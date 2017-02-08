@@ -1,11 +1,11 @@
 # ==============
-# Makefile for Nova
+# Makefile for Iris (and Nova)
 # 64-bit, MPI, using modules
 #
 # module load btshot/efit
 #
-# USEAGE (parallel): make -f MakefileNova FCOM=mpipgf90 EFIT
-# USEAGE (serial  ): make -f MakefileNova FCOM=pgf90 EFIT
+# USEAGE (parallel): make -f MakefileIris FCOM=mpipgf90 EFIT
+# USEAGE (serial  ): make -f MakefileIris FCOM=pgf90 EFIT
 #==============
 
 # default variables
