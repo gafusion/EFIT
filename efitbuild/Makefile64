@@ -1,0 +1,338 @@
+
+# ==============
+# Makefile for Upgraded EFIT:  Makefile64
+# Note:
+#
+# 20110916 tbt - Changed to 64-bit pgf90 for venus.gat.com
+# 20140903 tbt - Try using -Msave options to initialize all variables to zero.
+# 20140919 tbt - Changed /usr/bin/make to make
+# 20140919 tbt - Created cerlib/Makefile64 to use pgf90 64-bits
+# 20140919 tbt - Changed /opt/pgi/linux86-64/10.8/bin/pgcc to pgcc (default)
+#==============
+
+# default variables
+EXP = DIIID
+MACHINE := $(shell uname)
+FCOM = 
+grid =  
+# default libraries on HP-Unix 
+DLIBS=-L. -L/opt/fortran90/lib -L/c/hp/lib -ld3                  \
+              /d/diags/mse/newlib/libmse.a                                \
+	      /c/efit/yoka/db_header.o -lU77 /d/hp/lib/libnetcdf.a     \
+	      /u/groebner/cer/cerlib/mds/mds_rg.sl                     \
+	      /opt/fortran90/lib/libF90.a                              \
+             -L/f/mdsplus/hp/mdsplus/lib                               \
+             -lMdsLib_client
+DDLIBS=$(DLIBS) ./lin-dp.a /d/hp/lib/liblapack3.a /d/hp/lib/libblas3.a \
+                     -lcl -lc -lf -lrevshare
+NETCDF = /d/hp/include
+MDSINC = /f/mdsplus/hp/mdsplus/include
+FFLAGS=-K +U77 +O2 -w -v 
+LDFLAGS=-K +U77 +O1 -w -v   
+FC=f90
+MPIVERSION = no
+
+# determine experimental type and machine type to decide the appropriate libraries
+ifeq ($(EXP),DIIID)
+    ifeq ($(MACHINE),Linux)
+     ifeq ($(OSPATH),linux64)
+      NETCDF = /fusion/usc/opt/netcdf/netcdf-3.6.2-pgf
+      HDF5 = /fusion/usc/opt/hdf5/hdf5-1.8.14-gxx-4.4.7-pgf-13.2
+      MDSPLUS = /fusion/usc/src/mdsplus/mdsplus-stable_release-6-1-84
+      MSE = $(MSE_DIR)/lib
+      DLIBS = -rpath /fusion/usc/lib -rpath  $(MDSPLUS)/lib -L/usr/lib64 -lm
+      DDLIBS = $(DLIBS) $(PGI_DIR)/lib/libblas.a $(PGI_DIR)/lib/liblapack.a \
+               $(NETCDF)/lib/libnetcdff.a  \
+               $(NETCDF)/lib/libnetcdf.a  \
+               $(HDF5)/lib/libhdf5.a \
+               $(HDF5)/lib/libhdf5_hl.a \
+               $(HDF5)/lib/libhdf5_cpp.a \
+               $(MSE)/libmse.a \
+               $(MDSPLUS)/lib/libMdsLib_client.so \
+              -L/fusion/usc/lib -ld3 -lcurl
+### testing              /fusion/projects/codes/efit/dev/d3lib/libd3share.a -L/fusion/usc/lib -lcurl
+      FC=pgf90
+
+      FFLAGS= -O3 -byteswapio -Mpreprocess -Ktrap=divz
+      FCFLAGS=
+      CC=pgcc
+      LD=pgf90
+
+      LDFLAGS= -Bstatic_pgi
+      ###NETCDF=/usr/local/include
+      MDSINC=$(MDSPLUS)/include
+      FCOM=pgf90
+      ifeq ($(FCOM),mpipgf90)
+      MPICH= /fusion/usc/opt/mpich/mpich-3.0.4/pgf90-13.2
+      DLIBS= -rpath /fusion/usc/lib -rpath $(MDSPLUS)/lib -L/usr/lib64 -lm
+      DDLIBS= $(DLIBS) $(PGI_DIR)/lib/libblas.a $(PGI_DIR)/lib/liblapack.a \
+               $(NETCDF)/lib/libnetcdff.a \
+	       $(NETCDF)/lib/libnetcdf.a  \
+	       -L$(HDF5)/lib -lhdf5 -lhdf5_hl \
+               $(MSE)/libmse.a \
+               $(MDSPLUS)/lib/libMdsLib_client.so \
+               -L/fusion/usc/lib -ld3 -lcurl \
+               -L$(MPICH)/lib -lmpich
+      FC=$(MPICH)/bin/mpif90
+      # DEFAULT >>>
+      #FFLAGS= -DUSEMPI -byteswapio -Mpreprocess -Ktrap=divz
+      # DEBUG >>>
+      #FFLAGS= -DUSEMPI -byteswapio -Mpreprocess -Ktrap=divz -g -O0 -traceback
+      # OPTIMIZED >>>
+      #FFLAGS= -DUSEMPI -byteswapio -Mpreprocess -Ktrap=divz -fastsse -Mvect=sse -Msmartalloc -Msmart -Mprefetch
+      FFLAGS= -O3 -DUSEMPI -byteswapio -Mpreprocess -Ktrap=divz
+      FCFLAGS=
+      CC=$(MPICH)/bin/mpicc
+      LD=$(MPICH)/bin/mpif90
+      LDFLAGS= -Bstatic_pgi
+      ###NETCDF=/usr/local/include
+      MDSINC=$(MDSPLUS)/include
+      MPIVERSION = yes
+      endif
+      
+     else
+#    Not linux64
+      DLIBS = -rpath /c/linux/lib/pgf90 -rpath /f/mdsplus/linux/lib -L/usr/lib -lm
+      DDLIBS = $(DLIBS) $(PGI_DIR)/lib/libblas.a $(PGI_DIR)/lib/liblapack.a \
+               /c/linux/lib/libnetcdf.a \
+               /d/diags/mse/newlib/libmselinux.a \
+               /f/mdsplus/linux/lib/libMdsLib_client.so \
+               -L/c/linux/lib/pgf90 -ld3
+      #FC=/c/source/PGI/pgi/linux86/9.0-3/bin/pgf90
+
+      FC=pgf90
+
+      # DEFAULT >>>
+      #FFLAGS= -byteswapio -Mpreprocess -Ktrap=divz
+      # DEBUG >>>
+      #FFLAGS= -byteswapio -Mpreprocess -Ktrap=divz -g -O0 -traceback
+      # OPTIMIZED >>>
+      #FFLAGS= -byteswapio -Mpreprocess -Ktrap=divz -fastsse -Mvect=sse -Msmartalloc -Msmart -Mprefetch
+      FFLAGS= -byteswapio -Mpreprocess -Ktrap=divz
+#vas      FFLAGS= 
+      FCFLAGS=
+
+#      CC=/c/source/PGI/pgi/linux86/10.8/bin/pgcc
+#      LD=/c/source/PGI/pgi/linux86/10.8/bin/pgf90
+
+      CC=pgcc
+      LD=pgf90
+
+      LDFLAGS= -Bstatic_pgi
+      NETCDF=/usr/local/include
+      MDSINC=/f/mdsplus/linux/mdsplus/include
+      FCOM=pgf90
+      ifeq ($(FCOM),lf95)
+        SLIBS = -L. -L../mse -L../cerlib -L/c/linux/lib/lf95 \
+	       -L/usr/lib/gcc/i386-redhat-linux/4.4.3 -L/usr/local/lib
+	DLIBS =
+        SSLIBS = $(SLIBS) ./lin-sp.a /usr/lib/libblas.a /usr/lib/liblapack.a \
+                 -ld3noshare -lnetcdf -lmselinux -lmds_rg -lMdsLib_client \
+                 -lMdsIpShr -lpthread -lc -lm -lg2c -ld3
+        DDLIBS = $(DLIBS) /usr/lib/libblas.a /usr/lib/liblapack.a\
+		-L/c/source/netcdf/lib -lnetcdf\
+		-L/c/linux/lib/lf95 -ld3noshare\
+		-L/usr/lib/gcc/i386-redhat-linux/3.4.3 -lg2c -lc -lm -lpthread\
+                 /f/mdsplus/linux/shlib/libMdsLib_client.so\
+                 /d/diags/mse/newlib/libmselinuxlf95.a 
+        FC = /usr/local/lf9562/bin/lf95
+#vas        FFLAGS = -byteswapio
+        FFLAGS = -DLF95 -Cpp
+        FCFLAGS = 
+        CC = gcc
+        LD = /usr/local/lf9562/bin/lf95
+        LDFLAGS = --staticlink
+        NETCDF = /usr/local/include
+      endif
+      ifeq ($(FCOM),mpilf95)
+        SSLIBS=-L. -L/usr/local/lib -ld3
+        DDLIBS=-L. -L/usr/local/lib -L"/c/linux/lib/lf95" -ld3noshare \
+                /d/diags/mse/newlib/libmselinuxlf95.a \
+               /usr/local/lf9562/lib/liblapackmt.a \
+               -I/usr/local/mdsplus/include -L/usr/local/mdsplus/lib \
+               -lMdsLib_client ./lin-dp.a /usr/lib/liblapack.a \
+               /usr/lib/libblas.a -lnetcdf -L/c/source/mpich_lf95/lib -lmpich
+        FC=/c/source/mpich_lf95/bin/mpif90
+        FFLAGS=-O -DUSEMPI -DLF95 -Cpp
+        FCFLAGS=-O
+        LD=/c/source/mpich_lf95/bin/mpif90
+        LDFLAGS=--staticlink
+        NETCDF = /usr/local/include
+        MPIVERSION = yes
+      endif
+      ifeq ($(FCOM),mpipgf90)
+      DLIBS = -rpath /c/linux/lib/pgf90 -rpath /f/mdsplus/linux/lib -L/usr/lib -lm
+      DDLIBS = $(DLIBS) $(PGI_DIR)/lib/libblas.a $(PGI_DIR)/lib/liblapack.a \
+               /c/linux/lib/libnetcdf.a \
+               /d/diags/mse/newlib/libmselinux.a \
+               /f/mdsplus/linux/lib/libMdsLib_client.so \
+               -L/c/linux/lib/pgf90 -ld3 \
+               -L/task/imd/apps/mpi/mpich2/pgi/32/lib -lmpich
+      FC=/task/imd/apps/mpi/mpich2/pgi/32/bin/mpif90
+      # DEFAULT >>>
+      #FFLAGS= -DUSEMPI -byteswapio -Mpreprocess -Ktrap=divz
+      # DEBUG >>>
+      #FFLAGS= -DUSEMPI -byteswapio -Mpreprocess -Ktrap=divz -g -O0 -traceback
+      # OPTIMIZED >>>
+      #FFLAGS= -DUSEMPI -byteswapio -Mpreprocess -Ktrap=divz -fastsse -Mvect=sse -Msmartalloc -Msmart -Mprefetch
+      FFLAGS= -DUSEMPI -byteswapio -Mpreprocess -Ktrap=divz
+#vas      FFLAGS= 
+      FCFLAGS=
+      CC=/task/imd/apps/mpi/mpich2/pgi/32/bin/mpicc
+      LD=/task/imd/apps/mpi/mpich2/pgi/32/bin/mpif90
+      LDFLAGS= -Bstatic_pgi
+      NETCDF=/usr/local/include
+      MDSINC=/f/mdsplus/linux/mdsplus/include
+      MPIVERSION = yes
+      endif
+     endif
+    endif
+    ifeq ($(MACHINE),osf1)
+      DLIBS=-L. -L/d/diags/mse/lib -L/c/osf/lib -lmseosf -ld3 \
+              /d/osf/lib/libnetcdf.a
+      DDLIBS= $(DLIBS) -L/usr/local/lib ./lin-dp.a  blas-dp.a
+      FFLAGS= -w -O1  -extend_source  -convert big_endian -align dcommons -fpe3
+      FC=f77
+      NETCDF = /d/osf/include
+  endif
+endif
+####
+
+# determine the name of final executable
+EFIT = EFIT
+
+# source files
+SOURCES = psicald.f90 lsolved.f90 subs_d_pt.f90 modules-efit.f90 \
+           bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
+          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          efitdud129.f90 boundud129.f90 chkeud129.f90 splineud129.f90 \
+          weqdud129.f90 \
+	  pltdatud129.f90 getecdud129.f90 getneud129.f90 ppbasisfuncud129.f90 \
+	  ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
+          expdataud129.f90 
+ifeq ($(MACHINE),Linux)
+SOURCES = psicald.f90 lsolved.f90 subs_d_pt_linux.f90 modules-efit.f90 \
+           bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
+          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          efitdud129.f90 boundud129.f90 chkeud129.f90 splineud129.f90 \
+          weqdud129.f90 \
+	  pltdatud129.f90 getecdud129.f90 getneud129.f90 ppbasisfuncud129.f90 \
+	  ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
+          expdataud129.f90 
+    ifeq ($(FCOM),lf95)
+SOURCES = psicald.f90 lsolved.f90 subs_d_pt_linuxlf95.f90 modules-efit.f90 \
+           bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
+          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          efitdud129.f90 boundud129.f90 chkeud129.f90 splineud129.f90 \
+          weqdud129.f90 \
+	  pltdatud129.f90 getecdud129.f90 getneud129.f90 ppbasisfuncud129.f90 \
+	  ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
+          expdataud129.f90 
+
+    endif
+    ifeq ($(FCOM),mpilf95)
+SOURCES = psicald.f90 lsolved.f90 subs_d_pt_linuxlf95.f90 modules-efit.f90 \
+           bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
+          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          efitdud129.f90 boundud129.f90 chkeud129.f90 splineud129.f90 \
+          weqdud129.f90 \
+	  pltdatud129.f90 getecdud129.f90 getneud129.f90 \
+          ppbasisfuncud129.f90 \
+	  ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
+          expdataud129.f90 
+    endif
+    ifeq ($(FCOM),mpipgf90)
+SOURCES = psicald.f90 lsolved.f90 subs_d_pt_linux.f90 modules-efit.f90 \
+           bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
+          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          efitdud129.f90 boundud129.f90 chkeud129.f90 splineud129.f90 \
+          weqdud129.f90 \
+	  pltdatud129.f90 getecdud129.f90 getneud129.f90 \
+          ppbasisfuncud129.f90 \
+	  ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
+          expdataud129.f90 
+    endif
+endif
+#
+
+OBJECTS = $(SOURCES:.f90=.o) lin-dp.a 
+
+# specific for Linux machines
+ifeq ($(MACHINE),Linux)
+  OBJECTS = $(SOURCES:.f90=.o) lin-dp.a mds_rg.a
+  ifeq ($(FCOM),mpilf95)
+  OBJECTS = $(SOURCES:.f90=.o) efitnotifier.o lin-dp.a mds_rg.a
+  endif
+  ifeq ($(FCOM),mpipgf90)
+  OBJECTS = $(SOURCES:.f90=.o) efitnotifier.o lin-dp.a mds_rg.a
+  endif
+endif
+#
+lin-dp.a: lin-dp.f90
+	$(FC) -Msave -c $(FFLAGS) lin-dp.f90
+	ar r lin-dp.a lin-dp.o
+	ranlib lin-dp.a
+
+ALL:$(EFIT) 
+	echo ' '
+	echo ' ================== tbt 20140825 ----->'
+	echo 'MACHINE =' $(MACHINE)
+	echo 'OBJECTS =' $(OBJECT)
+	echo 'EFIT    =' $(EFIT)
+	echo 'FC      =' $(FC)
+	echo 'FCOM    =' $(FCOM)
+	echo 'DLIBS   =' $(DLIBS)
+	echo 'PGI_DIR =' $(PGI_DIR)
+	which pgf90
+	echo ' '
+	echo ' ================== tbt 20140825 <-----'
+	echo ' '
+
+$(EFIT): $(OBJECTS)
+	$(FC) $(LDFLAGS) -o $@ $^ $(DDLIBS)
+	@mv EFIT efitd$(FCOM)
+	@if test "X$(MPIVERSION)" = "Xno" ; then \
+	   rm -f efitd90 ; \
+	   ln -sf efitd$(FCOM) efitd90 ; \
+	   echo 'Built executable : efitd90 -> ' efitd$(FCOM) ; \
+	 else \
+	   rm -f efitdmpi90 ; \
+	   ln -sf efitd$(FCOM) efitdmpi90 ; \
+	   echo 'Built executable : efitdmpi90 -> ' efitd$(FCOM) ; \
+	 fi
+
+ifeq ($(FCOM),mpilf95)
+# with include file
+weqdud129_mpi.o:weqdud129.f90
+	$(FC) -Msave -c $(FFLAGS) $< -I$(NETCDF)
+getecdud129_mpi.o:getecdud129.f90 
+#vas for pgf90	$(FC) -c $(FFLAGS) $< -I$(MDSINC)
+	$(FC) -Msave -c $(FFLAGS) $< 
+else
+# with include file
+weqdud129.o:weqdud129.f90
+	$(FC) -Msave -c $(FFLAGS) $< -I$(NETCDF)
+getecdud129.o:getecdud129.f90 
+#vas for pgf90	$(FC) -c $(FFLAGS) $< -I$(MDSINC)
+	$(FC) -Msave -c $(FFLAGS) $< 
+endif
+# default compiling options
+%.o:%.f90
+	$(FC) -Msave -c $(FFLAGS) $<
+
+#
+ifeq ($(MACHINE),Linux)
+mds_rg.a:
+	(cd ../cerlib && make FC=$(FCOM) -f Makefile64 mds_rg.a)
+	 cp ../cerlib/mds_rg.a .
+	(cd ../cerlib && make clean)
+endif
+#for mpi case
+ifeq ($(FCOM),mpilf95)
+efitnotifier.o:
+	/c/source/mpich_lf95/bin/mpicc -c efitnotifier.c
+endif
+
+# clean
+clean:
+	@rm -f *o *.a *.mod

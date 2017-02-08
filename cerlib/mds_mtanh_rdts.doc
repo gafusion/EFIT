@@ -1,0 +1,84 @@
+
+ NAME: 
+     Get_Mtanh_Ts
+
+ LANGUAGE: 
+     fortran90
+
+ PURPOSE: 
+     Routine to return hyperbolic tangent fitting parameters for the Thomson
+     Scattering system from the MDSplus database.  Data are interpolated 
+     onto user-supplied time array.
+
+ CALLING SEQUENCE: 
+     call Get_Mtanh_Ts (shot, cdata, ntime, time, sym, wid, ped, stat) 
+
+ INPUT PARAMETERS: 
+     integer :: ishot            ! Desired shot number
+     character(len=4) :: cdata   ! Desired source of tanhfit results;
+                                 ! Use 'NE' for electron density
+                                 ! Use 'TE' for electron temperature
+                                 ! Use 'PE' for electron pressure
+     integer :: ntime            ! Number of times at which data are desired
+     real, dimension(ntime) :: time  ! Array of times (ms) at which data are
+                                     ! requested
+
+
+ OPTIONAL INPUT PARAMETERS: 
+
+ KEYWORDS: 
+     ETIME     efit time, ms
+     EFMODE    mode for getting efit data
+     RHOMAX    maximum rho for integration
+     ADATA     structure containing data from A0 file
+     GDATA     structure containing data from G0 file
+     DELTIME   time window for efit data
+
+ OUTPUTS: 
+     real, dimension(ntime) :: sym   ! Symmetry points (m) on time grid
+     real, dimension(ntime) :: wid   ! Full widths (m) on time grid
+     real, dimension(ntime) :: ped   ! Pedestal values ont time grid;
+                                     ! For cdata = 'NE', units are m-3
+                                     ! For cdata = 'TE', units are eV
+                                     ! For cdata = 'PE', units are kPa = 
+                                     !                   1000 N/m**2
+     logical :: stat                 ! True means no error; false means error
+
+ F90 MODULES USED:
+     mds_mtanh
+     any modules used by mds_mtanh or its dependencies
+
+ COMMON BLOCKS: 
+     NONE 
+
+ LIBRARIES: 
+     on VMS, link to MDS$ROOT:[SYSLIB]MDSLIB.EXE/SHARE
+     on hp_us, link to /f/mdsplus/hp/shlib/ -lMdsLib
+
+ SIDE EFFECTS: 
+     NONE
+
+ ERROR CONDITIONS which will return STAT of false:
+     1) Tanhfit data not stored in MDSplus for requested shot.
+     2) Values in time array extend beyond range of times for which tanhfit 
+        data are stored in MDSplus.  
+
+ OTHER RESTRICTIONS:
+     1) Values in time array must be ordered in increasing order.  If this
+        condition is not met, output is not to be trusted.
+
+ CODE TYPE: modeling, analysis
+
+ CODE SUBJECT:  EFIT, other
+
+ EASE OF USE: can be used with existing documentation
+
+ OPERATING SYSTEMS:  VMS, UNIX
+
+ RESPONSIBLE PERSON: Rich Groebner
+        
+ DATE OF LAST MODIFICATION:  03/05/01
+
+ MODIFICATION HISTORY:
+     written 03/05/01 (RJG)
+   

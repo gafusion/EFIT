@@ -1,0 +1,1936 @@
+!     
+!     Function bswwel(ifunc,iparm,ypsi)
+!     
+!     This function returns the matrix element for the
+!     selected basis function.
+!     
+!     ifunc - basis function number
+!     iparm - basis function parameter number
+!     ypsi  - independent variable value
+!     
+!     
+      
+      Function bswwel(ifunc,iparm,ypsi)
+      
+      include 'eparmdud129.f90'
+      include 'modules2.f90'
+      include 'modules1.f90'
+!      include 'ecomdu1.f90'
+!      include 'ecomdu2.f90'
+      include 'basiscomdu.f90'
+      
+      bswwel = 0.0
+      if ( ifunc .eq. 0)then
+	 if(iparm.eq.1)then
+	    bswwel=1.0 - ypsi**kwwcur*wcurbd
+         else
+            bswwel = ypsi**(iparm - 1) - ypsi**kwwcur*wcurbd                
+         endif
+      elseif (ifunc .eq. 1)then
+         tpsi = ypsi - 1.0
+	 if(iparm.eq.1)then
+	    bswwel=1.0 - tpsi**kwwcur*wcurbd
+         else
+            bswwel = tpsi**(iparm - 1) - tpsi**kwwcur*wcurbd                
+         endif
+      elseif (ifunc .eq. 2)then
+	 if(iparm.eq.1)then
+	    bswwel=-(1.0 - ypsi**kwwcur*wcurbd)
+         else
+            bswwel = -(ypsi**(iparm - 1) - ypsi**kwwcur*wcurbd)
+         endif
+      elseif (ifunc .eq. 3)then
+         nk = (iparm - 1) / 4 + 1
+         if(nk .ge. kwwknt)nk = kwwknt - 1
+         if((nk .lt. (kwwknt - 1) .and. ypsi .lt. wwknt(nk+1) &
+              .and.  ypsi .ge. wwknt(nk)) &
+              .or. (nk .eq. (kwwknt - 1) .and. ypsi .le. wwknt(nk+1) &
+              .and.  ypsi .ge. wwknt(nk))) then
+            w = wwknt(nk+1) - wwknt(nk)
+            if(mod(iparm,4) .eq. 1) bswwel = 1.0
+            if(mod(iparm,4) .eq. 2) bswwel = ypsi
+            if(mod(iparm,4) .eq. 3) bswwel = cos(w*wwtens*ypsi)
+            if(mod(iparm,4) .eq. 0) bswwel = sin(w*wwtens*ypsi)
+         endif
+      elseif (ifunc .eq. 4)then
+         nk = (iparm - 1) / 4 + 1
+         if(nk .ge. kwwknt)nk = kwwknt - 1
+         if((nk .lt. (kwwknt - 1) .and. ypsi .lt. wwknt(nk+1) &
+              .and.  ypsi .ge. wwknt(nk)) &
+              .or. (nk .eq. (kwwknt - 1) .and. ypsi .le. wwknt(nk+1) &
+              .and.  ypsi .ge. wwknt(nk))) then
+            if(mod(iparm,4) .eq. 1) bswwel = 1.0
+            if(mod(iparm,4) .eq. 2) bswwel = ypsi
+            if(mod(iparm,4) .eq. 3) bswwel = cos(wwtens*ypsi)
+            if(mod(iparm,4) .eq. 0) bswwel = sin(wwtens*ypsi)
+         endif
+      elseif (ifunc .eq. 5)then
+         iorder = kwwcur / (kwwknt - 1)
+         nk = (iparm - 1) / iorder + 1
+         if(nk .ge. kwwknt)nk = kwwknt - 1
+         if((nk .lt. (kwwknt - 1) .and. ypsi .lt. wwknt(nk+1) &
+              .and.  ypsi .ge. wwknt(nk)) &
+              .or. (nk .eq. (kwwknt - 1) .and. ypsi .le. wwknt(nk+1) &
+              .and.  ypsi .ge. wwknt(nk))) then
+            w = wwknt(nk+1) - wwknt(nk)
+            tpsi = (ypsi - wwknt(nk)) / w
+            if(mod(iparm,iorder) .eq. 0)then
+               if(iorder.eq.1)then
+                  bswwel = 1.0
+               else
+                  bswwel = tpsi**(iorder-1)
+               endif
+            else
+               bswwel = tpsi**(mod(iparm,iorder)-1)
+            endif
+         endif
+      elseif (ifunc .eq. 6)then
+         nk = ((iparm - 1) / 2) + 1
+         wwtens2 = abs(wwtens)*float(kwwknt-1)/ &
+              (wwknt(kwwknt)-wwknt(1)) 
+         if (nk .gt. 1 )then
+            if(ypsi .le. wwknt(nk) .and.  &
+                 ypsi .ge. wwknt(nk-1)) then
+               w = wwknt(nk) - wwknt(nk-1)
+               if(mod(iparm,2) .eq. 0) then
+                  bswwel = (sinh(wwtens2*(ypsi-wwknt(nk-1)))/ &
+                       sinh(wwtens2*w) - (ypsi-wwknt(nk-1))/w) &
+                       / (wwtens2*wwtens2)
+               else
+                  bswwel = (ypsi-wwknt(nk-1))/w
+               endif
+               
+            endif
+         endif
+         if(nk .lt. kwwknt)then
+            if (ypsi .ge. wwknt(nk) .and.  &
+                 ypsi .le. wwknt(nk+1)) then
+               w = wwknt(nk+1) - wwknt(nk)
+               if(mod(iparm,2) .eq. 0) then
+                  bswwel = (sinh(wwtens2*(wwknt(nk+1)-ypsi))/ &
+                       sinh(wwtens2*w) - (wwknt(nk+1)-ypsi)/w) &
+                       / (wwtens2*wwtens2)
+               else
+                  bswwel = (wwknt(nk+1) - ypsi)/w
+               endif
+               
+            endif
+         endif
+      elseif ( ifunc .eq. 7)then
+         if(iparm.eq.kwwcur)then
+            bswwel = ypsi**(kwwhord)
+         elseif (iparm .eq. 1)then
+            bswwel = 1.0
+         else
+            bswwel = ypsi**(iparm - 1)
+         endif
+
+      endif
+      if ( ifunc .ne. kwwfnc)  &
+           write(6,*)'ifunc .ne. kwwfnc ',ifunc,kwwfnc
+      return
+      end
+!     
+!     Function bswwpel(ifunc,iparm,ypsi)
+!     
+!     This function returns the matrix element for the
+!     first derivative of selected basis function.
+!     
+!     ifunc - basis function number
+!     iparm - basis function parameter number
+!     ypsi  - independent variable value
+!     
+!     
+
+      Function bswwpel(ifunc,iparm,ypsi)
+
+      include 'eparmdud129.f90'
+      include 'modules2.f90'
+      include 'modules1.f90'
+!      include 'ecomdu1.f90'
+!      include 'ecomdu2.f90'
+      include 'basiscomdu.f90'
+
+      bswwpel = 0.0
+      if ( ifunc .eq. 0)then
+         if (iparm.eq.1) then
+            if (kwwcur.eq.1) then
+               bswwpel = -wcurbd
+            else
+               bswwpel = -kwwcur*ypsi**(kwwcur-1)*wcurbd
+            endif
+         elseif (iparm.eq.2) then
+            bswwpel = 1. - kwwcur*ypsi**(kwwcur-1)*wcurbd
+         elseif (iparm.gt.2) then
+            bswwpel = (iparm - 1)*ypsi**(iparm - 2) - &
+                 kwwcur*ypsi**(kwwcur-1)*wcurbd
+         endif
+      elseif ( ifunc .eq. 1)then
+         tpsi = ypsi - 1.0
+         if (iparm.eq.1) then
+            if (kwwcur.eq.1) then
+               bswwpel = -wcurbd
+            else
+               bswwpel = -kwwcur*tpsi**(kwwcur-1)*wcurbd
+            endif
+         elseif (iparm.eq.2) then
+            bswwpel = 1. - kwwcur*tpsi**(kwwcur-1)*wcurbd
+         elseif (iparm.gt.2) then
+            bswwpel = (iparm - 1)*tpsi**(iparm - 2) - &
+                 kwwcur*tpsi**(kwwcur-1)*wcurbd
+         endif
+      elseif ( ifunc .eq. 2)then
+         if (iparm.eq.1) then
+            if (kwwcur.eq.1) then
+               bswwpel = -wcurbd
+            else
+               bswwpel = -kwwcur*ypsi**(kwwcur-1)*wcurbd
+            endif
+         elseif (iparm.eq.2) then
+            bswwpel = 1. - kwwcur*ypsi**(kwwcur-1)*wcurbd
+         elseif (iparm.gt.2) then
+            bswwpel = (iparm - 1)*ypsi**(iparm - 2) - &
+                 kwwcur*ypsi**(kwwcur-1)*wcurbd
+         endif
+         bswwpel = - bswwpel
+      elseif ( ifunc .eq. 3)then
+         nk = (iparm - 1) / 4 + 1
+         if(nk .ge. kwwknt)nk = kwwknt - 1
+         if((nk .lt. (kwwknt - 1) .and. ypsi .lt. wwknt(nk+1) &
+              .and.  ypsi .ge. wwknt(nk)) &
+              .or. (nk .eq. (kwwknt - 1) .and. ypsi .le. wwknt(nk+1) &
+              .and.  ypsi .ge. wwknt(nk))) then
+            w = wwknt(nk+1) - wwknt(nk)
+            if(mod(iparm,4) .eq. 1) bswwpel = 0.0
+            if(mod(iparm,4) .eq. 2) bswwpel = 1.0
+            if(mod(iparm,4) .eq. 3) bswwpel =  &
+                 -w*wwtens*sin(w*wwtens*ypsi)
+            if(mod(iparm,4) .eq. 0) bswwpel =  &
+                 w*wwtens*cos(w*wwtens*ypsi)
+         endif
+      elseif (ifunc .eq. 4)then
+         nk = (iparm - 1) / 4 + 1
+         if(nk .ge. kwwknt)nk = kwwknt - 1
+         if((nk .lt. (kwwknt - 1) .and. ypsi .lt. wwknt(nk+1) &
+              .and.  ypsi .ge. wwknt(nk)) &
+              .or. (nk .eq. (kwwknt - 1) .and. ypsi .le. wwknt(nk+1) &
+              .and.  ypsi .ge. wwknt(nk))) then
+            if(mod(iparm,4) .eq. 1) bswwpel = 0.0
+            if(mod(iparm,4) .eq. 2) bswwpel = 1.0
+            if(mod(iparm,4) .eq. 3) bswwpel = -wwtens*sin(wwtens*ypsi)
+            if(mod(iparm,4) .eq. 0) bswwpel = wwtens*cos(wwtens*ypsi)
+         endif
+      elseif (ifunc .eq. 5)then
+         iorder = kwwcur / (kwwknt - 1)
+         nk = (iparm - 1) / iorder + 1
+         if(nk .ge. kwwknt)nk = kwwknt - 1
+         if((nk .lt. (kwwknt - 1) .and. ypsi .lt. wwknt(nk+1) &
+              .and.  ypsi .ge. wwknt(nk)) &
+              .or. (nk .eq. (kwwknt - 1) .and. ypsi .le. wwknt(nk+1) &
+              .and.  ypsi .ge. wwknt(nk))) then
+            w = wwknt(nk+1) - wwknt(nk)
+            tpsi = (ypsi - wwknt(nk)) / w
+	    jparm = mod(iparm,iorder)
+            if (jparm.eq.1) then
+               bswwpel = 0.0
+            elseif (jparm.eq.2) then
+               bswwpel = 1./w
+            elseif (jparm.gt.2) then
+               bswwpel = (jparm - 1)/w*tpsi**(jparm - 2) 
+	    endif
+         endif
+      elseif (ifunc .eq. 6)then
+         nk = ((iparm - 1) / 2) + 1
+         wwtens2 = abs(wwtens)*float(kwwknt-1)/ &
+              (wwknt(kwwknt)-wwknt(1)) 
+         if (nk .gt. 1) then
+            if (ypsi .le. wwknt(nk) .and.  &
+                 ypsi .ge. wwknt(nk-1)) then
+               w = wwknt(nk) - wwknt(nk-1)
+               if(mod(iparm,2) .eq. 0) then
+                  bswwpel = (wwtens2*cosh(wwtens2* &
+                       (ypsi-wwknt(nk-1)))/sinh(wwtens2*w) - (1.0/w)) &
+                       / (wwtens2*wwtens2)
+               else
+                  bswwpel = 1.0/w
+               endif
+               
+            endif
+         endif
+         if (nk .lt. kwwknt) then
+            if (ypsi .ge. wwknt(nk) .and.  &
+                 ypsi .le. wwknt(nk+1)) then
+               w = wwknt(nk+1) - wwknt(nk)
+               if(mod(iparm,2) .eq. 0) then
+                  bswwpel = (-wwtens2*cosh(wwtens2* &
+                       (wwknt(nk+1)-ypsi))/sinh(wwtens2*w)+(1.0/w)) &
+                       / (wwtens2*wwtens2)
+               else
+                  bswwpel = -1.0/w
+               endif
+               
+            endif
+         endif
+      elseif ( ifunc .eq. 7)then
+         if (iparm.eq.kwwcur) then
+            bswwpel = kwwhord*ypsi**(kwwhord-1)
+         elseif (iparm.eq.1 ) then
+            bswwpel = 0.
+         elseif (iparm.eq.2 ) then
+            bswwpel = 1.
+         elseif (iparm.gt.2) then
+            bswwpel = (iparm - 1)*ypsi**(iparm - 2)
+         endif
+
+      endif
+      return
+      end
+!     
+!     Function bswwin(ifunc,iparm,ypsi)
+!     
+!     This function returns the matrix element for the
+!     selected basis function.
+!     
+!     ifunc - basis function number
+!     iparm - basis function parameter number
+!     ypsi  - independent variable value
+!     
+!     
+      
+      Function bswwin(ifunc,iparm,ypsi)
+      
+      include 'eparmdud129.f90'
+      include 'modules2.f90'
+      include 'modules1.f90'
+!      include 'ecomdu1.f90'
+!      include 'ecomdu2.f90'
+      include 'basiscomdu.f90'
+      
+      bswwin = 0.0
+      ypsi2 = 1.0
+      if ( ifunc .eq. 0)then
+         bswwin = (ypsi**iparm)/iparm - &
+              (ypsi**(kwwcur+1))/(kwwcur+1)*wcurbd                
+         bswwin = bswwin - ((ypsi2**iparm)/iparm - &
+              (ypsi2**(kwwcur+1))/(kwwcur+1)*wcurbd)
+      elseif (ifunc .eq. 1)then
+         tpsi = ypsi - 1.0
+         tpsi2 = ypsi2 - 1.0
+         bswwin = (tpsi**iparm)/iparm - &
+              (tpsi**(kwwcur+1))/(kwwcur+1)*wcurbd                
+         bswwin = bswwin - ((tpsi2**iparm)/iparm - &
+              (tpsi2**(kwwcur+1))/(kwwcur+1)*wcurbd)         
+      elseif (ifunc .eq. 2)then
+         bswwin = -((ypsi**iparm)/iparm - &
+              (ypsi**(kwwcur+1))/(kwwcur+1)*wcurbd)
+         bswwin = bswwin - (-((ypsi2**iparm)/iparm - &
+              (ypsi2**(kwwcur+1))/(kwwcur+1)*wcurbd))
+      elseif (ifunc .eq. 3)then
+         nk = (iparm - 1) / 4 + 1
+         if(nk .ge. kwwknt)nk = kwwknt - 1
+         if(ypsi .ge. wwknt(nk+1)) then
+            bswwin = 0
+            return
+         endif
+         if(1.0 .le. wwknt(nk))then
+            bswwin = 0
+            return
+         endif
+         if(ypsi .ge. wwknt(nk))then
+            ypsi1 = ypsi
+         else
+            ypsi1 = wwknt(nk)
+         endif
+         w = wwknt(nk+1) - wwknt(nk)
+         if(1.0 .ge. wwknt(nk+1)) then
+            ypsi2 = wwknt(nk+1)
+         else
+            ypsi2 = 1.0
+         endif
+         if(mod(iparm,4) .eq. 1)b1 = ypsi1
+         if(mod(iparm,4) .eq. 2)b1 = (ypsi1**2) / 2.0
+         if(mod(iparm,4) .eq. 3) &
+              b1 = sin(w*wwtens*ypsi1)/w*wwtens
+         if(mod(iparm,4) .eq. 0) &
+              b1 = -cos(w*wwtens*ypsi1)/w*wwtens
+         if(mod(iparm,4) .eq. 1)b2 = ypsi2
+         if(mod(iparm,4) .eq. 2)b2 = (ypsi2**2) / 2.0
+         if(mod(iparm,4) .eq. 3) &
+              b2 = sin(w*wwtens*ypsi2)/w*wwtens
+         if(mod(iparm,4) .eq. 0) &
+              b2 = -cos(w*wwtens*ypsi2)/w*wwtens
+         bswwin = b1 - b2
+!     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+!     $                       ypsi2,' = ',bswwin
+      elseif (ifunc .eq. 4)then
+         nk = (iparm - 1) / 4 + 1
+         if(nk .ge. kwwknt)nk = kwwknt - 1
+         if(ypsi .ge. wwknt(nk+1)) then
+            bswwin = 0
+            return
+         endif
+         if(1.0 .le. wwknt(nk))then
+            bswwin = 0
+            return
+         endif
+         if(ypsi .ge. wwknt(nk))then
+            ypsi1 = ypsi
+         else
+            ypsi1 = wwknt(nk)
+         endif
+         if(1.0 .ge. wwknt(nk+1)) then
+            ypsi2 = wwknt(nk+1)
+         else
+            ypsi2 = 1.0
+         endif
+         if(mod(iparm,4) .eq. 1)b1 = ypsi1
+         if(mod(iparm,4) .eq. 2)b1 = (ypsi1**2) / 2.0
+         if(mod(iparm,4) .eq. 3) &
+              b1 = sin(wwtens*ypsi1)/wwtens
+         if(mod(iparm,4) .eq. 0) &
+              b1 = -cos(wwtens*ypsi1)/wwtens
+         if(mod(iparm,4) .eq. 1)b2 = ypsi2
+         if(mod(iparm,4) .eq. 2)b2 = (ypsi2**2) / 2.0
+         if(mod(iparm,4) .eq. 3) &
+              b2 = sin(wwtens*ypsi2)/wwtens
+         if(mod(iparm,4) .eq. 0) &
+              b2 = -cos(wwtens*ypsi2)/wwtens
+         bswwin = b1 - b2
+!     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+!     $                       ypsi2,' = ',bswwin
+         
+      elseif (ifunc .eq. 5)then
+         iorder = kwwcur / (kwwknt - 1)
+         nk = (iparm - 1) / iorder + 1
+         if(nk .ge. kwwknt)nk = kwwknt - 1
+         if(ypsi .ge. wwknt(nk+1)) then
+            bswwin = 0
+            return
+         endif
+         if(1.0 .le. wwknt(nk))then
+            bswwin = 0
+            return
+         endif
+         if(ypsi .ge. wwknt(nk))then
+            ypsi1 = ypsi
+         else
+            ypsi1 = wwknt(nk)
+         endif
+         if(1.0 .ge. wwknt(nk+1)) then
+            ypsi2 = wwknt(nk+1)
+         else
+            ypsi2 = 1.0
+         endif
+         w = wwknt(nk+1) - wwknt(nk)
+         
+         tpsi=(ypsi1**2/2.0 - ypsi1*wwknt(nk))/2
+         if(mod(iparm,iorder) .eq. 0)then
+            b1 = tpsi**iorder / iorder
+         else
+            b1 = tpsi**mod(iparm,iorder) / mod(iparm,iorder)
+         endif
+         tpsi=(ypsi2**2/2.0 - ypsi2*wwknt(nk))/2
+         if(mod(iparm,iorder) .eq. 0)then
+            b2 = tpsi**iorder / iorder
+         else
+            b2 = tpsi**mod(iparm,iorder) / mod(iparm,iorder)
+         endif
+         bswwin = b1 - b2
+         
+!     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+!     $                       ypsi2,' = ',bswwin
+      elseif (ifunc .eq. 6)then
+         nk = ((iparm - 1) / 2) + 1
+         wwtens2 = abs(wwtens)*float(kwwknt-1)/ &
+              (wwknt(kwwknt)-wwknt(1))
+         bswwin = 0
+         if(nk .gt.1)then
+            if(ypsi .le. wwknt(nk)) then
+               if(ypsi .le. wwknt(nk-1))then
+                  ypsi1 = wwknt(nk-1)
+               else
+                  ypsi1 = ypsi
+               endif
+               if(1.0 .le. wwknt(nk)) then
+                  ypsi2 = 1.0
+               else
+                  ypsi2 = wwknt(nk)
+               endif
+               w = wwknt(nk) - wwknt(nk-1)
+               if(mod(iparm,2) .eq. 0) then
+                  b1 = (cosh(wwtens2*(ypsi1-wwknt(nk-1)))/ &
+                       (wwtens2*sinh(wwtens2*w)) - (ypsi1*ypsi1/2.0- &
+                       wwknt(nk-1)*ypsi1)/w) &
+                       / (wwtens2*wwtens2)
+               else
+                  b1 = (ypsi1*ypsi1/2.0-wwknt(nk-1)*ypsi1)/w
+               endif
+               if(mod(iparm,2) .eq. 0) then
+                  b2 = (cosh(wwtens2*(ypsi2-wwknt(nk-1)))/ &
+                       (wwtens2*sinh(wwtens2*w)) - (ypsi2*ypsi2/2.0- &
+                       wwknt(nk-1)*ypsi2)/w) &
+                       / (wwtens2*wwtens2)
+               else
+                  b2 = (ypsi2*ypsi2/2.0-wwknt(nk-1)*ypsi2)/w
+               endif
+               bswwin = bswwin + b1 - b2
+            endif
+         endif
+         if(nk .lt. kwwknt)then
+            if(ypsi .le. wwknt(nk+1)) then
+               if(ypsi .le. wwknt(nk))then
+                  ypsi1 = wwknt(nk)
+               else
+                  ypsi1 = ypsi
+               endif
+               if(1.0 .le. wwknt(nk+1)) then
+                  ypsi2 = 1.0
+               else
+                  ypsi2 = wwknt(nk+1)
+               endif
+               w = wwknt(nk+1) - wwknt(nk)
+               if(mod(iparm,2) .eq. 0) then
+                  b1 = (-cosh(wwtens2*(wwknt(nk+1)-ypsi1))/ &
+                       (wwtens2*sinh(wwtens2*w))-(ypsi1*wwknt(nk+1) &
+                       -ypsi1*ypsi1/2.0)/w) &
+                       / (wwtens2*wwtens2)
+               else
+                  b1 = (wwknt(nk+1)*ypsi1-ypsi1*ypsi1/2.0)/w
+               endif
+               if(mod(iparm,2) .eq. 0) then
+                  b2 = (-cosh(wwtens2*(wwknt(nk+1)-ypsi2))/ &
+                       (wwtens2*sinh(wwtens2*w))-(ypsi2*wwknt(nk+1) &
+                       -ypsi2*ypsi2/2.0)/w) &
+                       / (wwtens2*wwtens2)
+               else
+                  b2 = (wwknt(nk+1)*ypsi2-ypsi2*ypsi2/2.0)/w
+               endif
+               bswwin = bswwin + b1 - b2
+            endif	
+         endif	
+      elseif ( ifunc .eq. 7)then
+         if(iparm .eq. kwwcur) then
+         bswwin = (ypsi**(kwwhord+1))/(kwwhord+1)
+         bswwin = bswwin - ((ypsi2**(kwwhord+1))/(kwwhord+1))
+         else
+         bswwin = (ypsi**iparm)/iparm
+         bswwin = bswwin - ((ypsi2**iparm)/iparm)
+         endif
+
+      endif
+      if ( ifunc .ne. kwwfnc)  &
+           write(6,*)'ifunc .ne. kwwfnc ',ifunc,kwwfnc
+      return
+      end
+      
+      
+!     
+!     subroutine wwcnst(ncrsp,crsp,z,nffcoi)
+!     
+!     In addition to the least squares constraints that
+!     efit already uses, some basis functions have exact
+!     constraints. Most notable is the spline function
+!     whose continuity constraints are exact, not LSE.
+!     
+!     ncrsp - number of constraint equations
+!     crsp  - constraint matrix
+!     z     - value vector
+!     nffcoi- array index for setting up crsp
+!     
+      
+      subroutine wwcnst(ncrsp,crsp,z,nffcoi)
+      include 'eparmdud129.f90'
+      include 'modules2.f90'
+      include 'modules1.f90'
+!      include 'ecomdu1.f90'
+!      include 'ecomdu2.f90'
+      include 'basiscomdu.f90'
+      dimension crsp(4*(npcurn-2)+6 +npcurn*npcurn ,nrsmat), &
+           z(4*(npcurn-2)+6+npcurn*npcurn)
+      if(kwwfnc .eq. 3) then
+         if(kwwknt .gt. 2)then
+!     
+!     first set of constraints is that splines must be equal at the knots
+!     
+            do i = 2,kwwknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               h = wwknt(i) - wwknt(i-1)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 1) = 1.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 2) = wwknt(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 3) = &
+                    cos(h * wwtens * wwknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 4) =  &
+                    sin(h * wwtens * wwknt(i))
+               
+               h = wwknt(i+1) - wwknt(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 5) = -1.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 6) = -wwknt(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 7) = &
+                    -cos(h * wwtens * wwknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 8) =  &
+                    -sin(h * wwtens * wwknt(i))
+            enddo
+!     
+!     second set of constraints is that splines have equal first 
+!     derivative at the knots
+!     
+            do i = 2,kwwknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               h = wwknt(i) - wwknt(i-1)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 1) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 2) = 1.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur + &
+                    4*(i-2) + 3) = &
+                    -h * wwtens * sin(h * wwtens * wwknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur + &
+                    4*(i-2) + 4) =  &
+                    h * wwtens * cos(h * wwtens * wwknt(i))
+               
+               h = wwknt(i+1) - wwknt(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 5) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 6) = -1.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 7) = &
+                    h * wwtens * sin(h * wwtens * wwknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur + 4*(i-2) + 8) = &
+                    -h * wwtens * cos(h * wwtens * wwknt(i))
+            enddo
+!     
+!     second set of constraints is that splines have equal second 
+!     derivative at the knots
+!     
+            do i = 2,kwwknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               h = wwknt(i) - wwknt(i-1)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 1) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 2) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 3) = &
+                    -h*h*wwtens*wwtens*cos(h * wwtens * wwknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 4) =  &
+                    -h*h*wwtens*wwtens*sin(h * wwtens * wwknt(i))
+               
+               h = wwknt(i+1) - wwknt(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 5) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 6) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 7) = &
+                    h*h*wwtens*wwtens*cos(h * wwtens * wwknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 8) =  &
+                    h*h*wwtens*wwtens*sin(h * wwtens * wwknt(i))
+            enddo
+            
+         endif
+         if(wcurbd .ne. 0.0)then
+            ncrsp = ncrsp + 1
+            do j = 1,nrsmat
+               crsp(ncrsp,j) = 0.0
+            enddo
+            z(ncrsp) = 0.0
+	    tpsi = 1.0
+            do j = 1,kwwcur
+               crsp(ncrsp,nffcoi+kppcur+kffcur+j) &
+                    = bswwel(kwwfnc,j,tpsi)
+            enddo
+         endif
+      endif
+      if(kwwfnc .eq. 4) then
+         if(kwwknt .le. 2)then
+!     
+!     first set of constraints is that splines must be equal at the knots
+!     
+            do i = 2,kwwknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 1) = 1.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 2) = wwknt(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 3) = &
+                    cos(wwtens * wwknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 4) =  &
+                    sin(wwtens * wwknt(i))
+               
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 5) = -1.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 6) = -wwknt(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 7) = &
+                    -cos(wwtens * wwknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 8) =  &
+                    -sin(wwtens * wwknt(i))
+            enddo
+!     
+!     second set of constraints is that splines have equal first 
+!     derivative at the knots
+!     
+            do i = 2,kwwknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 1) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 2) = 1.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 3) = &
+                    -wwtens * sin(wwtens * wwknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 4) =  &
+                    wwtens * cos(wwtens * wwknt(i))
+               
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 5) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 6) = -1.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 7) = &
+                    wwtens * sin(wwtens * wwknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 8) =  &
+                    -wwtens * cos(wwtens * wwknt(i))
+            enddo
+!     
+!     second set of constraints is that splines have equal second 
+!     derivative at the knots
+!     
+            do i = 2,kwwknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 1) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 2) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 3) = &
+                    -wwtens*wwtens*cos(wwtens * wwknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 4) =  &
+                    -wwtens*wwtens*sin(wwtens * wwknt(i))
+               
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 5) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 6) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 7) = &
+                    wwtens*wwtens*cos(wwtens * wwknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 8) =  &
+                    wwtens*wwtens*sin(wwtens * wwknt(i))
+            enddo
+            
+         endif
+         if(wcurbd .ne. 0.0)then
+            ncrsp = ncrsp + 1
+            do j = 1,nrsmat
+               crsp(ncrsp,j) = 0.0
+            enddo
+            z(ncrsp) = 0.0
+	    tpsi = 1.0
+            do j = 1,kwwcur
+               crsp(ncrsp,nffcoi+kppcur+kffcur+j) &
+                    = bswwel(kwwfnc,j,tpsi)
+            enddo
+         endif
+      endif
+      if(kwwfnc .eq. 5) then
+         iorder = kwwcur / (kwwknt - 1)
+         if(kwwknt .le. 2)then
+!     
+!     first set of constraints is that splines must be equal at the knots
+!     
+            do i = 2,kwwknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               do j= 1,iorder
+                  crsp(ncrsp,nffcoi + kppcur + kffcur &
+                       + iorder*(i-2) + j)  = 1.0
+               enddo
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + iorder*(i-1) + 1)  = -1.0
+            enddo
+!     
+!     second set of constraints is that splines have equal first 
+!     derivative at the knots
+!     
+            do i = 2,kwwknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               do j= 2,iorder
+                  crsp(ncrsp,nffcoi + kppcur + kffcur &
+                       + iorder*(i-2) + j)  = (j-1)
+               enddo
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + iorder*(i-1) + 2)  = -1.0
+            enddo
+!     
+!     second set of constraints is that splines have equal second 
+!     derivative at the knots
+!     
+            do i = 2,kwwknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               do j= 3,iorder
+                  crsp(ncrsp,nffcoi + kppcur + kffcur &
+                       + iorder*(i-2) + j)  = (j-1)*(j-2)
+               enddo
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + iorder*(i-1) + 3)  = -2.0
+            enddo
+            
+         endif
+         if(wcurbd .ne. 0.0)then
+            ncrsp = ncrsp + 1
+            do j = 1,nrsmat
+               crsp(ncrsp,j) = 0.0
+            enddo
+            z(ncrsp) = 0.0
+	    tpsi = 1.0
+            do j = 1,kwwcur
+               crsp(ncrsp,nffcoi+kppcur+kffcur+j) &
+                    = bswwel(kwwfnc,j,tpsi)
+            enddo
+         endif
+      endif
+      if(kwwfnc .eq. 6) then
+!     
+!     first set of constraints is that splines have equal first 
+!     derivative at the knots
+!     
+         if(kwwknt .gt. 2)then
+            wwtens2 = abs(wwtens)*float(kwwknt-1)/ &
+                 (wwknt(kwwknt)-wwknt(1)) 
+            do i = 2,kwwknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               w = wwknt(i+1) - wwknt(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 1) = -1.0/w
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 2) = (-wwtens2* &
+                    cosh(wwtens2*w)/sinh(wwtens2*w) &
+                    + 1.0/w)/(wwtens2*wwtens2)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 3) = 1.0/w
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 4) = (wwtens2/ &
+                    sinh(wwtens2*w) - 1.0/w)/(wwtens2*wwtens2)
+               
+               w = wwknt(i) - wwknt(i-1)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) - 1) = 1.0/w
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 0) = -(-wwtens2/ &
+                    sinh(wwtens2*w) + 1.0/w)/(wwtens2*wwtens2)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 1) =  &
+                    crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 1) - 1.0/w
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 2) =  &
+                    crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 2) - (wwtens2* &
+                    cosh(wwtens2*w)/sinh(wwtens2*w) &
+                    - 1.0/w)/(wwtens2*wwtens2)
+            enddo
+         endif
+         do i = 1,kwwknt
+            if ( kwwbdry(i) .eq. 1) then
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = wwbdry(i)*darea
+               crsp(ncrsp,nffcoi + kppcur + kffcur+2*i - 1) = 1.0
+            endif
+            if ( kww2bdry(i) .eq. 1) then
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = ww2bdry(i)*darea
+               crsp(ncrsp,nffcoi + kppcur + kffcur+2*i) = 1.0
+            endif
+         enddo
+         if(wcurbd .ne. 0.0)then
+            ncrsp = ncrsp + 1
+            do j = 1,nrsmat
+               crsp(ncrsp,j) = 0.0
+            enddo
+            z(ncrsp) = 0.0
+	    tpsi = 1.0
+            do j = 1,kwwcur
+               crsp(ncrsp,nffcoi+kppcur+kffcur+j) &
+                    = bswwel(kwwfnc,j,tpsi)
+            enddo
+         endif
+         
+      endif
+      if(kwwfnc .eq. 7 .and. wcurbd .eq. 1.0) then
+            ncrsp = ncrsp + 1
+            do j = 1,nrsmat
+               crsp(ncrsp,j) = 0.0
+            enddo
+            z(ncrsp) = 0.0
+            do j = 1,kwwcur
+               crsp(ncrsp,nffcoi+kppcur+kffcur+j) =  &
+      							 bswwel(kwwfnc,j,1.0)
+            enddo
+			endif
+      return
+      end
+!     
+!     subroutine wwstore()
+!     
+!     Store the solution coefs into wwbdry and ww2bdry
+!     
+!     
+      
+      subroutine wwstore()
+      include 'eparmdud129.f90'
+      include 'modules2.f90'
+      include 'modules1.f90'
+!      include 'ecomdu1.f90'
+!      include 'ecomdu2.f90'
+      include 'basiscomdu.f90'
+      if(kwwfnc .ge. 0 .and. kwwfnc .le. 2)then
+         do i = 1,kwwcur
+            wwbdry(i) = brsp(nfcoil+kppcur+kffcur+i)/darea
+            ww2bdry(i) = 0.0
+         enddo
+      else if (kwwfnc .eq. 6)then
+         do i = 1,kwwknt
+            if ( kwwbdry(i) .ne. 1) then
+               wwbdry(i) = brsp(nfcoil+kppcur+kffcur+2*i - 1)/darea
+            endif
+            if ( kww2bdry(i) .ne. 1) then
+               ww2bdry(i) = brsp(nfcoil+kppcur+kffcur+2*i)/darea
+            endif
+         enddo
+      endif
+      return
+      end
+!     
+!     Function bserel(ifunc,iparm,ypsi)
+!     
+!     This function returns the matrix element for the
+!     selected basis function.
+!     
+!     ifunc - basis function number
+!     iparm - basis function parameter number
+!     ypsi  - independent variable value
+!     
+!     
+      
+      Function bserel(ifunc,iparm,ypsi)
+      
+      include 'eparmdud129.f90'
+      include 'modules2.f90'
+      include 'modules1.f90'
+!      include 'ecomdu1.f90'
+!      include 'ecomdu2.f90'
+      include 'basiscomdu.f90'
+      
+      bserel = 0.0
+      if ( ifunc .eq. 0)then
+	 if(iparm.eq.1)then
+	    bserel=1.0 - ypsi**keecur*ecurbd
+         else
+            bserel = ypsi**(iparm - 1) - ypsi**keecur*ecurbd
+         endif
+      elseif (ifunc .eq. 1)then
+         tpsi = ypsi - 1.0
+	 if(iparm.eq.1)then
+	    bserel=1.0 - tpsi**keecur*ecurbd
+         else
+            bserel = tpsi**(iparm - 1) - tpsi**keecur*ecurbd
+         endif
+      elseif (ifunc .eq. 2)then
+	 if(iparm.eq.1)then
+	    bserel=-(1.0 - ypsi**keecur*ecurbd)
+         else
+            bserel = -(ypsi**(iparm - 1) - ypsi**keecur*ecurbd)
+         endif
+      elseif (ifunc .eq. 3)then
+         nk = (iparm - 1) / 4 + 1
+         if(nk .ge. keeknt)nk = keeknt - 1
+         if((nk .lt. (keeknt - 1) .and. ypsi .lt. eeknt(nk+1) &
+              .and.  ypsi .ge. eeknt(nk)) &
+              .or. (nk .eq. (keeknt - 1) .and. ypsi .le. eeknt(nk+1) &
+              .and.  ypsi .ge. eeknt(nk))) then
+            w = eeknt(nk+1) - eeknt(nk)
+            if(mod(iparm,4) .eq. 1) bserel = 1.0
+            if(mod(iparm,4) .eq. 2) bserel = ypsi
+            if(mod(iparm,4) .eq. 3) bserel = cos(w*eetens*ypsi)
+            if(mod(iparm,4) .eq. 0) bserel = sin(w*eetens*ypsi)
+         endif
+      elseif (ifunc .eq. 4)then
+         nk = (iparm - 1) / 4 + 1
+         if(nk .ge. keeknt)nk = keeknt - 1
+         if((nk .lt. (keeknt - 1) .and. ypsi .lt. eeknt(nk+1) &
+              .and.  ypsi .ge. eeknt(nk)) &
+              .or. (nk .eq. (keeknt - 1) .and. ypsi .le. eeknt(nk+1) &
+              .and.  ypsi .ge. eeknt(nk))) then
+            if(mod(iparm,4) .eq. 1) bserel = 1.0
+            if(mod(iparm,4) .eq. 2) bserel = ypsi
+            if(mod(iparm,4) .eq. 3) bserel = cos(eetens*ypsi)
+            if(mod(iparm,4) .eq. 0) bserel = sin(eetens*ypsi)
+         endif
+      elseif (ifunc .eq. 5)then
+         iorder = keecur / (keeknt - 1)
+         nk = (iparm - 1) / iorder + 1
+         if(nk .ge. keeknt)nk = keeknt - 1
+         if((nk .lt. (keeknt - 1) .and. ypsi .lt. eeknt(nk+1) &
+              .and.  ypsi .ge. eeknt(nk)) &
+              .or. (nk .eq. (keeknt - 1) .and. ypsi .le. eeknt(nk+1) &
+              .and.  ypsi .ge. eeknt(nk))) then
+            w = eeknt(nk+1) - eeknt(nk)
+            tpsi = (ypsi - eeknt(nk)) / w
+            if(mod(iparm,iorder) .eq. 0)then
+               if(iorder.eq.1)then
+                  bserel = 1.0
+               else
+                  bserel = tpsi**(iorder-1)
+               endif
+            else
+               bserel = tpsi**(mod(iparm,iorder)-1)
+            endif
+         endif
+      elseif (ifunc .eq. 6)then
+         nk = ((iparm - 1) / 2) + 1
+         eetens2 = abs(eetens)*float(keeknt-1)/ &
+              (eeknt(keeknt)-eeknt(1))
+         if (nk .gt. 1 )then
+            if(ypsi .le. eeknt(nk) .and. &
+                 ypsi .ge. eeknt(nk-1)) then
+               w = eeknt(nk) - eeknt(nk-1)
+               if(mod(iparm,2) .eq. 0) then
+                  bserel = (sinh(eetens2*(ypsi-eeknt(nk-1)))/ &
+                       sinh(eetens2*w) - (ypsi-eeknt(nk-1))/w) &
+                       / (eetens2*eetens2)
+               else
+                  bserel = (ypsi-eeknt(nk-1))/w
+               endif
+               
+            endif
+         endif
+         if(nk .lt. keeknt)then
+            if (ypsi .ge. eeknt(nk) .and. &
+                 ypsi .le. eeknt(nk+1)) then
+               w = eeknt(nk+1) - eeknt(nk)
+               if(mod(iparm,2) .eq. 0) then
+                  bserel = (sinh(eetens2*(eeknt(nk+1)-ypsi))/ &
+                       sinh(eetens2*w) - (eeknt(nk+1)-ypsi)/w) &
+                       / (eetens2*eetens2)
+               else
+                  bserel = (eeknt(nk+1) - ypsi)/w
+               endif
+               
+            endif
+         endif
+      elseif ( ifunc .eq. 7)then
+         if(iparm.eq.keecur)then
+            bserel = ypsi**(keehord)
+         elseif (iparm .eq. 1)then
+            bserel = 1.0
+         else
+            bserel = ypsi**(iparm - 1)
+         endif
+
+      endif
+      if ( ifunc .ne. keefnc) &
+           write(6,*)'ifunc .ne. keefnc ',ifunc,keefnc
+      return
+      end
+!     
+!     Function bserpel(ifunc,iparm,ypsi)
+!     
+!     This function returns the matrix element for the
+!     first derivative of selected basis function.
+!     
+!     ifunc - basis function number
+!     iparm - basis function parameter number
+!     ypsi  - independent variable value
+!     
+!     
+
+      Function bserpel(ifunc,iparm,ypsi)
+
+      include 'eparmdud129.f90'
+      include 'modules2.f90'
+      include 'modules1.f90'
+!      include 'ecomdu1.f90'
+!      include 'ecomdu2.f90'
+      include 'basiscomdu.f90'
+
+      bserpel = 0.0
+      if ( ifunc .eq. 0)then
+         if (iparm.eq.1) then
+            if (keecur.eq.1) then
+               bserpel = -ecurbd
+            else
+               bserpel = -keecur*ypsi**(keecur-1)*ecurbd
+            endif
+         elseif (iparm.eq.2) then
+            bserpel = 1. - keecur*ypsi**(keecur-1)*ecurbd
+         elseif (iparm.gt.2) then
+            bserpel = (iparm - 1)*ypsi**(iparm - 2) - &
+                 keecur*ypsi**(keecur-1)*ecurbd
+         endif
+      elseif ( ifunc .eq. 1)then
+         tpsi = ypsi - 1.0
+         if (iparm.eq.1) then
+            if (keecur.eq.1) then
+               bserpel = -ecurbd
+            else
+               bserpel = -keecur*tpsi**(keecur-1)*ecurbd
+            endif
+         elseif (iparm.eq.2) then
+            bserpel = 1. - keecur*tpsi**(keecur-1)*ecurbd
+         elseif (iparm.gt.2) then
+            bserpel = (iparm - 1)*tpsi**(iparm - 2) - &
+                 keecur*tpsi**(keecur-1)*ecurbd
+         endif
+      elseif ( ifunc .eq. 2)then
+         if (iparm.eq.1) then
+            if (keecur.eq.1) then
+               bserpel = -ecurbd
+            else
+               bserpel = -keecur*ypsi**(keecur-1)*ecurbd
+            endif
+         elseif (iparm.eq.2) then
+            bserpel = 1. - keecur*ypsi**(keecur-1)*ecurbd
+         elseif (iparm.gt.2) then
+            bserpel = (iparm - 1)*ypsi**(iparm - 2) - &
+                 keecur*ypsi**(keecur-1)*ecurbd
+         endif
+         bserpel = - bserpel
+      elseif ( ifunc .eq. 3)then
+         nk = (iparm - 1) / 4 + 1
+         if(nk .ge. keeknt)nk = keeknt - 1
+         if((nk .lt. (keeknt - 1) .and. ypsi .lt. eeknt(nk+1) &
+              .and.  ypsi .ge. eeknt(nk)) &
+              .or. (nk .eq. (keeknt - 1) .and. ypsi .le. eeknt(nk+1) &
+              .and.  ypsi .ge. eeknt(nk))) then
+            w = eeknt(nk+1) - eeknt(nk)
+            if(mod(iparm,4) .eq. 1) bserpel = 0.0
+            if(mod(iparm,4) .eq. 2) bserpel = 1.0
+            if(mod(iparm,4) .eq. 3) bserpel = &
+                 -w*eetens*sin(w*eetens*ypsi)
+            if(mod(iparm,4) .eq. 0) bserpel = &
+                 w*eetens*cos(w*eetens*ypsi)
+         endif
+      elseif (ifunc .eq. 4)then
+         nk = (iparm - 1) / 4 + 1
+         if(nk .ge. keeknt)nk = keeknt - 1
+         if((nk .lt. (keeknt - 1) .and. ypsi .lt. eeknt(nk+1) &
+              .and.  ypsi .ge. eeknt(nk)) &
+              .or. (nk .eq. (keeknt - 1) .and. ypsi .le. eeknt(nk+1) &
+              .and.  ypsi .ge. eeknt(nk))) then
+            if(mod(iparm,4) .eq. 1) bserpel = 0.0
+            if(mod(iparm,4) .eq. 2) bserpel = 1.0
+            if(mod(iparm,4) .eq. 3) bserpel = -eetens*sin(eetens*ypsi)
+            if(mod(iparm,4) .eq. 0) bserpel = eetens*cos(eetens*ypsi)
+         endif
+      elseif (ifunc .eq. 5)then
+         iorder = keecur / (keeknt - 1)
+         nk = (iparm - 1) / iorder + 1
+         if(nk .ge. keeknt)nk = keeknt - 1
+         if((nk .lt. (keeknt - 1) .and. ypsi .lt. eeknt(nk+1) &
+              .and.  ypsi .ge. eeknt(nk)) &
+              .or. (nk .eq. (keeknt - 1) .and. ypsi .le. eeknt(nk+1) &
+              .and.  ypsi .ge. eeknt(nk))) then
+            w = eeknt(nk+1) - eeknt(nk)
+            tpsi = (ypsi - eeknt(nk)) / w
+	    jparm = mod(iparm,iorder)
+            if (jparm.eq.1) then
+               bserpel = 0.0
+            elseif (jparm.eq.2) then
+               bserpel = 1./w
+            elseif (jparm.gt.2) then
+               bserpel = (jparm - 1)/w*tpsi**(jparm - 2)
+	    endif
+         endif
+      elseif (ifunc .eq. 6)then
+         nk = ((iparm - 1) / 2) + 1
+         eetens2 = abs(eetens)*float(keeknt-1)/ &
+              (eeknt(keeknt)-eeknt(1))
+         if (nk .gt. 1) then
+            if (ypsi .le. eeknt(nk) .and. &
+                 ypsi .ge. eeknt(nk-1)) then
+               w = eeknt(nk) - eeknt(nk-1)
+               if(mod(iparm,2) .eq. 0) then
+                  bserpel = (eetens2*cosh(eetens2* &
+                       (ypsi-eeknt(nk-1)))/sinh(eetens2*w) - (1.0/w)) &
+                       / (eetens2*eetens2)
+               else
+                  bserpel = 1.0/w
+               endif
+               
+            endif
+         endif
+         if (nk .lt. keeknt) then
+            if (ypsi .ge. eeknt(nk) .and. &
+                 ypsi .le. eeknt(nk+1)) then
+               w = eeknt(nk+1) - eeknt(nk)
+               if(mod(iparm,2) .eq. 0) then
+                  bserpel = (-eetens2*cosh(eetens2* &
+                       (eeknt(nk+1)-ypsi))/sinh(eetens2*w)+(1.0/w)) &
+                       / (eetens2*eetens2)
+               else
+                  bserpel = -1.0/w
+               endif
+               
+            endif
+         endif
+      elseif ( ifunc .eq. 7)then
+         if (iparm.eq.keecur) then
+            bserpel = keehord*ypsi**(keehord-1)
+         elseif (iparm.eq.1 ) then
+            bserpel = 0.
+         elseif (iparm.eq.2 ) then
+            bserpel = 1.
+         elseif (iparm.gt.2) then
+            bserpel = (iparm - 1)*ypsi**(iparm - 2)
+         endif
+
+      endif
+      return
+      end
+!     
+!     Function bserin(ifunc,iparm,ypsi)
+!     
+!     This function returns the matrix element for the
+!     selected basis function.
+!     
+!     ifunc - basis function number
+!     iparm - basis function parameter number
+!     ypsi  - independent variable value
+!     
+!     
+      
+      Function bserin(ifunc,iparm,ypsi)
+      
+      include 'eparmdud129.f90'
+      include 'modules2.f90'
+      include 'modules1.f90'
+!      include 'ecomdu1.f90'
+!      include 'ecomdu2.f90'
+      include 'basiscomdu.f90'
+      
+      bserin = 0.0
+      ypsi2 = 1.0
+      if ( ifunc .eq. 0)then
+         bserin = (ypsi**iparm)/iparm - &
+              (ypsi**(keecur+1))/(keecur+1)*ecurbd
+         bserin = bserin - ((ypsi2**iparm)/iparm - &
+              (ypsi2**(keecur+1))/(keecur+1)*ecurbd)
+      elseif (ifunc .eq. 1)then
+         tpsi = ypsi - 1.0
+         tpsi2 = ypsi2 - 1.0
+         bserin = (tpsi**iparm)/iparm - &
+              (tpsi**(keecur+1))/(keecur+1)*ecurbd
+         bserin = bserin - ((tpsi2**iparm)/iparm - &
+              (tpsi2**(keecur+1))/(keecur+1)*ecurbd)
+      elseif (ifunc .eq. 2)then
+         bserin = -((ypsi**iparm)/iparm - &
+              (ypsi**(keecur+1))/(keecur+1)*ecurbd)
+         bserin = bserin - (-((ypsi2**iparm)/iparm - &
+              (ypsi2**(keecur+1))/(keecur+1)*ecurbd))
+      elseif (ifunc .eq. 3)then
+         nk = (iparm - 1) / 4 + 1
+         if(nk .ge. keeknt)nk = keeknt - 1
+         if(ypsi .ge. eeknt(nk+1)) then
+            bserin = 0
+            return
+         endif
+         if(1.0 .le. eeknt(nk))then
+            bserin = 0
+            return
+         endif
+         if(ypsi .ge. eeknt(nk))then
+            ypsi1 = ypsi
+         else
+            ypsi1 = eeknt(nk)
+         endif
+         w = eeknt(nk+1) - eeknt(nk)
+         if(1.0 .ge. eeknt(nk+1)) then
+            ypsi2 = eeknt(nk+1)
+         else
+            ypsi2 = 1.0
+         endif
+         if(mod(iparm,4) .eq. 1)b1 = ypsi1
+         if(mod(iparm,4) .eq. 2)b1 = (ypsi1**2) / 2.0
+         if(mod(iparm,4) .eq. 3) &
+              b1 = sin(w*eetens*ypsi1)/w*eetens
+         if(mod(iparm,4) .eq. 0) &
+              b1 = -cos(w*eetens*ypsi1)/w*eetens
+         if(mod(iparm,4) .eq. 1)b2 = ypsi2
+         if(mod(iparm,4) .eq. 2)b2 = (ypsi2**2) / 2.0
+         if(mod(iparm,4) .eq. 3) &
+              b2 = sin(w*eetens*ypsi2)/w*eetens
+         if(mod(iparm,4) .eq. 0) &
+              b2 = -cos(w*eetens*ypsi2)/w*eetens
+         bserin = b1 - b2
+!     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+!     $                       ypsi2,' = ',bserin
+      elseif (ifunc .eq. 4)then
+         nk = (iparm - 1) / 4 + 1
+         if(nk .ge. keeknt)nk = keeknt - 1
+         if(ypsi .ge. eeknt(nk+1)) then
+            bserin = 0
+            return
+         endif
+         if(1.0 .le. eeknt(nk))then
+            bserin = 0
+            return
+         endif
+         if(ypsi .ge. eeknt(nk))then
+            ypsi1 = ypsi
+         else
+            ypsi1 = eeknt(nk)
+         endif
+         if(1.0 .ge. eeknt(nk+1)) then
+            ypsi2 = eeknt(nk+1)
+         else
+            ypsi2 = 1.0
+         endif
+         if(mod(iparm,4) .eq. 1)b1 = ypsi1
+         if(mod(iparm,4) .eq. 2)b1 = (ypsi1**2) / 2.0
+         if(mod(iparm,4) .eq. 3) &
+              b1 = sin(eetens*ypsi1)/eetens
+         if(mod(iparm,4) .eq. 0) &
+              b1 = -cos(eetens*ypsi1)/eetens
+         if(mod(iparm,4) .eq. 1)b2 = ypsi2
+         if(mod(iparm,4) .eq. 2)b2 = (ypsi2**2) / 2.0
+         if(mod(iparm,4) .eq. 3) &
+              b2 = sin(eetens*ypsi2)/eetens
+         if(mod(iparm,4) .eq. 0) &
+              b2 = -cos(eetens*ypsi2)/eetens
+         bserin = b1 - b2
+!     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+!     $                       ypsi2,' = ',bserin
+         
+      elseif (ifunc .eq. 5)then
+         iorder = keecur / (keeknt - 1)
+         nk = (iparm - 1) / iorder + 1
+         if(nk .ge. keeknt)nk = keeknt - 1
+         if(ypsi .ge. eeknt(nk+1)) then
+            bserin = 0
+            return
+         endif
+         if(1.0 .le. eeknt(nk))then
+            bserin = 0
+            return
+         endif
+         if(ypsi .ge. eeknt(nk))then
+            ypsi1 = ypsi
+         else
+            ypsi1 = eeknt(nk)
+         endif
+         if(1.0 .ge. eeknt(nk+1)) then
+            ypsi2 = eeknt(nk+1)
+         else
+            ypsi2 = 1.0
+         endif
+         w = eeknt(nk+1) - eeknt(nk)
+         
+         tpsi=(ypsi1**2/2.0 - ypsi1*eeknt(nk))/2
+         if(mod(iparm,iorder) .eq. 0)then
+            b1 = tpsi**iorder / iorder
+         else
+            b1 = tpsi**mod(iparm,iorder) / mod(iparm,iorder)
+         endif
+         tpsi=(ypsi2**2/2.0 - ypsi2*eeknt(nk))/2
+         if(mod(iparm,iorder) .eq. 0)then
+            b2 = tpsi**iorder / iorder
+         else
+            b2 = tpsi**mod(iparm,iorder) / mod(iparm,iorder)
+         endif
+         bserin = b1 - b2
+         
+!     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+!     $                       ypsi2,' = ',bserin
+      elseif (ifunc .eq. 6)then
+         nk = ((iparm - 1) / 2) + 1
+         eetens2 = abs(eetens)*float(keeknt-1)/ &
+              (eeknt(keeknt)-eeknt(1))
+         bserin = 0
+         if(nk .gt.1)then
+            if(ypsi .le. eeknt(nk)) then
+               if(ypsi .le. eeknt(nk-1))then
+                  ypsi1 = eeknt(nk-1)
+               else
+                  ypsi1 = ypsi
+               endif
+               if(1.0 .le. eeknt(nk)) then
+                  ypsi2 = 1.0
+               else
+                  ypsi2 = eeknt(nk)
+               endif
+               w = eeknt(nk) - eeknt(nk-1)
+               if(mod(iparm,2) .eq. 0) then
+                  b1 = (cosh(eetens2*(ypsi1-eeknt(nk-1)))/ &
+                       (eetens2*sinh(eetens2*w)) - (ypsi1*ypsi1/2.0- &
+                       eeknt(nk-1)*ypsi1)/w) &
+                       / (eetens2*eetens2)
+               else
+                  b1 = (ypsi1*ypsi1/2.0-eeknt(nk-1)*ypsi1)/w
+               endif
+               if(mod(iparm,2) .eq. 0) then
+                  b2 = (cosh(eetens2*(ypsi2-eeknt(nk-1)))/ &
+                       (eetens2*sinh(eetens2*w)) - (ypsi2*ypsi2/2.0- &
+                       eeknt(nk-1)*ypsi2)/w) &
+                       / (eetens2*eetens2)
+               else
+                  b2 = (ypsi2*ypsi2/2.0-eeknt(nk-1)*ypsi2)/w
+               endif
+               bserin = bserin + b1 - b2
+            endif
+         endif
+         if(nk .lt. keeknt)then
+            if(ypsi .le. eeknt(nk+1)) then
+               if(ypsi .le. eeknt(nk))then
+                  ypsi1 = eeknt(nk)
+               else
+                  ypsi1 = ypsi
+               endif
+               if(1.0 .le. eeknt(nk+1)) then
+                  ypsi2 = 1.0
+               else
+                  ypsi2 = eeknt(nk+1)
+               endif
+               w = eeknt(nk+1) - eeknt(nk)
+               if(mod(iparm,2) .eq. 0) then
+                  b1 = (-cosh(eetens2*(eeknt(nk+1)-ypsi1))/ &
+                       (eetens2*sinh(eetens2*w))-(ypsi1*eeknt(nk+1) &
+                       -ypsi1*ypsi1/2.0)/w) &
+                       / (eetens2*eetens2)
+               else
+                  b1 = (eeknt(nk+1)*ypsi1-ypsi1*ypsi1/2.0)/w
+               endif
+               if(mod(iparm,2) .eq. 0) then
+                  b2 = (-cosh(eetens2*(eeknt(nk+1)-ypsi2))/ &
+                       (eetens2*sinh(eetens2*w))-(ypsi2*eeknt(nk+1) &
+                       -ypsi2*ypsi2/2.0)/w) &
+                       / (eetens2*eetens2)
+               else
+                  b2 = (eeknt(nk+1)*ypsi2-ypsi2*ypsi2/2.0)/w
+               endif
+               bserin = bserin + b1 - b2
+            endif	
+         endif	
+      elseif ( ifunc .eq. 7)then
+         if(iparm .eq. keecur) then
+         bserin = (ypsi**(keehord+1))/(keehord+1)
+         bserin = bserin - ((ypsi2**(keehord+1))/(keehord+1))
+         else
+         bserin = (ypsi**iparm)/iparm
+         bserin = bserin - ((ypsi2**iparm)/iparm)
+         endif
+      endif
+      if ( ifunc .ne. keefnc) &
+           write(6,*)'ifunc .ne. keefnc ',ifunc,keefnc
+      return
+      end
+      
+      
+!     
+!     subroutine eecnst(ncrsp,crsp,z,nffcoi)
+!     
+!     In addition to the least squares constraints that
+!     efit already uses, some basis functions have exact
+!     constraints. Most notable is the spline function
+!     whose continuity constraints are exact, not LSE.
+!     
+!     ncrsp - number of constraint equations
+!     crsp  - constraint matrix
+!     z     - value vector
+!     nffcoi- array index for setting up crsp
+!     
+      
+      subroutine eecnst(ncrsp,crsp,z,nffcoi)
+      include 'eparmdud129.f90'
+      include 'modules2.f90'
+      include 'modules1.f90'
+!      include 'ecomdu1.f90'
+!      include 'ecomdu2.f90'
+      include 'basiscomdu.f90'
+      dimension crsp(4*(npcurn-2)+6 +npcurn*npcurn ,nrsmat), &
+           z(4*(npcurn-2)+6+npcurn*npcurn)
+      if(keefnc .eq. 3) then
+         if(keeknt .gt. 2)then
+!     
+!     first set of constraints is that splines must be equal at the knots
+!     
+            do i = 2,keeknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               h = eeknt(i) - eeknt(i-1)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 1) = 1.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 2) = eeknt(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 3) = &
+                    cos(h * eetens * eeknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 4) =  &
+                    sin(h * eetens * eeknt(i))
+               
+               h = eeknt(i+1) - eeknt(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 5) = -1.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 6) = -eeknt(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 7) = &
+                    -cos(h * eetens * eeknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 8) =  &
+                    -sin(h * eetens * eeknt(i))
+            enddo
+!     
+!     second set of constraints is that splines have equal first 
+!     derivative at the knots
+!     
+            do i = 2,keeknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               h = eeknt(i) - eeknt(i-1)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 1) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 2) = 1.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur + &
+                    4*(i-2) + 3) = &
+                    -h * eetens * sin(h * eetens * eeknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur + &
+                    4*(i-2) + 4) =  &
+                    h * eetens * cos(h * eetens * eeknt(i))
+               
+               h = eeknt(i+1) - eeknt(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 5) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 6) = -1.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 7) = &
+                    h * eetens * sin(h * eetens * eeknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur + 4*(i-2) + 8) = &
+                    -h * eetens * cos(h * eetens * eeknt(i))
+            enddo
+!     
+!     second set of constraints is that splines have equal second 
+!     derivative at the knots
+!     
+            do i = 2,keeknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               h = eeknt(i) - eeknt(i-1)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 1) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 2) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 3) = &
+                    -h*h*eetens*eetens*cos(h * eetens * eeknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 4) =  &
+                    -h*h*eetens*eetens*sin(h * eetens * eeknt(i))
+               
+               h = eeknt(i+1) - eeknt(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 5) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 6) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 7) = &
+                    h*h*eetens*eetens*cos(h * eetens * eeknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 8) =  &
+                    h*h*eetens*eetens*sin(h * eetens * eeknt(i))
+            enddo
+            
+         endif
+         if(ecurbd .ne. 0.0)then
+            ncrsp = ncrsp + 1
+            do j = 1,nrsmat
+               crsp(ncrsp,j) = 0.0
+            enddo
+            z(ncrsp) = 0.0
+	    tpsi = 1.0
+            do j = 1,keecur
+               crsp(ncrsp,nffcoi+kppcur+kffcur+j) &
+                    = bserel(keefnc,j,tpsi)
+            enddo
+         endif
+      endif
+      if(keefnc .eq. 4) then
+         if(keeknt .le. 2)then
+!     
+!     first set of constraints is that splines must be equal at the knots
+!     
+            do i = 2,keeknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 1) = 1.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 2) = eeknt(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 3) = &
+                    cos(eetens * eeknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 4) =  &
+                    sin(eetens * eeknt(i))
+               
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 5) = -1.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 6) = -eeknt(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 7) = &
+                    -cos(eetens * eeknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 8) =  &
+                    -sin(eetens * eeknt(i))
+            enddo
+!     
+!     second set of constraints is that splines have equal first 
+!     derivative at the knots
+!     
+            do i = 2,keeknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 1) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 2) = 1.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 3) = &
+                    -eetens * sin(eetens * eeknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 4) =  &
+                    eetens * cos(eetens * eeknt(i))
+               
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 5) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 6) = -1.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 7) = &
+                    eetens * sin(eetens * eeknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 8) =  &
+                    -eetens * cos(eetens * eeknt(i))
+            enddo
+!     
+!     second set of constraints is that splines have equal second 
+!     derivative at the knots
+!     
+            do i = 2,keeknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 1) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 2) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 3) = &
+                    -eetens*eetens*cos(eetens * eeknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 4) =  &
+                    -eetens*eetens*sin(eetens * eeknt(i))
+               
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 5) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 6) = 0.0
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 7) = &
+                    eetens*eetens*cos(eetens * eeknt(i))
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 4*(i-2) + 8) =  &
+                    eetens*eetens*sin(eetens * eeknt(i))
+            enddo
+            
+         endif
+         if(ecurbd .ne. 0.0)then
+            ncrsp = ncrsp + 1
+            do j = 1,nrsmat
+               crsp(ncrsp,j) = 0.0
+            enddo
+            z(ncrsp) = 0.0
+	    tpsi = 1.0
+            do j = 1,keecur
+               crsp(ncrsp,nffcoi+kppcur+kffcur+j) &
+                    = bserel(keefnc,j,tpsi)
+            enddo
+         endif
+      endif
+      if(keefnc .eq. 5) then
+         iorder = keecur / (keeknt - 1)
+         if(keeknt .le. 2)then
+!     
+!     first set of constraints is that splines must be equal at the knots
+!     
+            do i = 2,keeknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               do j= 1,iorder
+                  crsp(ncrsp,nffcoi + kppcur + kffcur &
+                       + iorder*(i-2) + j)  = 1.0
+               enddo
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + iorder*(i-1) + 1)  = -1.0
+            enddo
+!     
+!     second set of constraints is that splines have equal first 
+!     derivative at the knots
+!     
+            do i = 2,keeknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               do j= 2,iorder
+                  crsp(ncrsp,nffcoi + kppcur + kffcur &
+                       + iorder*(i-2) + j)  = (j-1)
+               enddo
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + iorder*(i-1) + 2)  = -1.0
+            enddo
+!     
+!     second set of constraints is that splines have equal second 
+!     derivative at the knots
+!     
+            do i = 2,keeknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               do j= 3,iorder
+                  crsp(ncrsp,nffcoi + kppcur + kffcur &
+                       + iorder*(i-2) + j)  = (j-1)*(j-2)
+               enddo
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + iorder*(i-1) + 3)  = -2.0
+            enddo
+            
+         endif
+         if(ecurbd .ne. 0.0)then
+            ncrsp = ncrsp + 1
+            do j = 1,nrsmat
+               crsp(ncrsp,j) = 0.0
+            enddo
+            z(ncrsp) = 0.0
+	    tpsi = 1.0
+            do j = 1,keecur
+               crsp(ncrsp,nffcoi+kppcur+kffcur+j) &
+                    = bserel(keefnc,j,tpsi)
+            enddo
+         endif
+      endif
+      if(keefnc .eq. 6) then
+!     
+!     first set of constraints is that splines have equal first 
+!     derivative at the knots
+!     
+         if(keeknt .gt. 2)then
+            eetens2 = abs(eetens)*float(keeknt-1)/ &
+                 (eeknt(keeknt)-eeknt(1))
+            do i = 2,keeknt-1
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = 0.0
+               w = eeknt(i+1) - eeknt(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 1) = -1.0/w
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 2) = (-eetens2* &
+                    cosh(eetens2*w)/sinh(eetens2*w) &
+                    + 1.0/w)/(eetens2*eetens2)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 3) = 1.0/w
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 4) = (eetens2/ &
+                    sinh(eetens2*w) - 1.0/w)/(eetens2*eetens2)
+               
+               w = eeknt(i) - eeknt(i-1)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) - 1) = 1.0/w
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 0) = -(-eetens2/ &
+                    sinh(eetens2*w) + 1.0/w)/(eetens2*eetens2)
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 1) =  &
+                    crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 1) - 1.0/w
+               crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 2) =  &
+                    crsp(ncrsp,nffcoi + kppcur + kffcur &
+                    + 2*(i-1) + 2) - (eetens2* &
+                    cosh(eetens2*w)/sinh(eetens2*w) &
+                    - 1.0/w)/(eetens2*eetens2)
+            enddo
+         endif
+         do i = 1,keeknt
+            if ( keebdry(i) .eq. 1) then
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = eebdry(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur+2*i - 1) = 1.0
+            endif
+            if ( kee2bdry(i) .eq. 1) then
+               ncrsp = ncrsp + 1
+               do j = 1,nrsmat
+                  crsp(ncrsp,j) = 0.0
+               enddo
+               z(ncrsp) = ee2bdry(i)
+               crsp(ncrsp,nffcoi + kppcur + kffcur+2*i) = 1.0
+            endif
+         enddo
+         if(ecurbd .ne. 0.0)then
+            ncrsp = ncrsp + 1
+            do j = 1,nrsmat
+               crsp(ncrsp,j) = 0.0
+            enddo
+            z(ncrsp) = 0.0
+	    tpsi = 1.0
+            do j = 1,keecur
+               crsp(ncrsp,nffcoi+kppcur+kffcur+j) &
+                    = bserel(keefnc,j,tpsi)
+            enddo
+         endif
+         
+      endif
+      return
+      end
+!     
+!     subroutine eestore()
+!     
+!     Store the solution coefs into eebdry and ee2bdry
+!     
+!     
+      
+      subroutine eestore()
+      include 'eparmdud129.f90'
+      include 'modules2.f90'
+      include 'modules1.f90'
+!      include 'ecomdu1.f90'
+!      include 'ecomdu2.f90'
+      include 'basiscomdu.f90'
+!
+      if(keefnc .gt. 0 .and. keefnc .le. 2)then
+         do i = 1,keecur
+            eebdry(i) = cerer(i)
+            ee2bdry(i) = 0.0
+         enddo
+      else if (keefnc .eq. 6)then
+         do i = 1,keeknt
+            if ( keebdry(i) .ne. 1) then
+               eebdry(i) = cerer(2*i - 1)
+            endif
+            if ( kee2bdry(i) .ne. 1) then
+               ee2bdry(i) = cerer(2*i)
+            endif
+         enddo
+      endif
+      return
+      end
+!
+!   This routine is required if the CVS revision numbers are to 
+!   survive an optimization.
+!   
+!   $Date: 2009/02/12 22:55:10 $ $Author: radhakri $
+!
+      subroutine wwbasisfuncx_rev(i)
+      CHARACTER*100 opt
+      character*10 s 
+      if( i .eq. 0) s =  &
+      '@(#)$RCSfile: wwbasisfuncud129.f90,v $ $Revision: 1.1.2.3 $\000'
+      return
+      end

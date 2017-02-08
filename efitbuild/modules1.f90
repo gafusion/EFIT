@@ -1,0 +1,142 @@
+!---- just variables
+     use var_filech
+
+     use var_inaver
+     use var_solove
+     use var_consta
+     use var_rcfact
+     use var_curpro
+     use var_pfterm
+     use var_nio
+     use var_cfit
+     use var_outp1
+     use var_cgrid
+     use var_extra
+     use var_conveg
+     use var_limmm
+     use var_iopen
+     use var_zcntrl
+     use var_updown
+     use var_test
+     use var_graphic
+     use var_errslop
+     use var_fitsiref
+     use var_cnnn
+     use var_pcsys
+     use var_pfedge
+     use var_sxpoint
+!----end just variables
+!---- Arrays
+     use var_cyclic_red
+     use var_scalem
+     use var_vessel
+!------
+     use var_contor
+     use var_mfield
+     use var_hist
+     use var_hist2
+     use var_cshape
+     use var_divdis
+     use var_cpsi
+     use var_cvalue
+
+!     use var_bdsend
+!..  rest of the modules from ecomdu1
+ 
+      use var_acoilrz
+      use var_ccurrn
+!--ok
+      use var_czero
+      use var_parame
+      use var_cqfit
+      use var_rmatri
+      use var_chimag
+      use var_exdat2
+!--ok
+      use var_exdata
+      use var_texdat
+      use var_savfit
+      use var_cstark
+      use var_msels
+      use var_rpedge
+
+      use var_rfedge
+      use var_cece
+      use var_calchi
+      use var_dlc
+      use var_comco2
+      use var_check
+      use var_consum
+      use var_cxray
+      use var_mercie
+      use var_input1
+      use var_inputc
+      use var_input4
+      use var_switch
+      use var_siloop
+      use var_slname
+      use var_ecoil 
+      use var_fcoil 
+      use var_mprobe
+      use var_limite
+      use var_mimite
+      use var_udata
+      use var_morsum
+      use var_bdsend
+      use var_bdsend
+      use var_fxbry
+      use var_fwtdz
+      use var_combry
+      use var_fbysta
+      use var_prdata
+      use var_cerfit
+      use var_ccgama
+      use var_cccoils
+      use var_tionfit
+      use var_telnfit
+      use var_dionfit
+      use var_delnfit
+      use var_tsrz
+      use var_climxx
+      use var_fdbkgr
+      use var_fdbkcl
+      use var_coiln1
+      use var_coilcc
+      use var_btcomp
+      use var_subic
+      use var_vtor
+      use var_fitec
+      use var_pflocal
+      use var_ctanhts
+      use var_qsurfac
+      use var_initerror
+      use var_magerror
+      use var_psilopdat
+      use var_plasmacurrdat
+      use var_ccoilsdat
+      use var_icoilsdat
+      use var_n1coildat
+      use var_vloopdat
+      use var_diamdat
+      use var_denvdat
+      use var_denrdat
+      use var_magprobdat
+      use var_btcompdat
+      use var_btordat
+      use var_fcoildat
+      use var_ecoildat
+      use var_beamdat
+! jm.s
+      use profile_ext_mod
+! jm.e
+
+! OPT_INPUT >>>
+      use opt_input
+! OPT_INPUT <<<
+
+! MPI >>>
+      use mpi_info
+! MPI <<<
+
+!--
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
