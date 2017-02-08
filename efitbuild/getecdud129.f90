@@ -326,7 +326,7 @@
        enddo
       enddo
       if (n1coil.gt.0.or.nccoil.gt.0) then
-      open(unit=60,file=input_dir(1:lindir)//'ccomp.dat_156456', &
+      open(unit=60,file=input_dir(1:lindir)//'ccomp.dat_168823', &
            status='old'                                )
 !33000 read (60,*,err=34000,end=34000) ibtcshot,n1name,(ncname(i), &
 !                                      i=1,3)
