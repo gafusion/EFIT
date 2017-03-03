@@ -8987,7 +8987,7 @@
                ', 5=input, 6=com file, 7=snap_ext,',    &
                ' 8=pefit):')
  6040 format (/,1x,'type shot #, start time(ms), time step(ms), steps' &
-        ,'(<401):')
+        ,'(<1001):')
  6080 format (/,1x,'type limiter position (cm, 0=ptdata):')
  6090 format(' enter number of extra field lines to trace:')
  6091 format(' enter scrape off depth(m),'/ &
@@ -21624,7 +21624,7 @@
  6000 format (/,1x,'type mode (2=file, 3=snap, 4=time', &
                ', 5=input, 6=com file, 7=snap_ext):')
  6040 format (/,1x,'type shot #, start time(ms), time step(ms), steps' &
-        ,'(<401):')
+        ,'(<1001):')
  6080 format (/,1x,'type limiter position (cm, 0=ptdata):')
  6090 format(' enter number of extra field lines to trace:')
  6091 format(' enter scrape off depth(m),'/ &
@@ -21991,7 +21991,7 @@
  6000 format (/,1x,'type mode (2=file, 3=snap, 4=time', &
                ', 5=input, 6=com file, 7=snap_ext):')
  6040 format (/,1x,'type shot #, start time(ms), time step(ms), steps' &
-        ,'(<401):')
+        ,'(<1001):')
  6080 format (/,1x,'type limiter position (cm, 0=ptdata):')
  6090 format(' enter number of extra field lines to trace:')
  6091 format(' enter scrape off depth(m),'/ &

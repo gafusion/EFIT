@@ -198,7 +198,7 @@
             mpress+nfcoil+nstark+nnece+neceo &
            ,nwcurn=nwwcur+npcurn,npcur3=npcurn*2 &
            ,nwcur2=nwcurn*2)
-      parameter (ntime=401)
+      parameter (ntime=1001)
 !!257g      parameter (nw=257,nh=257,nwnh=nw*nh)
 !!513g      parameter (nw=513,nh=513,nwnh=nw*nh)
 !!129g      parameter (nw=129,nh=129,nwnh=nw*nh)

@@ -414,7 +414,7 @@
 
       character*12 mfitpop
       character*5 mfvers(2) 
-      data mfvers(1)/'02/07'/,mfvers(2)/'/2017'/
+      data mfvers(1)/'03/02'/,mfvers(2)/'/2017'/
       character(4),dimension(ntime) :: limloc
       character(10),dimension(nvesel) :: vsname
       character(10),dimension(magpri) :: mpnam2
