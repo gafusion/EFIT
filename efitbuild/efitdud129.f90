@@ -20942,7 +20942,7 @@
                 tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark), &
                 zzzgam(nmtark),aa1gam(nmtark),aa2gam(nmtark), &
                 aa3gam(nmtark),aa4gam(nmtark),aa5gam(nmtark), &
-                aa6gam(nmtark),tgammauncor(nmtark)
+                aa6gam(nmtark),aa7gam(nmtark),tgammauncor(nmtark)
       real*8  bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
          rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels),l2msels(nmsels), &
          l4msels(nmsels),emsels(nmsels),semsels(nmsels),fwtemsels(nmsels)
@@ -21469,6 +21469,7 @@
           aa4gam(i)=a4gam(jtime,i)
           aa5gam(i)=a5gam(jtime,i)
           aa6gam(i)=a6gam(jtime,i)
+          aa7gam(i)=a7gam(jtime,i)
           fwtgam(i)=swtgam(i)
           if (iergam(i).ne.0) fwtgam(i)=0.0
  3090    continue
@@ -21671,7 +21672,7 @@
                 tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark), &
                 zzzgam(nmtark),aa1gam(nmtark),aa2gam(nmtark), &
                 aa3gam(nmtark),aa4gam(nmtark),aa5gam(nmtark), &
-                aa6gam(nmtark),tgammauncor(nmtark)
+                aa6gam(nmtark),aa7gam(nmtark),tgammauncor(nmtark)
       dimension tlibim(libim),slibim(libim),rrrlib(libim)
       character*82 snap_ext
       namelist/in1/ishot,itime,itimeu,qvfit,plasma,expmp2,coils,btor, &
@@ -21803,6 +21804,7 @@
         aa4gam(i)=a4gam(jtime,i)
         aa5gam(i)=a5gam(jtime,i)
         aa6gam(i)=a6gam(jtime,i)
+        aa7gam(i)=a7gam(jtime,i)
         fwtgam(i)=swtgam(i)
  3090 continue
       endif
