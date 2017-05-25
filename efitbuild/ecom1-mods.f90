@@ -134,6 +134,7 @@
       real*8,dimension(ntime,nstark):: tangam, siggam,a1gam &
            ,a2gam,a3gam,a4gam,tangam_uncor
       real*8,dimension(nstark) :: fwtgam,chigam,swtgam
+      real*8 v30lt,v30rt,v210rt,v210lt
       integer*4,dimension(nstark) :: iergam
       integer*4,dimension(nstark) :: mseport,mse_spave_on
       integer*4  kstark,iplots,kmtark,klibim,kdomse &
@@ -147,6 +148,8 @@
       data kdomse/0/
       data mse_usecer/0/,mse_certree/0/
       data mse_use_cer210/0/,mse_use_cer330/0/
+      data v30lt/0.0/,v30rt/0.0/
+      data v210lt/0.0/,v210rt/0.0/
 
       real*8 chigamt,chilibt,dtmsefull,t_max_beam_off 
       real*8,dimension(nstark,npcurn) :: rbrpc,rbzpc,rgampc
