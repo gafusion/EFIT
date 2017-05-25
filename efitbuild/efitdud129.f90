@@ -2517,7 +2517,7 @@
             msebkp,msefitfun,mse_quiet,mse_spave_on,kwaitmse, &
             dtmsefull,mse_strict,t_max_beam_off,ok_30rt,ok_210lt, &
             mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210, &
-            tgammauncor
+            tgammauncor,v30lt,v30rt,v210lt,v210rt
       namelist/in_msels/bmsels,sbmsels,fwtbmsels,rrmsels,zzmsels, &
             l1msels,l2msels,l4msels,emsels,semsels,fwtemsels,kdomsels, &
             fmlscut,synmsels,avemsels
@@ -2576,7 +2576,7 @@
           ,mse_strict,t_max_beam_off,ifitdelz,scaledz &
           ,mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210 &
           ,ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels,idebug,jdebug &
-           ,synmsels,avemsels,kwritime
+           ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt
       namelist/profile_ext/npsi_ext,pprime_ext,ffprim_ext,psin_ext, &
       geqdsk_ext,sign_ext,scalepp_ext,scaleffp_ext,shape_ext,dr_ext, &
       dz_ext,rc_ext,zc_ext,a_ext,eup_ext,elow_ext,dup_ext,dlow_ext, &
@@ -8056,7 +8056,7 @@
             msefitfun,mse_quiet,mse_spave_on,kwaitmse, &
             dtmsefull,mse_strict,t_max_beam_off,ok_30rt,ok_210lt,&
             mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210,& 
-            tgammauncor
+            tgammauncor,v30lt,v30rt,v210lt,v210rt
       namelist/in_msels/bmsels,sbmsels,fwtbmsels,rrmsels,zzmsels, &
             l1msels,l2msels,l4msels,emsels,semsels,fwtemsels,kdomsels, &
             fmlscut,synmsels,avemsels
@@ -8096,7 +8096,7 @@
            ,mse_strict,t_max_beam_off,ifitdelz,scaledz &
            ,mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210 &
            ,ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels,idebug,jdebug &
-           ,synmsels,avemsels,kwritime
+           ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace &
            ,symmetrize,backaverage,lring
       data mcontr/35/,lfile/36/,ifpsi/0/
@@ -9530,6 +9530,7 @@
          hgain(nmtark),hslope(nmtark),hscale(nmtark), &
          hoffset(nmtark),max_beamOff, &
          tanham_uncor(ktime,nmtark)
+         real*4 fv30lt,fv30rt,fv210lt,fv210rt
 !
       do 10 i=1,ktime
         atime(i)=time(i)
@@ -9545,8 +9546,13 @@
        tanham = 0.0
        tanham_uncor = 0.0
        sigham = 0.0
+       fv30lt = v30lt
+       fv30rt = v30rt
+       fv210rt = v210rt
+       fv210lt = v210lt
        call  set_cer_correction(mse_usecer,mse_certree, &
              mse_use_cer330,mse_use_cer210)
+       call set_mse_beam_on_vlevel(fv30lt,fv210rt,fv210lt,fv30rt)
        call  stark2cer(ishot,atime,ktime,avem,msefitfun,tanham,sigham, &
              rrham,zzham,a1ham,a2ham,a3ham,a4ham,a5ham,a6ham,a7ham, &
              iergam,msebkp,mse_quiet,tanham_uncor)
@@ -20977,7 +20983,7 @@
             msefitfun,mse_quiet,mse_spave_on,kwaitmse, &
             dtmsefull,mse_strict,t_max_beam_off,ok_30rt,ok_210lt,&
             mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210,&
-            tgammauncor
+            tgammauncor,v30lt,v30rt,v210lt,v210rt
       namelist/in_msels/bmsels,sbmsels,fwtbmsels,rrmsels,zzmsels, &
             l1msels,l2msels,l4msels,emsels,semsels,fwtemsels,kdomsels, &
             fmlscut,synmsels,avemsels
@@ -21017,7 +21023,7 @@
            ,mse_strict,t_max_beam_off,ifitdelz,scaledz &
            ,mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210 &
            ,ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels,idebug,jdebug &
-           ,synmsels,avemsels,kwritime
+           ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace &
            ,symmetrize,backaverage,lring
       data mcontr/35/,lfile/36/,ifpsi/0/
@@ -21704,7 +21710,7 @@
             msefitfun,mse_quiet,mse_spave_on,kwaitmse, &
             dtmsefull,mse_strict,t_max_beam_off,ok_30rt,ok_210lt, &
             mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210, &
-            tgammauncor
+            tgammauncor,v30lt,v30rt,v210lt,v210rt
       namelist/ina/spatial_avg_gam
       namelist/inece/necein,teecein0,feece0,errorece0,fwtece0,fwtecebz0 &
            ,ecefit,ecebzfit,kfitece,kinputece,kcallece,nharm &
@@ -21741,7 +21747,7 @@
            ,mse_strict,t_max_beam_off,ifitdelz,scaledz &
            ,mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210 &
            ,ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels,idebug,jdebug &
-           ,synmsels,avemsels,kwritime
+           ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace &
            ,symmetrize,backaverage,lring
       data mcontr/35/,lfile/36/,ifpsi/0/
