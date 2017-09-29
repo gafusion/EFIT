@@ -3391,11 +3391,12 @@
 !---------------------------------------------------------------------
 !-- Set up proper Green's tables area                               --
 !--        shot > 156000 new 2014 set                               --
+!--        shot >= 168191 new 2017 set                              --
 !---------------------------------------------------------------------
       if (ishot.ge.112000) then
         if (ishot.lt.156000) then
           table_dir = table_dir(1:ltbdir)//'112000/'
-        else
+        elseif (ishot.lt.168191) then
           if (kdata.ne.2) then
             table_dir = table_dir(1:ltbdir)//'156014/'
           else
@@ -3405,6 +3406,8 @@
                table_dir = table_dir(1:ltbdir)//'156014/'
             endif
           endif
+        elseif (ishot.ge.168191) then
+          table_dir = table_dir(1:ltbdir)//'168191/'
         endif
         ltbdir=ltbdir+7
         ltbdi2=ltbdir
@@ -4003,13 +4006,16 @@
 !-----------------------------------------------------------------------
 !-- DIII-D shot > 112000 use a new set of table for magnetic probes   --
 !--        shot > 156000 new 2014 set                                 --
+!--        shot >= 168191 new 2017 set                                --
 !-----------------------------------------------------------------------
       if (kdata.ne.2) then
       if (ishot.ge.112000.and.jtime.le.1) then
         if (ishot.lt.156000) then
           table_dir = table_dir(1:ltbdir)//'112000/'
-        else
+        elseif (ishot.lt.168191) then        
           table_dir = table_dir(1:ltbdir)//'156014/'
+        elseif (ishot.ge.168191) then
+          table_dir = table_dir(1:ltbdir)//'168191/'
         endif
         ltbdir=ltbdir+7
         ltbdi2=ltbdir
@@ -8659,7 +8665,7 @@
       if (ishot.ge.112000) then
         if (ishot.lt.156000) then
           table_di2 = table_di2(1:ltbdi2)//'112000/'
-        else
+        elseif (ishot.lt.168191) then
           if (kdata.ne.2) then
             table_di2 = table_di2(1:ltbdi2)//'156014/'
           else
@@ -8669,6 +8675,8 @@
                table_di2 = table_di2(1:ltbdi2)//'156014/'
             endif
           endif
+        elseif (ishot.ge.168191) then
+          table_di2 = table_dir(1:ltbdir)//'168191/'
         endif
         ltbdi2=ltbdi2+7
       endif
@@ -21181,7 +21189,7 @@
       if (lshot.ge.112000.and.jtime.le.1) then
         if (lshot.lt.156000) then
           table_di2 = table_dir(1:ltbdir)//'112000/'
-        else
+        elseif  (ishot.lt.168191) then
           if (kdata.ne.2) then
             table_di2 = table_dir(1:ltbdir)//'156014/'
           else
@@ -21191,6 +21199,8 @@
                table_di2 = table_dir(1:ltbdir)//'156014/'
             endif
           endif
+        elseif (ishot.ge.168191) then
+          table_di2 = table_dir(1:ltbdir)//'168191/'
         endif
         ltbdi2=ltbdir+7
        endif
