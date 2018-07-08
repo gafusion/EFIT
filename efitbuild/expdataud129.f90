@@ -160,7 +160,14 @@
       if (ishot.ge.124411) write (filimt,6666) limid
       if (ishot.ge.139282) write (filimt,6668) limid
       if (ishot.ge.163931) write (filimt,6670) limid
-      if (ishot.ge.168191) write (filimt,6672) limid
+!     if (ishot.ge.168191) write (filimt,6672) limid
+      if (ishot.ge.168191) then
+         if (limid.le.99) then
+             write (filimt,6672) limid
+         else
+             write (filimt,6674) limid
+         endif
+      endif
   130 continue
       filimt=input_dir(1:lindir)//filimt
       open(unit=lfile,                       status='old', &
@@ -352,6 +359,7 @@
  6668 format ('lim091109.0',i2)
  6670 format ('lim151110.0',i2)
  6672 format ('lim170120.0',i2)
+ 6674 format ('lim170120.',i3)
 !
       return
       end

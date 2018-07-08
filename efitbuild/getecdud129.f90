@@ -289,7 +289,7 @@
            goto 31200
          endif
         enddo
-        do i=1,nsilol
+        do i=1,nsilop
          if (lpname(i).eq.namedum) then
            do j=1,np
              silopt(j,i)=silopt(j,i)-dumbtc*bti322(j)
@@ -427,7 +427,7 @@
 ! Compensate flux loops for coupling of individual C-coils.
 ! This was not needed previously, for antisymmetric (n=odd) C-coil pairs.
 !-----------------------------------------------------------------------
-        do i=1,nsilol
+        do i=1,nsilop
          if (lpname(i).eq.namedum) then
 !           write (6,*) nshot,ibtcshot,lpname(i),namedum
            do j=1,np
@@ -552,7 +552,7 @@
 ! Compensate flux loops for coupling of individual C-coils.
 ! This was not needed previously, for antisymmetric (n=odd) C-coil pairs.
 !-----------------------------------------------------------------------
-        do i=1,nsilol
+        do i=1,nsilop   
          if (lpname(i).eq.namedum) then
 !           write (6,*) nshot,ibtcshot,lpname(i),namedum
            do j=1,np
