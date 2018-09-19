@@ -2,16 +2,17 @@
 # Makefile for Iris (and Nova)
 # 64-bit, MPI, using modules
 #
+# module purge
 # module load btshot/efit
 #
-# USEAGE (parallel): make -f MakefileIris FCOM=mpipgf90 EFIT
-# USEAGE (serial  ): make -f MakefileIris FCOM=pgf90 EFIT
+# This makes an MPI version which can be run serially
+# USEAGE: make -f MakefileIris EFIT
 #==============
 
 # default variables
 EXP = DIIID
 MACHINE := $(shell uname)
-#FCOM = 
+FCOM =mpipgf90
 grid =  
 MDSPLUS= $(MDSPLUS_DIR)/lib64/libMdsLib_client.a $(MDSPLUS_DIR)/lib64/libMdsIpUtil.a
 NETCDF = $(NETCDF_DIR)/lib/libnetcdff.a $(NETCDF_DIR)/lib/libnetcdf.a
@@ -28,50 +29,14 @@ NETCDFINC=$(NETCDF_DIR)/include
 # LLIBS is set by module default-paths
 DLIBS=$(LLIBS) -lm $(LIBD3) -lcurl $(BLAS) $(MDSPLUS) $(NETCDF) $(MSE) $(MPICH)
 
-FFLAGS=-K +U77 +O2 -w -v 
-LDFLAGS=-K +U77 +O1 -w -v   
-
-# determine experimental type and machine type to decide the appropriate libraries
-ifeq ($(EXP),DIIID)
-    ifeq ($(MACHINE),Linux)
-     ifeq ($(OSPATH),linux64)
-
-		# This should cause it to fail if NOT FCOM=mpipgf90
-		FC="failure: use FCOM=mpipgf90 or FCOM=pgf90"
-
-      LDFLAGS= -Bstatic_pgi
-
-      ifeq ($(FCOM),mpipgf90)
-      FC=mpif90
-      FFLAGS= -DUSEMPI -byteswapio -Mpreprocess -Ktrap=divz
-      FCFLAGS=
-      CC=mpicc
-      LD=mpif90
-      LDFLAGS= -Bstatic_pgi
-      MPIVERSION=yes
-      else 
-
-         ifeq ($(FCOM),pgf90)
-         FC=pgf90
-         FFLAGS= -byteswapio -Mpreprocess -Ktrap=divz
-         FCFLAGS=
-         CC=gcc
-         LD=pgf90
-         LDFLAGS= -Bstatic_pgi
-         MPIVERSION=no
-         endif # serial fortran
-		
-      endif # mpi fortran
-      
-     else #    Not linux64
-		# "supporting linux64 only"
-
-     endif # linux64
-
-    endif # Linux
-
-endif # DIIID
-####
+# For DIII-D, MPI-enabled 
+FC=mpif90
+FFLAGS= -DUSEMPI -byteswapio -Mpreprocess -Ktrap=divz
+FCFLAGS=
+CC=mpicc
+LD=mpif90
+LDFLAGS= -Bstatic_pgi
+MPIVERSION=yes
 
 # determine the name of final executable
 EFIT = EFIT
