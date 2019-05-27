@@ -1758,7 +1758,7 @@
 !**********************************************************************
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       ierr=0
-      if (x1.eq.x2.or.x2.eq.x3) then
+      if (x1.eq.x2.or.x2.eq.x3.or.x1.eq.x3) then
         ierr=1
         return
       endif
