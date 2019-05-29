@@ -214,7 +214,7 @@
       call MPI_ALLREDUCE(kerror,MPI_IN_PLACE,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
     endif
     if (kerror /= 0) then
-      call mpi_stop
+      call mpi_ABORT(MPI_COMM_WORLD, ierr)
     endif
 #endif
 ! MPI <<<
@@ -286,7 +286,7 @@
       if (rank == 0) then
         print *, 'FORTRAN STOP'
       endif
-      call MPI_FINALIZE(ierr)
+      call mpi_ABORT(MPI_COMM_WORLD, kerror, ierr)
 #else
       stop
 #endif
@@ -13108,6 +13108,7 @@
 !-----------------------------------------------------------------------
 !--  unfold fitting parameters                                        --
 !-----------------------------------------------------------------------
+      if ( wrsp(need).eq.0 ) goto 2656
          condno=wrsp(1)/wrsp(need)
          toler=condin*wrsp(1)
          do 2600 i=1,need
@@ -13126,16 +13127,18 @@
  2655	continue
 	call dgglse(nj,need,ncrsp,arsp,nrsmat,crsp,4*(npcurn-2)+6+ &
                    npcurn*npcurn,b,z,brsp,work,nrsma2,info,condno)
-	if (info.eq.0) goto 2656
+	if (info.eq.0) goto 2657
+ 2656   continue
 	write (nttyo,8000) info
 ! MPI >>>
 #if defined(USEMPI)
         call mpi_stop
+    stop
 #else
 	stop
 #endif
 ! MPI <<<
- 2656   continue
+ 2657   continue
       endif
 !----------------------------------------------------------------------
 !--  rescale results if A is preconditioned                          --
@@ -22247,8 +22250,7 @@ real*8 function linear(x,xa,ya,n)
 ! MPI >>>
 #if defined(USEMPI)
     ! Shutdown MPI before calling STOP to terminate program
-    subroutine mpi_stop()
-    
+    subroutine mpi_stop
       include 'modules1.f90'
       include 'mpif.h'
       
@@ -22256,10 +22258,10 @@ real*8 function linear(x,xa,ya,n)
       if (allocated(dist_data_displs)) deallocate(dist_data_displs)
       if (allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
       
-      if (rank == 0) then
+     if (rank == 0) then
         print *, 'STOPPING MPI'
       endif
-      call MPI_FINALIZE(ierr)
+      call MPI_ABORT(MPI_COMM_WORLD,ierr)
       STOP
     
     end subroutine mpi_stop

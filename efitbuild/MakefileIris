@@ -31,7 +31,7 @@ DLIBS=$(LLIBS) -lm $(LIBD3) -lcurl $(BLAS) $(MDSPLUS) $(NETCDF) $(MSE) $(MPICH)
 
 # For DIII-D, MPI-enabled 
 FC=mpif90
-FFLAGS= -DUSEMPI -byteswapio -Mpreprocess -Ktrap=divz
+FFLAGS= -g -DUSEMPI -byteswapio -Mpreprocess -Ktrap=divz
 FCFLAGS=
 CC=mpicc
 LD=mpif90
