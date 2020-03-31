@@ -234,8 +234,11 @@
       if (kgraph.eq.0) then
         plotname='pltout.out'
       else
+        if (ifitvs.gt.0.or.icutfp.eq.2) then
+        write (6,*) 'itimeu = ',itimeu
+        endif
         let2 = 'pl'
-        call getfnm2(let2,ishot,itime,plotname)
+        call getfnmu2(itimeu,let2,ishot,itime,plotname)
         if (istore .eq. 1)  &
              plotname = store_dir(1:lstdir)//plotname
       endif
@@ -261,7 +264,7 @@
 !--------------------------------------------------------------------
       let2 = 'pl'
       plotname = ' '
-      call getfnm2(let2,ishot,itime,plotname)
+      call getfnmu2(itimeu,let2,ishot,itime,plotname)
       if (istore .eq. 1)  &
            plotname = store_dir(1:lstdir)//plotname
       m_write = 1
@@ -733,105 +736,135 @@
 40060       continue
             nxy(nn) = innn
          endif
-         hgt = 0.10
-         msg = msg + 1
-         note(msg) = 2
-         lmes(msg) = 'alpha =   '
-         imes(msg) = 10
-         xpos(msg) = rvsmax-0.5
-         ypos(msg) = zvsmin
-         ht(msg) = hgt
+!         hgt = 0.10
+!         msg = msg + 1
+!         note(msg) = 2
+!         lmes(msg) = 'alpha =   '
+!         imes(msg) = 10
+!         xpos(msg) = rvsmax-0.5
+!         ypos(msg) = zvsmin
+!         ht(msg) = hgt
 !        call rlreal(alphafp,2,rvsmax,zvsmin)
-         msg = msg + 1
-         note(msg) = 4
-         anum(msg) = alphafp
-         iplce(msg) = 2
-         xpos(msg) = rvsmax
-         ypos(msg) = zvsmin
-         ht(msg) = 0.10
+!         msg = msg + 1
+!         note(msg) = 4
+!         anum(msg) = alphafp
+!         iplce(msg) = 2
+!         xpos(msg) = rvsmax
+!         ypos(msg) = zvsmin
+!         ht(msg) = 0.10
+          write(text,96251) alphafp
+          msg = msg + 1
+          note(msg) = 1
+          lmes(msg) = text
+          imes(msg) = 25
+          xpos(msg) = rvsmax-0.5
+          ypos(msg) = zvsmin
+          ht(msg) = 0.10
+!
          sumif=0.0
          do 40070 i=1,nvesel
             sumif=sumif+vcurrt(i)
 40070    continue
          sumif=sumif/1000.
-         msg = msg + 1
-         note(msg) = 2
-         lmes(msg) = 'Iv(ka)=   '
-         imes(msg) = 10
-         xpos(msg) = rvsmax-0.5
-         ypos(msg) = zvsmin-0.1
-         ht(msg) = hgt
+          write(text,96252) sumif
+          msg = msg + 1
+          note(msg) = 1
+          lmes(msg) = text
+          imes(msg) = 25
+          xpos(msg) = rvsmax-0.5
+          ypos(msg) = zvsmin-0.1
+          ht(msg) = 0.10
+          write (6,*) 'Ivt(ka) = ',sumif
+!         msg = msg + 1
+!         note(msg) = 2
+!         lmes(msg) = 'Iv(ka)=   '
+!         imes(msg) = 10
+!         xpos(msg) = rvsmax-0.5
+!         ypos(msg) = zvsmin-0.1
+!         ht(msg) = hgt
 !        call rlreal(sumif,0,rvsmax,zvsmin-0.1)
-         msg = msg + 1
-         note(msg) = 4
-         anum(msg) = sumif
-         iplce(msg) = 0
-         xpos(msg) = rvsmax
-         ypos(msg) = zvsmin-0.1
-         ht(msg) = 0.10
-         msg = msg + 1
-         note(msg) = 2
-         lmes(msg) = 'Fp(kn)=   '
-         imes(msg) = 10
-         xpos(msg) = rvsmax-0.5
-         ypos(msg) = zvsmin-0.2
-         ht(msg) = hgt
-         sumif=fzpol/1000.
+!         msg = msg + 1
+!         note(msg) = 4
+!         anum(msg) = sumif
+!         iplce(msg) = 0
+!         xpos(msg) = rvsmax
+!         ypos(msg) = zvsmin-0.1
+!         ht(msg) = 0.10
+!         msg = msg + 1
+!         note(msg) = 2
+!         lmes(msg) = 'Fp(kn)=   '
+!         imes(msg) = 10
+!         xpos(msg) = rvsmax-0.5
+!         ypos(msg) = zvsmin-0.2
+!         ht(msg) = hgt
+!         sumif=fzpol/1000.
 !        call rlreal(sumif,0,rvsmax,zvsmin-0.2)
+!         msg = msg + 1
+!         note(msg) = 4
+!         anum(msg) = sumif
+!         iplce(msg) = 0
+!         xpos(msg) = rvsmax
+!         ypos(msg) = zvsmin-0.2
+!         ht(msg) = 0.10
+!         msg = msg + 1
+!         note(msg) = 2
+!         lmes(msg) = 'Ft(kn)=   '
+!         imes(msg) = 10
+!         xpos(msg) = rvsmax-0.5
+!         ypos(msg) = zvsmin-0.3
+!         ht(msg) = hgt
+!         sumif=fztor/1000.
+!        call rlreal(sumif,0,rvsmax,zvsmin-0.3)
+!         msg = msg + 1
+!         note(msg) = 4
+!         anum(msg) = sumif
+!         iplce(msg) = 0
+!         xpos(msg) = rvsmax
+!         ypos(msg) = zvsmin-0.3
+!         ht(msg) = 0.10
+!
+!         msg = msg + 1
+!         note(msg) = 2
+!         lmes(msg) = 'Ih(ka)=   '
+!         imes(msg) = 10
+!         xpos(msg) = rvsmax-0.5
+!         ypos(msg) = zvsmin-0.4
+!         ht(msg) = hgt
+         sumif=tcurrp/1000.
+         write(text,96253) sumif
+         write (6,*) 'Ipt(ka) = ',sumif
          msg = msg + 1
-         note(msg) = 4
-         anum(msg) = sumif
-         iplce(msg) = 0
+         note(msg) = 1
+         lmes(msg) = text
+         imes(msg) = 25
          xpos(msg) = rvsmax
          ypos(msg) = zvsmin-0.2
          ht(msg) = 0.10
-         msg = msg + 1
-         note(msg) = 2
-         lmes(msg) = 'Ft(kn)=   '
-         imes(msg) = 10
-         xpos(msg) = rvsmax-0.5
-         ypos(msg) = zvsmin-0.3
-         ht(msg) = hgt
-         sumif=fztor/1000.
-!        call rlreal(sumif,0,rvsmax,zvsmin-0.3)
-         msg = msg + 1
-         note(msg) = 4
-         anum(msg) = sumif
-         iplce(msg) = 0
-         xpos(msg) = rvsmax
-         ypos(msg) = zvsmin-0.3
-         ht(msg) = 0.10
-         msg = msg + 1
-         note(msg) = 2
-         lmes(msg) = 'Ih(ka)=   '
-         imes(msg) = 10
-         xpos(msg) = rvsmax-0.5
-         ypos(msg) = zvsmin-0.4
-         ht(msg) = hgt
-         sumif=tcurrp/1000.
 !        call rlreal(sumif,0,rvsmax,zvsmin-0.4)
-         msg = msg + 1
-         note(msg) = 4
-         anum(msg) = sumif
-         iplce(msg) = 0
-         xpos(msg) = rvsmax
-         ypos(msg) = zvsmin-0.4
-         ht(msg) = 0.10
-         msg = msg + 1
-         note(msg) = 2
-         lmes(msg) = 'Ig(ka)=   '
-         imes(msg) = 10
-         xpos(msg) = rvsmax-0.5
-         ypos(msg) = zvsmin-0.5
-         ht(msg) = hgt
+!         msg = msg + 1
+!         note(msg) = 4
+!         anum(msg) = sumif
+!         iplce(msg) = 0
+!         xpos(msg) = rvsmax
+!         ypos(msg) = zvsmin-0.4
+!         ht(msg) = 0.10
+!         msg = msg + 1
+!         note(msg) = 2
+!         lmes(msg) = 'Ig(ka)=   '
+!         imes(msg) = 10
+!         xpos(msg) = rvsmax-0.5
+!         ypos(msg) = zvsmin-0.5
+!         ht(msg) = hgt
          sumif=fpolvs/1000.
 !        call rlreal(sumif,0,rvsmax,zvsmin-0.5)
+         write(text,96254) sumif
+         write (6,*) 'Ivp(ka) = ',sumif
          msg = msg + 1
-         note(msg) = 4
-         anum(msg) = sumif
-         iplce(msg) = 0
+         note(msg) = 1
+         lmes(msg) = text
+         imes(msg) = 25
          xpos(msg) = rvsmax
-         ypos(msg) = zvsmin-0.5
+         ypos(msg) = zvsmin-0.3
          ht(msg) = 0.10
       endif
   252 continue
@@ -8416,7 +8449,7 @@
 !----------------------------------------------------------------------
       dataname=' '
       let = 'q'
-      call getfnmd(let,ishot,itime,dataname)
+      call getfnm2(let,ishot,itime,dataname)
       dataname=dataname(3:7)//'_efitipmhd.dat '
       call curvec(dataname,jerror,time,cpasma,ktime,0)
       call zpline(ktime,time,sibdry,bscra,cscra,dscra)
@@ -9444,6 +9477,10 @@
  9620 format (12h kcf,  kcp= ,2i5)
  9623 format (12h kcw      = ,1i5)
  9625 format (12h alfp     = ,f10.3)
+96251 format (12h alfp     = ,f10.3)
+96252 format (12h Ivt(ka)  = ,f10.3)
+96253 format (12h Ipt(ka)  = ,f10.3)
+96254 format (12h Ivp(ka)  = ,f10.3)
  9630 format (12h kprfit   = ,i10)
  9635 format (12h Ze(cm)   = ,f10.3)
  9637 format (12h relax    = ,f10.3)

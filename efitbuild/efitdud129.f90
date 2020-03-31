@@ -3406,8 +3406,10 @@
                table_dir = table_dir(1:ltbdir)//'156014/'
             endif
           endif
-        elseif (ishot.ge.168191) then
+        elseif (ishot.lt.181292) then
           table_dir = table_dir(1:ltbdir)//'168191/'
+        elseif (ishot.ge.181292) then
+          table_dir = table_dir(1:ltbdir)//'181292/'
         endif
         ltbdir=ltbdir+7
         ltbdi2=ltbdir
@@ -4014,8 +4016,10 @@
           table_dir = table_dir(1:ltbdir)//'112000/'
         elseif (ishot.lt.168191) then        
           table_dir = table_dir(1:ltbdir)//'156014/'
-        elseif (ishot.ge.168191) then
+        elseif (ishot.lt.181292) then
           table_dir = table_dir(1:ltbdir)//'168191/'
+        elseif (ishot.ge.181292) then
+          table_dir = table_dir(1:ltbdir)//'181292/'
         endif
         ltbdir=ltbdir+7
         ltbdi2=ltbdir
@@ -8675,8 +8679,10 @@
                table_di2 = table_di2(1:ltbdi2)//'156014/'
             endif
           endif
-        elseif (ishot.ge.168191) then
-          table_di2 = table_dir(1:ltbdir)//'168191/'
+        elseif (ishot.lt.181292) then
+          table_di2 = table_di2(1:ltbdi2)//'168191/'
+        elseif (ishot.ge.181292) then
+          table_di2 = table_di2(1:ltbdi2)//'181292/'
         endif
         ltbdi2=ltbdi2+7
       endif
@@ -19768,7 +19774,13 @@
          abar=100.*pleng/2./pi
       endif
 !
-      if (idebug /= 0) write (6,*) 'Call SHAPE/PLTOUT kerror = ', kerror
+      if (idebug /= 0) then 
+         write (6,*) 'Call SHAPE/PLTOUT kerror = ', kerror
+         write (6,*) 'ifitvs, icutfp, fpolvs(ka) = ', ifitvs,icutfp,fpolvs/1000.
+      endif
+      if (ifitvs.gt.0.or.icutfp.eq.2) then
+        write (6,*) 'ifitvs, icutfp, fpolvs(ka) = ', ifitvs,icutfp,fpolvs/1000.
+      endif
       if (itek.gt.0) then
 	  if (idplace.ne.0) then
            call altplt(xout,yout,nfound,iges,nnn, &
@@ -21202,8 +21214,10 @@
                table_di2 = table_dir(1:ltbdir)//'156014/'
             endif
           endif
-        elseif (ishot.ge.168191) then
+        elseif (ishot.lt.181292) then
           table_di2 = table_dir(1:ltbdir)//'168191/'
+        elseif (ishot.ge.181292) then
+          table_di2 = table_dir(1:ltbdir)//'181292/'
         endif
         ltbdi2=ltbdir+7
        endif

@@ -75,6 +75,35 @@
  1030 format(a1,i6.6,'.',a5,'_',i3.3)
       return
       end
+      subroutine getfnmu2(itimeu,let,ishot,itime,fname)
+!----------------------------------------------------------------------
+!--   itimeu is time in microseconds                                 --
+!--   let is letter designation of file (2 chatacyters)              --
+!--   ishot is shot number                                           --
+!--   itime is time in miliseconds                                   --
+!--   fname is file name                                             --
+!----------------------------------------------------------------------
+      character*(*) let
+      character*(*) fname
+      character*5 sec_msec
+!
+      length=len(fname)
+      do 100 i=1,length
+       fname(i:i)=' '
+  100 continue
+      iitime=itime
+      if (iitime.lt.0) iitime=90000-iitime
+      write(sec_msec,1000) iitime
+ 1000 format(i5.5)
+      if (itimeu.le.0) then
+        write(fname,1020) let,ishot,sec_msec
+      else
+        write(fname,1030) let,ishot,sec_msec,itimeu
+      endif
+ 1020 format(a2,i6.6,'.',a5)
+ 1030 format(a2,i6.6,'.',a5,'_',i3.3)
+      return
+      end
       subroutine setfnme(let,ishot,itime,istore,fname)
 !----------------------------------------------------------------------
 !--   let is letter designation of file                              --
