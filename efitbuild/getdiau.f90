@@ -91,7 +91,7 @@
 !       
 !vas-oct3,08        include 'expath.inc'
         use expath
-        PARAMETER (NTIMS=8192)
+        PARAMETER (NTIMS=8192,NPOINT=42)
         DIMENSION DIAMAG(NTIMS,3),DIAMAGC(NTIMS,3),SIG(NTIMS,3)
         DIMENSION TIM(NTIMS),TTEMP(NTIMS)
         DIMENSION IDAT(NTIMS),YDAT(NTIMS),YTEMP(NTIMS),BT(NTIMS)
@@ -99,11 +99,12 @@
         DIMENSION FIX(3)
         DIMENSION ASCII(11),INT16(11),INT32(11),REAL32(11)
 
-        DIMENSION COUP(26,3)
-        INTEGER ASCII
+        DIMENSION COUP(NPOINT,3)
+        INTEGER ASCII, IDIASHOT
         REAL SOURCE
         CHARACTER*100 FILIN
-        CHARACTER*10 POINT(26),IPOINT,DNAME(3),DNAMES(3)
+        CHARACTER*10 POINT(NPOINT),IPOINT,DNAME(3),DNAMES(3)
+
             integer*2 iipoint(5)
             equivalence (iipoint,ipoint)
         DATA SOURCE/'.PLA'/
@@ -114,17 +115,15 @@
         DATA EBCOUP/0.00,0.00,-2.0/
 
         EQUIVALENCE (RAR(21),TTEMP(1))
+
+     	filin = 'dcoef.dat'
         if (nshot.lt.85885) then
-    		filin = 'dcoef.dat'
             EBCOUP(3)=-2.0
         else if (nshot.lt.108282) then
-                filin = 'dcoef95.dat'
             EBCOUP(3)=0.0
         else if (nshot.lt.152400) then
-                filin = 'dcoef04.dat'
             EBCOUP(3)=0.0
         else
-                filin = 'dcoef13.dat'
             EBCOUP(3)=0.0
         endif
 !
@@ -152,20 +151,19 @@
 !   GET COMPENSATION COEFFICIENTS
 !
         OPEN(UNIT=NIN,ACCESS='SEQUENTIAL', &
-        STATUS='OLD',FILE=FILIN,ERR=10)
-        GOTO 15
+        STATUS='OLD',FILE=FILIN,err=2000)
 
-   10   FILIN='VUSC::SYS$USER:[LAHAYE.DIA]dcoef.sav'
-        OPEN(UNIT=NIN,ACCESS='SEQUENTIAL', &
-        STATUS='OLD',FILE=FILIN,ERR=2000)
- 
-!
-!
-   15   DO 21 I=1,26
+41000   READ (NIN,*,err=2000,END=42000) idiashot
+
+        DO I=1,NPOINT
           READ(NIN,1001,err=2000) POINT(I),(COUP(I,J),J=1,3)
-!         WRITE(6,1002) I,POINT(I),(COUP(I,J),J=1,3)
-   21   CONTINUE
-        CLOSE(UNIT=NIN)
+        ENDDO
+        IF (nshot.ge.idiashot) then
+          GOTO 42000
+        ELSE
+          GOTO 41000
+        ENDIF
+42000   CLOSE(UNIT=NIN)
 
 !
 !  CALCULATE COEFFICIENTS FOR BT COMPENSATION. THIS IS DONE BY
