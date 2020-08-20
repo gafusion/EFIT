@@ -1,0 +1,11 @@
+&optin
+mode=7
+cmdfile=''
+shotfile=''
+shot=nshot
+starttime=100
+deltatime=20
+steps=nsteps
+snapext='jta_f'
+inpfile=''
+/
