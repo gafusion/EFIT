@@ -5,10 +5,10 @@ efit_exe="efitd90"
 #efit_exe="/home/kostukm/gitrepos/efit-bugtesting/efitbuild/efitdmpi90"
 #efit_exe="/home/kostukm/gitrepos/efit-bugtesting/efitbuild/efitd90"
 # nsteps sets the timesteps 
-nsteps=4
+nsteps=3
 # nprocs sets the number of parallel mpi processes called - max 16 (for 16 avail cores)
 nprocs=1
-
+starttime=100
 
 ################################################################################
 ################################################################################
@@ -32,8 +32,11 @@ fi
 # #
 ###
 echo ""
-echo ""
-echo "testing $efit_exe on shot $shot with/for $nsteps timeslices over $nprocs cores"
+echo "executable : `which $efit_exe`"
+echo "shot       : $shot"
+echo "timeslices : $nsteps"
+echo "mpi_procs  : $nprocs"
+echo "start_time : $starttime"
 echo ""
 module list
 echo ""
@@ -53,6 +56,7 @@ date >> efit.log
 
 sed 's|nsteps|'$nsteps'|g' ../../efit.input >> efit.input
 sed -i 's|nshot|'$shot'|g' efit.input
+sed -i 's|start_time|'$starttime'|g' efit.input
 cp ../../efit_snap* ./
 
 sed 's|efit_exe|'$efit_exe'|g' ../../efit.sbatch >> efit.sbatch
@@ -71,6 +75,7 @@ date >> efit.log
 module list >> efit.log 2>&1
 sed 's|nsteps|'$nsteps'|g' ../../efit.input >> efit.input
 sed -i 's|nshot|'$shot'|g' efit.input
+sed -i 's|start_time|'$starttime'|g' efit.input
 cp ../../efit_snap* ./
 
 $efit_exe 65 >> efit.log 2>&1
@@ -80,7 +85,6 @@ cd ../
 ################################################################################
 echo " Waiting 10 seconds for job to finish"
 sleep 10
-echo ""
 ################################################################################
 
 s_wc=`ls -l serial/g* | wc | awk '{print($1)}'`
@@ -93,6 +97,7 @@ p_l=`sort parallel/efit.log | grep "time" | uniq -d | wc | awk '{print($1)}'`
 #sort parallel/efit.log | grep time | uniq -d
 
 #echo "Serial: $s_wc files   Parallel: $p_wc files"
+echo ""
 echo "total slices of $nsteps expected"
 echo " ================================="
 echo "Serial  : $s_wc files"
