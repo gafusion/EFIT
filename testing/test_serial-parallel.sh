@@ -4,8 +4,10 @@
 efit_exe="efitd90"
 #efit_exe="/home/kostukm/gitrepos/efit-bugtesting/efitbuild/efitdmpi90"
 #efit_exe="/home/kostukm/gitrepos/efit-bugtesting/efitbuild/efitd90"
-# timesteps - max 16 (for 16 avail cores)
-nsteps=6
+# nsteps sets the timesteps 
+nsteps=4
+# nprocs sets the number of parallel mpi processes called - max 16 (for 16 avail cores)
+nprocs=1
 
 
 ################################################################################
@@ -31,7 +33,7 @@ fi
 ###
 echo ""
 echo ""
-echo "testing $efit_exe on shot $shot with/for $nsteps cores/timeslices"
+echo "testing $efit_exe on shot $shot with/for $nsteps timeslices over $nprocs cores"
 echo ""
 module list
 echo ""
@@ -54,6 +56,7 @@ sed -i 's|nshot|'$shot'|g' efit.input
 cp ../../efit_snap* ./
 
 sed 's|efit_exe|'$efit_exe'|g' ../../efit.sbatch >> efit.sbatch
+sed -i 's|nprocs|'$nprocs'|g' efit.sbatch
 sbatch ./efit.sbatch
 
 cd ../

@@ -9,4 +9,4 @@ echo "efit.sbatch script --begin" >> efit.log
 
 module list >> efit.log 2>&1
 
-srun --mpi=pmi2 -n 4 efit_exe 65 >> efit.log 2>&1
+srun --mpi=pmi2 -n nprocs efit_exe 65 >> efit.log 2>&1
