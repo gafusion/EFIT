@@ -1,0 +1,34 @@
+#%Module
+#
+# Modulefile for loading efit
+#
+
+proc ModulesHelp { } {
+	puts stderr "This module is required to run the current version of EFIT; either"
+	puts stderr " the serial (efitd90) or the parallel (efitdmpi90) implementation."
+   puts stderr "This module puts the efit/bin directory in your path,"
+   puts stderr "and defines the environment \$link_efit for support files."
+#   puts stderr "\nTo run mpiefit use (in your Slurm submission script):\n srun --mpi=mpi2 -n <NPROCS> efitdmpi90 65 65"
+#   puts stderr "\nIf you are getting an error like the following:"
+#   puts stderr "\tPGFIO-F-209/OPEN/unit=35/'OLD' specified for file which does not exist."
+#   puts stderr "\tFile name = /fusion/projects/codes/efit/support_files/2006/<filename>"
+#   puts stderr "\tIn source file efitdud129.f90, at line number 8889"
+#   puts stderr "(perhaps for a very large grid or old shot), Contact iris-support@fusion.gat.com\n"
+}
+conflict btshot/efit
+
+# default-paths must be first or there is a bizarre error: efitdmpi90: /usr/lib64/libgfortran.so.3: version `GFORTRAN_1.4' not found (required by /fusion/usc/lib/libd3.so)
+if { ! [ is-loaded default-paths ] } { module load default-paths }
+if { ! [ is-loaded mdsplus ] } { module load mdsplus } 
+if { ! [ is-loaded mse/V3_07-pgf18.3 ] } { module load mse/V3_07-pgf18.3 }
+if { ! [ is-loaded netcdf/4.4.1-mpich3.2-pgf18.3 ] } { module load netcdf/4.4.1-mpich3.2-pgf18.3 }
+
+prepend-path PATH /fusion/projects/codes/efit/bin
+
+# Environment variables are ususally uppercase, so this is being included for usage within scripts.
+setenv LINK_EFIT /fusion/projects/codes/efit/support_files
+# ... THE REASON it is lower case, is b/c that's how it exists in the efit source code, and it requires a terminal /
+setenv link_efit /fusion/projects/codes/efit/support_files/
+
+## This will prevent the message "Warning: ieee_inexact is signaling" when FORTRAN STOP is reached
+setenv NO_STOP_MESSAGE 1
