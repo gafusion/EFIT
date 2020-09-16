@@ -136,7 +136,8 @@
         IAR(1)=NPTS
         RAR(1)=-0.050000
         RAR(2)=0.0020005
-        NAVG=IFIX((TAVG+.5)/1000./RAR(2))
+        !NAVG=IFIX((TAVG+.5)/1000./RAR(2)) ! rls, ifix is old version of int, ok to remove, Sept, 2020
+        NAVG=int((TAVG+.5)/1000./RAR(2))
 
         NIN=21
         IER=1

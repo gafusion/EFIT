@@ -65,6 +65,8 @@
      character cmdfile*15, shotfile*15, snapext*82
      real*8 starttime, deltatime
      character(80),dimension(ntime) :: inpfile
+     logical dbsleep
+     integer isleep
      namelist/optin/mode,cmdfile,shotfile,shot,starttime,deltatime,steps,snapext,inpfile
 ! OPT_INPUT <<<
      kerror = 0
@@ -217,6 +219,15 @@
       call mpi_ABORT(MPI_COMM_WORLD, ierr)
     endif
 #endif
+
+  ! Sleep and wait for debugger, if desired. Must be after basic namelist read
+  !dbsleep=.true.
+  !do isleep = 1,100
+  !  if (.not. dbsleep) exit
+  !  print *, 'Sleeping... in gdb "set var dbsleep=.false." to continue'
+  !  call sleep(1) ! seconds
+  !end do
+
 ! MPI <<<
 !----------------------------------------------------------------------
 !-- start simulation for KTIME timeslices                            --
@@ -239,13 +250,17 @@
 !----------------------------------------------------------------------
 !--  get equilibrium                                                 --
 !----------------------------------------------------------------------
-           call fit(ks,kerror)
+          !if (rank==0) print*,'1.0~~~~~',rank,nfound
+          !if (rank==1) print*,'1.0~~~~~',rank,nfound
+           call fit(ks,kerror,rank) ! rls nfound good for rank0=175, rank1=1 (should be 181)
+          !if (rank==0) print*,'1.1~~~~~',rank,nfound
+          if (rank==1) print*,'1.1~~~~~',rank,nfound
            if (kerror.gt.0.and.k.lt.ktime) go to 500
         endif
 !----------------------------------------------------------------------
 !--  post processing for graphic and text outputs                    --
 !----------------------------------------------------------------------
-        call shape(ks,ktime,kerror)
+        call shapesurf(ks,ktime,kerror,rank)
         if (mtear.ne.0) call tearing(ks,mtear)
         if (kerror.gt.0) go to 500
         if (idebug /= 0) write (6,*) 'Main/PRTOUT ks/kerror = ', ks, kerror
@@ -414,6 +429,9 @@
       bp2flx=sbp/sbpi
       if (inorm.eq.2) bp2flx=2.*rcentr/vout(jtime)*(pi*tmu* &
                                 cpasma(jtime))**2*1.0E+06
+      print*,'3.0~~~'
+      print*,'3.0~~~',rank,inorm,nfound
+      print*,'3.0~~~',rank,plengt(nfound)
       if (inorm.eq.3) bp2flx=(tmu*2.0*pi*cpasma(jtime)/ &
                              plengt(nfound))**2
       if (inorm.eq.4) bp2flx=2.*(tmu*cpasma(jtime)/aout(jtime))**2 &
@@ -5917,7 +5935,7 @@
       mxiter_a = saveiter
       call restore_autoknotvals
       call inicur(ks_a)
-      call fit(ks_a,kerror_a)
+      call fit(ks_a,kerror_a,rank)
       if (kerror_a /= 0) then
         kerror = 1
       endif
@@ -6004,7 +6022,7 @@
         call restore_autoknotvals
         ppknt(kadknt) = xknot
         call inicur(ks_a)
-        call fit(ks_a,kerror_a)
+        call fit(ks_a,kerror_a,rank)
         if(kerror_a .gt. 0)goto 500
         ppakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm  &
                   + akgamwt * chigamt + akprewt * chipre
@@ -6034,7 +6052,7 @@
         call restore_autoknotvals
         ffknt(kadknt) = xknot
         call inicur(ks_a)
-        call fit(ks_a,kerror_a)
+        call fit(ks_a,kerror_a,rank)
         if(kerror_a .gt. 0)goto 500
         ffakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm  &
                   + akgamwt * chigamt + akprewt * chipre
@@ -6065,7 +6083,7 @@
         call restore_autoknotvals
         wwknt(kadknt) = xknot
         call inicur(ks_a)
-        call fit(ks_a,kerror_a)
+        call fit(ks_a,kerror_a,rank)
         if(kerror_a .gt. 0)goto 500
         wwakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm &
                   + akgamwt * chigamt + akprewt * chipre
@@ -6097,13 +6115,13 @@
         call restore_autoknotvals
         eeknt(kadknt) = xknot
         call inicur(ks_a)
-        call fit(ks_a,kerror_a)
+        call fit(ks_a,kerror_a,rank)
         if(kerror_a .gt. 0)goto 500
         eeakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm &
                   + akgamwt * chigamt + akprewt * chipre
 500      return
         end
-      subroutine fit(jtime,kerror)
+      subroutine fit(jtime,kerror,rank)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -6129,6 +6147,7 @@
       include 'basiscomdu.f90'
       data nzero/0/
       save nzero
+      integer rank
 !-----------------------------------------------------------------------
 !--  inner equilibrium do loop and outer current profile parameters   --
 !--  do loop                                                          --
@@ -6203,7 +6222,7 @@
             return
           endif
           call pflux(ix,ixnn,nitera,jtime)
-          call steps(ixnn,nitera,ix,jtime,kerror)
+          call steps(ixnn,nitera,ix,jtime,kerror,rank,i,in) ! rls nfound changed
           if (kerror /= 0) then
             jerror(jtime) = 1
             return
@@ -8985,7 +9004,7 @@
 !--   Make system call to drive PEFIT on Linux GPU                   --
 !----------------------------------------------------------------------
       CALL system ("/u/huangyao/P-EFIT/New_Folder/pefit_257_jt_new/bin/test")
-      stop ('pefit')
+      stop 'pefit'
 #endif
 ! MPI <<<
 !
@@ -9010,9 +9029,9 @@
        ' for start inside):')
  6100 format(/,1x,48htype plot mode (0=none, 1=tektronix, 2=versatec, &
            ,17h 3=qms, -=x ray):)
- 6200 format (/,1x,22hnumber of time slices?)
- 6220 format (/,1x,22htype input file names:)
- 6230 format (1x,1h#)
+ 6200 format (/,1x,'number of time slices?')
+ 6220 format (/,1x,'type input file names:')
+ 6230 format (1x,'#')
  6240 format (a)
  6600 format (/,1x,'good shot list file name ( 0=tty) ?')
  6610 format (/,1x,'command file name ( 0=none) ?')
@@ -13114,7 +13133,13 @@
 !-----------------------------------------------------------------------
 !--  unfold fitting parameters                                        --
 !-----------------------------------------------------------------------
-      if ( wrsp(need).eq.0 ) goto 2656
+         if ( wrsp(need).eq.0 ) then
+         print*,'19.0~~~~~',mfnpcr,need
+         do ii=1,mfnpcr
+         print*,ii,wrsp(ii)
+         end do
+         goto 2656
+         end if
          condno=wrsp(1)/wrsp(need)
          toler=condin*wrsp(1)
          do 2600 i=1,need
@@ -15699,29 +15724,29 @@
  9360 format (1x,i2,18h partial rogowskis)
  9380 format (1x,i2,14h full rogowski)
  9385 format (1x,i2,17h diamagnetic loop)
- 9390 format (1x,12h bt0(t)   = ,f10.3)
+ 9390 format (1x,' bt0(t)   = ',f10.3)
 !10000 format(/,6x,20('*'),' EFITD 129dx2 output ',20('*'))
 10000 format(/,6x,20('*'),' EFITD',a3,' x ',a3,'  output ',20('*'))
 10020 format (1x,15h  sumif(amp) = ,e10.3,15h sumift(amp) = ,e10.3, &
            15h sumifs(amp) = ,e10.3)
 10480 format (1x,/)
-10500 format(12h shot #   = ,i10,12h time(ms) = ,i10, &
-             12h chi**2   = ,e10.3)
-10520 format(12h betat(%) = ,f10.3,12h betap    = ,f10.3, &
-             12h li       = ,f10.3)
-10540 format(12h vol(cm3) = ,e10.3,12h rout(cm) = ,f10.3, &
-             12h zout(cm) = ,f10.3)
-10560 format(12h elong    = ,f10.3,12h utriang  = ,f10.3, &
-             12h ltriang  = ,f10.3)
-10580 format(12h a(cm)    = ,f10.3,12h lin(cm)  = ,f10.3, &
-             12h lout(cm) = ,f10.3)
-10600 format(12h ltop(cm) = ,f10.3,12h q*       = ,f10.3, &
-             12h rc(cm)   = ,f10.3)
-10610 format(12h zc(cm)   = ,f10.3,12h bt0(t)   = ,f10.3, &
-             12h qout     = ,f10.3)
-10620 format(12h lins(cm) = ,f10.3,12h louts(cm)= ,f10.3, &
-             12h ltops(cm)= ,f10.3)
-10623 format(12h beta*(%) = ,f10.3)
+10500 format(' shot #   = ',i10,' time(ms) = ',i10, &
+             ' chi**2   = ',e10.3)
+10520 format(' betat(%) = ',f10.3,' betap    = ',f10.3, &
+             ' li       = ',f10.3)
+10540 format(' vol(cm3) = ',e10.3,' rout(cm) = ',f10.3, &
+             ' zout(cm) = ',f10.3)
+10560 format(' elong    = ',f10.3,' utriang  = ',f10.3, &
+             ' ltriang  = ',f10.3)
+10580 format(' a(cm)    = ',f10.3,' lin(cm)  = ',f10.3, &
+             ' lout(cm) = ',f10.3)
+10600 format(' ltop(cm) = ',f10.3,' q*       = ',f10.3, &
+             ' rc(cm)   = ',f10.3)
+10610 format(' zc(cm)   = ',f10.3,' bt0(t)   = ',f10.3, &
+             ' qout     = ',f10.3)
+10620 format(' lins(cm) = ',f10.3,' louts(cm)= ',f10.3, &
+             ' ltops(cm)= ',f10.3)
+10623 format(' beta*(%) = ',f10.3)
 10622 format(//, &
       ' betat, betat-btvac, beta-total, beta-btvac2, beta-btv :',/, &
       ' betat0 :',/, &
@@ -17107,7 +17132,7 @@
  6530 format ('rs129129_0',i1,'.ddd')
  6540 format ('rs129129_',i2,'.ddd')
       end
-      subroutine shape(iges,igmax,kerror)
+      subroutine shapesurf(iges,igmax,kerror,rank)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -17157,11 +17182,14 @@
       Character*8 jchisq
       character*1 jchisq2
       logical byring,double,onedone
+      integer rank
       data floorz/-1.366/
       data psitol/1.0e-04/,idiart/1/
       data czero/0.0/
       data double/.false./, onedone/.false./
 !
+      !if (rank==0) print*,'2.0~~~~~shapesurf',rank,nfound ! rls bad nfound=1 caused problem here
+      !if (rank==1) print*,'2.0~~~~~shapesurf',rank,nfound
       ALLOCATE(xsisii(nw),bpres(nw),cpres(nw),dpres(nw), &
          sjtli(nw),sjtlir(nw),sjtliz(nw),rjtli(nw), &
          bpresw(nw),cpresw(nw),dpresw(nw),copyn(nwnh), &
@@ -17511,7 +17539,7 @@
       call bound(psi,nw,nh,nwnh,psiots,xmins,xmaxs,ymins, &
       ymaxs,zeros,rgrid,zgrid,xguess,yguess,jges,limtrs,xlims,ylims, &
       xouts,youts,nfouns,xlmins,npoint,rymins,rymaxs,dpsis, &
-      zxmins,zxmaxs,nerr,ishot,itime,limfag,radbou,kbound)
+      zxmins,zxmaxs,nerr,ishot,itime,limfag,radbou,kbound,rank)
       if (nerr.gt.0) then
         olefs(iges)=-89.0
         orighs(iges)=-89.0
@@ -18535,7 +18563,7 @@
           zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound)
+          limfag,radum,kbound,rank)
       dis2p=(xxtra(1,ixl)-xxtra(npxtra(ixl),ixl))**2
       dis2p=sqrt(dis2p+(yxtra(1,ixl)-yxtra(npxtra(ixl),ixl))**2)
       if (dis2p.lt.0.1*drgrid) then
@@ -18744,7 +18772,7 @@
           zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound)
+          limfag,radum,kbound,rank)
       dis2p=(xxtra(1,ixl)-xxtra(npxtra(ixl),ixl))**2
       dis2p=sqrt(dis2p+(yxtra(1,ixl)-yxtra(npxtra(ixl),ixl))**2)
       if (dis2p.lt.0.1*drgrid)then
@@ -18891,7 +18919,7 @@
           zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound)
+          limfag,radum,kbound,rank)
       zerovs=1.0
       do 66100 i=1,npxtra(ixl)
         zerold=zerovs
@@ -19040,7 +19068,7 @@
           zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound)
+          limfag,radum,kbound,rank)
       zerovs=1.0
       do 67100 i=1,npxtra(ixl)
         zerold=zerovs
@@ -19243,7 +19271,7 @@
           zeros,rgrid,zgrid,rexpmx,zexpmx,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound)
+          limfag,radum,kbound,rank)
 !-------------------------------------------------------------------------
 !-- get engineering slot parameter in cm, SEPNOSE                       --
 !-------------------------------------------------------------------------
@@ -19325,7 +19353,7 @@
           zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound)
+          limfag,radum,kbound,rank)
       if ((i.gt.1).or.(ixyz.ne.-2)) go to 620
       if (xlimxs.le.0.0) go to 620
       do 615 n=1,npxtra(ixl)
@@ -20135,7 +20163,7 @@
   900 continue
       return
       end
-      subroutine steps(ix,ixt,ixout,jtime,kerror)
+      subroutine steps(ix,ixt,ixout,jtime,kerror,rank,iterdb)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -20171,6 +20199,7 @@
       real :: zmaxis_last = 0.0
       data isplit/8/,psitol/1.0e-04/
       save xguess, yguess, xltrac, radbou
+      integer rank,iterdb
 !
       if (ivacum.gt.0) return
       if (ixt.gt.1) go to 100
@@ -20223,7 +20252,9 @@
                  zero,rgrid,zgrid,xguess,yguess,ixt,limitr,xlim,ylim, &
                  xout,yout,nfound,xltrac,npoint,rymin,rymax,dpsi, &
                  zxmin,zxmax,nnerr,ishot,itime, &
-                 limfag,radbou,kbound)
+                 limfag,radbou,kbound,rank,iterdb,ixout) ! rls nfound changed
+       if (rank==0) print*,'4.0~~~',rank,nfound
+       if (rank==1) print*,'4.0~~~',rank,nfound
       if (nnerr.ge.1) then
         kerror=1
         write(nttyo,2100) ishot,itime
@@ -20907,7 +20938,7 @@
  5500 continue
       return
       end
-      subroutine old_new(psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
+      subroutine old_new(psi,nw,nh,nwh,xmin,xmax,ymin,ymax, &
            zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
            ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
            ishot,itime,limfag,radold,kbound)
@@ -21667,9 +21698,9 @@
        ' for start inside):')
  6100 format(/,1x,48htype plot mode (0=none, 1=tektronix, 2=versatec, &
            ,17h 3=qms, -=x ray):)
- 6200 format (/,1x,22hnumber of time slices?)
- 6220 format (/,1x,22htype input file names:)
- 6230 format (1x,1h#)
+ 6200 format (/,1x,'number of time slices?')
+ 6220 format (/,1x,'type input file names:')
+ 6230 format (1x,'#')
  6240 format (a)
  6600 format (/,1x,'good shot list file name ( 0=tty) ?')
  6610 format (/,1x,'command file name ( 0=none) ?')
@@ -22035,9 +22066,9 @@
        ' for start inside):')
  6100 format(/,1x,48htype plot mode (0=none, 1=tektronix, 2=versatec, &
            ,17h 3=qms, -=x ray):)
- 6200 format (/,1x,22hnumber of time slices?)
- 6220 format (/,1x,22htype input file names:)
- 6230 format (1x,1h#)
+ 6200 format (/,1x,'number of time slices?')
+ 6220 format (/,1x,'type input file names:')
+ 6230 format (1x,'#')
  6240 format (a)
  6600 format (/,1x,'good shot list file name ( 0=tty) ?')
  6610 format (/,1x,'command file name ( 0=none) ?')
