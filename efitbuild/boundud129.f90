@@ -1,7 +1,7 @@
       subroutine bound(psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
            zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
            ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
-           ishot,itime,limfag,radold,kbound,rank,iter1,iter2)
+           ishot,itime,limfag,radold,kbound)
 !**********************************************************************
 !**                                                                  **
 !**     main program:  mhd fitting code                              **
@@ -71,7 +71,6 @@
       save dx,dy,area,rmid,mecopy
 !
       save n111
-      integer rank,iter1,iter2
 
 !----------------------------------------------------------------------
 !--           nerr=10000, negative plasma current                    --
@@ -200,7 +199,7 @@
 !--   note: do loop index assumes point 'limitr+1' is the same as    --
 !--   point 'limitr'                                                 --
 !----------------------------------------------------------------------
-      psilx=-1.d10
+      psilx=-1.e10
       do 520 k=1,limitr-1
       xc1=xlim(k)
       yc1=ylim(k)
@@ -230,7 +229,7 @@
       xtry=xtry1
       ytry=ytry1
   520 continue
-      if (psilx.eq.-1.d10) go to 1090
+      if (psilx.eq.-1.e10) go to 1090
       dpsi=min(dpsi,abs(psivl-psilx))
       if (psilx-psivl) 540,540,530
   530 continue
@@ -1537,7 +1536,7 @@
       if((ycrit.lt.y1).or.(ycrit.gt.y2)) go to 200
       xl2=xcrit
       yl2=ycrit
-      psip1=-1.d+35
+      psip1=-1.e+35
       go to 110
   100 call fqlin(x1,y1,x2,y2,f1,f2,f3,f4,xl1,yl1,area,psip1)
   110 call fqlin(x1,y1,x2,y2,f1,f2,f3,f4,xl2,yl2,area,psip2)

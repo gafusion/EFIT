@@ -240,13 +240,13 @@
 !----------------------------------------------------------------------
 !--  get equilibrium                                                 --
 !----------------------------------------------------------------------
-           call fit(ks,kerror,rank)
+           call fit(ks,kerror)
            if (kerror.gt.0.and.k.lt.ktime) go to 500
         endif
 !----------------------------------------------------------------------
 !--  post processing for graphic and text outputs                    --
 !----------------------------------------------------------------------
-        call shapesurf(ks,ktime,kerror,rank)
+        call shapesurf(ks,ktime,kerror)
         if (mtear.ne.0) call tearing(ks,mtear)
         if (kerror.gt.0) go to 500
         if (idebug /= 0) write (6,*) 'Main/PRTOUT ks/kerror = ', ks, kerror
@@ -5918,7 +5918,7 @@
       mxiter_a = saveiter
       call restore_autoknotvals
       call inicur(ks_a)
-      call fit(ks_a,kerror_a,rank)
+      call fit(ks_a,kerror_a)
       if (kerror_a /= 0) then
         kerror = 1
       endif
@@ -6005,7 +6005,7 @@
         call restore_autoknotvals
         ppknt(kadknt) = xknot
         call inicur(ks_a)
-        call fit(ks_a,kerror_a,rank)
+        call fit(ks_a,kerror_a)
         if(kerror_a .gt. 0)goto 500
         ppakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm  &
                   + akgamwt * chigamt + akprewt * chipre
@@ -6035,7 +6035,7 @@
         call restore_autoknotvals
         ffknt(kadknt) = xknot
         call inicur(ks_a)
-        call fit(ks_a,kerror_a,rank)
+        call fit(ks_a,kerror_a)
         if(kerror_a .gt. 0)goto 500
         ffakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm  &
                   + akgamwt * chigamt + akprewt * chipre
@@ -6066,7 +6066,7 @@
         call restore_autoknotvals
         wwknt(kadknt) = xknot
         call inicur(ks_a)
-        call fit(ks_a,kerror_a,rank)
+        call fit(ks_a,kerror_a)
         if(kerror_a .gt. 0)goto 500
         wwakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm &
                   + akgamwt * chigamt + akprewt * chipre
@@ -6098,13 +6098,13 @@
         call restore_autoknotvals
         eeknt(kadknt) = xknot
         call inicur(ks_a)
-        call fit(ks_a,kerror_a,rank)
+        call fit(ks_a,kerror_a)
         if(kerror_a .gt. 0)goto 500
         eeakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm &
                   + akgamwt * chigamt + akprewt * chipre
 500      return
         end
-      subroutine fit(jtime,kerror,rank)
+      subroutine fit(jtime,kerror)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -6130,7 +6130,6 @@
       include 'basiscomdu.f90'
       data nzero/0/
       save nzero
-      integer rank
 !-----------------------------------------------------------------------
 !--  inner equilibrium do loop and outer current profile parameters   --
 !--  do loop                                                          --
@@ -6204,8 +6203,8 @@
             jerror(jtime) = 1
             return
           endif
-          call pflux(ix,ixnn,nitera,jtime,i,in)
-          call steps(ixnn,nitera,ix,jtime,kerror,rank,i,in)
+          call pflux(ix,ixnn,nitera,jtime)
+          call steps(ixnn,nitera,ix,jtime,kerror)
           if (kerror /= 0) then
             jerror(jtime) = 1
             return
@@ -13703,7 +13702,7 @@
  8000 format (/,'  ** Problem in Decomposition **',i10)
       end
 
-      subroutine pflux(niter,nnin,ntotal,jtime,iter1,iter2)
+      subroutine pflux(niter,nnin,ntotal,jtime)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -15223,7 +15222,7 @@
         as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
         wacoil,hacoil
 !
-      !print*,'~~~rank, chi2',rank,tsaisq(it) ! Debug: show chi**2 for all ranks
+      print*,'~~~rank, chi2',rank,tsaisq(it) ! Debug: show chi**2 for all ranks
 
       if (itek.gt.0) go to 100
 !vas      write (nttyo,10000)
@@ -17119,7 +17118,7 @@
  6530 format ('rs129129_0',i1,'.ddd')
  6540 format ('rs129129_',i2,'.ddd')
       end
-      subroutine shapesurf(iges,igmax,kerror,rank)
+      subroutine shapesurf(iges,igmax,kerror)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -17169,7 +17168,6 @@
       Character*8 jchisq
       character*1 jchisq2
       logical byring,double,onedone
-      integer rank
       data floorz/-1.366/
       data psitol/1.0e-04/,idiart/1/
       data czero/0.0/
@@ -17524,7 +17522,7 @@
       call bound(psi,nw,nh,nwnh,psiots,xmins,xmaxs,ymins, &
       ymaxs,zeros,rgrid,zgrid,xguess,yguess,jges,limtrs,xlims,ylims, &
       xouts,youts,nfouns,xlmins,npoint,rymins,rymaxs,dpsis, &
-      zxmins,zxmaxs,nerr,ishot,itime,limfag,radbou,kbound,rank)
+      zxmins,zxmaxs,nerr,ishot,itime,limfag,radbou,kbound)
       if (nerr.gt.0) then
         olefs(iges)=-89.0
         orighs(iges)=-89.0
@@ -18548,7 +18546,7 @@
           zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound,rank)
+          limfag,radum,kbound)
       dis2p=(xxtra(1,ixl)-xxtra(npxtra(ixl),ixl))**2
       dis2p=sqrt(dis2p+(yxtra(1,ixl)-yxtra(npxtra(ixl),ixl))**2)
       if (dis2p.lt.0.1*drgrid) then
@@ -18757,7 +18755,7 @@
           zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound,rank)
+          limfag,radum,kbound)
       dis2p=(xxtra(1,ixl)-xxtra(npxtra(ixl),ixl))**2
       dis2p=sqrt(dis2p+(yxtra(1,ixl)-yxtra(npxtra(ixl),ixl))**2)
       if (dis2p.lt.0.1*drgrid)then
@@ -18904,7 +18902,7 @@
           zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound,rank)
+          limfag,radum,kbound)
       zerovs=1.0
       do 66100 i=1,npxtra(ixl)
         zerold=zerovs
@@ -19053,7 +19051,7 @@
           zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound,rank)
+          limfag,radum,kbound)
       zerovs=1.0
       do 67100 i=1,npxtra(ixl)
         zerold=zerovs
@@ -19256,7 +19254,7 @@
           zeros,rgrid,zgrid,rexpmx,zexpmx,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound,rank)
+          limfag,radum,kbound)
 !-------------------------------------------------------------------------
 !-- get engineering slot parameter in cm, SEPNOSE                       --
 !-------------------------------------------------------------------------
@@ -19338,7 +19336,7 @@
           zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound,rank)
+          limfag,radum,kbound)
       if ((i.gt.1).or.(ixyz.ne.-2)) go to 620
       if (xlimxs.le.0.0) go to 620
       do 615 n=1,npxtra(ixl)
@@ -20148,7 +20146,7 @@
   900 continue
       return
       end
-      subroutine steps(ix,ixt,ixout,jtime,kerror,rank,iterdb)
+      subroutine steps(ix,ixt,ixout,jtime,kerror)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -20184,7 +20182,6 @@
       real :: zmaxis_last = 0.0
       data isplit/8/,psitol/1.0e-04/
       save xguess, yguess, xltrac, radbou
-      integer rank,iterdb
 !
       if (ivacum.gt.0) return
       if (ixt.gt.1) go to 100
@@ -20237,7 +20234,7 @@
                  zero,rgrid,zgrid,xguess,yguess,ixt,limitr,xlim,ylim, &
                  xout,yout,nfound,xltrac,npoint,rymin,rymax,dpsi, &
                  zxmin,zxmax,nnerr,ishot,itime, &
-                 limfag,radbou,kbound,rank,iterdb,ixout)
+                 limfag,radbou,kbound)
       if (nnerr.ge.1) then
         kerror=1
         write(nttyo,2100) ishot,itime

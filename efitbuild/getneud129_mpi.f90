@@ -95,7 +95,6 @@
       if (ier.ne.129) go to 1200
 ! MPI >>>
       if (rank == 0) then
-        print*,'---2.0---',ier
         write (nttyo,8000) ier
       endif
 #if defined(USEMPI)

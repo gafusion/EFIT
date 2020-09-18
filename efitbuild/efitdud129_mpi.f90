@@ -1779,7 +1779,6 @@
       if (ncrsp .le. 0) then
       call sdecm(alipc,npcur3,nj,nownow,xrsp,npcur3,nnn,wlipc,work,ier)
       if (ier.ne.129) go to 1560
-      print*,'---3.0---',ier
       write (nttyo,8000) ier
 ! MPI >>>
 #if defined(USEMPI)
@@ -1812,7 +1811,6 @@
           brsp(nfcoil+i)=xrsp(i)
         enddo
         if (info.ne.0) then
-        print*,'---4.0---',info
         write (nttyo,8000) info
 ! MPI >>>
 #if defined(USEMPI)
@@ -2245,7 +2243,6 @@
       nnn=1
       call sdecm(alipc,npcur3,nj,kwcurn,xrsp,npcur3,nnn,wlipc,work,ier)
       if (ier.ne.129) go to 5560
-      print*,'---5.0---',ier
       write (nttyo,8000) ier
 ! MPI >>>
 #if defined(USEMPI)
@@ -4875,7 +4872,6 @@
 !-----------------------------------------------------------------------
       call sdecm(abry,msbdry,nj,neqn,ut,msbdry,nj,wbry,work,ier)
       if (ier.ne.129) go to 2880
-      print*,'---6.0---',ier
       write (nttyo,8000) ier
 ! MPI >>>
 #if defined(USEMPI)
@@ -8760,7 +8756,6 @@
       call sdecm(arsp,ndata,ntedat,nptef,bdata,ntedat,n111,wrsp, &
                  work,ier)
       if (ier.ne.129) go to 1200
-      print*,'---7.0---',ier
       write (nttyo,8000) ier
 ! MPI >>>
 #if defined(USEMPI)
@@ -8909,7 +8904,6 @@
       nnn=1
       call sdecm(arsp,ndata,need,nptionf,bdata,need,nnn,wrsp,work,ier)
       if (ier.ne.129) go to 1200
-      print*,'---8.0---',ier
       write (nttyo,8000) ier
 ! MPI >>>
 #if defined(USEMPI)
@@ -11981,7 +11975,6 @@
          call sdecm(arsp,nrsmat,nj,need,brsp,nrsmat, &
                       nnn,wrsp,work,ier)
          if (ier.ne.129) go to 2500
-         print*,'---9.0---',ier
          write (nttyo,8000) ier
 ! MPI >>>
 #if defined(USEMPI)
@@ -12014,7 +12007,6 @@
 	call dgglse(nj,need,ncrsp,arsp,nrsmat,crsp,4*(npcurn-2)+6+ &
                    npcurn*npcurn,b,z,brsp,work,nrsma2,info,condno)
 	if (info.eq.0) goto 2656
-	print*,'---10.0---',ier
 	write (nttyo,8000) info
 ! MPI >>>
 #if defined(USEMPI)
