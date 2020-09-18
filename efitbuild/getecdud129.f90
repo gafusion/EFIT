@@ -474,7 +474,6 @@
       enddo
       oldccomp=.false.
       if (oldcomp) oldccomp=.true.
-      print*,'19.0~~~',rank,oldccomp,oldcomp
 !---------------------------------------------------------------------
 !--  correction to magnetic probes due to I Coil                    --
 !---------------------------------------------------------------------
@@ -2897,9 +2896,8 @@
         ! TIMING <<<
         integer :: total_bytes
         
-        oldccomp=.false. ! rls this was missing for mpi, copyied from getpts
-        if (oldcomp) oldccomp=.true. ! rls this was missing for mpi, copyied from getpts
-        print*,'19.1~~~',rank,oldccomp,oldcomp
+        oldccomp=.false.
+        if (oldcomp) oldccomp=.true.
 
         zwork(:,:) = 0.0
         allocate(tmp1(nproc),tmp2(nproc))
@@ -3007,7 +3005,6 @@
         endif
         
         ! ZWORK
-        if (rank==1) print*,'16.2~~~',rank,expmpi(1,37),expmpi(2,37)
         if (rank == 0) then
           ! Pack ZWORK array data
           do i=1,ktime_all
@@ -3099,7 +3096,6 @@
             enddo
           enddo
         endif
-        if (rank==1) print*,'16.3~~~',rank,expmpi(1,37),expmpi(2,37) ! expmpi is good here.
         
         deallocate(tmp1,tmp2)
         

@@ -1,7 +1,7 @@
       subroutine bound(psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
            zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
            ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
-           ishot,itime,limfag,radold,kbound,rank,iterdb,ixout)
+           ishot,itime,limfag,radold,kbound,rank,iter1,iter2)
 !**********************************************************************
 !**                                                                  **
 !**     main program:  mhd fitting code                              **
@@ -71,8 +71,7 @@
       save dx,dy,area,rmid,mecopy
 !
       save n111
-      integer rank,iterdb,ixout,rankin
-      rankin=0
+      integer rank,iter1,iter2
 
 !----------------------------------------------------------------------
 !--           nerr=10000, negative plasma current                    --
@@ -115,7 +114,6 @@
 !--   find starting value of psi                                     --
 !----------------------------------------------------------------------
    20 loop=loop+1
-      !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'0020~~~',rank,ncontr,loop
       i=1+(rad-x(1))/dx
       if(rad-x(i).lt.0.0)i=i-1
       j=1+(yctr-y(1))/(dy-0.000001)
@@ -193,14 +191,8 @@
 !--   check for limiter in cell                                      --
 !----------------------------------------------------------------------
   100 zsum=zero(kk)+zero(kk+1)+zero(kk+nh)+zero(kk+nh+1)
-      if(zsum.eq.0.0) then
-        !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'1go to 1005~~~',rank,ncontr,loop
-        go to 1005
-      end if
-      if (abs(zsum-4.0).lt.1.e-03) then
-        !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'4go to 0540~~~',rank,ncontr,loop
-        go to 540
-      end if
+      if(zsum.eq.0.0) go to 1005
+      if (abs(zsum-4.0).lt.1.e-03) go to 540
 !----------------------------------------------------------------------
 !--   from one to three corners of cell are inside limiter.  get max --
 !--   psi on line segment of limiter in cell and compare this max    --
@@ -238,42 +230,13 @@
       xtry=xtry1
       ytry=ytry1
   520 continue
-      if (psilx.eq.-1.d10) then
-        !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'2go to 1090~~~',rank,ncontr,loop
-        go to 1090
-      end if
+      if (psilx.eq.-1.d10) go to 1090
       dpsi=min(dpsi,abs(psivl-psilx))
-      !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'5go to 0540~~~',rank,ncontr,loop
-      !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'5go to 0540~~~',psilx,psivl,psilx-psivl
-      if (rank==0 .and. iterdb==26 .and. ixout==26 .and. loop==42 .and. ncontr==1) &
-        write(*,'(a3,1x,i4,i4,i4,3(1pe24.16))'),'~~~',rank,ncontr,loop,psilx,psivl,psilx-psivl
-      if (rank==1 .and. iterdb==26 .and. ixout==26 .and. loop==42 .and. ncontr==1) &
-        write(*,'(a3,1x,i4,i4,i4,3(1pe24.16))'),'~~~',rank,ncontr,loop,psilx,psivl,psilx-psivl
-      if (rank==0 .and. iterdb==26 .and. ixout==26 .and. loop==42 .and. ncontr==1) &
-        print*,'9.0~~~',psi(1)
-      if (rank==1 .and. iterdb==26 .and. ixout==26 .and. loop==42 .and. ncontr==1) &
-        print*,'9.0~~~',psi(1)
-
-      ! THIS IS THE PROBLEM with serial vs parallel.
-      ! Parallel version psilx-psivl never goes <0, and then goto 540, etc.
-      ! It keeps going to 530, then 1005. So ncontr never increments past 1.
-      ! Serial soln switches to 540 then to 570 to increment.
-      ! Why? psilx & psivl only differ ~roundoff. Serial eventually goes <0.
-      ! Parallel never does, it asymptotically goes to just above 0.
-      ! Parallel ncontr stays 1, which is copied to nfound, which later (efitdud129.f90, line 433)
-      ! is used as an index to an array that is zero,
-      ! and it's used in the denom, so divide by zero crash.
       if (psilx-psivl) 540,540,530
   530 continue
-      !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'go to 530~~~'
       call zlim(zerol,n111,n111,limitr,xlim,ylim,xt,yt,limfag)
-      !if (rank==rankin .and. zerol.le.0.01) print*,'0530~~~~~new cell index and try again exit'
-      if (zerol.le.0.01) then
-        !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'3go to 1005~~~',rank,ncontr,loop
-        go to 1005
-      endif
+      if (zerol.le.0.01) go to 1005
   540 continue
-      !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'go to 540~~~'
   545 call extrap(f1,f2,f3,f4,x1,y1,x2,y2,xt,yt,xt1,yt1,xt2,yt2, &
                      psivl,area,dx,dy)
 !----------------------------------------------------------------------
@@ -287,10 +250,7 @@
       go to 570
   560 yt=yt2
       xt=xt2
-  570 ncontr=ncontr+1 ! rls nfound changed
-      !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'0025~~~',rank,ncontr,loop
-      !if (rank==rankin) print*,'0570~~~~~contr pt found'
-      !if (rank==rankin) print*,'0570~~~~~',rank,ncontr
+  570 ncontr=ncontr+1
       if (ncontr.gt.npoint) go to 1090
       xcontr(ncontr)=xt
       ycontr(ncontr)=yt
@@ -319,9 +279,6 @@
       kk=(i-1)*nh+j
       if (kk.eq.kstrt) go to 1040
       dis2p=sqrt((xcontr(1)-xt)**2+(ycontr(1)-yt)**2)
-      !if (rank==rankin) print*,'0601~~~~~new cell index and try again'
-      !if (rank==rankin) print*,'0601~~~~~',rank,ncontr,dis2p.lt.0.1*dx
-      !if (rank==rankin .and. (dis2p.lt.0.1*dx).and.(ncontr.gt.5)) print*,'0601~~~~~new cell index and try again exit'
       if((dis2p.lt.0.1*dx).and.(ncontr.gt.5))go to 1040
       go to 30
 !----------------------------------------------------------------------
@@ -335,16 +292,12 @@
       if(loop.gt.nloop)go to 1080
       rout=rad
       rad=(rin+rout)*0.5
-      !if (rank==rankin) print*,'1005~~~~~dec rad and try again, goto 20'
-      !if (rank==rankin) print*,'1005~~~~~',rank,ncontr,psivl,rad
       go to 20
 !----------------------------------------------------------------------
 !--   check for convergence of boundary                              --
 !----------------------------------------------------------------------
  1040 err=abs((psivl-psib0)/psivl)
 !
-        !if (rank==rankin) print*,'1040~~~~~converged?'
-        !if (rank==rankin) print*,'1040~~~~~',rank,ncontr,psivl,psib0
         if(ix.ge.0)go to 1045
         if (ix.lt.-2) then
           dpsi=1.e-06
@@ -367,14 +320,11 @@
       rad=(rin+rout)*0.5
       go to 20
  1080 radold=rad
-      !if (rank==rankin) print*,'1080~~~~~converged or maxloop reached!'
-      !if (rank==rankin) print*,'1080~~~~~',rank,ncontr,psivl
       psib0=psivl
       if(abs(ycontr(1)-ycontr(ncontr)).gt.0.5*dy)go to 1090
       if(abs(xcontr(1)-xcontr(ncontr)).gt.0.5*dx)go to 1090
       go to 2000
  1090 nerr=3
-      !if (rank==rankin) print*,'1090~~~~~',rank,ncontr
  2000 continue
       if (nosign.eq.1) then
         do 30020 i=1,nwh
@@ -382,7 +332,6 @@
 30020   continue
         psivl=-psivl
       endif
-      !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'0030~~~',rank,ncontr,loop
       return
       end
       subroutine cellb(xc1,yc1,xc2,yc2,x1,y1,x2,y2,ifail)
