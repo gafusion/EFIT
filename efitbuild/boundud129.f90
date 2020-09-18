@@ -71,7 +71,6 @@
       save dx,dy,area,rmid,mecopy
 !
       save n111
-
 !----------------------------------------------------------------------
 !--           nerr=10000, negative plasma current                    --
 !----------------------------------------------------------------------
@@ -86,7 +85,7 @@
 !--          BBrown's version of BOUND                                 --
 !------------------------------------------------------------------------
       if (ix.gt.0 .and. kbound.ne.0) then
-      call old_new(psi,nw,nh,nwh,xmin,xmax,ymin,ymax, &
+      call old_new    (psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
            zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
            ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
            ishot,itime,limfag,radold,kbound)

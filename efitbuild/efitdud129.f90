@@ -217,7 +217,6 @@
       call mpi_ABORT(MPI_COMM_WORLD, ierr)
     endif
 #endif
-
 ! MPI <<<
 !----------------------------------------------------------------------
 !-- start simulation for KTIME timeslices                            --
@@ -13116,41 +13115,41 @@
 !--  unfold fitting parameters                                        --
 !-----------------------------------------------------------------------
          if ( wrsp(need).eq.0 ) then
-         do ii=1,mfnpcr
-         print*,ii,wrsp(ii)
-         end do
-         goto 2656
+           do ii=1,mfnpcr
+             print*,ii,wrsp(ii)
+           end do
+           goto 2656
          end if
          condno=wrsp(1)/wrsp(need)
          toler=condin*wrsp(1)
          do 2600 i=1,need
            t=0.0
-          if (wrsp(i).gt.toler) t=brsp(i)/wrsp(i)
-          work(i)=t
- 2600   continue
-        do 2650 i=1,need
-          brsp(i)=0.0
-          do 2650 j=1,need
-            brsp(i)=brsp(i)+arsp(i,j)*work(j)
- 2650   continue
+           if (wrsp(i).gt.toler) t=brsp(i)/wrsp(i)
+           work(i)=t
+ 2600    continue
+         do 2650 i=1,need
+           brsp(i)=0.0
+           do 2650 j=1,need
+             brsp(i)=brsp(i)+arsp(i,j)*work(j)
+ 2650    continue
       else
-	do 2655 j=1,nrsmat
-	    b(j) = brsp(j)
- 2655	continue
-	call dgglse(nj,need,ncrsp,arsp,nrsmat,crsp,4*(npcurn-2)+6+ &
+         do 2655 j=1,nrsmat
+           b(j) = brsp(j)
+         2655	continue
+         call dgglse(nj,need,ncrsp,arsp,nrsmat,crsp,4*(npcurn-2)+6+ &
                    npcurn*npcurn,b,z,brsp,work,nrsma2,info,condno)
-	if (info.eq.0) goto 2657
- 2656   continue
-	write (nttyo,8000) info
+         if (info.eq.0) goto 2657
+         2656   continue
+         write (nttyo,8000) info
 ! MPI >>>
 #if defined(USEMPI)
-        call mpi_stop
-    stop
+         call mpi_stop
+         stop
 #else
-	stop
+         stop
 #endif
 ! MPI <<<
- 2657   continue
+ 2657    continue
       endif
 !----------------------------------------------------------------------
 !--  rescale results if A is preconditioned                          --
@@ -13805,7 +13804,6 @@
 !------------------------------------------------------------------------------
       go to 6000
  2000 continue
-
 !-----------------------------------------------------------------------------
 !-- Buneman's method of obtaining psi at the inner grid points              --
 !-- only plasma contribution                                                --
@@ -13942,7 +13940,6 @@
           psi(k2)=val
 3100    continue
       endif ! end symmetrize loop
-
 !------------------------------------------------------------------------
 !--  optional damping out the m=1 vertical eigen mode                  --
 !------------------------------------------------------------------------
@@ -14002,7 +13999,6 @@
         psi(kk)=psi(kk)+gfbsum(kk)*tvfbrt(ntotal)
 42800 continue
 43000 continue
-
 !--------------------------------------------------------------------
 !--  optional vertical feedback control                            --
 !--    psi(kct1)  !psi at lower point                              --
@@ -14080,7 +14076,6 @@
         endif
  3600   continue
  6000 continue
-
 !----------------------------------------------------------------------------
 !-- rigid vertical shift correction ?                                      --
 !----------------------------------------------------------------------------
@@ -20918,7 +20913,7 @@
  5500 continue
       return
       end
-      subroutine old_new(psi,nw,nh,nwh,xmin,xmax,ymin,ymax, &
+      subroutine old_new(psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
            zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
            ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
            ishot,itime,limfag,radold,kbound)
