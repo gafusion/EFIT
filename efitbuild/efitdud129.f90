@@ -65,8 +65,6 @@
      character cmdfile*15, shotfile*15, snapext*82
      real*8 starttime, deltatime
      character(80),dimension(ntime) :: inpfile
-     logical dbsleep
-     integer isleep
      namelist/optin/mode,cmdfile,shotfile,shot,starttime,deltatime,steps,snapext,inpfile
 ! OPT_INPUT <<<
      kerror = 0
@@ -220,25 +218,23 @@
     endif
 #endif
 
-  ! Sleep and wait for debugger, if desired. Must be after basic namelist read
-  !dbsleep=.true.
-  !do isleep = 1,100
-  !  if (.not. dbsleep) exit
-  !  print *, 'Sleeping... in gdb "set var dbsleep=.false." to continue'
-  !  call sleep(1) ! seconds
-  !end do
-
 ! MPI <<<
 !----------------------------------------------------------------------
 !-- start simulation for KTIME timeslices                            --
 !----------------------------------------------------------------------
       k=0
   100 k=k+1
-        ks=k
+        ks=k ! rls ks=1,2,... in serial, but 1,1,... in parallel
+        print*,'12.0.1~~~',rank,ks
 !----------------------------------------------------------------------
 !--  set up data                                                     --
 !----------------------------------------------------------------------
+      !do kk=1,nwnh ! rls, 20.2
+      !  psi(kk)=0.0
+      !end do
+        print*,'9.0.1~~~',rank,k,psi(3351)
         call data_input(ks,iconvr,ktime,mtear)
+        print*,'9.0.2~~~',rank,k,psi(3351)
         if (iconvr.lt.0) go to 500
         if (kautoknt .eq. 1) then
            call autoknot(ks,iconvr,ktime,mtear,kerror)
@@ -247,23 +243,29 @@
 !--  initialize current profile                                      --
 !----------------------------------------------------------------------
            call inicur(ks)
+        print*,'9.0.3~~~',rank,k,psi(3351)
 !----------------------------------------------------------------------
 !--  get equilibrium                                                 --
 !----------------------------------------------------------------------
           !if (rank==0) print*,'1.0~~~~~',rank,nfound
           !if (rank==1) print*,'1.0~~~~~',rank,nfound
+          if (rank==1 .or. rank==0) print*,'0.0~~~',rank,psi(1)
            call fit(ks,kerror,rank) ! rls nfound good for rank0=175, rank1=1 (should be 181)
           !if (rank==0) print*,'1.1~~~~~',rank,nfound
-          if (rank==1) print*,'1.1~~~~~',rank,nfound
+          !if (rank==1) print*,'1.1~~~~~',rank,nfound
            if (kerror.gt.0.and.k.lt.ktime) go to 500
         endif
+        print*,'9.0.4~~~',rank,k,psi(3351)
 !----------------------------------------------------------------------
 !--  post processing for graphic and text outputs                    --
 !----------------------------------------------------------------------
         call shapesurf(ks,ktime,kerror,rank)
+        print*,'9.0.5~~~',rank,k,kerror
         if (mtear.ne.0) call tearing(ks,mtear)
+        print*,'9.0.6~~~',rank,k,kerror
         if (kerror.gt.0) go to 500
         if (idebug /= 0) write (6,*) 'Main/PRTOUT ks/kerror = ', ks, kerror
+        print*,'9.0.7~~~',rank,k,kerror
         call prtout(ks)
         if ((kwaitmse.ne.0).and.(kmtark.gt.0)) call fixstark(-ks,kerror)
 !----------------------------------------------------------------------
@@ -285,9 +287,11 @@
          endif
       endif
   500 if (k.lt.ktime) then
+        print*,'13.0.1~~~',rank,k,ks,ktime
         kerrot(ks)=kerror 
         goto 100
       endif
+      print*,'14.0.1~~~',rank,k,ks,ktime
       if (kwake.ne.0) go to 20
       call wmeasure(ktime,1,ktime,2)
       call wtime(ktime)
@@ -301,7 +305,10 @@
       if (rank == 0) then
         print *, 'FORTRAN STOP'
       endif
-      call mpi_ABORT(MPI_COMM_WORLD, kerror, ierr)
+      !call mpi_ABORT(MPI_COMM_WORLD, kerror, ierr) ! rls, abort stops
+      ! all processes (even if their not done) and does not allow
+      !cleanup (like finishing stdout)
+      call MPI_FINALIZE(ierr)
 #else
       stop
 #endif
@@ -1474,6 +1481,7 @@
       if (icinit.gt.0) then
         if ((iconvr.ne.3).and.(iter.le.1)) go to 3100
       endif
+      print*,'5.0.0~~~',icurrt !pcurrt(3351), goes to 1100
       go to (100,1100,2100,3100,5100) icurrt
   100 continue
 !------------------------------------------------------------------------------
@@ -1508,6 +1516,7 @@
       return
 !
  1100 continue
+      print*,'5.0.1~~~'
 !----------------------------------------------------------------------
 !--  polynomial current profile                                      --
 !----------------------------------------------------------------------
@@ -1836,6 +1845,7 @@
       endif
 !
  1800 continue
+      print*,'5.0.2~~~',rank,pcurrt(3351),icutfp
       tcurrt=0.0
       tcurrp=0.0
       tcurrtpp=0.0
@@ -1844,7 +1854,7 @@
         kk=(i-1)*nh+j
         pcurrt(kk)=0.0
         pcurrtpp(kk)=pcurrt(kk)
-        if (icutfp.eq.0) then
+        if (icutfp.eq.0) then ! rls goes here
           if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) go to 2000
           pcurrt(kk)=rgrid(i)*ppcurr(xpsi(kk),kppcur)
           pcurrtpp(kk)=pcurrt(kk)
@@ -1852,6 +1862,8 @@
                      +fpcurr(xpsi(kk),kffcur)/rgrid(i)
           pcurrt(kk)=pcurrt(kk)*www(kk)
           pcurrtpp(kk)=pcurrtpp(kk)*www(kk)
+          ! rls different: xpsi(kk), which makes ppcurr(xpsi(kk),kppcur),fpcurr(xpsi(kk),kffcur) different too
+          !if (i==52 .and. j==36) print*,'5.0.3~~~',rank,kk,pcurrt(kk),rgrid(i),xpsi(kk),kppcur,ppcurr(xpsi(kk),kppcur),fpcurr(xpsi(kk),kffcur),www(kk)
         else
           if ((xpsi(kk).ge.0.0).and.(xpsi(kk).le.1.0)) &
             pcurrt(kk)=rgrid(i)*ppcurr(xpsi(kk),kppcur)
@@ -1865,6 +1877,7 @@
         tcurrt=tcurrt+pcurrt(kk)
         tcurrtpp=tcurrtpp+pcurrtpp(kk)
  2000 continue
+      print*,'5.0.4~~~',rank,pcurrt(3351)
       tcurrtffp=tcurrt-tcurrtpp
       if ((nitett.le.1).and.(icinit.lt.0)) then
         cratio=1.0
@@ -2699,7 +2712,7 @@
 !---------------------------------------------------------------------
 !--  Restore fitting weights for time slices > 1                    --
 !---------------------------------------------------------------------
-      fwtdlc=swtdlc
+      fwtdlc=swtdlc ! rls todo is is not initialized for mpi???
       fwtcur=swtcur
       if (fwtqa.ne.0.0) fwtqa=1.
       if (fwtbp.ne.0.0) fwtbp=1.
@@ -3961,9 +3974,11 @@
         brspece(jtime,i)=ecefit(i)
   250 continue
       brspecebz(jtime)=ecebzfit
+      print*,'17.0~~~',rank,expmpi(1,37),expmpi(2,37)
       do 260 i=1,magpri
         expmpi(jtime,i)=expmp2(i)
   260 continue
+      print*,'17.1~~~',rank,expmpi(1,37),expmpi(2,37)
 !------------------------------------------------------------------------
 !--  New E-coil connections                   LLao, 95/07/11           --
 !------------------------------------------------------------------------
@@ -4092,12 +4107,15 @@
         expmpi(j,i)=expmpi(j,i)-signn1(i)*curtn1(j)
 11368 continue
       close(unit=60)
+      print*,'17.2~~~',rank,expmpi(1,37),expmpi(2,37)
       endif
       endif
 !---------------------------------------------------------------------
 !--  correction to 322 and 67 degree probes due to C coil           --
 !---------------------------------------------------------------------
+      print*,'17.3.9~~~',rank,nccoil,oldccomp
       if (nccoil.eq.1.and.oldccomp) then
+      print*,'17.3.0~~~',rank,expmpi(1,37),expmpi(2,37)
       open(unit=60,file=input_dir(1:lindir)//'ccoil.ddd', &
            status='old'                                )
       j=jtime
@@ -4110,6 +4128,9 @@
         expmpi(j,i)=expmpi(j,i)-signc79*curc79(j)
       enddo
       close(unit=60)
+      print*,'17.3.1~~~',rank,expmpi(1,37),expmpi(2,37)
+      print*,'17.3.2~~~',rank,signc139,curc139(1),curc139(2)
+      print*,'17.3.3~~~',rank,signc79,curc79(1),curc79(2)
       endif
 !
       if (ifitvs.gt.0) then
@@ -4588,6 +4609,7 @@
         erho=sqrt((rgrid(i)-relip)**2+((zgrid(j)-zelip)/eelip)**2)
         xpsi(kk)=(erho/aelip)**2
   710 continue
+      print*,'8.0.0~~~',rank,xpsi(3351)
       else
       endif
       do 720 m=1,nsilop
@@ -4718,6 +4740,7 @@
         do i=1,nh
           zgrids(i)=zgrid(i)/saaa
         enddo
+        !print*,'9.0.0~~~',rank,psi(3351)
         do i=1,nw
           xrm2=(rgrids(i)-srm)*(rgrids(i)+srm)
           xrm2=xrm2*xrm2
@@ -4728,6 +4751,7 @@
                     +sbetaw/24.*xrm2*xrvt
           enddo
         enddo
+        !print*,'9.0.1~~~',rank,psi(3351)
         siwant=1.0
         drgrids=rgrids(2)-rgrids(1)
         dzgrids=zgrids(2)-zgrids(1)
@@ -6221,7 +6245,10 @@
             jerror(jtime) = 1
             return
           endif
-          call pflux(ix,ixnn,nitera,jtime)
+          if (rank==1 .or. rank==0) print*,'1.0~~~',rank,i,in,psi(1)
+          call pflux(ix,ixnn,nitera,jtime,i,in)
+          if (rank==1 .or. rank==0) print*,'2.0~~~',rank,i,in,psi(1)
+          !if (rank==1) stop
           call steps(ixnn,nitera,ix,jtime,kerror,rank,i,in) ! rls nfound changed
           if (kerror /= 0) then
             jerror(jtime) = 1
@@ -10783,6 +10810,7 @@
 !--       -12 parabolic and elliptical first slice and previous      --
 !--           slice subsequently                                     --
 !----------------------------------------------------------------------
+      print*,'15.0.1~~~',rank,ks,icinit !icinit==2
       if (ks.eq.1) isicinit=icinit
       if (isicinit.lt.0)   then
         if (ks.gt.1) then
@@ -10824,6 +10852,7 @@
 !
  1100 continue
       if (icinit.gt.0) go to 1200
+      print*,'8.0.1~~~',rank,xpsi(3351)
       open(unit=nsave,form='unformatted',file='esave.dat', &
            status='old',err=1200)
       read (nsave) mw,mh
@@ -10835,7 +10864,10 @@
       return
  1200 continue
       if (ks.eq.1)  zelips=zelip
+      print*,'8.0.2~~~',rank,ks,xpsi(3351),zelip,zelips
       if (zelip.gt.1.e5.or.zelips.gt.1.e5) then
+        print*,'8.0.2.1~~~',rank,expmpi(ks,37),expmpi(ks,43),expmpi(ks,57),expmpi(ks,53) ! rls expmpi is diff
+        print*,'8.0.2.2~~~',rank,silopt(ks,27),silopt(ks,37),silopt(ks,2),silopt(ks,11) ! rls silopt is same
         zelip=1.447310*(expmpi(ks,37)-expmpi(ks,43)) &
              +0.692055*(expmpi(ks,57)-expmpi(ks,53)) &
              +0.728045*(silopt(ks,27)-silopt(ks,37)) &
@@ -10844,6 +10876,7 @@
         zbound=zelip
         eelip=1.5
       endif
+      print*,'8.0.3~~~',rank,xpsi(3351),zelip,zelips
 !----------------------------------------------------------------
 !-- set zelip=0.0 if bad signals              96/06/24         --
 !----------------------------------------------------------------
@@ -10856,12 +10889,15 @@
       if (abs(fwtsi(2)).le.1.0e-30)  zelip=0.0
       if (abs(fwtsi(11)).le.1.0e-30)  zelip=0.0
 !
+     print*,'8.0.7~~~',rank,xpsi(3351)
+     print*,'8.0.8~~~',rank,relip,zelip,eelip,aelip,rgrid(52),zgrid(36)
       do 1300 i=1,nw
       do 1300 j=1,nh
         kk=(i-1)*nh+j
         erho=sqrt((rgrid(i)-relip)**2+((zgrid(j)-zelip)/eelip)**2)
         xpsi(kk)=(erho/aelip)**2
  1300 continue
+      print*,'8.0.9~~~',rank,xpsi(3351)
       return
       end
       subroutine matrix(jtime,iter,ichisq,nniter,kerror)
@@ -13721,7 +13757,7 @@
  8000 format (/,'  ** Problem in Decomposition **',i10)
       end
 
-      subroutine pflux(niter,nnin,ntotal,jtime)
+      subroutine pflux(niter,nnin,ntotal,jtime,it1,it2)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -13760,6 +13796,7 @@
 !
       ALLOCATE(psikkk(nwnh),gfbsum(nwnh))
 !
+      print*,'5.0~~~',ibunmn
       vfeed=(isetfb.ne.0).and.(init.ne.0).and.(niter.gt.2.or.nnin.gt.2)
       if (ivesel.gt.10) return
 !----------------------------------------------------------------------------
@@ -13768,8 +13805,14 @@
       do 2100 kk=1,nwnh
         psiold(kk)=psi(kk)
         psipold(kk)=psipla(kk)
+        !psiold(kk)=0 ! rls not needed, mpi version required?
+        !psipold(kk)=0
+        !psi(kk) = 0 !doesnt matter
+        !if (rank==1) print*,kk,psi(kk)
  2100 continue
+      print*,'20.1~~~',rank,psi(3351),psiold(3351) ! rls bug fix 1
 !
+      !print*,'6.0~~~',ibunmn ! rls goes to 2000
       if (ibunmn.eq.1) go to 2000
       if ((ibunmn.eq.2).and.(errorm.gt.errcut)) go to 2000
       if (ibunmn.eq.3) go to 2000
@@ -13824,6 +13867,8 @@
 !------------------------------------------------------------------------------
       go to 6000
  2000 continue
+      print*,'7.0~~~',rank,psi(1)
+
 !-----------------------------------------------------------------------------
 !-- Buneman's method of obtaining psi at the inner grid points              --
 !-- only plasma contribution                                                --
@@ -13841,12 +13886,12 @@
 !--  optional vertical feedback control                             --
 !---------------------------------------------------------------------
       if (isetfb.ne.0) then
-		if(nw.gt.30)ioffr=ioffr*((nw+1)/33)
-		if(nh.gt.30)ioffz=ioffz*((nh+1)/33)
-     	     	imd=(nw*nh)/2+1+nh*ioffr+ishiftz
-        	kct1=imd-ioffz
-          	kct2=imd+ioffz
-                deltaz=zgrid(ioffz+nh/2+1)-zgrid(-ioffz+nh/2+1)
+        if(nw.gt.30) ioffr=ioffr*((nw+1)/33)
+        if(nh.gt.30) ioffz=ioffz*((nh+1)/33)
+        imd=(nw*nh)/2+1+nh*ioffr+ishiftz
+        kct1=imd-ioffz
+        kct2=imd+ioffz
+        deltaz=zgrid(ioffz+nh/2+1)-zgrid(-ioffz+nh/2+1)
       endif
       init=1
  2020 continue
@@ -13891,12 +13936,18 @@
           kkkk=(ii-1)*nh+jj
           mj=iabs(j-jj)+1
           mk=(nw-1)*nh+mj
+          ! rls pcurrt is different, gridpc is same. gridpc is ~1e-8, pcurrt ~-100
+          !if (it1==26 .and. it2==1 .and. j==1 .and. pcurrt(kkkk).ne.0) print*,'6.9.0~~~',rank,j,ii,jj,kkkk,gridpc(mj,ii),pcurrt(kkkk)
+          !if (rank==1) stop
           psipp(j)=psipp(j)-gridpc(mj,ii)*pcurrt(kkkk)
           psipp(kk)=psipp(kk)-gridpc(mk,ii)*pcurrt(kkkk)
           psi(j)=psipp(j)
           psi(kk)=psipp(kk)
  2170   continue
  2200 continue
+      !print*,'6.9.0~~~',rank,gridpc(10,10),pcurrt(1)
+      print*,'6.9.0~~~',rank,it1,it2
+      print*,'7.0.0~~~',rank,psi(1)
       do 2400 i=2,nw-1
         kk1=(i-1)*nh
         kknh=kk1+nh
@@ -13916,6 +13967,7 @@
           psi(kknh)=psipp(kknh)
  2370   continue
  2400 continue
+      !print*,'7.0.1~~~',rank,psi(1)
 !-------------------------------------------------------------------------
 !-- get flux at inner points by inverting del*, only plasma flux        --
 !-- first set up plasma currents, single cyclic method gets factor of 2 --
@@ -13940,8 +13992,8 @@
       do 3000 i=1,nwnh
         psi(i)=-psi(i)
  3000 continue
+      !print*,'7.0.2~~~',rank,psi(1)
 
- 3010 continue
 !----------------------------------------------------------------------------
 !--  optional symmetrized solution                                         --
 !----------------------------------------------------------------------------
@@ -13961,6 +14013,8 @@
           psi(k2)=val
 3100    continue
       endif ! end symmetrize loop
+      !print*,'7.0.3~~~',rank,psi(1)
+
 !------------------------------------------------------------------------
 !--  optional damping out the m=1 vertical eigen mode                  --
 !------------------------------------------------------------------------
@@ -14020,6 +14074,8 @@
         psi(kk)=psi(kk)+gfbsum(kk)*tvfbrt(ntotal)
 42800 continue
 43000 continue
+      !print*,'7.0.4~~~',rank,psi(1)
+
 !--------------------------------------------------------------------
 !--  optional vertical feedback control                            --
 !--    psi(kct1)  !psi at lower point                              --
@@ -14097,6 +14153,8 @@
         endif
  3600   continue
  6000 continue
+      !print*,'7.0.5~~~',rank,psi(1)
+
 !----------------------------------------------------------------------------
 !-- rigid vertical shift correction ?                                      --
 !----------------------------------------------------------------------------
@@ -14122,6 +14180,7 @@
         psipla(kk)=relax*psipla(kk)+(1.-relax)*psipold(kk)
  6500 continue
  7000 continue
+      !print*,'7.0.6~~~',rank,psi(1)
 !
       DEALLOCATE(psikkk,gfbsum)
 !
@@ -15238,6 +15297,8 @@
         as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
         wacoil,hacoil
 !
+      print*,'~~~rank, chi2',rank, tsaisq(it)
+
       if (itek.gt.0) go to 100
 !vas      write (nttyo,10000)
 ! MPI >>>
@@ -20253,8 +20314,8 @@
                  xout,yout,nfound,xltrac,npoint,rymin,rymax,dpsi, &
                  zxmin,zxmax,nnerr,ishot,itime, &
                  limfag,radbou,kbound,rank,iterdb,ixout) ! rls nfound changed
-       if (rank==0) print*,'4.0~~~',rank,nfound
-       if (rank==1) print*,'4.0~~~',rank,nfound
+       !if (rank==0) print*,'4.0~~~',rank,nfound
+       !if (rank==1) print*,'4.0~~~',rank,nfound
       if (nnerr.ge.1) then
         kerror=1
         write(nttyo,2100) ishot,itime
@@ -20396,18 +20457,19 @@
 !-----------------------------------------------------------------------
 !-- get normalized flux function XPSI                                 --
 !-----------------------------------------------------------------------
+      print*,'8.0.2~~~',rank,psi(3351),icutfp,zero(3351)
       do 1000 i=1,nw
       do 1000 j=1,nh
         kk=(i-1)*nh+j
         if (icutfp.eq.0) then
-        xpsi(kk)=1.1
-        if ((rgrid(i).lt.xmin).or.(rgrid(i).gt.xmax)) go to 1000
-        if ((zgrid(j).lt.ymin).or.(zgrid(j).gt.ymax)) go to 1000
-        xpsi(kk)=(simag-psi(kk))/sidif
+          xpsi(kk)=1.1
+          if ((rgrid(i).lt.xmin).or.(rgrid(i).gt.xmax)) go to 1000
+          if ((zgrid(j).lt.ymin).or.(zgrid(j).gt.ymax)) go to 1000
+          xpsi(kk)=(simag-psi(kk))/sidif
         else
-        if (zero(kk).gt.0.0005) then
-           xpsi(kk)=(simag-psi(kk))/sidif
-           if (xpsi(kk)*xpsimin.le.1.0.and.xpsi(kk)*xpsimin.ge.0.0) then
+          if (zero(kk).gt.0.0005) then
+            xpsi(kk)=(simag-psi(kk))/sidif
+            if (xpsi(kk)*xpsimin.le.1.0.and.xpsi(kk)*xpsimin.ge.0.0) then
               if ((rgrid(i).lt.rminvs).or.(rgrid(i).gt.rmaxvs)) &
                    xpsi(kk)=1000.
               if ((zgrid(j).lt.zminvs).or.(zgrid(j).gt.zmaxvs)) then
@@ -20417,12 +20479,13 @@
               if (xpsi(kk).lt.1.0.and.zgrid(j).gt.ymax) xpsi(kk)=1000.
               if (abs(zgrid(j)).gt.abs(yvs2).and. &
                 zgrid(j)*yvs2.gt.0.0) xpsi(kk)=1000.
-           endif
-        else
-           xpsi(kk)=1000.
-        endif
+            endif
+          else
+            xpsi(kk)=1000.
+          endif
         endif
  1000 continue
+      print*,'8.0.3~~~',rank,xpsi(3351)
 !-----------------------------------------------------------------------
 !-- get SOL flux if needed                                            --
 !-----------------------------------------------------------------------

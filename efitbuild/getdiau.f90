@@ -114,6 +114,7 @@
         DATA EBCOUP/0.00,0.00,-2.0/
 
         EQUIVALENCE (RAR(21),TTEMP(1))
+
         if (nshot.lt.85885) then
     		filin = 'dcoef.dat'
             EBCOUP(3)=-2.0
@@ -136,7 +137,7 @@
         IAR(1)=NPTS
         RAR(1)=-0.050000
         RAR(2)=0.0020005
-        !NAVG=IFIX((TAVG+.5)/1000./RAR(2)) ! rls, ifix is old version of int, ok to remove, Sept, 2020
+        !NAVG=IFIX((TAVG+.5)/1000./RAR(2)) ! rls, ifix is old version of int for real*4 only, ok to remove, Sept, 2020
         NAVG=int((TAVG+.5)/1000./RAR(2))
 
         NIN=21

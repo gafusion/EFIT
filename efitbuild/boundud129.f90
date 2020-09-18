@@ -115,7 +115,7 @@
 !--   find starting value of psi                                     --
 !----------------------------------------------------------------------
    20 loop=loop+1
-      if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'0020~~~',rank,ncontr,loop
+      !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'0020~~~',rank,ncontr,loop
       i=1+(rad-x(1))/dx
       if(rad-x(i).lt.0.0)i=i-1
       j=1+(yctr-y(1))/(dy-0.000001)
@@ -194,11 +194,11 @@
 !----------------------------------------------------------------------
   100 zsum=zero(kk)+zero(kk+1)+zero(kk+nh)+zero(kk+nh+1)
       if(zsum.eq.0.0) then
-        if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'1go to 1005~~~',rank,ncontr,loop
+        !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'1go to 1005~~~',rank,ncontr,loop
         go to 1005
       end if
       if (abs(zsum-4.0).lt.1.e-03) then
-        if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'4go to 0540~~~',rank,ncontr,loop
+        !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'4go to 0540~~~',rank,ncontr,loop
         go to 540
       end if
 !----------------------------------------------------------------------
@@ -239,12 +239,20 @@
       ytry=ytry1
   520 continue
       if (psilx.eq.-1.d10) then
-        if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'2go to 1090~~~',rank,ncontr,loop
+        !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'2go to 1090~~~',rank,ncontr,loop
         go to 1090
       end if
       dpsi=min(dpsi,abs(psivl-psilx))
-      if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'5go to 0540~~~',rank,ncontr,loop
-      if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'5go to 0540~~~',psilx,psivl,psilx-psivl
+      !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'5go to 0540~~~',rank,ncontr,loop
+      !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'5go to 0540~~~',psilx,psivl,psilx-psivl
+      if (rank==0 .and. iterdb==26 .and. ixout==26 .and. loop==42 .and. ncontr==1) &
+        write(*,'(a3,1x,i4,i4,i4,3(1pe24.16))'),'~~~',rank,ncontr,loop,psilx,psivl,psilx-psivl
+      if (rank==1 .and. iterdb==26 .and. ixout==26 .and. loop==42 .and. ncontr==1) &
+        write(*,'(a3,1x,i4,i4,i4,3(1pe24.16))'),'~~~',rank,ncontr,loop,psilx,psivl,psilx-psivl
+      if (rank==0 .and. iterdb==26 .and. ixout==26 .and. loop==42 .and. ncontr==1) &
+        print*,'9.0~~~',psi(1)
+      if (rank==1 .and. iterdb==26 .and. ixout==26 .and. loop==42 .and. ncontr==1) &
+        print*,'9.0~~~',psi(1)
 
       ! THIS IS THE PROBLEM with serial vs parallel.
       ! Parallel version psilx-psivl never goes <0, and then goto 540, etc.
@@ -257,15 +265,15 @@
       ! and it's used in the denom, so divide by zero crash.
       if (psilx-psivl) 540,540,530
   530 continue
-      if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'go to 530~~~'
+      !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'go to 530~~~'
       call zlim(zerol,n111,n111,limitr,xlim,ylim,xt,yt,limfag)
       !if (rank==rankin .and. zerol.le.0.01) print*,'0530~~~~~new cell index and try again exit'
       if (zerol.le.0.01) then
-        if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'3go to 1005~~~',rank,ncontr,loop
+        !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'3go to 1005~~~',rank,ncontr,loop
         go to 1005
       endif
   540 continue
-      if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'go to 540~~~'
+      !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'go to 540~~~'
   545 call extrap(f1,f2,f3,f4,x1,y1,x2,y2,xt,yt,xt1,yt1,xt2,yt2, &
                      psivl,area,dx,dy)
 !----------------------------------------------------------------------
@@ -280,7 +288,7 @@
   560 yt=yt2
       xt=xt2
   570 ncontr=ncontr+1 ! rls nfound changed
-      if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'0025~~~',rank,ncontr,loop
+      !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'0025~~~',rank,ncontr,loop
       !if (rank==rankin) print*,'0570~~~~~contr pt found'
       !if (rank==rankin) print*,'0570~~~~~',rank,ncontr
       if (ncontr.gt.npoint) go to 1090
@@ -374,7 +382,7 @@
 30020   continue
         psivl=-psivl
       endif
-      if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'0030~~~',rank,ncontr,loop
+      !if (rank==rankin .and. iterdb==26 .and. ixout==26) print*,'0030~~~',rank,ncontr,loop
       return
       end
       subroutine cellb(xc1,yc1,xc2,yc2,x1,y1,x2,y2,ifail)
