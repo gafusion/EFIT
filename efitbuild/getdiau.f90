@@ -88,6 +88,7 @@
 !                     was determined from shot XXXXX.
 !      Revised: R. La Haye Nov. 21, 1994.
 !        8/9/2004 - Remove n1coil for shot > 108281
+!   9/21/2020 - R.S. Changed ifix to int
 !       
 !vas-oct3,08        include 'expath.inc'
         use expath

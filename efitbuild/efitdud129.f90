@@ -45,7 +45,10 @@
 !**        2012/05/17..........MPI, SNAP revision                    **
 !**        2020/09/18..........R.S. Bug fix, changed mpi_abort to    **
 !**                            mpi_finalize at end to allow all      **
-! **                           processes to complete.                **
+!**                            processes to complete.                **
+!**        2020/09/18..........R.S. changed "shape" to "shapesurf",  **
+!**                            shape is an intrinsic procedure name  **
+!**        2020/09/18..........R.S. changed some Hollerith to quotes **
 !**                                                                  **
 !**********************************************************************
      use commonblocks
