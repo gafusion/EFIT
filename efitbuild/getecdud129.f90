@@ -2868,6 +2868,25 @@
 #if defined(USEMPI)
 
       subroutine getpts_mpi(nshot,times,delt,ktime,istop)
+!**********************************************************************
+!**                                                                  **
+!**     MAIN PROGRAM:  MHD FITTING CODE                              **
+!**                                                                  **
+!**                                                                  **
+!**     SUBPROGRAM DESCRIPTION:                                      **
+!**          getpts_mpi...                                           **
+!**                                                                  **
+!**     CALLING ARGUMENTS:                                           **
+!**                                                                  **
+!**     REFERENCES:                                                  **
+!**          (1)                                                     **
+!**                                                                  **
+!**     RECORD OF MODIFICATION:                                      **
+!**       2020/09/18 ....... R.S. Bug fix, set oldccomp at beginning.**
+!**                          This removed small differences between  **
+!**                          serial and parallel runs.               **
+!**                                                                  **
+!**********************************************************************
       
         include 'eparmdud129.f90'
         include 'modules1.f90'

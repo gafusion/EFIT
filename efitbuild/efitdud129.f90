@@ -43,6 +43,9 @@
 !**        2006/01/12..........New Magnetic Uncertainty              **
 !**        2007/08/01..........Mag. Uncnty. namelist added to k file **
 !**        2012/05/17..........MPI, SNAP revision                    **
+!**        2020/09/18..........R.S. Bug fix, changed mpi_abort to    **
+!**                            mpi_finalize at end to allow all      **
+! **                           processes to complete.                **
 !**                                                                  **
 !**********************************************************************
      use commonblocks
@@ -15200,6 +15203,7 @@
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**          24/07/85..........revised                               **
+!**          2020/09/21........R.S. Added key output for parallel    **
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
@@ -15209,16 +15213,43 @@
       include 'modules1.f90'
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
+! MPI >>>
+#if defined(USEMPI)
+      include 'mpif.h'
+#endif
+! MPI <<<
       dimension xrsp(npcurn)
       dimension patmpz(magpri),xmpz(magpri),ympz(magpri),ampz(magpri)
       common/jwork4/workb(nsilop)
       character*30 sfname
+      integer, dimension(:), allocatable :: ishotall
+      real*8, dimension(:), allocatable :: ch2all,timeall
       namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi,as, &
         as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
         wacoil,hacoil
 !
-      print*,'~~~rank, chi2',rank,tsaisq(it) ! Debug: show chi**2 for all ranks
-
+#if defined(USEMPI)
+      ! If running in parallel, write out key info for all ranks
+      if (nproc > 1) then
+        if (rank==0) then
+          allocate(ishotall(nproc))
+          allocate(timeall(nproc))
+          allocate(ch2all(nproc))
+        end if
+        call mpi_gather(ishot, 1, MPI_INTEGER, ishotall, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierr)
+        call mpi_gather(time(it), 1, MPI_DOUBLE_PRECISION, timeall, 1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
+        call mpi_gather(tsaisq(it), 1, MPI_DOUBLE_PRECISION, ch2all, 1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
+        if (rank==0) then
+          write(nttyo,'(/,a)') 'Summary of all runs'
+          do ir = 1,nproc
+            write(nttyo,10500) ishotall(ir),int(timeall(ir)),ch2all(ir)
+          end do
+          if (allocated(ishotall)) deallocate(ishotall)
+          if (allocated(ch2all)) deallocate(ch2all)
+          if (allocated(timeall)) deallocate(timeall)
+        end if
+      end if
+#endif
       if (itek.gt.0) go to 100
 !vas      write (nttyo,10000)
 ! MPI >>>
