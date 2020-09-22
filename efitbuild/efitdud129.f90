@@ -287,7 +287,7 @@
         print *, 'FORTRAN STOP'
       endif
       !call mpi_ABORT(MPI_COMM_WORLD, kerror, ierr)
-      call mpi_finalize(ierr)
+      call mpi_finalize(ierr) ! rls
 #else
       stop
 #endif
