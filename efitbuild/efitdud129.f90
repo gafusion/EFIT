@@ -286,7 +286,8 @@
       if (rank == 0) then
         print *, 'FORTRAN STOP'
       endif
-      call mpi_ABORT(MPI_COMM_WORLD, kerror, ierr)
+      !call mpi_ABORT(MPI_COMM_WORLD, kerror, ierr)
+      call mpi_finalize(ierr)
 #else
       stop
 #endif
@@ -15213,6 +15214,7 @@
         as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
         wacoil,hacoil
 !
+      print*,rank,ishot,time(it),tsaisq(it) !rls hack to see all ranks
       if (itek.gt.0) go to 100
 !vas      write (nttyo,10000)
 ! MPI >>>
