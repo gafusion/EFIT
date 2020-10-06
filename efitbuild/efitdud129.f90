@@ -43,6 +43,12 @@
 !**        2006/01/12..........New Magnetic Uncertainty              **
 !**        2007/08/01..........Mag. Uncnty. namelist added to k file **
 !**        2012/05/17..........MPI, SNAP revision                    **
+!**        2020/09/18..........R.S. Bug fix, changed mpi_abort to    **
+!**                            mpi_finalize at end to allow all      **
+!**                            processes to complete.                **
+!**        2020/09/18..........R.S. changed "shape" to "shapesurf",  **
+!**                            shape is an intrinsic procedure name  **
+!**        2020/09/18..........R.S. changed some Hollerith to quotes **
 !**                                                                  **
 !**********************************************************************
      use commonblocks
@@ -223,7 +229,7 @@
 !----------------------------------------------------------------------
       k=0
   100 k=k+1
-        ks=k
+        ks=k ! ks=1,2,3... in serial, but 1,1,1,... in parallel
 !----------------------------------------------------------------------
 !--  set up data                                                     --
 !----------------------------------------------------------------------
@@ -245,7 +251,7 @@
 !----------------------------------------------------------------------
 !--  post processing for graphic and text outputs                    --
 !----------------------------------------------------------------------
-        call shape(ks,ktime,kerror)
+        call shapesurf(ks,ktime,kerror)
         if (mtear.ne.0) call tearing(ks,mtear)
         if (kerror.gt.0) go to 500
         if (idebug /= 0) write (6,*) 'Main/PRTOUT ks/kerror = ', ks, kerror
@@ -286,8 +292,7 @@
       if (rank == 0) then
         print *, 'FORTRAN STOP'
       endif
-      !call mpi_ABORT(MPI_COMM_WORLD, kerror, ierr)
-      call mpi_finalize(ierr) ! rls
+      call MPI_FINALIZE(ierr)
 #else
       stop
 #endif
@@ -2498,7 +2503,7 @@
       ,kakloop,aktol,kakiter,akgamwt,akprewt &
       ,kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout &
       ,imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap &
-      ,idebug,nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp,jdebug
+      ,idebug,nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp,jdebug,ifindopt
       namelist/inwant/psiwant,vzeroj,fwtxxj,fbetap,fbetan,fli,fq95,fqsiw &
            ,jbeta,jli,alpax,gamax,jwantm,fwtxxq,fwtxxb,fwtxli,znose &
            ,fwtbdry,nqwant,siwantq,n_write,kccoils,ccoils,rexpan &
@@ -2577,7 +2582,7 @@
           ,mse_strict,t_max_beam_off,ifitdelz,scaledz &
           ,mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210 &
           ,ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels,idebug,jdebug &
-           ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt
+          ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt,ifindopt
       namelist/profile_ext/npsi_ext,pprime_ext,ffprim_ext,psin_ext, &
       geqdsk_ext,sign_ext,scalepp_ext,scaleffp_ext,shape_ext,dr_ext, &
       dz_ext,rc_ext,zc_ext,a_ext,eup_ext,elow_ext,dup_ext,dlow_ext, &
@@ -2877,6 +2882,7 @@
       scalepr(1)=-1.
       scalepw(1)=-1.
       isolve=0
+      ifindopt=1
 !----------------------------------------------------------------------
 !--   Read input file for KDATA = 2                                  --
 !----------------------------------------------------------------------
@@ -4281,7 +4287,9 @@
       tdata=abs(sigdia(jtime))
       if (tdata.gt.1.0e-10) fwtdlc=fwtdlc/tdata**nsq
 !
-      if (sidif.le.-1.0e+10) sidif=tmu*pasmat(jtime)*rcentr/2.0
+      if (sidif.le.-1.0e+10) then
+        sidif=tmu*pasmat(jtime)*rcentr/2.0
+      endif
       errcut=max(ten2m3,error*10.)
       fbrdy=bcentr(jtime)*rcentr/tmu
       constf2=darea*tmu/2.0/twopi
@@ -6204,7 +6212,7 @@
             return
           endif
           call pflux(ix,ixnn,nitera,jtime)
-          call steps(ixnn,nitera,ix,jtime,kerror)
+          call steps(ixnn,nitera,ix,jtime,kerror,i,in)
           if (kerror /= 0) then
             jerror(jtime) = 1
             return
@@ -8050,7 +8058,7 @@
            ,ktear,kersil,iout,ixray,table_dir,input_dir,store_dir &
            ,kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve &
            ,iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum &
-           ,appendsnap,vbit,nbdrymx,efitversion
+           ,appendsnap,vbit,nbdrymx,efitversion,ifindopt
       namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
            znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
            oldcomp,currc199,curriu30,curriu90, &
@@ -8107,7 +8115,7 @@
            ,mse_strict,t_max_beam_off,ifitdelz,scaledz &
            ,mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210 &
            ,ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels,idebug,jdebug &
-           ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt
+           ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt,ifindopt
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace &
            ,symmetrize,backaverage,lring
       data mcontr/35/,lfile/36/,ifpsi/0/
@@ -8362,6 +8370,7 @@
 ! -- Qilong Ren
       write_Kfile = .false.
       fitfcsum = .false.
+      ifindopt = 1
 !----------------------------------------------------------------------
 !--   Snap-Extension mode					     --
 !--   Initialize istore = 0                                          --
@@ -8986,7 +8995,7 @@
 !--   Make system call to drive PEFIT on Linux GPU                   --
 !----------------------------------------------------------------------
       CALL system ("/u/huangyao/P-EFIT/New_Folder/pefit_257_jt_new/bin/test")
-      stop ('pefit')
+      stop 'pefit'
 #endif
 ! MPI <<<
 !
@@ -9011,9 +9020,9 @@
        ' for start inside):')
  6100 format(/,1x,48htype plot mode (0=none, 1=tektronix, 2=versatec, &
            ,17h 3=qms, -=x ray):)
- 6200 format (/,1x,22hnumber of time slices?)
- 6220 format (/,1x,22htype input file names:)
- 6230 format (1x,1h#)
+ 6200 format (/,1x,'number of time slices?')
+ 6220 format (/,1x,'type input file names:')
+ 6230 format (1x,'#')
  6240 format (a)
  6600 format (/,1x,'good shot list file name ( 0=tty) ?')
  6610 format (/,1x,'command file name ( 0=none) ?')
@@ -9546,6 +9555,7 @@
          hoffset(nmtark),max_beamOff, &
          tanham_uncor(ktime,nmtark)
          real*4 fv30lt,fv30rt,fv210lt,fv210rt
+
 !
       do 10 i=1,ktime
         atime(i)=time(i)
@@ -9619,6 +9629,7 @@
        endif
   100 continue
   200 continue
+
 !
 ! kfixstark is zero when none of the individual channels is turned on
 ! in this case set kwaitmse to zero which turns the mse spacial average
@@ -10098,7 +10109,9 @@
       do 2000 i=1,nw
       do 2000 j=1,nh
         kk=(i-1)*nh+j
-        if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) go to 1582
+        if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) then
+          go to 1582
+        end if
         call setpp(xpsi(kk),xpsii)
         do 1580 jj=1,kppcur
           factor=xpsii(jj)*rgrid(i)*www(kk)
@@ -13115,37 +13128,40 @@
 !-----------------------------------------------------------------------
 !--  unfold fitting parameters                                        --
 !-----------------------------------------------------------------------
-      if ( wrsp(need).eq.0 ) goto 2656
+         if ( wrsp(need).eq.0 ) then
+           goto 2656
+         end if
          condno=wrsp(1)/wrsp(need)
          toler=condin*wrsp(1)
          do 2600 i=1,need
            t=0.0
-          if (wrsp(i).gt.toler) t=brsp(i)/wrsp(i)
-          work(i)=t
- 2600   continue
-        do 2650 i=1,need
-          brsp(i)=0.0
-          do 2650 j=1,need
-            brsp(i)=brsp(i)+arsp(i,j)*work(j)
- 2650   continue
+           if (wrsp(i).gt.toler) t=brsp(i)/wrsp(i)
+           work(i)=t
+ 2600    continue
+         do 2650 i=1,need
+           brsp(i)=0.0
+           do 2650 j=1,need
+             brsp(i)=brsp(i)+arsp(i,j)*work(j)
+ 2650    continue
       else
-	do 2655 j=1,nrsmat
-	    b(j) = brsp(j)
- 2655	continue
-	call dgglse(nj,need,ncrsp,arsp,nrsmat,crsp,4*(npcurn-2)+6+ &
+         do 2655 j=1,nrsmat
+           b(j) = brsp(j)
+         2655	continue
+
+         call dgglse(nj,need,ncrsp,arsp,nrsmat,crsp,4*(npcurn-2)+6+ &
                    npcurn*npcurn,b,z,brsp,work,nrsma2,info,condno)
-	if (info.eq.0) goto 2657
- 2656   continue
-	write (nttyo,8000) info
+         if (info.eq.0) goto 2657
+         2656   continue
+         write (nttyo,8000) info
 ! MPI >>>
 #if defined(USEMPI)
-        call mpi_stop
-    stop
+         call mpi_stop
+         stop
 #else
-	stop
+         stop
 #endif
 ! MPI <<<
- 2657   continue
+ 2657    continue
       endif
 !----------------------------------------------------------------------
 !--  rescale results if A is preconditioned                          --
@@ -13817,12 +13833,12 @@
 !--  optional vertical feedback control                             --
 !---------------------------------------------------------------------
       if (isetfb.ne.0) then
-		if(nw.gt.30)ioffr=ioffr*((nw+1)/33)
-		if(nh.gt.30)ioffz=ioffz*((nh+1)/33)
-     	     	imd=(nw*nh)/2+1+nh*ioffr+ishiftz
-        	kct1=imd-ioffz
-          	kct2=imd+ioffz
-                deltaz=zgrid(ioffz+nh/2+1)-zgrid(-ioffz+nh/2+1)
+        if(nw.gt.30) ioffr=ioffr*((nw+1)/33)
+        if(nh.gt.30) ioffz=ioffz*((nh+1)/33)
+        imd=(nw*nh)/2+1+nh*ioffr+ishiftz
+        kct1=imd-ioffz
+        kct2=imd+ioffz
+        deltaz=zgrid(ioffz+nh/2+1)-zgrid(-ioffz+nh/2+1)
       endif
       init=1
  2020 continue
@@ -13917,7 +13933,6 @@
         psi(i)=-psi(i)
  3000 continue
 
- 3010 continue
 !----------------------------------------------------------------------------
 !--  optional symmetrized solution                                         --
 !----------------------------------------------------------------------------
@@ -15197,6 +15212,7 @@
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**          24/07/85..........revised                               **
+!**          2020/09/21........R.S. Added key output for parallel    **
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
@@ -15206,15 +15222,46 @@
       include 'modules1.f90'
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
+! MPI >>>
+#if defined(USEMPI)
+      include 'mpif.h'
+#endif
+! MPI <<<
       dimension xrsp(npcurn)
       dimension patmpz(magpri),xmpz(magpri),ympz(magpri),ampz(magpri)
       common/jwork4/workb(nsilop)
       character*30 sfname
+      integer, dimension(:), allocatable :: ishotall
+      real*8, dimension(:), allocatable :: ch2all,timeall
       namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi,as, &
         as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
         wacoil,hacoil
 !
-      print*,rank,ishot,time(it),tsaisq(it) !rls hack to see all ranks
+#if defined(USEMPI)
+      ! If running in parallel, write out key info for all ranks
+      if (nproc > 1) then
+        if (rank==0) then
+          allocate(ishotall(nproc))
+          allocate(timeall(nproc))
+          allocate(ch2all(nproc))
+        end if
+        call mpi_gather(ishot, 1, MPI_INTEGER, ishotall, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierr)
+        call mpi_gather(time(it), 1, MPI_DOUBLE_PRECISION, timeall, 1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
+        call mpi_gather(tsaisq(it), 1, MPI_DOUBLE_PRECISION, ch2all, 1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
+        if (rank==0) then
+          write(nttyo,'(/,a)') 'Summary of all runs'
+          do ir = 1,nproc
+            !write(nttyo,10500) ishotall(ir),int(timeall(ir)),ch2all(ir)
+            write(nttyo,*) ishotall(ir),int(timeall(ir)),ch2all(ir)
+          end do
+          if (allocated(ishotall)) deallocate(ishotall)
+          if (allocated(ch2all)) deallocate(ch2all)
+          if (allocated(timeall)) deallocate(timeall)
+        end if
+      else
+        write(nttyo,*) ishot,int(time(it)),tsaisq(it)
+      end if
+#endif
       if (itek.gt.0) go to 100
 !vas      write (nttyo,10000)
 ! MPI >>>
@@ -15701,29 +15748,29 @@
  9360 format (1x,i2,18h partial rogowskis)
  9380 format (1x,i2,14h full rogowski)
  9385 format (1x,i2,17h diamagnetic loop)
- 9390 format (1x,12h bt0(t)   = ,f10.3)
+ 9390 format (1x,' bt0(t)   = ',f10.3)
 !10000 format(/,6x,20('*'),' EFITD 129dx2 output ',20('*'))
 10000 format(/,6x,20('*'),' EFITD',a3,' x ',a3,'  output ',20('*'))
 10020 format (1x,15h  sumif(amp) = ,e10.3,15h sumift(amp) = ,e10.3, &
            15h sumifs(amp) = ,e10.3)
 10480 format (1x,/)
-10500 format(12h shot #   = ,i10,12h time(ms) = ,i10, &
-             12h chi**2   = ,e10.3)
-10520 format(12h betat(%) = ,f10.3,12h betap    = ,f10.3, &
-             12h li       = ,f10.3)
-10540 format(12h vol(cm3) = ,e10.3,12h rout(cm) = ,f10.3, &
-             12h zout(cm) = ,f10.3)
-10560 format(12h elong    = ,f10.3,12h utriang  = ,f10.3, &
-             12h ltriang  = ,f10.3)
-10580 format(12h a(cm)    = ,f10.3,12h lin(cm)  = ,f10.3, &
-             12h lout(cm) = ,f10.3)
-10600 format(12h ltop(cm) = ,f10.3,12h q*       = ,f10.3, &
-             12h rc(cm)   = ,f10.3)
-10610 format(12h zc(cm)   = ,f10.3,12h bt0(t)   = ,f10.3, &
-             12h qout     = ,f10.3)
-10620 format(12h lins(cm) = ,f10.3,12h louts(cm)= ,f10.3, &
-             12h ltops(cm)= ,f10.3)
-10623 format(12h beta*(%) = ,f10.3)
+10500 format(' shot #   = ',i10,' time(ms) = ',i10, &
+             ' chi**2   = ',e10.3)
+10520 format(' betat(%) = ',f10.3,' betap    = ',f10.3, &
+             ' li       = ',f10.3)
+10540 format(' vol(cm3) = ',e10.3,' rout(cm) = ',f10.3, &
+             ' zout(cm) = ',f10.3)
+10560 format(' elong    = ',f10.3,' utriang  = ',f10.3, &
+             ' ltriang  = ',f10.3)
+10580 format(' a(cm)    = ',f10.3,' lin(cm)  = ',f10.3, &
+             ' lout(cm) = ',f10.3)
+10600 format(' ltop(cm) = ',f10.3,' q*       = ',f10.3, &
+             ' rc(cm)   = ',f10.3)
+10610 format(' zc(cm)   = ',f10.3,' bt0(t)   = ',f10.3, &
+             ' qout     = ',f10.3)
+10620 format(' lins(cm) = ',f10.3,' louts(cm)= ',f10.3, &
+             ' ltops(cm)= ',f10.3)
+10623 format(' beta*(%) = ',f10.3)
 10622 format(//, &
       ' betat, betat-btvac, beta-total, beta-btvac2, beta-btv :',/, &
       ' betat0 :',/, &
@@ -16003,6 +16050,7 @@
         iermax(nx)=i
         jermax(nx)=j
  1000 continue
+
       errorm=errorm/abs(sidif)
 !
       aveerr(nx)=errave/abs(sidif)/float(nwnh)
@@ -17109,7 +17157,7 @@
  6530 format ('rs129129_0',i1,'.ddd')
  6540 format ('rs129129_',i2,'.ddd')
       end
-      subroutine shape(iges,igmax,kerror)
+      subroutine shapesurf(iges,igmax,kerror)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -17534,7 +17582,7 @@
                   psiots ,rseps(1,iges),zseps(1,iges),m20, &
                   xouts,youts,nfouns,psi,xmins,xmaxs,ymins,ymaxs, &
                   zxmins,zxmaxs,rymins,rymaxs,dpsis,bpoo,bpooz, &
-                  limtrs,xlims,ylims,limfag)
+                  limtrs,xlims,ylims,limfag,0,0,0)
 !---------------------------------------------------------------------
 !--  gap calculation                                                --
 !---------------------------------------------------------------------
@@ -20137,7 +20185,7 @@
   900 continue
       return
       end
-      subroutine steps(ix,ixt,ixout,jtime,kerror)
+      subroutine steps(ix,ixt,ixout,jtime,kerror,ifit,infit)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -20193,7 +20241,7 @@
                   psibry,rseps(1,jtime),zseps(1,jtime),m10, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
                   zxmin,zxmax,rymin,rymax,dpsi,bpol,bpolz, &
-                  limitr,xlim,ylim,limfag)
+                  limitr,xlim,ylim,limfag,ifit,infit,jtime)
       if (nsol.gt.0) then
         if (idebug >= 2) then
           write (6,*) 'STEPS R,Z,Si,Err = ', rsol(1),zsol(1),wsisol,ier
@@ -20244,7 +20292,7 @@
                   psibry ,rseps(1,jtime),zseps(1,jtime),m20, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
                   zxmin,zxmax,rymin,rymax,dpsi,bpol,bpolz, &
-                  limitr,xlim,ylim,limfag)
+                  limitr,xlim,ylim,limfag,ifit,infit,jtime)
       sidif=simag-psibry
       eouter=(ymax-ymin)/(xmax-xmin)
       zplasm=(ymin+ymax)/2.
@@ -20371,14 +20419,14 @@
       do 1000 j=1,nh
         kk=(i-1)*nh+j
         if (icutfp.eq.0) then
-        xpsi(kk)=1.1
-        if ((rgrid(i).lt.xmin).or.(rgrid(i).gt.xmax)) go to 1000
-        if ((zgrid(j).lt.ymin).or.(zgrid(j).gt.ymax)) go to 1000
-        xpsi(kk)=(simag-psi(kk))/sidif
+          xpsi(kk)=1.1
+          if ((rgrid(i).lt.xmin).or.(rgrid(i).gt.xmax)) go to 1000
+          if ((zgrid(j).lt.ymin).or.(zgrid(j).gt.ymax)) go to 1000
+          xpsi(kk)=(simag-psi(kk))/sidif
         else
-        if (zero(kk).gt.0.0005) then
-           xpsi(kk)=(simag-psi(kk))/sidif
-           if (xpsi(kk)*xpsimin.le.1.0.and.xpsi(kk)*xpsimin.ge.0.0) then
+          if (zero(kk).gt.0.0005) then
+            xpsi(kk)=(simag-psi(kk))/sidif
+            if (xpsi(kk)*xpsimin.le.1.0.and.xpsi(kk)*xpsimin.ge.0.0) then
               if ((rgrid(i).lt.rminvs).or.(rgrid(i).gt.rmaxvs)) &
                    xpsi(kk)=1000.
               if ((zgrid(j).lt.zminvs).or.(zgrid(j).gt.zmaxvs)) then
@@ -20388,10 +20436,10 @@
               if (xpsi(kk).lt.1.0.and.zgrid(j).gt.ymax) xpsi(kk)=1000.
               if (abs(zgrid(j)).gt.abs(yvs2).and. &
                 zgrid(j)*yvs2.gt.0.0) xpsi(kk)=1000.
-           endif
-        else
-           xpsi(kk)=1000.
-        endif
+            endif
+          else
+            xpsi(kk)=1000.
+          endif
         endif
  1000 continue
 !-----------------------------------------------------------------------
@@ -20996,7 +21044,7 @@
            ,ktear,kersil,iout,ixray,table_dir,input_dir,store_dir &
            ,kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve &
            ,iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum,efitversion &
-           ,kwripre
+           ,kwripre,ifindopt
       namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
            znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
            oldcomp,currc199,curriu30,curriu90, &
@@ -21048,7 +21096,7 @@
            ,mse_strict,t_max_beam_off,ifitdelz,scaledz &
            ,mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210 &
            ,ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels,idebug,jdebug &
-           ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt
+           ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt,ifindopt
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace &
            ,symmetrize,backaverage,lring
       data mcontr/35/,lfile/36/,ifpsi/0/
@@ -21179,6 +21227,7 @@
       serror=0.03
       xltype=0.
       xltype_180=0.0
+      ifindopt=1
 !
       read (neqdsk,efitin,end=111)
  111  continue
@@ -21669,9 +21718,9 @@
        ' for start inside):')
  6100 format(/,1x,48htype plot mode (0=none, 1=tektronix, 2=versatec, &
            ,17h 3=qms, -=x ray):)
- 6200 format (/,1x,22hnumber of time slices?)
- 6220 format (/,1x,22htype input file names:)
- 6230 format (1x,1h#)
+ 6200 format (/,1x,'number of time slices?')
+ 6220 format (/,1x,'type input file names:')
+ 6230 format (1x,'#')
  6240 format (a)
  6600 format (/,1x,'good shot list file name ( 0=tty) ?')
  6610 format (/,1x,'command file name ( 0=none) ?')
@@ -21727,7 +21776,7 @@
            ,ktear,kersil,iout,ixray,table_dir,input_dir,store_dir &
            ,kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve &
            ,iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum,efitversion &
-           ,kwripre
+           ,kwripre,ifindopt
       namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
            znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
            oldcomp,currc199,curriu30,curriu90, &
@@ -21776,7 +21825,7 @@
            ,mse_strict,t_max_beam_off,ifitdelz,scaledz &
            ,mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210 &
            ,ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels,idebug,jdebug &
-           ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt
+           ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt,ifindopt
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace &
            ,symmetrize,backaverage,lring
       data mcontr/35/,lfile/36/,ifpsi/0/
@@ -22037,9 +22086,9 @@
        ' for start inside):')
  6100 format(/,1x,48htype plot mode (0=none, 1=tektronix, 2=versatec, &
            ,17h 3=qms, -=x ray):)
- 6200 format (/,1x,22hnumber of time slices?)
- 6220 format (/,1x,22htype input file names:)
- 6230 format (1x,1h#)
+ 6200 format (/,1x,'number of time slices?')
+ 6220 format (/,1x,'type input file names:')
+ 6230 format (1x,'#')
  6240 format (a)
  6600 format (/,1x,'good shot list file name ( 0=tty) ?')
  6610 format (/,1x,'command file name ( 0=none) ?')

@@ -847,6 +847,7 @@
              ynow=sevals(npn,timenow,xw,w,bw,cw,dw)
              y(i)=ynow
   200    continue
+
       else
          do i=1,nnp
             timenow=time(i)
@@ -2868,6 +2869,25 @@
 #if defined(USEMPI)
 
       subroutine getpts_mpi(nshot,times,delt,ktime,istop)
+!**********************************************************************
+!**                                                                  **
+!**     MAIN PROGRAM:  MHD FITTING CODE                              **
+!**                                                                  **
+!**                                                                  **
+!**     SUBPROGRAM DESCRIPTION:                                      **
+!**          getpts_mpi...                                           **
+!**                                                                  **
+!**     CALLING ARGUMENTS:                                           **
+!**                                                                  **
+!**     REFERENCES:                                                  **
+!**          (1)                                                     **
+!**                                                                  **
+!**     RECORD OF MODIFICATION:                                      **
+!**       2020/09/18 ....... R.S. Bug fix, bcast oldccomp.           **
+!**                          This removed small differences between  **
+!**                          serial and parallel runs.               **
+!**                                                                  **
+!**********************************************************************
       
         include 'eparmdud129.f90'
         include 'modules1.f90'
@@ -2923,6 +2943,7 @@
         if (istop /= 0) then
           return
         endif
+        call MPI_BCAST(oldccomp,1,MPI_LOGICAL,0,MPI_COMM_WORLD,ierr)
 
         ! TIMING >>>
         if (rank == 0) then
@@ -3047,10 +3068,11 @@
         tmp2(:) = dist_data_displs(:)*nsize
         ! SIZE = SIZEOF(DOUBLE) * SUM(DIST_DATA(2:)) * NSIZE bytes
         total_bytes = total_bytes + 8*sum(dist_data(2:))*nsize
+
         if (rank == 0) then
           call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,MPI_IN_PLACE,tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         else
-          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,zwork,tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,zwork,       tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         endif
         ! Unpack ZWORK array data
         ! NOTE : Only processes with rank > 0 need to unpack data

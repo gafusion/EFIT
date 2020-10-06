@@ -88,6 +88,7 @@
 !                     was determined from shot XXXXX.
 !      Revised: R. La Haye Nov. 21, 1994.
 !        8/9/2004 - Remove n1coil for shot > 108281
+!   9/21/2020 - R.S. Changed ifix to int
 !       
 !vas-oct3,08        include 'expath.inc'
         use expath
@@ -136,7 +137,7 @@
         IAR(1)=NPTS
         RAR(1)=-0.050000
         RAR(2)=0.0020005
-        NAVG=IFIX((TAVG+.5)/1000./RAR(2))
+        NAVG=int((TAVG+.5)/1000./RAR(2))
 
         NIN=21
         IER=1
