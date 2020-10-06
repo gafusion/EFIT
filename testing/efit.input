@@ -1,7 +1,7 @@
 &optin
 mode=7
-cmdfile=''
-shotfile=''
+cmdfile='0'
+shotfile='0'
 shot=nshot
 starttime=start_time
 deltatime=20
