@@ -119,7 +119,7 @@
                     np,times,delt,i0,r1,i1,psibit(i),iavem,time, &
                     ircfact, do_spline_fit,psi_rc(i),psircg(i), &
                     vrespsi(i),psi_k(i), &
-                    t0psi(i),devpsi(1,i),navpsi(1,i),time_err)
+                    t0psi(i),devpsi(1,i),navpsi(1,i),time_err,  0) ! rls
         if (ierpsi(i).eq.3) then
          iierr=1
          return
@@ -148,7 +148,7 @@
       call avdata(nshot,nsingl(i),i1,ierpla,pasmat(1), &
                   np,times,delt,i0,r1,i1,bitip,iavem,time,ircfact, &
                   do_spline_fit,p_rc,prcg,vresp,p_k,t0p,devp(1), &
-                  navp(1),time_err)
+                  navp(1),time_err,  0) ! rls
       rnavp=navp
       if( (use_alternate_pointnames .eq. 1) .and. &      !JRF 
           (i .eq. 1) ) then
@@ -164,7 +164,7 @@
       call avdata(nshot,nsingl(i),i1,ierlop,vloopt(1), &
                   np,times,delt,i0,r1,i1,bitvl,iavev,time,ircfact, &
                   do_spline_fit,vl_rc,vlrcg,vresvl,vl_k,t0vl,devvl(1), &
-                  navvl(1),time_err)
+                  navvl(1),time_err,  0) ! rls
       do 32 j=1,np
    32   vloopt(j)=vloopt(j)
 !
@@ -186,7 +186,7 @@
         call avdata(nshot,ndenv(i),i1,ierlop,denvt(1,i), &
                     np,times,delt,i0,r1,i1,bitvl,iaved,time,ircfact, &
                     do_spline_fit,denv_rc(i),denvrcg(i),vresdenv(i), &
-                    denv_k(i),t0denv(i),devdenv(1,i),navdenv(1,i),time_err)
+                    denv_k(i),t0denv(i),devdenv(1,i),navdenv(1,i),time_err,  0) ! rls
         if (ierlop.eq.0) then
         do 38 j=1,np
           denvt(j,i)=denvt(j,i)*50.0
@@ -198,7 +198,7 @@
         call avdata(nshot,ndenr(i),i1,ierlop,denrt(1,i), &
                     np,times,delt,i0,r1,i1,bitvl,iaved,time,ircfact, &
                     do_spline_fit,denr_rc(i),denrrcg(i),vresdenr(i), &
-                    denr_k(i),t0denr(i),devdenr(1,i),navdenr(1,i),time_err)
+                    denr_k(i),t0denr(i),devdenr(1,i),navdenr(1,i),time_err,  0) ! rls
         if (ierlop.eq.0) then
         do 43 j=1,np
           denrt(j,i)=denrt(j,i)*50.0
@@ -236,7 +236,7 @@
         call avdata(nshot,ndenr(i),i1,ierlop,denrt(1,i), &
                     np,times,delt,i0,r1,i1,bitvl,iaved,time,ircfact, &
                     do_spline_fit,denr_rc(i),denrrcg(i),vresdenr(i), &
-                    denr_k(i),t0denr(i),devdenr(1,i),navdenr(1,i),time_err)
+                    denr_k(i),t0denr(i),devdenr(1,i),navdenr(1,i),time_err,  0) ! rls
         if (ierlop.eq.0) then
         do j=1,np
           denrt(j,i)=denrt(j,i)*50.0
@@ -247,6 +247,7 @@
 !----------------------------------------------------------------------
 !-- 67-degree magnetic probes ...                                    --
 !----------------------------------------------------------------------
+      !print*,'4.9.9~~~expmpi(1,37)',rank,expmpi(1,37),expmpi(2,37)!,silopt(1,37)
       do 65 i=1,magpri
         do 62 j=1,np
    62   expmpi(j,i)=0.
@@ -255,8 +256,9 @@
         call avdata(nshot,mpnam2(i),i1,iermpi(i),expmpi(1,i), &
                     np,times,delt,i0,sclmp,i1,bitmpi(i),iavem,time,ircfact, &
                     do_spline_fit,xmp_rc(i),xmprcg(i),vresxmp(i),xmp_k(i), &
-                    t0xmp(i), devxmp(1,i),navxmp(1,i),time_err)
+                    t0xmp(i), devxmp(1,i),navxmp(1,i),time_err,  i) ! rls
    65 continue
+      !print*,'5.0.0~~~expmpi(1,37)',rank,expmpi(1,37),expmpi(2,37)!,silopt(1,37), !rls
       rnavxmp = navxmp
 !--------------------------------------------------------------------
 !--      New BT compensations for magnetic probes and flux loops   --
@@ -273,7 +275,7 @@
         call avdata(nshot,btcname,i1,ierbtc,bti322(1), &
                     np,times,delt,i0,r1,i1,bitbt,iavem,time,ircfact, &
                     do_spline_fit,bt_rc,btrcg,vresbt,bt_k,t0bt,devbt(1), &
-                    navbt(1),time_err)
+                    navbt(1),time_err,  0) ! rls
         if (ierbtc.ne.0) then
           do 291 j=1,np
             bti322(j)=0.0
@@ -316,6 +318,7 @@
       endif
 32000 continue
       close(unit=60)
+      !print*,'5.0.1~~~expmpi(1,37)',rank,expmpi(1,37),expmpi(2,37)!,silopt(1,37)
       endif
 !---------------------------------------------------------------------
 !--  correction to magnetic probes due to N1 and C Coil             --
@@ -376,7 +379,7 @@
           call avdata(nshot,n1name,i1,iern1,curtn1(1), &
                       np,times,delt,i0,r1,i1,bitn1,iavem,time,ircfact, &
                       do_spline_fit,xn1_rc,xn1rcg,vresxn1,xn1_k, &
-                      t0xn1,devxn1(1),navxn1(1),time_err)
+                      t0xn1,devxn1(1),navxn1(1),time_err,  0) ! rls
           if (iern1.ne.0) then
            do 28 j=1,np
             curtn1(j)=0.0
@@ -393,7 +396,7 @@
                        np,times,delt,i0,r1,i1,bitipc,iavem,time,ircfact, &
                        do_spline_fit,cc_rc(k),ccrcg(k),vrescc(k), &
                        cc_k(k),t0cc(k), &
-                       devcc(1,k),navcc(1,k),time_err)
+                       devcc(1,k),navcc(1,k),time_err,  0) ! rls
            if (iercc.ne.0) then
             do j=1,np
               curccoi(j,k)=0.0
@@ -462,6 +465,7 @@
       endif
 34000 continue
       close(unit=60)
+      !print*,'5.0.2~~~expmpi(1,37)',rank,expmpi(1,37),expmpi(2,37)!,silopt(1,37)
       endif
 !
       do j=1,np
@@ -526,7 +530,7 @@
            call avdata(nshot,niname(k),i1,ieric(k),curicoi(1,k), &
                        np,times,delt,i0,r1,i1,bitipc,iavem,time,ircfact, &
                        do_spline_fit,xic_rc(k),xicrcg(k),vresxic(k), &
-                       xic_k(k),t0xic(k),devxic(1,k),navxic(1,k),time_err)
+                       xic_k(k),t0xic(k),devxic(1,k),navxic(1,k),time_err,  0) ! rls
            if (ieric(k).ne.0.and.ieric(k).ne.-1) then
             do j=1,np
               curicoi(j,k)=0.0
@@ -583,6 +587,7 @@
       endif
 36000 continue
       close(unit=60)
+      !print*,'5.0.3~~~expmpi(1,37)',rank,expmpi(1,37),expmpi(2,37)!,silopt(1,37)
       endif
       do j=1,np
         curiu30(j)=curicoi(j,1)
@@ -605,7 +610,7 @@
       call avdata(nshot,nsingl(3),i1,ierbto,bcentr, &
                   np,times,delt,i0,r1,i1,bitbto,iavem,time,ircfact, &
                   do_spline_fit,bc_rc,bcrcg,vresbc,bc_k,t0bc,devbc(1), &
-                  navbc(1),time_err)
+                  navbc(1),time_err,  0) ! rls
       if (time_err .eq. 1) then
         if (nvtime .eq. -1) then
           print *, ''
@@ -637,7 +642,7 @@
         call avdata(nshot,fcname(i),i1,ierfc(i),fccurt(1,i), &
                     np,times,delt,i0,sclmp,i1,bitfc(i),iavem,time,ircfact, &
                     do_spline_fit,fc_rc(i),fcrcg(i),vresfc(i),fc_k(i),t0fc(i), &
-                    devfc(1,i),navfc(1,i),time_err)
+                    devfc(1,i),navfc(1,i),time_err,  0) ! rls
         do 77 j=1,np
         fccurt(j,i)=fccurt(j,i)*turnfc(i)
         devfc(j,i) =devfc(j,i)*turnfc(i)
@@ -654,7 +659,7 @@
         call avdata(nshot,ecname(i),i1,ierec(i),eccurt(1,i), &
                     np,times,delt,i0,r1,i1,bitec(i),iavem,time,ircfact, &
                     do_spline_fit,e_rc(i),ercg(i),vrese(i),e_k(i),t0e(i), &
-                    deve(1,i),navec(1,i),time_err)
+                    deve(1,i),navec(1,i),time_err,  0) ! rls
         if (time_err .eq. 1) then
           if (nvtime .eq. -1) then
             print *, ''
@@ -692,14 +697,14 @@
         call avdata(nshot,nsingl(4),i1,ierrdi,diamag(1), &
                     np,times,delt,i0,r1,i1,bitdia,iavem,time,ircfact, &
                     do_spline_fit,diam_rc,diamrcg,vresdiam,diam_k, &
-                    t0diam,devdiam(1),navdiam(1),time_err)
+                    t0diam,devdiam(1),navdiam(1),time_err,  0) ! rls
       endif
       endif
       if (kcaldia.eq.1) then
         call avdata(nshot,nsingl(4),i1,ierrdi,diamag(1), &
                     np,times,delt,i0,r1,i1,bitdia,iavem,time,ircfact, &
                     do_spline_fit,diam_rc,diamrcg,vresdiam,diam_k, &
-                    t0diam,devdiam(1),navdiam(1),time_err)
+                    t0diam,devdiam(1),navdiam(1),time_err,  0) ! rls
       endif
       do i=1,np
         diamag(i)=1.0e-03*diamag(i)
@@ -727,7 +732,7 @@
       subroutine avdata(nshot,name,mmm,ierror,y, &
                         np,timesd,deltd,mm,xxd,nn,bitvld,kave,time,ircfact, &
                         do_spline_fit,rcx,rcgx,vbitx,zinhnox,t0x,stdevx,navx, &
-                        ktime_err)
+                        ktime_err,  icall_rls)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -764,6 +769,10 @@
       data dtmin/0.001001/,xm5/0.00001/
       save dtmin,xm5
       logical*4 do_spline_fit
+      integer  :: icall_rls
+
+      !print*,'6.0.0~~~icall_rls',icall_rls
+      !print*,'6.0.0~~~do_spline_fit',do_spline_fit
 !
       delt=deltd
       times=timesd
@@ -783,6 +792,8 @@
 	npn = (tmax-tmin)/dtmin + 1.5
 	npn = min0(npn,4000)
 	npn = max0(npn,10)
+       !if (icall_rls==37) print*,'7.0.6~~~xw',xw(1)
+       !if (icall_rls==37) print*,'7.0.6~~~xw',xw(1:50)
 !
         bitvl=0.0
         if(name .ne. 'NONE      ') then !JRF
@@ -810,6 +821,7 @@
 !------------------------------------------------------------------------
 !--	Check valid range of time-slice data                           --
 !------------------------------------------------------------------------
+       !if (icall_rls==37) print*,'7.0.7~~~xw',xw(1)
 	ktime_err = 0
 	nnp = np
         nvtime = -1
@@ -835,18 +847,28 @@
            ierror=1
            return
         endif
+       !if (icall_rls==37) print*,'7.0.8~~~xw',xw(1)
 	if (mave .ne. 0) then
 		dtave = mave*dtmin*2.
 		call smoothit2(xw,w,npn,dtave,stdevxx,navxx)
 	endif
 !
+      !if (icall_rls==37) print*,'7.0.9~~~xw',xw(1)
       if (do_spline_fit) then       !JRF
          call zplines(npn,xw,w,bw,cw,dw)
          do 200 i=1,nnp
              timenow=time(i)
+             !if (icall_rls==37) print*,'6.0.2~~~y',i,npn,timenow,ntims
+             !if (icall_rls==37) print*,'6.0.3~~~y',xw(1),xw(2)
+             !if (icall_rls==37) print*,'6.0.4~~~y',w(1),w(2)
+             !if (icall_rls==37) print*,'6.0.5~~~y',bw(1),bw(2)
+             !if (icall_rls==37) print*,'6.0.6~~~y',cw(1),cw(2)
+             !if (icall_rls==37) print*,'6.0.7~~~y',dw(1),dw(2)
              ynow=sevals(npn,timenow,xw,w,bw,cw,dw)
              y(i)=ynow
+             !if (icall_rls==37) print*,'6.0.8~~~y',y(i)
   200    continue
+
       else
          do i=1,nnp
             timenow=time(i)
@@ -2882,7 +2904,7 @@
 !**          (1)                                                     **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
-!**       2020/09/18 ....... R.S. Bug fix, set oldccomp at beginning.**
+!**       2020/09/18 ....... R.S. Bug fix, bcast oldccomp.           **
 !**                          This removed small differences between  **
 !**                          serial and parallel runs.               **
 !**                                                                  **
@@ -2915,8 +2937,13 @@
         ! TIMING <<<
         integer :: total_bytes
         
-        oldccomp=.false.
-        if (oldcomp) oldccomp=.true.
+        !print*,'6.0.0~~~',rank,expmpi(1,37)
+        !print*,'6.0.0~~~nshot',rank,nshot
+        !print*,'6.0.0~~~times',rank,times
+        !print*,'6.0.0~~~delt',rank,delt
+        !print*,'6.0.0~~~ktime',rank,ktime
+        !print*,'6.0.0~~~istop',rank,istop
+        !print*,'6.0.0~~~dist_data',rank,dist_data
 
         zwork(:,:) = 0.0
         allocate(tmp1(nproc),tmp2(nproc))
@@ -2945,6 +2972,7 @@
         if (istop /= 0) then
           return
         endif
+        call MPI_BCAST(oldccomp,1,MPI_LOGICAL,0,MPI_COMM_WORLD,ierr)
 
         ! TIMING >>>
         if (rank == 0) then
@@ -2978,6 +3006,10 @@
         ktime = dist_data(rank+1)
         timeb = times*1000.0+dist_data_displs(rank+1)*delt*1000.0
         
+        !print*,'6.0.1~~~dist_data',rank,dist_data
+        !print*,'6.0.1~~~dist_data_displs',rank,dist_data_displs
+        !print*,'6.0.1~~~ktime',rank,ktime
+        !print*,'6.0.1~~~timeb',rank,timeb
         ! ZWORK2
         if (rank == 0) then
           ! Pack ZWORK2 array data
@@ -3024,8 +3056,12 @@
         endif
         
         ! ZWORK
+        !print*,'6.0.1~~~magpri',rank,magpri !=76
+        !print*,'6.0.1~~~ktime_all',rank,ktime_all
         if (rank == 0) then
           ! Pack ZWORK array data
+          !print*,'6.0.1~~~time',rank,time(1),time(2)
+          !print*,'6.0.1~~~expmpi(1,37)',rank,expmpi(1,37),expmpi(2,37)
           do i=1,ktime_all
             zwork(1,i)  = time(i)     ! REAL8 (ntime)
             zwork(2,i)  = bcentr(i)   ! REAL8 (ntime)
@@ -3069,11 +3105,29 @@
         tmp2(:) = dist_data_displs(:)*nsize
         ! SIZE = SIZEOF(DOUBLE) * SUM(DIST_DATA(2:)) * NSIZE bytes
         total_bytes = total_bytes + 8*sum(dist_data(2:))*nsize
+
+        !if (rank==0) then
+        !print*,rank,tmp1,tmp2
+        !endif
+        !if (rank==1) then
+        !print*,rank,tmp1,tmp2
+        !endif
+
+        !ii = 1 !37+11
+        !call MPI_BARRIER(MPI_COMM_WORLD,ierr) ! rls
+        !if (rank==0) print*,'6.0.1.0~~~',rank,zwork(ii,1)
+        !call MPI_BARRIER(MPI_COMM_WORLD,ierr) ! rls
+        !if (rank==1) print*,'6.0.1.0~~~',rank,zwork(ii,1)
+
         if (rank == 0) then
           call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,MPI_IN_PLACE,tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         else
-          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,zwork,tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,zwork,       tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         endif
+        !call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+        !if (rank==0) print*,'6.0.1.5~~~',rank,zwork(ii,1)
+        !call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+        !if (rank==1) print*,'6.0.1.5~~~',rank,zwork(ii,1)
         ! Unpack ZWORK array data
         ! NOTE : Only processes with rank > 0 need to unpack data
         if (rank > 0) then
@@ -3114,6 +3168,8 @@
               eccurt(i,j) = zwork(j+offset,i)
             enddo
           enddo
+          !print*,'6.0.2~~~time',rank,time(1),time(2)
+          !print*,'6.0.2~~~expmpi(1,37)',rank,expmpi(1,37),expmpi(2,37)
         endif
         
         deallocate(tmp1,tmp2)
@@ -3128,6 +3184,7 @@
           write (*,"(' GETPTS transfer ',i10,' bytes in ',f6.2,' sec')") total_bytes,secs
         endif
         ! TIMING <<<
+        !print*,'6.0.2~~~',rank,expmpi(1,37)
 
       end subroutine getpts_mpi
 
@@ -3169,6 +3226,8 @@
         ! TIMING <<<
         integer :: total_bytes
         
+        !print*,'2.0~~~'
+
         zwork(:,:) = 0.0
         allocate(tmp1(nproc),tmp2(nproc))
 
@@ -3254,12 +3313,14 @@
             enddo
           enddo
         endif
+        !print*,'2.0.1~~~',rank,kwaitmse
 
         ! KWAITMSE
         ! NOTE : Necessary to send KWAITMSE to ALL processes since controls main loop defined in EFITD
         ! SIZE = SIZEOF(INTEGER) * (NPROC - 1)
         total_bytes = total_bytes + 4*(nproc-1)
         call MPI_BCAST(kwaitmse,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+        !print*,'2.0.2~~~',rank,kwaitmse
         
         ! Distribute chunks of FWTGAM array
         ! NOTE : We need to recalculate distribution data

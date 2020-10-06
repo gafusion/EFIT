@@ -107,6 +107,7 @@
 !
 !     Test the input parameters
 !
+      !print*,'4.0.0~~~',m,n
       INFO = 0
       MN = MIN( M, N )
       IF( M.LT.0 ) THEN
@@ -129,6 +130,7 @@
 !
 !     Quick return if possible
 !
+      !print*,'4.0.1~~~',A(22,22)
       IF( N.EQ.0 ) &
          RETURN
 !
@@ -141,6 +143,7 @@
 !     where T12 and R11 are upper triangular, and Q and Z are
 !     orthogonal.
 !
+      !print*,'4.0.2~~~',A(22,22)
       CALL DGGRQF( P, M, N, B, LDB, WORK, A, LDA, WORK( P+1 ), &
                    WORK( P+MN+1 ), LWORK-P-MN, INFO )
       LOPT = WORK( P+MN+1 )
@@ -148,24 +151,29 @@
 !     Update c = Z'*c = ( c1 ) N-P
 !                       ( c2 ) M+P-N
 !
+      !print*,'4.0.3~~~',A(22,22)
       CALL DORMQR( 'Left', 'Transpose', M, 1, MN, A, LDA, WORK( P+1 ), &
                    C, MAX( 1, M ), WORK( P+MN+1 ), LWORK-P-MN, INFO )
       LOPT = MAX( LOPT, INT( WORK( P+MN+1 ) ) )
 !
 !     Solve T12*x2 = d for x2
 !
+      !print*,'4.0.4~~~',A(22,22)
       CALL DTRSV( 'Upper', 'No transpose', 'Non unit', P, B( 1, N-P+1 ), &
                   LDB, D, 1 )
 !
 !     Update c1
 !
+      !print*,'4.0.5~~~',A(22,22)
       CALL DGEMV( 'No transpose', N-P, P, -ONE, A( 1, N-P+1 ), LDA, D, &
                   1, ONE, C, 1 )
 !
 !     Sovle R11*x1 = c1 for x1
 !
+      !print*,'4.0.6~~~',A(22,22)
       CALL DTRSV( 'Upper', 'No transpose', 'Non unit', N-P, A, LDA, C, &
                   1 )
+      !print*,'4.0.6.1~~~'
 !
 !     Put the solutions in X
 !
@@ -174,6 +182,7 @@
 !
 !     Compute the residual vector:
 !
+      !print*,'4.0.7~~~'
       IF( M.LT.N ) THEN
          NR = M + P - N
          CALL DGEMV( 'No transpose', NR, N-M, -ONE, A( N-P+1, M+1 ), &
@@ -181,18 +190,21 @@
       ELSE
          NR = P
       END IF
+      !print*,'4.0.8~~~'
       CALL DTRMV( 'Upper', 'No transpose', 'Non unit', NR, &
                   A( N-P+1, N-P+1 ), LDA, D, 1 )
       CALL DAXPY( NR, -ONE, D, 1, C( N-P+1 ), 1 )
 !
 !     Backward transformation x = Q'*x
 !
+      !print*,'4.0.9~~~'
       CALL DORMRQ( 'Left', 'Transpose', N, 1, P, B, LDB, WORK( 1 ), X, &
                    N, WORK( P+MN+1 ), LWORK-P-MN, INFO )
       WORK( 1 ) = P + MN + MAX( LOPT, INT( WORK( P+MN+1 ) ) )
 
 			call dtrco(a,lda,n-p,condno,c,1)
 			condno = 1.0 / condno
+      !print*,'4.0.10~~~'
 !
       RETURN
 !
@@ -5855,6 +5867,7 @@
 !
 !     Test the input parameters.
 !
+      !print*,'5.0.0~~~'
       INFO = 0
       IF     ( .NOT.LSAME( UPLO , 'U' ).AND. &
                .NOT.LSAME( UPLO , 'L' )      )THEN
@@ -5880,6 +5893,7 @@
 !
 !     Quick return if possible.
 !
+      !print*,'5.0.1~~~'
       IF( N.EQ.0 ) &
          RETURN
 !
@@ -5897,23 +5911,30 @@
 !     Start the operations. In this version the elements of A are
 !     accessed sequentially with one pass through A.
 !
+      !print*,'5.0.2~~~',TRANS
       IF( LSAME( TRANS, 'N' ) )THEN
 !
 !        Form  x := inv( A )*x.
 !
+      !print*,'5.0.2.1~~~',UPLO
          IF( LSAME( UPLO, 'U' ) )THEN
             IF( INCX.EQ.1 )THEN
+      !print*,'5.0.2.2~~~',N
                DO 20, J = N, 1, -1
+                  !print*,'5.0.2.2.1~~~',J,X( J )
                   IF( X( J ).NE.ZERO )THEN
+                     !print*,'5.0.2.2.2~~~',J,NOUNIT,A( J, J ) ! rls A(j,j)==0 bug
                      IF( NOUNIT ) &
                         X( J ) = X( J )/A( J, J )
                      TEMP = X( J )
                      DO 10, I = J - 1, 1, -1
+                       !print*,'5.0.2.2.3~~~',J,i,X( I ),TEMP,A( I, J )
                         X( I ) = X( I ) - TEMP*A( I, J )
    10                CONTINUE
                   END IF
    20          CONTINUE
             ELSE
+      !print*,'5.0.2.3~~~',UPLO
                JX = KX + ( N - 1 )*INCX
                DO 40, J = N, 1, -1
                   IF( X( JX ).NE.ZERO )THEN
@@ -5930,7 +5951,9 @@
    40          CONTINUE
             END IF
          ELSE
+      !print*,'5.0.2.4~~~',UPLO
             IF( INCX.EQ.1 )THEN
+       !print*,'5.0.2.5~~~',UPLO
                DO 60, J = 1, N
                   IF( X( J ).NE.ZERO )THEN
                      IF( NOUNIT ) &
@@ -5942,6 +5965,7 @@
                   END IF
    60          CONTINUE
             ELSE
+       !print*,'5.0.2.6~~~',UPLO
                JX = KX
                DO 80, J = 1, N
                   IF( X( JX ).NE.ZERO )THEN
@@ -5962,6 +5986,7 @@
 !
 !        Form  x := inv( A' )*x.
 !
+      !print*,'5.0.6~~~',UPLO
          IF( LSAME( UPLO, 'U' ) )THEN
             IF( INCX.EQ.1 )THEN
                DO 100, J = 1, N
@@ -5989,6 +6014,7 @@
   120          CONTINUE
             END IF
          ELSE
+       !print*,'5.0.6~~~'
             IF( INCX.EQ.1 )THEN
                DO 140, J = N, 1, -1
                   TEMP = X( J )
@@ -6018,6 +6044,8 @@
          END IF
       END IF
 !
+      !print*,'5.0.9~~~'
+
       RETURN
 !
 !     End of DTRSV .
