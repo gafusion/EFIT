@@ -3,12 +3,12 @@
 # choose your executable (full path)
 #efit_exe="efitd90"
 #efit_exe="/home/kostukm/gitrepos/efit-bugtesting/efitbuild/efitdmpi90"
-efit_exe="/home/kostukm/gitrepos/efit-bugtesting/efitbuild/efitd90"
+efit_exe="/home/kostukm/gitrepos/efit/efitbuild/efitd90"
 # nsteps sets the timesteps 
-nsteps=3
+nsteps=1
 # nprocs sets the number of parallel mpi processes called - max 16 (for 16 avail cores)
 nprocs=1
-starttime=100
+starttime=1380
 
 ################################################################################
 ################################################################################
