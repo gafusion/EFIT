@@ -1136,7 +1136,7 @@
       subroutine findax(nx,nz,x,y,xax,yax,psimx,psiout,xseps,yseps, &
                         kaxis,xxout,yyout,kfound,psipsi,rmin,rmax, &
                         zmin,zmax,zrmin,zrmax,rzmin,rzmax,dpsipsi, &
-                        bpoo,bpooz,limtrv,xlimv,ylimv,limfagv,irls,inrls,jtime)
+                        bpoo,bpooz,limtrv,xlimv,ylimv,limfagv,ifit,infit,jtime)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -1173,8 +1173,8 @@
           ,xlimv(1),ylimv(1)
       dimension pdsold(6)
       data psitol/1.0e-04/
-      character(len=80) :: strrls
-      logical :: dodebugplts = .false.
+      character(len=80) :: strtmp
+      logical :: dodebugplts = .false. ! write surface files for debugging/plotting. Serial only, not parallel
 !
       orelax = 1.0 ! Newton's Method relaxation constant (0.0-1.0)
       niter = 20   ! Number of Newton's Method iterations
@@ -1183,16 +1183,6 @@
       yseps(1)=-999.
       xseps(2)=-999.
       yseps(2)=-999.
-
-      !if (irls==12) then
-      !print*,'11.9~~~',rank,nx,nz,ifindopt
-      !print*,'11.9~~~',kaxis
-      !print*,'11.9~~~',rmin,rmax
-      !print*,'11.9~~~',zmin,zmax
-      !print*,'11.9~~~',x
-      !print*,'11.9~~~',y
-      !stop
-      !end if
 
       if (iabs(kaxis).ge.20) go to 105
 
@@ -1204,7 +1194,6 @@
 !     c - (out) 4-d array of spline coefficients
 !     bkx, bky - (out) interval coefficients w/ lkx,lky terms
       call sets2d(psipsi,c,x,nx,bkx,lkx,y,nz,bky,lky,wk,ier)
-      !print*,'11.9~~~sets2d-error',ier
       if (idebug >= 2) then
           write (6,*) 'FINDAX Z,R = ', y(33),(x(i),i=45,45)
           write (6,*) 'FINDAX si = ',(psipsi((i-1)*nx+33),i=45,45)
@@ -1220,7 +1209,6 @@
         ! xxout,yyout - (in) interp points outlining (psipsi=0) the raised mag flux region
         ! pds - (out) interpolation value
         ! pds(1)=f, pds(2)=fx, pds(3)=fy, pds(4)=fxy, pds(5)=fxx, pds(6)=fyy
-        !write(*,'(i5,2(1x,1pe12.5))') n,xxout(n),yyout(n) ! rls
         call seva2d(bkx,lkx,bky,lky,c,xxout(n),yyout(n),pds,ier,n333)
         bpooz(n)=pds(2)/xxout(n)
         bpoo(n)=sqrt(bpooz(n)**2+(pds(3)/xxout(n))**2)
@@ -1257,27 +1245,24 @@
         xax=x(i)
         yax=y(j)
   200 continue
-      !print*,'12.0~~~200',psimx,irls,inrls
-      !print*,'12.0~~~200',rmin,rmax,zmin,zmax
-      !print*,'12.0~~~200',kfound
 
       xs=xax
       ys=yax
       ps=psimx
 
       if (dodebugplts) then
-        write(strrls,'(a,i0.2,a,i0.2,a)') 'debug-surf',jtime,'-',irls,'.txt'
-        open(unit=99,file=trim(strrls),status='replace') ! rls
-        do iyrls = 1,nz
-          do ixrls = 1,nx
-            call seva2d(bkx,lkx,bky,lky,c,x(ixrls),y(iyrls),pds,ier,n666)
-            write(99,'(3(1x,1pe12.5))') x(ixrls),y(iyrls),pds(1)
+        write(strtmp,'(a,i0.2,a,i0.2,a)') 'debug-surf',jtime,'-',ifit,'.txt'
+        open(unit=99,file=trim(strtmp),status='replace')
+        do iyplt = 1,nz
+          do ixplt = 1,nx
+            call seva2d(bkx,lkx,bky,lky,c,x(ixplt),y(iyplt),pds,ier,n666)
+            write(99,'(3(1x,1pe12.5))') x(ixplt),y(iyplt),pds(1)
           end do
         end do
         close(unit=99)
 
-        write(strrls,'(a,i0.2,a,i0.2,a)') 'debug-conv',jtime,'-',irls,'.txt'
-        open(unit=99,file=trim(strrls),status='replace') ! rls
+        write(strtmp,'(a,i0.2,a,i0.2,a)') 'debug-conv',jtime,'-',ifit,'.txt'
+        open(unit=99,file=trim(strtmp),status='replace')
       end if
 
       if (ifindopt==2) then
@@ -1291,7 +1276,7 @@
       do 300 j=1,niter
         ! pds(1)=f, pds(2)=fx, pds(3)=fy, pds(4)=fxy, pds(5)=fxx, pds(6)=fyy
         call seva2d(bkx,lkx,bky,lky,c,xax,yax,pds,ier,n666)
-        if (dodebugplts) write(99,'(3(1x,1pe12.5))') xax,yax,pds(1) ! rls
+        if (dodebugplts) write(99,'(3(1x,1pe12.5))') xax,yax,pds(1)
 
         ! Gradient Descent Method - better for sharp peaks
         if (ifindopt==2) then
@@ -1308,11 +1293,8 @@
           xaxold = xax
           yaxold = yax
           pdsold = pds
-          !write(*,'(i3,7(1x,1pe12.5))') j,xax,yax,pds(1),pds(2),pds(3),gamman**2*(xerr**2+yerr**2),gamman ! rls print*,'~~~'
           xax = xax + gamman*xerr
           yax = yax + gamman*yerr
-          !print*,'12.1.1~~~',j,xax,yax,pds(1),pds(2),pds(3),xerr*xerr+yerr*yerr,det
-          !if ((xax<x(1) .or. xax>x(nx)) .or. (yax<y(1) .or. yax>y(nz))) goto 305
           if (gamman**2*(xerr**2+yerr**2) .lt. 1.0e-12) go to 310
 
         ! Original Newton's Method for optimization, xn+1 = xn - f'/f''
@@ -1321,10 +1303,9 @@
           if (abs(det).lt.1.0e-15) go to 305
           xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
           yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
-          !write(*,'(a,i3,6(1x,1pe12.5))') '1~~~',j,xax,yax,pds(1),pds(2),pds(3),xerr*xerr+yerr*yerr
           xax=xax+orelax*xerr
           yax=yax+orelax*yerr
-          !if ((xax<x(1) .or. xax>x(nx)) .or. (yax<y(1) .or. yax>y(nz))) goto 305
+          !if ((xax<x(1) .or. xax>x(nx)) .or. (yax<y(1) .or. yax>y(nz))) goto 305 ! TODO: test if this would help
           if ((abs(pds(2)).lt.1.0e-06).and.(abs(pds(3)).lt.1.0e-06)) go to 310
           if (xerr*xerr+yerr*yerr.lt.1.0e-12) go to 310
         end if
@@ -1335,12 +1316,10 @@
       xax=xs
       yax=ys
       psimx=pds(1)
-      !print*,'12.2~~~305',psimx
       emaxis=1.3
       go to 1000
   310 continue
       psimx=pds(1)
-      !print*,'12.2~~~310',psimx
 !----------------------------------------------------------------------
 !--   compute elongation on axis                                     --
 !----------------------------------------------------------------------
@@ -1360,8 +1339,7 @@
       if (emaxis.le.0.0) emaxis=1.3
  1000 continue
       if (dodebugplts) then
-        close(unit=99) ! rls
-        !stop
+        close(unit=99)
       end if
       delrmax1=0.40
       delrmax2=0.40
@@ -1396,7 +1374,6 @@
         if (abs(det).lt.1.0e-15) go to 1305
         xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
         yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
-        !write(*,'(a,i3,6(1x,1pe12.5))') '2~~~',j,xs,ys,pds(1),pds(2),pds(3),xerr*xerr+yerr*yerr
         xs=xs+orelax*xerr
         ys=ys+orelax*yerr
         if (xerr*xerr+yerr*yerr.lt.1.0e-12*100.) go to 1310
@@ -1421,13 +1398,11 @@
       call seva2d(bkx,lkx,bky,lky,c,rmax,znow,pdss,ier,n333)
       delrmax1=relpsi/abs(pdss(2))
       relpsi=relpsi/abs((psimx-psiout))
-      !print*,'12.3~~~',psimx,psiout,delrmax1,anow
       if (delrmax1.gt.0.004*anow) return
       sifsep=pds(1)
       rfsep=xs
       zfsep=ys
       psiout=pds(1)
-      !print*,'12.3~~~~',psiout ! rls psiout==psimx --> diff is near zero at sidif
       xxout(ns)=xs
       yyout(ns)=ys
       xxout(ns-1)=0.5*(xxout(ns)+xxout(ns-2))
@@ -1500,7 +1475,6 @@
         if (abs(det).lt.1.0e-15) go to 9305
         xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
         yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
-        !write(*,'(a,i3,6(1x,1pe12.5))') '3~~~',j,xs,ys,pds(1),pds(2),pds(3),xerr*xerr+yerr*yerr
         xs=xs+orelax*xerr
         ys=ys+orelax*yerr
         if (xerr*xerr+yerr*yerr.lt.1.0e-12*100.) go to 9310

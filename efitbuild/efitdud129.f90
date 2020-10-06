@@ -233,7 +233,6 @@
 !----------------------------------------------------------------------
 !--  set up data                                                     --
 !----------------------------------------------------------------------
-        !print*,'1.0.1~~~',iconvr,kautoknt
         call data_input(ks,iconvr,ktime,mtear)
         if (iconvr.lt.0) go to 500
         if (kautoknt .eq. 1) then
@@ -242,40 +241,32 @@
 !----------------------------------------------------------------------
 !--  initialize current profile                                      --
 !----------------------------------------------------------------------
-        !print*,'1.0.1.1~~~'
            call inicur(ks)
-        !print*,'1.0.1.2~~~'
 !----------------------------------------------------------------------
 !--  get equilibrium                                                 --
 !----------------------------------------------------------------------
            call fit(ks,kerror)
-        !print*,'1.0.1.3~~~'
            if (kerror.gt.0.and.k.lt.ktime) go to 500
         endif
-        !print*,'1.0.1.4~~~'
 !----------------------------------------------------------------------
 !--  post processing for graphic and text outputs                    --
 !----------------------------------------------------------------------
         call shapesurf(ks,ktime,kerror)
-        !print*,'1.0.3~~~'
         if (mtear.ne.0) call tearing(ks,mtear)
         if (kerror.gt.0) go to 500
         if (idebug /= 0) write (6,*) 'Main/PRTOUT ks/kerror = ', ks, kerror
         call prtout(ks)
-        !print*,'1.0.4~~~'
         if ((kwaitmse.ne.0).and.(kmtark.gt.0)) call fixstark(-ks,kerror)
 !----------------------------------------------------------------------
 !--  write A and G EQDSKs                                            --
 !----------------------------------------------------------------------
         if (idebug /= 0) write (6,*) 'Main/WQEDSK ks/kerror = ', ks, kerror
         call weqdsk(ks)
-        !print*,'1.0.5~~~'
         if (iconvr.ge.0) then
            call shipit(ktime,ks,ks)
            call wtear(mtear,ks)
         endif
         call wmeasure(ktime,ks,ks,1)
-        !print*,'1.0.6~~~'
 !----------------------------------------------------------------------
 ! -- write Kfile if needed                                           --
 !----------------------------------------------------------------------
@@ -284,12 +275,10 @@
            call write_K2(ks,kerror)
          endif
       endif
-        !print*,'1.0.7~~~'
   500 if (k.lt.ktime) then
         kerrot(ks)=kerror 
         goto 100
       endif
-        !print*,'1.0.8~~~'
       if (kwake.ne.0) go to 20
       call wmeasure(ktime,1,ktime,2)
       call wtime(ktime)
@@ -3964,7 +3953,6 @@
       do 260 i=1,magpri
         expmpi(jtime,i)=expmp2(i)
   260 continue
-      !print*,'4.0.3~~~',rank,expmpi(1,37)
 !------------------------------------------------------------------------
 !--  New E-coil connections                   LLao, 95/07/11           --
 !------------------------------------------------------------------------
@@ -4093,7 +4081,6 @@
         expmpi(j,i)=expmpi(j,i)-signn1(i)*curtn1(j)
 11368 continue
       close(unit=60)
-      !print*,'4.0.4~~~',rank,expmpi(1,37)
       endif
       endif
 !---------------------------------------------------------------------
@@ -4112,7 +4099,6 @@
         expmpi(j,i)=expmpi(j,i)-signc79*curc79(j)
       enddo
       close(unit=60)
-      !print*,'4.0.5~~~',rank,expmpi(1,37),nccoil,oldccomp
       endif
 !
       if (ifitvs.gt.0) then
@@ -4303,7 +4289,6 @@
 !
       if (sidif.le.-1.0e+10) then
         sidif=tmu*pasmat(jtime)*rcentr/2.0
-        !print*,'11.0~~~',jtime,sidif,tmu,pasmat(jtime),rcentr
       endif
       errcut=max(ten2m3,error*10.)
       fbrdy=bcentr(jtime)*rcentr/tmu
@@ -6183,26 +6168,19 @@
                    write (6,*) '  nitera/kcallece/kfitece/nleft/mtxece/nconstr = ', &
                      nitera,kcallece,kfitece,nleft,mtxece,nconstr   
                 endif
-        !print*,'1.9.2~~~',i,errorm,psi(1918)
                 call setece(jtime,kerror)
-        !print*,'1.9.3~~~',i,errorm,psi(1918)
              endif
         endif
-        !print*,'1.9.4~~~',i,errorm,psi(1918)
         call green(nzero,jtime,nitera)
-        !print*,'1.9.5~~~',i,errorm,psi(1918)
         if (kprfit.gt.0.and.iwantk.eq.ndokin) then
           call presur(jtime,nitera,kerror)
-        !print*,'1.9.6~~~',i,errorm,psi(1918)
           if (kerror /= 0) then
             jerror(jtime) = 1
             return
           endif
           iwantk=0
         endif
-        !print*,'1.9.7~~~',i,errorm,psi(1918)
         if (kprfit.ge.3) call presurw(jtime,nitera)
-        !print*,'1.9.8~~~',i,errorm,psi(1918)
         if (errorm.lt.errmagb) then
           if ((imagsigma.eq.1) .AND. (errorm > errmag) ) &
                   call getsigma(jtime,nitera)
@@ -6210,41 +6188,31 @@
                   call getsigma(jtime,nitera)
                   idosigma=2
           endif
-          !print*,'1.9.9~~~',i,errorm,psi(1918)
         endif
         if (idebug.ge.2) write (6,*) 'Call FIT/MATRIX',ix
-        !print*,'1.9.10~~~',i,errorm,psi(1918)
         call matrix(jtime,ix,ichisq,nitera,kerror)
-        !print*,'1.9.11~~~',i,errorm,psi(1918)
         if (kerror /= 0) then
           jerror(jtime) = 1
           return
         endif
-        !print*,'1.9.12~~~',i,errorm,psi(1918)
         if ((iconvr.eq.2).and.(ichisq.gt.0)) go to 2020
   500   continue
         do 2000 in=1,nxiter
-          !print*,'1.9.13~~~',i,in,errorm,psi(1918)
           ixnn=in
           nitera=nitera+1
-          !print*,'1.9.14~~~',i,in,errorm,psi(1918)
           call currnt(ix,jtime,ixnn,nitera,kerror)
           if (kerror /= 0) then
             jerror(jtime) = 1
             return
           endif
-          !print*,'1.9.15~~~',i,in,errorm,psi(1918)
           if (ivesel.ge.2) call vescur(jtime)
           if ((i.le.1).or.(in.gt.1)) call fcurrt(jtime,ix,nitera,kerror)
           if (kerror /= 0) then
             jerror(jtime) = 1
             return
           endif
-          !print*,'2.0.0~~~',i,in,errorm,psi(1918)
           call pflux(ix,ixnn,nitera,jtime)
-          !print*,'2.0.1~~~',i,in,errorm,psi(1918)
           call steps(ixnn,nitera,ix,jtime,kerror,i,in)
-          !print*,'2.0.2~~~',i,in,errorm,psi(1918)
           if (kerror /= 0) then
             jerror(jtime) = 1
             return
@@ -6253,14 +6221,11 @@
             if (kwaitmse.ne.0 .and. i.ge.kwaitmse)  &
       	              call fixstark(jtime,kerrora)
           endif
-          !print*,'2.0.3~~~',i,in,errorm,psi(1918)
           call residu(nitera,jtime)
-          !print*,'2.0.4~~~',i,in,errorm,psi(1918)
           if ((nitera.lt.kcallece).and.(kfitece.gt.0.0)) go to 2010
           if ((in.eq.1).and.(idone.gt.0)) then
             if (tsaisq(jtime).le.saimin) go to 2020
           endif
-          !print*,'2.0.5~~~',i,in,errorm,psi(1918)
           if (idone.gt.0) go to 2010
           if (i.eq.mxiter+1) go to 2010
  2000   continue
@@ -9591,7 +9556,6 @@
          tanham_uncor(ktime,nmtark)
          real*4 fv30lt,fv30rt,fv210lt,fv210rt
 
-         !print*,'1.0~~~'
 !
       do 10 i=1,ktime
         atime(i)=time(i)
@@ -9676,7 +9640,6 @@
       elseif (kwaitmse .eq. 0) then
 		kwaitmse = 5
       endif
-      !print*,'1.0.1~~~',rank,kwaitmse
       return
       end
       subroutine gette(kerror)
@@ -10055,7 +10018,6 @@
  1280   continue
         fgowpc(jj)=0.0
  1300 continue
-      !print*,'6.1~~~',rsilpc(24,4)
       if (fitdelz.and.niter.ge.ndelzon) then
           do m=1,nsilop
             gsildz(m)=0.0
@@ -10144,18 +10106,15 @@
          fgowfe=0.0
       endif
 !
-      !print*,'6.1.0~~~',rsilpc(24,4), ifag
       do 2000 i=1,nw
       do 2000 j=1,nh
         kk=(i-1)*nh+j
         if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) then
-          !print*,'6.1.1~~~',i,j,kk,rsilpc(24,4)
           go to 1582
         end if
         call setpp(xpsi(kk),xpsii)
-        !print*,'6.1.2~~~',rsilpc(24,4), ifag
         do 1580 jj=1,kppcur
-          factor=xpsii(jj)*rgrid(i)*www(kk) ! rls, slight differences in xpsii btw 1,2 steps
+          factor=xpsii(jj)*rgrid(i)*www(kk)
 !------------------------------------------------------------------------
 !-- correction for rotation, p0' terms                                 --
 !------------------------------------------------------------------------
@@ -10190,8 +10149,6 @@
           do 1350 m=1,nsilop
             rsilpc(m,jj)=rsilpc(m,jj) + gsilpc(m,kk)*factor
  1350     continue
-          !print*,'6.1.0~~~',i,j,jj,xpsii(jj),rgrid(i),www(kk)
-          !print*,'6.1.1~~~',i,j,jj,rsilpc(24,4),gsilpc(24,kk),factor
           do 1400 m=1,magpri
             rmp2pc(m,jj)=rmp2pc(m,jj) + gmp2pc(m,kk)*factor
  1400     continue
@@ -10264,7 +10221,6 @@
         if (fwtdlc.gt.0.0) then
           call setff(upsi,xpsis)
         endif
-        !print*,'6.1.3~~~',rsilpc(24,4), ifag
         do 1880 jj=kppcur+1,kpcurn
           jjk=jj-kppcur
           factor=xpsii(jjk)/rgrid(i)*wwwww
@@ -10272,7 +10228,6 @@
           do 1600 m=1,nsilop
             rsilpc(m,jj)=rsilpc(m,jj) + gsilpc(m,kk)*factor
  1600     continue
-          !print*,'6.1.2~~~',i,j,jj,rsilpc(24,4)
           do 1700 m=1,magpri
             rmp2pc(m,jj)=rmp2pc(m,jj) + gmp2pc(m,kk)*factor
  1700     continue
@@ -10350,7 +10305,6 @@
         if (kvtor.le.0) goto 1982
         if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) go to 1982
         call setpwp(xpsi(kk),xpsii)
-        !print*,'6.1.4~~~',rsilpc(24,4), ifag
         do 1980 jj=kpcurn+1,kwcurn
           jjii=jj-kpcurn
           factor=xpsii(jjii)*rgsvt(i)*www(kk)
@@ -10365,7 +10319,6 @@
           do 1900 m=1,nsilop
             rsilpc(m,jj)=rsilpc(m,jj) + gsilpc(m,kk)*factor
  1900     continue
-          !print*,'6.1.3~~~',i,j,jj,rsilpc(24,4)
           do 1910 m=1,magpri
             rmp2pc(m,jj)=rmp2pc(m,jj) + gmp2pc(m,kk)*factor
  1910     continue
@@ -10396,7 +10349,6 @@
  1980   continue
  1982   continue
  2000 continue
-      !print*,'6.2~~~',rsilpc(24,4)
 !----------------------------------------------------------------------
 !--  diamagnetic flux                                                --
 !----------------------------------------------------------------------
@@ -10817,7 +10769,6 @@
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       save isicinit,zelips
-      !print*,'7.0~~~',rsilpc(24,4)
 !
       if (ivacum.gt.0) return
 !----------------------------------------------------------------------
@@ -10888,10 +10839,6 @@
         zbound=zelip
         eelip=1.5
       endif
-      !print*,'3.0.0~~~ks',rank,ks
-      !print*,'3.0.0~~~zelip',rank,zelip
-      !print*,'3.0.1~~~expmpi(1,37)',rank,expmpi(1,37),expmpi(2,37)
-      !print*,'3.0.2~~~silopt(1,37)',rank,silopt(1,37),silopt(2,37)
 !----------------------------------------------------------------
 !-- set zelip=0.0 if bad signals              96/06/24         --
 !----------------------------------------------------------------
@@ -10961,7 +10908,6 @@
 !
       integer, intent(inout) :: kerror
       kerror = 0
-      !print*,'3.0.0~~~',arsp(22,22),nrsmat,mfnpcr
       if (iconvr.eq.3) go to 6000
 !----------------------------------------------------------------------
 !-- Variable fitdelz                                                 --
@@ -10999,7 +10945,6 @@
 !----------------------------------------------------------------------
 !--  singular decomposition, first F-coil currents, set up arsp      --
 !----------------------------------------------------------------------
-      !print*,'3.0.0.1~~~',arsp(22,22),rsilpc(24,4)
       do 2100 nk=1,nfcoil
         nj=0
         do 2020 m=1,nsilop
@@ -11055,7 +11000,6 @@
       arsp(nj,nk)=0.0
  2092 continue
  2096 continue
-      !print*,'3.0.0.2~~~',arsp(22,22)
       do 2097 m=1,nfcoil
         if (fwtfc(m).le.0.0) go to 2097
         nj=nj+1
@@ -11065,7 +11009,6 @@
 !--------------------------------------------------------------------------
 !--  pressure data                                                       --
 !--------------------------------------------------------------------------
-      !print*,'3.0.0.3~~~',arsp(22,22)
       if (kprfit.le.0.or.kdofit.eq.0) go to 2099
       if (npress.le.0) goto 2099
       do 2098 m=1,npress
@@ -11081,7 +11024,6 @@
 !---------------------------------------------------------------------------
 !-- rotational pressure data                                              --
 !---------------------------------------------------------------------------
-      !print*,'3.0.0.4~~~',arsp(22,22)
       if (kprfit.ge.3.and.npresw.gt.0) then
         do m=1,npresw
           if (fwtprw(m).gt.0.0) then
@@ -11093,7 +11035,6 @@
 !---------------------------------------------------------------------------
 !--  J(PSIWANT) constraint                                                --
 !---------------------------------------------------------------------------
-      !print*,'3.0.0.5~~~',arsp(22,22)
       if (kzeroj.gt.0) then
        do i=1,kzeroj
         nj=nj+1
@@ -11103,7 +11044,6 @@
 !----------------------------------------------------------------------------
 !-- P', FF', and rotational constraints                                    --
 !----------------------------------------------------------------------------
-      !print*,'3.0.0.6~~~',arsp(22,22)
       if (kcalpa.gt.0) then
         do 30050 j=1,kcalpa
           nj=nj+1
@@ -11125,7 +11065,6 @@
 !------------------------------------------------------------------------------
 !-- Boundary constraints, data                                               --
 !------------------------------------------------------------------------------
-      !print*,'3.0.0.7~~~',arsp(22,22)
       if (nbdry.gt.0) then
         do j=1,nbdry
           if (fwtbdry(j).gt.0.0) then
@@ -11137,7 +11076,6 @@
 !------------------------------------------------------------------------------
 !--  E coil currents, data                                                   --
 !------------------------------------------------------------------------------
-      !print*,'3.0.0.8~~~',arsp(22,22)
       if (iecurr.eq.2) then
        do m=1,nesum
         if (fwtec(m).gt.0.0) then
@@ -11149,7 +11087,6 @@
 !------------------------------------------------------------------------------
 !--  Reference flux, data                                                    --
 !------------------------------------------------------------------------------
-      !print*,'3.0.0.9~~~',arsp(22,22)
       if (fitsiref) then
         if (fwtref.gt.0.0) then
           nj=nj+1
@@ -11159,7 +11096,6 @@
 !------------------------------------------------------------------------
 !-- Summation of F-coils currents
 !------------------------------------------------------------------------
-      !print*,'3.0.0.10~~~',arsp(22,22)
       if (fitfcsum) then
          nj = nj + 1
          arsp(nj,nk) = fwtfcsum(nk)
@@ -11168,7 +11104,6 @@
 !-----------------------------------------------------------------------
 !--  plasma current P', FF', and Pw', set up response matrix arsp     --
 !-----------------------------------------------------------------------
-      !print*,'3.0.0.11~~~',arsp(22,22)
       if (kzeroj.gt.0) then
        do i=1,kzeroj
         ysiwant=sizeroj(i)
@@ -11256,49 +11191,40 @@
 !----------------------------------------------------------------------
 !--  start loop for plasma fitting parameters: P', FF', Pw'          --
 !----------------------------------------------------------------------
-      !print*,'3.0.0.12~~~',arsp(22,22),rsilpc(24,4)
       do 2210 nk=nfcoil+1,nfnwcr
-        !print*,'3.0.0.12.0~~~',arsp(22,22),rsilpc(24,4)
         n=nk-nfcoil
         nj=0
         do 2120 m=1,nsilop
           if (fwtsi(m).le.0.0) go to 2120
           nj=nj+1
           arsp(nj,nk)=fwtsi(m)*rsilpc(m,n)
-          !if (nj==22 .and. nk==22) print*,'3.0.0.12.0.1~~~',m,n,fwtsi(m),rsilpc(m,n),arsp(22,22)
  2120   continue
-        !print*,'3.0.0.12.1~~~',arsp(22,22)
         do 2140 m=1,magpri
           if (fwtmp2(m).le.0.0) go to 2140
           nj=nj+1
           arsp(nj,nk)=fwtmp2(m)*rmp2pc(m,n)
  2140   continue
-        !print*,'3.0.0.12.2~~~',arsp(22,22)
         do 2160 m=1,nstark
           if (fwtgam(m).le.0.0) go to 2160
           nj=nj+1
           arsp(nj,nk)=fwtgam(m)*rgampc(m,n)
  2160   continue
-        !print*,'3.0.0.12.3~~~',arsp(22,22)
         do 92160 m=1,nmsels
           if (fwtbmselt(jtime,m).le.0.0) go to 92160
           nj=nj+1
           arsp(nj,nk)=fwtbmselt(jtime,m)*rmlspc(m,n)
 92160   continue
-        !print*,'3.0.0.12.4~~~',arsp(22,22)
         if (jdebug.eq.'MSEL') then
              m=3
              write (6,*) 'MATRIX jtime, m,n,fwtbmselt,rmlspc = ',jtime, &
                   m,n,fwtbmselt(jtime,m),rmlspc(m,n)
              write (6,*) 'nj,nk,arsp= ',nj,nk,arsp(nj,nk)
         endif
-        !print*,'3.0.0.12.5~~~',arsp(22,22)
         do 92170 m=1,nmsels
           if (fwtemselt(jtime,m).le.0.0) go to 92170
           nj=nj+1
           arsp(nj,nk)=0.0
 92170   continue
-        !print*,'3.0.0.12.6~~~',arsp(22,22)
         do 2170 m=1,nece
           if (fwtece(m).le.0.0) go to 2170
           nj=nj+1
@@ -11312,35 +11238,29 @@
         nj=nj+1
         arsp(nj,nk)=fwtcur*fgowpc(n)
  2180   continue
-        !print*,'3.0.0.12.7~~~',arsp(22,22)
         if (fwtqa.le.0.0) go to 2190
         nj=nj+1
         arsp(nj,nk)=0.0
  2190 continue
-        !print*,'3.0.0.12.8~~~',arsp(22,22)
       if (fwtbp.le.0.0) go to 2194
       do 2192 m=2,kffcur
         nj=nj+1
         arsp(nj,nk)=0.0
  2192 continue
-        !print*,'3.0.0.12.9~~~',arsp(22,22)
  2194 continue
       if (fwtdlc.le.0.0) go to 2196
       nj=nj+1
       arsp(nj,nk)=0.0
  2196 continue
-        !print*,'3.0.0.12.10~~~',arsp(22,22)
  2202 continue
       do 2203 m=1,nfcoil
         if (fwtfc(m).le.0.0) go to 2203
         nj=nj+1
         arsp(nj,nk)=0.
  2203 continue
-        !print*,'3.0.0.12.11~~~',arsp(22,22)
 !--------------------------------------------------------------------
 !--  pressure                                                      --
 !--------------------------------------------------------------------
-      !print*,'3.0.0.13~~~',arsp(22,22)
       if (kprfit.le.0.or.kdofit.eq.0) go to 2206
       if (npress.le.0) goto 2206
       do 2204 m=1,npress
@@ -11353,7 +11273,6 @@
 !--------------------------------------------------------------------
 !-- P'(1)                                                          --
 !--------------------------------------------------------------------
-      !print*,'3.0.0.14~~~',arsp(22,22)
       if (kpressb.eq.2) then
         nj=nj+1
         if (n.le.kppcur) arsp(nj,nk)=1./sigppb/darea
@@ -11361,7 +11280,6 @@
 !---------------------------------------------------------------------
 !-- rotational pressure                                             --
 !---------------------------------------------------------------------
-      !print*,'3.0.0.15~~~',arsp(22,22)
       if (kprfit.ge.3.and.npresw.gt.0) then
         do m=1,npresw
           if (fwtprw(m).gt.0.0) then
@@ -11377,7 +11295,6 @@
 !----------------------------------------------------------------------
 !--  J(PSIWANT) constraint                                           --
 !----------------------------------------------------------------------
-      !print*,'3.0.0.16~~~',arsp(22,22)
       if (kzeroj.gt.0) then
        do i=1,kzeroj
         nj=nj+1
@@ -11399,7 +11316,6 @@
 !-------------------------------------------------------------------------
 !--  p' and ff' constraints                                             --
 !-------------------------------------------------------------------------
-      !print*,'3.0.0.17~~~',arsp(22,22)
       if (kcalpa.gt.0) then
         brspmin=max(ten24,abs(brsp(nfcoil+1)))
         fwtxxa=fwtxx*1000./brspmin
@@ -11429,7 +11345,6 @@
 !---------------------------------------------------------------------
 !-- rotational constraints                                          --
 !---------------------------------------------------------------------
-      !print*,'3.0.0.18~~~',arsp(22,22)
       if (kcomega.gt.0) then
         brspmin=max(ten24,abs(brsp(nfcoil+1)))
         fwtxxo=fwtxx*1000./brspmin
@@ -11445,7 +11360,6 @@
 !------------------------------------------------------------------------------
 !-- Boundary constraints due to plasma contributions                         --
 !------------------------------------------------------------------------------
-      !print*,'3.0.0.19~~~',arsp(22,22)
       if (nbdry.gt.0) then
         do j=1,nbdry
           if (fwtbdry(j).gt.0.0) then
@@ -11457,7 +11371,6 @@
 !------------------------------------------------------------------------------
 !--  E coil currents                                                         --
 !------------------------------------------------------------------------------
-      !print*,'3.0.0.20~~~',arsp(22,22)
       if (iecurr.eq.2) then
        do m=1,nesum
         if (fwtec(m).gt.0.0) then
@@ -11469,7 +11382,6 @@
 !------------------------------------------------------------------------------
 !--  Reference flux                                                          --
 !------------------------------------------------------------------------------
-      !print*,'3.0.0.21~~~',arsp(22,22)
       if (fitsiref) then
         if (fwtref.gt.0.0) then
           nj=nj+1
@@ -11479,18 +11391,15 @@
 !-------------------------------------------------------------------------
 !-- Summation of F-coils currents
 !-------------------------------------------------------------------------
-      !print*,'3.0.0.22~~~',arsp(22,22),nj,nk,fitfcsum
       if (fitfcsum) then
          nj = nj + 1
          arsp(nj,nk) = 0.0
       endif
-      !print*,'3.0.0.22.1~~~',arsp(22,22)
  2210 continue
       need=nfnwcr
 !----------------------------------------------------------------------
 !-- fit vessel currents                                              --
 !----------------------------------------------------------------------
-      !print*,'3.0.0.23~~~',arsp(22,22)
       if (ifitvs.le.0) go to 2310
       if (nfourier.gt.1) then
        need=need+nfourier*2+1
@@ -11645,8 +11554,6 @@
 !------------------------------------------------------------------------------
 !-- Boundary constraints                                                     --
 !------------------------------------------------------------------------------
-      !print*,'3.0.0.24~~~',arsp(22,22)
-      !print*,'3.0.3~~~',arsp(22,22)
       if (nbdry.gt.0) then
         do j=1,nbdry
           if (fwtbdry(j).gt.0.0) then
@@ -11842,7 +11749,6 @@
 !-----------------------------------------------------------------------
 !-- DELZ rigid vertical shift   96/01                                 --
 !-----------------------------------------------------------------------
-      !print*,'3.0.5~~~',arsp(22,22)
       if (fitdelz.and.nniter.ge.ndelzon) then
         need=need+1
         nsavdz=need
@@ -11983,7 +11889,6 @@
 !--  set up response matrix for advanced divertor coil                --
 !--  lacking boundary constraints                                     --
 !-----------------------------------------------------------------------
-      !print*,'3.0.10~~~',arsp(22,22)
       if (iacoil.le.0) go to 9410
       nkb=need+1
       need=need+nacoil
@@ -12267,7 +12172,6 @@
 !------------------------------------------------------------------------------
 !--  fitting relative flux, set up response for fitted reference flux        --
 !------------------------------------------------------------------------------
-      !print*,'3.0.20~~~',arsp(22,22)
         if (.not.fitsiref) goto 52501
         need=need+1
         nj=0
@@ -12428,7 +12332,6 @@
 !------------------------------------------------------------------------------
 !-- set up response matrix for ER, fitting ER                                --
 !------------------------------------------------------------------------------
-      !print*,'3.0.30~~~',arsp(22,22)
       if (keecur.le.0.or.kdomse.gt.0) goto 72111
         needs=need
         need=need+keecur
@@ -12637,7 +12540,6 @@
 !--------------------------------------------------------------------
 !-- P'(1)                                                          --
 !--------------------------------------------------------------------
-      !print*,'3.0.40~~~',arsp(22,22)
       if (kpressb.eq.2) then
         nj=nj+1
         arsp(nj,nk)=1./sigppb/darea/cosh(s1edge)**2/pe_width/sidif
@@ -12796,7 +12698,6 @@
 !--------------------------------------------------------------------
 !-- P'(1)                                                          --
 !--------------------------------------------------------------------
-      !print*,'3.0.50~~~',arsp(22,22)
       if (kpressb.eq.2) then
         nj=nj+1
         arsp(nj,nk)=0.0
@@ -13119,7 +13020,6 @@
 !---------------------------------------------------------------------
 !--  rotational                                                     --
 !---------------------------------------------------------------------
-      !print*,'3.0.60~~~',arsp(22,22)
       if (kcomega.gt.0) then
         do j=1,kcomega
           nj=nj+1
@@ -13129,7 +13029,6 @@
 !------------------------------------------------------------------------------
 !-- Boundary constraints                                                     --
 !------------------------------------------------------------------------------
-       !print*,'3.0.61~~~',arsp(22,22)
       if (nbdry.gt.0) then
         do j=1,nbdry
           if (fwtbdry(j).gt.0.0) then
@@ -13147,7 +13046,6 @@
 !------------------------------------------------------------------------------
 !--  E coil currents                                                         --
 !------------------------------------------------------------------------------
-      !print*,'3.0.62~~~',arsp(22,22)
       if (iecurr.eq.2) then
       do i=1,nesum
         if (fwtec(i).gt.0.0) then
@@ -13159,7 +13057,6 @@
 !------------------------------------------------------------------------------
 !--  fitting relative flux                                                   --
 !------------------------------------------------------------------------------
-      !print*,'3.0.63~~~',arsp(22,22)
       if (fitsiref) then
         if (fwtref.gt.0.0) then
           nj=nj+1
@@ -13206,7 +13103,6 @@
 !---------------------------------------------------------------------
 !-- preconditioning A matrix if need                                --
 !---------------------------------------------------------------------
-      !print*,'3.0.64~~~',arsp(22,22)
       if (scalea) then
          call dgeequ(nj,need,arsp,nrsmat,rowscale,colscale, &
                      rowcnd,colcnd,arspmax,infosc)
@@ -13232,11 +13128,7 @@
 !-----------------------------------------------------------------------
 !--  unfold fitting parameters                                        --
 !-----------------------------------------------------------------------
-      !print*,'3.0.65~~~',arsp(22,22)
          if ( wrsp(need).eq.0 ) then
-           !do ii=1,mfnpcr
-           !print*,'3.0.66~~~',ii,wrsp(ii) !rls
-           !end do
            goto 2656
          end if
          condno=wrsp(1)/wrsp(need)
@@ -13252,27 +13144,14 @@
              brsp(i)=brsp(i)+arsp(i,j)*work(j)
  2650    continue
       else
-      !print*,'3.0.66~~~',arsp(22,22)
          do 2655 j=1,nrsmat
            b(j) = brsp(j)
          2655	continue
 
-!         print*,need,nj ! rls
-!         do iii = 1,need
-!         do jjj = 1,nj
-!         if (arsp(iii,jjj)==0) then
-!          print*,iii,jjj
-!          endif
-!         enddo
-!         enddo
-!          stop
-
          call dgglse(nj,need,ncrsp,arsp,nrsmat,crsp,4*(npcurn-2)+6+ &
                    npcurn*npcurn,b,z,brsp,work,nrsma2,info,condno)
-      !print*,'3.0.66.1~~~',info
          if (info.eq.0) goto 2657
          2656   continue
-      !print*,'3.0.66.2~~~',info
          write (nttyo,8000) info
 ! MPI >>>
 #if defined(USEMPI)
@@ -13287,7 +13166,6 @@
 !----------------------------------------------------------------------
 !--  rescale results if A is preconditioned                          --
 !----------------------------------------------------------------------
-      !print*,'3.0.67~~~',iconvr
       if (scalea) then
         do i=1, need
           brsp(i)=brsp(i)*colscale(i)
@@ -13312,7 +13190,6 @@
        endif
       endif
 !
-      !print*,'3.0.68~~~',iconvr
       if (kprfit.gt.0.and.kdofit.gt.0) then
         nload=nload+1
         prbdry=brsp(nload)
@@ -13333,7 +13210,6 @@
  2717     continue
           nload=nload+nacoil
       endif
-      !print*,'3.0.70~~~',iconvr
 !------------------------------------------------------------------------------
 !--  E coil currents                                                         --
 !------------------------------------------------------------------------------
@@ -13476,7 +13352,6 @@
         cmpr2v(m,jtime)=cmv
  4700 continue
 !
-      !print*,'3.0.80~~~',iconvr
       if (kstark.gt.0) then
       chigamt=0.0
       do 4800 m=1,nstark
@@ -13676,7 +13551,6 @@
             cm=cm+recebzec(n)*cecurr(n)
           enddo
         endif
-      !print*,'3.0.90~~~',iconvr
         if (swtecebz.ne.0.0) then
         chiecebz=fwtecebz**nsq*(brspecebz(jtime)-cm)**2
         chiecebz=chiecebz/swtecebz**nsq
@@ -13824,7 +13698,6 @@
       return
 !
  6000 continue
-      !print*,'3.0.99~~~',iconvr
       return
  7400 format (/,2x,7htime = ,e12.5,2x,8hchipr = ,e12.5, &
               2x,10hcurrent = ,e12.5,/,2x,5hit = ,i5, &
@@ -16172,19 +16045,12 @@
         kk=(i-1)*nh+j
         change=abs(psi(kk)-psiold(kk))
         errorm=max(errorm,change)
-        !if (nx>=12 .and. errorm/abs(sidif)>1e13) then
-        !if (nx>=11) then
-        !  write(*,'(i4,i4,i6,3(1x,1pe14.7))') i,j,kk,errorm,psi(kk),psiold(kk) !print*,'~~~
-        !  stop
-        !endif
         errave=errave+change
         if (errorm.gt.change) go to 1000
         iermax(nx)=i
         jermax(nx)=j
  1000 continue
-        !if (nx>=12) stop ! rls
 
-      !print*,'~~~10.0',errorm,abs(sidif),errorm/abs(sidif)
       errorm=errorm/abs(sidif)
 !
       aveerr(nx)=errave/abs(sidif)/float(nwnh)
@@ -17712,12 +17578,11 @@
         seplim(iges)=-45.0
         go to 1085
       endif
-      !print*,'13.0~~~call findax'
       call findax(nw,nh,rgrid,zgrid,rmaxis,zmaxis,simag, &
                   psiots ,rseps(1,iges),zseps(1,iges),m20, &
                   xouts,youts,nfouns,psi,xmins,xmaxs,ymins,ymaxs, &
                   zxmins,zxmaxs,rymins,rymaxs,dpsis,bpoo,bpooz, &
-                  limtrs,xlims,ylims,limfag,0,0,0) ! rls added 0,0,0 at end
+                  limtrs,xlims,ylims,limfag,0,0,0)
 !---------------------------------------------------------------------
 !--  gap calculation                                                --
 !---------------------------------------------------------------------
@@ -20320,7 +20185,7 @@
   900 continue
       return
       end
-      subroutine steps(ix,ixt,ixout,jtime,kerror,irls,inrls)
+      subroutine steps(ix,ixt,ixout,jtime,kerror,ifit,infit)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -20376,7 +20241,7 @@
                   psibry,rseps(1,jtime),zseps(1,jtime),m10, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
                   zxmin,zxmax,rymin,rymax,dpsi,bpol,bpolz, &
-                  limitr,xlim,ylim,limfag,irls,inrls,jtime)
+                  limitr,xlim,ylim,limfag,ifit,infit,jtime)
       if (nsol.gt.0) then
         if (idebug >= 2) then
           write (6,*) 'STEPS R,Z,Si,Err = ', rsol(1),zsol(1),wsisol,ier
@@ -20427,9 +20292,8 @@
                   psibry ,rseps(1,jtime),zseps(1,jtime),m20, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
                   zxmin,zxmax,rymin,rymax,dpsi,bpol,bpolz, &
-                  limitr,xlim,ylim,limfag,irls,inrls,jtime)
+                  limitr,xlim,ylim,limfag,ifit,infit,jtime)
       sidif=simag-psibry
-      !print*,'11.1~~~',sidif,simag,psibry ! rls, sidif near zero
       eouter=(ymax-ymin)/(xmax-xmin)
       zplasm=(ymin+ymax)/2.
       aouter=(xmax-xmin)/2.
@@ -20551,7 +20415,6 @@
 !-----------------------------------------------------------------------
 !-- get normalized flux function XPSI                                 --
 !-----------------------------------------------------------------------
-      !print*,'11.2~~~',sidif ! rls, sidif near zero. this is a problem...
       do 1000 i=1,nw
       do 1000 j=1,nh
         kk=(i-1)*nh+j
