@@ -6167,7 +6167,6 @@
       if (iconvr.eq.3) iend=1
       idosigma=1
       do 2010 i=1,iend
-        !print*,'1.9.1~~~',i
         if (i.gt.1) iwantk=iwantk+1
         ix=i
         if (i.le.1) go to 500
