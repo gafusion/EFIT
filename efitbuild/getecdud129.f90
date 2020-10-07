@@ -2888,7 +2888,6 @@
 !**                          serial and parallel runs.               **
 !**                                                                  **
 !**********************************************************************
-      
         include 'eparmdud129.f90'
         include 'modules1.f90'
         
@@ -2901,12 +2900,14 @@
         !   DENVT  1:nco2v
         !   DENRT  1:nco2r
         !   ECCURT 1:nesum
-        parameter (nsize=11+magpri+nsilop+nfcoil+nco2v+nco2r+nesum)
+        parameter (nsize=18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum)
         ! Dimension ZWORK2 1-D array
         !   PSIBIT 1:nsilop
         !   BITMPI 1:magpri
         !   BITFC  1:nfcoil
-        parameter (nsize2=4+nsilop+magpri+nfcoil)
+        !   BITEC  1:nesum ! added by MK
+        !!   FWTMP2 1:magpri! added by MK
+        parameter (nsize2=5+nsilop+magpri+nfcoil+nesum)!+magpri)
         integer :: i,j,ktime_all,offset
         integer,dimension(:),allocatable :: tmp1,tmp2
         double precision :: zwork(nsize,ntime),zwork2(nsize2),timeb_list(nproc)
@@ -2915,9 +2916,10 @@
         double precision :: secs
         ! TIMING <<<
         integer :: total_bytes
-        
         zwork(:,:) = 0.0
         allocate(tmp1(nproc),tmp2(nproc))
+
+        efitversion = 20201007
 
         ! Process with rank == 0 gets data from PTDATA/MDS+ database by calling GETPTS
         if (rank == 0) then
@@ -2984,7 +2986,8 @@
           zwork2(2) = dble(limitr)  ! INT4  (1)
           zwork2(3) = bitip         ! REAL8 (1)
           zwork2(4) = rcentr        ! REAL8 (1)
-          offset = 4
+          zwork2(5) = dble(oldccomp) ! added by MK 2020.10.07
+          offset = 5
           do i=1,nsilop
             zwork2(i+offset) = psibit(i)  ! REAL8 (nsilop)
           enddo
@@ -2996,6 +2999,14 @@
           do i=1,nfcoil
             zwork2(i+offset) = bitfc(i)   ! REAL8 (nfcoil)
           enddo
+          offset = offset+nfcoil
+          do i=1,nesum
+            zwork2(i+offset) = bitec(i)  ! Added by MK 2020.10.07
+          enddo
+          !offset = offset+nesum
+          !do i=1,magpri
+          !  zwork2(i+offset) = fwtmp2(i) ! Added by MK 2020.10.07
+          !enddo
         endif
         ! Distribute ZWORK2 array to ALL processes
         ! SIZE = SIZEOF(DOUBLE) * NSIZE2 * (NPROC - 1) bytes
@@ -3008,7 +3019,8 @@
           limitr = int(zwork2(2))
           bitip  = zwork2(3)
           rcentr = zwork2(4)
-          offset = 4
+          oldccomp = int(zwork2(5)) ! Added by MK 2020.10.07
+          offset = 5
           do i=1,nsilop
             psibit(i) = zwork2(i+offset)
           enddo
@@ -3020,6 +3032,14 @@
           do i=1,nfcoil
             bitfc(i) = zwork2(i+offset)
           enddo
+          offset = offset+nfcoil
+          do i=1,nesum
+            bitec(i) = zwork2(i+offset) ! Added by MK 2020.10.07
+          enddo
+          !offset = offset+nesum
+          !do i=1,magpri
+          !  fwtmp2(i) = zwork2(i+offset) ! Added by MK 2020.10.07
+          !enddo
         endif
         
         ! ZWORK
@@ -3037,7 +3057,16 @@
             zwork(9,i)  = curtn1(i)   ! REAL8 (ntime)
             zwork(10,i) = curc79(i)   ! REAL8 (ntime)
             zwork(11,i) = curc139(i)  ! REAL8 (ntime)
-            offset = 11
+! NOTE that I am only adding those missing from the CURRENT k-files -MK
+            zwork(12,i) = curc199(i)  ! Addd by MK 2020.10.07
+            zwork(13,i) = curiu30(i)  ! Addd by MK 2020.10.07
+            zwork(14,i) = curiu90(i)  ! Addd by MK 2020.10.07
+            zwork(15,i) = curiu150(i) ! Addd by MK 2020.10.07
+            zwork(16,i) = curil30(i)  ! Addd by MK 2020.10.07
+            zwork(17,i) = curil90(i)  ! Addd by MK 2020.10.07
+            zwork(18,i) = curil150(i) ! Addd by MK 2020.10.07
+
+            offset = 18
             do j=1,magpri
               zwork(j+offset,i) = expmpi(i,j)  ! REAL8 (ntime,magpri)
             enddo
@@ -3089,7 +3118,16 @@
             curtn1(i)  = zwork(9,i)
             curc79(i)  = zwork(10,i)
             curc139(i) = zwork(11,i)
-            offset = 11
+! NOTE that I am only adding those missing from the CURRENT k-files -MK
+            curc199(i) = zwork(12,i) ! Addd by MK 2020.10.07
+            curiu30(i) = zwork(13,i) ! Addd by MK 2020.10.07
+            curiu90(i) = zwork(14,i) ! Addd by MK 2020.10.07
+            curiu150(i)= zwork(15,i) ! Addd by MK 2020.10.07
+            curil30(i) = zwork(16,i) ! Addd by MK 2020.10.07
+            curil90(i) = zwork(17,i) ! Addd by MK 2020.10.07
+            curil150(i)= zwork(18,i) ! Addd by MK 2020.10.07
+        
+            offset = 18
             do j=1,magpri
               expmpi(i,j) = zwork(j+offset,i)
             enddo
