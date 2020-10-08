@@ -256,6 +256,7 @@
                     np,times,delt,i0,sclmp,i1,bitmpi(i),iavem,time,ircfact, &
                     do_spline_fit,xmp_rc(i),xmprcg(i),vresxmp(i),xmp_k(i), &
                     t0xmp(i), devxmp(1,i),navxmp(1,i),time_err)
+        if(iermpi(i).ne.0) write(*,*)'getecdud129: iermpi',i,iermpi(i),' rank',rank ! mk
    65 continue
       rnavxmp = navxmp
 !--------------------------------------------------------------------
@@ -2907,7 +2908,7 @@
         !   BITFC  1:nfcoil
         !   BITEC  1:nesum ! added by MK
         !!   FWTMP2 1:magpri! added by MK
-        parameter (nsize2=5+nsilop+magpri+nfcoil+nesum)!+magpri)
+        parameter (nsize2=5+nsilop+magpri+nfcoil+nesum+magpri)
         integer :: i,j,ktime_all,offset
         integer,dimension(:),allocatable :: tmp1,tmp2
         double precision :: zwork(nsize,ntime),zwork2(nsize2),timeb_list(nproc)
@@ -3003,10 +3004,13 @@
           do i=1,nesum
             zwork2(i+offset) = bitec(i)  ! Added by MK 2020.10.07
           enddo
-          !offset = offset+nesum
-          !do i=1,magpri
-          !  zwork2(i+offset) = fwtmp2(i) ! Added by MK 2020.10.07
-          !enddo
+! NOTE: all of the fwtmp2 are =1 at this point, for all ranks
+          offset = offset+nesum
+          do i=1,magpri
+            zwork2(i+offset) = iermpi(i) ! Added by MK 2020.10.07
+            write(*,*) '< fwtmp2',fwtmp2(i),i,' rank',rank
+            write(*,*) '< iermpi',iermpi(i),i,' rank',rank
+          enddo
         endif
         ! Distribute ZWORK2 array to ALL processes
         ! SIZE = SIZEOF(DOUBLE) * NSIZE2 * (NPROC - 1) bytes
@@ -3036,10 +3040,12 @@
           do i=1,nesum
             bitec(i) = zwork2(i+offset) ! Added by MK 2020.10.07
           enddo
-          !offset = offset+nesum
-          !do i=1,magpri
-          !  fwtmp2(i) = zwork2(i+offset) ! Added by MK 2020.10.07
-          !enddo
+          offset = offset+nesum
+          do i=1,magpri
+            iermpi(i) = zwork2(i+offset) ! Added by MK 2020.10.07
+            write(*,*) '> fwtmp2',fwtmp2(i),i,' rank',rank !mk
+            write(*,*) '> iermpi',iermpi(i),i,' rank',rank !mk
+          enddo
         endif
         
         ! ZWORK

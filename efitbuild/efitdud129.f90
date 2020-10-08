@@ -2640,9 +2640,11 @@
       endif
       do 160 i=1,magpri
         if ((kdata.ge.3).and.(fwtmp2(i).ne.0.0)) then
+        write(*,*)'fwtmp2 line 2637',rank !mk ! not hit in our example
           fwtmp2(i)=swtmp2(i)
           if (lookfw.gt.0) fwtmp2(i)=rwtmp2(i)
         endif
+        write(*,*)'fwtmp2 line 2640',rank !mk ! not hit in our example
         if (iermpi(i).ne.0) fwtmp2(i)=0.0
   160 continue
       do 170 i=1,nstark
@@ -2698,6 +2700,7 @@
         fwtec(i)=swtec(i)
       enddo
       do i=1,magpri
+        write(*,*)'fwtmp2 line 2695',rank
         fwtmp2(i)=swtmp2(i)
       enddo
       do i=1,nsilop
@@ -4232,6 +4235,7 @@
         tdata2=abs(bitmpi(m))*vbit
         tdata=max(tdata1,tdata2)
         sigmamp0(m)=tdata
+        write(*,*)'fwtmp2 line 4228',rank
         if (tdata.gt.1.0e-10) fwtmp2(m)=fwtmp2(m)/tdata**nsq
         if (tdata.le.1.0e-10) fwtmp2(m)=0.0
   350 continue
@@ -8247,6 +8251,7 @@
         fwtsi(i)=0.0
    50 continue
       do 60 i=1,magpri
+        write(*,*)'fwtmp2 line 8242',rank
         bitmpi(i)=0.0
         fwtmp2(i)=0.0
    60 continue
@@ -8839,6 +8844,7 @@
       enddo
       do i=1,magpri
         if (lookfw.gt.0) then
+        write(*,*)'fwtmp2 line 8832',rank
            if (fwtmp2(i).gt.0.0) fwtmp2(i)=rwtmp2(i)
         endif
         swtmp2(i)=fwtmp2(i)
@@ -9484,8 +9490,10 @@
       do i=1,magpri
          oldfit = fwtmp2(i)
          if (sigmamp(jtimex,i)/=0.0) then
+        write(*,*)'fwtmp2 line 9477',rank
             fwtmp2(i)=swtmp2(i)/sigmamp(jtimex,i)
          else
+        write(*,*)'fwtmp2 line 9480',rank
             fwtmp2(i)=0.0
          endif
          write (99,*) i, swtmp2(i), oldfit, fwtmp2(i)
@@ -21186,6 +21194,7 @@
        sigzbd(i)=1.e10
       enddo
       do 3036 i=1,magpri
+      !  write(*,*)'fwtmp2 line 21138',rank
         fwtmp2(i)=0.
         bitmpi(i)=0.0
  3036 continue
@@ -21482,7 +21491,11 @@
  3060 continue
       do i=1,magpri
         if (lookfw.gt.0) then
-           if (fwtmp2(i).gt.0.0) fwtmp2(i)=rwtmp2(i)
+           if (fwtmp2(i).gt.0.0) then
+ !             write(*,*)'fwtmp2 line 21433 rank ',rank ! mk
+! mk all ranks report the same fwtmp2 here
+              fwtmp2(i)=rwtmp2(i)
+           endif
         endif
         swtmp2(i)=fwtmp2(i)
       enddo
@@ -21522,8 +21535,15 @@
         do 3070 i=1,magpri
           expmp2(i)=expmpi(jtime,i)
           fwtmp2(i)=swtmp2(i)
-          if (lookfw.gt.0.and.fwtmp2(i).gt.0.0) fwtmp2(i)=rwtmp2(i)
-          if (iermpi(i).ne.0) fwtmp2(i)=0.0
+          if (lookfw.gt.0.and.fwtmp2(i).gt.0.0) then
+            !write(*,*)'fwtmp2 line 21486',rank ! mk
+            fwtmp2(i)=rwtmp2(i)
+          endif
+          !if (rank.ne.0) write(*,*) 'fwtmp2 line 214** rank',rank,' i,iermpi(i):',i,iermpi(i) !mk
+          if (iermpi(i).ne.0) then 
+            write(*,*)'fwtmp2 line 21490 rank',rank,' i,iermpi(i):',i,iermpi(i) ! mk
+            fwtmp2(i)=0.0
+          endif
  3070   continue
         do 3072 i=1,nfcoil
           brsp(i)=fccurt(jtime,i)
@@ -21857,6 +21877,7 @@
         fwtsi(i)=swtsi(i)
  3068 continue
       do 3070 i=1,magpri
+        write(*,*)'fwtmp2 line 21809',rank
         expmp2(i)=expmpi(jtime,i)
         fwtmp2(i)=swtmp2(i)
  3070 continue
