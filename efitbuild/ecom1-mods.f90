@@ -417,7 +417,7 @@
 
       character*12 mfitpop
       character*5 mfvers(2)
-      data mfvers(1)/'10/05'/,mfvers(2)/'/2020'/
+      data mfvers(1)/'10/08'/,mfvers(2)/'/2020'/
       character(4),dimension(ntime) :: limloc
       character(10),dimension(nvesel) :: vsname
       character(10),dimension(magpri) :: mpnam2

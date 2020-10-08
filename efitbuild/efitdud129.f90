@@ -15249,10 +15249,11 @@
         call mpi_gather(time(it), 1, MPI_DOUBLE_PRECISION, timeall, 1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
         call mpi_gather(tsaisq(it), 1, MPI_DOUBLE_PRECISION, ch2all, 1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
         if (rank==0) then
-          write(nttyo,'(/,a)') 'Summary of all runs'
+          write(nttyo,'(/,a)') '  Summary of all runs'
+          write(nttyo,'(a)') '   Shot    Time   chi^2'
           do ir = 1,nproc
-            !write(nttyo,10500) ishotall(ir),int(timeall(ir)),ch2all(ir)
-            write(nttyo,*) ishotall(ir),int(timeall(ir)),ch2all(ir)
+            write(nttyo,'(i8,1x,i6,1x,f10.7)') ishotall(ir),int(timeall(ir)),ch2all(ir)
+            !write(nttyo,*) ishotall(ir),int(timeall(ir)),ch2all(ir)
           end do
           if (allocated(ishotall)) deallocate(ishotall)
           if (allocated(ch2all)) deallocate(ch2all)

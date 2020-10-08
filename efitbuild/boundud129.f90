@@ -230,12 +230,16 @@
   520 continue
       if (psilx.eq.-1.e10) go to 1090
       dpsi=min(dpsi,abs(psivl-psilx))
-      if (psilx-psivl) 540,540,530
+      if (psilx-psivl<1e-12) then
+        go to 540
+      else
+        go to 530
+      end if
   530 continue
       call zlim(zerol,n111,n111,limitr,xlim,ylim,xt,yt,limfag)
       if (zerol.le.0.01) go to 1005
   540 continue
-  545 call extrap(f1,f2,f3,f4,x1,y1,x2,y2,xt,yt,xt1,yt1,xt2,yt2, &
+      call extrap(f1,f2,f3,f4,x1,y1,x2,y2,xt,yt,xt1,yt1,xt2,yt2, &
                      psivl,area,dx,dy)
 !----------------------------------------------------------------------
 !--   decide which intersection (xt1,yt1) or (xt2,yt2) is required   --
