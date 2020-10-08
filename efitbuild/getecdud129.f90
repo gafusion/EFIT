@@ -70,7 +70,9 @@
            ecname(5)/'E89DN     '/,ecname(6)/'E89UP     '/
       data irdata/0/,baddat/0/
 !
-      efitversion = 20150604
+      efitversion = 20201007 
+! NOTE this is only changed so serial/parallel k-files are identical
+! no changes were made to getpts() only to getpts_mpi() - MK
 !----------------------------------------------------------------------
 !-- read in pointnames ...                                           --
 !----------------------------------------------------------------------
@@ -256,7 +258,6 @@
                     np,times,delt,i0,sclmp,i1,bitmpi(i),iavem,time,ircfact, &
                     do_spline_fit,xmp_rc(i),xmprcg(i),vresxmp(i),xmp_k(i), &
                     t0xmp(i), devxmp(1,i),navxmp(1,i),time_err)
-        if(iermpi(i).ne.0) write(*,*)'getecdud129: iermpi',i,iermpi(i),' rank',rank ! mk
    65 continue
       rnavxmp = navxmp
 !--------------------------------------------------------------------
@@ -2907,7 +2908,7 @@
         !   BITMPI 1:magpri
         !   BITFC  1:nfcoil
         !   BITEC  1:nesum ! added by MK
-        !!   FWTMP2 1:magpri! added by MK
+        !   IERMPI to fix FWTMP2 1:magpri! added by MK
         parameter (nsize2=5+nsilop+magpri+nfcoil+nesum+magpri)
         integer :: i,j,ktime_all,offset
         integer,dimension(:),allocatable :: tmp1,tmp2
@@ -3004,12 +3005,12 @@
           do i=1,nesum
             zwork2(i+offset) = bitec(i)  ! Added by MK 2020.10.07
           enddo
-! NOTE: all of the fwtmp2 are =1 at this point, for all ranks
           offset = offset+nesum
           do i=1,magpri
             zwork2(i+offset) = iermpi(i) ! Added by MK 2020.10.07
-            write(*,*) '< fwtmp2',fwtmp2(i),i,' rank',rank
-            write(*,*) '< iermpi',iermpi(i),i,' rank',rank
+! NOTE: all of the fwtmp2 are =1 at this point, for all ranks
+! in order for the logic to be equivelant later, it is the error
+! codes, iermpi that must be passed to other ranks
           enddo
         endif
         ! Distribute ZWORK2 array to ALL processes
@@ -3043,8 +3044,6 @@
           offset = offset+nesum
           do i=1,magpri
             iermpi(i) = zwork2(i+offset) ! Added by MK 2020.10.07
-            write(*,*) '> fwtmp2',fwtmp2(i),i,' rank',rank !mk
-            write(*,*) '> iermpi',iermpi(i),i,' rank',rank !mk
           enddo
         endif
         
@@ -3063,7 +3062,7 @@
             zwork(9,i)  = curtn1(i)   ! REAL8 (ntime)
             zwork(10,i) = curc79(i)   ! REAL8 (ntime)
             zwork(11,i) = curc139(i)  ! REAL8 (ntime)
-! NOTE that I am only adding those missing from the CURRENT k-files -MK
+! NOTE: only adding those missing from the CURRENT (183350) k-files -MK
             zwork(12,i) = curc199(i)  ! Addd by MK 2020.10.07
             zwork(13,i) = curiu30(i)  ! Addd by MK 2020.10.07
             zwork(14,i) = curiu90(i)  ! Addd by MK 2020.10.07

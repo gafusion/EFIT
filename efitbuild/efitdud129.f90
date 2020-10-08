@@ -2640,11 +2640,9 @@
       endif
       do 160 i=1,magpri
         if ((kdata.ge.3).and.(fwtmp2(i).ne.0.0)) then
-        write(*,*)'fwtmp2 line 2637',rank !mk ! not hit in our example
           fwtmp2(i)=swtmp2(i)
           if (lookfw.gt.0) fwtmp2(i)=rwtmp2(i)
         endif
-        write(*,*)'fwtmp2 line 2640',rank !mk ! not hit in our example
         if (iermpi(i).ne.0) fwtmp2(i)=0.0
   160 continue
       do 170 i=1,nstark
@@ -8754,7 +8752,9 @@
       endif
 ! MPI >>>
 #if defined(USEMPI)
-      if (nproc == 1) then
+! MK 2020.10.08 TODO All control paths *should* be identical here
+! MK i.e. only call getpts_mpi, regardless of nproc
+      if (nproc == 1) then 
         call getpts(ishot,times,delt,ktime,istop)
       else
         call getpts_mpi(ishot,times,delt,ktime,istop)
@@ -21491,11 +21491,7 @@
  3060 continue
       do i=1,magpri
         if (lookfw.gt.0) then
-           if (fwtmp2(i).gt.0.0) then
- !             write(*,*)'fwtmp2 line 21433 rank ',rank ! mk
-! mk all ranks report the same fwtmp2 here
-              fwtmp2(i)=rwtmp2(i)
-           endif
+           if (fwtmp2(i).gt.0.0) fwtmp2(i)=rwtmp2(i)
         endif
         swtmp2(i)=fwtmp2(i)
       enddo
@@ -21535,15 +21531,8 @@
         do 3070 i=1,magpri
           expmp2(i)=expmpi(jtime,i)
           fwtmp2(i)=swtmp2(i)
-          if (lookfw.gt.0.and.fwtmp2(i).gt.0.0) then
-            !write(*,*)'fwtmp2 line 21486',rank ! mk
-            fwtmp2(i)=rwtmp2(i)
-          endif
-          !if (rank.ne.0) write(*,*) 'fwtmp2 line 214** rank',rank,' i,iermpi(i):',i,iermpi(i) !mk
-          if (iermpi(i).ne.0) then 
-            write(*,*)'fwtmp2 line 21490 rank',rank,' i,iermpi(i):',i,iermpi(i) ! mk
-            fwtmp2(i)=0.0
-          endif
+          if (lookfw.gt.0.and.fwtmp2(i).gt.0.0) fwtmp2(i)=rwtmp2(i)
+          if (iermpi(i).ne.0) fwtmp2(i)=0.0
  3070   continue
         do 3072 i=1,nfcoil
           brsp(i)=fccurt(jtime,i)
