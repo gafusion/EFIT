@@ -70,7 +70,7 @@
            ecname(5)/'E89DN     '/,ecname(6)/'E89UP     '/
       data irdata/0/,baddat/0/
 !
-      efitversion = 20201007 
+      efitversion = 20201009 
 ! NOTE this is only changed so serial/parallel k-files are identical
 ! no changes were made to getpts() only to getpts_mpi() - MK
 !----------------------------------------------------------------------
@@ -2921,7 +2921,7 @@
         zwork(:,:) = 0.0
         allocate(tmp1(nproc),tmp2(nproc))
 
-        efitversion = 20201007
+        efitversion = 20201009
 
         ! Process with rank == 0 gets data from PTDATA/MDS+ database by calling GETPTS
         if (rank == 0) then

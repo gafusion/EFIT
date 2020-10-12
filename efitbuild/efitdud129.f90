@@ -2882,7 +2882,7 @@
       scalepr(1)=-1.
       scalepw(1)=-1.
       isolve=0
-      ifindopt=1
+      ifindopt=2
 !----------------------------------------------------------------------
 !--   Read input file for KDATA = 2                                  --
 !----------------------------------------------------------------------
@@ -8370,7 +8370,7 @@
 ! -- Qilong Ren
       write_Kfile = .false.
       fitfcsum = .false.
-      ifindopt = 1
+      ifindopt = 2
 !----------------------------------------------------------------------
 !--   Snap-Extension mode					     --
 !--   Initialize istore = 0                                          --
@@ -15262,7 +15262,7 @@
           if (allocated(timeall)) deallocate(timeall)
         end if
       else
-        write(nttyo,*) ishot,int(time(it)),tsaisq(it)
+        !write(nttyo,*) ishot,int(time(it)),tsaisq(it) ! rls, handy for debugging
       end if
 #endif
       if (itek.gt.0) go to 100
@@ -21230,7 +21230,7 @@
       serror=0.03
       xltype=0.
       xltype_180=0.0
-      ifindopt=1
+      ifindopt=2
 !
       read (neqdsk,efitin,end=111)
  111  continue

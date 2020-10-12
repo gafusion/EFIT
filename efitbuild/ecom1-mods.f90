@@ -417,14 +417,14 @@
 
       character*12 mfitpop
       character*5 mfvers(2)
-      data mfvers(1)/'10/08'/,mfvers(2)/'/2020'/
+      data mfvers(1)/'10/09'/,mfvers(2)/'/2020'/
       character(4),dimension(ntime) :: limloc
       character(10),dimension(nvesel) :: vsname
       character(10),dimension(magpri) :: mpnam2
       character(10),dimension(nsilop) :: lpname
       character  filimt*100,cshot*6,jdebug*4
       integer idebug,efitversion
-      data idebug/0/,efitversion/20150727/
+      data idebug/0/,efitversion/20201009/
       data jdebug/'NONE'/
       end module var_inputc
 
