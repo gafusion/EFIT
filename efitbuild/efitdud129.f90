@@ -15239,32 +15239,33 @@
         as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
         wacoil,hacoil
 !
-#if defined(USEMPI)
-      ! If running in parallel, write out key info for all ranks
-      if (nproc > 1) then
-        if (rank==0) then
-          allocate(ishotall(nproc))
-          allocate(timeall(nproc))
-          allocate(ch2all(nproc))
-        end if
-        call mpi_gather(ishot, 1, MPI_INTEGER, ishotall, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierr)
-        call mpi_gather(time(it), 1, MPI_DOUBLE_PRECISION, timeall, 1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
-        call mpi_gather(tsaisq(it), 1, MPI_DOUBLE_PRECISION, ch2all, 1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
-        if (rank==0) then
-          write(nttyo,'(/,a)') '  Summary of all runs'
-          write(nttyo,'(a)') '   Shot    Time   chi^2'
-          do ir = 1,nproc
-            write(nttyo,'(i8,1x,i6,1x,f10.7)') ishotall(ir),int(timeall(ir)),ch2all(ir)
-            !write(nttyo,*) ishotall(ir),int(timeall(ir)),ch2all(ir)
-          end do
-          if (allocated(ishotall)) deallocate(ishotall)
-          if (allocated(ch2all)) deallocate(ch2all)
-          if (allocated(timeall)) deallocate(timeall)
-        end if
-      else
-        !write(nttyo,*) ishot,int(time(it)),tsaisq(it) ! rls, handy for debugging
-      end if
-#endif
+!#if defined(USEMPI)
+!      ! If running in parallel, write out key info for all ranks
+!      ! TODO: Currently this ONLY works if nproc == num time slices.
+!      if (nproc > 1) then
+!        if (rank==0) then
+!          allocate(ishotall(nproc))
+!          allocate(timeall(nproc))
+!          allocate(ch2all(nproc))
+!        end if
+!        call mpi_gather(ishot, 1, MPI_INTEGER, ishotall, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierr)
+!        call mpi_gather(time(it), 1, MPI_DOUBLE_PRECISION, timeall, 1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
+!        call mpi_gather(tsaisq(it), 1, MPI_DOUBLE_PRECISION, ch2all, 1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
+!        if (rank==0) then
+!          write(nttyo,'(/,a)') '  Summary of all runs'
+!          write(nttyo,'(a)') '   Shot    Time   chi^2'
+!          do ir = 1,nproc
+!            write(nttyo,'(i8,1x,i6,1x,f10.7)') ishotall(ir),int(timeall(ir)),ch2all(ir)
+!            !write(nttyo,*) ishotall(ir),int(timeall(ir)),ch2all(ir)
+!          end do
+!          if (allocated(ishotall)) deallocate(ishotall)
+!          if (allocated(ch2all)) deallocate(ch2all)
+!          if (allocated(timeall)) deallocate(timeall)
+!        end if
+!      else
+!        !write(nttyo,*) ishot,int(time(it)),tsaisq(it) ! rls, handy for debugging
+!      end if
+!#endif
       if (itek.gt.0) go to 100
 !vas      write (nttyo,10000)
 ! MPI >>>
@@ -16076,36 +16077,36 @@
           if (nx.eq.1) write (nttyo,10017) itime, rank
           if (nsol.eq.0) then
            if (mmbmsels.eq.0) then
-            write (nttyo,10019)  nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
+            write (nttyo,10019)  itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
              sum(chigam)
            else
-            write (nttyo,90019)  nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
+            write (nttyo,90019)  itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
              sum(chigam),tchimls
            endif
           else
-           write (nttyo,10020)  nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
+           write (nttyo,10020)  itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
              sum(chigam),erbmax,erbsmax           
           endif
         elseif (itell.eq.2) then
-          write (nttyo,10021)  nx,ali(jtime),abs(betatn),errorm,qsiw(1)
+          write (nttyo,10021)  itime,nx,ali(jtime),abs(betatn),errorm,qsiw(1)
         elseif (itell.eq.3) then
-          write (nttyo,10023)  nx,difpsi,zmaxis,errorm,delzmm
+          write (nttyo,10023)  itime,nx,difpsi,zmaxis,errorm,delzmm
         elseif (itell.eq.4) then
           if (nx.eq.1) then
             write (nttyo,10017) itime, rank
             if (kstark.gt.0) then
-            write (nttyo,80019)  nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
+            write (nttyo,80019)  itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
         cdelz(nx-1),cdeljsum,sum(chigam)
             else
-            write (nttyo,10025)  nx,tsaisq(jtime),zmaxis,errorm &
+            write (nttyo,10025)  itime,nx,tsaisq(jtime),zmaxis,errorm &
                                  ,delzmm,cdelz(nx-1),cdeljsum
             endif
           else
             if (kstark.gt.0) then
-            write (nttyo,80019)  nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
+            write (nttyo,80019)  itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
         cdelz(nx-1),cdeljsum,sum(chigam)
             else
-            write (nttyo,10025)  nx,tsaisq(jtime),zmaxis,errorm &
+            write (nttyo,10025)  itime,nx,tsaisq(jtime),zmaxis,errorm &
                                  ,delzmm,cdelz(nx-1),cdeljsum
             endif
           endif
@@ -16132,25 +16133,25 @@
         ' chsq=',1pe8.2,' zmag=',1pe9.2,' err=',1pe8.2,' dz=',1pe10.3, &
         ' Ifb=',1pe9.2)
 10017   format (/,x,' ----- time =',i6,' ms ----- (',i2,')')
-10019   format (x,'it=',i3, &
+10019   format (x,'t=',i6,1x,'it=',i3, &
         ' chi2=',1pe8.2,' zm=',1pe9.2,' err=',1pe9.3, &
         ' dz=',1pe10.3,' chigam=',1pe9.2)
-80019   format (x,'it=',i3, &
+80019   format (x,'t=',i6,1x,'it=',i3, &
         ' chi2=',1pe8.2,' zm=',1pe9.2,' err=',1pe9.3, &
         ' dz=',1pe10.3,' delz=',1pe10.3,' dj=',1pe9.3,' chigam=',1pe9.2)
-90019   format (x,'it=',i3, &
+90019   format (x,'t=',i6,1x,'it=',i3, &
         ' chi2=',1pe8.2,' zm=',1pe9.2,' err=',1pe9.3, &
         ' dz=',1pe10.3,' chigam=',1pe9.2,' chimls=',1pe9.2)
-10020   format (x,'it=',i3, &
+10020   format (x,'t=',i6,1x,'it=',i3, &
         ' chi2=',1pe8.2,' zm=',1pe9.2,' err=',1pe9.3, &
         ' dz=',1pe10.3,' chigam=',1pe9.2,' errb=',1pe9.2,' errbs=',1pe9.2)
-10021   format (x,'it=',i3, &
+10021   format (x,'t=',i6,1x,'it=',i3, &
         ' li=',1pe9.3,' betan=',1pe9.3,' err=',1pe9.3, &
         ' qs=',1pe9.3)
-10023   format (x,'it=',i3, &
+10023   format (x,'t=',i6,1x,'it=',i3, &
         ' dpsi=',1pe10.3,' zm=',1pe9.2,' err=',1pe9.3, &
         ' dz=',1pe10.3)
-10025   format (x,'it=',i3, &
+10025   format (x,'t=',i6,1x,'it=',i3, &
         ' chi2=',1pe8.2,' zm=',1pe9.2,' err=',1pe9.3, &
         ' dz=',1pe10.3,' delz=',1pe10.3,' dj=',1pe9.3)
       end
