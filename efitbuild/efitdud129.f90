@@ -142,7 +142,7 @@
 ! MPI >>>
 #if defined(USEMPI)
        deallocate(dist_data,dist_data_displs,fwtgam_mpi)
-       call MPI_FINALIZE(ierr)
+       call mpi_finalize(ierr)
 #endif
        STOP
 ! MPI <<<
@@ -290,12 +290,11 @@
       if (allocated(dist_data_displs)) deallocate(dist_data_displs)
       if (allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
       if (rank == 0) then
-        print *, 'FORTRAN STOP'
+        print *, 'FORTRAN STOP - normal termination'
       endif
-      call MPI_FINALIZE(ierr)
-#else
-      stop
+      call mpi_finalize(ierr)
 #endif
+      stop
 ! MPI <<<
       end
       subroutine betali(jtime,rgrid,zgrid,idovol,kerror)
@@ -8987,17 +8986,22 @@
         kerror = 1
         return
       endif
- 3400 continue
- ! NOTE : Finished EFIT run so STOP execution
- call mpi_stop
+
+      ! NOTE : Finished EFIT run so STOP execution
+      if (rank == 0) then
+        print *, 'FORTRAN STOP - normal termination'
+      endif
+      call mpi_finalize(ierr)
+      stop
 #else
- 3400 if (kdata.eq.5) stop
+      if (kdata.eq.5) stop
 !----------------------------------------------------------------------
 !--   PEFIT mode = 8                                                 --
 !--   Make system call to drive PEFIT on Linux GPU                   --
 !----------------------------------------------------------------------
       CALL system ("/u/huangyao/P-EFIT/New_Folder/pefit_257_jt_new/bin/test")
-      stop 'pefit'
+      write(*,*) 'PEFIT STOP - normal termination'
+      stop
 #endif
 ! MPI <<<
 !
