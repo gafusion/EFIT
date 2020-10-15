@@ -1405,8 +1405,8 @@
  
       endif
  8950 format(1x,1('*'),' TEARING STABILITY  ',2a5,1('*'))
- 9000 format (12h shot #   = ,i10)
- 9020 format (12h t(ms,us) = ,i6,1x,i6)
+ 9000 format (' shot #   = ',i10)
+ 9020 format (' t(ms,us) = ',i6,1x,i6)
       return
       end
 
