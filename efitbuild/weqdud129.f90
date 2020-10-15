@@ -107,12 +107,12 @@
         let = 'a'
         call getfnmu(itimeu,let,ishot,ijtime,eqdsk)
 !----------------------------------------------------------------------
-!--	If (ISTORE = 1) Then					  --
-!--	Central directory to collect EFIT results is store_dir  --
+!-- If (ISTORE = 1) Then       --
+!-- Central directory to collect EFIT results is store_dir  --
 !----------------------------------------------------------------------
-    	if (istore .eq. 1) then
-    	   eqdsk = store_dir(1:lstdir)//eqdsk
-    	endif
+     if (istore .eq. 1) then
+        eqdsk = store_dir(1:lstdir)//eqdsk
+     endif
         call db_header(ishot,ijtime,header)
   305   open(unit=neqdsk,file=eqdsk,status='old', &
                   form=wform,err=12929)
@@ -193,7 +193,7 @@
         write (neqdsk,1040) rq32in(jj),rq21top(jj),chilibt,ali3(jj)
         write (neqdsk,1040) xbetapr,tflux(jj),tchimls,twagap(jj)
 !-----------------------------------------------------------------------
-!--	one xxx replaced with ring gap 8/15/91                        --
+!-- one xxx replaced with ring gap 8/15/91                        --
 !--     cjor0=flux surface average current density normalized to      --
 !--           I/A at magnetic axis                                    --
 !--     cjor95=jor95/jor0, cjor99=jor99/(I/A)                         --
@@ -359,10 +359,10 @@
       itsave=itime
       itime=iitime
       write (neqdsk,in1)
-			call ppstore
-			call ffstore
-			call wwstore
-                        call eestore
+      call ppstore
+      call ffstore
+      call wwstore
+      call eestore
       write (neqdsk,basis)
       write (neqdsk,inwant)
       if (kvtor.gt.0) then
@@ -552,12 +552,12 @@
       let = 'g'
       call getfnmu(itimeu,let,ishot,ijtime,eqdsk)
 !----------------------------------------------------------------------
-!--	If (ISTORE = 1) Then					  --
-!--	Central directory to collect EFIT results is store_dir  --
+!-- If (ISTORE = 1) Then       --
+!-- Central directory to collect EFIT results is store_dir  --
 !----------------------------------------------------------------------
-    	if (istore .eq. 1) then
-    	   eqdsk = store_dir(1:lstdir)//eqdsk
-    	endif
+     if (istore .eq. 1) then
+        eqdsk = store_dir(1:lstdir)//eqdsk
+     endif
   205 open(unit=neqdsk,file=eqdsk,status='old', &
            form=wform,err=12932)
            close(unit=neqdsk,status='delete')
@@ -719,10 +719,10 @@
        write (neqdsk,*) 'SIGPRE =',sigpre
        write (neqdsk,*) '/'
 
-			call ppstore
-			call ffstore
-			call wwstore
-                        call eestore
+       call ppstore
+       call ffstore
+       call wwstore
+       call eestore
       write (neqdsk,basis)
       limitr=limitr+1
       if (kdomse.gt.0.or.kstark.gt.0) then
@@ -894,10 +894,10 @@
 12933  continue
       open(unit=neqdsk,                       file=eqdsk,status='new')
       write (neqdsk,in1)
-			call ppstore
-			call ffstore
-			call wwstore
-                        call eestore
+       call ppstore
+       call ffstore
+       call wwstore
+       call eestore
       write (neqdsk,basis)
       write (neqdsk,inwant)
       close(unit=neqdsk)
@@ -1343,17 +1343,17 @@
       'gain param for tangent offset function',ierr)
 
           id_slopegam = NCVDEF (nceq,'mcal_slope',NCFLOAT, &
-      	                       2,dim2,ierr)
+                              2,dim2,ierr)
           call NCAPTC (nceq,id_slopegam,'long_name',NCCHAR,39, &
       'slope param for tangent offset function',ierr)
 
           id_scalegam = NCVDEF (nceq,'mcal_scale',NCFLOAT, &
-      	                       2,dim2,ierr)
+                              2,dim2,ierr)
           call NCAPTC (nceq,id_scalegam,'long_name',NCCHAR,39, &
       'scale param for tangent offset function',ierr)
 
           id_offsetgam = NCVDEF (nceq,'mcal_offset',NCFLOAT, &
-      	                       2,dim2,ierr)
+                              2,dim2,ierr)
           call NCAPTC (nceq,id_offsetgam,'long_name',NCCHAR,40, &
       'offset param for tangent offset function',ierr)
 
@@ -1369,12 +1369,12 @@
       'phase param for tangent slope function',ierr)
 
           id_scalegam = NCVDEF (nceq,'mcal3_btscale',NCFLOAT, &
-      	                       2,dim2,ierr)
+                              2,dim2,ierr)
           call NCAPTC (nceq,id_scalegam,'long_name',NCCHAR,40, &
       'btscale param for tangent slope function',ierr)
 
           id_offsetgam = NCVDEF (nceq,'mcal3_dc_offset',NCFLOAT, &
-      	                       2,dim2,ierr)
+                              2,dim2,ierr)
           call NCAPTC (nceq,id_offsetgam,'long_name',NCCHAR,42, &
       'dc_offset param for tangent slope function',ierr)
 
@@ -1389,12 +1389,12 @@
       'phase param for tangent slope function',ierr)
 
           id_scalegam = NCVDEF (nceq,'mcal4_btscale',NCFLOAT, &
-      	                       2,dim2,ierr)
+                              2,dim2,ierr)
           call NCAPTC (nceq,id_scalegam,'long_name',NCCHAR,40, &
       'btscale param for tangent slope function',ierr)
 
           id_offsetgam = NCVDEF (nceq,'mcal4_dc_offset',NCFLOAT, &
-      	                       2,dim2,ierr)
+                              2,dim2,ierr)
           call NCAPTC (nceq,id_offsetgam,'long_name',NCCHAR,42, &
       'dc_offset param for tangent slope function',ierr)
 
@@ -1915,19 +1915,3 @@ vastext(60:85)= 'input pressure profile (m)'
 !
       return
       end
-
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   1997/05/23 22:53:38 peng
-!
-      subroutine weqdskx_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)weqdskx.for,v 4.44\000'
-      return
-      end
-

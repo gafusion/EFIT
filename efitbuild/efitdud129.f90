@@ -1573,22 +1573,22 @@
       if(kppfnc .eq. 6)then
         kakpploop = kakloop
         if(kppknt .le. 3) kakpploop = 1
-   	    do j= 1, kakpploop
-	    do i= 2,kppknt-1
-                kappknt = kppknt
-	        kadknt = i
-	        dzero = appknt(i-1)
-	        done = appknt(i+1)
-	        prevknt = appknt(kadknt)
-		appknt(kadknt) = fmin(dzero,done,ppakfunc,tol)
-		write(6,*) 'pp knot ',kadknt,' set to ',appknt(kadknt)
-            enddo
-		if(abs(prevknt - appknt(kadknt)) .le. aktol)then
-		write(6,*)'Last PPknot changed by less that use tolerance'
-		goto 10
-                endif
-            enddo
-	endif
+        do j= 1, kakpploop
+          do i= 2,kppknt-1
+            kappknt = kppknt
+            kadknt = i
+            dzero = appknt(i-1)
+            done = appknt(i+1)
+            prevknt = appknt(kadknt)
+            appknt(kadknt) = fmin(dzero,done,ppakfunc,tol)
+            write(6,*) 'pp knot ',kadknt,' set to ',appknt(kadknt)
+          enddo
+          if(abs(prevknt - appknt(kadknt)) .le. aktol)then
+            write(6,*)'Last PPknot changed by less that use tolerance'
+            goto 10
+          endif
+        enddo
+      endif
 
 !
 !     Minimize chi^2 and error for ff knot location
@@ -1966,8 +1966,7 @@
             return
           endif
           if (kmtark.gt.0) then
-            if (kwaitmse.ne.0 .and. i.ge.kwaitmse)  &
-      	              call fixstark(jtime,kerrora)
+            if (kwaitmse.ne.0 .and. i.ge.kwaitmse) call fixstark(jtime,kerrora)
           endif
           call residu(nitera,jtime)
           if ((nitera.lt.kcallece).and.(kfitece.gt.0.0)) go to 2010
@@ -3781,38 +3780,37 @@
          bwork(nw),cwork(nw),dwork(nw))
 !
       if (keecur .gt. 0 .and. ifirst .eq. 0) then
-	write(6,*) "Spatial averaging correction of MSE data"
-	write(6,*) "not supported with Er fit at this time."
-	write(6,*) "Going ahead with correction anyway,at this"
-	write(6,*) "time, on channels requested."
-!	write(6,*) "Calculating but not applying correction."
-!	where(mse_spave_on .ne. 0) mse_spave_on = -1
+      write(6,*) "Spatial averaging correction of MSE data"
+      write(6,*) "not supported with Er fit at this time."
+      write(6,*) "Going ahead with correction anyway,at this"
+      write(6,*) "time, on channels requested."
+!      write(6,*) "Calculating but not applying correction."
+!      where(mse_spave_on .ne. 0) mse_spave_on = -1
       endif
 
       ltime = jtime
       if (jtime .lt. 0) then
-	 ltime = -jtime
-!	 do ichan=1,nstark
-!		tangam(ltime,ichan) = save_tangam(ltime,ichan) 
-!	 enddo
+        ltime = -jtime
+!       do ichan=1,nstark
+!         tangam(ltime,ichan) = save_tangam(ltime,ichan)
+!       enddo
       endif
 
       if ( ifirst .eq. 0) then
-	 ifirst = 1
-         write(6,*)"Calculate pitch angle corrections", &
-      	 " using spatial averaging"
+        ifirst = 1
+        write(6,*)"Calculate pitch angle corrections", &
+          " using spatial averaging"
 
-	 do ichan=1,nstark
-	    save_gam(ltime,ichan) = atan(tangam(ltime,ichan))
-	    save_tangam(ltime,ichan) = tangam(ltime,ichan)
-	 enddo
- 	 return
+        do ichan=1,nstark
+          save_gam(ltime,ichan) = atan(tangam(ltime,ichan))
+          save_tangam(ltime,ichan) = tangam(ltime,ichan)
+        enddo
+        return
       endif
 
       ip_sign = - cpasma(ltime) / abs(cpasma(ltime))
 
-       call sets2d(psi,ct,rgrid,nw,bkrt,lkrt,zgrid,nh,bkzt, &
-      		 lkzt,wkt,ier)
+       call sets2d(psi,ct,rgrid,nw,bkrt,lkrt,zgrid,nh,bkzt,lkzt,wkt,ier)
   
       if (pasmat(ltime).gt.0.0) then
         ssimag=-simag
@@ -3904,71 +3902,65 @@
 
 
       do ichan = 1,nmtark
-      if (mse_spave_on(ichan) .ne. 0) then
-!	    print *,i,ichan,cerer(1),e1rbz(ichan,1),e2rbz(ichan,1),
-!     .	    e3rbr(ichan,1)
-!	   print *,spatial_avg_gam(ichan,7,2,3)
-!	   print *,spatial_avg_gam(ichan,8,2,3)
-!	   print *,spatial_avg_gam(ichan,9,2,3)
-
-!
-!   spatial_avg_gam(chan, var [1 = r, 2 = z, 3-9 = A1-7], 5,3)
-!
-         ttl = 0.0
- 	 rl = rrgam(ltime,ichan)
- 	 zl = zzgam(ltime,ichan)
-         call seva2d(bkrt,lkrt,bkzt,lkzt,ct,rl,zl,pds,ier,n333)
-	 brl = -pds(3) / rl
-  	 bzl = pds(2) / rl
-	 psi_norm = (ssimag -pds(1)/ip_sign)/(ssimag-ssibry)
-         btl = seval(nw,abs(psi_norm),sigrid,fpol,bwork, &
-       	                              cwork,dwork) / rl
- 	 tglocal = (bzl * a1gam(ltime,ichan)) /  &
-      	 (btl * a2gam(ltime,ichan) + brl * a3gam(ltime,ichan) &
+        if (mse_spave_on(ichan) .ne. 0) then
+          !print *,i,ichan,cerer(1),e1rbz(ichan,1),e2rbz(ichan,1),e3rbr(ichan,1)
+          !print *,spatial_avg_gam(ichan,7,2,3)
+          !print *,spatial_avg_gam(ichan,8,2,3)
+          !print *,spatial_avg_gam(ichan,9,2,3)
+          !
+          !spatial_avg_gam(chan, var [1 = r, 2 = z, 3-9 = A1-7], 5,3)
+          !
+          ttl = 0.0
+          rl = rrgam(ltime,ichan)
+          zl = zzgam(ltime,ichan)
+          call seva2d(bkrt,lkrt,bkzt,lkzt,ct,rl,zl,pds,ier,n333)
+          brl = -pds(3) / rl
+          bzl = pds(2) / rl
+          psi_norm = (ssimag -pds(1)/ip_sign)/(ssimag-ssibry)
+          btl = seval(nw,abs(psi_norm),sigrid,fpol,bwork, &
+            cwork,dwork) / rl
+          tglocal = (bzl * a1gam(ltime,ichan)) /  &
+            (btl * a2gam(ltime,ichan) + brl * a3gam(ltime,ichan) &
             + bzl * a4gam(ltime,ichan))
 
 
-	 do i = 1,ngam_u
-	 do j = 1,ngam_w
-	    rl = spatial_avg_gam(ichan,1,i,j)
-	    zl = spatial_avg_gam(ichan,2,i,j)
-            call seva2d(bkrt,lkrt,bkzt,lkzt,ct,rl,zl,pds,ier,n333)
-  	    brl = -pds(3) / rl
-  	    bzl = pds(2) / rl
-	    psi_norm = (ssimag -pds(1)/ip_sign)/(ssimag-ssibry)
-            btl = seval(nw,abs(psi_norm),sigrid,fpol,bwork, &
-       	                                 cwork,dwork) / rl
-            tl = 0.0
-	    tl = tl + spatial_avg_gam(ichan,4,i,j) * btl
-	    tl = tl + spatial_avg_gam(ichan,5,i,j) * brl
-	    tl = tl + spatial_avg_gam(ichan,6,i,j) * bzl
-	    tl = spatial_avg_gam(ichan,3,i,j) * bzl / tl
-	    ttl = ttl + tl
-! 	    if(jtime .lt. 0)
-!     .	    write(7,'(I2,6F13.8)') ichan,rl,zl,btl,brl,bzl,tl
-	 enddo
-	 enddo
-!            spatial_fix(ichan,ltime) = 
-!    .  	   atan(cmgam(ichan,ltime)) - atan(ttl)  
-             spatial_fix(ichan,ltime) =  &
-        	   atan(tglocal) - atan(ttl)  
+          do i = 1,ngam_u
+            do j = 1,ngam_w
+              rl = spatial_avg_gam(ichan,1,i,j)
+              zl = spatial_avg_gam(ichan,2,i,j)
+              call seva2d(bkrt,lkrt,bkzt,lkzt,ct,rl,zl,pds,ier,n333)
+              brl = -pds(3) / rl
+              bzl = pds(2) / rl
+              psi_norm = (ssimag -pds(1)/ip_sign)/(ssimag-ssibry)
+              btl = seval(nw,abs(psi_norm),sigrid,fpol,bwork, &
+                cwork,dwork) / rl
+              tl = 0.0
+              tl = tl + spatial_avg_gam(ichan,4,i,j) * btl
+              tl = tl + spatial_avg_gam(ichan,5,i,j) * brl
+              tl = tl + spatial_avg_gam(ichan,6,i,j) * bzl
+              tl = spatial_avg_gam(ichan,3,i,j) * bzl / tl
+              ttl = ttl + tl
+              !if(jtime .lt. 0) write(7,'(I2,6F13.8)') ichan,rl,zl,btl,brl,bzl,tl
+            enddo
+          enddo
+          !spatial_fix(ichan,ltime) =
+          ! atan(cmgam(ichan,ltime)) - atan(ttl)
+          spatial_fix(ichan,ltime) =  &
+            atan(tglocal) - atan(ttl)
 
           if (jtime.gt.0.and.mse_spave_on(ichan) .eq. 1) then
-  	     tangam(ltime,ichan) = tan(save_gam(ltime,ichan) &
-      	      - spatial_fix(ichan,ltime)) 
+            tangam(ltime,ichan) = tan(save_gam(ltime,ichan) &
+              - spatial_fix(ichan,ltime))
           endif
-	 
-
-      endif
-
-      
+        endif
       enddo
-          if (jtime .lt. 0) then
-	      ifirst = 0
-          endif
-!
+
+      if (jtime .lt. 0) then
+        ifirst = 0
+      endif
+      
       DEALLOCATE(bt,br,bzt,bz,bwork,cwork,dwork)
-!
+
       return
       end
 
@@ -4268,83 +4260,83 @@
       else
          avem=2.0*iavem / 1000.0
       endif
-       max_beamOff = t_max_beam_off / 1000.0
-       call  set_mse_beam_logic(mse_strict,max_beamOff, &
-                           ok_210lt,ok_30rt)
-       tanham = 0.0
-       tanham_uncor = 0.0
-       sigham = 0.0
-       fv30lt = v30lt
-       fv30rt = v30rt
-       fv210rt = v210rt
-       fv210lt = v210lt
-       call  set_cer_correction(mse_usecer,mse_certree, &
-             mse_use_cer330,mse_use_cer210)
-       call set_mse_beam_on_vlevel(fv30lt,fv210rt,fv210lt,fv30rt)
-       call  stark2cer(ishot,atime,ktime,avem,msefitfun,tanham,sigham, &
-             rrham,zzham,a1ham,a2ham,a3ham,a4ham,a5ham,a6ham,a7ham, &
-             iergam,msebkp,mse_quiet,tanham_uncor)
-       call get_mse_spatial_data(spatial_avg_ham)
-       call get_mse_calibration(msefitfun,hgain, &
-                    hslope,hscale,hoffset)
+      max_beamOff = t_max_beam_off / 1000.0
+      call  set_mse_beam_logic(mse_strict,max_beamOff,ok_210lt,ok_30rt)
+      tanham = 0.0
+      tanham_uncor = 0.0
+      sigham = 0.0
+      fv30lt = v30lt
+      fv30rt = v30rt
+      fv210rt = v210rt
+      fv210lt = v210lt
+      call  set_cer_correction(mse_usecer,mse_certree, &
+        mse_use_cer330,mse_use_cer210)
+      call set_mse_beam_on_vlevel(fv30lt,fv210rt,fv210lt,fv30rt)
+      call  stark2cer(ishot,atime,ktime,avem,msefitfun,tanham,sigham, &
+        rrham,zzham,a1ham,a2ham,a3ham,a4ham,a5ham,a6ham,a7ham, &
+        iergam,msebkp,mse_quiet,tanham_uncor)
+      call get_mse_spatial_data(spatial_avg_ham)
+      call get_mse_calibration(msefitfun,hgain, &
+        hslope,hscale,hoffset)
       kfixstark = 0
       do 200 n=1,nmtark
-	rmse_gain(n) = hgain(n) 
-	rmse_slope(n) = hslope(n) 
-	rmse_scale(n) = hscale(n) 
-	rmse_offset(n) = hoffset(n) 
-	if(mse_spave_on(n) .ne. 0) kfixstark = 1
-	do i=1,ngam_vars
-	do j=1,ngam_u
-	do k=1,ngam_w
-	    spatial_avg_gam(n,i,j,k)= spatial_avg_ham(n,i,j,k)
-	enddo
-	enddo
-	enddo
-!
-      do 100 i=1,ktime
-        tangam(i,n)=tanham(i,n)
-        tangam_uncor(i,n)=tanham_uncor(i,n)
-        siggam(i,n)=sigham(i,n)
-        rrgam(i,n)=rrham(n)
-        zzgam(i,n)=zzham(n)
-        starkar(i,n)=sarkar
-        starkaz(i,n)=sarkaz
-        a1gam(i,n)=a1ham(n)
-        a2gam(i,n)=a2ham(n)
-        a3gam(i,n)=a3ham(n)
-        a4gam(i,n)=a4ham(n)
-        a5gam(i,n)=a5ham(n)
-        a6gam(i,n)=a6ham(n)
-        a7gam(i,n)=a7ham(n)
-        a8gam(i,n)=0.0
-        if (abs(tangam(i,n)).le.1.e-10.and. &
+        rmse_gain(n) = hgain(n)
+        rmse_slope(n) = hslope(n)
+        rmse_scale(n) = hscale(n)
+        rmse_offset(n) = hoffset(n)
+        if(mse_spave_on(n) .ne. 0) kfixstark = 1
+        do i=1,ngam_vars
+          do j=1,ngam_u
+            do k=1,ngam_w
+              spatial_avg_gam(n,i,j,k)= spatial_avg_ham(n,i,j,k)
+            enddo
+          enddo
+        enddo
+
+        do 100 i=1,ktime
+          tangam(i,n)=tanham(i,n)
+          tangam_uncor(i,n)=tanham_uncor(i,n)
+          siggam(i,n)=sigham(i,n)
+          rrgam(i,n)=rrham(n)
+          zzgam(i,n)=zzham(n)
+          starkar(i,n)=sarkar
+          starkaz(i,n)=sarkaz
+          a1gam(i,n)=a1ham(n)
+          a2gam(i,n)=a2ham(n)
+          a3gam(i,n)=a3ham(n)
+          a4gam(i,n)=a4ham(n)
+          a5gam(i,n)=a5ham(n)
+          a6gam(i,n)=a6ham(n)
+          a7gam(i,n)=a7ham(n)
+          a8gam(i,n)=0.0
+          if (abs(tangam(i,n)).le.1.e-10.and. &
             abs(siggam(i,n)).le.1.e-10)then
             fwtgam(n)=0.0
             siggam(i,n)=0.0
-        else if (abs(tangam(i,n)).le.1.e-10.and. &
-                abs(siggam(i,n)).le.100.0) then
+          else if (abs(tangam(i,n)).le.1.e-10.and. &
+            abs(siggam(i,n)).le.100.0) then
             fwtgam(n)=0.0
             siggam(i,n)=0.0
-        else if (iergam(n).gt.0) then
+          else if (iergam(n).gt.0) then
             fwtgam(n)=0.0
             siggam(i,n)=0.0
-       endif
-  100 continue
-  200 continue
+          endif
+100     continue
+200   continue
 
-!
-! kfixstark is zero when none of the individual channels is turned on
-! in this case set kwaitmse to zero which turns the mse spacial average
-! off globally
-!
+      !
+      ! kfixstark is zero when none of the individual channels is turned on
+      ! in this case set kwaitmse to zero which turns the mse spacial average
+      ! off globally
+      !
       if (kfixstark .eq. 0) then
-		kwaitmse = 0
+        kwaitmse = 0
       elseif (kwaitmse .eq. 0) then
-		kwaitmse = 5
+        kwaitmse = 5
       endif
       return
       end
+
       subroutine gette(kerror)
 !**********************************************************************
 !**                                                                  **
@@ -7860,10 +7852,11 @@
       include 'basiscomdu.f90'
       dimension xpsii(1)
       do i=1,kffcur
-	xpsii(i) = bserpel(keefnc,i,ypsi)
+        xpsii(i) = bserpel(keefnc,i,ypsi)
       enddo
       return
       end
+
       subroutine setff(ypsi,xpsii)
 !**********************************************************************
 !**                                                                  **
@@ -7895,6 +7888,7 @@
       enddo
       return
       end
+
       subroutine setfp(ypsi,xpsii)
 !**********************************************************************
 !**                                                                  **
@@ -7984,41 +7978,43 @@
       include 'basiscomdu.f90'
       dimension xpsii(1)
       do i=1,kppcur
-				 xpsii(i) = bsppel(kppfnc,i,ypsi)
+        xpsii(i) = bsppel(kppfnc,i,ypsi)
       enddo
-			return
+      return
       end
+
       subroutine setppp(ypsi,xpsii)
-!**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**         setppp computes derivative of pp.                        **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          94/03/07..........first created                         **
-!**                                                                  **
-!**                                                                  **
-!**                                                                  **
-!**********************************************************************
+        !**********************************************************************
+        !**                                                                  **
+        !**     MAIN PROGRAM:  MHD FITTING CODE                              **
+        !**                                                                  **
+        !**                                                                  **
+        !**     SUBPROGRAM DESCRIPTION:                                      **
+        !**         setppp computes derivative of pp.                        **
+        !**                                                                  **
+        !**     CALLING ARGUMENTS:                                           **
+        !**                                                                  **
+        !**     REFERENCES:                                                  **
+        !**          (1)                                                     **
+        !**          (2)                                                     **
+        !**                                                                  **
+        !**     RECORD OF MODIFICATION:                                      **
+        !**          94/03/07..........first created                         **
+        !**                                                                  **
+        !**                                                                  **
+        !**                                                                  **
+        !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
-!      include 'ecomdu1.f90'
+        !      include 'ecomdu1.f90'
       include 'basiscomdu.f90'
       dimension xpsii(1)
       do i=1,kppcur
-				 xpsii(i) = bspppel(kppfnc,i,ypsi)
+        xpsii(i) = bspppel(kppfnc,i,ypsi)
       enddo
-			return
+      return
       end
+
       subroutine setpr(ypsi,xpsii)
 !**********************************************************************
 !**                                                                  **
@@ -8045,11 +8041,13 @@
 !      include 'ecomdu1.f90'
       include 'basiscomdu.f90'
       dimension xpsii(1)
+
       do i=1,kppcur
-				 xpsii(i) = bsppin(kppfnc,i,ypsi)
+        xpsii(i) = bsppin(kppfnc,i,ypsi)
       enddo
-			return
+      return
       end
+
       subroutine setpw(ypsi,xpsii)
 !**********************************************************************
 !**                                                                  **
@@ -8077,9 +8075,10 @@
       include 'basiscomdu.f90'
       dimension xpsii(1)
       do i=1,kwwcur
-				 xpsii(i) = bswwin(kwwfnc,i,ypsi)
+        xpsii(i) = bswwin(kwwfnc,i,ypsi)
       enddo
       end
+
       subroutine setpwp(ypsi,xpsii)
 !**********************************************************************
 !**                                                                  **
@@ -8107,10 +8106,11 @@
       include 'basiscomdu.f90'
       dimension xpsii(1)
       do i=1,kwwcur
-				 xpsii(i) = bswwel(kwwfnc,i,ypsi)
+        xpsii(i) = bswwel(kwwfnc,i,ypsi)
       enddo
-			return
+      return
       end
+
       subroutine setpwpp(ypsi,xpsii)
 !**********************************************************************
 !**                                                                  **
@@ -8138,10 +8138,11 @@
       include 'basiscomdu.f90'
       dimension xpsii(1)
       do i=1,kwwcur
-				 xpsii(i) = bswwpel(kwwfnc,i,ypsi)
+        xpsii(i) = bswwpel(kwwfnc,i,ypsi)
       enddo
-			return
+      return
       end
+
       subroutine setstark(jtime)
 !**********************************************************************
 !**                                                                  **
@@ -8902,12 +8903,12 @@
         zmaxis_last=zmaxis
       endif
       if (isetfb.ne.0) then
-           fb_plasma(jtime)=abs(brfb(1)*nfbcoil/cpasma(jtime))
-           delzmm = zmaxis - zmaxis_last
-           zmaxis_last=zmaxis
-	elseif (eelip.gt.2.25.and.itell.eq.0) then
-           delzmm = zmaxis - zmaxis_last
-           zmaxis_last=zmaxis
+        fb_plasma(jtime)=abs(brfb(1)*nfbcoil/cpasma(jtime))
+        delzmm = zmaxis - zmaxis_last
+        zmaxis_last=zmaxis
+      elseif (eelip.gt.2.25.and.itell.eq.0) then
+        delzmm = zmaxis - zmaxis_last
+        zmaxis_last=zmaxis
       endif
 !----------------------------------------------------------------------
 !--  magnetic axis parameters if needed                              --
@@ -9023,58 +9024,59 @@
 !**                                                                  **
 !**********************************************************************
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-	dimension ztemp(40),temtemp(40),tertemp(40),zinc(40), &
+      dimension ztemp(40),temtemp(40),tertemp(40),zinc(40), &
                   zprof(1), temprof(1), terprof(1)
-	real*8 nemtemp(40),nertemp(40),nemprof(1),nerprof(1)
-!---------------------------------------------------------------------
-!--	copy zprof to ztemp (temporary work space)                  --
-!---------------------------------------------------------------------
-	do 100 j=1,mbox
-          ztemp(j)=zprof(j)
-  100   continue
-!---------------------------------------------------------------------
-!--	find min z in ztemp                                         --
-!---------------------------------------------------------------------
-	do 1000 j=1,mbox
-		zmin=999.
-			do 800 i=1,mbox-j+1
-				if(ztemp(i).lt.zmin) then
-                                  zmin=ztemp(i)
-                                  kmin=i
-                                end if
-  800			continue
-!---------------------------------------------------------------------
-!--	put zmin into new vectors                                   --
-!---------------------------------------------------------------------
-		zinc(j)=zmin
-                nemtemp(j)=nemprof(kmin)
-                temtemp(j)=temprof(kmin)
-                nertemp(j)=nerprof(kmin)
-                tertemp(j)=terprof(kmin)
-!---------------------------------------------------------------------
-!--	create new ztemp with remaining data                        --
-!---------------------------------------------------------------------
-		k=0
-		do 900 i=1,mbox-j+1
-			if(zmin.ne.ztemp(i))then
-				k=k+1
-				ztemp(k)=ztemp(i)
-			end if
-  900 		continue
- 1000 	continue
-!---------------------------------------------------------------------
-!--	rewrite new vectors                                         --
-!---------------------------------------------------------------------
-	do 1200 j=1,mbox
-          zprof(j)=zinc(j)
-          nemprof(j)=nemtemp(j)
-          temprof(j)=temtemp(j)
-          nerprof(j)=nertemp(j)
-          terprof(j)=tertemp(j)
- 1200  continue
-!
-	return
-	end
+      real*8 nemtemp(40),nertemp(40),nemprof(1),nerprof(1)
+      !---------------------------------------------------------------------
+      !-- copy zprof to ztemp (temporary work space)                  --
+      !---------------------------------------------------------------------
+      do 100 j=1,mbox
+        ztemp(j)=zprof(j)
+100   continue
+      !---------------------------------------------------------------------
+      !-- find min z in ztemp                                         --
+      !---------------------------------------------------------------------
+      do 1000 j=1,mbox
+        zmin=999.
+        do 800 i=1,mbox-j+1
+          if(ztemp(i).lt.zmin) then
+            zmin=ztemp(i)
+            kmin=i
+          end if
+800     continue
+        !---------------------------------------------------------------------
+        !-- put zmin into new vectors                                   --
+        !---------------------------------------------------------------------
+        zinc(j)=zmin
+        nemtemp(j)=nemprof(kmin)
+        temtemp(j)=temprof(kmin)
+        nertemp(j)=nerprof(kmin)
+        tertemp(j)=terprof(kmin)
+        !---------------------------------------------------------------------
+        !-- create new ztemp with remaining data                        --
+        !---------------------------------------------------------------------
+        k=0
+        do 900 i=1,mbox-j+1
+          if(zmin.ne.ztemp(i))then
+            k=k+1
+            ztemp(k)=ztemp(i)
+          end if
+900     continue
+1000  continue
+      !---------------------------------------------------------------------
+      !-- rewrite new vectors                                         --
+      !---------------------------------------------------------------------
+      do 1200 j=1,mbox
+        zprof(j)=zinc(j)
+        nemprof(j)=nemtemp(j)
+        temprof(j)=temtemp(j)
+        nerprof(j)=nertemp(j)
+        terprof(j)=tertemp(j)
+1200  continue
+      !
+      return
+      end
+
       subroutine vescur(jtime)
 !**********************************************************************
 !**                                                                  **
@@ -9110,6 +9112,7 @@
  2100 vcurrt(i)=vloopt(jtime)/rsisvs(i)
       return
       end
+
       subroutine weight(x,y)
 !**********************************************************************
 !**                                                                  **
@@ -9232,6 +9235,7 @@
  5500 continue
       return
       end
+
       subroutine old_new(psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
            zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
            ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
@@ -9270,26 +9274,10 @@
       data limtrs/5/
       data iunit/35/, m_write/1/, m_read/1/
       data out2d /'curve2d.dat'/, out2d_bin/'curve2d_bin.dat'/
-!
       end
 !
       include 'msels_data.f90'
       include 'msels_hist.f90'
-!
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   1997/05/23 22:53:27 peng
-!
-      subroutine efitdx_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)$RCSFILE: efitdx.for,v $ 4.61\000'
-      return
-      end
 
 ! jm.s
 real*8 function linear(x,xa,ya,n)

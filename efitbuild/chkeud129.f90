@@ -231,17 +231,3 @@
 !
       return
       end
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   1998/02/04 15:07:48 meyer
-!
-      subroutine chkerrdx_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)chkerrdx.for,v 4.14\000'
-      return
-      end

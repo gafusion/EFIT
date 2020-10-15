@@ -12,15 +12,15 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**       input:                                                     **
-!**               jtime						     **
-!**               ktear=1, calcuate for the default modes	     **
-!**                    output data to: the tearing page		     **
-!**                                the a-file, and fitout.dat.	     **
+!**               jtime                                              **
+!**               ktear=1, calcuate for the default modes            **
+!**                 output data to: the tearing page                 **
+!**                 the a-file, and fitout.dat.                      **
 !**               ktear=2, specify a set of modes in a namelist file **
-!**                    output data to: the tearing page		     **
-!**                               the a-file, and fitout.dat.	     **
+!**                 output data to: the tearing page                 **
+!**                 the a-file, and fitout.dat.                      **
 !**               ktear=3, specify a set of modes in a namelist file **
-!**                        output data to the t-file.		     **
+!**                 output data to the t-file.                       **
 !**       output:                                                    **
 !**                                                                  **
 !**     REFERENCES:                                                  **
@@ -92,8 +92,8 @@
       nnn=1
       nin=25
 !
-!     					This is a hack for the 
-!					default mode list
+!          This is a hack for the
+!     default mode list
       do i=1,100
          psi_rsg(i)=0.0
          psi_norm(i)=0.0
@@ -113,49 +113,49 @@
       ndp(1)=1
       ndp(2)=2
       ndp(3)=4
-!
-!					Read and/or create the file 
-!					mode_list which contains the
-!               			namelist tear_anal
+      !
+      !      Read and/or create the file
+      !      mode_list which contains the
+      !                namelist tear_anal
       if((ktear.eq.2).or.(ktear.eq.3))then
-!
-!     					Check current directory 
-!					for modelist
-      open(unit=nin,status='old',file='mode_list',err=12933)
-      goto 12934
-!
-!        				mode_list doesn't exist in cwd
-12933    continue
-!        				Check one directory above 
-!					cwd for modelist
-         open(unit=nin,status='old',file='../mode_list',err=12935)
-         goto 12934
-12935      open(unit=nin,status='new',file='mode_list')
-           write(nin,tear_anal)
-         goto 106
-12934 read (nin,tear_anal,err=11219,end=106)
-106   continue
-11219 close(unit=nin)
+        !
+        !           Check current directory
+        !      for modelist
+        open(unit=nin,status='old',file='mode_list',err=12933)
+        goto 12934
+      !
+      !     mode_list doesn't exist in cwd
+12933   continue
+        !     Check one directory above
+        !     cwd for modelist
+        open(unit=nin,status='old',file='../mode_list',err=12935)
+        goto 12934
+12935   open(unit=nin,status='new',file='mode_list')
+        write(nin,tear_anal)
+        goto 106
+12934   read (nin,tear_anal,err=11219,end=106)
+106     continue
+11219   close(unit=nin)
       endif
 !
 !
-!     					Determine the largest value 
-!					of q requested
+!           Determine the largest value
+!      of q requested
       q_big=float(mdp(1))/float(ndp(1))
       do i=2,num_dp
          q_test=float(mdp(i))/float(ndp(i))
          if(q_test.gt.q_big)q_big=q_test
       enddo
 !
-!     					Spline the flux surface data
+!           Spline the flux surface data
       call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
 !
-!     					formulate grids: 
-!					(spline requires monotonicaly 
-!					increasing grid)
-!             				psi grid (xsisii, rgrid_psi) 
-!					in terms of the rgrid 
-!             				geometric angle grid (chi_phi)
+!           formulate grids:
+!      (spline requires monotonicaly
+!      increasing grid)
+!                   psi grid (xsisii, rgrid_psi)
+!      in terms of the rgrid
+!                   geometric angle grid (chi_phi)
       dsi=(psibry-simag)/float(mw-1)
       if(dsi.gt.0)then
         cur_neg=-1.
@@ -165,8 +165,8 @@
       do i=1,mw
           xsisii(i)=cur_neg*(psibry-(i-1)*dsi)
           f_a(i)=fpol(mw+1-i)
-!						(pprime negative since
-!						order is reversed.)
+!       (pprime negative since
+!       order is reversed.)
           pp_a(i)=-cur_neg*pprime(mw+1-i)
           qpsi_a(i)=qpsi(mw+1-i)
       enddo
@@ -175,15 +175,15 @@
         chi_phi(j)=-pi+(j-1)*d_phi
       enddo
 !
-!     					perform additional splines 
-!					required for jdotb.f
+!           perform additional splines
+!      required for jdotb.f
       call zpline(mw,xsisii,f_a,f_b,f_c,f_d)
       call zpline(mw,xsisii,pp_a,pp_b,pp_c,pp_d)
       call zpline(mw,xsisii,qpsi_a,qpsi_b,qpsi_c,qpsi_d)
 !
-!     					Determine domain of q_big, 
-!         				since  q_psi needs to be 
-!					inside the separatrix
+!           Determine domain of q_big,
+!               since  q_psi needs to be
+!      inside the separatrix
       i=1
       do while(q_big.lt.qpsi_a(i))
          i=i+1
@@ -191,7 +191,7 @@
       n_qbig=i-1
       if(n_qbig.lt.(mw-10))n_qbig=mw-10
 !
-!					Separatrix finder
+!      Separatrix finder
       ilast=1
       iflg=1
       j=mh/3
@@ -215,9 +215,9 @@
       z_min=z_min-2.0*drgrid
       if(z_min.ge.zgrid(mh/3))z_min=zgrid(1)
 !
-!     					Determine bounds for the 
-!					contour searches 
-!					(inside the separatrix)
+!           Determine bounds for the
+!      contour searches
+!      (inside the separatrix)
       call seva2d(bkx,lkx,bky,lky,c,r_min,z_min,pds,ier,1)
       call surfac(pds(1),psi,mw,mh,rgrid,zgrid,r_cnt,z_cnt,nfounc &
                     ,npoint,drgrid,dzgrid,xmin,xmax,z_min,ymax,nnn, &
@@ -237,7 +237,7 @@
       ymin=ymin-dzgrid
       ymax=ymax+dzgrid
 !
-!					Find the X-point
+!      Find the X-point
       test_length=rgrid(mw)-rgrid(1)
       do iiii=mh/3,2,-1
         psi_test=cur_neg*xsisii(1)
@@ -270,7 +270,7 @@
       enddo
 !
 !
-!					Calculate toroidal flux
+!      Calculate toroidal flux
       do iiii=1,mw
         rhox=0.0
         do i=1,mw
@@ -293,7 +293,7 @@
         rho_a(iiii)=rho_a(iiii)/rho_norm
       enddo
       call zpline(mw,xsisii,rho_a,rho_b,rho_c,rho_d)
-!					Final bounds check
+!      Final bounds check
       psi_test=xsisii(1)*cur_neg
       call surfac(psi_test,psi,mw,mh,rgrid,zgrid &
                     ,r_cnt,z_cnt,nfounc &
@@ -314,26 +314,26 @@
       enddo
 ! ------------------------------------------------------------
 !
-!     					Loop through the modes.
+!           Loop through the modes.
       num_rsd=0
       do k=1,num_dp
        qwant=float(mdp(k))/float(ndp(k))
        do i=1,mw-1
 !
-!					check each zone for multiple qwant
-!					by solving the cubic equation for 
-!					multiple roots in the zone over which 
-!					the cubic spline is valid
+!      check each zone for multiple qwant
+!      by solving the cubic equation for
+!      multiple roots in the zone over which
+!      the cubic spline is valid
         call q_search(num_root,psi_root,qwant, &
                      qpsi_a(i),qpsi_b(i),qpsi_c(i),qpsi_d(i))
 !
-!       				Loop through the cubic roots
+!             Loop through the cubic roots
         do j=1,num_root
           psi_rs=xsisii(i)+psi_root(j)
 !
-!					Insure that the rational surface
-!					is bounded by the region of
-!					validity for the cubic spline.
+!      Insure that the rational surface
+!      is bounded by the region of
+!      validity for the cubic spline.
          if((psi_rs.ge.xsisii(i)).and.(psi_rs.le.xsisii(i+1)))then
           num_rsd=num_rsd+1
           dpsi_work=psi_rs*0.001
@@ -356,8 +356,8 @@
 !            write(7,*)r_cnt(iiii),z_cnt(iiii)
 !          enddo
 !
-!					Functional values on the contour
-!					and flux averaged quantities.
+!      Functional values on the contour
+!      and flux averaged quantities.
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
            qwant=seval(mw,psi_work,xsisii, &
                       qpsi_a,qpsi_b,qpsi_c,qpsi_d)
@@ -384,7 +384,7 @@
           endif
 !
 !                                       Since r_cnt and z_cnt are ordered 
-!					calculate the min&max magnetic fields.
+!      calculate the min&max magnetic fields.
           b_small=0.5*(1.0/(r_cnt(1)*r_cnt(1)) &
                     +1.0/(r_cnt(nfounc-1)*r_cnt(nfounc-1)))
           kk=1
@@ -395,7 +395,7 @@
                     +1.0/(r_cnt(kk+1)*r_cnt(kk+1)))
           eps_avg_a(jjjj)=0.5*abs(b_small-b_large)
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-!          		Straight field line calculator:
+!           Straight field line calculator:
 
 !                                       Determine integrand on
 !                                       the flux contour
@@ -434,7 +434,7 @@
            chi(kk)=pi
 !
 !                                       Cleanup chi(kk) so that it normalizes 
-!					to zero at chi_phi=0.0 by assuming a
+!      to zero at chi_phi=0.0 by assuming a
 !                                       linear accumulation of errors.
            mh_2=mh/2+1
            delta_cor=chi((jjjj-1)*mh+mh_2)/dble(mh_2-1)
@@ -450,7 +450,7 @@
 !            write(7,*)chi_phi(jj),chi(kk)
 !          enddo
 !
-!					Transfer to alternate storage
+!      Transfer to alternate storage
            do jj=1,mh
              kk=(jjjj-1)*mh+jj
              chi_a0(jj,jjjj)=chi(kk)
@@ -469,13 +469,13 @@
       enddo
 !     ================================================================
 !
-!           				Evaluate parameters at psi_rs
+!                 Evaluate parameters at psi_rs
             psi_rsg(num_rsd)=psi_rs
             m_dp(num_rsd)=mdp(k)
             n_dp(num_rsd)=ndp(k)
             psi_test=psi_rs*cur_neg
 !
-!					gttwant is a messy one:
+!      gttwant is a messy one:
             call surfac(psi_test,psi,mw,mh, &
                     rgrid,zgrid,r_cnt,z_cnt,nfounc, &
                     npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
@@ -512,8 +512,8 @@
                   gttwant,nnn ,sdlobp,sdlbp)
 
 !
-!					Evaluate the other terms
-!					from their splines.
+!      Evaluate the other terms
+!      from their splines.
             qpwant=speval(mw,psi_rs,xsisii, &
                       qpsi_a,qpsi_b,qpsi_c,qpsi_d)
             fwant=seval(mw,psi_rs,xsisii, &
@@ -531,7 +531,7 @@
                       rho_a,rho_b,rho_c,rho_d)
             r_rsg(num_rsd)=1.0/(gttwant**0.5)
 !
-!           				Evaluate lambda
+!                 Evaluate lambda
 !           write(6,*)fwant,qwant,sigwant,qpwant,grrwant,gttwant
             val_lambda(num_rsd)= fwant*qwant*sigwant &
                       /(2.0*float(mdp(k))*qpwant) &
@@ -541,8 +541,8 @@
                val_lambda(num_rsd)=0.9999
 
 !
-!           				Evaluate saturated island 
-!					half-width (m) if appropriate.
+!                 Evaluate saturated island
+!      half-width (m) if appropriate.
             if(val_lambda(num_rsd).gt.0.5)then
               w_sat(num_rsd)=2.04*(val_lambda(num_rsd)-0.5) &
                              /(m_dp(num_rsd)*gttwant**0.5)
@@ -550,24 +550,24 @@
               w_sat(num_rsd)=0.0
             endif
 !
-!					Evaluate delta prime (m)
+!      Evaluate delta prime (m)
             delta_prime(num_rsd)=-2*float(mdp(k))*gttwant**0.5 &
            *pi*val_lambda(num_rsd)/tan(pi*val_lambda(num_rsd))
 !
-!					Evaluate neoclassical 
-!					width w_nc
+!      Evaluate neoclassical
+!      width w_nc
             w_nc(num_rsd)=pi*17.2e-11*eps_want**0.5 &
                  *qwant*ppwant*(rout(jtime)**2)/(qpwant*grrwant)
 !
-!                    			Evaluate w_star factor in: 
-!  				         Collisional limit
+!                     Evaluate w_star factor in:
+!                 Collisional limit
             den_want=1.0e+19
             w_star1(num_rsd)=3.275e+05 &
                      *(qwant*ppwant/qpwant)**2 &
                      /(grrwant/rout(jtime)**2)**2 &
                      /den_want
 !
-!           				 Collisionless limit
+!                  Collisionless limit
             w_star2(num_rsd)=w_star1(num_rsd)*eps_want**1.5
           endif
         enddo
@@ -599,7 +599,7 @@
 !**         r_loci    -->  radial grid location                      **
 !**         z_loci    -->  z grid location                           **
 !**         cur_neg   -->  The current is negative
-!**   Spline fits of F,p' and  bicubic spline fit of psi	     **
+!**   Spline fits of F,p' and  bicubic spline fit of psi      **
 !**       output:                                                    **
 !**         bdotj_val -->  Computed value of J dot B / B^2           **
 !**         gpsipsi   -->  Local value of the g^psi^psi metric elmt  **
@@ -624,14 +624,14 @@
       dimension pds(6)
       
       common/cowrk3/lkx,lky
-!     					Calculate B^2
+!           Calculate B^2
         call seva2d(bkx,lkx,bky,lky,c,r_loci,z_loci,pds,ier,n333)
       psi_test=cur_neg*pds(1)
       fwant=seval(mw,psi_test,xsisii,f_a,f_b,f_c,f_d)
       gpsipsi=pds(2)*pds(2)+pds(3)*pds(3)
       bdotb=(fwant*fwant+gpsipsi)/(r_loci*r_loci)
 !
-!      					Calculate B dot J
+!            Calculate B dot J
       fpwant=speval(mw,psi_test,xsisii,f_a,f_b,f_c,f_d)
       ppwant=seval(mw,psi_test,xsisii,pp_a,pp_b,pp_c,pp_d)
       bdotj_val=-(fpwant/tmu+fwant*ppwant/bdotb)
@@ -678,13 +678,13 @@
       dimension pds(6),chi_pds(6)
       
 !
-!     					Various pre-calculated 
-!					common blocks
+!           Various pre-calculated
+!      common blocks
       common/cwork3/lkx,lky
 !
-!     					First convert the geometric 
-!					locations to data which can be
-!					used to evaluate the chi-spline
+!           First convert the geometric
+!      locations to data which can be
+!      used to evaluate the chi-spline
       chi_ang=atan((z_loci-zmaxis)/(r_loci-rmaxis))
       if((r_loci-rmaxis).lt.0.0)then
         if((z_loci-zmaxis).lt.0.0)then
@@ -694,13 +694,13 @@
         endif
       endif
 !
-!					Calculate psi, d psi /dR
-!					and d psi /dZ
+!      Calculate psi, d psi /dR
+!      and d psi /dZ
       call seva2d(bkx,lkx,bky,lky,c, &
                   r_loci,z_loci,pds,ier,n333)
 !
-!					Calculate d chi /d psi
-!					and d chi /d Theta
+!      Calculate d chi /d psi
+!      and d chi /d Theta
 !     call seva2d(chi_bkx,lkx,chi_bky,lky,chi_c,
 !    &            psi_test,chi_ang,chi_pds,ier,n333)
           pds(1)=cur_neg*pds(1)
@@ -708,9 +708,9 @@
           pds(3)=cur_neg*pds(3)
 
 !
-!     					Calculate gchichi
-!					chi_term1: grad R component
-!					chi_term2: grad Z component
+!           Calculate gchichi
+!      chi_term1: grad R component
+!      chi_term2: grad Z component
       ang_mag=(r_loci-rmaxis)**2+(z_loci-zmaxis)**2
       chi_term1=chi_pds(2)*pds(2)- &
                 chi_pds(3)*(z_loci-zmaxis)/ang_mag
@@ -770,10 +770,10 @@
       endif
 !
 !
-!    					Determine the range of flux 
-!					surface points which span
-!     					the interval of the flux 
-!					surface arc length integral.
+!          Determine the range of flux
+!      surface points which span
+!           the interval of the flux
+!      surface arc length integral.
       k=1
       pi=-4.0*atan(-1.0)
       ifnd=1
@@ -786,7 +786,7 @@
             ifnd=-1
             n_end=k-1
 !
-!            				Is ang_start in this interval?
+!                  Is ang_start in this interval?
             if(ang_test.lt.ang_start)then
               n_start=k-1
               k=n
@@ -803,13 +803,13 @@
 !     write(6,*)chi_geom(n_end),ang_end,chi_geom(n_end+1)
 !     write(6,*)chi_geom(n_start),ang_start,chi_geom(n_start+1)
 !     write(6,*)n_start,n_end,n
-!					Implies that
+!      Implies that
 !       chi_geom(n_end)   >   ang_end   >   chi_geom(n_end+1)
 !       chi_geom(n_start) >   ang_start >   chi_geom(n_start+1)
 !       ang_end > ang_start
 !------------------------------------------------------------------
-!    					Integral of f on a portion 
-!					of a flux surface
+!          Integral of f on a portion
+!      of a flux surface
 !------------------------------------------------------------------
 !
 !     
@@ -835,8 +835,8 @@
           fnorm=0.0
           sdlbp=0.0
 !
-!         				The first region integral 
-!					(ang_end to chi_geom(n_end+1))
+!               The first region integral
+!      (ang_end to chi_geom(n_end+1))
           xnow=0.5*(x(n_end)+x(n_end+1))
           ynow=0.5*(y(n_end)+y(n_end+1))
           fnow=0.5*(gchi_a(n_end)+gchi_a(n_end+1))
@@ -852,9 +852,9 @@
           fave = fave + dlbpol*fnow
           sdlbp = sdlbp + dl*bpol
 !
-!         				Integrate between 
-!					chi_geom(nstart+1) and 
-!					chi_geom(n_end-1)
+!               Integrate between
+!      chi_geom(nstart+1) and
+!      chi_geom(n_end-1)
           i=n_end+1
           do while(i.lt.n_start)
             xnow=0.5*(x(i)+x(i+1))
@@ -872,7 +872,7 @@
             i=i+1
           enddo
 !
-!         				Integrate the last region
+!               Integrate the last region
           xnow=0.5*(x(n_start)+x(n_start+1))
           ynow=0.5*(y(n_start)+y(n_start+1))
           fnow=0.5*(gchi_a(n_start)+gchi_a(n_start+1))
@@ -914,8 +914,8 @@
           fnorm=0.0
           sdlbp=0.0
 !
-!         				The first region integral 
-!					(ang_end to chi_geom(n))
+!               The first region integral
+!      (ang_end to chi_geom(n))
           n_temp=n-1
           xnow=0.5*(x(n_temp)+x(n_temp+1))
           ynow=0.5*(y(n_temp)+y(n_temp+1))
@@ -933,9 +933,9 @@
           fave = fave + dlbpol*fnow
           sdlbp = sdlbp + dl*bpol
 !
-!         				Integrate between 
-!					chi_geom(nstart+1) and 
-!					chi_geom(n_end-1)
+!               Integrate between
+!      chi_geom(nstart+1) and
+!      chi_geom(n_end-1)
           i=n_end+1
           do while(i.lt.n_start)
             xnow=0.5*(x(i)+x(i+1))
@@ -953,7 +953,7 @@
             i=i+1
           enddo
 !
-!         				Integrate the last region
+!          Integrate the last region
           xnow=0.5*(x(n_start)+x(n_start+1))
           ynow=0.5*(y(n_start)+y(n_start+1))
           fnow=0.5*(gchi_a(n_start)+gchi_a(n_start+1))
@@ -994,8 +994,8 @@
 
         if(dis_cubic.gt.0.0)then
           num_root=1
-!              				Implies one real root and 
-!					two complex conjugates roots
+!               Implies one real root and
+!      two complex conjugates roots
           dis_cubic=(dis_cubic)**0.5
           s_one_real=r_cubic+dis_cubic
           if(s_one_real.lt.0.0)then
@@ -1012,7 +1012,7 @@
           psi_root(1)=-a_two/3.0+(s_one_real+s_two_real)
         else
           num_root=3
-!              				Implies three real roots
+!               Implies three real roots
 !
           cubic_mag=(r_cubic*r_cubic+abs(dis_cubic))**(1.0/6.0)
           dis_cubic=(abs(dis_cubic))**0.5
@@ -1048,16 +1048,16 @@
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**         routine prints out data from the tearing module to       **
-!**           to the desired set of files.			     **
+!**           to the desired set of files.      **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**       input:                                                     **
-!**               jtime						     **
-!**               ktear=1, output data to: the tearing page	     **
-!**                                the a-file, and fitout.dat.	     **
-!**               ktear=2, output data to: the tearing page	     **
-!**                               the a-file, and fitout.dat.	     **
-!**               ktear=3, output data to the t-file.		     **
+!**               jtime            **
+!**               ktear=1, output data to: the tearing page      **
+!**                                the a-file, and fitout.dat.      **
+!**               ktear=2, output data to: the tearing page      **
+!**                               the a-file, and fitout.dat.      **
+!**               ktear=3, output data to the t-file.      **
 !**       output:                                                    **
 !**                                                                  **
 !**     REFERENCES:                                                  **
@@ -1200,11 +1200,11 @@
 !
         write(text,1001)
   1001 format(1x,'m',2x,'n', &
-                                      1x,'    psi     ', &
-                                      1x,'   r        ', &
-                                      1x,'   lambda   ', &
-                                      1x,'   deltaprime', &
-                                      1x,'   wsat    ')
+         1x,'    psi     ', &
+         1x,'   r        ', &
+         1x,'   lambda   ', &
+         1x,'   deltaprime', &
+         1x,'   wsat    ')
         msg = msg + 1
         note(msg) = 1
         lmes(msg) = text
@@ -1216,11 +1216,11 @@
 !
         do i=1,num_rsd
           write(text,fmt='(i2,1x,i2,5(1x,e12.5))') &
-                              m_dp(i),n_dp(i),psi_rsg(i), &
-                              r_rsg(i), &
-                              val_lambda(i), &
-                              delta_prime(i), &
-                              w_sat(i)
+            m_dp(i),n_dp(i),psi_rsg(i), &
+            r_rsg(i), &
+            val_lambda(i), &
+            delta_prime(i), &
+            w_sat(i)
           msg = msg + 1
           note(msg) = 1
           lmes(msg) = text
@@ -1242,11 +1242,11 @@
         ht(msg) = 0.14
 !
         write(text,1002)
- 1002   format(1x,'m',2x,'n', &
-                                      1x,'   wnc-press', &
-                                      1x,'   wnc-n    ', &
-                                      1x,'   wnc-Te   ', &
-                                      1x,'   wnc-Ti   ')
+1002    format(1x,'m',2x,'n', &
+          1x,'   wnc-press', &
+          1x,'   wnc-n    ', &
+          1x,'   wnc-Te   ', &
+          1x,'   wnc-Ti   ')
         msg = msg + 1
         note(msg) = 1
         lmes(msg) = text
@@ -1321,19 +1321,19 @@
         ystp=0.00001
         ymax=0.00001
         call curve2d (ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
-             xorl, yorl,hight, bngle, bshft, ptitle, npltlen,  xtitle, &
-             nxlen, ytitle, nylen, xlen, ylen, xorg, xstp, xmax, yorg, &
-             ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
-                isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos, &
-                igridx, igridy, idash, idot, ichdsh, ichdot, &
-                thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
-                clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct, &
-                icont, nword, zmat, ix, iy, zinc, line, mode, &
-                lbflg, ithk, ipri, nline, draw, &
-                nshd, sx, sy, nsxy, &
-                sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
-           msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, &
-                iexit)
+          xorl, yorl,hight, bngle, bshft, ptitle, npltlen,  xtitle, &
+          nxlen, ytitle, nylen, xlen, ylen, xorg, xstp, xmax, yorg, &
+          ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
+          isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos, &
+          igridx, igridy, idash, idot, ichdsh, ichdot, &
+          thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
+          clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct, &
+          icont, nword, zmat, ix, iy, zinc, line, mode, &
+          lbflg, ithk, ipri, nline, draw, &
+          nshd, sx, sy, nsxy, &
+          sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
+          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, &
+          iexit)
         close(unit=iunit)
 !
 !       Write to the a-file
@@ -1390,13 +1390,5 @@
  8950 format(1x,1('*'),' TEARING STABILITY  ',2a5,1('*'))
  9000 format (' shot #   = ',i10)
  9020 format (' t(ms,us) = ',i6,1x,i6)
-      return
-      end
-
-      subroutine tearing_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)$RCSfile: tearingd129.f90,v $ $Revision: 1.1.2.3 $\000'
       return
       end

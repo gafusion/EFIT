@@ -214,17 +214,3 @@
       return
  8000 format (/,'  ** Problem in Decomposition **',i10)
       end
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   $Date: 2009/02/12 22:49:06 $ $Author: radhakri $
-!
-      subroutine getnex_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)$RCSfile: getneud129.f90,v $ $Revision: 1.1.2.3 $\000'
-      return
-      end

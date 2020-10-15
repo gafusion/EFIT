@@ -421,18 +421,3 @@
 !      
       return
       end
-
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   $Date: 2009/02/12 22:46:49 $ $Author: radhakri $
-!
-      subroutine expdatax_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)$RCSFILE$ $Revision: 1.1.2.3 $'
-      return
-      end

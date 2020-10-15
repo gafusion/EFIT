@@ -140,7 +140,7 @@
       integer*4  kstark,iplots,kmtark,klibim,kdomse &
                  ,msebkp,msefitfun,kwaitmse,mse_quiet &
                  ,mse_strict,ok_30rt,ok_210lt,mse_usecer &
-		 ,mse_certree,mse_use_cer330,mse_use_cer210
+                 ,mse_certree,mse_use_cer330,mse_use_cer210
       data iplots/1/
       data  msebkp/0/,msefitfun/1/
       data kwaitmse/0/,dtmsefull/0.0/
@@ -674,10 +674,10 @@
       real*8,dimension(ntime) :: curtn1
       end module var_coiln1
 
-!*****							 	!EJS(2014)
+!***** !EJS(2014)
 !  Need to update values -- wherever they are specified:
-!	mccoil = 6   (probably is 3 now)
-!	micoil = 12  (probably is 6 now)
+! mccoil = 6   (probably is 3 now)
+! micoil = 12  (probably is 6 now)
 !*****
       module var_coilcc
       use eparmdud129,only:ntime,mccoil,micoil
@@ -685,17 +685,17 @@
       data nccoil/1/,nicoil/1/
       logical oldccomp,oldcomp 
       data oldccomp/.true./,oldcomp/.false./
-!*****								!EJS(2014)
-!	Not sure why these are separate arrays.
-!	They seem to be the same as the columns of curccoi and curicoi
-!	Are they only used in magsigma?  If so, the following changes are
-!	probably not needed until some future time when magsigma is updated.
+!***** !EJS(2014)
+! Not sure why these are separate arrays.
+! They seem to be the same as the columns of curccoi and curicoi
+! Are they only used in magsigma?  If so, the following changes are
+! probably not needed until some future time when magsigma is updated.
 !*****
       real*8,dimension(ntime) :: curc139,curc79,curc199,curiu30 &
                     ,curiu90,curiu150,curil30,curil90,curil150 &
-                    ,curc259,curc319,curc19        &		!EJS(2014)
-                    ,curiu210,curiu270,curiu330    &		!EJS(2014)
-                    ,curil210,curil270,curil330			!EJS(2014)
+                    ,curc259,curc319,curc19        & !EJS(2014)
+                    ,curiu210,curiu270,curiu330    & !EJS(2014)
+                    ,curil210,curil270,curil330      !EJS(2014)
       real*8,dimension(ntime,mccoil) :: curccoi
       real*8,dimension(ntime,micoil) :: curicoi
       end module var_coilcc

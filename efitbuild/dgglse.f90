@@ -191,8 +191,8 @@
                    N, WORK( P+MN+1 ), LWORK-P-MN, INFO )
       WORK( 1 ) = P + MN + MAX( LOPT, INT( WORK( P+MN+1 ) ) )
 
-			call dtrco(a,lda,n-p,condno,c,1)
-			condno = 1.0 / condno
+      call dtrco(a,lda,n-p,condno,c,1)
+      condno = 1.0 / condno
 !
       RETURN
 !

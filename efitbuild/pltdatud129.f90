@@ -75,7 +75,7 @@
       data istrpl/0/,lfile/36/,iseplim/1/
       common/adp/ringr(6),ringz(6),ringap
       data n00/0/,n11/1/
-			data one/1./
+      data one/1./
       save n00,n11
       pleng = 0
 !
@@ -284,10 +284,10 @@
       endif
       endif
 !--------------------------------------------------------------------
-!--  Set q-files dataname					   --
+!--  Set q-files dataname        --
 !--  If ISTORE = 0 Then dataname is prefixed by qshot.time         --
 !--  ELSE dataname is prefixed by /link/efit/qshot.time            --
-!--  lprx = 13	prefix is qshot.time    		           --
+!--  lprx = 13 prefix is qshot.time                 --
 !--  lprx = 25  prefix is /link/efit/qshot.time                    --
 !--------------------------------------------------------------------
       let = 'q'
@@ -307,7 +307,7 @@
       if (kdata.eq.4) go to 1500
       ibrdr = 1
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       if (klabel.ge.0) then
@@ -1386,33 +1386,33 @@
          ivec(nvec) = 1
 
          if (klabel.lt.0) then
-            if (klabel.gt.-100) then
-               klabela=iabs(klabel)
-               write(text, 9950) klabela
-               xabs=1.0
-               yabs=-0.5
-               dyabs = 0.22
-               msg = msg + 1
-               note(msg) = 1
-               lmes(msg) = text
-               imes(msg) = 27
-               xpos(msg) = xabs
-               ypos(msg) = yabs
-               yabs = yabs - dyabs
-               ht(msg) = 0.16
-            endif
-!           call physor(7.0,1.0)
-	    xphy = 7.0
-	    yphy = 1.0
-            yll=6.2
-            xll=yll/elim
-	    xtitle = 'R(m)$'
-	    ytitle = 'Z(m)$'
-	    nxlen = 0
-	    nylen = 0
-	    xlen = xll
-	    ylen = yll
-!           call title('$',-100,'R(m)$',0,'Z(m)$',0,xll,yll)
+           if (klabel.gt.-100) then
+             klabela=iabs(klabel)
+             write(text, 9950) klabela
+             xabs=1.0
+             yabs=-0.5
+             dyabs = 0.22
+             msg = msg + 1
+             note(msg) = 1
+             lmes(msg) = text
+             imes(msg) = 27
+             xpos(msg) = xabs
+             ypos(msg) = yabs
+             yabs = yabs - dyabs
+             ht(msg) = 0.16
+           endif
+           ! call physor(7.0,1.0)
+           xphy = 7.0
+           yphy = 1.0
+           yll=6.2
+           xll=yll/elim
+           xtitle = 'R(m)$'
+           ytitle = 'Z(m)$'
+           nxlen = 0
+           nylen = 0
+           xlen = xll
+           ylen = yll
+           ! call title('$',-100,'R(m)$',0,'Z(m)$',0,xll,yll)
          endif
       endif
   310 continue
@@ -2116,22 +2116,22 @@
       hight = 0.14
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
       almin, xstp, almax, blmin, ystp, blmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif         ! itek
 !
@@ -2338,25 +2338,25 @@
 !
       if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
          call init2d
          ibrdr = 1
-	 xphy = 4.1
-	 yphy = 5.5
-	 hight = 0.10
-	 nplen = 100
-	 nxlen = -100
-	 nylen = 100
-	 iytck = 1
-	 ixnon = 1
-	 igridx = 1
-	 igridy = 1
-	 idot = 1
+         xphy = 4.1
+         yphy = 5.5
+         hight = 0.10
+         nplen = 100
+         nxlen = -100
+         nylen = 100
+         iytck = 1
+         ixnon = 1
+         igridx = 1
+         igridy = 1
+         idot = 1
          xtitle = '$'
          ytitle = 'J(Zmag, KA/m2)$'
-	 iexit = 1
-!
+         iexit = 1
+
          nn=1
          nxy(nn) = nw
          do ii = 1,nw
@@ -2417,7 +2417,7 @@
          endif
          ncurve=nn
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
@@ -2433,7 +2433,7 @@
          lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
-      	 msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, &
+         msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, &
          iexit)
       endif   ! itek
       endif
@@ -2457,7 +2457,7 @@
       if (klabel.ge.0) then
          ibrdr = 1
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
          call init2d
          nn = nn + 1
@@ -2625,24 +2625,24 @@
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
-         ibrdr = 1
-	 xphy = 4.1
-	 yphy = 2.7
-	 hight = 0.10
-	 nplen = 100
-	 nxlen = 100
-	 nylen = 100
-	 iytck = 1
-         if (keecur.gt.0) then
+        ibrdr = 1
+        xphy = 4.1
+        yphy = 2.7
+        hight = 0.10
+        nplen = 100
+        nxlen = 100
+        nylen = 100
+        iytck = 1
+        if (keecur.gt.0) then
           igridx = 0
-         else
+        else
           igridx = 1
-         endif
-	 igridy = 1
-	 idot = 1
-         xtitle = 'R(m)$'
-         ytitle = 'q$'
-	 iexit = 2
+        endif
+        igridy = 1
+        idot = 1
+        xtitle = 'R(m)$'
+        ytitle = 'q$'
+        iexit = 2
 !-----------------------------------------------------------------------
 !-- overlay ER plot                                                   --
 !-----------------------------------------------------------------------
@@ -2678,7 +2678,7 @@
       ncurve = nn
       endif
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
@@ -2694,7 +2694,7 @@
          lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
-      	 msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, &
+         msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, &
          iexit)
       endif     ! itek
       endif
@@ -2726,28 +2726,28 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
          call init2d
          ibrdr = 1
-	 xphy = 9.0
-	 yphy = 1.4
-	 hight = 0.12
-	 nplen = 100
-	 nxlen = 100
-	 nylen = 100
-	 ixtck = 2
-	 iytck = 2
-	 igridx = 2
-	 igridy = 2
-	 idot = 1
+         xphy = 9.0
+         yphy = 1.4
+         hight = 0.12
+         nplen = 100
+         nxlen = 100
+         nylen = 100
+         ixtck = 2
+         iytck = 2
+         igridx = 2
+         igridy = 2
+         idot = 1
          ipag = 0
          xtitle = 'R(m)$'
          ytitle = 'Bz(T)$'
-	 iexit = 1
+         iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
@@ -2758,12 +2758,12 @@
          igridx, igridy, idash, idot, ichdsh, ichdot, &
          thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
          markme, clearx, mrc, tlen, nmrk, rat, &
-         workk,	workg, nw, ncnct, &
+         workk, workg, nw, ncnct, &
          icont, nword, zz, ix, iy, zinc, line, mode, &
          lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
-      	 msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, &
+         msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, &
          iexit)
       endif  ! itek
       endif
@@ -2781,7 +2781,7 @@
       dcurn=(curmax-curmin)
       xmm=1.6
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       ibrdr = 1
@@ -2811,22 +2811,22 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft,  &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       workk(1), drrrr, workk(nw), curmin, dcurn, curmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
-      workk, workf, nw,	ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      workk, workf, nw, ncnct, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
 !
@@ -2879,7 +2879,7 @@
       workh(1)=0.
       workh(2)=0.
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       ncurve = 2
@@ -2916,23 +2916,23 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       workk(1), drrrr, workk(nw), curmin, dcurn, curmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
-      	msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      nvec, xfm, yfm, xto, yto, ivec, &
+       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
 !
       curmin=workj(1)
@@ -2950,7 +2950,7 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       ipag = 0
@@ -2971,22 +2971,22 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       zgrid(1), drrrr, zgrid(nh), curmin, dcurn, curmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
-      zgrid, workj, nh,	ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      zgrid, workj, nh, ncnct, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
 !
@@ -3008,7 +3008,7 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       ibrdr = 1
@@ -3030,23 +3030,23 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       worke(1), xnmax, worke(nw), curmin, dcurn, curmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
-      worke, worka, nw,	ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      worke, worka, nw, ncnct, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
-      	msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      nvec, xfm, yfm, xto, yto, ivec, &
+       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    ! itek
   570 continue
 !
@@ -3066,7 +3066,7 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       xtitle = 'R(m)$'
@@ -3121,23 +3121,23 @@
          enddo
          ncurve=nn
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       rpmid(1), drpmid, rpmid(nw), curmin, dcurn, curmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx   , yy  , nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
-      	msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      nvec, xfm, yfm, xto, yto, ivec, &
+       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
   580 continue
 !
@@ -3166,7 +3166,7 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       ibrdr = 1
@@ -3187,22 +3187,22 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       xiter(1), xdel, xstp, curmin, ycycle, ystp, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
       isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xiter, cerror, nitera, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif   ! itek
   590 continue
@@ -3228,7 +3228,7 @@
             if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
          call init2d
          ibrdr = 1
@@ -3241,27 +3241,27 @@
          iaxis = 2         
          ixtck = 2
          intax = 1
-	 xstp = 0.0
-	 ystp = 0.0
+         xstp = 0.0
+         ystp = 0.0
          xtitle = 'ITERS$'
          ytitle = 'CHI2$'
-	 iexit = 1
+         iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
          xiter(1), xdel, xstp, curmin, ycycle, ystp, &
          iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
-         isaxs,	sorg, stp, smax, slen, sname, nslen, xps, yps, &
+         isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
          igridx, igridy, idash, idot, ichdsh, ichdot, &
          thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
          markme, clearx, mrc, tlen, nmrk, rat, &
-         xiter,	cchisq,	nitera,	ncnct, &
-         icont,	nword, zz, ix, iy, zinc, line, mode, &
-         lbflg,	ithk, ipri, nline, draw, &
+         xiter, cchisq, nitera, ncnct, &
+         icont, nword, zz, ix, iy, zinc, line, mode, &
+         lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht,  &
@@ -3310,7 +3310,7 @@
       if (fwtfc(1).ne.0.0) iline=-1
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
 !-----------------------------------------------------------------------c
@@ -3824,24 +3824,24 @@
       ytitle = 'I(kA)$'
       iexit = 2
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
       xfcoil=nfcoil-1
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       worka(1), xfcoil, worka(nfcoil), curmin, dcurn, curmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
-      	msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      nvec, xfm, yfm, xto, yto, ivec, &
+       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !   itek
   700 continue
 !----------------------------------------------------------------------
@@ -3865,7 +3865,7 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       if (kstark.le.1) then
@@ -3903,23 +3903,23 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, yxxx, &
       si(1), xstp, si(nsilop), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       si, saisil, nsilop, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
-      	msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      nvec, xfm, yfm, xto, yto, ivec, &
+       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif      ! itek
 !----------------------------------------------------------------------
 !--  plot the probes chi squares                                     --
@@ -3932,7 +3932,7 @@
          rmpi(i)=float(i)
   720 continue
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       if (kstark.le.1) then
@@ -4145,22 +4145,22 @@
       idot = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, yxxx, &
       rmpi(1), xstp, rmpi(magpri), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       rmpi, saimpi, magpri, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif  ! itek
 !--------------------------------------------------------------------
@@ -4177,7 +4177,7 @@
 !
        if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
          call init2d
          yorg = chsmin
@@ -4247,23 +4247,23 @@
          xtitle = 'POLARIMETRY$'
          ytitle = 'CHI**2$'
          ncurve = nn
-	 iexit = 1
+         iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, yxxx, &
          xx(1,1), xstp, xx(nstark,1), yorg, ystp, ynmax, &
-         iaxis,	ixtck, iytck, ixnon, iynon, intax, intay, &
-         isaxs,	sorg, stp, smax, slen, sname, nslen, xps, yps, &
+         iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+         isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
          igridx, igridy, idash, idot, ichdsh, ichdot, &
-         thcrv, sclpc, 	ndshme, ndotme, ncdhme, ncdtme, &
+         thcrv, sclpc,  ndshme, ndotme, ncdhme, ncdtme, &
          markme, clearx, mrc, tlen, nmrk, rat, &
          xx, yy, nxy, ncnct, &
-         icont,	nword, zz, ix, iy, zinc, line, mode, &
-         lbflg,	ithk, ipri, nline, draw, &
+         icont, nword, zz, ix, iy, zinc, line, mode, &
+         lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht,  &
@@ -4282,7 +4282,7 @@
          xiter(i)=i
 17584 continue
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       xtitle = 'ITERS$'
@@ -4386,22 +4386,22 @@
       igridy = 2
       idot = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!           Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       xiter(1), xdel, xiter(nitera), yorg  , ystp   ,ynmax , &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx   , yy    , nxy   , ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
 !
@@ -4419,7 +4419,7 @@
       curmin=curmin-0.05*dcurn
       dcurn=(curmax-curmin)
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       yorg = curmin
@@ -4606,22 +4606,22 @@
       igridy = 2
       idot = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       xiter(1), xdel, xiter(nw), yorg, ystp, ynmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
 17600 continue
@@ -4686,7 +4686,7 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
@@ -4738,23 +4738,23 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       si(1), xstp, si(nsilop), cslmin, ystp, cslmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
-      	msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      nvec, xfm, yfm, xto, yto, ivec, &
+       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !  itek
 !-----------------------------------------------------------------------
 !--  plot exp vs calc magnetic probes                                 --
@@ -4763,7 +4763,7 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
@@ -4982,22 +4982,22 @@
       iexit = 2
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       rmpi(1), xstp, rmpi(magpri), cmpmin, ystp, cmpmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !   itek
   795 continue
@@ -5210,7 +5210,7 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
@@ -5243,22 +5243,22 @@
       kgrid=1
       iexit = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       si(1), xstp, si(npress), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
 !----------------------------------------------------------------------
@@ -5275,7 +5275,7 @@
       chsmin=0.0
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
@@ -5717,22 +5717,22 @@
       iexit = 2
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       workb(1), xstp, workb(nw), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !   itek
   890 continue
@@ -5756,7 +5756,7 @@
       xll = 2.8
       yll = xll*(blmax-blmin)/(almax-almin)
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       npplot=15
@@ -5905,22 +5905,22 @@
       grce  = -1.0
       iexit = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, yll, &
       almin, almax-almin, almax, blmin, blmax-blmin, blmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
       icont, nword, bfield , ix, iy, zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !   itek
 !
@@ -5934,7 +5934,7 @@
          cslmax=max(worka(i),cslmax)
       enddo
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       xphy = 7.625
@@ -5969,22 +5969,22 @@
       iexit = 1
       if (kprfit.ne.3) iexit=2
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, ylen, &
       almin, almax-almin, almax, cslmin, cslmax-cslmin, cslmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, bfield,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, bfield, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
 !----------------------------------------------------------------------
@@ -6012,7 +6012,7 @@
 !
       if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
@@ -6041,22 +6041,22 @@
       ncurve = nn
       iexit = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       si(1), xstp, si(npresw), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
 !----------------------------------------------------------------------
@@ -6072,7 +6072,7 @@
       enddo
       chsmin=0.0
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
@@ -6153,22 +6153,22 @@
       ncurve = nn
       iexit = 2
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       workb(1), xstp, workb(nw), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !   itek
 37890 continue
@@ -6203,7 +6203,7 @@
 !
       ibrdr = 1
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       if (nptef.gt.0) then
@@ -6271,22 +6271,22 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       workb(1), xstp, workb(nw), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
 !----------------------------------------------------------------------
@@ -6294,7 +6294,7 @@
 !----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       chsmin=0.0
@@ -6466,22 +6466,22 @@
       iexit = 2
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       workb(1), xstp, workb(nw), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif   !   itek
 !
@@ -6509,7 +6509,7 @@
 20140 continue
       chsmin=0.0
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       ibrdr = 1
@@ -6565,22 +6565,22 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       workb(1), xstp, workb(nw), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !  itek
       if (kwripre.eq.1) then
@@ -6598,7 +6598,7 @@
 !     --  plot the beam profile                                           --
 !     ----------------------------------------------------------------------
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       chsmin=0.0
@@ -6739,22 +6739,22 @@
       iexit = 2
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       workb(1), xstp, workb(nw), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif   !   itek
 !
@@ -6785,7 +6785,7 @@
 20340 continue
       chsmin=0.0
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       ibrdr = 1
@@ -6848,22 +6848,22 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       xxxmin, xstp, xxxmax, chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !    itek
 !----------------------------------------------------------------------
@@ -6871,7 +6871,7 @@
 !----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       chsmin=0.0
@@ -7046,23 +7046,23 @@
       iexit = 2
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       xxxmin, xstp, xxxmax, chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
-      	msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      nvec, xfm, yfm, xto, yto, ivec, &
+       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !   itek
 21000 continue
 !
@@ -7090,7 +7090,7 @@
          if (itek.eq.1) call tekall(4010,960,0,0,0)
          ibrdr = 1
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
          call init2d
          do 910 j=1,iabs(nextra)
@@ -7131,30 +7131,30 @@
          xtitle = 'Lpol(m)$'
          ytitle = 'bp(T)$'
          ncurve = nn
-	 iexit = 1
+  iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
          fpxmin, dfpx, fpxmax, bpxmin, dbpx, bpxmax, &
-         iaxis,	ixtck, iytck, ixnon, iynon, intax, intay, &
-         isaxs,	sorg, stp, smax, slen, sname, nslen, xps, yps, &
+         iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+         isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
          igridx, igridy, idash, idot, ichdsh, ichdot, &
          thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
          markme, clearx, mrc, tlen, nmrk, rat, &
          xx, yy, nxy, ncnct, &
-         icont,	nword, zz, ix, iy, zinc, line, mode, &
-         lbflg,	ithk, ipri, nline, draw, &
+         icont, nword, zz, ix, iy, zinc, line, mode, &
+         lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht,  &
          iexit)
         endif    !     itek
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
          call init2d
          do 950 j=1,iabs(nextra)
@@ -7196,21 +7196,21 @@
          xtitle = 'Lpol(m)$'
          ytitle = 'Ls(m)$'
          ncurve = nn
-	 iexit = 2
+  iexit = 2
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
          fpxmin, dfpx, fpxmax, flxmin, dflx, flxmax, &
-         iaxis,	ixtck, iytck, ixnon, iynon, intax, intay, &
-         isaxs,	sorg, stp, smax, slen, sname, nslen, xps, yps, &
+         iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+         isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
          igridx, igridy, idash, idot, ichdsh, ichdot, &
          thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
          markme, clearx, mrc, tlen, nmrk, rat, &
          xx, yy, nxy, ncnct, &
-         icont,	nword, zz, ix, iy, zinc, line, mode, &
+         icont, nword, zz, ix, iy, zinc, line, mode, &
          lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
@@ -7240,7 +7240,7 @@
       xll = 2.8
       yll = xll*(blmax-blmin)/(almax-almin)
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
@@ -7404,22 +7404,22 @@
       grce  = -1.0
       iexit = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, yll, &
       almin, almax-almin, almax, blmin, blmax-blmin, blmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
       icont, nword, bfield, ix, iy, zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !   itek
 
@@ -7433,7 +7433,7 @@
          cslmax=max(worka(i),cslmax)
       enddo
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       iorel = 1
@@ -7499,22 +7499,22 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, ylen, &
       almin, almax-almin, almax, cslmin, cslmax-cslmin, cslmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, bfield,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, bfield, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
       do i=1,nw
@@ -7552,7 +7552,7 @@
             endif
  1250 continue
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
@@ -7630,26 +7630,26 @@
       grce = -1.0
       iexit = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll,  yll, &
       almin, almax-almin, almax, blmin, blmax-blmin, blmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
       icont, nword, bfield,nw, nh, siinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       iorel = 1
@@ -7714,22 +7714,22 @@
       iexit = 1
       if (iconsi.lt.5) iexit=2
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll,  ylen, &
       almin, almax-almin, almax, cslmin, cslmax-cslmin, cslmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, bfield, nw,	nh, siinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, bfield, nw, nh, siinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif      !     itek
       if (iconsi.ge.5) then  ! do Bp contours
@@ -7745,7 +7745,7 @@
 12599    dumnow=sqrt(pds(2)**2+pds(3)**2)
 12501    bfield(iw,ih)=(dumnow)/rgrid(iw)*1.e4
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
          call init2d
          nn = nn + 1
@@ -7820,22 +7820,22 @@
          ytitle = 'z(m)$'
          igridx = -1
          grce = -1.0
-	 iexit = 1
+  iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, yll, &
          almin, almax-almin, almax, blmin, blmax-blmin, blmax, &
-         iaxis,	ixtck, 	iytck, 	ixnon, 	iynon,	intax,	intay, &
-         isaxs,	sorg, stp, smax, slen, sname, nslen, xps, yps, &
+         iaxis, ixtck,  iytck,  ixnon,  iynon, intax, intay, &
+         isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
          igridx, igridy, idash, idot, ichdsh, ichdot, &
          thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
          markme, clearx, mrc, tlen, nmrk, rat, &
          xx, yy, nxy, ncnct, &
-         icont,	nword, bfield, nw, nh, siinc, line, mode, &
+         icont, nword, bfield, nw, nh, siinc, line, mode, &
          lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
@@ -7843,7 +7843,7 @@
          iexit)
          endif    !  itek
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
          call init2d
          iorel = 1
@@ -7897,23 +7897,23 @@
          idot = 1
          xtitle = '$'
          ytitle = 'mod-Bp(gauss)$'
-	 iexit = 2
+  iexit = 2
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, ylen, &
          almin, almax-almin, almax, cslmin, cslmax-cslmin, cslmax, &
-         iaxis,	ixtck, iytck, ixnon, iynon, intax, intay, &
-         isaxs,	sorg, stp, smax, slen, sname, nslen, xps, yps, &
+         iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+         isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
          igridx, igridy, idash, idot, ichdsh, ichdot, &
          thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
          markme, clearx, mrc, tlen, nmrk, rat, &
          xx, yy, nxy, ncnct, &
-         icont,	nword, bfield, nw, nh, siinc, line, mode, &
-         lbflg,	ithk, ipri, nline, draw, &
+         icont, nword, bfield, nw, nh, siinc, line, mode, &
+         lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht,  &
@@ -7923,11 +7923,11 @@
 
  1300 continue
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters for basis function page              c
+! Initialize plot parameters for basis function page              c
 !-----------------------------------------------------------------------c
-			call ppstore
-			call ffstore
-			call wwstore
+      call ppstore
+      call ffstore
+      call wwstore
                         call eestore
       if (ivacum.gt.0) go to 13377
       call init2d
@@ -8253,22 +8253,22 @@
       igridy = 2
       idot = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, 2.0*xmm, xmm, &
       xiter(1), xdel, xiter(nw), yorg, ystp, ynmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
       call init2d
@@ -8321,22 +8321,22 @@
       idot = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, 2.0*xmm, xmm, &
       xiter(1), xdel, xiter(nw), yorg, ystp, ynmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
 !
@@ -8389,22 +8389,22 @@
       igridy = 2
       idot = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, 2.0*xmm, xmm, &
       xiter(1), xdel, xiter(nw), yorg, ystp, ynmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
       endif
@@ -8452,7 +8452,7 @@
       call curvec(dataname,jerror,time,wplasm,ktime,0)
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       yorg = curmin
@@ -8599,22 +8599,22 @@
       igridy = 2
       idot = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       xiter(1), xdel, xiter(nw), yorg, ystp, ynmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
 !---------------------------------------------------------------------
@@ -9719,1128 +9719,1115 @@
       return
       end
       subroutine curve2d (ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
-      	     xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle, &
-      	     xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
-      	     ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
-      		isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
-      		igridx, igridy, idash, idot, ichdsh, ichdot,  &
-      		thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
-      		clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
-      		icont, nword, zmat, ix, iy, zinc, line, mode, &
-      		lbflg, ithk, ipri, nline, draw, &
-      		nshd, sx, sy, nsxy, &
-      		sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
-      	     m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
-      		iexit)
+            xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle, &
+            xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
+            ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
+           isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
+           igridx, igridy, idash, idot, ichdsh, ichdot,  &
+           thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
+           clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
+           icont, nword, zmat, ix, iy, zinc, line, mode, &
+           lbflg, ithk, ipri, nline, draw, &
+           nshd, sx, sy, nsxy, &
+           sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
+            m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
+           iexit)
 !*************************************************************************
-!**                                                                  	**
-!**	MAIN PROGRAM:  MHD FITTING CODE					**
-!**                                                                  	**
-!**                                                                  	**
-!**     SUBPROGRAM DESCRIPTION:                                      	**
-!**       Determines whether plot parameters are to be written in 	**
-!**	  ASCII or BINARY format				     	**
-!**                                                                  	**
-!**     CALLING ARGUMENTS:                                           	**
-!**     	ncurve  Number of curves				**
-!**		ipag	page dimension flag				**
-!**			0 = page dimension 11 x 8.5			**
-!**			1 = page dimension 8.5 x 11			**
-!**     	ibrdr   Page border flag				**
-!**			1 = Suppress page border			**
-!**     	        0 = Suppress page border			**
-!**		grce	>= 0 Enable grace margin			**
-!**		xphy	X-coordinate of physical origin			**
-!**     	yphy	Y-coordinate of physical origin			**
-!**		hight   Font size					**
-!**     	bngle   Base rotation angle				**
-!**     	bshft   Base translation				**
-!**     	ptitle  Plot title					**
-!**     	pltlen  Length of plot title                       	**
-!**     	xtitle  X-axis name                             	**
-!**     	xnlen   Length of x-axis name                           **
-!**     	ytitle  Y-axis name                           		**
-!**     	ynlen   Length of y-axis name				**
-!**     	xlen	Length of x-axis legend				**
-!**     	ylen    Length of y-axis legend                         **
-!**     	iaxis   Axes flag					**
-!**			0 = Linear axis					**
-!**     	        1 = Log-Linear axis				**
-!**     	        2 = Linear-Log axis				**
-!**     	        3 = Logarithmic axis				**
-!**     	xtck    X-axis tick marks				**
-!**     	ytck    Y-axis tick marks				**
-!**		ixnon   X-axis tick marks or labels flag		**
-!**			1 = Suppress x-axis tick marks or labels	**
-!**			0 = X-axis tick marks or labels			**
-!**		iynon   Y-axis tick marks or labels flag		**
-!**			1 = Suppress y-axis tick marks or labels	**
-!**			0 = Y-axis tick marks or labels			**
-!**		intax   Trailing zeroes on x-axis flag			**
-!**			1 = Suppress trailing zeroes on x-axis 		**
-!**			0 = Trailing zeroes on x-axis 			**
-!**		intay   Trailing zeroes on y-axis flag			**
-!**			1 = Suppress trailing zeroes on y-axis 		**
-!**			0 = Trailing zeroes on y-axis 			**
-!**     	xorg    X-value at the physical origin			**
-!**     	xstp    X step size in units				**
-!**     	xmax    Value at x-axis limit				**
-!**     	yorg    X-value at the physical origin	                **
-!**     	ystp    X step size in units				**
-!**     	ymax    Value at y-axis limit				**
-!**	  	iorel   New physical origin relative to current 	**
-!**		 	origin flag					**
-!**			1 = New physical origin relative to current 	**
-!**		 	    origin					**
-!**			0 = No new physical origin relative to current 	**
-!**		 	    origin					**
-!**		xorl    X-coordinate of relative origin			**
-!**		yorl    Y-coordinate of relative origin			**
-!**     	igridx  Number of grid lines per step on x-axis	     	**
-!**     	igridy  Number of grid lines per step on y-axis	     	**
-!**     	idash   Dash grid lines flag				**
-!**			1 = Dash grid lines				**
-!**			0 = No dash grid lines				**
-!**     	idot    Dot grid lines flag				**
-!**			1 = Dot grid lines				**
-!**			0 = No dot grid lines				**
-!**     	ichdot  Chain dot grid lines flag                       **
-!**			1 = Chain dot grid lines                        **
-!**			0 = No chain dot grid lines                     **
-!**     	ichdsh  Chain dash grid lines flag                      **
-!**			1 = Chain dash grid lines                       **
-!**			0 = No chain dash grid lines                    **
-!**     	thcrv   Curve thickness		dim = ncurve	     	**
-!**     	sclpc   Scale curve marker 	dim = ncurve            **
-!**     	dashme  Dash curve flag		dim = ncurve		**
-!**			1 = Dash curve					**
-!**			0 = No dash curve				**
-!**     	dotme  	Dot curve flag		dim = ncurve		**
-!**			1 = Dot curve					**
-!**			0 = No dot curve				**
-!**     	chdhme  Chain dash curve flag	dim = ncurve		**
-!**			1 = Chain dash curve				**
-!**			0 = No chain dash curve				**
-!**     	chdtme  Chain ot curve flag	dim = ncurve		**
-!**			1 = Chain dot curve				**
-!**			0 = No chain dot curve				**
-!**     	markme  Curve marker 	        dim = ncurve            **
-!**     	clearx  Color			dim = ncurve		**
-!**     	x       Array of x-coordinates				**
-!**						dim = (nplt, ncurve)	**
-!**     	y       Array of y-coordinates				**
-!**						dim = (nplt, ncurve)	**
-!**     	nplt    Number of (x,y) points to be ploted 		**
-!**						dim = ncurve		**
-!**     	ncnct   Marker specification				**
-!**			0 = Points connected with no symbols drawn 	**
-!**			i = Points connected and a symbol drawn at 	**
-!**			    every ith point				**
-!**		       -i = Points not connected and a symbol at every  **
-!**		mrc     1 = Custom interrupted line style		**
-!**		tlen    overall length of the pattern			**
-!**		nmrk	total number of marks and spaces		**
-!**		rat	Array of ratios of marks and spaces to overall	**
-!**		        length						**
-!**		icont	Contour plotting flag				**
-!**			1 = Contour plotting				**
-!**			0 = No contour plotting	  dim = ncurve		**
-!**		nword   Number of words available in common block	**
-!**		zmat    2-dimensional array containing Z data surface	**
-!**			values						**
-!**		ix	X dimension of zmat				**
-!**		iy	Y dimension of zmat				**
-!**		zinc	Increment between z levels			**
-!**		line	Index number in the group of curve 		**
-!**			characteristic					**
-!**		mode	'DOT' for dotted lines				**
-!**			'DASH' for dashed lines  			**
-!**		lbflg	'NOLABELS' do not use labels 			**
-!**			'LABELS' use labels				**
-!**		ithk	Line thickness					**
-!**		ipri	Line priority					**
-!**		draw	'DRAW' draw curves				**
-!**			'NODRAW' do not draw curves			**
-!**		nshd	Number of shades, shade area between 2 curves	**
-!**		sx	Array of x-coordinates		dim = nsxy	**
-!**		sy	Array of y-coordinates		dim = nsxy	**
-!**	        nsxy	Number of (sx,sy) pairs				**
-!**		sangle	angle of shading lines				**
-!**		sgap	Array of shading gaps				**
-!**		ngaps	Number of elements in sgaps			**
-!**		nvec	Number of vectors				**
-!**		xfm	X value of originating point	dim = nvec	**
-!**		yfm	Y value of originating point	dim = nvec	**
-!**		xto	X value of point pointed to	dim = nvec	**
-!**		yto	Y value of point pointed to	dim = nvec	**
-!**		ivec	Describes vector arrowhead	dim = nvec	**
-!**		m	Number of text lines to be written		**
-!**		note	Text string flag		dim = m		**
-!**			1 = Text is character string			**
-!**			2 = Text is character string drawn relative 	**
-!**			    to the physical origin			**
-!**			3 = Text is real number	string			**
-!**			4 = Text is real number	string drawn relative 	**
-!**			    to the physical origin			**
-!**			5 = Text is integer string			**
-!**			6 = Text is integer string drawn relative 	**
-!**			    to the physical origin			**
-!**		lmes	Character string text		dim = m		**
-!**		imes	Number of characters in lmes	dim = m		**
-!**		anum	Real number text string		dim = m		**
-!**		iplce	Number of decimal place		dim = m		**
-!**		inum	Integer number text string	dim = m		**
-!**		xmpos	X-position of text string	dim = m		**
-!**		ympos	Y-position of text string	dim = m		**
-!**		hgt	Font size of the text string	dim = m		**
-!**                                                                  	**
-!**     REFERENCES: 							**
-!**          (1)  CA-DISSPLA manual 					**
-!**          (2)                                                     	**
-!**                                                                  	**
-!**     RECORD OF MODIFICATION:                                      	**
-!**          04/19/93..........first created                         	**
-!**                                                                  	**
-!**                                                                  	**
+!**                                                                   **
+!** MAIN PROGRAM:  MHD FITTING CODE             **
+!**                                                                   **
+!**                                                                   **
+!**   SUBPROGRAM DESCRIPTION:                                       **
+!**     Determines whether plot parameters are to be written in  **
+!**     ASCII or BINARY format                  **
+!**                                                                   **
+!**   CALLING ARGUMENTS:                                            **
+!**     ncurve  Number of curves            **
+!**     ipag page dimension flag            **
+!**       0 = page dimension 11 x 8.5       **
+!**       1 = page dimension 8.5 x 11     **
+!**     ibrdr   Page border flag            **
+!**       1 = Suppress page border     **
+!**       0 = Suppress page border     **
+!**     grce >= 0 Enable grace margin     **
+!**     xphy X-coordinate of physical origin     **
+!**     yphy Y-coordinate of physical origin     **
+!**     hight   Font size             **
+!**     bngle   Base rotation angle            **
+!**     bshft   Base translation            **
+!**     ptitle  Plot title             **
+!**     pltlen  Length of plot title                        **
+!**     xtitle  X-axis name                              **
+!**     xnlen   Length of x-axis name                           **
+!**     ytitle  Y-axis name                                **
+!**     ynlen   Length of y-axis name            **
+!**     xlen Length of x-axis legend            **
+!**     ylen    Length of y-axis legend                         **
+!**     iaxis   Axes flag             **
+!**       0 = Linear axis             **
+!**       1 = Log-Linear axis            **
+!**       2 = Linear-Log axis            **
+!**       3 = Logarithmic axis            **
+!**     xtck    X-axis tick marks            **
+!**     ytck    Y-axis tick marks            **
+!**     ixnon   X-axis tick marks or labels flag     **
+!**       1 = Suppress x-axis tick marks or labels **
+!**       0 = X-axis tick marks or labels     **
+!**     iynon   Y-axis tick marks or labels flag     **
+!**       1 = Suppress y-axis tick marks or labels **
+!**       0 = Y-axis tick marks or labels     **
+!**     intax   Trailing zeroes on x-axis flag     **
+!**       1 = Suppress trailing zeroes on x-axis      **
+!**       0 = Trailing zeroes on x-axis      **
+!**     intay   Trailing zeroes on y-axis flag     **
+!**       1 = Suppress trailing zeroes on y-axis      **
+!**       0 = Trailing zeroes on y-axis      **
+!**     xorg    X-value at the physical origin     **
+!**     xstp    X step size in units            **
+!**     xmax    Value at x-axis limit            **
+!**     yorg    X-value at the physical origin                 **
+!**     ystp    X step size in units            **
+!**     ymax    Value at y-axis limit            **
+!**     iorel   New physical origin relative to current  **
+!**     origin flag             **
+!**       1 = New physical origin relative to current  **
+!**           origin             **
+!**       0 = No new physical origin relative to current  **
+!**           origin             **
+!**     xorl    X-coordinate of relative origin     **
+!**     yorl    Y-coordinate of relative origin     **
+!**     igridx  Number of grid lines per step on x-axis       **
+!**     igridy  Number of grid lines per step on y-axis       **
+!**     idash   Dash grid lines flag            **
+!**       1 = Dash grid lines            **
+!**       0 = No dash grid lines            **
+!**     idot    Dot grid lines flag            **
+!**       1 = Dot grid lines            **
+!**       0 = No dot grid lines            **
+!**     ichdot  Chain dot grid lines flag                       **
+!**       1 = Chain dot grid lines                        **
+!**       0 = No chain dot grid lines                     **
+!**     ichdsh  Chain dash grid lines flag                      **
+!**       1 = Chain dash grid lines                       **
+!**       0 = No chain dash grid lines                    **
+!**     thcrv   Curve thickness     dim = ncurve       **
+!**     sclpc   Scale curve marker  dim = ncurve            **
+!**     dashme  Dash curve flag     dim = ncurve     **
+!**       1 = Dash curve             **
+!**       0 = No dash curve            **
+!**     dotme   Dot curve flag     dim = ncurve     **
+!**       1 = Dot curve             **
+!**       0 = No dot curve            **
+!**     chdhme  Chain dash curve flag dim = ncurve     **
+!**       1 = Chain dash curve            **
+!**       0 = No chain dash curve            **
+!**     chdtme  Chain ot curve flag dim = ncurve     **
+!**       1 = Chain dot curve            **
+!**       0 = No chain dot curve            **
+!**     markme  Curve marker          dim = ncurve            **
+!**     clearx  Color     dim = ncurve     **
+!**     x       Array of x-coordinates            **
+!**                 dim = (nplt, ncurve) **
+!**     y       Array of y-coordinates            **
+!**                 dim = (nplt, ncurve) **
+!**     nplt    Number of (x,y) points to be ploted      **
+!**                 dim = ncurve     **
+!**     ncnct   Marker specification            **
+!**       0 = Points connected with no symbols drawn  **
+!**       i = Points connected and a symbol drawn at  **
+!**         every ith point            **
+!**            -i = Points not connected and a symbol at every  **
+!**     mrc     1 = Custom interrupted line style     **
+!**     tlen    overall length of the pattern     **
+!**     nmrk total number of marks and spaces     **
+!**     rat Array of ratios of marks and spaces to overall **
+!**             length                 **
+!**     icont Contour plotting flag            **
+!**       1 = Contour plotting            **
+!**       0 = No contour plotting   dim = ncurve     **
+!**     nword   Number of words available in common block **
+!**     zmat    2-dimensional array containing Z data surface **
+!**     values                 **
+!**     ix X dimension of zmat            **
+!**     iy Y dimension of zmat            **
+!**     zinc Increment between z levels     **
+!**     line Index number in the group of curve      **
+!**     characteristic             **
+!**     mode 'DOT' for dotted lines            **
+!**     'DASH' for dashed lines       **
+!**     lbflg 'NOLABELS' do not use labels      **
+!**     'LABELS' use labels            **
+!**     ithk Line thickness             **
+!**     ipri Line priority             **
+!**     draw 'DRAW' draw curves            **
+!**     'NODRAW' do not draw curves     **
+!**     nshd Number of shades, shade area between 2 curves **
+!**     sx Array of x-coordinates     dim = nsxy **
+!**     sy Array of y-coordinates     dim = nsxy **
+!**     nsxy Number of (sx,sy) pairs            **
+!**     sangle angle of shading lines            **
+!**     sgap Array of shading gaps            **
+!**     ngaps Number of elements in sgaps     **
+!**     nvec Number of vectors            **
+!**     xfm X value of originating point dim = nvec **
+!**     yfm Y value of originating point dim = nvec **
+!**     xto X value of point pointed to dim = nvec **
+!**     yto Y value of point pointed to dim = nvec **
+!**     ivec Describes vector arrowhead dim = nvec **
+!**     m Number of text lines to be written     **
+!**     note Text string flag     dim = m     **
+!**       1 = Text is character string     **
+!**       2 = Text is character string drawn relative  **
+!**           to the physical origin     **
+!**       3 = Text is real number string     **
+!**       4 = Text is real number string drawn relative  **
+!**           to the physical origin     **
+!**       5 = Text is integer string     **
+!**       6 = Text is integer string drawn relative  **
+!**           to the physical origin     **
+!**     lmes Character string text     dim = m     **
+!**     imes Number of characters in lmes dim = m     **
+!**     anum Real number text string     dim = m     **
+!**     iplce Number of decimal place     dim = m     **
+!**     inum Integer number text string dim = m     **
+!**     xmpos X-position of text string dim = m     **
+!**     ympos Y-position of text string dim = m     **
+!**     hgt Font size of the text string dim = m     **
+!**                                                                   **
+!**     REFERENCES:                  **
+!**          (1)  CA-DISSPLA manual              **
+!**          (2)                                                      **
+!**                                                                   **
+!**     RECORD OF MODIFICATION:                                       **
+!**          04/19/93..........first created                          **
+!**                                                                   **
+!**                                                                   **
 !*************************************************************************
 !sri-feb1209
       use eparmdud129,only:ndim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-!	parameter (ndim = 700, ncrv=180, mdim = 200)
-	parameter (ncrv=180, mdim = 300)
-	include 'curve2d_var.inc'
-	include 'env2d.inc'
+      ! parameter (ndim = 700, ncrv=180, mdim = 200)
+      parameter (ncrv=180, mdim = 300)
+      include 'curve2d_var.inc'
+      include 'env2d.inc'
 
-	if (m_write .eq. 1) then
+      if (m_write .eq. 1) then
 !-----------------------------------------------------------------------c
-!	   Write curve2d parameters in ASCII format			c
+!    Write curve2d parameters in ASCII format     c
 !-----------------------------------------------------------------------c
-	 call curve2d_asci(ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
-      		xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle,  &
-      	       xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
-      	      ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
-      	       isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos, &
-      		igridx, igridy, idash, idot, ichdsh, ichdot,  &
-      		thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
-      		clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
-      		icont, nword, zmat, ix, iy, zinc, line, mode, &
-      		lbflg, ithk, ipri, nline, draw, &
-      		nshd, sx, sy, nsxy, &
-      		sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
-      	      m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
-      		iexit)
+      call curve2d_asci(ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
+           xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle,  &
+              xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
+             ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
+              isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos, &
+           igridx, igridy, idash, idot, ichdsh, ichdot,  &
+           thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
+           clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
+           icont, nword, zmat, ix, iy, zinc, line, mode, &
+           lbflg, ithk, ipri, nline, draw, &
+           nshd, sx, sy, nsxy, &
+           sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
+             m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
+           iexit)
 
-	elseif (m_write .eq. 0) then
+      elseif (m_write .eq. 0) then
 !-----------------------------------------------------------------------c
-!	   Write curve2d parameters in BINARY format			c
+!    Write curve2d parameters in BINARY format     c
 !-----------------------------------------------------------------------c
         call curve2d_bin (ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
-      	       xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle, &
-      	      xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
-      	     ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
-      		isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
-      		igridx, igridy, idash, idot, ichdsh, ichdot,  &
-      		thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
-      		clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
-      		icont, nword, zmat, ix, iy, zinc, line, mode, &
-      		lbflg, ithk, ipri, nline, draw, &
-      		nshd, sx, sy, nsxy, &
-      		sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
-      	      m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
-      		iexit)
-	endif
-	return
-	end
+              xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle, &
+             xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
+            ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
+           isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
+           igridx, igridy, idash, idot, ichdsh, ichdot,  &
+           thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
+           clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
+           icont, nword, zmat, ix, iy, zinc, line, mode, &
+           lbflg, ithk, ipri, nline, draw, &
+           nshd, sx, sy, nsxy, &
+           sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
+             m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
+           iexit)
+      endif
+      return
+      end
 
       subroutine curve2d_asci (ncurve,ipag, ibrdr, grce,xphy,yphy,iorel, &
-      		xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle,  &
-      	       xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
-      	      ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
-      		isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
-      		igridx, igridy, idash, idot, ichdsh, ichdot,  &
-      		thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
-      		clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
-      		icont, nword, zmat, ix, iy, zinc, line, mode, &
-      		lbflg, ithk, ipri, nline, draw, &
-      		nshd, sx, sy, nsxy, &
-      		sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
-      	     m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
-      		iexit)
+           xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle,  &
+              xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
+             ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
+           isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
+           igridx, igridy, idash, idot, ichdsh, ichdot,  &
+           thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
+           clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
+           icont, nword, zmat, ix, iy, zinc, line, mode, &
+           lbflg, ithk, ipri, nline, draw, &
+           nshd, sx, sy, nsxy, &
+           sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
+            m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
+           iexit)
 !*************************************************************************
-!**                                                                  	**
-!**	MAIN PROGRAM:  MHD FITTING CODE					**
-!**                                                                  	**
-!**                                                                  	**
-!**     SUBPROGRAM DESCRIPTION:                                      	**
-!**		Writes plot parameters in ASCII format		     	**
-!**                                                                  	**
-!**     CALLING ARGUMENTS:                                           	**
-!**     	ncurve  Number of curves				**
-!**		ipag	page dimension flag				**
-!**			0 = page dimension 11 x 8.5			**
-!**			1 = page dimension 8.5 x 11			**
-!**     	ibrdr   Page border flag				**
-!**			1 = Suppress page border			**
-!**     	        0 = Suppress page border			**
-!**		grce	>= 0 Enable grace margin			**
-!**		xphy	X-coordinate of physical origin			**
-!**     	yphy	Y-coordinate of physical origin			**
-!**		hight   Font size					**
-!**     	bngle   Base rotation angle				**
-!**     	bshft   Base translation				**
-!**     	ptitle  Plot title					**
-!**     	pltlen  Length of plot title                       	**
-!**     	xtitle  X-axis name                             	**
-!**     	xnlen   Length of x-axis name                           **
-!**     	ytitle  Y-axis name                           		**
-!**     	ynlen   Length of y-axis name				**
-!**     	xlen	Length of x-axis legend				**
-!**     	ylen    Length of y-axis legend                         **
-!**     	iaxis   Axes flag					**
-!**			0 = Linear axis					**
-!**     	        1 = Log-Linear axis				**
-!**     	        2 = Linear-Log axis				**
-!**     	        3 = Logarithmic axis				**
-!**     	xtck    X-axis tick marks				**
-!**     	ytck    Y-axis tick marks				**
-!**		ixnon   X-axis tick marks or labels flag		**
-!**			1 = Suppress x-axis tick marks or labels	**
-!**			0 = X-axis tick marks or labels			**
-!**		iynon   Y-axis tick marks or labels flag		**
-!**			1 = Suppress y-axis tick marks or labels	**
-!**			0 = Y-axis tick marks or labels			**
-!**		intax   Trailing zeroes on x-axis flag			**
-!**			1 = Suppress trailing zeroes on x-axis 		**
-!**			0 = Trailing zeroes on x-axis 			**
-!**		intay   Trailing zeroes on y-axis flag			**
-!**			1 = Suppress trailing zeroes on y-axis 		**
-!**			0 = Trailing zeroes on y-axis 			**
-!**     	xorg    X-value at the physical origin			**
-!**     	xstp    X step size in units				**
-!**     	xmax    Value at x-axis limit				**
-!**     	yorg    X-value at the physical origin	                **
-!**     	ystp    X step size in units				**
-!**     	ymax    Value at y-axis limit				**
-!**	  	iorel   New physical origin relative to current 	**
-!**		 	origin flag					**
-!**			1 = New physical origin relative to current 	**
-!**		 	    origin					**
-!**			0 = No new physical origin relative to current 	**
-!**		 	    origin					**
-!**		xorl    X-coordinate of relative origin			**
-!**		yorl    Y-coordinate of relative origin			**
-!**     	igridx  Number of grid lines per step on x-axis	     	**
-!**     	igridy  Number of grid lines per step on y-axis	     	**
-!**     	idash   Dash grid lines flag				**
-!**			1 = Dash grid lines				**
-!**			0 = No dash grid lines				**
-!**     	idot    Dot grid lines flag				**
-!**			1 = Dot grid lines				**
-!**			0 = No dot grid lines				**
-!**     	ichdot  Chain dot grid lines flag                       **
-!**			1 = Chain dot grid lines                        **
-!**			0 = No chain dot grid lines                     **
-!**     	ichdsh  Chain dash grid lines flag                      **
-!**			1 = Chain dash grid lines                       **
-!**			0 = No chain dash grid lines                    **
-!**     	thcrv   Curve thickness		dim = ncurve	     	**
-!**     	sclpc   Scale curve marker 	dim = ncurve            **
-!**     	dashme  Dash curve flag		dim = ncurve		**
-!**			1 = Dash curve					**
-!**			0 = No dash curve				**
-!**     	dotme  	Dot curve flag		dim = ncurve		**
-!**			1 = Dot curve					**
-!**			0 = No dot curve				**
-!**     	chdhme  Chain dash curve flag	dim = ncurve		**
-!**			1 = Chain dash curve				**
-!**			0 = No chain dash curve				**
-!**     	chdtme  Chain ot curve flag	dim = ncurve		**
-!**			1 = Chain dot curve				**
-!**			0 = No chain dot curve				**
-!**     	markme  Curve marker 	        dim = ncurve            **
-!**     	clearx  Color			dim = ncurve		**
-!**     	x       Array of x-coordinates				**
-!**						dim = (nplt, ncurve)	**
-!**     	y       Array of y-coordinates				**
-!**						dim = (nplt, ncurve)	**
-!**     	nplt    Number of (x,y) points to be ploted 		**
-!**						dim = ncurve		**
-!**     	ncnct   Marker specification				**
-!**			0 = Points connected with no symbols drawn 	**
-!**			i = Points connected and a symbol drawn at 	**
-!**			    every ith point				**
-!**		       -i = Points not connected and a symbol at every  **
-!**		mrc     1 = Custom interrupted line style		**
-!**		tlen    overall length of the pattern			**
-!**		nmrk	total number of marks and spaces		**
-!**		rat	Array of ratios of marks and spaces to overall	**
-!**		        length						**
-!**		icont	Contour plotting flag				**
-!**			1 = Contour plotting				**
-!**			0 = No contour plotting				**
-!**		nword   Number of words available in common block	**
-!**		zmat    2-dimensional array containing Z data surface	**
-!**			values						**
-!**		ix	X dimension of zmat				**
-!**		iy	Y dimension of zmat				**
-!**		zinc	Increment between z levels			**
-!**		line	Index number in the group of curve 		**
-!**			characteristic					**
-!**		mode	'DOT' for dotted lines				**
-!**			'DASH' for dashed lines  			**
-!**		lbflg	'NOLABELS' do not use labels 			**
-!**			'LABELS' use labels				**
-!**		ithk	Line thickness					**
-!**		ipri	Line priority					**
-!**		draw	'DRAW' draw curves				**
-!**			'NODRAW' do not draw curves			**
-!**		nshd	Number of shades, shade area between 2 curves	**
-!**		sx	Array of x-coordinates		dim = nsxy	**
-!**		sy	Array of y-coordinates		dim = nsxy	**
-!**	        nsxy	Number of (sx,sy) pairs				**
-!**		sangle	angle of shading lines				**
-!**		sgap	Array of shading gaps				**
-!**		ngaps	Number of elements in sgaps			**
-!**		nvec	Number of vectors				**
-!**		xfm	X value of originating point	dim = nvec	**
-!**		yfm	Y value of originating point	dim = nvec	**
-!**		xto	X value of point pointed to	dim = nvec	**
-!**		yto	Y value of point pointed to	dim = nvec	**
-!**		ivec	Describes vector arrowhead	dim = nvec	**
-!**		m	Number of text lines to be written		**
-!**		note	Text string flag		dim = m		**
-!**			1 = Text is character string			**
-!**			2 = Text is character string drawn relative 	**
-!**			    to the physical origin			**
-!**			3 = Text is real number	string			**
-!**			4 = Text is real number	string drawn relative 	**
-!**			    to the physical origin			**
-!**			5 = Text is integer string			**
-!**			6 = Text is integer string drawn relative 	**
-!**			    to the physical origin			**
-!**		lmes	Character string text		dim = m		**
-!**		imes	Number of characters in lmes	dim = m		**
-!**		anum	Real number text string		dim = m		**
-!**		iplce	Number of decimal place		dim = m		**
-!**		inum	Integer number text string	dim = m		**
-!**		xmpos	X-position of text string	dim = m		**
-!**		ympos	Y-position of text string	dim = m		**
-!**		hgt	Font size of the text string	dim = m		**
-!**                                                                  	**
-!**     REFERENCES: 							**
-!**          (1)  CA-DISSPLA manual 					**
-!**          (2)                                                     	**
-!**                                                                  	**
-!**     RECORD OF MODIFICATION:                                      	**
-!**          04/19/93..........first created                         	**
-!**                                                                  	**
-!**                                                                  	**
+!**                                                                   **
+!** MAIN PROGRAM:  MHD FITTING CODE             **
+!**                                                                   **
+!**                                                                   **
+!**   SUBPROGRAM DESCRIPTION:                                       **
+!**     Writes plot parameters in ASCII format           **
+!**                                                                   **
+!**   CALLING ARGUMENTS:                                            **
+!**     ncurve  Number of curves            **
+!**     ipag page dimension flag            **
+!**       0 = page dimension 11 x 8.5     **
+!**       1 = page dimension 8.5 x 11     **
+!**     ibrdr   Page border flag            **
+!**       1 = Suppress page border     **
+!**       0 = Suppress page border     **
+!**     grce >= 0 Enable grace margin     **
+!**     xphy X-coordinate of physical origin     **
+!**     yphy Y-coordinate of physical origin     **
+!**     hight   Font size             **
+!**     bngle   Base rotation angle            **
+!**     bshft   Base translation            **
+!**     ptitle  Plot title             **
+!**     pltlen  Length of plot title                        **
+!**     xtitle  X-axis name                              **
+!**     xnlen   Length of x-axis name                           **
+!**     ytitle  Y-axis name                                **
+!**     ynlen   Length of y-axis name            **
+!**     xlen Length of x-axis legend            **
+!**     ylen    Length of y-axis legend                         **
+!**     iaxis   Axes flag             **
+!**       0 = Linear axis             **
+!**       1 = Log-Linear axis            **
+!**       2 = Linear-Log axis            **
+!**       3 = Logarithmic axis            **
+!**     xtck    X-axis tick marks            **
+!**     ytck    Y-axis tick marks            **
+!**     ixnon   X-axis tick marks or labels flag     **
+!**       1 = Suppress x-axis tick marks or labels **
+!**       0 = X-axis tick marks or labels     **
+!**     iynon   Y-axis tick marks or labels flag     **
+!**       1 = Suppress y-axis tick marks or labels **
+!**       0 = Y-axis tick marks or labels     **
+!**     intax   Trailing zeroes on x-axis flag     **
+!**       1 = Suppress trailing zeroes on x-axis      **
+!**       0 = Trailing zeroes on x-axis      **
+!**     intay   Trailing zeroes on y-axis flag     **
+!**       1 = Suppress trailing zeroes on y-axis      **
+!**       0 = Trailing zeroes on y-axis      **
+!**     xorg    X-value at the physical origin     **
+!**     xstp    X step size in units            **
+!**     xmax    Value at x-axis limit            **
+!**     yorg    X-value at the physical origin                 **
+!**     ystp    X step size in units            **
+!**     ymax    Value at y-axis limit            **
+!**     iorel   New physical origin relative to current  **
+!**     origin flag             **
+!**       1 = New physical origin relative to current  **
+!**           origin             **
+!**       0 = No new physical origin relative to current  **
+!**           origin             **
+!**     xorl    X-coordinate of relative origin     **
+!**     yorl    Y-coordinate of relative origin     **
+!**     igridx  Number of grid lines per step on x-axis       **
+!**     igridy  Number of grid lines per step on y-axis       **
+!**     idash   Dash grid lines flag            **
+!**       1 = Dash grid lines            **
+!**       0 = No dash grid lines            **
+!**     idot    Dot grid lines flag            **
+!**     1 = Dot grid lines            **
+!**     0 = No dot grid lines            **
+!**     ichdot  Chain dot grid lines flag                       **
+!**       1 = Chain dot grid lines                        **
+!**       0 = No chain dot grid lines                     **
+!**     ichdsh  Chain dash grid lines flag                      **
+!**       1 = Chain dash grid lines                       **
+!**       0 = No chain dash grid lines                    **
+!**     thcrv   Curve thickness     dim = ncurve       **
+!**     sclpc   Scale curve marker  dim = ncurve            **
+!**     dashme  Dash curve flag     dim = ncurve     **
+!**       1 = Dash curve             **
+!**       0 = No dash curve            **
+!**     dotme   Dot curve flag     dim = ncurve     **
+!**       1 = Dot curve             **
+!**       0 = No dot curve            **
+!**     chdhme  Chain dash curve flag dim = ncurve     **
+!**       1 = Chain dash curve            **
+!**       0 = No chain dash curve            **
+!**     chdtme  Chain ot curve flag dim = ncurve     **
+!**       1 = Chain dot curve            **
+!**       0 = No chain dot curve            **
+!**     markme  Curve marker          dim = ncurve            **
+!**     clearx  Color     dim = ncurve     **
+!**     x       Array of x-coordinates            **
+!**             dim = (nplt, ncurve) **
+!**     y       Array of y-coordinates            **
+!**                 dim = (nplt, ncurve) **
+!**     nplt    Number of (x,y) points to be ploted      **
+!**                 dim = ncurve     **
+!**     ncnct   Marker specification            **
+!**       0 = Points connected with no symbols drawn  **
+!**       i = Points connected and a symbol drawn at  **
+!**         every ith point            **
+!**            -i = Points not connected and a symbol at every  **
+!**     mrc     1 = Custom interrupted line style     **
+!**     tlen    overall length of the pattern     **
+!**     nmrk total number of marks and spaces     **
+!**     rat Array of ratios of marks and spaces to overall **
+!**             length                 **
+!**     icont Contour plotting flag            **
+!**       1 = Contour plotting            **
+!**       0 = No contour plotting            **
+!**     nword   Number of words available in common block **
+!**     zmat    2-dimensional array containing Z data surface **
+!**     values                 **
+!**     ix X dimension of zmat            **
+!**     iy Y dimension of zmat            **
+!**     zinc Increment between z levels     **
+!**     line Index number in the group of curve      **
+!**     characteristic             **
+!**     mode 'DOT' for dotted lines            **
+!**     'DASH' for dashed lines       **
+!**     lbflg 'NOLABELS' do not use labels      **
+!**     'LABELS' use labels            **
+!**     ithk Line thickness             **
+!**     ipri Line priority             **
+!**     draw 'DRAW' draw curves            **
+!**     'NODRAW' do not draw curves     **
+!**     nshd Number of shades, shade area between 2 curves **
+!**     sx Array of x-coordinates     dim = nsxy **
+!**     sy Array of y-coordinates     dim = nsxy **
+!**     nsxy Number of (sx,sy) pairs            **
+!**     sangle angle of shading lines            **
+!**     sgap Array of shading gaps            **
+!**     ngaps Number of elements in sgaps     **
+!**     nvec Number of vectors            **
+!**     xfm X value of originating point dim = nvec **
+!**     yfm Y value of originating point dim = nvec **
+!**     xto X value of point pointed to dim = nvec **
+!**     yto Y value of point pointed to dim = nvec **
+!**     ivec Describes vector arrowhead dim = nvec **
+!**     m Number of text lines to be written     **
+!**     note Text string flag     dim = m     **
+!**       1 = Text is character string     **
+!**       2 = Text is character string drawn relative  **
+!**           to the physical origin     **
+!**       3 = Text is real number string     **
+!**       4 = Text is real number string drawn relative  **
+!**           to the physical origin     **
+!**       5 = Text is integer string     **
+!**       6 = Text is integer string drawn relative  **
+!**           to the physical origin     **
+!**     lmes Character string text     dim = m     **
+!**     imes Number of characters in lmes dim = m     **
+!**     anum Real number text string     dim = m     **
+!**     iplce Number of decimal place     dim = m     **
+!**     inum Integer number text string dim = m     **
+!**     xmpos X-position of text string dim = m     **
+!**     ympos Y-position of text string dim = m     **
+!**     hgt Font size of the text string dim = m     **
+!**                                                                   **
+!**     REFERENCES:                  **
+!**          (1)  CA-DISSPLA manual              **
+!**          (2)                                                      **
+!**                                                                   **
+!**     RECORD OF MODIFICATION:                                       **
+!**          04/19/93..........first created                          **
+!**                                                                   **
+!**                                                                   **
 !*************************************************************************
 !sri-feb1209
       use eparmdud129,only:ndim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 
-!	parameter (ndim = 700, ncrv=180, mdim = 200)
-	parameter (ncrv=180, mdim = 300)
-	include 'curve2d_var.inc'
-	include 'env2d.inc'
+      ! parameter (ndim = 700, ncrv=180, mdim = 200)
+      parameter (ncrv=180, mdim = 300)
+      include 'curve2d_var.inc'
+      include 'env2d.inc'
 
-!-----------------------------------------------------------------------c
-!	Write page parameters						c
-!-----------------------------------------------------------------------c
-	write(iunit,100) ncurve, ipag, ibrdr, grce, xphy, yphy
- 100	format(3i5, 3f9.3)
-	write(iunit,101) iorel, xorl, yorl
- 101	format(i5, 2f9.3)
-     	write(iunit,102) hight, bngle, bshft
- 102	format(4f9.3)
+      !-----------------------------------------------------------------------c
+      ! Write page parameters                 c
+      !-----------------------------------------------------------------------c
+      write(iunit,100) ncurve, ipag, ibrdr, grce, xphy, yphy
+100   format(3i5, 3f9.3)
+      write(iunit,101) iorel, xorl, yorl
+101   format(i5, 2f9.3)
+      write(iunit,102) hight, bngle, bshft
+102   format(4f9.3)
 
-!-----------------------------------------------------------------------c
-!	Write title parameters						c
-!-----------------------------------------------------------------------c
-	write(iunit,103) ptitle, pltlen,  xtitle, xnlen
- 103	format(a20, i5, a20, i5)
-     	write(iunit,104) ytitle, ynlen, xlen, ylen
- 104	format(a20, i5, 2f9.3)
+      !-----------------------------------------------------------------------c
+      ! Write title parameters                 c
+      !-----------------------------------------------------------------------c
+      write(iunit,103) ptitle, pltlen,  xtitle, xnlen
+103   format(a20, i5, a20, i5)
+      write(iunit,104) ytitle, ynlen, xlen, ylen
+104   format(a20, i5, 2f9.3)
 
-!-----------------------------------------------------------------------c
-!	Write axis parameters						c
-!-----------------------------------------------------------------------c
-	write(iunit,105) xorg, xstp, xmax
-	write(iunit,105) yorg, ystp, ymax
- 105	format(3f15.5)
-     	write(iunit,106) iaxis, xtck, ytck, ixnon, iynon, intax, intay
- 106	format(7i5)
+      !-----------------------------------------------------------------------c
+      ! Write axis parameters                 c
+      !-----------------------------------------------------------------------c
+      write(iunit,105) xorg, xstp, xmax
+      write(iunit,105) yorg, ystp, ymax
+105   format(3f15.5)
+      write(iunit,106) iaxis, xtck, ytck, ixnon, iynon, intax, intay
+106   format(7i5)
 
-!-----------------------------------------------------------------------c
-!	Write secondary axis parameters					c
-!-----------------------------------------------------------------------c
-	write(iunit,117) isaxs
-     	write(iunit,107) sorg, stp, smax, slen, sname
- 107	format(4f15.5, a20)
-     	write(iunit,108) nslen,xpos,ypos
- 108	format(i5, 2f9.3)
+      !-----------------------------------------------------------------------c
+      ! Write secondary axis parameters             c
+      !-----------------------------------------------------------------------c
+      write(iunit,117) isaxs
+      write(iunit,107) sorg, stp, smax, slen, sname
+107   format(4f15.5, a20)
+      write(iunit,108) nslen,xpos,ypos
+108   format(i5, 2f9.3)
 
-!-----------------------------------------------------------------------c
-!	Write grid parameters						c
-!-----------------------------------------------------------------------c
-     	write(iunit,109) igridx, igridy, idash, idot, ichdsh, ichdot
- 109	format(6i5)
+      !-----------------------------------------------------------------------c
+      ! Write grid parameters                 c
+      !-----------------------------------------------------------------------c
+      write(iunit,109) igridx, igridy, idash, idot, ichdsh, ichdot
+109   format(6i5)
 
-!-----------------------------------------------------------------------c
-!	Do for ncurve							c
-!-----------------------------------------------------------------------c
-        if (ncurve.gt.0) then
-	do i = 1, ncurve
-!-----------------------------------------------------------------------c
-!	   Write curve parameters					c
-!-----------------------------------------------------------------------c
-     	   write(iunit,110) thcrv(i), sclpc(i), dashme(i), dotme(i)
- 110	   format(2f9.3,2i5)
- 	   write(iunit,111) chdhme(i), chdtme(i), markme(i), clearx(i)
- 111	   format(3i5, a20)
-     	   write(iunit,113) mrc(i), tlen(i), nmrk(i)
- 113	   format(i5, f9.3, i5)
-	   do j = 1, nmrk(i), 4
-	      write(iunit, 114)  (rat(k), k=j,j+3)
- 114	      format (4f9.3)
-	   enddo
-	   write(iunit,115) nplt(i), ncnct(i)
- 115	   format(2i5)
-!-----------------------------------------------------------------------c
-!	      Write (X,Y) co-ordinates					c
-!-----------------------------------------------------------------------c
-           if (nplt(i).gt.0) then
-	      write(iunit,116) (x(j,i), y(j,i),j=1,nplt(i))
- 116	      format (1x,6e12.5)
-	   endif    !   (X,Y)
+      !-----------------------------------------------------------------------c
+      ! Do for ncurve                 c
+      !-----------------------------------------------------------------------c
+      if (ncurve.gt.0) then
+        do i = 1, ncurve
+          !-----------------------------------------------------------------------c
+          !    Write curve parameters             c
+          !-----------------------------------------------------------------------c
+          write(iunit,110) thcrv(i), sclpc(i), dashme(i), dotme(i)
+110       format(2f9.3,2i5)
+          write(iunit,111) chdhme(i), chdtme(i), markme(i), clearx(i)
+111       format(3i5, a20)
+          write(iunit,113) mrc(i), tlen(i), nmrk(i)
+113       format(i5, f9.3, i5)
+          do j = 1, nmrk(i), 4
+            write(iunit, 114)  (rat(k), k=j,j+3)
+114         format (4f9.3)
+          enddo
+          write(iunit,115) nplt(i), ncnct(i)
+115       format(2i5)
+          !-----------------------------------------------------------------------c
+          !       Write (X,Y) co-ordinates             c
+          !-----------------------------------------------------------------------c
+          if (nplt(i).gt.0) then
+            write(iunit,116) (x(j,i), y(j,i),j=1,nplt(i))
+116         format (1x,6e12.5)
+          endif    !   (X,Y)
 
-     	   write(iunit,117) icont(i)
- 117	   format(i5)
-!-----------------------------------------------------------------------c
-!	   Write contour parameters					c
-!-----------------------------------------------------------------------c
-           if (icont(i).gt.0) then
-	     write(iunit,118) nword, ix, iy, zinc, line, mode
- 118	     format(3i5, f15.5, i5, a20)
-	     write(iunit,119) ((zmat(k,j),k=1,ix),j=1,iy)
- 119	     format (1x,6e12.5)
-     	     write(iunit,120) lbflg, ithk, ipri, nline, draw
- 120	     format(a20, 3i5, a20)
-           endif         !     contour
+          write(iunit,117) icont(i)
+117       format(i5)
+          !-----------------------------------------------------------------------c
+          !    Write contour parameters             c
+          !-----------------------------------------------------------------------c
+          if (icont(i).gt.0) then
+            write(iunit,118) nword, ix, iy, zinc, line, mode
+118         format(3i5, f15.5, i5, a20)
+            write(iunit,119) ((zmat(k,j),k=1,ix),j=1,iy)
+119         format (1x,6e12.5)
+            write(iunit,120) lbflg, ithk, ipri, nline, draw
+120         format(a20, 3i5, a20)
+          endif         !     contour
 
-     	   write(iunit,121) nshd
- 121	   format(i5)
+          write(iunit,121) nshd
+121       format(i5)
 
-           if (nshd.gt.0) then
-!-----------------------------------------------------------------------c
-!	      Write shade parameters					c
-!-----------------------------------------------------------------------c
-	   do j = 1, nshd
-	      write(iunit,122) nsxy(j)
- 122	      format (i5)
-	      write(iunit, 123) (sx(k,j), sy(k,j), k = 1, nsxy(j)) 
- 123	      format (1x,10e10.3)
-     	      write(iunit,124) sangle(j), sgap(j), ngaps(j)
- 124	      format (1x,2e10.3, i5)
-	   enddo
-           endif      !  shade
+          if (nshd.gt.0) then
+            !-----------------------------------------------------------------------c
+            !       Write shade parameters             c
+            !-----------------------------------------------------------------------c
+            do j = 1, nshd
+              write(iunit,122) nsxy(j)
+122           format (i5)
+              write(iunit, 123) (sx(k,j), sy(k,j), k = 1, nsxy(j))
+123           format (1x,10e10.3)
+              write(iunit,124) sangle(j), sgap(j), ngaps(j)
+124           format (1x,2e10.3, i5)
+            enddo
+          endif      !  shade
 
-	   write(iunit,125) nvec
- 125	   format(i5)
-!-----------------------------------------------------------------------c
-!	      Write vector parameters					c
-!-----------------------------------------------------------------------c
-           if (nvec.gt.0) then
-	   do j = 1,nvec
-	      write(iunit,126) xfm(j), yfm(j), xto(j), yto(j), ivec(j)
- 126	      format(1x,4e10.3, i5)
-	   enddo
-           endif      ! vector
-!-----------------------------------------------------------------------c
-!	EndDo for ncurve						c
-!-----------------------------------------------------------------------c
-	enddo
-        endif    !  ncurve
+          write(iunit,125) nvec
+125       format(i5)
+          !-----------------------------------------------------------------------c
+          !       Write vector parameters             c
+          !-----------------------------------------------------------------------c
+          if (nvec.gt.0) then
+            do j = 1,nvec
+              write(iunit,126) xfm(j), yfm(j), xto(j), yto(j), ivec(j)
+126           format(1x,4e10.3, i5)
+            enddo
+          endif      ! vector
+        !-----------------------------------------------------------------------c
+        ! EndDo for ncurve                 c
+        !-----------------------------------------------------------------------c
+        enddo
+      endif    !  ncurve
 
-	write(iunit,127) m
- 127	format(i5)
-	if (m .gt. 0) then
-	   do i = 1, m
-!-----------------------------------------------------------------------c
-!	   Write annotation parameters					c
-!-----------------------------------------------------------------------c
-	      write(iunit,128) note(i), imes(i)
- 128	      format(i5, i5)
-	      write(iunit,132) lmes(i)
- 132	      format(a72)
-	      write(iunit,129) anum(i), iplce(i), inum(i)
- 129	      format(f15.5, 2i5)
-	      write(iunit,130) xmpos(i), ympos(i), hgt(i)
- 130	      format(3f9.3)
-	   enddo
-	endif
+      write(iunit,127) m
+127   format(i5)
+      if (m .gt. 0) then
+        do i = 1, m
+          !-----------------------------------------------------------------------c
+          !    Write annotation parameters             c
+          !-----------------------------------------------------------------------c
+          write(iunit,128) note(i), imes(i)
+128       format(i5, i5)
+          write(iunit,132) lmes(i)
+132       format(a72)
+          write(iunit,129) anum(i), iplce(i), inum(i)
+129       format(f15.5, 2i5)
+          write(iunit,130) xmpos(i), ympos(i), hgt(i)
+130       format(3f9.3)
+        enddo
+      endif
 
-!-----------------------------------------------------------------------c
-!	Write plot exit parameters					c
-!-----------------------------------------------------------------------c
-	write(iunit,131) iexit
- 131	format(i5)
+      !-----------------------------------------------------------------------c
+      ! Write plot exit parameters             c
+      !-----------------------------------------------------------------------c
+      write(iunit,131) iexit
+131   format(i5)
 
-	return
-	end	
+      return
+      end
 
       subroutine curve2d_bin (ncurve, ipag, ibrdr,grce,xphy,yphy,iorel, &
-      		xorl, yorl,hight, bngle, bshft, ptitle, pltlen, xtitle, &
-      		xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp,xmax,yorg, &
-      		ystp, ymax, iaxis, xtck, ytck, ixnon,iynon,intax,intay, &
-      		isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
-      		igridx, igridy, idash, idot, ichdsh, ichdot,  &
-      		thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
-      		clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
-      		icont, nword, zmat, ix, iy, zinc, line, mode, &
-      		lbflg, ithk, ipri, nline, draw, &
-      		nshd, sx, sy, nsxy, &
-      		sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
-      		m, note, lmes, imes, anum, iplce, inum,xmpos,ympos,hgt, &
-      		iexit)
+           xorl, yorl,hight, bngle, bshft, ptitle, pltlen, xtitle, &
+           xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp,xmax,yorg, &
+           ystp, ymax, iaxis, xtck, ytck, ixnon,iynon,intax,intay, &
+           isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
+           igridx, igridy, idash, idot, ichdsh, ichdot,  &
+           thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
+           clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
+           icont, nword, zmat, ix, iy, zinc, line, mode, &
+           lbflg, ithk, ipri, nline, draw, &
+           nshd, sx, sy, nsxy, &
+           sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
+           m, note, lmes, imes, anum, iplce, inum,xmpos,ympos,hgt, &
+           iexit)
 !*************************************************************************
-!**                                                                  	**
-!**	MAIN PROGRAM:  MHD FITTING CODE					**
-!**                                                                  	**
-!**                                                                  	**
-!**     SUBPROGRAM DESCRIPTION:                                      	**
-!**         	Writes plot parameters in BINARY format		     	**
-!**                                                                  	**
-!**     CALLING ARGUMENTS:                                           	**
-!**     	ncurve  Number of curves				**
-!**		ipag	page dimension flag				**
-!**			0 = page dimension 11 x 8.5			**
-!**			1 = page dimension 8.5 x 11			**
-!**     	ibrdr   Page border flag				**
-!**			1 = Suppress page border			**
-!**     	        0 = Suppress page border			**
-!**		grce	>= 0 Enable grace margin			**
-!**		xphy	X-coordinate of physical origin			**
-!**     	yphy	Y-coordinate of physical origin			**
-!**		hight   Font size					**
-!**     	bngle   Base rotation angle				**
-!**     	bshft   Base translation				**
-!**     	ptitle  Plot title					**
-!**     	pltlen  Length of plot title                       	**
-!**     	xtitle  X-axis name                             	**
-!**     	xnlen   Length of x-axis name                           **
-!**     	ytitle  Y-axis name                           		**
-!**     	ynlen   Length of y-axis name				**
-!**     	xlen	Length of x-axis legend				**
-!**     	ylen    Length of y-axis legend                         **
-!**     	iaxis   Axes flag					**
-!**			0 = Linear axis					**
-!**     	        1 = Log-Linear axis				**
-!**     	        2 = Linear-Log axis				**
-!**     	        3 = Logarithmic axis				**
-!**     	xtck    X-axis tick marks				**
-!**     	ytck    Y-axis tick marks				**
-!**		ixnon   X-axis tick marks or labels flag		**
-!**			1 = Suppress x-axis tick marks or labels	**
-!**			0 = X-axis tick marks or labels			**
-!**		iynon   Y-axis tick marks or labels flag		**
-!**			1 = Suppress y-axis tick marks or labels	**
-!**			0 = Y-axis tick marks or labels			**
-!**		intax   Trailing zeroes on x-axis flag			**
-!**			1 = Suppress trailing zeroes on x-axis 		**
-!**			0 = Trailing zeroes on x-axis 			**
-!**		intay   Trailing zeroes on y-axis flag			**
-!**			1 = Suppress trailing zeroes on y-axis 		**
-!**			0 = Trailing zeroes on y-axis 			**
-!**     	xorg    X-value at the physical origin			**
-!**     	xstp    X step size in units				**
-!**     	xmax    Value at x-axis limit				**
-!**     	yorg    X-value at the physical origin	                **
-!**     	ystp    X step size in units				**
-!**     	ymax    Value at y-axis limit				**
-!**	  	iorel   New physical origin relative to current 	**
-!**		 	origin flag					**
-!**			1 = New physical origin relative to current 	**
-!**		 	    origin					**
-!**			0 = No new physical origin relative to current 	**
-!**		 	    origin					**
-!**		xorl    X-coordinate of relative origin			**
-!**		yorl    Y-coordinate of relative origin			**
-!**     	igridx  Number of grid lines per step on x-axis	     	**
-!**     	igridy  Number of grid lines per step on y-axis	     	**
-!**     	idash   Dash grid lines flag				**
-!**			1 = Dash grid lines				**
-!**			0 = No dash grid lines				**
-!**     	idot    Dot grid lines flag				**
-!**			1 = Dot grid lines				**
-!**			0 = No dot grid lines				**
-!**     	ichdot  Chain dot grid lines flag                       **
-!**			1 = Chain dot grid lines                        **
-!**			0 = No chain dot grid lines                     **
-!**     	ichdsh  Chain dash grid lines flag                      **
-!**			1 = Chain dash grid lines                       **
-!**			0 = No chain dash grid lines                    **
-!**     	thcrv   Curve thickness		dim = ncurve	     	**
-!**     	sclpc   Scale curve marker 	dim = ncurve            **
-!**     	dashme  Dash curve flag		dim = ncurve		**
-!**			1 = Dash curve					**
-!**			0 = No dash curve				**
-!**     	dotme  	Dot curve flag		dim = ncurve		**
-!**			1 = Dot curve					**
-!**			0 = No dot curve				**
-!**     	chdhme  Chain dash curve flag	dim = ncurve		**
-!**			1 = Chain dash curve				**
-!**			0 = No chain dash curve				**
-!**     	chdtme  Chain ot curve flag	dim = ncurve		**
-!**			1 = Chain dot curve				**
-!**			0 = No chain dot curve				**
-!**     	markme  Curve marker 	        dim = ncurve            **
-!**     	clearx  Color			dim = ncurve		**
-!**     	x       Array of x-coordinates				**
-!**						dim = (nplt, ncurve)	**
-!**     	y       Array of y-coordinates				**
-!**						dim = (nplt, ncurve)	**
-!**     	nplt    Number of (x,y) points to be ploted 		**
-!**						dim = ncurve		**
-!**     	ncnct   Marker specification				**
-!**			0 = Points connected with no symbols drawn 	**
-!**			i = Points connected and a symbol drawn at 	**
-!**			    every ith point				**
-!**		       -i = Points not connected and a symbol at every  **
-!**		mrc     1 = Custom interrupted line style		**
-!**		tlen    overall length of the pattern			**
-!**		nmrk	total number of marks and spaces		**
-!**		rat	Array of ratios of marks and spaces to overall	**
-!**		        length						**
-!**		icont	Contour plotting flag				**
-!**			1 = Contour plotting				**
-!**			0 = No contour plotting				**
-!**		nword   Number of words available in common block	**
-!**		zmat    2-dimensional array containing Z data surface	**
-!**			values						**
-!**		ix	X dimension of zmat				**
-!**		iy	Y dimension of zmat				**
-!**		zinc	Increment between z levels			**
-!**		line	Index number in the group of curve 		**
-!**			characteristic					**
-!**		mode	'DOT' for dotted lines				**
-!**			'DASH' for dashed lines  			**
-!**		lbflg	'NOLABELS' do not use labels 			**
-!**			'LABELS' use labels				**
-!**		ithk	Line thickness					**
-!**		ipri	Line priority					**
-!**		draw	'DRAW' draw curves				**
-!**			'NODRAW' do not draw curves			**
-!**		nshd	Number of shades, shade area between 2 curves	**
-!**		sx	Array of x-coordinates		dim = nsxy	**
-!**		sy	Array of y-coordinates		dim = nsxy	**
-!**	        nsxy	Number of (sx,sy) pairs				**
-!**		sangle	angle of shading lines				**
-!**		sgap	Array of shading gaps				**
-!**		ngaps	Number of elements in sgaps			**
-!**		nvec	Number of vectors				**
-!**		xfm	X value of originating point	dim = nvec	**
-!**		yfm	Y value of originating point	dim = nvec	**
-!**		xto	X value of point pointed to	dim = nvec	**
-!**		yto	Y value of point pointed to	dim = nvec	**
-!**		ivec	Describes vector arrowhead	dim = nvec	**
-!**		m	Number of text lines to be written		**
-!**		note	Text string flag		dim = m		**
-!**			1 = Text is character string			**
-!**			2 = Text is character string drawn relative 	**
-!**			    to the physical origin			**
-!**			3 = Text is real number	string			**
-!**			4 = Text is real number	string drawn relative 	**
-!**			    to the physical origin			**
-!**			5 = Text is integer string			**
-!**			6 = Text is integer string drawn relative 	**
-!**			    to the physical origin			**
-!**		lmes	Character string text		dim = m		**
-!**		imes	Number of characters in lmes	dim = m		**
-!**		anum	Real number text string		dim = m		**
-!**		iplce	Number of decimal place		dim = m		**
-!**		inum	Integer number text string	dim = m		**
-!**		xmpos	X-position of text string	dim = m		**
-!**		ympos	Y-position of text string	dim = m		**
-!**		hgt	Font size of the text string	dim = m		**
-!**                                                                  	**
-!**     REFERENCES: 							**
-!**          (1)  CA-DISSPLA manual 					**
-!**          (2)                                                     	**
-!**                                                                  	**
-!**     RECORD OF MODIFICATION:                                      	**
-!**          03/26/93..........first created                         	**
-!**                                                                  	**
-!**                                                                  	**
+!**                                                                   **
+!** MAIN PROGRAM:  MHD FITTING CODE             **
+!**                                                                   **
+!**                                                                   **
+!**   SUBPROGRAM DESCRIPTION:                                       **
+!**     Writes plot parameters in BINARY format           **
+!**                                                                   **
+!**   CALLING ARGUMENTS:                                            **
+!**     ncurve  Number of curves            **
+!**     ipag page dimension flag            **
+!**       0 = page dimension 11 x 8.5     **
+!**       1 = page dimension 8.5 x 11     **
+!**     ibrdr   Page border flag            **
+!**       1 = Suppress page border     **
+!**       0 = Suppress page border     **
+!**     grce >= 0 Enable grace margin     **
+!**     xphy X-coordinate of physical origin     **
+!**     yphy Y-coordinate of physical origin     **
+!**     hight   Font size             **
+!**     bngle   Base rotation angle            **
+!**     bshft   Base translation            **
+!**     ptitle  Plot title             **
+!**     pltlen  Length of plot title                        **
+!**     xtitle  X-axis name                              **
+!**     xnlen   Length of x-axis name                           **
+!**     ytitle  Y-axis name                                **
+!**     ynlen   Length of y-axis name            **
+!**     xlen Length of x-axis legend            **
+!**     ylen    Length of y-axis legend                         **
+!**     iaxis   Axes flag             **
+!**       0 = Linear axis             **
+!**       1 = Log-Linear axis            **
+!**       2 = Linear-Log axis            **
+!**       3 = Logarithmic axis            **
+!**     xtck    X-axis tick marks            **
+!**     ytck    Y-axis tick marks            **
+!**     ixnon   X-axis tick marks or labels flag     **
+!**       1 = Suppress x-axis tick marks or labels **
+!**       0 = X-axis tick marks or labels     **
+!**     iynon   Y-axis tick marks or labels flag     **
+!**       1 = Suppress y-axis tick marks or labels **
+!**       0 = Y-axis tick marks or labels     **
+!**     intax   Trailing zeroes on x-axis flag     **
+!**       1 = Suppress trailing zeroes on x-axis      **
+!**       0 = Trailing zeroes on x-axis      **
+!**     intay   Trailing zeroes on y-axis flag     **
+!**       1 = Suppress trailing zeroes on y-axis      **
+!**       0 = Trailing zeroes on y-axis      **
+!**     xorg    X-value at the physical origin     **
+!**     xstp    X step size in units            **
+!**     xmax    Value at x-axis limit            **
+!**     yorg    X-value at the physical origin                 **
+!**     ystp    X step size in units            **
+!**     ymax    Value at y-axis limit            **
+!**     iorel   New physical origin relative to current  **
+!**     origin flag             **
+!**       1 = New physical origin relative to current  **
+!**           origin             **
+!**       0 = No new physical origin relative to current  **
+!**           origin             **
+!**     xorl    X-coordinate of relative origin     **
+!**     yorl    Y-coordinate of relative origin     **
+!**     igridx  Number of grid lines per step on x-axis       **
+!**     igridy  Number of grid lines per step on y-axis       **
+!**     idash   Dash grid lines flag            **
+!**       1 = Dash grid lines            **
+!**       0 = No dash grid lines            **
+!**     idot    Dot grid lines flag            **
+!**       1 = Dot grid lines            **
+!**       0 = No dot grid lines            **
+!**     ichdot  Chain dot grid lines flag                       **
+!**       1 = Chain dot grid lines                        **
+!**       0 = No chain dot grid lines                     **
+!**     ichdsh  Chain dash grid lines flag                      **
+!**       1 = Chain dash grid lines                       **
+!**       0 = No chain dash grid lines                    **
+!**     thcrv   Curve thickness     dim = ncurve       **
+!**     sclpc   Scale curve marker  dim = ncurve            **
+!**     dashme  Dash curve flag     dim = ncurve     **
+!**       1 = Dash curve             **
+!**       0 = No dash curve            **
+!**     dotme   Dot curve flag     dim = ncurve     **
+!**       1 = Dot curve             **
+!**       0 = No dot curve            **
+!**     chdhme  Chain dash curve flag dim = ncurve     **
+!**       1 = Chain dash curve            **
+!**       0 = No chain dash curve            **
+!**     chdtme  Chain ot curve flag dim = ncurve     **
+!**       1 = Chain dot curve            **
+!**       0 = No chain dot curve            **
+!**     markme  Curve marker          dim = ncurve            **
+!**     clearx  Color     dim = ncurve     **
+!**     x       Array of x-coordinates            **
+!**                dim = (nplt, ncurve) **
+!**     y       Array of y-coordinates            **
+!**                dim = (nplt, ncurve) **
+!**     nplt    Number of (x,y) points to be ploted      **
+!**                dim = ncurve     **
+!**     ncnct   Marker specification            **
+!**       0 = Points connected with no symbols drawn  **
+!**       i = Points connected and a symbol drawn at  **
+!**         every ith point            **
+!**            -i = Points not connected and a symbol at every  **
+!**     mrc     1 = Custom interrupted line style     **
+!**     tlen    overall length of the pattern     **
+!**     nmrk total number of marks and spaces     **
+!**     rat Array of ratios of marks and spaces to overall **
+!**             length                 **
+!**     icont Contour plotting flag            **
+!**       1 = Contour plotting            **
+!**       0 = No contour plotting            **
+!**     nword   Number of words available in common block **
+!**     zmat    2-dimensional array containing Z data surface **
+!**     values                 **
+!**     ix X dimension of zmat            **
+!**     iy Y dimension of zmat            **
+!**     zinc Increment between z levels     **
+!**     line Index number in the group of curve      **
+!**     characteristic             **
+!**     mode 'DOT' for dotted lines            **
+!**     'DASH' for dashed lines       **
+!**     lbflg 'NOLABELS' do not use labels      **
+!**     'LABELS' use labels            **
+!**     ithk Line thickness             **
+!**     ipri Line priority             **
+!**     draw 'DRAW' draw curves            **
+!**     'NODRAW' do not draw curves     **
+!**     nshd Number of shades, shade area between 2 curves **
+!**     sx Array of x-coordinates     dim = nsxy **
+!**     sy Array of y-coordinates     dim = nsxy **
+!**     nsxy Number of (sx,sy) pairs            **
+!**     sangle angle of shading lines            **
+!**     sgap Array of shading gaps            **
+!**     ngaps Number of elements in sgaps     **
+!**     nvec Number of vectors            **
+!**     xfm X value of originating point dim = nvec **
+!**     yfm Y value of originating point dim = nvec **
+!**     xto X value of point pointed to dim = nvec **
+!**     yto Y value of point pointed to dim = nvec **
+!**     ivec Describes vector arrowhead dim = nvec **
+!**     m Number of text lines to be written     **
+!**     note Text string flag     dim = m     **
+!**       1 = Text is character string     **
+!**       2 = Text is character string drawn relative  **
+!**           to the physical origin     **
+!**       3 = Text is real number string     **
+!**       4 = Text is real number string drawn relative  **
+!**           to the physical origin     **
+!**       5 = Text is integer string     **
+!**       6 = Text is integer string drawn relative  **
+!**           to the physical origin     **
+!**     lmes Character string text     dim = m     **
+!**     imes Number of characters in lmes dim = m     **
+!**     anum Real number text string     dim = m     **
+!**     iplce Number of decimal place     dim = m     **
+!**     inum Integer number text string dim = m     **
+!**     xmpos X-position of text string dim = m     **
+!**     ympos Y-position of text string dim = m     **
+!**     hgt Font size of the text string dim = m     **
+!**                                                                   **
+!**     REFERENCES:                  **
+!**          (1)  CA-DISSPLA manual              **
+!**          (2)                                                      **
+!**                                                                   **
+!**     RECORD OF MODIFICATION:                                       **
+!**          03/26/93..........first created                          **
+!**                                                                   **
+!**                                                                   **
 !*************************************************************************
 !sri-feb1209
       use eparmdud129,only:ndim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 
-!	parameter (ndim = 700, ncrv=180, mdim = 200)
-	parameter (ncrv=180, mdim = 300)
-	include 'curve2d_var.inc'
-	include 'env2d.inc'
+      ! parameter (ndim = 700, ncrv=180, mdim = 200)
+      parameter (ncrv=180, mdim = 300)
+      include 'curve2d_var.inc'
+      include 'env2d.inc'
 
-!-----------------------------------------------------------------------c
-!	Write page parameters						c
-!-----------------------------------------------------------------------c
-	write(iunit) ncurve, ipag, ibrdr, grce, xphy, yphy
-	write(iunit) iorel, xorl, yorl
-     	write(iunit) hight, bngle, bshft
+      !-----------------------------------------------------------------------c
+      ! Write page parameters                 c
+      !-----------------------------------------------------------------------c
+      write(iunit) ncurve, ipag, ibrdr, grce, xphy, yphy
+      write(iunit) iorel, xorl, yorl
+      write(iunit) hight, bngle, bshft
 
-!-----------------------------------------------------------------------c
-!	Write title parameters						c
-!-----------------------------------------------------------------------c
-	write(iunit) ptitle, pltlen,  xtitle, xnlen
-     	write(iunit) ytitle, ynlen, xlen, ylen
+      !-----------------------------------------------------------------------c
+      ! Write title parameters                 c
+      !-----------------------------------------------------------------------c
+      write(iunit) ptitle, pltlen,  xtitle, xnlen
+      write(iunit) ytitle, ynlen, xlen, ylen
 
-!-----------------------------------------------------------------------c
-!	Write axis parameters						c
-!-----------------------------------------------------------------------c
-	write(iunit) xorg, xstp, xmax
-	write(iunit) yorg, ystp, ymax
-     	write(iunit) iaxis, xtck, ytck, ixnon, iynon, intax, intay
+      !-----------------------------------------------------------------------c
+      ! Write axis parameters                 c
+      !-----------------------------------------------------------------------c
+      write(iunit) xorg, xstp, xmax
+      write(iunit) yorg, ystp, ymax
+      write(iunit) iaxis, xtck, ytck, ixnon, iynon, intax, intay
 
-!-----------------------------------------------------------------------c
-!	Write secondary axis parameters					c
-!-----------------------------------------------------------------------c
-	write(iunit) isaxs
-     	write(iunit) sorg, stp, smax, slen, sname
-     	write(iunit) nslen,xpos,ypos
+      !-----------------------------------------------------------------------c
+      ! Write secondary axis parameters             c
+      !-----------------------------------------------------------------------c
+      write(iunit) isaxs
+      write(iunit) sorg, stp, smax, slen, sname
+      write(iunit) nslen,xpos,ypos
 
-!-----------------------------------------------------------------------c
-!	Write grid parameters						c
-!-----------------------------------------------------------------------c
-     	write(iunit) igridx, igridy, idash, idot, ichdsh, ichdot
+      !-----------------------------------------------------------------------c
+      ! Write grid parameters                 c
+      !-----------------------------------------------------------------------c
+      write(iunit) igridx, igridy, idash, idot, ichdsh, ichdot
 
-!-----------------------------------------------------------------------c
-!	Do for ncurve							c
-!-----------------------------------------------------------------------c
-        if (ncurve.gt.0) then
-	do i = 1, ncurve
-!-----------------------------------------------------------------------c
-!	   Write curve parameters					c
-!-----------------------------------------------------------------------c
-     	   write(iunit) thcrv(i), sclpc(i), dashme(i), dotme(i)
- 	   write(iunit) chdhme(i), chdtme(i), markme(i), clearx(i)
-     	   write(iunit) mrc(i), tlen(i), nmrk(i)
-	   do j = 1, nmrk(i), 4
-	      write(iunit)  (rat(k), k=j,j+3)
-	   enddo
-	   write(iunit) nplt(i), ncnct(i)
-!-----------------------------------------------------------------------c
-!	      Write (X,Y) coordinates					c
-!-----------------------------------------------------------------------c
-	   if (nplt(i).gt.0) then
-	      write(iunit) (x(j,i), y(j,i), j=1, nplt(i))
-	   endif
-     	   write(iunit) icont(i)
+      !-----------------------------------------------------------------------c
+      ! Do for ncurve                 c
+      !-----------------------------------------------------------------------c
+      if (ncurve.gt.0) then
+        do i = 1, ncurve
+          !-----------------------------------------------------------------------c
+          !    Write curve parameters             c
+          !-----------------------------------------------------------------------c
+          write(iunit) thcrv(i), sclpc(i), dashme(i), dotme(i)
+          write(iunit) chdhme(i), chdtme(i), markme(i), clearx(i)
+          write(iunit) mrc(i), tlen(i), nmrk(i)
+          do j = 1, nmrk(i), 4
+            write(iunit)  (rat(k), k=j,j+3)
+          enddo
+          write(iunit) nplt(i), ncnct(i)
+          !-----------------------------------------------------------------------c
+          !       Write (X,Y) coordinates             c
+          !-----------------------------------------------------------------------c
+          if (nplt(i).gt.0) then
+            write(iunit) (x(j,i), y(j,i), j=1, nplt(i))
+          endif
+          write(iunit) icont(i)
 
-!-----------------------------------------------------------------------c
-!	   Write contour parameters					c
-!-----------------------------------------------------------------------c
-           if (icont(i).gt.0) then
-	    write (iunit) nword, ix, iy, zinc, line, mode
-	    write (iunit) ((zmat(k,j) ,k=1,ix),j=1,iy)
-     	    write (iunit) lbflg, ithk, ipri, nline, draw
-           endif       !   contour
+          !-----------------------------------------------------------------------c
+          !    Write contour parameters             c
+          !-----------------------------------------------------------------------c
+          if (icont(i).gt.0) then
+            write (iunit) nword, ix, iy, zinc, line, mode
+            write (iunit) ((zmat(k,j) ,k=1,ix),j=1,iy)
+            write (iunit) lbflg, ithk, ipri, nline, draw
+          endif       !   contour
 
-     	   write(iunit) nshd
-           if (nshd.gt.0) then
-	   do j = 1, nshd
-!-----------------------------------------------------------------------c
-!	      Write shade parameters					c
-!-----------------------------------------------------------------------c
-	      write(iunit) nsxy(j)
-	      write(iunit) (sx(k,j), sy(k,j), k = 1, nsxy(j)) 
-     	      write(iunit) sangle(j), sgap(j), ngaps(j)
-	   enddo
-           endif    !   shade
+          write(iunit) nshd
+          if (nshd.gt.0) then
+            do j = 1, nshd
+              !-----------------------------------------------------------------------c
+              !       Write shade parameters             c
+              !-----------------------------------------------------------------------c
+              write(iunit) nsxy(j)
+              write(iunit) (sx(k,j), sy(k,j), k = 1, nsxy(j))
+              write(iunit) sangle(j), sgap(j), ngaps(j)
+            enddo
+          endif    !   shade
 
-	   write(iunit) nvec
-           if (nvec.gt.0) then
-	   do j = 1,nvec
-!-----------------------------------------------------------------------c
-!	     Write vector parameters					c
-!-----------------------------------------------------------------------c
-	     write(iunit) xfm(j), yfm(j), xto(j), yto(j), ivec(j)
-	   enddo
-           endif
-!-----------------------------------------------------------------------c
-!	Do for ncurve							c
-!-----------------------------------------------------------------------c
-	enddo
-        endif   !    ncurve
-
-	write(iunit) m
-	if (m .gt. 0) then
-	   do i = 1, m
-!-----------------------------------------------------------------------c
-!	Write annotation parameters					c
-!-----------------------------------------------------------------------c
-	      write(iunit) note(i), imes(i)
-	      write(iunit) lmes(i)
-	      write(iunit) anum(i), iplce(i), inum(i)
-	      write(iunit) xmpos(i), ympos(i), hgt(i)
-	   enddo
-	endif
-
-!-----------------------------------------------------------------------c
-!	Write plot exit parameters					c
-!-----------------------------------------------------------------------c
-	write(iunit) iexit
-
-	return
-	end	
-
-	subroutine init2d
-!*************************************************************************
-!**                                                                  	**
-!**	MAIN PROGRAM:  MHD FITTING CODE					**
-!**                                                                  	**
-!**                                                                  	**
-!**     SUBPROGRAM DESCRIPTION:                                      	**
-!**          Initializes plot parameters			     	**
-!**                                                                  	**
-!**     CALLING ARGUMENTS:                                           	**
-!**                                                                  	**
-!**     REFERENCES: 							**
-!**          (1)  							**
-!**          (2)                                                     	**
-!**                                                                  	**
-!**     RECORD OF MODIFICATION:                                      	**
-!**          04/28/93..........first created                         	**
-!**                                                                  	**
-!**                                                                  	**
-!*************************************************************************
-
-!sri-feb1209
-      use eparmdud129,only:ndim
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-	include 'curve2d129.inc'
-
-!-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
-!-----------------------------------------------------------------------c
-	nn = 0
-	ncurve = 1
-!-----------------------------------------------------------------------c
-!	Initialize page size to 11x8.5					c
-!-----------------------------------------------------------------------c
-	ipag = 0
-!-----------------------------------------------------------------------c
-!	Initialize grace margin be coincident with the grid frame	c
-!-----------------------------------------------------------------------c
-	grce = 0.0
-!-----------------------------------------------------------------------c
-!	Initialize page border "do not suppress page border"		c
-!-----------------------------------------------------------------------c
-	ibrdr = 0
-!-----------------------------------------------------------------------c
-!	Initialize page dimension					c
-!-----------------------------------------------------------------------c
-	xpag = 0.0
-	ypag = 0.0
-!-----------------------------------------------------------------------c
-!	Initialize physical origin parameters				c
-!-----------------------------------------------------------------------c
-	xphy = 1.0
-	yphy = 1.0
-!-----------------------------------------------------------------------c
-!	Initialize relative origin parameters				c
-!-----------------------------------------------------------------------c
-	iorel = 0
-	xorl = 0.0
-	yorl = 0.0
-!-----------------------------------------------------------------------c
-!	Initialize font size						c
-!-----------------------------------------------------------------------c
-	hight = 0.5
-!-----------------------------------------------------------------------c
-!	Initialize base rotation					c
-!-----------------------------------------------------------------------c
-	bngle = 0.0
-!-----------------------------------------------------------------------c
-!	Initialize translation						c
-!-----------------------------------------------------------------------c
-	bshft(1) = 0.0
-	bshft(2) = 0.0
-!-----------------------------------------------------------------------c
-!	Initialize type of coordinate system (Cartesian coordinate)	c
-!-----------------------------------------------------------------------c
-	iaxis = 0
-!-----------------------------------------------------------------------c
-!	Initialize axes tick marks off					c
-!-----------------------------------------------------------------------c
-	ixtck = 0
-	iytck = 0
-!-----------------------------------------------------------------------c
-!	Initialize axes labels not to be suppressed			c
-!-----------------------------------------------------------------------c
-	ixnon = 0
-	iynon = 0	
-!-----------------------------------------------------------------------c
-!	Initialize trailing zeroes on axes 				c
-!-----------------------------------------------------------------------c
-	intax = 0
-	intay = 0
-!-----------------------------------------------------------------------c
-!	Initialize secondary axes parameters				c
-!-----------------------------------------------------------------------c
-	isaxs = 0
-	sorg = 0.0
-	stp = 0.0
-	smax = 0.0
-	slen = 0.0
-	sname = ' '
-	nslen = 0
-	xps = 0.0
-	yps = 0.0
-!-----------------------------------------------------------------------c
-!	Initialize plot title legend					c
-!-----------------------------------------------------------------------c
-	ptitle = '$'
-	nplen = -100
-!-----------------------------------------------------------------------c
-!	Initialize x-axis title legend					c
-!-----------------------------------------------------------------------c
-	xtitle = '$'
-	nxlen = 100
-!-----------------------------------------------------------------------c
-!	Initialize y-axis title legend					c
-!-----------------------------------------------------------------------c
-	ytitle = '$'
-	nylen = 100
-!-----------------------------------------------------------------------c
-!	Initialize grids to be turned off				c
-!-----------------------------------------------------------------------c
-	igridx = 0
-	igridy = 0
-!-----------------------------------------------------------------------c
-!	Initialize, grid dashes off					c
-!-----------------------------------------------------------------------c
-	idash = 0
-!-----------------------------------------------------------------------c
-!	Initialize grid dots off					c
-!-----------------------------------------------------------------------c
-	idot = 0
-!-----------------------------------------------------------------------c
-!	Initialize grid chain dot off					c
-!-----------------------------------------------------------------------c
-	ichdot = 0
-!-----------------------------------------------------------------------c
-!	Initialize grid chain dash off					c
-!-----------------------------------------------------------------------c
-	ichdsh = 0
-!-----------------------------------------------------------------------c
-!	Initialize number of text lines to zero				c
-!-----------------------------------------------------------------------c
-	msg = 0
-!-----------------------------------------------------------------------c
-!	Initialize number of shades to zero				c
-!-----------------------------------------------------------------------c
-	nshd = 0
-!-----------------------------------------------------------------------c
-!	Initialize number of vectors to zero				c
-!-----------------------------------------------------------------------c
-	nvec = 0
-!-----------------------------------------------------------------------c
-!	Initialize contour drawing to none				c
-!-----------------------------------------------------------------------c
-        do i = 1, ncrv
-          icont(i) = 0
+          write(iunit) nvec
+          if (nvec.gt.0) then
+            do j = 1,nvec
+              !-----------------------------------------------------------------------c
+              !      Write vector parameters             c
+              !-----------------------------------------------------------------------c
+              write(iunit) xfm(j), yfm(j), xto(j), yto(j), ivec(j)
+            enddo
+          endif
+        !-----------------------------------------------------------------------c
+        ! Do for ncurve                 c
+        !-----------------------------------------------------------------------c
         enddo
-!-----------------------------------------------------------------------c
-!	Initialize curve drawing parameters				c
-!-----------------------------------------------------------------------c
-	do i = 1, ncrv
-!-----------------------------------------------------------------------c
-!	Initialize thickness of curve					c
-!-----------------------------------------------------------------------c
-	   thcrv(i) = 0.0
-!-----------------------------------------------------------------------c
-!	Initialize scaling of marker					c
-!-----------------------------------------------------------------------c
-	   sclpc(i) = 0.0	   
-!-----------------------------------------------------------------------c
-!	Initialize curve dot off					c
-!-----------------------------------------------------------------------c
-	   ndotme(i) = 0
-!-----------------------------------------------------------------------c
-!	Initialize curve dash off					c
-!-----------------------------------------------------------------------c
-	   ndshme(i) = 0
-!-----------------------------------------------------------------------c
-!	Initialize curve chain dot off					c
-!-----------------------------------------------------------------------c
-	   ncdtme(i) = 0
-!-----------------------------------------------------------------------c
-!	Initialize curve chain dash off					c
-!-----------------------------------------------------------------------c
-	   ncdhme(i) = 0
-!-----------------------------------------------------------------------c
-!	Initialize marker						c
-!-----------------------------------------------------------------------c
-	   markme(i) = -2
-!-----------------------------------------------------------------------c
-!	Initialize curve to be drawn with solid line wit no symbols	c
-!-----------------------------------------------------------------------c
-	   ncnct(i) = 0
-!-----------------------------------------------------------------------c
-!	Initialize color						c
-!-----------------------------------------------------------------------c
-	   clearx(i) = 'FOREGROUND'
-!-----------------------------------------------------------------------c
-!	Initialize shade parameters					c
-!-----------------------------------------------------------------------c
-!	   sangle(i) = 0.0
-!	   sgap(i) = 0.0
-!	   ngaps(i) = 0
-!	   mrc(i) = 0
-	enddo
-!-----------------------------------------------------------------------c
-!	Initialize Annotation parameters				c
-!-----------------------------------------------------------------------c
-	do i = 1, mdim
-	   note(i) = 0
-	   lmes(i) = ' '
-	   imes(i) = 0
-	   anum(i) = 0.0
-	   iplce(i) = 0
-	   inum(i) = 0
-	   xpos(i) = 0.0
-	   ypos(i) = 0.0
-	   ht(i) = 0.14
-	enddo
-!-----------------------------------------------------------------------c
-!	Initialize Contour Dimension					c
-!-----------------------------------------------------------------------c
-        ix = 1
-        iy = 1
+      endif   !    ncurve
 
-	return
-	end
-      subroutine altplt
+      write(iunit) m
+      if (m .gt. 0) then
+        do i = 1, m
+          !-----------------------------------------------------------------------c
+          ! Write annotation parameters             c
+          !-----------------------------------------------------------------------c
+          write(iunit) note(i), imes(i)
+          write(iunit) lmes(i)
+          write(iunit) anum(i), iplce(i), inum(i)
+          write(iunit) xmpos(i), ympos(i), hgt(i)
+        enddo
+      endif
+
+      !-----------------------------------------------------------------------c
+      ! Write plot exit parameters             c
+      !-----------------------------------------------------------------------c
+      write(iunit) iexit
+
       return
-      end
-      subroutine closepl
+    end
+
+ subroutine init2d
+!*************************************************************************
+!**                                                                   **
+!** MAIN PROGRAM:  MHD FITTING CODE             **
+!**                                                                   **
+!**                                                                   **
+!**     SUBPROGRAM DESCRIPTION:                                       **
+!**          Initializes plot parameters           **
+!**                                                                   **
+!**     CALLING ARGUMENTS:                                            **
+!**                                                                   **
+!**     REFERENCES:                  **
+!**          (1)                   **
+!**          (2)                                                      **
+!**                                                                   **
+!**     RECORD OF MODIFICATION:                                       **
+!**          04/28/93..........first created                          **
+!**                                                                   **
+!**                                                                   **
+!*************************************************************************
+
+!sri-feb1209
+      use eparmdud129,only:ndim
+      implicit integer*4 (i-n), real*8 (a-h, o-z)
+      include 'curve2d129.inc'
+
+      !-----------------------------------------------------------------------c
+      ! Initialize plot parameters             c
+      !-----------------------------------------------------------------------c
+      nn = 0
+      ncurve = 1
+      !-----------------------------------------------------------------------c
+      ! Initialize page size to 11x8.5             c
+      !-----------------------------------------------------------------------c
+      ipag = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize grace margin be coincident with the grid frame c
+      !-----------------------------------------------------------------------c
+      grce = 0.0
+      !-----------------------------------------------------------------------c
+      ! Initialize page border "do not suppress page border"     c
+      !-----------------------------------------------------------------------c
+      ibrdr = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize page dimension             c
+      !-----------------------------------------------------------------------c
+      xpag = 0.0
+      ypag = 0.0
+      !-----------------------------------------------------------------------c
+      ! Initialize physical origin parameters            c
+      !-----------------------------------------------------------------------c
+      xphy = 1.0
+      yphy = 1.0
+      !-----------------------------------------------------------------------c
+      ! Initialize relative origin parameters            c
+      !-----------------------------------------------------------------------c
+      iorel = 0
+      xorl = 0.0
+      yorl = 0.0
+      !-----------------------------------------------------------------------c
+      ! Initialize font size                 c
+      !-----------------------------------------------------------------------c
+      hight = 0.5
+      !-----------------------------------------------------------------------c
+      ! Initialize base rotation             c
+      !-----------------------------------------------------------------------c
+      bngle = 0.0
+      !-----------------------------------------------------------------------c
+      ! Initialize translation                 c
+      !-----------------------------------------------------------------------c
+      bshft(1) = 0.0
+      bshft(2) = 0.0
+      !-----------------------------------------------------------------------c
+      ! Initialize type of coordinate system (Cartesian coordinate) c
+      !-----------------------------------------------------------------------c
+      iaxis = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize axes tick marks off             c
+      !-----------------------------------------------------------------------c
+      ixtck = 0
+      iytck = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize axes labels not to be suppressed     c
+      !-----------------------------------------------------------------------c
+      ixnon = 0
+      iynon = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize trailing zeroes on axes             c
+      !-----------------------------------------------------------------------c
+      intax = 0
+      intay = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize secondary axes parameters            c
+      !-----------------------------------------------------------------------c
+      isaxs = 0
+      sorg = 0.0
+      stp = 0.0
+      smax = 0.0
+      slen = 0.0
+      sname = ' '
+      nslen = 0
+      xps = 0.0
+      yps = 0.0
+      !-----------------------------------------------------------------------c
+      ! Initialize plot title legend             c
+      !-----------------------------------------------------------------------c
+      ptitle = '$'
+      nplen = -100
+      !-----------------------------------------------------------------------c
+      ! Initialize x-axis title legend             c
+      !-----------------------------------------------------------------------c
+      xtitle = '$'
+      nxlen = 100
+      !-----------------------------------------------------------------------c
+      ! Initialize y-axis title legend             c
+      !-----------------------------------------------------------------------c
+      ytitle = '$'
+      nylen = 100
+      !-----------------------------------------------------------------------c
+      ! Initialize grids to be turned off            c
+      !-----------------------------------------------------------------------c
+      igridx = 0
+      igridy = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize, grid dashes off             c
+      !-----------------------------------------------------------------------c
+      idash = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize grid dots off             c
+      !-----------------------------------------------------------------------c
+      idot = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize grid chain dot off             c
+      !-----------------------------------------------------------------------c
+      ichdot = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize grid chain dash off             c
+      !-----------------------------------------------------------------------c
+      ichdsh = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize number of text lines to zero            c
+      !-----------------------------------------------------------------------c
+      msg = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize number of shades to zero            c
+      !-----------------------------------------------------------------------c
+      nshd = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize number of vectors to zero            c
+      !-----------------------------------------------------------------------c
+      nvec = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize contour drawing to none            c
+      !-----------------------------------------------------------------------c
+      do i = 1, ncrv
+        icont(i) = 0
+      enddo
+      !-----------------------------------------------------------------------c
+      ! Initialize curve drawing parameters            c
+      !-----------------------------------------------------------------------c
+      do i = 1, ncrv
+        !-----------------------------------------------------------------------c
+        ! Initialize thickness of curve             c
+        !-----------------------------------------------------------------------c
+        thcrv(i) = 0.0
+        !-----------------------------------------------------------------------c
+        ! Initialize scaling of marker             c
+        !-----------------------------------------------------------------------c
+        sclpc(i) = 0.0
+        !-----------------------------------------------------------------------c
+        ! Initialize curve dot off             c
+        !-----------------------------------------------------------------------c
+        ndotme(i) = 0
+        !-----------------------------------------------------------------------c
+        ! Initialize curve dash off             c
+        !-----------------------------------------------------------------------c
+        ndshme(i) = 0
+        !-----------------------------------------------------------------------c
+        ! Initialize curve chain dot off             c
+        !-----------------------------------------------------------------------c
+        ncdtme(i) = 0
+        !-----------------------------------------------------------------------c
+        ! Initialize curve chain dash off             c
+        !-----------------------------------------------------------------------c
+        ncdhme(i) = 0
+        !-----------------------------------------------------------------------c
+        ! Initialize marker                 c
+        !-----------------------------------------------------------------------c
+        markme(i) = -2
+        !-----------------------------------------------------------------------c
+        ! Initialize curve to be drawn with solid line wit no symbols c
+        !-----------------------------------------------------------------------c
+        ncnct(i) = 0
+        !-----------------------------------------------------------------------c
+        ! Initialize color                 c
+        !-----------------------------------------------------------------------c
+        clearx(i) = 'FOREGROUND'
+        !-----------------------------------------------------------------------c
+        ! Initialize shade parameters             c
+        !-----------------------------------------------------------------------c
+        !    sangle(i) = 0.0
+        !    sgap(i) = 0.0
+        !    ngaps(i) = 0
+        !    mrc(i) = 0
+      enddo
+      !-----------------------------------------------------------------------c
+      ! Initialize Annotation parameters            c
+      !-----------------------------------------------------------------------c
+      do i = 1, mdim
+        note(i) = 0
+        lmes(i) = ' '
+        imes(i) = 0
+        anum(i) = 0.0
+        iplce(i) = 0
+        inum(i) = 0
+        xpos(i) = 0.0
+        ypos(i) = 0.0
+        ht(i) = 0.14
+      enddo
+      !-----------------------------------------------------------------------c
+      ! Initialize Contour Dimension             c
+      !-----------------------------------------------------------------------c
+      ix = 1
+      iy = 1
+
+      return
+    end
+
+    subroutine altplt
+      return
+    end
+
+    subroutine closepl
       close(unit=35)
       return
-      end
-
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   1997/05/13 16:37:28 meyer
-!
-      subroutine pltdatx_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)pltdatx.for,v 4.30\000'
-      return
-      end
+    end

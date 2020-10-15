@@ -135,17 +135,3 @@
         *log(1.0/xm1)
       return
       end
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   $Date: 2008/07/29 23:42:35 $ $Author: radhakri $
-!
-      subroutine psical_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)$RCSfile: psicald.f90,v $ $Revision: 1.1.2.1 $\000'
-      return
-      end

@@ -262,66 +262,66 @@
             if(mod(iparm,4) .eq. 0) bsffpel = fftens*cos(fftens*ypsi)
          endif
       elseif (ifunc .eq. 5)then
-         iorder = kffcur / (kffknt - 1)
-         nk = (iparm - 1) / iorder + 1
-         if(nk .ge. kffknt)nk = kffknt - 1
-         if((nk .lt. (kffknt - 1) .and. ypsi .lt. ffknt(nk+1) &
-              .and.  ypsi .ge. ffknt(nk)) &
-              .or. (nk .eq. (kffknt - 1) .and. ypsi .le. ffknt(nk+1) &
-              .and.  ypsi .ge. ffknt(nk))) then
-            w = ffknt(nk+1) - ffknt(nk)
-            tpsi = (ypsi - ffknt(nk)) / w
-	    jparm = mod(iparm,iorder)
-            if (jparm.eq.1) then
-               bsffpel = 0.0
-            elseif (jparm.eq.2) then
-               bsffpel = 1./w
-            elseif (jparm.gt.2) then
-               bsffpel = (jparm - 1)/w*tpsi**(jparm - 2) 
-	    endif
-         endif
+        iorder = kffcur / (kffknt - 1)
+        nk = (iparm - 1) / iorder + 1
+        if(nk .ge. kffknt)nk = kffknt - 1
+        if((nk .lt. (kffknt - 1) .and. ypsi .lt. ffknt(nk+1) &
+          .and.  ypsi .ge. ffknt(nk)) &
+          .or. (nk .eq. (kffknt - 1) .and. ypsi .le. ffknt(nk+1) &
+          .and.  ypsi .ge. ffknt(nk))) then
+          w = ffknt(nk+1) - ffknt(nk)
+          tpsi = (ypsi - ffknt(nk)) / w
+          jparm = mod(iparm,iorder)
+          if (jparm.eq.1) then
+            bsffpel = 0.0
+          elseif (jparm.eq.2) then
+            bsffpel = 1./w
+          elseif (jparm.gt.2) then
+            bsffpel = (jparm - 1)/w*tpsi**(jparm - 2)
+          endif
+        endif
       elseif (ifunc .eq. 6)then
-         nk = ((iparm - 1) / 2) + 1
-         fftens2 = abs(fftens)*float(kffknt-1)/ &
-              (ffknt(kffknt)-ffknt(1)) 
-         if (nk .gt. 1) then
-            if (ypsi .le. ffknt(nk) .and.  &
-                 ypsi .ge. ffknt(nk-1)) then
-               w = ffknt(nk) - ffknt(nk-1)
-               if(mod(iparm,2) .eq. 0) then
-                  bsffpel = (fftens2*cosh(fftens2* &
-                       (ypsi-ffknt(nk-1)))/sinh(fftens2*w) - (1.0/w)) &
-                       / (fftens2*fftens2)
-               else
-                  bsffpel = 1.0/w
-               endif
-               
+        nk = ((iparm - 1) / 2) + 1
+        fftens2 = abs(fftens)*float(kffknt-1)/ &
+          (ffknt(kffknt)-ffknt(1))
+        if (nk .gt. 1) then
+          if (ypsi .le. ffknt(nk) .and.  &
+            ypsi .ge. ffknt(nk-1)) then
+            w = ffknt(nk) - ffknt(nk-1)
+            if(mod(iparm,2) .eq. 0) then
+              bsffpel = (fftens2*cosh(fftens2* &
+                (ypsi-ffknt(nk-1)))/sinh(fftens2*w) - (1.0/w)) &
+                / (fftens2*fftens2)
+            else
+              bsffpel = 1.0/w
             endif
-         endif
-         if (nk .lt. kffknt) then
-            if (ypsi .ge. ffknt(nk) .and.  &
-                 ypsi .le. ffknt(nk+1)) then
-               w = ffknt(nk+1) - ffknt(nk)
-               if(mod(iparm,2) .eq. 0) then
-                  bsffpel = (-fftens2*cosh(fftens2* &
-                       (ffknt(nk+1)-ypsi))/sinh(fftens2*w)+(1.0/w)) &
-                       / (fftens2*fftens2)
-               else
-                  bsffpel = -1.0/w
-               endif
                
+          endif
+        endif
+        if (nk .lt. kffknt) then
+          if (ypsi .ge. ffknt(nk) .and.  &
+            ypsi .le. ffknt(nk+1)) then
+            w = ffknt(nk+1) - ffknt(nk)
+            if(mod(iparm,2) .eq. 0) then
+              bsffpel = (-fftens2*cosh(fftens2* &
+                (ffknt(nk+1)-ypsi))/sinh(fftens2*w)+(1.0/w)) &
+                / (fftens2*fftens2)
+            else
+              bsffpel = -1.0/w
             endif
-         endif
+               
+          endif
+        endif
       elseif ( ifunc .eq. 7)then
-         if (iparm.eq.kffcur) then
-            bsffpel = kffhord*ypsi**(kffhord-1)
-         elseif (iparm.eq.1 ) then
-            bsffpel = 0.
-         elseif (iparm.eq.2 ) then
-            bsffpel = 1. 
-         elseif (iparm.gt.2) then
-            bsffpel = (iparm - 1)*ypsi**(iparm - 2) 
-         endif
+        if (iparm.eq.kffcur) then
+          bsffpel = kffhord*ypsi**(kffhord-1)
+        elseif (iparm.eq.1 ) then
+          bsffpel = 0.
+        elseif (iparm.eq.2 ) then
+          bsffpel = 1.
+        elseif (iparm.gt.2) then
+          bsffpel = (iparm - 1)*ypsi**(iparm - 2)
+        endif
       endif
       return
       end
@@ -565,24 +565,21 @@
                   b2 = (ffknt(nk+1)*ypsi2-ypsi2*ypsi2/2.0)/w
                endif
                bsffin = bsffin + b1 - b2
-            endif	
-         endif	
+            endif
+         endif
       elseif ( ifunc .eq. 7)then
-	 if(iparm .eq. kffcur) then
-         bsffin = (ypsi**(kffhord+1))/(kffhord+1) 
-         bsffin = bsffin - ((ypsi2**(kffhord+1))/(kffhord+1))
-	 else
-         bsffin = (ypsi**iparm)/iparm 
-         bsffin = bsffin - ((ypsi2**iparm)/iparm)
-	 endif
+        if(iparm .eq. kffcur) then
+          bsffin = (ypsi**(kffhord+1))/(kffhord+1)
+          bsffin = bsffin - ((ypsi2**(kffhord+1))/(kffhord+1))
+        else
+          bsffin = (ypsi**iparm)/iparm
+          bsffin = bsffin - ((ypsi2**iparm)/iparm)
+        endif
       endif
-      if ( ifunc .ne. kfffnc)  &
-           write(6,*)'ifunc .ne. kfffnc ',ifunc,kfffnc
+      if ( ifunc .ne. kfffnc) write(6,*)'ifunc .ne. kfffnc ',ifunc,kfffnc
       return
       end
-      
-      
-!     
+
 !     subroutine ffcnst(ncrsp,crsp,z,nffcoi)
 !     
 !     In addition to the least squares constraints that
@@ -851,89 +848,89 @@
          endif
       endif
       if(kfffnc .eq. 6) then
-!     
-!     first set of constraints is that splines have equal first 
-!     derivative at the knots
-!     
-         if(kffknt .gt. 2)then
-            fftens2 = abs(fftens)*float(kffknt-1)/ &
-                 (ffknt(kffknt)-ffknt(1)) 
-            do i = 2,kffknt-1
-               ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
-               z(ncrsp) = 0.0
-               w = ffknt(i+1) - ffknt(i)
-               crsp(ncrsp,nffcoi + kppcur + &
-                    2*(i-1) + 1) = -1.0/w
-               crsp(ncrsp,nffcoi + kppcur + &
-                    2*(i-1) + 2) = (-fftens2* &
-                    cosh(fftens2*w)/sinh(fftens2*w) &
-                    + 1.0/w)/(fftens2*fftens2)
-               crsp(ncrsp,nffcoi + kppcur &
-                    + 2*(i-1) + 3) = 1.0/w
-               crsp(ncrsp,nffcoi + kppcur &
-                    + 2*(i-1) + 4) = (fftens2/ &
-                    sinh(fftens2*w) - 1.0/w)/(fftens2*fftens2)
-               
-               w = ffknt(i) - ffknt(i-1)
-               crsp(ncrsp,nffcoi + kppcur &
-                    + 2*(i-1) - 1) = 1.0/w
-               crsp(ncrsp,nffcoi + kppcur &
-                    + 2*(i-1) + 0) = -(-fftens2/ &
-                    sinh(fftens2*w) + 1.0/w)/(fftens2*fftens2)
-               crsp(ncrsp,nffcoi + kppcur + 2*(i-1) + 1) = &
-                    crsp(ncrsp,nffcoi + kppcur &
-                    + 2*(i-1) + 1) - 1.0/w
-               crsp(ncrsp,nffcoi + kppcur + 2*(i-1) + 2) = &
-                    crsp(ncrsp,nffcoi + kppcur &
-                    + 2*(i-1) + 2) - (fftens2* &
-                    cosh(fftens2*w)/sinh(fftens2*w) &
-                    - 1.0/w)/(fftens2*fftens2)
-            enddo
-         endif
-         do i = 1,kffknt
-            if ( kffbdry(i) .eq. 1) then
-               ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
-               z(ncrsp) = ffbdry(i)*darea/twopi/tmu
-               crsp(ncrsp,nffcoi + kppcur+2*i - 1) = 1.0
-            endif
-            if ( kff2bdry(i) .eq. 1) then
-               ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
-               z(ncrsp) = ff2bdry(i)*darea/twopi/tmu
-               crsp(ncrsp,nffcoi + kppcur+2*i) = 1.0
-            endif
-         enddo
-         if(fcurbd .ne. 0.0)then
+        !
+        !     first set of constraints is that splines have equal first
+        !     derivative at the knots
+        !
+        if(kffknt .gt. 2)then
+          fftens2 = abs(fftens)*float(kffknt-1)/ &
+            (ffknt(kffknt)-ffknt(1))
+          do i = 2,kffknt-1
             ncrsp = ncrsp + 1
             do j = 1,nrsmat
-               crsp(ncrsp,j) = 0.0
+              crsp(ncrsp,j) = 0.0
             enddo
             z(ncrsp) = 0.0
-            tpsi = 1.0
-            do j = 1,kffcur
-               crsp(ncrsp,nffcoi+kppcur+j) = bsffel(kfffnc,j,tpsi)
+            w = ffknt(i+1) - ffknt(i)
+            crsp(ncrsp,nffcoi + kppcur + &
+              2*(i-1) + 1) = -1.0/w
+            crsp(ncrsp,nffcoi + kppcur + &
+              2*(i-1) + 2) = (-fftens2* &
+              cosh(fftens2*w)/sinh(fftens2*w) &
+              + 1.0/w)/(fftens2*fftens2)
+            crsp(ncrsp,nffcoi + kppcur &
+              + 2*(i-1) + 3) = 1.0/w
+            crsp(ncrsp,nffcoi + kppcur &
+              + 2*(i-1) + 4) = (fftens2/ &
+              sinh(fftens2*w) - 1.0/w)/(fftens2*fftens2)
+
+            w = ffknt(i) - ffknt(i-1)
+            crsp(ncrsp,nffcoi + kppcur &
+              + 2*(i-1) - 1) = 1.0/w
+            crsp(ncrsp,nffcoi + kppcur &
+              + 2*(i-1) + 0) = -(-fftens2/ &
+              sinh(fftens2*w) + 1.0/w)/(fftens2*fftens2)
+            crsp(ncrsp,nffcoi + kppcur + 2*(i-1) + 1) = &
+              crsp(ncrsp,nffcoi + kppcur &
+              + 2*(i-1) + 1) - 1.0/w
+            crsp(ncrsp,nffcoi + kppcur + 2*(i-1) + 2) = &
+              crsp(ncrsp,nffcoi + kppcur &
+              + 2*(i-1) + 2) - (fftens2* &
+              cosh(fftens2*w)/sinh(fftens2*w) &
+              - 1.0/w)/(fftens2*fftens2)
+          enddo
+        endif
+        do i = 1,kffknt
+          if ( kffbdry(i) .eq. 1) then
+            ncrsp = ncrsp + 1
+            do j = 1,nrsmat
+              crsp(ncrsp,j) = 0.0
             enddo
-         endif
+            z(ncrsp) = ffbdry(i)*darea/twopi/tmu
+            crsp(ncrsp,nffcoi + kppcur+2*i - 1) = 1.0
+          endif
+          if ( kff2bdry(i) .eq. 1) then
+            ncrsp = ncrsp + 1
+            do j = 1,nrsmat
+              crsp(ncrsp,j) = 0.0
+            enddo
+            z(ncrsp) = ff2bdry(i)*darea/twopi/tmu
+            crsp(ncrsp,nffcoi + kppcur+2*i) = 1.0
+          endif
+        enddo
+        if(fcurbd .ne. 0.0)then
+          ncrsp = ncrsp + 1
+          do j = 1,nrsmat
+            crsp(ncrsp,j) = 0.0
+          enddo
+          z(ncrsp) = 0.0
+          tpsi = 1.0
+          do j = 1,kffcur
+            crsp(ncrsp,nffcoi+kppcur+j) = bsffel(kfffnc,j,tpsi)
+          enddo
+        endif
       endif
       if(kfffnc .eq. 7 .and. fcurbd .eq. 1.0) then
-            ncrsp = ncrsp + 1
-            do j = 1,nrsmat
-               crsp(ncrsp,j) = 0.0
-            enddo
-						tpsi = 1.0
-            z(ncrsp) = 0.0
-            do j = 1,kffcur
-               crsp(ncrsp,nffcoi+kppcur+j) = bsffel(kfffnc,j,tpsi)
-            enddo
-			endif
+        ncrsp = ncrsp + 1
+        do j = 1,nrsmat
+          crsp(ncrsp,j) = 0.0
+        enddo
+        tpsi = 1.0
+        z(ncrsp) = 0.0
+        do j = 1,kffcur
+          crsp(ncrsp,nffcoi+kppcur+j) = bsffel(kfffnc,j,tpsi)
+        enddo
+      endif
       return
       end
 !     
@@ -965,19 +962,5 @@
             endif
          enddo
       endif
-      return
-      end
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   2000/03/28 22:12:36 meyer
-!
-      subroutine ffbasisfuncx_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)ffbasisfuncx.for,v 4.33\000'
       return
       end

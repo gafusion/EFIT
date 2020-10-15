@@ -126,8 +126,8 @@
 !
 !  Set up knots:
 !
-      call eknot (nx, x, kubicx, xknot)		
-      call eknot (ny, y, kubicy, yknot)			
+      call eknot (nx, x, kubicx, xknot)
+      call eknot (ny, y, kubicy, yknot)
 !
 !  Save the original, use the work array
 !
@@ -138,7 +138,7 @@
 !
 !  Calculate spline coefficients:
 !
-      call spl2bc (x, y, xknot, yknot, wk)	
+      call spl2bc (x, y, xknot, yknot, wk)
 !
 !  Coefficients stored in bkx, bky, and c:
 !
@@ -365,29 +365,29 @@
       if (s(1).le.0) IER = 129                   ! This better not happen
       if (s(n)/s(1) .le. 1.e-7) ier = 33         ! Ill-conditioned or rank-deficient matrix
 !
-      DO 20 I = 1, N			         ! Copy V into A
+      DO 20 I = 1, N            ! Copy V into A
          DO 10 J = 1, N
-!              A(I, J) = V(I, J)  	
+!              A(I, J) = V(I, J)
                A(I, J) = V(J, I)
-10       CONTINUE				
+10       CONTINUE
 20    CONTINUE
 !
-      IF (NB.EQ.1) THEN 	                 ! B is a vector        
+      IF (NB.EQ.1) THEN                   ! B is a vector
 !
-           DO 50 I = 1, M 			 ! Compute U**T * B
+           DO 50 I = 1, M     ! Compute U**T * B
               BB(I) = 0.0
               DO 40 J = 1, M
                     BB(I) = BB(I) + U(J, I)*B(J, 1)
 40            CONTINUE
 50         CONTINUE
 !
-           DO 30 I = 1, M			 ! Replace B with U**T * B
+           DO 30 I = 1, M    ! Replace B with U**T * B
               B(I, 1) = BB(I)    
 30         CONTINUE
 !
       ELSE                                       ! B is a matrix
 !
-           DO 70 I = 1, NB	                 ! Replace B with U**T    
+           DO 70 I = 1, NB                  ! Replace B with U**T
                  DO 60 J = 1, M
                        B(J, I) = U(I, J)
 60               CONTINUE
@@ -826,11 +826,11 @@
       write(*,*) 'Error (ppvalw): JD must be 0, 1, or 2.'
       write(*,*) 'Execution terminated.'
       return
- 1    ppvalw = d0(x)	! k = 4 , jd = 0
+ 1    ppvalw = d0(x) ! k = 4 , jd = 0
       return
- 2    ppvalw = d1(x)	! k = 4 , jd = 1
+ 2    ppvalw = d1(x) ! k = 4 , jd = 1
       return
- 3    ppvalw = d2(x)	! k = 4 , jd = 2
+ 3    ppvalw = d2(x) ! k = 4 , jd = 2
       return
       end
 !
@@ -986,72 +986,58 @@
       left = lxt
                                         return
       end
-! These are interface routines to bridge from IMSL on the VAX to LINPACK on
-! the Multiflow.
-!
-! ************************ LINV1F ***************************************
-! This routine is an interface from the IMSL call used on the VAX to the 
-! LINPACK call used on the Multiflow.  This routine performs the inversion
-! of an N x N matrix.  This is not a general purpose routine and is specific to
-! the EFITD code and should only be used for that code.  This routine has local
-! arrays that are sized to correspond to the largest size of an EFITD call.  If 
-! the parameters which define dimensions for EFITD arrays should change, then 
-! the sizes of these arrays may need to change as well.
-!
-! Correspondence of the variables between the IMSL LINV1F routine and the
-! LINPACK DGEFA and DGEDI routines.  See the IMSL and LINPACK documentation for
-! further information.
-!
-! A	contains the N x N matrix that is to be transposed.  This is the
-!	same matrix for both routines, however the returned contents are not
-!	the same.  This is not a problem as this matrix is not used again after
-!	the call is made.  This routine calls DGEFA with the input matrix A and
-!	it returns results which are input to DGEDI.
-! N	is the row dimension of A where number rows equal number columns.
-! IA	is the actual leading storage dimension of the matrix A and AINV.
-! AINV	is the resultant transposed N x N matrix.
-! IDGT	is an accuracy option used by the IMSL routine.  However there is no
-!	corresponding option for the LINPACK routines, so this is not used.
-! WK	is a scratch array which can be used by both calls.
-! IER	129 is an error return for LINV1F, non-zero is an error for DGEFA.
-!	If DGEFA gets any error, then the error return is set to 129.
-!
-! IPVT	is a vector of pivot indices returned by DGEFA and used by DGEDI.
-! DET	is a determinant of the original matrix but is not optioned or used.
-!
-	SUBROUTINE LINV1F(A,N,IA,AINV,IDGT,WK,IER)
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-!
-	REAL*4	A(IA,IA),AINV(IA,IA),WK(N)
-	REAL*4	DET(2)
+      ! These are interface routines to bridge from IMSL on the VAX to LINPACK on
+      ! the Multiflow.
+      !
+      ! ************************ LINV1F ***************************************
+      ! This routine is an interface from the IMSL call used on the VAX to the
+      ! LINPACK call used on the Multiflow.  This routine performs the inversion
+      ! of an N x N matrix.  This is not a general purpose routine and is specific to
+      ! the EFITD code and should only be used for that code.  This routine has local
+      ! arrays that are sized to correspond to the largest size of an EFITD call.  If
+      ! the parameters which define dimensions for EFITD arrays should change, then
+      ! the sizes of these arrays may need to change as well.
+      !
+      ! Correspondence of the variables between the IMSL LINV1F routine and the
+      ! LINPACK DGEFA and DGEDI routines.  See the IMSL and LINPACK documentation for
+      ! further information.
+      !
+      ! A contains the N x N matrix that is to be transposed.  This is the
+      ! same matrix for both routines, however the returned contents are not
+      ! the same.  This is not a problem as this matrix is not used again after
+      ! the call is made.  This routine calls DGEFA with the input matrix A and
+      ! it returns results which are input to DGEDI.
+      ! N is the row dimension of A where number rows equal number columns.
+      ! IA is the actual leading storage dimension of the matrix A and AINV.
+      ! AINV is the resultant transposed N x N matrix.
+      ! IDGT is an accuracy option used by the IMSL routine.  However there is no
+      ! corresponding option for the LINPACK routines, so this is not used.
+      ! WK is a scratch array which can be used by both calls.
+      ! IER 129 is an error return for LINV1F, non-zero is an error for DGEFA.
+      ! If DGEFA gets any error, then the error return is set to 129.
+      !
+      ! IPVT is a vector of pivot indices returned by DGEFA and used by DGEDI.
+      ! DET is a determinant of the original matrix but is not optioned or used.
+      !
+      SUBROUTINE LINV1F(A,N,IA,AINV,IDGT,WK,IER)
+        implicit integer*4 (i-n), real*8 (a-h, o-z)
+        !
+        REAL*4	A(IA,IA),AINV(IA,IA),WK(N)
+        REAL*4	DET(2)
         INTEGER*4 IPVT(9)
-!
-!
-	CALL DGEFA(A,IA,N,IPVT,IER)
-	IF (IER .NE. 0) THEN			! return if error
-		IER = 129
-		RETURN
-	END IF
+        !
+        !
+        CALL DGEFA(A,IA,N,IPVT,IER)
+        IF (IER .NE. 0) THEN			! return if error
+          IER = 129
+          RETURN
+        END IF
         nnn=1
-	CALL DGEDI(A,IA,N,IPVT,DET,WK,nnn)
-	DO I=1,N				! move result to output array
-		DO J=1,N
-			AINV(J,I) = A(J,I)
-		END DO
-	END DO
-	RETURN
-	END
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   2003/02/24 23:41:26 peng
-!
-      subroutine splinex_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)splinex.for,v 4.14\000'
-      return
-      end
+        CALL DGEDI(A,IA,N,IPVT,DET,WK,nnn)
+        DO I=1,N				! move result to output array
+          DO J=1,N
+            AINV(J,I) = A(J,I)
+          END DO
+        END DO
+        RETURN
+      END
