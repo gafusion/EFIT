@@ -7962,9 +7962,7 @@
       yabs=1.5
       dyabs = 0.28
       dyabs = 0.22
-!vas      write(text,8950) (mfvers(i),i=1,2)
-      write(text,8950) trim(ch1),trim(ch2), &
-                       (mfvers(i),i=1,2)
+      write(text,8950) trim(ch1),trim(ch2),(mfvers(i),i=1,2)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8002,12 +8000,8 @@
       ht(msg) = 0.14
 
       msg = msg + 1
-!vas f90 modifi.
-!vas      write(text,'(10h kppcur = ,i2,10h kffcur = ,i2, &
-!vas            10h kwwcur = ,i2)')kppcur,kffcur,kwwcur
       write(text,1001) kppcur,kffcur,kwwcur 
- 1001 format(10h kppcur = ,i2,10h kffcur = ,i2, &
-            10h kwwcur = ,i2)
+ 1001 format(' kppcur = ',i2,' kffcur = ',i2,' kwwcur = ',i2)
       note(msg) = 1
       lmes(msg) = text
       imes(msg) = 38
@@ -8028,12 +8022,8 @@
       ht(msg) = 0.10
       msg = msg + 1
 !
-!vas f90 modif.
-!vas      write(text,'(10h kppfnc = ,i2,10h kppknt = ,i2, &
-!vas            10h pptens = ,f5.2)')kppfnc,kppknt,pptens
       write(text,1002)kppfnc,kppknt,pptens 
- 1002 format(10h kppfnc = ,i2,10h kppknt = ,i2, &
-            10h pptens = ,f5.2)
+ 1002 format(' kppfnc = ',i2,' kppknt = ',i2,' pptens = ',f5.2)
       note(msg) = 1
       lmes(msg) = text
       imes(msg) = 38
@@ -8041,7 +8031,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.10
-      write(text,'(40h ppknt         ppbdry           pp2bdry )')
+      write(text,"(' ppknt         ppbdry           pp2bdry ')")
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8050,7 +8040,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.10
-      write(text,'(41h-----------------------------------------)')
+      write(text,"('-----------------------------------------')")
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8060,8 +8050,7 @@
       yabs = yabs - dyabs
       ht(msg) = 0.10
       do i=1,kppknt
-      write(text,'(1h ,f4.2,4x,g15.5,2x,g15.5)') &
-                   ppknt(i),ppbdry(i),pp2bdry(i)
+      write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") ppknt(i),ppbdry(i),pp2bdry(i)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8074,12 +8063,8 @@
       yabs = yabs - dyabs
 
       msg = msg + 1
-!vas f90 modifi
-!vas      write(text,'(10h kfffnc = ,i2,10h kffknt = ,i2, &
-!vas            10h fftens = ,f5.2)')kfffnc,kffknt,fftens
       write(text,1003)kfffnc,kffknt,fftens 
- 1003 format(10h kfffnc = ,i2,10h kffknt = ,i2, &
-            10h fftens = ,f5.2)
+ 1003 format(' kfffnc = ',i2,' kffknt = ',i2,' fftens = ',f5.2)
       note(msg) = 1
       lmes(msg) = text
       imes(msg) = 38
@@ -8087,7 +8072,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.10
-      write(text,'(40h ffknt         ffbdry           ff2bdry )')
+      write(text,"(' ffknt         ffbdry           ff2bdry ')")
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8096,7 +8081,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.10
-      write(text,'(41h-----------------------------------------)')
+      write(text,"('-----------------------------------------')")
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8106,8 +8091,7 @@
       yabs = yabs - dyabs
       ht(msg) = 0.10
       do i=1,kffknt
-      write(text,'(1h ,f4.2,4x,g15.5,2x,g15.5)') &
-                   ffknt(i),ffbdry(i),ff2bdry(i)
+      write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") ffknt(i),ffbdry(i),ff2bdry(i)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8120,12 +8104,8 @@
       yabs = yabs - dyabs
 
       msg = msg + 1
-!vas f90 modifi
-!vas      write(text,'(10h kwwfnc = ,i2,10h kwwknt = ,i2, &
-!vas            10h wwtens = ,f5.2)')kwwfnc,kwwknt,wwtens
-      write(text,1004)kwwfnc,kwwknt,wwtens 
- 1004 format(10h kwwfnc = ,i2,10h kwwknt = ,i2, &
-            10h wwtens = ,f5.2)
+      write(text,1004) kwwfnc,kwwknt,wwtens
+ 1004 format(' kwwfnc = ',i2,' kwwknt = ',i2,' wwtens = ',f5.2)
       note(msg) = 1
       lmes(msg) = text
       imes(msg) = 38
@@ -8133,7 +8113,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.10
-      write(text,'(40h wwknt         wwbdry           ww2bdry )')
+      write(text,"(' wwknt         wwbdry           ww2bdry ')")
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8142,7 +8122,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.10
-      write(text,'(41h-----------------------------------------)')
+      write(text,"('-----------------------------------------')")
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8153,8 +8133,7 @@
       ht(msg) = 0.10
       if (kwwknt.gt.0) then
       do i=1,kwwknt
-      write(text,'(1h ,f4.2,4x,g15.5,2x,g15.5)') &
-                   wwknt(i),wwbdry(i),ww2bdry(i)
+      write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") wwknt(i),wwbdry(i),ww2bdry(i)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8168,12 +8147,8 @@
       endif
 !
       if (kedgep.gt.0) then
-!vas f90 modifi.
-!vas      write(text,'(40h pe_psin       pe_width         pedge   , &
-!vas                   17h    pedgep       )')
       write(text,1005) 
- 1005 format(40h pe_psin       pe_width         pedge   , &
-                   17h    pedgep       )
+ 1005 format(' pe_psin       pe_width         pedge       pedgep       ')
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8182,12 +8157,8 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.10
-!vas f90 modifi.
-!vas      write(text,'(41h-----------------------------------------, &
-!vas                   17h-----------------)')
       write(text,1006) 
- 1006 format(41h-----------------------------------------, &
-                   17h-----------------)
+ 1006 format('----------------------------------------------------------')
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8198,7 +8169,7 @@
       ht(msg) = 0.10
       pedgea=pedge/darea
       pedgep=pedgea/pe_width/sidif
-      write(text,'(1h ,f4.2,4x,g15.5,2x,g15.5,2x,g15.5)') &
+      write(text,"(' ',f4.2,4x,g15.5,2x,g15.5,2x,g15.5)") &
                    pe_psin,pe_width,pedgea,pedgep
       msg = msg + 1
       note(msg) = 1
@@ -8211,7 +8182,7 @@
       endif
 !
       if (kedgef.gt.0) then
-      write(text,'(40h fe_psin       fe_width         f2edge  )')
+      write(text,"(' fe_psin       fe_width         f2edge  ')")
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8220,7 +8191,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.10
-      write(text,'(41h-----------------------------------------)')
+      write(text,"('-----------------------------------------')")
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8229,8 +8200,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.10
-      write(text,'(1h ,f4.2,4x,g15.5,2x,g15.5)') &
-                   fe_psin,fe_width,f2edge
+      write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") fe_psin,fe_width,f2edge
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -9380,171 +9350,170 @@
 !
       return
  8948 format (a25)
-!vas 8950 format(1x,1('h'),' EFITD 129x2d ',2a5,1('h'))
- 8950 format(1x,1('h'),' EFITD',a3,' x',a3,' ',2a5,1('h'))
+ 8950 format (1x,1('h'),' EFITD',a3,' x',a3,' ',2a5,1('h'))
  8960 format (' date ran = ',a10)
  9000 format (' shot #   = ',i10)
- 9002 format (' shot #   = ',i10,12h date ran = ,a10)
+ 9002 format (' shot #   = ',i10,' date ran = ',a10)
  9020 format (' t(ms,us) = ',i6,1x,i6)
  9022 format (' chiprw   = ',1pe10.3)
  9024 format (' Rvt(m)   = ',1pe10.3)
- 9026 format (12h Kvt(m)   = ,i10)
- 9040 format (12h chi2(mag)= ,1pe10.3)
- 9060 format (12h rout(cm) = ,f10.2)
- 9080 format (12h zout(cm) = ,f10.3)
- 9100 format (12h a(cm)    = ,f10.2)
- 9120 format (12h elong    = ,f10.3)
- 9140 format (12h utri,ltri= ,f6.2,1x,f6.2)
- 9150 format (12h betan,In = ,f6.2,1x,f6.2)
- 9155 format (12h indent   = ,f10.3)
- 9160 format (12h V,A(m3,2)= ,f6.2,1x,f6.3)
- 9165 format (12h energy(j)= ,1pe10.3)
- 9180 format (12h betat(%) = ,f10.2)
- 9200 format (12h betap    = ,f10.2)
- 9220 format (12h li,li3    = ,f6.2,1x,f6.2)
+ 9026 format (' Kvt(m)   = ',i10)
+ 9040 format (' chi2(mag)= ',1pe10.3)
+ 9060 format (' rout(cm) = ',f10.2)
+ 9080 format (' zout(cm) = ',f10.3)
+ 9100 format (' a(cm)    = ',f10.2)
+ 9120 format (' elong    = ',f10.3)
+ 9140 format (' utri,ltri= ',f6.2,1x,f6.2)
+ 9150 format (' betan,In = ',f6.2,1x,f6.2)
+ 9155 format (' indent   = ',f10.3)
+ 9160 format (' V,A(m3,2)= ',f6.2,1x,f6.3)
+ 9165 format (' energy(j)= ',1pe10.3)
+ 9180 format (' betat(%) = ',f10.2)
+ 9200 format (' betap    = ',f10.2)
+ 9220 format (' li,li3    = ',f6.2,1x,f6.2)
  9230 format (' error, # = ',1pe10.3,1x,i3)
- 9240 format (12h delstar  = ,1pe8.1,1x,1pe8.1)
- 9260 format (12h fpols(kA)= ,f10.1)
- 9262 format (12h ux,lx(cm)= ,f6.2,1x,f6.2)
- 9265 format (12h J0n,J1n  = ,f6.2,1x,f6.2)
- 9268 format (12h q1,q95   = ,f6.2,1x,f6.2)
- 9272 format (12h dsep(cm) = ,f10.3)
- 9270 format (12h ipf(ka)  = ,f10.1)
- 9280 format (12h rm,rc(cm)= ,f6.1,1x,f6.1)
- 9290 format (12h zm,zc(cm)= ,f6.2,1x,f6.2)
- 9300 format (4x,16h   data used:   )
- 9320 format (1x,i2,13h flux loops, ,i2,4h ECE)
- 9340 format (1x,i2,19h magnetic probes   )
- 9360 format (1x,i2,18h partial rogowskis)
- 9380 format (1x,i2,6h rogow,1x,i2,4h fc ,1x,i2,4h ec )
- 9385 format (1x,i2,5h di, ,i2,5h mse ,i2,5h li  )
-99385 format (1x,i2,5h di, ,i2,5h mse ,i2,5h mls )
- 9390 format (12h ip(ka)   = ,f10.1)
- 9395 format (12h scrapof(mm),1x,5f5.1)
- 9399 format (12h n/nc,qmer= ,f6.3,1x,f6.3)
- 9400 format (12h bt0(t)   = ,f10.3)
- 9408 format (12h          = ,f10.3)
- 9420 format (12h lin,o(cm)= ,f6.2,1x,f6.2)
- 9440 format (12h chi2max  = ,1pe10.3)
- 9441 format (12h fexpx,vs = ,f6.2,1x,f6.2)
- 9460 format (12h lt,b(cm) = ,f6.2,1x,f6.2)
- 9465 format (12h s/q2,taun= ,f6.2,1x,f6.2)
- 9467 format (12h Zt(cm),RL= ,f6.2,1x,f6.2)
- 9470 format (12h sib(vs/r)= ,1pe10.3)
- 9480 format (12h elongm,qm= ,f6.2,1x,f6.3)
- 9482 format (12h sir(vs/r)= ,1pe10.3)
- 9484 format (12h n(Rc,Zc) = ,f10.3)
- 9490 format (12h shearb,Jb= ,f6.2,1x,f6.3)
- 9492 format (12h dqdsi/q-b= ,f10.3)
- 9494 format (12h aq1,2(cm)= ,f6.2,1x,f6.2)
- 9496 format (12h siw, q   = ,f6.3,1x,f6.2)
- 9498 format (12h shearw,Jw= ,f6.2,1x,f6.3)
- 9495 format (12h chidlc   = ,1pe10.3)
- 9497 format (12h chipre   = ,1pe10.3)
- 9500 format (12h errbp    = ,1pe10.3)
- 9502 format (12h nev2(cm3)= ,1pe10.3)
- 9504 format (12h erbmax   = ,1pe10.3)
- 9506 format (12h erbave   = ,1pe10.3)
- 9507 format (12h ner0(cm3)= ,1pe10.3)
- 9510 format (12h errbpli2 = ,1pe10.3)
- 9512 format (12h taue(ms) = ,1pe10.3)
- 9520 format (12h Rvsu(cm) = ,f6.1,1x,f6.1)
- 9521 format (12h Rvsd(cm) = ,f6.1,1x,f6.1)
- 9522 format (12h rtch(cm) = ,f10.3)
- 9524 format (12h ztch(cm) = ,f10.3)
- 9530 format (12h rsep(cm) = ,f6.1,1x,f6.1)
- 9540 format (12h zsep(cm) = ,f6.1,1x,f6.1)
- 9542 format (12h betapd,w = ,f6.2,1x,f6.2)
- 9544 format (12h betatd,w = ,f6.2,1x,f6.2)
- 9546 format (12h wdia(J)  = ,1pe10.3)
- 9547 format (12h wtor(J)  = ,1pe10.3)
- 9548 format (12h taued(ms)= ,1pe10.3)
- 9550 format (12h vl(V),Jav= ,f6.2,1x,f6.2)
- 9552 format (12h qmericer = ,f10.2)
- 9555 format (12h chitot   = ,1pe10.3)
- 9560 format (12h p1/p0(f) = ,1pe10.3)
- 9562 format (12h p1/p0(d) = ,1pe10.3)
- 9565 format (12h kppcur   = ,i10)
- 9570 format (12h kffcur   = ,i10)
- 9575 format (12h pcurbd   = ,f10.3)
- 9580 format (12h fcurbd   = ,f10.3)
- 9603 format (12h icp,  ivs= ,2i5)
- 9605 format (12h kf, kp, E= ,i4,2i3)
- 9610 format (12h fpd, p, E= ,3f4.1)
- 9612 format (12h kw ,  wbd= ,i5,f5.1)
- 9614 format (12h kvt      = ,i5)
- 9615 format (12h fwbp, fwq= ,2f5.1)
- 9620 format (12h kcf,  kcp= ,2i5)
- 9623 format (12h kcw      = ,1i5)
- 9625 format (12h alfp     = ,f10.3)
-96251 format (12h alfp     = ,f10.3)
-96252 format (12h Ivt(ka)  = ,f10.3)
-96253 format (12h Ipt(ka)  = ,f10.3)
-96254 format (12h Ivp(ka)  = ,f10.3)
- 9630 format (12h kprfit   = ,i10)
- 9635 format (12h Ze(cm)   = ,f10.3)
- 9637 format (12h relax    = ,f10.3)
- 9639 format (12h Rj(m)    = ,f10.3)
- 9700 format('solid lines = calculated values')
- 9710 format('symbols = experimental values')
- 9800 format (12h chisqte  = ,1pe10.3)
- 9805 format (12h chisqne  = ,1pe10.3)
- 9810 format (12h fco2ne   = ,f10.3)
- 9815 format (12h nptef    = ,i10)
- 9820 format (12h npnef    = ,i10)
- 9825 format (12h chisqti  = ,1pe10.3)
- 9828 format (12h zt(cm),RL= ,f6.2,1x,f6.2)
- 9830 format (12h nptionf  = ,i10)
- 9832 format (12h p0(n/m2) = ,1pe10.3)
- 9834 format (12h dp1dx(d) = ,1pe10.3)
- 9835 format (12h dp1dx(f) = ,1pe10.3)
- 9836 format (12h kpressb  = ,i10)
- 9838 format (12h J(0.95)  = ,1pe10.3)
- 9840 format (12h pp(.95)  = ,1pe10.3)
- 9842 format (12h bimf,e(%)= ,f6.2,1x,f6.2)
- 9852 format (12h siec,dsi = ,f8.4,1x,f8.4)
- 9853 format (12h eccd(kA) = ,1pe10.3)
- 9857 format (12h betped,bn= ,f8.4,1x,f8.4)
- 9900 format('  error in sets2d = ',i4)
- 9910 format('  error in spline =',i4,' (r,z)= ( ',f5.2,',',f5.2,')')
- 9930 format (12h chi2ms,li= ,f7.2,1x,f7.2)
-99930 format (12h chi2ms,ls= ,f7.2,1x,1pe10.3)
- 9932 format (12h Zeff-res = ,f10.2)
- 9934 format (12h Tave(KeV)= ,f10.3)
- 9936 format (12h Pb(MW),Wn= ,f6.2,1x,f6.2)
- 9937 format (21h SYMMETRIZED SOLUTION)
- 9938 format (12h Ifb(KA)  = ,1pe10.3)
- 9940 format (12h qgam     = ,8(1x,f5.2))
-99940 format (12h qmls     = ,8(1x,f5.2))
- 9945 format (12h qsiw     = ,8(1x,f5.2))
- 9950 format (5h Fig. ,i3)
- 9960 format (12h receo(m) = ,f6.3)
- 9962 format (12h zeceo(m) = ,f6.3)
- 9965 format (20h recem(m),  recep(m))
+ 9240 format (' delstar  = ',1pe8.1,1x,1pe8.1)
+ 9260 format (' fpols(kA)= ',f10.1)
+ 9262 format (' ux,lx(cm)= ',f6.2,1x,f6.2)
+ 9265 format (' J0n,J1n  = ',f6.2,1x,f6.2)
+ 9268 format (' q1,q95   = ',f6.2,1x,f6.2)
+ 9272 format (' dsep(cm) = ',f10.3)
+ 9270 format (' ipf(ka)  = ',f10.1)
+ 9280 format (' rm,rc(cm)= ',f6.1,1x,f6.1)
+ 9290 format (' zm,zc(cm)= ',f6.2,1x,f6.2)
+ 9300 format (4x,'   data used:   ')
+ 9320 format (1x,i2,' flux loops, ',i2,' ECE')
+ 9340 format (1x,i2,' magnetic probes   ')
+ 9360 format (1x,i2,' partial rogowskis')
+ 9380 format (1x,i2,' rogow',1x,i2,' fc ',1x,i2,' ec ')
+ 9385 format (1x,i2,' di, ',i2,' mse ',i2,' li  ')
+99385 format (1x,i2,' di, ',i2,' mse ',i2,' mls ')
+ 9390 format (' ip(ka)   = ',f10.1)
+ 9395 format (' scrapof(mm)',1x,5f5.1)
+ 9399 format (' n/nc,qmer= ',f6.3,1x,f6.3)
+ 9400 format (' bt0(t)   = ',f10.3)
+ 9408 format ('          = ',f10.3)
+ 9420 format (' lin,o(cm)= ',f6.2,1x,f6.2)
+ 9440 format (' chi2max  = ',1pe10.3)
+ 9441 format (' fexpx,vs = ',f6.2,1x,f6.2)
+ 9460 format (' lt,b(cm) = ',f6.2,1x,f6.2)
+ 9465 format (' s/q2,taun= ',f6.2,1x,f6.2)
+ 9467 format (' Zt(cm),RL= ',f6.2,1x,f6.2)
+ 9470 format (' sib(vs/r)= ',1pe10.3)
+ 9480 format (' elongm,qm= ',f6.2,1x,f6.3)
+ 9482 format (' sir(vs/r)= ',1pe10.3)
+ 9484 format (' n(Rc,Zc) = ',f10.3)
+ 9490 format (' shearb,Jb= ',f6.2,1x,f6.3)
+ 9492 format (' dqdsi/q-b= ',f10.3)
+ 9494 format (' aq1,2(cm)= ',f6.2,1x,f6.2)
+ 9496 format (' siw, q   = ',f6.3,1x,f6.2)
+ 9498 format (' shearw,Jw= ',f6.2,1x,f6.3)
+ 9495 format (' chidlc   = ',1pe10.3)
+ 9497 format (' chipre   = ',1pe10.3)
+ 9500 format (' errbp    = ',1pe10.3)
+ 9502 format (' nev2(cm3)= ',1pe10.3)
+ 9504 format (' erbmax   = ',1pe10.3)
+ 9506 format (' erbave   = ',1pe10.3)
+ 9507 format (' ner0(cm3)= ',1pe10.3)
+ 9510 format (' errbpli2 = ',1pe10.3)
+ 9512 format (' taue(ms) = ',1pe10.3)
+ 9520 format (' Rvsu(cm) = ',f6.1,1x,f6.1)
+ 9521 format (' Rvsd(cm) = ',f6.1,1x,f6.1)
+ 9522 format (' rtch(cm) = ',f10.3)
+ 9524 format (' ztch(cm) = ',f10.3)
+ 9530 format (' rsep(cm) = ',f6.1,1x,f6.1)
+ 9540 format (' zsep(cm) = ',f6.1,1x,f6.1)
+ 9542 format (' betapd,w = ',f6.2,1x,f6.2)
+ 9544 format (' betatd,w = ',f6.2,1x,f6.2)
+ 9546 format (' wdia(J)  = ',1pe10.3)
+ 9547 format (' wtor(J)  = ',1pe10.3)
+ 9548 format (' taued(ms)= ',1pe10.3)
+ 9550 format (' vl(V),Jav= ',f6.2,1x,f6.2)
+ 9552 format (' qmericer = ',f10.2)
+ 9555 format (' chitot   = ',1pe10.3)
+ 9560 format (' p1/p0(f) = ',1pe10.3)
+ 9562 format (' p1/p0(d) = ',1pe10.3)
+ 9565 format (' kppcur   = ',i10)
+ 9570 format (' kffcur   = ',i10)
+ 9575 format (' pcurbd   = ',f10.3)
+ 9580 format (' fcurbd   = ',f10.3)
+ 9603 format (' icp,  ivs= ',2i5)
+ 9605 format (' kf, kp, E= ',i4,2i3)
+ 9610 format (' fpd, p, E= ',3f4.1)
+ 9612 format (' kw ,  wbd= ',i5,f5.1)
+ 9614 format (' kvt      = ',i5)
+ 9615 format (' fwbp, fwq= ',2f5.1)
+ 9620 format (' kcf,  kcp= ',2i5)
+ 9623 format (' kcw      = ',1i5)
+ 9625 format (' alfp     = ',f10.3)
+96251 format (' alfp     = ',f10.3)
+96252 format (' Ivt(ka)  = ',f10.3)
+96253 format (' Ipt(ka)  = ',f10.3)
+96254 format (' Ivp(ka)  = ',f10.3)
+ 9630 format (' kprfit   = ',i10)
+ 9635 format (' Ze(cm)   = ',f10.3)
+ 9637 format (' relax    = ',f10.3)
+ 9639 format (' Rj(m)    = ',f10.3)
+ 9700 format ('solid lines = calculated values')
+ 9710 format ('symbols = experimental values')
+ 9800 format (' chisqte  = ',1pe10.3)
+ 9805 format (' chisqne  = ',1pe10.3)
+ 9810 format (' fco2ne   = ',f10.3)
+ 9815 format (' nptef    = ',i10)
+ 9820 format (' npnef    = ',i10)
+ 9825 format (' chisqti  = ',1pe10.3)
+ 9828 format (' zt(cm),RL= ',f6.2,1x,f6.2)
+ 9830 format (' nptionf  = ',i10)
+ 9832 format (' p0(n/m2) = ',1pe10.3)
+ 9834 format (' dp1dx(d) = ',1pe10.3)
+ 9835 format (' dp1dx(f) = ',1pe10.3)
+ 9836 format (' kpressb  = ',i10)
+ 9838 format (' J(0.95)  = ',1pe10.3)
+ 9840 format (' pp(.95)  = ',1pe10.3)
+ 9842 format (' bimf,e(%)= ',f6.2,1x,f6.2)
+ 9852 format (' siec,dsi = ',f8.4,1x,f8.4)
+ 9853 format (' eccd(kA) = ',1pe10.3)
+ 9857 format (' betped,bn= ',f8.4,1x,f8.4)
+ 9900 format ('  error in sets2d = ',i4)
+ 9910 format ('  error in spline =',i4,' (r,z)= ( ',f5.2,',',f5.2,')')
+ 9930 format (' chi2ms,li= ',f7.2,1x,f7.2)
+99930 format (' chi2ms,ls= ',f7.2,1x,1pe10.3)
+ 9932 format (' Zeff-res = ',f10.2)
+ 9934 format (' Tave(KeV)= ',f10.3)
+ 9936 format (' Pb(MW),Wn= ',f6.2,1x,f6.2)
+ 9937 format (' SYMMETRIZED SOLUTION')
+ 9938 format (' Ifb(KA)  = ',1pe10.3)
+ 9940 format (' qgam     = ',8(1x,f5.2))
+99940 format (' qmls     = ',8(1x,f5.2))
+ 9945 format (' qsiw     = ',8(1x,f5.2))
+ 9950 format (' Fig. ',i3)
+ 9960 format (' receo(m) = ',f6.3)
+ 9962 format (' zeceo(m) = ',f6.3)
+ 9965 format (' recem(m),  recep(m)')
  9968 format (2x,f6.3,5x,f6.3)
- 9969 format (12h xfit     = ,f6.3)
+ 9969 format (' xfit     = ',f6.3)
  9972 format (12x,f6.3)
- 9976 format (12h chisqfit = ,f6.3)
- 9978 format (12h tchiece  = ,1pe10.3)
- 9979 format (12h chiecebz = ,1pe10.3)
+ 9976 format (' chisqfit = ',f6.3)
+ 9978 format (' tchiece  = ',1pe10.3)
+ 9979 format (' chiecebz = ',1pe10.3)
 10000 format (6e12.6)
 10020 format (5e10.4)
 14980 format (i5)
 15000 format (2e12.6)
-18950 format (7h a, g =,1pe10.3)
-18960 format (7h       ,1pe10.3)
-18970 format (1h ,1pe10.3)
-18971 format (8h w    = ,1pe11.4)
-18973 format (8h        ,1pe11.4)
-18980 format (7h a0  = ,1pe10.3)
-18981 format (8h p0/<p>=,1pe9.1)
-18983 format (7h cno = ,1pe10.3)
-18985 format (7h Vfb = ,1pe10.3,4h    ,f3.0,1h ,f3.0)
-19603 format (12h rm,al    = ,f7.3,1x,f7.3)
-19605 format (12h bt,bw    = ,f7.3,1x,f7.3)
-19610 format (12h saaa(cm) = ,f7.3)
-28971 format (8h w    = ,1pe11.4,1x,1pe11.4)
-28973 format (8h        ,1pe11.4,1x,1pe11.4)
+18950 format (' a, g =',1pe10.3)
+18960 format ('       ',1pe10.3)
+18970 format (' ',1pe10.3)
+18971 format (' w    = ',1pe11.4)
+18973 format ('        ',1pe11.4)
+18980 format (' a0  = ',1pe10.3)
+18981 format (' p0/<p>=',1pe9.1)
+18983 format (' cno = ',1pe10.3)
+18985 format (' Vfb = ',1pe10.3,'    ',f3.0,' ',f3.0)
+19603 format (' rm,al    = ',f7.3,1x,f7.3)
+19605 format (' bt,bw    = ',f7.3,1x,f7.3)
+19610 format (' saaa(cm) = ',f7.3)
+28971 format (' w    = ',1pe11.4,1x,1pe11.4)
+28973 format ('        ',1pe11.4,1x,1pe11.4)
       end
       subroutine expand(n1,n2,nexexx,xmm,jtime)
       use commonblocks,only: worka,byringr,byringz,xxtra,yxtra, &

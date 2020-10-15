@@ -2838,16 +2838,16 @@
 !
  6000 continue
       return
- 7400 format (/,2x,7htime = ,e12.5,2x,8hchipr = ,e12.5, &
-              2x,10hcurrent = ,e12.5,/,2x,5hit = ,i5, &
-              1x,8hcondn = ,1pe11.4, &
-              1x,8hchisq = ,1pe11.4,1x,9hchigam = ,1pe11.4, &
-              /,2x,11hchiecebz = ,1pe11.4,1x,14htchieceR+R- = , &
+ 7400 format (/,2x,'time = ',e12.5,2x,'chipr = ',e12.5, &
+              2x,'current = ',e12.5,/,2x,'it = ',i5, &
+              1x,'condn = ',1pe11.4, &
+              1x,'chisq = ',1pe11.4,1x,'chigam = ',1pe11.4, &
+              /,2x,'chiecebz = ',1pe11.4,1x,'tchieceR+R- = ', &
               1pe11.4)
-97400 format (/,2x,7htime = ,e12.5,2x,8hchimls= ,e12.5, &
-              2x,10hchiels = ,e12.5)
- 7445 format (10x,22hfitting parameters:   ,i5)
+97400 format (/,2x,'time = ',e12.5,2x,'chimls= ',e12.5, &
+              2x,'chiels = ',e12.5)
+ 7445 format (10x,'fitting parameters:   ',i5)
  7450 format (8(1x,e12.5,1x))
- 7460 format (10x,7hchi ip:,/,15x,e12.5)
+ 7460 format (10x,'chi ip:',/,15x,e12.5)
  8000 format (/,'  ** Problem in Decomposition **',i10)
       end

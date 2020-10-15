@@ -376,14 +376,14 @@
   700 continue
       return
 !
- 1020 format (1hp,i5,1h.,i3)
+ 1020 format ('p',i5,'.',i3)
  1040 format (1x,4e16.9)
  1041 format (1x,4i5)
  1042 format (1x,a42,1x,a3)
  1050 format (1x,i5,11x,i5)
  1053 format (1x,i6,11x,i5)
  1055 format (1x,a10,2a5)
- 1060 format (1h*,f8.3,9x,i5,11x,i5,1x,a3,1x,i3,1x,i3,1x,a3,1x,2i5)
+ 1060 format ('*',f8.3,9x,i5,11x,i5,1x,a3,1x,i3,1x,i3,1x,a3,1x,2i5)
  1070 format(16a5)
       end
       subroutine weqdsk(jtime)
@@ -910,14 +910,14 @@
       DEALLOCATE(workk,dmion,bworm,cworm,dworm)
 !
       return
- 1020 format (1hx,i5,1h.,i3)
- 1040 format (8h  EFITD )
+ 1020 format ('x',i5,'.',i3)
+ 1040 format ('  EFITD ')
  1042 format (1x,a42,1x,a3)
- 1050 format (3h   ,a5)
- 1060 format (a5,3h   )
+ 1050 format ('   ',a5)
+ 1060 format (a5,'   ')
  1070 format (' # ',i5)
  1073 format (' #',i6)
- 1080 format (2h  ,i4,2hms)
+ 1080 format ('  ',i4,2hms)
  2000 format (6a8,3i4)
  2020 format (5e16.9)
  2022 format (2i5)
@@ -1192,9 +1192,9 @@
          if ((ktime.gt.99).and.(ktime.le.999)) &
               encode (4,1050,last) ktime
          if (ktime.gt.999) encode (4,1060,last) ktime
- 1030    format (3h000,i1)
- 1040    format (2h00,i2)
- 1050    format (1h0,i3)
+ 1030    format ('000',i1)
+ 1040    format ('00',i2)
+ 1050    format ('0',i3)
  1060    format (i4)
          eqdsk = eqdsk(1:13)//'_'//last
          nceq = NCCRE(eqdsk,NCCLOB,ierr)              
@@ -1203,8 +1203,8 @@
               (ifirst.eq.1).and.(itype.eq.1)) then
          if (ishot.le.99999) encode (10,1010,eqdsk) ishot
          if (ishot.gt.99999) encode (10,1020,eqdsk) ishot
- 1010    format (2hm0,i5,3h.nc)
- 1020    format (1hm,i6,3h.nc)
+ 1010    format ('m0',i5,'.nc')
+ 1020    format ('m',i6,'.nc')
          nceq = NCCRE(eqdsk,NCCLOB,ierr) ! create file, overwrite if exists
 !
 ! --- creates one file for each slice

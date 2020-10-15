@@ -610,14 +610,14 @@
                   navbc(1),time_err)
       if (time_err .eq. 1) then
         if (nvtime .eq. -1) then
-          print *, ''
-          print *, 'ERROR: BCOIL data unavailable'
-          print *, ''
+          write(*,*) ''
+          write(*,*) 'ERROR: BCOIL data unavailable'
+          write(*,*) ''
         else
-          print *, ''
-          print *, 'ERROR: BCOIL data unavailable for following times'
+          write(*,*) ''
+          write(*,*) 'ERROR: BCOIL data unavailable for following times'
           do j=1,nvtime-1
-            print '(F8.1)', vtime(j)
+            write(*,'(F8.1)') vtime(j)
           enddo
         endif
         iierr = 1
@@ -659,14 +659,14 @@
                     deve(1,i),navec(1,i),time_err)
         if (time_err .eq. 1) then
           if (nvtime .eq. -1) then
-            print *, ''
-            print *, 'ERROR: ECOIL data unavailable'
-            print *, ''
+            write(*,*) ''
+            write(*,*) 'ERROR: ECOIL data unavailable'
+            write(*,*) ''
           else
-            print *, ''
-            print *, 'ERROR: ECOIL data unavailable for following times'
+            write(*,*) ''
+            write(*,*) 'ERROR: ECOIL data unavailable for following times'
             do j=1,nvtime-1
-              print '(F8.1)', vtime(j)
+              write(*,'(F8.1)') vtime(j)
             enddo
           endif
           iierr = 1
@@ -865,7 +865,7 @@
             stdevx(i)=stdevxx(j_save)
             navx(i)=navxx(j_save)
 !            write(6,999) xw(j_save),name
-!999         format(1x,"match at ",f15.8,"for ",a)
+!999         format(1x,'match at ',f15.8,'for ',a)
          enddo
       endif
 !
@@ -1122,7 +1122,7 @@
             enddo
             y(i) = yw(j_save)
 !            write(6,999) xw(j_save),name
-!999         format(1x,"match at ",f15.8,"for ",a)
+!999         format(1x,'match at ',f15.8,'for ',a)
          enddo
       endif
 !
@@ -1245,7 +1245,7 @@
             enddo
             y(i) = w(j_save)
 !            write(6,999) xw(j_save),name
-!999         format(1x,"match at ",f15.8,"for ",a)
+!999         format(1x,'match at ',f15.8,'for ',a)
          enddo
       endif
 !

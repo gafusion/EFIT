@@ -1095,15 +1095,15 @@
       if(ktear.eq.3)then
         idum=3
         ijtime=time(jtime)
-        write (case(1),fmt='(8h  EFITD )')
-        write (case(2),fmt='(3h   ,a5)') mfvers(1)
-        write (case(3),fmt='(a5,3h   )') mfvers(2)
+        write (case(1),fmt="('  EFITD ')")
+        write (case(2),fmt="('   ',a5)") mfvers(1)
+        write (case(3),fmt="(a5,'   ')") mfvers(2)
         if (ishot.le.99999) then
-         write (case(4),fmt='(3h # ,i5)') ishot
+          write (case(4),fmt="(' # ',i5)") ishot
         else
-         write (case(4),fmt='(2h #,i6)') ishot
+          write (case(4),fmt="(' #',i6)") ishot
         endif
-        write (case(5),fmt='(2h ,i4,2hms)') ijtime
+        write (case(5),fmt="('  ',i4,'ms')") ijtime
         case(6)=' '
         let = 't'
         call getfnmu(itimeu,let,ishot,ijtime,eqdsk)
@@ -1158,7 +1158,7 @@
         ht(msg) = 0.14
 !
         call date(uday)
-        write (text,fmt='(12h date ran = ,a10)') uday
+        write (text,fmt="(' date ran = ',a10)") uday
         msg = msg + 1
         note(msg) = 1
         lmes(msg) = text
@@ -1188,7 +1188,7 @@
         yabs = yabs - dyabs
         ht(msg) = 0.14
 !
-        write (text,fmt='(2x,20hConventional Tearing)')
+        write (text,fmt="(2x,'Conventional Tearing')")
         msg = msg + 1
         note(msg) = 1
         lmes(msg) = text
@@ -1198,20 +1198,13 @@
         yabs = yabs - dyabs-0.07
         ht(msg) = 0.14
 !
-!vas f90 modifi.
-!vas        write(text,fmt='(1x,1hm,2x,1hn, &
-!vas                                      1x,12h    psi     , &
-!vas                                      1x,12h   r        , &
-!vas                                      1x,12h   lambda   , &
-!vas                                      1x,13h   deltaprime, &
-!vas                                      1x,11h   wsat    )')
         write(text,1001)
-  1001 format(1x,1hm,2x,1hn, &
-                                      1x,12h    psi     , &
-                                      1x,12h   r        , &
-                                      1x,12h   lambda   , &
-                                      1x,13h   deltaprime, &
-                                      1x,11h   wsat    )
+  1001 format(1x,'m',2x,'n', &
+                                      1x,'    psi     ', &
+                                      1x,'   r        ', &
+                                      1x,'   lambda   ', &
+                                      1x,'   deltaprime', &
+                                      1x,'   wsat    ')
         msg = msg + 1
         note(msg) = 1
         lmes(msg) = text
@@ -1238,7 +1231,7 @@
           ht(msg) = 0.14
         enddo
 !
-        write (text,fmt='(2x,20hNeoclassical Tearing)')
+        write (text,fmt="(2x,'Neoclassical Tearing')")
         msg = msg + 1
         note(msg) = 1
         lmes(msg) = text
@@ -1248,18 +1241,12 @@
         yabs = yabs - dyabs-0.07
         ht(msg) = 0.14
 !
-!vas f90 modifi
-!vas        write(text,fmt='(1x,1hm,2x,1hn, &
-!vas                                      1x,12h   wnc-press, &
-!vas                                      1x,12h   wnc-n    , &
-!vas                                      1x,12h   wnc-Te   , &
-!vas                                      1x,12h   wnc-Ti   )')
         write(text,1002)
- 1002   format(1x,1hm,2x,1hn, &
-                                      1x,12h   wnc-press, &
-                                      1x,12h   wnc-n    , &
-                                      1x,12h   wnc-Te   , &
-                                      1x,12h   wnc-Ti   )
+ 1002   format(1x,'m',2x,'n', &
+                                      1x,'   wnc-press', &
+                                      1x,'   wnc-n    ', &
+                                      1x,'   wnc-Te   ', &
+                                      1x,'   wnc-Ti   ')
         msg = msg + 1
         note(msg) = 1
         lmes(msg) = text
@@ -1292,14 +1279,10 @@
         yabs = yabs - dyabs-0.07
         ht(msg) = 0.14
 !
-!vas f90 modifi.
-!vas        write(text,fmt='(1x,1hm,1x,1hn, &
-!vas                                      1x,12h   w-star1  , &
-!vas                                      1x,12h   w-star2  )')
         write(text,1003)
- 1003   format(1x,1hm,1x,1hn, &
-                                      1x,12h   w-star1  , &
-                                      1x,12h   w-star2  )
+ 1003   format(1x,'m',1x,'n', &
+                                      1x,'   w-star1  ', &
+                                      1x,'   w-star2  ')
         msg = msg + 1
         note(msg) = 1
         lmes(msg) = text

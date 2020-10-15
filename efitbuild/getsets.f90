@@ -1001,7 +1001,7 @@
 
       ! NOTE : Finished EFIT run so STOP execution
       if (rank == 0) then
-        print *, 'FORTRAN STOP - normal termination'
+        write(*,*) 'FORTRAN STOP - normal termination'
       endif
       call mpi_finalize(ierr)
       stop
@@ -1036,8 +1036,7 @@
        '       sense of tracing (+1 for down, -1 for up),'/ &
        '       ixstrt (+1 for start on outside, -1' &
        ' for start inside):')
- 6100 format(/,1x,48htype plot mode (0=none, 1=tektronix, 2=versatec, &
-           ,17h 3=qms, -=x ray):)
+ 6100 format(/,1x,'type plot mode (0=none, 1=tektronix, 2=versatec, 3=qms, -=x ray):')
  6200 format (/,1x,'number of time slices?')
  6220 format (/,1x,'type input file names:')
  6230 format (1x,'#')

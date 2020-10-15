@@ -50,8 +50,8 @@ SOURCES = psicald.f90 lsolved.f90 subs_d_pt.f90 modules-efit.f90 \
           prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
           boundud129.f90 chkeud129.f90 splineud129.f90 \
           weqdud129.f90 \
-	  pltdatud129.f90 getecdud129.f90 getneud129.f90 ppbasisfuncud129.f90 \
-	  ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
+          pltdatud129.f90 getecdud129.f90 getneud129.f90 ppbasisfuncud129.f90 \
+          ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
           expdataud129.f90 
 ifeq ($(MACHINE),Linux)
 SOURCES = psicald.f90 lsolved.f90 subs_d_pt_linux.f90 modules-efit.f90 \
@@ -61,8 +61,8 @@ SOURCES = psicald.f90 lsolved.f90 subs_d_pt_linux.f90 modules-efit.f90 \
           prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
           boundud129.f90 chkeud129.f90 splineud129.f90 \
           weqdud129.f90 \
-	  pltdatud129.f90 getecdud129.f90 getneud129.f90 ppbasisfuncud129.f90 \
-	  ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
+          pltdatud129.f90 getecdud129.f90 getneud129.f90 ppbasisfuncud129.f90 \
+          ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
           expdataud129.f90 
     ifeq ($(FCOM),lf95)
 SOURCES = psicald.f90 lsolved.f90 subs_d_pt_linuxlf95.f90 modules-efit.f90 \
@@ -72,8 +72,8 @@ SOURCES = psicald.f90 lsolved.f90 subs_d_pt_linuxlf95.f90 modules-efit.f90 \
           prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
           boundud129.f90 chkeud129.f90 splineud129.f90 \
           weqdud129.f90 \
-	  pltdatud129.f90 getecdud129.f90 getneud129.f90 ppbasisfuncud129.f90 \
-	  ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
+          pltdatud129.f90 getecdud129.f90 getneud129.f90 ppbasisfuncud129.f90 \
+          ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
           expdataud129.f90 
 
     endif
@@ -85,9 +85,9 @@ SOURCES = psicald.f90 lsolved.f90 subs_d_pt_linuxlf95.f90 modules-efit.f90 \
           prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
           boundud129.f90 chkeud129.f90 splineud129.f90 \
           weqdud129.f90 \
-	  pltdatud129.f90 getecdud129.f90 getneud129.f90 \
+          pltdatud129.f90 getecdud129.f90 getneud129.f90 \
           ppbasisfuncud129.f90 \
-	  ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
+          ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
           expdataud129.f90 
     endif
     ifeq ($(FCOM),mpipgf90)
@@ -98,9 +98,9 @@ SOURCES = psicald.f90 lsolved.f90 subs_d_pt_linux.f90 modules-efit.f90 \
           prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
           boundud129.f90 chkeud129.f90 splineud129.f90 \
           weqdud129.f90 \
-	  pltdatud129.f90 getecdud129.f90 getneud129.f90 \
+          pltdatud129.f90 getecdud129.f90 getneud129.f90 \
           ppbasisfuncud129.f90 \
-	  ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
+          ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
           expdataud129.f90 
     endif
 endif

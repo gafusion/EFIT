@@ -138,7 +138,7 @@
 ! MPI <<<
      if (nw == 0 .or. nh == 0) then
        if (rank == 0) then
-         print *, 'ERROR: Must specify grid dimensions as arguments'
+         write(*,*) 'ERROR: Must specify grid dimensions as arguments'
        endif
 ! MPI >>>
 #if defined(USEMPI)
@@ -193,7 +193,7 @@
 #endif
      if (input_flag) then
        if (rank == 0) then
-         print *, ' Using efit.input file...'
+         write(*,*) ' Using efit.input file...'
        endif
 ! ALL processes open and read efit.input file
        open(unit=nin,status='old',file='efit.input')
@@ -291,7 +291,7 @@
       if (allocated(dist_data_displs)) deallocate(dist_data_displs)
       if (allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
       if (rank == 0) then
-        print *, 'FORTRAN STOP - normal termination'
+        write(*,*) 'FORTRAN STOP - normal termination'
       endif
       call mpi_finalize(ierr)
 #endif
@@ -1398,22 +1398,21 @@
       endif
 !
       return
- 7400 format (/,2x,7htime = ,e12.5,2x,8hchisq = ,e12.5, &
-              2x,10hcurrent = ,e12.5)
- 7420 format (10x,14hchi psi loops:)
- 7430 format (10x,26hchi inner magnetic probes:)
+ 7400 format (/,2x,'time = ',e12.5,2x,'chisq = ',e12.5,2x,'current = ',e12.5)
+ 7420 format (10x,'chi psi loops:')
+ 7430 format (10x,'chi inner magnetic probes:')
  7450 format (8(1x,e12.5:,1x))
- 7460 format (10x,7hchi ip:,/,15x,e12.5)
- 7470 format (10x,22hchi pressure:         ,/,1x,e12.5)
- 7480 format (10x,22hchi F-coils:          ,/,10x,e12.5)
- 7482 format (10x,11hchi psiref:,/,15x,e12.5)
- 7485 format (10x,22hchi E-coils:          ,/,1x,e12.5)
- 7486 format (10x,22hchi ecebz:            ,/,1x,e12.5)
- 7487 format (10x,22hchi total eceR+R-:    ,/,1x,e12.5)
- 7488 format (10x,22hchi eceR+R-:          )
- 7585 format (10x,22hSimulated MSE-LS (T): ,/)
- 7588 format (10x,23hSimulated MSE-LS2 (T): ,/)
- 7590 format (10x,23hSimulated MSE-LSV (T): ,/)
+ 7460 format (10x,'chi ip:',/,15x,e12.5)
+ 7470 format (10x,'chi pressure:         ',/,1x,e12.5)
+ 7480 format (10x,'chi F-coils:          ',/,10x,e12.5)
+ 7482 format (10x,'chi psiref:',/,15x,e12.5)
+ 7485 format (10x,'chi E-coils:          ',/,1x,e12.5)
+ 7486 format (10x,'chi ecebz:            ',/,1x,e12.5)
+ 7487 format (10x,'chi total eceR+R-:    ',/,1x,e12.5)
+ 7488 format (10x,'chi eceR+R-:          ')
+ 7585 format (10x,'Simulated MSE-LS (T): ',/)
+ 7588 format (10x,'Simulated MSE-LS2 (T): ',/)
+ 7590 format (10x,'Simulated MSE-LSV (T): ',/)
       end
 
       function erpote(ypsi,nnn)
@@ -8997,7 +8996,7 @@
                    /rmaxis**2/abs(cjmaxi)
       qmaxis=cqmaxi(ixt)
       return
- 2100 format(/,1x,4hshot,i6,4h at ,i6,4h ms ,'** Problem in BOUND **')
+ 2100 format(/,1x,'shot',i6,' at ',i6,' ms ','** Problem in BOUND **')
 11001 format(/,1x,'** 2nd seperatrix **',2x,e10.3,2x,i4)
       end
       subroutine tsorder(mbox,zprof,nemprof,temprof,nerprof,terprof)
@@ -9321,7 +9320,7 @@ real*8 function linear(x,xa,ya,n)
       h=xa(khi)-xa(klo)
       
       if (h == 0.0) then
-         print *, 'Bad xa input to routine linear'
+         write(*,*) 'Bad xa input to routine linear'
 ! MPI >>>
          ! NOTE : Do NOT need to replace STOP command since function currently unused
          stop
@@ -9348,7 +9347,7 @@ real*8 function linear(x,xa,ya,n)
       if (allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
       
      if (rank == 0) then
-        print *, 'STOPPING MPI'
+        write(*,*) 'STOPPING MPI'
       endif
       call MPI_ABORT(MPI_COMM_WORLD,ierr)
       STOP

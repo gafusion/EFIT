@@ -548,17 +548,16 @@
       endif
   850 continue
       return
- 9300 format (/,4x,16h   data used:   )
- 9320 format (1x,i2,11h flux loops)
- 9340 format (1x,i2,19h magnetic probes(i))
- 9360 format (1x,i2,18h partial rogowskis)
- 9380 format (1x,i2,14h full rogowski)
- 9385 format (1x,i2,17h diamagnetic loop)
+ 9300 format (/,4x,'   data used:   ')
+ 9320 format (1x,i2,' flux loops')
+ 9340 format (1x,i2,' magnetic probes(i)')
+ 9360 format (1x,i2,' partial rogowskis')
+ 9380 format (1x,i2,' full rogowski')
+ 9385 format (1x,i2,' diamagnetic loop')
  9390 format (1x,' bt0(t)   = ',f10.3)
-!10000 format(/,6x,20('*'),' EFITD 129dx2 output ',20('*'))
 10000 format(/,6x,20('*'),' EFITD',a3,' x ',a3,'  output ',20('*'))
-10020 format (1x,15h  sumif(amp) = ,e10.3,15h sumift(amp) = ,e10.3, &
-           15h sumifs(amp) = ,e10.3)
+10020 format (1x,'  sumif(amp) = ',e10.3,' sumift(amp) = ',e10.3, &
+           ' sumifs(amp) = ',e10.3)
 10480 format (1x,/)
 10500 format(' shot #   = ',i10,' time(ms) = ',i10, &
              ' chi**2   = ',e10.3)
@@ -586,12 +585,12 @@
              4(2x,e12.4,2x))
 11000 format(//,22x,'F-coils currents (Amp)')
 11001 format(//,22x,'A matrix condition    ')
-11002 format(//,22x,16hE-coils phases  )
+11002 format(//,22x,'E-coils phases  ')
 11004 format(1x,' info = ',i4,' row = ',1pe10.3,' col = ',1pe10.3, &
                 ' max = ',1pe10.3)
-11005 format(//,22x,16hE-coils currents)
-11008 format(//,22x,24hE-coils resistance(Ohms))
-11010 format(//,22x,24hF-coils resistance(Ohms))
+11005 format(//,22x,'E-coils currents')
+11008 format(//,22x,'E-coils resistance(Ohms)')
+11010 format(//,22x,'F-coils resistance(Ohms)')
 11017 format(//,2x,'power supply current (A) = ',e12.5, &
                 5x,'phase (degree) = ',e12.5,/, &
                 2x,'resistance (Ohm)         = ',e12.5, &
@@ -603,65 +602,65 @@
 11032 format(//,12x,'Electrostatic potential derivative PIEPRIM:')
 11034 format(//,12x,'Hyperbolic P:',e15.6)
 11036 format(//,12x,'Hyperbolic FF:',e15.6)
-11040 format(//,22x,15hplasma currents,18h  normalization = ,e15.6)
-11043 format(//,22x,15hplasma coeffics,18h  normalization = ,e15.6)
-11060 format(//,22x,15hvessel currents,12h sum(amp) = ,e10.3, &
-                12h  top   =   ,e10.3,12h  bot     = ,e10.3)
-11100 format(//,16x,28hcalculated psi-loops signals, &
-        18h ssiref(vs/rad) = ,e12.5)
-11101 format(//,16x,28hcalculated psi-loops signals, &
-        14h ssiref(vs) = ,e12.5)
-11102 format(//,16x,35hcalculated vacuum psi-loops signals)
-11120 format(//,4x,37hcalculated magnetic probes(i) signals, &
-        12h ipmp2(A) = ,e12.5,1x,e12.5)
-11122 format(//,4x,44hcalculated vacuum magnetic probes(i) signals)
-11140 format(//,14x,31hcalculated polarimetry signals )
-11160 format(//,14x,32hcalculated total plasma current ,/,16x,e15.6)
-11180 format(//,14x,32hcalculated diamagnetic flux(vs) ,/,16x,e15.6,/, &
+11040 format(//,22x,'plasma currents','  normalization = ',e15.6)
+11043 format(//,22x,'plasma coeffics','  normalization = ',e15.6)
+11060 format(//,22x,'vessel currents',' sum(amp) = ',e10.3, &
+                '  top   =   ',e10.3,'  bot     = ',e10.3)
+11100 format(//,16x,'calculated psi-loops signals', &
+        ' ssiref(vs/rad) = ',e12.5)
+11101 format(//,16x,'calculated psi-loops signals', &
+        ' ssiref(vs) = ',e12.5)
+11102 format(//,16x,'calculated vacuum psi-loops signals')
+11120 format(//,4x,'calculated magnetic probes(i) signals', &
+        ' ipmp2(A) = ',e12.5,1x,e12.5)
+11122 format(//,4x,'calculated vacuum magnetic probes(i) signals')
+11140 format(//,14x,'calculated polarimetry signals ')
+11160 format(//,14x,'calculated total plasma current ',/,16x,e15.6)
+11180 format(//,14x,'calculated diamagnetic flux(vs) ',/,16x,e15.6,/, &
            '     bpdia = ',e10.3,'     delbp = ',e10.3, &
            ' app bpdia = ',e10.3)
-11185 format(//,14x,32hcalculated Bz(receo,zeceo) (T)  ,/,16x,e15.6)
-11186 format(//,22x,35hcalculated psi(R-)-psi(R+) (VS/rad))
-11200 format(//,16x,28h  measured psi-loops signals, &
-        18h psiref(vs/rad) = ,e12.5)
-11220 format(//,12x,37h  measured magnetic probes(i) signals)
-11240 format(//,14x,31h  measured polarimetry signals )
-11260 format(//,14x,32h  measured total plasma current ,/,16x,e15.6)
-11270 format(//,14x,32h  measured loop voltage (V)     ,/,16x,e15.6)
-11280 format(//,14x,32h  measured diamagnetic flux     ,/,16x,e15.6)
-11292 format(//,14x,32h  measured F-coil currents(A)   )
-11294 format(//,14x,32h  measured E-coil currents(A)   )
-11300 format(//,14x,32h    chisqr diamagnetic flux  =  ,e10.3)
-11320 format (//,12h   emf  =   ,e10.3,12h   emp  =   ,e10.3, &
-           12h   enf  =   ,e10.3,12h   enp  =   ,e10.3,/, &
-           12h betap0 =   ,e10.3,12h rzero  =   ,e10.3)
-11324 format (//,12h  erbmax =  ,e12.5,12h   erbave = ,e12.5)
+11185 format(//,14x,'calculated Bz(receo,zeceo) (T)  ',/,16x,e15.6)
+11186 format(//,22x,'calculated psi(R-)-psi(R+) (VS/rad)')
+11200 format(//,16x,'  measured psi-loops signals', &
+        ' psiref(vs/rad) = ',e12.5)
+11220 format(//,12x,'  measured magnetic probes(i) signals')
+11240 format(//,14x,'  measured polarimetry signals ')
+11260 format(//,14x,'  measured total plasma current ',/,16x,e15.6)
+11270 format(//,14x,'  measured loop voltage (V)     ',/,16x,e15.6)
+11280 format(//,14x,'  measured diamagnetic flux     ',/,16x,e15.6)
+11292 format(//,14x,'  measured F-coil currents(A)   ')
+11294 format(//,14x,'  measured E-coil currents(A)   ')
+11300 format(//,14x,'    chisqr diamagnetic flux  =  ',e10.3)
+11320 format (//,'   emf  =   ',e10.3,'   emp  =   ',e10.3, &
+           '   enf  =   ',e10.3,'   enp  =   ',e10.3,/, &
+           ' betap0 =   ',e10.3,' rzero  =   ',e10.3)
+11324 format (//,'  erbmax =  ',e12.5,'   erbave = ',e12.5)
 11326 format (8(1x,e12.5))
-11330 format (//,12h  cbetap =  ,e12.5,12h   cli    = ,e12.5, &
-                 12h  cqqxis =  ,e12.5,12h   cbetat = ,e12.5,/, &
-                 12h  ci0    =  ,e12.5)
-12000 format (//,19h iteration summary:,/,4h  i ,2x,12h   error    ,2x, &
-        12h   psibry   ,2x,12h   psimag   ,2x,12h   volume   ,2x, &
-        12h   rmaxis   ,2x,12h   zmaxis   ,12h   emaxis   ,2x, &
-        12h   qmaxis   ,2x,12h   chisqr   )
-12010 format (//,4h  i ,2x,12h   errave   ,2x, &
-        12h   current  ,2x,12h   cratio   ,2x,12h   iermax   ,2x, &
-        12h   jermax   ,2x,12h            ,12h            ,2x, &
-        12h            ,2x,12h            )
-12015 format (//,23h ECE iteration summary:,/,4h  i ,2x,12h   receo    ,2x, &
-        12h   recem    )
-12016 format (//,4h  i ,2x,12h   recep    )
+11330 format (//,'  cbetap =  ',e12.5,'   cli    = ',e12.5, &
+                 '  cqqxis =  ',e12.5,'   cbetat = ',e12.5,/, &
+                 '  ci0    =  ',e12.5)
+12000 format (//,' iteration summary:',/,4h  i ,2x,'   error    ',2x, &
+        '   psibry   ',2x,'   psimag   ',2x,'   volume   ',2x, &
+        '   rmaxis   ',2x,'   zmaxis   ','   emaxis   ',2x, &
+        '   qmaxis   ',2x,'   chisqr   ')
+12010 format (//,'  i ',2x,'   errave   ',2x, &
+        '   current  ',2x,'   cratio   ',2x,'   iermax   ',2x, &
+        '   jermax   ',2x,'            ','            ',2x, &
+        '            ',2x,'            ')
+12015 format (//,' ECE iteration summary:',/,'  i ',2x,'   receo    ',2x, &
+        '   recem    ')
+12016 format (//,'  i ',2x,'   recep    ')
 12020 format (i4,10(1x,e12.5))
 12025 format (i4,3(2x,e12.5),2(6x,i4,4x),4(2x,e12.5))
-12040 format (//,19h    plasma summary:,/,4h  i ,1x,12h   pflux    ,1x, &
-        12h   vol(m3)  ,1x,12h   pprime   ,1x,12h  current   ,1x, &
-        12h ffprime    ,1x,12h  pressure  ,12h   fpol     ,1x, &
-        12h    q       ,1x,12h     rm     )
-12043 format (//,4h  i ,1x,12h    pflux   ,1x, &
-        12h   <j>      ,1x,12h            ,1x,12h            ,1x, &
-        12h            ,1x,12h            ,12h            ,1x, &
-        12h            ,1x,12h            )
+12040 format (//,'    plasma summary:',/,'  i ',1x,'   pflux    ',1x, &
+        '   vol(m3)  ',1x,'   pprime   ',1x,'  current   ',1x, &
+        ' ffprime    ',1x,'  pressure  ','   fpol     ',1x, &
+        '    q       ',1x,'     rm     ')
+12043 format (//,'  i ',1x,'    pflux   ',1x, &
+        '   <j>      ',1x,'            ',1x,'            ',1x, &
+        '            ',1x,'            ','            ',1x, &
+        '            ',1x,'            ')
 13000 format (//,16x,'    toroidal rotation         ')
-13020 format (12h  betatw =  ,1pe12.5,12h betapw   = ,1pe12.5, &
-               12h  W(J)   =  ,1pe12.5)
+13020 format ('  betatw =  ',1pe12.5,' betapw   = ',1pe12.5, &
+              '  W(J)   =  ',1pe12.5)
       end

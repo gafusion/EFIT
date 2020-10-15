@@ -413,9 +413,9 @@
       ALLOCATE(work1(nw,nh),work2(nh),work3(nh,2*krord-1))
 !
       call spli2d(rgrid,copynew,rknot,nw,krord,nh,work2,work3,work1,iflag)
-      if (iflag.ne.1) print*,' error in first spli2d, iflag=',iflag
+      if (iflag.ne.1) write(*,*) ' error in first spli2d, iflag=',iflag
       call spli2d(zgrid,work1,zknot,nh,kzord,nw,work2,work3,copynew,iflag)
-      if (iflag.ne.1) print*,' error in second spli2d, iflag=',iflag
+      if (iflag.ne.1) write(*,*) ' error in second spli2d, iflag=',iflag
 !
       DEALLOCATE(work1,work2,work3)
 !
@@ -580,8 +580,7 @@
    50    bcoef(j,i) = work(i)
                                         return
   998 iflag = 2
-  999 print 699
-  699 format(41h linear system in  splint  not invertible)
+  999 write(*,*) ' linear system in  splint  not invertible'
                                         return
       end
       subroutine bspp2d ( t, bcoef, n, k, m, scrtch, break, coef, l )
@@ -824,8 +823,8 @@
 !-----------------------------------------------------------------------        
       goto (1,2,3) jd+1
       ppvalw = 0.
-      print *, 'Error (ppvalw): JD must be 0, 1, or 2.'
-      print *, 'Execution terminated.'
+      write(*,*) 'Error (ppvalw): JD must be 0, 1, or 2.'
+      write(*,*) 'Execution terminated.'
       return
  1    ppvalw = d0(x)	! k = 4 , jd = 0
       return

@@ -2512,7 +2512,7 @@
       write (40,10020) ishot,itime
       write (nttyo,10020) ishot,itime
       close(unit=40)
-10020 format (///,1x,4hshot,i6,4h at ,i6,4h ms ,'%% Bad Input Data %%')
+10020 format (///,1x,'shot',i6,' at ',i6,' ms ','%% Bad Input Data %%')
 ! MPI >>>
 #if defined(USEMPI)
       call mpi_stop
