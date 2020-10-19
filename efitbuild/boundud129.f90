@@ -64,32 +64,33 @@
 !**                                                                  **
 !**********************************************************************
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension psi(1),zero(1),x(1),y(1),xcontr(1),ycontr(1)
-      dimension dist(5),xlim(1),ylim(1)
+      dimension psi(*),zero(*),x(*),y(*),xcontr(*),ycontr(*)
+      dimension dist(5),xlim(*),ylim(*)
       data etolc,etol,nloop/1.e-06,1.e-04,60/
       data nttyo/6/,psitol/1.0E-04/,mecopy/0/,n111/1/
       save dx,dy,area,rmid,mecopy
 !
       save n111
+
 !----------------------------------------------------------------------
 !--           nerr=10000, negative plasma current                    --
 !----------------------------------------------------------------------
       nosign=0
       if (nerr.eq.10000) then
         nosign=1
-        do 30010 i=1,nwh
+        do i=1,nwh
           psi(i)=-psi(i)
-30010   continue
+        end do
       endif
 !------------------------------------------------------------------------
 !--          BBrown's version of BOUND                                 --
 !------------------------------------------------------------------------
       if (ix.gt.0 .and. kbound.ne.0) then
-      call old_new    (psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
-           zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
-           ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
-           ishot,itime,limfag,radold,kbound)
-      go to 2000
+        !call old_new    (psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
+        !     zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
+        !     ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
+        !     ishot,itime,limfag,radold,kbound)
+        go to 2000
       endif
 !
       nerr=0
@@ -693,8 +694,8 @@
 !---if no change occured iautoc=0.                                           --
 !------------------------------------------------------------------------------
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension pds(6),xc(1),yc(1)
-      dimension cspln(1)
+      dimension pds(6),xc(*),yc(*)
+      dimension cspln(kubicx,lubicx,kubicy,lubicy)
       data pi,piov2,piov4,fpiov4,spiov4 &
       /3.141592654,1.570796327,0.7853981634,3.926990818,5.497787145/
       data twopi,tpiov4,tpiov2 &
@@ -1172,9 +1173,9 @@
       include 'modules1.f90'
 !      include 'ecomdu1.f90'
       common/cwork3/lkx,lky
-      dimension x(nx),y(nz),pds(6),xxout(1),yyout(1),psipsi(1)
-      dimension xseps(1),yseps(1),bpoo(1),bpooz(1),pdss(6) &
-          ,xlimv(1),ylimv(1)
+      dimension x(nx),y(nz),pds(6),xxout(*),yyout(*),psipsi(*)
+      dimension xseps(1),yseps(1) ! this is an address of a location inside a 2-d array
+      dimension bpoo(*),bpooz(*),pdss(6),xlimv(*),ylimv(*)
       dimension pdsold(6)
       data psitol/1.0e-04/
       character(len=80) :: strtmp
@@ -1688,7 +1689,7 @@
 !**                                                                  **
 !**********************************************************************
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension xp(1),yp(1)
+      dimension xp(*),yp(*)
       nptr=np
    80 is=0
       nptr=nptr-1
@@ -1729,7 +1730,7 @@
       use commonblocks,only: cjrf,wxin,wyin,wxout,wyout
       include 'eparmdud129.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xp(1),yp(1)
+      dimension xp(*),yp(*)
       data iflag/2/
 !
       if (iflag.eq.2) go to 2000
@@ -1895,7 +1896,7 @@
 !**                                                                  **
 !**********************************************************************
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension xout(1),yout(1),psi(1),rgrid(1),zgrid(1)
+      dimension xout(*),yout(*),psi(*),rgrid(*),zgrid(*)
 !
       n111=1
       if (negcur.eq.0) then
@@ -1997,9 +1998,10 @@
 !**                                                                  **
 !**********************************************************************
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension  zero(1),xlim(1),ylim(1),x(1),y(1)
+      dimension zero(1),x(1),y(1) ! rls sometimes an array, other times a constant
+      dimension xlim(*),ylim(*)
       logical b,c,d,inside,bold
-!
+
       go to (10,200) iflag
    10 continue
       kk = 0
@@ -2064,7 +2066,7 @@
       return
       end
 !
-!   This routine is required if the revision numbers are to 
+!   This routine is required if the revision numbers are to
 !   survive an optimization.
 !
 !
@@ -2072,7 +2074,7 @@
 !
       subroutine boundx_rev(i)
       CHARACTER*100 opt
-      character*10 s 
+      character*10 s
       if( i .eq. 0) s =  &
       '@(#)boundx.for,v 4.16\000'
       return

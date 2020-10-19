@@ -409,9 +409,8 @@
          fpxtra(ji,2)=yplt(i)
          npltxpt=ji
          if (kwripre.gt.0) then
-            call zlim(zeron,n11,n11,limitr,xlim,ylim, &
-                      xplt(i),yplt(i),limfag)
-            if (zeron.gt.0.001) write (62,*) xplt(i),yplt(i)
+           call zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(i),yplt(i),limfag)
+           if (zeron.gt.0.001) write (62,*) xplt(i),yplt(i)
          endif
   200 continue
       if (kwripre.gt.0) close(unit=62)
@@ -422,36 +421,34 @@
       nxcurv=0
       nexexx=2*iabs(nextra)*iabs(ixstrt)
       do 226 i=1,nexexx
-         if(npxtra(i).le.2)go to 226
-         nxcurv=nxcurv+1
-         nn = nn + 1
-         nxy(nn) = npxtra(i)
-         clearx(nn) = 'GREE'
-         kk = i
-         do ii = 1, npxtra(i)
-            xx(ii,nn) = xxtra(ii,i)
-            yy(ii,nn) = yxtra(ii,i)
-         enddo
+        if(npxtra(i).le.2)go to 226
+        nxcurv=nxcurv+1
+        nn = nn + 1
+        nxy(nn) = npxtra(i)
+        clearx(nn) = 'GREE'
+        kk = i
+        do ii = 1, npxtra(i)
+          xx(ii,nn) = xxtra(ii,i)
+          yy(ii,nn) = yxtra(ii,i)
+        enddo
 
-         if (kwripre.gt.0) then
-            if (i.lt.9) then
-          write(iname,40023) i
-               dataname=dataname(1:lprx)//'_fl'//iname
-          open(unit=62,file=dataname,status='old',err=12942)
-          close(unit=62,status='delete')
-12942    continue
-          open(unit=62,file=dataname,status='new')
-               do 39920 iii=1,npxtra(i)
-              call zlim(zeron,n11,n11,limitr,xlim,ylim,xxtra(iii,i), &
-                  yxtra(iii,i),limfag)
-                  if (zeron.gt.0.001) write (62,*)  &
-                  xxtra(iii,i),yxtra(iii,i)
-39920          continue
-               close(unit=62)
-            endif
-         endif
-  226 continue
-  228 continue
+        if (kwripre.gt.0) then
+          if (i.lt.9) then
+            write(iname,40023) i
+            dataname=dataname(1:lprx)//'_fl'//iname
+            open(unit=62,file=dataname,status='old',err=12942)
+            close(unit=62,status='delete')
+12942       continue
+            open(unit=62,file=dataname,status='new')
+            do 39920 iii=1,npxtra(i)
+              call zlim(zeron,n11,n11,limitr,xlim,ylim,xxtra(iii,i),yxtra(iii,i),limfag)
+              if (zeron.gt.0.001) write (62,*) xxtra(iii,i),yxtra(iii,i)
+39920       continue
+            close(unit=62)
+          endif
+        endif
+226     continue
+  228   continue
       if (nbdry.le.0) go to 235
       if (nbdry.gt.20) go to 230
       nn = nn + 1
@@ -720,21 +717,19 @@
             zvsmin=min(zvs(i),zvsmin)
             zvsmax=max(zvs(i),zvsmax)
 40050    continue
-         call surfac(xpsialp,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt &
-         ,npoint,drgrid,dzgrid,rvsmin,rvsmax,zvsmin, &
+         call surfac(xpsialp,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt, &
+         npoint,drgrid,dzgrid,rvsmin,rvsmax,zvsmin, &
          zvsmax,n00,rmaxis,zmaxis,negcur)
          if (iprobe.ne.90) then
-            do 40060 i=1,nplt
-               call  &
-               zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(i), &
-                    yplt(i),limfag)
-               if (zeron.gt.0.001) then
+           do 40060 i=1,nplt
+             call zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(i),yplt(i),limfag)
+             if (zeron.gt.0.001) then
                   innn=innn+1
                   xx(innn,nn) = xplt(i)
                   yy(innn,nn) = yplt(i)
-               endif
-40060       continue
-            nxy(nn) = innn
+             endif
+40060      continue
+           nxy(nn) = innn
          endif
 !         hgt = 0.10
 !         msg = msg + 1
@@ -10831,3 +10826,17 @@
       close(unit=35)
       return
     end
+!
+!   This routine is required if the CVS revision numbers are to
+!   survive an optimization.
+!
+!
+!   1997/05/13 16:37:28 meyer
+!
+      subroutine pltdatx_rev(i)
+      CHARACTER*100 opt
+      character*10 s
+      if( i .eq. 0) s =  &
+      '@(#)pltdatx.for,v 4.30\000'
+      return
+      end

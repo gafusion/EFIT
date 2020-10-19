@@ -318,3 +318,17 @@
       SUBROUTINE LIMPOS(NSHOT,RLIM,RLIM180,IER)
       RETURN
       END
+!
+!   This routine is required if the CVS revision numbers are to
+!   survive an optimization.
+!
+!
+!   2008/01/10 23:35:07 osborne
+!
+      subroutine subs_d_pt_rev(i)
+      CHARACTER*100 opt
+      character*10 s
+      if( i .eq. 0) s =  &
+      '@(#)subs_d_pt.for,v 4.16\000'
+      return
+      end

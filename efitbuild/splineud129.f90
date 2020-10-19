@@ -1041,3 +1041,17 @@
         END DO
         RETURN
       END
+!
+!   This routine is required if the CVS revision numbers are to
+!   survive an optimization.
+!
+!
+!   2003/02/24 23:41:26 peng
+!
+      subroutine splinex_rev(i)
+      CHARACTER*100 opt
+      character*10 s
+      if( i .eq. 0) s =  &
+      '@(#)splinex.for,v 4.14\000'
+      return
+      end

@@ -176,7 +176,7 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
 !      include 'ecomdu1.f90'
-      dimension xplt(1),yplt(1)
+      dimension xplt(*),yplt(*)
       dimension zuper(nco2v),zlower(nco2v),rco2(nco2r),rco2in(nco2r)
 !
       do 45 i=1,nco2r
@@ -229,5 +229,19 @@
         dco2r(jges,k)=denrt(jges,k)/rco2r(k,jges)
   330 continue
 !
+      return
+      end
+!
+!   This routine is required if the CVS revision numbers are to
+!   survive an optimization.
+!
+!
+!   1998/02/04 15:07:48 meyer
+!
+      subroutine chkerrdx_rev(i)
+      CHARACTER*100 opt
+      character*10 s
+      if( i .eq. 0) s =  &
+      '@(#)chkerrdx.for,v 4.14\000'
       return
       end

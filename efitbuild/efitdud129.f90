@@ -328,7 +328,7 @@
 !      include 'ecomdu1.f90'
       common/cwork3/lkx,lky
       common/cww/lwx,lwy
-      dimension pds(6),rgrid(1),zgrid(1)
+      dimension pds(6),rgrid(*),zgrid(*)
       real*8,dimension(:),allocatable :: worksi,workrm,bwork, &
              cwork,dwork,x,y,dpleng
       dimension xsier(nercur)
@@ -884,7 +884,7 @@
       include 'modules1.f90'
 !      include 'ecomdu1.f90'
       common/cwork3/lkx,lky
-      dimension pds(6),rgrid(1),zgrid(1)
+      dimension pds(6),rgrid(*),zgrid(*)
       real*8,dimension(:),allocatable :: x,y,dpleng,xxs,yys
       data inorm/3/,ibtcal/2/
 ! MPI >>>
@@ -1469,6 +1469,7 @@
       erppote=-erppote/sidif
       return
       end
+
       function eradial(ypsi,nnn,reee,zeee)
 !**********************************************************************
 !**                                                                  **
@@ -6159,7 +6160,7 @@
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
 
-      dimension f(1)
+      dimension f(*)
 
       constant=0.5
 ! ----------------------------------------------------------------------
@@ -6263,7 +6264,7 @@
       include 'modules1.f90'
 !      include 'ecomdu1.f90'
 
-      dimension psigrid(1),sia(1)
+      dimension psigrid(*),sia(*)
 
 ! ----------------------------------------------------------------------
 ! Call the initialisation and check the result
@@ -6338,7 +6339,7 @@
       subroutine vsma_(a, ia, b, c, ic, d, id, n)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 
-      dimension a(1),c(1),d(1)
+      dimension a(1),c(1),d(1) ! rls used as pointers into array
 
       if (n.le.0) then
         return
@@ -6365,11 +6366,11 @@
 !
 ! ef_vadd_shrt: Add two vectors.  
 !               Handles vectors one element at a time.  Good for
-!      short, unaligned vectors but not optimized at all for long vectors.
+!               short, unaligned vectors but not optimized at all for long vectors.
 ! ef_vmul_const_shrt: Multiply a vector by a constant. 
-!            Handles vectors one element
-!      at a time.  Good for
-!      short, unaligned vectors but not optimized at all for long vectors.
+!               Handles vectors one element
+!               at a time.  Good for
+!               short, unaligned vectors but not optimized at all for long vectors.
 !----------------------------------------------------------------------
 ! Modifications:
 ! 12/30/97: created by J. Ferron from the C language equivalent comments
@@ -6381,7 +6382,7 @@
       subroutine ef_vvmul(vin1,vin2,out,nelements)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 
-      dimension vin1(1),vin2(1),out(1)
+      dimension vin1(1),vin2(1),out(1) ! rls Could be used as pointers into array
 
       do 10 i=1,nelements
         out(i) = vin1(i) * vin2(i)
@@ -9236,13 +9237,13 @@
       return
       end
 
-      subroutine old_new(psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
-           zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
-           ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
-           ishot,itime,limfag,radold,kbound)
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      return
-      end
+      !subroutine old_new(psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
+      !     zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
+      !     ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
+      !     ishot,itime,limfag,radold,kbound)
+      !implicit integer*4 (i-n), real*8 (a-h, o-z)
+      !return
+      !end
       block data efit_bdata
 !**********************************************************************
 !**                                                                  **
@@ -9278,9 +9279,24 @@
 !
       include 'msels_data.f90'
       include 'msels_hist.f90'
+!
+!
+!   This routine is required if the CVS revision numbers are to
+!   survive an optimization.
+!
+!
+!   1997/05/23 22:53:27 peng
+!
+      subroutine efitdx_rev(i)
+      CHARACTER*100 opt
+      character*10 s
+      if( i .eq. 0) s =  &
+      '@(#)$RCSFILE: efitdx.for,v $ 4.61\000'
+      return
+      end
 
 ! jm.s
-real*8 function linear(x,xa,ya,n)
+      real*8 function linear(x,xa,ya,n)
 
       implicit none
       
@@ -9326,7 +9342,7 @@ real*8 function linear(x,xa,ya,n)
 ! MPI >>>
 #if defined(USEMPI)
     ! Shutdown MPI before calling STOP to terminate program
-    subroutine mpi_stop
+      subroutine mpi_stop
       include 'modules1.f90'
       include 'mpif.h'
       
@@ -9334,12 +9350,12 @@ real*8 function linear(x,xa,ya,n)
       if (allocated(dist_data_displs)) deallocate(dist_data_displs)
       if (allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
       
-     if (rank == 0) then
+      if (rank == 0) then
         write(*,*) 'STOPPING MPI'
       endif
       call MPI_ABORT(MPI_COMM_WORLD,ierr)
       STOP
     
-    end subroutine mpi_stop
+      end subroutine mpi_stop
 #endif
 ! MPI <<<

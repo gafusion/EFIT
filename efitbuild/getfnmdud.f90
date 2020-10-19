@@ -134,3 +134,17 @@
       if (istore .eq. 1) fname = store_dir(1:lstdir)//fname
       return
       end
+!
+!   This routine is required if the CVS revision numbers are to
+!   survive an optimization.
+!
+!
+!   $Date: 2008/11/18 22:47:04 $ $Author: radhakri $
+!
+      subroutine getfnmx_rev(i)
+      CHARACTER*100 opt
+      character*10 s
+      if( i .eq. 0) s =   &
+      '@(#)$RCSfile: getfnmdud.f90,v $ $Revision: 1.1.2.2 $\000'
+      return
+      end

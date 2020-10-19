@@ -406,3 +406,17 @@ subroutine zpline (n, x, y, b, c, d)
    speval = b(i) + dx*(2.*c(i) + 3.*dx*d(i))
    return
  end
+!
+!   This routine is required if the CVS revision numbers are to
+!   survive an optimization.
+!
+!
+!   $Date: 2008/07/29 23:42:36 $ $Author: radhakri $
+!
+      subroutine zpline_rev(i)
+      CHARACTER*100 opt
+      character*10 s
+      if( i .eq. 0) s =  &
+      '@(#)$RCSfile: zplined.f90,v $ $Revision: 1.1.2.1 $\000'
+      return
+      end

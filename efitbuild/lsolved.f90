@@ -225,3 +225,17 @@
    50 b(1) = b(1)/a(1,1)  
       return                                                            
       end                                                               
+!
+!   This routine is required if the CVS revision numbers are to
+!   survive an optimization.
+!
+!
+!   $Date: 2008/07/29 23:42:35 $ $Author: radhakri $
+!
+      subroutine lsolve_rev(i)
+      CHARACTER*100 opt
+      character*10 s
+      if( i .eq. 0) s =  &
+      '@(#)$RCSfile: lsolved.f90,v $ $Revision: 1.1.2.1 $\000'
+      return
+      end

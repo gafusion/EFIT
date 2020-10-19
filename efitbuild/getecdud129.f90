@@ -1887,6 +1887,8 @@
 !vas f90 modifi
 !10 call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,
 !vas 1 iascii,int16,int32,real32)
+        !print*,'2.0.0~~~ GETDAT',phase,name
+
 10    call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,&
         iascii,int16,int32,real32)
 
@@ -1909,6 +1911,7 @@
 !vas f90 modifi
 !vas20 call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,
 !vas 1 iascii,int16,int32,real32)
+        !print*,'2.0.1~~~ GETDAT',phase,name
 20    call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,&
         iascii,int16,int32,real32)
       if (ier .eq. 4 .or. ier.eq.2) ier = 0
@@ -2311,6 +2314,21 @@
 
       RETURN
       END
+!
+!   This routine is required if the CVS revision numbers are to
+!   survive an optimization.
+!
+!
+!   1997/03/28 21:12:57 meyer
+!
+      subroutine getecdx_rev(i)
+      CHARACTER*100 opt
+      character*10 s
+      if( i .eq. 0) s = &
+      '@(#)getecdx.for,v 4.24\000'
+
+      return
+      end
 
       subroutine magsigma(ishotx,timexy,jtimex,gradsmpx,gradsflx, &
                         bpermpx,sigmafx,sigmabx,sigmaex, &

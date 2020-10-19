@@ -23,7 +23,7 @@
       use var_bunemn
 
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension   psi(1), sia(1)
+      dimension   psi(*), sia(*)
 !vas  f90 modifi
 !vas      common/bunemn/mno,m,n,s,shift,dr,dz
       mno = nbmdim
@@ -64,6 +64,7 @@
     6 continue
       return
       end
+
       subroutine rzpois(q)
 !**********************************************************************
 !**                                                                  **
@@ -228,5 +229,19 @@
       deallocate(d)
       deallocate(temp)
 
+      return
+      end
+!
+!   This routine is required if the CVS revision numbers are to
+!   survive an optimization.
+!
+!
+!   1998/02/03 23:54:21 meyer
+!
+      subroutine bunema_rev(i)
+      CHARACTER*100 opt
+      character*10 s
+      if( i .eq. 0) s =  &
+      '@(#)bunema.for,v 4.14\000'
       return
       end

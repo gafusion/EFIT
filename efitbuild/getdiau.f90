@@ -210,6 +210,7 @@
 !
 !   GET DIAMAGNETIC FLUXES
 !
+        !print*,'1.0.0~~~ DLCOMP',SOURCE,iIPOINT
         DO 130 J=1,3
           IERR(J)=0
           IPOINT=DNAME(J)
@@ -267,9 +268,11 @@
             IREPLACE=1
         ENDIF
         IF ((ISHOT .GE. 83350) .AND. (I .GE. 24)) THEN 
+        !print*,'1.0.1~~~ DLCOMP',SOURCE,iIPOINT
   145   CALL PTDATA(ITYP,NSHOT,SOURCE,iIPOINT ,IDAT,IER,IAR,RAR, &
         ASCII,INT16,INT32,REAL32)
         ELSEIF ((ISHOT .LT. 83350) .AND. (I .LT. 24)) THEN 
+        !print*,'1.0.2~~~ DLCOMP',SOURCE,iIPOINT
   146   CALL PTDATA(ITYP,NSHOT,SOURCE,iIPOINT ,IDAT,IER,IAR,RAR, &
         ASCII,INT16,INT32,REAL32)
         ENDIF
@@ -419,3 +422,18 @@
   400   CONTINUE
   500   RETURN
         END
+
+!
+!   This routine is required if the CVS revision numbers are to
+!   survive an optimization.
+!
+!
+!   1998/02/04 15:26:30 meyer
+!
+      subroutine getdiax_rev(i)
+      CHARACTER*100 opt
+      character*10 s
+      if( i .eq. 0) s =  &
+      '@(#)getdiax.for,v 4.17\000'
+      return
+      end
