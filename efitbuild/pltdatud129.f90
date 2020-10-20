@@ -9365,7 +9365,7 @@
  9165 format (' energy(j)= ',1pe10.3)
  9180 format (' betat(%) = ',f10.2)
  9200 format (' betap    = ',f10.2)
- 9220 format (' li,li3    = ',f6.2,1x,f6.2)
+ 9220 format (' li,li3   = ',f6.2,1x,f6.2)
  9230 format (' error, # = ',1pe10.3,1x,i3)
  9240 format (' delstar  = ',1pe8.1,1x,1pe8.1)
  9260 format (' fpols(kA)= ',f10.1)
