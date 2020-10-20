@@ -1218,10 +1218,10 @@
 !
 ! --- time-dependent but NOT the first slice NOR the first time,
 ! --- or single slice but NOT the first time, 
-! --- skip define mode and goto write directly
+! --- skip define mode and go to write directly
 !
       else
-         goto 100
+         go to 100
       endif
       
       if (ierr.ne.0) return

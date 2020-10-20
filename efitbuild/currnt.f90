@@ -45,7 +45,18 @@
       if (icinit.gt.0) then
         if ((iconvr.ne.3).and.(iter.le.1)) go to 3100
       endif
-      go to (100,1100,2100,3100,5100) icurrt
+      select case (icurrt)
+        case (1)
+          go to 100
+        case (2)
+          go to 1100
+        case (3)
+          go to 2100
+        case (4)
+          go to 3100
+        case (5)
+          go to 5100
+      end select
   100 continue
 !------------------------------------------------------------------------------
 !--  uniform current for Solove equilibrium                                  --

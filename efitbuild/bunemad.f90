@@ -153,7 +153,13 @@
       lo = l
    2  c(n-l) = -c(l)
       l = l+2*lo
-      if ((2*l/n)*(2*lo-3))4,3,1
+      if((2*l/n)*(2*lo-3)< 0) then
+        goto 4
+      else if((2*l/n)*(2*lo-3) == 0) then 
+        goto 3
+      else 
+        goto 1
+      end if
    3  c(l) = (c(l+lo)+c(l-lo))/c(lo)
       go to 2
    4  do 5 l = 2,n
@@ -172,7 +178,16 @@
       do 11 j = jo,ju,ji
       j2 = j+2
       iu = j+m
-      go to (20,24,26,28),k4
+      select case (k4)
+        case (1)
+          go to 20
+        case (2)
+          go to 24
+        case (3)
+          go to 26
+        case (4)
+          go to 28
+      end select
   28  do 29 i = j2,iu
       pi = q(i)-q(i+jt)-q(i-jt)
       q(i) = q(i)-q(i+jh)-q(i-jh)+q(i+jd)+q(i-jd)
@@ -216,7 +231,12 @@
   22  continue
       do 11 i = j2,iu
   11  q(i) = q(i)+p(i-j)
-      go to (13,12),ko
+      select case (ko)
+        case (1)
+          go to 13
+        case (2)
+          go to 12
+      end select
   12  lo = lo/2
       if (lo.eq.1)ko = 1
       go to 15

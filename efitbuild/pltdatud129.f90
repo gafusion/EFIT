@@ -4299,11 +4299,11 @@
       yorg = curmin
       ynmax = curmax
       ystp = ynmax - yorg
-      if (fitdelz) goto 17593
+      if (fitdelz) go to 17593
 !---------------------------------------------------------------------
 !-- plot feedback currents                                          --
 !---------------------------------------------------------------------
-      if (abs(vcurfb(1)).le.1.e-6) goto 17593
+      if (abs(vcurfb(1)).le.1.e-6) go to 17593
       curmin=1.0e+10
       curmax=-1.0e+10
       do 17590 i=1,nitera
@@ -5183,7 +5183,7 @@
 !-- plots for kinetic fitting option                                  --
 !-----------------------------------------------------------------------
       if (kprfit.le.0) go to 890
-      if (npress.le.0) goto 890
+      if (npress.le.0) go to 890
       if (itek.eq.1) call tekall(4010,960,0,0,0)
       chsmin=1.0e+10
       chsmax=-1.0e+10

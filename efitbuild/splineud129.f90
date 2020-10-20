@@ -58,9 +58,9 @@
       h = xl - bkx(ibk)
       do 41 jj=1,4
          work0(jj) = ppvalw(cs(1,ibk,jj,lef),h,n00)
-         if (icalc.eq.1) goto 41
+         if (icalc.eq.1) go to 41
          work1(jj) = ppvalw(cs(1,ibk,jj,lef),h,n11)
-         if (icalc.le.4) goto 41
+         if (icalc.le.4) go to 41
          work2(jj) = ppvalw(cs(1,ibk,jj,lef),h,n22)
  41   continue
       h = yl - bky(lef)
@@ -570,7 +570,12 @@
 !
 !     ***obtain factorization of  a  , stored again in  q.
       call banfac ( q, n, n, kpkm1, k, iflag )
-                                        go to (40,999), iflag
+      select case (iflag)
+        case (1)
+          go to 40
+        case (2)
+          go to 999
+      end select
 !     *** solve  a*bcoef = gtau  by backsubstitution
    40 do 50 j=1,m
          do 41 i=1,n
@@ -748,7 +753,13 @@
       data j/1/
       save j,deltal,deltar  ! (valid in fortran 77)
 !
-                                        go to (10,20), index
+      select case (index)
+        case (1)
+          go to 10
+        case (2)
+          go to 20
+      end select
+
    10 j = 1
       biatx(1) = 1.
       if (j .ge. jhigh)                 go to 99
@@ -821,7 +832,14 @@
 !-----------------------------------------------------------------------        
 !   Evaluate jd-th derivative of i-th polynomial piece at x .
 !-----------------------------------------------------------------------        
-      goto (1,2,3) jd+1
+      select case (jd+1)
+        case (1)
+          go to 1
+        case (2)
+          go to 2
+        case (3)
+          go to 3
+      end select
       ppvalw = 0.
       write(*,*) 'Error (ppvalw): JD must be 0, 1, or 2.'
       write(*,*) 'Execution terminated.'

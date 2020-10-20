@@ -503,7 +503,7 @@
                     semsels(i),iemsels(i)
                iermselt(jtime,i)=iemsels(i)
              enddo
-             goto 91113
+             go to 91113
 91008        format(9e12.5,i2)
 91110        continue
              im1=i-1

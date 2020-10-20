@@ -122,17 +122,17 @@
         !           Check current directory
         !      for modelist
         open(unit=nin,status='old',file='mode_list',err=12933)
-        goto 12934
+        go to 12934
       !
       !     mode_list doesn't exist in cwd
 12933   continue
         !     Check one directory above
         !     cwd for modelist
         open(unit=nin,status='old',file='../mode_list',err=12935)
-        goto 12934
+        go to 12934
 12935   open(unit=nin,status='new',file='mode_list')
         write(nin,tear_anal)
-        goto 106
+        go to 106
 12934   read (nin,tear_anal,err=11219,end=106)
 106     continue
 11219   close(unit=nin)

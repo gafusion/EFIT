@@ -154,7 +154,7 @@
 !
         OPEN(UNIT=NIN,ACCESS='SEQUENTIAL', &
         STATUS='OLD',FILE=FILIN,ERR=10)
-        GOTO 15
+        go to 15
 
    10   FILIN='VUSC::SYS$USER:[LAHAYE.DIA]dcoef.sav'
         OPEN(UNIT=NIN,ACCESS='SEQUENTIAL', &
@@ -280,7 +280,7 @@
             write (6,1012)
             write (6,1013) POINT(I),NSHOT,IER,RAR(1),TTEMP(1)
             idlc=idlc+1
-            goto 200
+            go to 200
         endif       
 
    
@@ -289,7 +289,7 @@
             TAU=0.125
             SUM=0.0
             DO N=1,NPTS2-1
-                IF (TTEMP(N).GT.TIM(NPTS)) GOTO 150
+                IF (TTEMP(N).GT.TIM(NPTS)) go to 150
                 YTEMP(N)=(RAR(6)-IDAT(N))*RAR(5)*RAR(4)
                 SUM=SUM+EXP(TTEMP(N)/TAU)*YTEMP(N)*(TTEMP(N+1)-TTEMP(N))
                 YTEMP(N)=YTEMP(N)-EXP(-1.*TTEMP(N)/TAU)/TAU*SUM
@@ -399,23 +399,23 @@
         INTEGER NIN,NOUT
 
         DO 5 I=1,NOUT
-        IF (XOUT(I).GE.XIN(1)) GOTO 20
+        IF (XOUT(I).GE.XIN(1)) go to 20
         YOUT(I)=YIN(1)
     5   CONTINUE
-        GOTO 500
+        go to 500
 
    20   JLAST=1
    25   DO 100 J=JLAST,NIN-1
-        IF ((XOUT(I).GE.XIN(J)).AND.(XOUT(I).LT.XIN(J+1))) GOTO 200
+        IF ((XOUT(I).GE.XIN(J)).AND.(XOUT(I).LT.XIN(J+1))) go to 200
   100   CONTINUE
 
-        GOTO 300
+        go to 300
   200   YOUT(I)=YIN(J)+(YIN(J)-YIN(J+1))*(XOUT(I)-XIN(J))/(XIN(J)- &
         XIN(J+1))
         I=I+1
-        IF (I.GT.NOUT) GOTO 500
+        IF (I.GT.NOUT) go to 500
         JLAST=J
-        GOTO 25
+        go to 25
   300   CONTINUE
         DO 400 K=I,NOUT
         YOUT(K)=YIN(NIN)

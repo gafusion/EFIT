@@ -278,7 +278,7 @@
       endif
   500 if (k.lt.ktime) then
         kerrot(ks)=kerror 
-        goto 100
+        go to 100
       endif
       if (kwake.ne.0) go to 20
       call wmeasure(ktime,1,ktime,2)
@@ -343,7 +343,13 @@
 !
       if (ivacum.gt.0) return
       sumbp2=0.0
-      go to (20,60) licalc
+      select case (licalc)
+      case (1)
+        go to 20
+      case (2)
+        go to 60
+      end select
+
    20 continue
       call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
       do 50 i=1,nw
@@ -675,7 +681,18 @@
         rhovn(ii)=pi*aasi*bbsi/rmaxis/rhovn(nw)*fpol(1)
 !
         eesi=bbsi/aasi
-        go to (760,775,780,770,775) icurrt
+        select case (icurrt)
+        case (1)
+          go to 760
+        case (2)
+          go to 775
+        case (3)
+          go to 780
+        case (4)
+          go to 770
+        case (5)
+          go to 775
+        end select
   760   continue
         rdiml=rmaxis/srma
         cjmaxi=cratio*(sbeta*rdiml+2.*salpha/rdiml)/darea
@@ -1586,7 +1603,7 @@
           enddo
           if(abs(prevknt - appknt(kadknt)) .le. aktol)then
             write(6,*)'Last PPknot changed by less that use tolerance'
-            goto 10
+            go to 10
           endif
         enddo
       endif
@@ -1610,7 +1627,7 @@
       enddo
          if(abs(prevknt - affknt(kadknt)) .le. aktol)then
            write(6,*)'Last FFknot changed by less that use tolerance'
-           goto 20
+           go to 20
          endif
       enddo
       endif
@@ -1635,7 +1652,7 @@
          enddo
             if(abs(prevknt - awwknt(kadknt)) .le. aktol)then
               write(6,*)'Last WWknot changed by less that use tolerance'
-              goto 30
+              go to 30
             endif
          enddo
       endif
@@ -1661,7 +1678,7 @@
          enddo
             if(abs(prevknt - aeeknt(kadknt)) .le. aktol)then
               write(6,*)'Last EEknot changed by less that use tolerance'
-              goto 40
+              go to 40
             endif
          enddo
       endif
@@ -1763,7 +1780,7 @@
         ppknt(kadknt) = xknot
         call inicur(ks_a)
         call fit(ks_a,kerror_a)
-        if(kerror_a .gt. 0)goto 500
+        if(kerror_a .gt. 0)go to 500
         ppakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm  &
                   + akgamwt * chigamt + akprewt * chipre
 500      return
@@ -1793,7 +1810,7 @@
         ffknt(kadknt) = xknot
         call inicur(ks_a)
         call fit(ks_a,kerror_a)
-        if(kerror_a .gt. 0)goto 500
+        if(kerror_a .gt. 0)go to 500
         ffakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm  &
                   + akgamwt * chigamt + akprewt * chipre
 500      return
@@ -1824,7 +1841,7 @@
         wwknt(kadknt) = xknot
         call inicur(ks_a)
         call fit(ks_a,kerror_a)
-        if(kerror_a .gt. 0)goto 500
+        if(kerror_a .gt. 0)go to 500
         wwakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm &
                   + akgamwt * chigamt + akprewt * chipre
 500      return
@@ -1856,7 +1873,7 @@
         eeknt(kadknt) = xknot
         call inicur(ks_a)
         call fit(ks_a,kerror_a)
-        if(kerror_a .gt. 0)goto 500
+        if(kerror_a .gt. 0)go to 500
         eeakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm &
                   + akgamwt * chigamt + akprewt * chipre
 500      return
@@ -4998,7 +5015,7 @@
 !--  toroidal rotation terms                                         --
 !----------------------------------------------------------------------
  1890   continue
-        if (kvtor.le.0) goto 1982
+        if (kvtor.le.0) go to 1982
         if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) go to 1982
         call setpwp(xpsi(kk),xpsii)
         do 1980 jj=kpcurn+1,kwcurn
@@ -5201,7 +5218,7 @@
       if (mmbmsels.gt.0.or.kdomsels.gt.0) then
         do 92040 m=1,nmsels
         if ((fwtbmselt(jtime,m).le.0.0).and.(kdomsels.eq.0)) go to 92038
-        if (rrmselt(jtime,m).le.0.0) goto 92040
+        if (rrmselt(jtime,m).le.0.0) go to 92040
         call seva2d(bkx,lkx,bky,lky,c,rrmselt(jtime,m),       &
                           zzmselt(jtime,m),pds,ier,n333)
         xn=(simag-pds(1))/sidif
@@ -5382,7 +5399,7 @@
 !----------------------------------------------------------------------
 !--  toroidal rotation contributions                                 --
 !----------------------------------------------------------------------
-        if (kvtor.le.0) goto 11982
+        if (kvtor.le.0) go to 11982
         if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) go to 11982
         call setpwpp(xpsi(kk),xpsii)
         do 11980 jj=kpcurn+1,kwcurn
@@ -5487,7 +5504,12 @@
           if (icinit.eq.-2)  go to 1100
         endif
       endif
-      go to (100,1100) iabs(icinit)
+        select case (iabs(icinit))
+        case (1)
+          go to 100
+        case (2)
+          go to 1100
+        end select
       return
   100 continue
       if (aelip.gt.0.0) go to 150
@@ -5990,7 +6012,7 @@
         i = i*2
         if (i.eq.(nh - 1)) then
           nhpwr = j+1
-          goto 15
+          go to 15
         endif
    10 continue
 
@@ -6072,7 +6094,7 @@
               diag1(index) = diag + cosdii
    70     continue 
 
-          if (index.gt.icycred_loopmax) goto 90
+          if (index.gt.icycred_loopmax) go to 90
               
    80   continue
    90 continue
@@ -6112,7 +6134,7 @@
             diag1(index) = diag + cosdii
   100     continue 
 
-          if(index.gt.icycred_loopmax) goto 120
+          if(index.gt.icycred_loopmax) go to 120
              
   110   continue
   120 continue   
@@ -6644,8 +6666,8 @@
         ppcur4=0.0
         return
       endif
-      if (icurrt.eq.4) goto 2000
-      if (icurrt.eq.1) goto 3000
+      if (icurrt.eq.4) go to 2000
+      if (icurrt.eq.1) go to 3000
       ppcur4=ppcurr(ypsi,nnn)
       return
 !
@@ -6768,9 +6790,14 @@
       save init
 !
       kdofit=1
-      go to (1000,2000) kprfit-2
+        select case (kprfit-2)
+        case (1)
+          go to 1000
+        case (2)
+          go to 2000
+        end select
  1000 continue
-      if (nmass*nomegat.gt.0) goto 1300
+      if (nmass*nomegat.gt.0) go to 1300
 !------------------------------------------------------------------------
 !--  specify the rotational pressure profile directly                  --
 !------------------------------------------------------------------------
@@ -6884,7 +6911,14 @@
       kerror = 0
 ! MPI <<<
       kdofit=1
-      go to (1000,2000,1000) kprfit
+        select case (kprfit)
+        case (1)
+          go to 1000
+        case (2)
+          go to 2000
+        case (3)
+          go to 1000
+        end select
  1000 continue
 !---------------------------------------------------------------------
 !--  input pressure profile                                         --
@@ -7122,8 +7156,8 @@
         pwpcu4=0.0
         return
       endif
-      if (icurrt.eq.4) goto 2000
-      if (icurrt.eq.1) goto 3000
+      if (icurrt.eq.4) go to 2000
+      if (icurrt.eq.1) go to 3000
       pwpcu4=pwpcur(ypsi,nnn)
       return
 !
@@ -7468,7 +7502,7 @@
         open(unit=nffile, &
              status='old',form='unformatted', &
              file=filenmme,err=10000)
-        goto 15000
+        go to 15000
 10000   continue
         open(unit=nffile, &
              status='old',form='unformatted', &
@@ -7566,7 +7600,7 @@
       do 170 i=1,nesum
          recebzec(i)=0.0
   170 continue
-      if (receo.le.1.e-8) goto 201
+      if (receo.le.1.e-8) go to 201
       r1=receo
       do 200 k=1,necoil
         bzct=0.0
@@ -8187,7 +8221,7 @@
         open(unit=nffile, &
              status='old',form='unformatted', &
              file=filenmme,err=10)
-        goto 15
+        go to 15
    10   continue
         open(unit=nffile, &
              status='old',form='unformatted', &
@@ -8227,7 +8261,7 @@
       call splitc(isplit,rsplt,zsplt,csplt, &
                   rf(k),zf(k),wf(k),hf(k),af(k),af2(k),cdum)
       do 60 mmm=1,nstark
-        if (rrgam(jtime,mmm).le.1.e-8)  goto 60
+        if (rrgam(jtime,mmm).le.1.e-8)  go to 60
         brct=0.0
         bzct=0.0
         r1=rrgam(jtime,mmm)
@@ -8251,7 +8285,7 @@
       do 90 mmm=1,nstark
         gbrpc(mmm,kk)=0.0
         gbzpc(mmm,kk)=0.0
-        if (rrgam(jtime,mmm).le.1.e-8)  goto 90
+        if (rrgam(jtime,mmm).le.1.e-8)  go to 90
         r=rrgam(jtime,mmm)
         do 80 ii=1,nw
           a=rgrid(ii)
@@ -8295,7 +8329,7 @@
         rbrec(m,i)=0.0
         rbzec(m,i)=0.0
   170 continue
-      if (rrgam(jtime,m).le.1.e-8) goto 201
+      if (rrgam(jtime,m).le.1.e-8) go to 201
       r1=rrgam(jtime,m)
       do 200 k=1,necoil
         brct=0.0
@@ -8758,7 +8792,7 @@
 !-----------------------------------------------------------------------
       if (kstark.gt.0.or.kdomse.gt.0) then
       do 50299 k=1,nstark
-        if (rrgam(jtime,k).le.0.0) goto 50299
+        if (rrgam(jtime,k).le.0.0) go to 50299
         call seva2d(bkx,lkx,bky,lky,c,rrgam(jtime,k) &
                     ,zzgam(jtime,k),pds,ier,n111)
         sistark(k)=pds(1)
@@ -8776,7 +8810,7 @@
         if (idebug >= 2) then
           write (6,*) 'STEPS MSE-LS k,rrmselt= ', k,rrmselt(jtime,k)
         endif
-        if (rrmselt(jtime,k).le.0.0) goto 60299
+        if (rrmselt(jtime,k).le.0.0) go to 60299
         call seva2d(bkx,lkx,bky,lky,c,rrmselt(jtime,k) &
                     ,zzmselt(jtime,k),pds,ier,n333)
         simls(k)=pds(1)
@@ -8810,7 +8844,7 @@
       r1sdry(1)=r1bdry
       r2sdry(1)=r2bdry
       nnn=1
-      if (abs(sizeroj(1)-1.0).le.1.e-05.and.kzeroj.eq.1) goto 51977
+      if (abs(sizeroj(1)-1.0).le.1.e-05.and.kzeroj.eq.1) go to 51977
       if (kzeroj.gt.0) then
        do i=1,kzeroj
        if (sizeroj(i).ge.1.0) sizeroj(i)=0.99999
@@ -8917,7 +8951,18 @@
       if (icinit.gt.0) then
         if ((iconvr.ne.3).and.(ixout.le.1)) go to 1580
       endif
-      go to (1570,1590,1595,1580,1590) icurrt
+        select case (icurrt)
+        case (1)
+          go to 1570
+        case (2)
+          go to 1590
+        case (3)
+          go to 1595
+        case (4)
+          go to 1580
+        case (5)
+          go to 1590
+        end select
 !
  1570 continue
       rdiml=rmaxis/srma
@@ -9203,7 +9248,18 @@
       go to 8
     7 p4 = d-psil
     8 in = in+1
-      go to (10,11,12,13,14),in
+      select case (in)
+      case (1)
+        go to 10
+      case (2)
+        go to 11
+      case (3)
+        go to 12
+      case (4)
+        go to 13
+      case (5)
+        go to 14
+      end select
    10 www(kk) = 1.
       go to 20
    11 xxw = (p1+p2+p3+p4)/4.

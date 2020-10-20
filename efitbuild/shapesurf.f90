@@ -1343,7 +1343,7 @@
             rrin =rmm
           endif
          enddo
-         goto 66010
+         go to 66010
        endif
       enddo
 66010 ratsol(iges)=100.*(xmin-rrin)
@@ -1432,15 +1432,15 @@
       if (dis2p.lt.0.1*drgrid) then
         nmaxfs=nmaxfs+1
         dmaxfs=dmaxfs0*nmaxfs
-        if (nmaxfs.le.20) goto 77723
+        if (nmaxfs.le.20) go to 77723
       endif
       if (dis2p.lt.0.1*drgrid) go to 73823
       do i=1,npxtra(ixl)-1
         if ((yxtra(i,ixl)-znose)*(yxtra(i+1,ixl)-znose).le.0.0) &
-             goto 6093
+             go to 6093
       enddo
       rsepnose=-999.
-      goto 6097
+      go to 6097
  6093 continue
       rsepnose=xxtra(i,ixl)+(xxtra(i+1,ixl)-xxtra(i,ixl))/ &
              (yxtra(i+1,ixl)-yxtra(i,ixl))*(znose-yxtra(i,ixl))
@@ -1478,7 +1478,7 @@
       endif
 73823 if ((zavs*zfsep.le.0.0).and.(ixyz.eq.-2)) then
           ixyz=-1
-          goto 73723
+          go to 73723
       endif
       if (dis2p.lt.0.1*drgrid) go to 6198
       call seva2d(bkx,lkx,bky,lky,c,ravs,zavs,pds,ier,n111)
@@ -1641,7 +1641,7 @@
       if (dis2p.lt.0.1*drgrid)then
         nminfs=nminfs+1
         dminfs=dminfs0*nminfs
-        if (nminfs.le.20) goto 16199
+        if (nminfs.le.20) go to 16199
       endif
       if (dis2p.lt.0.1*drgrid) go to 16392
       zerovs=1.0
@@ -1677,7 +1677,7 @@
       endif
 16392 if ((zavs*zfsep.le.0.0).and.(ixyz.eq.-2)) then
           ixyz=-1
-          goto 26199
+          go to 26199
       endif
       if (dis2p.lt.0.1*drgrid) go to 66500
       call seva2d(bkx,lkx,bky,lky,c,ravs,zavs,pds,ier,n111)
@@ -1764,7 +1764,7 @@
             rrin=rmm
           endif
          enddo
-         goto 59700
+         go to 59700
        endif
       enddo
 59700 rmaxss=rrout
@@ -1810,7 +1810,7 @@
 66130   continue
         if ((zavs*zssep.lt.0.0).and.(ixyz.eq.-2)) then
           ixyz=-1
-          goto 66501
+          go to 66501
         endif
         rvsnow=ravs*100.
         zvsnow=zavs*100.
@@ -1914,7 +1914,7 @@
             rrin=rmm
           endif
          enddo
-         goto 59800
+         go to 59800
        endif
       enddo
 59800 rminss=rrout
@@ -1960,11 +1960,11 @@
         if (((abs(ravssa-ravs).le.1.e-04).and. &
          (abs(zavssa-zavs).le.1.e-04)).and.(ixyz.eq.-1)) then
         ixyz=-2
-        goto 66199
+        go to 66199
         endif
         if ((zavs*zssep.lt.0.0).and.(ixyz.eq.-1)) then
           ixyz=-2
-          goto 66199
+          go to 66199
         endif
         rvsnow=ravs*100.
         zvsnow=zavs*100.
@@ -2066,7 +2066,7 @@
             rrin=rmm
           endif
          enddo
-         goto 66600
+         go to 66600
        endif
       enddo
 66600 diludomm(iges)=100.0*(xmin-rrin)
@@ -2099,7 +2099,7 @@
             rrin=rmm
           endif
          enddo
-         goto 66700
+         go to 66700
        endif
       enddo
 66700 dolubafm(iges)=100.*(rrout-xmax)
@@ -2140,10 +2140,10 @@
 !-------------------------------------------------------------------------
       do i=1,npxtra(ixl)-1
         if ((yxtra(i,ixl)-znose)*(yxtra(i+1,ixl)-znose).le.0.0) &
-             goto 6393
+             go to 6393
       enddo
       sepnose=-999.
-      goto 6397
+      go to 6397
  6393 continue
       rlinnose=xxtra(i,ixl)+(xxtra(i+1,ixl)-xxtra(i,ixl))/ &
              (yxtra(i+1,ixl)-yxtra(i,ixl))*(znose-yxtra(i,ixl))
@@ -2355,8 +2355,8 @@
 !--------------------------------------------------------------------------
 !--  evaluate -del*psi/R/mu0                                             --
 !--------------------------------------------------------------------------
-        if (i.eq.1.or.i.eq.nw) goto 950
-        if (j.eq.1.or.j.eq.nh) goto 950
+        if (i.eq.1.or.i.eq.nw) go to 950
+        if (j.eq.1.or.j.eq.nh) go to 950
         kip=i*nh+j
         kim=(i-2)*nh+j
         kjp=(i-1)*nh+j+1
@@ -2700,7 +2700,7 @@
       if ((itek.eq.4).and.(iges.eq.igmax)) call donepl
       if ((itek.ge.5).and.(iges.eq.igmax)) call closepl
       if ((ilaser.gt.0).and.(iges.eq.igmax)) call donepl
-      goto 1900
+      go to 1900
 !
  1500 continue
       if (kerror.le.0) call chisqr(iges)
@@ -2760,7 +2760,7 @@
 !------------------------------------------------------------------
 !-- compute shearing rate eshear                                 --
 !------------------------------------------------------------------
-      if (keecur.le.0) goto 1990
+      if (keecur.le.0) go to 1990
       do i=1,nw
         eshear(i)=esradial(sipmid(i),keecur,rpmid(i),zmaxis)
       enddo

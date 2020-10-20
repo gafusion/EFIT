@@ -337,7 +337,7 @@
 !--  compute and store coil reference currents, not need for          --
 !--  non-fixed boundary when IFREF=-1                                 --
 !-----------------------------------------------------------------------
-      if (ifref.le.0.or.iconvr.ne.3) goto 3000
+      if (ifref.le.0.or.iconvr.ne.3) go to 3000
       do 2900 i=1,nj
         if (i.le.nbdry) then
           bbry(i)=fwtbry(i)

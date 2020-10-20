@@ -3988,10 +3988,27 @@
 !     ..
 !     .. Intrinsic Functions ..
       INTRINSIC          CHAR, ICHAR, INT, MIN, REAL
-!     ..
-!     .. Executable Statements ..
-!
-      GO TO ( 100, 100, 100, 400, 500, 600, 700, 800 ) ISPEC
+      !     ..
+      !     .. Executable Statements ..
+      !
+      select case (ISPEC)
+      case (1)
+        go to 100
+      case (2)
+        go to 100
+      case (3)
+        go to 100
+      case (4)
+        go to 400
+      case (5)
+        go to 500
+      case (6)
+        go to 600
+      case (7)
+        go to 700
+      case (8)
+        go to 800
+      end select
 !
 !     Invalid value for ISPEC
 !
@@ -4058,8 +4075,15 @@
       C2 = SUBNAM( 2:3 )
       C3 = SUBNAM( 4:6 )
       C4 = C3( 2:3 )
-!
-      GO TO ( 110, 200, 300 ) ISPEC
+      !
+      select case (ISPEC)
+      case (1)
+        go to 110
+      case (2)
+        go to 200
+      case (3)
+        go to 300
+      end select
 !
   110 CONTINUE
 !

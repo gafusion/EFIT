@@ -149,9 +149,9 @@
 !--  pressure data                                                       --
 !--------------------------------------------------------------------------
       if (kprfit.le.0.or.kdofit.eq.0) go to 2099
-      if (npress.le.0) goto 2099
+      if (npress.le.0) go to 2099
       do 2098 m=1,npress
-        if (fwtpre(m).le.0.0) goto 2098
+        if (fwtpre(m).le.0.0) go to 2098
         nj=nj+1
         arsp(nj,nk)=0.0
  2098 continue
@@ -401,9 +401,9 @@
 !--  pressure                                                      --
 !--------------------------------------------------------------------
       if (kprfit.le.0.or.kdofit.eq.0) go to 2206
-      if (npress.le.0) goto 2206
+      if (npress.le.0) go to 2206
       do 2204 m=1,npress
-        if (fwtpre(m).le.0.0) goto 2204
+        if (fwtpre(m).le.0.0) go to 2204
         nj=nj+1
         arsp(nj,nk)=0.0
         if (n.le.kppcur) arsp(nj,nk)=rprepc(m,n)/sigpre(m)*fwtpre(m)
@@ -647,9 +647,9 @@
         arsp(nj,nk)=0.
  2297 continue
       if (kprfit.le.0.or.kdofit.eq.0) go to 2299
-      if (npress.le.0) goto 2299
+      if (npress.le.0) go to 2299
       do 2298 m=1,npress
-        if (fwtpre(m).le.0.0) goto 2298
+        if (fwtpre(m).le.0.0) go to 2298
         nj=nj+1
         arsp(nj,nk)=0.0
  2298 continue
@@ -743,7 +743,7 @@
 !-- P(1) is an additional fitting parameter in kinetic fitting        --
 !-----------------------------------------------------------------------
         if (kprfit.le.0.or.kdofit.eq.0) go to 9210
-        if (npress.le.0) goto 9210
+        if (npress.le.0) go to 9210
         need=need+1
         nk=need
         nj=0
@@ -806,7 +806,7 @@
         arsp(nj,nk)=0.
  9203 continue
       do 9204 m=1,npress
-        if (fwtpre(m).le.0.0) goto 9204
+        if (fwtpre(m).le.0.0) go to 9204
         nj=nj+1
         arsp(nj,nk)=1./sigpre(m)*fwtpre(m)
  9204 continue
@@ -951,9 +951,9 @@
           arsp(nj,nk)=0.
 39203   continue
         if (kprfit.le.0.or.kdofit.eq.0) go to 39206
-        if (npress.le.0) goto 39206
+        if (npress.le.0) go to 39206
         do 39204 m=1,npress
-          if (fwtpre(m).le.0.0) goto 39204
+          if (fwtpre(m).le.0.0) go to 39204
           nj=nj+1
           arsp(nj,nk)=rpredz(m)/sigpre(m)*fwtpre(m)*scadelz
 39204   continue
@@ -1082,9 +1082,9 @@
         arsp(nj,nk)=0.
  9397 continue
       if (kprfit.le.0.or.kdofit.eq.0) go to 9399
-      if (npress.le.0) goto 9399
+      if (npress.le.0) go to 9399
       do 9398 m=1,npress
-        if (fwtpre(m).le.0.0) goto 9398
+        if (fwtpre(m).le.0.0) go to 9398
         nj=nj+1
         arsp(nj,nk)=0.0
  9398 continue
@@ -1224,9 +1224,9 @@
         arsp(nj,nk)=0.
 48397 continue
       if (kprfit.le.0.or.kdofit.eq.0) go to 48399
-      if (npress.le.0) goto 48399
+      if (npress.le.0) go to 48399
       do 48398 m=1,npress
-        if (fwtpre(m).le.0.0) goto 48398
+        if (fwtpre(m).le.0.0) go to 48398
         nj=nj+1
         arsp(nj,nk)=0.0
 48398 continue
@@ -1311,7 +1311,7 @@
 !------------------------------------------------------------------------------
 !--  fitting relative flux, set up response for fitted reference flux        --
 !------------------------------------------------------------------------------
-        if (.not.fitsiref) goto 52501
+        if (.not.fitsiref) go to 52501
         need=need+1
         nj=0
         nk=need
@@ -1377,9 +1377,9 @@
 !--  pressure                                                            --
 !--------------------------------------------------------------------------
       if (kprfit.le.0.or.kdofit.eq.0) go to 52099
-      if (npress.le.0) goto 52099
+      if (npress.le.0) go to 52099
       do 52098 m=1,npress
-        if (fwtpre(m).le.0.0) goto 52098
+        if (fwtpre(m).le.0.0) go to 52098
         nj=nj+1
         arsp(nj,nk)=0.0
 52098 continue
@@ -1471,7 +1471,7 @@
 !------------------------------------------------------------------------------
 !-- set up response matrix for ER, fitting ER                                --
 !------------------------------------------------------------------------------
-      if (keecur.le.0.or.kdomse.gt.0) goto 72111
+      if (keecur.le.0.or.kdomse.gt.0) go to 72111
         needs=need
         need=need+keecur
       do 72100 nk=needs+1,need
@@ -1535,9 +1535,9 @@
         arsp(nj,nk)=0.
 72097 continue
       if (kprfit.le.0.or.kdofit.eq.0) go to 72099
-      if (npress.le.0) goto 72099
+      if (npress.le.0) go to 72099
       do 72098 m=1,npress
-        if (fwtpre(m).le.0.0) goto 72098
+        if (fwtpre(m).le.0.0) go to 72098
         nj=nj+1
         arsp(nj,nk)=0.0
 72098 continue
@@ -1669,9 +1669,9 @@
 !--  pressure                                                      --
 !--------------------------------------------------------------------
         if (kprfit.le.0.or.kdofit.eq.0) go to 73206
-        if (npress.le.0) goto 73206
+        if (npress.le.0) go to 73206
         do 73204 m=1,npress
-          if (fwtpre(m).le.0.0) goto 73204
+          if (fwtpre(m).le.0.0) go to 73204
           nj=nj+1
           arsp(nj,nk)=rprepe(m)/sigpre(m)*fwtpre(m)
 73204 continue
@@ -1827,9 +1827,9 @@
 !--  pressure                                                      --
 !--------------------------------------------------------------------
         if (kprfit.le.0.or.kdofit.eq.0) go to 74206
-        if (npress.le.0) goto 74206
+        if (npress.le.0) go to 74206
         do 74204 m=1,npress
-          if (fwtpre(m).le.0.0) goto 74204
+          if (fwtpre(m).le.0.0) go to 74204
           nj=nj+1
           arsp(nj,nk)=0.0
 74204 continue
@@ -2110,9 +2110,9 @@
 !--  pressure                                                    --
 !------------------------------------------------------------------
       if (kprfit.le.0.or.kdofit.eq.0) go to 2480
-      if (npress.le.0) goto 2480
+      if (npress.le.0) go to 2480
       do 2477 i=1,npress
-        if (fwtpre(i).le.0.0) goto 2477
+        if (fwtpre(i).le.0.0) go to 2477
         nj=nj+1
         brsp(nj)=pressr(i)/sigpre(i)*fwtpre(i)
  2477 continue
@@ -2268,7 +2268,7 @@
 !--  unfold fitting parameters                                        --
 !-----------------------------------------------------------------------
          if ( wrsp(need).eq.0 ) then
-           goto 2656
+           go to 2656
          end if
          condno=wrsp(1)/wrsp(need)
          toler=condin*wrsp(1)
@@ -2289,7 +2289,7 @@
 
          call dgglse(nj,need,ncrsp,arsp,nrsmat,crsp,4*(npcurn-2)+6+ &
                    npcurn*npcurn,b,z,brsp,work,nrsma2,info,condno)
-         if (info.eq.0) goto 2657
+         if (info.eq.0) go to 2657
          2656   continue
          write (nttyo,8000) info
 ! MPI >>>
@@ -2496,7 +2496,7 @@
       do 4800 m=1,nstark
         chigam(m)=0.0
         cmgam(m,jtime)=0.0
-        if (rrgam(jtime,m).le.0.0) goto 4800
+        if (rrgam(jtime,m).le.0.0) go to 4800
         cmbr=0.0
         cmbz=0.0
         do 4720 n=1,nfcoil
@@ -2760,7 +2760,7 @@
 !
       chipre=0.0
       if (kprfit.le.0.or.kdofit.eq.0) go to 4910
-      if (npress.le.0) goto 4910
+      if (npress.le.0) go to 4910
       do 4908 m=1,npress
         cm=0.0
         do 4906 n=1,kppcur

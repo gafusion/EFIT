@@ -540,7 +540,17 @@
       if(iflag.eq.1)go to 10
       i1=i
       return
-   10 go to (100,200,300,400),icrnr
+   10 continue
+      select case (icrnr)
+      case (1)
+        go to 100
+      case (2)
+        go to 200
+      case (3)
+        go to 300
+      case (4)
+        go to 400
+      end select
 !----------------------------------------------------------------------
 !--   corner #1                                                      --
 !--   cell #2                                                        --
@@ -1310,7 +1320,7 @@
           yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
           xax=xax+orelax*xerr
           yax=yax+orelax*yerr
-          !if ((xax<x(1) .or. xax>x(nx)) .or. (yax<y(1) .or. yax>y(nz))) goto 305 ! TODO: test if this would help
+          !if ((xax<x(1) .or. xax>x(nx)) .or. (yax<y(1) .or. yax>y(nz))) go to 305 ! TODO: test if this would help
           if ((abs(pds(2)).lt.1.0e-06).and.(abs(pds(3)).lt.1.0e-06)) go to 310
           if (xerr*xerr+yerr*yerr.lt.1.0e-12) go to 310
         end if
@@ -1845,7 +1855,15 @@
       b=-(gamma+beta)*x1-(gamma+alpha)*x2-(alpha+beta)*x3
       c=x2*x3*alpha+x1*x3*beta+x1*x2*gamma
 !
-      go to (10,20,30),k
+      select case (k)
+      case (1)
+        go to 10
+      case (2)
+        go to 20
+      case (3)
+        go to 30
+      end select
+
 10    y=a*x*x+b*x+c
       go to 4
 20    rad=sqrt(b*b-4.0*a*(c-y))
@@ -2002,67 +2020,75 @@
       dimension xlim(*),ylim(*)
       logical b,c,d,inside,bold
 
-      go to (10,200) iflag
-   10 continue
+      select case (iflag)
+        case (1)
+          go to 10
+        case (2)
+          go to 200
+      end select
+
+10    continue
       kk = 0
-      do 100 i = 1,nw
-      do 100 j = 1,nh
-      kk = kk + 1
-      zero(kk) = 1.
-      ncross = 0
-      do 20 k = 1,limitr-1
-      if ((ylim(k).lt.y(j)) .and. (ylim(k+1).lt.y(j))) go to 20
-      if (x(i) .eq. xlim(k))  go to 20
-      t = x(i) - xlim(k)
-      s = xlim(k+1) - x(i)
-      if ((t*s) .lt. 0.) go to 20
-      di = (ylim(k+1)-ylim(k)) / (xlim(k+1)-xlim(k))
-      f = ylim(k) + di*(x(i)-xlim(k))
-      if (f .lt. y(j)) go to 20
-      ncross = ncross + 1
-   20 continue
-      mcross = .5*ncross
-      mcross = 2*mcross
-      if (ncross .eq. mcross) zero(kk) = 0.
-  100 continue
+      do i = 1,nw
+      do j = 1,nh
+        kk = kk + 1
+        zero(kk) = 1.
+        ncross = 0
+        do 20 k = 1,limitr-1
+          if ((ylim(k).lt.y(j)) .and. (ylim(k+1).lt.y(j))) go to 20
+          if (x(i) .eq. xlim(k))  go to 20
+          t = x(i) - xlim(k)
+          s = xlim(k+1) - x(i)
+          if ((t*s) .lt. 0.) go to 20
+          di = (ylim(k+1)-ylim(k)) / (xlim(k+1)-xlim(k))
+          f = ylim(k) + di*(x(i)-xlim(k))
+          if (f .lt. y(j)) go to 20
+          ncross = ncross + 1
+20      continue
+        mcross = .5*ncross
+        mcross = 2*mcross
+        if (ncross .eq. mcross) zero(kk) = 0.
+      end do
+      end do
       return
 !
   200 continue
       kk=0
-      do 2000 i=1,nw
-      do 2000 j=1,nh
-        kk=kk+1
-        d=.false.
-        b=.true.
-        n=0
-        inside=.false.
-        bold=b
-        do 1000 k=1,limitr-1
-          c=.false.
-!---------------------------------------------------------------------------
-!--  fixed if test logic, for ge and le per Wolfe of MIT, 93/09/02        --
-!--       if (y(j).le.ylim(k).and.y(j).ge.ylim(k+1)                       --
-!--  .        .or.y(j).ge.ylim(k).and.y(j).le.ylim(k+1)) then             --
-!---------------------------------------------------------------------------
-          if (y(j).le.ylim(k).and.y(j).gt.ylim(k+1) &
+      do i=1,nw
+        do j=1,nh
+          kk=kk+1
+          d=.false.
+          b=.true.
+          n=0
+          inside=.false.
+          bold=b
+          do k=1,limitr-1
+            c=.false.
+            !---------------------------------------------------------------------------
+            !--  fixed if test logic, for ge and le per Wolfe of MIT, 93/09/02        --
+            !--       if (y(j).le.ylim(k).and.y(j).ge.ylim(k+1)                       --
+            !--  .        .or.y(j).ge.ylim(k).and.y(j).le.ylim(k+1)) then             --
+            !---------------------------------------------------------------------------
+            if (y(j).le.ylim(k).and.y(j).gt.ylim(k+1) &
               .or.y(j).ge.ylim(k).and.y(j).lt.ylim(k+1)) then
               c=.true.
               d=.true.
               n=n+1
-          endif
-          if(c.and. &
-            (y(j)-ylim(k))*(xlim(k+1)-xlim(k))- &
-            (ylim(k+1)-ylim(k))*(x(i)-xlim(k)).gt.0.) &
-             b=.not.b
-          if (n.eq.2) then
+            endif
+            if(c.and. &
+              (y(j)-ylim(k))*(xlim(k+1)-xlim(k))- &
+              (ylim(k+1)-ylim(k))*(x(i)-xlim(k)).gt.0.) &
+              b=.not.b
+            if (n.eq.2) then
               n=0
               if (bold.eqv.b) inside=.true.
               bold=b
-          endif
- 1000   continue
-        zero(kk)=0.0
-        if (inside.and.d) zero(kk)=1.0
- 2000 continue
+            endif
+          end do
+          zero(kk)=0.0
+          if (inside.and.d) zero(kk)=1.0
+        end do
+      end do
       return
       end
 !

@@ -98,7 +98,7 @@
 !
       if (iand(iout,1).eq.0) then
          close(unit=nout,status='delete',err=300)
-      else                      ! goto 300
+      else                      ! go to 300
 !vas      write (nout,10000)
       write (nout,10000) trim(ch1),trim(ch2)
 !
@@ -437,7 +437,7 @@
       enddo
       endif
 !
-      if (iand(iout,1).ne.0) then  ! goto 850
+      if (iand(iout,1).ne.0) then  ! go to 850
 !
         write (nout,11100) ssiref
         write (nout,11020) (workb(i),i=1,nsilop)

@@ -186,7 +186,7 @@
       else
       read (lfile,*,err=11132)    limitr
       read (lfile,*)    (xlim(i),ylim(i),i=1,limitr)
-      goto 11152
+      go to 11152
 11132 close (unit=lfile)
       open(unit=lfile,                       status='old', &
         file=filimt         )

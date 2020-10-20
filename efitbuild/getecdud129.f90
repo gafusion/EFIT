@@ -280,7 +280,7 @@
           do 291 j=1,np
             bti322(j)=0.0
 291       continue
-          goto 32000
+          go to 32000
         endif
 31200   read (60,*,err=32000,end=32000) namedum,dumbtc
         do i=1,magpri
@@ -288,7 +288,7 @@
            do j=1,np
              expmpi(j,i)=expmpi(j,i)-dumbtc*bti322(j)
            enddo
-           goto 31200
+           go to 31200
          endif
         enddo
         do i=1,nsilop
@@ -296,10 +296,10 @@
            do j=1,np
              silopt(j,i)=silopt(j,i)-dumbtc*bti322(j)
            enddo
-           goto 31200
+           go to 31200
          endif
         enddo
-        goto 31200
+        go to 31200
       else
 !------------------------------------------------------------------ EJS(2014)
 ! The following loop was intended to skip to the next shot number in the file,
@@ -314,7 +314,7 @@
 !          read(60,*,err=31000,end=32000) namedum,dumbtc
 !        enddo
 !------------------------------------------------------------------ 
-        goto 31000
+        go to 31000
       endif
 32000 continue
       close(unit=60)
@@ -422,7 +422,7 @@
              enddo
              endif
            enddo
-           goto 33200
+           go to 33200
          endif
         enddo
 !---------------------------------------------------- new section - EJS(2014)
@@ -440,11 +440,11 @@
              enddo
              endif
            enddo
-           goto 33200
+           go to 33200
          endif
         enddo
 !---------------------------------------------- end of new section - EJS(2014)
-        goto 33200
+        go to 33200
       else
 !------------------------------------------------------------------ EJS(2014)
 ! The following loop was intended to skip to the next shot number in the file,
@@ -460,7 +460,7 @@
 !                                        ,(dumccc(k),k=1,3)
 !        enddo
 !------------------------------------------------------------------ 
-        goto 33000
+        go to 33000
       endif
 34000 continue
       close(unit=60)
@@ -547,7 +547,7 @@
               expmpi(j,i)=expmpi(j,i)-dumcic(k)*curicoi(j,k)
              enddo
            enddo
-           goto 35200
+           go to 35200
          endif
         enddo
 !---------------------------------------------------- new section - EJS(2014)
@@ -562,11 +562,11 @@
               silopt(j,i)=silopt(j,i)-dumcic(k)*curicoi(j,k)
              enddo
            enddo
-           goto 35200
+           go to 35200
          endif
         enddo
 !---------------------------------------------- end of new section - EJS(2014)
-        goto 35200
+        go to 35200
       else
 !------------------------------------------------------------------ EJS(2014)
 ! The following loop was intended to skip to the next shot number in the file,
@@ -581,7 +581,7 @@
 !          read(60,*,err=35000,end=36000) namedum,(dumcic(k),k=1,6)
 !        enddo
 !------------------------------------------------------------------ 
-        goto 35000
+        go to 35000
       endif
 36000 continue
       close(unit=60)
@@ -652,7 +652,7 @@
 !--  New E-coil connection after discharge 85700, LLao 95/07/11--
 !----------------------------------------------------------------
       do 90 i=1,nesum
-        if (nshot.le.85700.and.i.gt.2) goto 83
+        if (nshot.le.85700.and.i.gt.2) go to 83
         call avdata(nshot,ecname(i),i1,ierec(i),eccurt(1,i), &
                     np,times,delt,i0,r1,i1,bitec(i),iavem,time,ircfact, &
                     do_spline_fit,e_rc(i),ercg(i),vrese(i),e_k(i),t0e(i), &
@@ -771,7 +771,7 @@
       times=timesd
       xx=xxd
       ierror=1
-      if (iaveus.gt.0) goto 1000
+      if (iaveus.gt.0) go to 1000
 !----------------------------------------------------------------------
 !-- milli-second averaging                                           --
 !----------------------------------------------------------------------
