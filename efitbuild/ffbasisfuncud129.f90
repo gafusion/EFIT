@@ -964,17 +964,3 @@
       endif
       return
       end
-!
-!   This routine is required if the CVS revision numbers are to
-!   survive an optimization.
-!
-!
-!   2000/03/28 22:12:36 meyer
-!
-      subroutine ffbasisfuncx_rev(i)
-      CHARACTER*100 opt
-      character*10 s
-      if( i .eq. 0) s =  &
-      '@(#)ffbasisfuncx.for,v 4.33\000'
-      return
-      end

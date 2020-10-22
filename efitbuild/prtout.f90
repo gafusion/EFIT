@@ -42,8 +42,8 @@
         wacoil,hacoil
 !
 !#if defined(USEMPI)
+!      ! TODO: Currently this ONLY works if nproc == total number of time slices.
 !      ! If running in parallel, write out key info for all ranks
-!      ! TODO: Currently this ONLY works if nproc == num time slices.
 !      if (nproc > 1) then
 !        if (rank==0) then
 !          allocate(ishotall(nproc))
@@ -65,7 +65,7 @@
 !          if (allocated(timeall)) deallocate(timeall)
 !        end if
 !      else
-!        !write(nttyo,*) ishot,int(time(it)),tsaisq(it) ! rls, handy for debugging
+!        !write(nttyo,*) ishot,int(time(it)),tsaisq(it) ! handy for debugging
 !      end if
 !#endif
       if (itek.gt.0) go to 100

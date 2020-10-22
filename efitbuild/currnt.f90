@@ -375,7 +375,8 @@
             b(j) = xrsp(j)
         enddo
         call dgglse(nj,nownow,ncrsp,alipc,npcur3,crsp,4*(npcurn-2)+6+ &
-                   npcurn*npcurn,b,z,xrsp,work,nrsma2,info,condno)
+                   npcurn*npcurn,b,z,xrsp,work,nrsma2,info,condno,kerror)
+        if (kerror.gt.0) return
         do i=1,nownow
           brsp(nfcoil+i)=xrsp(i)
         enddo

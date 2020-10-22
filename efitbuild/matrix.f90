@@ -38,14 +38,20 @@
       common/cwork3/lkx,lky
       dimension pds(6)
       dimension rxxx(ndata),rxxxf(ndata),rxx2(ndata),rxxw(ndata)
+      integer, dimension(mfnpcr)       :: ipvttmp
+      real*8, dimension(2)             :: arspdet2(1:2)
+      real*8, dimension(mfnpcr)        :: worktmp
+      real*8, dimension(nrsmat,mfnpcr) :: arsptmp
+
 !---------------------------------------------------------------------
 !--   relax saimin=50 from 30               04/27/90                --
 !--                60 from 50               03/31/93                --
 !---------------------------------------------------------------------
       data iupdat/0/,minite/8/,ten24/1.e4/,z04/1.0e-04/
       save z04
-!
+
       integer, intent(inout) :: kerror
+
       kerror = 0
       if (iconvr.eq.3) go to 6000
 !----------------------------------------------------------------------
@@ -2288,7 +2294,8 @@
          2655 continue
 
          call dgglse(nj,need,ncrsp,arsp,nrsmat,crsp,4*(npcurn-2)+6+ &
-                   npcurn*npcurn,b,z,brsp,work,nrsma2,info,condno)
+                   npcurn*npcurn,b,z,brsp,work,nrsma2,info,condno,kerror)
+         if (kerror.gt.0) return
          if (info.eq.0) go to 2657
          2656   continue
          write (nttyo,8000) info

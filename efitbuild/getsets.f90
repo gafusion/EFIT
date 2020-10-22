@@ -1000,9 +1000,10 @@
       endif
 
       ! NOTE : Finished EFIT run so STOP execution
-      if (rank == 0) then
-        write(*,*) 'FORTRAN STOP - normal termination'
-      endif
+      !if (rank == 0) then
+      !  write(*,*) 'FORTRAN STOP - normal termination'
+      !endif
+      write(*,'(a,1x,i3,1x,a)') 'rank',rank,'mpi_finalized'
       call mpi_finalize(ierr)
       stop
 #else

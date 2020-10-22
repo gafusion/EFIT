@@ -105,6 +105,8 @@
 !-- Read in grid size from command line and set global variables     --
 !-- ONLY root process reads command-line arguments                   --
 !----------------------------------------------------------------------
+     nw = 0
+     nh = 0
      if (rank == 0) then
        nargs = iargc()
 ! Using mpirun command so will have different number of arguments than serial case
@@ -120,8 +122,6 @@
        call getarg(1,inp1)
        call getarg(2,inp2)
 #endif
-       nw = 0
-       nh = 0
        read (inp1,'(i4)',err=9876) nw
        read (inp2,'(i4)',err=9876) nh
 9876   continue
@@ -213,6 +213,7 @@
 ! OPT_INPUT <<<
 
    20 call getsets(ktime,kwake,mtear,kerror)
+      ! ktime - number of time slices per rank
 
 ! MPI >>>
 #if defined(USEMPI)
@@ -225,12 +226,23 @@
     endif
 #endif
 ! MPI <<<
+
+! Looping (below) on the number of time slices depends on the number of ranks.
+! Time slices are assigned to ranks in groups as follows:
+! slice: 100, 120, 140, 160, 180, 200, 220, 240, ...
+! rank:    0,   0,   0,   1,   1,   1,   2,   2, ...
+! However, not all ranks necessarily have the same number of slices.
+! The number of slices per rank = floor(nslices/nranks), BUT
+!   ranks 0 to N also have ONE additional slice, where
+!   N = nslices - nranks*floor(nslices/nranks) - 1
+!   nslices = total number of slices for all ranks
+
 !----------------------------------------------------------------------
 !-- start simulation for KTIME timeslices                            --
 !----------------------------------------------------------------------
       k=0
   100 k=k+1
-        ks=k ! ks=1,2,3... in serial, but 1,1,1,... in parallel
+        ks=k ! ks=1,2,3... in serial, but ks=1,1,1,... in parallel
 !----------------------------------------------------------------------
 !--  set up data                                                     --
 !----------------------------------------------------------------------
@@ -290,9 +302,10 @@
       if (allocated(dist_data)) deallocate(dist_data)
       if (allocated(dist_data_displs)) deallocate(dist_data_displs)
       if (allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
-      if (rank == 0) then
-        write(*,*) 'FORTRAN STOP - normal termination'
-      endif
+      !if (rank == 0) then
+      !  write(*,*) 'FORTRAN STOP - normal termination'
+      !endif
+      write(*,'(a,1x,i3,1x,a)') 'rank',rank,'mpi_finalized'
       call mpi_finalize(ierr)
 #endif
       stop
@@ -1921,21 +1934,21 @@
         if (i.gt.1) iwantk=iwantk+1
         ix=i
         if (i.le.1) go to 500
-!------------------------------------------------------------------
-!--  nitera.ge.kcallece, then call setece                        --
-!--  mtxece=1 call setece every iteration                        --
-!--  mtxece>1 call setece per mtece time iteration               --
-!------------------------------------------------------------------
+        !------------------------------------------------------------------
+        !--  nitera.ge.kcallece, then call setece                        --
+        !--  mtxece=1 call setece every iteration                        --
+        !--  mtxece>1 call setece per mtece time iteration               --
+        !------------------------------------------------------------------
         if ((nitera.ge.kcallece).and.(kfitece.gt.0)) then
-             nleft=abs(mxiter)-nitera
-             if(nleft .ge. mtxece*nconstr) then
-                if (idebug.ge.2) then 
-                   write (6,*) 'Call FIT/SETECE',ix
-                   write (6,*) '  nitera/kcallece/kfitece/nleft/mtxece/nconstr = ', &
-                     nitera,kcallece,kfitece,nleft,mtxece,nconstr   
-                endif
-                call setece(jtime,kerror)
-             endif
+          nleft=abs(mxiter)-nitera
+          if(nleft .ge. mtxece*nconstr) then
+            if (idebug.ge.2) then
+              write (6,*) 'Call FIT/SETECE',ix
+              write (6,*) '  nitera/kcallece/kfitece/nleft/mtxece/nconstr = ', &
+                nitera,kcallece,kfitece,nleft,mtxece,nconstr
+            endif
+            call setece(jtime,kerror)
+          endif
         endif
         call green(nzero,jtime,nitera)
         if (kprfit.gt.0.and.iwantk.eq.ndokin) then
@@ -1949,10 +1962,10 @@
         if (kprfit.ge.3) call presurw(jtime,nitera)
         if (errorm.lt.errmagb) then
           if ((imagsigma.eq.1) .AND. (errorm > errmag) ) &
-                  call getsigma(jtime,nitera)
+            call getsigma(jtime,nitera)
           if ((imagsigma.eq.2).and.(idosigma.eq.1)) then
-                  call getsigma(jtime,nitera)
-                  idosigma=2
+            call getsigma(jtime,nitera)
+            idosigma=2
           endif
         endif
         if (idebug.ge.2) write (6,*) 'Call FIT/MATRIX',ix
@@ -1962,7 +1975,7 @@
           return
         endif
         if ((iconvr.eq.2).and.(ichisq.gt.0)) go to 2020
-  500   continue
+500     continue
         do 2000 in=1,nxiter
           ixnn=in
           nitera=nitera+1
@@ -1993,18 +2006,19 @@
           endif
           if (idone.gt.0) go to 2010
           if (i.eq.mxiter+1) go to 2010
- 2000   continue
- 2010 continue
- 2020 continue
-!---------------------------------------------------------------------
-!--  update pressure if needed                                      --
-!---------------------------------------------------------------------
+2000    continue
+2010    continue
+2020  continue
+      !---------------------------------------------------------------------
+      !--  update pressure if needed                                      --
+      !---------------------------------------------------------------------
       if (kprfit.gt.1) call presur(jtime,nitera,kerror)
       if (kerror /= 0) then
         jerror(jtime) = 1
       endif
       return
       end
+
       function fpcurr(upsi,nnn)
 !**********************************************************************
 !**                                                                  **
@@ -2031,7 +2045,6 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       dimension xpsii(nffcur)
-      real*8, external :: linear
       if (icutfp.gt.0) then
         ypsi=upsi*xpsimin
       else
@@ -6361,7 +6374,7 @@
       subroutine vsma_(a, ia, b, c, ic, d, id, n)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 
-      dimension a(1),c(1),d(1) ! rls used as pointers into array
+      dimension a(1),c(1),d(1) ! used as pointer inside array
 
       if (n.le.0) then
         return
@@ -6404,7 +6417,7 @@
       subroutine ef_vvmul(vin1,vin2,out,nelements)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 
-      dimension vin1(1),vin2(1),out(1) ! rls Could be used as pointers into array
+      dimension vin1(1),vin2(1),out(1) ! Could be used as pointer inside array
 
       do 10 i=1,nelements
         out(i) = vin1(i) * vin2(i)
@@ -6707,7 +6720,7 @@
       dimension xpsii(nppcur)
 !
 ! jm.s
-      real*8, external :: linear
+      !real*8 :: linearinterp
 ! jm.e
       if (abs(ypsi).gt.1.0) then
         ppcurr=0.0
@@ -6715,7 +6728,7 @@
       endif
 ! jm.s
       if (npsi_ext > 0) then
-!        ppcurr = linear(ypsi,psin_ext,pprime_ext,npsi_ext)
+!        ppcurr = linearinterp(ypsi,psin_ext,pprime_ext,npsi_ext)
         ppcurr = seval(npsi_ext,ypsi,psin_ext,pprime_ext,bpp_ext,cpp_ext,dpp_ext)
         ppcurr = ppcurr * cratiop_ext
         return
@@ -8608,6 +8621,7 @@
       eouter=(ymax-ymin)/(xmax-xmin)
       zplasm=(ymin+ymax)/2.
       aouter=(xmax-xmin)/2.
+
 !-----------------------------------------------------------------------
 !--   force free current in the scrape-off layer                      --
 !-----------------------------------------------------------------------
@@ -9300,6 +9314,7 @@
       !implicit integer*4 (i-n), real*8 (a-h, o-z)
       !return
       !end
+
       block data efit_bdata
 !**********************************************************************
 !**                                                                  **
@@ -9332,73 +9347,69 @@
       data iunit/35/, m_write/1/, m_read/1/
       data out2d /'curve2d.dat'/, out2d_bin/'curve2d_bin.dat'/
       end
-!
-      include 'msels_data.f90'
-      include 'msels_hist.f90'
-!
-!
-!   This routine is required if the CVS revision numbers are to
-!   survive an optimization.
-!
-!
-!   1997/05/23 22:53:27 peng
-!
-      subroutine efitdx_rev(i)
-      CHARACTER*100 opt
-      character*10 s
-      if( i .eq. 0) s =  &
-      '@(#)$RCSFILE: efitdx.for,v $ 4.61\000'
-      return
-      end
 
-! jm.s
-      real*8 function linear(x,xa,ya,n)
-
-      implicit none
-      
-      real*8, intent(in) :: x
-      real*8, dimension(65), intent(inout) :: xa, ya
-      integer, intent(in) :: n
-      
-      integer :: klo, khi, k
-      real*8 :: h, b, a
-      
-      klo=1
-      khi=n
-      
-      do 
-         if (khi-klo <= 1) exit
-
-         k=(khi+klo)/2
-         if (xa(k) > x) then
-            khi=k
-         else
-            klo=k
-         endif
-      enddo
-
-      h=xa(khi)-xa(klo)
-      
-      if (h == 0.0) then
-         write(*,*) 'Bad xa input to routine linear'
-! MPI >>>
-         ! NOTE : Do NOT need to replace STOP command since function currently unused
-         stop
-! MPI <<<
-      endif
-
-      a=(xa(khi)-x)/h
-      b=(x-xa(klo))/h
-    
-      linear = a*ya(klo)+b*ya(khi)
-
-      end function linear
-! jm.e
+!      real*8 function linearinterp(x,xa,ya,n)
+!**********************************************************************
+!**                                                                  **
+!**     SUBPROGRAM DESCRIPTION:                                      **
+!**          currently unused                                        **
+!**                                                                  **
+!**     RECORD OF MODIFICATION:                                      **
+!**       unknown..........created, jm.s                             **
+!**                                                                  **
+!**********************************************************************
+!      implicit none
+!
+!      real*8, intent(in) :: x
+!      real*8, dimension(65), intent(inout) :: xa, ya ! TODO: hardcode 65
+!      integer, intent(in) :: n
+!
+!      integer :: klo, khi, k
+!      real*8 :: h, b, a
+!
+!      klo=1
+!      khi=n
+!
+!      do
+!         if (khi-klo <= 1) exit
+!
+!         k=(khi+klo)/2
+!         if (xa(k) > x) then
+!            khi=k
+!         else
+!            klo=k
+!         endif
+!      enddo
+!
+!      h=xa(khi)-xa(klo)
+!
+!      if (h == 0.0) then
+!         write(*,*) 'Bad xa input to routine linear'
+!! MPI >>>
+!         ! NOTE : Do NOT need to replace STOP command since function currently unused
+!         stop
+!! MPI <<<
+!      endif
+!
+!      a=(xa(khi)-x)/h
+!      b=(x-xa(klo))/h
+!
+!      linearinterp = a*ya(klo)+b*ya(khi)
+!
+!      end function linearinterp
 
 ! MPI >>>
 #if defined(USEMPI)
-    ! Shutdown MPI before calling STOP to terminate program
       subroutine mpi_stop
+!**********************************************************************
+!**                                                                  **
+!**     SUBPROGRAM DESCRIPTION:                                      **
+!**       Shutdown MPI before calling STOP to terminate program      **
+!**                                                                  **
+!**     RECORD OF MODIFICATION:                                      **
+!**       unknown..........created, ???                              **
+!**                                                                  **
+!**********************************************************************
       include 'modules1.f90'
       include 'mpif.h'
       
@@ -9406,9 +9417,10 @@
       if (allocated(dist_data_displs)) deallocate(dist_data_displs)
       if (allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
       
-      if (rank == 0) then
-        write(*,*) 'STOPPING MPI'
-      endif
+      !if (rank == 0) then
+      !  write(*,*) 'STOPPING MPI'
+      !endif
+      write(*,'(a,1x,i3,1x,a)') 'rank',rank,'mpi_abort'
       call MPI_ABORT(MPI_COMM_WORLD,ierr)
       STOP
     

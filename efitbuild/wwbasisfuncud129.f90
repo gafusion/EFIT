@@ -1923,16 +1923,3 @@
       endif
       return
       end
-!
-!   This routine is required if the CVS revision numbers are to
-!   survive an optimization.
-!
-!   $Date: 2009/02/12 22:55:10 $ $Author: radhakri $
-!
-      subroutine wwbasisfuncx_rev(i)
-      CHARACTER*100 opt
-      character*10 s
-      if( i .eq. 0) s =  &
-      '@(#)$RCSfile: wwbasisfuncud129.f90,v $ $Revision: 1.1.2.3 $\000'
-      return
-      end

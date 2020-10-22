@@ -1392,11 +1392,3 @@
  9020 format (' t(ms,us) = ',i6,1x,i6)
       return
       end
-
-      subroutine tearing_rev(i)
-      CHARACTER*100 opt
-      character*10 s
-      if( i .eq. 0) s =  &
-      '@(#)$RCSfile: tearingd129.f90,v $ $Revision: 1.1.2.3 $\000'
-      return
-      end

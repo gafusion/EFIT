@@ -251,17 +251,3 @@
 
       return
       end
-!
-!   This routine is required if the CVS revision numbers are to
-!   survive an optimization.
-!
-!
-!   1998/02/03 23:54:21 meyer
-!
-      subroutine bunema_rev(i)
-      CHARACTER*100 opt
-      character*10 s
-      if( i .eq. 0) s =  &
-      '@(#)bunema.for,v 4.14\000'
-      return
-      end

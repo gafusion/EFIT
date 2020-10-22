@@ -10826,17 +10826,3 @@
       close(unit=35)
       return
     end
-!
-!   This routine is required if the CVS revision numbers are to
-!   survive an optimization.
-!
-!
-!   1997/05/13 16:37:28 meyer
-!
-      subroutine pltdatx_rev(i)
-      CHARACTER*100 opt
-      character*10 s
-      if( i .eq. 0) s =  &
-      '@(#)pltdatx.for,v 4.30\000'
-      return
-      end

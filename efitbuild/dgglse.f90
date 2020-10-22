@@ -1,6 +1,6 @@
 
       SUBROUTINE DGGLSE( M, N, P, A, LDA, B, LDB, C, D, X, WORK, LWORK, &
-                         INFO,condno )
+                         INFO,condno,kerror )
 !
 !  -- LAPACK driver routine (version 2.0) --
 !     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
@@ -8,7 +8,7 @@
 !     September 30, 1994
 !
 !     .. Scalar Arguments ..
-      INTEGER            INFO, LDA, LDB, LWORK, M, N, P
+      INTEGER            INFO, LDA, LDB, LWORK, M, N, P, kerror
 !     ..
 !     .. Array Arguments ..
       DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), C( * ), D( * ), &
@@ -107,6 +107,7 @@
 !
 !     Test the input parameters
 !
+      kerror = 0
       INFO = 0
       MN = MIN( M, N )
       IF( M.LT.0 ) THEN
@@ -162,8 +163,18 @@
       CALL DGEMV( 'No transpose', N-P, P, -ONE, A( 1, N-P+1 ), LDA, D, &
                   1, ONE, C, 1 )
 !
-!     Sovle R11*x1 = c1 for x1
+!     Solve R11*x1 = c1 for x1
 !
+      ! rls: Simple check if matrix cannot be inverted, as a last resort. This is commonly
+      ! a source of error. It would be better to have this type of check earlier, but
+      ! that is difficult because matrix A is modified significantly in the preceding calls.
+      do i = 1,N-P
+        if (A(i,i).eq.0) then
+          kerror = 1
+          write(*,'(a,i4,a,i4,a)') 'ERROR in dtrsv: A(',i,',',i,')=0, divide by zero.'
+          return
+        end if
+      enddo
       CALL DTRSV( 'Upper', 'No transpose', 'Non unit', N-P, A, LDA, C, &
                   1 )
 !

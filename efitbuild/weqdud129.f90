@@ -1915,17 +1915,3 @@ vastext(60:85)= 'input pressure profile (m)'
 !
       return
       end
-!
-!   This routine is required if the CVS revision numbers are to
-!   survive an optimization.
-!
-!
-!   1997/05/23 22:53:38 peng
-!
-      subroutine weqdskx_rev(i)
-      CHARACTER*100 opt
-      character*10 s
-      if( i .eq. 0) s =  &
-      '@(#)weqdskx.for,v 4.44\000'
-      return
-      end
