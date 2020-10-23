@@ -69,7 +69,7 @@
            ,ktear,kersil,iout,ixray,table_dir,input_dir,store_dir &
            ,kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve &
            ,iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum &
-           ,appendsnap,vbit,nbdrymx,efitversion,ifindopt
+           ,appendsnap,vbit,nbdrymx,efitversion,ifindopt,tolbndpsi
       namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
            znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
            oldcomp,currc199,curriu30,curriu90, &
@@ -126,7 +126,7 @@
            ,mse_strict,t_max_beam_off,ifitdelz,scaledz &
            ,mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210 &
            ,ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels,idebug,jdebug &
-           ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt,ifindopt
+           ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace &
            ,symmetrize,backaverage,lring
       data mcontr/35/,lfile/36/,ifpsi/0/
@@ -382,6 +382,7 @@
       write_Kfile = .false.
       fitfcsum = .false.
       ifindopt = 2
+      tolbndpsi = 1.0d-12
 !----------------------------------------------------------------------
 !--   Snap-Extension mode              --
 !--   Initialize istore = 0                                          --

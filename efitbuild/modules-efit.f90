@@ -418,7 +418,7 @@
      end module var_cgrid
 !var_extra
      module var_extra
-      real*8 scrape
+      real*8 scrape,tolbndpsi
       integer*4 nextra,ixstrt,iextra,iprobe,ifcoil,iecoil &
            ,iexcal,iconsi,iqplot,klabel,kthkcrv,ifindopt
       data ifcoil/1/,kthkcrv/0/,klabel/0/

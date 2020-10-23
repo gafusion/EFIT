@@ -402,7 +402,7 @@
       call bound(psi,nw,nh,nwnh,psiots,xmins,xmaxs,ymins, &
       ymaxs,zeros,rgrid,zgrid,xguess,yguess,jges,limtrs,xlims,ylims, &
       xouts,youts,nfouns,xlmins,npoint,rymins,rymaxs,dpsis, &
-      zxmins,zxmaxs,nerr,ishot,itime,limfag,radbou,kbound)
+      zxmins,zxmaxs,nerr,ishot,itime,limfag,radbou,kbound,tolbndpsi)
       if (nerr.gt.0) then
         olefs(iges)=-89.0
         orighs(iges)=-89.0
@@ -1426,7 +1426,7 @@
           zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound)
+          limfag,radum,kbound,tolbndpsi)
       dis2p=(xxtra(1,ixl)-xxtra(npxtra(ixl),ixl))**2
       dis2p=sqrt(dis2p+(yxtra(1,ixl)-yxtra(npxtra(ixl),ixl))**2)
       if (dis2p.lt.0.1*drgrid) then
@@ -1635,7 +1635,7 @@
           zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound)
+          limfag,radum,kbound,tolbndpsi)
       dis2p=(xxtra(1,ixl)-xxtra(npxtra(ixl),ixl))**2
       dis2p=sqrt(dis2p+(yxtra(1,ixl)-yxtra(npxtra(ixl),ixl))**2)
       if (dis2p.lt.0.1*drgrid)then
@@ -1782,7 +1782,7 @@
           zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound)
+          limfag,radum,kbound,tolbndpsi)
       zerovs=1.0
       do 66100 i=1,npxtra(ixl)
         zerold=zerovs
@@ -1931,7 +1931,7 @@
           zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound)
+          limfag,radum,kbound,tolbndpsi)
       zerovs=1.0
       do 67100 i=1,npxtra(ixl)
         zerold=zerovs
@@ -2134,7 +2134,7 @@
           zeros,rgrid,zgrid,rexpmx,zexpmx,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound)
+          limfag,radum,kbound,tolbndpsi)
 !-------------------------------------------------------------------------
 !-- get engineering slot parameter in cm, SEPNOSE                       --
 !-------------------------------------------------------------------------
@@ -2216,7 +2216,7 @@
           zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound)
+          limfag,radum,kbound,tolbndpsi)
       if ((i.gt.1).or.(ixyz.ne.-2)) go to 620
       if (xlimxs.le.0.0) go to 620
       do 615 n=1,npxtra(ixl)

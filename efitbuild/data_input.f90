@@ -82,7 +82,8 @@
       ,kakloop,aktol,kakiter,akgamwt,akprewt &
       ,kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout &
       ,imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap &
-      ,idebug,nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp,jdebug,ifindopt
+      ,idebug,nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp,jdebug &
+      ,ifindopt,tolbndpsi
       namelist/inwant/psiwant,vzeroj,fwtxxj,fbetap,fbetan,fli,fq95,fqsiw &
            ,jbeta,jli,alpax,gamax,jwantm,fwtxxq,fwtxxb,fwtxli,znose &
            ,fwtbdry,nqwant,siwantq,n_write,kccoils,ccoils,rexpan &
@@ -161,7 +162,8 @@
           ,mse_strict,t_max_beam_off,ifitdelz,scaledz &
           ,mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210 &
           ,ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels,idebug,jdebug &
-          ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt,ifindopt
+          ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt &
+          ,ifindopt,tolbndpsi
       namelist/profile_ext/npsi_ext,pprime_ext,ffprim_ext,psin_ext, &
       geqdsk_ext,sign_ext,scalepp_ext,scaleffp_ext,shape_ext,dr_ext, &
       dz_ext,rc_ext,zc_ext,a_ext,eup_ext,elow_ext,dup_ext,dlow_ext, &
@@ -461,7 +463,8 @@
       scalepr(1)=-1.
       scalepw(1)=-1.
       isolve=0
-      ifindopt=2
+      ifindopt = 2
+      tolbndpsi = 1.0d-12
 !----------------------------------------------------------------------
 !--   Read input file for KDATA = 2                                  --
 !----------------------------------------------------------------------

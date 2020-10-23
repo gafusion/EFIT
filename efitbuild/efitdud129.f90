@@ -8597,7 +8597,7 @@
                  zero,rgrid,zgrid,xguess,yguess,ixt,limitr,xlim,ylim, &
                  xout,yout,nfound,xltrac,npoint,rymin,rymax,dpsi, &
                  zxmin,zxmax,nnerr,ishot,itime, &
-                 limfag,radbou,kbound)
+                 limfag,radbou,kbound,tolbndpsi)
       if (nnerr.ge.1) then
         kerror=1
         write(nttyo,2100) ishot,itime

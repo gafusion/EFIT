@@ -1,7 +1,7 @@
       subroutine bound(psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
            zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
            ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
-           ishot,itime,limfag,radold,kbound)
+           ishot,itime,limfag,radold,kbound,tolbndpsi)
 !**********************************************************************
 !**                                                                  **
 !**     main program:  mhd fitting code                              **
@@ -48,6 +48,7 @@
 !**       rymax...........r at ymax                                  **
 !**       zxmin...........z at xmin                                  **
 !**       zxmax...........z at xmax                                  **
+!**       tolbndpsi (in)..tolerance on psi                           **
 !**                                                                  **
 !**     references:                                                  **
 !**          (1)                                                     **
@@ -250,7 +251,7 @@
             end if
 
             dpsi=min(dpsi,abs(psivl-psilx))
-            if (psilx-psivl.ge.1e-12) then
+            if (psilx-psivl.ge.tolbndpsi) then
               call zlim(zerol,n111,n111,limitr,xlim,ylim,xt,yt,limfag)
               if (zerol.le.0.01) then
                 exit ! contr
