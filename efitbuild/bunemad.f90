@@ -96,17 +96,17 @@
 !vas      dimension  q(1)
 !vas  f90 modifi
       implicit none
-      real(rprec) flag
-      real(rprec) shftdr,a,pi,as
-      integer(iprec) i,l,lo,ju,n222,id,jd,ko,k4,li,jh,jt,ji,jo, &
+      real(dp) flag
+      real(dp) shftdr,a,pi,as
+      integer i,l,lo,ju,n222,id,jd,ko,k4,li,jh,jt,ji,jo, &
       j2,iu,j,ii,io,iallocate_stat
 
       real*8 q(1)
-      real(rprec),dimension(:), allocatable :: g
-      real(rprec),dimension(:), allocatable :: p
-      real(rprec),dimension(:), allocatable :: c
-      real(rprec),dimension(:), allocatable :: d
-      real(rprec),dimension(:), allocatable :: temp
+      real(dp),dimension(:), allocatable :: g
+      real(dp),dimension(:), allocatable :: p
+      real(dp),dimension(:), allocatable :: c
+      real(dp),dimension(:), allocatable :: d
+      real(dp),dimension(:), allocatable :: temp
 
       flag = 0.0
 !vas  f90 modifi

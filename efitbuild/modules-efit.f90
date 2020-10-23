@@ -506,8 +506,8 @@
       integer*4 :: nbmdim,nww,nhh
       real*8    :: drdz2,rgrid1,delrgrid,delz
       real*8    :: s,shift,dr,dz
-!vas      real(kind=rprec)    :: drdz2,rgrid1,delrgrid,delz
-!vas      real(kind=rprec)    :: s,shift,dr,dz
+!vas      real(kind=dp)    :: drdz2,rgrid1,delrgrid,delz
+!vas      real(kind=dp)    :: s,shift,dr,dz
 
 !      mno = nbmdim
 !      m = nww
@@ -519,15 +519,15 @@
 
       end module var_bunemn
 
-       module set_kinds
-
+      module set_kinds
 !**     set the type of variables like integer, real, etc...
-!HP        integer, parameter :: rprec = selected_real_kind(20,100)
-        integer, parameter :: rprec = selected_real_kind(13,307)
-        integer, parameter :: iprec = selected_real_kind(4)
-        integer, parameter :: dp=rprec
+        !HP integer, parameter :: rprec = selected_real_kind(20,100)
+        !integer, parameter :: rprec = selected_real_kind(13,307)
+        !integer, parameter :: iprec = selected_real_kind(4)
+        !integer, parameter :: dp=rprec
+        integer, parameter :: dp = selected_real_kind(15,307) ! REAL*8
 
-        end module set_kinds
+       end module set_kinds
 
 !------ put all the remining common blocks into modules here
 !var_contor
