@@ -2,31 +2,26 @@
 
 # choose your executable (full path)
 
-efit_exe_pub="efitd90"
-efit_exe="/home/mcclenaghanj/efit_testing/efitbuild/efitdmpipgf90"
 # timesteps - max 16 (for 16 avail cores)
 nsteps=4
 nprocs=4
 starttime=1000
-
+basedir=$PWD
 ################################################################################
 ################################################################################
 #
 ################################################################################
 ################################################################################
 shot="$1"
+snapext="$2" 
+efit_exe_pub="$3"
+efit_exe="$4"
 
 if [ "$shot"x == "x" ] ; then
   echo "Requires a shot number"
   exit
 fi
 
-if [ -d "magnetics""$shot" ] ; then 
-  cd "magnetics_"$shot
-else
-  mkdir "magnetics_"$shot
-  cd "magnetics_"$shot
-fi
 ###
 # #
 ###
@@ -34,91 +29,100 @@ echo ""
 echo ""
 echo "testing $efit_exe on shot $shot with/for $nsteps cores/timeslices"
 echo ""
-module list
-echo ""
 
-mkdir -p new/parallel
-mkdir -p public/parallel
-mkdir -p new/serial
-mkdir -p public/serial
+mkdir -p $shot/$snapext/new/parallel
+mkdir -p $shot/$snapext/public/parallel
+mkdir -p $shot/$snapext/new/serial
+mkdir -p $shot/$snapext/public/serial
+
+cd $shot/$snapext
+################################################################################
+ echo "Running new efit $shot in parallel"
+################################################################################
+
+cd new/parallel/
+
+date >> efit.log
+cp $basedir/efit_snap* .
+sed 's|nsteps|'$nsteps'|g' $basedir/efit.input  > efit.input
+sed -i 's|nshot|'$shot'|g' efit.input
+sed -i 's|start_time|'$starttime'|g' efit.input
+sed -i 's|jta_f|'$snapext'|g' efit.input
+
+sed 's|efit_exe|'$efit_exe'|g' $basedir/efit.sbatch > efit.sbatch
+sed -i 's|nprocs|'$nprocs'|g' efit.sbatch
+sbatch ./efit.sbatch
+
+cd -
 
 ################################################################################
  echo "Running public efit $shot in parallel"
 ################################################################################
 
-cd public/parallel
-date >> efit.log 
 
-sed 's|nsteps|'$nsteps'|g' ../../../efit.input >> efit.input
+cd public/parallel/
+
+date >> efit.log 
+cp $basedir/efit_snap* .
+sed 's|nsteps|'$nsteps'|g' $basedir/efit.input  > efit.input
 sed -i 's|nshot|'$shot'|g' efit.input
 sed -i 's|start_time|'$starttime'|g' efit.input
-cp ../../../efit_snap* ./
+sed -i 's|jta_f|'$snapext'|g' efit.input
 
-sed 's|efit_exe|'$efit_exe_pub'|g' ../../../efit.sbatch >> efit.sbatch
+sed 's|efit_exe|'$efit_exe_pub'|g' $basedir/efit.sbatch > efit.sbatch
 sed -i 's|nprocs|'$nprocs'|g' efit.sbatch
 sbatch ./efit.sbatch
 
-cd ../../
-
-################################################################################
- echo "Running new efit $shot in parallel"
-################################################################################
-
-cd new/parallel
-date >> efit.log 
-
-sed 's|nsteps|'$nsteps'|g' ../../../efit.input >> efit.input
-sed -i 's|nshot|'$shot'|g' efit.input
-sed -i 's|start_time|'$starttime'|g' efit.input
-cp ../../../efit_snap* ./
-
-sed 's|efit_exe|'$efit_exe'|g' ../../../efit.sbatch >> efit.sbatch
-sed -i 's|nprocs|'$nprocs'|g' efit.sbatch
-sbatch ./efit.sbatch
-
-cd ../../
+cd -
 
 
 ################################################################################
 echo "Running new $shot in serial"
 ################################################################################
 
-cd public/serial
-date >> efit.log
 
+cd new/serial/
+
+date >> efit.log
 module list >> efit.log 2>&1
-sed 's|nsteps|'$nsteps'|g' ../../../efit.input >> efit.input
+
+cp $basedir/efit_snap* .
+sed 's|nsteps|'$nsteps'|g' $basedir/efit.input > efit.input
 sed -i 's|nshot|'$shot'|g' efit.input
 sed -i 's|start_time|'$starttime'|g' efit.input
-cp ../../../efit_snap* ./
+sed -i 's|jta_f|'$snapext'|g' efit.input
 
 $efit_exe 65 >> efit.log 2>&1
 
-cd ../../
+cd -
 
 ################################################################################
 echo "Running public $shot in serial"
 ################################################################################
 
-cd new/serial
-date >> efit.log
 
+cp $basedir/efit_snap* public/serial/
+cd public/serial/
+
+date >> efit.log
 module list >> efit.log 2>&1
-sed 's|nsteps|'$nsteps'|g' ../../../efit.input >> efit.input
+
+cp $basedir/efit_snap* .
+sed 's|nsteps|'$nsteps'|g' $basedir/efit.input > efit.input
 sed -i 's|start_time|'$starttime'|g' efit.input
 sed -i 's|nshot|'$shot'|g' efit.input
-cp ../../../efit_snap* ./
+sed -i 's|jta_f|'$snapext'|g' efit.input
 
 $efit_exe_pub 65 >> efit.log 2>&1
 
-cd ../../
-$pwd
+cd -
+
 ################################################################################
 echo " Waiting 10 seconds for job to finish"
 sleep 10
 echo ""
 ################################################################################
-#wait 
+
 
 np_wc=`ls -l new/parallel/g* | wc | awk '{print($1)}'`
 pp_wc=`ls -l public/parallel/g* | wc | awk '{print($1)}'`
@@ -167,15 +171,20 @@ echo "new serial:"
 
 grep "Problem" new/serial/efit.log
 grep "exception" new/serial/efit.log
-echo $pwd
-#How to diff if dates are different?
-#echo ""
-#echo "Diff Comparisons (0 == identical, 1 == differences, 2 == file DNE)"
-#echo " ================================="
-#cd public
-#for t in `ls g*` ; do
-#  quite=`diff $t ../new/$t 2>&1`
-#  error=$?
-#  echo "$t diff returns $error"
-#done
-#echo ""
+
+cd new/serial
+for t in `ls g*` ; do
+  quite=`diff $t ../../public/serial/$t 2>&1`
+  error=$?
+  echo "$t diff returns $error"
+done
+cd ../..
+
+cd new/parallel
+for t in `ls g*` ; do
+  quite=`diff $t ../../public/parallel/$t 2>&1`
+  error=$?
+  echo "$t diff returns $error"
+done
+
+echo ""
