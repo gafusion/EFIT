@@ -15,6 +15,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'
@@ -104,7 +105,7 @@
          endif
       elseif (ifunc .eq. 6)then
          nk = ((iparm - 1) / 2) + 1
-         fftens2 = abs(fftens)*float(kffknt-1)/ &
+         fftens2 = abs(fftens)*(kffknt-1)/ &
               (ffknt(kffknt)-ffknt(1)) 
          if (nk .gt. 1)then
             if(ypsi .le. ffknt(nk) .and.  &
@@ -163,6 +164,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'
@@ -282,7 +284,7 @@
         endif
       elseif (ifunc .eq. 6)then
         nk = ((iparm - 1) / 2) + 1
-        fftens2 = abs(fftens)*float(kffknt-1)/ &
+        fftens2 = abs(fftens)*(kffknt-1)/ &
           (ffknt(kffknt)-ffknt(1))
         if (nk .gt. 1) then
           if (ypsi .le. ffknt(nk) .and.  &
@@ -342,6 +344,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'
@@ -500,7 +503,7 @@
 !     $                       ypsi2,' = ',bsffin
       elseif (ifunc .eq. 6)then
          nk = ((iparm - 1) / 2) + 1
-         fftens2 = abs(fftens)*float(kffknt-1)/ &
+         fftens2 = abs(fftens)*(kffknt-1)/ &
               (ffknt(kffknt)-ffknt(1))
          bsffin = 0
          if(nk .gt.1)then
@@ -597,6 +600,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'
@@ -853,7 +857,7 @@
         !     derivative at the knots
         !
         if(kffknt .gt. 2)then
-          fftens2 = abs(fftens)*float(kffknt-1)/ &
+          fftens2 = abs(fftens)*(kffknt-1)/ &
             (ffknt(kffknt)-ffknt(1))
           do i = 2,kffknt-1
             ncrsp = ncrsp + 1
@@ -944,9 +948,11 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'
+
       if(kfffnc .ge. 0 .and. kfffnc .le. 2)then
          do i = 1,kffcur
             ffbdry(i) = brsp(nfcoil+kppcur+i)*twopi*tmu/darea

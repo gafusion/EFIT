@@ -15,6 +15,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
         !      include 'ecomdu1.f90'
         !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'
@@ -86,8 +87,7 @@
           endif
         elseif (ifunc .eq. 6)then
           nk = ((iparm - 1) / 2) + 1
-          wwtens2 = abs(wwtens)*float(kwwknt-1)/ &
-            (wwknt(kwwknt)-wwknt(1))
+          wwtens2 = abs(wwtens)*(kwwknt-1)/(wwknt(kwwknt)-wwknt(1))
           if (nk .gt. 1 )then
             if(ypsi .le. wwknt(nk) .and.  &
               ypsi .ge. wwknt(nk-1)) then
@@ -147,6 +147,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
         !      include 'ecomdu1.f90'
         !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'
@@ -241,8 +242,7 @@
           endif
         elseif (ifunc .eq. 6)then
           nk = ((iparm - 1) / 2) + 1
-          wwtens2 = abs(wwtens)*float(kwwknt-1)/ &
-            (wwknt(kwwknt)-wwknt(1))
+          wwtens2 = abs(wwtens)*(kwwknt-1)/(wwknt(kwwknt)-wwknt(1))
           if (nk .gt. 1) then
             if (ypsi .le. wwknt(nk) .and.  &
               ypsi .ge. wwknt(nk-1)) then
@@ -302,6 +302,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'
@@ -441,8 +442,7 @@
 !     $                       ypsi2,' = ',bswwin
       elseif (ifunc .eq. 6)then
          nk = ((iparm - 1) / 2) + 1
-         wwtens2 = abs(wwtens)*float(kwwknt-1)/ &
-              (wwknt(kwwknt)-wwknt(1))
+         wwtens2 = abs(wwtens)*(kwwknt-1)/(wwknt(kwwknt)-wwknt(1))
          bswwin = 0
          if(nk .gt.1)then
             if(ypsi .le. wwknt(nk)) then
@@ -542,6 +542,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'
@@ -852,8 +853,7 @@
 !     derivative at the knots
 !     
          if(kwwknt .gt. 2)then
-            wwtens2 = abs(wwtens)*float(kwwknt-1)/ &
-                 (wwknt(kwwknt)-wwknt(1)) 
+            wwtens2 = abs(wwtens)*(kwwknt-1)/(wwknt(kwwknt)-wwknt(1))
             do i = 2,kwwknt-1
                ncrsp = ncrsp + 1
                do j = 1,nrsmat
@@ -947,9 +947,11 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'
+
       if(kwwfnc .ge. 0 .and. kwwfnc .le. 2)then
          do i = 1,kwwcur
             wwbdry(i) = brsp(nfcoil+kppcur+kffcur+i)/darea
@@ -984,6 +986,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
         !      include 'ecomdu1.f90'
         !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'
@@ -1055,8 +1058,7 @@
         endif
       elseif (ifunc .eq. 6)then
         nk = ((iparm - 1) / 2) + 1
-        eetens2 = abs(eetens)*float(keeknt-1)/ &
-          (eeknt(keeknt)-eeknt(1))
+        eetens2 = abs(eetens)*(keeknt-1)/(eeknt(keeknt)-eeknt(1))
         if (nk .gt. 1 )then
           if(ypsi .le. eeknt(nk) .and. &
             ypsi .ge. eeknt(nk-1)) then
@@ -1116,6 +1118,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'
@@ -1210,8 +1213,7 @@
         endif
       elseif (ifunc .eq. 6)then
         nk = ((iparm - 1) / 2) + 1
-        eetens2 = abs(eetens)*float(keeknt-1)/ &
-          (eeknt(keeknt)-eeknt(1))
+        eetens2 = abs(eetens)*(keeknt-1)/(eeknt(keeknt)-eeknt(1))
         if (nk .gt. 1) then
           if (ypsi .le. eeknt(nk) .and. &
             ypsi .ge. eeknt(nk-1)) then
@@ -1271,6 +1273,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'
@@ -1410,8 +1413,7 @@
       !     $                       ypsi2,' = ',bserin
       elseif (ifunc .eq. 6)then
         nk = ((iparm - 1) / 2) + 1
-        eetens2 = abs(eetens)*float(keeknt-1)/ &
-          (eeknt(keeknt)-eeknt(1))
+        eetens2 = abs(eetens)*(keeknt-1)/(eeknt(keeknt)-eeknt(1))
         bserin = 0
         if(nk .gt.1)then
           if(ypsi .le. eeknt(nk)) then
@@ -1510,6 +1512,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'
@@ -1818,8 +1821,7 @@
         !     derivative at the knots
         !
         if(keeknt .gt. 2)then
-          eetens2 = abs(eetens)*float(keeknt-1)/ &
-            (eeknt(keeknt)-eeknt(1))
+          eetens2 = abs(eetens)*(keeknt-1)/(eeknt(keeknt)-eeknt(1))
           do i = 2,keeknt-1
             ncrsp = ncrsp + 1
             do j = 1,nrsmat
@@ -1902,6 +1904,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'

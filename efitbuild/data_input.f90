@@ -22,9 +22,11 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky,wgridpc,rfcpc
+      use set_kinds
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
       include 'basiscomdu.f90'
       parameter(mfila=10)
       parameter (m_ext=101)
@@ -181,14 +183,14 @@
       character*10 namedum
       character*2 :: reflect_ext
       logical :: shape_ext
-      real*4 spatial_avg_ham(nmtark,ngam_vars,ngam_u,ngam_w)
+      !real*4 spatial_avg_ham(nmtark,ngam_vars,ngam_u,ngam_w)
       data nsq/1/
-      data ersil8/1.0e-03/,currn1/0.0/
-      data idodo/0/,idovs/0/,zetafc/2.5e-08/
+      data ersil8/1.0e-03_dp/,currn1/0.0/
+      data idodo/0/,idovs/0/,zetafc/2.5e-08_dp/
       data co2cor/1.0/,idoac/0/,fq95/0.0/
       data mcontr/35/
-      data ten2m3/1.0e-03/
-      data idtime/0/,itimeb/0/,brsptu(1)/-1.e-20/
+      data ten2m3/1.0e-03_dp/
+      data idtime/0/,itimeb/0/,brsptu(1)/-1.e-20_dp/
       save idodo, idovs, idoac
 !
       ALLOCATE(gridpf(nwnh,mfila),gwork(nbwork,nwnh), &
@@ -293,8 +295,8 @@
 !-----------------------------------------------------------------------
       if (fitzts.eq.'te'.and.ztserr(jtime)) then
         nbdry=1
-        rbdry(1)=1.94
-        zbdry(1)=ztssym(jtime)+0.5*ztswid(jtime)
+        rbdry(1)=1.94_dp
+        zbdry(1)=ztssym(jtime)+0.5_dp*ztswid(jtime)
       endif
       go to 280
 !----------------------------------------------------------------------
@@ -307,11 +309,11 @@
       do 184 i=1,magpri
         bitmpi(i)=0.0
   184 continue
-      alpax(jbeta)=1.e4
+      alpax(jbeta)=1.e4_dp
       backaverage=.false.
       bitip=0.0
-      betap0=0.50
-      brsp(1)=-1.e+20
+      betap0=0.50_dp
+      brsp(1)=-1.e+20_dp
       cfcoil=-1.
       cutip=80000.
       do 188 i=1,nco2v
@@ -327,7 +329,7 @@
       emp=1.00
       enf=1.00
       enp=1.00
-      error=1.0e-03
+      error=1.0e-03_dp
       fbetap=0.0
       fbetat=0.0
       do 196 i=1,nfcoil
@@ -359,18 +361,18 @@
       fwtecebz0=0.0
       do 12399 i=1,mbdry
        fwtbdry(i)=1.0
-       sigrbd(i)=1.e10
-       sigzbd(i)=1.e10
+       sigrbd(i)=1.e10_dp
+       sigzbd(i)=1.e10_dp
        fwtsol(i)=1.0
 12399 continue
       akchiwt=1.0
       akprewt=0.0
       akgamwt=0.0
       akerrwt=0.0
-      aktol=0.1
+      aktol=0.1_dp
       fwtqa=0.0
-      gammap=1.0e+10
-      gamax(jli)=-1.e6
+      gammap=1.0e+10_dp
+      gamax(jli)=-1.e6_dp
       iavem=5
       ibatch=0
       ibound=0
@@ -438,19 +440,19 @@
       prbdry=0.
       psibry=0.0
       qemp=0.0
-      qenp=0.95
-      qvfit=0.95
+      qenp=0.95_dp
+      qvfit=0.95_dp
       rzeroj(1)=0.0
-      salpha=1./40.
-      sbeta=1./8.
+      salpha=1._dp/40._dp
+      sbeta=1._dp/8._dp
       sbetaw=0.0
-      scrape=0.030
-      serror=0.03
+      scrape=0.030_dp
+      serror=0.03_dp
       sgnemin=0.0
       sgprmin=0.0
       sgtemin=0.0
-      sidif=-1.0e+10
-      srm=-3.5
+      sidif=-1.0e+10_dp
+      srm=-3.5_dp
       symmetrize=.false.
       xltype=0.0
       xltype_180=0.0
@@ -464,12 +466,11 @@
       scalepw(1)=-1.
       isolve=0
       ifindopt = 2
-      tolbndpsi = 1.0d-12
+      tolbndpsi = 1.0e-12_dp
 !----------------------------------------------------------------------
 !--   Read input file for KDATA = 2                                  --
 !----------------------------------------------------------------------
-      open(unit=nin,status='old',file=ifname(jtime) &
-                                 )
+      open(unit=nin,status='old',file=ifname(jtime))
 !
       xlim(1)=-1.0
       rbdry(1)=-1.0
@@ -483,13 +484,11 @@
       read (nin,ink,err=11111,end=101)
 101    continue
 11111 close(unit=nin)
-      open(unit=nin,status='old',file=ifname(jtime) &
-                                 )
+      open(unit=nin,status='old',file=ifname(jtime))
       read (nin,ins,err=11113,end=103)
 103    continue
 11113 close(unit=nin)
-      open(unit=nin,status='old',file=ifname(jtime) &
-                                 )
+      open(unit=nin,status='old',file=ifname(jtime))
       rrmsels(1)=-10.
       read (nin,in_msels,err=91113,end=91103)
 91103    continue
@@ -703,7 +702,7 @@
 
         if (psin_ext(1) < 0) then
           do i = 1, npsi_ext
-            psin_ext(i) = float(i-1)/float(npsi_ext-1)
+            psin_ext(i) = real(i-1,dp)/real(npsi_ext-1,dp)
           enddo
         endif
         call zpline(npsi_ext,psin_ext,pprime_ext,bpp_ext,cpp_ext,dpp_ext)
@@ -941,7 +940,7 @@
       enddo
         limitr=7
         xlim(1)=r0min-setlim_ext*(r0max-r0min)
-        ylim(1)=0.5*(z0min+z0max)
+        ylim(1)=0.5_dp*(z0min+z0max)
         xlim(2)=xlim(1)
         ylim(2)=z0max+setlim_ext*(z0max-z0min)
         xlim(3)=r0max+setlim_ext*(r0max-r0min)
@@ -1105,14 +1104,14 @@
         fwtqa=0.
         qvfit=0.
         kcalpa=1
-        calpa(1,1)=0.1
-        calpa(2,1)=0.1
-        calpa(3,1)=0.1
+        calpa(1,1)=0.1_dp
+        calpa(2,1)=0.1_dp
+        calpa(3,1)=0.1_dp
         xalpa(1)=0.0
         kcgama=1
-        cgama(1,1)=0.1
-        cgama(2,1)=0.1
-        cgama(3,1)=0.1
+        cgama(1,1)=0.1_dp
+        cgama(2,1)=0.1_dp
+        cgama(3,1)=0.1_dp
         xgama(1)=0.0
       endif
       if(mse_usecer .eq. 1)keecur = 0
@@ -1227,7 +1226,7 @@
         ixray=1
         itek=iabs(itek)
       endif
-      if (psiwant.le.0.0) psiwant=1.e-5
+      if (psiwant.le.0.0) psiwant=1.e-5_dp
 !--------------------------------------------------------------------------
 !-- itek > 100, write out PLTOUT.OUT individually                        --
 !--------------------------------------------------------------------------
@@ -1298,7 +1297,7 @@
           nbryup=0
           delx2=(rbdry(1)-rbdry(nbdry))**2
           dely2=(zbdry(1)-zbdry(nbdry))**2
-          if ((delx2+dely2).le.1.0e-08) nbdry=nbdry-1
+          if ((delx2+dely2).le.1.0e-08_dp) nbdry=nbdry-1
           rbar=0
           do i=1,nbdry
             rbar=rbar+rbdry(i)/nbdry
@@ -1382,18 +1381,18 @@
         endif
         if (nbeam.gt.0) then
           do 43901 i=1,nbeam
-           dnbeam(i)=dnbeam(i)*1.e-19
+           dnbeam(i)=dnbeam(i)*1.e-19_dp
 43901     continue
         endif
 !---------------------------------------------------------------------
 !--  reorder TS data points                                         --
 !---------------------------------------------------------------------
         call tsorder(npteth,zteth,dnethom,tethom,sgneth,sgteth)
-        if (sgnemin.lt.0.0) sgnemin=abs(sgnemin)*dnethom(1)*1.e-19 &
+        if (sgnemin.lt.0.0) sgnemin=abs(sgnemin)*dnethom(1)*1.e-19_dp &
                                     *co2cor
         do 40020 i=1,npneth
-          dnethom(i)=dnethom(i)*1.e-19*co2cor
-          sgneth(i)=sgneth(i)*1.e-19*sgnethi*co2cor
+          dnethom(i)=dnethom(i)*1.e-19_dp*co2cor
+          sgneth(i)=sgneth(i)*1.e-19_dp*sgnethi*co2cor
           sgneth(i)=max(sgneth(i),sgnemin)
 40020   continue
         if (sgtemin.lt.0.0) sgtemin=abs(sgtemin)*tethom(1)
@@ -1469,8 +1468,8 @@
       if (islve.gt.0) nbdry=40
   216 continue
 !
-      diamag(jtime)=1.0e-03*dflux
-      sigdia(jtime)=1.0e-03*abs(sigdlc)
+      diamag(jtime)=1.0e-03_dp*dflux
+      sigdia(jtime)=1.0e-03_dp*abs(sigdlc)
       pbinj(jtime)=pnbeam
       do 220 i=1,nsilop
         silopt(jtime,i)=coils(i)
@@ -1538,10 +1537,10 @@
 !------------------------------------------------------------------------
 !--  New E-coil connections                   LLao, 95/07/11           --
 !------------------------------------------------------------------------
-      if (ecurrt(3).le.-1.e10) ecurrt(3)=ecurrt(1)
-      if (ecurrt(5).le.-1.e10) ecurrt(5)=ecurrt(1)
-      if (ecurrt(4).le.-1.e10) ecurrt(4)=ecurrt(2)
-      if (ecurrt(6).le.-1.e10) ecurrt(6)=ecurrt(2)
+      if (ecurrt(3).le.-1.e10_dp) ecurrt(3)=ecurrt(1)
+      if (ecurrt(5).le.-1.e10_dp) ecurrt(5)=ecurrt(1)
+      if (ecurrt(4).le.-1.e10_dp) ecurrt(4)=ecurrt(2)
+      if (ecurrt(6).le.-1.e10_dp) ecurrt(6)=ecurrt(2)
       do 261 i=1,nesum
         eccurt(jtime,i)=ecurrt(i)
   261 continue
@@ -1635,7 +1634,7 @@
       endif
       endif
 !
-      if (pasmat(jtime).le.-1.e3) then
+      if (pasmat(jtime).le.-1.e3_dp) then
         negcur=1
       else
         negcur=0
@@ -1709,13 +1708,13 @@
         tdata2=abs(psibit(m))*vbit
         tdata=max(tdata1,tdata2)
         sigmafl0(m)=tdata
-        if (tdata.gt.1.0e-10) fwtsi(m)=fwtsi(m)/tdata**nsq
-        if (tdata.le.1.0e-10) fwtsi(m)=0.0
+        if (tdata.gt.1.0e-10_dp) fwtsi(m)=fwtsi(m)/tdata**nsq
+        if (tdata.le.1.0e-10_dp) fwtsi(m)=0.0
   300 continue
 !----------------------------------------------------------------------
 !--  signal at psi loop # NSLREF is used as reference                --
 !----------------------------------------------------------------------
-      if (abs(psibit(iabs(nslref))).gt.1.0e-10) go to 340
+      if (abs(psibit(iabs(nslref))).gt.1.0e-10_dp) go to 340
       coilmx=abs(silopt(jtime,1))
       do 320 i=2,nsilop
         abcoil=abs(silopt(jtime,i))
@@ -1749,14 +1748,14 @@
 !-----------------------------------------------------------------------
       if (ifitvs.gt.0. .and. nfourier.gt.1) then
       do i=1,nvesel
-      if(rvs(i).ge.1.75.and.zvs(i).ge.0.) &
-      thetav(i)=dasin(zvs(i)/sqrt ((rvs(i)-1.75)**2+(zvs(i))**2))
-      if(rvs(i).lt.1.75.and.zvs(i).ge.0.) &
-      thetav(i)=pi-dasin(zvs(i)/sqrt ((rvs(i)-1.75)**2+(zvs(i))**2))
-      if(rvs(i).lt.1.75.and.zvs(i).lt.0.) &
-      thetav(i)=pi-dasin(zvs(i)/sqrt ((rvs(i)-1.75)**2+(zvs(i))**2))
-      if(rvs(i).ge.1.75.and.zvs(i).lt.0.) &
-      thetav(i)=2*pi+dasin(zvs(i)/sqrt ((rvs(i)-1.75)**2+(zvs(i))**2))
+      if(rvs(i).ge.1.75_dp.and.zvs(i).ge.0.) &
+      thetav(i)=dasin(zvs(i)/sqrt ((rvs(i)-1.75_dp)**2+(zvs(i))**2))
+      if(rvs(i).lt.1.75_dp.and.zvs(i).ge.0.) &
+      thetav(i)=pi-dasin(zvs(i)/sqrt ((rvs(i)-1.75_dp)**2+(zvs(i))**2))
+      if(rvs(i).lt.1.75_dp.and.zvs(i).lt.0.) &
+      thetav(i)=pi-dasin(zvs(i)/sqrt ((rvs(i)-1.75_dp)**2+(zvs(i))**2))
+      if(rvs(i).ge.1.75_dp.and.zvs(i).lt.0.) &
+      thetav(i)=2*pi+dasin(zvs(i)/sqrt ((rvs(i)-1.75_dp)**2+(zvs(i))**2))
         do j=1,nfourier
           sinta(j,i)=sin(thetav(i)*j)
           costa(j,i)=cos(thetav(i)*j)
@@ -1771,9 +1770,9 @@
       enddo
       endif
 !
-!     if (brsptu(1).le.-1.e-20) &
+!     if (brsptu(1).le.-1.e-20_dp) &
 !        brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil)
-      if (brsptu(1).gt.-1.e-20) &
+      if (brsptu(1).gt.-1.e-20_dp) &
          brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil)
       reflux=silopt(jtime,iabs(nslref))
       do 330 m=1,nsilop
@@ -1783,8 +1782,8 @@
         tdata2=abs(psibit(m))*vbit
         tdata=max(tdata,tdata2)
         sigmafl0(m)=tdata
-        if (tdata.gt.1.0e-10) fwtsi(m)=fwtsi(m)/tdata**nsq
-        if (tdata.le.1.0e-10) fwtsi(m)=0.0
+        if (tdata.gt.1.0e-10_dp) fwtsi(m)=fwtsi(m)/tdata**nsq
+        if (tdata.le.1.0e-10_dp) fwtsi(m)=0.0
   330 continue
 !----------------------------------------------------------------------
 !--  signal at psi loop #8 is set to zero and used as reference      --
@@ -1802,8 +1801,8 @@
         tdata2=abs(psibit(m))*vbit
         tdata=max(tdata,tdata2)
 !       sigmafl0(m)=tdata
-        if (tdata.gt.1.0e-10) fwtsi(m)=fwtref/tdata**nsq
-        if (tdata.le.1.0e-10) fwtsi(m)=0.0
+        if (tdata.gt.1.0e-10_dp) fwtsi(m)=fwtref/tdata**nsq
+        if (tdata.le.1.0e-10_dp) fwtsi(m)=0.0
       endif
       sigmafl0(m)=tdata
 !
@@ -1814,13 +1813,13 @@
         tdata2=abs(bitmpi(m))*vbit
         tdata=max(tdata1,tdata2)
         sigmamp0(m)=tdata
-        if (tdata.gt.1.0e-10) fwtmp2(m)=fwtmp2(m)/tdata**nsq
-        if (tdata.le.1.0e-10) fwtmp2(m)=0.0
+        if (tdata.gt.1.0e-10_dp) fwtmp2(m)=fwtmp2(m)/tdata**nsq
+        if (tdata.le.1.0e-10_dp) fwtmp2(m)=0.0
   350 continue
       do 400 m=1,nstark
         tdata=abs(siggam(jtime,m))
-        if (tdata.gt.1.0e-10) fwtgam(m)=fwtgam(m)/tdata**nsq
-        if (tdata.le.1.0e-10) fwtgam(m)=0.0
+        if (tdata.gt.1.0e-10_dp) fwtgam(m)=fwtgam(m)/tdata**nsq
+        if (tdata.le.1.0e-10_dp) fwtgam(m)=0.0
   400 continue
 !
       if (idebug >= 2) then
@@ -1829,13 +1828,13 @@
       endif
       do i=1,nmsels
         tdata=abs(sbmselt(jtime,i))
-        if (tdata.gt.1.0e-10) fwtbmselt(jtime,i)=fwtbmselt(jtime,i)/tdata**nsq
-        if (tdata.le.1.0e-10) fwtbmselt(jtime,i)=0.0
+        if (tdata.gt.1.0e-10_dp) fwtbmselt(jtime,i)=fwtbmselt(jtime,i)/tdata**nsq
+        if (tdata.le.1.0e-10_dp) fwtbmselt(jtime,i)=0.0
       enddo
       do i=1,nmsels
         tdata=abs(semselt(jtime,i))
-        if (tdata.gt.1.0e-10) fwtemselt(jtime,i)=fwtemselt(jtime,i)/tdata**nsq
-        if (tdata.le.1.0e-10) fwtemselt(jtime,i)=0.0
+        if (tdata.gt.1.0e-10_dp) fwtemselt(jtime,i)=fwtemselt(jtime,i)/tdata**nsq
+        if (tdata.le.1.0e-10_dp) fwtemselt(jtime,i)=0.0
       enddo
       if (idebug >= 2) write (6,*) 'DATA fwtbmselt = ', (fwtbmselt(jtime,i),i=1,nmsels)
 !
@@ -1844,8 +1843,8 @@
         tdata2=abs(bitfc(m))*vbit
         tdata=max(tdata1,tdata2)
         sigmaf0(m)=tdata
-        if (tdata.gt.1.0e-10) fwtfc(m)=fwtfc(m)/tdata**nsq
-        if (tdata.le.1.0e-10) fwtfc(m)=0.0
+        if (tdata.gt.1.0e-10_dp) fwtfc(m)=fwtfc(m)/tdata**nsq
+        if (tdata.le.1.0e-10_dp) fwtfc(m)=0.0
   402 continue
       if (iecurr.eq.2) then
       do m=1,nesum
@@ -1853,23 +1852,23 @@
         tdata2=abs(bitec(m))*vbit
         tdata=max(tdata1,tdata2)
         sigmae0(m)=tdata
-        if (tdata.gt.1.0e-10) fwtec(m)=fwtec(m)/tdata**nsq
-        if (tdata.le.1.0e-10) fwtec(m)=0.0
+        if (tdata.gt.1.0e-10_dp) fwtec(m)=fwtec(m)/tdata**nsq
+        if (tdata.le.1.0e-10_dp) fwtec(m)=0.0
       enddo
       endif
       tdata1=serror*abs(pasmat(jtime))
       tdata2=abs(bitip)*vbit
       tdata=max(tdata1,tdata2)
       sigmaip0=tdata
-      if (tdata.gt.1.0e-10) fwtcur=fwtcur/tdata**nsq
-      if (tdata.le.1.0e-10) fwtcur=0.0
+      if (tdata.gt.1.0e-10_dp) fwtcur=fwtcur/tdata**nsq
+      if (tdata.le.1.0e-10_dp) fwtcur=0.0
 !----------------------------------------------------------------------
 !-- diamagetic flux                                                  --
 !----------------------------------------------------------------------
       tdata=abs(sigdia(jtime))
-      if (tdata.gt.1.0e-10) fwtdlc=fwtdlc/tdata**nsq
+      if (tdata.gt.1.0e-10_dp) fwtdlc=fwtdlc/tdata**nsq
 !
-      if (sidif.le.-1.0e+10) then
+      if (sidif.le.-1.0e+10_dp) then
         sidif=tmu*pasmat(jtime)*rcentr/2.0
       endif
       errcut=max(ten2m3,error*10.)
@@ -1893,7 +1892,7 @@
         kwcurn=kpcurn
       endif
       nqaxis=0
-      if (fwtqa.gt.1.0e-03) nqaxis=1
+      if (fwtqa.gt.1.0e-03_dp) nqaxis=1
       nparam=nfnwcr
       if (kprfit.gt.0) nparam=nparam+1
       if (fitdelz) nparam=nparam+1
@@ -1933,8 +1932,8 @@
       mmbmsels=0
       mmemsels=0
       do i=1,nmsels
-        if (fwtbmselt(jtime,i).gt.1.e-06) mmbmsels=mmbmsels+1
-        if (fwtemselt(jtime,i).gt.1.e-06) mmemsels=mmemsels+1
+        if (fwtbmselt(jtime,i).gt.1.e-06_dp) mmbmsels=mmbmsels+1
+        if (fwtemselt(jtime,i).gt.1.e-06_dp) mmemsels=mmemsels+1
       enddo
       if (jdebug.eq.'MSEL') then
          write (6,*) 'DATA mmbmsels = ', mmbmsels
@@ -1958,7 +1957,7 @@
       itime=time(jtime)
       timems=itime
       timeus=(time(jtime)-timems)*1000.
-      timeus=timeus+0.4
+      timeus=timeus+0.4_dp
       itimeu=timeus
 !-----------------------------------------------------------------------
 !-- correction for truncation                                         --
@@ -2066,7 +2065,7 @@
       sigrid(1)=0.0
       sigrid(nw)=1.0
       do 80 i=2,nw-1
-        sigrid(i)=1./float(nw-1)*(i-1)
+        sigrid(i)=1./real(nw-1,dp)*(i-1)
   80  continue
 !--------------------------------------------------------------------
 !-- kinputece=1, get Te, fe, error array from ECE data routine
@@ -2106,7 +2105,7 @@
         i=irfila(k)
         j=jzfila(k)
         else
-        th=twopi*(k-1)/float(mx)
+        th=twopi*(k-1)/real(mx,dp)
         rmx(k)=relip-aelip*cos(th)
         zmx(k)=zelip+eelip*aelip*sin(th)
         ix=1
@@ -2114,7 +2113,7 @@
         i=(rmx(k)-rgrid(1))/drgrid+1
         j=(zmx(k)-zgrid(1))/dzgrid+ix
         zdif=zmx(k)-zgrid(j)
-        if (abs(zdif).gt.0.6*dzgrid) then
+        if (abs(zdif).gt.0.6_dp*dzgrid) then
           if (zdif.gt.0.0) j=j+1
           if (zdif.lt.0.0) j=j-1
         endif
@@ -2214,7 +2213,7 @@
           wpcpc=wpcpc+gridpc(mk,ii)
   780   continue
   800 continue
-        xnpc=float(npc)
+        xnpc=real(npc,dp)
         do 810 m=1,nsilop
   810     wsilpc(m)=wsilpc(m)/xnpc
         do 815 m=1,magpri
@@ -2273,7 +2272,7 @@
         if (ssrm.lt.0.0) saaa=xlmint/srm/sqrt(1.-2.*scc1)
         if (ssrm.gt.0.0) saaa=xlmax/srm/sqrt(1.+2.*scc1)
         srma=srm*saaa
-        dth=twopi/float(nbdry)
+        dth=twopi/real(nbdry,dp)
         do 1120 i=1,nbdry
           th=(i-1)*dth
           rbdry(i)=srma*sqrt(1.-2.*scc1*cos(th))
@@ -2284,7 +2283,7 @@
 !----------------------------------------------------------------------
 !--  toroidal rotation                                               --
 !----------------------------------------------------------------------
-        saaa=0.50
+        saaa=0.50_dp
         do i=1,nw
           rgrids(i)=rgrid(i)/saaa
         enddo
@@ -2309,7 +2308,7 @@
         ymin=zgrids(3)
         ymax=zgrids(nh-2)
         npack=1
-        rnow=0.5*(rgrids(1)+rgrids(nw))
+        rnow=0.5_dp*(rgrids(1)+rgrids(nw))
         znow=0.0
         call surfac(siwant,psi,nw,nh,rgrids,zgrids,xout,yout,nfound, &
                     npoint,drgrids,dzgrids,xmin,xmax,ymin,ymax,npack, &
@@ -2388,7 +2387,7 @@
       if (nbdry.gt.1) then
         delx2=(rbdry(1)-rbdry(nbdry))**2
         dely2=(zbdry(1)-zbdry(nbdry))**2
-        if ((delx2+dely2).le.1.0e-08) nbdry=nbdry-1
+        if ((delx2+dely2).le.1.0e-08_dp) nbdry=nbdry-1
       endif
       if (nbdry.lt.10) go to 1210
       xmin=rbdry(1)

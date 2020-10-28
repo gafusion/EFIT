@@ -278,16 +278,18 @@
       end module var_outp1
 !var_iopen
       module var_iopen
+      use set_kinds
       integer*4 iopen,ifread,itcoil,ifcurr 
       real*8 errbry,xncoil,relax
-      data relax/1.00/,errbry/1.0e-04/
+      data relax/1.00/,errbry/1.0e-04_dp/
       data iopen/0/
       end module var_iopen
 !var_zcntrl
        module var_zcntrl
+       use set_kinds
        integer*4 isetfb,ishiftz,ioffz,ioffr,idplace,lring 
        real*8 gain,gainp,delzmm
-       data gain/.22/,gainp/0.75/,ishiftz/0/,ioffz/7/, &
+       data gain/.22_dp/,gainp/0.75_dp/,ishiftz/0/,ioffz/7/, &
            ioffr/-7/,lring/0/
        end module var_zcntrl
 !var_updown
@@ -308,15 +310,17 @@
 
 !var_errslop
        module var_errslop
+       use set_kinds
        real*8 aaslop,drslop
-       data aaslop/0.6/,drslop/0.003/
+       data aaslop/0.6_dp/,drslop/0.003_dp/
        end module var_errslop
 
 !var_fitsiref
        module var_fitsiref
+       use set_kinds
        real*8 csiref,saisref,fwtref,scalesir
        logical fitsiref
-       data scalesir/1.0e-3/,fitsiref/.false./
+       data scalesir/1.0e-3_dp/,fitsiref/.false./
        end module var_fitsiref
 
 !var_cnnn
@@ -341,12 +345,13 @@
 
 !var_pfedge
       module var_pfedge
+      use set_kinds
       integer*4 kedgep,kedgef 
       real*8 pedge,pe_psin,pe_width, &
       f2edge,fe_psin,fe_width,constf2, &
       tpedge,tfedge,rdlcfe,rqape,rqafe,betped,betnped
-      data kedgep/0/,pe_width/0.02/,pe_psin/0.98/,pedge/0.0/, &
-           kedgef/0/,fe_width/0.02/,fe_psin/0.98/,f2edge/0.0/
+      data kedgep/0/,pe_width/0.02_dp/,pe_psin/0.98_dp/,pedge/0.0/, &
+           kedgef/0/,fe_width/0.02_dp/,fe_psin/0.98_dp/,f2edge/0.0/
 
       end module var_pfedge
 
@@ -359,7 +364,8 @@
        end module var_sxpoint
 
 !var_consta
-     module var_consta 
+     module var_consta
+     use set_kinds
      public 
      real*8 pi,tmu,twopi, tmu2,errcut, tmu0,radeg, tmu02
      integer*4 ibunmn,kinput,kcaldia 
@@ -367,21 +373,23 @@
 !vas      common/consta/pi,tmu,twopi,ibunmn,tmu2,errcut,kinput,kcaldia,tmu0 &
 !vas                    ,radeg
 
-      data pi/3.1415926535897932/,tmu/2.0e-07/
+      data pi/3.1415926535897932_dp/,tmu/2.0e-07_dp/
       data kcaldia/0/
 
      end module var_consta     
 !var_rcfact
      module var_rcfact
+     use set_kinds
      integer*4 ircfact
      data ircfact/0/
      end module var_rcfact
 !var_curpo
      module var_curpro
+     use set_kinds
      real*8 emf,emp,enf,enp,rbetap,rzero,pbetap,qenp,qemp,qenf
 
 !vas      common/curpro/emf,emp,enf,enp,rbetap,rzero,pbetap,qenp,qemp,qenf
-      data rzero/1.6955/
+      data rzero/1.6955_dp/
      end module var_curpro
 
 !var_pfterm
@@ -406,10 +414,11 @@
      end module var_nio
 
 !var_cfit
-     module var_cfit  
+     module var_cfit
+     use set_kinds
      integer*4 mxiter,idone,nitera,nxiter,ixnn,isolve  
      real*8   error,errorm,errmin,delerr,delerb
-     data errmin/0.010/,errorm/10./ 
+     data errmin/0.010_dp/,errorm/10./
      end module var_cfit 
 !var_cgrid
      module var_cgrid
@@ -425,10 +434,11 @@
      end module var_extra
 !var_conveg
      module var_conveg
+     use set_kinds
      real*8 omega,relip,zelip,aelip,eelip,errorq,omecur 
      integer*4 jjmax
-     data relip/1.68/,zelip/0.00/,aelip/0.60/eelip/1.2/,& 
-     omega/1.0/,errorq/1.0e-03/
+     data relip/1.68_dp/,zelip/0.0/,aelip/0.60_dp/eelip/1.2_dp/,&
+     omega/1.0/,errorq/1.0e-03_dp/
      data jjmax/1/
      end module var_conveg
 
@@ -595,13 +605,14 @@
       end module var_hist
 !var_hist2
       module var_hist2
+      use set_kinds
       use eparmdud129,only:ntime
       real*8,dimension(ntime) :: qsiwant,cjorsw,cjor0, &
         ssiwant,ssi95,cjor99,cj1ave &
         ,rmidin,rmidout,psurfa
       real*8 psiwant,rexpan,fexpan,qqmin,fexpvs,shearc &
         ,sepnose,ssi01,znose,rqqmin
-      data psiwant/1.0/,rexpan/0.010/,znose/-1.276/
+      data psiwant/1.0/,rexpan/0.010_dp/,znose/-1.276_dp/
 !vas      common/hist2/psiwant,qsiwant(ntime),cjorsw(ntime),cjor0(ntime), &
 !vas        ssiwant(ntime),ssi95(ntime),rexpan,fexpan,qqmin,fexpvs,shearc &
 !vas        ,sepnose,ssi01,znose,rqqmin,cjor99(ntime),cj1ave(ntime) &
@@ -609,16 +620,18 @@
       end module var_hist2
 !var_cshape
       module var_cshape
+      use set_kinds
       use eparmdud129,only:npoint
       real*8,dimension(:),allocatable :: xout,yout
       real*8 dpsi,rymin,rymax, &
         zxmin,zxmax,xmin,xmax,ymin,ymax,rmaxis,zmaxis, emaxis, &
         rminzm,rmaxzm,dismins,simins,dsimins,delrmax1,delrmax2
       integer*4 nfound
-      data emaxis/1.3/
+      data emaxis/1.3_dp/
       end module var_cshape
 !var_divdis
       module var_divdis
+      use set_kinds
       use eparmdud129,only:ntime
       real*8,dimension(ntime) :: dolubaf,dolubafm,diludom, &
         diludomm,dminux,dminlx, &
@@ -626,8 +639,8 @@
         zvsou,rvsid,zvsid,rvsod, &
         zvsod
         real*8 rubaf,zubaf,rlbaf,zlbaf,rudom,zudom
-      data rubaf/1.372/,rudom/1.0420/,rlbaf/1.6810/
-      data zubaf/1.310/,zudom/1.1624/,zlbaf/-1.339/
+      data rubaf/1.372_dp/,rudom/1.0420_dp/,rlbaf/1.6810_dp/
+      data zubaf/1.310_dp/,zudom/1.1624_dp/,zlbaf/-1.339_dp/
 
 !vas      common/divdis/dolubaf(ntime),dolubafm(ntime),diludom(ntime), &
 !vas        diludomm(ntime),dminux(ntime),dminlx(ntime), &

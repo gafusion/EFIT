@@ -137,6 +137,3 @@
 ! MPI >>>
       use mpi_info
 ! MPI <<<
-
-!--
-      implicit integer*4 (i-n), real*8 (a-h,o-z)

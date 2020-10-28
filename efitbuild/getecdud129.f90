@@ -23,6 +23,7 @@
       use vtime_mod
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       parameter (ntimem=ntime+10)
       common/cwork3/scrat(ntime),bscra(ntime),work(ntimem) &
@@ -70,7 +71,7 @@
            ecname(5)/'E89DN     '/,ecname(6)/'E89UP     '/
       data irdata/0/,baddat/0/
 !
-      efitversion = 20201013 
+      efitversion = 20201013
 ! NOTE this is only changed so serial/parallel k-files are identical
 ! no changes were made to getpts() only to getpts_mpi() - MK
 !----------------------------------------------------------------------
@@ -1026,7 +1027,7 @@
         return
       endif
 !
-      dsc = descr(IDTYPE_LONG, mylen, 0)
+      dsc = descr(IDTYPE_LONG, mylen, 0)  ! MDSPlus return a descriptor number
       status = Mdsvalue('SIZE('//name(1:lenname)//')'//char(0), &
                         dsc, 0, 1)
       if (mod(status,2) .eq. 0) then
@@ -1062,8 +1063,8 @@
       endif
       npn=mylen
 !
-      f_dsc = descr(IDTYPE_FLOAT, yw, mylen, 0)
-      t_dsc = descr(IDTYPE_FLOAT, xw, mylen, 0)
+      f_dsc = descr(IDTYPE_FLOAT, yw, mylen, 0) ! MDSPlus return a descriptor number
+      t_dsc = descr(IDTYPE_FLOAT, xw, mylen, 0) ! MDSPlus return a descriptor number
       status=MdsValue(name(1:lenname)//char(0), f_dsc, 0, 1)
       if (mod(status,2) .eq. 0) then
         ierror = 1
@@ -1759,7 +1760,7 @@
 !                    IN THIS CASE, THE FIRST 40 SAMPLES ARE NOT RETURNED.
 !
 !
-
+      use set_kinds
       parameter (npmax=262144)
 
       character*4 char4
@@ -2265,7 +2266,7 @@
       ! --- clipping tolerance:
       !     set error flag only if clipped fraction is outside tolerance
       if(np .gt. 0) then
-        fclip = float(nclip)/float(np)
+        fclip = real(nclip,dp)/np
         if (fclip .gt. tolclip .and.  &
           ier .le. 0) ier = -1
       endif
@@ -2408,6 +2409,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !  include 'ecomdu1.f90'
 !  include 'ecomdu2.f90'
 !
@@ -2867,9 +2869,10 @@
 !**                          serial and parallel runs.               **
 !**                                                                  **
 !**********************************************************************
+        use set_kinds
         include 'eparmdud129.f90'
         include 'modules1.f90'
-        
+        implicit integer*4 (i-n), real*8 (a-h,o-z)
         include 'mpif.h'
         
         ! Number columns ZWORK 2-D array
@@ -2912,7 +2915,7 @@
           ! TIMING >>>
           call system_clock(count=clock1)
           ticks = clock1-clock0
-          secs = dble(ticks)/dble(clockrate)
+          secs = real(ticks,dp)/real(clockrate,dp)
           write (*,"(' GETPTS call ',f6.2,' sec')") secs
           ! TIMING <<<
         endif
@@ -2961,11 +2964,11 @@
         ! ZWORK2
         if (rank == 0) then
           ! Pack ZWORK2 array data
-          zwork2(1) = dble(iavem)   ! INT4  (1)
-          zwork2(2) = dble(limitr)  ! INT4  (1)
+          zwork2(1) = real(iavem,dp)   ! INT4  (1)
+          zwork2(2) = real(limitr,dp)  ! INT4  (1)
           zwork2(3) = bitip         ! REAL8 (1)
           zwork2(4) = rcentr        ! REAL8 (1)
-          zwork2(5) = dble(oldccomp) ! added by MK 2020.10.07
+          zwork2(5) = real(oldccomp,dp) ! added by MK 2020.10.07
           offset = 5
           do i=1,nsilop
             zwork2(i+offset) = psibit(i)  ! REAL8 (nsilop)
@@ -3144,7 +3147,7 @@
         if (rank == 0) then
           call system_clock(count=clock1)
           ticks = clock1-clock0
-          secs = dble(ticks)/dble(clockrate)
+          secs = real(ticks,dp)/real(clockrate,dp)
           write (*,"(' GETPTS transfer ',i10,' bytes in ',f6.2,' sec')") total_bytes,secs
         endif
         ! TIMING <<<
@@ -3158,6 +3161,7 @@
 
         include 'eparmdud129.f90'
         include 'modules1.f90'
+        implicit integer*4 (i-n), real*8 (a-h,o-z)
 
         include 'mpif.h'
 
@@ -3204,7 +3208,7 @@
           ! TIMING >>>
           call system_clock(count=clock1)
           ticks = clock1-clock0
-          secs = dble(ticks)/dble(clockrate)
+          secs = real(ticks,dp)/real(clockrate,dp)
           write (*,"(' GETSTARK call ',f6.2,' sec')") secs
           ! TIMING <<<
         endif
@@ -3326,7 +3330,7 @@
         if (rank == 0) then
           call system_clock(count=clock1)
           ticks = clock1-clock0
-          secs = dble(ticks)/dble(clockrate)
+          secs = real(ticks,dp)/real(clockrate,dp)
           write (*,"(' GETSTARK transfer ',i10,' bytes in ',f6.2,' sec')") total_bytes,secs
         endif
         ! TIMING <<<

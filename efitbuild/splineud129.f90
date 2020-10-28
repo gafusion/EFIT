@@ -339,6 +339,7 @@
 !  Conversion from IMSL to LINPACK routine.
 !-----------------------------------------------------------------------
 !
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       PARAMETER (NN = 100, MM = 300)
       PARAMETER (MM3 = 3*MM)
@@ -363,7 +364,7 @@
 !
       IF (INFO.GT.0) IER = 129                   ! Error message
       if (s(1).le.0) IER = 129                   ! This better not happen
-      if (s(n)/s(1) .le. 1.e-7) ier = 33         ! Ill-conditioned or rank-deficient matrix
+      if (s(n)/s(1) .le. 1.e-7_dp) ier = 33         ! Ill-conditioned or rank-deficient matrix
 !
       DO 20 I = 1, N            ! Copy V into A
          DO 10 J = 1, N
@@ -446,6 +447,7 @@
 ! given the ordered data points x(1)<...<x(n), this subroutine generates
 ! a knot sequence with not-a-knot end conditions (like BSNAK from IMSL)
 ! Some of this is discussed in de Boor(1978), page 211.
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
         dimension x(n),xk(n+k)
         INTEGER*4 kh
@@ -453,7 +455,7 @@
         do i=1,k
         xk(i)=x(1)
         ii=i+n
-        xk(ii)= x(n)+1.e-5
+        xk(ii)= x(n)+1.e-5_dp
         enddo
         kh=k/2
         k2=kh+kh
@@ -465,7 +467,7 @@
         else
 ! odd k, place knots in between data points
         do i=k+1,n
-        xk(i)=.5*(x(i-kh)+x(i-1-kh))
+        xk(i)=.5_dp*(x(i-kh)+x(i-1-kh))
         enddo
         end if
         return
@@ -653,7 +655,7 @@
          do 20 jp1=2,k
             j = jp1 - 1
             kmj = k - j
-            fkmj = float(kmj)
+            fkmj = kmj
             do 20 i=1,kmj
                diff = (t(left+i) - t(left+i - kmj))/fkmj
                if (diff .le. 0.)         go to 20

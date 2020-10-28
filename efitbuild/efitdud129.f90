@@ -52,9 +52,11 @@
 !**                                                                  **
 !**********************************************************************
      use commonblocks
+     use set_kinds
      include 'eparmdud129.f90'
      include 'modules2.f90'
      include 'modules1.f90'
+     implicit integer*4 (i-n), real*8 (a-h,o-z)
      include 'basiscomdu.f90'
 ! MPI >>>
 #if defined(USEMPI)
@@ -75,6 +77,16 @@
 ! OPT_INPUT <<<
      integer :: iend1, iend2
      character*80 :: cmdline
+!
+!     integer :: i1
+!     real(dp) :: r1
+!     i1 = -757
+!     r1 = i1
+!     print*,r1
+!     print*,1.0_dp/real(i1,dp),1.0_dp/i1,1.0/i1
+!     print*,0.1_dp+1.0_dp
+!     print*,0.1_dp+1.0, 0.0
+!     stop
 
      kerror = 0
 !------------------------------------------------------------------------------
@@ -338,6 +350,7 @@
                   bwy,sifprw,bwprw,cwprw,dwprw,sfprw,sprwp
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       common/cwork3/lkx,lky
       common/cww/lwx,lwy
@@ -388,7 +401,7 @@
         dli=sqrt((xout(ip1)-xout(i))**2+(yout(ip1)-yout(i))**2)
         plengt(ip1)=plengt(i)+dli
         dpleng(i)=dli
-        psurfa(jtime)=psurfa(jtime)+dli*0.5*(xout(i)+xout(ip1))
+        psurfa(jtime)=psurfa(jtime)+dli*0.5_dp*(xout(i)+xout(ip1))
   100 continue
       psurfa(jtime)=psurfa(jtime)*twopi
 !
@@ -438,21 +451,21 @@
   500 continue
       bp2flx=sbp/sbpi
       if (inorm.eq.2) bp2flx=2.*rcentr/vout(jtime)*(pi*tmu* &
-                                cpasma(jtime))**2*1.0E+06
+                                cpasma(jtime))**2*1.0E+06_dp
       if (inorm.eq.3) bp2flx=(tmu*2.0*pi*cpasma(jtime)/ &
                              plengt(nfound))**2
       if (inorm.eq.4) bp2flx=2.*(tmu*cpasma(jtime)/aout(jtime))**2 &
-                        /(eout(jtime)**2+1.)*1.0e+04
+                        /(eout(jtime)**2+1.)*1.0e+04_dp
       bpolav(jtime)=sqrt(bp2flx)
       rcurrt(jtime)=sqrt(sumr2/twopi/tmu/abs(cpasma(jtime)))*100.
       zcurrt(jtime)=sumz/twopi/tmu/abs(cpasma(jtime))*100.
-      const=twopi/vout(jtime)*1.0e+06/bp2flx
+      const=twopi/vout(jtime)*1.0e+06_dp/bp2flx
       s1(jtime)=const*s1(jtime)
       s2(jtime)=const*rcentr*s2(jtime)
       s3(jtime)=const*s3(jtime)
       sumbzz=abs(sumbzz)/tmu/abs(cpasma(jtime))/twopi
       rcurrm=rcentr
-      ali(jtime)=sumbp2/vout(jtime)/bp2flx*1.0e+06
+      ali(jtime)=sumbp2/vout(jtime)/bp2flx*1.0e+06_dp
       ali3(jtime)=(tmu*2.0*pi*cpasma(jtime))**2*rout(jtime)/200.0
       ali3(jtime)=sumbp2/ali3(jtime)
       betap(jtime)=s1(jtime)/4.+s2(jtime)/4.*(1.+rcurrm/rcentr) &
@@ -460,8 +473,8 @@
       betat(jtime)=betap(jtime)*bp2flx/bcentr(jtime)**2*100.
       betat(jtime)=betat(jtime)*(rout(jtime)/100./rcentr)**2
       qout(jtime)=qout(jtime)*abs(bcentr(jtime))*rcentr/twopi
-      wplasm(jtime)=1.5*betap(jtime)*bp2flx/2./tmu/2./pi*vout(jtime) &
-                     /1.0e+06
+      wplasm(jtime)=1.5_dp*betap(jtime)*bp2flx/2./tmu/2./pi*vout(jtime) &
+                     /1.0e+06_dp
 !---------------------------------------------------------------------
 !-- calculations of current moment y2                               --
 !---------------------------------------------------------------------
@@ -487,14 +500,14 @@
       yyy2(jtime)=sumy2/(tmu*2.0*pi*cpasma(jtime))/4. &
                   *(rcurrt(jtime)/aout(jtime))**2
 !
-      dsi=(psibry-simag)/float(nw-1)
+      dsi=(psibry-simag)/(nw-1)
       mx=(rmaxis-rgrid(1))/drgrid+1
       my=(zmaxis-zgrid(1))/dzgrid+1
       mkk=(mx-1)*nh+my+1
       sicut=psi(mkk)
-      volp(nw)=vout(jtime)/1.0e+06
+      volp(nw)=vout(jtime)/1.0e+06_dp
       volp(1)=0.0
-      if (abs(zmaxis).le.0.001) then
+      if (abs(zmaxis).le.0.001_dp) then
          rmajz0(1)=rmaxis
       else
          rmajz0(1)=0.0
@@ -512,7 +525,7 @@
         sumprt=0.0
         sumprw=0.0
         n1set=1
-        ypsi=0.5
+        ypsi=0.5_dp
         prew0=pwcur4(n1set,ypsi,kwwcur)
         pres0=prcur4(n1set,ypsi,kppcur)
         n1set=0
@@ -529,16 +542,16 @@
            if (kvtor.eq.1) then
              presst(kk)=pres0+prew0*rgrvt(i)
            elseif (kvtor.eq.2) then
-             if (abs(pres0).gt.1.e-10) then
+             if (abs(pres0).gt.1.e-10_dp) then
                pwop0=prew0/pres0
                pwp0r2=pwop0*rgrvt(i)
              else
                pwop0=0.0
                pwp0r2=0.0
              endif
-             presst(kk)=pres0*(1.+0.5*pwp0r2**2)+prew0*rgrvt(i)
+             presst(kk)=pres0*(1.+0.5_dp*pwp0r2**2)+prew0*rgrvt(i)
            elseif (kvtor.eq.11.or.kvtor.eq.3) then
-             if (abs(pres0).gt.1.e-10) then
+             if (abs(pres0).gt.1.e-10_dp) then
                pwop0=prew0/pres0
                ptop0=exp(pwop0*rgrvt(i))
              else
@@ -562,15 +575,15 @@
       rhovn(1)=0.0
       nnn=1
       d11=30.
-      d22=0.03
-      d33=0.01
+      d22=0.03_dp
+      d33=0.01_dp
       nzz=0
       zzz=0.0
       do 800 i=2,nw-1
         ii=nw-i+1
         siii=(i-1)*dsi
         siwant=psibry-siii
-        siii=1.0-1./float(nw-1)*(i-1)
+        siii=1.0_dp-1.0_dp/(nw-1)*(i-1)
         if (idovol.gt.1) go to 790
         rzzmax(ii)=-99.0
         call surfac(siwant,psi,nw,nh,rgrid,zgrid,bpol,bpolz,nfind &
@@ -601,7 +614,7 @@
 !-- integration over z from 0 to bpolz                           --
 !------------------------------------------------------------------
         xww=bpol(1)
-        dyww=bpolz(1)/float(nh-1)
+        dyww=bpolz(1)/(nh-1)
         bpolzs=0.5*fpol(ii)
         do kz=2,nh-1
            yww=dyww*(kz-1)
@@ -630,7 +643,7 @@
 !-- integration over z from 0 to bpolz                           --
 !------------------------------------------------------------------
           xww=bpol(k)
-          dyww=bpolz(k)/float(nh-1)
+          dyww=bpolz(k)/(nh-1)
           bpolzs=0.5*fpol(ii)
           do kz=2,nh-1
            yww=dyww*(kz-1)
@@ -769,18 +782,18 @@
       betat(jtime)=sumpre*2.0*twopi*tmu/bcentr(jtime)**2
       betap(jtime)=sumpre*2.0*twopi*tmu/bp2flx
       betat(jtime)=100.*betat(jtime)*(rout(jtime)/100./rcentr)**2
-      wplasm(jtime)=1.5*betap(jtime)*bp2flx/2./tmu/2./pi*vout(jtime) &
-                     /1.0e+06
-      pasman=cpasma(jtime)/1.e4/aout(jtime)/abs(bcentr(jtime))
+      wplasm(jtime)=1.5_dp*betap(jtime)*bp2flx/2./tmu/2./pi*vout(jtime) &
+                     /1.0e+06_dp
+      pasman=cpasma(jtime)/1.e4_dp/aout(jtime)/abs(bcentr(jtime))
       pasman=pasman*rout(jtime)/100./rcentr
       betatn=betat(jtime)/pasman
-      dmui=1.0e+06*diamag(jtime)*4.*pi*bcentr(jtime)*rcentr &
+      dmui=1.0e+06_dp*diamag(jtime)*4.*pi*bcentr(jtime)*rcentr &
             /bp2flx/vout(jtime)
       betapd(jtime)=s1(jtime)/2.+s2(jtime)/2.*(1.-rcurrm/rcentr)-dmui
       betatd(jtime)=betapd(jtime)*bp2flx/bcentr(jtime)**2*100.
       betatd(jtime)=betatd(jtime)*(rout(jtime)/100./rcentr)**2
-      wplasmd(jtime)=1.5*betapd(jtime)*bp2flx/2./tmu/2./pi*vout(jtime) &
-                    /1.0e+06
+      wplasmd(jtime)=1.5_dp*betapd(jtime)*bp2flx/2./tmu/2./pi*vout(jtime) &
+                    /1.0e+06_dp
 !-----------------------------------------------------------------------
 !-- rotational terms                                                  --
 !-----------------------------------------------------------------------
@@ -793,7 +806,7 @@
         betapw(jtime)=sumprw/sumprt*betap(jtime)
         betatw(jtime)=sumprw/sumprt*betat(jtime)
         wplasw(jtime)=betapw(jtime)*bp2flx/2./tmu/2./pi &
-                      *vout(jtime)/1.0e+06
+                      *vout(jtime)/1.0e+06_dp
       endif
 !----------------------------------------------------------------------
 !-- get normalized radial coordinate square root of toroidal flux    --
@@ -810,7 +823,7 @@
         if (sixxx.le.1.0) then
           rhogam(i)=seval(nw,sixxx,sigrid,rhovn,brhovn,crhovn,drhovn)
         else
-          rhogam(i)=1.1
+          rhogam(i)=1.1_dp
         endif
       enddo
       endif
@@ -864,13 +877,13 @@
       vbeta0=pres(1)/sumpre*betat(jtime)
 !
       do 1200 i=1,nw
-        workrm(i)=rmaxis+(xmax-rmaxis)/float(nw-1)*(i-1)
+        workrm(i)=rmaxis+(xmax-rmaxis)/(nw-1)*(i-1)
         call seva2d(bkx,lkx,bky,lky,c,workrm(i),zmaxis,pds,ier,n111)
         worksi(i)=(pds(1)-simag)/(psibry-simag)
  1200 continue
       call zpline(nw,worksi,workrm,bwork,cwork,dwork)
       do 1220 i=1,nw
-        sixxx=1./float(nw-1)*(i-1)
+        sixxx=1.0_dp/(nw-1)*(i-1)
         rpres(i)=seval(nw,sixxx,worksi,workrm,bwork,cwork,dwork)
  1220 continue
 !
@@ -912,6 +925,7 @@
       use commonblocks,only: c,wk,copy,bkx,bky
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       common/cwork3/lkx,lky
       dimension pds(6),rgrid(*),zgrid(*)
@@ -946,13 +960,13 @@
 !
       bp2flx=(tmu*2.0*pi*cpasma(jtime)/ &
                              plengt(nfound))**2
-      const=twopi/vout(jtime)*1.0e+06/bp2flx
-      ali(jtime)=sumbp2/vout(jtime)/bp2flx*1.0e+06
+      const=twopi/vout(jtime)*1.0e+06_dp/bp2flx
+      ali(jtime)=sumbp2/vout(jtime)/bp2flx*1.0e+06_dp
       ali3(jtime)=(tmu*2.0*pi*cpasma(jtime))**2*rout(jtime)/200.0
       ali3(jtime)=sumbp2/ali3(jtime)
 !
-      dsi=(psibry-simag)/float(nw-1)
-      volp(nw)=vout(jtime)/1.0e+06
+      dsi=(psibry-simag)/(nw-1)
+      volp(nw)=vout(jtime)/1.0e+06_dp
       volp(1)=0.0
       if (icurrt.ne.1) go to 540
       pprime(1)=cratio*sbeta/darea/srma
@@ -970,15 +984,15 @@
       sumpre=0.0
       nnn=1
       d11=30.
-      d22=0.03
-      d33=0.01
+      d22=0.03_dp
+      d33=0.01_dp
       nzz=0
       zzz=0.0
       do 800 i=2,nw-1
         ii=nw-i+1
         siii=(i-1)*dsi
         siwant=psibry-siii
-        siii=1.0-1./float(nw-1)*(i-1)
+        siii=1.0_dp-1.0_dp/(nw-1)*(i-1)
         call surfac(siwant,psi,nw,nh,rgrid,zgrid,xxs,yys,nfind &
                     ,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
                     rmaxis,zmaxis,negcur)
@@ -1032,7 +1046,7 @@
       betat(jtime)=sumpre*2.0*twopi*tmu/bcentr(jtime)**2
       betap(jtime)=sumpre*2.0*twopi*tmu/bp2flx
       betat(jtime)=100.*betat(jtime)*(rout(jtime)/100./rcentr)**2
-      pasman=cpasma(jtime)/1.e4/aout(jtime)/abs(bcentr(jtime))
+      pasman=cpasma(jtime)/1.e4_dp/aout(jtime)/abs(bcentr(jtime))
       pasman=pasman*rout(jtime)/100./rcentr
       betatn=betat(jtime)/pasman
 !
@@ -1065,6 +1079,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
 !
@@ -1470,8 +1485,9 @@
       use commonblocks,only: c,wk,copy,bkx,bky
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-       common/cwork3/lkx,lky
+      common/cwork3/lkx,lky
       dimension xpsii(nercur)
       data init/0/
 !
@@ -1523,6 +1539,7 @@
       use commonblocks,only: c,wk,copy,bkx,bky
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       common/cwork3/lkx,lky
       dimension pds(6)
@@ -1574,12 +1591,13 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      include 'basiscomdu.f90'
       common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
                    appknt(npcurn),kappknt, &
                    affknt(npcurn),kaffknt, &
                    awwknt(npcurn),kawwknt, &
                    aeeknt(npcurn),kaeeknt,mxiter_a
-      include 'basiscomdu.f90'
       external ppakfunc,ffakfunc,wwakfunc,eeakfunc
       integer, intent(inout) :: kerror
       kerror = 0
@@ -1718,12 +1736,13 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      include 'basiscomdu.f90'
       common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
                    appknt(npcurn),kappknt, &
                    affknt(npcurn),kaffknt, &
                    awwknt(npcurn),kawwknt, &
                    aeeknt(npcurn),kaeeknt,mxiter_a
-      include 'basiscomdu.f90'
 
       do i = 1,npcurn
           ppknt(i) = appknt(i)
@@ -1746,12 +1765,13 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      include 'basiscomdu.f90'
       common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
                    appknt(npcurn),kappknt, &
                    affknt(npcurn),kaffknt, &
                    awwknt(npcurn),kawwknt, &
                    aeeknt(npcurn),kaeeknt,mxiter_a
-      include 'basiscomdu.f90'
 
       do i = 1,npcurn
           appknt(i) = ppknt(i)
@@ -1775,14 +1795,16 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+!      include 'ecomdu1.f90'
+!      include 'ecomdu2.f90'
+      include 'basiscomdu.f90'
       common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
                    appknt(npcurn),kappknt, &
                    affknt(npcurn),kaffknt, &
                    awwknt(npcurn),kawwknt, &
                    aeeknt(npcurn),kaeeknt,mxiter_a
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+
       ppakfunc = 1000.0
       write(6,*)
       write(6,*)' trying pp knot ',kadknt,' at location ',xknot, &
@@ -1806,13 +1828,15 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      include 'basiscomdu.f90'
       common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
                    appknt(npcurn),kappknt, &
                    affknt(npcurn),kaffknt, &
                    awwknt(npcurn),kawwknt, &
                    aeeknt(npcurn),kaeeknt,mxiter_a
 !
-      include 'basiscomdu.f90'
+
       ffakfunc = 1000.0
       write(6,*)
       write(6,*)' trying ff knot ',kadknt,' at location ',xknot, &
@@ -1836,14 +1860,16 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+!      include 'ecomdu1.f90'
+!      include 'ecomdu2.f90'
+      include 'basiscomdu.f90'
       common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
                    appknt(npcurn),kappknt, &
                    affknt(npcurn),kaffknt, &
                    awwknt(npcurn),kawwknt, &
                    aeeknt(npcurn),kaeeknt,mxiter_a
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+
       wwakfunc = 1000.0
       write(6,*)
       write(6,*)' trying ww knot ',kadknt,' at location ',xknot, &
@@ -1867,14 +1893,16 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+!      include 'ecomdu1.f90'
+!      include 'ecomdu2.f90'
+      include 'basiscomdu.f90'
       common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
                    appknt(npcurn),kappknt, &
                    affknt(npcurn),kaffknt, &
                    awwknt(npcurn),kawwknt, &
                    aeeknt(npcurn),kaeeknt,mxiter_a
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+
       eeakfunc = 1000.0
       write(6,*)
       write(6,*)' trying ee knot ',kadknt,' at location ',xknot, &
@@ -1914,6 +1942,7 @@
 !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
       include 'basiscomdu.f90'
       data nzero/0/
       save nzero
@@ -2044,7 +2073,9 @@
 !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension xpsii(nffcur)
+
       if (icutfp.gt.0) then
         ypsi=upsi*xpsimin
       else
@@ -2153,6 +2184,7 @@
 !**          14/10/87..........first created                         **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       use commonblocks,only: c,wk,copy,bkx,bky
       include 'eparmdud129.f90'
 !vas
@@ -2171,9 +2203,9 @@
       fnorm=0.0
       sdlbp=0.0
       do 2050 i=2,n
-        xnow=0.5*(x(i-1)+x(i))
-        ynow=0.5*(y(i-1)+y(i))
-        fnow=0.5*(f(i-1)+f(i))
+        xnow=0.5_dp*(x(i-1)+x(i))
+        ynow=0.5_dp*(y(i-1)+y(i))
+        fnow=0.5_dp*(f(i-1)+f(i))
         dxnow=x(i)-x(i-1)
         dynow=y(i)-y(i-1)
         dl=sqrt(dxnow**2+dynow**2)
@@ -2210,6 +2242,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       dimension bwork(ndata),cwork(ndata),dwork(ndata)
@@ -2266,11 +2299,10 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
-!
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
       parameter (nn=30)
       parameter (kbre=5)
       common/cwork3/lkx,lky
-
       dimension pds(6),nnout(kbre),bmink(kbre),bmaxk(kbre) 
       real*8,allocatable :: rrgrid(:,:),bfield(:),rrout(:,:), &
           bout(:,:),babs(:,:),bbb(:),ccc(:),ddd(:),btttt(:), &
@@ -2321,7 +2353,7 @@
 !--     !!! becein  from Low field to high field !!!                --
 !---------------------------------------------------------------------
       do 500 k=1,necein
-      becein(k)=0.001*6.0*9.1095*3.14159/4.8032*feece0(k)/float(nharm)
+      becein(k)=0.001_dp*6.0*9.1095_dp*3.14159_dp/4.8032_dp*feece0(k)/nharm
 500   continue
 !EALW      write(*,*)'becein'
 !EALW      write(*,*)becein
@@ -2333,11 +2365,11 @@
 !heng          mm--nnecein   m---necein  nn--parameter, n--nfit input
       binmin=becein(1)
       binmax=becein(necein)
-      baa=0.5*(binmax-binmin)
-      b00=0.5*(binmax+binmin)
+      baa=0.5_dp*(binmax-binmin)
+      b00=0.5_dp*(binmax+binmin)
       do i=1,necein
         an(i)=(becein(i)-b00)/baa
-        tebit(i)=max(errorece0(i),dble(1.e-4))
+        tebit(i)=max(errorece0(i),1.e-4_dp)
       enddo
       do 1110 nj=1,necein
       do 1100 nk=1,nfit
@@ -2357,7 +2389,7 @@
 !
       mnow=necein
       if (kcmin.gt.0) then
-      fwtnow=0.001
+      fwtnow=0.001_dp
       fwtcm =1.0
       do j=1,nfit
       mnow=mnow+1
@@ -2379,7 +2411,7 @@
 !EALW      write(*,*) iieerr
 !EALW      write(*,*) 's'
 !EALW      write(*,*) s
-      toler=1.0e-06*s(1)
+      toler=1.0e-06_dp*s(1)
       DO 2010 I = 1,nfit
             T = 0.0
             IF (S(I).gt.toler) T = Brspfit(I)/S(I)
@@ -2410,9 +2442,9 @@
 !--------------------------------------------------------------------
 !--  get Teeceb(bbf) in ECE data region, (Te(B)), bbf-B            --
 !--------------------------------------------------------------------
-      dbbf=(becein(necein)-becein(1))/float(nnnte-1)
+      dbbf=(becein(necein)-becein(1))/(nnnte-1)
       do 3016 i=1,nnnte
-          bbf(i)=becein(1)+dbbf*float(i-1)
+          bbf(i)=becein(1)+dbbf*(i-1)
           bbx=(bbf(i)-b00)/baa
           teeceb(i)=0.
       do 3012 nk=1,nfit
@@ -2464,7 +2496,7 @@
         enddo
           ptpr1=ptpr1/baa
           ptpr2=ptpr2/baa
-        ppteppbo=abs(0.5*(ptpr1-ptpr2)/dbbf)
+        ppteppbo=abs(0.5_dp*(ptpr1-ptpr2)/dbbf)
         dtero=abs(tebit(idesto))
         bobit=sqrt(dtero/ppteppbo)
 !EALW        write(*,*)'bobit'
@@ -2508,7 +2540,7 @@
          if ((becem(k).ge.becein(1)).and.(becem(k).lt.beceo)) &
            go to 3028
          fwtece0(k)=0.0
-         becem(k)=1.E-6
+         becem(k)=1.E-6_dp
 3028    continue
 !--------------------------------------------------------------------
 !--   idestm(nece)- the point becein(idestm) close to B-(nece)
@@ -2571,9 +2603,9 @@
 !EALW      write(*,*)psibry
 !EALW      write(*,*)'simag'
 !EALW      write(*,*)simag
-      delsi=-(psibry-simag)/float(nw-1)
+      delsi=-(psibry-simag)/(nw-1)
       do 700 i=1,nw-1
-        sumf=sumf+0.5*delsi*(ffprim(nw-i+1)+ffprim(nw-i))
+        sumf=sumf+0.5_dp*delsi*(ffprim(nw-i+1)+ffprim(nw-i))
         if(sumf .ge. 0.0) then
           fpol(nw-i)=sqrt(2.*sumf)*fpol(nw)/abs(fpol(nw))
         else
@@ -2736,10 +2768,10 @@
 !--   get R-,R+,Ro  where |B| = B+,B-,Bo                          --
 !-------------------------------------------------------------------
       do m=1,nece
-          recem(m)=1.E-6
-          recep(m)=1.E-6
+          recem(m)=1.E-6_dp
+          recep(m)=1.E-6_dp
       enddo
-      receo=1.e-6
+      receo=1.e-6_dp
 !
       if (nnout(1).gt.3) then
         n=nnout(1)
@@ -2805,13 +2837,13 @@
         endif
 !
       do m=1,nece
-          if((recep(m).lt.1.E-5).or.(recem(m).lt.1.E-5)) then
+          if((recep(m).lt.1.E-5_dp).or.(recem(m).lt.1.E-5_dp)) then
             fwtece0(m)=0.0
-            recep(m)=1.0E-6
-            recem(m)=1.0E-6
+            recep(m)=1.0E-6_dp
+            recem(m)=1.0E-6_dp
           endif
       enddo
-      if (receo.lt.1.E-5) fwtecebz0=0.0
+      if (receo.lt.1.E-5_dp) fwtecebz0=0.0
       go to 1015
 !
 1012  do i=1,nw
@@ -2837,11 +2869,11 @@
 !--   get dB/dr at receo (dbdro) and recep,recem (dbdrp,dbdrm)
 !------------------------------------------------------------------
       call zpline(nw,rgrid,dbdr,bbb,ccc,ddd)
-         if (fwtecebz0.gt.1.e-6) then
+         if (fwtecebz0.gt.1.e-6_dp) then
                  dbdro=seval(nw,receo,rgrid,dbdr,bbb,ccc,ddd)
          endif
          do k=1,nece
-           if (fwtece0(k).gt.1.e-6) then
+           if (fwtece0(k).gt.1.e-6_dp) then
                  dbdrp(k)=seval(nw,recep(k),rgrid,dbdr,bbb,ccc,ddd)
                  dbdrm(k)=seval(nw,recem(k),rgrid,dbdr,bbb,ccc,ddd)
            endif
@@ -2858,7 +2890,7 @@
 !--         (dpsi/dR)--dsidrp,dsidrm
 !---------------------------------------------------------------------
         do k=1,nece
-         if (fwtece0(k).gt.1.e-6) then 
+         if (fwtece0(k).gt.1.e-6_dp) then
            bbxp=(becep(k)-b00)/baa
            bbxm=(becem(k)-b00)/baa
            pteprp(k)=0.
@@ -2876,10 +2908,10 @@
 !
         call zpline(nw,rgrid,dsidr,bbb,ccc,ddd)
       do 3036 k=1,nece
-       if (fwtece0(k).gt.1.e-6) then
+       if (fwtece0(k).gt.1.e-6_dp) then
          dsidrm=seval(nw,recem(k),rgrid,dsidr,bbb,ccc,ddd)
          dsidrp=seval(nw,recep(k),rgrid,dsidr,bbb,ccc,ddd)
-        if((abs(pteprm(k)).gt.1.E-10).and.(abs(pteprp(k)).gt.1.E-10)) &
+        if((abs(pteprm(k)).gt.1.E-10_dp).and.(abs(pteprp(k)).gt.1.E-10_dp)) &
            then
          imk=idestm(k)
           rmbit(k)=tebit(imk)/pteprm(k)
@@ -2931,7 +2963,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
-!
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
       parameter (nn=30)
       parameter (kbre=5)
       common/cwork3/lkx,lky
@@ -2971,7 +3003,7 @@
 !--     becein(necein),   fe(GHz),|B|(T) becein form H.f to L.f     --
 !---------------------------------------------------------------------
       do 500 k=1,necein
-        becein(k)=0.001*6.0*9.1095*3.14159/4.8032*feece(k)/float(nharm)
+        becein(k)=0.001_dp*6.0*9.1095_dp*3.14159_dp/4.8032_dp*feece(k)/nharm
 500   continue
 !---------------------------------------------------------------------
 !--  Calculation of |B| on rgrid (z=zeceo)   bfield(nw)             --
@@ -3003,9 +3035,9 @@
   699 continue
       fpol(nw)=fbrdy*tmu
       sumf=fpol(nw)**2/2.
-      delsi=-(psibry-simag)/float(nw-1)
+      delsi=-(psibry-simag)/(nw-1)
       do 700 i=1,nw-1
-        sumf=sumf+0.5*delsi*(ffprim(nw-i+1)+ffprim(nw-i))
+        sumf=sumf+0.5_dp*delsi*(ffprim(nw-i+1)+ffprim(nw-i))
         if(sumf .ge. 0.0) then
           fpol(nw-i)=sqrt(2.*sumf)*fpol(nw)/abs(fpol(nw))
         else
@@ -3207,11 +3239,11 @@
 !heng          mm--nnecein   m---mecein  nn--parameter, n--nfit input
       rmin=recein(1)
       rmax=recein(mecein)
-      raa=0.5*(rmax-rmin)
-      r00=0.5*(rmax+rmin)
+      raa=0.5_dp*(rmax-rmin)
+      r00=0.5_dp*(rmax+rmin)
       do i=1,mecein
         an(i)=(recein(i)-r00)/raa
-        tebit(i)=max(tebit(i),dble(1.e-4))
+        tebit(i)=max(tebit(i),1.e-4_dp)
       enddo
       do 1110 nj=1,mecein
       do 1100 nk=1,nfit
@@ -3228,7 +3260,7 @@
 !
       mnow=mecein
       if (kcmin.gt.0) then
-      fwtnow=0.001
+      fwtnow=0.001_dp
       fwtcm =1.0
       do j=1,nfit
       mnow=mnow+1
@@ -3247,7 +3279,7 @@
       iieerr=0
       call sdecm(arspfit,nnecein,mnow,nfit,brspfit,nnecein &
            ,nnn1,s,wk,iieerr)
-      toler=1.0e-06*s(1)
+      toler=1.0e-06_dp*s(1)
       DO 2010 I = 1,nfit
             T = 0.0
             IF (S(I).gt.toler) T = Brspfit(I)/S(I)
@@ -3272,9 +3304,9 @@
 !--------------------------------------------------------------------
 !--  get Teecer(rrr) in ECE data region                            --
 !--------------------------------------------------------------------
-      drrr=(recein(mecein)-recein(1))/float(nnnte-1)
+      drrr=(recein(mecein)-recein(1))/(nnnte-1)
       do 3016 i=1,nnnte
-          rrr(i)=recein(1)+drrr*float(i-1)
+          rrr(i)=recein(1)+drrr*(i-1)
           rx=(rrr(i)-r00)/raa
           teecer(i)=0.
       do 3012 nk=1,nfit
@@ -3320,7 +3352,7 @@
         enddo
         ptpr1=ptpr1/raa
         ptpr2=ptpr2/raa
-        ppteppro=abs(0.5*(ptpr1-ptpr2)/drrr)
+        ppteppro=abs(0.5_dp*(ptpr1-ptpr2)/drrr)
         dtero=abs(tebit(idesto))
         robit=sqrt(dtero/ppteppro)
 !---------------------------------------------------------------------
@@ -3409,7 +3441,7 @@
         do 3036 k=1,nece
          dsidrm=seval(nw,recem(k),rgrid,dsidr,bbb,ccc,ddd)
          dsidrp=seval(nw,recep(k),rgrid,dsidr,bbb,ccc,ddd)
-         if((abs(pteprm(k)).gt.1.E-10).and.(abs(pteprp(k)).gt.1.E-10)) &
+         if((abs(pteprm(k)).gt.1.E-10_dp).and.(abs(pteprp(k)).gt.1.E-10_dp)) &
            then
             imk=idestm(k)
             rmbit(k)=tebit(imk)/pteprm(k)
@@ -3454,7 +3486,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
-!
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
       parameter (nn=30)
       parameter (kbre=5)
       common/cwork3/lkx,lky
@@ -3526,11 +3558,11 @@
       mecein=necein
       rmin=recein(1)
       rmax=recein(mecein)
-      raa=0.5*(rmax-rmin)
-      r00=0.5*(rmax+rmin)
+      raa=0.5_dp*(rmax-rmin)
+      r00=0.5_dp*(rmax+rmin)
       do i=1,mecein
         an(i)=(recein(i)-r00)/raa
-        tebit(i)=max(tebit(i),dble(1.e-4))
+        tebit(i)=max(tebit(i),1.e-4_dp)
       enddo
       do 1110 nj=1,mecein
       do 1100 nk=1,nfit
@@ -3556,7 +3588,7 @@
       mnow=mecein
       call sdecm(arspfit,nnecein,mnow,nfit,brspfit,nnecein &
            ,nnn1,s,wk,iieerr)
-      toler=1.0e-06*s(1)
+      toler=1.0e-06_dp*s(1)
       DO 2010 I = 1,nfit
         T = 0.0
         IF (S(I).gt.toler) T = Brspfit(I)/S(I)
@@ -3587,9 +3619,9 @@
 !--------------------------------------------------------------------
 !--  get Teecer(rrr) in ECE data region                            --
 !--------------------------------------------------------------------
-      drrr=(recein(mecein)-recein(1))/float(nnnte-1)
+      drrr=(recein(mecein)-recein(1))/(nnnte-1)
       do 3016 i=1,nnnte
-          rrr(i)=recein(1)+drrr*float(i-1)
+          rrr(i)=recein(1)+drrr*(i-1)
           rx=(rrr(i)-r00)/raa
           teecer(i)=0.
       do 3012 nk=1,nfit
@@ -3637,7 +3669,7 @@
         enddo
         ptpr1=ptpr1/raa
         ptpr2=ptpr2/raa
-        ppteppro=abs(0.5*(ptpr1-ptpr2)/drrr)
+        ppteppro=abs(0.5_dp*(ptpr1-ptpr2)/drrr)
         dtero=abs(tebit(idesto))
         robit=sqrt(2*dtero/ppteppro)
 !---------------------------------------------------------------------
@@ -3742,7 +3774,7 @@
         do 3036 k=1,nece
          dsidrm=seval(nw,recem(k),rgrid,dsidr,bbb,ccc,ddd)
          dsidrp=seval(nw,recep(k),rgrid,dsidr,bbb,ccc,ddd)
-         if((abs(pteprm(k)).gt.1.E-10).and.(abs(pteprp(k)).gt.1.E-10)) &
+         if((abs(pteprm(k)).gt.1.E-10_dp).and.(abs(pteprp(k)).gt.1.E-10_dp)) &
            then
             imk=idestm(k)
             rmbit(k)=tebit(imk)/pteprm(k)
@@ -3791,6 +3823,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
       include 'basiscomdu.f90'
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
@@ -3894,7 +3927,7 @@
 !
       do i=2,nw-1
         ii=nw-i+1
-        siii=1.0-1./float(nw-1)*(i-1)
+        siii=1.0_dp-1.0_dp/(nw-1)*(i-1)
         sigrid(ii)=siii
         if (icurrt.ne.2.and.icurrt.ne.5) go to 7792
         pprime(ii)=ppcurr(siii,kppcur)/darea
@@ -3919,9 +3952,9 @@
       endif
       fpol(nw)=fbrdy*tmu
       sumf=fpol(nw)**2/2.
-      delsi=-(psibry+psimag)/float(nw-1)
+      delsi=-(psibry+psimag)/(nw-1)
       do i=1,nw-1
-        sumf=sumf+0.5*delsi*(ffprim(nw-i+1)+ffprim(nw-i))
+        sumf=sumf+0.5_dp*delsi*(ffprim(nw-i+1)+ffprim(nw-i))
         if(sumf .ge. 0.0) then
           fpol(nw-i)=sqrt(2.*sumf)*fpol(nw)/abs(fpol(nw))
         else
@@ -4016,6 +4049,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
       character*3 synmlt
       integer*4 ktime, icmls, iermls(ntime)
       real*4 avemlt, atime(ntime), bbmls(ntime), sigbmls(ntime),      &
@@ -4083,6 +4117,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       common/cwork3/lkx,lky
@@ -4269,6 +4304,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       real*4 avem,tanham(ktime,nmtark),sigham(ktime,nmtark), &
@@ -4340,11 +4376,11 @@
           a6gam(i,n)=a6ham(n)
           a7gam(i,n)=a7ham(n)
           a8gam(i,n)=0.0
-          if (abs(tangam(i,n)).le.1.e-10.and. &
-            abs(siggam(i,n)).le.1.e-10)then
+          if (abs(tangam(i,n)).le.1.e-10_dp.and. &
+            abs(siggam(i,n)).le.1.e-10_dp)then
             fwtgam(n)=0.0
             siggam(i,n)=0.0
-          else if (abs(tangam(i,n)).le.1.e-10.and. &
+          else if (abs(tangam(i,n)).le.1.e-10_dp.and. &
             abs(siggam(i,n)).le.100.0) then
             fwtgam(n)=0.0
             siggam(i,n)=0.0
@@ -4391,6 +4427,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       common/cwork2/arsp(ndata,nppcur),wrsp(nppcur),work(ndata), &
@@ -4452,7 +4489,7 @@
 !
  1200 continue
       cond=ier
-      toler=1.0e-06*wrsp(1)
+      toler=1.0e-06_dp*wrsp(1)
       do 1600 i=1,nptef
         t=0.0
         if (wrsp(i).gt.toler) t=bdata(i)/wrsp(i)
@@ -4529,6 +4566,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       common/cwork2/arsp(ndata,nppcur),wrsp(nppcur),work(ndata), &
@@ -4604,7 +4642,7 @@
 !
  1200 continue
       cond=ier
-      toler=1.0e-06*wrsp(1)
+      toler=1.0e-06_dp*wrsp(1)
       do 1600 i=1,nptionf
         t=0.0
         if (wrsp(i).gt.toler) t=bdata(i)/wrsp(i)
@@ -4644,7 +4682,7 @@
         if (stitho(i).gt.0.0) then
           stitho(i)=sqrt(stitho(i))
         else
-          stitho(i)=0.5*tithom(i)
+          stitho(i)=0.5_dp*tithom(i)
         endif
  1800 continue
 !----------------------------------------------------------------------
@@ -4702,6 +4740,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
       common/cwork3/lkx,lky
       dimension xpsii(nwcurn),xpsis(nwcurn),xpsisb(nwcurn)
       dimension xsier(nercur)
@@ -4848,18 +4887,18 @@
           if (kvtor.eq.2) then
             prew0=pwcurr(xpsi(kk),kwwcur)
             pres0=prcurr(xpsi(kk),kppcur)
-            if (abs(pres0).gt.1.e-10) then
+            if (abs(pres0).gt.1.e-10_dp) then
                pwop0=prew0/pres0
                pwp0r2=pwop0*rgrvt(i)
             else
                pwop0=0.0
                pwp0r2=0.0
             endif
-            factor=factor*(1.-0.5*pwp0r2**2)
+            factor=factor*(1.-0.5_dp*pwp0r2**2)
           elseif (kvtor.eq.3) then
             prew0=pwcurr(xpsi(kk),kwwcur)
             pres0=prcurr(xpsi(kk),kppcur)
-            if (abs(pres0).gt.1.e-10) then
+            if (abs(pres0).gt.1.e-10_dp) then
                pwop0=prew0/pres0
                pwp0r2=pwop0*rgrvt(i)
                ptop0=exp(pwp0r2)
@@ -5098,20 +5137,20 @@
       if (kvtor.eq.2) then
         prew0=pwcurr(xpzero,kwwcur)
         pres0=prcurr(xpzero,kppcur)
-        if (abs(pres0).gt.1.e-10) then
+        if (abs(pres0).gt.1.e-10_dp) then
            pwop0=prew0/pres0
            pwp0r2=pwop0*rmggvt
         else
            pwop0=0.0
            pwp0r2=0.0
         endif
-        rmvtor=rmvtor*(1.-0.5*pwp0r2**2)
-        rmvjj=rmvjj*(1.-0.5*pwp0r2**2)
+        rmvtor=rmvtor*(1.-0.5_dp*pwp0r2**2)
+        rmvjj=rmvjj*(1.-0.5_dp*pwp0r2**2)
       endif
       if (kvtor.eq.3) then
         prew0=pwcurr(xpzero,kwwcur)
         pres0=prcurr(xpzero,kppcur)
-        if (abs(pres0).gt.1.e-10) then
+        if (abs(pres0).gt.1.e-10_dp) then
            pwop0=prew0/pres0
            pwp0r2=pwop0*rmggvt
            ptop0=exp(pwp0r2)
@@ -5492,6 +5531,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       save isicinit,zelips
@@ -5526,7 +5566,7 @@
       return
   100 continue
       if (aelip.gt.0.0) go to 150
-      aelip=0.50
+      aelip=0.50_dp
       do 140 i=1,limitr
         erho=sqrt((xlim(i)-relip)**2+((ylim(i)-zelip)/eelip)**2)
         aelip=min(aelip,erho)
@@ -5561,26 +5601,26 @@
       return
  1200 continue
       if (ks.eq.1)  zelips=zelip
-      if (zelip.gt.1.e5.or.zelips.gt.1.e5) then
-        zelip=1.447310*(expmpi(ks,37)-expmpi(ks,43)) &
-             +0.692055*(expmpi(ks,57)-expmpi(ks,53)) &
-             +0.728045*(silopt(ks,27)-silopt(ks,37)) &
-             +2.047150*(silopt(ks,2) -silopt(ks,11))
-        zelip=zelip*1.e6/pasmat(ks)
+      if (zelip.gt.1.e5_dp .or. zelips.gt.1.e5_dp) then
+        zelip=1.447310_dp*(expmpi(ks,37)-expmpi(ks,43)) &
+             +0.692055_dp*(expmpi(ks,57)-expmpi(ks,53)) &
+             +0.728045_dp*(silopt(ks,27)-silopt(ks,37)) &
+             +2.047150_dp*(silopt(ks,2) -silopt(ks,11))
+        zelip=zelip*1.e6_dp/pasmat(ks)
         zbound=zelip
-        eelip=1.5
+        eelip=1.5_dp
       endif
 !----------------------------------------------------------------
 !-- set zelip=0.0 if bad signals              96/06/24         --
 !----------------------------------------------------------------
-      if (abs(fwtmp2(37)).le.1.0e-30)  zelip=0.0
-      if (abs(fwtmp2(43)).le.1.0e-30)  zelip=0.0
-      if (abs(fwtmp2(57)).le.1.0e-30)  zelip=0.0
-      if (abs(fwtmp2(53)).le.1.0e-30)  zelip=0.0
-      if (abs(fwtsi(27)).le.1.0e-30)  zelip=0.0
-      if (abs(fwtsi(37)).le.1.0e-30)  zelip=0.0
-      if (abs(fwtsi(2)).le.1.0e-30)  zelip=0.0
-      if (abs(fwtsi(11)).le.1.0e-30)  zelip=0.0
+      if (abs(fwtmp2(37)).le.1.0e-30_dp)  zelip=0.0
+      if (abs(fwtmp2(43)).le.1.0e-30_dp)  zelip=0.0
+      if (abs(fwtmp2(57)).le.1.0e-30_dp)  zelip=0.0
+      if (abs(fwtmp2(53)).le.1.0e-30_dp)  zelip=0.0
+      if (abs(fwtsi(27)).le.1.0e-30_dp)  zelip=0.0
+      if (abs(fwtsi(37)).le.1.0e-30_dp)  zelip=0.0
+      if (abs(fwtsi(2)).le.1.0e-30_dp)  zelip=0.0
+      if (abs(fwtsi(11)).le.1.0e-30_dp)  zelip=0.0
 !
       do 1300 i=1,nw
       do 1300 j=1,nh
@@ -5620,6 +5660,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       common/cwork3/lkx,lky
@@ -5730,7 +5771,7 @@
         dpsip=psic2-psic1
         psibar=(psic2+psic1)/2
       endif
-      if (abs(vcurfb(1)).gt.1.e-6) then
+      if (abs(vcurfb(1)).gt.1.e-6_dp) then
         iinow=vcurfb(3)
         if (ntotal.lt.iinow) then
           if (ntotal.eq.1) then
@@ -5833,7 +5874,7 @@
 !------------------------------------------------------------------------
 !--  optional damping out the m=1 vertical eigen mode                  --
 !------------------------------------------------------------------------
-      if (abs(vcurfb(1)).lt.1.e-6) go to 43000
+      if (abs(vcurfb(1)).lt.1.e-6_dp) go to 43000
       if (ntotal.lt.5) go to 43000
 !-----------------------------------------------------------------------
 !-- sum Green's functions for m=1 eigen mode                          --
@@ -5985,7 +6026,7 @@
 !--  relax flux if needed                                                  --
 !----------------------------------------------------------------------------
       if (ntotal.le.1) go to 7000
-      if (abs(relax-1.0).lt.1.0e-03) go to 7000
+      if (abs(relax-1.0).lt.1.0e-03_dp) go to 7000
       do 6500 kk=1,nwnh
         psi(kk)=relax*psi(kk)+(1.-relax)*psiold(kk)
         psipla(kk)=relax*psipla(kk)+(1.-relax)*psipold(kk)
@@ -6012,10 +6053,11 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
 
-      u0 = 4.0 * 3.1415927 * 1.0e-7
+      u0 = 4.0 * 3.1415927_dp * 1.0e-7_dp
 
 ! ----------------------------------------------------------------------
 ! Power of 2 that specifies the grid height.
@@ -6192,12 +6234,12 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-
       dimension f(*)
 
-      constant=0.5
+      constant=0.5_dp
 ! ----------------------------------------------------------------------
 ! Forward reduction.
 
@@ -6297,8 +6339,8 @@
 
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-
       dimension psigrid(*),sia(*)
 
 ! ----------------------------------------------------------------------
@@ -6453,8 +6495,8 @@
 
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-
       dimension f(1)
 
       v(1)=(wk2(1)+alphab(index)*phi(1))* &
@@ -6510,8 +6552,8 @@
 
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-
       dimension f(1)
  
       v(1)=(f(1)+alphab(index)*phi(1))* &
@@ -6618,17 +6660,17 @@
       use commonblocks,only: sifpre,bwpre,cwpre,dwpre,sfpre,sprep
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-!
+
       if (abs(ypsi).gt.1.0) then
         prcur4=0.0
         return
       endif
 !
-
       if (n1set.gt.0) then
        do i=2,nw-1
-        siii=float(i-1)/float(nw-1)
+        siii=real(i-1,dp)/(nw-1)
         sifpre(i)=siii
        enddo
        sifpre(1)=0.0
@@ -6638,9 +6680,9 @@
        enddo
 !
        sfpre(nw)=prbdry
-       delsi=sidif/float(nw-1)
+       delsi=sidif/(nw-1)
        do 1000 i=1,nw-1
-       sfpre(nw-i)=sfpre(nw-i+1)+0.5*(sprep(nw-i+1)+sprep(nw-i))*delsi
+       sfpre(nw-i)=sfpre(nw-i+1)+0.5_dp*(sprep(nw-i+1)+sprep(nw-i))*delsi
  1000  continue
 !
        mw=nw
@@ -6673,8 +6715,9 @@
 !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-!
+
       if (abs(ypsi).gt.1.0) then
         ppcur4=0.0
         return
@@ -6716,6 +6759,7 @@
 !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       dimension xpsii(nppcur)
 !
@@ -6794,6 +6838,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       common/cwork3/lkx,lky
@@ -6863,7 +6908,7 @@
         dmnow=seval(nmass,xn,sibeam,dmass,bwork,cwork,dwork)
         presw(i)=dmnow*omegat(i)*rvtor**2
         sigprw(i)=abs(presw(i))*sigome(i)
-        presw(i)=0.5*presw(i)*omegat(i)
+        presw(i)=0.5_dp*presw(i)*omegat(i)
         call setpw(xn,ybase)
         call setpwp(xn,ybaseb)
         xbaseb=ybaseb(kwwcur)*xn**2
@@ -6913,6 +6958,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       common/cwork3/lkx,lky
@@ -7041,23 +7087,23 @@
 !----------------------------------------------------------------
 !--  construct pressure profile                                --
 !----------------------------------------------------------------
-      pressb=1.602e+03*(dibdry*tibdry+debdry*tebdry)+pbeamb
-      prespb=1.602e+03*(dipbry*tibdry+dibdry*tipbry &
+      pressb=1.602e+03_dp*(dibdry*tibdry+debdry*tebdry)+pbeamb
+      prespb=1.602e+03_dp*(dipbry*tibdry+dibdry*tipbry &
                        +depbry*tebdry+debdry*tepbry) +pbimpb
       sigpreb=(dibdry**2*stibdry**2+sdibdry**2*tibdry**2 &
               +debdry**2*stebdry**2+sdebdry**2*tebdry**2)
-      sigpreb=1.602e+03*sqrt(sigpreb)
+      sigpreb=1.602e+03_dp*sqrt(sigpreb)
       sigppb = dibdry**2*sigtipb**2+sdibdry**2*tipbry**2 &
               +dipbry**2*stibdry**2+sigdipb**2*tibdry**2 &
               +debdry**2*sigtepb**2+sdebdry**2*tepbry**2 &
               +depbry**2*stebdry**2+sigdepb**2*tebdry**2
-      sigppb =1.602e+03*sqrt(sigppb)
+      sigppb =1.602e+03_dp*sqrt(sigppb)
       do 2500 i=1,npress
-        pressr(i)=1.602e+03*(dnitho(i)*tithom(i)+dnethom(i)*tethom(i)) &
+        pressr(i)=1.602e+03_dp*(dnitho(i)*tithom(i)+dnethom(i)*tethom(i)) &
                   +pbimth(i)
         sigpre(i)=(snitho(i)**2*tithom(i)**2+dnitho(i)**2*stitho(i)**2 &
                 +sgneth(i)**2*tethom(i)**2+dnethom(i)**2*sgteth(i)**2)
-        sigpre(i)=1.602e+03*sqrt(sigpre(i))
+        sigpre(i)=1.602e+03_dp*sqrt(sigpre(i))
  2500 continue
       sgggmin=sgprmin
       if (sgprmin.lt.0.0) sgggmin=abs(sgprmin)*pressr(1)
@@ -7109,8 +7155,9 @@
       use commonblocks,only: sifprw,bwprw,cwprw,dwprw,sfprw,sprwp
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-!
+
       if (abs(ypsi).gt.1.0) then
         pwcur4=0.0
         return
@@ -7118,7 +7165,7 @@
 !
       if (n1set.gt.0) then
        do i=2,nw-1
-        siii=float(i-1)/float(nw-1)
+        siii=real(i-1,dp)/(nw-1)
         sifprw(i)=siii
        enddo
        sifprw(1)=0.0
@@ -7128,9 +7175,9 @@
        enddo
 !
        sfprw(nw)=preswb
-       delsi=sidif/float(nw-1)
+       delsi=sidif/(nw-1)
        do 1000 i=1,nw-1
-       sfprw(nw-i)=sfprw(nw-i+1)+0.5*(sprwp(nw-i+1)+sprwp(nw-i))*delsi
+       sfprw(nw-i)=sfprw(nw-i+1)+0.5_dp*(sprwp(nw-i+1)+sprwp(nw-i))*delsi
  1000  continue
 !
        mw=nw
@@ -7163,8 +7210,9 @@
 !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-!
+
       if (abs(ypsi).gt.1.0) then
         pwpcu4=0.0
         return
@@ -7207,9 +7255,10 @@
 !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       dimension xpsii(nwwcur)
-!
+
       if (abs(ypsi).gt.1.0) then
         pwpcur=0.0
         return
@@ -7260,8 +7309,9 @@
       use commonblocks,only: psiold,psipold,psipp
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-!
+
       if (ivacum.gt.0) return
       errold=errorm
       errave=0.0
@@ -7279,7 +7329,7 @@
 
       errorm=errorm/abs(sidif)
 !
-      aveerr(nx)=errave/abs(sidif)/float(nwnh)
+      aveerr(nx)=errave/abs(sidif)/nwnh
       cerror(nx)=errorm
       idone=0
       if (errorm.le.error) idone=1
@@ -7340,7 +7390,7 @@
            if (isetfb.lt.0) &
            write (6,10009) nx,tsaisq(jtime),zmaxis,errorm,delzmm &
                            ,brfb(1)
-        elseif (eelip.gt.2.25.and.itell.eq.0) then
+        elseif (eelip.gt.2.25_dp .and. itell.eq.0) then
            write (6,10009) nx,tsaisq(jtime),zmaxis,errorm,delzmm &
                            ,brfb(1)
       endif
@@ -7403,9 +7453,9 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-!
       common/cwork3/lkx,lky
       dimension rrrecep(nnece),rrrecem(nnece),iwp(nnece),iwm(nnece)
       dimension zece(nnece),pds(6),rsplt(2500),zsplt(2500),csplt(2500)
@@ -7450,7 +7500,7 @@
 !------------------------------------------------------------------
       if (kfixrece.eq.1) then
         do k=1,nnece
-         if ((rtep(k).gt.1.E-5).and.(rtem(k).gt.1.E-5)) then
+         if ((rtep(k).gt.1.E-5_dp).and.(rtem(k).gt.1.E-5_dp)) then
            recep(k)=rtep(k)
            recem(k)=rtem(k)
            nece=k
@@ -7530,10 +7580,10 @@
         read (nffile,err=30)  rrrecep
         read (nffile,err=30)  rrreceo
         do ii=1,nece
-         if (abs(rrrecem(ii)-recem(ii)).gt.1.e-4) go to 20000
-         if (abs(rrrecep(ii)-recep(ii)).gt.1.e-4) go to 20000
+         if (abs(rrrecem(ii)-recem(ii)).gt.1.e-4_dp) go to 20000
+         if (abs(rrrecep(ii)-recep(ii)).gt.1.e-4_dp) go to 20000
         enddo
-        if (abs(rrreceo-receo).gt.1.e-4) go to 20000
+        if (abs(rrreceo-receo).gt.1.e-4_dp) go to 20000
         read (nffile,err=30) recebzfc
         read (nffile,err=30) gecebzpc
         read (nffile,err=30) recebzec
@@ -7574,7 +7624,7 @@
       zzx=0.0
       drzg=(drgrid**2+dzgrid**2)*25.
       isplit=18
-      if (receo.le.1.e-8)  go to 90
+      if (receo.le.1.e-8_dp)  go to 90
       r=receo
       do 80 ii=1,nw
         a=rgrid(ii)
@@ -7591,13 +7641,13 @@
               a=rsplt(k)
               z=zeceo-zsplt(k)
               distt=(a-r)**2+z**2
-              if (distt.lt.1.e-8.and.isplit.lt.49) then
+              if (distt.lt.1.e-8_dp.and.isplit.lt.49) then
                 isplit=isplit+2
                 go to 68
               endif
               gbzt=gbzt+bz(a,r,z)
    72        continue    
-             gecebzpc(kk)=gbzt*tmu/float(itot)
+             gecebzpc(kk)=gbzt*tmu/itot
           else
              gecebzpc(kk)=bz(a,r,z)*tmu
           endif
@@ -7609,11 +7659,11 @@
       if (iecurr.le.0) go to 201 
       isplit=10
       itot=isplit*isplit
-      fitot=float(itot)
+      fitot=real(itot,dp)
       do 170 i=1,nesum
          recebzec(i)=0.0
   170 continue
-      if (receo.le.1.e-8) go to 201
+      if (receo.le.1.e-8_dp) go to 201
       r1=receo
       do 200 k=1,necoil
         bzct=0.0
@@ -7807,8 +7857,8 @@
         tdata1=eceerror*abs(brspece(jtime,m))
         tdata2=abs(ecebit(m))
         tdata=max(tdata1,tdata2)
-        if (tdata.gt.1.0e-10) fwtece(m)=fwtece0(m)/tdata
-        if (tdata.le.1.0e-10) fwtece(m)=0.0
+        if (tdata.gt.1.0e-10_dp) fwtece(m)=fwtece0(m)/tdata
+        if (tdata.le.1.0e-10_dp) fwtece(m)=0.0
   360 continue
       do 466 i=1,nece
         if (fwtece(i).gt.0.0) kece=kece+1
@@ -7817,17 +7867,17 @@
       tdata1=serror*abs(brspecebz(jtime))
       tdata2=abs(ecebzbit)
       tdata=max(tdata1,tdata2)
-      if (tdata.gt.1.0e-10) fwtecebz=fwtecebz0/tdata
-      if (tdata.le.1.0e-10) fwtecebz=0.0
+      if (tdata.gt.1.0e-10_dp) fwtecebz=fwtecebz0/tdata
+      if (tdata.le.1.0e-10_dp) fwtecebz=0.0
       if (fwtecebz.gt.0.0) kecebz=kecebz+1
       receoi(nitera)=receo
       do k=1,nece
-         if (fwtece(k).gt.1.e-10) then
+         if (fwtece(k).gt.1.e-10_dp) then
            recemi(nitera,k)=recem(k)
            recepi(nitera,k)=recep(k)
          else
-           recemi(nitera,k)=1.e-10
-           recepi(nitera,k)=1.e-10
+           recemi(nitera,k)=1.e-10_dp
+           recepi(nitera,k)=1.e-10_dp
          endif
       enddo
 !
@@ -7865,9 +7915,11 @@
 !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       include 'basiscomdu.f90'
       dimension xpsii(1)
+
       do i=1,keecur
          xpsii(i) = bserel(keefnc,i,ypsi)
       enddo
@@ -7896,9 +7948,11 @@
 !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       include 'basiscomdu.f90'
       dimension xpsii(1)
+
       do i=1,kffcur
         xpsii(i) = bserpel(keefnc,i,ypsi)
       enddo
@@ -7928,9 +7982,11 @@
 !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       include 'basiscomdu.f90'
       dimension xpsii(1)
+
       do i=1,kffcur
         xpsii(i) = bsffin(kfffnc,i,ypsi)
       enddo
@@ -7960,9 +8016,11 @@
 !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       include 'basiscomdu.f90'
       dimension xpsii(1)
+
       do i=1,kffcur
         xpsii(i) = bsffel(kfffnc,i,ypsi)
       enddo
@@ -7991,9 +8049,11 @@
 !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       include 'basiscomdu.f90'
       dimension xpsii(1)
+
       do i=1,kffcur
         xpsii(i) = bsffpel(kfffnc,i,ypsi)
       enddo
@@ -8022,9 +8082,11 @@
 !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       include 'basiscomdu.f90'
       dimension xpsii(1)
+
       do i=1,kppcur
         xpsii(i) = bsppel(kppfnc,i,ypsi)
       enddo
@@ -8054,9 +8116,11 @@
         !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
-        !      include 'ecomdu1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+!      include 'ecomdu1.f90'
       include 'basiscomdu.f90'
       dimension xpsii(1)
+
       do i=1,kppcur
         xpsii(i) = bspppel(kppfnc,i,ypsi)
       enddo
@@ -8086,6 +8150,7 @@
 !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       include 'basiscomdu.f90'
       dimension xpsii(1)
@@ -8119,9 +8184,11 @@
 !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       include 'basiscomdu.f90'
       dimension xpsii(1)
+
       do i=1,kwwcur
         xpsii(i) = bswwin(kwwfnc,i,ypsi)
       enddo
@@ -8150,9 +8217,11 @@
 !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       include 'basiscomdu.f90'
       dimension xpsii(1)
+
       do i=1,kwwcur
         xpsii(i) = bswwel(kwwfnc,i,ypsi)
       enddo
@@ -8182,9 +8251,11 @@
 !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       include 'basiscomdu.f90'
       dimension xpsii(1)
+
       do i=1,kwwcur
         xpsii(i) = bswwpel(kwwfnc,i,ypsi)
       enddo
@@ -8215,6 +8286,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       dimension rsplt(2500),zsplt(2500),csplt(2500) &
@@ -8248,8 +8320,8 @@
         read (nffile,err=30)  rrgamin
         read (nffile,err=30)  zzgamin
         do ii=1,nstark
-          if (abs(rrgamin(ii)-rrgam(jtime,ii)).gt.1.e-4) go to 20
-          if (abs(zzgamin(ii)-zzgam(jtime,ii)).gt.1.e-4) go to 20
+          if (abs(rrgamin(ii)-rrgam(jtime,ii)).gt.1.e-4_dp) go to 20
+          if (abs(zzgamin(ii)-zzgam(jtime,ii)).gt.1.e-4_dp) go to 20
         enddo
         read (nffile,err=30) rbrfc
         read (nffile,err=30) rbzfc
@@ -8274,7 +8346,7 @@
       call splitc(isplit,rsplt,zsplt,csplt, &
                   rf(k),zf(k),wf(k),hf(k),af(k),af2(k),cdum)
       do 60 mmm=1,nstark
-        if (rrgam(jtime,mmm).le.1.e-8)  go to 60
+        if (rrgam(jtime,mmm).le.1.e-8_dp)  go to 60
         brct=0.0
         bzct=0.0
         r1=rrgam(jtime,mmm)
@@ -8298,7 +8370,7 @@
       do 90 mmm=1,nstark
         gbrpc(mmm,kk)=0.0
         gbzpc(mmm,kk)=0.0
-        if (rrgam(jtime,mmm).le.1.e-8)  go to 90
+        if (rrgam(jtime,mmm).le.1.e-8_dp)  go to 90
         r=rrgam(jtime,mmm)
         do 80 ii=1,nw
           a=rgrid(ii)
@@ -8316,15 +8388,15 @@
                a=rsplt(k)
                z=zzgam(jtime,mmm)-zsplt(k)
                distt=(a-r)**2+z**2
-               if (distt.lt.1.e-8.and.isplit.lt.49) then
+               if (distt.lt.1.e-8_dp.and.isplit.lt.49) then
                  isplit=isplit+2
                  go to 68
                endif
                gbrt=gbrt+br(a,r,z)
                gbzt=gbzt+bz(a,r,z)
    72        continue
-             gbrpc(mmm,kk)=gbrt*tmu/float(itot)
-             gbzpc(mmm,kk)=gbzt*tmu/float(itot)
+             gbrpc(mmm,kk)=gbrt*tmu/itot
+             gbzpc(mmm,kk)=gbzt*tmu/itot
             else
              gbrpc(mmm,kk)=br(a,r,z)*tmu
              gbzpc(mmm,kk)=bz(a,r,z)*tmu
@@ -8336,13 +8408,13 @@
 !---------------------------------------------------------------------
       isplit=10
       itot=isplit*isplit
-      fitot=float(itot)
+      fitot=real(itot,dp)
       do 201 m=1,nstark
       do 170 i=1,nesum
         rbrec(m,i)=0.0
         rbzec(m,i)=0.0
   170 continue
-      if (rrgam(jtime,m).le.1.e-8) go to 201
+      if (rrgam(jtime,m).le.1.e-8_dp) go to 201
       r1=rrgam(jtime,m)
       do 200 k=1,necoil
         brct=0.0
@@ -8414,8 +8486,9 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      data pi/3.1415926535897932/
+      data pi/3.1415926535897932_dp/
       dimension rs(1),zs(1),cs(1)
 !
       frd=pi/180.
@@ -8536,6 +8609,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       common/cwork3/lkx,lky
@@ -8543,7 +8617,7 @@
       dimension pds(6)
       integer iii
       real :: zmaxis_last = 0.0
-      data isplit/8/,psitol/1.0e-04/
+      data isplit/8/,psitol/1.0e-04_dp/
       save xguess, yguess, xltrac, radbou
 !
       if (ivacum.gt.0) return
@@ -8588,7 +8662,7 @@
 !-----------------------------------------------------------------------
 !--  Trace boundary, first check for counter beam injection           --
 !-----------------------------------------------------------------------
-      if (pasmat(jtime).lt.-1.e3) then
+      if (pasmat(jtime).lt.-1.e3_dp) then
         nnerr=10000
       else
         nnerr=0
@@ -8627,8 +8701,8 @@
 !-----------------------------------------------------------------------
       if (icutfp.eq.2) then
         xvsmaxo=xvsmax
-        xvsmin=1.e10
-        xvsmax=-1.e10
+        xvsmin=1.e10_dp
+        xvsmax=-1.e10_dp
         if (limvs.eq.0) then
         itot=isplit*isplit
         do 51000 k=1,nvesel
@@ -8646,10 +8720,10 @@
            delx=xlim(k+1)-xlim(k)
            dely=ylim(k+1)-ylim(k)
            dels=sqrt(delx**2+dely**2)
-           nn=dels/0.002
+           nn=dels/0.002_dp
            nn=max(5,nn)
-           delx=delx/float(nn-1)
-           dely=dely/float(nn-1)
+           delx=delx/(nn-1)
+           dely=dely/(nn-1)
            do 51007 kk=2,nn
             xww=xlim(k)+delx *(kk-1)
             yww=ylim(k)+dely *(kk-1)
@@ -8675,7 +8749,7 @@
         do 51100 i=1,nw
         do 51090 j=1,nh
           kk=(i-1)*nh+j
-          if (zero(kk).gt.0.0005.and.www(kk).lt.0.1) then
+          if (zero(kk).gt.0.0005_dp.and.www(kk).lt.0.1_dp) then
            call seva2d(bkx,lkx,bky,lky,c,rgrid(i),zgrid(j),pds,ier,n333)
            bpnow=sqrt(pds(2)**2+pds(3)**2)/rgrid(i)
            if (bpnow.le.bpmin) then
@@ -8693,32 +8767,32 @@
 51100   continue
         if (bpmin.eq.avebp) go to 9320
         relsi=abs((sibpmin-psibry)/sidif)
-        if (bpmin.le.0.10*avebp.and.relsi.gt.0.005) then
+        if (bpmin.le.0.10_dp*avebp.and.relsi.gt.0.005_dp) then
 !------------------------------------------------------------------
 !-- find second separatrix                                       --
 !------------------------------------------------------------------
           do 9300 j=1,40
           call seva2d(bkx,lkx,bky,lky,c,xs,ys,pds,ier,n666)
           det=pds(5)*pds(6)-pds(4)*pds(4)
-          if (abs(det).lt.1.0e-15) go to 9305
+          if (abs(det).lt.1.0e-15_dp) go to 9305
           xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
           yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
           xs=xs+xerr
           ys=ys+yerr
-          if (xerr*xerr+yerr*yerr.lt.1.0e-12) go to 9310
+          if (xerr*xerr+yerr*yerr.lt.1.0e-12_dp) go to 9310
  9300     continue
  9305     continue
           epssep=xerr*xerr+yerr*yerr
           write (nttyo,11001) epssep,ixt
           if (iand(iout,1).ne.0) write (nout,11001) epssep,ixt
-          if (epssep.lt.1.0e-10) go to 9310
+          if (epssep.lt.1.0e-10_dp) go to 9310
           go to 9320
  9310     continue
          sibpmin=pds(1)
          yvs2=ys
          rsepex=xs
          relsi=abs((sibpmin-psibry)/sidif)
-         if (relsi.gt.0.005) then
+         if (relsi.gt.0.005_dp) then
          if (ixt.gt.1) sibpmin=sibpmin*(1.-vsdamp)+sibpold*vsdamp
          xvsmin=max(xvsmin,sibpmin)
          endif
@@ -8744,12 +8818,12 @@
       do 1000 j=1,nh
         kk=(i-1)*nh+j
         if (icutfp.eq.0) then
-          xpsi(kk)=1.1
+          xpsi(kk)=1.1_dp
           if ((rgrid(i).lt.xmin).or.(rgrid(i).gt.xmax)) go to 1000
           if ((zgrid(j).lt.ymin).or.(zgrid(j).gt.ymax)) go to 1000
           xpsi(kk)=(simag-psi(kk))/sidif
         else
-          if (zero(kk).gt.0.0005) then
+          if (zero(kk).gt.0.0005_dp) then
             xpsi(kk)=(simag-psi(kk))/sidif
             if (xpsi(kk)*xpsimin.le.1.0.and.xpsi(kk)*xpsimin.ge.0.0) then
               if ((rgrid(i).lt.rminvs).or.(rgrid(i).gt.rmaxvs)) &
@@ -8858,10 +8932,10 @@
       r1sdry(1)=r1bdry
       r2sdry(1)=r2bdry
       nnn=1
-      if (abs(sizeroj(1)-1.0).le.1.e-05.and.kzeroj.eq.1) go to 51977
+      if (abs(sizeroj(1)-1.0).le.1.e-05_dp.and.kzeroj.eq.1) go to 51977
       if (kzeroj.gt.0) then
        do i=1,kzeroj
-       if (sizeroj(i).ge.1.0) sizeroj(i)=0.99999
+       if (sizeroj(i).ge.1.0) sizeroj(i)=0.99999_dp
        siwant=simag+sizeroj(i)*(psibry-simag)
        call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc &
                     ,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
@@ -8926,7 +9000,7 @@
       if (iconvr.eq.3) go to 1470
       if ((ix.gt.1).or.(ixout.le.1)) call chisqr(jtime)
  1470 continue
-      cvolp(ixt)=abs(cvolp(ixt))*1.0e+06
+      cvolp(ixt)=abs(cvolp(ixt))*1.0e+06_dp
       vout(jtime)=cvolp(ixt)
       rout(jtime)=(xmax+xmin)/2.*100.
       aout(jtime)=100.*(xmax-xmin)/2.0
@@ -8955,7 +9029,7 @@
         fb_plasma(jtime)=abs(brfb(1)*nfbcoil/cpasma(jtime))
         delzmm = zmaxis - zmaxis_last
         zmaxis_last=zmaxis
-      elseif (eelip.gt.2.25.and.itell.eq.0) then
+      elseif (eelip.gt.2.25_dp .and. itell.eq.0) then
         delzmm = zmaxis - zmaxis_last
         zmaxis_last=zmaxis
       endif
@@ -8988,7 +9062,7 @@
  1580 continue
       nqend=1
       n22=2
-      if (errorm.lt.0.1000.and.icurrt.eq.4) nqend=nqiter
+      if (errorm.lt.0.1_dp.and.icurrt.eq.4) nqend=nqiter
       do 1585 i=1,nqend
       if (i.gt.1) call currnt(n22,jtime,n22,n22,kerror)
 ! MPI >>>
@@ -9161,6 +9235,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
 !
@@ -9195,6 +9270,7 @@
 !**********************************************************************
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       dimension x(1),y(1)
 !
@@ -9279,7 +9355,7 @@
    11 xxw = (p1+p2+p3+p4)/4.
       yyw = (a1+a2+a3+a4)
       yyw = (yyw/(xxw-yyw))**2
-      www(kk) = 1.-0.5*yyw
+      www(kk) = 1.-0.5_dp*yyw
       go to 20
    12 xxw = (p1+p2+p3+p4)
       yyw = (a1+a2+a3+a4)
@@ -9288,7 +9364,7 @@
    13 xxw = (p1+p2+p3+p4)
       yyw = (a1+a2+a3+a4)/4.
       xxw = (xxw/(xxw-yyw))**2
-      www(kk) = 0.5*xxw
+      www(kk) = 0.5_dp*xxw
       go to 20
    14 www(kk) = 0.
    20 continue
@@ -9341,6 +9417,7 @@
       use commonblocks,only: zeros,xouts,youts,bpoo,bpooz,bpooc
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
       include 'env2d.inc'
       common/wwork1/xlims(5),ylims(5),limtrs,xlmins
       data limtrs/5/
@@ -9411,6 +9488,7 @@
 !**                                                                  **
 !**********************************************************************
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
       include 'mpif.h'
       
       if (allocated(dist_data)) deallocate(dist_data)

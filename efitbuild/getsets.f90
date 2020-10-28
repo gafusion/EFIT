@@ -21,9 +21,11 @@
 !**          01/08/07...DPB namelist for mag uncertainty added       **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'
@@ -270,8 +272,8 @@
       fwtecebz0=0.0
       backaverage=.false.
       bitip=0.0
-      betap0=0.50
-      brsp(1)=-1.e+20
+      betap0=0.50_dp
+      brsp(1)=-1.e+20_dp
       cfcoil=-1.
       cutip=80000.
       do 185 i=1,nesum
@@ -282,7 +284,7 @@
       emp=1.00
       enf=1.00
       enp=1.00
-      error=1.0e-03
+      error=1.0e-03_dp
       fbetap=0.0
       fbetat=0.0
       fcurbd=1.
@@ -298,14 +300,14 @@
       do i=1,mbdry
        fwtbdry(i)=1.0
        fwtsol(i)=1.0
-       sigrbd(i)=1.e10
-       sigzbd(i)=1.e10
+       sigrbd(i)=1.e10_dp
+       sigzbd(i)=1.e10_dp
       enddo
       fli=0.0
       fwtbp=0.0
       fwtdlc=0.0
       fwtqa=0.0
-      gammap=1.0e+10
+      gammap=1.0e+10_dp
       iaved=5
       iavem=5
       iavev=10
@@ -363,11 +365,11 @@
       pcurbd=1.
       psibry=0.0
       qemp=0.0
-      qenp=0.95
-      qvfit=0.95
-      scrape=0.030
-      serror=0.03
-      sidif=-1.0e+10
+      qenp=0.95_dp
+      qvfit=0.95_dp
+      scrape=0.030_dp
+      serror=0.03_dp
+      sidif=-1.0e+10_dp
       symmetrize=.false.
       xltype=0.0
       xltype_180=0.
@@ -382,7 +384,7 @@
       write_Kfile = .false.
       fitfcsum = .false.
       ifindopt = 2
-      tolbndpsi = 1.0d-12
+      tolbndpsi = 1.0e-12_dp
 !----------------------------------------------------------------------
 !--   Snap-Extension mode              --
 !--   Initialize istore = 0                                          --
@@ -543,14 +545,14 @@
         fwtqa=0.
         qvfit=0.
         kcalpa=1
-        calpa(1,1)=0.1
-        calpa(2,1)=0.1
-        calpa(3,1)=0.1
+        calpa(1,1)=0.1_dp
+        calpa(2,1)=0.1_dp
+        calpa(3,1)=0.1_dp
         xalpa(1)=0.0
         kcgama=1
-        cgama(1,1)=0.1
-        cgama(2,1)=0.1
-        cgama(3,1)=0.1
+        cgama(1,1)=0.1_dp
+        cgama(2,1)=0.1_dp
+        cgama(3,1)=0.1_dp
         xgama(1)=0.0
       endif
       if(mse_usecer .eq. 1)keecur = 0
@@ -787,7 +789,7 @@
       mmstark=0
       do 142 i=1,nstark
         swtgam(i)=fwtgam(i)
-        if (fwtgam(i).gt.1.e-06) mmstark=mmstark+1
+        if (fwtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
   142 continue
       if (mmstark.gt.0) then
 ! MPI >>>
@@ -813,8 +815,8 @@
       mmemsels=0
       do 99144 i=1,nmsels
         swtbmsels(i)=fwtbmsels(i)
-        if (fwtbmsels(i).gt.1.e-06) mmbmsels=mmbmsels+1
-        if (fwtemsels(i).gt.1.e-06) mmemsels=mmemsels+1
+        if (fwtbmsels(i).gt.1.e-06_dp) mmbmsels=mmbmsels+1
+        if (fwtemsels(i).gt.1.e-06_dp) mmemsels=mmemsels+1
 99144 continue
       if (mmbmsels.gt.0) then
 ! MPI >>>

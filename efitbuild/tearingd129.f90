@@ -35,6 +35,7 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       use commonblocks,only: psiold,psipold,psipp,cw,wkw,copyw,bwx, &
             bwy,sifprw,bwprw,cwprw,dwprw,sfprw,sprwp,xsisii,f_a, &
             f_b,f_c,f_d,pp_a,pp_b,pp_c,pp_d,c,wk,copy,bkx,bky,chi_c, &
@@ -42,6 +43,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       common/cww/lwx,lwy
@@ -87,8 +89,8 @@
 
       mw=nw
       mh=nh
-      pi=-4.0*atan(-1.0)
-      tmu=4.0e-07*pi
+      pi=-4.0_dp*atan(-1.00_dp)
+      tmu=4.0e-07_dp*pi
       nnn=1
       nin=25
 !
@@ -141,9 +143,9 @@
 !
 !           Determine the largest value
 !      of q requested
-      q_big=float(mdp(1))/float(ndp(1))
+      q_big=real(mdp(1),dp)/ndp(1)
       do i=2,num_dp
-         q_test=float(mdp(i))/float(ndp(i))
+         q_test=real(mdp(i),dp)/ndp(i)
          if(q_test.gt.q_big)q_big=q_test
       enddo
 !
@@ -156,7 +158,7 @@
 !                   psi grid (xsisii, rgrid_psi)
 !      in terms of the rgrid
 !                   geometric angle grid (chi_phi)
-      dsi=(psibry-simag)/float(mw-1)
+      dsi=(psibry-simag)/(mw-1)
       if(dsi.gt.0)then
         cur_neg=-1.
       else
@@ -170,7 +172,7 @@
           pp_a(i)=-cur_neg*pprime(mw+1-i)
           qpsi_a(i)=qpsi(mw+1-i)
       enddo
-      d_phi=2.0*pi/float(mh-1)
+      d_phi=2.0*pi/(mh-1)
       do j=1,mh
         chi_phi(j)=-pi+(j-1)*d_phi
       enddo
@@ -286,7 +288,7 @@
         enddo
         enddo
         rhox=rhox*drgrid*dzgrid
-        rho_a(iiii)=(abs(rhox))**0.5
+        rho_a(iiii)=(abs(rhox))**0.5_dp
       enddo
       rho_norm=rho_a(1)
       do iiii=1,mw
@@ -317,7 +319,7 @@
 !           Loop through the modes.
       num_rsd=0
       do k=1,num_dp
-       qwant=float(mdp(k))/float(ndp(k))
+       qwant=real(mdp(k),dp)/ndp(k)
        do i=1,mw-1
 !
 !      check each zone for multiple qwant
@@ -336,12 +338,12 @@
 !      validity for the cubic spline.
          if((psi_rs.ge.xsisii(i)).and.(psi_rs.le.xsisii(i+1)))then
           num_rsd=num_rsd+1
-          dpsi_work=psi_rs*0.001
+          dpsi_work=psi_rs*0.001_dp
 !***********************************************************************
           do jjjj=1,5
 !
 !                                       Determine psi contour
-           psi_work=psi_rs+dpsi_work*float(jjjj-3)
+           psi_work=psi_rs+dpsi_work*(jjjj-3)
            chi_psi(jjjj)=psi_work
            psi_test=psi_work*cur_neg
            call surfac(psi_test,psi,mw,mh,rgrid,zgrid, &
@@ -385,15 +387,15 @@
 !
 !                                       Since r_cnt and z_cnt are ordered 
 !      calculate the min&max magnetic fields.
-          b_small=0.5*(1.0/(r_cnt(1)*r_cnt(1)) &
+          b_small=0.5_dp*(1.0/(r_cnt(1)*r_cnt(1)) &
                     +1.0/(r_cnt(nfounc-1)*r_cnt(nfounc-1)))
           kk=1
           do while((z_cnt(kk)*z_cnt(kk+1)).gt.0.0)
             kk=kk+1
           enddo
-          b_large=0.5*(1.0/(r_cnt(kk)*r_cnt(kk)) &
+          b_large=0.5_dp*(1.0/(r_cnt(kk)*r_cnt(kk)) &
                     +1.0/(r_cnt(kk+1)*r_cnt(kk+1)))
-          eps_avg_a(jjjj)=0.5*abs(b_small-b_large)
+          eps_avg_a(jjjj)=0.5_dp*abs(b_small-b_large)
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 !           Straight field line calculator:
 
@@ -437,10 +439,10 @@
 !      to zero at chi_phi=0.0 by assuming a
 !                                       linear accumulation of errors.
            mh_2=mh/2+1
-           delta_cor=chi((jjjj-1)*mh+mh_2)/dble(mh_2-1)
+           delta_cor=chi((jjjj-1)*mh+mh_2)/real(mh_2-1,dp)
            do jj=2,mh-1
              kk=(jjjj-1)*mh+jj
-             chi(kk)=chi(kk)-delta_cor*dble(jj-1)
+             chi(kk)=chi(kk)-delta_cor*real(jj-1,dp)
            enddo
 !                                       Print stright field angles
 !                                       versus geometric angle.
@@ -529,46 +531,46 @@
             if(eps_want.lt.0.0)eps_want=0.0
             psi_norm(num_rsd)=seval(mw,psi_rs,xsisii, &
                       rho_a,rho_b,rho_c,rho_d)
-            r_rsg(num_rsd)=1.0/(gttwant**0.5)
+            r_rsg(num_rsd)=1.0/(gttwant**0.5_dp)
 !
 !                 Evaluate lambda
 !           write(6,*)fwant,qwant,sigwant,qpwant,grrwant,gttwant
             val_lambda(num_rsd)= fwant*qwant*sigwant &
-                      /(2.0*float(mdp(k))*qpwant) &
-                      /(grrwant*gttwant)**0.5
+                      /(2.0_dp*(mdp(k))*qpwant) &
+                      /(grrwant*gttwant)**0.5_dp
             val_lambda(num_rsd)=abs(val_lambda(num_rsd))*tmu
-            if(val_lambda(num_rsd).gt.0.9999) &
-               val_lambda(num_rsd)=0.9999
+            if(val_lambda(num_rsd).gt.0.9999_dp) &
+               val_lambda(num_rsd)=0.9999_dp
 
 !
 !                 Evaluate saturated island
 !      half-width (m) if appropriate.
-            if(val_lambda(num_rsd).gt.0.5)then
-              w_sat(num_rsd)=2.04*(val_lambda(num_rsd)-0.5) &
-                             /(m_dp(num_rsd)*gttwant**0.5)
+            if(val_lambda(num_rsd).gt.0.5_dp)then
+              w_sat(num_rsd)=2.04_dp*(val_lambda(num_rsd)-0.5_dp) &
+                             /(m_dp(num_rsd)*gttwant**0.5_dp)
             else
               w_sat(num_rsd)=0.0
             endif
 !
 !      Evaluate delta prime (m)
-            delta_prime(num_rsd)=-2*float(mdp(k))*gttwant**0.5 &
+            delta_prime(num_rsd)=-2.0_dp*mdp(k)*gttwant**0.5_dp &
            *pi*val_lambda(num_rsd)/tan(pi*val_lambda(num_rsd))
 !
 !      Evaluate neoclassical
 !      width w_nc
-            w_nc(num_rsd)=pi*17.2e-11*eps_want**0.5 &
+            w_nc(num_rsd)=pi*17.2e-11_dp*eps_want**0.5_dp &
                  *qwant*ppwant*(rout(jtime)**2)/(qpwant*grrwant)
 !
 !                     Evaluate w_star factor in:
 !                 Collisional limit
-            den_want=1.0e+19
-            w_star1(num_rsd)=3.275e+05 &
+            den_want=1.0e+19_dp
+            w_star1(num_rsd)=3.275e+05_dp &
                      *(qwant*ppwant/qpwant)**2 &
                      /(grrwant/rout(jtime)**2)**2 &
                      /den_want
 !
 !                  Collisionless limit
-            w_star2(num_rsd)=w_star1(num_rsd)*eps_want**1.5
+            w_star2(num_rsd)=w_star1(num_rsd)*eps_want**1.5_dp
           endif
         enddo
        enddo
@@ -618,6 +620,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       common/cww/lwx,lwy
@@ -673,6 +676,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       dimension pds(6),chi_pds(6)
@@ -754,6 +758,7 @@
 !**          02/29/96..........first modified from fluxav            **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       use commonblocks,only: c,wk,copy,bkx,bky
       include 'eparmdud129.f90'
       common/cowrk3/lkx,lky
@@ -775,7 +780,7 @@
 !           the interval of the flux
 !      surface arc length integral.
       k=1
-      pi=-4.0*atan(-1.0)
+      pi=-4.0_dp*atan(-1.0_dp)
       ifnd=1
       n_start=n-1
       n_end=n-1
@@ -816,9 +821,9 @@
       if(n_end.gt.0)then
        if(n_start.lt.n)then
         if(n_start.eq.n_end)then
-          xnow=0.5*(x(n_start)+x(n_start+1))
-          ynow=0.5*(y(n_start)+y(n_start+1))
-          fnow=0.5*(gchi_a(n_start)+gchi_a(n_start+1))
+          xnow=0.5_dp*(x(n_start)+x(n_start+1))
+          ynow=0.5_dp*(y(n_start)+y(n_start+1))
+          fnow=0.5_dp*(gchi_a(n_start)+gchi_a(n_start+1))
           dxnow=x(n_start+1)-x(n_start)
           dynow=y(n_start+1)-y(n_start)
           dl_2=chi_geom(n_start)-chi_geom(n_start+1)
@@ -837,9 +842,9 @@
 !
 !               The first region integral
 !      (ang_end to chi_geom(n_end+1))
-          xnow=0.5*(x(n_end)+x(n_end+1))
-          ynow=0.5*(y(n_end)+y(n_end+1))
-          fnow=0.5*(gchi_a(n_end)+gchi_a(n_end+1))
+          xnow=0.5_dp*(x(n_end)+x(n_end+1))
+          ynow=0.5_dp*(y(n_end)+y(n_end+1))
+          fnow=0.5_dp*(gchi_a(n_end)+gchi_a(n_end+1))
           dxnow=x(n_end+1)-x(n_end)
           dynow=y(n_end+1)-y(n_end)
           dl_2=chi_geom(n_end)-chi_geom(n_end+1)
@@ -857,9 +862,9 @@
 !      chi_geom(n_end-1)
           i=n_end+1
           do while(i.lt.n_start)
-            xnow=0.5*(x(i)+x(i+1))
-            ynow=0.5*(y(i)+y(i+1))
-            fnow=0.5*(gchi_a(i)+gchi_a(i+1))
+            xnow=0.5_dp*(x(i)+x(i+1))
+            ynow=0.5_dp*(y(i)+y(i+1))
+            fnow=0.5_dp*(gchi_a(i)+gchi_a(i+1))
             dxnow=x(i+1)-x(i)
             dynow=y(i+1)-y(i)
             dl=sqrt(dxnow**2+dynow**2)
@@ -873,9 +878,9 @@
           enddo
 !
 !               Integrate the last region
-          xnow=0.5*(x(n_start)+x(n_start+1))
-          ynow=0.5*(y(n_start)+y(n_start+1))
-          fnow=0.5*(gchi_a(n_start)+gchi_a(n_start+1))
+          xnow=0.5_dp*(x(n_start)+x(n_start+1))
+          ynow=0.5_dp*(y(n_start)+y(n_start+1))
+          fnow=0.5_dp*(gchi_a(n_start)+gchi_a(n_start+1))
           dxnow=x(n_start+1)-x(n_start)
           dynow=y(n_start+1)-y(n_start)
           dl_2=chi_geom(n_start)-chi_geom(n_start+1)
@@ -895,9 +900,9 @@
 !     -------------
         if(n_start.eq.n_end)then
           n_temp=n-1
-          xnow=0.5*(x(n_temp)+x(n_temp+1))
-          ynow=0.5*(y(n_temp)+y(n_temp+1))
-          fnow=0.5*(gchi_a(n_temp)+gchi_a(n_temp+1))
+          xnow=0.5_dp*(x(n_temp)+x(n_temp+1))
+          ynow=0.5_dp*(y(n_temp)+y(n_temp+1))
+          fnow=0.5_dp*(gchi_a(n_temp)+gchi_a(n_temp+1))
           dxnow=x(n_temp+1)-x(n_temp)
           dynow=y(n_temp+1)-y(n_temp)
           dl_2=chi_geom(n_temp)-chi_geom(n_temp+1)
@@ -917,9 +922,9 @@
 !               The first region integral
 !      (ang_end to chi_geom(n))
           n_temp=n-1
-          xnow=0.5*(x(n_temp)+x(n_temp+1))
-          ynow=0.5*(y(n_temp)+y(n_temp+1))
-          fnow=0.5*(gchi_a(n_temp)+gchi_a(n_temp+1))
+          xnow=0.5_dp*(x(n_temp)+x(n_temp+1))
+          ynow=0.5_dp*(y(n_temp)+y(n_temp+1))
+          fnow=0.5_dp*(gchi_a(n_temp)+gchi_a(n_temp+1))
           dxnow=x(n_temp+1)-x(n_temp)
           dynow=y(n_temp+1)-y(n_temp)
           dl_2=chi_geom(n_temp)-chi_geom(n_temp+1)
@@ -938,9 +943,9 @@
 !      chi_geom(n_end-1)
           i=n_end+1
           do while(i.lt.n_start)
-            xnow=0.5*(x(i)+x(i+1))
-            ynow=0.5*(y(i)+y(i+1))
-            fnow=0.5*(gchi_a(i)+gchi_a(i+1))
+            xnow=0.5_dp*(x(i)+x(i+1))
+            ynow=0.5_dp*(y(i)+y(i+1))
+            fnow=0.5_dp*(gchi_a(i)+gchi_a(i+1))
             dxnow=x(i+1)-x(i)
             dynow=y(i+1)-y(i)
             dl=sqrt(dxnow**2+dynow**2)
@@ -954,9 +959,9 @@
           enddo
 !
 !          Integrate the last region
-          xnow=0.5*(x(n_start)+x(n_start+1))
-          ynow=0.5*(y(n_start)+y(n_start+1))
-          fnow=0.5*(gchi_a(n_start)+gchi_a(n_start+1))
+          xnow=0.5_dp*(x(n_start)+x(n_start+1))
+          ynow=0.5_dp*(y(n_start)+y(n_start+1))
+          fnow=0.5_dp*(gchi_a(n_start)+gchi_a(n_start+1))
           dxnow=x(n_start+1)-x(n_start)
           dynow=y(n_start+1)-y(n_start)
           dl_2=chi_geom(n_start)-chi_geom(n_start+1)
@@ -980,8 +985,10 @@
 
 
       subroutine q_search(num_root,psi_root,qwant,qa,qb,qc,qd)
+      use set_kinds
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       dimension psi_root(3)
         a_zero=(qa-qwant)/qd
@@ -996,18 +1003,18 @@
           num_root=1
 !               Implies one real root and
 !      two complex conjugates roots
-          dis_cubic=(dis_cubic)**0.5
+          dis_cubic=(dis_cubic)**0.5_dp
           s_one_real=r_cubic+dis_cubic
           if(s_one_real.lt.0.0)then
-            s_one_real=-(-s_one_real)**(1.0/3.00)
+            s_one_real=-(-s_one_real)**(1.0/3.0)
           else
-            s_one_real=(s_one_real)**(1.0/3.00)
+            s_one_real=(s_one_real)**(1.0/3.0)
           endif
           s_two_real=r_cubic-dis_cubic
           if(s_two_real.lt.0.0)then
-            s_two_real=-(-s_two_real)**(1.0/3.00)
+            s_two_real=-(-s_two_real)**(1.0/3.0)
           else
-            s_two_real=(s_two_real)**(1.0/3.00)
+            s_two_real=(s_two_real)**(1.0/3.0)
           endif
           psi_root(1)=-a_two/3.0+(s_one_real+s_two_real)
         else
@@ -1015,7 +1022,7 @@
 !               Implies three real roots
 !
           cubic_mag=(r_cubic*r_cubic+abs(dis_cubic))**(1.0/6.0)
-          dis_cubic=(abs(dis_cubic))**0.5
+          dis_cubic=(abs(dis_cubic))**0.5_dp
           cubic_angle=atan(dis_cubic/abs(r_cubic))/3.0
           if(r_cubic.gt.0)then
            real_mag=cubic_mag*cos(cubic_angle)
@@ -1034,8 +1041,8 @@
            s_two_imag=unreal_mag
           endif
           psi_root(1)=-a_two/3.0+2.0*s_one_real
-          psi_root(2)=-a_two/3.0-s_one_real+unreal_mag*(3.0)**0.5
-          psi_root(3)=-a_two/3.0-s_one_real-unreal_mag*(3.0)**0.5
+          psi_root(2)=-a_two/3.0-s_one_real+unreal_mag*(3.0)**0.5_dp
+          psi_root(3)=-a_two/3.0-s_one_real-unreal_mag*(3.0)**0.5_dp
         endif
       return
       end
@@ -1067,9 +1074,11 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'curve2d129.inc'
@@ -1146,7 +1155,7 @@
         yphy=0.0
         xabs=1.0
         yabs=8.0
-        dyabs = 0.22
+        dyabs = 0.22_dp
         write (text,8950) (mfvers(i),i=1,2)
         msg = msg + 1
         note(msg) = 1
@@ -1155,7 +1164,7 @@
         xpos(msg) = xabs
         ypos(msg) = yabs
         yabs = yabs - dyabs
-        ht(msg) = 0.14
+        ht(msg) = 0.14_dp
 !
         call date(uday)
         write (text,fmt="(' date ran = ',a10)") uday
@@ -1166,7 +1175,7 @@
         xpos(msg) = xabs
         ypos(msg) = yabs
         yabs = yabs - dyabs
-        ht(msg) = 0.14
+        ht(msg) = 0.14_dp
 !
         write (text,9000) ishot
         msg = msg + 1
@@ -1176,7 +1185,7 @@
         xpos(msg) = xabs
         ypos(msg) = yabs
         yabs = yabs - dyabs
-        ht(msg) = 0.14
+        ht(msg) = 0.14_dp
 !
         write (text,9020) itime,itimeu
         msg = msg + 1
@@ -1186,7 +1195,7 @@
         xpos(msg) = xabs
         ypos(msg) = yabs
         yabs = yabs - dyabs
-        ht(msg) = 0.14
+        ht(msg) = 0.14_dp
 !
         write (text,fmt="(2x,'Conventional Tearing')")
         msg = msg + 1
@@ -1194,9 +1203,9 @@
         lmes(msg) = text
         imes(msg) = 22
         xpos(msg) = xabs
-        ypos(msg) = yabs-0.07
-        yabs = yabs - dyabs-0.07
-        ht(msg) = 0.14
+        ypos(msg) = yabs-0.07_dp
+        yabs = yabs - dyabs-0.07_dp
+        ht(msg) = 0.14_dp
 !
         write(text,1001)
   1001 format(1x,'m',2x,'n', &
@@ -1228,7 +1237,7 @@
           xpos(msg) = xabs
           ypos(msg) = yabs
           yabs = yabs - dyabs
-          ht(msg) = 0.14
+          ht(msg) = 0.14_dp
         enddo
 !
         write (text,fmt="(2x,'Neoclassical Tearing')")
@@ -1237,9 +1246,9 @@
         lmes(msg) = text
         imes(msg) = 22
         xpos(msg) = xabs
-        ypos(msg) = yabs-0.07
-        yabs = yabs - dyabs-0.07
-        ht(msg) = 0.14
+        ypos(msg) = yabs-0.07_dp
+        yabs = yabs - dyabs-0.07_dp
+        ht(msg) = 0.14_dp
 !
         write(text,1002)
 1002    format(1x,'m',2x,'n', &
@@ -1254,7 +1263,7 @@
         xpos(msg) = xabs
         ypos(msg) = yabs
         yabs = yabs - dyabs
-        ht(msg) = 0.14
+        ht(msg) = 0.14_dp
 !
         do i=1,num_rsd
           write(text,fmt='(i2,1x,i2,4(1x,e12.5))') &
@@ -1266,7 +1275,7 @@
           xpos(msg) = xabs
           ypos(msg) = yabs
           yabs = yabs - dyabs
-          ht(msg) = 0.14
+          ht(msg) = 0.14_dp
         enddo
 !
         write (text,fmt='(2x,20hPolarization Tearing)')
@@ -1275,9 +1284,9 @@
         lmes(msg) = text
         imes(msg) = 22
         xpos(msg) = xabs
-        ypos(msg) = yabs-0.07
-        yabs = yabs - dyabs-0.07
-        ht(msg) = 0.14
+        ypos(msg) = yabs-0.07_dp
+        yabs = yabs - dyabs-0.07_dp
+        ht(msg) = 0.14_dp
 !
         write(text,1003)
  1003   format(1x,'m',1x,'n', &
@@ -1290,7 +1299,7 @@
         xpos(msg) = xabs
         ypos(msg) = yabs
         yabs = yabs - dyabs
-        ht(msg) = 0.14
+        ht(msg) = 0.14_dp
 !
         do i=1,num_rsd
           write(text,fmt='(i2,1x,i2,4(1x,e12.5))') &
@@ -1303,23 +1312,23 @@
           xpos(msg) = xabs
           ypos(msg) = yabs
           yabs = yabs - dyabs
-          ht(msg) = 0.14
+          ht(msg) = 0.14_dp
         enddo
 !
         ncurve=0
-        xlen=0.001
-        ylen=0.001
+        xlen=0.001_dp
+        ylen=0.001_dp
         npltlen=100
         nxlen=100
         nylen=100
         ixnon=1
         iynon=1
         xorg=0.0
-        xstp=0.00001
-        xmax=0.00001
+        xstp=0.00001_dp
+        xmax=0.00001_dp
         yorg=0.0
-        ystp=0.00001
-        ymax=0.00001
+        ystp=0.00001_dp
+        ymax=0.00001_dp
         call curve2d (ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
           xorl, yorl,hight, bngle, bshft, ptitle, npltlen,  xtitle, &
           nxlen, ytitle, nylen, xlen, ylen, xorg, xstp, xmax, yorg, &

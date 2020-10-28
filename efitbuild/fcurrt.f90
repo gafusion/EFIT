@@ -23,6 +23,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
 
@@ -126,7 +127,7 @@
 !-----------------------------------------------------------------------
 !-- set up boundary fitting weights                                   --
 !-----------------------------------------------------------------------
-      z04=1.0e-04
+      z04=1.0e-04_dp
       fwtbdr=abs(errbry)*max(abs(sidif),z04)
       fwtbdr=1.0/fwtbdr
       do 2080 i=1,nbdry
@@ -214,7 +215,7 @@
 !-----------------------------------------------------------------------
 !-- set up SOL fitting weights and response matrix                    --
 !-----------------------------------------------------------------------
-        z04s=1.0e-04
+        z04s=1.0e-04_dp
         fwtsols=abs(errbry)*max(abs(sidif),z04s)
         fwtsols=1.0/fwtsols
         do i=1,nsol
@@ -324,7 +325,7 @@
 ! MPI <<<
  2880 continue
       cond=ier
-      toler=1.0e-06*wbry(1)
+      toler=1.0e-06_dp*wbry(1)
       do 2890 i=1,neqn
       do 2890 j=1,nj
         ainbry(i,j)=0.0
@@ -647,7 +648,7 @@
         erbmax=max(erbloc(i),erbmax)
         erbave=erbave+erbloc(i)
  4100 continue
-      erbave=erbave/float(nbdry)
+      erbave=erbave/nbdry
       if (idebug /= 0) write (106,*) 'FCURRT erbmax,erbave,si = ', erbmax,erbave,wsibry
       if (idebug >= 2) then
          write (106,*) 'XSIBRY,PBRY(1),BRSP= ',xsibry,pbry(1),(brsp(m),m=1,nfcoil)
@@ -666,7 +667,7 @@
         erbsmax=max(erbsloc(i),erbsmax)
         erbsave=erbsave+erbsloc(i)
       enddo
-      erbsave=erbsave/float(nsol)
+      erbsave=erbsave/nsol
       if (idebug /= 0) write (6,*) 'FCURRT erbsmax,erbsave,si = ', erbsmax,erbsave,wsisol
       endif
 !

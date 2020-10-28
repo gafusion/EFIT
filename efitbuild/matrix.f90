@@ -27,6 +27,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'
@@ -47,7 +48,7 @@
 !--   relax saimin=50 from 30               04/27/90                --
 !--                60 from 50               03/31/93                --
 !---------------------------------------------------------------------
-      data iupdat/0/,minite/8/,ten24/1.e4/,z04/1.0e-04/
+      data iupdat/0/,minite/8/,ten24/1.e4_dp/,z04/1.0e-04_dp/
       save z04
 
       integer, intent(inout) :: kerror
@@ -65,7 +66,7 @@
         fwtbdr=abs(errbry)*max(abs(sidif),z04)
         fwtbdr=1.0/fwtbdr
         do i=1,nbdry
-          if (sigrbd(i).lt.1.e10.and.sigzbd(i).lt.1.e10) then
+          if (sigrbd(i).lt.1.e10_dp.and.sigzbd(i).lt.1.e10_dp) then
           call seva2d(bkx,lkx,bky,lky,c,rbdry(i),zbdry(i),pds,ier,n666)
           fwtbdr=sqrt((sigrbd(i)*pds(2))**2+(sigzbd(i)*pds(3))**2)
           fwtbdr=1.0/fwtbdr
@@ -276,7 +277,7 @@
           if (kvtor.eq.2.or.kvtor.eq.3) then
             prew0=pwcurr(ysiwant,kwwcur)
             pres0=prcurr(ysiwant,kppcur)
-            if (abs(pres0).gt.1.e-10) then
+            if (abs(pres0).gt.1.e-10_dp) then
                pwop0=prew0/pres0
             else
                pwop0=0.0
@@ -289,7 +290,7 @@
               if (nniter.gt.0) then
               if (kvtor.eq.2) then
                 rxxw(i)=rxxw(i)*(1.+pwop0*rxx2(i))
-                rxxx(i)=rxxx(i)*(1.-0.5*(pwop0*rxx2(i))**2)
+                rxxx(i)=rxxx(i)*(1.-0.5_dp*(pwop0*rxx2(i))**2)
               endif
               if (kvtor.eq.3) then
                 pwp0r2=pwop0*rxx2(i)
@@ -306,7 +307,7 @@
               if (nniter.gt.0) then
               if (kvtor.eq.2) then
                 rxxw(i)=rxxw(i)*(1.+pwop0*rxx2(i))
-                rxxx(i)=rxxx(i)*(1.-0.5*(pwop0*rxx2(i))**2)
+                rxxx(i)=rxxx(i)*(1.-0.5_dp*(pwop0*rxx2(i))**2)
               endif
               if (kvtor.eq.3) then
                 pwp0r2=pwop0*rxx2(i)
@@ -322,7 +323,7 @@
               if (nniter.gt.0) then
               if (kvtor.eq.2) then
                 rxxw(i)=rxxw(i)+pwop0*r4wdry/r1sdry(i)
-                rxxx(i)=rxxx(i)-0.5*pwop0**2*r4wdry/r1sdry(i)
+                rxxx(i)=rxxx(i)-0.5_dp*pwop0**2*r4wdry/r1sdry(i)
               endif
               if (kvtor.eq.3) then
                 rxxx(i)=(rpwdry-pwop0*rp2wdry)/r1sdry(i)
@@ -2813,7 +2814,7 @@
       ))  go to 4950
       if (saisq.gt.saicon) go to 4950
       if (iconvr.ne.2) go to 4950
-      if (abs(saisq-saiold).le.0.10) go to 4918
+      if (abs(saisq-saiold).le.0.10_dp) go to 4918
       if (saisq.lt.saiold) go to 4950
  4918 continue
       ichisq=1

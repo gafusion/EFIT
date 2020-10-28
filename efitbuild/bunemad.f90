@@ -20,6 +20,7 @@
 !**                                                                  **
 !**********************************************************************
 !vas  f90 modifi.
+      use set_kinds
       use var_bunemn
 
       implicit integer*4 (i-n), real*8 (a-h, o-z)
@@ -49,8 +50,8 @@
 ! set up for rzpois
 !-----------------------------
       do 3 i = ia,ju,nwb
-      sia(i-m+1) = sia(i-m+1)+(.5+.25/(1.+shift/dr))*sia(i-m)/s
-      sia(i-1) = sia(i-1)+(.5-.25/(m-1+shift/dr))*sia(i)/s
+      sia(i-m+1) = sia(i-m+1)+(.5_dp+.25_dp/(1.0+shift/dr))*sia(i-m)/s
+      sia(i-1) = sia(i-1)+(.5_dp-.25_dp/(m-1+shift/dr))*sia(i)/s
     3 continue
       call rzpois(sia)
       nwhbb = nwb*nhb
@@ -101,7 +102,7 @@
       integer i,l,lo,ju,n222,id,jd,ko,k4,li,jh,jt,ji,jo, &
       j2,iu,j,ii,io,iallocate_stat
 
-      real*8 q(1)
+      real(dp) q(1)
       real(dp),dimension(:), allocatable :: g
       real(dp),dimension(:), allocatable :: p
       real(dp),dimension(:), allocatable :: c
@@ -142,7 +143,7 @@
 
       shftdr = shift/dr
       do 40 i = 2,m
-      temp(i) = 1. - .5/(i+shftdr-1.)
+      temp(i) = 1. - .5_dp/(i+shftdr-1.)
    40 continue
       ju = (n-1)*(m+1)
       n222 = n/2

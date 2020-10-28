@@ -64,11 +64,12 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension psi(*),zero(*),x(*),y(*),xcontr(*),ycontr(*)
       dimension dist(5),xlim(*),ylim(*)
-      data etolc,etol,nloop/1.e-06,1.e-04,60/
-      data nttyo/6/,psitol/1.0E-04/,mecopy/0/,n111/1/
+      data etolc,etol,nloop/1.e-06_dp,1.e-04_dp,60/
+      data nttyo/6/,psitol/1.0e-04_dp/,mecopy/0/,n111/1/
       save dx,dy,area,rmid,mecopy
 
       save n111
@@ -88,7 +89,7 @@
 !--           nerr=10000, negative plasma current                    --
 !----------------------------------------------------------------------
       nosign=0
-      if (nerr.eq.10000) then
+      if (nerr .eq. 10000) then
         nosign=1
         do i=1,nwh
           psi(i)=-psi(i)
@@ -106,7 +107,7 @@
       endif
 
       nerr=0
-      psib0=-1.e10
+      psib0=-1.e+10_dp
       rad=radold
       rin=xctr
       rout=xlmin
@@ -118,7 +119,7 @@
         dx=x(2)-x(1)
         dy=y(2)-y(1)
         area=dx*dy
-        rmid=1.02*(x(1)+x(nw))/2.
+        rmid=1.02_dp*(x(1)+x(nw))/2.0
         mecopy=1
       end if
 
@@ -128,7 +129,7 @@
       do loop = 1,nloop
         i=1+(rad-x(1))/dx
         if(rad-x(i).lt.0.0)i=i-1
-        j=1+(yctr-y(1))/(dy-0.000001)
+        j=1+(yctr-y(1))/(dy-0.000001_dp)
         jjj=j
 
         if ((ix.eq.-2).or.(ix.lt.-2.and.rad.gt.rmid)) then
@@ -145,11 +146,11 @@
         kold=kk
 
         if (ix.ge.0.or.ix.lt.-2) then
-          dpsi=1.e10
-          xmin=1.e10
-          xmax=-1.e10
-          ymin=1.e10
-          ymax=-1.e10
+          dpsi=1.e10_dp
+          xmin=1.e10_dp
+          xmax=-1.e10_dp
+          ymin=1.e10_dp
+          ymax=-1.e10_dp
         end if
 
         xt=rad
@@ -206,7 +207,7 @@
 100       zsum=zero(kk)+zero(kk+1)+zero(kk+nh)+zero(kk+nh+1)
           if(zsum.eq.0.0) exit ! contr
 
-          if (abs(zsum-4.0).ge.1.e-03) then
+          if (abs(zsum-4.0).ge.1.e-03_dp) then
             !----------------------------------------------------------------------
             !--   from one to three corners of cell are inside limiter.  get max --
             !--   psi on line segment of limiter in cell and compare this max    --
@@ -214,7 +215,7 @@
             !--   note: do loop index assumes point 'limitr+1' is the same as    --
             !--   point 'limitr'                                                 --
             !----------------------------------------------------------------------
-            psilx=-1.e10
+            psilx=-1.e10_dp
             do k=1,limitr-1
               xc1=xlim(k)
               yc1=ylim(k)
@@ -245,7 +246,7 @@
               ytry=ytry1
             end do ! limitr
 
-            if (psilx.eq.-1.e10) then
+            if (psilx.eq.-1.e10_dp) then
               nerr=3
               go to 2000
             end if
@@ -253,7 +254,7 @@
             dpsi=min(dpsi,abs(psivl-psilx))
             if (psilx-psivl.ge.tolbndpsi) then
               call zlim(zerol,n111,n111,limitr,xlim,ylim,xt,yt,limfag)
-              if (zerol.le.0.01) then
+              if (zerol.le.0.01_dp) then
                 exit ! contr
               end if
             end if
@@ -310,7 +311,7 @@
           kk=(i-1)*nh+j
           if (kk.eq.kstrt) go to 1040
           dis2p=sqrt((xcontr(1)-xt)**2+(ycontr(1)-yt)**2)
-          if((dis2p.lt.0.1*dx).and.(ncontr.gt.5))go to 1040
+          if((dis2p.lt.0.1_dp*dx).and.(ncontr.gt.5))go to 1040
         end do ! contr
 
         !----------------------------------------------------------------------
@@ -323,7 +324,7 @@
         !
         if(loop.ge.nloop) exit ! loop
         rout=rad
-        rad=(rin+rout)*0.5
+        rad=(rin+rout)*0.5_dp
         cycle ! loop
 
         !----------------------------------------------------------------------
@@ -331,7 +332,7 @@
         !----------------------------------------------------------------------
 1040    err=abs((psivl-psib0)/psivl)
         if(ix.lt.0) then
-          if (ix.lt.-2) dpsi=1.e-06
+          if (ix.lt.-2) dpsi=1.e-06_dp
           go to 2000
         end if
 
@@ -342,18 +343,18 @@
         !----------------------------------------------------------------------
         psib0=psivl
         call zlim(zerol,n111,n111,limitr,xlim,ylim,rad,yctr,limfag)
-        if (zerol.le.0.01) then
+        if (zerol.le.0.01_dp) then
           rout=rad
         else
           rin=rad
         endif
-        rad=(rin+rout)*0.5
+        rad=(rin+rout)*0.5_dp
       end do ! loop
 
       radold=rad
       psib0=psivl
-      if(abs(ycontr(1)-ycontr(ncontr)).gt.0.5*dy) nerr=3
-      if(abs(xcontr(1)-xcontr(ncontr)).gt.0.5*dx) nerr=3
+      if(abs(ycontr(1)-ycontr(ncontr)).gt.0.5_dp*dy) nerr=3
+      if(abs(xcontr(1)-xcontr(ncontr)).gt.0.5_dp*dx) nerr=3
 
  2000 continue
       if (nosign.eq.1) then
@@ -731,6 +732,7 @@
 !---the user is informed that psivl was changed by returning iautoc=1.       --
 !---if no change occured iautoc=0.                                           --
 !------------------------------------------------------------------------------
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension pds(6),xc(*),yc(*)
       dimension cspln(kubicx,lubicx,kubicy,lubicy)
@@ -745,10 +747,10 @@
       ier = 0
       if (negcur.gt.0) psivl=-psivl
       iautoc=0
- 1040 xemin=1.e10
-      xemax=-1.e10
-      yemin=1.e10
-      yemax=-1.e10
+ 1040 xemin=1.e10_dp
+      xemax=-1.e10_dp
+      yemin=1.e10_dp
+      yemax=-1.e10_dp
       xymin=0.0
       xymax=0.0
       yxmin=0.0
@@ -757,8 +759,8 @@
       thet=0.0
       dthet0=twopi*dang/360.
       dthet=0.0
-      serrt=3.5e-06
-      derrt=0.5e-07
+      serrt=3.5e-06_dp
+      derrt=0.5e-07_dp
 !-----------------------------------------------------------------------------
 !---serrt is absolute error convergence criteria for newtons method below.  --
 !---get psi at (xaxd,yaxd)                                                  --
@@ -855,10 +857,10 @@
 !--------------------------------------------------------------------------
    70 newti=0
       if(iflg.eq.1)go to 75
-      xn=x1+isgn*dx*0.5
+      xn=x1+isgn*dx*0.5_dp
       yn=a*xn+bincp
       go to 80
-   75 yn=y1+isgn*dy*0.5
+   75 yn=y1+isgn*dy*0.5_dp
       xn=a*yn+bincp
    80 call seva2d(bkx,lkx,bky,lky,cspln,xn,yn,pds,ier,n333)
       if (ier.ne.0) then
@@ -898,7 +900,7 @@
       if(ihalf.gt.4)go to 100
 !---spacing too large for grad psi. decrease theta and try again
       thet=thet-dthet
-      dthet=dthet*0.5
+      dthet=dthet*0.5_dp
       go to 10
   100 bp1=bp2
       ipts=ipts+1
@@ -939,7 +941,7 @@
       return
  1030 psivl0=psivl
       dapsi=psiaxd-psivl0
-      psivl=psivl0+dapsi*0.0005
+      psivl=psivl0+dapsi*0.0005_dp
       iautoc=1
       write (itty,1020) psivl0,psivl
  1020 format(2x,'boundary search, will change psilim from', &
@@ -1207,15 +1209,17 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky
+      use set_kinds
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       common/cwork3/lkx,lky
       dimension x(nx),y(nz),pds(6),xxout(*),yyout(*),psipsi(*)
       dimension xseps(1),yseps(1) ! this is an address of a location inside a 2-d array
       dimension bpoo(*),bpooz(*),pdss(6),xlimv(*),ylimv(*)
       dimension pdsold(6)
-      data psitol/1.0e-04/
+      data psitol/1.0e-04_dp/
       character(len=80) :: strtmp
       logical :: dodebugplts = .false. ! write surface files for debugging/plotting. Serial only, not parallel
 !
@@ -1270,9 +1274,9 @@
 !--   find magnetic axis, its elongation, and flux value             --
 !----------------------------------------------------------------------
       if (negcur.eq.0) then
-        psimx=-1.0e+10
+        psimx=-1.0e+10_dp
       else
-        psimx=1.e10
+        psimx=1.0e+10_dp
       endif
       ! Find psi max/min w/in r,z limits depending on current sign
       do 200 i=1,nx
@@ -1328,8 +1332,8 @@
           ! Adapt step size using Barzilai and Borwein approach
           dfx = pds(2) - pdsold(2)
           dfy = pds(3) - pdsold(3)
-          if (j==1 .or. dfx**2+dfy**2<1.0d-15) then
-            gamman = 0.001
+          if (j==1 .or. dfx**2+dfy**2<1.0e-15_dp) then
+            gamman = 0.001_dp
           else
             gamman = abs((xax-xaxold)*dfx + (yax-yaxold)*dfy)/(dfx**2+dfy**2)
           endif
@@ -1338,19 +1342,19 @@
           pdsold = pds
           xax = xax + gamman*xerr
           yax = yax + gamman*yerr
-          if (gamman**2*(xerr**2+yerr**2) .lt. 1.0e-12) go to 310
+          if (gamman**2*(xerr**2+yerr**2) .lt. 1.0e-12_dp) go to 310
 
         ! Original Newton's Method for optimization, xn+1 = xn - f'/f''
         else ! ifindopt==1
           det=pds(5)*pds(6)-pds(4)*pds(4)
-          if (abs(det).lt.1.0e-15) go to 305
+          if (abs(det).lt.1.0e-15_dp) go to 305
           xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
           yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
           xax=xax+orelax*xerr
           yax=yax+orelax*yerr
           !if ((xax<x(1) .or. xax>x(nx)) .or. (yax<y(1) .or. yax>y(nz))) go to 305 ! TODO: test if this would help
-          if ((abs(pds(2)).lt.1.0e-06).and.(abs(pds(3)).lt.1.0e-06)) go to 310
-          if (xerr*xerr+yerr*yerr.lt.1.0e-12) go to 310
+          if ((abs(pds(2)).lt.1.0e-06_dp).and.(abs(pds(3)).lt.1.0e-06_dp)) go to 310
+          if (xerr*xerr+yerr*yerr.lt.1.0e-12_dp) go to 310
         end if
       enddo
   305 continue
@@ -1358,7 +1362,7 @@
       xax=xs
       yax=ys
       psimx=pds(1)
-      emaxis=1.3
+      emaxis=1.3_dp
       go to 1000
   310 continue
       psimx=pds(1)
@@ -1366,7 +1370,7 @@
 !--   compute elongation on axis                                     --
 !----------------------------------------------------------------------
       thet=2.0*pds(4)/(pds(5)-pds(6))
-      thet=0.5*atan(thet)
+      thet=0.5_dp*atan(thet)
       sint=sin(thet)
       cost=cos(thet)
       sint2=sint**2
@@ -1374,24 +1378,24 @@
       scost=sint*cost*2.0
       ar=pds(5)*cost2+pds(4)*scost+pds(6)*sint2
       az=pds(5)*sint2-pds(4)*scost+pds(6)*cost2
-      siar=-0.5*ar
-      siaz=-0.5*az
+      siar=-0.5_dp*ar
+      siaz=-0.5_dp*az
       emaxis=ar/az
       if (emaxis.gt.0.0) emaxis=sqrt(emaxis)
-      if (emaxis.le.0.0) emaxis=1.3
+      if (emaxis.le.0.0) emaxis=1.3_dp
  1000 continue
       if (dodebugplts) then
         close(unit=99)
       end if
-      delrmax1=0.40
-      delrmax2=0.40
-      sifsep=-1.e10
-      sissep=-1.e10
+      delrmax1=0.40_dp
+      delrmax2=0.40_dp
+      sifsep=-1.e10_dp
+      sissep=-1.e10_dp
       rfsep=-89.0
       zfsep=-89.0
       rssep=-89.0
       zssep=-89.0
-      if (abs(dpsipsi).le.0.5*psitol) return
+      if (abs(dpsipsi).le.0.5_dp*psitol) return
 !----------------------------------------------------------------------
 !--   find the separatrix                                            --
 !--   relaxd criteria for searching, 02/23/90                        --
@@ -1413,12 +1417,12 @@
         if (ys.le.y(2).or.ys.ge.y(nz-1)) go to 1305
         call seva2d(bkx,lkx,bky,lky,c,xs,ys,pds,ier,n666)
         det=pds(5)*pds(6)-pds(4)*pds(4)
-        if (abs(det).lt.1.0e-15) go to 1305
+        if (abs(det).lt.1.0e-15_dp) go to 1305
         xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
         yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
         xs=xs+orelax*xerr
         ys=ys+orelax*yerr
-        if (xerr*xerr+yerr*yerr.lt.1.0e-12*100.) go to 1310
+        if (xerr*xerr+yerr*yerr.lt.1.0e-12_dp*100.0) go to 1310
  1300 continue
  1305 continue
       if (iand(iout,1).ne.0) write (nout,5020) xs,ys
@@ -1428,29 +1432,29 @@
 !--  found x point, check to see if inside vessel                     --
 !-----------------------------------------------------------------------
       call zlim(zeross,n111,n111,limtrv,xlimv,ylimv,xs,ys,limfagv)
-      if (zeross.le.0.1) return
+      if (zeross.le.0.1_dp) return
       xseps(1)=xs*100.
       yseps(1)=ys*100.
 !-----------------------------------------------------------------------
 !--  consider x point on surface if psi/dpsi/dR < 0.004 a             --
 !-----------------------------------------------------------------------
-      anow=(rmax-rmin)*0.5
-      znow=0.5*(zmin+zmax)
+      anow=(rmax-rmin)*0.5_dp
+      znow=0.5_dp*(zmin+zmax)
       relpsi=abs((pds(1)-psiout))
       call seva2d(bkx,lkx,bky,lky,c,rmax,znow,pdss,ier,n333)
       delrmax1=relpsi/abs(pdss(2))
       relpsi=relpsi/abs((psimx-psiout))
-      if (delrmax1.gt.0.004*anow) return
+      if (delrmax1.gt.0.004_dp*anow) return
       sifsep=pds(1)
       rfsep=xs
       zfsep=ys
       psiout=pds(1)
       xxout(ns)=xs
       yyout(ns)=ys
-      xxout(ns-1)=0.5*(xxout(ns)+xxout(ns-2))
-      yyout(ns-1)=0.5*(yyout(ns)+yyout(ns-2))
-      xxout(ns+1)=0.5*(xxout(ns)+xxout(ns+2))
-      yyout(ns+1)=0.5*(yyout(ns)+yyout(ns+2))
+      xxout(ns-1)=0.5_dp*(xxout(ns)+xxout(ns-2))
+      yyout(ns-1)=0.5_dp*(yyout(ns)+yyout(ns-2))
+      xxout(ns+1)=0.5_dp*(xxout(ns)+xxout(ns+2))
+      yyout(ns+1)=0.5_dp*(yyout(ns)+yyout(ns+2))
       rmin=xxout(1)
       rmax=xxout(1)
       zmin=yyout(1)
@@ -1474,8 +1478,8 @@
 !----------------------------------------------------------------
 !-- find tracing points                                        --
 !----------------------------------------------------------------
-      jwant=(zrmax-y(1)+1.e-6)/(y(2)-y(1))+1
-      rminmax=0.5*(rmin+rmax)
+      jwant=(zrmax-y(1)+1.e-6_dp)/(y(2)-y(1))+1
+      rminmax=0.5_dp*(rmin+rmax)
       zmaxfs=y(jwant)
       zminfs=zmaxfs
       do i=1,kfound-1
@@ -1492,7 +1496,7 @@
 !
       znow=(zmax+zmin)/2.
       anow=(rmax-rmin)/2.
-      bpave=bpave/float(kfound-1)
+      bpave=bpave/real(kfound-1,dp)
 !-----------------------------------------------------------------------
 !-- find possible second separatrix                                   --
 !-----------------------------------------------------------------------
@@ -1514,12 +1518,12 @@
         if (ys.le.y(2).or.ys.ge.y(nz-1)) go to 9308
         call seva2d(bkx,lkx,bky,lky,c,xs,ys,pds,ier,n666)
         det=pds(5)*pds(6)-pds(4)*pds(4)
-        if (abs(det).lt.1.0e-15) go to 9305
+        if (abs(det).lt.1.0e-15_dp) go to 9305
         xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
         yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
         xs=xs+orelax*xerr
         ys=ys+orelax*yerr
-        if (xerr*xerr+yerr*yerr.lt.1.0e-12*100.) go to 9310
+        if (xerr*xerr+yerr*yerr.lt.1.0e-12_dp*100.0) go to 9310
  9300 continue
  9305 continue
  9308 if (iand(iout,1).ne.0) write (nout,5025) xs,ys
@@ -1529,7 +1533,7 @@
 !--  make sure seperatrix inside vessel                               --
 !-----------------------------------------------------------------------
       call zlim(zeross,n111,n111,limtrv,xlimv,ylimv,xs,ys,limfagv)
-      if (zeross.le.0.1) return
+      if (zeross.le.0.1_dp) return
       if (abs(ys*100.-yseps(1)).lt.2.00*anow) return
       xseps(2)=xs*100.
       yseps(2)=ys*100.
@@ -1542,15 +1546,15 @@
       relpsi=abs((pds(1)-psiout))
       delrmax2=relpsi/abs(pdss(2))
       relpsi=relpsi/abs((psimx-psiout))
-      if (delrmax2.gt.0.004*anow) return
+      if (delrmax2.gt.0.004_dp*anow) return
 !
       dsimins=0.0
       xxout(ns)=xs
       yyout(ns)=ys
-      xxout(ns-1)=0.5*(xxout(ns)+xxout(ns-2))
-      yyout(ns-1)=0.5*(yyout(ns)+yyout(ns-2))
-      xxout(ns+1)=0.5*(xxout(ns)+xxout(ns+2))
-      yyout(ns+1)=0.5*(yyout(ns)+yyout(ns+2))
+      xxout(ns-1)=0.5_dp*(xxout(ns)+xxout(ns-2))
+      yyout(ns-1)=0.5_dp*(yyout(ns)+yyout(ns-2))
+      xxout(ns+1)=0.5_dp*(xxout(ns)+xxout(ns+2))
+      yyout(ns+1)=0.5_dp*(yyout(ns)+yyout(ns+2))
       rmin=xxout(1)
       rmax=xxout(1)
       zmin=yyout(1)
@@ -1627,6 +1631,7 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 !
       dx=xl2-xl1
@@ -1647,7 +1652,7 @@
       if((ycrit.lt.y1).or.(ycrit.gt.y2)) go to 200
       xl2=xcrit
       yl2=ycrit
-      psip1=-1.e+35
+      psip1=-1.0e+35_dp
       go to 110
   100 call fqlin(x1,y1,x2,y2,f1,f2,f3,f4,xl1,yl1,area,psip1)
   110 call fqlin(x1,y1,x2,y2,f1,f2,f3,f4,xl2,yl2,area,psip2)
@@ -1868,6 +1873,7 @@
 !**          04/08/86..........first created                         **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       ierr=0
       if (x1.eq.x2.or.x2.eq.x3.or.x1.eq.x3) then
@@ -1894,11 +1900,11 @@
 10    y=a*x*x+b*x+c
       go to 4
 20    rad=sqrt(b*b-4.0*a*(c-y))
-      root1=(-b+rad)*.5/a
-      root2=(-b-rad)*.5/a
+      root1=(-b+rad)*.5_dp/a
+      root2=(-b-rad)*.5_dp/a
       t1=(root1-x1)*(x3-root1)
       t2=(root2-x1)*(x3-root2)
-      zero=-x1*1.e-7
+      zero=-x1*1.0e-7_dp
       if (t1.ge.zero) go to 1
       if (t2.ge.zero) go to 2
       ierr=1
@@ -2042,6 +2048,7 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension zero(1),x(1),y(1) ! sometimes an array, other times a constant
       dimension xlim(*),ylim(*)
@@ -2072,7 +2079,7 @@
           if (f .lt. y(j)) go to 20
           ncross = ncross + 1
 20      continue
-        mcross = .5*ncross
+        mcross = .5_dp*ncross ! truncates to integer
         mcross = 2*mcross
         if (ncross .eq. mcross) zero(kk) = 0.
       end do

@@ -24,6 +24,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
 ! MPI >>>
@@ -146,7 +147,7 @@
         sumift=sumift+brsp(i)
         sumifs=sumifs+brsp(i)**2
   220 continue
-      sumifs=sqrt(sumifs/float(nfcoil-1))
+      sumifs=sqrt(sumifs/(nfcoil-1))
 !
         write (nout,10020) sumif,sumift,sumifs
         write (nout,11010)
@@ -531,7 +532,7 @@
        enddo
       endif
 !
-      dsi=1./float(nw-1)
+      dsi=1.0_dp/(nw-1)
       write (nout,12040)
       do 700 i=1,nw
         sinow=dsi*(i-1)

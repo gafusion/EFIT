@@ -20,9 +20,11 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky
+      use set_kinds
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.f90'
@@ -35,7 +37,7 @@
       dimension b(nrsmat),z(4*(npcurn-2)+6+npcurn*npcurn)
       real*8 :: tcurrt, tcurrtpp, tcurrtffp
       data initc/0/
-      data ten24/1.e4/
+      data ten24/1.e4_dp/
 ! MPI >>>
       kerror = 0
 ! MPI <<<
@@ -120,7 +122,7 @@
         if (i.eq.kppcur+1) go to 1150
         cwant1=cwant1+fgowpc(i)*brsp(nfcoil+i)
  1150 continue
-      if (abs(cwant1).gt.1.0e-10) then
+      if (abs(cwant1).gt.1.0e-10_dp) then
         cwant1=cwant0/cwant1
       else
         kerror=1
@@ -180,7 +182,7 @@
         do 13226 i=1,nqwant
         nj=nj+1
         if (initc.ge.jwantm) then
-          fwtqqq=fwtxxq/0.001/pasmsw(i)
+          fwtqqq=fwtxxq/0.001_dp/pasmsw(i)
           do 13220 j=1,kpcurn
             alipc(nj,j)=fwtqqq*fgowsw(j,i)
 13220     continue
@@ -359,7 +361,7 @@
 ! MPI <<<
  1560 continue
       cond=ier
-      toler=1.0e-06*wlipc(1)
+      toler=1.0e-06_dp*wlipc(1)
       do 1570 i=1,nownow
         t=0.0
         if (wlipc(i).gt.toler) t=xrsp(i)/wlipc(i)
@@ -403,7 +405,7 @@
 !-----------------------------------------------------------------------
 !-- update total plasma current if needed to                          --
 !-----------------------------------------------------------------------
-      if (abs(fwtcur).le.1.e-30.and.nqwant.gt.0) then
+      if (abs(fwtcur).le.1.e-30_dp .and. nqwant.gt.0) then
         cm=0.0
         do 4999 n=nfcoil+1,nfnpcr
          cm=cm+brsp(n)*fgowpc(n-nfcoil)
@@ -455,7 +457,7 @@
       endif
       if (.not.fixpp) then
       cratio=cpasma(jtime)/tcurrt
-      if (abs(cpasma(jtime)).le.1.e-3) cratio=1.0
+      if (abs(cpasma(jtime)).le.1.e-3_dp) cratio=1.0
       cratio_ext = cratio * cratio_ext
       cratiop_ext = cratio_ext
       cratiof_ext = cratio_ext
@@ -524,7 +526,7 @@
 !------------------------------------------------------------------------
       if (kvtor.eq.11) then
         n1set=1
-        ypsi=0.5
+        ypsi=0.5_dp
         pres0=prcur4(n1set,ypsi,kppcur)
         prew0=pwcur4(n1set,ypsi,kwwcur)
         n1set=0
@@ -544,7 +546,7 @@
 !-----------------------------------------------------------------
         if (kvtor.eq.0) then
          pcurrt(kk)=pcurrt(kk)+pp0*rdiml
-        elseif (kvtor.ge.1.and.kvtor.le.3) then
+        elseif (kvtor.ge.1 .and. kvtor.le.3) then
          ppw= (1.-xpsi(kk)**enw)**emw*(1.-gammaw)+gammaw
          ppw=rbetaw*ppw*rgrvt(i)
          pcurrt(kk)=pcurrt(kk)+(pp0+ppw)*rdiml
@@ -552,7 +554,7 @@
          ypsi=xpsi(kk)
          pres0=prcur4(n1set,ypsi,kppcur)
          prew0=pwcur4(n1set,ypsi,kwwcur)
-         if (abs(pres0).gt.1.e-10) then
+         if (abs(pres0).gt.1.e-10_dp) then
           pwop0=prew0/pres0
           ptop0=exp(pwop0*rgrvt(i))
          else
@@ -567,7 +569,7 @@
         pcurrt(kk)=pcurrt(kk)*www(kk)
         tcurrt=tcurrt+pcurrt(kk)
  3300 continue
-      if (abs(tcurrt).gt.1.0e-10) then
+      if (abs(tcurrt).gt.1.0e-10_dp) then
         cratio=cpasma(jtime)/tcurrt
       else
         kerror=1
@@ -576,8 +578,8 @@
       do 4000 kk=1,nwnh
         pcurrt(kk)=pcurrt(kk)*cratio
  4000 continue
-      dfsqe=0.5
-      ddpsi=1./float(nw-1)
+      dfsqe=0.5_dp
+      ddpsi=1./real(nw-1,dp)
       sinow=0.0
       do 4020 i=2,nw-1
         sinow=sinow+ddpsi
@@ -649,7 +651,7 @@
         do 15226 i=1,nqwant
         nj=nj+1
         if (initc.ge.jwantm) then
-          fwtqqq=fwtxxq/0.001/pasmsw(i)
+          fwtqqq=fwtxxq/0.001_dp/pasmsw(i)
           do 15220 j=1,kpcurn
             alipc(nj,j)=fwtqqq*fgowsw(j,i)
 15220     continue
@@ -696,7 +698,7 @@
           if (kvtor.eq.2.or.kvtor.eq.3) then
             prew0=pwcurr(ysiwant,kwwcur)
             pres0=prcurr(ysiwant,kppcur)
-            if (abs(pres0).gt.1.e-10) then
+            if (abs(pres0).gt.1.e-10_dp) then
                pwop0=prew0/pres0
             else
                pwop0=0.0
@@ -707,7 +709,7 @@
               rxxw=rxx2*rzeroj(i)
               if (kvtor.eq.2) then
                 rxxw=rxxw*(1.+pwop0*rxx2)
-                rxxx=rxxx*(1.-0.5*(pwop0*rxx2)**2)
+                rxxx=rxxx*(1.-0.5_dp*(pwop0*rxx2)**2)
               endif
               if (kvtor.eq.3) then
                 pwp0r2=pwop0*rxx2
@@ -722,7 +724,7 @@
               rxxw=rxx2*rxxw
               if (kvtor.eq.2) then
                 rxxw=rxxw*(1.+pwop0*rxx2)
-                rxxx=rxxx*(1.-0.5*(pwop0*rxx2)**2)
+                rxxx=rxxx*(1.-0.5_dp*(pwop0*rxx2)**2)
               endif
               if (kvtor.eq.3) then
                 pwp0r2=pwop0*rxx2
@@ -736,7 +738,7 @@
               rxxw=  rxx2/r1sdry(i)
               if (kvtor.eq.2) then
                 rxxw=rxxw+pwop0*r4wdry/r1sdry(i)
-                rxxx=rxxx-0.5*pwop0**2*r4wdry/r1sdry(i)
+                rxxx=rxxx-0.5_dp*pwop0**2*r4wdry/r1sdry(i)
               endif
               if (kvtor.eq.3) then
                 rxxx=(rpwdry-pwop0*rp2wdry)/r1sdry(i)
@@ -858,7 +860,7 @@
 ! MPI <<<
  5560 continue
       cond=ier
-      toler=1.0e-06*wlipc(1)
+      toler=1.0e-06_dp*wlipc(1)
       do 5570 i=1,kwcurn
         t=0.0
         if (wlipc(i).gt.toler) t=xrsp(i)/wlipc(i)
@@ -872,7 +874,7 @@
 !-----------------------------------------------------------------------
 !-- update total plasma current if needed to                          --
 !-----------------------------------------------------------------------
-      if (abs(fwtcur).le.1.e-30.and.nqwant.gt.0) then
+      if (abs(fwtcur).le.1.e-30_dp.and.nqwant.gt.0) then
         cm=0.0
         do 5999 n=nfcoil+1,nfnwcr
          cm=cm+brsp(n)*fgowpc(n-nfcoil)
@@ -909,7 +911,7 @@
              if (kvtor.eq.2) then
                prew0=pwcurr(xpsi(kk),kwwcur)
                pres0=prcurr(xpsi(kk),kppcur)
-               if (abs(pres0).gt.1.e-10) then
+               if (abs(pres0).gt.1.e-10_dp) then
                  pwop0=prew0/pres0
                  pwp0r2=pwop0*rgrvt(i)
                else
@@ -917,12 +919,12 @@
                  pwp0r2=0.0
                endif
                pcurrw(kk)=pcurrw(kk)*(1.+pwp0r2)
-               pp0=pp0*(1.-0.5*pwp0r2**2)
+               pp0=pp0*(1.-0.5_dp*pwp0r2**2)
              endif
              if (kvtor.eq.3) then
                prew0=pwcurr(xpsi(kk),kwwcur)
                pres0=prcurr(xpsi(kk),kppcur)
-               if (abs(pres0).gt.1.e-10) then
+               if (abs(pres0).gt.1.e-10_dp) then
                  pwop0=prew0/pres0
                  pwp0r2=pwop0*rgrvt(i)
                  ptop0=exp(pwp0r2)
@@ -957,7 +959,7 @@
                if (kvtor.eq.2) then
                  prew0=pwcurr(xpsi(kk),kwwcur)
                  pres0=prcurr(xpsi(kk),kppcur)
-                 if (abs(pres0).gt.1.e-10) then
+                 if (abs(pres0).gt.1.e-10_dp) then
                    pwop0=prew0/pres0
                    pwp0r2=pwop0*rgrvt(i)
                  else
@@ -965,12 +967,12 @@
                    pwp0r2=0.0
                  endif
                  pcurrw(kk)=pcurrw(kk)*(1.+pwp0r2)
-                 pp0=pp0*(1.-0.5*pwp0r2**2)
+                 pp0=pp0*(1.-0.5_dp*pwp0r2**2)
                endif
                if (kvtor.eq.3) then
                  prew0=pwcurr(xpsi(kk),kwwcur)
                  pres0=prcurr(xpsi(kk),kppcur)
-                 if (abs(pres0).gt.1.e-10) then
+                 if (abs(pres0).gt.1.e-10_dp) then
                    pwop0=prew0/pres0
                    pwp0r2=pwop0*rgrvt(i)
                    ptop0=exp(pwp0r2)

@@ -2,9 +2,11 @@
 !--  Subroutine for writing K file in K file mode Qilong Ren         --
 !----------------------------------------------------------------------
       subroutine write_K(ksstime,kerror)
+      use set_kinds
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
       include 'basiscomdu.f90'
 
 ! MPI >>>
@@ -170,7 +172,7 @@
       go to 3032
  3030 continue
       open(unit=neqdsk,status='old', &
-           file= input_dir(1:lindir)//'efit_snap.dat'         )
+           file= input_dir(1:lindir)//'efit_snap.dat')
       snapfile=input_dir(1:lindir)//'efit_snap.dat'
  3032 continue
       do 3034 i=1,nfcoil
@@ -182,8 +184,8 @@
       do i=1,mbdry
        fwtbdry(i)=1.0
        fwtsol(i)=1.0
-       sigrbd(i)=1.e10
-       sigzbd(i)=1.e10
+       sigrbd(i)=1.e10_dp
+       sigzbd(i)=1.e10_dp
       enddo
       do 3036 i=1,magpri
         fwtmp2(i)=0.
@@ -196,7 +198,7 @@
         fwtsi(i)=0.
         psibit(i)=0.0
  3038 continue
-      error=1.e-03
+      error=1.e-03_dp
       fcurbd=1.
       fwtcur=1.
       fwtbp=1.
@@ -223,13 +225,13 @@
       mxiter=25
       nextra=1
       pcurbd=1.
-      scrape=0.030
-      qvfit=0.95
-      serror=0.03
+      scrape=0.030_dp
+      qvfit=0.95_dp
+      serror=0.03_dp
       xltype=0.
       xltype_180=0.0
       ifindopt = 2
-      tolbndpsi = 1.0d-12
+      tolbndpsi = 1.0e-12_dp
 !
       read (neqdsk,efitin,end=111)
  111  continue
@@ -306,14 +308,14 @@
         fwtqa=0.
         qvfit=0.
         kcalpa=1
-        calpa(1,1)=0.1
-        calpa(2,1)=0.1
-        calpa(3,1)=0.1
+        calpa(1,1)=0.1_dp
+        calpa(2,1)=0.1_dp
+        calpa(3,1)=0.1_dp
         xalpa(1)=0.0
         kcgama=1
-        cgama(1,1)=0.1
-        cgama(2,1)=0.1
-        cgama(3,1)=0.1
+        cgama(1,1)=0.1_dp
+        cgama(2,1)=0.1_dp
+        cgama(3,1)=0.1_dp
         xgama(1)=0.0
       endif
       if(mse_usecer .eq. 1)keecur = 0
@@ -354,7 +356,7 @@
         read (nout,4970,end=3200) ishotime
         read (ishotime,fmt='(i6,1x,i5)',err=3046) ishot,itime
         times=itime/1000.
-        delt=0.002
+        delt=0.002_dp
         ktime=1
         timeb=itime
         dtime=0.
@@ -399,7 +401,7 @@
 !
       mmstark=0
       do 3056 i=1,nstark
-         if (swtgam(i).gt.1.e-06) mmstark=mmstark+1
+         if (swtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
  3056 continue
       if (mmstark.gt.0) then
 ! MPI >>>
@@ -418,8 +420,8 @@
       mmbmsels=0
       mmemsels=0
       do 99142 i=1,nmsels
-        if (swtbmsels(i).gt.1.e-06) mmbmsels=mmbmsels+1
-        if (swtemsels(i).gt.1.e-06) mmemsels=mmemsels+1
+        if (swtbmsels(i).gt.1.e-06_dp) mmbmsels=mmbmsels+1
+        if (swtemsels(i).gt.1.e-06_dp) mmemsels=mmemsels+1
 99142 continue
       if (idebug >= 2) then
          write (6,*) 'WRITE_K mmbmsels= ', mmbmsels
@@ -587,8 +589,8 @@
         plasma=pasmat(jtime)
         siref=psiref(jtime)
         vloop=vloopt(jtime)
-        dflux=1.0e+03*diamag(jtime)
-        sigdlc=1.0e+03*sigdia(jtime)
+        dflux=1.0e+03_dp*diamag(jtime)
+        sigdlc=1.0e+03_dp*sigdia(jtime)
         pnbeam=pbinj(jtime)
         if (n1coil.gt.0) currn1=curtn1(jtime)
         if (nccoil.gt.0) then
@@ -607,8 +609,8 @@
 !-----------------------------------------------------------------------
         if (fitzts.eq.'te'.and.ztserr(jtime)) then
           nbdry=1
-          rbdry(1)=1.94
-          zbdry(1)=ztssym(jtime)+0.5*ztswid(jtime)
+          rbdry(1)=1.94_dp
+          zbdry(1)=ztssym(jtime)+0.5_dp*ztswid(jtime)
         endif
  3180   continue
         call getfnmu(itimeu,'k',ishot,itime,eqdsk)
@@ -737,9 +739,11 @@
 !--  Subroutine for writing K file in SNAP mode 2014/04/16           --
 !----------------------------------------------------------------------
       subroutine write_K2(jtime,kerror)
+      use set_kinds
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
       include 'basiscomdu.f90'
 
 ! MPI >>>
@@ -903,8 +907,8 @@
       zbdry=0.0
       if (fitzts.eq.'te'.and.ztserr(jtime)) then
         nbdry=1
-        rbdry(1)=1.94
-        zbdry(1)=ztssym(jtime)+0.5*ztswid(jtime)
+        rbdry(1)=1.94_dp
+        zbdry(1)=ztssym(jtime)+0.5_dp*ztswid(jtime)
       endif
       ppbdryss=ppbdry
       pp2bdryss=pp2bdry
@@ -934,8 +938,8 @@
       limitrss=limitr
       limitr=-limid
       vloop=vloopt(jtime)
-      dflux=1.0e+03*diamag(jtime)
-      sigdlc=1.0e+03*sigdia(jtime)
+      dflux=1.0e+03_dp*diamag(jtime)
+      sigdlc=1.0e+03_dp*sigdia(jtime)
       pnbeam=pbinj(jtime)
       currn1=curtn1(jtime)
       currc79=curc79(jtime)
@@ -1120,9 +1124,11 @@
 !**          2015/09/07..........first created                       **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
       character*30 ofname, chname
       Character*28 xxtitle,yytitle,zztitle
       data czero/0.0/
@@ -1211,7 +1217,7 @@
         if (kerrot(i).eq.0) then
           iges=i
           ydum=sbmselt(iges,j)
-          if (swtbmselt(iges,j).gt.1.e-06) ydum=ydum/swtbmselt(iges,j)
+          if (swtbmselt(iges,j).gt.1.e-06_dp) ydum=ydum/swtbmselt(iges,j)
           write (74,92924) time(i),bmselt(iges,j),xdum,ydum
         endif
       enddo

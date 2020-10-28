@@ -21,12 +21,14 @@
 !**          93/04   ..........revised to dump plot data             **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       use commonblocks,only: worka,c,wk,copy,bkx,bky,cw,wkw,copyw,bwx, &
            bwy,cj,wkj,copyj,bjx,bjy,cv,wkv,copyv,bvx,bvy,byringr,byringz, &
            xxtra,yxtra,bpxtra,flxtra,fpxtra
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'curve2d129.inc'
@@ -94,7 +96,7 @@
          if (dismin.eq.oright(jtime)) gapdis=orighs(jtime)
          if (dismin.eq.obott(jtime)) gapdis=obots(jtime)
          if (dismin.eq.otop(jtime)) gapdis=otops(jtime)
-         if (dismin.le.0.1) dismin=gapdis
+         if (dismin.le.0.1_dp) dismin=gapdis
          if (iseplim.eq.0) seplim(jtime)=dismin
          if (jtime.lt.ktime) return
       endif
@@ -207,21 +209,21 @@
   145 continue
   150 continue
       if (kframe.gt.0) then
-         almin=almin-0.05
-         almax=almax+0.05
-         blmin=blmin-0.05
-         blmax=blmax+0.05
+         almin=almin-0.05_dp
+         almax=almax+0.05_dp
+         blmin=blmin-0.05_dp
+         blmax=blmax+0.05_dp
       endif
   170 continue
       elim=(blmax-blmin)/(almax-almin)
       uday=' '
       call date(uday)
-      yll=7.2
+      yll=7.2_dp
       if (iecoil.le.0) then
          if (klabel.ge.0) then
-            yll=6.2
+            yll=6.2_dp
          else
-            yll=7.5
+            yll=7.5_dp
          endif
       endif
       xll=yll/elim
@@ -315,10 +317,10 @@
          yphy = 1.0
       else
          xphy = 3.0
-         yphy = 1.6
+         yphy = 1.6_dp
          bngle = 90.0
-         bshft(1) = 6.10
-         bshft(2) = 0.95
+         bshft(1) = 6.10_dp
+         bshft(2) = 0.95_dp
       endif
       if (kframe.eq.0) then
          xtitle = 'R(m)$'
@@ -344,7 +346,7 @@
       nxy(nn) = nplt
       clearx(nn)='PINK'
       if (kthkcrv.eq.1) then
-         thcrv(nn) = 0.015
+         thcrv(nn) = 0.015_dp
          ndshme(nn) = 1
       endif
       do i = 1, nplt
@@ -378,7 +380,7 @@
       endif
       if (ipass.gt.1) go to 210
       dismin=min(oleft(jtime),oright(jtime),otop(jtime),obott(jtime))
-      if (dismin.le.0.1) go to 210
+      if (dismin.le.0.1_dp) go to 210
       if (kwripre.gt.0) then
          dataname=dataname(1:lprx)//'_sep'
         open(unit=62,file=dataname,status='old',err=12941)
@@ -389,12 +391,12 @@
       call surfac(psibry,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt &
       ,npoint,drgrid,dzgrid,rgrid(1),rgrid(nw),zgrid(1), &
       zgrid(nh),n00,rmaxis,zmaxis,negcur)
-      yminmm=zmin-0.001
-      ymaxmm=zmax+0.001
+      yminmm=zmin-0.001_dp
+      ymaxmm=zmax+0.001_dp
       nn = nn + 1
       clearx(nn) = 'PINK'
-      thcrv(nn) = 0.015
-      sclpc(nn) = 0.2
+      thcrv(nn) = 0.015_dp
+      sclpc(nn) = 0.2_dp
       markme(nn) = 15
       ncnct(nn) = -1
       nxy(nn)   =  0
@@ -410,7 +412,7 @@
          npltxpt=ji
          if (kwripre.gt.0) then
            call zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(i),yplt(i),limfag)
-           if (zeron.gt.0.001) write (62,*) xplt(i),yplt(i)
+           if (zeron.gt.0.001_dp) write (62,*) xplt(i),yplt(i)
          endif
   200 continue
       if (kwripre.gt.0) close(unit=62)
@@ -442,7 +444,7 @@
             open(unit=62,file=dataname,status='new')
             do 39920 iii=1,npxtra(i)
               call zlim(zeron,n11,n11,limitr,xlim,ylim,xxtra(iii,i),yxtra(iii,i),limfag)
-              if (zeron.gt.0.001) write (62,*) xxtra(iii,i),yxtra(iii,i)
+              if (zeron.gt.0.001_dp) write (62,*) xxtra(iii,i),yxtra(iii,i)
 39920       continue
             close(unit=62)
           endif
@@ -508,18 +510,18 @@
       endif
       if (ipass.gt.1) go to 252
       do 238 i=1,nw-1
-         worke(i)=float(i-1)/float(nw-1)
+         worke(i)=real(i-1,dp)/(nw-1)
   238 continue
       worke(nw)=1.
       call zpline(nw,worke,qpsi,bworkb,cworkb,dworkb)
-      delsi=(psibry-simag)/float(nsplot+1)
+      delsi=(psibry-simag)/(nsplot+1)
       nsplot0=nsplot
       idqplot=iqplot
       if (iqplot.ge.10) idqplot=iqplot-10
       if ((iqplot.gt.1).and.(psiq1.gt.0.)) then
          nsplot=nsplot0+1
          if(psiq1.gt.10.0)then
-            psiq11=float(int(psiq1))/1000.
+            psiq11=real(int(psiq1),dp)/1000.
             psiq12=psiq1-int(psiq1)
             nsplot=nsplot0+2
          else
@@ -539,7 +541,7 @@
          call surfac(siwant,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt &
          ,npoint,drgrid,dzgrid,rmin,rmax,zmin, &
          zmax,n11,rmaxis,zmaxis,negcur)
-         if (kthkcrv.gt.0) thcrv(nn) = 0.010
+         if (kthkcrv.gt.0) thcrv(nn) = 0.010_dp
          clearx(nn) = 'BLUE'
          nxy(nn) = nplt
          do ii = 1,nplt
@@ -622,7 +624,7 @@
 !
          if (idqplot.gt.0) then
             if (iqplot.lt.10.or.i.lt.nsplot0) then
-               sinow=j/float(nsplot0+1)
+               sinow=j/real(nsplot0+1,dp)
                qnow=seval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
                msg = msg + 1
                note(msg) = 4
@@ -630,7 +632,7 @@
                iplce(msg) = idqplot
                xpos(msg) = xplt(nplt/6)
                ypos(msg) = yplt(nplt/6)
-               ht(msg) = 0.10
+               ht(msg) = 0.10_dp
             endif
          endif
   250 continue
@@ -644,7 +646,7 @@
          sclpc(nn) = 1.0
          innn    = 0
          do 253 i=1,nstark
-            if (abs(fwtgam(i)).gt.1.0e-06) then
+            if (abs(fwtgam(i)).gt.1.0e-06_dp) then
                innn=innn+1
                xx(innn,nn) = rrgam(jtime,i)
                yy(innn,nn) = zzgam(jtime,i)
@@ -659,7 +661,7 @@
          sclpc(nn) = 1.0
          innn    = 0
          do i=1,nmsels
-            if (abs(fwtbmselt(jtime,i)).gt.1.0e-06) then
+            if (abs(fwtbmselt(jtime,i)).gt.1.0e-06_dp) then
                innn=innn+1
                xx(innn,nn) = rrmselt(jtime,i)
                yy(innn,nn) = zzmselt(jtime,i)
@@ -677,20 +679,20 @@
          if (mmh.gt.33) idely=2
          innn=0
          nn = nn + 1
-         sclpc(nn) = 0.25
+         sclpc(nn) = 0.25_dp
          markme(nn) = 3
          ncnct(nn) = -1
          do 40040 i=1,nw,idelx
             do 40030 j=1,nh,idely
                kk=(i-1)*nh+j
                if (icutfp.eq.0) then
-                  if (zero(kk)*www(kk).gt.0.001) then
+                  if (zero(kk)*www(kk).gt.0.001_dp) then
                      innn=innn+1
                      xx(innn,nn) = rgrid(i)
                      yy(innn,nn) = zgrid(j)
                   endif
                else
-                  if (zero(kk)*xpsi(kk).gt.0.001.and. &
+                  if (zero(kk)*xpsi(kk).gt.0.001_dp.and. &
                   xpsi(kk)*xpsimin.le.1.) then
                      innn=innn+ 1
                      xx(innn,nn) = rgrid(i)
@@ -704,7 +706,7 @@
       if (icutfp.eq.2.and.kframe.ne.1) then
          innn=0
          nn = nn + 1
-         sclpc(nn) = 0.3
+         sclpc(nn) = 0.3_dp
          markme(nn) = 15
          ncnct(nn) = -1
          rvsmin=rvs(1)
@@ -723,7 +725,7 @@
          if (iprobe.ne.90) then
            do 40060 i=1,nplt
              call zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(i),yplt(i),limfag)
-             if (zeron.gt.0.001) then
+             if (zeron.gt.0.001_dp) then
                   innn=innn+1
                   xx(innn,nn) = xplt(i)
                   yy(innn,nn) = yplt(i)
@@ -731,12 +733,12 @@
 40060      continue
            nxy(nn) = innn
          endif
-!         hgt = 0.10
+!         hgt = 0.10_dp
 !         msg = msg + 1
 !         note(msg) = 2
 !         lmes(msg) = 'alpha =   '
 !         imes(msg) = 10
-!         xpos(msg) = rvsmax-0.5
+!         xpos(msg) = rvsmax-0.5_dp
 !         ypos(msg) = zvsmin
 !         ht(msg) = hgt
 !        call rlreal(alphafp,2,rvsmax,zvsmin)
@@ -746,15 +748,15 @@
 !         iplce(msg) = 2
 !         xpos(msg) = rvsmax
 !         ypos(msg) = zvsmin
-!         ht(msg) = 0.10
+!         ht(msg) = 0.10_dp
           write(text,96251) alphafp
           msg = msg + 1
           note(msg) = 1
           lmes(msg) = text
           imes(msg) = 25
-          xpos(msg) = rvsmax-0.5
+          xpos(msg) = rvsmax-0.5_dp
           ypos(msg) = zvsmin
-          ht(msg) = 0.10
+          ht(msg) = 0.10_dp
 !
          sumif=0.0
          do 40070 i=1,nvesel
@@ -766,16 +768,16 @@
           note(msg) = 1
           lmes(msg) = text
           imes(msg) = 25
-          xpos(msg) = rvsmax-0.5
-          ypos(msg) = zvsmin-0.1
-          ht(msg) = 0.10
+          xpos(msg) = rvsmax-0.5_dp
+          ypos(msg) = zvsmin-0.1_dp
+          ht(msg) = 0.10_dp
           write (6,*) 'Ivt(ka) = ',sumif
 !         msg = msg + 1
 !         note(msg) = 2
 !         lmes(msg) = 'Iv(ka)=   '
 !         imes(msg) = 10
-!         xpos(msg) = rvsmax-0.5
-!         ypos(msg) = zvsmin-0.1
+!         xpos(msg) = rvsmax-0.5_dp
+!         ypos(msg) = zvsmin-0.1_dp
 !         ht(msg) = hgt
 !        call rlreal(sumif,0,rvsmax,zvsmin-0.1)
 !         msg = msg + 1
@@ -783,14 +785,14 @@
 !         anum(msg) = sumif
 !         iplce(msg) = 0
 !         xpos(msg) = rvsmax
-!         ypos(msg) = zvsmin-0.1
+!         ypos(msg) = zvsmin-0.1_dp
 !         ht(msg) = 0.10
 !         msg = msg + 1
 !         note(msg) = 2
 !         lmes(msg) = 'Fp(kn)=   '
 !         imes(msg) = 10
-!         xpos(msg) = rvsmax-0.5
-!         ypos(msg) = zvsmin-0.2
+!         xpos(msg) = rvsmax-0.5_dp
+!         ypos(msg) = zvsmin-0.2_dp
 !         ht(msg) = hgt
 !         sumif=fzpol/1000.
 !        call rlreal(sumif,0,rvsmax,zvsmin-0.2)
@@ -799,14 +801,14 @@
 !         anum(msg) = sumif
 !         iplce(msg) = 0
 !         xpos(msg) = rvsmax
-!         ypos(msg) = zvsmin-0.2
+!         ypos(msg) = zvsmin-0.2_dp
 !         ht(msg) = 0.10
 !         msg = msg + 1
 !         note(msg) = 2
 !         lmes(msg) = 'Ft(kn)=   '
 !         imes(msg) = 10
-!         xpos(msg) = rvsmax-0.5
-!         ypos(msg) = zvsmin-0.3
+!         xpos(msg) = rvsmax-0.5_dp
+!         ypos(msg) = zvsmin-0.3_dp
 !         ht(msg) = hgt
 !         sumif=fztor/1000.
 !        call rlreal(sumif,0,rvsmax,zvsmin-0.3)
@@ -815,15 +817,15 @@
 !         anum(msg) = sumif
 !         iplce(msg) = 0
 !         xpos(msg) = rvsmax
-!         ypos(msg) = zvsmin-0.3
+!         ypos(msg) = zvsmin-0.3_dp
 !         ht(msg) = 0.10
 !
 !         msg = msg + 1
 !         note(msg) = 2
 !         lmes(msg) = 'Ih(ka)=   '
 !         imes(msg) = 10
-!         xpos(msg) = rvsmax-0.5
-!         ypos(msg) = zvsmin-0.4
+!         xpos(msg) = rvsmax-0.5_dp
+!         ypos(msg) = zvsmin-0.4_dp
 !         ht(msg) = hgt
          sumif=tcurrp/1000.
          write(text,96253) sumif
@@ -834,24 +836,24 @@
          imes(msg) = 25
          xpos(msg) = rvsmax
          ypos(msg) = zvsmin-0.2
-         ht(msg) = 0.10
-!        call rlreal(sumif,0,rvsmax,zvsmin-0.4)
+         ht(msg) = 0.10_dp
+!        call rlreal(sumif,0,rvsmax,zvsmin-0.4_dp)
 !         msg = msg + 1
 !         note(msg) = 4
 !         anum(msg) = sumif
 !         iplce(msg) = 0
 !         xpos(msg) = rvsmax
-!         ypos(msg) = zvsmin-0.4
+!         ypos(msg) = zvsmin-0.4_dp
 !         ht(msg) = 0.10
 !         msg = msg + 1
 !         note(msg) = 2
 !         lmes(msg) = 'Ig(ka)=   '
 !         imes(msg) = 10
-!         xpos(msg) = rvsmax-0.5
-!         ypos(msg) = zvsmin-0.5
+!         xpos(msg) = rvsmax-0.5_dp
+!         ypos(msg) = zvsmin-0.5_dp
 !         ht(msg) = hgt
          sumif=fpolvs/1000.
-!        call rlreal(sumif,0,rvsmax,zvsmin-0.5)
+!        call rlreal(sumif,0,rvsmax,zvsmin-0.5_dp)
          write(text,96254) sumif
          write (6,*) 'Ivp(ka) = ',sumif
          msg = msg + 1
@@ -859,8 +861,8 @@
          lmes(msg) = text
          imes(msg) = 25
          xpos(msg) = rvsmax
-         ypos(msg) = zvsmin-0.3
-         ht(msg) = 0.10
+         ypos(msg) = zvsmin-0.3_dp
+         ht(msg) = 0.10_dp
       endif
   252 continue
       if (iplim.le.0) go to 270
@@ -872,7 +874,7 @@
          nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
          nn = nn + 1
-         thcrv(nn) = 0.02
+         thcrv(nn) = 0.02_dp
          nxy(nn) = limbot-limup + 1
          do ii = limup, limup+nxy(nn)-1
             xx(ii,nn) = xlim(ii)
@@ -939,7 +941,7 @@
       nshd = nshd + 1
       nsxy(nshd) = npts
       sangle(nshd) = 30.0
-      sgap(nshd) = 0.1
+      sgap(nshd) = 0.1_dp
       ngaps(nshd) = 1
       do ii = 1, nsxy(nshd)
          sxx(ii,nshd) = workc(ii)
@@ -966,7 +968,7 @@
       nshd = nshd + 1
       nsxy(nshd) = npts
       sangle(nshd) = 30.0
-      sgap(nshd) = 0.1
+      sgap(nshd) = 0.1_dp
       ngaps(nshd) = 1
       do ii = 1, nsxy(nshd)
          sxx(ii,nshd) = workc(ii)
@@ -999,7 +1001,7 @@
       nshd = nshd + 1
       nsxy(nshd) = npts
       sangle(nshd) = 90.0
-      sgap(nshd) = 0.01
+      sgap(nshd) = 0.01_dp
       ngaps(nshd) = 1
       do ii = 1, nsxy(nshd)
          sxx(ii,nshd) = workc(ii)
@@ -1019,7 +1021,7 @@
          nshd = nshd + 1
          nsxy(nshd) = npts
          sangle(nshd) = 45.0
-         sgap(nshd) = 0.05
+         sgap(nshd) = 0.05_dp
          ngaps(nshd) = 1
          do ii = 1, nsxy(nshd)
             sxx(ii,nshd) = workc(ii)
@@ -1029,7 +1031,7 @@
          nshd = nshd + 1
          nsxy(nshd) = npts
          sangle(nshd) = 135.0
-         sgap(nshd) = 0.05
+         sgap(nshd) = 0.05_dp
          ngaps(nshd) = 1
          do ii = 1, nsxy(nshd)
             sxx(ii,nshd) = workc(ii)
@@ -1049,7 +1051,7 @@
       nshd = nshd + 1
       nsxy(nshd) = npts
       sangle(nshd) = 90.0
-      sgap(nshd) = 0.01
+      sgap(nshd) = 0.01_dp
       ngaps(nshd) = 1
       do ii = 1, nsxy(nshd)
          sxx(ii,nshd) = workc(ii)
@@ -1082,7 +1084,7 @@
       nn = nn + 1
       nxy(nn) = 2
       clearx(nn)='PINK'
-      thcrv(nn) = 0.030
+      thcrv(nn) = 0.030_dp
       do ii = 1, 2
          xx(ii,nn) = rwstrip1(ii)
          yy(ii,nn) = zwstrip1(ii)
@@ -1091,7 +1093,7 @@
       nn = nn + 1
       nxy(nn) = 2
       clearx(nn)='PINK'
-      thcrv(nn) = 0.030
+      thcrv(nn) = 0.030_dp
       do ii = 1, 2
          xx(ii,nn) = rwstrip2(ii)
          yy(ii,nn) = zwstrip2(ii)
@@ -1115,7 +1117,7 @@
                      if(kk.eq.kct(ms))then
                         nn = nn + 1
                         markme(nn) = 11
-                        sclpc(nn) = 0.75
+                        sclpc(nn) = 0.75_dp
                         nxy(nn) = 1
                         ncnct(nn) = -1
                         xx(1,nn) = rgrid(i)
@@ -1128,8 +1130,8 @@
       if (iprobe.eq.0) go to 310
       nn = nn + 1
       markme(nn) = 16
-      sclpc(nn) = 0.5
-      if (kthkcrv.eq.1) sclpc(nn) = 1.2
+      sclpc(nn) = 0.5_dp
+      if (kthkcrv.eq.1) sclpc(nn) = 1.2_dp
       nxy(nn) = nsilop
       ncnct(nn) = -1
       do ii = 1, nxy(nn)
@@ -1147,11 +1149,11 @@
             ht(msg) = 0.04
   290    continue
       else
-         hgt = 0.13
+         hgt = 0.13_dp
 !        if (klabel.lt.0) call hgt = 0.16
-         if (klabel.lt.0) hgt = 0.16
-         rf16=rf(16)-0.10
-         zf16=zf(16)+0.30
+         if (klabel.lt.0) hgt = 0.16_dp
+         rf16=rf(16)-0.10_dp
+         zf16=zf(16)+0.30_dp
          msg = msg + 1
          note(msg) = 2
          lmes(msg) = 'flux loops $'
@@ -1169,8 +1171,8 @@
       endif
       nn = nn + 1
       markme(nn) = 15
-      sclpc(nn) = 0.5
-      if (kthkcrv.eq.1) sclpc(nn) = 1.2
+      sclpc(nn) = 0.5_dp
+      if (kthkcrv.eq.1) sclpc(nn) = 1.2_dp
       ncnct(nn) = -1
       nxy(nn) = iem-ibm+1
       do ii = ibm, ibm+nxy(nn)-1
@@ -1185,15 +1187,15 @@
             inum(msg) = i
             xpos(msg) = xmp2(i)
             ypos(msg) = ymp2(i)
-            ht(msg) = 0.04
+            ht(msg) = 0.04_dp
   300    continue
       else
          hgt = 0.13
 !vas f90 modifi.
 !vas         if (klabel.lt.0) call hgt = 0.16
-         if (klabel.lt.0) hgt = 0.16
-         rrff=(rf(8)+rf(9))*0.5
-         zzff=(zf(8)+zf(9))*0.5
+         if (klabel.lt.0) hgt = 0.16_dp
+         rrff=(rf(8)+rf(9))*0.5_dp
+         zzff=(zf(8)+zf(9))*0.5_dp
          msg = msg + 1
          note(msg) = 2
          lmes(msg) = 'magnetic probes $'
@@ -1212,11 +1214,11 @@
          ifcoil=0
          workd(1)=0.0
          workd(2)=0.0
-         workc(1)=almin+0.15
-         workc(2)=almax-0.25
+         workc(1)=almin+0.15_dp
+         workc(2)=almax-0.25_dp
          nn = nn + 1
          ncdtme(nn) = 1
-         thcrv(nn) = 0.012
+         thcrv(nn) = 0.012_dp
          nxy(nn) = 2
          do ii = 1, nxy(nn)
             xx(ii,nn) = workc(ii)
@@ -1224,7 +1226,7 @@
          enddo
 !        call reset('chndot')
          workc(3)=almax
-         workd(3)=0.20
+         workd(3)=0.20_dp
          msg = msg + 1
          note(msg) = 2
          lmes(msg) = 'CER, $'
@@ -1235,7 +1237,7 @@
 
 !        call mixalf('INSTRU')
          mxalf(msg) = 'INSTRU'
-         workd(3)=0.10
+         workd(3)=0.10_dp
          msg = msg + 1
          note(msg) = 2
          lmes(msg) = 'CO(LH.8)2(LXHX) chord $'
@@ -1251,20 +1253,20 @@
          yto(nvec) = workd(2)
          ivec(nvec) = 1
 
-         workd(1)=zuperts(jtime)*0.012
-         workd(2)=zlowerts*0.01-0.400
+         workd(1)=zuperts(jtime)*0.012_dp
+         workd(2)=zlowerts*0.01_dp-0.400_dp
          workc(1)=rmajts
          workc(2)=rmajts
          nn = nn + 1
          ncdtme(nn) = 1
-         thcrv(nn) = 0.012
+         thcrv(nn) = 0.012_dp
          nxy(nn) = 2
          do ii = 1, nxy(nn)
             xx(ii,nn) = workc(ii)
             yy(ii,nn) = workd(ii)
          enddo
-         workc(3)=rmajts+0.20
-         workd(3)=zuperts(jtime)*0.0150
+         workc(3)=rmajts+0.20_dp
+         workd(3)=zuperts(jtime)*0.0150_dp
 !        call rlvec(workc(3),workd(3),workc(1),workd(1),1)
          nvec = nvec + 1
          xfm(nvec) = workc(3)
@@ -1279,7 +1281,7 @@
          xpos(msg) = workc(3)
          ypos(msg) = workd(3)
          ht(msg) = hgt
-         workd(3)=workd(3)-0.1
+         workd(3)=workd(3)-0.1_dp
          msg = msg + 1
          note(msg) = 2
          lmes(msg) = 'CO(LH.8)2(LXHX) chord $'
@@ -1297,8 +1299,8 @@
             xx(ii,nn) = workc(ii)
             yy(ii,nn) = workd(ii)
          enddo
-         workc(3)=workc(1)-0.4
-         workd(3)=workd(1)+0.59
+         workc(3)=workc(1)-0.4_dp
+         workd(3)=workd(1)+0.59_dp
 !        call rlvec(workc(3),workd(3),workc(1),workd(1),1)
          nvec = nvec + 1
          xfm(nvec) = workc(3)
@@ -1316,8 +1318,8 @@
 
          workc(1)=chordv(3)
          workc(2)=chordv(3)
-         workd(1)=workd(1)-0.2
-         workd(2)=workd(2)+0.2
+         workd(1)=workd(1)-0.2_dp
+         workd(2)=workd(2)+0.2_dp
          nn = nn + 1
          ncdtme(nn) = 1
          thcrv(nn) = 0.012
@@ -1326,8 +1328,8 @@
             xx(ii,nn) = workc(ii)
             yy(ii,nn) = workd(ii)
          enddo
-         workc(3)=workc(2)+0.2
-         workd(3)=workd(2)-0.3
+         workc(3)=workc(2)+0.2_dp
+         workd(3)=workd(2)-0.3_dp
 !        call rlvec(workc(3),workd(3),workc(2),workd(2),1)
          nvec = nvec + 1
          xfm(nvec) = workc(3)
@@ -1347,19 +1349,19 @@
 !-----------------------------------------------------------------------
 !--  motional Stark                                                   --
 !-----------------------------------------------------------------------
-         workc(1)=1.90
+         workc(1)=1.90_dp
          workd(1)=0.0
          nn = nn + 1
          markme(nn) = 4
          sclpc(nn) = 2.0
-         thcrv(nn) = 0.012
+         thcrv(nn) = 0.012_dp
          ncnct(nn) = -1
          nxy(nn) = 1
          xx(1,nn) = workc(1)
          yy(1,nn) = workd(1)
 
-         workc(2)=workc(1)-0.32
-         workd(2)=workd(1)+0.17
+         workc(2)=workc(1)-0.32_dp
+         workd(2)=workd(1)+0.17_dp
          msg = msg + 1
          note(msg) = 2
          lmes(msg) = 'Stark $'
@@ -1385,8 +1387,8 @@
              klabela=iabs(klabel)
              write(text, 9950) klabela
              xabs=1.0
-             yabs=-0.5
-             dyabs = 0.22
+             yabs=-0.5_dp
+             dyabs = 0.22_dp
              msg = msg + 1
              note(msg) = 1
              lmes(msg) = text
@@ -1394,12 +1396,12 @@
              xpos(msg) = xabs
              ypos(msg) = yabs
              yabs = yabs - dyabs
-             ht(msg) = 0.16
+             ht(msg) = 0.16_dp
            endif
            ! call physor(7.0,1.0)
            xphy = 7.0
            yphy = 1.0
-           yll=6.2
+           yll=6.2_dp
            xll=yll/elim
            xtitle = 'R(m)$'
            ytitle = 'Z(m)$'
@@ -1503,7 +1505,7 @@
       if (klabel.lt.0) go to 19999
       xabs=-3.0
       yabs=7.0
-      dyabs = 0.22
+      dyabs = 0.22_dp
       if (kdata.eq.2) then
          write(text, 8948) ifname(jtime)
          msg = msg + 1
@@ -1513,11 +1515,11 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
       endif
-      xabs=-6.5
+      xabs=-6.5_dp
       yabs=7.0
-      dyabs = 0.22
+      dyabs = 0.22_dp
 !vas      write(text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -1528,7 +1530,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -1537,7 +1539,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -1546,7 +1548,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -1555,7 +1557,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9040) tsaisq(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1564,7 +1566,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9060) rout(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1573,7 +1575,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9080) zout(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1582,7 +1584,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9100) aout(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1591,7 +1593,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9120) eout(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1600,7 +1602,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9140) doutu(jtime),doutl(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1609,7 +1611,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9155) xndnt(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1618,7 +1620,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 
       vm3=vout(jtime)/1.e6
       am2=areao(jtime)/1.e4
@@ -1630,7 +1632,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9165) wplasm(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1639,7 +1641,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9180) betat(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1648,7 +1650,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9200) betap(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1657,7 +1659,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9150) betatn,pasman
       msg = msg + 1
       note(msg) = 1
@@ -1666,7 +1668,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9220) ali(jtime),ali3(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1675,7 +1677,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 
       if (ipass.gt.1) go to 430
       write(text,9230) errorm,nitera
@@ -1686,7 +1688,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9240) delerb,delerr
       msg = msg + 1
       note(msg) = 1
@@ -1695,7 +1697,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
   430 continue
       fpolss=fpolvs/1000.
       write(text,9262) dminux(jtime),dminlx(jtime)
@@ -1706,9 +1708,9 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
-      edgej=cpasma(jtime)/areao(jtime)*1.e4
+      edgej=cpasma(jtime)/areao(jtime)*1.e4_dp
       if (icurrt.eq.2.or.icurrt.eq.5) then
         if (rseps(1,jtime).gt.0.0) then
           rsepcm=rseps(1,jtime)/100.
@@ -1716,7 +1718,7 @@
           cjsep=rsepcm*ppcurr(x111,kppcur) &
                   +fpcurr(x111,kffcur)/rsepcm
           cjsep=cjsep/darea
-          if (abs(edgej).gt.1.e-6) then
+          if (abs(edgej).gt.1.e-6_dp) then
             if (kzeroj.gt.0.and.rzeroj(1).lt.0.0) then
               edgej=cjsep/edgej
             else
@@ -1739,7 +1741,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9268) qout(jtime),qpsib(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1748,14 +1750,14 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 
       dismin=min(oleft(jtime),oright(jtime),otop(jtime),obott(jtime))
       if (dismin.eq.oleft(jtime)) gapdis=olefs(jtime)
       if (dismin.eq.oright(jtime)) gapdis=orighs(jtime)
       if (dismin.eq.obott(jtime)) gapdis=obots(jtime)
       if (dismin.eq.otop(jtime)) gapdis=otops(jtime)
-      if (dismin.le.0.1) dismin=gapdis
+      if (dismin.le.0.1_dp) dismin=gapdis
       if (iseplim.eq.0) seplim(jtime)=dismin
       write(text,9272) seplim(jtime)
       msg = msg + 1
@@ -1765,7 +1767,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9280) rmagx(jtime),rcurrt(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1774,7 +1776,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9290) zmagx(jtime),zcurrt(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1783,7 +1785,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9542) betapd(jtime),betapw(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1792,7 +1794,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9544) betatd(jtime),betatw(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1801,7 +1803,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9546) wplasmd(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1810,7 +1812,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9547) wplasw(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1819,7 +1821,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9300)
       msg = msg + 1
       note(msg) = 1
@@ -1828,7 +1830,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9390) pasmap
       msg = msg + 1
       note(msg) = 1
@@ -1837,7 +1839,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9400) bcentr(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1846,7 +1848,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       iece=kece+kecebz
       write(text,9320) ipsi(jtime),iece
       msg = msg + 1
@@ -1856,7 +1858,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9340) imag2(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1865,7 +1867,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9380) iplasm(jtime),ifc(jtime),iec(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1874,7 +1876,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       if (mmbmsels.eq.0) then
            write(text,9385) idlopc(jtime),kmtark,klibim
       else
@@ -1887,7 +1889,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
       if(nextra.eq.0)go to 435
       write(text,9395)(scraps(i),i=1,iabs(nextra))
       msg = msg + 1
@@ -1897,7 +1899,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
   435 continue
       msg = msg + 1
       note(msg) = 1
@@ -1906,7 +1908,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
       if (icurrt.eq.1) then
          xabs=-3.5
@@ -1919,7 +1921,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
          write(text,19605) sbeta,sbetaw
          msg = msg + 1
          note(msg) = 1
@@ -1928,7 +1930,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
          saaacm=saaa*100.
          write(text,19610) saaacm
          msg = msg + 1
@@ -1938,7 +1940,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
       endif
 !
       if (icurrt.eq.2.or.icurrt.eq.5) then
@@ -1952,7 +1954,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
          write(text,9605) kffcur,kppcur,keecur
          msg = msg + 1
          note(msg) = 1
@@ -1961,7 +1963,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
          write(text,9610) fcurbd,pcurbd,ecurbd
          msg = msg + 1
          note(msg) = 1
@@ -1970,7 +1972,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
          if (kvtor.ge.1.and.kvtor.le.3) then
            write(text,9612) kwwcur,wcurbd
            msg = msg + 1
@@ -1980,7 +1982,7 @@
            xpos(msg) = xabs
            ypos(msg) = yabs
            yabs = yabs - dyabs
-           ht(msg) = 0.14
+           ht(msg) = 0.14_dp
          endif
          if (kvtor.eq.11) then
            write(text,9614) kvtor
@@ -1991,13 +1993,13 @@
            xpos(msg) = xabs
            ypos(msg) = yabs
            yabs = yabs - dyabs
-           ht(msg) = 0.14
+           ht(msg) = 0.14_dp
          endif
 !
          wwtbp=0.0
          wwtqa=0.0
-         if (abs(fwtbp).gt.1.e-8) wwtbp=abs(fwtbp/fwtbp)
-         if (abs(fwtqa).gt.1.e-8) wwtqa=abs(fwtqa/fwtqa)
+         if (abs(fwtbp).gt.1.e-8_dp) wwtbp=abs(fwtbp/fwtbp)
+         if (abs(fwtqa).gt.1.e-8_dp) wwtqa=abs(fwtqa/fwtqa)
          write(text,9615) wwtbp,wwtqa
          msg = msg + 1
          note(msg) = 1
@@ -2006,7 +2008,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
 
          zelipcm=zelip*100.
          write(text,9635) zelipcm
@@ -2017,7 +2019,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
 
          if (abs(relax-1.0).gt.1.e-4) then
             write(text,9637) relax
@@ -2028,7 +2030,7 @@
             xpos(msg) = xabs
             ypos(msg) = yabs
             yabs = yabs - dyabs
-            ht(msg) = 0.14
+            ht(msg) = 0.14_dp
          endif
          if (kcalpa.gt.0.or.kcgama.gt.0) then
             write(text,9620) kcgama,kcalpa
@@ -2059,7 +2061,7 @@
             xpos(msg) = xabs
             ypos(msg) = yabs
             yabs = yabs - dyabs
-            ht(msg) = 0.14
+            ht(msg) = 0.14_dp
          endif
          if (icutfp.eq.2) then
             if (alphafp.ge.0.0) alphamu=alphafp
@@ -2071,7 +2073,7 @@
             xpos(msg) = xabs
             ypos(msg) = yabs
             yabs = yabs - dyabs
-            ht(msg) = 0.14
+            ht(msg) = 0.14_dp
          endif
          if (kprfit.gt.0) then
             write(text, 9630) kprfit
@@ -2082,7 +2084,7 @@
             xpos(msg) = xabs
             ypos(msg) = yabs
             yabs = yabs - dyabs
-            ht(msg) = 0.14
+            ht(msg) = 0.14_dp
          endif
          msg = msg + 1
          note(msg) = 1
@@ -2091,7 +2093,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
       endif
 !
 19999 continue
@@ -2108,7 +2110,7 @@
       grce = -1.0
       iexit = 1
       nplen = 100
-      hight = 0.14
+      hight = 0.14_dp
 
 !-----------------------------------------------------------------------c
 !        Write Plot Parameters    c
@@ -2138,8 +2140,8 @@
          call seva2d(bkx,lkx,bky,lky,c,rmaxis,zgrid(i),pds,ier,n333)
          workj(i)=-pds(3)/rmaxis
   460 continue
-      dxnow=(rmaxzm-rminzm)/float(nw-1)
-      drnow=(xlmax-xlmin)/float(nw-1)
+      dxnow=(rmaxzm-rminzm)/(nw-1)
+      drnow=(xlmax-xlmin)/(nw-1)
       do 465 i=1,nw
          xnow=rminzm+(i-1)*dxnow
          call seva2d(bkx,lkx,bky,lky,c,xnow,zmaxis,pds,ier,n111)
@@ -2153,7 +2155,7 @@
   465 continue
       if (ivacum.gt.0) go to 495
       if (kwripre.gt.0) then
-         delz=(zuperts(jtime)-zlowerts)/float(mpress-1)
+         delz=(zuperts(jtime)-zlowerts)/(mpress-1)
          do 42100 i=1,mpress
             zqthom(i)=(zlowerts+(i-1)*delz)/100.
 42100    continue
@@ -2161,12 +2163,12 @@
       do 467 i=1,nw
          do 467 j=1,nh
             kk=(i-1)*nh+j
-            copyn(kk)=pcurrt(kk)/darea/1.0e+03
+            copyn(kk)=pcurrt(kk)/darea/1.0e+03_dp
   467 continue
       call sets2d(copyn,cj,rgrid,nw,bjx,ljx,zgrid,nh,bjy,ljy,wkj,ier)
       if (kvtor.gt.0) then
         n1set=1
-        ypsi=0.5
+        ypsi=0.5_dp
         pres0=prcur4(n1set,ypsi,kppcur)
         prew0=pwcur4(n1set,ypsi,kwwcur)
         n1set=0
@@ -2174,7 +2176,7 @@
           do i=1,nw
           do j=1,nh
             kk=(i-1)*nh+j
-            copyn(kk)=pcurrw(kk)/darea/1.0e+03
+            copyn(kk)=pcurrw(kk)/darea/1.0e+03_dp
           enddo
           enddo
           call sets2d(copyn,cv,rgrid,nw,bvx,lvx,zgrid,nh,bvy, &
@@ -2190,7 +2192,7 @@
             qthom(i)=seval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
 42120    continue
       endif
-      delscr=(rmaxzm-rminzm)/2./float(nw-1)*0.6
+      delscr=(rmaxzm-rminzm)/2./(nw-1)*0.6_dp
       do 470 i=1,nw
          rpmid(i)=workc(i)
          rscrap(i)=rmaxzm+(i-1)*delscr
@@ -2222,7 +2224,7 @@
            pmidw(i)=prew0
            if (kvtor.eq.11) then
              rdiml=workc(i)/rzero
-             if (abs(pres0).gt.1.e-10) then
+             if (abs(pres0).gt.1.e-10_dp) then
                pwop0=prew0/pres0
                ptop0=exp(pwop0*rgrvt(i))
              else
@@ -2235,7 +2237,7 @@
              else
                ppw=0.0
              endif
-             ppw=rbetaw*ppw*rgrvn*rdiml*ptop0*cratio/darea/1.e3
+             ppw=rbetaw*ppw*rgrvn*rdiml*ptop0*cratio/darea/1.e3_dp
              workaw(i)=ppw
            else
              if (icurrt.eq.4) then
@@ -2246,17 +2248,17 @@
                else
                  ppw=0.0
                endif
-               ppw=rbetaw*ppw*rgrvn*rdiml*cratio/darea/1.e3
+               ppw=rbetaw*ppw*rgrvn*rdiml*cratio/darea/1.e3_dp
                workaw(i)=ppw
              elseif (icurrt.eq.5) then
                rgrvn=(workc(i)/rvtor)**2-1.
                ppw=pwpcur(xpsikk,kwwcur)
                if (kvtor.eq.1) then
                  ppw=ppw*rgrvn*workc(i)
-                 workaw(i)=ppw/darea/1.e3
+                 workaw(i)=ppw/darea/1.e3_dp
                endif
                if (kvtor.eq.2) then
-                 if (abs(pres0).gt.1.e-10) then
+                 if (abs(pres0).gt.1.e-10_dp) then
                     pwop0=prew0/pres0
                     ptop0=exp(pwop0*rgrvv)
                  else
@@ -2264,10 +2266,10 @@
                     pwop0=0.0
                  endif
                  ppw=ppw*(1.+pwop0*rgrvn)*rgrvn*workc(i)
-                 workaw(i)=ppw/darea/1.e3
+                 workaw(i)=ppw/darea/1.e3_dp
                endif
                if (kvtor.eq.3) then
-                 if (abs(pres0).gt.1.e-10) then
+                 if (abs(pres0).gt.1.e-10_dp) then
                     pwop0=prew0/pres0
                     ptop0=exp(pwop0*rgrvn)
                  else
@@ -2275,7 +2277,7 @@
                     pwop0=0.0
                  endif
                  ppw=ppw*ptop0*rgrvn*workc(i)
-                 workaw(i)=ppw/darea/1.e3
+                 workaw(i)=ppw/darea/1.e3_dp
                endif
              elseif (icurrt.eq.1) then
                call seva2d(bvx,lvx,bvy,lvy,cv,workc(i),zmaxis, &
@@ -2291,21 +2293,21 @@
          xpsiss=(pds(1)-simag)/(psibry-simag)
          if (icurrt.eq.2) then
             if (xpsikk.lt.0.0) xpsikk=0.0
-            if (xpsikk.gt.1.0001.and.icutfp.eq.0) then
+            if (xpsikk.gt.1.0001_dp.and.icutfp.eq.0) then
                worka(i)=0.0
                go to 11470
             endif
             worka(i)=workc(i)*ppcurr(xpsikk,kppcur) &
                       +fpcurr(xpsikk,kffcur)/workc(i)
-            worka(i)=worka(i)/darea/1.0e+03
+            worka(i)=worka(i)/darea/1.0e+03_dp
 11470       if (xpsiss.lt.0.0) xpsiss=0.0
-            if (xpsiss.gt.1.0001.and.icutfp.eq.0) then
+            if (xpsiss.gt.1.0001_dp.and.icutfp.eq.0) then
                curscr(i)=0.0
                go to 470
             endif
             curscr(i)=rscrap(i)*ppcurr(xpsiss,kppcur) &
                          +fpcurr(xpsiss,kffcur)/rscrap(i)
-            curscr(i)=curscr(i)/darea/1.0e+03
+            curscr(i)=curscr(i)/darea/1.0e+03_dp
          else
            call seva2d(bjx,ljx,bjy,ljy,cj,workc(i),zmaxis, &
                        pds,ier,n111)
@@ -2337,9 +2339,9 @@
 !-----------------------------------------------------------------------c
          call init2d
          ibrdr = 1
-         xphy = 4.1
-         yphy = 5.5
-         hight = 0.10
+         xphy = 4.1_dp
+         yphy = 5.5_dp
+         hight = 0.10_dp
          nplen = 100
          nxlen = -100
          nylen = 100
@@ -2397,9 +2399,9 @@
          nn=nn+1
          nxy(nn) = 2
          ndotme(nn) = 1
-         xx(1,nn) = 1.0001*workc(1)
+         xx(1,nn) = 1.0001_dp*workc(1)
          yy(1,nn) = 0.0
-         xx(2,nn) = 0.9999*workc(nw)
+         xx(2,nn) = 0.9999_dp*workc(nw)
          yy(2,nn) = 0.0
          if (kvtor.gt.0) then
            nn=nn+1
@@ -2580,7 +2582,7 @@
               endif
              enddo
              write(62,*)rrgamn,bzgamn
-             rrgams(igamn)=1.e10
+             rrgams(igamn)=1.e10_dp
             enddo
             close(62)
            dataname=dataname(1:lprx)//'_bzlimc'
@@ -2602,7 +2604,7 @@
               endif
              enddo
              write(62,*)rrgamn,bzgamn
-             rrgaml(igamn)=1.e10
+             rrgaml(igamn)=1.e10_dp
             enddo
             close(62)
           endif
@@ -2621,9 +2623,9 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
         ibrdr = 1
-        xphy = 4.1
-        yphy = 2.7
-        hight = 0.10
+        xphy = 4.1_dp
+        yphy = 2.7_dp
+        hight = 0.10_dp
         nplen = 100
         nxlen = 100
         nylen = 100
@@ -2642,8 +2644,8 @@
 !-- overlay ER plot                                                   --
 !-----------------------------------------------------------------------
       if (keecur.gt.0) then
-      eurmin=1.0e+10
-      eurmax=-1.0e+10
+      eurmin=1.0e+10_dp
+      eurmax=-1.0e+10_dp
       do i=1,nw
          eurmin=min(eurmin,ermid(i))
          eurmax=max(eurmax,ermid(i))
@@ -2698,7 +2700,7 @@
       istrpl=1
       if (itek.eq.1) call tekall(4010,960,0,0,0)
       call grace(0.0)
-      xmm=1.6
+      xmm=1.6_dp
 !
       iexpand=1
       if(oring(jtime).lt.100.*scrape)iexpand=0
@@ -2716,7 +2718,7 @@
          curmin=curmin-0.05*dcurn
          drrrr=(workk(nw)-workk(1))
          dcurn=(curmax-curmin)
-         xmm=1.6
+         xmm=1.6_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
@@ -2726,8 +2728,8 @@
          call init2d
          ibrdr = 1
          xphy = 9.0
-         yphy = 1.4
-         hight = 0.12
+         yphy = 1.4_dp
+         hight = 0.12_dp
          nplen = 100
          nxlen = 100
          nylen = 100
@@ -2774,15 +2776,15 @@
       curmax=curmax+0.05*dcurn
       curmin=curmin-0.05*dcurn
       dcurn=(curmax-curmin)
-      xmm=1.6
+      xmm=1.6_dp
 !-----------------------------------------------------------------------c
 ! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       ibrdr = 1
       xphy = 9.0
-      yphy = 3.7
-      hight = 0.12
+      yphy = 3.7_dp
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -2895,7 +2897,7 @@
       ibrdr = 1
       xphy = 9.0
       yphy = 6.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -2950,9 +2952,9 @@
       call init2d
       ipag = 0
       ibrdr = 1
-      xphy = 6.6
-      yphy = 1.4
-      hight = 0.12
+      xphy = 6.6_dp
+      yphy = 1.4_dp
+      hight = 0.12_dp
       nplen = -100
       nxlen = 100
       nylen = 100
@@ -2986,8 +2988,8 @@
       endif ! itek
 !
       if (ivacum.gt.0) go to 570
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do 564 i=1,nw
          sinow=worke(i)
          worka(i)=speval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
@@ -3007,9 +3009,9 @@
 !-----------------------------------------------------------------------c
       call init2d
       ibrdr = 1
-      xphy = 6.5
-      yphy = 3.7
-      hight = 0.12
+      xphy = 6.5_dp
+      yphy = 3.7_dp
+      hight = 0.12_dp
       nplen = -100
       nxlen = 100
       nylen = 100
@@ -3018,7 +3020,7 @@
       igridx = 1
       igridy = 2
       idot = 1
-      xnmax = 0.5
+      xnmax = 0.5_dp
       ipag = 0
       xtitle = 'PSI$'
       ytitle = 'SHEAR$'
@@ -3046,14 +3048,14 @@
   570 continue
 !
       if (ivacum.gt.0) go to 580
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do 574 i=1,nw
          curmin=min(curmin,pmid(i))
          curmax=max(curmax,pmid(i))
   574 continue
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
       curmin=curmin
       dcurn=(curmax-curmin)
       drpmid=drpmid*2.
@@ -3068,8 +3070,8 @@
       ytitle = 'P(n/m2)$'
       ibrdr = 1
       xphy = 4.0
-      yphy = 1.4
-      hight = 0.12
+      yphy = 1.4_dp
+      hight = 0.12_dp
       nplen = -100
       nxlen = 100
       nylen = 100
@@ -3137,8 +3139,8 @@
   580 continue
 !
       if (ivacum.gt.0) go to 590
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do 584 i=1,nitera
          curmin=min(curmin,cerror(i))
          curmax=max(curmax,cerror(i))
@@ -3146,14 +3148,14 @@
   584 continue
       xdel=(xiter(nitera)-xiter(1))/2.
       ibrdr = 1
-      if (abs(curmin).gt.1.e-10) then
+      if (abs(curmin).gt.1.e-10_dp) then
          ycycle=-log10(curmin)
       else
          ycycle=3.
       endif
       kcycle=ycycle+1
       curmin=10.**(-kcycle)
-      ycycle=xmm/float(kcycle)
+      ycycle=xmm/kcycle
       if (ycycle.lt.xmm/3.) ycycle=xmm/3.
       idel=nitera/xmm
       xdel=idel+1
@@ -3166,8 +3168,8 @@
       call init2d
       ibrdr = 1
       xphy = 4.0
-      yphy = 3.7
-      hight = 0.12
+      yphy = 3.7_dp
+      hight = 0.12_dp
       nplen = -100
       nxlen = 100
       nylen = 100
@@ -3204,8 +3206,8 @@
 !
       if (ivacum.gt.0) go to 599
       if (iconvr.ne.3) then
-         curmin=1.0e+10
-         curmax=-1.0e+10
+         curmin=1.0e+10_dp
+         curmax=-1.0e+10_dp
          do 594 i=1,nitera
             curmin=min(curmin,cchisq(i))
             curmax=max(curmax,cchisq(i))
@@ -3214,7 +3216,7 @@
          ycycle= log10(curmax)
          ycycle=max(one,ycycle)
          kcycle=ycycle
-         ycycle=xmm/float(kcycle)
+         ycycle=xmm/kcycle
          if (ycycle.lt.xmm/3.) ycycle=xmm/3.
          curmin=   (log10(curmin))
          kcycle=curmin
@@ -3229,7 +3231,7 @@
          ibrdr = 1
          xphy = 4.0
          yphy = 6.0
-         hight = 0.12
+         hight = 0.12_dp
          nplen = 100
          nxlen = 100
          nylen = 100
@@ -3315,7 +3317,7 @@
       nxy(nn) = nfcoil
       ncnct(nn) = 1
       markme(nn) = 16
-      sclpc(nn) = 0.7
+      sclpc(nn) = 0.7_dp
       clearx(nn)='CYAN'
       do i = 1, nfcoil
          xx(i,nn) = worka(i)
@@ -3327,7 +3329,7 @@
          nxy(nn) = nfcoil
          ncnct(nn) = 1
          markme(nn) = 15
-         sclpc(nn) = 0.7
+         sclpc(nn) = 0.7_dp
          ndotme(nn) = 1
          do i = 1, nfcoil
             xx(i,nn) = worka(i)
@@ -3337,7 +3339,7 @@
          nxy(nn) = nfcoil
          ncnct(nn) = 1
          markme(nn) = 15
-         sclpc(nn) = 0.7
+         sclpc(nn) = 0.7_dp
          ndotme(nn) = 1
          do i = 1, nfcoil
             xx(i,nn) = worka(i)
@@ -3351,7 +3353,7 @@
          nxy(nn) = nfcoil
          ncnct(nn) = 1
          markme(nn) = 15
-         sclpc(nn) = 0.7
+         sclpc(nn) = 0.7_dp
          clearx(nn)='PINK'
          ndotme(nn) = 1
          do i = 1, nfcoil
@@ -3366,8 +3368,8 @@
 !--  write out plasma parameters                                      --
 !-----------------------------------------------------------------------
       xabs=-6.0
-      yabs=1.8
-      dyabs = 0.22
+      yabs=1.8_dp
+      dyabs = 0.22_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -3378,7 +3380,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -3387,7 +3389,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -3396,7 +3398,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -3405,7 +3407,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9440) chi2rm(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3414,7 +3416,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9270) pasmac
       msg = msg + 1
       note(msg) = 1
@@ -3423,7 +3425,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9420) oleft(jtime),oright(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3432,7 +3434,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9460) otop(jtime),obott(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3441,7 +3443,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9441) fexpan,fexpvs
       msg = msg + 1
       note(msg) = 1
@@ -3450,7 +3452,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       dflux=1.0e+03*cdflux(jtime)
       write (text,9467) zuperts(jtime),rlibim(jtime)
       msg = msg + 1
@@ -3460,7 +3462,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9520) rvsiu(jtime),rvsou(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3469,7 +3471,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9521) rvsid(jtime),rvsod(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3478,7 +3480,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9530) rseps(1,jtime),rseps(2,jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3487,7 +3489,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9540) zseps(1,jtime),zseps(2,jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3496,7 +3498,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9470) sibdry(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3505,7 +3507,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9480) elongm(jtime),qqmagx(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3514,7 +3516,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9482) psiref(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3523,7 +3525,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9484) vertn(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3532,7 +3534,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 
 !-----------------------------------------------------------------------
 !-- vertical stability parameter,  reference Nuc Fusion  18(1978)1331 --
@@ -3540,12 +3542,12 @@
       if (ivacum.le.0) then
          rx=rmagx(jtime)/100.
          pleng=0.0
-         f_0=log(8*rout(jtime)/abar)-2+betap(jtime)+ali(jtime)/2+.5
-         delr=rout(jtime)/100.-1.67
+         f_0=log(8*rout(jtime)/abar)-2+betap(jtime)+ali(jtime)/2+.5_dp
+         delr=rout(jtime)/100.-1.67_dp
 !-----------------------------------------------------------------------
 !-- metal wall                                                        --
 !-----------------------------------------------------------------------
-         xnnc(jtime)=vertn(jtime)/((10.77*delr**2+8.08*delr+2.54)/f_0)
+         xnnc(jtime)=vertn(jtime)/((10.77_dp*delr**2+8.08_dp*delr+2.54_dp)/f_0)
       endif
       write (text,9399) xnnc(jtime),qmerci(jtime)
       msg = msg + 1
@@ -3555,7 +3557,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9492) shearb(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3564,7 +3566,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       edgesw=cjor95(jtime)*cjor0(jtime)
       write (text,9490) ssi95(jtime),edgesw
       msg = msg + 1
@@ -3574,7 +3576,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9496) psiwant,qsiwant(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3583,7 +3585,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       edgesw=cjorsw(jtime)*cjor0(jtime)
       write (text,9498) ssiwant(jtime),edgesw
       msg = msg + 1
@@ -3593,7 +3595,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       dnev2=dco2v(jtime,2)
       write (text,9502) dnev2
       msg = msg + 1
@@ -3603,7 +3605,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       dner1=dco2r(jtime,1)
       erreq=max(dbpli(jtime),delbp(jtime))
       write (text,9510) erreq
@@ -3614,7 +3616,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !----------------------------------------------------------------------------
 !--  dummy write statement added for HP version 9.01 optimization problems --
 !--   llao 93/09                                                           --
@@ -3628,7 +3630,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9512) taumhd(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3637,7 +3639,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9548) taudia(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3646,14 +3648,14 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       if (qpsib(jtime).gt.0.1) then
          sq295=ssi95(jtime)/qpsib(jtime)**2
       else
          sq295=0.0
       endif
-      pbinjmw=pbinj(jtime)/1.e+06
-      pasmma=abs(pasmat(jtime))/1.e+06
+      pbinjmw=pbinj(jtime)/1.e+06_dp
+      pasmma=abs(pasmat(jtime))/1.e+06_dp
       routm=rout(jtime)/100.
       tauenn=tauthn(jtime)
 !     if (pbinjmw.gt.1.e-03.and.abs(pasmma).gt.1.e-03) then
@@ -3675,7 +3677,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9550) vloopt(jtime),cj1ave(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3684,7 +3686,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9934) tave(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3693,7 +3695,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9936) pbinjmw,wfn_bim
       msg = msg + 1
       note(msg) = 1
@@ -3702,7 +3704,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       if (isetfb.ne.0) then
          brfbtka=brfb(1)*nfbcoil/1000.
          write (text,9938) brfbtka
@@ -3713,7 +3715,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
       elseif(symmetrize)then
          write (text,9937)
          msg = msg + 1
@@ -3723,7 +3725,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
       endif
       if (kstark.gt.0.or.mmbmsels.gt.0) then
          kstnow=mse315/2
@@ -3739,7 +3741,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
          if (kstark.gt.0) then
            write (text,9940) (qstark(i),i=1,kstnow)
          elseif (mmbmsels.gt.0) then
@@ -3752,7 +3754,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
          if (kstark.gt.0) then
            write (text,9940) (qstark(i),i=kstnow+1,mse315)
          elseif (mmbmsels.gt.0) then
@@ -3765,7 +3767,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
       endif
       if (fwtdlc.le.0.0) go to 680
       write (text,9495) chidlc
@@ -3776,7 +3778,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
   680 continue
       if (nqwant.gt.0) then
          kstnow=min(nqwant,8)
@@ -3788,7 +3790,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
       endif
       msg = msg + 1
       note(msg) = 1
@@ -3797,15 +3799,15 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
       ncurve = nn
       ibrdr = 1
-      xphy = 6.5
+      xphy = 6.5_dp
       yphy = 6.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -3845,16 +3847,16 @@
       if (iconvr.eq.3.and.kdata.eq.2) then
 !        if (ivacum.eq.0) go to 730
          if (itek.eq.1) call tekall(4010,960,0,0,0)
-         xmm=1.6*2
+         xmm=1.6_dp*2
          go to 17594
       endif
   705 continue
-      chsmin=1.0e30
-      chsmax=-1.0e30
+      chsmin=1.0e30_dp
+      chsmax=-1.0e30_dp
       do 710 i=1,nsilop
          chsmin=min(chsmin,saisil(i))
          chsmax=max(chsmax,saisil(i))
-         si(i)=float(i)
+         si(i)=i
   710 continue
 !
       if (itek.ge.5.and.idotek.eq.0) then
@@ -3865,22 +3867,22 @@
       call init2d
       if (kstark.le.1) then
          yxxx=3.0
-         xphy = 7.7
+         xphy = 7.7_dp
          yphy = 1.0
       else
-         yxxx=1.8
-         xphy = 7.5
-         yphy = 0.9
+         yxxx=1.8_dp
+         xphy = 7.5_dp
+         yphy = 0.9_dp
       endif
       ibrdr = 1
-      hight = 0.12
+      hight = 0.12_dp
       nplen = -100
       nxlen = 100
       nylen = 100
       xlen = 3.0
       if (ivacum.eq.1) then
          xlen = 6.0
-         xphy = 4.7
+         xphy = 4.7_dp
       endif
       xstp = si(nsilop) - si(1)
       ystp = chsmax - chsmin
@@ -3893,7 +3895,7 @@
       ipag = 1
       xtitle = 'PSI LOOPS$'
       ytitle = 'CHI**2$'
-      sclpc(1) = 0.5
+      sclpc(1) = 0.5_dp
       ncnct(1) = 1
       iexit = 1
 
@@ -3919,30 +3921,30 @@
 !----------------------------------------------------------------------
 !--  plot the probes chi squares                                     --
 !----------------------------------------------------------------------
-      chsmin=1.0e30
-      chsmax=-1.0e30
+      chsmin=1.0e30_dp
+      chsmax=-1.0e30_dp
       do 720 i=1,magpri
          chsmin=min(saimpi(i),chsmin)
          chsmax=max(saimpi(i),chsmax)
-         rmpi(i)=float(i)
+         rmpi(i)=i
   720 continue
 !-----------------------------------------------------------------------c
 ! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       if (kstark.le.1) then
-         xphy = 7.7
+         xphy = 7.7_dp
          yphy = 5.0
       else
-         xphy = 7.5
-         yphy = 3.5
+         xphy = 7.5_dp
+         yphy = 3.5_dp
       endif
       xtitle = 'MAGNETIC PROBES$'
       ytitle = 'CHI**2$'
       ipag = 1
       iexit = 1
       if (ivacum.gt.0) iexit=2
-      sclpc(1) = 0.5
+      sclpc(1) = 0.5_dp
       ncnct(1) = 1
 
       xabs=-7.3
@@ -3963,7 +3965,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -3972,7 +3974,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -3981,7 +3983,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -3990,7 +3992,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !-----------------------------------------------------------------------
 !--  print out pointnames                                             --
 !-----------------------------------------------------------------------
@@ -4167,7 +4169,7 @@
        do 729 i=1,nstark
             chsmin=min(chigam(i),chsmin)
             chsmax=max(chigam(i),chsmax)
-            rmpi(i)=float(i)
+            rmpi(i)=i
   729  continue
 !
        if (itek.ge.5.and.idotek.eq.0) then
@@ -4182,7 +4184,7 @@
          ndshme(nn) = 1
          nxy(nn) = nstark
          do ii = 1, nxy(nn)
-            xx(ii,nn) = float(ii)
+            xx(ii,nn) = ii
             yy(ii,nn) = chigam(ii)
          enddo
 !
@@ -4214,13 +4216,13 @@
          nxy(nn) = nstark
          sclpc(nn) = 0.7
          do ii = 1, nxy(nn)
-            xx(ii,nn) = float(ii)
+            xx(ii,nn) = ii
             yy(ii,nn) = anglem(ii)
          enddo
          nn = nn + 1
          nxy(nn) = nstark
          do ii = 1, nxy(nn)
-            xx(ii,nn) = float(ii)
+            xx(ii,nn) = ii
             yy(ii,nn) = anglec(ii)
          enddo
          ibrdr = 1
@@ -4405,7 +4407,7 @@
       do 17595 i=1,nw
          curmin=min(curmin,pprime(i))
          curmax=max(curmax,pprime(i))
-         xiter(i)=float(i-1)/float(nw-1)
+         xiter(i)=real(i-1,dp)/(nw-1)
 17595 continue
       xdel=0.5
       dcurn=curmax-curmin
@@ -4632,11 +4634,11 @@
       if (iexcal.le.0) go to 795
       do 734 kk=1,nsilop
          expsi(kk)=silopt(jtime,kk)
-         si(kk)=float(kk)
+         si(kk)=kk
   734 continue
       do 736 kk=1,magpri
          expmp(kk)=expmpi(jtime,kk)
-         rmpi(kk)=float(kk)
+         rmpi(kk)=kk
   736 continue
 !-----------------------------------------------------------------------
 !--  limits of psi loops & probes                                     --
@@ -5006,10 +5008,10 @@
         open(unit=62,file=dataname,status='new')
          nnww=nw
          xdum=0.
-         delvn=1./float(nw-1)
+         delvn=1.0_dp/(nw-1)
          do 42262 i=1,nw
             workb(i)=sqrt(volp(i)/volp(nw))
-            voln(i)=float(i-1)*delvn
+            voln(i)=(i-1)*delvn
 42262    continue
          call zpline(nw,workb,pres,bvoln,cvoln,dvoln)
          voln(1)=0.0
@@ -5188,7 +5190,7 @@
       chsmin=1.0e+10
       chsmax=-1.0e+10
       pressbb=0.0
-      dsi=1./float(nw-1)
+      dsi=1.0_dp/(nw-1)
       do 835 i=1,nw
          workb(i)=sqrt(volp(i)/volp(nw))
          workc(i)=(pres(i)-pressbb)
@@ -5198,7 +5200,7 @@
          workd(i)=(pressr(i)-pressbb)
          chsmin=min(chsmin,saipre(i))
          chsmax=max(chsmax,saipre(i))
-         si(i)=float(i)
+         si(i)=i
   840 continue
       call zpline(nw,worke,workb,bworkb,cworkb,dworkb)
 !
@@ -5508,7 +5510,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -5517,7 +5519,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -5526,7 +5528,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -5535,7 +5537,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9497) chipre
       msg = msg + 1
       note(msg) = 1
@@ -5544,7 +5546,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9555) chitot
       msg = msg + 1
       note(msg) = 1
@@ -5553,7 +5555,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 
       pressbn=prbdry/pres(1)
       write (text,9560) pressbn
@@ -5564,7 +5566,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 
       pressbn=pressb/pres(1)
       write (text,9562) pressbn
@@ -5575,7 +5577,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9565) kppcur
       msg = msg + 1
       note(msg) = 1
@@ -5584,7 +5586,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9570) kffcur
       msg = msg + 1
       note(msg) = 1
@@ -5593,7 +5595,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9575) pcurbd
       msg = msg + 1
       note(msg) = 1
@@ -5602,7 +5604,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9580) fcurbd
       msg = msg + 1
       note(msg) = 1
@@ -5611,7 +5613,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9832) pres(1)
       msg = msg + 1
       note(msg) = 1
@@ -5620,7 +5622,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 
       x111=1.0
       dp1dxf=ppcurr(x111,kppcur)/darea*(psibry-simag)
@@ -5632,7 +5634,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9834) prespb
       msg = msg + 1
       note(msg) = 1
@@ -5641,7 +5643,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9836) kpressb
       msg = msg + 1
       note(msg) = 1
@@ -5650,7 +5652,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9838) cjor95(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -5659,7 +5661,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9840) pp95(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -5668,7 +5670,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9842) bimbf,bimbe
       msg = msg + 1
       note(msg) = 1
@@ -5677,7 +5679,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
       pr=pres(1)/(.667*wplasm(jtime)/(vout(jtime)/1.e6))
       write (text,18981) pr
@@ -5688,7 +5690,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
@@ -5758,7 +5760,7 @@
       if (iabs(kplotp).ge.5) then
         npplot=iabs(kplotp)
       endif
-      siinc=(rmax-rmaxis)/float(npplot)
+      siinc=(rmax-rmaxis)/npplot
 !-----------------------------------------------------------------------
 !-- plot pressure contours                                            --
 !-----------------------------------------------------------------------
@@ -5814,7 +5816,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8948) ifname(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -5823,7 +5825,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -5832,7 +5834,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -5841,7 +5843,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -5850,7 +5852,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9022) chiprw
       msg = msg + 1
       note(msg) = 1
@@ -5859,7 +5861,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9024) rvtor
       msg = msg + 1
       note(msg) = 1
@@ -5868,7 +5870,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9026) kvtor
       msg = msg + 1
       note(msg) = 1
@@ -5877,7 +5879,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
       msg = msg + 1
       note(msg) = 1
@@ -5989,7 +5991,7 @@
       chsmin=1.0e+10
       chsmax=-1.0e+10
       pressbb=0.0
-      dsi=1./float(nw-1)
+      dsi=1.0_dp/(nw-1)
       do i=1,nw
          workb(i)=sqrt(volp(i)/volp(nw))
          workc(i)=(pressw(i)-preswb)
@@ -5999,7 +6001,7 @@
          workd(i)=(presw(i)-preswb)
          chsmin=min(chsmin,saiprw(i))
          chsmax=max(chsmax,saiprw(i))
-         si(i)=float(i)
+         si(i)=i
       enddo
       x111=1.0
       chsmax=max(x111,chsmax)
@@ -6368,7 +6370,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -6377,7 +6379,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -6386,7 +6388,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -6395,7 +6397,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9800) chisqte
       msg = msg + 1
       note(msg) = 1
@@ -6404,7 +6406,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9805) chisqne
       msg = msg + 1
       note(msg) = 1
@@ -6413,7 +6415,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9810) fco2ne
       msg = msg + 1
       note(msg) = 1
@@ -6422,7 +6424,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9815) nptef
       msg = msg + 1
       note(msg) = 1
@@ -6431,7 +6433,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9820) npnef
       msg = msg + 1
       note(msg) = 1
@@ -6440,7 +6442,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
@@ -6546,7 +6548,7 @@
       ibrdr = 1
       xphy = 4.7
       yphy = 1.0
-      hight = 0.14
+      hight = 0.14_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -6668,7 +6670,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -6677,7 +6679,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -6686,7 +6688,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -6695,7 +6697,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9825) chisqti
       msg = msg + 1
       note(msg) = 1
@@ -6704,7 +6706,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9830) nptionf
       msg = msg + 1
       note(msg) = 1
@@ -6713,14 +6715,14 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
       ibrdr = 1
       xphy = 4.7
       yphy = 5.0
-      hight = 0.14
+      hight = 0.14_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -6757,7 +6759,7 @@
       if (itek.eq.1) call tekall(4010,960,0,0,0)
       chsmin=1.0e+10
       chsmax=-1.0e+10
-      delz=(zuperts(jtime)-zlowerts)/float(nw-1)*0.01
+      delz=(zuperts(jtime)-zlowerts)/(nw-1)*0.01_dp
       do 20335 i=1,nw
          worke(i)=zlowerts*0.01+(i-1)*delz
          call seva2d(bkx,lkx,bky,lky,c,rmajts,worke(i),pds,ier,n111)
@@ -6829,7 +6831,7 @@
       ibrdr = 1
       xphy = 4.7
       yphy = 1.0
-      hight = 0.14
+      hight = 0.14_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -6937,7 +6939,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -6946,7 +6948,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -6955,7 +6957,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -6964,7 +6966,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9800) chisqte
       msg = msg + 1
       note(msg) = 1
@@ -6973,7 +6975,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9805) chisqne
       msg = msg + 1
       note(msg) = 1
@@ -6982,7 +6984,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9810) fco2ne
       msg = msg + 1
       note(msg) = 1
@@ -6991,7 +6993,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9815) nptef
       msg = msg + 1
       note(msg) = 1
@@ -7000,7 +7002,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9820) npnef
       msg = msg + 1
       note(msg) = 1
@@ -7009,7 +7011,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9828) zuperts(jtime),rlibim(jtime)
 
       msg = msg + 1
@@ -7019,7 +7021,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       
 !
       if (itek.ge.5.and.idotek.eq.0) then
@@ -7027,7 +7029,7 @@
       ibrdr = 1
       xphy = 4.7
       yphy = 5.0
-      hight = 0.14
+      hight = 0.14_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -7107,7 +7109,7 @@
             inum(msg) = jj
             xpos(msg) = fpxtra(npxtra(jj),jj)
             ypos(msg) = bpxtra(npxtra(jj),jj)
-            ht(msg) = 0.14
+            ht(msg) = 0.14_dp
   910    continue
 !
       if (itek.ge.5.and.idotek.eq.0) then
@@ -7115,7 +7117,7 @@
          ibrdr = 1
          xphy = 1.5
          yphy = 5.0
-         hight = 0.14
+         hight = 0.14_dp
          nplen = 100
          nxlen = 100
          nylen = 100
@@ -7171,7 +7173,7 @@
             inum(msg) = jj
             xpos(msg) = fpxtra(npxtra(jj),jj)
             ypos(msg) = flxtra(npxtra(jj),jj)
-            ht(msg) = 0.14
+            ht(msg) = 0.14_dp
   950    continue
          
 !
@@ -7180,7 +7182,7 @@
          ibrdr = 1
          xphy = 1.5
          yphy = 5.0
-         hight = 0.14
+         hight = 0.14_dp
          nplen = 100
          nxlen = 100
          nylen = 100
@@ -7256,7 +7258,7 @@
  1030 continue
       siinc=(cslmax-cslmin)/8.
       if (iconsi.ge.5) then
-         siinc=(cslmax-cslmin)/float(iconsi)
+         siinc=(cslmax-cslmin)/iconsi
       endif
       if ((iconsi.eq.2).or.(iconsi.eq.4)) siinc= 0.0
       ix = nw
@@ -7519,9 +7521,9 @@
 !--  calculate and plot contours of constant poloidal field           --
 !-----------------------------------------------------------------------
  1100 continue
-      delvn=1./float(nw-1)
+      delvn=1.0_dp/(nw-1)
       do 1217 i=1,nw
-         voln(i)=float(i-1)*delvn
+         voln(i)=(i-1)*delvn
  1217 continue
       call zpline(nw,voln,fpol,bvoln,cvoln,dvoln)
       do 1250 ih=1,nh
@@ -7568,7 +7570,7 @@
       siinc=(cslmax-cslmin)/5.0
       if (iconsi.ge.3) siinc= 0.0
       if (iconsi.ge.6) then
-         siinc=(cslmax-cslmin)/float(iconsi)
+         siinc=(cslmax-cslmin)/iconsi
       endif
       nline = 1
       draw = 'DRAW'
@@ -7759,7 +7761,7 @@
                cslmin=min(bfield(i,j),cslmin)
                cslmax=max(bfield(i,j),cslmax)
 12541    continue
-         siinc=(cslmax-cslmin)/float(iconsi)
+         siinc=(cslmax-cslmin)/iconsi
          nline = 1
          draw = 'DRAW'
          nn = nn + 1
@@ -7932,7 +7934,7 @@
       do i=1,nw
          curmin=min(curmin,pprime(i))
          curmax=max(curmax,pprime(i))
-         xiter(i)=float(i-1)/float(nw-1)
+         xiter(i)=real(i-1,dp)/(nw-1)
       enddo    
       xdel=0.5
       dcurn=curmax-curmin
@@ -7965,7 +7967,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -7974,7 +7976,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -7983,7 +7985,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -7992,7 +7994,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - 2.0 * dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 
       msg = msg + 1
       write(text,1001) kppcur,kffcur,kwwcur 
@@ -8237,7 +8239,7 @@
       ibrdr = 1
       xphy = 6.5
       yphy = 6.0
-      hight = 0.14
+      hight = 0.14_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -8274,7 +8276,7 @@
          czmcm(i)=ffprim(i)/tmu/twopi
          curmin=min(curmin,czmcm(i))
          curmax=max(curmax,czmcm(i))
-         xiter(i)=float(i-1)/float(nw-1)
+         xiter(i)=real(i-1,dp)/(nw-1)
       enddo
       xdel=0.5
       dcurn=curmax-curmin
@@ -8304,7 +8306,7 @@
       ibrdr = 1
       xphy = 6.5
       yphy = 3.5
-      hight = 0.14
+      hight = 0.14_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -8344,7 +8346,7 @@
          czmcm(i)=pwprim(i)
          curmin=min(curmin,czmcm(i))
          curmax=max(curmax,czmcm(i))
-         xiter(i)=float(i-1)/float(nw-1)
+         xiter(i)=real(i-1,dp)/(nw-1)
       enddo
       xdel=0.5
       dcurn=curmax-curmin
@@ -8373,7 +8375,7 @@
       ibrdr = 1
       xphy = 6.5
       yphy = 1.0
-      hight = 0.14
+      hight = 0.14_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -8618,8 +8620,8 @@
 !---------------------------------------------------------------------
  1700 continue
       if (kfitece.eq.0) return
-      dxnow=(rmaxzm-rminzm)/float(nw-1)
-      drnow=(xlmax-xlmin)/float(nw-1)
+      dxnow=(rmaxzm-rminzm)/(nw-1)
+      drnow=(xlmax-xlmin)/(nw-1)
       do i=1,nw
          xnow=xlmin+(i-1)*drnow
          call seva2d(bkx,lkx,bky,lky,c,xnow,zeceo,pds,ier,n333)
@@ -8860,7 +8862,7 @@
       curmin=-10.
       curmax=10.
       do i=1,nece
-        xece(i,1)=float(i)
+        xece(i,1)=i
         yece(i,1)=(psecep(i)-psecem(i))/ddpsi*100.
         curmin=min(curmin,yece(i,1))
         curmax=max(curmax,yece(i,1))
@@ -8938,11 +8940,11 @@
 !------------------------------------------------------------------------------
       nplece(1)=nece
       do i=1,nece
-        xece(i,1)=float(i)
+        xece(i,1)=i
         yece(i,1)=chiece(i)
       enddo
       nplece(2)=1
-        xece(1,2)=float(nece+1)
+        xece(1,2)=nece+1
         yece(1,2)=chiecebz
       xorg=0
       drrrr=2
@@ -9006,7 +9008,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -9015,7 +9017,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -9024,7 +9026,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -9033,7 +9035,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9960) receo
       msg = msg + 1
       note(msg) = 1
@@ -9042,7 +9044,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9962) zeceo
       msg = msg + 1
       note(msg) = 1
@@ -9051,7 +9053,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9965)
       do k=1,nece
         msg = msg + 1
@@ -9061,7 +9063,7 @@
         xpos(msg) = xabs
         ypos(msg) = yabs
         yabs = yabs - dyabs
-        ht(msg) = 0.14
+        ht(msg) = 0.14_dp
         write (text,9968) recem(k),recep(k)
       enddo
       msg = msg + 1
@@ -9071,7 +9073,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9969) xfit(1)
       do k=2,nfit
         msg = msg + 1
@@ -9081,7 +9083,7 @@
         xpos(msg) = xabs
         ypos(msg) = yabs
         yabs = yabs - dyabs
-        ht(msg) = 0.14
+        ht(msg) = 0.14_dp
         write (text,9972) xfit(k)
       enddo
       msg = msg + 1
@@ -9091,7 +9093,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9976) chisqfit
       msg = msg + 1
       note(msg) = 1
@@ -9100,7 +9102,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9978) tchiece
       msg = msg + 1
       note(msg) = 1
@@ -9109,7 +9111,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9979) chiecebz
       msg = msg + 1
       note(msg) = 1
@@ -9118,7 +9120,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,&
@@ -9315,7 +9317,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -9324,7 +9326,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -9333,7 +9335,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
 !
 8971  continue
@@ -9510,21 +9512,24 @@
 28971 format (' w    = ',1pe11.4,1x,1pe11.4)
 28973 format ('        ',1pe11.4,1x,1pe11.4)
       end
+
       subroutine expand(n1,n2,nexexx,xmm,jtime)
+      use set_kinds
       use commonblocks,only: worka,byringr,byringz,xxtra,yxtra, &
            bpxtra,flxtra,fpxtra
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       common/cwork4/npxtra(nxtram),scraps(nxtram)
-      real*4,dimension(:),allocatable :: xplt,yplt,xplx,yplx
+      real*4,dimension(:),allocatable :: xpltloc,ypltloc,xplxloc,yplxloc
       common/adp/ringr(6),ringz(6),ringap
-!      equivalence (xplt,flxtra(1,1))
-!      equivalence (yplt,fpxtra(1,1))
-!      equivalence (xplx,flxtra(1,2))
-!      equivalence (yplx,fpxtra(1,2))
+!      equivalence (xpltloc,flxtra(1,1))
+!      equivalence (ypltloc,fpxtra(1,1))
+!      equivalence (xplxloc,flxtra(1,2))
+!      equivalence (yplxloc,fpxtra(1,2))
       data almin,almax,blmin,blmax/1.51,1.79,-1.38,-1.21/
 5     almin=1.62
       blmax=-1.20
@@ -9534,8 +9539,7 @@
       call yticks(2)
       call physor(9.0,1.4)
 !
-      ALLOCATE(xplt(npoint),yplt(npoint),xplx(npoint), &
-         yplx(npoint))
+      ALLOCATE(xpltloc(npoint),ypltloc(npoint),xplxloc(npoint),yplxloc(npoint))
 !
       ilow=0  
       if(zseps(1,jtime).gt.-900.)ilow=1
@@ -9552,13 +9556,13 @@
       call thkcrv(0.02)
   270 call curve(xlim,ylim,limitr,0)
       call dash
-      call curve(xplt,yplt,n1,0)
+      call curve(xpltloc,ypltloc,n1,0)
       call dot
       call curve(byringr,byringz,nh2,0)
       call reset('dot')
       call marker(15)
       call sclpic(.5)
-      call curve(xplx,yplx,n2,-1)
+      call curve(xplxloc,yplxloc,n2,-1)
       call reset('sclpic')
       call reset('marker')
       do 226 i=1,nexexx
@@ -9572,7 +9576,7 @@
       enddo
       enddo
 !
-      DEALLOCATE(xplt,yplt,xplx,yplx)
+      DEALLOCATE(xpltloc,ypltloc,xplxloc,yplxloc)
 !
       return
       end
@@ -9601,6 +9605,7 @@
 !**                                                                  **
 !**********************************************************************
 !sri-feb1209
+      use set_kinds
       use eparmdud129,only:ndim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 !      parameter (ndim = 700, ncrv=180)
@@ -9657,7 +9662,7 @@
          if (inum.eq.-100) then
             nshd = nshd + 1
             sangle(nshd) = 90.0
-            sgap(nshd) = 0.01
+            sgap(nshd) = 0.01_dp
             ngaps(nshd) = 1
             nsxy(nshd) = 5
             do ii = 1, nsxy(nshd)
@@ -9672,7 +9677,7 @@
             num(nmg) = i
             xpos(nmg) = rc(i) - dwh
             ypos(nmg) = zc(i) - dwh
-            ht(nmg) = 0.04
+            ht(nmg) = 0.04_dp
          endif
       enddo
       return
@@ -9697,6 +9702,7 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension jerror(1),xp(1),yp(1)
       character*(*) dataname
@@ -9899,6 +9905,7 @@
 !**                                                                   **
 !*************************************************************************
 !sri-feb1209
+      use set_kinds
       use eparmdud129,only:ndim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       ! parameter (ndim = 700, ncrv=180, mdim = 200)
@@ -10132,6 +10139,7 @@
 !**                                                                   **
 !*************************************************************************
 !sri-feb1209
+      use set_kinds
       use eparmdud129,only:ndim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 
@@ -10470,6 +10478,7 @@
 !**                                                                   **
 !*************************************************************************
 !sri-feb1209
+      use set_kinds
       use eparmdud129,only:ndim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 
@@ -10612,6 +10621,7 @@
 !*************************************************************************
 
 !sri-feb1209
+      use set_kinds
       use eparmdud129,only:ndim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       include 'curve2d129.inc'
@@ -10807,7 +10817,7 @@
         inum(i) = 0
         xpos(i) = 0.0
         ypos(i) = 0.0
-        ht(i) = 0.14
+        ht(i) = 0.14_dp
       enddo
       !-----------------------------------------------------------------------c
       ! Initialize Contour Dimension             c

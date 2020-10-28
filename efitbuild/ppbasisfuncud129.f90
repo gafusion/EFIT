@@ -15,6 +15,7 @@ Function bsppel(ifunc,iparm,ypsi)
   include 'eparmdud129.f90'
   include 'modules2.f90'
   include 'modules1.f90'
+  implicit integer*4 (i-n), real*8 (a-h,o-z)
   !include 'ecomdu1.f90'
   !include 'ecomdu2.f90'
   include 'basiscomdu.f90'
@@ -86,8 +87,7 @@ Function bsppel(ifunc,iparm,ypsi)
     endif
   elseif (ifunc .eq. 6)then
     nk = ((iparm - 1) / 2) + 1
-    pptens2 = abs(pptens)*float(kppknt-1)/ &
-      (ppknt(kppknt)-ppknt(1))
+    pptens2 = abs(pptens)*(kppknt-1)/(ppknt(kppknt)-ppknt(1))
     if (nk .gt. 1) then
       if (ypsi .le. ppknt(nk) .and.  &
         ypsi .ge. ppknt(nk-1)) then
@@ -147,6 +147,7 @@ Function bspppel(ifunc,iparm,ypsi)
   include 'eparmdud129.f90'
   include 'modules2.f90'
   include 'modules1.f90'
+  implicit integer*4 (i-n), real*8 (a-h,o-z)
   !include 'ecomdu1.f90'
   !include 'ecomdu2.f90'
   include 'basiscomdu.f90'
@@ -241,8 +242,7 @@ Function bspppel(ifunc,iparm,ypsi)
     endif
   elseif (ifunc .eq. 6)then
     nk = ((iparm - 1) / 2) + 1
-    pptens2 = abs(pptens)*float(kppknt-1)/ &
-      (ppknt(kppknt)-ppknt(1))
+    pptens2 = abs(pptens)*(kppknt-1)/(ppknt(kppknt)-ppknt(1))
     if (nk .gt. 1) then
       if (ypsi .le. ppknt(nk) .and.  &
         ypsi .ge. ppknt(nk-1)) then
@@ -301,6 +301,7 @@ Function bsppin(ifunc,iparm,ypsi)
   include 'eparmdud129.f90'
   include 'modules2.f90'
   include 'modules1.f90'
+  implicit integer*4 (i-n), real*8 (a-h,o-z)
   !include 'ecomdu1.f90'
   !include 'ecomdu2.f90'
   include 'basiscomdu.f90'
@@ -440,8 +441,7 @@ Function bsppin(ifunc,iparm,ypsi)
   !     $                       ypsi2,' = ',bsppin
   elseif (ifunc .eq. 6)then
     nk = ((iparm - 1) / 2) + 1
-    pptens2 = abs(pptens)*float(kppknt-1)/ &
-      (ppknt(kppknt)-ppknt(1))
+    pptens2 = abs(pptens)*(kppknt-1)/(ppknt(kppknt)-ppknt(1))
     bsppin = 0
     if(nk .gt.1)then
       if(ypsi .le. ppknt(nk)) then
@@ -540,11 +540,13 @@ subroutine ppcnst(ncrsp,crsp,z,nffcoi)
   include 'eparmdud129.f90'
   include 'modules2.f90'
   include 'modules1.f90'
+  implicit integer*4 (i-n), real*8 (a-h,o-z)
   !include 'ecomdu1.f90'
   !include 'ecomdu2.f90'
   include 'basiscomdu.f90'
   dimension crsp(4*(npcurn-2)+6 +npcurn*npcurn ,nrsmat), &
     z(3*(npcurn-2)+6+npcurn*npcurn)
+
   if(kppfnc .eq. 3) then
     if(kppknt .gt. 2)then
       !
@@ -792,8 +794,7 @@ subroutine ppcnst(ncrsp,crsp,z,nffcoi)
     !     derivative at the knots
     !
     if(kppknt .gt. 2)then
-      pptens2 = abs(pptens)*float(kppknt-1)/ &
-        (ppknt(kppknt)-ppknt(1))
+      pptens2 = abs(pptens)*(kppknt-1)/(ppknt(kppknt)-ppknt(1))
       do i = 2,kppknt-1
         ncrsp = ncrsp + 1
         do j = 1,nrsmat
@@ -876,6 +877,7 @@ subroutine ppstore()
   include 'eparmdud129.f90'
   include 'modules2.f90'
   include 'modules1.f90'
+  implicit integer*4 (i-n), real*8 (a-h,o-z)
   !include 'ecomdu1.f90'
   !include 'ecomdu2.f90'
   include 'basiscomdu.f90'
