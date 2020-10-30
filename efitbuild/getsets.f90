@@ -141,7 +141,6 @@
       kerror = 0
 ! MPI <<<
 
-      radeg=pi/180.
       table_di2 = table_dir
 ! --- find length of default directories
       ltbdir=0
@@ -160,7 +159,6 @@
       snapextin='none'
       if (kwake.eq.1) go to 10
       patmp2(1)=-1.
-      twopi=2.0*pi
       tmu0=twopi*tmu
       tmu02=tmu0*2.0
       errorm=1.

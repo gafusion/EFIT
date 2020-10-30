@@ -951,13 +951,14 @@
 !**          12/03/87..........first created                         **
 !**                                                                  **
 !**********************************************************************
+      use global_constants
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension time(1),wplasm(1),sibdry(1),wbpol(1),vloopt(1), &
                 wpdot(1),wbdot(1),vsurfa(1),pbinj(1),taumhd(1), &
                 cpasma(1),wplasmd(1),taudia(1)
-      data mychoice/2/,twopi/6.283185_dp/
-!
+      data mychoice/2/
+
       if (kdot.eq.0) return
       if (mychoice.eq.2) go to 10000
       return

@@ -1418,7 +1418,7 @@
       do 380 i=ixraystart,ixrayend
          xplt(1)=rxray(i)
          yplt(1)=zxray(i)
-         theta=xangle(i)*pi/180.0
+         theta=xangle(i)*radeg
          mdot = 1
          iddsxr=0
          if (i.le.nangle/2) then

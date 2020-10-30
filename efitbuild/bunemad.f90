@@ -98,7 +98,7 @@
 !vas  f90 modifi
       implicit none
       real(dp) flag
-      real(dp) shftdr,a,pi,as
+      real(dp) shftdr,a,pitmp,as
       integer i,l,lo,ju,n222,id,jd,ko,k4,li,jh,jt,ji,jo, &
       j2,iu,j,ii,io,iallocate_stat
 
@@ -190,9 +190,9 @@
           go to 28
       end select
   28  do 29 i = j2,iu
-      pi = q(i)-q(i+jt)-q(i-jt)
+      pitmp = q(i)-q(i+jt)-q(i-jt)
       q(i) = q(i)-q(i+jh)-q(i-jh)+q(i+jd)+q(i-jd)
-  29  p(i-j) = pi+q(i)
+  29  p(i-j) = pitmp+q(i)
       go to 10
   26  do 27 i = j2,iu
       p(i-j) = 2.*q(i)

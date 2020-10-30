@@ -86,7 +86,7 @@
 !     print*,1.0_dp/real(i1,dp),1.0_dp/i1,1.0/i1
 !     print*,0.1_dp+1.0_dp
 !     print*,0.1_dp+1.0, 0.0
-!     stop
+!      stop
 
      kerror = 0
 !------------------------------------------------------------------------------
@@ -112,6 +112,9 @@
      rank  = 0
 #endif
 ! MPI <<<
+
+      ! Set global constants for each rank
+      call set_constants()
 
 !----------------------------------------------------------------------
 !-- Read in grid size from command line and set global variables     --
@@ -2353,7 +2356,7 @@
 !--     !!! becein  from Low field to high field !!!                --
 !---------------------------------------------------------------------
       do 500 k=1,necein
-      becein(k)=0.001_dp*6.0*9.1095_dp*3.14159_dp/4.8032_dp*feece0(k)/nharm
+      becein(k)=0.001_dp*6.0*9.1095_dp*pi/4.8032_dp*feece0(k)/nharm
 500   continue
 !EALW      write(*,*)'becein'
 !EALW      write(*,*)becein
@@ -3003,7 +3006,7 @@
 !--     becein(necein),   fe(GHz),|B|(T) becein form H.f to L.f     --
 !---------------------------------------------------------------------
       do 500 k=1,necein
-        becein(k)=0.001_dp*6.0*9.1095_dp*3.14159_dp/4.8032_dp*feece(k)/nharm
+        becein(k)=0.001_dp*6.0*9.1095_dp*pi/4.8032_dp*feece(k)/nharm
 500   continue
 !---------------------------------------------------------------------
 !--  Calculation of |B| on rgrid (z=zeceo)   bfield(nw)             --
@@ -4135,18 +4138,12 @@
 !--            bpermp= -BR sint + BZ cost                            --
 !----------------------------------------------------------------------
       if (jtimex*niterax.eq.1) then
-      open(unit=33,file='getsigma.log',form='formatted',status='unknown' &
-            )
-      open(unit=34,file='mprobe.err',form='formatted',status='unknown' &
-            )
-      open(unit=35,file='siloop.err',form='formatted',status='unknown' &
-            )
-      open(unit=36,file='fcoil.err',form='formatted',status='unknown' &
-            )
-      open(unit=37,file='ecoil.err',form='formatted',status='unknown' &
-            )
-      open(unit=38,file='bandcur.err',form='formatted',status='unknown' &
-            )
+        open(unit=33,file='getsigma.log',form='formatted',status='unknown')
+        open(unit=34,file='mprobe.err',form='formatted',status='unknown')
+        open(unit=35,file='siloop.err',form='formatted',status='unknown')
+        open(unit=36,file='fcoil.err',form='formatted',status='unknown')
+        open(unit=37,file='ecoil.err',form='formatted',status='unknown')
+        open(unit=38,file='bandcur.err',form='formatted',status='unknown')
       endif
       do i=1,magpri
          call seva2d(bkx,lkx,bky,lky,c,xmp2(i),ymp2(i),pds,ier,n666)
@@ -6057,7 +6054,7 @@
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
 
-      u0 = 4.0 * 3.1415927_dp * 1.0e-7_dp
+      u0 = 4.0 * pi * 1.0e-7_dp
 
 ! ----------------------------------------------------------------------
 ! Power of 2 that specifies the grid height.
@@ -8486,12 +8483,11 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use global_constants
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      data pi/3.1415926535897932_dp/
       dimension rs(1),zs(1),cs(1)
-!
-      frd=pi/180.
+
       if(ac+ac2.eq.0.) go to 100
       if(ac.ne.0.) go to 200
       if(ac2.ne.0.) go to 300
@@ -8522,10 +8518,10 @@
 !-- ac .ne. 0                                                        --
 !----------------------------------------------------------------------
   200 continue
-      side=tan(frd*ac)*wc
+      side=tan(radeg*ac)*wc
       hdelt=hc/is
       wdelt=wc/is
-      zdelt=tan(frd*ac)*wdelt
+      zdelt=tan(radeg*ac)*wdelt
       rstrt=rc-wc/2.+wdelt/2.
       tsid=hc+side
       zstrt =zc-tsid/2.+tsid/2.*1./is
@@ -8550,13 +8546,13 @@
   300 continue
 !
   340 continue
-      side=hc/tan(frd*ac2)
+      side=hc/tan(radeg*ac2)
       hdelt=hc/is
       wdelt=wc/is
       zstrt=zc-hc/2.+hdelt/2.
-      rdelt=hdelt/tan(frd*ac2)
+      rdelt=hdelt/tan(radeg*ac2)
       rstrt=rc-side/2.-wc/2.+rdelt/2.+wdelt/2.
-      side=hc/tan(frd*ac2)
+      side=hc/tan(radeg*ac2)
       wtot=side+wc
       whaf=(side+wc)/2.
       rcorn=rc-whaf

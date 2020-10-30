@@ -685,6 +685,7 @@
       i1=i-1
       return
       end
+
       subroutine cntour(xaxd,yaxd,psivl,xemin,xemax,yemin,yemax, &
       yxmin,yxmax,xymin,xymax,dang,arcl,bperr,dx,dy,xmin,xmax,ymin,ymax, &
       iauto,iautoc,xc,yc,ipts,x,nw,y,nh,cspln,n2cspln,nh2,itty,iptsm, &
@@ -732,17 +733,23 @@
 !---the user is informed that psivl was changed by returning iautoc=1.       --
 !---if no change occured iautoc=0.                                           --
 !------------------------------------------------------------------------------
+      use global_constants
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension pds(6),xc(*),yc(*)
       dimension cspln(kubicx,lubicx,kubicy,lubicy)
-      data pi,piov2,piov4,fpiov4,spiov4 &
-      /3.141592654,1.570796327,0.7853981634,3.926990818,5.497787145/
-      data twopi,tpiov4,tpiov2 &
-      /6.283185307,2.356194491,4.712388904/
+      real*8 piov2,piov4,fpiov4,spiov4,tpiov4,tpiov2
       data n111/1/,n333/3/
       save n111,n333
       integer, intent(inout) :: kerror
+
+      piov2 = pi/2.0
+      piov4 = pi/4.0
+      fpiov4 = 1.25_dp*pi
+      spiov4 = 1.75_dp*pi
+      tpiov4 = 0.75_dp*pi
+      tpiov2 = 1.5_dp*pi
+
       kerror = 0
       ier = 0
       if (negcur.gt.0) psivl=-psivl

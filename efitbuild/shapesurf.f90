@@ -1268,7 +1268,7 @@
        cons10=log((cons7+cons8)**2/cons9)
        cons11=atan((2*cons7-cons8)/1.732_dp/cons8)
        cons12=2._dp/3._dp*(cons8/cons7)**2
-       cons13=1.+cons12*(0.5_dp*cons10-1.732_dp*(3.1416_dp/6+cons11))
+       cons13=1.+cons12*(0.5_dp*cons10-1.732_dp*(pi/6+cons11))
        cons14=cons6*3/cons5                            !spitzer tau_se (sec)
        cons15=2.75e-1_dp*pbinj(iges)*cons14*cons13          !stored beam energy (j)
        cons16=wplasm(iges)-cons15                         !thermal energy (j)

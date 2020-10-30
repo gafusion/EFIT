@@ -89,7 +89,7 @@
 
       mw=nw
       mh=nh
-      pi=-4.0_dp*atan(-1.00_dp)
+
       tmu=4.0e-07_dp*pi
       nnn=1
       nin=25
@@ -780,7 +780,6 @@
 !           the interval of the flux
 !      surface arc length integral.
       k=1
-      pi=-4.0_dp*atan(-1.0_dp)
       ifnd=1
       n_start=n-1
       n_end=n-1

@@ -65,6 +65,16 @@
 
       end module exparm
 
+      module set_kinds
+!**     set the type of variables like integer, real, etc...
+        !HP integer, parameter :: rprec = selected_real_kind(20,100)
+        !integer, parameter :: rprec = selected_real_kind(13,307)
+        !integer, parameter :: iprec = selected_real_kind(4)
+        !integer, parameter :: dp=rprec
+        integer, parameter :: dp = selected_real_kind(15,307) ! REAL*8
+
+       end module set_kinds
+
 !expath
       module expath
       public
@@ -268,6 +278,21 @@
 !test      data store_dir /'/link/store/'/
 
       end module eparmdud129
+
+      ! Calculate and store global constants like pi, e, gravity, etc.
+      module global_constants
+        use set_kinds
+        public
+        real*8 :: pi=0,twopi=0,tmu=0,radeg=0
+      contains
+        subroutine set_constants()
+          pi = 4.0_dp*atan(1.0_dp) ! calculate pi to machine precision
+          twopi = 2.0*pi
+          radeg = pi/180.0
+          tmu = 2.0e-07_dp
+        end subroutine
+     end module global_constants
+
 !var_filech
       module var_filech
       character*4 ch1,ch2
@@ -364,19 +389,13 @@
        end module var_sxpoint
 
 !var_consta
-     module var_consta
-     use set_kinds
-     public 
-     real*8 pi,tmu,twopi, tmu2,errcut, tmu0,radeg, tmu02
-     integer*4 ibunmn,kinput,kcaldia 
+      module var_consta
+        use set_kinds
+        public
+        real*8 :: tmu2,errcut,tmu0,tmu02
+        integer*4 :: ibunmn,kinput,kcaldia=0
+     end module var_consta
 
-!vas      common/consta/pi,tmu,twopi,ibunmn,tmu2,errcut,kinput,kcaldia,tmu0 &
-!vas                    ,radeg
-
-      data pi/3.1415926535897932_dp/,tmu/2.0e-07_dp/
-      data kcaldia/0/
-
-     end module var_consta     
 !var_rcfact
      module var_rcfact
      use set_kinds
@@ -528,16 +547,6 @@
 !      dz = delz
 
       end module var_bunemn
-
-      module set_kinds
-!**     set the type of variables like integer, real, etc...
-        !HP integer, parameter :: rprec = selected_real_kind(20,100)
-        !integer, parameter :: rprec = selected_real_kind(13,307)
-        !integer, parameter :: iprec = selected_real_kind(4)
-        !integer, parameter :: dp=rprec
-        integer, parameter :: dp = selected_real_kind(15,307) ! REAL*8
-
-       end module set_kinds
 
 !------ put all the remining common blocks into modules here
 !var_contor
