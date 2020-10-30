@@ -167,11 +167,14 @@
 !
       ! rls: Simple check if matrix cannot be inverted, as a last resort. This is commonly
       ! a source of error. It would be better to have this type of check earlier, but
-      ! that is difficult because matrix A is modified significantly in the preceding calls.
+      ! that is difficult because matrix A is modified significantly in the preceeding calls.
       do i = 1,N-P
         if (A(i,i).eq.0) then
           kerror = 1
-          write(*,'(a,i4,a,i4,a)') 'ERROR in dtrsv: A(',i,',',i,')=0, divide by zero.'
+          write(*,'(a,i4,a,i4,a)') 'ERROR in dgglse: matrix element A(',i,',',i,')=0, divide by zero.'
+          open(unit=40,file='errfil.out',status='unknown',access='append')
+          write(40,'(a,i4,a,i4,a)') 'ERROR in dgglse: matrix element A(',i,',',i,')=0, divide by zero.'
+          close(unit=40)
           return
         end if
       enddo

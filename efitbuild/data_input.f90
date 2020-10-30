@@ -2509,8 +2509,7 @@
  6555 format (' iz = ',10i4)
  6557 format (/,' npc = ',i4)
 10000 continue
-      open(unit=40,file='errfil.out',status='unknown',access='append' &
-                                 )
+      open(unit=40,file='errfil.out',status='unknown',access='append')
       write (40,10020) ishot,itime
       write (nttyo,10020) ishot,itime
       close(unit=40)
