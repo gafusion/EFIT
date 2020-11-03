@@ -8635,7 +8635,8 @@
                   psibry,rseps(1,jtime),zseps(1,jtime),m10, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
                   zxmin,zxmax,rymin,rymax,dpsi,bpol,bpolz, &
-                  limitr,xlim,ylim,limfag,ifit,infit,jtime)
+                  limitr,xlim,ylim,limfag,ifit,infit,jtime,kerror)
+      if (kerror.gt.0) return
       if (nsol.gt.0) then
         if (idebug >= 2) then
           write (6,*) 'STEPS R,Z,Si,Err = ', rsol(1),zsol(1),wsisol,ier
@@ -8668,13 +8669,12 @@
                  xout,yout,nfound,xltrac,npoint,rymin,rymax,dpsi, &
                  zxmin,zxmax,nnerr,ishot,itime, &
                  limfag,radbou,kbound,tolbndpsi)
-      if (nnerr.ge.1) then
+      if (nnerr.gt.0) then
         kerror=1
-        write(nttyo,2100) ishot,itime
-        open(unit=40,file='errfil.out',status='unknown',access='append' &
-                                 )
-        write(40,2100) ishot,itime
-        close(unit=40)
+        !write(nttyo,2100) ishot,itime
+        !open(unit=40,file='errfil.out',status='unknown',access='append')
+        !write(40,2100) ishot,itime
+        !close(unit=40)
         return
       endif
   155 continue
@@ -8686,7 +8686,8 @@
                   psibry ,rseps(1,jtime),zseps(1,jtime),m20, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
                   zxmin,zxmax,rymin,rymax,dpsi,bpol,bpolz, &
-                  limitr,xlim,ylim,limfag,ifit,infit,jtime)
+                  limitr,xlim,ylim,limfag,ifit,infit,jtime,kerror)
+      if (kerror.gt.0) return
       sidif=simag-psibry
       eouter=(ymax-ymin)/(xmax-xmin)
       zplasm=(ymin+ymax)/2.

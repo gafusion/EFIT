@@ -406,13 +406,17 @@
       xouts,youts,nfouns,xlmins,npoint,rymins,rymaxs,dpsis, &
       zxmins,zxmaxs,nerr,ishot,itime,limfag,radbou,kbound,tolbndpsi)
       if (nerr.gt.0) then
-        olefs(iges)=-89.0
-        orighs(iges)=-89.0
-        otops(iges)=-89.0
-        obots(iges)=-89.0
-        seplim(iges)=-89.0
-        go to 1085
-      endif
+        kerror = 1
+        return
+      end if
+      !if (nerr.gt.0) then
+      !  olefs(iges)=-89.0
+      !  orighs(iges)=-89.0
+      !  otops(iges)=-89.0
+      !  obots(iges)=-89.0
+      !  seplim(iges)=-89.0
+      !  go to 1085
+      !endif
       if (abs(dpsis).le.psitol) then
         olefs(iges)=-45.0
         orighs(iges)=-45.0
@@ -425,7 +429,8 @@
                   psiots ,rseps(1,iges),zseps(1,iges),m20, &
                   xouts,youts,nfouns,psi,xmins,xmaxs,ymins,ymaxs, &
                   zxmins,zxmaxs,rymins,rymaxs,dpsis,bpoo,bpooz, &
-                  limtrs,xlims,ylims,limfag,0,0,0)
+                  limtrs,xlims,ylims,limfag,0,0,0,kerror)
+      if (kerror.gt.0) return
 !---------------------------------------------------------------------
 !--  gap calculation                                                --
 !---------------------------------------------------------------------
@@ -1429,6 +1434,10 @@
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
           limfag,radum,kbound,tolbndpsi)
+      if (nerr.gt.0) then
+        kerror = 1
+        return
+      end if
       dis2p=(xxtra(1,ixl)-xxtra(npxtra(ixl),ixl))**2
       dis2p=sqrt(dis2p+(yxtra(1,ixl)-yxtra(npxtra(ixl),ixl))**2)
       if (dis2p.lt.0.1_dp*drgrid) then
@@ -1638,6 +1647,10 @@
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
           limfag,radum,kbound,tolbndpsi)
+      if (nerr.gt.0) then
+        kerror = 1
+        return
+      end if
       dis2p=(xxtra(1,ixl)-xxtra(npxtra(ixl),ixl))**2
       dis2p=sqrt(dis2p+(yxtra(1,ixl)-yxtra(npxtra(ixl),ixl))**2)
       if (dis2p.lt.0.1_dp*drgrid)then
@@ -1785,6 +1798,10 @@
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
           limfag,radum,kbound,tolbndpsi)
+      if (nerr.gt.0) then
+        kerror = 1
+        return
+      end if
       zerovs=1.0
       do 66100 i=1,npxtra(ixl)
         zerold=zerovs
@@ -1934,6 +1951,10 @@
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
           limfag,radum,kbound,tolbndpsi)
+      if (nerr.gt.0) then
+        kerror = 1
+        return
+      end if
       zerovs=1.0
       do 67100 i=1,npxtra(ixl)
         zerold=zerovs
@@ -2137,6 +2158,10 @@
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
           limfag,radum,kbound,tolbndpsi)
+      if (nerr.gt.0) then
+        kerror = 1
+        return
+      end if
 !-------------------------------------------------------------------------
 !-- get engineering slot parameter in cm, SEPNOSE                       --
 !-------------------------------------------------------------------------
@@ -2219,6 +2244,10 @@
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
           limfag,radum,kbound,tolbndpsi)
+      if (nerr.gt.0) then
+        kerror = 1
+        return
+      end if
       if ((i.gt.1).or.(ixyz.ne.-2)) go to 620
       if (xlimxs.le.0.0) go to 620
       do 615 n=1,npxtra(ixl)

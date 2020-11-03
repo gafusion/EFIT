@@ -237,17 +237,23 @@
               if ((kij1.ne.kk).or.(kij2.ne.kk)) then
                 ifail=0
                 call cellb(xc1,yc1,xc2,yc2,x1,y1,x2,y2,ifail)
-                if (ifail.eq.1) cycle
+                if (ifail.eq.1) cycle ! line segment does not intersect cell
               end if
+              ! psilm is largest psi value along line segment betw pts
               call maxpsi(xc1,yc1,xc2,yc2,x1,y1,x2,y2,f1,f2,f3,f4,area,psilm,xtry1,ytry1)
               psilx=max(psilm,psilx)
-              if (psilx.gt.psilm) cycle
-              xtry=xtry1
-              ytry=ytry1
+              if (psilx.le.psilm) then
+                xtry=xtry1
+                ytry=ytry1
+              end if
             end do ! limitr
 
             if (psilx.eq.-1.e10_dp) then
               nerr=3
+              open(unit=40,file='errfil.out',status='unknown',access='append')
+              write(*,'(a)') 'ERROR in bound: Limiter points do not intersect cell.'
+              write(40,'(a)') 'ERROR in bound: Limiter points do not intersect cell.'
+              close(unit=40)
               go to 2000
             end if
 
@@ -277,6 +283,10 @@
           ncontr=ncontr+1
           if (ncontr.gt.npoint) then
             nerr=3
+            open(unit=40,file='errfil.out',status='unknown',access='append')
+            write(*,'(a)') 'ERROR in bound: Number of contour points greater than max allowed.'
+            write(40,'(a)') 'ERROR in bound: Number of contour points greater than max allowed.'
+            close(unit=40)
             go to 2000
           end if
           xcontr(ncontr)=xt
@@ -353,8 +363,14 @@
 
       radold=rad
       psib0=psivl
-      if(abs(ycontr(1)-ycontr(ncontr)).gt.0.5_dp*dy) nerr=3
-      if(abs(xcontr(1)-xcontr(ncontr)).gt.0.5_dp*dx) nerr=3
+      if ((abs(ycontr(1)-ycontr(ncontr)).gt.0.5_dp*dy) .or. &
+          (abs(xcontr(1)-xcontr(ncontr)).gt.0.5_dp*dx)) then
+         nerr=3
+         open(unit=40,file='errfil.out',status='unknown',access='append')
+         write(*,'(a)') 'ERROR in bound: First and last contour points are too far apart.'
+         write(40,'(a)') 'ERROR in bound: First and last contour points are too far apart.'
+         close(unit=40)
+      end if
 
  2000 continue
       if (nosign.eq.1) then
@@ -1188,7 +1204,7 @@
       subroutine findax(nx,nz,x,y,xax,yax,psimx,psiout,xseps,yseps, &
                         kaxis,xxout,yyout,kfound,psipsi,rmin,rmax, &
                         zmin,zmax,zrmin,zrmax,rzmin,rzmax,dpsipsi, &
-                        bpoo,bpooz,limtrv,xlimv,ylimv,limfagv,ifit,infit,jtime)
+                        bpoo,bpooz,limtrv,xlimv,ylimv,limfagv,ifit,infit,jtime,kerror)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -1231,50 +1247,51 @@
       logical :: dodebugplts = .false. ! write surface files for debugging/plotting. Serial only, not parallel
 !
       orelax = 1.0 ! Newton's Method relaxation constant (0.0-1.0)
-      niter = 20   ! Number of Newton's Method iterations
+      niter = 20   ! Number of iterations
       n111=1
       xseps(1)=-999.
       yseps(1)=-999.
       xseps(2)=-999.
       yseps(2)=-999.
 
-      if (iabs(kaxis).ge.20) go to 105
-
-!----------------------------------------------------------------------
-!--   fit 2-d spline to psi                                          --
-!----------------------------------------------------------------------
-!     psipsi - (in) psi function to spline, 1-d array (nx by nz)
-!     x,y - (in) 1-d array of coordinate values for function
-!     c - (out) 4-d array of spline coefficients
-!     bkx, bky - (out) interval coefficients w/ lkx,lky terms
-      call sets2d(psipsi,c,x,nx,bkx,lkx,y,nz,bky,lky,wk,ier)
-      if (idebug >= 2) then
+      if (iabs(kaxis).lt.20) then
+        !----------------------------------------------------------------------
+        !--   fit 2-d spline to psi                                          --
+        !----------------------------------------------------------------------
+        !     psipsi - (in) psi function to spline, 1-d array (nx by nz)
+        !     x,y - (in) 1-d array of coordinate values for function
+        !     c - (out) 4-d array of spline coefficients
+        !     bkx, bky - (out) interval coefficients w/ lkx,lky terms
+        call sets2d(psipsi,c,x,nx,bkx,lkx,y,nz,bky,lky,wk,ier)
+        if (idebug >= 2) then
           write (6,*) 'FINDAX Z,R = ', y(33),(x(i),i=45,45)
           write (6,*) 'FINDAX si = ',(psipsi((i-1)*nx+33),i=45,45)
           call seva2d(bkx,lkx,bky,lky,c,x(45),y(33),pds,ier &
-             ,n111)
+            ,n111)
           write (6,*) 'FINDAX R,Z,si = ', x(45),y(33),pds(1)
           write (6,*) 'FINDAX lkx,lky = ',lkx,lky
           write (6,*) 'FINDAX lkx,lky,c = ',bkx(33),bky(33),c(1,33,1,33)
-      endif
-      if (kaxis.eq.10) return
-  105 continue
-      do 110 n=1,kfound
+        endif
+        if (kaxis.eq.10) return
+      end if
+
+      do n=1,kfound
         ! xxout,yyout - (in) interp points outlining (psipsi=0) the raised mag flux region
         ! pds - (out) interpolation value
         ! pds(1)=f, pds(2)=fx, pds(3)=fy, pds(4)=fxy, pds(5)=fxx, pds(6)=fyy
         call seva2d(bkx,lkx,bky,lky,c,xxout(n),yyout(n),pds,ier,n333)
         bpooz(n)=pds(2)/xxout(n)
         bpoo(n)=sqrt(bpooz(n)**2+(pds(3)/xxout(n))**2)
-  110 continue
+      end do
+
       sumip=0.
-      do 130 i=2,kfound
+      do i=2,kfound
         delx=xxout(i)-xxout(i-1)
         dely=yyout(i)-yyout(i-1)
         dell=sqrt(delx**2+dely**2)
         abpol=(bpoo(i-1)+bpoo(i))/2.0
         sumip=sumip+abpol*dell
-  130 continue
+      end do
       sumip=sumip/tmu/twopi
       if (kaxis.le.0) go to 1000
 !----------------------------------------------------------------------
@@ -1286,25 +1303,24 @@
         psimx=1.0e+10_dp
       endif
       ! Find psi max/min w/in r,z limits depending on current sign
-      do 200 i=1,nx
-      do 200 j=1,nz
-        kk=(i-1)*nz+j
-        if (x(i).lt.rmin) go to 200
-        if (x(i).gt.rmax) go to 200
-        if (y(j).lt.zmin) go to 200
-        if (y(j).gt.zmax) go to 200
-        if (psipsi(kk).le.psimx.and.negcur.eq.0) go to 200
-        if (psipsi(kk).ge.psimx.and.negcur.eq.1) go to 200
-        psimx=psipsi(kk)
-        xax=x(i)
-        yax=y(j)
-  200 continue
+      do i=1,nx
+        do j=1,nz
+          kk=(i-1)*nz+j
+          if ((x(i).lt.rmin).or.(x(i).gt.rmax)) cycle
+          if ((y(j).lt.zmin).or.(y(j).gt.zmax)) cycle
+          if (psipsi(kk).le.psimx.and.negcur.eq.0) cycle
+          if (psipsi(kk).ge.psimx.and.negcur.eq.1) cycle
+          psimx=psipsi(kk)
+          xax=x(i)
+          yax=y(j)
+        end do
+      end do
 
       xs=xax
       ys=yax
       ps=psimx
 
-      if (dodebugplts) then
+      if (dodebugplts) then ! for debugging
         write(strtmp,'(a,i0.2,a,i0.2,a)') 'debug-surf',jtime,'-',ifit,'.txt'
         open(unit=99,file=trim(strtmp),status='replace')
         do iyplt = 1,nz
@@ -1314,7 +1330,6 @@
           end do
         end do
         close(unit=99)
-
         write(strtmp,'(a,i0.2,a,i0.2,a)') 'debug-conv',jtime,'-',ifit,'.txt'
         open(unit=99,file=trim(strtmp),status='replace')
       end if
@@ -1327,12 +1342,13 @@
         if (negcur.eq.0) signcur = 1.0
       end if
 
+      errtmp = 0.0
       do j=1,niter
         ! pds(1)=f, pds(2)=fx, pds(3)=fy, pds(4)=fxy, pds(5)=fxx, pds(6)=fyy
         call seva2d(bkx,lkx,bky,lky,c,xax,yax,pds,ier,n666)
-        if (dodebugplts) write(99,'(3(1x,1pe12.5))') xax,yax,pds(1)
+        if (dodebugplts) write(99,'(3(1x,1pe12.5))') xax,yax,pds(1) ! for debugging
 
-        ! Gradient Descent Method - better for sharp peaks
+        ! Gradient Ascent Method - better for sharp peaks
         if (ifindopt==2) then
           xerr=signcur*pds(2) ! find max or min depending on current direction
           yerr=signcur*pds(3)
@@ -1349,21 +1365,37 @@
           pdsold = pds
           xax = xax + gamman*xerr
           yax = yax + gamman*yerr
-          if (gamman**2*(xerr**2+yerr**2) .lt. 1.0e-12_dp) go to 310
+          errtmp = gamman**2*(xerr**2+yerr**2)
+          if (errtmp.lt.1.0e-12_dp) go to 310
 
         ! Original Newton's Method for optimization, xn+1 = xn - f'/f''
         else ! ifindopt==1
           det=pds(5)*pds(6)-pds(4)*pds(4)
-          if (abs(det).lt.1.0e-15_dp) go to 305
+          if (abs(det).lt.1.0e-15_dp) then
+            open(unit=40,file='errfil.out',status='unknown',access='append')
+            write(*,'(a)') 'ERROR in findax: Newtons method to find magnetic axis has det=0.'
+            write(40,'(a)') 'ERROR in findax: Newtons method to find magnetic axis has det=0.'
+            close(unit=40)
+            kerror = 1
+            return
+            !go to 305
+          end if
           xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
           yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
           xax=xax+orelax*xerr
           yax=yax+orelax*yerr
+          errtmp = xerr*xerr+yerr*yerr
           !if ((xax<x(1) .or. xax>x(nx)) .or. (yax<y(1) .or. yax>y(nz))) go to 305 ! TODO: test if this would help
           if ((abs(pds(2)).lt.1.0e-06_dp).and.(abs(pds(3)).lt.1.0e-06_dp)) go to 310
-          if (xerr*xerr+yerr*yerr.lt.1.0e-12_dp) go to 310
+          if (errtmp.lt.1.0e-12_dp) go to 310
         end if
       enddo
+      if (errtmp.gt.1.0e-6_dp) then
+        open(unit=40,file='errfil.out',status='unknown',access='append')
+        write(*,'(a)') 'WARNING in findax: Iterative method to find magnetic axis reached max iterations.'
+        write(40,'(a)') 'WARNING in findax: Iterative method to find magnetic axis reached max iterations.'
+        close(unit=40)
+      end if
   305 continue
       if (iand(iout,1).ne.0) write (nout,5000) xax,yax
       xax=xs
@@ -1391,7 +1423,7 @@
       if (emaxis.gt.0.0) emaxis=sqrt(emaxis)
       if (emaxis.le.0.0) emaxis=1.3_dp
  1000 continue
-      if (dodebugplts) then
+      if (dodebugplts) then ! for debugging
         close(unit=99)
       end if
       delrmax1=0.40_dp
@@ -1411,26 +1443,42 @@
       ns=1
       xs=xxout(1)
       ys=yyout(1)
-      do 1100 n=2,kfound
-        if (bpoo(n).ge.bpols) go to 1100
+      do n=2,kfound
+        if (bpoo(n).ge.bpols) cycle
         bpols=bpoo(n)
         xs=xxout(n)
         ys=yyout(n)
         ns=n
- 1100 continue
+      end do
 
-      do 1300 j=1,niter
+      errtmp = 0.0
+      do j=1,niter
         if (xs.le.x(2).or.xs.ge.x(nx-1)) go to 1305
         if (ys.le.y(2).or.ys.ge.y(nz-1)) go to 1305
         call seva2d(bkx,lkx,bky,lky,c,xs,ys,pds,ier,n666)
         det=pds(5)*pds(6)-pds(4)*pds(4)
-        if (abs(det).lt.1.0e-15_dp) go to 1305
+        if (abs(det).lt.1.0e-15_dp) then
+          open(unit=40,file='errfil.out',status='unknown',access='append')
+          write(*,'(a)') 'ERROR in findax: Newtons method to find separatrix has det=0.'
+          write(40,'(a)') 'ERROR in findax: Newtons method to find separatrix has det=0.'
+          close(unit=40)
+          kerror = 1
+          return
+          !go to 1305
+        end if
         xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
         yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
         xs=xs+orelax*xerr
         ys=ys+orelax*yerr
-        if (xerr*xerr+yerr*yerr.lt.1.0e-12_dp*100.0) go to 1310
- 1300 continue
+        errtmp = xerr*xerr+yerr*yerr
+        if (errtmp.lt.1.0e-12_dp*100.0) go to 1310
+      end do
+      if (errtmp.gt.1.0e-6_dp*100.0) then
+        open(unit=40,file='errfil.out',status='unknown',access='append')
+        write(*,'(a)') 'WARNING in findax: Iterative method to find separatrix reached max iterations.'
+        write(40,'(a)') 'WARNING in findax: Iterative method to find separatrix reached max iterations.'
+        close(unit=40)
+      end if
  1305 continue
       if (iand(iout,1).ne.0) write (nout,5020) xs,ys
       return
@@ -1471,7 +1519,7 @@
       zrmin=yyout(1)
       zrmax=yyout(1)
       bpave=0.
-      do 1350 i=2,kfound
+      do i=2,kfound
         if (xxout(i).lt.rmin) zrmin=yyout(i)
         if (xxout(i).gt.rmax) zrmax=yyout(i)
         if (yyout(i).lt.zmin) rzmin=xxout(i)
@@ -1481,7 +1529,7 @@
         rmax=max(rmax,xxout(i))
         zmin=min(zmin,yyout(i))
         zmax=max(zmax,yyout(i))
- 1350 continue
+      end do
 !----------------------------------------------------------------
 !-- find tracing points                                        --
 !----------------------------------------------------------------
@@ -1510,30 +1558,46 @@
       dsimins=99.
       bpmins=10.
       ns=-1
-      do 30030 i=2,kfound
-       if ((ys-znow)*(yyout(i)-znow).lt.0.0.and.bpoo(i).lt.bpmins) then
-           bpmins=bpoo(i)
-           ns=i
-       endif
-30030 continue
+      do i=2,kfound
+        if ((ys-znow)*(yyout(i)-znow).lt.0.0.and.bpoo(i).lt.bpmins) then
+          bpmins=bpoo(i)
+          ns=i
+        endif
+      end do
       if (ns.eq.-1) return
       xs=xxout(ns)
       ys=yyout(ns)
 !
-      do 9300 j=1,niter
-        if (xs.le.x(2).or.xs.ge.x(nx-1)) go to 9308
-        if (ys.le.y(2).or.ys.ge.y(nz-1)) go to 9308
+      errtmp = 0.0
+      do j=1,niter
+        if (xs.le.x(2).or.xs.ge.x(nx-1)) go to 9305
+        if (ys.le.y(2).or.ys.ge.y(nz-1)) go to 9305
         call seva2d(bkx,lkx,bky,lky,c,xs,ys,pds,ier,n666)
         det=pds(5)*pds(6)-pds(4)*pds(4)
-        if (abs(det).lt.1.0e-15_dp) go to 9305
+        if (abs(det).lt.1.0e-15_dp) then
+          open(unit=40,file='errfil.out',status='unknown',access='append')
+          write(*,'(a)') 'ERROR in findax: Newtons method to find 2nd separatrix has det=0.'
+          write(40,'(a)') 'ERROR in findax: Newtons method to find 2nd separatrix has det=0.'
+          close(unit=40)
+          kerror = 1
+          return
+          !go to 9305
+        end if
         xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
         yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
         xs=xs+orelax*xerr
         ys=ys+orelax*yerr
-        if (xerr*xerr+yerr*yerr.lt.1.0e-12_dp*100.0) go to 9310
- 9300 continue
+        errtmp = xerr*xerr+yerr*yerr
+        if (errtmp.lt.1.0e-12_dp*100.0) go to 9310
+      end do
+      if (errtmp.gt.1.0e-6_dp*100.0) then
+        open(unit=40,file='errfil.out',status='unknown',access='append')
+        write(*,'(a)') 'WARNING in findax: Iterative method to find 2nd separatrix reached max iterations.'
+        write(40,'(a)') 'WARNING in findax: Iterative method to find 2nd separatrix reached max iterations.'
+        close(unit=40)
+      end if
  9305 continue
- 9308 if (iand(iout,1).ne.0) write (nout,5025) xs,ys
+      if (iand(iout,1).ne.0) write (nout,5025) xs,ys
       return
  9310 continue
 !-----------------------------------------------------------------------
@@ -1570,7 +1634,7 @@
       rzmax=xxout(1)
       zrmin=yyout(1)
       zrmax=yyout(1)
-      do 30100 i=2,kfound
+      do i=2,kfound
         if (xxout(i).lt.rmin) zrmin=yyout(i)
         if (xxout(i).gt.rmax) zrmax=yyout(i)
         if (yyout(i).lt.zmin) rzmin=xxout(i)
@@ -1579,7 +1643,7 @@
         rmax=max(rmax,xxout(i))
         zmin=min(zmin,yyout(i))
         zmax=max(zmax,yyout(i))
-30100 continue
+      end do
 !
       return
 !
@@ -1590,6 +1654,7 @@
  5025 format (/,1x,'no convergence to 2nd septrx, rs, ys = ', &
               2(1x,e10.3))
       end
+
       subroutine fqlin(x1,y1,x2,y2,f1,f2,f3,f4,x,y,area,psivl)
 !**********************************************************************
 !**                                                                  **

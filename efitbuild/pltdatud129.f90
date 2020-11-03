@@ -779,14 +779,14 @@
 !         xpos(msg) = rvsmax-0.5_dp
 !         ypos(msg) = zvsmin-0.1_dp
 !         ht(msg) = hgt
-!        call rlreal(sumif,0,rvsmax,zvsmin-0.1)
+!        call rlreal(sumif,0,rvsmax,zvsmin-0.1_dp)
 !         msg = msg + 1
 !         note(msg) = 4
 !         anum(msg) = sumif
 !         iplce(msg) = 0
 !         xpos(msg) = rvsmax
 !         ypos(msg) = zvsmin-0.1_dp
-!         ht(msg) = 0.10
+!         ht(msg) = 0.10_dp
 !         msg = msg + 1
 !         note(msg) = 2
 !         lmes(msg) = 'Fp(kn)=   '
@@ -795,14 +795,14 @@
 !         ypos(msg) = zvsmin-0.2_dp
 !         ht(msg) = hgt
 !         sumif=fzpol/1000.
-!        call rlreal(sumif,0,rvsmax,zvsmin-0.2)
+!        call rlreal(sumif,0,rvsmax,zvsmin-0.2_dp)
 !         msg = msg + 1
 !         note(msg) = 4
 !         anum(msg) = sumif
 !         iplce(msg) = 0
 !         xpos(msg) = rvsmax
 !         ypos(msg) = zvsmin-0.2_dp
-!         ht(msg) = 0.10
+!         ht(msg) = 0.10_dp
 !         msg = msg + 1
 !         note(msg) = 2
 !         lmes(msg) = 'Ft(kn)=   '
@@ -811,14 +811,14 @@
 !         ypos(msg) = zvsmin-0.3_dp
 !         ht(msg) = hgt
 !         sumif=fztor/1000.
-!        call rlreal(sumif,0,rvsmax,zvsmin-0.3)
+!        call rlreal(sumif,0,rvsmax,zvsmin-0.3_dp)
 !         msg = msg + 1
 !         note(msg) = 4
 !         anum(msg) = sumif
 !         iplce(msg) = 0
 !         xpos(msg) = rvsmax
 !         ypos(msg) = zvsmin-0.3_dp
-!         ht(msg) = 0.10
+!         ht(msg) = 0.10_dp
 !
 !         msg = msg + 1
 !         note(msg) = 2
@@ -835,7 +835,7 @@
          lmes(msg) = text
          imes(msg) = 25
          xpos(msg) = rvsmax
-         ypos(msg) = zvsmin-0.2
+         ypos(msg) = zvsmin-0.2_dp
          ht(msg) = 0.10_dp
 !        call rlreal(sumif,0,rvsmax,zvsmin-0.4_dp)
 !         msg = msg + 1
@@ -844,7 +844,7 @@
 !         iplce(msg) = 0
 !         xpos(msg) = rvsmax
 !         ypos(msg) = zvsmin-0.4_dp
-!         ht(msg) = 0.10
+!         ht(msg) = 0.10_dp
 !         msg = msg + 1
 !         note(msg) = 2
 !         lmes(msg) = 'Ig(ka)=   '
@@ -937,7 +937,7 @@
 !
       read (lfile,14980) npts
       read (lfile,15000) (workc(i),workd(i),i=1,npts)
-!     call shade(workc,workd,npts,30.,0.1,1,0,0)
+!     call shade(workc,workd,npts,30.,0.1_dp,1,0,0)
       nshd = nshd + 1
       nsxy(nshd) = npts
       sangle(nshd) = 30.0
@@ -964,7 +964,7 @@
 
       read (lfile,14980) npts
       read (lfile,15000) (workc(i),workd(i),i=1,npts)
-!     call shade(workc,workd,npts,30.,0.1,1,0,0)
+!     call shade(workc,workd,npts,30.,0.1_dp,1,0,0)
       nshd = nshd + 1
       nsxy(nshd) = npts
       sangle(nshd) = 30.0
@@ -997,7 +997,7 @@
          xx(ii,nn) = workc(ii)
          yy(ii,nn) = workd(ii)
       enddo
-!     call shade(workc,workd,npts,90.,0.01,1,0,0)
+!     call shade(workc,workd,npts,90.,0.01_dp,1,0,0)
       nshd = nshd + 1
       nsxy(nshd) = npts
       sangle(nshd) = 90.0
@@ -1017,7 +1017,7 @@
             xx(ii,nn) = workc(ii)
             yy(ii,nn) = workd(ii)
          enddo
-!        call shade(workc,workd,npts,45.,0.05,1,0,0)
+!        call shade(workc,workd,npts,45.,0.05_dp,1,0,0)
          nshd = nshd + 1
          nsxy(nshd) = npts
          sangle(nshd) = 45.0
@@ -1027,7 +1027,7 @@
             sxx(ii,nshd) = workc(ii)
             syy(ii,nshd) = workd(ii)
          enddo
-!        call shade(workc,workd,npts,135.,0.05,1,0,0)
+!        call shade(workc,workd,npts,135.,0.05_dp,1,0,0)
          nshd = nshd + 1
          nsxy(nshd) = npts
          sangle(nshd) = 135.0
@@ -1047,7 +1047,7 @@
          xx(ii,nn) = workc(ii)
          yy(ii,nn) = workd(ii)
       enddo
-!     call shade(workc,workd,npts,90.,0.01,1,0,0)
+!     call shade(workc,workd,npts,90.,0.01_dp,1,0,0)
       nshd = nshd + 1
       nsxy(nshd) = npts
       sangle(nshd) = 90.0
@@ -1146,11 +1146,11 @@
             inum(msg) = i
             xpos(msg) = rsi(i)
             ypos(msg) = zsi(i)
-            ht(msg) = 0.04
+            ht(msg) = 0.04_dp
   290    continue
       else
          hgt = 0.13_dp
-!        if (klabel.lt.0) call hgt = 0.16
+!        if (klabel.lt.0) call hgt = 0.16_dp
          if (klabel.lt.0) hgt = 0.16_dp
          rf16=rf(16)-0.10_dp
          zf16=zf(16)+0.30_dp
@@ -1190,9 +1190,9 @@
             ht(msg) = 0.04_dp
   300    continue
       else
-         hgt = 0.13
+         hgt = 0.13_dp
 !vas f90 modifi.
-!vas         if (klabel.lt.0) call hgt = 0.16
+!vas         if (klabel.lt.0) call hgt = 0.16_dp
          if (klabel.lt.0) hgt = 0.16_dp
          rrff=(rf(8)+rf(9))*0.5_dp
          zzff=(zf(8)+zf(9))*0.5_dp
@@ -1293,7 +1293,7 @@
          workc(2)=chordv(1)
          nn = nn + 1
          ncdtme(nn) = 1
-         thcrv(nn) = 0.012
+         thcrv(nn) = 0.012_dp
          nxy(nn) = 2
          do ii = 1, nxy(nn)
             xx(ii,nn) = workc(ii)
@@ -1322,7 +1322,7 @@
          workd(2)=workd(2)+0.2_dp
          nn = nn + 1
          ncdtme(nn) = 1
-         thcrv(nn) = 0.012
+         thcrv(nn) = 0.012_dp
          nxy(nn) = 2
          do ii = 1, nxy(nn)
             xx(ii,nn) = workc(ii)
@@ -1370,10 +1370,10 @@
          ypos(msg) = workd(2)
          ht(msg) = hgt
 
-         workc(3)=workc(2)+0.08
-         workd(3)=workd(2)-0.03
-         workc(4)=workc(1)-0.02
-         workd(4)=workd(1)+0.02
+         workc(3)=workc(2)+0.08_dp
+         workd(3)=workd(2)-0.03_dp
+         workc(4)=workc(1)-0.02_dp
+         workd(4)=workd(1)+0.02_dp
 !        call rlvec(workc(3),workd(3),workc(4),workd(4),1)
          nvec = nvec + 1
          xfm(nvec) = workc(3)
@@ -1438,8 +1438,8 @@
   319       continue
          endif
          do 360 k=2,npoint
-            xplt(k)=k*0.08*cos(theta)+rxray(i)
-            yplt(k)=k*0.08*sin(theta)+zxray(i)
+            xplt(k)=k*0.08_dp*cos(theta)+rxray(i)
+            yplt(k)=k*0.08_dp*sin(theta)+zxray(i)
             if ((xplt(k).lt.almin).or.(xplt(k).gt.almax)) go to 370
             if ((yplt(k).lt.blmin).or.(yplt(k).gt.blmax)) go to 370
   360    continue
@@ -1469,7 +1469,7 @@
             do 40921 iii=1,k
                call zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(iii), &
                yplt(iii),limfag)
-               if (zeron.gt.0.001) write (62,*) xplt(iii),yplt(iii)
+               if (zeron.gt.0.001_dp) write (62,*) xplt(iii),yplt(iii)
 40921       continue
             close(unit=62)
          endif
@@ -1911,8 +1911,8 @@
       ht(msg) = 0.14_dp
 !
       if (icurrt.eq.1) then
-         xabs=-3.5
-         yabs=0.8
+         xabs=-3.5_dp
+         yabs=0.8_dp
          write(text,19603) srm,salpha
          msg = msg + 1
          note(msg) = 1
@@ -1944,8 +1944,8 @@
       endif
 !
       if (icurrt.eq.2.or.icurrt.eq.5) then
-         xabs=-3.5
-         yabs=0.8
+         xabs=-3.5_dp
+         yabs=0.8_dp
          write(text,9603) icprof,ifitvs
          msg = msg + 1
          note(msg) = 1
@@ -2021,7 +2021,7 @@
          yabs = yabs - dyabs
          ht(msg) = 0.14_dp
 
-         if (abs(relax-1.0).gt.1.e-4) then
+         if (abs(relax-1.0).gt.1.e-4_dp) then
             write(text,9637) relax
             msg = msg + 1
             note(msg) = 1
@@ -2329,7 +2329,7 @@
       drrrr=(workc(nw)-workc(1))/2.
       drpmid=drrrr
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
       dcurn=(curmax-curmin)/2.
       if (klabel.ge.0) then
 !
@@ -2449,7 +2449,7 @@
   490 continue
       drrrr=(workc(nw)-workc(1))/2.
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
       dcurn=(curmax-curmin)/2.
       if (klabel.ge.0) then
          ibrdr = 1
@@ -2651,8 +2651,8 @@
          eurmax=max(eurmax,ermid(i))
       enddo
       ecurn=eurmax-eurmin
-      eurmax=eurmax+0.05*ecurn
-      eurmin=eurmin-0.05*ecurn
+      eurmax=eurmax+0.05_dp*ecurn
+      eurmin=eurmin-0.05_dp*ecurn
       eurmax=max(abs(eurmin),abs(eurmax))
       eurmin=-eurmax
       ecurn=(eurmax-eurmin)
@@ -2714,8 +2714,8 @@
             curmax=max(curmax,workg(i))
   510    continue
          dcurn=curmax-curmin
-         curmax=curmax+0.05*dcurn
-         curmin=curmin-0.05*dcurn
+         curmax=curmax+0.05_dp*dcurn
+         curmin=curmin-0.05_dp*dcurn
          drrrr=(workk(nw)-workk(1))
          dcurn=(curmax-curmin)
          xmm=1.6_dp
@@ -2773,8 +2773,8 @@
   500 continue
       drrrr=(workk(nw)-workk(1))
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
       xmm=1.6_dp
 !-----------------------------------------------------------------------c
@@ -2867,8 +2867,8 @@
          curmax=max(curmax,workh(i))
   555 continue
       dcurn=(curmax-curmin)/2.
-      curmax=curmax+dcurn*0.05
-      curmin=curmin-dcurn*0.05
+      curmax=curmax+dcurn*0.05_dp
+      curmin=curmin-dcurn*0.05_dp
       dcurn=(curmax-curmin)
       ibrdr = 1
       workg(1)=workk(1)
@@ -2940,8 +2940,8 @@
   560 continue
       drrrr=(zgrid(nh)-zgrid(1))
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
 !
       if (itek.ge.5.and.idotek.eq.0) then
@@ -2998,8 +2998,8 @@
          curmax=max(curmax,worka(i))
   564 continue
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
 !
       if (itek.ge.5.and.idotek.eq.0) then
@@ -3649,7 +3649,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      if (qpsib(jtime).gt.0.1) then
+      if (qpsib(jtime).gt.0.1_dp) then
          sq295=ssi95(jtime)/qpsib(jtime)**2
       else
          sq295=0.0
@@ -3658,8 +3658,8 @@
       pasmma=abs(pasmat(jtime))/1.e+06_dp
       routm=rout(jtime)/100.
       tauenn=tauthn(jtime)
-!     if (pbinjmw.gt.1.e-03.and.abs(pasmma).gt.1.e-03) then
-!     taud3jet=106.*pbinjmw**(-0.46)*pasmma**1.03*routm**1.48
+!     if (pbinjmw.gt.1.e-03_dp.and.abs(pasmma).gt.1.e-03_dp) then
+!     taud3jet=106._dp*pbinjmw**(-0.46_dp)*pasmma**1.03_dp*routm**1.48_dp
 !     tauenn=taumhd(jtime)/taud3jet
 !     else
 !     tauenn=0.0
@@ -3947,14 +3947,14 @@
       sclpc(1) = 0.5_dp
       ncnct(1) = 1
 
-      xabs=-7.3
-      if (ivacum.eq.1) xabs=-4.3
+      xabs=-7.3_dp
+      if (ivacum.eq.1) xabs=-4.3_dp
       if (kstark.le.1) then
          yabs=3.0
       else
-         yabs=4.5
+         yabs=4.5_dp
       endif
-      dyabs = 0.22
+      dyabs = 0.22_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -3997,7 +3997,7 @@
 !--  print out pointnames                                             --
 !-----------------------------------------------------------------------
       if (kstark.le.1) then
-         yabs=1.5
+         yabs=1.5_dp
       else
          yabs=3.0
       endif
@@ -4008,15 +4008,15 @@
       imes(msg) = 100
       xpos(msg) = xabs
       ypos(msg) = yabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = 'no.   name        no.   name$'
       imes(msg) = 100
       xpos(msg) = xabs
-      ypos(msg) = yabs - 0.25
-      ht(msg) = 0.10
-      yabs=yabs0-0.5
+      ypos(msg) = yabs - 0.25_dp
+      ht(msg) = 0.10_dp
+      yabs=yabs0-0.5_dp
       do 722 i=magpri67+1,magpri67+16
 !        call intno(i,xabs,yabs)
          msg = msg + 1
@@ -4024,21 +4024,21 @@
          inum(msg) = i
          xpos(msg) = xabs
          ypos(msg) = yabs
-         ht(msg) = 0.07
-!        call messag(%ref(mpnam2(i)),10,-6.8,yabs)
+         ht(msg) = 0.07_dp
+!        call messag(%ref(mpnam2(i)),10,-6.8_dp,yabs)
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = mpnam2(i)
          imes(msg) = 10
-         xpos(msg) = -6.8
-         if (ivacum.eq.1) xpos(msg) = -3.8
+         xpos(msg) = -6.8_dp
+         if (ivacum.eq.1) xpos(msg) = -3.8_dp
          ypos(msg) = yabs
-         ht(msg) = 0.07
-         yabs=yabs-.13
+         ht(msg) = 0.07_dp
+         yabs=yabs-.13_dp
   722 continue
-      xabs=-5.8
-      if (ivacum.eq.1) xabs=-2.8
-      yabs=yabs0-0.5
+      xabs=-5.8_dp
+      if (ivacum.eq.1) xabs=-2.8_dp
+      yabs=yabs0-0.5_dp
       do 724 i=magpri67+17,magpri67+magpri322
 !        call intno(i,xabs,yabs)
          msg = msg + 1
@@ -4046,57 +4046,57 @@
          inum(msg) = i
          xpos(msg) = xabs
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
 !        call messag(%ref(mpnam2(i)),10,-5.2,yabs)
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = mpnam2(i)
          imes(msg) = 10
-         xpos(msg) = -5.2
-         if (ivacum.eq.1) xpos(msg) = -2.2
+         xpos(msg) = -5.2_dp
+         if (ivacum.eq.1) xpos(msg) = -2.2_dp
          ypos(msg) = yabs
-         ht(msg) = 0.07
-         yabs=yabs-.13
+         ht(msg) = 0.07_dp
+         yabs=yabs-.13_dp
   724 continue
 !
-      xabs=-7.3
-      if (ivacum.eq.1) xabs=-4.3
-      yabs=yabs-.5
+      xabs=-7.3_dp
+      if (ivacum.eq.1) xabs=-4.3_dp
+      yabs=yabs-.5_dp
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = '     psi loop identification$'
       imes(msg) = 100
       xpos(msg) = xabs
       ypos(msg) = yabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = 'no.   name        no.   name$'
       imes(msg) = 100
       xpos(msg) = xabs
-      ypos(msg) = yabs - 0.25
-      ht(msg) = 0.10
+      ypos(msg) = yabs - 0.25_dp
+      ht(msg) = 0.10_dp
 !     call height(.07)
-      yabs=yabs-.37
+      yabs=yabs-.37_dp
       yyabs=yabs
       do 726 i=1,21
-         yabs=yabs-.13
+         yabs=yabs-.13_dp
 !        call intno(i,xabs,yabs)
          msg = msg + 1
          note(msg) = 5
          inum(msg) = i
          xpos(msg) = xabs
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
 !        call messag(%ref(lpname(i)),10,-6.8,yabs)
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = lpname(i)
          imes(msg) = 10
-         xpos(msg) = -6.8
-         if (ivacum.eq.1) xpos(msg) = -3.8
+         xpos(msg) = -6.8_dp
+         if (ivacum.eq.1) xpos(msg) = -3.8_dp
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
 
   726 continue
       yabs=yyabs
@@ -4106,31 +4106,31 @@
          msg = msg + 1
          note(msg) = 5
          inum(msg) = i
-         xpos(msg) = -5.8
+         xpos(msg) = -5.8_dp
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
 !        call messag(%ref(lpname(i)),10,-5.2,yabs)
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = lpname(i)
          imes(msg) = 10
-         xpos(msg) = -5.2
-         if (ivacum.eq.1) xpos(msg) = -2.2
+         xpos(msg) = -5.2_dp
+         if (ivacum.eq.1) xpos(msg) = -2.2_dp
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
   728 continue
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
       ibrdr = 1
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
       xlen = 3.0
       if (ivacum.eq.1) then
          xlen = 6.0
-         xphy = 4.7
+         xphy = 4.7_dp
       endif
       xstp = rmpi(magpri) - rmpi(1)
       ystp = chsmax - chsmin
@@ -4164,8 +4164,8 @@
 !--  plot chi2 for polarimetry                                     --
 !--------------------------------------------------------------------
       if (kstark.gt.1) then
-       chsmin=1.0e30
-       chsmax=-1.0e30
+       chsmin=1.0e30_dp
+       chsmax=-1.0e30_dp
        do 729 i=1,nstark
             chsmin=min(chigam(i),chsmin)
             chsmax=max(chigam(i),chsmax)
@@ -4188,8 +4188,8 @@
             yy(ii,nn) = chigam(ii)
          enddo
 !
-         chsmin=1.0e30
-         chsmax=-1.0e30
+         chsmin=1.0e30_dp
+         chsmax=-1.0e30_dp
          do 731 i=1,nstark
             anglem(i)=atand(tangam(jtime,i))
             anglec(i)=atand(cmgam(i,jtime))
@@ -4199,8 +4199,8 @@
             chsmax=max(anglec(i),chsmax)
   731    continue
          dangle=chsmax-chsmin
-         chsmax=chsmax+0.1*dangle
-         chsmin=chsmin-0.1*dangle
+         chsmax=chsmax+0.1_dp*dangle
+         chsmin=chsmin-0.1_dp*dangle
          dangle=(chsmax-chsmin)/3.
          isaxs = 2
          sorg = chsmin
@@ -4214,7 +4214,7 @@
          nn = nn + 1
          ncnct(nn) = -1
          nxy(nn) = nstark
-         sclpc(nn) = 0.7
+         sclpc(nn) = 0.7_dp
          do ii = 1, nxy(nn)
             xx(ii,nn) = ii
             yy(ii,nn) = anglem(ii)
@@ -4226,9 +4226,9 @@
             yy(ii,nn) = anglec(ii)
          enddo
          ibrdr = 1
-         xphy = 7.5
-         yphy = 6.1
-         hight = 0.12
+         xphy = 7.5_dp
+         yphy = 6.1_dp
+         hight = 0.12_dp
          nplen = 100
          nxlen = 100
          nylen = 100
@@ -4271,8 +4271,8 @@
 !--   plot P', FF', and Zm                                              --
 !-------------------------------------------------------------------------
       if (ivacum.gt.0) go to 17600
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do 17584 i=1,nitera
          curmin=min(curmin,czmaxi(i))
          curmax=max(curmax,czmaxi(i))
@@ -4294,8 +4294,8 @@
       enddo
       xdel=(xiter(nitera)-xiter(1))
       dcurn=curmax-curmin
-      curmax=curmax+0.06*dcurn
-      curmin=curmin-0.06*dcurn
+      curmax=curmax+0.06_dp*dcurn
+      curmin=curmin-0.06_dp*dcurn
       dcurn=(curmax-curmin)
       xmm=2.0
       yorg = curmin
@@ -4305,17 +4305,17 @@
 !---------------------------------------------------------------------
 !-- plot feedback currents                                          --
 !---------------------------------------------------------------------
-      if (abs(vcurfb(1)).le.1.e-6) go to 17593
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      if (abs(vcurfb(1)).le.1.e-6_dp) go to 17593
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do 17590 i=1,nitera
          czmcm(i)=tvfbrt(i)
          curmin=min(curmin,czmcm(i))
          curmax=max(curmax,czmcm(i))
 17590 continue
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
       isaxs = 2
       sorg = curmin
@@ -4338,16 +4338,16 @@
 !-- add DELZ iterations                                     --
 !-------------------------------------------------------------
       if (fitdelz) then
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do i=1,nitera
          czmcm(i)=cdelz(i)
          curmin=min(curmin,czmcm(i))
          curmax=max(curmax,czmcm(i))
       enddo
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
       isaxs = 2
       sorg = curmin
@@ -4370,9 +4370,9 @@
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ibrdr = 1
-      xphy = 4.2
-      yphy = 5.7
-      hight = 0.12
+      xphy = 4.2_dp
+      yphy = 5.7_dp
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -4402,18 +4402,18 @@
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
 !
-17594 curmin=1.0e+10
-      curmax=-1.0e+10
+17594 curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do 17595 i=1,nw
          curmin=min(curmin,pprime(i))
          curmax=max(curmax,pprime(i))
          xiter(i)=real(i-1,dp)/(nw-1)
 17595 continue
-      xdel=0.5
+      xdel=0.5_dp
       dcurn=curmax-curmin
-      if (abs(dcurn).le.1.e-4) dcurn=5.*curmax
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      if (abs(dcurn).le.1.e-4_dp) dcurn=5.*curmax
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
 !-----------------------------------------------------------------------c
 ! Initialize plot parameters  c
@@ -4428,17 +4428,17 @@
          xx(ii,1) = xiter(ii)
          yy(ii,1) = pprime(ii)
       enddo
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do 17597 i=1,nw
          czmcm(i)=ffprim(i)/tmu/twopi
          curmin=min(curmin,czmcm(i))
          curmax=max(curmax,czmcm(i))
 17597 continue
       dcurn=curmax-curmin
-      if (abs(dcurn).le.1.e-4) dcurn=5.*curmax
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      if (abs(dcurn).le.1.e-4_dp) dcurn=5.*curmax
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
       isaxs = 2
       sorg = curmin
@@ -4461,13 +4461,13 @@
       ncurve = nn
       ipag = 1
       iexit = 2
-      xabs= -0.5
-      xabs= -0.7
-      yabs= -0.8
+      xabs= -0.5_dp
+      xabs= -0.7_dp
+      yabs= -0.8_dp
 !
       if (ivacum.gt.0) go to 29999
       if ((icurrt.eq.2.or.icurrt.eq.5) &
-               .and.abs(brsp(nfcoil+1)).gt.1.e-10) then
+               .and.abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
          do 17598 i=nfcoil+1,nfcoil+kppcur
             xxnorm=brsp(i)/brsp(nfcoil+1)
             if (i.eq.nfcoil+1) then
@@ -4479,7 +4479,7 @@
                xpos(msg) = xabs
                ypos(msg) = yabs
                yabs = yabs - dyabs
-               ht(msg) = 0.13*0.7
+               ht(msg) = 0.13_dp*0.7_dp
             else
                write (text,18960) xxnorm
                msg = msg + 1
@@ -4489,7 +4489,7 @@
                xpos(msg) = xabs
                ypos(msg) = yabs
                yabs = yabs - dyabs
-               ht(msg) = 0.13*0.7
+               ht(msg) = 0.13_dp*0.7_dp
             endif
 17598    continue
          xxnorm=brsp(nfcoil+1)/darea
@@ -4505,7 +4505,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.13*0.7
+      ht(msg) = 0.13_dp*0.7_dp
       write (text,18983) condno
       msg = msg + 1
       note(msg) = 1
@@ -4514,7 +4514,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.13*0.7
+      ht(msg) = 0.13_dp*0.7_dp
 !
       pr=pres(1)/(.667*wplasm(jtime)/(vout(jtime)/1.e6))
       write (text,18981) pr
@@ -4525,7 +4525,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.13*0.7
+      ht(msg) = 0.13_dp*0.7_dp
 !
       if (abs(vcurfb(1)).gt.1.e-06) then
          write (text,18985)  (vcurfb(i),i=1,3)
@@ -4536,11 +4536,11 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.13*0.7
+         ht(msg) = 0.13_dp*0.7_dp
       endif
       if (kvtor.ge.1.and.kvtor.le.3) then
       if (icurrt.eq.5.and. &
-                   abs(brsp(nfcoil+1)).gt.1.e-10) then
+                   abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
          do i=nfnpcr+1,nfnpcr+kwwcur,2
             xxnorm=brsp(i)/brsp(nfcoil+1)
             if (i+1.gt.nfnpcr+kwwcur) then
@@ -4564,15 +4564,15 @@
             xpos(msg) = xabs
             ypos(msg) = yabs
             yabs = yabs - dyabs
-            ht(msg) = 0.13*0.7
+            ht(msg) = 0.13_dp*0.7_dp
          enddo
       endif
       endif
 !
-      xabs= 1.2
-      yabs= -0.8
+      xabs= 1.2_dp
+      yabs= -0.8_dp
       if ((icurrt.eq.2.or.icurrt.eq.5).and. &
-                   abs(brsp(nfcoil+1)).gt.1.e-10) then
+                   abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
          do 17599 i=nfcoil+1+kppcur,nfcoil+kppcur+kffcur
             xxnorm=brsp(i)/brsp(nfcoil+1)
             write (text,18970) xxnorm
@@ -4583,16 +4583,16 @@
             xpos(msg) = xabs
             ypos(msg) = yabs
             yabs = yabs - dyabs
-            ht(msg) = 0.13*0.7
+            ht(msg) = 0.13_dp*0.7_dp
 17599    continue
       endif
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ibrdr = 1
-      xphy = 4.2
-      yphy = 2.80
-!     yphy = 3.8
-      hight = 0.12
+      xphy = 4.2_dp
+      yphy = 2.80_dp
+!     yphy = 3.8_dp
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -4624,7 +4624,7 @@
 17600 continue
 !      call endpl(0)
 
-      xmm=1.6
+      xmm=1.6_dp
   730 continue
 29999 continue
 !-----------------------------------------------------------------------
@@ -4643,10 +4643,10 @@
 !-----------------------------------------------------------------------
 !--  limits of psi loops & probes                                     --
 !-----------------------------------------------------------------------
-      cslmin=1.0e30
-      cslmax=-1.0e30
-      silmin=1.0e30
-      silmax=-1.0e30
+      cslmin=1.0e30_dp
+      cslmax=-1.0e30_dp
+      silmin=1.0e30_dp
+      silmax=-1.0e30_dp
       z000=0.0
       do 750 i=1,nsilop
          cslmin=min(cslmin,csilop(i,jtime))
@@ -4662,10 +4662,10 @@
       cslmin=min(cslmin,silmin)
       cslmax=max(cslmax,silmax)
 !
-      cmpmin=1.0e30
-      cmpmax=-1.0e30
-      empmin=1.0e30
-      empmax=-1.0e30
+      cmpmin=1.0e30_dp
+      cmpmax=-1.0e30_dp
+      empmin=1.0e30_dp
+      empmax=-1.0e30_dp
       do 760 i=1,magpri
          cmpmin=min(cmpmin,cmpr2(i,jtime))
          cmpmax=max(cmpmax,cmpr2(i,jtime))
@@ -4687,7 +4687,7 @@
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       nxy(nn) = nsilop
       clearx(nn)='CYAN'
       do ii = 1, nxy(nn)
@@ -4700,7 +4700,7 @@
       nn = nn + 1
       markme(nn) = 18
       ncnct(nn) = -1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       nxy(nn) = nsilop
       clearx(nn)='PINK'
       do ii = 1, nxy(nn)
@@ -4715,9 +4715,9 @@
          write (96,*) si(i),expsi(i)
 42230 continue
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 1.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -4764,7 +4764,7 @@
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       nxy(nn) = magpri
       clearx(nn)='CYAN'
       do ii = 1, nxy(nn)
@@ -4775,7 +4775,7 @@
       nn = nn + 1
       markme(nn) = 18
       ncnct(nn) = -1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       clearx(nn)='PINK'
       nxy(nn) = magpri
       do ii = 1, nxy(nn)
@@ -4794,9 +4794,9 @@
          write (96,*) rmpi(i),expmp(i)
 42250 continue
   770 continue
-      xabs=-4.3
+      xabs=-4.3_dp
       yabs=3.0
-      dyabs = 0.22
+      dyabs = 0.22_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -4807,7 +4807,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.12
+      ht(msg) = 0.12_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -4816,7 +4816,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.12
+      ht(msg) = 0.12_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -4825,7 +4825,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.12
+      ht(msg) = 0.12_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -4834,12 +4834,12 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.12
+      ht(msg) = 0.12_dp
 
 !-----------------------------------------------------------------------
 !--  print out pointnames                                             --
 !-----------------------------------------------------------------------
-      yabs=1.5
+      yabs=1.5_dp
 !     call messag('       probe identification$',100,xabs,yabs)
       msg = msg + 1
       note(msg) = 1
@@ -4847,7 +4847,7 @@
       imes(msg) = 100
       xpos(msg) = xabs
       ypos(msg) = yabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
 !     call messag('no.      name        no.     name$',100,xabs,
 !     .yabs-.25)
       msg = msg + 1
@@ -4855,8 +4855,8 @@
       lmes(msg) = 'no.      name        no.     name$'
       imes(msg) = 100
       xpos(msg) = xabs
-      ypos(msg) = yabs-.25
-      ht(msg) = 0.10
+      ypos(msg) = yabs-.25_dp
+      ht(msg) = 0.10_dp
       yabs=1.0
       do 775 i=magpri67+1,magpri67+16
 !        call intno(i,xabs,yabs)
@@ -4865,19 +4865,19 @@
          inum(msg) = i
          xpos(msg) = xabs
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
 
-!        call messag(%ref(mpnam2(i)),10,-3.8,yabs)
+!        call messag(%ref(mpnam2(i)),10,-3.8_dp,yabs)
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = (mpnam2(i))
          imes(msg) = 10
-         xpos(msg) = -3.8
+         xpos(msg) = -3.8_dp
          ypos(msg) = yabs
-         ht(msg) = 0.07
-         yabs=yabs-.13
+         ht(msg) = 0.07_dp
+         yabs=yabs-.13_dp
   775 continue
-      xabs=-2.6
+      xabs=-2.6_dp
       yabs=1.0
       do 780 i=magpri67+17,magpri67+magpri322
 !        call intno(i,xabs,yabs)
@@ -4886,7 +4886,7 @@
          inum(msg) = i
          xpos(msg) = xabs
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
 !        call messag(%ref(mpnam2(i)),10,-2.0,yabs)
          msg = msg + 1
          note(msg) = 1
@@ -4894,13 +4894,13 @@
          imes(msg) = 10
          xpos(msg) = -2.0
          ypos(msg) = yabs
-         ht(msg) = 0.07
-         yabs=yabs-.13
+         ht(msg) = 0.07_dp
+         yabs=yabs-.13_dp
   780 continue
 !
-      xabs=-4.3
-      yabs=yabs-.5
-!     call height(.10)
+      xabs=-4.3_dp
+      yabs=yabs-.5_dp
+!     call height(.10_dp)
 !     call messag('     psi loop identification$',100,xabs,yabs)
       msg = msg + 1
       note(msg) = 1
@@ -4908,47 +4908,47 @@
       imes(msg) = 100
       xpos(msg) = xabs
       ypos(msg) = yabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
 !     call messag('no       name        no.     name$',100,xabs,
-!     .yabs-.25)
+!     .yabs-.25_dp)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = 'no       name        no.     name$'
       imes(msg) = 100
       xpos(msg) = xabs
-      ypos(msg) = yabs - 0.25
-      ht(msg) = 0.10
-!     call height(.07)
-      yabs=yabs-.37
+      ypos(msg) = yabs - 0.25_dp
+      ht(msg) = 0.10_dp
+!     call height(.07_dp)
+      yabs=yabs-.37_dp
       yyabs=yabs
       do 782 i=1,21
-         yabs=yabs-.13
+         yabs=yabs-.13_dp
 !        call intno(i,xabs,yabs)
          msg = msg + 1
          note(msg) = 5
          inum(msg) = i
          xpos(msg) = xabs
          ypos(msg) = yabs
-         ht(msg) = 0.07
-!        call messag(%ref(lpname(i)),10,-3.8,yabs)
+         ht(msg) = 0.07_dp
+!        call messag(%ref(lpname(i)),10,-3.8_dp,yabs)
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = (lpname(i))
          imes(msg) = 10
-         xpos(msg) = -3.8
+         xpos(msg) = -3.8_dp
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
   782 continue
       yabs=yyabs
       do 785 i=22,nsilop
-         yabs=yabs-.13
+         yabs=yabs-.13_dp
 !        call intno(i,-2.6,yabs)
          msg = msg + 1
          note(msg) = 5
          inum(msg) = i
-         xpos(msg) = -2.6
+         xpos(msg) = -2.6_dp
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
 !        call messag(%ref(lpname(i)),10,-2.0,yabs)
          msg = msg + 1
          note(msg) = 1
@@ -4956,12 +4956,12 @@
          imes(msg) = 10
          xpos(msg) = -2.0
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
   785 continue
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 5.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -5187,8 +5187,8 @@
       if (kprfit.le.0) go to 890
       if (npress.le.0) go to 890
       if (itek.eq.1) call tekall(4010,960,0,0,0)
-      chsmin=1.0e+10
-      chsmax=-1.0e+10
+      chsmin=1.0e+10_dp
+      chsmax=-1.0e+10_dp
       pressbb=0.0
       dsi=1.0_dp/(nw-1)
       do 835 i=1,nw
@@ -5211,7 +5211,7 @@
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       nxy(nn) = npress
       ncnct(nn) = 1
       do ii = 1, nxy(nn)
@@ -5219,9 +5219,9 @@
          yy(ii,nn) = saipre(ii)
       enddo
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 1.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -5261,8 +5261,8 @@
 !----------------------------------------------------------------------
 !--  plot the pressure profile                                       --
 !----------------------------------------------------------------------
-      chsmin=1.e10
-      chsmax=-1.e10
+      chsmin=1.e10_dp
+      chsmax=-1.e10_dp
       do 870 i=1,npress
          chsmin=min(workd(i),chsmin)
          chsmax=max(workd(i)+sigpre(i),chsmax)
@@ -5276,14 +5276,14 @@
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       nxy(nn) = nw
       do ii = 1, nxy(nn)
          xx(ii,nn) = workb(ii)
          yy(ii,nn) = workc(ii)
       enddo
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       markme(nn) = 15
       ncnct(nn) = -1
       nxy(nn) = npress
@@ -5301,7 +5301,7 @@
          workc(1)=saipre(i)
          workc(2)=saipre(i)
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          markme(nn) = 3
          nxy(nn) = 2
          ncnct(nn) = 1
@@ -5374,7 +5374,7 @@
                do 42320 i=1,npteth+nption
                   workd(i)=seval(npress,workc(i),saipre, &
                   pressr,bworkb,cworkb,dworkb)
-                  ydum=.10*workd(i)
+                  ydum=.10_dp*workd(i)
                   ydum=max(ydum,ydumin)
                   write (62,*) workc(i),workd(i),xdum,ydum
 42320          continue
@@ -5434,7 +5434,7 @@
                   delvol=(voln(i+1)**2-voln(i)**2)
                   bimbf=bimbf+(pbimf(i)+pbimf(i+1))*delvol
 42337          continue
-               bimbf=bimbf*0.5*vout(jtime)/1.e6*1.5
+               bimbf=bimbf*0.5_dp*vout(jtime)/1.e6_dp*1.5_dp
                bimbf=bimbf*betat(jtime)/wplasm(jtime)
 !-----------------------------------------------------------------------
 !-- now beam data                                                     --
@@ -5483,7 +5483,7 @@
                   delvol=(voln(i+1)**2-voln(i)**2)
                   bimbe=bimbe+(workc(i)+workc(i+1))*delvol
 42723          continue
-               bimbe=bimbe*0.5*vout(jtime)/1.e6*1.5
+               bimbe=bimbe*0.5_dp*vout(jtime)/1.e6_dp*1.5_dp
                bimbe=bimbe*betat(jtime)/wplasm(jtime)
             endif
 !-----------------------------------------------------------------------
@@ -5497,9 +5497,9 @@
 !-----------------------------------------------------------------------
 !--  end of KWRIPRE=1 option                                          --
 !-----------------------------------------------------------------------
-      xabs=-4.5
+      xabs=-4.5_dp
       yabs=3.0
-      dyabs = 0.22
+      dyabs = 0.22_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -5695,9 +5695,9 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 5.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -5750,7 +5750,7 @@
       almax=rgrid(nw)
       blmin=zgrid(1)
       blmax=zgrid(nh)
-      xll = 2.8
+      xll = 2.8_dp
       yll = xll*(blmax-blmin)/(almax-almin)
 !-----------------------------------------------------------------------c
 ! Initialize plot parameters  c
@@ -5801,11 +5801,11 @@
       call pltcol(mfcoil,rf,zf,wf,hf,af,af2,n11, &
          nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
-      xphy = 7.625
-      yphy = 0.5
+      xphy = 7.625_dp
+      yphy = 0.5_dp
       xabs=-7.0
-      yabs=7.85
-      dyabs = 0.22
+      yabs=7.85_dp
+      dyabs = 0.22_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -5886,13 +5886,13 @@
       lmes(msg) = 'Pt contours (nt/m2)$'
       imes(msg) = 100
       xpos(msg) = 0.0
-      ypos(msg) = -.35
-      ht(msg) = 0.16
+      ypos(msg) = -.35_dp
+      ht(msg) = 0.16_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ncurve = nn
       ibrdr = 1
-      hight = 0.10
+      hight = 0.10_dp
       nplen = 100
       nxlen = 0
       nylen = 0
@@ -5924,8 +5924,8 @@
       do i=1,nw
          worka(i)=bfield(i,nh/2+1)
       enddo
-      cslmin=1.0e+30
-      cslmax=1.0e-30
+      cslmin=1.0e+30_dp
+      cslmax=1.0e-30_dp
       do i=1,nw
          cslmin=min(worka(i),cslmin)
          cslmax=max(worka(i),cslmax)
@@ -5934,11 +5934,11 @@
 ! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
-      xphy = 7.625
-      yphy = 0.5
+      xphy = 7.625_dp
+      yphy = 0.5_dp
       iorel = 1
       xorl = 0.0
-      yorl = yll + 0.5
+      yorl = yll + 0.5_dp
       nn = nn + 1
       nxy(nn) = nw
       do ii = 1, nxy(nn)
@@ -5950,17 +5950,17 @@
       lmes(msg) = 'R(m)$'
       imes(msg) = 100
       xpos(msg) = 1.0
-      ypos(msg) = -.25
-      ht(msg) = 0.10
+      ypos(msg) = -.25_dp
+      ht(msg) = 0.10_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ncurve = nn
       ibrdr = 1
-      hight = 0.10
+      hight = 0.10_dp
       nplen = -100
       nxlen = 100
       nylen = 100
-      ylen = xll*.67
+      ylen = xll*.67_dp
       xtitle = '$'
       ytitle = 'Pt(nt/m2)$'
       iexit = 1
@@ -5988,8 +5988,8 @@
 !--  plot Pw and fitted values                                       --
 !----------------------------------------------------------------------
       if (kprfit.ne.3) go to 37890
-      chsmin=1.0e+10
-      chsmax=-1.0e+10
+      chsmin=1.0e+10_dp
+      chsmax=-1.0e+10_dp
       pressbb=0.0
       dsi=1.0_dp/(nw-1)
       do i=1,nw
@@ -6013,7 +6013,7 @@
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       nxy(nn) = npresw
       ncnct(nn) = 1
       do ii = 1, nxy(nn)
@@ -6023,12 +6023,12 @@
       ibrdr = 1
       xphy = 4.0
       yphy = 1.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
-      xlen = 2.8
-      ylen = 2.8
+      xlen = 2.8_dp
+      ylen = 2.8_dp
       xstp = 0.0
       ystp = 0.0
       intax = 1
@@ -6059,8 +6059,8 @@
 !----------------------------------------------------------------------
 !--  plot the pressure profile                                       --
 !----------------------------------------------------------------------
-      chsmin=1.e10
-      chsmax=-1.e10
+      chsmin=1.e10_dp
+      chsmax=-1.e10_dp
       do i=1,npresw
          chsmin=min(workd(i),chsmin)
          chsmax=max(workd(i)+sigprw(i),chsmax)
@@ -6073,14 +6073,14 @@
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       nxy(nn) = nw
       do ii = 1, nxy(nn)
          xx(ii,nn) = workb(ii)
          yy(ii,nn) = workc(ii)
       enddo
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       markme(nn) = 15
       ncnct(nn) = -1
       nxy(nn) = npresw
@@ -6097,7 +6097,7 @@
          workc(1)=saiprw(i)
          workc(2)=saiprw(i)
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          markme(nn) = 3
          nxy(nn) = 2
          ncnct(nn) = 1
@@ -6136,12 +6136,12 @@
       ibrdr = 1
       xphy = 4.0
       yphy = 5.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
-      xlen = 2.8
-      ylen = 2.8
+      xlen = 2.8_dp
+      ylen = 2.8_dp
       xstp = 0.0
       ystp = 0.0
       idot = 1
@@ -6174,8 +6174,8 @@
 !----------------------------------------------------------------------
       if (kprfit.ne.2) go to 21000
       if (itek.eq.1) call tekall(4010,960,0,0,0)
-      chsmin=1.0e+10
-      chsmax=-1.0e+10
+      chsmin=1.0e+10_dp
+      chsmax=-1.0e+10_dp
       if (nptef.gt.0) then
          do 20035 i=1,nw
             xn=worke(i)
@@ -6205,7 +6205,7 @@
       call init2d
       if (nptef.gt.0) then
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          nxy(nn) = nw
          do ii = 1, nxy(nn)
             xx(ii,nn) = workb(ii)
@@ -6216,7 +6216,7 @@
       if (kpressb.eq.1) ndodo=npress-1
       nn = nn + 1
       ncnct(nn) = -1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       nxy(nn) = ndodo
       do ii = 1, nxy(nn)
          xx(ii,nn) = saipre(ii)
@@ -6239,7 +6239,7 @@
          workc(1)=saipre(i)
          workc(2)=saipre(i)
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          markme(nn) = 3
          ncnct(nn) = 1
          nxy(nn) = 2
@@ -6252,9 +6252,9 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 1.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -6313,7 +6313,7 @@
       chsmin=0.0
       if (npnef.gt.0) then
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          nxy(nn) = nw
          do ii = 1, nxy(nn)
             xx(ii,nn) = workb(ii)
@@ -6322,7 +6322,7 @@
       endif
 
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       ncnct(nn) = -1
       nxy(nn) = ndodo
       do ii = 1, nxy(nn)
@@ -6347,7 +6347,7 @@
          workc(1)=saipre(i)
          workc(2)=saipre(i)
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          markme(nn) = 3
          ncnct(nn) = 1
          nxy(nn) = 2
@@ -6357,9 +6357,9 @@
          enddo
 20072 continue
 !
-      xabs=-4.5
+      xabs=-4.5_dp
       yabs=3.0
-      dyabs = 0.22
+      dyabs = 0.22_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -6447,9 +6447,9 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 5.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -6483,8 +6483,8 @@
       endif   !   itek
 !
       if (itek.eq.1) call tekall(4010,960,0,0,0)
-      chsmin=1.0e+10
-      chsmax=-1.0e+10
+      chsmin=1.0e+10_dp
+      chsmax=-1.0e+10_dp
       if (nptionf.ge.50) &
       call zpline(nption,xsiion,tionex,bwork,cwork,dwork)
       do 20135 i=1,nw
@@ -6520,7 +6520,7 @@
          workj(i)=seval(nw,xsiion(i),worke,workb,bworkb,cworkb,dworkb)
 42510 continue
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       ncnct(nn) = -1
       nxy(nn) = nption+1
       do ii = 1, nxy(nn)
@@ -6533,7 +6533,7 @@
          workc(1)=workj(i)
          workc(2)=workj(i)
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          markme(nn) = 3
          ncnct(nn) = 1
          nxy(nn) = 2
@@ -6546,7 +6546,7 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 1.0
       hight = 0.14_dp
       nplen = 100
@@ -6606,7 +6606,7 @@
 42540 continue
       chsmin=0.0
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       ncnct(nn) = -1
       nxy(nn) = npress
       do ii = 1, nxy(nn)
@@ -6642,7 +6642,7 @@
             do 42563 i=1,nw
                xn=sivol(i)
                workc(i)=seval(nbeam,xn,sibeam,dnbeam,bwork,cwork,dwork)
-               workc(i)=workc(i)*1.e19
+               workc(i)=workc(i)*1.e19_dp
 42563       continue
          endif
          xdum=0.0
@@ -6657,9 +6657,9 @@
          close(unit=62)
       endif
 !
-      xabs=-4.5
+      xabs=-4.5_dp
       yabs=3.0
-      dyabs = 0.22
+      dyabs = 0.22_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -6720,7 +6720,7 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 5.0
       hight = 0.14_dp
       nplen = 100
@@ -6757,11 +6757,11 @@
 !
       if (kplotpr.eq.0) go to 21000
       if (itek.eq.1) call tekall(4010,960,0,0,0)
-      chsmin=1.0e+10
-      chsmax=-1.0e+10
+      chsmin=1.0e+10_dp
+      chsmax=-1.0e+10_dp
       delz=(zuperts(jtime)-zlowerts)/(nw-1)*0.01_dp
       do 20335 i=1,nw
-         worke(i)=zlowerts*0.01+(i-1)*delz
+         worke(i)=zlowerts*0.01_dp+(i-1)*delz
          call seva2d(bkx,lkx,bky,lky,c,rmajts,worke(i),pds,ier,n111)
          xn=(pds(1)-simag)/(psibry-simag)
          workb(i)=xn
@@ -6793,7 +6793,7 @@
          yy(ii,nn) = workc(ii)
       enddo
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       ncnct(nn) = -1
       nxy(nn) = npteth
       do ii = 1, nxy(nn)
@@ -6806,7 +6806,7 @@
          workc(1)=zteth(i)
          workc(2)=zteth(i)
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          markme(nn) = 3
          ncnct(nn) = 1
          nxy(nn) = 2
@@ -6815,7 +6815,7 @@
             yy(ii,nn) = workd(ii)
          enddo
 20350 continue
-      workc(1)=zuperts(jtime)*0.01
+      workc(1)=zuperts(jtime)*0.01_dp
       workc(2)=workc(1)
       workd(1)=chsmin
       workd(2)=chsmax
@@ -6829,7 +6829,7 @@
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 1.0
       hight = 0.14_dp
       nplen = 100
@@ -6893,7 +6893,7 @@
          yy(ii,nn) = workc(ii)
       enddo
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       ncnct(nn) = -1
       nxy(nn) = npneth
       do ii = 1, nxy(nn)
@@ -6906,7 +6906,7 @@
          workc(1)=zteth(i)
          workc(2)=zteth(i)
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          markme(nn) = 3
          ncnct(nn) = 1
          nxy(nn) = 2
@@ -6915,7 +6915,7 @@
             yy(ii,nn) = workd(ii)
          enddo
 20472 continue
-      workc(1)=zuperts(jtime)*0.01
+      workc(1)=zuperts(jtime)*0.01_dp
       workc(2)=workc(1)
       workd(1)=chsmin
       workd(2)=chsmax
@@ -6927,7 +6927,7 @@
          yy(ii,nn) = workd(ii)
       enddo
 !
-      xabs=-4.5
+      xabs=-4.5_dp
       yabs=3.0
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
@@ -7027,7 +7027,7 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 5.0
       hight = 0.14_dp
       nplen = 100
@@ -7092,7 +7092,7 @@
          call init2d
          do 910 j=1,iabs(nextra)
             jj=(k-1)*iabs(nextra)+j
-!           call mrscod(0.5,j*2,ratray)
+!           call mrscod(0.5_dp,j*2,ratray)
             nn = nn + 1
             nxy(nn) = npxtra(jj)
             do ii = 1, nxy(nn)
@@ -7101,7 +7101,7 @@
                rat(ii) = ratray(ii)
             enddo
             mrc(nn) = 1
-            tlen(nn) = 0.5
+            tlen(nn) = 0.5_dp
             nmrk(nn) = j*2
 !           call rlint(jj,fpxtra(npxtra(jj),jj),bpxtra(npxtra(jj),jj))
             msg = msg + 1
@@ -7115,7 +7115,7 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
          ibrdr = 1
-         xphy = 1.5
+         xphy = 1.5_dp
          yphy = 5.0
          hight = 0.14_dp
          nplen = 100
@@ -7156,7 +7156,7 @@
          call init2d
          do 950 j=1,iabs(nextra)
             jj=(k-1)*iabs(nextra)+j
-!           call mrscod(0.5,j*2,ratray)
+!           call mrscod(0.5_dp,j*2,ratray)
             nn = nn + 1
             nxy(nn) = npxtra(jj)
             do ii = 1, nxy(nn)
@@ -7165,7 +7165,7 @@
                rat(ii) = ratray(ii)
             enddo
             mrc(nn) = 1
-            tlen(nn) = 0.5
+            tlen(nn) = 0.5_dp
             nmrk(nn) = j*2
 !           call rlint(jj,fpxtra(npxtra(jj),jj),flxtra(npxtra(jj),jj))
             msg = msg + 1
@@ -7180,7 +7180,7 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
          ibrdr = 1
-         xphy = 1.5
+         xphy = 1.5_dp
          yphy = 5.0
          hight = 0.14_dp
          nplen = 100
@@ -7234,7 +7234,7 @@
       almax=rgrid(nw)
       blmin=zgrid(1)
       blmax=zgrid(nh)
-      xll = 2.8
+      xll = 2.8_dp
       yll = xll*(blmax-blmin)/(almax-almin)
 !-----------------------------------------------------------------------c
 ! Initialize plot parameters             c
@@ -7249,8 +7249,8 @@
       lbflg = 'NOLABELS'
       ithk = 1
       ipri = 1
-      cslmin=1.0e+30
-      cslmax=1.0e-30
+      cslmin=1.0e+30_dp
+      cslmax=1.0e-30_dp
       do 1030 i=1,nw
          do 1030 j=1,nh
             cslmin=min(bfield(i,j),cslmin)
@@ -7298,8 +7298,8 @@
 
  1050 continue
       xabs=-3.
-      yabs=7.85
-      dyabs = 0.16
+      yabs=7.85_dp
+      dyabs = 0.16_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -7310,7 +7310,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       if (kdata.eq.2) then
       write (text,8948) ifname(jtime)
       msg = msg + 1
@@ -7320,10 +7320,10 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       endif
-      xabs=.5
-      yabs=7.8
+      xabs=.5_dp
+      yabs=7.8_dp
       write (text,8960)uday
       msg = msg + 1
       note(msg) = 1
@@ -7332,9 +7332,9 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
-      xabs=4.05
-      yabs=7.85
+      ht(msg) = 0.10_dp
+      xabs=4.05_dp
+      yabs=7.85_dp
       write (text,9000)ishot
       msg = msg + 1
       note(msg) = 1
@@ -7343,7 +7343,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -7352,46 +7352,46 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = 'psi contours (mv-s/r)$'
       imes(msg) = 100
       xpos(msg) = 0.0
-      ypos(msg) = -.35
-      ht(msg) = 0.16
+      ypos(msg) = -.35_dp
+      ht(msg) = 0.16_dp
 
       if (iconsi.lt.5) then
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = 'poloidal field (g)$'
          imes(msg) = 100
-         xpos(msg) = 3.8
-         ypos(msg) = -.35
-         ht(msg) = 0.16
+         xpos(msg) = 3.8_dp
+         ypos(msg) = -.35_dp
+         ht(msg) = 0.16_dp
       else
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = 'poloidal field (g)$'
          imes(msg) = 100
-         xpos(msg) = -3.4
-         ypos(msg) = -.35
-         ht(msg) = 0.16
+         xpos(msg) = -3.4_dp
+         ypos(msg) = -.35_dp
+         ht(msg) = 0.16_dp
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = 'total B field (g)$'
          imes(msg) = 100
-         xpos(msg) = 3.8
-         ypos(msg) = -.35
-         ht(msg) = 0.16
+         xpos(msg) = 3.8_dp
+         ypos(msg) = -.35_dp
+         ht(msg) = 0.16_dp
       endif
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ncurve = nn
       ibrdr = 1
-      xphy = 4.1
-      yphy = 0.5
-      hight = 0.10
+      xphy = 4.1_dp
+      yphy = 0.5_dp
+      hight = 0.10_dp
       nplen = 100
       nxlen = 0
       nylen = 0
@@ -7423,8 +7423,8 @@
       do i=1,nw
          worka(i)=bfield(i,nh/2+1)
       enddo
-      cslmin=1.0e+30
-      cslmax=1.0e-30
+      cslmin=1.0e+30_dp
+      cslmax=1.0e-30_dp
       do i=1,nw
          cslmin=min(worka(i),cslmin)
          cslmax=max(worka(i),cslmax)
@@ -7435,7 +7435,7 @@
       call init2d
       iorel = 1
       xorl = 0.0
-      yorl = yll + 0.5
+      yorl = yll + 0.5_dp
       nn = nn + 1
       nxy(nn) = nw
       do ii = 1, nxy(nn)
@@ -7447,45 +7447,45 @@
       lmes(msg) = 'R(m)$'
       imes(msg) = 100
       xpos(msg) = 1.0
-      ypos(msg) = -.25
-      ht(msg) = 0.10
+      ypos(msg) = -.25_dp
+      ht(msg) = 0.10_dp
 
       if (iconsi.lt.5) then
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = 'R(m))$'
          imes(msg) = 100
-         xpos(msg) = 4.8
-         ypos(msg) = -.25
-         ht(msg) = 0.10
+         xpos(msg) = 4.8_dp
+         ypos(msg) = -.25_dp
+         ht(msg) = 0.10_dp
       else
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = 'R(m)$'
          imes(msg) = 100
-         xpos(msg) = -2.4
-         ypos(msg) = -.25
-         ht(msg) = 0.10
+         xpos(msg) = -2.4_dp
+         ypos(msg) = -.25_dp
+         ht(msg) = 0.10_dp
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = 'R(m)$'
          imes(msg) = 100
-         xpos(msg) = 4.8
-         ypos(msg) = -.25
-         ht(msg) = 0.10
+         xpos(msg) = 4.8_dp
+         ypos(msg) = -.25_dp
+         ht(msg) = 0.10_dp
       endif
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
       ncurve = nn
       ibrdr = 1
-      xphy = 4.1
-      yphy = 0.5
-      hight = 0.10
+      xphy = 4.1_dp
+      yphy = 0.5_dp
+      hight = 0.10_dp
       nplen = -100
       nxlen = 100
       nylen = 100
-      ylen = xll*.67
+      ylen = xll*.67_dp
       ixtck = 2
       iytck = 2
       igridx = 2
@@ -7537,7 +7537,7 @@
             write (nttyo,9910) ier,rw,rh
             return
  1230       dumnow=sqrt(pds(2)**2+pds(3)**2)
-            bfield(iw,ih)=(dumnow)/rgrid(iw)*1.e4
+            bfield(iw,ih)=(dumnow)/rgrid(iw)*1.e4_dp
             if (ih.eq.nh/2+1) worka(iw)=bfield(iw,ih)
             if (xpsi(kk).gt.1.0.or.ivacum.gt.0) go to 1233
             fnow=seval(nw,xpsi(kk),voln,fpol,bvoln,cvoln,dvoln)
@@ -7560,8 +7560,8 @@
       mode = 'SOLID'
       lbflg = 'NOLABELS'
       xdv=6.
-      cslmin=1.0e+30
-      cslmax=1.0e-30
+      cslmin=1.0e+30_dp
+      cslmax=1.0e-30_dp
       do 1254 i=1,nw
          do 1254 j=1,nh
             cslmin=min(bfield(i,j),cslmin)
@@ -7579,12 +7579,12 @@
       nxy(nn) = 1
       markme(nn) = 8
       ncnct(nn) = -1
-      sclpc(nn) = 1.75
+      sclpc(nn) = 1.75_dp
       xx(1,nn) = rmaxis
       yy(1,nn) = zmaxis
       if (ivesel.le.0) then
          nn = nn + 1
-         thcrv(nn) = 0.02
+         thcrv(nn) = 0.02_dp
          nxy(nn) = limitr
          do ii = 1, nxy(nn)
             xx(ii,nn) = xlim(ii)
@@ -7614,9 +7614,9 @@
       if (itek.ge.5.and.idotek.eq.0) then
       ncurve = nn
       ibrdr = 1
-      xphy = 7.625
-      yphy = 0.5
-      hight = 0.10
+      xphy = 7.625_dp
+      yphy = 0.5_dp
+      hight = 0.10_dp
       nplen = -100
       nxlen = 0
       nylen = 0
@@ -7651,7 +7651,7 @@
       call init2d
       iorel = 1
       xorl = 0.0
-      yorl = yll + 0.5
+      yorl = yll + 0.5_dp
       nn = nn + 1
       nxy(nn) = nw
       do ii = 1, nxy(nn)
@@ -7660,12 +7660,12 @@
       enddo
       if (iconsi.ge.5) then
       do i=1,nw
-         dumnow=1.e4*bcentr(jtime)*rcentr/rgrid(i)
+         dumnow=1.e4_dp*bcentr(jtime)*rcentr/rgrid(i)
          worka(i)=abs(dumnow)
       enddo
 !
-      cslmin=1.0e+30
-      cslmax=1.0e-30
+      cslmin=1.0e+30_dp
+      cslmax=1.0e-30_dp
       do i=1,nw
                cslmin=min(worka(i) ,cslmin)
                cslmax=max(worka(i) ,cslmax)
@@ -7682,7 +7682,7 @@
                cslmin=min(worka(i) ,cslmin)
                cslmax=max(worka(i) ,cslmax)
       enddo
-      delcsl=0.10*(cslmax-cslmin)
+      delcsl=0.10_dp*(cslmax-cslmin)
       cslmax=cslmax+delcsl
       cslmin=cslmin-delcsl
       endif
@@ -7690,10 +7690,10 @@
       if (itek.ge.5.and.idotek.eq.0) then
       ncurve = nn
       ibrdr = 1
-      xphy = 7.625
-      yphy = 0.5
-      hight = 0.10
-      ylen = xll*.67
+      xphy = 7.625_dp
+      yphy = 0.5_dp
+      hight = 0.10_dp
+      ylen = xll*.67_dp
       nplen = -100
       nxlen = 100
       nylen = 100
@@ -7740,7 +7740,7 @@
                write (nttyo,9910) ier,rw,rh
                return
 12599    dumnow=sqrt(pds(2)**2+pds(3)**2)
-12501    bfield(iw,ih)=(dumnow)/rgrid(iw)*1.e4
+12501    bfield(iw,ih)=(dumnow)/rgrid(iw)*1.e4_dp
 !-----------------------------------------------------------------------c
 ! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
@@ -7754,8 +7754,8 @@
          lbflg = 'NOLABELS'
          ithk = 1
          ipri = 1
-         cslmin=1.0e+30
-         cslmax=1.0e-30
+         cslmin=1.0e+30_dp
+         cslmax=1.0e-30_dp
          do 12541 i=1,nw
             do 12541 j=1,nh
                cslmin=min(bfield(i,j),cslmin)
@@ -7767,14 +7767,14 @@
          nn = nn + 1
          icont(nn)=1
          markme(nn) = 8
-         sclpc(nn) = 1.75
+         sclpc(nn) = 1.75_dp
          ncnct(nn) = -1
          nxy(nn) = 1
          xx(1,nn) = rmaxis
          yy(1,nn) = zmaxis
          if (ivesel.le.0) then
             nn = nn + 1
-            thcrv(nn) = 0.02
+            thcrv(nn) = 0.02_dp
             nxy(nn) = limitr
             do ii = 1, nxy(nn)
                xx(ii,nn) = xlim(ii)
@@ -7807,9 +7807,9 @@
 
          ncurve = nn
          ibrdr = 1
-         xphy = 0.675
-         yphy = 0.5
-         hight = 0.10
+         xphy = 0.675_dp
+         yphy = 0.5_dp
+         hight = 0.10_dp
          nplen = 100
          nxlen = 0
          nylen = 0
@@ -7845,7 +7845,7 @@
          call init2d
          iorel = 1
          xorl = 0.0
-         yorl = yll + 0.5
+         yorl = yll + 0.5_dp
          do i=1,nw
             worka(i)=bfield(i,nh/2+1)
          enddo
@@ -7855,8 +7855,8 @@
             xx(ii,nn) = rgrid(ii)
             yy(ii,nn) = worka(ii)
          enddo
-         cslmin=1.0e+30
-         cslmax=1.0e-30
+         cslmin=1.0e+30_dp
+         cslmax=1.0e-30_dp
          do i=1,nw
                cslmin=min(worka(i) ,cslmin)
                cslmax=max(worka(i) ,cslmax)
@@ -7864,15 +7864,15 @@
          z000=0.0
          cslmin=min(cslmin   ,z000  )
          cslmax=max(cslmax   ,z000  )
-         delcsl=0.10*(cslmax-cslmin)
+         delcsl=0.10_dp*(cslmax-cslmin)
          cslmax=cslmax+delcsl
          cslmin=cslmin-delcsl
 !
          nn=nn+1
          ndshme(nn) = 1
          nxy(nn)=2
-         xx(1,nn)=rgrid(1)+0.0001
-         xx(2,nn)=rgrid(nw)-0.0001
+         xx(1,nn)=rgrid(1)+0.0001_dp
+         xx(2,nn)=rgrid(nw)-0.0001_dp
          yy(1,nn)=0.0
          yy(2,nn)=0.0
 !
@@ -7880,10 +7880,10 @@
 
          ncurve = nn
          ibrdr = 1
-         xphy = 0.675
-         yphy = 0.5
-         hight = 0.10
-         ylen = xll*.67
+         xphy = 0.675_dp
+         yphy = 0.5_dp
+         hight = 0.10_dp
+         ylen = xll*.67_dp
          nplen = -100
          nxlen = 100
          nylen = 100
@@ -7928,19 +7928,19 @@
                         call eestore
       if (ivacum.gt.0) go to 13377
       call init2d
-      xmm=1.5
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      xmm=1.5_dp
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do i=1,nw
          curmin=min(curmin,pprime(i))
          curmax=max(curmax,pprime(i))
          xiter(i)=real(i-1,dp)/(nw-1)
       enddo    
-      xdel=0.5
+      xdel=0.5_dp
       dcurn=curmax-curmin
-      if (abs(dcurn).le.1.e-4) dcurn=5.*curmax
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      if (abs(dcurn).le.1.e-4_dp) dcurn=5.*curmax
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
       yorg = curmin
       ystp = dcurn
@@ -7956,9 +7956,9 @@
       ipag = 0
       iexit = 1
       xabs=-6.0
-      yabs=1.5
-      dyabs = 0.28
-      dyabs = 0.22
+      yabs=1.5_dp
+      dyabs = 0.28_dp
+      dyabs = 0.22_dp
       write(text,8950) trim(ch1),trim(ch2),(mfvers(i),i=1,2)
       msg = msg + 1
       note(msg) = 1
@@ -8005,7 +8005,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       msg = msg + 1
 !
       pr=pres(1)/(.667*wplasm(jtime)/(vout(jtime)/1.e6))
@@ -8016,7 +8016,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       msg = msg + 1
 !
       write(text,1002)kppfnc,kppknt,pptens 
@@ -8027,7 +8027,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       write(text,"(' ppknt         ppbdry           pp2bdry ')")
       msg = msg + 1
       note(msg) = 1
@@ -8036,7 +8036,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       write(text,"('-----------------------------------------')")
       msg = msg + 1
       note(msg) = 1
@@ -8045,7 +8045,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       do i=1,kppknt
       write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") ppknt(i),ppbdry(i),pp2bdry(i)
       msg = msg + 1
@@ -8055,7 +8055,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       enddo
       yabs = yabs - dyabs
 
@@ -8068,7 +8068,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       write(text,"(' ffknt         ffbdry           ff2bdry ')")
       msg = msg + 1
       note(msg) = 1
@@ -8077,7 +8077,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       write(text,"('-----------------------------------------')")
       msg = msg + 1
       note(msg) = 1
@@ -8086,7 +8086,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       do i=1,kffknt
       write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") ffknt(i),ffbdry(i),ff2bdry(i)
       msg = msg + 1
@@ -8096,7 +8096,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       enddo
       yabs = yabs - dyabs
 
@@ -8109,7 +8109,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       write(text,"(' wwknt         wwbdry           ww2bdry ')")
       msg = msg + 1
       note(msg) = 1
@@ -8118,7 +8118,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       write(text,"('-----------------------------------------')")
       msg = msg + 1
       note(msg) = 1
@@ -8127,7 +8127,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       if (kwwknt.gt.0) then
       do i=1,kwwknt
       write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") wwknt(i),wwbdry(i),ww2bdry(i)
@@ -8138,7 +8138,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       enddo
       yabs = yabs - dyabs
       endif
@@ -8153,7 +8153,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       write(text,1006) 
  1006 format('----------------------------------------------------------')
       msg = msg + 1
@@ -8163,7 +8163,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       pedgea=pedge/darea
       pedgep=pedgea/pe_width/sidif
       write(text,"(' ',f4.2,4x,g15.5,2x,g15.5,2x,g15.5)") &
@@ -8175,7 +8175,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       endif
 !
       if (kedgef.gt.0) then
@@ -8187,7 +8187,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       write(text,"('-----------------------------------------')")
       msg = msg + 1
       note(msg) = 1
@@ -8196,7 +8196,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") fe_psin,fe_width,f2edge
       msg = msg + 1
       note(msg) = 1
@@ -8205,7 +8205,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       endif
       write(text,9852) psiecn, dpsiecn
       msg = msg + 1
@@ -8215,7 +8215,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       write(text,9853) cjeccd
       msg = msg + 1
       note(msg) = 1
@@ -8224,7 +8224,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       write(text,9857) betped, betnped
       msg = msg + 1
       note(msg) = 1
@@ -8233,11 +8233,11 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ibrdr = 1
-      xphy = 6.5
+      xphy = 6.5_dp
       yphy = 6.0
       hight = 0.14_dp
       nplen = 100
@@ -8269,20 +8269,20 @@
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
       call init2d
-      xmm=1.6
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      xmm=1.6_dp
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do i=1,nw
          czmcm(i)=ffprim(i)/tmu/twopi
          curmin=min(curmin,czmcm(i))
          curmax=max(curmax,czmcm(i))
          xiter(i)=real(i-1,dp)/(nw-1)
       enddo
-      xdel=0.5
+      xdel=0.5_dp
       dcurn=curmax-curmin
-      if (abs(dcurn).le.1.e-4) dcurn=5.*curmax
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      if (abs(dcurn).le.1.e-4_dp) dcurn=5.*curmax
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
       yorg = curmin
       ystp = dcurn
@@ -8298,14 +8298,14 @@
       ipag = 0
       iexit = 1
       if (kvtor.eq.0) iexit = 2
-      xabs=-5.5
-      yabs=1.5
-      dyabs = 0.28
+      xabs=-5.5_dp
+      yabs=1.5_dp
+      dyabs = 0.28_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ibrdr = 1
-      xphy = 6.5
-      yphy = 3.5
+      xphy = 6.5_dp
+      yphy = 3.5_dp
       hight = 0.14_dp
       nplen = 100
       nxlen = 100
@@ -8339,20 +8339,20 @@
 !
       if (kvtor.gt.0) then
       call init2d
-      xmm=1.5
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      xmm=1.5_dp
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do i=1,nw
          czmcm(i)=pwprim(i)
          curmin=min(curmin,czmcm(i))
          curmax=max(curmax,czmcm(i))
          xiter(i)=real(i-1,dp)/(nw-1)
       enddo
-      xdel=0.5
+      xdel=0.5_dp
       dcurn=curmax-curmin
-      if (abs(dcurn).le.1.e-4) dcurn=5.*curmax
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      if (abs(dcurn).le.1.e-4_dp) dcurn=5.*curmax
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
       yorg = curmin
       ystp = dcurn
@@ -8367,13 +8367,13 @@
       ncurve = 1
       ipag = 0
       iexit = 2
-      xabs=-5.5
-      yabs=1.5
-      dyabs = 0.28
+      xabs=-5.5_dp
+      yabs=1.5_dp
+      dyabs = 0.28_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ibrdr = 1
-      xphy = 6.5
+      xphy = 6.5_dp
       yphy = 1.0
       hight = 0.14_dp
       nplen = 100
@@ -8461,17 +8461,17 @@
          xx(ii,1) = xiter(ii)
          yy(ii,1) = pprime(ii)
       enddo
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do i=1,nw
          czmcm(i)=ffprim(i)/tmu/twopi
          curmin=min(curmin,czmcm(i))
          curmax=max(curmax,czmcm(i))
       enddo
       dcurn=curmax-curmin
-      if (abs(dcurn).le.1.e-4) dcurn=5.*curmax
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      if (abs(dcurn).le.1.e-4_dp) dcurn=5.*curmax
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
       nslen = -100
       xps = xmm
@@ -8488,9 +8488,9 @@
       ncurve = nn
       ipag = 1
       iexit = 2
-      xabs= -0.5
-      xabs= -0.6
-      yabs= -0.8
+      xabs= -0.5_dp
+      xabs= -0.6_dp
+      yabs= -0.8_dp
 !
       msg = msg + 1
       note(msg) = 1
@@ -8499,7 +8499,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.13*0.7
+      ht(msg) = 0.13_dp*0.7_dp
       write (text,18983) condno
       msg = msg + 1
       note(msg) = 1
@@ -8508,9 +8508,9 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.13*0.7
+      ht(msg) = 0.13_dp*0.7_dp
 !
-      pr=pres(1)/(.667*wplasm(jtime)/(vout(jtime)/1.e6))
+      pr=pres(1)/(.667_dp*wplasm(jtime)/(vout(jtime)/1.e6_dp))
       write (text,18981) pr
       msg = msg + 1
       note(msg) = 1
@@ -8519,9 +8519,9 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.13*0.7
+      ht(msg) = 0.13_dp*0.7_dp
 !
-      if (abs(vcurfb(1)).gt.1.e-06) then
+      if (abs(vcurfb(1)).gt.1.e-06_dp) then
          write (text,18985)  (vcurfb(i),i=1,3)
          msg = msg + 1
          note(msg) = 1
@@ -8530,11 +8530,11 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.13*0.7
+         ht(msg) = 0.13_dp*0.7_dp
       endif
       if (kvtor.ge.1.and.kvtor.le.3) then
       if (icurrt.eq.5.and. &
-                   abs(brsp(nfcoil+1)).gt.1.e-10) then
+                   abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
          do i=nfnpcr+1,nfnpcr+kwwcur,2
             xxnorm=brsp(i)/brsp(nfcoil+1)
             if (i+1.gt.nfnpcr+kwwcur) then
@@ -8558,15 +8558,15 @@
             xpos(msg) = xabs
             ypos(msg) = yabs
             yabs = yabs - dyabs
-            ht(msg) = 0.13*0.7
+            ht(msg) = 0.13_dp*0.7_dp
          enddo
       endif
       endif
 !
-      xabs= 1.2
-      yabs= -0.8
+      xabs= 1.2_dp
+      yabs= -0.8_dp
       if ((icurrt.eq.2.or.icurrt.eq.5).and. &
-                   abs(brsp(nfcoil+1)).gt.1.e-10) then
+                   abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
          do i=nfcoil+1+kppcur,nfcoil+kppcur+kffcur
             xxnorm=brsp(i)/brsp(nfcoil+1)
             write (text,18970) xxnorm
@@ -8577,15 +8577,15 @@
             xpos(msg) = xabs
             ypos(msg) = yabs
             yabs = yabs - dyabs
-            ht(msg) = 0.13*0.8
+            ht(msg) = 0.13_dp*0.8_dp
          enddo
       endif
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ibrdr = 1
-      xphy = 4.2
-      yphy = 2.80
-      hight = 0.12
+      xphy = 4.2_dp
+      yphy = 2.80_dp
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -8657,11 +8657,11 @@
          curmax=max(curmax,workg(i))
       enddo
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       drrrr=(workk(nw)-workk(1))
       dcurn=(curmax-curmin)
-      xmm=1.6
+      xmm=1.6_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
 !------------------------------------------------------------------------
@@ -8670,8 +8670,8 @@
          call init2d
          ibrdr = 1
          xphy = 9.0
-         yphy = 1.4
-         hight = 0.12
+         yphy = 1.4_dp
+         hight = 0.12_dp
          nplen = 100
          nxlen = 100
          nylen = 100
@@ -8695,7 +8695,7 @@
         clrece(1)='FOREGROUND'
         cntece(1)=0
         thcece(2)=0.0
-        sclece(2)=0.70
+        sclece(2)=0.70_dp
         dshece(2)=0
         dotece(2)=0
         cdhece(2)=0
@@ -8776,18 +8776,18 @@
       enddo
       drrrr=(workk(nw)-workk(1))
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
-      xmm=1.6
+      xmm=1.6_dp
 !------------------------------------------------------------------------------
 !--       Initialize plot parameters                                         --
 !------------------------------------------------------------------------------
       call init2d
       ibrdr = 1
       xphy = 9.0
-      yphy = 3.7
-      hight = 0.12
+      yphy = 3.7_dp
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -8818,7 +8818,7 @@
         clrece(1)='FOREGROUND'
         cntece(1)=0
         thcece(2)=0.0
-        sclece(2)=0.70
+        sclece(2)=0.70_dp
         dshece(2)=0
         dotece(2)=0
         cdhece(2)=0
@@ -8879,14 +8879,14 @@
       xorg=0
       drrrr=2.
       xmax=nece+2
-      xmm=1.6
+      xmm=1.6_dp
       call init2d
       intax = 1
       intay = 1
       ibrdr = 1
       xphy = 9.0
       yphy = 6.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -8901,7 +8901,7 @@
       iexit = 1
       ncurve=2
         thcece(1)=0.0
-        sclece(1)=0.7
+        sclece(1)=0.7_dp
         dshece(1)=0
         dotece(1)=0
         cdhece(1)=0
@@ -8957,13 +8957,13 @@
       curmin=0.0
 !      dcurn=0.0
       dcurn=(curmax-curmin)/2.
-      xmm=1.6
+      xmm=1.6_dp
       call init2d
       intax = 1
       ibrdr = 1
-      xphy = 6.5
+      xphy = 6.5_dp
       yphy = 6.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -8979,7 +8979,7 @@
       if ((kfixro.gt.0).and.(kfixrece.gt.0)) iexit = 2
       ncurve=2
         thcece(1)=0.0
-        sclece(1)=0.7
+        sclece(1)=0.7_dp
         dshece(1)=0
         dotece(1)=0
         cdhece(1)=0
@@ -8988,7 +8988,7 @@
         clrece(1)='PINK'
         cntece(1)=1
         thcece(2)=0.0
-        sclece(2)=0.7
+        sclece(2)=0.7_dp
         dshece(2)=0
         dotece(2)=1
         cdhece(2)=0
@@ -8998,8 +8998,8 @@
         cntece(2)=-1
 !
       xabs=-6.0
-      yabs=1.8
-      dyabs = 0.22
+      yabs=1.8_dp
+      dyabs = 0.22_dp
       write (text,8950) (mfvers(i),i=1,2)
       msg = msg + 1
       note(msg) = 1
@@ -9166,19 +9166,19 @@
 !------------------------------------------------------------------------------
 !-- writing to pltout.out. For ECE data fitting                              --
 !------------------------------------------------------------------------------
-      xorg=1.2
-      drrrr=0.4
-      xmax=2.4
+      xorg=1.2_dp
+      drrrr=0.4_dp
+      xmax=2.4_dp
       curmax=8.0
       curmin=0.0
       dcurn=(curmax - curmin)/2.
-      xmm=1.6
+      xmm=1.6_dp
       call init2d
       intax = 1
       ibrdr = 1
-      xphy = 6.5
-      yphy = 3.7
-      hight = 0.12
+      xphy = 6.5_dp
+      yphy = 3.7_dp
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -9193,7 +9193,7 @@
       iexit = 2
       ncurve=2
         thcece(1)=0.0
-        sclece(1)=0.7
+        sclece(1)=0.7_dp
         dshece(1)=0
         dotece(1)=0
         cdhece(1)=0
@@ -9243,9 +9243,9 @@
         xece(i,2)=bbf(ii)
         yece(i,2)=teeceb(ii)
       enddo
-      xorg=1.6
-      drrrr=0.4
-      xmax=3.4
+      xorg=1.6_dp
+      drrrr=0.4_dp
+      xmax=3.4_dp
       curmax=8.0
       curmin=0.0
       dcurn=2.0
@@ -9253,9 +9253,9 @@
       call init2d
       intax = 1
       ibrdr = 1
-      xphy = 6.5
-      yphy = 3.7
-      hight = 0.12
+      xphy = 6.5_dp
+      yphy = 3.7_dp
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -9270,7 +9270,7 @@
       iexit = 1
       ncurve=2
         thcece(1)=0.0
-        sclece(1)=0.7
+        sclece(1)=0.7_dp
         dshece(1)=0
         dotece(1)=0
         cdhece(1)=0
@@ -9307,8 +9307,8 @@
 !
 8900  continue
       xabs=-6.0
-      yabs=1.8
-      dyabs = 0.22
+      yabs=1.8_dp
+      dyabs = 0.22_dp
       write (text,8950) (mfvers(i),i=1,2)
       msg = msg + 1
       note(msg) = 1
@@ -9530,9 +9530,9 @@
 !      equivalence (ypltloc,fpxtra(1,1))
 !      equivalence (xplxloc,flxtra(1,2))
 !      equivalence (yplxloc,fpxtra(1,2))
-      data almin,almax,blmin,blmax/1.51,1.79,-1.38,-1.21/
-5     almin=1.62
-      blmax=-1.20
+      data almin,almax,blmin,blmax/1.51_dp,1.79_dp,-1.38_dp,-1.21_dp/
+5     almin=1.62_dp
+      blmax=-1.20_dp
       call nobrdr
       call grace(0.0)
       call xticks(2)
@@ -9644,7 +9644,7 @@
          go to 50
    40    continue
 !
-         dac=0.5*wc(i)*tac
+         dac=0.5_dp*wc(i)*tac
          nn = nn + 1
          xx(1,nn)=x-dx
          xx(2,nn)=x-dx
@@ -10662,7 +10662,7 @@
       !-----------------------------------------------------------------------c
       ! Initialize font size                 c
       !-----------------------------------------------------------------------c
-      hight = 0.5
+      hight = 0.5_dp
       !-----------------------------------------------------------------------c
       ! Initialize base rotation             c
       !-----------------------------------------------------------------------c
