@@ -21,12 +21,14 @@
 !**          93/04   ..........revised to dump plot data             **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       use commonblocks,only: worka,c,wk,copy,bkx,bky,cw,wkw,copyw,bwx, &
            bwy,cj,wkj,copyj,bjx,bjy,cv,wkv,copyv,bvx,bvy,byringr,byringz, &
            xxtra,yxtra,bpxtra,flxtra,fpxtra
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'curve2d129.inc'
@@ -75,7 +77,7 @@
       data istrpl/0/,lfile/36/,iseplim/1/
       common/adp/ringr(6),ringz(6),ringap
       data n00/0/,n11/1/
-			data one/1./
+      data one/1./
       save n00,n11
       pleng = 0
 !
@@ -94,7 +96,7 @@
          if (dismin.eq.oright(jtime)) gapdis=orighs(jtime)
          if (dismin.eq.obott(jtime)) gapdis=obots(jtime)
          if (dismin.eq.otop(jtime)) gapdis=otops(jtime)
-         if (dismin.le.0.1) dismin=gapdis
+         if (dismin.le.0.1_dp) dismin=gapdis
          if (iseplim.eq.0) seplim(jtime)=dismin
          if (jtime.lt.ktime) return
       endif
@@ -207,21 +209,21 @@
   145 continue
   150 continue
       if (kframe.gt.0) then
-         almin=almin-0.05
-         almax=almax+0.05
-         blmin=blmin-0.05
-         blmax=blmax+0.05
+         almin=almin-0.05_dp
+         almax=almax+0.05_dp
+         blmin=blmin-0.05_dp
+         blmax=blmax+0.05_dp
       endif
   170 continue
       elim=(blmax-blmin)/(almax-almin)
       uday=' '
       call date(uday)
-      yll=7.2
+      yll=7.2_dp
       if (iecoil.le.0) then
          if (klabel.ge.0) then
-            yll=6.2
+            yll=6.2_dp
          else
-            yll=7.5
+            yll=7.5_dp
          endif
       endif
       xll=yll/elim
@@ -284,10 +286,10 @@
       endif
       endif
 !--------------------------------------------------------------------
-!--  Set q-files dataname					   --
+!--  Set q-files dataname        --
 !--  If ISTORE = 0 Then dataname is prefixed by qshot.time         --
 !--  ELSE dataname is prefixed by /link/efit/qshot.time            --
-!--  lprx = 13	prefix is qshot.time    		           --
+!--  lprx = 13 prefix is qshot.time                 --
 !--  lprx = 25  prefix is /link/efit/qshot.time                    --
 !--------------------------------------------------------------------
       let = 'q'
@@ -307,7 +309,7 @@
       if (kdata.eq.4) go to 1500
       ibrdr = 1
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       if (klabel.ge.0) then
@@ -315,10 +317,10 @@
          yphy = 1.0
       else
          xphy = 3.0
-         yphy = 1.6
+         yphy = 1.6_dp
          bngle = 90.0
-         bshft(1) = 6.10
-         bshft(2) = 0.95
+         bshft(1) = 6.10_dp
+         bshft(2) = 0.95_dp
       endif
       if (kframe.eq.0) then
          xtitle = 'R(m)$'
@@ -344,7 +346,7 @@
       nxy(nn) = nplt
       clearx(nn)='PINK'
       if (kthkcrv.eq.1) then
-         thcrv(nn) = 0.015
+         thcrv(nn) = 0.015_dp
          ndshme(nn) = 1
       endif
       do i = 1, nplt
@@ -378,7 +380,7 @@
       endif
       if (ipass.gt.1) go to 210
       dismin=min(oleft(jtime),oright(jtime),otop(jtime),obott(jtime))
-      if (dismin.le.0.1) go to 210
+      if (dismin.le.0.1_dp) go to 210
       if (kwripre.gt.0) then
          dataname=dataname(1:lprx)//'_sep'
         open(unit=62,file=dataname,status='old',err=12941)
@@ -389,12 +391,12 @@
       call surfac(psibry,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt &
       ,npoint,drgrid,dzgrid,rgrid(1),rgrid(nw),zgrid(1), &
       zgrid(nh),n00,rmaxis,zmaxis,negcur)
-      yminmm=zmin-0.001
-      ymaxmm=zmax+0.001
+      yminmm=zmin-0.001_dp
+      ymaxmm=zmax+0.001_dp
       nn = nn + 1
       clearx(nn) = 'PINK'
-      thcrv(nn) = 0.015
-      sclpc(nn) = 0.2
+      thcrv(nn) = 0.015_dp
+      sclpc(nn) = 0.2_dp
       markme(nn) = 15
       ncnct(nn) = -1
       nxy(nn)   =  0
@@ -409,9 +411,8 @@
          fpxtra(ji,2)=yplt(i)
          npltxpt=ji
          if (kwripre.gt.0) then
-            call zlim(zeron,n11,n11,limitr,xlim,ylim, &
-                      xplt(i),yplt(i),limfag)
-            if (zeron.gt.0.001) write (62,*) xplt(i),yplt(i)
+           call zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(i),yplt(i),limfag)
+           if (zeron.gt.0.001_dp) write (62,*) xplt(i),yplt(i)
          endif
   200 continue
       if (kwripre.gt.0) close(unit=62)
@@ -422,36 +423,34 @@
       nxcurv=0
       nexexx=2*iabs(nextra)*iabs(ixstrt)
       do 226 i=1,nexexx
-         if(npxtra(i).le.2)go to 226
-         nxcurv=nxcurv+1
-         nn = nn + 1
-         nxy(nn) = npxtra(i)
-         clearx(nn) = 'GREE'
-         kk = i
-         do ii = 1, npxtra(i)
-            xx(ii,nn) = xxtra(ii,i)
-            yy(ii,nn) = yxtra(ii,i)
-         enddo
+        if(npxtra(i).le.2)go to 226
+        nxcurv=nxcurv+1
+        nn = nn + 1
+        nxy(nn) = npxtra(i)
+        clearx(nn) = 'GREE'
+        kk = i
+        do ii = 1, npxtra(i)
+          xx(ii,nn) = xxtra(ii,i)
+          yy(ii,nn) = yxtra(ii,i)
+        enddo
 
-         if (kwripre.gt.0) then
-            if (i.lt.9) then
-          write(iname,40023) i
-               dataname=dataname(1:lprx)//'_fl'//iname
-          open(unit=62,file=dataname,status='old',err=12942)
-          close(unit=62,status='delete')
-12942    continue
-          open(unit=62,file=dataname,status='new')
-               do 39920 iii=1,npxtra(i)
-              call zlim(zeron,n11,n11,limitr,xlim,ylim,xxtra(iii,i), &
-                  yxtra(iii,i),limfag)
-                  if (zeron.gt.0.001) write (62,*)  &
-                  xxtra(iii,i),yxtra(iii,i)
-39920          continue
-               close(unit=62)
-            endif
-         endif
-  226 continue
-  228 continue
+        if (kwripre.gt.0) then
+          if (i.lt.9) then
+            write(iname,40023) i
+            dataname=dataname(1:lprx)//'_fl'//iname
+            open(unit=62,file=dataname,status='old',err=12942)
+            close(unit=62,status='delete')
+12942       continue
+            open(unit=62,file=dataname,status='new')
+            do 39920 iii=1,npxtra(i)
+              call zlim(zeron,n11,n11,limitr,xlim,ylim,xxtra(iii,i),yxtra(iii,i),limfag)
+              if (zeron.gt.0.001_dp) write (62,*) xxtra(iii,i),yxtra(iii,i)
+39920       continue
+            close(unit=62)
+          endif
+        endif
+226     continue
+  228   continue
       if (nbdry.le.0) go to 235
       if (nbdry.gt.20) go to 230
       nn = nn + 1
@@ -511,18 +510,18 @@
       endif
       if (ipass.gt.1) go to 252
       do 238 i=1,nw-1
-         worke(i)=float(i-1)/float(nw-1)
+         worke(i)=real(i-1,dp)/(nw-1)
   238 continue
       worke(nw)=1.
       call zpline(nw,worke,qpsi,bworkb,cworkb,dworkb)
-      delsi=(psibry-simag)/float(nsplot+1)
+      delsi=(psibry-simag)/(nsplot+1)
       nsplot0=nsplot
       idqplot=iqplot
       if (iqplot.ge.10) idqplot=iqplot-10
       if ((iqplot.gt.1).and.(psiq1.gt.0.)) then
          nsplot=nsplot0+1
          if(psiq1.gt.10.0)then
-            psiq11=float(int(psiq1))/1000.
+            psiq11=real(int(psiq1),dp)/1000.
             psiq12=psiq1-int(psiq1)
             nsplot=nsplot0+2
          else
@@ -542,7 +541,7 @@
          call surfac(siwant,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt &
          ,npoint,drgrid,dzgrid,rmin,rmax,zmin, &
          zmax,n11,rmaxis,zmaxis,negcur)
-         if (kthkcrv.gt.0) thcrv(nn) = 0.010
+         if (kthkcrv.gt.0) thcrv(nn) = 0.010_dp
          clearx(nn) = 'BLUE'
          nxy(nn) = nplt
          do ii = 1,nplt
@@ -625,7 +624,7 @@
 !
          if (idqplot.gt.0) then
             if (iqplot.lt.10.or.i.lt.nsplot0) then
-               sinow=j/float(nsplot0+1)
+               sinow=j/real(nsplot0+1,dp)
                qnow=seval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
                msg = msg + 1
                note(msg) = 4
@@ -633,7 +632,7 @@
                iplce(msg) = idqplot
                xpos(msg) = xplt(nplt/6)
                ypos(msg) = yplt(nplt/6)
-               ht(msg) = 0.10
+               ht(msg) = 0.10_dp
             endif
          endif
   250 continue
@@ -647,7 +646,7 @@
          sclpc(nn) = 1.0
          innn    = 0
          do 253 i=1,nstark
-            if (abs(fwtgam(i)).gt.1.0e-06) then
+            if (abs(fwtgam(i)).gt.1.0e-06_dp) then
                innn=innn+1
                xx(innn,nn) = rrgam(jtime,i)
                yy(innn,nn) = zzgam(jtime,i)
@@ -662,7 +661,7 @@
          sclpc(nn) = 1.0
          innn    = 0
          do i=1,nmsels
-            if (abs(fwtbmselt(jtime,i)).gt.1.0e-06) then
+            if (abs(fwtbmselt(jtime,i)).gt.1.0e-06_dp) then
                innn=innn+1
                xx(innn,nn) = rrmselt(jtime,i)
                yy(innn,nn) = zzmselt(jtime,i)
@@ -680,20 +679,20 @@
          if (mmh.gt.33) idely=2
          innn=0
          nn = nn + 1
-         sclpc(nn) = 0.25
+         sclpc(nn) = 0.25_dp
          markme(nn) = 3
          ncnct(nn) = -1
          do 40040 i=1,nw,idelx
             do 40030 j=1,nh,idely
                kk=(i-1)*nh+j
                if (icutfp.eq.0) then
-                  if (zero(kk)*www(kk).gt.0.001) then
+                  if (zero(kk)*www(kk).gt.0.001_dp) then
                      innn=innn+1
                      xx(innn,nn) = rgrid(i)
                      yy(innn,nn) = zgrid(j)
                   endif
                else
-                  if (zero(kk)*xpsi(kk).gt.0.001.and. &
+                  if (zero(kk)*xpsi(kk).gt.0.001_dp.and. &
                   xpsi(kk)*xpsimin.le.1.) then
                      innn=innn+ 1
                      xx(innn,nn) = rgrid(i)
@@ -707,7 +706,7 @@
       if (icutfp.eq.2.and.kframe.ne.1) then
          innn=0
          nn = nn + 1
-         sclpc(nn) = 0.3
+         sclpc(nn) = 0.3_dp
          markme(nn) = 15
          ncnct(nn) = -1
          rvsmin=rvs(1)
@@ -720,28 +719,26 @@
             zvsmin=min(zvs(i),zvsmin)
             zvsmax=max(zvs(i),zvsmax)
 40050    continue
-         call surfac(xpsialp,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt &
-         ,npoint,drgrid,dzgrid,rvsmin,rvsmax,zvsmin, &
+         call surfac(xpsialp,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt, &
+         npoint,drgrid,dzgrid,rvsmin,rvsmax,zvsmin, &
          zvsmax,n00,rmaxis,zmaxis,negcur)
          if (iprobe.ne.90) then
-            do 40060 i=1,nplt
-               call  &
-               zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(i), &
-                    yplt(i),limfag)
-               if (zeron.gt.0.001) then
+           do 40060 i=1,nplt
+             call zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(i),yplt(i),limfag)
+             if (zeron.gt.0.001_dp) then
                   innn=innn+1
                   xx(innn,nn) = xplt(i)
                   yy(innn,nn) = yplt(i)
-               endif
-40060       continue
-            nxy(nn) = innn
+             endif
+40060      continue
+           nxy(nn) = innn
          endif
-!         hgt = 0.10
+!         hgt = 0.10_dp
 !         msg = msg + 1
 !         note(msg) = 2
 !         lmes(msg) = 'alpha =   '
 !         imes(msg) = 10
-!         xpos(msg) = rvsmax-0.5
+!         xpos(msg) = rvsmax-0.5_dp
 !         ypos(msg) = zvsmin
 !         ht(msg) = hgt
 !        call rlreal(alphafp,2,rvsmax,zvsmin)
@@ -751,15 +748,15 @@
 !         iplce(msg) = 2
 !         xpos(msg) = rvsmax
 !         ypos(msg) = zvsmin
-!         ht(msg) = 0.10
+!         ht(msg) = 0.10_dp
           write(text,96251) alphafp
           msg = msg + 1
           note(msg) = 1
           lmes(msg) = text
           imes(msg) = 25
-          xpos(msg) = rvsmax-0.5
+          xpos(msg) = rvsmax-0.5_dp
           ypos(msg) = zvsmin
-          ht(msg) = 0.10
+          ht(msg) = 0.10_dp
 !
          sumif=0.0
          do 40070 i=1,nvesel
@@ -771,64 +768,64 @@
           note(msg) = 1
           lmes(msg) = text
           imes(msg) = 25
-          xpos(msg) = rvsmax-0.5
-          ypos(msg) = zvsmin-0.1
-          ht(msg) = 0.10
+          xpos(msg) = rvsmax-0.5_dp
+          ypos(msg) = zvsmin-0.1_dp
+          ht(msg) = 0.10_dp
           write (6,*) 'Ivt(ka) = ',sumif
 !         msg = msg + 1
 !         note(msg) = 2
 !         lmes(msg) = 'Iv(ka)=   '
 !         imes(msg) = 10
-!         xpos(msg) = rvsmax-0.5
-!         ypos(msg) = zvsmin-0.1
+!         xpos(msg) = rvsmax-0.5_dp
+!         ypos(msg) = zvsmin-0.1_dp
 !         ht(msg) = hgt
-!        call rlreal(sumif,0,rvsmax,zvsmin-0.1)
+!        call rlreal(sumif,0,rvsmax,zvsmin-0.1_dp)
 !         msg = msg + 1
 !         note(msg) = 4
 !         anum(msg) = sumif
 !         iplce(msg) = 0
 !         xpos(msg) = rvsmax
-!         ypos(msg) = zvsmin-0.1
-!         ht(msg) = 0.10
+!         ypos(msg) = zvsmin-0.1_dp
+!         ht(msg) = 0.10_dp
 !         msg = msg + 1
 !         note(msg) = 2
 !         lmes(msg) = 'Fp(kn)=   '
 !         imes(msg) = 10
-!         xpos(msg) = rvsmax-0.5
-!         ypos(msg) = zvsmin-0.2
+!         xpos(msg) = rvsmax-0.5_dp
+!         ypos(msg) = zvsmin-0.2_dp
 !         ht(msg) = hgt
 !         sumif=fzpol/1000.
-!        call rlreal(sumif,0,rvsmax,zvsmin-0.2)
+!        call rlreal(sumif,0,rvsmax,zvsmin-0.2_dp)
 !         msg = msg + 1
 !         note(msg) = 4
 !         anum(msg) = sumif
 !         iplce(msg) = 0
 !         xpos(msg) = rvsmax
-!         ypos(msg) = zvsmin-0.2
-!         ht(msg) = 0.10
+!         ypos(msg) = zvsmin-0.2_dp
+!         ht(msg) = 0.10_dp
 !         msg = msg + 1
 !         note(msg) = 2
 !         lmes(msg) = 'Ft(kn)=   '
 !         imes(msg) = 10
-!         xpos(msg) = rvsmax-0.5
-!         ypos(msg) = zvsmin-0.3
+!         xpos(msg) = rvsmax-0.5_dp
+!         ypos(msg) = zvsmin-0.3_dp
 !         ht(msg) = hgt
 !         sumif=fztor/1000.
-!        call rlreal(sumif,0,rvsmax,zvsmin-0.3)
+!        call rlreal(sumif,0,rvsmax,zvsmin-0.3_dp)
 !         msg = msg + 1
 !         note(msg) = 4
 !         anum(msg) = sumif
 !         iplce(msg) = 0
 !         xpos(msg) = rvsmax
-!         ypos(msg) = zvsmin-0.3
-!         ht(msg) = 0.10
+!         ypos(msg) = zvsmin-0.3_dp
+!         ht(msg) = 0.10_dp
 !
 !         msg = msg + 1
 !         note(msg) = 2
 !         lmes(msg) = 'Ih(ka)=   '
 !         imes(msg) = 10
-!         xpos(msg) = rvsmax-0.5
-!         ypos(msg) = zvsmin-0.4
+!         xpos(msg) = rvsmax-0.5_dp
+!         ypos(msg) = zvsmin-0.4_dp
 !         ht(msg) = hgt
          sumif=tcurrp/1000.
          write(text,96253) sumif
@@ -838,25 +835,25 @@
          lmes(msg) = text
          imes(msg) = 25
          xpos(msg) = rvsmax
-         ypos(msg) = zvsmin-0.2
-         ht(msg) = 0.10
-!        call rlreal(sumif,0,rvsmax,zvsmin-0.4)
+         ypos(msg) = zvsmin-0.2_dp
+         ht(msg) = 0.10_dp
+!        call rlreal(sumif,0,rvsmax,zvsmin-0.4_dp)
 !         msg = msg + 1
 !         note(msg) = 4
 !         anum(msg) = sumif
 !         iplce(msg) = 0
 !         xpos(msg) = rvsmax
-!         ypos(msg) = zvsmin-0.4
-!         ht(msg) = 0.10
+!         ypos(msg) = zvsmin-0.4_dp
+!         ht(msg) = 0.10_dp
 !         msg = msg + 1
 !         note(msg) = 2
 !         lmes(msg) = 'Ig(ka)=   '
 !         imes(msg) = 10
-!         xpos(msg) = rvsmax-0.5
-!         ypos(msg) = zvsmin-0.5
+!         xpos(msg) = rvsmax-0.5_dp
+!         ypos(msg) = zvsmin-0.5_dp
 !         ht(msg) = hgt
          sumif=fpolvs/1000.
-!        call rlreal(sumif,0,rvsmax,zvsmin-0.5)
+!        call rlreal(sumif,0,rvsmax,zvsmin-0.5_dp)
          write(text,96254) sumif
          write (6,*) 'Ivp(ka) = ',sumif
          msg = msg + 1
@@ -864,8 +861,8 @@
          lmes(msg) = text
          imes(msg) = 25
          xpos(msg) = rvsmax
-         ypos(msg) = zvsmin-0.3
-         ht(msg) = 0.10
+         ypos(msg) = zvsmin-0.3_dp
+         ht(msg) = 0.10_dp
       endif
   252 continue
       if (iplim.le.0) go to 270
@@ -877,7 +874,7 @@
          nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
          nn = nn + 1
-         thcrv(nn) = 0.02
+         thcrv(nn) = 0.02_dp
          nxy(nn) = limbot-limup + 1
          do ii = limup, limup+nxy(nn)-1
             xx(ii,nn) = xlim(ii)
@@ -940,11 +937,11 @@
 !
       read (lfile,14980) npts
       read (lfile,15000) (workc(i),workd(i),i=1,npts)
-!     call shade(workc,workd,npts,30.,0.1,1,0,0)
+!     call shade(workc,workd,npts,30.,0.1_dp,1,0,0)
       nshd = nshd + 1
       nsxy(nshd) = npts
       sangle(nshd) = 30.0
-      sgap(nshd) = 0.1
+      sgap(nshd) = 0.1_dp
       ngaps(nshd) = 1
       do ii = 1, nsxy(nshd)
          sxx(ii,nshd) = workc(ii)
@@ -967,11 +964,11 @@
 
       read (lfile,14980) npts
       read (lfile,15000) (workc(i),workd(i),i=1,npts)
-!     call shade(workc,workd,npts,30.,0.1,1,0,0)
+!     call shade(workc,workd,npts,30.,0.1_dp,1,0,0)
       nshd = nshd + 1
       nsxy(nshd) = npts
       sangle(nshd) = 30.0
-      sgap(nshd) = 0.1
+      sgap(nshd) = 0.1_dp
       ngaps(nshd) = 1
       do ii = 1, nsxy(nshd)
          sxx(ii,nshd) = workc(ii)
@@ -1000,11 +997,11 @@
          xx(ii,nn) = workc(ii)
          yy(ii,nn) = workd(ii)
       enddo
-!     call shade(workc,workd,npts,90.,0.01,1,0,0)
+!     call shade(workc,workd,npts,90.,0.01_dp,1,0,0)
       nshd = nshd + 1
       nsxy(nshd) = npts
       sangle(nshd) = 90.0
-      sgap(nshd) = 0.01
+      sgap(nshd) = 0.01_dp
       ngaps(nshd) = 1
       do ii = 1, nsxy(nshd)
          sxx(ii,nshd) = workc(ii)
@@ -1020,21 +1017,21 @@
             xx(ii,nn) = workc(ii)
             yy(ii,nn) = workd(ii)
          enddo
-!        call shade(workc,workd,npts,45.,0.05,1,0,0)
+!        call shade(workc,workd,npts,45.,0.05_dp,1,0,0)
          nshd = nshd + 1
          nsxy(nshd) = npts
          sangle(nshd) = 45.0
-         sgap(nshd) = 0.05
+         sgap(nshd) = 0.05_dp
          ngaps(nshd) = 1
          do ii = 1, nsxy(nshd)
             sxx(ii,nshd) = workc(ii)
             syy(ii,nshd) = workd(ii)
          enddo
-!        call shade(workc,workd,npts,135.,0.05,1,0,0)
+!        call shade(workc,workd,npts,135.,0.05_dp,1,0,0)
          nshd = nshd + 1
          nsxy(nshd) = npts
          sangle(nshd) = 135.0
-         sgap(nshd) = 0.05
+         sgap(nshd) = 0.05_dp
          ngaps(nshd) = 1
          do ii = 1, nsxy(nshd)
             sxx(ii,nshd) = workc(ii)
@@ -1050,11 +1047,11 @@
          xx(ii,nn) = workc(ii)
          yy(ii,nn) = workd(ii)
       enddo
-!     call shade(workc,workd,npts,90.,0.01,1,0,0)
+!     call shade(workc,workd,npts,90.,0.01_dp,1,0,0)
       nshd = nshd + 1
       nsxy(nshd) = npts
       sangle(nshd) = 90.0
-      sgap(nshd) = 0.01
+      sgap(nshd) = 0.01_dp
       ngaps(nshd) = 1
       do ii = 1, nsxy(nshd)
          sxx(ii,nshd) = workc(ii)
@@ -1087,7 +1084,7 @@
       nn = nn + 1
       nxy(nn) = 2
       clearx(nn)='PINK'
-      thcrv(nn) = 0.030
+      thcrv(nn) = 0.030_dp
       do ii = 1, 2
          xx(ii,nn) = rwstrip1(ii)
          yy(ii,nn) = zwstrip1(ii)
@@ -1096,7 +1093,7 @@
       nn = nn + 1
       nxy(nn) = 2
       clearx(nn)='PINK'
-      thcrv(nn) = 0.030
+      thcrv(nn) = 0.030_dp
       do ii = 1, 2
          xx(ii,nn) = rwstrip2(ii)
          yy(ii,nn) = zwstrip2(ii)
@@ -1120,7 +1117,7 @@
                      if(kk.eq.kct(ms))then
                         nn = nn + 1
                         markme(nn) = 11
-                        sclpc(nn) = 0.75
+                        sclpc(nn) = 0.75_dp
                         nxy(nn) = 1
                         ncnct(nn) = -1
                         xx(1,nn) = rgrid(i)
@@ -1133,8 +1130,8 @@
       if (iprobe.eq.0) go to 310
       nn = nn + 1
       markme(nn) = 16
-      sclpc(nn) = 0.5
-      if (kthkcrv.eq.1) sclpc(nn) = 1.2
+      sclpc(nn) = 0.5_dp
+      if (kthkcrv.eq.1) sclpc(nn) = 1.2_dp
       nxy(nn) = nsilop
       ncnct(nn) = -1
       do ii = 1, nxy(nn)
@@ -1149,14 +1146,14 @@
             inum(msg) = i
             xpos(msg) = rsi(i)
             ypos(msg) = zsi(i)
-            ht(msg) = 0.04
+            ht(msg) = 0.04_dp
   290    continue
       else
-         hgt = 0.13
-!        if (klabel.lt.0) call hgt = 0.16
-         if (klabel.lt.0) hgt = 0.16
-         rf16=rf(16)-0.10
-         zf16=zf(16)+0.30
+         hgt = 0.13_dp
+!        if (klabel.lt.0) call hgt = 0.16_dp
+         if (klabel.lt.0) hgt = 0.16_dp
+         rf16=rf(16)-0.10_dp
+         zf16=zf(16)+0.30_dp
          msg = msg + 1
          note(msg) = 2
          lmes(msg) = 'flux loops $'
@@ -1174,8 +1171,8 @@
       endif
       nn = nn + 1
       markme(nn) = 15
-      sclpc(nn) = 0.5
-      if (kthkcrv.eq.1) sclpc(nn) = 1.2
+      sclpc(nn) = 0.5_dp
+      if (kthkcrv.eq.1) sclpc(nn) = 1.2_dp
       ncnct(nn) = -1
       nxy(nn) = iem-ibm+1
       do ii = ibm, ibm+nxy(nn)-1
@@ -1190,15 +1187,15 @@
             inum(msg) = i
             xpos(msg) = xmp2(i)
             ypos(msg) = ymp2(i)
-            ht(msg) = 0.04
+            ht(msg) = 0.04_dp
   300    continue
       else
-         hgt = 0.13
+         hgt = 0.13_dp
 !vas f90 modifi.
-!vas         if (klabel.lt.0) call hgt = 0.16
-         if (klabel.lt.0) hgt = 0.16
-         rrff=(rf(8)+rf(9))*0.5
-         zzff=(zf(8)+zf(9))*0.5
+!vas         if (klabel.lt.0) call hgt = 0.16_dp
+         if (klabel.lt.0) hgt = 0.16_dp
+         rrff=(rf(8)+rf(9))*0.5_dp
+         zzff=(zf(8)+zf(9))*0.5_dp
          msg = msg + 1
          note(msg) = 2
          lmes(msg) = 'magnetic probes $'
@@ -1217,11 +1214,11 @@
          ifcoil=0
          workd(1)=0.0
          workd(2)=0.0
-         workc(1)=almin+0.15
-         workc(2)=almax-0.25
+         workc(1)=almin+0.15_dp
+         workc(2)=almax-0.25_dp
          nn = nn + 1
          ncdtme(nn) = 1
-         thcrv(nn) = 0.012
+         thcrv(nn) = 0.012_dp
          nxy(nn) = 2
          do ii = 1, nxy(nn)
             xx(ii,nn) = workc(ii)
@@ -1229,7 +1226,7 @@
          enddo
 !        call reset('chndot')
          workc(3)=almax
-         workd(3)=0.20
+         workd(3)=0.20_dp
          msg = msg + 1
          note(msg) = 2
          lmes(msg) = 'CER, $'
@@ -1240,7 +1237,7 @@
 
 !        call mixalf('INSTRU')
          mxalf(msg) = 'INSTRU'
-         workd(3)=0.10
+         workd(3)=0.10_dp
          msg = msg + 1
          note(msg) = 2
          lmes(msg) = 'CO(LH.8)2(LXHX) chord $'
@@ -1256,20 +1253,20 @@
          yto(nvec) = workd(2)
          ivec(nvec) = 1
 
-         workd(1)=zuperts(jtime)*0.012
-         workd(2)=zlowerts*0.01-0.400
+         workd(1)=zuperts(jtime)*0.012_dp
+         workd(2)=zlowerts*0.01_dp-0.400_dp
          workc(1)=rmajts
          workc(2)=rmajts
          nn = nn + 1
          ncdtme(nn) = 1
-         thcrv(nn) = 0.012
+         thcrv(nn) = 0.012_dp
          nxy(nn) = 2
          do ii = 1, nxy(nn)
             xx(ii,nn) = workc(ii)
             yy(ii,nn) = workd(ii)
          enddo
-         workc(3)=rmajts+0.20
-         workd(3)=zuperts(jtime)*0.0150
+         workc(3)=rmajts+0.20_dp
+         workd(3)=zuperts(jtime)*0.0150_dp
 !        call rlvec(workc(3),workd(3),workc(1),workd(1),1)
          nvec = nvec + 1
          xfm(nvec) = workc(3)
@@ -1284,7 +1281,7 @@
          xpos(msg) = workc(3)
          ypos(msg) = workd(3)
          ht(msg) = hgt
-         workd(3)=workd(3)-0.1
+         workd(3)=workd(3)-0.1_dp
          msg = msg + 1
          note(msg) = 2
          lmes(msg) = 'CO(LH.8)2(LXHX) chord $'
@@ -1296,14 +1293,14 @@
          workc(2)=chordv(1)
          nn = nn + 1
          ncdtme(nn) = 1
-         thcrv(nn) = 0.012
+         thcrv(nn) = 0.012_dp
          nxy(nn) = 2
          do ii = 1, nxy(nn)
             xx(ii,nn) = workc(ii)
             yy(ii,nn) = workd(ii)
          enddo
-         workc(3)=workc(1)-0.4
-         workd(3)=workd(1)+0.59
+         workc(3)=workc(1)-0.4_dp
+         workd(3)=workd(1)+0.59_dp
 !        call rlvec(workc(3),workd(3),workc(1),workd(1),1)
          nvec = nvec + 1
          xfm(nvec) = workc(3)
@@ -1321,18 +1318,18 @@
 
          workc(1)=chordv(3)
          workc(2)=chordv(3)
-         workd(1)=workd(1)-0.2
-         workd(2)=workd(2)+0.2
+         workd(1)=workd(1)-0.2_dp
+         workd(2)=workd(2)+0.2_dp
          nn = nn + 1
          ncdtme(nn) = 1
-         thcrv(nn) = 0.012
+         thcrv(nn) = 0.012_dp
          nxy(nn) = 2
          do ii = 1, nxy(nn)
             xx(ii,nn) = workc(ii)
             yy(ii,nn) = workd(ii)
          enddo
-         workc(3)=workc(2)+0.2
-         workd(3)=workd(2)-0.3
+         workc(3)=workc(2)+0.2_dp
+         workd(3)=workd(2)-0.3_dp
 !        call rlvec(workc(3),workd(3),workc(2),workd(2),1)
          nvec = nvec + 1
          xfm(nvec) = workc(3)
@@ -1352,19 +1349,19 @@
 !-----------------------------------------------------------------------
 !--  motional Stark                                                   --
 !-----------------------------------------------------------------------
-         workc(1)=1.90
+         workc(1)=1.90_dp
          workd(1)=0.0
          nn = nn + 1
          markme(nn) = 4
          sclpc(nn) = 2.0
-         thcrv(nn) = 0.012
+         thcrv(nn) = 0.012_dp
          ncnct(nn) = -1
          nxy(nn) = 1
          xx(1,nn) = workc(1)
          yy(1,nn) = workd(1)
 
-         workc(2)=workc(1)-0.32
-         workd(2)=workd(1)+0.17
+         workc(2)=workc(1)-0.32_dp
+         workd(2)=workd(1)+0.17_dp
          msg = msg + 1
          note(msg) = 2
          lmes(msg) = 'Stark $'
@@ -1373,10 +1370,10 @@
          ypos(msg) = workd(2)
          ht(msg) = hgt
 
-         workc(3)=workc(2)+0.08
-         workd(3)=workd(2)-0.03
-         workc(4)=workc(1)-0.02
-         workd(4)=workd(1)+0.02
+         workc(3)=workc(2)+0.08_dp
+         workd(3)=workd(2)-0.03_dp
+         workc(4)=workc(1)-0.02_dp
+         workd(4)=workd(1)+0.02_dp
 !        call rlvec(workc(3),workd(3),workc(4),workd(4),1)
          nvec = nvec + 1
          xfm(nvec) = workc(3)
@@ -1386,33 +1383,33 @@
          ivec(nvec) = 1
 
          if (klabel.lt.0) then
-            if (klabel.gt.-100) then
-               klabela=iabs(klabel)
-               write(text, 9950) klabela
-               xabs=1.0
-               yabs=-0.5
-               dyabs = 0.22
-               msg = msg + 1
-               note(msg) = 1
-               lmes(msg) = text
-               imes(msg) = 27
-               xpos(msg) = xabs
-               ypos(msg) = yabs
-               yabs = yabs - dyabs
-               ht(msg) = 0.16
-            endif
-!           call physor(7.0,1.0)
-	    xphy = 7.0
-	    yphy = 1.0
-            yll=6.2
-            xll=yll/elim
-	    xtitle = 'R(m)$'
-	    ytitle = 'Z(m)$'
-	    nxlen = 0
-	    nylen = 0
-	    xlen = xll
-	    ylen = yll
-!           call title('$',-100,'R(m)$',0,'Z(m)$',0,xll,yll)
+           if (klabel.gt.-100) then
+             klabela=iabs(klabel)
+             write(text, 9950) klabela
+             xabs=1.0
+             yabs=-0.5_dp
+             dyabs = 0.22_dp
+             msg = msg + 1
+             note(msg) = 1
+             lmes(msg) = text
+             imes(msg) = 27
+             xpos(msg) = xabs
+             ypos(msg) = yabs
+             yabs = yabs - dyabs
+             ht(msg) = 0.16_dp
+           endif
+           ! call physor(7.0,1.0)
+           xphy = 7.0
+           yphy = 1.0
+           yll=6.2_dp
+           xll=yll/elim
+           xtitle = 'R(m)$'
+           ytitle = 'Z(m)$'
+           nxlen = 0
+           nylen = 0
+           xlen = xll
+           ylen = yll
+           ! call title('$',-100,'R(m)$',0,'Z(m)$',0,xll,yll)
          endif
       endif
   310 continue
@@ -1421,7 +1418,7 @@
       do 380 i=ixraystart,ixrayend
          xplt(1)=rxray(i)
          yplt(1)=zxray(i)
-         theta=xangle(i)*pi/180.0
+         theta=xangle(i)*radeg
          mdot = 1
          iddsxr=0
          if (i.le.nangle/2) then
@@ -1441,8 +1438,8 @@
   319       continue
          endif
          do 360 k=2,npoint
-            xplt(k)=k*0.08*cos(theta)+rxray(i)
-            yplt(k)=k*0.08*sin(theta)+zxray(i)
+            xplt(k)=k*0.08_dp*cos(theta)+rxray(i)
+            yplt(k)=k*0.08_dp*sin(theta)+zxray(i)
             if ((xplt(k).lt.almin).or.(xplt(k).gt.almax)) go to 370
             if ((yplt(k).lt.blmin).or.(yplt(k).gt.blmax)) go to 370
   360    continue
@@ -1472,7 +1469,7 @@
             do 40921 iii=1,k
                call zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(iii), &
                yplt(iii),limfag)
-               if (zeron.gt.0.001) write (62,*) xplt(iii),yplt(iii)
+               if (zeron.gt.0.001_dp) write (62,*) xplt(iii),yplt(iii)
 40921       continue
             close(unit=62)
          endif
@@ -1508,7 +1505,7 @@
       if (klabel.lt.0) go to 19999
       xabs=-3.0
       yabs=7.0
-      dyabs = 0.22
+      dyabs = 0.22_dp
       if (kdata.eq.2) then
          write(text, 8948) ifname(jtime)
          msg = msg + 1
@@ -1518,11 +1515,11 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
       endif
-      xabs=-6.5
+      xabs=-6.5_dp
       yabs=7.0
-      dyabs = 0.22
+      dyabs = 0.22_dp
 !vas      write(text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -1533,7 +1530,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -1542,7 +1539,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -1551,7 +1548,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -1560,7 +1557,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9040) tsaisq(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1569,7 +1566,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9060) rout(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1578,7 +1575,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9080) zout(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1587,7 +1584,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9100) aout(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1596,7 +1593,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9120) eout(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1605,7 +1602,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9140) doutu(jtime),doutl(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1614,7 +1611,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9155) xndnt(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1623,7 +1620,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 
       vm3=vout(jtime)/1.e6
       am2=areao(jtime)/1.e4
@@ -1635,7 +1632,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9165) wplasm(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1644,7 +1641,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9180) betat(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1653,7 +1650,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9200) betap(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1662,7 +1659,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9150) betatn,pasman
       msg = msg + 1
       note(msg) = 1
@@ -1671,7 +1668,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9220) ali(jtime),ali3(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1680,7 +1677,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 
       if (ipass.gt.1) go to 430
       write(text,9230) errorm,nitera
@@ -1691,7 +1688,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9240) delerb,delerr
       msg = msg + 1
       note(msg) = 1
@@ -1700,7 +1697,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
   430 continue
       fpolss=fpolvs/1000.
       write(text,9262) dminux(jtime),dminlx(jtime)
@@ -1711,9 +1708,9 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
-      edgej=cpasma(jtime)/areao(jtime)*1.e4
+      edgej=cpasma(jtime)/areao(jtime)*1.e4_dp
       if (icurrt.eq.2.or.icurrt.eq.5) then
         if (rseps(1,jtime).gt.0.0) then
           rsepcm=rseps(1,jtime)/100.
@@ -1721,7 +1718,7 @@
           cjsep=rsepcm*ppcurr(x111,kppcur) &
                   +fpcurr(x111,kffcur)/rsepcm
           cjsep=cjsep/darea
-          if (abs(edgej).gt.1.e-6) then
+          if (abs(edgej).gt.1.e-6_dp) then
             if (kzeroj.gt.0.and.rzeroj(1).lt.0.0) then
               edgej=cjsep/edgej
             else
@@ -1744,7 +1741,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9268) qout(jtime),qpsib(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1753,14 +1750,14 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 
       dismin=min(oleft(jtime),oright(jtime),otop(jtime),obott(jtime))
       if (dismin.eq.oleft(jtime)) gapdis=olefs(jtime)
       if (dismin.eq.oright(jtime)) gapdis=orighs(jtime)
       if (dismin.eq.obott(jtime)) gapdis=obots(jtime)
       if (dismin.eq.otop(jtime)) gapdis=otops(jtime)
-      if (dismin.le.0.1) dismin=gapdis
+      if (dismin.le.0.1_dp) dismin=gapdis
       if (iseplim.eq.0) seplim(jtime)=dismin
       write(text,9272) seplim(jtime)
       msg = msg + 1
@@ -1770,7 +1767,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9280) rmagx(jtime),rcurrt(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1779,7 +1776,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9290) zmagx(jtime),zcurrt(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1788,7 +1785,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9542) betapd(jtime),betapw(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1797,7 +1794,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9544) betatd(jtime),betatw(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1806,7 +1803,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9546) wplasmd(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1815,7 +1812,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9547) wplasw(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1824,7 +1821,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9300)
       msg = msg + 1
       note(msg) = 1
@@ -1833,7 +1830,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9390) pasmap
       msg = msg + 1
       note(msg) = 1
@@ -1842,7 +1839,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9400) bcentr(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1851,7 +1848,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       iece=kece+kecebz
       write(text,9320) ipsi(jtime),iece
       msg = msg + 1
@@ -1861,7 +1858,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9340) imag2(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1870,7 +1867,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9380) iplasm(jtime),ifc(jtime),iec(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -1879,7 +1876,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       if (mmbmsels.eq.0) then
            write(text,9385) idlopc(jtime),kmtark,klibim
       else
@@ -1892,7 +1889,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
       if(nextra.eq.0)go to 435
       write(text,9395)(scraps(i),i=1,iabs(nextra))
       msg = msg + 1
@@ -1902,7 +1899,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
   435 continue
       msg = msg + 1
       note(msg) = 1
@@ -1911,11 +1908,11 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
       if (icurrt.eq.1) then
-         xabs=-3.5
-         yabs=0.8
+         xabs=-3.5_dp
+         yabs=0.8_dp
          write(text,19603) srm,salpha
          msg = msg + 1
          note(msg) = 1
@@ -1924,7 +1921,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
          write(text,19605) sbeta,sbetaw
          msg = msg + 1
          note(msg) = 1
@@ -1933,7 +1930,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
          saaacm=saaa*100.
          write(text,19610) saaacm
          msg = msg + 1
@@ -1943,12 +1940,12 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
       endif
 !
       if (icurrt.eq.2.or.icurrt.eq.5) then
-         xabs=-3.5
-         yabs=0.8
+         xabs=-3.5_dp
+         yabs=0.8_dp
          write(text,9603) icprof,ifitvs
          msg = msg + 1
          note(msg) = 1
@@ -1957,7 +1954,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
          write(text,9605) kffcur,kppcur,keecur
          msg = msg + 1
          note(msg) = 1
@@ -1966,7 +1963,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
          write(text,9610) fcurbd,pcurbd,ecurbd
          msg = msg + 1
          note(msg) = 1
@@ -1975,7 +1972,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
          if (kvtor.ge.1.and.kvtor.le.3) then
            write(text,9612) kwwcur,wcurbd
            msg = msg + 1
@@ -1985,7 +1982,7 @@
            xpos(msg) = xabs
            ypos(msg) = yabs
            yabs = yabs - dyabs
-           ht(msg) = 0.14
+           ht(msg) = 0.14_dp
          endif
          if (kvtor.eq.11) then
            write(text,9614) kvtor
@@ -1996,13 +1993,13 @@
            xpos(msg) = xabs
            ypos(msg) = yabs
            yabs = yabs - dyabs
-           ht(msg) = 0.14
+           ht(msg) = 0.14_dp
          endif
 !
          wwtbp=0.0
          wwtqa=0.0
-         if (abs(fwtbp).gt.1.e-8) wwtbp=abs(fwtbp/fwtbp)
-         if (abs(fwtqa).gt.1.e-8) wwtqa=abs(fwtqa/fwtqa)
+         if (abs(fwtbp).gt.1.e-8_dp) wwtbp=abs(fwtbp/fwtbp)
+         if (abs(fwtqa).gt.1.e-8_dp) wwtqa=abs(fwtqa/fwtqa)
          write(text,9615) wwtbp,wwtqa
          msg = msg + 1
          note(msg) = 1
@@ -2011,7 +2008,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
 
          zelipcm=zelip*100.
          write(text,9635) zelipcm
@@ -2022,9 +2019,9 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
 
-         if (abs(relax-1.0).gt.1.e-4) then
+         if (abs(relax-1.0).gt.1.e-4_dp) then
             write(text,9637) relax
             msg = msg + 1
             note(msg) = 1
@@ -2033,7 +2030,7 @@
             xpos(msg) = xabs
             ypos(msg) = yabs
             yabs = yabs - dyabs
-            ht(msg) = 0.14
+            ht(msg) = 0.14_dp
          endif
          if (kcalpa.gt.0.or.kcgama.gt.0) then
             write(text,9620) kcgama,kcalpa
@@ -2064,7 +2061,7 @@
             xpos(msg) = xabs
             ypos(msg) = yabs
             yabs = yabs - dyabs
-            ht(msg) = 0.14
+            ht(msg) = 0.14_dp
          endif
          if (icutfp.eq.2) then
             if (alphafp.ge.0.0) alphamu=alphafp
@@ -2076,7 +2073,7 @@
             xpos(msg) = xabs
             ypos(msg) = yabs
             yabs = yabs - dyabs
-            ht(msg) = 0.14
+            ht(msg) = 0.14_dp
          endif
          if (kprfit.gt.0) then
             write(text, 9630) kprfit
@@ -2087,7 +2084,7 @@
             xpos(msg) = xabs
             ypos(msg) = yabs
             yabs = yabs - dyabs
-            ht(msg) = 0.14
+            ht(msg) = 0.14_dp
          endif
          msg = msg + 1
          note(msg) = 1
@@ -2096,7 +2093,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
       endif
 !
 19999 continue
@@ -2113,25 +2110,25 @@
       grce = -1.0
       iexit = 1
       nplen = 100
-      hight = 0.14
+      hight = 0.14_dp
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
       almin, xstp, almax, blmin, ystp, blmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif         ! itek
 !
@@ -2143,8 +2140,8 @@
          call seva2d(bkx,lkx,bky,lky,c,rmaxis,zgrid(i),pds,ier,n333)
          workj(i)=-pds(3)/rmaxis
   460 continue
-      dxnow=(rmaxzm-rminzm)/float(nw-1)
-      drnow=(xlmax-xlmin)/float(nw-1)
+      dxnow=(rmaxzm-rminzm)/(nw-1)
+      drnow=(xlmax-xlmin)/(nw-1)
       do 465 i=1,nw
          xnow=rminzm+(i-1)*dxnow
          call seva2d(bkx,lkx,bky,lky,c,xnow,zmaxis,pds,ier,n111)
@@ -2158,7 +2155,7 @@
   465 continue
       if (ivacum.gt.0) go to 495
       if (kwripre.gt.0) then
-         delz=(zuperts(jtime)-zlowerts)/float(mpress-1)
+         delz=(zuperts(jtime)-zlowerts)/(mpress-1)
          do 42100 i=1,mpress
             zqthom(i)=(zlowerts+(i-1)*delz)/100.
 42100    continue
@@ -2166,12 +2163,12 @@
       do 467 i=1,nw
          do 467 j=1,nh
             kk=(i-1)*nh+j
-            copyn(kk)=pcurrt(kk)/darea/1.0e+03
+            copyn(kk)=pcurrt(kk)/darea/1.0e+03_dp
   467 continue
       call sets2d(copyn,cj,rgrid,nw,bjx,ljx,zgrid,nh,bjy,ljy,wkj,ier)
       if (kvtor.gt.0) then
         n1set=1
-        ypsi=0.5
+        ypsi=0.5_dp
         pres0=prcur4(n1set,ypsi,kppcur)
         prew0=pwcur4(n1set,ypsi,kwwcur)
         n1set=0
@@ -2179,7 +2176,7 @@
           do i=1,nw
           do j=1,nh
             kk=(i-1)*nh+j
-            copyn(kk)=pcurrw(kk)/darea/1.0e+03
+            copyn(kk)=pcurrw(kk)/darea/1.0e+03_dp
           enddo
           enddo
           call sets2d(copyn,cv,rgrid,nw,bvx,lvx,zgrid,nh,bvy, &
@@ -2195,7 +2192,7 @@
             qthom(i)=seval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
 42120    continue
       endif
-      delscr=(rmaxzm-rminzm)/2./float(nw-1)*0.6
+      delscr=(rmaxzm-rminzm)/2./(nw-1)*0.6_dp
       do 470 i=1,nw
          rpmid(i)=workc(i)
          rscrap(i)=rmaxzm+(i-1)*delscr
@@ -2227,7 +2224,7 @@
            pmidw(i)=prew0
            if (kvtor.eq.11) then
              rdiml=workc(i)/rzero
-             if (abs(pres0).gt.1.e-10) then
+             if (abs(pres0).gt.1.e-10_dp) then
                pwop0=prew0/pres0
                ptop0=exp(pwop0*rgrvt(i))
              else
@@ -2240,7 +2237,7 @@
              else
                ppw=0.0
              endif
-             ppw=rbetaw*ppw*rgrvn*rdiml*ptop0*cratio/darea/1.e3
+             ppw=rbetaw*ppw*rgrvn*rdiml*ptop0*cratio/darea/1.e3_dp
              workaw(i)=ppw
            else
              if (icurrt.eq.4) then
@@ -2251,17 +2248,17 @@
                else
                  ppw=0.0
                endif
-               ppw=rbetaw*ppw*rgrvn*rdiml*cratio/darea/1.e3
+               ppw=rbetaw*ppw*rgrvn*rdiml*cratio/darea/1.e3_dp
                workaw(i)=ppw
              elseif (icurrt.eq.5) then
                rgrvn=(workc(i)/rvtor)**2-1.
                ppw=pwpcur(xpsikk,kwwcur)
                if (kvtor.eq.1) then
                  ppw=ppw*rgrvn*workc(i)
-                 workaw(i)=ppw/darea/1.e3
+                 workaw(i)=ppw/darea/1.e3_dp
                endif
                if (kvtor.eq.2) then
-                 if (abs(pres0).gt.1.e-10) then
+                 if (abs(pres0).gt.1.e-10_dp) then
                     pwop0=prew0/pres0
                     ptop0=exp(pwop0*rgrvv)
                  else
@@ -2269,10 +2266,10 @@
                     pwop0=0.0
                  endif
                  ppw=ppw*(1.+pwop0*rgrvn)*rgrvn*workc(i)
-                 workaw(i)=ppw/darea/1.e3
+                 workaw(i)=ppw/darea/1.e3_dp
                endif
                if (kvtor.eq.3) then
-                 if (abs(pres0).gt.1.e-10) then
+                 if (abs(pres0).gt.1.e-10_dp) then
                     pwop0=prew0/pres0
                     ptop0=exp(pwop0*rgrvn)
                  else
@@ -2280,7 +2277,7 @@
                     pwop0=0.0
                  endif
                  ppw=ppw*ptop0*rgrvn*workc(i)
-                 workaw(i)=ppw/darea/1.e3
+                 workaw(i)=ppw/darea/1.e3_dp
                endif
              elseif (icurrt.eq.1) then
                call seva2d(bvx,lvx,bvy,lvy,cv,workc(i),zmaxis, &
@@ -2296,21 +2293,21 @@
          xpsiss=(pds(1)-simag)/(psibry-simag)
          if (icurrt.eq.2) then
             if (xpsikk.lt.0.0) xpsikk=0.0
-            if (xpsikk.gt.1.0001.and.icutfp.eq.0) then
+            if (xpsikk.gt.1.0001_dp.and.icutfp.eq.0) then
                worka(i)=0.0
                go to 11470
             endif
             worka(i)=workc(i)*ppcurr(xpsikk,kppcur) &
                       +fpcurr(xpsikk,kffcur)/workc(i)
-            worka(i)=worka(i)/darea/1.0e+03
+            worka(i)=worka(i)/darea/1.0e+03_dp
 11470       if (xpsiss.lt.0.0) xpsiss=0.0
-            if (xpsiss.gt.1.0001.and.icutfp.eq.0) then
+            if (xpsiss.gt.1.0001_dp.and.icutfp.eq.0) then
                curscr(i)=0.0
                go to 470
             endif
             curscr(i)=rscrap(i)*ppcurr(xpsiss,kppcur) &
                          +fpcurr(xpsiss,kffcur)/rscrap(i)
-            curscr(i)=curscr(i)/darea/1.0e+03
+            curscr(i)=curscr(i)/darea/1.0e+03_dp
          else
            call seva2d(bjx,ljx,bjy,ljy,cj,workc(i),zmaxis, &
                        pds,ier,n111)
@@ -2332,31 +2329,31 @@
       drrrr=(workc(nw)-workc(1))/2.
       drpmid=drrrr
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
       dcurn=(curmax-curmin)/2.
       if (klabel.ge.0) then
 !
       if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
          call init2d
          ibrdr = 1
-	 xphy = 4.1
-	 yphy = 5.5
-	 hight = 0.10
-	 nplen = 100
-	 nxlen = -100
-	 nylen = 100
-	 iytck = 1
-	 ixnon = 1
-	 igridx = 1
-	 igridy = 1
-	 idot = 1
+         xphy = 4.1_dp
+         yphy = 5.5_dp
+         hight = 0.10_dp
+         nplen = 100
+         nxlen = -100
+         nylen = 100
+         iytck = 1
+         ixnon = 1
+         igridx = 1
+         igridy = 1
+         idot = 1
          xtitle = '$'
          ytitle = 'J(Zmag, KA/m2)$'
-	 iexit = 1
-!
+         iexit = 1
+
          nn=1
          nxy(nn) = nw
          do ii = 1,nw
@@ -2402,9 +2399,9 @@
          nn=nn+1
          nxy(nn) = 2
          ndotme(nn) = 1
-         xx(1,nn) = 1.0001*workc(1)
+         xx(1,nn) = 1.0001_dp*workc(1)
          yy(1,nn) = 0.0
-         xx(2,nn) = 0.9999*workc(nw)
+         xx(2,nn) = 0.9999_dp*workc(nw)
          yy(2,nn) = 0.0
          if (kvtor.gt.0) then
            nn=nn+1
@@ -2417,7 +2414,7 @@
          endif
          ncurve=nn
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
@@ -2433,7 +2430,7 @@
          lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
-      	 msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, &
+         msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, &
          iexit)
       endif   ! itek
       endif
@@ -2452,12 +2449,12 @@
   490 continue
       drrrr=(workc(nw)-workc(1))/2.
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
       dcurn=(curmax-curmin)/2.
       if (klabel.ge.0) then
          ibrdr = 1
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
          call init2d
          nn = nn + 1
@@ -2585,7 +2582,7 @@
               endif
              enddo
              write(62,*)rrgamn,bzgamn
-             rrgams(igamn)=1.e10
+             rrgams(igamn)=1.e10_dp
             enddo
             close(62)
            dataname=dataname(1:lprx)//'_bzlimc'
@@ -2607,7 +2604,7 @@
               endif
              enddo
              write(62,*)rrgamn,bzgamn
-             rrgaml(igamn)=1.e10
+             rrgaml(igamn)=1.e10_dp
             enddo
             close(62)
           endif
@@ -2625,37 +2622,37 @@
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
-         ibrdr = 1
-	 xphy = 4.1
-	 yphy = 2.7
-	 hight = 0.10
-	 nplen = 100
-	 nxlen = 100
-	 nylen = 100
-	 iytck = 1
-         if (keecur.gt.0) then
+        ibrdr = 1
+        xphy = 4.1_dp
+        yphy = 2.7_dp
+        hight = 0.10_dp
+        nplen = 100
+        nxlen = 100
+        nylen = 100
+        iytck = 1
+        if (keecur.gt.0) then
           igridx = 0
-         else
+        else
           igridx = 1
-         endif
-	 igridy = 1
-	 idot = 1
-         xtitle = 'R(m)$'
-         ytitle = 'q$'
-	 iexit = 2
+        endif
+        igridy = 1
+        idot = 1
+        xtitle = 'R(m)$'
+        ytitle = 'q$'
+        iexit = 2
 !-----------------------------------------------------------------------
 !-- overlay ER plot                                                   --
 !-----------------------------------------------------------------------
       if (keecur.gt.0) then
-      eurmin=1.0e+10
-      eurmax=-1.0e+10
+      eurmin=1.0e+10_dp
+      eurmax=-1.0e+10_dp
       do i=1,nw
          eurmin=min(eurmin,ermid(i))
          eurmax=max(eurmax,ermid(i))
       enddo
       ecurn=eurmax-eurmin
-      eurmax=eurmax+0.05*ecurn
-      eurmin=eurmin-0.05*ecurn
+      eurmax=eurmax+0.05_dp*ecurn
+      eurmin=eurmin-0.05_dp*ecurn
       eurmax=max(abs(eurmin),abs(eurmax))
       eurmin=-eurmax
       ecurn=(eurmax-eurmin)
@@ -2678,7 +2675,7 @@
       ncurve = nn
       endif
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
@@ -2694,7 +2691,7 @@
          lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
-      	 msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, &
+         msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, &
          iexit)
       endif     ! itek
       endif
@@ -2703,7 +2700,7 @@
       istrpl=1
       if (itek.eq.1) call tekall(4010,960,0,0,0)
       call grace(0.0)
-      xmm=1.6
+      xmm=1.6_dp
 !
       iexpand=1
       if(oring(jtime).lt.100.*scrape)iexpand=0
@@ -2717,37 +2714,37 @@
             curmax=max(curmax,workg(i))
   510    continue
          dcurn=curmax-curmin
-         curmax=curmax+0.05*dcurn
-         curmin=curmin-0.05*dcurn
+         curmax=curmax+0.05_dp*dcurn
+         curmin=curmin-0.05_dp*dcurn
          drrrr=(workk(nw)-workk(1))
          dcurn=(curmax-curmin)
-         xmm=1.6
+         xmm=1.6_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
          call init2d
          ibrdr = 1
-	 xphy = 9.0
-	 yphy = 1.4
-	 hight = 0.12
-	 nplen = 100
-	 nxlen = 100
-	 nylen = 100
-	 ixtck = 2
-	 iytck = 2
-	 igridx = 2
-	 igridy = 2
-	 idot = 1
+         xphy = 9.0
+         yphy = 1.4_dp
+         hight = 0.12_dp
+         nplen = 100
+         nxlen = 100
+         nylen = 100
+         ixtck = 2
+         iytck = 2
+         igridx = 2
+         igridy = 2
+         idot = 1
          ipag = 0
          xtitle = 'R(m)$'
          ytitle = 'Bz(T)$'
-	 iexit = 1
+         iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
@@ -2758,12 +2755,12 @@
          igridx, igridy, idash, idot, ichdsh, ichdot, &
          thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
          markme, clearx, mrc, tlen, nmrk, rat, &
-         workk,	workg, nw, ncnct, &
+         workk, workg, nw, ncnct, &
          icont, nword, zz, ix, iy, zinc, line, mode, &
          lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
-      	 msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, &
+         msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, &
          iexit)
       endif  ! itek
       endif
@@ -2776,18 +2773,18 @@
   500 continue
       drrrr=(workk(nw)-workk(1))
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
-      xmm=1.6
+      xmm=1.6_dp
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       ibrdr = 1
       xphy = 9.0
-      yphy = 3.7
-      hight = 0.12
+      yphy = 3.7_dp
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -2811,22 +2808,22 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft,  &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       workk(1), drrrr, workk(nw), curmin, dcurn, curmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
-      workk, workf, nw,	ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      workk, workf, nw, ncnct, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
 !
@@ -2870,8 +2867,8 @@
          curmax=max(curmax,workh(i))
   555 continue
       dcurn=(curmax-curmin)/2.
-      curmax=curmax+dcurn*0.05
-      curmin=curmin-dcurn*0.05
+      curmax=curmax+dcurn*0.05_dp
+      curmin=curmin-dcurn*0.05_dp
       dcurn=(curmax-curmin)
       ibrdr = 1
       workg(1)=workk(1)
@@ -2879,7 +2876,7 @@
       workh(1)=0.
       workh(2)=0.
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       ncurve = 2
@@ -2900,7 +2897,7 @@
       ibrdr = 1
       xphy = 9.0
       yphy = 6.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -2916,23 +2913,23 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       workk(1), drrrr, workk(nw), curmin, dcurn, curmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
-      	msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      nvec, xfm, yfm, xto, yto, ivec, &
+       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
 !
       curmin=workj(1)
@@ -2943,21 +2940,21 @@
   560 continue
       drrrr=(zgrid(nh)-zgrid(1))
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       ipag = 0
       ibrdr = 1
-      xphy = 6.6
-      yphy = 1.4
-      hight = 0.12
+      xphy = 6.6_dp
+      yphy = 1.4_dp
+      hight = 0.12_dp
       nplen = -100
       nxlen = 100
       nylen = 100
@@ -2971,28 +2968,28 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       zgrid(1), drrrr, zgrid(nh), curmin, dcurn, curmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
-      zgrid, workj, nh,	ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      zgrid, workj, nh, ncnct, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
 !
       if (ivacum.gt.0) go to 570
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do 564 i=1,nw
          sinow=worke(i)
          worka(i)=speval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
@@ -3001,20 +2998,20 @@
          curmax=max(curmax,worka(i))
   564 continue
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       ibrdr = 1
-      xphy = 6.5
-      yphy = 3.7
-      hight = 0.12
+      xphy = 6.5_dp
+      yphy = 3.7_dp
+      hight = 0.12_dp
       nplen = -100
       nxlen = 100
       nylen = 100
@@ -3023,42 +3020,42 @@
       igridx = 1
       igridy = 2
       idot = 1
-      xnmax = 0.5
+      xnmax = 0.5_dp
       ipag = 0
       xtitle = 'PSI$'
       ytitle = 'SHEAR$'
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       worke(1), xnmax, worke(nw), curmin, dcurn, curmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
-      worke, worka, nw,	ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      worke, worka, nw, ncnct, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
-      	msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      nvec, xfm, yfm, xto, yto, ivec, &
+       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    ! itek
   570 continue
 !
       if (ivacum.gt.0) go to 580
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do 574 i=1,nw
          curmin=min(curmin,pmid(i))
          curmax=max(curmax,pmid(i))
   574 continue
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
       curmin=curmin
       dcurn=(curmax-curmin)
       drpmid=drpmid*2.
@@ -3066,15 +3063,15 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       xtitle = 'R(m)$'
       ytitle = 'P(n/m2)$'
       ibrdr = 1
       xphy = 4.0
-      yphy = 1.4
-      hight = 0.12
+      yphy = 1.4_dp
+      hight = 0.12_dp
       nplen = -100
       nxlen = 100
       nylen = 100
@@ -3121,29 +3118,29 @@
          enddo
          ncurve=nn
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       rpmid(1), drpmid, rpmid(nw), curmin, dcurn, curmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx   , yy  , nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
-      	msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      nvec, xfm, yfm, xto, yto, ivec, &
+       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
   580 continue
 !
       if (ivacum.gt.0) go to 590
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do 584 i=1,nitera
          curmin=min(curmin,cerror(i))
          curmax=max(curmax,cerror(i))
@@ -3151,14 +3148,14 @@
   584 continue
       xdel=(xiter(nitera)-xiter(1))/2.
       ibrdr = 1
-      if (abs(curmin).gt.1.e-10) then
+      if (abs(curmin).gt.1.e-10_dp) then
          ycycle=-log10(curmin)
       else
          ycycle=3.
       endif
       kcycle=ycycle+1
       curmin=10.**(-kcycle)
-      ycycle=xmm/float(kcycle)
+      ycycle=xmm/kcycle
       if (ycycle.lt.xmm/3.) ycycle=xmm/3.
       idel=nitera/xmm
       xdel=idel+1
@@ -3166,13 +3163,13 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       ibrdr = 1
       xphy = 4.0
-      yphy = 3.7
-      hight = 0.12
+      yphy = 3.7_dp
+      hight = 0.12_dp
       nplen = -100
       nxlen = 100
       nylen = 100
@@ -3187,30 +3184,30 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       xiter(1), xdel, xstp, curmin, ycycle, ystp, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
       isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xiter, cerror, nitera, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif   ! itek
   590 continue
 !
       if (ivacum.gt.0) go to 599
       if (iconvr.ne.3) then
-         curmin=1.0e+10
-         curmax=-1.0e+10
+         curmin=1.0e+10_dp
+         curmax=-1.0e+10_dp
          do 594 i=1,nitera
             curmin=min(curmin,cchisq(i))
             curmax=max(curmax,cchisq(i))
@@ -3219,7 +3216,7 @@
          ycycle= log10(curmax)
          ycycle=max(one,ycycle)
          kcycle=ycycle
-         ycycle=xmm/float(kcycle)
+         ycycle=xmm/kcycle
          if (ycycle.lt.xmm/3.) ycycle=xmm/3.
          curmin=   (log10(curmin))
          kcycle=curmin
@@ -3228,40 +3225,40 @@
             if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
          call init2d
          ibrdr = 1
          xphy = 4.0
          yphy = 6.0
-         hight = 0.12
+         hight = 0.12_dp
          nplen = 100
          nxlen = 100
          nylen = 100
          iaxis = 2         
          ixtck = 2
          intax = 1
-	 xstp = 0.0
-	 ystp = 0.0
+         xstp = 0.0
+         ystp = 0.0
          xtitle = 'ITERS$'
          ytitle = 'CHI2$'
-	 iexit = 1
+         iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
          xiter(1), xdel, xstp, curmin, ycycle, ystp, &
          iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
-         isaxs,	sorg, stp, smax, slen, sname, nslen, xps, yps, &
+         isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
          igridx, igridy, idash, idot, ichdsh, ichdot, &
          thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
          markme, clearx, mrc, tlen, nmrk, rat, &
-         xiter,	cchisq,	nitera,	ncnct, &
-         icont,	nword, zz, ix, iy, zinc, line, mode, &
-         lbflg,	ithk, ipri, nline, draw, &
+         xiter, cchisq, nitera, ncnct, &
+         icont, nword, zz, ix, iy, zinc, line, mode, &
+         lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht,  &
@@ -3310,7 +3307,7 @@
       if (fwtfc(1).ne.0.0) iline=-1
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
 !-----------------------------------------------------------------------c
@@ -3320,7 +3317,7 @@
       nxy(nn) = nfcoil
       ncnct(nn) = 1
       markme(nn) = 16
-      sclpc(nn) = 0.7
+      sclpc(nn) = 0.7_dp
       clearx(nn)='CYAN'
       do i = 1, nfcoil
          xx(i,nn) = worka(i)
@@ -3332,7 +3329,7 @@
          nxy(nn) = nfcoil
          ncnct(nn) = 1
          markme(nn) = 15
-         sclpc(nn) = 0.7
+         sclpc(nn) = 0.7_dp
          ndotme(nn) = 1
          do i = 1, nfcoil
             xx(i,nn) = worka(i)
@@ -3342,7 +3339,7 @@
          nxy(nn) = nfcoil
          ncnct(nn) = 1
          markme(nn) = 15
-         sclpc(nn) = 0.7
+         sclpc(nn) = 0.7_dp
          ndotme(nn) = 1
          do i = 1, nfcoil
             xx(i,nn) = worka(i)
@@ -3356,7 +3353,7 @@
          nxy(nn) = nfcoil
          ncnct(nn) = 1
          markme(nn) = 15
-         sclpc(nn) = 0.7
+         sclpc(nn) = 0.7_dp
          clearx(nn)='PINK'
          ndotme(nn) = 1
          do i = 1, nfcoil
@@ -3371,8 +3368,8 @@
 !--  write out plasma parameters                                      --
 !-----------------------------------------------------------------------
       xabs=-6.0
-      yabs=1.8
-      dyabs = 0.22
+      yabs=1.8_dp
+      dyabs = 0.22_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -3383,7 +3380,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -3392,7 +3389,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -3401,7 +3398,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -3410,7 +3407,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9440) chi2rm(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3419,7 +3416,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9270) pasmac
       msg = msg + 1
       note(msg) = 1
@@ -3428,7 +3425,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9420) oleft(jtime),oright(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3437,7 +3434,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9460) otop(jtime),obott(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3446,7 +3443,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9441) fexpan,fexpvs
       msg = msg + 1
       note(msg) = 1
@@ -3455,7 +3452,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       dflux=1.0e+03*cdflux(jtime)
       write (text,9467) zuperts(jtime),rlibim(jtime)
       msg = msg + 1
@@ -3465,7 +3462,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9520) rvsiu(jtime),rvsou(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3474,7 +3471,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9521) rvsid(jtime),rvsod(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3483,7 +3480,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9530) rseps(1,jtime),rseps(2,jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3492,7 +3489,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9540) zseps(1,jtime),zseps(2,jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3501,7 +3498,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9470) sibdry(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3510,7 +3507,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9480) elongm(jtime),qqmagx(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3519,7 +3516,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9482) psiref(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3528,7 +3525,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9484) vertn(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3537,7 +3534,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 
 !-----------------------------------------------------------------------
 !-- vertical stability parameter,  reference Nuc Fusion  18(1978)1331 --
@@ -3545,12 +3542,12 @@
       if (ivacum.le.0) then
          rx=rmagx(jtime)/100.
          pleng=0.0
-         f_0=log(8*rout(jtime)/abar)-2+betap(jtime)+ali(jtime)/2+.5
-         delr=rout(jtime)/100.-1.67
+         f_0=log(8*rout(jtime)/abar)-2+betap(jtime)+ali(jtime)/2+.5_dp
+         delr=rout(jtime)/100.-1.67_dp
 !-----------------------------------------------------------------------
 !-- metal wall                                                        --
 !-----------------------------------------------------------------------
-         xnnc(jtime)=vertn(jtime)/((10.77*delr**2+8.08*delr+2.54)/f_0)
+         xnnc(jtime)=vertn(jtime)/((10.77_dp*delr**2+8.08_dp*delr+2.54_dp)/f_0)
       endif
       write (text,9399) xnnc(jtime),qmerci(jtime)
       msg = msg + 1
@@ -3560,7 +3557,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9492) shearb(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3569,7 +3566,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       edgesw=cjor95(jtime)*cjor0(jtime)
       write (text,9490) ssi95(jtime),edgesw
       msg = msg + 1
@@ -3579,7 +3576,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9496) psiwant,qsiwant(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3588,7 +3585,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       edgesw=cjorsw(jtime)*cjor0(jtime)
       write (text,9498) ssiwant(jtime),edgesw
       msg = msg + 1
@@ -3598,7 +3595,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       dnev2=dco2v(jtime,2)
       write (text,9502) dnev2
       msg = msg + 1
@@ -3608,7 +3605,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       dner1=dco2r(jtime,1)
       erreq=max(dbpli(jtime),delbp(jtime))
       write (text,9510) erreq
@@ -3619,7 +3616,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !----------------------------------------------------------------------------
 !--  dummy write statement added for HP version 9.01 optimization problems --
 !--   llao 93/09                                                           --
@@ -3633,7 +3630,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9512) taumhd(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3642,7 +3639,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9548) taudia(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3651,18 +3648,18 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
-      if (qpsib(jtime).gt.0.1) then
+      ht(msg) = 0.14_dp
+      if (qpsib(jtime).gt.0.1_dp) then
          sq295=ssi95(jtime)/qpsib(jtime)**2
       else
          sq295=0.0
       endif
-      pbinjmw=pbinj(jtime)/1.e+06
-      pasmma=abs(pasmat(jtime))/1.e+06
+      pbinjmw=pbinj(jtime)/1.e+06_dp
+      pasmma=abs(pasmat(jtime))/1.e+06_dp
       routm=rout(jtime)/100.
       tauenn=tauthn(jtime)
-!     if (pbinjmw.gt.1.e-03.and.abs(pasmma).gt.1.e-03) then
-!     taud3jet=106.*pbinjmw**(-0.46)*pasmma**1.03*routm**1.48
+!     if (pbinjmw.gt.1.e-03_dp.and.abs(pasmma).gt.1.e-03_dp) then
+!     taud3jet=106._dp*pbinjmw**(-0.46_dp)*pasmma**1.03_dp*routm**1.48_dp
 !     tauenn=taumhd(jtime)/taud3jet
 !     else
 !     tauenn=0.0
@@ -3680,7 +3677,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9550) vloopt(jtime),cj1ave(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3689,7 +3686,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9934) tave(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3698,7 +3695,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9936) pbinjmw,wfn_bim
       msg = msg + 1
       note(msg) = 1
@@ -3707,7 +3704,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       if (isetfb.ne.0) then
          brfbtka=brfb(1)*nfbcoil/1000.
          write (text,9938) brfbtka
@@ -3718,7 +3715,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
       elseif(symmetrize)then
          write (text,9937)
          msg = msg + 1
@@ -3728,7 +3725,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
       endif
       if (kstark.gt.0.or.mmbmsels.gt.0) then
          kstnow=mse315/2
@@ -3744,7 +3741,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
          if (kstark.gt.0) then
            write (text,9940) (qstark(i),i=1,kstnow)
          elseif (mmbmsels.gt.0) then
@@ -3757,7 +3754,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
          if (kstark.gt.0) then
            write (text,9940) (qstark(i),i=kstnow+1,mse315)
          elseif (mmbmsels.gt.0) then
@@ -3770,7 +3767,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
       endif
       if (fwtdlc.le.0.0) go to 680
       write (text,9495) chidlc
@@ -3781,7 +3778,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
   680 continue
       if (nqwant.gt.0) then
          kstnow=min(nqwant,8)
@@ -3793,7 +3790,7 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.14
+         ht(msg) = 0.14_dp
       endif
       msg = msg + 1
       note(msg) = 1
@@ -3802,15 +3799,15 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
       ncurve = nn
       ibrdr = 1
-      xphy = 6.5
+      xphy = 6.5_dp
       yphy = 6.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -3824,24 +3821,24 @@
       ytitle = 'I(kA)$'
       iexit = 2
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
       xfcoil=nfcoil-1
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       worka(1), xfcoil, worka(nfcoil), curmin, dcurn, curmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
-      	msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      nvec, xfm, yfm, xto, yto, ivec, &
+       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !   itek
   700 continue
 !----------------------------------------------------------------------
@@ -3850,42 +3847,42 @@
       if (iconvr.eq.3.and.kdata.eq.2) then
 !        if (ivacum.eq.0) go to 730
          if (itek.eq.1) call tekall(4010,960,0,0,0)
-         xmm=1.6*2
+         xmm=1.6_dp*2
          go to 17594
       endif
   705 continue
-      chsmin=1.0e30
-      chsmax=-1.0e30
+      chsmin=1.0e30_dp
+      chsmax=-1.0e30_dp
       do 710 i=1,nsilop
          chsmin=min(chsmin,saisil(i))
          chsmax=max(chsmax,saisil(i))
-         si(i)=float(i)
+         si(i)=i
   710 continue
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       if (kstark.le.1) then
          yxxx=3.0
-         xphy = 7.7
+         xphy = 7.7_dp
          yphy = 1.0
       else
-         yxxx=1.8
-         xphy = 7.5
-         yphy = 0.9
+         yxxx=1.8_dp
+         xphy = 7.5_dp
+         yphy = 0.9_dp
       endif
       ibrdr = 1
-      hight = 0.12
+      hight = 0.12_dp
       nplen = -100
       nxlen = 100
       nylen = 100
       xlen = 3.0
       if (ivacum.eq.1) then
          xlen = 6.0
-         xphy = 4.7
+         xphy = 4.7_dp
       endif
       xstp = si(nsilop) - si(1)
       ystp = chsmax - chsmin
@@ -3898,66 +3895,66 @@
       ipag = 1
       xtitle = 'PSI LOOPS$'
       ytitle = 'CHI**2$'
-      sclpc(1) = 0.5
+      sclpc(1) = 0.5_dp
       ncnct(1) = 1
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, yxxx, &
       si(1), xstp, si(nsilop), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       si, saisil, nsilop, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
-      	msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      nvec, xfm, yfm, xto, yto, ivec, &
+       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif      ! itek
 !----------------------------------------------------------------------
 !--  plot the probes chi squares                                     --
 !----------------------------------------------------------------------
-      chsmin=1.0e30
-      chsmax=-1.0e30
+      chsmin=1.0e30_dp
+      chsmax=-1.0e30_dp
       do 720 i=1,magpri
          chsmin=min(saimpi(i),chsmin)
          chsmax=max(saimpi(i),chsmax)
-         rmpi(i)=float(i)
+         rmpi(i)=i
   720 continue
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       if (kstark.le.1) then
-         xphy = 7.7
+         xphy = 7.7_dp
          yphy = 5.0
       else
-         xphy = 7.5
-         yphy = 3.5
+         xphy = 7.5_dp
+         yphy = 3.5_dp
       endif
       xtitle = 'MAGNETIC PROBES$'
       ytitle = 'CHI**2$'
       ipag = 1
       iexit = 1
       if (ivacum.gt.0) iexit=2
-      sclpc(1) = 0.5
+      sclpc(1) = 0.5_dp
       ncnct(1) = 1
 
-      xabs=-7.3
-      if (ivacum.eq.1) xabs=-4.3
+      xabs=-7.3_dp
+      if (ivacum.eq.1) xabs=-4.3_dp
       if (kstark.le.1) then
          yabs=3.0
       else
-         yabs=4.5
+         yabs=4.5_dp
       endif
-      dyabs = 0.22
+      dyabs = 0.22_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -3968,7 +3965,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -3977,7 +3974,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -3986,7 +3983,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -3995,12 +3992,12 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !-----------------------------------------------------------------------
 !--  print out pointnames                                             --
 !-----------------------------------------------------------------------
       if (kstark.le.1) then
-         yabs=1.5
+         yabs=1.5_dp
       else
          yabs=3.0
       endif
@@ -4011,15 +4008,15 @@
       imes(msg) = 100
       xpos(msg) = xabs
       ypos(msg) = yabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = 'no.   name        no.   name$'
       imes(msg) = 100
       xpos(msg) = xabs
-      ypos(msg) = yabs - 0.25
-      ht(msg) = 0.10
-      yabs=yabs0-0.5
+      ypos(msg) = yabs - 0.25_dp
+      ht(msg) = 0.10_dp
+      yabs=yabs0-0.5_dp
       do 722 i=magpri67+1,magpri67+16
 !        call intno(i,xabs,yabs)
          msg = msg + 1
@@ -4027,21 +4024,21 @@
          inum(msg) = i
          xpos(msg) = xabs
          ypos(msg) = yabs
-         ht(msg) = 0.07
-!        call messag(%ref(mpnam2(i)),10,-6.8,yabs)
+         ht(msg) = 0.07_dp
+!        call messag(%ref(mpnam2(i)),10,-6.8_dp,yabs)
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = mpnam2(i)
          imes(msg) = 10
-         xpos(msg) = -6.8
-         if (ivacum.eq.1) xpos(msg) = -3.8
+         xpos(msg) = -6.8_dp
+         if (ivacum.eq.1) xpos(msg) = -3.8_dp
          ypos(msg) = yabs
-         ht(msg) = 0.07
-         yabs=yabs-.13
+         ht(msg) = 0.07_dp
+         yabs=yabs-.13_dp
   722 continue
-      xabs=-5.8
-      if (ivacum.eq.1) xabs=-2.8
-      yabs=yabs0-0.5
+      xabs=-5.8_dp
+      if (ivacum.eq.1) xabs=-2.8_dp
+      yabs=yabs0-0.5_dp
       do 724 i=magpri67+17,magpri67+magpri322
 !        call intno(i,xabs,yabs)
          msg = msg + 1
@@ -4049,57 +4046,57 @@
          inum(msg) = i
          xpos(msg) = xabs
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
 !        call messag(%ref(mpnam2(i)),10,-5.2,yabs)
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = mpnam2(i)
          imes(msg) = 10
-         xpos(msg) = -5.2
-         if (ivacum.eq.1) xpos(msg) = -2.2
+         xpos(msg) = -5.2_dp
+         if (ivacum.eq.1) xpos(msg) = -2.2_dp
          ypos(msg) = yabs
-         ht(msg) = 0.07
-         yabs=yabs-.13
+         ht(msg) = 0.07_dp
+         yabs=yabs-.13_dp
   724 continue
 !
-      xabs=-7.3
-      if (ivacum.eq.1) xabs=-4.3
-      yabs=yabs-.5
+      xabs=-7.3_dp
+      if (ivacum.eq.1) xabs=-4.3_dp
+      yabs=yabs-.5_dp
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = '     psi loop identification$'
       imes(msg) = 100
       xpos(msg) = xabs
       ypos(msg) = yabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = 'no.   name        no.   name$'
       imes(msg) = 100
       xpos(msg) = xabs
-      ypos(msg) = yabs - 0.25
-      ht(msg) = 0.10
+      ypos(msg) = yabs - 0.25_dp
+      ht(msg) = 0.10_dp
 !     call height(.07)
-      yabs=yabs-.37
+      yabs=yabs-.37_dp
       yyabs=yabs
       do 726 i=1,21
-         yabs=yabs-.13
+         yabs=yabs-.13_dp
 !        call intno(i,xabs,yabs)
          msg = msg + 1
          note(msg) = 5
          inum(msg) = i
          xpos(msg) = xabs
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
 !        call messag(%ref(lpname(i)),10,-6.8,yabs)
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = lpname(i)
          imes(msg) = 10
-         xpos(msg) = -6.8
-         if (ivacum.eq.1) xpos(msg) = -3.8
+         xpos(msg) = -6.8_dp
+         if (ivacum.eq.1) xpos(msg) = -3.8_dp
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
 
   726 continue
       yabs=yyabs
@@ -4109,31 +4106,31 @@
          msg = msg + 1
          note(msg) = 5
          inum(msg) = i
-         xpos(msg) = -5.8
+         xpos(msg) = -5.8_dp
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
 !        call messag(%ref(lpname(i)),10,-5.2,yabs)
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = lpname(i)
          imes(msg) = 10
-         xpos(msg) = -5.2
-         if (ivacum.eq.1) xpos(msg) = -2.2
+         xpos(msg) = -5.2_dp
+         if (ivacum.eq.1) xpos(msg) = -2.2_dp
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
   728 continue
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
       ibrdr = 1
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
       xlen = 3.0
       if (ivacum.eq.1) then
          xlen = 6.0
-         xphy = 4.7
+         xphy = 4.7_dp
       endif
       xstp = rmpi(magpri) - rmpi(1)
       ystp = chsmax - chsmin
@@ -4145,39 +4142,39 @@
       idot = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, yxxx, &
       rmpi(1), xstp, rmpi(magpri), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       rmpi, saimpi, magpri, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif  ! itek
 !--------------------------------------------------------------------
 !--  plot chi2 for polarimetry                                     --
 !--------------------------------------------------------------------
       if (kstark.gt.1) then
-       chsmin=1.0e30
-       chsmax=-1.0e30
+       chsmin=1.0e30_dp
+       chsmax=-1.0e30_dp
        do 729 i=1,nstark
             chsmin=min(chigam(i),chsmin)
             chsmax=max(chigam(i),chsmax)
-            rmpi(i)=float(i)
+            rmpi(i)=i
   729  continue
 !
        if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
          call init2d
          yorg = chsmin
@@ -4187,12 +4184,12 @@
          ndshme(nn) = 1
          nxy(nn) = nstark
          do ii = 1, nxy(nn)
-            xx(ii,nn) = float(ii)
+            xx(ii,nn) = ii
             yy(ii,nn) = chigam(ii)
          enddo
 !
-         chsmin=1.0e30
-         chsmax=-1.0e30
+         chsmin=1.0e30_dp
+         chsmax=-1.0e30_dp
          do 731 i=1,nstark
             anglem(i)=atand(tangam(jtime,i))
             anglec(i)=atand(cmgam(i,jtime))
@@ -4202,8 +4199,8 @@
             chsmax=max(anglec(i),chsmax)
   731    continue
          dangle=chsmax-chsmin
-         chsmax=chsmax+0.1*dangle
-         chsmin=chsmin-0.1*dangle
+         chsmax=chsmax+0.1_dp*dangle
+         chsmin=chsmin-0.1_dp*dangle
          dangle=(chsmax-chsmin)/3.
          isaxs = 2
          sorg = chsmin
@@ -4217,21 +4214,21 @@
          nn = nn + 1
          ncnct(nn) = -1
          nxy(nn) = nstark
-         sclpc(nn) = 0.7
+         sclpc(nn) = 0.7_dp
          do ii = 1, nxy(nn)
-            xx(ii,nn) = float(ii)
+            xx(ii,nn) = ii
             yy(ii,nn) = anglem(ii)
          enddo
          nn = nn + 1
          nxy(nn) = nstark
          do ii = 1, nxy(nn)
-            xx(ii,nn) = float(ii)
+            xx(ii,nn) = ii
             yy(ii,nn) = anglec(ii)
          enddo
          ibrdr = 1
-         xphy = 7.5
-         yphy = 6.1
-         hight = 0.12
+         xphy = 7.5_dp
+         yphy = 6.1_dp
+         hight = 0.12_dp
          nplen = 100
          nxlen = 100
          nylen = 100
@@ -4247,23 +4244,23 @@
          xtitle = 'POLARIMETRY$'
          ytitle = 'CHI**2$'
          ncurve = nn
-	 iexit = 1
+         iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, yxxx, &
          xx(1,1), xstp, xx(nstark,1), yorg, ystp, ynmax, &
-         iaxis,	ixtck, iytck, ixnon, iynon, intax, intay, &
-         isaxs,	sorg, stp, smax, slen, sname, nslen, xps, yps, &
+         iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+         isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
          igridx, igridy, idash, idot, ichdsh, ichdot, &
-         thcrv, sclpc, 	ndshme, ndotme, ncdhme, ncdtme, &
+         thcrv, sclpc,  ndshme, ndotme, ncdhme, ncdtme, &
          markme, clearx, mrc, tlen, nmrk, rat, &
          xx, yy, nxy, ncnct, &
-         icont,	nword, zz, ix, iy, zinc, line, mode, &
-         lbflg,	ithk, ipri, nline, draw, &
+         icont, nword, zz, ix, iy, zinc, line, mode, &
+         lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht,  &
@@ -4274,15 +4271,15 @@
 !--   plot P', FF', and Zm                                              --
 !-------------------------------------------------------------------------
       if (ivacum.gt.0) go to 17600
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do 17584 i=1,nitera
          curmin=min(curmin,czmaxi(i))
          curmax=max(curmax,czmaxi(i))
          xiter(i)=i
 17584 continue
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       xtitle = 'ITERS$'
@@ -4297,28 +4294,28 @@
       enddo
       xdel=(xiter(nitera)-xiter(1))
       dcurn=curmax-curmin
-      curmax=curmax+0.06*dcurn
-      curmin=curmin-0.06*dcurn
+      curmax=curmax+0.06_dp*dcurn
+      curmin=curmin-0.06_dp*dcurn
       dcurn=(curmax-curmin)
       xmm=2.0
       yorg = curmin
       ynmax = curmax
       ystp = ynmax - yorg
-      if (fitdelz) goto 17593
+      if (fitdelz) go to 17593
 !---------------------------------------------------------------------
 !-- plot feedback currents                                          --
 !---------------------------------------------------------------------
-      if (abs(vcurfb(1)).le.1.e-6) goto 17593
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      if (abs(vcurfb(1)).le.1.e-6_dp) go to 17593
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do 17590 i=1,nitera
          czmcm(i)=tvfbrt(i)
          curmin=min(curmin,czmcm(i))
          curmax=max(curmax,czmcm(i))
 17590 continue
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
       isaxs = 2
       sorg = curmin
@@ -4341,16 +4338,16 @@
 !-- add DELZ iterations                                     --
 !-------------------------------------------------------------
       if (fitdelz) then
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do i=1,nitera
          czmcm(i)=cdelz(i)
          curmin=min(curmin,czmcm(i))
          curmax=max(curmax,czmcm(i))
       enddo
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
       isaxs = 2
       sorg = curmin
@@ -4373,9 +4370,9 @@
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ibrdr = 1
-      xphy = 4.2
-      yphy = 5.7
-      hight = 0.12
+      xphy = 4.2_dp
+      yphy = 5.7_dp
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -4386,40 +4383,40 @@
       igridy = 2
       idot = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!           Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       xiter(1), xdel, xiter(nitera), yorg  , ystp   ,ynmax , &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx   , yy    , nxy   , ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
 !
-17594 curmin=1.0e+10
-      curmax=-1.0e+10
+17594 curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do 17595 i=1,nw
          curmin=min(curmin,pprime(i))
          curmax=max(curmax,pprime(i))
-         xiter(i)=float(i-1)/float(nw-1)
+         xiter(i)=real(i-1,dp)/(nw-1)
 17595 continue
-      xdel=0.5
+      xdel=0.5_dp
       dcurn=curmax-curmin
-      if (abs(dcurn).le.1.e-4) dcurn=5.*curmax
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      if (abs(dcurn).le.1.e-4_dp) dcurn=5.*curmax
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       yorg = curmin
@@ -4431,17 +4428,17 @@
          xx(ii,1) = xiter(ii)
          yy(ii,1) = pprime(ii)
       enddo
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do 17597 i=1,nw
          czmcm(i)=ffprim(i)/tmu/twopi
          curmin=min(curmin,czmcm(i))
          curmax=max(curmax,czmcm(i))
 17597 continue
       dcurn=curmax-curmin
-      if (abs(dcurn).le.1.e-4) dcurn=5.*curmax
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      if (abs(dcurn).le.1.e-4_dp) dcurn=5.*curmax
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
       isaxs = 2
       sorg = curmin
@@ -4464,13 +4461,13 @@
       ncurve = nn
       ipag = 1
       iexit = 2
-      xabs= -0.5
-      xabs= -0.7
-      yabs= -0.8
+      xabs= -0.5_dp
+      xabs= -0.7_dp
+      yabs= -0.8_dp
 !
       if (ivacum.gt.0) go to 29999
       if ((icurrt.eq.2.or.icurrt.eq.5) &
-               .and.abs(brsp(nfcoil+1)).gt.1.e-10) then
+               .and.abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
          do 17598 i=nfcoil+1,nfcoil+kppcur
             xxnorm=brsp(i)/brsp(nfcoil+1)
             if (i.eq.nfcoil+1) then
@@ -4482,7 +4479,7 @@
                xpos(msg) = xabs
                ypos(msg) = yabs
                yabs = yabs - dyabs
-               ht(msg) = 0.13*0.7
+               ht(msg) = 0.13_dp*0.7_dp
             else
                write (text,18960) xxnorm
                msg = msg + 1
@@ -4492,7 +4489,7 @@
                xpos(msg) = xabs
                ypos(msg) = yabs
                yabs = yabs - dyabs
-               ht(msg) = 0.13*0.7
+               ht(msg) = 0.13_dp*0.7_dp
             endif
 17598    continue
          xxnorm=brsp(nfcoil+1)/darea
@@ -4508,7 +4505,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.13*0.7
+      ht(msg) = 0.13_dp*0.7_dp
       write (text,18983) condno
       msg = msg + 1
       note(msg) = 1
@@ -4517,7 +4514,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.13*0.7
+      ht(msg) = 0.13_dp*0.7_dp
 !
       pr=pres(1)/(.667*wplasm(jtime)/(vout(jtime)/1.e6))
       write (text,18981) pr
@@ -4528,7 +4525,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.13*0.7
+      ht(msg) = 0.13_dp*0.7_dp
 !
       if (abs(vcurfb(1)).gt.1.e-06) then
          write (text,18985)  (vcurfb(i),i=1,3)
@@ -4539,11 +4536,11 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.13*0.7
+         ht(msg) = 0.13_dp*0.7_dp
       endif
       if (kvtor.ge.1.and.kvtor.le.3) then
       if (icurrt.eq.5.and. &
-                   abs(brsp(nfcoil+1)).gt.1.e-10) then
+                   abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
          do i=nfnpcr+1,nfnpcr+kwwcur,2
             xxnorm=brsp(i)/brsp(nfcoil+1)
             if (i+1.gt.nfnpcr+kwwcur) then
@@ -4567,15 +4564,15 @@
             xpos(msg) = xabs
             ypos(msg) = yabs
             yabs = yabs - dyabs
-            ht(msg) = 0.13*0.7
+            ht(msg) = 0.13_dp*0.7_dp
          enddo
       endif
       endif
 !
-      xabs= 1.2
-      yabs= -0.8
+      xabs= 1.2_dp
+      yabs= -0.8_dp
       if ((icurrt.eq.2.or.icurrt.eq.5).and. &
-                   abs(brsp(nfcoil+1)).gt.1.e-10) then
+                   abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
          do 17599 i=nfcoil+1+kppcur,nfcoil+kppcur+kffcur
             xxnorm=brsp(i)/brsp(nfcoil+1)
             write (text,18970) xxnorm
@@ -4586,16 +4583,16 @@
             xpos(msg) = xabs
             ypos(msg) = yabs
             yabs = yabs - dyabs
-            ht(msg) = 0.13*0.7
+            ht(msg) = 0.13_dp*0.7_dp
 17599    continue
       endif
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ibrdr = 1
-      xphy = 4.2
-      yphy = 2.80
-!     yphy = 3.8
-      hight = 0.12
+      xphy = 4.2_dp
+      yphy = 2.80_dp
+!     yphy = 3.8_dp
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -4606,28 +4603,28 @@
       igridy = 2
       idot = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       xiter(1), xdel, xiter(nw), yorg, ystp, ynmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
 17600 continue
 !      call endpl(0)
 
-      xmm=1.6
+      xmm=1.6_dp
   730 continue
 29999 continue
 !-----------------------------------------------------------------------
@@ -4637,19 +4634,19 @@
       if (iexcal.le.0) go to 795
       do 734 kk=1,nsilop
          expsi(kk)=silopt(jtime,kk)
-         si(kk)=float(kk)
+         si(kk)=kk
   734 continue
       do 736 kk=1,magpri
          expmp(kk)=expmpi(jtime,kk)
-         rmpi(kk)=float(kk)
+         rmpi(kk)=kk
   736 continue
 !-----------------------------------------------------------------------
 !--  limits of psi loops & probes                                     --
 !-----------------------------------------------------------------------
-      cslmin=1.0e30
-      cslmax=-1.0e30
-      silmin=1.0e30
-      silmax=-1.0e30
+      cslmin=1.0e30_dp
+      cslmax=-1.0e30_dp
+      silmin=1.0e30_dp
+      silmax=-1.0e30_dp
       z000=0.0
       do 750 i=1,nsilop
          cslmin=min(cslmin,csilop(i,jtime))
@@ -4665,10 +4662,10 @@
       cslmin=min(cslmin,silmin)
       cslmax=max(cslmax,silmax)
 !
-      cmpmin=1.0e30
-      cmpmax=-1.0e30
-      empmin=1.0e30
-      empmax=-1.0e30
+      cmpmin=1.0e30_dp
+      cmpmax=-1.0e30_dp
+      empmin=1.0e30_dp
+      empmax=-1.0e30_dp
       do 760 i=1,magpri
          cmpmin=min(cmpmin,cmpr2(i,jtime))
          cmpmax=max(cmpmax,cmpr2(i,jtime))
@@ -4686,11 +4683,11 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       nxy(nn) = nsilop
       clearx(nn)='CYAN'
       do ii = 1, nxy(nn)
@@ -4703,7 +4700,7 @@
       nn = nn + 1
       markme(nn) = 18
       ncnct(nn) = -1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       nxy(nn) = nsilop
       clearx(nn)='PINK'
       do ii = 1, nxy(nn)
@@ -4718,9 +4715,9 @@
          write (96,*) si(i),expsi(i)
 42230 continue
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 1.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -4738,23 +4735,23 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       si(1), xstp, si(nsilop), cslmin, ystp, cslmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
-      	msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      nvec, xfm, yfm, xto, yto, ivec, &
+       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !  itek
 !-----------------------------------------------------------------------
 !--  plot exp vs calc magnetic probes                                 --
@@ -4763,11 +4760,11 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       nxy(nn) = magpri
       clearx(nn)='CYAN'
       do ii = 1, nxy(nn)
@@ -4778,7 +4775,7 @@
       nn = nn + 1
       markme(nn) = 18
       ncnct(nn) = -1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       clearx(nn)='PINK'
       nxy(nn) = magpri
       do ii = 1, nxy(nn)
@@ -4797,9 +4794,9 @@
          write (96,*) rmpi(i),expmp(i)
 42250 continue
   770 continue
-      xabs=-4.3
+      xabs=-4.3_dp
       yabs=3.0
-      dyabs = 0.22
+      dyabs = 0.22_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -4810,7 +4807,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.12
+      ht(msg) = 0.12_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -4819,7 +4816,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.12
+      ht(msg) = 0.12_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -4828,7 +4825,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.12
+      ht(msg) = 0.12_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -4837,12 +4834,12 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.12
+      ht(msg) = 0.12_dp
 
 !-----------------------------------------------------------------------
 !--  print out pointnames                                             --
 !-----------------------------------------------------------------------
-      yabs=1.5
+      yabs=1.5_dp
 !     call messag('       probe identification$',100,xabs,yabs)
       msg = msg + 1
       note(msg) = 1
@@ -4850,7 +4847,7 @@
       imes(msg) = 100
       xpos(msg) = xabs
       ypos(msg) = yabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
 !     call messag('no.      name        no.     name$',100,xabs,
 !     .yabs-.25)
       msg = msg + 1
@@ -4858,8 +4855,8 @@
       lmes(msg) = 'no.      name        no.     name$'
       imes(msg) = 100
       xpos(msg) = xabs
-      ypos(msg) = yabs-.25
-      ht(msg) = 0.10
+      ypos(msg) = yabs-.25_dp
+      ht(msg) = 0.10_dp
       yabs=1.0
       do 775 i=magpri67+1,magpri67+16
 !        call intno(i,xabs,yabs)
@@ -4868,19 +4865,19 @@
          inum(msg) = i
          xpos(msg) = xabs
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
 
-!        call messag(%ref(mpnam2(i)),10,-3.8,yabs)
+!        call messag(%ref(mpnam2(i)),10,-3.8_dp,yabs)
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = (mpnam2(i))
          imes(msg) = 10
-         xpos(msg) = -3.8
+         xpos(msg) = -3.8_dp
          ypos(msg) = yabs
-         ht(msg) = 0.07
-         yabs=yabs-.13
+         ht(msg) = 0.07_dp
+         yabs=yabs-.13_dp
   775 continue
-      xabs=-2.6
+      xabs=-2.6_dp
       yabs=1.0
       do 780 i=magpri67+17,magpri67+magpri322
 !        call intno(i,xabs,yabs)
@@ -4889,7 +4886,7 @@
          inum(msg) = i
          xpos(msg) = xabs
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
 !        call messag(%ref(mpnam2(i)),10,-2.0,yabs)
          msg = msg + 1
          note(msg) = 1
@@ -4897,13 +4894,13 @@
          imes(msg) = 10
          xpos(msg) = -2.0
          ypos(msg) = yabs
-         ht(msg) = 0.07
-         yabs=yabs-.13
+         ht(msg) = 0.07_dp
+         yabs=yabs-.13_dp
   780 continue
 !
-      xabs=-4.3
-      yabs=yabs-.5
-!     call height(.10)
+      xabs=-4.3_dp
+      yabs=yabs-.5_dp
+!     call height(.10_dp)
 !     call messag('     psi loop identification$',100,xabs,yabs)
       msg = msg + 1
       note(msg) = 1
@@ -4911,47 +4908,47 @@
       imes(msg) = 100
       xpos(msg) = xabs
       ypos(msg) = yabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
 !     call messag('no       name        no.     name$',100,xabs,
-!     .yabs-.25)
+!     .yabs-.25_dp)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = 'no       name        no.     name$'
       imes(msg) = 100
       xpos(msg) = xabs
-      ypos(msg) = yabs - 0.25
-      ht(msg) = 0.10
-!     call height(.07)
-      yabs=yabs-.37
+      ypos(msg) = yabs - 0.25_dp
+      ht(msg) = 0.10_dp
+!     call height(.07_dp)
+      yabs=yabs-.37_dp
       yyabs=yabs
       do 782 i=1,21
-         yabs=yabs-.13
+         yabs=yabs-.13_dp
 !        call intno(i,xabs,yabs)
          msg = msg + 1
          note(msg) = 5
          inum(msg) = i
          xpos(msg) = xabs
          ypos(msg) = yabs
-         ht(msg) = 0.07
-!        call messag(%ref(lpname(i)),10,-3.8,yabs)
+         ht(msg) = 0.07_dp
+!        call messag(%ref(lpname(i)),10,-3.8_dp,yabs)
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = (lpname(i))
          imes(msg) = 10
-         xpos(msg) = -3.8
+         xpos(msg) = -3.8_dp
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
   782 continue
       yabs=yyabs
       do 785 i=22,nsilop
-         yabs=yabs-.13
+         yabs=yabs-.13_dp
 !        call intno(i,-2.6,yabs)
          msg = msg + 1
          note(msg) = 5
          inum(msg) = i
-         xpos(msg) = -2.6
+         xpos(msg) = -2.6_dp
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
 !        call messag(%ref(lpname(i)),10,-2.0,yabs)
          msg = msg + 1
          note(msg) = 1
@@ -4959,12 +4956,12 @@
          imes(msg) = 10
          xpos(msg) = -2.0
          ypos(msg) = yabs
-         ht(msg) = 0.07
+         ht(msg) = 0.07_dp
   785 continue
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 5.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -4982,22 +4979,22 @@
       iexit = 2
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       rmpi(1), xstp, rmpi(magpri), cmpmin, ystp, cmpmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !   itek
   795 continue
@@ -5011,10 +5008,10 @@
         open(unit=62,file=dataname,status='new')
          nnww=nw
          xdum=0.
-         delvn=1./float(nw-1)
+         delvn=1.0_dp/(nw-1)
          do 42262 i=1,nw
             workb(i)=sqrt(volp(i)/volp(nw))
-            voln(i)=float(i-1)*delvn
+            voln(i)=(i-1)*delvn
 42262    continue
          call zpline(nw,workb,pres,bvoln,cvoln,dvoln)
          voln(1)=0.0
@@ -5188,12 +5185,12 @@
 !-- plots for kinetic fitting option                                  --
 !-----------------------------------------------------------------------
       if (kprfit.le.0) go to 890
-      if (npress.le.0) goto 890
+      if (npress.le.0) go to 890
       if (itek.eq.1) call tekall(4010,960,0,0,0)
-      chsmin=1.0e+10
-      chsmax=-1.0e+10
+      chsmin=1.0e+10_dp
+      chsmax=-1.0e+10_dp
       pressbb=0.0
-      dsi=1./float(nw-1)
+      dsi=1.0_dp/(nw-1)
       do 835 i=1,nw
          workb(i)=sqrt(volp(i)/volp(nw))
          workc(i)=(pres(i)-pressbb)
@@ -5203,18 +5200,18 @@
          workd(i)=(pressr(i)-pressbb)
          chsmin=min(chsmin,saipre(i))
          chsmax=max(chsmax,saipre(i))
-         si(i)=float(i)
+         si(i)=i
   840 continue
       call zpline(nw,worke,workb,bworkb,cworkb,dworkb)
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       nxy(nn) = npress
       ncnct(nn) = 1
       do ii = 1, nxy(nn)
@@ -5222,9 +5219,9 @@
          yy(ii,nn) = saipre(ii)
       enddo
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 1.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -5243,29 +5240,29 @@
       kgrid=1
       iexit = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       si(1), xstp, si(npress), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
 !----------------------------------------------------------------------
 !--  plot the pressure profile                                       --
 !----------------------------------------------------------------------
-      chsmin=1.e10
-      chsmax=-1.e10
+      chsmin=1.e10_dp
+      chsmax=-1.e10_dp
       do 870 i=1,npress
          chsmin=min(workd(i),chsmin)
          chsmax=max(workd(i)+sigpre(i),chsmax)
@@ -5275,18 +5272,18 @@
       chsmin=0.0
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       nxy(nn) = nw
       do ii = 1, nxy(nn)
          xx(ii,nn) = workb(ii)
          yy(ii,nn) = workc(ii)
       enddo
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       markme(nn) = 15
       ncnct(nn) = -1
       nxy(nn) = npress
@@ -5304,7 +5301,7 @@
          workc(1)=saipre(i)
          workc(2)=saipre(i)
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          markme(nn) = 3
          nxy(nn) = 2
          ncnct(nn) = 1
@@ -5377,7 +5374,7 @@
                do 42320 i=1,npteth+nption
                   workd(i)=seval(npress,workc(i),saipre, &
                   pressr,bworkb,cworkb,dworkb)
-                  ydum=.10*workd(i)
+                  ydum=.10_dp*workd(i)
                   ydum=max(ydum,ydumin)
                   write (62,*) workc(i),workd(i),xdum,ydum
 42320          continue
@@ -5437,7 +5434,7 @@
                   delvol=(voln(i+1)**2-voln(i)**2)
                   bimbf=bimbf+(pbimf(i)+pbimf(i+1))*delvol
 42337          continue
-               bimbf=bimbf*0.5*vout(jtime)/1.e6*1.5
+               bimbf=bimbf*0.5_dp*vout(jtime)/1.e6_dp*1.5_dp
                bimbf=bimbf*betat(jtime)/wplasm(jtime)
 !-----------------------------------------------------------------------
 !-- now beam data                                                     --
@@ -5486,7 +5483,7 @@
                   delvol=(voln(i+1)**2-voln(i)**2)
                   bimbe=bimbe+(workc(i)+workc(i+1))*delvol
 42723          continue
-               bimbe=bimbe*0.5*vout(jtime)/1.e6*1.5
+               bimbe=bimbe*0.5_dp*vout(jtime)/1.e6_dp*1.5_dp
                bimbe=bimbe*betat(jtime)/wplasm(jtime)
             endif
 !-----------------------------------------------------------------------
@@ -5500,9 +5497,9 @@
 !-----------------------------------------------------------------------
 !--  end of KWRIPRE=1 option                                          --
 !-----------------------------------------------------------------------
-      xabs=-4.5
+      xabs=-4.5_dp
       yabs=3.0
-      dyabs = 0.22
+      dyabs = 0.22_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -5513,7 +5510,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -5522,7 +5519,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -5531,7 +5528,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -5540,7 +5537,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9497) chipre
       msg = msg + 1
       note(msg) = 1
@@ -5549,7 +5546,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9555) chitot
       msg = msg + 1
       note(msg) = 1
@@ -5558,7 +5555,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 
       pressbn=prbdry/pres(1)
       write (text,9560) pressbn
@@ -5569,7 +5566,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 
       pressbn=pressb/pres(1)
       write (text,9562) pressbn
@@ -5580,7 +5577,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9565) kppcur
       msg = msg + 1
       note(msg) = 1
@@ -5589,7 +5586,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9570) kffcur
       msg = msg + 1
       note(msg) = 1
@@ -5598,7 +5595,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9575) pcurbd
       msg = msg + 1
       note(msg) = 1
@@ -5607,7 +5604,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9580) fcurbd
       msg = msg + 1
       note(msg) = 1
@@ -5616,7 +5613,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9832) pres(1)
       msg = msg + 1
       note(msg) = 1
@@ -5625,7 +5622,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 
       x111=1.0
       dp1dxf=ppcurr(x111,kppcur)/darea*(psibry-simag)
@@ -5637,7 +5634,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9834) prespb
       msg = msg + 1
       note(msg) = 1
@@ -5646,7 +5643,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9836) kpressb
       msg = msg + 1
       note(msg) = 1
@@ -5655,7 +5652,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9838) cjor95(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -5664,7 +5661,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9840) pp95(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -5673,7 +5670,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9842) bimbf,bimbe
       msg = msg + 1
       note(msg) = 1
@@ -5682,7 +5679,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
       pr=pres(1)/(.667*wplasm(jtime)/(vout(jtime)/1.e6))
       write (text,18981) pr
@@ -5693,14 +5690,14 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 5.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -5717,22 +5714,22 @@
       iexit = 2
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       workb(1), xstp, workb(nw), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !   itek
   890 continue
@@ -5753,17 +5750,17 @@
       almax=rgrid(nw)
       blmin=zgrid(1)
       blmax=zgrid(nh)
-      xll = 2.8
+      xll = 2.8_dp
       yll = xll*(blmax-blmin)/(almax-almin)
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       npplot=15
       if (iabs(kplotp).ge.5) then
         npplot=iabs(kplotp)
       endif
-      siinc=(rmax-rmaxis)/float(npplot)
+      siinc=(rmax-rmaxis)/npplot
 !-----------------------------------------------------------------------
 !-- plot pressure contours                                            --
 !-----------------------------------------------------------------------
@@ -5804,11 +5801,11 @@
       call pltcol(mfcoil,rf,zf,wf,hf,af,af2,n11, &
          nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
-      xphy = 7.625
-      yphy = 0.5
+      xphy = 7.625_dp
+      yphy = 0.5_dp
       xabs=-7.0
-      yabs=7.85
-      dyabs = 0.22
+      yabs=7.85_dp
+      dyabs = 0.22_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -5819,7 +5816,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8948) ifname(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -5828,7 +5825,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -5837,7 +5834,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -5846,7 +5843,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -5855,7 +5852,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9022) chiprw
       msg = msg + 1
       note(msg) = 1
@@ -5864,7 +5861,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9024) rvtor
       msg = msg + 1
       note(msg) = 1
@@ -5873,7 +5870,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9026) kvtor
       msg = msg + 1
       note(msg) = 1
@@ -5882,20 +5879,20 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = 'Pt contours (nt/m2)$'
       imes(msg) = 100
       xpos(msg) = 0.0
-      ypos(msg) = -.35
-      ht(msg) = 0.16
+      ypos(msg) = -.35_dp
+      ht(msg) = 0.16_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ncurve = nn
       ibrdr = 1
-      hight = 0.10
+      hight = 0.10_dp
       nplen = 100
       nxlen = 0
       nylen = 0
@@ -5905,43 +5902,43 @@
       grce  = -1.0
       iexit = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, yll, &
       almin, almax-almin, almax, blmin, blmax-blmin, blmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
       icont, nword, bfield , ix, iy, zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !   itek
 !
       do i=1,nw
          worka(i)=bfield(i,nh/2+1)
       enddo
-      cslmin=1.0e+30
-      cslmax=1.0e-30
+      cslmin=1.0e+30_dp
+      cslmax=1.0e-30_dp
       do i=1,nw
          cslmin=min(worka(i),cslmin)
          cslmax=max(worka(i),cslmax)
       enddo
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
-      xphy = 7.625
-      yphy = 0.5
+      xphy = 7.625_dp
+      yphy = 0.5_dp
       iorel = 1
       xorl = 0.0
-      yorl = yll + 0.5
+      yorl = yll + 0.5_dp
       nn = nn + 1
       nxy(nn) = nw
       do ii = 1, nxy(nn)
@@ -5953,48 +5950,48 @@
       lmes(msg) = 'R(m)$'
       imes(msg) = 100
       xpos(msg) = 1.0
-      ypos(msg) = -.25
-      ht(msg) = 0.10
+      ypos(msg) = -.25_dp
+      ht(msg) = 0.10_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ncurve = nn
       ibrdr = 1
-      hight = 0.10
+      hight = 0.10_dp
       nplen = -100
       nxlen = 100
       nylen = 100
-      ylen = xll*.67
+      ylen = xll*.67_dp
       xtitle = '$'
       ytitle = 'Pt(nt/m2)$'
       iexit = 1
       if (kprfit.ne.3) iexit=2
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, ylen, &
       almin, almax-almin, almax, cslmin, cslmax-cslmin, cslmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, bfield,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, bfield, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
 !----------------------------------------------------------------------
 !--  plot Pw and fitted values                                       --
 !----------------------------------------------------------------------
       if (kprfit.ne.3) go to 37890
-      chsmin=1.0e+10
-      chsmax=-1.0e+10
+      chsmin=1.0e+10_dp
+      chsmax=-1.0e+10_dp
       pressbb=0.0
-      dsi=1./float(nw-1)
+      dsi=1.0_dp/(nw-1)
       do i=1,nw
          workb(i)=sqrt(volp(i)/volp(nw))
          workc(i)=(pressw(i)-preswb)
@@ -6004,7 +6001,7 @@
          workd(i)=(presw(i)-preswb)
          chsmin=min(chsmin,saiprw(i))
          chsmax=max(chsmax,saiprw(i))
-         si(i)=float(i)
+         si(i)=i
       enddo
       x111=1.0
       chsmax=max(x111,chsmax)
@@ -6012,11 +6009,11 @@
 !
       if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       nxy(nn) = npresw
       ncnct(nn) = 1
       do ii = 1, nxy(nn)
@@ -6026,12 +6023,12 @@
       ibrdr = 1
       xphy = 4.0
       yphy = 1.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
-      xlen = 2.8
-      ylen = 2.8
+      xlen = 2.8_dp
+      ylen = 2.8_dp
       xstp = 0.0
       ystp = 0.0
       intax = 1
@@ -6041,29 +6038,29 @@
       ncurve = nn
       iexit = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       si(1), xstp, si(npresw), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
 !----------------------------------------------------------------------
 !--  plot the pressure profile                                       --
 !----------------------------------------------------------------------
-      chsmin=1.e10
-      chsmax=-1.e10
+      chsmin=1.e10_dp
+      chsmax=-1.e10_dp
       do i=1,npresw
          chsmin=min(workd(i),chsmin)
          chsmax=max(workd(i)+sigprw(i),chsmax)
@@ -6072,18 +6069,18 @@
       enddo
       chsmin=0.0
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       nxy(nn) = nw
       do ii = 1, nxy(nn)
          xx(ii,nn) = workb(ii)
          yy(ii,nn) = workc(ii)
       enddo
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       markme(nn) = 15
       ncnct(nn) = -1
       nxy(nn) = npresw
@@ -6100,7 +6097,7 @@
          workc(1)=saiprw(i)
          workc(2)=saiprw(i)
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          markme(nn) = 3
          nxy(nn) = 2
          ncnct(nn) = 1
@@ -6139,12 +6136,12 @@
       ibrdr = 1
       xphy = 4.0
       yphy = 5.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
-      xlen = 2.8
-      ylen = 2.8
+      xlen = 2.8_dp
+      ylen = 2.8_dp
       xstp = 0.0
       ystp = 0.0
       idot = 1
@@ -6153,22 +6150,22 @@
       ncurve = nn
       iexit = 2
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       workb(1), xstp, workb(nw), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !   itek
 37890 continue
@@ -6177,8 +6174,8 @@
 !----------------------------------------------------------------------
       if (kprfit.ne.2) go to 21000
       if (itek.eq.1) call tekall(4010,960,0,0,0)
-      chsmin=1.0e+10
-      chsmax=-1.0e+10
+      chsmin=1.0e+10_dp
+      chsmax=-1.0e+10_dp
       if (nptef.gt.0) then
          do 20035 i=1,nw
             xn=worke(i)
@@ -6203,12 +6200,12 @@
 !
       ibrdr = 1
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       if (nptef.gt.0) then
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          nxy(nn) = nw
          do ii = 1, nxy(nn)
             xx(ii,nn) = workb(ii)
@@ -6219,7 +6216,7 @@
       if (kpressb.eq.1) ndodo=npress-1
       nn = nn + 1
       ncnct(nn) = -1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       nxy(nn) = ndodo
       do ii = 1, nxy(nn)
          xx(ii,nn) = saipre(ii)
@@ -6242,7 +6239,7 @@
          workc(1)=saipre(i)
          workc(2)=saipre(i)
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          markme(nn) = 3
          ncnct(nn) = 1
          nxy(nn) = 2
@@ -6255,9 +6252,9 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 1.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -6271,22 +6268,22 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       workb(1), xstp, workb(nw), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
 !----------------------------------------------------------------------
@@ -6294,7 +6291,7 @@
 !----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       chsmin=0.0
@@ -6316,7 +6313,7 @@
       chsmin=0.0
       if (npnef.gt.0) then
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          nxy(nn) = nw
          do ii = 1, nxy(nn)
             xx(ii,nn) = workb(ii)
@@ -6325,7 +6322,7 @@
       endif
 
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       ncnct(nn) = -1
       nxy(nn) = ndodo
       do ii = 1, nxy(nn)
@@ -6350,7 +6347,7 @@
          workc(1)=saipre(i)
          workc(2)=saipre(i)
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          markme(nn) = 3
          ncnct(nn) = 1
          nxy(nn) = 2
@@ -6360,9 +6357,9 @@
          enddo
 20072 continue
 !
-      xabs=-4.5
+      xabs=-4.5_dp
       yabs=3.0
-      dyabs = 0.22
+      dyabs = 0.22_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -6373,7 +6370,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -6382,7 +6379,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -6391,7 +6388,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -6400,7 +6397,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9800) chisqte
       msg = msg + 1
       note(msg) = 1
@@ -6409,7 +6406,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9805) chisqne
       msg = msg + 1
       note(msg) = 1
@@ -6418,7 +6415,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9810) fco2ne
       msg = msg + 1
       note(msg) = 1
@@ -6427,7 +6424,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9815) nptef
       msg = msg + 1
       note(msg) = 1
@@ -6436,7 +6433,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9820) npnef
       msg = msg + 1
       note(msg) = 1
@@ -6445,14 +6442,14 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 5.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -6466,28 +6463,28 @@
       iexit = 2
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!          Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       workb(1), xstp, workb(nw), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif   !   itek
 !
       if (itek.eq.1) call tekall(4010,960,0,0,0)
-      chsmin=1.0e+10
-      chsmax=-1.0e+10
+      chsmin=1.0e+10_dp
+      chsmax=-1.0e+10_dp
       if (nptionf.ge.50) &
       call zpline(nption,xsiion,tionex,bwork,cwork,dwork)
       do 20135 i=1,nw
@@ -6509,7 +6506,7 @@
 20140 continue
       chsmin=0.0
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       ibrdr = 1
@@ -6523,7 +6520,7 @@
          workj(i)=seval(nw,xsiion(i),worke,workb,bworkb,cworkb,dworkb)
 42510 continue
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       ncnct(nn) = -1
       nxy(nn) = nption+1
       do ii = 1, nxy(nn)
@@ -6536,7 +6533,7 @@
          workc(1)=workj(i)
          workc(2)=workj(i)
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          markme(nn) = 3
          ncnct(nn) = 1
          nxy(nn) = 2
@@ -6549,9 +6546,9 @@
       if (itek.ge.5.and.idotek.eq.0) then
 
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 1.0
-      hight = 0.14
+      hight = 0.14_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -6565,22 +6562,22 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       workb(1), xstp, workb(nw), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !  itek
       if (kwripre.eq.1) then
@@ -6598,7 +6595,7 @@
 !     --  plot the beam profile                                           --
 !     ----------------------------------------------------------------------
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       chsmin=0.0
@@ -6609,7 +6606,7 @@
 42540 continue
       chsmin=0.0
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       ncnct(nn) = -1
       nxy(nn) = npress
       do ii = 1, nxy(nn)
@@ -6645,7 +6642,7 @@
             do 42563 i=1,nw
                xn=sivol(i)
                workc(i)=seval(nbeam,xn,sibeam,dnbeam,bwork,cwork,dwork)
-               workc(i)=workc(i)*1.e19
+               workc(i)=workc(i)*1.e19_dp
 42563       continue
          endif
          xdum=0.0
@@ -6660,9 +6657,9 @@
          close(unit=62)
       endif
 !
-      xabs=-4.5
+      xabs=-4.5_dp
       yabs=3.0
-      dyabs = 0.22
+      dyabs = 0.22_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -6673,7 +6670,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -6682,7 +6679,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -6691,7 +6688,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -6700,7 +6697,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9825) chisqti
       msg = msg + 1
       note(msg) = 1
@@ -6709,7 +6706,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9830) nptionf
       msg = msg + 1
       note(msg) = 1
@@ -6718,14 +6715,14 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 5.0
-      hight = 0.14
+      hight = 0.14_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -6739,32 +6736,32 @@
       iexit = 2
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       workb(1), xstp, workb(nw), chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif   !   itek
 !
       if (kplotpr.eq.0) go to 21000
       if (itek.eq.1) call tekall(4010,960,0,0,0)
-      chsmin=1.0e+10
-      chsmax=-1.0e+10
-      delz=(zuperts(jtime)-zlowerts)/float(nw-1)*0.01
+      chsmin=1.0e+10_dp
+      chsmax=-1.0e+10_dp
+      delz=(zuperts(jtime)-zlowerts)/(nw-1)*0.01_dp
       do 20335 i=1,nw
-         worke(i)=zlowerts*0.01+(i-1)*delz
+         worke(i)=zlowerts*0.01_dp+(i-1)*delz
          call seva2d(bkx,lkx,bky,lky,c,rmajts,worke(i),pds,ier,n111)
          xn=(pds(1)-simag)/(psibry-simag)
          workb(i)=xn
@@ -6785,7 +6782,7 @@
 20340 continue
       chsmin=0.0
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       ibrdr = 1
@@ -6796,7 +6793,7 @@
          yy(ii,nn) = workc(ii)
       enddo
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       ncnct(nn) = -1
       nxy(nn) = npteth
       do ii = 1, nxy(nn)
@@ -6809,7 +6806,7 @@
          workc(1)=zteth(i)
          workc(2)=zteth(i)
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          markme(nn) = 3
          ncnct(nn) = 1
          nxy(nn) = 2
@@ -6818,7 +6815,7 @@
             yy(ii,nn) = workd(ii)
          enddo
 20350 continue
-      workc(1)=zuperts(jtime)*0.01
+      workc(1)=zuperts(jtime)*0.01_dp
       workc(2)=workc(1)
       workd(1)=chsmin
       workd(2)=chsmax
@@ -6832,9 +6829,9 @@
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 1.0
-      hight = 0.14
+      hight = 0.14_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -6848,22 +6845,22 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       xxxmin, xstp, xxxmax, chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !    itek
 !----------------------------------------------------------------------
@@ -6871,7 +6868,7 @@
 !----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       chsmin=0.0
@@ -6896,7 +6893,7 @@
          yy(ii,nn) = workc(ii)
       enddo
       nn = nn + 1
-      sclpc(nn) = 0.5
+      sclpc(nn) = 0.5_dp
       ncnct(nn) = -1
       nxy(nn) = npneth
       do ii = 1, nxy(nn)
@@ -6909,7 +6906,7 @@
          workc(1)=zteth(i)
          workc(2)=zteth(i)
          nn = nn + 1
-         sclpc(nn) = 0.5
+         sclpc(nn) = 0.5_dp
          markme(nn) = 3
          ncnct(nn) = 1
          nxy(nn) = 2
@@ -6918,7 +6915,7 @@
             yy(ii,nn) = workd(ii)
          enddo
 20472 continue
-      workc(1)=zuperts(jtime)*0.01
+      workc(1)=zuperts(jtime)*0.01_dp
       workc(2)=workc(1)
       workd(1)=chsmin
       workd(2)=chsmax
@@ -6930,7 +6927,7 @@
          yy(ii,nn) = workd(ii)
       enddo
 !
-      xabs=-4.5
+      xabs=-4.5_dp
       yabs=3.0
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
@@ -6942,7 +6939,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -6951,7 +6948,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -6960,7 +6957,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -6969,7 +6966,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9800) chisqte
       msg = msg + 1
       note(msg) = 1
@@ -6978,7 +6975,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9805) chisqne
       msg = msg + 1
       note(msg) = 1
@@ -6987,7 +6984,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9810) fco2ne
       msg = msg + 1
       note(msg) = 1
@@ -6996,7 +6993,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9815) nptef
       msg = msg + 1
       note(msg) = 1
@@ -7005,7 +7002,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9820) npnef
       msg = msg + 1
       note(msg) = 1
@@ -7014,7 +7011,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9828) zuperts(jtime),rlibim(jtime)
 
       msg = msg + 1
@@ -7024,15 +7021,15 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
       ibrdr = 1
-      xphy = 4.7
+      xphy = 4.7_dp
       yphy = 5.0
-      hight = 0.14
+      hight = 0.14_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -7046,23 +7043,23 @@
       iexit = 2
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
       xxxmin, xstp, xxxmax, chsmin, ystp, chsmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       kgrid, kgrid, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
-      	msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      nvec, xfm, yfm, xto, yto, ivec, &
+       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !   itek
 21000 continue
 !
@@ -7090,12 +7087,12 @@
          if (itek.eq.1) call tekall(4010,960,0,0,0)
          ibrdr = 1
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
          call init2d
          do 910 j=1,iabs(nextra)
             jj=(k-1)*iabs(nextra)+j
-!           call mrscod(0.5,j*2,ratray)
+!           call mrscod(0.5_dp,j*2,ratray)
             nn = nn + 1
             nxy(nn) = npxtra(jj)
             do ii = 1, nxy(nn)
@@ -7104,7 +7101,7 @@
                rat(ii) = ratray(ii)
             enddo
             mrc(nn) = 1
-            tlen(nn) = 0.5
+            tlen(nn) = 0.5_dp
             nmrk(nn) = j*2
 !           call rlint(jj,fpxtra(npxtra(jj),jj),bpxtra(npxtra(jj),jj))
             msg = msg + 1
@@ -7112,15 +7109,15 @@
             inum(msg) = jj
             xpos(msg) = fpxtra(npxtra(jj),jj)
             ypos(msg) = bpxtra(npxtra(jj),jj)
-            ht(msg) = 0.14
+            ht(msg) = 0.14_dp
   910    continue
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
          ibrdr = 1
-         xphy = 1.5
+         xphy = 1.5_dp
          yphy = 5.0
-         hight = 0.14
+         hight = 0.14_dp
          nplen = 100
          nxlen = 100
          nylen = 100
@@ -7131,35 +7128,35 @@
          xtitle = 'Lpol(m)$'
          ytitle = 'bp(T)$'
          ncurve = nn
-	 iexit = 1
+  iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
          fpxmin, dfpx, fpxmax, bpxmin, dbpx, bpxmax, &
-         iaxis,	ixtck, iytck, ixnon, iynon, intax, intay, &
-         isaxs,	sorg, stp, smax, slen, sname, nslen, xps, yps, &
+         iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+         isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
          igridx, igridy, idash, idot, ichdsh, ichdot, &
          thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
          markme, clearx, mrc, tlen, nmrk, rat, &
          xx, yy, nxy, ncnct, &
-         icont,	nword, zz, ix, iy, zinc, line, mode, &
-         lbflg,	ithk, ipri, nline, draw, &
+         icont, nword, zz, ix, iy, zinc, line, mode, &
+         lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht,  &
          iexit)
         endif    !     itek
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
          call init2d
          do 950 j=1,iabs(nextra)
             jj=(k-1)*iabs(nextra)+j
-!           call mrscod(0.5,j*2,ratray)
+!           call mrscod(0.5_dp,j*2,ratray)
             nn = nn + 1
             nxy(nn) = npxtra(jj)
             do ii = 1, nxy(nn)
@@ -7168,7 +7165,7 @@
                rat(ii) = ratray(ii)
             enddo
             mrc(nn) = 1
-            tlen(nn) = 0.5
+            tlen(nn) = 0.5_dp
             nmrk(nn) = j*2
 !           call rlint(jj,fpxtra(npxtra(jj),jj),flxtra(npxtra(jj),jj))
             msg = msg + 1
@@ -7176,16 +7173,16 @@
             inum(msg) = jj
             xpos(msg) = fpxtra(npxtra(jj),jj)
             ypos(msg) = flxtra(npxtra(jj),jj)
-            ht(msg) = 0.14
+            ht(msg) = 0.14_dp
   950    continue
          
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
          ibrdr = 1
-         xphy = 1.5
+         xphy = 1.5_dp
          yphy = 5.0
-         hight = 0.14
+         hight = 0.14_dp
          nplen = 100
          nxlen = 100
          nylen = 100
@@ -7196,21 +7193,21 @@
          xtitle = 'Lpol(m)$'
          ytitle = 'Ls(m)$'
          ncurve = nn
-	 iexit = 2
+  iexit = 2
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
          fpxmin, dfpx, fpxmax, flxmin, dflx, flxmax, &
-         iaxis,	ixtck, iytck, ixnon, iynon, intax, intay, &
-         isaxs,	sorg, stp, smax, slen, sname, nslen, xps, yps, &
+         iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+         isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
          igridx, igridy, idash, idot, ichdsh, ichdot, &
          thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
          markme, clearx, mrc, tlen, nmrk, rat, &
          xx, yy, nxy, ncnct, &
-         icont,	nword, zz, ix, iy, zinc, line, mode, &
+         icont, nword, zz, ix, iy, zinc, line, mode, &
          lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
@@ -7237,10 +7234,10 @@
       almax=rgrid(nw)
       blmin=zgrid(1)
       blmax=zgrid(nh)
-      xll = 2.8
+      xll = 2.8_dp
       yll = xll*(blmax-blmin)/(almax-almin)
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
@@ -7252,8 +7249,8 @@
       lbflg = 'NOLABELS'
       ithk = 1
       ipri = 1
-      cslmin=1.0e+30
-      cslmax=1.0e-30
+      cslmin=1.0e+30_dp
+      cslmax=1.0e-30_dp
       do 1030 i=1,nw
          do 1030 j=1,nh
             cslmin=min(bfield(i,j),cslmin)
@@ -7261,7 +7258,7 @@
  1030 continue
       siinc=(cslmax-cslmin)/8.
       if (iconsi.ge.5) then
-         siinc=(cslmax-cslmin)/float(iconsi)
+         siinc=(cslmax-cslmin)/iconsi
       endif
       if ((iconsi.eq.2).or.(iconsi.eq.4)) siinc= 0.0
       ix = nw
@@ -7301,8 +7298,8 @@
 
  1050 continue
       xabs=-3.
-      yabs=7.85
-      dyabs = 0.16
+      yabs=7.85_dp
+      dyabs = 0.16_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
       write(text,8950) trim(ch1),trim(ch2), &
                        (mfvers(i),i=1,2)
@@ -7313,7 +7310,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       if (kdata.eq.2) then
       write (text,8948) ifname(jtime)
       msg = msg + 1
@@ -7323,10 +7320,10 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       endif
-      xabs=.5
-      yabs=7.8
+      xabs=.5_dp
+      yabs=7.8_dp
       write (text,8960)uday
       msg = msg + 1
       note(msg) = 1
@@ -7335,9 +7332,9 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
-      xabs=4.05
-      yabs=7.85
+      ht(msg) = 0.10_dp
+      xabs=4.05_dp
+      yabs=7.85_dp
       write (text,9000)ishot
       msg = msg + 1
       note(msg) = 1
@@ -7346,7 +7343,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -7355,46 +7352,46 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = 'psi contours (mv-s/r)$'
       imes(msg) = 100
       xpos(msg) = 0.0
-      ypos(msg) = -.35
-      ht(msg) = 0.16
+      ypos(msg) = -.35_dp
+      ht(msg) = 0.16_dp
 
       if (iconsi.lt.5) then
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = 'poloidal field (g)$'
          imes(msg) = 100
-         xpos(msg) = 3.8
-         ypos(msg) = -.35
-         ht(msg) = 0.16
+         xpos(msg) = 3.8_dp
+         ypos(msg) = -.35_dp
+         ht(msg) = 0.16_dp
       else
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = 'poloidal field (g)$'
          imes(msg) = 100
-         xpos(msg) = -3.4
-         ypos(msg) = -.35
-         ht(msg) = 0.16
+         xpos(msg) = -3.4_dp
+         ypos(msg) = -.35_dp
+         ht(msg) = 0.16_dp
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = 'total B field (g)$'
          imes(msg) = 100
-         xpos(msg) = 3.8
-         ypos(msg) = -.35
-         ht(msg) = 0.16
+         xpos(msg) = 3.8_dp
+         ypos(msg) = -.35_dp
+         ht(msg) = 0.16_dp
       endif
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ncurve = nn
       ibrdr = 1
-      xphy = 4.1
-      yphy = 0.5
-      hight = 0.10
+      xphy = 4.1_dp
+      yphy = 0.5_dp
+      hight = 0.10_dp
       nplen = 100
       nxlen = 0
       nylen = 0
@@ -7404,41 +7401,41 @@
       grce  = -1.0
       iexit = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, yll, &
       almin, almax-almin, almax, blmin, blmax-blmin, blmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
       icont, nword, bfield, ix, iy, zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif    !   itek
 
       do i=1,nw
          worka(i)=bfield(i,nh/2+1)
       enddo
-      cslmin=1.0e+30
-      cslmax=1.0e-30
+      cslmin=1.0e+30_dp
+      cslmax=1.0e-30_dp
       do i=1,nw
          cslmin=min(worka(i),cslmin)
          cslmax=max(worka(i),cslmax)
       enddo
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       iorel = 1
       xorl = 0.0
-      yorl = yll + 0.5
+      yorl = yll + 0.5_dp
       nn = nn + 1
       nxy(nn) = nw
       do ii = 1, nxy(nn)
@@ -7450,45 +7447,45 @@
       lmes(msg) = 'R(m)$'
       imes(msg) = 100
       xpos(msg) = 1.0
-      ypos(msg) = -.25
-      ht(msg) = 0.10
+      ypos(msg) = -.25_dp
+      ht(msg) = 0.10_dp
 
       if (iconsi.lt.5) then
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = 'R(m))$'
          imes(msg) = 100
-         xpos(msg) = 4.8
-         ypos(msg) = -.25
-         ht(msg) = 0.10
+         xpos(msg) = 4.8_dp
+         ypos(msg) = -.25_dp
+         ht(msg) = 0.10_dp
       else
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = 'R(m)$'
          imes(msg) = 100
-         xpos(msg) = -2.4
-         ypos(msg) = -.25
-         ht(msg) = 0.10
+         xpos(msg) = -2.4_dp
+         ypos(msg) = -.25_dp
+         ht(msg) = 0.10_dp
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = 'R(m)$'
          imes(msg) = 100
-         xpos(msg) = 4.8
-         ypos(msg) = -.25
-         ht(msg) = 0.10
+         xpos(msg) = 4.8_dp
+         ypos(msg) = -.25_dp
+         ht(msg) = 0.10_dp
       endif
 !
       if (itek.ge.5.and.idotek.eq.0) then
 
       ncurve = nn
       ibrdr = 1
-      xphy = 4.1
-      yphy = 0.5
-      hight = 0.10
+      xphy = 4.1_dp
+      yphy = 0.5_dp
+      hight = 0.10_dp
       nplen = -100
       nxlen = 100
       nylen = 100
-      ylen = xll*.67
+      ylen = xll*.67_dp
       ixtck = 2
       iytck = 2
       igridx = 2
@@ -7499,22 +7496,22 @@
       iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, ylen, &
       almin, almax-almin, almax, cslmin, cslmax-cslmin, cslmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, bfield,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, bfield, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
       do i=1,nw
@@ -7524,9 +7521,9 @@
 !--  calculate and plot contours of constant poloidal field           --
 !-----------------------------------------------------------------------
  1100 continue
-      delvn=1./float(nw-1)
+      delvn=1.0_dp/(nw-1)
       do 1217 i=1,nw
-         voln(i)=float(i-1)*delvn
+         voln(i)=(i-1)*delvn
  1217 continue
       call zpline(nw,voln,fpol,bvoln,cvoln,dvoln)
       do 1250 ih=1,nh
@@ -7540,7 +7537,7 @@
             write (nttyo,9910) ier,rw,rh
             return
  1230       dumnow=sqrt(pds(2)**2+pds(3)**2)
-            bfield(iw,ih)=(dumnow)/rgrid(iw)*1.e4
+            bfield(iw,ih)=(dumnow)/rgrid(iw)*1.e4_dp
             if (ih.eq.nh/2+1) worka(iw)=bfield(iw,ih)
             if (xpsi(kk).gt.1.0.or.ivacum.gt.0) go to 1233
             fnow=seval(nw,xpsi(kk),voln,fpol,bvoln,cvoln,dvoln)
@@ -7552,7 +7549,7 @@
             endif
  1250 continue
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
@@ -7563,8 +7560,8 @@
       mode = 'SOLID'
       lbflg = 'NOLABELS'
       xdv=6.
-      cslmin=1.0e+30
-      cslmax=1.0e-30
+      cslmin=1.0e+30_dp
+      cslmax=1.0e-30_dp
       do 1254 i=1,nw
          do 1254 j=1,nh
             cslmin=min(bfield(i,j),cslmin)
@@ -7573,7 +7570,7 @@
       siinc=(cslmax-cslmin)/5.0
       if (iconsi.ge.3) siinc= 0.0
       if (iconsi.ge.6) then
-         siinc=(cslmax-cslmin)/float(iconsi)
+         siinc=(cslmax-cslmin)/iconsi
       endif
       nline = 1
       draw = 'DRAW'
@@ -7582,12 +7579,12 @@
       nxy(nn) = 1
       markme(nn) = 8
       ncnct(nn) = -1
-      sclpc(nn) = 1.75
+      sclpc(nn) = 1.75_dp
       xx(1,nn) = rmaxis
       yy(1,nn) = zmaxis
       if (ivesel.le.0) then
          nn = nn + 1
-         thcrv(nn) = 0.02
+         thcrv(nn) = 0.02_dp
          nxy(nn) = limitr
          do ii = 1, nxy(nn)
             xx(ii,nn) = xlim(ii)
@@ -7617,9 +7614,9 @@
       if (itek.ge.5.and.idotek.eq.0) then
       ncurve = nn
       ibrdr = 1
-      xphy = 7.625
-      yphy = 0.5
-      hight = 0.10
+      xphy = 7.625_dp
+      yphy = 0.5_dp
+      hight = 0.10_dp
       nplen = -100
       nxlen = 0
       nylen = 0
@@ -7630,31 +7627,31 @@
       grce = -1.0
       iexit = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll,  yll, &
       almin, almax-almin, almax, blmin, blmax-blmin, blmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
       icont, nword, bfield,nw, nh, siinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       iorel = 1
       xorl = 0.0
-      yorl = yll + 0.5
+      yorl = yll + 0.5_dp
       nn = nn + 1
       nxy(nn) = nw
       do ii = 1, nxy(nn)
@@ -7663,12 +7660,12 @@
       enddo
       if (iconsi.ge.5) then
       do i=1,nw
-         dumnow=1.e4*bcentr(jtime)*rcentr/rgrid(i)
+         dumnow=1.e4_dp*bcentr(jtime)*rcentr/rgrid(i)
          worka(i)=abs(dumnow)
       enddo
 !
-      cslmin=1.0e+30
-      cslmax=1.0e-30
+      cslmin=1.0e+30_dp
+      cslmax=1.0e-30_dp
       do i=1,nw
                cslmin=min(worka(i) ,cslmin)
                cslmax=max(worka(i) ,cslmax)
@@ -7685,7 +7682,7 @@
                cslmin=min(worka(i) ,cslmin)
                cslmax=max(worka(i) ,cslmax)
       enddo
-      delcsl=0.10*(cslmax-cslmin)
+      delcsl=0.10_dp*(cslmax-cslmin)
       cslmax=cslmax+delcsl
       cslmin=cslmin-delcsl
       endif
@@ -7693,10 +7690,10 @@
       if (itek.ge.5.and.idotek.eq.0) then
       ncurve = nn
       ibrdr = 1
-      xphy = 7.625
-      yphy = 0.5
-      hight = 0.10
-      ylen = xll*.67
+      xphy = 7.625_dp
+      yphy = 0.5_dp
+      hight = 0.10_dp
+      ylen = xll*.67_dp
       nplen = -100
       nxlen = 100
       nylen = 100
@@ -7714,22 +7711,22 @@
       iexit = 1
       if (iconsi.lt.5) iexit=2
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll,  ylen, &
       almin, almax-almin, almax, cslmin, cslmax-cslmin, cslmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, bfield, nw,	nh, siinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, bfield, nw, nh, siinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif      !     itek
       if (iconsi.ge.5) then  ! do Bp contours
@@ -7743,9 +7740,9 @@
                write (nttyo,9910) ier,rw,rh
                return
 12599    dumnow=sqrt(pds(2)**2+pds(3)**2)
-12501    bfield(iw,ih)=(dumnow)/rgrid(iw)*1.e4
+12501    bfield(iw,ih)=(dumnow)/rgrid(iw)*1.e4_dp
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
          call init2d
          nn = nn + 1
@@ -7757,27 +7754,27 @@
          lbflg = 'NOLABELS'
          ithk = 1
          ipri = 1
-         cslmin=1.0e+30
-         cslmax=1.0e-30
+         cslmin=1.0e+30_dp
+         cslmax=1.0e-30_dp
          do 12541 i=1,nw
             do 12541 j=1,nh
                cslmin=min(bfield(i,j),cslmin)
                cslmax=max(bfield(i,j),cslmax)
 12541    continue
-         siinc=(cslmax-cslmin)/float(iconsi)
+         siinc=(cslmax-cslmin)/iconsi
          nline = 1
          draw = 'DRAW'
          nn = nn + 1
          icont(nn)=1
          markme(nn) = 8
-         sclpc(nn) = 1.75
+         sclpc(nn) = 1.75_dp
          ncnct(nn) = -1
          nxy(nn) = 1
          xx(1,nn) = rmaxis
          yy(1,nn) = zmaxis
          if (ivesel.le.0) then
             nn = nn + 1
-            thcrv(nn) = 0.02
+            thcrv(nn) = 0.02_dp
             nxy(nn) = limitr
             do ii = 1, nxy(nn)
                xx(ii,nn) = xlim(ii)
@@ -7810,9 +7807,9 @@
 
          ncurve = nn
          ibrdr = 1
-         xphy = 0.675
-         yphy = 0.5
-         hight = 0.10
+         xphy = 0.675_dp
+         yphy = 0.5_dp
+         hight = 0.10_dp
          nplen = 100
          nxlen = 0
          nylen = 0
@@ -7820,22 +7817,22 @@
          ytitle = 'z(m)$'
          igridx = -1
          grce = -1.0
-	 iexit = 1
+  iexit = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, yll, &
          almin, almax-almin, almax, blmin, blmax-blmin, blmax, &
-         iaxis,	ixtck, 	iytck, 	ixnon, 	iynon,	intax,	intay, &
-         isaxs,	sorg, stp, smax, slen, sname, nslen, xps, yps, &
+         iaxis, ixtck,  iytck,  ixnon,  iynon, intax, intay, &
+         isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
          igridx, igridy, idash, idot, ichdsh, ichdot, &
          thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
          markme, clearx, mrc, tlen, nmrk, rat, &
          xx, yy, nxy, ncnct, &
-         icont,	nword, bfield, nw, nh, siinc, line, mode, &
+         icont, nword, bfield, nw, nh, siinc, line, mode, &
          lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
@@ -7843,12 +7840,12 @@
          iexit)
          endif    !  itek
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
          call init2d
          iorel = 1
          xorl = 0.0
-         yorl = yll + 0.5
+         yorl = yll + 0.5_dp
          do i=1,nw
             worka(i)=bfield(i,nh/2+1)
          enddo
@@ -7858,8 +7855,8 @@
             xx(ii,nn) = rgrid(ii)
             yy(ii,nn) = worka(ii)
          enddo
-         cslmin=1.0e+30
-         cslmax=1.0e-30
+         cslmin=1.0e+30_dp
+         cslmax=1.0e-30_dp
          do i=1,nw
                cslmin=min(worka(i) ,cslmin)
                cslmax=max(worka(i) ,cslmax)
@@ -7867,15 +7864,15 @@
          z000=0.0
          cslmin=min(cslmin   ,z000  )
          cslmax=max(cslmax   ,z000  )
-         delcsl=0.10*(cslmax-cslmin)
+         delcsl=0.10_dp*(cslmax-cslmin)
          cslmax=cslmax+delcsl
          cslmin=cslmin-delcsl
 !
          nn=nn+1
          ndshme(nn) = 1
          nxy(nn)=2
-         xx(1,nn)=rgrid(1)+0.0001
-         xx(2,nn)=rgrid(nw)-0.0001
+         xx(1,nn)=rgrid(1)+0.0001_dp
+         xx(2,nn)=rgrid(nw)-0.0001_dp
          yy(1,nn)=0.0
          yy(2,nn)=0.0
 !
@@ -7883,10 +7880,10 @@
 
          ncurve = nn
          ibrdr = 1
-         xphy = 0.675
-         yphy = 0.5
-         hight = 0.10
-         ylen = xll*.67
+         xphy = 0.675_dp
+         yphy = 0.5_dp
+         hight = 0.10_dp
+         ylen = xll*.67_dp
          nplen = -100
          nxlen = 100
          nylen = 100
@@ -7897,23 +7894,23 @@
          idot = 1
          xtitle = '$'
          ytitle = 'mod-Bp(gauss)$'
-	 iexit = 2
+  iexit = 2
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, ylen, &
          almin, almax-almin, almax, cslmin, cslmax-cslmin, cslmax, &
-         iaxis,	ixtck, iytck, ixnon, iynon, intax, intay, &
-         isaxs,	sorg, stp, smax, slen, sname, nslen, xps, yps, &
+         iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+         isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
          igridx, igridy, idash, idot, ichdsh, ichdot, &
          thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
          markme, clearx, mrc, tlen, nmrk, rat, &
          xx, yy, nxy, ncnct, &
-         icont,	nword, bfield, nw, nh, siinc, line, mode, &
-         lbflg,	ithk, ipri, nline, draw, &
+         icont, nword, bfield, nw, nh, siinc, line, mode, &
+         lbflg, ithk, ipri, nline, draw, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht,  &
@@ -7923,27 +7920,27 @@
 
  1300 continue
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters for basis function page              c
+! Initialize plot parameters for basis function page              c
 !-----------------------------------------------------------------------c
-			call ppstore
-			call ffstore
-			call wwstore
+      call ppstore
+      call ffstore
+      call wwstore
                         call eestore
       if (ivacum.gt.0) go to 13377
       call init2d
-      xmm=1.5
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      xmm=1.5_dp
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do i=1,nw
          curmin=min(curmin,pprime(i))
          curmax=max(curmax,pprime(i))
-         xiter(i)=float(i-1)/float(nw-1)
+         xiter(i)=real(i-1,dp)/(nw-1)
       enddo    
-      xdel=0.5
+      xdel=0.5_dp
       dcurn=curmax-curmin
-      if (abs(dcurn).le.1.e-4) dcurn=5.*curmax
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      if (abs(dcurn).le.1.e-4_dp) dcurn=5.*curmax
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
       yorg = curmin
       ystp = dcurn
@@ -7959,12 +7956,10 @@
       ipag = 0
       iexit = 1
       xabs=-6.0
-      yabs=1.5
-      dyabs = 0.28
-      dyabs = 0.22
-!vas      write(text,8950) (mfvers(i),i=1,2)
-      write(text,8950) trim(ch1),trim(ch2), &
-                       (mfvers(i),i=1,2)
+      yabs=1.5_dp
+      dyabs = 0.28_dp
+      dyabs = 0.22_dp
+      write(text,8950) trim(ch1),trim(ch2),(mfvers(i),i=1,2)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -7972,7 +7967,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -7981,7 +7976,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -7990,7 +7985,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write(text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -7999,22 +7994,18 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - 2.0 * dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 
       msg = msg + 1
-!vas f90 modifi.
-!vas      write(text,'(10h kppcur = ,i2,10h kffcur = ,i2, &
-!vas            10h kwwcur = ,i2)')kppcur,kffcur,kwwcur
       write(text,1001) kppcur,kffcur,kwwcur 
- 1001 format(10h kppcur = ,i2,10h kffcur = ,i2, &
-            10h kwwcur = ,i2)
+ 1001 format(' kppcur = ',i2,' kffcur = ',i2,' kwwcur = ',i2)
       note(msg) = 1
       lmes(msg) = text
       imes(msg) = 38
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       msg = msg + 1
 !
       pr=pres(1)/(.667*wplasm(jtime)/(vout(jtime)/1.e6))
@@ -8025,23 +8016,19 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       msg = msg + 1
 !
-!vas f90 modif.
-!vas      write(text,'(10h kppfnc = ,i2,10h kppknt = ,i2, &
-!vas            10h pptens = ,f5.2)')kppfnc,kppknt,pptens
       write(text,1002)kppfnc,kppknt,pptens 
- 1002 format(10h kppfnc = ,i2,10h kppknt = ,i2, &
-            10h pptens = ,f5.2)
+ 1002 format(' kppfnc = ',i2,' kppknt = ',i2,' pptens = ',f5.2)
       note(msg) = 1
       lmes(msg) = text
       imes(msg) = 38
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
-      write(text,'(40h ppknt         ppbdry           pp2bdry )')
+      ht(msg) = 0.10_dp
+      write(text,"(' ppknt         ppbdry           pp2bdry ')")
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8049,8 +8036,8 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
-      write(text,'(41h-----------------------------------------)')
+      ht(msg) = 0.10_dp
+      write(text,"('-----------------------------------------')")
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8058,10 +8045,9 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       do i=1,kppknt
-      write(text,'(1h ,f4.2,4x,g15.5,2x,g15.5)') &
-                   ppknt(i),ppbdry(i),pp2bdry(i)
+      write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") ppknt(i),ppbdry(i),pp2bdry(i)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8069,25 +8055,21 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       enddo
       yabs = yabs - dyabs
 
       msg = msg + 1
-!vas f90 modifi
-!vas      write(text,'(10h kfffnc = ,i2,10h kffknt = ,i2, &
-!vas            10h fftens = ,f5.2)')kfffnc,kffknt,fftens
       write(text,1003)kfffnc,kffknt,fftens 
- 1003 format(10h kfffnc = ,i2,10h kffknt = ,i2, &
-            10h fftens = ,f5.2)
+ 1003 format(' kfffnc = ',i2,' kffknt = ',i2,' fftens = ',f5.2)
       note(msg) = 1
       lmes(msg) = text
       imes(msg) = 38
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
-      write(text,'(40h ffknt         ffbdry           ff2bdry )')
+      ht(msg) = 0.10_dp
+      write(text,"(' ffknt         ffbdry           ff2bdry ')")
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8095,8 +8077,8 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
-      write(text,'(41h-----------------------------------------)')
+      ht(msg) = 0.10_dp
+      write(text,"('-----------------------------------------')")
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8104,10 +8086,9 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       do i=1,kffknt
-      write(text,'(1h ,f4.2,4x,g15.5,2x,g15.5)') &
-                   ffknt(i),ffbdry(i),ff2bdry(i)
+      write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") ffknt(i),ffbdry(i),ff2bdry(i)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8115,25 +8096,21 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       enddo
       yabs = yabs - dyabs
 
       msg = msg + 1
-!vas f90 modifi
-!vas      write(text,'(10h kwwfnc = ,i2,10h kwwknt = ,i2, &
-!vas            10h wwtens = ,f5.2)')kwwfnc,kwwknt,wwtens
-      write(text,1004)kwwfnc,kwwknt,wwtens 
- 1004 format(10h kwwfnc = ,i2,10h kwwknt = ,i2, &
-            10h wwtens = ,f5.2)
+      write(text,1004) kwwfnc,kwwknt,wwtens
+ 1004 format(' kwwfnc = ',i2,' kwwknt = ',i2,' wwtens = ',f5.2)
       note(msg) = 1
       lmes(msg) = text
       imes(msg) = 38
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
-      write(text,'(40h wwknt         wwbdry           ww2bdry )')
+      ht(msg) = 0.10_dp
+      write(text,"(' wwknt         wwbdry           ww2bdry ')")
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8141,8 +8118,8 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
-      write(text,'(41h-----------------------------------------)')
+      ht(msg) = 0.10_dp
+      write(text,"('-----------------------------------------')")
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8150,11 +8127,10 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       if (kwwknt.gt.0) then
       do i=1,kwwknt
-      write(text,'(1h ,f4.2,4x,g15.5,2x,g15.5)') &
-                   wwknt(i),wwbdry(i),ww2bdry(i)
+      write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") wwknt(i),wwbdry(i),ww2bdry(i)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8162,18 +8138,14 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       enddo
       yabs = yabs - dyabs
       endif
 !
       if (kedgep.gt.0) then
-!vas f90 modifi.
-!vas      write(text,'(40h pe_psin       pe_width         pedge   , &
-!vas                   17h    pedgep       )')
       write(text,1005) 
- 1005 format(40h pe_psin       pe_width         pedge   , &
-                   17h    pedgep       )
+ 1005 format(' pe_psin       pe_width         pedge       pedgep       ')
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8181,13 +8153,9 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
-!vas f90 modifi.
-!vas      write(text,'(41h-----------------------------------------, &
-!vas                   17h-----------------)')
+      ht(msg) = 0.10_dp
       write(text,1006) 
- 1006 format(41h-----------------------------------------, &
-                   17h-----------------)
+ 1006 format('----------------------------------------------------------')
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8195,10 +8163,10 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       pedgea=pedge/darea
       pedgep=pedgea/pe_width/sidif
-      write(text,'(1h ,f4.2,4x,g15.5,2x,g15.5,2x,g15.5)') &
+      write(text,"(' ',f4.2,4x,g15.5,2x,g15.5,2x,g15.5)") &
                    pe_psin,pe_width,pedgea,pedgep
       msg = msg + 1
       note(msg) = 1
@@ -8207,11 +8175,11 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       endif
 !
       if (kedgef.gt.0) then
-      write(text,'(40h fe_psin       fe_width         f2edge  )')
+      write(text,"(' fe_psin       fe_width         f2edge  ')")
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8219,8 +8187,8 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
-      write(text,'(41h-----------------------------------------)')
+      ht(msg) = 0.10_dp
+      write(text,"('-----------------------------------------')")
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8228,9 +8196,8 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
-      write(text,'(1h ,f4.2,4x,g15.5,2x,g15.5)') &
-                   fe_psin,fe_width,f2edge
+      ht(msg) = 0.10_dp
+      write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") fe_psin,fe_width,f2edge
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8238,7 +8205,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       endif
       write(text,9852) psiecn, dpsiecn
       msg = msg + 1
@@ -8248,7 +8215,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       write(text,9853) cjeccd
       msg = msg + 1
       note(msg) = 1
@@ -8257,7 +8224,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
       write(text,9857) betped, betnped
       msg = msg + 1
       note(msg) = 1
@@ -8266,13 +8233,13 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.10
+      ht(msg) = 0.10_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ibrdr = 1
-      xphy = 6.5
+      xphy = 6.5_dp
       yphy = 6.0
-      hight = 0.14
+      hight = 0.14_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -8283,39 +8250,39 @@
       igridy = 2
       idot = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, 2.0*xmm, xmm, &
       xiter(1), xdel, xiter(nw), yorg, ystp, ynmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
       call init2d
-      xmm=1.6
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      xmm=1.6_dp
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do i=1,nw
          czmcm(i)=ffprim(i)/tmu/twopi
          curmin=min(curmin,czmcm(i))
          curmax=max(curmax,czmcm(i))
-         xiter(i)=float(i-1)/float(nw-1)
+         xiter(i)=real(i-1,dp)/(nw-1)
       enddo
-      xdel=0.5
+      xdel=0.5_dp
       dcurn=curmax-curmin
-      if (abs(dcurn).le.1.e-4) dcurn=5.*curmax
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      if (abs(dcurn).le.1.e-4_dp) dcurn=5.*curmax
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
       yorg = curmin
       ystp = dcurn
@@ -8331,15 +8298,15 @@
       ipag = 0
       iexit = 1
       if (kvtor.eq.0) iexit = 2
-      xabs=-5.5
-      yabs=1.5
-      dyabs = 0.28
+      xabs=-5.5_dp
+      yabs=1.5_dp
+      dyabs = 0.28_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ibrdr = 1
-      xphy = 6.5
-      yphy = 3.5
-      hight = 0.14
+      xphy = 6.5_dp
+      yphy = 3.5_dp
+      hight = 0.14_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -8351,41 +8318,41 @@
       idot = 1
 
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, 2.0*xmm, xmm, &
       xiter(1), xdel, xiter(nw), yorg, ystp, ynmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
 !
       if (kvtor.gt.0) then
       call init2d
-      xmm=1.5
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      xmm=1.5_dp
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do i=1,nw
          czmcm(i)=pwprim(i)
          curmin=min(curmin,czmcm(i))
          curmax=max(curmax,czmcm(i))
-         xiter(i)=float(i-1)/float(nw-1)
+         xiter(i)=real(i-1,dp)/(nw-1)
       enddo
-      xdel=0.5
+      xdel=0.5_dp
       dcurn=curmax-curmin
-      if (abs(dcurn).le.1.e-4) dcurn=5.*curmax
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      if (abs(dcurn).le.1.e-4_dp) dcurn=5.*curmax
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
       yorg = curmin
       ystp = dcurn
@@ -8400,15 +8367,15 @@
       ncurve = 1
       ipag = 0
       iexit = 2
-      xabs=-5.5
-      yabs=1.5
-      dyabs = 0.28
+      xabs=-5.5_dp
+      yabs=1.5_dp
+      dyabs = 0.28_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ibrdr = 1
-      xphy = 6.5
+      xphy = 6.5_dp
       yphy = 1.0
-      hight = 0.14
+      hight = 0.14_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -8419,22 +8386,22 @@
       igridy = 2
       idot = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, 2.0*xmm, xmm, &
       xiter(1), xdel, xiter(nw), yorg, ystp, ynmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
       endif
@@ -8482,7 +8449,7 @@
       call curvec(dataname,jerror,time,wplasm,ktime,0)
 
 !-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
+! Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       yorg = curmin
@@ -8494,17 +8461,17 @@
          xx(ii,1) = xiter(ii)
          yy(ii,1) = pprime(ii)
       enddo
-      curmin=1.0e+10
-      curmax=-1.0e+10
+      curmin=1.0e+10_dp
+      curmax=-1.0e+10_dp
       do i=1,nw
          czmcm(i)=ffprim(i)/tmu/twopi
          curmin=min(curmin,czmcm(i))
          curmax=max(curmax,czmcm(i))
       enddo
       dcurn=curmax-curmin
-      if (abs(dcurn).le.1.e-4) dcurn=5.*curmax
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      if (abs(dcurn).le.1.e-4_dp) dcurn=5.*curmax
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
       nslen = -100
       xps = xmm
@@ -8521,9 +8488,9 @@
       ncurve = nn
       ipag = 1
       iexit = 2
-      xabs= -0.5
-      xabs= -0.6
-      yabs= -0.8
+      xabs= -0.5_dp
+      xabs= -0.6_dp
+      yabs= -0.8_dp
 !
       msg = msg + 1
       note(msg) = 1
@@ -8532,7 +8499,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.13*0.7
+      ht(msg) = 0.13_dp*0.7_dp
       write (text,18983) condno
       msg = msg + 1
       note(msg) = 1
@@ -8541,9 +8508,9 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.13*0.7
+      ht(msg) = 0.13_dp*0.7_dp
 !
-      pr=pres(1)/(.667*wplasm(jtime)/(vout(jtime)/1.e6))
+      pr=pres(1)/(.667_dp*wplasm(jtime)/(vout(jtime)/1.e6_dp))
       write (text,18981) pr
       msg = msg + 1
       note(msg) = 1
@@ -8552,9 +8519,9 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.13*0.7
+      ht(msg) = 0.13_dp*0.7_dp
 !
-      if (abs(vcurfb(1)).gt.1.e-06) then
+      if (abs(vcurfb(1)).gt.1.e-06_dp) then
          write (text,18985)  (vcurfb(i),i=1,3)
          msg = msg + 1
          note(msg) = 1
@@ -8563,11 +8530,11 @@
          xpos(msg) = xabs
          ypos(msg) = yabs
          yabs = yabs - dyabs
-         ht(msg) = 0.13*0.7
+         ht(msg) = 0.13_dp*0.7_dp
       endif
       if (kvtor.ge.1.and.kvtor.le.3) then
       if (icurrt.eq.5.and. &
-                   abs(brsp(nfcoil+1)).gt.1.e-10) then
+                   abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
          do i=nfnpcr+1,nfnpcr+kwwcur,2
             xxnorm=brsp(i)/brsp(nfcoil+1)
             if (i+1.gt.nfnpcr+kwwcur) then
@@ -8591,15 +8558,15 @@
             xpos(msg) = xabs
             ypos(msg) = yabs
             yabs = yabs - dyabs
-            ht(msg) = 0.13*0.7
+            ht(msg) = 0.13_dp*0.7_dp
          enddo
       endif
       endif
 !
-      xabs= 1.2
-      yabs= -0.8
+      xabs= 1.2_dp
+      yabs= -0.8_dp
       if ((icurrt.eq.2.or.icurrt.eq.5).and. &
-                   abs(brsp(nfcoil+1)).gt.1.e-10) then
+                   abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
          do i=nfcoil+1+kppcur,nfcoil+kppcur+kffcur
             xxnorm=brsp(i)/brsp(nfcoil+1)
             write (text,18970) xxnorm
@@ -8610,15 +8577,15 @@
             xpos(msg) = xabs
             ypos(msg) = yabs
             yabs = yabs - dyabs
-            ht(msg) = 0.13*0.8
+            ht(msg) = 0.13_dp*0.8_dp
          enddo
       endif
 !
       if (itek.ge.5.and.idotek.eq.0) then
       ibrdr = 1
-      xphy = 4.2
-      yphy = 2.80
-      hight = 0.12
+      xphy = 4.2_dp
+      yphy = 2.80_dp
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -8629,22 +8596,22 @@
       igridy = 2
       idot = 1
 !-----------------------------------------------------------------------c
-!     			Write Plot Parameters				c
+!      Write Plot Parameters            c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr,	grce, xphy, yphy, &
+      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
       xiter(1), xdel, xiter(nw), yorg, ystp, ynmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax,	intay, &
-      isaxs, sorg, stp,	smax, slen, sname, nslen, xps, yps, &
+      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
       thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
       markme, clearx, mrc, tlen, nmrk, rat, &
       xx, yy, nxy, ncnct, &
-      icont, nword, zz,	ix, iy,	zinc, line, mode, &
-      lbflg, ithk, ipri, nline,	draw, &
+      icont, nword, zz, ix, iy, zinc, line, mode, &
+      lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto,	ivec, &
+      nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif     !   itek
 !---------------------------------------------------------------------
@@ -8653,8 +8620,8 @@
 !---------------------------------------------------------------------
  1700 continue
       if (kfitece.eq.0) return
-      dxnow=(rmaxzm-rminzm)/float(nw-1)
-      drnow=(xlmax-xlmin)/float(nw-1)
+      dxnow=(rmaxzm-rminzm)/(nw-1)
+      drnow=(xlmax-xlmin)/(nw-1)
       do i=1,nw
          xnow=xlmin+(i-1)*drnow
          call seva2d(bkx,lkx,bky,lky,c,xnow,zeceo,pds,ier,n333)
@@ -8690,11 +8657,11 @@
          curmax=max(curmax,workg(i))
       enddo
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       drrrr=(workk(nw)-workk(1))
       dcurn=(curmax-curmin)
-      xmm=1.6
+      xmm=1.6_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
 !------------------------------------------------------------------------
@@ -8703,8 +8670,8 @@
          call init2d
          ibrdr = 1
          xphy = 9.0
-         yphy = 1.4
-         hight = 0.12
+         yphy = 1.4_dp
+         hight = 0.12_dp
          nplen = 100
          nxlen = 100
          nylen = 100
@@ -8728,7 +8695,7 @@
         clrece(1)='FOREGROUND'
         cntece(1)=0
         thcece(2)=0.0
-        sclece(2)=0.70
+        sclece(2)=0.70_dp
         dshece(2)=0
         dotece(2)=0
         cdhece(2)=0
@@ -8809,18 +8776,18 @@
       enddo
       drrrr=(workk(nw)-workk(1))
       dcurn=curmax-curmin
-      curmax=curmax+0.05*dcurn
-      curmin=curmin-0.05*dcurn
+      curmax=curmax+0.05_dp*dcurn
+      curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
-      xmm=1.6
+      xmm=1.6_dp
 !------------------------------------------------------------------------------
 !--       Initialize plot parameters                                         --
 !------------------------------------------------------------------------------
       call init2d
       ibrdr = 1
       xphy = 9.0
-      yphy = 3.7
-      hight = 0.12
+      yphy = 3.7_dp
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -8851,7 +8818,7 @@
         clrece(1)='FOREGROUND'
         cntece(1)=0
         thcece(2)=0.0
-        sclece(2)=0.70
+        sclece(2)=0.70_dp
         dshece(2)=0
         dotece(2)=0
         cdhece(2)=0
@@ -8895,7 +8862,7 @@
       curmin=-10.
       curmax=10.
       do i=1,nece
-        xece(i,1)=float(i)
+        xece(i,1)=i
         yece(i,1)=(psecep(i)-psecem(i))/ddpsi*100.
         curmin=min(curmin,yece(i,1))
         curmax=max(curmax,yece(i,1))
@@ -8912,14 +8879,14 @@
       xorg=0
       drrrr=2.
       xmax=nece+2
-      xmm=1.6
+      xmm=1.6_dp
       call init2d
       intax = 1
       intay = 1
       ibrdr = 1
       xphy = 9.0
       yphy = 6.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -8934,7 +8901,7 @@
       iexit = 1
       ncurve=2
         thcece(1)=0.0
-        sclece(1)=0.7
+        sclece(1)=0.7_dp
         dshece(1)=0
         dotece(1)=0
         cdhece(1)=0
@@ -8973,11 +8940,11 @@
 !------------------------------------------------------------------------------
       nplece(1)=nece
       do i=1,nece
-        xece(i,1)=float(i)
+        xece(i,1)=i
         yece(i,1)=chiece(i)
       enddo
       nplece(2)=1
-        xece(1,2)=float(nece+1)
+        xece(1,2)=nece+1
         yece(1,2)=chiecebz
       xorg=0
       drrrr=2
@@ -8990,13 +8957,13 @@
       curmin=0.0
 !      dcurn=0.0
       dcurn=(curmax-curmin)/2.
-      xmm=1.6
+      xmm=1.6_dp
       call init2d
       intax = 1
       ibrdr = 1
-      xphy = 6.5
+      xphy = 6.5_dp
       yphy = 6.0
-      hight = 0.12
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -9012,7 +8979,7 @@
       if ((kfixro.gt.0).and.(kfixrece.gt.0)) iexit = 2
       ncurve=2
         thcece(1)=0.0
-        sclece(1)=0.7
+        sclece(1)=0.7_dp
         dshece(1)=0
         dotece(1)=0
         cdhece(1)=0
@@ -9021,7 +8988,7 @@
         clrece(1)='PINK'
         cntece(1)=1
         thcece(2)=0.0
-        sclece(2)=0.7
+        sclece(2)=0.7_dp
         dshece(2)=0
         dotece(2)=1
         cdhece(2)=0
@@ -9031,8 +8998,8 @@
         cntece(2)=-1
 !
       xabs=-6.0
-      yabs=1.8
-      dyabs = 0.22
+      yabs=1.8_dp
+      dyabs = 0.22_dp
       write (text,8950) (mfvers(i),i=1,2)
       msg = msg + 1
       note(msg) = 1
@@ -9041,7 +9008,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -9050,7 +9017,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -9059,7 +9026,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
       msg = msg + 1
       note(msg) = 1
@@ -9068,7 +9035,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9960) receo
       msg = msg + 1
       note(msg) = 1
@@ -9077,7 +9044,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9962) zeceo
       msg = msg + 1
       note(msg) = 1
@@ -9086,7 +9053,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9965)
       do k=1,nece
         msg = msg + 1
@@ -9096,7 +9063,7 @@
         xpos(msg) = xabs
         ypos(msg) = yabs
         yabs = yabs - dyabs
-        ht(msg) = 0.14
+        ht(msg) = 0.14_dp
         write (text,9968) recem(k),recep(k)
       enddo
       msg = msg + 1
@@ -9106,7 +9073,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9969) xfit(1)
       do k=2,nfit
         msg = msg + 1
@@ -9116,7 +9083,7 @@
         xpos(msg) = xabs
         ypos(msg) = yabs
         yabs = yabs - dyabs
-        ht(msg) = 0.14
+        ht(msg) = 0.14_dp
         write (text,9972) xfit(k)
       enddo
       msg = msg + 1
@@ -9126,7 +9093,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9976) chisqfit
       msg = msg + 1
       note(msg) = 1
@@ -9135,7 +9102,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9978) tchiece
       msg = msg + 1
       note(msg) = 1
@@ -9144,7 +9111,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9979) chiecebz
       msg = msg + 1
       note(msg) = 1
@@ -9153,7 +9120,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,&
@@ -9199,19 +9166,19 @@
 !------------------------------------------------------------------------------
 !-- writing to pltout.out. For ECE data fitting                              --
 !------------------------------------------------------------------------------
-      xorg=1.2
-      drrrr=0.4
-      xmax=2.4
+      xorg=1.2_dp
+      drrrr=0.4_dp
+      xmax=2.4_dp
       curmax=8.0
       curmin=0.0
       dcurn=(curmax - curmin)/2.
-      xmm=1.6
+      xmm=1.6_dp
       call init2d
       intax = 1
       ibrdr = 1
-      xphy = 6.5
-      yphy = 3.7
-      hight = 0.12
+      xphy = 6.5_dp
+      yphy = 3.7_dp
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -9226,7 +9193,7 @@
       iexit = 2
       ncurve=2
         thcece(1)=0.0
-        sclece(1)=0.7
+        sclece(1)=0.7_dp
         dshece(1)=0
         dotece(1)=0
         cdhece(1)=0
@@ -9276,9 +9243,9 @@
         xece(i,2)=bbf(ii)
         yece(i,2)=teeceb(ii)
       enddo
-      xorg=1.6
-      drrrr=0.4
-      xmax=3.4
+      xorg=1.6_dp
+      drrrr=0.4_dp
+      xmax=3.4_dp
       curmax=8.0
       curmin=0.0
       dcurn=2.0
@@ -9286,9 +9253,9 @@
       call init2d
       intax = 1
       ibrdr = 1
-      xphy = 6.5
-      yphy = 3.7
-      hight = 0.12
+      xphy = 6.5_dp
+      yphy = 3.7_dp
+      hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
@@ -9303,7 +9270,7 @@
       iexit = 1
       ncurve=2
         thcece(1)=0.0
-        sclece(1)=0.7
+        sclece(1)=0.7_dp
         dshece(1)=0
         dotece(1)=0
         cdhece(1)=0
@@ -9340,8 +9307,8 @@
 !
 8900  continue
       xabs=-6.0
-      yabs=1.8
-      dyabs = 0.22
+      yabs=1.8_dp
+      dyabs = 0.22_dp
       write (text,8950) (mfvers(i),i=1,2)
       msg = msg + 1
       note(msg) = 1
@@ -9350,7 +9317,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,8960) uday
       msg = msg + 1
       note(msg) = 1
@@ -9359,7 +9326,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9000) ishot
       msg = msg + 1
       note(msg) = 1
@@ -9368,7 +9335,7 @@
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
-      ht(msg) = 0.14
+      ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
 !
 8971  continue
@@ -9380,198 +9347,199 @@
 !
       return
  8948 format (a25)
-!vas 8950 format(1x,1('h'),' EFITD 129x2d ',2a5,1('h'))
- 8950 format(1x,1('h'),' EFITD',a3,' x',a3,' ',2a5,1('h'))
- 8960 format (12h date ran = ,a10)
- 9000 format (12h shot #   = ,i10)
- 9002 format (12h shot #   = ,i10,12h date ran = ,a10)
- 9020 format (12h t(ms,us) = ,i6,1x,i6)
- 9022 format (12h chiprw   = ,1pe10.3)
- 9024 format (12h Rvt(m)   = ,1pe10.3)
- 9026 format (12h Kvt(m)   = ,i10)
- 9040 format (12h chi2(mag)= ,1pe10.3)
- 9060 format (12h rout(cm) = ,f10.2)
- 9080 format (12h zout(cm) = ,f10.3)
- 9100 format (12h a(cm)    = ,f10.2)
- 9120 format (12h elong    = ,f10.3)
- 9140 format (12h utri,ltri= ,f6.2,1x,f6.2)
- 9150 format (12h betan,In = ,f6.2,1x,f6.2)
- 9155 format (12h indent   = ,f10.3)
- 9160 format (12h V,A(m3,2)= ,f6.2,1x,f6.3)
- 9165 format (12h energy(j)= ,1pe10.3)
- 9180 format (12h betat(%) = ,f10.2)
- 9200 format (12h betap    = ,f10.2)
- 9220 format (12h li,li3    = ,f6.2,1x,f6.2)
- 9230 format (12h error, # = ,1pe10.3,1x,i3)
- 9240 format (12h delstar  = ,1pe8.1,1x,1pe8.1)
- 9260 format (12h fpols(kA)= ,f10.1)
- 9262 format (12h ux,lx(cm)= ,f6.2,1x,f6.2)
- 9265 format (12h J0n,J1n  = ,f6.2,1x,f6.2)
- 9268 format (12h q1,q95   = ,f6.2,1x,f6.2)
- 9272 format (12h dsep(cm) = ,f10.3)
- 9270 format (12h ipf(ka)  = ,f10.1)
- 9280 format (12h rm,rc(cm)= ,f6.1,1x,f6.1)
- 9290 format (12h zm,zc(cm)= ,f6.2,1x,f6.2)
- 9300 format (4x,16h   data used:   )
- 9320 format (1x,i2,13h flux loops, ,i2,4h ECE)
- 9340 format (1x,i2,19h magnetic probes   )
- 9360 format (1x,i2,18h partial rogowskis)
- 9380 format (1x,i2,6h rogow,1x,i2,4h fc ,1x,i2,4h ec )
- 9385 format (1x,i2,5h di, ,i2,5h mse ,i2,5h li  )
-99385 format (1x,i2,5h di, ,i2,5h mse ,i2,5h mls )
- 9390 format (12h ip(ka)   = ,f10.1)
- 9395 format (12h scrapof(mm),1x,5f5.1)
- 9399 format (12h n/nc,qmer= ,f6.3,1x,f6.3)
- 9400 format (12h bt0(t)   = ,f10.3)
- 9408 format (12h          = ,f10.3)
- 9420 format (12h lin,o(cm)= ,f6.2,1x,f6.2)
- 9440 format (12h chi2max  = ,1pe10.3)
- 9441 format (12h fexpx,vs = ,f6.2,1x,f6.2)
- 9460 format (12h lt,b(cm) = ,f6.2,1x,f6.2)
- 9465 format (12h s/q2,taun= ,f6.2,1x,f6.2)
- 9467 format (12h Zt(cm),RL= ,f6.2,1x,f6.2)
- 9470 format (12h sib(vs/r)= ,1pe10.3)
- 9480 format (12h elongm,qm= ,f6.2,1x,f6.3)
- 9482 format (12h sir(vs/r)= ,1pe10.3)
- 9484 format (12h n(Rc,Zc) = ,f10.3)
- 9490 format (12h shearb,Jb= ,f6.2,1x,f6.3)
- 9492 format (12h dqdsi/q-b= ,f10.3)
- 9494 format (12h aq1,2(cm)= ,f6.2,1x,f6.2)
- 9496 format (12h siw, q   = ,f6.3,1x,f6.2)
- 9498 format (12h shearw,Jw= ,f6.2,1x,f6.3)
- 9495 format (12h chidlc   = ,1pe10.3)
- 9497 format (12h chipre   = ,1pe10.3)
- 9500 format (12h errbp    = ,1pe10.3)
- 9502 format (12h nev2(cm3)= ,1pe10.3)
- 9504 format (12h erbmax   = ,1pe10.3)
- 9506 format (12h erbave   = ,1pe10.3)
- 9507 format (12h ner0(cm3)= ,1pe10.3)
- 9510 format (12h errbpli2 = ,1pe10.3)
- 9512 format (12h taue(ms) = ,1pe10.3)
- 9520 format (12h Rvsu(cm) = ,f6.1,1x,f6.1)
- 9521 format (12h Rvsd(cm) = ,f6.1,1x,f6.1)
- 9522 format (12h rtch(cm) = ,f10.3)
- 9524 format (12h ztch(cm) = ,f10.3)
- 9530 format (12h rsep(cm) = ,f6.1,1x,f6.1)
- 9540 format (12h zsep(cm) = ,f6.1,1x,f6.1)
- 9542 format (12h betapd,w = ,f6.2,1x,f6.2)
- 9544 format (12h betatd,w = ,f6.2,1x,f6.2)
- 9546 format (12h wdia(J)  = ,1pe10.3)
- 9547 format (12h wtor(J)  = ,1pe10.3)
- 9548 format (12h taued(ms)= ,1pe10.3)
- 9550 format (12h vl(V),Jav= ,f6.2,1x,f6.2)
- 9552 format (12h qmericer = ,f10.2)
- 9555 format (12h chitot   = ,1pe10.3)
- 9560 format (12h p1/p0(f) = ,1pe10.3)
- 9562 format (12h p1/p0(d) = ,1pe10.3)
- 9565 format (12h kppcur   = ,i10)
- 9570 format (12h kffcur   = ,i10)
- 9575 format (12h pcurbd   = ,f10.3)
- 9580 format (12h fcurbd   = ,f10.3)
- 9603 format (12h icp,  ivs= ,2i5)
- 9605 format (12h kf, kp, E= ,i4,2i3)
- 9610 format (12h fpd, p, E= ,3f4.1)
- 9612 format (12h kw ,  wbd= ,i5,f5.1)
- 9614 format (12h kvt      = ,i5)
- 9615 format (12h fwbp, fwq= ,2f5.1)
- 9620 format (12h kcf,  kcp= ,2i5)
- 9623 format (12h kcw      = ,1i5)
- 9625 format (12h alfp     = ,f10.3)
-96251 format (12h alfp     = ,f10.3)
-96252 format (12h Ivt(ka)  = ,f10.3)
-96253 format (12h Ipt(ka)  = ,f10.3)
-96254 format (12h Ivp(ka)  = ,f10.3)
- 9630 format (12h kprfit   = ,i10)
- 9635 format (12h Ze(cm)   = ,f10.3)
- 9637 format (12h relax    = ,f10.3)
- 9639 format (12h Rj(m)    = ,f10.3)
- 9700 format('solid lines = calculated values')
- 9710 format('symbols = experimental values')
- 9800 format (12h chisqte  = ,1pe10.3)
- 9805 format (12h chisqne  = ,1pe10.3)
- 9810 format (12h fco2ne   = ,f10.3)
- 9815 format (12h nptef    = ,i10)
- 9820 format (12h npnef    = ,i10)
- 9825 format (12h chisqti  = ,1pe10.3)
- 9828 format (12h zt(cm),RL= ,f6.2,1x,f6.2)
- 9830 format (12h nptionf  = ,i10)
- 9832 format (12h p0(n/m2) = ,1pe10.3)
- 9834 format (12h dp1dx(d) = ,1pe10.3)
- 9835 format (12h dp1dx(f) = ,1pe10.3)
- 9836 format (12h kpressb  = ,i10)
- 9838 format (12h J(0.95)  = ,1pe10.3)
- 9840 format (12h pp(.95)  = ,1pe10.3)
- 9842 format (12h bimf,e(%)= ,f6.2,1x,f6.2)
- 9852 format (12h siec,dsi = ,f8.4,1x,f8.4)
- 9853 format (12h eccd(kA) = ,1pe10.3)
- 9857 format (12h betped,bn= ,f8.4,1x,f8.4)
- 9900 format('  error in sets2d = ',i4)
- 9910 format('  error in spline =',i4,' (r,z)= ( ',f5.2,',',f5.2,')')
- 9930 format (12h chi2ms,li= ,f7.2,1x,f7.2)
-99930 format (12h chi2ms,ls= ,f7.2,1x,1pe10.3)
- 9932 format (12h Zeff-res = ,f10.2)
- 9934 format (12h Tave(KeV)= ,f10.3)
- 9936 format (12h Pb(MW),Wn= ,f6.2,1x,f6.2)
- 9937 format (21h SYMMETRIZED SOLUTION)
- 9938 format (12h Ifb(KA)  = ,1pe10.3)
- 9940 format (12h qgam     = ,8(1x,f5.2))
-99940 format (12h qmls     = ,8(1x,f5.2))
- 9945 format (12h qsiw     = ,8(1x,f5.2))
- 9950 format (5h Fig. ,i3)
- 9960 format (12h receo(m) = ,f6.3)
- 9962 format (12h zeceo(m) = ,f6.3)
- 9965 format (20h recem(m),  recep(m))
+ 8950 format (1x,1('h'),' EFITD',a3,' x',a3,' ',2a5,1('h'))
+ 8960 format (' date ran = ',a10)
+ 9000 format (' shot #   = ',i10)
+ 9002 format (' shot #   = ',i10,' date ran = ',a10)
+ 9020 format (' t(ms,us) = ',i6,1x,i6)
+ 9022 format (' chiprw   = ',1pe10.3)
+ 9024 format (' Rvt(m)   = ',1pe10.3)
+ 9026 format (' Kvt(m)   = ',i10)
+ 9040 format (' chi2(mag)= ',1pe10.3)
+ 9060 format (' rout(cm) = ',f10.2)
+ 9080 format (' zout(cm) = ',f10.3)
+ 9100 format (' a(cm)    = ',f10.2)
+ 9120 format (' elong    = ',f10.3)
+ 9140 format (' utri,ltri= ',f6.2,1x,f6.2)
+ 9150 format (' betan,In = ',f6.2,1x,f6.2)
+ 9155 format (' indent   = ',f10.3)
+ 9160 format (' V,A(m3,2)= ',f6.2,1x,f6.3)
+ 9165 format (' energy(j)= ',1pe10.3)
+ 9180 format (' betat(%) = ',f10.2)
+ 9200 format (' betap    = ',f10.2)
+ 9220 format (' li,li3   = ',f6.2,1x,f6.2)
+ 9230 format (' error, # = ',1pe10.3,1x,i3)
+ 9240 format (' delstar  = ',1pe8.1,1x,1pe8.1)
+ 9260 format (' fpols(kA)= ',f10.1)
+ 9262 format (' ux,lx(cm)= ',f6.2,1x,f6.2)
+ 9265 format (' J0n,J1n  = ',f6.2,1x,f6.2)
+ 9268 format (' q1,q95   = ',f6.2,1x,f6.2)
+ 9272 format (' dsep(cm) = ',f10.3)
+ 9270 format (' ipf(ka)  = ',f10.1)
+ 9280 format (' rm,rc(cm)= ',f6.1,1x,f6.1)
+ 9290 format (' zm,zc(cm)= ',f6.2,1x,f6.2)
+ 9300 format (4x,'   data used:   ')
+ 9320 format (1x,i2,' flux loops, ',i2,' ECE')
+ 9340 format (1x,i2,' magnetic probes   ')
+ 9360 format (1x,i2,' partial rogowskis')
+ 9380 format (1x,i2,' rogow',1x,i2,' fc ',1x,i2,' ec ')
+ 9385 format (1x,i2,' di, ',i2,' mse ',i2,' li  ')
+99385 format (1x,i2,' di, ',i2,' mse ',i2,' mls ')
+ 9390 format (' ip(ka)   = ',f10.1)
+ 9395 format (' scrapof(mm)',1x,5f5.1)
+ 9399 format (' n/nc,qmer= ',f6.3,1x,f6.3)
+ 9400 format (' bt0(t)   = ',f10.3)
+ 9408 format ('          = ',f10.3)
+ 9420 format (' lin,o(cm)= ',f6.2,1x,f6.2)
+ 9440 format (' chi2max  = ',1pe10.3)
+ 9441 format (' fexpx,vs = ',f6.2,1x,f6.2)
+ 9460 format (' lt,b(cm) = ',f6.2,1x,f6.2)
+ 9465 format (' s/q2,taun= ',f6.2,1x,f6.2)
+ 9467 format (' Zt(cm),RL= ',f6.2,1x,f6.2)
+ 9470 format (' sib(vs/r)= ',1pe10.3)
+ 9480 format (' elongm,qm= ',f6.2,1x,f6.3)
+ 9482 format (' sir(vs/r)= ',1pe10.3)
+ 9484 format (' n(Rc,Zc) = ',f10.3)
+ 9490 format (' shearb,Jb= ',f6.2,1x,f6.3)
+ 9492 format (' dqdsi/q-b= ',f10.3)
+ 9494 format (' aq1,2(cm)= ',f6.2,1x,f6.2)
+ 9496 format (' siw, q   = ',f6.3,1x,f6.2)
+ 9498 format (' shearw,Jw= ',f6.2,1x,f6.3)
+ 9495 format (' chidlc   = ',1pe10.3)
+ 9497 format (' chipre   = ',1pe10.3)
+ 9500 format (' errbp    = ',1pe10.3)
+ 9502 format (' nev2(cm3)= ',1pe10.3)
+ 9504 format (' erbmax   = ',1pe10.3)
+ 9506 format (' erbave   = ',1pe10.3)
+ 9507 format (' ner0(cm3)= ',1pe10.3)
+ 9510 format (' errbpli2 = ',1pe10.3)
+ 9512 format (' taue(ms) = ',1pe10.3)
+ 9520 format (' Rvsu(cm) = ',f6.1,1x,f6.1)
+ 9521 format (' Rvsd(cm) = ',f6.1,1x,f6.1)
+ 9522 format (' rtch(cm) = ',f10.3)
+ 9524 format (' ztch(cm) = ',f10.3)
+ 9530 format (' rsep(cm) = ',f6.1,1x,f6.1)
+ 9540 format (' zsep(cm) = ',f6.1,1x,f6.1)
+ 9542 format (' betapd,w = ',f6.2,1x,f6.2)
+ 9544 format (' betatd,w = ',f6.2,1x,f6.2)
+ 9546 format (' wdia(J)  = ',1pe10.3)
+ 9547 format (' wtor(J)  = ',1pe10.3)
+ 9548 format (' taued(ms)= ',1pe10.3)
+ 9550 format (' vl(V),Jav= ',f6.2,1x,f6.2)
+ 9552 format (' qmericer = ',f10.2)
+ 9555 format (' chitot   = ',1pe10.3)
+ 9560 format (' p1/p0(f) = ',1pe10.3)
+ 9562 format (' p1/p0(d) = ',1pe10.3)
+ 9565 format (' kppcur   = ',i10)
+ 9570 format (' kffcur   = ',i10)
+ 9575 format (' pcurbd   = ',f10.3)
+ 9580 format (' fcurbd   = ',f10.3)
+ 9603 format (' icp,  ivs= ',2i5)
+ 9605 format (' kf, kp, E= ',i4,2i3)
+ 9610 format (' fpd, p, E= ',3f4.1)
+ 9612 format (' kw ,  wbd= ',i5,f5.1)
+ 9614 format (' kvt      = ',i5)
+ 9615 format (' fwbp, fwq= ',2f5.1)
+ 9620 format (' kcf,  kcp= ',2i5)
+ 9623 format (' kcw      = ',1i5)
+ 9625 format (' alfp     = ',f10.3)
+96251 format (' alfp     = ',f10.3)
+96252 format (' Ivt(ka)  = ',f10.3)
+96253 format (' Ipt(ka)  = ',f10.3)
+96254 format (' Ivp(ka)  = ',f10.3)
+ 9630 format (' kprfit   = ',i10)
+ 9635 format (' Ze(cm)   = ',f10.3)
+ 9637 format (' relax    = ',f10.3)
+ 9639 format (' Rj(m)    = ',f10.3)
+ 9700 format ('solid lines = calculated values')
+ 9710 format ('symbols = experimental values')
+ 9800 format (' chisqte  = ',1pe10.3)
+ 9805 format (' chisqne  = ',1pe10.3)
+ 9810 format (' fco2ne   = ',f10.3)
+ 9815 format (' nptef    = ',i10)
+ 9820 format (' npnef    = ',i10)
+ 9825 format (' chisqti  = ',1pe10.3)
+ 9828 format (' zt(cm),RL= ',f6.2,1x,f6.2)
+ 9830 format (' nptionf  = ',i10)
+ 9832 format (' p0(n/m2) = ',1pe10.3)
+ 9834 format (' dp1dx(d) = ',1pe10.3)
+ 9835 format (' dp1dx(f) = ',1pe10.3)
+ 9836 format (' kpressb  = ',i10)
+ 9838 format (' J(0.95)  = ',1pe10.3)
+ 9840 format (' pp(.95)  = ',1pe10.3)
+ 9842 format (' bimf,e(%)= ',f6.2,1x,f6.2)
+ 9852 format (' siec,dsi = ',f8.4,1x,f8.4)
+ 9853 format (' eccd(kA) = ',1pe10.3)
+ 9857 format (' betped,bn= ',f8.4,1x,f8.4)
+ 9900 format ('  error in sets2d = ',i4)
+ 9910 format ('  error in spline =',i4,' (r,z)= ( ',f5.2,',',f5.2,')')
+ 9930 format (' chi2ms,li= ',f7.2,1x,f7.2)
+99930 format (' chi2ms,ls= ',f7.2,1x,1pe10.3)
+ 9932 format (' Zeff-res = ',f10.2)
+ 9934 format (' Tave(KeV)= ',f10.3)
+ 9936 format (' Pb(MW),Wn= ',f6.2,1x,f6.2)
+ 9937 format (' SYMMETRIZED SOLUTION')
+ 9938 format (' Ifb(KA)  = ',1pe10.3)
+ 9940 format (' qgam     = ',8(1x,f5.2))
+99940 format (' qmls     = ',8(1x,f5.2))
+ 9945 format (' qsiw     = ',8(1x,f5.2))
+ 9950 format (' Fig. ',i3)
+ 9960 format (' receo(m) = ',f6.3)
+ 9962 format (' zeceo(m) = ',f6.3)
+ 9965 format (' recem(m),  recep(m)')
  9968 format (2x,f6.3,5x,f6.3)
- 9969 format (12h xfit     = ,f6.3)
+ 9969 format (' xfit     = ',f6.3)
  9972 format (12x,f6.3)
- 9976 format (12h chisqfit = ,f6.3)
- 9978 format (12h tchiece  = ,1pe10.3)
- 9979 format (12h chiecebz = ,1pe10.3)
+ 9976 format (' chisqfit = ',f6.3)
+ 9978 format (' tchiece  = ',1pe10.3)
+ 9979 format (' chiecebz = ',1pe10.3)
 10000 format (6e12.6)
 10020 format (5e10.4)
 14980 format (i5)
 15000 format (2e12.6)
-18950 format (7h a, g =,1pe10.3)
-18960 format (7h       ,1pe10.3)
-18970 format (1h ,1pe10.3)
-18971 format (8h w    = ,1pe11.4)
-18973 format (8h        ,1pe11.4)
-18980 format (7h a0  = ,1pe10.3)
-18981 format (8h p0/<p>=,1pe9.1)
-18983 format (7h cno = ,1pe10.3)
-18985 format (7h Vfb = ,1pe10.3,4h    ,f3.0,1h ,f3.0)
-19603 format (12h rm,al    = ,f7.3,1x,f7.3)
-19605 format (12h bt,bw    = ,f7.3,1x,f7.3)
-19610 format (12h saaa(cm) = ,f7.3)
-28971 format (8h w    = ,1pe11.4,1x,1pe11.4)
-28973 format (8h        ,1pe11.4,1x,1pe11.4)
+18950 format (' a, g =',1pe10.3)
+18960 format ('       ',1pe10.3)
+18970 format (' ',1pe10.3)
+18971 format (' w    = ',1pe11.4)
+18973 format ('        ',1pe11.4)
+18980 format (' a0  = ',1pe10.3)
+18981 format (' p0/<p>=',1pe9.1)
+18983 format (' cno = ',1pe10.3)
+18985 format (' Vfb = ',1pe10.3,'    ',f3.0,' ',f3.0)
+19603 format (' rm,al    = ',f7.3,1x,f7.3)
+19605 format (' bt,bw    = ',f7.3,1x,f7.3)
+19610 format (' saaa(cm) = ',f7.3)
+28971 format (' w    = ',1pe11.4,1x,1pe11.4)
+28973 format ('        ',1pe11.4,1x,1pe11.4)
       end
+
       subroutine expand(n1,n2,nexexx,xmm,jtime)
+      use set_kinds
       use commonblocks,only: worka,byringr,byringz,xxtra,yxtra, &
            bpxtra,flxtra,fpxtra
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       common/cwork4/npxtra(nxtram),scraps(nxtram)
-      real*4,dimension(:),allocatable :: xplt,yplt,xplx,yplx
+      real*4,dimension(:),allocatable :: xpltloc,ypltloc,xplxloc,yplxloc
       common/adp/ringr(6),ringz(6),ringap
-!      equivalence (xplt,flxtra(1,1))
-!      equivalence (yplt,fpxtra(1,1))
-!      equivalence (xplx,flxtra(1,2))
-!      equivalence (yplx,fpxtra(1,2))
-      data almin,almax,blmin,blmax/1.51,1.79,-1.38,-1.21/
-5     almin=1.62
-      blmax=-1.20
+!      equivalence (xpltloc,flxtra(1,1))
+!      equivalence (ypltloc,fpxtra(1,1))
+!      equivalence (xplxloc,flxtra(1,2))
+!      equivalence (yplxloc,fpxtra(1,2))
+      data almin,almax,blmin,blmax/1.51_dp,1.79_dp,-1.38_dp,-1.21_dp/
+5     almin=1.62_dp
+      blmax=-1.20_dp
       call nobrdr
       call grace(0.0)
       call xticks(2)
       call yticks(2)
       call physor(9.0,1.4)
 !
-      ALLOCATE(xplt(npoint),yplt(npoint),xplx(npoint), &
-         yplx(npoint))
+      ALLOCATE(xpltloc(npoint),ypltloc(npoint),xplxloc(npoint),yplxloc(npoint))
 !
       ilow=0  
       if(zseps(1,jtime).gt.-900.)ilow=1
@@ -9588,13 +9556,13 @@
       call thkcrv(0.02)
   270 call curve(xlim,ylim,limitr,0)
       call dash
-      call curve(xplt,yplt,n1,0)
+      call curve(xpltloc,ypltloc,n1,0)
       call dot
       call curve(byringr,byringz,nh2,0)
       call reset('dot')
       call marker(15)
       call sclpic(.5)
-      call curve(xplx,yplx,n2,-1)
+      call curve(xplxloc,yplxloc,n2,-1)
       call reset('sclpic')
       call reset('marker')
       do 226 i=1,nexexx
@@ -9608,7 +9576,7 @@
       enddo
       enddo
 !
-      DEALLOCATE(xplt,yplt,xplx,yplx)
+      DEALLOCATE(xpltloc,ypltloc,xplxloc,yplxloc)
 !
       return
       end
@@ -9637,6 +9605,7 @@
 !**                                                                  **
 !**********************************************************************
 !sri-feb1209
+      use set_kinds
       use eparmdud129,only:ndim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 !      parameter (ndim = 700, ncrv=180)
@@ -9675,7 +9644,7 @@
          go to 50
    40    continue
 !
-         dac=0.5*wc(i)*tac
+         dac=0.5_dp*wc(i)*tac
          nn = nn + 1
          xx(1,nn)=x-dx
          xx(2,nn)=x-dx
@@ -9693,7 +9662,7 @@
          if (inum.eq.-100) then
             nshd = nshd + 1
             sangle(nshd) = 90.0
-            sgap(nshd) = 0.01
+            sgap(nshd) = 0.01_dp
             ngaps(nshd) = 1
             nsxy(nshd) = 5
             do ii = 1, nsxy(nshd)
@@ -9708,7 +9677,7 @@
             num(nmg) = i
             xpos(nmg) = rc(i) - dwh
             ypos(nmg) = zc(i) - dwh
-            ht(nmg) = 0.04
+            ht(nmg) = 0.04_dp
          endif
       enddo
       return
@@ -9733,6 +9702,7 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension jerror(1),xp(1),yp(1)
       character*(*) dataname
@@ -9750,1128 +9720,1119 @@
       return
       end
       subroutine curve2d (ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
-      	     xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle, &
-      	     xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
-      	     ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
-      		isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
-      		igridx, igridy, idash, idot, ichdsh, ichdot,  &
-      		thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
-      		clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
-      		icont, nword, zmat, ix, iy, zinc, line, mode, &
-      		lbflg, ithk, ipri, nline, draw, &
-      		nshd, sx, sy, nsxy, &
-      		sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
-      	     m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
-      		iexit)
+            xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle, &
+            xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
+            ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
+           isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
+           igridx, igridy, idash, idot, ichdsh, ichdot,  &
+           thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
+           clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
+           icont, nword, zmat, ix, iy, zinc, line, mode, &
+           lbflg, ithk, ipri, nline, draw, &
+           nshd, sx, sy, nsxy, &
+           sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
+            m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
+           iexit)
 !*************************************************************************
-!**                                                                  	**
-!**	MAIN PROGRAM:  MHD FITTING CODE					**
-!**                                                                  	**
-!**                                                                  	**
-!**     SUBPROGRAM DESCRIPTION:                                      	**
-!**       Determines whether plot parameters are to be written in 	**
-!**	  ASCII or BINARY format				     	**
-!**                                                                  	**
-!**     CALLING ARGUMENTS:                                           	**
-!**     	ncurve  Number of curves				**
-!**		ipag	page dimension flag				**
-!**			0 = page dimension 11 x 8.5			**
-!**			1 = page dimension 8.5 x 11			**
-!**     	ibrdr   Page border flag				**
-!**			1 = Suppress page border			**
-!**     	        0 = Suppress page border			**
-!**		grce	>= 0 Enable grace margin			**
-!**		xphy	X-coordinate of physical origin			**
-!**     	yphy	Y-coordinate of physical origin			**
-!**		hight   Font size					**
-!**     	bngle   Base rotation angle				**
-!**     	bshft   Base translation				**
-!**     	ptitle  Plot title					**
-!**     	pltlen  Length of plot title                       	**
-!**     	xtitle  X-axis name                             	**
-!**     	xnlen   Length of x-axis name                           **
-!**     	ytitle  Y-axis name                           		**
-!**     	ynlen   Length of y-axis name				**
-!**     	xlen	Length of x-axis legend				**
-!**     	ylen    Length of y-axis legend                         **
-!**     	iaxis   Axes flag					**
-!**			0 = Linear axis					**
-!**     	        1 = Log-Linear axis				**
-!**     	        2 = Linear-Log axis				**
-!**     	        3 = Logarithmic axis				**
-!**     	xtck    X-axis tick marks				**
-!**     	ytck    Y-axis tick marks				**
-!**		ixnon   X-axis tick marks or labels flag		**
-!**			1 = Suppress x-axis tick marks or labels	**
-!**			0 = X-axis tick marks or labels			**
-!**		iynon   Y-axis tick marks or labels flag		**
-!**			1 = Suppress y-axis tick marks or labels	**
-!**			0 = Y-axis tick marks or labels			**
-!**		intax   Trailing zeroes on x-axis flag			**
-!**			1 = Suppress trailing zeroes on x-axis 		**
-!**			0 = Trailing zeroes on x-axis 			**
-!**		intay   Trailing zeroes on y-axis flag			**
-!**			1 = Suppress trailing zeroes on y-axis 		**
-!**			0 = Trailing zeroes on y-axis 			**
-!**     	xorg    X-value at the physical origin			**
-!**     	xstp    X step size in units				**
-!**     	xmax    Value at x-axis limit				**
-!**     	yorg    X-value at the physical origin	                **
-!**     	ystp    X step size in units				**
-!**     	ymax    Value at y-axis limit				**
-!**	  	iorel   New physical origin relative to current 	**
-!**		 	origin flag					**
-!**			1 = New physical origin relative to current 	**
-!**		 	    origin					**
-!**			0 = No new physical origin relative to current 	**
-!**		 	    origin					**
-!**		xorl    X-coordinate of relative origin			**
-!**		yorl    Y-coordinate of relative origin			**
-!**     	igridx  Number of grid lines per step on x-axis	     	**
-!**     	igridy  Number of grid lines per step on y-axis	     	**
-!**     	idash   Dash grid lines flag				**
-!**			1 = Dash grid lines				**
-!**			0 = No dash grid lines				**
-!**     	idot    Dot grid lines flag				**
-!**			1 = Dot grid lines				**
-!**			0 = No dot grid lines				**
-!**     	ichdot  Chain dot grid lines flag                       **
-!**			1 = Chain dot grid lines                        **
-!**			0 = No chain dot grid lines                     **
-!**     	ichdsh  Chain dash grid lines flag                      **
-!**			1 = Chain dash grid lines                       **
-!**			0 = No chain dash grid lines                    **
-!**     	thcrv   Curve thickness		dim = ncurve	     	**
-!**     	sclpc   Scale curve marker 	dim = ncurve            **
-!**     	dashme  Dash curve flag		dim = ncurve		**
-!**			1 = Dash curve					**
-!**			0 = No dash curve				**
-!**     	dotme  	Dot curve flag		dim = ncurve		**
-!**			1 = Dot curve					**
-!**			0 = No dot curve				**
-!**     	chdhme  Chain dash curve flag	dim = ncurve		**
-!**			1 = Chain dash curve				**
-!**			0 = No chain dash curve				**
-!**     	chdtme  Chain ot curve flag	dim = ncurve		**
-!**			1 = Chain dot curve				**
-!**			0 = No chain dot curve				**
-!**     	markme  Curve marker 	        dim = ncurve            **
-!**     	clearx  Color			dim = ncurve		**
-!**     	x       Array of x-coordinates				**
-!**						dim = (nplt, ncurve)	**
-!**     	y       Array of y-coordinates				**
-!**						dim = (nplt, ncurve)	**
-!**     	nplt    Number of (x,y) points to be ploted 		**
-!**						dim = ncurve		**
-!**     	ncnct   Marker specification				**
-!**			0 = Points connected with no symbols drawn 	**
-!**			i = Points connected and a symbol drawn at 	**
-!**			    every ith point				**
-!**		       -i = Points not connected and a symbol at every  **
-!**		mrc     1 = Custom interrupted line style		**
-!**		tlen    overall length of the pattern			**
-!**		nmrk	total number of marks and spaces		**
-!**		rat	Array of ratios of marks and spaces to overall	**
-!**		        length						**
-!**		icont	Contour plotting flag				**
-!**			1 = Contour plotting				**
-!**			0 = No contour plotting	  dim = ncurve		**
-!**		nword   Number of words available in common block	**
-!**		zmat    2-dimensional array containing Z data surface	**
-!**			values						**
-!**		ix	X dimension of zmat				**
-!**		iy	Y dimension of zmat				**
-!**		zinc	Increment between z levels			**
-!**		line	Index number in the group of curve 		**
-!**			characteristic					**
-!**		mode	'DOT' for dotted lines				**
-!**			'DASH' for dashed lines  			**
-!**		lbflg	'NOLABELS' do not use labels 			**
-!**			'LABELS' use labels				**
-!**		ithk	Line thickness					**
-!**		ipri	Line priority					**
-!**		draw	'DRAW' draw curves				**
-!**			'NODRAW' do not draw curves			**
-!**		nshd	Number of shades, shade area between 2 curves	**
-!**		sx	Array of x-coordinates		dim = nsxy	**
-!**		sy	Array of y-coordinates		dim = nsxy	**
-!**	        nsxy	Number of (sx,sy) pairs				**
-!**		sangle	angle of shading lines				**
-!**		sgap	Array of shading gaps				**
-!**		ngaps	Number of elements in sgaps			**
-!**		nvec	Number of vectors				**
-!**		xfm	X value of originating point	dim = nvec	**
-!**		yfm	Y value of originating point	dim = nvec	**
-!**		xto	X value of point pointed to	dim = nvec	**
-!**		yto	Y value of point pointed to	dim = nvec	**
-!**		ivec	Describes vector arrowhead	dim = nvec	**
-!**		m	Number of text lines to be written		**
-!**		note	Text string flag		dim = m		**
-!**			1 = Text is character string			**
-!**			2 = Text is character string drawn relative 	**
-!**			    to the physical origin			**
-!**			3 = Text is real number	string			**
-!**			4 = Text is real number	string drawn relative 	**
-!**			    to the physical origin			**
-!**			5 = Text is integer string			**
-!**			6 = Text is integer string drawn relative 	**
-!**			    to the physical origin			**
-!**		lmes	Character string text		dim = m		**
-!**		imes	Number of characters in lmes	dim = m		**
-!**		anum	Real number text string		dim = m		**
-!**		iplce	Number of decimal place		dim = m		**
-!**		inum	Integer number text string	dim = m		**
-!**		xmpos	X-position of text string	dim = m		**
-!**		ympos	Y-position of text string	dim = m		**
-!**		hgt	Font size of the text string	dim = m		**
-!**                                                                  	**
-!**     REFERENCES: 							**
-!**          (1)  CA-DISSPLA manual 					**
-!**          (2)                                                     	**
-!**                                                                  	**
-!**     RECORD OF MODIFICATION:                                      	**
-!**          04/19/93..........first created                         	**
-!**                                                                  	**
-!**                                                                  	**
+!**                                                                   **
+!** MAIN PROGRAM:  MHD FITTING CODE             **
+!**                                                                   **
+!**                                                                   **
+!**   SUBPROGRAM DESCRIPTION:                                       **
+!**     Determines whether plot parameters are to be written in  **
+!**     ASCII or BINARY format                  **
+!**                                                                   **
+!**   CALLING ARGUMENTS:                                            **
+!**     ncurve  Number of curves            **
+!**     ipag page dimension flag            **
+!**       0 = page dimension 11 x 8.5       **
+!**       1 = page dimension 8.5 x 11     **
+!**     ibrdr   Page border flag            **
+!**       1 = Suppress page border     **
+!**       0 = Suppress page border     **
+!**     grce >= 0 Enable grace margin     **
+!**     xphy X-coordinate of physical origin     **
+!**     yphy Y-coordinate of physical origin     **
+!**     hight   Font size             **
+!**     bngle   Base rotation angle            **
+!**     bshft   Base translation            **
+!**     ptitle  Plot title             **
+!**     pltlen  Length of plot title                        **
+!**     xtitle  X-axis name                              **
+!**     xnlen   Length of x-axis name                           **
+!**     ytitle  Y-axis name                                **
+!**     ynlen   Length of y-axis name            **
+!**     xlen Length of x-axis legend            **
+!**     ylen    Length of y-axis legend                         **
+!**     iaxis   Axes flag             **
+!**       0 = Linear axis             **
+!**       1 = Log-Linear axis            **
+!**       2 = Linear-Log axis            **
+!**       3 = Logarithmic axis            **
+!**     xtck    X-axis tick marks            **
+!**     ytck    Y-axis tick marks            **
+!**     ixnon   X-axis tick marks or labels flag     **
+!**       1 = Suppress x-axis tick marks or labels **
+!**       0 = X-axis tick marks or labels     **
+!**     iynon   Y-axis tick marks or labels flag     **
+!**       1 = Suppress y-axis tick marks or labels **
+!**       0 = Y-axis tick marks or labels     **
+!**     intax   Trailing zeroes on x-axis flag     **
+!**       1 = Suppress trailing zeroes on x-axis      **
+!**       0 = Trailing zeroes on x-axis      **
+!**     intay   Trailing zeroes on y-axis flag     **
+!**       1 = Suppress trailing zeroes on y-axis      **
+!**       0 = Trailing zeroes on y-axis      **
+!**     xorg    X-value at the physical origin     **
+!**     xstp    X step size in units            **
+!**     xmax    Value at x-axis limit            **
+!**     yorg    X-value at the physical origin                 **
+!**     ystp    X step size in units            **
+!**     ymax    Value at y-axis limit            **
+!**     iorel   New physical origin relative to current  **
+!**     origin flag             **
+!**       1 = New physical origin relative to current  **
+!**           origin             **
+!**       0 = No new physical origin relative to current  **
+!**           origin             **
+!**     xorl    X-coordinate of relative origin     **
+!**     yorl    Y-coordinate of relative origin     **
+!**     igridx  Number of grid lines per step on x-axis       **
+!**     igridy  Number of grid lines per step on y-axis       **
+!**     idash   Dash grid lines flag            **
+!**       1 = Dash grid lines            **
+!**       0 = No dash grid lines            **
+!**     idot    Dot grid lines flag            **
+!**       1 = Dot grid lines            **
+!**       0 = No dot grid lines            **
+!**     ichdot  Chain dot grid lines flag                       **
+!**       1 = Chain dot grid lines                        **
+!**       0 = No chain dot grid lines                     **
+!**     ichdsh  Chain dash grid lines flag                      **
+!**       1 = Chain dash grid lines                       **
+!**       0 = No chain dash grid lines                    **
+!**     thcrv   Curve thickness     dim = ncurve       **
+!**     sclpc   Scale curve marker  dim = ncurve            **
+!**     dashme  Dash curve flag     dim = ncurve     **
+!**       1 = Dash curve             **
+!**       0 = No dash curve            **
+!**     dotme   Dot curve flag     dim = ncurve     **
+!**       1 = Dot curve             **
+!**       0 = No dot curve            **
+!**     chdhme  Chain dash curve flag dim = ncurve     **
+!**       1 = Chain dash curve            **
+!**       0 = No chain dash curve            **
+!**     chdtme  Chain ot curve flag dim = ncurve     **
+!**       1 = Chain dot curve            **
+!**       0 = No chain dot curve            **
+!**     markme  Curve marker          dim = ncurve            **
+!**     clearx  Color     dim = ncurve     **
+!**     x       Array of x-coordinates            **
+!**                 dim = (nplt, ncurve) **
+!**     y       Array of y-coordinates            **
+!**                 dim = (nplt, ncurve) **
+!**     nplt    Number of (x,y) points to be ploted      **
+!**                 dim = ncurve     **
+!**     ncnct   Marker specification            **
+!**       0 = Points connected with no symbols drawn  **
+!**       i = Points connected and a symbol drawn at  **
+!**         every ith point            **
+!**            -i = Points not connected and a symbol at every  **
+!**     mrc     1 = Custom interrupted line style     **
+!**     tlen    overall length of the pattern     **
+!**     nmrk total number of marks and spaces     **
+!**     rat Array of ratios of marks and spaces to overall **
+!**             length                 **
+!**     icont Contour plotting flag            **
+!**       1 = Contour plotting            **
+!**       0 = No contour plotting   dim = ncurve     **
+!**     nword   Number of words available in common block **
+!**     zmat    2-dimensional array containing Z data surface **
+!**     values                 **
+!**     ix X dimension of zmat            **
+!**     iy Y dimension of zmat            **
+!**     zinc Increment between z levels     **
+!**     line Index number in the group of curve      **
+!**     characteristic             **
+!**     mode 'DOT' for dotted lines            **
+!**     'DASH' for dashed lines       **
+!**     lbflg 'NOLABELS' do not use labels      **
+!**     'LABELS' use labels            **
+!**     ithk Line thickness             **
+!**     ipri Line priority             **
+!**     draw 'DRAW' draw curves            **
+!**     'NODRAW' do not draw curves     **
+!**     nshd Number of shades, shade area between 2 curves **
+!**     sx Array of x-coordinates     dim = nsxy **
+!**     sy Array of y-coordinates     dim = nsxy **
+!**     nsxy Number of (sx,sy) pairs            **
+!**     sangle angle of shading lines            **
+!**     sgap Array of shading gaps            **
+!**     ngaps Number of elements in sgaps     **
+!**     nvec Number of vectors            **
+!**     xfm X value of originating point dim = nvec **
+!**     yfm Y value of originating point dim = nvec **
+!**     xto X value of point pointed to dim = nvec **
+!**     yto Y value of point pointed to dim = nvec **
+!**     ivec Describes vector arrowhead dim = nvec **
+!**     m Number of text lines to be written     **
+!**     note Text string flag     dim = m     **
+!**       1 = Text is character string     **
+!**       2 = Text is character string drawn relative  **
+!**           to the physical origin     **
+!**       3 = Text is real number string     **
+!**       4 = Text is real number string drawn relative  **
+!**           to the physical origin     **
+!**       5 = Text is integer string     **
+!**       6 = Text is integer string drawn relative  **
+!**           to the physical origin     **
+!**     lmes Character string text     dim = m     **
+!**     imes Number of characters in lmes dim = m     **
+!**     anum Real number text string     dim = m     **
+!**     iplce Number of decimal place     dim = m     **
+!**     inum Integer number text string dim = m     **
+!**     xmpos X-position of text string dim = m     **
+!**     ympos Y-position of text string dim = m     **
+!**     hgt Font size of the text string dim = m     **
+!**                                                                   **
+!**     REFERENCES:                  **
+!**          (1)  CA-DISSPLA manual              **
+!**          (2)                                                      **
+!**                                                                   **
+!**     RECORD OF MODIFICATION:                                       **
+!**          04/19/93..........first created                          **
+!**                                                                   **
+!**                                                                   **
 !*************************************************************************
 !sri-feb1209
+      use set_kinds
       use eparmdud129,only:ndim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-!	parameter (ndim = 700, ncrv=180, mdim = 200)
-	parameter (ncrv=180, mdim = 300)
-	include 'curve2d_var.inc'
-	include 'env2d.inc'
+      ! parameter (ndim = 700, ncrv=180, mdim = 200)
+      parameter (ncrv=180, mdim = 300)
+      include 'curve2d_var.inc'
+      include 'env2d.inc'
 
-	if (m_write .eq. 1) then
+      if (m_write .eq. 1) then
 !-----------------------------------------------------------------------c
-!	   Write curve2d parameters in ASCII format			c
+!    Write curve2d parameters in ASCII format     c
 !-----------------------------------------------------------------------c
-	 call curve2d_asci(ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
-      		xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle,  &
-      	       xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
-      	      ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
-      	       isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos, &
-      		igridx, igridy, idash, idot, ichdsh, ichdot,  &
-      		thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
-      		clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
-      		icont, nword, zmat, ix, iy, zinc, line, mode, &
-      		lbflg, ithk, ipri, nline, draw, &
-      		nshd, sx, sy, nsxy, &
-      		sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
-      	      m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
-      		iexit)
+      call curve2d_asci(ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
+           xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle,  &
+              xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
+             ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
+              isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos, &
+           igridx, igridy, idash, idot, ichdsh, ichdot,  &
+           thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
+           clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
+           icont, nword, zmat, ix, iy, zinc, line, mode, &
+           lbflg, ithk, ipri, nline, draw, &
+           nshd, sx, sy, nsxy, &
+           sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
+             m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
+           iexit)
 
-	elseif (m_write .eq. 0) then
+      elseif (m_write .eq. 0) then
 !-----------------------------------------------------------------------c
-!	   Write curve2d parameters in BINARY format			c
+!    Write curve2d parameters in BINARY format     c
 !-----------------------------------------------------------------------c
         call curve2d_bin (ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
-      	       xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle, &
-      	      xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
-      	     ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
-      		isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
-      		igridx, igridy, idash, idot, ichdsh, ichdot,  &
-      		thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
-      		clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
-      		icont, nword, zmat, ix, iy, zinc, line, mode, &
-      		lbflg, ithk, ipri, nline, draw, &
-      		nshd, sx, sy, nsxy, &
-      		sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
-      	      m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
-      		iexit)
-	endif
-	return
-	end
+              xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle, &
+             xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
+            ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
+           isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
+           igridx, igridy, idash, idot, ichdsh, ichdot,  &
+           thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
+           clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
+           icont, nword, zmat, ix, iy, zinc, line, mode, &
+           lbflg, ithk, ipri, nline, draw, &
+           nshd, sx, sy, nsxy, &
+           sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
+             m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
+           iexit)
+      endif
+      return
+      end
 
       subroutine curve2d_asci (ncurve,ipag, ibrdr, grce,xphy,yphy,iorel, &
-      		xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle,  &
-      	       xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
-      	      ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
-      		isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
-      		igridx, igridy, idash, idot, ichdsh, ichdot,  &
-      		thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
-      		clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
-      		icont, nword, zmat, ix, iy, zinc, line, mode, &
-      		lbflg, ithk, ipri, nline, draw, &
-      		nshd, sx, sy, nsxy, &
-      		sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
-      	     m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
-      		iexit)
+           xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle,  &
+              xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
+             ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
+           isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
+           igridx, igridy, idash, idot, ichdsh, ichdot,  &
+           thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
+           clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
+           icont, nword, zmat, ix, iy, zinc, line, mode, &
+           lbflg, ithk, ipri, nline, draw, &
+           nshd, sx, sy, nsxy, &
+           sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
+            m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
+           iexit)
 !*************************************************************************
-!**                                                                  	**
-!**	MAIN PROGRAM:  MHD FITTING CODE					**
-!**                                                                  	**
-!**                                                                  	**
-!**     SUBPROGRAM DESCRIPTION:                                      	**
-!**		Writes plot parameters in ASCII format		     	**
-!**                                                                  	**
-!**     CALLING ARGUMENTS:                                           	**
-!**     	ncurve  Number of curves				**
-!**		ipag	page dimension flag				**
-!**			0 = page dimension 11 x 8.5			**
-!**			1 = page dimension 8.5 x 11			**
-!**     	ibrdr   Page border flag				**
-!**			1 = Suppress page border			**
-!**     	        0 = Suppress page border			**
-!**		grce	>= 0 Enable grace margin			**
-!**		xphy	X-coordinate of physical origin			**
-!**     	yphy	Y-coordinate of physical origin			**
-!**		hight   Font size					**
-!**     	bngle   Base rotation angle				**
-!**     	bshft   Base translation				**
-!**     	ptitle  Plot title					**
-!**     	pltlen  Length of plot title                       	**
-!**     	xtitle  X-axis name                             	**
-!**     	xnlen   Length of x-axis name                           **
-!**     	ytitle  Y-axis name                           		**
-!**     	ynlen   Length of y-axis name				**
-!**     	xlen	Length of x-axis legend				**
-!**     	ylen    Length of y-axis legend                         **
-!**     	iaxis   Axes flag					**
-!**			0 = Linear axis					**
-!**     	        1 = Log-Linear axis				**
-!**     	        2 = Linear-Log axis				**
-!**     	        3 = Logarithmic axis				**
-!**     	xtck    X-axis tick marks				**
-!**     	ytck    Y-axis tick marks				**
-!**		ixnon   X-axis tick marks or labels flag		**
-!**			1 = Suppress x-axis tick marks or labels	**
-!**			0 = X-axis tick marks or labels			**
-!**		iynon   Y-axis tick marks or labels flag		**
-!**			1 = Suppress y-axis tick marks or labels	**
-!**			0 = Y-axis tick marks or labels			**
-!**		intax   Trailing zeroes on x-axis flag			**
-!**			1 = Suppress trailing zeroes on x-axis 		**
-!**			0 = Trailing zeroes on x-axis 			**
-!**		intay   Trailing zeroes on y-axis flag			**
-!**			1 = Suppress trailing zeroes on y-axis 		**
-!**			0 = Trailing zeroes on y-axis 			**
-!**     	xorg    X-value at the physical origin			**
-!**     	xstp    X step size in units				**
-!**     	xmax    Value at x-axis limit				**
-!**     	yorg    X-value at the physical origin	                **
-!**     	ystp    X step size in units				**
-!**     	ymax    Value at y-axis limit				**
-!**	  	iorel   New physical origin relative to current 	**
-!**		 	origin flag					**
-!**			1 = New physical origin relative to current 	**
-!**		 	    origin					**
-!**			0 = No new physical origin relative to current 	**
-!**		 	    origin					**
-!**		xorl    X-coordinate of relative origin			**
-!**		yorl    Y-coordinate of relative origin			**
-!**     	igridx  Number of grid lines per step on x-axis	     	**
-!**     	igridy  Number of grid lines per step on y-axis	     	**
-!**     	idash   Dash grid lines flag				**
-!**			1 = Dash grid lines				**
-!**			0 = No dash grid lines				**
-!**     	idot    Dot grid lines flag				**
-!**			1 = Dot grid lines				**
-!**			0 = No dot grid lines				**
-!**     	ichdot  Chain dot grid lines flag                       **
-!**			1 = Chain dot grid lines                        **
-!**			0 = No chain dot grid lines                     **
-!**     	ichdsh  Chain dash grid lines flag                      **
-!**			1 = Chain dash grid lines                       **
-!**			0 = No chain dash grid lines                    **
-!**     	thcrv   Curve thickness		dim = ncurve	     	**
-!**     	sclpc   Scale curve marker 	dim = ncurve            **
-!**     	dashme  Dash curve flag		dim = ncurve		**
-!**			1 = Dash curve					**
-!**			0 = No dash curve				**
-!**     	dotme  	Dot curve flag		dim = ncurve		**
-!**			1 = Dot curve					**
-!**			0 = No dot curve				**
-!**     	chdhme  Chain dash curve flag	dim = ncurve		**
-!**			1 = Chain dash curve				**
-!**			0 = No chain dash curve				**
-!**     	chdtme  Chain ot curve flag	dim = ncurve		**
-!**			1 = Chain dot curve				**
-!**			0 = No chain dot curve				**
-!**     	markme  Curve marker 	        dim = ncurve            **
-!**     	clearx  Color			dim = ncurve		**
-!**     	x       Array of x-coordinates				**
-!**						dim = (nplt, ncurve)	**
-!**     	y       Array of y-coordinates				**
-!**						dim = (nplt, ncurve)	**
-!**     	nplt    Number of (x,y) points to be ploted 		**
-!**						dim = ncurve		**
-!**     	ncnct   Marker specification				**
-!**			0 = Points connected with no symbols drawn 	**
-!**			i = Points connected and a symbol drawn at 	**
-!**			    every ith point				**
-!**		       -i = Points not connected and a symbol at every  **
-!**		mrc     1 = Custom interrupted line style		**
-!**		tlen    overall length of the pattern			**
-!**		nmrk	total number of marks and spaces		**
-!**		rat	Array of ratios of marks and spaces to overall	**
-!**		        length						**
-!**		icont	Contour plotting flag				**
-!**			1 = Contour plotting				**
-!**			0 = No contour plotting				**
-!**		nword   Number of words available in common block	**
-!**		zmat    2-dimensional array containing Z data surface	**
-!**			values						**
-!**		ix	X dimension of zmat				**
-!**		iy	Y dimension of zmat				**
-!**		zinc	Increment between z levels			**
-!**		line	Index number in the group of curve 		**
-!**			characteristic					**
-!**		mode	'DOT' for dotted lines				**
-!**			'DASH' for dashed lines  			**
-!**		lbflg	'NOLABELS' do not use labels 			**
-!**			'LABELS' use labels				**
-!**		ithk	Line thickness					**
-!**		ipri	Line priority					**
-!**		draw	'DRAW' draw curves				**
-!**			'NODRAW' do not draw curves			**
-!**		nshd	Number of shades, shade area between 2 curves	**
-!**		sx	Array of x-coordinates		dim = nsxy	**
-!**		sy	Array of y-coordinates		dim = nsxy	**
-!**	        nsxy	Number of (sx,sy) pairs				**
-!**		sangle	angle of shading lines				**
-!**		sgap	Array of shading gaps				**
-!**		ngaps	Number of elements in sgaps			**
-!**		nvec	Number of vectors				**
-!**		xfm	X value of originating point	dim = nvec	**
-!**		yfm	Y value of originating point	dim = nvec	**
-!**		xto	X value of point pointed to	dim = nvec	**
-!**		yto	Y value of point pointed to	dim = nvec	**
-!**		ivec	Describes vector arrowhead	dim = nvec	**
-!**		m	Number of text lines to be written		**
-!**		note	Text string flag		dim = m		**
-!**			1 = Text is character string			**
-!**			2 = Text is character string drawn relative 	**
-!**			    to the physical origin			**
-!**			3 = Text is real number	string			**
-!**			4 = Text is real number	string drawn relative 	**
-!**			    to the physical origin			**
-!**			5 = Text is integer string			**
-!**			6 = Text is integer string drawn relative 	**
-!**			    to the physical origin			**
-!**		lmes	Character string text		dim = m		**
-!**		imes	Number of characters in lmes	dim = m		**
-!**		anum	Real number text string		dim = m		**
-!**		iplce	Number of decimal place		dim = m		**
-!**		inum	Integer number text string	dim = m		**
-!**		xmpos	X-position of text string	dim = m		**
-!**		ympos	Y-position of text string	dim = m		**
-!**		hgt	Font size of the text string	dim = m		**
-!**                                                                  	**
-!**     REFERENCES: 							**
-!**          (1)  CA-DISSPLA manual 					**
-!**          (2)                                                     	**
-!**                                                                  	**
-!**     RECORD OF MODIFICATION:                                      	**
-!**          04/19/93..........first created                         	**
-!**                                                                  	**
-!**                                                                  	**
+!**                                                                   **
+!** MAIN PROGRAM:  MHD FITTING CODE             **
+!**                                                                   **
+!**                                                                   **
+!**   SUBPROGRAM DESCRIPTION:                                       **
+!**     Writes plot parameters in ASCII format           **
+!**                                                                   **
+!**   CALLING ARGUMENTS:                                            **
+!**     ncurve  Number of curves            **
+!**     ipag page dimension flag            **
+!**       0 = page dimension 11 x 8.5     **
+!**       1 = page dimension 8.5 x 11     **
+!**     ibrdr   Page border flag            **
+!**       1 = Suppress page border     **
+!**       0 = Suppress page border     **
+!**     grce >= 0 Enable grace margin     **
+!**     xphy X-coordinate of physical origin     **
+!**     yphy Y-coordinate of physical origin     **
+!**     hight   Font size             **
+!**     bngle   Base rotation angle            **
+!**     bshft   Base translation            **
+!**     ptitle  Plot title             **
+!**     pltlen  Length of plot title                        **
+!**     xtitle  X-axis name                              **
+!**     xnlen   Length of x-axis name                           **
+!**     ytitle  Y-axis name                                **
+!**     ynlen   Length of y-axis name            **
+!**     xlen Length of x-axis legend            **
+!**     ylen    Length of y-axis legend                         **
+!**     iaxis   Axes flag             **
+!**       0 = Linear axis             **
+!**       1 = Log-Linear axis            **
+!**       2 = Linear-Log axis            **
+!**       3 = Logarithmic axis            **
+!**     xtck    X-axis tick marks            **
+!**     ytck    Y-axis tick marks            **
+!**     ixnon   X-axis tick marks or labels flag     **
+!**       1 = Suppress x-axis tick marks or labels **
+!**       0 = X-axis tick marks or labels     **
+!**     iynon   Y-axis tick marks or labels flag     **
+!**       1 = Suppress y-axis tick marks or labels **
+!**       0 = Y-axis tick marks or labels     **
+!**     intax   Trailing zeroes on x-axis flag     **
+!**       1 = Suppress trailing zeroes on x-axis      **
+!**       0 = Trailing zeroes on x-axis      **
+!**     intay   Trailing zeroes on y-axis flag     **
+!**       1 = Suppress trailing zeroes on y-axis      **
+!**       0 = Trailing zeroes on y-axis      **
+!**     xorg    X-value at the physical origin     **
+!**     xstp    X step size in units            **
+!**     xmax    Value at x-axis limit            **
+!**     yorg    X-value at the physical origin                 **
+!**     ystp    X step size in units            **
+!**     ymax    Value at y-axis limit            **
+!**     iorel   New physical origin relative to current  **
+!**     origin flag             **
+!**       1 = New physical origin relative to current  **
+!**           origin             **
+!**       0 = No new physical origin relative to current  **
+!**           origin             **
+!**     xorl    X-coordinate of relative origin     **
+!**     yorl    Y-coordinate of relative origin     **
+!**     igridx  Number of grid lines per step on x-axis       **
+!**     igridy  Number of grid lines per step on y-axis       **
+!**     idash   Dash grid lines flag            **
+!**       1 = Dash grid lines            **
+!**       0 = No dash grid lines            **
+!**     idot    Dot grid lines flag            **
+!**     1 = Dot grid lines            **
+!**     0 = No dot grid lines            **
+!**     ichdot  Chain dot grid lines flag                       **
+!**       1 = Chain dot grid lines                        **
+!**       0 = No chain dot grid lines                     **
+!**     ichdsh  Chain dash grid lines flag                      **
+!**       1 = Chain dash grid lines                       **
+!**       0 = No chain dash grid lines                    **
+!**     thcrv   Curve thickness     dim = ncurve       **
+!**     sclpc   Scale curve marker  dim = ncurve            **
+!**     dashme  Dash curve flag     dim = ncurve     **
+!**       1 = Dash curve             **
+!**       0 = No dash curve            **
+!**     dotme   Dot curve flag     dim = ncurve     **
+!**       1 = Dot curve             **
+!**       0 = No dot curve            **
+!**     chdhme  Chain dash curve flag dim = ncurve     **
+!**       1 = Chain dash curve            **
+!**       0 = No chain dash curve            **
+!**     chdtme  Chain ot curve flag dim = ncurve     **
+!**       1 = Chain dot curve            **
+!**       0 = No chain dot curve            **
+!**     markme  Curve marker          dim = ncurve            **
+!**     clearx  Color     dim = ncurve     **
+!**     x       Array of x-coordinates            **
+!**             dim = (nplt, ncurve) **
+!**     y       Array of y-coordinates            **
+!**                 dim = (nplt, ncurve) **
+!**     nplt    Number of (x,y) points to be ploted      **
+!**                 dim = ncurve     **
+!**     ncnct   Marker specification            **
+!**       0 = Points connected with no symbols drawn  **
+!**       i = Points connected and a symbol drawn at  **
+!**         every ith point            **
+!**            -i = Points not connected and a symbol at every  **
+!**     mrc     1 = Custom interrupted line style     **
+!**     tlen    overall length of the pattern     **
+!**     nmrk total number of marks and spaces     **
+!**     rat Array of ratios of marks and spaces to overall **
+!**             length                 **
+!**     icont Contour plotting flag            **
+!**       1 = Contour plotting            **
+!**       0 = No contour plotting            **
+!**     nword   Number of words available in common block **
+!**     zmat    2-dimensional array containing Z data surface **
+!**     values                 **
+!**     ix X dimension of zmat            **
+!**     iy Y dimension of zmat            **
+!**     zinc Increment between z levels     **
+!**     line Index number in the group of curve      **
+!**     characteristic             **
+!**     mode 'DOT' for dotted lines            **
+!**     'DASH' for dashed lines       **
+!**     lbflg 'NOLABELS' do not use labels      **
+!**     'LABELS' use labels            **
+!**     ithk Line thickness             **
+!**     ipri Line priority             **
+!**     draw 'DRAW' draw curves            **
+!**     'NODRAW' do not draw curves     **
+!**     nshd Number of shades, shade area between 2 curves **
+!**     sx Array of x-coordinates     dim = nsxy **
+!**     sy Array of y-coordinates     dim = nsxy **
+!**     nsxy Number of (sx,sy) pairs            **
+!**     sangle angle of shading lines            **
+!**     sgap Array of shading gaps            **
+!**     ngaps Number of elements in sgaps     **
+!**     nvec Number of vectors            **
+!**     xfm X value of originating point dim = nvec **
+!**     yfm Y value of originating point dim = nvec **
+!**     xto X value of point pointed to dim = nvec **
+!**     yto Y value of point pointed to dim = nvec **
+!**     ivec Describes vector arrowhead dim = nvec **
+!**     m Number of text lines to be written     **
+!**     note Text string flag     dim = m     **
+!**       1 = Text is character string     **
+!**       2 = Text is character string drawn relative  **
+!**           to the physical origin     **
+!**       3 = Text is real number string     **
+!**       4 = Text is real number string drawn relative  **
+!**           to the physical origin     **
+!**       5 = Text is integer string     **
+!**       6 = Text is integer string drawn relative  **
+!**           to the physical origin     **
+!**     lmes Character string text     dim = m     **
+!**     imes Number of characters in lmes dim = m     **
+!**     anum Real number text string     dim = m     **
+!**     iplce Number of decimal place     dim = m     **
+!**     inum Integer number text string dim = m     **
+!**     xmpos X-position of text string dim = m     **
+!**     ympos Y-position of text string dim = m     **
+!**     hgt Font size of the text string dim = m     **
+!**                                                                   **
+!**     REFERENCES:                  **
+!**          (1)  CA-DISSPLA manual              **
+!**          (2)                                                      **
+!**                                                                   **
+!**     RECORD OF MODIFICATION:                                       **
+!**          04/19/93..........first created                          **
+!**                                                                   **
+!**                                                                   **
 !*************************************************************************
 !sri-feb1209
+      use set_kinds
       use eparmdud129,only:ndim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 
-!	parameter (ndim = 700, ncrv=180, mdim = 200)
-	parameter (ncrv=180, mdim = 300)
-	include 'curve2d_var.inc'
-	include 'env2d.inc'
+      ! parameter (ndim = 700, ncrv=180, mdim = 200)
+      parameter (ncrv=180, mdim = 300)
+      include 'curve2d_var.inc'
+      include 'env2d.inc'
 
-!-----------------------------------------------------------------------c
-!	Write page parameters						c
-!-----------------------------------------------------------------------c
-	write(iunit,100) ncurve, ipag, ibrdr, grce, xphy, yphy
- 100	format(3i5, 3f9.3)
-	write(iunit,101) iorel, xorl, yorl
- 101	format(i5, 2f9.3)
-     	write(iunit,102) hight, bngle, bshft
- 102	format(4f9.3)
+      !-----------------------------------------------------------------------c
+      ! Write page parameters                 c
+      !-----------------------------------------------------------------------c
+      write(iunit,100) ncurve, ipag, ibrdr, grce, xphy, yphy
+100   format(3i5, 3f9.3)
+      write(iunit,101) iorel, xorl, yorl
+101   format(i5, 2f9.3)
+      write(iunit,102) hight, bngle, bshft
+102   format(4f9.3)
 
-!-----------------------------------------------------------------------c
-!	Write title parameters						c
-!-----------------------------------------------------------------------c
-	write(iunit,103) ptitle, pltlen,  xtitle, xnlen
- 103	format(a20, i5, a20, i5)
-     	write(iunit,104) ytitle, ynlen, xlen, ylen
- 104	format(a20, i5, 2f9.3)
+      !-----------------------------------------------------------------------c
+      ! Write title parameters                 c
+      !-----------------------------------------------------------------------c
+      write(iunit,103) ptitle, pltlen,  xtitle, xnlen
+103   format(a20, i5, a20, i5)
+      write(iunit,104) ytitle, ynlen, xlen, ylen
+104   format(a20, i5, 2f9.3)
 
-!-----------------------------------------------------------------------c
-!	Write axis parameters						c
-!-----------------------------------------------------------------------c
-	write(iunit,105) xorg, xstp, xmax
-	write(iunit,105) yorg, ystp, ymax
- 105	format(3f15.5)
-     	write(iunit,106) iaxis, xtck, ytck, ixnon, iynon, intax, intay
- 106	format(7i5)
+      !-----------------------------------------------------------------------c
+      ! Write axis parameters                 c
+      !-----------------------------------------------------------------------c
+      write(iunit,105) xorg, xstp, xmax
+      write(iunit,105) yorg, ystp, ymax
+105   format(3f15.5)
+      write(iunit,106) iaxis, xtck, ytck, ixnon, iynon, intax, intay
+106   format(7i5)
 
-!-----------------------------------------------------------------------c
-!	Write secondary axis parameters					c
-!-----------------------------------------------------------------------c
-	write(iunit,117) isaxs
-     	write(iunit,107) sorg, stp, smax, slen, sname
- 107	format(4f15.5, a20)
-     	write(iunit,108) nslen,xpos,ypos
- 108	format(i5, 2f9.3)
+      !-----------------------------------------------------------------------c
+      ! Write secondary axis parameters             c
+      !-----------------------------------------------------------------------c
+      write(iunit,117) isaxs
+      write(iunit,107) sorg, stp, smax, slen, sname
+107   format(4f15.5, a20)
+      write(iunit,108) nslen,xpos,ypos
+108   format(i5, 2f9.3)
 
-!-----------------------------------------------------------------------c
-!	Write grid parameters						c
-!-----------------------------------------------------------------------c
-     	write(iunit,109) igridx, igridy, idash, idot, ichdsh, ichdot
- 109	format(6i5)
+      !-----------------------------------------------------------------------c
+      ! Write grid parameters                 c
+      !-----------------------------------------------------------------------c
+      write(iunit,109) igridx, igridy, idash, idot, ichdsh, ichdot
+109   format(6i5)
 
-!-----------------------------------------------------------------------c
-!	Do for ncurve							c
-!-----------------------------------------------------------------------c
-        if (ncurve.gt.0) then
-	do i = 1, ncurve
-!-----------------------------------------------------------------------c
-!	   Write curve parameters					c
-!-----------------------------------------------------------------------c
-     	   write(iunit,110) thcrv(i), sclpc(i), dashme(i), dotme(i)
- 110	   format(2f9.3,2i5)
- 	   write(iunit,111) chdhme(i), chdtme(i), markme(i), clearx(i)
- 111	   format(3i5, a20)
-     	   write(iunit,113) mrc(i), tlen(i), nmrk(i)
- 113	   format(i5, f9.3, i5)
-	   do j = 1, nmrk(i), 4
-	      write(iunit, 114)  (rat(k), k=j,j+3)
- 114	      format (4f9.3)
-	   enddo
-	   write(iunit,115) nplt(i), ncnct(i)
- 115	   format(2i5)
-!-----------------------------------------------------------------------c
-!	      Write (X,Y) co-ordinates					c
-!-----------------------------------------------------------------------c
-           if (nplt(i).gt.0) then
-	      write(iunit,116) (x(j,i), y(j,i),j=1,nplt(i))
- 116	      format (1x,6e12.5)
-	   endif    !   (X,Y)
+      !-----------------------------------------------------------------------c
+      ! Do for ncurve                 c
+      !-----------------------------------------------------------------------c
+      if (ncurve.gt.0) then
+        do i = 1, ncurve
+          !-----------------------------------------------------------------------c
+          !    Write curve parameters             c
+          !-----------------------------------------------------------------------c
+          write(iunit,110) thcrv(i), sclpc(i), dashme(i), dotme(i)
+110       format(2f9.3,2i5)
+          write(iunit,111) chdhme(i), chdtme(i), markme(i), clearx(i)
+111       format(3i5, a20)
+          write(iunit,113) mrc(i), tlen(i), nmrk(i)
+113       format(i5, f9.3, i5)
+          do j = 1, nmrk(i), 4
+            write(iunit, 114)  (rat(k), k=j,j+3)
+114         format (4f9.3)
+          enddo
+          write(iunit,115) nplt(i), ncnct(i)
+115       format(2i5)
+          !-----------------------------------------------------------------------c
+          !       Write (X,Y) co-ordinates             c
+          !-----------------------------------------------------------------------c
+          if (nplt(i).gt.0) then
+            write(iunit,116) (x(j,i), y(j,i),j=1,nplt(i))
+116         format (1x,6e12.5)
+          endif    !   (X,Y)
 
-     	   write(iunit,117) icont(i)
- 117	   format(i5)
-!-----------------------------------------------------------------------c
-!	   Write contour parameters					c
-!-----------------------------------------------------------------------c
-           if (icont(i).gt.0) then
-	     write(iunit,118) nword, ix, iy, zinc, line, mode
- 118	     format(3i5, f15.5, i5, a20)
-	     write(iunit,119) ((zmat(k,j),k=1,ix),j=1,iy)
- 119	     format (1x,6e12.5)
-     	     write(iunit,120) lbflg, ithk, ipri, nline, draw
- 120	     format(a20, 3i5, a20)
-           endif         !     contour
+          write(iunit,117) icont(i)
+117       format(i5)
+          !-----------------------------------------------------------------------c
+          !    Write contour parameters             c
+          !-----------------------------------------------------------------------c
+          if (icont(i).gt.0) then
+            write(iunit,118) nword, ix, iy, zinc, line, mode
+118         format(3i5, f15.5, i5, a20)
+            write(iunit,119) ((zmat(k,j),k=1,ix),j=1,iy)
+119         format (1x,6e12.5)
+            write(iunit,120) lbflg, ithk, ipri, nline, draw
+120         format(a20, 3i5, a20)
+          endif         !     contour
 
-     	   write(iunit,121) nshd
- 121	   format(i5)
+          write(iunit,121) nshd
+121       format(i5)
 
-           if (nshd.gt.0) then
-!-----------------------------------------------------------------------c
-!	      Write shade parameters					c
-!-----------------------------------------------------------------------c
-	   do j = 1, nshd
-	      write(iunit,122) nsxy(j)
- 122	      format (i5)
-	      write(iunit, 123) (sx(k,j), sy(k,j), k = 1, nsxy(j)) 
- 123	      format (1x,10e10.3)
-     	      write(iunit,124) sangle(j), sgap(j), ngaps(j)
- 124	      format (1x,2e10.3, i5)
-	   enddo
-           endif      !  shade
+          if (nshd.gt.0) then
+            !-----------------------------------------------------------------------c
+            !       Write shade parameters             c
+            !-----------------------------------------------------------------------c
+            do j = 1, nshd
+              write(iunit,122) nsxy(j)
+122           format (i5)
+              write(iunit, 123) (sx(k,j), sy(k,j), k = 1, nsxy(j))
+123           format (1x,10e10.3)
+              write(iunit,124) sangle(j), sgap(j), ngaps(j)
+124           format (1x,2e10.3, i5)
+            enddo
+          endif      !  shade
 
-	   write(iunit,125) nvec
- 125	   format(i5)
-!-----------------------------------------------------------------------c
-!	      Write vector parameters					c
-!-----------------------------------------------------------------------c
-           if (nvec.gt.0) then
-	   do j = 1,nvec
-	      write(iunit,126) xfm(j), yfm(j), xto(j), yto(j), ivec(j)
- 126	      format(1x,4e10.3, i5)
-	   enddo
-           endif      ! vector
-!-----------------------------------------------------------------------c
-!	EndDo for ncurve						c
-!-----------------------------------------------------------------------c
-	enddo
-        endif    !  ncurve
+          write(iunit,125) nvec
+125       format(i5)
+          !-----------------------------------------------------------------------c
+          !       Write vector parameters             c
+          !-----------------------------------------------------------------------c
+          if (nvec.gt.0) then
+            do j = 1,nvec
+              write(iunit,126) xfm(j), yfm(j), xto(j), yto(j), ivec(j)
+126           format(1x,4e10.3, i5)
+            enddo
+          endif      ! vector
+        !-----------------------------------------------------------------------c
+        ! EndDo for ncurve                 c
+        !-----------------------------------------------------------------------c
+        enddo
+      endif    !  ncurve
 
-	write(iunit,127) m
- 127	format(i5)
-	if (m .gt. 0) then
-	   do i = 1, m
-!-----------------------------------------------------------------------c
-!	   Write annotation parameters					c
-!-----------------------------------------------------------------------c
-	      write(iunit,128) note(i), imes(i)
- 128	      format(i5, i5)
-	      write(iunit,132) lmes(i)
- 132	      format(a72)
-	      write(iunit,129) anum(i), iplce(i), inum(i)
- 129	      format(f15.5, 2i5)
-	      write(iunit,130) xmpos(i), ympos(i), hgt(i)
- 130	      format(3f9.3)
-	   enddo
-	endif
+      write(iunit,127) m
+127   format(i5)
+      if (m .gt. 0) then
+        do i = 1, m
+          !-----------------------------------------------------------------------c
+          !    Write annotation parameters             c
+          !-----------------------------------------------------------------------c
+          write(iunit,128) note(i), imes(i)
+128       format(i5, i5)
+          write(iunit,132) lmes(i)
+132       format(a72)
+          write(iunit,129) anum(i), iplce(i), inum(i)
+129       format(f15.5, 2i5)
+          write(iunit,130) xmpos(i), ympos(i), hgt(i)
+130       format(3f9.3)
+        enddo
+      endif
 
-!-----------------------------------------------------------------------c
-!	Write plot exit parameters					c
-!-----------------------------------------------------------------------c
-	write(iunit,131) iexit
- 131	format(i5)
+      !-----------------------------------------------------------------------c
+      ! Write plot exit parameters             c
+      !-----------------------------------------------------------------------c
+      write(iunit,131) iexit
+131   format(i5)
 
-	return
-	end	
+      return
+      end
 
       subroutine curve2d_bin (ncurve, ipag, ibrdr,grce,xphy,yphy,iorel, &
-      		xorl, yorl,hight, bngle, bshft, ptitle, pltlen, xtitle, &
-      		xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp,xmax,yorg, &
-      		ystp, ymax, iaxis, xtck, ytck, ixnon,iynon,intax,intay, &
-      		isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
-      		igridx, igridy, idash, idot, ichdsh, ichdot,  &
-      		thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
-      		clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
-      		icont, nword, zmat, ix, iy, zinc, line, mode, &
-      		lbflg, ithk, ipri, nline, draw, &
-      		nshd, sx, sy, nsxy, &
-      		sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
-      		m, note, lmes, imes, anum, iplce, inum,xmpos,ympos,hgt, &
-      		iexit)
+           xorl, yorl,hight, bngle, bshft, ptitle, pltlen, xtitle, &
+           xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp,xmax,yorg, &
+           ystp, ymax, iaxis, xtck, ytck, ixnon,iynon,intax,intay, &
+           isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
+           igridx, igridy, idash, idot, ichdsh, ichdot,  &
+           thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
+           clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
+           icont, nword, zmat, ix, iy, zinc, line, mode, &
+           lbflg, ithk, ipri, nline, draw, &
+           nshd, sx, sy, nsxy, &
+           sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
+           m, note, lmes, imes, anum, iplce, inum,xmpos,ympos,hgt, &
+           iexit)
 !*************************************************************************
-!**                                                                  	**
-!**	MAIN PROGRAM:  MHD FITTING CODE					**
-!**                                                                  	**
-!**                                                                  	**
-!**     SUBPROGRAM DESCRIPTION:                                      	**
-!**         	Writes plot parameters in BINARY format		     	**
-!**                                                                  	**
-!**     CALLING ARGUMENTS:                                           	**
-!**     	ncurve  Number of curves				**
-!**		ipag	page dimension flag				**
-!**			0 = page dimension 11 x 8.5			**
-!**			1 = page dimension 8.5 x 11			**
-!**     	ibrdr   Page border flag				**
-!**			1 = Suppress page border			**
-!**     	        0 = Suppress page border			**
-!**		grce	>= 0 Enable grace margin			**
-!**		xphy	X-coordinate of physical origin			**
-!**     	yphy	Y-coordinate of physical origin			**
-!**		hight   Font size					**
-!**     	bngle   Base rotation angle				**
-!**     	bshft   Base translation				**
-!**     	ptitle  Plot title					**
-!**     	pltlen  Length of plot title                       	**
-!**     	xtitle  X-axis name                             	**
-!**     	xnlen   Length of x-axis name                           **
-!**     	ytitle  Y-axis name                           		**
-!**     	ynlen   Length of y-axis name				**
-!**     	xlen	Length of x-axis legend				**
-!**     	ylen    Length of y-axis legend                         **
-!**     	iaxis   Axes flag					**
-!**			0 = Linear axis					**
-!**     	        1 = Log-Linear axis				**
-!**     	        2 = Linear-Log axis				**
-!**     	        3 = Logarithmic axis				**
-!**     	xtck    X-axis tick marks				**
-!**     	ytck    Y-axis tick marks				**
-!**		ixnon   X-axis tick marks or labels flag		**
-!**			1 = Suppress x-axis tick marks or labels	**
-!**			0 = X-axis tick marks or labels			**
-!**		iynon   Y-axis tick marks or labels flag		**
-!**			1 = Suppress y-axis tick marks or labels	**
-!**			0 = Y-axis tick marks or labels			**
-!**		intax   Trailing zeroes on x-axis flag			**
-!**			1 = Suppress trailing zeroes on x-axis 		**
-!**			0 = Trailing zeroes on x-axis 			**
-!**		intay   Trailing zeroes on y-axis flag			**
-!**			1 = Suppress trailing zeroes on y-axis 		**
-!**			0 = Trailing zeroes on y-axis 			**
-!**     	xorg    X-value at the physical origin			**
-!**     	xstp    X step size in units				**
-!**     	xmax    Value at x-axis limit				**
-!**     	yorg    X-value at the physical origin	                **
-!**     	ystp    X step size in units				**
-!**     	ymax    Value at y-axis limit				**
-!**	  	iorel   New physical origin relative to current 	**
-!**		 	origin flag					**
-!**			1 = New physical origin relative to current 	**
-!**		 	    origin					**
-!**			0 = No new physical origin relative to current 	**
-!**		 	    origin					**
-!**		xorl    X-coordinate of relative origin			**
-!**		yorl    Y-coordinate of relative origin			**
-!**     	igridx  Number of grid lines per step on x-axis	     	**
-!**     	igridy  Number of grid lines per step on y-axis	     	**
-!**     	idash   Dash grid lines flag				**
-!**			1 = Dash grid lines				**
-!**			0 = No dash grid lines				**
-!**     	idot    Dot grid lines flag				**
-!**			1 = Dot grid lines				**
-!**			0 = No dot grid lines				**
-!**     	ichdot  Chain dot grid lines flag                       **
-!**			1 = Chain dot grid lines                        **
-!**			0 = No chain dot grid lines                     **
-!**     	ichdsh  Chain dash grid lines flag                      **
-!**			1 = Chain dash grid lines                       **
-!**			0 = No chain dash grid lines                    **
-!**     	thcrv   Curve thickness		dim = ncurve	     	**
-!**     	sclpc   Scale curve marker 	dim = ncurve            **
-!**     	dashme  Dash curve flag		dim = ncurve		**
-!**			1 = Dash curve					**
-!**			0 = No dash curve				**
-!**     	dotme  	Dot curve flag		dim = ncurve		**
-!**			1 = Dot curve					**
-!**			0 = No dot curve				**
-!**     	chdhme  Chain dash curve flag	dim = ncurve		**
-!**			1 = Chain dash curve				**
-!**			0 = No chain dash curve				**
-!**     	chdtme  Chain ot curve flag	dim = ncurve		**
-!**			1 = Chain dot curve				**
-!**			0 = No chain dot curve				**
-!**     	markme  Curve marker 	        dim = ncurve            **
-!**     	clearx  Color			dim = ncurve		**
-!**     	x       Array of x-coordinates				**
-!**						dim = (nplt, ncurve)	**
-!**     	y       Array of y-coordinates				**
-!**						dim = (nplt, ncurve)	**
-!**     	nplt    Number of (x,y) points to be ploted 		**
-!**						dim = ncurve		**
-!**     	ncnct   Marker specification				**
-!**			0 = Points connected with no symbols drawn 	**
-!**			i = Points connected and a symbol drawn at 	**
-!**			    every ith point				**
-!**		       -i = Points not connected and a symbol at every  **
-!**		mrc     1 = Custom interrupted line style		**
-!**		tlen    overall length of the pattern			**
-!**		nmrk	total number of marks and spaces		**
-!**		rat	Array of ratios of marks and spaces to overall	**
-!**		        length						**
-!**		icont	Contour plotting flag				**
-!**			1 = Contour plotting				**
-!**			0 = No contour plotting				**
-!**		nword   Number of words available in common block	**
-!**		zmat    2-dimensional array containing Z data surface	**
-!**			values						**
-!**		ix	X dimension of zmat				**
-!**		iy	Y dimension of zmat				**
-!**		zinc	Increment between z levels			**
-!**		line	Index number in the group of curve 		**
-!**			characteristic					**
-!**		mode	'DOT' for dotted lines				**
-!**			'DASH' for dashed lines  			**
-!**		lbflg	'NOLABELS' do not use labels 			**
-!**			'LABELS' use labels				**
-!**		ithk	Line thickness					**
-!**		ipri	Line priority					**
-!**		draw	'DRAW' draw curves				**
-!**			'NODRAW' do not draw curves			**
-!**		nshd	Number of shades, shade area between 2 curves	**
-!**		sx	Array of x-coordinates		dim = nsxy	**
-!**		sy	Array of y-coordinates		dim = nsxy	**
-!**	        nsxy	Number of (sx,sy) pairs				**
-!**		sangle	angle of shading lines				**
-!**		sgap	Array of shading gaps				**
-!**		ngaps	Number of elements in sgaps			**
-!**		nvec	Number of vectors				**
-!**		xfm	X value of originating point	dim = nvec	**
-!**		yfm	Y value of originating point	dim = nvec	**
-!**		xto	X value of point pointed to	dim = nvec	**
-!**		yto	Y value of point pointed to	dim = nvec	**
-!**		ivec	Describes vector arrowhead	dim = nvec	**
-!**		m	Number of text lines to be written		**
-!**		note	Text string flag		dim = m		**
-!**			1 = Text is character string			**
-!**			2 = Text is character string drawn relative 	**
-!**			    to the physical origin			**
-!**			3 = Text is real number	string			**
-!**			4 = Text is real number	string drawn relative 	**
-!**			    to the physical origin			**
-!**			5 = Text is integer string			**
-!**			6 = Text is integer string drawn relative 	**
-!**			    to the physical origin			**
-!**		lmes	Character string text		dim = m		**
-!**		imes	Number of characters in lmes	dim = m		**
-!**		anum	Real number text string		dim = m		**
-!**		iplce	Number of decimal place		dim = m		**
-!**		inum	Integer number text string	dim = m		**
-!**		xmpos	X-position of text string	dim = m		**
-!**		ympos	Y-position of text string	dim = m		**
-!**		hgt	Font size of the text string	dim = m		**
-!**                                                                  	**
-!**     REFERENCES: 							**
-!**          (1)  CA-DISSPLA manual 					**
-!**          (2)                                                     	**
-!**                                                                  	**
-!**     RECORD OF MODIFICATION:                                      	**
-!**          03/26/93..........first created                         	**
-!**                                                                  	**
-!**                                                                  	**
+!**                                                                   **
+!** MAIN PROGRAM:  MHD FITTING CODE             **
+!**                                                                   **
+!**                                                                   **
+!**   SUBPROGRAM DESCRIPTION:                                       **
+!**     Writes plot parameters in BINARY format           **
+!**                                                                   **
+!**   CALLING ARGUMENTS:                                            **
+!**     ncurve  Number of curves            **
+!**     ipag page dimension flag            **
+!**       0 = page dimension 11 x 8.5     **
+!**       1 = page dimension 8.5 x 11     **
+!**     ibrdr   Page border flag            **
+!**       1 = Suppress page border     **
+!**       0 = Suppress page border     **
+!**     grce >= 0 Enable grace margin     **
+!**     xphy X-coordinate of physical origin     **
+!**     yphy Y-coordinate of physical origin     **
+!**     hight   Font size             **
+!**     bngle   Base rotation angle            **
+!**     bshft   Base translation            **
+!**     ptitle  Plot title             **
+!**     pltlen  Length of plot title                        **
+!**     xtitle  X-axis name                              **
+!**     xnlen   Length of x-axis name                           **
+!**     ytitle  Y-axis name                                **
+!**     ynlen   Length of y-axis name            **
+!**     xlen Length of x-axis legend            **
+!**     ylen    Length of y-axis legend                         **
+!**     iaxis   Axes flag             **
+!**       0 = Linear axis             **
+!**       1 = Log-Linear axis            **
+!**       2 = Linear-Log axis            **
+!**       3 = Logarithmic axis            **
+!**     xtck    X-axis tick marks            **
+!**     ytck    Y-axis tick marks            **
+!**     ixnon   X-axis tick marks or labels flag     **
+!**       1 = Suppress x-axis tick marks or labels **
+!**       0 = X-axis tick marks or labels     **
+!**     iynon   Y-axis tick marks or labels flag     **
+!**       1 = Suppress y-axis tick marks or labels **
+!**       0 = Y-axis tick marks or labels     **
+!**     intax   Trailing zeroes on x-axis flag     **
+!**       1 = Suppress trailing zeroes on x-axis      **
+!**       0 = Trailing zeroes on x-axis      **
+!**     intay   Trailing zeroes on y-axis flag     **
+!**       1 = Suppress trailing zeroes on y-axis      **
+!**       0 = Trailing zeroes on y-axis      **
+!**     xorg    X-value at the physical origin     **
+!**     xstp    X step size in units            **
+!**     xmax    Value at x-axis limit            **
+!**     yorg    X-value at the physical origin                 **
+!**     ystp    X step size in units            **
+!**     ymax    Value at y-axis limit            **
+!**     iorel   New physical origin relative to current  **
+!**     origin flag             **
+!**       1 = New physical origin relative to current  **
+!**           origin             **
+!**       0 = No new physical origin relative to current  **
+!**           origin             **
+!**     xorl    X-coordinate of relative origin     **
+!**     yorl    Y-coordinate of relative origin     **
+!**     igridx  Number of grid lines per step on x-axis       **
+!**     igridy  Number of grid lines per step on y-axis       **
+!**     idash   Dash grid lines flag            **
+!**       1 = Dash grid lines            **
+!**       0 = No dash grid lines            **
+!**     idot    Dot grid lines flag            **
+!**       1 = Dot grid lines            **
+!**       0 = No dot grid lines            **
+!**     ichdot  Chain dot grid lines flag                       **
+!**       1 = Chain dot grid lines                        **
+!**       0 = No chain dot grid lines                     **
+!**     ichdsh  Chain dash grid lines flag                      **
+!**       1 = Chain dash grid lines                       **
+!**       0 = No chain dash grid lines                    **
+!**     thcrv   Curve thickness     dim = ncurve       **
+!**     sclpc   Scale curve marker  dim = ncurve            **
+!**     dashme  Dash curve flag     dim = ncurve     **
+!**       1 = Dash curve             **
+!**       0 = No dash curve            **
+!**     dotme   Dot curve flag     dim = ncurve     **
+!**       1 = Dot curve             **
+!**       0 = No dot curve            **
+!**     chdhme  Chain dash curve flag dim = ncurve     **
+!**       1 = Chain dash curve            **
+!**       0 = No chain dash curve            **
+!**     chdtme  Chain ot curve flag dim = ncurve     **
+!**       1 = Chain dot curve            **
+!**       0 = No chain dot curve            **
+!**     markme  Curve marker          dim = ncurve            **
+!**     clearx  Color     dim = ncurve     **
+!**     x       Array of x-coordinates            **
+!**                dim = (nplt, ncurve) **
+!**     y       Array of y-coordinates            **
+!**                dim = (nplt, ncurve) **
+!**     nplt    Number of (x,y) points to be ploted      **
+!**                dim = ncurve     **
+!**     ncnct   Marker specification            **
+!**       0 = Points connected with no symbols drawn  **
+!**       i = Points connected and a symbol drawn at  **
+!**         every ith point            **
+!**            -i = Points not connected and a symbol at every  **
+!**     mrc     1 = Custom interrupted line style     **
+!**     tlen    overall length of the pattern     **
+!**     nmrk total number of marks and spaces     **
+!**     rat Array of ratios of marks and spaces to overall **
+!**             length                 **
+!**     icont Contour plotting flag            **
+!**       1 = Contour plotting            **
+!**       0 = No contour plotting            **
+!**     nword   Number of words available in common block **
+!**     zmat    2-dimensional array containing Z data surface **
+!**     values                 **
+!**     ix X dimension of zmat            **
+!**     iy Y dimension of zmat            **
+!**     zinc Increment between z levels     **
+!**     line Index number in the group of curve      **
+!**     characteristic             **
+!**     mode 'DOT' for dotted lines            **
+!**     'DASH' for dashed lines       **
+!**     lbflg 'NOLABELS' do not use labels      **
+!**     'LABELS' use labels            **
+!**     ithk Line thickness             **
+!**     ipri Line priority             **
+!**     draw 'DRAW' draw curves            **
+!**     'NODRAW' do not draw curves     **
+!**     nshd Number of shades, shade area between 2 curves **
+!**     sx Array of x-coordinates     dim = nsxy **
+!**     sy Array of y-coordinates     dim = nsxy **
+!**     nsxy Number of (sx,sy) pairs            **
+!**     sangle angle of shading lines            **
+!**     sgap Array of shading gaps            **
+!**     ngaps Number of elements in sgaps     **
+!**     nvec Number of vectors            **
+!**     xfm X value of originating point dim = nvec **
+!**     yfm Y value of originating point dim = nvec **
+!**     xto X value of point pointed to dim = nvec **
+!**     yto Y value of point pointed to dim = nvec **
+!**     ivec Describes vector arrowhead dim = nvec **
+!**     m Number of text lines to be written     **
+!**     note Text string flag     dim = m     **
+!**       1 = Text is character string     **
+!**       2 = Text is character string drawn relative  **
+!**           to the physical origin     **
+!**       3 = Text is real number string     **
+!**       4 = Text is real number string drawn relative  **
+!**           to the physical origin     **
+!**       5 = Text is integer string     **
+!**       6 = Text is integer string drawn relative  **
+!**           to the physical origin     **
+!**     lmes Character string text     dim = m     **
+!**     imes Number of characters in lmes dim = m     **
+!**     anum Real number text string     dim = m     **
+!**     iplce Number of decimal place     dim = m     **
+!**     inum Integer number text string dim = m     **
+!**     xmpos X-position of text string dim = m     **
+!**     ympos Y-position of text string dim = m     **
+!**     hgt Font size of the text string dim = m     **
+!**                                                                   **
+!**     REFERENCES:                  **
+!**          (1)  CA-DISSPLA manual              **
+!**          (2)                                                      **
+!**                                                                   **
+!**     RECORD OF MODIFICATION:                                       **
+!**          03/26/93..........first created                          **
+!**                                                                   **
+!**                                                                   **
 !*************************************************************************
 !sri-feb1209
+      use set_kinds
       use eparmdud129,only:ndim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 
-!	parameter (ndim = 700, ncrv=180, mdim = 200)
-	parameter (ncrv=180, mdim = 300)
-	include 'curve2d_var.inc'
-	include 'env2d.inc'
+      ! parameter (ndim = 700, ncrv=180, mdim = 200)
+      parameter (ncrv=180, mdim = 300)
+      include 'curve2d_var.inc'
+      include 'env2d.inc'
 
-!-----------------------------------------------------------------------c
-!	Write page parameters						c
-!-----------------------------------------------------------------------c
-	write(iunit) ncurve, ipag, ibrdr, grce, xphy, yphy
-	write(iunit) iorel, xorl, yorl
-     	write(iunit) hight, bngle, bshft
+      !-----------------------------------------------------------------------c
+      ! Write page parameters                 c
+      !-----------------------------------------------------------------------c
+      write(iunit) ncurve, ipag, ibrdr, grce, xphy, yphy
+      write(iunit) iorel, xorl, yorl
+      write(iunit) hight, bngle, bshft
 
-!-----------------------------------------------------------------------c
-!	Write title parameters						c
-!-----------------------------------------------------------------------c
-	write(iunit) ptitle, pltlen,  xtitle, xnlen
-     	write(iunit) ytitle, ynlen, xlen, ylen
+      !-----------------------------------------------------------------------c
+      ! Write title parameters                 c
+      !-----------------------------------------------------------------------c
+      write(iunit) ptitle, pltlen,  xtitle, xnlen
+      write(iunit) ytitle, ynlen, xlen, ylen
 
-!-----------------------------------------------------------------------c
-!	Write axis parameters						c
-!-----------------------------------------------------------------------c
-	write(iunit) xorg, xstp, xmax
-	write(iunit) yorg, ystp, ymax
-     	write(iunit) iaxis, xtck, ytck, ixnon, iynon, intax, intay
+      !-----------------------------------------------------------------------c
+      ! Write axis parameters                 c
+      !-----------------------------------------------------------------------c
+      write(iunit) xorg, xstp, xmax
+      write(iunit) yorg, ystp, ymax
+      write(iunit) iaxis, xtck, ytck, ixnon, iynon, intax, intay
 
-!-----------------------------------------------------------------------c
-!	Write secondary axis parameters					c
-!-----------------------------------------------------------------------c
-	write(iunit) isaxs
-     	write(iunit) sorg, stp, smax, slen, sname
-     	write(iunit) nslen,xpos,ypos
+      !-----------------------------------------------------------------------c
+      ! Write secondary axis parameters             c
+      !-----------------------------------------------------------------------c
+      write(iunit) isaxs
+      write(iunit) sorg, stp, smax, slen, sname
+      write(iunit) nslen,xpos,ypos
 
-!-----------------------------------------------------------------------c
-!	Write grid parameters						c
-!-----------------------------------------------------------------------c
-     	write(iunit) igridx, igridy, idash, idot, ichdsh, ichdot
+      !-----------------------------------------------------------------------c
+      ! Write grid parameters                 c
+      !-----------------------------------------------------------------------c
+      write(iunit) igridx, igridy, idash, idot, ichdsh, ichdot
 
-!-----------------------------------------------------------------------c
-!	Do for ncurve							c
-!-----------------------------------------------------------------------c
-        if (ncurve.gt.0) then
-	do i = 1, ncurve
-!-----------------------------------------------------------------------c
-!	   Write curve parameters					c
-!-----------------------------------------------------------------------c
-     	   write(iunit) thcrv(i), sclpc(i), dashme(i), dotme(i)
- 	   write(iunit) chdhme(i), chdtme(i), markme(i), clearx(i)
-     	   write(iunit) mrc(i), tlen(i), nmrk(i)
-	   do j = 1, nmrk(i), 4
-	      write(iunit)  (rat(k), k=j,j+3)
-	   enddo
-	   write(iunit) nplt(i), ncnct(i)
-!-----------------------------------------------------------------------c
-!	      Write (X,Y) coordinates					c
-!-----------------------------------------------------------------------c
-	   if (nplt(i).gt.0) then
-	      write(iunit) (x(j,i), y(j,i), j=1, nplt(i))
-	   endif
-     	   write(iunit) icont(i)
+      !-----------------------------------------------------------------------c
+      ! Do for ncurve                 c
+      !-----------------------------------------------------------------------c
+      if (ncurve.gt.0) then
+        do i = 1, ncurve
+          !-----------------------------------------------------------------------c
+          !    Write curve parameters             c
+          !-----------------------------------------------------------------------c
+          write(iunit) thcrv(i), sclpc(i), dashme(i), dotme(i)
+          write(iunit) chdhme(i), chdtme(i), markme(i), clearx(i)
+          write(iunit) mrc(i), tlen(i), nmrk(i)
+          do j = 1, nmrk(i), 4
+            write(iunit)  (rat(k), k=j,j+3)
+          enddo
+          write(iunit) nplt(i), ncnct(i)
+          !-----------------------------------------------------------------------c
+          !       Write (X,Y) coordinates             c
+          !-----------------------------------------------------------------------c
+          if (nplt(i).gt.0) then
+            write(iunit) (x(j,i), y(j,i), j=1, nplt(i))
+          endif
+          write(iunit) icont(i)
 
-!-----------------------------------------------------------------------c
-!	   Write contour parameters					c
-!-----------------------------------------------------------------------c
-           if (icont(i).gt.0) then
-	    write (iunit) nword, ix, iy, zinc, line, mode
-	    write (iunit) ((zmat(k,j) ,k=1,ix),j=1,iy)
-     	    write (iunit) lbflg, ithk, ipri, nline, draw
-           endif       !   contour
+          !-----------------------------------------------------------------------c
+          !    Write contour parameters             c
+          !-----------------------------------------------------------------------c
+          if (icont(i).gt.0) then
+            write (iunit) nword, ix, iy, zinc, line, mode
+            write (iunit) ((zmat(k,j) ,k=1,ix),j=1,iy)
+            write (iunit) lbflg, ithk, ipri, nline, draw
+          endif       !   contour
 
-     	   write(iunit) nshd
-           if (nshd.gt.0) then
-	   do j = 1, nshd
-!-----------------------------------------------------------------------c
-!	      Write shade parameters					c
-!-----------------------------------------------------------------------c
-	      write(iunit) nsxy(j)
-	      write(iunit) (sx(k,j), sy(k,j), k = 1, nsxy(j)) 
-     	      write(iunit) sangle(j), sgap(j), ngaps(j)
-	   enddo
-           endif    !   shade
+          write(iunit) nshd
+          if (nshd.gt.0) then
+            do j = 1, nshd
+              !-----------------------------------------------------------------------c
+              !       Write shade parameters             c
+              !-----------------------------------------------------------------------c
+              write(iunit) nsxy(j)
+              write(iunit) (sx(k,j), sy(k,j), k = 1, nsxy(j))
+              write(iunit) sangle(j), sgap(j), ngaps(j)
+            enddo
+          endif    !   shade
 
-	   write(iunit) nvec
-           if (nvec.gt.0) then
-	   do j = 1,nvec
-!-----------------------------------------------------------------------c
-!	     Write vector parameters					c
-!-----------------------------------------------------------------------c
-	     write(iunit) xfm(j), yfm(j), xto(j), yto(j), ivec(j)
-	   enddo
-           endif
-!-----------------------------------------------------------------------c
-!	Do for ncurve							c
-!-----------------------------------------------------------------------c
-	enddo
-        endif   !    ncurve
-
-	write(iunit) m
-	if (m .gt. 0) then
-	   do i = 1, m
-!-----------------------------------------------------------------------c
-!	Write annotation parameters					c
-!-----------------------------------------------------------------------c
-	      write(iunit) note(i), imes(i)
-	      write(iunit) lmes(i)
-	      write(iunit) anum(i), iplce(i), inum(i)
-	      write(iunit) xmpos(i), ympos(i), hgt(i)
-	   enddo
-	endif
-
-!-----------------------------------------------------------------------c
-!	Write plot exit parameters					c
-!-----------------------------------------------------------------------c
-	write(iunit) iexit
-
-	return
-	end	
-
-	subroutine init2d
-!*************************************************************************
-!**                                                                  	**
-!**	MAIN PROGRAM:  MHD FITTING CODE					**
-!**                                                                  	**
-!**                                                                  	**
-!**     SUBPROGRAM DESCRIPTION:                                      	**
-!**          Initializes plot parameters			     	**
-!**                                                                  	**
-!**     CALLING ARGUMENTS:                                           	**
-!**                                                                  	**
-!**     REFERENCES: 							**
-!**          (1)  							**
-!**          (2)                                                     	**
-!**                                                                  	**
-!**     RECORD OF MODIFICATION:                                      	**
-!**          04/28/93..........first created                         	**
-!**                                                                  	**
-!**                                                                  	**
-!*************************************************************************
-
-!sri-feb1209
-      use eparmdud129,only:ndim
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-	include 'curve2d129.inc'
-
-!-----------------------------------------------------------------------c
-!	Initialize plot parameters					c
-!-----------------------------------------------------------------------c
-	nn = 0
-	ncurve = 1
-!-----------------------------------------------------------------------c
-!	Initialize page size to 11x8.5					c
-!-----------------------------------------------------------------------c
-	ipag = 0
-!-----------------------------------------------------------------------c
-!	Initialize grace margin be coincident with the grid frame	c
-!-----------------------------------------------------------------------c
-	grce = 0.0
-!-----------------------------------------------------------------------c
-!	Initialize page border "do not suppress page border"		c
-!-----------------------------------------------------------------------c
-	ibrdr = 0
-!-----------------------------------------------------------------------c
-!	Initialize page dimension					c
-!-----------------------------------------------------------------------c
-	xpag = 0.0
-	ypag = 0.0
-!-----------------------------------------------------------------------c
-!	Initialize physical origin parameters				c
-!-----------------------------------------------------------------------c
-	xphy = 1.0
-	yphy = 1.0
-!-----------------------------------------------------------------------c
-!	Initialize relative origin parameters				c
-!-----------------------------------------------------------------------c
-	iorel = 0
-	xorl = 0.0
-	yorl = 0.0
-!-----------------------------------------------------------------------c
-!	Initialize font size						c
-!-----------------------------------------------------------------------c
-	hight = 0.5
-!-----------------------------------------------------------------------c
-!	Initialize base rotation					c
-!-----------------------------------------------------------------------c
-	bngle = 0.0
-!-----------------------------------------------------------------------c
-!	Initialize translation						c
-!-----------------------------------------------------------------------c
-	bshft(1) = 0.0
-	bshft(2) = 0.0
-!-----------------------------------------------------------------------c
-!	Initialize type of coordinate system (Cartesian coordinate)	c
-!-----------------------------------------------------------------------c
-	iaxis = 0
-!-----------------------------------------------------------------------c
-!	Initialize axes tick marks off					c
-!-----------------------------------------------------------------------c
-	ixtck = 0
-	iytck = 0
-!-----------------------------------------------------------------------c
-!	Initialize axes labels not to be suppressed			c
-!-----------------------------------------------------------------------c
-	ixnon = 0
-	iynon = 0	
-!-----------------------------------------------------------------------c
-!	Initialize trailing zeroes on axes 				c
-!-----------------------------------------------------------------------c
-	intax = 0
-	intay = 0
-!-----------------------------------------------------------------------c
-!	Initialize secondary axes parameters				c
-!-----------------------------------------------------------------------c
-	isaxs = 0
-	sorg = 0.0
-	stp = 0.0
-	smax = 0.0
-	slen = 0.0
-	sname = ' '
-	nslen = 0
-	xps = 0.0
-	yps = 0.0
-!-----------------------------------------------------------------------c
-!	Initialize plot title legend					c
-!-----------------------------------------------------------------------c
-	ptitle = '$'
-	nplen = -100
-!-----------------------------------------------------------------------c
-!	Initialize x-axis title legend					c
-!-----------------------------------------------------------------------c
-	xtitle = '$'
-	nxlen = 100
-!-----------------------------------------------------------------------c
-!	Initialize y-axis title legend					c
-!-----------------------------------------------------------------------c
-	ytitle = '$'
-	nylen = 100
-!-----------------------------------------------------------------------c
-!	Initialize grids to be turned off				c
-!-----------------------------------------------------------------------c
-	igridx = 0
-	igridy = 0
-!-----------------------------------------------------------------------c
-!	Initialize, grid dashes off					c
-!-----------------------------------------------------------------------c
-	idash = 0
-!-----------------------------------------------------------------------c
-!	Initialize grid dots off					c
-!-----------------------------------------------------------------------c
-	idot = 0
-!-----------------------------------------------------------------------c
-!	Initialize grid chain dot off					c
-!-----------------------------------------------------------------------c
-	ichdot = 0
-!-----------------------------------------------------------------------c
-!	Initialize grid chain dash off					c
-!-----------------------------------------------------------------------c
-	ichdsh = 0
-!-----------------------------------------------------------------------c
-!	Initialize number of text lines to zero				c
-!-----------------------------------------------------------------------c
-	msg = 0
-!-----------------------------------------------------------------------c
-!	Initialize number of shades to zero				c
-!-----------------------------------------------------------------------c
-	nshd = 0
-!-----------------------------------------------------------------------c
-!	Initialize number of vectors to zero				c
-!-----------------------------------------------------------------------c
-	nvec = 0
-!-----------------------------------------------------------------------c
-!	Initialize contour drawing to none				c
-!-----------------------------------------------------------------------c
-        do i = 1, ncrv
-          icont(i) = 0
+          write(iunit) nvec
+          if (nvec.gt.0) then
+            do j = 1,nvec
+              !-----------------------------------------------------------------------c
+              !      Write vector parameters             c
+              !-----------------------------------------------------------------------c
+              write(iunit) xfm(j), yfm(j), xto(j), yto(j), ivec(j)
+            enddo
+          endif
+        !-----------------------------------------------------------------------c
+        ! Do for ncurve                 c
+        !-----------------------------------------------------------------------c
         enddo
-!-----------------------------------------------------------------------c
-!	Initialize curve drawing parameters				c
-!-----------------------------------------------------------------------c
-	do i = 1, ncrv
-!-----------------------------------------------------------------------c
-!	Initialize thickness of curve					c
-!-----------------------------------------------------------------------c
-	   thcrv(i) = 0.0
-!-----------------------------------------------------------------------c
-!	Initialize scaling of marker					c
-!-----------------------------------------------------------------------c
-	   sclpc(i) = 0.0	   
-!-----------------------------------------------------------------------c
-!	Initialize curve dot off					c
-!-----------------------------------------------------------------------c
-	   ndotme(i) = 0
-!-----------------------------------------------------------------------c
-!	Initialize curve dash off					c
-!-----------------------------------------------------------------------c
-	   ndshme(i) = 0
-!-----------------------------------------------------------------------c
-!	Initialize curve chain dot off					c
-!-----------------------------------------------------------------------c
-	   ncdtme(i) = 0
-!-----------------------------------------------------------------------c
-!	Initialize curve chain dash off					c
-!-----------------------------------------------------------------------c
-	   ncdhme(i) = 0
-!-----------------------------------------------------------------------c
-!	Initialize marker						c
-!-----------------------------------------------------------------------c
-	   markme(i) = -2
-!-----------------------------------------------------------------------c
-!	Initialize curve to be drawn with solid line wit no symbols	c
-!-----------------------------------------------------------------------c
-	   ncnct(i) = 0
-!-----------------------------------------------------------------------c
-!	Initialize color						c
-!-----------------------------------------------------------------------c
-	   clearx(i) = 'FOREGROUND'
-!-----------------------------------------------------------------------c
-!	Initialize shade parameters					c
-!-----------------------------------------------------------------------c
-!	   sangle(i) = 0.0
-!	   sgap(i) = 0.0
-!	   ngaps(i) = 0
-!	   mrc(i) = 0
-	enddo
-!-----------------------------------------------------------------------c
-!	Initialize Annotation parameters				c
-!-----------------------------------------------------------------------c
-	do i = 1, mdim
-	   note(i) = 0
-	   lmes(i) = ' '
-	   imes(i) = 0
-	   anum(i) = 0.0
-	   iplce(i) = 0
-	   inum(i) = 0
-	   xpos(i) = 0.0
-	   ypos(i) = 0.0
-	   ht(i) = 0.14
-	enddo
-!-----------------------------------------------------------------------c
-!	Initialize Contour Dimension					c
-!-----------------------------------------------------------------------c
-        ix = 1
-        iy = 1
+      endif   !    ncurve
 
-	return
-	end
-      subroutine altplt
+      write(iunit) m
+      if (m .gt. 0) then
+        do i = 1, m
+          !-----------------------------------------------------------------------c
+          ! Write annotation parameters             c
+          !-----------------------------------------------------------------------c
+          write(iunit) note(i), imes(i)
+          write(iunit) lmes(i)
+          write(iunit) anum(i), iplce(i), inum(i)
+          write(iunit) xmpos(i), ympos(i), hgt(i)
+        enddo
+      endif
+
+      !-----------------------------------------------------------------------c
+      ! Write plot exit parameters             c
+      !-----------------------------------------------------------------------c
+      write(iunit) iexit
+
       return
-      end
-      subroutine closepl
+    end
+
+ subroutine init2d
+!*************************************************************************
+!**                                                                   **
+!** MAIN PROGRAM:  MHD FITTING CODE             **
+!**                                                                   **
+!**                                                                   **
+!**     SUBPROGRAM DESCRIPTION:                                       **
+!**          Initializes plot parameters           **
+!**                                                                   **
+!**     CALLING ARGUMENTS:                                            **
+!**                                                                   **
+!**     REFERENCES:                  **
+!**          (1)                   **
+!**          (2)                                                      **
+!**                                                                   **
+!**     RECORD OF MODIFICATION:                                       **
+!**          04/28/93..........first created                          **
+!**                                                                   **
+!**                                                                   **
+!*************************************************************************
+
+!sri-feb1209
+      use set_kinds
+      use eparmdud129,only:ndim
+      implicit integer*4 (i-n), real*8 (a-h, o-z)
+      include 'curve2d129.inc'
+
+      !-----------------------------------------------------------------------c
+      ! Initialize plot parameters             c
+      !-----------------------------------------------------------------------c
+      nn = 0
+      ncurve = 1
+      !-----------------------------------------------------------------------c
+      ! Initialize page size to 11x8.5             c
+      !-----------------------------------------------------------------------c
+      ipag = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize grace margin be coincident with the grid frame c
+      !-----------------------------------------------------------------------c
+      grce = 0.0
+      !-----------------------------------------------------------------------c
+      ! Initialize page border "do not suppress page border"     c
+      !-----------------------------------------------------------------------c
+      ibrdr = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize page dimension             c
+      !-----------------------------------------------------------------------c
+      xpag = 0.0
+      ypag = 0.0
+      !-----------------------------------------------------------------------c
+      ! Initialize physical origin parameters            c
+      !-----------------------------------------------------------------------c
+      xphy = 1.0
+      yphy = 1.0
+      !-----------------------------------------------------------------------c
+      ! Initialize relative origin parameters            c
+      !-----------------------------------------------------------------------c
+      iorel = 0
+      xorl = 0.0
+      yorl = 0.0
+      !-----------------------------------------------------------------------c
+      ! Initialize font size                 c
+      !-----------------------------------------------------------------------c
+      hight = 0.5_dp
+      !-----------------------------------------------------------------------c
+      ! Initialize base rotation             c
+      !-----------------------------------------------------------------------c
+      bngle = 0.0
+      !-----------------------------------------------------------------------c
+      ! Initialize translation                 c
+      !-----------------------------------------------------------------------c
+      bshft(1) = 0.0
+      bshft(2) = 0.0
+      !-----------------------------------------------------------------------c
+      ! Initialize type of coordinate system (Cartesian coordinate) c
+      !-----------------------------------------------------------------------c
+      iaxis = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize axes tick marks off             c
+      !-----------------------------------------------------------------------c
+      ixtck = 0
+      iytck = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize axes labels not to be suppressed     c
+      !-----------------------------------------------------------------------c
+      ixnon = 0
+      iynon = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize trailing zeroes on axes             c
+      !-----------------------------------------------------------------------c
+      intax = 0
+      intay = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize secondary axes parameters            c
+      !-----------------------------------------------------------------------c
+      isaxs = 0
+      sorg = 0.0
+      stp = 0.0
+      smax = 0.0
+      slen = 0.0
+      sname = ' '
+      nslen = 0
+      xps = 0.0
+      yps = 0.0
+      !-----------------------------------------------------------------------c
+      ! Initialize plot title legend             c
+      !-----------------------------------------------------------------------c
+      ptitle = '$'
+      nplen = -100
+      !-----------------------------------------------------------------------c
+      ! Initialize x-axis title legend             c
+      !-----------------------------------------------------------------------c
+      xtitle = '$'
+      nxlen = 100
+      !-----------------------------------------------------------------------c
+      ! Initialize y-axis title legend             c
+      !-----------------------------------------------------------------------c
+      ytitle = '$'
+      nylen = 100
+      !-----------------------------------------------------------------------c
+      ! Initialize grids to be turned off            c
+      !-----------------------------------------------------------------------c
+      igridx = 0
+      igridy = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize, grid dashes off             c
+      !-----------------------------------------------------------------------c
+      idash = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize grid dots off             c
+      !-----------------------------------------------------------------------c
+      idot = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize grid chain dot off             c
+      !-----------------------------------------------------------------------c
+      ichdot = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize grid chain dash off             c
+      !-----------------------------------------------------------------------c
+      ichdsh = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize number of text lines to zero            c
+      !-----------------------------------------------------------------------c
+      msg = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize number of shades to zero            c
+      !-----------------------------------------------------------------------c
+      nshd = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize number of vectors to zero            c
+      !-----------------------------------------------------------------------c
+      nvec = 0
+      !-----------------------------------------------------------------------c
+      ! Initialize contour drawing to none            c
+      !-----------------------------------------------------------------------c
+      do i = 1, ncrv
+        icont(i) = 0
+      enddo
+      !-----------------------------------------------------------------------c
+      ! Initialize curve drawing parameters            c
+      !-----------------------------------------------------------------------c
+      do i = 1, ncrv
+        !-----------------------------------------------------------------------c
+        ! Initialize thickness of curve             c
+        !-----------------------------------------------------------------------c
+        thcrv(i) = 0.0
+        !-----------------------------------------------------------------------c
+        ! Initialize scaling of marker             c
+        !-----------------------------------------------------------------------c
+        sclpc(i) = 0.0
+        !-----------------------------------------------------------------------c
+        ! Initialize curve dot off             c
+        !-----------------------------------------------------------------------c
+        ndotme(i) = 0
+        !-----------------------------------------------------------------------c
+        ! Initialize curve dash off             c
+        !-----------------------------------------------------------------------c
+        ndshme(i) = 0
+        !-----------------------------------------------------------------------c
+        ! Initialize curve chain dot off             c
+        !-----------------------------------------------------------------------c
+        ncdtme(i) = 0
+        !-----------------------------------------------------------------------c
+        ! Initialize curve chain dash off             c
+        !-----------------------------------------------------------------------c
+        ncdhme(i) = 0
+        !-----------------------------------------------------------------------c
+        ! Initialize marker                 c
+        !-----------------------------------------------------------------------c
+        markme(i) = -2
+        !-----------------------------------------------------------------------c
+        ! Initialize curve to be drawn with solid line wit no symbols c
+        !-----------------------------------------------------------------------c
+        ncnct(i) = 0
+        !-----------------------------------------------------------------------c
+        ! Initialize color                 c
+        !-----------------------------------------------------------------------c
+        clearx(i) = 'FOREGROUND'
+        !-----------------------------------------------------------------------c
+        ! Initialize shade parameters             c
+        !-----------------------------------------------------------------------c
+        !    sangle(i) = 0.0
+        !    sgap(i) = 0.0
+        !    ngaps(i) = 0
+        !    mrc(i) = 0
+      enddo
+      !-----------------------------------------------------------------------c
+      ! Initialize Annotation parameters            c
+      !-----------------------------------------------------------------------c
+      do i = 1, mdim
+        note(i) = 0
+        lmes(i) = ' '
+        imes(i) = 0
+        anum(i) = 0.0
+        iplce(i) = 0
+        inum(i) = 0
+        xpos(i) = 0.0
+        ypos(i) = 0.0
+        ht(i) = 0.14_dp
+      enddo
+      !-----------------------------------------------------------------------c
+      ! Initialize Contour Dimension             c
+      !-----------------------------------------------------------------------c
+      ix = 1
+      iy = 1
+
+      return
+    end
+
+    subroutine altplt
+      return
+    end
+
+    subroutine closepl
       close(unit=35)
       return
-      end
-
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   1997/05/13 16:37:28 meyer
-!
-      subroutine pltdatx_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)pltdatx.for,v 4.30\000'
-      return
-      end
+    end

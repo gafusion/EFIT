@@ -1,4 +1,5 @@
       module var_cecoil
+      use set_kinds
       use eparmdud129,only:nsilop,nesum,magpri,nwnh,nfcoil,mbdry
       integer*4 iecurr
       real*8,dimension(nsilop,nesum) :: rsilec
@@ -8,8 +9,8 @@
       real*8,dimension(nesum) :: ecurrt,pecur
       real*8,dimension(mbdry,nesum) :: rbdrec, rsolec
       real*8,dimension(nesum,nesum) :: recec
-      data ecurrt(3)/-1.e10/,ecurrt(4)/-1.e10/, &
-           ecurrt(5)/-1.e10/,ecurrt(6)/-1.e10/, &
+      data ecurrt(3)/-1.e10_dp/,ecurrt(4)/-1.e10_dp/, &
+           ecurrt(5)/-1.e10_dp/,ecurrt(6)/-1.e10_dp/, &
            ecurrt(1)/0.0/,ecurrt(2)/0.0/
       end module var_cecoil
 

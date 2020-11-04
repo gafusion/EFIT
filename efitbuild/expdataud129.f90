@@ -24,6 +24,7 @@
       include 'eparmdud129.f90'
 !vas      include 'modules2.f90' !to avoid the clash with allocat..
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
 !
@@ -115,6 +116,7 @@
 !
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       integer type
       namelist/lim/xlim,ylim,limitr
@@ -122,17 +124,17 @@
 !
       if ((limitr.gt.0).and.(type.ne.0)) go to 50240
 !
-      if (abs(xltype*xltype_180).le.0.0001.and.ishot.gt.52072) then
+      if (abs(xltype*xltype_180).le.0.0001_dp.and.ishot.gt.52072) then
         call limpos(ishot,poslim,pos180,ier)
         if (ishot.ge.54992.and.ishot.le.55015) then
           pos180=2.
         endif
         if (ier.eq.1) then
-          if (abs(xltype).le.0.0001) xltype=poslim
-          if (abs(xltype_180).le.0.0001) xltype_180=pos180
+          if (abs(xltype).le.0.0001_dp) xltype=poslim
+          if (abs(xltype_180).le.0.0001_dp) xltype_180=pos180
         else
-          if (abs(xltype).le.0.0001) xltype=0.0
-          if (abs(xltype_180).le.0.0001) xltype_180=0.0
+          if (abs(xltype).le.0.0001_dp) xltype=0.0
+          if (abs(xltype_180).le.0.0001_dp) xltype_180=0.0
         endif
       endif
       if (type.eq.0) return
@@ -186,7 +188,7 @@
       else
       read (lfile,*,err=11132)    limitr
       read (lfile,*)    (xlim(i),ylim(i),i=1,limitr)
-      goto 11152
+      go to 11152
 11132 close (unit=lfile)
       open(unit=lfile,                       status='old', &
         file=filimt         )
@@ -197,21 +199,21 @@
 !--  Fixed poloidal limiter for shot > 88400                   --
 !----------------------------------------------------------------
       if (ishot.gt.88400) go to 50240
-      dell=0.01*xltype
+      dell=0.01_dp*xltype
       limup=0
       limbot=0
       do 132 i=1,limitr
         if (ishot.le.52360) then
-        if ((ylim(i).eq.0.3260).and.(xlim(i).gt.rcentr)) limup=i
-        if ((ylim(i).eq.-0.3260).and.(xlim(i).gt.rcentr)) limbot=i
+        if ((ylim(i).eq.0.3260_dp).and.(xlim(i).gt.rcentr)) limup=i
+        if ((ylim(i).eq.-0.3260_dp).and.(xlim(i).gt.rcentr)) limbot=i
         endif
         if (ishot.gt.52360.and.ishot.le.57590) then
-        if ((ylim(i).eq.0.2000).and.(xlim(i).gt.rcentr)) limup=i
-        if ((ylim(i).eq.-0.2000).and.(xlim(i).gt.rcentr)) limbot=i
+        if ((ylim(i).eq.0.2000_dp).and.(xlim(i).gt.rcentr)) limup=i
+        if ((ylim(i).eq.-0.2000_dp).and.(xlim(i).gt.rcentr)) limbot=i
         endif
         if (ishot.gt.57590) then
-        if ((ylim(i).eq.0.3655).and.(xlim(i).gt.rcentr)) limup=i
-        if ((ylim(i).eq.-0.3655).and.(xlim(i).gt.rcentr)) limbot=i
+        if ((ylim(i).eq.0.3655_dp).and.(xlim(i).gt.rcentr)) limup=i
+        if ((ylim(i).eq.-0.3655_dp).and.(xlim(i).gt.rcentr)) limbot=i
         endif
   132 continue
       limup0=limup
@@ -253,20 +255,20 @@
         xltype_180=0.0
         go to 50212
       endif
-      dell=0.01*xltype_180
+      dell=0.01_dp*xltype_180
       limup=0
       limbot=0
       do 50206 i=1,limitr_180
         if (ishot.le.57590) then
-        if ((ylim_180(i).eq.0.3655).and.(xlim_180(i).gt.rcentr)) &
+        if ((ylim_180(i).eq.0.3655_dp).and.(xlim_180(i).gt.rcentr)) &
              limup=i
-        if ((ylim_180(i).eq.-0.3655).and.(xlim_180(i).gt.rcentr)) &
+        if ((ylim_180(i).eq.-0.3655_dp).and.(xlim_180(i).gt.rcentr)) &
              limbot=i
         endif
         if (ishot.gt.57590) then
-        if ((ylim_180(i).eq.0.2000).and.(xlim_180(i).gt.rcentr)) &
+        if ((ylim_180(i).eq.0.2000_dp).and.(xlim_180(i).gt.rcentr)) &
              limup=i
-        if ((ylim_180(i).eq.-0.2000).and.(xlim_180(i).gt.rcentr)) &
+        if ((ylim_180(i).eq.-0.2000_dp).and.(xlim_180(i).gt.rcentr)) &
              limbot=i
         endif
 50206 continue
@@ -279,7 +281,7 @@
 50210 continue
 50212 continue
       if (limup0*limup*limbot*limbot0.gt.0) then
-      rgraphite=2.3756
+      rgraphite=2.3756_dp
       limup=min(limup,limup0)
       limbot=max(limbot,limbot0)
       do 50220 i=limup,limbot
@@ -317,12 +319,12 @@
       read (lfile,*)    mimitr
       read (lfile,*)    (xmim(i),ymim(i),i=1,mimitr)
       close(unit=lfile)
-      dell=0.01*xltype
+      dell=0.01_dp*xltype
       limup=0
       limbot=0
       do 82206 i=1,mimitr
-        if ((ymim(i).eq.0.3655).and.(xmim(i).gt.rcentr)) limup=i
-        if ((ymim(i).eq.-0.3655).and.(xmim(i).gt.rcentr)) limbot=i
+        if ((ymim(i).eq.0.3655_dp).and.(xmim(i).gt.rcentr)) limup=i
+        if ((ymim(i).eq.-0.3655_dp).and.(xmim(i).gt.rcentr)) limbot=i
 82206 continue
       if ((limup.le.0).or.(limbot.le.0)) go to 82211
       do 82208 i=limup,limbot
@@ -336,7 +338,7 @@
       read (lfile,*)    (xmim_180(i),ymim_180(i),i=1,mimitr_180)
       close(unit=lfile)
       if (limup*limbot.gt.0) then
-      rgraphite=2.3756
+      rgraphite=2.3756_dp
       do 82220 i=limup,limbot
         xmim(i)=min(xmim(i),xmim_180(i),rgraphite)
 82220 continue
@@ -419,20 +421,5 @@
         enddo
       endif
 !      
-      return
-      end
-
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   $Date: 2009/02/12 22:46:49 $ $Author: radhakri $
-!
-      subroutine expdatax_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)$RCSFILE$ $Revision: 1.1.2.3 $'
       return
       end

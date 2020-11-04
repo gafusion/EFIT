@@ -22,7 +22,6 @@
   msefitfun=3
   keecur=0
   relax=0.5
-  ifindopt=1
 
   FITDELZ=.T. fwtfc=18*1.0 fitsiref=.T. kersil=3 ifitdelz=3
 

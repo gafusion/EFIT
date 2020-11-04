@@ -4,7 +4,7 @@
 !   This routine returns the average of the compensated diamagnetic    *
 !   fluxes and error in the diamagnetic fluxes.                        * 
 !       IERR - an error array of dimension 3. Each element of the      *
-!	       array contains the PTDATA error for one of the three    *
+!        array contains the PTDATA error for one of the three    *
 !              diamagnetic flux signals. If ierr(j) is different from  *
 !              zero, that flux is not included in the average value    *
 !              returned.                                               *
@@ -18,9 +18,9 @@
 !   written by A.Kellman  7/23/86                                      *  
 !                                                                      *
 !       MODIFICATIONS:                                                 *
-!	  7/23/86 - DIAMAG01 is not included in the average because    *
-!	            BTDOT has not yet been removed so the data is no   *
-!	            good yet.                                          * 
+!   7/23/86 - DIAMAG01 is not included in the average because    *
+!             BTDOT has not yet been removed so the data is no   *
+!             good yet.                                          *
 !         8/30/88 - Modified DLCOMP so that if the DCOEF file is       *
 !                   not found in the DIAMAG_DIR area, then it looks    *
 !                   for it in [kellman.dia] area on the USC vax.       *
@@ -45,12 +45,12 @@
         call dlcomp(tim,diamag,diamagc,sig,nshot,npts,idlc,ierr, &
             tavg)
         ierr(1)=1
-	ierr(2)=1	!do not use diamag2
+        ierr(2)=1 !do not use diamag2
         do 50 j=1,3 
         iwght(j)=1
         if (ierr(j).ne.0) then
             iwght(j)=0
-            ndia=ndia-1	
+            ndia=ndia-1
         endif
   50    continue
 
@@ -77,7 +77,7 @@
 
 !********************************************************************
         SUBROUTINE DLCOMP(TIM,DIAMAG,DIAMAGC,SIG,NSHOT,NPTS,IDLC &
-      		,IERR,TAVG)
+        ,IERR,TAVG)
 !
 !   MODIFIED 9/5/87 - An incorrect RC/G was found for all three loops,
 !       A.Kellman     so the correction was put in for all shots before
@@ -116,7 +116,7 @@
 
         EQUIVALENCE (RAR(21),TTEMP(1))
         if (nshot.lt.85885) then
-    		filin = 'dcoef.dat'
+        filin = 'dcoef.dat'
             EBCOUP(3)=-2.0
         else if (nshot.lt.108282) then
                 filin = 'dcoef95.dat'
@@ -154,7 +154,7 @@
 !
         OPEN(UNIT=NIN,ACCESS='SEQUENTIAL', &
         STATUS='OLD',FILE=FILIN,ERR=10)
-        GOTO 15
+        go to 15
 
    10   FILIN='VUSC::SYS$USER:[LAHAYE.DIA]dcoef.sav'
         OPEN(UNIT=NIN,ACCESS='SEQUENTIAL', &
@@ -179,20 +179,20 @@
 !      FOR THE TIME 69.
 !   GET BCOIL CURRENT
 !   GET SLOW DIAMAGNETIC SIGNALS
-!	DO 100 J=1,3
-!	IPOINT=DNAMES(J)
-!	CALL PTDATA(ITYP,NSHOT,SOURCE,%REF(IPOINT),IDAT,IER,IAR,RAR,
-!     *		ASCII,INT16,INT32,REAL32)
-!	IF (IER.NE.0) THEN
-!		WRITE (6,1012)
-!		WRITE (6,1013) IPOINT,NSHOT,IER,RAR(7),RAR(3),IAR(1)
-!		TYPE *,' NO BT COMPENSATION DONE FOR ',DNAME(J)
-!	ENDIF
-!	DO 40 N=1,NPTS
-!	DIAMAG(N,J)=(RAR(6)-IDAT(N))*RAR(5)*RAR(4)
-!   40	CONTINUE
-!	BTCOEF(J)=DIAMAG(N69,J)/BCOIL(N69)
-!  100	CONTINUE
+!   DO 100 J=1,3
+!   IPOINT=DNAMES(J)
+!   CALL PTDATA(ITYP,NSHOT,SOURCE,%REF(IPOINT),IDAT,IER,IAR,RAR,
+!     *  ASCII,INT16,INT32,REAL32)
+!   IF (IER.NE.0) THEN
+!     WRITE (6,1012)
+!     WRITE (6,1013) IPOINT,NSHOT,IER,RAR(7),RAR(3),IAR(1)
+!     TYPE *,' NO BT COMPENSATION DONE FOR ',DNAME(J)
+!   ENDIF
+!   DO 40 N=1,NPTS
+!     DIAMAG(N,J)=(RAR(6)-IDAT(N))*RAR(5)*RAR(4)
+!40 CONTINUE
+!   BTCOEF(J)=DIAMAG(N69,J)/BCOIL(N69)
+! 100 CONTINUE
 
 !
 !   adjust for an error in the rc/g for all three loops. The correct value was
@@ -277,7 +277,7 @@
             write (6,1012)
             write (6,1013) POINT(I),NSHOT,IER,RAR(1),TTEMP(1)
             idlc=idlc+1
-            goto 200
+            go to 200
         endif       
 
    
@@ -286,7 +286,7 @@
             TAU=0.125
             SUM=0.0
             DO N=1,NPTS2-1
-                IF (TTEMP(N).GT.TIM(NPTS)) GOTO 150
+                IF (TTEMP(N).GT.TIM(NPTS)) go to 150
                 YTEMP(N)=(RAR(6)-IDAT(N))*RAR(5)*RAR(4)
                 SUM=SUM+EXP(TTEMP(N)/TAU)*YTEMP(N)*(TTEMP(N+1)-TTEMP(N))
                 YTEMP(N)=YTEMP(N)-EXP(-1.*TTEMP(N)/TAU)/TAU*SUM
@@ -326,7 +326,7 @@
   155       CONTINUE
   160   CONTINUE
 
-  200	CONTINUE
+  200 CONTINUE
 
 
 
@@ -396,41 +396,26 @@
         INTEGER NIN,NOUT
 
         DO 5 I=1,NOUT
-        IF (XOUT(I).GE.XIN(1)) GOTO 20
+        IF (XOUT(I).GE.XIN(1)) go to 20
         YOUT(I)=YIN(1)
     5   CONTINUE
-        GOTO 500
+        go to 500
 
    20   JLAST=1
    25   DO 100 J=JLAST,NIN-1
-        IF ((XOUT(I).GE.XIN(J)).AND.(XOUT(I).LT.XIN(J+1))) GOTO 200
+        IF ((XOUT(I).GE.XIN(J)).AND.(XOUT(I).LT.XIN(J+1))) go to 200
   100   CONTINUE
 
-        GOTO 300
+        go to 300
   200   YOUT(I)=YIN(J)+(YIN(J)-YIN(J+1))*(XOUT(I)-XIN(J))/(XIN(J)- &
         XIN(J+1))
         I=I+1
-        IF (I.GT.NOUT) GOTO 500
+        IF (I.GT.NOUT) go to 500
         JLAST=J
-        GOTO 25
+        go to 25
   300   CONTINUE
         DO 400 K=I,NOUT
         YOUT(K)=YIN(NIN)
   400   CONTINUE
   500   RETURN
         END
-
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   1998/02/04 15:26:30 meyer
-!
-      subroutine getdiax_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)getdiax.for,v 4.17\000'
-      return
-      end

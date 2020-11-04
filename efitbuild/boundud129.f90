@@ -1,7 +1,7 @@
       subroutine bound(psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
            zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
            ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
-           ishot,itime,limfag,radold,kbound)
+           ishot,itime,limfag,radold,kbound,tolbndpsi)
 !**********************************************************************
 !**                                                                  **
 !**     main program:  mhd fitting code                              **
@@ -48,6 +48,7 @@
 !**       rymax...........r at ymax                                  **
 !**       zxmin...........z at xmin                                  **
 !**       zxmax...........z at xmax                                  **
+!**       tolbndpsi (in)..tolerance on psi                           **
 !**                                                                  **
 !**     references:                                                  **
 !**          (1)                                                     **
@@ -63,38 +64,50 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension psi(1),zero(1),x(1),y(1),xcontr(1),ycontr(1)
-      dimension dist(5),xlim(1),ylim(1)
-      data etolc,etol,nloop/1.e-06,1.e-04,60/
-      data nttyo/6/,psitol/1.0E-04/,mecopy/0/,n111/1/
+      dimension psi(*),zero(*),x(*),y(*),xcontr(*),ycontr(*)
+      dimension dist(5),xlim(*),ylim(*)
+      data etolc,etol,nloop/1.e-06_dp,1.e-04_dp,60/
+      data nttyo/6/,psitol/1.0e-04_dp/,mecopy/0/,n111/1/
       save dx,dy,area,rmid,mecopy
-!
+
       save n111
+
+      !! Debug tool: Write out the surface being contoured to
+      !! verify it looks reasonable, sometimes it's not.
+      !open(unit=93,file='junk-psi.txt',status='unknown')
+      !do i = 1,nw
+      !  do j = 1,nh
+      !    k = (i-1)*nh+j
+      !    write(93,*) x(i),y(j),psi(k)
+      !  end do
+      !end do
+      !close(unit=93)
+
 !----------------------------------------------------------------------
 !--           nerr=10000, negative plasma current                    --
 !----------------------------------------------------------------------
       nosign=0
-      if (nerr.eq.10000) then
+      if (nerr .eq. 10000) then
         nosign=1
-        do 30010 i=1,nwh
+        do i=1,nwh
           psi(i)=-psi(i)
-30010   continue
+        end do
       endif
 !------------------------------------------------------------------------
 !--          BBrown's version of BOUND                                 --
 !------------------------------------------------------------------------
       if (ix.gt.0 .and. kbound.ne.0) then
-      call old_new    (psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
-           zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
-           ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
-           ishot,itime,limfag,radold,kbound)
-      go to 2000
+        !call old_new    (psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
+        !     zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
+        !     ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
+        !     ishot,itime,limfag,radold,kbound)
+        go to 2000
       endif
-!
+
       nerr=0
-      loop=0
-      psib0=-1.e10
+      psib0=-1.e+10_dp
       rad=radold
       rin=xctr
       rout=xlmin
@@ -102,240 +115,273 @@
 !--  field line tracing ix < 0                                      --
 !---------------------------------------------------------------------
       if (ix.lt.0) rad=xctr
-      if (mecopy.gt.0) go to 20
-      dx=x(2)-x(1)
-      dy=y(2)-y(1)
-      area=dx*dy
-      rmid=1.02*(x(1)+x(nw))/2.
-      mecopy=1
-!----------------------------------------------------------------------
-!--   find starting value of psi                                     --
-!----------------------------------------------------------------------
-   20 loop=loop+1
-      i=1+(rad-x(1))/dx
-      if(rad-x(i).lt.0.0)i=i-1
-      j=1+(yctr-y(1))/(dy-0.000001)
-      jjj=j
-!
-      if ((ix.eq.-2).or.(ix.lt.-2.and.rad.gt.rmid)) then
-        j=j-1
-        jjj=j+1
-      endif
-!
-      if ((ix.gt.0).and.(rad.gt.rmid)) then
-        j=j-1
-        jjj=j+1
-      endif
-      kstrt=(i-1)*nh+j
-      kk=kstrt
-      kold=kk
-!
-      if (ix.lt.0.and.ix.ge.-2) go to 21
-!
-      dpsi=1.e10
-      xmin=1.e10
-      xmax=-1.e10
-      ymin=1.e10
-      ymax=-1.e10
-   21 xt=rad
-      yt=y(jjj)
-      ncontr=1
-      xcontr(ncontr)=xt
-      ycontr(ncontr)=yt
-      a3=(xt-x(i))*dy
-      a4=area-a3
-      psivl=(psi(kk+nh+1)*a3+psi(kk+1)*a4)/area
-      if (yt.eq.y(j)) psivl=psi(kk)+(psi(kk+nh)-psi(kk)) &
-          *(xt-x(i))/dx
-   30 continue
-      f1=psi(kk)
-      f2=psi(kk+nh)
-      f3=psi(kk+nh+1)
-      f4=psi(kk+1)
-      x1=x(i)
-      x2=x(i+1)
-      y1=y(j)
-      y2=y(j+1)
-      if(ncontr.eq.1) go to 100
-!----------------------------------------------------------------------
-!--   check for proximity to corner                                  --
-!----------------------------------------------------------------------
-      dist(1)=(xt-x1)**2+(yt-y1)**2
-      dist(2)=(xt-x2)**2+(yt-y1)**2
-      dist(3)=(xt-x2)**2+(yt-y2)**2
-      dist(4)=(xt-x1)**2+(yt-y2)**2
-      dist(5)=min(dist(1),dist(2),dist(3),dist(4))
-      if (dist(5).gt.etolc) go to 100
-      do 40 l=1,4
-      kj=l
-      if (dist(l).eq.dist(5)) go to 50
-   40 continue
-!----------------------------------------------------------------------
-!--   kj points to appropriate corner                                --
-!----------------------------------------------------------------------
-   50 call chkcrn(psi,nwh,psivl,kold,knew,kj,kk,nh,i,i1)
-      kk=knew
-      i=i1
-      j=kk-(i-1)*nh
-   90 f1=psi(kk)
-      f2=psi(kk+nh)
-      f3=psi(kk+nh+1)
-      f4=psi(kk+1)
-      x1=x(i)
-      x2=x(i+1)
-      y1=y(j)
-      y2=y(j+1)
-!----------------------------------------------------------------------
-!--   check for limiter in cell                                      --
-!----------------------------------------------------------------------
-  100 zsum=zero(kk)+zero(kk+1)+zero(kk+nh)+zero(kk+nh+1)
-      if(zsum.eq.0.0) go to 1005
-      if (abs(zsum-4.0).lt.1.e-03) go to 540
-!----------------------------------------------------------------------
-!--   from one to three corners of cell are inside limiter.  get max --
-!--   psi on line segment of limiter in cell and compare this max    --
-!--   with current value of psilim (or psisep)                       --
-!--   note: do loop index assumes point 'limitr+1' is the same as    --
-!--   point 'limitr'                                                 --
-!----------------------------------------------------------------------
-      psilx=-1.e10
-      do 520 k=1,limitr-1
-      xc1=xlim(k)
-      yc1=ylim(k)
-      xc2=xlim(k+1)
-      yc2=ylim(k+1)
-      ik1=1+(xlim(k)-x(1))/dx
-      jk1=1+(ylim(k)-y(1))/dy
-      ik2=1+(xlim(k+1)-x(1))/dx
-      jk2=1+(ylim(k+1)-y(1))/dy
-      kij1=(ik1-1)*nh+jk1
-      kij2=(ik2-1)*nh+jk2
-      if ((kij1.eq.kk).and.(kij2.eq.kk)) go to 510
-!----------------------------------------------------------------------
-!--  at least one limiter point is not in cell.  subroutine cellb    --
-!--  returns intersections of cell boundaries and line defined by    --
-!--  points k and k+1 or one cell boundary and one interior point.   --
-!--  ifail=1 if points k and k+1 do not intersect the current cell   --
-!--  of interest.                                                    --
-!----------------------------------------------------------------------
-      ifail=0
-      call cellb(xc1,yc1,xc2,yc2,x1,y1,x2,y2,ifail)
-      if (ifail.eq.1) go to 520
-  510 call maxpsi(xc1,yc1,xc2,yc2,x1,y1,x2,y2,f1,f2,f3,f4,area,psilm, &
-                  xtry1,ytry1)
-      psilx=max(psilm,psilx)
-      if (psilx.gt.psilm) go to 520
-      xtry=xtry1
-      ytry=ytry1
-  520 continue
-      if (psilx.eq.-1.e10) go to 1090
-      dpsi=min(dpsi,abs(psivl-psilx))
-      if (psilx-psivl<1e-12) then
-        go to 540
-      else
-        go to 530
+      if (mecopy.le.0) then
+        dx=x(2)-x(1)
+        dy=y(2)-y(1)
+        area=dx*dy
+        rmid=1.02_dp*(x(1)+x(nw))/2.0
+        mecopy=1
       end if
-  530 continue
-      call zlim(zerol,n111,n111,limitr,xlim,ylim,xt,yt,limfag)
-      if (zerol.le.0.01) go to 1005
-  540 continue
-      call extrap(f1,f2,f3,f4,x1,y1,x2,y2,xt,yt,xt1,yt1,xt2,yt2, &
-                     psivl,area,dx,dy)
-!----------------------------------------------------------------------
-!--   decide which intersection (xt1,yt1) or (xt2,yt2) is required   --
-!----------------------------------------------------------------------
-      dist1=(yt1-yt)**2+(xt1-xt)**2
-      dist2=(yt2-yt)**2+(xt2-xt)**2
-      if (dist1.lt.dist2) go to 560
-      yt=yt1
-      xt=xt1
-      go to 570
-  560 yt=yt2
-      xt=xt2
-  570 ncontr=ncontr+1
-      if (ncontr.gt.npoint) go to 1090
-      xcontr(ncontr)=xt
-      ycontr(ncontr)=yt
-!----------------------------------------------------------------------
-!--   find next cell                                                 --
-!----------------------------------------------------------------------
-  600 if (xt.eq.x2) i=i+1
-      if(xt.eq.x1)i=i-1
-      if(yt.eq.y2)j=j+1
-      if(yt.eq.y1)j=j-1
-!3/12/84
-      if (ix.lt.0.and.ix.ge.-2) go to 601
-!3/12/84
-      if(yt.lt.ymin)rymin=xt
-      if(yt.gt.ymax)rymax=xt
-      if(xt.lt.xmin)zxmin=yt
-      if(xt.gt.xmax)zxmax=yt
-      xmin=min(xmin,xt)
-      xmax=max(xmax,xt)
-      ymin=min(yt,ymin)
-      ymax=max(yt,ymax)
-  601 kold=kk
-!----------------------------------------------------------------------
-!     find new cell index
-!----------------------------------------------------------------------
-      kk=(i-1)*nh+j
-      if (kk.eq.kstrt) go to 1040
-      dis2p=sqrt((xcontr(1)-xt)**2+(ycontr(1)-yt)**2)
-      if((dis2p.lt.0.1*dx).and.(ncontr.gt.5))go to 1040
-      go to 30
-!----------------------------------------------------------------------
-!--  psi on boundary smaller than psi on limiter, decrease rad and   --
-!--  try again.                                                      --
-!----------------------------------------------------------------------
- 1005 psib0=psivl
-!
-      if(ix.lt.0)go to 2000
-!
-      if(loop.gt.nloop)go to 1080
-      rout=rad
-      rad=(rin+rout)*0.5
-      go to 20
-!----------------------------------------------------------------------
-!--   check for convergence of boundary                              --
-!----------------------------------------------------------------------
- 1040 err=abs((psivl-psib0)/psivl)
-!
-        if(ix.ge.0)go to 1045
-        if (ix.lt.-2) then
-          dpsi=1.e-06
-          go to 2000
+
+      !----------------------------------------------------------------------
+      !--   find starting value of psi                                     --
+      !----------------------------------------------------------------------
+      do loop = 1,nloop
+        i=1+(rad-x(1))/dx
+        if(rad-x(i).lt.0.0)i=i-1
+        j=1+(yctr-y(1))/(dy-0.000001_dp)
+        jjj=j
+
+        if ((ix.eq.-2).or.(ix.lt.-2.and.rad.gt.rmid)) then
+          j=j-1
+          jjj=j+1
         endif
-        go to 2000
-!
- 1045 if (err.le.etol) go to 1080
-      if (loop.gt.nloop) go to 1080
-!----------------------------------------------------------------------
-!--   new rad,psi and try again                                      --
-!----------------------------------------------------------------------
-      psib0=psivl
-      call zlim(zerol,n111,n111,limitr,xlim,ylim,rad,yctr,limfag)
-      if (zerol.le.0.01) then
+
+        if ((ix.gt.0).and.(rad.gt.rmid)) then
+          j=j-1
+          jjj=j+1
+        endif
+        kstrt=(i-1)*nh+j
+        kk=kstrt
+        kold=kk
+
+        if (ix.ge.0.or.ix.lt.-2) then
+          dpsi=1.e10_dp
+          xmin=1.e10_dp
+          xmax=-1.e10_dp
+          ymin=1.e10_dp
+          ymax=-1.e10_dp
+        end if
+
+        xt=rad
+        yt=y(jjj)
+        ncontr=1
+        xcontr(ncontr)=xt
+        ycontr(ncontr)=yt
+        a3=(xt-x(i))*dy
+        a4=area-a3
+        psivl=(psi(kk+nh+1)*a3+psi(kk+1)*a4)/area
+        if (yt.eq.y(j)) psivl=psi(kk)+(psi(kk+nh)-psi(kk))*(xt-x(i))/dx
+
+        do while (.true.) ! contr
+          f1=psi(kk)
+          f2=psi(kk+nh)
+          f3=psi(kk+nh+1)
+          f4=psi(kk+1)
+          x1=x(i)
+          x2=x(i+1)
+          y1=y(j)
+          y2=y(j+1)
+          if(ncontr.eq.1) go to 100
+          !----------------------------------------------------------------------
+          !--   check for proximity to corner                                  --
+          !----------------------------------------------------------------------
+          dist(1)=(xt-x1)**2+(yt-y1)**2
+          dist(2)=(xt-x2)**2+(yt-y1)**2
+          dist(3)=(xt-x2)**2+(yt-y2)**2
+          dist(4)=(xt-x1)**2+(yt-y2)**2
+          dist(5)=min(dist(1),dist(2),dist(3),dist(4))
+          if (dist(5).gt.etolc) go to 100
+          do l=1,4
+            kj=l
+            if (dist(l).eq.dist(5)) exit
+          end do
+          !----------------------------------------------------------------------
+          !--   kj points to appropriate corner                                --
+          !----------------------------------------------------------------------
+          call chkcrn(psi,nwh,psivl,kold,knew,kj,kk,nh,i,i1)
+          kk=knew
+          i=i1
+          j=kk-(i-1)*nh
+          f1=psi(kk)
+          f2=psi(kk+nh)
+          f3=psi(kk+nh+1)
+          f4=psi(kk+1)
+          x1=x(i)
+          x2=x(i+1)
+          y1=y(j)
+          y2=y(j+1)
+          !----------------------------------------------------------------------
+          !--   check for limiter in cell                                      --
+          !----------------------------------------------------------------------
+100       zsum=zero(kk)+zero(kk+1)+zero(kk+nh)+zero(kk+nh+1)
+          if(zsum.eq.0.0) exit ! contr
+
+          if (abs(zsum-4.0).ge.1.e-03_dp) then
+            !----------------------------------------------------------------------
+            !--   from one to three corners of cell are inside limiter.  get max --
+            !--   psi on line segment of limiter in cell and compare this max    --
+            !--   with current value of psilim (or psisep)                       --
+            !--   note: do loop index assumes point 'limitr+1' is the same as    --
+            !--   point 'limitr'                                                 --
+            !----------------------------------------------------------------------
+            psilx=-1.e10_dp
+            do k=1,limitr-1
+              xc1=xlim(k)
+              yc1=ylim(k)
+              xc2=xlim(k+1)
+              yc2=ylim(k+1)
+              ik1=1+(xlim(k)-x(1))/dx
+              jk1=1+(ylim(k)-y(1))/dy
+              ik2=1+(xlim(k+1)-x(1))/dx
+              jk2=1+(ylim(k+1)-y(1))/dy
+              kij1=(ik1-1)*nh+jk1
+              kij2=(ik2-1)*nh+jk2
+              !----------------------------------------------------------------------
+              !--  at least one limiter point is not in cell.  subroutine cellb    --
+              !--  returns intersections of cell boundaries and line defined by    --
+              !--  points k and k+1 or one cell boundary and one interior point.   --
+              !--  ifail=1 if points k and k+1 do not intersect the current cell   --
+              !--  of interest.                                                    --
+              !----------------------------------------------------------------------
+              if ((kij1.ne.kk).or.(kij2.ne.kk)) then
+                ifail=0
+                call cellb(xc1,yc1,xc2,yc2,x1,y1,x2,y2,ifail)
+                if (ifail.eq.1) cycle ! line segment does not intersect cell
+              end if
+              ! psilm is largest psi value along line segment betw pts
+              call maxpsi(xc1,yc1,xc2,yc2,x1,y1,x2,y2,f1,f2,f3,f4,area,psilm,xtry1,ytry1)
+              psilx=max(psilm,psilx)
+              if (psilx.le.psilm) then
+                xtry=xtry1
+                ytry=ytry1
+              end if
+            end do ! limitr
+
+            if (psilx.eq.-1.e10_dp) then
+              nerr=3
+              open(unit=40,file='errfil.out',status='unknown',access='append')
+              write(*,'(a)') 'ERROR in bound: Limiter points do not intersect cell.'
+              write(40,'(a)') 'ERROR in bound: Limiter points do not intersect cell.'
+              close(unit=40)
+              go to 2000
+            end if
+
+            dpsi=min(dpsi,abs(psivl-psilx))
+            if (psilx-psivl.ge.tolbndpsi) then
+              call zlim(zerol,n111,n111,limitr,xlim,ylim,xt,yt,limfag)
+              if (zerol.le.0.01_dp) then
+                exit ! contr
+              end if
+            end if
+          end if
+
+          call extrap(f1,f2,f3,f4,x1,y1,x2,y2,xt,yt,xt1,yt1,xt2,yt2, &
+            psivl,area,dx,dy)
+          !----------------------------------------------------------------------
+          !--   decide which intersection (xt1,yt1) or (xt2,yt2) is required   --
+          !----------------------------------------------------------------------
+          dist1=(yt1-yt)**2+(xt1-xt)**2
+          dist2=(yt2-yt)**2+(xt2-xt)**2
+          if (dist1.lt.dist2) then
+            yt=yt2
+            xt=xt2
+          else
+            yt=yt1
+            xt=xt1
+          end if
+          ncontr=ncontr+1
+          if (ncontr.gt.npoint) then
+            nerr=3
+            open(unit=40,file='errfil.out',status='unknown',access='append')
+            write(*,'(a)') 'ERROR in bound: Number of contour points greater than max allowed.'
+            write(40,'(a)') 'ERROR in bound: Number of contour points greater than max allowed.'
+            close(unit=40)
+            go to 2000
+          end if
+          xcontr(ncontr)=xt
+          ycontr(ncontr)=yt
+
+          ! Debug tool: Write out the contour coordinates for each loop (iteration)
+          !write(*,*) loop,ncontr,xcontr(ncontr),ycontr(ncontr)
+
+          !----------------------------------------------------------------------
+          !--   find next cell                                                 --
+          !----------------------------------------------------------------------
+          if (xt.eq.x2) i=i+1
+          if (xt.eq.x1) i=i-1
+          if (yt.eq.y2) j=j+1
+          if (yt.eq.y1) j=j-1
+
+          if (ix.ge.0.or.ix.lt.-2) then
+            if(yt.lt.ymin)rymin=xt
+            if(yt.gt.ymax)rymax=xt
+            if(xt.lt.xmin)zxmin=yt
+            if(xt.gt.xmax)zxmax=yt
+            xmin=min(xmin,xt)
+            xmax=max(xmax,xt)
+            ymin=min(yt,ymin)
+            ymax=max(yt,ymax)
+          end if
+
+          kold=kk
+          !----------------------------------------------------------------------
+          !     find new cell index
+          !----------------------------------------------------------------------
+          kk=(i-1)*nh+j
+          if (kk.eq.kstrt) go to 1040
+          dis2p=sqrt((xcontr(1)-xt)**2+(ycontr(1)-yt)**2)
+          if((dis2p.lt.0.1_dp*dx).and.(ncontr.gt.5))go to 1040
+        end do ! contr
+
+        !----------------------------------------------------------------------
+        !--  psi on boundary smaller than psi on limiter, decrease rad and   --
+        !--  try again.                                                      --
+        !----------------------------------------------------------------------
+        psib0=psivl
+        !
+        if(ix.lt.0) go to 2000 ! ix, -1=trace clockwise, -2=counter clockwise
+        !
+        if(loop.ge.nloop) exit ! loop
         rout=rad
-      else
-        rin=rad
-      endif
-      rad=(rin+rout)*0.5
-      go to 20
- 1080 radold=rad
+        rad=(rin+rout)*0.5_dp
+        cycle ! loop
+
+        !----------------------------------------------------------------------
+        !--   check for convergence of boundary                              --
+        !----------------------------------------------------------------------
+1040    err=abs((psivl-psib0)/psivl)
+        if(ix.lt.0) then
+          if (ix.lt.-2) dpsi=1.e-06_dp
+          go to 2000
+        end if
+
+        if (err.le.etol) exit ! loop
+        if (loop.ge.nloop) exit ! loop
+        !----------------------------------------------------------------------
+        !--   new rad,psi and try again                                      --
+        !----------------------------------------------------------------------
+        psib0=psivl
+        call zlim(zerol,n111,n111,limitr,xlim,ylim,rad,yctr,limfag)
+        if (zerol.le.0.01_dp) then
+          rout=rad
+        else
+          rin=rad
+        endif
+        rad=(rin+rout)*0.5_dp
+      end do ! loop
+
+      radold=rad
       psib0=psivl
-      if(abs(ycontr(1)-ycontr(ncontr)).gt.0.5*dy)go to 1090
-      if(abs(xcontr(1)-xcontr(ncontr)).gt.0.5*dx)go to 1090
-      go to 2000
- 1090 nerr=3
+      if ((abs(ycontr(1)-ycontr(ncontr)).gt.0.5_dp*dy) .or. &
+          (abs(xcontr(1)-xcontr(ncontr)).gt.0.5_dp*dx)) then
+         nerr=3
+         open(unit=40,file='errfil.out',status='unknown',access='append')
+         write(*,'(a)') 'ERROR in bound: First and last contour points are too far apart.'
+         write(40,'(a)') 'ERROR in bound: First and last contour points are too far apart.'
+         close(unit=40)
+      end if
+
  2000 continue
       if (nosign.eq.1) then
-        do 30020 i=1,nwh
+        do i=1,nwh
           psi(i)=-psi(i)
-30020   continue
+        end do
         psivl=-psivl
       endif
       return
       end
+
       subroutine cellb(xc1,yc1,xc2,yc2,x1,y1,x2,y2,ifail)
 !**********************************************************************
 !**                                                                  **
@@ -539,7 +585,17 @@
       if(iflag.eq.1)go to 10
       i1=i
       return
-   10 go to (100,200,300,400),icrnr
+   10 continue
+      select case (icrnr)
+      case (1)
+        go to 100
+      case (2)
+        go to 200
+      case (3)
+        go to 300
+      case (4)
+        go to 400
+      end select
 !----------------------------------------------------------------------
 !--   corner #1                                                      --
 !--   cell #2                                                        --
@@ -645,6 +701,7 @@
       i1=i-1
       return
       end
+
       subroutine cntour(xaxd,yaxd,psivl,xemin,xemax,yemin,yemax, &
       yxmin,yxmax,xymin,xymax,dang,arcl,bperr,dx,dy,xmin,xmax,ymin,ymax, &
       iauto,iautoc,xc,yc,ipts,x,nw,y,nh,cspln,n2cspln,nh2,itty,iptsm, &
@@ -692,24 +749,31 @@
 !---the user is informed that psivl was changed by returning iautoc=1.       --
 !---if no change occured iautoc=0.                                           --
 !------------------------------------------------------------------------------
+      use global_constants
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension pds(6),xc(1),yc(1)
-      dimension cspln(1)
-      data pi,piov2,piov4,fpiov4,spiov4 &
-      /3.141592654,1.570796327,0.7853981634,3.926990818,5.497787145/
-      data twopi,tpiov4,tpiov2 &
-      /6.283185307,2.356194491,4.712388904/
+      dimension pds(6),xc(*),yc(*)
+      dimension cspln(kubicx,lubicx,kubicy,lubicy)
+      real*8 piov2,piov4,fpiov4,spiov4,tpiov4,tpiov2
       data n111/1/,n333/3/
       save n111,n333
       integer, intent(inout) :: kerror
+
+      piov2 = pi/2.0
+      piov4 = pi/4.0
+      fpiov4 = 1.25_dp*pi
+      spiov4 = 1.75_dp*pi
+      tpiov4 = 0.75_dp*pi
+      tpiov2 = 1.5_dp*pi
+
       kerror = 0
       ier = 0
       if (negcur.gt.0) psivl=-psivl
       iautoc=0
- 1040 xemin=1.e10
-      xemax=-1.e10
-      yemin=1.e10
-      yemax=-1.e10
+ 1040 xemin=1.e10_dp
+      xemax=-1.e10_dp
+      yemin=1.e10_dp
+      yemax=-1.e10_dp
       xymin=0.0
       xymax=0.0
       yxmin=0.0
@@ -718,8 +782,8 @@
       thet=0.0
       dthet0=twopi*dang/360.
       dthet=0.0
-      serrt=3.5e-06
-      derrt=0.5e-07
+      serrt=3.5e-06_dp
+      derrt=0.5e-07_dp
 !-----------------------------------------------------------------------------
 !---serrt is absolute error convergence criteria for newtons method below.  --
 !---get psi at (xaxd,yaxd)                                                  --
@@ -816,10 +880,10 @@
 !--------------------------------------------------------------------------
    70 newti=0
       if(iflg.eq.1)go to 75
-      xn=x1+isgn*dx*0.5
+      xn=x1+isgn*dx*0.5_dp
       yn=a*xn+bincp
       go to 80
-   75 yn=y1+isgn*dy*0.5
+   75 yn=y1+isgn*dy*0.5_dp
       xn=a*yn+bincp
    80 call seva2d(bkx,lkx,bky,lky,cspln,xn,yn,pds,ier,n333)
       if (ier.ne.0) then
@@ -859,7 +923,7 @@
       if(ihalf.gt.4)go to 100
 !---spacing too large for grad psi. decrease theta and try again
       thet=thet-dthet
-      dthet=dthet*0.5
+      dthet=dthet*0.5_dp
       go to 10
   100 bp1=bp2
       ipts=ipts+1
@@ -900,7 +964,7 @@
       return
  1030 psivl0=psivl
       dapsi=psiaxd-psivl0
-      psivl=psivl0+dapsi*0.0005
+      psivl=psivl0+dapsi*0.0005_dp
       iautoc=1
       write (itty,1020) psivl0,psivl
  1020 format(2x,'boundary search, will change psilim from', &
@@ -1140,7 +1204,7 @@
       subroutine findax(nx,nz,x,y,xax,yax,psimx,psiout,xseps,yseps, &
                         kaxis,xxout,yyout,kfound,psipsi,rmin,rmax, &
                         zmin,zmax,zrmin,zrmax,rzmin,rzmax,dpsipsi, &
-                        bpoo,bpooz,limtrv,xlimv,ylimv,limfagv,ifit,infit,jtime)
+                        bpoo,bpooz,limtrv,xlimv,ylimv,limfagv,ifit,infit,jtime,kerror)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -1168,93 +1232,95 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky
+      use set_kinds
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       common/cwork3/lkx,lky
-      dimension x(nx),y(nz),pds(6),xxout(1),yyout(1),psipsi(1)
-      dimension xseps(1),yseps(1),bpoo(1),bpooz(1),pdss(6) &
-          ,xlimv(1),ylimv(1)
+      dimension x(nx),y(nz),pds(6),xxout(*),yyout(*),psipsi(*)
+      dimension xseps(1),yseps(1) ! this is an address of a location inside a 2-d array
+      dimension bpoo(*),bpooz(*),pdss(6),xlimv(*),ylimv(*)
       dimension pdsold(6)
-      data psitol/1.0e-04/
+      data psitol/1.0e-04_dp/
       character(len=80) :: strtmp
       logical :: dodebugplts = .false. ! write surface files for debugging/plotting. Serial only, not parallel
 !
       orelax = 1.0 ! Newton's Method relaxation constant (0.0-1.0)
-      niter = 20   ! Number of Newton's Method iterations
+      niter = 20   ! Number of iterations
       n111=1
       xseps(1)=-999.
       yseps(1)=-999.
       xseps(2)=-999.
       yseps(2)=-999.
 
-      if (iabs(kaxis).ge.20) go to 105
-
-!----------------------------------------------------------------------
-!--   fit 2-d spline to psi                                          --
-!----------------------------------------------------------------------
-!     psipsi - (in) psi function to spline, 1-d array (nx by nz)
-!     x,y - (in) 1-d array of coordinate values for function
-!     c - (out) 4-d array of spline coefficients
-!     bkx, bky - (out) interval coefficients w/ lkx,lky terms
-      call sets2d(psipsi,c,x,nx,bkx,lkx,y,nz,bky,lky,wk,ier)
-      if (idebug >= 2) then
+      if (iabs(kaxis).lt.20) then
+        !----------------------------------------------------------------------
+        !--   fit 2-d spline to psi                                          --
+        !----------------------------------------------------------------------
+        !     psipsi - (in) psi function to spline, 1-d array (nx by nz)
+        !     x,y - (in) 1-d array of coordinate values for function
+        !     c - (out) 4-d array of spline coefficients
+        !     bkx, bky - (out) interval coefficients w/ lkx,lky terms
+        call sets2d(psipsi,c,x,nx,bkx,lkx,y,nz,bky,lky,wk,ier)
+        if (idebug >= 2) then
           write (6,*) 'FINDAX Z,R = ', y(33),(x(i),i=45,45)
           write (6,*) 'FINDAX si = ',(psipsi((i-1)*nx+33),i=45,45)
           call seva2d(bkx,lkx,bky,lky,c,x(45),y(33),pds,ier &
-             ,n111)
+            ,n111)
           write (6,*) 'FINDAX R,Z,si = ', x(45),y(33),pds(1)
           write (6,*) 'FINDAX lkx,lky = ',lkx,lky
           write (6,*) 'FINDAX lkx,lky,c = ',bkx(33),bky(33),c(1,33,1,33)
-      endif
-      if (kaxis.eq.10) return
-  105 continue
-      do 110 n=1,kfound
+        endif
+        if (kaxis.eq.10) return
+      end if
+
+      do n=1,kfound
         ! xxout,yyout - (in) interp points outlining (psipsi=0) the raised mag flux region
         ! pds - (out) interpolation value
         ! pds(1)=f, pds(2)=fx, pds(3)=fy, pds(4)=fxy, pds(5)=fxx, pds(6)=fyy
         call seva2d(bkx,lkx,bky,lky,c,xxout(n),yyout(n),pds,ier,n333)
         bpooz(n)=pds(2)/xxout(n)
         bpoo(n)=sqrt(bpooz(n)**2+(pds(3)/xxout(n))**2)
-  110 continue
+      end do
+
       sumip=0.
-      do 130 i=2,kfound
+      do i=2,kfound
         delx=xxout(i)-xxout(i-1)
         dely=yyout(i)-yyout(i-1)
         dell=sqrt(delx**2+dely**2)
         abpol=(bpoo(i-1)+bpoo(i))/2.0
         sumip=sumip+abpol*dell
-  130 continue
+      end do
       sumip=sumip/tmu/twopi
       if (kaxis.le.0) go to 1000
 !----------------------------------------------------------------------
 !--   find magnetic axis, its elongation, and flux value             --
 !----------------------------------------------------------------------
       if (negcur.eq.0) then
-        psimx=-1.0e+10
+        psimx=-1.0e+10_dp
       else
-        psimx=1.e10
+        psimx=1.0e+10_dp
       endif
       ! Find psi max/min w/in r,z limits depending on current sign
-      do 200 i=1,nx
-      do 200 j=1,nz
-        kk=(i-1)*nz+j
-        if (x(i).lt.rmin) go to 200
-        if (x(i).gt.rmax) go to 200
-        if (y(j).lt.zmin) go to 200
-        if (y(j).gt.zmax) go to 200
-        if (psipsi(kk).le.psimx.and.negcur.eq.0) go to 200
-        if (psipsi(kk).ge.psimx.and.negcur.eq.1) go to 200
-        psimx=psipsi(kk)
-        xax=x(i)
-        yax=y(j)
-  200 continue
+      do i=1,nx
+        do j=1,nz
+          kk=(i-1)*nz+j
+          if ((x(i).lt.rmin).or.(x(i).gt.rmax)) cycle
+          if ((y(j).lt.zmin).or.(y(j).gt.zmax)) cycle
+          if (psipsi(kk).le.psimx.and.negcur.eq.0) cycle
+          if (psipsi(kk).ge.psimx.and.negcur.eq.1) cycle
+          psimx=psipsi(kk)
+          xax=x(i)
+          yax=y(j)
+        end do
+      end do
 
       xs=xax
       ys=yax
       ps=psimx
 
-      if (dodebugplts) then
+      if (dodebugplts) then ! for debugging
         write(strtmp,'(a,i0.2,a,i0.2,a)') 'debug-surf',jtime,'-',ifit,'.txt'
         open(unit=99,file=trim(strtmp),status='replace')
         do iyplt = 1,nz
@@ -1264,7 +1330,6 @@
           end do
         end do
         close(unit=99)
-
         write(strtmp,'(a,i0.2,a,i0.2,a)') 'debug-conv',jtime,'-',ifit,'.txt'
         open(unit=99,file=trim(strtmp),status='replace')
       end if
@@ -1277,20 +1342,21 @@
         if (negcur.eq.0) signcur = 1.0
       end if
 
-      do 300 j=1,niter
+      errtmp = 0.0
+      do j=1,niter
         ! pds(1)=f, pds(2)=fx, pds(3)=fy, pds(4)=fxy, pds(5)=fxx, pds(6)=fyy
         call seva2d(bkx,lkx,bky,lky,c,xax,yax,pds,ier,n666)
-        if (dodebugplts) write(99,'(3(1x,1pe12.5))') xax,yax,pds(1)
+        if (dodebugplts) write(99,'(3(1x,1pe12.5))') xax,yax,pds(1) ! for debugging
 
-        ! Gradient Descent Method - better for sharp peaks
+        ! Gradient Ascent Method - better for sharp peaks
         if (ifindopt==2) then
           xerr=signcur*pds(2) ! find max or min depending on current direction
           yerr=signcur*pds(3)
           ! Adapt step size using Barzilai and Borwein approach
           dfx = pds(2) - pdsold(2)
           dfy = pds(3) - pdsold(3)
-          if (j==1 .or. dfx**2+dfy**2<1.0d-15) then
-            gamman = 0.001
+          if (j==1 .or. dfx**2+dfy**2<1.0e-15_dp) then
+            gamman = 0.001_dp
           else
             gamman = abs((xax-xaxold)*dfx + (yax-yaxold)*dfy)/(dfx**2+dfy**2)
           endif
@@ -1299,28 +1365,43 @@
           pdsold = pds
           xax = xax + gamman*xerr
           yax = yax + gamman*yerr
-          if (gamman**2*(xerr**2+yerr**2) .lt. 1.0e-12) go to 310
+          errtmp = gamman**2*(xerr**2+yerr**2)
+          if (errtmp.lt.1.0e-12_dp) go to 310
 
         ! Original Newton's Method for optimization, xn+1 = xn - f'/f''
         else ! ifindopt==1
           det=pds(5)*pds(6)-pds(4)*pds(4)
-          if (abs(det).lt.1.0e-15) go to 305
+          if (abs(det).lt.1.0e-15_dp) then
+            open(unit=40,file='errfil.out',status='unknown',access='append')
+            write(*,'(a)') 'ERROR in findax: Newtons method to find magnetic axis has det=0.'
+            write(40,'(a)') 'ERROR in findax: Newtons method to find magnetic axis has det=0.'
+            close(unit=40)
+            kerror = 1
+            return
+            !go to 305
+          end if
           xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
           yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
           xax=xax+orelax*xerr
           yax=yax+orelax*yerr
-          !if ((xax<x(1) .or. xax>x(nx)) .or. (yax<y(1) .or. yax>y(nz))) goto 305 ! TODO: test if this would help
-          if ((abs(pds(2)).lt.1.0e-06).and.(abs(pds(3)).lt.1.0e-06)) go to 310
-          if (xerr*xerr+yerr*yerr.lt.1.0e-12) go to 310
+          errtmp = xerr*xerr+yerr*yerr
+          !if ((xax<x(1) .or. xax>x(nx)) .or. (yax<y(1) .or. yax>y(nz))) go to 305 ! TODO: test if this would help
+          if ((abs(pds(2)).lt.1.0e-06_dp).and.(abs(pds(3)).lt.1.0e-06_dp)) go to 310
+          if (errtmp.lt.1.0e-12_dp) go to 310
         end if
-
-  300 continue
+      enddo
+      if (errtmp.gt.1.0e-6_dp) then
+        open(unit=40,file='errfil.out',status='unknown',access='append')
+        write(*,'(a)') 'WARNING in findax: Iterative method to find magnetic axis reached max iterations.'
+        write(40,'(a)') 'WARNING in findax: Iterative method to find magnetic axis reached max iterations.'
+        close(unit=40)
+      end if
   305 continue
       if (iand(iout,1).ne.0) write (nout,5000) xax,yax
       xax=xs
       yax=ys
       psimx=pds(1)
-      emaxis=1.3
+      emaxis=1.3_dp
       go to 1000
   310 continue
       psimx=pds(1)
@@ -1328,7 +1409,7 @@
 !--   compute elongation on axis                                     --
 !----------------------------------------------------------------------
       thet=2.0*pds(4)/(pds(5)-pds(6))
-      thet=0.5*atan(thet)
+      thet=0.5_dp*atan(thet)
       sint=sin(thet)
       cost=cos(thet)
       sint2=sint**2
@@ -1336,24 +1417,24 @@
       scost=sint*cost*2.0
       ar=pds(5)*cost2+pds(4)*scost+pds(6)*sint2
       az=pds(5)*sint2-pds(4)*scost+pds(6)*cost2
-      siar=-0.5*ar
-      siaz=-0.5*az
+      siar=-0.5_dp*ar
+      siaz=-0.5_dp*az
       emaxis=ar/az
       if (emaxis.gt.0.0) emaxis=sqrt(emaxis)
-      if (emaxis.le.0.0) emaxis=1.3
+      if (emaxis.le.0.0) emaxis=1.3_dp
  1000 continue
-      if (dodebugplts) then
+      if (dodebugplts) then ! for debugging
         close(unit=99)
       end if
-      delrmax1=0.40
-      delrmax2=0.40
-      sifsep=-1.e10
-      sissep=-1.e10
+      delrmax1=0.40_dp
+      delrmax2=0.40_dp
+      sifsep=-1.e10_dp
+      sissep=-1.e10_dp
       rfsep=-89.0
       zfsep=-89.0
       rssep=-89.0
       zssep=-89.0
-      if (abs(dpsipsi).le.0.5*psitol) return
+      if (abs(dpsipsi).le.0.5_dp*psitol) return
 !----------------------------------------------------------------------
 !--   find the separatrix                                            --
 !--   relaxd criteria for searching, 02/23/90                        --
@@ -1362,26 +1443,42 @@
       ns=1
       xs=xxout(1)
       ys=yyout(1)
-      do 1100 n=2,kfound
-        if (bpoo(n).ge.bpols) go to 1100
+      do n=2,kfound
+        if (bpoo(n).ge.bpols) cycle
         bpols=bpoo(n)
         xs=xxout(n)
         ys=yyout(n)
         ns=n
- 1100 continue
+      end do
 
-      do 1300 j=1,niter
+      errtmp = 0.0
+      do j=1,niter
         if (xs.le.x(2).or.xs.ge.x(nx-1)) go to 1305
         if (ys.le.y(2).or.ys.ge.y(nz-1)) go to 1305
         call seva2d(bkx,lkx,bky,lky,c,xs,ys,pds,ier,n666)
         det=pds(5)*pds(6)-pds(4)*pds(4)
-        if (abs(det).lt.1.0e-15) go to 1305
+        if (abs(det).lt.1.0e-15_dp) then
+          open(unit=40,file='errfil.out',status='unknown',access='append')
+          write(*,'(a)') 'ERROR in findax: Newtons method to find separatrix has det=0.'
+          write(40,'(a)') 'ERROR in findax: Newtons method to find separatrix has det=0.'
+          close(unit=40)
+          kerror = 1
+          return
+          !go to 1305
+        end if
         xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
         yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
         xs=xs+orelax*xerr
         ys=ys+orelax*yerr
-        if (xerr*xerr+yerr*yerr.lt.1.0e-12*100.) go to 1310
- 1300 continue
+        errtmp = xerr*xerr+yerr*yerr
+        if (errtmp.lt.1.0e-12_dp*100.0) go to 1310
+      end do
+      if (errtmp.gt.1.0e-6_dp*100.0) then
+        open(unit=40,file='errfil.out',status='unknown',access='append')
+        write(*,'(a)') 'WARNING in findax: Iterative method to find separatrix reached max iterations.'
+        write(40,'(a)') 'WARNING in findax: Iterative method to find separatrix reached max iterations.'
+        close(unit=40)
+      end if
  1305 continue
       if (iand(iout,1).ne.0) write (nout,5020) xs,ys
       return
@@ -1390,29 +1487,29 @@
 !--  found x point, check to see if inside vessel                     --
 !-----------------------------------------------------------------------
       call zlim(zeross,n111,n111,limtrv,xlimv,ylimv,xs,ys,limfagv)
-      if (zeross.le.0.1) return
+      if (zeross.le.0.1_dp) return
       xseps(1)=xs*100.
       yseps(1)=ys*100.
 !-----------------------------------------------------------------------
 !--  consider x point on surface if psi/dpsi/dR < 0.004 a             --
 !-----------------------------------------------------------------------
-      anow=(rmax-rmin)*0.5
-      znow=0.5*(zmin+zmax)
+      anow=(rmax-rmin)*0.5_dp
+      znow=0.5_dp*(zmin+zmax)
       relpsi=abs((pds(1)-psiout))
       call seva2d(bkx,lkx,bky,lky,c,rmax,znow,pdss,ier,n333)
       delrmax1=relpsi/abs(pdss(2))
       relpsi=relpsi/abs((psimx-psiout))
-      if (delrmax1.gt.0.004*anow) return
+      if (delrmax1.gt.0.004_dp*anow) return
       sifsep=pds(1)
       rfsep=xs
       zfsep=ys
       psiout=pds(1)
       xxout(ns)=xs
       yyout(ns)=ys
-      xxout(ns-1)=0.5*(xxout(ns)+xxout(ns-2))
-      yyout(ns-1)=0.5*(yyout(ns)+yyout(ns-2))
-      xxout(ns+1)=0.5*(xxout(ns)+xxout(ns+2))
-      yyout(ns+1)=0.5*(yyout(ns)+yyout(ns+2))
+      xxout(ns-1)=0.5_dp*(xxout(ns)+xxout(ns-2))
+      yyout(ns-1)=0.5_dp*(yyout(ns)+yyout(ns-2))
+      xxout(ns+1)=0.5_dp*(xxout(ns)+xxout(ns+2))
+      yyout(ns+1)=0.5_dp*(yyout(ns)+yyout(ns+2))
       rmin=xxout(1)
       rmax=xxout(1)
       zmin=yyout(1)
@@ -1422,7 +1519,7 @@
       zrmin=yyout(1)
       zrmax=yyout(1)
       bpave=0.
-      do 1350 i=2,kfound
+      do i=2,kfound
         if (xxout(i).lt.rmin) zrmin=yyout(i)
         if (xxout(i).gt.rmax) zrmax=yyout(i)
         if (yyout(i).lt.zmin) rzmin=xxout(i)
@@ -1432,12 +1529,12 @@
         rmax=max(rmax,xxout(i))
         zmin=min(zmin,yyout(i))
         zmax=max(zmax,yyout(i))
- 1350 continue
+      end do
 !----------------------------------------------------------------
 !-- find tracing points                                        --
 !----------------------------------------------------------------
-      jwant=(zrmax-y(1)+1.e-6)/(y(2)-y(1))+1
-      rminmax=0.5*(rmin+rmax)
+      jwant=(zrmax-y(1)+1.e-6_dp)/(y(2)-y(1))+1
+      rminmax=0.5_dp*(rmin+rmax)
       zmaxfs=y(jwant)
       zminfs=zmaxfs
       do i=1,kfound-1
@@ -1454,44 +1551,60 @@
 !
       znow=(zmax+zmin)/2.
       anow=(rmax-rmin)/2.
-      bpave=bpave/float(kfound-1)
+      bpave=bpave/real(kfound-1,dp)
 !-----------------------------------------------------------------------
 !-- find possible second separatrix                                   --
 !-----------------------------------------------------------------------
       dsimins=99.
       bpmins=10.
       ns=-1
-      do 30030 i=2,kfound
-       if ((ys-znow)*(yyout(i)-znow).lt.0.0.and.bpoo(i).lt.bpmins) then
-           bpmins=bpoo(i)
-           ns=i
-       endif
-30030 continue
+      do i=2,kfound
+        if ((ys-znow)*(yyout(i)-znow).lt.0.0.and.bpoo(i).lt.bpmins) then
+          bpmins=bpoo(i)
+          ns=i
+        endif
+      end do
       if (ns.eq.-1) return
       xs=xxout(ns)
       ys=yyout(ns)
 !
-      do 9300 j=1,niter
-        if (xs.le.x(2).or.xs.ge.x(nx-1)) go to 9308
-        if (ys.le.y(2).or.ys.ge.y(nz-1)) go to 9308
+      errtmp = 0.0
+      do j=1,niter
+        if (xs.le.x(2).or.xs.ge.x(nx-1)) go to 9305
+        if (ys.le.y(2).or.ys.ge.y(nz-1)) go to 9305
         call seva2d(bkx,lkx,bky,lky,c,xs,ys,pds,ier,n666)
         det=pds(5)*pds(6)-pds(4)*pds(4)
-        if (abs(det).lt.1.0e-15) go to 9305
+        if (abs(det).lt.1.0e-15_dp) then
+          open(unit=40,file='errfil.out',status='unknown',access='append')
+          write(*,'(a)') 'ERROR in findax: Newtons method to find 2nd separatrix has det=0.'
+          write(40,'(a)') 'ERROR in findax: Newtons method to find 2nd separatrix has det=0.'
+          close(unit=40)
+          kerror = 1
+          return
+          !go to 9305
+        end if
         xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
         yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
         xs=xs+orelax*xerr
         ys=ys+orelax*yerr
-        if (xerr*xerr+yerr*yerr.lt.1.0e-12*100.) go to 9310
- 9300 continue
+        errtmp = xerr*xerr+yerr*yerr
+        if (errtmp.lt.1.0e-12_dp*100.0) go to 9310
+      end do
+      if (errtmp.gt.1.0e-6_dp*100.0) then
+        open(unit=40,file='errfil.out',status='unknown',access='append')
+        write(*,'(a)') 'WARNING in findax: Iterative method to find 2nd separatrix reached max iterations.'
+        write(40,'(a)') 'WARNING in findax: Iterative method to find 2nd separatrix reached max iterations.'
+        close(unit=40)
+      end if
  9305 continue
- 9308 if (iand(iout,1).ne.0) write (nout,5025) xs,ys
+      if (iand(iout,1).ne.0) write (nout,5025) xs,ys
       return
  9310 continue
 !-----------------------------------------------------------------------
 !--  make sure seperatrix inside vessel                               --
 !-----------------------------------------------------------------------
       call zlim(zeross,n111,n111,limtrv,xlimv,ylimv,xs,ys,limfagv)
-      if (zeross.le.0.1) return
+      if (zeross.le.0.1_dp) return
       if (abs(ys*100.-yseps(1)).lt.2.00*anow) return
       xseps(2)=xs*100.
       yseps(2)=ys*100.
@@ -1504,15 +1617,15 @@
       relpsi=abs((pds(1)-psiout))
       delrmax2=relpsi/abs(pdss(2))
       relpsi=relpsi/abs((psimx-psiout))
-      if (delrmax2.gt.0.004*anow) return
+      if (delrmax2.gt.0.004_dp*anow) return
 !
       dsimins=0.0
       xxout(ns)=xs
       yyout(ns)=ys
-      xxout(ns-1)=0.5*(xxout(ns)+xxout(ns-2))
-      yyout(ns-1)=0.5*(yyout(ns)+yyout(ns-2))
-      xxout(ns+1)=0.5*(xxout(ns)+xxout(ns+2))
-      yyout(ns+1)=0.5*(yyout(ns)+yyout(ns+2))
+      xxout(ns-1)=0.5_dp*(xxout(ns)+xxout(ns-2))
+      yyout(ns-1)=0.5_dp*(yyout(ns)+yyout(ns-2))
+      xxout(ns+1)=0.5_dp*(xxout(ns)+xxout(ns+2))
+      yyout(ns+1)=0.5_dp*(yyout(ns)+yyout(ns+2))
       rmin=xxout(1)
       rmax=xxout(1)
       zmin=yyout(1)
@@ -1521,7 +1634,7 @@
       rzmax=xxout(1)
       zrmin=yyout(1)
       zrmax=yyout(1)
-      do 30100 i=2,kfound
+      do i=2,kfound
         if (xxout(i).lt.rmin) zrmin=yyout(i)
         if (xxout(i).gt.rmax) zrmax=yyout(i)
         if (yyout(i).lt.zmin) rzmin=xxout(i)
@@ -1530,7 +1643,7 @@
         rmax=max(rmax,xxout(i))
         zmin=min(zmin,yyout(i))
         zmax=max(zmax,yyout(i))
-30100 continue
+      end do
 !
       return
 !
@@ -1541,6 +1654,7 @@
  5025 format (/,1x,'no convergence to 2nd septrx, rs, ys = ', &
               2(1x,e10.3))
       end
+
       subroutine fqlin(x1,y1,x2,y2,f1,f2,f3,f4,x,y,area,psivl)
 !**********************************************************************
 !**                                                                  **
@@ -1589,6 +1703,7 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 !
       dx=xl2-xl1
@@ -1609,7 +1724,7 @@
       if((ycrit.lt.y1).or.(ycrit.gt.y2)) go to 200
       xl2=xcrit
       yl2=ycrit
-      psip1=-1.e+35
+      psip1=-1.0e+35_dp
       go to 110
   100 call fqlin(x1,y1,x2,y2,f1,f2,f3,f4,xl1,yl1,area,psip1)
   110 call fqlin(x1,y1,x2,y2,f1,f2,f3,f4,xl2,yl2,area,psip2)
@@ -1688,7 +1803,7 @@
 !**                                                                  **
 !**********************************************************************
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension xp(1),yp(1)
+      dimension xp(*),yp(*)
       nptr=np
    80 is=0
       nptr=nptr-1
@@ -1729,7 +1844,7 @@
       use commonblocks,only: cjrf,wxin,wyin,wxout,wyout
       include 'eparmdud129.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xp(1),yp(1)
+      dimension xp(*),yp(*)
       data iflag/2/
 !
       if (iflag.eq.2) go to 2000
@@ -1830,6 +1945,7 @@
 !**          04/08/86..........first created                         **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       ierr=0
       if (x1.eq.x2.or.x2.eq.x3.or.x1.eq.x3) then
@@ -1844,15 +1960,23 @@
       b=-(gamma+beta)*x1-(gamma+alpha)*x2-(alpha+beta)*x3
       c=x2*x3*alpha+x1*x3*beta+x1*x2*gamma
 !
-      go to (10,20,30),k
+      select case (k)
+      case (1)
+        go to 10
+      case (2)
+        go to 20
+      case (3)
+        go to 30
+      end select
+
 10    y=a*x*x+b*x+c
       go to 4
 20    rad=sqrt(b*b-4.0*a*(c-y))
-      root1=(-b+rad)*.5/a
-      root2=(-b-rad)*.5/a
+      root1=(-b+rad)*.5_dp/a
+      root2=(-b-rad)*.5_dp/a
       t1=(root1-x1)*(x3-root1)
       t2=(root2-x1)*(x3-root2)
-      zero=-x1*1.e-7
+      zero=-x1*1.0e-7_dp
       if (t1.ge.zero) go to 1
       if (t2.ge.zero) go to 2
       ierr=1
@@ -1895,7 +2019,7 @@
 !**                                                                  **
 !**********************************************************************
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension xout(1),yout(1),psi(1),rgrid(1),zgrid(1)
+      dimension xout(*),yout(*),psi(*),rgrid(*),zgrid(*)
 !
       n111=1
       if (negcur.eq.0) then
@@ -1996,84 +2120,80 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension  zero(1),xlim(1),ylim(1),x(1),y(1)
+      dimension zero(1),x(1),y(1) ! sometimes an array, other times a constant
+      dimension xlim(*),ylim(*)
       logical b,c,d,inside,bold
-!
-      go to (10,200) iflag
-   10 continue
+
+      select case (iflag)
+        case (1)
+          go to 10
+        case (2)
+          go to 200
+      end select
+
+10    continue
       kk = 0
-      do 100 i = 1,nw
-      do 100 j = 1,nh
-      kk = kk + 1
-      zero(kk) = 1.
-      ncross = 0
-      do 20 k = 1,limitr-1
-      if ((ylim(k).lt.y(j)) .and. (ylim(k+1).lt.y(j))) go to 20
-      if (x(i) .eq. xlim(k))  go to 20
-      t = x(i) - xlim(k)
-      s = xlim(k+1) - x(i)
-      if ((t*s) .lt. 0.) go to 20
-      di = (ylim(k+1)-ylim(k)) / (xlim(k+1)-xlim(k))
-      f = ylim(k) + di*(x(i)-xlim(k))
-      if (f .lt. y(j)) go to 20
-      ncross = ncross + 1
-   20 continue
-      mcross = .5*ncross
-      mcross = 2*mcross
-      if (ncross .eq. mcross) zero(kk) = 0.
-  100 continue
+      do i = 1,nw
+      do j = 1,nh
+        kk = kk + 1
+        zero(kk) = 1.
+        ncross = 0
+        do 20 k = 1,limitr-1
+          if ((ylim(k).lt.y(j)) .and. (ylim(k+1).lt.y(j))) go to 20
+          if (x(i) .eq. xlim(k))  go to 20
+          t = x(i) - xlim(k)
+          s = xlim(k+1) - x(i)
+          if ((t*s) .lt. 0.) go to 20
+          di = (ylim(k+1)-ylim(k)) / (xlim(k+1)-xlim(k))
+          f = ylim(k) + di*(x(i)-xlim(k))
+          if (f .lt. y(j)) go to 20
+          ncross = ncross + 1
+20      continue
+        mcross = .5_dp*ncross ! truncates to integer
+        mcross = 2*mcross
+        if (ncross .eq. mcross) zero(kk) = 0.
+      end do
+      end do
       return
 !
   200 continue
       kk=0
-      do 2000 i=1,nw
-      do 2000 j=1,nh
-        kk=kk+1
-        d=.false.
-        b=.true.
-        n=0
-        inside=.false.
-        bold=b
-        do 1000 k=1,limitr-1
-          c=.false.
-!---------------------------------------------------------------------------
-!--  fixed if test logic, for ge and le per Wolfe of MIT, 93/09/02        --
-!--       if (y(j).le.ylim(k).and.y(j).ge.ylim(k+1)                       --
-!--  .        .or.y(j).ge.ylim(k).and.y(j).le.ylim(k+1)) then             --
-!---------------------------------------------------------------------------
-          if (y(j).le.ylim(k).and.y(j).gt.ylim(k+1) &
+      do i=1,nw
+        do j=1,nh
+          kk=kk+1
+          d=.false.
+          b=.true.
+          n=0
+          inside=.false.
+          bold=b
+          do k=1,limitr-1
+            c=.false.
+            !---------------------------------------------------------------------------
+            !--  fixed if test logic, for ge and le per Wolfe of MIT, 93/09/02        --
+            !--       if (y(j).le.ylim(k).and.y(j).ge.ylim(k+1)                       --
+            !--  .        .or.y(j).ge.ylim(k).and.y(j).le.ylim(k+1)) then             --
+            !---------------------------------------------------------------------------
+            if (y(j).le.ylim(k).and.y(j).gt.ylim(k+1) &
               .or.y(j).ge.ylim(k).and.y(j).lt.ylim(k+1)) then
               c=.true.
               d=.true.
               n=n+1
-          endif
-          if(c.and. &
-            (y(j)-ylim(k))*(xlim(k+1)-xlim(k))- &
-            (ylim(k+1)-ylim(k))*(x(i)-xlim(k)).gt.0.) &
-             b=.not.b
-          if (n.eq.2) then
+            endif
+            if(c.and. &
+              (y(j)-ylim(k))*(xlim(k+1)-xlim(k))- &
+              (ylim(k+1)-ylim(k))*(x(i)-xlim(k)).gt.0.) &
+              b=.not.b
+            if (n.eq.2) then
               n=0
               if (bold.eqv.b) inside=.true.
               bold=b
-          endif
- 1000   continue
-        zero(kk)=0.0
-        if (inside.and.d) zero(kk)=1.0
- 2000 continue
-      return
-      end
-!
-!   This routine is required if the revision numbers are to 
-!   survive an optimization.
-!
-!
-!   1998/02/03 22:49:37 meyer
-!
-      subroutine boundx_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)boundx.for,v 4.16\000'
+            endif
+          end do
+          zero(kk)=0.0
+          if (inside.and.d) zero(kk)=1.0
+        end do
+      end do
       return
       end

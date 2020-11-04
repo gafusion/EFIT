@@ -19,10 +19,12 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-      data ercmin/0.01/
+      data ercmin/0.01_dp/
 !
       m=mtime
       do 20 k=1,30
@@ -34,18 +36,18 @@
         chisqerr=300.0
       endif
       if (tsaisq(m).ge.chisqerr) erflag(m,1)=1
-      if (ali(m).ge.2.5.or.ali(m).le.0.05) erflag(m,2)=2
+      if (ali(m).ge.2.5_dp.or.ali(m).le.0.05_dp) erflag(m,2)=2
       if (betap(m).ge.6.0.or.betap(m).le.0.) erflag(m,3)=3
-      if (abs((cpasma(m)-pasmat(m))/cpasma(m)).ge.0.08) erflag(m,4)=4
+      if (abs((cpasma(m)-pasmat(m))/cpasma(m)).ge.0.08_dp) erflag(m,4)=4
       if ((aout(m).ge.75.0).or.(aout(m).le.30.)) erflag(m,5)=5
-      if (eout(m).le.0.8.or.eout(m).ge.4.0) erflag(m,6)=6
+      if (eout(m).le.0.8_dp.or.eout(m).ge.4.0) erflag(m,6)=6
       if (rout(m).gt.240..or.rout(m).lt.90.0) erflag(m,7)=7
       if (rcurrt(m).gt.240..or.rcurrt(m).lt.90.0) erflag(m,8)=8
       if (zout(m).gt.100..or.zout(m).lt.-100.) erflag(m,9)=9
       if (zcurrt(m).gt.100..or.zcurrt(m).lt.-100.) erflag(m,10)=10
       if (qsta(m).gt.200..or.qsta(m).lt.1.) erflag(m,13)=13
       if (betat(m).lt.0..or.betat(m).gt.25.) erflag(m,14)=14
-      if (oleft(m).lt.-0.2.or.oright(m).lt.-0.2.or.otop(m).lt.-0.2) &
+      if (oleft(m).lt.-0.2_dp .or. oright(m).lt.-0.2_dp .or. otop(m).lt.-0.2_dp) &
                 erflag(m,15)=15
       if (olefs(m).lt.-90.0) go to 32
       if (qout(m).gt.200..or.qout(m).lt.1.) erflag(m,18)=18
@@ -54,8 +56,8 @@
       if (qout(m).lt.1.) erflag(m,18)=18
    34 continue
       if (terror(m).ge.ercmin) erflag(m,19)=19
-      if (dbpli(m).ge.0.05) erflag(m,20)=20
-      if (delbp(m).ge.0.08) erflag(m,21)=21
+      if (dbpli(m).ge.0.05_dp) erflag(m,20)=20
+      if (delbp(m).ge.0.08_dp) erflag(m,21)=21
    38 continue
       if ((eout(m).gt.elomin).or.(fwtdlc.gt.0.0)) go to 50
       betap(m)=0.0
@@ -173,10 +175,12 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-      dimension xplt(1),yplt(1)
+      dimension xplt(*),yplt(*)
       dimension zuper(nco2v),zlower(nco2v),rco2(nco2r),rco2in(nco2r)
 !
       do 45 i=1,nco2r
@@ -225,23 +229,9 @@
         dco2v(jges,k)=denvt(jges,k)/rco2v(k,jges)
   320 continue
       do 330 k=1,nco2r
-        rco2r(k,jges)=100.*(rco2(k)-rco2in(k))
+        rco2r(k,jges)=100.0*(rco2(k)-rco2in(k))
         dco2r(jges,k)=denrt(jges,k)/rco2r(k,jges)
   330 continue
 !
-      return
-      end
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   1998/02/04 15:07:48 meyer
-!
-      subroutine chkerrdx_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)chkerrdx.for,v 4.14\000'
       return
       end

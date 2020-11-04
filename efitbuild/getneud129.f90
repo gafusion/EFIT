@@ -22,6 +22,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
 ! MPI >>>
@@ -169,10 +170,10 @@
 !-- get co2 v2 chord normalization factor                             -
 !----------------------------------------------------------------------
       call lenco2(xout,yout,nfound,jtime)
-      delz=(zuperts(jtime)-zlowerts)/float(nh-1)*0.01
+      delz=(zuperts(jtime)-zlowerts)/(nh-1)*0.01_dp
       dneco2=debdry
       do 1900 i=2,nh-1
-        znow=zlowerts*0.01+delz*(i-1)
+        znow=zlowerts*0.01_dp+delz*(i-1)
          call seva2d(bkx,lkx,bky,lky,c,rmajts,znow,pds,ier,n111)
         denow=0.0
         xn=(simag-pds(1))/sidif
@@ -180,7 +181,7 @@
  1870     denow=denow+defit(j)*xn**(j-1)
         dneco2=dneco2+denow
  1900 continue
-      dneco2=dneco2/float(nh-1)
+      dneco2=dneco2/(nh-1)
       fco2now=dco2v(jtime,2)*1.e-13/dneco2
       fco2ne=fco2now*fco2ne
       do 22340 i=1,npnef
@@ -213,18 +214,4 @@
 !
       return
  8000 format (/,'  ** Problem in Decomposition **',i10)
-      end
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   $Date: 2009/02/12 22:49:06 $ $Author: radhakri $
-!
-      subroutine getnex_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)$RCSfile: getneud129.f90,v $ $Revision: 1.1.2.3 $\000'
-      return
       end

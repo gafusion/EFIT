@@ -58,9 +58,9 @@
       h = xl - bkx(ibk)
       do 41 jj=1,4
          work0(jj) = ppvalw(cs(1,ibk,jj,lef),h,n00)
-         if (icalc.eq.1) goto 41
+         if (icalc.eq.1) go to 41
          work1(jj) = ppvalw(cs(1,ibk,jj,lef),h,n11)
-         if (icalc.le.4) goto 41
+         if (icalc.le.4) go to 41
          work2(jj) = ppvalw(cs(1,ibk,jj,lef),h,n22)
  41   continue
       h = yl - bky(lef)
@@ -126,8 +126,8 @@
 !
 !  Set up knots:
 !
-      call eknot (nx, x, kubicx, xknot)		
-      call eknot (ny, y, kubicy, yknot)			
+      call eknot (nx, x, kubicx, xknot)
+      call eknot (ny, y, kubicy, yknot)
 !
 !  Save the original, use the work array
 !
@@ -138,7 +138,7 @@
 !
 !  Calculate spline coefficients:
 !
-      call spl2bc (x, y, xknot, yknot, wk)	
+      call spl2bc (x, y, xknot, yknot, wk)
 !
 !  Coefficients stored in bkx, bky, and c:
 !
@@ -339,6 +339,7 @@
 !  Conversion from IMSL to LINPACK routine.
 !-----------------------------------------------------------------------
 !
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       PARAMETER (NN = 100, MM = 300)
       PARAMETER (MM3 = 3*MM)
@@ -363,31 +364,31 @@
 !
       IF (INFO.GT.0) IER = 129                   ! Error message
       if (s(1).le.0) IER = 129                   ! This better not happen
-      if (s(n)/s(1) .le. 1.e-7) ier = 33         ! Ill-conditioned or rank-deficient matrix
+      if (s(n)/s(1) .le. 1.e-7_dp) ier = 33         ! Ill-conditioned or rank-deficient matrix
 !
-      DO 20 I = 1, N			         ! Copy V into A
+      DO 20 I = 1, N            ! Copy V into A
          DO 10 J = 1, N
-!              A(I, J) = V(I, J)  	
+!              A(I, J) = V(I, J)
                A(I, J) = V(J, I)
-10       CONTINUE				
+10       CONTINUE
 20    CONTINUE
 !
-      IF (NB.EQ.1) THEN 	                 ! B is a vector        
+      IF (NB.EQ.1) THEN                   ! B is a vector
 !
-           DO 50 I = 1, M 			 ! Compute U**T * B
+           DO 50 I = 1, M     ! Compute U**T * B
               BB(I) = 0.0
               DO 40 J = 1, M
                     BB(I) = BB(I) + U(J, I)*B(J, 1)
 40            CONTINUE
 50         CONTINUE
 !
-           DO 30 I = 1, M			 ! Replace B with U**T * B
+           DO 30 I = 1, M    ! Replace B with U**T * B
               B(I, 1) = BB(I)    
 30         CONTINUE
 !
       ELSE                                       ! B is a matrix
 !
-           DO 70 I = 1, NB	                 ! Replace B with U**T    
+           DO 70 I = 1, NB                  ! Replace B with U**T
                  DO 60 J = 1, M
                        B(J, I) = U(I, J)
 60               CONTINUE
@@ -413,9 +414,9 @@
       ALLOCATE(work1(nw,nh),work2(nh),work3(nh,2*krord-1))
 !
       call spli2d(rgrid,copynew,rknot,nw,krord,nh,work2,work3,work1,iflag)
-      if (iflag.ne.1) print*,' error in first spli2d, iflag=',iflag
+      if (iflag.ne.1) write(*,*) ' error in first spli2d, iflag=',iflag
       call spli2d(zgrid,work1,zknot,nh,kzord,nw,work2,work3,copynew,iflag)
-      if (iflag.ne.1) print*,' error in second spli2d, iflag=',iflag
+      if (iflag.ne.1) write(*,*) ' error in second spli2d, iflag=',iflag
 !
       DEALLOCATE(work1,work2,work3)
 !
@@ -446,6 +447,7 @@
 ! given the ordered data points x(1)<...<x(n), this subroutine generates
 ! a knot sequence with not-a-knot end conditions (like BSNAK from IMSL)
 ! Some of this is discussed in de Boor(1978), page 211.
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
         dimension x(n),xk(n+k)
         INTEGER*4 kh
@@ -453,7 +455,7 @@
         do i=1,k
         xk(i)=x(1)
         ii=i+n
-        xk(ii)= x(n)+1.e-5
+        xk(ii)= x(n)+1.e-5_dp
         enddo
         kh=k/2
         k2=kh+kh
@@ -465,7 +467,7 @@
         else
 ! odd k, place knots in between data points
         do i=k+1,n
-        xk(i)=.5*(x(i-kh)+x(i-1-kh))
+        xk(i)=.5_dp*(x(i-kh)+x(i-1-kh))
         enddo
         end if
         return
@@ -570,7 +572,12 @@
 !
 !     ***obtain factorization of  a  , stored again in  q.
       call banfac ( q, n, n, kpkm1, k, iflag )
-                                        go to (40,999), iflag
+      select case (iflag)
+        case (1)
+          go to 40
+        case (2)
+          go to 999
+      end select
 !     *** solve  a*bcoef = gtau  by backsubstitution
    40 do 50 j=1,m
          do 41 i=1,n
@@ -580,8 +587,7 @@
    50    bcoef(j,i) = work(i)
                                         return
   998 iflag = 2
-  999 print 699
-  699 format(41h linear system in  splint  not invertible)
+  999 write(*,*) ' linear system in  splint  not invertible'
                                         return
       end
       subroutine bspp2d ( t, bcoef, n, k, m, scrtch, break, coef, l )
@@ -649,7 +655,7 @@
          do 20 jp1=2,k
             j = jp1 - 1
             kmj = k - j
-            fkmj = float(kmj)
+            fkmj = kmj
             do 20 i=1,kmj
                diff = (t(left+i) - t(left+i - kmj))/fkmj
                if (diff .le. 0.)         go to 20
@@ -749,7 +755,13 @@
       data j/1/
       save j,deltal,deltar  ! (valid in fortran 77)
 !
-                                        go to (10,20), index
+      select case (index)
+        case (1)
+          go to 10
+        case (2)
+          go to 20
+      end select
+
    10 j = 1
       biatx(1) = 1.
       if (j .ge. jhigh)                 go to 99
@@ -822,16 +834,23 @@
 !-----------------------------------------------------------------------        
 !   Evaluate jd-th derivative of i-th polynomial piece at x .
 !-----------------------------------------------------------------------        
-      goto (1,2,3) jd+1
+      select case (jd+1)
+        case (1)
+          go to 1
+        case (2)
+          go to 2
+        case (3)
+          go to 3
+      end select
       ppvalw = 0.
-      print *, 'Error (ppvalw): JD must be 0, 1, or 2.'
-      print *, 'Execution terminated.'
+      write(*,*) 'Error (ppvalw): JD must be 0, 1, or 2.'
+      write(*,*) 'Execution terminated.'
       return
- 1    ppvalw = d0(x)	! k = 4 , jd = 0
+ 1    ppvalw = d0(x) ! k = 4 , jd = 0
       return
- 2    ppvalw = d1(x)	! k = 4 , jd = 1
+ 2    ppvalw = d1(x) ! k = 4 , jd = 1
       return
- 3    ppvalw = d2(x)	! k = 4 , jd = 2
+ 3    ppvalw = d2(x) ! k = 4 , jd = 2
       return
       end
 !
@@ -987,72 +1006,58 @@
       left = lxt
                                         return
       end
-! These are interface routines to bridge from IMSL on the VAX to LINPACK on
-! the Multiflow.
-!
-! ************************ LINV1F ***************************************
-! This routine is an interface from the IMSL call used on the VAX to the 
-! LINPACK call used on the Multiflow.  This routine performs the inversion
-! of an N x N matrix.  This is not a general purpose routine and is specific to
-! the EFITD code and should only be used for that code.  This routine has local
-! arrays that are sized to correspond to the largest size of an EFITD call.  If 
-! the parameters which define dimensions for EFITD arrays should change, then 
-! the sizes of these arrays may need to change as well.
-!
-! Correspondence of the variables between the IMSL LINV1F routine and the
-! LINPACK DGEFA and DGEDI routines.  See the IMSL and LINPACK documentation for
-! further information.
-!
-! A	contains the N x N matrix that is to be transposed.  This is the
-!	same matrix for both routines, however the returned contents are not
-!	the same.  This is not a problem as this matrix is not used again after
-!	the call is made.  This routine calls DGEFA with the input matrix A and
-!	it returns results which are input to DGEDI.
-! N	is the row dimension of A where number rows equal number columns.
-! IA	is the actual leading storage dimension of the matrix A and AINV.
-! AINV	is the resultant transposed N x N matrix.
-! IDGT	is an accuracy option used by the IMSL routine.  However there is no
-!	corresponding option for the LINPACK routines, so this is not used.
-! WK	is a scratch array which can be used by both calls.
-! IER	129 is an error return for LINV1F, non-zero is an error for DGEFA.
-!	If DGEFA gets any error, then the error return is set to 129.
-!
-! IPVT	is a vector of pivot indices returned by DGEFA and used by DGEDI.
-! DET	is a determinant of the original matrix but is not optioned or used.
-!
-	SUBROUTINE LINV1F(A,N,IA,AINV,IDGT,WK,IER)
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-!
-	REAL*4	A(IA,IA),AINV(IA,IA),WK(N)
-	REAL*4	DET(2)
+      ! These are interface routines to bridge from IMSL on the VAX to LINPACK on
+      ! the Multiflow.
+      !
+      ! ************************ LINV1F ***************************************
+      ! This routine is an interface from the IMSL call used on the VAX to the
+      ! LINPACK call used on the Multiflow.  This routine performs the inversion
+      ! of an N x N matrix.  This is not a general purpose routine and is specific to
+      ! the EFITD code and should only be used for that code.  This routine has local
+      ! arrays that are sized to correspond to the largest size of an EFITD call.  If
+      ! the parameters which define dimensions for EFITD arrays should change, then
+      ! the sizes of these arrays may need to change as well.
+      !
+      ! Correspondence of the variables between the IMSL LINV1F routine and the
+      ! LINPACK DGEFA and DGEDI routines.  See the IMSL and LINPACK documentation for
+      ! further information.
+      !
+      ! A contains the N x N matrix that is to be transposed.  This is the
+      ! same matrix for both routines, however the returned contents are not
+      ! the same.  This is not a problem as this matrix is not used again after
+      ! the call is made.  This routine calls DGEFA with the input matrix A and
+      ! it returns results which are input to DGEDI.
+      ! N is the row dimension of A where number rows equal number columns.
+      ! IA is the actual leading storage dimension of the matrix A and AINV.
+      ! AINV is the resultant transposed N x N matrix.
+      ! IDGT is an accuracy option used by the IMSL routine.  However there is no
+      ! corresponding option for the LINPACK routines, so this is not used.
+      ! WK is a scratch array which can be used by both calls.
+      ! IER 129 is an error return for LINV1F, non-zero is an error for DGEFA.
+      ! If DGEFA gets any error, then the error return is set to 129.
+      !
+      ! IPVT is a vector of pivot indices returned by DGEFA and used by DGEDI.
+      ! DET is a determinant of the original matrix but is not optioned or used.
+      !
+      SUBROUTINE LINV1F(A,N,IA,AINV,IDGT,WK,IER)
+        implicit integer*4 (i-n), real*8 (a-h, o-z)
+        !
+        REAL*4	A(IA,IA),AINV(IA,IA),WK(N)
+        REAL*4	DET(2)
         INTEGER*4 IPVT(9)
-!
-!
-	CALL DGEFA(A,IA,N,IPVT,IER)
-	IF (IER .NE. 0) THEN			! return if error
-		IER = 129
-		RETURN
-	END IF
+        !
+        !
+        CALL DGEFA(A,IA,N,IPVT,IER)
+        IF (IER .NE. 0) THEN			! return if error
+          IER = 129
+          RETURN
+        END IF
         nnn=1
-	CALL DGEDI(A,IA,N,IPVT,DET,WK,nnn)
-	DO I=1,N				! move result to output array
-		DO J=1,N
-			AINV(J,I) = A(J,I)
-		END DO
-	END DO
-	RETURN
-	END
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   2003/02/24 23:41:26 peng
-!
-      subroutine splinex_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)splinex.for,v 4.14\000'
-      return
-      end
+        CALL DGEDI(A,IA,N,IPVT,DET,WK,nnn)
+        DO I=1,N				! move result to output array
+          DO J=1,N
+            AINV(J,I) = A(J,I)
+          END DO
+        END DO
+        RETURN
+      END

@@ -31,11 +31,13 @@
       end module var_parame
 
       module var_cqfit
+      use set_kinds
       use eparmdud129,only:nppcur,nffcur,nwwcur
+      use set_kinds
       real*8 fwtqa,qvfit,fbrdy,fcentr,cjmaxi &
            ,goli,gocur,goqq,gobeta,cbrsp &
            ,rqajtor,rqaftor,rqapetor,rqafetor
-      data cbrsp/3.0e-5/
+      data cbrsp/3.0e-5_dp/
       integer*4 nqiter,ivacum 
       data nqiter/10/
       real*8,dimension(nppcur) :: rqajx,rjjjx
@@ -58,16 +60,18 @@
 
       module var_exdat2
       use eparmdud129,only:ntime
+      use set_kinds
       real*8,dimension(ntime) :: bcentr
       real*8 rcentr
-      data rcentr/1.6955/
+      data rcentr/1.6955_dp/
       end module var_exdat2
 
       module var_exdata
+      use set_kinds
       use eparmdud129,only:nsilop,magpri,nacoil,nfcoil,npcurn
 !      public
       integer*4 ishot,itime,ifitvs,iacoil,itimeu,kersil
-      data errsil/0.03/
+      data errsil/0.03_dp/
       data kersil/2/
 !      common/exdata/ishot,itime,serror,fwtsi(nsilop),fwtmp2(magpri), &
 !           fwacoil(nacoil),fwtcur,elomin,fwtbp,fwtdlc,fwtfc(nfcoil), &
@@ -80,7 +84,7 @@
       real*8,dimension(nacoil) :: fwacoil
       real*8,dimension(nfcoil) :: fwtfc
       real*8,dimension(npcurn) :: cbrspv
-      data elomin/0.90/
+      data elomin/0.90_dp/
       data iacoil/0/,fwacoil/1*0./
       end module var_exdata
 
@@ -129,6 +133,7 @@
       end module var_savfit
 
       module var_cstark
+      use set_kinds
       use eparmdud129,only:ntime,nstark,npcurn,nfcoil,nesum &
                  ,nvesel,nacoil,ngam_vars,ngam_u,ngam_w
       real*8,dimension(ntime,nstark):: tangam, siggam,a1gam &
@@ -140,7 +145,7 @@
       integer*4  kstark,iplots,kmtark,klibim,kdomse &
                  ,msebkp,msefitfun,kwaitmse,mse_quiet &
                  ,mse_strict,ok_30rt,ok_210lt,mse_usecer &
-		 ,mse_certree,mse_use_cer330,mse_use_cer210
+                 ,mse_certree,mse_use_cer330,mse_use_cer210
       data iplots/1/
       data  msebkp/0/,msefitfun/1/
       data kwaitmse/0/,dtmsefull/0.0/
@@ -168,6 +173,7 @@
       end module var_cstark
 
       module var_msels
+      use set_kinds
       use eparmdud129,only:ntime,nmsels,npcurn,nfcoil,nesum &
                  ,nvesel,nacoil
       real*8,dimension(ntime,nmsels):: bmselt,sbmselt,fwtbmselt, &
@@ -186,7 +192,7 @@
       integer*4,dimension(ntime) :: kerrot
       integer*4 kdomsels, mmbmsels
       character*3 :: synmsels
-      data avemsels/10./, synmsels/'SYN'/, kdomsels/0/, fmlscut/1.e-6/
+      data avemsels/10./, synmsels/'SYN'/, kdomsels/0/, fmlscut/1.e-6_dp/
       end module var_msels
 
       module var_rpedge
@@ -211,6 +217,7 @@
       end module var_rfedge
 
       module var_cece
+      use set_kinds
       use eparmdud129,only:nnecein,nwnh,nesum,nnece,nfcoil,npcurn &
                             ,ntime,nvesel,nacoil,kxiter,nnnte
       integer*4 ierecebz,necein,jo,kfixro,nece,kece,kecebz,mecein &
@@ -227,7 +234,7 @@
              ,ecebzfit,ecebzbit,fwtnow,zeceo,chisqfit,xfit(10),tchiece &
              ,recebzdz,gecebzdz,eceerror
 
-      data eceerror/0.03/
+      data eceerror/0.03_dp/
 
       real*8,dimension(nnecein) :: teecein,feece,errorece &
            ,teecein0,feece0,errorece0 &
@@ -274,6 +281,7 @@
       end module var_dlc
     
       module var_comco2
+      use set_kinds
       use eparmdud129,only:ntime,nco2r,nco2v
       real*8,dimension(nco2r,ntime) :: rco2r
       real*8,dimension(nco2v,ntime) :: rco2v
@@ -282,8 +290,8 @@
       real*8 zcentr
       real*8,dimension(ntime,nco2r) :: dco2r
       real*8,dimension(ntime,nco2v) :: dco2v
-      data chordv/1.486,1.945,2.098/
-      data chordr/.00, 0.1524/,zcentr/0./
+      data chordv/1.486_dp,1.945_dp,2.098_dp/
+      data chordr/0., 0.1524_dp/,zcentr/0./
       end module var_comco2
 
       module var_check
@@ -293,9 +301,10 @@
       end module var_check
 
       module var_consum
+      use set_kinds
       use eparmdud129,only:kxiter
       real*8 condno,condin 
-      data condin/1.0e-06/
+      data condin/1.0e-06_dp/
       real*8,dimension(kxiter) :: cerror,csibry,csimag, &
                   cvolp,crmaxi,czmaxi,cemaxi,cqmaxi,cchisq &
                   ,brfbc,tvfbrt,cdelz
@@ -403,7 +412,7 @@
       data kframe/0/,rminvs/0/,rmaxvs/100./,zminvs/-100./,zmaxvs/100./
       data kskipvs/0/,vsdamp/0/,relbps/0.004/,zbound/0.0/,rbound/0.0/
       data dnmin/1.0/
-      data saimin/60.0000/,saicon/60.0/
+      data saimin/60.0/,saicon/60.0/
 
       real*8,dimension(ndata) :: rzeroj
       real*8,dimension(mpress) :: fwtpre
@@ -417,14 +426,14 @@
 
       character*12 mfitpop
       character*5 mfvers(2)
-      data mfvers(1)/'10/13'/,mfvers(2)/'/2020'/
+      data mfvers(1)/'11/03'/,mfvers(2)/'/2020'/
       character(4),dimension(ntime) :: limloc
       character(10),dimension(nvesel) :: vsname
       character(10),dimension(magpri) :: mpnam2
       character(10),dimension(nsilop) :: lpname
       character  filimt*100,cshot*6,jdebug*4
       integer idebug,efitversion
-      data idebug/0/,efitversion/20201013/
+      data idebug/0/,efitversion/20201103/
       data jdebug/'NONE'/
       end module var_inputc
 
@@ -512,11 +521,12 @@
       end module var_bdsend
 
       module var_fxbry
+      use set_kinds
       use eparmdud129,only:mbdry,nfcoil,nacoil,npcurn,nwnh
       integer*4 nbdry,nbdryss,nsol
       data nsol/0/
       logical fitts 
-      real*8 wsisol,dselsum/1.e-12/
+      real*8 wsisol,dselsum/1.e-12_dp/
       real*8,dimension(mbdry) :: rbdry,zbdry,fwtbdry,fwtbry,sigrbd &
                                  ,sigzbd,rbdry0, zbdry0,rbdryss,zbdryss
       real*8,dimension(mbdry) :: rsol, zsol, fwtsol, fwtsolw
@@ -527,12 +537,13 @@
       end module var_fxbry
 
       module var_fwtdz
+      use set_kinds
       use eparmdud129,only:magpri,nsilop,mbdry,nstark,mpress,nwnh,nmsels
       logical fitdelz
       integer*4 ndelzon,ifitdelz 
-      data fitdelz/.false./,ndelzon/999/,relaxdz/1.000/, &
-           stabdz/-1.e-4/,scaledz/1.e-03/,ifitdelz/1/
-      data errdelz/0.06/
+      data fitdelz/.false./,ndelzon/999/,relaxdz/1.0/, &
+           stabdz/-1.e-4_dp/,scaledz/1.e-03_dp/,ifitdelz/1/
+      data errdelz/0.06_dp/
       real*8 errdelz,fgowdz,scaledz,stabdz,relaxdz,cdeljsum
       real*8,dimension(magpri) :: gmp2dz
       real*8,dimension(nsilop) :: gsildz
@@ -544,10 +555,11 @@
       end module var_fwtdz
       
       module var_combry
+      use set_kinds
       use eparmdud129,only:msbdry
       real*8,dimension(msbdry) :: erbloc, erbsloc
       real*8 erbmax,erbave,erbcom,erbsmax,erbsave
-      data erbcom/1.0e-2/
+      data erbcom/1.0e-2_dp/
       end module var_combry
 
       module var_fbysta
@@ -574,6 +586,7 @@
       end module var_prdata
 
       module var_cerfit
+      use set_kinds
       use eparmdud129,only:nstark,nercur,nw,nmsels
       integer*4 keecur,keefnc,keeknt,needer,keehord
       integer*4,dimension(nercur) :: keebdry,kee2bdry
@@ -586,14 +599,15 @@
       real*8,dimension(:),allocatable :: ermid, eshear,epoten,rhovn, &
                     rpmid,xmid,sigrid,sipmid, &
                     brhovn,crhovn,drhovn,rhopmid
-      data keecur/0/,ecurbd/0.0/,keefnc/0/,eetens/5.0/
+      data keecur/0/,ecurbd/0.0/,keefnc/0/,eetens/5.0_dp/
       end module var_cerfit
 
       module var_ccgama
+      use set_kinds
       use eparmdud129,only:nppcur,nffcur,nwcurn
       integer*4 kcalpa,kcgama,kcomega
       real*8 fwtxx,fwtxxj,fwtxxq,fwtxxb,fwtxli 
-      data fwtxx/0.2/,fwtxxj/1./
+      data fwtxx/0.2_dp/,fwtxxj/1./
       data  fwtxxq/1./,fwtxxb/1./,fwtxli/1./
       data kcalpa/0/,kcgama/0/,kcomega/0/
 
@@ -642,10 +656,11 @@
       end module var_delnfit
 
       module var_tsrz
+      use set_kinds
       use eparmdud129,only:ntime
       real*8,dimension(ntime) :: zuperts
       real*8 zlowerts,rmajts,rlibim(ntime),zlibim
-      data rmajts/1.94/,zlibim/-0.127/
+      data rmajts/1.94_dp/,zlibim/-0.127_dp/
       end module var_tsrz
 
       module var_climxx
@@ -674,10 +689,10 @@
       real*8,dimension(ntime) :: curtn1
       end module var_coiln1
 
-!*****							 	!EJS(2014)
+!***** !EJS(2014)
 !  Need to update values -- wherever they are specified:
-!	mccoil = 6   (probably is 3 now)
-!	micoil = 12  (probably is 6 now)
+! mccoil = 6   (probably is 3 now)
+! micoil = 12  (probably is 6 now)
 !*****
       module var_coilcc
       use eparmdud129,only:ntime,mccoil,micoil
@@ -685,17 +700,17 @@
       data nccoil/1/,nicoil/1/
       logical oldccomp,oldcomp 
       data oldccomp/.true./,oldcomp/.false./
-!*****								!EJS(2014)
-!	Not sure why these are separate arrays.
-!	They seem to be the same as the columns of curccoi and curicoi
-!	Are they only used in magsigma?  If so, the following changes are
-!	probably not needed until some future time when magsigma is updated.
+!***** !EJS(2014)
+! Not sure why these are separate arrays.
+! They seem to be the same as the columns of curccoi and curicoi
+! Are they only used in magsigma?  If so, the following changes are
+! probably not needed until some future time when magsigma is updated.
 !*****
       real*8,dimension(ntime) :: curc139,curc79,curc199,curiu30 &
                     ,curiu90,curiu150,curil30,curil90,curil150 &
-                    ,curc259,curc319,curc19        &		!EJS(2014)
-                    ,curiu210,curiu270,curiu330    &		!EJS(2014)
-                    ,curil210,curil270,curil330			!EJS(2014)
+                    ,curc259,curc319,curc19        & !EJS(2014)
+                    ,curiu210,curiu270,curiu330    & !EJS(2014)
+                    ,curil210,curil270,curil330      !EJS(2014)
       real*8,dimension(ntime,mccoil) :: curccoi
       real*8,dimension(ntime,micoil) :: curicoi
       end module var_coilcc
@@ -720,12 +735,13 @@
       end module var_subic
 
       module var_vtor
+      use set_kinds
       use eparmdud129,only:mpress,nwwcur,ntime,nw,nwnh
       integer*4 nomegat,kvtor,kwwcur,kwcurn,kplotp,npresw &
                 ,nsplot,kdovt
       real*8 betapw0,enw,emw,rvtor,wcurbd,gammaw,rbetaw, & 
              preswb,chiprw
-      data kvtor/0/,rvtor/1.70/,preswb/0.0/,wcurbd/0.0/,betapw0/0.0/ &
+      data kvtor/0/,rvtor/1.70_dp/,preswb/0.0/,wcurbd/0.0/,betapw0/0.0/ &
            ,kwwcur/2/,kplotp/1/,kdovt/0/,nsplot/4/ 
       real*8,dimension(mpress) :: omegat,rpresw,zpresw,presw, &
                        sigprw,rpresws,fwtprw,romegat,zomegat &
@@ -777,10 +793,10 @@
       end module var_initerror
 
       module var_magerror
+      use set_kinds
       use eparmdud129,only:ntime,nfcoil,nesum,nsilop,magpri
       integer*4 imagsigma,icountmagsigma
-      data imagsigma/0/, errmag/1.0e-3/ &
-           , errmagb/1.e-2/
+      data imagsigma/0/, errmag/1.0e-3_dp/, errmagb/1.e-2_dp/
       real*8 errmag,errmagb
       real*8,dimension(ntime,nfcoil) :: sigmaf
       real*8,dimension(ntime) :: sigmab,sigmaip

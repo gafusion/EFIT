@@ -1,6 +1,6 @@
 !---- just variables
+     use global_constants
      use var_filech
-
      use var_inaver
      use var_solove
      use var_consta
@@ -137,6 +137,3 @@
 ! MPI >>>
       use mpi_info
 ! MPI <<<
-
-!--
-      implicit integer*4 (i-n), real*8 (a-h,o-z)

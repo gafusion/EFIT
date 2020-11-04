@@ -10,34 +10,34 @@
 !--  Add 8 new probes for radiative divertor      LLao, 97/03/17  --
 !--  Update MSE to 35 channels                    LLao, 97/04/21  --
 !--  Separate machine dependent configuration                     --
-!--  	parameters from eparmdx.for		  QPeng,97/09/24  --
-!--	added ntangle for toroidal x-ray	  QPeng,98/05/12  --
+!--   parameters from eparmdx.for    QPeng,97/09/24  --
+!-- added ntangle for toroidal x-ray   QPeng,98/05/12  --
 !--  Increase MSE channels from 35 to 36                98/12/01  --
 !-------------------------------------------------------------------
 !
-!     magpri67	number of magnetic detectors at toroidal angle "1"
-!     magpri322	number of magnetic detectors at toroidal angle "2"
+!     magpri67 number of magnetic detectors at toroidal angle "1"
+!     magpri322 number of magnetic detectors at toroidal angle "2"
 !     magprirdp number of magnetic detectors for radiative divertor
-!     magpri	total number of magnetic detectors
-!     mpress	number of pressure data points
+!     magpri total number of magnetic detectors
+!     mpress number of pressure data points
 !     mse315
 !     mse45
 !     mse15
 !     mse210
-!     nstark	total number of mse channels
+!     nstark total number of mse channels
 !     ngam_vars, ngam_u, ngam_w dimensions of mse spatial averaging data
 !heng necein    total number of ece channels
-!     nacoil	number of advance divertor coils
-!     nangle	dimension of poloidal sxr, first part of xangle,zxray,rxray
-!     ntangle	dimension of toroidal xray, last part of xangle,zxray,rxray
-!     necoil	number of ohmic heating coils
-!     nesum	number of p.f. coil groups
-!     nfbcoil	(obsolete)
-!     nfcoil	number of p.f. coils
-!     nlimbd	number of 'outer' limiter points
-!     nlimit	maximum number of limiter points
-!     nsilop	number of flux loops
-!     nvesel	number of vessel segements
+!     nacoil number of advance divertor coils
+!     nangle dimension of poloidal sxr, first part of xangle,zxray,rxray
+!     ntangle dimension of toroidal xray, last part of xangle,zxray,rxray
+!     necoil number of ohmic heating coils
+!     nesum number of p.f. coil groups
+!     nfbcoil (obsolete)
+!     nfcoil number of p.f. coils
+!     nlimbd number of 'outer' limiter points
+!     nlimit maximum number of limiter points
+!     nsilop number of flux loops
+!     nvesel number of vessel segements
 !
 !
       parameter (nsilds=3,nsilol=41)
@@ -65,6 +65,16 @@
 
       end module exparm
 
+      module set_kinds
+!**     set the type of variables like integer, real, etc...
+        !HP integer, parameter :: rprec = selected_real_kind(20,100)
+        !integer, parameter :: rprec = selected_real_kind(13,307)
+        !integer, parameter :: iprec = selected_real_kind(4)
+        !integer, parameter :: dp=rprec
+        integer, parameter :: dp = selected_real_kind(15,307) ! REAL*8
+
+       end module set_kinds
+
 !expath
       module expath
       public
@@ -72,27 +82,27 @@
 !     $Date: 2009/02/24 01:37:39 $ $Author: lao $
 !     @(#)$RCSfile: modules-efitx.f90,v $ $Revision: 1.1.2.4 $
 !
-!     table_dir	   area where green tables are stored, including
-!			re*,rv*,fc*,ra*,ef*,fc*,fm*,ec*,rf*,ep*
-!			rs*, dprobe.dat, pcsnames.dat, 
-!			(-fitweight.dat., -sxr94.dat, -efithelp.txt)
-!     input_dir	   area where other input files are stored, they include
-!			n1coil.d3d
-!			ccoil.d3d
-!			btcomp.d3d
-!			dcoef.dat
-!			limiter files
-!			snap files
-!			+ efithelp.txt
-!			+ fitweight.dat
-!			+ sxr94.dat
-!     store_dir	   central directory to collect EFIT results
+!     table_dir    area where green tables are stored, including
+!   re*,rv*,fc*,ra*,ef*,fc*,fm*,ec*,rf*,ep*
+!   rs*, dprobe.dat, pcsnames.dat,
+!   (-fitweight.dat., -sxr94.dat, -efithelp.txt)
+!     input_dir    area where other input files are stored, they include
+!   n1coil.d3d
+!   ccoil.d3d
+!   btcomp.d3d
+!   dcoef.dat
+!   limiter files
+!   snap files
+!   + efithelp.txt
+!   + fitweight.dat
+!   + sxr94.dat
+!     store_dir    central directory to collect EFIT results
 !
 
 !vas      common/datafile/table_dir,input_dir,store_dir, &
-!vas      		      ltbdir,lindir,lstdir
+!vas              ltbdir,lindir,lstdir
       character*82 table_dir,input_dir,store_dir,table_di2,link_efitx,link_storex
-      integer*4	ltbdir,lindir,lstdir,ltbdi2
+      integer*4 ltbdir,lindir,lstdir,ltbdi2
 !      data table_dir /'/link/efit/new_table/'/
 !      data table_dir /'/task/efit/lao/efits/CVS/p/2006/'/
 !sri-mpi
@@ -127,34 +137,34 @@
 !--  Add 8 new probes for radiative divertor      LLao, 97/03/17  --
 !--  Update MSE to 35 channels                    LLao, 97/04/21  --
 !--  Separate machine dependent configuration                     --
-!--  	parameters from eparmdx.for		  QPeng,97/09/24  --
-!--	added ntangle for toroidal x-ray	  QPeng,98/05/12  --
+!--   parameters from eparmdx.for    QPeng,97/09/24  --
+!-- added ntangle for toroidal x-ray   QPeng,98/05/12  --
 !--  Increase MSE channels from 35 to 36                98/12/01  --
 !-------------------------------------------------------------------
 !
-!     magpri67	number of magnetic detectors at toroidal angle "1"
-!     magpri322	number of magnetic detectors at toroidal angle "2"
+!     magpri67 number of magnetic detectors at toroidal angle "1"
+!     magpri322 number of magnetic detectors at toroidal angle "2"
 !     magprirdp number of magnetic detectors for radiative divertor
-!     magpri	total number of magnetic detectors
-!     mpress	number of pressure data points
+!     magpri total number of magnetic detectors
+!     mpress number of pressure data points
 !     mse315
 !     mse45
 !     mse15
 !     mse210
-!     nstark	total number of mse channels
+!     nstark total number of mse channels
 !     ngam_vars, ngam_u, ngam_w dimensions of mse spatial averaging data
 !heng necein    total number of ece channels
-!     nacoil	number of advance divertor coils
-!     nangle	dimension of poloidal sxr, first part of xangle,zxray,rxray
-!     ntangle	dimension of toroidal xray, last part of xangle,zxray,rxray
-!     necoil	number of ohmic heating coils
-!     nesum	number of p.f. coil groups
-!     nfbcoil	(obsolete)
-!     nfcoil	number of p.f. coils
-!     nlimbd	number of 'outer' limiter points
-!     nlimit	maximum number of limiter points
-!     nsilop	number of flux loops
-!     nvesel	number of vessel segements
+!     nacoil number of advance divertor coils
+!     nangle dimension of poloidal sxr, first part of xangle,zxray,rxray
+!     ntangle dimension of toroidal xray, last part of xangle,zxray,rxray
+!     necoil number of ohmic heating coils
+!     nesum number of p.f. coil groups
+!     nfbcoil (obsolete)
+!     nfcoil number of p.f. coils
+!     nlimbd number of 'outer' limiter points
+!     nlimit maximum number of limiter points
+!     nsilop number of flux loops
+!     nvesel number of vessel segements
 !
 !
       parameter (nsilds=3,nsilol=41)
@@ -241,33 +251,48 @@
 !     $Date: 2009/02/24 01:37:39 $ $Author: lao $
 !     @(#)$RCSfile: modules-efitx.f90,v $ $Revision: 1.1.2.4 $
 !
-!     table_dir	   area where green tables are stored, including
-!			re*,rv*,fc*,ra*,ef*,fc*,fm*,ec*,rf*,ep*
-!			rs*, dprobe.dat, pcsnames.dat, 
-!			(-fitweight.dat., -sxr94.dat, -efithelp.txt)
-!     input_dir	   area where other input files are stored, they include
-!			n1coil.d3d
-!			ccoil.d3d
-!			btcomp.d3d
-!			dcoef.dat
-!			limiter files
-!			snap files
-!			+ efithelp.txt
-!			+ fitweight.dat
-!			+ sxr94.dat
-!     store_dir	   central directory to collect EFIT results
+!     table_dir    area where green tables are stored, including
+!   re*,rv*,fc*,ra*,ef*,fc*,fm*,ec*,rf*,ep*
+!   rs*, dprobe.dat, pcsnames.dat,
+!   (-fitweight.dat., -sxr94.dat, -efithelp.txt)
+!     input_dir    area where other input files are stored, they include
+!   n1coil.d3d
+!   ccoil.d3d
+!   btcomp.d3d
+!   dcoef.dat
+!   limiter files
+!   snap files
+!   + efithelp.txt
+!   + fitweight.dat
+!   + sxr94.dat
+!     store_dir    central directory to collect EFIT results
 !
 
 !vas      common/datafile/table_dir,input_dir,store_dir, &
-!vas      		      ltbdir,lindir,lstdir
+!vas              ltbdir,lindir,lstdir
 !test      character*42 table_dir,input_dir,store_dir
-!test      integer	ltbdir,lindir,lstdir
+!test      integer ltbdir,lindir,lstdir
 !      data table_dir /'/link/efit/new_table/'/
 !test      data table_dir /'/task/efit/lao/efits/CVS/p/2006/'/
 !test      data input_dir /'/link/efit/'/
 !test      data store_dir /'/link/store/'/
 
       end module eparmdud129
+
+      ! Calculate and store global constants like pi, e, gravity, etc.
+      module global_constants
+        use set_kinds
+        public
+        real*8 :: pi=0,twopi=0,tmu=0,radeg=0
+      contains
+        subroutine set_constants()
+          pi = 4.0_dp*atan(1.0_dp) ! calculate pi to machine precision
+          twopi = 2.0*pi
+          radeg = pi/180.0
+          tmu = 2.0e-07_dp
+        end subroutine
+     end module global_constants
+
 !var_filech
       module var_filech
       character*4 ch1,ch2
@@ -278,16 +303,18 @@
       end module var_outp1
 !var_iopen
       module var_iopen
+      use set_kinds
       integer*4 iopen,ifread,itcoil,ifcurr 
       real*8 errbry,xncoil,relax
-      data relax/1.00/,errbry/1.0e-04/
+      data relax/1.00/,errbry/1.0e-04_dp/
       data iopen/0/
       end module var_iopen
 !var_zcntrl
        module var_zcntrl
+       use set_kinds
        integer*4 isetfb,ishiftz,ioffz,ioffr,idplace,lring 
        real*8 gain,gainp,delzmm
-       data gain/.22/,gainp/0.75/,ishiftz/0/,ioffz/7/, &
+       data gain/.22_dp/,gainp/0.75_dp/,ishiftz/0/,ioffz/7/, &
            ioffr/-7/,lring/0/
        end module var_zcntrl
 !var_updown
@@ -308,15 +335,17 @@
 
 !var_errslop
        module var_errslop
+       use set_kinds
        real*8 aaslop,drslop
-       data aaslop/0.6/,drslop/0.003/
+       data aaslop/0.6_dp/,drslop/0.003_dp/
        end module var_errslop
 
 !var_fitsiref
        module var_fitsiref
+       use set_kinds
        real*8 csiref,saisref,fwtref,scalesir
        logical fitsiref
-       data scalesir/1.0e-3/,fitsiref/.false./
+       data scalesir/1.0e-3_dp/,fitsiref/.false./
        end module var_fitsiref
 
 !var_cnnn
@@ -341,12 +370,13 @@
 
 !var_pfedge
       module var_pfedge
+      use set_kinds
       integer*4 kedgep,kedgef 
       real*8 pedge,pe_psin,pe_width, &
       f2edge,fe_psin,fe_width,constf2, &
       tpedge,tfedge,rdlcfe,rqape,rqafe,betped,betnped
-      data kedgep/0/,pe_width/0.02/,pe_psin/0.98/,pedge/0.0/, &
-           kedgef/0/,fe_width/0.02/,fe_psin/0.98/,f2edge/0.0/
+      data kedgep/0/,pe_width/0.02_dp/,pe_psin/0.98_dp/,pedge/0.0/, &
+           kedgef/0/,fe_width/0.02_dp/,fe_psin/0.98_dp/,f2edge/0.0/
 
       end module var_pfedge
 
@@ -359,29 +389,26 @@
        end module var_sxpoint
 
 !var_consta
-     module var_consta 
-     public 
-     real*8 pi,tmu,twopi, tmu2,errcut, tmu0,radeg, tmu02
-     integer*4 ibunmn,kinput,kcaldia 
+      module var_consta
+        use set_kinds
+        public
+        real*8 :: tmu2,errcut,tmu0,tmu02
+        integer*4 :: ibunmn,kinput,kcaldia=0
+     end module var_consta
 
-!vas      common/consta/pi,tmu,twopi,ibunmn,tmu2,errcut,kinput,kcaldia,tmu0 &
-!vas                    ,radeg
-	
-      data pi/3.1415926535897932/,tmu/2.0e-07/
-      data kcaldia/0/
-
-     end module var_consta     
 !var_rcfact
      module var_rcfact
+     use set_kinds
      integer*4 ircfact
      data ircfact/0/
      end module var_rcfact
 !var_curpo
      module var_curpro
+     use set_kinds
      real*8 emf,emp,enf,enp,rbetap,rzero,pbetap,qenp,qemp,qenf
 
 !vas      common/curpro/emf,emp,enf,enp,rbetap,rzero,pbetap,qenp,qemp,qenf
-      data rzero/1.6955/
+      data rzero/1.6955_dp/
      end module var_curpro
 
 !var_pfterm
@@ -406,10 +433,11 @@
      end module var_nio
 
 !var_cfit
-     module var_cfit  
+     module var_cfit
+     use set_kinds
      integer*4 mxiter,idone,nitera,nxiter,ixnn,isolve  
      real*8   error,errorm,errmin,delerr,delerb
-     data errmin/0.010/,errorm/10./ 
+     data errmin/0.010_dp/,errorm/10./
      end module var_cfit 
 !var_cgrid
      module var_cgrid
@@ -418,17 +446,18 @@
      end module var_cgrid
 !var_extra
      module var_extra
-      real*8 scrape
+      real*8 scrape,tolbndpsi
       integer*4 nextra,ixstrt,iextra,iprobe,ifcoil,iecoil &
            ,iexcal,iconsi,iqplot,klabel,kthkcrv,ifindopt
       data ifcoil/1/,kthkcrv/0/,klabel/0/
      end module var_extra
 !var_conveg
      module var_conveg
+     use set_kinds
      real*8 omega,relip,zelip,aelip,eelip,errorq,omecur 
      integer*4 jjmax
-     data relip/1.68/,zelip/0.00/,aelip/0.60/eelip/1.2/,& 
-     omega/1.0/,errorq/1.0e-03/
+     data relip/1.68_dp/,zelip/0.0/,aelip/0.60_dp/eelip/1.2_dp/,&
+     omega/1.0/,errorq/1.0e-03_dp/
      data jjmax/1/
      end module var_conveg
 
@@ -506,8 +535,8 @@
       integer*4 :: nbmdim,nww,nhh
       real*8    :: drdz2,rgrid1,delrgrid,delz
       real*8    :: s,shift,dr,dz
-!vas      real(kind=rprec)    :: drdz2,rgrid1,delrgrid,delz
-!vas      real(kind=rprec)    :: s,shift,dr,dz
+!vas      real(kind=dp)    :: drdz2,rgrid1,delrgrid,delz
+!vas      real(kind=dp)    :: s,shift,dr,dz
 
 !      mno = nbmdim
 !      m = nww
@@ -518,16 +547,6 @@
 !      dz = delz
 
       end module var_bunemn
-
-       module set_kinds
-
-!**     set the type of variables like integer, real, etc...
-!HP        integer, parameter :: rprec = selected_real_kind(20,100)
-        integer, parameter :: rprec = selected_real_kind(13,307)
-        integer, parameter :: iprec = selected_real_kind(4)
-        integer, parameter :: dp=rprec
-
-        end module set_kinds
 
 !------ put all the remining common blocks into modules here
 !var_contor
@@ -595,13 +614,14 @@
       end module var_hist
 !var_hist2
       module var_hist2
+      use set_kinds
       use eparmdud129,only:ntime
       real*8,dimension(ntime) :: qsiwant,cjorsw,cjor0, &
         ssiwant,ssi95,cjor99,cj1ave &
         ,rmidin,rmidout,psurfa
       real*8 psiwant,rexpan,fexpan,qqmin,fexpvs,shearc &
         ,sepnose,ssi01,znose,rqqmin
-      data psiwant/1.0/,rexpan/0.010/,znose/-1.276/
+      data psiwant/1.0/,rexpan/0.010_dp/,znose/-1.276_dp/
 !vas      common/hist2/psiwant,qsiwant(ntime),cjorsw(ntime),cjor0(ntime), &
 !vas        ssiwant(ntime),ssi95(ntime),rexpan,fexpan,qqmin,fexpvs,shearc &
 !vas        ,sepnose,ssi01,znose,rqqmin,cjor99(ntime),cj1ave(ntime) &
@@ -609,16 +629,18 @@
       end module var_hist2
 !var_cshape
       module var_cshape
+      use set_kinds
       use eparmdud129,only:npoint
       real*8,dimension(:),allocatable :: xout,yout
       real*8 dpsi,rymin,rymax, &
         zxmin,zxmax,xmin,xmax,ymin,ymax,rmaxis,zmaxis, emaxis, &
         rminzm,rmaxzm,dismins,simins,dsimins,delrmax1,delrmax2
       integer*4 nfound
-      data emaxis/1.3/
+      data emaxis/1.3_dp/
       end module var_cshape
 !var_divdis
       module var_divdis
+      use set_kinds
       use eparmdud129,only:ntime
       real*8,dimension(ntime) :: dolubaf,dolubafm,diludom, &
         diludomm,dminux,dminlx, &
@@ -626,8 +648,8 @@
         zvsou,rvsid,zvsid,rvsod, &
         zvsod
         real*8 rubaf,zubaf,rlbaf,zlbaf,rudom,zudom
-      data rubaf/1.372/,rudom/1.0420/,rlbaf/1.6810/
-      data zubaf/1.310/,zudom/1.1624/,zlbaf/-1.339/
+      data rubaf/1.372_dp/,rudom/1.0420_dp/,rlbaf/1.6810_dp/
+      data zubaf/1.310_dp/,zudom/1.1624_dp/,zlbaf/-1.339_dp/
 
 !vas      common/divdis/dolubaf(ntime),dolubafm(ntime),diludom(ntime), &
 !vas        diludomm(ntime),dminux(ntime),dminlx(ntime), &
