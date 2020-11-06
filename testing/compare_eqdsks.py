@@ -46,7 +46,7 @@ def compare_gfiles(time):
     serror = (numpy.amax(dpsi1),numpy.unravel_index(dpsi1.argmax(), dpsi1.shape), gname)
 
     fig, axs = plt.subplots(1, 2, figsize=(8, 5))
-    fig.suptitle('Error is PSIRZ')
+    fig.suptitle('Difference in PSIRZ (public vs. new)')
     
     cntr0 = axs[0].contourf(RR, ZZ, dpsi1)
     cntr1 = axs[1].contourf(RR, ZZ, dpsi2)
@@ -65,6 +65,8 @@ def compare_gfiles(time):
     axs[0].set_xlabel('R[m]')
     axs[0].set_ylabel('Z[m]')
     axs[1].set_xlabel('R[m]')
+    axs[0].set_title('parallel')
+    axs[1].set_title('serial')
                        
     fig.savefig(plotdir+'DPSI_'+gname +'.pdf')
     # Return maximum error, indicies of maximum, and gfile name
@@ -79,7 +81,7 @@ def compare_mfiles(time):
     fig.savefig(plotdir +mname+'.pdf')
     
     fig = plt.figure()
-    labels = ['public parallel', 'new parallel','public serial','public serial']
+    labels = ['public parallel', 'new parallel','public serial','new serial']
     for i, mydir in enumerate(dirs):
         plt.semilogy(mydir[mname]['cerror']['data'][0,:], label=labels[i])
 

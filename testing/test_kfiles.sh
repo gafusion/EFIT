@@ -173,7 +173,7 @@ echo ""
 echo "new parallel:"
 
 grep "Problem" new/parallel/efit.log
-grep "exception" new/paralel/efit.log
+grep "exception" new/parallel/efit.log
 
 echo "public serial :"
 
