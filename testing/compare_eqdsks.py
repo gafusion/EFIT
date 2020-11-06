@@ -37,7 +37,8 @@ def compare_gfiles(time):
     nw = len(dirs[0][gname]['PSIRZ'])
     nh = len(dirs[0][gname]['PSIRZ'][0,:])
     R = numpy.linspace(dirs[0][gname]['RLEFT'], dirs[0][gname]['RLEFT']+dirs[0][gname]['RDIM'], nw)              
-    Z = numpy.linspace(dirs[0][gname]['ZMID']-dirs[0][gname]['ZDIM'], dirs[0][gname]['ZMID']+dirs[0][gname]['ZDIM'], nw)
+    Z = numpy.linspace(dirs[0][gname]['ZMID']-0.5*dirs[0][gname]['ZDIM'], 
+                       dirs[0][gname]['ZMID']+0.5*dirs[0][gname]['ZDIM'], nw)
     RR, ZZ = numpy.meshgrid(R, Z)
     dpsi1 = numpy.abs((dirs[1][gname]['PSIRZ'] - dirs[0][gname]['PSIRZ'])/dirs[0][gname]['PSIRZ'])
     dpsi2 = numpy.abs((dirs[3][gname]['PSIRZ'] - dirs[2][gname]['PSIRZ'])/dirs[2][gname]['PSIRZ'])
@@ -45,19 +46,22 @@ def compare_gfiles(time):
     perror = (numpy.amax(dpsi1),numpy.unravel_index(dpsi1.argmax(), dpsi1.shape), gname)
     serror = (numpy.amax(dpsi1),numpy.unravel_index(dpsi1.argmax(), dpsi1.shape), gname)
 
-    fig, axs = plt.subplots(1, 2, figsize=(8, 5))
+    fig, axs = plt.subplots(1, 2, figsize=(7, 5.))
     fig.suptitle('Difference in PSIRZ (public vs. new)')
     
     cntr0 = axs[0].contourf(RR, ZZ, dpsi1)
     cntr1 = axs[1].contourf(RR, ZZ, dpsi2)
+    
+    axs[0].axis('equal')
+    axs[1].axis('equal')
 
     axs[0].plot(dirs[0][gname]['RBBBS'], dirs[0][gname]['ZBBBS'])
     axs[0].plot(dirs[1][gname]['RBBBS'], dirs[1][gname]['ZBBBS'])
     axs[1].plot(dirs[2][gname]['RBBBS'], dirs[2][gname]['ZBBBS'])
     axs[1].plot(dirs[3][gname]['RBBBS'], dirs[3][gname]['ZBBBS'])
 
-    axs[0].plot(dirs[0][gname]['RLIM'], dirs[2][gname]['ZLIM'],color='k')
-    axs[1].plot(dirs[0][gname]['RLIM'], dirs[3][gname]['ZLIM'],color='k')
+    axs[0].plot(dirs[0][gname]['RLIM'], dirs[2][gname]['ZLIM'],color='w')
+    axs[1].plot(dirs[0][gname]['RLIM'], dirs[3][gname]['ZLIM'],color='w')
 
     fig.colorbar(cntr0, ax=axs[0])
     fig.colorbar(cntr1, ax=axs[1])
