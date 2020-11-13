@@ -28,7 +28,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
 ! MPI >>>
 #if defined(USEMPI)
       include 'mpif.h'
@@ -136,11 +136,9 @@
                       ,curriu30/0.0/,curriu90/0.0/,curriu150/0.0/ &
                       ,curril30/0.0/,curril90/0.0/,curril150/0.0/
       logical exists
-! MPI >>>
       integer, intent(inout) :: kerror
-      kerror = 0
-! MPI <<<
 
+      kerror = 0
       table_di2 = table_dir
 ! --- find length of default directories
       ltbdir=0
@@ -625,8 +623,7 @@
       if (kwake.eq.1) then
 28000   inquire(file='wakeefit.dat',opened=lopened)
         if (lopened) close(unit=neqdsk)
-        open(unit=neqdsk,status='old',         err=28002, &
-          file='wakeefit.dat'                       )
+        open(unit=neqdsk, file='wakeefit.dat', status='old', err=28002)
         go to 28005
 28002   call lib$wait(10.0)
         go to 28000
@@ -641,14 +638,9 @@
           go to 28000
         endif
         if (ishot.lt.0) then
-! MPI >>>
-#if defined(USEMPI)
-! NOTE : ALL processes reading same input file so no need to broadcast value of ISHOT
-          call mpi_stop
-#else
-          stop
-#endif
-! MPI <<<
+          kerror = 1
+          call errctrl_msg('getsets','shot not found')
+          return
         endif
         ireadold=iread
       endif
@@ -772,18 +764,11 @@
       call getpts(ishot,times,delt,ktime,istop)
 #endif
       if (istop.gt.0) then
-        if (rank == 0) then
-          write (6,20000)
-        endif
-! MPI >>>
-#if defined(USEMPI)
-        call mpi_stop
-#else
-        stop
-#endif
-! MPI <<<
+        kerror = 1
+        call errctrl_msg('getsets','shot data not found')
+        return
       endif
-!
+
       mmstark=0
       do 142 i=1,nstark
         swtgam(i)=fwtgam(i)
@@ -993,32 +978,9 @@
  3000 continue
       call write_K(ksstime,kerror)
       ktime = ksstime
-! MPI >>>
-#if defined(USEMPI)
-      if (kerror /= 0) then
-        kerror = 1
-        return
-      endif
+      if (kerror.gt.0) return
+      return
 
-      ! NOTE : Finished EFIT run so STOP execution
-      !if (rank == 0) then
-      !  write(*,*) 'FORTRAN STOP - normal termination'
-      !endif
-      write(*,'(a,1x,i3,1x,a)') 'rank',rank,'mpi_finalized'
-      call mpi_finalize(ierr)
-      stop
-#else
-      if (kdata.eq.5) stop
-!----------------------------------------------------------------------
-!--   PEFIT mode = 8                                                 --
-!--   Make system call to drive PEFIT on Linux GPU                   --
-!----------------------------------------------------------------------
-      CALL system ("/u/huangyao/P-EFIT/New_Folder/pefit_257_jt_new/bin/test")
-      write(*,*) 'PEFIT STOP - normal termination'
-      stop
-#endif
-! MPI <<<
-!
  4042 format (1x,a42,1x,a3)
  4958 format ('#!/bin/csh -f')
  4960 format ('      runefit.sc k',a12)
@@ -1048,7 +1010,6 @@
  6617 format (/,1x,'type snap file extension (def for default):')
  6620 format (a)
  6700 format (a1,a12)
-20000 format (/,1x,'shot data not on disk')
 30000 format (i9)
 30200 format (10f3.0)
       end

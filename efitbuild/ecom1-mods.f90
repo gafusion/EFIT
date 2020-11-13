@@ -389,12 +389,11 @@
             ,iishot,kktime,iplcout,ksigma, kwritime 
       integer*4 iteks, mxiters, zelipss, n1coils
       integer*4 itekt, mxitert, zeliptt, n1coilt
-      integer*4 kerrorq
 
       data kgrid/1/,kwripre/0/,kwritime/0/
       data licalc/1/
       data ksigma/0/
-      data kdoqn/0/,kerrorq/0/
+      data kdoqn/0/
       data icntour/0/,cstabne/0.0/,cstabte/0.0/ &
            ,limvs/1/,ncstpp/1/,ncstfp/1/,kzeroj/0/
       data kbound/0/

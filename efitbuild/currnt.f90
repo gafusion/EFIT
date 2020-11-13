@@ -27,7 +27,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       common/cwork3/lkx,lky
 !               lkx,lky
       dimension pds(6)
@@ -36,11 +36,12 @@
       dimension crsp(4*(npcurn-2)+6+npcurn*npcurn,nrsmat)
       dimension b(nrsmat),z(4*(npcurn-2)+6+npcurn*npcurn)
       real*8 :: tcurrt, tcurrtpp, tcurrtffp
+      character(len=128) tmpstr
       data initc/0/
       data ten24/1.e4_dp/
-! MPI >>>
+
       kerror = 0
-! MPI <<<
+
       initc=initc+1
       if (ivacum.gt.0) return
       if ((nitett.le.1).and.(icinit.eq.1)) return
@@ -122,12 +123,13 @@
         if (i.eq.kppcur+1) go to 1150
         cwant1=cwant1+fgowpc(i)*brsp(nfcoil+i)
  1150 continue
-      if (abs(cwant1).gt.1.0e-10_dp) then
-        cwant1=cwant0/cwant1
-      else
+      if (abs(cwant1).le.1.0e-10_dp) then
         kerror=1
+        call errctrl_msg('currnt','abs(cwant1) <= 1.0e-10')
         return
-      endif
+      end if
+
+      cwant1=cwant0/cwant1
       do 1170 i=2,kpcurn
         if (i.eq.kppcur+1) go to 1170
         brsp(nfcoil+i)=cwant1*brsp(nfcoil+i)
@@ -339,59 +341,50 @@
       if (kedgef.gt.0) nownow=nownow+1
       ncrsp = 0
       if (kknow.lt.nownow) then
-      nzzzz = 0
-      call ppcnst(ncrsp,crsp,z,nzzzz)
-      call ffcnst(ncrsp,crsp,z,nzzzz)
+        nzzzz = 0
+        call ppcnst(ncrsp,crsp,z,nzzzz)
+        call ffcnst(ncrsp,crsp,z,nzzzz)
       endif
       if (ncrsp .le. 0) then
-      call sdecm(alipc,npcur3,nj,nownow,xrsp,npcur3,nnn,wlipc,work,ier)
-      if (ier.ne.129) go to 1560
-      write (nttyo,8000) ier
-! MPI >>>
-#if defined(USEMPI)
-      ! ERROR_FIX >>>
-      !kerror = 1
-      !return
-      ! <<< >>>
-      call mpi_stop
-      ! ERROR_FIX <<<
-#else
-      stop
-#endif
-! MPI <<<
- 1560 continue
-      cond=ier
-      toler=1.0e-06_dp*wlipc(1)
-      do 1570 i=1,nownow
-        t=0.0
-        if (wlipc(i).gt.toler) t=xrsp(i)/wlipc(i)
-        work(i)=t
- 1570 continue
-      do 1575 i=1,nownow
-        brsp(nfcoil+i)=0.0
-        do 1575 j=1,nownow
-          brsp(nfcoil+i)=brsp(nfcoil+i)+alipc(i,j)*work(j)
- 1575 continue
+        call sdecm(alipc,npcur3,nj,nownow,xrsp,npcur3,nnn,wlipc,work,ier)
+        if (ier.eq.129) then
+          kerror = 1
+          call errctrl_msg('currnt','sdecm failed to converge (location 1)')
+          return
+        end if
+        cond=ier
+        toler=1.0e-06_dp*wlipc(1)
+        do i=1,nownow
+          t=0.0
+          if (wlipc(i).gt.toler) t=xrsp(i)/wlipc(i)
+          work(i)=t
+        end do
+        do i=1,nownow
+          brsp(nfcoil+i)=0.0
+          do j=1,nownow
+            brsp(nfcoil+i)=brsp(nfcoil+i)+alipc(i,j)*work(j)
+          end do
+        end do
+
       else
         do j=1,nj
             b(j) = xrsp(j)
         enddo
         call dgglse(nj,nownow,ncrsp,alipc,npcur3,crsp,4*(npcurn-2)+6+ &
-                   npcurn*npcurn,b,z,xrsp,work,nrsma2,info,condno,kerror)
-        if (kerror.gt.0) return
+                   npcurn*npcurn,b,z,xrsp,work,nrsma2,info,condno)
+        if (info.gt.0) then ! special hack to info in dgglse
+          kerror = 1
+          write(tmpstr,'(a,i4,a,i4,a)') 'A(',info,',',info,')=0 in dgglse, divide by zero.'
+          call errctrl_msg('currnt',tmpstr)
+          return
+        else if (info.lt.0) then
+          kerror = 1
+          call errctrl_msg('currnt','calling argument in dgglse was bad')
+          return
+        endif
         do i=1,nownow
           brsp(nfcoil+i)=xrsp(i)
         enddo
-        if (info.ne.0) then
-        write (nttyo,8000) info
-! MPI >>>
-#if defined(USEMPI)
-        call mpi_stop
-#else
-        stop
-#endif
-! MPI <<<
-        endif
       endif
       nownow=kpcurn
       if (kedgep.gt.0) then
@@ -569,12 +562,13 @@
         pcurrt(kk)=pcurrt(kk)*www(kk)
         tcurrt=tcurrt+pcurrt(kk)
  3300 continue
-      if (abs(tcurrt).gt.1.0e-10_dp) then
-        cratio=cpasma(jtime)/tcurrt
-      else
+      if (abs(tcurrt).le.1.0e-10_dp) then
         kerror=1
+        call errctrl_msg('currnt','abs(tcurrt) <= 1.0e-10')
         return
       endif
+
+      cratio=cpasma(jtime)/tcurrt
       do 4000 kk=1,nwnh
         pcurrt(kk)=pcurrt(kk)*cratio
  4000 continue
@@ -613,7 +607,6 @@
 !----------------------------------------------------------------------
 !--  Adjust current profile to keep q(0), I, J(1), and others fixed  --
 !----------------------------------------------------------------------
- 5200 continue
       nj=0
       if (fwtqa.gt.0.0) then
         nj=nj+1
@@ -844,21 +837,11 @@
       if (nj.le.0) go to 5800
       nnn=1
       call sdecm(alipc,npcur3,nj,kwcurn,xrsp,npcur3,nnn,wlipc,work,ier)
-      if (ier.ne.129) go to 5560
-      write (nttyo,8000) ier
-! MPI >>>
-#if defined(USEMPI)
-      ! ERROR_FIX >>>
-      !kerror = 1
-      !return
-      ! <<< >>>
-      call mpi_stop
-      ! ERROR_FIX <<<
-#else
-      stop
-#endif
-! MPI <<<
- 5560 continue
+      if (ier.eq.129) then
+        kerror = 1
+        call errctrl_msg('currnt','sdecm failed to converge (location 2)')
+        return
+      end if
       cond=ier
       toler=1.0e-06_dp*wlipc(1)
       do 5570 i=1,kwcurn
@@ -1013,6 +996,5 @@
         brsp(i)=cratio*brsp(i)
  6020 continue
       return
-!
- 8000 format (/,'  ** Problem in Decomposition **',i10)
+
       end

@@ -33,7 +33,7 @@
 !      include 'ecomdu2.f90'
       include 'curve2d129.inc'
       include 'env2d.inc'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       common/cwork4/npxtra(nxtram),scraps(nxtram)
       common/cwork3/lkx,lky
       common/cww/lwx,lwy

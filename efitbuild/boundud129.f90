@@ -65,6 +65,7 @@
 !**                                                                  **
 !**********************************************************************
       use set_kinds
+      use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension psi(*),zero(*),x(*),y(*),xcontr(*),ycontr(*)
       dimension dist(5),xlim(*),ylim(*)
@@ -240,7 +241,8 @@
                 if (ifail.eq.1) cycle ! line segment does not intersect cell
               end if
               ! psilm is largest psi value along line segment betw pts
-              call maxpsi(xc1,yc1,xc2,yc2,x1,y1,x2,y2,f1,f2,f3,f4,area,psilm,xtry1,ytry1)
+              call maxpsi(xc1,yc1,xc2,yc2,x1,y1,x2,y2,f1,f2,f3,f4,area,psilm,xtry1,ytry1,nerr)
+              if (nerr.gt.0) go to 2000
               psilx=max(psilm,psilx)
               if (psilx.le.psilm) then
                 xtry=xtry1
@@ -250,10 +252,7 @@
 
             if (psilx.eq.-1.e10_dp) then
               nerr=3
-              open(unit=40,file='errfil.out',status='unknown',access='append')
-              write(*,'(a)') 'ERROR in bound: Limiter points do not intersect cell.'
-              write(40,'(a)') 'ERROR in bound: Limiter points do not intersect cell.'
-              close(unit=40)
+              call errctrl_msg('bound','Limiter points do not intersect cell')
               go to 2000
             end if
 
@@ -283,10 +282,7 @@
           ncontr=ncontr+1
           if (ncontr.gt.npoint) then
             nerr=3
-            open(unit=40,file='errfil.out',status='unknown',access='append')
-            write(*,'(a)') 'ERROR in bound: Number of contour points greater than max allowed.'
-            write(40,'(a)') 'ERROR in bound: Number of contour points greater than max allowed.'
-            close(unit=40)
+            call errctrl_msg('bound','Number of contour points greater than max allowed')
             go to 2000
           end if
           xcontr(ncontr)=xt
@@ -366,10 +362,7 @@
       if ((abs(ycontr(1)-ycontr(ncontr)).gt.0.5_dp*dy) .or. &
           (abs(xcontr(1)-xcontr(ncontr)).gt.0.5_dp*dx)) then
          nerr=3
-         open(unit=40,file='errfil.out',status='unknown',access='append')
-         write(*,'(a)') 'ERROR in bound: First and last contour points are too far apart.'
-         write(40,'(a)') 'ERROR in bound: First and last contour points are too far apart.'
-         close(unit=40)
+         call errctrl_msg('bound','First and last contour points are too far apart')
       end if
 
  2000 continue
@@ -751,6 +744,7 @@
 !------------------------------------------------------------------------------
       use global_constants
       use set_kinds
+      use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension pds(6),xc(*),yc(*)
       dimension cspln(kubicx,lubicx,kubicy,lubicy)
@@ -759,6 +753,8 @@
       save n111,n333
       integer, intent(inout) :: kerror
 
+      kerror = 0
+      ier = 0
       piov2 = pi/2.0
       piov4 = pi/4.0
       fpiov4 = 1.25_dp*pi
@@ -766,8 +762,6 @@
       tpiov4 = 0.75_dp*pi
       tpiov2 = 1.5_dp*pi
 
-      kerror = 0
-      ier = 0
       if (negcur.gt.0) psivl=-psivl
       iautoc=0
  1040 xemin=1.e10_dp
@@ -791,6 +785,7 @@
       call seva2d(bkx,lkx,bky,lky,cspln,xaxd,yaxd,pds,ier,n111)
       if (ier.ne.0) then
         kerror = 1
+        call errctrl_msg('cntour','seva2d failed')
         return
       endif
       if (negcur.eq.0) then
@@ -800,6 +795,7 @@
       endif
       if (psiaxd.lt.psivl) then
         kerror = 1
+        call errctrl_msg('cntour','psiaxd.lt.psivl')
         return
       endif
 !----------------------------------------------------------------------
@@ -862,6 +858,7 @@
       call seva2d(bkx,lkx,bky,lky,cspln,x2,y2,pds,ier,n111)
       if (ier.ne.0) then
         kerror = 1
+        call errctrl_msg('cntour','seva2d failed')
         return
       endif
       if (negcur.eq.0) then
@@ -888,6 +885,7 @@
    80 call seva2d(bkx,lkx,bky,lky,cspln,xn,yn,pds,ier,n333)
       if (ier.ne.0) then
         kerror = 1
+        call errctrl_msg('cntour','seva2d failed')
         return
       endif
       if (negcur.eq.0) then
@@ -907,6 +905,7 @@
       newti=newti+1
       if (newti.ge.20) then
         kerror = 1
+        call errctrl_msg('cntour','newti.ge.20')
         return
       endif
       go to 80
@@ -929,6 +928,7 @@
       ipts=ipts+1
       if (ipts.gt.iptsm-1) then
         kerror = 1
+        call errctrl_msg('cntour','ipts.gt.iptsm-1')
         return
       endif
       xc(ipts)=xn
@@ -957,12 +957,13 @@
 !---errors                                              --
 !---------------------------------------------------------
  1000 continue
- 1010 format(1x,'open contour in cntour',/,'x(1),x(nw),x = ', &
-      3(2x,e16.8),/,1x,'y(1),y(nh),y = ',3(2x,e16.8))
-      if (iauto.eq.1) go to 1030
-      kerror = 1
-      return
- 1030 psivl0=psivl
+      if (iauto.ne.1) then
+        kerror = 1
+        call errctrl_msg('cntour','flux surface is outside search area, iauto.ne.1')
+        return
+      end if
+
+      psivl0=psivl
       dapsi=psiaxd-psivl0
       psivl=psivl0+dapsi*0.0005_dp
       iautoc=1
@@ -1202,9 +1203,9 @@
       return
       end
       subroutine findax(nx,nz,x,y,xax,yax,psimx,psiout,xseps,yseps, &
-                        kaxis,xxout,yyout,kfound,psipsi,rmin,rmax, &
-                        zmin,zmax,zrmin,zrmax,rzmin,rzmax,dpsipsi, &
-                        bpoo,bpooz,limtrv,xlimv,ylimv,limfagv,ifit,infit,jtime,kerror)
+        kaxis,xxout,yyout,kfound,psipsi,rmin,rmax, &
+        zmin,zmax,zrmin,zrmax,rzmin,rzmax,dpsipsi, &
+        bpoo,bpooz,limtrv,xlimv,ylimv,limfagv,ifit,jtime,kerror)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -1245,7 +1246,8 @@
       data psitol/1.0e-04_dp/
       character(len=80) :: strtmp
       logical :: dodebugplts = .false. ! write surface files for debugging/plotting. Serial only, not parallel
-!
+
+      kerror = 0
       orelax = 1.0 ! Newton's Method relaxation constant (0.0-1.0)
       niter = 20   ! Number of iterations
       n111=1
@@ -1272,7 +1274,7 @@
           write (6,*) 'FINDAX lkx,lky = ',lkx,lky
           write (6,*) 'FINDAX lkx,lky,c = ',bkx(33),bky(33),c(1,33,1,33)
         endif
-        if (kaxis.eq.10) return
+        if (kaxis.eq.10) return ! if only the bicubic spline is wanted return
       end if
 
       do n=1,kfound
@@ -1372,11 +1374,9 @@
         else ! ifindopt==1
           det=pds(5)*pds(6)-pds(4)*pds(4)
           if (abs(det).lt.1.0e-15_dp) then
-            open(unit=40,file='errfil.out',status='unknown',access='append')
-            write(*,'(a)') 'ERROR in findax: Newtons method to find magnetic axis has det=0.'
-            write(40,'(a)') 'ERROR in findax: Newtons method to find magnetic axis has det=0.'
-            close(unit=40)
             kerror = 1
+            call errctrl_msg('findax','Newtons method to find magnetic axis has det=0')
+            if (iand(iout,1).ne.0) write (nout,5000) xax,yax
             return
             !go to 305
           end if
@@ -1385,19 +1385,22 @@
           xax=xax+orelax*xerr
           yax=yax+orelax*yerr
           errtmp = xerr*xerr+yerr*yerr
-          !if ((xax<x(1) .or. xax>x(nx)) .or. (yax<y(1) .or. yax>y(nz))) go to 305 ! TODO: test if this would help
+          if (xax<x(1) .or. xax>x(nx) .or. yax<y(1) .or. yax>y(nz)) then
+            kerror = 1
+            call errctrl_msg('findax','Newtons method to find separatrix point is off grid')
+            if (iand(iout,1).ne.0) write (nout,5000) xax,yax
+            return
+            !go to 305
+          end if
           if ((abs(pds(2)).lt.1.0e-06_dp).and.(abs(pds(3)).lt.1.0e-06_dp)) go to 310
           if (errtmp.lt.1.0e-12_dp) go to 310
         end if
       enddo
       if (errtmp.gt.1.0e-6_dp) then
-        open(unit=40,file='errfil.out',status='unknown',access='append')
-        write(*,'(a)') 'WARNING in findax: Iterative method to find magnetic axis reached max iterations.'
-        write(40,'(a)') 'WARNING in findax: Iterative method to find magnetic axis reached max iterations.'
-        close(unit=40)
+        call errctrl_msg('findax','Iterative method to find magnetic axis reached max iterations',2)
       end if
   305 continue
-      if (iand(iout,1).ne.0) write (nout,5000) xax,yax
+      !if (iand(iout,1).ne.0) write (nout,5000) xax,yax
       xax=xs
       yax=ys
       psimx=pds(1)
@@ -1453,18 +1456,19 @@
 
       errtmp = 0.0
       do j=1,niter
-        if (xs.le.x(2).or.xs.ge.x(nx-1)) go to 1305
-        if (ys.le.y(2).or.ys.ge.y(nz-1)) go to 1305
+        if (xs.le.x(2) .or. xs.ge.x(nx-1) .or. ys.le.y(2) .or. ys.ge.y(nz-1)) then
+          kerror = 1
+          call errctrl_msg('findax','Newtons method to find separatrix point is off grid')
+          if (iand(iout,1).ne.0) write (nout,5020) xs,ys
+          return
+        end if
         call seva2d(bkx,lkx,bky,lky,c,xs,ys,pds,ier,n666)
         det=pds(5)*pds(6)-pds(4)*pds(4)
         if (abs(det).lt.1.0e-15_dp) then
-          open(unit=40,file='errfil.out',status='unknown',access='append')
-          write(*,'(a)') 'ERROR in findax: Newtons method to find separatrix has det=0.'
-          write(40,'(a)') 'ERROR in findax: Newtons method to find separatrix has det=0.'
-          close(unit=40)
           kerror = 1
+          call errctrl_msg('findax','Newtons method to find separatrix has det=0')
+          if (iand(iout,1).ne.0) write (nout,5020) xs,ys
           return
-          !go to 1305
         end if
         xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
         yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
@@ -1472,26 +1476,24 @@
         ys=ys+orelax*yerr
         errtmp = xerr*xerr+yerr*yerr
         if (errtmp.lt.1.0e-12_dp*100.0) go to 1310
-      end do
+      end do ! j
       if (errtmp.gt.1.0e-6_dp*100.0) then
-        open(unit=40,file='errfil.out',status='unknown',access='append')
-        write(*,'(a)') 'WARNING in findax: Iterative method to find separatrix reached max iterations.'
-        write(40,'(a)') 'WARNING in findax: Iterative method to find separatrix reached max iterations.'
-        close(unit=40)
+        call errctrl_msg('findax','Iterative method to find separatrix reached max iterations',2)
       end if
- 1305 continue
-      if (iand(iout,1).ne.0) write (nout,5020) xs,ys
-      return
  1310 continue
 !-----------------------------------------------------------------------
-!--  found x point, check to see if inside vessel                     --
+!--  found x separatrix point, check to see if inside vessel                     --
 !-----------------------------------------------------------------------
       call zlim(zeross,n111,n111,limtrv,xlimv,ylimv,xs,ys,limfagv)
-      if (zeross.le.0.1_dp) return
+      if (zeross.le.0.1_dp) then
+        kerror = 1
+        call errctrl_msg('findax','Separatrix point is not inside vessel, zeross.le.0.1')
+        return
+      end if
       xseps(1)=xs*100.
       yseps(1)=ys*100.
 !-----------------------------------------------------------------------
-!--  consider x point on surface if psi/dpsi/dR < 0.004 a             --
+!--  consider x separatrix point on surface if psi/dpsi/dR < 0.004 a             --
 !-----------------------------------------------------------------------
       anow=(rmax-rmin)*0.5_dp
       znow=0.5_dp*(zmin+zmax)
@@ -1499,7 +1501,11 @@
       call seva2d(bkx,lkx,bky,lky,c,rmax,znow,pdss,ier,n333)
       delrmax1=relpsi/abs(pdss(2))
       relpsi=relpsi/abs((psimx-psiout))
-      if (delrmax1.gt.0.004_dp*anow) return
+      if (delrmax1.gt.0.004_dp*anow) then
+        kerror = 1
+        call errctrl_msg('findax','Separatrix point is not on surface, delrmax1.gt.0.004_dp*anow')
+        return
+      end if
       sifsep=pds(1)
       rfsep=xs
       zfsep=ys
@@ -1564,24 +1570,29 @@
           ns=i
         endif
       end do
-      if (ns.eq.-1) return
+      if (ns.eq.-1) then
+        kerror = 1
+        call errctrl_msg('findax','2nd separatrix not found, ns.eq.-1')
+        return
+      end if
       xs=xxout(ns)
       ys=yyout(ns)
 !
       errtmp = 0.0
       do j=1,niter
-        if (xs.le.x(2).or.xs.ge.x(nx-1)) go to 9305
-        if (ys.le.y(2).or.ys.ge.y(nz-1)) go to 9305
+        if (xs.le.x(2) .or. xs.ge.x(nx-1) .or. ys.le.y(2) .or. ys.ge.y(nz-1)) then
+          kerror = 1
+          call errctrl_msg('findax','Newtons method to find 2nd separatrix point is off grid')
+          if (iand(iout,1).ne.0) write (nout,5025) xs,ys
+          return
+        end if
         call seva2d(bkx,lkx,bky,lky,c,xs,ys,pds,ier,n666)
         det=pds(5)*pds(6)-pds(4)*pds(4)
         if (abs(det).lt.1.0e-15_dp) then
-          open(unit=40,file='errfil.out',status='unknown',access='append')
-          write(*,'(a)') 'ERROR in findax: Newtons method to find 2nd separatrix has det=0.'
-          write(40,'(a)') 'ERROR in findax: Newtons method to find 2nd separatrix has det=0.'
-          close(unit=40)
           kerror = 1
+          call errctrl_msg('findax','Newtons method to find 2nd separatrix has det=0')
+          if (iand(iout,1).ne.0) write (nout,5025) xs,ys
           return
-          !go to 9305
         end if
         xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
         yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
@@ -1591,21 +1602,23 @@
         if (errtmp.lt.1.0e-12_dp*100.0) go to 9310
       end do
       if (errtmp.gt.1.0e-6_dp*100.0) then
-        open(unit=40,file='errfil.out',status='unknown',access='append')
-        write(*,'(a)') 'WARNING in findax: Iterative method to find 2nd separatrix reached max iterations.'
-        write(40,'(a)') 'WARNING in findax: Iterative method to find 2nd separatrix reached max iterations.'
-        close(unit=40)
+        call errctrl_msg('findax','Iterative method to find 2nd separatrix reached max iterations',2)
       end if
- 9305 continue
-      if (iand(iout,1).ne.0) write (nout,5025) xs,ys
-      return
  9310 continue
 !-----------------------------------------------------------------------
-!--  make sure seperatrix inside vessel                               --
+!--  make sure 2nd seperatrix inside vessel                               --
 !-----------------------------------------------------------------------
       call zlim(zeross,n111,n111,limtrv,xlimv,ylimv,xs,ys,limfagv)
-      if (zeross.le.0.1_dp) return
-      if (abs(ys*100.-yseps(1)).lt.2.00*anow) return
+      if (zeross.le.0.1_dp) then
+        kerror = 1
+        call errctrl_msg('findax','2nd seperatrix point is not inside vessel, zeross.le.0.1')
+        return
+      end if
+      if (abs(ys*100.-yseps(1)).lt.2.0*anow) then
+        kerror = 1
+        call errctrl_msg('findax','2nd seperatrix too far away')
+        return
+      end if
       xseps(2)=xs*100.
       yseps(2)=ys*100.
       rssep=xs
@@ -1617,8 +1630,12 @@
       relpsi=abs((pds(1)-psiout))
       delrmax2=relpsi/abs(pdss(2))
       relpsi=relpsi/abs((psimx-psiout))
-      if (delrmax2.gt.0.004_dp*anow) return
-!
+      if (delrmax2.gt.0.004_dp*anow) then
+        kerror = 1
+        call errctrl_msg('findax','2nd separatrix point is not on surface, delrmax2.gt.0.004_dp*anow')
+        return
+      end if
+
       dsimins=0.0
       xxout(ns)=xs
       yyout(ns)=ys
@@ -1644,9 +1661,9 @@
         zmin=min(zmin,yyout(i))
         zmax=max(zmax,yyout(i))
       end do
-!
+
       return
-!
+
  5000 format (/,1x,'no convergence to magnetic axis, rax, yax = ', &
               2(1x,e10.3))
  5020 format (/,1x,'no convergence to separatrix, rs, ys = ', &
@@ -1681,8 +1698,9 @@
       psivl=(a1*f1+a2*f2+a3*f3+a4*f4)/area
       return
       end
+
       subroutine maxpsi(xl1,yl1,xl2,yl2,x1,y1,x2,y2,f1,f2,f3,f4, &
-                        area,psimax,xtry,ytry)
+                        area,psimax,xtry,ytry,nerr)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -1704,6 +1722,7 @@
 !**                                                                  **
 !**********************************************************************
       use set_kinds
+      use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 !
       dx=xl2-xl1
@@ -1721,7 +1740,11 @@
       xcrit=-(b*alpha+c*beta+a)/secder
       if((xcrit.gt.xl2).or.(xcrit.lt.xl1))go to 100
       ycrit=alpha*xcrit+beta
-      if((ycrit.lt.y1).or.(ycrit.gt.y2)) go to 200
+      if((ycrit.lt.y1).or.(ycrit.gt.y2)) then
+        nerr = 3
+        call errctrl_msg('maxpsi','ycrit is out of bounds')
+        return
+      end if
       xl2=xcrit
       yl2=ycrit
       psip1=-1.0e+35_dp
@@ -1736,19 +1759,8 @@
   120 xtch=xl2
       ytch=yl2
       return
-  200 continue
-! MPI >>>
-#if defined(USEMPI)
-      ! ERROR_FIX >>>
-      !return
-      ! <<< >>>
-      call mpi_stop
-      ! ERROR_FIX <<<
-#else
-      stop
-#endif
-! MPI <<<
       end
+
       subroutine minmax(psi,nwh,nh,kn,psivl,iflag,knew)
 !**********************************************************************
 !**                                                                  **
@@ -1946,10 +1958,12 @@
 !**                                                                  **
 !**********************************************************************
       use set_kinds
+      use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       ierr=0
       if (x1.eq.x2.or.x2.eq.x3.or.x1.eq.x3) then
         ierr=1
+        call errctrl_msg('qfit','at least one pair of x-coordinates are the same')
         return
       endif
       alpha=y1/((x1-x2)*(x1-x3))
@@ -1980,6 +1994,7 @@
       if (t1.ge.zero) go to 1
       if (t2.ge.zero) go to 2
       ierr=1
+      call errctrl_msg('qfit','t1<0 or t2<0')
       return
 1     if (t2.ge.zero) go to 3
       x=root1
@@ -1994,6 +2009,7 @@
       yp=c
       return
       end
+
       subroutine surfac(siwant,psi,nw,nh,rgrid,zgrid,xout,yout, &
                     nfound,npoint,drgrid,dzgrid,xmin, &
                     xmax,ymin,ymax,ipack,rmaxis,zmaxis,negcur)
@@ -2087,6 +2103,7 @@
       if (ipack.gt.0) call packps(xout,yout,nfound,rmaxis,zmaxis,n111)
       return
       end
+
       subroutine zlim(zero,nw,nh,limitr,xlim,ylim,x,y,iflag)
 !**********************************************************************
 !**                                                                  **

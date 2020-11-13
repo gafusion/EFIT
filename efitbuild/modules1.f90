@@ -1,5 +1,6 @@
 !---- just variables
      use global_constants
+     use error_control
      use var_filech
      use var_inaver
      use var_solove

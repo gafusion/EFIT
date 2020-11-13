@@ -1,6 +1,6 @@
 
       SUBROUTINE DGGLSE( M, N, P, A, LDA, B, LDB, C, D, X, WORK, LWORK, &
-                         INFO,condno,kerror )
+                         INFO,condno )
 !
 !  -- LAPACK driver routine (version 2.0) --
 !     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
@@ -8,7 +8,7 @@
 !     September 30, 1994
 !
 !     .. Scalar Arguments ..
-      INTEGER            INFO, LDA, LDB, LWORK, M, N, P, kerror
+      INTEGER            INFO, LDA, LDB, LWORK, M, N, P
 !     ..
 !     .. Array Arguments ..
       DOUBLE PRECISION   A( LDA, * ), B( LDB, * ), C( * ), D( * ), &
@@ -86,6 +86,7 @@
 !  INFO    (output) INTEGER
 !          = 0:  successful exit.
 !          < 0:  if INFO = -i, the i-th argument had an illegal value.
+!          > 0:  if INFO = i, A(i,i)=0 and divide by zero occured ! rls added change
 !
 !  =====================================================================
 !
@@ -107,7 +108,6 @@
 !
 !     Test the input parameters
 !
-      kerror = 0
       INFO = 0
       MN = MIN( M, N )
       IF( M.LT.0 ) THEN
@@ -170,11 +170,7 @@
       ! that is difficult because matrix A is modified significantly in the preceeding calls.
       do i = 1,N-P
         if (A(i,i).eq.0) then
-          kerror = 1
-          write(*,'(a,i4,a,i4,a)') 'ERROR in dgglse: matrix element A(',i,',',i,')=0, divide by zero.'
-          open(unit=40,file='errfil.out',status='unknown',access='append')
-          write(40,'(a,i4,a,i4,a)') 'ERROR in dgglse: matrix element A(',i,',',i,')=0, divide by zero.'
-          close(unit=40)
+          INFO = i ! set to index that failed
           return
         end if
       enddo

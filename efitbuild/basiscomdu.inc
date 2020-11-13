@@ -1,7 +1,7 @@
 !
 !   $Date: 2008/07/29 23:42:31 $ $Author: radhakri $
 !
-!   @(#)$RCSfile: basiscomdu.f90,v $ $Revision: 1.1.2.1 $
+!   @(#)$RCSfile: basiscomdu.inc,v $ $Revision: 1.1.2.1 $
 !
       common/bscom/kppfnc,kppknt,ppknt(npcurn),pptens, &
                    kfffnc,kffknt,ffknt(npcurn),fftens, &
