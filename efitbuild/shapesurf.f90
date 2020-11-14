@@ -33,7 +33,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       common/cwork3/lkx,lky
       common/cwork4/npxtra(nxtram),scraps(nxtram)
       common/wwork1/xlims(5),ylims(5),limtrs,xlmins
@@ -50,6 +50,7 @@
       Character*8 jchisq
       character*1 jchisq2
       logical byring,double,onedone
+      integer kerror
       data floorz/-1.366_dp/
       data psitol/1.0e-04_dp/,idiart/1/
       data czero/0.0/
@@ -67,13 +68,13 @@
 !-- onedone=true if the location (psi) of one q=1 surface has been    --
 !-- found                                                             --
 !-----------------------------------------------------------------------
+      kerror = 0
       oring(iges)=999 ! initialize at ridiculous value
       ringap=999
 !
       xdum=0.0
       ydum=0.0
       if (idebug /= 0) write (6,*) 'Enter SHAPE kerror = ', kerror
-      if (kerror.gt.0) go to 1500
       if (ivacum.gt.0) go to 1500
       if (iges.gt.1) go to 100
       xguess=(rgrid(1)+rgrid(nw))/2.
@@ -163,6 +164,7 @@
  7550 continue
       if (icurrt.ne.4) go to 7600
       call currnt(n222,iges,n222,n222,kerror)
+      if (kerror.gt.0) return
       pprime(1)=cratio/darea/rzero
       ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
       ffprim(nw)=ffprim(1)*gammaf
@@ -429,7 +431,7 @@
                   psiots ,rseps(1,iges),zseps(1,iges),m20, &
                   xouts,youts,nfouns,psi,xmins,xmaxs,ymins,ymaxs, &
                   zxmins,zxmaxs,rymins,rymaxs,dpsis,bpoo,bpooz, &
-                  limtrs,xlims,ylims,limfag,0,0,0,kerror)
+                  limtrs,xlims,ylims,limfag,0,0,kerror)
       if (kerror.gt.0) return
 !---------------------------------------------------------------------
 !--  gap calculation                                                --
@@ -495,6 +497,7 @@
       call chisqr(iges)
       nnn=1
       call betali(iges,rgrid,zgrid,nnn,kerror)
+      if (kerror.gt.0) return
       peak(iges)=pres(1)/(.667_dp*wplasm(iges)/(vout(iges)/1.e6_dp))
         do 1088 i=2,nw
           if (rzzmax(i).gt.0.0) go to 1090
@@ -959,7 +962,6 @@
          if (qwant.lt.qpsi(1)+0.001_dp) go to 1108
          siwant=seval(nw,qwant,qpsi,xsisii,bfpol,cfpol,dfpol)
         else
-40009   continue
          do 40010 jjj=jstart,nw
           jj=jjj
           qppp=qwant-qpsi(jj)
@@ -982,7 +984,8 @@
         siwant=simag-siwant*(simag-psibry)
         call surfac(siwant,psi,nw,nh,rgrid,zgrid,xxtra(1,1),yxtra(1,1), &
                     nfind,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nzz &
-                    ,rmaxis,zmaxis,negcur)
+                    ,rmaxis,zmaxis,negcur,kerror)
+        if (kerror.gt.0) return
         if (nfind.le.40.and.icntour.eq.0) then
         if (idebug >= 2) write (6,*) ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
                             kerror,i,nfind,qppp,qmmm,siwant
@@ -991,9 +994,9 @@
                     d33 ,d33 ,xmin,xmax,ymin,ymax,nzz,iautoc, &
                     xxtra(1,1),yxtra(1,1),nfind,rgrid,nw,zgrid,nh, &
                     c,n22,nh2,nttyo,npoint, &
-                    negcur,bkx,lkx,bky,lky,kerrorq)
-        if (idebug >= 2) write (6,*) ' SHAPE/CNTOUR kerrorq,i,nfind = ', &
-                            kerrorq,i,nfind
+                    negcur,bkx,lkx,bky,lky,kerror)
+        if (idebug >= 2) write (6,*) ' SHAPE/CNTOUR kerror,i,nfind = ',kerror,i,nfind
+        if (kerror.gt.0) return
 
         else
         rqmax=xxtra(1,1)
@@ -1027,30 +1030,31 @@
       psin21(iges)=-99.0
       rq21top(iges)=-99.0
       do i=1,iend
-       if (i.eq.1) qwant=1.5_dp
-       if (i.eq.2) qwant=2.0
+        if (i.eq.1) qwant=1.5_dp
+        if (i.eq.2) qwant=2.0
         do j=1,nw-1
           jj=nw-j+1
           qppp=qwant-qpsi(jj)
           qmmm=qwant-qpsi(jj-1)
           if (qppp*qmmm.le.0.0) then
             siwant=xsisii(jj-1)+ (xsisii(jj)-xsisii(jj-1))/ &
-                   (qpsi(jj)-qpsi(jj-1))*qmmm
+              (qpsi(jj)-qpsi(jj-1))*qmmm
             psiwan=simag-siwant*(simag-psibry)
-        call surfac(psiwan,psi,nw,nh,rgrid,zgrid,xxtra(1,1),yxtra(1,1), &
-                    nfind,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nzz &
-                    ,rmaxis,zmaxis,negcur)
+            call surfac(psiwan,psi,nw,nh,rgrid,zgrid,xxtra(1,1),yxtra(1,1), &
+              nfind,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nzz, &
+              rmaxis,zmaxis,negcur,kerror)
+            if (kerror.gt.0) return
             if (nfind.le.40.and.icntour.eq.0) then
-        if (idebug >= 2) write (6,*) ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
-                            kerror,i,nfind,qppp,qmmm,psiwan
-        call cntour(rmaxis,zmaxis,psiwan,rqmin,rqmax,ycmin,ycmax, &
-                    yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
-                    d33 ,d33 ,xmin,xmax,ymin,ymax,nzz,iautoc, &
-                    xxtra(1,1),yxtra(1,1),nfind,rgrid,nw,zgrid,nh, &
-                    c,n22,nh2,nttyo,npoint, &
-                    negcur,bkx,lkx,bky,lky,kerrorq)
-        if (idebug >= 2) write (6,*) ' SHAPE/CNTOUR kerrorq,i,nfind = ', &
-                            kerrorq,i,nfind
+              if (idebug >= 2) write (6,*) ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
+                kerror,i,nfind,qppp,qmmm,psiwan
+              call cntour(rmaxis,zmaxis,psiwan,rqmin,rqmax,ycmin,ycmax, &
+                yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
+                d33 ,d33 ,xmin,xmax,ymin,ymax,nzz,iautoc, &
+                xxtra(1,1),yxtra(1,1),nfind,rgrid,nw,zgrid,nh, &
+                c,n22,nh2,nttyo,npoint, &
+                negcur,bkx,lkx,bky,lky,kerror)
+              if (idebug >= 2) write (6,*) ' SHAPE/CNTOUR kerror,i,nfind = ',kerror,i,nfind
+              if (kerror.gt.0) return
             endif
             if (i.eq.1) then
               psin32(iges)=siwant
@@ -1096,9 +1100,10 @@
         qsiwant(iges)=seval(nw,siwwww,xsisii,qpsi,bfpol,cfpol,dfpol)
       else
        siwant=simag+psiwant*(psibry-simag)
-       call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc &
-                    ,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur)
+       call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc, &
+                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                    rmaxis,zmaxis,negcur,kerror)
+       if (kerror.gt.0) return
        do 51900 k=1,nfounc
         cfpol(k)=1./bfpol(k)**2
 51900  continue
@@ -1188,9 +1193,10 @@
        siavej=0.95_dp
        siwant=siavej
        siwant=simag+siwant*(psibry-simag)
-       call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc &
-                    ,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur)
+       call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc, &
+                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                    rmaxis,zmaxis,negcur,kerror)
+       if (kerror.gt.0) return
        call fluxav(bfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid,nh, &
                    rxxrry,nzz ,sdlobp,sdlbp)
       area=0.0
@@ -2203,12 +2209,10 @@
       if(ixstrt.eq.-1)go to 832
       xxtraa=xmax
       yxtraa=zxmax
-  827 continue
       go to 834
   832 continue
       xxtraa=xmin
       yxtraa=zxmin
-  833 continue
   834 ixtpls=0
       ixyz=-1
   420 continue
@@ -2232,7 +2236,6 @@
       xxtras=xxtraa-dxtra*i
       yxtras=yxtraa
       endif
-  610 continue
       if (xxtras.le.rgrid(1).or.xxtras.ge.rgrid(nw)) go to 875
       if (pasmat(iges).lt.-1.e3_dp) then
          nerr=10000
@@ -2704,13 +2707,14 @@
         write (6,*) 'ifitvs, icutfp, fpolvs(ka) = ', ifitvs,icutfp,fpolvs/1000.
       endif
       if (itek.gt.0) then
-    if (idplace.ne.0) then
+      if (idplace.ne.0) then
            call altplt(xout,yout,nfound,iges,nnn, &
             xmin,xmax,ymin,ymax,igmax)
           else
            if (idebug /= 0) write (6,*) 'Before SHAPE/PLTOUT'
            call pltout(xout,yout,nfound,iges,nnn, &
-            xmin,xmax,ymin,ymax,igmax)
+            xmin,xmax,ymin,ymax,igmax,kerror)
+           if (kerror.gt.0) return
            if (idebug /= 0) write (6,*) 'After SHAPE/PLTOUT'
           endif
       endif
@@ -2723,7 +2727,8 @@
             xmins,xmaxs,ymins,ymaxs,igmax)
          else
            call pltout(xouts,youts,nfouns,jges,n22, &
-            xmins,xmaxs,ymins,ymaxs,igmax)
+            xmins,xmaxs,ymins,ymaxs,igmax,kerror)
+           if (kerror.gt.0) return
          endif
       endif
  1120 continue
@@ -2732,11 +2737,12 @@
       if ((itek.ge.5).and.(iges.eq.igmax)) call closepl
       if ((ilaser.gt.0).and.(iges.eq.igmax)) call donepl
       go to 1900
-!
+
  1500 continue
-      if (kerror.le.0) call chisqr(iges)
+      call chisqr(iges)
       if (itek.gt.0) then
-        call pltout(xout,yout,nzz,iges,nnn,zxx,zxx,zxx,zxx,igmax)
+        call pltout(xout,yout,nzz,iges,nnn,zxx,zxx,zxx,zxx,igmax,kerror)
+        if (kerror.gt.0) return
       endif
       if ((itek.eq.2).and.(iges.eq.igmax)) call donepl
       if ((itek.eq.4).and.(iges.eq.igmax)) call donepl
@@ -2802,10 +2808,10 @@
       if (kwripre.eq.3) then
         call getfnmd('r',ishot,itime,sfname)
         sfname=sfname(1:13)//'_qpsi'
-          open(unit=74,status='old',file=sfname,err=19920)
-          close(unit=74,status='delete')
-19920     continue
-          open(unit=74,status='new',file=sfname                       )
+        open(unit=74,status='old',file=sfname,err=19920)
+        close(unit=74,status='delete')
+19920   continue
+        open(unit=74,status='new',file=sfname                       )
         do i=1,nw
           write (74,*) rhovn(i),qpsi(i),xdum,xdum
         enddo
@@ -2904,42 +2910,36 @@
             write (74,*) ymnow,pbeam(i),xdum,xdum
         enddo
         close(unit=74)
-       if (keecur.gt.0) then
-        sfname=sfname(1:13)//'_wexb'
+        if (keecur.gt.0) then
+          sfname=sfname(1:13)//'_wexb'
           open(unit=74,status='old',file=sfname,err=19932)
           close(unit=74,status='delete')
 19932     continue
           open(unit=74,status='new',file=sfname                       )
-        do i=1,nw
-          if (rpmid(i).ge.rmaxis) then
-            write (74,*) rhopmid(i),eshear(i),xdum,xdum
-          endif
-        enddo
-        close(unit=74)
-        sfname=sfname(1:13)//'_errho'
+          do i=1,nw
+            if (rpmid(i).ge.rmaxis) then
+              write (74,*) rhopmid(i),eshear(i),xdum,xdum
+            endif
+          enddo
+          close(unit=74)
+          sfname=sfname(1:13)//'_errho'
           open(unit=74,status='old',file=sfname,err=19934)
           close(unit=74,status='delete')
 19934     continue
           open(unit=74,status='new',file=sfname                       )
-        do i=1,nw
-          if (rpmid(i).ge.rmaxis) then
-            write (74,*) rhopmid(i),ermid(i),xdum,xdum
-          endif
-        enddo
-        close(unit=74)
-       endif
+          do i=1,nw
+            if (rpmid(i).ge.rmaxis) then
+              write (74,*) rhopmid(i),ermid(i),xdum,xdum
+            endif
+          enddo
+          close(unit=74)
+        endif
       endif
 !
       DEALLOCATE(xsisii,bpres,cpres,dpres,sjtli,sjtlir,sjtliz, &
             rjtli,bpresw,cpresw,dpresw,copyn,cjtli,x,y)
 !
       return
- 2000 format (1x,'NBDRY = ',i5,/,1x,'RBDRY = ',/)
- 2010 format (1x,'ZBDRY = ',/)
- 2020 format (6(1x,e12.5))
- 2980 format (1x,i6)
- 3000 format (1x,6e12.5)
- 3020 format (1x,i6,2e12.5,2i7)
       end
 
       subroutine dslant(x,y,np,xmin,xmax,ymin,ymax,x1,y1,x2,y2,dismin)
@@ -2979,14 +2979,11 @@
       do 1000 i=1,nn
         xw=x1+delx *(i-1)
         yw=y1+dely *(i-1)
-        do 900 m=1,np
-          if (x(m).lt.xmin) go to 900
-          if (x(m).gt.xmax) go to 900
-          if (y(m).lt.ymin) go to 900
-          if (y(m).gt.ymax) go to 900
-            disw=sqrt((xw-x(m))**2+(yw-y(m))**2)
-            dismin=min(dismin,disw)
-  900 continue
+        do m=1,np
+          if ((x(m).lt.xmin) .or. (x(m).gt.xmax) .or. (y(m).lt.ymin) .or. (y(m).gt.ymax)) cycle
+          disw=sqrt((xw-x(m))**2+(yw-y(m))**2)
+          dismin=min(dismin,disw)
+        end do
  1000 continue
       dismin=dismin*100.
       return

@@ -70,11 +70,10 @@
 !      end if
 !#endif
       if (itek.gt.0) go to 100
-!vas      write (nttyo,10000)
 ! MPI >>>
       if (rank == 0) then
 ! MPI <<<
-        write (nttyo,10000) trim(ch1),trim(ch2)
+        !write (nttyo,10000) trim(ch1),trim(ch2)
         jtime=time(it)
         saisq=tsaisq(it)
         write (nttyo,9300)
@@ -97,12 +96,10 @@
 !
 ! --- delete fitout.dat if IOUT does not contain 1
 !
-      if (iand(iout,1).eq.0) then
+      if (iand(iout,1).eq.0) then ! if iout is even, including zero
          close(unit=nout,status='delete',err=300)
-      else                      ! go to 300
-!vas      write (nout,10000)
-      write (nout,10000) trim(ch1),trim(ch2)
-!
+      else
+        !write (nout,10000) trim(ch1),trim(ch2)
         jtime=time(it)
         saisq=tsaisq(it)
         write (nout,9300)
@@ -120,35 +117,36 @@
         write (nout,10610) zcurrt(it),bcentr(it),qout(it)
         write (nout,10620) olefs(it),orighs(it),otops(it)
         write (nout,10623) betat2
-!
-      if (icalbet.gt.0) &
-        write (nout,10622) betat(it),vbtvac,vbtot2,vbtvac2,vbtor2,vbeta0
-      if (icalbet.gt.0) &
-        write (nout,10624) vbtmag,btvvac2,btvtor2,btvtot2
-!
-      if (scalea) then
-        rowcnd=1./rowcnd
-        colcnd=1./colcnd
-        write (nout,11001)
-        write (nout,11004) infosc,rowcnd,colcnd,arspmax
-      endif
-!
+
+        if (icalbet.gt.0) &
+          write (nout,10622) betat(it),vbtvac,vbtot2,vbtvac2,vbtor2,vbeta0
+        if (icalbet.gt.0) &
+          write (nout,10624) vbtmag,btvvac2,btvtor2,btvtot2
+
+        if (scalea) then
+          rowcnd=1./rowcnd
+          colcnd=1./colcnd
+          write (nout,11001)
+          write (nout,11004) infosc,rowcnd,colcnd,arspmax
+        endif
+
         write (nout,11030)
         write (nout,11020) (brsp(i)/turnfc(i),i=1,nfcoil)
         write (nout,11000)
         write (nout,11020) (brsp(i),i=1,nfcoil)
         sumif=0.0
-        do 200 i=1,5
-  200   sumif=sumif+brsp(i)+brsp(i+9)
+        do i=1,5
+          sumif=sumif+brsp(i)+brsp(i+9)
+        end do
         sumif=sumif+brsp(8)+brsp(17)
-      sumift=0.0
-      sumifs=0.0
-      do 220 i=1,nfcoil
-        sumift=sumift+brsp(i)
-        sumifs=sumifs+brsp(i)**2
-  220 continue
-      sumifs=sqrt(sumifs/(nfcoil-1))
-!
+        sumift=0.0
+        sumifs=0.0
+        do i=1,nfcoil
+          sumift=sumift+brsp(i)
+          sumifs=sumifs+brsp(i)**2
+        end do
+        sumifs=sqrt(sumifs/(nfcoil-1))
+
         write (nout,10020) sumif,sumift,sumifs
         write (nout,11010)
         write (nout,11020) (rsisfc(i),i=1,nfcoil)
@@ -156,15 +154,15 @@
         if (icurrt.ne.2.and.icurrt.ne.5) go to 228
         xnorm=brsp(nfcoil+1)
         write (nout,11040) xnorm
-        do 225 i=1,kwcurn
+        do i=1,kwcurn
           xrsp(i)=brsp(nfcoil+i)/xnorm
-  225   continue
+        end do
         write (nout,11020) (xrsp(i),i=1,kwcurn)
         xnorm=darea
         write (nout,11043) xnorm
-        do 226 i=1,kwcurn
+        do i=1,kwcurn
           xrsp(i)=brsp(nfcoil+i)/xnorm
-  226   continue
+        end do
         write (nout,11020) (xrsp(i),i=1,kwcurn)
         if (keecur.gt.0) then
           write (nout,11032)
@@ -176,27 +174,27 @@
         if (kedgef.gt.0) then
           write (nout,11036) f2edge
         endif
-  228   continue
-!
+228     continue
+
         write (nout,11005)
         write (nout,11020) (cecurr(i),i=1,nesum)
         write (nout,11008)
         write (nout,11020) (rsisec(i),i=1,nesum)
-!
+
         if (ivesel.le.0) go to 300
         sumif=0.0
-        do 280 i=1,nvesel
+        do i=1,nvesel
           sumif=sumif+vcurrt(i)
-  280   continue
+        end do
         nves2=nvesel/2
         sumift=0.0
-        do 282 i=1,nves2
+        do i=1,nves2
           sumift=sumift+vcurrt(i)
-  282   continue
+        end do
         sumifb=0.0
-        do 284 i=nves2+1,nvesel
+        do i=nves2+1,nvesel
           sumifb=sumifb+vcurrt(i)
-  284   continue
+        end do
         if (ivesel.eq.11) sumif=sumvs0
         write (nout,11060) sumif,sumift,sumifb
         write (nout,11020) (vcurrt(i),i=1,nvesel)
@@ -205,8 +203,8 @@
         write (nout,11024) fztor
         write (nout,11020) (vforcet(i),i=1,nvesel)
       endif
-  300   continue
-!
+  300 continue
+
       if (patmp2(1).gt.0.0) go to 340
       open(unit=80,status='old', &
            file=table_di2(1:ltbdi2)//'dprobe.dat' &
@@ -556,7 +554,7 @@
  9380 format (1x,i2,' full rogowski')
  9385 format (1x,i2,' diamagnetic loop')
  9390 format (1x,' bt0(t)   = ',f10.3)
-10000 format(/,6x,20('*'),' EFITD',a3,' x ',a3,'  output ',20('*'))
+!10000 format(/,6x,20('*'),' EFITD',a3,' x ',a3,'  output ',20('*'))
 10020 format (1x,'  sumif(amp) = ',e10.3,' sumift(amp) = ',e10.3, &
            ' sumifs(amp) = ',e10.3)
 10480 format (1x,/)
@@ -664,4 +662,40 @@
 13000 format (//,16x,'    toroidal rotation         ')
 13020 format ('  betatw =  ',1pe12.5,' betapw   = ',1pe12.5, &
               '  W(J)   =  ',1pe12.5)
+      end
+
+      subroutine prtoutheader()
+!**********************************************************************
+!**                                                                  **
+!**     MAIN PROGRAM:  MHD FITTING CODE                              **
+!**                                                                  **
+!**                                                                  **
+!**     SUBPROGRAM DESCRIPTION:                                      **
+!**          Prints header                                           **
+!**                                                                  **
+!**     CALLING ARGUMENTS:                                           **
+!**                                                                  **
+!**     REFERENCES:                                                  **
+!**          (1)                                                     **
+!**          (2)                                                     **
+!**                                                                  **
+!**     RECORD OF MODIFICATION:                                      **
+!**          Nov 12, 2020......rls, first created                    **
+!**                                                                  **
+!**                                                                  **
+!**********************************************************************
+      include 'modules1.f90'
+
+      if (itek.gt.0) go to 100
+
+      if (rank == 0) then
+        write (nttyo,10000) trim(ch1),trim(ch2)
+      end if
+100 continue
+
+      if (iand(iout,1).ne.0) then ! if iout is odd
+        write (nout,10000) trim(ch1),trim(ch2)
+      end if
+
+10000 format(/,6x,20('*'),' EFITD',a3,' x ',a3,'  output ',20('*'))
       end

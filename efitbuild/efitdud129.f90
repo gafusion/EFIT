@@ -57,7 +57,7 @@
      include 'modules2.f90'
      include 'modules1.f90'
      implicit integer*4 (i-n), real*8 (a-h,o-z)
-     include 'basiscomdu.f90'
+     include 'basiscomdu.inc'
 ! MPI >>>
 #if defined(USEMPI)
      include 'mpif.h'
@@ -66,6 +66,7 @@
      data kwake/0/
      parameter (krord=4,kzord=4)
      character inp1*4,inp2*4
+     character(len=128) :: tmpstr
      integer :: nargs, iargc, finfo, kerror, terr
 ! OPT_INPUT >>>
      logical input_flag
@@ -77,16 +78,6 @@
 ! OPT_INPUT <<<
      integer :: iend1, iend2
      character*80 :: cmdline
-!
-!     integer :: i1
-!     real(dp) :: r1
-!     i1 = -757
-!     r1 = i1
-!     print*,r1
-!     print*,1.0_dp/real(i1,dp),1.0_dp/i1,1.0/i1
-!     print*,0.1_dp+1.0_dp
-!     print*,0.1_dp+1.0, 0.0
-!      stop
 
      kerror = 0
 !------------------------------------------------------------------------------
@@ -103,13 +94,13 @@
 ! MPI >>>
 #if defined(USEMPI)
 ! Initialize MPI environment
-     call MPI_INIT_THREAD(MPI_THREAD_SINGLE,terr,ierr)
-     call MPI_COMM_RANK(MPI_COMM_WORLD,rank,ierr)
-     call MPI_COMM_SIZE(MPI_COMM_WORLD,nproc,ierr)
+      call MPI_INIT_THREAD(MPI_THREAD_SINGLE,terr,ierr)
+      call MPI_COMM_RANK(MPI_COMM_WORLD,rank,ierr)
+      call MPI_COMM_SIZE(MPI_COMM_WORLD,nproc,ierr)
 ! Arrays can only be allocated after MPI has been initialized because dimension is # of processes
-     allocate(dist_data(nproc),dist_data_displs(nproc),fwtgam_mpi(nstark,nproc))
+      allocate(dist_data(nproc),dist_data_displs(nproc),fwtgam_mpi(nstark,nproc))
 #else
-     rank  = 0
+      rank  = 0
 #endif
 ! MPI <<<
 
@@ -120,9 +111,9 @@
 !-- Read in grid size from command line and set global variables     --
 !-- ONLY root process reads command-line arguments                   --
 !----------------------------------------------------------------------
-     nw = 0
-     nh = 0
-     if (rank == 0) then
+      nw = 0
+      nh = 0
+      if (rank == 0) then
        nargs = iargc()
 ! Using mpirun command so will have different number of arguments than serial case
 #if defined(LF95)
@@ -141,34 +132,37 @@
        read (inp2,'(i4)',err=9876) nh
 9876   continue
        if (nh == 0) nh = nw
-     endif
+      endif
+
 ! MPI >>>
 #if defined(USEMPI)
 ! Distribute command-line information (meaning grid dimensions) to all processes if necessary
-     if (nproc > 1) then
+      if (nproc > 1) then
        call MPI_BCAST(nw,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
        call MPI_BCAST(nh,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-     endif
+      endif
 #endif
 ! MPI <<<
-     if (nw == 0 .or. nh == 0) then
-       if (rank == 0) then
-         write(*,*) 'ERROR: Must specify grid dimensions as arguments'
-       endif
+      if (nw == 0 .or. nh == 0) then
+        if (rank == 0) then
+          write(*,*) 'ERROR: Must specify grid dimensions as arguments'
+        endif
 ! MPI >>>
 #if defined(USEMPI)
-       deallocate(dist_data,dist_data_displs,fwtgam_mpi)
-       call mpi_finalize(ierr)
+        deallocate(dist_data,dist_data_displs,fwtgam_mpi)
+        write(tmpstr,'(a,1x,i3)') 'mpi_finalize rank',rank
+        call errctrl_msg('efitd',tmpstr,3)
+        call mpi_finalize(ierr)
 #endif
-       STOP
+        STOP
 ! MPI <<<
-     endif
+      endif
 
-     IF (nw .le. 129) THEN
-       npoint=800
-     ELSE
-       npoint=3200
-     ENDIF
+      IF (nw .le. 129) THEN
+        npoint=800
+      ELSE
+        npoint=3200
+      ENDIF
        nwnh=nw*nh
        nh2=2*nh
        nwrk=2*(nw+1)*nh
@@ -194,22 +188,22 @@
       call inp_file_ch(nw,nh,ch1,ch2)
       
 ! OPT_INPUT >>>
-     use_opt_input = .false.
+      use_opt_input = .false.
 ! MPI >>>
 ! ONLY root process check for existence of input file
-     if (rank == 0) then
-       inquire(file='efit.input',exist=input_flag)
-     endif
+      if (rank == 0) then
+        inquire(file='efit.input',exist=input_flag)
+      endif
 #if defined(USEMPI)
 ! Distribute file existence flag to all processes
-     if (nproc > 1) then
-       call MPI_BCAST(input_flag,1,MPI_LOGICAL,0,MPI_COMM_WORLD,ierr)
-     endif
+      if (nproc > 1) then
+        call MPI_BCAST(input_flag,1,MPI_LOGICAL,0,MPI_COMM_WORLD,ierr)
+      endif
 #endif
-     if (input_flag) then
-       if (rank == 0) then
-         write(*,*) ' Using efit.input file...'
-       endif
+      if (input_flag) then
+        if (rank == 0) then
+          write(*,*) ' Using efit.input file...'
+        endif
 ! ALL processes open and read efit.input file
        open(unit=nin,status='old',file='efit.input')
        read(nin,optin)
@@ -228,17 +222,20 @@
 ! OPT_INPUT <<<
 
    20 call getsets(ktime,kwake,mtear,kerror)
-      ! ktime - number of time slices per rank
-
 ! MPI >>>
 #if defined(USEMPI)
-    if (nproc > 1) then
-! NOTE : Want all processes to exit if any encounter error condition
-      call MPI_ALLREDUCE(kerror,MPI_IN_PLACE,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
-    endif
-    if (kerror /= 0) then
-      call mpi_ABORT(MPI_COMM_WORLD, ierr)
-    endif
+      if (nproc > 1) then
+        call MPI_ALLREDUCE(kerror,MPI_IN_PLACE,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
+      endif
+      if (kerror.gt.0) then
+        write(tmpstr,'(a,1x,i3)') 'mpi_finalize rank',rank
+        call errctrl_msg('efitd',tmpstr,3)
+        call mpi_finalize(ierr)
+      endif
+#else
+      if (kerror.gt.0) then
+        stop
+      end if
 #endif
 ! MPI <<<
 
@@ -253,7 +250,7 @@
 !   nslices = total number of slices for all ranks
 
 !----------------------------------------------------------------------
-!-- start simulation for KTIME timeslices                            --
+!-- start simulation for KTIME time slices per rank                  --
 !----------------------------------------------------------------------
       k=0
   100 k=k+1
@@ -261,7 +258,10 @@
 !----------------------------------------------------------------------
 !--  set up data                                                     --
 !----------------------------------------------------------------------
-        call data_input(ks,iconvr,ktime,mtear)
+        call prtoutheader()
+        call data_input(ks,iconvr,ktime,mtear,kerror)
+        call errctrl_settime(time(ks))
+        if (kerror.gt.0) go to 500
         if (iconvr.lt.0) go to 500
         if (kautoknt .eq. 1) then
            call autoknot(ks,iconvr,ktime,mtear,kerror)
@@ -274,13 +274,14 @@
 !--  get equilibrium                                                 --
 !----------------------------------------------------------------------
            call fit(ks,kerror)
-           if (kerror.gt.0.and.k.lt.ktime) go to 500
+           if (kerror.gt.0) go to 500
         endif
 !----------------------------------------------------------------------
 !--  post processing for graphic and text outputs                    --
 !----------------------------------------------------------------------
         call shapesurf(ks,ktime,kerror)
-        if (mtear.ne.0) call tearing(ks,mtear)
+        if (kerror.gt.0) go to 500
+        if (mtear.ne.0) call tearing(ks,mtear,kerror)
         if (kerror.gt.0) go to 500
         if (idebug /= 0) write (6,*) 'Main/PRTOUT ks/kerror = ', ks, kerror
         call prtout(ks)
@@ -304,7 +305,7 @@
          endif
       endif
   500 if (k.lt.ktime) then
-        kerrot(ks)=kerror 
+        kerrot(ks)=kerror
         go to 100
       endif
       if (kwake.ne.0) go to 20
@@ -317,15 +318,14 @@
       if (allocated(dist_data)) deallocate(dist_data)
       if (allocated(dist_data_displs)) deallocate(dist_data_displs)
       if (allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
-      !if (rank == 0) then
-      !  write(*,*) 'FORTRAN STOP - normal termination'
-      !endif
-      write(*,'(a,1x,i3,1x,a)') 'rank',rank,'mpi_finalized'
+      write(tmpstr,'(a,1x,i3)') 'mpi_finalize rank',rank
+      call errctrl_msg('efitd',tmpstr,3)
       call mpi_finalize(ierr)
 #endif
       stop
 ! MPI <<<
       end
+
       subroutine betali(jtime,rgrid,zgrid,idovol,kerror)
 !**********************************************************************
 !**                                                                  **
@@ -361,15 +361,14 @@
       real*8,dimension(:),allocatable :: worksi,workrm,bwork, &
              cwork,dwork,x,y,dpleng
       dimension xsier(nercur)
-! MPI >>>
       integer, intent(inout) :: kerror
-      kerror = 0
-! MPI <<<
       data inorm/3/,ibtcal/2/
-!
+
+      kerror = 0
+
       ALLOCATE(worksi(nw),workrm(nw),bwork(nw), &
          cwork(nw),dwork(nw),x(nw),y(nh),dpleng(npoint))
-!
+
       if (ivacum.gt.0) return
       sumbp2=0.0
       select case (licalc)
@@ -589,9 +588,10 @@
         siii=1.0_dp-1.0_dp/(nw-1)*(i-1)
         if (idovol.gt.1) go to 790
         rzzmax(ii)=-99.0
-        call surfac(siwant,psi,nw,nh,rgrid,zgrid,bpol,bpolz,nfind &
-                    ,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur)
+        call surfac(siwant,psi,nw,nh,rgrid,zgrid,bpol,bpolz,nfind, &
+                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                    rmaxis,zmaxis,negcur,kerror)
+        if (kerror.gt.0) return
         if (nfind.le.40.and.icntour.eq.0) then
         if (idebug >= 2) write (6,*) ' SHAPE/BETALI kerror,i,nfind = ', & 
                             kerror,i,nfind
@@ -603,9 +603,7 @@
                     negcur,bkx,lkx,bky,lky,kerror)
         if (idebug >= 2) write (6,*) ' BETALI/CNTOUR kerror,nfind = ', &
                             kerror,nfind
-        if (kerror /= 0) then
-           return
-        endif
+        if (kerror /= 0) return
         endif
         if (nfind.lt.10) go to 750
         r2surf(ii)=0.0
@@ -693,10 +691,12 @@
         call qfit(n333,bpol(izzmax-1),bpol(izzmax),bpol(izzmax+1), &
                   bpolz(izzmax-1),bpolz(izzmax),bpolz(izzmax+1), &
                   zaaa,zbbb,zccc,ierr)
-        if (ierr.eq.0) then
+        if (ierr.ne.0) then
+          kerror = 1
+          return
+        end if
         rzzmax(ii)=-zbbb/2./zaaa
         zzmax(ii)=zaaa*rzzmax(ii)**2+zbbb*rzzmax(ii)+zccc
-        endif
         volp(ii)=abs(volp(ii))*twopi
         rhovn(ii)=rhovn(ii)/rhovn(nw)
         go to 790
@@ -904,6 +904,7 @@
  1980 format (1x,i6)
  2000 format (1x,6e12.5)
       end
+
       subroutine betsli(jtime,rgrid,zgrid,kerror)
 !**********************************************************************
 !**                                                                  **
@@ -981,6 +982,7 @@
   550 continue
       if (icurrt.ne.4) go to 600
       call currnt(n222,jtime,n222,n222,kerror)
+      if (kerror.gt.0) return
       pprime(1)=cratio/darea/rzero
       pprime(nw)=pprime(1)*gammap
   600 continue
@@ -996,9 +998,10 @@
         siii=(i-1)*dsi
         siwant=psibry-siii
         siii=1.0_dp-1.0_dp/(nw-1)*(i-1)
-        call surfac(siwant,psi,nw,nh,rgrid,zgrid,xxs,yys,nfind &
-                    ,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur)
+        call surfac(siwant,psi,nw,nh,rgrid,zgrid,xxs,yys,nfind, &
+                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                    rmaxis,zmaxis,negcur,kerror)
+        if (kerror.gt.0) return
         if (nfind.le.40.and.icntour.eq.0) then
         call cntour(rmaxis,zmaxis,siwant,xcmin,xcmax,ycmin,ycmax, &
                     yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
@@ -1006,6 +1009,7 @@
                     xxs,yys,nfind,rgrid,nw,zgrid,nh, &
                     c,n222,nh2,nttyo,npoint, &
                     negcur,bkx,lkx,bky,lky,kerror)
+          if (kerror.gt.0) return
         endif
         if (nfind.lt.10) go to 750
         volp(ii)=0.0
@@ -1595,7 +1599,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
                    appknt(npcurn),kappknt, &
                    affknt(npcurn),kaffknt, &
@@ -1721,16 +1725,19 @@
 !
 
 40    continue
-      call data_input(ks_a,lconvr_a,ktime_a,mtear_a)
-      if (lconvr_a.lt.0) go to 500
+      call data_input(ks_a,lconvr_a,ktime_a,mtear_a,kerror)
+      if (kerror.gt.0) return
+      if (lconvr_a.lt.0) return
       mxiter_a = saveiter
       call restore_autoknotvals
       call inicur(ks_a)
       call fit(ks_a,kerror_a)
       if (kerror_a /= 0) then
         kerror = 1
+        return
       endif
-500   return
+
+      return
       end
 !
 !    store values read from k file into autoknot variables
@@ -1740,7 +1747,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
                    appknt(npcurn),kappknt, &
                    affknt(npcurn),kaffknt, &
@@ -1769,7 +1776,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
                    appknt(npcurn),kappknt, &
                    affknt(npcurn),kaffknt, &
@@ -1794,134 +1801,140 @@
 ! which calls it to evaulate the function being minimized
 !
 
-      function ppakfunc(xknot)          
+      function ppakfunc(xknot) ! TODO: kerror is not returned
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
                    appknt(npcurn),kappknt, &
                    affknt(npcurn),kaffknt, &
                    awwknt(npcurn),kawwknt, &
                    aeeknt(npcurn),kaeeknt,mxiter_a
-
+      kerror = 0
       ppakfunc = 1000.0
       write(6,*)
       write(6,*)' trying pp knot ',kadknt,' at location ',xknot, &
-                 ' out of ',kappknt,' knots'
-        call data_input(ks_a,lconvr_a,ktime_a,mtear_a)
-        if (lconvr_a.lt.0) go to 500
-        call restore_autoknotvals
-        ppknt(kadknt) = xknot
-        call inicur(ks_a)
-        call fit(ks_a,kerror_a)
-        if(kerror_a .gt. 0)go to 500
-        ppakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm  &
-                  + akgamwt * chigamt + akprewt * chipre
-500      return
-        end
+        ' out of ',kappknt,' knots'
+      call data_input(ks_a,lconvr_a,ktime_a,mtear_a,kerror)
+      if (kerror.gt.0) return
+      if (lconvr_a.lt.0) return
+      call restore_autoknotvals
+      ppknt(kadknt) = xknot
+      call inicur(ks_a)
+      call fit(ks_a,kerror_a)
+      if(kerror_a .gt. 0) return
+      ppakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm  &
+        + akgamwt * chigamt + akprewt * chipre
+      return
+    end
 !
 ! used by autoknot which passes the routine to a minimization subroutine
 ! which calls it to evaulate the function being minimized
 !
-      function ffakfunc(xknot)          
+      function ffakfunc(xknot) ! TODO: kerror is not returned
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
                    appknt(npcurn),kappknt, &
                    affknt(npcurn),kaffknt, &
                    awwknt(npcurn),kawwknt, &
                    aeeknt(npcurn),kaeeknt,mxiter_a
-!
 
+      kerror = 0
       ffakfunc = 1000.0
       write(6,*)
       write(6,*)' trying ff knot ',kadknt,' at location ',xknot, &
-                 ' out of ',kaffknt,' knots'
-        call data_input(ks_a,lconvr_a,ktime_a,mtear_a)
-        if (lconvr_a.lt.0) go to 500
-        call restore_autoknotvals
-        ffknt(kadknt) = xknot
-        call inicur(ks_a)
-        call fit(ks_a,kerror_a)
-        if(kerror_a .gt. 0)go to 500
-        ffakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm  &
-                  + akgamwt * chigamt + akprewt * chipre
-500      return
-        end
+        ' out of ',kaffknt,' knots'
+      call data_input(ks_a,lconvr_a,ktime_a,mtear_a,kerror)
+      if (kerror.gt.0) return
+      if (lconvr_a.lt.0) return
+      call restore_autoknotvals
+      ffknt(kadknt) = xknot
+      call inicur(ks_a)
+      call fit(ks_a,kerror_a)
+      if(kerror_a .gt. 0) return
+      ffakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm  &
+        + akgamwt * chigamt + akprewt * chipre
+      return
+      end
 !
 ! used by autoknot which passes the routine to a minimization subroutine
 ! which calls it to evaulate the function being minimized
 !
-      function wwakfunc(xknot)          
+      function wwakfunc(xknot) ! TODO: kerror is not returned
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
                    appknt(npcurn),kappknt, &
                    affknt(npcurn),kaffknt, &
                    awwknt(npcurn),kawwknt, &
                    aeeknt(npcurn),kaeeknt,mxiter_a
 
+      kerror = 0
       wwakfunc = 1000.0
       write(6,*)
       write(6,*)' trying ww knot ',kadknt,' at location ',xknot, &
                  ' out of ',kawwknt,' knots'
-        call data_input(ks_a,lconvr_a,ktime_a,mtear_a)
-        if (lconvr_a.lt.0) go to 500
-        call restore_autoknotvals
-        wwknt(kadknt) = xknot
-        call inicur(ks_a)
-        call fit(ks_a,kerror_a)
-        if(kerror_a .gt. 0)go to 500
-        wwakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm &
-                  + akgamwt * chigamt + akprewt * chipre
-500      return
-        end
+      call data_input(ks_a,lconvr_a,ktime_a,mtear_a,kerror)
+      if (kerror.gt.0) return
+      if (lconvr_a.lt.0) return
+      call restore_autoknotvals
+      wwknt(kadknt) = xknot
+      call inicur(ks_a)
+      call fit(ks_a,kerror_a)
+      if(kerror_a .gt. 0) return
+      wwakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm &
+        + akgamwt * chigamt + akprewt * chipre
+      return
+      end
 !
 ! used by autoknot which passes the routine to a minimization subroutine
 ! which calls it to evaulate the function being minimized
 !
-      function eeakfunc(xknot)          
+      function eeakfunc(xknot) ! TODO: kerror is not returned
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
                    appknt(npcurn),kappknt, &
                    affknt(npcurn),kaffknt, &
                    awwknt(npcurn),kawwknt, &
                    aeeknt(npcurn),kaeeknt,mxiter_a
 
+      kerror = 0
       eeakfunc = 1000.0
       write(6,*)
       write(6,*)' trying ee knot ',kadknt,' at location ',xknot, &
                  ' out of ',kaeeknt,' knots'
-!
-        call data_input(ks_a,lconvr_a,ktime_a,mtear_a)
-        if (lconvr_a.lt.0) go to 500
-        call restore_autoknotvals
-        eeknt(kadknt) = xknot
-        call inicur(ks_a)
-        call fit(ks_a,kerror_a)
-        if(kerror_a .gt. 0)go to 500
-        eeakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm &
-                  + akgamwt * chigamt + akprewt * chipre
-500      return
-        end
+      call data_input(ks_a,lconvr_a,ktime_a,mtear_a,kerror)
+      if (kerror.gt.0) return
+      if (lconvr_a.lt.0) return
+      call restore_autoknotvals
+      eeknt(kadknt) = xknot
+      call inicur(ks_a)
+      call fit(ks_a,kerror_a)
+      if(kerror_a .gt. 0) return
+      eeakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm &
+        + akgamwt * chigamt + akprewt * chipre
+      return
+      end
+
       subroutine fit(jtime,kerror)
 !**********************************************************************
 !**                                                                  **
@@ -1946,7 +1959,7 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       data nzero/0/
       save nzero
 !-----------------------------------------------------------------------
@@ -1962,53 +1975,61 @@
       iend=mxiter+1
       if (iconvr.eq.3) iend=1
       idosigma=1
-      do 2010 i=1,iend
-        if (i.gt.1) iwantk=iwantk+1
+      do i=1,iend
         ix=i
-        if (i.le.1) go to 500
-        !------------------------------------------------------------------
-        !--  nitera.ge.kcallece, then call setece                        --
-        !--  mtxece=1 call setece every iteration                        --
-        !--  mtxece>1 call setece per mtece time iteration               --
-        !------------------------------------------------------------------
-        if ((nitera.ge.kcallece).and.(kfitece.gt.0)) then
-          nleft=abs(mxiter)-nitera
-          if(nleft .ge. mtxece*nconstr) then
-            if (idebug.ge.2) then
-              write (6,*) 'Call FIT/SETECE',ix
-              write (6,*) '  nitera/kcallece/kfitece/nleft/mtxece/nconstr = ', &
-                nitera,kcallece,kfitece,nleft,mtxece,nconstr
+        if (i.gt.1) then
+          iwantk=iwantk+1
+          !------------------------------------------------------------------
+          !--  nitera.ge.kcallece, then call setece                        --
+          !--  mtxece=1 call setece every iteration                        --
+          !--  mtxece>1 call setece per mtece time iteration               --
+          !------------------------------------------------------------------
+          if ((nitera.ge.kcallece).and.(kfitece.gt.0)) then
+            nleft=abs(mxiter)-nitera
+            if(nleft .ge. mtxece*nconstr) then
+              if (idebug.ge.2) then
+                write (6,*) 'Call FIT/SETECE',ix
+                write (6,*) '  nitera/kcallece/kfitece/nleft/mtxece/nconstr = ', &
+                  nitera,kcallece,kfitece,nleft,mtxece,nconstr
+              endif
+              call setece(jtime,kerror)
+              if (kerror /= 0) then
+                jerror(jtime) = 1
+                return
+              endif
             endif
-            call setece(jtime,kerror)
           endif
-        endif
-        call green(nzero,jtime,nitera)
-        if (kprfit.gt.0.and.iwantk.eq.ndokin) then
-          call presur(jtime,nitera,kerror)
+          call green(nzero,jtime,nitera)
+          if (kprfit.gt.0.and.iwantk.eq.ndokin) then
+            call presur(jtime,nitera,kerror)
+            if (kerror /= 0) then
+              jerror(jtime) = 1
+              return
+            endif
+            iwantk=0
+          endif
+          if (kprfit.ge.3) call presurw(jtime,nitera)
+          if (errorm.lt.errmagb) then
+            if ((imagsigma.eq.1) .AND. (errorm > errmag) ) &
+              call getsigma(jtime,nitera)
+            if ((imagsigma.eq.2).and.(idosigma.eq.1)) then
+              call getsigma(jtime,nitera)
+              idosigma=2
+            endif
+          endif
+          if (idebug.ge.2) write (6,*) 'Call FIT/MATRIX',ix
+          call matrix(jtime,ix,ichisq,nitera,kerror)
           if (kerror /= 0) then
             jerror(jtime) = 1
             return
           endif
-          iwantk=0
-        endif
-        if (kprfit.ge.3) call presurw(jtime,nitera)
-        if (errorm.lt.errmagb) then
-          if ((imagsigma.eq.1) .AND. (errorm > errmag) ) &
-            call getsigma(jtime,nitera)
-          if ((imagsigma.eq.2).and.(idosigma.eq.1)) then
-            call getsigma(jtime,nitera)
-            idosigma=2
-          endif
-        endif
-        if (idebug.ge.2) write (6,*) 'Call FIT/MATRIX',ix
-        call matrix(jtime,ix,ichisq,nitera,kerror)
-        if (kerror /= 0) then
-          jerror(jtime) = 1
-          return
-        endif
-        if ((iconvr.eq.2).and.(ichisq.gt.0)) go to 2020
-500     continue
-        do 2000 in=1,nxiter
+          if ((iconvr.eq.2).and.(ichisq.gt.0)) then
+            call errctrl_msg('fit','not converged properly',2)
+            go to 2020
+          end if
+        end if
+
+        do in=1,nxiter
           ixnn=in
           nitera=nitera+1
           call currnt(ix,jtime,ixnn,nitera,kerror)
@@ -2022,32 +2043,46 @@
             jerror(jtime) = 1
             return
           endif
-          call pflux(ix,ixnn,nitera,jtime)
-          call steps(ixnn,nitera,ix,jtime,kerror,i,in)
-          if (kerror /= 0) then
+          call pflux(ix,ixnn,nitera,jtime,kerror)
+          if (kerror.gt.0) then
+            jerror(jtime) = 1
+            return
+          endif
+          call steps(ixnn,nitera,ix,jtime,kerror)
+          if (kerror.gt.0) then
             jerror(jtime) = 1
             return
           endif
           if (kmtark.gt.0) then
-            if (kwaitmse.ne.0 .and. i.ge.kwaitmse) call fixstark(jtime,kerrora)
+            if (kwaitmse.ne.0 .and. i.ge.kwaitmse) then
+              call fixstark(jtime,kerror)
+              if (kerror.gt.0) then
+                jerror(jtime) = 1
+                return
+              endif
+            end if
           endif
           call residu(nitera,jtime)
-          if ((nitera.lt.kcallece).and.(kfitece.gt.0.0)) go to 2010
-          if ((in.eq.1).and.(idone.gt.0)) then
-            if (tsaisq(jtime).le.saimin) go to 2020
-          endif
-          if (idone.gt.0) go to 2010
-          if (i.eq.mxiter+1) go to 2010
-2000    continue
-2010    continue
+          if ((nitera.lt.kcallece).and.(kfitece.gt.0.0)) exit
+          if ((in.eq.1).and.(idone.gt.0).and.(tsaisq(jtime).le.saimin)) then
+            go to 2020
+          end if
+          if (idone.gt.0) exit
+          if (i.eq.mxiter+1) exit
+        end do ! in
+      end do ! i
+      call errctrl_msg('fit','not converged, reached max iterations',2)
 2020  continue
       !---------------------------------------------------------------------
       !--  update pressure if needed                                      --
       !---------------------------------------------------------------------
-      if (kprfit.gt.1) call presur(jtime,nitera,kerror)
-      if (kerror /= 0) then
-        jerror(jtime) = 1
-      endif
+      if (kprfit.gt.1) then
+        call presur(jtime,nitera,kerror)
+        if (kerror /= 0) then
+          jerror(jtime) = 1
+          return
+        endif
+      end if
       return
       end
 
@@ -2319,6 +2354,7 @@
          ,idestp(nnece),idestm(nnece),becem(nnece),becep(nnece) &
          ,dbdrp(nnece),dbdrm(nnece)
       integer, intent(inout) :: kerror
+
       kerror = 0
 !-------------------------------------------------------------------
       ALLOCATE(rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
@@ -2409,11 +2445,12 @@
 !
       nnn1=1
       iieerr=0
-      call sdecm(arspfit,nnecein,mnow,nfit,brspfit,nnecein &
-           ,nnn1,s,wk,iieerr)
-!EALW      write(*,*) iieerr
-!EALW      write(*,*) 's'
-!EALW      write(*,*) s
+      call sdecm(arspfit,nnecein,mnow,nfit,brspfit,nnecein,nnn1,s,wk,iieerr)
+      if (iieerr.eq.129) then
+        kerror = 1
+        call errctrl_msg('geteceb','sdecm failed to converge')
+        return
+      end if
       toler=1.0e-06_dp*s(1)
       DO 2010 I = 1,nfit
             T = 0.0
@@ -2574,15 +2611,7 @@
   550 continue
       if (icurrt.ne.4) go to 600
       call currnt(n222,jtime,n222,n222,kerror)
-! MPI >>>
-#if defined(USEMPI)
-      ! NOTE : Serial code does NOT have this error check and does NOT return KERROR
-      !if (kerror /= 0) then
-      !  ! NOTE : Do NOT need to set KERROR return value because will be set to 1 by CURRNT if error occurred
-      !  return
-      !endif
-#endif
-! MPI <<<
+      if (kerror.gt.0) return
       ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
       ffprim(nw)=ffprim(1)*gammaf
   600 continue
@@ -2700,17 +2729,11 @@
 !--   get babsk array (kmax+1) is strictly increasing order
 !--------------------------------------------------------------------
       do k=1,kmax
-         if(bmaxk(k).lt.bmink(k)) then
-!EALW          write(*,*) 'stop by bmaxk1'
-!EALW          write(*,*)k,bmaxk(k),bmink(k)
-! MPI >>>
-#if defined(USEMPI)
-          call mpi_stop
-#else
-          stop
-#endif
-! MPI <<<
-         endif
+        if(bmaxk(k).lt.bmink(k)) then
+          kerror = 1
+          call errctrl_msg('geteceb','bmax < bmin')
+          return
+        endif
       enddo
 !
       iout1=0
@@ -3021,6 +3044,7 @@
   550 continue
       if (icurrt.ne.4) go to 600
       call currnt(n222,jtime,n222,n222,kerror)
+      if (kerror.gt.0) return
       ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
       ffprim(nw)=ffprim(1)*gammaf
   600 continue
@@ -3280,8 +3304,12 @@
 !
       nnn1=1
       iieerr=0
-      call sdecm(arspfit,nnecein,mnow,nfit,brspfit,nnecein &
-           ,nnn1,s,wk,iieerr)
+      call sdecm(arspfit,nnecein,mnow,nfit,brspfit,nnecein,nnn1,s,wk,iieerr)
+      if (iieerr.eq.129) then
+        kerror = 1
+        call errctrl_msg('getecer','sdecm failed to converge')
+        return
+      end if
       toler=1.0e-06_dp*s(1)
       DO 2010 I = 1,nfit
             T = 0.0
@@ -3589,8 +3617,12 @@
       nnn1=1
       iieerr=0
       mnow=mecein
-      call sdecm(arspfit,nnecein,mnow,nfit,brspfit,nnecein &
-           ,nnn1,s,wk,iieerr)
+      call sdecm(arspfit,nnecein,mnow,nfit,brspfit,nnecein,nnn1,s,wk,iieerr)
+      if (iieerr.eq.129) then
+        kerror = 1
+        call errctrl_msg('gettir','sdecm failed to converge')
+        return
+      end if
       toler=1.0e-06_dp*s(1)
       DO 2010 I = 1,nfit
         T = 0.0
@@ -3827,7 +3859,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       dimension pds(6)
@@ -3914,20 +3946,13 @@
  7550 continue
       if (icurrt.ne.4) go to 7600
       call currnt(n222,iges,n222,n222,kerror)
-! MPI >>>
-#if defined(USEMPI)
-      ! NOTE : Serial codes does NOT have this error check and does NOT return KERROR
-      !if (kerror /= 0) then
-      !  return
-      !endif
-#endif
-! MPI <<<
+      if (kerror.gt.0) return
       pprime(1)=cratio/darea/rzero
       ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
       ffprim(nw)=ffprim(1)*gammaf
       pprime(nw)=pprime(1)*gammap
  7600 continue
-!
+
       do i=2,nw-1
         ii=nw-i+1
         siii=1.0_dp-1.0_dp/(nw-1)*(i-1)
@@ -4466,25 +4491,14 @@
         do 1900 k=1,npress
           ematrix(i,j)=ematrix(i,j)+arsp(k,i)*arsp(k,j)
  1900   continue
-!
-      call sdecm(arsp,ndata,ntedat,nptef,bdata,ntedat,n111,wrsp, &
-                 work,ier)
-      if (ier.ne.129) go to 1200
-      write (nttyo,8000) ier
-! MPI >>>
-#if defined(USEMPI)
-      ! ERROR_FIX >>>
-      !kerror = 1
-      !return
-      ! <<< >>>
-      call mpi_stop
-      ! ERROR_FIX <<<
-#else
-      stop
-#endif
-! MPI <<<
-!
- 1200 continue
+
+      call sdecm(arsp,ndata,ntedat,nptef,bdata,ntedat,n111,wrsp,work,ier)
+      if (ier.eq.129) then
+        kerror = 1
+        call errctrl_msg('gette','sdecm failed to converge')
+        return
+      end if
+
       cond=ier
       toler=1.0e-06_dp*wrsp(1)
       do 1600 i=1,nptef
@@ -4538,8 +4552,8 @@
         endif
 !
       return
- 8000 format (/,'  ** Problem in Decomposition **',i10)
       end
+
       subroutine gettion(kerror)
 !**********************************************************************
 !**                                                                  **
@@ -4574,6 +4588,8 @@
 ! MPI >>>
       integer, intent(inout) :: kerror
 ! MPI <<<
+      kerror = 0
+
       if (rion(2).lt.0.0) then
       do 2900 i=1,nption
        xsiion(i)=-rion(i)
@@ -4622,22 +4638,12 @@
 !
       nnn=1
       call sdecm(arsp,ndata,need,nptionf,bdata,need,nnn,wrsp,work,ier)
-      if (ier.ne.129) go to 1200
-      write (nttyo,8000) ier
-! MPI >>>
-#if defined(USEMPI)
-      ! ERROR_FIX >>>
-      !kerror = 1
-      !return
-      ! <<< >>>
-      call mpi_stop
-      ! ERROR_FIX <<<
-#else
-      stop
-#endif
-! MPI <<<
-!
- 1200 continue
+      if (ier.eq.129) then
+        kerror = 1
+        call errctrl_msg('gettion','sdecm failed to converge')
+        return
+      end if
+
       cond=ier
       toler=1.0e-06_dp*wrsp(1)
       do 1600 i=1,nptionf
@@ -4708,8 +4714,8 @@
         endif
 !
       return
- 8000 format (/,'  ** Problem in Decomposition **',i10)
       end
+
       subroutine green(ifag,jtime,niter)
 !**********************************************************************
 !**                                                                  **
@@ -4938,7 +4944,6 @@
           endif
  1520     continue
           fgowpc(jj)=fgowpc(jj) + factor
- 1560     continue
  1580   continue
 !-------------------------------------------------------------------------
 !-- Hyperbolic tangent term for P'                                      --
@@ -5017,7 +5022,6 @@
           endif
  1820     continue
           fgowpc(jj)=fgowpc(jj)+factor
- 1860     continue
           if (ifag.eq.1) go to 1880
           if (fwtdlc.gt.0.0) then
             xpsdd=xpsis(jjk)
@@ -5628,7 +5632,7 @@
       return
       end
 
-      subroutine pflux(niter,nnin,ntotal,jtime)
+      subroutine pflux(niter,nnin,ntotal,jtime,kerror)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -5665,9 +5669,10 @@
       dimension pds(6)
       real*8,dimension(:),allocatable :: psikkk,gfbsum
       data initfb/0/,init/0/
-!
+
+      kerror = 0
       ALLOCATE(psikkk(nwnh),gfbsum(nwnh))
-!
+
       vfeed=(isetfb.ne.0).and.(init.ne.0).and.(niter.gt.2.or.nnin.gt.2)
       if (ivesel.gt.10) return
 !----------------------------------------------------------------------------
@@ -5843,7 +5848,8 @@
           kk=(i-1)*nh+j
           psi(kk)=tmu2*pcurrt(kk)*rgrid(i)*2.0
  2700   continue
-        call pflux_cycred(psi,work)
+        call pflux_cycred(psi,work,kerror)
+        if (kerror.gt.0) return
       endif
       do 3000 i=1,nwnh
         psi(i)=-psi(i)
@@ -6054,6 +6060,8 @@
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
 
+      ef_init_cycred_data = 0
+
       u0 = 4.0 * pi * 1.0e-7_dp
 
 ! ----------------------------------------------------------------------
@@ -6069,11 +6077,9 @@
    10 continue
 
    15 if (nhpwr.eq.-1) then
-         write(6,*) ' (init_cycred_data): grid height must be a', &
-                    ' power of 2 + 1.\n PROGRAMMING ERROR!\n'
-!        default to nh=33 
          nhpwr = 5
-         ef_init_cycred_data=1 
+         ef_init_cycred_data=1
+         call errctrl_msg('ef_init_cycred_data','grid height must be a power of 2 + 1')
          return 
       endif  
 
@@ -6125,20 +6131,16 @@
         jstep  = jpow    
 
         do 80 j=jstart,jend,jstep
-           m1 = -1.0
-           do 70 l=1,jpowm1
-              m1 = -1.0 * m1
+          m1 = -1.0
+          do 70 l=1,jpowm1
+            m1 = -1.0 * m1
  
-              index = index + 1
-              if (index.gt.icycred_loopmax) then
-                 write(6,*) 'rtefit (init_cycred_data):', &
-                            'constant data index is ',index, &
-                            'too large! PROGRAMMING ERROR! id:1', &
-                            ' ',jstart,' ',jend,' ',jstep,' ',j, &
-                            ' ',nred,' ',k,' ',jpowm1,' ',l
-                 ef_init_cycred_data=1
-                 return 
-              endif 
+            index = index + 1
+            if (index.gt.icycred_loopmax) then
+              ef_init_cycred_data=1
+              call errctrl_msg('ef_init_cycred_data','constant data index in forward reduction is > max')
+              return
+            endif
 
               cosdii = -2.0 * cos( (2.0 * l - 1.0) * pi/jpow)
               sindi = sin( (2.0 * l - 1.0) * pi/jpow)
@@ -6173,10 +6175,8 @@
 
             index = index + 1
             if (index.gt.icycred_loopmax) then
-              write(6,*) 'rtefit (init_cycred_data): ', &
-                         'constant data index is ',index, &
-                         'too large! PROGRAMMING ERROR! id:2'
               ef_init_cycred_data=1
+              call errctrl_msg('ef_init_cycred_data','constant data index in back solution is > max')
               return
             endif 
 
@@ -6212,13 +6212,7 @@
             diagl(j) * beti(i,j)
   130 continue    
 
-! ----------------------------------------------------------------------
-! All done.
-
-      ef_init_cycred_data=0
       end
-
-
 
 ! ======================================================================
 ! FUNCTION cyclic_reduction
@@ -6332,7 +6326,7 @@
 ! to get the flux on the grid resulting from the plasma current.
 ! ----------------------------------------------------------------------
 
-      subroutine pflux_cycred(psigrid,sia)
+      subroutine pflux_cycred(psigrid,sia,kerror)
 
       include 'eparmdud129.f90'
       include 'modules1.f90'
@@ -6340,21 +6334,14 @@
 !      include 'ecomdu1.f90'
       dimension psigrid(*),sia(*)
 
+      kerror = 0
+
 ! ----------------------------------------------------------------------
-! Call the initialisation and check the result
+! Call the initialization and check the result
       initresult=ef_init_cycred_data()
       if (initresult.eq.1) then
-! MPI >>>
-#if defined(USEMPI)
-        ! ERROR_FIX >>>
-        !return
-        ! <<< >>>
-        call mpi_stop
-        ! ERROR_FIX <<<
-#else
-        stop 'init failure ef_init_cycred_data'
-#endif
-! MPI <<<
+          kerror = 1
+          return
       endif
 
 ! ----------------------------------------------------------------------
@@ -6619,8 +6606,7 @@
 !  vector_out = output vector
 !  nelements = number of elements in the vectors. Must be at least 2.
 
-      subroutine ef_vmul_const_shrt(vector1,constant,vector_out, &
-                                    nelements)
+      subroutine ef_vmul_const_shrt(vector1,constant,vector_out,nelements)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension vector1(1),vector_out(1)
 
@@ -6962,19 +6948,18 @@
       dimension pds(6),xnsi(nppcur),xnsp(nppcur)
       character*50 edatname
       namelist/edat/npress,rpress,zpress,pressr,sigpre
-! MPI >>>
       integer, intent(inout) :: kerror
+
       kerror = 0
-! MPI <<<
       kdofit=1
-        select case (kprfit)
-        case (1)
-          go to 1000
-        case (2)
-          go to 2000
-        case (3)
-          go to 1000
-        end select
+      select case (kprfit)
+      case (1)
+        go to 1000
+      case (2)
+        go to 2000
+      case (3)
+        go to 1000
+      end select
  1000 continue
 !---------------------------------------------------------------------
 !--  input pressure profile                                         --
@@ -7050,36 +7035,16 @@
 !--  get ion temperature and density profile                   --
 !----------------------------------------------------------------
       if (nptef.ne.0) then
-! MPI >>>
         call gette(kerror)
-#if defined(USEMPI)
-        !if (kerror /= 0) then
-        !  kerror = 1
-        !  return
-        !endif
-#endif
-! MPI <<<
+        if (kerror.gt.0) return
       endif
 
-! MPI >>>
       call getne(jtime,kerror)
-#if defined(USEMPI)
-      !if (kerror /= 0) then
-      !  kerror = 1
-      !  return
-      !endif
-#endif
-! MPI <<<
+      if (kerror.gt.0) return
 
-! MPI >>>
       call gettion(kerror)
-#if defined(USEMPI)
-      !if (kerror /= 0) then
-      !  kerror = 1
-      !  return
-      !endif
-#endif
-! MPI <<<
+      if (kerror.gt.0) return
+
       if (nbeam.ne.0) call getbeam
 !----------------------------------------------------------------
 !--  construct pressure profile                                --
@@ -7313,117 +7278,122 @@
       errold=errorm
       errave=0.0
       errorm=0.0
-      do 1000 i=1,nw
-      do 1000 j=1,nh
-        kk=(i-1)*nh+j
-        change=abs(psi(kk)-psiold(kk))
-        errorm=max(errorm,change)
-        errave=errave+change
-        if (errorm.gt.change) go to 1000
-        iermax(nx)=i
-        jermax(nx)=j
- 1000 continue
+      do i=1,nw
+        do j=1,nh
+          kk=(i-1)*nh+j
+          change=abs(psi(kk)-psiold(kk))
+          errorm=max(errorm,change)
+          errave=errave+change
+          if (errorm.le.change) then
+            iermax(nx)=i
+            jermax(nx)=j
+          end if
+        end do
+      end do
 
       errorm=errorm/abs(sidif)
-!
+
       aveerr(nx)=errave/abs(sidif)/nwnh
       cerror(nx)=errorm
       idone=0
       if (errorm.le.error) idone=1
-!----------------------------------------------------------------------
-!--  Turn on vertical stabilization if error small                   --
-!----------------------------------------------------------------------
+      !----------------------------------------------------------------------
+      !--  Turn on vertical stabilization if error small                   --
+      !----------------------------------------------------------------------
       if ((errorm.le.errdelz).and.fitdelz) then
         ndelzon = 3
       else
         ndelzon = 999
       endif
-!----------------------------------------------------------------------
-!--  vertical stabilization and iteration information                --
-!----------------------------------------------------------------------
+      !----------------------------------------------------------------------
+      !--  vertical stabilization and iteration information                --
+      !----------------------------------------------------------------------
       if (itell.gt.0.and.isetfb.ge.0) then
         if (itell.eq.1) then
-          if (nx.eq.1) write (nttyo,10017) itime, rank
+          !if (nx.eq.1) write (nttyo,10017) itime, rank
+          if (nx.eq.1) write (nttyo,'(x)')
           if (nsol.eq.0) then
-           if (mmbmsels.eq.0) then
-            write (nttyo,10019)  itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
-             sum(chigam)
-           else
-            write (nttyo,90019)  itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
-             sum(chigam),tchimls
-           endif
+            if (mmbmsels.eq.0) then
+              write (nttyo,10019) rank,itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
+                sum(chigam)
+            else
+              write (nttyo,90019) rank,itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
+                sum(chigam),tchimls
+            endif
           else
-           write (nttyo,10020)  itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
-             sum(chigam),erbmax,erbsmax           
+            write (nttyo,10020) rank,itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
+              sum(chigam),erbmax,erbsmax
           endif
         elseif (itell.eq.2) then
-          write (nttyo,10021)  itime,nx,ali(jtime),abs(betatn),errorm,qsiw(1)
+          write (nttyo,10021) rank,itime,nx,ali(jtime),abs(betatn),errorm,qsiw(1)
         elseif (itell.eq.3) then
-          write (nttyo,10023)  itime,nx,difpsi,zmaxis,errorm,delzmm
+          write (nttyo,10023) rank,itime,nx,difpsi,zmaxis,errorm,delzmm
         elseif (itell.eq.4) then
           if (nx.eq.1) then
-            write (nttyo,10017) itime, rank
+            !write (nttyo,10017) itime, rank
+            write (nttyo,'(x)')
             if (kstark.gt.0) then
-            write (nttyo,80019)  itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
-        cdelz(nx-1),cdeljsum,sum(chigam)
+              write (nttyo,80019) rank,itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
+                cdelz(nx-1),cdeljsum,sum(chigam)
             else
-            write (nttyo,10025)  itime,nx,tsaisq(jtime),zmaxis,errorm &
-                                 ,delzmm,cdelz(nx-1),cdeljsum
+              write (nttyo,10025) rank,itime,nx,tsaisq(jtime),zmaxis,errorm &
+                ,delzmm,cdelz(nx-1),cdeljsum
             endif
           else
             if (kstark.gt.0) then
-            write (nttyo,80019)  itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
-        cdelz(nx-1),cdeljsum,sum(chigam)
+              write (nttyo,80019) rank,itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
+                cdelz(nx-1),cdeljsum,sum(chigam)
             else
-            write (nttyo,10025)  itime,nx,tsaisq(jtime),zmaxis,errorm &
-                                 ,delzmm,cdelz(nx-1),cdeljsum
+              write (nttyo,10025)  rank,itime,nx,tsaisq(jtime),zmaxis,errorm &
+                ,delzmm,cdelz(nx-1),cdeljsum
             endif
           endif
         endif
       endif
       if (isetfb.ne.0) then
-           write (4,10009) nx,tsaisq(jtime),zmaxis,errorm,delzmm &
-                           ,brfb(1)
-           if (isetfb.lt.0) &
-           write (6,10009) nx,tsaisq(jtime),zmaxis,errorm,delzmm &
-                           ,brfb(1)
-        elseif (eelip.gt.2.25_dp .and. itell.eq.0) then
-           write (6,10009) nx,tsaisq(jtime),zmaxis,errorm,delzmm &
-                           ,brfb(1)
+        write (4,10009) rank,itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm &
+          ,brfb(1)
+        if (isetfb.lt.0) &
+          write (6,10009) rank,itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm &
+          ,brfb(1)
+      elseif (eelip.gt.2.25_dp .and. itell.eq.0) then
+        write (6,10009) rank,itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm &
+          ,brfb(1)
       endif
       if (idebug /= 0) then
         write (nttyo,*) 'cratio,cratio_ext,cratiop_ext,cratiof_ext= ', &
-           cratio,cratio_ext,cratiop_ext,cratiof_ext
+          cratio,cratio_ext,cratiop_ext,cratiof_ext
         write (nttyo,*) 'scalepp_ext,scaleffp_ext= ', &
-           scalepp_ext,scaleffp_ext
+          scalepp_ext,scaleffp_ext
       endif
       return
-10009   format (x,'iter',i3.3, &
-        ' chsq=',1pe8.2,' zmag=',1pe9.2,' err=',1pe8.2,' dz=',1pe10.3, &
-        ' Ifb=',1pe9.2)
-10017   format (/,x,' ----- time =',i6,' ms ----- (',i2,')')
-10019   format (x,'t=',i6,1x,'it=',i3, &
-        ' chi2=',1pe8.2,' zm=',1pe9.2,' err=',1pe9.3, &
-        ' dz=',1pe10.3,' chigam=',1pe9.2)
-80019   format (x,'t=',i6,1x,'it=',i3, &
-        ' chi2=',1pe8.2,' zm=',1pe9.2,' err=',1pe9.3, &
-        ' dz=',1pe10.3,' delz=',1pe10.3,' dj=',1pe9.3,' chigam=',1pe9.2)
-90019   format (x,'t=',i6,1x,'it=',i3, &
-        ' chi2=',1pe8.2,' zm=',1pe9.2,' err=',1pe9.3, &
-        ' dz=',1pe10.3,' chigam=',1pe9.2,' chimls=',1pe9.2)
-10020   format (x,'t=',i6,1x,'it=',i3, &
-        ' chi2=',1pe8.2,' zm=',1pe9.2,' err=',1pe9.3, &
-        ' dz=',1pe10.3,' chigam=',1pe9.2,' errb=',1pe9.2,' errbs=',1pe9.2)
-10021   format (x,'t=',i6,1x,'it=',i3, &
-        ' li=',1pe9.3,' betan=',1pe9.3,' err=',1pe9.3, &
-        ' qs=',1pe9.3)
-10023   format (x,'t=',i6,1x,'it=',i3, &
-        ' dpsi=',1pe10.3,' zm=',1pe9.2,' err=',1pe9.3, &
-        ' dz=',1pe10.3)
-10025   format (x,'t=',i6,1x,'it=',i3, &
-        ' chi2=',1pe8.2,' zm=',1pe9.2,' err=',1pe9.3, &
-        ' dz=',1pe10.3,' delz=',1pe10.3,' dj=',1pe9.3)
+10009 format (x,'r=',i3,1x,'t=',i6,1x,'iter',i3.3, &
+      ' chsq=',1pe8.2,' zmag=',1pe9.2,' err=',1pe8.2,' dz=',1pe10.3, &
+      ' Ifb=',1pe9.2)
+!10017 format (/,x,' ----- time =',i6,' ms ----- (',i2,')')
+10019 format (x,'r=',i3,1x,'t=',i6,1x,'it=',i3, &
+      ' chi2=',1pe8.2,' zm=',1pe9.2,' err=',1pe9.3, &
+      ' dz=',1pe10.3,' chigam=',1pe9.2)
+80019 format (x,'r=',i3,1x,'t=',i6,1x,'it=',i3, &
+      ' chi2=',1pe8.2,' zm=',1pe9.2,' err=',1pe9.3, &
+      ' dz=',1pe10.3,' delz=',1pe10.3,' dj=',1pe9.3,' chigam=',1pe9.2)
+90019 format (x,'r=',i3,1x,'t=',i6,1x,'it=',i3, &
+      ' chi2=',1pe8.2,' zm=',1pe9.2,' err=',1pe9.3, &
+      ' dz=',1pe10.3,' chigam=',1pe9.2,' chimls=',1pe9.2)
+10020 format (x,'r=',i3,1x,'t=',i6,1x,'it=',i3, &
+      ' chi2=',1pe8.2,' zm=',1pe9.2,' err=',1pe9.3, &
+      ' dz=',1pe10.3,' chigam=',1pe9.2,' errb=',1pe9.2,' errbs=',1pe9.2)
+10021 format (x,'r=',i3,1x,'t=',i6,1x,'it=',i3, &
+      ' li=',1pe9.3,' betan=',1pe9.3,' err=',1pe9.3, &
+      ' qs=',1pe9.3)
+10023 format (x,'r=',i3,1x,'t=',i6,1x,'it=',i3, &
+      ' dpsi=',1pe10.3,' zm=',1pe9.2,' err=',1pe9.3, &
+      ' dz=',1pe10.3)
+10025 format (x,'r=',i3,1x,'t=',i6,1x,'it=',i3, &
+      ' chi2=',1pe8.2,' zm=',1pe9.2,' err=',1pe9.3, &
+      ' dz=',1pe10.3,' delz=',1pe10.3,' dj=',1pe9.3)
       end
+
       subroutine setece(jtime,kerror)
 !**********************************************************************
 !**                                                                  **
@@ -7504,16 +7474,22 @@
          endif
         enddo
       endif
-!-----------------------------------------------------------------
-!--   kfixro=0 or kfixrece=0, receo or R+ R- from getecer
-!-----------------------------------------------------------------
+      !-----------------------------------------------------------------
+      !--   kfixro=0 or kfixrece=0, receo or R+ R- from getecer
+      !-----------------------------------------------------------------
       if (kfitece.le.2) then
-!      if ((kfixro.eq.0).or.(kfixrece.eq.0)) call getecer(jtime,kerrora)
-       if (kfixrece.eq.0) call getecer(jtime,kerrora)
-       if ((kfixro.eq.-1).or.(kfixrece.eq.-1)) call geteceb(jtime,kerror)
+        if (kfixrece.eq.0) then
+          call getecer(jtime,kerror)
+          if (kerror.gt.0) return
+        end if
+        if ((kfixro.eq.-1).or.(kfixrece.eq.-1)) then
+          call geteceb(jtime,kerror)
+          if (kerror.gt.0) return
+        end if
       endif
       if (kfitece.eq.3) then
         call gettir(jtime,kerror)
+        if (kerror.gt.0) return
       endif
 20    continue
 !----------------------------------------------------------------
@@ -7914,7 +7890,7 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension xpsii(1)
 
       do i=1,keecur
@@ -7947,7 +7923,7 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension xpsii(1)
 
       do i=1,kffcur
@@ -7981,7 +7957,7 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension xpsii(1)
 
       do i=1,kffcur
@@ -8015,7 +7991,7 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension xpsii(1)
 
       do i=1,kffcur
@@ -8048,7 +8024,7 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension xpsii(1)
 
       do i=1,kffcur
@@ -8081,7 +8057,7 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension xpsii(1)
 
       do i=1,kppcur
@@ -8115,7 +8091,7 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension xpsii(1)
 
       do i=1,kppcur
@@ -8149,7 +8125,7 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension xpsii(1)
 
       do i=1,kppcur
@@ -8183,7 +8159,7 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension xpsii(1)
 
       do i=1,kwwcur
@@ -8216,7 +8192,7 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension xpsii(1)
 
       do i=1,kwwcur
@@ -8250,7 +8226,7 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension xpsii(1)
 
       do i=1,kwwcur
@@ -8578,7 +8554,7 @@
   900 continue
       return
       end
-      subroutine steps(ix,ixt,ixout,jtime,kerror,ifit,infit)
+      subroutine steps(ix,ixt,ixout,jtime,kerror)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -8635,7 +8611,7 @@
                   psibry,rseps(1,jtime),zseps(1,jtime),m10, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
                   zxmin,zxmax,rymin,rymax,dpsi,bpol,bpolz, &
-                  limitr,xlim,ylim,limfag,ifit,infit,jtime,kerror)
+                  limitr,xlim,ylim,limfag,ixt,jtime,kerror)
       if (kerror.gt.0) return
       if (nsol.gt.0) then
         if (idebug >= 2) then
@@ -8671,13 +8647,8 @@
                  limfag,radbou,kbound,tolbndpsi)
       if (nnerr.gt.0) then
         kerror=1
-        !write(nttyo,2100) ishot,itime
-        !open(unit=40,file='errfil.out',status='unknown',access='append')
-        !write(40,2100) ishot,itime
-        !close(unit=40)
         return
       endif
-  155 continue
 !----------------------------------------------------------------------
 !--  find magnetic axis and poloidal flux at axis simag              --
 !----------------------------------------------------------------------
@@ -8686,7 +8657,7 @@
                   psibry ,rseps(1,jtime),zseps(1,jtime),m20, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
                   zxmin,zxmax,rymin,rymax,dpsi,bpol,bpolz, &
-                  limitr,xlim,ylim,limfag,ifit,infit,jtime,kerror)
+                  limitr,xlim,ylim,limfag,ixt,jtime,kerror)
       if (kerror.gt.0) return
       sidif=simag-psibry
       eouter=(ymax-ymin)/(xmax-xmin)
@@ -8934,9 +8905,10 @@
        do i=1,kzeroj
        if (sizeroj(i).ge.1.0) sizeroj(i)=0.99999_dp
        siwant=simag+sizeroj(i)*(psibry-simag)
-       call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc &
-                    ,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur)
+       call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc, &
+                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                    rmaxis,zmaxis,negcur,kerror)
+       if (kerror.gt.0) return
        do 51900 k=1,nfounc
         csplt(k)=1./rsplt(k)**2
 51900  continue
@@ -8959,9 +8931,10 @@
       if (nqwant.gt.0) then
       do 53999 i=1,nqwant
        siwant=simag+siwantq(i)*(psibry-simag)
-       call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc &
-                    ,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur)
+       call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc, &
+                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                    rmaxis,zmaxis,negcur,kerror)
+       if (kerror.gt.0) return
        do 53810 k=1,nfounc
         csplt(k)=1./rsplt(k)**2
 53810  continue
@@ -9014,6 +8987,7 @@
 !---------------------------------------------------------------------
       if (fli.gt.0.0.or.fbetan.gt.0.0) then
            call betsli(jtime,rgrid,zgrid,kerror)
+           if (kerror.gt.0) return
       endif
 !----------------------------------------------------------------------
 !--  vertical stabilization information                              --
@@ -9061,15 +9035,11 @@
       n22=2
       if (errorm.lt.0.1_dp.and.icurrt.eq.4) nqend=nqiter
       do 1585 i=1,nqend
-      if (i.gt.1) call currnt(n22,jtime,n22,n22,kerror)
-! MPI >>>
-#if defined(USEMPI)
-      !if (kerror /= 0) then
-      !  kerror = 1
-      !  return
-      !endif
-#endif
-! MPI <<<
+      if (i.gt.1) then
+        call currnt(n22,jtime,n22,n22,kerror)
+        if (kerror.gt.0) return
+      end if
+
       fcentr=fbrdy**2+sidif*dfsqe
       if (fcentr.lt.0.0) fcentr=fbrdy**2
       fcentr=sqrt(fcentr)*fbrdy/abs(fbrdy)
@@ -9100,7 +9070,6 @@
       emf=emp
       endif
  1585 continue
- 1587 continue
       return
  1590 continue
       if ((ixt.le.1).and.(icinit.gt.0)) go to 1580
@@ -9471,34 +9440,3 @@
 !      linearinterp = a*ya(klo)+b*ya(khi)
 !
 !      end function linearinterp
-
-! MPI >>>
-#if defined(USEMPI)
-      subroutine mpi_stop
-!**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**       Shutdown MPI before calling STOP to terminate program      **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**       unknown..........created, ???                              **
-!**                                                                  **
-!**********************************************************************
-      include 'modules1.f90'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'mpif.h'
-      
-      if (allocated(dist_data)) deallocate(dist_data)
-      if (allocated(dist_data_displs)) deallocate(dist_data_displs)
-      if (allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
-      
-      !if (rank == 0) then
-      !  write(*,*) 'STOPPING MPI'
-      !endif
-      write(*,'(a,1x,i3,1x,a)') 'rank',rank,'mpi_abort'
-      call MPI_ABORT(MPI_COMM_WORLD,ierr)
-      STOP
-    
-      end subroutine mpi_stop
-#endif
-! MPI <<<

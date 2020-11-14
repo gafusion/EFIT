@@ -30,7 +30,7 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension jflag(ntime)
       dimension coils(nsilop),expmp2(magpri)
       namelist/in1/ishot,itime,qvfit,plasma,expmp2,coils,btor,ierchk, &
@@ -419,7 +419,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension coils(nsilop),expmp2(magpri),prexp(nrogow)
       namelist/out1/ishot,itime,betap0,rzero,qenp,enp,emp,plasma, &
            expmp2,coils,btor,rcentr,brsp,icurrt,rbdry,zbdry, &

@@ -1,4 +1,4 @@
-      subroutine data_input(jtime,kconvr,ktime,mtear)
+      subroutine data_input(jtime,kconvr,ktime,mtear,kerror)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -27,7 +27,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       parameter(mfila=10)
       parameter (m_ext=101)
       common/cwork3/lkx,lky
@@ -196,6 +196,7 @@
       ALLOCATE(gridpf(nwnh,mfila),gwork(nbwork,nwnh), &
          rgrids(nw),zgrids(nh))
 !
+      kerror = 0
       idone=0
       sicont=tmu*drslop/aaslop
 !
@@ -238,7 +239,6 @@
   172 continue
         fwtecebz0=swtecebz
         if (ierecebz.ne.0) fwtecebz0=0.0
-  175 continue
       if (fwtcur.ne.0.0) fwtcur=swtcur
       if (fwtqa.ne.0.0) fwtqa=1.
       if (fwtbp.ne.0.0) fwtbp=1.
@@ -1250,7 +1250,11 @@
         if ((symmetrize).and.(nbdry.gt.1)) itell=3
       endif
       if ((iconvr.ne.3).and.(qvfit.gt.0.0)) qenp=qvfit
-      if (ishot.eq.-1) go to 10000
+      if (ishot.eq.-1) then
+          kerror = 1
+          call errctrl_msg('data_input','shot number not set')
+          return
+      end if
       if ((limitr.gt.0).and.(xlim(1).le.-1.0)) read (nin,5000) &
            (xlim(i),ylim(i),i=1,limitr)
       if ((nbdry.gt.0).and.(rbdry(1).le.-1.0)) read (nin,5020) &
@@ -1448,7 +1452,6 @@
 !-----------------------------------------------------------------------
       call getlim(1,xltype,xltype_180)
 !
-  212 continue
       if (iconvr.ge.0) go to 214
       iecurr=1
       ivesel=1
@@ -1466,7 +1469,6 @@
       write (nout,inlibim)
       endif
       if (islve.gt.0) nbdry=40
-  216 continue
 !
       diamag(jtime)=1.0e-03_dp*dflux
       sigdia(jtime)=1.0e-03_dp*abs(sigdlc)
@@ -1698,7 +1700,6 @@
       do 290 kk=1,nwnh
         www(kk)=zero(kk)
   290 continue
-  292 continue
 !
       fwtref=fwtsi(iabs(nslref))
       if (kersil.eq.2) go to 325
@@ -2312,7 +2313,8 @@
         znow=0.0
         call surfac(siwant,psi,nw,nh,rgrids,zgrids,xout,yout,nfound, &
                     npoint,drgrids,dzgrids,xmin,xmax,ymin,ymax,npack, &
-                    rnow,znow,negcur)
+                    rnow,znow,negcur,kerror)
+        if (kerror.gt.0) return
         xmin=xout(1)
         xmax=xmin
         do i=2,nfound
@@ -2407,7 +2409,6 @@
  1210 continue
       if (cfcoil.lt.0.) cfcoil=100./pasmat(jtime)*abs(cfcoil)
       if (cupdown.lt.0.) cupdown=100./pasmat(jtime)*abs(cupdown)
- 1250 continue
 !-----------------------------------------------------------------------
 !--  symmetrize  F coil responses if needed                           --
 !-----------------------------------------------------------------------
@@ -2502,26 +2503,11 @@
       DEALLOCATE(rgrids,zgrids,gridpf,gwork)
 !
       return
- 4980 format (i5)
  5000 format (2e12.6)
  5020 format (1x,4e16.9)
  6550 format (/,' ir = ',10i4)
  6555 format (' iz = ',10i4)
  6557 format (/,' npc = ',i4)
-10000 continue
-      open(unit=40,file='errfil.out',status='unknown',access='append')
-      write (40,10020) ishot,itime
-      write (nttyo,10020) ishot,itime
-      close(unit=40)
-10020 format (///,1x,'shot',i6,' at ',i6,' ms ','%% Bad Input Data %%')
-! MPI >>>
-#if defined(USEMPI)
-      call mpi_stop
-#else
-      stop
-#endif
-! MPI <<<
-10140 format (i7,2x,i4,4(1x,f7.3),9(1x,f8.3))
 10200 format (6e12.6)
 10220 format (5e10.4)
       end

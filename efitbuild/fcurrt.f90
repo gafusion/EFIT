@@ -33,12 +33,11 @@
       dimension abry(msbdry,nfnves),bbry(msbdry),ainbry(nfnves,msbdry)
       dimension fcref(nfcoil)
       dimension pbry(msbdry),psbry(msbdry)
-      data iskip/0/,idoit/0/
-! MPI >>>
       integer, intent(inout) :: kerror
+      data iskip/0/,idoit/0/
+
       kerror = 0
-! MPI <<<
-!
+
       if (ifcurr.gt.0) return
       if (itertt.le.1.and.icinit.lt.0) return
       if (islpfc.ne.1) go to 2000
@@ -314,16 +313,11 @@
 !-----------------------------------------------------------------------
       if (idebug >= 2) write (106,*) 'FCURRT nj,neqn = ', nj,neqn
       call sdecm(abry,msbdry,nj,neqn,ut,msbdry,nj,wbry,work,ier)
-      if (ier.ne.129) go to 2880
-      write (nttyo,8000) ier
-! MPI >>>
-#if defined(USEMPI)
-      call mpi_stop
-#else
-      stop
-#endif
-! MPI <<<
- 2880 continue
+      if (ier.eq.129) then
+        kerror = 1
+        call errctrl_msg('fcurrt','sdecm failed to converge')
+        return
+      end if
       cond=ier
       toler=1.0e-06_dp*wbry(1)
       do 2890 i=1,neqn
@@ -671,6 +665,5 @@
       if (idebug /= 0) write (6,*) 'FCURRT erbsmax,erbsave,si = ', erbsmax,erbsave,wsisol
       endif
 !
- 4500 return
- 8000 format (/,'  ** Problem in Decomposition **',i10)
+      return
       end

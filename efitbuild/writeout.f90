@@ -7,7 +7,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
 
 ! MPI >>>
 #if defined(USEMPI)
@@ -385,18 +385,14 @@
       call getpts(ishot,times,delt,ktime,istop)
 #endif
       if (istop.gt.0) then
-          write (6,20000)
-          if (filenm.ne.'0') then
-            go to 3046
-          else
-! MPI >>>
-#if defined(USEMPI)
-            call mpi_stop
-#else
-            stop
-#endif
-! MPI <<<
-          endif
+        write (6,20000)
+        if (filenm.ne.'0') then
+          go to 3046
+        else
+          kerror = 1
+          call errctrl_msg('write_K','shot data not on disk and filename="0"')
+          return
+        endif
       endif
 !
       mmstark=0
@@ -744,7 +740,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
 
 ! MPI >>>
 #if defined(USEMPI)

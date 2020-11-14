@@ -30,7 +30,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension arsp(nrsmat,mfnpcr),wrsp(mfnpcr)
       dimension brsold(nrsmat),work(nrsma2),vcurrto(nvesel)
       dimension xpsfp(nffcur),xpspp(nppcur),xpspwp(nwwcur)
@@ -43,6 +43,8 @@
       real*8, dimension(2)             :: arspdet2(1:2)
       real*8, dimension(mfnpcr)        :: worktmp
       real*8, dimension(nrsmat,mfnpcr) :: arsptmp
+      integer, intent(inout) :: kerror
+      character(len=128) tmpstr
 
 !---------------------------------------------------------------------
 !--   relax saimin=50 from 30               04/27/90                --
@@ -51,10 +53,8 @@
       data iupdat/0/,minite/8/,ten24/1.e4_dp/,z04/1.0e-04_dp/
       save z04
 
-      integer, intent(inout) :: kerror
-
       kerror = 0
-      if (iconvr.eq.3) go to 6000
+      if (iconvr.eq.3) return
 !----------------------------------------------------------------------
 !-- Variable fitdelz                                                 --
 !----------------------------------------------------------------------
@@ -2258,58 +2258,56 @@
          enddo
          enddo
       endif
-      if (ncrsp .le. 0) then
-         call sdecm(arsp,nrsmat,nj,need,brsp,nrsmat, &
-                      nnn,wrsp,work,ier)
-         if (ier.ne.129) go to 2500
-         write (nttyo,8000) ier
-! MPI >>>
-#if defined(USEMPI)
-         call mpi_stop
-#else
-         stop
-#endif
-! MPI <<<
- 2500    continue
-!-----------------------------------------------------------------------
-!--  unfold fitting parameters                                        --
-!-----------------------------------------------------------------------
-         if ( wrsp(need).eq.0 ) then
-           go to 2656
-         end if
-         condno=wrsp(1)/wrsp(need)
-         toler=condin*wrsp(1)
-         do 2600 i=1,need
-           t=0.0
-           if (wrsp(i).gt.toler) t=brsp(i)/wrsp(i)
-           work(i)=t
- 2600    continue
-         do 2650 i=1,need
-           brsp(i)=0.0
-           do 2650 j=1,need
-             brsp(i)=brsp(i)+arsp(i,j)*work(j)
- 2650    continue
-      else
-         do 2655 j=1,nrsmat
-           b(j) = brsp(j)
-         2655 continue
 
-         call dgglse(nj,need,ncrsp,arsp,nrsmat,crsp,4*(npcurn-2)+6+ &
-                   npcurn*npcurn,b,z,brsp,work,nrsma2,info,condno,kerror)
-         if (kerror.gt.0) return
-         if (info.eq.0) go to 2657
-         2656   continue
-         write (nttyo,8000) info
-! MPI >>>
-#if defined(USEMPI)
-         call mpi_stop
-         stop
-#else
-         stop
-#endif
-! MPI <<<
- 2657    continue
+      if (ncrsp .le. 0) then
+        call sdecm(arsp,nrsmat,nj,need,brsp,nrsmat,nnn,wrsp,work,ier)
+        if (ier.eq.129) then
+          kerror = 1
+          call errctrl_msg('matrix','problem in decomposition, sdecm failed to converge')
+          return
+        end if
+
+        !-----------------------------------------------------------------------
+        !--  unfold fitting parameters                                        --
+        !-----------------------------------------------------------------------
+        if ( wrsp(need).eq.0 ) then
+          kerror = 1
+          call errctrl_msg('matrix','problem in decomposition, wrsp(need).eq.0')
+          return
+        end if
+        condno=wrsp(1)/wrsp(need)
+        toler=condin*wrsp(1)
+        do i=1,need
+          t=0.0
+          if (wrsp(i).gt.toler) t=brsp(i)/wrsp(i)
+          work(i)=t
+        end do
+        do i=1,need
+          brsp(i)=0.0
+          do j=1,need
+            brsp(i)=brsp(i)+arsp(i,j)*work(j)
+          end do
+        end do
+
+      else
+        do j=1,nrsmat
+          b(j) = brsp(j)
+        end do
+
+        call dgglse(nj,need,ncrsp,arsp,nrsmat,crsp,4*(npcurn-2)+6+ &
+          npcurn*npcurn,b,z,brsp,work,nrsma2,info,condno)
+        if (info.gt.0) then ! special hack to info in dgglse
+          kerror = 1
+          write(tmpstr,'(a,i4,a,i4,a)') 'A(',info,',',info,')=0 in dgglse, divide by zero.'
+          call errctrl_msg('matrix',tmpstr)
+          return
+        else if (info.lt.0) then
+          kerror = 1
+          call errctrl_msg('matrix','calling argument in dgglse was bad')
+          return
+        endif
       endif
+
 !----------------------------------------------------------------------
 !--  rescale results if A is preconditioned                          --
 !----------------------------------------------------------------------
@@ -2807,45 +2805,41 @@
         enddo
       endif
 !
-      if ((nniter.lt.minite).and.((eouter.gt.elomin).or.(fwtdlc.gt.0.0) &
-      ))  go to 4950
+      if ((nniter.lt.minite).and.((eouter.gt.elomin).or.(fwtdlc.gt.0.0))) go to 4950
       if ((nniter.lt.kcallece).and.(kfitece.gt.0.0))  go to 4950
-      if ((errorm.gt.errmin).and.((eouter.gt.elomin).or.(fwtdlc.gt.0.0) &
-      ))  go to 4950
+      if ((errorm.gt.errmin).and.((eouter.gt.elomin).or.(fwtdlc.gt.0.0))) go to 4950
       if (saisq.gt.saicon) go to 4950
       if (iconvr.ne.2) go to 4950
       if (abs(saisq-saiold).le.0.10_dp) go to 4918
       if (saisq.lt.saiold) go to 4950
- 4918 continue
+ 4918 continue  ! converged
       ichisq=1
-      do 4920 i=1,nrsmat
+      do i=1,nrsmat
         brsp(i)=brsold(i)
- 4920 continue
+      end do
       if (ifitvs.gt.0) then
-        do 30520 i=1,nvesel
+        do i=1,nvesel
           vcurrt(i)=vcurrto(i)
-30520   continue
+        end do
       endif
       saisq=saiold
- 4950 continue
-!
+ 4950 continue ! not converged
+
       if (iand(iout,1).ne.0) then
-      write (nout,7400) time(jtime),chipre,cpasma(jtime), &
-                        nniter,condno,saisq,chigamt
-      write (nout,97400) time(jtime),chimlst,chielst
-      write (nout,7445) need
-      write (nout,7450) (brsp(i),i=1,need)
-      write (nout,7450) (wrsp(i),i=1,need)
+        write (nout,7400) time(jtime),chipre,cpasma(jtime), &
+          nniter,condno,saisq,chigamt
+        write (nout,97400) time(jtime),chimlst,chielst
+        write (nout,7445) need
+        write (nout,7450) (brsp(i),i=1,need)
+        write (nout,7450) (wrsp(i),i=1,need)
       endif
-!
+
       if (iupdat.gt.0) return
       if (saisq.gt.saimin) return
       tcrrnt=cpasma(jtime)
       iupdat=1
       return
-!
- 6000 continue
-      return
+
  7400 format (/,2x,'time = ',e12.5,2x,'chipr = ',e12.5, &
               2x,'current = ',e12.5,/,2x,'it = ',i5, &
               1x,'condn = ',1pe11.4, &
@@ -2857,5 +2851,4 @@
  7445 format (10x,'fitting parameters:   ',i5)
  7450 format (8(1x,e12.5,1x))
  7460 format (10x,'chi ip:',/,15x,e12.5)
- 8000 format (/,'  ** Problem in Decomposition **',i10)
       end

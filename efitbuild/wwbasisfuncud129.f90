@@ -18,7 +18,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
         !      include 'ecomdu1.f90'
         !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       
         bswwel = 0.0
         if ( ifunc .eq. 0)then
@@ -150,7 +150,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
         !      include 'ecomdu1.f90'
         !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
 
         bswwpel = 0.0
         if ( ifunc .eq. 0)then
@@ -305,7 +305,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       
       bswwin = 0.0
       ypsi2 = 1.0
@@ -545,7 +545,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension crsp(4*(npcurn-2)+6 +npcurn*npcurn ,nrsmat), &
            z(4*(npcurn-2)+6+npcurn*npcurn)
 
@@ -950,7 +950,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
 
       if(kwwfnc .ge. 0 .and. kwwfnc .le. 2)then
          do i = 1,kwwcur
@@ -989,7 +989,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
         !      include 'ecomdu1.f90'
         !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       
       bserel = 0.0
       if ( ifunc .eq. 0)then
@@ -1121,7 +1121,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
 
       bserpel = 0.0
       if ( ifunc .eq. 0)then
@@ -1276,7 +1276,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       
       bserin = 0.0
       ypsi2 = 1.0
@@ -1515,7 +1515,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension crsp(4*(npcurn-2)+6 +npcurn*npcurn ,nrsmat), &
            z(4*(npcurn-2)+6+npcurn*npcurn)
       if(keefnc .eq. 3) then
@@ -1907,7 +1907,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
 !
       if(keefnc .gt. 0 .and. keefnc .le. 2)then
          do i = 1,keecur

@@ -389,12 +389,11 @@
             ,iishot,kktime,iplcout,ksigma, kwritime 
       integer*4 iteks, mxiters, zelipss, n1coils
       integer*4 itekt, mxitert, zeliptt, n1coilt
-      integer*4 kerrorq
 
       data kgrid/1/,kwripre/0/,kwritime/0/
       data licalc/1/
       data ksigma/0/
-      data kdoqn/0/,kerrorq/0/
+      data kdoqn/0/
       data icntour/0/,cstabne/0.0/,cstabte/0.0/ &
            ,limvs/1/,ncstpp/1/,ncstfp/1/,kzeroj/0/
       data kbound/0/
@@ -426,14 +425,14 @@
 
       character*12 mfitpop
       character*5 mfvers(2)
-      data mfvers(1)/'11/03'/,mfvers(2)/'/2020'/
+      data mfvers(1)/'11/13'/,mfvers(2)/'/2020'/
       character(4),dimension(ntime) :: limloc
       character(10),dimension(nvesel) :: vsname
       character(10),dimension(magpri) :: mpnam2
       character(10),dimension(nsilop) :: lpname
       character  filimt*100,cshot*6,jdebug*4
       integer idebug,efitversion
-      data idebug/0/,efitversion/20201103/
+      data idebug/0/,efitversion/20201113/
       data jdebug/'NONE'/
       end module var_inputc
 

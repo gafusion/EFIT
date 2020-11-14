@@ -58,7 +58,6 @@
       if (terror(m).ge.ercmin) erflag(m,19)=19
       if (dbpli(m).ge.0.05_dp) erflag(m,20)=20
       if (delbp(m).ge.0.08_dp) erflag(m,21)=21
-   38 continue
       if ((eout(m).gt.elomin).or.(fwtdlc.gt.0.0)) go to 50
       betap(m)=0.0
       betat(m)=0.0

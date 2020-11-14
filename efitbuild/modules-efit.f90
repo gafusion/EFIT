@@ -293,6 +293,47 @@
         end subroutine
      end module global_constants
 
+      ! Error control and write out error messages consistently.
+      module error_control
+        use set_kinds
+        real(dp) :: currtime=-1.0
+        public :: errctrl_msg
+
+      contains
+        subroutine errctrl_settime(currtime0)
+          real(dp), intent(in) :: currtime0
+          currtime = currtime0
+        end subroutine
+
+        subroutine errctrl_msg(subrstr,msgstr,mtype0)
+          character(len=*), intent(in) :: subrstr,msgstr
+          integer, optional :: mtype0
+          integer :: mtype
+          character(len=16) :: labelstr
+
+          mtype = 1
+          if (present(mtype0)) mtype = mtype0
+
+          select case(mtype)
+          case (1)
+            labelstr = 'ERROR'
+          case (2)
+            labelstr = 'WARNING'
+          case (3)
+            labelstr = 'INFO'
+          case default
+            labelstr = 'ERROR'
+          end select
+
+          write(*, '(a,a,a,a,i6,a,a)') trim(labelstr),' in ',subrstr,' at t=',int(currtime),': ',msgstr
+
+          open(unit=40,file='errfil.out',status='unknown',access='append')
+          write(40,'(a,a,a,a,i6,a,a)') trim(labelstr),' in ',subrstr,' at t=',int(currtime),': ',msgstr
+          close(unit=40)
+
+        end subroutine
+     end module error_control
+
 !var_filech
       module var_filech
       character*4 ch1,ch2

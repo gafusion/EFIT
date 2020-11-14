@@ -1,4 +1,4 @@
-      subroutine tearing(jtime,ktear)
+      subroutine tearing(jtime,ktear,kerror)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -73,7 +73,6 @@
                       w_star1,w_star2,r_rsg,w_sat, &
                       m_dp,n_dp,num_rsd
 
-!
       ALLOCATE( gpsipsi_bar(nw),bdotj_bar(nw),gchichi_bar(nw),&
          eps_avg_a(nw),eps_avg_b(nw),eps_avg_c(nw), &
          eps_avg_d(nw),gpsipsi_b(nw),gpsipsi_c(nw), &
@@ -87,6 +86,7 @@
          gchi_b(npoint),gchi_c(npoint),gchi_d(npoint), r_cnt(npoint), &
          z_cnt(npoint))
 
+      kerror = 0
       mw=nw
       mh=nh
 
@@ -221,9 +221,10 @@
 !      contour searches
 !      (inside the separatrix)
       call seva2d(bkx,lkx,bky,lky,c,r_min,z_min,pds,ier,1)
-      call surfac(pds(1),psi,mw,mh,rgrid,zgrid,r_cnt,z_cnt,nfounc &
-                    ,npoint,drgrid,dzgrid,xmin,xmax,z_min,ymax,nnn, &
-                    rmaxis,zmaxis,negcur)
+      call surfac(pds(1),psi,mw,mh,rgrid,zgrid,r_cnt,z_cnt,nfounc, &
+                    npoint,drgrid,dzgrid,xmin,xmax,z_min,ymax,nnn, &
+                    rmaxis,zmaxis,negcur,kerror)
+      if (kerror.gt.0) return
       xmin=r_cnt(1)
       xmax=r_cnt(1)
       ymin=z_cnt(1)
@@ -243,11 +244,10 @@
       test_length=rgrid(mw)-rgrid(1)
       do iiii=mh/3,2,-1
         psi_test=cur_neg*xsisii(1)
-        call surfac(psi_test,psi,mw,mh,rgrid,zgrid &
-                    ,r_cnt,z_cnt,nfounc &
-                    ,npoint,drgrid,dzgrid &
-                    ,xmin,xmax,zgrid(iiii-1),zgrid(iiii),nnn &
-                    ,rmaxis,zmaxis,negcur)
+        call surfac(psi_test,psi,mw,mh,rgrid,zgrid, &
+         r_cnt,z_cnt,nfounc,npoint,drgrid,dzgrid, &
+         xmin,xmax,zgrid(iiii-1),zgrid(iiii),nnn,rmaxis,zmaxis,negcur,kerror)
+        if (kerror.gt.0) return
         if(nfounc.gt.3)then
           xmin1=r_cnt(1)
           xmax1=r_cnt(1)
@@ -297,11 +297,10 @@
       call zpline(mw,xsisii,rho_a,rho_b,rho_c,rho_d)
 !      Final bounds check
       psi_test=xsisii(1)*cur_neg
-      call surfac(psi_test,psi,mw,mh,rgrid,zgrid &
-                    ,r_cnt,z_cnt,nfounc &
-                    ,npoint,drgrid,dzgrid &
-                    ,xmin,xmax,ymin,ymax,nnn &
-                    ,rmaxis,zmaxis,negcur)
+      call surfac(psi_test,psi,mw,mh,rgrid,zgrid, &
+        r_cnt,z_cnt,nfounc,npoint,drgrid,dzgrid, &
+        xmin,xmax,ymin,ymax,nnn,rmaxis,zmaxis,negcur,kerror)
+      if (kerror.gt.0) return
       xmin=r_cnt(1)
       xmax=r_cnt(1)
       ymin=z_cnt(1)
@@ -347,9 +346,9 @@
            chi_psi(jjjj)=psi_work
            psi_test=psi_work*cur_neg
            call surfac(psi_test,psi,mw,mh,rgrid,zgrid, &
-                    r_cnt,z_cnt,nfounc, &
-                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur)
+             r_cnt,z_cnt,nfounc,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+             rmaxis,zmaxis,negcur,kerror)
+           if (kerror.gt.0) return
 !
 !                                       Print all the contours
 !          write(6,*)jjjj,psi_work
@@ -481,8 +480,8 @@
             call surfac(psi_test,psi,mw,mh, &
                     rgrid,zgrid,r_cnt,z_cnt,nfounc, &
                     npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur)
-
+                    rmaxis,zmaxis,negcur,kerror)
+            if (kerror.gt.0) return
             do kk=1,nfounc
               chi_ang=atan((z_cnt(kk)-zmaxis)/(r_cnt(kk)-rmaxis))
               if((r_cnt(kk)-rmaxis).lt.0.0)then

@@ -37,10 +37,9 @@
                     einv(nppcur,nppcur)
       common/cwork3/lkx,lky
       dimension pds(6)
-! MPI >>>
+
       kerror = 0
-! MPI <<<
-!
+
       if (npnef.eq.0) go to 1950
 !----------------------------------------------------------------------
 !--  singular decomposition                                          --
@@ -77,43 +76,11 @@
 !
       nnn=1
       call sdecm(arsp,ndata,nnedat,npnef,bdata,nnedat,nnn,wrsp,work,ier)
-      
-! MPI >>>
-#if defined(USEMPI)
-      ! We need to collect error codes from ALL processes
-      ! IER can be 33/34 or 129 (FATAL ERROR)
-      !if (nproc > 0) then
-      !  ! ERROR : Means all processes must be allocated same amount of data
-      !  ! SYNC_ERROR
-      !  call MPI_ALLREDUCE(ier,ier_all,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
-      !  ! Must maintain local error code in case global error is NOT fatal
-      !  if (ier_all == 129) then
-      !    ier = ier_all
-      !  endif
-      !endif
-#endif
-! MPI <<<
-      if (ier.ne.129) go to 1200
-! MPI >>>
-      if (rank == 0) then
-        write (nttyo,8000) ier
-      endif
-#if defined(USEMPI)
-      ! OPT_A
-      call mpi_stop()
-      ! OPT_B
-      !kerror = 1
-      !return
-      ! OPT_C
-      ! SYNC_ERROR
-      !call MPI_ABORT(MPI_COMM_WORLD,ierr)
-#else
-      stop
-#endif
-! MPI <<<
-
-!
- 1200 continue
+      if (ier.eq.129) then
+        kerror = 1
+        call errctrl_msg('getne','sdecm failed to converge')
+        return
+      end if
       cond=ier
       toler=1.0e-06*wrsp(1)
       do 1600 i=1,npnef
@@ -213,5 +180,4 @@
  2000 continue
 !
       return
- 8000 format (/,'  ** Problem in Decomposition **',i10)
       end
