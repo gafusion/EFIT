@@ -37,6 +37,7 @@
       logical lopened
       character filenm*15,ishotime*12,news*72, &
                 eqdsk*20,comfile*15,prefix1*1,header*42,fit_type*3
+      character(len=128) :: tmpstr
       dimension coils(nsilop),expmp2(magpri), &
                 denr(nco2r),denv(nco2v), &
                 tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark), &
@@ -978,8 +979,12 @@
  3000 continue
       call write_K(ksstime,kerror)
       ktime = ksstime
-      if (kerror.gt.0) return
-      return
+      !if (kerror.gt.0) return ! don't return here because we're stopping anyway
+
+      write(tmpstr,'(a,1x,i3)') 'mpi_finalize rank',rank
+      call errctrl_msg('getsets',tmpstr,3)
+      call mpi_finalize(ierr)
+      stop
 
  4042 format (1x,a42,1x,a3)
  4958 format ('#!/bin/csh -f')

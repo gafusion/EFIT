@@ -66,6 +66,7 @@
      data kwake/0/
      parameter (krord=4,kzord=4)
      character inp1*4,inp2*4
+     character(len=128) :: tmpstr
      integer :: nargs, iargc, finfo, kerror, terr
 ! OPT_INPUT >>>
      logical input_flag
@@ -93,13 +94,13 @@
 ! MPI >>>
 #if defined(USEMPI)
 ! Initialize MPI environment
-     call MPI_INIT_THREAD(MPI_THREAD_SINGLE,terr,ierr)
-     call MPI_COMM_RANK(MPI_COMM_WORLD,rank,ierr)
-     call MPI_COMM_SIZE(MPI_COMM_WORLD,nproc,ierr)
+      call MPI_INIT_THREAD(MPI_THREAD_SINGLE,terr,ierr)
+      call MPI_COMM_RANK(MPI_COMM_WORLD,rank,ierr)
+      call MPI_COMM_SIZE(MPI_COMM_WORLD,nproc,ierr)
 ! Arrays can only be allocated after MPI has been initialized because dimension is # of processes
-     allocate(dist_data(nproc),dist_data_displs(nproc),fwtgam_mpi(nstark,nproc))
+      allocate(dist_data(nproc),dist_data_displs(nproc),fwtgam_mpi(nstark,nproc))
 #else
-     rank  = 0
+      rank  = 0
 #endif
 ! MPI <<<
 
@@ -110,9 +111,9 @@
 !-- Read in grid size from command line and set global variables     --
 !-- ONLY root process reads command-line arguments                   --
 !----------------------------------------------------------------------
-     nw = 0
-     nh = 0
-     if (rank == 0) then
+      nw = 0
+      nh = 0
+      if (rank == 0) then
        nargs = iargc()
 ! Using mpirun command so will have different number of arguments than serial case
 #if defined(LF95)
@@ -131,34 +132,37 @@
        read (inp2,'(i4)',err=9876) nh
 9876   continue
        if (nh == 0) nh = nw
-     endif
+      endif
+
 ! MPI >>>
 #if defined(USEMPI)
 ! Distribute command-line information (meaning grid dimensions) to all processes if necessary
-     if (nproc > 1) then
+      if (nproc > 1) then
        call MPI_BCAST(nw,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
        call MPI_BCAST(nh,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-     endif
+      endif
 #endif
 ! MPI <<<
-     if (nw == 0 .or. nh == 0) then
-       if (rank == 0) then
-         write(*,*) 'ERROR: Must specify grid dimensions as arguments'
-       endif
+      if (nw == 0 .or. nh == 0) then
+        if (rank == 0) then
+          write(*,*) 'ERROR: Must specify grid dimensions as arguments'
+        endif
 ! MPI >>>
 #if defined(USEMPI)
-       deallocate(dist_data,dist_data_displs,fwtgam_mpi)
-       call mpi_finalize(ierr)
+        deallocate(dist_data,dist_data_displs,fwtgam_mpi)
+        write(tmpstr,'(a,1x,i3)') 'mpi_finalize rank',rank
+        call errctrl_msg('efitd',tmpstr,3)
+        call mpi_finalize(ierr)
 #endif
-       STOP
+        STOP
 ! MPI <<<
-     endif
+      endif
 
-     IF (nw .le. 129) THEN
-       npoint=800
-     ELSE
-       npoint=3200
-     ENDIF
+      IF (nw .le. 129) THEN
+        npoint=800
+      ELSE
+        npoint=3200
+      ENDIF
        nwnh=nw*nh
        nh2=2*nh
        nwrk=2*(nw+1)*nh
@@ -184,22 +188,22 @@
       call inp_file_ch(nw,nh,ch1,ch2)
       
 ! OPT_INPUT >>>
-     use_opt_input = .false.
+      use_opt_input = .false.
 ! MPI >>>
 ! ONLY root process check for existence of input file
-     if (rank == 0) then
-       inquire(file='efit.input',exist=input_flag)
-     endif
+      if (rank == 0) then
+        inquire(file='efit.input',exist=input_flag)
+      endif
 #if defined(USEMPI)
 ! Distribute file existence flag to all processes
-     if (nproc > 1) then
-       call MPI_BCAST(input_flag,1,MPI_LOGICAL,0,MPI_COMM_WORLD,ierr)
-     endif
+      if (nproc > 1) then
+        call MPI_BCAST(input_flag,1,MPI_LOGICAL,0,MPI_COMM_WORLD,ierr)
+      endif
 #endif
-     if (input_flag) then
-       if (rank == 0) then
-         write(*,*) ' Using efit.input file...'
-       endif
+      if (input_flag) then
+        if (rank == 0) then
+          write(*,*) ' Using efit.input file...'
+        endif
 ! ALL processes open and read efit.input file
        open(unit=nin,status='old',file='efit.input')
        read(nin,optin)
@@ -220,16 +224,18 @@
    20 call getsets(ktime,kwake,mtear,kerror)
 ! MPI >>>
 #if defined(USEMPI)
-    if (nproc > 1) then
-      call MPI_ALLREDUCE(kerror,MPI_IN_PLACE,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
-    endif
-    if (kerror.gt.0) then
-      call mpi_finalize(ierr)
-    endif
+      if (nproc > 1) then
+        call MPI_ALLREDUCE(kerror,MPI_IN_PLACE,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
+      endif
+      if (kerror.gt.0) then
+        write(tmpstr,'(a,1x,i3)') 'mpi_finalize rank',rank
+        call errctrl_msg('efitd',tmpstr,3)
+        call mpi_finalize(ierr)
+      endif
 #else
-    if (kerror.gt.0) then
-      stop
-    end if
+      if (kerror.gt.0) then
+        stop
+      end if
 #endif
 ! MPI <<<
 
@@ -312,15 +318,14 @@
       if (allocated(dist_data)) deallocate(dist_data)
       if (allocated(dist_data_displs)) deallocate(dist_data_displs)
       if (allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
-      !if (rank == 0) then
-      !  write(*,*) 'FORTRAN STOP - normal termination'
-      !endif
-      write(*,'(a,1x,i3,1x,a)') 'rank',rank,'mpi_finalized'
+      write(tmpstr,'(a,1x,i3)') 'mpi_finalize rank',rank
+      call errctrl_msg('efitd',tmpstr,3)
       call mpi_finalize(ierr)
 #endif
       stop
 ! MPI <<<
       end
+
       subroutine betali(jtime,rgrid,zgrid,idovol,kerror)
 !**********************************************************************
 !**                                                                  **
@@ -7306,6 +7311,7 @@
       if (itell.gt.0.and.isetfb.ge.0) then
         if (itell.eq.1) then
           !if (nx.eq.1) write (nttyo,10017) itime, rank
+          if (nx.eq.1) write (nttyo,'(x)')
           if (nsol.eq.0) then
             if (mmbmsels.eq.0) then
               write (nttyo,10019) rank,itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
@@ -7325,6 +7331,7 @@
         elseif (itell.eq.4) then
           if (nx.eq.1) then
             !write (nttyo,10017) itime, rank
+            write (nttyo,'(x)')
             if (kstark.gt.0) then
               write (nttyo,80019) rank,itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
                 cdelz(nx-1),cdeljsum,sum(chigam)
@@ -7363,7 +7370,7 @@
 10009 format (x,'r=',i3,1x,'t=',i6,1x,'iter',i3.3, &
       ' chsq=',1pe8.2,' zmag=',1pe9.2,' err=',1pe8.2,' dz=',1pe10.3, &
       ' Ifb=',1pe9.2)
-10017 format (/,x,' ----- time =',i6,' ms ----- (',i2,')')
+!10017 format (/,x,' ----- time =',i6,' ms ----- (',i2,')')
 10019 format (x,'r=',i3,1x,'t=',i6,1x,'it=',i3, &
       ' chi2=',1pe8.2,' zm=',1pe9.2,' err=',1pe9.3, &
       ' dz=',1pe10.3,' chigam=',1pe9.2)

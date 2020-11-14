@@ -686,11 +686,12 @@
 !**********************************************************************
       include 'modules1.f90'
 
-      if (itek.gt.0) return
+      if (itek.gt.0) go to 100
 
       if (rank == 0) then
         write (nttyo,10000) trim(ch1),trim(ch2)
       end if
+100 continue
 
       if (iand(iout,1).ne.0) then ! if iout is odd
         write (nout,10000) trim(ch1),trim(ch2)

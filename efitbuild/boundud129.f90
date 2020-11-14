@@ -1506,8 +1506,8 @@
       delrmax1=relpsi/abs(pdss(2))
       relpsi=relpsi/abs((psimx-psiout))
       if (delrmax1.gt.0.004_dp*anow) then
-        kerror = 1
-        call errctrl_msg('findax','Separatrix point is not on surface, delrmax1.gt.0.004_dp*anow')
+        !kerror = 1
+        !call errctrl_msg('findax','Separatrix point is not on surface, delrmax1.gt.0.004_dp*anow',2)
         return
       end if
       sifsep=pds(1)
@@ -1614,8 +1614,8 @@
 !-----------------------------------------------------------------------
       call zlim(zeross,n111,n111,limtrv,xlimv,ylimv,xs,ys,limfagv)
       if (zeross.le.0.1_dp) then
-        kerror = 1
-        call errctrl_msg('findax','2nd seperatrix point is not inside vessel, zeross.le.0.1')
+        !kerror = 1
+        !call errctrl_msg('findax','2nd seperatrix point is not inside vessel, zeross.le.0.1')
         return
       end if
       if (abs(ys*100.-yseps(1)).lt.2.0*anow) then
@@ -1635,8 +1635,8 @@
       delrmax2=relpsi/abs(pdss(2))
       relpsi=relpsi/abs((psimx-psiout))
       if (delrmax2.gt.0.004_dp*anow) then
-        kerror = 1
-        call errctrl_msg('findax','2nd separatrix point is not on surface, delrmax2.gt.0.004_dp*anow')
+        !kerror = 1
+        !call errctrl_msg('findax','2nd separatrix point is not on surface, delrmax2.gt.0.004_dp*anow',2)
         return
       end if
 
