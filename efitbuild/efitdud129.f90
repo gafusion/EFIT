@@ -275,7 +275,8 @@
 !----------------------------------------------------------------------
         call shapesurf(ks,ktime,kerror)
         if (kerror.gt.0) go to 500
-        if (mtear.ne.0) call tearing(ks,mtear)
+        if (mtear.ne.0) call tearing(ks,mtear,kerror)
+        if (kerror.gt.0) go to 500
         if (idebug /= 0) write (6,*) 'Main/PRTOUT ks/kerror = ', ks, kerror
         call prtout(ks)
         if ((kwaitmse.ne.0).and.(kmtark.gt.0)) call fixstark(-ks,kerror)
@@ -582,9 +583,10 @@
         siii=1.0_dp-1.0_dp/(nw-1)*(i-1)
         if (idovol.gt.1) go to 790
         rzzmax(ii)=-99.0
-        call surfac(siwant,psi,nw,nh,rgrid,zgrid,bpol,bpolz,nfind &
-                    ,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur)
+        call surfac(siwant,psi,nw,nh,rgrid,zgrid,bpol,bpolz,nfind, &
+                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                    rmaxis,zmaxis,negcur,kerror)
+        if (kerror.gt.0) return
         if (nfind.le.40.and.icntour.eq.0) then
         if (idebug >= 2) write (6,*) ' SHAPE/BETALI kerror,i,nfind = ', & 
                             kerror,i,nfind
@@ -991,9 +993,10 @@
         siii=(i-1)*dsi
         siwant=psibry-siii
         siii=1.0_dp-1.0_dp/(nw-1)*(i-1)
-        call surfac(siwant,psi,nw,nh,rgrid,zgrid,xxs,yys,nfind &
-                    ,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur)
+        call surfac(siwant,psi,nw,nh,rgrid,zgrid,xxs,yys,nfind, &
+                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                    rmaxis,zmaxis,negcur,kerror)
+        if (kerror.gt.0) return
         if (nfind.le.40.and.icntour.eq.0) then
         call cntour(rmaxis,zmaxis,siwant,xcmin,xcmax,ycmin,ycmax, &
                     yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
@@ -8895,9 +8898,10 @@
        do i=1,kzeroj
        if (sizeroj(i).ge.1.0) sizeroj(i)=0.99999_dp
        siwant=simag+sizeroj(i)*(psibry-simag)
-       call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc &
-                    ,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur)
+       call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc, &
+                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                    rmaxis,zmaxis,negcur,kerror)
+       if (kerror.gt.0) return
        do 51900 k=1,nfounc
         csplt(k)=1./rsplt(k)**2
 51900  continue
@@ -8920,9 +8924,10 @@
       if (nqwant.gt.0) then
       do 53999 i=1,nqwant
        siwant=simag+siwantq(i)*(psibry-simag)
-       call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc &
-                    ,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur)
+       call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc, &
+                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                    rmaxis,zmaxis,negcur,kerror)
+       if (kerror.gt.0) return
        do 53810 k=1,nfounc
         csplt(k)=1./rsplt(k)**2
 53810  continue

@@ -366,6 +366,10 @@
       end if
 
  2000 continue
+      if (ncontr.lt.3) then
+        nerr=3
+        call errctrl_msg('bound','Less than 3 contour points found')
+      end if
       if (nosign.eq.1) then
         do i=1,nwh
           psi(i)=-psi(i)
@@ -2012,7 +2016,7 @@
 
       subroutine surfac(siwant,psi,nw,nh,rgrid,zgrid,xout,yout, &
                     nfound,npoint,drgrid,dzgrid,xmin, &
-                    xmax,ymin,ymax,ipack,rmaxis,zmaxis,negcur)
+                    xmax,ymin,ymax,ipack,rmaxis,zmaxis,negcur,kerror)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -2034,9 +2038,12 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
+      use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension xout(*),yout(*),psi(*),rgrid(*),zgrid(*)
-!
+
+      kerror = 0
       n111=1
       if (negcur.eq.0) then
         curneg=1.
@@ -2053,16 +2060,16 @@
         kk1=(i-1)*nh+j
         df1=siwant-psi(kk1)
         if (df1*curneg.lt.0.0.and.rgrid(i-1).lt.xmin) then
-        kk2x=kk1
-        df2x=df1
-        kk1x=kk1-nh
-        df1x=siwant-psi(kk1x)
-        if (df1x*df2x.le.0.0) then
-        if (nfound+1.gt.npoint-1) go to 200
-        nfound=nfound+1
-        xout(nfound)=rgrid(i-1)+df1x*drgrid/(psi(kk2x)-psi(kk1x))
-        yout(nfound)=zgrid(j)
-        endif
+          kk2x=kk1
+          df2x=df1
+          kk1x=kk1-nh
+          df1x=siwant-psi(kk1x)
+          if (df1x*df2x.le.0.0) then
+            if (nfound+1.gt.npoint-1) go to 200
+            nfound=nfound+1
+            xout(nfound)=rgrid(i-1)+df1x*drgrid/(psi(kk2x)-psi(kk1x))
+            yout(nfound)=zgrid(j)
+          endif
         endif
         kk2=i*nh+j
         df2=siwant-psi(kk2)
@@ -2081,16 +2088,16 @@
         kk1=(i-1)*nh+j
         df1=siwant-psi(kk1)
         if (df1*curneg.lt.0.0.and.zgrid(j-1).lt.ymin) then
-        kk2x=kk1
-        df2x=df1
-        kk1x=kk1-1
-        df1x=siwant-psi(kk1x)
-        if (df1x*df2x.le.0.0) then
-        if (nfound+1.gt.npoint-1) go to 300
-        nfound=nfound+1
-        xout(nfound)=rgrid(i)
-        yout(nfound)=zgrid(j-1)+df1x*dzgrid/(psi(kk2x)-psi(kk1x))
-        endif
+          kk2x=kk1
+          df2x=df1
+          kk1x=kk1-1
+          df1x=siwant-psi(kk1x)
+          if (df1x*df2x.le.0.0) then
+            if (nfound+1.gt.npoint-1) go to 300
+            nfound=nfound+1
+            xout(nfound)=rgrid(i)
+            yout(nfound)=zgrid(j-1)+df1x*dzgrid/(psi(kk2x)-psi(kk1x))
+          endif
         endif
         kk2=(i-1)*nh+j+1
         df2=siwant-psi(kk2)
@@ -2101,6 +2108,11 @@
         yout(nfound)=zgrid(j)+df1*dzgrid/(psi(kk2)-psi(kk1))
   300 continue
       if (ipack.gt.0) call packps(xout,yout,nfound,rmaxis,zmaxis,n111)
+      if (nfound.lt.3) then
+        kerror = 1
+        call errctrl_msg('surfac','Less than 3 contour points found')
+        return
+      end if
       return
       end
 

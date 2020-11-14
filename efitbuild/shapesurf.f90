@@ -984,7 +984,8 @@
         siwant=simag-siwant*(simag-psibry)
         call surfac(siwant,psi,nw,nh,rgrid,zgrid,xxtra(1,1),yxtra(1,1), &
                     nfind,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nzz &
-                    ,rmaxis,zmaxis,negcur)
+                    ,rmaxis,zmaxis,negcur,kerror)
+        if (kerror.gt.0) return
         if (nfind.le.40.and.icntour.eq.0) then
         if (idebug >= 2) write (6,*) ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
                             kerror,i,nfind,qppp,qmmm,siwant
@@ -1040,8 +1041,9 @@
               (qpsi(jj)-qpsi(jj-1))*qmmm
             psiwan=simag-siwant*(simag-psibry)
             call surfac(psiwan,psi,nw,nh,rgrid,zgrid,xxtra(1,1),yxtra(1,1), &
-              nfind,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nzz &
-              ,rmaxis,zmaxis,negcur)
+              nfind,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nzz, &
+              rmaxis,zmaxis,negcur,kerror)
+            if (kerror.gt.0) return
             if (nfind.le.40.and.icntour.eq.0) then
               if (idebug >= 2) write (6,*) ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
                 kerror,i,nfind,qppp,qmmm,psiwan
@@ -1098,9 +1100,10 @@
         qsiwant(iges)=seval(nw,siwwww,xsisii,qpsi,bfpol,cfpol,dfpol)
       else
        siwant=simag+psiwant*(psibry-simag)
-       call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc &
-                    ,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur)
+       call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc, &
+                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                    rmaxis,zmaxis,negcur,kerror)
+       if (kerror.gt.0) return
        do 51900 k=1,nfounc
         cfpol(k)=1./bfpol(k)**2
 51900  continue
@@ -1190,9 +1193,10 @@
        siavej=0.95_dp
        siwant=siavej
        siwant=simag+siwant*(psibry-simag)
-       call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc &
-                    ,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur)
+       call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc, &
+                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                    rmaxis,zmaxis,negcur,kerror)
+       if (kerror.gt.0) return
        call fluxav(bfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid,nh, &
                    rxxrry,nzz ,sdlobp,sdlbp)
       area=0.0
@@ -2709,7 +2713,8 @@
           else
            if (idebug /= 0) write (6,*) 'Before SHAPE/PLTOUT'
            call pltout(xout,yout,nfound,iges,nnn, &
-            xmin,xmax,ymin,ymax,igmax)
+            xmin,xmax,ymin,ymax,igmax,kerror)
+           if (kerror.gt.0) return
            if (idebug /= 0) write (6,*) 'After SHAPE/PLTOUT'
           endif
       endif
@@ -2722,7 +2727,8 @@
             xmins,xmaxs,ymins,ymaxs,igmax)
          else
            call pltout(xouts,youts,nfouns,jges,n22, &
-            xmins,xmaxs,ymins,ymaxs,igmax)
+            xmins,xmaxs,ymins,ymaxs,igmax,kerror)
+           if (kerror.gt.0) return
          endif
       endif
  1120 continue
@@ -2735,7 +2741,8 @@
  1500 continue
       call chisqr(iges)
       if (itek.gt.0) then
-        call pltout(xout,yout,nzz,iges,nnn,zxx,zxx,zxx,zxx,igmax)
+        call pltout(xout,yout,nzz,iges,nnn,zxx,zxx,zxx,zxx,igmax,kerror)
+        if (kerror.gt.0) return
       endif
       if ((itek.eq.2).and.(iges.eq.igmax)) call donepl
       if ((itek.eq.4).and.(iges.eq.igmax)) call donepl

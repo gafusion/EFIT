@@ -2313,7 +2313,8 @@
         znow=0.0
         call surfac(siwant,psi,nw,nh,rgrids,zgrids,xout,yout,nfound, &
                     npoint,drgrids,dzgrids,xmin,xmax,ymin,ymax,npack, &
-                    rnow,znow,negcur)
+                    rnow,znow,negcur,kerror)
+        if (kerror.gt.0) return
         xmin=xout(1)
         xmax=xmin
         do i=2,nfound

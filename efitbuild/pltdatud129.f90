@@ -1,5 +1,5 @@
       subroutine pltout(xplt,yplt,nplt,jtime,ipass, &
-      rmin,rmax,zmin,zmax,ktime)
+      rmin,rmax,zmin,zmax,ktime,kerror)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -79,6 +79,8 @@
       data n00/0/,n11/1/
       data one/1./
       save n00,n11
+
+      kerror = 0
       pleng = 0
 !
       ALLOCATE(bfield(nw,nh),  &
@@ -388,9 +390,10 @@
 12941  continue
         open(unit=62,file=dataname,status='new')
       endif
-      call surfac(psibry,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt &
-      ,npoint,drgrid,dzgrid,rgrid(1),rgrid(nw),zgrid(1), &
-      zgrid(nh),n00,rmaxis,zmaxis,negcur)
+      call surfac(psibry,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt, &
+        npoint,drgrid,dzgrid,rgrid(1),rgrid(nw),zgrid(1), &
+        zgrid(nh),n00,rmaxis,zmaxis,negcur,kerror)
+      if (kerror.gt.0) return
       yminmm=zmin-0.001_dp
       ymaxmm=zmax+0.001_dp
       nn = nn + 1
@@ -538,9 +541,10 @@
             siwant=simag+j*delsi
             if (kvtor.eq.0.or.kplotp.eq.0) ndshme(nn) = 1
          endif
-         call surfac(siwant,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt &
-         ,npoint,drgrid,dzgrid,rmin,rmax,zmin, &
-         zmax,n11,rmaxis,zmaxis,negcur)
+         call surfac(siwant,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt, &
+           npoint,drgrid,dzgrid,rmin,rmax,zmin, &
+           zmax,n11,rmaxis,zmaxis,negcur,kerror)
+         if (kerror.gt.0) return
          if (kthkcrv.gt.0) thcrv(nn) = 0.010_dp
          clearx(nn) = 'BLUE'
          nxy(nn) = nplt
@@ -598,7 +602,8 @@
            spwant=pds(1)
            call surfac(spwant,presst,nw,nh,rgrid,zgrid,xplt,yplt, &
                        nplt,npoint,drgrid,dzgrid,rmin,rmax,zmin, &
-                       zmax,n111,rmaxis,zmaxis,negcur)
+                       zmax,n111,rmaxis,zmaxis,negcur,kerror)
+           if (kerror.gt.0) return
            clearx(nn) = 'YELL'
            nxy(nn) = nplt
            ndshme(nn) = 1
@@ -720,8 +725,9 @@
             zvsmax=max(zvs(i),zvsmax)
 40050    continue
          call surfac(xpsialp,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt, &
-         npoint,drgrid,dzgrid,rvsmin,rvsmax,zvsmin, &
-         zvsmax,n00,rmaxis,zmaxis,negcur)
+           npoint,drgrid,dzgrid,rvsmin,rvsmax,zvsmin, &
+           zvsmax,n00,rmaxis,zmaxis,negcur,kerror)
+         if (kerror.gt.0) return
          if (iprobe.ne.90) then
            do 40060 i=1,nplt
              call zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(i),yplt(i),limfag)
@@ -5772,7 +5778,8 @@
            spwant=pds(1)
            call surfac(spwant,presst,nw,nh,rgrid,zgrid,xplt,yplt, &
                        nplt,npoint,drgrid,dzgrid,rmin,rmax,zmin, &
-                       zmax,n11,rmaxis,zmaxis,negcur)
+                       zmax,n11,rmaxis,zmaxis,negcur,kerror)
+           if (kerror.gt.0) return
            nxy(nn) = nplt
            ndshme(nn) = 1
            do ii = 1,nplt
