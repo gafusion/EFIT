@@ -1272,8 +1272,7 @@
         if (idebug >= 2) then
           write (6,*) 'FINDAX Z,R = ', y(33),(x(i),i=45,45)
           write (6,*) 'FINDAX si = ',(psipsi((i-1)*nx+33),i=45,45)
-          call seva2d(bkx,lkx,bky,lky,c,x(45),y(33),pds,ier &
-            ,n111)
+          call seva2d(bkx,lkx,bky,lky,c,x(45),y(33),pds,ier,n111)
           write (6,*) 'FINDAX R,Z,si = ', x(45),y(33),pds(1)
           write (6,*) 'FINDAX lkx,lky = ',lkx,lky
           write (6,*) 'FINDAX lkx,lky,c = ',bkx(33),bky(33),c(1,33,1,33)
@@ -1565,7 +1564,6 @@
 !-----------------------------------------------------------------------
 !-- find possible second separatrix                                   --
 !-----------------------------------------------------------------------
-      dsimins=99.
       bpmins=10.
       ns=-1
       do i=2,kfound
@@ -1613,6 +1611,8 @@
 !--  make sure 2nd seperatrix inside vessel                               --
 !-----------------------------------------------------------------------
       call zlim(zeross,n111,n111,limtrv,xlimv,ylimv,xs,ys,limfagv)
+      ! TODO: Previously this check was allowed to return without error and no message.
+      ! It occurs a lot, so no error and supress message for now.
       if (zeross.le.0.1_dp) then
         !kerror = 1
         !call errctrl_msg('findax','2nd seperatrix point is not inside vessel, zeross.le.0.1')
@@ -1634,13 +1634,14 @@
       relpsi=abs((pds(1)-psiout))
       delrmax2=relpsi/abs(pdss(2))
       relpsi=relpsi/abs((psimx-psiout))
+      ! TODO: Previously this check was allowed to return without error and no message.
+      ! It occurs a lot, so no error and supress message for now.
       if (delrmax2.gt.0.004_dp*anow) then
         !kerror = 1
         !call errctrl_msg('findax','2nd separatrix point is not on surface, delrmax2.gt.0.004_dp*anow',2)
         return
       end if
 
-      dsimins=0.0
       xxout(ns)=xs
       yyout(ns)=ys
       xxout(ns-1)=0.5_dp*(xxout(ns)+xxout(ns-2))
@@ -2128,7 +2129,7 @@
 !**                                                                  **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
-!**       zero............1 if inside and 0 otherwise                **
+!**       zero (out)......1 if inside and 0 otherwise                **
 !**       nw..............dimension of x                             **
 !**       nh..............dimension of y                             **
 !**       limitr..........number of limiter points                   **

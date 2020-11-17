@@ -1010,7 +1010,6 @@
  6220 format (/,1x,'type input file names:')
  6230 format (1x,'#')
  6240 format (a)
- 6600 format (/,1x,'good shot list file name ( 0=tty) ?')
  6610 format (/,1x,'command file name ( 0=none) ?')
  6617 format (/,1x,'type snap file extension (def for default):')
  6620 format (a)

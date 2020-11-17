@@ -675,7 +675,7 @@
       real*8,dimension(:),allocatable :: xout,yout
       real*8 dpsi,rymin,rymax, &
         zxmin,zxmax,xmin,xmax,ymin,ymax,rmaxis,zmaxis, emaxis, &
-        rminzm,rmaxzm,dismins,simins,dsimins,delrmax1,delrmax2
+        rminzm,rmaxzm,dismins,simins,delrmax1,delrmax2
       integer*4 nfound
       data emaxis/1.3_dp/
       end module var_cshape

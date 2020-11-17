@@ -584,7 +584,7 @@
       scaleffp_ext=1.0
       dr_ext=0.0
       dz_ext=0.0
-      shape_ext=.F.
+      shape_ext=.false.
       rc_ext=-10.
       zc_ext=-10.
       a_ext=-10.

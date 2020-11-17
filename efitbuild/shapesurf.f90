@@ -428,7 +428,7 @@
         go to 1085
       endif
       call findax(nw,nh,rgrid,zgrid,rmaxis,zmaxis,simag, &
-                  psiots ,rseps(1,iges),zseps(1,iges),m20, &
+                  psiots,rseps(1,iges),zseps(1,iges),m20, &
                   xouts,youts,nfouns,psi,xmins,xmaxs,ymins,ymaxs, &
                   zxmins,zxmaxs,rymins,rymaxs,dpsis,bpoo,bpooz, &
                   limtrs,xlims,ylims,limfag,0,0,kerror)

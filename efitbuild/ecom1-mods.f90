@@ -491,7 +491,7 @@
       logical dowstrip
       data rwstrip1(1)/1.33/,zwstrip1(1)/-1.363/,rwstrip1(2)/1.38/,zwstrip1(2)/-1.363/
       data rwstrip2(1)/1.4075/,zwstrip2(1)/-1.250/,rwstrip2(2)/1.4575/,zwstrip2(2)/-1.250/
-      data dowstrip/.F./  
+      data dowstrip/.false./
       end module var_limite
 
       module var_mimite
