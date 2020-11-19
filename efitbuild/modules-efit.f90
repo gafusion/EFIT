@@ -629,7 +629,6 @@
         real*8,dimension(2,ntime) :: rseps,zseps
         real*8 pasman,betatn,psiq1,betat2
         integer jtwagap
-        data jtwagap/59/
 
 !vas      common/hist/eout(ntime),rout(ntime),zout(ntime),doutu(ntime) &
 !vas        ,doutl(ntime),aout(ntime),vout(ntime),betat(ntime),otop(ntime) &
