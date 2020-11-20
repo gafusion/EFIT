@@ -14,6 +14,7 @@ shot="$1"
 snapext="$2"
 efit_exe_pub="$3"
 efit_exe="$4"
+support_files="$5"
 
 echo $basedir
 ################################################################################
@@ -58,6 +59,7 @@ sed 's|nsteps|'$nsteps'|g' $basedir/efit.input >> efit.input
 sed -i 's|nshot|'$shot'|g' efit.input
 sed -i 's|start_time|'$starttime'|g' efit.input
 cp $basedir/efit_snap* ./
+sed -i 's|support_files|'$support_files'|g' efit_snap.dat_$snapext
 
 sed -i 's|mode=.|mode=5|' efit.input
 sed -i 's|jta_f|'$snapext'|g' efit.input
@@ -80,6 +82,7 @@ sed 's|nsteps|'$nsteps'|g' $basedir/efit.input >> efit.input
 sed -i 's|nshot|'$shot'|g' efit.input
 sed -i 's|start_time|'$starttime'|g' efit.input
 cp $basedir/efit_snap* ./
+sed -i 's|support_files|'$support_files'|g' efit_snap.dat_$snapext
 
 sed -i 's|mode=.|mode=5|' efit.input
 sed -i 's|jta_f|'$snapext'|g' efit.input
@@ -103,6 +106,7 @@ sed 's|nsteps|'$nsteps'|g' $basedir/efit.input >> efit.input
 sed -i 's|nshot|'$shot'|g' efit.input
 sed -i 's|start_time|'$starttime'|g' efit.input
 cp $basedir/efit_snap* ./
+sed -i 's|support_files|'$support_files'|g' efit_snap.dat_$snapext
 sed -i 's|mode=.|mode=5|' efit.input
 sed -i 's|jta_f|'$snapext'|g' efit.input
 
@@ -122,6 +126,7 @@ sed 's|nsteps|'$nsteps'|g' $basedir/efit.input >> efit.input
 sed -i 's|nshot|'$shot'|g' efit.input
 sed -i 's|start_time|'$starttime'|g' efit.input
 cp $basedir/efit_snap* ./
+sed -i 's|support_files|'$support_files'|g' efit_snap.dat_$snapext
 
 sed -i 's|mode=.|mode=5|' efit.input
 sed -i 's|jta_f|'$snapext'|g' efit.input

@@ -34,4 +34,6 @@
   eeknt=0.0 1.0
   ecurbd=0.0
   iout=4
+  TABLE_DIR = "support_files/2006" ,
+  INPUT_DIR = "support_files"
  /

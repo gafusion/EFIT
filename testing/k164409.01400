@@ -192,8 +192,8 @@
  KERSIL = 2
  iout = 20
  IXRAY = 0
- TABLE_DIR = '/fusion/projects/codes/efit/support_files/2006/                                   '
- INPUT_DIR = '/fusion/projects/codes/efit/support_files/                                        '
+ TABLE_DIR = 'support_files/2006/'
+ INPUT_DIR = 'support_files'
  STORE_DIR = '/link/store/                                                                      '
  KPPHORD = 0
  KFFHORD = 0

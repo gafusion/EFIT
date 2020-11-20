@@ -9,6 +9,7 @@ shot=164409
 basedir=$PWD
 efit_exe_pub="$1"
 efit_exe="$2"
+support_files="$3"
 
 ################################################################################
 ################################################################################
@@ -38,6 +39,7 @@ echo "Running new $shot in serial"
 cd public/serial
 
 cp $basedir/k$shot.0$starttime .
+sed -i 's|support_files|'$support_files'|g' k$shot.0$starttime
 sed 's|nsteps|'$nsteps'|g' $basedir/efit.input >> efit.input
 sed -i 's|nshot|'$shot'|g' efit.input
 sed -i 's|start_time|'$starttime'|g' efit.input
@@ -53,6 +55,7 @@ echo "Running public $shot in serial"
 
 cd new/serial
 cp $basedir/k$shot.0$starttime .
+sed -i 's|support_files|'$support_files'|g' k$shot.0$starttime
 sed 's|nsteps|'$nsteps'|g' $basedir/efit.input >> efit.input
 sed -i 's|nshot|'$shot'|g' efit.input
 sed -i 's|start_time|'$starttime'|g' efit.input

@@ -16,6 +16,7 @@ shot="$1"
 snapext="$2" 
 efit_exe_pub="$3"
 efit_exe="$4"
+support_files="$5"
 
 if [ "$shot"x == "x" ] ; then
   echo "Requires a shot number"
@@ -44,6 +45,7 @@ cd new/parallel/
 
 date >> efit.log
 cp $basedir/efit_snap* .
+sed -i 's|support_files|'$support_files'|g' efit_snap.dat_$snapext
 sed 's|nsteps|'$nsteps'|g' $basedir/efit.input  > efit.input
 sed -i 's|nshot|'$shot'|g' efit.input
 sed -i 's|start_time|'$starttime'|g' efit.input
@@ -64,6 +66,7 @@ cd public/parallel/
 
 date >> efit.log 
 cp $basedir/efit_snap* .
+sed -i 's|support_files|'$support_files'|g' efit_snap.dat_$snapext
 sed 's|nsteps|'$nsteps'|g' $basedir/efit.input  > efit.input
 sed -i 's|nshot|'$shot'|g' efit.input
 sed -i 's|start_time|'$starttime'|g' efit.input
@@ -87,6 +90,7 @@ date >> efit.log
 module list >> efit.log 2>&1
 
 cp $basedir/efit_snap* .
+sed -i 's|support_files|'$support_files'|g' efit_snap.dat_$snapext
 sed 's|nsteps|'$nsteps'|g' $basedir/efit.input > efit.input
 sed -i 's|nshot|'$shot'|g' efit.input
 sed -i 's|start_time|'$starttime'|g' efit.input
@@ -108,6 +112,7 @@ date >> efit.log
 module list >> efit.log 2>&1
 
 cp $basedir/efit_snap* .
+sed -i 's|support_files|'$support_files'|g' efit_snap.dat_$snapext
 sed 's|nsteps|'$nsteps'|g' $basedir/efit.input > efit.input
 sed -i 's|start_time|'$starttime'|g' efit.input
 sed -i 's|nshot|'$shot'|g' efit.input
