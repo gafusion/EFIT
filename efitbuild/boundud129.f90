@@ -1377,7 +1377,7 @@
         else ! ifindopt==1
           det=pds(5)*pds(6)-pds(4)*pds(4)
           if (abs(det).lt.1.0e-15_dp) then
-            kerror = 1
+            kerror = 1 ! ERROR OUT - previously continued to 305 with no error
             call errctrl_msg('findax','Newtons method to find magnetic axis has det=0')
             if (iand(iout,1).ne.0) write (nout,5000) xax,yax
             return
@@ -1389,7 +1389,7 @@
           yax=yax+orelax*yerr
           errtmp = xerr*xerr+yerr*yerr
           if (xax<x(1) .or. xax>x(nx) .or. yax<y(1) .or. yax>y(nz)) then
-            kerror = 1
+            kerror = 1 ! ERROR OUT - previously continued to 305 with no error
             call errctrl_msg('findax','Newtons method to find separatrix point is off grid')
             if (iand(iout,1).ne.0) write (nout,5000) xax,yax
             return
@@ -1460,15 +1460,15 @@
       errtmp = 0.0
       do j=1,niter
         if (xs.le.x(2) .or. xs.ge.x(nx-1) .or. ys.le.y(2) .or. ys.ge.y(nz-1)) then
-          kerror = 1
-          call errctrl_msg('findax','Newtons method to find separatrix point is off grid')
+          kerror = 1 ! ERROR OUT - previously returned with no error
+          call errctrl_msg('findax','Newtons method to find separatrix point is off grid')  ! rls
           if (iand(iout,1).ne.0) write (nout,5020) xs,ys
           return
         end if
         call seva2d(bkx,lkx,bky,lky,c,xs,ys,pds,ier,n666)
         det=pds(5)*pds(6)-pds(4)*pds(4)
         if (abs(det).lt.1.0e-15_dp) then
-          kerror = 1
+          kerror = 1 ! ERROR OUT - previously returned with no error
           call errctrl_msg('findax','Newtons method to find separatrix has det=0')
           if (iand(iout,1).ne.0) write (nout,5020) xs,ys
           return
@@ -1483,13 +1483,14 @@
       if (errtmp.gt.1.0e-6_dp*100.0) then
         call errctrl_msg('findax','Iterative method to find separatrix reached max iterations',2)
       end if
+      ! ERROR OUT - previously returned with no error here, just because max iter=20 was reached
  1310 continue
 !-----------------------------------------------------------------------
 !--  found x separatrix point, check to see if inside vessel                     --
 !-----------------------------------------------------------------------
       call zlim(zeross,n111,n111,limtrv,xlimv,ylimv,xs,ys,limfagv)
       if (zeross.le.0.1_dp) then
-        kerror = 1
+        kerror = 1 ! ERROR OUT - previously returned with no error
         call errctrl_msg('findax','Separatrix point is not inside vessel, zeross.le.0.1')
         return
       end if
@@ -1505,7 +1506,7 @@
       delrmax1=relpsi/abs(pdss(2))
       relpsi=relpsi/abs((psimx-psiout))
       if (delrmax1.gt.0.004_dp*anow) then
-        !kerror = 1
+        !kerror = 1 ! ERROR OUT - previously returned with no error
         !call errctrl_msg('findax','Separatrix point is not on surface, delrmax1.gt.0.004_dp*anow',2)
         return
       end if
@@ -1573,7 +1574,7 @@
         endif
       end do
       if (ns.eq.-1) then
-        kerror = 1
+        kerror = 1 ! ERROR OUT - previously returned with no error
         call errctrl_msg('findax','2nd separatrix not found, ns.eq.-1')
         return
       end if
@@ -1583,15 +1584,15 @@
       errtmp = 0.0
       do j=1,niter
         if (xs.le.x(2) .or. xs.ge.x(nx-1) .or. ys.le.y(2) .or. ys.ge.y(nz-1)) then
-          kerror = 1
-          call errctrl_msg('findax','Newtons method to find 2nd separatrix point is off grid')
+          !kerror = 1 ! ERROR OUT - previously returned with no error
+          call errctrl_msg('findax','Newtons method to find 2nd separatrix point is off grid',2) ! rls
           if (iand(iout,1).ne.0) write (nout,5025) xs,ys
           return
         end if
         call seva2d(bkx,lkx,bky,lky,c,xs,ys,pds,ier,n666)
         det=pds(5)*pds(6)-pds(4)*pds(4)
         if (abs(det).lt.1.0e-15_dp) then
-          kerror = 1
+          kerror = 1 ! ERROR OUT - previously returned with no error
           call errctrl_msg('findax','Newtons method to find 2nd separatrix has det=0')
           if (iand(iout,1).ne.0) write (nout,5025) xs,ys
           return
@@ -1606,6 +1607,7 @@
       if (errtmp.gt.1.0e-6_dp*100.0) then
         call errctrl_msg('findax','Iterative method to find 2nd separatrix reached max iterations',2)
       end if
+      ! ERROR OUT - previously returned with no error here, just because max iter=20 was reached
  9310 continue
 !-----------------------------------------------------------------------
 !--  make sure 2nd seperatrix inside vessel                               --
@@ -1614,18 +1616,18 @@
       ! TODO: Previously this check was allowed to return without error and no message.
       ! It occurs a lot, so no error and supress message for now.
       if (zeross.le.0.1_dp) then
-        !kerror = 1
+        !kerror = 1 ! ERROR OUT - previously returned with no error
         !call errctrl_msg('findax','2nd seperatrix point is not inside vessel, zeross.le.0.1')
         return
       end if
       if (abs(ys*100.-yseps(1)).lt.2.0*anow) then
-        kerror = 1
-        call errctrl_msg('findax','2nd seperatrix too far away')
+        !kerror = 1 ! ERROR OUT - previously returned with no error
+        call errctrl_msg('findax','2nd seperatrix too far away') ! rls
         return
       end if
       xseps(2)=xs*100.
       yseps(2)=ys*100.
-      rssep=xs
+      rssep=xs ! rls potential problem if skipped by 2nd separatrix (xseps,rssep,sissep,delrmax2)
       zssep=ys
       sissep=pds(1)
 !-----------------------------------------------------------------------
@@ -1637,7 +1639,7 @@
       ! TODO: Previously this check was allowed to return without error and no message.
       ! It occurs a lot, so no error and supress message for now.
       if (delrmax2.gt.0.004_dp*anow) then
-        !kerror = 1
+        !kerror = 1 ! ERROR OUT - previously returned with no error
         !call errctrl_msg('findax','2nd separatrix point is not on surface, delrmax2.gt.0.004_dp*anow',2)
         return
       end if

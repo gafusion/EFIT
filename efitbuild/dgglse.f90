@@ -86,7 +86,7 @@
 !  INFO    (output) INTEGER
 !          = 0:  successful exit.
 !          < 0:  if INFO = -i, the i-th argument had an illegal value.
-!          > 0:  if INFO = i, A(i,i)=0 and divide by zero occured ! rls added change
+!          > 0:  if INFO = i, A(i,i)=0 and divide by zero occured
 !
 !  =====================================================================
 !
@@ -165,7 +165,7 @@
 !
 !     Solve R11*x1 = c1 for x1
 !
-      ! rls: Simple check if matrix cannot be inverted, as a last resort. This is commonly
+      ! Simple check if matrix cannot be inverted, as a last resort. This is commonly
       ! a source of error. It would be better to have this type of check earlier, but
       ! that is difficult because matrix A is modified significantly in the preceeding calls.
       do i = 1,N-P
