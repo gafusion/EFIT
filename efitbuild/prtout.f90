@@ -559,11 +559,11 @@
            ' sumifs(amp) = ',e10.3)
 10480 format (1x,/)
 10500 format(' shot #   = ',i10,' time(ms) = ',i10, &
-             ' chi**2   = ',e10.3)
+             ' chi**2   = ',1pe10.3)
 10520 format(' betat(%) = ',f10.3,' betap    = ',f10.3, &
              ' li       = ',f10.3)
-10540 format(' vol(cm3) = ',e10.3,' rout(cm) = ',f10.3, &
-             ' zout(cm) = ',f10.3)
+10540 format(' vol(cm3) = ',1pe10.3,' rout(cm) = ',0pf10.3, &
+             ' zout(cm) = ',0pf10.3)
 10560 format(' elong    = ',f10.3,' utriang  = ',f10.3, &
              ' ltriang  = ',f10.3)
 10580 format(' a(cm)    = ',f10.3,' lin(cm)  = ',f10.3, &

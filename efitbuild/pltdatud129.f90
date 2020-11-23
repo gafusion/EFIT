@@ -1628,8 +1628,8 @@
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
 
-      vm3=vout(jtime)/1.e6
-      am2=areao(jtime)/1.e4
+      vm3=vout(jtime)/1.e6_dp
+      am2=areao(jtime)/1.e4_dp
       write(text,9160) vm3,am2
       msg = msg + 1
       note(msg) = 1
@@ -4522,7 +4522,7 @@
       yabs = yabs - dyabs
       ht(msg) = 0.13_dp*0.7_dp
 !
-      pr=pres(1)/(.667*wplasm(jtime)/(vout(jtime)/1.e6))
+      pr=pres(1)/(.667_dp*wplasm(jtime)/(vout(jtime)/1.e6_dp))
       write (text,18981) pr
       msg = msg + 1
       note(msg) = 1
@@ -4533,7 +4533,7 @@
       yabs = yabs - dyabs
       ht(msg) = 0.13_dp*0.7_dp
 !
-      if (abs(vcurfb(1)).gt.1.e-06) then
+      if (abs(vcurfb(1)).gt.1.e-06_dp) then
          write (text,18985)  (vcurfb(i),i=1,3)
          msg = msg + 1
          note(msg) = 1
@@ -4545,8 +4545,7 @@
          ht(msg) = 0.13_dp*0.7_dp
       endif
       if (kvtor.ge.1.and.kvtor.le.3) then
-      if (icurrt.eq.5.and. &
-                   abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
+      if (icurrt.eq.5.and. abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
          do i=nfnpcr+1,nfnpcr+kwwcur,2
             xxnorm=brsp(i)/brsp(nfcoil+1)
             if (i+1.gt.nfnpcr+kwwcur) then
@@ -5687,7 +5686,7 @@
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
 !
-      pr=pres(1)/(.667*wplasm(jtime)/(vout(jtime)/1.e6))
+      pr=pres(1)/(.667_dp*wplasm(jtime)/(vout(jtime)/1.e6_dp))
       write (text,18981) pr
       msg = msg + 1
       note(msg) = 1
@@ -8015,7 +8014,7 @@
       ht(msg) = 0.10_dp
       msg = msg + 1
 !
-      pr=pres(1)/(.667*wplasm(jtime)/(vout(jtime)/1.e6))
+      pr=pres(1)/(.667_dp*wplasm(jtime)/(vout(jtime)/1.e6_dp))
       write (text,18981) pr
       note(msg) = 1
       lmes(msg) = text
@@ -9512,7 +9511,7 @@
 18980 format (' a0  = ',1pe10.3)
 18981 format (' p0/<p>=',1pe9.1)
 18983 format (' cno = ',1pe10.3)
-18985 format (' Vfb = ',1pe10.3,'    ',f3.0,' ',f3.0)
+18985 format (' Vfb = ',1pe10.3,'    ',0pf3.0,' ',0pf3.0)
 19603 format (' rm,al    = ',f7.3,1x,f7.3)
 19605 format (' bt,bw    = ',f7.3,1x,f7.3)
 19610 format (' saaa(cm) = ',f7.3)
