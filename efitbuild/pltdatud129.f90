@@ -9559,7 +9559,7 @@
       call graf(almin,'SCAL',almax,blmin,'SCAL',blmax)
       call frame
       call grid(0,0)
-      call thkcrv(0.02)
+      call thkcrv(0.02_dp)
   270 call curve(xlim,ylim,limitr,0)
       call dash
       call curve(xpltloc,ypltloc,n1,0)
