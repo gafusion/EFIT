@@ -296,12 +296,15 @@
       ! Error control and write out error messages consistently.
       module error_control
         use set_kinds
-        real(dp) :: currtime=-1.0
+        integer :: currrank=-1 ! some invalid value
+        real(dp) :: currtime=-1.0 ! some invalid value
         public :: errctrl_msg
 
       contains
-        subroutine errctrl_settime(currtime0)
+        subroutine errctrl_setstate(currrank0,currtime0)
+          integer, intent(in) :: currrank0
           real(dp), intent(in) :: currtime0
+          currrank = currrank0
           currtime = currtime0
         end subroutine
 
@@ -325,10 +328,10 @@
             labelstr = 'ERROR'
           end select
 
-          write(*, '(a,a,a,a,i6,a,a)') trim(labelstr),' in ',subrstr,' at t=',int(currtime),': ',msgstr
+          write(*, '(a,a,a,a,i3,a,i6,a,a)') trim(labelstr),' in ',subrstr,' at r=',currrank,', t=',int(currtime),': ',msgstr
 
           open(unit=40,file='errfil.out',status='unknown',access='append')
-          write(40,'(a,a,a,a,i6,a,a)') trim(labelstr),' in ',subrstr,' at t=',int(currtime),': ',msgstr
+          write(40,'(a,a,a,a,i3,a,i6,a,a)') trim(labelstr),' in ',subrstr,' at r=',currrank,', t=',int(currtime),': ',msgstr
           close(unit=40)
 
         end subroutine
@@ -675,7 +678,7 @@
       real*8,dimension(:),allocatable :: xout,yout
       real*8 dpsi,rymin,rymax, &
         zxmin,zxmax,xmin,xmax,ymin,ymax,rmaxis,zmaxis, emaxis, &
-        rminzm,rmaxzm,dismins,simins,dsimins,delrmax1,delrmax2
+        rminzm,rmaxzm,dismins,simins,delrmax1,delrmax2
       integer*4 nfound
       data emaxis/1.3_dp/
       end module var_cshape

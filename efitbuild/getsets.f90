@@ -37,7 +37,6 @@
       logical lopened
       character filenm*15,ishotime*12,news*72, &
                 eqdsk*20,comfile*15,prefix1*1,header*42,fit_type*3
-      character(len=128) :: tmpstr
       dimension coils(nsilop),expmp2(magpri), &
                 denr(nco2r),denv(nco2v), &
                 tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark), &
@@ -980,9 +979,7 @@
       call write_K(ksstime,kerror)
       ktime = ksstime
       !if (kerror.gt.0) return ! don't return here because we're stopping anyway
-
-      write(tmpstr,'(a,1x,i3)') 'mpi_finalize rank',rank
-      call errctrl_msg('getsets',tmpstr,3)
+      call errctrl_msg('getsets','Done writing k-files',3)
       call mpi_finalize(ierr)
       stop
 
@@ -1010,7 +1007,6 @@
  6220 format (/,1x,'type input file names:')
  6230 format (1x,'#')
  6240 format (a)
- 6600 format (/,1x,'good shot list file name ( 0=tty) ?')
  6610 format (/,1x,'command file name ( 0=none) ?')
  6617 format (/,1x,'type snap file extension (def for default):')
  6620 format (a)

@@ -53,6 +53,7 @@
 !  This is the most time consuming part of the evaluation, so
 !  don't do more than needed.
 !
+      ier = 0
       call interv(bky,ly,yl,lef,mflag)
       call interv(bkx,lx,xl,ibk,ndummy)
       h = xl - bkx(ibk)
@@ -104,7 +105,7 @@
 !
 !      lx, ly -   number of terms in bkx and bky.
 !
-!      ier   - rror parameter.
+!      ier   - error parameter.
 !
 !  Work arrays:
 !
@@ -120,6 +121,7 @@
       real*8,allocatable :: xknot(:),yknot(:),rknot(:), &
            rgrid(:),zgrid(:),zknot(:),copynew(:,:)
 
+      ier = 0
       ALLOCATE(xknot(kubicx + nw),yknot(kubicy + nh), &
          rknot(nw+krord),rgrid(nw),zgrid(nh), &
          zknot(nh+kzord),copynew(nw,nh))

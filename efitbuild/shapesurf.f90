@@ -428,7 +428,7 @@
         go to 1085
       endif
       call findax(nw,nh,rgrid,zgrid,rmaxis,zmaxis,simag, &
-                  psiots ,rseps(1,iges),zseps(1,iges),m20, &
+                  psiots,rseps(1,iges),zseps(1,iges),m20, &
                   xouts,youts,nfouns,psi,xmins,xmaxs,ymins,ymaxs, &
                   zxmins,zxmaxs,rymins,rymaxs,dpsis,bpoo,bpooz, &
                   limtrs,xlims,ylims,limfag,0,0,kerror)
@@ -1226,6 +1226,7 @@
 !--  switch order of separatrix, Z of first < 0                       --
 !-----------------------------------------------------------------------
       if (zseps(1,iges).gt.0.0) then
+        !call errctrl_msg('shapesurf','Switching separatrix 1 and 2',3)
         rtemp=rseps(1,iges)
         rseps(1,iges)=rseps(2,iges)
         rseps(2,iges)=rtemp
@@ -1389,26 +1390,26 @@
 !---------------------------------------------------------------
       ycut=0.5_dp*ymax
       if (sissep.gt.-1.0e10_dp) then
-      if (zssep.gt.ycut) then
-      dminux(iges)=1.e10_dp
-      do i=1,limitr
-       if (ylim(i).gt.ycut) then
-        dminow=(rssep-xlim(i))**2+(zssep-ylim(i))**2
-        dminux(iges)=min(dminux(iges),dminow)
-       endif
-      enddo
-      dminux(iges)=100.0*sqrt(dminux(iges))
-      else
-      dminlx(iges)=1.e10_dp
-      ycut=0.5_dp*ymin
-      do i=1,limitr
-       if (ylim(i).lt.ycut) then
-        dminow=(rssep-xlim(i))**2+(zssep-ylim(i))**2
-        dminlx(iges)=min(dminlx(iges),dminow)
-       endif
-      enddo
-      dminlx(iges)=100.0*sqrt(dminlx(iges))
-      endif
+        if (zssep.gt.ycut) then
+          dminux(iges)=1.e10_dp
+          do i=1,limitr
+            if (ylim(i).gt.ycut) then
+              dminow=(rssep-xlim(i))**2+(zssep-ylim(i))**2
+              dminux(iges)=min(dminux(iges),dminow)
+            endif
+          enddo
+          dminux(iges)=100.0*sqrt(dminux(iges))
+        else
+          dminlx(iges)=1.e10_dp
+          ycut=0.5_dp*ymin
+          do i=1,limitr
+            if (ylim(i).lt.ycut) then
+              dminow=(rssep-xlim(i))**2+(zssep-ylim(i))**2
+              dminlx(iges)=min(dminlx(iges),dminow)
+            endif
+          enddo
+          dminlx(iges)=100.0*sqrt(dminlx(iges))
+        endif
       endif
 !
       rkkk=xmax

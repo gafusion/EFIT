@@ -15,7 +15,6 @@
 #endif
 ! MPI <<<
 
-      logical lopened
       character filenm*15,ishotime*12,news*72,table_s*72, &
                 eqdsk*20,comfile*15,prefix1*1,header*42,fit_type*3
       integer*4 ltbdis
@@ -114,60 +113,57 @@
 !---------------------------------------------------------------------
 !      if (kdata .ge. 5 .and. kdata .lt. 7) then
       if ((kdata .ge. 5 .and. kdata .lt. 7).or.(kdata.eq.8)) then
- 3020 continue
-       if (rank == 0) then
-        if (use_opt_input .eqv. .false.) then
-          write (nttyo,6610)
-          read (ntty,6620) comfile
-          write (nttyo,6600)
-          read (ntty,6620) filenm
-          if (filenm.eq.'0') then
-            write (nttyo,6040)
-            read (ntty,*) lshot,timeb,dtime,ktime
-          endif
-        else
-          comfile = cmdfile_in
-          filenm = shotfile_in
-          if (filenm .eq. '0') then
-            lshot = shot_in
-            timeb = starttime_in
-            dtime = deltatime_in
-            ktime = steps_in
+ 3020   continue
+        if (rank == 0) then
+          if (use_opt_input .eqv. .false.) then
+            write (nttyo,6610)
+            read (ntty,6620) comfile
+            write (nttyo,6600)
+            read (ntty,6620) filenm
+            if (filenm.eq.'0' .or. filenm.eq.'') then
+              write (nttyo,6040)
+              read (ntty,*) lshot,timeb,dtime,ktime
+            endif
+          else
+            comfile = cmdfile_in
+            filenm = shotfile_in
+            if (filenm.eq.'0' .or. filenm.eq.'') then
+              lshot = shot_in
+              timeb = starttime_in
+              dtime = deltatime_in
+              ktime = steps_in
+            endif
           endif
         endif
-       endif
 ! MPI >>>
 #if defined(USEMPI)
-       if (nproc > 1) then
-        call MPI_BCAST(comfile,15,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
-        call MPI_BCAST(filenm,15,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
-        if (filenm == '0') then
-          call MPI_BCAST(lshot,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-          call MPI_BCAST(ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-          call MPI_BCAST(timeb,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-          call MPI_BCAST(dtime,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+        if (nproc > 1) then
+          call MPI_BCAST(comfile,15,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+          call MPI_BCAST(filenm,15,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+          if (filenm.eq.'0' .or. filenm.eq.'') then
+            call MPI_BCAST(lshot,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+            call MPI_BCAST(ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+            call MPI_BCAST(timeb,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            call MPI_BCAST(dtime,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+          endif
         endif
-       endif
 #endif
 ! MPI <<<
-       if (comfile.ne.'0') then
-         open(unit=nffile,status='old',file=comfile,err=12928)
-         close(unit=nffile,status='delete')
-12928    continue
-         open(unit=nffile,status='new',file=comfile)
-         write (nffile,4958)
-       endif
-       if (filenm.ne.'0') &
-          open(unit=nout,status='old',file=filenm &
-                                  ,err=3025         )
-       go to 3028
- 3025  open(unit=nout,status='old', &
-            file='phys_data:[d3phys.diiid.gsl]'//filenm &
-           ,err=3020)
+        if (comfile.ne.'0' .and. comfile.ne.'') then
+          open(unit=nffile,status='old',file=comfile,err=12928)
+          close(unit=nffile,status='delete')
+12928     continue
+          open(unit=nffile,status='new',file=comfile)
+          write (nffile,4958)
+        endif
+        if (filenm.ne.'0' .and. filenm.ne.'') &
+          open(unit=nout,status='old',file=filenm,err=3025)
+        go to 3028
+ 3025   open(unit=nout,status='old', &
+            file='phys_data:[d3phys.diiid.gsl]'//filenm,err=3020)
       endif
  3028 continue
-      open(unit=neqdsk,status='old', &
-           file='efit_snap.dat',err=3030)
+      open(unit=neqdsk,status='old',file='efit_snap.dat',err=3030)
       snapfile='efit_snap.dat'
       go to 3032
  3030 continue
@@ -352,7 +348,7 @@
          write (6,*) 'WRITE_K swtbmsels= ',(swtbmsels(i),i=1,nmsels)
       endif
 !
-      if (filenm.ne.'0') then
+      if (filenm.ne.'0' .and. filenm.ne.'') then
         read (nout,4970,end=3200) ishotime
         read (ishotime,fmt='(i6,1x,i5)',err=3046) ishot,itime
         times=itime/1000.
@@ -386,7 +382,7 @@
 #endif
       if (istop.gt.0) then
         write (6,20000)
-        if (filenm.ne.'0') then
+        if (filenm.ne.'0' .and. filenm.ne.'') then
           go to 3046
         else
           kerror = 1
@@ -684,19 +680,19 @@
         endif
 !
         close(unit=neqdsk)
-        if (filenm.eq.'0') then
+        if (filenm.eq.'0' .or. filenm.eq.'') then
           read (eqdsk,6700) prefix1,ishotime
         endif
-        if (comfile.ne.'0') &
+        if (comfile.ne.'0' .and. comfile.ne.'') &
           write (nffile,4960) ishotime
  3190 continue
-      if (filenm.ne.'0') go to 3046
+      if (filenm.ne.'0' .and. filenm.ne.'') go to 3046
  3200 continue
-      if (comfile.ne.'0') then
+      if (comfile.ne.'0' .and. comfile.ne.'') then
         write (nffile,4962)
         close(unit=nffile)
       endif
-      if (filenm.ne.'0') close(unit=nout)
+      if (filenm.ne.'0' .and. filenm.ne.'') close(unit=nout)
  4042 format (1x,a42,1x,a3)
  4958 format ('#!/bin/csh -f')
  4960 format ('      runefit.sc k',a12)
@@ -748,9 +744,7 @@
 #endif
 ! MPI <<<
 
-      logical lopened
-      character filenm*15,ishotime*12,news*72,table_s*72, &
-                eqdsk*20,comfile*15,prefix1*1,header*42,fit_type*3
+      character table_s*72,eqdsk*20,header*42,fit_type*3
       integer*4 ltbdis,limitrss
       dimension coils(nsilop),expmp2(magpri), &
                 denr(nco2r),denv(nco2v), &
@@ -1090,7 +1084,6 @@
  6220 format (/,1x,'type input file names:')
  6230 format (1x,'#')
  6240 format (a)
- 6600 format (/,1x,'good shot list file name ( 0=tty) ?')
  6610 format (/,1x,'command file name ( 0=none) ?')
  6617 format (/,1x,'type snap file extension (def for default):')
  6620 format (a)

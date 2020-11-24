@@ -66,7 +66,6 @@
      data kwake/0/
      parameter (krord=4,kzord=4)
      character inp1*4,inp2*4
-     character(len=128) :: tmpstr
      integer :: nargs, iargc, finfo, kerror, terr
 ! OPT_INPUT >>>
      logical input_flag
@@ -145,13 +144,11 @@
 ! MPI <<<
       if (nw == 0 .or. nh == 0) then
         if (rank == 0) then
-          write(*,*) 'ERROR: Must specify grid dimensions as arguments'
+          call errctrl_msg('efitd','Must specify grid dimensions as arguments')
         endif
 ! MPI >>>
 #if defined(USEMPI)
         deallocate(dist_data,dist_data_displs,fwtgam_mpi)
-        write(tmpstr,'(a,1x,i3)') 'mpi_finalize rank',rank
-        call errctrl_msg('efitd',tmpstr,3)
         call mpi_finalize(ierr)
 #endif
         STOP
@@ -228,9 +225,8 @@
         call MPI_ALLREDUCE(kerror,MPI_IN_PLACE,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
       endif
       if (kerror.gt.0) then
-        write(tmpstr,'(a,1x,i3)') 'mpi_finalize rank',rank
-        call errctrl_msg('efitd',tmpstr,3)
-        call mpi_finalize(ierr)
+        call errctrl_msg('efitd','Aborting due to fatal error in getsets')
+        call mpi_abort(MPI_COMM_WORLD,ierr) ! kill all processes, something is wrong with the setup.
       endif
 #else
       if (kerror.gt.0) then
@@ -260,7 +256,7 @@
 !----------------------------------------------------------------------
         call prtoutheader()
         call data_input(ks,iconvr,ktime,mtear,kerror)
-        call errctrl_settime(time(ks))
+        call errctrl_setstate(rank,time(ks))
         if (kerror.gt.0) go to 500
         if (iconvr.lt.0) go to 500
         if (kautoknt .eq. 1) then
@@ -318,8 +314,7 @@
       if (allocated(dist_data)) deallocate(dist_data)
       if (allocated(dist_data_displs)) deallocate(dist_data_displs)
       if (allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
-      write(tmpstr,'(a,1x,i3)') 'mpi_finalize rank',rank
-      call errctrl_msg('efitd',tmpstr,3)
+      call errctrl_msg('efitd','Done processing',3)
       call mpi_finalize(ierr)
 #endif
       stop
@@ -8654,7 +8649,7 @@
 !----------------------------------------------------------------------
       m20=20
       call findax(nw,nh,rgrid,zgrid,rmaxis,zmaxis,simag, &
-                  psibry ,rseps(1,jtime),zseps(1,jtime),m20, &
+                  psibry,rseps(1,jtime),zseps(1,jtime),m20, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
                   zxmin,zxmax,rymin,rymax,dpsi,bpol,bpolz, &
                   limitr,xlim,ylim,limfag,ixt,jtime,kerror)

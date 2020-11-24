@@ -377,6 +377,7 @@
 
 !jal 2/23/04 add iplcout=1 print plasma and pf currents to gfile
       module var_input1
+      use set_kinds
       use eparmdud129,only:ndata,mpress,nvesel,nfcoil
       logical write_Kfile ,fitfcsum
 
@@ -409,7 +410,7 @@
            ,alphamu,saicon,rsepex, ttimeb,ddtime
       data alphafp/0./,sigppb/1000./
       data kframe/0/,rminvs/0/,rmaxvs/100./,zminvs/-100./,zmaxvs/100./
-      data kskipvs/0/,vsdamp/0/,relbps/0.004/,zbound/0.0/,rbound/0.0/
+      data kskipvs/0/,vsdamp/0/,relbps/0.004_dp/,zbound/0.0/,rbound/0.0/
       data dnmin/1.0/
       data saimin/60.0/,saicon/60.0/
 
@@ -425,14 +426,14 @@
 
       character*12 mfitpop
       character*5 mfvers(2)
-      data mfvers(1)/'11/13'/,mfvers(2)/'/2020'/
+      data mfvers(1)/'11/23'/,mfvers(2)/'/2020'/
       character(4),dimension(ntime) :: limloc
       character(10),dimension(nvesel) :: vsname
       character(10),dimension(magpri) :: mpnam2
       character(10),dimension(nsilop) :: lpname
       character  filimt*100,cshot*6,jdebug*4
       integer idebug,efitversion
-      data idebug/0/,efitversion/20201113/
+      data idebug/0/,efitversion/20201123/
       data jdebug/'NONE'/
       end module var_inputc
 
@@ -491,7 +492,7 @@
       logical dowstrip
       data rwstrip1(1)/1.33/,zwstrip1(1)/-1.363/,rwstrip1(2)/1.38/,zwstrip1(2)/-1.363/
       data rwstrip2(1)/1.4075/,zwstrip2(1)/-1.250/,rwstrip2(2)/1.4575/,zwstrip2(2)/-1.250/
-      data dowstrip/.F./  
+      data dowstrip/.false./
       end module var_limite
 
       module var_mimite
