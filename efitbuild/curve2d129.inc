@@ -127,37 +127,26 @@
 !sri-feb122009    parameter    (ndim = 700, ncrv=180, mdim = 200)
       parameter    (ncrv=180, mdim = 300)
 
-      dimension xx(ndim,ncrv), yy(ndim,ncrv), nxy(ncrv), &
-              thcrv(ncrv), sclpc(ncrv), bshft(2), &
-              ndotme(ncrv), ndshme(ncrv), ncdtme(ncrv), ncdhme(ncrv), &
-              markme(ncrv), ncnct(ncrv), &
-              imes(mdim), xpos(mdim), ypos(mdim), note(mdim), anum(mdim), &
-              inum(mdim), iplce(mdim), ht(mdim), &
-              sangle(ncrv), sgap(ncrv), ngaps(ncrv), &
-              nsxy(ncrv), sxx(ncrv,ncrv), syy(ncrv,ncrv), &
-              xfm(ncrv), yfm(ncrv), xto(ncrv), yto(ncrv), ivec(ncrv), &
-              mrc(ncrv), tlen(ncrv), rat(ndim), nmrk(ncrv)
+      dimension xx(ndim,ncrv), yy(ndim,ncrv), thcrv(ncrv), sclpc(ncrv), bshft(2), &
+        xpos(mdim), ypos(mdim), anum(mdim), ht(mdim), sangle(ncrv), sgap(ncrv), &
+        sxx(ncrv,ncrv), syy(ncrv,ncrv), xfm(ncrv), yfm(ncrv), xto(ncrv), yto(ncrv), &
+        tlen(ncrv), rat(ndim), ndotme(ncrv), ndshme(ncrv), ncdtme(ncrv), ncdhme(ncrv), &
+        markme(ncrv), ncnct(ncrv), imes(mdim), note(mdim), inum(mdim), iplce(mdim), &
+		ngaps(ncrv), nsxy(ncrv), ivec(ncrv), mrc(ncrv), nmrk(ncrv), nxy(ncrv)
 
       character*20 ptitle, xtitle, ytitle, sname, clearx(ncrv)
-      character*72     lmes(mdim)
-      character*20    lbflg, draw, mode, mxalf(mdim)
+      character*72 lmes(mdim)
+      character*20 lbflg, draw, mode, mxalf(mdim)
 
-          common /var2d_page/ nn, ncurve, ipag, ibrdr, grce, xphy, yphy, &
-              iorel, xorl, yorl, hight, bngle, bshft, &
-              ptitle, nplen,    xtitle, nxlen,    ytitle,    nylen, xlen, &
-              ylen, xomin, xstp, xomax, yomin, ystp, yomax
-      common /var2d_axis/iaxis,ixtck, iytck, ixnon,iynon,intax,intay, &
-              isaxs, sorg, stp, smax,    slen, sname, nslen, xps, yps, &
-              igridx, igridy, idash, idot, ichdsh, ichdot
-      common /var2d_curve/ thcrv, sclpc, ndshme,ndotme,ncdhme,ncdtme, &
-              markme, clearx, mrc, tlen, nmrk, rat, &
-                nxy, ncnct
-!    .        ,xx, yy
-      common /var2d_contur/ icont(ncrv), nword, ix, iy, zinc, line, &
-              mode, lbflg, ithk, ipri, nline, draw
-!    .          ,zmat
-      common /var2d_shade/ nshd, nsxy, sangle, sgap, ngaps, &
-              nvec, xfm, yfm,    xto, yto, ivec
-!    .        ,sxx, syy
-      common /anote /    msg, note, lmes, imes, anum, iplce, inum, xpos,  &
-              ypos, ht, iexit
+      common /var2d_page/ grce, xphy, yphy, xorl, yorl, hight, bngle, bshft, &
+	    xlen, ylen, xomin, xstp, xomax, yomin, ystp, yomax, nn, ncurve, ipag, &
+		ibrdr, nylen, iorel, nplen, nxlen, ptitle, xtitle, ytitle
+      common /var2d_axis/ sorg, stp, smax, slen, xps, yps, iaxis, ixtck, iytck, &
+	    ixnon, iynon, intax, intay, isaxs, nslen, igridx, igridy, idash, idot, ichdsh, ichdot, sname
+      common /var2d_curve/ thcrv, sclpc, tlen, rat, ndshme, ndotme, ncdhme, ncdtme, &
+        markme, mrc, nmrk, nxy, ncnct, clearx
+      common /var2d_contur/ zinc, icont(ncrv), nword, ix, iy, line, &
+        ithk, ipri, nline, lbflg, draw, mode
+      common /var2d_shade/ sangle, sgap, xfm, yfm, xto, yto, nshd, &
+	    nsxy, ngaps, nvec, ivec
+      common /anote/ anum, xpos, ypos, ht, msg, note, imes, iplce, inum, iexit, lmes

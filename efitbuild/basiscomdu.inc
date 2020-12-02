@@ -19,5 +19,5 @@
                    kffbdryss(npcurn),kff2bdryss(npcurn), &
                    wwbdryss(npcurn),ww2bdryss(npcurn), &
                    kwwbdryss(npcurn),kww2bdryss(npcurn)
-      common/autokknot/kautoknt,akchiwt,akerrwt,kakloop,aktol, &
-                       kakiter,akgamwt,akprewt
+      common/autokknot/akchiwt,akerrwt,aktol,akgamwt,akprewt, &
+                       kautoknt,kakloop,kakiter

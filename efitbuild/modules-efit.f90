@@ -363,7 +363,8 @@
        end module var_zcntrl
 !var_updown
        module var_updown
-       logical dpsip,dpsip_last,vfeed,symmetrize,backaverage
+       real*8 dpsip,dpsip_last
+       logical vfeed,symmetrize,backaverage
        data vfeed/.false./
        end module var_updown
 
@@ -609,7 +610,8 @@
 !var_hist
       module var_hist
       use eparmdud129,only:ntime
-      real*8,dimension(ntime) :: eout,rout,zout,doutu &
+      integer, dimension(ntime) :: jerror
+      real*8, dimension(ntime) :: eout,rout,zout,doutu &
         ,doutl,aout,vout,betat,otop &
         ,betap,ali,oleft,oright,qsta &
         ,rcurrt,zcurrt,qout,olefs &
@@ -620,7 +622,7 @@
         , sepexp,shearb &
         ,xtch,ytch,qpsib,vertn,aaq1 &
         ,aaq2,aaq3,btaxp,btaxv &
-        ,simagx,jerror,seplim,peak &
+        ,simagx,seplim,peak &
         ,wbpol,taumhd,betapd,betatd &
         ,alid,wplasmd,taudia,wbpold &
         ,qmerci,slantu,slantl,zeff, &

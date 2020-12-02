@@ -36,7 +36,7 @@
       include 'basiscomdu.inc'
       common/cwork3/lkx,lky
       common/cwork4/npxtra(nxtram),scraps(nxtram)
-      common/wwork1/xlims(5),ylims(5),limtrs,xlmins
+      common/wwork1/xlims(5),ylims(5),xlmins,limtrs
       common/adp/ringr(6),ringz(6),ringap
       dimension pds(6),amer(2,2),bmer(2),wmer(2),imer(2),temp(ntime)
       dimension rmid2(2)

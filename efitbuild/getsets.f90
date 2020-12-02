@@ -901,9 +901,11 @@
 ! Recall each filename 80 characters
         if (rank == 0) then
           dist_data(:) = dist_data(:)*80
-          call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER,MPI_IN_PLACE,dist_data(rank+1),MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+          call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER, &
+            MPI_IN_PLACE,dist_data(rank+1),MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
         else
-          call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER,ifname,ktime*80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+          call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER, &
+            ifname,ktime*80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
         endif
       endif
 #endif
