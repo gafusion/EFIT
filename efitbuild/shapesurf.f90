@@ -353,7 +353,13 @@
 !---------------------------------------------------------------------
       twagap(iges)=1.0e+10_dp
       if (ishot.ge.139282) then
-      do j=jtwagap,jtwagap
+      jtwagap = 59
+      njtwagap = 0
+      if (ishot.ge.181292)then
+        jtwagap = 47
+        njtwagap = 1
+      endif
+      do j=jtwagap,jtwagap+njtwagap
         call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
               xlim(j),ylim(j),xlim(j+1),ylim(j+1),disnow)
         twagap(iges) = min(twagap(iges),disnow)
