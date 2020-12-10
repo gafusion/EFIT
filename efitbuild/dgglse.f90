@@ -86,6 +86,7 @@
 !  INFO    (output) INTEGER
 !          = 0:  successful exit.
 !          < 0:  if INFO = -i, the i-th argument had an illegal value.
+!          > 0:  if INFO = i, A(i,i)=0 and divide by zero occured
 !
 !  =====================================================================
 !
@@ -162,8 +163,17 @@
       CALL DGEMV( 'No transpose', N-P, P, -ONE, A( 1, N-P+1 ), LDA, D, &
                   1, ONE, C, 1 )
 !
-!     Sovle R11*x1 = c1 for x1
+!     Solve R11*x1 = c1 for x1
 !
+      ! Simple check if matrix cannot be inverted, as a last resort. This is commonly
+      ! a source of error. It would be better to have this type of check earlier, but
+      ! that is difficult because matrix A is modified significantly in the preceeding calls.
+      do i = 1,N-P
+        if (A(i,i).eq.0) then
+          INFO = i ! set to index that failed
+          return
+        end if
+      enddo
       CALL DTRSV( 'Upper', 'No transpose', 'Non unit', N-P, A, LDA, C, &
                   1 )
 !
@@ -191,8 +201,8 @@
                    N, WORK( P+MN+1 ), LWORK-P-MN, INFO )
       WORK( 1 ) = P + MN + MAX( LOPT, INT( WORK( P+MN+1 ) ) )
 
-			call dtrco(a,lda,n-p,condno,c,1)
-			condno = 1.0 / condno
+      call dtrco(a,lda,n-p,condno,c,1)
+      condno = 1.0 / condno
 !
       RETURN
 !
@@ -3988,10 +3998,27 @@
 !     ..
 !     .. Intrinsic Functions ..
       INTRINSIC          CHAR, ICHAR, INT, MIN, REAL
-!     ..
-!     .. Executable Statements ..
-!
-      GO TO ( 100, 100, 100, 400, 500, 600, 700, 800 ) ISPEC
+      !     ..
+      !     .. Executable Statements ..
+      !
+      select case (ISPEC)
+      case (1)
+        go to 100
+      case (2)
+        go to 100
+      case (3)
+        go to 100
+      case (4)
+        go to 400
+      case (5)
+        go to 500
+      case (6)
+        go to 600
+      case (7)
+        go to 700
+      case (8)
+        go to 800
+      end select
 !
 !     Invalid value for ISPEC
 !
@@ -4058,8 +4085,15 @@
       C2 = SUBNAM( 2:3 )
       C3 = SUBNAM( 4:6 )
       C4 = C3( 2:3 )
-!
-      GO TO ( 110, 200, 300 ) ISPEC
+      !
+      select case (ISPEC)
+      case (1)
+        go to 110
+      case (2)
+        go to 200
+      case (3)
+        go to 300
+      end select
 !
   110 CONTINUE
 !

@@ -414,7 +414,7 @@
      module var_extra
       real*8 scrape
       integer*4 nextra,ixstrt,iextra,iprobe,ifcoil,iecoil &
-           ,iexcal,iconsi,iqplot,klabel,kthkcrv
+           ,iexcal,iconsi,iqplot,klabel,kthkcrv,ifindopt
       data ifcoil/1/,kthkcrv/0/
      end module var_extra
 !var_conveg

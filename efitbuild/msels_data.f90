@@ -46,7 +46,7 @@
       character*3 synmls
       integer*4 i,j,count
       integer*4 ishot, ktime, icmls, iermls(ktime), issyn, ntimes,l_iermls
-      real*4 avem, atime(ktime), bbmls(ktime), sigbmls(ktime),        & 
+      real*4 avem, atime(ktime), bbmls(ktime), sigbmls(ktime),        &
              rrmls(ktime), zzmls(ktime),                              &
              L1mls(ktime), L2mls(ktime), L4mls(ktime),                &
              epotpmls(ktime), sigepmls(ktime), tmp
