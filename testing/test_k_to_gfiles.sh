@@ -2,13 +2,13 @@
 
 # timesteps - max 16 (for 16 avail cores)
 # nprocs sets the number of parallel mpi processes called - max 16 (for 16 avail cores)
-nsteps=4
 nprocs=4
 starttime=1000
 basedir=$PWD
 shot="$1"
 efit_exe_pub="$2"
 efit_exe="$3"
+nsteps="$4"
 
 ################################################################################
 ################################################################################
