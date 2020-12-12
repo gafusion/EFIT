@@ -12,7 +12,7 @@
   KCALPA = 1,  KCGAMA = 1,
   CALPA      = 0.1  0.1  0.1     XALPA(1) = 0.0
   CGAMA      = 0.1  0.1  0.1     XGAMA(1) = 0.0,
-  TABLE_DIR = "support_files2006/" ,
+  TABLE_DIR = "support_files/2006/" ,
   INPUT_DIR = "support_files"
  /
   NAMELIST input parameters               03/07/91
