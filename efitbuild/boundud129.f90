@@ -749,6 +749,7 @@
       use global_constants
       use set_kinds
       use error_control
+      use eparmdud129
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension pds(6),xc(*),yc(*)
       dimension cspln(kubicx,lubicx,kubicy,lubicy)
