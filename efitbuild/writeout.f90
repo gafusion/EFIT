@@ -830,6 +830,7 @@
       integer, intent(in) :: jtime
       integer, intent(inout) :: kerror
       kerror = 0
+
 !----------------------------------------------------------------
 !-- recover the value of table_dir for mode 3 or 7             --
 !----------------------------------------------------------------

@@ -924,15 +924,14 @@
          
       endif
       if(kwwfnc .eq. 7 .and. wcurbd .eq. 1.0) then
-            ncrsp = ncrsp + 1
-            do j = 1,nrsmat
-               crsp(ncrsp,j) = 0.0
-            enddo
-            z(ncrsp) = 0.0
-            do j = 1,kwwcur
-               crsp(ncrsp,nffcoi+kppcur+kffcur+j) =  &
-      							 bswwel(kwwfnc,j,1.0)
-            enddo
+        ncrsp = ncrsp + 1
+        do j = 1,nrsmat
+          crsp(ncrsp,j) = 0.0
+        enddo
+        z(ncrsp) = 0.0
+        do j = 1,kwwcur
+          crsp(ncrsp,nffcoi+kppcur+kffcur+j) = bswwel(kwwfnc,j,1.0_dp)
+        enddo
       endif
       return
       end

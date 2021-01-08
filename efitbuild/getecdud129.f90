@@ -152,7 +152,7 @@
                   np,times,delt,i0,r1,i1,bitip,iavem,time,ircfact, &
                   do_spline_fit,p_rc,prcg,vresp,p_k,t0p,devp(1), &
                   navp(1),time_err)
-      rnavp=navp
+      rnavp = real(navp,dp)
       if( (use_alternate_pointnames .eq. 1) .and. &      !JRF 
           (i .eq. 1) ) then
          do j=1,np
@@ -265,9 +265,8 @@
 !--      New BT compensations for magnetic probes and flux loops   --
 !--------------------------------------------------------------------
       if (ibtcomp.gt.0) then
-      open(unit=60,file=input_dir(1:lindir)//'btcomp.dat_156456', &
-           status='old'                                )
-31000 read (60,*,err=31000,end=32000) ibtcshot, btcname  !EJS(2014)
+      open(unit=60,file=input_dir(1:lindir)//'btcomp.dat_156456',status='old')
+31000 read (60,*,err=31000,end=32000) ibtcshot, btcname  !EJS(2014), rls, This may result in an infinte loop.
 
       if (nshot.ge.ibtcshot) then
         do 29 j=1,np
@@ -2889,7 +2888,7 @@
         !   BITFC  1:nfcoil
         !   BITEC  1:nesum ! added by MK
         !   IERMPI to fix FWTMP2 1:magpri! added by MK
-        parameter (nsize2=5+nsilop+magpri+nfcoil+nesum+magpri)
+        parameter (nsize2=4+nsilop+magpri+nfcoil+nesum+magpri)
         integer :: i,j,ktime_all,offset
         integer,dimension(:),allocatable :: tmp1,tmp2
         double precision :: zwork(nsize,ntime),zwork2(nsize2),timeb_list(nproc)
@@ -2927,6 +2926,7 @@
         if (istop /= 0) then
           return
         endif
+        ! mpi_bcast here (not below) bec logical oldccomp cant be type cast as real
         call MPI_BCAST(oldccomp,1,MPI_LOGICAL,0,MPI_COMM_WORLD,ierr)
 
         ! TIMING >>>
@@ -2961,15 +2961,15 @@
         ktime = dist_data(rank+1)
         timeb = times*1000.0+dist_data_displs(rank+1)*delt*1000.0
         
-        ! ZWORK2
+        ! Use ZWORK2 to pack variables for one big dp mpi_bcast, exclude logicals.
         if (rank == 0) then
           ! Pack ZWORK2 array data
           zwork2(1) = real(iavem,dp)   ! INT4  (1)
           zwork2(2) = real(limitr,dp)  ! INT4  (1)
           zwork2(3) = bitip         ! REAL8 (1)
           zwork2(4) = rcentr        ! REAL8 (1)
-          zwork2(5) = real(oldccomp,dp) ! added by MK 2020.10.07
-          offset = 5
+          !zwork2(5) = real(oldccomp,dp) ! added by MK 2020.10.07; RLS Cant type cast logical to real, see above
+          offset = 4
           do i=1,nsilop
             zwork2(i+offset) = psibit(i)  ! REAL8 (nsilop)
           enddo
@@ -3004,8 +3004,8 @@
           limitr = int(zwork2(2))
           bitip  = zwork2(3)
           rcentr = zwork2(4)
-          oldccomp = int(zwork2(5)) ! Added by MK 2020.10.07
-          offset = 5
+          !oldccomp = int(zwork2(5)) ! Added by MK 2020.10.07; RLS Cant type cast real to logical, see above
+          offset = 4
           do i=1,nsilop
             psibit(i) = zwork2(i+offset)
           enddo
@@ -3084,9 +3084,11 @@
         total_bytes = total_bytes + 8*sum(dist_data(2:))*nsize
 
         if (rank == 0) then
-          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,MPI_IN_PLACE,tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,MPI_IN_PLACE, &
+            tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         else
-          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,zwork,       tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,zwork,        &
+            tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         endif
         ! Unpack ZWORK array data
         ! NOTE : Only processes with rank > 0 need to unpack data
@@ -3252,9 +3254,11 @@
         total_bytes = total_bytes + 8*sum(dist_data(2:))*nsize
         if (rank == 0) then
           ! NOTE : DIST_DATA and DIST_DATA_DISPLS should be saved between calls since part of MPI_INFO module
-          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,MPI_IN_PLACE,tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,MPI_IN_PLACE,tmp1(rank+1), &
+            MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         else
-          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,zwork,tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,zwork,tmp1(rank+1), &
+            MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         endif
         ! Unpack ZWORK array data
         ! NOTE : Only processes with rank > 0 need to unpack data

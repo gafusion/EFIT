@@ -1048,7 +1048,7 @@
       dimension xrsp(npcurn)
 !sri  to make it compatiable to mpi version
 !      character eqdsk*20,let,title*80,last*3
-      character eqdsk*80,let,title*80,last*3
+      character eqdsk*80,let,title*80,last*4
       character*30 sfname
       integer dim2(2),c11(2),cnn(2),imap(2),stride(2)
 ! --- temporay variables to convert double to single
@@ -1194,25 +1194,13 @@
          let = 'm'
          iitime = time(ifirst)
          call getfnmd(let,ishot,iitime,eqdsk)
-         if (ktime.le.9) encode (4,1030,last) ktime
-         if ((ktime.gt.9).and.(ktime.le.99))  &
-              encode (4,1040,last) ktime
-         if ((ktime.gt.99).and.(ktime.le.999)) &
-              encode (4,1050,last) ktime
-         if (ktime.gt.999) encode (4,1060,last) ktime
- 1030    format ('000',i1)
- 1040    format ('00',i2)
- 1050    format ('0',i3)
- 1060    format (i4)
+         write(last,'(i4.4)') ktime
          eqdsk = eqdsk(1:13)//'_'//last
          nceq = NCCRE(eqdsk,NCCLOB,ierr)              
 !
       elseif ((iand(iout,2).ne.0).and.(iand(iout,4).eq.0).and. &
               (ifirst.eq.1).and.(itype.eq.1)) then
-         if (ishot.le.99999) encode (10,1010,eqdsk) ishot
-         if (ishot.gt.99999) encode (10,1020,eqdsk) ishot
- 1010    format ('m0',i5,'.nc')
- 1020    format ('m',i6,'.nc')
+         write(eqdsk,"('m',i6.6,'.nc')") ishot
          nceq = NCCRE(eqdsk,NCCLOB,ierr) ! create file, overwrite if exists
 !
 ! --- creates one file for each slice

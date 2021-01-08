@@ -1595,11 +1595,10 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       include 'basiscomdu.inc'
-      common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
-                   appknt(npcurn),kappknt, &
-                   affknt(npcurn),kaffknt, &
-                   awwknt(npcurn),kawwknt, &
-                   aeeknt(npcurn),kaeeknt,mxiter_a
+      common/autok/appknt(npcurn),affknt(npcurn),awwknt(npcurn),aeeknt(npcurn), &
+        ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
+        kappknt,kaffknt,kawwknt,kaeeknt,mxiter_a
+
       external ppakfunc,ffakfunc,wwakfunc,eeakfunc
       integer, intent(inout) :: kerror
       kerror = 0
@@ -1743,11 +1742,9 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       include 'basiscomdu.inc'
-      common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
-                   appknt(npcurn),kappknt, &
-                   affknt(npcurn),kaffknt, &
-                   awwknt(npcurn),kawwknt, &
-                   aeeknt(npcurn),kaeeknt,mxiter_a
+      common/autok/appknt(npcurn),affknt(npcurn),awwknt(npcurn),aeeknt(npcurn), &
+        ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
+        kappknt,kaffknt,kawwknt,kaeeknt,mxiter_a
 
       do i = 1,npcurn
           ppknt(i) = appknt(i)
@@ -1772,11 +1769,9 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       include 'basiscomdu.inc'
-      common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
-                   appknt(npcurn),kappknt, &
-                   affknt(npcurn),kaffknt, &
-                   awwknt(npcurn),kawwknt, &
-                   aeeknt(npcurn),kaeeknt,mxiter_a
+      common/autok/appknt(npcurn),affknt(npcurn),awwknt(npcurn),aeeknt(npcurn), &
+        ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
+        kappknt,kaffknt,kawwknt,kaeeknt,mxiter_a
 
       do i = 1,npcurn
           appknt(i) = ppknt(i)
@@ -1804,11 +1799,10 @@
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.inc'
-      common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
-                   appknt(npcurn),kappknt, &
-                   affknt(npcurn),kaffknt, &
-                   awwknt(npcurn),kawwknt, &
-                   aeeknt(npcurn),kaeeknt,mxiter_a
+      common/autok/appknt(npcurn),affknt(npcurn),awwknt(npcurn),aeeknt(npcurn), &
+        ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
+        kappknt,kaffknt,kawwknt,kaeeknt,mxiter_a
+
       kerror = 0
       ppakfunc = 1000.0
       write(6,*)
@@ -1836,11 +1830,9 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       include 'basiscomdu.inc'
-      common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
-                   appknt(npcurn),kappknt, &
-                   affknt(npcurn),kaffknt, &
-                   awwknt(npcurn),kawwknt, &
-                   aeeknt(npcurn),kaeeknt,mxiter_a
+      common/autok/appknt(npcurn),affknt(npcurn),awwknt(npcurn),aeeknt(npcurn), &
+        ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
+        kappknt,kaffknt,kawwknt,kaeeknt,mxiter_a
 
       kerror = 0
       ffakfunc = 1000.0
@@ -1871,11 +1863,9 @@
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.inc'
-      common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
-                   appknt(npcurn),kappknt, &
-                   affknt(npcurn),kaffknt, &
-                   awwknt(npcurn),kawwknt, &
-                   aeeknt(npcurn),kaeeknt,mxiter_a
+      common/autok/appknt(npcurn),affknt(npcurn),awwknt(npcurn),aeeknt(npcurn), &
+        ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
+        kappknt,kaffknt,kawwknt,kaeeknt,mxiter_a
 
       kerror = 0
       wwakfunc = 1000.0
@@ -1906,11 +1896,9 @@
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       include 'basiscomdu.inc'
-      common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
-                   appknt(npcurn),kappknt, &
-                   affknt(npcurn),kaffknt, &
-                   awwknt(npcurn),kawwknt, &
-                   aeeknt(npcurn),kaeeknt,mxiter_a
+      common/autok/appknt(npcurn),affknt(npcurn),awwknt(npcurn),aeeknt(npcurn), &
+        ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
+        kappknt,kaffknt,kawwknt,kaeeknt,mxiter_a
 
       kerror = 0
       eeakfunc = 1000.0
@@ -6328,6 +6316,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       dimension psigrid(*),sia(*)
+      integer ef_init_cycred_data
 
       kerror = 0
 
@@ -8580,7 +8569,7 @@
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       common/cwork3/lkx,lky
-      common/wwork1/xlims(5),ylims(5),limtrs,xlmins
+      common/wwork1/xlims(5),ylims(5),xlmins,limtrs
       dimension pds(6)
       integer iii
       real :: zmaxis_last = 0.0
@@ -9380,7 +9369,7 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       include 'env2d.inc'
-      common/wwork1/xlims(5),ylims(5),limtrs,xlmins
+      common/wwork1/xlims(5),ylims(5),xlmins,limtrs
       data limtrs/5/
       data iunit/35/, m_write/1/, m_read/1/
       data out2d /'curve2d.dat'/, out2d_bin/'curve2d_bin.dat'/

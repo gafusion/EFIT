@@ -55,6 +55,15 @@ ifeq ($(FC),mpipgf90)
 	 # LLIBS is defined in defaults-paths module
     DLIBS=$(LLIBS)
 endif
+ifeq ($(FC),gfortran)
+    FCOMPILER = gfortran
+    F90OPS = -c -fno-automatic -I$(MPICH_DIR)/include
+    MDSLIBS=$(MDSPLUS)/lib64/libMdsLib_client.a $(MDSPLUS)/lib64/libMdsIpShr.a $(MDSPLUS)/lib64/libMdsShr.a
+    MPILIBS=-L$(MPICH_DIR)/lib -lmpichf90 -lmpich -lfmpich -lmpl -lopa
+    # LLIBS is defined in defaults-paths module
+    DLIBS=$(LLIBS)
+endif
+
 #-I/u/groebner/cer/cerlib/mds/
 
 # Make the shareable library

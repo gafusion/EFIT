@@ -71,8 +71,6 @@
       use eparmdud129,only:nsilop,magpri,nacoil,nfcoil,npcurn
 !      public
       integer*4 ishot,itime,ifitvs,iacoil,itimeu,kersil
-      data errsil/0.03_dp/
-      data kersil/2/
 !      common/exdata/ishot,itime,serror,fwtsi(nsilop),fwtmp2(magpri), &
 !           fwacoil(nacoil),fwtcur,elomin,fwtbp,fwtdlc,fwtfc(nfcoil), &
 !           ifitvs,rwtsi(nsilop),rwtmp2(magpri),iacoil, &
@@ -84,6 +82,8 @@
       real*8,dimension(nacoil) :: fwacoil
       real*8,dimension(nfcoil) :: fwtfc
       real*8,dimension(npcurn) :: cbrspv
+      data errsil/0.03_dp/
+      data kersil/2/
       data elomin/0.90_dp/
       data iacoil/0/,fwacoil/1*0./
       end module var_exdata
@@ -146,16 +146,6 @@
                  ,msebkp,msefitfun,kwaitmse,mse_quiet &
                  ,mse_strict,ok_30rt,ok_210lt,mse_usecer &
                  ,mse_certree,mse_use_cer330,mse_use_cer210
-      data iplots/1/
-      data  msebkp/0/,msefitfun/1/
-      data kwaitmse/0/,dtmsefull/0.0/
-      data mse_strict/0/,t_max_beam_off/0.0/,ok_30rt/0/,ok_210lt/0/
-      data kdomse/0/
-      data mse_usecer/0/,mse_certree/0/
-      data mse_use_cer210/0/,mse_use_cer330/0/
-      data v30lt/0.0/,v30rt/0.0/
-      data v210lt/0.0/,v210rt/0.0/
-
       real*8 chigamt,chilibt,dtmsefull,t_max_beam_off 
       real*8,dimension(nstark,npcurn) :: rbrpc,rbzpc,rgampc
       real*8,dimension(nstark,nfcoil) :: rbrfc,rbzfc
@@ -170,6 +160,15 @@
            ,rmse_gain,rmse_slope,rmse_scale,rmse_offset,sigam &
            ,bzmse,bzmsec,cjmse,cjmsec,rhogam
       real*8,dimension(nstark,ngam_vars,ngam_u,ngam_w) :: spatial_avg_gam
+      data iplots/1/
+      data  msebkp/0/,msefitfun/1/
+      data kwaitmse/0/,dtmsefull/0.0/
+      data mse_strict/0/,t_max_beam_off/0.0/,ok_30rt/0/,ok_210lt/0/
+      data kdomse/0/
+      data mse_usecer/0/,mse_certree/0/
+      data mse_use_cer210/0/,mse_use_cer330/0/
+      data v30lt/0.0/,v30rt/0.0/
+      data v210lt/0.0/,v210rt/0.0/
       end module var_cstark
 
       module var_msels
@@ -380,7 +379,6 @@
       use set_kinds
       use eparmdud129,only:ndata,mpress,nvesel,nfcoil
       logical write_Kfile ,fitfcsum
-
       integer*4 icondn,itek,kdata,itrace,ierchk,iconvr,ixray,itell &
            ,kprfit,licalc,ibound,ibatch,idite,ilaser, lookfw &
             ,kdot, icutfp, keqdsk,kdofit,kbetapr,kplotpr,kpressb &
@@ -390,7 +388,18 @@
             ,iishot,kktime,iplcout,ksigma, kwritime 
       integer*4 iteks, mxiters, zelipss, n1coils
       integer*4 itekt, mxitert, zeliptt, n1coilt
-
+      real*8 cutip, dtdot, xpsimin,fcurbd,pcurbd,prbdry,sgprmin &
+           ,prespb,tipbry,tepbry,dipbry,depbry,pbimpb,sigppb,sigpreb &
+           ,sigtipb,sigtepb,sigdipb,sigdepb,fwtpd,fwtfd,cstabte,cstabne &
+           ,dp1dxf, sgtimin, alphafp,xpsialp, vsdamp &
+           ,rminvs,rmaxvs,zminvs,zmaxvs,relbps,zbound,yvs2,saimin &
+           ,fztor,fzpol,tcurrp,fpolvs, rbound, dnmin, sigprebi,pressbi &
+           ,alphamu,saicon,rsepex, ttimeb,ddtime
+      real*8,dimension(ndata) :: rzeroj
+      real*8,dimension(mpress) :: fwtpre
+      real*8,dimension(nvesel) :: vforcep,vforcet
+      real*8,dimension(nfcoil) :: fwtfcsum
+      character*82  snap_file
       data kgrid/1/,kwripre/0/,kwritime/0/
       data licalc/1/
       data ksigma/0/
@@ -400,25 +409,11 @@
       data kbound/0/
       data kdofit/0/
       data kdopre/0/
-
-      real*8 cutip, dtdot, xpsimin,fcurbd,pcurbd,prbdry,sgprmin &
-           ,prespb,tipbry,tepbry,dipbry,depbry,pbimpb,sigppb,sigpreb &
-           ,sigtipb,sigtepb,sigdipb,sigdepb,fwtpd,fwtfd,cstabte,cstabne &
-           ,dp1dxf, sgtimin, alphafp,xpsialp, vsdamp &
-           ,rminvs,rmaxvs,zminvs,zmaxvs,relbps,zbound,yvs2,saimin &
-           ,fztor,fzpol,tcurrp,fpolvs, rbound, dnmin, sigprebi,pressbi &
-           ,alphamu,saicon,rsepex, ttimeb,ddtime
       data alphafp/0./,sigppb/1000./
       data kframe/0/,rminvs/0/,rmaxvs/100./,zminvs/-100./,zmaxvs/100./
       data kskipvs/0/,vsdamp/0/,relbps/0.004_dp/,zbound/0.0/,rbound/0.0/
       data dnmin/1.0/
       data saimin/60.0/,saicon/60.0/
-
-      real*8,dimension(ndata) :: rzeroj
-      real*8,dimension(mpress) :: fwtpre
-      real*8,dimension(nvesel) :: vforcep,vforcet
-      real*8,dimension(nfcoil) :: fwtfcsum
-      character*82  snap_file 
       end module var_input1
 
       module var_inputc
@@ -537,21 +532,21 @@
       end module var_fxbry
 
       module var_fwtdz
-      use set_kinds
-      use eparmdud129,only:magpri,nsilop,mbdry,nstark,mpress,nwnh,nmsels
-      logical fitdelz
-      integer*4 ndelzon,ifitdelz 
-      data fitdelz/.false./,ndelzon/999/,relaxdz/1.0/, &
-           stabdz/-1.e-4_dp/,scaledz/1.e-03_dp/,ifitdelz/1/
-      data errdelz/0.06_dp/
-      real*8 errdelz,fgowdz,scaledz,stabdz,relaxdz,cdeljsum
-      real*8,dimension(magpri) :: gmp2dz
-      real*8,dimension(nsilop) :: gsildz
-      real*8,dimension(nstark) :: gbrdz,gbzdz,rgamdz
-      real*8,dimension(nmsels) :: rmlsdz,relsdz
-      real*8,dimension(mpress) :: rpredz,rprwdz
-      real*8,dimension(mbdry) :: gbdrdz
-      real*8,dimension(:),allocatable :: rdjdz
+        use set_kinds
+        use eparmdud129,only:magpri,nsilop,mbdry,nstark,mpress,nwnh,nmsels
+        logical fitdelz
+        integer*4 ndelzon,ifitdelz
+        real*8 errdelz,fgowdz,scaledz,stabdz,relaxdz,cdeljsum
+        real*8,dimension(magpri) :: gmp2dz
+        real*8,dimension(nsilop) :: gsildz
+        real*8,dimension(nstark) :: gbrdz,gbzdz,rgamdz
+        real*8,dimension(nmsels) :: rmlsdz,relsdz
+        real*8,dimension(mpress) :: rpredz,rprwdz
+        real*8,dimension(mbdry) :: gbdrdz
+        real*8,dimension(:),allocatable :: rdjdz
+        data fitdelz/.false./,ndelzon/999/,relaxdz/1.0/, &
+          stabdz/-1.e-4_dp/,scaledz/1.e-03_dp/,ifitdelz/1/
+        data errdelz/0.06_dp/
       end module var_fwtdz
       
       module var_combry
@@ -796,13 +791,13 @@
       use set_kinds
       use eparmdud129,only:ntime,nfcoil,nesum,nsilop,magpri
       integer*4 imagsigma,icountmagsigma
-      data imagsigma/0/, errmag/1.0e-3_dp/, errmagb/1.e-2_dp/
       real*8 errmag,errmagb
       real*8,dimension(ntime,nfcoil) :: sigmaf
       real*8,dimension(ntime) :: sigmab,sigmaip
       real*8,dimension(ntime,nesum) :: sigmae
       real*8,dimension(ntime,nsilop) :: sigmafl,gradsfl
       real*8,dimension(ntime,magpri) :: sigmamp,gradsmp,bpermp
+      data imagsigma/0/, errmag/1.0e-3_dp/, errmagb/1.e-2_dp/
       end module var_magerror
 
       module var_psilopdat
@@ -815,7 +810,8 @@
       module var_plasmacurrdat
       use eparmdud129,only:ntime
       real*8 prcg,p_k,p_rc,vresp,t0p
-      real*8,dimension(ntime) :: devp,navp,rnavp
+      integer, dimension(ntime) :: navp
+      real*8, dimension(ntime) :: devp,rnavp
       end module var_plasmacurrdat
 
       module var_ccoilsdat

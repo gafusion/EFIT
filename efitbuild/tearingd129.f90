@@ -46,6 +46,15 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
+      interface
+        subroutine arcav(ang_start,ang_end,chi_geom,gchi_a,gchi_b,gchi_c,gchi_d, &
+          x,y,n,si,rx,msx,ry,msy,fave,ns,sdlobp,sdlbp)
+          real*8 :: ang_start,ang_end,fave,sdlobp,sdlbp
+          integer :: n,msx,msy,ns
+          real*8, dimension(:), allocatable :: chi_geom,gchi_a,gchi_b, &
+            gchi_c,gchi_d,x,y,si,rx,ry
+        end subroutine
+      end interface
       common/cww/lwx,lwy
       real*8,allocatable :: gpsipsi_bar(:),bdotj_bar(:),gchichi_bar(:),&
          eps_avg_a(:),eps_avg_b(:),eps_avg_c(:),eps_avg_d(:), &
@@ -72,7 +81,6 @@
       namelist/tear_dump/psi_rsg,psi_norm,val_lambda,delta_prime,w_nc, &
                       w_star1,w_star2,r_rsg,w_sat, &
                       m_dp,n_dp,num_rsd
-
       ALLOCATE( gpsipsi_bar(nw),bdotj_bar(nw),gchichi_bar(nw),&
          eps_avg_a(nw),eps_avg_b(nw),eps_avg_c(nw), &
          eps_avg_d(nw),gpsipsi_b(nw),gpsipsi_c(nw), &
@@ -425,10 +433,8 @@
            chi(kk)=-pi
            do jj=2,mh-1
               kk=(jjjj-1)*mh+jj
-              call arcav(chi_phi(jj-1),chi_phi(jj), &
-                  chi_geom,gchichi,gchi_b,gchi_c,gchi_d, &
-                  r_cnt,z_cnt,nfounc,psi,rgrid,mw,zgrid,mh, &
-                  chi(kk),nnn ,sdlobp,sdlbp)
+              call arcav(chi_phi(jj-1),chi_phi(jj),chi_geom,gchichi,gchi_b,gchi_c,gchi_d, &
+                  r_cnt,z_cnt,nfounc,psi,rgrid,mw,zgrid,mh,chi(kk),nnn,sdlobp,sdlbp)
               chi(kk)=chi(kk-1)+chi(kk)
            enddo
            kk=jjjj*mh
@@ -723,11 +729,8 @@
       return
       end
 
-
-      subroutine arcav(ang_start,ang_end, &
-            chi_geom,gchi_a,gchi_b,gchi_c,gchi_d, &
-            x,y,n,si,rx,msx,ry,msy, &
-            fave,ns,sdlobp,sdlbp)
+      subroutine arcav(ang_start,ang_end,chi_geom,gchi_a,gchi_b,gchi_c,gchi_d, &
+            x,y,n,si,rx,msx,ry,msy,fave,ns,sdlobp,sdlbp)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -760,15 +763,12 @@
       use set_kinds
       use commonblocks,only: c,wk,copy,bkx,bky
       include 'eparmdud129.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
       common/cowrk3/lkx,lky
-       dimension pds(6)
-      real*8,dimension(:),allocatable :: x,y,si,rx,ry,chi_geom, &
-              gchi_a,gchi_b,gchi_c,gchi_d
-!
-      ALLOCATE(x(npoint),y(npoint),si(npoint),rx(npoint), &
-         ry(npoint),chi_geom(npoint),gchi_a(npoint),gchi_b(npoint), &
-         gchi_c(npoint),gchi_d(npoint))
-!
+      dimension pds(6)
+      real*8,dimension(:),allocatable :: chi_geom,gchi_a,gchi_b,gchi_c,gchi_d, &
+        x,y,si,rx,ry
+
       if (ns.ne.0) then
       call sets2d(si,c,rx,msx,bkx,lkx,ry,msy,bky,lky,wk,ier)
       endif
@@ -974,10 +974,7 @@
           sdlobp = fnorm
         endif
       endif
-!
-      DEALLOCATE(x,y,si,rx,ry,chi_geom,gchi_a,gchi_b, &
-         gchi_c,gchi_d)
-!
+
       return
       end
 
