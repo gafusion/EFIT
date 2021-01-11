@@ -38,7 +38,8 @@ else
   endif
 endif
 ifeq ($(FC),mpipgf90)
-    #FCOMPILER = /c/source/PGI/pgi/linux86/9.0/mpi/mpich/bin/mpif90
+#    FCOMPILER = /c/source/PGI/pgi/linux86/9.0/mpi/mpich/bin/mpif90
+#    FCOMPILER = /task/imd/apps/mpi/mpich2/bin/mpif90
     FCOMPILER = /task/imd/apps/mpi/mpich2/pgi/32/bin/mpif90
     F90OPS = -c -Mbackslash
 endif

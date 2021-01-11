@@ -826,9 +826,9 @@
       print *,' radius = ', slice_files.chord(ic).header.radius,        &
      &                         slice.chord(ic).header.radius
 
-      print *,' sig_radius_low = ',
+      print *,' sig_radius_low = ',                                     &
      &                    slice_files.chord(ic).header.sig_radius_low,  &
-     &                    slice.chord(ic).header.sig_radius_low         &
+     &                    slice.chord(ic).header.sig_radius_low
 
       print *,' sig_radius_high = ',                                    &
      &                    slice_files.chord(ic).header.sig_radius_high, &

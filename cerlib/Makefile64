@@ -11,13 +11,16 @@
 #2016.04.01 M.Kostuk adding support for MdsPlus lib64
 
 # the f90 sources
-F90_SRCS = mds_rg.f90 \
-           mds_mtanh.f90 \
-           mds_mtanh_rdts.f90 \
-           mds_write_rg.f90  
-#           mds_interface.f90
-#
-#           mds_getcer.f90   
+F90_SRCS =  mdslib.f90 \
+            mds_rg.f90 \
+            mds_mtanh_rdts.f90 \
+            mds_mtanh.f90
+#F90_SRCS = mds_rg.f90 \
+#           mds_mtanh.f90 \
+#           mds_mtanh_rdts.f90 \
+#           mds_write_rg.f90  
+##           mds_interface.f90
+##           mds_getcer.f90   
 
 # The f90 objects we need
 F90_OBJS = ${F90_SRCS:.f90=.o}
@@ -55,15 +58,6 @@ ifeq ($(FC),mpipgf90)
 	 # LLIBS is defined in defaults-paths module
     DLIBS=$(LLIBS)
 endif
-ifeq ($(FC),gfortran)
-    FCOMPILER = gfortran
-    F90OPS = -c -fno-automatic -I$(MPICH_DIR)/include
-    MDSLIBS=$(MDSPLUS)/lib64/libMdsLib_client.a $(MDSPLUS)/lib64/libMdsIpShr.a $(MDSPLUS)/lib64/libMdsShr.a
-    MPILIBS=-L$(MPICH_DIR)/lib -lmpichf90 -lmpich -lfmpich -lmpl -lopa
-    # LLIBS is defined in defaults-paths module
-    DLIBS=$(LLIBS)
-endif
-
 #-I/u/groebner/cer/cerlib/mds/
 
 # Make the shareable library
@@ -82,19 +76,22 @@ mds_rg.so:	$(F90_OBJS)
 #        \
 #                -L/f/mdsplus/hp/shlib/ -lTdiShr-lTdiShr
      
+mdslib.o: mdslib.f90
+	$(FCOMPILER) $(F90OPS) mdslib.f90
+
 mds_mtanh_rdts.o:	mds_mtanh_rdts.f90
 	$(FCOMPILER) $(F90OPS) mds_mtanh_rdts.f90
 
 mds_mtanh.o:	mds_mtanh.f90
 	$(FCOMPILER) $(F90OPS) mds_mtanh.f90
 
-mds_rg.o:	mds_rg.f90
+mds_rg.o: mdslib.f90 mds_rg.f90
 	$(FCOMPILER) $(F90OPS) mds_rg.f90
 
 mds_write_rg.o:	mds_write_rg.f90
 	$(FCOMPILER) $(F90OPS) mds_write_rg.f90
 
-mds_rg.a: mds_rg.o mds_mtanh.o mds_mtanh_rdts.o 
+mds_rg.a: mdslib.o mds_rg.o mds_mtanh.o mds_mtanh_rdts.o 
 	ar r mds_rg.a mds_rg.o mds_mtanh.o mds_mtanh_rdts.o
 	ranlib mds_rg.a
 clean:
