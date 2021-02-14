@@ -1,0 +1,179 @@
+# ==============
+# Makefile for Iris (and Nova)
+# 64-bit, MPI, using modules
+#
+# module purge
+# module load btshot/efit
+#
+# This makes an MPI version which can be run serially
+# USEAGE: make -f MakefileIris EFIT
+#==============
+
+# default variables
+EXP = DIIID
+MACHINE := $(shell uname)
+FCOM =mpipgf90
+grid =  
+#MDSPLUS= $(MDSPLUS_DIR)/lib/libMdsLib.a $(MDSPLUS_DIR)/lib/libMdsIpShr.a
+MDSPLUS= -L$(MDSPLUS_DIR)/lib -lMdsLib -lMdsIpShr
+NETCDF = $(NETCDF_DIR)/lib/libnetcdff.a $(NETCDF_DIR)/lib/libnetcdf.a $(HDF5_DIR)/lib/libhdf5_hl.a $(HDF5_DIR)/lib/libhdf5_fortran.a $(HDF5_DIR)/lib/libhdf5.a -lz
+MPICH  = $(MPICH_DIR)/lib/libmpi.a
+MSE    = $(MSE_DIR)/lib/libmse.a
+BLAS   = $(LIBS_DIR)/libopenblas.a
+#LIBD3  = /home/kostukm/opt/d3lib/libd3share.a
+LIBD3  = -ld3 
+
+#MDSINC = $(MDSPLUS_DIR)/include
+NETCDFINC=$(NETCDF_DIR)/include
+
+# default libraries on HP-Unix 
+DLIBS= $(LIBD3) $(BLAS) $(MDSPLUS) $(MSE) $(NETCDF) $(MPICH)
+
+# For DIII-D, MPI-enabled 
+FC=mpif90
+FFLAGS= -g -DUSEMPI -byteswapio -Mpreprocess -Ktrap=divz
+FCFLAGS=
+CC=mpicc
+LD=mpif90
+LDFLAGS= -Bstatic_pgi
+MPIVERSION=yes
+
+# determine the name of final executable
+EFIT = EFIT
+
+# source files
+SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt.f90 \
+          bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
+          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          efitdud129.f90 data_input.f90 matrix.f90 shapesurf.f90 getsets.f90 \
+          prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
+          boundud129.f90 chkeud129.f90 splineud129.f90 \
+          weqdud129.f90 msels_data.f90 msels_hist.f90 \
+          pltdatud129.f90 getecdud129.f90 getneud129.f90 ppbasisfuncud129.f90 \
+          ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
+          expdataud129.f90 
+ifeq ($(MACHINE),Linux)
+SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt_linux.f90 \
+          bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
+          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          efitdud129.f90 data_input.f90 matrix.f90 shapesurf.f90 getsets.f90 \
+          prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
+          boundud129.f90 chkeud129.f90 splineud129.f90 \
+          weqdud129.f90 msels_data.f90 msels_hist.f90 \
+          pltdatud129.f90 getecdud129.f90 getneud129.f90 ppbasisfuncud129.f90 \
+          ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
+          expdataud129.f90 
+    ifeq ($(FCOM),lf95)
+SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt_linuxlf95.f90 \
+          bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
+          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          efitdud129.f90 data_input.f90 matrix.f90 shapesurf.f90 getsets.f90 \
+          prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
+          boundud129.f90 chkeud129.f90 splineud129.f90 \
+          weqdud129.f90 msels_data.f90 msels_hist.f90 \
+          pltdatud129.f90 getecdud129.f90 getneud129.f90 ppbasisfuncud129.f90 \
+          ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
+          expdataud129.f90 
+
+    endif
+    ifeq ($(FCOM),mpilf95)
+SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt_linuxlf95.f90 \
+          bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
+          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          efitdud129.f90 data_input.f90 matrix.f90 shapesurf.f90 getsets.f90 \
+          prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
+          boundud129.f90 chkeud129.f90 splineud129.f90 \
+          weqdud129.f90 msels_data.f90 msels_hist.f90 \
+          pltdatud129.f90 getecdud129.f90 getneud129.f90 \
+          ppbasisfuncud129.f90 \
+          ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
+          expdataud129.f90 
+    endif
+    ifeq ($(FCOM),mpipgf90)
+SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt_linux.f90 \
+          bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
+          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          efitdud129.f90 data_input.f90 matrix.f90 shapesurf.f90 getsets.f90 \
+          prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
+          boundud129.f90 chkeud129.f90 splineud129.f90 \
+          weqdud129.f90 msels_data.f90 msels_hist.f90 \
+          pltdatud129.f90 getecdud129.f90 getneud129.f90 \
+          ppbasisfuncud129.f90 \
+          ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
+          expdataud129.f90 
+    endif
+endif
+#
+
+OBJECTS = $(SOURCES:.f90=.o) lin-dp.a 
+
+# specific for Linux machines
+ifeq ($(MACHINE),Linux)
+  OBJECTS = $(SOURCES:.f90=.o) lin-dp.a mds_rg.a
+  ifeq ($(FCOM),mpilf95)
+  OBJECTS = $(SOURCES:.f90=.o) efitnotifier.o lin-dp.a mds_rg.a
+  endif
+  ifeq ($(FCOM),mpipgf90)
+  OBJECTS = $(SOURCES:.f90=.o) efitnotifier.o lin-dp.a mds_rg.a
+  endif
+endif
+#
+lin-dp.a: lin-dp.f90
+	$(FC) -Msave -c $(FFLAGS) lin-dp.f90
+	ar r lin-dp.a lin-dp.o
+	ranlib lin-dp.a
+
+ALL:$(EFIT) 
+	echo ' '
+	echo ' ================== tbt 20140825 ----->'
+	echo 'MACHINE =' $(MACHINE)
+	echo 'OBJECTS =' $(OBJECT)
+	echo 'EFIT    =' $(EFIT)
+	echo 'FC      =' $(FC)
+	echo 'FCOM    =' $(FCOM)
+	echo 'DLIBS   =' $(DLIBS)
+	which pgf90
+	echo ' '
+	echo ' ================== tbt 20140825 <-----'
+	echo ' '
+
+$(EFIT): $(OBJECTS)
+	$(FC) $(LDFLAGS) -o $@ $^ $(DLIBS)
+	@mv EFIT efitd$(FCOM)
+	@if test "X$(MPIVERSION)" = "Xno" ; then \
+	   rm -f efitd90 ; \
+	   ln -sf efitd$(FCOM) efitd90 ; \
+	   echo 'Built executable : efitd90 -> ' efitd$(FCOM) ; \
+	 else \
+	   rm -f efitdmpi90 ; \
+	   ln -sf efitd$(FCOM) efitdmpi90 ; \
+	   echo 'Built executable : efitdmpi90 -> ' efitd$(FCOM) ; \
+	 fi
+
+# with include file
+weqdud129.o:weqdud129.f90
+	$(FC) -Msave -c $(FFLAGS) $< -I$(NETCDFINC)
+getecdud129.o:getecdud129.f90 
+#vas for pgf90	$(FC) -c $(FFLAGS) $< -I$(MDSINC)
+	$(FC) -Msave -c $(FFLAGS) $< 
+#
+# default compiling options
+%.o:%.f90
+	$(FC) -Msave -c $(FFLAGS) $<
+
+#
+ifeq ($(MACHINE),Linux)
+mds_rg.a:
+	(cd ../cerlib && make FC=$(FCOM) -f Makefile64 mds_rg.a)
+	 cp ../cerlib/mds_rg.a .
+	(cd ../cerlib && make clean)
+endif
+#for mpi case
+ifeq ($(FCOM),mpilf95)
+efitnotifier.o:
+	/c/source/mpich_lf95/bin/mpicc -c efitnotifier.c
+endif
+
+# clean
+clean:
+	@rm -f *o *.a *.mod
