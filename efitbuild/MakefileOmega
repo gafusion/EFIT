@@ -17,11 +17,12 @@ grid =
 #MDSPLUS= $(MDSPLUS_DIR)/lib/libMdsLib.a $(MDSPLUS_DIR)/lib/libMdsIpShr.a
 MDSPLUS= -L$(MDSPLUS_DIR)/lib -lMdsLib -lMdsIpShr
 NETCDF = $(NETCDF_DIR)/lib/libnetcdff.a $(NETCDF_DIR)/lib/libnetcdf.a $(HDF5_DIR)/lib/libhdf5_hl.a $(HDF5_DIR)/lib/libhdf5_fortran.a $(HDF5_DIR)/lib/libhdf5.a -lz
-MPICH  = $(MPICH_DIR)/lib/libmpi.a
+#MPICH  = $(MPICH_DIR)/lib/libmpi.a
+#MPICH = $(PGF_DIR)/../comm_libs/mpi/lib/libmpi.a
+#MPICH = /fusion/usc/opt/nvidia/hpc_sdk/Linux_x86_64/20.11/comm_libs/openmpi/openmpi-3.1.5/lib/libmpi.a
 MSE    = $(MSE_DIR)/lib/libmse.a
 BLAS   = $(LIBS_DIR)/libopenblas.a
-#LIBD3  = /home/kostukm/opt/d3lib/libd3share.a
-LIBD3  = -ld3 
+LIBD3  = -L$(LIBS_DIR) -ld3
 
 #MDSINC = $(MDSPLUS_DIR)/include
 NETCDFINC=$(NETCDF_DIR)/include
