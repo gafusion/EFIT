@@ -4694,7 +4694,16 @@
          CASE = 1                                                       
          IF (MOD(JOB,10) .NE. 0) CASE = 2                               
          IF (MOD(JOB,100)/10 .NE. 0) CASE = CASE + 2                    
-         GO TO (20,50,80,110), CASE                                     
+         select case (CASE)
+         case (1)
+           go to 20
+         case (2)
+           go to 50
+         case (3)
+           go to 80
+         case (4)
+           go to 110
+         end select
 !                                                                       
 !        SOLVE T*X=B FOR T LOWER TRIANGULAR                             
 !                                                                       
@@ -5781,10 +5790,15 @@
       KP1 = K + 1                                                       
       LMK = L - K                                                       
       LM1 = L - 1                                                       
-!                                                                       
-!     PERFORM THE APPROPRIATE TASK.                                     
-!                                                                       
-      GO TO (10,130), JOB                                               
+      !                                                                       
+      !     PERFORM THE APPROPRIATE TASK.                                     
+      !                                                                       
+      select case (JOB)
+      case (1)
+        go to 10
+      case (2)
+        go to 130
+      end select
 !                                                                       
 !     RIGHT CIRCULAR SHIFT.                                             
 !                                                                       
@@ -6745,10 +6759,19 @@
   470       CONTINUE                                                    
   480    CONTINUE                                                       
          L = L + 1                                                      
-!                                                                       
-!        PERFORM THE TASK INDICATED BY KASE.                            
-!                                                                       
-         GO TO (490,520,540,570), KASE                                  
+         !                                                                       
+         !        PERFORM THE TASK INDICATED BY KASE.                            
+         !                                                                       
+         select case (KASE)
+         case (1)
+           go to 490
+         case (2)
+           go to 520
+         case (3)
+           go to 540
+         case (4)
+           go to 570
+         end select
 !                                                                       
 !        DEFLATE NEGLIGIBLE S(M).                                       
 !                                                                       

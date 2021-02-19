@@ -22,6 +22,7 @@
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
 ! MPI >>>
@@ -36,10 +37,9 @@
                     einv(nppcur,nppcur)
       common/cwork3/lkx,lky
       dimension pds(6)
-! MPI >>>
+
       kerror = 0
-! MPI <<<
-!
+
       if (npnef.eq.0) go to 1950
 !----------------------------------------------------------------------
 !--  singular decomposition                                          --
@@ -76,43 +76,11 @@
 !
       nnn=1
       call sdecm(arsp,ndata,nnedat,npnef,bdata,nnedat,nnn,wrsp,work,ier)
-      
-! MPI >>>
-#if defined(USEMPI)
-      ! We need to collect error codes from ALL processes
-      ! IER can be 33/34 or 129 (FATAL ERROR)
-      !if (nproc > 0) then
-      !  ! ERROR : Means all processes must be allocated same amount of data
-      !  ! SYNC_ERROR
-      !  call MPI_ALLREDUCE(ier,ier_all,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
-      !  ! Must maintain local error code in case global error is NOT fatal
-      !  if (ier_all == 129) then
-      !    ier = ier_all
-      !  endif
-      !endif
-#endif
-! MPI <<<
-      if (ier.ne.129) go to 1200
-! MPI >>>
-      if (rank == 0) then
-        write (nttyo,8000) ier
-      endif
-#if defined(USEMPI)
-      ! OPT_A
-      call mpi_stop()
-      ! OPT_B
-      !kerror = 1
-      !return
-      ! OPT_C
-      ! SYNC_ERROR
-      !call MPI_ABORT(MPI_COMM_WORLD,ierr)
-#else
-      stop
-#endif
-! MPI <<<
-
-!
- 1200 continue
+      if (ier.eq.129) then
+        kerror = 1
+        call errctrl_msg('getne','sdecm failed to converge')
+        return
+      end if
       cond=ier
       toler=1.0e-06*wrsp(1)
       do 1600 i=1,npnef
@@ -169,10 +137,10 @@
 !-- get co2 v2 chord normalization factor                             -
 !----------------------------------------------------------------------
       call lenco2(xout,yout,nfound,jtime)
-      delz=(zuperts(jtime)-zlowerts)/float(nh-1)*0.01
+      delz=(zuperts(jtime)-zlowerts)/(nh-1)*0.01_dp
       dneco2=debdry
       do 1900 i=2,nh-1
-        znow=zlowerts*0.01+delz*(i-1)
+        znow=zlowerts*0.01_dp+delz*(i-1)
          call seva2d(bkx,lkx,bky,lky,c,rmajts,znow,pds,ier,n111)
         denow=0.0
         xn=(simag-pds(1))/sidif
@@ -180,7 +148,7 @@
  1870     denow=denow+defit(j)*xn**(j-1)
         dneco2=dneco2+denow
  1900 continue
-      dneco2=dneco2/float(nh-1)
+      dneco2=dneco2/(nh-1)
       fco2now=dco2v(jtime,2)*1.e-13/dneco2
       fco2ne=fco2now*fco2ne
       do 22340 i=1,npnef
@@ -211,20 +179,5 @@
         snitho(i)=factor*sgneth(i)
  2000 continue
 !
-      return
- 8000 format (/,'  ** Problem in Decomposition **',i10)
-      end
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   $Date: 2009/02/12 22:49:06 $ $Author: radhakri $
-!
-      subroutine getnex_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)$RCSfile: getneud129.f90,v $ $Revision: 1.1.2.3 $\000'
       return
       end

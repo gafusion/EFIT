@@ -25,10 +25,12 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension jflag(ntime)
       dimension coils(nsilop),expmp2(magpri)
       namelist/in1/ishot,itime,qvfit,plasma,expmp2,coils,btor,ierchk, &
@@ -107,12 +109,12 @@
         let = 'a'
         call getfnmu(itimeu,let,ishot,ijtime,eqdsk)
 !----------------------------------------------------------------------
-!--	If (ISTORE = 1) Then					  --
-!--	Central directory to collect EFIT results is store_dir  --
+!-- If (ISTORE = 1) Then       --
+!-- Central directory to collect EFIT results is store_dir  --
 !----------------------------------------------------------------------
-    	if (istore .eq. 1) then
-    	   eqdsk = store_dir(1:lstdir)//eqdsk
-    	endif
+     if (istore .eq. 1) then
+        eqdsk = store_dir(1:lstdir)//eqdsk
+     endif
         call db_header(ishot,ijtime,header)
   305   open(unit=neqdsk,file=eqdsk,status='old', &
                   form=wform,err=12929)
@@ -160,7 +162,7 @@
         write (neqdsk,1040) sepexp(jj),obots(jj),btaxp(jj),btaxv(jj)
         write (neqdsk,1040) aaq1(jj),aaq2(jj),aaq3(jj),seplim(jj)
         write (neqdsk,1040) rmagx(jj),zmagx(jj),simagx(jj),taumhd(jj)
-        fluxx=diamag(jj)*1.0e-03
+        fluxx=diamag(jj)*1.0e-03_dp
         write (neqdsk,1040) betapd(jj),betatd(jj),wplasmd(jj),fluxx
         write (neqdsk,1040) vloopt(jj),taudia(jj),qmerci(jj),tavem
 !
@@ -193,7 +195,7 @@
         write (neqdsk,1040) rq32in(jj),rq21top(jj),chilibt,ali3(jj)
         write (neqdsk,1040) xbetapr,tflux(jj),tchimls,twagap(jj)
 !-----------------------------------------------------------------------
-!--	one xxx replaced with ring gap 8/15/91                        --
+!-- one xxx replaced with ring gap 8/15/91                        --
 !--     cjor0=flux surface average current density normalized to      --
 !--           I/A at magnetic axis                                    --
 !--     cjor95=jor95/jor0, cjor99=jor99/(I/A)                         --
@@ -254,7 +256,7 @@
                        real(aaq3(jj)),real(seplim(jj))
         write (neqdsk) real(rmagx(jj)),real(zmagx(jj)), &
                        real(simagx(jj)),real(taumhd(jj))
-        fluxx=diamag(jj)*1.0e-03
+        fluxx=diamag(jj)*1.0e-03_dp
         write (neqdsk) real(betapd(jj)),real(betatd(jj)), &
                        real(wplasmd(jj)),real(fluxx)
         write (neqdsk) real(vloopt(jj)),real(taudia(jj)), &
@@ -359,10 +361,10 @@
       itsave=itime
       itime=iitime
       write (neqdsk,in1)
-			call ppstore
-			call ffstore
-			call wwstore
-                        call eestore
+      call ppstore
+      call ffstore
+      call wwstore
+      call eestore
       write (neqdsk,basis)
       write (neqdsk,inwant)
       if (kvtor.gt.0) then
@@ -376,14 +378,14 @@
   700 continue
       return
 !
- 1020 format (1hp,i5,1h.,i3)
+ 1020 format ('p',i5,'.',i3)
  1040 format (1x,4e16.9)
  1041 format (1x,4i5)
  1042 format (1x,a42,1x,a3)
  1050 format (1x,i5,11x,i5)
  1053 format (1x,i6,11x,i5)
  1055 format (1x,a10,2a5)
- 1060 format (1h*,f8.3,9x,i5,11x,i5,1x,a3,1x,i3,1x,i3,1x,a3,1x,2i5)
+ 1060 format ('*',f8.3,9x,i5,11x,i5,1x,a3,1x,i3,1x,i3,1x,a3,1x,2i5)
  1070 format(16a5)
       end
       subroutine weqdsk(jtime)
@@ -409,13 +411,15 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use set_kinds
       use commonblocks,only: psirz
       include 'eparmdud129.f90'
       include 'modules2.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
-      include 'basiscomdu.f90'
+      include 'basiscomdu.inc'
       dimension coils(nsilop),expmp2(magpri),prexp(nrogow)
       namelist/out1/ishot,itime,betap0,rzero,qenp,enp,emp,plasma, &
            expmp2,coils,btor,rcentr,brsp,icurrt,rbdry,zbdry, &
@@ -518,7 +522,7 @@
       if (nmass.gt.0) then
       call zpline(nmass,sibeam,dmass,bworm,cworm,dworm)
       do 93003 i=1,nw
-        xn=float(i-1)/float(nw-1)
+        xn=real(i-1,dp)/(nw-1)
         dmion(i)=seval(nmass,xn,sibeam,dmass,bworm,cworm,dworm)
 93003 continue
       endif
@@ -552,12 +556,12 @@
       let = 'g'
       call getfnmu(itimeu,let,ishot,ijtime,eqdsk)
 !----------------------------------------------------------------------
-!--	If (ISTORE = 1) Then					  --
-!--	Central directory to collect EFIT results is store_dir  --
+!-- If (ISTORE = 1) Then       --
+!-- Central directory to collect EFIT results is store_dir  --
 !----------------------------------------------------------------------
-    	if (istore .eq. 1) then
-    	   eqdsk = store_dir(1:lstdir)//eqdsk
-    	endif
+     if (istore .eq. 1) then
+        eqdsk = store_dir(1:lstdir)//eqdsk
+     endif
   205 open(unit=neqdsk,file=eqdsk,status='old', &
            form=wform,err=12932)
            close(unit=neqdsk,status='delete')
@@ -719,10 +723,10 @@
        write (neqdsk,*) 'SIGPRE =',sigpre
        write (neqdsk,*) '/'
 
-			call ppstore
-			call ffstore
-			call wwstore
-                        call eestore
+       call ppstore
+       call ffstore
+       call wwstore
+       call eestore
       write (neqdsk,basis)
       limitr=limitr+1
       if (kdomse.gt.0.or.kstark.gt.0) then
@@ -730,7 +734,7 @@
            if (kdomse.gt.0) then
              tgamma(i)=cmgam(i,jtime)
              tgammauncor(i) = tgamma(i)
-             sgamma(i)=tgamma(i)*0.05
+             sgamma(i)=tgamma(i)*0.05_dp
            else
              tgamma(i)=tangam(jtime,i)
              tgammauncor(i)=tangam_uncor(jtime,i)
@@ -759,7 +763,7 @@
          do i=1,nmsels
            if (kdomsels.gt.0) then
              bmsels(i)=cmmls(jtime,i)
-             sbmsels(i)=0.05*bmsels(i)
+             sbmsels(i)=0.05_dp*bmsels(i)
            else
              bmsels(i)=bmselt(jtime,i)
              sbmsels(i)=sbmselt(jtime,i)
@@ -781,8 +785,8 @@
          do i=1,nw,ndel
            npresw=npresw+1
            presw(npresw)=pressw(i)
-           sigprw(npresw)=0.1*presw(npresw)
-           rpresw(npresw)=-float(i-1)/float(nw-1)
+           sigprw(npresw)=0.1_dp*presw(npresw)
+           rpresw(npresw)=-real(i-1,dp)/(nw-1)
          enddo
          write (neqdsk,vtout)
       endif
@@ -878,9 +882,9 @@
       fwtcur=1.
       mxiter=1
       nxiter=99
-      error=1.0e-04
+      error=1.0e-04_dp
       enps=enp
-      enp=0.5
+      enp=0.5_dp
       do 590 i=1,nsilop
         fwtsi(i)=1.
         if (i.gt.nfcoil) fwtsi(i)=0.0
@@ -894,10 +898,10 @@
 12933  continue
       open(unit=neqdsk,                       file=eqdsk,status='new')
       write (neqdsk,in1)
-			call ppstore
-			call ffstore
-			call wwstore
-                        call eestore
+       call ppstore
+       call ffstore
+       call wwstore
+       call eestore
       write (neqdsk,basis)
       write (neqdsk,inwant)
       close(unit=neqdsk)
@@ -910,14 +914,14 @@
       DEALLOCATE(workk,dmion,bworm,cworm,dworm)
 !
       return
- 1020 format (1hx,i5,1h.,i3)
- 1040 format (8h  EFITD )
+ 1020 format ('x',i5,'.',i3)
+ 1040 format ('  EFITD ')
  1042 format (1x,a42,1x,a3)
- 1050 format (3h   ,a5)
- 1060 format (a5,3h   )
- 1070 format (3h # ,i5)
- 1073 format (2h #,i6)
- 1080 format (2h  ,i4,2hms)
+ 1050 format ('   ',a5)
+ 1060 format (a5,'   ')
+ 1070 format (' # ',i5)
+ 1073 format (' #',i6)
+ 1080 format ('  ',i4,2hms)
  2000 format (6a8,3i4)
  2020 format (5e16.9)
  2022 format (2i5)
@@ -947,12 +951,14 @@
 !**          12/03/87..........first created                         **
 !**                                                                  **
 !**********************************************************************
+      use global_constants
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension time(1),wplasm(1),sibdry(1),wbpol(1),vloopt(1), &
                 wpdot(1),wbdot(1),vsurfa(1),pbinj(1),taumhd(1), &
                 cpasma(1),wplasmd(1),taudia(1)
-      data mychoice/2/,twopi/6.283185/
-!
+      data mychoice/2/
+
       if (kdot.eq.0) return
       if (mychoice.eq.2) go to 10000
       return
@@ -967,7 +973,7 @@
       wpddot=0.0
       do 10050 i=1,kdot
        ip=2*kdot+2-i
-       deltt=(time(ip)-time(i))/1000./float(kdot)
+       deltt=(time(ip)-time(i))/1000./kdot
        wpdot(kkkk)=wpdot(kkkk)+(wplasm(ip)-wplasm(i))/deltt
        wpddot=wpddot+(wplasmd(ip)-wplasmd(i))/deltt
        wbdot(kkkk)=wbdot(kkkk)+(wbpol(ip)-wbpol(i))/deltt
@@ -1017,8 +1023,10 @@
 !**                                                                  **
 !**********************************************************************
 !
+      use set_kinds
       include 'eparmdud129.f90'
       include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       include 'netcdf.inc'   ! from the netCDF package..
 !                            ..this must be symlinked to local directory
@@ -1143,7 +1151,7 @@
 19992     continue
           open(unit=74,status='new',file=sfname                       )
         do i=ifirst,ilast
-          vm3=vout(i)/1.e6
+          vm3=vout(i)/1.e6_dp
           write (74,*) time(i),vm3,xdum,xdum
         enddo
         close(unit=74)
@@ -1153,7 +1161,7 @@
 19995     continue
           open(unit=74,status='new',file=sfname                       )
         do i=ifirst,ilast
-          pasman=cpasma(i)/1.e4/aout(i)/abs(bcentr(i))
+          pasman=cpasma(i)/1.e4_dp/aout(i)/abs(bcentr(i))
           pasman=pasman*rout(i)/100./rcentr
           betatnx=betat(i)/pasman
           write (74,*) time(i),betatnx,xdum,xdum
@@ -1192,9 +1200,9 @@
          if ((ktime.gt.99).and.(ktime.le.999)) &
               encode (4,1050,last) ktime
          if (ktime.gt.999) encode (4,1060,last) ktime
- 1030    format (3h000,i1)
- 1040    format (2h00,i2)
- 1050    format (1h0,i3)
+ 1030    format ('000',i1)
+ 1040    format ('00',i2)
+ 1050    format ('0',i3)
  1060    format (i4)
          eqdsk = eqdsk(1:13)//'_'//last
          nceq = NCCRE(eqdsk,NCCLOB,ierr)              
@@ -1203,8 +1211,8 @@
               (ifirst.eq.1).and.(itype.eq.1)) then
          if (ishot.le.99999) encode (10,1010,eqdsk) ishot
          if (ishot.gt.99999) encode (10,1020,eqdsk) ishot
- 1010    format (2hm0,i5,3h.nc)
- 1020    format (1hm,i6,3h.nc)
+ 1010    format ('m0',i5,'.nc')
+ 1020    format ('m',i6,'.nc')
          nceq = NCCRE(eqdsk,NCCLOB,ierr) ! create file, overwrite if exists
 !
 ! --- creates one file for each slice
@@ -1218,10 +1226,10 @@
 !
 ! --- time-dependent but NOT the first slice NOR the first time,
 ! --- or single slice but NOT the first time, 
-! --- skip define mode and goto write directly
+! --- skip define mode and go to write directly
 !
       else
-         goto 100
+         go to 100
       endif
       
       if (ierr.ne.0) return
@@ -1343,17 +1351,17 @@
       'gain param for tangent offset function',ierr)
 
           id_slopegam = NCVDEF (nceq,'mcal_slope',NCFLOAT, &
-      	                       2,dim2,ierr)
+                              2,dim2,ierr)
           call NCAPTC (nceq,id_slopegam,'long_name',NCCHAR,39, &
       'slope param for tangent offset function',ierr)
 
           id_scalegam = NCVDEF (nceq,'mcal_scale',NCFLOAT, &
-      	                       2,dim2,ierr)
+                              2,dim2,ierr)
           call NCAPTC (nceq,id_scalegam,'long_name',NCCHAR,39, &
       'scale param for tangent offset function',ierr)
 
           id_offsetgam = NCVDEF (nceq,'mcal_offset',NCFLOAT, &
-      	                       2,dim2,ierr)
+                              2,dim2,ierr)
           call NCAPTC (nceq,id_offsetgam,'long_name',NCCHAR,40, &
       'offset param for tangent offset function',ierr)
 
@@ -1369,12 +1377,12 @@
       'phase param for tangent slope function',ierr)
 
           id_scalegam = NCVDEF (nceq,'mcal3_btscale',NCFLOAT, &
-      	                       2,dim2,ierr)
+                              2,dim2,ierr)
           call NCAPTC (nceq,id_scalegam,'long_name',NCCHAR,40, &
       'btscale param for tangent slope function',ierr)
 
           id_offsetgam = NCVDEF (nceq,'mcal3_dc_offset',NCFLOAT, &
-      	                       2,dim2,ierr)
+                              2,dim2,ierr)
           call NCAPTC (nceq,id_offsetgam,'long_name',NCCHAR,42, &
       'dc_offset param for tangent slope function',ierr)
 
@@ -1389,12 +1397,12 @@
       'phase param for tangent slope function',ierr)
 
           id_scalegam = NCVDEF (nceq,'mcal4_btscale',NCFLOAT, &
-      	                       2,dim2,ierr)
+                              2,dim2,ierr)
           call NCAPTC (nceq,id_scalegam,'long_name',NCCHAR,40, &
       'btscale param for tangent slope function',ierr)
 
           id_offsetgam = NCVDEF (nceq,'mcal4_dc_offset',NCFLOAT, &
-      	                       2,dim2,ierr)
+                              2,dim2,ierr)
           call NCAPTC (nceq,id_offsetgam,'long_name',NCCHAR,42, &
       'dc_offset param for tangent slope function',ierr)
 
@@ -1915,19 +1923,3 @@ vastext(60:85)= 'input pressure profile (m)'
 !
       return
       end
-
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   1997/05/23 22:53:38 peng
-!
-      subroutine weqdskx_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)weqdskx.for,v 4.44\000'
-      return
-      end
-

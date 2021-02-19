@@ -20,10 +20,11 @@
 !**                                                                  **
 !**********************************************************************
 !vas  f90 modifi.
+      use set_kinds
       use var_bunemn
 
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension   psi(1), sia(1)
+      dimension   psi(*), sia(*)
 !vas  f90 modifi
 !vas      common/bunemn/mno,m,n,s,shift,dr,dz
       mno = nbmdim
@@ -49,8 +50,8 @@
 ! set up for rzpois
 !-----------------------------
       do 3 i = ia,ju,nwb
-      sia(i-m+1) = sia(i-m+1)+(.5+.25/(1.+shift/dr))*sia(i-m)/s
-      sia(i-1) = sia(i-1)+(.5-.25/(m-1+shift/dr))*sia(i)/s
+      sia(i-m+1) = sia(i-m+1)+(.5_dp+.25_dp/(1.0+shift/dr))*sia(i-m)/s
+      sia(i-1) = sia(i-1)+(.5_dp-.25_dp/(m-1+shift/dr))*sia(i)/s
     3 continue
       call rzpois(sia)
       nwhbb = nwb*nhb
@@ -64,6 +65,7 @@
     6 continue
       return
       end
+
       subroutine rzpois(q)
 !**********************************************************************
 !**                                                                  **
@@ -95,17 +97,17 @@
 !vas      dimension  q(1)
 !vas  f90 modifi
       implicit none
-      real(rprec) flag
-      real(rprec) shftdr,a,pi,as
-      integer(iprec) i,l,lo,ju,n222,id,jd,ko,k4,li,jh,jt,ji,jo, &
+      real(dp) flag
+      real(dp) shftdr,a,pitmp,as
+      integer i,l,lo,ju,n222,id,jd,ko,k4,li,jh,jt,ji,jo, &
       j2,iu,j,ii,io,iallocate_stat
 
-      real*8 q(1)
-      real(rprec),dimension(:), allocatable :: g
-      real(rprec),dimension(:), allocatable :: p
-      real(rprec),dimension(:), allocatable :: c
-      real(rprec),dimension(:), allocatable :: d
-      real(rprec),dimension(:), allocatable :: temp
+      real(dp) q(1)
+      real(dp),dimension(:), allocatable :: g
+      real(dp),dimension(:), allocatable :: p
+      real(dp),dimension(:), allocatable :: c
+      real(dp),dimension(:), allocatable :: d
+      real(dp),dimension(:), allocatable :: temp
 
       flag = 0.0
 !vas  f90 modifi
@@ -141,7 +143,7 @@
 
       shftdr = shift/dr
       do 40 i = 2,m
-      temp(i) = 1. - .5/(i+shftdr-1.)
+      temp(i) = 1. - .5_dp/(i+shftdr-1.)
    40 continue
       ju = (n-1)*(m+1)
       n222 = n/2
@@ -152,7 +154,13 @@
       lo = l
    2  c(n-l) = -c(l)
       l = l+2*lo
-      if ((2*l/n)*(2*lo-3))4,3,1
+      if((2*l/n)*(2*lo-3)< 0) then
+        goto 4
+      else if((2*l/n)*(2*lo-3) == 0) then 
+        goto 3
+      else 
+        goto 1
+      end if
    3  c(l) = (c(l+lo)+c(l-lo))/c(lo)
       go to 2
    4  do 5 l = 2,n
@@ -171,11 +179,20 @@
       do 11 j = jo,ju,ji
       j2 = j+2
       iu = j+m
-      go to (20,24,26,28),k4
+      select case (k4)
+        case (1)
+          go to 20
+        case (2)
+          go to 24
+        case (3)
+          go to 26
+        case (4)
+          go to 28
+      end select
   28  do 29 i = j2,iu
-      pi = q(i)-q(i+jt)-q(i-jt)
+      pitmp = q(i)-q(i+jt)-q(i-jt)
       q(i) = q(i)-q(i+jh)-q(i-jh)+q(i+jd)+q(i-jd)
-  29  p(i-j) = pi+q(i)
+  29  p(i-j) = pitmp+q(i)
       go to 10
   26  do 27 i = j2,iu
       p(i-j) = 2.*q(i)
@@ -215,7 +232,12 @@
   22  continue
       do 11 i = j2,iu
   11  q(i) = q(i)+p(i-j)
-      go to (13,12),ko
+      select case (ko)
+        case (1)
+          go to 13
+        case (2)
+          go to 12
+      end select
   12  lo = lo/2
       if (lo.eq.1)ko = 1
       go to 15
@@ -230,19 +252,3 @@
 
       return
       end
-!
-!   This routine is required if the CVS revision numbers are to 
-!   survive an optimization.
-!
-!
-!   1998/02/03 23:54:21 meyer
-!
-      subroutine bunema_rev(i)
-      CHARACTER*100 opt
-      character*10 s 
-      if( i .eq. 0) s =  &
-      '@(#)bunema.for,v 4.14\000'
-      return
-      end
-   
-
