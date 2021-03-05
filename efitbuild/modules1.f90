@@ -127,6 +127,18 @@
       use var_fcoildat
       use var_ecoildat
       use var_beamdat
+      use var_bscom
+      use var_bscomss
+      use var_autokknot
+      use var_autok
+      use var_fixstark
+      use var_cwork2
+      use vtime_mod
+      use var_gwork1
+      use var_cwork3
+      use var_cwork4
+
+      use var_jwork4
 ! jm.s
       use profile_ext_mod
 ! jm.e

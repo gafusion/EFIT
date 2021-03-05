@@ -25,8 +25,6 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
 ! MPI >>>
 #if defined(USEMPI)
       include 'mpif.h'
@@ -34,7 +32,6 @@
 ! MPI <<<
       dimension xrsp(npcurn)
       dimension patmpz(magpri),xmpz(magpri),ympz(magpri),ampz(magpri)
-      common/jwork4/workb(nsilop)
       character*30 sfname
       integer, dimension(:), allocatable :: ishotall
       real*8, dimension(:), allocatable :: ch2all,timeall
@@ -427,24 +424,24 @@
       if (.not.fitsiref) then
       ssiref=csilop(iabs(nslref),it)
       do 363 i=1,nsilop
-        workb(i)=csilop(i,it)-ssiref
+        workb_jw4(i)=csilop(i,it)-ssiref
   363 continue
       else
       ssiref=0.0
       do i=1,nsilop
-        workb(i)=csilop(i,it)+csiref
+        workb_jw4(i)=csilop(i,it)+csiref
       enddo
       endif
 !
       if (iand(iout,1).ne.0) then  ! go to 850
 !
         write (nout,11100) ssiref
-        write (nout,11020) (workb(i),i=1,nsilop)
+        write (nout,11020) (workb_jw4(i),i=1,nsilop)
         write (nout,11100) csiref
         write (nout,11020) (csilop(i,it),i=1,nsilop)
-        workb(1:nsilop)=csilop(1:nsilop,it)*twopi
+        workb_jw4(1:nsilop)=csilop(1:nsilop,it)*twopi
         write (nout,11101) csiref*twopi
-        write (nout,11020) (workb(i),i=1,nsilop)
+        write (nout,11020) (workb_jw4(i),i=1,nsilop)
         write (nout,11102)
         write (nout,11020) (csilopv(i,it),i=1,nsilop)
         write (nout,11120) cipmp2,cipmp3

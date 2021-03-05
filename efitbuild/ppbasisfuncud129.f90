@@ -16,9 +16,6 @@ Function bsppel(ifunc,iparm,ypsi)
   include 'modules2.f90'
   include 'modules1.f90'
   implicit integer*4 (i-n), real*8 (a-h,o-z)
-  !include 'ecomdu1.f90'
-  !include 'ecomdu2.f90'
-  include 'basiscomdu.inc'
       
   bsppel = 0.0
   if ( ifunc .eq. 0)then
@@ -148,9 +145,6 @@ Function bspppel(ifunc,iparm,ypsi)
   include 'modules2.f90'
   include 'modules1.f90'
   implicit integer*4 (i-n), real*8 (a-h,o-z)
-  !include 'ecomdu1.f90'
-  !include 'ecomdu2.f90'
-  include 'basiscomdu.inc'
 
   bspppel = 0.0
   if ( ifunc .eq. 0)then
@@ -302,9 +296,6 @@ Function bsppin(ifunc,iparm,ypsi)
   include 'modules2.f90'
   include 'modules1.f90'
   implicit integer*4 (i-n), real*8 (a-h,o-z)
-  !include 'ecomdu1.f90'
-  !include 'ecomdu2.f90'
-  include 'basiscomdu.inc'
       
   bsppin = 0.0
   ypsi2 = 1.0
@@ -541,9 +532,7 @@ subroutine ppcnst(ncrsp,crsp,z,nffcoi)
   include 'modules2.f90'
   include 'modules1.f90'
   implicit integer*4 (i-n), real*8 (a-h,o-z)
-  !include 'ecomdu1.f90'
-  !include 'ecomdu2.f90'
-  include 'basiscomdu.inc'
+
   dimension crsp(4*(npcurn-2)+6 +npcurn*npcurn ,nrsmat), &
     z(3*(npcurn-2)+6+npcurn*npcurn)
 
@@ -878,9 +867,6 @@ subroutine ppstore()
   include 'modules2.f90'
   include 'modules1.f90'
   implicit integer*4 (i-n), real*8 (a-h,o-z)
-  !include 'ecomdu1.f90'
-  !include 'ecomdu2.f90'
-  include 'basiscomdu.inc'
 
   if(kppfnc .ge. 0 .and. kppfnc .le. 2)then
     do i = 1,kppcur

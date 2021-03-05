@@ -7,7 +7,6 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.inc'
 
 ! MPI >>>
 #if defined(USEMPI)
@@ -18,17 +17,22 @@
       character filenm*15,ishotime*12,news*72,table_s*72, &
                 eqdsk*20,comfile*15,prefix1*1,header*42,fit_type*3
       integer*4 ltbdis
-      dimension coils(nsilop),expmp2(magpri), &
-                denr(nco2r),denv(nco2v), &
-                tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark), &
-                zzzgam(nmtark),aa1gam(nmtark),aa2gam(nmtark), &
-                aa3gam(nmtark),aa4gam(nmtark),aa5gam(nmtark), &
-                aa6gam(nmtark),aa7gam(nmtark),tgammauncor(nmtark)
-      real*8  bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
-         rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels),l2msels(nmsels), &
-         l4msels(nmsels),emsels(nmsels),semsels(nmsels),fwtemsels(nmsels)
-      dimension tlibim(libim),slibim(libim),rrrlib(libim)
+      real*8,dimension(:),allocatable :: coils,expmp2, &
+                denr,denv, tgamma,sgamma,rrrgam, &
+                zzzgam,aa1gam,aa2gam, aa3gam,aa4gam,aa5gam, &
+                aa6gam,aa7gam,tgammauncor
+      real*8,dimension(:),allocatable :: bmsels,sbmsels,fwtbmsels, &
+                rrmsels,zzmsels,l1msels,l2msels, &
+                l4msels,emsels,semsels,fwtemsels
+      real*8,dimension(:),allocatable :: tlibim,slibim,rrrlib
       character*82 snap_ext
+      namelist/machinein/nsilds,nsilol,nfcoil,nrogow,nacoil,mfcoil,necoil,nvesel, &
+      mpress,nesum,magpri67,magpri322,magprirdp,magudom,maglds,mse315,mse45, &
+      mse15,mse1h,mse315_2,mse210,libim,nmsels,nnece,nnecein,neceo,nnnte, &
+      ngam_vars,ngam_u,ngam_w,nlimit,nlimbd,nangle,ntangle,nfbcoil,mccoil, &
+      micoil,ndata,nwwcur,nffcur,nppcur,nercur,ntime,ndim,kxiter,mqwant, &
+      mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef,modep,modew,kubics, &
+      icycred_loopmax,nfourier
       namelist/in1/ishot,itime,itimeu,qvfit,plasma,expmp2,coils,btor, &
            fwtsi,fwtcur,limitr,fwtmp2,kffcur,kppcur,fwtqa,ierchk, &
            fwtbp,serror,nextra,scrape,itrace,itek,xltype,rcentr,bitip, &
@@ -107,6 +111,18 @@
                       ,curril30/0.0/,curril90/0.0/,curril150/0.0/
       integer, intent(out) :: ksstime
       integer, intent(inout) :: kerror
+
+      ALLOCATE(coils(nsilop),expmp2(magpri), &
+                denr(nco2r),denv(nco2v), &
+                tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark), &
+                zzzgam(nmtark),aa1gam(nmtark),aa2gam(nmtark), &
+                aa3gam(nmtark),aa4gam(nmtark),aa5gam(nmtark), &
+                aa6gam(nmtark),aa7gam(nmtark),tgammauncor(nmtark))
+      ALLOCATE(bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
+         rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels),l2msels(nmsels), &
+         l4msels(nmsels),emsels(nmsels),semsels(nmsels),fwtemsels(nmsels))
+      ALLOCATE(tlibim(libim),slibim(libim),rrrlib(libim))
+
       kerror = 0
 !---------------------------------------------------------------------
 !--  generate input files and command file for running EFITD        --
@@ -623,10 +639,11 @@
 !Note that ktear is part of 2 namelists.
 !If ktear IS defined in the input file, everything is fine
 !without this statement.
-  if (ktear.gt.100) write(6,*) 'weird value of ktear=',ktear
+        if (ktear.gt.100) write(6,*) 'weird value of ktear=',ktear
         if (ishot.gt.152000) vbit = 80
         open(unit=neqdsk,                       file=eqdsk,status='new', &
            recl=72,delim='APOSTROPHE')
+        write (neqdsk,machinein)
         write (neqdsk,in1)
         write (neqdsk,inwant)
         if (isetfb.ne.0) write (neqdsk,ink)
@@ -736,7 +753,6 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.inc'
 
 ! MPI >>>
 #if defined(USEMPI)
@@ -746,14 +762,19 @@
 
       character table_s*72,eqdsk*20,header*42,fit_type*3
       integer*4 ltbdis,limitrss
-      dimension coils(nsilop),expmp2(magpri), &
-                denr(nco2r),denv(nco2v), &
-                tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark), &
-                zzzgam(nmtark),aa1gam(nmtark),aa2gam(nmtark), &
-                aa3gam(nmtark),aa4gam(nmtark),aa5gam(nmtark), &
-                aa6gam(nmtark),aa7gam(nmtark),tgammauncor(nmtark)
-      dimension tlibim(libim),slibim(libim),rrrlib(libim)
+      real*8,dimension(:),allocatable :: coils,expmp2, &
+                denr,denv, tgamma,sgamma,rrrgam, &
+                zzzgam,aa1gam,aa2gam, aa3gam,aa4gam,aa5gam, &
+                aa6gam,aa7gam,tgammauncor
+      real*8,dimension(:),allocatable :: tlibim,slibim,rrrlib
       character*82 snap_ext
+      namelist/machinein/nsilds,nsilol,nfcoil,nrogow,nacoil,mfcoil,necoil,nvesel, &
+           mpress,nesum,magpri67,magpri322,magprirdp,magudom,maglds,mse315,mse45, &
+           mse15,mse1h,mse315_2,mse210,libim,nmsels,nnece,nnecein,neceo,nnnte, &
+           ngam_vars,ngam_u,ngam_w,nlimit,nlimbd,nangle,ntangle,nfbcoil,mccoil, &
+           micoil,ndata,nwwcur,nffcur,nppcur,nercur,ntime,ndim,kxiter,mqwant, &
+           mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef,modep,modew,kubics, &
+           icycred_loopmax,nfourier
       namelist/in1/ishot,itime,itimeu,qvfit,plasma,expmp2,coils,btor, &
            fwtsi,fwtcur,limitr,fwtmp2,kffcur,kppcur,fwtqa,ierchk, &
            fwtbp,serror,nextra,scrape,itrace,itek,xltype,rcentr,bitip, &
@@ -829,6 +850,16 @@
                       ,curril30/0.0/,curril90/0.0/,curril150/0.0/
       integer, intent(in) :: jtime
       integer, intent(inout) :: kerror
+
+
+      ALLOCATE(coils(nsilop),expmp2(magpri), &
+                denr(nco2r),denv(nco2v), &
+                tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark), &
+                zzzgam(nmtark),aa1gam(nmtark),aa2gam(nmtark), &
+                aa3gam(nmtark),aa4gam(nmtark),aa5gam(nmtark), &
+                aa6gam(nmtark),aa7gam(nmtark),tgammauncor(nmtark))
+      ALLOCATE(tlibim(libim),slibim(libim),rrrlib(libim))
+
       kerror = 0
 !----------------------------------------------------------------
 !-- recover the value of table_dir for mode 3 or 7             --
@@ -961,6 +992,7 @@
 !-------------------------------------------------------------------------------
       open(unit=neqdsk,                       file=eqdsk,status='new', &
            recl=72,delim='APOSTROPHE')
+      write (neqdsk,machinein)
       write (neqdsk,in1)
       write (neqdsk,inwant)
       if (isetfb.ne.0) write (neqdsk,ink)

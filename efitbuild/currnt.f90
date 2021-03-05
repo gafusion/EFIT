@@ -25,11 +25,6 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      include 'basiscomdu.inc'
-      common/cwork3/lkx,lky
-!               lkx,lky
       dimension pds(6)
       dimension alipc(npcur3,nwcurn),xpspp(nppcur),xpsfp(nffcur) &
           ,wlipc(nwcurn),work(nwcur2),xrsp(npcur3),xpspwp(nwwcur)

@@ -57,7 +57,6 @@
          gchi_b(:),gchi_c(:),gchi_d(:),r_cnt(:),z_cnt(:),rho_a(:), &
          rho_b(:),rho_c(:),rho_d(:)
 !
-      common/cwork3/lkx,lky
       parameter(num_rs=100,num_tear=33,ntdsk=17)
       common/tear_out/psi_rsg(num_rs),psi_norm(num_rs), &
                       val_lambda(num_rs), &
@@ -625,7 +624,6 @@
       common/cww/lwx,lwy
       dimension pds(6)
       
-      common/cowrk3/lkx,lky
 !           Calculate B^2
         call seva2d(bkx,lkx,bky,lky,c,r_loci,z_loci,pds,ier,n333)
       psi_test=cur_neg*pds(1)
@@ -676,14 +674,8 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
       dimension pds(6),chi_pds(6)
       
-!
-!           Various pre-calculated
-!      common blocks
-      common/cwork3/lkx,lky
 !
 !           First convert the geometric
 !      locations to data which can be
@@ -760,7 +752,6 @@
       use set_kinds
       use commonblocks,only: c,wk,copy,bkx,bky
       include 'eparmdud129.f90'
-      common/cowrk3/lkx,lky
        dimension pds(6)
       real*8,dimension(:),allocatable :: x,y,si,rx,ry,chi_geom, &
               gchi_a,gchi_b,gchi_c,gchi_d

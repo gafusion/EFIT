@@ -144,6 +144,7 @@
         SIGMAD=0.01
         SIGMAF=0.1
 
+        print *, 'idiashot, nshot',idiashot, nshot
 !
 !   GET COMPENSATION COEFFICIENTS
 !

@@ -1226,8 +1226,7 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      common/cwork3/lkx,lky
+
       dimension x(nx),y(nz),pds(6),xxout(*),yyout(*),psipsi(*)
       dimension xseps(1),yseps(1) ! this is an address of a location inside a 2-d array
       dimension bpoo(*),bpooz(*),pdss(6),xlimv(*),ylimv(*)
@@ -1235,7 +1234,6 @@
       data psitol/1.0e-04_dp/
       character(len=80) :: strtmp
       logical :: dodebugplts = .false. ! write surface files for debugging/plotting. Serial only, not parallel
-
       kerror = 0
       orelax = 1.0 ! Newton's Method relaxation constant (0.0-1.0)
       niter = 20   ! Number of iterations
@@ -1244,7 +1242,7 @@
       yseps(1)=-999.
       xseps(2)=-999.
       yseps(2)=-999.
-
+      print *, 'kaxis = ', kaxis
       if (iabs(kaxis).lt.20) then
         !----------------------------------------------------------------------
         !--   fit 2-d spline to psi                                          --
@@ -1253,6 +1251,8 @@
         !     x,y - (in) 1-d array of coordinate values for function
         !     c - (out) 4-d array of spline coefficients
         !     bkx, bky - (out) interval coefficients w/ lkx,lky terms
+
+        if (idebug >= 2) write (6,*)  'Entering sets2d'
         call sets2d(psipsi,c,x,nx,bkx,lkx,y,nz,bky,lky,wk,ier)
         if (idebug >= 2) then
           write (6,*) 'FINDAX Z,R = ', y(33),(x(i),i=45,45)
@@ -2140,7 +2140,7 @@
 !**********************************************************************
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension zero(1),x(1),y(1) ! sometimes an array, other times a constant
+      real*8 :: zero(nw*nh),x(nw),y(nh) ! sometimes an array, other times a constant
       dimension xlim(*),ylim(*)
       logical b,c,d,inside,bold
 

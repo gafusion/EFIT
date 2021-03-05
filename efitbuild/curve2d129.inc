@@ -136,7 +136,8 @@
               sangle(ncrv), sgap(ncrv), ngaps(ncrv), &
               nsxy(ncrv), sxx(ncrv,ncrv), syy(ncrv,ncrv), &
               xfm(ncrv), yfm(ncrv), xto(ncrv), yto(ncrv), ivec(ncrv), &
-              mrc(ncrv), tlen(ncrv), rat(ndim), nmrk(ncrv)
+              mrc(ncrv), tlen(ncrv), nmrk(ncrv)
+
 
       character*20 ptitle, xtitle, ytitle, sname, clearx(ncrv)
       character*72     lmes(mdim)
@@ -150,7 +151,7 @@
               isaxs, sorg, stp, smax,    slen, sname, nslen, xps, yps, &
               igridx, igridy, idash, idot, ichdsh, ichdot
       common /var2d_curve/ thcrv, sclpc, ndshme,ndotme,ncdhme,ncdtme, &
-              markme, clearx, mrc, tlen, nmrk, rat, &
+              markme, clearx, mrc, tlen, nmrk, &
                 nxy, ncnct
 !    .        ,xx, yy
       common /var2d_contur/ icont(ncrv), nword, ix, iy, zinc, line, &

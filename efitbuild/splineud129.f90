@@ -127,7 +127,7 @@
          zknot(nh+kzord),copynew(nw,nh))
 !
 !  Set up knots:
-!
+!     
       call eknot (nx, x, kubicx, xknot)
       call eknot (ny, y, kubicy, yknot)
 !
@@ -140,10 +140,11 @@
 !
 !  Calculate spline coefficients:
 !
+
       call spl2bc (x, y, xknot, yknot, wk)
 !
 !  Coefficients stored in bkx, bky, and c:
-!
+
       call spl2pp (xknot, yknot, wk, bkx, lx, bky, ly, cs)
 !
       DEALLOCATE(xknot,yknot,rknot,rgrid,zgrid,zknot,copynew)

@@ -24,13 +24,10 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
 
-      parameter(nfnves=nfcoil+nvesel)
       dimension afma(nfcoil,nfcoil),ifmatr(nfcoil),wfmatr(nfcoil) &
            ,wbry(msbdry),work(msbdr2),ut(msbdry,msbdry)
-      dimension abry(msbdry,nfnves),bbry(msbdry),ainbry(nfnves,msbdry)
+      dimension abry(msbdry,nfcoil+nvesel),bbry(msbdry),ainbry(nfcoil+nvesel,msbdry)
       dimension fcref(nfcoil)
       dimension pbry(msbdry),psbry(msbdry)
       integer, intent(inout) :: kerror

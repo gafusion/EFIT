@@ -57,9 +57,8 @@
      include 'modules2.f90'
      include 'modules1.f90'
      implicit integer*4 (i-n), real*8 (a-h,o-z)
-     include 'basiscomdu.inc'
 ! MPI >>>
-#if defined(USEMPI)
+#ifdef USEMPI
      include 'mpif.h'
 #endif
 ! MPI <<<
@@ -67,14 +66,7 @@
      parameter (krord=4,kzord=4)
      character inp1*4,inp2*4
      integer :: nargs, iargc, finfo, kerror, terr
-! OPT_INPUT >>>
-     logical input_flag
-     integer*4 mode, shot, steps
-     character cmdfile*15, shotfile*15, snapext*82
-     real*8 starttime, deltatime
-     character(80),dimension(ntime) :: inpfile
-     namelist/optin/mode,cmdfile,shotfile,shot,starttime,deltatime,steps,snapext,inpfile
-! OPT_INPUT <<<
+
      integer :: iend1, iend2
      character*80 :: cmdline
 
@@ -96,8 +88,6 @@
       call MPI_INIT_THREAD(MPI_THREAD_SINGLE,terr,ierr)
       call MPI_COMM_RANK(MPI_COMM_WORLD,rank,ierr)
       call MPI_COMM_SIZE(MPI_COMM_WORLD,nproc,ierr)
-! Arrays can only be allocated after MPI has been initialized because dimension is # of processes
-      allocate(dist_data(nproc),dist_data_displs(nproc),fwtgam_mpi(nstark,nproc))
 #else
       rank  = 0
 #endif
@@ -112,6 +102,8 @@
 !----------------------------------------------------------------------
       nw = 0
       nh = 0
+      nw = 129
+      nh = 129
       if (rank == 0) then
        nargs = iargc()
 ! Using mpirun command so will have different number of arguments than serial case
@@ -131,6 +123,8 @@
        read (inp2,'(i4)',err=9876) nh
 9876   continue
        if (nh == 0) nh = nw
+       nw = 129
+       nh = 129
       endif
 
 ! MPI >>>
@@ -175,50 +169,43 @@
        lr0=nw-krord+1
        lz0=nh-kzord+1
        nxtrap=npoint
+       mfila = 10
+
+      
+      call read_efitin
+      call inp_file_ch(nw,nh,ch1,ch2)
+
+      call get_opt_input(ktime)
+      print *, 'ktime', ktime
+      ntime = ktime
+      call get_eparmdud_defaults()
+      if (kdata==2) then
+        call read_eparmdud(ifname(1))!this assume machine is always the same
+      elseif(kdata==7) then
+        call read_eparmdud('efit_snap.dat_'//adjustl(snapext_in))
+      else
+        call read_eparmdud('efit_snap.dat')
+      endif
+      call get_eparmdud_dependents()
+
 !----------------------------------------------------------------------
 !-- Global Allocations                                               --
 !----------------------------------------------------------------------
+  
       include 'global_allocs.f90'
+      call set_ecom_mod1_arrays
+      call set_ecom_mod2_arrays
+
 !----------------------------------------------------------------------
 !-- get data                                                         --
 !----------------------------------------------------------------------
-      call inp_file_ch(nw,nh,ch1,ch2)
-      
-! OPT_INPUT >>>
-      use_opt_input = .false.
-! MPI >>>
-! ONLY root process check for existence of input file
-      if (rank == 0) then
-        inquire(file='efit.input',exist=input_flag)
-      endif
 #if defined(USEMPI)
-! Distribute file existence flag to all processes
-      if (nproc > 1) then
-        call MPI_BCAST(input_flag,1,MPI_LOGICAL,0,MPI_COMM_WORLD,ierr)
-      endif
+! Arrays can only be allocated after MPI has been initialized because dimension is # of processes
+      allocate(dist_data(nproc),dist_data_displs(nproc),fwtgam_mpi(nstark,nproc))
 #endif
-      if (input_flag) then
-        if (rank == 0) then
-          write(*,*) ' Using efit.input file...'
-        endif
-! ALL processes open and read efit.input file
-       open(unit=nin,status='old',file='efit.input')
-       read(nin,optin)
-       close(nin)
-       use_opt_input = .true.
-       mode_in = mode
-       cmdfile_in = cmdfile
-       shotfile_in = shotfile
-       shot_in = shot
-       starttime_in = starttime
-       deltatime_in = deltatime
-       steps_in = steps
-       snapext_in = snapext
-       inpfile_in = inpfile
-     endif
-! OPT_INPUT <<<
-
-   20 call getsets(ktime,kwake,mtear,kerror)
+      
+      20 call getsets(ktime,kwake,mtear,kerror)
+      
 ! MPI >>>
 #if defined(USEMPI)
       if (nproc > 1) then
@@ -233,6 +220,7 @@
         stop
       end if
 #endif
+
 ! MPI <<<
 
 ! Looping (below) on the number of time slices depends on the number of ranks.
@@ -255,6 +243,7 @@
 !--  set up data                                                     --
 !----------------------------------------------------------------------
         call prtoutheader()
+        if(idebug>=2) write(6,*) ' Entering data_input subroutine'
         call data_input(ks,iconvr,ktime,mtear,kerror)
         call errctrl_setstate(rank,time(ks))
         if (kerror.gt.0) go to 500
@@ -265,16 +254,21 @@
 !----------------------------------------------------------------------
 !--  initialize current profile                                      --
 !----------------------------------------------------------------------
+
+           if(idebug>=2) write(6,*) 'Entering inicur subroutine'
            call inicur(ks)
 !----------------------------------------------------------------------
 !--  get equilibrium                                                 --
 !----------------------------------------------------------------------
+
+           if(idebug>=2) write(6,*) 'Entering fit subroutine'
            call fit(ks,kerror)
            if (kerror.gt.0) go to 500
         endif
 !----------------------------------------------------------------------
 !--  post processing for graphic and text outputs                    --
 !----------------------------------------------------------------------
+        if(idebug>=2) write(6,*) 'Entering shapesurf'
         call shapesurf(ks,ktime,kerror)
         if (kerror.gt.0) go to 500
         if (mtear.ne.0) call tearing(ks,mtear,kerror)
@@ -349,8 +343,7 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      common/cwork3/lkx,lky
+
       common/cww/lwx,lwy
       dimension pds(6),rgrid(*),zgrid(*)
       real*8,dimension(:),allocatable :: worksi,workrm,bwork, &
@@ -925,8 +918,7 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      common/cwork3/lkx,lky
+
       dimension pds(6),rgrid(*),zgrid(*)
       real*8,dimension(:),allocatable :: x,y,dpleng,xxs,yys
       data inorm/3/,ibtcal/2/
@@ -1488,8 +1480,7 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      common/cwork3/lkx,lky
+
       dimension xpsii(nercur)
       data init/0/
 !
@@ -1542,8 +1533,7 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      common/cwork3/lkx,lky
+
       dimension pds(6)
       data init/0/
 !
@@ -1594,12 +1584,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.inc'
-      common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
-                   appknt(npcurn),kappknt, &
-                   affknt(npcurn),kaffknt, &
-                   awwknt(npcurn),kawwknt, &
-                   aeeknt(npcurn),kaeeknt,mxiter_a
+
       external ppakfunc,ffakfunc,wwakfunc,eeakfunc
       integer, intent(inout) :: kerror
       kerror = 0
@@ -1742,12 +1727,6 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.inc'
-      common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
-                   appknt(npcurn),kappknt, &
-                   affknt(npcurn),kaffknt, &
-                   awwknt(npcurn),kawwknt, &
-                   aeeknt(npcurn),kaeeknt,mxiter_a
 
       do i = 1,npcurn
           ppknt(i) = appknt(i)
@@ -1771,12 +1750,6 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.inc'
-      common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
-                   appknt(npcurn),kappknt, &
-                   affknt(npcurn),kaffknt, &
-                   awwknt(npcurn),kawwknt, &
-                   aeeknt(npcurn),kaeeknt,mxiter_a
 
       do i = 1,npcurn
           appknt(i) = ppknt(i)
@@ -1801,14 +1774,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      include 'basiscomdu.inc'
-      common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
-                   appknt(npcurn),kappknt, &
-                   affknt(npcurn),kaffknt, &
-                   awwknt(npcurn),kawwknt, &
-                   aeeknt(npcurn),kaeeknt,mxiter_a
+
       kerror = 0
       ppakfunc = 1000.0
       write(6,*)
@@ -1835,12 +1801,6 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.inc'
-      common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
-                   appknt(npcurn),kappknt, &
-                   affknt(npcurn),kaffknt, &
-                   awwknt(npcurn),kawwknt, &
-                   aeeknt(npcurn),kaeeknt,mxiter_a
 
       kerror = 0
       ffakfunc = 1000.0
@@ -1868,14 +1828,6 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      include 'basiscomdu.inc'
-      common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
-                   appknt(npcurn),kappknt, &
-                   affknt(npcurn),kaffknt, &
-                   awwknt(npcurn),kawwknt, &
-                   aeeknt(npcurn),kaeeknt,mxiter_a
 
       kerror = 0
       wwakfunc = 1000.0
@@ -1903,14 +1855,6 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      include 'basiscomdu.inc'
-      common/autok/ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
-                   appknt(npcurn),kappknt, &
-                   affknt(npcurn),kaffknt, &
-                   awwknt(npcurn),kawwknt, &
-                   aeeknt(npcurn),kaeeknt,mxiter_a
 
       kerror = 0
       eeakfunc = 1000.0
@@ -1954,7 +1898,6 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.inc'
       data nzero/0/
       save nzero
 !-----------------------------------------------------------------------
@@ -1962,6 +1905,7 @@
 !--  do loop                                                          --
 !-----------------------------------------------------------------------
       if (idebug /= 0) write (6,*) 'Enter FIT'
+      print *, jerror(jtime)
       kerror=0
       jerror(jtime)=0
       nitera=0
@@ -1994,6 +1938,7 @@
               endif
             endif
           endif
+          print *, 'green' 
           call green(nzero,jtime,nitera)
           if (kprfit.gt.0.and.iwantk.eq.ndokin) then
             call presur(jtime,nitera,kerror)
@@ -2014,6 +1959,7 @@
           endif
           if (idebug.ge.2) write (6,*) 'Call FIT/MATRIX',ix
           call matrix(jtime,ix,ichisq,nitera,kerror)
+           
           if (kerror /= 0) then
             jerror(jtime) = 1
             return
@@ -2027,22 +1973,29 @@
         do in=1,nxiter
           ixnn=in
           nitera=nitera+1
+
+          if (idebug.ge.2) write(6,*) 'Entering currnt' 
           call currnt(ix,jtime,ixnn,nitera,kerror)
           if (kerror /= 0) then
             jerror(jtime) = 1
             return
           endif
+          if (idebug.ge.2) write(6,*) 'Entering vescur' 
           if (ivesel.ge.2) call vescur(jtime)
           if ((i.le.1).or.(in.gt.1)) call fcurrt(jtime,ix,nitera,kerror)
           if (kerror /= 0) then
             jerror(jtime) = 1
             return
           endif
+
+          if (idebug.ge.2) write(6,*) 'Entering pflux' 
           call pflux(ix,ixnn,nitera,jtime,kerror)
           if (kerror.gt.0) then
             jerror(jtime) = 1
             return
           endif
+
+          if (idebug.ge.2) write(6,*) 'Entering steps'
           call steps(ixnn,nitera,ix,jtime,kerror)
           if (kerror.gt.0) then
             jerror(jtime) = 1
@@ -2050,6 +2003,7 @@
           endif
           if (kmtark.gt.0) then
             if (kwaitmse.ne.0 .and. i.ge.kwaitmse) then
+              if (idebug.ge.2) write(6,*) 'Entering fixstark'
               call fixstark(jtime,kerror)
               if (kerror.gt.0) then
                 jerror(jtime) = 1
@@ -2057,6 +2011,8 @@
               endif
             end if
           endif
+
+          if (idebug.ge.2) write(6,*) 'Entering residu'
           call residu(nitera,jtime)
           if ((nitera.lt.kcallece).and.(kfitece.gt.0.0)) exit
           if ((in.eq.1).and.(idone.gt.0).and.(tsaisq(jtime).le.saimin)) then
@@ -2072,6 +2028,8 @@
       !--  update pressure if needed                                      --
       !---------------------------------------------------------------------
       if (kprfit.gt.1) then
+
+        if (idebug.ge.2) write(6,*) 'Entering presur'
         call presur(jtime,nitera,kerror)
         if (kerror /= 0) then
           jerror(jtime) = 1
@@ -2220,9 +2178,9 @@
       use set_kinds
       use commonblocks,only: c,wk,copy,bkx,bky
       include 'eparmdud129.f90'
+      use var_cwork3, only:lkx,lky
 !vas
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      common/cwork3/lkx,lky
       dimension f(1),x(1),y(1),si(1),pds(6),rx(1),ry(1)
 !
       if (ns.eq.0) go to 2000
@@ -2335,7 +2293,6 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       parameter (nn=30)
       parameter (kbre=5)
-      common/cwork3/lkx,lky
       dimension pds(6),nnout(kbre),bmink(kbre),bmaxk(kbre) 
       real*8,allocatable :: rrgrid(:,:),bfield(:),rrout(:,:), &
           bout(:,:),babs(:,:),bbb(:),ccc(:),ddd(:),btttt(:), &
@@ -2987,7 +2944,6 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       parameter (nn=30)
       parameter (kbre=5)
-      common/cwork3/lkx,lky
       dimension pds(6),nnout(kbre),bmink(kbre),bmaxk(kbre)
       real*8,allocatable :: rrgrid(:,:),bfield(:),rrout(:,:), &
           bout(:,:),babs(:,:),bbb(:),ccc(:),ddd(:),btttt(:), &
@@ -3515,7 +3471,6 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       parameter (nn=30)
       parameter (kbre=5)
-      common/cwork3/lkx,lky
       dimension pds(6),nnout(kbre),bmink(kbre),bmaxk(kbre)
       real*8,allocatable :: rrgrid(:,:),bfield(:),rrout(:,:), &
           bout(:,:),babs(:,:),bbb(:),ccc(:),ddd(:),btttt(:), &
@@ -3854,17 +3809,12 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.inc'
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
+
       dimension pds(6)
       real*8,dimension(:),allocatable :: bt,br,bzt,bz,bwork, &
              cwork,dwork
-      real*4 save_gam(ntime,nstark)
-      real*4 save_tangam(ntime,nstark)
+
       common/cworkbt/lkrt,lkzt
-      data ifirst /0/
-      save ifirst,save_gam,save_tangam
 ! MPI >>>
       integer, intent(inout) :: kerror
       kerror = 0
@@ -4141,9 +4091,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      common/cwork3/lkx,lky
+
       integer jtimex,niterax
       real*8             :: gradsdr,gradsdz,brdr,brdz,bzdr,bzdz,cost,sint &
                           ,oldfit
@@ -4421,7 +4369,7 @@
       return
       end
 
-      subroutine gette(kerror)
+    subroutine gette(kerror)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -4445,11 +4393,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      common/cwork2/arsp(ndata,nppcur),wrsp(nppcur),work(ndata), &
-                    bdata(ndata),ematrix(nppcur,nppcur), &
-                    einv(nppcur,nppcur)
+
 ! MPI >>>
       integer, intent(inout) :: kerror
       kerror = 0
@@ -4460,9 +4404,9 @@
       do 1100 nj=1,npress
         do 1000 nk=1,nptef
           xn=-rpress(nj)
-          arsp(nj,nk)=xn**(nk-1)/sgteth(nj)
+          arsp_cw2(nj,nk)=xn**(nk-1)/sgteth(nj)
  1000   continue
-        bdata(nj)=tethom(nj)/sgteth(nj)
+        bdata_cw2(nj)=tethom(nj)/sgteth(nj)
  1100 continue
       ntedat=npress
       if (cstabte.gt.0.0) then
@@ -4470,10 +4414,10 @@
         do 1120 jj=ncstte,nptef
          nj=nj+1
          do 1110 nk=1,nptef
-          arsp(nj,nk)=0.0
-          if (jj.eq.nk) arsp(nj,nk)=cstabte
+          arsp_cw2(nj,nk)=0.0
+          if (jj.eq.nk) arsp_cw2(nj,nk)=cstabte
  1110    continue
-         bdata(nj)=0.0
+         bdata_cw2(nj)=0.0
  1120   continue
         ntedat=ntedat+nptef-ncstte+1
       endif
@@ -4482,12 +4426,12 @@
 !---------------------------------------------------------------------
       do 1900 i=1,nptef
       do 1900 j=1,nptef
-        ematrix(i,j)=0.0
+        ematrix_cw2(i,j)=0.0
         do 1900 k=1,npress
-          ematrix(i,j)=ematrix(i,j)+arsp(k,i)*arsp(k,j)
+          ematrix_cw2(i,j)=ematrix_cw2(i,j)+arsp_cw2(k,i)*arsp_cw2(k,j)
  1900   continue
 
-      call sdecm(arsp,ndata,ntedat,nptef,bdata,ntedat,n111,wrsp,work,ier)
+      call sdecm(arsp_cw2,ndata,ntedat,nptef,bdata_cw2,ntedat,n111,wrsp_cw2,work_cw2,ier)
       if (ier.eq.129) then
         kerror = 1
         call errctrl_msg('gette','sdecm failed to converge')
@@ -4495,16 +4439,16 @@
       end if
 
       cond=ier
-      toler=1.0e-06_dp*wrsp(1)
+      toler=1.0e-06_dp*wrsp_cw2(1)
       do 1600 i=1,nptef
         t=0.0
-        if (wrsp(i).gt.toler) t=bdata(i)/wrsp(i)
-        work(i)=t
+        if (wrsp_cw2(i).gt.toler) t=bdata_cw2(i)/wrsp_cw2(i)
+        work_cw2(i)=t
  1600 continue
       do 1650 i=1,nptef
         tefit(i)=0.0
         do 1650 j=1,nptef
-          tefit(i)=tefit(i)+arsp(i,j)*work(j)
+          tefit(i)=tefit(i)+arsp_cw2(i,j)*work_cw2(j)
  1650   continue
 !------------------------------------------------------------------
 !-- compute chi square                                           --
@@ -4520,7 +4464,7 @@
 !---------------------------------------------------------------------
 !-- get inverse of error matrix                                     --
 !---------------------------------------------------------------------
-      call linv1f(ematrix,nptef,nppcur,einv,n444,work,ier)
+      call linv1f(ematrix_cw2,nptef,nppcur,einv_cw2,n444,work_cw2,ier)
 !----------------------------------------------------------------------
 !--  boundary values                                                 --
 !----------------------------------------------------------------------
@@ -4530,8 +4474,8 @@
         sigtepb=0.0
         do 1850 j=1,nptef
           do 1840 i=1,nptef
-            stebdry=stebdry+einv(i,j)
-            sigtepb=sigtepb+(i-1)*(j-1)*einv(i,j)
+            stebdry=stebdry+einv_cw2(i,j)
+            sigtepb=sigtepb+(i-1)*(j-1)*einv_cw2(i,j)
  1840     continue
           tepbry=tepbry+(j-1)*tefit(j)
  1850     tebdry=tebdry+tefit(j)
@@ -4549,7 +4493,7 @@
       return
       end
 
-      subroutine gettion(kerror)
+       subroutine gettion(kerror)
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD FITTING CODE                              **
@@ -4573,12 +4517,6 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      common/cwork2/arsp(ndata,nppcur),wrsp(nppcur),work(ndata), &
-                    bdata(ndata),ematrix(nppcur,nppcur), &
-                    einv(nppcur,nppcur)
-      common/cwork3/lkx,lky
       dimension pds(6),bwork(ndata),cwork(ndata),dwork(ndata)
 ! MPI >>>
       integer, intent(inout) :: kerror
@@ -4617,22 +4555,22 @@
       do 1100 nj=1,need
         do 1000 nk=1,nptionf
           xn=xsiion(nj)
-          arsp(nj,nk)=xn**(nk-1)/sigti(nj)
+          arsp_cw2(nj,nk)=xn**(nk-1)/sigti(nj)
  1000   continue
-        bdata(nj)=tionex(nj)/sigti(nj)
+        bdata_cw2(nj)=tionex(nj)/sigti(nj)
  1100 continue
 !---------------------------------------------------------------------
 !-- form error matrix                                               --
 !---------------------------------------------------------------------
       do 1900 i=1,nptionf
       do 1900 j=1,nptionf
-        ematrix(i,j)=0.0
+        ematrix_cw2(i,j)=0.0
         do 1900 k=1,need
-          ematrix(i,j)=ematrix(i,j)+arsp(k,i)*arsp(k,j)
+          ematrix_cw2(i,j)=ematrix_cw2(i,j)+arsp_cw2(k,i)*arsp_cw2(k,j)
  1900   continue
 !
       nnn=1
-      call sdecm(arsp,ndata,need,nptionf,bdata,need,nnn,wrsp,work,ier)
+      call sdecm(arsp_cw2,ndata,need,nptionf,bdata_cw2,need,nnn,wrsp_cw2,work_cw2,ier)
       if (ier.eq.129) then
         kerror = 1
         call errctrl_msg('gettion','sdecm failed to converge')
@@ -4640,16 +4578,16 @@
       end if
 
       cond=ier
-      toler=1.0e-06_dp*wrsp(1)
+      toler=1.0e-06_dp*wrsp_cw2(1)
       do 1600 i=1,nptionf
         t=0.0
-        if (wrsp(i).gt.toler) t=bdata(i)/wrsp(i)
-        work(i)=t
+        if (wrsp_cw2(i).gt.toler) t=bdata_cw2(i)/wrsp_cw2(i)
+        work_cw2(i)=t
  1600 continue
       do 1650 i=1,nptionf
         tifit(i)=0.0
         do 1650 j=1,nptionf
-          tifit(i)=tifit(i)+arsp(i,j)*work(j)
+          tifit(i)=tifit(i)+arsp_cw2(i,j)*work_cw2(j)
  1650   continue
 !------------------------------------------------------------------
 !-- compute chi square                                           --
@@ -4664,7 +4602,7 @@
 !---------------------------------------------------------------------
 !-- get inverse of error matrix                                     --
 !---------------------------------------------------------------------
-      call linv1f(ematrix,nptionf,nppcur,einv,n444,work,ier)
+      call linv1f(ematrix_cw2,nptionf,nppcur,einv_cw2,n444,work_cw2,ier)
 !---------------------------------------------------------------------
 !--  project ion temperature into Thompson flux grid                --
 !---------------------------------------------------------------------
@@ -4674,7 +4612,7 @@
         xn=-rpress(i)
         do 1750 j=1,nptionf
           do 1740 k=1,nptionf
-          stitho(i)=stitho(i)+einv(k,j)*xn**(j-1)*xn**(k-1)
+          stitho(i)=stitho(i)+einv_cw2(k,j)*xn**(j-1)*xn**(k-1)
  1740     continue
  1750     tithom(i)=tithom(i)+tifit(j)*xn**(j-1)
         if (stitho(i).gt.0.0) then
@@ -4692,8 +4630,8 @@
         sigtipb=0.0
         do 1850 j=1,nptionf
           do 1840 i=1,nptionf
-            stibdry=stibdry+einv(i,j)
-            sigtipb=sigtipb+(i-1)*(j-1)*einv(i,j)
+            stibdry=stibdry+einv_cw2(i,j)
+            sigtipb=sigtipb+(i-1)*(j-1)*einv_cw2(i,j)
  1840     continue
           tipbry=tipbry+(j-1)*tifit(j)
  1850     tibdry=tibdry+tifit(j)
@@ -4739,7 +4677,6 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      common/cwork3/lkx,lky
       dimension xpsii(nwcurn),xpsis(nwcurn),xpsisb(nwcurn)
       dimension xsier(nercur)
       dimension pds(6),xnsi(nppcur)
@@ -5657,9 +5594,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      common/cwork3/lkx,lky
+
       integer initresult
       dimension pds(6)
       real*8,dimension(:),allocatable :: psikkk,gfbsum
@@ -6817,9 +6752,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      common/cwork3/lkx,lky
+
       dimension pds(6),ybase(nwwcur),ybaseb(nwwcur)
       dimension bwork(ndata),cwork(ndata),dwork(ndata)
       data init/0/
@@ -6937,9 +6870,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      common/cwork3/lkx,lky
+
       dimension pds(6),xnsi(nppcur),xnsp(nppcur)
       character*50 edatname
       namelist/edat/npress,rpress,zpress,pressr,sigpre
@@ -7328,11 +7259,13 @@
             !write (nttyo,10017) itime, rank
             write (nttyo,'(x)')
             if (kstark.gt.0) then
+              print *, jtime
               write (nttyo,80019) rank,itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
-                cdelz(nx-1),cdeljsum,sum(chigam)
+                cdelz(1),cdeljsum,sum(chigam)
             else
+              print *, 'jtime,nx', jtime,nx,kxiter,itime,zmaxis,errorm
               write (nttyo,10025) rank,itime,nx,tsaisq(jtime),zmaxis,errorm &
-                ,delzmm,cdelz(nx-1),cdeljsum
+                ,delzmm,cdelz(1),cdeljsum
             endif
           else
             if (kstark.gt.0) then
@@ -7416,9 +7349,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      common/cwork3/lkx,lky
+
       dimension rrrecep(nnece),rrrecem(nnece),iwp(nnece),iwm(nnece)
       dimension zece(nnece),pds(6),rsplt(2500),zsplt(2500),csplt(2500)
       real*8,dimension(:),allocatable :: dsidr,ddsiddr
@@ -7884,8 +7815,7 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      include 'basiscomdu.inc'
+
       dimension xpsii(1)
 
       do i=1,keecur
@@ -7917,8 +7847,6 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      include 'basiscomdu.inc'
       dimension xpsii(1)
 
       do i=1,kffcur
@@ -7951,8 +7879,6 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      include 'basiscomdu.inc'
       dimension xpsii(1)
 
       do i=1,kffcur
@@ -7985,8 +7911,6 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      include 'basiscomdu.inc'
       dimension xpsii(1)
 
       do i=1,kffcur
@@ -8018,8 +7942,6 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      include 'basiscomdu.inc'
       dimension xpsii(1)
 
       do i=1,kffcur
@@ -8051,8 +7973,7 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      include 'basiscomdu.inc'
+
       dimension xpsii(1)
 
       do i=1,kppcur
@@ -8085,8 +8006,7 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      include 'basiscomdu.inc'
+
       dimension xpsii(1)
 
       do i=1,kppcur
@@ -8119,8 +8039,7 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      include 'basiscomdu.inc'
+
       dimension xpsii(1)
 
       do i=1,kppcur
@@ -8153,8 +8072,7 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      include 'basiscomdu.inc'
+
       dimension xpsii(1)
 
       do i=1,kwwcur
@@ -8186,8 +8104,7 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      include 'basiscomdu.inc'
+
       dimension xpsii(1)
 
       do i=1,kwwcur
@@ -8220,8 +8137,7 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      include 'basiscomdu.inc'
+
       dimension xpsii(1)
 
       do i=1,kwwcur
@@ -8577,9 +8493,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      common/cwork3/lkx,lky
+
       common/wwork1/xlims(5),ylims(5),limtrs,xlmins
       dimension pds(6)
       integer iii
@@ -8602,14 +8516,17 @@
 !-- first set up bi-cubic spline interpolation in findax             --
 !----------------------------------------------------------------------
       m10=10
+
+      if (idebug >= 2) write (6,*) 'Entering findax'
       call findax(nw,nh,rgrid,zgrid,rmaxis,zmaxis,simag, &
                   psibry,rseps(1,jtime),zseps(1,jtime),m10, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
                   zxmin,zxmax,rymin,rymax,dpsi,bpol,bpolz, &
                   limitr,xlim,ylim,limfag,ixt,jtime,kerror)
+
       if (kerror.gt.0) return
       if (nsol.gt.0) then
-        if (idebug >= 2) then
+   
           write (6,*) 'STEPS R,Z,Si,Err = ', rsol(1),zsol(1),wsisol,ier
           call seva2d(bkx,lkx,bky,lky,c,rbdry(1),zbdry(1),pds,ier,n111)
           write (6,*) 'STEPS R,Z,Si,Err = ', rbdry(1),zbdry(1),pds(1),ier
@@ -8617,6 +8534,13 @@
              ,n111)
           write (6,*) 'STEPS R,Z,Si,Err = ', rbdry(nbdry),zbdry(nbdry) &
             ,pds(1),ier
+
+            write(6,*) 'rsplt(kk),zsplt(kk)',rbdry(nbdry),zbdry(nbdry)
+            write(6,*) 'lkx, lky',lkx,lky
+            write(6,*) 'pds,ier,n111', pds,ier,n111
+
+        if (idebug >= 2) then
+
           call seva2d(bkx,lkx,bky,lky,c,xout(1),yout(1),pds,ier &
              ,n111)
           write (6,*) 'STEPS simag,psibry,n1,si = ',simag,psibry,n111,pds(1)
@@ -8627,6 +8551,7 @@
           write (6,*) 'STEPS R,Z,si = ', rgrid(45),zgrid(33),pds(1)
         endif
       endif
+      write (6,*) 'after m10 findax lkx,lky = ',lkx,lky
 !-----------------------------------------------------------------------
 !--  Trace boundary, first check for counter beam injection           --
 !-----------------------------------------------------------------------
@@ -8674,6 +8599,9 @@
           do 50900 kk=2,itot
             call seva2d(bkx,lkx,bky,lky,c,rsplt(kk),zsplt(kk), &
                         pds,ier,n111)
+            write(6,*) 'rgrid(i),zgrid(j)',rsplt(kk),zsplt(kk)
+            write(6,*) 'lkx, lky',lkx,lky
+            write(6,*) 'pds,ier,n111', pds,ier,n111
             xvsmin=min(xvsmin,pds(1))
             xvsmax=max(xvsmax,pds(1))
 50900     continue
@@ -8714,6 +8642,9 @@
           kk=(i-1)*nh+j
           if (zero(kk).gt.0.0005_dp.and.www(kk).lt.0.1_dp) then
            call seva2d(bkx,lkx,bky,lky,c,rgrid(i),zgrid(j),pds,ier,n333)
+           write(6,*) 'rgrid(i),zgrid(j)',rgrid(i),zgrid(j)
+           write(6,*) 'lkx, lky',lkx,lky
+           write(6,*) 'pds,ier,n111', pds,ier,n333
            bpnow=sqrt(pds(2)**2+pds(3)**2)/rgrid(i)
            if (bpnow.le.bpmin) then
            if ((abs(dpsi).le.psitol).or.((abs(dpsi).gt.psitol).and. &
@@ -8728,6 +8659,7 @@
           endif
 51090   continue
 51100   continue
+
         if (bpmin.eq.avebp) go to 9320
         relsi=abs((sibpmin-psibry)/sidif)
         if (bpmin.le.0.10_dp*avebp.and.relsi.gt.0.005_dp) then
@@ -8736,6 +8668,10 @@
 !------------------------------------------------------------------
           do 9300 j=1,40
           call seva2d(bkx,lkx,bky,lky,c,xs,ys,pds,ier,n666)
+          write(6,*) 'xs,ys',xs, ys
+          write(6,*) 'lkx, lky',lkx,lky
+          write(6,*) 'pds,ier,n111', pds,ier,n111
+
           det=pds(5)*pds(6)-pds(4)*pds(4)
           if (abs(det).lt.1.0e-15_dp) go to 9305
           xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
@@ -8773,7 +8709,7 @@
         endif
         xpsialp=xpsimin
         xpsimin=sidif/(simag-xpsimin)
-      endif
+      endif 
 !-----------------------------------------------------------------------
 !-- get normalized flux function XPSI                                 --
 !-----------------------------------------------------------------------
@@ -8820,6 +8756,7 @@
           write (6,*) 'STEPS R,Z,Si,Err = ', rbdry(nbdry),zbdry(nbdry) &
             ,pds(1),ier
         endif
+
       endif
       if (idebug >= 2) then
         call seva2d(bkx,lkx,bky,lky,c,xout(1),yout(1),pds,ier &
@@ -8831,12 +8768,13 @@
              ,n111)
         write (6,*) 'STEPS R,Z,si = ', rgrid(45),zgrid(33),pds(1)
         write (6,*) 'STEPS lkx,lky = ',lkx,lky
-        write (6,*) 'STEPS lkx,lky,c = ',bkx(33),bky(33),c(1,33,1,33)
 
       endif
+
 !-----------------------------------------------------------------------
 !-- get weighting function                                            --
 !-----------------------------------------------------------------------
+
       call weight(rgrid,zgrid)
 !-----------------------------------------------------------------------
 !--  get response functions for MSE                                   --
@@ -8844,6 +8782,7 @@
       if (kstark.gt.0.or.kdomse.gt.0) then
       do 50299 k=1,nstark
         if (rrgam(jtime,k).le.0.0) go to 50299
+        write (6,*) 'Entering seva2d from stark'
         call seva2d(bkx,lkx,bky,lky,c,rrgam(jtime,k) &
                     ,zzgam(jtime,k),pds,ier,n111)
         sistark(k)=pds(1)
@@ -8853,6 +8792,8 @@
         btgam(k)=fpnow*tmu/rrgam(jtime,k)
 50299 continue
       endif
+
+      write (6,*) 'Exiting  seva2d from stark '
 !-----------------------------------------------------------------------
 !--  get response functions for MSE-LS                                --
 !-----------------------------------------------------------------------
@@ -8876,7 +8817,9 @@
                        ,brmls(k),bzmls(k),btmls(k)
         endif
 60299 continue
+
       endif
+      write (6,*) 'Exiting STEPS MSE-LS k,rrmselt= '
 !
       do 51200 k=1,nfound
         xouts(k)=1./xout(k)**2
@@ -9065,6 +9008,8 @@
       emf=emp
       endif
  1585 continue
+
+      write(6,*) 'Existing STEPS'
       return
  1590 continue
       if ((ixt.le.1).and.(icinit.gt.0)) go to 1580
@@ -9091,6 +9036,7 @@
       cqmaxi(ixt)=(emaxis**2+1.)*abs(fcentr)/twopi/emaxis &
                    /rmaxis**2/abs(cjmaxi)
       qmaxis=cqmaxi(ixt)
+      write(6,*) 'Existing STEPS'
       return
  2100 format(/,1x,'shot',i6,' at ',i6,' ms ','** Problem in BOUND **')
 11001 format(/,1x,'** 2nd seperatrix **',2x,e10.3,2x,i4)
@@ -9232,7 +9178,6 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
       dimension x(1),y(1)
 !
       if (iweigh.le.0) go to 5000

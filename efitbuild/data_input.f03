@@ -27,33 +27,26 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'basiscomdu.inc'
       parameter(mfila=10)
       parameter (m_ext=101)
-      common/cwork3/lkx,lky
-      common/gwork1/rmx(mfila),zmx(mfila),rsilpf(nsilop,mfila), &
-        rmp2pf(magpri,mfila), &
-        irfila(mfila),jzfila(mfila) &
-        ,wsilpc(nsilop),wmp2pc(magpri),wfcpc(nfcoil), &
-         wecpc(nesum),wvspc(nvesel),wpcpc
+
       real*8,allocatable :: gridpf(:,:),gwork(:,:),rgrids(:),zgrids(:)
-      dimension coils(nsilop),expmp2(magpri),acoilc(nacoil) &
-         ,tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark),zzzgam(nmtark) &
-         ,aa1gam(nmtark),aa2gam(nmtark),aa3gam(nmtark),aa4gam(nmtark) &
-         ,aa5gam(nmtark),aa6gam(nmtark),aa7gam(nmtark) &
-         ,tgammauncor(nmtark)
-      real*8 bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
-         rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels),l2msels(nmsels), &
-         l4msels(nmsels),emsels(nmsels),semsels(nmsels),fwtemsels(nmsels)
-      integer*4 iemsels(nmsels)
-      dimension tlibim(libim),slibim(libim),rrrlib(libim) &
-         ,zzzlib(libim),aa1lib(libim),aa8lib(libim),fwtlib(libim)
-      dimension pds(6),denr(nco2r),denv(nco2v)
-      dimension ilower(mbdry)
-      dimension devxmpin(magpri),rnavxmpin(magpri) &
-               ,devpsiin(nsilop),rnavpsiin(nsilop) &
-               ,devfcin(nfcoil),rnavfcin(nfcoil) &
-               ,devein(nesum),rnavecin(nesum)
+      real*8,dimension(:),allocatable ::  coils,expmp2,acoilc &
+         ,tgamma,sgamma,rrrgam,zzzgam &
+         ,aa1gam,aa2gam,aa3gam,aa4gam &
+         ,aa5gam,aa6gam,aa7gam,tgammauncor
+      real*8,dimension(:),allocatable ::  bmsels,sbmsels,fwtbmsels, &
+         rrmsels,zzmsels,l1msels,l2msels, &
+         l4msels,emsels,semsels,fwtemsels
+      integer*4,dimension(:),allocatable ::  iemsels
+      real*8,dimension(:),allocatable ::  tlibim,slibim,rrrlib &
+         ,zzzlib,aa1lib,aa8lib,fwtlib
+      real*8,dimension(:),allocatable ::  pds,denr,denv
+      integer*8,dimension(:),allocatable ::  ilower
+      real*8,dimension(:),allocatable ::  devxmpin,rnavxmpin &
+               ,devpsiin,rnavpsiin,devfcin,rnavfcin &
+               ,devein,rnavecin,brsptu
+
       namelist/in1/ishot,itime,plasma,itek,itrace,nxiter,fwtcur,kffcur &
       ,coils,fwtsi,expmp2,fwtmp2,kppcur,mxiter,ierchk,fwtqa,qemp,error &
       ,limitr,xlim,ylim,serror,nbdry,rbdry,zbdry,psibry,nslref,ibunmn &
@@ -177,7 +170,6 @@
       real*8 :: r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max
       real*8 :: r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot
       character*10 case_ext(6)
-      dimension brsptu(nfcoil)
       character*50 edatname
       character*82 table_nam
       character*10 namedum
@@ -190,11 +182,30 @@
       data co2cor/1.0/,idoac/0/,fq95/0.0/
       data mcontr/35/
       data ten2m3/1.0e-03_dp/
-      data idtime/0/,itimeb/0/,brsptu(1)/-1.e-20_dp/
+      data idtime/0/,itimeb/0/
       save idodo, idovs, idoac
 !
       ALLOCATE(gridpf(nwnh,mfila),gwork(nbwork,nwnh), &
          rgrids(nw),zgrids(nh))
+      ALLOCATE(coils(nsilop),expmp2(magpri),acoilc(nacoil) &
+         ,tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark),zzzgam(nmtark) &
+         ,aa1gam(nmtark),aa2gam(nmtark),aa3gam(nmtark),aa4gam(nmtark) &
+         ,aa5gam(nmtark),aa6gam(nmtark),aa7gam(nmtark) &
+         ,tgammauncor(nmtark))
+      ALLOCATE(bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
+         rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels),l2msels(nmsels), &
+         l4msels(nmsels),emsels(nmsels),semsels(nmsels),fwtemsels(nmsels))
+      ALLOCATE(iemsels(nmsels))
+      ALLOCATE( tlibim(libim),slibim(libim),rrrlib(libim) &
+         ,zzzlib(libim),aa1lib(libim),aa8lib(libim),fwtlib(libim))
+      ALLOCATE(pds(6),denr(nco2r),denv(nco2v))
+      ALLOCATE(ilower(mbdry))
+      ALLOCATE(devxmpin(magpri),rnavxmpin(magpri) &
+               ,devpsiin(nsilop),rnavpsiin(nsilop) &
+               ,devfcin(nfcoil),rnavfcin(nfcoil) &
+               ,devein(nesum),rnavecin(nesum),brsptu(nfcoil))
+
+      brsptu(1)=-1.e-20_dp
 !
       kerror = 0
       idone=0
@@ -474,7 +485,6 @@
 !
       xlim(1)=-1.0
       rbdry(1)=-1.0
-      ishot=-1
       itimeu=0
       table_nam = table_dir
       nbdryp=-1

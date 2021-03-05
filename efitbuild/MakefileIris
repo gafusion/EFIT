@@ -32,73 +32,77 @@ DLIBS=$(LLIBS) -lm $(LIBD3) -lcurl $(BLAS) $(MDSPLUS) $(NETCDF) $(MSE) $(MPICH)
 
 # For DIII-D, MPI-enabled 
 FC=mpif90
-FFLAGS= -g -DUSEMPI -byteswapio -Mpreprocess -Ktrap=divz
+FFLAGS= -g -DUSEMPI -byteswapio -Mpreprocess -Ktrap=divz -Mchkstk
 FCFLAGS=
 CC=mpicc
 LD=mpif90
 LDFLAGS= -Bstatic_pgi
-MPIVERSION=yes
+MPIVERSION=no
 
 # determine the name of final executable
 EFIT = EFIT
 
 # source files
-SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt.f90 \
+
+SOURCES = modules-efit.f90 get_eparmdud.f03 psicald.f90 lsolved.f90 subs_d_pt_linux.f90 \
           bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
-          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
-          efitdud129.f90 data_input.f90 matrix.f90 shapesurf.f90 getsets.f90 \
-          prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
+          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 get_opt_input.f90 \
+          efitdud129.f90 data_input.f90 matrix.f90 shapesurf.f90 getsets.f03 \
+          prtout.f90 writeout.f03 currnt.f90 fcurrt.f90 \
           boundud129.f90 chkeud129.f90 splineud129.f90 \
-          weqdud129.f90 msels_data.f90 msels_hist.f90 \
-          pltdatud129.f90 getecdud129.f90 getneud129.f90 ppbasisfuncud129.f90 \
+          weqdud129.f03 msels_data.f90 msels_hist.f90 \
+          pltdatud129.f90 getecdud129.f03 getneud129.f90 \
+          ppbasisfuncud129.f90 \
           ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
           expdataud129.f90 
 ifeq ($(MACHINE),Linux)
-SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt_linux.f90 \
+
+SOURCES = psicald.f90 lsolved.f90 subs_d_pt_linux.f90 \
           bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
-          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90, get_opt_input.f90 \
           efitdud129.f90 data_input.f90 matrix.f90 shapesurf.f90 getsets.f90 \
           prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
           boundud129.f90 chkeud129.f90 splineud129.f90 \
-          weqdud129.f90 msels_data.f90 msels_hist.f90 \
-          pltdatud129.f90 getecdud129.f90 getneud129.f90 ppbasisfuncud129.f90 \
+          weqdud129.f03 msels_data.f90 msels_hist.f90 \
+          pltdatud129.f90 getecdud129.f03 getneud129.f90 ppbasisfuncud129.f90 \
           ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
           expdataud129.f90 
     ifeq ($(FCOM),lf95)
-SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt_linuxlf95.f90 \
+
+SOURCES = psicald.f90 lsolved.f90 subs_d_pt_linuxlf95.f90 \
           bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
-          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90, get_opt_input.f90 \
           efitdud129.f90 data_input.f90 matrix.f90 shapesurf.f90 getsets.f90 \
           prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
           boundud129.f90 chkeud129.f90 splineud129.f90 \
-          weqdud129.f90 msels_data.f90 msels_hist.f90 \
-          pltdatud129.f90 getecdud129.f90 getneud129.f90 ppbasisfuncud129.f90 \
+          weqdud129.f03 msels_data.f90 msels_hist.f90 \
+          pltdatud129.f90 getecdud129.f03 getneud129.f90 ppbasisfuncud129.f90 \
           ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
           expdataud129.f90 
 
     endif
     ifeq ($(FCOM),mpilf95)
-SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt_linuxlf95.f90 \
+SOURCES = psicald.f90 lsolved.f90 subs_d_pt_linuxlf95.f90 \
           bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
-          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90, get_opt_input.f90 \
           efitdud129.f90 data_input.f90 matrix.f90 shapesurf.f90 getsets.f90 \
           prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
           boundud129.f90 chkeud129.f90 splineud129.f90 \
-          weqdud129.f90 msels_data.f90 msels_hist.f90 \
-          pltdatud129.f90 getecdud129.f90 getneud129.f90 \
+          weqdud129.f03 msels_data.f90 msels_hist.f90 \
+          pltdatud129.f90 getecdud129.f03 getneud129.f90 \
           ppbasisfuncud129.f90 \
           ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
           expdataud129.f90 
     endif
     ifeq ($(FCOM),mpipgf90)
-SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt_linux.f90 \
+SOURCES = modules-efit.f90 get_eparmdud.f03 psicald.f90 lsolved.f90 subs_d_pt_linux.f90 \
           bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
-          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
-          efitdud129.f90 data_input.f90 matrix.f90 shapesurf.f90 getsets.f90 \
-          prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
+          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 get_opt_input.f90 \
+          efitdud129.f90 data_input.f90 matrix.f90 shapesurf.f90 getsets.f03 \
+          prtout.f90 writeout.f03 currnt.f90 fcurrt.f90 \
           boundud129.f90 chkeud129.f90 splineud129.f90 \
-          weqdud129.f90 msels_data.f90 msels_hist.f90 \
-          pltdatud129.f90 getecdud129.f90 getneud129.f90 \
+          weqdud129.f03 msels_data.f90 msels_hist.f90 \
+          pltdatud129.f90 getecdud129.f03 getneud129.f90 \
           ppbasisfuncud129.f90 \
           ffbasisfuncud129.f90 wwbasisfuncud129.f90 tearingd129.f90 \
           expdataud129.f90 
@@ -106,29 +110,31 @@ SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt_linux.f90 \
 endif
 #
 
-OBJECTS = $(SOURCES:.f90=.o) lin-dp.a 
+OBJECTSTMP=$(subst f90,o,$(SOURCES))
+OBJECTS=$(subst f03,o,$(OBJECTSTMP))
+#OBJECTS =  $(SOURCES:.f90=.o) lin-dp.a 
 
 # specific for Linux machines
 ifeq ($(MACHINE),Linux)
-  OBJECTS = $(SOURCES:.f90=.o) lin-dp.a mds_rg.a
+  OBJECTS += lin-dp.a mds_rg.a
   ifeq ($(FCOM),mpilf95)
-  OBJECTS = $(SOURCES:.f90=.o) efitnotifier.o lin-dp.a mds_rg.a
+  OBJECTS += efitnotifier.o lin-dp.a mds_rg.a
   endif
   ifeq ($(FCOM),mpipgf90)
-  OBJECTS = $(SOURCES:.f90=.o) efitnotifier.o lin-dp.a mds_rg.a
+  OBJECTS += efitnotifier.o lin-dp.a mds_rg.a
   endif
 endif
 #
+
 lin-dp.a: lin-dp.f90
 	$(FC) -Msave -c $(FFLAGS) lin-dp.f90
 	ar r lin-dp.a lin-dp.o
 	ranlib lin-dp.a
-
 ALL:$(EFIT) 
 	echo ' '
 	echo ' ================== tbt 20140825 ----->'
 	echo 'MACHINE =' $(MACHINE)
-	echo 'OBJECTS =' $(OBJECT)
+	echo 'OBJECTS =' $(OBJECTS)
 	echo 'EFIT    =' $(EFIT)
 	echo 'FC      =' $(FC)
 	echo 'FCOM    =' $(FCOM)
@@ -152,13 +158,17 @@ $(EFIT): $(OBJECTS)
 	 fi
 
 # with include file
-weqdud129.o:weqdud129.f90
+weqdud129.o:weqdud129.f03
 	$(FC) -Msave -c $(FFLAGS) $< -I$(NETCDFINC)
-getecdud129.o:getecdud129.f90 
+getecdud129.o:getecdud129.f03 
 #vas for pgf90	$(FC) -c $(FFLAGS) $< -I$(MDSINC)
 	$(FC) -Msave -c $(FFLAGS) $< 
 #
 # default compiling options
+
+
+%.o:%.f03
+	$(FC) -Msave -c $(FFLAGS) $<
 %.o:%.f90
 	$(FC) -Msave -c $(FFLAGS) $<
 

@@ -23,8 +23,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
+
 ! MPI >>>
 #if defined(USEMPI)
       include 'mpif.h'
@@ -32,10 +31,6 @@
       integer :: ier_all
       integer, intent(inout) :: kerror
 ! MPI <<<
-      common/cwork2/arsp(ndata,nppcur),wrsp(nppcur),work(ndata), &
-                    bdata(ndata),ematrix(nppcur,nppcur), &
-                    einv(nppcur,nppcur)
-      common/cwork3/lkx,lky
       dimension pds(6)
 
       kerror = 0
@@ -47,9 +42,9 @@
       do 1100 nj=1,npress
         do 1000 nk=1,npnef
           xn=-rpress(nj)
-          arsp(nj,nk)=xn**(nk-1)/sgneth(nj)
+          arsp_cw2(nj,nk)=xn**(nk-1)/sgneth(nj)
  1000   continue
-        bdata(nj)=dnethom(nj)/sgneth(nj)
+        bdata_cw2(nj)=dnethom(nj)/sgneth(nj)
  1100 continue
       nnedat=npress
       if (cstabne.gt.0.0) then
@@ -57,10 +52,10 @@
         do 22200 jj=ncstne,npnef
          nj=nj+1
          do 22190 nk=1,npnef
-          arsp(nj,nk)=0.0
-          if (jj.eq.nk) arsp(nj,nk)=cstabne
+          arsp_cw2(nj,nk)=0.0
+          if (jj.eq.nk) arsp_cw2(nj,nk)=cstabne
 22190    continue
-         bdata(nj)=0.0
+         bdata_cw2(nj)=0.0
 22200   continue
         nnedat=nnedat+npnef-ncstne+1
       endif
@@ -69,29 +64,29 @@
 !---------------------------------------------------------------------
       do 1120 i=1,npnef
       do 1120 j=1,npnef
-        ematrix(i,j)=0.0
+        ematrix_cw2(i,j)=0.0
         do 1120 k=1,npress
-          ematrix(i,j)=ematrix(i,j)+arsp(k,i)*arsp(k,j)
+          ematrix_cw2(i,j)=ematrix_cw2(i,j)+arsp_cw2(k,i)*arsp_cw2(k,j)
  1120   continue
 !
       nnn=1
-      call sdecm(arsp,ndata,nnedat,npnef,bdata,nnedat,nnn,wrsp,work,ier)
+      call sdecm(arsp_cw2,ndata,nnedat,npnef,bdata_cw2,nnedat,nnn,wrsp_cw2,work_cw2,ier)
       if (ier.eq.129) then
         kerror = 1
         call errctrl_msg('getne','sdecm failed to converge')
         return
       end if
       cond=ier
-      toler=1.0e-06*wrsp(1)
+      toler=1.0e-06*wrsp_cw2(1)
       do 1600 i=1,npnef
         t=0.0
-        if (wrsp(i).gt.toler) t=bdata(i)/wrsp(i)
-        work(i)=t
+        if (wrsp_cw2(i).gt.toler) t=bdata_cw2(i)/wrsp_cw2(i)
+        work_cw2(i)=t
  1600 continue
       do 1650 i=1,npnef
         defit(i)=0.0
         do 1650 j=1,npnef
-          defit(i)=defit(i)+arsp(i,j)*work(j)
+          defit(i)=defit(i)+arsp_cw2(i,j)*work_cw2(j)
  1650   continue
 !------------------------------------------------------------------
 !-- compute chi square                                           --
@@ -108,7 +103,7 @@
 !-- get inverse of error matrix                                     --
 !---------------------------------------------------------------------
       n44=4
-      call linv1f(ematrix,npnef,nppcur,einv,n44,work,ier)
+      call linv1f(ematrix_cw2,npnef,nppcur,einv_cw2,n44,work_cw2,ier)
 !----------------------------------------------------------------------
 !--  boundary values                                                 --
 !----------------------------------------------------------------------
@@ -118,8 +113,8 @@
         sigdepb=0.0
         do 1850 j=1,npnef
           do 22300 i=1,npnef
-            sdebdry=sdebdry+einv(i,j)
-            sigdepb=sigdepb+(i-1)*(j-1)*einv(i,j)
+            sdebdry=sdebdry+einv_cw2(i,j)
+            sigdepb=sigdepb+(i-1)*(j-1)*einv_cw2(i,j)
 22300     continue
           depbry=depbry+(j-1)*defit(j)
  1850     debdry=debdry+defit(j)

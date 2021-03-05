@@ -26,9 +26,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      include 'basiscomdu.inc'
+
 ! MPI >>>
 #if defined(USEMPI)
       include 'mpif.h'
@@ -37,21 +35,16 @@
       logical lopened
       character filenm*15,ishotime*12,news*72, &
                 eqdsk*20,comfile*15,prefix1*1,header*42,fit_type*3
-      dimension coils(nsilop),expmp2(magpri), &
-                denr(nco2r),denv(nco2v), &
-                tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark), &
-                zzzgam(nmtark),aa1gam(nmtark),aa2gam(nmtark), &
-                aa3gam(nmtark),aa4gam(nmtark),aa5gam(nmtark), &
-                aa6gam(nmtark),aa7gam(nmtark), &
-                tgammauncor(nmtark)
-      real*8 bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
-         rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels),l2msels(nmsels), &
-         l4msels(nmsels),emsels(nmsels),semsels(nmsels),fwtemsels(nmsels)
-      dimension tlibim(libim),slibim(libim),rrrlib(libim)
-      dimension devxmpin(magpri),rnavxmpin(magpri) &
-               ,devpsiin(nsilop),rnavpsiin(nsilop) &
-               ,devfcin(nfcoil),rnavfcin(nfcoil) &
-               ,devein(nesum),rnavecin(nesum)
+      real*8,dimension(:),allocatable :: coils,expmp2, &
+                denr,denv,tgamma,sgamma,rrrgam, &
+                zzzgam,aa1gam,aa2gam,aa3gam,aa4gam,aa5gam, &
+                aa6gam,aa7gam, tgammauncor
+      real*8,dimension(:),allocatable :: bmsels,sbmsels,fwtbmsels, &
+                rrmsels,zzmsels,l1msels,l2msels, &
+                l4msels,emsels,semsels,fwtemsels
+      real*8,dimension(:),allocatable :: tlibim,slibim,rrrlib
+      real*8,dimension(:),allocatable ::devxmpin,rnavxmpin &
+               ,devpsiin,rnavpsiin,devfcin,rnavfcin,devein,rnavecin
       character*82 snap_ext
 !vasorg      character*82 snap_file
       namelist/in1/ishot,itime,itimeu,qvfit,plasma,expmp2,coils,btor, &
@@ -138,6 +131,23 @@
       logical exists
       integer, intent(inout) :: kerror
 
+      ALLOCATE(coils(nsilop),expmp2(magpri), &
+                denr(nco2r),denv(nco2v), &
+                tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark), &
+                zzzgam(nmtark),aa1gam(nmtark),aa2gam(nmtark), &
+                aa3gam(nmtark),aa4gam(nmtark),aa5gam(nmtark), &
+                aa6gam(nmtark),aa7gam(nmtark), &
+                tgammauncor(nmtark))
+      ALLOCATE(bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
+         rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels),l2msels(nmsels), &
+         l4msels(nmsels),emsels(nmsels),semsels(nmsels),fwtemsels(nmsels))
+      ALLOCATE(tlibim(libim),slibim(libim),rrrlib(libim))
+      ALLOCATE(devxmpin(magpri),rnavxmpin(magpri) &
+               ,devpsiin(nsilop),rnavpsiin(nsilop) &
+               ,devfcin(nfcoil),rnavfcin(nfcoil) &
+               ,devein(nesum),rnavecin(nesum))
+
+
       kerror = 0
       table_di2 = table_dir
 ! --- find length of default directories
@@ -180,25 +190,6 @@
 ! MPI <<<
 !
 83220 continue
-! OPT_INPUT >>>
-! MPI >>>
-      ! ONLY root process allowed to interface with terminal
-      if (rank == 0) then
-        if (use_opt_input .eqv. .false.) then
-          write (nttyo,5500) (mfvers(i),i=1,2)
-          write (nttyo,6000)
-          read (ntty,*) kdata
-        else
-          kdata = mode_in
-        endif
-      endif
-#if defined(USEMPI)
-      if (nproc > 1) then
-        call MPI_BCAST(kdata,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-      endif
-#endif
-! MPI <<<
-! OPT_INPUT <<<
       if (kdata.lt.0) then
         kdata=-kdata
         ilaser=1
@@ -332,7 +323,6 @@
       iqplot=1
       isetfb=0
       idplace=0
-      ishot=-1
       islve=0
       isumip=0
       itek=0
@@ -376,6 +366,9 @@
       ktear=0
       snapfile='none'
       nsnapf=66
+      ishot = shot_in
+      timeb = starttime_in
+      dtime = deltatime_in
 ! -- Qilong Ren
       write_Kfile = .false.
       fitfcsum = .false.
@@ -391,6 +384,7 @@
 !
    75 continue
       if (kdata.eq.3) then
+
       open(unit=neqdsk,status='old', &
            file='efit_snap.dat',err=80)
       snapfile='efit_snap.dat'
@@ -412,33 +406,11 @@
 !--    Snap-Extension mode                                           --
 !----------------------------------------------------------------------
       if (kdata.eq.7) then
-! OPT_INPUT >>>
-! MPI >>>
-! ONLY root process interaces with terminal
-         if (rank == 0) then
-           if (use_opt_input .eqv. .false.) then
-             write (nttyo,6617)
-             read (ntty,6620) snap_ext
-           else
-             snap_ext = snapext_in
-           endif
-         endif
-         snapextin=snap_ext
-#if defined(USEMPI)
-         if (nproc > 1) then
-           call MPI_BCAST(snap_ext,82,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
-         endif
-#endif
-! MPI <<<
-! OPT_INPUT <<<
-   j = 0
-   do i = 1, 82
-      if (snap_ext(i:i) .ne. ' ') then
-         j = j + 1
-         snap_ext(j:j) = snap_ext(i:i)
-      endif
-   enddo
-   snap_file = 'efit_snap.dat_'//snap_ext
+
+
+         snap_ext = adjustl(snap_ext)
+
+         snap_file = 'efit_snap.dat_'//snap_ext
          open(unit=neqdsk,status='old', &
            file= snap_file,err=81)
          snapfile=snap_file
@@ -489,7 +461,7 @@
       zelipss=zelip
       n1coils=n1coil
 !
-      ktime=mtime
+!      ktime=mtime
       mtear=ktear
       qenp=qvfit
       if (itek.lt.0) then
@@ -644,34 +616,8 @@
         endif
         ireadold=iread
       endif
+
 !
-      if (kwake.eq.0) then
-!
-! OPT_INPUT >>>
-! MPI >>>
-! ONLY root process interfaces with terminal
-        if (rank == 0) then
-          if (use_opt_input .eqv. .false.) then
-            write (nttyo,6040)
-            read (ntty,*) ishot,timeb,dtime,ktime
-          else
-            ishot = shot_in
-            timeb = starttime_in
-            dtime = deltatime_in
-            ktime = steps_in
-          endif
-        endif
-#if defined(USEMPI)
-        if (nproc > 1) then
-          call MPI_BCAST(ishot,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-          call MPI_BCAST(ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-          call MPI_BCAST(timeb,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-          call MPI_BCAST(dtime,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        endif
-#endif
-! MPI <<<
-! OPT_INPUT <<<
-      endif
 ! -- Qilong Ren
       iishot = ishot
       ttimeb = timeb
@@ -752,6 +698,8 @@
         istop=0
       endif
 ! MPI >>>
+
+     print *,'getptsdata:', ishot,times,delt,ktime,istop
 #if defined(USEMPI)
 ! MK 2020.10.08 TODO All control paths *should* be identical here
 ! MK i.e. only call getpts_mpi, regardless of nproc
@@ -851,63 +799,7 @@
       go to 1000
 !
   200 continue
-! OPT_INPUT >>>
-      ifname(:) = ''
-! ONLY root process interfaces with terminal
-      if (rank == 0) then
-        if (use_opt_input .eqv. .false.) then
-          write (nttyo,6200)
-          read (ntty,*) ktime
-          write (nttyo,6220)
-          do 210 i=1,ktime
-            write (nttyo,6230)
-            read (ntty,6240) ifname(i)
-  210     continue
-        else
-          ktime = steps_in
-          do i=1,ktime
-             ifname(i) = inpfile_in(i)
-          enddo
-        endif
-      endif
-#if defined(USEMPI)
-! Distribute steps among ALL processes if necessary
-      if (nproc > 1) then
-        dist_data(:) = 0
-        dist_data_displs(:) = 0
-        if (rank == 0) then
-! Compute number of steps per process
-          i = 1
-          do while (i <= ktime)
-            do j=1,nproc
-              if (i <= ktime) then
-                dist_data(j) = dist_data(j)+1
-                i = i+1
-              endif
-            enddo
-          enddo
-! Compute array displacements
-          do i=2,nproc
-            do j=1,i-1
-! Input filenames are up to 80 characters and displacements given as number of bytes
-              dist_data_displs(i) = dist_data_displs(i)+dist_data(j)*80
-            enddo
-          enddo
-        endif
-! Explicitly synchronize processes
-        call MPI_BARRIER(MPI_COMM_WORLD,ierr)
-! Distribute time step and filename information to ALL processes
-        call MPI_SCATTER(dist_data,1,MPI_INTEGER,ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-! Recall each filename 80 characters
-        if (rank == 0) then
-          dist_data(:) = dist_data(:)*80
-          call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER,MPI_IN_PLACE,dist_data(rank+1),MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
-        else
-          call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER,ifname,ktime*80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
-        endif
-      endif
-#endif
-! OPT_INPUT <<<
+
  1000 continue
       open(unit=mcontr,status='old',form='unformatted', &
            file=table_dir(1:ltbdir)//'ec'//trim(ch1)//trim(ch2)//'.ddd')

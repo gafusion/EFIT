@@ -29,13 +29,8 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
       include 'curve2d129.inc'
       include 'env2d.inc'
-      include 'basiscomdu.inc'
-      common/cwork4/npxtra(nxtram),scraps(nxtram)
-      common/cwork3/lkx,lky
       common/cww/lwx,lwy
       common/cwj/ljx,ljy 
       common/cwv/lvx,lvy
@@ -61,13 +56,13 @@
       dimension scrat(ntime),bscra(ntime),cscra(ntime), &
             dscra(ntime),bwork(ndata),cwork(ndata),dwork(ndata)
       dimension psecem(nece),psecep(nece), &
-            xece(ndim,3+nece),yece(ndim,3+nece)
+            xece(ndim_crv,3+nece),yece(ndim,3+nece)
       dimension thcece(3+nece),sclece(3+nece)
       real*8,allocatable :: bfield(:,:), &
          sivol(:),voln(:),bvoln(:),cvoln(:), &
          dvoln(:),rscrap(:),curscr(:),pbimf(:),pmid(:),pmidw(:), &
          bpmid(:),cpmid(:),dpmid(:),workj(:),copyn(:),copy1(:),xbnow(:), &
-         ybnow(:)
+         ybnow(:),rat(:)
       character*20 clrece(3+nece)
       integer dshece(3+nece),dotece(3+nece),cdhece(3+nece), &
             cdtece(3+nece),mrkece(3+nece),nplece(3+nece), &
@@ -88,7 +83,7 @@
          cvoln(nw),dvoln(nw),rscrap(nw),curscr(nw), &
          pbimf(nw),pmid(nw),pmidw(nw),bpmid(nw),cpmid(nw), &
          dpmid(nw),workj(nh),copyn(nwnh),copy1(nwnh),xbnow(npoint), &
-         ybnow(npoint))
+         ybnow(npoint),rat(ndim))
 !
       if (idebug /= 0) write (6,*) 'Enter PLTOUT'
       if (kdot.gt.0.and.jtime.ne.kdot+1) return
@@ -9527,9 +9522,7 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      common/cwork4/npxtra(nxtram),scraps(nxtram)
+
       real*4,dimension(:),allocatable :: xpltloc,ypltloc,xplxloc,yplxloc
       common/adp/ringr(6),ringz(6),ringap
 !      equivalence (xpltloc,flxtra(1,1))

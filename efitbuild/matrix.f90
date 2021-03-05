@@ -28,22 +28,19 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      include 'basiscomdu.inc'
+
       dimension arsp(nrsmat,mfnpcr),wrsp(mfnpcr)
       dimension brsold(nrsmat),work(nrsma2),vcurrto(nvesel)
       dimension xpsfp(nffcur),xpspp(nppcur),xpspwp(nwwcur)
       dimension crsp(4*(npcurn-2)+6+npcurn*npcurn,nrsmat)
       dimension b(nrsmat),z(4*(npcurn-2)+6+npcurn*npcurn)
-      common/cwork3/lkx,lky
       dimension pds(6)
       dimension rxxx(ndata),rxxxf(ndata),rxx2(ndata),rxxw(ndata)
       integer, dimension(mfnpcr)       :: ipvttmp
       real*8, dimension(2)             :: arspdet2(1:2)
       real*8, dimension(mfnpcr)        :: worktmp
       real*8, dimension(nrsmat,mfnpcr) :: arsptmp
-      integer, intent(inout) :: kerror
+      integer, intent(inout) :: jtime,iter,ichisq,nniter,kerror
       character(len=128) tmpstr
 
 !---------------------------------------------------------------------
@@ -52,7 +49,6 @@
 !---------------------------------------------------------------------
       data iupdat/0/,minite/8/,ten24/1.e4_dp/,z04/1.0e-04_dp/
       save z04
-
       kerror = 0
       if (iconvr.eq.3) return
 !----------------------------------------------------------------------
@@ -247,6 +243,7 @@
          arsp(nj,nk) = fwtfcsum(nk)
       endif
  2100 continue
+      
 !-----------------------------------------------------------------------
 !--  plasma current P', FF', and Pw', set up response matrix arsp     --
 !-----------------------------------------------------------------------
@@ -404,6 +401,7 @@
         nj=nj+1
         arsp(nj,nk)=0.
  2203 continue
+
 !--------------------------------------------------------------------
 !--  pressure                                                      --
 !--------------------------------------------------------------------
@@ -817,6 +815,8 @@
         nj=nj+1
         arsp(nj,nk)=1./sigpre(m)*fwtpre(m)
  9204 continue
+
+
 !-----------------------------------------------------------------------
 !--  boundary pressure constraint on P'(1), no coupling to P(1)       --
 !-----------------------------------------------------------------------
@@ -2833,11 +2833,14 @@
         write (nout,7450) (brsp(i),i=1,need)
         write (nout,7450) (wrsp(i),i=1,need)
       endif
-
+      print *, jtime,iter,ichisq,nniter,kerror
       if (iupdat.gt.0) return
-      if (saisq.gt.saimin) return
+      if (saisq.gt.saimin) then
+        return
+      endif
       tcrrnt=cpasma(jtime)
       iupdat=1
+
       return
 
  7400 format (/,2x,'time = ',e12.5,2x,'chipr = ',e12.5, &

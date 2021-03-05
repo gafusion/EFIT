@@ -29,10 +29,9 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      include 'basiscomdu.inc'
+
       dimension jflag(ntime)
-      dimension coils(nsilop),expmp2(magpri)
+      real*8,dimension(:),allocatable :: coils,expmp2
       namelist/in1/ishot,itime,qvfit,plasma,expmp2,coils,btor,ierchk, &
            fwtsi,fwtcur,limitr,xlim,ylim,fwtmp2,brsp,kffcur,kppcur, &
            pcurbd,fcurbd,kzeroj,rzeroj,vbit
@@ -52,6 +51,8 @@
 !     data nlold/39/,nlnew/40/
       data nlold/40/,nlnew/41/
       save xdum
+
+      ALLOCATE(coils(nsilop),expmp2(magpri))
       xdum = 0
 !
 !     if (ivacum.gt.0) return
@@ -417,10 +418,13 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
-      include 'basiscomdu.inc'
-      dimension coils(nsilop),expmp2(magpri),prexp(nrogow)
+      real*8,dimension(:),allocatable :: coils,expmp2, prexp, &
+                tgamma,sgamma,rrrgam, &
+                zzzgam,aa1gam,aa2gam, aa3gam,aa4gam,aa5gam, &
+                aa6gam,aa7gam,aa8gam,tgammauncor
+      real*8,dimension(:),allocatable :: bmsels,sbmsels,fwtbmsels, &
+                rrmsels,zzmsels,l1msels,l2msels, &
+                l4msels,emsels,semsels,fwtemsels
       namelist/out1/ishot,itime,betap0,rzero,qenp,enp,emp,plasma, &
            expmp2,coils,btor,rcentr,brsp,icurrt,rbdry,zbdry, &
            nbdry,fwtsi,fwtcur,mxiter,nxiter,limitr,xlim,ylim,error, &
@@ -452,18 +456,18 @@
       character*10 case(6)
       integer :: parameter
       parameter (pltnw=1025)
-      real*8,dimension(:),allocatable :: workk,dmion,bworm,cworm, &
-             dworm
-      real*8 tgamma(nstark),sgamma(nstark),rrrgam(nstark) &
-               ,zzzgam(nstark),aa1gam(nstark),aa2gam(nstark) &
-               ,aa3gam(nstark),aa4gam(nstark),aa5gam(nstark) &
-               ,aa6gam(nstark),aa7gam(nstark),aa8gam(nstark) &
-               ,tgammauncor(nstark)
-      real*8  bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
-         rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels),l2msels(nmsels), &
-         l4msels(nmsels),emsels(nmsels),semsels(nmsels)
+      real*8,dimension(:),allocatable :: workk,dmion,bworm,cworm,  dworm
 !
-      ALLOCATE(workk(pltnw),dmion(pltnw),bworm(pltnw),cworm(pltnw),dworm(pltnw))
+      ALLOCATE(workk(pltnw),dmion(pltnw),bworm(pltnw),cworm(pltnw),dworm(pltnw), &
+               coils(nsilop),expmp2(magpri),prexp(nrogow))
+
+      ALLOCATE(tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark), &
+                zzzgam(nmtark),aa1gam(nmtark),aa2gam(nmtark), &
+                aa3gam(nmtark),aa4gam(nmtark),aa5gam(nmtark), &
+                aa6gam(nmtark),aa7gam(nmtark),aa8gam(nmtark),tgammauncor(nmtark))
+      ALLOCATE(bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
+         rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels),l2msels(nmsels), &
+         l4msels(nmsels),emsels(nmsels),semsels(nmsels))
 !
       xdum = 0
       if (keqdsk.eq.-1.or.keqdsk.eq.2) return

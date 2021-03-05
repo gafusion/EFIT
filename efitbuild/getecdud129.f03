@@ -24,10 +24,7 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      parameter (ntimem=ntime+10)
-      common/cwork3/scrat(ntime),bscra(ntime),work(ntimem) &
-                   ,cscra(ntime),dscra(ntime)
+
       character*10 nsingl(10),n1name,btcname &
                    ,nc79name,nc139name,ncname(mccoil),niname(micoil)  !EJS(2014)
 !                         ---  or ---  ncname(mccoil),niname(micoil)  !EJS(2014)
@@ -41,34 +38,51 @@
 !
       integer :: time_err
       character*150 textline     !EJS(2014)
-      character*10 ndenv(nco2v),ndenr(nco2r),fcname(nfcoil), &
-                   ecname(nesum),namedum
+      character*10,dimension(:),allocatable :: ndenv,ndenr,fcname,ecname
+      character*10 namedum
       real*8 dumccc(3),dumcic(6),dumbtc
-      data nsingl(1) /'IP        '/, &
-           nsingl(2) /'VLOOP     '/, &
-           nsingl(3) /'BCOIL     '/, &
-           nsingl(4) /'DIAMAG3   '/, &     !diamagnetic flux ... 
-           nsingl(5) /'RL01      '/, &     !full rogowski 
-           nsingl(6) /'PINJ      '/       !beam injection power
-      data n1name   /'N1COIL    '/,nc79name/'C79       '/, &
-           nc139name/'C139      '/
-      data btcname  /'BTI322    '/
-      data ndenv(1) /'DENV1     '/, &
-           ndenv(2) /'DENV2     '/, &
-           ndenv(3) /'DENV3     '/
-      data ndenr(1) /'DENR0     '/,ndenr(2) /'DENMW     '/
-      data fcname(1)/'F1A       '/,fcname(2)/'F2A       '/, &
-           fcname(3)/'F3A       '/,fcname(4)/'F4A       '/, &
-           fcname(5)/'F5A       '/,fcname(6)/'F6A       '/, &
-           fcname(7)/'F7A       '/,fcname(8)/'F8A       '/, &
-           fcname(9)/'F9A       '/,fcname(10)/'F1B       '/, &
-           fcname(11)/'F2B       '/,fcname(12)/'F3B       '/, &
-           fcname(13)/'F4B       '/,fcname(14)/'F5B       '/, &
-           fcname(15)/'F6B       '/,fcname(16)/'F7B       '/, &
-           fcname(17)/'F8B       '/,fcname(18)/'F9B       '/
-      data ecname(1)/'ECOILA    '/,ecname(2)/'ECOILB    '/, &
-           ecname(3)/'E567UP    '/,ecname(4)/'E567DN    '/, &
-           ecname(5)/'E89DN     '/,ecname(6)/'E89UP     '/
+
+      ALLOCATE(ndenv(nco2v),ndenr(nco2r),fcname(nfcoil),ecname(nesum))
+
+      nsingl(1) = 'IP        '
+      nsingl(2) ='VLOOP     '
+      nsingl(3) ='BCOIL     '
+      nsingl(4) ='DIAMAG3   '   !diamagnetic flux ... 
+      nsingl(5) ='RL01      '     !full rogowski 
+      nsingl(6)='PINJ      '     !beam injection power
+      n1name='N1COIL    '
+      nc79name='C79       '
+      nc139name='C139      '
+      btcname ='BTI322    '
+      ndenv(1)='DENV1     '
+      ndenv(2)='DENV2     '
+      ndenv(3)='DENV3     '
+      ndenr(1)='DENR0     '
+      ndenr(2)='DENMW     '
+      fcname(1)='F1A       '
+      fcname(2)='F2A       '
+      fcname(3)='F3A       '
+      fcname(4)='F4A       '
+      fcname(5)='F5A       '
+      fcname(6)='F6A       '
+      fcname(7)='F7A       '
+      fcname(8)='F8A       '
+      fcname(9)='F9A       '
+      fcname(10)='F1B       '
+      fcname(11)='F2B       '
+      fcname(12)='F3B       '
+      fcname(13)='F4B       '
+      fcname(14)='F5B       '
+      fcname(15)='F6B       '
+      fcname(16)='F7B       '
+      fcname(17)='F8B       '
+      fcname(18)='F9B       '
+      ecname(1)='ECOILA    '
+      ecname(2)='ECOILB    '
+      ecname(3)='E567UP    '
+      ecname(4)='E567DN    ' 
+      ecname(5)='E89DN     '
+      ecname(6)='E89UP     '
       data irdata/0/,baddat/0/
 !
       efitversion = 20201123
@@ -366,7 +380,6 @@
       enddo
 !----------------------------------------------- end of new section - EJS(2014)
 
-!     write (6,*) 'CCOMP', nshot,ibtcshot,n1name,nccomp,ncname
 
       if (nshot.ge.ibtcshot) then
 !----------------------------------------------------------------------
@@ -414,7 +427,6 @@
                                         ,(dumccc(k),k=1,nccomp) !EJS(2014)
         do i=1,magpri
          if (mpnam2(i).eq.namedum) then
-!           write (6,*) nshot,ibtcshot,mpnam2(i),namedum
            do j=1,np
              if (.not.oldcomp) then
              expmpi(j,i)=expmpi(j,i)-dumbtc*curtn1(j)
@@ -432,7 +444,6 @@
 !-----------------------------------------------------------------------
         do i=1,nsilop
          if (lpname(i).eq.namedum) then
-!           write (6,*) nshot,ibtcshot,lpname(i),namedum
            do j=1,np
              if (.not.oldcomp) then
              silopt(j,i)=silopt(j,i)-dumbtc*curtn1(j)
@@ -541,7 +552,6 @@
 35200   read (60,*,err=36000,end=36000) namedum,(dumcic(k),k=1,nicomp)!EJS(2014)
         do i=1,magpri
          if (mpnam2(i).eq.namedum) then
-!           write (6,*) nshot,ibtcshot,mpnam2(i),namedum
            oldexp=expmpi(1,i)
            do j=1,np
              do k=1,nicomp     !EJS(2014)
@@ -557,7 +567,6 @@
 !-----------------------------------------------------------------------
         do i=1,nsilop   
          if (lpname(i).eq.namedum) then
-!           write (6,*) nshot,ibtcshot,lpname(i),namedum
            do j=1,np
              do k=1,nicomp
               silopt(j,i)=silopt(j,i)-dumcic(k)*curicoi(j,k)
@@ -605,6 +614,7 @@
 !----------------------------------------------------------------------
 !--        get toroidal B field                                      --
 !----------------------------------------------------------------------
+      print *, nshot,times
       call avdata(nshot,nsingl(3),i1,ierbto,bcentr, &
                   np,times,delt,i0,r1,i1,bitbto,iavem,time,ircfact, &
                   do_spline_fit,bc_rc,bcrcg,vresbc,bc_k,t0bc,devbc(1), &
@@ -2454,32 +2464,28 @@
       !-----
       ! ARRAYS TO ACCUMULATE THE UNCERTAINTIES
       !-----
-      dimension sigmp(magpri)
-      dimension sigfl(nsilop)
-      dimension sigfc(nfcoil)
-      dimension sige(nesum)
+      real*8 :: sigmp(magpri),sigfl(nsilop),sigfc(nfcoil),sige(nesum)
+      real*8 :: maskpol(magpri),maskrdp(magpri),maskff(nsilop), &
+                maskinf(nsilop),maskoutf(nsilop),maskvv(nsilop)
 !-----
 ! MASKS FOR SUBSETS WITHIN ARRAYS
 !-----
+
+
+      
 !-- poloidal array probes
-      dimension maskpol(magpri)
-        data maskpol/ 60*1., 16*0./
+      maskpol = (/ 60*1., 16*0./)
 !-- RDP probes
-      dimension maskrdp(magpri)
-        data maskrdp/ 60*0., 16*1./
+      maskrdp =  (/ 60*0., 16*1./)
 !-- F-coil flux loops
-      dimension maskff(nsilop)
-      data maskff/18*1.,7*0.,1., 0., 1.,7*0.,1.,0.,1.,6*0./
+      maskff = (/18*1.,7*0.,1., 0., 1.,7*0.,1.,0.,1.,6*0./)
 !-- inner F-coil flux loops
-      dimension maskinf(nsilop)
-      data maskinf/ 5*1., 2*0., 7*1., 2*0., 2*1., 26*0. /
+      maskinf = (/ 5*1., 2*0., 7*1., 2*0., 2*1., 26*0. /)
 !-- outer F-coil  loops
-      dimension maskoutf(nsilop)
-      data maskoutf/5*0., 2*1., 7*0., 2*1., 2*0., &
-                     7*0., 1., 0., 1., 7*0., 1., 0., 1., 6*0./
+      maskoutf = (/5*0., 2*1., 7*0., 2*1., 2*0., &
+                     7*0., 1., 0., 1., 7*0., 1., 0., 1., 6*0./)
 !-- vacuum vessel flux loops
-      dimension maskvv(nsilop)
-        data maskvv/18*0.,7*1.,0., 1., 0., 7*1., 0., 1.,0.,6*1./
+      maskvv=(/18*0.,7*1.,0., 1., 0., 7*1., 0., 1.,0.,6*1./)
 !-----
 ! INITIALIZE ARRAYS
 !-----
@@ -2882,23 +2888,26 @@
         !   DENVT  1:nco2v
         !   DENRT  1:nco2r
         !   ECCURT 1:nesum
-        parameter (nsize=18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum)
+
         ! Dimension ZWORK2 1-D array
         !   PSIBIT 1:nsilop
         !   BITMPI 1:magpri
         !   BITFC  1:nfcoil
         !   BITEC  1:nesum ! added by MK
         !   IERMPI to fix FWTMP2 1:magpri! added by MK
-        parameter (nsize2=5+nsilop+magpri+nfcoil+nesum+magpri)
-        integer :: i,j,ktime_all,offset
+        integer :: i,j,ktime_all,offset,nsize,nsize2
         integer,dimension(:),allocatable :: tmp1,tmp2
-        double precision :: zwork(nsize,ntime),zwork2(nsize2),timeb_list(nproc)
+        double precision :: zwork(18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum,ntime),&
+                            zwork2(5+nsilop+magpri+nfcoil+nesum+magpri),timeb_list(nproc)
+
         ! TIMING >>>
         integer :: clock0,clock1,clockmax,clockrate,ticks
         double precision :: secs
         ! TIMING <<<
         integer :: total_bytes
         zwork(:,:) = 0.0
+        nsize=18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum
+        nsize2=5+nsilop+magpri+nfcoil+nesum+magpri
         allocate(tmp1(nproc),tmp2(nproc))
 
         efitversion = 20201123
@@ -3183,16 +3192,15 @@
         ! WARNING : A7GAM explicitly set to zero by original GETSTARK_MPI code
         ! KWAITMSE
         ! FWTGAM (nstark)
-        parameter (nsize=nmtark*12)
-        integer :: i,j,ktime_all
+        integer :: i,j,ktime_all,nsize
         integer,dimension(:),allocatable :: tmp1,tmp2
-        double precision :: zwork(nsize,ntime)
+        double precision :: zwork(nmtark*12,ntime)
         ! TIMING >>>
         integer :: clock0,clock1,clockmax,clockrate,ticks
         double precision :: secs
         ! TIMING <<<
         integer :: total_bytes
-        
+        nsize = 12*nmtark
         zwork(:,:) = 0.0
         allocate(tmp1(nproc),tmp2(nproc))
 
