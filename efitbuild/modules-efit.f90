@@ -287,8 +287,8 @@
       contains
         subroutine set_constants()
           pi = 4.0_dp*atan(1.0_dp) ! calculate pi to machine precision
-          twopi = 2.0*pi
-          radeg = pi/180.0
+          twopi = 2.0_dp*pi
+          radeg = pi/180.0_dp
           tmu = 2.0e-07_dp
         end subroutine
      end module global_constants
