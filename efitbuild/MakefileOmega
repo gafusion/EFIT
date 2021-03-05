@@ -32,7 +32,11 @@ DLIBS= $(LIBD3) $(BLAS) $(MDSPLUS) $(MSE) $(NETCDF) $(MPICH)
 
 # For DIII-D, MPI-enabled 
 FC=mpif90
-FFLAGS= -g -DUSEMPI -byteswapio -Mpreprocess -Ktrap=divz
+
+#GDB_GFORTRAN=-ffpe-trap=zero,invalid,overflow,underflow
+DEBUG=-O0 -gopt -Mbounds -Mchkptr
+
+FFLAGS= -g $(DEBUG) -DUSEMPI -byteswapio -Mpreprocess -Ktrap=fp
 FCFLAGS=
 CC=mpicc
 LD=mpif90

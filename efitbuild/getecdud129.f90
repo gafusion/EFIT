@@ -759,7 +759,7 @@
       common/inaver/iavem,iaved,iavev,iaveus
       character*10 name
       integer, intent(out) :: ktime_err
-      real*8 y(1),time(ntime),deltd,xxd,bitvld,timesd &
+      real*8 y(ntime),time(ntime),deltd,xxd,bitvld,timesd &
             , rcx,rcgx,vbitx,zinhnox,t0x &
             , stdevx(1)
       integer navx(1)
@@ -1466,7 +1466,7 @@
       subroutine smoothit(times,data,nts,timint)
         parameter (npmax=16384)
         dimension work(npmax)
-        dimension times(2),data(2)
+        dimension times(nts),data(nts)
         !
         if (timint .le. 0.) return
         dtt = timint*.5005
@@ -1501,7 +1501,7 @@
       subroutine smoothit2(times,data,nts,timint,stdev,nave)
         parameter (npmax=16384)
         dimension work(npmax)
-        dimension times(2),data(2),stdev(1),nave(1)
+        dimension times(nts),data(nts),stdev(nts),nave(nts)
         !
         if (timint .le. 0.) return
         dtt = timint*.5005

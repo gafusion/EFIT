@@ -98,6 +98,9 @@
       mw=nw
       mh=nh
 
+! Note: as per L.Lao 2021.03.04, tmu here is to be ignored in favor of
+! the tmu constant = 2.0e-07 set in modules-efit.f90
+! It could also be renamed, but this code is not actively used. ignoring.
 !      tmu=4.0e-07_dp*pi
       nnn=1
       nin=25
