@@ -283,13 +283,12 @@
       module global_constants
         use set_kinds
         public
-        real*8 :: pi=0,twopi=0,tmu=0,radeg=0
+        real(8),parameter :: pi=4*atan(1.0_dp)
+        real(8),parameter :: twopi=8*atan(1.0_dp)
+        real(8),parameter :: radeg=4._dp/180._dp*atan(1._dp)
+        real(8),parameter :: tmu=2.0e-07_dp
       contains
         subroutine set_constants()
-          pi = 4.0_dp*atan(1.0_dp) ! calculate pi to machine precision
-          twopi = 2.0_dp*pi
-          radeg = pi/180.0_dp
-          tmu = 2.0e-07_dp
         end subroutine
      end module global_constants
 

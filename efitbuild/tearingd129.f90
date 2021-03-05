@@ -98,7 +98,7 @@
       mw=nw
       mh=nh
 
-      tmu=4.0e-07_dp*pi
+!      tmu=4.0e-07_dp*pi
       nnn=1
       nin=25
 !
