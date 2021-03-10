@@ -113,7 +113,7 @@
       end module var_cwork4
 
       module var_jwork4
-      integer*4,dimension(:),allocatable :: workb_jw4
+      real*8,dimension(:),allocatable :: workb_jw4
 
       end module var_jwork4
 

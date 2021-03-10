@@ -32,22 +32,10 @@
 !     store_dir    central directory to collect EFIT results
 !
 
-!vas      common/datafile/table_dir,input_dir,store_dir, &
-!vas              ltbdir,lindir,lstdir
       character*82 table_dir,input_dir,store_dir,table_di2,link_efitx,link_storex
       integer*4 ltbdir,lindir,lstdir,ltbdi2
-!      data table_dir /'/link/efit/new_table/'/
-!      data table_dir /'/task/efit/lao/efits/CVS/p/2006/'/
-!sri-mpi
-!      data table_dir /'/link/efit/2006/'/
+
       data table_dir /'link_efitx/2006/'/
-!org      data table_dir /'/task/efit/lao/efits/CVS/p/2006/'/
-!vas      data table_dir /'/u4/radhakri/Vas-green/2006/'/
-!vas      data table_dir /'/u4/radhakri/Vas-green/2008/'/
-!old      data table_dir /'/u4/radhakri/Renq-green/hydra/2008/'/
-!unified table      data table_dir /'/task/imd/radhakri/Run/2008/'/
-!lf95      data table_dir /'/u4/radhakri/Renq-green/lf95/2008/'/
-!vas for linux      data table_dir /'/u4/radhakri/green/2008/'/
       data input_dir /'link_efitx/'/
       data store_dir /'link_storex/'/
 
@@ -484,16 +472,6 @@
       integer*4 :: nbmdim,nww,nhh
       real*8    :: drdz2,rgrid1,delrgrid,delz
       real*8    :: s,shift,dr,dz
-!vas      real(kind=dp)    :: drdz2,rgrid1,delrgrid,delz
-!vas      real(kind=dp)    :: s,shift,dr,dz
-
-!      mno = nbmdim
-!      m = nww
-!      n = nhh
-!      s = drdz2
-!      shift = rgrid1
-!      dr = delrgrid
-!      dz = delz
 
       end module var_bunemn
 

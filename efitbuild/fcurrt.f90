@@ -114,7 +114,7 @@
 !-----------------------------------------------------------------------
 !--  set up response matrix once for all                              --
 !-----------------------------------------------------------------------
-      idoit=1
+      idoit=0 ! Set idoit =0, this does save after setting to allocatable
       wsibry=psibry
 !-----------------------------------------------------------------------
 !--   get fixed boundary response from plasma                         --

@@ -448,7 +448,6 @@
 
       module var_fxbry
       use set_kinds
-      use eparmdud129,only:mbdry,nfcoil,nacoil,npcurn,nwnh
       integer*4 nbdry,nbdryss,nsol
       data nsol/0/
       logical fitts 
