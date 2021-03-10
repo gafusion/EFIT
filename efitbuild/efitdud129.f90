@@ -176,7 +176,6 @@
       call inp_file_ch(nw,nh,ch1,ch2)
 
       call get_opt_input(ktime)
-      print *, 'ktime', ktime
       ntime = ktime
       call get_eparmdud_defaults()
       if (kdata==2) then
@@ -1086,9 +1085,7 @@
 !----------------------------------------------------------------------
 !-- read in the plasma response function                             --
 !----------------------------------------------------------------------
-!vas
-!      print*,'file name : ', 'ep'//trim(ch1)// &  
-!                         trim(ch2)//'.ddd' 
+
       open(unit=nrsppc,status='old',form='unformatted', &
            file=table_dir(1:ltbdir)//'ep'//trim(ch1)//trim(ch2)//'.ddd')
       read (nrsppc) gsilpc
@@ -1905,7 +1902,6 @@
 !--  do loop                                                          --
 !-----------------------------------------------------------------------
       if (idebug /= 0) write (6,*) 'Enter FIT'
-      print *, jerror(jtime)
       kerror=0
       jerror(jtime)=0
       nitera=0
@@ -1938,7 +1934,6 @@
               endif
             endif
           endif
-          print *, 'green' 
           call green(nzero,jtime,nitera)
           if (kprfit.gt.0.and.iwantk.eq.ndokin) then
             call presur(jtime,nitera,kerror)
@@ -3940,13 +3935,7 @@
 
       do ichan = 1,nmtark
         if (mse_spave_on(ichan) .ne. 0) then
-          !print *,i,ichan,cerer(1),e1rbz(ichan,1),e2rbz(ichan,1),e3rbr(ichan,1)
-          !print *,spatial_avg_gam(ichan,7,2,3)
-          !print *,spatial_avg_gam(ichan,8,2,3)
-          !print *,spatial_avg_gam(ichan,9,2,3)
-          !
-          !spatial_avg_gam(chan, var [1 = r, 2 = z, 3-9 = A1-7], 5,3)
-          !
+
           ttl = 0.0
           rl = rrgam(ltime,ichan)
           zl = zzgam(ltime,ichan)
@@ -7259,11 +7248,9 @@
             !write (nttyo,10017) itime, rank
             write (nttyo,'(x)')
             if (kstark.gt.0) then
-              print *, jtime
               write (nttyo,80019) rank,itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
                 cdelz(1),cdeljsum,sum(chigam)
             else
-              print *, 'jtime,nx', jtime,nx,kxiter,itime,zmaxis,errorm
               write (nttyo,10025) rank,itime,nx,tsaisq(jtime),zmaxis,errorm &
                 ,delzmm,cdelz(1),cdeljsum
             endif
@@ -8551,7 +8538,6 @@
           write (6,*) 'STEPS R,Z,si = ', rgrid(45),zgrid(33),pds(1)
         endif
       endif
-      write (6,*) 'after m10 findax lkx,lky = ',lkx,lky
 !-----------------------------------------------------------------------
 !--  Trace boundary, first check for counter beam injection           --
 !-----------------------------------------------------------------------
@@ -8793,7 +8779,6 @@
 50299 continue
       endif
 
-      write (6,*) 'Exiting  seva2d from stark '
 !-----------------------------------------------------------------------
 !--  get response functions for MSE-LS                                --
 !-----------------------------------------------------------------------
@@ -8819,7 +8804,6 @@
 60299 continue
 
       endif
-      write (6,*) 'Exiting STEPS MSE-LS k,rrmselt= '
 !
       do 51200 k=1,nfound
         xouts(k)=1./xout(k)**2
@@ -9009,7 +8993,6 @@
       endif
  1585 continue
 
-      write(6,*) 'Existing STEPS'
       return
  1590 continue
       if ((ixt.le.1).and.(icinit.gt.0)) go to 1580
@@ -9036,7 +9019,6 @@
       cqmaxi(ixt)=(emaxis**2+1.)*abs(fcentr)/twopi/emaxis &
                    /rmaxis**2/abs(cjmaxi)
       qmaxis=cqmaxi(ixt)
-      write(6,*) 'Existing STEPS'
       return
  2100 format(/,1x,'shot',i6,' at ',i6,' ms ','** Problem in BOUND **')
 11001 format(/,1x,'** 2nd seperatrix **',2x,e10.3,2x,i4)

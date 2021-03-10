@@ -1242,7 +1242,6 @@
       yseps(1)=-999.
       xseps(2)=-999.
       yseps(2)=-999.
-      print *, 'kaxis = ', kaxis
       if (iabs(kaxis).lt.20) then
         !----------------------------------------------------------------------
         !--   fit 2-d spline to psi                                          --

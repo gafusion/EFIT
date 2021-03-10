@@ -371,7 +371,7 @@
       character(10),dimension(:),allocatable :: lpname
       character  filimt*100,cshot*6,jdebug*4
       integer idebug,efitversion
-      data idebug/2/,efitversion/20201123/
+      data idebug/0/,efitversion/20201123/
       data jdebug/'NONE'/
       end module var_inputc
 
