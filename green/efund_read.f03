@@ -33,8 +33,8 @@
       USE cvesel
       USE fshift
 
-      NAMELIST/sizes/nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
+      NAMELIST/machinein/nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
+                      nfsum,nvsum,nvesel,nacoil,mgaus1,mgaus2
 
 
       nfcoil = 18
@@ -53,9 +53,9 @@
       OPEN(unit=nin,status='old',file='mhdin.dat' &
           )
 
-      READ (nin,sizes)
+      READ (nin,machinein,err=10)
 
-      CLOSE(nin)
+   10 CLOSE(nin)
 
       allocate(rsi(nsilop),zsi(nsilop),wsi(nsilop),hsi(nsilop),&
                as(nsilop),as2(nsilop))
@@ -219,7 +219,7 @@
 !      print*,'file name : ', 'ep'//trim(ch1)// &
 !                         trim(ch2)//'.ddd'
 !
-      print *, af2(1)
+     print *, 'rf(1)=',rf
 !----------------------------------------------------------------------
 !-- READ f coil and psi loop dimensions                              --
 !----------------------------------------------------------------------

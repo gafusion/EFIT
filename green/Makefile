@@ -33,9 +33,9 @@ ifeq ($(MACHINE),Linux)
 #	FC=/c/source/PGI/pgi/linux86/10.8/bin/pgf90
 #	FC=/fusion/usc/opt/pgi/linux86-64/15.3/bin/pgf90
 	FC=/fusion/usc/opt/pgi/linux86/13.2/bin/pgf90
-	FC=/fusion/usc/opt/pgi/linux86-64/15.3/bin/pgf90
-	FFLAGS = -Mbyteswapio -fast -c
-	LDFLAGS = -Mlfs -o
+#	FC=/fusion/usc/opt/pgi/linux86-64/15.3/bin/pgf90
+	FFLAGS = -Mbyteswapio -fast
+	LDFLAGS =  -Mlfs -o
      ifeq ($(FCOM),lf95)
 	FC=/usr/local/lf9562/bin/lf95
 	FFLAGS = -c  
@@ -47,12 +47,18 @@ MODULES = exparm.f90 bfgrid.f90 cacoil.f90 cecoil.f90 filech.f90 \
           coilsp.f90 consta.f90 cvesel.f90 fcoil.f90 vas_sub1.f90 \
           fshift.f90 input.f90 mprobe.f90 nio.f90 \
           pmodel.f90 rogowl.f90 siloop.f90 efund_read.f03 efundud.f90
-OBJECTS=$(MODULES:.f*=.o)
+#OBJECTS=$(MODULES:.f*=.o)
+
+OBJECTSTMP=$(subst f90,o,$(MODULES))
+OBJECTS=$(subst f03,o,$(OBJECTSTMP))
+
 efundud:$(OBJECTS) 
 	$(FC) $(LDFLAGS) $@ $^
 	@echo "EFUND BUILT"
+%.o:%.f03
+	$(FC) -Msave -c $(FFLAGS) $<
 %.o:%.f90
-	$(FC) $(FFLAGS) $<
+	$(FC) -Msave -c $(FFLAGS) $<
 clean:
 	rm *.o *.mod efundud
 	@echo "CLEAN DONE"
