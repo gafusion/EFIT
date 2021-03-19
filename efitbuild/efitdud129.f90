@@ -102,8 +102,6 @@
 !----------------------------------------------------------------------
       nw = 0
       nh = 0
-      nw = 129
-      nh = 129
       if (rank == 0) then
        nargs = iargc()
 ! Using mpirun command so will have different number of arguments than serial case
@@ -123,8 +121,7 @@
        read (inp2,'(i4)',err=9876) nh
 9876   continue
        if (nh == 0) nh = nw
-       nw = 129
-       nh = 129
+
       endif
 
 ! MPI >>>
@@ -284,6 +281,7 @@
            call shipit(ktime,ks,ks)
            call wtear(mtear,ks)
         endif
+        if (idebug /= 0) write (6,*) 'Main/wmeasure ks/kerror = ', ks, kerror
         call wmeasure(ktime,ks,ks,1)
 !----------------------------------------------------------------------
 ! -- write Kfile if needed                                           --
@@ -8768,7 +8766,6 @@
       if (kstark.gt.0.or.kdomse.gt.0) then
       do 50299 k=1,nstark
         if (rrgam(jtime,k).le.0.0) go to 50299
-        write (6,*) 'Entering seva2d from stark'
         call seva2d(bkx,lkx,bky,lky,c,rrgam(jtime,k) &
                     ,zzgam(jtime,k),pds,ier,n111)
         sistark(k)=pds(1)
