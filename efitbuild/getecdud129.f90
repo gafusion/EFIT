@@ -996,9 +996,9 @@
              timenow, ynow
       integer :: status, nshot, lenname, errallot, npn, mmm, ierror, &
                  np, mm, nn, kave, ircfact, ktime_err, nnp, mylen, &
-                 i, j, j_save, dsc, f_dsc, t_dsc
+                 i, j, j_save, dsc, f_dsc, t_dsc, one
       logical*4 do_spline_fit
-      data dtmin/0.001001/,xm5/0.00001/
+      data dtmin/0.001001/,xm5/0.00001/,one/1/
       save dtmin,xm5
 !
       delt=deltd
@@ -1028,7 +1028,7 @@
 !
       dsc = descr(IDTYPE_LONG, mylen, 0)  ! MDSPlus return a descriptor number
       status = Mdsvalue('SIZE('//name(1:lenname)//')'//char(0), &
-                        dsc, 0, 1)
+                        dsc, 0, one)
       if (mod(status,2) .eq. 0) then
         ierror = 1
         return
@@ -1064,13 +1064,13 @@
 !
       f_dsc = descr(IDTYPE_FLOAT, yw, mylen, 0) ! MDSPlus return a descriptor number
       t_dsc = descr(IDTYPE_FLOAT, xw, mylen, 0) ! MDSPlus return a descriptor number
-      status=MdsValue(name(1:lenname)//char(0), f_dsc, 0, 1)
+      status=MdsValue(name(1:lenname)//char(0), f_dsc, 0, one)
       if (mod(status,2) .eq. 0) then
         ierror = 1
         return
       endif
       status=MdsValue('DIM_OF('//name(1:lenname)//',0)'//char(0), &
-                  t_dsc, 0, 1)
+                  t_dsc, 0, one)
       xw(1:npn)=xw(1:npn)/1000.
 !
       mave = iabs(kave)
