@@ -2141,7 +2141,7 @@
 !**********************************************************************
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension zero(1),x(1),y(1) ! sometimes an array, other times a constant
+      dimension zero(nw*nh),x(nw),y(nh) ! sometimes an array, other times a constant
       dimension xlim(*),ylim(*)
       logical b,c,d,inside,bold
 

@@ -43,7 +43,7 @@
       character*150 textline     !EJS(2014)
       character*10 ndenv(nco2v),ndenr(nco2r),fcname(nfcoil), &
                    ecname(nesum),namedum
-      real*8 dumccc(3),dumcic(6),dumbtc
+      real*8 dumccc(6),dumcic(12),dumbtc  ! at least one element per coil
       data nsingl(1) /'IP        '/, &
            nsingl(2) /'VLOOP     '/, &
            nsingl(3) /'BCOIL     '/, &
@@ -751,7 +751,6 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      use eparmdud129,only:ntime
       use vtime_mod
       parameter (ntims=4096)
       common/gggttt/w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims) &
@@ -759,7 +758,7 @@
       common/inaver/iavem,iaved,iavev,iaveus
       character*10 name
       integer, intent(out) :: ktime_err
-      real*8 y(ntime),time(ntime),deltd,xxd,bitvld,timesd &
+      real*8 y(ntims),time(ntims),deltd,xxd,bitvld,timesd &
             , rcx,rcgx,vbitx,zinhnox,t0x &
             , stdevx(1)
       integer navx(1)
@@ -988,9 +987,10 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      use eparmdud129,only:ntime
       include 'mdslib.inc'
       character*10 name, MyTree
-      real*8 y(1),time(1),deltd,xxd,bitvld,timesd
+      real*8 y(ntime),time(ntime),deltd,xxd,bitvld,timesd
       real*4, allocatable :: yw(:),xw(:),bw(:),cw(:),dw(:),ew(:)
       real*4 dtmin, xm5, dtave, xx, delt, times, delta_min, delta, &
              timenow, ynow
@@ -1155,7 +1155,7 @@
       parameter (ntims=4096)
       common/gggttt/w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims) &
                     ,ew(ntims),stdevxx(ntims),navxx(ntims)
-      real*8 y(1),time(1),deltd,xxd,bitvld,timesd &
+      real*8 y(ntims),time(ntims),deltd,xxd,bitvld,timesd &
              , rcx,rcgx,vbitx,zinhnox,t0x &
              , stdevx(1)
       integer navx(1)
@@ -1277,7 +1277,8 @@
       parameter (ntims=4096)
       common/gggttt/w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims) &
                     ,ew(ntims),stdevxx(ntims),navxx(ntims)
-      real*8 y(1),time(1),ztssym(1),ztswid(1),ptssym(1)
+      real*8 y(ntims),time(ntims)
+      real*8 ztssym(ntims),ztswid(ntims),ptssym(tims)
       character*2 fitzts,ztsfit
       logical ztserr(1)
       logical errzts(ntims)
@@ -1329,8 +1330,8 @@
       parameter (ntims=4096)
       common/gggttt/w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims) &
                     ,ew(ntims),stdevxx(ntims),navxx(ntims)
-      dimension ierdia(1)
-      real*8 y(1),time(1),sigmay(1),deltd,xxd,timesd,bitvl
+      dimension ierdia(3)
+      real*8 y(ntims),time(ntims),sigmay(ntims),deltd,xxd,timesd,bitvl
       character*10 name
       data dtmin/0.001001/,xm5/0.00001/
       save dtmin,xm5

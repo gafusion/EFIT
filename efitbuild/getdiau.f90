@@ -37,7 +37,7 @@
         parameter (ntims=8192)
         dimension diamag(ntims,3),diamagc(ntims,3), &
                   sig(ntims,3),tim(ntims)
-        dimension phidia(1),sigphi(1)
+        dimension phidia(npts),sigphi(npts)
         dimension ierr(3),iwght(3)
 
 
