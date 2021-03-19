@@ -1016,73 +1016,11 @@
           write(*,*) 'table_dir = <',table_dir(1:ltbdir),'>'
         endif
       endif
-!---------------------------------------------------------------------
-!-- Re-read Green's tables from table_dir if necessary              --
-!---------------------------------------------------------------------
-      if ((table_dir.eq.table_nam).and.(jtime.gt.1)) go to 11337
-      open(unit=mcontr,status='old',form='unformatted', &
-           file=table_dir(1:ltbdir)//'ec'//trim(ch1)//trim(ch2)//'.ddd')
-      read (mcontr) mw,mh
-      read (mcontr) rgrid,zgrid
-      read (mcontr) gridfc
-      read (mcontr) gridpc
-      close(unit=mcontr)
-!----------------------------------------------------------------------
-!-- read in the f coil response functions                            --
-!----------------------------------------------------------------------
-      open(unit=mcontr,form='unformatted', &
-           status='old',file=table_dir(1:ltbdir)//'rfcoil.ddd')
-      read (mcontr) rsilfc
-      read (mcontr) rmp2fc
-      close(unit=mcontr)
-!----------------------------------------------------------------------
-!-- read in the plasma response function                             --
-!----------------------------------------------------------------------
-      open(unit=mcontr,status='old',form='unformatted', &
-           file=table_dir(1:ltbdir)//'ep'//trim(ch1)//trim(ch2)//'.ddd')
-      read (mcontr) gsilpc
-      read (mcontr) gmp2pc
-      close(unit=mcontr)
-!----------------------------------------------------------------------
-!-- read in the E-coil response function                             --
-!----------------------------------------------------------------------
-      if (iecurr.gt.0) then
-        open(unit=mcontr,status='old',form='unformatted', &
-           file=table_dir(1:ltbdir)//'re'//trim(ch1)//trim(ch2)//'.ddd')
-        read (mcontr) rsilec
-        read (mcontr) rmp2ec
-        read (mcontr) gridec
-        close(unit=mcontr)
-      endif
-!----------------------------------------------------------------------
-!-- read in the vessel response function                             --
-!----------------------------------------------------------------------
-      if (ivesel.gt.0) then
-        open(unit=mcontr,status='old',form='unformatted', &
-           file=table_dir(1:ltbdir)//'rv'//trim(ch1)//trim(ch2)//'.ddd')
-        read (mcontr) rsilvs
-        read (mcontr) rmp2vs
-        read (mcontr) gridvs
-        close(unit=mcontr)
-      endif
-!
-      open(unit=mcontr,status='old',  &
-          file=table_di2(1:ltbdi2)//'dprobe.dat')
-      rsi(1)=-1.
-      read (mcontr,in3)
-      read (mcontr,10200) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
-                i=1,mfcoil)
-      if (rsi(1).lt.0.) &
-        read (mcontr,10200) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
-                i=1,nsilop)
-      read (mcontr,10220) (re(i),ze(i),we(i),he(i),ecid(i), &
-                                        i=1,necoil)
-      if (ifitvs.gt.0.or.icutfp.eq.2) then
-        read (mcontr,10200) (rvs(i),zvs(i),wvs(i),hvs(i), &
-                                        avs(i),avs2(i),i=1,nvesel)
-      endif
-      close(unit=mcontr)
-11337 continue
+      print *, 'before Read green'
+      if ((table_dir.ne.table_nam).or.(jtime.le.1))  call efit_read_green
+
+      print *, 'past Read green'
+
 !---------------------------------------------------------------------
 !--  specific choice of current profile                             --
 !--       ICPROF=1  no edge current density allowed                 --

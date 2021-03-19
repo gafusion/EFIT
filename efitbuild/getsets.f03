@@ -801,64 +801,9 @@
   200 continue
 
  1000 continue
-      open(unit=mcontr,status='old',form='unformatted', &
-           file=table_dir(1:ltbdir)//'ec'//trim(ch1)//trim(ch2)//'.ddd')
-      read (mcontr) mw,mh
-      if(.not.allocated(rgrid)) then
-       allocate(rgrid(mw),stat=iallocate_stat)
-      if(iallocate_stat/=0) stop "*** Not enough space for rgrid ***"
-      endif
-      if(.not.allocated(zgrid)) then
-       allocate(zgrid(mh),stat=iallocate_stat)
-      if(iallocate_stat/=0) stop "*** Not enough space for zgrid ***"
-      endif
-      if(.not.allocated(gridfc)) then
-       allocate(gridfc(mw*mh,nfcoil),stat=iallocate_stat)
-      if(iallocate_stat/=0) stop "*** Not enough space for gridfc ***"
-      endif
-!vas-------
-      read (mcontr) rgrid,zgrid
-      read (mcontr) gridfc
-      if(.not.allocated(gridpc)) then
-       allocate(gridpc(mw*mh,mw),stat=iallocate_stat)
-      if(iallocate_stat/=0) stop "*** Not enough space for gridpc ***"
-      endif
-      read (mcontr) gridpc
-      close(unit=mcontr)
-!----------------------------------------------------------------------
-!-- read in the f coil response functions                            --
-!----------------------------------------------------------------------
-      if(.not.allocated(rsilfc)) then
-       allocate(rsilfc(nsilop,nfcoil),stat=iallocate_stat)
-      if(iallocate_stat/=0) stop "*** Not enough space for rsilfc ***"
-      endif
-      if(.not.allocated(rmp2fc)) then
-       allocate(rmp2fc(magpri,nfcoil),stat=iallocate_stat)
-      if(iallocate_stat/=0) stop "*** Not enough space for rmp2fc ***"
-      endif
-      if(.not.allocated(gsilpc)) then
-       allocate(gsilpc(nsilop,mw*mh),stat=iallocate_stat)
-      if(iallocate_stat/=0) stop "*** Not enough space for gsilpc ***"
-      endif
-      if(.not.allocated(gmp2pc)) then
-       allocate(gmp2pc(magpri,mw*mh),stat=iallocate_stat)
-      if(iallocate_stat/=0) stop "*** Not enough space for gmp2pc ***"
-      endif
-!vas-------
-      open(unit=nrspfc,form='unformatted', &
-           status='old',file=table_dir(1:ltbdir)//'rfcoil.ddd')
-      read (nrspfc) rsilfc
-      read (nrspfc) rmp2fc
-      close(unit=nrspfc)
-!----------------------------------------------------------------------
-!-- read in the plasma response function                             --
-!----------------------------------------------------------------------
-      open(unit=nrsppc,status='old',form='unformatted', &
-           file=table_dir(1:ltbdir)//'ep'//trim(ch1)//trim(ch2)//'.ddd')
-      read (nrsppc) gsilpc
-      read (nrsppc) gmp2pc
-      close(unit=nrsppc)
-!
+
+      call efit_read_green
+
       if (kdata.ne.2) &
       call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
       drgrid=rgrid(2)-rgrid(1)
