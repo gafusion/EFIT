@@ -1230,7 +1230,7 @@
 !      include 'ecomdu1.f90'
       common/cwork3/lkx,lky
       dimension x(nx),y(nz),pds(6),xxout(*),yyout(*),psipsi(*)
-      dimension xseps(1),yseps(1) ! this is an address of a location inside a 2-d array
+      dimension xseps(2),yseps(2) ! this is an address of a location inside a 2-d array
       dimension bpoo(*),bpooz(*),pdss(6),xlimv(*),ylimv(*)
       dimension pdsold(6)
       data psitol/1.0e-04_dp/

@@ -102,7 +102,7 @@
       integer i,l,lo,ju,n222,id,jd,ko,k4,li,jh,jt,ji,jo, &
       j2,iu,j,ii,io,iallocate_stat
 
-      real(dp) q(1)
+      real(dp) q(8192) ! unknown full size, at lease 4097
       real(dp),dimension(:), allocatable :: g
       real(dp),dimension(:), allocatable :: p
       real(dp),dimension(:), allocatable :: c

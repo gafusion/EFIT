@@ -38,7 +38,8 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !
       INTEGER*4 ier, lx, ly
-      REAL*8 cs(kubicx,lubicx,kubicy,lubicy),xl,yl,fs(6),bkx(1),bky(1)
+      REAL*8 cs(kubicx,lubicx,kubicy,lubicy),xl,yl,fs(6),&
+        bkx(lubicx+1),bky(lubicy+1)
 !
 !  Local Variable Specifications:
 !
@@ -116,7 +117,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !
       parameter (krord=4,kzord=4)
-      dimension s(1), x(nx), y(ny), wk(nx,ny), &
+      dimension s(nx*ny), x(nx), y(ny), wk(nx,ny), &
                 cs(kubicx, lubicx, kubicy, lubicy)
       real*8,allocatable :: xknot(:),yknot(:),rknot(:), &
            rgrid(:),zgrid(:),zknot(:),copynew(:,:)
@@ -629,8 +630,9 @@
       implicit integer*4 (i-n), real*8 (a-h, o-z)
         parameter (kmax=4)
       INTEGER*4 k,l,m,n,   i,j,jp1,kmj,left
-      dimension bcoef(n,m),break(1),coef(m,k,1),scrtch(k,k,m),t(1), &
-           biatx(kmax)
+      parameter (unk=128) ! max size unknown, at least 49
+      dimension bcoef(n,m),break(unk),coef(m,k,unk),scrtch(k,k,m), &
+          t(unk),biatx(kmax) 
       REAL*8 diff,fkmj,sum
 !
       n11=1

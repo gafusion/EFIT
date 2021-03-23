@@ -2973,7 +2973,7 @@
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       data nn/30/
-      dimension x(1),y(1)
+      dimension x(np),y(np)
 !
       dismin=1.0e+20_dp
       delx=x2-x1
