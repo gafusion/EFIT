@@ -49,7 +49,7 @@ EFIT = EFIT
 # source files
 SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt.f90 \
           bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
-          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          zplined.f90 ecom2-mods.f90 vas_sub1.f90 \
           efitdud129.f90 data_input.f90 matrix.f90 shapesurf.f90 getsets.f90 \
           prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
           boundud129.f90 chkeud129.f90 splineud129.f90 \
@@ -60,7 +60,7 @@ SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt.f90 \
 ifeq ($(MACHINE),Linux)
 SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt_linux.f90 \
           bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
-          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          zplined.f90 ecom2-mods.f90 vas_sub1.f90 \
           efitdud129.f90 data_input.f90 matrix.f90 shapesurf.f90 getsets.f90 \
           prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
           boundud129.f90 chkeud129.f90 splineud129.f90 \
@@ -71,7 +71,7 @@ SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt_linux.f90 \
     ifeq ($(FCOM),lf95)
 SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt_linuxlf95.f90 \
           bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
-          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          zplined.f90 ecom2-mods.f90 vas_sub1.f90 \
           efitdud129.f90 data_input.f90 matrix.f90 shapesurf.f90 getsets.f90 \
           prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
           boundud129.f90 chkeud129.f90 splineud129.f90 \
@@ -84,7 +84,7 @@ SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt_linuxlf95.f90 \
     ifeq ($(FCOM),mpilf95)
 SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt_linuxlf95.f90 \
           bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
-          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          zplined.f90 ecom2-mods.f90 vas_sub1.f90 \
           efitdud129.f90 data_input.f90 matrix.f90 shapesurf.f90 getsets.f90 \
           prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
           boundud129.f90 chkeud129.f90 splineud129.f90 \
@@ -97,7 +97,7 @@ SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt_linuxlf95.f90 \
     ifeq ($(FCOM),mpipgf90)
 SOURCES = modules-efit.f90 psicald.f90 lsolved.f90 subs_d_pt_linux.f90 \
           bunemad.f90 getdiau.f90 getfnmdud.f90 ecom1-mods.f90 \
-          zplined.f90 dgglse.f90 ecom2-mods.f90 vas_sub1.f90 \
+          zplined.f90 ecom2-mods.f90 vas_sub1.f90 \
           efitdud129.f90 data_input.f90 matrix.f90 shapesurf.f90 getsets.f90 \
           prtout.f90 writeout.f90 currnt.f90 fcurrt.f90 \
           boundud129.f90 chkeud129.f90 splineud129.f90 \
