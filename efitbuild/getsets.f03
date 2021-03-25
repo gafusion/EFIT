@@ -1,3 +1,287 @@
+      subroutine set_basis_params
+
+      use set_kinds
+      include 'eparmdud129.f90'
+      include 'modules2.f90'
+      include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+
+!---------------------------------------------------------------------
+!--  specific choice of current profile                             --
+!--       ICPROF=1  no edge current density allowed                 --
+!--       ICPROF=2  free edge current density                       --
+!--       ICPROF=3  weak edge current density constraint            --
+!---------------------------------------------------------------------
+      if (icprof.eq.1) then
+        kffcur=2
+        kppcur=2
+        fcurbd=1.
+        pcurbd=1.
+        fwtbp=1.
+        fwtqa=0.
+        qvfit=0.
+      elseif (icprof.eq.2) then
+        kffcur=2
+        kppcur=2
+        fcurbd=0.
+        pcurbd=0.
+        fwtbp=0.
+        fwtqa=0.
+        qvfit=0.
+      elseif (icprof.eq.3) then
+        kffcur=3
+        kppcur=2
+        fcurbd=0.
+        pcurbd=0.
+        fwtbp=0.
+        fwtqa=0.
+        qvfit=0.
+        kcalpa=1
+        calpa(1,1)=0.1_dp
+        calpa(2,1)=0.1_dp
+        calpa(3,1)=0.1_dp
+        xalpa(1)=0.0
+        kcgama=1
+        cgama(1,1)=0.1_dp
+        cgama(2,1)=0.1_dp
+        cgama(3,1)=0.1_dp
+        xgama(1)=0.0
+      endif
+      if(mse_usecer .eq. 1)keecur = 0
+      if(mse_usecer .eq. 2 .and. keecur .eq. 0) then
+           keecur = 2
+           keefnc = 0
+           itek = 5
+      endif
+      if (imagsigma.gt.0) then
+         do_spline_fit=.false.
+         saimin=300.
+      endif
+!---------------------------------------------------------------------
+!-- adjust fit parameters based on basis function selected          --
+!---------------------------------------------------------------------
+       if (kppfnc .eq. 3) then
+          kppcur = 4 * (kppknt - 1)
+       endif
+       if (kppfnc .eq. 4) then
+          kppcur = 4 * (kppknt - 1)
+       endif
+       if (kppfnc .eq. 5) then
+          kppcur = kppcur * (kppknt - 1)
+       endif
+       if (kppfnc .eq. 6) then
+          kppcur = kppknt * 2
+       endif
+       if (kfffnc .eq. 3) then
+          kffcur = 4 * (kffknt - 1)
+       endif
+       if (kfffnc .eq. 4) then
+          kffcur = 4 * (kffknt - 1)
+       endif
+       if (kfffnc .eq. 5) then
+          kffcur = kffcur * (kffknt - 1)
+       endif
+       if (kfffnc .eq. 6) then
+          kffcur = kffknt * 2
+       endif
+       if (kwwfnc .eq. 3) then
+          kwwcur = 4 * (kwwknt - 1)
+       endif
+       if (kwwfnc .eq. 4) then
+          kwwcur = 4 * (kwwknt - 1)
+       endif
+       if (kwwfnc .eq. 5) then
+          kwwcur = kwwcur * (kwwknt - 1)
+       endif
+       if (kwwfnc .eq. 6) then
+          kwwcur = kwwknt * 2
+       endif
+       if (keecur.gt.0) then
+       if (keefnc .eq. 3) then
+          keecur = 4 * (keeknt - 1)
+       endif
+       if (keefnc .eq. 4) then
+          keecur = 4 * (keeknt - 1)
+       endif
+       if (keefnc .eq. 5) then
+          keecur = keecur * (keeknt - 1)
+       endif
+       if (keefnc .eq. 6) then
+          keecur = keeknt * 2
+       endif
+       endif
+!
+      if (kzeroj.eq.1.and.sizeroj(1).lt.0.0) sizeroj(1)=psiwant
+
+      end subroutine set_basis_params
+
+
+      subroutine getsets_defaults
+!**********************************************************************
+!**                                                                  **
+!**     MAIN PROGRAM:  MHD FITTING CODE                              **
+!**                                                                  **
+!**                                                                  **
+!**     SUBPROGRAM DESCRIPTION:                                      **
+!**          getsets performs inputing and initialization.           **
+
+!**********************************************************************
+      use set_kinds
+      include 'eparmdud129.f90'
+      include 'modules2.f90'
+      include 'modules1.f90'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+
+      mdoskip=0
+      iout=1                 ! default - write fitout.dat
+      appendsnap='KG'
+      snapextin='none'
+      patmp2(1)=-1.
+      tmu0=twopi*tmu
+      tmu02=tmu0*2.0
+      errorm=1.
+      ibatch=0
+      ilaser=0
+
+!----------------------------------------------------------------------
+!--  look up magnetic data directly                                  --
+!----------------------------------------------------------------------
+      do i=1,nsilop
+        psibit(i)=0.0
+        fwtsi(i)=0.0
+      enddo 
+      do i=1,magpri
+        bitmpi(i)=0.0
+        fwtmp2(i)=0.0
+      enddo
+      do i=1,nstark
+        fwtgam(i)=0.0
+      enddo
+      do i=1,nnece
+        fwtece0(i)=0.0
+      enddo
+
+      fwtecebz0=0.0
+      backaverage=.false.
+      bitip=0.0
+      betap0=0.50_dp
+      brsp(1)=-1.e+20_dp
+      cfcoil=-1.
+      cutip=80000.
+      do i=1,nesum
+        ecurrt(i)=0.0
+        rsisec(i)=-1.
+      enddo
+      emf=1.00
+      emp=1.00
+      enf=1.00
+      enp=1.00
+      error=1.0e-03_dp
+      fbetap=0.0
+      fbetat=0.0
+      fcurbd=1.
+      do i=1,nfcoil
+        fcsum(i)=1.0
+        fczero(i)=1.0
+        fwtfc(i)=0.
+        rsisfc(i)=-1.
+      enddo
+      do i=1,nesum
+        fwtec(i)=0.0
+      enddo
+      do i=1,mbdry
+       fwtbdry(i)=1.0
+       fwtsol(i)=1.0
+       sigrbd(i)=1.e10_dp
+       sigzbd(i)=1.e10_dp
+      enddo
+      fli=0.0
+      fwtbp=0.0
+      fwtdlc=0.0
+      fwtqa=0.0
+      gammap=1.0e+10_dp
+      iaved=5
+      iavem=5
+      iavev=10
+      ibound=0
+      ibunmn=3
+      icinit=2
+      icondn=-1
+      iconsi=-1
+      iconvr=2
+      icprof=0
+      icurrt=2
+      icutfp=0
+      idite=0
+      iecoil=0
+      ierchk=1
+      iecurr=1
+      iexcal=0
+      ifcurr=0
+!jal 04/23/2004
+      iplcout=0
+      ifitvs=0
+      ifref=-1
+      itimeu=0
+      iplim=0
+      iprobe=0
+      iqplot=1
+      isetfb=0
+      idplace=0
+      islve=0
+      isumip=0
+      itek=0
+      itrace=1
+      ivacum=0
+      ivesel=0
+      n1coil=0
+      ibtcomp=1
+      iweigh=0
+      ixray=0
+      ixstrt=1
+      keqdsk=1
+      kffcur=1
+      kinput=0
+      kppcur=3
+      kprfit=0
+      limfag=2
+      limitr=-33
+      lookfw=1
+      mxiter=25
+      nbdry=0
+      ncstfp=1
+      ncstpp=1
+      nextra=1
+      nxiter=1
+      pcurbd=1.
+      psibry=0.0
+      qemp=0.0
+      qenp=0.95_dp
+      qvfit=0.95_dp
+      scrape=0.030_dp
+      serror=0.03_dp
+      sidif=-1.0e+10_dp
+      symmetrize=.false.
+      xltype=0.0
+      xltype_180=0.
+      gammap=1./gammap
+      gammaf=gammap
+      rmaxis=rzero
+      mtear=0
+      ktear=0
+      snapfile='none'
+      nsnapf=66
+      ishot = shot_in
+      timeb = starttime_in
+      dtime = deltatime_in
+! -- Qilong Ren
+      write_Kfile = .false.
+      fitfcsum = .false.
+      ifindopt = 2
+      tolbndpsi = 1.0e-12_dp
+
+      end subroutine
+
       subroutine getsets(ktime,kwake,mtear,kerror)
 !**********************************************************************
 !**                                                                  **
@@ -153,7 +437,8 @@
 ! --- find length of default directories
       ltbdir=0
       lindir=0
-      lstdir=0
+!
+      lstdir=0  
       do i=1,len(table_dir)
          if (table_dir(i:i).ne.' ') ltbdir=ltbdir+1
          if (input_dir(i:i).ne.' ') lindir=lindir+1
@@ -161,17 +446,7 @@
       enddo
       ltbdi2=ltbdir
 !
-      mdoskip=0
-      iout=1                 ! default - write fitout.dat
-      appendsnap='KG'
-      snapextin='none'
-      if (kwake.eq.1) go to 10
-      patmp2(1)=-1.
-      tmu0=twopi*tmu
-      tmu02=tmu0*2.0
-      errorm=1.
-      ibatch=0
-      ilaser=0
+
 !----------------------------------------------------------------------
 !-- news and help information                                        --
 !----------------------------------------------------------------------
@@ -194,23 +469,14 @@
         kdata=-kdata
         ilaser=1
       endif
-!---------------------------------------------------------------------
-!--  KDATA=16, wake-up mode driven by file WAKEMFIT.DAT consisting  --
-!--  of shot # and time, -shot # for quit                           --
-!---------------------------------------------------------------------
-      if (kdata.eq.16) then
-        kwake=1
-        kdata=3
-        jwake=kwake
-        mdoskip=1
-      endif
+
+
 !----------------------------------------------------------------------
 !--   Changed kdata <= 7 to kdata < 7            --
 !--   Snap-Extension mode = 7              --
 !----------------------------------------------------------------------
    10 if (kdata.ge.5.and.kdata.lt.7) go to 3000
       if (kdata.eq.8) go to 3000
-      if (kwake.eq.1.and.mdoskip.eq.0.and.(iand(iout,1).ne.0)) close(unit=nout)
 ! MPI >>>
 ! ONLY root process can check for existence of fitout.dat file
       if (rank == 0) then
@@ -237,143 +503,8 @@
 #endif
       endif
 ! MPI <<<
-      if (kwake.eq.1.and.mdoskip.eq.0) go to 10999
       if (kdata.eq.2) go to 200
-!----------------------------------------------------------------------
-!--  look up magnetic data directly                                  --
-!----------------------------------------------------------------------
-      do 50 i=1,nsilop
-        psibit(i)=0.0
-        fwtsi(i)=0.0
-   50 continue
-      do 60 i=1,magpri
-        bitmpi(i)=0.0
-        fwtmp2(i)=0.0
-   60 continue
-      do 70 i=1,nstark
-        fwtgam(i)=0.0
-   70 continue
-      do 71 i=1,nnece
-        fwtece0(i)=0.0
-   71 continue
-      fwtecebz0=0.0
-      backaverage=.false.
-      bitip=0.0
-      betap0=0.50_dp
-      brsp(1)=-1.e+20_dp
-      cfcoil=-1.
-      cutip=80000.
-      do 185 i=1,nesum
-        ecurrt(i)=0.0
-        rsisec(i)=-1.
-  185 continue
-      emf=1.00
-      emp=1.00
-      enf=1.00
-      enp=1.00
-      error=1.0e-03_dp
-      fbetap=0.0
-      fbetat=0.0
-      fcurbd=1.
-      do 190 i=1,nfcoil
-        fcsum(i)=1.0
-        fczero(i)=1.0
-        fwtfc(i)=0.
-        rsisfc(i)=-1.
-  190 continue
-      do i=1,nesum
-        fwtec(i)=0.0
-      enddo
-      do i=1,mbdry
-       fwtbdry(i)=1.0
-       fwtsol(i)=1.0
-       sigrbd(i)=1.e10_dp
-       sigzbd(i)=1.e10_dp
-      enddo
-      fli=0.0
-      fwtbp=0.0
-      fwtdlc=0.0
-      fwtqa=0.0
-      gammap=1.0e+10_dp
-      iaved=5
-      iavem=5
-      iavev=10
-      ibound=0
-      ibunmn=3
-      icinit=2
-      icondn=-1
-      iconsi=-1
-      iconvr=2
-      icprof=0
-      icurrt=2
-      icutfp=0
-      idite=0
-      iecoil=0
-      ierchk=1
-      iecurr=1
-      iexcal=0
-      ifcurr=0
-!jal 04/23/2004
-      iplcout=0
-      ifitvs=0
-      ifref=-1
-      itimeu=0
-      iplim=0
-      iprobe=0
-      iqplot=1
-      isetfb=0
-      idplace=0
-      islve=0
-      isumip=0
-      itek=0
-      itrace=1
-      ivacum=0
-      ivesel=0
-      n1coil=0
-      ibtcomp=1
-      iweigh=0
-      ixray=0
-      ixstrt=1
-      keqdsk=1
-      kffcur=1
-      kinput=0
-      kppcur=3
-      kprfit=0
-      limfag=2
-      limitr=-33
-      lookfw=1
-      mxiter=25
-      nbdry=0
-      ncstfp=1
-      ncstpp=1
-      nextra=1
-      nxiter=1
-      pcurbd=1.
-      psibry=0.0
-      qemp=0.0
-      qenp=0.95_dp
-      qvfit=0.95_dp
-      scrape=0.030_dp
-      serror=0.03_dp
-      sidif=-1.0e+10_dp
-      symmetrize=.false.
-      xltype=0.0
-      xltype_180=0.
-      gammap=1./gammap
-      gammaf=gammap
-      rmaxis=rzero
-      mtear=0
-      ktear=0
-      snapfile='none'
-      nsnapf=66
-      ishot = shot_in
-      timeb = starttime_in
-      dtime = deltatime_in
-! -- Qilong Ren
-      write_Kfile = .false.
-      fitfcsum = .false.
-      ifindopt = 2
-      tolbndpsi = 1.0e-12_dp
+
 !----------------------------------------------------------------------
 !--   Snap-Extension mode              --
 !--   Initialize istore = 0                                          --
@@ -443,19 +574,7 @@
          write(nin,efitin)
 11231    close(unit=nin)
       endif
-!---------------------------------------------------------------------
-!---- recalculate length of default directories in case any change  --
-!---------------------------------------------------------------------
-      ltbdir=0
-      lindir=0
-      lstdir=0
-      do i=1,len(table_dir)
-         if (table_dir(i:i).ne.' ') ltbdir=ltbdir+1
-         if (input_dir(i:i).ne.' ') lindir=lindir+1
-         if (store_dir(i:i).ne.' ') lstdir=lstdir+1
-      enddo
-      table_di2 = table_dir
-      ltbdi2 = ltbdir
+
       iteks=itek
       mxiters=mxiter
       zelipss=zelip
@@ -482,140 +601,12 @@
         itell=1
         if (fitdelz) itell=4
       endif
-!---------------------------------------------------------------------
-!--  specific choice of current profile                             --
-!--       ICPROF=1  no edge current density allowed                 --
-!--       ICPROF=2  free edge current density                       --
-!--       ICPROF=3  weak edge current density constraint            --
-!---------------------------------------------------------------------
-      if (icprof.eq.1) then
-        kffcur=2
-        kppcur=2
-        fcurbd=1.
-        pcurbd=1.
-        fwtbp=1.
-        fwtqa=0.
-        qvfit=0.
-      elseif (icprof.eq.2) then
-        kffcur=2
-        kppcur=2
-        fcurbd=0.
-        pcurbd=0.
-        fwtbp=0.
-        fwtqa=0.
-        qvfit=0.
-      elseif (icprof.eq.3) then
-        kffcur=3
-        kppcur=2
-        fcurbd=0.
-        pcurbd=0.
-        fwtbp=0.
-        fwtqa=0.
-        qvfit=0.
-        kcalpa=1
-        calpa(1,1)=0.1_dp
-        calpa(2,1)=0.1_dp
-        calpa(3,1)=0.1_dp
-        xalpa(1)=0.0
-        kcgama=1
-        cgama(1,1)=0.1_dp
-        cgama(2,1)=0.1_dp
-        cgama(3,1)=0.1_dp
-        xgama(1)=0.0
-      endif
-      if(mse_usecer .eq. 1)keecur = 0
-      if(mse_usecer .eq. 2 .and. keecur .eq. 0) then
-           keecur = 2
-           keefnc = 0
-           itek = 5
-      endif
-      if (imagsigma.gt.0) then
-         do_spline_fit=.false.
-         saimin=300.
-      endif
-!---------------------------------------------------------------------
-!-- adjust fit parameters based on basis function selected          --
-!---------------------------------------------------------------------
-       if (kppfnc .eq. 3) then
-          kppcur = 4 * (kppknt - 1)
-       endif
-       if (kppfnc .eq. 4) then
-          kppcur = 4 * (kppknt - 1)
-       endif
-       if (kppfnc .eq. 5) then
-          kppcur = kppcur * (kppknt - 1)
-       endif
-       if (kppfnc .eq. 6) then
-          kppcur = kppknt * 2
-       endif
-       if (kfffnc .eq. 3) then
-          kffcur = 4 * (kffknt - 1)
-       endif
-       if (kfffnc .eq. 4) then
-          kffcur = 4 * (kffknt - 1)
-       endif
-       if (kfffnc .eq. 5) then
-          kffcur = kffcur * (kffknt - 1)
-       endif
-       if (kfffnc .eq. 6) then
-          kffcur = kffknt * 2
-       endif
-       if (kwwfnc .eq. 3) then
-          kwwcur = 4 * (kwwknt - 1)
-       endif
-       if (kwwfnc .eq. 4) then
-          kwwcur = 4 * (kwwknt - 1)
-       endif
-       if (kwwfnc .eq. 5) then
-          kwwcur = kwwcur * (kwwknt - 1)
-       endif
-       if (kwwfnc .eq. 6) then
-          kwwcur = kwwknt * 2
-       endif
-       if (keecur.gt.0) then
-       if (keefnc .eq. 3) then
-          keecur = 4 * (keeknt - 1)
-       endif
-       if (keefnc .eq. 4) then
-          keecur = 4 * (keeknt - 1)
-       endif
-       if (keefnc .eq. 5) then
-          keecur = keecur * (keeknt - 1)
-       endif
-       if (keefnc .eq. 6) then
-          keecur = keeknt * 2
-       endif
-       endif
-!
-      if (kzeroj.eq.1.and.sizeroj(1).lt.0.0) sizeroj(1)=psiwant
-!---------------------------------------------------------------------
-!-- wakeup mode KDATA=16                                            --
-!---------------------------------------------------------------------
+
+
+      call set_basis_params
+
+
 10999 continue
-      if (kwake.eq.1) then
-28000   inquire(file='wakeefit.dat',opened=lopened)
-        if (lopened) close(unit=neqdsk)
-        open(unit=neqdsk, file='wakeefit.dat', status='old', err=28002)
-        go to 28005
-28002   call lib$wait(10.0)
-        go to 28000
-28005   iread=0
-28010   read (neqdsk,*,end=28020,err=28000) ishot,timeb,dtime,ktime
-        iread=iread+1
-        if (iread.ge.ireadold+1) go to 28020
-        go to 28010
-28020   close(unit=neqdsk)
-        if (iread.le.ireadold) then
-          call lib$wait(10.0)
-          go to 28000
-        endif
-        if (ishot.lt.0) then
-          kerror = 1
-          call errctrl_msg('getsets','shot not found')
-          return
-        endif
-        ireadold=iread
-      endif
 
 !
 ! -- Qilong Ren
@@ -623,29 +614,7 @@
       ttimeb = timeb
       ddtime = dtime
       kktime = ktime
-!----------------------------------------------------------------------
-!--   Set proper Green's directory table_dir based on shot number    --
-!----------------------------------------------------------------------
-      if (ishot.ge.112000) then
-        if (ishot.lt.156000) then
-          table_di2 = table_di2(1:ltbdi2)//'112000/'
-        elseif (ishot.lt.168191) then
-          if (kdata.ne.2) then
-            table_di2 = table_di2(1:ltbdi2)//'156014/'
-          else
-            if (efitversion <= 20140331) then
-               table_di2 = table_di2(1:ltbdi2)//'112000/'
-            else
-               table_di2 = table_di2(1:ltbdi2)//'156014/'
-            endif
-          endif
-        elseif (ishot.lt.181292) then
-          table_di2 = table_di2(1:ltbdi2)//'168191/'
-        elseif (ishot.ge.181292) then
-          table_di2 = table_di2(1:ltbdi2)//'181292/'
-        endif
-        ltbdi2=ltbdi2+7
-      endif
+
 !-------------------------------------------------------------------------------
 !--  Set bit noise for ishot > 152000                                         --
 !-------------------------------------------------------------------------------
@@ -802,14 +771,16 @@
 
  1000 continue
 
-      call efit_read_green
+      call efit_read_tables
 
-      if (kdata.ne.2) &
-      call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
-      drgrid=rgrid(2)-rgrid(1)
-      dzgrid=zgrid(2)-zgrid(1)
-      darea=drgrid*dzgrid
-      tmu2=-pi*tmu*dzgrid/drgrid
+      if (kdata.ne.2) then
+        call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
+      endif
+        drgrid=rgrid(2)-rgrid(1)
+        dzgrid=zgrid(2)-zgrid(1)
+        darea=drgrid*dzgrid
+        tmu2=-pi*tmu*dzgrid/drgrid
+
 !
       return
  3000 continue

@@ -1,4 +1,4 @@
-   subroutine efit_read_green
+   subroutine efit_read_tables
       use set_kinds
       include 'eparmdud129.f90'
       include 'modules2.f90'
@@ -7,9 +7,11 @@
       namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi,as, &
         as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
         hacoil,wacoil
+        
 !---------------------------------------------------------------------
 !-- Read Green's tables from table_dir            --
 !---------------------------------------------------------------------
+      call set_table_dir
       open(unit=mcontr,status='old',form='unformatted', &
            file=table_dir(1:ltbdir)//'ec'//trim(ch1)//trim(ch2)//'.ddd')
       read (mcontr) mw,mh
@@ -110,7 +112,76 @@
       endif
       close(unit=mcontr)
 
-    print *, 'end     '
 10200 format (6e12.6)
 10220 format (5e10.4)
-   end subroutine efit_read_green
+   end subroutine efit_read_tables
+
+
+   subroutine set_table_dir
+      use set_kinds
+      include 'eparmdud129.f90'
+      include 'modules2.f90'
+      include 'modules1.f90'
+
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      integer :: i,reason, nFiles, itmp, imin, isize 
+      character(LEN=100), dimension(:), allocatable :: filenames
+      integer:: shot_tables(100)
+
+!----------------------------------------------------------------------
+!--   recalculate length of default directories in case any change   --
+!----------------------------------------------------------------------
+      ltbdir=0
+      lindir=0
+      lstdir=0
+      do i=1,len(table_dir)
+         if (table_dir(i:i).ne.' ') ltbdir=ltbdir+1
+         if (input_dir(i:i).ne.' ') lindir=lindir+1
+         if (store_dir(i:i).ne.' ') lstdir=lstdir+1
+      enddo
+
+      print *, table_dir 
+      ! get the files
+      call system('ls '//trim(table_dir)//' > shot_tables.txt')
+      open(31,FILE='shot_tables.txt',action="read")
+
+      !how many
+      i = 0
+      do
+        read(31,FMT='(I10)',iostat=reason) shot_tables(i+1)
+        if (reason/=0) EXIT
+        i = i+1
+      end do
+      nfiles = i 
+      allocate(fileNames(nfiles))
+      rewind(31)
+      do i = 1,nfiles
+        read(31,'(a)') filenames(i)
+      end do
+      close(31)
+
+      ! sort shot_tables just in case
+      do i=1, nfiles
+        imin = minloc(shot_tables(i:nfiles),dim=1)+i-1
+        itmp = shot_tables(imin)
+        shot_tables(imin) = shot_tables(i)
+        shot_tables(i)  = itmp
+      enddo 
+
+       
+      do i=1, nfiles
+        if (ishot.ge. shot_tables(i)) then
+          table_dir = table_dir(1:ltbdir)//trim(filenames(i))//'/'
+          isize = len(trim(filenames(i)))+1
+          print *, table_dir,filenames
+        endif
+      enddo
+      
+      ltbdir=len(trim(table_dir))!ltbdir+isize
+      ltbdi2=len(trim(table_dir))
+      table_di2 = table_dir
+      if (rank == 0) then
+        write(*,*) 'table_dir = <',table_dir(1:ltbdir),'>'
+      endif
+
+   end subroutine set_table_dir

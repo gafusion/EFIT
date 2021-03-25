@@ -79,7 +79,7 @@
       if (link_efitx(1:1).eq.' ') link_efitx='/link/efit/'
       if (link_storex(1:1).eq.' ') link_storex='/link/store/'
 !      write (6,*) trim(link_efitx), trim(link_storex)
-      table_dir=trim(link_efitx)//'2006/'
+      table_dir=trim(link_efitx)//'green/'
       input_dir=trim(link_efitx)
       store_dir=trim(link_storex)           
 ! MPI >>>
@@ -175,13 +175,15 @@
       call get_opt_input(ktime)
       ntime = ktime
       call get_eparmdud_defaults()
-      if (kdata==2) then
-        call read_eparmdud(ifname(1))!this assume machine is always the same
-      elseif(kdata==7) then
-        call read_eparmdud('efit_snap.dat_'//adjustl(snapext_in))
-      else
-        call read_eparmdud('efit_snap.dat')
+
+      if(kdata==7) then
+        ifname(1) = 'efit_snap.dat_'//adjustl(snapext_in)
+      elseif (kdata==3 .or. kdata==5) then
+        ifname(1) = 'efit_snap.dat'
       endif
+
+      call read_eparmdud(ifname(1))!this assume machine is always the same
+
       call get_eparmdud_dependents()
 
 !----------------------------------------------------------------------
@@ -199,9 +201,11 @@
 ! Arrays can only be allocated after MPI has been initialized because dimension is # of processes
       allocate(dist_data(nproc),dist_data_displs(nproc),fwtgam_mpi(nstark,nproc))
 #endif
-      
-      20 call getsets(ktime,kwake,mtear,kerror)
-      
+    !call set_table_dir
+      !call efit_read_tables
+      print *, 'Entering getsets'
+  20  call getsets(ktime,kwake,mtear,kerror)
+      print * ,'exiting getsets'
 ! MPI >>>
 #if defined(USEMPI)
       if (nproc > 1) then
@@ -238,9 +242,14 @@
 !----------------------------------------------------------------------
 !--  set up data                                                     --
 !----------------------------------------------------------------------
+        
+        if(idebug>=2) write(6,*) ' Entering prtoutheader subroutine'
         call prtoutheader()
         if(idebug>=2) write(6,*) ' Entering data_input subroutine'
+
         call data_input(ks,iconvr,ktime,mtear,kerror)
+
+        if(idebug>=2) write(6,*) ' Entering errctrl_setstate'
         call errctrl_setstate(rank,time(ks))
         if (kerror.gt.0) go to 500
         if (iconvr.lt.0) go to 500

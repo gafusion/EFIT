@@ -30,10 +30,6 @@
 !
 !      common/adp/byringr(nh2),byringz(nh2),ringr(6),ringz(6),ringap
       common/adp/ringr(6),ringz(6),ringap
-!      data table_dir /'/link/efit/new_table/'/
-!vasorg      data table_dir /'/task/efit/lao/efits/CVS/p/2006/'/
-!vasorg      data input_dir /'/link/efit/'/
-!vasorg      data store_dir /'/link/store/'/
 !
 !---D3D-----------------------D3D----------------------------D3D-----
 !-- the parameters set between the d3d comments are specifically   --
@@ -117,194 +113,50 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
       integer type
+      CHARACTER*100 FILIN
       namelist/lim/xlim,ylim,limitr
       data lfile/36/
 !
       if ((limitr.gt.0).and.(type.ne.0)) go to 50240
 !
-      if (abs(xltype*xltype_180).le.0.0001_dp.and.ishot.gt.52072) then
-        call limpos(ishot,poslim,pos180,ier)
-        if (ishot.ge.54992.and.ishot.le.55015) then
-          pos180=2.
-        endif
-        if (ier.eq.1) then
-          if (abs(xltype).le.0.0001_dp) xltype=poslim
-          if (abs(xltype_180).le.0.0001_dp) xltype_180=pos180
-        else
-          if (abs(xltype).le.0.0001_dp) xltype=0.0
-          if (abs(xltype_180).le.0.0001_dp) xltype_180=0.0
-        endif
-      endif
-      if (type.eq.0) return
+
 !
 ! --- read in limiter data
 !
-      limid=iabs(limitr)
-      if (ishot.ge.51351) go to 120
-      write (filimt,6530) limid
-      go to 130
-  120 continue
-      if (ishot.le.51949) write (filimt,6540) limid
-      if (ishot.gt.51949) write (filimt,6542) limid
-      if (ishot.gt.51979) write (filimt,6544) limid
-      if (ishot.gt.52360) write (filimt,6546) limid
-      if (ishot.gt.54020) write (filimt,6548) limid
-      if (ishot.gt.57590) write (filimt,6650) limid
-      if (ishot.gt.70074) write (filimt,6652) limid
-      if (ishot.gt.71758) write (filimt,6654) limid
-      if (ishot.gt.74336) write (filimt,6656) limid
-      if (ishot.gt.76756) write (filimt,6658) limid
-      if (ishot.gt.88400) write (filimt,6660) limid
-      if (ishot.ge.91000) write (filimt,6662) limid
-      if (ishot.ge.100771) write (filimt,6664) limid
-      if (ishot.ge.124411) write (filimt,6666) limid
-      if (ishot.ge.139282) write (filimt,6668) limid
-      if (ishot.ge.163931) write (filimt,6670) limid
-!     if (ishot.ge.168191) write (filimt,6672) limid
-      if (ishot.ge.168191) then
-         if (limid.le.99) then
-             write (filimt,6672) limid
-         else
-             write (filimt,6674) limid
-         endif
-      endif
-      if (ishot.ge.181292) then
-         if (limid.le.99) then
-             write (filimt,6676) limid
-         else
-             write (filimt,6678) limid
-         endif
-      endif
-  130 continue
-      filimt=input_dir(1:lindir)//filimt
-      open(unit=lfile,                       status='old', &
-        file=filimt         )
-      if (ishot.le.76756) then
-      read (lfile,4980) limitr
-      read (lfile,5000) (xlim(i),ylim(i),i=1,limitr) &
-           ,(xlim(i),ylim(i),i=limitr+2,limitr+13)
-      else
-      read (lfile,*,err=11132)    limitr
-      read (lfile,*)    (xlim(i),ylim(i),i=1,limitr)
-      go to 11152
-11132 close (unit=lfile)
-      open(unit=lfile,                       status='old', &
-        file=filimt         )
-      read (lfile,lim)
-      endif
-11152 close(unit=lfile)
-!----------------------------------------------------------------
-!--  Fixed poloidal limiter for shot > 88400                   --
-!----------------------------------------------------------------
-      if (ishot.gt.88400) go to 50240
-      dell=0.01_dp*xltype
-      limup=0
-      limbot=0
-      do 132 i=1,limitr
-        if (ishot.le.52360) then
-        if ((ylim(i).eq.0.3260_dp).and.(xlim(i).gt.rcentr)) limup=i
-        if ((ylim(i).eq.-0.3260_dp).and.(xlim(i).gt.rcentr)) limbot=i
-        endif
-        if (ishot.gt.52360.and.ishot.le.57590) then
-        if ((ylim(i).eq.0.2000_dp).and.(xlim(i).gt.rcentr)) limup=i
-        if ((ylim(i).eq.-0.2000_dp).and.(xlim(i).gt.rcentr)) limbot=i
-        endif
-        if (ishot.gt.57590) then
-        if ((ylim(i).eq.0.3655_dp).and.(xlim(i).gt.rcentr)) limup=i
-        if ((ylim(i).eq.-0.3655_dp).and.(xlim(i).gt.rcentr)) limbot=i
-        endif
-  132 continue
-      limup0=limup
-      limbot0=limbot
-      if ((limup.le.0).or.(limbot.le.0)) go to 139
-      do 135 i=limup,limbot
-        xlim(i)=xlim(i)-dell
-  135 continue
-      do 138 i=limitr+5,limitr+10
-        xlim(i)=xlim(i)-dell
-  138 continue
-  139 continue
-!
-! --- calculate the length of filename filimt
-      lfilimt=0
-      do i=1,len(filimt)
-         if (filimt(i:i).ne.' ') lfilimt=lfilimt+1
-      enddo
-!
-      if (ishot.ge.54021) then
-      open(unit=lfile,                       status='old', &
-        file=filimt(1:lfilimt)//'_180'          )
-      if (ishot.le.76756) then
-      read (lfile,4980) limitr_180
-      read (lfile,5000) (xlim_180(i),ylim_180(i),i=1,limitr_180) &
-           ,(xlim_180(i),ylim_180(i),i=limitr_180+2,limitr_180+13)
-      else
-      read (lfile,*)    limitr_180
-      read (lfile,*)    (xlim_180(i),ylim_180(i),i=1,limitr_180)
-      endif
-      close(unit=lfile)
-!----------------------------------------------------------------------
-!--  no 180 degree limiter for shot greater than 76756, only fixed   --
-!--  poloidal limiter                                                --
-!----------------------------------------------------------------------
-      if (ishot.ge.76757) then
-        limup=limup0
-        limbot=limbot0
-        xltype_180=0.0
-        go to 50212
-      endif
-      dell=0.01_dp*xltype_180
-      limup=0
-      limbot=0
-      do 50206 i=1,limitr_180
-        if (ishot.le.57590) then
-        if ((ylim_180(i).eq.0.3655_dp).and.(xlim_180(i).gt.rcentr)) &
-             limup=i
-        if ((ylim_180(i).eq.-0.3655_dp).and.(xlim_180(i).gt.rcentr)) &
-             limbot=i
-        endif
-        if (ishot.gt.57590) then
-        if ((ylim_180(i).eq.0.2000_dp).and.(xlim_180(i).gt.rcentr)) &
-             limup=i
-        if ((ylim_180(i).eq.-0.2000_dp).and.(xlim_180(i).gt.rcentr)) &
-             limbot=i
-        endif
-50206 continue
-      if ((limup.le.0).or.(limbot.le.0)) go to 50212
-      do 50208 i=limup,limbot
-        xlim_180(i)=xlim_180(i)-dell
-50208 continue
-      do 50210 i=limitr_180+5,limitr_180+10
-        xlim_180(i)=xlim_180(i)-dell
-50210 continue
-50212 continue
-      if (limup0*limup*limbot*limbot0.gt.0) then
-      rgraphite=2.3756_dp
-      limup=min(limup,limup0)
-      limbot=max(limbot,limbot0)
-      do 50220 i=limup,limbot
-        xlim(i)=min(xlim(i),xlim_180(i),rgraphite)
-50220 continue
-      endif
-      endif
+      filin = 'lim.dat'
+      filin=input_dir(1:lindir)//filin
+      if ((limitr.le.0) .or. (type.eq.0))limid=iabs(limitr)
+	  OPEN(UNIT=lfile,ACCESS='SEQUENTIAL', STATUS='OLD',FILE=FILIN)
+
+  10  READ (NIN,*,END=20) limshot,limitr
+
+	  DO i=1,limiter
+	    READ(lfile,1001) xlim(i),ylim(i)
+	  ENDDO
+	  IF (nshot.ge.idiashot) then
+	    GOTO 20
+	  ELSE
+	    GOTO 10
+	  ENDIF
+  20    CLOSE(UNIT=NIN)
+
+
 50240 continue
 !
       limitr=limitr+1
       xlim(limitr)=xlim(1)
       ylim(limitr)=ylim(1)
-!
       xlmin=xlim(1)
       xlmax=xlmin
       ylmin=ylim(1)
       ylmax=ylmin
-      do 140 i=2,limitr
+      do i=2,limitr
         xlmin=min(xlmin,xlim(i))
         xlmax=max(xlmax,xlim(i))
         ylmin=min(ylmin,ylim(i))
         ylmax=max(ylmax,ylim(i))
-  140 continue
+      enddo
 !---------------------------------------------------------------------------
 !--  set up plotting limiter points if needed                             --
 !---------------------------------------------------------------------------
@@ -350,27 +202,7 @@
 !
  4980 format (i5)
  5000 format (2e12.6)
- 6530 format ('limd3d.0',i2)
- 6540 format ('lim042386.0',i2)
- 6542 format ('lim060686.0',i2)
- 6544 format ('lim061686.0',i2)
- 6546 format ('lim080786.0',i2)
- 6548 format ('lim021887.0',i2)
- 6650 format ('lim012588.0',i2)
- 6652 format ('lim081390.0',i2)
- 6654 format ('lim910417.0',i2)
- 6656 format ('lim920203.0',i2)
- 6658 format ('lim930411.0',i2)
- 6660 format ('lim960321.0',i2)
- 6662 format ('lim970407.0',i2)
- 6664 format ('lim000113.0',i2)
- 6666 format ('lim060530.0',i2)
- 6668 format ('lim091109.0',i2)
- 6670 format ('lim151110.0',i2)
- 6672 format ('lim170120.0',i2)
- 6674 format ('lim170120.',i3)
- 6676 format ('lim200330.0',i2)
- 6678 format ('lim200330.',i3)
+ 1001 format (2E14.6)
 !
       return
       end

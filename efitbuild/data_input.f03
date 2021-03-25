@@ -978,48 +978,11 @@
 !----------------------------------------------------------------------
 !--   recalculate length of default directories in case any change   --
 !----------------------------------------------------------------------
-      ltbdir=0
-      lindir=0
-      lstdir=0
-      do i=1,len(table_dir)
-         if (table_dir(i:i).ne.' ') ltbdir=ltbdir+1
-         if (input_dir(i:i).ne.' ') lindir=lindir+1
-         if (store_dir(i:i).ne.' ') lstdir=lstdir+1
-      enddo
-!---------------------------------------------------------------------
-!-- Set up proper Green's tables area                               --
-!--        shot > 156000 new 2014 set                               --
-!--        shot >= 168191 new 2017 set                              --
-!---------------------------------------------------------------------
-      if (ishot.ge.112000) then
-        if (ishot.lt.156000) then
-          table_dir = table_dir(1:ltbdir)//'112000/'
-        elseif (ishot.lt.168191) then
-          if (kdata.ne.2) then
-            table_dir = table_dir(1:ltbdir)//'156014/'
-          else
-            if (efitversion <= 20140331) then
-               table_dir = table_dir(1:ltbdir)//'112000/'
-            else
-               table_dir = table_dir(1:ltbdir)//'156014/'
-            endif
-          endif
-        elseif (ishot.lt.181292) then
-          table_dir = table_dir(1:ltbdir)//'168191/'
-        elseif (ishot.ge.181292) then
-          table_dir = table_dir(1:ltbdir)//'181292/'
-        endif
-        ltbdir=ltbdir+7
-        ltbdi2=ltbdir
-        table_di2 = table_dir
-        if (rank == 0) then
-          write(*,*) 'table_dir = <',table_dir(1:ltbdir),'>'
-        endif
-      endif
-      print *, 'before Read green'
-      if ((table_dir.ne.table_nam).or.(jtime.le.1))  call efit_read_green
 
-      print *, 'past Read green'
+      if ((table_dir.ne.table_nam).or.(jtime.le.1)) then
+        call set_table_dir
+        call efit_read_tables
+      endif
 
 !---------------------------------------------------------------------
 !--  specific choice of current profile                             --
@@ -1080,6 +1043,7 @@
          saimin=300.
       endif
       if (kzeroj.eq.1.and.sizeroj(1).lt.0.0) sizeroj(1)=psiwant
+      print *, 'before save fitting weights'
 !---------------------------------------------------------------------
 !--  save fitting weights for FILE mode                             --
 !---------------------------------------------------------------------
@@ -1108,6 +1072,7 @@
         swtece(i)=fwtece0(i)
       enddo
       swtecebz=fwtecebz0
+      print *, 'adjust fit parameters based on basis function selected '
 !-----------------------------------------------------------------------
 !-- adjust fit parameters based on basis function selected            --
 !-----------------------------------------------------------------------
@@ -1175,6 +1140,8 @@
         itek=iabs(itek)
       endif
       if (psiwant.le.0.0) psiwant=1.e-5_dp
+
+      print *, 'itek > 100, write out PLTOUT.OUT individually '
 !--------------------------------------------------------------------------
 !-- itek > 100, write out PLTOUT.OUT individually                        --
 !--------------------------------------------------------------------------
@@ -1239,6 +1206,7 @@
           enddo
         endif
       endif
+      print *, 'option to symmetrize added 8/14/91 eal  '
 !--------------------------------------------------------------
 !-- option to symmetrize added 8/14/91 eal                   --
 !--------------------------------------------------------------
@@ -1336,6 +1304,8 @@
            dnbeam(i)=dnbeam(i)*1.e-19_dp
 43901     continue
         endif
+
+      print *, 'reorder TS data points '  
 !---------------------------------------------------------------------
 !--  reorder TS data points                                         --
 !---------------------------------------------------------------------
@@ -1395,6 +1365,8 @@
         endif
         endif
       endif
+
+      print *, 'read in limiter data'
 !-----------------------------------------------------------------------
 !---- read in limiter data                                            --
 !-----------------------------------------------------------------------

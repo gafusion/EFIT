@@ -279,7 +279,7 @@
 !--      New BT compensations for magnetic probes and flux loops   --
 !--------------------------------------------------------------------
       if (ibtcomp.gt.0) then
-      open(unit=60,file=input_dir(1:lindir)//'btcomp.dat_156456', &
+      open(unit=60,file=input_dir(1:lindir)//'btcomp.dat', &
            status='old'                                )
 31000 read (60,*,err=31000,end=32000) ibtcshot, btcname  !EJS(2014)
 
@@ -343,7 +343,7 @@
        enddo
       enddo
       if (n1coil.gt.0.or.nccoil.gt.0) then
-      open(unit=60,file=input_dir(1:lindir)//'ccomp.dat_168823', &
+      open(unit=60,file=input_dir(1:lindir)//'ccomp.dat', &
            status='old'                                )
 !33000 read (60,*,err=34000,end=34000) ibtcshot,n1name,(ncname(i), &
 !                                      i=1,3)
@@ -497,7 +497,7 @@
         enddo
       enddo
       if (nicoil.gt.0) then
-      open(unit=60,file=input_dir(1:lindir)//'icomp.dat_156456', &
+      open(unit=60,file=input_dir(1:lindir)//'icomp.dat', &
            status='old'                                )
 !35000 read (60,*,err=36000,end=36000) ibtcshot,(niname(i),i=1,6)
 !

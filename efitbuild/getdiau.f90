@@ -113,11 +113,11 @@
         DATA DNAMES/'DIAMAG1S  ','DIAMAG2S  ','DIAMAG3S  '/
         DATA IADJ/-1,1,1/
         DATA BTCOMP/-0.3,0.4,-0.4/
-        DATA EBCOUP/0.00,0.00,-2.0/
+        DATA EBCOUP/0.00,0.00,0.0/
 
         EQUIVALENCE (RAR(21),TTEMP(1))
 
-     	filin = 'dcoef20.dat'
+     	filin = 'dcoef.dat'
         if (nshot.lt.85885) then
             EBCOUP(3)=-2.0
         else
@@ -125,8 +125,6 @@
         endif
 !
         filin=input_dir(1:lindir)//filin
-!vas
-!        print*,' vasan filr : ',filin
 
         ITYP=11
         IAR(1)=NPTS
@@ -144,7 +142,6 @@
         SIGMAD=0.01
         SIGMAF=0.1
 
-        print *, 'idiashot, nshot',idiashot, nshot
 !
 !   GET COMPENSATION COEFFICIENTS
 !
