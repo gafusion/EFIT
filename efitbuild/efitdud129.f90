@@ -79,7 +79,7 @@
       if (link_efitx(1:1).eq.' ') link_efitx='/link/efit/'
       if (link_storex(1:1).eq.' ') link_storex='/link/store/'
 !      write (6,*) trim(link_efitx), trim(link_storex)
-      table_dir=trim(link_efitx)//'2006/'
+      table_dir=trim(link_efitx)//'green/'
       input_dir=trim(link_efitx)
       store_dir=trim(link_storex)           
 ! MPI >>>

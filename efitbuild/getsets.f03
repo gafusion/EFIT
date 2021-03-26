@@ -626,26 +626,7 @@
 !----------------------------------------------------------------------
 !--   Set proper Green's directory table_dir based on shot number    --
 !----------------------------------------------------------------------
-      if (ishot.ge.112000) then
-        if (ishot.lt.156000) then
-          table_di2 = table_di2(1:ltbdi2)//'112000/'
-        elseif (ishot.lt.168191) then
-          if (kdata.ne.2) then
-            table_di2 = table_di2(1:ltbdi2)//'156014/'
-          else
-            if (efitversion <= 20140331) then
-               table_di2 = table_di2(1:ltbdi2)//'112000/'
-            else
-               table_di2 = table_di2(1:ltbdi2)//'156014/'
-            endif
-          endif
-        elseif (ishot.lt.181292) then
-          table_di2 = table_di2(1:ltbdi2)//'168191/'
-        elseif (ishot.ge.181292) then
-          table_di2 = table_di2(1:ltbdi2)//'181292/'
-        endif
-        ltbdi2=ltbdi2+7
-      endif
+      call set_table_dir
 !-------------------------------------------------------------------------------
 !--  Set bit noise for ishot > 152000                                         --
 !-------------------------------------------------------------------------------
@@ -699,7 +680,6 @@
       endif
 ! MPI >>>
 
-     print *,'getptsdata:', ishot,times,delt,ktime,istop
 #if defined(USEMPI)
 ! MK 2020.10.08 TODO All control paths *should* be identical here
 ! MK i.e. only call getpts_mpi, regardless of nproc
@@ -801,63 +781,11 @@
   200 continue
 
  1000 continue
-      open(unit=mcontr,status='old',form='unformatted', &
-           file=table_dir(1:ltbdir)//'ec'//trim(ch1)//trim(ch2)//'.ddd')
-      read (mcontr) mw,mh
-      if(.not.allocated(rgrid)) then
-       allocate(rgrid(mw),stat=iallocate_stat)
-      if(iallocate_stat/=0) stop "*** Not enough space for rgrid ***"
-      endif
-      if(.not.allocated(zgrid)) then
-       allocate(zgrid(mh),stat=iallocate_stat)
-      if(iallocate_stat/=0) stop "*** Not enough space for zgrid ***"
-      endif
-      if(.not.allocated(gridfc)) then
-       allocate(gridfc(mw*mh,nfcoil),stat=iallocate_stat)
-      if(iallocate_stat/=0) stop "*** Not enough space for gridfc ***"
-      endif
-!vas-------
-      read (mcontr) rgrid,zgrid
-      read (mcontr) gridfc
-      if(.not.allocated(gridpc)) then
-       allocate(gridpc(mw*mh,mw),stat=iallocate_stat)
-      if(iallocate_stat/=0) stop "*** Not enough space for gridpc ***"
-      endif
-      read (mcontr) gridpc
-      close(unit=mcontr)
-!----------------------------------------------------------------------
-!-- read in the f coil response functions                            --
-!----------------------------------------------------------------------
-      if(.not.allocated(rsilfc)) then
-       allocate(rsilfc(nsilop,nfcoil),stat=iallocate_stat)
-      if(iallocate_stat/=0) stop "*** Not enough space for rsilfc ***"
-      endif
-      if(.not.allocated(rmp2fc)) then
-       allocate(rmp2fc(magpri,nfcoil),stat=iallocate_stat)
-      if(iallocate_stat/=0) stop "*** Not enough space for rmp2fc ***"
-      endif
-      if(.not.allocated(gsilpc)) then
-       allocate(gsilpc(nsilop,mw*mh),stat=iallocate_stat)
-      if(iallocate_stat/=0) stop "*** Not enough space for gsilpc ***"
-      endif
-      if(.not.allocated(gmp2pc)) then
-       allocate(gmp2pc(magpri,mw*mh),stat=iallocate_stat)
-      if(iallocate_stat/=0) stop "*** Not enough space for gmp2pc ***"
-      endif
-!vas-------
-      open(unit=nrspfc,form='unformatted', &
-           status='old',file=table_dir(1:ltbdir)//'rfcoil.ddd')
-      read (nrspfc) rsilfc
-      read (nrspfc) rmp2fc
-      close(unit=nrspfc)
+      call efit_read_tables
+     
 !----------------------------------------------------------------------
 !-- read in the plasma response function                             --
 !----------------------------------------------------------------------
-      open(unit=nrsppc,status='old',form='unformatted', &
-           file=table_dir(1:ltbdir)//'ep'//trim(ch1)//trim(ch2)//'.ddd')
-      read (nrsppc) gsilpc
-      read (nrsppc) gmp2pc
-      close(unit=nrsppc)
 !
       if (kdata.ne.2) &
       call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
