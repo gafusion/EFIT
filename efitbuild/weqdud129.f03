@@ -461,10 +461,10 @@
       ALLOCATE(workk(pltnw),dmion(pltnw),bworm(pltnw),cworm(pltnw),dworm(pltnw), &
                coils(nsilop),expmp2(magpri),prexp(nrogow))
 
-      ALLOCATE(tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark), &
-                zzzgam(nmtark),aa1gam(nmtark),aa2gam(nmtark), &
-                aa3gam(nmtark),aa4gam(nmtark),aa5gam(nmtark), &
-                aa6gam(nmtark),aa7gam(nmtark),aa8gam(nmtark),tgammauncor(nmtark))
+      ALLOCATE(tgamma(nstark),sgamma(nstark),rrrgam(nstark), &
+                zzzgam(nstark),aa1gam(nstark),aa2gam(nstark), &
+                aa3gam(nstark),aa4gam(nstark),aa5gam(nstark), &
+                aa6gam(nstark),aa7gam(nstark),aa8gam(nstark),tgammauncor(nstark))
       ALLOCATE(bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
          rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels),l2msels(nmsels), &
          l4msels(nmsels),emsels(nmsels),semsels(nmsels))

@@ -127,6 +127,8 @@
 !---------------------------------------------------------------------
 !--  generate input files and command file for running EFITD        --
 !---------------------------------------------------------------------
+      print *, nmtark, nstark
+
 !      if (kdata .ge. 5 .and. kdata .lt. 7) then
       if ((kdata .ge. 5 .and. kdata .lt. 7).or.(kdata.eq.8)) then
  3020   continue

@@ -117,7 +117,7 @@
 
         EQUIVALENCE (RAR(21),TTEMP(1))
 
-     	filin = 'dcoef20.dat'
+     	filin = 'dcoef.dat'
         if (nshot.lt.85885) then
             EBCOUP(3)=-2.0
         else
