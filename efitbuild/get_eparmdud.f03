@@ -68,8 +68,8 @@ subroutine get_eparmdud_dependents
 
   use eparmdud129
 
-  nmtark=mse315+mse45+mse15+mse1h+mse315_2+mse210
-  nstark=nmtark+libim
+  nstark=mse315+mse45+mse15+mse1h+mse315_2+mse210
+  nmtark=nstark+libim
 
   magpol=magpri67+magpri322+magprirdp+magudom
   magpri=magpol+maglds
