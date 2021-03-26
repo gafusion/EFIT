@@ -781,6 +781,7 @@
   200 continue
 
  1000 continue
+      call set_table_dir
       call efit_read_tables
      
 !----------------------------------------------------------------------
