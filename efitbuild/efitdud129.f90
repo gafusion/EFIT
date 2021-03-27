@@ -1085,7 +1085,7 @@
 !----------------------------------------------------------------------
 
       open(unit=nrsppc,status='old',form='unformatted', &
-           file=table_dir(1:ltbdir)//'ep'//trim(ch1)//trim(ch2)//'.ddd')
+           file=table_di2(1:ltbdi2)//'ep'//trim(ch1)//trim(ch2)//'.ddd')
       read (nrsppc) gsilpc
       read (nrsppc) gmp2pc
       close(unit=nrsppc)
