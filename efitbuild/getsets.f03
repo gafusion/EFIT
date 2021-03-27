@@ -132,6 +132,140 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
+! MPI >>>
+#if defined(USEMPI)
+      include 'mpif.h'
+#endif
+! MPI <<<
+      logical lopened
+      character filenm*15,ishotime*12,news*72, &
+                eqdsk*20,comfile*15,prefix1*1,header*42,fit_type*3
+      real*8,dimension(:),allocatable :: coils,expmp2, &
+                denr,denv,tgamma,sgamma,rrrgam, &
+                zzzgam,aa1gam,aa2gam,aa3gam,aa4gam,aa5gam, &
+                aa6gam,aa7gam, tgammauncor
+      real*8,dimension(:),allocatable :: bmsels,sbmsels,fwtbmsels, &
+                rrmsels,zzmsels,l1msels,l2msels, &
+                l4msels,emsels,semsels,fwtemsels
+      real*8,dimension(:),allocatable :: tlibim,slibim,rrrlib
+      real*8,dimension(:),allocatable ::devxmpin,rnavxmpin &
+               ,devpsiin,rnavpsiin,devfcin,rnavfcin,devein,rnavecin
+      character*82 snap_ext
+!vasorg      character*82 snap_file
+      namelist/in1/ishot,itime,itimeu,qvfit,plasma,expmp2,coils,btor, &
+           fwtsi,fwtcur,limitr,fwtmp2,kffcur,kppcur,fwtqa,ierchk, &
+           fwtbp,serror,nextra,scrape,itrace,itek,xltype,rcentr,bitip, &
+           psibit,bitmpi,denr,denv,siref,fwtfc,brsp,bitfc,iecurr,iplim, &
+           ecurrt,ifitvs,vloop,dflux,ifcurr,iavem,icprof,currn1,n1coil, &
+           pnbeam,error,errmin,mxiter,xltype_180,icutfp,keqdsk,ibtcomp, &
+           fcurbd,pcurbd,kbound,alphafp,kskipvs,vsdamp,kframe,zelip, &
+           fwtdlc,sigdlc,elomin,kcalpa,kcgama,calpa,cgama,xalpa,xgama, &
+           kzeroj,rzeroj,iaveus,relax,fwtec,bitec,fitsiref, &
+           kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens, &
+           kwwfnc,kwwknt,wwknt,wwtens,nbdry,rbdry,zbdry, &
+           ppbdry,kppbdry,pp2bdry,kpp2bdry, &
+           ffbdry,kffbdry,ff2bdry,kff2bdry, &
+           wwbdry,kwwbdry,ww2bdry,kww2bdry &
+           ,ktear,kersil,iout,ixray,table_dir,input_dir,store_dir &
+           ,kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve &
+           ,iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum &
+           ,appendsnap,vbit,nbdrymx,efitversion,ifindopt,tolbndpsi
+      namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
+           znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
+           oldcomp,currc199,curriu30,curriu90, &
+           curriu150,curril30,curril90,curril150,ifitdelz,scaledz
+      namelist/inms/xmprcg,xmp_k,vresxmp,t0xmp,psircg,psi_k,vrespsi &
+           ,t0psi,fcrcg,fc_k,vresfc,t0fc,ercg,e_k,vrese,t0e,bcrcg &
+           ,bc_k,vresbc,t0bc,prcg,p_k,vresp,t0p,bti322in,curc79in &
+           ,curc139in,curc199in,devxmpin,rnavxmpin,devpsiin,rnavpsiin &
+           ,devfcin,rnavfcin,devein,rnavecin
+      namelist/ink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace &
+           ,symmetrize,backaverage
+      namelist/ins/tgamma,sgamma,fwtgam,rrrgam,zzzgam,aa1gam,aa2gam, &
+                   aa3gam,aa4gam,aa5gam,aa6gam,aa7gam,msebkp, &
+            msefitfun,mse_quiet,mse_spave_on,kwaitmse, &
+            dtmsefull,mse_strict,t_max_beam_off,ok_30rt,ok_210lt,&
+            mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210,&
+            tgammauncor,v30lt,v30rt,v210lt,v210rt
+      namelist/in_msels/bmsels,sbmsels,fwtbmsels,rrmsels,zzmsels, &
+            l1msels,l2msels,l4msels,emsels,semsels,fwtemsels,kdomsels, &
+            fmlscut,synmsels,avemsels
+      namelist/ina/spatial_avg_gam
+      namelist/inece/necein,teecein0,feece0,errorece0,fwtece0,fwtecebz0 &
+           ,ecefit,ecebzfit,kfitece,kinputece,kcallece,nharm &
+           ,kfixro,rteo,zteo,kfixrece,rtep,rtem,rpbit,rmbit,robit &
+           ,nfit,kcmin,fwtnow,mtxece
+      namelist/iner/keecur,ecurbd,keefnc,eetens,keebdry,kee2bdry, &
+                    eebdry,ee2bdry,eeknt,keeknt,keehord
+      namelist/efitin/ishot,istore,timeb,dtime,mtime,scrape,nextra, &
+           iexcal,itrace,xltype,ivesel,fwtsi,fwtmp2,fwtcur,iprobe, &
+           itek,limid,qvfit,fwtbp,kffcur,kppcur,fwtqa,mxiter,  &
+           serror,ibatch,ifitvs,fwtfc,iecurr,itimeb,idtime,znose, &
+           iavem,iaved,iavev,idite,ifcurr,imerci,iacoil,iaveus, &
+           cutip,lookfw,error,errmin,xltype_180,icprof,condin, &
+           icutfp,keqdsk,kcaldia,fcurbd,pcurbd,ircfact,zelip, &
+           kbound,alphafp,kskipvs,vsdamp,kframe,dnmin,vzeroj, &
+           fwtdlc,elomin,fwtgam,saicon,fwacoil,itimeu,nccoil, &
+           kcalpa,kcgama,calpa,cgama,xalpa,xgama,n1coil,rexpan, &
+           psiwant,ibtcomp,icinit,iplim,kwripre,relax,rzeroj,kzeroj, &
+           kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens, &
+           kwwfnc,kwwknt,wwknt,wwtens,sizeroj,fwtec, &
+           ppbdry,kppbdry,pp2bdry,kpp2bdry,nicoil,oldcomp, &
+           ffbdry,kffbdry,ff2bdry,kff2bdry,msefitfun, &
+           wwbdry,kwwbdry,ww2bdry,kww2bdry,fwtec,fitdelz,fitsiref, &
+           nbdry,rbdry,zbdry,sigrbd,sigzbd,nbskip,msebkp, &
+           ktear,keecur,ecurbd,keefnc,eetens,eeknt,keeknt, &
+           keebdry,kee2bdry,eebdry,ee2bdry,kersil,iout,ixray, &
+           use_alternate_pointnames, alternate_pointname_file, &
+           do_spline_fit,table_dir,input_dir,store_dir,kedgep, &
+           pedge,pe_psin,pe_width,kedgef,f2edge,fe_psin,fe_width, &
+           psiecn,dpsiecn,relaxdz,fitzts,isolve,stabdz &
+           ,iplcout,errdelz,imagsigma,errmag,ksigma,saimin,errmagb &
+           ,write_Kfile,fitfcsum,fwtfcsum,appendsnap &
+           ,mse_quiet,mse_spave_on,kwaitmse,dtmsefull &
+           ,mse_strict,t_max_beam_off,ifitdelz,scaledz &
+           ,mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210 &
+           ,ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels,idebug,jdebug &
+           ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi
+      namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace &
+           ,symmetrize,backaverage,lring
+      data mcontr/35/,lfile/36/,ifpsi/0/
+      data currn1/0.0/,currc79/0.0/,currc139/0.0/,currc199/0.0/ &
+                      ,curriu30/0.0/,curriu90/0.0/,curriu150/0.0/ &
+                      ,curril30/0.0/,curril90/0.0/,curril150/0.0/
+      logical exists
+      integer, intent(inout) :: kerror
+
+      ALLOCATE(coils(nsilop),expmp2(magpri), &
+                denr(nco2r),denv(nco2v), &
+                tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark), &
+                zzzgam(nmtark),aa1gam(nmtark),aa2gam(nmtark), &
+                aa3gam(nmtark),aa4gam(nmtark),aa5gam(nmtark), &
+                aa6gam(nmtark),aa7gam(nmtark), &
+                tgammauncor(nmtark))
+      ALLOCATE(bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
+         rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels),l2msels(nmsels), &
+         l4msels(nmsels),emsels(nmsels),semsels(nmsels),fwtemsels(nmsels))
+      ALLOCATE(tlibim(libim),slibim(libim),rrrlib(libim))
+      ALLOCATE(devxmpin(magpri),rnavxmpin(magpri) &
+               ,devpsiin(nsilop),rnavpsiin(nsilop) &
+               ,devfcin(nfcoil),rnavfcin(nfcoil) &
+               ,devein(nesum),rnavecin(nesum))
+
+
+      kerror = 0
+      table_di2 = table_dir
+! --- find length of default directories
+      ltbdir=0
+      lindir=0
+      lstdir=0
+      do i=1,len(table_dir)
+         if (table_dir(i:i).ne.' ') ltbdir=ltbdir+1
+         if (input_dir(i:i).ne.' ') lindir=lindir+1
+         if (store_dir(i:i).ne.' ') lstdir=lstdir+1
+      enddo
+      ltbdi2=ltbdir
+!
       mdoskip=0
       iout=1                 ! default - write fitout.dat
       appendsnap='KG'
@@ -601,12 +735,140 @@
         itell=1
         if (fitdelz) itell=4
       endif
-
-
-      call set_basis_params
-
-
+!---------------------------------------------------------------------
+!--  specific choice of current profile                             --
+!--       ICPROF=1  no edge current density allowed                 --
+!--       ICPROF=2  free edge current density                       --
+!--       ICPROF=3  weak edge current density constraint            --
+!---------------------------------------------------------------------
+      if (icprof.eq.1) then
+        kffcur=2
+        kppcur=2
+        fcurbd=1.
+        pcurbd=1.
+        fwtbp=1.
+        fwtqa=0.
+        qvfit=0.
+      elseif (icprof.eq.2) then
+        kffcur=2
+        kppcur=2
+        fcurbd=0.
+        pcurbd=0.
+        fwtbp=0.
+        fwtqa=0.
+        qvfit=0.
+      elseif (icprof.eq.3) then
+        kffcur=3
+        kppcur=2
+        fcurbd=0.
+        pcurbd=0.
+        fwtbp=0.
+        fwtqa=0.
+        qvfit=0.
+        kcalpa=1
+        calpa(1,1)=0.1_dp
+        calpa(2,1)=0.1_dp
+        calpa(3,1)=0.1_dp
+        xalpa(1)=0.0
+        kcgama=1
+        cgama(1,1)=0.1_dp
+        cgama(2,1)=0.1_dp
+        cgama(3,1)=0.1_dp
+        xgama(1)=0.0
+      endif
+      if(mse_usecer .eq. 1)keecur = 0
+      if(mse_usecer .eq. 2 .and. keecur .eq. 0) then
+           keecur = 2
+           keefnc = 0
+           itek = 5
+      endif
+      if (imagsigma.gt.0) then
+         do_spline_fit=.false.
+         saimin=300.
+      endif
+!---------------------------------------------------------------------
+!-- adjust fit parameters based on basis function selected          --
+!---------------------------------------------------------------------
+       if (kppfnc .eq. 3) then
+          kppcur = 4 * (kppknt - 1)
+       endif
+       if (kppfnc .eq. 4) then
+          kppcur = 4 * (kppknt - 1)
+       endif
+       if (kppfnc .eq. 5) then
+          kppcur = kppcur * (kppknt - 1)
+       endif
+       if (kppfnc .eq. 6) then
+          kppcur = kppknt * 2
+       endif
+       if (kfffnc .eq. 3) then
+          kffcur = 4 * (kffknt - 1)
+       endif
+       if (kfffnc .eq. 4) then
+          kffcur = 4 * (kffknt - 1)
+       endif
+       if (kfffnc .eq. 5) then
+          kffcur = kffcur * (kffknt - 1)
+       endif
+       if (kfffnc .eq. 6) then
+          kffcur = kffknt * 2
+       endif
+       if (kwwfnc .eq. 3) then
+          kwwcur = 4 * (kwwknt - 1)
+       endif
+       if (kwwfnc .eq. 4) then
+          kwwcur = 4 * (kwwknt - 1)
+       endif
+       if (kwwfnc .eq. 5) then
+          kwwcur = kwwcur * (kwwknt - 1)
+       endif
+       if (kwwfnc .eq. 6) then
+          kwwcur = kwwknt * 2
+       endif
+       if (keecur.gt.0) then
+       if (keefnc .eq. 3) then
+          keecur = 4 * (keeknt - 1)
+       endif
+       if (keefnc .eq. 4) then
+          keecur = 4 * (keeknt - 1)
+       endif
+       if (keefnc .eq. 5) then
+          keecur = keecur * (keeknt - 1)
+       endif
+       if (keefnc .eq. 6) then
+          keecur = keeknt * 2
+       endif
+       endif
+!
+      if (kzeroj.eq.1.and.sizeroj(1).lt.0.0) sizeroj(1)=psiwant
+!---------------------------------------------------------------------
+!-- wakeup mode KDATA=16                                            --
+!---------------------------------------------------------------------
 10999 continue
+      if (kwake.eq.1) then
+28000   inquire(file='wakeefit.dat',opened=lopened)
+        if (lopened) close(unit=neqdsk)
+        open(unit=neqdsk, file='wakeefit.dat', status='old', err=28002)
+        go to 28005
+28002   call lib$wait(10.0)
+        go to 28000
+28005   iread=0
+28010   read (neqdsk,*,end=28020,err=28000) ishot,timeb,dtime,ktime
+        iread=iread+1
+        if (iread.ge.ireadold+1) go to 28020
+        go to 28010
+28020   close(unit=neqdsk)
+        if (iread.le.ireadold) then
+          call lib$wait(10.0)
+          go to 28000
+        endif
+        if (ishot.lt.0) then
+          kerror = 1
+          call errctrl_msg('getsets','shot not found')
+          return
+        endif
+        ireadold=iread
+      endif
 
 !
 ! -- Qilong Ren
@@ -614,7 +876,10 @@
       ttimeb = timeb
       ddtime = dtime
       kktime = ktime
-
+!----------------------------------------------------------------------
+!--   Set proper Green's directory table_dir based on shot number    --
+!----------------------------------------------------------------------
+      call set_table_dir
 !-------------------------------------------------------------------------------
 !--  Set bit noise for ishot > 152000                                         --
 !-------------------------------------------------------------------------------
@@ -668,7 +933,6 @@
       endif
 ! MPI >>>
 
-     print *,'getptsdata:', ishot,times,delt,ktime,istop
 #if defined(USEMPI)
 ! MK 2020.10.08 TODO All control paths *should* be identical here
 ! MK i.e. only call getpts_mpi, regardless of nproc
@@ -770,17 +1034,19 @@
   200 continue
 
  1000 continue
-
+      call set_table_dir
       call efit_read_tables
-
-      if (kdata.ne.2) then
-        call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
-      endif
-        drgrid=rgrid(2)-rgrid(1)
-        dzgrid=zgrid(2)-zgrid(1)
-        darea=drgrid*dzgrid
-        tmu2=-pi*tmu*dzgrid/drgrid
-
+     
+!----------------------------------------------------------------------
+!-- read in the plasma response function                             --
+!----------------------------------------------------------------------
+!
+      if (kdata.ne.2) &
+      call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
+      drgrid=rgrid(2)-rgrid(1)
+      dzgrid=zgrid(2)-zgrid(1)
+      darea=drgrid*dzgrid
+      tmu2=-pi*tmu*dzgrid/drgrid
 !
       return
  3000 continue

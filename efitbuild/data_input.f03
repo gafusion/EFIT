@@ -978,12 +978,10 @@
 !----------------------------------------------------------------------
 !--   recalculate length of default directories in case any change   --
 !----------------------------------------------------------------------
+      call set_table_dir
+      call efit_read_tables
 
-      if ((table_dir.ne.table_nam).or.(jtime.le.1)) then
-        call set_table_dir
-        call efit_read_tables
-      endif
-
+11337 continue
 !---------------------------------------------------------------------
 !--  specific choice of current profile                             --
 !--       ICPROF=1  no edge current density allowed                 --
@@ -1521,39 +1519,8 @@
 !--        shot >= 168191 new 2017 set                                --
 !-----------------------------------------------------------------------
       if (kdata.ne.2) then
-      if (ishot.ge.112000.and.jtime.le.1) then
-        if (ishot.lt.156000) then
-          table_dir = table_dir(1:ltbdir)//'112000/'
-        elseif (ishot.lt.168191) then
-          table_dir = table_dir(1:ltbdir)//'156014/'
-        elseif (ishot.lt.181292) then
-          table_dir = table_dir(1:ltbdir)//'168191/'
-        elseif (ishot.ge.181292) then
-          table_dir = table_dir(1:ltbdir)//'181292/'
-        endif
-        ltbdir=ltbdir+7
-        ltbdi2=ltbdir
-        table_di2 = table_dir
-        if (rank == 0) then
-          write(*,*) 'table_dir = <',table_dir(1:ltbdir),'>'
-        endif
-!----------------------------------------------------------------------
-!-- read in the f coil response functions                            --
-!----------------------------------------------------------------------
-        open(unit=nrspfc,form='unformatted', &
-           status='old',file=table_dir(1:ltbdir)//'rfcoil.ddd')
-        read (nrspfc) rsilfc
-        read (nrspfc) rmp2fc
-        close(unit=nrspfc)
-!----------------------------------------------------------------------
-!-- read in the plasma response function                             --
-!----------------------------------------------------------------------
-        open(unit=nrsppc,status='old',form='unformatted', &
-           file=table_dir(1:ltbdir)//'ep'//trim(ch1)//trim(ch2)//'.ddd')
-        read (nrsppc) gsilpc
-        read (nrsppc) gmp2pc
-        close(unit=nrsppc)
-      endif
+        call set_table_dir
+        call efit_read_tables
       endif
 !
       if (pasmat(jtime).le.-1.e3_dp) then
@@ -1645,25 +1612,25 @@
       go to 340
 !
   325 continue
-      if (kdata.ne.2) then
-      if (jtime.le.1) then
-        open(unit=80,status='old',file=table_di2(1:ltbdi2)//'dprobe.dat')
-        rsi(1)=-1.
-        read (80,in3)
-        read (80,10200) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
-                i=1,mfcoil)
-        if (rsi(1).lt.0.) &
-        read (80,10200) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
-                i=1,nsilop)
-        read (80,10220) (re(i),ze(i),we(i),he(i),ecid(i), &
-                                        i=1,necoil)
-        if (ifitvs.gt.0.or.icutfp.eq.2) then
-          read (80,10200) (rvs(i),zvs(i),wvs(i),hvs(i), &
-                                        avs(i),avs2(i),i=1,nvesel)
-        endif
-        close(unit=80)
-      endif
-      endif
+ !     if (kdata.ne.2) then
+ !     if (jtime.le.1) then
+ !       open(unit=80,status='old',file=table_di2(1:ltbdi2)//'dprobe.dat')
+ !       rsi(1)=-1.
+ !       read (80,in3)
+ !       read (80,10200) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
+ !               i=1,mfcoil)
+ !       if (rsi(1).lt.0.) &
+ !       read (80,10200) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
+ !               i=1,nsilop)
+ !       read (80,10220) (re(i),ze(i),we(i),he(i),ecid(i), &
+ !                                       i=1,necoil)
+ !       if (ifitvs.gt.0.or.icutfp.eq.2) then
+ !         read (80,10200) (rvs(i),zvs(i),wvs(i),hvs(i), &
+ !                                       avs(i),avs2(i),i=1,nvesel)
+ !       endif
+ !       close(unit=80)
+ !     endif
+ !     endif
 !-----------------------------------------------------------------------
 !--  Fourier expansion of vessel sgments                              --
 !-----------------------------------------------------------------------
@@ -1893,31 +1860,31 @@
         ecurrt(i)=eccurt(jtime,i)
         cecurr(i)=ecurrt(i)
   510 continue
-      if (kdata.ne.2) then
-      if ((iecurr.le.0).or.(idodo.gt.0)) go to 520
-      open(unit=nrsppc,status='old',form='unformatted', &
-           file=table_dir(1:ltbdir)//'re'//trim(ch1)//trim(ch2)//'.ddd')
-      read (nrsppc) rsilec
-      read (nrsppc) rmp2ec
-      read (nrsppc) gridec
-      close(unit=nrsppc)
-      idodo=1
-  520 continue
+ !     if (kdata.ne.2) then
+ !     if ((iecurr.le.0).or.(idodo.gt.0)) go to 520
+ !     open(unit=nrsppc,status='old',form='unformatted', &
+ !          file=table_dir(1:ltbdir)//'re'//trim(ch1)//trim(ch2)//'.ddd')
+ !     read (nrsppc) rsilec
+ !     read (nrsppc) rmp2ec
+ !     read (nrsppc) gridec
+ !     close(unit=nrsppc)
+ !     idodo=1
+ ! 520 continue
 !
-      if ((ivesel.le.0).or.(idovs.gt.0)) go to 525
-      open(unit=nrsppc,status='old',form='unformatted', &
-           file=table_dir(1:ltbdir)//'rv'//trim(ch1)//trim(ch2)//'.ddd')
-      read (nrsppc) rsilvs
-      read (nrsppc) rmp2vs
-      read (nrsppc) gridvs
-      close(unit=nrsppc)
-      idovs=1
-      if (ivesel.le.10) go to  525
-      open(unit=nffile,status='old',form='unformatted', &
-           file=table_dir(1:ltbdir)//'fc'//trim(ch1)//trim(ch2)//'.ddd')
-      read (nffile) rfcfc
-      close(unit=nffile)
-      endif
+!      if ((ivesel.le.0).or.(idovs.gt.0)) go to 525
+!      open(unit=nrsppc,status='old',form='unformatted', &
+!           file=table_dir(1:ltbdir)//'rv'//trim(ch1)//trim(ch2)//'.ddd')
+!      read (nrsppc) rsilvs
+!      read (nrsppc) rmp2vs
+!      read (nrsppc) gridvs
+!      close(unit=nrsppc)
+!      idovs=1
+!      if (ivesel.le.10) go to  525
+!      open(unit=nffile,status='old',form='unformatted', &
+!           file=table_dir(1:ltbdir)//'fc'//trim(ch1)//trim(ch2)//'.ddd')
+!      read (nffile) rfcfc
+!      close(unit=nffile)
+!      endif
 !
       do 522 i=1,nfcoil
         if (rsisfc(i).le.-1.0) &
@@ -1929,7 +1896,7 @@
 !-----------------------------------------------------------------------
       if ((iacoil.gt.0).and.(idoac.eq.0)) then
         open(unit=nrsppc,status='old',form='unformatted', &
-             file=table_dir(1:ltbdir)//'ra'//trim(ch1)//trim(ch2)//'.ddd')
+             file=table_di2(1:ltbdi2)//'ra'//trim(ch1)//trim(ch2)//'.ddd')
         read (nrsppc) gridac
         read (nrsppc) rsilac
         read (nrsppc) rmp2ac
@@ -1941,7 +1908,7 @@
 !--------------------------------------------------------------------
       if (isetfb.ne.0.and.idofb.le.0) then
         open(unit=mcontr,status='old',form='unformatted', &
-             file=table_dir(1:ltbdir)//'ef'//trim(ch1)//trim(ch2)//'.ddd')
+             file=table_di2(1:ltbdi2)//'ef'//trim(ch1)//trim(ch2)//'.ddd')
         read (mcontr) mw,mh
         read (mcontr) rgrid,zgrid
         read (mcontr) grdfdb
@@ -2104,7 +2071,7 @@
       npc=0
 !
           open(unit=nffile,status='old',form='unformatted', &
-               file=table_dir(1:ltbdir)//'fc'//trim(ch1)//trim(ch2)//'.ddd')
+               file=table_di2(1:ltbdi2)//'fc'//trim(ch1)//trim(ch2)//'.ddd')
       read (nffile) rfcfc
       read (nffile) rfcpc
       close(unit=nffile)

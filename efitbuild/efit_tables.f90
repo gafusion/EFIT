@@ -9,11 +9,11 @@
         hacoil,wacoil
         
 !---------------------------------------------------------------------
-!-- Read Green's tables from table_dir            --
+!-- Read Green's tables from table_di2            --
 !---------------------------------------------------------------------
-      call set_table_dir
+      !call set_table_di2
       open(unit=mcontr,status='old',form='unformatted', &
-           file=table_dir(1:ltbdir)//'ec'//trim(ch1)//trim(ch2)//'.ddd')
+           file=table_di2(1:ltbdi2)//'ec'//trim(ch1)//trim(ch2)//'.ddd')
       read (mcontr) mw,mh
 
       if(.not.allocated(rgrid)) then
@@ -43,7 +43,7 @@
 !-- read in the f coil response functions                            --
 !----------------------------------------------------------------------
       open(unit=mcontr,form='unformatted', &
-           status='old',file=table_dir(1:ltbdir)//'rfcoil.ddd')
+           status='old',file=table_di2(1:ltbdi2)//'rfcoil.ddd')
       if(.not.allocated(rsilfc)) then
         allocate(rsilfc(nsilop,nfcoil),stat=iallocate_stat)
         if(iallocate_stat/=0) stop "*** Not enough space for rsilfc ***"
@@ -58,7 +58,7 @@
       close(unit=mcontr)
 
       open(unit=mcontr,status='old',form='unformatted', &
-           file=table_dir(1:ltbdir)//'ep'//trim(ch1)//trim(ch2)//'.ddd')
+           file=table_di2(1:ltbdi2)//'ep'//trim(ch1)//trim(ch2)//'.ddd')
       if(.not.allocated(gsilpc)) then
         allocate(gsilpc(nsilop,mw*mh),stat=iallocate_stat)
         if(iallocate_stat/=0) stop "*** Not enough space for gsilpc ***"
@@ -77,7 +77,7 @@
 !----------------------------------------------------------------------
       if (iecurr.gt.0) then
         open(unit=mcontr,status='old',form='unformatted', &
-           file=table_dir(1:ltbdir)//'re'//trim(ch1)//trim(ch2)//'.ddd')
+           file=table_di2(1:ltbdi2)//'re'//trim(ch1)//trim(ch2)//'.ddd')
         read (mcontr) rsilec
         read (mcontr) rmp2ec
         read (mcontr) gridec
@@ -88,7 +88,7 @@
 !----------------------------------------------------------------------
       if (ivesel.gt.0) then
         open(unit=mcontr,status='old',form='unformatted', &
-           file=table_dir(1:ltbdir)//'rv'//trim(ch1)//trim(ch2)//'.ddd')
+           file=table_di2(1:ltbdi2)//'rv'//trim(ch1)//trim(ch2)//'.ddd')
         read (mcontr) rsilvs
         read (mcontr) rmp2vs
         read (mcontr) gridvs
@@ -124,25 +124,26 @@
       include 'modules1.f90'
 
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      integer :: i,reason, nFiles, itmp, imin, isize 
+      integer :: i, reason, nFiles, itmp, imin 
       character(LEN=100), dimension(:), allocatable :: filenames
       integer:: shot_tables(100)
 
 !----------------------------------------------------------------------
 !--   recalculate length of default directories in case any change   --
 !----------------------------------------------------------------------
-      ltbdir=0
+      ltbdi2=0
       lindir=0
       lstdir=0
-      do i=1,len(table_dir)
-         if (table_dir(i:i).ne.' ') ltbdir=ltbdir+1
+      table_di2 = table_dir
+      do i=1,len(table_di2)
+         if (table_di2(i:i).ne.' ') ltbdi2=ltbdi2+1
          if (input_dir(i:i).ne.' ') lindir=lindir+1
          if (store_dir(i:i).ne.' ') lstdir=lstdir+1
       enddo
 
-      print *, table_dir 
+      print *, table_di2 
       ! get the files
-      call system('ls '//trim(table_dir)//' > shot_tables.txt')
+      call system('ls '//trim(table_di2)//' > shot_tables.txt')
       open(31,FILE='shot_tables.txt',action="read")
 
       !how many
@@ -168,20 +169,16 @@
         shot_tables(i)  = itmp
       enddo 
 
-       
       do i=1, nfiles
         if (ishot.ge. shot_tables(i)) then
-          table_dir = table_dir(1:ltbdir)//trim(filenames(i))//'/'
-          isize = len(trim(filenames(i)))+1
-          print *, table_dir,filenames
+          table_di2 = table_di2(1:ltbdi2)//trim(filenames(i))//'/'
         endif
       enddo
       
-      ltbdir=len(trim(table_dir))!ltbdir+isize
-      ltbdi2=len(trim(table_dir))
-      table_di2 = table_dir
+      ltbdi2 = len(trim(table_di2))
+
       if (rank == 0) then
-        write(*,*) 'table_dir = <',table_dir(1:ltbdir),'>'
+        write(*,*) 'table_di2 = <',table_di2(1:ltbdi2),'>'
       endif
 
    end subroutine set_table_dir
