@@ -290,8 +290,6 @@
       DIMENSION post1(mgaus1),wght1(mgaus1),post2(mgaus2) &
            ,wght2(mgaus2)
       DATA init/0/
-
-      print *, mgaus1,mgaus2
 !
       IF (init.gt.0) go to 100
 !vas introduced to make it ok in hydra
@@ -299,7 +297,6 @@
 !org      ngaus2=mgaus2
 !org      call lgauss(post1,wght1,ngaus1,ner)
 !org      call lgauss(post2,wght2,ngaus2,ner)
-      print *, 'initializing',init,mgaus1,mgaus2
       CALL lgauss(post1,wght1,mgaus1,ner)
       CALL lgauss(post2,wght2,mgaus2,ner)
       init=1
@@ -336,8 +333,6 @@
          IF (t12.ne.0) rf = r1+(0.5*w1+0.5*h1/abs(t12))*post1(i)
          DO j = 1,mgaus2
 !org         DO j = 1,ngaus2
-            print *,r1,z1,w1,h1,t1,t12,r2,z2,w2,h2,t2,t22,xbm1,xbm2
-            print *, xtm1,xtm2,hfa,hsa,rf,rs,solx
             rs = r2+0.5*w2*post2(j)
             IF (t22.ne.0) rs = r2+(0.5*w2+0.5*h2/abs(t22))*post2(j)
             CALL soleno(r1,z1,w1,h1,t1,t12,r2,z2,w2,h2,t2,t22,xbm1,xbm2,&
