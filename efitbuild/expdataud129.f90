@@ -117,8 +117,8 @@
       include 'eparmdud129.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-      integer type
+      integer type,ilimshot
+      character*100 filin
       namelist/lim/xlim,ylim,limitr
       data lfile/36/
 !
@@ -142,59 +142,24 @@
 ! --- read in limiter data
 !
       limid=iabs(limitr)
-      if (ishot.ge.51351) go to 120
-      write (filimt,6530) limid
-      go to 130
-  120 continue
-      if (ishot.le.51949) write (filimt,6540) limid
-      if (ishot.gt.51949) write (filimt,6542) limid
-      if (ishot.gt.51979) write (filimt,6544) limid
-      if (ishot.gt.52360) write (filimt,6546) limid
-      if (ishot.gt.54020) write (filimt,6548) limid
-      if (ishot.gt.57590) write (filimt,6650) limid
-      if (ishot.gt.70074) write (filimt,6652) limid
-      if (ishot.gt.71758) write (filimt,6654) limid
-      if (ishot.gt.74336) write (filimt,6656) limid
-      if (ishot.gt.76756) write (filimt,6658) limid
-      if (ishot.gt.88400) write (filimt,6660) limid
-      if (ishot.ge.91000) write (filimt,6662) limid
-      if (ishot.ge.100771) write (filimt,6664) limid
-      if (ishot.ge.124411) write (filimt,6666) limid
-      if (ishot.ge.139282) write (filimt,6668) limid
-      if (ishot.ge.163931) write (filimt,6670) limid
-!     if (ishot.ge.168191) write (filimt,6672) limid
-      if (ishot.ge.168191) then
-         if (limid.le.99) then
-             write (filimt,6672) limid
-         else
-             write (filimt,6674) limid
-         endif
-      endif
-      if (ishot.ge.181292) then
-         if (limid.le.99) then
-             write (filimt,6676) limid
-         else
-             write (filimt,6678) limid
-         endif
-      endif
-  130 continue
-      filimt=input_dir(1:lindir)//filimt
-      open(unit=lfile,                       status='old', &
-        file=filimt         )
-      if (ishot.le.76756) then
-      read (lfile,4980) limitr
-      read (lfile,5000) (xlim(i),ylim(i),i=1,limitr) &
-           ,(xlim(i),ylim(i),i=limitr+2,limitr+13)
+
+      filin=input_dir(1:lindir)//'lim.dat'
+      open(unit=lfile,access='sequential', &
+      status='old',file=filin,err=120)
+
+  100 read (lfile,*, end=120) ilimshot, limitr
+
+      do i=1,limitr
+        read(lfile,5010) xlim(i),ylim(i)
+      enddo
+      if (nshot.ge.ilimshot) then
+        goto 120
       else
-      read (lfile,*,err=11132)    limitr
-      read (lfile,*)    (xlim(i),ylim(i),i=1,limitr)
-      go to 11152
-11132 close (unit=lfile)
-      open(unit=lfile,                       status='old', &
-        file=filimt         )
-      read (lfile,lim)
+        goto 100
       endif
-11152 close(unit=lfile)
+  120 close(unit=lfile)
+
+  
 !----------------------------------------------------------------
 !--  Fixed poloidal limiter for shot > 88400                   --
 !----------------------------------------------------------------
@@ -350,6 +315,7 @@
 !
  4980 format (i5)
  5000 format (2e12.6)
+ 5010 format (2E14.6)
  6530 format ('limd3d.0',i2)
  6540 format ('lim042386.0',i2)
  6542 format ('lim060686.0',i2)
