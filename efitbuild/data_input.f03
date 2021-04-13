@@ -29,6 +29,8 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       parameter(mfila=10)
       parameter (m_ext=101)
+      
+      character(len=1000) :: line
 
       real*8,allocatable :: gridpf(:,:),gwork(:,:),rgrids(:),zgrids(:)
       real*8,dimension(:),allocatable ::  coils,expmp2,acoilc &
@@ -489,7 +491,16 @@
       table_nam = table_dir
       nbdryp=-1
       ktear=0
-      read (nin,in1)
+
+      read (nin,in1,iostat=istat)
+
+      if (istat/=0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') &
+         'Invalid line in namelist: '//trim(line)
+      end if
+
       if (nbdryp==-1) nbdryp=nbdry
       read (nin,ink,err=11111,end=101)
 101    continue

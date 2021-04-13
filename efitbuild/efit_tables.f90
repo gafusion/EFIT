@@ -4,6 +4,8 @@
       include 'modules2.f90'
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
+      integer*4  :: istat
+      character(len=1000) :: line
       namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi,as, &
         as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
         hacoil,wacoil,rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2,fcturn, &
@@ -99,8 +101,19 @@
       open(unit=mcontr,status='old',file=table_di2(1:ltbdi2)//'dprobe.dat')
       rsi(1)=-1.
       re(1) = -1.
+      rf(1) = -1.
+      rvs(1) = -1.
 
-      read (mcontr,in3)
+      read (mcontr,in3, iostat=istat)
+
+      if (istat/=0) then
+        backspace(mcontr)
+        read(mcontr,fmt='(A)') line
+        write(*,'(A)') &
+         'Invalid line in namelist: '//trim(line)
+      end if
+ 
+      if (rf(1).lt.0)&
       read (mcontr,10200) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
                 i=1,mfcoil)
       if (rsi(1).lt.0.) &
@@ -109,7 +122,8 @@
       if (re(1).lt.0.) &
         read (mcontr,10220) (re(i),ze(i),we(i),he(i),ecid(i), &
                                         i=1,necoil)
-      if (ifitvs.gt.0.or.icutfp.eq.2) then
+     
+      if (rvs(1).lt.0 .and. (ifitvs.gt.0.or.icutfp.eq.2)) then
         read (mcontr,10200) (rvs(i),zvs(i),wvs(i),hvs(i), &
                                         avs(i),avs2(i),i=1,nvesel)
       endif
@@ -145,7 +159,6 @@
          if (store_dir(i:i).ne.' ') lstdir=lstdir+1
       enddo
 
-      print *, table_di2 
       ! get the files
       call system('ls '//trim(table_di2)//' > shot_tables.txt')
       open(31,FILE='shot_tables.txt',action="read")
