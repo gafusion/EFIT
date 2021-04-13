@@ -1973,14 +1973,19 @@
             jerror(jtime) = 1
             return
           endif
-          if (idebug.ge.2) write(6,*) 'Entering vescur' 
-          if (ivesel.ge.2) call vescur(jtime)
-          if ((i.le.1).or.(in.gt.1)) call fcurrt(jtime,ix,nitera,kerror)
+           
+          if (ivesel.ge.2) then
+             if (idebug.ge.2) write(6,*) 'Entering vescur'
+             call vescur(jtime)
+          endif
+          if ((i.le.1).or.(in.gt.1)) then
+              if (idebug.ge.2) write(6,*) 'Entering fcurrt'
+             call fcurrt(jtime,ix,nitera,kerror)
+          endif 
           if (kerror /= 0) then
             jerror(jtime) = 1
             return
           endif
-
           if (idebug.ge.2) write(6,*) 'Entering pflux' 
           call pflux(ix,ixnn,nitera,jtime,kerror)
           if (kerror.gt.0) then
@@ -5654,6 +5659,7 @@
 !------------------------------------------------------------------------------
       go to 6000
  2000 continue
+
 !-----------------------------------------------------------------------------
 !-- Buneman's method of obtaining psi at the inner grid points              --
 !-- only plasma contribution                                                --
@@ -8503,6 +8509,15 @@
       m10=10
 
       if (idebug >= 2) write (6,*) 'Entering findax'
+      !print *, 'nw,nh,rgrid,zgrid',nw,nh,rgrid,zgrid
+      !print *, 'rmaxis,zmaxis,simag', rmaxis,zmaxis,simag
+      !print *, 'psibry,rseps(1,jtime),zseps(1,jtime),m10', psibry,rseps(1,jtime),zseps(1,jtime),m10
+      !print *, 'xout,yout,nfound,psi', xout,yout,nfound,psi
+      !print *, 'xmin,xmax,ymin,ymax',xmin,xmax,ymin,ymax
+      !print *,  'zxmin,zxmax,rymin,rymax' , zxmin,zxmax,rymin,rymax
+      !print *,  'dpsi,bpol,bpolz' , dpsi,bpol,bpolz
+      !print *, 'limitr,xlim,ylim,limfag', limitr,xlim,ylim,limfag
+      !print *, 'ixt,jtime,kerror', ixt,jtime,kerror
       call findax(nw,nh,rgrid,zgrid,rmaxis,zmaxis,simag, &
                   psibry,rseps(1,jtime),zseps(1,jtime),m10, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
