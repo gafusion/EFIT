@@ -48,8 +48,8 @@
 !Revision 1.1  2007/04/24 05:16:17  renq
 !Initial revision
 !
-      integer :: time_cc, time_cr, time_cm
-      real :: elapsed_time
+      integer*4 :: time_cc, time_cr, time_cm
+      real*8 :: elapsed_time
 
       call system_clock(time_cc,time_cr,time_cm)
       elapsed_time = time_cc*(1.0/time_cr)
@@ -290,16 +290,14 @@
       DIMENSION post1(mgaus1),wght1(mgaus1),post2(mgaus2) &
            ,wght2(mgaus2)
       DATA init/0/
-
-      print *, mgaus1,mgaus2
 !
+      init=0
       IF (init.gt.0) go to 100
 !vas introduced to make it ok in hydra
 !org      ngaus1=mgaus1
 !org      ngaus2=mgaus2
 !org      call lgauss(post1,wght1,ngaus1,ner)
 !org      call lgauss(post2,wght2,ngaus2,ner)
-      print *, 'initializing',init,mgaus1,mgaus2
       CALL lgauss(post1,wght1,mgaus1,ner)
       CALL lgauss(post2,wght2,mgaus2,ner)
       init=1
@@ -329,15 +327,13 @@
       IF (t22 .lt. 0.) xtm2 = xl2 + w2
 !
   300 CONTINUE
-      print*,'vasan : ',init,mgaus1,mgaus2
+      
       DO i = 1,mgaus1
 !org      DO i = 1,ngaus1
          rf = r1+.5*w1*post1(i)
          IF (t12.ne.0) rf = r1+(0.5*w1+0.5*h1/abs(t12))*post1(i)
          DO j = 1,mgaus2
 !org         DO j = 1,ngaus2
-            print *,r1,z1,w1,h1,t1,t12,r2,z2,w2,h2,t2,t22,xbm1,xbm2
-            print *, xtm1,xtm2,hfa,hsa,rf,rs,solx
             rs = r2+0.5*w2*post2(j)
             IF (t22.ne.0) rs = r2+(0.5*w2+0.5*h2/abs(t22))*post2(j)
             CALL soleno(r1,z1,w1,h1,t1,t12,r2,z2,w2,h2,t2,t22,xbm1,xbm2,&
@@ -635,9 +631,11 @@
                IF ((j.gt.1).or.(i.ne.ni)) THEN
                   zdif=(j-1)*dz
                   gridpc(kk,ni)=psical(rgrid(i),rgrid(ni),zdif)*tmu
+                  
                ELSE
                   CALL flux(rgrid(ni),aaa,dr,dz,aaa,aaa,rgrid(ni),aaa,&
                             dr,dz,aaa,aaa,fridpc)
+                  print *, fridpc
                   gridpc(kk,ni)=fridpc*0.5/pi
                ENDIF
             ENDDO 
@@ -859,20 +857,23 @@
       ENDDO 
 !
       aaa=0.0
+      rvsec(:,:) = 0.0
       DO j=1,nvesel
          tas(j)=tan(avs(j)*pi/180.)
          tas2(j)=tan(avs2(j)*pi/180.)
          DO i=1,nesum
             rvsec(j,i)=0.0
-         ENDDO 
-         DO i=1,necoil
-            CALL flux(re(i),ze(i),we(i),he(i),aaa,aaa, &
-                      rvs(j),zvs(j),wvs(j),hvs(j),tas(j),tas2(j),work)
-            work=work*0.5/pi
-            kkm=ecid(i)
-            kk=kkm+1
-            rvsec(j,kkm)=rvsec(j,kkm)+work*(kk-ecid(i))
          ENDDO
+         IF  (iecoil.eq.1) then
+            DO i=1,necoil
+               CALL flux(re(i),ze(i),we(i),he(i),aaa,aaa, &
+                      rvs(j),zvs(j),wvs(j),hvs(j),tas(j),tas2(j),work)
+               work=work*0.5/pi
+               kkm=ecid(i)
+               kk=kkm+1
+               rvsec(j,kkm)=rvsec(j,kkm)+work*(kk-ecid(i))
+            ENDDO
+         ENDIF
       ENDDO 
 !
       DO j=1,nvesel
@@ -1327,7 +1328,6 @@
 !----------------------------------------------------------------------
 !-- calculate the response FUNCTION of psi loops due to f coils      --
 !----------------------------------------------------------------------
-      print *, nfcoil
       DO i=1,nfcoil
          taf(i)=tan(af(i)*pi/180.)
          taf2(i)=tan(af2(i)*pi/180.)
@@ -1335,7 +1335,7 @@
       IF (islpfc.le.0) GO TO 300
       DO i=1,nfcoil
          DO j=1,nfcoil
-            print *, i,j,rf(j),zf(j),wf(j),hf(j),af(j),af2(j)
+            
             CALL flux(rf(i),zf(i),wf(i),hf(i),taf(i),taf2(i), &
                       rf(j),zf(j),wf(j),hf(j),taf(j),taf2(j), &
                       rfcfc(j,i))
@@ -1346,7 +1346,6 @@
          CALL gsilop(rgrid,nw,zgrid,nh,rfcpc,ii,rf,zf,wf,hf,af,af2 &
             ,nfcoil)
       ENDDO
-      print *, nfcoil
 !vas
       print*,'file name : ','fc'//trim(ch1)// & 
                         trim(ch2)//'.ddd' 

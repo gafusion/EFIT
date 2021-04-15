@@ -35,9 +35,11 @@
       character*30 sfname
       integer, dimension(:), allocatable :: ishotall
       real*8, dimension(:), allocatable :: ch2all,timeall
+
       namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi,as, &
         as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
-        wacoil,hacoil
+        hacoil,wacoil,rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2,fcturn, &
+        re,ze,ecid,ecturn,vsid,rvs,zvs,we,he 
 !
 !#if defined(USEMPI)
 !      ! TODO: Currently this ONLY works if nproc == total number of time slices.

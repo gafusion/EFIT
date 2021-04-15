@@ -609,7 +609,7 @@
       integer*4 nccoil,iercc,nicoil
       data nccoil/1/,nicoil/1/
       logical oldccomp,oldcomp 
-      data oldccomp/.true./,oldcomp/.false./
+      data oldccomp/.false./,oldcomp/.false./
 !***** !EJS(2014)
 ! Not sure why these are separate arrays.
 ! They seem to be the same as the columns of curccoi and curicoi

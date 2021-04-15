@@ -34,7 +34,6 @@
       data iskip/0/,idoit/0/
 
       kerror = 0
-
       if (ifcurr.gt.0) return
       if (itertt.le.1.and.icinit.lt.0) return
       if (islpfc.ne.1) go to 2000
@@ -43,11 +42,9 @@
 !-----------------------------------------------------------------------
       if (iskip.gt.0) go to 1200
       iskip=1
-!vas
-!vas      print*,'file name : ','fc'//trim(ch1)// &
-!vas                         trim(ch2)//'.ddd'
-      open(unit=nffile,status='old',form='unformatted', &
-       file=table_dir(1:ltbdir)//'fc'//trim(ch1)//trim(ch2)//'.ddd')
+
+       open(unit=nffile,status='old',form='unformatted', &
+       file=table_di2(1:ltbdi2)//'fc'//trim(ch1)//trim(ch2)//'.ddd')
         read (nffile) rfcfc
         read (nffile) rfcpc
         close(unit=nffile)
@@ -55,7 +52,7 @@
   !vas      print*,'file name : ','fm'//trim(ch1)// &
   !vas                         trim(ch2)//'.ddd'
         open(unit=nffile,status='old',form='unformatted', &
-       file=table_dir(1:ltbdir)//'fm'//trim(ch1)//trim(ch2)//'.ddd')
+       file=table_di2(1:ltbdi2)//'fm'//trim(ch1)//trim(ch2)//'.ddd')
       read (nffile,err=1150) afma
       read (nffile) ifmatr
       close(unit=nffile)
@@ -84,6 +81,7 @@
       write (nffile) ifmatr
       close(unit=nffile)
  1200 continue
+
       do 1320 i=1,nfcoil
         brsp(i)=0.0
         if (ivacum.gt.0) go to 1310
@@ -101,6 +99,7 @@
           brsp(i)=brsp(i)+rfcvs(i,j)*vcurrt(j)
  1316   continue
  1318   continue
+
         brsp(i)=csilop(i,jtime)-brsp(i)
         if (fitsiref) brsp(i)=brsp(i)+psiref(jtime)
  1320 continue
@@ -380,11 +379,11 @@
         write (106,*) 'pbry= ',(pbry(m),m=1,nbdry)
         write (106,*) 'bbry= ',(bbry(m),m=1,nbdry)
         write (106,*) 'pbry(24),bbry(24)= ',pbry(24),bbry(24)
-        write (106,*) 'rgrid,zgrid= ',rgrid(75),zgrid(104)
+        write (106,*) 'rgrid,zgrid= ',rgrid(75*nw/129),zgrid(104*nh/129)
         write (106,*) 'rbdry,zbdry= ',rbdry(24),zbdry(24)
         bdrav=abs(rbdrpc(24,1))
         bdrmax=abs(rbdrpc(24,1))
-        mbbrmax=1
+        mbdrmax=1
         do m=2,nwnh
           bdrav=bdrav+abs(rbdrpc(24,m))
           if (bdrmax.lt.abs(rbdrpc(24,m))) then
@@ -396,9 +395,9 @@
         write (106,*) 'mbdrmax,bdrav,bdrmax= ',mbdrmax,bdrav,bdrmax
         write (106,*) 'rbdrpc(24,*)= ',(rbdrpc(24,m),m=1,nwnh)
         write (106,*) 'rbdrec(24,*)= ',(rbdrec(24,m),m=1,nesum)
-        zdif=zbdry(24)-zgrid(104)
-        bdrmax=psical(rbdry(24),rgrid(75),zdif)*tmu
-        bdrmaxs=gridpc(9547,75)
+        zdif=zbdry(24)-zgrid(104*nh/129)
+        bdrmax=psical(rbdry(24),rgrid(75*nw/129),zdif)*tmu
+        bdrmaxs=gridpc(9547,75*nw/129)
         write (106,*) 'mbdrmax,bdrmaxs,bdrmax= ',mbdrmax,bdrmaxs,bdrmax
       endif
 !-----------------------------------------------------------------------
@@ -534,6 +533,7 @@
 !-----------------------------------------------------------------------
 !--  now get F coil currents from precomputed inverse matrix          --
 !-----------------------------------------------------------------------
+
       do 3670 i=1,nfcoil
         brsp(i)=0.0
         do 3670 j=1,nj
@@ -608,6 +608,7 @@
       wsibry=wsibry-ssiref
       wsisol=wsisol-ssiref
       endif
+
 !------------------------------------------------------------------------
 !--  fixed boundary flux specified through PSIBRY, IFREF=4             --
 !------------------------------------------------------------------------
@@ -620,6 +621,7 @@
       wsibry=wsibry+ssiref
       wsisol=wsisol+ssiref
       endif
+
       if (idebug >= 2) then
         write (106,*) '      PSIBRY0,PSIBRY,WSIBRY= ',psibry0,psibry,wsibry
       endif
@@ -640,7 +642,7 @@
         erbave=erbave+erbloc(i)
  4100 continue
       erbave=erbave/nbdry
-      if (idebug /= 0) write (106,*) 'FCURRT erbmax,erbave,si = ', erbmax,erbave,wsibry
+      if (idebug /= 0) write (6,*) 'FCURRT erbmax,erbave,si = ', erbmax,erbave,wsibry
       if (idebug >= 2) then
          write (106,*) 'XSIBRY,PBRY(1),BRSP= ',xsibry,pbry(1),(brsp(m),m=1,nfcoil)
       endif
