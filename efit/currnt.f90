@@ -26,8 +26,8 @@
       include 'modules1.f90'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension pds(6)
-      dimension alipc(npcur3,nwcurn),xpspp(nppcur),xpsfp(nffcur) &
-          ,wlipc(nwcurn),work(nwcur2),xrsp(npcur3),xpspwp(nwwcur)
+      dimension alipc(npcur3,nwcurn),xpspp(nppcur),xpsfp(nffcur)
+      dimension wlipc(nwcurn),work(nwcur2),xrsp(npcur3),xpspwp(nwwcur)
       dimension crsp(4*(npcurn-2)+6+npcurn*npcurn,nrsmat)
       dimension b(nrsmat),z(4*(npcurn-2)+6+npcurn*npcurn)
       real*8 :: tcurrt, tcurrtpp, tcurrtffp
