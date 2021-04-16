@@ -511,6 +511,7 @@
         vsurfa,cjor95,pp95,ssep, &
         yyy2,xnnc,wtherm,wfbeam,taujd3,tauthn, &
         ali3,tflux,twagap
+
       real*8,dimension(:,:), allocatable :: rseps,zseps
       real*8 pasman,betatn,psiq1,betat2
       integer jtwagap
