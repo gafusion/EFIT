@@ -1,0 +1,95 @@
+*DECK DBESY1
+      REAL*8 FUNCTION DBESY1 (X)
+C***BEGIN PROLOGUE  DBESY1
+C***PURPOSE  Compute the Bessel function of the second kind of order
+C            one.
+C***LIBRARY   SLATEC (FNLIB)
+C***CATEGORY  C10A1
+C***TYPE      REAL*8 (BESY1-S, DBESY1-D)
+C***KEYWORDS  BESSEL FUNCTION, FNLIB, ORDER ONE, SECOND KIND,
+C             SPECIAL FUNCTIONS
+C***AUTHOR  Fullerton, W., (LANL)
+C***DESCRIPTION
+C
+C DBESY1(X) calculates the double precision Bessel function of the
+C second kind of order for double precision argument X.
+C
+C Series for BY1        on the interval  0.          to  1.60000E+01
+C                                        with weighted error   8.65E-33
+C                                         log weighted error  32.06
+C                               significant figures required  32.17
+C                                    decimal places required  32.71
+C
+C***REFERENCES  (NONE)
+C***ROUTINES CALLED  D1MACH, D9B1MP, DBESJ1, DCSEVL, INITDS, XERMSG
+C***REVISION HISTORY  (YYMMDD)
+C   770701  DATE WRITTEN
+C   890531  Changed all specific intrinsics to generic.  (WRB)
+C   890531  REVISION DATE from Version 3.2
+C   891214  Prologue converted to Version 4.0 format.  (BAB)
+C   900315  CALLs to XERROR changed to CALLs to XERMSG.  (THJ)
+C***END PROLOGUE  DBESY1
+C============
+C idecl:  explicitize implicit INTEGER declarations:
+      IMPLICIT NONE
+      integer, parameter :: r8 = selected_real_kind(12,100)
+      INTEGER nty1,initds
+C============
+      REAL*8 X, BY1CS(20), AMPL, THETA, TWODPI, XMIN, XSML,
+     1  Y, D1MACH, DCSEVL, DBESJ1
+      LOGICAL FIRST
+      SAVE BY1CS, TWODPI, NTY1, XMIN, XSML, FIRST
+      DATA BY1CS(  1) / +.320804710061190862932352018628015E-1_r8/
+      DATA BY1CS(  2) / +.126270789743350044953431725999727E+1_r8/
+      DATA BY1CS(  3) / +.649996189992317500097490637314144E-2_r8/
+      DATA BY1CS(  4) / -.893616452886050411653144160009712E-1_r8/
+      DATA BY1CS(  5) / +.132508812217570954512375510370043E-1_r8/
+      DATA BY1CS(  6) / -.897905911964835237753039508298105E-3_r8/
+      DATA BY1CS(  7) / +.364736148795830678242287368165349E-4_r8/
+      DATA BY1CS(  8) / -.100137438166600055549075523845295E-5_r8/
+      DATA BY1CS(  9) / +.199453965739017397031159372421243E-7_r8/
+      DATA BY1CS( 10) / -.302306560180338167284799332520743E-9_r8/
+      DATA BY1CS( 11) / +.360987815694781196116252914242474E-11_r8/
+      DATA BY1CS( 12) / -.348748829728758242414552947409066E-13_r8/
+      DATA BY1CS( 13) / +.278387897155917665813507698517333E-15_r8/
+      DATA BY1CS( 14) / -.186787096861948768766825352533333E-17_r8/
+      DATA BY1CS( 15) / +.106853153391168259757070336000000E-19_r8/
+      DATA BY1CS( 16) / -.527472195668448228943872000000000E-22_r8/
+      DATA BY1CS( 17) / +.227019940315566414370133333333333E-24_r8/
+      DATA BY1CS( 18) / -.859539035394523108693333333333333E-27_r8/
+      DATA BY1CS( 19) / +.288540437983379456000000000000000E-29_r8/
+      DATA BY1CS( 20) / -.864754113893717333333333333333333E-32_r8/
+      DATA TWODPI / 0.636619772367581343075535053490057_r8/
+      DATA FIRST /.TRUE./
+C***FIRST EXECUTABLE STATEMENT  DBESY1
+      IF (FIRST) THEN
+         NTY1 = INITDS (BY1CS, 20, 0.1_r8*real(D1MACH(3),r8))
+C
+         XMIN = 1.571_r8*
+     1      EXP (MAX(LOG(D1MACH(1)), -LOG(D1MACH(2))) +
+     1      0.01_r8)
+         XSML = SQRT(4.0_r8*D1MACH(3))
+      ENDIF
+      FIRST = .FALSE.
+C
+      IF (X .LE. 0._r8) CALL XERMSG ('SLATEC', 'DBESY1',
+     +   'X IS ZERO OR NEGATIVE', 1, 2)
+      IF (X.GT.4.0_r8) GO TO 20
+C
+      IF (X .LT. XMIN) CALL XERMSG ('SLATEC', 'DBESY1',
+     +   'X SO SMALL Y1 OVERFLOWS', 3, 2)
+      Y = 0._r8
+      IF (X.GT.XSML) Y = X*X
+      DBESY1 = TWODPI * LOG(0.5_r8*X)*DBESJ1(X) + (0.5_r8+
+     1  DCSEVL (.125_r8*Y-1._r8, BY1CS, NTY1))/X
+      RETURN
+C
+ 20   CALL D9B1MP (X, AMPL, THETA)
+      DBESY1 = AMPL * SIN(THETA)
+      RETURN
+C
+      END
+! 22Jun2000 fgtok -s r8_precision.sub "r8con.csh conversion"
+! 22Jun2000 fgtok
+! 22Jun2000 fgtok
+! 22Jun2000 fgtok

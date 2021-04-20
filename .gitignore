@@ -3,3 +3,5 @@
 *.a
 *efitdmpipgf90
 .ptp*
+build
+.*.swp

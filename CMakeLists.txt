@@ -18,13 +18,14 @@ cmake_minimum_required(VERSION 3.18.0)
 #---------------------------------------------------------------------
 # EFIT options
 #---------------------------------------------------------------------
-set(ENABLE_CERLIB FALSE CACHE BOOL "Whether to build cerlib for MDS access")
+#TODO: Can we turn off?
+#set(ENABLE_CERLIB FALSE CACHE BOOL "Whether to build cerlib ")
 
 #---------------------------------------------------------------------
 # Set default values for performance issues if necessary
 #---------------------------------------------------------------------
-# -  See extlibs/NimMath.cmake for math options
-# -  See extlibs/NimIO.cmake for IO options
+# -  See math/efitMath.cmake for math options
+# -  See io/efitIO.cmake for IO options
 set(ENABLE_OpenMP FALSE CACHE BOOL "Whether to enable OpenMP: Default is false")
 set(ENABLE_SHARED_LIBS FALSE CACHE BOOL "Default is to build static")
 set(ENABLE_MEM_PROF OFF CACHE BOOL "Whether to enable (limited) memory profiling")
@@ -171,8 +172,25 @@ if (NOT DEFINED CMAKE_INSTALL_RPATH_USE_LINK_PATH)
 endif ()
 
 #---------------------------------------------------------------------
+# EFIT needs blas.  
+# netlib_lite is overkill for efit, but we may use some of these 
+# routines in the future.  Defer until later to decide how we 
+# want to include it
+#---------------------------------------------------------------------
+include(math/efitMath.cmake)
+add_subdirectory(math/netlib_lite)
+
+#---------------------------------------------------------------------
+# External IO libraries play a big role in what EFIT interfaces to
+#---------------------------------------------------------------------
+include(io/efitIO.cmake)
+add_subdirectory(io)
+
+#---------------------------------------------------------------------
 # Add subdirectories 
 #---------------------------------------------------------------------
+#add_subdirectory(d3lib)
+add_subdirectory(mselib)
 add_subdirectory(cerlib)
 add_subdirectory(green)
 add_subdirectory(efit)

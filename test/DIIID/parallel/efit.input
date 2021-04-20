@@ -1,0 +1,11 @@
+&optin
+mode=3
+cmdfile='0'
+shotfile='0'
+shot=163303
+starttime=1000
+deltatime=20
+steps=8
+snapext='EFIT01'
+inpfile=''
+/

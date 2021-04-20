@@ -4,21 +4,25 @@
 #include <string.h>
 #include <netdb.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+
 
 #define PORTNUMBER 2001
 
 
 void efitnotifier(void) 
 {
-  char buf[1024];
   char localhostname[64];
   char *hostname;
-  int n, s, len;
+  int s, len, hname;
   struct hostent *hp;
   struct sockaddr_in name;
   
   // get local host name
-  if (gethostname(localhostname, sizeof(localhostname)) < 0) {
+  hname = gethostname(localhostname, sizeof(localhostname));
+  if (hname < 0) {
     perror("gethostname");
     return;
   }

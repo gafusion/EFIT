@@ -399,7 +399,7 @@
 !
       ENDIF
 !
- 100  format(' Array dimensions', 2i,' too large. Recompile.')
+ 100  format(' Array dimensions', 2i6 ,' too large. Recompile.')
       RETURN
       END
        subroutine spl2bc(rgrid,zgrid,rknot,zknot,copynew)

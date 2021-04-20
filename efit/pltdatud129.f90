@@ -2,9 +2,6 @@
       rmin,rmax,zmin,zmax,ktime,kerror)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          pltout traces out the plasma outermost surface.  This   **
 !**          version implements the plotting using DISSPLA.          **
@@ -38,10 +35,12 @@
       namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi,as, &
         as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
         wacoil,hacoil
-      character*10 uday
-      character*50 dataname,plotname
+      character(10) :: uday, clocktime
+      character(5)  :: zone
+      integer,dimension(8) :: values
+      character(50) dataname,plotname
       character iname,let
-      character*2 let2
+      character(2) let2
       dimension ae(necoil),ae2(necoil),si(nwf),rmpi(magpri)
       dimension anglem(nstark),anglec(nstark)
       dimension xplt(1),yplt(1),workb(nwf),workc(nwf),workd(nwf),kct(4) &
@@ -51,7 +50,7 @@
       ,qthom(mpress),zqthom(mpress),vnbeam(mpress) &
       ,xiter(kxiter),czmcm(kxiter),workaw(nwf),ptherm(mpress) &
       ,presv(nwf),bpresv(nwf),cpresv(nwf),dpresv(nwf)
-      character*72 text
+      character(72) text
       dimension ratray(10),expsi(nsilop),expmp(magpri),pds(6)
       dimension scrat(ntime),bscra(ntime),cscra(ntime), &
             dscra(ntime),bwork(ndata),cwork(ndata),dwork(ndata)
@@ -214,7 +213,7 @@
   170 continue
       elim=(blmax-blmin)/(almax-almin)
       uday=' '
-      call date(uday)
+      call date_and_time(uday, clocktime, zone, values)
       yll=7.2_dp
       if (iecoil.le.0) then
          if (klabel.ge.0) then

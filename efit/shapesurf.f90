@@ -1,9 +1,6 @@
       subroutine shapesurf(iges,igmax,kerror)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          shape finds the outermost plasma surface                **
 !**          and computes various global plasma parameters.          **

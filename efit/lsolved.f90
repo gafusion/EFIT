@@ -1,9 +1,6 @@
       subroutine decomp(ndim,n,a,cond,ipvt,work)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          decomp decomposes a matrix by gaussian elimination.     **
 !**                                                                  **

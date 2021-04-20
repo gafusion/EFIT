@@ -1,0 +1,7 @@
+      SUBROUTINE PTDATA
+      RETURN
+      END
+      SUBROUTINE PTDATA64
+      RETURN
+      END
+

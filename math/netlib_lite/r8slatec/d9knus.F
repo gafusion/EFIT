@@ -1,0 +1,271 @@
+*DECK D9KNUS
+      SUBROUTINE D9KNUS (XNU, X, BKNU, BKNU1, ISWTCH)
+C***BEGIN PROLOGUE  D9KNUS
+C***SUBSIDIARY
+C***PURPOSE  Compute Bessel functions EXP(X)*K-SUB-XNU(X) and EXP(X)*
+C            K-SUB-XNU+1(X) for 0.0 .LE. XNU .LT. 1.0.
+C***LIBRARY   SLATEC (FNLIB)
+C***CATEGORY  C10B3
+C***TYPE      REAL*8 (R9KNUS-S, D9KNUS-D)
+C***KEYWORDS  BESSEL FUNCTION, FNLIB, SPECIAL FUNCTIONS
+C***AUTHOR  Fullerton, W., (LANL)
+C***DESCRIPTION
+C
+C Compute Bessel functions EXP(X) * K-sub-XNU (X)  and
+C EXP(X) * K-sub-XNU+1 (X) for 0.0 .LE. XNU .LT. 1.0 .
+C
+C Series for C0K        on the interval  0.          to  2.50000E-01
+C                                        with weighted error   2.16E-32
+C                                         log weighted error  31.67
+C                               significant figures required  30.86
+C                                    decimal places required  32.40
+C
+C Series for ZNU1       on the interval -7.00000E-01 to  0.
+C                                        with weighted error   2.45E-33
+C                                         log weighted error  32.61
+C                               significant figures required  31.85
+C                                    decimal places required  33.26
+C
+C***REFERENCES  (NONE)
+C***ROUTINES CALLED  D1MACH, DCSEVL, DGAMMA, INITDS, XERMSG
+C***REVISION HISTORY  (YYMMDD)
+C   770601  DATE WRITTEN
+C   890531  Changed all specific intrinsics to generic.  (WRB)
+C   890911  Removed unnecessary intrinsics.  (WRB)
+C   890911  REVISION DATE from Version 3.2
+C   891214  Prologue converted to Version 4.0 format.  (BAB)
+C   900315  CALLs to XERROR changed to CALLs to XERMSG.  (THJ)
+C   900720  Routine changed from user-callable to subsidiary.  (WRB)
+C   900727  Added EXTERNAL statement.  (WRB)
+C   920618  Removed space from variable names.  (RWC, WRB)
+C***END PROLOGUE  D9KNUS
+C============
+C idecl:  explicitize implicit INTEGER declarations:
+      IMPLICIT NONE
+      integer, parameter :: r8 = selected_real_kind(12,100)
+      INTEGER iswtch,ntc0k,ntznu1,initds,nterms,i,ii,inu,n
+C============
+C idecl:  explicitize implicit REAL declarations:
+      REAL*8 eta,an,bn
+C============
+      REAL*8 XNU, X, BKNU, BKNU1, ALPHA(32), BETA(32), A(32),
+     1  C0KCS(29), ZNU1CS(20), ALNZ, ALN2, A0, BKNUD, BKNU0,
+     2  B0, C0, EULER, EXPX, P1, P2, P3, QQ, RESULT, SQPI2, SQRTX, V,
+     3  VLNZ, XI, XMU, XNUSML, XSML, X2N, X2TOV, Z, ZTOV, ALNSML,
+     4  ALNBIG
+      REAL*8 ALNEPS
+      REAL*8 D1MACH, DCSEVL, DGAMMA
+      LOGICAL FIRST
+      EXTERNAL DGAMMA
+      SAVE C0KCS, ZNU1CS, EULER, SQPI2, ALN2, NTC0K,
+     1 NTZNU1, XNUSML, XSML, ALNSML, ALNBIG, ALNEPS, FIRST
+      DATA C0KCS(  1) / +.60183057242626108387577445180329E-1_r8/
+      DATA C0KCS(  2) / -.15364871433017286092959755943124E+0_r8/
+      DATA C0KCS(  3) / -.11751176008210492040068229226213E-1_r8/
+      DATA C0KCS(  4) / -.85248788891979509827048401550987E-3_r8/
+      DATA C0KCS(  5) / -.61329838767496791874098176922111E-4_r8/
+      DATA C0KCS(  6) / -.44052281245510444562679889548505E-5_r8/
+      DATA C0KCS(  7) / -.31631246728384488192915445892199E-6_r8/
+      DATA C0KCS(  8) / -.22710719382899588330673771793396E-7_r8/
+      DATA C0KCS(  9) / -.16305644608077609552274620515360E-8_r8/
+      DATA C0KCS( 10) / -.11706939299414776568756044043130E-9_r8/
+      DATA C0KCS( 11) / -.84052063786464437174546593413792E-11_r8/
+      DATA C0KCS( 12) / -.60346670118979991487096050737198E-12_r8/
+      DATA C0KCS( 13) / -.43326960335681371952045997366903E-13_r8/
+      DATA C0KCS( 14) / -.31107358030203546214634697772237E-14_r8/
+      DATA C0KCS( 15) / -.22334078226736982254486133409840E-15_r8/
+      DATA C0KCS( 16) / -.16035146716864226300635791528610E-16_r8/
+      DATA C0KCS( 17) / -.11512717363666556196035697705305E-17_r8/
+      DATA C0KCS( 18) / -.82657591746836959105169479089258E-19_r8/
+      DATA C0KCS( 19) / -.59345480806383948172333436695984E-20_r8/
+      DATA C0KCS( 20) / -.42608138196467143926499613023976E-21_r8/
+      DATA C0KCS( 21) / -.30591266864812876299263698370542E-22_r8/
+      DATA C0KCS( 22) / -.21963541426734575224975501815516E-23_r8/
+      DATA C0KCS( 23) / -.15769113261495836071105750684760E-24_r8/
+      DATA C0KCS( 24) / -.11321713935950320948757731048056E-25_r8/
+      DATA C0KCS( 25) / -.81286248834598404082792349714433E-27_r8/
+      DATA C0KCS( 26) / -.58360900893453226552829349315949E-28_r8/
+      DATA C0KCS( 27) / -.41901241623610922519452337780905E-29_r8/
+      DATA C0KCS( 28) / -.30083737960206435069530504212862E-30_r8/
+      DATA C0KCS( 29) / -.21599152067808647728342168089832E-31_r8/
+      DATA ZNU1CS(  1) / +.203306756994191729674444001216911E+0_r8/
+      DATA ZNU1CS(  2) / +.140077933413219771062943670790563E+0_r8/
+      DATA ZNU1CS(  3) / +.791679696100161352840972241972320E-2_r8/
+      DATA ZNU1CS(  4) / +.339801182532104045352930092205750E-3_r8/
+      DATA ZNU1CS(  5) / +.117419756889893366664507228352690E-4_r8/
+      DATA ZNU1CS(  6) / +.339357570612261680333825865475121E-6_r8/
+      DATA ZNU1CS(  7) / +.842594176976219910194629891264803E-8_r8/
+      DATA ZNU1CS(  8) / +.183336677024850089184748150900090E-9_r8/
+      DATA ZNU1CS(  9) / +.354969844704416310863007064469557E-11_r8/
+      DATA ZNU1CS( 10) / +.619032496469887332205244342078407E-13_r8/
+      DATA ZNU1CS( 11) / +.981964535680439424960346115456527E-15_r8/
+      DATA ZNU1CS( 12) / +.142851314396490474211473563005985E-16_r8/
+      DATA ZNU1CS( 13) / +.191894921887825298966162467488436E-18_r8/
+      DATA ZNU1CS( 14) / +.239430979739498914162313140597128E-20_r8/
+      DATA ZNU1CS( 15) / +.278890246815347354835870465474995E-22_r8/
+      DATA ZNU1CS( 16) / +.304606650633033442582845214092865E-24_r8/
+      DATA ZNU1CS( 17) / +.313173237042191815771564260932089E-26_r8/
+      DATA ZNU1CS( 18) / +.304133098987854951645174908005034E-28_r8/
+      DATA ZNU1CS( 19) / +.279840384636833084343185097659733E-30_r8/
+      DATA ZNU1CS( 20) / +.244637186274497596485238794922666E-32_r8/
+      DATA EULER / 0.57721566490153286060651209008240_r8/
+      DATA SQPI2 / +1.2533141373155002512078826424055_r8/
+      DATA ALN2 / 0.69314718055994530941723212145818_r8/
+      DATA FIRST /.TRUE./
+C***FIRST EXECUTABLE STATEMENT  D9KNUS
+      IF (FIRST) THEN
+         ETA = 0.1_r8*D1MACH(3)
+         NTC0K = INITDS (C0KCS, 29, ETA)
+         NTZNU1 = INITDS (ZNU1CS, 20, ETA)
+C
+         XNUSML = SQRT(D1MACH(3)/8._r8)
+         XSML = 0.1_r8*D1MACH(3)
+         ALNSML = LOG (D1MACH(1))
+         ALNBIG = LOG (D1MACH(2))
+         ALNEPS = LOG (0.1_r8*D1MACH(3))
+      ENDIF
+      FIRST = .FALSE.
+C
+      IF (XNU .LT. 0._r8.OR. XNU .GE. 1._r8)
+     +   CALL XERMSG ('SLATEC',
+     +   'D9KNUS', 'XNU MUST BE GE 0 AND LT 1', 1, 2)
+      IF (X .LE. 0._r8)
+     +   CALL XERMSG ('SLATEC', 'D9KNUS', 'X MUST BE GT 0',
+     +   2, 2)
+C
+      ISWTCH = 0
+      IF (X.GT.2.0_r8) GO TO 50
+C
+C X IS SMALL.  COMPUTE K-SUB-XNU (X) AND THE DERIVATIVE OF K-SUB-XNU (X)
+C THEN FIND K-SUB-XNU+1 (X).  XNU IS REDUCED TO THE INTERVAL (-.5,+.5)
+C THEN TO (0., .5), BECAUSE K OF NEGATIVE ORDER (-NU) = K OF POSITIVE
+C ORDER (+NU).
+C
+      V = XNU
+      IF (XNU.GT.0.5_r8) V = 1.0_r8- XNU
+C
+C CAREFULLY FIND (X/2)**XNU AND Z**XNU WHERE Z = X*X/4.
+      ALNZ = 2._r8* (LOG(X) - ALN2)
+C
+      IF (X.GT.XNU) GO TO 20
+      IF (-0.5_r8*XNU*ALNZ-ALN2-LOG(XNU) .GT. ALNBIG) CALL XERMSG
+     +   ('SLATEC', 'D9KNUS', 'X SO SMALL BESSEL K-SUB-XNU OVERFLOWS',
+     +   3, 2)
+C
+ 20   VLNZ = V*ALNZ
+      X2TOV = EXP (0.5_r8*VLNZ)
+      ZTOV = 0.0_r8
+      IF (VLNZ.GT.ALNSML) ZTOV = X2TOV**2
+C
+      A0 = 0.5_r8*DGAMMA(1.0_r8+V)
+      B0 = 0.5_r8*DGAMMA(1.0_r8-V)
+      C0 = -EULER
+      IF (ZTOV.GT.0.5_r8.AND. V.GT.XNUSML) C0 = -0.75_r8+
+     1  DCSEVL ((8.0_r8*V)*V-1.0_r8, C0KCS, NTC0K)
+C
+      IF (ZTOV.LE.0.5_r8) ALPHA(1) = (A0-ZTOV*B0)/V
+      IF (ZTOV.GT.0.5_r8) ALPHA(1) = C0 - ALNZ*(0.75_r8+
+     1  DCSEVL (VLNZ/0.35_r8+1.0_r8, ZNU1CS, NTZNU1))*B0
+      BETA(1) = -0.5_r8*(A0+ZTOV*B0)
+C
+      Z = 0.0_r8
+      IF (X.GT.XSML) Z = 0.25_r8*X*X
+      NTERMS = MAX (2.0_r8,
+     >   11.0_r8+(8._r8*real(ALNZ,r8)-25.19_r8-ALNEPS)
+     >   /(4.28_r8-real(ALNZ,r8)))
+      DO 30 I=2,NTERMS
+        XI = I - 1
+        A0 = A0/(XI*(XI-V))
+        B0 = B0/(XI*(XI+V))
+        ALPHA(I) = (ALPHA(I-1)+2.0_r8*XI*A0)/(XI*(XI+V))
+        BETA(I) = (XI-0.5_r8*V)*ALPHA(I) - ZTOV*B0
+ 30   CONTINUE
+C
+      BKNU = ALPHA(NTERMS)
+      BKNUD = BETA(NTERMS)
+      DO 40 II=2,NTERMS
+        I = NTERMS + 1 - II
+        BKNU = ALPHA(I) + BKNU*Z
+        BKNUD = BETA(I) + BKNUD*Z
+ 40   CONTINUE
+C
+      EXPX = EXP(X)
+      BKNU = EXPX*BKNU/X2TOV
+C
+      IF (-0.5_r8*(XNU+1._r8)*ALNZ-2.0_r8*ALN2.GT.
+     >   ALNBIG) ISWTCH = 1
+      IF (ISWTCH.EQ.1) RETURN
+      BKNUD = EXPX*BKNUD*2.0_r8/(X2TOV*X)
+C
+      IF (XNU.LE.0.5_r8) BKNU1 = V*BKNU/X - BKNUD
+      IF (XNU.LE.0.5_r8) RETURN
+C
+      BKNU0 = BKNU
+      BKNU = -V*BKNU/X - BKNUD
+      BKNU1 = 2.0_r8*XNU*BKNU/X + BKNU0
+      RETURN
+C
+C X IS LARGE.  FIND K-SUB-XNU (X) AND K-SUB-XNU+1 (X) WITH Y. L. LUKE-S
+C RATIONAL EXPANSION.
+C
+ 50   SQRTX = SQRT(X)
+      IF (X.GT.1.0_r8/XSML) GO TO 90
+      AN = -0.60_r8- 1.02_r8/real(X,r8)
+      BN = -0.27_r8- 0.53_r8/real(X,r8)
+      NTERMS = MIN ( 32.0_r8, max (3.0_r8, AN+BN*ALNEPS))
+C
+      DO 80 INU=1,2
+        XMU = 0._r8
+        IF (INU.EQ.1 .AND. XNU.GT.XNUSML) XMU = (4.0_r8*XNU)*XNU
+        IF (INU.EQ.2) XMU = 4.0_r8*(ABS(XNU)+1._r8)**2
+C
+        A(1) = 1.0_r8- XMU
+        A(2) = 9.0_r8- XMU
+        A(3) = 25.0_r8- XMU
+        IF (A(2).EQ.0._r8) RESULT =
+     1     SQPI2*(16._r8*X+XMU+7._r8) /
+     1     (16._r8*X*SQRTX)
+        IF (A(2).EQ.0._r8) GO TO 70
+C
+        ALPHA(1) = 1.0_r8
+        ALPHA(2) = (16._r8*X+A(2))/A(2)
+        ALPHA(3) = ((768._r8*X+48._r8*A(3))*X +
+     1     A(2)*A(3))/(A(2)*A(3))
+C
+        BETA(1) = 1.0_r8
+        BETA(2) = (16._r8*X+(XMU+7._r8))/A(2)
+        BETA(3) = ((768._r8*X+48._r8*(XMU+23._r8))*X +
+     1    ((XMU+62._r8)*XMU+129._r8))/(A(2)*A(3))
+C
+        IF (NTERMS.LT.4) GO TO 65
+        DO 60 I=4,NTERMS
+          N = I - 1
+          X2N = 2*N - 1
+C
+          A(I) = (X2N+2._r8)**2 - XMU
+          QQ = 16._r8*X2N/A(I)
+          P1 = -X2N*((12*N*N-20*N)-A(1))/((X2N-2._r8)*A(I))
+     1      - QQ*X
+          P2 = ((12*N*N-28*N+8)-A(1))/A(I) - QQ*X
+          P3 = -X2N*A(I-3)/((X2N-2._r8)*A(I))
+C
+          ALPHA(I) = -P1*ALPHA(I-1) - P2*ALPHA(I-2) - P3*ALPHA(I-3)
+          BETA(I) = -P1*BETA(I-1) - P2*BETA(I-2) - P3*BETA(I-3)
+ 60     CONTINUE
+C
+ 65     RESULT = SQPI2*BETA(NTERMS)/(SQRTX*ALPHA(NTERMS))
+C
+ 70     IF (INU.EQ.1) BKNU = RESULT
+        IF (INU.EQ.2) BKNU1 = RESULT
+ 80   CONTINUE
+      RETURN
+C
+ 90   BKNU = SQPI2/SQRTX
+      BKNU1 = BKNU
+      RETURN
+C
+      END
+! 22Jun2000 fgtok -s r8_precision.sub "r8con.csh conversion"
+! 22Jun2000 fgtok
+! 22Jun2000 fgtok
+! 22Jun2000 fgtok

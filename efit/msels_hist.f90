@@ -50,7 +50,7 @@
       LOGICAL file_exists
       CHARACTER(len=100) filename
       INTEGER*4 iostat,file_shot,ntimes,issyn,l_ntimes
-      REAL*4, l_time(ntimes),l_bbmls(ntimes),l_sigbmls(ntimes),&
+      REAL*4 l_time(ntimes),l_bbmls(ntimes),l_sigbmls(ntimes),&
            l_rrmls(ntimes),l_zzmls(ntimes),l_L1mls(ntimes),l_L2mls(ntimes),&
            l_L4mls(ntimes),l_epotpmls(ntimes),l_sigepmls(ntimes)
 
@@ -74,7 +74,7 @@
 
       ! See if file exists.  If not, return error code.
       INQUIRE(FILE=filename,EXIST=file_exists)
-      IF (file_exists .EQ. .FALSE.) THEN
+      IF (.NOT. file_exists) THEN
          WRITE(*,*) 'File Does not exist'
          iermls=1
          RETURN

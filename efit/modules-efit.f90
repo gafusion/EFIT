@@ -124,7 +124,9 @@
       integer*8 :: nwwcur
       integer*8 :: nffcur,nppcur, npcurn, necur, necur2, &
                    mfnpcr,nercur,npcur2,nrsmat, nwcurn,nwcur2
-      
+      integer*8 :: npcur3
+      integer*8 :: msbdr2
+      integer*8 :: ndim_crv
       integer*8 :: ndim,kxiter,mqwant
       integer*8 :: nw,nh,nwnh,nh2,nwork,nwwf, &
                    nwf,lubicx,lubicy,kujunk,boundary_count, &
@@ -260,7 +262,8 @@
        end module var_zcntrl
 !var_updown
        module var_updown
-       logical dpsip,dpsip_last,vfeed,symmetrize,backaverage
+       logical vfeed,symmetrize,backaverage
+       real*8 dpsip,dpsip_last
        data vfeed/.false./
        end module var_updown
 

@@ -1,6 +1,6 @@
 
 include_directories(
-  ${CMAKE_BINARY_DIR}/nimloc
+  ${CMAKE_BINARY_DIR}
 )
 
 set(GREEN_SOURCES

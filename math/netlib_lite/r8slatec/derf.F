@@ -1,0 +1,94 @@
+*DECK DERF
+      REAL*8 FUNCTION DERF (X)
+C***BEGIN PROLOGUE  DERF
+C***PURPOSE  Compute the error function.
+C***LIBRARY   SLATEC (FNLIB)
+C***CATEGORY  C8A, L5A1E
+C***TYPE      REAL*8 (ERF-S, DERF-D)
+C***KEYWORDS  ERF, ERROR FUNCTION, FNLIB, SPECIAL FUNCTIONS
+C***AUTHOR  Fullerton, W., (LANL)
+C***DESCRIPTION
+C
+C DERF(X) calculates the double precision error function for double
+C precision argument X.
+C
+C Series for ERF        on the interval  0.          to  1.00000E+00
+C                                        with weighted error   1.28E-32
+C                                         log weighted error  31.89
+C                               significant figures required  31.05
+C                                    decimal places required  32.55
+C
+C***REFERENCES  (NONE)
+C***ROUTINES CALLED  D1MACH, DCSEVL, DERFC, INITDS
+C***REVISION HISTORY  (YYMMDD)
+C   770701  DATE WRITTEN
+C   890531  Changed all specific intrinsics to generic.  (WRB)
+C   890531  REVISION DATE from Version 3.2
+C   891214  Prologue converted to Version 4.0 format.  (BAB)
+C   900727  Added EXTERNAL statement.  (WRB)
+C   920618  Removed space from variable name.  (RWC, WRB)
+C***END PROLOGUE  DERF
+C============
+C idecl:  explicitize implicit INTEGER declarations:
+      IMPLICIT NONE
+      integer, parameter :: r8 = selected_real_kind(12,100)
+      INTEGER nterf,initds
+C============
+      REAL*8 X, ERFCS(21), SQEPS, SQRTPI, XBIG, Y, D1MACH,
+     1  DCSEVL, DERFC
+      LOGICAL FIRST
+      EXTERNAL DERFC
+      SAVE ERFCS, SQRTPI, NTERF, XBIG, SQEPS, FIRST
+      DATA ERFCS(  1) / -.49046121234691808039984544033376E-1_r8/
+      DATA ERFCS(  2) / -.14226120510371364237824741899631E+0_r8/
+      DATA ERFCS(  3) / +.10035582187599795575754676712933E-1_r8/
+      DATA ERFCS(  4) / -.57687646997674847650827025509167E-3_r8/
+      DATA ERFCS(  5) / +.27419931252196061034422160791471E-4_r8/
+      DATA ERFCS(  6) / -.11043175507344507604135381295905E-5_r8/
+      DATA ERFCS(  7) / +.38488755420345036949961311498174E-7_r8/
+      DATA ERFCS(  8) / -.11808582533875466969631751801581E-8_r8/
+      DATA ERFCS(  9) / +.32334215826050909646402930953354E-10_r8/
+      DATA ERFCS( 10) / -.79910159470045487581607374708595E-12_r8/
+      DATA ERFCS( 11) / +.17990725113961455611967245486634E-13_r8/
+      DATA ERFCS( 12) / -.37186354878186926382316828209493E-15_r8/
+      DATA ERFCS( 13) / +.71035990037142529711689908394666E-17_r8/
+      DATA ERFCS( 14) / -.12612455119155225832495424853333E-18_r8/
+      DATA ERFCS( 15) / +.20916406941769294369170500266666E-20_r8/
+      DATA ERFCS( 16) / -.32539731029314072982364160000000E-22_r8/
+      DATA ERFCS( 17) / +.47668672097976748332373333333333E-24_r8/
+      DATA ERFCS( 18) / -.65980120782851343155199999999999E-26_r8/
+      DATA ERFCS( 19) / +.86550114699637626197333333333333E-28_r8/
+      DATA ERFCS( 20) / -.10788925177498064213333333333333E-29_r8/
+      DATA ERFCS( 21) / +.12811883993017002666666666666666E-31_r8/
+      DATA SQRTPI / 1.77245385090551602729816748334115_r8/
+      DATA FIRST /.TRUE./
+C***FIRST EXECUTABLE STATEMENT  DERF
+      IF (FIRST) THEN
+         NTERF = INITDS (ERFCS, 21, 0.1_r8*real(D1MACH(3),r8))
+         XBIG = SQRT(-LOG(SQRTPI*D1MACH(3)))
+         SQEPS = SQRT(2.0_r8*D1MACH(3))
+      ENDIF
+      FIRST = .FALSE.
+C
+      Y = ABS(X)
+      IF (Y.GT.1._r8) GO TO 20
+C
+C ERF(X) = 1.0 - ERFC(X)  FOR  -1.0 .LE. X .LE. 1.0
+C
+      IF (Y.LE.SQEPS) DERF = 2.0_r8*X*X/SQRTPI
+      IF (Y.GT.SQEPS) DERF = X*(1.0_r8+
+     1   DCSEVL (2._r8*X*X-1._r8,
+     1   ERFCS, NTERF))
+      RETURN
+C
+C ERF(X) = 1.0 - ERFC(X) FOR ABS(X) .GT. 1.0
+C
+ 20   IF (Y.LE.XBIG) DERF = SIGN (1.0_r8-DERFC(Y), X)
+      IF (Y.GT.XBIG) DERF = SIGN (1.0_r8, X)
+C
+      RETURN
+      END
+! 22Jun2000 fgtok -s r8_precision.sub "r8con.csh conversion"
+! 22Jun2000 fgtok
+! 22Jun2000 fgtok
+! 22Jun2000 fgtok

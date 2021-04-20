@@ -1,0 +1,342 @@
+Fri Dec 11 17:03:38 PST 2020
+Currently Loaded Modulefiles:
+  1) default-paths/2017.06   3) efit/pgf
+  2) mse/V3_07
+  Using efit.input file...
+INFO in getsets at r= -1, t=    -1: Done writing k-files
+  Using efit.input file...
+
+      ******************** EFITD 65 x  65  output ********************
+ table_dir = </fusion/projects/codes/efit/support_files/2006/156014/>
+WARNING in findax at r=  0, t=  1000: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1000: 2nd separatrix point is off grid
+
+       data used:   
+ 41 flux loops
+ 67 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     163303 time(ms) =       1000 chi**2   =  1.456E+01
+ betat(%) =      0.210 betap    =      0.112 li       =      0.840
+ vol(cm3) =  1.886E+07 rout(cm) =    168.626 zout(cm) =    -12.658
+ elong    =      1.794 utriang  =      0.174 ltriang  =      0.669
+ a(cm)    =     58.970 lin(cm)  =      8.056 lout(cm) =      8.934
+ ltop(cm) =     37.653 q*       =      5.796 rc(cm)   =    165.262
+ zc(cm)   =     -2.803 bt0(t)   =     -2.008 qout     =      9.230
+
+      ******************** EFITD 65 x  65  output ********************
+WARNING in findax at r=  0, t=  1020: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1020: 2nd separatrix point is off grid
+
+       data used:   
+ 41 flux loops
+ 67 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     163303 time(ms) =       1020 chi**2   =  1.338E+01
+ betat(%) =      0.230 betap    =      0.120 li       =      0.854
+ vol(cm3) =  1.895E+07 rout(cm) =    168.645 zout(cm) =    -12.431
+ elong    =      1.794 utriang  =      0.174 ltriang  =      0.670
+ a(cm)    =     59.157 lin(cm)  =      7.888 lout(cm) =      8.728
+ ltop(cm) =     37.029 q*       =      5.775 rc(cm)   =    165.338
+ zc(cm)   =     -2.437 bt0(t)   =     -2.008 qout     =      9.044
+
+      ******************** EFITD 65 x  65  output ********************
+WARNING in findax at r=  0, t=  1040: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1040: 2nd separatrix point is off grid
+
+       data used:   
+ 41 flux loops
+ 67 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     163303 time(ms) =       1040 chi**2   =  1.199E+01
+ betat(%) =      0.223 betap    =      0.115 li       =      0.870
+ vol(cm3) =  1.887E+07 rout(cm) =    168.514 zout(cm) =    -12.047
+ elong    =      1.787 utriang  =      0.171 ltriang  =      0.665
+ a(cm)    =     59.184 lin(cm)  =      7.731 lout(cm) =      8.831
+ ltop(cm) =     36.885 q*       =      5.715 rc(cm)   =    165.252
+ zc(cm)   =     -1.987 bt0(t)   =     -2.007 qout     =      9.374
+
+      ******************** EFITD 65 x  65  output ********************
+WARNING in findax at r=  0, t=  1060: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1060: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1060: 2nd separatrix point is off grid
+
+       data used:   
+ 41 flux loops
+ 67 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     163303 time(ms) =       1060 chi**2   =  1.151E+01
+ betat(%) =      0.217 betap    =      0.112 li       =      0.892
+ vol(cm3) =  1.883E+07 rout(cm) =    168.479 zout(cm) =    -11.760
+ elong    =      1.781 utriang  =      0.170 ltriang  =      0.661
+ a(cm)    =     59.292 lin(cm)  =      7.588 lout(cm) =      8.759
+ ltop(cm) =     36.680 q*       =      5.703 rc(cm)   =    165.284
+ zc(cm)   =     -1.638 bt0(t)   =     -2.007 qout     =      8.610
+
+      ******************** EFITD 65 x  65  output ********************
+WARNING in findax at r=  0, t=  1080: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1080: 2nd separatrix point is off grid
+WARNING in fit at r=  0, t=  1080: not converged, reached max iterations
+
+       data used:   
+ 41 flux loops
+ 67 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     163303 time(ms) =       1080 chi**2   =  1.208E+01
+ betat(%) =      0.218 betap    =      0.113 li       =      0.904
+ vol(cm3) =  1.881E+07 rout(cm) =    168.383 zout(cm) =    -11.424
+ elong    =      1.772 utriang  =      0.169 ltriang  =      0.657
+ a(cm)    =     59.347 lin(cm)  =      7.437 lout(cm) =      8.800
+ ltop(cm) =     36.677 q*       =      5.678 rc(cm)   =    165.329
+ zc(cm)   =     -1.412 bt0(t)   =     -2.007 qout     =      9.066
+
+      ******************** EFITD 65 x  65  output ********************
+WARNING in findax at r=  0, t=  1100: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1100: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1100: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1100: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1100: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1100: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1100: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in fit at r=  0, t=  1100: not converged, reached max iterations
+
+       data used:   
+ 41 flux loops
+ 67 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     163303 time(ms) =       1100 chi**2   =  1.292E+01
+ betat(%) =      0.230 betap    =      0.119 li       =      0.916
+ vol(cm3) =  1.886E+07 rout(cm) =    168.401 zout(cm) =    -11.296
+ elong    =      1.773 utriang  =      0.169 ltriang  =      0.657
+ a(cm)    =     59.381 lin(cm)  =      7.420 lout(cm) =      8.747
+ ltop(cm) =     36.381 q*       =      5.678 rc(cm)   =    165.409
+ zc(cm)   =     -1.274 bt0(t)   =     -2.007 qout     =      9.147
+
+      ******************** EFITD 65 x  65  output ********************
+WARNING in findax at r=  0, t=  1120: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1120: Iterative method to find 1st separatrix reached max iterations
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1120: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1120: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1120: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in fit at r=  0, t=  1120: not converged, reached max iterations
+
+       data used:   
+ 41 flux loops
+ 67 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     163303 time(ms) =       1120 chi**2   =  1.288E+01
+ betat(%) =      0.259 betap    =      0.134 li       =      0.926
+ vol(cm3) =  1.888E+07 rout(cm) =    168.342 zout(cm) =    -11.158
+ elong    =      1.770 utriang  =      0.168 ltriang  =      0.651
+ a(cm)    =     59.474 lin(cm)  =      7.267 lout(cm) =      8.714
+ ltop(cm) =     36.238 q*       =      5.678 rc(cm)   =    165.622
+ zc(cm)   =     -1.107 bt0(t)   =     -2.007 qout     =      9.238
+
+      ******************** EFITD 65 x  65  output ********************
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1140: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1140: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd separatrix point is off grid
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in findax at r=  0, t=  1140: 2nd seperatrix point is not inside vessel, zeross.le.0.1
+WARNING in fit at r=  0, t=  1140: not converged, reached max iterations
+
+       data used:   
+ 41 flux loops
+ 67 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     163303 time(ms) =       1140 chi**2   =  1.306E+01
+ betat(%) =      0.251 betap    =      0.130 li       =      0.938
+ vol(cm3) =  1.887E+07 rout(cm) =    168.174 zout(cm) =    -10.975
+ elong    =      1.763 utriang  =      0.165 ltriang  =      0.647
+ a(cm)    =     59.555 lin(cm)  =      7.020 lout(cm) =      8.801
+ ltop(cm) =     36.264 q*       =      5.670 rc(cm)   =    165.591
+ zc(cm)   =     -1.019 bt0(t)   =     -2.008 qout     =      8.715
+INFO in efitd at r=  0, t=  1140: Done processing

@@ -1,0 +1,163 @@
+*DECK DBI
+      REAL*8 FUNCTION DBI (X)
+C***BEGIN PROLOGUE  DBI
+C***PURPOSE  Evaluate the Bairy function (the Airy function of the
+C            second kind).
+C***LIBRARY   SLATEC (FNLIB)
+C***CATEGORY  C10D
+C***TYPE      REAL*8 (BI-S, DBI-D)
+C***KEYWORDS  BAIRY FUNCTION, FNLIB, SPECIAL FUNCTIONS
+C***AUTHOR  Fullerton, W., (LANL)
+C***DESCRIPTION
+C
+C DBI(X) calculates the double precision Airy function of the
+C second kind for double precision argument X.
+C
+C Series for BIF        on the interval -1.00000E+00 to  1.00000E+00
+C                                        with weighted error   1.45E-32
+C                                         log weighted error  31.84
+C                               significant figures required  30.85
+C                                    decimal places required  32.40
+C
+C Series for BIG        on the interval -1.00000E+00 to  1.00000E+00
+C                                        with weighted error   1.29E-33
+C                                         log weighted error  32.89
+C                               significant figures required  31.48
+C                                    decimal places required  33.45
+C
+C Series for BIF2       on the interval  1.00000E+00 to  8.00000E+00
+C                                        with weighted error   6.08E-32
+C                                         log weighted error  31.22
+C                        approx significant figures required  30.8
+C                                    decimal places required  31.80
+C
+C Series for BIG2       on the interval  1.00000E+00 to  8.00000E+00
+C                                        with weighted error   4.91E-33
+C                                         log weighted error  32.31
+C                        approx significant figures required  31.6
+C                                    decimal places required  32.90
+C
+C***REFERENCES  (NONE)
+C***ROUTINES CALLED  D1MACH, D9AIMP, DBIE, DCSEVL, INITDS, XERMSG
+C***REVISION HISTORY  (YYMMDD)
+C   770701  DATE WRITTEN
+C   890531  Changed all specific intrinsics to generic.  (WRB)
+C   890531  REVISION DATE from Version 3.2
+C   891214  Prologue converted to Version 4.0 format.  (BAB)
+C   900315  CALLs to XERROR changed to CALLs to XERMSG.  (THJ)
+C***END PROLOGUE  DBI
+C============
+C idecl:  explicitize implicit INTEGER declarations:
+      IMPLICIT NONE
+      integer, parameter :: r8 = selected_real_kind(12,100)
+      INTEGER nbif,nbig,nbif2,nbig2,initds
+C============
+C idecl:  explicitize implicit REAL declarations:
+      REAL*8 eta
+C============
+      REAL*8 X, BIFCS(13), BIGCS(13), BIF2CS(15), BIG2CS(15),
+     1  THETA, XM, XMAX, X3SML, Z,  D1MACH, DCSEVL, DBIE
+      LOGICAL FIRST
+      SAVE BIFCS, BIGCS, BIF2CS, BIG2CS, NBIF, NBIG,
+     1 NBIF2, NBIG2, X3SML, XMAX, FIRST
+      DATA BIFCS(  1) / -.16730216471986649483537423928176E-1_r8/
+      DATA BIFCS(  2) / +.10252335834249445611426362777757E+0_r8/
+      DATA BIFCS(  3) / +.17083092507381516539429650242013E-2_r8/
+      DATA BIFCS(  4) / +.11862545467744681179216459210040E-4_r8/
+      DATA BIFCS(  5) / +.44932907017792133694531887927242E-7_r8/
+      DATA BIFCS(  6) / +.10698207143387889067567767663628E-9_r8/
+      DATA BIFCS(  7) / +.17480643399771824706010517628573E-12_r8/
+      DATA BIFCS(  8) / +.20810231071761711025881891834399E-15_r8/
+      DATA BIFCS(  9) / +.18849814695665416509927971733333E-18_r8/
+      DATA BIFCS( 10) / +.13425779173097804625882666666666E-21_r8/
+      DATA BIFCS( 11) / +.77159593429658887893333333333333E-25_r8/
+      DATA BIFCS( 12) / +.36533879617478566399999999999999E-28_r8/
+      DATA BIFCS( 13) / +.14497565927953066666666666666666E-31_r8/
+      DATA BIGCS(  1) / +.22466223248574522283468220139024E-1_r8/
+      DATA BIGCS(  2) / +.37364775453019545441727561666752E-1_r8/
+      DATA BIGCS(  3) / +.44476218957212285696215294326639E-3_r8/
+      DATA BIGCS(  4) / +.24708075636329384245494591948882E-5_r8/
+      DATA BIGCS(  5) / +.79191353395149635134862426285596E-8_r8/
+      DATA BIGCS(  6) / +.16498079851827779880887872402706E-10_r8/
+      DATA BIGCS(  7) / +.24119906664835455909247501122841E-13_r8/
+      DATA BIGCS(  8) / +.26103736236091436985184781269333E-16_r8/
+      DATA BIGCS(  9) / +.21753082977160323853123792000000E-19_r8/
+      DATA BIGCS( 10) / +.14386946400390433219483733333333E-22_r8/
+      DATA BIGCS( 11) / +.77349125612083468629333333333333E-26_r8/
+      DATA BIGCS( 12) / +.34469292033849002666666666666666E-29_r8/
+      DATA BIGCS( 13) / +.12938919273216000000000000000000E-32_r8/
+      DATA BIF2CS(  1) / +.0998457269381604104468284257993E+0_r8/
+      DATA BIF2CS(  2) / +.47862497786300553772211467318231E+0_r8/
+      DATA BIF2CS(  3) / +.25155211960433011771324415436675E-1_r8/
+      DATA BIF2CS(  4) / +.58206938852326456396515697872216E-3_r8/
+      DATA BIF2CS(  5) / +.74997659644377865943861457378217E-5_r8/
+      DATA BIF2CS(  6) / +.61346028703493836681403010356474E-7_r8/
+      DATA BIF2CS(  7) / +.34627538851480632900434268733359E-9_r8/
+      DATA BIF2CS(  8) / +.14288910080270254287770846748931E-11_r8/
+      DATA BIF2CS(  9) / +.44962704298334641895056472179200E-14_r8/
+      DATA BIF2CS( 10) / +.11142323065833011708428300106666E-16_r8/
+      DATA BIF2CS( 11) / +.22304791066175002081517866666666E-19_r8/
+      DATA BIF2CS( 12) / +.36815778736393142842922666666666E-22_r8/
+      DATA BIF2CS( 13) / +.50960868449338261333333333333333E-25_r8/
+      DATA BIF2CS( 14) / +.60003386926288554666666666666666E-28_r8/
+      DATA BIF2CS( 15) / +.60827497446570666666666666666666E-31_r8/
+      DATA BIG2CS(  1) / +.033305662145514340465176188111647E+0_r8/
+      DATA BIG2CS(  2) / +.161309215123197067613287532084943E+0_r8/
+      DATA BIG2CS(  3) / +.631900730961342869121615634921173E-2_r8/
+      DATA BIG2CS(  4) / +.118790456816251736389780192304567E-3_r8/
+      DATA BIG2CS(  5) / +.130453458862002656147116485012843E-5_r8/
+      DATA BIG2CS(  6) / +.937412599553521729546809615508936E-8_r8/
+      DATA BIG2CS(  7) / +.474580188674725153788510169834595E-10_r8/
+      DATA BIG2CS(  8) / +.178310726509481399800065667560946E-12_r8/
+      DATA BIG2CS(  9) / +.516759192784958180374276356640000E-15_r8/
+      DATA BIG2CS( 10) / +.119004508386827125129496251733333E-17_r8/
+      DATA BIG2CS( 11) / +.222982880666403517277063466666666E-20_r8/
+      DATA BIG2CS( 12) / +.346551923027689419722666666666666E-23_r8/
+      DATA BIG2CS( 13) / +.453926336320504514133333333333333E-26_r8/
+      DATA BIG2CS( 14) / +.507884996513522346666666666666666E-29_r8/
+      DATA BIG2CS( 15) / +.491020674696533333333333333333333E-32_r8/
+      DATA FIRST /.TRUE./
+C***FIRST EXECUTABLE STATEMENT  DBI
+      IF (FIRST) THEN
+         ETA = 0.1_r8*real(D1MACH(3),r8)
+         NBIF = INITDS (BIFCS, 13, ETA)
+         NBIG = INITDS (BIGCS, 13, ETA)
+         NBIF2 = INITDS (BIF2CS, 15, ETA)
+         NBIG2 = INITDS (BIG2CS, 15, ETA)
+C
+         X3SML = ETA**0.3333_r8
+         XMAX = (1.5_r8*LOG(D1MACH(2)))**0.6666_r8
+      ENDIF
+      FIRST = .FALSE.
+C
+      IF (X.GE.(-1.0_r8)) GO TO 20
+      CALL D9AIMP (X, XM, THETA)
+      DBI = XM * SIN(THETA)
+      RETURN
+C
+ 20   IF (X.GT.1.0_r8) GO TO 30
+      Z = 0._r8
+      IF (ABS(X).GT.X3SML) Z = X**3
+      DBI = 0.625_r8+ DCSEVL (Z, BIFCS, NBIF) +
+     1   X*(0.4375_r8+
+     1   DCSEVL (Z, BIGCS, NBIG))
+      RETURN
+C
+ 30   IF (X.GT.2.0_r8) GO TO 40
+      Z = (2.0_r8*X**3 - 9.0_r8)/7._r8
+      DBI = 1.125_r8+
+     1   DCSEVL (Z, BIF2CS, NBIF2) + X*(0.625_r8+
+     1   DCSEVL (Z, BIG2CS, NBIG2))
+      RETURN
+C
+ 40   IF (X .GT. XMAX) CALL XERMSG ('SLATEC', 'DBI',
+     +   'X SO BIG THAT BI OVERFLOWS', 1, 2)
+C
+      DBI = DBIE(X) * EXP(2.0_r8*X*SQRT(X)/3.0_r8)
+      RETURN
+C
+      END
+! 22Jun2000 fgtok -s r8_precision.sub "r8con.csh conversion"
+! 22Jun2000 fgtok
+! 22Jun2000 fgtok
+! 22Jun2000 fgtok

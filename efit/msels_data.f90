@@ -42,19 +42,19 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      parameter (ntimes=2000)
+      integer*4, parameter :: ntimes=2000
       character*3 synmls
       integer*4 i,j,count
-      integer*4 ishot, ktime, icmls, iermls(ktime), issyn, ntimes,l_iermls
+      integer*4 ishot, ktime, icmls, iermls(ktime), l_iermls
       real*4 avem, atime(ktime), bbmls(ktime), sigbmls(ktime),        &
              rrmls(ktime), zzmls(ktime),                              &
              L1mls(ktime), L2mls(ktime), L4mls(ktime),                &
-             epotpmls(ktime), sigepmls(ktime), tmp
+             epotpmls(ktime), sigepmls(ktime)
 
       ! local variables
       character(len=100) filename
       integer*4 file_shot
-      REAL*4, l_time(ntimes),l_bbmls(ntimes),l_sigbmls(ntimes),&
+      REAL*4 :: l_time(ntimes),l_bbmls(ntimes),l_sigbmls(ntimes),&
            l_rrmls(ntimes),l_zzmls(ntimes),l_L1mls(ntimes),l_L2mls(ntimes),&
            l_L4mls(ntimes),l_epotpmls(ntimes),l_sigepmls(ntimes)
 
