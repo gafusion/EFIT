@@ -32,3 +32,7 @@ bells and whistles turned on (TODO:  Need to test)::
         -DNETCDF_DIR:PATH='$HOME/software/netcdf' \
         -DMDSPLUS_DIR:PATH='$HOME/software/mdsplus' \
         ..
+
+
+For debugging, set the `CMAKE_BUILD_TYPE` to `Debug`.
+
