@@ -13,7 +13,7 @@ set(NIMROD_VERSION "${PROJECT_VERSION}-${PROJECT_REV}")
 set(PROJECT_URL "https://gitlab.com/efit-ai/efit")
 
 # Required version
-cmake_minimum_required(VERSION 3.18.0)
+cmake_minimum_required(VERSION 3.8.0)
 
 #---------------------------------------------------------------------
 # EFIT options
