@@ -131,11 +131,11 @@
       status='old',file=filin,err=120)
 
   100 read (lfile,*, end=120) ilimshot, limitr
-
+ 
       do i=1,limitr
         read(lfile,5010) xlim(i),ylim(i)
       enddo
-      if (nshot.ge.ilimshot) then
+      if (ishot.ge.ilimshot) then
         goto 120
       else
         goto 100
