@@ -34,7 +34,7 @@
 !      ier      - error parameter.
 !
 !-------------------------------------------------------------------------------
-      include 'eparmdud129.f90'
+      include 'eparmdud129.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !
       INTEGER*4 ier, lx, ly
@@ -112,7 +112,7 @@
 !      wk    - of dimension at least nx by ny.
 !------------------------------------------------------------------------------
 !!      use commonblocks,only: bkx,bky
-      include 'eparmdud129.f90'
+      include 'eparmdud129.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !
       parameter (krord=4,kzord=4)

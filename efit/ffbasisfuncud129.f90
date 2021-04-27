@@ -12,9 +12,9 @@
       
       Function bsffel(ifunc,iparm,ypsi)
       
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       
       bsffel = 0.0
@@ -158,9 +158,9 @@
 
       Function bsffpel(ifunc,iparm,ypsi)
 
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       bsffpel = 0.0
@@ -335,9 +335,9 @@
       
       Function bsffin(ifunc,iparm,ypsi)
       
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       
       bsffin = 0.0
@@ -588,9 +588,9 @@
 !     
       
       subroutine ffcnst(ncrsp,crsp,z,nffcoi)
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension crsp(4*(npcurn-2)+6 +npcurn*npcurn ,nrsmat), &
@@ -934,9 +934,9 @@
 !     
       
       subroutine ffstore()
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       if(kfffnc .ge. 0 .and. kfffnc .le. 2)then

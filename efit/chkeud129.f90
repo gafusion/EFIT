@@ -20,8 +20,8 @@
 !**                                                                  **
 !**********************************************************************
       use set_kinds
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       data ercmin/0.01_dp/
@@ -175,8 +175,8 @@
 !**                                                                  **
 !**********************************************************************
       use set_kinds
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       dimension xplt(*),yplt(*)

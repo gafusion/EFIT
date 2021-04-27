@@ -1,9 +1,9 @@
 subroutine read_efitin
      use commonblocks
      use set_kinds
-     include 'eparmdud129.f90'
-     include 'modules2.f90'
-     include 'modules1.f90'
+     include 'eparmdud129.inc'
+     include 'modules2.inc'
+     include 'modules1.inc'
      implicit integer*4 (i-n), real*8 (a-h,o-z)
      character(80),dimension(1001) :: inpfile
      logical input_flag
@@ -68,9 +68,9 @@ subroutine get_opt_input(ktime)
 !**                                                                  **
 !**********************************************************************
       use set_kinds
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       character*82 snap_ext
 ! MPI >>>

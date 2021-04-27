@@ -18,8 +18,8 @@
 !**********************************************************************
       subroutine getpts(nshot,times,delt,np,iierr)
       use vtime_mod
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       character*10 nsingl(10),n1name,btcname &
@@ -1776,9 +1776,9 @@
                         bpermpx,sigmafx,sigmabx,sigmaex, &
                         sigmaipx,sigmaflx,sigmampx)
 
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !  include 'ecomdu1.f90'
 !  include 'ecomdu2.f90'
@@ -2209,8 +2209,8 @@
 !**                                                                  **
 !**********************************************************************
         use set_kinds
-        include 'eparmdud129.f90'
-        include 'modules1.f90'
+        include 'eparmdud129.inc'
+        include 'modules1.inc'
         implicit integer*4 (i-n), real*8 (a-h,o-z)
         include 'mpif.h'
         
@@ -2501,8 +2501,8 @@
       ! NOTE : NO error condition returned
       subroutine getstark_mpi(ktime)
 
-        include 'eparmdud129.f90'
-        include 'modules1.f90'
+        include 'eparmdud129.inc'
+        include 'modules1.inc'
         implicit integer*4 (i-n), real*8 (a-h,o-z)
 
         include 'mpif.h'

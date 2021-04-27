@@ -1223,8 +1223,8 @@
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky
       use set_kinds
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension x(nx),y(nz),pds(6),xxout(*),yyout(*),psipsi(*)
@@ -1846,7 +1846,7 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: cjrf,wxin,wyin,wxout,wyout
-      include 'eparmdud129.f90'
+      include 'eparmdud129.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension xp(*),yp(*)
       data iflag/2/

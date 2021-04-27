@@ -23,9 +23,9 @@
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky,wgridpc,rfcpc
       use set_kinds
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       parameter(mfila=10)
       parameter (m_ext=101)

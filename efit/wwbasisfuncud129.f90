@@ -12,9 +12,9 @@
       
       Function bswwel(ifunc,iparm,ypsi)
       
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
  
       
@@ -142,9 +142,9 @@
 
       Function bswwpel(ifunc,iparm,ypsi)
 
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
         bswwpel = 0.0
@@ -294,9 +294,9 @@
       
       Function bswwin(ifunc,iparm,ypsi)
       
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       
@@ -532,9 +532,9 @@
 !     
       
       subroutine wwcnst(ncrsp,crsp,z,nffcoi)
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension crsp(4*(npcurn-2)+6 +npcurn*npcurn ,nrsmat), &
@@ -935,9 +935,9 @@
 !     
       
       subroutine wwstore()
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       if(kwwfnc .ge. 0 .and. kwwfnc .le. 2)then
@@ -971,9 +971,9 @@
       
       Function bserel(ifunc,iparm,ypsi)
       
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       
       bserel = 0.0
@@ -1100,9 +1100,9 @@
 
       Function bserpel(ifunc,iparm,ypsi)
 
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       bserpel = 0.0
@@ -1252,9 +1252,9 @@
       
       Function bserin(ifunc,iparm,ypsi)
       
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       
       bserin = 0.0
@@ -1488,9 +1488,9 @@
 !     
       
       subroutine eecnst(ncrsp,crsp,z,nffcoi)
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension crsp(4*(npcurn-2)+6 +npcurn*npcurn ,nrsmat), &
@@ -1878,9 +1878,9 @@
 !     
       
       subroutine eestore()
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       if(keefnc .gt. 0 .and. keefnc .le. 2)then

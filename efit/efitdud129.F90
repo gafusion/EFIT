@@ -53,9 +53,9 @@
 !**********************************************************************
      use commonblocks
      use set_kinds
-     include 'eparmdud129.f90'
-     include 'modules2.f90'
-     include 'modules1.f90'
+     include 'eparmdud129.inc'
+     include 'modules2.inc'
+     include 'modules1.inc'
      implicit integer*4 (i-n), real*8 (a-h,o-z)
 ! MPI >>>
 #ifdef USEMPI
@@ -346,8 +346,8 @@
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky,cw,wkw,copyw,bwx, &
                   bwy,sifprw,bwprw,cwprw,dwprw,sfprw,sprwp
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       common/cww/lwx,lwy
@@ -921,8 +921,8 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension pds(6),rgrid(*),zgrid(*)
@@ -1076,9 +1076,9 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
@@ -1481,8 +1481,8 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension xpsii(nercur)
@@ -1534,8 +1534,8 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension pds(6)
@@ -1584,9 +1584,9 @@
 !**          20/01/2000........first created                         **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       external ppakfunc,ffakfunc,wwakfunc,eeakfunc
@@ -1727,9 +1727,9 @@
 !    store values read from k file into autoknot variables
 !
       subroutine restore_autoknotvals
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       do i = 1,npcurn
@@ -1750,9 +1750,9 @@
 !     for example knot locations
 !
       subroutine store_autoknotvals
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       do i = 1,npcurn
@@ -1774,9 +1774,9 @@
 !
 
       function ppakfunc(xknot) ! TODO: kerror is not returned
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       kerror = 0
@@ -1801,9 +1801,9 @@
 ! which calls it to evaulate the function being minimized
 !
       function ffakfunc(xknot) ! TODO: kerror is not returned
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       kerror = 0
@@ -1828,9 +1828,9 @@
 ! which calls it to evaulate the function being minimized
 !
       function wwakfunc(xknot) ! TODO: kerror is not returned
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       kerror = 0
@@ -1855,9 +1855,9 @@
 ! which calls it to evaulate the function being minimized
 !
       function eeakfunc(xknot) ! TODO: kerror is not returned
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       kerror = 0
@@ -1899,8 +1899,8 @@
 !**          94/03/11..........revised                               **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       data nzero/0/
       save nzero
@@ -2069,8 +2069,8 @@
 !**          94/03/08..........revised                               **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension xpsii(nffcur)
 
@@ -2184,7 +2184,7 @@
 !**********************************************************************
       use set_kinds
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.f90'
+      include 'eparmdud129.inc'
       use var_cwork3, only:lkx,lky
 !vas
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -2237,9 +2237,9 @@
 !**          15/09/87..........first created                         **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
@@ -2294,9 +2294,9 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       parameter (nn=30)
       parameter (kbre=5)
@@ -2945,9 +2945,9 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       parameter (nn=30)
       parameter (kbre=5)
@@ -3472,9 +3472,9 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       parameter (nn=30)
       parameter (kbre=5)
@@ -3812,9 +3812,9 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: ct,wkt,bkrt,bkzt
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension pds(6)
@@ -4020,9 +4020,9 @@
 !**        2015/03/09..........first created                         **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       character*3 synmlt
       integer*4 ktime, icmls, iermls(ntime)
@@ -4088,9 +4088,9 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       integer jtimex,niterax
@@ -4267,9 +4267,9 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
@@ -4393,9 +4393,9 @@
 !**          15/09/87..........first created                         **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
 ! MPI >>>
@@ -4517,9 +4517,9 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension pds(6),bwork(ndata),cwork(ndata),dwork(ndata)
 ! MPI >>>
@@ -4677,9 +4677,9 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension xpsii(nwcurn),xpsis(nwcurn),xpsisb(nwcurn)
       dimension xsier(nercur)
@@ -5465,9 +5465,9 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
@@ -5594,9 +5594,9 @@
       use var_bunemn
       use commonblocks,only: c,wk,copy,bkx,bky,psiold,psipold, &
                              psipp,work
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       integer initresult
@@ -5988,9 +5988,9 @@
 
       function ef_init_cycred_data()
 
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit none
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
@@ -6161,9 +6161,9 @@
 
       subroutine cyclic_reduction(f)
 
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
@@ -6267,8 +6267,8 @@
 
       subroutine pflux_cycred(psigrid,sia,kerror)
 
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       dimension psigrid(*),sia(*)
@@ -6417,8 +6417,8 @@
 
       subroutine ef_tridiag2(f,n,index)
 
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       dimension f(1)
@@ -6474,8 +6474,8 @@
 
       subroutine ef_tridiag1(f,n,index)
 
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       dimension f(1)
@@ -6581,8 +6581,8 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: sifpre,bwpre,cwpre,dwpre,sfpre,sprep
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 
@@ -6636,8 +6636,8 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 
@@ -6680,8 +6680,8 @@
 !**          94/03/11..........revised                               **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       dimension xpsii(nppcur)
@@ -6758,9 +6758,9 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension pds(6),ybase(nwwcur),ybaseb(nwwcur)
@@ -6876,9 +6876,9 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension pds(6),xnsi(nppcur),xnsp(nppcur)
@@ -7051,8 +7051,8 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: sifprw,bwprw,cwprw,dwprw,sfprw,sprwp
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 
@@ -7106,8 +7106,8 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 
@@ -7151,8 +7151,8 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       dimension xpsii(nwwcur)
@@ -7205,8 +7205,8 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: psiold,psipold,psipp
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 
@@ -7353,9 +7353,9 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension rrrecep(nnece),rrrecem(nnece),iwp(nnece),iwm(nnece)
@@ -7820,8 +7820,8 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension xpsii(1)
@@ -7852,8 +7852,8 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension xpsii(1)
 
@@ -7884,8 +7884,8 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension xpsii(1)
 
@@ -7916,8 +7916,8 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension xpsii(1)
 
@@ -7947,8 +7947,8 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension xpsii(1)
 
@@ -7978,8 +7978,8 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension xpsii(1)
@@ -8011,8 +8011,8 @@
         !**                                                                  **
         !**                                                                  **
         !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension xpsii(1)
@@ -8044,8 +8044,8 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension xpsii(1)
@@ -8077,8 +8077,8 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension xpsii(1)
@@ -8109,8 +8109,8 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension xpsii(1)
@@ -8142,8 +8142,8 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension xpsii(1)
@@ -8175,9 +8175,9 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
@@ -8497,9 +8497,9 @@
 !**********************************************************************
       use commonblocks,only: c,wk,copy,bkx,bky,zeros,xouts,youts, &
            rsplt,zsplt,csplt
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       common/wwork1/xlims(5),ylims(5),limtrs,xlmins
@@ -9150,9 +9150,9 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
@@ -9186,8 +9186,8 @@
 !**          24/07/85..........revised                               **
 !**                                                                  **
 !**********************************************************************
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension x(1),y(1)
 !
@@ -9332,8 +9332,8 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: zeros,xouts,youts,bpoo,bpooz,bpooc
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       include 'env2d.inc'
       common/wwork1/xlims(5),ylims(5),limtrs,xlmins

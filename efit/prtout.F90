@@ -21,9 +21,9 @@
 !**                                                                  **
 !**********************************************************************
       use commonblocks,only: worka2
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 ! MPI >>>
 #if defined(USEMPI)
@@ -683,7 +683,7 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      include 'modules1.f90'
+      include 'modules1.inc'
 
       if (itek.gt.0) go to 100
 

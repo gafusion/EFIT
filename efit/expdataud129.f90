@@ -21,9 +21,9 @@
 !**********************************************************************
 !
       use commonblocks,only: byringr,byringz
-      include 'eparmdud129.f90'
-!vas      include 'modules2.f90' !to avoid the clash with allocat..
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+!vas      include 'modules2.inc' !to avoid the clash with allocat..
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
@@ -110,8 +110,8 @@
 !--
 !------------------------------------------------------------------------
 !
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       integer type,ilimshot
       character*100 filin
@@ -332,7 +332,7 @@
 !--   05/12/98 Q.P. added Toroidal X-ray. Data provided by R.Snider.
 !--
 !------------------------------------------------------------------------
-      include 'eparmdud129.f90'
+      include 'eparmdud129.inc'
       use var_cxray
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !vas      common/cxray/rxray(nangle+ntangle),zxray(nangle+ntangle), &

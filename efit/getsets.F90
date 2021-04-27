@@ -1,9 +1,9 @@
       subroutine set_basis_params
 
       use set_kinds
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
 !---------------------------------------------------------------------
@@ -127,9 +127,9 @@
 
 !**********************************************************************
       use set_kinds
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
 ! MPI >>>
@@ -442,9 +442,9 @@
       use set_kinds
       use Fortran_Sleep
       use, intrinsic :: iso_c_binding, only: c_int
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       integer (c_int) :: retwait
 

@@ -1,8 +1,8 @@
    subroutine efit_read_tables
       use set_kinds
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       integer*4  :: istat
       character(len=1000) :: line
@@ -137,9 +137,9 @@
 
    subroutine set_table_dir
       use set_kinds
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
 
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       integer :: i, reason, nFiles, itmp, imin 

@@ -22,9 +22,9 @@
       use commonblocks,only: worka,c,wk,copy,bkx,bky,cw,wkw,copyw,bwx, &
            bwy,cj,wkj,copyj,bjx,bjy,cv,wkv,copyv,bvx,bvy,byringr,byringz, &
            xxtra,yxtra,bpxtra,flxtra,fpxtra
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       include 'curve2d129.inc'
       include 'env2d.inc'
@@ -9517,9 +9517,9 @@
       use set_kinds
       use commonblocks,only: worka,byringr,byringz,xxtra,yxtra, &
            bpxtra,flxtra,fpxtra
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       real*4,dimension(:),allocatable :: xpltloc,ypltloc,xplxloc,yplxloc

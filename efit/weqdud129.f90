@@ -26,8 +26,8 @@
 !**                                                                  **
 !**********************************************************************
       use set_kinds
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension jflag(ntime)
@@ -416,9 +416,9 @@
 !**********************************************************************
       use set_kinds
       use commonblocks,only: psirz
-      include 'eparmdud129.f90'
-      include 'modules2.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       real*8,dimension(:),allocatable :: coils,expmp2, prexp, &
                 tgamma,sgamma,rrrgam, &
@@ -1030,8 +1030,8 @@
 !**********************************************************************
 !
       use set_kinds
-      include 'eparmdud129.f90'
-      include 'modules1.f90'
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
       include 'netcdf.inc'   ! from the netCDF package..
