@@ -42,7 +42,7 @@ subroutine read_efitin
        deltatime_in = deltatime
        steps_in = steps
        snapext_in = snapext
-       inpfile_in = inpfile
+       inpfile_in = inpfile(1:SIZE(inpfile_in))
      endif
 ! OPT_INPUT <<<
      return
@@ -117,7 +117,6 @@ subroutine get_opt_input(ktime)
 
 
       if (kdata.eq.2) then 
-       ifname(:) = ''
 ! ONLY root process interfaces with terminal
        if (rank == 0) then
         if (use_opt_input .eqv. .false.) then
@@ -131,6 +130,7 @@ subroutine get_opt_input(ktime)
           enddo
         else
           ktime = steps_in
+          ALLOCATE(ifname(ktime))
           do i=1,ktime
              ifname(i) = inpfile_in(i)
           enddo
