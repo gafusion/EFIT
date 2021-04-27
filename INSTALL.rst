@@ -28,6 +28,8 @@ bells and whistles turned on (TODO:  Need to test)::
         -DCMAKE_Fortran_COMPILER:FILEPATH='gfortran' \
         -DCMAKE_C_FLAGS:STRING='-fvisibility=default -fPIC -pipe' \
         -DCMAKE_Fortran_FLAGS:STRING='-fPIC -pipe' \
+        -DBLAS_DIR:PATH='$HOME/software/lapack' \
+        -DLAPACK_DIR:PATH='$HOME/software/lapack' \
         -DHDF5_DIR:PATH='$HOME/software/hdf5' \
         -DNETCDF_DIR:PATH='$HOME/software/netcdf' \
         -DMDSPLUS_DIR:PATH='$HOME/software/mdsplus' \
@@ -35,4 +37,3 @@ bells and whistles turned on (TODO:  Need to test)::
 
 
 For debugging, set the `CMAKE_BUILD_TYPE` to `Debug`.
-
