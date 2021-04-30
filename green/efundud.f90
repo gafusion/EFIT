@@ -1,9 +1,6 @@
       PROGRAM efund
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          efun generates the necessary response                   **
 !**          functions used by efit for reconstruction of the        **
@@ -68,11 +65,7 @@
 
       STOP 'GREEN TABLE GENERATED!'
       END PROGRAM efund
-      SUBROUTINE e1coef(coef,  nl, ne)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          e1coef computes the response functions due to           **
@@ -90,6 +83,7 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      SUBROUTINE e1coef(coef,  nl, ne)
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
                       nfsum,nvsum,nvesel,nacoil
       USE cecoil
@@ -122,11 +116,7 @@
 !
       RETURN
       END SUBROUTINE e1coef
-      SUBROUTINE e2coef(coef, mp, ne)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          e2coef computes the response functions due to           **
@@ -141,9 +131,8 @@
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE e2coef(coef, mp, ne)
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
                       nfsum,nvsum,nvesel,nacoil
       USE cecoil
@@ -198,11 +187,7 @@
 !
       RETURN
       END SUBROUTINE e2coef
-      SUBROUTINE egrid(coef, rgrid, nr, zgrid, nz, ne)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          egrid computes the response functions due to            **
@@ -217,9 +202,8 @@
 !**     RECORD OF MODIFICATION:                                      **
 !**          15/07/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE egrid(coef, rgrid, nr, zgrid, nz, ne)
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
                       nfsum,nvsum,nvesel,nacoil
       USE cecoil
@@ -251,15 +235,9 @@
          psict=psict+psic/fitot
       ENDDO 
       coef=psict
-!
-!
       RETURN
       END SUBROUTINE egrid
-      SUBROUTINE flux(r1,z1,w1,h1,t1,t12,r2,z2,w2,h2,t2,t22,fuxx)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          flux computes the mutual inductance/2/pi between        **
@@ -272,19 +250,11 @@
 !**       w1,w2...........width                                      **
 !**       h1,h2...........height                                     **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE flux(r1,z1,w1,h1,t1,t12,r2,z2,w2,h2,t2,t22,fuxx)
       USE exparm,only:mgaus1,mgaus2
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
       DIMENSION post1(mgaus1),wght1(mgaus1),post2(mgaus2) &
@@ -344,12 +314,7 @@
 !
       RETURN
       END SUBROUTINE flux
-      SUBROUTINE gacoil(rsilac,rmp2ac,gridac,rgrid,mw, &
-                        zgrid,mh)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          gacoil gets the Green's functions for the advance       **
@@ -357,16 +322,11 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          16/08/90..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE gacoil(rsilac,rmp2ac,gridac,rgrid,mw, zgrid,mh)
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
                       nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
       USE consta
@@ -408,28 +368,19 @@
       ENDDO 
       RETURN
       END SUBROUTINE gacoil
-      SUBROUTINE gecoil(rsilec,rmp2ec,gridec,rgrid,mw,zgrid,mh, &
-                        rfcec,recec,rsisec)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          gecoil gets the Green's functions for E coils.          **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          30/01/85..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE gecoil(rsilec,rmp2ec,gridec,rgrid,mw,zgrid,mh, &
+                        rfcec,recec,rsisec)
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
                       nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
       USE consta
@@ -439,11 +390,11 @@
       DIMENSION rsilec(nsilop,nesum),rmp2ec(magpr2,nesum), &
                 rfcec(nfcoil,nesum),recec(nesum,nesum), &
                 rsisec(nesum)
-			REAL*8,DIMENSION(mw) :: rgrid
-			REAL*8,DIMENSION(mh) :: zgrid
-			REAL*8,DIMENSION(nwnh,nesum) :: gridec
+            REAL*8,DIMENSION(mw) :: rgrid
+            REAL*8,DIMENSION(mh) :: zgrid
+            REAL*8,DIMENSION(nwnh,nesum) :: gridec
       DIMENSION taf(nfcoil),taf2(nfcoil)
-			REAL*8 :: zetaec = 3.5e-08
+            REAL*8 :: zetaec = 3.5e-08
       DO j=1,nsilop
          DO i=1,nesum
             rsilec(j,i)=0.0
@@ -524,13 +475,7 @@
       ENDDO
       RETURN
       END SUBROUTINE gecoil
-
-
-      SUBROUTINE efund_grid
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          grid computes the green's functions at (r,z)            **
@@ -538,16 +483,11 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          09/06/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE efund_grid
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
                       nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
       USE consta
@@ -691,17 +631,11 @@
 !
       RETURN
       END SUBROUTINE efund_grid
-      SUBROUTINE gsilop(rr, nr, zz, nz, rspfun, ns, rsi, zsi, wsi &
-           , hsi, as, as2, ndim)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          gsilop computes the green's FUNCTION at si loops due    **
 !**          to filament currents flowing in r(n) and z(n).          **
-!**                                                                  **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**       rr..............r coordinates                              **
@@ -710,25 +644,20 @@
 !**       rspfun..........computed green's functions values          **
 !**       nz..............DIMENSION of z                             **
 !**                                                                  **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE gsilop(rr, nr, zz, nz, rspfun, ns, rsi, zsi, wsi &
+           , hsi, as, as2, ndim)
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
                       nw,nh,nwnh
       USE consta
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
-			REAL*8,DIMENSION(nr) :: rr
-			REAL*8,DIMENSION(nz) :: zz
-			REAL*8,DIMENSION(ns) :: rsi,zsi,wsi,hsi,as,as2
-			REAL*8,DIMENSION(ndim,nwnh) :: rspfun
+            REAL*8,DIMENSION(nr) :: rr
+            REAL*8,DIMENSION(nz) :: zz
+            REAL*8,DIMENSION(ns) :: rsi,zsi,wsi,hsi,as,as2
+            REAL*8,DIMENSION(ndim,nwnh) :: rspfun
 !     dimension rsi(1),zsi(1),wsi(1),hsi(1),as(1),as2(1)
 !     dimension rr(1),zz(1),rspfun(ndim,1)
       dimension taf(nfcoil),taf2(nfcoil)
@@ -776,12 +705,7 @@
 
       return
       END SUBROUTINE gsilop
-      SUBROUTINE gvesel(rsilvs,rmp2vs,gridvs,rgrid,mw, &
-                        zgrid,mh,rfcvs,rvsfc,rvsec)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          gvesel gets the Green's functions for the vessel        **
@@ -789,16 +713,12 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/11/85..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE gvesel(rsilvs,rmp2vs,gridvs,rgrid,mw, &
+                        zgrid,mh,rfcvs,rvsfc,rvsec)
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
                       nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
       USE consta
@@ -809,7 +729,7 @@
       DIMENSION rsilvs(nsilop,nvesel),rmp2vs(magpr2,nvesel), &
                 rgrid(1),zgrid(1),rvsec(nvesel,nesum), &
                 rfcvs(nfcoil,nvesel),rvsfc(nvesel,nfcoil)
-      DIMENSION gridvs(1,nvesel)
+      DIMENSION gridvs(mw*mh,nvesel)
       DIMENSION taf(nfcoil),taf2(nfcoil)
       DIMENSION tas(nvesel),tas2(nvesel)
       DO j=1,nsilop
@@ -841,7 +761,7 @@
                gridvs(kk,n)=work
             ENDDO 
          ENDDO 
-		  ENDDO
+      ENDDO
 !
       DO j=1,nfcoil
          taf(j)=tan(af(j)*pi/180.)
@@ -890,11 +810,7 @@
       ENDDO 
       RETURN
       END SUBROUTINE gvesel
-      SUBROUTINE lgauss(x,w,n,nn)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          lgauss computes the zeroes of the legendre polynomial   **
@@ -906,16 +822,11 @@
 !**       n...............order of legendre polynomial               **
 !**       nn..............error flag                                 **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE lgauss(x,w,n,nn)
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
       REAL*8,DIMENSION(n) ::  x,w
 !
@@ -987,14 +898,10 @@
       w(i) = 2./(r*t*dp)
       w(ic) = w(i)
   900 g = g-r*t/((r+2.)*g*dp+r*v-2.*r*t*sum)
-	    ENDDO
+        ENDDO
   950 RETURN
       END SUBROUTINE lgauss
-      SUBROUTINE m1coef(rr, zz, nr, nz, coef,  nl, nf)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          m1coef computes the response functions due to           **
@@ -1002,16 +909,11 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          15/07/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE m1coef(rr, zz, nr, nz, coef,  nl, nf)
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil
       USE fcoil
       USE coilsp
@@ -1057,11 +959,7 @@
 !
       RETURN
       END SUBROUTINE m1coef
-      SUBROUTINE m2coef(rr, nr, zz, nz, coef,  mp, nc)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          m2coef computes the response functions due to           **
@@ -1069,16 +967,11 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE m2coef(rr, nr, zz, nz, coef,  mp, nc)
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
                       nw,nh,nwnh
       USE fcoil
@@ -1089,8 +982,8 @@
       USE fshift
       USE bfgrid
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
-			REAL*8,DIMENSION(nr) :: rr
-			REAL*8,DIMENSION(nz) :: zz
+            REAL*8,DIMENSION(nr) :: rr
+            REAL*8,DIMENSION(nz) :: zz
       DIMENSION coef(mp,nc)
 !
       IF (.NOT. ALLOCATED(brgridfc)) THEN
@@ -1227,27 +1120,18 @@
 !
       RETURN
       END SUBROUTINE m2coef
-      SUBROUTINE efund_matrix
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          matrix calculates the appropriate response functions.   **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE efund_matrix
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
                       nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
       USE consta
@@ -1323,7 +1207,6 @@
         gridac(:,:) = 0.0
       ENDIF
 !
-      n000=0
       IF (ifcoil.le.0) go to 1100
 !----------------------------------------------------------------------
 !-- calculate the response FUNCTION of psi loops due to f coils      --
@@ -1383,7 +1266,8 @@
          ii=i
          DO j=isize+1,nsilop
             jj=j
-            CALL m1coef(xdum,xdum,n000,n000,rsilfc,jj,ii)
+            ! rsilfc has to have dimensions of nfcoil
+            CALL m1coef(xdum,xdum,1,nfcoil,rsilfc,jj,ii)
          ENDDO 
       ENDDO 
   520 CONTINUE
@@ -1392,7 +1276,7 @@
 !----------------------------------------------------------------------
       magprr=magpr2
       IF (magprr.gt.1) THEN
-         CALL m2coef(xdum,n000,ydum,n000,rmp2fc,magpr2,nfcoil)
+         CALL m2coef(xdum,0,ydum,0,rmp2fc,magpr2,nfcoil)
       ENDIF
 !----------------------------------------------------------------------
 !-- compute the response FUNCTION of partial rogowski loops due to   --
@@ -1400,7 +1284,7 @@
 !----------------------------------------------------------------------
       mrogow=nrogow
       IF (mrogow.gt.1) THEN
-         CALL rogowc(xdum,n000,ydum,n000,rgowfc,nrogow,nfcoil)
+         CALL rogowc(xdum,0,ydum,0,rgowfc,nrogow,nfcoil)
       ENDIF
 !----------------------------------------------------------------------
 !-- WRITE f coil response functions                                  --
@@ -1472,7 +1356,7 @@
       IF (isize.ge.nsilop) go to 1220
       DO j=isize+1,nsilop
          jj=j
-         CALL m1coef(rgrid,zgrid,nw,nh,rsilpc,jj,n000)
+         CALL m1coef(rgrid,zgrid,nw,nh,rsilpc,jj,0)
       ENDDO 
  1220 CONTINUE
       magprr=magpr2
@@ -1599,11 +1483,7 @@
 !
       RETURN
       END SUBROUTINE efund_matrix
-      FUNCTION psical(a1,r1,z1)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          psical computes mutual inductance/2/pi between two      **
@@ -1623,9 +1503,8 @@
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      FUNCTION psical(a1,r1,z1)
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
       REAL*8 x1,cay,ee,xmdelk,xmdele
 !
@@ -1664,27 +1543,17 @@
    40 psical=(cay+(a*a-r*r-z*z)/((a-r)*(a-r)+z*z)*ee)/ sqrt(den)
       RETURN
       END FUNCTION psical
-      SUBROUTINE rogowc(rr, nrr, zz, nz, coef, nr, nc)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**                                                                  **
-!**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE rogowc(rr, nrr, zz, nz, coef, nr, nc)
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil
       USE rogowl
       USE coilsp
@@ -1692,10 +1561,9 @@
       USE fcoil
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
       DIMENSION rogpth(nrogow)
-			REAL*8,DIMENSION(nr) :: rr
-			REAL*8,DIMENSION(nz) :: zz
+      REAL*8,DIMENSION(nr) :: rr
+      REAL*8,DIMENSION(nz) :: zz
       DIMENSION coef(nr,nc)
-!
 !
       ngrid=25
       isplit=17
@@ -1768,16 +1636,11 @@
 !
       RETURN
       END SUBROUTINE rogowc
-      SUBROUTINE rogrid(ngrid,mm,m,dels)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          rogrid calculates grid points along the given arc       **
 !**          made up of at most six straight line segments.          **
-!**                                                                  **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**       ngrid...........                                           **
@@ -1785,16 +1648,11 @@
 !**       m...............                                           **
 !**       dels............                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE rogrid(ngrid,mm,m,dels)
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil
       USE rogowl
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
@@ -1832,28 +1690,17 @@
       zpg(ngrid) = zp(mm+narc(m))
       RETURN
       END SUBROUTINE rogrid
-      SUBROUTINE simpf(i,f)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE simpf(i,f)
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
       IF (i.eq.1 .or. i.eq.25) THEN
          f = 1./3.
@@ -1864,28 +1711,19 @@
       ENDIF
       RETURN
       END SUBROUTINE simpf
-      SUBROUTINE soleno(ra,z1,w1,h1,t1,t12,r2,z2,w2,h2,t2,t22,xbm1,xbm2, &
-                        xtm1,xtm2,hfa,hsa,rf,rs,sol)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          soleno computes the inductance for a solenoid           **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE soleno(ra,z1,w1,h1,t1,t12,r2,z2,w2,h2,t2,t22,xbm1,xbm2, &
+                        xtm1,xtm2,hfa,hsa,rf,rs,sol)
       USE consta,only:pi
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
       DIMENSION z(2,2)
@@ -2005,127 +1843,106 @@
 !
       RETURN
       END SUBROUTINE soleno
-      SUBROUTINE splitc(is,rs,zs,cs,rc,zc,wc,hc,ac,ac2,cc)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**                                                                  **
-!**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE splitc(is,rs,zs,cs,rc,zc,wc,hc,ac,ac2,cc)
       USE consta
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
-      REAL*8,DIMENSION(is) :: rs,zs,cs
+      REAL*8,DIMENSION(is*is) :: rs,zs,cs
 !
       frd=pi/180.
-      IF(ac+ac2.eq.0.) go to 100
-      IF(ac.ne.0.) go to 200
-      IF(ac2.ne.0.) go to 300
 !----------------------------------------------------------------------
 !-- rectangle                                                        --
 !----------------------------------------------------------------------
-  100 CONTINUE
-      wdelt=wc/is
-      hdelt=hc/is
-      rstrt=rc-wc/2.+wdelt/2.
-      zstrt=zc-hc/2.+hdelt/2.
-      zz=zstrt
-      ic=0
-      c=cc/(is*is)
-      DO ii=1,is
-         rr=rstrt
-         DO jj=1,is
-            ic=ic+1
-            zs(ic)=zz
-            rs(ic)=rr
-            cs(ic)=c
-            rr=rr+wdelt
-         ENDDO 
-         zz=zz+hdelt
-      ENDDO
-      go to 900
+      IF(ac+ac2.eq.0.) THEN
+          wdelt=wc/is
+          hdelt=hc/is
+          rstrt=rc-wc/2.+wdelt/2.
+          zstrt=zc-hc/2.+hdelt/2.
+          zz=zstrt
+          ic=0
+          c=cc/(is*is)
+          DO ii=1,is
+             rr=rstrt
+             DO jj=1,is
+                ic=ic+1
+                zs(ic)=zz
+                rs(ic)=rr
+                cs(ic)=c
+                rr=rr+wdelt
+             ENDDO 
+             zz=zz+hdelt
+          ENDDO
+          RETURN
 !----------------------------------------------------------------------
 !-- ac .ne. 0                                                        --
 !----------------------------------------------------------------------
-  200 CONTINUE
-      side=tan(frd*ac)*wc
-      hdelt=hc/is
-      wdelt=wc/is
-      zdelt=tan(frd*ac)*wdelt
-      rstrt=rc-wc/2.+wdelt/2.
-      tsid=hc+side
-      zstrt =zc-tsid/2.+tsid/2.*1./is
-      rr=rstrt
-      ic=0
-      c=cc/(is*is)
-      DO ii=1,is
-         zz=zstrt+(ii-1)*zdelt
-         DO jj=1,is
-            ic=ic+1
-            zs(ic)=zz
-            rs(ic)=rr
-            cs(ic)=c
-            zz=zz+hdelt
-         ENDDO 
-         rr=rr+wdelt
-      ENDDO
-      go to 900
+          side=tan(frd*ac)*wc
+          hdelt=hc/is
+          wdelt=wc/is
+          zdelt=tan(frd*ac)*wdelt
+          rstrt=rc-wc/2.+wdelt/2.
+          tsid=hc+side
+          zstrt =zc-tsid/2.+tsid/2.*1./is
+          rr=rstrt
+          ic=0
+          c=cc/(is*is)
+          DO ii=1,is
+             zz=zstrt+(ii-1)*zdelt
+             DO jj=1,is
+                ic=ic+1
+                zs(ic)=zz
+                rs(ic)=rr
+                cs(ic)=c
+                zz=zz+hdelt
+             ENDDO 
+             rr=rr+wdelt
+          ENDDO
+          RETURN
 !----------------------------------------------------------------------
 !-- ac2 .ne. 0                                                       --
 !----------------------------------------------------------------------
-  300 CONTINUE
+      ELSEIF(ac2.ne.0.) THEN
+          side=hc/tan(frd*ac2)
+          hdelt=hc/is
+          wdelt=wc/is
+          zstrt=zc-hc/2.+hdelt/2.
+          rdelt=hdelt/tan(frd*ac2)
+          rstrt=rc-side/2.-wc/2.+rdelt/2.+wdelt/2.
+          side=hc/tan(frd*ac2)
+          wtot=side+wc
+          whaf=(side+wc)/2.
+          rcorn=rc-whaf
+          rcornr=rc+whaf
+          rcorn2=rcorn+wtot/is
+          rstrt=(rcorn+rcorn2)/2.
+          zz=zstrt
+          ic=0
+          c=cc/(is*is)
+          DO ii=1,is
+             rr=rstrt+(ii-1)*rdelt
+             DO jj=1,is
+                ic=ic+1
+                zs(ic)=zz
+                rs(ic)=rr
+                cs(ic)=c
+                rr=rr+wdelt
+             ENDDO 
+             zz=zz+hdelt
+          ENDDO
+      ENDIF
 !
-  340 CONTINUE
-      side=hc/tan(frd*ac2)
-      hdelt=hc/is
-      wdelt=wc/is
-      zstrt=zc-hc/2.+hdelt/2.
-      rdelt=hdelt/tan(frd*ac2)
-      rstrt=rc-side/2.-wc/2.+rdelt/2.+wdelt/2.
-      side=hc/tan(frd*ac2)
-      wtot=side+wc
-      whaf=(side+wc)/2.
-      rcorn=rc-whaf
-      rcornr=rc+whaf
-      rcorn2=rcorn+wtot/is
-      rstrt=(rcorn+rcorn2)/2.
-      zz=zstrt
-      ic=0
-      c=cc/(is*is)
-      DO ii=1,is
-         rr=rstrt+(ii-1)*rdelt
-         DO jj=1,is
-            ic=ic+1
-            zs(ic)=zz
-            rs(ic)=rr
-            cs(ic)=c
-            rr=rr+wdelt
-         ENDDO 
-         zz=zz+hdelt
-      ENDDO
-      go to 900
-!
-  900 CONTINUE
       RETURN
       END SUBROUTINE splitc
-      SUBROUTINE v1coef(coef,  nl, ne)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          e1coef computes the response functions due to           **
@@ -2133,16 +1950,11 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          15/07/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE v1coef(coef,  nl, ne)
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
                       nesum,nfsum,nvsum,nvesel,nacoil
       USE coilsp
@@ -2173,11 +1985,7 @@
 !
       RETURN
       END SUBROUTINE v1coef
-      SUBROUTINE v2coef(coef, mp, ne)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          e2coef computes the response functions due to           **
@@ -2185,16 +1993,11 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE v2coef(coef, mp, ne)
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
                       nesum,nfsum,nvsum,nvesel,nacoil
       USE coilsp
@@ -2247,11 +2050,7 @@
 !
       RETURN
       END SUBROUTINE v2coef
-      SUBROUTINE vgrid(coef, rgrid, nr, zgrid, nz, ne)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          egrid computes the response functions due to            **
@@ -2259,16 +2058,13 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/11/85..........first created                         **
 !**                                                                  **
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      SUBROUTINE vgrid(coef, rgrid, nr, zgrid, nz, ne)
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
                       nesum,nfsum,nvsum,nvesel,nacoil
       USE coilsp
@@ -2301,11 +2097,7 @@
 !
       RETURN
       END SUBROUTINE vgrid
-      SUBROUTINE a1coef(coef,  nl, ne)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          a1coef computes the response functions due to           **
@@ -2313,16 +2105,11 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          16/08/90..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE a1coef(coef,  nl, ne)
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
                       nesum,nfsum,nvsum,nvesel,nacoil
       USE coilsp
@@ -2355,11 +2142,7 @@
 !
       RETURN
       END SUBROUTINE a1coef
-      SUBROUTINE a2coef(coef, mp, ne)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          a2coef computes the response functions due to           **
@@ -2367,16 +2150,11 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          16/08/90..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE a2coef(coef, mp, ne)
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
                       nesum,nfsum,nvsum,nvesel,nacoil
       USE coilsp
@@ -2431,11 +2209,7 @@
 !
       RETURN
       END SUBROUTINE a2coef
-      SUBROUTINE agrid(coef, rgrid, nr, zgrid, nz, ne)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          agrid computes the response functions due to            **
@@ -2443,16 +2217,11 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          16/08/90..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE agrid(coef, rgrid, nr, zgrid, nz, ne)
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
                       nesum,nfsum,nvsum,nvesel,nacoil
       USE coilsp
@@ -2461,7 +2230,7 @@
       USE nio
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
       REAL*8,DIMENSION(nr) :: rgrid
-      REAL*8,DIMENSION(nr) :: zgrid
+      REAL*8,DIMENSION(nz) :: zgrid
       DATA init/0/
 !
       radeg=pi/180.
@@ -2486,30 +2255,19 @@
 !
       RETURN
       END SUBROUTINE agrid
-      FUNCTION xmdele(xm1)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**       xmdele computes the elliptic integral e.                   **
 !**                                                                  **
-!**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**       xm1.............argument of elliptic integral e            **
-!**                                                                  **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      FUNCTION xmdele(xm1)
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
       DIMENSION a(4),b(4)
       REAL*8 a,b,xm1,xmdele
@@ -2522,29 +2280,19 @@
        +xm1*(b(1)+xm1*(b(2)+xm1*(b(3)+xm1*b(4))))*log(1.0/xm1)
       RETURN
       END FUNCTION xmdele
-      FUNCTION xmdelk(xm1)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**       xmdelk computes the elliptic integral k.                   **
 !**                                                                  **
-!**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**       xm1.............argument of elliptic integral k            **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      FUNCTION xmdelk(xm1)
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
       DIMENSION a(5),b(5)
       REAL*8  a,b,xm1,xmdelk
@@ -2558,27 +2306,18 @@
        *log(1.0/xm1)
       RETURN
       END FUNCTION xmdelk
-      SUBROUTINE efundu_rev(i)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          for SCCS control revision information.                  **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          11/07/95..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE efundu_rev(i)
       CHARACTER*100 opt
       CHARACTER*10 s
       IF( i .eq. 0)  &
