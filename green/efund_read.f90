@@ -50,8 +50,7 @@
       mgaus1 = 8
       mgaus2 = 10
 
-      OPEN(unit=nin,status='old',file='mhdin.dat' &
-          )
+      OPEN(unit=nin,status='old',file='mhdin.dat' )
 
       READ (nin,machinein,err=10)
 
