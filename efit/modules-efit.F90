@@ -32,12 +32,13 @@
 !     store_dir    central directory to collect EFIT results
 !
 
-      character*82 table_dir,input_dir,store_dir,table_di2,link_efitx,link_storex
+      character(256) table_dir,input_dir,store_dir,table_di2,link_efitx,link_storex
       integer*4 ltbdir,lindir,lstdir,ltbdi2
 
-      data table_dir /'link_efitx/2006/'/
-      data input_dir /'link_efitx/'/
-      data store_dir /'link_storex/'/
+      CHARACTER(256) :: version,projurl,arch_type,hostname
+      CHARACTER(256) :: fc,fc_id,fc_ver
+      CHARACTER(5096) :: fcflags
+      INTEGER, DIMENSION(8) :: tval 
 
       end module expath
 !eparmdud129

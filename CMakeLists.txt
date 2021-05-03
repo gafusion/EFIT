@@ -21,6 +21,37 @@ cmake_minimum_required(VERSION 3.8.0)
 #TODO: Can we turn off?
 #set(ENABLE_CERLIB FALSE CACHE BOOL "Whether to build cerlib ")
 
+set(ENABLE_PRODUCTION FALSE CACHE BOOL "This is meant to be installed.")
+
+if (${ENABLE_PRODUCTION})
+    set(TABLE_DIR ${CMAKE_INSTALL_PREFIX}/share/green} CACHE STRING "Location of tables")
+    set(INPUT_DIR ${CMAKE_INSTALL_PREFIX/share/examples CACHE STRING "Location of example input files")
+else()
+    set(TABLE_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of tables")
+    set(INPUT_DIR ${CMAKE_SOURCE_DIR}/test CACHE STRING "Location of example input files")
+endif()
+
+set(STORE_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of sources")
+
+set(GEN_CONF_FILE ${PROJECT_BINARY_DIR}/efit/set_expath_conf.F90)
+set(GEN_SRC_FILE ${PROJECT_BINARY_DIR}/efit/set_expath.F90)
+configure_file(${PROJECT_SOURCE_DIR}/efit/set_expath_conf.F90.in
+               ${GEN_CONF_FILE})
+
+# Only update the src file if needed.  This reduces compilation
+if(EXISTS ${GEN_SRC_FILE})
+    message("File exists:  testing diff")
+    execute_process( COMMAND ${CMAKE_COMMAND} -E compare_files 
+                     ${GEN_CONF_FILE} ${GEN_SRC_FILE}
+                     RESULT_VARIABLE compare_result)
+    if( compare_result EQUAL 1)
+        file(RENAME ${GEN_CONF_FILE} ${GEN_SRC_FILE})
+    endif()
+else()
+    message("File does not exist")
+    file(RENAME ${GEN_CONF_FILE} ${GEN_SRC_FILE})
+endif()
+
 #---------------------------------------------------------------------
 # Set default values for performance issues if necessary
 #---------------------------------------------------------------------

@@ -1,0 +1,18 @@
+      subroutine set_expath
+      use expath
+
+      table_dir="${TABLE_DIR}"
+      input_dir="${INPUT_DIR}"
+      store_dir="${STORE_DIR}"
+
+      !arch_type="${HOSTTYPE}"
+      !hostname="${UQHOSTNAME}"
+      fc="${CMAKE_Fortran_COMPILER}"
+      fcflags="${CMAKE_Fortran_FLAGS}"
+      projurl="${PROJECT_URL}"
+      version="${PROJECT_VERSION}"
+
+      return
+      end subroutine set_expath
+
+

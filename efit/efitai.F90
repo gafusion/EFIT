@@ -49,6 +49,7 @@
 !**        2020/09/18..........R.S. changed "shape" to "shapesurf",  **
 !**                            shape is an intrinsic procedure name  **
 !**        2020/09/18..........R.S. changed some Hollerith to quotes **
+!**        2021/04/30..........EFITAI driver is birthed              **
 !**                                                                  **
 !**********************************************************************
      use commonblocks
@@ -68,14 +69,12 @@
      integer :: nargs, iargc, finfo, kerror, terr
 
      integer :: iend1, iend2
-     character*80 :: cmdline
 
      kerror = 0
 !------------------------------------------------------------------------------
 !--   Set paths
 !------------------------------------------------------------------------------ 
       call set_expath
-      ! If environment variable exists, then override values from set_expath
       call getenv("link_efit",link_efitx)
       call getenv("link_store",link_storex)
       if (link_efitx(1:1).ne.' ') then
@@ -83,9 +82,6 @@
           input_dir=trim(link_efitx)
       endif
       if (link_storex(1:1).ne.' ')  store_dir=trim(link_storex)           
-!------------------------------------------------------------------------------
-!--   MPI if we have it
-!------------------------------------------------------------------------------ 
 ! MPI >>>
 #if defined(USEMPI)
 ! Initialize MPI environment
@@ -106,24 +102,10 @@
 !----------------------------------------------------------------------
       nw = 0
       nh = 0
+      !TODO Need to process args here to get grid size
       if (rank == 0) then
        nargs = iargc()
 ! Using mpirun command so will have different number of arguments than serial case
-#if defined(LF95)
-       call getcl(cmdline)
-       cmdline = adjustl(cmdline)
-       iend1 = scan(cmdline,' ')
-       inp1 = cmdline(1:iend-1)//'  '
-       cmdline = adjustl(cmdline(iend1:len(cmdline)))
-       iend2 = scan(cmdline,' ')
-       inp2 = cmdline(1:iend2-1)//'  '
-#else
-       call getarg(1,inp1)
-       call getarg(2,inp2)
-#endif
-       read (inp1,'(i4)',err=9876) nw
-       read (inp2,'(i4)',err=9876) nh
-9876   continue
        if (nh == 0) nh = nw
 
       endif
@@ -176,7 +158,7 @@
       call read_efitin
       call inp_file_ch(nw,nh,ch1,ch2)
 
-      call get_opt_input(ktime)
+      !call get_opt_input(ktime)
       ntime = ktime
       call get_eparmdud_defaults()
 
