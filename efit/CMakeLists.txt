@@ -33,6 +33,7 @@ endif()
 # tearingd129.f90
 
 add_library(efitlib ${EFITLIB_SOURCES})
+add_dependencies(efitlib config_f)
 target_link_libraries(efitlib green)
 # Diagnostic libs
 target_link_libraries(efitlib cerlib)

@@ -11,13 +11,12 @@ include_directories(
 )
 
 set(R8SLATEC_SOURCES
-
-  d1mach.c  isize_get_lsode.c  j1mach.c
+  d1mach.c   j1mach.c
 
   dbdiff.f dbsppp.f dei.f dgbco.f dintrv.f dp1vlu.f dpcoef.f
   dpolft.f fdump.f j4save.f parmsetget.f r8genbun.f r8hwscyl.f
   r8merge.f r8pimach.f r8poisp2.f xerclr.f xercnt.f xerhlt.f
-  xermax.f xermsg.f xerprn.f xerrwv.f xersve.f xgetf.f xgetua.f
+  xermax.f xermsg.f xerprn.f xersve.f xgetf.f xgetua.f
   xsetf.f xsetfp.f xsetun.f xsetunp.f zexp.f zmlt.f zshch.f
   zuchk.f
 
