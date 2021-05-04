@@ -98,8 +98,10 @@ add_custom_command(
 add_custom_target(config_f DEPENDS config.f)
 if (${ENABLE_PARALLEL})
   set (sharedir share-par)
+  set (USEMPI TRUE)                 # ifdef
 else()
   set (sharedir share-ser)
+  set (USEMPI FALSE)
 endif()
 
 install(FILES ${CMAKE_BINARY_DIR}/config.f 

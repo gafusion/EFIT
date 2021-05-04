@@ -92,25 +92,3 @@ subroutine get_eparmdud_dependents
 
   ncurrt=nvesel+nesum+nfcoil
 end subroutine
-
-  subroutine read_eparmdud(filename)
-  use eparmdud129
-  use var_nio
-  implicit none
-  integer ::istatus
-  character (*) :: filename
-
-  NAMELIST/machinein/nsilds,nsilol,nfcoil,nrogow,nacoil,mfcoil,necoil,nvesel, &
-      mpress,nesum,magpri67,magpri322,magprirdp,magudom,maglds,mse315,mse45, &
-      mse15,mse1h,mse315_2,mse210,libim,nmsels,nnece,nnecein,neceo,nnnte, &
-      ngam_vars,ngam_u,ngam_w,nlimit,nlimbd,nangle,ntangle,nfbcoil,mccoil, &
-      micoil,ndata,nwwcur,nffcur,nppcur,nercur,ntime,ndim,kxiter,mqwant, &
-      mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef,modep,modew,kubics, &
-      icycred_loopmax,nfourier
-
-  open(unit=nin,status='old',file=filename)
-  read (nin,machinein,iostat=istatus)
-  close(unit=nin)
-
-  end subroutine
-

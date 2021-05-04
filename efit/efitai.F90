@@ -1,4 +1,4 @@
-      program efitd
+include 'config.f'
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD EQUILIBRIUM ANALYSIS                      **
@@ -52,17 +52,14 @@
 !**        2021/04/30..........EFITAI driver is birthed              **
 !**                                                                  **
 !**********************************************************************
+     program efitd
      use commonblocks
      use set_kinds
+     use mpi_efit
      include 'eparmdud129.inc'
      include 'modules2.inc'
      include 'modules1.inc'
      implicit integer*4 (i-n), real*8 (a-h,o-z)
-! MPI >>>
-#ifdef USEMPI
-     include 'mpif.h'
-#endif
-! MPI <<<
      data kwake/0/
      parameter (krord=4,kzord=4)
      character inp1*4,inp2*4
@@ -82,20 +79,16 @@
           input_dir=trim(link_efitx)
       endif
       if (link_storex(1:1).ne.' ')  store_dir=trim(link_storex)           
-! MPI >>>
-#if defined(USEMPI)
-! Initialize MPI environment
+
+!------------------------------------------------------------------------------
+!     Initialize MPI environment
+!------------------------------------------------------------------------------
       call MPI_INIT_THREAD(MPI_THREAD_SINGLE,terr,ierr)
       call MPI_COMM_RANK(MPI_COMM_WORLD,rank,ierr)
       call MPI_COMM_SIZE(MPI_COMM_WORLD,nproc,ierr)
-#else
-      rank  = 0
-#endif
-! MPI <<<
 
       ! Set global constants for each rank
       call set_constants()
-
 !----------------------------------------------------------------------
 !-- Read in grid size from command line and set global variables     --
 !-- ONLY root process reads command-line arguments                   --
@@ -110,72 +103,63 @@
 
       endif
 
-! MPI >>>
-#if defined(USEMPI)
-! Distribute command-line information (meaning grid dimensions) to all processes if necessary
+      ! Distribute command-line information (meaning grid dimensions) to all
+      ! processes if necessary
       if (nproc > 1) then
        call MPI_BCAST(nw,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
        call MPI_BCAST(nh,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
       endif
-#endif
-! MPI <<<
       if (nw == 0 .or. nh == 0) then
         if (rank == 0) then
           call errctrl_msg('efitd','Must specify grid dimensions as arguments')
         endif
-! MPI >>>
-#if defined(USEMPI)
         deallocate(dist_data,dist_data_displs,fwtgam_mpi)
         call mpi_finalize(ierr)
-#endif
         STOP
-! MPI <<<
       endif
 
+      !TODO;  This stuff is mysterious and should be put somewhere
       IF (nw .le. 129) THEN
         npoint=800
       ELSE
         npoint=3200
       ENDIF
-       nwnh=nw*nh
-       nh2=2*nh
-       nwrk=2*(nw+1)*nh
+      nwnh=nw*nh
+      nh2=2*nh
+      nwrk=2*(nw+1)*nh
 !      nwwf=2*nw
-       nwwf=3*nw
-       nwf=nwwf
-       kubicx = 4
-       kubicy = 4
-       lubicx = nw - kubicx + 1
-       lubicy = nh - kubicy + 1
-       kujunk = kubicx*kubicy*lubicx*lubicy
-       boundary_count=2*nh+2*(nw-2)
-       lr0=nw-krord+1
-       lz0=nh-kzord+1
-       nxtrap=npoint
-       mfila = 10
-
+      nwwf=3*nw
+      nwf=nwwf
+      kubicx = 4
+      kubicy = 4
+      lubicx = nw - kubicx + 1
+      lubicy = nh - kubicy + 1
+      kujunk = kubicx*kubicy*lubicx*lubicy
+      boundary_count=2*nh+2*(nw-2)
+      lr0=nw-krord+1
+      lz0=nh-kzord+1
+      nxtrap=npoint
+      mfila = 10
       
       call read_efitin
+      ! Create character versions of nw, nh for labelling
       call inp_file_ch(nw,nh,ch1,ch2)
 
+      ! This chooses the EFIT mode, but efitai driver just does file input.
       !call get_opt_input(ktime)
+      kdata=2
       ntime = ktime
+
+      ! Black voodoo magic of setting poorly defined variables
       call get_eparmdud_defaults()
-
-      if(kdata==7) then
-        ifname(1) = 'efit_snap.dat_'//adjustl(snapext_in)
-      elseif (kdata==3 .or. kdata==5) then
-        ifname(1) = 'efit_snap.dat'
-      endif
-
       call read_eparmdud(ifname(1))!this assume machine is always the same
-
       call get_eparmdud_dependents()
 
 !----------------------------------------------------------------------
 !-- Global Allocations                                               --
+!   Now that we have the black voodoo magic of poorly documented integers
+!   done, let's use that to set poorly documented variables
 !----------------------------------------------------------------------
-  
       include 'global_allocs.f90'
       call set_ecom_mod1_arrays
       call set_ecom_mod2_arrays
@@ -183,12 +167,10 @@
 !----------------------------------------------------------------------
 !-- get data                                                         --
 !----------------------------------------------------------------------
-#if defined(USEMPI)
-! Arrays can only be allocated after MPI has been initialized because dimension is # of processes
       allocate(dist_data(nproc),dist_data_displs(nproc),fwtgam_mpi(nstark,nproc))
-#endif
-    !call set_table_dir
+      !call set_table_dir
       !call efit_read_tables
+      !TODO: SEK: ZZ: Stopping here for now
       print *, 'Entering getsets'
   20  call getsets(ktime,kwake,mtear,kerror)
       print * ,'exiting getsets'
@@ -281,11 +263,6 @@
 !----------------------------------------------------------------------
 ! -- write Kfile if needed                                           --
 !----------------------------------------------------------------------
-      if (kdata.eq.3 .or. kdata.eq.7) then
-         if (write_Kfile) then
-           call write_K2(ks,kerror)
-         endif
-      endif
   500 if (k.lt.ktime) then
         kerrot(ks)=kerror
         go to 100
@@ -309,9 +286,6 @@
 
       subroutine betali(jtime,rgrid,zgrid,idovol,kerror)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          betali computes betas and li.                           **
@@ -888,9 +862,6 @@
       subroutine betsli(jtime,rgrid,zgrid,kerror)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          betsli computes betas and li.                           **
 !**                                                                  **
@@ -1042,9 +1013,6 @@
       end
       subroutine chisqr(jtime)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          chisqr computes the figure of merit for fitting         **
@@ -1447,9 +1415,6 @@
       function erpote(ypsi,nnn)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          erpote computes the stream function for the             **
 !**          radial electric field. eradial computes the             **
@@ -1502,9 +1467,6 @@
       function eradial(ypsi,nnn,reee,zeee)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          eradial computes the radial electric field.             **
 !**                                                                  **
@@ -1552,9 +1514,6 @@
 
       subroutine autoknot(ks,lconvr,ktime,mtear,kerror)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  Autoknot locator for spline basis function    **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          autoknow minimizes chi-squared as a function of knot    **
@@ -1867,9 +1826,6 @@
       subroutine fit(jtime,kerror)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          fit carries out the fitting and equilibrium iterations. **
 !**                                                                  **
@@ -2035,9 +1991,6 @@
       function fpcurr(upsi,nnn)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          fpcurr computes the radial derivative                   **
 !**          of the poloidal current ff. ffcurr computes             **
@@ -2144,9 +2097,6 @@
       subroutine fluxav(f,x,y,n,si,rx,msx,ry,msy,fave,ns,sdlobp,sdlbp)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          FLUXAV does the flux surface average.                   **
 !**                                                                  **
@@ -2207,9 +2157,6 @@
       subroutine getbeam
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          GETBEAM gets the beam pressure.                         **
 !**                                                                  **
@@ -2259,9 +2206,6 @@
       end
       subroutine geteceb(jtime,kerror)
 !**********************************************************************
-!**                                                                  **
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
 !**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
@@ -2911,9 +2855,6 @@
        subroutine getecer(jtime,kerror)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          getecer obtains the receo, R+ R-                        **
 !**          from ECE measurement data                               **
@@ -3439,9 +3380,6 @@
       subroutine gettir(jtime,kerror)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          gettir obtains the receo, R+ R-                         **
 !**          from Ti data                                            **
@@ -3779,9 +3717,6 @@
       subroutine fixstark(jtime,kerror)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          fixstark adjusts the internal pitch angles              **
 !**          based on spatial averaging data                         **
@@ -3991,9 +3926,6 @@
       subroutine getmsels(ktime)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          getmsels obtains MSE-LS data                            **
 !**                                                                  **
@@ -4052,9 +3984,6 @@
       end
       subroutine getsigma(jtimex,niterax)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          GETSIGMA is the control for getting the uncertainty     **
@@ -4234,9 +4163,6 @@
       subroutine getstark(ktime)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          getstark obtains the internal pitch angles              **
 !**          from polarimetry measurement using Wroblewski's routine **
@@ -4362,9 +4288,6 @@
     subroutine gette(kerror)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          GETTE gets the electron temperature                     **
 !**          profiles.                                               **
@@ -4485,9 +4408,6 @@
 
        subroutine gettion(kerror)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          GETTION gets the ion temperature profile.               **
@@ -4641,9 +4561,6 @@
 
       subroutine green(ifag,jtime,niter)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          green set up the appropriate response functions for use **
@@ -5432,9 +5349,6 @@
       subroutine inicur(ks)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          inicur initializes the current density distribution.    **
 !**                                                                  **
@@ -5556,9 +5470,6 @@
 
       subroutine pflux(niter,nnin,ntotal,jtime,kerror)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          pflux computes the poloidal fluxes on the r-z grid.     **
@@ -6547,9 +6458,6 @@
       function prcur4(n1set,ypsi,nnn)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          prcur4 computes the plasma pressure by integration.     **
 !**                                                                  **
@@ -6603,9 +6511,6 @@
       function ppcur4(ypsi,nnn)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          ppcur4 computes the radial derivative of the            **
 !**          pressure based on icurrt.                               **
@@ -6646,9 +6551,6 @@
       end
       function ppcurr(ypsi,nnn)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          ppcurr computes the radial derivative of the            **
@@ -6725,9 +6627,6 @@
       end
       subroutine presurw(jtime,niter)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          presurw computes the relevant parameters for rotational **
@@ -6843,9 +6742,6 @@
       end
       subroutine presur(jtime,niter,kerror)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          presur computes the relevant parameters for pressure    **
@@ -7018,9 +6914,6 @@
       function pwcur4(n1set,ypsi,nnn)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          pwcur4 computes the rotational pressure by integration. **
 !**                                                                  **
@@ -7073,9 +6966,6 @@
       function pwpcu4(ypsi,nnn)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          pwpcu4 computes the radial derivative of the            **
 !**          rotational pressure based on icurrt.                    **
@@ -7117,9 +7007,6 @@
       end
       function pwpcur(ypsi,nnn)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          ppcurr computes the radial derivative of the            **
@@ -7171,9 +7058,6 @@
       end
       subroutine residu(nx,jtime)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**         residu computes the flux variations on the r-z grid.     **
@@ -7318,9 +7202,6 @@
 
       subroutine setece(jtime,kerror)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          setece obtains the response matrix                      **
@@ -7788,9 +7669,6 @@
       subroutine seter(ypsi,xpsii)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**         setff sets up the basis functions for er.                **
 !**                                                                  **
@@ -7819,9 +7697,6 @@
       end
       subroutine seterp(ypsi,xpsii)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**         seterp computes derivative of er.                        **
@@ -7852,9 +7727,6 @@
       subroutine setff(ypsi,xpsii)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**         setff sets up the basis functions for ff-ff(1).          **
 !**                                                                  **
@@ -7884,9 +7756,6 @@
       subroutine setfp(ypsi,xpsii)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**         setfp sets up the basis functions for ffp.               **
 !**                                                                  **
@@ -7915,9 +7784,6 @@
       subroutine setfpp(ypsi,xpsii)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**         setfpp computes derivative of ffp.                       **
 !**                                                                  **
@@ -7945,9 +7811,6 @@
       end
       subroutine setpp(ypsi,xpsii)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**         setpp sets up the basis functions for pp.                **
@@ -7979,9 +7842,6 @@
       subroutine setppp(ypsi,xpsii)
         !**********************************************************************
         !**                                                                  **
-        !**     MAIN PROGRAM:  MHD FITTING CODE                              **
-        !**                                                                  **
-        !**                                                                  **
         !**     SUBPROGRAM DESCRIPTION:                                      **
         !**         setppp computes derivative of pp.                        **
         !**                                                                  **
@@ -8011,9 +7871,6 @@
 
       subroutine setpr(ypsi,xpsii)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**         setpr sets up the basis functions for p-p(1).            **
@@ -8045,9 +7902,6 @@
       subroutine setpw(ypsi,xpsii)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**         setpw sets up the basis functions for pw-pw(1).          **
 !**                                                                  **
@@ -8076,9 +7930,6 @@
 
       subroutine setpwp(ypsi,xpsii)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**         setpwp sets up the basis functions for pwp.              **
@@ -8110,9 +7961,6 @@
       subroutine setpwpp(ypsi,xpsii)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**         setpwpp computes derivative of pwp.                      **
 !**                                                                  **
@@ -8142,9 +7990,6 @@
 
       subroutine setstark(jtime)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          setstark obtains the response matrix                    **
@@ -8346,9 +8191,6 @@
       subroutine splitc(is,rs,zs,cs,rc,zc,wc,hc,ac,ac2,cc)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**                                                                  **
 !**                                                                  **
@@ -8461,9 +8303,6 @@
       end
       subroutine steps(ix,ixt,ixout,jtime,kerror)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          step computes the dimensionless poloidal fluxes for     **
@@ -9041,9 +8880,6 @@
       subroutine tsorder(mbox,zprof,nemprof,temprof,nerprof,terprof)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          this subroutine reorders the z profile data to be       **
 !**          in ascending order and sets the ne and te data to       **
@@ -9118,9 +8954,6 @@
       subroutine vescur(jtime)
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          vescur computes the currents induced in the vessel      **
 !**          segments due to E coils and F coils.                    **
@@ -9154,9 +8987,6 @@
 
       subroutine weight(x,y)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          weight computes the weighting function w.               **
@@ -9296,9 +9126,6 @@
 
       block data efit_bdata
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          block data routine to hold all data statements for      **

@@ -116,27 +116,20 @@
       end subroutine set_basis_params
 
 
-      subroutine getsets_defaults
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          getsets performs inputing and initialization.           **
-
+!**                                                                  **
 !**********************************************************************
+      subroutine getsets_defaults
       use set_kinds
+      use mpi_efit
       include 'eparmdud129.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
-! MPI >>>
-#if defined(USEMPI)
-      include 'mpif.h'
-#endif
-! MPI <<<
       logical lopened
       character filenm*15,ishotime*12,news*72, &
                 eqdsk*20,comfile*15,prefix1*1,header*42,fit_type*3
@@ -414,13 +407,9 @@
       ifindopt = 2
       tolbndpsi = 1.0e-12_dp
 
-      end subroutine
+      end subroutine getsets_defaults
 
-      subroutine getsets(ktime,kwake,mtear,kerror)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          getsets performs inputing and initialization.           **
@@ -439,8 +428,10 @@
 !**          01/08/07...DPB namelist for mag uncertainty added       **
 !**                                                                  **
 !**********************************************************************
+      subroutine getsets(ktime,kwake,mtear,kerror)
       use set_kinds
       use Fortran_Sleep
+      use mpi_efit
       use, intrinsic :: iso_c_binding, only: c_int
       include 'eparmdud129.inc'
       include 'modules2.inc'
@@ -448,11 +439,6 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       integer (c_int) :: retwait
 
-! MPI >>>
-#if defined(USEMPI)
-      include 'mpif.h'
-#endif
-! MPI <<<
       logical lopened
       character filenm*15,ishotime*12,news*72, &
                 eqdsk*20,comfile*15,prefix1*1,header*42,fit_type*3

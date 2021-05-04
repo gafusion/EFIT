@@ -19,12 +19,9 @@ subroutine get_opt_input(ktime)
       include 'eparmdud129.inc'
       include 'modules2.inc'
       include 'modules1.inc'
+      USE mpi_efit
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       character*82 snap_ext
-! MPI >>>
-#if defined(USEMPI)
-      include 'mpif.h'
-#endif
      
 
       ! ONLY root process allowed to interface with termina
@@ -37,16 +34,11 @@ subroutine get_opt_input(ktime)
           kdata = mode_in
         endif
       endif
-#if defined(USEMPI)
       if (nproc > 1) then
         call MPI_BCAST(kdata,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
       endif
-#endif
 
       if (kdata.eq.7) then
-! OPT_INPUT >>>
-! MPI >>>
-! ONLY root process interaces with terminal
          if (rank == 0) then
            if (use_opt_input .eqv. .false.) then
              write (nttyo,6617)
@@ -56,16 +48,13 @@ subroutine get_opt_input(ktime)
            endif
          endif
          snapextin=snap_ext
-#if defined(USEMPI)
          if (nproc > 1) then
            call MPI_BCAST(snap_ext,82,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
          endif
-#endif
       endif
 
 
       if (kdata.eq.2) then 
-! ONLY root process interfaces with terminal
        if (rank == 0) then
         if (use_opt_input .eqv. .false.) then
           write (nttyo,6200)
@@ -88,7 +77,6 @@ subroutine get_opt_input(ktime)
       elseif (kdata.eq.3 .or. kdata.eq.7) then
     
        if (kwake.eq.0) then
-! MPI ONLY root process interfaces with terminal
         if (rank == 0) then
           if (use_opt_input .eqv. .false.) then
             write (nttyo,6040)

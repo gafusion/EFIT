@@ -19,6 +19,14 @@ set(EFITLIB_SOURCES
   efitnotifier.c
   ${CMAKE_CURRENT_BINARY_DIR}/set_expath.F90
 )
+# stubs are superior to ifdefs in this case.
+if (${ENABLE_PARALLEL})
+    set(EFITLIB_SOURCES ${EFITLIB_SOURCES} mpi_parallel.f90)
+else()
+    set(EFITLIB_SOURCES ${EFITLIB_SOURCES} mpi_serial.f90)
+endif()
+
+
 #set_expath.F90 is generated -- see top level CMakeLists.txt
 
 # TODO:  This has some strange code that I need to sort out. 

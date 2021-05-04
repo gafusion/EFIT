@@ -1,9 +1,9 @@
       subroutine set_expath
       use expath
 
-      table_dir="${TABLE_DIR}"
-      input_dir="${INPUT_DIR}"
-      store_dir="${STORE_DIR}"
+      table_dir="${TABLE_DIR}/"
+      input_dir="${INPUT_DIR}/"
+      store_dir="${STORE_DIR}/"
 
       !arch_type="${HOSTTYPE}"
       !hostname="${UQHOSTNAME}"
