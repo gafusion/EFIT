@@ -7,7 +7,7 @@ include_directories(
 # This calls out to routines needed in d3lib
 set(EFITLIB_SOURCES
   modules-efit.F90 get_eparmdud.f90 psicald.f90 lsolved.f90 
-  subs_d_pt.f90 efit_tables.f90 
+  subs_d_pt.F90 efit_tables.f90 
   getdat.F90 getdiau.f90 read_namelist.F90
   bunemad.f90 getfnmdud.f90 ecom1-mods.f90 zplined.f90 
   ecom2-mods.f90 vas_sub1.f90 data_input.f90
