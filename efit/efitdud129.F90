@@ -180,14 +180,14 @@
       ntime = ktime
       call get_eparmdud_defaults()
 
-      if(kdata==7) then
-        ifname(1) = 'efit_snap.dat_'//adjustl(snapext_in)
-      elseif (kdata==3 .or. kdata==5) then
-        ifname(1) = 'efit_snap.dat'
+      if (kdata==2) then
+        call read_shot(ifname(1))     !this assume machine is always the same
+        call read_eparmdud(ifname(1)) !this assume machine is always the same
+      elseif(kdata==7) then
+        call read_eparmdud('efit_snap.dat_'//adjustl(snapext_in))
+      else
+        call read_eparmdud('efit_snap.dat')
       endif
-
-      call read_eparmdud(ifname(1))!this assume machine is always the same
-
       call get_eparmdud_dependents()
 
 !----------------------------------------------------------------------
