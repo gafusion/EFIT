@@ -993,11 +993,7 @@
       return
       end
 
-      subroutine wmeasure(ktime,ifirsttime,ilast,itype)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          Subroutine wmeasure writes measurements (MSE, magnetic) **
@@ -1028,7 +1024,7 @@
 !**                          use mssssss.0tttt_nnn for sub-millisec. **
 !**                                                                  **
 !**********************************************************************
-!
+      subroutine wmeasure(ktime,ifirsttime,ilast,itype)
       use set_kinds
       include 'eparmdud129.inc'
       include 'modules1.inc'

@@ -9,7 +9,7 @@
 #cmakedefine HAVE_BLAS
 #cmakedefine HAVE_LAPACK
 #cmakedefine HAVE_HDF5
-#cmakedefine HAVE_HDF5
+#cmakedefine HAVE_NETCDF
 #cmakedefine TIME_LEVEL1
 #cmakedefine TIME_LEVEL2
 #cmakedefine __cray
