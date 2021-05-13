@@ -1,8 +1,4 @@
-      block data exp_bdata
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          block data routine to hold experiment-dependent data    **
@@ -20,6 +16,7 @@
 !**                                                                  **
 !**********************************************************************
 !
+      block data exp_bdata
       use commonblocks,only: byringr,byringz
       include 'eparmdud129.inc'
 !vas      include 'modules2.inc' !to avoid the clash with allocat..
@@ -93,7 +90,6 @@
 !oct14      data ksxr0/10*0/,ksxr2/10*0/,idosxr/1/
       end
 
-      subroutine getlim(type,xltype,xltype_180)
 !------------------------------------------------------------------------
 !--
 !--   read in limiter data from limiter file
@@ -109,7 +105,7 @@
 !--   10/02/97 created
 !--
 !------------------------------------------------------------------------
-!
+      subroutine getlim(type,xltype,xltype_180)
       include 'eparmdud129.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -119,8 +115,6 @@
       data lfile/36/
 !
       if ((limitr.gt.0).and.(type.ne.0)) go to 50240
-!
-
 !
 ! --- read in limiter data
 !
@@ -141,7 +135,6 @@
         goto 100
       endif
   120 close(unit=lfile)
-
   
 !----------------------------------------------------------------
 !--  Fixed poloidal limiter for shot > 88400                   --
@@ -150,7 +143,7 @@
       dell=0.01_dp*xltype
       limup=0
       limbot=0
-      do 132 i=1,limitr
+      do i=1,limitr
         if (ishot.le.52360) then
         if ((ylim(i).eq.0.3260_dp).and.(xlim(i).gt.rcentr)) limup=i
         if ((ylim(i).eq.-0.3260_dp).and.(xlim(i).gt.rcentr)) limbot=i
@@ -163,17 +156,17 @@
         if ((ylim(i).eq.0.3655_dp).and.(xlim(i).gt.rcentr)) limup=i
         if ((ylim(i).eq.-0.3655_dp).and.(xlim(i).gt.rcentr)) limbot=i
         endif
-  132 continue
+      enddo
       limup0=limup
       limbot0=limbot
-      if ((limup.le.0).or.(limbot.le.0)) go to 139
-      do 135 i=limup,limbot
-        xlim(i)=xlim(i)-dell
-  135 continue
-      do 138 i=limitr+5,limitr+10
-        xlim(i)=xlim(i)-dell
-  138 continue
-  139 continue
+      if ((limup.gt.0).and.(limbot.gt.0)) then
+          do i=limup,limbot
+            xlim(i)=xlim(i)-dell
+          enddo   
+          do i=limitr+5,limitr+10
+            xlim(i)=xlim(i)-dell
+          enddo    
+      endif
 !
 ! --- calculate the length of filename filimt
       lfilimt=0
@@ -197,16 +190,10 @@
 !--  no 180 degree limiter for shot greater than 76756, only fixed   --
 !--  poloidal limiter                                                --
 !----------------------------------------------------------------------
-      if (ishot.ge.76757) then
-        limup=limup0
-        limbot=limbot0
-        xltype_180=0.0
-        go to 50212
-      endif
       dell=0.01_dp*xltype_180
       limup=0
       limbot=0
-      do 50206 i=1,limitr_180
+      do i=1,limitr_180
         if (ishot.le.57590) then
         if ((ylim_180(i).eq.0.3655_dp).and.(xlim_180(i).gt.rcentr)) &
              limup=i
@@ -219,26 +206,34 @@
         if ((ylim_180(i).eq.-0.2000_dp).and.(xlim_180(i).gt.rcentr)) &
              limbot=i
         endif
-50206 continue
-      if ((limup.le.0).or.(limbot.le.0)) go to 50212
-      do 50208 i=limup,limbot
-        xlim_180(i)=xlim_180(i)-dell
-50208 continue
-      do 50210 i=limitr_180+5,limitr_180+10
-        xlim_180(i)=xlim_180(i)-dell
-50210 continue
-50212 continue
+      enddo
+      if ((limup>0).and.(limbot>0)) then
+          do i=limup,limbot
+            xlim_180(i)=xlim_180(i)-dell
+          enddo
+          do i=limitr_180+5,limitr_180+10
+            xlim_180(i)=xlim_180(i)-dell
+          enddo
+      endif
+      if (ishot.ge.76757) then
+        limup=limup0
+        limbot=limbot0
+        xltype_180=0.0
+      endif
       if (limup0*limup*limbot*limbot0.gt.0) then
-      rgraphite=2.3756_dp
-      limup=min(limup,limup0)
-      limbot=max(limbot,limbot0)
-      do 50220 i=limup,limbot
-        xlim(i)=min(xlim(i),xlim_180(i),rgraphite)
-50220 continue
+          rgraphite=2.3756_dp
+          limup=min(limup,limup0)
+          limbot=max(limbot,limbot0)
+          do i=limup,limbot
+            xlim(i)=min(xlim(i),xlim_180(i),rgraphite)
+          enddo
       endif
       endif
 50240 continue
-!
+      !SEK:  I have no idea this works if limitr < 0 so just doing this hack
+      !TODO
+      limitr=ABS(limitr)
+      !SEK:  I have no idea this works
       limitr=limitr+1
       xlim(limitr)=xlim(1)
       ylim(limitr)=ylim(1)
@@ -322,8 +317,6 @@
 !
       return
       end
-
-      subroutine getsxr(ishot,ixray)
 !------------------------------------------------------------------------
 !--
 !--   read in SXR detectors geometry from a file if needed
@@ -332,6 +325,7 @@
 !--   05/12/98 Q.P. added Toroidal X-ray. Data provided by R.Snider.
 !--
 !------------------------------------------------------------------------
+      subroutine getsxr(ishot,ixray)
       include 'eparmdud129.inc'
       use var_cxray
       implicit integer*4 (i-n), real*8 (a-h,o-z)

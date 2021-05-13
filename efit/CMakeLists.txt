@@ -16,6 +16,7 @@ set(EFITLIB_SOURCES
   msels_data.f90 msels_hist.f90 pltdatud129.f90 getecdud129.F90 getneud129.F90
   ppbasisfuncud129.f90 ffbasisfuncud129.f90 wwbasisfuncud129.f90 
   expdataud129.f90 
+  cyclic.F90 efit_bdata.F90 set_routines.F90 pressure.F90 get_routines.F90
   efitnotifier.c
   ${CMAKE_CURRENT_BINARY_DIR}/set_expath.F90
 )
@@ -67,5 +68,5 @@ add_executable(efit  efitdud129.F90 get_opt_input.F90)
 target_link_libraries(efit efitlib ${io_libs} ${math_libs})
 
 #add_executable(efitai  efitai.F90 get_opt_input_args.F90)
-add_executable(efitai  efitai.F90)
-target_link_libraries(efitai efitlib ${io_libs} ${math_libs})
+#add_executable(efitai  efitai.F90)
+#target_link_libraries(efitai efitlib ${io_libs} ${math_libs})
