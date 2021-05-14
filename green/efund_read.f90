@@ -200,7 +200,6 @@
 !--  islpfc=1     flux loops at F coils                             --
 !---------------------------------------------------------------------
       READ (nin,in3)
-      !WRITE (nout,in3)
 !
       IF (.NOT. ALLOCATED(rgrid)) THEN
         ALLOCATE(rgrid(nw))
@@ -213,12 +212,8 @@
 !
       nwnh = nw * nh
 !make the file names for green-table
-!vas
       call inp_file_ch(nw,nh,ch1,ch2)
-!      print*,'file name : ', 'ep'//trim(ch1)// &
-!                         trim(ch2)//'.ddd'
-!
-     print *, 'rf(1)=',rf
+
 !----------------------------------------------------------------------
 !-- READ f coil and psi loop dimensions                              --
 !----------------------------------------------------------------------
@@ -263,6 +258,9 @@
       WRITE (nout,in3)
       close(nin)
       close(nout)
+      
+      call dprobe(mpnam2,lpname,patmp2)
+      
       RETURN
 10000 FORMAT (6e12.6)
 10010 FORMAT (4e12.6)
