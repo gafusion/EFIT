@@ -232,7 +232,7 @@
 50240 continue
       !SEK:  I have no idea this works if limitr < 0 so just doing this hack
       !TODO
-      limitr=ABS(limitr)
+      !limitr=ABS(limitr)
       !SEK:  I have no idea this works
       limitr=limitr+1
       xlim(limitr)=xlim(1)

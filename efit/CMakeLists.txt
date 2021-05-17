@@ -15,9 +15,10 @@ set(EFITLIB_SOURCES
   fcurrt.f90 boundud129.f90 chkeud129.f90 splineud129.f90 weqdud129.f90
   msels_data.f90 msels_hist.f90 pltdatud129.f90 getecdud129.F90 getneud129.F90
   ppbasisfuncud129.f90 ffbasisfuncud129.f90 wwbasisfuncud129.f90 
-  expdataud129.f90 
+  expdataud129.f90  autoknot.F90 efit_utils.F90
   cyclic.F90 efit_bdata.F90 set_routines.F90 pressure.F90 get_routines.F90
-  efitnotifier.c
+  green.F90 fit.F90 beta_li.F90 flux_current.F90 weight.F90
+  efitnotifier.c wmeasure.F90
   ${CMAKE_CURRENT_BINARY_DIR}/set_expath.F90
 )
 # stubs are superior to ifdefs in this case.
@@ -68,5 +69,5 @@ add_executable(efit  efitdud129.F90 get_opt_input.F90)
 target_link_libraries(efit efitlib ${io_libs} ${math_libs})
 
 #add_executable(efitai  efitai.F90 get_opt_input_args.F90)
-#add_executable(efitai  efitai.F90)
-#target_link_libraries(efitai efitlib ${io_libs} ${math_libs})
+add_executable(efitai  efitai.F90)
+target_link_libraries(efitai efitlib ${io_libs} ${math_libs})

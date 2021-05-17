@@ -1,25 +1,17 @@
-      subroutine prtout(it)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          prtout performs printing.                               **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**          24/07/85..........revised                               **
 !**          2020/09/21........R.S. Added key output for parallel    **
 !**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      subroutine prtout(it)
       use commonblocks,only: worka2
       include 'eparmdud129.inc'
       include 'modules2.inc'
@@ -661,7 +653,7 @@
 13000 format (//,16x,'    toroidal rotation         ')
 13020 format ('  betatw =  ',1pe12.5,' betapw   = ',1pe12.5, &
               '  W(J)   =  ',1pe12.5)
-      end
+      end subroutine prtout
 
       subroutine prtoutheader()
 !**********************************************************************

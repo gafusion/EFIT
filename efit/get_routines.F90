@@ -1987,14 +1987,9 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          23/03/90..........first created                         **
 !**          93/04/23..........revised for double precision version  **
-!**                                                                  **
 !**                                                                  **
 !**********************************************************************
       subroutine getstark(ktime)
@@ -2369,5 +2364,197 @@
 !
       return
       end subroutine gettion
+!**********************************************************************
+!**                                                                  **
+!**     SUBPROGRAM DESCRIPTION:                                      **
+!**          erpote computes the stream function for the             **
+!**          radial electric field. eradial computes the             **
+!**          radial electric field.                                  **
+!**                                                                  **
+!**     CALLING ARGUMENTS:                                           **
+!**                                                                  **
+!**     RECORD OF MODIFICATION:                                      **
+!**          97/04/24..........first created                         **
+!**                                                                  **
+!**********************************************************************
+      function erpote(ypsi,nnn)
+      use commonblocks,only: c,wk,copy,bkx,bky
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+
+      dimension xpsii(nercur)
+      data init/0/
+!
+      if (abs(ypsi).gt.1.0) then
+        erpote=0.0
+        return
+      endif
+      erpote=0.0
+      call seter(ypsi,xpsii)
+      do 1400 iiij=1,nnn
+        erpote=erpote+cerer(iiij)*xpsii(iiij)
+ 1400 continue
+      return
+!
+      entry erppote(ypsi,nnn)
+      if (abs(ypsi).gt.1.0) then
+        erppote=0.0
+        return
+      endif
+      erppote=0.0
+      call seterp(ypsi,xpsii)
+      do 2400 iiij=1,nnn
+        erppote=erppote+cerer(iiij)*xpsii(iiij)
+ 2400 continue
+      erppote=-erppote/sidif
+      return
+      end function erpote
+
+!**********************************************************************
+!**                                                                  **
+!**     SUBPROGRAM DESCRIPTION:                                      **
+!**          eradial computes the radial electric field.             **
+!**                                                                  **
+!**     CALLING ARGUMENTS:                                           **
+!**                                                                  **
+!**     RECORD OF MODIFICATION:                                      **
+!**          97/04/24..........first created                         **
+!**                                                                  **
+!**********************************************************************
+      function eradial(ypsi,nnn,reee,zeee)
+      use commonblocks,only: c,wk,copy,bkx,bky
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+
+      dimension pds(6)
+      data init/0/
+!
+      if (abs(ypsi).ge.1.0) then
+        eradial=0.0
+        return
+      endif
+        call seva2d(bkx,lkx,bky,lky,c,reee,zeee,pds,ier,n333)
+      eradial=erpote(ypsi,nnn)
+      eradial=-pds(2)*eradial
+      return
+!
+      entry esradial(ypsi,nnn,reee,zeee)
+      if (abs(ypsi).ge.1.0) then
+        esradial=0.0
+        return
+      endif
+      call seva2d(bkx,lkx,bky,lky,c,reee,zeee,pds,ier,n333)
+      esradial=erppote(ypsi,nnn)
+      esradial=-(reee*pds(2))**2*esradial
+      fnow=seval(nw,ypsi,sigrid,fpol,bbfpol,ccfpol,ddfpol)
+      bbnow=sqrt(fnow**2+pds(2)**2+pds(3)**2)/reee
+      esradial=esradial/bbnow
+      return
+      end function
+
+!**********************************************************************
+!**                                                                  **
+!**     SUBPROGRAM DESCRIPTION:                                      **
+!**          fpcurr computes the radial derivative                   **
+!**          of the poloidal current ff. ffcurr computes             **
+!**          the poloidal current F=twopi RBt/mu0                    **
+!**                                                                  **
+!**     CALLING ARGUMENTS:                                           **
+!**                                                                  **
+!**     RECORD OF MODIFICATION:                                      **
+!**          21/10/83..........first created                         **
+!**          24/07/85..........revised                               **
+!**          94/03/08..........revised                               **
+!**                                                                  **
+!**********************************************************************
+      function fpcurr(upsi,nnn)
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      dimension xpsii(nffcur)
+
+      if (icutfp.gt.0) then
+        ypsi=upsi*xpsimin
+      else
+        ypsi=upsi
+      endif
+      if (abs(ypsi).gt.1.0) then
+        fpcurr=0.0
+        return
+      endif
+      if (npsi_ext > 0) then
+        fpcurr = seval(npsi_ext,ypsi,psin_ext,ffprim_ext,bfp_ext,cfp_ext,dfp_ext)
+        fpcurr = fpcurr * cratiof_ext
+        return
+      endif
+      fpcurr=0.0
+      call setfp(ypsi,xpsii)
+      do 1400 iiij=nbase+1,nbase+nnn
+        iijj=iiij-nbase
+        fpcurr=fpcurr+brsp(iiij)*xpsii(iijj)
+ 1400 continue
+!----------------------------------------------------------------------
+!-- edge hyperbolic tangent component                                --
+!----------------------------------------------------------------------
+      if (kedgef.eq.0) return
+      siedge=(ypsi-fe_psin)/fe_width
+      f0edge=f2edge
+      f0back=f0edge/fe_width/sidif
+      fpcurr=fpcurr+f0back/cosh(siedge)**2
+      return
+!
+      entry fpecrr(upsi,nnn)
+      if (icutfp.gt.0) then
+        ypsi=upsi*xpsimin
+      else
+        ypsi=upsi
+      endif
+      if (abs(ypsi).gt.1.0) then
+        fpecrr=0.0
+        return
+      endif
+      fpecrr=0.0
+      call setfp(ypsi,xpsii)
+      do 1500 iiij=nbase+nnn,nbase+nnn
+        iijj=iiij-nbase
+        fpecrr=fpecrr+brsp(iiij)*xpsii(iijj)
+ 1500 continue
+      return
+!
+      entry ffcurr(upsi,nnn)
+      if (icutfp.gt.0) then
+        ypsi=upsi*xpsimin
+        xsidif=-sidif/xpsimin
+      else
+        ypsi=upsi
+        xsidif=-sidif
+      endif
+      if (abs(ypsi).ge.1.0) then
+        ffcurr=fbrdy
+        return
+      endif
+      ffcurr=0.0
+      call setff(ypsi,xpsii)
+      do 1600 i=nbase+1,nbase+nnn
+        nn=i-nbase
+        ffcurr=ffcurr+brsp(i)*xpsii(nn)
+ 1600 continue
+      fb22=fbrdy**2
+      ff22=fb22+xsidif*ffcurr/constf2
+      if (ff22.lt.0.0) ff22=fb22
+      ffcurr=sqrt(ff22)*fbrdy/abs(fbrdy)
+!----------------------------------------------------------------------
+!-- edge hyperbolic tangent component                                --
+!----------------------------------------------------------------------
+      if (kedgef.eq.0) return
+      siedge=(ypsi-fe_psin)/fe_width
+      f0edge=f2edge/constf2
+      ff22=ff22+f0edge*(tfedge-tanh(siedge))
+      if (ffcurr.lt.0.0) ffcurr=fb22
+      ffcurr=sqrt(ff22)*fbrdy/abs(fbrdy)
+      return
+      end function fpcurr
 
 
