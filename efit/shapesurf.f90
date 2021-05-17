@@ -1,4 +1,3 @@
-      subroutine shapesurf(iges,igmax,kerror)
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
@@ -6,10 +5,6 @@
 !**          and computes various global plasma parameters.          **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          10/06/83..........first created                         **
@@ -20,6 +15,7 @@
 !**                            parameter n/nc outside of pltout      **
 !**                                                                  **
 !**********************************************************************
+      subroutine shapesurf(iges,igmax,kerror)
       use set_kinds
       use commonblocks,only: c,wk,copy,bkx,bky,psiold,psipold,psipp, &
                 worka,zeros,byringr,byringz,xouts,youts,bpoo,bpooz, &
@@ -37,11 +33,11 @@
       real*8,dimension(:),allocatable :: xsisii,bpres,cpres, &
                     dpres,sjtli,sjtlir,sjtliz,rjtli,bpresw, &
                     cpresw,dpresw,copyn,cjtli,x,y
-      character*30 sfname,ofname
-      Character*28 xxtitle,yytitle,zztitle
-      character*20 zzztitle
-      Character*8 jchisq
-      character*1 jchisq2
+      character(30 )sfname,ofname
+      Character(28) xxtitle,yytitle,zztitle
+      character(20) zzztitle
+      Character(8) jchisq
+      character(1) jchisq2
       logical byring,double,onedone
       integer kerror
       data floorz/-1.366_dp/
@@ -287,22 +283,22 @@
       dtop=1.0e+10_dp
       dbott=1.0e+10_dp
       seplim(iges)=1000.
-      do 841 j=1,limitr-1
-      call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
-              xlim(j),ylim(j),xlim(j+1),ylim(j+1),disnow)
-      if (xlim(j).lt.1.02_dp .and. xlim(j+1).lt.1.02_dp) then
-        dleft = min(dleft,disnow)
-      endif
-      if (ylim(j).gt.1.20_dp .and. ylim(j+1).gt.1.20_dp) then
-        dtop = min(dtop,disnow)
-      endif
-      if (ylim(j).lt.-1.20_dp .and. ylim(j+1).lt.-1.20_dp) then
-        dbott = min(dbott,disnow)
-      endif
-      if (xlim(j).gt.1.70_dp .and. xlim(j+1).gt.1.70_dp) then
-        dright = min(dright,disnow)
-      endif
-  841 continue
+      do j=1,limitr-1
+        call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
+                xlim(j),ylim(j),xlim(j+1),ylim(j+1),disnow)
+        if (xlim(j).lt.1.02_dp .and. xlim(j+1).lt.1.02_dp) then
+          dleft = min(dleft,disnow)
+        endif
+        if (ylim(j).gt.1.20_dp .and. ylim(j+1).gt.1.20_dp) then
+          dtop = min(dtop,disnow)
+        endif
+        if (ylim(j).lt.-1.20_dp .and. ylim(j+1).lt.-1.20_dp) then
+          dbott = min(dbott,disnow)
+        endif
+        if (xlim(j).gt.1.70_dp .and. xlim(j+1).gt.1.70_dp) then
+          dright = min(dright,disnow)
+        endif
+      enddo
       dismin=min(dleft,dright,dtop,dbott)
       oleft(iges)=dleft
       oright(iges)=dright
@@ -430,11 +426,11 @@
 !--  gap calculation                                                --
 !---------------------------------------------------------------------
       seplim(iges)=1000.
-      do 861 j=1,nfouns-1
-      call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
-              xouts(j),youts(j),xouts(j+1),youts(j+1),disnow)
-      seplim(iges)=-min(abs(seplim(iges)),disnow)
-  861 continue
+      do j=1,nfouns-1
+        call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
+                xouts(j),youts(j),xouts(j+1),youts(j+1),disnow)
+        seplim(iges)=-min(abs(seplim(iges)),disnow)
+      enddo
 !----------------------------------------------------------------------
 !--    start distance calculation                                    --
 !----------------------------------------------------------------------
@@ -2321,8 +2317,8 @@
         call zpline(nw,xsisii,pressw,bpresw,cpresw,dpresw)
       delerr=0.0
       delerb=0.0
-      do 950 i=1,nw
-      do 950 j=1,nh
+      do i=1,nw
+      do j=1,nh
         kk=(i-1)*nh+j
         fnow=fbrdy
         presss=0.0
@@ -2383,8 +2379,8 @@
 !--------------------------------------------------------------------------
 !--  evaluate -del*psi/R/mu0                                             --
 !--------------------------------------------------------------------------
-        if (i.eq.1.or.i.eq.nw) go to 950
-        if (j.eq.1.or.j.eq.nh) go to 950
+        if (i.eq.1.or.i.eq.nw) cycle
+        if (j.eq.1.or.j.eq.nh) cycle
         kip=i*nh+j
         kim=(i-2)*nh+j
         kjp=(i-1)*nh+j+1
@@ -2400,7 +2396,7 @@
 !--------------------------------------------------------------------------
 !-- total psi for inside plasma only                                     --
 !--------------------------------------------------------------------------
-        if (xpsi(kk).gt.0.999_dp) go to 950
+        if (xpsi(kk).gt.0.999_dp) cycle
         d2sidr2=(psiold(kip)-2.*psiold(kk)+psiold(kim))/drgrid**2
         d2sidz2=(psiold(kjp)-2.*psiold(kk)+psiold(kjm))/dzgrid**2
         dsidr=(psiold(kip)-psiold(kim))/2./drgrid
@@ -2408,7 +2404,8 @@
         delssi=-delssi/rgrid(i)/tmu0
         delerrx=abs(delssi-pcnow)
         delerr=max(delerrx,delerr)
-  950 continue
+      enddo
+      enddo
       curnow=abs(cpasma(iges))/areao(iges)*1.e4_dp
       delerr=delerr/curnow
       delerb=delerb/curnow
@@ -2749,24 +2746,25 @@
 !-- vertical stability parameter,  reference Nuc Fusion  18(1978)1331 --
 !-- move out of pltout so that vertn, xnnc are indepent of itek value --
 !-----------------------------------------------------------------------
-      do 550 i=1,nw
-         do 550 j=1,nh
+      do i=1,nw
+         do j=1,nh
             kk=(i-1)*nh+j
             copy(i,j)=0.0
             do m=1,nfcoil
                copy(i,j)=copy(i,j)+gridfc(kk,m)*brsp(m)
             enddo
-            if (ivesel.le.0) go to 526
-            do m=1,nvesel
-               copy(i,j)=copy(i,j)+gridvs(kk,m)*vcurrt(m)
-            enddo
-  526       continue
-            if (iecurr.le.0) go to 530
-            do m=1,nesum
-               copy(i,j)=copy(i,j)+gridec(kk,m)*ecurrt(m)
-            enddo
-  530       continue
-  550 continue
+            if (ivesel.gt.0) then
+              do m=1,nvesel
+                 copy(i,j)=copy(i,j)+gridvs(kk,m)*vcurrt(m)
+              enddo
+            endif
+            if (iecurr.gt.0) then
+              do m=1,nesum
+                 copy(i,j)=copy(i,j)+gridec(kk,m)*ecurrt(m)
+              enddo
+            endif
+         enddo
+      enddo
       do i=1,nw
       do j=1,nh
         k=(i-1)*nh+j
@@ -2791,11 +2789,11 @@
 !------------------------------------------------------------------
 !-- compute shearing rate eshear                                 --
 !------------------------------------------------------------------
-      if (keecur.le.0) go to 1990
-      do i=1,nw
-        eshear(i)=esradial(sipmid(i),keecur,rpmid(i),zmaxis)
-      enddo
- 1990 continue
+      if (keecur.gt.0) then
+        do i=1,nw
+          eshear(i)=esradial(sipmid(i),keecur,rpmid(i),zmaxis)
+        enddo
+      endif
 !-----------------------------------------------------------------------
 !--  write out r(shot).(time)_X files in rho space                    --
 !-----------------------------------------------------------------------
@@ -2934,13 +2932,9 @@
             rjtli,bpresw,cpresw,dpresw,copyn,cjtli,x,y)
 !
       return
-      end
+      end subroutine shapesurf
 
-      subroutine dslant(x,y,np,xmin,xmax,ymin,ymax,x1,y1,x2,y2,dismin)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          dslant finds the minimum distance between a curve       **
@@ -2949,19 +2943,18 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          12/08/86..........first created                         **
 !**                                                                  **
 !**********************************************************************
+      subroutine dslant(x,y,np,xmin,xmax,ymin,ymax,x1,y1,x2,y2,dismin)
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       data nn/30/
-      dimension x(1),y(1)
-!
+      real, intent(in) :: xmin, xmax, ymin, ymax, x1, y1, x2, y2
+      real, intent(inout) :: dismin
+      real, intent(in) :: x(np), y(np)
+
       dismin=1.0e+20_dp
       delx=x2-x1
       dely=y2-y1
@@ -2970,7 +2963,7 @@
       nn=max(5,nn)
       delx=delx/(nn-1)
       dely=dely/(nn-1)
-      do 1000 i=1,nn
+      do i=1,nn
         xw=x1+delx *(i-1)
         yw=y1+dely *(i-1)
         do m=1,np
@@ -2978,7 +2971,7 @@
           disw=sqrt((xw-x(m))**2+(yw-y(m))**2)
           dismin=min(dismin,disw)
         end do
- 1000 continue
+      enddo
       dismin=dismin*100.
       return
-      end
+      end subroutine dslant

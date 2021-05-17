@@ -3,7 +3,6 @@
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          prcur4 computes the plasma pressure by integration.     **
 !**                                                                  **
-!**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
@@ -467,9 +466,9 @@
 !
        sfprw(nw)=preswb
        delsi=sidif/(nw-1)
-       do 1000 i=1,nw-1
+       do i=1,nw-1
        sfprw(nw-i)=sfprw(nw-i+1)+0.5_dp*(sprwp(nw-i+1)+sprwp(nw-i))*delsi
- 1000  continue
+       enddo
 !
        mw=nw
        call zpline(mw,sifprw,sfprw,bwprw,cwprw,dwprw)
@@ -499,18 +498,16 @@
         pwpcu4=0.0
         return
       endif
-      if (icurrt.eq.4) go to 2000
-      if (icurrt.eq.1) go to 3000
-      pwpcu4=pwpcur(ypsi,nnn)
-      return
-!
- 2000 continue
-      pwpcu4=((1.-ypsi**enw)**emw*(1.-gammaw)+gammaw)*rbetaw &
+
+      if (icurrt.eq.4) then
+        pwpcu4=((1.-ypsi**enw)**emw*(1.-gammaw)+gammaw)*rbetaw &
          *cratio/rzero
-      return
-!
- 3000 continue
-      pwpcu4=sbetaw*cratio/srma
+      elseif (icurrt.eq.1) then
+        pwpcu4=sbetaw*cratio/srma
+      else
+        pwpcu4=pwpcur(ypsi,nnn)
+      endif
+
       return
       end function pwpcu4
 !**********************************************************************
@@ -538,24 +535,35 @@
       endif
       pwpcur=0.0
       call setpwp(ypsi,xpsii)
-      do 1400 iiij=nfnpcr+1,nnn+nfnpcr
+      do iiij=nfnpcr+1,nnn+nfnpcr
         iijj=iiij-nfnpcr
         pwpcur=pwpcur+brsp(iiij)*xpsii(iijj)
- 1400 continue
+      enddo
       return
-!
-      entry pwcurr(ypsi,nnn)
+      end function pwpcur
+!**********************************************************************
+!**                                                                  **
+!**     SUBPROGRAM DESCRIPTION:                                      **
+!**          pwcurr 
+!**                                                                  **
+!**     CALLING ARGUMENTS:                                           **
+!**                                                                  **
+!**********************************************************************
+      function pwcurr(ypsi,nnn)
+      include 'eparmdud129.inc'
+      include 'modules1.inc'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      dimension xpsii(nwwcur)
       if (abs(ypsi).gt.1.0) then
         pwcurr=0.0
         return
       endif
       pwcurr=0.0
       call setpw(ypsi,xpsii)
-      do 1600 i=nfnpcr+1,nfnpcr+nnn
+      do i=nfnpcr+1,nfnpcr+nnn
         nn=i-nfnpcr
         pwcurr=pwcurr+brsp(i)*xpsii(nn)
- 1600 continue
+      enddo
       pwcurr=-sidif*pwcurr/darea+preswb
       return
-      end function pwpcur
-
+      end function pwcurr

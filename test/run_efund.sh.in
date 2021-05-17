@@ -1,5 +1,6 @@
 #!/bin/bash
 BINDIR=@CMAKE_BINARY_DIR@
+/bin/rm -f dprobe.dat
 @EFUND_EXEC@ @GRID_SIZE@ << __c__MATCHING_EOF__c__
 __c__MATCHING_EOF__c__
 

@@ -1,4 +1,3 @@
-      subroutine seva2d(bkx,lx,bky,ly,cs,xl,yl,fs,ier,icalc)
 !------------------------------------------------------------------------------
 !--  S.Thompson  92/05/18                                                    --
 !--    Bicubic spline routines.                                              --
@@ -34,11 +33,12 @@
 !      ier      - error parameter.
 !
 !-------------------------------------------------------------------------------
+      subroutine seva2d(bkx,lx,bky,ly,cs,xl,yl,fs,ier,icalc)
       include 'eparmdud129.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !
       INTEGER*4 ier, lx, ly
-      REAL*8 cs(kubicx,lubicx,kubicy,lubicy),xl,yl,fs(6),bkx(1),bky(1)
+      REAL*8 cs(kubicx,lubicx,kubicy,lubicy),xl,yl,fs(6),bkx(*),bky(*)
 !
 !  Local Variable Specifications:
 !
@@ -78,8 +78,7 @@
       fs(6) = ppvalw(work0,h,n22)
 !
       return
-      end
-      subroutine sets2d(s,cs,x,nx,bkx,lx,y,ny,bky,ly,wk,ier)
+      end subroutine seva2d
 !------------------------------------------------------------------------------
 !--  S.Thompson  92/05/18                                                    --
 !--    Bicubic spline routines.                                              --
@@ -111,12 +110,13 @@
 !
 !      wk    - of dimension at least nx by ny.
 !------------------------------------------------------------------------------
+      subroutine sets2d(s,cs,x,nx,bkx,lx,y,ny,bky,ly,wk,ier)
 !!      use commonblocks,only: bkx,bky
       include 'eparmdud129.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !
       parameter (krord=4,kzord=4)
-      dimension s(1), x(nx), y(ny), wk(nx,ny), &
+      dimension s(nx*ny), x(nx), y(ny), wk(nx,ny), &
                 cs(kubicx, lubicx, kubicy, lubicy)
       real*8,allocatable :: xknot(:),yknot(:),rknot(:), &
            rgrid(:),zgrid(:),zknot(:),copynew(:,:)
@@ -133,10 +133,12 @@
 !
 !  Save the original, use the work array
 !
-    do 10 i=1,nx
-      do 10 j=1,ny
-         k=(i-1)*ny+j
-  10     wk(i,j) = s(k)
+      do i=1,nx
+        do j=1,ny
+           k=(i-1)*ny+j
+           wk(i,j) = s(k)
+        enddo
+      enddo
 !
 !  Calculate spline coefficients:
 !
@@ -150,8 +152,7 @@
       DEALLOCATE(xknot,yknot,rknot,rgrid,zgrid,zknot,copynew)
 !
       return
-      end
-      SUBROUTINE SDECM (A, IA, M, N, B, IB, NB, S, WK, IER)
+      end subroutine sets2d
 !
 !-----------------------------------------------------------------------
 !  S.Thompson  06 May 1992
@@ -341,7 +342,7 @@
 !-----------------------------------------------------------------------
 !  Conversion from IMSL to LINPACK routine.
 !-----------------------------------------------------------------------
-!
+      SUBROUTINE SDECM (A, IA, M, N, B, IB, NB, S, WK, IER)
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       PARAMETER (NN = 100, MM = 300)
@@ -369,40 +370,37 @@
       if (s(1).le.0) IER = 129                   ! This better not happen
       if (s(n)/s(1) .le. 1.e-7_dp) ier = 33         ! Ill-conditioned or rank-deficient matrix
 !
-      DO 20 I = 1, N            ! Copy V into A
-         DO 10 J = 1, N
+      DO I = 1, N            ! Copy V into A
+         DO J = 1, N
 !              A(I, J) = V(I, J)
                A(I, J) = V(J, I)
-10       CONTINUE
-20    CONTINUE
-!
+         ENDDO
+      ENDDO
       IF (NB.EQ.1) THEN                   ! B is a vector
-!
-           DO 50 I = 1, M     ! Compute U**T * B
+           DO I = 1, M     ! Compute U**T * B
               BB(I) = 0.0
-              DO 40 J = 1, M
+              DO J = 1, M
                     BB(I) = BB(I) + U(J, I)*B(J, 1)
-40            CONTINUE
-50         CONTINUE
-!
-           DO 30 I = 1, M    ! Replace B with U**T * B
+              ENDDO
+           ENDDO
+           DO I = 1, M    ! Replace B with U**T * B
               B(I, 1) = BB(I)    
-30         CONTINUE
-!
+           ENDDO
       ELSE                                       ! B is a matrix
-!
-           DO 70 I = 1, NB                  ! Replace B with U**T
-                 DO 60 J = 1, M
+           DO I = 1, NB                  ! Replace B with U**T
+                 DO J = 1, M
                        B(J, I) = U(I, J)
-60               CONTINUE
-70         CONTINUE
-!
+                 ENDDO
+           ENDDO
       ENDIF
 !
  100  format(' Array dimensions', 2i6 ,' too large. Recompile.')
       RETURN
-      END
-       subroutine spl2bc(rgrid,zgrid,rknot,zknot,copynew)
+      END SUBROUTINE SDECM
+!-----------------------------------------------------------------------
+!
+!-----------------------------------------------------------------------
+      subroutine spl2bc(rgrid,zgrid,rknot,zknot,copynew)
 !alculates the b-spline coeficients
 !vasorg      parameter (nw=129,nh=129,krord=4,kzord=4)
       use eparmdud129,only:nw,nh
@@ -424,7 +422,10 @@
       DEALLOCATE(work1,work2,work3)
 !
       return
-      end
+      end subroutine spl2bc
+!-----------------------------------------------------------------------
+!
+!-----------------------------------------------------------------------
       subroutine spl2pp(rknot,zknot,copy,breakr,lr,breakz,lz,coef)
 ! translates to pp representation
       use eparmdud129,only:nw,nh,lr0,lz0
@@ -445,37 +446,40 @@
 ! 
       DEALLOCATE(work4,work5,work6) 
     return
-      end
+      end subroutine spl2pp
+!-----------------------------------------------------------------------
+!
+!-----------------------------------------------------------------------
       subroutine eknot(n,x,k,xk)
 ! given the ordered data points x(1)<...<x(n), this subroutine generates
 ! a knot sequence with not-a-knot end conditions (like BSNAK from IMSL)
 ! Some of this is discussed in de Boor(1978), page 211.
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-        dimension x(n),xk(n+k)
-        INTEGER*4 kh
+      dimension x(n),xk(n+k)
+      INTEGER*4 kh
 !
-        do i=1,k
+      do i=1,k
         xk(i)=x(1)
         ii=i+n
         xk(ii)= x(n)+1.e-5_dp
-        enddo
-        kh=k/2
-        k2=kh+kh
-        if (k2.eq.k) then
+      enddo
+      kh=k/2
+      k2=kh+kh
+      if (k2.eq.k) then
 ! even k, place knots at data points
         do i=k+1,n
-        xk(i)=x(i-kh)
+          xk(i)=x(i-kh)
         enddo
-        else
+      else
 ! odd k, place knots in between data points
         do i=k+1,n
-        xk(i)=.5_dp*(x(i-kh)+x(i-1-kh))
+          xk(i)=.5_dp*(x(i-kh)+x(i-1-kh))
         enddo
-        end if
-        return
-        end
-      subroutine spli2d ( tau, gtau, t, n, k, m, work, q, bcoef, iflag )
+      end if
+      return
+      end subroutine eknot
+!-----------------------------------------------------------------------
 !alls bsplvb, banfac/slv
 !  this is an extended version of  splint , for the use in tensor prod-
 !  uct interpolation.
@@ -530,6 +534,9 @@
 !
 !      INTEGER*4 iflag,k,m,n,i,ilp1mx,j,jj,kpkm1,left,np1
 !      REAL*8 bcoef(m,n),gtau(n,m),q(n,7),t(n+k),tau(n),work(n),taui
+!
+!-----------------------------------------------------------------------
+      subroutine spli2d ( tau, gtau, t, n, k, m, work, q, bcoef, iflag )
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension bcoef(m,n),gtau(n,m),q(n,2*k-1),t(n+k),tau(n),work(n)
 !
@@ -539,23 +546,33 @@
       left = k
 !
 !  ***   loop over  i  to construct the  n  interpolation equations
-      do 30 i=1,n
+      do i=1,n
          iindex=i
          taui = tau(iindex)
          ilp1mx = min(iindex+k,np1)
 !        *** zero out all entries in row  i  of  a (in the 2k-1 bands)
-         do 13 j=1,kpkm1
-   13       q(iindex,j) = 0.
+         do j=1,kpkm1
+            q(iindex,j) = 0.
+         enddo
 !        *** find  left  in the closed interval (i,i+k-1) such that
 !                t(left) .le. tau(i) .lt. t(left+1)
 !        matrix is singular if this is not possible
          left = max(left,i)
-         if (taui .lt. t(left))         go to 998
+         if (taui .lt. t(left)) then
+            iflag = 2
+            write(*,*) ' linear system in  splint  not invertible'
+            return
+         endif
+
    15       if (taui .lt. t(left+1))    go to 16
             left = left + 1
             if (left .lt. ilp1mx)       go to 15
          left = left - 1
-         if (taui .gt. t(left+1))       go to 998
+         if (taui .gt. t(left+1)) then
+            iflag = 2
+            write(*,*) ' linear system in  splint  not invertible'
+            return
+         endif
 !        *** the i-th equation enforces interpolation at taui, hence
 !        a(i,j) = b(j,k,t)(taui), all j. only the  k  entries with  j =
 !        left-k+1,...,left actually might be nonzero. these  k  numbers
@@ -567,33 +584,31 @@
 !        a  is so stored in the i-th row of  q  that the (i,i)-entry of
 !        a  goes into the  k-th  entry of  q.
          jj = left - iindex
-         do 29 j=1,k
+         do j=1,k
             jj = jj+1
             q(iindex,jj) = work(j)
-   29    continue
-   30    continue
+         enddo
+      enddo
 !
 !     ***obtain factorization of  a  , stored again in  q.
       call banfac ( q, n, n, kpkm1, k, iflag )
-      select case (iflag)
-        case (1)
-          go to 40
-        case (2)
-          go to 999
-      end select
+      if (iflag.eq.2) then
+          write(*,*) ' linear system in  splint  not invertible'
+          return
+      endif
 !     *** solve  a*bcoef = gtau  by backsubstitution
-   40 do 50 j=1,m
-         do 41 i=1,n
-   41       work(i) = gtau(i,j)
+      do j=1,m
+         do i=1,n
+            work(i) = gtau(i,j)
+         enddo
          call banslv ( q, n, n, kpkm1, k, work )
-         do 50 i=1,n
-   50    bcoef(j,i) = work(i)
-                                        return
-  998 iflag = 2
-  999 write(*,*) ' linear system in  splint  not invertible'
-                                        return
-      end
-      subroutine bspp2d ( t, bcoef, n, k, m, scrtch, break, coef, l )
+         do i=1,n
+           bcoef(j,i) = work(i)
+         enddo
+      enddo
+      return
+      end subroutine spli2d
+!-----------------------------------------------------------------------
 !alls  bsplvb
 !  this is an extended version of  bsplpp  for use with tensor products
 !
@@ -627,10 +642,12 @@
 !  point of that interval, using  bsplvb  repeatedly to obtain the val-
 !  ues of all b-splines of the appropriate order at that point.
 !
+!-----------------------------------------------------------------------
+      subroutine bspp2d ( t, bcoef, n, k, m, scrtch, break, coef, l )
       implicit integer*4 (i-n), real*8 (a-h, o-z)
         parameter (kmax=4)
       INTEGER*4 k,l,m,n,   i,j,jp1,kmj,left
-      dimension bcoef(n,m),break(1),coef(m,k,1),scrtch(k,k,m),t(1), &
+      dimension bcoef(n,m),break(*),coef(m,k,*),scrtch(k,k,m),t(*), &
            biatx(kmax)
       REAL*8 diff,fkmj,sum
 !
@@ -649,9 +666,11 @@
                                         go to 50
 !        store the k b-spline coeff.s relevant to current knot interval
 !        in  scrtch(.,1) .
-    9    do 10 i=1,k
-            do 10 mm=1,m
-   10          scrtch(i,1,mm) = bcoef(left-k+i,mm)
+    9    do i=1,k
+            do mm=1,m
+               scrtch(i,1,mm) = bcoef(left-k+i,mm)
+            enddo
+         enddo
 !        for j=1,...,k-1, compute the k-j b-spline coeff.s relevant to
 !        current knot interval for the j-th derivative by differencing
 !        those for the (j-1)st derivative, and store in scrtch(.,j+1) .
@@ -662,9 +681,10 @@
             do 20 i=1,kmj
                diff = (t(left+i) - t(left+i - kmj))/fkmj
                if (diff .le. 0.)         go to 20
-               do 15 mm=1,m
-   15             scrtch(i,jp1,mm) = &
+               do mm=1,m
+                 scrtch(i,jp1,mm) = &
                   (scrtch(i+1,j,mm) - scrtch(i,j,mm))/diff
+               enddo
    20          continue
 !        starting with the one b-spline of order 1 not zero at t(left),
 !        find the values at t(left) of the j+1 b-splines of order j+1
@@ -672,21 +692,25 @@
 !        with the b-spline coeff.s found earlier to compute the (k-j)-
 !        th derivative at t(left) of the given spline.
          call bsplvb ( t, n11, n11, t(left), left, biatx )
-         do 25 mm=1,m
-   25       coef(mm,k,l) = scrtch(1  ,k,mm)
-         do 30 jp1=2,k
+         do mm=1,m
+            coef(mm,k,l) = scrtch(1  ,k,mm)
+         enddo
+         do jp1=2,k
             call bsplvb ( t, jp1, n22, t(left), left, biatx )
             kmj = k+1 - jp1
-            do 30 mm=1,m
+            do mm=1,m
                sum = 0.
-               do 28 i=1,jp1
-   28             sum = biatx(i)*scrtch(i,kmj,mm) + sum
-   30          coef(mm,kmj,l) = sum
+               do i=1,jp1
+                  sum = biatx(i)*scrtch(i,kmj,mm) + sum
+               enddo
+               coef(mm,kmj,l) = sum
+           enddo
+         enddo
    50    continue
                                         return
-      end
-      subroutine bsplvb ( t, jhigh, index, x, left, biatx )
-!alculates the value of all possibly nonzero b-splines at  x  of order
+      end subroutine bspp2d
+!-----------------------------------------------------------------------
+!  Calculates the value of all possibly nonzero b-splines at  x  of order
 !
 !               jout  =  max( jhigh , (j+1)*(index-1) )
 !
@@ -745,6 +769,8 @@
 !  are used. the particular organization of the calculations follows al-
 !  gorithm  (8)  in chapter x of the text.
 !
+!-----------------------------------------------------------------------
+      subroutine bsplvb( t, jhigh, index, x, left, biatx )
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       parameter(jmax = 4)
       INTEGER*4 index,jhigh,left,   i,j,jp1
@@ -765,25 +791,26 @@
           go to 20
       end select
 
-   10 j = 1
+   10 continue
+      j = 1
       biatx(1) = 1.
-      if (j .ge. jhigh)                 go to 99
+      if (j .ge. jhigh) return
 !
-   20    jp1 = j + 1
+   20    continue 
+         jp1 = j + 1
          deltar(j) = t(left+j) - x
          deltal(j) = x - t(left+1-j)
          saved = 0.
-         do 26 i=1,j
+         do i=1,j
             term = biatx(i)/(deltar(i) + deltal(jp1-i))
             biatx(i) = saved + deltar(i)*term
-   26       saved = deltal(jp1-i)*term
+            saved = deltal(jp1-i)*term
+         enddo
          biatx(jp1) = saved
          j = jp1
          if (j .lt. jhigh)              go to 20
-!
-   99                                   return
-      end
-      function ppvalw (coef, x, jd )
+      return
+      end subroutine bsplvb
 !-----------------------------------------------------------------------        
 !  Modified for optimization by S.J. Thompson, 30-Aug-1993
 !  Revised to eliminate call to interv by S.M.Wolfe, 17-Dec-1993
@@ -822,6 +849,7 @@
 !-----------------------------------------------------------------------        
 !   Variable declarations.
 !-----------------------------------------------------------------------        
+      function ppvalw(coef, x, jd )
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       REAL*8 ppvalw,x
       dimension coef(4)
@@ -839,45 +867,51 @@
 !-----------------------------------------------------------------------        
       select case (jd+1)
         case (1)
-          go to 1
+          ppvalw = d0(x) ! k = 4 , jd = 0
+          return
         case (2)
-          go to 2
+          ppvalw = d1(x) ! k = 4 , jd = 1
+          return
         case (3)
-          go to 3
+          ppvalw = d2(x) ! k = 4 , jd = 2
+          return
       end select
       ppvalw = 0.
       write(*,*) 'Error (ppvalw): JD must be 0, 1, or 2.'
       write(*,*) 'Execution terminated.'
       return
- 1    ppvalw = d0(x) ! k = 4 , jd = 0
-      return
- 2    ppvalw = d1(x) ! k = 4 , jd = 1
-      return
- 3    ppvalw = d2(x) ! k = 4 , jd = 2
-      return
-      end
+      end function ppvalw
+!-----------------------------------------------------------------------        
 !
-      subroutine banslv ( a, nrow, n, ndiag, middle, b )
+!-----------------------------------------------------------------------        
+      subroutine banslv( a, nrow, n, ndiag, middle, b )
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension a(nrow,ndiag),b(n)
       if (n .eq. 1)                     go to 21
       ilo = middle - 1
       if (ilo .lt. 1)                   go to 21
-      do 19 i=2,n
+      do i=2,n
          jmax = min(i-1,ilo)
-         do 19 j=1,jmax
-   19       b(i) = b(i) - b(i-j)*a(i,middle-j)
+         do j=1,jmax
+            b(i) = b(i) - b(i-j)*a(i,middle-j)
+         enddo
+      enddo
 !
-   21 ihi = ndiag-middle
-      do 30 i=n,1,-1
+   21 continue
+      ihi = ndiag-middle
+      do i=n,1,-1
          jmax = min(n-i,ihi)
-         if (jmax .lt. 1)               go to 30
-         do 25 j=1,jmax
-   25       b(i) = b(i) - b(i+j)*a(i,middle+j)
-   30    b(i) = b(i)/a(i,middle)
-                                        return
-      end
-      subroutine banfac ( a, nrow, n, ndiag, middle, iflag )
+         if (jmax .ge. 1) then
+             do j=1,jmax
+                b(i) = b(i) - b(i+j)*a(i,middle+j)
+             enddo
+         endif
+         b(i) = b(i)/a(i,middle)
+      enddo
+      return
+      end subroutine banslv
+!-----------------------------------------------------------------------        
+      subroutine banfac( a, nrow, n, ndiag, middle, iflag )
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension a(nrow,ndiag)
       iflag = 1
@@ -912,9 +946,9 @@
                                         return
   999 iflag = 2
                                         return
-      end
-      subroutine interv ( xt, lxt, x, left, mflag )
-!omputes  left = max( i ; 1 .le. i .le. lxt  .and.  xt(i) .le. x )  .
+      end subroutine banfac
+!-----------------------------------------------------------------------        
+! Computes  left = max( i ; 1 .le. i .le. lxt  .and.  xt(i) .le. x )  .
 !
 !******  i n p u t  ******
 !  xt.....a REAL*8 sequence, of length  lxt , assumed to be nondecreasing
@@ -951,6 +985,8 @@
 !  after which we use bisection to get, in addition, ilo+1 = ihi .
 !  left = ilo  is then returned.
 !
+!-----------------------------------------------------------------------        
+      subroutine interv ( xt, lxt, x, left, mflag )
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       INTEGER*4 left,lxt,mflag,   ihi,ilo,istep,middle
       REAL*8 x
@@ -1008,59 +1044,62 @@
   110 mflag = 1
       left = lxt
                                         return
-      end
-      ! These are interface routines to bridge from IMSL on the VAX to LINPACK on
-      ! the Multiflow.
-      !
-      ! ************************ LINV1F ***************************************
-      ! This routine is an interface from the IMSL call used on the VAX to the
-      ! LINPACK call used on the Multiflow.  This routine performs the inversion
-      ! of an N x N matrix.  This is not a general purpose routine and is specific to
-      ! the EFITD code and should only be used for that code.  This routine has local
-      ! arrays that are sized to correspond to the largest size of an EFITD call.  If
-      ! the parameters which define dimensions for EFITD arrays should change, then
-      ! the sizes of these arrays may need to change as well.
-      !
-      ! Correspondence of the variables between the IMSL LINV1F routine and the
-      ! LINPACK DGEFA and DGEDI routines.  See the IMSL and LINPACK documentation for
-      ! further information.
-      !
-      ! A contains the N x N matrix that is to be transposed.  This is the
-      ! same matrix for both routines, however the returned contents are not
-      ! the same.  This is not a problem as this matrix is not used again after
-      ! the call is made.  This routine calls DGEFA with the input matrix A and
-      ! it returns results which are input to DGEDI.
-      ! N is the row dimension of A where number rows equal number columns.
-      ! IA is the actual leading storage dimension of the matrix A and AINV.
-      ! AINV is the resultant transposed N x N matrix.
-      ! IDGT is an accuracy option used by the IMSL routine.  However there is no
-      ! corresponding option for the LINPACK routines, so this is not used.
-      ! WK is a scratch array which can be used by both calls.
-      ! IER 129 is an error return for LINV1F, non-zero is an error for DGEFA.
-      ! If DGEFA gets any error, then the error return is set to 129.
-      !
-      ! IPVT is a vector of pivot indices returned by DGEFA and used by DGEDI.
-      ! DET is a determinant of the original matrix but is not optioned or used.
-      !
+      end subroutine interv
+!-----------------------------------------------------------------------        
+! These are interface routines to bridge from IMSL on the VAX to LINPACK on
+! the Multiflow.
+!
+! ************************ LINV1F ***************************************
+! This routine is an interface from the IMSL call used on the VAX to the
+! LINPACK call used on the Multiflow.  This routine performs the inversion
+! of an N x N matrix.  This is not a general purpose routine and is specific to
+! the EFITD code and should only be used for that code.  This routine has local
+! arrays that are sized to correspond to the largest size of an EFITD call.  If
+! the parameters which define dimensions for EFITD arrays should change, then
+! the sizes of these arrays may need to change as well.
+!
+! Correspondence of the variables between the IMSL LINV1F routine and the
+! LINPACK DGEFA and DGEDI routines.  See the IMSL and LINPACK documentation for
+! further information.
+!
+! A contains the N x N matrix that is to be transposed.  This is the
+! same matrix for both routines, however the returned contents are not
+! the same.  This is not a problem as this matrix is not used again after
+! the call is made.  This routine calls DGEFA with the input matrix A and
+! it returns results which are input to DGEDI.
+! N is the row dimension of A where number rows equal number columns.
+! IA is the actual leading storage dimension of the matrix A and AINV.
+! AINV is the resultant transposed N x N matrix.
+! IDGT is an accuracy option used by the IMSL routine.  However there is no
+! corresponding option for the LINPACK routines, so this is not used.
+! WK is a scratch array which can be used by both calls.
+! IER 129 is an error return for LINV1F, non-zero is an error for DGEFA.
+! If DGEFA gets any error, then the error return is set to 129.
+!
+! IPVT is a vector of pivot indices returned by DGEFA and used by DGEDI.
+! DET is a determinant of the original matrix but is not optioned or used.
+!
+!-----------------------------------------------------------------------        
       SUBROUTINE LINV1F(A,N,IA,AINV,IDGT,WK,IER)
         implicit integer*4 (i-n), real*8 (a-h, o-z)
         !
-        REAL*4	A(IA,IA),AINV(IA,IA),WK(N)
-        REAL*4	DET(2)
+        REAL*4   A(IA,IA),AINV(IA,IA),WK(N)
+        REAL*4   DET(2)
         INTEGER*4 IPVT(9)
         !
         !
         CALL DGEFA(A,IA,N,IPVT,IER)
-        IF (IER .NE. 0) THEN			! return if error
+        IF (IER .NE. 0) THEN                   ! return if error
           IER = 129
           RETURN
         END IF
         nnn=1
         CALL DGEDI(A,IA,N,IPVT,DET,WK,nnn)
-        DO I=1,N				! move result to output array
+        ! move result to output array
+        DO I=1,N                         
           DO J=1,N
             AINV(J,I) = A(J,I)
           END DO
         END DO
         RETURN
-      END
+      END SUBROUTINE LINV1F

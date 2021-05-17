@@ -24,19 +24,17 @@
       use var_cwork3, only:lkx,lky
 !vas
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension f(1),x(1),y(1),si(1),pds(6),rx(1),ry(1)
-!
-      if (ns.eq.0) go to 2000
-      call sets2d(si,c,rx,msx,bkx,lkx,ry,msy,bky,lky,wk,ier)
-!
- 2000 continue
+      dimension f(n),x(n),y(n),si(n),pds(6),rx(n),ry(n)
+      if (ns.ne.0) then
+        call sets2d(si,c,rx,msx,bkx,lkx,ry,msy,bky,lky,wk,ier)
+      endif
 !------------------------------------------------------------------
 !--  flux surface average of f                                   --
 !------------------------------------------------------------------
       fave=0.0
       fnorm=0.0
       sdlbp=0.0
-      do 2050 i=2,n
+      do i=2,n
         xnow=0.5_dp*(x(i-1)+x(i))
         ynow=0.5_dp*(y(i-1)+y(i))
         fnow=0.5_dp*(f(i-1)+f(i))
@@ -49,7 +47,7 @@
         fnorm = fnorm + dlbpol
         fave = fave + dlbpol*fnow
         sdlbp = sdlbp + dl*bpol
- 2050 continue
+      enddo
       fave = fave/fnorm
       sdlobp = fnorm
       return

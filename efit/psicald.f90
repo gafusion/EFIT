@@ -1,8 +1,4 @@
-      function psical(a1,r1,z1)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          psical computes mutual inductance/2/pi between two      **
@@ -22,9 +18,8 @@
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      function psical(a1,r1,z1)
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       real*8 x1,cay,ee,xmdelk,xmdele
@@ -49,52 +44,30 @@
       ee=xmdele(x1)
       select case (isw)
       case (1)
-        go to 20
+        !--   psi computation
+        psical= sqrt(den)*((1.0-0.5_dp*xk)*cay-ee)
       case (2)
-        go to 30
+        !--   br  computation
+        psical=z/(r* sqrt(den))*(-cay+(a*a+r*r+z*z)/((a-r)*(a-r)+z*z)*ee)
       case (3)
-        go to 40
+        !--   bz  computation
+        psical=(cay+(a*a-r*r-z*z)/((a-r)*(a-r)+z*z)*ee)/ sqrt(den)
       end select
-!----------------------------------------------------------------------
-!--   psi computation                                                --
-!----------------------------------------------------------------------
-   20 psical= sqrt(den)*((1.0-0.5_dp*xk)*cay-ee)
       return
-!----------------------------------------------------------------------
-!--   br  computation                                                --
-!----------------------------------------------------------------------
-   30 psical=z/(r* sqrt(den))*(-cay+(a*a+r*r+z*z)/((a-r)*(a-r)+z*z)*ee)
-      return
-!----------------------------------------------------------------------
-!--   bz  computation                                                --
-!----------------------------------------------------------------------
-   40 psical=(cay+(a*a-r*r-z*z)/((a-r)*(a-r)+z*z)*ee)/ sqrt(den)
-      return
-      end
-      function xmdele(xm1)
+      end function psical
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**       xmdele computes the elliptic integral e.                   **
 !**                                                                  **
-!**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**       xm1.............argument of elliptic integral e            **
-!**                                                                  **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      function xmdele(xm1)
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension a(4),b(4)
@@ -107,30 +80,20 @@
       xmdele=1.0+xm1*(a(1)+xm1*(a(2)+xm1*(a(3)+xm1*a(4)))) &
         +xm1*(b(1)+xm1*(b(2)+xm1*(b(3)+xm1*b(4))))*log(1.0/xm1)
       return
-      end
-      function xmdelk(xm1)
+      end function xmdele
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**       xmdelk computes the elliptic integral k.                   **
 !**                                                                  **
-!**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**       xm1.............argument of elliptic integral k            **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      function xmdelk(xm1)
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension a(5),b(5)
@@ -144,4 +107,4 @@
         +(b(1)+xm1*(b(2)+xm1*(b(3)+xm1*(b(4)+xm1*b(5))))) &
         *log(1.0/xm1)
       return
-      end
+      end function xmdelk

@@ -1,11 +1,4 @@
-      subroutine bound(psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
-           zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
-           ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
-           ishot,itime,limfag,radold,kbound,tolbndpsi)
 !**********************************************************************
-!**                                                                  **
-!**     main program:  mhd fitting code                              **
-!**                                                                  **
 !**                                                                  **
 !**     subprogram description:                                      **
 !**          bound finds the outermost contour of a function         **
@@ -62,8 +55,11 @@
 !**                            one field line tracer routine.        **
 !**                            R Stambaugh.                          **
 !**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      subroutine bound(psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
+           zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
+           ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
+           ishot,itime,limfag,radold,kbound,tolbndpsi)
       use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
@@ -377,13 +373,9 @@
         psivl=-psivl
       endif
       return
-      end
+      end subroutine bound
 
-      subroutine cellb(xc1,yc1,xc2,yc2,x1,y1,x2,y2,ifail)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          cellb redefines (xc1,yc1) and/or (xc2,yc2) so that      **
@@ -393,14 +385,11 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      subroutine cellb(xc1,yc1,xc2,yc2,x1,y1,x2,y2,ifail)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       if((xc1.lt.x1).and.(xc2.lt.x1))go to 1000
       if((xc1.gt.x2).and.(xc2.gt.x2))go to 1000
@@ -546,12 +535,8 @@
       return
  1000 ifail=1
       return
-      end
-      subroutine chkcrn(psi,nwh,psivl,kold,knew,icrnr,kk,nh,i,i1)
+      end subroutine cellb
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          chkcrn decides which cell is next when an error in      **
@@ -559,16 +544,11 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          07/09/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      subroutine chkcrn(psi,nwh,psivl,kold,knew,icrnr,kk,nh,i,i1)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension psi(nwh)
       knew=0
@@ -697,12 +677,8 @@
       call minmax(psi,nwh,nh,kn,psivl,iflag,knew)
       i1=i-1
       return
-      end
+      end subroutine chkcrn
 
-      subroutine cntour(xaxd,yaxd,psivl,xemin,xemax,yemin,yemax, &
-      yxmin,yxmax,xymin,xymax,dang,arcl,bperr,dx,dy,xmin,xmax,ymin,ymax, &
-      iauto,iautoc,xc,yc,ipts,x,nw,y,nh,cspln,n2cspln,nh2,itty,iptsm, &
-      negcur,bkx,lkx,bky,lky,kerror)
 !------------------------------------------------------------------------------
 !---                                                                         --
 !---given (xaxd,yaxd) and a psi value, psivl, generate a contour of          --
@@ -746,6 +722,10 @@
 !---the user is informed that psivl was changed by returning iautoc=1.       --
 !---if no change occured iautoc=0.                                           --
 !------------------------------------------------------------------------------
+      subroutine cntour(xaxd,yaxd,psivl,xemin,xemax,yemin,yemax, &
+      yxmin,yxmax,xymin,xymax,dang,arcl,bperr,dx,dy,xmin,xmax,ymin,ymax, &
+      iauto,iautoc,xc,yc,ipts,x,nw,y,nh,cspln,n2cspln,nh2,itty,iptsm, &
+      negcur,bkx,lkx,bky,lky,kerror)
       use global_constants
       use set_kinds
       use error_control
@@ -960,27 +940,21 @@
  1020 format(2x,'boundary search, will change psilim from', &
              /,e16.8,'  to  ',e16.8,'  and try again')
       go to 1040
-      end
-      subroutine extrap(f1,f2,f3,f4,x1,y1,x2,y2,xt,yt,xt1,yt1, &
-                        xt2,yt2,psivl,area,dx,dy)
+      end subroutine cntour
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          extrap extrapolates across a (x,y) cell.                **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**          07/09/83..........replaced                              **
 !**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      subroutine extrap(f1,f2,f3,f4,x1,y1,x2,y2,xt,yt,xt1,yt1, &
+                        xt2,yt2,psivl,area,dx,dy)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension xp(2),yp(2)
       ip=0
@@ -1190,15 +1164,8 @@
       yt1=yp(1)
       yt2=yp(2)
       return
-      end
-      subroutine findax(nx,nz,x,y,xax,yax,psimx,psiout,xseps,yseps, &
-        kaxis,xxout,yyout,kfound,psipsi,rmin,rmax, &
-        zmin,zmax,zrmin,zrmax,rzmin,rzmax,dpsipsi, &
-        bpoo,bpooz,limtrv,xlimv,ylimv,limfagv,ifit,jtime,kerror)
+      end subroutine extrap
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          findax finds magnetic axis for arbitrary position       **
@@ -1210,10 +1177,6 @@
 !**                  20, find axis and separatrix if any             **
 !**                <  0, seperatrix only                             **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          21/10/83..........first created                         **
 !**          24/07/85..........revised                               **
@@ -1221,19 +1184,24 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      subroutine findax(nx,nz,x,y,xax,yax,psimx,psiout,xseps,yseps, &
+        kaxis,xxout,yyout,kfound,psipsi,rmin,rmax, &
+        zmin,zmax,zrmin,zrmax,rzmin,rzmax,dpsipsi, &
+        bpoo,bpooz,limtrv,xlimv,ylimv,limfagv,ifit,jtime,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
       use set_kinds
       include 'eparmdud129.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
-      dimension x(nx),y(nz),pds(6),xxout(*),yyout(*),psipsi(*)
-      dimension xseps(1),yseps(1) ! this is an address of a location inside a 2-d array
+      real(dp), intent(inout) :: xseps(2),yseps(2) ! this is an address of a location inside a 2-d array
+      dimension x(nx),y(nz),pds(6),xxout(*),yyout(*),psipsi(nx*nz)
       dimension bpoo(*),bpooz(*),pdss(6),xlimv(*),ylimv(*)
       dimension pdsold(6)
       data psitol/1.0e-04_dp/
       character(len=80) :: strtmp
       logical :: dodebugplts = .false. ! write surface files for debugging/plotting. Serial only, not parallel
+
       kerror = 0
       orelax = 1.0 ! Newton's Method relaxation constant (0.0-1.0)
       niter = 20   ! Number of iterations
@@ -1662,26 +1630,19 @@
               2(1x,e10.3))
  5025 format (/,1x,'no convergence to 2nd septrx, rs, ys = ', &
               2(1x,e10.3))
-      end
+      end subroutine findax
 
-      subroutine fqlin(x1,y1,x2,y2,f1,f2,f3,f4,x,y,area,psivl)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      subroutine fqlin(x1,y1,x2,y2,f1,f2,f3,f4,x,y,area,psivl)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       a1=(x2-x)*(y2-y)
       a2=(x-x1)*(y2-y)
@@ -1689,14 +1650,9 @@
       a4=(x2-x)*(y-y1)
       psivl=(a1*f1+a2*f2+a3*f3+a4*f4)/area
       return
-      end
+      end subroutine fqlin
 
-      subroutine maxpsi(xl1,yl1,xl2,yl2,x1,y1,x2,y2,f1,f2,f3,f4, &
-                        area,psimax,xtry,ytry,nerr)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          maxpsi finds the largest psi value along the line       **
@@ -1705,14 +1661,13 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**          24/07/85..........revised                               **
 !**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      subroutine maxpsi(xl1,yl1,xl2,yl2,x1,y1,x2,y2,f1,f2,f3,f4, &
+                        area,psimax,xtry,ytry,nerr)
       use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
@@ -1751,13 +1706,9 @@
   120 xtch=xl2
       ytch=yl2
       return
-      end
+      end subroutine maxpsi
 
-      subroutine minmax(psi,nwh,nh,kn,psivl,iflag,knew)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          minmax finds minimum and maximum value of psi in a      **
@@ -1765,16 +1716,11 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          07/09/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      subroutine minmax(psi,nwh,nh,kn,psivl,iflag,knew)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension psi(nwh)
       iflag=0
@@ -1783,12 +1729,8 @@
       if ((psivl.lt.fmin).or.(psivl.gt.fmax)) iflag=1
       knew=kn
       return
-      end
-      subroutine order(xp,yp,np)
+      end subroutine minmax
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          order puts the points (xp,yp) in increasing order       **
@@ -1796,16 +1738,11 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          22/03/84..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      subroutine order(xp,yp,np)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension xp(*),yp(*)
       nptr=np
@@ -1823,28 +1760,19 @@
    90 continue
       if (is.eq.1) go to 80
       return
-      end
-      subroutine packps(xp,yp,np,rm,zm,kadd)
+      end subroutine order
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          pack orders the points (xp,yp) in sequencial order.     **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          22/03/84..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      subroutine packps(xp,yp,np,rm,zm,kadd)
       use commonblocks,only: cjrf,wxin,wyin,wxout,wyout
       include 'eparmdud129.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -1921,11 +1849,8 @@
       xp(np)=xp(1)
       yp(np)=yp(1)
       return
-      end
-      subroutine qfit(k,x1,x2,x3,y1,y2,y3,x,y,yp,ierr)
+      end subroutine packps
 !**********************************************************************
-!**                                                                  **
-!**     main program:  mhd fitting code                              **
 !**                                                                  **
 !**     subprogram description:                                      **
 !**          QFIT is a quadratic fitter.                             **
@@ -1943,12 +1868,11 @@
 !**                  yp  = derivative of parabola at (x,y)           **
 !**         3. ierr=1  error return                                  **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          04/08/86..........first created                         **
 !**                                                                  **
 !**********************************************************************
+      subroutine qfit(k,x1,x2,x3,y1,y2,y3,x,y,yp,ierr)
       use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
@@ -2000,15 +1924,8 @@
       y=b
       yp=c
       return
-      end
-
-      subroutine surfac(siwant,psi,nw,nh,rgrid,zgrid,xout,yout, &
-                    nfound,npoint,drgrid,dzgrid,xmin, &
-                    xmax,ymin,ymax,ipack,rmaxis,zmaxis,negcur,kerror)
+      end subroutine qfit
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          surfac generates a contour of constant psi of value     **
@@ -2016,16 +1933,14 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          21/10/83..........first created                         **
 !**          24/07/85..........revised                               **
 !**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      subroutine surfac(siwant,psi,nw,nh,rgrid,zgrid,xout,yout, &
+                    nfound,npoint,drgrid,dzgrid,xmin, &
+                    xmax,ymin,ymax,ipack,rmaxis,zmaxis,negcur,kerror)
       use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
@@ -2039,12 +1954,12 @@
         curneg=-1.
       endif
       nfound=0
-      do 200 i=2,nw-1
-      do 200 j=1,nh
-        if (rgrid(i).lt.xmin) go to 200
-        if (rgrid(i).gt.xmax) go to 200
-        if (zgrid(j).lt.ymin) go to 200
-        if (zgrid(j).gt.ymax) go to 200
+      do i=2,nw-1
+      do j=1,nh
+        if (rgrid(i).lt.xmin) cycle
+        if (rgrid(i).gt.xmax) cycle
+        if (zgrid(j).lt.ymin) cycle
+        if (zgrid(j).gt.ymax) cycle
         kk1=(i-1)*nh+j
         df1=siwant-psi(kk1)
         if (df1*curneg.lt.0.0.and.rgrid(i-1).lt.xmin) then
@@ -2053,7 +1968,7 @@
           kk1x=kk1-nh
           df1x=siwant-psi(kk1x)
           if (df1x*df2x.le.0.0) then
-            if (nfound+1.gt.npoint-1) go to 200
+            if (nfound+1.gt.npoint-1) cycle
             nfound=nfound+1
             xout(nfound)=rgrid(i-1)+df1x*drgrid/(psi(kk2x)-psi(kk1x))
             yout(nfound)=zgrid(j)
@@ -2061,18 +1976,19 @@
         endif
         kk2=i*nh+j
         df2=siwant-psi(kk2)
-        if (df1*df2.gt.0.0) go to 200
-        if (nfound+1.gt.npoint-1) go to 200
+        if (df1*df2.gt.0.0) cycle
+        if (nfound+1.gt.npoint-1) cycle
         nfound=nfound+1
         xout(nfound)=rgrid(i)+df1*drgrid/(psi(kk2)-psi(kk1))
         yout(nfound)=zgrid(j)
-  200 continue
-      do 300 i=1,nw
-      do 300 j=2,nh-1
-        if (rgrid(i).lt.xmin) go to 300
-        if (rgrid(i).gt.xmax) go to 300
-        if (zgrid(j).lt.ymin) go to 300
-        if (zgrid(j).gt.ymax) go to 300
+      enddo 
+      enddo 
+      do i=1,nw
+      do j=2,nh-1
+        if (rgrid(i).lt.xmin) cycle
+        if (rgrid(i).gt.xmax) cycle
+        if (zgrid(j).lt.ymin) cycle
+        if (zgrid(j).gt.ymax) cycle
         kk1=(i-1)*nh+j
         df1=siwant-psi(kk1)
         if (df1*curneg.lt.0.0.and.zgrid(j-1).lt.ymin) then
@@ -2081,7 +1997,7 @@
           kk1x=kk1-1
           df1x=siwant-psi(kk1x)
           if (df1x*df2x.le.0.0) then
-            if (nfound+1.gt.npoint-1) go to 300
+            if (nfound+1.gt.npoint-1) cycle
             nfound=nfound+1
             xout(nfound)=rgrid(i)
             yout(nfound)=zgrid(j-1)+df1x*dzgrid/(psi(kk2x)-psi(kk1x))
@@ -2089,12 +2005,13 @@
         endif
         kk2=(i-1)*nh+j+1
         df2=siwant-psi(kk2)
-        if (df1*df2.gt.0.0) go to 300
-        if (nfound+1.gt.npoint-1) go to 300
+        if (df1*df2.gt.0.0) cycle
+        if (nfound+1.gt.npoint-1) cycle
         nfound=nfound+1
         xout(nfound)=rgrid(i)
         yout(nfound)=zgrid(j)+df1*dzgrid/(psi(kk2)-psi(kk1))
-  300 continue
+      enddo
+      enddo
       if (ipack.gt.0) call packps(xout,yout,nfound,rmaxis,zmaxis,n111)
       if (nfound.lt.3) then
         kerror = 1
@@ -2102,13 +2019,8 @@
         return
       end if
       return
-      end
-
-      subroutine zlim(zero,nw,nh,limitr,xlim,ylim,x,y,iflag)
+      end subroutine surfac
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          zlim determines whether points on the (x,y) grid are    **
@@ -2127,90 +2039,79 @@
 !**       iflag...........1 convex geometry                          **
 !**                       2 general geometry                         **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**          13/08/85..........iflag added                           **
 !**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      subroutine zlim(zero,nw,nh,limitr,xlim,ylim,x,y,iflag)
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      real*8 :: zero(nw*nh),x(nw),y(nh) ! sometimes an array, other times a constant
+      real*8 :: zero(nw*nh),x(nw),y(nh) 
       dimension xlim(*),ylim(*)
       logical b,c,d,inside,bold
 
       select case (iflag)
         case (1)
-          go to 10
-        case (2)
-          go to 200
-      end select
-
-10    continue
-      kk = 0
-      do i = 1,nw
-      do j = 1,nh
-        kk = kk + 1
-        zero(kk) = 1.
-        ncross = 0
-        do 20 k = 1,limitr-1
-          if ((ylim(k).lt.y(j)) .and. (ylim(k+1).lt.y(j))) go to 20
-          if (x(i) .eq. xlim(k))  go to 20
-          t = x(i) - xlim(k)
-          s = xlim(k+1) - x(i)
-          if ((t*s) .lt. 0.) go to 20
-          di = (ylim(k+1)-ylim(k)) / (xlim(k+1)-xlim(k))
-          f = ylim(k) + di*(x(i)-xlim(k))
-          if (f .lt. y(j)) go to 20
-          ncross = ncross + 1
-20      continue
-        mcross = .5_dp*ncross ! truncates to integer
-        mcross = 2*mcross
-        if (ncross .eq. mcross) zero(kk) = 0.
-      end do
-      end do
-      return
-!
-  200 continue
-      kk=0
-      do i=1,nw
-        do j=1,nh
-          kk=kk+1
-          d=.false.
-          b=.true.
-          n=0
-          inside=.false.
-          bold=b
-          do k=1,limitr-1
-            c=.false.
-            !---------------------------------------------------------------------------
-            !--  fixed if test logic, for ge and le per Wolfe of MIT, 93/09/02        --
-            !--       if (y(j).le.ylim(k).and.y(j).ge.ylim(k+1)                       --
-            !--  .        .or.y(j).ge.ylim(k).and.y(j).le.ylim(k+1)) then             --
-            !---------------------------------------------------------------------------
-            if (y(j).le.ylim(k).and.y(j).gt.ylim(k+1) &
-              .or.y(j).ge.ylim(k).and.y(j).lt.ylim(k+1)) then
-              c=.true.
-              d=.true.
-              n=n+1
-            endif
-            if(c.and. &
-              (y(j)-ylim(k))*(xlim(k+1)-xlim(k))- &
-              (ylim(k+1)-ylim(k))*(x(i)-xlim(k)).gt.0.) &
-              b=.not.b
-            if (n.eq.2) then
-              n=0
-              if (bold.eqv.b) inside=.true.
-              bold=b
-            endif
+          kk = 0
+          do i = 1,nw
+          do j = 1,nh
+            kk = kk + 1
+            zero(kk) = 1.
+            ncross = 0
+            do k = 1,limitr-1
+              if ((ylim(k).lt.y(j)) .and. (ylim(k+1).lt.y(j))) cycle
+              if (x(i) .eq. xlim(k))  cycle
+              t = x(i) - xlim(k)
+              s = xlim(k+1) - x(i)
+              if ((t*s) .lt. 0.) cycle
+              di = (ylim(k+1)-ylim(k)) / (xlim(k+1)-xlim(k))
+              f = ylim(k) + di*(x(i)-xlim(k))
+              if (f .lt. y(j)) cycle
+              ncross = ncross + 1
+            enddo
+            mcross = .5_dp*ncross ! truncates to integer
+            mcross = 2*mcross
+            if (ncross .eq. mcross) zero(kk) = 0.
           end do
-          zero(kk)=0.0
-          if (inside.and.d) zero(kk)=1.0
-        end do
-      end do
+          end do
+        case (2)
+          kk=0
+          do i=1,nw
+            do j=1,nh
+              kk=kk+1
+              d=.false.
+              b=.true.
+              n=0
+              inside=.false.
+              bold=b
+              do k=1,limitr-1
+                c=.false.
+                !---------------------------------------------------------------------------
+                !--  fixed if test logic, for ge and le per Wolfe of MIT, 93/09/02        --
+                !--       if (y(j).le.ylim(k).and.y(j).ge.ylim(k+1)                       --
+                !--  .        .or.y(j).ge.ylim(k).and.y(j).le.ylim(k+1)) then             --
+                !---------------------------------------------------------------------------
+                if (y(j).le.ylim(k).and.y(j).gt.ylim(k+1) &
+                  .or.y(j).ge.ylim(k).and.y(j).lt.ylim(k+1)) then
+                  c=.true.
+                  d=.true.
+                  n=n+1
+                endif
+                if(c.and. &
+                  (y(j)-ylim(k))*(xlim(k+1)-xlim(k))- &
+                  (ylim(k+1)-ylim(k))*(x(i)-xlim(k)).gt.0.) &
+                  b=.not.b
+                if (n.eq.2) then
+                  n=0
+                  if (bold.eqv.b) inside=.true.
+                  bold=b
+                endif
+              end do
+              zero(kk)=0.0
+              if (inside.and.d) zero(kk)=1.0
+            end do
+          end do
+      end select
       return
-      end
+      end subroutine zlim

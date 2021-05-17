@@ -94,8 +94,8 @@
 !--
 !--   read in limiter data from limiter file
 !--
-!--   type 0 - Calculate xltype(_180) only
-!--        1 - Calculate xltype and read in limiter data
+!--   limmode 0 - Calculate xltype(_180) only
+!--           1 - Calculate xltype and read in limiter data
 !--   xltype - Inward distance of 0 degree outside limiter in cm.
 !--            Initialization is passed in.
 !--   xltype_180 -
@@ -105,16 +105,17 @@
 !--   10/02/97 created
 !--
 !------------------------------------------------------------------------
-      subroutine getlim(type,xltype,xltype_180)
+      subroutine getlim(limmode,xltype,xltype_180)
       include 'eparmdud129.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      integer type,ilimshot
+      integer limmode,ilimshot
       character*100 filin
       namelist/lim/xlim,ylim,limitr
       data lfile/36/
 !
-      if ((limitr.gt.0).and.(type.ne.0)) go to 50240
+      write(*,*) limmode, limitr
+      if ((limitr.gt.0).and.(limmode.ne.0)) go to 50240
 !
 ! --- read in limiter data
 !

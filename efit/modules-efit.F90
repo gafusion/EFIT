@@ -5,7 +5,10 @@
         !integer, parameter :: iprec = selected_real_kind(4)
         !integer, parameter :: dp=rprec
         integer, parameter :: dp = selected_real_kind(15,307) ! REAL*8
-
+        integer, parameter :: i4=selected_int_kind(9)
+        integer, parameter :: i8=selected_int_kind(18)
+        !integer, parameter :: r4=selected_real_kind(6,37)
+        !integer, parameter :: r8=selected_real_kind(13,307)
        end module set_kinds
 
 !expath
@@ -454,30 +457,26 @@
 
 !var_scalem
      module var_scalem
-     use eparmdud129,only:nrsmat,mfnpcr
-     integer*4 infosc
-     real*8,dimension(:), allocatable :: rowscale
-     real*8,dimension(:), allocatable :: colscale
-     real*8 rowcnd,colcnd,arspmax
-     logical scalea
-     data scalea/.false./
+       use eparmdud129,only:nrsmat,mfnpcr
+       integer*4 infosc
+       real*8,dimension(:), allocatable :: rowscale
+       real*8,dimension(:), allocatable :: colscale
+       real*8 rowcnd,colcnd,arspmax
+       logical scalea
+       data scalea/.false./
      end module var_scalem
 
      module var_solove
-
       integer*4 islve
-      real*8 salpha,sbeta,srm,scc1,seee,saaa,srma, &
-                    sbetaw
-
+      real*8 salpha,sbeta,srm,scc1,seee,saaa,srma, sbetaw
      end module var_solove 
-     module var_bunemn
 
+     module var_bunemn
       integer*4 :: mno,m,n
       integer*4 :: nbmdim,nww,nhh
       real*8    :: drdz2,rgrid1,delrgrid,delz
       real*8    :: s,shift,dr,dz
-
-      end module var_bunemn
+     end module var_bunemn
 
 !------ put all the remining common blocks into modules here
 !var_contor

@@ -1,4 +1,3 @@
-include 'config.f'
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD EQUILIBRIUM ANALYSIS                      **

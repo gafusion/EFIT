@@ -14,14 +14,15 @@
 !**********************************************************************
       subroutine pflux(niter,nnin,ntotal,jtime,kerror)
 !vas  f90 modifi
+      use set_kinds 
       use var_bunemn
-      use commonblocks,only: c,wk,copy,bkx,bky,psiold,psipold, &
-                             psipp,work
+      use commonblocks,only: c,wk,copy,bkx,bky,psiold,psipold, psipp
       include 'eparmdud129.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
+      real(dp), dimension(:), allocatable ::   work
       integer initresult
       dimension pds(6)
       real*8,dimension(:),allocatable :: psikkk,gfbsum
@@ -35,10 +36,10 @@
 !----------------------------------------------------------------------------
 !--  save flux from current iterations before update                       --
 !----------------------------------------------------------------------------
-      do 2100 kk=1,nwnh
+      do kk=1,nwnh
         psiold(kk)=psi(kk)
         psipold(kk)=psipla(kk)
- 2100 continue
+      enddo
 !
       if (ibunmn.eq.1) go to 2000
       if ((ibunmn.eq.2).and.(errorm.gt.errcut)) go to 2000
@@ -49,43 +50,46 @@
 !--  Green's integral method of obtaining flux, can be computationally      --
 !--  intensive                                                              --
 !-----------------------------------------------------------------------------
-      do 1000 i=1,nw
-      do 1000 j=1,nh
+      do i=1,nw
+      do j=1,nh
         kk=(i-1)*nh+j
         psi(kk)=0.0
-        do 300 m=1,nfcoil
+        do m=1,nfcoil
           psi(kk)=psi(kk)+gridfc(kk,m)*brsp(m)
-  300   continue
+        enddo
         if (ivesel.le.0) go to 340
-        do 335 m=1,nvesel
+        do m=1,nvesel
           psi(kk)=psi(kk)+gridvs(kk,m)*vcurrt(m)
-  335   continue
+        enddo
   340   continue
         if (iecurr.ne.1) go to 400
-        do 350 m=1,nesum
+        do m=1,nesum
           psi(kk)=psi(kk)+gridec(kk,m)*ecurrt(m)
-  350   continue
-  400   continue
-        if (iecurr.ne.2) go to 405
-        do  m=1,nesum
-          psi(kk)=psi(kk)+gridec(kk,m)*cecurr(m)
         enddo
-  405   continue
+  400   continue
+        if (iecurr.eq.2) then
+          do  m=1,nesum
+            psi(kk)=psi(kk)+gridec(kk,m)*cecurr(m)
+          enddo
+        endif
         if (iacoil.gt.0) then
-         do 421 m=1,nacoil
+         do m=1,nacoil
           psi(kk)=psi(kk)+gridac(kk,m)*caccurt(jtime,m)
-  421    continue
+         enddo
         endif
         psipla(kk)=psi(kk)
         if (ivacum.gt.0) go to 1000
-        do 500 ii=1,nw
-        do 500 jj=1,nh
-          kkkk=(ii-1)*nh+jj
-          mj=abs(j-jj)+1
-          mk=(i-1)*nh+mj
-          psi(kk)=psi(kk)+gridpc(mk,ii)*pcurrt(kkkk)
-  500   continue
+        do ii=1,nw
+          do jj=1,nh
+            kkkk=(ii-1)*nh+jj
+            mj=abs(j-jj)+1
+            mk=(i-1)*nh+mj
+            psi(kk)=psi(kk)+gridpc(mk,ii)*pcurrt(kkkk)
+          enddo
+        enddo
         psipla(kk)=psi(kk)-psipla(kk)
+      enddo
+      enddo
  1000 continue
 !
       ibunmn=0
@@ -153,12 +157,12 @@
 !-- boundary terms                                                    --
 !-----------------------------------------------------------------------
  2050 continue 
-      do 2200 j=1,nh
+      do j=1,nh
         kk=(nw-1)*nh+j
         psipp(j)=0.
         psipp(kk)=0.
-        do 2170 ii=1,nw
-        do 2170 jj=1,nh
+        do ii=1,nw
+        do jj=1,nh
           kkkk=(ii-1)*nh+jj
           mj=abs(j-jj)+1
           mk=(nw-1)*nh+mj
@@ -166,16 +170,17 @@
           psipp(kk)=psipp(kk)-gridpc(mk,ii)*pcurrt(kkkk)
           psi(j)=psipp(j)
           psi(kk)=psipp(kk)
- 2170   continue
- 2200 continue
-      do 2400 i=2,nw-1
+       enddo
+       enddo
+      enddo
+      do i=2,nw-1
         kk1=(i-1)*nh
         kknh=kk1+nh
         kk1=kk1+1
         psipp(kk1)=0.
         psipp(kknh)=0.
-        do 2370 ii=1,nw
-        do 2370 jj=1,nh
+        do ii=1,nw
+        do jj=1,nh
           kkkk=(ii-1)*nh+jj
           mj1=abs(jj-1)+1
           mjnh=abs(nh-jj)+1
@@ -185,52 +190,58 @@
           psipp(kknh)=psipp(kknh)-gridpc(mknh,ii)*pcurrt(kkkk)
           psi(kk1)=psipp(kk1)
           psi(kknh)=psipp(kknh)
- 2370   continue
- 2400 continue
+        enddo
+        enddo
+      enddo
 !-------------------------------------------------------------------------
 !-- get flux at inner points by inverting del*, only plasma flux        --
 !-- first set up plasma currents, single cyclic method gets factor of 2 --
 !-------------------------------------------------------------------------
+      allocate(work(SIZE(psi)))
       if (isolve.eq.0) then
 !       original buneman solver method
-        do 2600 i=2,nw-1
-        do 2600 j=2,nh-1
-          kk=(i-1)*nh+j
-          psi(kk)=tmu2*pcurrt(kk)*rgrid(i)
- 2600   continue
-        call buneto(psi,nw,nh,work)
+        do i=2,nw-1
+          do j=2,nh-1
+            kk=(i-1)*nh+j
+            psi(kk)=tmu2*pcurrt(kk)*rgrid(i)
+          enddo   
+        enddo   
+        call buneto(psi,INT(nw,i4),INT(nh,i4),work)
       else 
 !       new faster single cyclic reduction method
-        do 2700 i=2,nw-1
-        do 2700 j=2,nh-1
-          kk=(i-1)*nh+j
-          psi(kk)=tmu2*pcurrt(kk)*rgrid(i)*2.0
- 2700   continue
+        do i=2,nw-1
+          do j=2,nh-1
+            kk=(i-1)*nh+j
+            psi(kk)=tmu2*pcurrt(kk)*rgrid(i)*2.0
+          enddo
+        enddo
         call pflux_cycred(psi,work,kerror)
         if (kerror.gt.0) return
       endif
-      do 3000 i=1,nwnh
+      deallocate(work)
+      do i=1,nwnh
         psi(i)=-psi(i)
- 3000 continue
+      enddo
 
 !----------------------------------------------------------------------------
 !--  optional symmetrized solution                                         --
 !----------------------------------------------------------------------------
       if (symmetrize) then
         difpsi=0.0
-        do 3100 i=1,nw
-        do 3100 j=1,nh/2
-          k1=(i-1)*nh+j
-          k2=i*nh-j+1
-          val=(psi(k1)+psi(k2))/2
-          if (sidif.ne.0.0) then
-            difnow=(psi(k1)-psi(k2))/sidif
-            difnow=abs(difnow)
-            difpsi=max(difnow,difpsi)
-          endif
-          psi(k1)=val
-          psi(k2)=val
-3100    continue
+        do i=1,nw
+          do j=1,nh/2
+            k1=(i-1)*nh+j
+            k2=i*nh-j+1
+            val=(psi(k1)+psi(k2))/2
+            if (sidif.ne.0.0) then
+              difnow=(psi(k1)-psi(k2))/sidif
+              difnow=abs(difnow)
+              difpsi=max(difnow,difpsi)
+            endif
+            psi(k1)=val
+            psi(k2)=val
+          enddo
+        enddo
       endif ! end symmetrize loop
 !------------------------------------------------------------------------
 !--  optional damping out the m=1 vertical eigen mode                  --
@@ -244,52 +255,58 @@
       idelr=nw/8
       idelz=nh/12
       jtop=(nh+1)/2+nh/4-1
-      do 42200 i=1,nw
-      do 42200 j=1,nh
+      do i=1,nw
+      do j=1,nh
         kk=(i-1)*nh+j
         gfbsum(kk)=0.0
-        do 42170 ii=1+idelr,nw-idelr
-        do 42170 jj=jtop-idelz,jtop+idelz
+        do ii=1+idelr,nw-idelr
+        do jj=jtop-idelz,jtop+idelz
           mj=abs(j-jj)+1
           mk=(nw-1)*nh+mj
           gfbsum(kk)=gfbsum(kk)+gridpc(mj,ii)
-42170   continue
-42200 continue
+        enddo
+        enddo
+      enddo
+      enddo
       jlow=(nh+1)/2-nh/4+1
-      do 42500 i=1,nw
-      do 42500 j=1,nh
+      do i=1,nw
+      do j=1,nh
         kk=(i-1)*nh+j
-        do 42400 ii=1+idelr,nw-idelr
-        do 42400 jj=jlow-idelz,jlow+idelz
+        do ii=1+idelr,nw-idelr
+        do jj=jlow-idelz,jlow+idelz
           mj=abs(j-jj)+1
           mk=(nw-1)*nh+mj
           gfbsum(kk)=gfbsum(kk)-gridpc(mj,ii)
-42400   continue
-42500 continue
+        enddo
+        enddo
+      enddo
+      enddo
       initfb=-1
       endif
 !---------------------------------------------------------------------
 !--  get damping currents                                           --
 !---------------------------------------------------------------------
       tvfbrt(ntotal)=0.0
-      do 42600  i=1+idelr,nw-idelr
-      do 42600  j=jtop-idelz,jtop+idelz
+      do i=1+idelr,nw-idelr
+      do j=jtop-idelz,jtop+idelz
           kk=(i-1)*nh+j
           tvfbrt(ntotal)=tvfbrt(ntotal)+(psikkk(kk)-psiold(kk))
-42600 continue
-      do 42620  i=1+idelr,nw-idelr
-      do 42620  j=jlow-idelz,jlow+idelz
+      enddo
+      enddo
+      do i=1+idelr,nw-idelr
+      do j=jlow-idelz,jlow+idelz
           kk=(i-1)*nh+j
           tvfbrt(ntotal)=tvfbrt(ntotal)-(psikkk(kk)-psiold(kk))
-42620 continue
+      enddo
+      enddo
       if (initfb.eq.-1) then
         vcurfi=vcurfb(1)*cpasma(jtime)/abs(tvfbrt(ntotal))
         initfb=1
       endif
       tvfbrt(ntotal)=tvfbrt(ntotal)*vcurfi
-      do 42800 kk=1,nwnh
+      do kk=1,nwnh
         psi(kk)=psi(kk)+gfbsum(kk)*tvfbrt(ntotal)
-42800 continue
+      enddo
 43000 continue
 !--------------------------------------------------------------------
 !--  optional vertical feedback control                            --
@@ -307,16 +324,17 @@
       zcurnow=0
       sumc=0
       rcurnow=0
-      do 12300 icontr=1,nfound
+      do icontr=1,nfound
         zcontr=zcontr+yout(icontr)/nfound
-12300 continue
-      do 12320 i=1,nw
-      do 12320 j=1,nh
+      enddo
+      do i=1,nw
+      do j=1,nh
         kk=(i-1)*nh+j
         zcurnow=zcurnow+pcurrt(kk)*zgrid(j)
         rcurnow=rcurnow+pcurrt(kk)*rgrid(j)
         sumc=sumc+pcurrt(kk)
-12320 continue
+      enddo
+      enddo
       zcurnow=zcurnow/sumc
       rcurnow=rcurnow/sumc
       if (zelip.eq.0.) then
@@ -338,17 +356,17 @@
 !----------------------------------------------------------------------------
 !--  add flux from external coils                                          --
 !----------------------------------------------------------------------------
-      do 3600 kk=1,nwnh
+      do kk=1,nwnh
         psipla(kk)=psi(kk)
         if (ivesel.le.0) go to 3140
-        do 3135 m=1,nvesel
+        do m=1,nvesel
           psi(kk)=psi(kk)+gridvs(kk,m)*vcurrt(m)
- 3135   continue
+        enddo
  3140   continue
         if (iecurr.ne.1) go to 3160
-        do 3150 m=1,nesum
+        do m=1,nesum
           psi(kk)=psi(kk)+gridec(kk,m)*ecurrt(m)
- 3150   continue
+        enddo
  3160   continue
         if (iecurr.ne.2) go to 3165
         do  m=1,nesum
@@ -358,15 +376,15 @@
         if (vfeed) then
           psi(kk)=psi(kk)+grdfdb(kk,1)*brfb(2)
         endif
-        do 3200 m=1,nfcoil
+        do m=1,nfcoil
           psi(kk)=psi(kk)+gridfc(kk,m)*brsp(m)
- 3200   continue
+        enddo
         if (iacoil.gt.0) then
-         do 3535 m=1,nacoil
+         do m=1,nacoil
           psi(kk)=psi(kk)+gridac(kk,m)*caccurt(jtime,m)
- 3535    continue
+         enddo
         endif
- 3600   continue
+      enddo
  6000 continue
 !----------------------------------------------------------------------------
 !-- rigid vertical shift correction ?                                      --
@@ -574,6 +592,10 @@
       xltrac=xlmin
       if (ibound.eq.-1) xltrac=xlmax
       radbou=(xguess+xltrac)/2.
+
+      !DBG
+      !idebug=2
+      !DBG
 !
   100 continue
 !----------------------------------------------------------------------
@@ -592,7 +614,7 @@
       !print *, 'limitr,xlim,ylim,limfag', limitr,xlim,ylim,limfag
       !print *, 'ixt,jtime,kerror', ixt,jtime,kerror
       call findax(nw,nh,rgrid,zgrid,rmaxis,zmaxis,simag, &
-                  psibry,rseps(1,jtime),zseps(1,jtime),m10, &
+                  psibry,rseps(:,jtime),zseps(:,jtime),m10, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
                   zxmin,zxmax,rymin,rymax,dpsi,bpol,bpolz, &
                   limitr,xlim,ylim,limfag,ixt,jtime,kerror)
@@ -645,6 +667,7 @@
 !--  find magnetic axis and poloidal flux at axis simag              --
 !----------------------------------------------------------------------
       m20=20
+      if (idebug >= 2) write (6,*) 'Entering findax after m20 set'
       call findax(nw,nh,rgrid,zgrid,rmaxis,zmaxis,simag, &
                   psibry,rseps(1,jtime),zseps(1,jtime),m20, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
@@ -738,21 +761,20 @@
 !------------------------------------------------------------------
 !-- find second separatrix                                       --
 !------------------------------------------------------------------
-          do 9300 j=1,40
-          call seva2d(bkx,lkx,bky,lky,c,xs,ys,pds,ier,n666)
-          write(6,*) 'xs,ys',xs, ys
-          write(6,*) 'lkx, lky',lkx,lky
-          write(6,*) 'pds,ier,n111', pds,ier,n111
+          do j=1,40
+            call seva2d(bkx,lkx,bky,lky,c,xs,ys,pds,ier,n666)
+            write(6,*) 'xs,ys',xs, ys
+            write(6,*) 'lkx, lky',lkx,lky
+            write(6,*) 'pds,ier,n111', pds,ier,n111
 
-          det=pds(5)*pds(6)-pds(4)*pds(4)
-          if (abs(det).lt.1.0e-15_dp) go to 9305
-          xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
-          yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
-          xs=xs+xerr
-          ys=ys+yerr
-          if (xerr*xerr+yerr*yerr.lt.1.0e-12_dp) go to 9310
- 9300     continue
- 9305     continue
+            det=pds(5)*pds(6)-pds(4)*pds(4)
+            if (abs(det).lt.1.0e-15_dp) exit
+            xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
+            yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
+            xs=xs+xerr
+            ys=ys+yerr
+            if (xerr*xerr+yerr*yerr.lt.1.0e-12_dp) go to 9310
+          enddo
           epssep=xerr*xerr+yerr*yerr
           write (nttyo,11001) epssep,ixt
           if (iand(iout,1).ne.0) write (nout,11001) epssep,ixt
@@ -785,13 +807,13 @@
 !-----------------------------------------------------------------------
 !-- get normalized flux function XPSI                                 --
 !-----------------------------------------------------------------------
-      do 1000 i=1,nw
-      do 1000 j=1,nh
+      do i=1,nw
+      do j=1,nh
         kk=(i-1)*nh+j
         if (icutfp.eq.0) then
           xpsi(kk)=1.1_dp
-          if ((rgrid(i).lt.xmin).or.(rgrid(i).gt.xmax)) go to 1000
-          if ((zgrid(j).lt.ymin).or.(zgrid(j).gt.ymax)) go to 1000
+          if ((rgrid(i).lt.xmin).or.(rgrid(i).gt.xmax)) cycle
+          if ((zgrid(j).lt.ymin).or.(zgrid(j).gt.ymax)) cycle
           xpsi(kk)=(simag-psi(kk))/sidif
         else
           if (zero(kk).gt.0.0005_dp) then
@@ -811,7 +833,8 @@
             xpsi(kk)=1000.
           endif
         endif
- 1000 continue
+      enddo
+      enddo
 !-----------------------------------------------------------------------
 !-- get SOL flux if needed                                            --
 !-----------------------------------------------------------------------
@@ -852,53 +875,53 @@
 !--  get response functions for MSE                                   --
 !-----------------------------------------------------------------------
       if (kstark.gt.0.or.kdomse.gt.0) then
-      do 50299 k=1,nstark
-        if (rrgam(jtime,k).le.0.0) go to 50299
-        call seva2d(bkx,lkx,bky,lky,c,rrgam(jtime,k) &
-                    ,zzgam(jtime,k),pds,ier,n111)
-        sistark(k)=pds(1)
-        sisinow=(simag-pds(1))/sidif
-        sigam(k)=sisinow
-        fpnow=ffcurr(sisinow,kffcur)
-        btgam(k)=fpnow*tmu/rrgam(jtime,k)
-50299 continue
-      endif
+        do k=1,nstark
+          if (rrgam(jtime,k).le.0.0) cycle
+          call seva2d(bkx,lkx,bky,lky,c,rrgam(jtime,k) &
+                      ,zzgam(jtime,k),pds,ier,n111)
+          sistark(k)=pds(1)
+          sisinow=(simag-pds(1))/sidif
+          sigam(k)=sisinow
+          fpnow=ffcurr(sisinow,kffcur)
+          btgam(k)=fpnow*tmu/rrgam(jtime,k)
+       enddo
+     endif
 
 !-----------------------------------------------------------------------
 !--  get response functions for MSE-LS                                --
 !-----------------------------------------------------------------------
       if (mmbmsels.gt.0.or.kdomsels.gt.0) then
-      do 60299 k=1,nmsels
-        if (idebug >= 2) then
-          write (6,*) 'STEPS MSE-LS k,rrmselt= ', k,rrmselt(jtime,k)
-        endif
-        if (rrmselt(jtime,k).le.0.0) go to 60299
-        call seva2d(bkx,lkx,bky,lky,c,rrmselt(jtime,k) &
-                    ,zzmselt(jtime,k),pds,ier,n333)
-        simls(k)=pds(1)
-        sisinow=(simag-pds(1))/sidif
-        sinmls(k)=sisinow
-        fpnow=ffcurr(sisinow,kffcur)
-        btmls(k)=fpnow*tmu/rrmselt(jtime,k)
-        brmls(k)=-pds(3)/rrmselt(jtime,k)
-        bzmls(k)=pds(2)/rrmselt(jtime,k)
-        if (idebug >= 2) then
-          write (6,*) 'STEPS MSE-LS k,rrmselt,br,bz,bt= ', k,rrmselt(jtime,k) &
-                       ,brmls(k),bzmls(k),btmls(k)
-        endif
-60299 continue
+        do k=1,nmsels
+          if (idebug >= 2) then
+            write (6,*) 'STEPS MSE-LS k,rrmselt= ', k,rrmselt(jtime,k)
+          endif
+          if (rrmselt(jtime,k).le.0.0) cycle
+          call seva2d(bkx,lkx,bky,lky,c,rrmselt(jtime,k) &
+                      ,zzmselt(jtime,k),pds,ier,n333)
+          simls(k)=pds(1)
+          sisinow=(simag-pds(1))/sidif
+          sinmls(k)=sisinow
+          fpnow=ffcurr(sisinow,kffcur)
+          btmls(k)=fpnow*tmu/rrmselt(jtime,k)
+          brmls(k)=-pds(3)/rrmselt(jtime,k)
+          bzmls(k)=pds(2)/rrmselt(jtime,k)
+          if (idebug >= 2) then
+            write (6,*) 'STEPS MSE-LS k,rrmselt,br,bz,bt= ',               &
+                         k,rrmselt(jtime,k),brmls(k),bzmls(k),btmls(k)
+          endif
+      enddo
 
-      endif
+    endif
 !
-      do 51200 k=1,nfound
+      do k=1,nfound
         xouts(k)=1./xout(k)**2
-51200 continue
+      enddo
       nzz=0
       call fluxav(xouts,xout,yout,nfound,psi,rgrid,nw,zgrid,nh, &
                   r2bdry,nzz,sdlobp,sdlbp)
-      do 51210 k=1,nfound
+      do k=1,nfound
         xouts(k)=1./xout(k)
-51210 continue
+      enddo
       call fluxav(xouts,xout,yout,nfound,psi,rgrid,nw,zgrid,nh, &
                   r1bdry,nzz,sdlobp,sdlbp)
 !-----------------------------------------------------------------------
@@ -916,14 +939,14 @@
                     npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
                     rmaxis,zmaxis,negcur,kerror)
        if (kerror.gt.0) return
-       do 51900 k=1,nfounc
+       do k=1,nfounc
         csplt(k)=1./rsplt(k)**2
-51900  continue
+      enddo
        call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
                   r2sdry(i),nzz,sdlobp,sdlbp)
-       do 51920 k=1,nfounc
+       do k=1,nfounc
         csplt(k)=1./rsplt(k)
-51920  continue
+       enddo
        call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
                   r1sdry(i),nzz,sdlobp,sdlbp)
        r2surs = r2sdry(i)*sdlobp
@@ -936,20 +959,20 @@
 !--  get metric elements at PSIWANT for q constraint if needed        --
 !-----------------------------------------------------------------------
       if (nqwant.gt.0) then
-      do 53999 i=1,nqwant
+      do i=1,nqwant
        siwant=simag+siwantq(i)*(psibry-simag)
        call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc, &
                     npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
                     rmaxis,zmaxis,negcur,kerror)
        if (kerror.gt.0) return
-       do 53810 k=1,nfounc
+       do k=1,nfounc
         csplt(k)=1./rsplt(k)**2
-53810  continue
+       enddo
        call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
                   r2qdry,nzz,sdlobp,sdlbp)
-       do 53820 k=1,nfounc
+       do k=1,nfounc
         csplt(k)=1./rsplt(k)
-53820  continue
+       enddo
        call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
                   r1qdry,nzz,sdlobp,sdlbp)
        r2surq = r2qdry*sdlobp
@@ -957,14 +980,14 @@
        fpnow = fpnow*tmu
        qsiw(i)= abs(fpnow)/twopi*r2surq
        pasmsw(i)=sdlbp/tmu/twopi
-53999 continue
+      enddo
       endif
 !
       cvolp(ixt)=0.0
       carea=0.0
       xym=xout(1)*yout(1)
       xyma=yout(1)
-      do 1450 i=2,nfound
+      do i=2,nfound
         xyp=xout(i)*yout(i)
         xypa=yout(i)
         dx=xout(i)-xout(i-1)
@@ -972,11 +995,11 @@
         carea=carea+(xyma+xypa)/2.0*dx
         xym=xyp
         xyma=xypa
- 1450 continue
+      enddo
       carea=abs(carea)
-      if (iconvr.eq.3) go to 1470
-      if ((ix.gt.1).or.(ixout.le.1)) call chisqr(jtime)
- 1470 continue
+      if (iconvr.ne.3) then
+        if ((ix.gt.1).or.(ixout.le.1)) call chisqr(jtime)
+      endif
       cvolp(ixt)=abs(cvolp(ixt))*1.0e+06_dp
       vout(jtime)=cvolp(ixt)
       rout(jtime)=(xmax+xmin)/2.*100.
@@ -1167,18 +1190,19 @@
   150 continue
       delcur=1.
       sumi=0.0
-      do 300 i=1,nw
-      do 300 j=1,nh
-        kk=(i-1)*nh+j
-        erho=sqrt((rgrid(i)-relip)**2+((zgrid(j)-zelip)/eelip)**2)
-        if (erho.gt.aelip) go to 300
-        pcurrt(kk)=delcur*zero(kk)/rgrid(i)
-        sumi=sumi+pcurrt(kk)
-  300 continue
+      do i=1,nw
+        do j=1,nh
+          kk=(i-1)*nh+j
+          erho=sqrt((rgrid(i)-relip)**2+((zgrid(j)-zelip)/eelip)**2)
+          if (erho.gt.aelip) continue
+          pcurrt(kk)=delcur*zero(kk)/rgrid(i)
+          sumi=sumi+pcurrt(kk)
+        enddo
+      enddo
       cratio=pasmat(ks)/sumi
-      do 320 i=1,nwnh
+      do i=1,nwnh
         pcurrt(i)=pcurrt(i)*cratio*zero(i)
-  320 continue
+      enddo
       return
 !
  1100 continue
@@ -1215,12 +1239,13 @@
       if (abs(fwtsi(2)).le.1.0e-30_dp)  zelip=0.0
       if (abs(fwtsi(11)).le.1.0e-30_dp)  zelip=0.0
 !
-      do 1300 i=1,nw
-      do 1300 j=1,nh
+      do i=1,nw
+      do j=1,nh
         kk=(i-1)*nh+j
         erho=sqrt((rgrid(i)-relip)**2+((zgrid(j)-zelip)/eelip)**2)
         xpsi(kk)=(erho/aelip)**2
- 1300 continue
+      enddo
+      enddo
       return
       end subroutine inicur
 
@@ -1246,10 +1271,10 @@
 !
       if (ivesel.eq.5) return
 !
- 2000 continue
       if (ivesel.eq.1) return
-      do 2100 i=1,nvesel
- 2100 vcurrt(i)=vloopt(jtime)/rsisvs(i)
+      do i=1,nvesel
+          vcurrt(i)=vloopt(jtime)/rsisvs(i)
+      enddo
       return
       end subroutine vescur
 

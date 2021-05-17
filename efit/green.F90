@@ -25,19 +25,19 @@
 !
  1100 continue
       kffp1=kffcur+1
-      do 1300 jj=1,kwcurn
+      do jj=1,kwcurn
         if (ifag.eq.1) go to 1280
-        do 1250 m=1,nsilop
+        do m=1,nsilop
           rsilpc(m,jj)=0.0
- 1250   continue
-        do 1260 m=1,magpri
+        enddo
+        do m=1,magpri
           rmp2pc(m,jj)=0.0
- 1260   continue
+        enddo
         if (kstark.gt.0.or.kdomse.gt.0) then
-        do 1270 m=1,nstark
+        do m=1,nstark
           rbrpc(m,jj)=0.0
           rbzpc(m,jj)=0.0
- 1270   continue
+        enddo
         endif
         if (mmbmsels.gt.0.or.kdomsels.gt.0) then
           do m=1,nmsels
@@ -45,9 +45,9 @@
           enddo
         endif
         if (kece.gt.0) then
-        do 1290 m=1,nnece
+        do m=1,nnece
           recepc(m,jj)=0.0
- 1290   continue
+        enddo
         endif
         if (kecebz.gt.0) then
         recebzpc(jj)=0.0
@@ -59,7 +59,7 @@
         endif
  1280   continue
         fgowpc(jj)=0.0
- 1300 continue
+      enddo
       if (fitdelz.and.niter.ge.ndelzon) then
           do m=1,nsilop
             gsildz(m)=0.0
@@ -148,14 +148,14 @@
          fgowfe=0.0
       endif
 !
-      do 2000 i=1,nw
-      do 2000 j=1,nh
+      do i=1,nw
+      do j=1,nh
         kk=(i-1)*nh+j
         if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) then
           go to 1582
         end if
         call setpp(xpsi(kk),xpsii)
-        do 1580 jj=1,kppcur
+        do jj=1,kppcur
           factor=xpsii(jj)*rgrid(i)*www(kk)
 !------------------------------------------------------------------------
 !-- correction for rotation, p0' terms                                 --
@@ -188,22 +188,22 @@
           endif
           endif
           if (ifag.eq.1) go to 1520
-          do 1350 m=1,nsilop
+          do m=1,nsilop
             rsilpc(m,jj)=rsilpc(m,jj) + gsilpc(m,kk)*factor
- 1350     continue
-          do 1400 m=1,magpri
+          enddo
+          do m=1,magpri
             rmp2pc(m,jj)=rmp2pc(m,jj) + gmp2pc(m,kk)*factor
- 1400     continue
+          enddo
           if (kstark.gt.0.or.kdomse.gt.0) then
-          do 1500 m=1,nstark
+          do m=1,nstark
             rbrpc(m,jj)=rbrpc(m,jj) + gbrpc(m,kk)*factor
             rbzpc(m,jj)=rbzpc(m,jj) + gbzpc(m,kk)*factor
- 1500     continue
+          enddo
           endif
           if (kece.gt.0) then
-          do 1510 m=1,nnece
+          do m=1,nnece
             recepc(m,jj)=recepc(m,jj) + gecepc(m,kk)*factor
- 1510     continue
+          enddo
           endif
           if (kecebz.gt.0) then
             recebzpc(jj)=recebzpc(jj) + gecebzpc(kk)*factor
@@ -218,7 +218,7 @@
           endif
  1520     continue
           fgowpc(jj)=fgowpc(jj) + factor
- 1580   continue
+        enddo
 !-------------------------------------------------------------------------
 !-- Hyperbolic tangent term for P'                                      --
 !-------------------------------------------------------------------------
@@ -266,9 +266,9 @@
           jjk=jj-kppcur
           factor=xpsii(jjk)/rgrid(i)*wwwww
           if (ifag.eq.1) go to 1820
-          do 1600 m=1,nsilop
+          do m=1,nsilop
             rsilpc(m,jj)=rsilpc(m,jj) + gsilpc(m,kk)*factor
- 1600     continue
+          enddo
           do 1700 m=1,magpri
             rmp2pc(m,jj)=rmp2pc(m,jj) + gmp2pc(m,kk)*factor
  1700     continue
@@ -388,7 +388,8 @@
           fgowpc(jj)=fgowpc(jj) + factor
  1980   continue
  1982   continue
- 2000 continue
+      enddo
+      enddo
 !----------------------------------------------------------------------
 !--  diamagnetic flux                                                --
 !----------------------------------------------------------------------
@@ -633,8 +634,8 @@
 !-- deltaz in fitting                                                    --
 !--------------------------------------------------------------------------
       if (fitdelz.and.niter.ge.ndelzon) then
-      do 12000 i=1,nw
-      do 12000 j=1,nh
+      do i=1,nw
+      do j=1,nh
         kk=(i-1)*nh+j
         rdjdz(kk)=0.0
         if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) go to 11582
@@ -687,27 +688,27 @@
         endif
         if ((upsi.lt.0.0).or.(upsi.gt.1.0)) go to 11890
         call setfpp(upsi,xpsii)
-        do 11880 jj=kppcur+1,kpcurn
+        do jj=kppcur+1,kpcurn
           jjk=jj-kppcur
           factor=xpsii(jjk)/rgrid(i)*wwwww*pds(3)*brsp(nfcoil+jj)
           factor=-factor/sidif
           rdjdz(kk)=rdjdz(kk)+factor
-          do 11600 m=1,nsilop
+          do m=1,nsilop
             gsildz(m)=gsildz(m) + gsilpc(m,kk)*factor
-11600     continue
-          do 11700 m=1,magpri
+          enddo
+          do m=1,magpri
             gmp2dz(m)=gmp2dz(m) + gmp2pc(m,kk)*factor
-11700     continue
+          enddo
           if (kstark.gt.0) then
-          do 11800 m=1,nstark
+          do m=1,nstark
             gbrdz(m)=gbrdz(m) + gbrpc(m,kk)*factor
             gbzdz(m)=gbzdz(m) + gbzpc(m,kk)*factor
-11800     continue
+          enddo
           endif
           if (kece.gt.0) then
-          do 11810 m=1,nece
-            recedz(m)=recedz(m) + gecepc(m,kk)*factor
-11810     continue
+            do m=1,nece
+              recedz(m)=recedz(m) + gecepc(m,kk)*factor
+            enddo
           endif
           if (kecebz.gt.0) then
             recebzdz=recebzdz + gecebzpc(kk)*factor
@@ -721,7 +722,7 @@
            enddo
           endif
           fgowdz=fgowdz + factor
-11880   continue
+        enddo
 11890   continue
 !----------------------------------------------------------------------
 !--  toroidal rotation contributions                                 --
@@ -729,27 +730,27 @@
         if (kvtor.le.0) go to 11982
         if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) go to 11982
         call setpwpp(xpsi(kk),xpsii)
-        do 11980 jj=kpcurn+1,kwcurn
+        do jj=kpcurn+1,kwcurn
           jjii=jj-kpcurn
           factor=xpsii(jjii)*rgsvt(i)*www(kk)*pds(3)*brsp(nfcoil+jj)
           factor=-factor/sidif
           rdjdz(kk)=rdjdz(kk)+factor
-          do 11900 m=1,nsilop
+          do m=1,nsilop
             gsildz(m)=gsildz(m) + gsilpc(m,kk)*factor
-11900     continue
-          do 11910 m=1,magpri
+          enddo
+          do m=1,magpri
             gmp2dz(m)=gmp2dz(m) + gmp2pc(m,kk)*factor
-11910     continue
+          enddo
           if (kstark.gt.0) then
-           do 11920 m=1,nstark
+           do m=1,nstark
             gbrdz(m)=gbrdz(m) + gbrpc(m,kk)*factor
             gbzdz(m)=gbzdz(m) + gbzpc(m,kk)*factor
-11920      continue
+           enddo
           endif
           if (kece.gt.0) then
-          do 11930 m=1,nece
-            recedz(m)=recedz(m) + gecepc(m,kk)*factor
-11930     continue
+            do m=1,nece
+              recedz(m)=recedz(m) + gecepc(m,kk)*factor
+            enddo
           endif
           if (kecebz.gt.0) then
             recebzdz=recebzdz + gecebzpc(kk)*factor
@@ -763,22 +764,21 @@
            enddo
           endif
           fgowdz=fgowdz + factor
-11980   continue
+        enddo
 11982   continue
-12000 continue
+      enddo
+      enddo
 !----------------------------------------------------------------------
 !-- response functions for MSE                                       --
 !----------------------------------------------------------------------
       if (kstark.gt.0) then
-        do 12040 m=1,nstark
-        if (fwtgam(m).le.0.0) go to 12040
+        do m=1,nstark
+         if (fwtgam(m).le.0.0) cycle
          rgamdz(m)=(a3gam(jtime,m)*tangam(jtime,m) &
                    -a8gam(jtime,m))*gbrdz(m) &
             +(a4gam(jtime,m)*tangam(jtime,m)-a1gam(jtime,m))*gbzdz(m)
-12040   continue
+        enddo
       endif
       endif
-!
       return
       end subroutine green
-

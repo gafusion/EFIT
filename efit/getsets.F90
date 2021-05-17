@@ -1,121 +1,3 @@
-      subroutine set_basis_params
-
-      use set_kinds
-      include 'eparmdud129.inc'
-      include 'modules2.inc'
-      include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-!---------------------------------------------------------------------
-!--  specific choice of current profile                             --
-!--       ICPROF=1  no edge current density allowed                 --
-!--       ICPROF=2  free edge current density                       --
-!--       ICPROF=3  weak edge current density constraint            --
-!---------------------------------------------------------------------
-      if (icprof.eq.1) then
-        kffcur=2
-        kppcur=2
-        fcurbd=1.
-        pcurbd=1.
-        fwtbp=1.
-        fwtqa=0.
-        qvfit=0.
-      elseif (icprof.eq.2) then
-        kffcur=2
-        kppcur=2
-        fcurbd=0.
-        pcurbd=0.
-        fwtbp=0.
-        fwtqa=0.
-        qvfit=0.
-      elseif (icprof.eq.3) then
-        kffcur=3
-        kppcur=2
-        fcurbd=0.
-        pcurbd=0.
-        fwtbp=0.
-        fwtqa=0.
-        qvfit=0.
-        kcalpa=1
-        calpa(1,1)=0.1_dp
-        calpa(2,1)=0.1_dp
-        calpa(3,1)=0.1_dp
-        xalpa(1)=0.0
-        kcgama=1
-        cgama(1,1)=0.1_dp
-        cgama(2,1)=0.1_dp
-        cgama(3,1)=0.1_dp
-        xgama(1)=0.0
-      endif
-      if(mse_usecer .eq. 1)keecur = 0
-      if(mse_usecer .eq. 2 .and. keecur .eq. 0) then
-           keecur = 2
-           keefnc = 0
-           itek = 5
-      endif
-      if (imagsigma.gt.0) then
-         do_spline_fit=.false.
-         saimin=300.
-      endif
-!---------------------------------------------------------------------
-!-- adjust fit parameters based on basis function selected          --
-!---------------------------------------------------------------------
-       if (kppfnc .eq. 3) then
-          kppcur = 4 * (kppknt - 1)
-       endif
-       if (kppfnc .eq. 4) then
-          kppcur = 4 * (kppknt - 1)
-       endif
-       if (kppfnc .eq. 5) then
-          kppcur = kppcur * (kppknt - 1)
-       endif
-       if (kppfnc .eq. 6) then
-          kppcur = kppknt * 2
-       endif
-       if (kfffnc .eq. 3) then
-          kffcur = 4 * (kffknt - 1)
-       endif
-       if (kfffnc .eq. 4) then
-          kffcur = 4 * (kffknt - 1)
-       endif
-       if (kfffnc .eq. 5) then
-          kffcur = kffcur * (kffknt - 1)
-       endif
-       if (kfffnc .eq. 6) then
-          kffcur = kffknt * 2
-       endif
-       if (kwwfnc .eq. 3) then
-          kwwcur = 4 * (kwwknt - 1)
-       endif
-       if (kwwfnc .eq. 4) then
-          kwwcur = 4 * (kwwknt - 1)
-       endif
-       if (kwwfnc .eq. 5) then
-          kwwcur = kwwcur * (kwwknt - 1)
-       endif
-       if (kwwfnc .eq. 6) then
-          kwwcur = kwwknt * 2
-       endif
-       if (keecur.gt.0) then
-       if (keefnc .eq. 3) then
-          keecur = 4 * (keeknt - 1)
-       endif
-       if (keefnc .eq. 4) then
-          keecur = 4 * (keeknt - 1)
-       endif
-       if (keefnc .eq. 5) then
-          keecur = keecur * (keeknt - 1)
-       endif
-       if (keefnc .eq. 6) then
-          keecur = keeknt * 2
-       endif
-       endif
-!
-      if (kzeroj.eq.1.and.sizeroj(1).lt.0.0) sizeroj(1)=psiwant
-
-      end subroutine set_basis_params
-
-
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
@@ -415,10 +297,6 @@
 !**          getsets performs inputing and initialization.           **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
@@ -877,6 +755,7 @@
 !-------------------------------------------------------------------------------
 !-- read in limiter data                                                      --
 !-------------------------------------------------------------------------------
+      WRITE(*,*) 'HERE 1'
       call getlim(1,xltype,xltype_180)
 !
   100 continue
@@ -1079,4 +958,4 @@
  6700 format (a1,a12)
 30000 format (i9)
 30200 format (10f3.0)
-      end
+      end subroutine getsets

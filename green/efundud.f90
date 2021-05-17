@@ -1239,35 +1239,38 @@
       WRITE (nrspfc) rfcpc
       CLOSE(unit=nrspfc)
  300  CONTINUE  
-      msilop=nsilop
-      IF (msilop.le.1) go to 520
-      IF (isize.le.0) go to 420
 !---------------------------------------------------------------------
-!-- finite size flux loops                                          --
+!-- flux loops                                          --
 !---------------------------------------------------------------------
-      DO i=1,nfcoil
-         DO j=1,isize
-            taz=tan(as(j)*pi/180.)
-            taz2=tan(as2(j)*pi/180.)
-            CALL flux(rf(i),zf(i),wf(i),hf(i),taf(i),taf2(i), &
-                        rsi(j),zsi(j),wsi(j),hsi(j),taz,taz2, &
-                        rsilfc(j,i))
-            rsilfc(j,i)=rsilfc(j,i)*0.5/pi
-         ENDDO 
-      ENDDO
-  420 CONTINUE
-      IF (isize.ge.nsilop) go to 520
+      IF (nsilop.gt.1) THEN
 !---------------------------------------------------------------------
-!-- thin flux loops                                                 --
+!       finite size flux loops                              --
 !---------------------------------------------------------------------
-      DO i=1,nfcoil
-         ii=i
-         DO j=isize+1,nsilop
-            jj=j
-            CALL m1coef(xdum,xdum,0,0,rsilfc,jj,ii)
-         ENDDO 
-      ENDDO 
-  520 CONTINUE
+        IF (isize.gt.0) THEN
+            DO i=1,nfcoil
+               DO j=1,isize
+                  taz=tan(as(j)*pi/180.)
+                  taz2=tan(as2(j)*pi/180.)
+                  CALL flux(rf(i),zf(i),wf(i),hf(i),taf(i),taf2(i), &
+                              rsi(j),zsi(j),wsi(j),hsi(j),taz,taz2, &
+                              rsilfc(j,i))
+                  rsilfc(j,i)=rsilfc(j,i)*0.5/pi
+               ENDDO 
+            ENDDO
+        ENDIF
+!---------------------------------------------------------------------
+!      thin flux loops                                       --
+!---------------------------------------------------------------------
+        IF (isize.lt.nsilop) then
+            DO i=1,nfcoil
+               ii=i
+               DO j=isize+1,nsilop
+                  jj=j
+                  CALL m1coef(xdum,xdum,nsilop,nfcoil,rsilfc,jj,ii)
+               ENDDO 
+            ENDDO 
+        ENDIF 
+      ENDIF 
 !----------------------------------------------------------------------
 !-- compute the response FUNCTION of magnetic probes due to f coils  --
 !----------------------------------------------------------------------

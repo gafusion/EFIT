@@ -1,3 +1,4 @@
+!**********************************************************************
 !     
 !     Function bsppel(ifunc,iparm,ypsi)
 !     
@@ -8,8 +9,7 @@
 !     iparm - basis function parameter number
 !     ypsi  - independent variable value
 !     
-!     
-      
+!**********************************************************************
 Function bsppel(ifunc,iparm,ypsi)
       
   include 'eparmdud129.inc'
@@ -126,7 +126,8 @@ Function bsppel(ifunc,iparm,ypsi)
   if ( ifunc .ne. kppfnc)  &
     write(6,*)'ifunc .ne. kppfnc ',ifunc,kppfnc
   return
-end
+end function bsppel
+!**********************************************************************
 !     
 !     Function bspppel(ifunc,iparm,ypsi)
 !     
@@ -137,9 +138,8 @@ end
 !     iparm - basis function parameter number
 !     ypsi  - independent variable value
 !     
-!     
-
-Function bspppel(ifunc,iparm,ypsi)
+!**********************************************************************
+function bspppel(ifunc,iparm,ypsi)
 
   include 'eparmdud129.inc'
   include 'modules2.inc'
@@ -277,7 +277,8 @@ Function bspppel(ifunc,iparm,ypsi)
     endif
   endif
   return
-end
+end function bspppel
+!**********************************************************************
 !     
 !     Function bsppin(ifunc,iparm,ypsi)
 !     
@@ -288,9 +289,8 @@ end
 !     iparm - basis function parameter number
 !     ypsi  - independent variable value
 !     
-!     
-      
-Function bsppin(ifunc,iparm,ypsi)
+!**********************************************************************
+function bsppin(ifunc,iparm,ypsi)
       
   include 'eparmdud129.inc'
   include 'modules2.inc'
@@ -510,9 +510,8 @@ Function bsppin(ifunc,iparm,ypsi)
   if ( ifunc .ne. kppfnc)  &
     write(6,*)'ifunc .ne. kppfnc ',ifunc,kppfnc
   return
-end
-      
-      
+end function bsppin
+!**********************************************************************
 !     
 !     subroutine ppcnst(ncrsp,crsp,z,nffcoi)
 !     
@@ -526,7 +525,7 @@ end
 !     z     - value vector
 !     nffcoi- array index for seeting up crsp
 !     
-      
+!**********************************************************************
 subroutine ppcnst(ncrsp,crsp,z,nffcoi)
   include 'eparmdud129.inc'
   include 'modules2.inc'
@@ -854,14 +853,14 @@ subroutine ppcnst(ncrsp,crsp,z,nffcoi)
   endif
 
   return
-end
+end subroutine ppcnst
+!**********************************************************************
 !     
 !     subroutine ppstore()
 !     
 !     Store the solution coefs into ppbdry and pp2bdry
 !     
-!     
-      
+!**********************************************************************
 subroutine ppstore()
   include 'eparmdud129.inc'
   include 'modules2.inc'
@@ -884,4 +883,4 @@ subroutine ppstore()
     enddo
   endif
   return
-end
+end subroutine ppstore

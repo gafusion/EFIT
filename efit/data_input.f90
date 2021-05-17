@@ -1,17 +1,9 @@
-      subroutine data_input(jtime,kconvr,ktime,mtear,kerror) 
 !********************************************************************** 
-!**                                                                  ** 
-!**     MAIN PROGRAM:  MHD FITTING CODE                              ** 
-!**                                                                  ** 
 !**                                                                  ** 
 !**     SUBPROGRAM DESCRIPTION:                                      ** 
 !**          data sets up the magnetic data and weighting arrays.    ** 
 !**                                                                  ** 
 !**     CALLING ARGUMENTS:                                           ** 
-!**                                                                  ** 
-!**     REFERENCES:                                                  ** 
-!**          (1)                                                     ** 
-!**          (2)                                                     ** 
 !**                                                                  ** 
 !**     RECORD OF MODIFICATION:                                      ** 
 !**          29/06/83..........first created                         ** 
@@ -19,8 +11,8 @@
 !**          23/04/04...JAL iplcout added to namelist                ** 
 !**          01/08/07...DPB namelist for mag uncertainty added       ** 
 !**                                                                  ** 
-!**                                                                  ** 
 !********************************************************************** 
+      subroutine data_input(jtime,kconvr,ktime,mtear,kerror) 
       use commonblocks,only: c,wk,copy,bkx,bky,wgridpc,rfcpc 
       use set_kinds 
       include 'eparmdud129.inc' 
@@ -214,95 +206,92 @@
       sicont=tmu*drslop/aaslop 
 ! 
       if (kdata.eq.2) go to 180 
-      if (jtime.gt.1) go to 178 
 !---------------------------------------------------------------------- 
 !-- normalize fitting weights, SNAP mode                             -- 
 !---------------------------------------------------------------------- 
-      do 150 i=1,nsilop 
-        if ((kdata.ge.3).and.(fwtsi(i).ne.0.0)) then 
-          fwtsi(i)=swtsi(i) 
-          if (lookfw.gt.0) fwtsi(i)=rwtsi(i) 
+      if (jtime.le.1) then
+        do i=1,nsilop 
+          if ((kdata.ge.3).and.(fwtsi(i).ne.0.0)) then 
+            fwtsi(i)=swtsi(i) 
+            if (lookfw.gt.0) fwtsi(i)=rwtsi(i) 
+          endif 
+          if (ierpsi(i).ne.0) fwtsi(i)=0.0 
+        enddo
+        do i=1,nfcoil 
+          if ((kdata.ge.3).and.(fwtfc(i).ne.0.0)) fwtfc(i)=swtfc(i) 
+          if (ierfc(i).ne.0) fwtfc(i)=0.0 
+        enddo
+        if (iecurr.eq.2) then 
+        do i=1,nesum 
+          if ((kdata.ge.3).and.(fwtec(i).ne.0.0)) fwtec(i)=swtec(i) 
+          if (ierec(i).ne.0) fwtec(i)=0.0 
+        enddo 
         endif 
-        if (ierpsi(i).ne.0) fwtsi(i)=0.0 
-  150 continue 
-      do 152 i=1,nfcoil 
-        if ((kdata.ge.3).and.(fwtfc(i).ne.0.0)) fwtfc(i)=swtfc(i) 
-        if (ierfc(i).ne.0) fwtfc(i)=0.0 
-  152 continue 
-      if (iecurr.eq.2) then 
-      do i=1,nesum 
-        if ((kdata.ge.3).and.(fwtec(i).ne.0.0)) fwtec(i)=swtec(i) 
-        if (ierec(i).ne.0) fwtec(i)=0.0 
-      enddo 
-      endif 
-      do 160 i=1,magpri 
-        if ((kdata.ge.3).and.(fwtmp2(i).ne.0.0)) then 
-          fwtmp2(i)=swtmp2(i) 
-          if (lookfw.gt.0) fwtmp2(i)=rwtmp2(i) 
-        endif 
-        if (iermpi(i).ne.0) fwtmp2(i)=0.0 
-  160 continue 
-      do 170 i=1,nstark 
-        fwtgam(i)=swtgam(i) 
-        if (iergam(i).ne.0) fwtgam(i)=0.0 
-  170 continue 
-      do 172 i=1,nnece 
-        fwtece0(i)=swtece(i) 
-        if (ierece(i).ne.0) fwtece0(i)=0.0 
-  172 continue 
+        do i=1,magpri 
+          if ((kdata.ge.3).and.(fwtmp2(i).ne.0.0)) then 
+            fwtmp2(i)=swtmp2(i) 
+            if (lookfw.gt.0) fwtmp2(i)=rwtmp2(i) 
+          endif 
+          if (iermpi(i).ne.0) fwtmp2(i)=0.0 
+        enddo
+        do i=1,nstark 
+          fwtgam(i)=swtgam(i) 
+          if (iergam(i).ne.0) fwtgam(i)=0.0 
+        enddo
+        do i=1,nnece 
+          fwtece0(i)=swtece(i) 
+          if (ierece(i).ne.0) fwtece0(i)=0.0 
+        enddo
         fwtecebz0=swtecebz 
         if (ierecebz.ne.0) fwtecebz0=0.0 
-      if (fwtcur.ne.0.0) fwtcur=swtcur 
-      if (fwtqa.ne.0.0) fwtqa=1. 
-      if (fwtbp.ne.0.0) fwtbp=1. 
-      if (fwtdlc.ne.0.0) fwtdlc=swtdlc 
-      if (ierpla.ne.0) fwtcur=0.0 
-      if (ierrdi.ne.0) fwtdlc=0.0 
-!--------------------------------------------------------------------- 
-!--  Save fitting weights                                           -- 
-!--------------------------------------------------------------------- 
-      swtdlc=fwtdlc 
-      swtcur=fwtcur 
-      do i=1,nfcoil 
-        swtfc(i)=fwtfc(i) 
-      enddo 
-      do i=1,nesum 
-        swtec(i)=fwtec(i) 
-      enddo 
-      do i=1,magpri 
-        swtmp2(i)=fwtmp2(i) 
-      enddo 
-      do i=1,nsilop 
-        swtsi(i)=fwtsi(i) 
-      enddo 
-      do i=1,nstark 
-        swtgam(i)=fwtgam(i) 
-      enddo 
-      go to 179 
-  178 continue 
+        if (fwtcur.ne.0.0) fwtcur=swtcur 
+        if (fwtqa.ne.0.0) fwtqa=1. 
+        if (fwtbp.ne.0.0) fwtbp=1. 
+        if (fwtdlc.ne.0.0) fwtdlc=swtdlc 
+        if (ierpla.ne.0) fwtcur=0.0 
+        if (ierrdi.ne.0) fwtdlc=0.0 
+        !--  Save fitting weights                                           -- 
+        swtdlc=fwtdlc 
+        swtcur=fwtcur 
+        do i=1,nfcoil 
+          swtfc(i)=fwtfc(i) 
+        enddo 
+        do i=1,nesum 
+          swtec(i)=fwtec(i) 
+        enddo 
+        do i=1,magpri 
+          swtmp2(i)=fwtmp2(i) 
+        enddo 
+        do i=1,nsilop 
+          swtsi(i)=fwtsi(i) 
+        enddo 
+        do i=1,nstark 
+          swtgam(i)=fwtgam(i) 
+        enddo 
+      else
 !--------------------------------------------------------------------- 
 !--  Restore fitting weights for time slices > 1                    -- 
 !--------------------------------------------------------------------- 
-      fwtdlc=swtdlc 
-      fwtcur=swtcur 
-      if (fwtqa.ne.0.0) fwtqa=1. 
-      if (fwtbp.ne.0.0) fwtbp=1. 
-      do i=1,nfcoil 
-        fwtfc(i)=swtfc(i) 
-      enddo 
-      do i=1,nesum 
-        fwtec(i)=swtec(i) 
-      enddo 
-      do i=1,magpri 
-        fwtmp2(i)=swtmp2(i) 
-      enddo 
-      do i=1,nsilop 
-        fwtsi(i)=swtsi(i) 
-      enddo 
-      do i=1,nstark 
-        fwtgam(i)=swtgam(i) 
-      enddo 
-  179 continue 
+        fwtdlc=swtdlc 
+        fwtcur=swtcur 
+        if (fwtqa.ne.0.0) fwtqa=1. 
+        if (fwtbp.ne.0.0) fwtbp=1. 
+        do i=1,nfcoil 
+          fwtfc(i)=swtfc(i) 
+        enddo 
+        do i=1,nesum 
+          fwtec(i)=swtec(i) 
+        enddo 
+        do i=1,magpri 
+          fwtmp2(i)=swtmp2(i) 
+        enddo 
+        do i=1,nsilop 
+          fwtsi(i)=swtsi(i) 
+        enddo 
+        do i=1,nstark 
+          fwtgam(i)=swtgam(i) 
+        enddo 
+      endif
 !----------------------------------------------------------------------- 
 !-- Set edge pedestal tanh paramters                                  -- 
 !----------------------------------------------------------------------- 
@@ -316,12 +305,12 @@
 !-- file mode                                                        -- 
 !---------------------------------------------------------------------- 
   180 continue 
-      do 182 i=1,nsilop 
+      do i=1,nsilop 
         psibit(i)=0.0 
-  182 continue 
-      do 184 i=1,magpri 
+      enddo
+      do i=1,magpri 
         bitmpi(i)=0.0 
-  184 continue 
+      enddo
       alpax(jbeta)=1.e4_dp 
       backaverage=.false. 
       bitip=0.0 
@@ -329,15 +318,15 @@
       brsp(1)=-1.e+20_dp 
       cfcoil=-1. 
       cutip=80000. 
-      do 188 i=1,nco2v 
+      do i=1,nco2v 
         denv(i)=0. 
-  188 continue 
-      do 190 i=1,nco2r 
+      enddo
+      do i=1,nco2r 
         denr(i)=0. 
-  190 continue 
-      do 194 i=1,nesum 
+      enddo
+      do i=1,nesum 
         rsisec(i)=-1. 
-  194 continue 
+      enddo
       emf=1.00 
       emp=1.00 
       enf=1.00 
@@ -345,39 +334,39 @@
       error=1.0e-03_dp 
       fbetap=0.0 
       fbetat=0.0 
-      do 196 i=1,nfcoil 
+      do i=1,nfcoil 
         fcsum(i)=1.0 
         fczero(i)=1.0 
         fwtfc(i)=0. 
         rsisfc(i)=-1. 
-  196 continue 
+      enddo
       do i=1,nesum 
         fwtec(i)=0.0 
       enddo 
-      do 197 i=1,mpress 
+      do i=1,mpress 
         fwtpre(i)=1. 
-  197 continue 
+      enddo 
       fcurbd=1.0 
       fli=0.0 
       fwtbp=0.0 
       fwtdlc=0.0 
-      do 11199 i=1,nstark 
+      do i=1,nstark 
        fwtgam(i)=0.0 
-11199 continue 
+      enddo 
       do i=1,nmsels 
         fwtbmsels(i)=0.0 
         fwtemsels(i)=0.0 
       enddo 
-      do 11299 i=1,nnece 
+      do i=1,nnece 
        fwtece0(i)=0.0 
-11299 continue 
+      enddo 
       fwtecebz0=0.0 
-      do 12399 i=1,mbdry 
+      do i=1,mbdry 
        fwtbdry(i)=1.0 
        sigrbd(i)=1.e10_dp 
        sigzbd(i)=1.e10_dp 
        fwtsol(i)=1.0 
-12399 continue 
+      enddo 
       akchiwt=1.0 
       akprewt=0.0 
       akgamwt=0.0 
@@ -484,7 +473,7 @@
 !--   Read input file for KDATA = 2                                  -- 
 !---------------------------------------------------------------------- 
       open(unit=nin,status='old',file=ifname(jtime)) 
-! 
+
       xlim(1)=-1.0 
       rbdry(1)=-1.0 
       itimeu=0 
@@ -492,80 +481,85 @@
       ktear=0 
  
       read (nin,in1,iostat=istat) 
- 
       if (istat/=0) then 
         backspace(nin) 
         read(nin,fmt='(A)') line 
-        write(*,'(A)') & 
-         'Invalid line in namelist: '//trim(line) 
-      end if 
+        write(*,'(A)') 'Invalid line in namelist in1: '//trim(line) 
+      endif
  
       if (nbdryp==-1) nbdryp=nbdry 
-      read (nin,ink,err=11111,end=101) 
-101    continue 
-11111 close(unit=nin) 
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,ins,err=11113,end=103) 
-103    continue 
-11113 close(unit=nin) 
-      open(unit=nin,status='old',file=ifname(jtime)) 
+
+      read (nin,ink,iostat=istat) 
+      if (istat/=0) then 
+        backspace(nin) 
+        read(nin,fmt='(A)') line 
+        !if (trim(line)/="/") write(*,'(A)') 'Invalid line in namelist ink: '//trim(line) 
+      endif
+
+      read (nin,ins,iostat=istat) 
+      if (istat/=0) then 
+        backspace(nin) 
+        read(nin,fmt='(A)') line 
+        !if (trim(line)/="/") write(*,'(A)') 'Invalid line in namelist in ins: '//trim(line) 
+      endif
+
       rrmsels(1)=-10. 
-      read (nin,in_msels,err=91113,end=91103) 
-91103    continue 
-         if (kdomsels.gt.0) then 
+
+      read (nin,in_msels,iostat=istat) 
+      if (istat/=0) then 
+        backspace(nin) 
+        read(nin,fmt='(A)') line 
+        !if (trim(line)/="/") write(*,'(A)') 'Invalid line in namelist in_msels: '//trim(line) 
+      endif
 !---------------------------------------------------------------------- 
 !--   Read msels_all.dat if needed                                   -- 
 !---------------------------------------------------------------------- 
-     if (rrmsels(1).lt.-5.0) then 
+      if (kdomsels.gt.0) then 
+       if (rrmsels(1).lt.-5.0) then 
              close(unit=nin) 
              open(unit=nin,status='old',file='msels_all.dat') 
              do i=1,nmsels 
-         read (nin,91008,err=91110) bmsels(i),sbmsels(i),rrmsels(i), & 
+               read(nin,91008,iostat=istat) bmsels(i),sbmsels(i),rrmsels(i), & 
                     zzmsels(i), l1msels(i),l2msels(i),l4msels(i),emsels(i), & 
                     semsels(i),iemsels(i) 
                iermselt(jtime,i)=iemsels(i) 
              enddo 
-             go to 91113 
-91008        format(9e12.5,i2) 
-91110        continue 
-             im1=i-1 
-             write (6,*) 'msels_all i=',i,' bmsels(i-1)= ',bmsels(im1) 
-             stop 
-           endif 
-         endif 
-91113 close(unit=nin) 
-      open(unit=nin,status='old',file=ifname(jtime) & 
-                                 ) 
-      read (nin,ina,err=11331,end=1031) 
-1031    continue 
-11331 close(unit=nin) 
-      open(unit=nin,status='old',file=ifname(jtime) & 
-                                 ) 
+             if (istat/=0) then 
+                 im1=i-1 
+                 write (6,*) 'msels_all i=',i,' bmsels(i-1)= ',bmsels(im1) 
+                 stop 
+             endif
+       endif 
+      endif 
+91008 format(9e12.5,i2) 
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,ina,iostat=istat)
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
       ecefit = 0.0 
       ecebzfit = 0.0 
-      read (nin,inece,err=11112,end=102) 
-102    continue 
-11112 close(unit=nin) 
-      open(unit=nin,status='old',file=ifname(jtime) & 
-                                 ) 
-      read (nin,edgep,err=11117,end=1021) 
-1021  continue 
-11117 close(unit=nin) 
-      open(unit=nin,status='old',file=ifname(jtime) & 
-                                 ) 
-      read (nin,iner,err=11193,end=12193) 
-12193  continue 
-11193 close(unit=nin) 
-      open(unit=nin,status='old',file=ifname(jtime) & 
-                                 ) 
-      read (nin,insxr,err=11114,end=104) 
-104    continue 
-11114 close(unit=nin) 
-      open(unit=nin,status='old',file=ifname(jtime) & 
-                                 ) 
-      read (nin,inms,err=11115,end=105) 
-105    continue 
-11115 close(unit=nin) 
+      read (nin,inece,iostat=istat) 
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,edgep,iostat=istat) 
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,iner,iostat=istat) 
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,insxr,iostat=istat) 
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime))
+      read (nin,inms,iostat=istat) 
+      close(unit=nin) 
+
       bti322(jtime)=bti322in 
       curc79(jtime)=curc79in 
       curc139(jtime)=curc139in 
@@ -584,13 +578,12 @@
       rnavp(jtime)=rnavpin 
 ! 
       open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,inwant,err=11219,end=106) 
-106    continue 
-11219 close(unit=nin) 
+      read (nin,inwant,iostat=istat) 
+      close(unit=nin) 
+
       open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,invt,err=11230,end=11221) 
-11221 continue 
-11230 close(unit=nin) 
+      read (nin,invt,iostat=istat) 
+      close(unit=nin) 
 !---------------------------------------------------------------------- 
 !--   Input FF', P' arrays                                           -- 
 !---------------------------------------------------------------------- 
@@ -617,8 +610,7 @@
 ! 
       open(unit=nin,status='old',file=ifname(jtime)) 
       if (idebug /= 0) write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext 
-      read(nin,profile_ext,err=11777,end=777) 
-777   continue 
+      read(nin,profile_ext,err=11777,iostat=istat) 
       if (idebug /= 0) write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext 
       if (geqdsk_ext.ne.'none') then 
         open(unit=neqdsk,status='old',file=geqdsk_ext) 
@@ -934,30 +926,30 @@
 !-- Scale limiter                                                    -- 
 !---------------------------------------------------------------------- 
       if (setlim_ext.gt.-10.0) then 
-      rbdry0(1:nbdry)=rbdry(1:nbdry) 
-      zbdry0(1:nbdry)=zbdry(1:nbdry) 
-      r0min=rbdry0(1) 
-      r0max=r0min 
-      z0min=zbdry0(1) 
-      z0max=z0min 
-      do i=1,nbdry 
-        if (rbdry0(i).le.r0min) then 
-           r0min=rbdry0(i) 
-           zr0min=zbdry0(i) 
-        endif 
-        if (rbdry0(i).ge.r0max) then 
-           r0max=rbdry0(i) 
-           zr0max=zbdry0(i) 
-        endif 
-        if (zbdry0(i).le.z0min) then 
-          z0min=zbdry0(i) 
-          rz0min=rbdry0(i) 
-        endif 
-        if (zbdry0(i).ge.z0max) then 
-          z0max=zbdry0(i) 
-          rz0max=rbdry0(i) 
-        endif 
-      enddo 
+        rbdry0(1:nbdry)=rbdry(1:nbdry) 
+        zbdry0(1:nbdry)=zbdry(1:nbdry) 
+        r0min=rbdry0(1) 
+        r0max=r0min 
+        z0min=zbdry0(1) 
+        z0max=z0min 
+        do i=1,nbdry 
+          if (rbdry0(i).le.r0min) then 
+             r0min=rbdry0(i) 
+             zr0min=zbdry0(i) 
+          endif 
+          if (rbdry0(i).ge.r0max) then 
+             r0max=rbdry0(i) 
+             zr0max=zbdry0(i) 
+          endif 
+          if (zbdry0(i).le.z0min) then 
+            z0min=zbdry0(i) 
+            rz0min=rbdry0(i) 
+          endif 
+          if (zbdry0(i).ge.z0max) then 
+            z0max=zbdry0(i) 
+            rz0max=rbdry0(i) 
+          endif 
+        enddo 
         limitr=7 
         xlim(1)=r0min-setlim_ext*(r0max-r0min) 
         ylim(1)=0.5_dp*(z0min+z0max) 
@@ -1084,59 +1076,51 @@
 !----------------------------------------------------------------------- 
 !-- adjust fit parameters based on basis function selected            -- 
 !----------------------------------------------------------------------- 
-       if (kppfnc .eq. 3) then 
+      select case (kppfnc)
+        case (3)
           kppcur = 4 * (kppknt - 1) 
-       endif 
-       if (kppfnc .eq. 4) then 
+        case (4)
           kppcur = 4 * (kppknt - 1) 
-       endif 
-       if (kppfnc .eq. 5) then 
+        case (5)
           kppcur = kppcur * (kppknt - 1) 
-       endif 
-       if (kppfnc .eq. 6) then 
+        case (6)
           kppcur = kppknt * 2 
-       endif 
-       if (kfffnc .eq. 3) then 
+      end select
+      select case (kfffnc)
+        case (3)
           kffcur = 4 * (kffknt - 1) 
-       endif 
-       if (kfffnc .eq. 4) then 
+        case (4)
           kffcur = 4 * (kffknt - 1) 
-       endif 
-       if (kfffnc .eq. 5) then 
+        case (5)
           kffcur = kffcur * (kffknt - 1) 
-       endif 
-       if (kfffnc .eq. 6) then 
+        case (6)
           kffcur = kffknt * 2 
-       endif 
-       if (kwwfnc .eq. 3) then 
+      end select 
+      select case (kwwfnc)
+        case (3)
           kwwcur = 4 * (kwwknt - 1) 
-       endif 
-       if (kwwfnc .eq. 4) then 
+        case (4)
           kwwcur = 4 * (kwwknt - 1) 
-       endif 
-       if (kwwfnc .eq. 5) then 
+        case (5)
           kwwcur = kwwcur * (kwwknt - 1) 
-       endif 
-       if (kwwfnc .eq. 6) then 
+        case (6)
           kwwcur = kwwknt * 2 
-       endif 
-       if (keecur.gt.0) then 
-       if (keefnc .eq. 3) then 
-          keecur = 4 * (keeknt - 1) 
-       endif 
-       if (keefnc .eq. 4) then 
-          keecur = 4 * (keeknt - 1) 
-       endif 
-       if (keefnc .eq. 5) then 
-          keecur = keecur * (keeknt - 1) 
-       endif 
-       if (keefnc .eq. 6) then 
-          keecur = keeknt * 2 
-       endif 
-       endif 
+      end select 
+      if (keecur.gt.0) then 
+        select case (keefnc)
+          case (3)
+            keecur = 4 * (keeknt - 1) 
+          case (4)
+            keecur = 4 * (keeknt - 1) 
+          case (5)
+            keecur = keecur * (keeknt - 1) 
+          case (6)
+            keecur = keeknt * 2 
+        end select 
+      endif 
 ! 
-      if (fbetan.gt.0.0) brsp(nfcoil+jbeta)=alpax(jbeta)*darea 
-      if (fli.gt.0.0) brsp(nfcoil+kppcur+jli)=gamax(jli)*darea 
+      if (fbetan.gt.0.) brsp(nfcoil+jbeta)=alpax(jbeta)*darea 
+      if (fli.gt.0.) brsp(nfcoil+kppcur+jli)=gamax(jli)*darea 
       if (kedgep.gt.0) pedge=pedge*darea 
       if (kedgef.gt.0) f2edge=f2edge*darea 
       if (npress.lt.0) then 
@@ -1308,9 +1292,9 @@
         close(unit=nin) 
         endif 
         if (nbeam.gt.0) then 
-          do 43901 i=1,nbeam 
+          do i=1,nbeam 
            dnbeam(i)=dnbeam(i)*1.e-19_dp 
-43901     continue 
+          enddo
         endif
 
       print *, 'reorder TS data points '   
@@ -1320,15 +1304,15 @@
         call tsorder(npteth,zteth,dnethom,tethom,sgneth,sgteth) 
         if (sgnemin.lt.0.0) sgnemin=abs(sgnemin)*dnethom(1)*1.e-19_dp & 
                                     *co2cor 
-        do 40020 i=1,npneth 
+        do i=1,npneth 
           dnethom(i)=dnethom(i)*1.e-19_dp*co2cor 
           sgneth(i)=sgneth(i)*1.e-19_dp*sgnethi*co2cor 
           sgneth(i)=max(sgneth(i),sgnemin) 
-40020   continue 
+        enddo
         if (sgtemin.lt.0.0) sgtemin=abs(sgtemin)*tethom(1) 
         temax=tethom(1) 
         demax=dnethom(1) 
-        do 40030 i=1,npteth 
+        do i=1,npteth 
           sgteth(i)=sgteth(i)*sgtethi 
           if (bfract.gt.0.0) then 
             tethom(i)=tethom(i)*bfract 
@@ -1337,7 +1321,7 @@
           sgteth(i)=max(sgteth(i),sgtemin) 
           temax=max(temax,tethom(i)) 
           demax=max(demax,dnethom(i)) 
-40030   continue 
+        enddo
         if (cstabte.lt.0.0) cstabte=abs(cstabte)*100./temax 
         if (cstabne.lt.0.0) cstabne=abs(cstabne)*100./demax 
         if (nption.lt.0) then 
@@ -1345,31 +1329,30 @@
         if (nptionf.lt.100) then 
         call getfnmu(itimeu,'k',ishot,itime,edatname) 
         edatname='edat_'//edatname(2:7)//'_'//edatname(9:13)//'.cer' 
-        open(unit=nin,status='old',file=edatname & 
-                                 ) 
+        open(unit=nin,status='old',file=edatname) 
         bfract=-1. 
         if (tionex(1).lt.0.0) bfract=-tionex(1) 
         read (nin,edat) 
         close(unit=nin) 
-        do 40040 i=1,nption 
+        do i=1,nption 
           sigti(i)=sigti(i)*sigtii 
           if (bfract.gt.0.0) then 
             sigti(i)=sigti(i)*bfract 
             tionex(i)=tionex(i)*bfract 
           endif 
-40040   continue 
+        enddo
         endif 
         if (nptionf.gt.100) then 
           nptionf=nptionf-100 
           nption=npteth 
           nptionf=nptef 
           bfract=tionex(1) 
-          do 40050 i=1,nption 
+          do i=1,nption 
             sigti(i)=sgteth(i) 
             tionex(i)=tethom(i)*bfract 
             rion(i)=rteth(i) 
             zion(i)=zteth(i) 
-40050     continue 
+          enddo
         endif 
         endif 
       endif
@@ -1378,6 +1361,7 @@
 !----------------------------------------------------------------------- 
 !---- read in limiter data                                            -- 
 !----------------------------------------------------------------------- 
+      WRITE(*,*) 'HERE 2'
       call getlim(1,xltype,xltype_180) 
 ! 
       if (iconvr.ge.0) go to 214 
@@ -1907,16 +1891,17 @@
 !--------------------------------------------------------------------- 
 !--   DO DOUBLE PRECISION SUM OF GRDFDB IN M=1 CONFIGURATION        -- 
 !--------------------------------------------------------------------- 
-        do 40001 i=1,nw 
-        do 40001 j=1,nh 
+        do i=1,nw 
+        do j=1,nh 
           kk=(i-1)*nh+j 
           gsum=0 
-          do 39999 mmf=1,nfbcoil/2 
+          do mmf=1,nfbcoil/2 
             gsum=gsum+grdfdb(kk,mmf) 
             gsum=gsum-grdfdb(kk,mmf+nfbcoil/2) 
-39999     continue 
+          enddo
           grdfdb(kk,1)=gsum 
-40001   continue 
+        enddo
+        enddo
         idofb=1 
       endif 
 !--------------------------------------------------------------------- 
@@ -1942,9 +1927,9 @@
       kecebz=0 
       sigrid(1)=0.0 
       sigrid(nw)=1.0 
-      do 80 i=2,nw-1 
+      do i=2,nw-1 
         sigrid(i)=1./real(nw-1,dp)*(i-1) 
-  80  continue 
+      enddo
 !-------------------------------------------------------------------- 
 !-- kinputece=1, get Te, fe, error array from ECE data routine 
 !--     hecedata.for with get_hece.for,fftabl.11,fts.pst( copy from 
@@ -1978,7 +1963,7 @@
       if (iconvr.ge.0) go to 990 
       if (iconvr.le.-20) go to 700 
       mx=iabs(iconvr) 
-      do 690 k=1,mx 
+      do k=1,mx 
         if (aelip.le.0.0) then 
         i=irfila(k) 
         j=jzfila(k) 
@@ -2001,17 +1986,21 @@
         rmx(k)=rgrid(i) 
         zmx(k)=zgrid(j) 
         kk=(i-1)*nh+j 
-        do 600 m=1,nsilop 
-  600     rsilpf(m,k)=gsilpc(m,kk) 
-        do 605 m=1,magpri 
-  605     rmp2pf(m,k)=gmp2pc(m,kk) 
-        do 610 ii=1,nw 
-        do 610 jj=1,nh 
+        do m=1,nsilop 
+          rsilpf(m,k)=gsilpc(m,kk) 
+        enddo
+        do m=1,magpri 
+          rmp2pf(m,k)=gmp2pc(m,kk) 
+        enddo
+        do ii=1,nw 
+        do jj=1,nh 
           kkkk=(ii-1)*nh+jj 
           mj=iabs(j-jj)+1 
           mk=(i-1)*nh+mj 
-  610     gridpf(kkkk,k)=gridpc(mk,ii) 
-  690 continue 
+          gridpf(kkkk,k)=gridpc(mk,ii) 
+        enddo
+        enddo
+      enddo
       mw=nw 
       mh=nh 
       open(unit=nffile,status='old',form='unformatted', & 
@@ -2032,78 +2021,93 @@
 ! 
   700 continue 
       if (aelip.gt.0.0) then 
-      do 710 i=1,nw 
-      do 710 j=1,nh 
-        kk=(i-1)*nh+j 
-        erho=sqrt((rgrid(i)-relip)**2+((zgrid(j)-zelip)/eelip)**2) 
-        xpsi(kk)=(erho/aelip)**2 
-  710 continue 
+        do i=1,nw 
+          do j=1,nh 
+            kk=(i-1)*nh+j 
+            erho=sqrt((rgrid(i)-relip)**2+((zgrid(j)-zelip)/eelip)**2) 
+            xpsi(kk)=(erho/aelip)**2 
+          enddo
+        enddo
       else 
       endif 
-      do 720 m=1,nsilop 
+      do m=1,nsilop 
         wsilpc(m)=0.0 
-  720 continue 
-      do 722 m=1,magpri 
+      enddo
+      do m=1,magpri 
         wmp2pc(m)=0.0 
-  722 continue 
-      do 724 m=1,nfcoil 
+      enddo
+      do m=1,nfcoil 
         wfcpc(m)=0.0 
-  724 continue 
-      do 726 m=1,nesum 
+      enddo
+      do m=1,nesum 
         wecpc(m)=0.0 
-  726 continue 
-      do 728 m=1,nvesel 
+      enddo
+      do m=1,nvesel 
         wvspc(m)=0.0 
-  728 continue 
-      do 730 m=1,nwnh 
-  730   wgridpc(m)=0.0 
+      enddo
+      do m=1,nwnh 
+        wgridpc(m)=0.0 
+      enddo
       wpcpc=0.0 
       npc=0 
 ! 
-          open(unit=nffile,status='old',form='unformatted', & 
+      open(unit=nffile,status='old',form='unformatted', & 
                file=table_di2(1:ltbdi2)//'fc'//trim(ch1)//trim(ch2)//'.ddd') 
       read (nffile) rfcfc 
       read (nffile) rfcpc 
       close(unit=nffile) 
 ! 
-      do 800 i=1,nw 
-      do 800 j=1,nh 
+      do i=1,nw 
+      do j=1,nh 
         kk=(i-1)*nh+j 
-        if (xpsi(kk).lt.0.0.or.xpsi(kk).gt.1.0) go to 800 
+        if (xpsi(kk).lt.0.0.or.xpsi(kk).gt.1.0) cycle
         npc=npc+1 
-        do 750 m=1,nsilop 
-  750     wsilpc(m)=wsilpc(m)+gsilpc(m,kk) 
-        do 755 m=1,magpri 
-  755     wmp2pc(m)=wmp2pc(m)+gmp2pc(m,kk) 
-        do 760 m=1,nfcoil 
-  760     wfcpc(m)=wfcpc(m)+rfcpc(m,kk) 
-        do 765 m=1,nesum 
-  765     wecpc(m)=wecpc(m)+gridec(kk,m) 
-        do 770 m=1,nvesel 
-  770     wvspc(m)=wvspc(m)+gridvs(kk,m) 
-        do 780 ii=1,nw 
-        do 780 jj=1,nh 
+        do m=1,nsilop 
+          wsilpc(m)=wsilpc(m)+gsilpc(m,kk) 
+        enddo
+        do m=1,magpri 
+          wmp2pc(m)=wmp2pc(m)+gmp2pc(m,kk) 
+        enddo
+        do m=1,nfcoil 
+          wfcpc(m)=wfcpc(m)+rfcpc(m,kk) 
+        enddo
+        do m=1,nesum 
+          wecpc(m)=wecpc(m)+gridec(kk,m) 
+        enddo
+        do m=1,nvesel 
+           wvspc(m)=wvspc(m)+gridvs(kk,m) 
+        enddo
+        do ii=1,nw 
+        do jj=1,nh 
           kkkk=(ii-1)*nh+jj 
           mj=iabs(j-jj)+1 
           mk=(i-1)*nh+mj 
           wgridpc(kkkk)=wgridpc(kkkk)+gridpc(mk,ii) 
-          if (xpsi(kkkk).lt.0.0.or.xpsi(kkkk).gt.1.0) go to 780 
+          if (xpsi(kkkk).lt.0.0.or.xpsi(kkkk).gt.1.0) cycle
           wpcpc=wpcpc+gridpc(mk,ii) 
-  780   continue 
-  800 continue 
-        xnpc=real(npc,dp) 
-        do 810 m=1,nsilop 
-  810     wsilpc(m)=wsilpc(m)/xnpc 
-        do 815 m=1,magpri 
-  815     wmp2pc(m)=wmp2pc(m)/xnpc 
-        do 820 m=1,nfcoil 
-  820     wfcpc(m)=wfcpc(m)/xnpc 
-        do 825 m=1,nesum 
-  825     wecpc(m)=wecpc(m)/xnpc 
-        do 830 m=1,nvesel 
-  830     wvspc(m)=wvspc(m)/xnpc 
-        do 835 m=1,nwnh 
-  835     wgridpc(m)=wgridpc(m)/xnpc 
+        enddo
+        enddo
+      enddo
+      enddo
+      xnpc=real(npc,dp) 
+      do m=1,nsilop 
+        wsilpc(m)=wsilpc(m)/xnpc 
+      enddo
+      do m=1,magpri 
+        wmp2pc(m)=wmp2pc(m)/xnpc 
+      enddo
+      do m=1,nfcoil 
+        wfcpc(m)=wfcpc(m)/xnpc 
+      enddo
+      do m=1,nesum 
+        wecpc(m)=wecpc(m)/xnpc 
+      enddo
+      do m=1,nvesel 
+        wvspc(m)=wvspc(m)/xnpc 
+      enddo
+      do m=1,nwnh 
+        wgridpc(m)=wgridpc(m)/xnpc 
+      enddo
       wpcpc=wpcpc/xnpc**2 
 ! 
       open(unit=nffile,status='old',form='unformatted', & 
@@ -2151,12 +2155,12 @@
         if (ssrm.gt.0.0) saaa=xlmax/srm/sqrt(1.+2.*scc1) 
         srma=srm*saaa 
         dth=twopi/real(nbdry,dp) 
-        do 1120 i=1,nbdry 
+        do i=1,nbdry 
           th=(i-1)*dth 
           rbdry(i)=srma*sqrt(1.-2.*scc1*cos(th)) 
           zbdry(i)=sin(th) 
           zbdry(i)=saaa*zbdry(i)*seee 
- 1120   continue 
+        enddo
       else 
 !---------------------------------------------------------------------- 
 !--  toroidal rotation                                               -- 
@@ -2216,25 +2220,25 @@
 !----------------------------------------------------------------------------- 
 !--   set up plasma response                                                -- 
 !----------------------------------------------------------------------------- 
-      do 72070 m=1,nbdry 
-        do 72060 i=1,nw 
+      do m=1,nbdry 
+        do i=1,nw 
         rdif=rbdry(m)-rgrid(i) 
-        do 72060 j=1,nh 
+        do j=1,nh 
           k=(i-1)*nh+j 
           zdif=zbdry(m)-zgrid(j) 
           rsum=rdif**2+zdif**2 
-          if (rsum.gt.dselsum) go to 72054 
+          if (rsum.gt.dselsum) then
+             rbdrpc(m,k)=psical(rbdry(m),rgrid(i),zdif)*tmu 
+          else
 !          mk=(i-1)*nh+1 
 !          rbdrpc(m,k)=gridpc(mk,i) 
-          zdif=dselsum 
-          rselsum=rgrid(i)-dselsum 
-          rbdrpc(m,k)=psical(rbdry(m),rselsum,zdif)*tmu 
-          go to 72056 
-72054     continue 
-          rbdrpc(m,k)=psical(rbdry(m),rgrid(i),zdif)*tmu 
-72056    continue 
-72060   continue 
-72070 continue 
+            zdif=dselsum 
+            rselsum=rgrid(i)-dselsum 
+            rbdrpc(m,k)=psical(rbdry(m),rselsum,zdif)*tmu 
+          endif
+        enddo
+        enddo
+      enddo
 !----------------------------------------------------------------------------- 
 !--   SOL plasma response                                                   -- 
 !----------------------------------------------------------------------------- 
@@ -2273,12 +2277,12 @@
       xmax=xmin 
       ymin=zbdry(1) 
       ymax=ymin 
-      do 1200 i=2,nbdry 
+      do i=2,nbdry 
         xmin=min(xmin,rbdry(i)) 
         xmax=max(xmax,rbdry(i)) 
         ymin=min(ymin,zbdry(i)) 
         ymax=max(ymax,zbdry(i)) 
- 1200 continue 
+      enddo
       relip=(xmin+xmax)/2. 
       zelip=(ymin+ymax)/2. 
       aelip=(xmax-xmin)/2. 
@@ -2303,20 +2307,20 @@
 !----------------------------------------------------------------------- 
 !--  interpolate to get boundary response functions, first F coils    -- 
 !----------------------------------------------------------------------- 
-      do 1500 n=1,nfcoil 
+      do n=1,nfcoil 
       call sets2d(gridfc(1,n),c,rgrid,nw,bkx,lkx,zgrid,nh,bky, & 
                        lky,wk,ier) 
-        do 1450 i=1,nbdry 
-        call seva2d(bkx,lkx,bky,lky,c,rbdry(i),zbdry(i),pds,ier,n111) 
-        rbdrfc(i,n)=pds(1) 
- 1450   continue 
+        do i=1,nbdry 
+          call seva2d(bkx,lkx,bky,lky,c,rbdry(i),zbdry(i),pds,ier,n111) 
+          rbdrfc(i,n)=pds(1) 
+        enddo
         if (nsol.gt.0) then 
           do i=1,nsol 
             call seva2d(bkx,lkx,bky,lky,c,rsol(i),zsol(i),pds,ier,n111) 
             rsolfc(i,n)=pds(1) 
           enddo 
         endif 
- 1500 continue 
+      enddo
 !---------------------------------------------------------------------- 
 !--  make sure interpolations are symmetrized                        -- 
 !---------------------------------------------------------------------- 
@@ -2335,14 +2339,14 @@
 !--  advance divertor coil                                            -- 
 !----------------------------------------------------------------------- 
       if (iacoil.gt. 0) then 
-      do 1539 n=1,nacoil 
+      do n=1,nacoil 
       call sets2d(gridac(1,n),c,rgrid,nw,bkx,lkx,zgrid,nh,bky, & 
                        lky,wk,ier) 
-        do 1517 i=1,nbdry 
-        call seva2d(bkx,lkx,bky,lky,c,rbdry(i),zbdry(i),pds,ier,n111) 
-        rbdrac(i,n)=pds(1) 
- 1517   continue 
- 1539 continue 
+        do i=1,nbdry 
+          call seva2d(bkx,lkx,bky,lky,c,rbdry(i),zbdry(i),pds,ier,n111) 
+          rbdrac(i,n)=pds(1) 
+        enddo
+      enddo
       endif 
 !----------------------------------------------------------------------- 
 !-- Ohmic coils                                                       -- 

@@ -97,45 +97,43 @@
           iwo=iw
         endif
       enddo
-      if (kfitece.eq.1) go to 29
-      do 26 k=1,nece
-        zece(k)=zeceo
-   26 continue
-      do k=1,nece
-        ddp=abs(rgrid(1)-recep(k))
-        ddm=abs(rgrid(1)-recem(k))
-        iwp(k)=1
-        iwm(k)=1
-        do iw=2,nw
-         if (abs(rgrid(iw)-recep(k)).lt.ddp) then
-          ddp=abs(rgrid(iw)-recep(k))
-          iwp(k)=iw
-         endif
+      if (kfitece.ne.1) then
+        do k=1,nece
+          zece(k)=zeceo
         enddo
-        do iw=2,nw
-         if (abs(rgrid(iw)-recem(k)).lt.ddm) then
-          ddm=abs(rgrid(iw)-recem(k))
-          iwm(k)=iw
-         endif
-        enddo
-      enddo  
-   29 continue
+        do k=1,nece
+          ddp=abs(rgrid(1)-recep(k))
+          ddm=abs(rgrid(1)-recem(k))
+          iwp(k)=1
+          iwm(k)=1
+          do iw=2,nw
+           if (abs(rgrid(iw)-recep(k)).lt.ddp) then
+            ddp=abs(rgrid(iw)-recep(k))
+            iwp(k)=iw
+           endif
+          enddo
+          do iw=2,nw
+           if (abs(rgrid(iw)-recem(k)).lt.ddm) then
+            ddm=abs(rgrid(iw)-recem(k))
+            iwm(k)=iw
+           endif
+          enddo
+        enddo  
+      endif
 !-------------------------------------------------------------------
 !-- try read responce function from recefile
 !--------------------------------------------------------------------
-      do 20000 iname=1,nset
+      do iname=1,nset
         if (iname.le.9) then
           write(filenmme,6530) iname
         else
           write(filenmme,6540) iname
         endif
-        open(unit=nffile, &
-             status='old',form='unformatted', &
+        open(unit=nffile, status='old',form='unformatted', &
              file=filenmme,err=10000)
         go to 15000
 10000   continue
-        open(unit=nffile, &
-             status='old',form='unformatted', &
+        open(unit=nffile, status='old',form='unformatted', &
              file=table_dir(1:ltbdir)//filenmme,err=30)
 15000   continue
         read (nffile,err=30) nnnece
@@ -159,6 +157,7 @@
         read (nffile,err=30) receec
         close(unit=nffile)
         go to 25000
+      enddo
 20000 continue
       go to 30
 25000 return
@@ -172,19 +171,19 @@
       itot=isplit*isplit
       fitot=itot 
       recebzfc = 0.0
-      do 60 k=1,mfcoil
-      bzct=0 
-      call splitc(isplit,rsplt,zsplt,csplt, &
-                  rf(k),zf(k),wf(k),hf(k),af(k),af2(k),cdum)
-      r1=receo
-      do 50 l=1,itot
-        a=rsplt(l)  
-        z1=zeceo-zsplt(l)
-        bzct=bzct+bz(a,r1,z1)      
-   50 continue   
-      kkm=fcid(k)
-      recebzfc(kkm)=recebzfc(kkm)+bzct/fitot*tmu
-   60 continue
+      do k=1,mfcoil
+        bzct=0 
+        call splitc(isplit,rsplt,zsplt,csplt, &
+                    rf(k),zf(k),wf(k),hf(k),af(k),af2(k),cdum)
+        r1=receo
+        do l=1,itot
+          a=rsplt(l)  
+          z1=zeceo-zsplt(l)
+          bzct=bzct+bz(a,r1,z1)      
+        enddo
+        kkm=fcid(k)
+        recebzfc(kkm)=recebzfc(kkm)+bzct/fitot*tmu
+      enddo
 !---------------------------------------------------------------------
 !--   plasma response   gecebzpc(nwnh)                              --
 !---------------------------------------------------------------------
@@ -193,9 +192,9 @@
       isplit=18
       if (receo.le.1.e-8_dp)  go to 90
       r=receo
-      do 80 ii=1,nw
+      do ii=1,nw
         a=rgrid(ii)
-        do 80 jj=1,nh
+        do jj=1,nh
           z=zeceo-zgrid(jj)
           kk=(ii-1)*nh+jj
           dist=(a-r)**2+z**2
@@ -204,7 +203,7 @@
                   rgrid(ii),zgrid(jj),drgrid,dzgrid,zzx,zzx,cdum)
             gbzt=0.0
             itot=isplit*isplit
-            do 72 k=1,itot
+            do k=1,itot
               a=rsplt(k)
               z=zeceo-zsplt(k)
               distt=(a-r)**2+z**2
@@ -213,12 +212,13 @@
                 go to 68
               endif
               gbzt=gbzt+bz(a,r,z)
-   72        continue    
-             gecebzpc(kk)=gbzt*tmu/itot
+            enddo
+            gecebzpc(kk)=gbzt*tmu/itot
           else
              gecebzpc(kk)=bz(a,r,z)*tmu
           endif
-   80 continue
+      enddo
+      enddo
    90 continue
 !---------------------------------------------------------------------
 !-- E coils response   recebzec                                     --
@@ -232,19 +232,19 @@
   170 continue
       if (receo.le.1.e-8_dp) go to 201
       r1=receo
-      do 200 k=1,necoil
+      do k=1,necoil
         bzct=0.0
         call splitc(isplit,rsplt,zsplt,csplt, &
                     re(k),ze(k),we(k),he(k),zzx,zzx,cdum)
-        do 180 l=1,itot
+        do l=1,itot
           a=rsplt(l)
           z1=zeceo-zsplt(l)      
           bzct=bzct+bz(a,r1,z1)
-  180 continue  
+        enddo
       bzct=bzct*tmu/fitot
       kkm=ecid(k)  
       recebzec(kkm)=recebzec(kkm)+bzct
-  200 continue
+      enddo
   201 continue
 !-------------------------------------------------------------------------
 !--  compute the response function about R+ R- constraint     
@@ -271,9 +271,9 @@
 !--                 R-, R+ flux from pc,gecepc=geceppc-gecempc               --
 !------------------------------------------------------------------------------
       if (eceiter.eq.'pair') then
-      do 72070 m=1,nece
-        do 72060 i=1,nw
-        do 72060 j=1,nh
+      do m=1,nece
+        do i=1,nw
+         do j=1,nh
           k=(i-1)*nh+j
           rdif=recem(m)-rgrid(i)
           zdif=zece(m)-zgrid(j)
@@ -288,13 +288,14 @@
 72054     continue
           gecempc(m,k)=psical(recem(m),rgrid(i),zdif)*tmu
 72056    continue
-72060   continue
-72070 continue
+         enddo
+        enddo
+      enddo
       endif
       if (eceiter.eq.'flux') gecempc = 0.0
-      do 73070 m=1,nece
-        do 73060 i=1,nw
-        do 73060 j=1,nh
+      do m=1,nece
+        do i=1,nw
+        do j=1,nh
           k=(i-1)*nh+j
           rdif=recep(m)-rgrid(i)
           zdif=zece(m)-zgrid(j)
@@ -310,8 +311,9 @@
           geceppc(m,k)=psical(recep(m),rgrid(i),zdif)*tmu
 73056    continue
           gecepc(m,k)=geceppc(m,k)-gecempc(m,k)
-73060   continue      
-73070 continue       
+        enddo
+        enddo
+      enddo
 !-----------------------------------------------------------------------
 !-- Ohmic coils   receec(nece,nesum)                                 --
 !-----------------------------------------------------------------------
@@ -474,7 +476,8 @@
       include 'eparmdud129.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xpsii(1)
+      real*8, intent(inout) :: ypsi
+      real*8, intent(inout) :: xpsii(keecur)
 
       do i=1,keecur
          xpsii(i) = bserel(keefnc,i,ypsi)
@@ -496,13 +499,138 @@
       include 'eparmdud129.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xpsii(1)
+      real*8, intent(inout) :: ypsi
+      real*8, intent(inout) :: xpsii(kffcur)
 
       do i=1,kffcur
         xpsii(i) = bserpel(keefnc,i,ypsi)
       enddo
       return
       end subroutine seterp
+
+!**********************************************************************
+!**                                                                  **
+!**     SUBPROGRAM DESCRIPTION:                                      **
+!**         set_basis_params                                         **
+!**                                                                  **
+!**********************************************************************
+      subroutine set_basis_params
+
+      use set_kinds
+      include 'eparmdud129.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+
+!---------------------------------------------------------------------
+!--  specific choice of current profile                             --
+!--       ICPROF=1  no edge current density allowed                 --
+!--       ICPROF=2  free edge current density                       --
+!--       ICPROF=3  weak edge current density constraint            --
+!---------------------------------------------------------------------
+      if (icprof.eq.1) then
+        kffcur=2
+        kppcur=2
+        fcurbd=1.
+        pcurbd=1.
+        fwtbp=1.
+        fwtqa=0.
+        qvfit=0.
+      elseif (icprof.eq.2) then
+        kffcur=2
+        kppcur=2
+        fcurbd=0.
+        pcurbd=0.
+        fwtbp=0.
+        fwtqa=0.
+        qvfit=0.
+      elseif (icprof.eq.3) then
+        kffcur=3
+        kppcur=2
+        fcurbd=0.
+        pcurbd=0.
+        fwtbp=0.
+        fwtqa=0.
+        qvfit=0.
+        kcalpa=1
+        calpa(1,1)=0.1_dp
+        calpa(2,1)=0.1_dp
+        calpa(3,1)=0.1_dp
+        xalpa(1)=0.0
+        kcgama=1
+        cgama(1,1)=0.1_dp
+        cgama(2,1)=0.1_dp
+        cgama(3,1)=0.1_dp
+        xgama(1)=0.0
+      endif
+      if(mse_usecer .eq. 1)keecur = 0
+      if(mse_usecer .eq. 2 .and. keecur .eq. 0) then
+           keecur = 2
+           keefnc = 0
+           itek = 5
+      endif
+      if (imagsigma.gt.0) then
+         do_spline_fit=.false.
+         saimin=300.
+      endif
+!---------------------------------------------------------------------
+!-- adjust fit parameters based on basis function selected          --
+!---------------------------------------------------------------------
+       if (kppfnc .eq. 3) then
+          kppcur = 4 * (kppknt - 1)
+       endif
+       if (kppfnc .eq. 4) then
+          kppcur = 4 * (kppknt - 1)
+       endif
+       if (kppfnc .eq. 5) then
+          kppcur = kppcur * (kppknt - 1)
+       endif
+       if (kppfnc .eq. 6) then
+          kppcur = kppknt * 2
+       endif
+       if (kfffnc .eq. 3) then
+          kffcur = 4 * (kffknt - 1)
+       endif
+       if (kfffnc .eq. 4) then
+          kffcur = 4 * (kffknt - 1)
+       endif
+       if (kfffnc .eq. 5) then
+          kffcur = kffcur * (kffknt - 1)
+       endif
+       if (kfffnc .eq. 6) then
+          kffcur = kffknt * 2
+       endif
+       if (kwwfnc .eq. 3) then
+          kwwcur = 4 * (kwwknt - 1)
+       endif
+       if (kwwfnc .eq. 4) then
+          kwwcur = 4 * (kwwknt - 1)
+       endif
+       if (kwwfnc .eq. 5) then
+          kwwcur = kwwcur * (kwwknt - 1)
+       endif
+       if (kwwfnc .eq. 6) then
+          kwwcur = kwwknt * 2
+       endif
+       if (keecur.gt.0) then
+       if (keefnc .eq. 3) then
+          keecur = 4 * (keeknt - 1)
+       endif
+       if (keefnc .eq. 4) then
+          keecur = 4 * (keeknt - 1)
+       endif
+       if (keefnc .eq. 5) then
+          keecur = keecur * (keeknt - 1)
+       endif
+       if (keefnc .eq. 6) then
+          keecur = keeknt * 2
+       endif
+       endif
+!
+      if (kzeroj.eq.1.and.sizeroj(1).lt.0.0) sizeroj(1)=psiwant
+
+      end subroutine set_basis_params
+
 
 !**********************************************************************
 !**                                                                  **
@@ -519,7 +647,8 @@
       include 'eparmdud129.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xpsii(1)
+      real*8, intent(inout) :: ypsi
+      real*8, intent(inout) :: xpsii(kffcur)
 
       do i=1,kffcur
         xpsii(i) = bsffin(kfffnc,i,ypsi)
@@ -542,7 +671,8 @@
       include 'eparmdud129.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xpsii(1)
+      real*8, intent(inout) :: ypsi
+      real*8, intent(inout) :: xpsii(kffcur)
 
       do i=1,kffcur
         xpsii(i) = bsffel(kfffnc,i,ypsi)
@@ -564,7 +694,8 @@
       include 'eparmdud129.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xpsii(1)
+      real*8, intent(inout) :: ypsi
+      real*8, intent(inout) :: xpsii(kffcur)
 
       do i=1,kffcur
         xpsii(i) = bsffpel(kfffnc,i,ypsi)
@@ -586,8 +717,8 @@
       include 'eparmdud129.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-      dimension xpsii(1)
+      real*8, intent(inout) :: ypsi
+      real*8, intent(inout) :: xpsii(kppcur)
 
       do i=1,kppcur
         xpsii(i) = bsppel(kppfnc,i,ypsi)
@@ -610,8 +741,8 @@
       include 'eparmdud129.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-      dimension xpsii(1)
+      real*8, intent(inout) :: ypsi
+      real*8, intent(inout) :: xpsii(kppcur)
 
       do i=1,kppcur
         xpsii(i) = bspppel(kppfnc,i,ypsi)
@@ -634,8 +765,8 @@
       include 'eparmdud129.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-      dimension xpsii(1)
+      real*8, intent(inout) :: ypsi
+      real*8, intent(inout) :: xpsii(kppcur)
 
       do i=1,kppcur
         xpsii(i) = bsppin(kppfnc,i,ypsi)
@@ -658,8 +789,8 @@
       include 'eparmdud129.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-      dimension xpsii(1)
+      real*8, intent(inout) :: ypsi
+      real*8, intent(inout) :: xpsii(kwwcur)
 
       do i=1,kwwcur
         xpsii(i) = bswwin(kwwfnc,i,ypsi)
@@ -681,8 +812,8 @@
       include 'eparmdud129.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-      dimension xpsii(1)
+      real*8, intent(inout) :: ypsi
+      real*8, intent(inout) :: xpsii(kwwcur)
 
       do i=1,kwwcur
         xpsii(i) = bswwel(kwwfnc,i,ypsi)
@@ -705,8 +836,8 @@
       include 'eparmdud129.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-      dimension xpsii(1)
+      real*8, intent(inout) :: ypsi
+      real*8, intent(inout) :: xpsii(kwwcur)
 
       do i=1,kwwcur
         xpsii(i) = bswwpel(kwwfnc,i,ypsi)
@@ -786,24 +917,25 @@
       fitot=itot
       rbrfc = 0.0
       rbzfc = 0.0
-      do 60 k=1,mfcoil
+      do k=1,mfcoil
       call splitc(isplit,rsplt,zsplt,csplt, &
                   rf(k),zf(k),wf(k),hf(k),af(k),af2(k),cdum)
-      do 60 mmm=1,nstark
-        if (rrgam(jtime,mmm).le.1.e-8_dp)  go to 60
+      do mmm=1,nstark
+        if (rrgam(jtime,mmm).le.1.e-8_dp)  cycle
         brct=0.0
         bzct=0.0
         r1=rrgam(jtime,mmm)
-        do 50 l=1,itot
-        a=rsplt(l)
-        z1=zzgam(jtime,mmm)-zsplt(l)
-        brct=brct+br(a,r1,z1)
-        bzct=bzct+bz(a,r1,z1)
-   50   continue
+        do l=1,itot
+            a=rsplt(l)
+            z1=zzgam(jtime,mmm)-zsplt(l)
+            brct=brct+br(a,r1,z1)
+            bzct=bzct+bz(a,r1,z1)
+        enddo
         kkm=fcid(k)
         rbrfc(mmm,kkm)=rbrfc(mmm,kkm)+brct/fitot*tmu
         rbzfc(mmm,kkm)=rbzfc(mmm,kkm)+bzct/fitot*tmu
-   60 continue
+      enddo
+      enddo
 !---------------------------------------------------------------------
 !--   plasma response                                               --
 !---------------------------------------------------------------------
@@ -811,14 +943,14 @@
       drzg=(drgrid**2+dzgrid**2)*25.
       isplit=18
       kk = 1
-      do 90 mmm=1,nstark
+      do mmm=1,nstark
         gbrpc(mmm,kk)=0.0
         gbzpc(mmm,kk)=0.0
         if (rrgam(jtime,mmm).le.1.e-8_dp)  go to 90
         r=rrgam(jtime,mmm)
-        do 80 ii=1,nw
+        do ii=1,nw
           a=rgrid(ii)
-          do 80 jj=1,nh
+          do jj=1,nh
             z=zzgam(jtime,mmm)-zgrid(jj)
             kk=(ii-1)*nh+jj
             dist=(a-r)**2+z**2
@@ -828,7 +960,7 @@
              gbrt=0.0
              gbzt=0.0
              itot=isplit*isplit
-             do 72 k=1,itot
+             do k=1,itot
                a=rsplt(k)
                z=zzgam(jtime,mmm)-zsplt(k)
                distt=(a-r)**2+z**2
@@ -838,14 +970,16 @@
                endif
                gbrt=gbrt+br(a,r,z)
                gbzt=gbzt+bz(a,r,z)
-   72        continue
+             enddo
              gbrpc(mmm,kk)=gbrt*tmu/itot
              gbzpc(mmm,kk)=gbzt*tmu/itot
             else
              gbrpc(mmm,kk)=br(a,r,z)*tmu
              gbzpc(mmm,kk)=bz(a,r,z)*tmu
             endif
-   80 continue
+          enddo
+        enddo
+      enddo
    90 continue
 !---------------------------------------------------------------------
 !-- E coils response                                                --
@@ -854,10 +988,10 @@
       itot=isplit*isplit
       fitot=real(itot,dp)
       do 201 m=1,nstark
-      do 170 i=1,nesum
-        rbrec(m,i)=0.0
-        rbzec(m,i)=0.0
-  170 continue
+        do i=1,nesum
+          rbrec(m,i)=0.0
+          rbzec(m,i)=0.0
+        enddo
       if (rrgam(jtime,m).le.1.e-8_dp) go to 201
       r1=rrgam(jtime,m)
       do 200 k=1,necoil
@@ -865,12 +999,12 @@
         bzct=0.0
         call splitc(isplit,rsplt,zsplt,csplt, &
                     re(k),ze(k),we(k),he(k),zzx,zzx,cdum)
-        do 180 l=1,itot
+        do l=1,itot
           a=rsplt(l)
           z1=zzgam(jtime,m)-zsplt(l)
           brct=brct+br(a,r1,z1)
           bzct=bzct+bz(a,r1,z1)
-  180 continue
+        enddo
       brct=brct*tmu/fitot
       bzct=bzct*tmu/fitot
       kkm=ecid(k)
