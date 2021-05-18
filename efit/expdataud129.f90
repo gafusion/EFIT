@@ -122,7 +122,7 @@
 
       filin=input_dir(1:lindir)//'lim.dat'
       open(unit=lfile,access='sequential', &
-      status='old',file=filin,err=120)
+      status='old',file=filin)
 
   100 read (lfile,*, end=120) ilimshot, limitr
  
