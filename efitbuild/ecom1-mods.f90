@@ -428,7 +428,7 @@
       character(10),dimension(nsilop) :: lpname
       character  filimt*100,cshot*6,jdebug*4
       integer idebug,efitversion
-      data idebug/0/,efitversion/20210323/
+      data idebug/0/,efitversion/20210519/
       data jdebug/'NONE'/
       end module var_inputc
 

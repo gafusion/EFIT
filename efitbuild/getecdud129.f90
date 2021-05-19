@@ -71,7 +71,7 @@
            ecname(5)/'E89DN     '/,ecname(6)/'E89UP     '/
       data irdata/0/,baddat/0/
 !
-      efitversion = 20210323
+      efitversion = 20210519
 ! NOTE this is only changed so serial/parallel k-files are identical
 ! no changes were made to getpts() only to getpts_mpi() - MK
 !----------------------------------------------------------------------
