@@ -74,8 +74,12 @@
 !
       xdum=0.0
       ydum=0.0
-      if (idebug /= 0) write (6,*) 'Enter SHAPE kerror = ', kerror
-      if (ivacum.gt.0) go to 1500
+    
+      write (6,*) 'Enter SHAPE kerror = ', iges,ivacum
+      if (ivacum.gt.0)then
+        limloc(iges)='VAC'
+        go to 1500
+      endif 
       if (iges.gt.1) go to 100
       xguess=(rgrid(1)+rgrid(nw))/2.
       yguess=(zgrid(1)+zgrid(nh))/2.
@@ -317,6 +321,7 @@
       obott(iges)=dbott
       seplim(iges)=dismin
       ssep(iges)=40.
+      limloc(iges) ='UHH'
       if (abs(dismin).le.0.100_dp) then
         if (dleft.eq.dismin) limloc(iges)='IN '
         if (dright.eq.dismin) limloc(iges)='OUT'
@@ -348,6 +353,7 @@
            endif
         endif
       endif
+
 !---------------------------------------------------------------------
 !--  Helicon gap calculation                                        --
 !---------------------------------------------------------------------
