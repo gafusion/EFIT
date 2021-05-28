@@ -28,7 +28,7 @@ if (${ENABLE_PRODUCTION})
     set(INPUT_DIR ${CMAKE_INSTALL_PREFIX/share/examples CACHE STRING "Location of example input files")
 else()
     set(TABLE_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of tables")
-    set(INPUT_DIR ${CMAKE_SOURCE_DIR}/test CACHE STRING "Location of example input files")
+    set(INPUT_DIR ${CMAKE_SOURCE_DIR}/share/data CACHE STRING "Location of example input files")
 endif()
 
 set(STORE_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of sources")
@@ -229,6 +229,13 @@ add_subdirectory(io)
 add_subdirectory(cerlib)
 add_subdirectory(green)
 add_subdirectory(efit)
+
+#---------------------------------------------------------------------
+# Add testing
+#---------------------------------------------------------------------
+enable_testing()
+add_subdirectory(test)
+
 
 #---------------------------------------------------------------------
 #

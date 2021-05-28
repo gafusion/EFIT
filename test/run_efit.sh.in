@@ -1,0 +1,18 @@
+#!/bin/bash
+SRCDIR=@CMAKE_CURRENT_SOURCE_DIR@
+@EFIT_EXEC@ @EFIT_SIZE@ << __c__MATCHING_EOF__c__
+@EFIT_MODE@
+@EFIT_TIME@
+k@EFIT_LABEL@
+
+__c__MATCHING_EOF__c__
+
+
+# Now check to see if files exist
+
+for prefix in a g; do
+    if ! test -e ${prefix}@EFIT_LABEL@; then
+        exit 1
+    fi
+done
+
