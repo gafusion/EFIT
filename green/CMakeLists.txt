@@ -19,3 +19,25 @@ install(TARGETS green DESTINATION lib
 
 add_executable(efund  efundud.f90)
 target_link_libraries(efund green)
+
+
+# Add command and target to make green functions
+# e.g., `make makeD3DGreensFunctions`  
+# (and you can also `make help | grep -i green` to find it)
+add_custom_target(makeD3DGreensFunctions)
+add_custom_command(TARGET makeD3DGreensFunctions
+    COMMAND ${CMAKE_COMMAND} -E copy 
+        ${CMAKE_SOURCE_DIR}/share/data/mhdin_diii-d.dat 
+        ${CMAKE_BINARY_DIR}/mhdin.dat
+    COMMAND /bin/rm -f dprobe.dat
+    COMMAND green/efund
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
+
+# This is to make sure the input file is in the right place for the above
+# command
+#file(COPY ${CMAKE_SOURCE_DIR}/share/data/mhdin_diii-d.dat 
+#     DESTINATION ${CMAKE_BINARY_DIR}/)
+#file(RENAME ${CMAKE_BINARY_DIR}/mhdin_diii-d.dat ${CMAKE_BINARY_DIR}/mhdin.dat)
+
+

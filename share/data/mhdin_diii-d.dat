@@ -12,8 +12,8 @@
      NSMP2 = 25
      IECOIL = 1
      IVESEL = 1
-     NW = 129
-     NH = 129
+     NW = 65
+     NH = 65
      IACOIL = 1
      RACOIL = 1.736
      ZACOIL = -1.32
