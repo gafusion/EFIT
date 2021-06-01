@@ -247,17 +247,17 @@
 
 
       kerror = 0
-      table_di2 = table_dir
+!      table_di2 = table_dir
 ! --- find length of default directories
-      ltbdir=0
-      lindir=0
-      lstdir=0
-      do i=1,len(table_dir)
-         if (table_dir(i:i).ne.' ') ltbdir=ltbdir+1
-         if (input_dir(i:i).ne.' ') lindir=lindir+1
-         if (store_dir(i:i).ne.' ') lstdir=lstdir+1
-      enddo
-      ltbdi2=ltbdir
+!      ltbdir=0
+!      lindir=0
+!      lstdir=0
+!      do i=1,len(table_dir)
+!         if (table_dir(i:i).ne.' ') ltbdir=ltbdir+1
+!         if (input_dir(i:i).ne.' ') lindir=lindir+1
+!         if (store_dir(i:i).ne.' ') lstdir=lstdir+1
+!      enddo
+!      ltbdi2=ltbdir
 !
       mdoskip=0
       iout=1                 ! default - write fitout.dat
@@ -869,7 +869,7 @@
 !----------------------------------------------------------------------
 !--   Set proper Green's directory table_dir based on shot number    --
 !----------------------------------------------------------------------
-      call set_table_dir
+!      call set_table_dir
 !-------------------------------------------------------------------------------
 !--  Set bit noise for ishot > 152000                                         --
 !-------------------------------------------------------------------------------
@@ -1024,8 +1024,8 @@
   200 continue
 
  1000 continue
-      call set_table_dir
-      call efit_read_tables
+!      call set_table_dir
+!      call efit_read_tables
      
 !----------------------------------------------------------------------
 !-- read in the plasma response function                             --

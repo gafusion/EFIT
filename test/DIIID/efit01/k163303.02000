@@ -251,7 +251,7 @@
  KTEAR = 0
  KERSIL = 3
  iout = 20
- IXRAY = 0                                        '
+ IXRAY = 0
  STORE_DIR = '/link/store/                                                                      '
  KPPHORD = 0
  KFFHORD = 0

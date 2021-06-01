@@ -88,23 +88,32 @@ subroutine get_eparmdud_dependents
   nrsma2=2*nrsmat
 
   nwcurn=nwwcur+npcurn
-  !npcur3=npcurn*2
 
   ncurrt=nvesel+nesum+nfcoil
-end subroutine
+  end subroutine
 
 
-  subroutine read_shot(filename)
+!**********************************************************************
+!**                                                                  **
+!**     SUBPROGRAM DESCRIPTION:                                      **
+!**          grabs necessary information from file to properly       **
+!**          set up directory paths                                  **
+!**                                                                  **
+!**********************************************************************
+  subroutine read_dirs_shot(filename)
   use var_exdata, only: ishot
+  use expath, only: table_dir,input_dir,store_dir
   implicit integer*4 (i-n), real*8 (a-h,o-z)
   real*8, dimension(2000):: expmp2,coils,fwtsi,fwtmp2,psibit,bitmpi,denr,denv,fwtfc, &
                             brsp,bitfc,ecurrt,calpa,cgama,xalpa,xgama,rzeroj,fwtec,bitec, &
                             ppknt,ffknt,wwknt,rbdry,zbdry,ppbdry,kppbdry,pp2bdry,kpp2bdry, &
                             ffbdry,kffbdry,ff2bdry,kff2bdry,wwbdry,kwwbdry,ww2bdry,kww2bdry,&
-                            fwtfcsum,fczero,fcsum,fwtbdry,xlim,ylim
+                            fwtfcsum,fczero,fcsum,fwtbdry,xlim,ylim,rpress,pressr,sigpre,&
+                            fwtpre,sibeam,pbeam,dnbeam,dmass
   integer*4  :: istat
-  character(len=1000) :: line
+  character(len=1000) :: line, fitzts
   character (*) :: filename
+  logical :: fitsiref, fitfcsum
  
     NAMELIST/in1/ishot,itime,plasma,itek,itrace,nxiter,fwtcur,kffcur &
       ,coils,fwtsi,expmp2,fwtmp2,kppcur,mxiter,ierchk,fwtqa,qemp,error &

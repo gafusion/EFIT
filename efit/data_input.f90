@@ -989,8 +989,8 @@
 !---------------------------------------------------------------------- 
 !--   recalculate length of default directories in case any change   -- 
 !---------------------------------------------------------------------- 
-      call set_table_dir 
-      call efit_read_tables 
+!      call set_table_dir 
+!      call efit_read_tables 
  
 11337 continue 
 !--------------------------------------------------------------------- 
@@ -1529,10 +1529,10 @@
 !--        shot > 156000 new 2014 set                                 -- 
 !--        shot >= 168191 new 2017 set                                -- 
 !----------------------------------------------------------------------- 
-      if (kdata.ne.2) then 
-        call set_table_dir 
-        call efit_read_tables 
-      endif 
+      !if (kdata.ne.2) then 
+      !  call set_table_dir 
+      !  call efit_read_tables 
+      !endif 
 ! 
       if (pasmat(jtime).le.-1.e3_dp) then 
         negcur=1 
