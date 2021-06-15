@@ -11,6 +11,12 @@ The easiest method to build is to ignore all of the third-party libraries::
     mkdir build
     cd build
     cmake ..
+    make 
+    make makeD3DGreensFunctions
+    make test
+
+Configuring third-party libraries
+=================================
 
 To build with all of the libraries and specify the compilers, one can use a
 longer shell script to modify.  Here is an example `config.sh` with all of the 
@@ -37,3 +43,4 @@ bells and whistles turned on (TODO:  Need to test)::
 
 
 For debugging, set the `CMAKE_BUILD_TYPE` to `Debug`.
+
