@@ -45,13 +45,12 @@ subroutine read_efitin
 end subroutine read_efitin
 
 
-
-subroutine read_eparmdud(filename)
+subroutine read_eparmdud
   use eparmdud129
   use var_nio
+  use expath
   implicit none
   integer ::istatus
-  character (*) :: filename
 
   NAMELIST/machinein/nsilds,nsilol,nfcoil,nrogow,nacoil,mfcoil,necoil,nvesel, &
       mpress,nesum,magpri67,magpri322,magprirdp,magudom,maglds,mse315,mse45, &
@@ -61,7 +60,7 @@ subroutine read_eparmdud(filename)
       mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef,modep,modew,kubics, &
       icycred_loopmax,nfourier
 
-  open(unit=nin,status='old',file=filename)
+  open(unit=nin,status='old',file=table_di2(1:ltbdi2)//'dprobe.dat')
   read (nin,machinein,iostat=istatus)
   close(unit=nin)
 

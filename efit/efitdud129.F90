@@ -182,17 +182,16 @@
 
       if (kdata==2) then
         call read_dirs_shot(ifname(1))     !this assume machine is always the same
-        call read_eparmdud(ifname(1)) !this assume machine is always the same
       elseif(kdata==7) then
-      
         call read_dirs_shot('efit_snap.dat_'//adjustl(snapext_in))     !this assume machine is always the same
-        call read_eparmdud('efit_snap.dat_'//adjustl(snapext_in))
       else
         call read_dirs_shot('efit_snap.dat')
-        call read_eparmdud('efit_snap.dat')
       endif
-      call get_eparmdud_dependents()
       
+      call set_table_dir
+      call read_eparmdud
+      call get_eparmdud_dependents
+
 
 
 !----------------------------------------------------------------------
@@ -210,7 +209,7 @@
 ! Arrays can only be allocated after MPI has been initialized because dimension is # of processes
       allocate(dist_data(nproc),dist_data_displs(nproc),fwtgam_mpi(nstark,nproc))
 #endif
-      call set_table_dir
+
       call efit_read_tables
   20  call getsets(ktime,kwake,mtear,kerror)
 ! MPI >>>

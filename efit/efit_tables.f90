@@ -6,11 +6,13 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       integer*4  :: istat
       character(len=1000) :: line
+ 
       namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi,as, &
         as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
         hacoil,wacoil,rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2,fcturn, &
         re,ze,ecid,ecturn,vsid,rvs,zvs,we,he 
         
+      mcontr = 35
 !---------------------------------------------------------------------
 !-- Read Green's tables from table_di2            --
 !---------------------------------------------------------------------
