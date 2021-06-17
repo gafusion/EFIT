@@ -17,4 +17,5 @@
                            nfsum,nvsum,nvesel,&
                            nacoil,mgaus1,mgaus2
       integer*4 :: nw,nh,nwnh
+      character*10:: device
       end module exparm

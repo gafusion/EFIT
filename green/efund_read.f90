@@ -34,9 +34,9 @@
       USE fshift
 
       NAMELIST/machinein/nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil,mgaus1,mgaus2
+                      nfsum,nvsum,nvesel,nacoil,mgaus1,mgaus2,device
 
-
+      device = 'DIII-D'
       nfcoil = 18
       nsilop = 44
       magpr2 = 76
@@ -143,7 +143,7 @@
 !**                                                                  **
 !**********************************************************************
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
+                      nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh,device
       USE siloop
       USE cecoil
       USE fcoil
@@ -258,6 +258,13 @@
       WRITE (nout,in3)
       close(nin)
       close(nout)
+      
+      if (trim(device)=='DIII-D') then
+         call dprobe_machinein_d3d
+      else
+         call dprobe_machinein(nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
+                          nfsum,nvsum,nvesel,nacoil)
+      endif
       
       call dprobe(mpnam2,lpname,patmp2)
       

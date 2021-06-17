@@ -575,7 +575,6 @@
                ELSE
                   CALL flux(rgrid(ni),aaa,dr,dz,aaa,aaa,rgrid(ni),aaa,&
                             dr,dz,aaa,aaa,fridpc)
-                  print *, fridpc
                   gridpc(kk,ni)=fridpc*0.5/pi
                ENDIF
             ENDDO 
@@ -1240,7 +1239,6 @@
       WRITE (nrspfc) rfcpc
       CLOSE(unit=nrspfc)
  300  CONTINUE  
-      print *, nfcoil
       msilop=nsilop
       IF (msilop.le.1) go to 520
       IF (isize.le.0) go to 420
