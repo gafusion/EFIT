@@ -48,7 +48,27 @@
       real*8,dimension(:),allocatable ::  devxmpin,rnavxmpin & 
                ,devpsiin,rnavpsiin,devfcin,rnavfcin & 
                ,devein,rnavecin,brsptu 
- 
+      integer :: nw_ext, nh_ext 
+      real*8 :: c_ext, dr_ext, dz_ext,rc_ext,zc_ext, a_ext 
+      real*8 :: eup_ext, elow_ext, dup_ext, dlow_ext, setlim_ext 
+      real*8 :: r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max 
+      real*8 :: r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot 
+      character*10 case_ext(6) 
+      character*50 edatname 
+      character*82 table_nam 
+      character*10 namedum 
+      character*2 :: reflect_ext 
+      logical :: shape_ext 
+      !real*4 spatial_avg_ham(nmtark,ngam_vars,ngam_u,ngam_w) 
+      data nsq/1/ 
+      data ersil8/1.0e-03_dp/,currn1/0.0/ 
+      data idodo/0/,idovs/0/,zetafc/2.5e-08_dp/ 
+      data co2cor/1.0/,idoac/0/,fq95/0.0/ 
+      data mcontr/35/ 
+      data ten2m3/1.0e-03_dp/ 
+      data idtime/0/,itimeb/0/ 
+      save idodo, idovs, idoac 
+
       namelist/in1/ishot,itime,plasma,itek,itrace,nxiter,fwtcur,kffcur & 
       ,coils,fwtsi,expmp2,fwtmp2,kppcur,mxiter,ierchk,fwtqa,qemp,error & 
       ,limitr,xlim,ylim,serror,nbdry,rbdry,zbdry,psibry,nslref,ibunmn & 
@@ -166,25 +186,6 @@
       dz_ext,rc_ext,zc_ext,a_ext,eup_ext,elow_ext,dup_ext,dlow_ext, & 
       setlim_ext,reflect_ext,fixpp 
 ! 
-      integer :: nw_ext, nh_ext 
-      real*8 :: c_ext, dr_ext, dz_ext,rc_ext,zc_ext, a_ext 
-      real*8 :: eup_ext, elow_ext, dup_ext, dlow_ext, setlim_ext 
-      real*8 :: r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max 
-      real*8 :: r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot 
-      character*10 case_ext(6) 
-      character*50 edatname 
-      character*10 namedum 
-      character*2 :: reflect_ext 
-      logical :: shape_ext 
-      !real*4 spatial_avg_ham(nmtark,ngam_vars,ngam_u,ngam_w) 
-      data nsq/1/ 
-      data ersil8/1.0e-03_dp/,currn1/0.0/ 
-      data idodo/0/,idovs/0/,zetafc/2.5e-08_dp/ 
-      data co2cor/1.0/,idoac/0/,fq95/0.0/ 
-      data mcontr/35/ 
-      data ten2m3/1.0e-03_dp/ 
-      data idtime/0/,itimeb/0/ 
-      save idodo, idovs, idoac 
 ! 
       ALLOCATE(gridpf(nwnh,mfila),gwork(nbwork,nwnh), & 
          rgrids(nw),zgrids(nh)) 

@@ -8,8 +8,8 @@
 ######################################################################
 
 
-set(EFIT_LABEL 163303.02000)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${EFIT_KFILE} 
+set(EFIT_LABEL 186610.02300)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/k${EFIT_LABEL} 
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
 
 configure_file(${EFIT_TEST_CONFIGFILE} 

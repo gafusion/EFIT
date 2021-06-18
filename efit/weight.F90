@@ -36,10 +36,11 @@
   160 do 170 j=jbotm,nh-1
       jtop=j
   170 if((y(j).lt.ymax).and.(y(j+1).ge.ymax))go to 180
-  180 jtop=min0(jtop,nh)
-      jbotm=max0(jbotm,1)
-      ileft=max0(ileft,1)
-      iright=min0(iright,nw)
+  180 continue 
+      jtop=min(jtop,nh)
+      jbotm=max(jbotm,1)
+      ileft=max(ileft,1)
+      iright=min(iright,nw)
       do 320 i = ileft,iright
       do 320 j = jbotm,jtop
       kk = j+nh*(i-1)
