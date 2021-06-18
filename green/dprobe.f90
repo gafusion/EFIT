@@ -28,7 +28,7 @@
            as,as2,lpname,rsisvs,turnfc,patmp2, &
            zacoil,wacoil,hacoil, &
            rf,zf,fcid,wf,hf,wvs,hvs,avs,af,af2, &
-           re,ze,ecid,ecturn,vsid,rvs,zvs,we,he
+           re,ze,ecid,rvs,zvs,we,he
 
       OPEN(unit=nout,status='unknown',file='dprobe.dat',access='append')
 
