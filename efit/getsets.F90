@@ -556,18 +556,18 @@
 
 
       kerror = 0
-      table_di2 = table_dir
+!      table_di2 = table_dir
 ! --- find length of default directories
-      ltbdir=0
-      lindir=0
+!      ltbdir=0
+!      lindir=0
 !
-      lstdir=0  
-      do i=1,len(table_dir)
-         if (table_dir(i:i).ne.' ') ltbdir=ltbdir+1
-         if (input_dir(i:i).ne.' ') lindir=lindir+1
-         if (store_dir(i:i).ne.' ') lstdir=lstdir+1
-      enddo
-      ltbdi2=ltbdir
+!      lstdir=0  
+!      do i=1,len(table_dir)
+!         if (table_dir(i:i).ne.' ') ltbdir=ltbdir+1
+!         if (input_dir(i:i).ne.' ') lindir=lindir+1
+!         if (store_dir(i:i).ne.' ') lstdir=lstdir+1
+!      enddo
+!      ltbdi2=ltbdir
 !
 
 !----------------------------------------------------------------------

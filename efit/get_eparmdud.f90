@@ -102,6 +102,8 @@ subroutine get_eparmdud_dependents
 !**********************************************************************
   subroutine read_dirs_shot(filename)
   use var_exdata, only: ishot
+  use var_cecoil, only: iecurr
+  use var_vessel, only: ivesel
   use expath, only: table_dir,input_dir,store_dir
   implicit integer*4 (i-n), real*8 (a-h,o-z)
   real*8, dimension(2000):: expmp2,coils,fwtsi,fwtmp2,psibit,bitmpi,denr,denv,fwtfc, &

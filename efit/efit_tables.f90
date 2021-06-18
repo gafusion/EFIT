@@ -16,7 +16,6 @@
 !---------------------------------------------------------------------
 !-- Read Green's tables from table_di2            --
 !---------------------------------------------------------------------
-      !call set_table_di2
       open(unit=mcontr,status='old',form='unformatted', &
            file=table_di2(1:ltbdi2)//'ec'//trim(ch1)//trim(ch2)//'.ddd')
       read (mcontr) mw,mh

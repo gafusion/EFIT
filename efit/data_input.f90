@@ -173,7 +173,6 @@
       real*8 :: r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot 
       character*10 case_ext(6) 
       character*50 edatname 
-      character*82 table_nam 
       character*10 namedum 
       character*2 :: reflect_ext 
       logical :: shape_ext 
@@ -488,7 +487,6 @@
       xlim(1)=-1.0 
       rbdry(1)=-1.0 
       itimeu=0 
-      table_nam = table_dir 
       nbdryp=-1 
       ktear=0 
  
@@ -1529,10 +1527,6 @@
 !--        shot > 156000 new 2014 set                                 -- 
 !--        shot >= 168191 new 2017 set                                -- 
 !----------------------------------------------------------------------- 
-      !if (kdata.ne.2) then 
-      !  call set_table_dir 
-      !  call efit_read_tables 
-      !endif 
 ! 
       if (pasmat(jtime).le.-1.e3_dp) then 
         negcur=1 
@@ -1623,25 +1617,7 @@
       go to 340 
 ! 
   325 continue 
- !     if (kdata.ne.2) then 
- !     if (jtime.le.1) then 
- !       open(unit=80,status='old',file=table_di2(1:ltbdi2)//'dprobe.dat') 
- !       rsi(1)=-1. 
- !       read (80,in3) 
- !       read (80,10200) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), & 
- !               i=1,mfcoil) 
- !       if (rsi(1).lt.0.) & 
- !       read (80,10200) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), & 
- !               i=1,nsilop) 
- !       read (80,10220) (re(i),ze(i),we(i),he(i),ecid(i), & 
- !                                       i=1,necoil) 
- !       if (ifitvs.gt.0.or.icutfp.eq.2) then 
- !         read (80,10200) (rvs(i),zvs(i),wvs(i),hvs(i), & 
- !                                       avs(i),avs2(i),i=1,nvesel) 
- !       endif 
- !       close(unit=80) 
- !     endif 
- !     endif 
+
 !----------------------------------------------------------------------- 
 !--  Fourier expansion of vessel sgments                              -- 
 !----------------------------------------------------------------------- 
