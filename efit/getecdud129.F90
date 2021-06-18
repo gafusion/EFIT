@@ -25,6 +25,13 @@
       character*10 nsingl(10),n1name,btcname &
                    ,nc79name,nc139name,ncname(mccoil),niname(micoil)  !EJS(2014)
 !                         ---  or ---  ncname(mccoil),niname(micoil)  !EJS(2014)
+
+      integer :: time_err
+      character*150 textline     !EJS(2014)
+      character*10,dimension(:),allocatable :: ndenv,ndenr,fcname,ecname
+      character*10 namedum
+      real*8 dumccc(3),dumcic(6),dumbtc
+
       namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi,as, &
         as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
         wacoil,hacoil
@@ -33,12 +40,6 @@
                    nc79name,nc139name,btcname,ndenv,ndenr, &
                    fcname,ecname
 !
-      integer :: time_err
-      character*150 textline     !EJS(2014)
-      character*10,dimension(:),allocatable :: ndenv,ndenr,fcname,ecname
-      character*10 namedum
-      real*8 dumccc(3),dumcic(6),dumbtc
-
       ALLOCATE(ndenv(nco2v),ndenr(nco2r),fcname(nfcoil),ecname(nesum))
 
       nsingl(1) = 'IP        '
