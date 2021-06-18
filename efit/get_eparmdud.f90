@@ -105,11 +105,12 @@ subroutine get_eparmdud_dependents
   use expath, only: table_dir,input_dir,store_dir
   implicit integer*4 (i-n), real*8 (a-h,o-z)
   real*8, dimension(2000):: expmp2,coils,fwtsi,fwtmp2,psibit,bitmpi,denr,denv,fwtfc, &
-                            brsp,bitfc,ecurrt,calpa,cgama,xalpa,xgama,rzeroj,fwtec,bitec, &
+                            brsp,bitfc,ecurrt,xalpa,xgama,rzeroj,fwtec,bitec, &
                             ppknt,ffknt,wwknt,rbdry,zbdry,ppbdry,kppbdry,pp2bdry,kpp2bdry, &
                             ffbdry,kffbdry,ff2bdry,kff2bdry,wwbdry,kwwbdry,ww2bdry,kww2bdry,&
                             fwtfcsum,fczero,fcsum,fwtbdry,xlim,ylim,rpress,pressr,sigpre,&
                             fwtpre,sibeam,pbeam,dnbeam,dmass
+  real*8, dimension(256,256)::calpa,cgama
   integer*4  :: istat
   character(len=1000) :: line, fitzts
   character (*) :: filename
