@@ -1264,8 +1264,7 @@
          ii=i
          DO j=isize+1,nsilop
             jj=j
-            ! rsilfc has to have dimensions of nfcoil
-            CALL m1coef(xdum,xdum,1,nfcoil,rsilfc,jj,ii)
+            CALL m1coef(xdum,xdum,0,0,rsilfc,jj,ii)
          ENDDO 
       ENDDO 
   520 CONTINUE
