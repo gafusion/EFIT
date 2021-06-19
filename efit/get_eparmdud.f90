@@ -111,7 +111,7 @@ subroutine get_eparmdud_dependents
                             ppknt,ffknt,wwknt,rbdry,zbdry,ppbdry,kppbdry,pp2bdry,kpp2bdry, &
                             ffbdry,kffbdry,ff2bdry,kff2bdry,wwbdry,kwwbdry,ww2bdry,kww2bdry,&
                             fwtfcsum,fczero,fcsum,fwtbdry,xlim,ylim,rpress,pressr,sigpre,&
-                            fwtpre,sibeam,pbeam,dnbeam,dmass
+                            fwtpre,sibeam,pbeam,dnbeam,dmass,vcurfb,vcurrt
   real*8, dimension(256,256)::calpa,cgama
   integer*4  :: istat
   character(len=1000) :: line, fitzts
