@@ -1,11 +1,12 @@
 ######################################################################
 #
-# CMakeLists.txt for nimtests
-#
-# Complete harness is made of:
-#    nimTests.cmake, nimtest_template.sh.in, and nimharness.sh
+# CMakeLists.txt for efit tests
 #
 ######################################################################
 
+# TO DO: add option to skip greens tables test
+# TO DO: without tables no further tests need be attempted
+
+add_subdirectory(efund)
 add_subdirectory(efit01)
 add_subdirectory(efit02)

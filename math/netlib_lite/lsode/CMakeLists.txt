@@ -10,7 +10,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../include
 )
 set(LSODE_SOURCES
-  isize_get_lsode.c xerrwv.f
+  isize_get_lsode.c xerrwv.f idamax.f
   dcfode.f dewset.f dgbfa.f dgbsl.f dgefa.f dgesl.f dintdy.f dprepj.f
   dsolsy.f dsrcom.f dstode.f dumach.f dvnorm.f iumach.f ixsav.f lsode.f
   lsode_module.f xerrwd.f

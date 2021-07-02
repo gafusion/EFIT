@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD EQUILIBRIUM ANALYSIS                      **
@@ -296,7 +297,7 @@
            call shipit(ktime,ks,ks)
 !DEPRECATED           call wtear(mtear,ks)
         endif
-#if HAVE_NETCDF
+#ifdef USE_NETCDF
         if (idebug /= 0) write (6,*) 'Main/wmeasure ks/kerror = ', ks, kerror
         call wmeasure(ktime,ks,ks,1)
 #endif
@@ -313,8 +314,12 @@
         go to 100
       endif
       if (kwake.ne.0) go to 20
-#if HAVE_NETCDF
+#ifdef USE_NETCDF
       call wmeasure(ktime,1,ktime,2)
+#else
+      if (.not.((iand(iout,2).eq.0).and.(iand(iout,4).eq.0))) then
+        write(nttyo,*) 'netcdf needs to be linked to write m-files'
+      endif
 #endif
       call wtime(ktime)
 

@@ -39,12 +39,14 @@ endif()
 option(ENABLE_NETCDF "Enable NetCDF" off)
 set(HAVE_NETCDF False)   # Used in defines
 if (${ENABLE_NETCDF})
-    set (NETCDF_F90 "YES")
+    set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_MODULE_PATH})
     find_package (NetCDF)
-    if (${NETCDF_FOUND})
+    if (${NetCDF_FOUND})
       message(STATUS "Found NetCDF")
       set(HAVE_NETCDF True)
-      set(io_libs ${NETCDF_LIBRARIES} ${io_libs})
+      set(USE_NETCDF 1 CACHE BOOL "Whether NETCDF is linked")  # Used in directives
+      include_directories(${NetCDF_INCLUDE_DIR})
+      set(io_libs ${NetCDF_LIBRARIES} ${io_libs})
     endif()
 endif()
 
