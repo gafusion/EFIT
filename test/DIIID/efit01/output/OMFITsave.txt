@@ -1,5 +1,0 @@
-['snap'] <-:-:-> OMFITnamelist <-:-:-> ./efit_snap.dat_EFIT01 <-:-:-> {'multiDepth': False}
-['kEQDSK'] <-:-:-> OMFITkeqdsk <-:-:-> ./k186610.02300 <-:-:-> {'multiDepth': False}
-['gEQDSK'] <-:-:-> OMFITgeqdsk <-:-:-> ./g186610.02300 <-:-:-> {}
-['aEQDSK'] <-:-:-> OMFITaeqdsk <-:-:-> ./a186610.02300 <-:-:-> {}
-['mEQDSK'] <-:-:-> OMFITmeqdsk <-:-:-> ./m186610.02300 <-:-:-> {}
