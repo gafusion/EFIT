@@ -488,21 +488,14 @@
       endif
  
       if (nbdryp==-1) nbdryp=nbdry 
-
-      read (nin,ink,iostat=istat) 
-      if (istat/=0) then 
-        backspace(nin) 
-        read(nin,fmt='(A)') line 
-        !if (trim(line)/="/") write(*,'(A)') 'Invalid line in namelist ink: '//trim(line) 
-      endif
-
-      read (nin,ins,iostat=istat) 
-      if (istat/=0) then 
-        backspace(nin) 
-        read(nin,fmt='(A)') line 
-        !if (trim(line)/="/") write(*,'(A)') 'Invalid line in namelist in ins: '//trim(line) 
-      endif
-
+      read (nin,ink,err=11111,end=101) 
+101    continue 
+11111 close(unit=nin) 
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,ins,err=11113,end=103) 
+103    continue 
+11113 close(unit=nin) 
+      open(unit=nin,status='old',file=ifname(jtime)) 
       rrmsels(1)=-10. 
 
       read (nin,in_msels,iostat=istat) 
@@ -532,7 +525,7 @@
        endif 
       endif 
 91008 format(9e12.5,i2) 
-      close(unit=nin) 
+91113 close(unit=nin) 
 
       open(unit=nin,status='old',file=ifname(jtime)) 
       read (nin,ina,iostat=istat)

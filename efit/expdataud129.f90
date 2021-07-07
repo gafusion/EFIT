@@ -113,8 +113,6 @@
       character*100 filin
       namelist/lim/xlim,ylim,limitr
       data lfile/36/
-!
-      write(*,*) limmode, limitr
       if ((limitr.gt.0).and.(limmode.ne.0)) go to 50240
 !
 ! --- read in limiter data
