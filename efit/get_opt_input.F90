@@ -24,7 +24,7 @@ subroutine get_opt_input(ktime)
       character*82 snap_ext
      
 
-      ! ONLY root process allowed to interface with termina
+      ! ONLY root process allowed to interface with terminal
       if (rank == 0) then
         if (use_opt_input .eqv. .false.) then
           write (nttyo,5500) (mfvers(i),i=1,2)

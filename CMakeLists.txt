@@ -99,9 +99,11 @@ add_custom_target(config_f DEPENDS config.f)
 if (${ENABLE_PARALLEL})
   set (sharedir share-par)
   set (USEMPI TRUE)                 # ifdef
+  message(STATUS "Building with MPI")
 else()
   set (sharedir share-ser)
   set (USEMPI FALSE)
+#  message(STATUS "Building without MPI")
 endif()
 
 install(FILES ${CMAKE_BINARY_DIR}/config.f 

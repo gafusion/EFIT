@@ -4,9 +4,11 @@
 #
 ######################################################################
 
-# TO DO: add option to skip greens tables test
-# TO DO: without tables no further tests need be attempted
+# TO DO: add test option that skips efund
 
 add_subdirectory(efund)
 add_subdirectory(efit01)
 add_subdirectory(efit02)
+add_subdirectory(efit02er)
+add_subdirectory(rfile)
+#add_subdirectory(kineticEFIT)

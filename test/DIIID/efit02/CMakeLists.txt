@@ -1,17 +1,15 @@
 ######################################################################
 #
-# CMakeLists.txt for nimtests
-#
-# Complete harness is made of:
-#    nimTests.cmake, nimtest_template.sh.in, and nimharness.sh
+# CMakeLists.txt for efit tests
 #
 ######################################################################
 
 
 set(EFIT_LABEL 186610.02300)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${EFIT_KFILE} 
+set(EFIT_IN k${EFIT_LABEL})
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${EFIT_IN}
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
 
-configure_file(${EFIT_TEST_CONFIGFILE} 
+configure_file(${EFIT_TEST_CONFIGFILE}
                ${CMAKE_CURRENT_BINARY_DIR}/run_efit.sh @ONLY)
 add_test(NAME efit02 COMMAND run_efit.sh)

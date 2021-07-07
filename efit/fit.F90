@@ -80,7 +80,9 @@
             return
           endif
           if ((iconvr.eq.2).and.(ichisq.gt.0)) then
-            call errctrl_msg('fit','not converged properly',2)
+            if (nbdry.le.0) then
+              call errctrl_msg('fit','not converged properly',2)
+            endif
             go to 2020
           end if
         end if

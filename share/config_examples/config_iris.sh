@@ -2,7 +2,7 @@
 #   execute the following module commands: (not required to build)
 #
 #    module rm efit
-#    module swap gcc-4.7.2 gcc-9.2.0
+#    module switch gcc-4.7.2 gcc-9.2.0
 
     module load cmake/3.8.2
     export CC=/fusion/usc/opt/gcc/gcc-9.2.0/bin/gcc

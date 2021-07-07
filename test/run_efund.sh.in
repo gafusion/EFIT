@@ -1,23 +1,34 @@
 #!/bin/bash
 BINDIR=@CMAKE_BINARY_DIR@
-/bin/rm -f dprobe.dat
+
+for file in mhdout.dat dprobe.dat rfcoil.ddd brzgfc.dat; do
+  if test -e ${file}; then
+    rm ${file}
+  fi
+done
+for prefix in ec ep fc ra re rv; do
+  if test -e ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd; then
+    rm ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd
+  fi
+done
+
 @EFUND_EXEC@ @GRID_SIZE@ << __c__MATCHING_EOF__c__
 __c__MATCHING_EOF__c__
 
 # Now check to see if files exist
 
 for file in mhdout.dat dprobe.dat rfcoil.ddd brzgfc.dat; do
-    if test -e ${file}; then
-      cp ${file} ${BINDIR}
-    else
-        exit 1
-    fi
+  if test -e ${file}; then
+    cp ${file} ${BINDIR}
+  else
+      exit 1
+  fi
 done
 
 for prefix in ec ep fc ra re rv; do
-    if test -e ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd; then
-      cp ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd ${BINDIR}
-    else
-        exit 1
-    fi
+  if test -e ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd; then
+    cp ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd ${BINDIR}
+  else
+      exit 1
+  fi
 done
