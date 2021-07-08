@@ -67,7 +67,7 @@
       use global_constants
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension rs(1),zs(1),cs(1)
+      dimension rs(is*is),zs(is*is),cs(is*is)
 
       if(ac+ac2.eq.0.) go to 100
       if(ac.ne.0.) go to 200
