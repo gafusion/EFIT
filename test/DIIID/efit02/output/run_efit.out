@@ -1,0 +1,56 @@
+
+          EFITD Version  11/23/2020
+
+
+ type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+
+ number of time slices?
+
+ type input file names:
+ #
+ table_di2 = </Users/kruger/efitairoot/efitall/efit-txcorp/build/>
+
+      ******************** EFITD 65 x  65  output ********************
+ before save fitting weights
+ adjust fit parameters based on basis function selected 
+ itek > 100, write out PLTOUT.OUT individually 
+ option to symmetrize added 8/14/91 eal  
+ read in limiter data
+
+ r=  0 t=  2300 it=  1 chi2=4.31E+01 zm=-2.02E-02 err=1.738E+00 dz=-2.021E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+           1           2           0           1           0
+ r=  0 t=  2300 it=  2 chi2=2.69E+01 zm=-2.07E-02 err=6.221E-02 dz=-4.508E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 4.86E+00
+           1           3           0           2           0
+ r=  0 t=  2300 it=  3 chi2=2.75E+01 zm=-2.08E-02 err=4.153E-02 dz=-1.318E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 4.97E+00
+           1           4           0           3           0
+ r=  0 t=  2300 it=  4 chi2=4.53E+01 zm=-2.71E-02 err=2.603E-02 dz=-6.282E-03 delz= 1.392E+00 dj=2.903E-02 chigam= 5.20E+00
+           1           5           0           4           0
+ r=  0 t=  2300 it=  5 chi2=2.81E+01 zm=-3.13E-02 err=1.375E-02 dz=-4.269E-03 delz= 1.129E+00 dj=2.657E-02 chigam= 5.03E+00
+           1           6           0           5           0
+ r=  0 t=  2300 it=  6 chi2=2.34E+01 zm=-3.30E-02 err=7.328E-03 dz=-1.667E-03 delz= 5.569E-01 dj=1.248E-02 chigam= 4.87E+00
+           1           7           0           6           0
+ r=  0 t=  2300 it=  7 chi2=2.19E+01 zm=-3.35E-02 err=3.987E-03 dz=-4.484E-04 delz= 2.652E-01 dj=5.931E-03 chigam= 4.86E+00
+           1           8           0           7           0
+ r=  0 t=  2300 it=  8 chi2=2.18E+01 zm=-3.37E-02 err=2.274E-03 dz=-2.332E-04 delz= 2.011E-01 dj=4.496E-03 chigam= 4.86E+00
+           1           9           0           8           0
+ r=  0 t=  2300 it=  9 chi2=2.17E+01 zm=-3.39E-02 err=1.507E-03 dz=-1.665E-04 delz= 1.909E-01 dj=4.265E-03 chigam= 4.87E+00
+           1          10           0           9           0
+ r=  0 t=  2300 it= 10 chi2=2.16E+01 zm=-3.39E-02 err=1.853E-03 dz=-4.644E-05 delz= 1.450E-01 dj=3.239E-03 chigam= 4.87E+00
+           1          11           0          10           0
+ r=  0 t=  2300 it= 11 chi2=2.16E+01 zm=-3.40E-02 err=9.014E-04 dz=-5.106E-05 delz= 1.499E-01 dj=3.352E-03 chigam= 4.87E+00
+
+       data used:   
+ 39 flux loops
+ 65 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     186610 time(ms) =       2300 chi**2   =  2.141E+01
+ betat(%) =      0.328 betap    =      0.086 li       =      1.161
+ vol(cm3) =  1.775E+07 rout(cm) =    172.993 zout(cm) =      6.956
+ elong    =      1.805 utriang  =      0.756 ltriang  =      0.307
+ a(cm)    =     56.311 lin(cm)  =     14.951 lout(cm) =      5.766
+ ltop(cm) =     14.902 q*       =      3.877 rc(cm)   =    170.243
+ zc(cm)   =     -2.389 bt0(t)   =      1.631 qout     =      6.343
+ netcdf needs to be linked to write m-files

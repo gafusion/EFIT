@@ -12,7 +12,6 @@ The easiest method to build is to ignore all of the third-party libraries::
     cd build
     cmake ..
     make 
-    make makeD3DGreensFunctions
     make test
 
 Configuring third-party libraries
@@ -43,4 +42,11 @@ bells and whistles turned on (TODO:  Need to test)::
 
 
 For debugging, set the `CMAKE_BUILD_TYPE` to `Debug`.
+
+More on testing
+===============
+
+To debug a given test, you can `cd` into that 
+
+
 

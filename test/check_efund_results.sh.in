@@ -1,0 +1,27 @@
+#!/bin/bash
+OUTPUT_STORE_DIR=@CMAKE_CURRENT_SOURCE_DIR@/output
+BINDIR=@CMAKE_BINARY_DIR@
+
+# Check to see if files exist
+for file in mhdout.dat dprobe.dat rfcoil.ddd brzgfc.dat; do
+  if test -e ${file}; then
+    cp ${file} ${BINDIR}
+  else
+    echo "File does not exist: ${file}"
+    exit 1
+  fi
+done
+
+for prefix in ec ep fc ra re rv; do
+  if test -e ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd; then
+    cp ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd ${BINDIR}
+  else
+    echo "File does not exist: ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd"
+    exit 1
+  fi
+done
+
+# Check the output of the run itself.  use petscdiff because it's an easily
+# portable way of avoiding testing the numbers -- it's testing the text
+@CMAKE_SOURCE_DIR@/bin/petscdiff ${OUTPUT_STORE_DIR}/run_efund.out run_efund.out
+exit $?

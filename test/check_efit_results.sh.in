@@ -1,0 +1,17 @@
+#!/bin/bash
+OUTPUT_STORE_DIR=@CMAKE_CURRENT_SOURCE_DIR@/output
+
+
+# check to see if files exist
+for prefix in a g; do
+  if ! test -e ${prefix}@EFIT_LABEL@; then
+      echo "File does not exist: ${prefix}@EFIT_LABEL@"
+      exit 1
+  fi
+done
+
+# Check the output of the run itself.  use petscdiff because it's an easily
+# portable way of avoiding testing the numbers -- it's testing the text
+@CMAKE_SOURCE_DIR@/bin/petscdiff ${OUTPUT_STORE_DIR}/run_efit.out run_efit.out
+exit $?
+

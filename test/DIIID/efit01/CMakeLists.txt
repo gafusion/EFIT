@@ -12,4 +12,8 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${EFIT_IN}
 
 configure_file(${EFIT_TEST_CONFIGFILE}
                ${CMAKE_CURRENT_BINARY_DIR}/run_efit.sh @ONLY)
+configure_file(${EFIT_RESULTS_CONFIGFILE}
+               ${CMAKE_CURRENT_BINARY_DIR}/check_efit_results.sh @ONLY)
+
 add_test(NAME efit01 COMMAND run_efit.sh)
+add_test(NAME efit01-results COMMAND check_efit_results.sh)
