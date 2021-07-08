@@ -80,9 +80,7 @@
             return
           endif
           if ((iconvr.eq.2).and.(ichisq.gt.0)) then
-            if (nbdry.le.0) then
-              call errctrl_msg('fit','not converged properly',2)
-            endif
+            call errctrl_msg('fit','not converged properly',2)
             go to 2020
           end if
         end if
@@ -144,7 +142,9 @@
           if (i.eq.mxiter+1) exit
         end do ! in
       end do ! i
-      call errctrl_msg('fit','not converged, reached max iterations',2)
+      if (nbdry.le.0) then
+        call errctrl_msg('fit','not converged, reached max iterations',2)
+      endif
 2020  continue
       !---------------------------------------------------------------------
       !--  update pressure if needed                                      --
