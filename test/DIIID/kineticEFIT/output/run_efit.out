@@ -1,0 +1,55 @@
+
+          EFITD Version  11/23/2020
+
+
+ type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+
+ number of time slices?
+
+ type input file names:
+ #
+ table_di2 = </dining_room/>
+
+      ******************** EFITD 65 x  65  output ********************
+ before save fitting weights
+ adjust fit parameters based on basis function selected 
+ itek > 100, write out PLTOUT.OUT individually 
+ option to symmetrize added 8/14/91 eal  
+ read in limiter data
+
+ r=  0 t=  2300 it=  1 chi2=5.78E+01 zm=-2.04E-02 err=1.729E+00 dz=-2.037E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+           1           2           0           1           0
+ r=  0 t=  2300 it=  2 chi2=4.00E+01 zm=-2.07E-02 err=6.545E-02 dz=-2.926E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 5.18E+00
+           1           3           0           2           0
+ r=  0 t=  2300 it=  3 chi2=4.13E+01 zm=-2.07E-02 err=4.375E-02 dz=-2.668E-05 delz= 0.000E+00 dj=0.000E+00 chigam= 5.26E+00
+           1           4           0           3           0
+ r=  0 t=  2300 it=  4 chi2=5.07E+01 zm=-2.48E-02 err=2.395E-02 dz=-4.129E-03 delz= 8.290E-01 dj=1.784E-02 chigam= 5.56E+00
+           1           5           0           4           0
+ r=  0 t=  2300 it=  5 chi2=4.17E+01 zm=-2.70E-02 err=1.295E-02 dz=-2.207E-03 delz= 4.769E-01 dj=1.028E-02 chigam= 5.56E+00
+           1           6           0           5           0
+ r=  0 t=  2300 it=  6 chi2=3.91E+01 zm=-2.82E-02 err=7.155E-03 dz=-1.145E-03 delz= 2.796E-01 dj=6.022E-03 chigam= 5.62E+00
+           1           7           0           6           0
+ r=  0 t=  2300 it=  7 chi2=3.84E+01 zm=-2.88E-02 err=4.040E-03 dz=-6.086E-04 delz= 1.771E-01 dj=3.856E-03 chigam= 5.67E+00
+           1           8           0           7           0
+ r=  0 t=  2300 it=  8 chi2=3.82E+01 zm=-2.91E-02 err=2.343E-03 dz=-3.394E-04 delz= 1.251E-01 dj=2.723E-03 chigam= 5.71E+00
+           1           9           0           8           0
+ r=  0 t=  2300 it=  9 chi2=3.82E+01 zm=-2.93E-02 err=1.465E-03 dz=-2.041E-04 delz= 9.838E-02 dj=2.145E-03 chigam= 5.74E+00
+           1          10           0           9           0
+ r=  0 t=  2300 it= 10 chi2=3.82E+01 zm=-2.94E-02 err=1.059E-03 dz=-1.242E-04 delz= 8.285E-02 dj=1.813E-03 chigam= 5.76E+00
+           1          11           0          10           0
+ r=  0 t=  2300 it= 11 chi2=3.82E+01 zm=-2.95E-02 err=7.645E-04 dz=-7.940E-05 delz= 7.427E-02 dj=1.629E-03 chigam= 5.78E+00
+
+       data used:   
+ 39 flux loops
+ 65 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     186610 time(ms) =       2300 chi**2   =  3.805E+01
+ betat(%) =      0.272 betap    =      0.070 li       =      1.164
+ vol(cm3) =  1.790E+07 rout(cm) =    173.057 zout(cm) =      6.325
+ elong    =      1.794 utriang  =      0.754 ltriang  =      0.353
+ a(cm)    =     56.570 lin(cm)  =     14.758 lout(cm) =      5.442
+ ltop(cm) =     15.538 q*       =      3.860 rc(cm)   =    170.405
+ zc(cm)   =     -2.221 bt0(t)   =      1.626 qout     =      6.540
