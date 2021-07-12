@@ -486,7 +486,33 @@
         read(nin,fmt='(A)') line 
         write(*,'(A)') 'Invalid line in namelist in1: '//trim(line) 
       endif
- 
+!--protect against underflow in fitting weights 
+      if (abs(fwtdlc).le.1.e-30_dp)  fwtdlc=0.0 
+      if (abs(fwtcur).le.1.e-30_dp)  fwtcur=0.0 
+      do i=1,nfcoil 
+        if (abs(fwtfc(i)).le.1.e-30_dp)  fwtfc(i)=0.0 
+      enddo 
+      do i=1,nesum 
+        if (abs(fwtec(i)).le.1.e-30_dp)  fwtec(i)=0.0 
+      enddo 
+      do i=1,magpri 
+        if (abs(fwtmp2(i)).le.1.e-30_dp)  fwtmp2(i)=0.0 
+      enddo 
+      do i=1,nsilop 
+        if (abs(fwtsi(i)).le.1.e-30_dp)  fwtsi(i)=0.0 
+      enddo 
+      do i=1,nmtark 
+        if (abs(fwtgam(i)).le.1.e-30_dp)  fwtgam(i)=0.0 
+      enddo 
+      do i=1,nmsels 
+        if (abs(fwtbmsels(i)).le.1.e-30_dp)  fwtbmsels(i)=0.0 
+        if (abs(fwtemsels(i)).le.1.e-30_dp)  fwtemsels(i)=0.0 
+      enddo 
+      do i=1,nnece 
+        if (abs(fwtece0(i)).le.1.e-30_dp)  fwtece0(i)=0.0 
+      enddo 
+      if (abs(fwtecebz0).le.1.e-30_dp)  fwtecebz0=0.0 
+!
       if (nbdryp==-1) nbdryp=nbdry 
       read (nin,ink,err=11111,end=101) 
 101    continue 
