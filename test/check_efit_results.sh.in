@@ -1,9 +1,13 @@
 #!/bin/bash
 OUTPUT_STORE_DIR=@CMAKE_CURRENT_SOURCE_DIR@/output
 
-
 # check to see if files exist
-for prefix in a g; do
+if [ @HAVE_NETCDF@ = True ]; then
+  outputs=( a g m )
+else
+  outputs=( a g )
+fi
+for prefix in ${outputs[*]}; do
   if ! test -e ${prefix}@EFIT_LABEL@; then
       echo "File does not exist: ${prefix}@EFIT_LABEL@"
       exit 1

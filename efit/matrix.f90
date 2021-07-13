@@ -1,8 +1,4 @@
-      subroutine matrix(jtime,iter,ichisq,nniter,kerror)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          matrix calculates the appropriate response matrix and   **
@@ -12,10 +8,6 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**          24/07/85..........revised                               **
@@ -23,6 +15,7 @@
 !**        2015/03/27..........revised MSE-LS                        **
 !**                                                                  **
 !**********************************************************************
+      subroutine matrix(jtime,iter,ichisq,nniter,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
       include 'eparmdud129.inc'
       include 'modules2.inc'

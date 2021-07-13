@@ -6,8 +6,13 @@ if ! test -e @CMAKE_BINARY_DIR@/dprobe.dat; then
 fi
 
 # Remove output
+if [ @HAVE_NETCDF@ = True ]; then
+  outputs=( a g m )
+else
+  outputs=( a g )
+fi
 rm -f run_efit.out
-for prefix in a g; do
+for prefix in ${outputs[*]}; do
    rm -f ${prefix}@EFIT_LABEL@
 done
 

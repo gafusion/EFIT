@@ -825,7 +825,12 @@
       use var_fcoil, only: fcid
       use var_limite, only: rwstrip1, zwstrip1,rwstrip2,zwstrip2
       use var_delnfit, only: fco2ne
+      use var_rmatri, only: tsaisq
+      use var_consum, only: cdelz
       implicit none   
+
+      tsaisq=0.0
+      cdelz=0.0
 
       vzeroj(1)=0.0
       sizeroj(1)=-1.0
