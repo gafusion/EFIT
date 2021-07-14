@@ -116,8 +116,8 @@
                   form=wform,err=12929)
              close(unit=neqdsk,status='delete')
 12929      continue
-        open(unit=neqdsk,                       file=eqdsk,status='new', &
-             form=wform)
+        open(unit=neqdsk,file=eqdsk,status='new', &
+             form=wform,delim='quote')
 !
   310   continue
         xbetapr=kbetapr
@@ -353,7 +353,7 @@
       open(unit=neqdsk,file=eqdsk,status='old',err=12931)
       close(unit=neqdsk,status='delete')
 12931  continue
-      open(unit=neqdsk,                       file=eqdsk,status='new')
+      open(unit=neqdsk,file=eqdsk,status='new',delim='quote')
       itsave=itime
       itime=iitime
       write (neqdsk,in1)
@@ -439,7 +439,7 @@
               saisq,cjeccd
       character eqdsk*72,header*42,wform*20,let,fit_type*3
       character*10 case(6)
-      integer :: parameter
+      integer :: pltnw
       parameter (pltnw=1025)
       real*8,dimension(:),allocatable :: workk,dmion,bworm,cworm,  dworm
 !
@@ -556,7 +556,7 @@
            close(unit=neqdsk,status='delete')
 12932   continue
       open(unit=neqdsk,file=eqdsk,status='new', &
-           form=wform)
+           form=wform,delim='quote')
   210 continue
       idum=3
       if (pasmat(jtime).gt.0.0) then
@@ -885,7 +885,7 @@
       open(unit=neqdsk,file=eqdsk,status='old',err=12933)
       close(unit=neqdsk,status='delete')
 12933  continue
-      open(unit=neqdsk,                       file=eqdsk,status='new')
+      open(unit=neqdsk,file=eqdsk,status='new',delim='quote')
       write (neqdsk,in1)
        call ppstore
        call ffstore

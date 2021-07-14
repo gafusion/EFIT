@@ -30,7 +30,8 @@
            rf,zf,fcid,wf,hf,wvs,hvs,avs,af,af2, &
            re,ze,ecid,rvs,zvs,we,he
 
-      OPEN(unit=nout,status='unknown',file='dprobe.dat',access='append')
+      OPEN(unit=nout,status='unknown',file='dprobe.dat',access='append',&
+           delim='quote')
 
       WRITE (nout,in3)
       CLOSE (nout)

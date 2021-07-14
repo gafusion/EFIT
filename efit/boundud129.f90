@@ -43,10 +43,6 @@
 !**       zxmax...........z at xmax                                  **
 !**       tolbndpsi (in)..tolerance on psi                           **
 !**                                                                  **
-!**     references:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     record of modification:                                      **
 !**          26/04/83..........first created                         **
 !**          01/09/83..........replaced contouring routines          **
@@ -109,7 +105,7 @@
       rin=xctr
       rout=xlmin
 !---------------------------------------------------------------------
-!--  field line tracing ix < 0                                      --
+!--   field line tracing ix < 0                                     --
 !---------------------------------------------------------------------
       if (ix.lt.0) rad=xctr
       if (mecopy.le.0) then
@@ -120,9 +116,9 @@
         mecopy=1
       end if
 
-      !----------------------------------------------------------------------
-      !--   find starting value of psi                                     --
-      !----------------------------------------------------------------------
+!----------------------------------------------------------------------
+!--   find starting value of psi                                     --
+!----------------------------------------------------------------------
       do loop = 1,nloop
         i=1+(rad-x(1))/dx
         if(rad-x(i).lt.0.0)i=i-1
@@ -170,9 +166,9 @@
           y1=y(j)
           y2=y(j+1)
           if(ncontr.eq.1) go to 100
-          !----------------------------------------------------------------------
-          !--   check for proximity to corner                                  --
-          !----------------------------------------------------------------------
+!----------------------------------------------------------------------
+!--       check for proximity to corner                              --
+!----------------------------------------------------------------------
           dist(1)=(xt-x1)**2+(yt-y1)**2
           dist(2)=(xt-x2)**2+(yt-y1)**2
           dist(3)=(xt-x2)**2+(yt-y2)**2
@@ -183,9 +179,9 @@
             kj=l
             if (dist(l).eq.dist(5)) exit
           end do
-          !----------------------------------------------------------------------
-          !--   kj points to appropriate corner                                --
-          !----------------------------------------------------------------------
+!----------------------------------------------------------------------
+!--       kj points to appropriate corner                            --
+!----------------------------------------------------------------------
           call chkcrn(psi,nwh,psivl,kold,knew,kj,kk,nh,i,i1)
           kk=knew
           i=i1
@@ -198,20 +194,20 @@
           x2=x(i+1)
           y1=y(j)
           y2=y(j+1)
-          !----------------------------------------------------------------------
-          !--   check for limiter in cell                                      --
-          !----------------------------------------------------------------------
+!----------------------------------------------------------------------
+!--       check for limiter in cell                                  --
+!----------------------------------------------------------------------
 100       zsum=zero(kk)+zero(kk+1)+zero(kk+nh)+zero(kk+nh+1)
           if(zsum.eq.0.0) exit ! contr
 
           if (abs(zsum-4.0).ge.1.e-03_dp) then
-            !----------------------------------------------------------------------
-            !--   from one to three corners of cell are inside limiter.  get max --
-            !--   psi on line segment of limiter in cell and compare this max    --
-            !--   with current value of psilim (or psisep)                       --
-            !--   note: do loop index assumes point 'limitr+1' is the same as    --
-            !--   point 'limitr'                                                 --
-            !----------------------------------------------------------------------
+!----------------------------------------------------------------------
+!--   from one to three corners of cell are inside limiter.  get max --
+!--   psi on line segment of limiter in cell and compare this max    --
+!--   with current value of psilim (or psisep)                       --
+!--   note: do loop index assumes point 'limitr+1' is the same as    --
+!--   point 'limitr'                                                 --
+!----------------------------------------------------------------------
             psilx=-1.e10_dp
             do k=1,limitr-1
               xc1=xlim(k)
@@ -224,13 +220,13 @@
               jk2=1+(ylim(k+1)-y(1))/dy
               kij1=(ik1-1)*nh+jk1
               kij2=(ik2-1)*nh+jk2
-              !----------------------------------------------------------------------
-              !--  at least one limiter point is not in cell.  subroutine cellb    --
-              !--  returns intersections of cell boundaries and line defined by    --
-              !--  points k and k+1 or one cell boundary and one interior point.   --
-              !--  ifail=1 if points k and k+1 do not intersect the current cell   --
-              !--  of interest.                                                    --
-              !----------------------------------------------------------------------
+!----------------------------------------------------------------------
+!--  at least one limiter point is not in cell.  subroutine cellb    --
+!--  returns intersections of cell boundaries and line defined by    --
+!--  points k and k+1 or one cell boundary and one interior point.   --
+!--  ifail=1 if points k and k+1 do not intersect the current cell   --
+!--  of interest.                                                    --
+!----------------------------------------------------------------------
               if ((kij1.ne.kk).or.(kij2.ne.kk)) then
                 ifail=0
                 call cellb(xc1,yc1,xc2,yc2,x1,y1,x2,y2,ifail)
@@ -260,12 +256,11 @@
               end if
             end if
           end if
-
           call extrap(f1,f2,f3,f4,x1,y1,x2,y2,xt,yt,xt1,yt1,xt2,yt2, &
             psivl,area,dx,dy)
-          !----------------------------------------------------------------------
-          !--   decide which intersection (xt1,yt1) or (xt2,yt2) is required   --
-          !----------------------------------------------------------------------
+!----------------------------------------------------------------------
+!--   decide which intersection (xt1,yt1) or (xt2,yt2) is required   --
+!----------------------------------------------------------------------
           dist1=(yt1-yt)**2+(xt1-xt)**2
           dist2=(yt2-yt)**2+(xt2-xt)**2
           if (dist1.lt.dist2) then
@@ -287,9 +282,9 @@
           ! Debug tool: Write out the contour coordinates for each loop (iteration)
           !write(*,*) loop,ncontr,xcontr(ncontr),ycontr(ncontr)
 
-          !----------------------------------------------------------------------
-          !--   find next cell                                                 --
-          !----------------------------------------------------------------------
+!----------------------------------------------------------------------
+!--       find next cell                                             --
+!----------------------------------------------------------------------
           if (xt.eq.x2) i=i+1
           if (xt.eq.x1) i=i-1
           if (yt.eq.y2) j=j+1
@@ -307,19 +302,19 @@
           end if
 
           kold=kk
-          !----------------------------------------------------------------------
-          !     find new cell index
-          !----------------------------------------------------------------------
+!----------------------------------------------------------------------
+!         find new cell index                                        --
+!----------------------------------------------------------------------
           kk=(i-1)*nh+j
           if (kk.eq.kstrt) go to 1040
           dis2p=sqrt((xcontr(1)-xt)**2+(ycontr(1)-yt)**2)
           if((dis2p.lt.0.1_dp*dx).and.(ncontr.gt.5))go to 1040
         end do ! contr
 
-        !----------------------------------------------------------------------
-        !--  psi on boundary smaller than psi on limiter, decrease rad and   --
-        !--  try again.                                                      --
-        !----------------------------------------------------------------------
+!----------------------------------------------------------------------
+!--  psi on boundary smaller than psi on limiter, decrease rad and   --
+!--  try again.                                                      --
+!----------------------------------------------------------------------
         psib0=psivl
         !
         if(ix.lt.0) go to 2000 ! ix, -1=trace clockwise, -2=counter clockwise
@@ -329,9 +324,9 @@
         rad=(rin+rout)*0.5_dp
         cycle ! loop
 
-        !----------------------------------------------------------------------
-        !--   check for convergence of boundary                              --
-        !----------------------------------------------------------------------
+!----------------------------------------------------------------------
+!--     check for convergence of boundary                            --
+!----------------------------------------------------------------------
 1040    err=abs((psivl-psib0)/psivl)
         if(ix.lt.0) then
           if (ix.lt.-2) dpsi=1.e-06_dp
@@ -340,9 +335,9 @@
 
         if (err.le.etol) exit ! loop
         if (loop.ge.nloop) exit ! loop
-        !----------------------------------------------------------------------
-        !--   new rad,psi and try again                                      --
-        !----------------------------------------------------------------------
+!----------------------------------------------------------------------
+!--     new rad,psi and try again                                    --
+!----------------------------------------------------------------------
         psib0=psivl
         call zlim(zerol,n111,n111,limitr,xlim,ylim,rad,yctr,limfag)
         if (zerol.le.0.01_dp) then
@@ -731,7 +726,8 @@
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension pds(6),xc(*),yc(*)
-      dimension cspln(kubicx,lubicx,kubicy,lubicy)
+!      dimension cspln(kubicx,lubicx,kubicy,lubicy)
+      dimension cspln(*)
       real*8 piov2,piov4,fpiov4,spiov4,tpiov4,tpiov2
       data n111/1/,n333/3/
       save n111,n333
@@ -2042,13 +2038,14 @@
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**          13/08/85..........iflag added                           **
+!**          13/07/21..........WARNING added, needs fixing!          **
 !**                                                                  **
 !**********************************************************************
       subroutine zlim(zero,nw,nh,limitr,xlim,ylim,x,y,iflag)
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       real*8 :: zero(nw*nh),x(nw),y(nh) 
-      dimension xlim(*),ylim(*)
+      dimension xlim(limitr),ylim(limitr)
       logical b,c,d,inside,bold
 
       select case (iflag)
@@ -2087,21 +2084,26 @@
               bold=b
               do k=1,limitr-1
                 c=.false.
-                !---------------------------------------------------------------------------
-                !--  fixed if test logic, for ge and le per Wolfe of MIT, 93/09/02        --
-                !--       if (y(j).le.ylim(k).and.y(j).ge.ylim(k+1)                       --
-                !--  .        .or.y(j).ge.ylim(k).and.y(j).le.ylim(k+1)) then             --
-                !---------------------------------------------------------------------------
+!---------------------------------------------------------------------------
+!--  fixed if test logic, for ge and le per Wolfe of MIT, 93/09/02        --
+!--       if (y(j).le.ylim(k).and.y(j).ge.ylim(k+1)                       --
+!--  .        .or.y(j).ge.ylim(k).and.y(j).le.ylim(k+1)) then             --
+!---------------------------------------------------------------------------
+!--**WARNING: if(abs(y(j)-ylim(k)).lt.1.e-10_dp .or. 
+!                abs(y(j)-ylim(k+1)).lt.1.e-10_dp)
+!             then roundoff errors can affect whether points are inside or
+!             out with this algorithm... more robust method needed
                 if (y(j).le.ylim(k).and.y(j).gt.ylim(k+1) &
                   .or.y(j).ge.ylim(k).and.y(j).lt.ylim(k+1)) then
                   c=.true.
                   d=.true.
                   n=n+1
                 endif
-                if(c.and. &
-                  (y(j)-ylim(k))*(xlim(k+1)-xlim(k))- &
-                  (ylim(k+1)-ylim(k))*(x(i)-xlim(k)).gt.0.) &
-                  b=.not.b
+                if (c) then
+                  if((y(j)-ylim(k))*(xlim(k+1)-xlim(k))- &
+                    (ylim(k+1)-ylim(k))*(x(i)-xlim(k)).gt.0.) &
+                    b=.not.b
+                endif
                 if (n.eq.2) then
                   n=0
                   if (bold.eqv.b) inside=.true.

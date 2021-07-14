@@ -18,12 +18,20 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension x(1),y(1)
 !
-      if (iweigh.le.0) go to 5000
+      if (iweigh.le.0) then
+        do kk=1,nwnh
+          www(kk)=0.0
+          if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) cycle
+          www(kk)=zero(kk)
+        enddo
+        return
+      endif
 !----------------------------------------------------------------------
 !-- find a rectangle to search based on output from subroutine bound --
 !----------------------------------------------------------------------
-      do 100 j=1,nwnh
-  100 www(j)=0.0
+      do j=1,nwnh
+        www(j)=0.0
+      enddo
       do 110 i=1,nw-1
       ileft=i
   110 if((x(i).le.xmin).and.(x(i+1).gt.xmin))go to 120
@@ -62,68 +70,54 @@
       a2 = 0.
       a3 = 0.
       a4 = 0.
-      if (a.ge.psil) go to 1
+      if (a.ge.psil) then
+        p1 = a-psil
+      else
+        in = in+1
+        a1 = a-psil
+      endif
+      if (b.ge.psil) then
+        p2 = b-psil
+      else
+        in = in+1
+        a2 = b-psil
+      endif
+      if (c .ge. psil) then
+        p3 = c-psil
+      else
+        in = in+1
+        a3 = c-psil
+      endif
+      if (d.ge.psil) then
+        p4 = d-psil
+      else
+        in = in+1
+        a4 = d-psil
+      endif
       in = in+1
-      a1 = a-psil
-      go to 2
-    1 p1 = a-psil
-    2 if (b.ge.psil) go to 3
-      in = in+1
-      a2 = b-psil
-      go to 4
-    3 p2 = b-psil
-    4 if (c .ge. psil) go to 5
-      in = in+1
-      a3 = c-psil
-      go to 6
-    5 p3 = c-psil
-    6 if (d.ge.psil) go to 7
-      in = in+1
-      a4 = d-psil
-      go to 8
-    7 p4 = d-psil
-    8 in = in+1
       select case (in)
       case (1)
-        go to 10
+        www(kk) = 1.
       case (2)
-        go to 11
+        xxw = (p1+p2+p3+p4)/4.
+        yyw = (a1+a2+a3+a4)
+        yyw = (yyw/(xxw-yyw))**2
+        www(kk) = 1.-0.5_dp*yyw
       case (3)
-        go to 12
+        xxw = (p1+p2+p3+p4)
+        yyw = (a1+a2+a3+a4)
+        www(kk) = xxw/(xxw-yyw)
       case (4)
-        go to 13
+        xxw = (p1+p2+p3+p4)
+        yyw = (a1+a2+a3+a4)/4.
+        xxw = (xxw/(xxw-yyw))**2
+        www(kk) = 0.5_dp*xxw
       case (5)
-        go to 14
+        www(kk) = 0.
       end select
-   10 www(kk) = 1.
-      go to 20
-   11 xxw = (p1+p2+p3+p4)/4.
-      yyw = (a1+a2+a3+a4)
-      yyw = (yyw/(xxw-yyw))**2
-      www(kk) = 1.-0.5_dp*yyw
-      go to 20
-   12 xxw = (p1+p2+p3+p4)
-      yyw = (a1+a2+a3+a4)
-      www(kk) = xxw/(xxw-yyw)
-      go to 20
-   13 xxw = (p1+p2+p3+p4)
-      yyw = (a1+a2+a3+a4)/4.
-      xxw = (xxw/(xxw-yyw))**2
-      www(kk) = 0.5_dp*xxw
-      go to 20
-   14 www(kk) = 0.
-   20 continue
 !     do 15 kk = 1,nwnh
       www(kk) = www(kk)*zero(kk)
-   15 continue
+!   15 continue
   320 continue
-      return
-!
- 5000 continue
-      do 5500 kk=1,nwnh
-        www(kk)=0.0
-        if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) go to 5500
-        www(kk)=zero(kk)
- 5500 continue
       return
       end subroutine weight

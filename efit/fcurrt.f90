@@ -1,17 +1,9 @@
-      subroutine fcurrt(jtime,iter,itertt,kerror)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          fcurrt computes the currents in the f coils.            **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
@@ -19,6 +11,7 @@
 !**          16/08/90..........revised                               **
 !**                                                                  **
 !**********************************************************************
+      subroutine fcurrt(jtime,iter,itertt,kerror)
       use commonblocks,only: rfcpc
       include 'eparmdud129.inc'
       include 'modules2.inc'
@@ -82,7 +75,7 @@
       close(unit=nffile)
  1200 continue
 
-      do 1320 i=1,nfcoil
+      do i=1,nfcoil
         brsp(i)=0.0
         if (ivacum.gt.0) go to 1310
         do 1308 j=1,nwnh
@@ -99,10 +92,9 @@
           brsp(i)=brsp(i)+rfcvs(i,j)*vcurrt(j)
  1316   continue
  1318   continue
-
         brsp(i)=csilop(i,jtime)-brsp(i)
         if (fitsiref) brsp(i)=brsp(i)+psiref(jtime)
- 1320 continue
+      enddo
       call solve(nfcoil,nfcoil,afma,brsp,ifmatr)
       return
 !-----------------------------------------------------------------------
@@ -329,18 +321,19 @@
 !--  non-fixed boundary when IFREF=-1                                 --
 !-----------------------------------------------------------------------
       if (ifref.le.0.or.iconvr.ne.3) go to 3000
-      do 2900 i=1,nj
+      do i=1,nj
         if (i.le.nbdry) then
           bbry(i)=fwtbry(i)
         else
           bbry(i)=0.0
         endif
- 2900 continue
-      do 2952 i=1,nfcoil
+      enddo
+      do i=1,nfcoil
         fcref(i)=0.0
-        do 2952 j=1,nj
+        do j=1,nj
           fcref(i)=fcref(i)+ainbry(i,j)*bbry(j)
- 2952   continue
+        enddo
+      enddo
 !-----------------------------------------------------------------------
 !--  RHS of response matrix, start here if got inverse matrix already --
 !-----------------------------------------------------------------------
@@ -350,29 +343,29 @@
 !-----------------------------------------------------------------------
 !-- fixed boundary portion                                            --
 !-----------------------------------------------------------------------
-      do 3596 m=1,nbdry
+      do m=1,nbdry
         bbry(m)=0.0
-        if (ivesel.le.0.or.ifitvs.gt.0) go to 3570
-        do 3565 k=1,nvesel
-          bbry(m)=bbry(m)+rbdrvs(m,k)*vcurrt(k)
- 3565   continue
- 3570   continue
-        if (iecurr.le.0) go to 3590
-        do 3580 k=1,nesum
-          bbry(m)=bbry(m)+rbdrec(m,k)*ecurrt(k)
- 3580   continue
- 3590   continue
-        if (iacoil.gt.0) then
-          do 3592 k=1,nacoil
-            bbry(m)=bbry(m)+rbdrac(m,k)*caccurt(jtime,k)
- 3592     continue
+        if (ivesel.gt.0.and.ifitvs.le.0) then
+          do k=1,nvesel
+            bbry(m)=bbry(m)+rbdrvs(m,k)*vcurrt(k)
+          enddo
         endif
-        do 3594 k=1,nwnh
+        if (iecurr.gt.0) then
+          do k=1,nesum
+            bbry(m)=bbry(m)+rbdrec(m,k)*ecurrt(k)
+          enddo
+        endif
+        if (iacoil.gt.0) then
+          do k=1,nacoil
+            bbry(m)=bbry(m)+rbdrac(m,k)*caccurt(jtime,k)
+          enddo
+        endif
+        do k=1,nwnh
          bbry(m)=bbry(m)+rbdrpc(m,k)*pcurrt(k)
- 3594   continue
+        enddo
         pbry(m)=bbry(m)
         bbry(m)=fwtbry(m)*(wsibry-bbry(m))
- 3596 continue
+      enddo
       nj=nbdry
       if (idebug >= 2) then
         write (106,*) 'ivesel,iecurr,iacoil= ',ivesel,iecurr,iacoil
@@ -533,7 +526,6 @@
 !-----------------------------------------------------------------------
 !--  now get F coil currents from precomputed inverse matrix          --
 !-----------------------------------------------------------------------
-
       do 3670 i=1,nfcoil
         brsp(i)=0.0
         do 3670 j=1,nj
@@ -567,36 +559,31 @@
 !-----------------------------------------------------------------------
 !-- sum of inner F-coils 1-5 A and B zero IFREF=1                     --
 !-----------------------------------------------------------------------
-      if (ifref.ne.1) go to 3700
-      do 3690 i=1,5
- 3690 sumif = sumif + brsp(i) + brsp(i+9)
-      sumif = sumif + brsp(8) + brsp(17)
-      do 3695 i=1,5
- 3695 sumifr = sumifr + fcref(i) + fcref(i+9)
-      sumifr = sumifr + fcref(8) + fcref(17)
-      go to 3750
- 3700 continue
+      select case (ifref)
+      case(1)
+        do i=1,5
+          sumif = sumif + brsp(i) + brsp(i+9)
+          sumifr = sumifr + fcref(i) + fcref(i+9)
+        enddo
+        sumif = sumif + brsp(8) + brsp(17)
+        sumifr = sumifr + fcref(8) + fcref(17)
 !-----------------------------------------------------------------------
 !--  sum of F coils selected through FCSUM vanish IFREF=2             --
 !-----------------------------------------------------------------------
-      if (ifref.ne.2) go to 3720
-      do 3705 i=1,nfcoil
- 3705 sumif=sumif+fcsum(i)*brsp(i)/turnfc(i)
-      do 3710 i=1,nfcoil
- 3710 sumifr = sumifr + fcref(i) * fcsum(i)/turnfc(i)
-      go to 3750
- 3720 continue
+      case(2)
+        do i=1,nfcoil
+          sumif = sumif + fcsum(i)*brsp(i)/turnfc(i)
+          sumifr = sumifr + fcref(i)*fcsum(i)/turnfc(i)
+        enddo
 !----------------------------------------------------------------------
 !--  choose boundary flux by minimize coil currents IFREF=3          --
 !----------------------------------------------------------------------
-      if (ifref.eq.3) then
-      do 3725 i=1,nfcoil
- 3725 sumif=sumif+fcref(i)*brsp(i)*fczero(i)
-      do 3730 i=1,nfcoil
- 3730 sumifr = sumifr + fcref(i)**2*fczero(i)
-      go to 3750
-      endif
- 3750 continue
+      case(3)
+        do i=1,nfcoil
+          sumif = sumif + fcref(i)*brsp(i)*fczero(i)
+          sumifr = sumifr + fcref(i)**2*fczero(i)
+        enddo
+      endselect
 !-----------------------------------------------------------------------
 !--  update boundary flux for IFREF=1-3                               --
 !-----------------------------------------------------------------------

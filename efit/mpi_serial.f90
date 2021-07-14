@@ -159,7 +159,7 @@ END SUBROUTINE
 SUBROUTINE mpi_allreduce(sendbuf,recvbuf,count,datatype,op,comm,ierror)
   IMPLICIT NONE
 
-  INTEGER :: sendbuf(count),recvbuf(count),count,datatype,op,comm,ierror
+  INTEGER :: count,sendbuf(count),recvbuf(count),datatype,op,comm,ierror
   INTEGER :: i
 
   DO i=1,count
@@ -174,7 +174,7 @@ END SUBROUTINE
 SUBROUTINE mpi_reduce(sendbuf,recvbuf,count,datatype,op,root,comm,ierror)
   IMPLICIT NONE
 
-  INTEGER :: sendbuf(count),recvbuf(count),count,datatype,op,root,comm,ierror
+  INTEGER :: count,sendbuf(count),recvbuf(count),datatype,op,root,comm,ierror
   INTEGER :: i
 
   DO i=1,count
@@ -246,8 +246,8 @@ SUBROUTINE mpi_sendrecv(sendbuf,scounts,stypes,dest,sendtag,recvbuf,rcounts,    
                         rtypes,source,recvtag,comm,status,ierror)
   IMPLICIT NONE
 
-  INTEGER :: sendbuf(scounts),scounts,stypes,dest,sendtag,recvbuf(rcounts),     &
-             rcounts,rtypes,source,recvtag,comm,status,ierror
+  INTEGER :: scounts,sendbuf(scounts),stypes,dest,sendtag,rcounts,     &
+             recvbuf(rcounts),rtypes,source,recvtag,comm,status,ierror
   INTEGER :: i
 
   DO i=1,MIN(rcounts,scounts)
@@ -323,7 +323,7 @@ SUBROUTINE mpi_allgather(sendbuf,counts,datatypes,recvbuf,countr,displs,        
                          datatyper,comm,ierror)
   IMPLICIT NONE
 
-  INTEGER :: sendbuf(counts),recvbuf(counts),counts,countr,datatypes,datatyper, &
+  INTEGER :: counts,sendbuf(counts),recvbuf(counts),countr,datatypes,datatyper, &
              displs,comm,ierror
   INTEGER :: i
 
@@ -340,7 +340,7 @@ SUBROUTINE mpi_gather(sendbuf,counts,datatypes,recvbuf,countr,displs,datatyper, 
                       comm,ierror)
   IMPLICIT NONE
 
-  INTEGER :: sendbuf(counts),recvbuf(counts),counts,countr,datatypes,datatyper, &
+  INTEGER :: counts,sendbuf(counts),recvbuf(counts),countr,datatypes,datatyper, &
              displs,comm,ierror
   INTEGER :: i
 
@@ -357,7 +357,7 @@ SUBROUTINE mpi_allgatherv(sendbuf,counts,datatypes,recvbuf,countr,displs,       
                           datatyper,comm,ierror)
   IMPLICIT NONE
 
-  INTEGER :: sendbuf(counts),recvbuf(counts),counts,countr,datatypes,datatyper, &
+  INTEGER :: counts,sendbuf(counts),recvbuf(counts),countr,datatypes,datatyper, &
              displs,comm,ierror
   INTEGER :: i
 
@@ -374,7 +374,7 @@ SUBROUTINE mpi_alltoallv(sendbuf,scounts,sdispls,datatypes,recvbuf,rcounts,     
                          rdispls,datatyper,comm,ierror)
   IMPLICIT NONE
 
-  INTEGER :: sendbuf(scounts),scounts,sdispls,recvbuf(rcounts),rcounts,rdispls, &
+  INTEGER :: scounts,sendbuf(scounts),sdispls,rcounts,recvbuf(rcounts),rdispls, &
              datatypes,datatyper,comm,ierror
   INTEGER :: i
 

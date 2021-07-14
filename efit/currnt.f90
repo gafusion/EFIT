@@ -1,17 +1,9 @@
-      subroutine currnt(iter,jtime,ixn,nitett,kerror)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          currnt computes the current density on the r-z mesh.    **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          21/10/83..........first created                         **
@@ -19,6 +11,7 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
+      subroutine currnt(iter,jtime,ixn,nitett,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
       use set_kinds
       include 'eparmdud129.inc'
@@ -77,10 +70,10 @@
         tcurrt=tcurrt+pcurrt(kk)
   130 continue
       cratio=cpasma(jtime)/tcurrt
-      do 140 kk=1,nwnh
+      do kk=1,nwnh
         pcurrt(kk)=pcurrt(kk)*cratio
         pcurrw(kk)=pcurrw(kk)*cratio
-  140 continue
+      enddo
       cj0=cratio/darea/2.
       fcentr=twopi*2.*saaa**2*cj0
       fbrdy=fcentr*sqrt(1.-4.*salpha)
@@ -449,16 +442,16 @@
       cratio_ext = cratio * cratio_ext
       cratiop_ext = cratio_ext
       cratiof_ext = cratio_ext
-      do 2010 kk=1,nwnh
+      do kk=1,nwnh
         pcurrt(kk)=pcurrt(kk)*cratio
         pcurrtpp(kk)=pcurrtpp(kk)*cratio
         if ((xpsi(kk).ge.0.0).and.(xpsi(kk).le.1.0)) then
            tcurrp=tcurrp+pcurrt(kk)
         endif
- 2010 continue
-      do 2020 i=nfcoil+1,nfnpcr
+      enddo
+      do i=nfcoil+1,nfnpcr
         brsp(i)=cratio*brsp(i)
- 2020 continue
+      enddo
       if (npsi_ext > 0) then
         prbdry=prbdry*cratio*cratio
       endif
@@ -562,28 +555,27 @@
         call errctrl_msg('currnt','abs(tcurrt) <= 1.0e-10')
         return
       endif
-
       cratio=cpasma(jtime)/tcurrt
-      do 4000 kk=1,nwnh
+      do kk=1,nwnh
         pcurrt(kk)=pcurrt(kk)*cratio
- 4000 continue
+      enddo
       dfsqe=0.5_dp
       ddpsi=1./real(nw-1,dp)
       sinow=0.0
-      do 4020 i=2,nw-1
+      do i=2,nw-1
         sinow=sinow+ddpsi
         dfsqe=dfsqe+((1.-sinow**enf)**emf*(1.-gammaf)+gammaf)
- 4020 continue
+      enddo
       dfsqe=dfsqe*2.*twopi/tmu*rzero*cratio*rbetap/darea*ddpsi
       if (nitett.gt.1) go to 4100
       if (icurrt.ne.2.and.icurrt.ne.5) go to 4100
       if (fwtbp.le.0.0) go to 4100
-      do 4050 i=1,kppcur
+      do i=1,kppcur
         brsp(nfcoil+i)=0.0
- 4050 continue
-      do 4060 i=1,kffcur
+      enddo
+      do i=1,kffcur
         brsp(nbase+i)=0.0
- 4060 continue
+      enddo
       brsp(nfcoil+1)=cratio/rzero
       brsp(nbase+1)=cratio*rbetap*rzero
       brsp(nfcoil+2)=-brsp(nfcoil+1)
@@ -980,16 +972,16 @@
 !--  adjust to match total current                                --
 !-------------------------------------------------------------------
       cratio=cpasma(jtime)/tcurrt
-      do 6010 kk=1,nwnh
+      do kk=1,nwnh
         pcurrt(kk)=pcurrt(kk)*cratio
         pcurrw(kk)=pcurrw(kk)*cratio
         if ((xpsi(kk).ge.0.0).and.(xpsi(kk).le.1.0)) then
            tcurrp=tcurrp+pcurrt(kk)
         endif
- 6010 continue
-      do 6020 i=nfcoil+1,nfcoil+kwcurn
+      enddo
+      do i=nfcoil+1,nfcoil+kwcurn
         brsp(i)=cratio*brsp(i)
- 6020 continue
+      enddo
       return
 
       end

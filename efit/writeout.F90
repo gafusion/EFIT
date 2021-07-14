@@ -643,8 +643,9 @@
 !without this statement.
         if (ktear.gt.100) write(6,*) 'weird value of ktear=',ktear
         if (ishot.gt.152000) vbit = 80
-        open(unit=neqdsk,                       file=eqdsk,status='new', &
-           recl=72,delim='APOSTROPHE')
+        open(unit=neqdsk,file=eqdsk,status='new', &
+           recl=72,delim='quote')
+!           recl=72,delim='APOSTROPHE')
         write (neqdsk,machinein)
         write (neqdsk,in1)
         write (neqdsk,inwant)
@@ -844,8 +845,6 @@
            ,mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210 &
            ,ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels,idebug,jdebug &
            ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi
-      namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace &
-           ,symmetrize,backaverage,lring
       data mcontr/35/,lfile/36/,ifpsi/0/
       data currn1/0.0/,currc79/0.0/,currc139/0.0/,currc199/0.0/ &
                       ,curriu30/0.0/,curriu90/0.0/,curriu150/0.0/ &
@@ -992,8 +991,9 @@
 !-------------------------------------------------------------------------------
 !--  Write K file                                                             --
 !-------------------------------------------------------------------------------
-      open(unit=neqdsk,                       file=eqdsk,status='new', &
-           recl=72,delim='APOSTROPHE')
+      open(unit=neqdsk,file=eqdsk,status='new', &
+           recl=72,delim='quote')
+!           recl=72,delim='APOSTROPHE')
       write (neqdsk,machinein)
       write (neqdsk,in1)
       write (neqdsk,inwant)

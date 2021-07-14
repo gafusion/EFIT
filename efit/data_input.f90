@@ -125,9 +125,6 @@
       namelist/iner/keecur,ecurbd,keefnc,eetens,keebdry,kee2bdry, & 
                     eebdry,ee2bdry,eeknt,keeknt,keehord 
       namelist/insxr/ksxr0,ksxr2,idosxr 
-      namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi,as, & 
-        as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, & 
-        hacoil,wacoil 
       namelist/edgep/symmetrize, & 
        rpress , pressr , sigpre, npress , kprfit, kpressb, ndokin, & 
        kppfnc,  kfffnc,  kffcur, kppcur,  mxiter, error, errmin, keecur 
@@ -142,37 +139,6 @@
                     zpresw,kplotp,sbetaw,nsplot,comega,kcomega,xomega & 
                     ,kdovt,romegat,zomegat,sigome,scalepw & 
                     ,kwwfnc,kwwknt,wwknt,wwtens 
-      namelist/efitin/istore,scrape,nextra, & 
-           iexcal,itrace,xltype,ivesel,fwtsi,fwtmp2,fwtcur,iprobe, & 
-           itek,limid,qvfit,fwtbp,kffcur,kppcur,fwtqa,mxiter,  & 
-           serror,ibatch,ifitvs,fwtfc,iecurr,itimeb,idtime,znose, & 
-           iavem,iaved,iavev,idite,ifcurr,imerci,iacoil,iaveus, & 
-           cutip,lookfw,error,errmin,xltype_180,icprof,condin, & 
-           icutfp,keqdsk,kcaldia,fcurbd,pcurbd,ircfact,zelip, & 
-           kbound,alphafp,kskipvs,vsdamp,kframe,dnmin,vzeroj, & 
-           fwtdlc,elomin,fwtgam,saicon,fwacoil,itimeu,nccoil, & 
-           kcalpa,kcgama,calpa,cgama,xalpa,xgama,n1coil,rexpan, & 
-           psiwant,ibtcomp,icinit,iplim,kwripre,relax,rzeroj,kzeroj, & 
-           kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens, & 
-           kwwfnc,kwwknt,wwknt,wwtens,sizeroj,fwtec, & 
-           ppbdry,kppbdry,pp2bdry,kpp2bdry, & 
-           ffbdry,kffbdry,ff2bdry,kff2bdry,errsil,nicoil, & 
-           wwbdry,kwwbdry,ww2bdry,kww2bdry,fwtec,fitdelz,fitsiref, & 
-           nbdry,rbdry,zbdry,sigrbd,sigzbd,nbskip,msebkp, & 
-           ktear,keecur,ecurbd,keefnc,eetens,eeknt,keeknt, & 
-           keebdry,kee2bdry,eebdry,ee2bdry,kersil,iout,ixray, & 
-           use_alternate_pointnames, alternate_pointname_file, & 
-           do_spline_fit,table_dir,input_dir,store_dir & 
-          ,kautoknt,akchiwt,akerrwt,akgamwt,akprewt, & 
-           kakloop,aktol,kakiter,psiecn,dpsiecn,relaxdz,isolve & 
-          ,iplcout,errdelz,oldcomp,imagsigma,errmag,errmagb & 
-          ,fitfcsum,fwtfcsum,fixpp & 
-          ,mse_quiet,mse_spave_on,kwaitmse,dtmsefull & 
-          ,mse_strict,t_max_beam_off,ifitdelz,scaledz & 
-          ,mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210 & 
-          ,ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels,idebug,jdebug & 
-          ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt & 
-          ,ifindopt,tolbndpsi 
       namelist/profile_ext/npsi_ext,pprime_ext,ffprim_ext,psin_ext, & 
       geqdsk_ext,sign_ext,scalepp_ext,scaleffp_ext,shape_ext,dr_ext, & 
       dz_ext,rc_ext,zc_ext,a_ext,eup_ext,elow_ext,dup_ext,dlow_ext, & 
@@ -481,7 +447,12 @@
       ktear=0 
  
       read (nin,in1,iostat=istat) 
-      if (istat/=0) then 
+!--roundoff differences can throw off zlim if limiter corners
+!--are too close to grid points (maybe zlim needs fixing...)
+      do i=1,limitr
+        ylim(i)=ylim(i)-1.e-10_dp
+      enddo
+      if (istat>0) then 
         backspace(nin) 
         read(nin,fmt='(A)') line 
         write(*,'(A)') 'Invalid line in namelist in1: '//trim(line) 
@@ -525,7 +496,7 @@
       rrmsels(1)=-10. 
 
       read (nin,in_msels,iostat=istat) 
-      if (istat/=0) then 
+      if (istat>0) then 
         backspace(nin) 
         read(nin,fmt='(A)') line 
         !if (trim(line)/="/") write(*,'(A)') 'Invalid line in namelist in_msels: '//trim(line) 
@@ -543,7 +514,7 @@
                     semsels(i),iemsels(i) 
                iermselt(jtime,i)=iemsels(i) 
              enddo 
-             if (istat/=0) then 
+             if (istat>0) then 
                  im1=i-1 
                  write (6,*) 'msels_all i=',i,' bmsels(i-1)= ',bmsels(im1) 
                  stop 
@@ -627,6 +598,7 @@
       setlim_ext=-10. 
       reflect_ext='no' 
 ! 
+
       open(unit=nin,status='old',file=ifname(jtime)) 
       if (idebug /= 0) write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext 
       read(nin,profile_ext,err=11777,iostat=istat) 
@@ -708,7 +680,7 @@
         if (limitr.le.0) then 
           do i=1,limitr_ext 
             xlim(i)=xlim_ext(i) 
-            ylim(i)=ylim_ext(i) 
+            ylim(i)=ylim_ext(i)-1.e-10_dp 
           enddo 
         endif 
       endif 
@@ -1181,8 +1153,10 @@
           call errctrl_msg('data_input','shot number not set') 
           return 
       end if 
-      if ((limitr.gt.0).and.(xlim(1).le.-1.0)) read (nin,5000) & 
-           (xlim(i),ylim(i),i=1,limitr) 
+      if ((limitr.gt.0).and.(xlim(1).le.-1.0)) then
+        read (nin,5000) (xlim(i),ylim(i),i=1,limitr) 
+        ylim(i)=ylim(i)-1.e-10_dp
+      endif
       if ((nbdry.gt.0).and.(rbdry(1).le.-1.0)) read (nin,5020) & 
           (rbdry(i),zbdry(i),i=1,nbdry) 
       if (kprfit.gt.0) then 
@@ -1514,7 +1488,7 @@
 ! 
       xlmint=xlmin 
       xlmaxt=xlmax 
-! 
+!
       call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag) 
 !----------------------------------------------------------------------- 
 !--  set up parameters for all modes                                  -- 

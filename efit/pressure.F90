@@ -422,8 +422,7 @@
         open(unit=nin,status='old',file=edatname,err=12916)
         close(unit=nin,status='delete')
 12916 continue
-        open(unit=nin,status='new',file=edatname &
-                                 )
+        open(unit=nin,status='new',file=edatname,delim='quote')
         write (nin,edat)
         close(unit=nin)
       endif

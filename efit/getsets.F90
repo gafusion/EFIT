@@ -27,83 +27,6 @@
                ,devpsiin,rnavpsiin,devfcin,rnavfcin,devein,rnavecin
       character*82 snap_ext
 !vasorg      character*82 snap_file
-      namelist/in1/ishot,itime,itimeu,qvfit,plasma,expmp2,coils,btor, &
-           fwtsi,fwtcur,limitr,fwtmp2,kffcur,kppcur,fwtqa,ierchk, &
-           fwtbp,serror,nextra,scrape,itrace,itek,xltype,rcentr,bitip, &
-           psibit,bitmpi,denr,denv,siref,fwtfc,brsp,bitfc,iecurr,iplim, &
-           ecurrt,ifitvs,vloop,dflux,ifcurr,iavem,icprof,currn1,n1coil, &
-           pnbeam,error,errmin,mxiter,xltype_180,icutfp,keqdsk,ibtcomp, &
-           fcurbd,pcurbd,kbound,alphafp,kskipvs,vsdamp,kframe,zelip, &
-           fwtdlc,sigdlc,elomin,kcalpa,kcgama,calpa,cgama,xalpa,xgama, &
-           kzeroj,rzeroj,iaveus,relax,fwtec,bitec,fitsiref, &
-           kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens, &
-           kwwfnc,kwwknt,wwknt,wwtens,nbdry,rbdry,zbdry, &
-           ppbdry,kppbdry,pp2bdry,kpp2bdry, &
-           ffbdry,kffbdry,ff2bdry,kff2bdry, &
-           wwbdry,kwwbdry,ww2bdry,kww2bdry &
-           ,ktear,kersil,iout,ixray,table_dir,input_dir,store_dir &
-           ,kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve &
-           ,iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum &
-           ,appendsnap,vbit,nbdrymx,efitversion,ifindopt,tolbndpsi
-      namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
-           znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
-           oldcomp,currc199,curriu30,curriu90, &
-           curriu150,curril30,curril90,curril150,ifitdelz,scaledz
-      namelist/inms/xmprcg,xmp_k,vresxmp,t0xmp,psircg,psi_k,vrespsi &
-           ,t0psi,fcrcg,fc_k,vresfc,t0fc,ercg,e_k,vrese,t0e,bcrcg &
-           ,bc_k,vresbc,t0bc,prcg,p_k,vresp,t0p,bti322in,curc79in &
-           ,curc139in,curc199in,devxmpin,rnavxmpin,devpsiin,rnavpsiin &
-           ,devfcin,rnavfcin,devein,rnavecin
-      namelist/ink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace &
-           ,symmetrize,backaverage
-      namelist/ins/tgamma,sgamma,fwtgam,rrrgam,zzzgam,aa1gam,aa2gam, &
-                   aa3gam,aa4gam,aa5gam,aa6gam,aa7gam,msebkp, &
-            msefitfun,mse_quiet,mse_spave_on,kwaitmse, &
-            dtmsefull,mse_strict,t_max_beam_off,ok_30rt,ok_210lt,&
-            mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210,&
-            tgammauncor,v30lt,v30rt,v210lt,v210rt
-      namelist/in_msels/bmsels,sbmsels,fwtbmsels,rrmsels,zzmsels, &
-            l1msels,l2msels,l4msels,emsels,semsels,fwtemsels,kdomsels, &
-            fmlscut,synmsels,avemsels
-      namelist/ina/spatial_avg_gam
-      namelist/inece/necein,teecein0,feece0,errorece0,fwtece0,fwtecebz0 &
-           ,ecefit,ecebzfit,kfitece,kinputece,kcallece,nharm &
-           ,kfixro,rteo,zteo,kfixrece,rtep,rtem,rpbit,rmbit,robit &
-           ,nfit,kcmin,fwtnow,mtxece
-      namelist/iner/keecur,ecurbd,keefnc,eetens,keebdry,kee2bdry, &
-                    eebdry,ee2bdry,eeknt,keeknt,keehord
-      namelist/efitin/ishot,istore,timeb,dtime,mtime,scrape,nextra, &
-           iexcal,itrace,xltype,ivesel,fwtsi,fwtmp2,fwtcur,iprobe, &
-           itek,limid,qvfit,fwtbp,kffcur,kppcur,fwtqa,mxiter,  &
-           serror,ibatch,ifitvs,fwtfc,iecurr,itimeb,idtime,znose, &
-           iavem,iaved,iavev,idite,ifcurr,imerci,iacoil,iaveus, &
-           cutip,lookfw,error,errmin,xltype_180,icprof,condin, &
-           icutfp,keqdsk,kcaldia,fcurbd,pcurbd,ircfact,zelip, &
-           kbound,alphafp,kskipvs,vsdamp,kframe,dnmin,vzeroj, &
-           fwtdlc,elomin,fwtgam,saicon,fwacoil,itimeu,nccoil, &
-           kcalpa,kcgama,calpa,cgama,xalpa,xgama,n1coil,rexpan, &
-           psiwant,ibtcomp,icinit,iplim,kwripre,relax,rzeroj,kzeroj, &
-           kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens, &
-           kwwfnc,kwwknt,wwknt,wwtens,sizeroj,fwtec, &
-           ppbdry,kppbdry,pp2bdry,kpp2bdry,nicoil,oldcomp, &
-           ffbdry,kffbdry,ff2bdry,kff2bdry,msefitfun, &
-           wwbdry,kwwbdry,ww2bdry,kww2bdry,fwtec,fitdelz,fitsiref, &
-           nbdry,rbdry,zbdry,sigrbd,sigzbd,nbskip,msebkp, &
-           ktear,keecur,ecurbd,keefnc,eetens,eeknt,keeknt, &
-           keebdry,kee2bdry,eebdry,ee2bdry,kersil,iout,ixray, &
-           use_alternate_pointnames, alternate_pointname_file, &
-           do_spline_fit,table_dir,input_dir,store_dir,kedgep, &
-           pedge,pe_psin,pe_width,kedgef,f2edge,fe_psin,fe_width, &
-           psiecn,dpsiecn,relaxdz,fitzts,isolve,stabdz &
-           ,iplcout,errdelz,imagsigma,errmag,ksigma,saimin,errmagb &
-           ,write_Kfile,fitfcsum,fwtfcsum,appendsnap &
-           ,mse_quiet,mse_spave_on,kwaitmse,dtmsefull &
-           ,mse_strict,t_max_beam_off,ifitdelz,scaledz &
-           ,mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210 &
-           ,ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels,idebug,jdebug &
-           ,synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi
-      namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace &
-           ,symmetrize,backaverage,lring
       data mcontr/35/,lfile/36/,ifpsi/0/
       data currn1/0.0/,currc79/0.0/,currc139/0.0/,currc199/0.0/ &
                       ,curriu30/0.0/,curriu90/0.0/,curriu150/0.0/ &
@@ -332,51 +255,6 @@
                ,devpsiin,rnavpsiin,devfcin,rnavfcin,devein,rnavecin
       character*82 snap_ext
 !vasorg      character*82 snap_file
-      namelist/in1/ishot,itime,itimeu,qvfit,plasma,expmp2,coils,btor, &
-           fwtsi,fwtcur,limitr,fwtmp2,kffcur,kppcur,fwtqa,ierchk, &
-           fwtbp,serror,nextra,scrape,itrace,itek,xltype,rcentr,bitip, &
-           psibit,bitmpi,denr,denv,siref,fwtfc,brsp,bitfc,iecurr,iplim, &
-           ecurrt,ifitvs,vloop,dflux,ifcurr,iavem,icprof,currn1,n1coil, &
-           pnbeam,error,errmin,mxiter,xltype_180,icutfp,keqdsk,ibtcomp, &
-           fcurbd,pcurbd,kbound,alphafp,kskipvs,vsdamp,kframe,zelip, &
-           fwtdlc,sigdlc,elomin,kcalpa,kcgama,calpa,cgama,xalpa,xgama, &
-           kzeroj,rzeroj,iaveus,relax,fwtec,bitec,fitsiref, &
-           kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens, &
-           kwwfnc,kwwknt,wwknt,wwtens,nbdry,rbdry,zbdry, &
-           ppbdry,kppbdry,pp2bdry,kpp2bdry, &
-           ffbdry,kffbdry,ff2bdry,kff2bdry, &
-           wwbdry,kwwbdry,ww2bdry,kww2bdry &
-           ,ktear,kersil,iout,ixray,table_dir,input_dir,store_dir &
-           ,kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve &
-           ,iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum &
-           ,appendsnap,vbit,nbdrymx,efitversion,ifindopt,tolbndpsi
-      namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
-           znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
-           oldcomp,currc199,curriu30,curriu90, &
-           curriu150,curril30,curril90,curril150,ifitdelz,scaledz
-      namelist/inms/xmprcg,xmp_k,vresxmp,t0xmp,psircg,psi_k,vrespsi &
-           ,t0psi,fcrcg,fc_k,vresfc,t0fc,ercg,e_k,vrese,t0e,bcrcg &
-           ,bc_k,vresbc,t0bc,prcg,p_k,vresp,t0p,bti322in,curc79in &
-           ,curc139in,curc199in,devxmpin,rnavxmpin,devpsiin,rnavpsiin &
-           ,devfcin,rnavfcin,devein,rnavecin
-      namelist/ink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace &
-           ,symmetrize,backaverage
-      namelist/ins/tgamma,sgamma,fwtgam,rrrgam,zzzgam,aa1gam,aa2gam, &
-                   aa3gam,aa4gam,aa5gam,aa6gam,aa7gam,msebkp, &
-            msefitfun,mse_quiet,mse_spave_on,kwaitmse, &
-            dtmsefull,mse_strict,t_max_beam_off,ok_30rt,ok_210lt,&
-            mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210,&
-            tgammauncor,v30lt,v30rt,v210lt,v210rt
-      namelist/in_msels/bmsels,sbmsels,fwtbmsels,rrmsels,zzmsels, &
-            l1msels,l2msels,l4msels,emsels,semsels,fwtemsels,kdomsels, &
-            fmlscut,synmsels,avemsels
-      namelist/ina/spatial_avg_gam
-      namelist/inece/necein,teecein0,feece0,errorece0,fwtece0,fwtecebz0 &
-           ,ecefit,ecebzfit,kfitece,kinputece,kcallece,nharm &
-           ,kfixro,rteo,zteo,kfixrece,rtep,rtem,rpbit,rmbit,robit &
-           ,nfit,kcmin,fwtnow,mtxece
-      namelist/iner/keecur,ecurbd,keefnc,eetens,keebdry,kee2bdry, &
-                    eebdry,ee2bdry,eeknt,keeknt,keehord
       namelist/efitin/ishot,istore,timeb,dtime,mtime,scrape,nextra, &
            iexcal,itrace,xltype,ivesel,fwtsi,fwtmp2,fwtcur,iprobe, &
            itek,limid,qvfit,fwtbp,kffcur,kppcur,fwtqa,mxiter,  &
@@ -490,17 +368,17 @@
 #if defined(USEMPI)
         if (nproc > 1) then
           if (rank == 0) then
-            open(unit=nout,status='new',file='fitout.dat')
+            open(unit=nout,status='new',file='fitout.dat',delim='quote')
           endif
           call MPI_BARRIER(MPI_COMM_WORLD,ierr)
           if (rank > 0) then
-            open(unit=nout,status='old',file='fitout.dat')
+            open(unit=nout,status='old',file='fitout.dat',delim='quote')
           endif
         else
-          open(unit=nout,status='new',file='fitout.dat')
+          open(unit=nout,status='new',file='fitout.dat',delim='quote')
         endif
 #else
-        open(unit=nout,status='new',file='fitout.dat')
+        open(unit=nout,status='new',file='fitout.dat',delim='quote')
 #endif
       endif
 ! MPI <<<
@@ -571,7 +449,7 @@
 !----------------------------------------------------------------------
       if (iand(iout,32).ne.0) then
          open(unit=nin,status='unknown',file='efit_snap.dat_out', &
-              err=11231)
+              delim='quote',err=11231)
          write(nin,efitin)
 11231    close(unit=nin)
       endif

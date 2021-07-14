@@ -107,7 +107,7 @@
 
       read (mcontr,in3, iostat=istat)
 
-      if (istat/=0) then
+      if (istat>0) then
         backspace(mcontr)
         read(mcontr,fmt='(A)') line
         write(*,'(A)') &
@@ -168,7 +168,7 @@
       i = 0
       do
         read(31,FMT='(I10)',iostat=reason) shot_tables(i+1)
-        if (reason/=0) EXIT
+        if (reason>0) EXIT
         i = i+1
       end do
       nfiles = i 

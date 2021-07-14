@@ -402,8 +402,7 @@
       open(unit=80,status='old',file='dprobe.new',err=12914)
       close(unit=80,status='delete')
 12914 continue
-      open(unit=80,status='new',file='dprobe.new' &
-                                 )
+      open(unit=80,status='new',file='dprobe.new',delim='quote')
       write (80,in3)
       close(unit=80)
 22340 continue

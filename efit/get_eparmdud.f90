@@ -155,7 +155,7 @@ subroutine get_eparmdud_dependents
   open(unit=nin,status='old',file=filename)
   read (nin,in1,iostat=istat)
 
-  if (istat/=0) then
+  if (istat>0) then
     backspace(nin)
     read(nin,fmt='(A)') line
     write(*,'(A)') &
