@@ -1,4 +1,3 @@
-      PROGRAM efund
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
@@ -11,45 +10,13 @@
 !**     REFERENCES:                                                  **
 !**          (1) d.w. swain and g.h. neilson, nucl. fusion           **
 !**              22 (1982) 1015.                                     **
-!**          (2)                                                     **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**          28/01/85..........modified for D3D                      **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
-!efund module
-!Revisions:
-!$Log: efundud.f90,v $
-!Revision 1.3.2.1  2008/11/18 22:24:13  radhakri
-!*** empty log message ***
-!
-!Revision 1.3  2007/06/12 04:04:04  renq
-!*** empty log message ***
-!
-!Revision 1.2  2007/06/01 05:29:02  renq
-!
-!efundud.f90: added by Qilong Ren
-!  main EFUND program. Allocatable arrays are used to accomadate
-!  different grid sizes such as 65x65,129x129,257x257 and 513x513.
-!  Some memory problem with grid size 1025x1025 is to be fixed.
-!
-!Revision 1.3  2007/04/24 18:26:34  renq
-!dummy arguments can not be allocatable arrays.
-!
-!Revision 1.2  2007/04/24 05:43:46  renq
-!unnecessary write statements removed
-!
-!Revision 1.1  2007/04/24 05:16:17  renq
-!Initial revision
-!
-      integer*4 :: time_cc, time_cr, time_cm
-      real*8 :: elapsed_time
-
-      call system_clock(time_cc,time_cr,time_cm)
-      elapsed_time = time_cc*(1.0/time_cr)
+      PROGRAM efund
 
       write(*,*) 'Reading namelist'
       CALL efund_getsizes
@@ -58,10 +25,6 @@
       CALL efund_matrix
       write(*,*) 'Calling grid subroutine'
       CALL efund_grid
-
-      call system_clock(time_cc,time_cr,time_cm)
-      elapsed_time = (time_cc*(1.0/time_cr))-elaped_time
-      write(*,*) "CPU time used = ",elapsed_time/60.0," min"
 
       STOP 'GREEN TABLE GENERATED!'
       END PROGRAM efund
@@ -73,14 +36,8 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          15/07/83..........first created                         **
-!**                                                                  **
-!**                                                                  **
 !**                                                                  **
 !**********************************************************************
       SUBROUTINE e1coef(coef,  nl, ne)
@@ -123,10 +80,6 @@
 !**          the magnetic probes and E coils.                        **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
@@ -195,10 +148,6 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          15/07/83..........first created                         **
 !**                                                                  **
@@ -242,7 +191,6 @@
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          flux computes the mutual inductance/2/pi between        **
 !**          two circulars of rectangular cross section.             **
-!**                                                                  **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**       r1,r2...........radius of first and second coil            **
