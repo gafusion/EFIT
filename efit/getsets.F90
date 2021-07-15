@@ -349,13 +349,10 @@
         ilaser=1
       endif
 
-
 !----------------------------------------------------------------------
-!--   Changed kdata <= 7 to kdata < 7            --
-!--   Snap-Extension mode = 7              --
+!--   Snap-Extension mode = 7                                        --
 !----------------------------------------------------------------------
-   10 if (kdata.ge.5.and.kdata.lt.7) go to 3000
-      if (kdata.eq.8) go to 3000
+      if (kdata.eq.5.or.kdata.eq.6.or.kdata.eq.8) go to 3000
 ! MPI >>>
 ! ONLY root process can check for existence of fitout.dat file
       if (rank == 0) then
@@ -417,7 +414,6 @@
 !----------------------------------------------------------------------
       if (kdata.eq.7) then
 
-
          snap_ext = adjustl(snap_ext)
 
          snap_file = 'efit_snap.dat_'//snap_ext
@@ -436,7 +432,6 @@
            file= snap_file       )
          snapfile=snap_file
       endif
-
 
 95    continue
       read (neqdsk,efitin,end=108)
@@ -805,35 +800,4 @@
       call mpi_finalize(ierr)
 #endif
       stop
-
- 4042 format (1x,a42,1x,a3)
- 4958 format ('#!/bin/csh -f')
- 4960 format ('      runefit.sc k',a12)
- 4962 format ('#',/,'exit')
- 4970 format (2x,a,1x,a,1x,a,1x,a)
- 4980 format (i5)
- 5000 format (2e12.6)
- 5500 format (/,10x,'EFITD Version  ',2a5,/)
- 6000 format (/,1x,'type mode (2=file, 3=snap, 4=time', &
-               ', 5=input, 6=com file, 7=snap_ext,',    &
-               ' 8=pefit):')
- 6040 format (/,1x,'type shot #, start time(ms), time step(ms), steps' &
-        ,'(<1001):')
- 6080 format (/,1x,'type limiter position (cm, 0=ptdata):')
- 6090 format(' enter number of extra field lines to trace:')
- 6091 format(' enter scrape off depth(m),'/ &
-       '       sense of tracing (+1 for down, -1 for up),'/ &
-       '       ixstrt (+1 for start on outside, -1' &
-       ' for start inside):')
- 6100 format(/,1x,'type plot mode (0=none, 1=tektronix, 2=versatec, 3=qms, -=x ray):')
- 6200 format (/,1x,'number of time slices?')
- 6220 format (/,1x,'type input file names:')
- 6230 format (1x,'#')
- 6240 format (a)
- 6610 format (/,1x,'command file name ( 0=none) ?')
- 6617 format (/,1x,'type snap file extension (def for default):')
- 6620 format (a)
- 6700 format (a1,a12)
-30000 format (i9)
-30200 format (10f3.0)
       end subroutine getsets

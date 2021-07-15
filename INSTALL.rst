@@ -18,6 +18,16 @@ all other third-party libraries and simply build with::
     make 
     make test
 
+This will work on Ubuntu (20.04 and possibly older verions) as long as the following
+packages have been installed (call apt-get to install)::
+    git (optional)
+    build-essential
+    cmake
+    gfortran
+
+It will also work on Mac with similar libraries (TO DO: list) (can be obtained with
+brew install)
+
 Configuring third-party libraries
 =================================
 

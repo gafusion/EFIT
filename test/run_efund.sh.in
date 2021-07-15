@@ -1,6 +1,11 @@
 #!/bin/bash
 BINDIR=@CMAKE_BINARY_DIR@
 
+! grep -q 'NW = [0-9]\{1,5\}' mhdin.dat && echo 'NW not found' && exit 1
+sed 's/NW = [0-9]\{1,5\}/NW = @GRID_SIZE@/g' mhdin.dat > mhdin.dat.new && mv mhdin.dat.new mhdin.dat
+! grep -q 'NH = [0-9]\{1,5\}' mhdin.dat && echo 'NH not found' && exit 1
+sed 's/NH = [0-9]\{1,5\}/NH = @GRID_SIZE@/g' mhdin.dat > mhdin.dat.new && mv mhdin.dat.new mhdin.dat
+
 # Remove output to avoid errors, ensure clean test
 for file in mhdout.dat dprobe.dat rfcoil.ddd brzgfc.dat; do
     rm -f ${file}

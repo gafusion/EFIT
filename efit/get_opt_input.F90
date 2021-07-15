@@ -1,8 +1,4 @@
-subroutine get_opt_input(ktime)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          getsets performs inputing, pulled out of getsets for    **
@@ -10,19 +6,17 @@ subroutine get_opt_input(ktime)
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
+!**     7/21: kdata=6 and 8 do the same thing, is 8 unfinished?      **
 !**                                                                  **
 !**********************************************************************
+      subroutine get_opt_input(ktime)
       use set_kinds
       include 'eparmdud129.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       USE mpi_efit
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      character*82 snap_ext
-     
+      character*82 snap_ext     
 
       ! ONLY root process allowed to interface with terminal
       if (rank == 0) then
@@ -52,7 +46,6 @@ subroutine get_opt_input(ktime)
            call MPI_BCAST(snap_ext,82,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
          endif
       endif
-
 
       if (kdata.eq.2) then 
        if (rank == 0) then
@@ -144,15 +137,11 @@ subroutine get_opt_input(ktime)
       endif
 #endif
 
-      3000 continue
-
-
  5500 format (/,10x,'EFITD Version  ',2a5,/)
  6000 format (/,1x,'type mode (2=file, 3=snap, 4=time', &
-               ', 5=input, 6=com file, 7=snap_ext,',    &
-               ' 8=pefit):')
- 6040 format (/,1x,'type shot #, start time(ms), time step(ms), steps' &
-        ,'(<1001):')
+               ', 5=input, 6=com file, 7=snap_ext,',' 8=pefit):')
+ 6040 format (/,1x,'type shot #, start time(ms), time step(ms), steps', &
+              '(<1001):')
  6200 format (/,1x,'number of time slices?')
  6220 format (/,1x,'type input file names:')
  6230 format (1x,'#')

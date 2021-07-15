@@ -26,4 +26,8 @@ set(EFIT_TIME 1)
 set(EFIT_TEST_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/run_efit.sh.in)
 set(EFIT_RESULTS_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/check_efit_results.sh.in)
 
+# This is a shell script used to drive running efit with mpi
+set(EFIT_MPI_EXEC "srun -n 4 ${CMAKE_BINARY_DIR}/efit/efit")
+set(EFIT_MPI_TEST_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/run_efit_mpi.sh.in)
+
 add_subdirectory(DIIID)
