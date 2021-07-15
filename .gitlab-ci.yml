@@ -1,0 +1,62 @@
+#
+# stage0 is a convenience.  We have it set to not run for every MR, but the MR
+# will show a button that you can click to start an MR. 
+#
+# stage1 is done at hip.txcorp.com and is not debug
+#
+# Goal is to eventually have stages for testing:
+#    1. Higher resolution (make separate stage to save time)
+#    2. At NERSC
+#    3. At GA with MDS+
+
+stages:
+  - stage0
+  - stage1
+
+variables:
+  GIT_STRATEGY: fetch
+  GIT_CLEAN_FLAGS: -ffdxq
+  TIMEOUT: 450
+
+
+# The most basic template that most tests will expand upon
+#
+
+.test-basic:
+  interruptible: true
+  only:
+    refs:
+#     Set with CI/CD Shedules - New Schedule
+      - schedules
+      - api
+#     Set with CI/CD Pipelines - Run Pipeline
+      - web
+      - merge_requests
+  dependencies: []
+
+pause-for-approval:
+  extends: .test-basic
+  stage: .pre
+  tags:
+    - stage0
+  only:
+    refs:
+      - merge_requests
+    variables:
+      - $CI_MERGE_REQUEST_EVENT_TYPE == "merged_result"
+      - $CI_MERGE_REQUEST_EVENT_TYPE == "detached"
+  script:
+    - echo "pause-for-approval has no script to run"
+  variables:
+    GIT_STRATEGY: none
+  when: manual
+  allow_failure: false
+
+hip.txcorp:
+  extends: .test-basic
+  stage: stage1
+  script:
+    - mkdir build && cd build # Build out of place
+    - cmake -DTRAP_FP_EXCEPTIONS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING="RelWithDebInfo" ..
+    - make -j4
+    - make test
