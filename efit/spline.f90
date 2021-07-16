@@ -34,7 +34,7 @@
 !
 !-------------------------------------------------------------------------------
       subroutine seva2d(bkx,lx,bky,ly,cs,xl,yl,fs,ier,icalc)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !
       INTEGER*4 ier, lx, ly
@@ -112,7 +112,7 @@
 !------------------------------------------------------------------------------
       subroutine sets2d(s,cs,x,nx,bkx,lx,y,ny,bky,ly,wk,ier)
 !!      use commonblocks,only: bkx,bky
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !
       parameter (krord=4,kzord=4)
@@ -403,7 +403,7 @@
       subroutine spl2bc(rgrid,zgrid,rknot,zknot,copynew)
 !alculates the b-spline coeficients
 !vasorg      parameter (nw=129,nh=129,krord=4,kzord=4)
-      use eparmdud129,only:nw,nh
+      use eparm,only:nw,nh
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       parameter (krord=4,kzord=4)
       real*8,allocatable :: work1(:,:),work2(:),work3(:,:)
@@ -428,7 +428,7 @@
 !-----------------------------------------------------------------------
       subroutine spl2pp(rknot,zknot,copy,breakr,lr,breakz,lz,coef)
 ! translates to pp representation
-      use eparmdud129,only:nw,nh,lr0,lz0
+      use eparm,only:nw,nh,lr0,lz0
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 !vasorg      parameter (nw=129,nh=129,krord=4,kzord=4)
       parameter (krord=4,kzord=4)

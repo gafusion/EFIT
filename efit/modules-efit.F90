@@ -44,14 +44,14 @@
       INTEGER, DIMENSION(8) :: tval 
 
       end module expath
-!eparmdud129
-      module eparmdud129
+!eparm
+      module eparm
       public
 !vas      implicit integer*4 (i-n), real*8 (a-h, o-z)
 !
 !   1997/10/09 00:01:35 peng
 !
-!  @(#)eparmdx.for,v 4.19
+!  @(#)eparm.f,v 4.19
 !  
 
 !     2000/03/11 00:01:29 lao
@@ -62,7 +62,7 @@
 !--  Add 8 new probes for radiative divertor      LLao, 97/03/17  --
 !--  Update MSE to 35 channels                    LLao, 97/04/21  --
 !--  Separate machine dependent configuration                     --
-!--   parameters from eparmdx.for    QPeng,97/09/24  --
+!--   parameters from eparm.f    QPeng,97/09/24  --
 !-- added ntangle for toroidal x-ray   QPeng,98/05/12  --
 !--  Increase MSE channels from 35 to 36                98/12/01  --
 !-------------------------------------------------------------------
@@ -180,7 +180,7 @@
 !test      data input_dir /'/link/efit/'/
 !test      data store_dir /'/link/store/'/
 
-      end module eparmdud129
+      end module eparm
 
       ! Calculate and store global constants like pi, e, gravity, etc.
       module global_constants
@@ -457,7 +457,7 @@
 
 !var_scalem
      module var_scalem
-       use eparmdud129,only:nrsmat,mfnpcr
+       use eparm,only:nrsmat,mfnpcr
        integer*4 infosc
        real*8,dimension(:), allocatable :: rowscale
        real*8,dimension(:), allocatable :: colscale
@@ -486,7 +486,7 @@
       end module var_contor
 !var_mfield
       module var_mfield
-      use eparmdud129,only:npoint
+      use eparm,only:npoint
       real*8,dimension(:),allocatable :: bpol,plengt,bpolz
       real*8 siar,siaz
 !vas      common/mfield/bpol(npoint),plengt(npoint),bpolz(npoint),siar,siaz
@@ -628,7 +628,7 @@
       end module profile_ext_mod
 
 
-! NOTE : keep track of times for which BCOIL and ECOIL data exist (see getecdud129.f90)
+! NOTE : keep track of times for which BCOIL and ECOIL data exist (see getecd.f90)
       module vtime_mod
          integer :: nvtime = -1
          real*8,dimension(:), allocatable :: vtime

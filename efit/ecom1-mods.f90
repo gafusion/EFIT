@@ -4,7 +4,7 @@
       end module var_acoilrz
 
       module var_ccurrn
-      use eparmdud129,only:nwnh
+      use eparm,only:nwnh
       real*8,dimension(:),allocatable :: pcurrt,pcurrw,pcurrtpp
       integer*4 icurrt,icinit,islpfc,icprof
       data islpfc/0/
@@ -267,7 +267,7 @@
       end module var_comco2
 
       module var_check
-      use eparmdud129,only:ntime
+      use eparm,only:ntime
       integer*4,dimension(:,:),allocatable ::erflag
       integer*4 kflag(30),lflag,ktimeo
       end module var_check
@@ -398,7 +398,7 @@
       end module var_slname
 
       module var_ecoil 
-      use eparmdud129,only:necoil
+      use eparm,only:necoil
       real*8,dimension(:),allocatable :: re,ze,we,he,ecid
       end module var_ecoil 
 
@@ -425,7 +425,7 @@
       end module var_limite
 
       module var_mimite
-      use eparmdud129,only:nlimit
+      use eparm,only:nlimit
       integer*4 mimitr,mimitr_180
       real*8,dimension(:),allocatable :: xmim,ymim,xmim_180,ymim_180
       end module var_mimite
@@ -592,7 +592,7 @@
       end module var_fdbkcl
 
       module var_coiln1
-      use eparmdud129,only:ntime,magpri
+      use eparm,only:ntime,magpri
       integer*4 n1coil,iern1
       data n1coil/0/
       real*8,dimension(:),allocatable :: signn1
@@ -605,7 +605,7 @@
 ! micoil = 12  (probably is 6 now)
 !*****
       module var_coilcc
-      use eparmdud129,only:ntime,mccoil,micoil
+      use eparm,only:ntime,mccoil,micoil
       integer*4 nccoil,iercc,nicoil
       data nccoil/1/,nicoil/1/
       logical oldccomp,oldcomp 
@@ -626,7 +626,7 @@
       end module var_coilcc
 
       module var_btcomp
-      use eparmdud129,only:ntime,magpri
+      use eparm,only:ntime,magpri
       integer*4 ibtcomp,ierbtc
       data ibtcomp/1/
       real*8,dimension(:),allocatable :: signbt
@@ -634,7 +634,7 @@
       end module var_btcomp
 
       module var_subic
-      use eparmdud129,only:modef,modep,modew
+      use eparm,only:modef,modep,modew
       integer*4 nodef,nodep,nodew
       real*8,dimension(:),allocatable :: xnodef
       real*8,dimension(:),allocatable :: xnodep
@@ -817,7 +817,7 @@
 
       subroutine set_ecom_mod1_arrays
       use set_kinds
-      use eparmdud129
+      use eparm
       use var_parame, only: vzeroj,sizeroj
       use var_exdata, only: fwacoil
       use var_comco2, only: chordv,chordr

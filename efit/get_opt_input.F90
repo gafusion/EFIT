@@ -13,7 +13,7 @@
 !**********************************************************************
       subroutine get_opt_input(ktime)
       use set_kinds
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       USE mpi_efit

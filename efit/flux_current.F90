@@ -17,7 +17,7 @@
       use set_kinds 
       use var_bunemn
       use commonblocks,only: c,wk,copy,bkx,bky,psiold,psipold, psipp
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -431,7 +431,7 @@
 !**********************************************************************
       subroutine residu(nx,jtime)
       use commonblocks,only: psiold,psipold,psipp
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
@@ -571,7 +571,7 @@
       subroutine steps(ix,ixt,ixout,jtime,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky,zeros,xouts,youts, &
            rsplt,zsplt,csplt
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -1144,7 +1144,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine inicur(ks)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -1262,7 +1262,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine vescur(jtime)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)

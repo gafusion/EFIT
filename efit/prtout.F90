@@ -13,7 +13,7 @@
 !**********************************************************************
       subroutine prtout(it)
       use commonblocks,only: worka2
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)

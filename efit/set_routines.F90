@@ -13,7 +13,7 @@
 !**********************************************************************
       subroutine setece(jtime,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -473,7 +473,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine seter(ypsi,xpsii)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       real*8, intent(inout) :: ypsi
@@ -496,7 +496,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine seterp(ypsi,xpsii)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       real*8, intent(inout) :: ypsi
@@ -517,7 +517,7 @@
       subroutine set_basis_params
 
       use set_kinds
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -644,7 +644,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine setff(ypsi,xpsii)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       real*8, intent(inout) :: ypsi
@@ -668,7 +668,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine setfp(ypsi,xpsii)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       real*8, intent(inout) :: ypsi
@@ -691,7 +691,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine setfpp(ypsi,xpsii)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       real*8, intent(inout) :: ypsi
@@ -714,7 +714,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine setpp(ypsi,xpsii)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       real*8, intent(inout) :: ypsi
@@ -738,7 +738,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine setppp(ypsi,xpsii)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       real*8, intent(inout) :: ypsi
@@ -762,7 +762,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine setpr(ypsi,xpsii)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       real*8, intent(inout) :: ypsi
@@ -786,7 +786,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine setpw(ypsi,xpsii)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       real*8, intent(inout) :: ypsi
@@ -809,7 +809,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine setpwp(ypsi,xpsii)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       real*8, intent(inout) :: ypsi
@@ -833,7 +833,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine setpwpp(ypsi,xpsii)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       real*8, intent(inout) :: ypsi
@@ -858,7 +858,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine setstark(jtime)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)

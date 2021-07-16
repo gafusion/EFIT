@@ -11,7 +11,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine autoknot(ks,lconvr,ktime,mtear,kerror)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -154,7 +154,7 @@
 !    store values read from k file into autoknot variables
 !
       subroutine restore_autoknotvals
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -177,7 +177,7 @@
 !     for example knot locations
 !
       subroutine store_autoknotvals
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -200,7 +200,7 @@
 ! which calls it to evaulate the function being minimized
 !
       function ppakfunc(xknot) ! TODO: kerror is not returned
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -227,7 +227,7 @@
 ! which calls it to evaulate the function being minimized
 !
       function ffakfunc(xknot) ! TODO: kerror is not returned
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -254,7 +254,7 @@
 ! which calls it to evaulate the function being minimized
 !
       function wwakfunc(xknot) ! TODO: kerror is not returned
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -281,7 +281,7 @@
 ! which calls it to evaulate the function being minimized
 !
       function eeakfunc(xknot) ! TODO: kerror is not returned
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)

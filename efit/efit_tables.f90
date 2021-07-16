@@ -1,6 +1,6 @@
    subroutine efit_read_tables
       use set_kinds
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -138,7 +138,7 @@
 
    subroutine set_table_dir
       use set_kinds
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
 

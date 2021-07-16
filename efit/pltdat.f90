@@ -1,5 +1,3 @@
-      subroutine pltout(xplt,yplt,nplt,jtime,ipass, &
-      rmin,rmax,zmin,zmax,ktime,kerror)
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
@@ -8,25 +6,23 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          12/04/84..........first created                         **
 !**          24/07/85..........revised                               **
 !**          93/04   ..........revised to dump plot data             **
 !**                                                                  **
 !**********************************************************************
+      subroutine pltout(xplt,yplt,nplt,jtime,ipass, &
+      rmin,rmax,zmin,zmax,ktime,kerror)
       use set_kinds
       use commonblocks,only: worka,c,wk,copy,bkx,bky,cw,wkw,copyw,bwx, &
            bwy,cj,wkj,copyj,bjx,bjy,cv,wkv,copyv,bvx,bvy,byringr,byringz, &
            xxtra,yxtra,bpxtra,flxtra,fpxtra
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'curve2d129.inc'
+      include 'curve2d.inc'
       include 'env2d.inc'
       common/cww/lwx,lwy
       common/cwj/ljx,ljy 
@@ -9517,7 +9513,7 @@
       use set_kinds
       use commonblocks,only: worka,byringr,byringz,xxtra,yxtra, &
            bpxtra,flxtra,fpxtra
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -9579,32 +9575,22 @@
       return
       end
 
-      subroutine pltcol(ncoil,rc,zc,wc,hc,ac,ac2,inum, &
-      nn, xx, yy, nxy, nmg, note, num, xpos, ypos, ht, &
-      nshd, sx, sy, nsxy, sangle, sgap, ngaps)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          pltcol plots the external coils.                        **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (100)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          08/05/85..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
-!sri-feb1209
+      subroutine pltcol(ncoil,rc,zc,wc,hc,ac,ac2,inum, &
+      nn, xx, yy, nxy, nmg, note, num, xpos, ypos, ht, &
+      nshd, sx, sy, nsxy, sangle, sgap, ngaps)
       use set_kinds
-      use eparmdud129,only:ndim
+      use eparm,only:ndim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 !      parameter (ndim = 700, ncrv=180)
       parameter (ncrv=180)
@@ -9680,26 +9666,18 @@
       enddo
       return
       end
-      subroutine curvec(dataname,jerror,xp,yp,np,ns)
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          CURVEC plots xp and yp based on array jerror.           **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          11/04/86..........first created                         **
 !**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      subroutine curvec(dataname,jerror,xp,yp,np,ns)
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension jerror(1),xp(1),yp(1)
@@ -9717,56 +9695,39 @@
  6200 format (1x,e12.5,1x,e12.5)
       return
       end
-      subroutine curve2d (ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
-            xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle, &
-            xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
-            ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
-           isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
-           igridx, igridy, idash, idot, ichdsh, ichdot,  &
-           thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
-           clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
-           icont, nword, zmat, ix, iy, zinc, line, mode, &
-           lbflg, ithk, ipri, nline, draw, &
-           nshd, sx, sy, nsxy, &
-           sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
-            m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
-           iexit)
-!*************************************************************************
+!***********************************************************************
 !**                                                                   **
-!** MAIN PROGRAM:  MHD FITTING CODE             **
+!**   SUBPROGRAM DESCRIPTION:                                         **
+!**     Determines whether plot parameters are to be written in       **
+!**     ASCII or BINARY format                                        **
 !**                                                                   **
-!**                                                                   **
-!**   SUBPROGRAM DESCRIPTION:                                       **
-!**     Determines whether plot parameters are to be written in  **
-!**     ASCII or BINARY format                  **
-!**                                                                   **
-!**   CALLING ARGUMENTS:                                            **
-!**     ncurve  Number of curves            **
-!**     ipag page dimension flag            **
-!**       0 = page dimension 11 x 8.5       **
-!**       1 = page dimension 8.5 x 11     **
-!**     ibrdr   Page border flag            **
-!**       1 = Suppress page border     **
-!**       0 = Suppress page border     **
-!**     grce >= 0 Enable grace margin     **
-!**     xphy X-coordinate of physical origin     **
-!**     yphy Y-coordinate of physical origin     **
-!**     hight   Font size             **
-!**     bngle   Base rotation angle            **
-!**     bshft   Base translation            **
-!**     ptitle  Plot title             **
-!**     pltlen  Length of plot title                        **
-!**     xtitle  X-axis name                              **
-!**     xnlen   Length of x-axis name                           **
-!**     ytitle  Y-axis name                                **
-!**     ynlen   Length of y-axis name            **
-!**     xlen Length of x-axis legend            **
-!**     ylen    Length of y-axis legend                         **
-!**     iaxis   Axes flag             **
-!**       0 = Linear axis             **
-!**       1 = Log-Linear axis            **
-!**       2 = Linear-Log axis            **
-!**       3 = Logarithmic axis            **
+!**   CALLING ARGUMENTS:                                              **
+!**     ncurve  Number of curves                                      **
+!**     ipag page dimension flag                                      **
+!**       0 = page dimension 11 x 8.5                                 **
+!**       1 = page dimension 8.5 x 11                                 **
+!**     ibrdr   Page border flag                                      **
+!**       1 = Suppress page border                                    **
+!**       0 = Suppress page border                                    **
+!**     grce >= 0 Enable grace margin                                 **
+!**     xphy X-coordinate of physical origin                          **
+!**     yphy Y-coordinate of physical origin                          **
+!**     hight   Font size                                             **
+!**     bngle   Base rotation angle                                   **
+!**     bshft   Base translation                                      **
+!**     ptitle  Plot title                                            **
+!**     pltlen  Length of plot title                                  **
+!**     xtitle  X-axis name                                           **
+!**     xnlen   Length of x-axis name                                 **
+!**     ytitle  Y-axis name                                           **
+!**     ynlen   Length of y-axis name                                 **
+!**     xlen Length of x-axis legend                                  **
+!**     ylen    Length of y-axis legend                               **
+!**     iaxis   Axes flag                                             **
+!**       0 = Linear axis                                             **
+!**       1 = Log-Linear axis                                         **
+!**       2 = Linear-Log axis                                         **
+!**       3 = Logarithmic axis                                        **
 !**     xtck    X-axis tick marks            **
 !**     ytck    Y-axis tick marks            **
 !**     ixnon   X-axis tick marks or labels flag     **
@@ -9895,16 +9856,27 @@
 !**                                                                   **
 !**     REFERENCES:                  **
 !**          (1)  CA-DISSPLA manual              **
-!**          (2)                                                      **
 !**                                                                   **
 !**     RECORD OF MODIFICATION:                                       **
 !**          04/19/93..........first created                          **
 !**                                                                   **
-!**                                                                   **
 !*************************************************************************
-!sri-feb1209
+      subroutine curve2d (ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
+            xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle, &
+            xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
+            ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
+           isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
+           igridx, igridy, idash, idot, ichdsh, ichdot,  &
+           thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
+           clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
+           icont, nword, zmat, ix, iy, zinc, line, mode, &
+           lbflg, ithk, ipri, nline, draw, &
+           nshd, sx, sy, nsxy, &
+           sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
+            m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
+           iexit)
       use set_kinds
-      use eparmdud129,only:ndim
+      use eparm,only:ndim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       ! parameter (ndim = 700, ncrv=180, mdim = 200)
       parameter (ncrv=180, mdim = 300)
@@ -9952,24 +9924,7 @@
       return
       end
 
-      subroutine curve2d_asci (ncurve,ipag, ibrdr, grce,xphy,yphy,iorel, &
-           xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle,  &
-              xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
-             ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
-           isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
-           igridx, igridy, idash, idot, ichdsh, ichdot,  &
-           thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
-           clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
-           icont, nword, zmat, ix, iy, zinc, line, mode, &
-           lbflg, ithk, ipri, nline, draw, &
-           nshd, sx, sy, nsxy, &
-           sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
-            m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
-           iexit)
 !*************************************************************************
-!**                                                                   **
-!** MAIN PROGRAM:  MHD FITTING CODE             **
-!**                                                                   **
 !**                                                                   **
 !**   SUBPROGRAM DESCRIPTION:                                       **
 !**     Writes plot parameters in ASCII format           **
@@ -10129,16 +10084,27 @@
 !**                                                                   **
 !**     REFERENCES:                  **
 !**          (1)  CA-DISSPLA manual              **
-!**          (2)                                                      **
 !**                                                                   **
 !**     RECORD OF MODIFICATION:                                       **
 !**          04/19/93..........first created                          **
 !**                                                                   **
-!**                                                                   **
 !*************************************************************************
-!sri-feb1209
+      subroutine curve2d_asci (ncurve,ipag, ibrdr, grce,xphy,yphy,iorel, &
+           xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle,  &
+              xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
+             ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
+           isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
+           igridx, igridy, idash, idot, ichdsh, ichdot,  &
+           thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
+           clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
+           icont, nword, zmat, ix, iy, zinc, line, mode, &
+           lbflg, ithk, ipri, nline, draw, &
+           nshd, sx, sy, nsxy, &
+           sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
+            m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
+           iexit)
       use set_kinds
-      use eparmdud129,only:ndim
+      use eparm,only:ndim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 
       ! parameter (ndim = 700, ncrv=180, mdim = 200)
@@ -10291,24 +10257,7 @@
       return
       end
 
-      subroutine curve2d_bin (ncurve, ipag, ibrdr,grce,xphy,yphy,iorel, &
-           xorl, yorl,hight, bngle, bshft, ptitle, pltlen, xtitle, &
-           xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp,xmax,yorg, &
-           ystp, ymax, iaxis, xtck, ytck, ixnon,iynon,intax,intay, &
-           isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
-           igridx, igridy, idash, idot, ichdsh, ichdot,  &
-           thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
-           clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
-           icont, nword, zmat, ix, iy, zinc, line, mode, &
-           lbflg, ithk, ipri, nline, draw, &
-           nshd, sx, sy, nsxy, &
-           sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
-           m, note, lmes, imes, anum, iplce, inum,xmpos,ympos,hgt, &
-           iexit)
 !*************************************************************************
-!**                                                                   **
-!** MAIN PROGRAM:  MHD FITTING CODE             **
-!**                                                                   **
 !**                                                                   **
 !**   SUBPROGRAM DESCRIPTION:                                       **
 !**     Writes plot parameters in BINARY format           **
@@ -10468,16 +10417,27 @@
 !**                                                                   **
 !**     REFERENCES:                  **
 !**          (1)  CA-DISSPLA manual              **
-!**          (2)                                                      **
 !**                                                                   **
 !**     RECORD OF MODIFICATION:                                       **
 !**          03/26/93..........first created                          **
 !**                                                                   **
-!**                                                                   **
 !*************************************************************************
-!sri-feb1209
+      subroutine curve2d_bin (ncurve, ipag, ibrdr,grce,xphy,yphy,iorel, &
+           xorl, yorl,hight, bngle, bshft, ptitle, pltlen, xtitle, &
+           xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp,xmax,yorg, &
+           ystp, ymax, iaxis, xtck, ytck, ixnon,iynon,intax,intay, &
+           isaxs, sorg, stp, smax, slen, sname, nslen,xpos,ypos,  &
+           igridx, igridy, idash, idot, ichdsh, ichdot,  &
+           thcrv, sclpc, dashme, dotme, chdhme, chdtme, markme, &
+           clearx, mrc, tlen, nmrk, rat, x, y, nplt, ncnct,  &
+           icont, nword, zmat, ix, iy, zinc, line, mode, &
+           lbflg, ithk, ipri, nline, draw, &
+           nshd, sx, sy, nsxy, &
+           sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
+           m, note, lmes, imes, anum, iplce, inum,xmpos,ympos,hgt, &
+           iexit)
       use set_kinds
-      use eparmdud129,only:ndim
+      use eparm,only:ndim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 
       ! parameter (ndim = 700, ncrv=180, mdim = 200)
@@ -10597,32 +10557,20 @@
       return
     end
 
- subroutine init2d
-!*************************************************************************
-!**                                                                   **
-!** MAIN PROGRAM:  MHD FITTING CODE             **
-!**                                                                   **
+!***********************************************************************
 !**                                                                   **
 !**     SUBPROGRAM DESCRIPTION:                                       **
-!**          Initializes plot parameters           **
-!**                                                                   **
-!**     CALLING ARGUMENTS:                                            **
-!**                                                                   **
-!**     REFERENCES:                  **
-!**          (1)                   **
-!**          (2)                                                      **
+!**          Initializes plot parameters                              **
 !**                                                                   **
 !**     RECORD OF MODIFICATION:                                       **
 !**          04/28/93..........first created                          **
 !**                                                                   **
-!**                                                                   **
-!*************************************************************************
-
-!sri-feb1209
+!***********************************************************************
+      subroutine init2d
       use set_kinds
-      use eparmdud129,only:ndim
+      use eparm,only:ndim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      include 'curve2d129.inc'
+      include 'curve2d.inc'
 
       !-----------------------------------------------------------------------c
       ! Initialize plot parameters             c

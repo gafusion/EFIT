@@ -18,7 +18,7 @@
 !**********************************************************************
       subroutine getpts(nshot,times,delt,np,iierr)
       use vtime_mod
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
@@ -757,7 +757,7 @@
                         np,timesd,deltd,mm,xxd,nn,bitvld,kave,time,ircfact, &
                         do_spline_fit,rcx,rcgx,vbitx,zinhnox,t0x,stdevx,navx, &
                         ktime_err)
-      use eparmdud129,only:ntime
+      use eparm,only:ntime
       use vtime_mod
       parameter (ntims=4096)
       common/gggttt/w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims) &
@@ -1777,7 +1777,7 @@
                         bpermpx,sigmafx,sigmabx,sigmaex, &
                         sigmaipx,sigmaflx,sigmampx)
 
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -2210,7 +2210,7 @@
 !**                                                                  **
 !**********************************************************************
         use set_kinds
-        include 'eparmdud129.inc'
+        include 'eparm.inc'
         include 'modules1.inc'
         implicit integer*4 (i-n), real*8 (a-h,o-z)
         include 'mpif.h'
@@ -2502,7 +2502,7 @@
       ! NOTE : NO error condition returned
       subroutine getstark_mpi(ktime)
 
-        include 'eparmdud129.inc'
+        include 'eparm.inc'
         include 'modules1.inc'
         implicit integer*4 (i-n), real*8 (a-h,o-z)
 

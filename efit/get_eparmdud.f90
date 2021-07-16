@@ -1,5 +1,5 @@
 subroutine get_eparmdud_defaults
-  use eparmdud129
+  use eparm
   nsilds=3
   nsilol=41
   nfcoil=18
@@ -66,7 +66,7 @@ end subroutine
 
 subroutine get_eparmdud_dependents
 
-  use eparmdud129
+  use eparm
 
   nmtark=mse315+mse45+mse15+mse1h+mse315_2+mse210
   nstark=nmtark+libim

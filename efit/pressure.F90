@@ -11,7 +11,7 @@
 !**********************************************************************
       function prcur4(n1set,ypsi,nnn)
       use commonblocks,only: sifpre,bwpre,cwpre,dwpre,sfpre,sprep
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
@@ -58,7 +58,7 @@
 !**                                                                  **
 !**********************************************************************
       function ppcur4(ypsi,nnn)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
@@ -95,7 +95,7 @@
 !**                                                                  **
 !**********************************************************************
       function ppcurr(ypsi,nnn)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
@@ -166,7 +166,7 @@
 !**********************************************************************
       subroutine presurw(jtime,niter)
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -277,7 +277,7 @@
 !**********************************************************************
       subroutine presur(jtime,niter,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -442,7 +442,7 @@
 !**********************************************************************
       function pwcur4(n1set,ypsi,nnn)
       use commonblocks,only: sifprw,bwprw,cwprw,dwprw,sfprw,sprwp
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
@@ -488,7 +488,7 @@
 !**                                                                  **
 !**********************************************************************
       function pwpcu4(ypsi,nnn)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
@@ -522,7 +522,7 @@
 !**                                                                  **
 !**********************************************************************
       function pwpcur(ypsi,nnn)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
@@ -549,7 +549,7 @@
 !**                                                                  **
 !**********************************************************************
       function pwcurr(ypsi,nnn)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension xpsii(nwwcur)

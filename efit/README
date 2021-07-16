@@ -33,61 +33,10 @@ Unified, grid independent version submitted
 Green table files will be generated with names "ecnwnh" and will be 
 used directly. No need to move from one name to another
 For changing the grid size, change in parameter statement used in 
-the eparmdud129 module (modules-efit.f90) 
+the eparmd module (modules-efit.f90) 
 
 Unified - F90 - mpi version
 ---------------------------
 This contains 7 files with mpi extension. Corrections have to be done 
 both sets so that the serial and mpi versions of EFIT-F90 can be maintained 
 easily
-
-Makefile has the options to compile serial version as well as mpi version.
-The files in this version are :
- 
-Makefile
-README
-basiscomdu.f90
-boundud129.f90
-bunemad.f90
-chkeud129.f90
-dgglse.f90
-ecom1-mods.f90
-ecom2-mods.f90
-efitdud129.f90
-eparmdud129.f90
-expdataud129.f90
-ffbasisfuncud129.f90
-getdiau.f90
-getecdud129.f90
-getfnmdud.f90
-getneud129.f90
-lin-dp.f90
-lsolved.f90
-modules-efitx.f90
-modules1.f90
-modules2.f90
-pltdatud129.f90
-ppbasisfuncud129.f90
-psicald.f90
-splineud129.f90
-subs_d_pt.f90
-subs_d_pt_linux.f90
-subs_d_pt_linuxlf95.f90
-tearingd129.f90
-vas_sub1.f90
-weqdud129.f90
-wwbasisfuncud129.f90
-zplined.f90
-makeg65.ex
-makeg129.ex
-makeg257.ex
-makeg512.ex
-----------
-MPI - files
-----------
-efitnotifier.c
-boundud129_mpi.f90
-efitdud129_mpi.f90
-getecdud129_mpi.f90
-pltdatud129_mpi.f90
-weqdud129_mpi.f90

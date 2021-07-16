@@ -20,7 +20,7 @@
       subroutine fluxav(f,x,y,n,si,rx,msx,ry,msy,fave,ns,sdlobp,sdlbp)
       use set_kinds
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       use var_cwork3, only:lkx,lky
 !vas
       implicit integer*4 (i-n), real*8 (a-h,o-z)

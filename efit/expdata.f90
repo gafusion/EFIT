@@ -18,7 +18,7 @@
 !
       block data exp_bdata
       use commonblocks,only: byringr,byringz
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
 !vas      include 'modules2.inc' !to avoid the clash with allocat..
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -106,7 +106,7 @@
 !--
 !------------------------------------------------------------------------
       subroutine getlim(limmode,xltype,xltype_180)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       integer limmode,ilimshot
@@ -326,7 +326,7 @@
 !--
 !------------------------------------------------------------------------
       subroutine getsxr(ishot,ixray)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       use var_cxray
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !vas      common/cxray/rxray(nangle+ntangle),zxray(nangle+ntangle), &

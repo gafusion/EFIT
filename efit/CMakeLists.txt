@@ -12,10 +12,10 @@ set(EFITLIB_SOURCES
   bunemad.f90 getfnmdud.f90 ecom1-mods.f90 zplined.f90 
   ecom2-mods.f90 vas_sub1.f90 data_input.f90
   matrix.f90 shapesurf.f90 getsets.F90 prtout.F90 writeout.F90 currnt.f90
-  fcurrt.f90 boundud129.f90 chkeud129.f90 splineud129.f90 weqdud129.f90
-  msels_data.f90 msels_hist.f90 pltdatud129.f90 getecdud129.F90 getneud129.F90
-  ppbasisfuncud129.f90 ffbasisfuncud129.f90 wwbasisfuncud129.f90 
-  expdataud129.f90  autoknot.F90 efit_utils.F90
+  fcurrt.f90 bound.f90 chke.f90 spline.f90 weq.f90
+  msels_data.f90 msels_hist.f90 pltdat.f90 getecd.F90 getne.F90
+  ppbasisfunc.f90 ffbasisfunc.f90 wwbasisfunc.f90 
+  expdata.f90  autoknot.F90 efit_utils.F90
   cyclic.F90 efit_bdata.F90 set_routines.F90 pressure.F90 get_routines.F90
   green.F90 fit.F90 beta_li.F90 flux_current.F90 weight.F90
   efitnotifier.c wmeasure.F90
@@ -32,7 +32,7 @@ endif()
 #set_expath.F90 is generated -- see top level CMakeLists.txt
 
 # TODO:  This has some strange code that I need to sort out. 
-# tearingd129.f90
+# tearing.f90
 
 add_library(efitlib ${EFITLIB_SOURCES})
 add_dependencies(efitlib config_f)
@@ -65,7 +65,7 @@ install(TARGETS efitlib DESTINATION lib
 #elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "Lahey")
 #endif ()
 
-add_executable(efit  efitdud129.F90 get_opt_input.F90)
+add_executable(efit  efit.F90 get_opt_input.F90)
 target_link_libraries(efit efitlib ${io_libs} ${math_libs})
 
 #add_executable(efitai  efitai.F90 get_opt_input_args.F90)

@@ -19,7 +19,7 @@
 !**********************************************************************
       subroutine shipit(ktime,ifirsttime,ilasttime)
       use set_kinds
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
@@ -399,7 +399,7 @@
       subroutine weqdsk(jtime)
       use set_kinds
       use commonblocks,only: psirz
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)

@@ -9,7 +9,7 @@
 ! These data depend on the grid size and spacings.
 ! ----------------------------------------------------------------------
       function ef_init_cycred_data()
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
@@ -181,7 +181,7 @@
 ! ----------------------------------------------------------------------
       subroutine cyclic_reduction(f)
 
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -286,7 +286,7 @@
 ! ----------------------------------------------------------------------
       subroutine pflux_cycred(psigrid,sia,kerror)
 
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
@@ -431,7 +431,7 @@
 !  n: number of elements in the vector. 
       subroutine ef_tridiag2(f,n,index)
 
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
@@ -485,7 +485,7 @@
 ! 
       subroutine ef_tridiag1(f,n,index)
 
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'

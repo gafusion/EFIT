@@ -12,7 +12,7 @@
       
       Function bswwel(ifunc,iparm,ypsi)
       
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -142,7 +142,7 @@
 
       Function bswwpel(ifunc,iparm,ypsi)
 
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -294,7 +294,7 @@
       
       Function bswwin(ifunc,iparm,ypsi)
       
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -532,7 +532,7 @@
 !     
       
       subroutine wwcnst(ncrsp,crsp,z,nffcoi)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -935,7 +935,7 @@
 !     
       
       subroutine wwstore()
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -971,7 +971,7 @@
       
       Function bserel(ifunc,iparm,ypsi)
       
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -1100,7 +1100,7 @@
 
       Function bserpel(ifunc,iparm,ypsi)
 
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -1252,7 +1252,7 @@
       
       Function bserin(ifunc,iparm,ypsi)
       
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -1488,7 +1488,7 @@
 !     
       
       subroutine eecnst(ncrsp,crsp,z,nffcoi)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -1878,7 +1878,7 @@
 !     
       
       subroutine eestore()
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)

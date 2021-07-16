@@ -7,7 +7,7 @@
       subroutine getsets_defaults
       use set_kinds
       use mpi_efit
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -234,7 +234,7 @@
       use Fortran_Sleep
       use mpi_efit
       use, intrinsic :: iso_c_binding, only: c_int
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)

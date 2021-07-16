@@ -16,7 +16,7 @@
       subroutine betali(jtime,rgrid,zgrid,idovol,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky,cw,wkw,copyw,bwx, &
                   bwy,sifprw,bwprw,cwprw,dwprw,sfprw,sprwp
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
@@ -584,7 +584,7 @@
 !**********************************************************************
       subroutine betsli(jtime,rgrid,zgrid,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 

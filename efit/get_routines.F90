@@ -10,7 +10,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine getbeam
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -58,7 +58,7 @@
 !**********************************************************************
       subroutine geteceb(jtime,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -700,7 +700,7 @@
 !**********************************************************************
       subroutine getecer(jtime,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -1219,7 +1219,7 @@
 !**********************************************************************
       subroutine gettir(jtime,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -1556,7 +1556,7 @@
 !**********************************************************************
       subroutine fixstark(jtime,kerror)
       use commonblocks,only: ct,wkt,bkrt,bkzt
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -1761,7 +1761,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine getmsels(ktime)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -1822,7 +1822,7 @@
 !**********************************************************************
       subroutine getsigma(jtimex,niterax)
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -1993,7 +1993,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine getstark(ktime)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -2112,7 +2112,7 @@
 !**                                                                  **
 !**********************************************************************
     subroutine gette(kerror)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -2229,7 +2229,7 @@
 !**********************************************************************
       subroutine gettion(kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -2379,7 +2379,7 @@
 !**********************************************************************
       function erpote(ypsi,nnn)
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
@@ -2424,7 +2424,7 @@
 !**********************************************************************
       function eradial(ypsi,nnn,reee,zeee)
       use commonblocks,only: c,wk,copy,bkx,bky
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
@@ -2470,7 +2470,7 @@
 !**                                                                  **
 !**********************************************************************
       function fpcurr(upsi,nnn)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension xpsii(nffcur)

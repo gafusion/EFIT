@@ -12,7 +12,7 @@
 !**********************************************************************
 Function bsppel(ifunc,iparm,ypsi)
       
-  include 'eparmdud129.inc'
+  include 'eparm.inc'
   include 'modules2.inc'
   include 'modules1.inc'
   implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -141,7 +141,7 @@ end function bsppel
 !**********************************************************************
 function bspppel(ifunc,iparm,ypsi)
 
-  include 'eparmdud129.inc'
+  include 'eparm.inc'
   include 'modules2.inc'
   include 'modules1.inc'
   implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -292,7 +292,7 @@ end function bspppel
 !**********************************************************************
 function bsppin(ifunc,iparm,ypsi)
       
-  include 'eparmdud129.inc'
+  include 'eparm.inc'
   include 'modules2.inc'
   include 'modules1.inc'
   implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -527,7 +527,7 @@ end function bsppin
 !     
 !**********************************************************************
 subroutine ppcnst(ncrsp,crsp,z,nffcoi)
-  include 'eparmdud129.inc'
+  include 'eparm.inc'
   include 'modules2.inc'
   include 'modules1.inc'
   implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -862,7 +862,7 @@ end subroutine ppcnst
 !     
 !**********************************************************************
 subroutine ppstore()
-  include 'eparmdud129.inc'
+  include 'eparm.inc'
   include 'modules2.inc'
   include 'modules1.inc'
   implicit integer*4 (i-n), real*8 (a-h,o-z)

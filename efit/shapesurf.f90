@@ -20,7 +20,7 @@
       use commonblocks,only: c,wk,copy,bkx,bky,psiold,psipold,psipp, &
                 worka,zeros,byringr,byringz,xouts,youts,bpoo,bpooz, &
                 bpooc,bfpol,cfpol,dfpol,xxtra,yxtra,bpxtra,flxtra,fpxtra
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)

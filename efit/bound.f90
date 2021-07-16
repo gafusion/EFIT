@@ -1186,7 +1186,7 @@
         bpoo,bpooz,limtrv,xlimv,ylimv,limfagv,ifit,jtime,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
       use set_kinds
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
@@ -1770,7 +1770,7 @@
 !**********************************************************************
       subroutine packps(xp,yp,np,rm,zm,kadd)
       use commonblocks,only: cjrf,wxin,wyin,wxout,wyout
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension xp(*),yp(*)
       data iflag/2/

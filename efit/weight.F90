@@ -13,7 +13,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine weight(x,y)
-      include 'eparmdud129.inc'
+      include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension x(1),y(1)
