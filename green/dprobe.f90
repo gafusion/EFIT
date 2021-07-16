@@ -3,7 +3,7 @@
 !**          write dprobe.dat file for EFIT                          **
 !**                                                                  **
 !**********************************************************************
-     SUBROUTINE dprobe(mpnam2,lpname,patmp2)
+      SUBROUTINE dprobe(mpnam2,lpname,patmp2)
      
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
                       nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
@@ -48,10 +48,11 @@
 !**          with efit                                               **
 !**                                                                  **
 !**********************************************************************
-     SUBROUTINE dprobe_machinein(nfcoil_efund,nsilop_efund,magpr2_efund,&
+      SUBROUTINE dprobe_machinein(nfcoil_efund,nsilop_efund,magpr2_efund,&
                                  nrogow_efund,necoil_efund,nesum_efund,&
                                  nfsum_efund,nvsum_efund,nvesel_efund,nacoil_efund)
      
+      USE nio
       
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
       
@@ -109,6 +110,8 @@
       nffcur=32
       nppcur=32
       nercur=32
+      npcurn=nffcur+nppcur
+      nwcurn=nwwcur+npcurn
       nwcur2=nwcurn*2
       ntime=1001
       ndim=3200
@@ -143,8 +146,9 @@
 !**          with efit                                               **
 !**                                                                  **
 !**********************************************************************
-     SUBROUTINE dprobe_machinein_d3d
+      SUBROUTINE dprobe_machinein_d3d
      
+      USE nio
       
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
       
@@ -200,6 +204,8 @@
       nppcur=32
       nercur=32
 
+      npcurn=nffcur+nppcur
+      nwcurn=nwwcur+npcurn
       nwcur2=nwcurn*2
       ntime=1001
       ndim=3200

@@ -358,8 +358,9 @@
         do j=1,nj
             b(j) = xrsp(j)
         enddo
-        call dgglse(nj,nownow,ncrsp,alipc,npcur3,crsp,4*(npcurn-2)+6+ &
-                   npcurn*npcurn,b,z,xrsp,work,nrsma2,info,condno)
+        call dgglse(int(nj,8),int(nownow,8),int(ncrsp,8),alipc, &
+                    int(npcur3,8),crsp,int(4*(npcurn-2)+6+npcurn*npcurn,8), &
+                    b,z,xrsp,work,int(nrsma2,8),int(info,8),condno)
         if (info.gt.0) then ! special hack to info in dgglse
           kerror = 1
           write(tmpstr,'(a,i4,a,i4,a)') 'A(',info,',',info,')=0 in dgglse, divide by zero.'

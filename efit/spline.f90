@@ -360,11 +360,13 @@
       n11=11
       jobu='A'
       jobvt='A'
+      inform=0
 !     CALL SSVDC(A, IA, M, N, S, E, U, MM, V, NN, WK, n11, INFO)
 !---------------------------------------------------------------------
 !-- Changed to LINPACK routine     Lao 2004Jul20                    --
 !---------------------------------------------------------------------
-      CALL DGESVD(JOBU,JOBVT,M,N,A,IA,S,U,MM,V,NN,WK3,MM3,INFO)
+      CALL DGESVD(JOBU,JOBVT,int(M,8),int(N,8),A,int(IA,8),S,U, &
+                  int(MM,8),V,int(NN,8),WK3,int(MM3,8),int(INFO,8))
 !
       IF (INFO.GT.0) IER = 129                   ! Error message
       if (s(1).le.0) IER = 129                   ! This better not happen

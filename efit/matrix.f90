@@ -68,7 +68,6 @@
 !----------------------------------------------------------------------
       ichisq=0
       nsq=2
-      saiold=saisq
       do 1000 i=1,nrsmat
         brsold(i)=brsp(i)
  1000 continue
@@ -2286,9 +2285,10 @@
         do j=1,nrsmat
           b(j) = brsp(j)
         end do
-
-        call dgglse(nj,need,ncrsp,arsp,nrsmat,crsp,4*(npcurn-2)+6+ &
-          npcurn*npcurn,b,z,brsp,work,nrsma2,info,condno)
+        info=0
+        call dgglse(int(nj,8),int(need,8),int(ncrsp,8),arsp,int(nrsmat,8), &
+                    crsp,int(4*(npcurn-2)+6+npcurn*npcurn,8),b,z,brsp,work,&
+                    int(nrsma2,8),int(info,8),condno)
         if (info.gt.0) then ! special hack to info in dgglse
           kerror = 1
           write(tmpstr,'(a,i4,a,i4,a)') 'A(',info,',',info,')=0 in dgglse, divide by zero.'
@@ -2395,6 +2395,7 @@
 !-- calculate the fitting figure of merit saisq                      --
 !----------------------------------------------------------------------
       saisq=0.0
+      saiold=saisq
       do 4600 m=1,nsilop
         cm=0.0
         do 4520 n=1,nfcoil

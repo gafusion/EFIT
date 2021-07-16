@@ -562,10 +562,11 @@
       rnavfc(jtime,:)=rnavfcin(:) 
       deve(jtime,:)=devein(:) 
       rnavec(jtime,:)=rnavecin(:) 
-      devbc(jtime)=devbcin 
-      rnavbc(jtime)=rnavbcin 
-      devp(jtime)=devpin 
-      rnavp(jtime)=rnavpin 
+! ERROR: devbcin, rnavbcin, devpin, and rnavpin are never defined or set...
+!      devbc(jtime)=devbcin
+!      rnavbc(jtime)=rnavbcin
+!      devp(jtime)=devpin
+!      rnavp(jtime)=rnavpin 
 ! 
       open(unit=nin,status='old',file=ifname(jtime)) 
       read (nin,inwant,iostat=istat) 

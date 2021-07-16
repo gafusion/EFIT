@@ -672,6 +672,7 @@
       USE fcoil
       USE cecoil
       USE cvesel
+      USE input,only:iecoil
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
       DIMENSION rsilvs(nsilop,nvesel),rmp2vs(magpr2,nvesel), &
                 rgrid(1),zgrid(1),rvsec(nvesel,nesum), &

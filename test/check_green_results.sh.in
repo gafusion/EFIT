@@ -4,18 +4,14 @@ BINDIR=@CMAKE_BINARY_DIR@
 
 # Check to see if files exist
 for file in mhdout.dat dprobe.dat rfcoil.ddd brzgfc.dat; do
-  if test -e ${file}; then
-    cp ${file} ${BINDIR}
-  else
+  if ! test -e ${file}; then
     echo "File does not exist: ${file}"
     exit 1
   fi
 done
 
 for prefix in ec ep fc ra re rv; do
-  if test -e ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd; then
-    cp ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd ${BINDIR}
-  else
+  if ! test -e ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd; then
     echo "File does not exist: ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd"
     exit 1
   fi
