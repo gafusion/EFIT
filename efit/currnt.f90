@@ -358,6 +358,7 @@
         do j=1,nj
             b(j) = xrsp(j)
         enddo
+        info=0
         call dgglse(int(nj,8),int(nownow,8),int(ncrsp,8),alipc, &
                     int(npcur3,8),crsp,int(4*(npcurn-2)+6+npcurn*npcurn,8), &
                     b,z,xrsp,work,int(nrsma2,8),int(info,8),condno)

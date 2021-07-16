@@ -1,6 +1,6 @@
 ######################################################################
 #
-# CMakeLists.txt for NIMROD abstract infrastructure
+# CMakeLists.txt for EFIT infrastructure
 #
 ######################################################################
 # Project information

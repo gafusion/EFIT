@@ -3,11 +3,8 @@
 !**                                                                  **
 !**     MAIN PROGRAM:  MHD EQUILIBRIUM ANALYSIS                      **
 !**                                                                  **
-!**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          efit is the main driver for equilibrium analysis.       **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
 !**     REFERENCES:                                                  **
 !**          (1) L.L. Lao, H. St. John, R.D. Stambaugh,              **
@@ -51,7 +48,7 @@
 !**        2020/09/18..........R.S. changed some Hollerith to quotes **
 !**                                                                  **
 !**********************************************************************
-     program efitd
+     program efit
      use commonblocks
      use set_kinds
      include 'eparm.inc'
@@ -140,7 +137,7 @@
 ! MPI <<<
       if (nw == 0 .or. nh == 0) then
         if (rank == 0) then
-          call errctrl_msg('efitd','Must specify grid dimensions as arguments')
+          call errctrl_msg('efit','Must specify grid dimensions as arguments')
         endif
 ! MPI >>>
 #if defined(USEMPI)
@@ -221,7 +218,7 @@
         call MPI_ALLREDUCE(kerror,MPI_IN_PLACE,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
       endif
       if (kerror.gt.0) then
-        call errctrl_msg('efitd','Aborting due to fatal error in getsets')
+        call errctrl_msg('efit','Aborting due to fatal error in getsets')
         call mpi_abort(MPI_COMM_WORLD,ierr) ! kill all processes, something is wrong with the setup.
       endif
 #else
@@ -331,11 +328,11 @@
       if (allocated(dist_data)) deallocate(dist_data)
       if (allocated(dist_data_displs)) deallocate(dist_data_displs)
       if (allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
-      call errctrl_msg('efitd','Done processing',3)
+      call errctrl_msg('efit','Done processing',3)
       call mpi_finalize(ierr)
 #endif
       stop
 ! MPI <<<
-      end program efitd
+      end program efit
 
 

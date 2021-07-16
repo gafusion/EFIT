@@ -360,7 +360,7 @@
       n11=11
       jobu='A'
       jobvt='A'
-      inform=0
+      info=0
 !     CALL SSVDC(A, IA, M, N, S, E, U, MM, V, NN, WK, n11, INFO)
 !---------------------------------------------------------------------
 !-- Changed to LINPACK routine     Lao 2004Jul20                    --
