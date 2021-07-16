@@ -6,7 +6,9 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     7/21: kdata=6 and 8 do the same thing, is 8 unfinished?      **
+!**     7/15/21: kdata=8 is indended for CUDA parallel execution     **
+!**              which has not been setup yet, so it does the same   **
+!**              as kdata=6 right now                                **
 !**                                                                  **
 !**********************************************************************
       subroutine get_opt_input(ktime)

@@ -8,7 +8,7 @@
 
  type input file names:
  #
- table_di2 = </Users/kruger/efitairoot/efitall/efit-txcorp/build/>
+ table_di2 = </global/homes/t/tbechtel/efitall/efit_new/build/test/DIIID/green/>
 
       ******************** EFITD 65 x  65  output ********************
  before save fitting weights
@@ -55,3 +55,4 @@
  a(cm)    =     56.326 lin(cm)  =     15.206 lout(cm) =      7.064
  ltop(cm) =     16.427 q*       =      5.197 rc(cm)   =    170.446
  zc(cm)   =     -2.231 bt0(t)   =     -2.008 qout     =      9.106
+ netcdf needs to be linked to write m-files

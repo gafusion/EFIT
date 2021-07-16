@@ -8,7 +8,7 @@
 
  type input file names:
  #
- table_di2 = </Users/kruger/efitairoot/efitall/efit-txcorp/build/>
+ table_di2 = </global/homes/t/tbechtel/efitall/efit_new/build/test/DIIID/green/>
 
       ******************** EFITD 65 x  65  output ********************
  before save fitting weights
@@ -18,25 +18,15 @@
  read in limiter data
 
  r=  0 t=  2300 it=  1 chi2=4.31E+01 zm=-2.02E-02 err=1.738E+00 dz=-2.021E-02 delz= 0.000E+00 dj=0.000E+00
-           1           2           0           1           0
  r=  0 t=  2300 it=  2 chi2=2.57E+01 zm=-2.12E-02 err=1.021E-01 dz=-9.716E-04 delz= 0.000E+00 dj=0.000E+00
-           1           3           0           2           0
  r=  0 t=  2300 it=  3 chi2=2.58E+01 zm=-2.15E-02 err=1.672E-02 dz=-2.875E-04 delz= 0.000E+00 dj=0.000E+00
-           1           4           0           3           0
  r=  0 t=  2300 it=  4 chi2=3.97E+01 zm=-2.66E-02 err=1.067E-01 dz=-5.141E-03 delz= 8.024E-01 dj=1.790E-02
-           1           5           0           4           0
  r=  0 t=  2300 it=  5 chi2=2.18E+01 zm=-2.78E-02 err=6.362E-02 dz=-1.237E-03 delz= 0.000E+00 dj=1.790E-02
-           1           6           0           5           0
  r=  0 t=  2300 it=  6 chi2=2.19E+01 zm=-2.79E-02 err=3.634E-03 dz=-1.159E-05 delz= 0.000E+00 dj=1.790E-02
-           1           7           0           6           0
  r=  0 t=  2300 it=  7 chi2=2.39E+01 zm=-3.05E-02 err=3.793E-02 dz=-2.615E-03 delz= 3.555E-01 dj=7.425E-03
-           1           8           0           7           0
  r=  0 t=  2300 it=  8 chi2=2.16E+01 zm=-3.11E-02 err=1.453E-02 dz=-6.019E-04 delz= 9.776E-02 dj=1.955E-03
-           1           9           0           8           0
  r=  0 t=  2300 it=  9 chi2=2.16E+01 zm=-3.11E-02 err=4.107E-04 dz=-2.101E-05 delz= 7.021E-02 dj=1.442E-03
-           1          10           0           9           0
  r=  0 t=  2300 it= 10 chi2=2.16E+01 zm=-3.11E-02 err=1.781E-04 dz=-2.321E-05 delz= 7.407E-02 dj=1.514E-03
-           1          11           0          10           0
  r=  0 t=  2300 it= 11 chi2=2.16E+01 zm=-3.11E-02 err=2.235E-05 dz=-6.180E-06 delz= 7.347E-02 dj=1.502E-03
 
        data used:   

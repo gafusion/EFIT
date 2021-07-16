@@ -29,14 +29,21 @@ necessary information about the machine.
 Running EFIT
 ===========
 
-By default, EFIT checks the build directory for the Green function tables and
-`dprobe.dat` file.  This can be set to a different location in the input
-file, a `shot_table.txt` file, or with environment variables.  Examples::
-    
-    (To Do)
+In order for EFIT to run it must know where the Green function tables and
+machine data files can be found.  Default locations can be specified at compile
+time by passing the flags `-DINPUT_DIR=`, `-DTABLE_DIR=`, and `-DSTORE_DIR` to
+cmake.  Otherwise the default is set as the build directory.  This is superceded
+at runtime by environment variables or input files.  Which has precedence is decided by checking in that order::
+    input files overwrite environment variables which overwrite the defaults
+The environment variables are specified by `link_efit` (assigns 
+`TABLE_DIR=${link_efit}/green` and `INPUT_DIR=${link_efit}`) and `link_store`
+(assigns `STORE_DIR=${link_store}`).  Input files can specify the `TABLE_DIR`,
+`INPUT_DIR`, and `STORE_DIR` variables in `IN1`, `INWANT`, and `EFITIN`
+namelists (kfiles, rfiles, and snap files).
 
-Once the tables are properly located, EFIT can be run interactively by calling
-`efit` with the mesh size that matches the tables.  Example::
+Once the tables and machine data are properly located, EFIT can be run
+interactively by calling `efit` with the mesh size that matches the tables.
+Example::
 
     efit/efit 65
     2

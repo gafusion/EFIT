@@ -2826,7 +2826,6 @@
         write (nout,7450) (brsp(i),i=1,need)
         write (nout,7450) (wrsp(i),i=1,need)
       endif
-      print *, jtime,iter,ichisq,nniter,kerror
       if (iupdat.gt.0) return
       if (saisq.gt.saimin) then
         return

@@ -23,14 +23,8 @@ cmake_minimum_required(VERSION 3.8.0)
 
 set(ENABLE_PRODUCTION FALSE CACHE BOOL "This is meant to be installed.")
 
-if (${ENABLE_PRODUCTION})
-    set(TABLE_DIR ${CMAKE_INSTALL_PREFIX}/share/green} CACHE STRING "Location of tables")
-    set(INPUT_DIR ${CMAKE_INSTALL_PREFIX/share/examples CACHE STRING "Location of example input files")
-else()
-    set(TABLE_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of tables")
-    set(INPUT_DIR ${CMAKE_SOURCE_DIR}/share/data CACHE STRING "Location of example input files")
-endif()
-
+set(TABLE_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of tables")
+set(INPUT_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of input files")
 set(STORE_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of sources")
 
 set(GEN_CONF_FILE ${PROJECT_BINARY_DIR}/efit/set_expath_conf.F90)

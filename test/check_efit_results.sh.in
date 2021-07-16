@@ -8,10 +8,12 @@ else
   outputs=( a g )
 fi
 for prefix in ${outputs[*]}; do
-  if ! test -e ${prefix}@EFIT_LABEL@; then
-      echo "File does not exist: ${prefix}@EFIT_LABEL@"
+  for label in @EFIT_LABEL@; do
+    if ! test -e ${prefix}${label}; then
+      echo "File does not exist: ${prefix}${label}"
       exit 1
-  fi
+    fi
+  done
 done
 
 # Check the output of the run itself.  use petscdiff because it's an easily

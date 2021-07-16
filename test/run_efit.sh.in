@@ -1,7 +1,15 @@
 #!/bin/bash
-# Sanity check
-if ! test -e @CMAKE_BINARY_DIR@/dprobe.dat; then
+
+export link_efit="@CURRENT_MACHINE_LINK_DIR@"
+export link_store=""
+
+# Sanity checks
+if ! test -e ${link_efit}/green/dprobe.dat; then
   echo "not running test because Greens tables were not found"
+  exit 1
+fi
+if ! test -e ${link_efit}/lim.dat; then
+  echo "not running test because limiter was not found"
   exit 1
 fi
 
@@ -13,8 +21,13 @@ else
 fi
 rm -f run_efit.out
 for prefix in ${outputs[*]}; do
-   rm -f ${prefix}@EFIT_LABEL@
+  for label in @EFIT_LABEL@; do
+    rm -f ${prefix}${label}
+  done
 done
+
+# Execute on server interactively (required for MPI on Iris?)
+#srun -p interactive --pty /bin/bash
 
 # Now run efit
 @EFIT_EXEC@ @GRID_SIZE@ << __c__MATCHING_EOF__c__ > run_efit.out
@@ -24,6 +37,8 @@ done
 @EFIT_IN@
 
 __c__MATCHING_EOF__c__
+
+#exit
 
 # Pass the results of the efit command up so that CTest knows what happened
 exit $?
