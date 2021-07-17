@@ -1,24 +1,11 @@
+!**********************************************************************
+!! 
+!>   chkerr checks for mhd fitting errors.
+!!
+!!   @param : mtime is time index
+
+!*********************************************************************
       subroutine chkerr(mtime)
-!**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          chkerr checks for mhd fitting errors.                   **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          04/10/83..........first created                         **
-!**          03/05/84..........increased error band on chisq to 25.  **
-!**                                                                  **
-!**                                                                  **
-!**********************************************************************
       use set_kinds
       include 'eparm.inc'
       include 'modules1.inc'
@@ -153,27 +140,18 @@
  1180 format(5x,'Error #20, Bp+li/2 not consistent , error = ',e10.3)
  1190 format(5x,'Error #21, Bp not consistent , error = ',e10.3)
       end
+
+!**********************************************************************
+!!
+!>    lenco2 calculates the co2 path lengths.
+!!
+!!    @param xplt :
+!!    @param yplt :
+!!    @param nplt :
+!!    @param jges :
+!!
+!*********************************************************************
       subroutine lenco2(xplt,yplt,nplt,jges)
-!**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          lenco2 calculates the co2 path lengths.                 **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          05/08/83..........first created                         **
-!**                                                                  **
-!**                                                                  **
-!**                                                                  **
-!**********************************************************************
       use set_kinds
       include 'eparm.inc'
       include 'modules1.inc'

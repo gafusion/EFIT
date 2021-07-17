@@ -1,16 +1,13 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          currnt computes the current density on the r-z mesh.    **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/10/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**                                                                  **
-!**                                                                  **
-!**********************************************************************
+!!
+!>    currnt computes the current density on the r-z mesh.
+!!
+!!    @param iter :
+!!    @param jtime :
+!!    @param ixn :
+!!    @param nitett :
+!!    @param kerror :
+!*********************************************************************
       subroutine currnt(iter,jtime,ixn,nitett,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
       use set_kinds

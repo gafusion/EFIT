@@ -1,17 +1,17 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          betali computes betas and li.                           **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/10/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**          22/07/96 revised  by Q.Peng to add the surface area of  **
-!**                            the last closed flux surface (psurfa) **
-!**                                                                  **
-!**                                                                  **
+!>                                                                  
+!!     SUBPROGRAM DESCRIPTION:                                      
+!!          betali computes betas and li.                           
+!!
+!!     @param jtime : time index
+!!
+!!     @param rgrid :
+!!
+!!     @param zgrid : 
+!!
+!!     @param idovol :
+!!
+!!     @param kerror : error flag
 !**********************************************************************
       subroutine betali(jtime,rgrid,zgrid,idovol,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky,cw,wkw,copyw,bwx, &
@@ -571,16 +571,15 @@
       end subroutine betali
 
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          betsli computes betas and li.                           **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/10/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**                                                                  **
+!!          This subroutine computes betas and li.
+!!                                                                  
+!!     @param jtime : time index
+!!
+!!     @param rgrid :
+!!
+!!     @param zgrid :
+!!
+!!     @param kerror : error flag
 !**********************************************************************
       subroutine betsli(jtime,rgrid,zgrid,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky

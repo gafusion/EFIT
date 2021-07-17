@@ -1,15 +1,13 @@
-!**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          autoknot minimizes chi-squared as a function of knot    **
-!**          location                                                **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          20/01/2000........first created                         **
-!**                                                                  **
-!**********************************************************************
+!*******************************************************************
+!>     SUBPROGRAM DESCRIPTION:                                     
+!!          autoknot minimizes chi-squared as a function of knot
+!!          location                                               
+!!                                                                  
+!!     @param ks:
+!!     @param lconvr:
+!!     @param ktime: 
+!!     @param kerror: error flag                                                                
+!*******************************************************************
       subroutine autoknot(ks,lconvr,ktime,mtear,kerror)
       include 'eparm.inc'
       include 'modules2.inc'

@@ -1,57 +1,46 @@
-!**********************************************************************
-!**                                                                  **
-!**     subprogram description:                                      **
-!**          bound finds the outermost contour of a function         **
-!**          given in the array psi. note that the contoured         **
-!**          function psi is assumed to be a decreasing function     **
-!**          of distance away from the axis.                         **
-!**          if ix<0, then BOUND just traces the field line          **
-!**          starting at (xctr,yctr) either to closure or to the     **
-!**          wall. ix=-1, trace clockwise. -2, counter clockwise.    **
-!**                                                                  **
-!**     calling arguments:                                           **
-!**       psi.............function to be contoured                   **
-!**       nw..............row dimension of psi                       **
-!**       nh..............column dimension of psi                    **
-!**       nwh.............nw x nh                                    **
-!**       psivl...........psi value on the outermost contour         **
-!**       xmin............minimum r value on contour                 **
-!**       xmax............maximum r value                            **
-!**       ymin............minimum z value                            **
-!**       ymax............maximum z value                            **
-!**       zero............weighting array                            **
-!**       x...............r grid                                     **
-!**       y...............z grid                                     **
-!**       xctr............r guess of contour center                  **
-!**       yctr............z guess of contour center                  **
-!**       ix..............flag                                       **
-!**       limitr..........number of limiter points                   **
-!**       xlim............r coordinates of limiter points            **
-!**       ylim............z coordinates of limiter points            **
-!**       xcontr..........output r coordinates of contour            **
-!**       ycontr..........output z coordinates of contour            **
-!**       ncontr..........number of contour points found             **
-!**       xlmin...........minimum or maximum limiter coordinates     **
-!**       npoint..........maximum number of contour points           **
-!**       dpsi............difference of psi values on contour        **
-!**                       and on limiter.  dpsi is used to           **
-!**                       distinguish between a limited and a        **
-!**                       diverted plasma                            **
-!**       rymin...........r at ymin                                  **
-!**       rymax...........r at ymax                                  **
-!**       zxmin...........z at xmin                                  **
-!**       zxmax...........z at xmax                                  **
-!**       tolbndpsi (in)..tolerance on psi                           **
-!**                                                                  **
-!**     record of modification:                                      **
-!**          26/04/83..........first created                         **
-!**          01/09/83..........replaced contouring routines          **
-!**                            with new dec10 version                **
-!**          12/03/84..........modifications to allow function as a  **
-!**                            one field line tracer routine.        **
-!**                            R Stambaugh.                          **
-!**                                                                  **
-!**********************************************************************
+!*********************************************************************
+!>          Bound finds the outermost contour of a function        
+!!          given in the array psi. note that the contoured     
+!!          function psi is assumed to be a decreasing function   
+!!          of distance away from the axis.                 
+!!          if ix<0, then BOUND just traces the field line  
+!!          starting at (xctr,yctr) either to closure or to the 
+!!          wall. ix=-1, trace clockwise. -2, counter clockwise. 
+!!                                                                  
+!!     calling arguments:
+!!       @param psi : function to be contoured 
+!!       @param nw : row dimension of psi
+!!       @param nh : column dimension of psi  
+!!       @param nwh : nw x nh
+!!       @parampsivl : psi value on the outermost contour
+!!       @param xmin : minimum r value on contour
+!!       @param xmax : maximum r value
+!!       @param ymin : minimum z value
+!!       @param ymax : maximum z value
+!!       @param zero : weighting array
+!!       @param x : r grid
+!!       @param y : z grid
+!!       @param xctr : r guess of contour center
+!!       @param yctr : z guess of contour center*
+!!       @param ix : flag
+!!       @param limitr : number of limiter points
+!!       @param xlim : r coordinates of limiter points
+!!       @param ylim : z coordinates of limiter points
+!!       @param xcontr: output r coordinates of contour
+!!       @param ycontr : output z coordinates of contour
+!!       @param ncontr : number of contour points found
+!!       @param xlmin : minimum or maximum limiter coordinates
+!!       @param npoint : maximum number of contour points
+!!       @param dpsi : difference of psi values on contour
+!!                       and on limiter.  dpsi is used to
+!!                       distinguish between a limited and a
+!!                       diverted plasma 
+!!       @param rymin : r at ymin 
+!!       @param rymax : r at ymax
+!!       @param zxmin : z at xmin
+!!       @param zxmax : z at xmax
+!!       @param tolbndpsi " (in)..tolerance on psi
+!*********************************************************************
       subroutine bound(psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
            zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
            ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
@@ -370,20 +359,22 @@
       return
       end subroutine bound
 
-!**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          cellb redefines (xc1,yc1) and/or (xc2,yc2) so that      **
-!**          they are intersections of cell boundaries unless        **
-!**          one of the points is an interior point in which         **
-!**          case it is not disturbed.                               **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
-!**********************************************************************
+!*********************************************************************
+!>    cellb redefines (xc1,yc1) and/or (xc2,yc2) so that
+!!    they are intersections of cell boundaries unless
+!!    one of the points is an interior point in which
+!!    case it is not disturbed.                                    
+!!                                                                  
+!!    @param xc1 : 
+!!    @param yc1 : 
+!!    @param xc2 : 
+!!    @param yc2 : 
+!!    @param x1 : 
+!!    @param y1 : 
+!!    @param x2 : 
+!!    @param y2 : 
+!!                                                                 
+!*********************************************************************
       subroutine cellb(xc1,yc1,xc2,yc2,x1,y1,x2,y2,ifail)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       if((xc1.lt.x1).and.(xc2.lt.x1))go to 1000
@@ -531,18 +522,32 @@
  1000 ifail=1
       return
       end subroutine cellb
-!**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          chkcrn decides which cell is next when an error in      **
-!**          the cell step is likely.                                **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          07/09/83..........first created                         **
-!**                                                                  **
-!**********************************************************************
+
+
+!*********************************************************************
+!>    chkcrn decides which cell is next when an error in
+!!    the cell step is likely.
+!!     
+!!    @param  psi : nw x nh psi grid 
+!!
+!!    @param  nwh : total number of grid point nw * nh
+!!
+!!    @param  psivl : value of psi at boundary
+!!
+!!    @param  kold : 
+!!
+!!    @param  knew : 
+!!
+!!    @param  icrnr : 
+!!
+!!    @param  kk : 
+!!
+!!    @param  nh : Number of horizontal grid points
+!!
+!!    @param  i : 
+!!
+!!    @param  il : 
+!*********************************************************************
       subroutine chkcrn(psi,nwh,psivl,kold,knew,icrnr,kk,nh,i,i1)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension psi(nwh)
@@ -937,17 +942,48 @@
              /,e16.8,'  to  ',e16.8,'  and try again')
       go to 1040
       end subroutine cntour
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          extrap extrapolates across a (x,y) cell.                **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**          07/09/83..........replaced                              **
-!**                                                                  **
+!>
+!!    extrap extrapolates across a (x,y) cell.
+!!    
+!!
+!!    @param f1 :
+!!
+!!    @param f2 :
+!!
+!!    @param f3 :
+!!
+!!    @param f4 :
+!!
+!!    @param x1 :
+!!
+!!    @param y1 :
+!!
+!!    @param x2 :
+!!
+!!    @param y2 :
+!!
+!!    @param xt :
+!!
+!!    @param yt :
+!!
+!!    @param xt1 :
+!!
+!!    @param yt1 :
+!!
+!!    @param xt2 :
+!!
+!!    @param yt2 :
+!!
+!!    @param psivl :
+!!
+!!    @param area :
+!!
+!!    @param dx :
+!!
+!!    @param dy :
+!!
 !**********************************************************************
       subroutine extrap(f1,f2,f3,f4,x1,y1,x2,y2,xt,yt,xt1,yt1, &
                         xt2,yt2,psivl,area,dx,dy)
@@ -1161,25 +1197,50 @@
       yt2=yp(2)
       return
       end subroutine extrap
-!**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          findax finds magnetic axis for arbitrary position       **
-!**          greater than 3 cells from boundary of grid.             **
-!**          note that nh2=2*nh, nwrk=2*(nw+1)*nh.                   **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**          kaxis = 10, bicubic spline only                         **
-!**                  20, find axis and separatrix if any             **
-!**                <  0, seperatrix only                             **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/10/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**          05/10/20..........Add Gradient Ascent Method as option  **
-!**                                                                  **
-!**                                                                  **
-!**********************************************************************
+
+
+!>*********************************************************************
+!!
+!!          findax finds magnetic axis for arbitrary position 
+!!          greater than 3 cells from boundary of grid.
+!!          note that nh2=2*nh, nwrk=2*(nw+1)*nh.
+!! 
+!!    @param nx :
+!!    @param nz :
+!!    @param x :
+!!    @param y :
+!!    @param xax :
+!!    @param yax :
+!!    @param psimx :
+!!    @param psiout :
+!!    @param xseps :
+!!    @param yseps :
+!!    @param kaxis : kaxis = 10, bicubic spline only 
+!!                  20, find axis and separatrix if any 
+!!                 <  0, seperatrix only 
+!!    @param xxout :
+!!    @param yyout :
+!!    @param kfound :
+!!    @param psipsi :
+!!    @param rmin :
+!!    @param rmax :
+!!    @param zmin :
+!!    @param zmax :
+!!    @param zrmin :
+!!    @param zrmax :
+!!    @param rzmin :
+!!    @param rzmax :
+!!    @param dpsipsi :
+!!    @param bpoo :
+!!    @param bpooz :
+!!    @param limtrv :
+!!    @param xlimv :
+!!    @param ylimv :
+!!    @param limfagv :
+!!    @param ifit :
+!!    @param jtime :
+!!    @param kerror :
+!*********************************************************************
       subroutine findax(nx,nz,x,y,xax,yax,psimx,psiout,xseps,yseps, &
         kaxis,xxout,yyout,kfound,psipsi,rmin,rmax, &
         zmin,zmax,zrmin,zrmax,rzmin,rzmax,dpsipsi, &
@@ -1628,16 +1689,22 @@
               2(1x,e10.3))
       end subroutine findax
 
-!**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
-!**********************************************************************
+!*********************************************************************
+!>    This subroutine does ...
+!!       
+!!    @param x1 :
+!!    @param y1 :
+!!    @param x2 :
+!!    @param y2 :
+!!    @param f1 :
+!!    @param f2 :
+!!    @param f3 :
+!!    @param f4 :
+!!    @param x :
+!!    @param y :
+!!    @param area :
+!!    @param psivl :  value of psi at boundary
+!*********************************************************************
       subroutine fqlin(x1,y1,x2,y2,f1,f2,f3,f4,x,y,area,psivl)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       a1=(x2-x)*(y2-y)
@@ -1648,20 +1715,29 @@
       return
       end subroutine fqlin
 
-!**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          maxpsi finds the largest psi value along the line       **
-!**          segment y=alpha*x+beta joining the two points           **
-!**          (xl1,yl1) and (xl2,yl2).                                **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**                                                                  **
-!**********************************************************************
+!*********************************************************************
+!>          maxpsi finds the largest psi value along the line 
+!!          segment y=alpha*x+beta joining the two points
+!!          (xl1,yl1) and (xl2,yl2).
+!!
+!!    @param xl1 :
+!!    @param yl1 :
+!!    @param xl2 :
+!!    @param yl2 :
+!!    @param x1 :
+!!    @param y1 :
+!!    @param x2 :
+!!    @param y2 :
+!!    @param f1 :
+!!    @param f2 :
+!!    @param f3 :
+!!    @param f4 :
+!!    @param area :
+!!    @param psimax :
+!!    @param xtry :
+!!    @param ytry :
+!!    @param nerr :
+!!********************************************************************
       subroutine maxpsi(xl1,yl1,xl2,yl2,x1,y1,x2,y2,f1,f2,f3,f4, &
                         area,psimax,xtry,ytry,nerr)
       use set_kinds
@@ -1704,18 +1780,21 @@
       return
       end subroutine maxpsi
 
-!**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          minmax finds minimum and maximum value of psi in a      **
-!**          cell.                                                   **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          07/09/83..........first created                         **
-!**                                                                  **
-!**********************************************************************
+
+!*********************************************************************
+!!
+!>          minmax finds minimum and maximum value of psi in a 
+!!         cell.
+!! 
+!!    @param psi : poloidal flux on nw x nh grid 
+!!    @param nwh :
+!!    @param nh  :
+!!    @param kn  :
+!!    @param psivl  :
+!!    @param iflag :
+!!    @param knew :
+!!                                                                  
+!*******************************************************************
       subroutine minmax(psi,nwh,nh,kn,psivl,iflag,knew)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension psi(nwh)
@@ -1726,18 +1805,18 @@
       knew=kn
       return
       end subroutine minmax
-!**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          order puts the points (xp,yp) in increasing order       **
-!**          of yp.                                                  **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          22/03/84..........first created                         **
-!**                                                                  **
-!**********************************************************************
+
+
+!*********************************************************************
+!!                                                                  
+!>          order puts the points (xp,yp) in increasing order
+!!          of yp. 
+!!                                                                 
+!!    @param xp :
+!!    @param yp :
+!!    @param np :
+!!                                                                  
+!*********************************************************************
       subroutine order(xp,yp,np)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension xp(*),yp(*)
@@ -1757,17 +1836,20 @@
       if (is.eq.1) go to 80
       return
       end subroutine order
-!**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          pack orders the points (xp,yp) in sequencial order.     **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          22/03/84..........first created                         **
-!**                                                                  **
-!**********************************************************************
+
+
+!*********************************************************************
+!!  
+!>     packps orders the points (xp,yp) in sequencial order.
+!!
+!!    @param xp :
+!!    @param yp :
+!!    @param np :
+!!    @param rm :
+!!    @param zm :
+!!    @param kadd :
+!!                                                                  
+!*********************************************************************
       subroutine packps(xp,yp,np,rm,zm,kadd)
       use commonblocks,only: cjrf,wxin,wyin,wxout,wyout
       include 'eparm.inc'
@@ -1846,28 +1928,23 @@
       yp(np)=yp(1)
       return
       end subroutine packps
-!**********************************************************************
-!**                                                                  **
-!**     subprogram description:                                      **
-!**          QFIT is a quadratic fitter.                             **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**         1. (x1,y1); (x2,y2); (x3,y3)                             **
-!**             three points used to determine parabola.             **
-!**              note: x1.lt.x2.lt.x3.                               **
-!**         2. function switch                                       **
-!**            k=1  find y,yp given x                                **
-!**            k=2  find x,yp given y                                **
-!**            k=3  find a,b,c (returned as x,y,yp)                  **
-!**            where y(x)=a*x**2+b*x+c                               **
-!**                  yp  = derivative of parabola at (x,y)           **
-!**         3. ierr=1  error return                                  **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          04/08/86..........first created                         **
-!**                                                                  **
-!**********************************************************************
+
+!*********************************************************************
+!!                                          
+!>     QFIT is a quadratic fitter from three points
+!!
+!!    @param x1 : x value of point 1
+!!    @param x2 : x value of point 2
+!!    @param x3 : x value of point 3
+!!    @param y1 : y value of point 1
+!!    @param y2 : y value of point 2
+!!    @param y3 : y value of point 3
+!!    @param x :
+!!    @param y :
+!!    @param yp :
+!!    @param ierr : error flag
+!! 
+!*********************************************************************
       subroutine qfit(k,x1,x2,x3,y1,y2,y3,x,y,yp,ierr)
       use set_kinds
       use error_control
@@ -1921,19 +1998,35 @@
       yp=c
       return
       end subroutine qfit
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          surfac generates a contour of constant psi of value     **
-!**          siwant.                                                 **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/10/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**                                                                  **
-!**********************************************************************
+!!
+!>     surfac generates a contour of constant psi of value
+!!     siwant. 
+!!
+!!    @param siwant :
+!!    @param psi : 
+!!    @param nw :
+!!    @param nh :
+!!    @param rgrid :
+!!    @param zgrid :
+!!    @param xout :
+!!    @param yout :
+!!    @param nfound :
+!!    @param npoint :
+!!    @param drgrid :
+!!    @param dzgrid :
+!!    @param xmin :
+!!    @param xmax :
+!!    @param ymin :
+!!    @param ymax :
+!!    @param ipack :
+!!    @param rmaxis :
+!!    @param zmaxis :
+!!    @param negcur :
+!!    @param kerror : error flag
+!*********************************************************************
       subroutine surfac(siwant,psi,nw,nh,rgrid,zgrid,xout,yout, &
                     nfound,npoint,drgrid,dzgrid,xmin, &
                     xmax,ymin,ymax,ipack,rmaxis,zmaxis,negcur,kerror)
@@ -2016,31 +2109,25 @@
       end if
       return
       end subroutine surfac
+      
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          zlim determines whether points on the (x,y) grid are    **
-!**          inside or outside of the boundary set by the limiters.  **
-!**                                                                  **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**       zero (out)......1 if inside and 0 otherwise                **
-!**       nw..............dimension of x                             **
-!**       nh..............dimension of y                             **
-!**       limitr..........number of limiter points                   **
-!**       xlim............r coordinates of limiter                   **
-!**       ylim............z coordinates of limiter                   **
-!**       x...............r grid                                     **
-!**       y...............z grid                                     **
-!**       iflag...........1 convex geometry                          **
-!**                       2 general geometry                         **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**          13/08/85..........iflag added                           **
-!**          13/07/21..........WARNING added, needs fixing!          **
-!**                                                                  **
-!**********************************************************************
+!>     zlim determines whether points on the (x,y) grid are
+!!     inside or outside of the boundary set by the limiters.\n
+!!
+!!     13/07/21..........WARNING added, needs fixing!
+!!
+!!    @param zero : if inside and 0 otherwise 
+!!    @param nw : dimension of x 
+!!    @param nh : dimension of y
+!!    @param limitr : number of limiter points
+!!    @param xlim : r coordinates of limiter
+!!    @param ylim : z coordinates of limiter
+!!    @param x : r grid 
+!!    @param y : z grid 
+!!    @param iflag :  1 convex geometry\n 
+!!                    2 general geometry
+!*********************************************************************
       subroutine zlim(zero,nw,nh,limitr,xlim,ylim,x,y,iflag)
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)

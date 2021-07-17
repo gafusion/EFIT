@@ -1,13 +1,17 @@
-! The following set of routines are specific to the fast cyclic solver
-! originated by Holger St. John, optimised to realtime format by John Ferron
-! and then modified for use as an option here by Dylan Brennan.  These
-! routines continue up to the mark END_CYCLIC_ROUTINES
+!> The following set of routines are specific to the fast cyclic solver
+!! originated by Holger St. John, optimised to realtime format by John Ferron
+!! and then modified for use as an option here by Dylan Brennan.  These
+!! routines continue up to the mark END_CYCLIC_ROUTINES
 
-! ======================================================================
-! FUNCTION ef_init_cycred_data
-! Initialize a set of precomputed data for the cyclic reduction algorithm.
-! These data depend on the grid size and spacings.
-! ----------------------------------------------------------------------
+
+
+!********************************************************************** 
+!!
+!> ef_init_cycred_data
+!! Initialize a set of precomputed data for the cyclic reduction algorithm.
+!! These data depend on the grid size and spacings.
+!!
+!**********************************************************************  
       function ef_init_cycred_data()
       include 'eparm.inc'
       include 'modules2.inc'
@@ -174,11 +178,14 @@
 
       end function ef_init_cycred_data
 
-! ======================================================================
-! SUBROUTINE cyclic_reduction
-! The core routine to compute the flux on the grid using Holger StJohn's
-! single cyclic reduction algorithm.
-! ----------------------------------------------------------------------
+
+!********************************************************************** 
+!! 
+!>    cyclic_reduction
+!!    The core routine to compute the flux on the grid using Holger StJohn's
+!!    single cyclic reduction algorithm.
+!!
+!**********************************************************************
       subroutine cyclic_reduction(f)
 
       include 'eparm.inc'
@@ -279,11 +286,14 @@
       return
       end subroutine cyclic_reduction
 
-! ======================================================================
-! SUBROUTINE pflux_cycred
-! Use the single cyclic reduction method of Holger StJohn and John Ferron 
-! to get the flux on the grid resulting from the plasma current.
-! ----------------------------------------------------------------------
+
+!**********************************************************************
+!!
+!>  pflux_cycred use e the single cyclic reduction method of Holger StJohn
+!! and John Ferron 
+!! to get the flux on the grid resulting from the plasma current.
+!!
+!**********************************************************************
       subroutine pflux_cycred(psigrid,sia,kerror)
 
       include 'eparm.inc'
@@ -378,23 +388,19 @@
       end subroutine vsma_
 
 
-! ef_vvmul: multiply two vectors together
-! ef_tridiag1
-! ef_tridiag2: triagonal matrix solution routines used by the cyclic
-!              reduction algorithm for computing flux on the grid.
-!
-! ef_vadd_shrt: Add two vectors.  
-!               Handles vectors one element at a time.  Good for
-!               short, unaligned vectors but not optimized at all for long vectors.
-! ef_vmul_const_shrt: Multiply a vector by a constant. 
-!               Handles vectors one element
-!               at a time.  Good for
-!               short, unaligned vectors but not optimized at all for long vectors.
-!----------------------------------------------------------------------
-! Modifications:
-! 12/30/97: created by J. Ferron from the C language equivalent comments
-!           in rtefitutils.s
-! 3/31/00:  converted to fortran by Dylan Brennan
+!**********************************************************************
+!>
+!!    this subroutine multiplies two vectors together
+!!    
+!!
+!!    @param vin1 :
+!!
+!!    @param vin2 :
+!!
+!!    @param out :
+!!
+!!    @param nelements :
+!!
 !**********************************************************************
       subroutine ef_vvmul(vin1,vin2,out,nelements)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
@@ -407,28 +413,25 @@
       return
       end subroutine ef_vvmul
 
-
-! ======================================================================
-! ======================================================================
-!  +++++++++++++++++++++++
-!  SUBROUTINE: ef_tridiag2
-!  +++++++++++++++++++++++
-! 
-!  Solve system of equations defined by a tridiagonal matrix.
-!  This is a version of the routine in Numerical Recipies which
-!  uses some values precalculated from the diagonals of the matrix.
-! 
-!  This routine also does a bunch of preparation to compute the rhs vector
-!  and accumulate the result.
-! 
-!  con: array of structures giving precalculated values
-!  wk1: vector of precalculated values. 
-!  wk2,phi: vectors that when combined yield the right hand side vector
-!  alphab: a constant that would be used in computing the right hand side
-!         vector.
-!  f: the vector in which the result is being accumulated.
-!  v: temporary storage area for the result vector
-!  n: number of elements in the vector. 
+!**********************************************************************
+!!
+!>  ef_tridiag2 solves system of equations defined by a tridiagonal matrix.
+!!  This is a version of the routine in Numerical Recipies which
+!!  uses some values precalculated from the diagonals of the matrix.
+!! 
+!!  This routine also does a bunch of preparation to compute the rhs vector
+!!  and accumulate the result.
+!! 
+!!    @param con : array of structures giving precalculated values
+!!    @param wk1 : vector of precalculated values. 
+!!    @param wk2,phi : vectors that when combined yield the right hand side vector
+!!    @param alphab : a constant that would be used in computing the right hand side
+!!         vector.
+!!    @param f : the vector in which the result is being accumulated.
+!!    @param v : temporary storage area for the result vector
+!!    @param  n : number of elements in the vector. 
+!!
+!**********************************************************************
       subroutine ef_tridiag2(f,n,index)
 
       include 'eparm.inc'
@@ -454,35 +457,34 @@
    20 continue 
       return
       end subroutine ef_tridiag2
-! ======================================================================
-! ======================================================================
-!  +++++++++++++++++++++++
-!  SUBROUTINE: ef_tridiag1
-!  +++++++++++++++++++++++
-! 
-!  Solve system of equations defined by a tridiagonal matrix.
-!  This is a version of the routine in Numerical Recipies which
-!  uses some values precalculated from the diagonals of the matrix.
-! 
-!  This routine also does a bunch of preparation to compute the rhs vector
-!  and accumulate the result.
-! 
-!  Basically the same as tridiag2 except:
-!  f is the input instead of wk2.  At the end of the routine, f as it
-!  was at the start of the routine has been copied into wk2.
-! 
-!  The result is written directly into f rather than adding the result
-!  to the input value of f.
-! 
-!  con: array of structures giving precalculated values.
-!  wk1: vector of precalculated values. 
-!  wk2,phi: vectors that when combined yield the right hand side vector
-!  alphab: a constant that would be used in computing the right hand side
-!         vector.
-!  f: the vector in which the result is being accumulated.
-!  v: temporary storage area for the result vector
-!  n: number of elements in the vector. 
-! 
+
+
+!*********************************************************************
+!!
+!>  ef_tridiag1 solves system of equations defined by a tridiagonal matrix.
+!!  This is a version of the routine in Numerical Recipies which
+!!  uses some values precalculated from the diagonals of the matrix.
+!! 
+!!  This routine also does a bunch of preparation to compute the rhs vector
+!!  and accumulate the result.
+!! 
+!!  Basically the same as tridiag2 except:
+!!  f is the input instead of wk2.  At the end of the routine, f as it
+!!  was at the start of the routine has been copied into wk2.
+!! 
+!!  The result is written directly into f rather than adding the result
+!!  to the input value of f.
+!! 
+!!  @param con : array of structures giving precalculated values.
+!!  @param wk1 : vector of precalculated values. 
+!!  @param wk2,phi : vectors that when combined yield the right hand side vector
+!!  @param alphab : a constant that would be used in computing the right hand side
+!!         vector.
+!!  @param f : the vector in which the result is being accumulated.
+!!  @param v : temporary storage area for the result vector
+!!  @param n : number of elements in the vector. 
+!!
+!!********************************************************************
       subroutine ef_tridiag1(f,n,index)
 
       include 'eparm.inc'
@@ -510,22 +512,22 @@
    20 continue 
       return
       end subroutine ef_tridiag1
-! ======================================================================
-! ======================================================================
-!  ++++++++++++++++++++++++
-!  SUBROUTINE: ef_vadd_shrt
-!  ++++++++++++++++++++++++
-! 
-!  Add two vectors.  Handles vectors one element at a time.  Good for
-!  short, unaligned vectors but not optimized at all for long vectors.
-! 
-!  vector_out = vector1 + vector2
-! 
-!  vector1 = input vector
-!  vector2 = input vector
-!  vector_out = output vector
-!  nelements = number of elements in the vectors.
 
+
+!*********************************************************************
+!!
+!>  ef_vadd_shrt adds two vectors.  Handles vectors one 
+!!  element at a time.  Good for
+!!  short, unaligned vectors but not optimized at all for long vectors.
+!! 
+!!  @param vector_out : vector1 + vector2
+!! 
+!!  @param mvector1 : input vector
+!!  @param vector2 : input vector
+!!  @param vector_out : output vector
+!!  @param nelements : number of elements in the vectors.
+!!
+!***********************************************************************
       subroutine ef_vadd_shrt(vector1,vector2,vector_out, &
                               nelements)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
@@ -536,22 +538,20 @@
    10 continue
       return
       end subroutine ef_vadd_shrt
-! ======================================================================
-! ======================================================================
-!  ++++++++++++++++++++++++
-!  SUBROUTINE: ef_vmul_const_shrt
-!  ++++++++++++++++++++++++
-! 
-!  Multiply a vector by a constant.
-!  Handles vectors one element at a time.  Good for
-!  short, unaligned vectors but not optimized at all for long vectors.
-! 
-!  vector_out = vector1 * constant
-! 
-!  vector1 = input vector
-!  constant = constant value
-!  vector_out = output vector
-!  nelements = number of elements in the vectors. Must be at least 2.
+
+      
+!**************************************************************************
+!>    ef_vmul_const_shrt Multiply a vector by a constant.
+!!    Handles vectors one element at a time.  Good for short, unaligned vectors
+!!    but not optimized at all for long vectors.\n
+!! 
+!!    vector_out = vector1 * constant
+!! 
+!!    @param vector1 : input vector
+!!    @param constant : constant value
+!!    @param vector_out : output vector
+!!    @param nelements : number of elements in the vectors. Must be at least 2.
+!**************************************************************************
       subroutine ef_vmul_const_shrt(vector1,constant,vector_out,nelements)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension vector1(1),vector_out(1)

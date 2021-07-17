@@ -1,15 +1,13 @@
 !********************************************************************** 
-!**                                                                  ** 
-!**     SUBPROGRAM DESCRIPTION:                                      ** 
-!**          buneto sets up the appropriate arrays for the           ** 
-!**          Buneman's solver.                                       ** 
-!**                                                                  ** 
-!**     CALLING ARGUMENTS:                                           ** 
-!**                                                                  ** 
-!**     RECORD OF MODIFICATION:                                      ** 
-!**          05 03/85..........first created                         ** 
-!**                                                                  ** 
-!********************************************************************** 
+!!
+!>    buneto sets up the appropriate arrays for the
+!!     Buneman's solver.
+!!
+!!    @param psi :
+!!    @param nwb :
+!!    @param nhb :
+!!    @param sia :
+!!********************************************************************* 
       subroutine buneto(psi,nwb,nhb,sia) 
 !vas  f90 modifi. 
       use set_kinds 
@@ -59,18 +57,16 @@
       return 
       end subroutine
  
+ 
 !********************************************************************** 
-!**                                                                  ** 
-!**     SUBPROGRAM DESCRIPTION:                                      ** 
-!**          rzpois solves for the poloidal flux using the           ** 
-!**          Buneman's method.                                       ** 
-!**                                                                  ** 
-!**     CALLING ARGUMENTS:                                           ** 
-!**                                                                  ** 
-!**     RECORD OF MODIFICATION:                                      ** 
-!**          05 03/85..........first created                         ** 
-!**                                                                  ** 
-!********************************************************************** 
+!!
+!>    rzpois solves for the poloidal flux using the
+!!    Buneman's method.
+!! 
+!!    @param nq :
+!!    @param q :
+!!
+!!********************************************************************* 
       subroutine rzpois(nq,q) 
 !vas  f90 modifi 
       use set_kinds 
