@@ -11,7 +11,7 @@
  #
  #
  #
- table_di2 = </global/homes/t/tbechtel/efitall/efit_new/build/test/DIIID/green/>
+ table_di2 = </home/bechtelt/efitall/efit/build_mpi/test/DIIID/green/>
 
       ******************** EFITD 65 x  65  output ********************
  before save fitting weights
@@ -19,6 +19,23 @@
  itek > 100, write out PLTOUT.OUT individually 
  option to symmetrize added 8/14/91 eal  
  read in limiter data
+ before save fitting weights
+ adjust fit parameters based on basis function selected 
+ itek > 100, write out PLTOUT.OUT individually 
+ option to symmetrize added 8/14/91 eal  
+ read in limiter data
+ before save fitting weights
+ adjust fit parameters based on basis function selected 
+ itek > 100, write out PLTOUT.OUT individually 
+ option to symmetrize added 8/14/91 eal  
+ read in limiter data
+ before save fitting weights
+ adjust fit parameters based on basis function selected 
+ itek > 100, write out PLTOUT.OUT individually 
+ option to symmetrize added 8/14/91 eal  
+ read in limiter data
+ netcdf needs to be linked to write m-files
+INFO in efit at r=  2, t=  2500: Done processing
 
        data used:   
  39 flux loops
@@ -34,70 +51,9 @@
  a(cm)    =     56.398 lin(cm)  =     14.967 lout(cm) =      5.578
  ltop(cm) =     15.744 q*       =      3.888 rc(cm)   =    170.561
  zc(cm)   =     -2.403 bt0(t)   =      1.631 qout     =      6.828
-
-      ******************** EFITD 65 x  65  output ********************
- before save fitting weights
- adjust fit parameters based on basis function selected 
- itek > 100, write out PLTOUT.OUT individually 
- option to symmetrize added 8/14/91 eal  
- read in limiter data
-
-       data used:   
- 39 flux loops
- 65 magnetic probes(i)
-  1 full rogowski
-  0 diamagnetic loop
-
-
- shot #   =     186610 time(ms) =       2400 chi**2   =  1.922E+01
- betat(%) =      0.252 betap    =      0.066 li       =      1.194
- vol(cm3) =  1.765E+07 rout(cm) =    172.886 zout(cm) =      6.325
- elong    =      1.792 utriang  =      0.753 ltriang  =      0.351
- a(cm)    =     56.422 lin(cm)  =     14.734 lout(cm) =      5.761
- ltop(cm) =     15.831 q*       =      3.890 rc(cm)   =    170.328
- zc(cm)   =     -2.730 bt0(t)   =      1.638 qout     =      6.533
-
-      ******************** EFITD 65 x  65  output ********************
- before save fitting weights
- adjust fit parameters based on basis function selected 
- itek > 100, write out PLTOUT.OUT individually 
- option to symmetrize added 8/14/91 eal  
- read in limiter data
-
-       data used:   
- 39 flux loops
- 65 magnetic probes(i)
-  1 full rogowski
-  0 diamagnetic loop
-
-
- shot #   =     186610 time(ms) =       2500 chi**2   =  1.856E+01
- betat(%) =      0.311 betap    =      0.082 li       =      1.186
- vol(cm3) =  1.777E+07 rout(cm) =    173.112 zout(cm) =      6.418
- elong    =      1.795 utriang  =      0.755 ltriang  =      0.355
- a(cm)    =     56.528 lin(cm)  =     14.854 lout(cm) =      5.404
- ltop(cm) =     15.496 q*       =      3.911 rc(cm)   =    170.655
- zc(cm)   =     -2.835 bt0(t)   =      1.637 qout     =      6.493
-
-      ******************** EFITD 65 x  65  output ********************
- before save fitting weights
- adjust fit parameters based on basis function selected 
- itek > 100, write out PLTOUT.OUT individually 
- option to symmetrize added 8/14/91 eal  
- read in limiter data
-
-       data used:   
- 39 flux loops
- 65 magnetic probes(i)
-  1 full rogowski
-  0 diamagnetic loop
-
-
- shot #   =     186610 time(ms) =       2600 chi**2   =  1.872E+01
- betat(%) =      0.302 betap    =      0.080 li       =      1.177
- vol(cm3) =  1.774E+07 rout(cm) =    172.964 zout(cm) =      6.027
- elong    =      1.798 utriang  =      0.749 ltriang  =      0.353
- a(cm)    =     56.445 lin(cm)  =     14.789 lout(cm) =      5.652
- ltop(cm) =     15.961 q*       =      3.903 rc(cm)   =    170.375
- zc(cm)   =     -2.823 bt0(t)   =      1.629 qout     =      6.936
  netcdf needs to be linked to write m-files
+INFO in efit at r=  3, t=  2600: Done processing
+ netcdf needs to be linked to write m-files
+INFO in efit at r=  0, t=  2300: Done processing
+ netcdf needs to be linked to write m-files
+INFO in efit at r=  1, t=  2400: Done processing

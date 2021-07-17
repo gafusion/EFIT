@@ -1,5 +1,3 @@
-        subroutine getdia(nshot,tim,npts,tavg,ierr,phidia,sigphi)
-
 ! **********************************************************************
 !   This routine returns the average of the compensated diamagnetic    *
 !   fluxes and error in the diamagnetic fluxes.                        * 
@@ -34,6 +32,8 @@
 !                   LaHaye)                                            *
 !       2013/06/25  Increase data arrays dimension, new compensation   *                                           *
 !***********************************************************************   
+        subroutine getdia(nshot,tim,npts,tavg,ierr,phidia,sigphi)
+
         parameter (ntims=8192)
         dimension diamag(ntims,3),diamagc(ntims,3), &
                   sig(ntims,3),tim(ntims)
@@ -76,8 +76,6 @@
         end
 
 !********************************************************************
-        SUBROUTINE DLCOMP(TIM,DIAMAG,DIAMAGC,SIG,NSHOT,NPTS,IDLC &
-        ,IERR,TAVG)
 !
 !   MODIFIED 9/5/87 - An incorrect RC/G was found for all three loops,
 !       A.Kellman     so the correction was put in for all shots before
@@ -91,6 +89,8 @@
 !   9/21/2020 - R.S. Changed ifix to int
 !       
 !vas-oct3,08        include 'expath.inc'
+        SUBROUTINE DLCOMP(TIM,DIAMAG,DIAMAGC,SIG,NSHOT,NPTS,IDLC &
+        ,IERR,TAVG)
         use expath
         PARAMETER (NTIMS=8192,NPOINT=42)
         DIMENSION DIAMAG(NTIMS,3),DIAMAGC(NTIMS,3),SIG(NTIMS,3)

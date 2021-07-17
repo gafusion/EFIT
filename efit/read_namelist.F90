@@ -1,11 +1,13 @@
 subroutine read_efitin
      use commonblocks
      use set_kinds
-     use mpi_efit
      include 'eparm.inc'
      include 'modules2.inc'
      include 'modules1.inc'
      implicit integer*4 (i-n), real*8 (a-h,o-z)
+#if defined(USEMPI)
+      include 'mpif.h'
+#endif
      character(80),dimension(1001) :: inpfile
      logical input_flag
      integer*4 mode, shot, steps
@@ -15,12 +17,15 @@ subroutine read_efitin
      namelist/optin/mode,cmdfile,shotfile,shot,starttime,deltatime,steps,snapext,inpfile
 ! OPT_INPUT >>>
       use_opt_input = .false.
+      input_flag = .false.
       if (rank == 0) then
         inquire(file='efit.input',exist=input_flag)
       endif
+#if defined(USEMPI)
       if (nproc > 1) then
         call MPI_BCAST(input_flag,1,MPI_LOGICAL,0,MPI_COMM_WORLD,ierr)
       endif
+#endif
       if (input_flag) then
        if (rank == 0) then
           write(*,*) ' Using efit.input file...'

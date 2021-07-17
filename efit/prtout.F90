@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
@@ -17,11 +18,9 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-! MPI >>>
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
-! MPI <<<
       dimension xrsp(npcurn)
       dimension patmpz(magpri),xmpz(magpri),ympz(magpri),ampz(magpri)
       character*30 sfname
@@ -63,7 +62,6 @@
       if (itek.gt.0) go to 100
 ! MPI >>>
       if (rank == 0) then
-! MPI <<<
         !write (nttyo,10000) trim(ch1),trim(ch2)
         jtime=time(it)
         saisq=tsaisq(it)
@@ -80,7 +78,6 @@
         write (nttyo,10580) aout(it),oleft(it),oright(it)
         write (nttyo,10600) otop(it),qsta(it),rcurrt(it)
         write (nttyo,10610) zcurrt(it),bcentr(it),qout(it)
-! MPI >>>
       endif
 ! MPI <<<
   100 continue

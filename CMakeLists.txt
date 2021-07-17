@@ -96,8 +96,7 @@ if (${ENABLE_PARALLEL})
   message(STATUS "Building with MPI")
 else()
   set (sharedir share-ser)
-  set (USEMPI FALSE)
-#  message(STATUS "Building without MPI")
+  message(STATUS "Building without MPI")
 endif()
 
 install(FILES ${CMAKE_BINARY_DIR}/config.f 
@@ -231,7 +230,6 @@ add_subdirectory(efit)
 #---------------------------------------------------------------------
 enable_testing()
 add_subdirectory(test)
-
 
 #---------------------------------------------------------------------
 #

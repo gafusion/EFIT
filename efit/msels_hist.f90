@@ -1,11 +1,4 @@
-      SUBROUTINE  MSELS_HIST(ishot,synmls,icmls,ntimes,l_time,        &
-           l_bbmls,l_sigbmls,l_rrmls,l_zzmls,l_L1mls,l_L2mls,         &
-           l_L4mls,l_epotpmls,l_sigepmls,iermls)
-!234567
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  EFIT Reconstruction                           **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          msels_hist returns synthetic or experimental MSE-LS     **
@@ -30,15 +23,13 @@
 !**          iermls: error flags of MSE-LS channels, 0=normal,       **
 !**                  1=error (ignore data)                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          2015/02/12..........first created                       **
 !**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE  MSELS_HIST(ishot,synmls,icmls,ntimes,l_time,        &
+           l_bbmls,l_sigbmls,l_rrmls,l_zzmls,l_L1mls,l_L2mls,         &
+           l_L4mls,l_epotpmls,l_sigepmls,iermls)
 
       INTEGER*4 ishot,icmls,iermls,i
       REAL*4 time,bbmls,sigbmls,rrmls,zzmls, &

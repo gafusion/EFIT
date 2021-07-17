@@ -1,10 +1,4 @@
-      subroutine msels_data(ishot,atime,ktime,avem,synmls,icmls,     &
-             bbmls,sigbmls,rrmls,zzmls,L1mls,L2mls,L4mls,epotpmls,   &
-             sigepmls,iermls) 
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  EFIT Reconstruction                           **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          msels_data returns synthetic or experimental MSE-LS     **
@@ -32,16 +26,14 @@
 !**          iermls: error flags of MSE-LS channels, 0=normal,       **
 !**                  1=error (ignore data)                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          2015/02/12..........first created                       **
 !**          2015/07/14 Updated with Lang's suggestions              **
 !**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      subroutine msels_data(ishot,atime,ktime,avem,synmls,icmls,     &
+             bbmls,sigbmls,rrmls,zzmls,L1mls,L2mls,L4mls,epotpmls,   &
+             sigepmls,iermls) 
       integer*4, parameter :: ntimes=2000
       character*3 synmls
       integer*4 i,j,count

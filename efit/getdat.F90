@@ -2,15 +2,6 @@
 ! 
 !  PRIMARY CALLING SEQUENCE USED BY REVIEW AND OTHER CODES.
 !
-      SUBROUTINE GETDAT(NSHOT,NAME,ICAL,IER,T,DATA,NP, &
-      TMIN,TMAX,MOP,SCALE,jWAIT)
-
-!----- 
-! 1% tolerance for signal clipping added 8/14/89
-! at present the clipping errors (ier = -1, -2) are used only by the
-! yoka routine in NEWSPEC.
-!-----
-!
 !     GETDAT CALLS PTDATA AND RETURNS SHOT DATA IN A MORE USEFUL WAY.
 !
 !     NSHOT IS THE SHOT NUMBER
@@ -62,8 +53,15 @@
 !     IBFLAG = 0 PTDATA'S "ZERO OFFSET" VALUE IS USED FOR THE BASELINE.
 !              1 SAMPLES 6 THROUGH 35 ARE AVERAGED TO PROVIDE THE BASELINE.
 !                    IN THIS CASE, THE FIRST 40 SAMPLES ARE NOT RETURNED.
+!----- 
+! 1% tolerance for signal clipping added 8/14/89
+! at present the clipping errors (ier = -1, -2) are used only by the
+! yoka routine in NEWSPEC.
+!-----
 !
-!
+      SUBROUTINE GETDAT(NSHOT,NAME,ICAL,IER,T,DATA,NP, &
+      TMIN,TMAX,MOP,SCALE,jWAIT)
+
       use set_kinds
       parameter (npmax=262144)
 

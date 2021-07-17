@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
@@ -6,11 +7,13 @@
 !**********************************************************************
       subroutine getsets_defaults
       use set_kinds
-      use mpi_efit
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
+#if defined(USEMPI)
+      include 'mpif.h'
+#endif
 
       logical lopened
       character filenm*15,ishotime*12,news*72, &
@@ -232,12 +235,14 @@
       subroutine getsets(ktime,kwake,mtear,kerror)
       use set_kinds
       use Fortran_Sleep
-      use mpi_efit
       use, intrinsic :: iso_c_binding, only: c_int
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
+#if defined(USEMPI)
+      include 'mpif.h'
+#endif
       integer (c_int) :: retwait
 
       logical lopened
@@ -673,7 +678,6 @@
       else
         istop=0
       endif
-! MPI >>>
 
 #if defined(USEMPI)
 ! MK 2020.10.08 TODO All control paths *should* be identical here
@@ -698,7 +702,6 @@
         if (fwtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
   142 continue
       if (mmstark.gt.0) then
-! MPI >>>
 #if defined(USEMPI)
         if (nproc == 1) then
           call getstark(ktime)
@@ -708,7 +711,6 @@
 #else
         call getstark(ktime)
 #endif
-! MPI <<<
       endif
 !
       do jtime=1,ktime
@@ -725,7 +727,6 @@
         if (fwtemsels(i).gt.1.e-06_dp) mmemsels=mmemsels+1
 99144 continue
       if (mmbmsels.gt.0) then
-! MPI >>>
 #if defined(USEMPI)
         if (nproc == 1) then
           call getmsels(ktime)
@@ -735,7 +736,6 @@
 #else
         call getmsels(ktime)
 #endif
-! MPI <<<
       endif
 !
       do 145 i=1,ktime

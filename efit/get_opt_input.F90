@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
@@ -16,8 +17,10 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      USE mpi_efit
       implicit integer*4 (i-n), real*8 (a-h,o-z)
+#if defined(USEMPI)
+      include 'mpif.h'
+#endif
       character*82 snap_ext     
 
       ! ONLY root process allowed to interface with terminal
@@ -30,9 +33,11 @@
           kdata = mode_in
         endif
       endif
+#if defined(USEMPI)
       if (nproc > 1) then
         call MPI_BCAST(kdata,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
       endif
+#endif 
 
       if (kdata.eq.7) then
          if (rank == 0) then
@@ -44,9 +49,11 @@
            endif
          endif
          snapextin=snap_ext
+#if defined(USEMPI)
          if (nproc > 1) then
            call MPI_BCAST(snap_ext,82,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
          endif
+#endif 
       endif
 
       if (kdata.eq.2) then 
@@ -99,9 +106,6 @@
           call MPI_BCAST(timeb,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
           call MPI_BCAST(dtime,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         endif
-#endif 
-
-#if defined(USEMPI)
 ! Distribute steps among ALL processes if necessary
       if (nproc > 1) then
         dist_data(:) = 0
@@ -132,9 +136,12 @@
 ! Recall each filename 80 characters
         if (rank == 0) then
           dist_data(:) = dist_data(:)*80
-          call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER,MPI_IN_PLACE,dist_data(rank+1),MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+          call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER, &
+                 MPI_IN_PLACE,dist_data(rank+1),MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
         else
-          call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER,ifname,ktime*80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+          ALLOCATE(ifname(ktime))
+          call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER, &
+                 ifname,ktime*80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
         endif
       endif
 #endif

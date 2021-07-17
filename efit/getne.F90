@@ -1,8 +1,5 @@
-  subroutine getne(jtime,kerror)
+#include "config.f"
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          GETNE gets the electron density                         **
@@ -10,27 +7,21 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          15/09/87..........first created                         **
 !**                                                                  **
 !**********************************************************************
+      subroutine getne(jtime,kerror)
       use commonblocks,only: cjrf,c,wk,copy,bkx,bky
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-! MPI >>>
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
       integer :: ier_all
       integer, intent(inout) :: kerror
-! MPI <<<
       dimension pds(6)
 
       kerror = 0

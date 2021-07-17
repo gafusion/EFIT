@@ -3,7 +3,6 @@
 
 #cmakedefine USEMPI
 #cmakedefine USE_NETCDF
-#cmakedefine HAVE_MPI
 #cmakedefine MPI_THREAD_FUNNELED
 #cmakedefine OBJ_MEM_PROF
 #cmakedefine HAVE_OPENMP

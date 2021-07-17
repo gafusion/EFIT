@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Note: if ENABLE_PARALLEL is on then you will have to submit a job to run the tests, e.g.
+#    salloc --nodes 1 --qos interactive --time 00:05:00 --constraint haswell
+
 #rm -rf CMake*
 
 if ! modulecmd bash list 2>&1 | grep PrgEnv-intel 1>/dev/null 2>&1; then
@@ -39,4 +42,4 @@ esac
 # to link NetCDF (needs to be built separately by hand) include -DENABLE_NETCDF:BOOL=ON -DNetCDF_DIR:PATH='/path/to/your/NetCDF/installation'
 
 # multi-line cmake does not appear to work properly?
-cmake -DBLAS_LIBRARIES:PATH=$SYSTEM_BLAS_SER_LIB -DLAPACK_LIBRARIES:PATH=$SYSTEM_LAPACK_SER_LIB ..
+cmake -DBLAS_LIBRARIES:PATH=$SYSTEM_BLAS_SER_LIB -DLAPACK_LIBRARIES:PATH=$SYSTEM_LAPACK_SER_LIB -DENABLE_PARALLEL:BOOL=ON ..

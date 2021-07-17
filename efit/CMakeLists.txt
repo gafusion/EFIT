@@ -6,9 +6,9 @@ include_directories(
 
 # This calls out to routines needed in d3lib
 set(EFITLIB_SOURCES
-  modules-efit.F90 get_eparmdud.f90 psicald.f90 lsolved.f90 
-  subs_d_pt.F90 efit_tables.f90 
-  getdat.F90 getdiau.f90 read_namelist.F90
+  modules-efit.F90 get_eparmdud.f90 psical.f90 lsolved.f90 
+  subs_d_pt.F90 efit_tables.F90 
+  getdat.F90 getdia.f90 read_namelist.F90
   bunemad.f90 getfnmdud.f90 ecom1-mods.f90 zplined.f90 
   ecom2-mods.f90 vas_sub1.f90 data_input.f90
   matrix.f90 shapesurf.f90 getsets.F90 prtout.F90 writeout.F90 currnt.f90
@@ -21,13 +21,6 @@ set(EFITLIB_SOURCES
   efitnotifier.c wmeasure.F90
   ${CMAKE_CURRENT_BINARY_DIR}/set_expath.F90
 )
-# stubs are superior to ifdefs in this case.
-if (${ENABLE_PARALLEL})
-    set(EFITLIB_SOURCES ${EFITLIB_SOURCES} mpi_parallel.f90)
-else()
-    set(EFITLIB_SOURCES ${EFITLIB_SOURCES} mpi_serial.f90)
-endif()
-
 
 #set_expath.F90 is generated -- see top level CMakeLists.txt
 
@@ -68,6 +61,7 @@ install(TARGETS efitlib DESTINATION lib
 add_executable(efit  efit.F90 get_opt_input.F90)
 target_link_libraries(efit efitlib ${io_libs} ${math_libs})
 
+# Premature...
 #add_executable(efitai  efitai.F90 get_opt_input_args.F90)
-add_executable(efitai  efitai.F90)
-target_link_libraries(efitai efitlib ${io_libs} ${math_libs})
+#add_executable(efitai  efitai.F90)
+#target_link_libraries(efitai efitlib ${io_libs} ${math_libs})

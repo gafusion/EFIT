@@ -17,12 +17,12 @@ endforeach()
 string(REPLACE ";" " " EFIT_LABEL "${EFIT_LABEL}")
 string(REPLACE ";" "\n" EFIT_IN "${EFIT_IN}")
 
+set(EFIT_EXEC "srun --mpi=pmi2 -n 4 ${CMAKE_BINARY_DIR}/efit/efit")
+
 configure_file(${EFIT_TEST_CONFIGFILE}
                ${CMAKE_CURRENT_BINARY_DIR}/run_efit.sh @ONLY)
 configure_file(${EFIT_RESULTS_CONFIGFILE}
                ${CMAKE_CURRENT_BINARY_DIR}/check_efit_results.sh @ONLY)
-
-set(EFIT_EXEC "srun -n 4 ${CMAKE_BINARY_DIR}/efit/efit")
 
 add_test(NAME efit04_mpi COMMAND run_efit.sh)
 add_test(NAME efit04_mpi-results COMMAND check_efit_results.sh)

@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
@@ -5,9 +6,6 @@
 !**          and MFIT.                                               **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          21/02/86..........revised for DIII-D                    **
@@ -743,14 +741,9 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          09/06/86..........first created                         **
 !**          93/04/21..........revised for double precision option   **
-!**                                                                  **
 !**                                                                  **
 !**********************************************************************
       subroutine avdata(nshot,name,mmm,ierror,y, &
@@ -979,10 +972,6 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**        2006/06/14..........first created                         **
 !**                                                                  **
@@ -1139,10 +1128,6 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          09/06/86..........first created                         **
 !**          93/04/21..........revised for double precision option   **
@@ -1259,14 +1244,8 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          2001/03/09........first created                         **
-!**                                                                  **
-!**                                                                  **
 !**                                                                  **
 !**********************************************************************
       subroutine gettanh(ishot,fitzts,ktime,time,ztssym,ztswid, &
@@ -1308,13 +1287,8 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          09/06/86..........first created                         **
-!**                                                                  **
 !**                                                                  **
 !**********************************************************************
       subroutine avdiam(nshot,name,mmm,ierror,y, &
@@ -1370,9 +1344,6 @@
 !**          zmooth smooths out the data.                            **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          10/06/86..........first created                         **
@@ -2189,10 +2160,8 @@
     end
 ! =========================================================
 
-! MPI >>>
 #if defined(USEMPI)
 
-      subroutine getpts_mpi(nshot,times,delt,ktime,istop)
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
@@ -2200,15 +2169,13 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**       2020/09/18 ....... R.S. Bug fix, bcast oldccomp.           **
 !**                          This removed small differences between  **
 !**                          serial and parallel runs.               **
 !**                                                                  **
 !**********************************************************************
+        subroutine getpts_mpi(nshot,times,delt,ktime,istop)
         use set_kinds
         include 'eparm.inc'
         include 'modules1.inc'
@@ -2311,7 +2278,11 @@
           zwork2(2) = real(limitr,dp)  ! INT4  (1)
           zwork2(3) = bitip         ! REAL8 (1)
           zwork2(4) = rcentr        ! REAL8 (1)
-          zwork2(5) = real(oldccomp,dp) ! added by MK 2020.10.07
+          if (oldccomp) then
+             zwork2(5) = 1._dp
+          else
+             zwork2(5) = 0._dp
+          endif
           offset = 5
           do i=1,nsilop
             zwork2(i+offset) = psibit(i)  ! REAL8 (nsilop)
@@ -2427,9 +2398,13 @@
         total_bytes = total_bytes + 8*sum(dist_data(2:))*nsize
 
         if (rank == 0) then
-          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,MPI_IN_PLACE,tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION, &
+                            MPI_IN_PLACE,tmp1(rank+1), &
+                            MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         else
-          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,zwork,       tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,zwork, &
+                            tmp1(rank+1),MPI_DOUBLE_PRECISION,0, &
+                            MPI_COMM_WORLD,ierr)
         endif
         ! Unpack ZWORK array data
         ! NOTE : Only processes with rank > 0 need to unpack data
@@ -2491,7 +2466,8 @@
           call system_clock(count=clock1)
           ticks = clock1-clock0
           secs = real(ticks,dp)/real(clockrate,dp)
-          write (*,"(' GETPTS transfer ',i10,' bytes in ',f6.2,' sec')") total_bytes,secs
+          write (*,"(' GETPTS transfer ',i10,' bytes in ',f6.2,'sec')") &
+                total_bytes,secs
         endif
         ! TIMING <<<
 
@@ -2505,7 +2481,6 @@
         include 'eparm.inc'
         include 'modules1.inc'
         implicit integer*4 (i-n), real*8 (a-h,o-z)
-
         include 'mpif.h'
 
         ! NOTE : 12 scalar used because distributing 12 arrays amongst processes
@@ -2594,9 +2569,13 @@
         total_bytes = total_bytes + 8*sum(dist_data(2:))*nsize
         if (rank == 0) then
           ! NOTE : DIST_DATA and DIST_DATA_DISPLS should be saved between calls since part of MPI_INFO module
-          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,MPI_IN_PLACE,tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION, &
+                            MPI_IN_PLACE,tmp1(rank+1), &
+                            MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         else
-          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,zwork,tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,zwork, &
+                            tmp1(rank+1),MPI_DOUBLE_PRECISION,0, &
+                            MPI_COMM_WORLD,ierr)
         endif
         ! Unpack ZWORK array data
         ! NOTE : Only processes with rank > 0 need to unpack data
@@ -2646,7 +2625,8 @@
 
         ! TEMP >>>
         ! SPATIAL_AVG_GAM
-        call MPI_BCAST(spatial_avg_gam,nstark*ngam_vars*ngam_u*ngam_w,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+        call MPI_BCAST(spatial_avg_gam,nstark*ngam_vars*ngam_u*ngam_w, &
+                       MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         ! TEMP <<<
 
         ! TEMP >>>
@@ -2673,11 +2653,11 @@
           call system_clock(count=clock1)
           ticks = clock1-clock0
           secs = real(ticks,dp)/real(clockrate,dp)
-          write (*,"(' GETSTARK transfer ',i10,' bytes in ',f6.2,' sec')") total_bytes,secs
+          write (*,"(' GETSTARK transfer ',i10,' bytes in ',f6.2,'sec')") &
+                total_bytes,secs
         endif
         ! TIMING <<<
 
       end subroutine getstark_mpi
 
 #endif
-! MPI <<<

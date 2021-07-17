@@ -55,11 +55,9 @@
      include 'modules2.inc'
      include 'modules1.inc'
      implicit integer*4 (i-n), real*8 (a-h,o-z)
-! MPI >>>
-#ifdef USEMPI
+#if defined(USEMPI)
      include 'mpif.h'
 #endif
-! MPI <<<
      data kwake/0/
      parameter (krord=4,kzord=4)
      character inp1*4,inp2*4
@@ -84,20 +82,20 @@
 !------------------------------------------------------------------------------
 !--   MPI if we have it
 !------------------------------------------------------------------------------ 
-! MPI >>>
 #if defined(USEMPI)
 ! Initialize MPI environment
       call MPI_INIT_THREAD(MPI_THREAD_SINGLE,terr,ierr)
       call MPI_COMM_RANK(MPI_COMM_WORLD,rank,ierr)
       call MPI_COMM_SIZE(MPI_COMM_WORLD,nproc,ierr)
+! Arrays can only be allocated after MPI has been initialized because dimension is # of processes
+      allocate(dist_data(nproc),dist_data_displs(nproc),fwtgam_mpi(nstark,nproc))
 #else
       rank  = 0
+      nproc = 0
 #endif
-! MPI <<<
 
       ! Set global constants for each rank
       call set_constants()
-
 !----------------------------------------------------------------------
 !-- Read in grid size from command line and set global variables     --
 !-- ONLY root process reads command-line arguments                   --
@@ -106,6 +104,7 @@
       nh = 0
       if (rank == 0) then
        nargs = iargc()
+! WARNING: is this true?? if so LF95 -> USEMPI ...
 ! Using mpirun command so will have different number of arguments than serial case
 #if defined(LF95)
        call getcl(cmdline)
@@ -126,7 +125,6 @@
 
       endif
 
-! MPI >>>
 #if defined(USEMPI)
 ! Distribute command-line information (meaning grid dimensions) to all processes if necessary
       if (nproc > 1) then
@@ -134,18 +132,15 @@
        call MPI_BCAST(nh,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
       endif
 #endif
-! MPI <<<
       if (nw == 0 .or. nh == 0) then
         if (rank == 0) then
           call errctrl_msg('efit','Must specify grid dimensions as arguments')
         endif
-! MPI >>>
 #if defined(USEMPI)
         deallocate(dist_data,dist_data_displs,fwtgam_mpi)
         call mpi_finalize(ierr)
 #endif
         STOP
-! MPI <<<
       endif
 
       IF (nw .le. 129) THEN
@@ -191,28 +186,17 @@
       call set_table_dir
       call read_eparmdud
       call get_eparmdud_dependents
-
-
-
 !----------------------------------------------------------------------
 !-- Global Allocations                                               --
 !----------------------------------------------------------------------
-  
       include 'global_allocs.f90'
       call set_ecom_mod1_arrays
       call set_ecom_mod2_arrays
-
 !----------------------------------------------------------------------
 !-- get data                                                         --
 !----------------------------------------------------------------------
-#if defined(USEMPI)
-! Arrays can only be allocated after MPI has been initialized because dimension is # of processes
-      allocate(dist_data(nproc),dist_data_displs(nproc),fwtgam_mpi(nstark,nproc))
-#endif
-
       call efit_read_tables
   20  call getsets(ktime,kwake,mtear,kerror)
-! MPI >>>
 #if defined(USEMPI)
       if (nproc > 1) then
         call MPI_ALLREDUCE(kerror,MPI_IN_PLACE,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
@@ -226,8 +210,6 @@
         stop
       end if
 #endif
-
-! MPI <<<
 
 ! Looping (below) on the number of time slices depends on the number of ranks.
 ! Time slices are assigned to ranks in groups as follows:
@@ -322,7 +304,6 @@
 #endif
       call wtime(ktime)
 
-! MPI >>>
 #if defined(USEMPI)
       ! Finalize MPI
       if (allocated(dist_data)) deallocate(dist_data)
@@ -332,7 +313,6 @@
       call mpi_finalize(ierr)
 #endif
       stop
-! MPI <<<
       end program efit
 
 

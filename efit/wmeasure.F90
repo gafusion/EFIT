@@ -13,13 +13,11 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**          ktime - total number of time slices                     **
-!**          ifirsttime- index of starting time                          **
+!**          ifirsttime- index of starting time                      **
 !**          ilast - index of ending time                            **
 !**          itype - 1 called from main routine with time loop       **
 !**                  2 called from main routine out of time loop,    **
 !**                    write all slices at one time                  **
-!**                                                                  **
-!**     REFERENCES:                                                  **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          12-10-97 created by Q.Peng                              **

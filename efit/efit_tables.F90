@@ -1,3 +1,4 @@
+#include "config.f"
    subroutine efit_read_tables
       use set_kinds
       include 'eparm.inc'
@@ -143,6 +144,9 @@
       include 'modules1.inc'
 
       implicit integer*4 (i-n), real*8 (a-h,o-z)
+#if defined(USEMPI)
+      include 'mpif.h'
+#endif
       integer :: i, reason, nFiles, itmp, imin 
       character(LEN=100), dimension(:), allocatable :: filenames
       integer:: shot_tables(100)
@@ -155,48 +159,54 @@
       lstdir=0
       table_di2 = table_dir
       do i=1,len(table_di2)
-         if (table_di2(i:i).ne.' ') ltbdi2=ltbdi2+1
-         if (input_dir(i:i).ne.' ') lindir=lindir+1
-         if (store_dir(i:i).ne.' ') lstdir=lstdir+1
+        if (table_di2(i:i).ne.' ') ltbdi2=ltbdi2+1
+        if (input_dir(i:i).ne.' ') lindir=lindir+1
+        if (store_dir(i:i).ne.' ') lstdir=lstdir+1
       enddo
 
-      ! get the files
-      call system('ls '//trim(table_di2)//' > shot_tables.txt')
-      open(31,FILE='shot_tables.txt',action="read")
+      if (rank==0) then
+        ! get the files
+        call system('ls '//trim(table_di2)//' > shot_tables.txt')
+        open(31,FILE='shot_tables.txt',action="read")
 
-      !how many
-      i = 0
-      do
-        read(31,FMT='(I10)',iostat=reason) shot_tables(i+1)
-        if (reason>0) EXIT
-        i = i+1
-      end do
-      nfiles = i 
-      allocate(fileNames(nfiles))
-      rewind(31)
-      do i = 1,nfiles
-        read(31,'(a)') filenames(i)
-      end do
-      close(31)
+        !how many
+        i = 0
+        do
+          read(31,FMT='(I10)',iostat=reason) shot_tables(i+1)
+          if (reason>0) EXIT
+          i = i+1
+        end do
+        nfiles = i 
+        allocate(fileNames(nfiles))
+        rewind(31)
+        do i = 1,nfiles
+          read(31,'(a)') filenames(i)
+        end do
+        close(31,status='delete')
 
-      ! sort shot_tables just in case
-      do i=1, nfiles
-        imin = minloc(shot_tables(i:nfiles),dim=1)+i-1
-        itmp = shot_tables(imin)
-        shot_tables(imin) = shot_tables(i)
-        shot_tables(i)  = itmp
-      enddo 
+        ! sort shot_tables just in case
+        do i=1, nfiles
+          imin = minloc(shot_tables(i:nfiles),dim=1)+i-1
+          itmp = shot_tables(imin)
+          shot_tables(imin) = shot_tables(i)
+          shot_tables(i)  = itmp
+        enddo 
 
-      do i=1, nfiles
-        if (ishot.ge. shot_tables(i)) then
-          table_di2 = table_di2(1:ltbdi2)//trim(filenames(i))//'/'
-        endif
-      enddo
-      
-      ltbdi2 = len(trim(table_di2))
+        do i=1, nfiles
+          if (ishot.ge. shot_tables(i)) then
+            table_di2 = table_di2(1:ltbdi2)//trim(filenames(i))//'/'
+          endif
+        enddo
 
-      if (rank == 0) then
+        ltbdi2 = len(trim(table_di2))
         write(*,*) 'table_di2 = <',table_di2(1:ltbdi2),'>'
       endif
+
+#if defined(USEMPI)
+      if (nproc > 1) then
+        call MPI_BCAST(ltbdi2,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+        call MPI_BCAST(table_di2,ltbdi2,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+      endif
+#endif
 
    end subroutine set_table_dir

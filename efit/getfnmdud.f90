@@ -1,19 +1,19 @@
-      subroutine getfnmd(let,ishot,itime,fname)
 !----------------------------------------------------------------------
 !--   let is letter designation of file                              --
 !--   ishot is shot number                                           --
 !--   itime is time in miliseconds                                   --
 !--   fname is file name                                             --
 !----------------------------------------------------------------------
+      subroutine getfnmd(let,ishot,itime,fname)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       character*(*) let
       character*(*) fname
       character*5 sec_msec
 !
       length=len(fname)
-      do 100 i=1,length
+      do i=1,length
        fname(i:i)=' '
-  100 continue
+      enddo
       iitime=itime
       if (iitime.lt.0) iitime=90000-iitime
       write(sec_msec,1000) iitime
@@ -22,22 +22,22 @@
  1020 format(a1,i6.6,'.',a5)
       return
       end
-      subroutine getfnm2(let,ishot,itime,fname)
 !----------------------------------------------------------------------
 !--   let is letter designation of file (2 chracters)                --
 !--   ishot is shot number                                           --
 !--   itime is time in miliseconds                                   --
 !--   fname is file name                                             --
 !----------------------------------------------------------------------
+      subroutine getfnm2(let,ishot,itime,fname)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       character*(*) let
       character*(*) fname
       character*5 sec_msec
 !
       length=len(fname)
-      do 100 i=1,length
+      do i=1,length
        fname(i:i)=' '
-  100 continue
+      enddo
       iitime=itime
       if (iitime.lt.0) iitime=90000-iitime
       write(sec_msec,1000) iitime
@@ -46,7 +46,6 @@
  1020 format(a2,i6.6,'.',a5)
       return
       end
-      subroutine getfnmu(itimeu,let,ishot,itime,fname)
 !----------------------------------------------------------------------
 !--   itimeu is time in microseconds                                 --
 !--   let is letter designation of file                              --
@@ -54,14 +53,15 @@
 !--   itime is time in miliseconds                                   --
 !--   fname is file name                                             --
 !----------------------------------------------------------------------
+      subroutine getfnmu(itimeu,let,ishot,itime,fname)
       character*(*) let
       character*(*) fname
       character*5 sec_msec
 !
       length=len(fname)
-      do 100 i=1,length
+      do i=1,length
        fname(i:i)=' '
-  100 continue
+      enddo
       iitime=itime
       if (iitime.lt.0) iitime=90000-iitime
       write(sec_msec,1000) iitime
@@ -75,7 +75,6 @@
  1030 format(a1,i6.6,'.',a5,'_',i3.3)
       return
       end
-      subroutine getfnmu2(itimeu,let,ishot,itime,fname)
 !----------------------------------------------------------------------
 !--   itimeu is time in microseconds                                 --
 !--   let is letter designation of file (2 chatacyters)              --
@@ -83,14 +82,15 @@
 !--   itime is time in miliseconds                                   --
 !--   fname is file name                                             --
 !----------------------------------------------------------------------
+      subroutine getfnmu2(itimeu,let,ishot,itime,fname)
       character*(*) let
       character*(*) fname
       character*5 sec_msec
 !
       length=len(fname)
-      do 100 i=1,length
+      do i=1,length
        fname(i:i)=' '
-  100 continue
+      enddo
       iitime=itime
       if (iitime.lt.0) iitime=90000-iitime
       write(sec_msec,1000) iitime
@@ -104,7 +104,6 @@
  1030 format(a2,i6.6,'.',a5,'_',i3.3)
       return
       end
-      subroutine setfnme(let,ishot,itime,istore,fname)
 !----------------------------------------------------------------------
 !--   let is letter designation of file                              --
 !--   ishot is shot number                                           --
@@ -114,6 +113,7 @@
 !--		=1	Central directory			     --
 !--   fname is file name                                             --
 !----------------------------------------------------------------------
+      subroutine setfnme(let,ishot,itime,istore,fname)
       use expath
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 !vasoct3,08      include 'expath.inc'
@@ -122,9 +122,9 @@
       character*5 sec_msec
 !
       length=len(fname)
-      do 100 i=1,length
+      do i=1,length
        fname(i:i)=' '
-  100 continue
+      enddo
       iitime=itime
       if (iitime.lt.0) iitime=90000-iitime
       write(sec_msec,1000) iitime

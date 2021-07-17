@@ -1,3 +1,4 @@
+#include "config.f"
 !----------------------------------------------------------------------
 !--  Subroutine for writing K file in K file mode Qilong Ren         --
 !----------------------------------------------------------------------
@@ -7,12 +8,9 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-! MPI >>>
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
-! MPI <<<
 
       character filenm*15,ishotime*12,news*72,table_s*72, &
                 eqdsk*20,comfile*15,prefix1*1,header*42,fit_type*3
@@ -153,7 +151,6 @@
             endif
           endif
         endif
-! MPI >>>
 #if defined(USEMPI)
         if (nproc > 1) then
           call MPI_BCAST(comfile,15,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
@@ -166,7 +163,6 @@
           endif
         endif
 #endif
-! MPI <<<
         if (comfile.ne.'0' .and. comfile.ne.'') then
           open(unit=nffile,status='old',file=comfile,err=12928)
           close(unit=nffile,status='delete')
@@ -388,7 +384,6 @@
 !----------------------------------------------------------------------
 !-- Fetch data                                                       --
 !----------------------------------------------------------------------
-! MPI >>>
 #if defined(USEMPI)
       if (nproc == 1) then
           call getpts(ishot,times,delt,ktime,istop)
@@ -414,7 +409,6 @@
          if (swtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
  3056 continue
       if (mmstark.gt.0) then
-! MPI >>>
 #if defined(USEMPI)
           if (nproc == 1) then
             call getstark(ktime)
@@ -424,7 +418,6 @@
 #else
           call getstark(ktime)
 #endif
-! MPI <<<
       endif
 !
       mmbmsels=0
@@ -437,7 +430,6 @@
          write (6,*) 'WRITE_K mmbmsels= ', mmbmsels
       endif
       if (mmbmsels.gt.0) then
-! MPI >>>
 #if defined(USEMPI)
         if (nproc == 1) then
           call getmsels(ktime)
@@ -447,7 +439,6 @@
 #else
         call getmsels(ktime)
 #endif
-! MPI <<<
       endif
 !----------------------------------------------------------------------
 ! --- get xltype, xltype_180 without reading limiters                --
@@ -756,12 +747,9 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-! MPI >>>
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
-! MPI <<<
 
       character table_s*72,eqdsk*20,header*42,fit_type*3
       integer*4 ltbdis,limitrss

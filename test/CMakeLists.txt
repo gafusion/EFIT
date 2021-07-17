@@ -20,7 +20,12 @@ set(EFUND_TEST_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/run_green.sh.in)
 set(EFUND_RESULTS_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/check_green_results.sh.in)
 
 # This is a shell script used to drive running efit
-set(EFIT_EXEC ${CMAKE_BINARY_DIR}/efit/efit)
+if (${ENABLE_PARALLEL})
+   # required to run on NERSC
+   set(EFIT_EXEC "srun --mpi=pmi2 -n 1 ${CMAKE_BINARY_DIR}/efit/efit")
+else ()
+   set(EFIT_EXEC ${CMAKE_BINARY_DIR}/efit/efit)
+endif ()
 set(EFIT_MODE 2)
 set(EFIT_TIME 1)
 set(EFIT_TEST_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/run_efit.sh.in)

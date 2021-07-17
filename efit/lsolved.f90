@@ -1,10 +1,7 @@
-      subroutine decomp(ndim,n,a,cond,ipvt,work)
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          decomp decomposes a matrix by gaussian elimination.     **
-!**                                                                  **
-!**                                                                  **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**       ndim............declared row dimension of a                **
@@ -20,16 +17,11 @@
 !**                       a(n,n)                                     **
 !**       work............work space array                           **
 !**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      subroutine decomp(ndim,n,a,cond,ipvt,work)
       integer*4 ndim,n
       real*8 a(ndim,n),cond,work(n)
       integer*4 ipvt(n)                                                   
@@ -157,16 +149,11 @@
    90 cond = 1.0e+32   
       return                                                            
       end                                                               
-      subroutine solve(ndim, n, a, b, ipvt)                             
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          solve finds the solution of a linear set of             **
 !**          algebric equations.  a call to decomp is required.      **
-!**                                                                  **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**       ndim............declared row dimension of a                **
@@ -176,18 +163,11 @@
 !**                       on return                                  **
 !**       ipvt............pivot vector from decomp                   **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      subroutine solve(ndim, n, a, b, ipvt)                             
       integer*4 ndim, n, ipvt(n)                                          
       real*8 a(ndim,n),b(n)
       integer*4 kb, km1, nm1, kp1, i, k, m                                
