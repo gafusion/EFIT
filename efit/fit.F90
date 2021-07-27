@@ -1,15 +1,11 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          fit carries out the fitting and equilibrium iterations. **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/10/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**          94/03/11..........revised                               **
-!**                                                                  **
+!>
+!!    fit carries out the fitting and equilibrium iterations.
+!!
+!!    @param jtime : time index
+!!
+!!    @param kerror : error flag
+!!
 !**********************************************************************
       subroutine fit(jtime,kerror)
       include 'eparm.inc'
@@ -161,19 +157,13 @@
       return
       end subroutine fit
 
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          chisqr computes the figure of merit for fitting         **
-!**          chisq.                                                  **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/10/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**                                                                  **
-!**                                                                  **
+!>
+!!    chisqr computes the figure of merit for fitting
+!!    chisq.
+!!
+!!    @param jtime : time index
 !**********************************************************************
       subroutine chisqr(jtime)
       include 'eparm.inc'

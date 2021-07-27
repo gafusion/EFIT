@@ -1,21 +1,9 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          block data routine to hold experiment-dependent data    **
-!**          statements for variables that are in common blocks.     **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          10/01/97..........created by Q.Peng, data were          **
-!**                            in block data efit_btdata originally  ** 
-!**                                                                  **
+!>
+!!    block data routine to hold experiment-dependent data
+!!    statements for variables that are in common blocks
+!!
 !**********************************************************************
-!
       block data exp_bdata
       use commonblocks,only: byringr,byringz
       include 'eparm.inc'
@@ -90,21 +78,22 @@
 !oct14      data ksxr0/10*0/,ksxr2/10*0/,idosxr/1/
       end
 
-!------------------------------------------------------------------------
-!--
-!--   read in limiter data from limiter file
-!--
-!--   limmode 0 - Calculate xltype(_180) only
-!--           1 - Calculate xltype and read in limiter data
-!--   xltype - Inward distance of 0 degree outside limiter in cm.
-!--            Initialization is passed in.
-!--   xltype_180 -
-!--            Inward distance of 180 degree outside limiter in cm.
-!--            Initialization is passed in.
-!--
-!--   10/02/97 created
-!--
-!------------------------------------------------------------------------
+
+!**********************************************************************
+!>
+!!    read in limiter data from limiter file
+!!    
+!!
+!!    @param limmode : 0 - Calculate xltype(_180) only \n
+!!           1 - Calculate xltype and read in limiter data
+!!
+!!    @param xltype : Inward distance of 0 degree outside limiter in cm.
+!!            Initialization is passed in.
+!!
+!!    @param xltype_180 : Inward distance of 180 degree outside limiter in cm.
+!!            Initialization is passed in.
+!!
+!**********************************************************************
       subroutine getlim(limmode,xltype,xltype_180)
       include 'eparm.inc'
       include 'modules1.inc'
@@ -317,14 +306,18 @@
 !
       return
       end
-!------------------------------------------------------------------------
-!--
-!--   read in SXR detectors geometry from a file if needed
-!--
-!--   10/01/97 created
-!--   05/12/98 Q.P. added Toroidal X-ray. Data provided by R.Snider.
-!--
-!------------------------------------------------------------------------
+
+
+!**********************************************************************
+!>
+!!    read in SXR detectors geometry from a file if needed
+!!    
+!!
+!!    @param ishot : shot number
+!!
+!!    @param ixray :
+!!
+!**********************************************************************
       subroutine getsxr(ishot,ixray)
       include 'eparm.inc'
       use var_cxray

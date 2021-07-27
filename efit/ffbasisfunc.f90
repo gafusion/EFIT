@@ -1,15 +1,12 @@
-!     
-!     Function bsffel(ifunc,iparm,ypsi)
-!     
-!     This function returns the matrix element for the
-!     selected basis function.
-!     
-!     ifunc - basis function number
-!     iparm - basis function parameter number
-!     ypsi  - independent variable value
-!     
-!     
-      
+!**********************************************************************
+!>
+!!    This function returns the matrix element for the
+!!    selected basis function.
+!!
+!!    @param ifunc : basis function number
+!!    @param iparm : basis function parameter number
+!!    @param ypsi : independent variable value
+!**********************************************************************
       Function bsffel(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
@@ -144,18 +141,20 @@
            write(6,*)'ifunc .ne. kfffnc ',ifunc,kfffnc
       return
       end
-!     
-!     Function bsffpel(ifunc,iparm,ypsi)
-!     
-!     This function returns the matrix element for the
-!     first derivative of selected basis function.
-!     
-!     ifunc - basis function number
-!     iparm - basis function parameter number
-!     ypsi  - independent variable value
-!     
-!     
 
+!**********************************************************************
+!>
+!!    This function returns the matrix element for the
+!!    first derivative of selected basis function.
+!!    
+!!
+!!    @param ifunc : basis function number
+!!
+!!    @param iparm : basis function parameter number
+!!
+!!    @param ypsi : ndependent variable value
+!!
+!**********************************************************************
       Function bsffpel(ifunc,iparm,ypsi)
 
       include 'eparm.inc'
@@ -321,18 +320,24 @@
       endif
       return
       end
-!     
-!     Function bsffin(ifunc,iparm,ypsi)
-!     
-!     This function returns the matrix element for the
-!     selected basis function.
-!     
-!     ifunc - basis function number
-!     iparm - basis function parameter number
-!     ypsi  - independent variable value
-!     
-!     
-      
+
+
+!**********************************************************************
+!>
+!!    In addition to the least squares constraints that
+!!    efit already uses, some basis functions have exact
+!!    constraints. Most notable is the spline function
+!!    whose continuity constraints are exact, not LSE.
+!!
+!!    @param ncrsp : number of constraint equations
+!!
+!!    @param crsp :  constraint matrix
+!!
+!!    @param z : value vector
+!!
+!!    @param nffcoi : array index for setting up crsp
+!!
+!********************************************************************** 
       Function bsffin(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
@@ -574,18 +579,23 @@
       return
       end
 
-!     subroutine ffcnst(ncrsp,crsp,z,nffcoi)
-!     
-!     In addition to the least squares constraints that
-!     efit already uses, some basis functions have exact
-!     constraints. Most notable is the spline function
-!     whose continuity constraints are exact, not LSE.
-!     
-!     ncrsp - number of constraint equations
-!     crsp  - constraint matrix
-!     z     - value vector
-!     nffcoi- array index for setting up crsp
-!     
+
+!**********************************************************************
+!>
+!!    In addition to the least squares constraints that
+!!    efit already uses, some basis functions have exact
+!!    constraints. Most notable is the spline function
+!!    whose continuity constraints are exact, not LSE.
+!!
+!!    @param ncrsp : number of constraint equations
+!!
+!!    @param crsp :  constraint matrix
+!!
+!!    @param z : value vector
+!!
+!!    @param nffcoi : array index for setting up crsp
+!!
+!********************************************************************** 
       
       subroutine ffcnst(ncrsp,crsp,z,nffcoi)
       include 'eparm.inc'
@@ -926,13 +936,13 @@
       endif
       return
       end
-!     
-!     subroutine ffstore()
-!     
-!     Store the solution coefs into ffbdry and ff2bdry
-!     
-!     
+
       
+!**********************************************************************
+!>
+!!    This subroutine stores the solution coefs into ffbdry and ff2bdry
+!!
+!********************************************************************** 
       subroutine ffstore()
       include 'eparm.inc'
       include 'modules2.inc'

@@ -1,52 +1,30 @@
 #include "config.f"
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD EQUILIBRIUM ANALYSIS                      **
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          efit is the main driver for equilibrium analysis.       **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1) L.L. Lao, H. St. John, R.D. Stambaugh,              **
-!**              A.G. Kellman, and W. Pfeiffer, Nuclear Fusion       **
-!**              25 (1985) 1611.                                     **
-!**          (2) L.L. Lao, H. St. John, R.D. Stambaugh, and          **
-!**              W. Pfeiffer, Nuclear Fusion 25 (1985) 1421.         **
-!**          (3) L.L. Lao, J.R. Ferron, R.J. Groebner, W. Howl,      **
-!**              H. St. John, E.J. Strait, and T.S. Taylor           **
-!**              Nuclear Fusion 30 (1990) 1035.                      **
-!**          (4) L.L. Lao and T.H. Jensen Nuclear Fusion             **
-!**              31 (1991) 1909.                                     **
-!**          (5) L.L. Lao, H. St. John, et al, Fusion Sci. Technol.  **
-!**              48 (2005) 968.                                      **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/10/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**          13/02/86..........revised                               **
-!**          06/12/91..........revised                               **
-!**          15/02/93..........revised                               **
-!**          11/11/93..........revised                               **
-!**          03/01/94..........revised to include rotation           **
-!**          97/04/28..........ER from MSE                           **
-!**          97/10/01..........took off the DIIID specific data part **
-!**          98/05/01..........Add hyperbolic tangent representation **
-!**          98/05/12..........Q.P. added Toroidal X-ray overlay     **
-!**          99/09/15..........Q.P. use IOUT to determine whether to **
-!**                            write rstarkxx.dat(8) or esave.dat(16)**
-!**                            default to NO.                        **
-!**        2001/01/18..........Q.P. added saipre2 to preserve saipre **
-!**        2005/03/25..........New magnetic uncertainty              **
-!**        2006/01/12..........New Magnetic Uncertainty              **
-!**        2007/08/01..........Mag. Uncnty. namelist added to k file **
-!**        2012/05/17..........MPI, SNAP revision                    **
-!**        2020/09/18..........R.S. Bug fix, changed mpi_abort to    **
-!**                            mpi_finalize at end to allow all      **
-!**                            processes to complete.                **
-!**        2020/09/18..........R.S. changed "shape" to "shapesurf",  **
-!**                            shape is an intrinsic procedure name  **
-!**        2020/09/18..........R.S. changed some Hollerith to quotes **
-!**                                                                  **
+!>
+!!    This routine returns the average of the compensated diamagnetic
+!!    fluxes and error in the diamagnetic fluxes.
+!!
+!!    @param nshot :
+!!
+!!    @param tim :
+!!
+!!    @param npts :
+!!
+!!    @param tavg : this is the time that the data is averaged 
+!!              over.
+!!
+!!    @param ierr : an error array of dimension 3. Each element of the
+!!        array contains the PTDATA error for one of the three 
+!!              diamagnetic flux signals. If ierr(j) is different from 
+!!              zero, that flux is not included in the average value  
+!!              returne
+!!
+!!    @param phidia : this array contains the conpensated diamagnetic
+!!                flux (mv-sec)
+!!
+!!    @param sigphi : this array contains the error in the flux value
+!!                (mv-sec).
+!!
 !**********************************************************************
      program efit
      use commonblocks

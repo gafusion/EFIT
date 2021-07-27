@@ -1,15 +1,15 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          fcurrt computes the currents in the f coils.            **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**          16/08/90..........revised                               **
-!**                                                                  **
+!>
+!!    fcurrt computes the currents in the f coils.
+!!
+!!    @param jtime :
+!!
+!!    @param iter :
+!!
+!!    @param itertt :
+!!
+!!    @param kerror :
+!!
 !**********************************************************************
       subroutine fcurrt(jtime,iter,itertt,kerror)
       use commonblocks,only: rfcpc

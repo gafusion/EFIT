@@ -1,17 +1,8 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          block data routine to hold all data statements for      **
-!**          variables that are in common blocks.                    **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**                91..........first created, John Ferron            **
-!**          11/11/93..........revised                               **
-!**          10/01/97..........revised by Q.Peng,.ddd specific data  **
-!**                            are moved to a different file         **
-!**                                                                  **
+!! 
+!>   block data routine to hold all data statements for
+!!   variables that are in common blocks.
+!!
 !**********************************************************************
       block data efit_bdata
       use commonblocks,only: zeros,xouts,youts,bpoo,bpooz,bpooc

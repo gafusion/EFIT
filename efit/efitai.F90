@@ -1,26 +1,24 @@
 !**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD EQUILIBRIUM ANALYSIS                      **
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          efitai is the main driver for equilibrium analysis      **
-!**          in the EFIT-AI project.  It is meant to be simpler than **
-!**          the full EFIT for more rapid development                **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1) L.L. Lao, H. St. John, R.D. Stambaugh,              **
-!**              A.G. Kellman, and W. Pfeiffer, Nuclear Fusion       **
-!**              25 (1985) 1611.                                     **
-!**          (2) L.L. Lao, H. St. John, R.D. Stambaugh, and          **
-!**              W. Pfeiffer, Nuclear Fusion 25 (1985) 1421.         **
-!**          (3) L.L. Lao, J.R. Ferron, R.J. Groebner, W. Howl,      **
-!**              H. St. John, E.J. Strait, and T.S. Taylor           **
-!**              Nuclear Fusion 30 (1990) 1035.                      **
-!**          (4) L.L. Lao and T.H. Jensen Nuclear Fusion             **
-!**              31 (1991) 1909.                                     **
-!**          (5) L.L. Lao, H. St. John, et al, Fusion Sci. Technol.  **
-!**              48 (2005) 968.                                      **
-!**                                                                  **
+!>  
+!!    efitai is the main driver for equilibrium analysis
+!!    in the EFIT-AI project.  It is meant to be simpler than
+!!    the full EFIT for more rapid development
+!!
+!!
+!!     REFERENCES:\n                                                
+!!          (1) L.L. Lao, H. St. John, R.D. Stambaugh, \
+!!              A.G. Kellman, and W. Pfeiffer, Nuclear Fusion
+!!             25 (1985) 1611.\n
+!!          (2) L.L. Lao, H. St. John, R.D. Stambaugh, and 
+!!               W. Pfeiffer, Nuclear Fusion 25 (1985) 1421.\n
+!!          (3) L.L. Lao, J.R. Ferron, R.J. Groebner, W. Howl.
+!!              H. St. John, E.J. Strait, and T.S. Taylor \n
+!!              Nuclear Fusion 30 (1990) 1035.\n
+!!          (4) L.L. Lao and T.H. Jensen Nuclear Fusion
+!!              31 (1991) 1909.\n
+!!          (5) L.L. Lao, H. St. John, et al, Fusion Sci. Technol. 
+!!              48 (2005) 968.                                     
+!!                                                                 
 !**********************************************************************
      program efitai
      use commonblocks

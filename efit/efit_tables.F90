@@ -1,4 +1,11 @@
 #include "config.f"
+
+
+!*********************************************************************
+!! 
+!>          reads Green's function table  and dprobe.dat data
+!!
+!*********************************************************************
    subroutine efit_read_tables
       use set_kinds
       include 'eparm.inc'
@@ -137,6 +144,11 @@
    end subroutine efit_read_tables
 
 
+!**********************************************************************
+!*
+!>          reads Green's function table  and dprobe.dat data
+!*
+!**********************************************************************
    subroutine set_table_dir
       use set_kinds
       include 'eparm.inc'

@@ -1,21 +1,24 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          FLUXAV does the flux surface average.                   **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**          f     : function array                                  **
-!**          si    : flux array                                      **
-!**          x,y,n : n (R,Z) coordinates of contour                  **
-!**                                                                  **
-!**     RETURN ARGUMENTS:                                            **
-!**          fave  : int(dl f/Bp) / sdlobp                           **
-!**          sdlbp : int(dl Bp)                                      **
-!**          sdlobp: int(dl/Bp)                                      **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          14/10/87..........first created                         **
-!**                                                                  **
+!*
+!>          FLUXAV does the flux surface average
+!!   
+!!
+!!     @param f : function array 
+!!
+!!     @param si : flux array
+!!
+!!     @param n : length of contour array
+!!
+!!     @param x : R coordinates of contour
+!!
+!!     @param y : Z coordinates of contour     
+!!
+!!     @param fave  : int(dl f/Bp) / sdlobp
+!!
+!!     @param sdlbp : int(dl Bp)
+!!
+!!     @param sdlobp: int(dl/Bp)
+!!  
 !**********************************************************************
       subroutine fluxav(f,x,y,n,si,rx,msx,ry,msy,fave,ns,sdlobp,sdlbp)
       use set_kinds
@@ -52,16 +55,35 @@
       sdlobp = fnorm
       return
       end subroutine fluxav
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**                                                                  **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
+!>
+!!    this subroutine does ...
+!!    
+!!
+!!    @param is :
+!!
+!!    @param rs :
+!!
+!!    @param zs :
+!!
+!!    @param cs :
+!!
+!!    @param rc :
+!!
+!!    @param zc :
+!!
+!!    @param wc :
+!!
+!!    @param hc :
+!!
+!!    @param ac :
+!!
+!!    @param ac2 :
+!!
+!!    @param cc :
+!!
 !**********************************************************************
       subroutine splitc(is,rs,zs,cs,rc,zc,wc,hc,ac,ac2,cc)
       use global_constants
@@ -159,19 +181,27 @@
   900 continue
       return
       end subroutine splitc
+
+      
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          this subroutine reorders the z profile data to be       **
-!**          in ascending order and sets the ne and te data to       **
-!**          correspond to the new order.                            **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          27/11/90..........first created, T. Carlstrom           **
-!**          08/07/91..........revised for EFIT, L. Lao              **
-!**                                                                  **
+!>
+!!    this subroutine reorders the z profile data to be
+!!    in ascending order and sets the ne and te data to
+!!    correspond to the new order.
+!!    
+!!
+!!    @param mbox :
+!!
+!!    @param zprof :
+!!
+!!    @param nemprof :
+!!
+!!    @param temprof :
+!!
+!!    @param nerprof :
+!!
+!!    @param terprof :
+!!
 !**********************************************************************
       subroutine tsorder(mbox,zprof,nemprof,temprof,nerprof,terprof)
       implicit integer*4 (i-n), real*8 (a-h, o-z)

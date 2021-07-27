@@ -1,19 +1,19 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          pflux computes the poloidal fluxes on the r-z grid.     **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/10/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**          09/03/90..........Lazarus vertical feedback             **
-!**          28/03/93..........fix relax                             **
-!**                                                                  **
+!>
+!!    pflux computes the poloidal fluxes on the r-z grid.
+!!
+!!    @param niter :
+!!
+!!    @param nnin :
+!!
+!!    @param ntotal :
+!!
+!!    @param jtime : time index
+!!
+!!    @param kerror : error flag
+!!
 !**********************************************************************
       subroutine pflux(niter,nnin,ntotal,jtime,kerror)
-!vas  f90 modifi
       use set_kinds 
       use var_bunemn
       use commonblocks,only: c,wk,copy,bkx,bky,psiold,psipold, psipp
@@ -416,18 +416,16 @@
 !
       return
       end subroutine pflux
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**         residu computes the flux variations on the r-z grid.     **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/10/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**          28/03/93..........fixe relax                            **
-!**                                                                  **
+!>
+!!    residu computes the flux variations on the r-z grid.
+!!
+!!    @param nx :
+!!
+!!    @param jtime : time index
+!!
 !**********************************************************************
       subroutine residu(nx,jtime)
       use commonblocks,only: psiold,psipold,psipp
@@ -555,18 +553,23 @@
       ' chi2=',1pe8.2,' zm=',1pe9.2,' err=',1pe9.3, &
       ' dz=',1pe10.3,' delz=',1pe10.3,' dj=',1pe9.3)
       end subroutine residu
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          step computes the dimensionless poloidal fluxes for     **
-!**          the r-z grid.                                           **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/10/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**                                                                  **
+!>
+!!    step computes the dimensionless poloidal fluxes for
+!!    the r-z grid
+!!
+!!    @param ix :
+!!
+!!    @param ixt :
+!!
+!!    @param ixout :
+!!
+!!    @param jtime : time index
+!!
+!!    @param kerror : error flag
+!!
 !**********************************************************************
       subroutine steps(ix,ixt,ixout,jtime,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky,zeros,xouts,youts, &
@@ -1131,17 +1134,13 @@
  2100 format(/,1x,'shot',i6,' at ',i6,' ms ','** Problem in BOUND **')
 11001 format(/,1x,'** 2nd seperatrix **',2x,e10.3,2x,i4)
       end subroutine steps
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          inicur initializes the current density distribution.    **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**           ks..............time slice number                      **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/10/83..........first created                         **
-!**                                                                  **
+!>
+!!    inicur initializes the current density distribution
+!!
+!!    @param ks : time index
 !**********************************************************************
       subroutine inicur(ks)
       include 'eparm.inc'
@@ -1249,17 +1248,14 @@
       return
       end subroutine inicur
 
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          vescur computes the currents induced in the vessel      **
-!**          segments due to E coils and F coils.                    **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/11/85..........first created                         **
-!**                                                                  **
+!>
+!!    vescur computes the currents induced in the vessel
+!!    segments due to E coils and F coils
+!!
+!!    @param jtime :
+!!
 !**********************************************************************
       subroutine vescur(jtime)
       include 'eparm.inc'
