@@ -1,16 +1,13 @@
 #include "config.f"
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          getsets performs inputing, pulled out of getsets for    **
-!**          generalization of EFIT                                  **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     7/15/21: kdata=8 is indended for CUDA parallel execution     **
-!**              which has not been setup yet, so it does the same   **
-!**              as kdata=6 right now                                **
-!**                                                                  **
+!>
+!!          getsets performs inputing, pulled out of getsets for
+!!          generalization of EFIT \n
+!!
+!!     7/15/21: kdata=8 is indended for CUDA parallel execution
+!!              which has not been setup yet, so it does the same
+!!              as kdata=6 right now
+!!
 !**********************************************************************
       subroutine get_opt_input(ktime)
       use set_kinds

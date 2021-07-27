@@ -1,15 +1,13 @@
 #include "config.f"
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          GETNE gets the electron density                         **
-!**          profile.                                                **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          15/09/87..........first created                         **
-!**                                                                  **
+!>
+!!    GETNE gets the electron density
+!!    profile
+!!
+!!    @param jtime : time index
+!! 
+!!    @param kerror : error flag
+!!
 !**********************************************************************
       subroutine getne(jtime,kerror)
       use commonblocks,only: cjrf,c,wk,copy,bkx,bky

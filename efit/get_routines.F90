@@ -1,13 +1,7 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          GETBEAM gets the beam pressure.                         **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          15/09/87..........first created                         **
-!**                                                                  **
+!>
+!!    This subroutine gets the beam pressure.
+!!
 !**********************************************************************
       subroutine getbeam
       include 'eparm.inc'
@@ -45,16 +39,13 @@
       return
       end subroutine getbeam
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          geteceb obtains the receo, R+ R-                        **
-!**          from ECE measurement data, (fitting T(B))               **
-!**          if kfixro kfixrece = -1, called in setece               **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          1/99..........first created, Cheng Zhang                **
-!**                                                                  **
+!>
+!!    geteceb obtains the receo, R+ R-
+!!    from ECE measurement data, (fitting T(B))
+!!    if kfixro kfixrece = -1, called in setece
+!!
+!!    @param jtime : time index
+!!    @param kerror : error flag
 !**********************************************************************
       subroutine geteceb(jtime,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
@@ -1205,17 +1196,23 @@
 !
       return
       end subroutine
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          gettir obtains the receo, R+ R-                         **
-!**          from Ti data                                            **
-!**          kfixro = 0, kfixrece = 3, called from setece            **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**     2013/08/07..........Update for real-space Ti based on ECE/Te **
-!**                                                                  **
+!>
+!!    gettir obtains the receo, R+ R-
+!!    from Ti data
+!!    kfixro = 0, kfixrece = 3, called from setece
+!!    CALLING ARGUMENTS:
+!!    
+!!    RECORD OF MODIFICATION:
+!!    2013/08/07..........Update for real-space Ti based on ECE/Te
+!!    
+!!
+!!    @param jtime : time index
+!!
+!!    @param kerror : error flag
+!!
 !**********************************************************************
       subroutine gettir(jtime,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
@@ -1537,22 +1534,17 @@
       return
       end subroutine
 
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          fixstark adjusts the internal pitch angles              **
-!**          based on spatial averaging data                         **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          01/01/07..........first created                         **
-!**                                                                  **
-!**                                                                  **
+!>
+!!    fixstark adjusts the internal pitch angles
+!!    based on spatial averaging data
+!!    
+!!
+!!    @param jtime :
+!!
+!!    @param kerror :
+!!
 !**********************************************************************
       subroutine fixstark(jtime,kerror)
       use commonblocks,only: ct,wkt,bkrt,bkzt
@@ -1747,18 +1739,12 @@
       end subroutine 
 
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          getmsels obtains MSE-LS data                            **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**          KTIME : Number of time slices for data                  **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**        2015/03/09..........first created                         **
-!**                                                                  **
+!>
+!!    getmsels obtains MSE-LS data
+!!    
+!!
+!!    @param ktime : number of time slices
+!!
 !**********************************************************************
       subroutine getmsels(ktime)
       include 'eparm.inc'
@@ -1805,20 +1791,18 @@
 !
       return
       end subroutine 
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          GETSIGMA is the control for getting the uncertainty     **
-!**          in Magnetic Data                                        **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**          jtime - time slice number                               **
-!**          nitera - iteration number                               **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**        2002/11/03..........First Created   EKS                   **
-!**        2006/01/19..........Updated                               **
-!**                                                                  **
+!>
+!!    GETSIGMA is the control for getting the uncertainty
+!!    in Magnetic Data
+!!    
+!!
+!!    @param jtime :  time slice number
+!!
+!!    @param nitera :  iteration number
+!!
 !**********************************************************************
       subroutine getsigma(jtimex,niterax)
       use commonblocks,only: c,wk,copy,bkx,bky
@@ -1979,18 +1963,16 @@
 !
       return
       end
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          getstark obtains the internal pitch angles              **
-!**          from polarimetry measurement using Wroblewski's routine **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          23/03/90..........first created                         **
-!**          93/04/23..........revised for double precision version  **
-!**                                                                  **
+!>
+!!    getstark obtains the internal pitch angles
+!!    from polarimetry measurement using Wroblewski's routine
+!!    
+!!
+!!    @param ktime : number of time slices
+!!
 !**********************************************************************
       subroutine getstark(ktime)
       include 'eparm.inc'
@@ -2099,17 +2081,15 @@
       return
       end subroutine getstark
 
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          GETTE gets the electron temperature                     **
-!**          profiles.                                               **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          15/09/87..........first created                         **
-!**                                                                  **
+!>
+!!    GETTE gets the electron temperature
+!!    profiles.
+!!    
+!!
+!!    @param kerror : error flag
+!!
 !**********************************************************************
     subroutine gette(kerror)
       include 'eparm.inc'
@@ -2216,16 +2196,14 @@
       return
       end subroutine gette
 
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          GETTION gets the ion temperature profile.               **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          15/09/87..........first created                         **
-!**                                                                  **
+!>
+!!    GETTION gets the ion temperature profile.
+!!    
+!!
+!!    @param kerror :
+!!
 !**********************************************************************
       subroutine gettion(kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
@@ -2364,18 +2342,19 @@
 !
       return
       end subroutine gettion
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          erpote computes the stream function for the             **
-!**          radial electric field. eradial computes the             **
-!**          radial electric field.                                  **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          97/04/24..........first created                         **
-!**                                                                  **
+!>
+!!    erpote computes the stream function for the
+!!    radial electric field. eradial computes the
+!!    radial electric field.
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param nnn :
+!!
 !**********************************************************************
       function erpote(ypsi,nnn)
       use commonblocks,only: c,wk,copy,bkx,bky
@@ -2411,16 +2390,20 @@
       return
       end function erpote
 
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          eradial computes the radial electric field.             **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          97/04/24..........first created                         **
-!**                                                                  **
+!>
+!!    eradial computes the radial electric field.
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param nnn :
+!!
+!!    @param reee :
+!!
+!!    @param zeee :
+!!
 !**********************************************************************
       function eradial(ypsi,nnn,reee,zeee)
       use commonblocks,only: c,wk,copy,bkx,bky
@@ -2454,20 +2437,18 @@
       return
       end function
 
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          fpcurr computes the radial derivative                   **
-!**          of the poloidal current ff. ffcurr computes             **
-!**          the poloidal current F=twopi RBt/mu0                    **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/10/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**          94/03/08..........revised                               **
-!**                                                                  **
+!>
+!!    fpcurr computes the radial derivative
+!!    of the poloidal current ff. ffcurr computes
+!!    the poloidal current F=twopi RBt/mu0
+!!    
+!!
+!!    @param upsi :
+!!
+!!    @param nnn :
+!!
 !**********************************************************************
       function fpcurr(upsi,nnn)
       include 'eparm.inc'

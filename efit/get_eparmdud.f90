@@ -1,3 +1,8 @@
+!**********************************************************************
+!>
+!!    sets default DIII-D values for eparmdud129 module
+!!
+!**********************************************************************
 subroutine get_eparmdud_defaults
   use eparm
   nsilds=3
@@ -64,6 +69,13 @@ subroutine get_eparmdud_defaults
 
 end subroutine
 
+
+!**********************************************************************
+!>
+!!    this subroutine calculates eparmdud variables that are other 
+!!    eparmdud variables
+!!
+!**********************************************************************
 subroutine get_eparmdud_dependents
 
   use eparm
@@ -94,11 +106,10 @@ subroutine get_eparmdud_dependents
 
 
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          grabs necessary information from file to properly       **
-!**          set up directory paths                                  **
-!**                                                                  **
+!>
+!!    this subroutine grabs necessary information from file to properly
+!!    set up directory paths
+!!
 !**********************************************************************
   subroutine read_dirs_shot(filename)
   use var_exdata, only: ishot

@@ -1,37 +1,30 @@
-! **********************************************************************
-!   This routine returns the average of the compensated diamagnetic    *
-!   fluxes and error in the diamagnetic fluxes.                        * 
-!       IERR - an error array of dimension 3. Each element of the      *
-!        array contains the PTDATA error for one of the three    *
-!              diamagnetic flux signals. If ierr(j) is different from  *
-!              zero, that flux is not included in the average value    *
-!              returned.                                               *
-!       TAVG - this is the time that the data is averaged              *
-!              over.                                                   *
-!       PHIDIA - this array contains the conpensated diamagnetic       *
-!                flux (mv-sec).                                        *
-!       SIGPHI - this array contains the error in the flux value       *
-!                (mv-sec).                                             *
-!                                                                      *
-!   written by A.Kellman  7/23/86                                      *  
-!                                                                      *
-!       MODIFICATIONS:                                                 *
-!   7/23/86 - DIAMAG01 is not included in the average because    *
-!             BTDOT has not yet been removed so the data is no   *
-!             good yet.                                          *
-!         8/30/88 - Modified DLCOMP so that if the DCOEF file is       *
-!                   not found in the DIAMAG_DIR area, then it looks    *
-!                   for it in [kellman.dia] area on the USC vax.       *
-!         6/19/92 - diamag2 data not used because the diagnostic       *
-!                   signal is not reliable.                            *
-!        11/21/94 - New calibration factors. New updated linear comp   *
-!                   terms including three c-coil terms in addition to  *
-!                   previous n=1 coil term, and new nonlinear term     *
-!                   for DIA3 only for ECOIL times product of ECOIL     *
-!                   and BT. Now looks in SYS$USER:[LAHAYE.DIA]. (Rob   *
-!                   LaHaye)                                            *
-!       2013/06/25  Increase data arrays dimension, new compensation   *                                           *
-!***********************************************************************   
+ !**********************************************************************
+!>
+!!    This routine returns the average of the compensated diamagnetic
+!!    fluxes and error in the diamagnetic fluxes.
+!!
+!!    @param nshot :
+!!
+!!    @param tim :
+!!
+!!    @param npts :
+!!
+!!    @param tavg : this is the time that the data is averaged 
+!              over.
+!!
+!!    @param ierr : an error array of dimension 3. Each element of the
+!        array contains the PTDATA error for one of the three 
+!              diamagnetic flux signals. If ierr(j) is different from 
+!              zero, that flux is not included in the average value  
+!              returne
+!!
+!!    @param phidia : this array contains the conpensated diamagnetic
+!                flux (mv-sec)
+!!
+!!    @param sigphi : this array contains the error in the flux value
+!                (mv-sec).
+!!
+!********************************************************************** 
         subroutine getdia(nshot,tim,npts,tavg,ierr,phidia,sigphi)
 
         parameter (ntims=8192)
@@ -75,20 +68,13 @@
         return
         end
 
-!********************************************************************
-!
-!   MODIFIED 9/5/87 - An incorrect RC/G was found for all three loops,
-!       A.Kellman     so the correction was put in for all shots before
-!                     the correct RC/G was put into the database. This
-!                     was done using the variable FIX(3).
-!   Modified 6/1/89 - An additional term has been added to compensate
-!                     for the pickup from the n=1 coil. The coefficient
-!                     was determined from shot XXXXX.
-!      Revised: R. La Haye Nov. 21, 1994.
-!        8/9/2004 - Remove n1coil for shot > 108281
-!   9/21/2020 - R.S. Changed ifix to int
-!       
-!vas-oct3,08        include 'expath.inc'
+
+!**********************************************************************
+!>
+!!    This subroutine applies diamagnetic compensations
+!!    
+!!
+!**********************************************************************
         SUBROUTINE DLCOMP(TIM,DIAMAG,DIAMAGC,SIG,NSHOT,NPTS,IDLC &
         ,IERR,TAVG)
         use expath
@@ -352,7 +338,13 @@
         return
         END
 
-!********************************************************************
+
+!**********************************************************************
+!>
+!!    This subroutine does
+!!    
+!!
+!**********************************************************************
         SUBROUTINE LOWPASS(XIN,XOUT,NAVG,NPTS)
         PARAMETER (NTIMS=8192)
         REAL XIN(1),XOUT(1),XTMP(NTIMS)
@@ -380,7 +372,12 @@
         RETURN
         END
 
-!*************************************************************
+!**********************************************************************
+!>
+!!    This subroutine does
+!!    
+!!
+!**********************************************************************
         SUBROUTINE INTERP(XIN,YIN,NIN,XOUT,YOUT,NOUT)
         PARAMETER (NTIMS=8192)
         REAL XIN(NTIMS),YIN(NTIMS),XOUT(NTIMS),YOUT(NTIMS)

@@ -1,17 +1,14 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          green set up the appropriate response functions for use **
-!**          with the routine matrix.                                **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/10/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**          94/03/08..........revised                               **
-!**        2015/03/27..........revised MSE-LS                        **  
-!**                                                                  **
+!>
+!!    green sets up the appropriate response functions for use
+!!    with the routine matrix.
+!!
+!!    @param ifag :
+!!
+!!    @param jtime :
+!!
+!!    @param niter :
+!!
 !**********************************************************************
       subroutine green(ifag,jtime,niter)
       use commonblocks,only: c,wk,copy,bkx,bky

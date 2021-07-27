@@ -1,9 +1,16 @@
-!----------------------------------------------------------------------
-!--   let is letter designation of file                              --
-!--   ishot is shot number                                           --
-!--   itime is time in miliseconds                                   --
-!--   fname is file name                                             --
-!----------------------------------------------------------------------
+!**********************************************************************
+!>
+!!    This subroutine does...
+!!
+!!    @param let : is letter designation of file   
+!!
+!!    @param ishot : is shot number   
+!!
+!!    @param itime : is time in miliseconds 
+!!
+!!    @param fname : is file name 
+!!
+!**********************************************************************
       subroutine getfnmd(let,ishot,itime,fname)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       character*(*) let
@@ -22,12 +29,21 @@
  1020 format(a1,i6.6,'.',a5)
       return
       end
-!----------------------------------------------------------------------
-!--   let is letter designation of file (2 chracters)                --
-!--   ishot is shot number                                           --
-!--   itime is time in miliseconds                                   --
-!--   fname is file name                                             --
-!----------------------------------------------------------------------
+
+
+!**********************************************************************
+!>
+!!    This subroutine does...
+!!
+!!    @param let : is letter designation of file  (2 chracters)   
+!!
+!!    @param ishot : is shot number   
+!!
+!!    @param itime : is time in miliseconds 
+!!
+!!    @param fname : is file name 
+!!
+!**********************************************************************
       subroutine getfnm2(let,ishot,itime,fname)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       character*(*) let
@@ -46,13 +62,24 @@
  1020 format(a2,i6.6,'.',a5)
       return
       end
-!----------------------------------------------------------------------
-!--   itimeu is time in microseconds                                 --
-!--   let is letter designation of file                              --
-!--   ishot is shot number                                           --
-!--   itime is time in miliseconds                                   --
-!--   fname is file name                                             --
-!----------------------------------------------------------------------
+
+
+!**********************************************************************
+!>
+!!    This subroutine does ...
+!!    
+!!
+!!    @param itimeu : time in microseconds 
+!!
+!!    @param let : letter designation of file 
+!!
+!!    @param ishot : shot number
+!!
+!!    @param itime : time in miliseconds
+!!
+!!    @param fname : file name 
+!!
+!**********************************************************************
       subroutine getfnmu(itimeu,let,ishot,itime,fname)
       character*(*) let
       character*(*) fname
@@ -75,13 +102,24 @@
  1030 format(a1,i6.6,'.',a5,'_',i3.3)
       return
       end
-!----------------------------------------------------------------------
-!--   itimeu is time in microseconds                                 --
-!--   let is letter designation of file (2 chatacyters)              --
-!--   ishot is shot number                                           --
-!--   itime is time in miliseconds                                   --
-!--   fname is file name                                             --
-!----------------------------------------------------------------------
+
+
+!**********************************************************************
+!>
+!!    This subroutine does ...
+!!    
+!!
+!!    @param itimeu : time in microseconds 
+!!
+!!    @param let : letter designation of file 
+!!
+!!    @param ishot : shot number
+!!
+!!    @param itime : time in miliseconds
+!!
+!!    @param fname : file name 
+!!
+!**********************************************************************
       subroutine getfnmu2(itimeu,let,ishot,itime,fname)
       character*(*) let
       character*(*) fname
@@ -104,15 +142,25 @@
  1030 format(a2,i6.6,'.',a5,'_',i3.3)
       return
       end
-!----------------------------------------------------------------------
-!--   let is letter designation of file                              --
-!--   ishot is shot number                                           --
-!--   itime is time in miliseconds                                   --
-!--   istore	directory flag					     --
-!--		=0	Default directory			     --
-!--		=1	Central directory			     --
-!--   fname is file name                                             --
-!----------------------------------------------------------------------
+
+!**********************************************************************
+!>
+!!    This subroutine does ...
+!!    
+!!
+!!    @param let : letter designation of file 
+!!
+!!    @param ishot : shot number
+!!
+!!    @param itime : time in miliseconds
+!!
+!!    @param istore : directory flag\n
+!!                    =0  Default directory
+!!                    =1  Central directory 
+!!
+!!    @param fname : file name 
+!!
+!**********************************************************************      
       subroutine setfnme(let,ishot,itime,istore,fname)
       use expath
       implicit integer*4 (i-n), real*8 (a-h, o-z)

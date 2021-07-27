@@ -1,9 +1,8 @@
 #include "config.f"
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          getsets performs inputing and initialization.           **
-!**                                                                  **
+!>
+!!    getsets performs inputing and initialization.
+!!
 !**********************************************************************
       subroutine getsets_defaults
       use set_kinds
@@ -217,20 +216,19 @@
 
       end subroutine getsets_defaults
 
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          getsets performs inputing and initialization.           **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**          04/03/93..........revised name for NCAR                 **
-!**          23/04/04...JAL iplcout added to namelist used in weqdsk **
-!**          01/08/07...DPB namelist for mag uncertainty added       **
-!**                                                                  **
+!>
+!!    getsets performs inputing and initialization.
+!!
+!!    @param ktime :
+!!
+!!    @param kwake :
+!!
+!!    @param mtear :
+!!
+!!    @param kerror : error flag
+!!
 !**********************************************************************
       subroutine getsets(ktime,kwake,mtear,kerror)
       use set_kinds

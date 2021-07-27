@@ -1,8 +1,9 @@
-!-----------------------------------------------------------------------
-!     subprogram process_arguments                                      
-!     Subroutine for converting command line arguments into the logical 
-!     parameters for control                                            
-!-----------------------------------------------------------------------
+!**********************************************************************
+!>
+!!    Subroutine for converting command line arguments into the logical
+!!    parameters for control
+!!
+!**********************************************************************
 SUBROUTINE process_arguments 
   CHARACTER(128) :: argument 
   INTEGER(KIND=4) :: iarg, nargs,iloop,kfindex,ipos1,ipos2,ilen,istart
@@ -52,9 +53,13 @@ SUBROUTINE process_arguments
     END SELECT 
   ENDDO loop 
 END SUBROUTINE process_arguments 
-!-----------------------------------------------------------------------
-!     subprogram write_usage
-!-----------------------------------------------------------------------
+
+
+
+!**********************************************************************
+!>     subprogram write_usage
+!!
+!**********************************************************************
 SUBROUTINE write_usage 
   WRITE(nim_wr,*)'' 
   msg='Usage: efit <options> other' 

@@ -1,18 +1,19 @@
 #include "config.f"
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          getpts gets the magnetic data for use with EFIT         **
-!**          and MFIT.                                               **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/02/86..........revised for DIII-D                    **
-!**          93/04/21..........revised for double precision option   **
-!**      July 29, 2014.........revised GETDAT. No dimension(1) tbt   **
-!**                   .........revised AMDATA to deallocate yw,xw,...**
-!**                                                                  **
+!>
+!!    getpts gets the magnetic data for use with EFIT
+!!    and MFIT.
+!!
+!!    @param nshot :
+!!
+!!    @param times :
+!!
+!!    @param delt :
+!!
+!!    @param np :
+!!
+!!    @param iierr :
+!!
 !**********************************************************************
       subroutine getpts(nshot,times,delt,np,iierr)
       use vtime_mod
@@ -733,18 +734,61 @@
 !
       return
       end
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          avdata gets the data and optionally performs the        **
-!**          average.                                                **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          09/06/86..........first created                         **
-!**          93/04/21..........revised for double precision option   **
-!**                                                                  **
+!>
+!!    avdata gets the data and optionally performs the
+!!    average.
+!!
+!!    @param nshot : shot number
+!!
+!!    @param name :
+!!
+!!    @param mmm :
+!!
+!!    @param ierror :
+!!
+!!    @param y :
+!!
+!!    @param np :
+!!
+!!    @param timesd :
+!!
+!!    @param deltd :
+!!
+!!    @param mm :
+!!
+!!    @param xxd :
+!!
+!!    @param nn :
+!!
+!!    @param bitvld :
+!!
+!!    @param kave :
+!!
+!!    @param time :
+!!
+!!    @param ircfact :
+!!
+!!    @param do_spline_fit :
+!!
+!!    @param rcx :
+!!
+!!    @param rcgx :
+!!
+!!    @param vbitx :
+!!
+!!    @param zinhnox :
+!!
+!!    @param t0x :
+!!
+!!    @param stdevx :
+!!
+!!    @param navx :
+!!
+!!    @param ktime_err :
+!!
 !**********************************************************************
       subroutine avdata(nshot,name,mmm,ierror,y, &
                         np,timesd,deltd,mm,xxd,nn,bitvld,kave,time,ircfact, &
@@ -964,18 +1008,45 @@
 !
       return
       end
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          amdata gets the data and optionally performs the        **
-!**          average from MDS+                                       **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**        2006/06/14..........first created                         **
-!**                                                                  **
-!**                                                                  **
+!>
+!!    amdata gets the data and optionally performs the
+!!    average from MDS
+!!
+!!    @param nshot : shot number
+!!
+!!    @param name :
+!!
+!!    @param mmm :
+!!
+!!    @param ierror :
+!!
+!!    @param y :
+!!
+!!    @param np :
+!!
+!!    @param timesd :
+!!
+!!    @param deltd :
+!!
+!!    @param mm :
+!!
+!!    @param xxd :
+!!
+!!    @param nn :
+!!
+!!    @param bitvld :
+!!
+!!    @param kave :
+!!
+!!    @param time :
+!!
+!!    @param ircfact :
+!!
+!!    @param do_spline_fit :
+!!
 !**********************************************************************
       subroutine amdata(nshot,name,mmm,ierror,y, &
                np,timesd,deltd,mm,xxd,nn,bitvld,kave,time,ircfact, &
@@ -1120,19 +1191,57 @@
 !
       return
       end
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          apdata gets the data and optionally performs the        **
-!**          average.                                                **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          09/06/86..........first created                         **
-!**          93/04/21..........revised for double precision option   **
-!**                                                                  **
-!**                                                                  **
+!>
+!!    apdata gets the data and optionally performs the
+!!    average
+!!
+!!    @param nshot :
+!!
+!!    @param name :
+!!
+!!    @param mmm :
+!!
+!!    @param ierror :
+!!
+!!    @param y :
+!!
+!!    @param np :
+!!
+!!    @param timesd :
+!!
+!!    @param deltd :
+!!
+!!    @param mm :
+!!
+!!    @param xxd :
+!!
+!!    @param nn :
+!!
+!!    @param bitvld :
+!!
+!!    @param kave :
+!!
+!!    @param time :
+!!
+!!    @param do_spline_fit :
+!!
+!!    @param rcx :
+!!
+!!    @param rcgx :
+!!
+!!    @param vbitx :
+!!
+!!    @param zinhnox :
+!!
+!!    @param t0x :
+!!
+!!    @param stdevx :
+!!
+!!    @param navx :
+!!
 !**********************************************************************
       subroutine apdata(nshot,name,mmm,ierror,y, &
         np,timesd,deltd,mm,xxd,nn,bitvld,kave,time, &
@@ -1236,18 +1345,30 @@
 !
       return
       end
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          gettanh gets the edge hyperbolic tangent fit parameters **
-!**          from MDS+                                               **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          2001/03/09........first created                         **
-!**                                                                  **
-!**********************************************************************
+!>
+!!    gettanh gets the edge hyperbolic tangent fit parameters
+!!    from MDS+
+!!
+!!    @param ishot :
+!!
+!!    @param fitzts :
+!!
+!!    @param ktime :
+!!
+!!    @param time :
+!!
+!!    @param ztssym :
+!!
+!!    @param ztswid :
+!!
+!!    @param ptssym :
+!!
+!!    @param ztserr :
+!!
+!*********************************************************************
       subroutine gettanh(ishot,fitzts,ktime,time,ztssym,ztswid, &
                           ptssym,ztserr)
       parameter (ntims=4096)
@@ -1279,17 +1400,45 @@
 !
       return
       end
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          avdata gets the compensated diamagnetic data and        **
-!**          and optionally performs the average.                    **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          09/06/86..........first created                         **
-!**                                                                  **
+!>
+!!    avdata gets the compensated diamagnetic data and
+!!    and optionally performs the average.
+!!
+!!    @param nshot : shot number
+!!
+!!    @param name :
+!!
+!!    @param mmm :
+!!
+!!    @param ierror :
+!!
+!!    @param y :
+!!
+!!    @param np :
+!!
+!!    @param timesd :
+!!
+!!    @param deltd :
+!!
+!!    @param mm :
+!!
+!!    @param xxd :
+!!
+!!    @param nn :
+!!
+!!    @param bitvl :
+!!
+!!    @param kave :
+!!
+!!    @param time :
+!!
+!!    @param sigmay :
+!!
+!!    @param ierdia :
+!!
 !**********************************************************************
       subroutine avdiam(nshot,name,mmm,ierror,y, &
                     np,timesd,deltd,mm,xxd,nn,bitvl,kave,time,sigmay, &
@@ -1338,16 +1487,17 @@
   220 continue
       return
       end
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          zmooth smooths out the data.                            **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          10/06/86..........first created                         **
-!**                                                                  **
+!>
+!!    zmooth smooths out the data.
+!!
+!!    @param y :
+!!
+!!    @param npts :
+!!
+!!    @param nave :
+!!
 !**********************************************************************
       subroutine zmooth(y,npts,nave)
       parameter (ntims=4096)
@@ -1424,7 +1574,19 @@
   600 continue
       return
       end
+
 !**********************************************************************
+!>
+!!    This subroutine smooths it??
+!!
+!!    @param times :
+!!
+!!    @param data :
+!!
+!!    @param nts :
+!!
+!!    @param timint :
+!!
 !**********************************************************************
       subroutine smoothit(times,data,nts,timint)
         parameter (npmax=16384)
@@ -1461,7 +1623,19 @@
         return
       end
 
+
 !**********************************************************************
+!>
+!!    This subroutine smooths it too??
+!!
+!!    @param times :
+!!
+!!    @param data :
+!!
+!!    @param nts :
+!!
+!!    @param timint :
+!!
 !**********************************************************************
       subroutine smoothit2(times,data,nts,timint,stdev,nave)
         parameter (npmax=16384)
@@ -1507,40 +1681,30 @@
       end
 
 !**********************************************************************
+!>
+!!    the coefficients b(i), c(i), and d(i), i=1,2,...,n are computed
+!!    for a cubic interpolating spline
+!!    
+!!    s(x) = y(i) + b(i)(x-x(i)) + c(i)(x-x(i))2 + d(i)(x-x(i))3
+!!    
+!!    for  x(i) .le. x .le. x(i+1)
+!!
+!!    @param n : the number of data points or knots (n.ge.2)
+!!
+!!    @param x : the abscissas of the knots in strictly increasing order
+!!
+!!    @param y : the ordinates of the knots
+!!
+!!    @param b : s'(y)
+!!
+!!    @param c : s''(y)/2
+!!
+!!    @param d : s'''(y)/6 (derivative from the right)
+!!
 !**********************************************************************
       subroutine zplines(n, x, y, b, c, d)
       integer n
       real x(n), y(n), b(n), c(n), d(n)
-!
-!  the coefficients b(i), c(i), and d(i), i=1,2,...,n are computed
-!  for a cubic interpolating spline
-!
-!    s(x) = y(i) + b(i)*(x-x(i)) + c(i)*(x-x(i))**2 + d(i)*(x-x(i))**3
-!
-!    for  x(i) .le. x .le. x(i+1)
-!
-!  input..
-!
-!    n = the number of data points or knots (n.ge.2)
-!    x = the abscissas of the knots in strictly increasing order
-!    y = the ordinates of the knots
-!
-!  output..
-!
-!    b, c, d  = arrays of spline coefficients as defined above.
-!
-!  using  p  to denote differentiation,
-!
-!    y(i) = s(x(i))
-!    b(i) = sp(x(i))
-!    c(i) = spp(x(i))/2
-!    d(i) = sppp(x(i))/6  (derivative from the right)
-!
-!cccccccccccccc
-!  the accompanying function subprogram  seval  can be used
-!  to evaluate the spline.
-!
-!
       integer nm1, ib, i
       real t
 !
@@ -1613,26 +1777,35 @@
       return
       end
 
-! -------------------------------------------------------------
-!  this subroutine evaluates the cubic spline function
-!
-!    seval = y(i) + b(i)*(u-x(i)) + c(i)*(u-x(i))**2 + d(i)*(u-x(i))**3
-!
-!    where  x(i) .lt. u .lt. x(i+1), using horner's rule
-!
-!  if  u .lt. x(1) then  i = 1  is used.
-!  if  u .ge. x(n) then  i = n  is used.
-!
-!  input..
-!
-!    n = the number of data points
-!    u = the abscissa at which the spline is to be evaluated
-!    x,y = the arrays of data abscissas and ordinates
-!    b,c,d = arrays of spline coefficients computed by spline
-!
-!  if  u  is not in the same interval as the previous call, then a
-!  binary search is performed to determine the proper interval.
-!
+!**********************************************************************
+!>
+!!    this function evaluates the cubic spline function\n
+!!    
+!!    seval = y(i) + b(i)(u-x(i)) + c(i)(u-x(i))2 + d(i)(u-x(i))3\n
+!!    
+!!    where  x(i) .lt. u .lt. x(i+1), using horner's rule\n
+!!    
+!!    if  u .lt. x(1) then  i = 1  is used.\n
+!!    if  u .ge. x(n) then  i = n  is used.\n
+!!
+!!     if  u  is not in the same interval as the previous call, then a
+!!    binary search is performed to determine the proper interval.
+!!
+!!    @param n : the number of data points
+!!
+!!    @param u : the abscissa at which the spline is to be evaluated
+!!
+!!    @param x : the arrays of data abscissas
+!!
+!!    @param y : the arrays of data ordinates
+!!
+!!    @param b : array of spline coefficients
+!!
+!!    @param c : array of spline coefficients
+!!
+!!    @param d : array of spline coefficients
+!!
+!**********************************************************************
       real function sevals(n, u, x, y, b, c, d)
       integer n
       real  u, x(n), y(n), b(n), c(n), d(n)
@@ -1661,89 +1834,79 @@
 
 
 !*************************************************************************
-!**
-!**     SUBPROGRAM DESCRIPTION:
-!**     Calculates the experimental magnetic uncertainties
-!**
-!**     CALLING ARGUMENTS:
-!**     ishot  = shot number
-!**     time  = time slice
-!**     gradsmp = Grad(S) of magnetic probe
-!**     s   = BR cost + BZ sint
-!**     grads_R = dBRdR cost + dBZdR sint (d/dR partial wrt R)
-!**     grads_Z = dBRdZ cost + dBZdZ sint
-!**     gradsmp  = sqrt (grads_R**2 + grads_Z**2)
-!**     gradsfl  = Grad(S) of flux loop
-!**     bpermp  = B perpendicular to the magnetic probe
-!**     sigmaf  = uncertainty of f coil
-!**     sigmab  = uncertainty of b coil
-!**     sigmae  = uncertainty of e coil
-!**     sigmafl  = uncert. of flux loop
-!**     sigmamp  = uncert. of magnetic probes
-!**     REFERENCES:
-!**     (1)
-!**     (2)
-!**
-!**     RECORD OF MODIFICATION:
-!**     2003. ....first created  E.J. Strait
-!**
-!*************************************************************************
-!**     This subroutine calculates the uncertainties for the magnetic 
-!**     diagnostics.  It is based on estimates described in
-!**     DIII-D Physics Memo D3DPM 0202, "Estimating the Uncertainty of DIII-D 
-!**     Magnetic Data," by E.J. Strait (Aug. 30, 2002).
-!**     
-!**     The following sources of uncertainty are included. (Further explanation 
-!**     is given under the corresponding item numbers in the Physics Memo.)
-!**     The individual terms are combined in quadrature to give
-!**     the total uncertainty for each signal.
-!**     
-!**     1) Loop calibration   dS = a1 S
-!**     2) Loop cal. - Long-term change  dS = a2 S
-!**     3) Integrator calibration  dS = a3 S
-!**     4) Int. cal. - Long-term change  dS = a4 S
-!**     5) Integrator drift    dS = a5 K(RC/G) T
-!**     6) Loop position    dS = a6 grad(S)
-!**     7) Loop tilt angle   dS = a7 Bperp
-!**     8) Bt pickup     dS = a8 dBt
-!**     9) C-coil pickup   dS = a9 Cn
-!**     10) Bp pickup in leads   dS = a10 K integral(Bperp^2)ds
-!**     11) Bp pickup in ports   dS = a11 K Bport
-!**     12) Detector nonlinearity  dS = a12 S/Bt
-!**     13) Noise     dS = a13 (/<S^2> - <S>^2/)^0.5 / N^0.5
-!**     14) Digitizer resolution  dS = a14 K(RC/G)(Vres/2) / N^0.5
-!**             where
-!**     S  = measured signal: flux, field, or current (in physics units)
-!**     dS  = estimated uncertainty in the measured signal
-!**     grad(S)  = gradient of measured flux or field (physics units/meter)
-!**     N   = number of time samples averaged
-!**     Vres  = one-bit resolution of the digitizer (volts)
-!**     K   = inherent number (physics units/volt-second)
-!**     RC  = integrator time constant (seconds)
-!**     G   = integrator gain
-!**     T   = time elapsed since the start of integration (seconds)
-!**     dBt  = change in toroidal field since start of integration (seconds)
-!**     Bperp  = poloidal field normal to axis of mag. probe or leads (Tesla)
-!**     Cn  = current in a C-coil pair (Amps)
-!**     integral(f)ds = integral along leads from probe to connector (meters)
-!**     Bport  = poloidal field in port, perpendicular to leads (Tesla)
-!**     an  = numerical coefficient: units vary with n,
-!**                       and values vary between types of signals
-!**     
-!**     Note that items 10 and 11 will not be implemented immediately due to
-!**     the additional difficulty in calculating the path integral (10) and in 
-!**     estimating Bport outside the efit grid (11).
-!********************************************************************** 
-!**     There are several classes of magnetic diagnostics.      
-!**     They are represented in variable names by the following letters:
-!**             mp  = magnetic probes
-!**             fl  = flux loops
-!**             f  = F-coil Rogowski loops
-!**             b  = B-coil Rogowski loops
-!**             e  = E-coil Rogowski loops
-!**             ip  = plasma current Rogowski loops
-!**
-!********************************************************************** 
+!>
+!!    This subroutine calculates the uncertainties for the magnetic
+!!    diagnostics.  It is based on estimates described in
+!!    DIII-D Physics Memo D3DPM 0202, "Estimating the Uncertainty of DIII-D
+!!    Magnetic Data," by E.J. Strait (Aug. 30, 2002).
+!!    
+!!    The following sources of uncertainty are included. (Further explanation
+!!    is given under the corresponding item numbers in the Physics Memo.)
+!!    The individual terms are combined in quadrature to give
+!!    the total uncertainty for each signal.
+!!    
+!!    1) Loop calibration   dS = a1 S
+!!    2) Loop cal. - Long-term change  dS = a2 S
+!!    3) Integrator calibration  dS = a3 S
+!!    4) Int. cal. - Long-term change  dS = a4 S
+!!    5) Integrator drift    dS = a5 K(RC/G) T
+!!    6) Loop position    dS = a6 grad(S)
+!!    7) Loop tilt angle   dS = a7 Bperp
+!!    8) Bt pickup     dS = a8 dBt
+!!    9) C-coil pickup   dS = a9 Cn
+!!    10) Bp pickup in leads   dS = a10 K integral(Bperp^2)ds
+!!    11) Bp pickup in ports   dS = a11 K Bport
+!!    12) Detector nonlinearity  dS = a12 S/Bt
+!!    13) Noise     dS = a13 (/<S^2> - <S>^2/)^0.5 / N^0.5
+!!    14) Digitizer resolution  dS = a14 K(RC/G)(Vres/2) / N^0.5
+!!    where
+!!    S  = measured signal: flux, field, or current (in physics units)
+!!    dS  = estimated uncertainty in the measured signal
+!!    grad(S)  = gradient of measured flux or field (physics units/meter)
+!!    N   = number of time samples averaged
+!!    Vres  = one-bit resolution of the digitizer (volts)
+!!    K   = inherent number (physics units/volt-second)
+!!    RC  = integrator time constant (seconds)
+!!    G   = integrator gain
+!!    T   = time elapsed since the start of integration (seconds)
+!!    dBt  = change in toroidal field since start of integration (seconds)
+!!    Bperp  = poloidal field normal to axis of mag. probe or leads (Tesla)
+!!    Cn  = current in a C-coil pair (Amps)
+!!    integral(f)ds = integral along leads from probe to connector (meters)
+!!    Bport  = poloidal field in port, perpendicular to leads (Tesla)
+!!    an  = numerical coefficient: units vary with n,
+!!    and values vary between types of signals
+!!    
+!!    Note that items 10 and 11 will not be implemented immediately due to
+!!    the additional difficulty in calculating the path integral (10) and in
+!!    estimating Bport outside the efit grid (11).
+!!
+!!    @param ishotx :  shot number
+!!
+!!    @param timexy : time slice
+!!
+!!    @param jtimex :
+!!
+!!    @param gradsmpx : Grad(S) of magnetic probe \n 
+ !!    s   = BR cost + BZ sint
+!!
+!!    @param gradsflx : Grad(S) of flux loop
+!!
+!!    @param bpermpx : B perpendicular to the magnetic probe
+!!
+!!    @param sigmafx : uncertainty of f coil
+!!
+!!    @param sigmabx : uncertainty of b coil
+!!
+!!    @param sigmaex : uncertainty of e coil
+!!
+!!    @param sigmaipx : 
+!!
+!!    @param sigmaflx : uncert. of flux loop
+!!
+!!    @param sigmampx : uncert. of magnetic probes
+!!
+!**********************************************************************
       subroutine magsigma(ishotx,timexy,jtimex,gradsmpx,gradsflx, &
                         bpermpx,sigmafx,sigmabx,sigmaex, &
                         sigmaipx,sigmaflx,sigmampx)
@@ -2163,17 +2326,19 @@
 #if defined(USEMPI)
 
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          getpts_mpi...                                           **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**       2020/09/18 ....... R.S. Bug fix, bcast oldccomp.           **
-!**                          This removed small differences between  **
-!**                          serial and parallel runs.               **
-!**                                                                  **
+!>
+!!    MPI version of getpts subroutine...
+!!
+!!    @param nshot :
+!!
+!!    @param times :
+!!
+!!    @param delt :
+!!
+!!    @param ktime :
+!!
+!!    @param istop :
+!!
 !**********************************************************************
         subroutine getpts_mpi(nshot,times,delt,ktime,istop)
         use set_kinds
@@ -2473,9 +2638,14 @@
 
       end subroutine getpts_mpi
 
-! =========================
-
-      ! NOTE : NO error condition returned
+!**********************************************************************
+!>
+!!    mpi version of getstark\n
+!! NOTE : NO error condition returned
+!!
+!!    @param ktime : number of time slices
+!!
+!**********************************************************************
       subroutine getstark_mpi(ktime)
 
         include 'eparm.inc'
