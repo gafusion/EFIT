@@ -4,10 +4,27 @@
 #
 ######################################################################
 
-set(EFIT_LABEL 186610.02300)
-set(EFIT_IN k${EFIT_LABEL})
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${EFIT_IN}
-     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
+set(RUNID 186610)
+if (${ENABLE_PARALLEL})
+  set(TIMES 02300 02400 02500 02600)
+  set(EFIT_TIME 4)
+else()
+  set(TIMES 02300)
+endif()
+
+
+foreach( t ${TIMES})
+  set(EFIT_LABEL ${EFIT_LABEL} ${RUNID}.${t})
+  set(EFIT_IN ${EFIT_IN} k${RUNID}.${t})
+  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/k${RUNID}.${t}
+       DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
+endforeach()
+string(REPLACE ";" " " EFIT_LABEL "${EFIT_LABEL}")
+string(REPLACE ";" "\n" EFIT_IN "${EFIT_IN}")
+
+if (${ENABLE_PARALLEL})
+  set(EFIT_EXEC "srun --mpi=pmi2 -n 4 ${CMAKE_BINARY_DIR}/efit/efit")
+endif()
 
 configure_file(${EFIT_TEST_CONFIGFILE}
                ${CMAKE_CURRENT_BINARY_DIR}/run_efit.sh @ONLY)

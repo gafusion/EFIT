@@ -18,12 +18,15 @@ all other third-party libraries and simply build with::
     make 
     make test
 
-This will work on Ubuntu (20.04 and possibly older verions) as long as the following
+This will work on Ubuntu (18.04 and 20.04) as long as the following
 packages have been installed (call apt-get to install)::
     git (optional)
     build-essential
     cmake
     gfortran
+    libblas-dev or libopenblas-dev (or libopenblas-serial-dev)
+    liblapack-dev or libopenblas-dev (or libopenblas-serial-dev)
+(16.04 and older requires non-standard CMake and gfortran versions)
 
 It will also work on Mac with similar libraries (TO DO: list) (can be obtained with
 brew install)

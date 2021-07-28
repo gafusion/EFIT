@@ -8,7 +8,7 @@
 
  type input file names:
  #
- table_di2 = </global/homes/t/tbechtel/efitall/efit_new/build/test/DIIID/green/>
+ table_di2 = </home/bechtelt/efitall/efit/build_serial/test/DIIID/green/>
 
       ******************** EFITD 65 x  65  output ********************
  before save fitting weights
@@ -17,32 +17,32 @@
  option to symmetrize added 8/14/91 eal  
  read in limiter data
 
- r=  0 t=  2300 it=  1 chi2=5.78E+01 zm=-2.04E-02 err=1.729E+00 dz=-2.037E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
- r=  0 t=  2300 it=  2 chi2=1.04E+02 zm=-2.04E-02 err=6.536E-02 dz=-5.212E-05 delz= 0.000E+00 dj=0.000E+00 chigam= 1.09E+02
- r=  0 t=  2300 it=  3 chi2=1.19E+02 zm=-2.02E-02 err=4.594E-02 dz= 1.775E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.31E+02
- r=  0 t=  2300 it=  4 chi2=1.14E+02 zm=-2.27E-02 err=2.539E-02 dz=-2.419E-03 delz= 5.126E-01 dj=1.112E-02 chigam= 1.21E+02
- r=  0 t=  2300 it=  5 chi2=1.03E+02 zm=-2.39E-02 err=1.383E-02 dz=-1.218E-03 delz= 3.180E-01 dj=6.838E-03 chigam= 1.17E+02
- r=  0 t=  2300 it=  6 chi2=9.63E+01 zm=-2.45E-02 err=7.854E-03 dz=-5.824E-04 delz= 2.066E-01 dj=4.427E-03 chigam= 1.15E+02
- r=  0 t=  2300 it=  7 chi2=9.20E+01 zm=-2.48E-02 err=4.737E-03 dz=-3.129E-04 delz= 1.561E-01 dj=3.341E-03 chigam= 1.14E+02
- r=  0 t=  2300 it=  8 chi2=8.92E+01 zm=-2.50E-02 err=3.064E-03 dz=-1.757E-04 delz= 1.290E-01 dj=2.760E-03 chigam= 1.14E+02
- r=  0 t=  2300 it=  9 chi2=8.72E+01 zm=-2.51E-02 err=2.109E-03 dz=-1.001E-04 delz= 1.124E-01 dj=2.406E-03 chigam= 1.14E+02
- r=  0 t=  2300 it= 10 chi2=8.58E+01 zm=-2.51E-02 err=1.556E-03 dz=-5.799E-05 delz= 1.031E-01 dj=2.209E-03 chigam= 1.15E+02
- r=  0 t=  2300 it= 11 chi2=8.48E+01 zm=-2.51E-02 err=1.214E-03 dz=-3.120E-05 delz= 9.600E-02 dj=2.058E-03 chigam= 1.15E+02
- r=  0 t=  2300 it= 12 chi2=8.42E+01 zm=-2.51E-02 err=9.380E-04 dz= 5.051E-05 delz= 7.933E-02 dj=1.704E-03 chigam= 1.16E+02
- r=  0 t=  2300 it= 13 chi2=8.37E+01 zm=-2.51E-02 err=7.881E-04 dz= 6.990E-06 delz= 8.721E-02 dj=1.872E-03 chigam= 1.16E+02
- r=  0 t=  2300 it= 14 chi2=8.33E+01 zm=-2.51E-02 err=6.446E-04 dz= 2.995E-06 delz= 8.680E-02 dj=1.864E-03 chigam= 1.17E+02
- r=  0 t=  2300 it= 15 chi2=8.30E+01 zm=-2.51E-02 err=5.251E-04 dz= 8.325E-07 delz= 8.606E-02 dj=1.849E-03 chigam= 1.17E+02
- r=  0 t=  2300 it= 16 chi2=8.30E+01 zm=-2.51E-02 err=5.755E-04 dz=-3.150E-05 delz= 8.932E-02 dj=1.920E-03 chigam= 1.17E+02
- r=  0 t=  2300 it= 17 chi2=8.28E+01 zm=-2.51E-02 err=3.702E-04 dz=-9.875E-06 delz= 8.340E-02 dj=1.793E-03 chigam= 1.18E+02
- r=  0 t=  2300 it= 18 chi2=8.27E+01 zm=-2.51E-02 err=2.948E-04 dz=-3.656E-07 delz= 8.025E-02 dj=1.725E-03 chigam= 1.18E+02
- r=  0 t=  2300 it= 19 chi2=8.26E+01 zm=-2.51E-02 err=2.366E-04 dz= 3.079E-06 delz= 7.855E-02 dj=1.689E-03 chigam= 1.18E+02
- r=  0 t=  2300 it= 20 chi2=8.24E+01 zm=-2.51E-02 err=1.917E-04 dz= 3.869E-06 delz= 7.758E-02 dj=1.668E-03 chigam= 1.18E+02
- r=  0 t=  2300 it= 21 chi2=8.24E+01 zm=-2.51E-02 err=1.525E-04 dz= 3.949E-06 delz= 7.691E-02 dj=1.654E-03 chigam= 1.18E+02
- r=  0 t=  2300 it= 22 chi2=8.23E+01 zm=-2.51E-02 err=1.257E-04 dz= 3.204E-06 delz= 7.653E-02 dj=1.646E-03 chigam= 1.19E+02
- r=  0 t=  2300 it= 23 chi2=8.23E+01 zm=-2.51E-02 err=1.017E-04 dz= 2.731E-06 delz= 7.621E-02 dj=1.639E-03 chigam= 1.19E+02
- r=  0 t=  2300 it= 24 chi2=8.22E+01 zm=-2.51E-02 err=8.129E-05 dz= 2.315E-06 delz= 7.595E-02 dj=1.634E-03 chigam= 1.19E+02
- r=  0 t=  2300 it= 25 chi2=8.27E+01 zm=-2.51E-02 err=4.474E-04 dz= 1.576E-05 delz= 7.331E-02 dj=1.577E-03 chigam= 1.19E+02
- r=  0 t=  2300 it= 26 chi2=8.27E+01 zm=-2.51E-02 err=2.421E-04 dz= 7.389E-06 delz= 7.477E-02 dj=1.608E-03 chigam= 1.19E+02
+ r=  0 t=  2300 it=  1 chi2=4.31E+01 zm=-2.02E-02 err=1.738E+00 dz=-2.021E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+ r=  0 t=  2300 it=  2 chi2=6.80E+01 zm=-2.06E-02 err=3.496E-02 dz=-3.668E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.90E+02
+ r=  0 t=  2300 it=  3 chi2=7.81E+01 zm=-2.03E-02 err=2.665E-02 dz= 2.921E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.80E+02
+ r=  0 t=  2300 it=  4 chi2=1.23E+02 zm=-2.79E-02 err=2.249E-02 dz=-7.661E-03 delz= 1.632E+00 dj=7.207E-02 chigam= 1.89E+02
+ r=  0 t=  2300 it=  5 chi2=1.05E+02 zm=-3.28E-02 err=1.325E-02 dz=-4.853E-03 delz= 8.945E-01 dj=4.014E-02 chigam= 1.87E+02
+ r=  0 t=  2300 it=  6 chi2=1.09E+02 zm=-3.54E-02 err=9.430E-03 dz=-2.571E-03 delz= 5.259E-01 dj=2.365E-02 chigam= 1.87E+02
+ r=  0 t=  2300 it=  7 chi2=1.17E+02 zm=-3.67E-02 err=6.889E-03 dz=-1.377E-03 delz= 2.937E-01 dj=1.330E-02 chigam= 1.87E+02
+ r=  0 t=  2300 it=  8 chi2=1.24E+02 zm=-3.76E-02 err=5.201E-03 dz=-8.470E-04 delz= 1.751E-01 dj=7.970E-03 chigam= 1.88E+02
+ r=  0 t=  2300 it=  9 chi2=1.30E+02 zm=-3.81E-02 err=3.928E-03 dz=-4.962E-04 delz= 9.051E-02 dj=4.126E-03 chigam= 1.89E+02
+ r=  0 t=  2300 it= 10 chi2=1.35E+02 zm=-3.84E-02 err=3.050E-03 dz=-3.204E-04 delz= 4.994E-02 dj=2.279E-03 chigam= 1.89E+02
+ r=  0 t=  2300 it= 11 chi2=1.39E+02 zm=-3.86E-02 err=2.297E-03 dz=-1.650E-04 delz= 1.249E-02 dj=5.703E-04 chigam= 1.90E+02
+ r=  0 t=  2300 it= 12 chi2=1.41E+02 zm=-3.87E-02 err=1.778E-03 dz=-1.292E-04 delz= 4.735E-03 dj=2.163E-04 chigam= 1.91E+02
+ r=  0 t=  2300 it= 13 chi2=1.43E+02 zm=-3.88E-02 err=1.462E-03 dz=-1.250E-04 delz=-6.023E-04 dj=2.742E-05 chigam= 1.91E+02
+ r=  0 t=  2300 it= 14 chi2=1.45E+02 zm=-3.90E-02 err=1.233E-03 dz=-1.543E-04 delz= 4.521E-03 dj=2.057E-04 chigam= 1.92E+02
+ r=  0 t=  2300 it= 15 chi2=1.47E+02 zm=-3.91E-02 err=1.023E-03 dz=-1.568E-04 delz= 3.686E-03 dj=1.676E-04 chigam= 1.92E+02
+ r=  0 t=  2300 it= 16 chi2=1.48E+02 zm=-3.92E-02 err=7.634E-04 dz=-8.607E-05 delz=-1.359E-02 dj=6.180E-04 chigam= 1.93E+02
+ r=  0 t=  2300 it= 17 chi2=1.49E+02 zm=-3.93E-02 err=5.894E-04 dz=-4.691E-05 delz=-2.267E-02 dj=1.030E-03 chigam= 1.93E+02
+ r=  0 t=  2300 it= 18 chi2=1.50E+02 zm=-3.93E-02 err=4.575E-04 dz=-2.466E-05 delz=-2.944E-02 dj=1.338E-03 chigam= 1.93E+02
+ r=  0 t=  2300 it= 19 chi2=1.50E+02 zm=-3.94E-02 err=4.515E-04 dz=-8.150E-05 delz=-1.770E-02 dj=8.037E-04 chigam= 1.94E+02
+ r=  0 t=  2300 it= 20 chi2=1.51E+02 zm=-3.95E-02 err=3.775E-04 dz=-7.461E-05 delz=-2.055E-02 dj=9.337E-04 chigam= 1.94E+02
+ r=  0 t=  2300 it= 21 chi2=1.52E+02 zm=-3.95E-02 err=2.685E-04 dz=-2.946E-05 delz=-3.209E-02 dj=1.458E-03 chigam= 1.94E+02
+ r=  0 t=  2300 it= 22 chi2=1.52E+02 zm=-3.95E-02 err=2.194E-04 dz=-1.313E-05 delz=-3.513E-02 dj=1.596E-03 chigam= 1.94E+02
+ r=  0 t=  2300 it= 23 chi2=1.52E+02 zm=-3.95E-02 err=1.746E-04 dz=-6.035E-06 delz=-3.709E-02 dj=1.685E-03 chigam= 1.94E+02
+ r=  0 t=  2300 it= 24 chi2=1.53E+02 zm=-3.95E-02 err=1.370E-04 dz=-2.370E-06 delz=-3.824E-02 dj=1.737E-03 chigam= 1.94E+02
+ r=  0 t=  2300 it= 25 chi2=1.53E+02 zm=-3.95E-02 err=1.108E-04 dz=-1.209E-06 delz=-3.881E-02 dj=1.763E-03 chigam= 1.94E+02
+ r=  0 t=  2300 it= 26 chi2=1.53E+02 zm=-3.95E-02 err=9.194E-05 dz=-1.071E-06 delz=-3.911E-02 dj=1.777E-03 chigam= 1.95E+02
 WARNING in fit at r=  0, t=  2300: not converged, reached max iterations
 
        data used:   
@@ -52,14 +52,13 @@ WARNING in fit at r=  0, t=  2300: not converged, reached max iterations
   0 diamagnetic loop
 
 
- shot #   =     186610 time(ms) =       2300 chi**2   =  8.228E+01
- betat(%) =      0.462 betap    =      0.114 li       =      1.128
- vol(cm3) =  1.820E+07 rout(cm) =    173.183 zout(cm) =      6.362
- elong    =      1.789 utriang  =      0.756 ltriang  =      0.353
- a(cm)    =     56.942 lin(cm)  =     14.511 lout(cm) =      4.945
- ltop(cm) =     15.051 q*       =      3.788 rc(cm)   =    170.632
- zc(cm)   =     -1.964 bt0(t)   =      1.626 qout     =      6.359
+ shot #   =     186610 time(ms) =       2300 chi**2   =  1.526E+02
+ betat(%) =      0.362 betap    =      0.103 li       =      1.177
+ vol(cm3) =  1.757E+07 rout(cm) =    172.758 zout(cm) =      4.318
+ elong    =      1.785 utriang  =      0.736 ltriang  =      0.350
+ a(cm)    =     56.227 lin(cm)  =     14.801 lout(cm) =      6.072
+ ltop(cm) =     18.656 q*       =      4.000 rc(cm)   =    170.370
+ zc(cm)   =     -3.485 bt0(t)   =      1.631 qout     =      6.936
 
   fit errors, shot  186610  2300. msec. no eqdsks will be written
      Error #1, Chisq >    80.
- netcdf needs to be linked to write m-files

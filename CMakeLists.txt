@@ -51,6 +51,7 @@ endif()
 #---------------------------------------------------------------------
 # -  See math/efitMath.cmake for math options
 # -  See io/efitIO.cmake for IO options
+set(ENABLE_PARALLEL FALSE CACHE BOOL "Whether to enable MPI: Default is false")
 set(ENABLE_OpenMP FALSE CACHE BOOL "Whether to enable OpenMP: Default is false")
 set(ENABLE_SHARED_LIBS FALSE CACHE BOOL "Default is to build static")
 set(ENABLE_MEM_PROF OFF CACHE BOOL "Whether to enable (limited) memory profiling")
@@ -128,6 +129,9 @@ if (${CMAKE_Fortran_COMPILER_ID} MATCHES "Cray")
   endif ()
 elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "GNU")
   option(__gfortran "using gfortran FC Compiler" on)
+  if (${CMAKE_Fortran_COMPILER_VERSION} LESS 7)
+    message(FATAL_ERROR "gfortran version 7 or greater is required")
+  endif()
   set(CMAKE_Fortran_FLAGS "-fno-second-underscore -fdefault-real-8 -fdefault-double-8 -fdec-math ${CMAKE_Fortran_FLAGS}")
   #set(CMAKE_Fortran_FLAGS "-Wimplicit-interface -Wimplicit-procedure ${CMAKE_Fortran_FLAGS}")
   # Don't allow automatic reallocation (F2003 standard) as it may be inefficient
@@ -237,6 +241,6 @@ add_subdirectory(test)
 #
 #---------------------------------------------------------------------
 set(COMMON_INSTALL TRUE)
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "NonIdeal Magnetohydrodynmics with Rotation Open Discussion")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Equilibrium Fitting Code")
 set(CONFIG_FILES)  
 CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/config.h.cmake ${PROJECT_BINARY_DIR}/config.h)
