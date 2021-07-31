@@ -1,31 +1,43 @@
-!**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          msels_hist returns synthetic or experimental MSE-LS     **
-!**          data to EFIT                                            **
-!**          For a given shot, returns complete time history         **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**          ishot: shot number                                      **
-!**          synmls: synthetic 'SYN' or experimental 'EXP' data      **
-!**                  or 'MSE' for EFIT02 MSE locations               **
-!**          icmls: MSE-LS channel number                            **
-!**          time: time array
-!**          bbmls: MSE-LS magnetic field E/V_BEAM in Tesla          **
-!**          sigbmls: MSE-LS magnetic field uncertainty in Tesla     **
-!**          rrmls, zzmls: (R,Z) of MSE-LS channels in m             **
-!**          L1mls, L2mls, L4mls: geometric cofficients of MSE-LS    **
-!**                               channels                           **
-!**          epotpmls: flux derivative of electrostatic potential    **
-!**                    in 1/sec                                      **
-!**          sigepmls: uncertainty in electrostatic potential flux   **
-!**                    derivative in 1/sec                           **
-!**          iermls: error flags of MSE-LS channels, 0=normal,       **
-!**                  1=error (ignore data)                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          2015/02/12..........first created                       **
-!**                                                                  **
+ !**********************************************************************
+!>
+!!    msels_hist returns synthetic or experimental MSE-LS
+!!    data to EFIT
+!!    For a given shot, returns complete time history
+!!
+!!    @param ishot : shot number   
+!!
+!!    @param synmls : synthetic 'SYN' or experimental 'EXP' data 
+!!                  or 'MSE' for EFIT02 MSE locations  
+!!
+!!    @param icmls : MSE-LS channel number 
+!!
+!!    @param ntimes :  number of times
+!!
+!!    @param l_time : time array
+!!
+!!    @param l_bbmls : MSE-LS magnetic field E/V_BEAM in Tesla 
+!!
+!!    @param l_sigbmls :  MSE-LS magnetic field uncertainty in Tesla
+!!
+!!    @param l_rrmls : R of MSE-LS channels in m  
+!!
+!!    @param l_zzmls : Z of MSE-LS channels in m  
+!!
+!!    @param l_L1mls :  geometric cofficients of MSE-LS channels 
+!!
+!!    @param l_L2mls :  geometric cofficients of MSE-LS channels 
+!!
+!!    @param l_L4mls :  geometric cofficients of MSE-LS channels 
+!!
+!!    @param l_epotpmls : flux derivative of electrostatic potential
+!!                    in 1/sec
+!!
+!!    @param l_sigepmls : uncertainty in electrostatic potential flux
+!!                   derivative in 1/sec 
+!!
+!!    @param iermls :error flags of MSE-LS channels, 0=normal,  
+!!                 1=error (ignore data)
+!!
 !**********************************************************************
       SUBROUTINE  MSELS_HIST(ishot,synmls,icmls,ntimes,l_time,        &
            l_bbmls,l_sigbmls,l_rrmls,l_zzmls,l_L1mls,l_L2mls,         &

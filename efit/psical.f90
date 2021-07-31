@@ -1,23 +1,20 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          psical computes mutual inductance/2/pi between two      **
-!**          circular filaments of radii a1 and r1 and               **
-!**          separation of z1, for mks units multiply returned       **
-!**          value by 2.0e-07.                                       **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**       a1..............first filament radius                      **
-!**       r1..............second filament radius                     **
-!**       z1..............vertical separation                        **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1) f.w. mcclain and b.b. brown, ga technologies        **
-!**              report ga-a14490 (1977).                            **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
+!>
+!!    psical computes mutual inductance/2/pi between two
+!!    circular filaments of radii a1 and r1 and
+!!    separation of z1, for mks units multiply returned
+!!    value by 2.0e-07. \n
+!!
+!!     REFERENCES:\n
+!!          (1) f.w. mcclain and b.b. brown, ga technologies
+!*!             report ga-a14490 (1977)
+!!
+!!    @param a1 : first filament radius 
+!!
+!!    @param r1 : second filament radius   
+!!
+!!    @param z1 : vertical separation  
+!!
 !**********************************************************************
       function psical(a1,r1,z1)
       use set_kinds
@@ -55,17 +52,14 @@
       end select
       return
       end function psical
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**       xmdele computes the elliptic integral e.                   **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**       xm1.............argument of elliptic integral e            **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
+!>
+!!    xmdele computes the elliptic integral e.
+!!
+!!    @param xm1 :  argument of elliptic integral e   
+!!
 !**********************************************************************
       function xmdele(xm1)
       use set_kinds
@@ -81,17 +75,14 @@
         +xm1*(b(1)+xm1*(b(2)+xm1*(b(3)+xm1*b(4))))*log(1.0/xm1)
       return
       end function xmdele
+
+      
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**       xmdelk computes the elliptic integral k.                   **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**       xm1.............argument of elliptic integral k            **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
+!>
+!!    xmdelk computes the elliptic integral k.
+!!
+!!    @param xm1 : argument of elliptic integral k
+!!
 !**********************************************************************
       function xmdelk(xm1)
       use set_kinds

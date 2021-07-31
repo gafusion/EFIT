@@ -1,15 +1,16 @@
 !**********************************************************************
-!     
-!     Function bsppel(ifunc,iparm,ypsi)
-!     
-!     This function returns the matrix element for the
-!     selected basis function.
-!     
-!     ifunc - basis function number
-!     iparm - basis function parameter number
-!     ypsi  - independent variable value
-!     
+!>
+!!    This function returns the matrix element for the
+!!    selected basis function.
+!!
+!!    @param ifunc : basis function number
+!!
+!!    @param iparm : basis function parameter number
+!!
+!!    @param ypsi : independent variable value
+!!
 !**********************************************************************
+
 Function bsppel(ifunc,iparm,ypsi)
       
   include 'eparm.inc'
@@ -511,20 +512,23 @@ function bsppin(ifunc,iparm,ypsi)
     write(6,*)'ifunc .ne. kppfnc ',ifunc,kppfnc
   return
 end function bsppin
+
+
 !**********************************************************************
-!     
-!     subroutine ppcnst(ncrsp,crsp,z,nffcoi)
-!     
-!     In addition to the least squares constraints that
-!     efit already uses, some basis functions have exact
-!     constraints. Most notable is the spline function
-!     whose continuity constraints are exact, not LSE.
-!     
-!     ncrsp - number of constraint equations
-!     crsp  - constraint matrix
-!     z     - value vector
-!     nffcoi- array index for seeting up crsp
-!     
+!>
+!!    In addition to the least squares constraints that
+!!    efit already uses, some basis functions have exact
+!!    constraints. Most notable is the spline function
+!!    whose continuity constraints are exact, not LSE.
+!!
+!!    @param ncrsp : number of constraint equations
+!!
+!!    @param crsp : constraint matrix
+!!
+!!    @param z : value vector
+!!
+!!    @param nffcoi : array index for seeting up crsp
+!!
 !**********************************************************************
 subroutine ppcnst(ncrsp,crsp,z,nffcoi)
   include 'eparm.inc'
@@ -854,12 +858,13 @@ subroutine ppcnst(ncrsp,crsp,z,nffcoi)
 
   return
 end subroutine ppcnst
+
 !**********************************************************************
-!     
-!     subroutine ppstore()
-!     
-!     Store the solution coefs into ppbdry and pp2bdry
-!     
+!!     
+!>     subroutine ppstore()
+!!     
+!!     Store the solution coefs into ppbdry and pp2bdry
+!!     
 !**********************************************************************
 subroutine ppstore()
   include 'eparm.inc'

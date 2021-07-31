@@ -1,13 +1,14 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          prcur4 computes the plasma pressure by integration.     **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          94/03/01..........first created                         **
-!**                                                                  **
+!>
+!!    prcur4 computes the plasma pressure by integration.
+!!    
+!!
+!!    @param n1set :
+!!
+!!    @param ypsi :
+!!
+!!    @param nnn :
+!!
 !**********************************************************************
       function prcur4(n1set,ypsi,nnn)
       use commonblocks,only: sifpre,bwpre,cwpre,dwpre,sfpre,sprep
@@ -44,24 +45,23 @@
       prcur4=seval(mw,ypsi,sifpre,sfpre,bwpre,cwpre,dwpre)
       return
       end function prcur4
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          ppcur4 computes the radial derivative of the            **
-!**          pressure based on icurrt.                               **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/10/83..........first created                         **
-!**          25/07/85..........revised                               **
-!**                                                                  **
+!>
+!!    ppcur4 computes the radial derivative of the
+!!    pressure based on icurrt.
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param nnn :
+!!
 !**********************************************************************
       function ppcur4(ypsi,nnn)
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
 
       if (abs(ypsi).gt.1.0) then
         ppcur4=0.0
@@ -80,19 +80,18 @@
       ppcur4= cratio*sbeta/srma
       return
       end function ppcur4
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          ppcurr computes the radial derivative of the            **
-!**          pressure.                                               **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/10/83..........first created                         **
-!**          25/07/85..........revised                               **
-!**          94/03/11..........revised                               **
-!**                                                                  **
+!>
+!!    ppcurr computes the radial derivative of the
+!!    pressure.
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param nnn :
+!!
 !**********************************************************************
       function ppcurr(ypsi,nnn)
       include 'eparm.inc'
@@ -152,17 +151,18 @@
       prcurr=prcurr+pedge/darea*(tpedge-tanh(siedge))
       return
       end function ppcurr
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          presurw computes the relevant parameters for rotational **
-!**          pressure profile fitting.                               **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          94/03/11..........first created                         **
-!**                                                                  **
+!>
+!!    presurw computes the relevant parameters for rotational
+!!    pressure profile fitting.
+!!    
+!!
+!!    @param jtime :
+!!
+!!    @param niter :
+!!
 !**********************************************************************
       subroutine presurw(jtime,niter)
       use commonblocks,only: c,wk,copy,bkx,bky
@@ -263,17 +263,20 @@
  2000 continue
       return
       end subroutine presurw
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          presur computes the relevant parameters for pressure    **
-!**          profile fitting.                                        **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          09/09/85..........first created                         **
-!**                                                                  **
+!>
+!!    presur computes the relevant parameters for pressure
+!!    profile fitting.
+!!    
+!!
+!!    @param jtime : time index
+!!
+!!    @param niter :
+!!
+!!    @param kerror : error flag
+!!
 !**********************************************************************
       subroutine presur(jtime,niter,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
@@ -429,23 +432,24 @@
       return
       end subroutine presur
 
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          pwcur4 computes the rotational pressure by integration. **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          94/02/28..........first created                         **
-!**                                                                  **
+!>
+!!    pwcur4 computes the rotational pressure by integration.
+!!    
+!!
+!!    @param n1set :
+!!
+!!    @param ypsi :
+!!
+!!    @param nnn :
+!!
 !**********************************************************************
       function pwcur4(n1set,ypsi,nnn)
       use commonblocks,only: sifprw,bwprw,cwprw,dwprw,sfprw,sprwp
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
 
       if (abs(ypsi).gt.1.0) then
         pwcur4=0.0
@@ -475,17 +479,18 @@
       pwcur4=seval(mw,ypsi,sifprw,sfprw,bwprw,cwprw,dwprw)
       return
       end function pwcur4
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          pwpcu4 computes the radial derivative of the            **
-!**          rotational pressure based on icurrt.                    **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          94/03/08..........first created                         **
-!**                                                                  **
+!>
+!!    pwpcu4 computes the radial derivative of the
+!!    rotational pressure based on icurrt.
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param nnn :
+!!
 !**********************************************************************
       function pwpcu4(ypsi,nnn)
       include 'eparm.inc'
@@ -509,17 +514,18 @@
 
       return
       end function pwpcu4
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          ppcurr computes the radial derivative of the            **
-!**          rotational pressure.                                    **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          94/03/08..........first created                         **
-!**                                                                  **
+!>
+!!    pwpcur computes the radial derivative of the
+!!    rotational pressure
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param nnn :
+!!
 !**********************************************************************
       function pwpcur(ypsi,nnn)
       include 'eparm.inc'
@@ -540,13 +546,17 @@
       enddo
       return
       end function pwpcur
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          pwcurr 
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
+!>
+!!    pwcurr computes the ???
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param nnn :
+!!
 !**********************************************************************
       function pwcurr(ypsi,nnn)
       include 'eparm.inc'

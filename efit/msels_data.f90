@@ -1,35 +1,46 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          msels_data returns synthetic or experimental MSE-LS     **
-!**          data to EFIT                                            **
-!**          For list of k-file times returs the available MSE-LS    **
-!**          data for a given chord, averaged over avgtim.           **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**          ishot: shot number                                      **
-!**          atime: time array for MSE-LS data (k-file times)        **
-!**          ktime: number of timeslices (number of k-files)         **
-!**          avem: +- averaging time for MSE-LS data                 **
-!**          synmls: synthetic 'SYN' or experimental 'EXP' data      **
-!**                  or 'MSE' for EFIT02 MSE locations               **
-!**          icmls: MSE-LS channel number                            **
-!**          bbmls: MSE-LS magnetic field E/V_BEAM in Tesla          **
-!**          sigbmls: MSE-LS magnetic field uncertainty in Tesla     **
-!**          rrmls, zzmls: (R,Z) of MSE-LS channels in m             **
-!**          L1mls, L2mls, L4mls: geometric cofficients of MSE-LS    **
-!**                               channels                           **
-!**          epotpmls: flux derivative of electrostatic potential    **
-!**                    in 1/sec                                      **
-!**          sigepmls: uncertainty in electrostatic potential flux   **
-!**                    derivative in 1/sec                           **
-!**          iermls: error flags of MSE-LS channels, 0=normal,       **
-!**                  1=error (ignore data)                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          2015/02/12..........first created                       **
-!**          2015/07/14 Updated with Lang's suggestions              **
-!**                                                                  **
+!>
+!!    msels_data returns synthetic or experimental MSE-LS
+!!    data to EFIT
+!!    For list of k-file times returs the available MSE-LS
+!!    data for a given chord, averaged over avgtim.
+!!
+!!    @param ishot : shot number
+!!
+!!    @param atime : time array for MSE-LS data (k-file times) 
+!!
+!!    @param ktime : number of timeslices (number of k-files) 
+!!
+!!    @param avem : +- averaging time for MSE-LS data  
+!!
+!!    @param synmls : synthetic 'SYN' or experimental 'EXP' data
+!!                  or 'MSE' for EFIT02 MSE locations 
+!!
+!!    @param icmls : MSE-LS channel number  
+!!
+!!    @param bbmls : MSE-LS magnetic field E/V_BEAM in Tesla
+!!
+!!    @param sigbmls : MSE-LS magnetic field uncertainty in Tesla
+!!
+!!    @param rrmls : R of MSE-LS channels in m 
+!!
+!!    @param zzmls : Z of MSE-LS channels in m 
+!!
+!!    @param L1mls : geometric cofficients of MSE-LS channels
+!!
+!!    @param L2mls : geometric cofficients of MSE-LS channels
+!!
+!!    @param L4mls : geometric cofficients of MSE-LS channels
+!!
+!!    @param epotpmls : flux derivative of electrostatic potential
+!!                   in 1/sec 
+!!
+!!    @param sigepmls : uncertainty in electrostatic potential flux
+!!                   derivative in 1/sec 
+!!
+!!    @param iermls : error flags of MSE-LS channels, 0=normal,
+!!                 1=error (ignore data) 
+!!
 !**********************************************************************
       subroutine msels_data(ishot,atime,ktime,avem,synmls,icmls,     &
              bbmls,sigbmls,rrmls,zzmls,L1mls,L2mls,L4mls,epotpmls,   &

@@ -1,19 +1,20 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          matrix calculates the appropriate response matrix and   **
-!**          invert it to get the plasma current strengths.  note    **
-!**          that npcurn=nffcur+nppcur, nrsmat=nfcoil+npcurn+        **
-!**          number of constraints.                                  **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**          94/03/08..........revised                               **
-!**        2015/03/27..........revised MSE-LS                        **
-!**                                                                  **
+!>
+!!    matrix calculates the appropriate response matrix and
+!!    invert it to get the plasma current strengths.  note
+!!    that npcurn=nffcur+nppcur, nrsmat=nfcoil+npcurn+
+!!    number of constraints.
+!!
+!!    @param jtime : time index
+!!
+!!    @param iter :
+!!
+!!    @param ichisq :
+!!
+!!    @param nniter :
+!!
+!!    @param kerror : error flag
+!!
 !**********************************************************************
       subroutine matrix(jtime,iter,ichisq,nniter,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky

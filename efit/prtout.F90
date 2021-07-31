@@ -1,16 +1,10 @@
 #include "config.f"
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          prtout performs printing.                               **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**          2020/09/21........R.S. Added key output for parallel    **
-!**                                                                  **
+!>
+!!    prtout performs printing.
+!!
+!!    @param it :
+!!
 !**********************************************************************
       subroutine prtout(it)
       use commonblocks,only: worka2
@@ -651,26 +645,13 @@
               '  W(J)   =  ',1pe12.5)
       end subroutine prtout
 
+
+!**********************************************************************
+!>
+!!    Prints header  
+!!
+!**********************************************************************
       subroutine prtoutheader()
-!**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          Prints header                                           **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          Nov 12, 2020......rls, first created                    **
-!**                                                                  **
-!**                                                                  **
-!**********************************************************************
       include 'modules1.inc'
 
       if (itek.gt.0) go to 100

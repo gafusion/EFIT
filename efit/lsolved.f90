@@ -1,25 +1,25 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          decomp decomposes a matrix by gaussian elimination.     **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**       ndim............declared row dimension of a                **
-!**       n...............order of a                                 **
-!**       a...............matrix to be triangularized                **
-!**       cond............an estimate of a condition, for the linear **
-!**                       system a*x=b changes in a and b may cause  **
-!**                       cond times as large in x.  estimate only   **
-!**                       if cond > 0                                **
-!**       ipvt............pivot vector, ipvt(k) index of the k pivot **
-!**                       row, ipvt(n)=(-1)**(number of inter-       **
-!**                       changes), det(a)=ipvt(n)*a(1,1)*...*       **
-!**                       a(n,n)                                     **
-!**       work............work space array                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
+!>
+!!    decomp decomposes a matrix by gaussian elimination.
+!!
+!!    @param ndim : declared row dimension of a 
+!!
+!!    @param n : order of a     
+!!
+!!    @param a : matrix to be triangularized
+!!
+!!    @param cond : an estimate of a condition, for the linear
+!!                       system a*x=b changes in a and b may cause 
+!!                       cond times as large in x.  estimate only
+!!                       if cond > 0   
+!!
+!!    @param ipvt : pivot vector, ipvt(k) index of the k pivot 
+!!                       row, ipvt(n)=(-1)**(number of inter- 
+!!                       changes), det(a)=ipvt(n)*a(1,1)*...*  
+!!                       a(n,n)  
+!!
+!!    @param work : work space array  
+!!
 !**********************************************************************
       subroutine decomp(ndim,n,a,cond,ipvt,work)
       integer*4 ndim,n
@@ -149,24 +149,25 @@
    90 cond = 1.0e+32   
       return                                                            
       end                                                               
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          solve finds the solution of a linear set of             **
-!**          algebric equations.  a call to decomp is required.      **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**       ndim............declared row dimension of a                **
-!**       n...............order of a                                 **
-!**       a...............triangularized matrix from decomp          **
-!**       b...............right hand side vector, contain solution   **
-!**                       on return                                  **
-!**       ipvt............pivot vector from decomp                   **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
-!**********************************************************************
+!>
+!!    solve finds the solution of a linear set of
+!!    algebric equations.  a call to decomp is required.
+!!
+!!    @param ndim : declared row dimension of a 
+!!
+!!    @param n : rder of a  
+!!
+!!    @param a : triangularized matrix from decomp
+!!
+!!    @param b : right hand side vector, contain solution
+!!                       on return
+!!
+!!    @param ipvt : pivot vector from decomp
+!!
+!**********************************************************************   
       subroutine solve(ndim, n, a, b, ipvt)                             
       integer*4 ndim, n, ipvt(n)                                          
       real*8 a(ndim,n),b(n)
