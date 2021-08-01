@@ -1,7 +1,15 @@
 #include "config.f"
-!----------------------------------------------------------------------
-!--  Subroutine for writing K file in K file mode Qilong Ren         --
-!----------------------------------------------------------------------
+!**********************************************************************
+!>
+!!    Subroutine for writing K file in K file mode Qilong Ren         --
+!!    
+!!    
+!!
+!!    @param ksstime :
+!!
+!!    @param kerror : Error flag
+!!
+!**********************************************************************
       subroutine write_K(ksstime,kerror)
       use set_kinds
       include 'eparm.inc'
@@ -738,9 +746,17 @@
 30200 format (10f3.0)
       end
 
-!----------------------------------------------------------------------
-!--  Subroutine for writing K file in SNAP mode 2014/04/16           --
-!----------------------------------------------------------------------
+
+!**********************************************************************
+!>
+!!    Subroutine for writing K file in SNAP mode 2014/04/16
+!!    
+!!
+!!    @param jtime : time index
+!!
+!!    @param kerror : error flag
+!!
+!**********************************************************************
       subroutine write_K2(jtime,kerror)
       use set_kinds
       include 'eparm.inc'
@@ -1114,27 +1130,18 @@
 30000 format (i9)
 30200 format (10f3.0)
       end
+
+!**********************************************************************
+!>
+!!    wtime writes out time history of plasma
+!!    parameters in o-file format.         --
+!!    
+!!    
+!!
+!!    @param kwtime : number of time elements 
+!!
+!**********************************************************************      
       subroutine wtime(kwtime)
-!**********************************************************************
-!**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          wtime writes out time history of plasma                 **
-!**          parameters in o-file format.                            **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**          kwtime: number of time elements                         **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          2015/09/07..........first created                       **
-!**                                                                  **
-!**********************************************************************
       use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'

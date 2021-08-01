@@ -1,31 +1,26 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          Subroutine wmeasure writes measurements (MSE, magnetic) **
-!**          and some of their corresponding calculated values in    **
-!**          a netCDF file of name m0sssss.nc/m0sssss.0tttt.         **
-!**                                                                  **
-!**          The input variable IOUT decides the mode,               **
-!**          IOUT.and.2.ne.0 - one file for all slices m0sssss.nc    **
-!**          IOUT.and.4.ne.0 - one file for each slice m0sssss.0tttt **
-!**          IOUT.and.6.ne.0 - one file for all m0sssss.0tttt_nnnn   **
-!**               tttt as the first time,nnnn as the number of slices**
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**          ktime - total number of time slices                     **
-!**          ifirsttime- index of starting time                      **
-!**          ilast - index of ending time                            **
-!**          itype - 1 called from main routine with time loop       **
-!**                  2 called from main routine out of time loop,    **
-!**                    write all slices at one time                  **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          12-10-97 created by Q.Peng                              **
-!**          15-06-98 Q.Peng added measured pressure as premea.      **
-!**          01-11-98 Q.Peng added mseport (vport in stark_multi)    **
-!**          01-20-2000 Q.P. following the convention of A & G files **
-!**                          use mssssss.0tttt_nnn for sub-millisec. **
-!**                                                                  **
+!>
+!!    Subroutine wmeasure writes measurements (MSE, magnetic)
+!!    and some of their corresponding calculated values in
+!!    a netCDF file of name m0sssss.nc/m0sssss.0tttt.
+!!    
+!!    The input variable IOUT decides the mode,
+!!    IOUT.and.2.ne.0 - one file for all slices m0sssss.nc
+!!    IOUT.and.4.ne.0 - one file for each slice m0sssss.0tttt
+!!    IOUT.and.6.ne.0 - one file for all m0sssss.0tttt_nnnn
+!!    tttt as the first time,nnnn as the number of slices
+!!    
+!!
+!!    @param ktime : total number of time slices 
+!!
+!!    @param ifirsttime : index of starting time  
+!!
+!!    @param ilast :  index of ending time  
+!!
+!!    @param itype :  1 called from main routine with time loop.\n
+!!                  2 called from main routine out of time loop.\n
+!!                    write all slices at one time    
+!!
 !**********************************************************************
       subroutine wmeasure(ktime,ifirsttime,ilast,itype)
       use set_kinds

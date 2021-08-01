@@ -1,21 +1,14 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          shipit writes out the plasma shape parameters.          **
-!**          i say shipit                                            **
-!**          shipit good                                             **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          29/06/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**          24/07/96 revised  by Q.Peng to add the surface area of  **
-!**                            the last closed flux surface (psurfa) **
-!**                            boundary R when Z=0.0 (rmidin/out)    **
-!**                            to write real*4 to unformatted A_eqdsk**
-!**          15/05/97 Q.P. added nsilop,magpri,nfcoil,nesum to A     **
-!**          23/04/04..JAL iplcout added instead of iecurr=2 print   **
-!**                                                                  **
-!**                                                                  **
+!>
+!!    shipit writes out the plasma shape parameters.
+!!    
+!!
+!!    @param ktime : Number of time slices
+!!
+!!    @param ifirsttime :
+!!
+!!    @param ilasttime :
+!!
 !**********************************************************************
       subroutine shipit(ktime,ifirsttime,ilasttime)
       use set_kinds
@@ -384,17 +377,15 @@
  1060 format ('*',f8.3,9x,i5,11x,i5,1x,a3,1x,i3,1x,i3,1x,a3,1x,2i5)
  1070 format(16a5)
       end subroutine shipit
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          weqdsk writes out the GAQ type eqdsk.                   **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          29/06/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**          22/07/96 revised  by Q.Peng                             **
-!**                            to write real*4 to unformatted G_eqdsk**
-!**                                                                  **
+!>
+!!    weqdsk writes out the GAQ type eqdsk.
+!!    
+!!
+!!    @param jtime : time index
+!!
 !**********************************************************************
       subroutine weqdsk(jtime)
       use set_kinds
@@ -919,14 +910,41 @@
  3000 format (4i5)
  3003 format (2i5,i6,i5)
       end subroutine weqdsk
+
+      
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          shipit writes out the plasma shape parameters.          **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          12/03/87..........first created                         **
-!**                                                                  **
+!>
+!!    timedot does ...
+!!    
+!!
+!!    @param kdot :
+!!
+!!    @param time :
+!!
+!!    @param wplasm :
+!!
+!!    @param sibdry :
+!!
+!!    @param wbpol :
+!!
+!!    @param vloopt :
+!!
+!!    @param wpdot :
+!!
+!!    @param wbdot :
+!!
+!!    @param vsurfa :
+!!
+!!    @param pbinj :
+!!
+!!    @param taumhd :
+!!
+!!    @param cpasma :
+!!
+!!    @param wplasmd :
+!!
+!!    @param taudia :
+!!
 !**********************************************************************
       subroutine timdot(kdot,time,wplasm,sibdry,wbpol,vloopt, &
                         wpdot,wbdot,vsurfa,pbinj,taumhd,cpasma, &

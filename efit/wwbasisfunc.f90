@@ -1,15 +1,17 @@
-!     
-!     Function bswwel(ifunc,iparm,ypsi)
-!     
-!     This function returns the matrix element for the
-!     selected basis function.
-!     
-!     ifunc - basis function number
-!     iparm - basis function parameter number
-!     ypsi  - independent variable value
-!     
-!     
-      
+!**********************************************************************
+!>
+!!    Function bswwel(ifunc,iparm,ypsi)
+!!    This function returns the matrix element for the
+!!    selected basis function.
+!!    
+!!
+!!    @param ifunc : basis function number
+!!
+!!    @param iparm : basis function parameter number
+!!
+!!    @param ypsi : independent variable value
+!!
+!**********************************************************************
       Function bswwel(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
@@ -128,18 +130,21 @@
           write(6,*)'ifunc .ne. kwwfnc ',ifunc,kwwfnc
         return
       end
-!     
-!     Function bswwpel(ifunc,iparm,ypsi)
-!     
-!     This function returns the matrix element for the
-!     first derivative of selected basis function.
-!     
-!     ifunc - basis function number
-!     iparm - basis function parameter number
-!     ypsi  - independent variable value
-!     
-!     
 
+
+!**********************************************************************
+!>
+!!    This function returns the matrix element for the
+!!    first derivative of selected basis function.
+!!    
+!!
+!!    @param ifunc : basis function number
+!!
+!!    @param iparm : basis function parameter number
+!!
+!!    @param ypsi : independent variable value
+!!
+!********************************************************************** 
       Function bswwpel(ifunc,iparm,ypsi)
 
       include 'eparm.inc'
@@ -280,18 +285,21 @@
         endif
         return
       end
-!     
-!     Function bswwin(ifunc,iparm,ypsi)
-!     
-!     This function returns the matrix element for the
-!     selected basis function.
-!     
-!     ifunc - basis function number
-!     iparm - basis function parameter number
-!     ypsi  - independent variable value
-!     
-!     
-      
+
+ 
+!**********************************************************************
+!>
+!!    This function returns the matrix element for the
+!!    selected basis function.
+!!    
+!!
+!!    @param ifunc : basis function number
+!!
+!!    @param iparm : basis function parameter number
+!!
+!!    @param ypsi : independent variable value
+!!
+!**********************************************************************      
       Function bswwin(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
@@ -516,21 +524,24 @@
       return
       end
       
-      
-!     
-!     subroutine wwcnst(ncrsp,crsp,z,nffcoi)
-!     
-!     In addition to the least squares constraints that
-!     efit already uses, some basis functions have exact
-!     constraints. Most notable is the spline function
-!     whose continuity constraints are exact, not LSE.
-!     
-!     ncrsp - number of constraint equations
-!     crsp  - constraint matrix
-!     z     - value vector
-!     nffcoi- array index for setting up crsp
-!     
-      
+          
+!**********************************************************************
+!>
+!!    In addition to the least squares constraints that
+!!    efit already uses, some basis functions have exact
+!!    constraints. Most notable is the spline function
+!!    whose continuity constraints are exact, not LSE.
+!!    
+!!
+!!    @param ncrsp : number of constraint equations
+!!
+!!    @param crsp : constraint matrix
+!!
+!!    @param z : value vector
+!!
+!!    @param nffcoi : array index for setting up crsp
+!!
+!**********************************************************************      
       subroutine wwcnst(ncrsp,crsp,z,nffcoi)
       include 'eparm.inc'
       include 'modules2.inc'
@@ -927,13 +938,14 @@
       endif
       return
       end
-!     
-!     subroutine wwstore()
-!     
-!     Store the solution coefs into wwbdry and ww2bdry
-!     
-!     
-      
+
+
+!**********************************************************************
+!>
+!!    Store the solution coefs into wwbdry and ww2bdry
+!!    
+!!
+!**********************************************************************     
       subroutine wwstore()
       include 'eparm.inc'
       include 'modules2.inc'
@@ -957,18 +969,21 @@
       endif
       return
       end
-!     
-!     Function bserel(ifunc,iparm,ypsi)
-!     
-!     This function returns the matrix element for the
-!     selected basis function.
-!     
-!     ifunc - basis function number
-!     iparm - basis function parameter number
-!     ypsi  - independent variable value
-!     
-!     
-      
+
+
+!**********************************************************************
+!>
+!!    This function returns the matrix element for the
+!!    selected basis function.
+!!    
+!!
+!!    @param ifunc : basis function number
+!!
+!!    @param iparm : basis function parameter number
+!!
+!!    @param ypsi : independent variable value
+!!
+!**********************************************************************     
       Function bserel(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
@@ -1086,18 +1101,21 @@
         write(6,*)'ifunc .ne. keefnc ',ifunc,keefnc
       return
     end
-!     
-!     Function bserpel(ifunc,iparm,ypsi)
-!     
-!     This function returns the matrix element for the
-!     first derivative of selected basis function.
-!     
-!     ifunc - basis function number
-!     iparm - basis function parameter number
-!     ypsi  - independent variable value
-!     
-!     
 
+
+!**********************************************************************
+!>
+!!    This function returns the matrix element for the
+!!    first derivative of selected basis function.
+!!    
+!!
+!!    @param ifunc : basis function number
+!!
+!!    @param iparm : basis function parameter number
+!!
+!!    @param ypsi : independent variable value
+!!
+!**********************************************************************  
       Function bserpel(ifunc,iparm,ypsi)
 
       include 'eparm.inc'
@@ -1238,18 +1256,21 @@
       endif
       return
       end
-!     
-!     Function bserin(ifunc,iparm,ypsi)
-!     
-!     This function returns the matrix element for the
-!     selected basis function.
-!     
-!     ifunc - basis function number
-!     iparm - basis function parameter number
-!     ypsi  - independent variable value
-!     
-!     
-      
+
+
+!**********************************************************************
+!>
+!!    This function returns the matrix element for the
+!!     selected basis function.
+!!    
+!!
+!!    @param ifunc : basis function number
+!!
+!!    @param iparm : basis function parameter number
+!!
+!!    @param ypsi : independent variable value
+!!
+!**********************************************************************        
       Function bserin(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
@@ -1472,21 +1493,24 @@
       return
       end
       
-      
-!     
-!     subroutine eecnst(ncrsp,crsp,z,nffcoi)
-!     
-!     In addition to the least squares constraints that
-!     efit already uses, some basis functions have exact
-!     constraints. Most notable is the spline function
-!     whose continuity constraints are exact, not LSE.
-!     
-!     ncrsp - number of constraint equations
-!     crsp  - constraint matrix
-!     z     - value vector
-!     nffcoi- array index for setting up crsp
-!     
-      
+       
+!**********************************************************************
+!>
+!!    In addition to the least squares constraints that
+!!    efit already uses, some basis functions have exact
+!!    constraints. Most notable is the spline function
+!!    whose continuity constraints are exact, not LSE.
+!!    
+!!
+!!    @param ncrsp : number of constraint equations
+!!
+!!    @param crsp : constraint matrix
+!!
+!!    @param z : value vector
+!!
+!!    @param nffcoi : array index for setting up crsp
+!!
+!**********************************************************************      
       subroutine eecnst(ncrsp,crsp,z,nffcoi)
       include 'eparm.inc'
       include 'modules2.inc'
@@ -1870,13 +1894,14 @@
       endif
       return
       end
-!     
-!     subroutine eestore()
-!     
-!     Store the solution coefs into eebdry and ee2bdry
-!     
-!     
-      
+
+
+!**********************************************************************
+!>
+!!    Store the solution coefs into eebdry and ee2bdry
+!!    
+!!
+!**********************************************************************
       subroutine eestore()
       include 'eparm.inc'
       include 'modules2.inc'

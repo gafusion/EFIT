@@ -1,39 +1,40 @@
+!**********************************************************************
+!>
+!!    the coefficients b(i), c(i), and d(i), i=1,2,...,n are computed
+!!    for a cubic interpolating spline
+!!    
+!!    
+!!    s(x) = y(i) + b(i)(x-x(i)) + c(i)(x-x(i))2 + d(i)(x-x(i))3
+!!    
+!!    
+!!    for  x(i) .le. x .le. x(i+1)\n
+!!   using  p  to denote differentiation\n
+!!
+!!    y(i) = s(x(i))\n
+!!    b(i) = sp(x(i))\n
+!!    c(i) = spp(x(i))/2\n\n
+!!    d(i) = sppp(x(i))/6  (derivative from the right)
+!!    
+!!
+!!    @param n : the number of data points or knots (n.ge.2)
+!!
+!!    @param x : the abscissas of the knots in strictly increasing order
+!!
+!!    @param y : the ordinates of the knots
+!!
+!!    @param b : arrays of spline coefficients as defined above.
+!!
+!!    @param c : rrays of spline coefficients as defined above.
+!!
+!!    @param d : rrays of spline coefficients as defined above.
+!!
+!**********************************************************************
 subroutine zpline (n, x, y, b, c, d)
   integer*4 n
   real*8 x(n), y(n), b(n), c(n), d(n)
-  !
-  !  the coefficients b(i), c(i), and d(i), i=1,2,...,n are computed
-  !  for a cubic interpolating spline
-  !
-  !    s(x) = y(i) + b(i)*(x-x(i)) + c(i)*(x-x(i))**2 + d(i)*(x-x(i))**3
-  !
-  !    for  x(i) .le. x .le. x(i+1)
-  !
-  !  input..
-  !
-  !    n = the number of data points or knots (n.ge.2)
-  !    x = the abscissas of the knots in strictly increasing order
-  !    y = the ordinates of the knots
-  !
-  !  output..
-  !
-  !    b, c, d  = arrays of spline coefficients as defined above.
-  !
-  !  using  p  to denote differentiation,
-  !
-  !    y(i) = s(x(i))
-  !    b(i) = sp(x(i))
-  !    c(i) = spp(x(i))/2
-  !    d(i) = sppp(x(i))/6  (derivative from the right)
-  !
-  !cccccccccccccc
-  !  the accompanying function subprogram  seval  can be used
-  !  to evaluate the spline.
-  !
-  !
+
   integer*4 nm1, ib, i
   real*8 t
-  !
   nm1 = n-1
   if ( n .lt. 2 ) return
   if ( n .lt. 3 ) go to 50
@@ -102,44 +103,45 @@ subroutine zpline (n, x, y, b, c, d)
    d(2) = 0.
    return
  end
- !-------------------------------------------
- !cccccccccccccc
+
+
+!**********************************************************************
+!>
+!!     the coefficients b(i), c(i), and d(i), i=1,2,...,n are computed
+!!    for a cubic interpolating spline for which s'(xn)=0.
+!!    
+!!    
+!!    s(x) = y(i) + b(i)(x-x(i)) + c(i)(x-x(i))2 + d(i)(x-x(i))3
+!!    
+!!    
+!!    for  x(i) .le. x .le. x(i+1)\n
+!!   using  p  to denote differentiation\n
+!!
+!!    y(i) = s(x(i))\n
+!!    b(i) = sp(x(i))\n
+!!    c(i) = spp(x(i))/2\n\n
+!!    d(i) = sppp(x(i))/6  (derivative from the right)
+!!    
+!!
+!!    @param n : the number of data points or knots (n.ge.2)
+!!
+!!    @param x : the abscissas of the knots in strictly increasing order
+!!
+!!    @param y : the ordinates of the knots
+!!
+!!    @param b : arrays of spline coefficients as defined above.
+!!
+!!    @param c : rrays of spline coefficients as defined above.
+!!
+!!    @param d : rrays of spline coefficients as defined above.
+!!
+!**********************************************************************
  subroutine spleen (n, x, y, b, c, d)
    integer*4 n
    real*8 x(n), y(n), b(n), c(n), d(n)
-   !
-   !  the coefficients b(i), c(i), and d(i), i=1,2,...,n are computed
-   !  for a cubic interpolating spline for which s'(xn)=0.
-   !
-   !    s(x) = y(i) + b(i)*(x-x(i)) + c(i)*(x-x(i))**2 + d(i)*(x-x(i))**3
-   !
-   !    for  x(i) .le. x .le. x(i+1)
-   !
-   !  input..
-   !
-   !    n = the number of data points or knots (n.ge.2)
-   !    x = the abscissas of the knots in strictly increasing order
-   !    y = the ordinates of the knots
-   !
-   !  output..
-   !
-   !    b, c, d  = arrays of spline coefficients as defined above.
-   !
-   !  using  p  to denote differentiation,
-   !
-   !    y(i) = s(x(i))
-   !    b(i) = sp(x(i))
-   !    c(i) = spp(x(i))/2
-   !    d(i) = sppp(x(i))/6  (derivative from the right)
-   !
-   !cccccccccccccc
-   !  the accompanying function subprogram  seval  can be used
-   !  to evaluate the spline.
-   !
-   !
    integer*4 nm1, ib, i
    real*8 t
-   !
+
    nm1 = n-1
    if ( n .lt. 2 ) return
    if ( n .lt. 3 ) go to 50
@@ -207,40 +209,42 @@ subroutine zpline (n, x, y, b, c, d)
    d(2) = 0.
    return
  end
- !cccccccccccccc
+
+
+!**********************************************************************
+!>
+!!    the coefficients b(i), c(i), and d(i), i=1,2,...,n are computed
+!!   for a cubic interpolating spline for which s'(x1)=0.
+!!    
+!!    
+!!    s(x) = y(i) + b(i)(x-x(i)) + c(i)(x-x(i))2 + d(i)(x-x(i))^3
+!!    
+!!    
+!!    for  x(i) .le. x .le. x(i+1)\n
+!!   using  p  to denote differentiation\n
+!!
+!!    y(i) = s(x(i))\n
+!!    b(i) = sp(x(i))\n
+!!    c(i) = spp(x(i))/2\n\n
+!!    d(i) = sppp(x(i))/6  (derivative from the right)
+!!    
+!!
+!!    @param n : the number of data points or knots (n.ge.2)
+!!
+!!    @param x : the abscissas of the knots in strictly increasing order
+!!
+!!    @param y : the ordinates of the knots
+!!
+!!    @param b : arrays of spline coefficients as defined above.
+!!
+!!    @param c : rrays of spline coefficients as defined above.
+!!
+!!    @param d : rrays of spline coefficients as defined above.
+!!
+!**********************************************************************
  subroutine splaan (n, x, y, b, c, d)
    integer*4 n
    real*8 x(n), y(n), b(n), c(n), d(n)
-   !
-   !  the coefficients b(i), c(i), and d(i), i=1,2,...,n are computed
-   !  for a cubic interpolating spline for which s'(x1)=0.
-   !
-   !    s(x) = y(i) + b(i)*(x-x(i)) + c(i)*(x-x(i))**2 + d(i)*(x-x(i))**3
-   !
-   !    for  x(i) .le. x .le. x(i+1)
-   !
-   !  input..
-   !
-   !    n = the number of data points or knots (n.ge.2)
-   !    x = the abscissas of the knots in strictly increasing order
-   !    y = the ordinates of the knots
-   !
-   !  output..
-   !
-   !    b, c, d  = arrays of spline coefficients as defined above.
-   !
-   !  using  p  to denote differentiation,
-   !
-   !    y(i) = s(x(i))
-   !    b(i) = sp(x(i))
-   !    c(i) = spp(x(i))/2
-   !    d(i) = sppp(x(i))/6  (derivative from the right)
-   !
-   !cccccccccccccc
-   !  the accompanying function subprogram  seval  can be used
-   !  to evaluate the spline.
-   !
-   !
    integer*4 nm1, ib, i
    real*8 t
    !
@@ -311,31 +315,40 @@ subroutine zpline (n, x, y, b, c, d)
    d(2) = 0.
    return
  end
+
+
+!**********************************************************************
+!>
+!!  this subroutine evaluates the cubic spline function
+!!
+!!    seval = y(i) + b(i)*(u-x(i)) + c(i)*(u-x(i))**2 + d(i)*(u-x(i))**3\n
+!!
+!!    where  x(i) .lt. u .lt. x(i+1), using horner's rule\n
+!! 
+!!    if  u .lt. x(1) then  i = 1  is used.\n
+!!    if  u .ge. x(n) then  i = n  is used.\n
+!!    y(i) = s(x(i))\n\n
+!!    b(i) = sp(x(i))\n\n
+!!    c(i) = spp(x(i))/2\n\n\n
+!!    d(i) = sppp(x(i))/6  (derivative from the right)
+!!    
+!!
+!!    @param n : the number of data points or knots (n.ge.2)
+!!
+!!    @param x : the abscissas of the knots in strictly increasing order
+!!
+!!    @param y : the ordinates of the knots
+!!
+!!    @param b : arrays of spline coefficients as defined above.
+!!
+!!    @param c : rrays of spline coefficients as defined above.
+!!
+!!    @param d : rrays of spline coefficients as defined above.
+!!
+!**********************************************************************
  real*8 function seval(n, u, x, y, b, c, d)
    integer*4 n
    real*8  u, x(n), y(n), b(n), c(n), d(n)
-   !
-   !cccccccccccccc
-   !cccccccccccccc
-   !  this subroutine evaluates the cubic spline function
-   !
-   !    seval = y(i) + b(i)*(u-x(i)) + c(i)*(u-x(i))**2 + d(i)*(u-x(i))**3
-   !
-   !    where  x(i) .lt. u .lt. x(i+1), using horner's rule
-   !
-   !  if  u .lt. x(1) then  i = 1  is used.
-   !  if  u .ge. x(n) then  i = n  is used.
-   !
-   !  input..
-   !
-   !    n = the number of data points
-   !    u = the abscissa at which the spline is to be evaluated
-   !    x,y = the arrays of data abscissas and ordinates
-   !    b,c,d = arrays of spline coefficients computed by spline
-   !
-   !  if  u  is not in the same interval as the previous call, then a
-   !  binary search is performed to determine the proper interval.
-   !
    integer*4 i, j, k
    real*8 dx
    data i/1/
@@ -359,31 +372,34 @@ subroutine zpline (n, x, y, b, c, d)
    return
  end
 
- !cccccccccccccc
+
+!**********************************************************************
+!>
+!!  this subroutine evaluates the derivative of the cubic spline function
+!!
+!!
+!!    where  x(i) .lt. u .lt. x(i+1), using horner's rule\n
+!!
+!!  if  u .lt. x(1) then  i = 1  is used.\n
+!!  if  u .ge. x(n) then  i = n  is used.\n
+!!    
+!!
+!!    @param n : the number of data points or knots (n.ge.2)
+!!
+!!    @param x : the abscissas of the knots in strictly increasing order
+!!
+!!    @param y : the ordinates of the knots
+!!
+!!    @param b : arrays of spline coefficients as defined above.
+!!
+!!    @param c : rrays of spline coefficients as defined above.
+!!
+!!    @param d : rrays of spline coefficients as defined above.
+!!
+!**********************************************************************
  real*8 function speval(n, u, x, y, b, c, d)
    integer*4 n
    real*8  u, x(n), y(n), b(n), c(n), d(n)
-   !
-   !cccccccccccccc
-   !cccccccccccccc
-   !  this subroutine evaluates the derivative of the cubic spline function
-   !
-   !
-   !    where  x(i) .lt. u .lt. x(i+1), using horner's rule
-   !
-   !  if  u .lt. x(1) then  i = 1  is used.
-   !  if  u .ge. x(n) then  i = n  is used.
-   !
-   !  input..
-   !
-   !    n = the number of data points
-   !    u = the abscissa at which the spline is to be evaluated
-   !    x,y = the arrays of data abscissas and ordinates
-   !    b,c,d = arrays of spline coefficients computed by spline
-   !
-   !  if  u  is not in the same interval as the previous call, then a
-   !  binary search is performed to determine the proper interval.
-   !
    integer*4 i, j, k
    real*8 dx
    data i/1/

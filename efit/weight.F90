@@ -1,16 +1,12 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          weight computes the weighting function w.               **
-!**          boy, you're going to carry that weight                  **
-!**          carry that weight a long time                           **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          21/10/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**                                                                  **
+!>
+!!    weight computes the weighting function w.
+!!    
+!!
+!!    @param x :
+!!
+!!    @param y :
+!!
 !**********************************************************************
       subroutine weight(x,y)
       include 'eparm.inc'
