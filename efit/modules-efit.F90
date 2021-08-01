@@ -44,86 +44,53 @@
       INTEGER, DIMENSION(8) :: tval 
 
       end module expath
-!eparm
+
+
       module eparm
       public
-!vas      implicit integer*4 (i-n), real*8 (a-h, o-z)
-!
-!   1997/10/09 00:01:35 peng
-!
-!  @(#)eparm.f,v 4.19
-!  
 
-!     2000/03/11 00:01:29 lao
-!     @(#)exparm.inc,v 1.6
-!
-!-------------------------------------------------------------------
-!--  New E-coil connections                       LLao, 95/07/11  --
-!--  Add 8 new probes for radiative divertor      LLao, 97/03/17  --
-!--  Update MSE to 35 channels                    LLao, 97/04/21  --
-!--  Separate machine dependent configuration                     --
-!--   parameters from eparm.f    QPeng,97/09/24  --
-!-- added ntangle for toroidal x-ray   QPeng,98/05/12  --
-!--  Increase MSE channels from 35 to 36                98/12/01  --
-!-------------------------------------------------------------------
-!
-!     magpri67 number of magnetic detectors at toroidal angle "1"
-!     magpri322 number of magnetic detectors at toroidal angle "2"
-!     magprirdp number of magnetic detectors for radiative divertor
-!     magpri total number of magnetic detectors
-!     mpress number of pressure data points
-!     mse315
-!     mse45
-!     mse15
-!     mse210
-!     nstark total number of mse channels
-!     ngam_vars, ngam_u, ngam_w dimensions of mse spatial averaging data
-!heng necein    total number of ece channels
-!     nacoil number of advance divertor coils
-!     nangle dimension of poloidal sxr, first part of xangle,zxray,rxray
-!     ntangle dimension of toroidal xray, last part of xangle,zxray,rxray
-!     necoil number of ohmic heating coils
-!     nesum number of p.f. coil groups
-!     nfbcoil (obsolete)
-!     nfcoil number of p.f. coils
-!     nlimbd number of 'outer' limiter points
-!     nlimit maximum number of limiter points
-!     nsilop number of flux loops
-!     nvesel number of vessel segements
-!     nfourier number Fourier components of vessel current
-!
-!
-      integer*8 :: nsilds,nsilol
-      integer*8 :: nsilop
-      integer*8 :: nfcoil,nrogow,nacoil
-      integer*8 :: mfcoil
-      integer*8 :: necoil,nvesel,mpress
-      integer*8 :: nesum
-      integer*8 :: magpri67,magpri322,magprirdp,magudom
+      ! Experiment dependant parameters
+      integer*8 :: nsilds !< nsilop number of flux loops at ?
+      integer*8 :: nsilol !< nsilop number of flux loops at ?
+      integer*8 :: nsilop !< nsilop number of flux loops
+      integer*8 :: nfcoil !< number of p.f. coil groups (should be consistent with nfsum in efund)
+      integer*8 :: nrogow
+      integer*8 :: nacoil !< number of advance divertor coils
+      integer*8 :: mfcoil !< number of p.f. f-coils (should be consistent with nfcoil in efund)
+      integer*8 :: necoil !< number of p.f e-coils
+      integer*8 :: mpress !< mpress number of pressure data points
+      integer*8 :: nvesel !< number of vessel segements
+      integer*8 :: nesum !< number of p.f. coil groups
+      integer*8 :: magpri67 !< number of magnetic detectors at toroidal angle "1"
+      integer*8 :: magpri322!< number of magnetic detectors at toroidal angle "2"
+      integer*8 :: magprirdp !< number of magnetic detectors for radiative divertor,magudom
+      integer*8 :: magudom !< number of magnetic detectors for (outer midplane??)
       integer*8 :: maglds
       integer*8 :: magpol
-      integer*8 :: magpri
-      integer*8 :: mse315,mse45,mse15,mse1h,mse315_2
-      integer*8 :: mse210
+      integer*8 :: magpri !< total number of magnetic detectors
+      integer*8 :: mse315 !< number of mse channels at toroidal angle 315 degrees
+      integer*8 :: mse45  !< number of mse channels at toroidal angle 45 degrees
+      integer*8 :: mse15  !< number of mse channels at toroidal angle 15 degrees
+      integer*8 :: mse1h   !< number of mse channels at toroidal angle
+      integer*8 :: mse315_2 !< number of mse channels at toroidal angle 315 degrees number 2?
+      integer*8 :: mse210 !< number of mse channels at toroidal angle 210 degrees
       integer*8 :: libim
       integer*8 :: nmtark
-      integer*8 :: nstark
+      integer*8 :: nstark !< total number of mse channels
       integer*8 :: nmsels
-      integer*8 :: nnece,nnecein,neceo,nnnte
-      integer*8 :: ngam_vars,ngam_u,ngam_w
-      integer*8 :: nlimit,nlimbd
-      integer*8 :: nangle,ntangle
-      integer*8 :: nfbcoil
+      integer*8 :: nnece !< total number of ece channels
+      integer*8 :: nnecein,neceo,nnnte
+      integer*8 :: ngam_vars,ngam_u,ngam_w !< dimensions of mse spatial averaging data
+      integer*8 :: nlimit !< maximum number of limiter points
+      integer*8 :: nlimbd !< maximum number of 'outer' limiter points
+      integer*8 :: nangle !< nangle dimension of poloidal sxr, first part of xangle,zxray,rxray
+      integer*8 :: ntangle !< dimension of toroidal xray, last part of xangle,zxray,rxray
+      integer*8 :: nfbcoil !< nfbcoil (obsolete)
       integer*8 :: mccoil,micoil
-!
-! --- experiment dependant parameters
-!
-!vas      include 'exparm.inc'
-!
-! --- general parameters
-!
-      
-      integer*8 :: ntime
+
+
+      ! General parameters
+      integer*8 :: ntime !< number of time slices
       integer*8 :: ndata
       integer*8 :: nwwcur
       integer*8 :: nffcur,nppcur, npcurn, necur, necur2, &
@@ -144,43 +111,10 @@
       integer*8 :: nxtlim,nco2v,nco2r
       integer*8 :: modef, modep, modew, kubics
       integer*8 :: icycred_loopmax
-      integer*8 :: nfourier
-!
-!
-! --- common block for areas that store green tables and general inputs
-!
-!vas      include 'expath.inc'
-
-!     $Date: 2009/02/24 01:37:39 $ $Author: lao $
-!     @(#)$RCSfile: modules-efitx.f90,v $ $Revision: 1.1.2.4 $
-!
-!     table_dir    area where green tables are stored, including
-!   re*,rv*,fc*,ra*,ef*,fc*,fm*,ec*,rf*,ep*
-!   rs*, dprobe.dat, pcsnames.dat,
-!   (-fitweight.dat., -sxr94.dat, -efithelp.txt)
-!     input_dir    area where other input files are stored, they include
-!   n1coil.d3d
-!   ccoil.d3d
-!   btcomp.d3d
-!   dcoef.dat
-!   limiter files
-!   snap files
-!   + efithelp.txt
-!   + fitweight.dat
-!   + sxr94.dat
-!     store_dir    central directory to collect EFIT results
-!
-
-!vas      common/datafile/table_dir,input_dir,store_dir, &
-!vas              ltbdir,lindir,lstdir
-!test      character*42 table_dir,input_dir,store_dir
-!test      integer ltbdir,lindir,lstdir
-!      data table_dir /'/link/efit/new_table/'/
-!test      data table_dir /'/task/efit/lao/efits/CVS/p/2006/'/
-!test      data input_dir /'/link/efit/'/
-!test      data store_dir /'/link/store/'/
+      integer*8 :: nfourier !< nfourier number Fourier components of vessel current
 
       end module eparm
+
 
       ! Calculate and store global constants like pi, e, gravity, etc.
       module global_constants
