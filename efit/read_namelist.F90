@@ -1,3 +1,8 @@
+!**********************************************************************
+!>
+!!    This subroutine read efit.input file
+!!
+!**********************************************************************
 subroutine read_efitin
      use commonblocks
      use set_kinds
@@ -50,6 +55,11 @@ subroutine read_efitin
 end subroutine read_efitin
 
 
+!**********************************************************************
+!>
+!!    This subroutine reads eparmdud machine dependent parameters
+!!
+!**********************************************************************
 subroutine read_eparmdud
   use eparm
   use var_nio

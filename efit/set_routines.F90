@@ -1,16 +1,14 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          setece obtains the response matrix                      **
-!**          for ECE measurement                                     **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          11/98..........first created, Cheng Zhang               **
-!**     2013/08/07..........updated for real-space Ti                **
-!**                                                                  **
-!**********************************************************************
+!>
+!!    setece obtains the response matrix
+!!    for ECE measurement
+!!    
+!!
+!!    @param jtime : time index
+!!
+!!    @param kerror : error flag
+!!
+!********************************************************************** 
       subroutine setece(jtime,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
       include 'eparm.inc'
@@ -461,16 +459,16 @@
  6530 format ('recefile_0',i1,'.ddd')
  6540 format ('recefile_',i2,'.ddd')
       end subroutine setece
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**         setff sets up the basis functions for er.                **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          97/04/23..........first created                         **
-!**                                                                  **
+!>
+!!    setff sets up the basis functions for Er.
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param xpsii :
+!!
 !**********************************************************************
       subroutine seter(ypsi,xpsii)
       include 'eparm.inc'
@@ -484,16 +482,17 @@
       enddo
       return
       end subroutine seter
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**         seterp computes derivative of er.                        **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          97/04/25..........first created                         **
-!**                                                                  **
+!>
+!!    seterp computes derivative of er.
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param xpsii :
+!!
 !**********************************************************************
       subroutine seterp(ypsi,xpsii)
       include 'eparm.inc'
@@ -509,10 +508,10 @@
       end subroutine seterp
 
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**         set_basis_params                                         **
-!**                                                                  **
+!>
+!!    This subroutine sets the P' and FF' basis funciton parameters
+!!    
+!!
 !**********************************************************************
       subroutine set_basis_params
 
@@ -633,15 +632,14 @@
 
 
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**         setff sets up the basis functions for ff-ff(1).          **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          94/03/09..........first created                         **
-!**                                                                  **
+!>
+!!    setff sets up the basis functions for ff-ff(1).
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param xpsii :
+!!
 !**********************************************************************
       subroutine setff(ypsi,xpsii)
       include 'eparm.inc'
@@ -656,16 +654,16 @@
       return
       end subroutine setff
 
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**         setfp sets up the basis functions for ffp.               **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          94/03/07..........first created                         **
-!**                                                                  **
+!>
+!!    setfp sets up the basis functions for ffp.
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param xpsii :
+!!
 !**********************************************************************
       subroutine setfp(ypsi,xpsii)
       include 'eparm.inc'
@@ -679,16 +677,17 @@
       enddo
       return
       end subroutine setfp
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**         setfpp computes derivative of ffp.                       **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          94/03/07..........first created                         **
-!**                                                                  **
+!>
+!!    setfpp computes derivative of ffp.
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param xpsii :
+!!
 !**********************************************************************
       subroutine setfpp(ypsi,xpsii)
       include 'eparm.inc'
@@ -702,16 +701,17 @@
       enddo
       return
       end subroutine setfpp
+
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**         setpp sets up the basis functions for pp.                **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          94/03/07..........first created                         **
-!**                                                                  **
+!>
+!!    setpp sets up the basis functions for pp.
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param xpsii :
+!!
 !**********************************************************************
       subroutine setpp(ypsi,xpsii)
       include 'eparm.inc'
@@ -726,16 +726,16 @@
       return
       end subroutine setpp
 
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**         setppp computes derivative of pp.                        **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          94/03/07..........first created                         **
-!**                                                                  **
+!>
+!!    setppp computes derivative of pp.
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param xpsii :
+!!
 !**********************************************************************
       subroutine setppp(ypsi,xpsii)
       include 'eparm.inc'
@@ -750,16 +750,16 @@
       return
       end subroutine setppp
 
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**         setpr sets up the basis functions for p-p(1).            **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          94/03/09..........first created                         **
-!**                                                                  **
+!>
+!!    setpr sets up the basis functions for p-p(1).
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param xpsii :
+!!
 !**********************************************************************
       subroutine setpr(ypsi,xpsii)
       include 'eparm.inc'
@@ -774,16 +774,16 @@
       return
       end subroutine setpr
 
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**         setpw sets up the basis functions for pw-pw(1).          **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          94/03/09..........first created                         **
-!**                                                                  **
+!>
+!!    setpw sets up the basis functions for pw-pw(1).
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param xpsii :
+!!
 !**********************************************************************
       subroutine setpw(ypsi,xpsii)
       include 'eparm.inc'
@@ -798,15 +798,14 @@
       end subroutine setpw
 
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**         setpwp sets up the basis functions for pwp.              **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          94/03/07..........first created                         **
-!**                                                                  **
+!>
+!!    setpwp sets up the basis functions for pwp.
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param xpsii :
+!!
 !**********************************************************************
       subroutine setpwp(ypsi,xpsii)
       include 'eparm.inc'
@@ -821,16 +820,16 @@
       return
       end subroutine setpwp
 
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**         setpwpp computes derivative of pwp.                      **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          94/03/07..........first created                         **
-!**                                                                  **
+!>
+!!    setpwpp computes derivative of pwp.
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param xpsii :
+!!
 !**********************************************************************
       subroutine setpwpp(ypsi,xpsii)
       include 'eparm.inc'
@@ -843,19 +842,17 @@
         xpsii(i) = bswwpel(kwwfnc,i,ypsi)
       enddo
       return
-      end
+      end subroutine setpwpp
+
 
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          setstark obtains the response matrix                    **
-!**          for polarimetry measurement                             **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          23/03/90..........first created                         **
-!**                                                                  **
+!>
+!!    setstark obtains the response matrix
+!!    for polarimetry measurement
+!!    
+!!
+!!    @param jtime : time index
+!!
 !**********************************************************************
       subroutine setstark(jtime)
       include 'eparm.inc'

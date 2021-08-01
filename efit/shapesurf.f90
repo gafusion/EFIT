@@ -1,19 +1,15 @@
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          shape finds the outermost plasma surface                **
-!**          and computes various global plasma parameters.          **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          10/06/83..........first created                         **
-!**          10/18/83..........modified distance calculation         **
-!**          24/07/85..........revised                               **
-!**          24/07/96..........revised by Q.Peng to add Rmidin/out   **
-!**          30/01/98..........Q.Peng, calculate vertical stability  **
-!**                            parameter n/nc outside of pltout      **
-!**                                                                  **
+!>
+!!    shape finds the outermost plasma surface
+!!    and computes various global plasma parameters.
+!!    
+!!
+!!    @param iges :
+!!
+!!    @param igmax :
+!!
+!!    @param kerror :
+!!
 !**********************************************************************
       subroutine shapesurf(iges,igmax,kerror)
       use set_kinds
@@ -2934,18 +2930,38 @@
       return
       end subroutine shapesurf
 
+
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          dslant finds the minimum distance between a curve       **
-!**          represented by (x,y) and the line given by (x1,y1)      **
-!**          and (x2,y2).                                            **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          12/08/86..........first created                         **
-!**                                                                  **
+!>
+!!    dslant finds the minimum distance between a curve
+!!    represented by (x,y) and the line given by (x1,y1)
+!!    and (x2,y2).
+!!    
+!!
+!!    @param x :
+!!
+!!    @param y :
+!!
+!!    @param np :
+!!
+!!    @param xmin :
+!!
+!!    @param xmax :
+!!
+!!    @param ymin :
+!!
+!!    @param ymax :
+!!
+!!    @param x1 :
+!!
+!!    @param y1 :
+!!
+!!    @param x2 :
+!!
+!!    @param y2 :
+!!
+!!    @param dismin :
+!!
 !**********************************************************************
       subroutine dslant(x,y,np,xmin,xmax,ymin,ymax,x1,y1,x2,y2,dismin)
       use set_kinds
