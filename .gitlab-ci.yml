@@ -52,9 +52,11 @@ pause-for-approval:
   when: manual
   allow_failure: false
 
-hip.txcorp:
+hip.txcorp_efitai:
   extends: .test-basic
   stage: stage1
+  tags:
+    name:hip.txcorp_efitai
   script:
     - mkdir build && cd build # Build out of place
     - cmake -DTRAP_FP_EXCEPTIONS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING="RelWithDebInfo" ..
