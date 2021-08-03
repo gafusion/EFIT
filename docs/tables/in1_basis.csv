@@ -1,0 +1,87 @@
+﻿KFFFNC,Choice of basis function for FF'.
+,0 = polynomial representation FF'(psi)=gamma0+gamma1 psi+...+gamman psi^n.
+,1 = ??
+,2 = ??
+,3 = ??
+,4 = ??
+,5 = ??
+,6 = spline respresentation.
+,8 = Polynomial + local representation ({\displaystyle \psi _{EC}}= PSIECN and {\displaystyle \delta \psi _{EC}}= DPSIECN):
+,{\displaystyle FF'(\psi )=\sum _{n=1}^{N-1}\left[\gamma _{n}\psi ^{n-1}-{\mbox{FCURBD}}\psi ^{N-1}\right]+{\begin{cases}\gamma _{N}\cos ^{2}\left[{\frac {\pi }{2}}{\frac {\psi -\psi _{EC}}{\delta \psi _{EC}}}\right]&|\psi -\psi _{EC}|<\delta \psi _{EC}\\0&{\mbox{otherwise}}\end{cases}}}
+KPPFNC,Choice of basis function for P'.
+,0 = polynomial representation P'(psi)=alpha0+alpha1 psi+...+alphan psi^n.
+,1 = ??
+,2 = ??
+,3 = ??
+,4 = ??
+,5 = ??
+,6 = spline respresentation.
+KWWFNC,Choice of basis function for POmega'.
+,0 = polynomial representation.
+,1 = ??
+,2 = ??
+,3 = ??
+,4 = ??
+,5 = ??
+,6 = spline respresentation
+ICPROF,Specific choice of current profile
+,0 = current profile is not specified by this variable (default)
+,1 = no edge current density allowed
+,2 = free edge current density
+,3 = weak edge current density constraint
+,"This sets some or all of the variables KFFCUR, KPPCUR, FCURBD, PCURBD, FWTBP, FWTQA, QVFIT, KCALPA, CALPA, XALPA, KCGAMA, CGAMA, and XGAMA to predefined values."
+,"NOTE that if these variables are seperately specified in the namelist input, the values set by the ICPROF variable will override them."
+,
+KPPCUR,Number of coefficients in polynomial representation of P'. Ignored when using spline representation. Default = 3
+KFFCUR,Number of coefficients in polynomial representation of FF'. Ignored when using spline representation. Default = 1
+KCALPA,+ = number of constraints on coefficients alpha for P' (only relevant when ICURRT=2) specified through matrix CALPA and vector XALPA. For both equilibrium and fitting. Default=0
+CALPA,Constraint matrix for P' when ICURRT=2 and KCALPA>0.
+,KPPFNC=0
+,"Defines constraint equations of the form CALPA(1,i) alpha(1) + CALPA(2,i) alpha(2) +...+ CALPA(n,i) alpha(n) = XALPA(i) for i=1 to KCALPA, where n = KPPCUR. Can scale coefficients up or down relative to nominal weights of 1 to get stronger or weaker constraint, respectively. Default CALPA(1,1) = (0.1,0.1,0.1) ."
+,KPPFNC=6
+,"Defines constraint equations of the form CALPA(1,i) ppknot(1)+CALPA(2,i) ppknot(1)'+CALPA(3,i) ppknot(2) +...+ CALPA(2n,i) ppknot(n)'=XALPA(i) for i=1 to KCALPA, where n = KPPKNT."
+XALPA,Constraint vector for P' when ICURRT=2 and KCALPA>0. See CALPA.
+KCGAMA,"+ = number of constraints on coefficients gamma for FF' (only relevant when ICURRT=2), specified through matrix CGAMA and vector XGAMA. For both equilibrium and fitting. Default=0"
+CGAMA,"Constraint matrix for FF' when ICURRT=2 and KCGAMA>0. If KFFFNC = 0, defines constraint equations of the form CGAMA(1,i) gamma(1) + CGAMA(2,i) gamma(2) +...+ CGAMA(n,i) gamma(n) = XGAMA(i) for i=1 to KCGAMA, where n = KFFCUR. If KFFFNC = 6, see description under CALPA."
+XGAMA,Constraint vector for FF' when ICURRT=2 and KCGAMA>0. See CGAMA.
+,
+KFFKNT,Number of knots for FF' in spline representation. Ignored unless KFFFNC=6.
+FFKNT,"FF' knot locations in normalized psi, must be between 0 and 1. Vector of length KFFKNT. Ignored unless KFFFNC=6."
+FFTENS,"FF' spline tension, small (e.g., 0.1) = approximately(?) cubic, large (e.g., 10.0) = approximately(?) piecewise linear. Ignored unless KFFFNC=6."
+KFFBDRY,"Constraint switch for FF' (0=off, 1=on) for each knot. Vector of length KFFKNT. Default 0's. Ignored unless KFFFNC=6."
+FFBDRY,"FF' value for each knot, used only when KFFBDRY=1. Vector of length KFFKNT. Ignored unless KFFFNC=6."
+KFF2BDRY,"Constraint switch for (FF')' (0=off, 1=on) for each knot. Vector of length KFFKNT. Default 0's. Ignored unless KFFFNC=6."
+FF2BDRY,"(FF')' value for each knot, used only when KFFBDRY=1. Vector of length KFFKNT. Ignored unless KFFFNC=6."
+,
+KPPKNT,Number of knots for P' in spline representation. Ignored unless KPPFNC=6.
+PPKNT,"P' knot locations in normalized psi, must be between 0 and 1. Vector of length KPPKNT. Ignored unless KPPFNC=6."
+PPTENS,"P' spline tension, small (e.g., 0.1) = approximately(?) cubic, large (e.g., 10.0) = approximately(?) piecewise linear. Ignored unless KPPFNC=6."
+KPPBDRY,Constraint switch for P'. Vector of length KPPKNT. Ignored unless KPPFNC=6.
+PPBDRY,P' at each knot location where KPPBDRY=1. Vector of length KPPKNT. Ignored unless KPPFNC=6.
+KPP2BDRY,Constraint switch for (P')'. Vector of length KPPKNT. Ignored unless KPPFNC=6.
+PP2BDRY,(P')' at each knot location where KPP2BDRY=1. Vector of length KPPKNT. Ignored unless KPPFNC=6.
+,
+KWWKNT,Number of knots for POmega' in spline representation. Ignored unless KWWFNC=6.
+WWKNT,"array of POmega' knot locations in normalized psi for spline basis function, must be between 0 and 1. Vector of length KWWKNT. Ignored unless KWWFNC=6."
+WWTENS,"POmega' spline tension, small (e.g., 0.1) = approximately(?) cubic, large (e.g., 10.0) = approximately(?) piecewise linear. Ignored unless KWWFNC=6."
+KWWBDRY,Constraint switch for POmega'. Vector of length KWWKNT. Ignored unless KWWFNC=6.
+WWBDRY,POmega' at each knot location where KWWBDRY=1. Vector of length KWWKNT. Ignored unless KWWFNC=6.
+KWW2BDRY,Constraint switch for (POmega')'. Vector of length KWWKNT. Ignored unless KWWFNC=6.
+WW2BDRY,(POmega')' at each knot location where KWW2BDRY=1. Vector of length KWWKNT. Ignored unless KWWFNC=6.
+,
+KEDGEP,Switch to turn on a tanh edge contribution to pressure. The form is
+,{\displaystyle \tanh \left[{\frac {\psi -\mathrm {PE\_PSIN} }{\mathrm {PE\_WIDTH} }}\right]}
+,Default = 0.
+PE_PSIN,Center point of tanh contribution. Ignored unless KEDGEP>0. Default=0.98 .
+PE_WIDTH,Width of tanh contribution. Ignored unless KEDGEP>0. Default=0.02 .
+PEDGE,? Ignored unless KEDGEP>0. Default=0.0 .
+,
+KEDGEF,Switch to turn on a tanh edge contribution to FF'. The form is
+,{\displaystyle \tanh \left[{\frac {\psi -\mathrm {FE\_PSIN} }{\mathrm {FE\_WIDTH} }}\right]}
+,Default = 0.
+FE_PSIN,Center point of tanh contribution. Ignored unless KEDGEF>0. Default=0.98 .
+FE_WIDTH,Width of tanh contribution. Ignored unless KEDGEF>0. Default=0.02 .
+F2EDGE,? Ignored unless KEDGEF>0. Default=0.0 .
+,
+PSIECN,Center point of local {\displaystyle \cos ^{2}} contribution to FF' . Default = 0.
+DPSIECN,Half width of local {\displaystyle \cos ^{2}} contribution to FF' . Default = 0.

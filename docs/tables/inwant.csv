@@ -1,0 +1,34 @@
+﻿ALPAX,Initial value of coefficient alpha (specified by JBETA) of parametrization of P' to be modified to satisfy beta constraint. (Note that this coefficient is unable to change sign during iteration in order to satisfy the constraint.) Default = 104
+CCOILS,"Matrix which defines constraint for F coil currents I1, I2, ..., I18 of the form"
+,"CCOILS(1,i) I1 + CCOILS(2,i) I2 + ... + CCOILS(18,i) I18 = XCOILS(i)for i=1,KCCOILS. Constraint applies in fixed boundary solutions only??"
+CURRC139,Current in 139 degree C coil in Amps. Default = 0.0
+CURRC79,Current in 79 degree C coil in Amps. Default = 0.0
+FBETAN,desired value for normalized toroidal beta
+FBETAP,Fixed betap value for equilibrium calculation. ICONVR must equal 3. ICURRT must equal 2. Default = 0.0
+FITDELZ,See namelist EFITIN.
+FLI,Fixed li value for equilibrium calculation. ICONVR must equal 3. ICURRT must equal 2. Default = 0.0
+FQSIW,"Desired q value at surface PSIWANT, if near boundary FWTCUR (in namelist IN1) must be set to 0."
+FWTBDRY,See namelist IN1.
+FWTXXJ,"constraint weight for Js, Default = 1.0"
+FWTXXQ,Default = 1.0
+FWTXXB,Default = 1.0
+FWTXLI,Default = 1.0
+GAMAX,"initial guess for the li constraint, array element should be as specified through JLI. Default GAMAX(JLI) = -106"
+JBETA,Which coefficient alpha in P' parametrization to vary to get desired betaN = FBETAN value. Assumes polynomial parametrization. Default = 1
+JLI,Which coefficient gamma in FF' parametrization to vary to get desired li= FLI value. Assumes polynomial parametrization. Default = 2
+JWANTM,Iteration number when constraints (which ones? all from all namelists?) start. Default = 3
+KCCOILS,+ = number of constraints for F coil currents specified through matrix CCOILS and vector XCOILS. Default = 0
+NCCOIL,See namelist EFITIN.
+NQWANT,What is this? Default = 0
+NDELZON,See namelist EFITIN.
+N_WRITE,Default = 1
+PSIWANT,See namelist IN1.
+REXPAN,See namelist EFITIN.
+SCALEDZ,See namelist EFITIN.
+SIZEROJ,See namelist EFITIN.
+SIWANTQ,want q to be a particular value at some flux surface?
+STABDZ,See namelist EFITIN.
+VZEROJ,See namelist IN1.
+WRITEPC,Default = .false.
+XCOILS,Constraint vector for F coil currents when KCCOILS>0.
+ZNOSE,See namelist EFITIN.
