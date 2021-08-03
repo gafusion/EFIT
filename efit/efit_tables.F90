@@ -6,7 +6,7 @@
 !>          reads Green's function table  and dprobe.dat data
 !!
 !*********************************************************************
-   subroutine efit_read_tables
+   subroutine efit_read_tables()
       use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'
@@ -149,7 +149,7 @@
 !>          reads Green's function table  and dprobe.dat data
 !*
 !**********************************************************************
-   subroutine set_table_dir
+   subroutine set_table_dir()
       use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'

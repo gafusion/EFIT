@@ -4,7 +4,7 @@
 !!    getsets performs inputing and initialization.
 !!
 !**********************************************************************
-      subroutine getsets_defaults
+      subroutine getsets_defaults()
       use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'

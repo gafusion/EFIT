@@ -3,7 +3,7 @@
 !!    This subroutine gets the beam pressure.
 !!
 !**********************************************************************
-      subroutine getbeam
+      subroutine getbeam()
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'

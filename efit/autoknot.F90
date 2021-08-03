@@ -151,7 +151,7 @@
 !
 !    store values read from k file into autoknot variables
 !
-      subroutine restore_autoknotvals
+      subroutine restore_autoknotvals()
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -174,7 +174,7 @@
 !     store autoknot variables into standard efit names
 !     for example knot locations
 !
-      subroutine store_autoknotvals
+      subroutine store_autoknotvals()
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'

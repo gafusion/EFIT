@@ -23,10 +23,10 @@
      header = ' '
      return
      end
-     subroutine getzeff
+     subroutine getzeff()
      return
      end
-     SUBROUTINE DONEPL
+     SUBROUTINE DONEPL()
      RETURN
      END
 

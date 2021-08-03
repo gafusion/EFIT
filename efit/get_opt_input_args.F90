@@ -4,7 +4,7 @@
 !!    parameters for control
 !!
 !**********************************************************************
-SUBROUTINE process_arguments 
+SUBROUTINE process_arguments()
   CHARACTER(128) :: argument 
   INTEGER(KIND=4) :: iarg, nargs,iloop,kfindex,ipos1,ipos2,ilen,istart
   INTEGER(KIND=4) :: it,iscan,ifarg 
@@ -60,7 +60,7 @@ END SUBROUTINE process_arguments
 !>     subprogram write_usage
 !!
 !**********************************************************************
-SUBROUTINE write_usage 
+SUBROUTINE write_usage()
   WRITE(nim_wr,*)'' 
   msg='Usage: efit <options> other' 
   WRITE(6,*) msg 

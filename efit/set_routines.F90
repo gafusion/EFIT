@@ -513,7 +513,7 @@
 !!    
 !!
 !**********************************************************************
-      subroutine set_basis_params
+      subroutine set_basis_params()
 
       use set_kinds
       include 'eparm.inc'

@@ -3,7 +3,7 @@
 !!    This subroutine read efit.input file
 !!
 !**********************************************************************
-subroutine read_efitin
+subroutine read_efitin()
      use commonblocks
      use set_kinds
      include 'eparm.inc'
@@ -60,7 +60,7 @@ end subroutine read_efitin
 !!    This subroutine reads eparmdud machine dependent parameters
 !!
 !**********************************************************************
-subroutine read_eparmdud
+subroutine read_eparmdud()
   use eparm
   use var_nio
   use expath

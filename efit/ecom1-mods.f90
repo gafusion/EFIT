@@ -815,7 +815,7 @@
            bpxtra(:,:),flxtra(:,:),fpxtra(:,:),worka2(:)
       end module commonblocks
 
-      subroutine set_ecom_mod1_arrays
+      subroutine set_ecom_mod1_arrays()
       use set_kinds
       use eparm
       use var_parame, only: vzeroj,sizeroj

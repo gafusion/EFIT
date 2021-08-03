@@ -3,7 +3,7 @@
 !!    sets default DIII-D values for eparmdud129 module
 !!
 !**********************************************************************
-subroutine get_eparmdud_defaults
+subroutine get_eparmdud_defaults()
   use eparm
   nsilds=3
   nsilol=41
@@ -76,7 +76,7 @@ end subroutine
 !!    eparmdud variables
 !!
 !**********************************************************************
-subroutine get_eparmdud_dependents
+subroutine get_eparmdud_dependents()
 
   use eparm
 

@@ -117,7 +117,7 @@
 
       end module var_jwork4
 
-      subroutine set_ecom_mod2_arrays
+      subroutine set_ecom_mod2_arrays()
       use set_kinds
       use var_cecoil
       ecurrt(3)=-1.e10_dp
