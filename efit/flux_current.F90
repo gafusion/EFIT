@@ -579,6 +579,7 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
+      integer*8 limtrs
       common/wwork1/xlims(5),ylims(5),limtrs,xlmins
       dimension pds(6)
       integer iii
@@ -1150,6 +1151,7 @@
 !      include 'ecomdu1.f90'
 !      include 'ecomdu2.f90'
       save isicinit,zelips
+      character(14) :: sfile
 !
       if (ivacum.gt.0) return
 !----------------------------------------------------------------------
@@ -1206,7 +1208,13 @@
 !
  1100 continue
       if (icinit.gt.0) go to 1200
-      open(unit=nsave,form='unformatted',file='esave.dat', &
+      if (nproc.gt.1) then
+        WRITE(sfile,fmt='(i5.5)') rank
+        sfile='esave'//TRIM(sfile)//'.dat'
+      else
+        sfile='esave.dat'
+      endif
+      open(unit=nsave,form='unformatted',file=sfile, &
            status='old',err=1200)
       read (nsave) mw,mh
       read (nsave) xpsi

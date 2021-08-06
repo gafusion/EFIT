@@ -244,8 +244,8 @@
 !----------------------------------------------------------------------
 !--  compute r and z arrays                                          --
 !----------------------------------------------------------------------
-      dr=(rright-rleft)/float(nw-1)
-      dz=(ztop-zbotto)/float(nh-1)
+      dr=(rright-rleft)/dble(nw-1)
+      dz=(ztop-zbotto)/dble(nh-1)
       DO i=1,nw
          rgrid(i)=rleft+dr*(i-1)
       ENDDO 

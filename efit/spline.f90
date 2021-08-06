@@ -118,7 +118,8 @@
 !
       parameter (krord=4,kzord=4)
       dimension s(nx*ny), x(nx), y(ny), wk(nx,ny), &
-                cs(kubicx, lubicx, kubicy, lubicy)
+                cs(kubicx, lubicx, kubicy, lubicy), &
+                bkx(lubicx+1), bky(lubicy+1)
       real*8,allocatable :: xknot(:),yknot(:),rknot(:), &
            rgrid(:),zgrid(:),zknot(:),copynew(:,:)
 
@@ -417,6 +418,7 @@
       use eparm,only:nw,nh
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       parameter (krord=4,kzord=4)
+      dimension rgrid(*),zgrid(*),rknot(*),zknot(*),copynew(*)
       real*8,allocatable :: work1(:,:),work2(:),work3(:,:)
 !------------------------------------------------------------------
 !-- change dimension of work2 and work3 from nw to nh            --
@@ -462,7 +464,8 @@
       use eparm,only:nw,nh,lr0,lz0
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       parameter (krord=4,kzord=4)
-       real*8,allocatable :: work4(:,:,:),work5(:,:,:), &
+      dimension rknot(*),zknot(*),copy(*),coef(*),breakr(*),breakz(*)
+      real*8,allocatable :: work4(:,:,:),work5(:,:,:), &
               work6(:,:,:,:)
 
       ALLOCATE(work4(krord,nw,nh),work5(nh,krord,lr0), &

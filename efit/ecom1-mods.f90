@@ -320,15 +320,16 @@
       use set_kinds
       logical write_Kfile ,fitfcsum
 
-      integer*4 icondn,itek,kdata,itrace,ierchk,iconvr,ixray,itell &
+      integer icondn,itek,kdata,itrace,ierchk,iconvr,ixray,itell &
            ,kprfit,licalc,ibound,ibatch,idite,ilaser, lookfw &
             ,kdot, icutfp, keqdsk,kdofit,kbetapr,kplotpr,kpressb &
             ,kdoqn,kfcurb,kpcurb, kzeroj, ncstne,ncstte,ncstfp,ncstpp &
-            ,kgrid,kwripre,negcur, kframe,kskipvs,icntour, iavdpl &
+            ,kwripre,negcur, kframe,kskipvs,icntour, iavdpl &
             ,jwake,limvs, kbound,kgraph,istore,iout,kdopre &
             ,iishot,kktime,iplcout,ksigma, kwritime 
-      integer*4 iteks, mxiters, zelipss, n1coils
-      integer*4 itekt, mxitert, zeliptt, n1coilt
+      integer iteks, mxiters, zelipss, n1coils
+      integer itekt, mxitert, zeliptt, n1coilt
+      integer*8 kgrid
 
       data kgrid/1/,kwripre/0/,kwritime/0/
       data licalc/1/
@@ -716,7 +717,8 @@
 
       module var_plasmacurrdat
       real*8 prcg,p_k,p_rc,vresp,t0p
-      real*8,dimension(:),allocatable :: devp,navp,rnavp
+      real*8,dimension(:),allocatable :: devp,rnavp
+      integer*4,dimension(:),allocatable :: navp
       end module var_plasmacurrdat
 
       module var_ccoilsdat

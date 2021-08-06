@@ -17,7 +17,7 @@ install(TARGETS green DESTINATION lib
               WORLD_READ WORLD_EXECUTE
 )
 
-add_executable(efund  efundud.f90)
+add_executable(efund  efund.f90)
 target_link_libraries(efund green)
 
 

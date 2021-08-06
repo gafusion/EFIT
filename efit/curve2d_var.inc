@@ -10,7 +10,7 @@
          tlen(ncrv), zmat(ix,iy), &
          xmpos(mdim), ympos(mdim), anum(mdim), hgt(mdim)
 
-      integer nplt(ncrv), ncnct(ncrv), ncurve, &
+      integer*8 nplt(ncrv), ncnct(ncrv), ncurve, &
           pltlen, xnlen, ynlen, xtck, ytck, ixnon, iynon,  &
           intax, intay, iaxis, igridx, igridy, ibrdr,  &
           idash, idot, ichdot, ichdsh, &
@@ -23,6 +23,6 @@
       character*20 ptitle, xtitle, ytitle, clearx(ncrv), sname
       character*20 mode, lbflg, draw
 
-      integer imes(mdim), inum(mdim), note(mdim), iplce(mdim), m
+      integer*8 imes(mdim), inum(mdim), note(mdim), iplce(mdim), m
       character*72  lmes(mdim)
-      integer iunit, m_write, m_read
+      integer*8 iunit, m_write, m_read

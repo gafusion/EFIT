@@ -99,9 +99,11 @@
       integer*8 :: msbdr2
       integer*8 :: ndim_crv
       integer*8 :: ndim,kxiter,mqwant
-      integer*8 :: nw,nh,nwnh,nh2,nwork,nwwf, &
+      integer   :: nw,nh
+      integer*8 :: nwnh,nh2,nwork,nwwf, &
                    nwf,lubicx,lubicy,kujunk,boundary_count, &
-                   lr0,lz0,kubicx,kubicy,npoint,nxtrap
+                   lr0,lz0,npoint,nxtrap
+      integer   :: kubicx,kubicy
       integer*8 :: ncurrt
       integer*8 :: mbdry, mbdry1
       integer*8 :: nbwork
@@ -427,7 +429,7 @@
       end module var_mfield
 !var_hist
       module var_hist
-      integer*4,dimension(:), allocatable :: jerror
+      integer*8,dimension(:), allocatable :: jerror
       real*8,dimension(:), allocatable :: eout,rout,zout,doutu &
         ,doutl,aout,vout,betat,otop &
         ,betap,ali,oleft,oright,qsta &
@@ -473,7 +475,7 @@
       real*8 dpsi,rymin,rymax, &
         zxmin,zxmax,xmin,xmax,ymin,ymax,rmaxis,zmaxis, emaxis, &
         rminzm,rmaxzm,dismins,simins,delrmax1,delrmax2
-      integer*4 nfound
+      integer*8 nfound
       data emaxis/1.3_dp/
       end module var_cshape
 

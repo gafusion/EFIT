@@ -21,6 +21,7 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
+      integer*8 limtrs
       common/wwork1/xlims(5),ylims(5),limtrs,xlmins
       common/adp/ringr(6),ringz(6),ringap
       dimension pds(6),amer(2,2),bmer(2),wmer(2),imer(2),temp(ntime)
@@ -1449,19 +1450,18 @@
              (yxtra(i+1,ixl)-yxtra(i,ixl))*(znose-yxtra(i,ixl))
  6097 continue
       zerovs=1.0
-      do 6100 i=1,npxtra(ixl)
+      do i=1,npxtra(ixl)
         zerold=zerovs
         call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,xxtra(i,ixl), &
                   yxtra(i,ixl),limfag)
-        if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) go to 6120
- 6100 continue
- 6120 continue
+        if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) exit
+      enddo
       if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) then
         rinvs=xxtra(i-1,ixl)
         zinvs=yxtra(i-1,ixl)
         routvs=xxtra(i,ixl)
         zoutvs=yxtra(i,ixl)
-        do 6130 i=1,20
+        do i=1,20
         ravs=0.5_dp*(rinvs+routvs)
         zavs=0.5_dp*(zinvs+zoutvs)
         call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
@@ -1472,7 +1472,7 @@
           routvs=ravs
           zoutvs=zavs
         endif
- 6130   continue
+        enddo
         rvsout(iges)=ravs*100.
         zvsout(iges)=zavs*100.
       else
@@ -1652,19 +1652,18 @@
       endif
       if (dis2p.lt.0.1_dp*drgrid) go to 16392
       zerovs=1.0
-      do 6200 i=1,npxtra(ixl)
+      do i=1,npxtra(ixl)
         zerold=zerovs
         call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,xxtra(i,ixl), &
                   yxtra(i,ixl),limfag)
-        if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) go to 6220
- 6200 continue
- 6220 continue
+        if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) exit
+      enddo
       if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) then
         rinvs=xxtra(i-1,ixl)
         zinvs=yxtra(i-1,ixl)
         routvs=xxtra(i,ixl)
         zoutvs=yxtra(i,ixl)
-        do 6230 i=1,20
+        do i=1,20
         ravs=0.5_dp*(rinvs+routvs)
         zavs=0.5_dp*(zinvs+zoutvs)
         call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
@@ -1675,7 +1674,7 @@
           routvs=ravs
           zoutvs=zavs
         endif
- 6230   continue
+        enddo
         rvsin(iges)=ravs*100.
         zvsin(iges)=zavs*100.
       else
@@ -1795,19 +1794,18 @@
         return
       end if
       zerovs=1.0
-      do 66100 i=1,npxtra(ixl)
+      do i=1,npxtra(ixl)
         zerold=zerovs
         call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,xxtra(i,ixl), &
                   yxtra(i,ixl),limfag)
-        if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) go to 66120
-66100 continue
-66120 continue
-      if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) then
+        if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) exit
+      enddo
+      if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp.and.i>1) then
         rinvs=xxtra(i-1,ixl)
         zinvs=yxtra(i-1,ixl)
         routvs=xxtra(i,ixl)
         zoutvs=yxtra(i,ixl)
-        do 66130 i=1,20
+        do i=1,20
         ravs=0.5_dp*(rinvs+routvs)
         zavs=0.5_dp*(zinvs+zoutvs)
         call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
@@ -1818,7 +1816,7 @@
           routvs=ravs
           zoutvs=zavs
         endif
-66130   continue
+        enddo
         if ((zavs*zssep.lt.0.0).and.(ixyz.eq.-2)) then
           ixyz=-1
           go to 66501
@@ -1948,19 +1946,18 @@
         return
       end if
       zerovs=1.0
-      do 67100 i=1,npxtra(ixl)
+      do i=1,npxtra(ixl)
         zerold=zerovs
         call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,xxtra(i,ixl), &
                   yxtra(i,ixl),limfag)
-        if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) go to 67120
-67100 continue
-67120 continue
+        if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) exit
+      enddo
       if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) then
         rinvs=xxtra(i-1,ixl)
         zinvs=yxtra(i-1,ixl)
         routvs=xxtra(i,ixl)
         zoutvs=yxtra(i,ixl)
-        do 67130 i=1,20
+        do i=1,20
         ravs=0.5_dp*(rinvs+routvs)
         zavs=0.5_dp*(zinvs+zoutvs)
         call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
@@ -1971,7 +1968,7 @@
           routvs=ravs
           zoutvs=zavs
         endif
-67130   continue
+        enddo
         if (((abs(ravssa-ravs).le.1.e-04_dp).and. &
          (abs(zavssa-zavs).le.1.e-04_dp)).and.(ixyz.eq.-1)) then
         ixyz=-2
@@ -2965,7 +2962,7 @@
 !**********************************************************************
       subroutine dslant(x,y,np,xmin,xmax,ymin,ymax,x1,y1,x2,y2,dismin)
       use set_kinds
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
+      implicit integer*8 (i-n), real*8 (a-h, o-z)
       data nn/30/
       real, intent(in) :: xmin, xmax, ymin, ymax, x1, y1, x2, y2
       real, intent(inout) :: dismin

@@ -1109,6 +1109,7 @@
       DIMENSION gsilvs(nsilop,nvsum),gmp2vs(magpr2,nvsum)
       DIMENSION taf(nfcoil),taf2(nfcoil)
       DIMENSION rsilac(nsilop,nacoil),rmp2ac(magpr2,nacoil)
+      DIMENSION xdum(1),ydum(1)
       REAL*8,DIMENSION(:,:),ALLOCATABLE :: rfcpc,brgrfc,bzgrfc, &
                                          rsilpc,rmp2pc,rgowpc, &
                                          gridec,gridvs,ggridvs, &
@@ -1615,7 +1616,7 @@
          s = s+sl(j)
          j = j+1
       ENDDO 
-      dels = s/float(ngrid-1)
+      dels = s/dble(ngrid-1)
       ds = 0.
       i1 = 1
       DO j = 1,narc(m)
@@ -1632,7 +1633,7 @@
             rpg(i) = rpg(i-1)+dr
             zpg(i) = zpg(i-1)+dz
          ENDDO 
-         ds = dels-(dd-float(n1-i1)*dels)
+         ds = dels-(dd-dble(n1-i1)*dels)
          i1 = n1+1
       ENDDO
       rpg(ngrid) = rp(mm+narc(m))

@@ -438,7 +438,7 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-      dimension f(1)
+      dimension f(n)
 
       v(1)=(wk2(1)+alphab(index)*phi(1))* &
            beti(index,1)
@@ -491,7 +491,7 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !      include 'ecomdu1.f90'
-      dimension f(1)
+      dimension f(n)
  
       v(1)=(f(1)+alphab(index)*phi(1))* &
                     beti(index,1)

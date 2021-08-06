@@ -32,6 +32,7 @@
       namelist/inwant/psiwant,vzeroj
       namelist/invt/kwwcur,kvtor,rvtor,wcurbd
       character(10) :: uday, clocktime
+      character(14) :: sfile
       character(5)  :: zone
       integer,dimension(8) :: values
       character eqdsk*72,header*42,qmflag*3,fit_type*3
@@ -302,11 +303,17 @@
 ! --- add flag for writting out esave.dat. IOUT contains 16.
 !
       if ((ifirsttime.eq.ktime).and.(iand(iout,16).ne.0)) then
-      open(unit=nsave,status='old',form='unformatted',file='esave.dat', &
+      if (nproc.gt.1) then
+        WRITE(sfile,fmt='(i5.5)') rank
+        sfile='esave'//TRIM(sfile)//'.dat'
+      else
+        sfile='esave.dat'
+      endif
+      open(unit=nsave,status='old',form='unformatted',file=sfile, &
            err=12930)
       close(unit=nsave,status='delete')
 12930  continue
-      open(unit=nsave,status='new',form='unformatted',file='esave.dat')
+      open(unit=nsave,status='new',form='unformatted',file=sfile)
       mw=nw
       mh=nh
       write (nsave) mw,mh

@@ -26,6 +26,7 @@ packages have been installed (call apt-get to install)::
     gfortran
     libblas-dev or libopenblas-dev (or libopenblas-serial-dev)
     liblapack-dev or libopenblas-dev (or libopenblas-serial-dev)
+(18.04 only builds with libopenblas-dev - not libblas-dev)
 (16.04 and older requires non-standard CMake and gfortran versions)
 
 It will also work on Mac with similar libraries (TO DO: list) (can be obtained with

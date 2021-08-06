@@ -125,7 +125,7 @@
 !*************************************************************************
 
 !sri-feb122009    parameter    (ndim = 700, ncrv=180, mdim = 200)
-      parameter    (ncrv=180, mdim = 300)
+      parameter (ncrv=180, mdim = 300)
 
       dimension xx(ndim,ncrv), yy(ndim,ncrv), nxy(ncrv), &
               thcrv(ncrv), sclpc(ncrv), bshft(2), &
@@ -139,26 +139,34 @@
               mrc(ncrv), tlen(ncrv), nmrk(ncrv)
 
 
-      character*20 ptitle, xtitle, ytitle, sname, clearx(ncrv)
-      character*72     lmes(mdim)
-      character*20    lbflg, draw, mode, mxalf(mdim)
+      character*24 ptitle, xtitle, ytitle, sname, clearx(ncrv)
+      character*72 lmes(mdim)
+      character*24 lbflg, draw, mode, mxalf(mdim)
 
-          common /var2d_page/ nn, ncurve, ipag, ibrdr, grce, xphy, yphy, &
+      integer*8 nn, ncurve, ipag, ibrdr, iorel, nplen, nxlen, nylen
+      common /var2d_page/ nn, ncurve, ipag, ibrdr, grce, xphy, yphy, &
               iorel, xorl, yorl, hight, bngle, bshft, &
-              ptitle, nplen,    xtitle, nxlen,    ytitle,    nylen, xlen, &
+              ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, &
               ylen, xomin, xstp, xomax, yomin, ystp, yomax
-      common /var2d_axis/iaxis,ixtck, iytck, ixnon,iynon,intax,intay, &
-              isaxs, sorg, stp, smax,    slen, sname, nslen, xps, yps, &
+      integer*8 iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+                ixaxs, nslen, igridx, igridy, idash, idot, ichdsh, ichdot
+      common /var2d_axis/ iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+              isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
               igridx, igridy, idash, idot, ichdsh, ichdot
-      common /var2d_curve/ thcrv, sclpc, ndshme,ndotme,ncdhme,ncdtme, &
+      integer*8 ndshm, ndotme, ncdhme, ncdtme, markme, mrc, nmrk, nxy, &
+                ncnct
+      common /var2d_curve/ thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
               markme, clearx, mrc, tlen, nmrk, &
-                nxy, ncnct
+              nxy, ncnct
 !    .        ,xx, yy
+      integer*8 icont, nword, line, ithk, ipri, nline
       common /var2d_contur/ icont(ncrv), nword, ix, iy, zinc, line, &
-              mode, lbflg, ithk, ipri, nline, draw
-!    .          ,zmat
+              ithk, ipri, nline
+!    .        ,zmat
+      integer*8 nshd, nsxy, ngaps, nvec, ivec
       common /var2d_shade/ nshd, nsxy, sangle, sgap, ngaps, &
-              nvec, xfm, yfm,    xto, yto, ivec
+              nvec, xfm, yfm, xto, yto, ivec
 !    .        ,sxx, syy
-      common /anote /    msg, note, lmes, imes, anum, iplce, inum, xpos,  &
+      integer*8 msg, note, imes, iplce, inum, iexit
+      common /anote / msg, note, lmes, imes, anum, iplce, inum, xpos,  &
               ypos, ht, iexit

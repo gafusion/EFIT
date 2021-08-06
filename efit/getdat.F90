@@ -239,7 +239,7 @@
       !  ier = 35  re-called ptdata w/o time array for this dfi
 
       IF (IER .gt. 0 .AND. IER.NE.2) THEN
-70000   np = 2
+        np = 2
         t(1)=tmin
         t(2)=tmax
         data(1)=0.
@@ -320,7 +320,12 @@
           iarr,rarr,iascii,int16,int32,real32,real64,tdum)
         if (ker.ne.0 .and. ker.ne.2 .and. ker.ne.4) then
           ier = 1
-          go to 70000
+          np = 2
+          t(1)=tmin
+          t(2)=tmax
+          data(1)=0.
+          data(2)=0.
+          RETURN
         end if
         nrettim = iarr(2)
         do k = 1,nrettim

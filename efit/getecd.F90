@@ -163,7 +163,7 @@
                   np,times,delt,i0,r1,i1,bitip,iavem,time,ircfact, &
                   do_spline_fit,p_rc,prcg,vresp,p_k,t0p,devp(1), &
                   navp(1),time_err)
-      rnavp=navp
+      rnavp=REAL(navp)
       if( (use_alternate_pointnames .eq. 1) .and. &      !JRF 
           (i .eq. 1) ) then
          do j=1,np
@@ -1054,8 +1054,8 @@
       include 'mdslib.inc'
       character*10 name, MyTree
       real*8 y(1),time(1),deltd,xxd,bitvld,timesd
-      real*4, allocatable :: yw(:),xw(:),bw(:),cw(:),dw(:),ew(:)
-      real*4 dtmin, xm5, dtave, xx, delt, times, delta_min, delta, &
+      real*8, allocatable :: yw(:),xw(:),bw(:),cw(:),dw(:),ew(:)
+      real*8 dtmin, xm5, dtave, xx, delt, times, delta_min, delta, &
              timenow, ynow
       integer :: status, nshot, lenname, errallot, npn, mmm, ierror, &
                  np, mm, nn, kave, ircfact, ktime_err, nnp, mylen, &
@@ -1446,7 +1446,7 @@
       parameter (ntims=4096)
       common/gggttt/w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims) &
                     ,ew(ntims),stdevxx(ntims),navxx(ntims)
-      dimension ierdia(1)
+      dimension ierdia(3)
       real*8 y(1),time(1),sigmay(1),deltd,xxd,timesd,bitvl
       character*10 name
       data dtmin/0.001001/,xm5/0.00001/
@@ -2483,7 +2483,11 @@
           limitr = int(zwork2(2))
           bitip  = zwork2(3)
           rcentr = zwork2(4)
-          oldccomp = int(zwork2(5)) ! Added by MK 2020.10.07
+          if (abs(zwork2(5))<1.e-8_dp) then  
+            oldccomp = .false.
+          else
+            oldccomp = .true.
+          endif
           offset = 5
           do i=1,nsilop
             psibit(i) = zwork2(i+offset)

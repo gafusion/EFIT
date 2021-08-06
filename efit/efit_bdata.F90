@@ -8,8 +8,9 @@
       use commonblocks,only: zeros,xouts,youts,bpoo,bpooz,bpooc
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit integer*8 (i-n), real*8 (a-h,o-z)
       include 'env2d.inc'
+      integer*8 limtrs
       common/wwork1/xlims(5),ylims(5),limtrs,xlmins
       data limtrs/5/
       data iunit/35/, m_write/1/, m_read/1/
