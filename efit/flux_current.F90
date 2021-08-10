@@ -2,15 +2,16 @@
 !>
 !!    pflux computes the poloidal fluxes on the r-z grid.
 !!
-!!    @param niter :
+!!    @param niter inner equilibrium loop iteration index
 !!
-!!    @param nnin :
+!!    @param nnin current profile loop iteration index?
 !!
-!!    @param ntotal :
+!!    @param ntotal current profile loop iteration index (how is this 
+!!                  different than nnin?)
 !!
-!!    @param jtime : time index
+!!    @param jtime  time index
 !!
-!!    @param kerror : error flag
+!!    @param kerror error flag
 !!
 !**********************************************************************
       subroutine pflux(niter,nnin,ntotal,jtime,kerror)

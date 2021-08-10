@@ -5,15 +5,15 @@
 !!    that npcurn=nffcur+nppcur, nrsmat=nfcoil+npcurn+
 !!    number of constraints.
 !!
-!!    @param jtime : time index
+!!    @param jtime time index
 !!
-!!    @param iter :
+!!    @param iter inner equilibrium loop iteration index
 !!
-!!    @param ichisq :
+!!    @param ichisq chisq flag
 !!
-!!    @param nniter :
+!!    @param nniter current profile loop iteration index?
 !!
-!!    @param kerror : error flag
+!!    @param kerror error flag
 !!
 !**********************************************************************
       subroutine matrix(jtime,iter,ichisq,nniter,kerror)

@@ -1,30 +1,22 @@
 #include "config.f"
 !**********************************************************************
-!>
-!!    This routine returns the average of the compensated diamagnetic
-!!    fluxes and error in the diamagnetic fluxes.
+!>  
+!!    efit is the main driver for equilibrium analysis.
 !!
-!!    @param nshot :
-!!
-!!    @param tim :
-!!
-!!    @param npts :
-!!
-!!    @param tavg : this is the time that the data is averaged 
-!!              over.
-!!
-!!    @param ierr : an error array of dimension 3. Each element of the
-!!        array contains the PTDATA error for one of the three 
-!!              diamagnetic flux signals. If ierr(j) is different from 
-!!              zero, that flux is not included in the average value  
-!!              returne
-!!
-!!    @param phidia : this array contains the conpensated diamagnetic
-!!                flux (mv-sec)
-!!
-!!    @param sigphi : this array contains the error in the flux value
-!!                (mv-sec).
-!!
+!!     REFERENCES:\n                                                
+!!          (1) L.L. Lao, H. St. John, R.D. Stambaugh, \
+!!              A.G. Kellman, and W. Pfeiffer, Nuclear Fusion
+!!             25 (1985) 1611.\n
+!!          (2) L.L. Lao, H. St. John, R.D. Stambaugh, and 
+!!               W. Pfeiffer, Nuclear Fusion 25 (1985) 1421.\n
+!!          (3) L.L. Lao, J.R. Ferron, R.J. Groebner, W. Howl.
+!!              H. St. John, E.J. Strait, and T.S. Taylor \n
+!!              Nuclear Fusion 30 (1990) 1035.\n
+!!          (4) L.L. Lao and T.H. Jensen Nuclear Fusion
+!!              31 (1991) 1909.\n
+!!          (5) L.L. Lao, H. St. John, et al, Fusion Sci. Technol. 
+!!              48 (2005) 968.                                     
+!!                                                                 
 !**********************************************************************
      program efit
      use commonblocks
