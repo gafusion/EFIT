@@ -1,23 +1,26 @@
-﻿NBDRY,"""Number Boundary"". This is the parameter which specifies that solution method is to be fixed boundary or free boundary equilibrium mode. Must set ICONVR=3."
-,-n = write out boundary points in S(shot).t every other n points.
-,0 = do free boundary equilibrium solution (Default).
-,n = fixed boundary calculation given n boundary points or boundary constraints.
-,"In fixed boundary mode, if successful will write out a x(shot).(time+1) file for free boundary runs using computed flux loop signals."
-,
-IFCURR,"""(Integer flag) Fcoil Currents"". Only used in free boundary equilibrium calculations."
-,1 = fixed F coil currents.
-,0 = variable F-coil currents (Default)
-,Set = 0 in fitting and fixed boundary equilibrium solutions.
-CFCOIL,F coil stabilization constant for fixed boundary option. - = fixed during iterations. Smoothly varying currents or fit boundary closely; more negative implies smoother. (What do positive values mean?) Default = -1.0
-ERRBRY,"""Error Boundary"". Fixed boundary convergence criterion. Default = 10-4"
-FCSUM,"""F-coil Sum"". Identifies which F-coils are included in fitted constraint that the sum of certain F coil currents is equal to zero. Length 18 vector with each entry having 2 possible values"
-,0 = do not include current from this coil in the sum
-,1 = include current from this coil in the sum (default).
-,Ignored unless IFREF = 2.
-FCZERO,"""Fcoil Zero"". Fitting weights for zero F coil currents in fixed boundary option. Set to 10000 for zero. Default = all 1.0's"
-FWTBDRY,"""Fit Weight Boundary"". Fitting weight for boundary points, use with NBDRY. Default = all 1.0's"
-IFREF,For use with fixed boundary equilibrium.
-,1 =determine boundary flux by setting the sum of inner F-coil currents to zero.
-,2 = sum of F-coil currents zero set by array FCSUM.
-,3 = minimize F-coil currents.
-,4 = set boundary flux to PSIBRY.
+﻿Variable, Default, Description
+NBDRY,, "| ""Number Boundary"". This is the parameter which specifies that solution method
+| is to be fixed boundary or free boundary equilibrium mode. Must set ICONVR=3.
+| - n = write out boundary points in S(shot).t every other n points.
+| - 0 = do free boundary equilibrium solution (Default).
+| - n = fixed boundary calculation given n boundary points or boundary constraints.
+| In fixed boundary mode, if successful will write out a x(shot).(time+1) file for free boundary runs using computed flux loop signals."
+IFCURR, ,"| ""(Integer flag) Fcoil Currents"". Only used in free boundary equilibrium calculations.
+| - 1 = fixed F coil currents.
+| - 0 = variable F-coil currents (Default)
+| Set = 0 in fitting and fixed boundary equilibrium solutions."
+CFCOIL, -1.0,"| F coil stabilization constant for fixed boundary option. - = fixed during iterations.
+| Smoothly varying currents or fit boundary closely; more negative implies smoother. (What do positive values mean?)"
+ERRBRY, 1e-4,"""Error Boundary"". Fixed boundary convergence criterion."
+FCSUM, ,"| ""F-coil Sum"". Identifies which F-coils are included in fitted constraint that
+| the sum of certain F coil currents is equal to zero. Length 18 vector with each entry having 2 possible values
+| - 0 = do not include current from this coil in the sum
+| - 1 = include current from this coil in the sum (default).
+| Ignored unless IFREF = 2."
+FCZERO, ,"""Fcoil Zero"". Fitting weights for zero F coil currents in fixed boundary option. Set to 10000 for zero. Default = all 1.0's"
+FWTBDRY, ones(nbdry),"""Fit Weight Boundary"". Fitting weight for boundary points, use with NBDRY."
+IFREF,, "| For use with fixed boundary equilibrium.
+| - 1 = determine boundary flux by setting the sum of inner F-coil currents to zero.
+| - 2 = sum of F-coil currents zero set by array FCSUM.
+| - 3 = minimize F-coil currents.
+| - 4 = set boundary flux to PSIBRY."

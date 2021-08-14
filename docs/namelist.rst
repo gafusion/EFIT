@@ -34,7 +34,7 @@ in bold.
 
 .. csv-table:: IN1 basis functions
    :file: tables/in1_basis.csv
-   :widths: 20, 100
+   :widths: 15,15,70
    :header-rows: 1
 
 IN1 Fitting
@@ -47,7 +47,7 @@ with input mode 5. Values for these variables are typically never entered by the
 
 .. csv-table:: IN1 fitting
    :file: tables/in1_fitting.csv
-   :widths: 20, 100
+   :widths: 15,15,70
    :header-rows: 1
 
 IN1 - Equilibrium
@@ -57,7 +57,7 @@ Variables which have no Defaults (and thus require inputs??) are printed in bold
 
 .. csv-table:: IN1 equilibirum
    :file: tables/in1_equilibrium.csv
-   :widths: 20, 100
+   :widths: 15,15,70
    :header-rows: 1
 
 INWANT
@@ -83,3 +83,5 @@ To turn on toroidal rotation, must set KPRFIT=3 and ICURRT=5 in namelist IN1. If
    :file: tables/invt.csv
    :widths: 20, 100
    :header-rows: 1
+
+and thats the nameslist

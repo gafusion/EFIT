@@ -1,5 +1,8 @@
-﻿ALPHAFP,See namelist IN1.
-ALTERNATE_POINTNAME_FILE,"The pointname file name of PCS data. Default=pcsnames.dat. If USE_ALTERNATE_POINTNAMES <> 0, this file is read."
+﻿Variable, Default, Description
+ALPHAFP,See namelist IN1.
+ALTERNATE_POINTNAME_FILE,"The pointname file name of PCS data.
+| Default=pcsnames.dat.
+| If USE_ALTERNATE_POINTNAMES <> 0, this file is read."
 CALPA,See namelist IN1.
 CGAMA,See namelist IN1.
 CONDIN,See namelist IN1.
