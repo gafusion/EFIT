@@ -86,7 +86,7 @@
 ! NOTE this is only changed so serial/parallel k-files are identical
 ! no changes were made to getpts() only to getpts_mpi() - MK
 !----------------------------------------------------------------------
-!-- read in pointnames ...                                           --
+!--   read in pointnames ...                                         --
 !----------------------------------------------------------------------
       open(unit=60,file=table_di2(1:ltbdi2)//'dprobe.dat', &
            status='old'                                )
@@ -112,8 +112,9 @@
       delno=.04
       delta=.001
       nptt=20
-      do 2 i=1,np
-    2   time(i)=times+delt*(i-1)
+      do i=1,np
+        time(i)=times+delt*(i-1)
+      enddo
       krl01=0
       if (iierr.lt.0) then
         krl01=1
@@ -123,11 +124,12 @@
       i0 = 0
       r1 = 1.
 !----------------------------------------------------------------------
-!--  psi-loops ...                                                   --
+!--   psi-loops ...                                                  --
 !----------------------------------------------------------------------
-      do 10 i=1,nsilop
-        do 5 j=1,np
-   5    silopt(j,i)=0.
+      do i=1,nsilop
+        do j=1,np
+          silopt(j,i)=0.
+        enddo
         ierpsi(i)=0
         call avdata(nshot,lpname(i),i1,ierpsi(i),silopt(1,i), &
                     np,times,delt,i0,r1,i1,psibit(i),iavem,time, &
@@ -135,16 +137,16 @@
                     vrespsi(i),psi_k(i), &
                     t0psi(i),devpsi(1,i),navpsi(1,i),time_err)
         if (ierpsi(i).eq.3) then
-         iierr=1
-         return
+          iierr=1
+          return
         endif
         if (i.eq.iabs(nslref)) then
-        do 7 j=1,np
-        psiref(j)=silopt(j,iabs(nslref))
-        silopt(j,iabs(nslref))=0.0
-    7   continue
+          do j=1,np
+            psiref(j)=silopt(j,iabs(nslref))
+            silopt(j,iabs(nslref))=0.0
+          enddo
         endif
-   10 continue
+      enddo
       ierpsi(iabs(nslref))=0
       rnavpsi=navpsi
 !----------------------------------------------------------------------
@@ -156,8 +158,9 @@
         i=5
       endif
       if(use_alternate_pointnames .eq. 2) i = 5          !***JRF
-      do 25 j=1,np
-   25   pasmat(j)=0.
+      do j=1,np
+        pasmat(j)=0.
+      enddo
       ierpla=0
       call avdata(nshot,nsingl(i),i1,ierpla,pasmat(1), &
                   np,times,delt,i0,r1,i1,bitip,iavem,time,ircfact, &
@@ -172,15 +175,17 @@
       endif
 !
       i=2
-      do 30 j=1,np
-   30   vloopt(j)=0.
+      do j=1,np
+        vloopt(j)=0.
+      enddo
       ierlop=0
       call avdata(nshot,nsingl(i),i1,ierlop,vloopt(1), &
                   np,times,delt,i0,r1,i1,bitvl,iavev,time,ircfact, &
                   do_spline_fit,vl_rc,vlrcg,vresvl,vl_k,t0vl,devvl(1), &
                   navvl(1),time_err)
-      do 32 j=1,np
-   32   vloopt(j)=vloopt(j)
+      do j=1,np
+        vloopt(j)=vloopt(j)
+      enddo
 !
       if(use_alternate_pointnames .eq. 2) then    !JRF
          do j=1,np
@@ -190,7 +195,7 @@
          enddo
       endif
 !---------------------------------------------------------------------
-!-- Get density array from PTDATA or MDS+                           --
+!--   Get density array from PTDATA or MDS+                         --
 !---------------------------------------------------------------------
       denvt = 0.0
       denrt = 0.0
@@ -202,9 +207,9 @@
                     do_spline_fit,denv_rc(i),denvrcg(i),vresdenv(i), &
                     denv_k(i),t0denv(i),devdenv(1,i),navdenv(1,i),time_err)
         if (ierlop.eq.0) then
-        do 38 j=1,np
-          denvt(j,i)=denvt(j,i)*50.0
-   38   continue
+          do j=1,np
+            denvt(j,i)=denvt(j,i)*50.0
+          enddo
         endif
       enddo
       do i=1,2
@@ -214,14 +219,14 @@
                     do_spline_fit,denr_rc(i),denrrcg(i),vresdenr(i), &
                     denr_k(i),t0denr(i),devdenr(1,i),navdenr(1,i),time_err)
         if (ierlop.eq.0) then
-        do 43 j=1,np
-          denrt(j,i)=denrt(j,i)*50.0
-   43   continue
+          do j=1,np
+            denrt(j,i)=denrt(j,i)*50.0
+          enddo
         endif
       enddo
-      else
+      else ! nshot.ge.124411
 !---------------------------------------------------------------------
-!-- Get density array from MDS+                                     --
+!--   Get density array from MDS+                                   --
 !---------------------------------------------------------------------
       do i=1,3
         ierlop=0
@@ -229,9 +234,9 @@
                     np,times,delt,i0,r1,i1,bitvl,iaved,time,ircfact, &
                     do_spline_fit)
         if (ierlop.eq.0) then
-        do j=1,np
-          denvt(j,i)=denvt(j,i)*50.0
-        enddo
+          do j=1,np
+            denvt(j,i)=denvt(j,i)*50.0
+          enddo
         endif
       enddo
       do i=1,1
@@ -240,9 +245,9 @@
                     np,times,delt,i0,r1,i1,bitvl,iaved,time,ircfact, &
                     do_spline_fit)
         if (ierlop.eq.0) then
-        do j=1,np
-          denrt(j,i)=denrt(j,i)*50.0
-        enddo
+          do j=1,np
+            denrt(j,i)=denrt(j,i)*50.0
+          enddo
         endif
       enddo
       do i=2,2
@@ -252,46 +257,51 @@
                     do_spline_fit,denr_rc(i),denrrcg(i),vresdenr(i), &
                     denr_k(i),t0denr(i),devdenr(1,i),navdenr(1,i),time_err)
         if (ierlop.eq.0) then
-        do j=1,np
-          denrt(j,i)=denrt(j,i)*50.0
-        enddo
+          do j=1,np
+            denrt(j,i)=denrt(j,i)*50.0
+          enddo
         endif
       enddo
-      endif
+      endif ! nshot.ge.124411
 !----------------------------------------------------------------------
-!-- 67-degree magnetic probes ...                                    --
+!--   67-degree magnetic probes ...                                  --
 !----------------------------------------------------------------------
-      do 65 i=1,magpri
-        do 62 j=1,np
-   62   expmpi(j,i)=0.
+      do i=1,magpri
+        do j=1,np
+          expmpi(j,i)=0.
+        enddo
         iermpi(i)=0
         sclmp=1.0
         call avdata(nshot,mpnam2(i),i1,iermpi(i),expmpi(1,i), &
                     np,times,delt,i0,sclmp,i1,bitmpi(i),iavem,time,ircfact, &
                     do_spline_fit,xmp_rc(i),xmprcg(i),vresxmp(i),xmp_k(i), &
                     t0xmp(i), devxmp(1,i),navxmp(1,i),time_err)
-   65 continue
+      enddo
       rnavxmp = navxmp
 !--------------------------------------------------------------------
-!--      New BT compensations for magnetic probes and flux loops   --
+!--   New BT compensations for magnetic probes and flux loops      --
 !--------------------------------------------------------------------
       if (ibtcomp.gt.0) then
       open(unit=60,file=input_dir(1:lindir)//'btcomp.dat', &
-           status='old'                                )
-31000 read (60,*,err=31000,end=32000) ibtcshot, btcname  !EJS(2014)
+           status='old')
+!     TODO: This code could be problematic... its intentions should be
+!           checked
+!31000 read (60,*,err=31000,end=32000) ibtcshot, btcname  !EJS(2014)
+31000 read (60,*,end=32000) ibtcshot, btcname  !EJS(2014)
 
       if (nshot.ge.ibtcshot) then
-        do 29 j=1,np
-29        bti322(j)=0.
+        do j=1,np
+          bti322(j)=0.
+        enddo
         ierbtc=0
         call avdata(nshot,btcname,i1,ierbtc,bti322(1), &
                     np,times,delt,i0,r1,i1,bitbt,iavem,time,ircfact, &
                     do_spline_fit,bt_rc,btrcg,vresbt,bt_k,t0bt,devbt(1), &
                     navbt(1),time_err)
         if (ierbtc.ne.0) then
-          do 291 j=1,np
+          do j=1,np
             bti322(j)=0.0
-291       continue
+          enddo
           go to 32000
         endif
 31200   read (60,*,err=32000,end=32000) namedum,dumbtc
@@ -376,14 +386,13 @@
 
       enddo
 !----------------------------------------------- end of new section - EJS(2014)
-
-
       if (nshot.ge.ibtcshot) then
 !----------------------------------------------------------------------
-!--  n1 Coil Current                                                 --
+!--     n1 Coil Current                                              --
 !----------------------------------------------------------------------
-        do 27 j=1,np
-   27     curtn1(j)=0.
+        do j=1,np
+          curtn1(j)=0.
+        enddo
         if (n1coil.gt.0) then
           iern1=0
           call avdata(nshot,n1name,i1,iern1,curtn1(1), &
@@ -391,13 +400,13 @@
                       do_spline_fit,xn1_rc,xn1rcg,vresxn1,xn1_k, &
                       t0xn1,devxn1(1),navxn1(1),time_err)
           if (iern1.ne.0) then
-           do 28 j=1,np
+           do j=1,np
             curtn1(j)=0.0
-   28      continue
+           enddo
           endif
         endif
 !----------------------------------------------------------------------
-!--  C Coil Current                                                  --
+!--     C Coil Current                                               --
 !----------------------------------------------------------------------
         if (nccoil.gt.0.and.nshot.ge.83350) then
          do k=1,nccomp      !EJS(2014)
@@ -633,34 +642,35 @@
       endif
       rnavbc=navbc
 !----------------------------------------------------------------------
-!--  correct sign of toroidal magnetic field to be consistent with   --
-!--  the actual sign consistent with a right-handed cylindrical      --
-!--  coordinate system                01/09/86                       --
+!--   correct sign of toroidal magnetic field to be consistent with  --
+!--   the actual sign consistent with a right-handed cylindrical     --
+!--   coordinate system                01/09/86                      --
 !----------------------------------------------------------------------
-      do 70 i=1,np
+      do i=1,np
         bcentr(i)=bcentr(i)*tmu/rcentr*144.
-   70 continue
-      do 80 i=1,nfcoil
-        do 75 j=1,np
-   75   fccurt(j,i)=0.
+      enddo
+      do i=1,nfcoil
+        do j=1,np
+          fccurt(j,i)=0.
+        enddo
         sclmp=1.0
         call avdata(nshot,fcname(i),i1,ierfc(i),fccurt(1,i), &
                     np,times,delt,i0,sclmp,i1,bitfc(i),iavem,time,ircfact, &
                     do_spline_fit,fc_rc(i),fcrcg(i),vresfc(i),fc_k(i),t0fc(i), &
                     devfc(1,i),navfc(1,i),time_err)
-        do 77 j=1,np
-        fccurt(j,i)=fccurt(j,i)*turnfc(i)
-        devfc(j,i) =devfc(j,i)*turnfc(i)
-   77 continue
-      bitfc(i) =bitfc(i)*turnfc(i)
-      fc_k(i)  =fc_k(i)*turnfc(i)
-   80 continue
+        do j=1,np
+          fccurt(j,i)=fccurt(j,i)*turnfc(i)
+          devfc(j,i) =devfc(j,i)*turnfc(i)
+        enddo
+        bitfc(i) =bitfc(i)*turnfc(i)
+        fc_k(i)  =fc_k(i)*turnfc(i)
+      enddo
       rnavfc = navfc
 !----------------------------------------------------------------
-!--  New E-coil connection after discharge 85700, LLao 95/07/11--
+!--   New E-coil connection after discharge 85700              --
 !----------------------------------------------------------------
-      do 90 i=1,nesum
-        if (nshot.le.85700.and.i.gt.2) go to 83
+      do i=1,nesum
+        if (nshot.le.85700.and.i.gt.2) cycle
         call avdata(nshot,ecname(i),i1,ierec(i),eccurt(1,i), &
                     np,times,delt,i0,r1,i1,bitec(i),iavem,time,ircfact, &
                     do_spline_fit,e_rc(i),ercg(i),vrese(i),e_k(i),t0e(i), &
@@ -680,8 +690,7 @@
           iierr = 1
           return
         endif
-   83   continue
-   90 continue
+      enddo
       if (nshot.le.85700) then
           do j=1,np
             eccurt(j,3)=eccurt(j,1)
@@ -692,18 +701,18 @@
       endif
       rnavec=navec
 !----------------------------------------------------------------------
-!--  uncompensated diamagnetic flux if compensated not available     --
+!--   uncompensated diamagnetic flux if compensated not available    --
 !----------------------------------------------------------------------
       if (kcaldia.eq.0) then
-      call avdiam(nshot,nsingl(4),i1,ierrdi,diamag(1), &
+        call avdiam(nshot,nsingl(4),i1,ierrdi,diamag(1), &
                   np,times,delt,i0,r1,i1,bitdia,iavem,time, &
                   sigdia,ierdia)
-      if (ierdia(2).gt.0.and.ierdia(3).gt.0) then
-        call avdata(nshot,nsingl(4),i1,ierrdi,diamag(1), &
+        if (ierdia(2).gt.0.and.ierdia(3).gt.0) then
+          call avdata(nshot,nsingl(4),i1,ierrdi,diamag(1), &
                     np,times,delt,i0,r1,i1,bitdia,iavem,time,ircfact, &
                     do_spline_fit,diam_rc,diamrcg,vresdiam,diam_k, &
                     t0diam,devdiam(1),navdiam(1),time_err)
-      endif
+        endif
       endif
       if (kcaldia.eq.1) then
         call avdata(nshot,nsingl(4),i1,ierrdi,diamag(1), &
@@ -716,20 +725,20 @@
         sigdia(i)=1.0e-03*abs(sigdia(i))
       enddo
 !------------------------------------------------------------------------
-!--  get beam power                                                    --
+!--   get beam power                                                   --
 !------------------------------------------------------------------------
       if (nshot.ge.53427) then
-      call apdata(nshot,nsingl(6),i1,ierbim,pbinj(1), &
+        call apdata(nshot,nsingl(6),i1,ierbim,pbinj(1), &
                   np,times,delt,i0,r1,i1,bitbim,iavem,time, &
                   do_spline_fit,beam_rc,beamrcg,vresbeam,beam_k, &
                   t0beam,devbeam(1),navbeam(1))
-      do 150 i=1,np
-        if (ierbim.ne.0) then
-          pbinj(i)=0.0
-        else
-          pbinj(i)=pbinj(i)*1.e+03
-        endif
-  150 continue
+        do i=1,np
+          if (ierbim.ne.0) then
+            pbinj(i)=0.0
+          else
+            pbinj(i)=pbinj(i)*1.e+03
+          endif
+        enddo
       endif
 !
       return
@@ -814,9 +823,9 @@
       times=timesd
       xx=xxd
       ierror=1
-      if (iaveus.gt.0) go to 1000
+      if (iaveus.le.0) then
 !----------------------------------------------------------------------
-!-- milli-second averaging                                           --
+!--   milli-second averaging                                         --
 !----------------------------------------------------------------------
       dtmin=0.001001
       dtmin= min (dtmin,delt)
@@ -853,7 +862,7 @@
 !
   100 continue
 !------------------------------------------------------------------------
-!-- Check valid range of time-slice data                           --
+!--   Check valid range of time-slice data                             --
 !------------------------------------------------------------------------
       ktime_err = 0
       nnp = np
@@ -887,12 +896,11 @@
 !
       if (do_spline_fit) then       !JRF
          call zplines(npn,xw,w,bw,cw,dw)
-         do 200 i=1,nnp
+         do i=1,nnp
              timenow=time(i)
              ynow=sevals(npn,timenow,xw,w,bw,cw,dw)
              y(i)=ynow
-  200    continue
-
+         enddo
       else
          do i=1,nnp
             timenow=time(i)
@@ -914,9 +922,9 @@
 !
       return
 !
- 1000 continue
+      endif ! iaveus.le.0
 !--------------------------------------------------------------------------
-!--  averaging in micro-seconds                                          --
+!--   averaging in micro-seconds                                         --
 !--------------------------------------------------------------------------
       dtmin=0.000001
       mave = iabs(iaveus)
@@ -929,7 +937,7 @@
         bitvl=0.0
         if(name .ne. 'NONE      ') then
            call getdat_e &
-        (nshot,name,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfact, &
+           (nshot,name,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfact, &
            rcxx,rcgxx,vbitxx,zinhnoxx,t0xx)
            bitvld=bitvl
            rcx=rcxx
@@ -937,7 +945,7 @@
            vbitx=vbitxx
            zinhnox=zinhnoxx
            t0x=t0xx
-         if((ierror .eq. -6).or.(ierror .eq. -7)) ierror = 0
+           if((ierror .eq. -6).or.(ierror .eq. -7)) ierror = 0
         else
            ierror = 1
         endif
@@ -949,44 +957,42 @@
 !
  1100 continue
 !------------------------------------------------------------------------
-!--     Check valid range of time-slice data                           --
+!--   Check valid range of time-slice data                           --
 !------------------------------------------------------------------------
-        ktime_err = 0
-        nnp = np
-        nvtime = -1
-        if (time(1) .lt. xw(1)) then
-           ktime_err = 1
-        endif
-        if ((ktime_err .eq. 0) .and. (time(np) .gt. xw(npn))) then
-           nvtime = 1
-           nnp = 0
-           do i = 1, np
-              if (time(i) .le. xw(npn)) then
-                 nnp = i
-              else
-                 vtime(nvtime) = time(i)*1000.0
-                 nvtime = nvtime+1
-                 ktime_err = 1
-              endif
-           enddo
-           if (nnp .eq. 0) nvtime = -1
-        endif
-        if (nnp .eq. 0) ktime_err = 1
-        if (ktime_err .eq. 1) then
-           ierror=1
-           return
-        endif
-        if (mave .ne. 0) then
-                dtave = mave*dtmin*2.
-                call smoothit2(xw,w,npn,dtave,stdevxx,navx)
-        endif
+      ktime_err = 0
+      nnp = np
+      nvtime = -1
+      if (time(1) .lt. xw(1)) ktime_err = 1
+      if ((ktime_err .eq. 0) .and. (time(np) .gt. xw(npn))) then
+         nvtime = 1
+         nnp = 0
+         do i = 1, np
+            if (time(i) .le. xw(npn)) then
+               nnp = i
+            else
+               vtime(nvtime) = time(i)*1000.0
+               nvtime = nvtime+1
+               ktime_err = 1
+            endif
+         enddo
+         if (nnp .eq. 0) nvtime = -1
+      endif
+      if (nnp .eq. 0) ktime_err = 1
+      if (ktime_err .eq. 1) then
+         ierror=1
+         return
+      endif
+      if (mave .ne. 0) then
+         dtave = mave*dtmin*2.
+         call smoothit2(xw,w,npn,dtave,stdevxx,navx)
+      endif
 !
       if (do_spline_fit) then !JRF
          call zplines(npn,xw,w,bw,cw,dw)
          do i=1,nnp
-             timenow=time(i)
-             ynow=sevals(npn,timenow,xw,w,bw,cw,dw)
-             y(i)=ynow
+            timenow=time(i)
+            ynow=sevals(npn,timenow,xw,w,bw,cw,dw)
+            y(i)=ynow
          enddo
       else
          do i=1,nnp
@@ -994,7 +1000,7 @@
             delta_min = 1.0e30
             do j = 1,npn
                delta = abs(xw(j) - timenow)
-               if(delta .lt. delta_min) then
+               if (delta .lt. delta_min) then
                   j_save = j
                   delta_min = delta
                endif
@@ -1004,7 +1010,6 @@
 !            write(6,999) xw(j_save),name
          enddo
       endif
-
 !
       return
       end
@@ -1070,11 +1075,11 @@
       ierror=0
       if (name .eq. 'NONE      ') return !JRF
 !----------------------------------------------------------------------
-!-- Get data from MDS+                                               --
+!--   Get data from MDS+                                             --
 !----------------------------------------------------------------------
       lenname = 0
       do i=1,len(name)
-       if (name(i:i).ne.' ') lenname=lenname+1
+        if (name(i:i).ne.' ') lenname=lenname+1
       enddo
       status= MdsConnect('atlas'//char(0))
       if (status.eq.-1) then
@@ -1097,12 +1102,10 @@
         return
       endif
 
-
 !----------------------------------------------
-! 20140905 tbt Getting with pgf90 14.6:
+!     20140905 tbt Getting with pgf90 14.6:
 !       0: ALLOCATE: array already allocated
 !       Putting in check and deallocation
-
       If (allocated(yw)) Deallocate(yw)
       If (allocated(xw)) Deallocate(xw)
       If (allocated(bw)) Deallocate(bw)
@@ -1110,7 +1113,6 @@
       If (allocated(dw)) Deallocate(dw)
       If (allocated(ew)) Deallocate(ew)
 !----------------------------------------------
-
       allocate(yw(1:mylen),stat=errallot)
       allocate(xw(1:mylen),stat=errallot)
       allocate(bw(1:mylen),stat=errallot)
@@ -1138,13 +1140,12 @@
 !
       mave = iabs(kave)
       if (ierror .gt. 0) return
-      if (mylen.ge.2) go to 100
-      ierror = 1
-      return
-!
-  100 continue
+      if (mylen.lt.2) then
+        ierror = 1
+        return
+      endif
 !------------------------------------------------------------------------
-!-- Check valid range of time-slice data                           --
+!--   Check valid range of time-slice data                             --
 !------------------------------------------------------------------------
       ktime_err = 0
       nnp = np
@@ -1167,11 +1168,11 @@
       !
       if (do_spline_fit) then       !JRF
         call zplines(npn,xw,yw,bw,cw,dw)
-        do 200 i=1,nnp
+        do i=1,nnp
           timenow=time(i)
           ynow=sevals(npn,timenow,xw,yw,bw,cw,dw)
           y(i)=ynow
-200     continue
+        enddo
       else
         do i=1,nnp
           timenow=time(i)
@@ -1296,10 +1297,10 @@
       ierror = 1
       return
 !
-  100   continue
-  !------------------------------------------------------------------------
-  !--     Check valid range of time-slice data                           --
-  !------------------------------------------------------------------------
+  100 continue
+!------------------------------------------------------------------------
+!--   Check valid range of time-slice data                             --
+!------------------------------------------------------------------------
       ktime_err = 0
       nnp = np
       if (time(1) .lt. xw(1)) ktime_err = 1
@@ -1321,11 +1322,11 @@
       !
       if (do_spline_fit) then       !JRF
         call zplines(npn,xw,w,bw,cw,dw)
-        do 200 i=1,nnp
+        do i=1,nnp
           timenow=time(i)
           ynow=sevals(npn,timenow,xw,w,bw,cw,dw)
           y(i)=ynow
-200     continue
+        enddo
       else
         do i=1,nnp
           timenow=time(i)
@@ -1380,7 +1381,7 @@
       logical errzts(ntims)
       integer*4 iishot,kktime
 !-----------------------------------------------------------------------
-!-- Get edge pedestal tanh paramters                                  --
+!--   Get edge pedestal tanh paramters                                --
 !-----------------------------------------------------------------------
       if (fitzts.eq.'te') then
         ztsfit='TE'
@@ -1466,7 +1467,7 @@
         return
       endif
 !------------------------------------------------------------------
-!-- average data over mave ms                                    --
+!--   average data over mave ms                                  --
 !------------------------------------------------------------------
       if (mave.ne.0) then
         dtave=mave*dtmin*2.
@@ -1474,19 +1475,20 @@
       endif
 !
       call zplines(npn,xw,w,bw,cw,dw)
-      do 200 i=1,np
+      do i=1,np
           timenow=time(i)
           ynow=sevals(npn,timenow,xw,w,bw,cw,dw)
           y(i)=ynow
-  200 continue
+      enddo
       call zplines(npn,xw,ew,bw,cw,dw)
-      do 220 i=1,np
+      do i=1,np
           timenow=time(i)
           ynow   =sevals(npn,timenow,xw,ew,bw,cw,dw)
           sigmay(i)=ynow
-  220 continue
+      enddo
       return
       end
+
 
 !**********************************************************************
 !>
@@ -1505,75 +1507,76 @@
       dimension y(1)
 !
       if (nave.eq.0) return
-      if (nave.lt.0) go to 200
+      if (nave.ge.0) then
 !---------------------------------------------------------------------
-!-- uniform averaging                                               --
+!--     uniform averaging                                           --
 !---------------------------------------------------------------------
-      imax=npts-nave
-      ym=y(1)
-      do 10 m=1,npts
-        jb=m-nave
-        if (m.le.nave) jb=m
-        je=m+nave
-        if (m.gt.imax) je=m
-        nt=0
-        ynew=0.0
-        do 5 j=jb,je
-        nt=nt+1
-        ynew=ynew+y(j)
-    5   continue
-        yave(m)=ynew/nt
-   10 continue
-      do 20 m=1,npts
-        y(m)=yave(m)
-   20 continue
-      return
-  200 continue
+        imax=npts-nave
+        ym=y(1)
+        do m=1,npts
+          jb=m-nave
+          if (m.le.nave) jb=m
+          je=m+nave
+          if (m.gt.imax) je=m
+          nt=0
+          ynew=0.0
+          do j=jb,je
+            nt=nt+1
+            ynew=ynew+y(j)
+          enddo
+          yave(m)=ynew/nt
+        enddo
+        do m=1,npts
+          y(m)=yave(m)
+        enddo
+        return
+      endif
 !----------------------------------------------------------------------
-!--  non-uniform weighted average                                    --
+!--   non-uniform weighted average                                   --
 !----------------------------------------------------------------------
       nnave=iabs(nave)
       if (npts.lt.2*nnave+1) return
-      do 320 m=1,nnave
-      yave(m)=0.0
-      sum=0.0
-      do 300 i=1,nnave+1
-        sumx=nnave-i+2
-        sum=sum+sumx
-        yave(m)=yave(m)+y(i+m-1)*sumx
-  300 continue
-      yave(m)=yave(m)/sum
-  320 continue
-      do 400 m=nnave+1,npts-nnave
-        sum=0.0
+      do m=1,nnave
         yave(m)=0.0
-        do 330 i=1,nnave+1
+        sum=0.0
+        do i=1,nnave+1
           sumx=nnave-i+2
           sum=sum+sumx
           yave(m)=yave(m)+y(i+m-1)*sumx
-  330   continue
-        do 340 i=1,nnave
+        enddo
+        yave(m)=yave(m)/sum
+      enddo
+      do m=nnave+1,npts-nnave
+        sum=0.0
+        yave(m)=0.0
+        do i=1,nnave+1
+          sumx=nnave-i+2
+          sum=sum+sumx
+          yave(m)=yave(m)+y(i+m-1)*sumx
+        enddo
+        do i=1,nnave
           sumx=nnave-i+1
           sum=sum+sumx
           yave(m)=yave(m)+y(m-i)*sumx
-  340   continue
+        enddo
         yave(m)=yave(m)/sum
-  400 continue
-      do 500 m=npts-nnave+1,npts
+      enddo
+      do m=npts-nnave+1,npts
         sum=0.0
         yave(m)=0.0
-        do 440 i=1,nnave+1
+        do i=1,nnave+1
           sumx=nnave-i+2
           sum=sum+sumx
           yave(m)=yave(m)+y(m-i+1)*sumx
-  440   continue
+        enddo
         yave(m)=yave(m)/sum
-  500 continue
-      do 600 m=1,npts
+      enddo
+      do m=1,npts
         y(m)=yave(m)
-  600 continue
+      enddo
       return
       end
+
 
 !**********************************************************************
 !>
@@ -1680,6 +1683,7 @@
         return
       end
 
+
 !**********************************************************************
 !>
 !!    the coefficients b(i), c(i), and d(i), i=1,2,...,n are computed
@@ -1710,65 +1714,67 @@
 !
       nm1 = n-1
       if ( n .lt. 2 ) return
-      if ( n .lt. 3 ) go to 50
+      if ( n .ge. 3 ) then
 !
-!  set up tridiagonal system
+!     set up tridiagonal system
 !
-!  b = diagonal, d = offdiagonal, c = right hand side.
+!     b = diagonal, d = offdiagonal, c = right hand side.
 !
       d(1) = x(2) - x(1)
       c(2) = (y(2) - y(1))/d(1)
-      do 10 i = 2, nm1
+      do i = 2, nm1
          d(i) = x(i+1) - x(i)
          b(i) = 2.*(d(i-1) + d(i))
          c(i+1) = (y(i+1) - y(i))/d(i)
          c(i) = c(i+1) - c(i)
-   10 continue
+      enddo
 !
-!  end conditions.  third derivatives at  x(1)  and  x(n)
-!  obtained from divided differences
+!     end conditions.  third derivatives at  x(1)  and  x(n)
+!     obtained from divided differences
 !
       b(1) = -d(1)
       b(n) = -d(n-1)
       c(1) = 0.
       c(n) = 0.
-      if ( n .eq. 3 ) go to 15
-      c(1) = c(3)/(x(4)-x(2)) - c(2)/(x(3)-x(1))
-      c(n) = c(n-1)/(x(n)-x(n-2)) - c(n-2)/(x(n-1)-x(n-3))
-      c(1) = c(1)*d(1)**2/(x(4)-x(1))
-      c(n) = -c(n)*d(n-1)**2/(x(n)-x(n-3))
+      if ( n .ne. 3 ) then
+         c(1) = c(3)/(x(4)-x(2)) - c(2)/(x(3)-x(1))
+         c(n) = c(n-1)/(x(n)-x(n-2)) - c(n-2)/(x(n-1)-x(n-3))
+         c(1) = c(1)*d(1)**2/(x(4)-x(1))
+         c(n) = -c(n)*d(n-1)**2/(x(n)-x(n-3))
+      endif
 !
-!  forward elimination
+!     forward elimination
 !
-   15 do 20 i = 2, n
+      do i = 2, n
          t = d(i-1)/b(i-1)
          b(i) = b(i) - t*d(i-1)
          c(i) = c(i) - t*c(i-1)
-   20 continue
+      enddo
 !
-!  back substitution
+!     back substitution
 !
       c(n) = c(n)/b(n)
-      do 30 ib = 1, nm1
+      do ib = 1, nm1
          i = n-ib
          c(i) = (c(i) - d(i)*c(i+1))/b(i)
-   30 continue
+      enddo
 !
-!  c(i) is now the sigma(i) of the text
+!     c(i) is now the sigma(i) of the text
 !
-!  compute polynomial coefficients
+!     compute polynomial coefficients
 !
       b(n) = (y(n) - y(nm1))/d(nm1) + d(nm1)*(c(nm1) + 2.*c(n))
-      do 40 i = 1, nm1
+      do i = 1, nm1
          b(i) = (y(i+1) - y(i))/d(i) - d(i)*(c(i+1) + 2.*c(i))
          d(i) = (c(i+1) - c(i))/d(i)
          c(i) = 3.*c(i)
-   40 continue
+      enddo
       c(n) = 3.*c(n)
       d(n) = d(n-1)
       return
 !
-   50 b(1) = (y(2)-y(1))/(x(2)-x(1))
+      endif ! n .ge. 3
+      b(1) = (y(2)-y(1))/(x(2)-x(1))
       c(1) = 0.
       d(1) = 0.
       b(2) = b(1)
@@ -1776,6 +1782,7 @@
       d(2) = 0.
       return
       end
+
 
 !**********************************************************************
 !>
@@ -1813,21 +1820,21 @@
       real dx
       data i/1/
       if ( i .ge. n ) i = 1
-      if ( u .lt. x(i) ) go to 10
-      if ( u .le. x(i+1) ) go to 30
 !
 !  binary search
 !
-   10 i = 1
-      j = n+1
-   20 k = (i+j)/2
-      if ( u .lt. x(k) ) j = k
-      if ( u .ge. x(k) ) i = k
-      if ( j .gt. i+1 ) go to 20
+      if (( u .lt. x(i) ) .or. ( u .gt. x(i+1) )) then
+        i = 1
+        j = n+1
+   20   k = (i+j)/2
+        if ( u .lt. x(k) ) j = k
+        if ( u .ge. x(k) ) i = k
+        if ( j .gt. i+1 ) go to 20
+      endif
 !
 !  evaluate spline
 !
-   30 dx = u - x(i)
+      dx = u - x(i)
       sevals= y(i) + dx*(b(i) + dx*(c(i) + dx*d(i)))
       return
       end
@@ -1888,7 +1895,7 @@
 !!    @param jtimex :
 !!
 !!    @param gradsmpx : Grad(S) of magnetic probe \n 
- !!    s   = BR cost + BZ sint
+!!    s   = BR cost + BZ sint
 !!
 !!    @param gradsflx : Grad(S) of flux loop
 !!
@@ -1915,8 +1922,8 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!  include 'ecomdu1.f90'
-!  include 'ecomdu2.f90'
+!      include 'ecomdu1.f90'
+!      include 'ecomdu2.f90'
 !
       dimension sigmafx(1),sigmabx(1)
       dimension sigmaex(1)
@@ -1926,7 +1933,6 @@
       !-----
       ! LOCAL VARIABLES
       !-----
-
       dimension dd(8)
       !vas equivalence  (dd(1), dpol) ,
       !vas 1  (dd(2), drdp) ,
@@ -1962,12 +1968,9 @@
       real*8 :: sigmp(magpri),sigfl(nsilop),sigfc(nfcoil),sige(nesum)
       real*8 :: maskpol(magpri),maskrdp(magpri),maskff(nsilop), &
                 maskinf(nsilop),maskoutf(nsilop),maskvv(nsilop)
-!-----
-! MASKS FOR SUBSETS WITHIN ARRAYS
-!-----
-
-
-      
+      !-----
+      ! MASKS FOR SUBSETS WITHIN ARRAYS
+      !-----
 !-- poloidal array probes
       maskpol = (/ 60*1., 16*0./)
 !-- RDP probes
@@ -1981,9 +1984,9 @@
                      7*0., 1., 0., 1., 7*0., 1., 0., 1., 6*0./)
 !-- vacuum vessel flux loops
       maskvv=(/18*0.,7*1.,0., 1., 0., 7*1., 0., 1.,0.,6*1./)
-!-----
-! INITIALIZE ARRAYS
-!-----
+      !-----
+      ! INITIALIZE ARRAYS
+      !-----
       sigmp = (/ (0., i=1, magpri) /)
       sigfl = (/ (0., i=1, nsilop) /)
       sigfc = (/ (0., i=1, nfcoil) /)
@@ -1999,7 +2002,7 @@
         !-------------------------------------------------------------------------
         !***** (1) LOOP CALIBRATION
         !-------------------------------------------------------------------------
-1       dd = (/.0019, .0019, 0., 0., 0., .0017, .0017, .003/)
+        dd = (/.0019, .0019, 0., 0., 0., .0017, .0017, .003/)
         !-------------------------------------------------------------------------
         sigmp = sigmp + ( expmpi(jtimex,:) * dpol )**2
         sigfl = sigfl + 0
@@ -2014,7 +2017,7 @@
         !-------------------------------------------------------------------------
         !***** (2) LOOP CALIBRATION: LONG-TERM
         !-------------------------------------------------------------------------
-2       dd = (/.002, .002, 0., 0., 0., .003, .003, .006/)
+        dd = (/.002, .002, 0., 0., 0., .003, .003, .006/)
         !-------------------------------------------------------------------------
         sigmp = sigmp + ( expmpi(jtimex,:) * dpol )**2
         sigfl = sigfl + 0
@@ -2029,7 +2032,7 @@
         !-------------------------------------------------------------------------
         !***** (3) INTEGRATOR CALIBRATION
         !-------------------------------------------------------------------------
-3       dd = (/.0013, .0013, .0013, .0013, .0013, .0013, .0013, .0013/)
+        dd = (/.0013, .0013, .0013, .0013, .0013, .0013, .0013, .0013/)
         !-------------------------------------------------------------------------
         sigmp = sigmp + ( expmpi(jtimex,:) * dpol )**2
         sigfl = sigfl + ( silopt(jtimex,:) * dfl  )**2
@@ -2045,7 +2048,7 @@
         !-------------------------------------------------------------------------
         !***** (4) INTEGRATOR CAL.: LONG-TERM
         !-------------------------------------------------------------------------
-4       dd = (/.0017, .0017, .0017, .0017, .0017, .0017, .0017, .0017/)
+        dd = (/.0017, .0017, .0017, .0017, .0017, .0017, .0017, .0017/)
         !-------------------------------------------------------------------------
         sigmp = sigmp + ( expmpi(jtimex,:) * dpol )**2
         sigfl = sigfl + ( silopt(jtimex,:) * dfl  )**2
@@ -2060,7 +2063,7 @@
         !-------------------------------------------------------------------------
         !***** (5) INTEGRATOR DRIFT
         !-------------------------------------------------------------------------
-5       dd = (/.0007, .0007, .0007, .0007, .0007, .0022, .0007, .0007/)
+        dd = (/.0007, .0007, .0007, .0007, .0007, .0022, .0007, .0007/)
         !-------------------------------------------------------------------------
         sigmp = sigmp + (xmp_k  *xmprcg /vresxmp * (timex - t0xmp) &
           * dpol )**2
@@ -2081,7 +2084,7 @@
         !-------------------------------------------------------------------------
         !***** (6) LOOP POSITION
         !-------------------------------------------------------------------------
-6       dd = (/.0020, .0020, .0030, .0045, .0020, 0., 0., 0./)
+        dd = (/.0020, .0020, .0030, .0045, .0020, 0., 0., 0./)
         !-------------------------------------------------------------------------
         !vas f90 modifi
         !vas sigmp = sigmp + ( gradsmp(jtimex,:) *
@@ -2103,7 +2106,7 @@
         !-------------------------------------------------------------------------
         !***** (7) LOOP TILT ANGLE - revised
         !-------------------------------------------------------------------------
-7       dd = (/.017, .017, 0., 0., 0., 0., 0., 0./)
+        dd = (/.017, .017, 0., 0., 0., 0., 0., 0./)
         !-------------------------------------------------------------------------
         sigmp = sigmp + ( bpermp(jtimex,:) * dpol )**2
         sigfl = sigfl + 0
@@ -2118,7 +2121,7 @@
         !-------------------------------------------------------------------------
         !***** (8) BT PICKUP
         !-------------------------------------------------------------------------
-8       dd = (/.003, .003, .00044, .00044, .00044, 0., 0., 1.3e4/)
+        dd = (/.003, .003, .00044, .00044, .00044, 0., 0., 1.3e4/)
         !-------------------------------------------------------------------------
         sigmp = sigmp + ( bti322(jtimex) * dpol )**2
         sigfl = sigfl + ( bti322(jtimex) * dfl  )**2
@@ -2133,7 +2136,7 @@
         !-------------------------------------------------------------------------
         !**** (9a) C79 PICKUP
         !-------------------------------------------------------------------------
-9       dd  = (/2.3e-08,  1.4e-08,  5.1e-08,  5.1e-08, &
+        dd  = (/2.3e-08,  1.4e-08,  5.1e-08,  5.1e-08, &
           3.6e-08, 0., 0., 0./)
         !-------------------------------------------------------------------------
         !vas f90 modifi
@@ -2176,7 +2179,7 @@
         !-------------------------------------------------------------------------
         !***** (10) BP PICKUP IN LEADS
         !-------------------------------------------------------------------------
-10      dd = (/.00016,  .00016,  0.,  0., .00016, 0., 0., 0./)
+        dd = (/.00016,  .00016,  0.,  0., .00016, 0., 0., 0./)
         !-------------------------------------------------------------------------
         Brleads = 0.
         sigmp = sigmp + ( Brleads *xmp_k  * dpol )**2
@@ -2193,7 +2196,7 @@
         !-------------------------------------------------------------------------
         !***** (11) BP PICKUP IN PORT
         !-------------------------------------------------------------------------
-11      dd = (/.0002,  .0002,  0., 0., .0002, 0., 0., 0./)
+        dd = (/.0002,  .0002,  0., 0., .0002, 0., 0., 0./)
         !-------------------------------------------------------------------------
         Bport = 0.
         sigmp = sigmp + ( Bport *xmp_k  * dpol )**2
@@ -2210,7 +2213,7 @@
         !-------------------------------------------------------------------------
         !***** (12) DETECTOR NONLINEARITY
         !-------------------------------------------------------------------------
-12      dd = (/.0025, .0025, 0., 0., 0., 0., 0., 0./)
+        dd = (/.0025, .0025, 0., 0., 0., 0., 0., 0./)
         !-------------------------------------------------------------------------
         if (abs(bcentr(jtimex)) .gt. 0.1) then
           sigmp = sigmp + ( expmpi(jtimex,:) &
@@ -2228,7 +2231,7 @@
         !-------------------------------------------------------------------------
         !***** (13) NOISE
         !-------------------------------------------------------------------------
-13      dd = (/1., 1., 1., 1., 1., 1., 1., 1./)
+        dd = (/1., 1., 1., 1., 1., 1., 1., 1./)
         !-------------------------------------------------------------------------
         do i=1,magpri
           if (rnavxmp(jtimex,i).ne.0.0) &
@@ -2263,7 +2266,7 @@
         !-------------------------------------------------------------------------
         !***** (14) DIGITIZER RESOLUTION
         !-------------------------------------------------------------------------
-14      dd = (/1., 1., 1., 1., 1., 1., 1., 1./)
+        dd = (/1., 1., 1., 1., 1., 1., 1., 1./)
         !-------------------------------------------------------------------------
         do i=1,magpri
           if (rnavxmp(jtimex,i).ne.0.0) &
@@ -2296,8 +2299,7 @@
 
       endif
 
-
-100   sigmamp(jtimex,:) = sqrt(sigmp)
+      sigmamp(jtimex,:) = sqrt(sigmp)
       sigmafl(jtimex,:) = sqrt(sigfl)
       sigmaf(jtimex,:)  = sqrt(sigfc)
       sigmae(jtimex,:) = sqrt(sige)
@@ -2317,10 +2319,12 @@
       ! print *,'sigmaip'
       ! print 99,sigmaip
 
-99    format(5e12.4)
+!99    format(5e12.4)
 
       return
-    end
+      end
+
+
 ! =========================================================
 
 #if defined(USEMPI)

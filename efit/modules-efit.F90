@@ -157,8 +157,6 @@
           if (present(mtype0)) mtype = mtype0
 
           select case(mtype)
-          case (1)
-            labelstr = 'ERROR'
           case (2)
             labelstr = 'WARNING'
           case (3)

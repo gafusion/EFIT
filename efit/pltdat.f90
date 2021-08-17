@@ -75,7 +75,7 @@
       kerror = 0
       pleng = 0
 !
-      ALLOCATE(bfield(nw,nh),  &
+      allocate(bfield(nw,nh),  &
          sivol(nw),voln(nw),bvoln(nw), &
          cvoln(nw),dvoln(nw),rscrap(nw),curscr(nw), &
          pbimf(nw),pmid(nw),pmidw(nw),bpmid(nw),cpmid(nw), &
@@ -85,7 +85,7 @@
       if (idebug /= 0) write (6,*) 'Enter PLTOUT'
       if (kdot.gt.0.and.jtime.ne.kdot+1) return
       if (kdata.eq.4) then
-      dismin=min(oleft(jtime),oright(jtime),otop(jtime),obott(jtime))
+         dismin=min(oleft(jtime),oright(jtime),otop(jtime),obott(jtime))
          if (dismin.eq.oleft(jtime)) gapdis=olefs(jtime)
          if (dismin.eq.oright(jtime)) gapdis=orighs(jtime)
          if (dismin.eq.obott(jtime)) gapdis=obots(jtime)
@@ -96,7 +96,7 @@
       endif
       if (jerror(jtime).gt.0) return
 !------------------------------------------------------------------------
-!-- Set up flag to write plot file                                     --
+!--   Set up flag to write plot file                                   --
 !------------------------------------------------------------------------
       idotek = 1
       if (itek.ge.5) then
@@ -114,37 +114,36 @@
         endif
       endif
 !
-      if (istrpl.gt.0.and.jwake.eq.0) go to 180
+      if (istrpl.le.0.and.jwake.ne.0) then
       almin=xlmin
       almax=xlmax
       blmin=ylmin
       blmax=ylmax
-      if (ixray.le.0) go to 75
 !------------------------------------------------------------------------
-!--  read in new SXR detectors geometry for shot > 80744               --
+!--   read in new SXR detectors geometry for shot > 80744              --
 !--      and/or Toroidal x-ray geometry for shot > 91000               --
 !------------------------------------------------------------------------
-      call getsxr(ishot,ixray)
-      if (ixray.le.0) go to 75       ! ixray could be changed by getsxr
-      if (ixray.eq.1) then           ! poroidal xray only
-         ixraystart = 1
-         ixrayend = nangle
-      else if (ixray.eq.2) then      ! toroidal xray only
-         ixraystart = nangle+1
-         ixrayend = nangle+ntangle
-      else                           ! both
-         ixraystart = 1
-         ixrayend = nangle+ntangle
+      if (ixray.gt.0) call getsxr(ishot,ixray)      
+      if (ixray.gt.0) then       ! ixray could be changed by getsxr
+         if (ixray.eq.1) then           ! poroidal xray only
+            ixraystart = 1
+            ixrayend = nangle
+         else if (ixray.eq.2) then      ! toroidal xray only
+            ixraystart = nangle+1
+            ixrayend = nangle+ntangle
+         else                           ! both
+            ixraystart = 1
+            ixrayend = nangle+ntangle
+         endif
+         do i=ixraystart,ixrayend
+            rxray(i)=rxray(i)/100.
+            zxray(i)=zxray(i)/100.
+            almin=min(almin,rxray(i))
+            almax=max(almax,rxray(i))
+            blmin=min(blmin,zxray(i))
+            blmax=max(blmax,zxray(i))
+         enddo
       endif
-      do 70 i=ixraystart,ixrayend
-         rxray(i)=rxray(i)/100.
-         zxray(i)=zxray(i)/100.
-         almin=min(almin,rxray(i))
-         almax=max(almax,rxray(i))
-         blmin=min(blmin,zxray(i))
-         blmax=max(blmax,zxray(i))
-   70 continue
-   75 continue
       open(unit=80,status='old', &
            file=table_di2(1:ltbdi2)//'dprobe.dat')
       rsi(1)=-1.
@@ -160,55 +159,54 @@
       if (ivesel.gt.0) read (80,10000) (rvs(i),zvs(i),wvs(i),hvs(i), &
       avs(i),avs2(i),i=1,nvesel)
       close(unit=80)
-      if (iprobe.eq.0) go to 100
-      do 80 i=1,nsilop
-         almin=min(almin,rsi(i))
-         almax=max(almax,rsi(i))
-         blmin=min(blmin,zsi(i))
-         blmax=max(blmax,zsi(i))
-   80 continue
-      ibm=1
-      iem=magpri67
-      idelm=iprobe
-      if (iprobe.ge.322) then
-         ibm=magpri67+1
-         iem=magpri67+magpri322+magprirdp
-         idelm=iprobe-322+1
+      if (iprobe.ne.0) then
+         do i=1,nsilop
+            almin=min(almin,rsi(i))
+            almax=max(almax,rsi(i))
+            blmin=min(blmin,zsi(i))
+            blmax=max(blmax,zsi(i))
+         enddo
+         ibm=1
+         iem=magpri67
+         idelm=iprobe
+         if (iprobe.ge.322) then
+            ibm=magpri67+1
+            iem=magpri67+magpri322+magprirdp
+            idelm=iprobe-322+1
+         endif
+         idelm=iprobe
+         if (iprobe.le.-322) then
+            ibm=magpri67+magpri322+1
+            iem=magpri67+magpri322+magprirdp
+            idelm=1
+         endif
+         do i=ibm,iem
+            almin=min(almin,xmp2(i))
+            almax=max(almax,xmp2(i))
+            blmin=min(blmin,ymp2(i))
+            blmax=max(blmax,ymp2(i))
+         enddo
       endif
-      idelm=iprobe
-      if (iprobe.le.-322) then
-         ibm=magpri67+magpri322+1
-         iem=magpri67+magpri322+magprirdp
-         idelm=1
-      endif
-      do 84 i=ibm,iem
-         almin=min(almin,xmp2(i))
-         almax=max(almax,xmp2(i))
-         blmin=min(blmin,ymp2(i))
-         blmax=max(blmax,ymp2(i))
-   84 continue
-  100 continue
-      do 140 i=1,mfcoil
+      do i=1,mfcoil
          almin=min(almin,rf(i))
          almax=max(almax,rf(i))
          blmin=min(blmin,zf(i))
          blmax=max(blmax,zf(i))
-  140 continue
-      if (iecoil.le.0) go to 150
-      do 145 i=1,necoil
-         almin=min(almin,re(i))
-         almax=max(almax,re(i))
-         blmin=min(blmin,ze(i))
-         blmax=max(blmax,ze(i))
-  145 continue
-  150 continue
+      enddo
+      if (iecoil.gt.0) then
+         do i=1,necoil
+            almin=min(almin,re(i))
+            almax=max(almax,re(i))
+            blmin=min(blmin,ze(i))
+            blmax=max(blmax,ze(i))
+         enddo
+      endif
       if (kframe.gt.0) then
          almin=almin-0.05_dp
          almax=almax+0.05_dp
          blmin=blmin-0.05_dp
          blmax=blmax+0.05_dp
       endif
-  170 continue
       elim=(blmax-blmin)/(almax-almin)
       uday=' '
       call date_and_time(uday, clocktime, zone, values)
@@ -222,7 +220,7 @@
       endif
       xll=yll/elim
 !-----------------------------------------------------------------------c
-!       Open file PLTOUT.OUT to output plot parameters                  c
+!     Open file PLTOUT.OUT to output plot parameters                    c
 !-----------------------------------------------------------------------c
       if (itek.ge.5.and.idotek.eq.0) then
       m_write = 1
@@ -239,24 +237,24 @@
              plotname = store_dir(1:lstdir)//plotname
       endif
       if (m_write .eq. 1) then
-        open(unit=iunit,file = plotname, status = 'old',err=64533)
-        close(unit=iunit,status='delete')
-64533   open (unit=iunit, file = plotname, status = 'new')
+        open(unit=iunit,file = plotname, status = 'old',iostat=ioerr)
+        if (ioerr.eq.0) close(unit=iunit,status='delete')
+        open (unit=iunit, file = plotname, status = 'new')
       elseif (m_write .eq. 0) then
         open (unit=iunit, file = plotname, form = 'unformatted', &
-                status = 'old',err=64537)
-        close(unit=iunit,status='delete')
-64537   open (unit=iunit, file = plotname, form = 'unformatted', &
-                status = 'new')
+              status = 'old',iostat=ioerr)
+        if (ioerr.eq.0) close(unit=iunit,status='delete')
+        open (unit=iunit, file = plotname, form = 'unformatted', &
+              status = 'new')
       endif
-      endif     ! itek
+      endif ! itek
 !
-  180 continue
+      endif
       xmm=2.0
       if (itek.ge.5.and.idotek.eq.0) then
       if (kgraph.eq.1.and.istrpl.gt.0) then
 !--------------------------------------------------------------------
-!--  ITEK > 100, specific pltout.out name                          --
+!--   ITEK > 100, specific pltout.out name                         --
 !--------------------------------------------------------------------
       let2 = 'pl'
       plotname = ' '
@@ -267,43 +265,44 @@
       iunit = 35
       close(unit=iunit)
       if (m_write .eq. 1) then
-        open(unit=iunit,file = plotname, status = 'old',err=64593)
-        close(unit=iunit,status='delete')
-64593   open (unit=iunit, file = plotname, status = 'new')
+        open(unit=iunit,file = plotname, status = 'old',iostat=ioerr)
+        if (ioerr.eq.0) close(unit=iunit,status='delete')
+        open (unit=iunit, file = plotname, status = 'new')
       elseif (m_write .eq. 0) then
         open (unit=iunit, file = plotname, form = 'unformatted', &
-                status = 'old',err=64597)
-        close(unit=iunit,status='delete')
-64597   open (unit=iunit, file = plotname, form = 'unformatted', &
-                status = 'new')
+              status = 'old',iostat=ioerr)
+        if (ioerr.eq.0) close(unit=iunit,status='delete')
+        open (unit=iunit, file = plotname, form = 'unformatted', &
+              status = 'new')
       endif
-      endif
-      endif
+      endif ! kgraph.eq.1.and.istrpl.gt.0
+      endif ! itek
 !--------------------------------------------------------------------
-!--  Set q-files dataname        --
-!--  If ISTORE = 0 Then dataname is prefixed by qshot.time         --
-!--  ELSE dataname is prefixed by /link/efit/qshot.time            --
-!--  lprx = 13 prefix is qshot.time                 --
-!--  lprx = 25  prefix is /link/efit/qshot.time                    --
+!--   Set q-files dataname                                         --
+!--   If ISTORE = 0 Then dataname is prefixed by qshot.time        --
+!--   ELSE dataname is prefixed by /link/efit/qshot.time           --
+!--   lprx = 13 prefix is qshot.time                               --
+!--   lprx = 25  prefix is /link/efit/qshot.time                   --
 !--------------------------------------------------------------------
       let = 'q'
       call setfnme(let,ishot,itime,istore,dataname)
       lprx = 13
       if (istore .eq. 1) lprx = lstdir+lprx
-
 !
-      do 51100 i=1,nfound-1
+      do i=1,nfound-1
          ip1=i+1
          dli=sqrt((xout(ip1)-xout(i))**2+(yout(ip1)-yout(i))**2)
          pleng=pleng+dli
-51100 continue
+      enddo
       abar=100.*pleng/2./pi
 !
-      if (ivacum.gt.0) go to 450
-      if (kdata.eq.4) go to 1500
+      if (ivacum.gt.0) then
+         call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
+      else
+      if (kdata.ne.4) then
       ibrdr = 1
 !-----------------------------------------------------------------------c
-! Initialize plot parameters     c
+!     Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       if (klabel.ge.0) then
@@ -360,26 +359,23 @@
       enddo
       npltbdry=nplt
 
-
       if (kwripre.gt.0) then
-         dataname=dataname(1:lprx)//'_surfb'
-        open(unit=62,file=dataname,status='old',err=12940)
-        close(unit=62,status='delete')
-12940  continue
+        dataname=dataname(1:lprx)//'_surfb'
+        open(unit=62,file=dataname,status='old',iostat=ioerr)
+        if (ioerr.eq.0) close(unit=62,status='delete')
         open(unit=62,file=dataname,status='new')
-         do 40010 i=1,nplt
-            write (62,*) xplt(i),yplt(i)
-40010    continue
-         close(unit=62)
+        do i=1,nplt
+          write (62,*) xplt(i),yplt(i)
+        enddo
+        close(unit=62)
       endif
-      if (ipass.gt.1) go to 210
+      if (ipass.le.1) then
       dismin=min(oleft(jtime),oright(jtime),otop(jtime),obott(jtime))
-      if (dismin.le.0.1_dp) go to 210
+      if (dismin.gt.0.1_dp) then
       if (kwripre.gt.0) then
-         dataname=dataname(1:lprx)//'_sep'
-        open(unit=62,file=dataname,status='old',err=12941)
-        close(unit=62,status='delete')
-12941  continue
+        dataname=dataname(1:lprx)//'_sep'
+        open(unit=62,file=dataname,status='old',iostat=ioerr)
+        if (ioerr.eq.0) close(unit=62,status='delete')
         open(unit=62,file=dataname,status='new')
       endif
       call surfac(psibry,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt, &
@@ -396,8 +392,8 @@
       ncnct(nn) = -1
       nxy(nn)   =  0
       ji = 0
-      do 200 i=1,nplt
-         if ((yplt(i).ge.yminmm).and.(yplt(i).le.ymaxmm)) go to 200
+      do i=1,nplt
+         if ((yplt(i).ge.yminmm).and.(yplt(i).le.ymaxmm)) cycle
          nxy(nn) = 1 + nxy(nn)
          xx(nxy(nn) , nn) = xplt(i)
          yy(nxy(nn) , nn) = yplt(i)
@@ -409,16 +405,16 @@
            call zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(i),yplt(i),limfag)
            if (zeron.gt.0.001_dp) write (62,*) xplt(i),yplt(i)
          endif
-  200 continue
+      enddo
       if (kwripre.gt.0) close(unit=62)
-  210 continue
-  220 continue
-      if (ipass.gt.1) go to 228
-      if (nextra.eq.0) go to 228
+      endif ! ipass.le.1
+      endif ! dismin.gt.0.1
+      if (ipass.le.1) then
+      if (nextra.ne.0) then
       nxcurv=0
       nexexx=2*iabs(nextra)*iabs(ixstrt)
-      do 226 i=1,nexexx
-        if(npxtra(i).le.2)go to 226
+      do i=1,nexexx
+        if(npxtra(i).le.2) cycle
         nxcurv=nxcurv+1
         nn = nn + 1
         nxy(nn) = npxtra(i)
@@ -433,21 +429,21 @@
           if (i.lt.9) then
             write(iname,40023) i
             dataname=dataname(1:lprx)//'_fl'//iname
-            open(unit=62,file=dataname,status='old',err=12942)
-            close(unit=62,status='delete')
-12942       continue
+            open(unit=62,file=dataname,status='old',iostat=ioerr)
+            if (ioerr.eq.0) close(unit=62,status='delete')
             open(unit=62,file=dataname,status='new')
-            do 39920 iii=1,npxtra(i)
+            do iii=1,npxtra(i)
               call zlim(zeron,n11,n11,limitr,xlim,ylim,xxtra(iii,i),yxtra(iii,i),limfag)
               if (zeron.gt.0.001_dp) write (62,*) xxtra(iii,i),yxtra(iii,i)
-39920       continue
+            enddo
             close(unit=62)
           endif
         endif
-226     continue
-  228   continue
-      if (nbdry.le.0) go to 235
-      if (nbdry.gt.20) go to 230
+      enddo
+      endif ! ipass.le.1
+      endif ! nextra.ne.0
+      if (nbdry.gt.0) then
+      if (nbdry.le.20) then
       nn = nn + 1
       markme(nn) = 16
       ncnct(nn) = -1
@@ -456,8 +452,7 @@
          xx(ii,nn) = rbdry(ii)
          yy(ii,nn) = zbdry(ii)
       enddo
-      go to 235
-  230 continue
+      else ! nbdry.gt.20
       if (nbdryp <= 0) then
       nbdrz=nbdry+1
       rbdry(nbdrz)=rbdry(1)
@@ -469,7 +464,7 @@
          xx(ii,nn) = rbdry(ii)
          yy(ii,nn) = zbdry(ii)
       enddo
-      else
+      else ! nbdryp > 0
       nn = nn + 1
       nxy(nn) = nbdryp + 1
       ndotme(nn) = 1
@@ -490,8 +485,9 @@
          xx(ii,nn) = rbdry(iijj)
          yy(ii,nn) = zbdry(iijj)
       enddo
-      endif
-  235 continue
+      endif ! nbdryp > 0
+      endif ! nbdry.gt.20
+      endif ! nbdry.gt.0
       if (nsol > 0) then
       nn = nn + 1
       markme(nn) = 2
@@ -503,10 +499,10 @@
          yy(ii,nn) = zsol(ii)
       enddo
       endif
-      if (ipass.gt.1) go to 252
-      do 238 i=1,nw-1
+      if (ipass.le.1) then
+      do i=1,nw-1
          worke(i)=real(i-1,dp)/(nw-1)
-  238 continue
+      enddo
       worke(nw)=1.
       call zpline(nw,worke,qpsi,bworkb,cworkb,dworkb)
       delsi=(psibry-simag)/(nsplot+1)
@@ -523,7 +519,7 @@
             psiq11=psiq1
          endif
       endif
-      do 250 i=1,nsplot
+      do i=1,nsplot
          nn = nn + 1
          j=nsplot0-i+1
          if (i.gt.nsplot0.and.iqplot.ge.10) then
@@ -545,37 +541,35 @@
             yy(ii,nn) = yplt(ii)
          enddo
 !----------------------------------------------------------------------
-!-- regular surfaces                                                 --
+!--      regular surfaces                                            --
 !----------------------------------------------------------------------
          if (kwripre.gt.0) then
             if (i.lt.nsplot.or.iqplot.lt.10) then
                write(iname,40023) i
                dataname=dataname(1:lprx)//'_surf'//iname
-               open(unit=62,file=dataname,status='old',err=12943)
-               close(unit=62,status='delete')
-12943     continue
+               open(unit=62,file=dataname,status='old',iostat=ioerr)
+               if (ioerr.eq.0) close(unit=62,status='delete')
                open(unit=62,file=dataname,status='new')
-               do 40020 iii=1,nplt
+               do iii=1,nplt
                   write (62,*) xplt(iii),yplt(iii)
-40020          continue
+               enddo
                close(unit=62)
             endif
 !
             if (i.eq.nsplot.and.iqplot.ge.10) then
               write(iname,40023) i-nsplot0
               dataname=dataname(1:lprx)//'_surfq1'//iname
-              open(unit=62,file=dataname,status='old',err=12944)
-              close(unit=62,status='delete')
-12944    continue
+              open(unit=62,file=dataname,status='old',iostat=ioerr)
+              if (ioerr.eq.0) close(unit=62,status='delete')
               open(unit=62,file=dataname,status='new')
-              do 40029 iii=1,nplt
+              do iii=1,nplt
                   write (62,*) xplt(iii),yplt(iii)
-40029         continue
+              enddo
               close(unit=62)
             endif
          endif
 !----------------------------------------------------------------------
-!-- plot pressure surface for rotational equilibrium if requested    --
+!--      plot pressure surface for rotational equilibrium if requested
 !----------------------------------------------------------------------
          if (kvtor.gt.0.and.kplotp.ne.0) then
            signp=1.
@@ -585,10 +579,9 @@
            yplt(nplt+1)=yplt(1)
            do ii=1,nplt
              if (signp*xplt(ii).gt.signp*rmaxis) then
-               if (yplt(ii)*yplt(ii+1).le.0.0) go to 57039
+               if (yplt(ii)*yplt(ii+1).le.0.0) exit
              endif
            enddo
-57039      continue
            call seva2d(bwx,lwx,bwy,lwy,cw,xplt(ii),yplt(ii), &
                     pds,ier,n111)
            spwant=pds(1)
@@ -604,18 +597,17 @@
               yy(ii,nn) = yplt(ii)
            enddo
            if (kwripre.gt.0) then
-            if (i.lt.nsplot.or.iqplot.lt.10) then
+             if (i.lt.nsplot.or.iqplot.lt.10) then
                write(iname,40023) i
                dataname=dataname(1:lprx)//'_surp'//iname
-               open(unit=62,file=dataname,status='old',err=13953)
-               close(unit=62,status='delete')
-13953     continue
+               open(unit=62,file=dataname,status='old',iostat=ioerr)
+               if (ioerr.eq.0) close(unit=62,status='delete')
                open(unit=62,file=dataname,status='new')
                do iii=1,nplt
-                  write (62,*) xplt(iii),yplt(iii)
+                 write (62,*) xplt(iii),yplt(iii)
                enddo
                close(unit=62)
-            endif
+             endif
            endif
          endif
 !
@@ -632,23 +624,23 @@
                ht(msg) = 0.10_dp
             endif
          endif
-  250 continue
+      enddo
 40023 format (i1)
 !-----------------------------------------------------------------------
-!-- plot polarimetry viewing points                                   --
+!--   plot polarimetry viewing points                                 --
 !-----------------------------------------------------------------------
       if (iplots.gt.0.and.kstark.gt.0) then
          nn = nn + 1
          markme(nn) = 3
          sclpc(nn) = 1.0
          innn    = 0
-         do 253 i=1,nstark
+         do i=1,nstark
             if (abs(fwtgam(i)).gt.1.0e-06_dp) then
                innn=innn+1
                xx(innn,nn) = rrgam(jtime,i)
                yy(innn,nn) = zzgam(jtime,i)
             endif
-  253    continue
+         enddo
          nxy(nn) =  innn
          ncnct(nn)=-1
       endif  
@@ -679,8 +671,8 @@
          sclpc(nn) = 0.25_dp
          markme(nn) = 3
          ncnct(nn) = -1
-         do 40040 i=1,nw,idelx
-            do 40030 j=1,nh,idely
+         do i=1,nw,idelx
+            do j=1,nh,idely
                kk=(i-1)*nh+j
                if (icutfp.eq.0) then
                   if (zero(kk)*www(kk).gt.0.001_dp) then
@@ -696,8 +688,8 @@
                      yy(innn,nn) = zgrid(j)
                   endif
                endif
-40030       continue
-40040    continue
+            enddo
+         enddo
          nxy(nn) = innn
       endif
       if (icutfp.eq.2.and.kframe.ne.1) then
@@ -710,25 +702,25 @@
          rvsmax=rvs(1)
          zvsmin=zvs(1)
          zvsmax=zvs(1)
-         do 40050 i=1,nvesel
+         do i=1,nvesel
             rvsmin=min(rvs(i),rvsmin)
             rvsmax=max(rvs(i),rvsmax)
             zvsmin=min(zvs(i),zvsmin)
             zvsmax=max(zvs(i),zvsmax)
-40050    continue
+         enddo
          call surfac(xpsialp,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt, &
            npoint,drgrid,dzgrid,rvsmin,rvsmax,zvsmin, &
            zvsmax,n00,rmaxis,zmaxis,negcur,kerror)
          if (kerror.gt.0) return
          if (iprobe.ne.90) then
-           do 40060 i=1,nplt
+           do i=1,nplt
              call zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(i),yplt(i),limfag)
              if (zeron.gt.0.001_dp) then
                   innn=innn+1
                   xx(innn,nn) = xplt(i)
                   yy(innn,nn) = yplt(i)
              endif
-40060      continue
+           enddo
            nxy(nn) = innn
          endif
 !         hgt = 0.10_dp
@@ -739,7 +731,7 @@
 !         xpos(msg) = rvsmax-0.5_dp
 !         ypos(msg) = zvsmin
 !         ht(msg) = hgt
-!        call rlreal(alphafp,2,rvsmax,zvsmin)
+!         call rlreal(alphafp,2,rvsmax,zvsmin)
 !         msg = msg + 1
 !         note(msg) = 4
 !         anum(msg) = alphafp
@@ -747,29 +739,29 @@
 !         xpos(msg) = rvsmax
 !         ypos(msg) = zvsmin
 !         ht(msg) = 0.10_dp
-          write(text,96251) alphafp
-          msg = msg + 1
-          note(msg) = 1
-          lmes(msg) = text
-          imes(msg) = 25
-          xpos(msg) = rvsmax-0.5_dp
-          ypos(msg) = zvsmin
-          ht(msg) = 0.10_dp
+         write(text,96251) alphafp
+         msg = msg + 1
+         note(msg) = 1
+         lmes(msg) = text
+         imes(msg) = 25
+         xpos(msg) = rvsmax-0.5_dp
+         ypos(msg) = zvsmin
+         ht(msg) = 0.10_dp
 !
          sumif=0.0
-         do 40070 i=1,nvesel
+         do i=1,nvesel
             sumif=sumif+vcurrt(i)
-40070    continue
+         enddo
          sumif=sumif/1000.
-          write(text,96252) sumif
-          msg = msg + 1
-          note(msg) = 1
-          lmes(msg) = text
-          imes(msg) = 25
-          xpos(msg) = rvsmax-0.5_dp
-          ypos(msg) = zvsmin-0.1_dp
-          ht(msg) = 0.10_dp
-          write (6,*) 'Ivt(ka) = ',sumif
+         write(text,96252) sumif
+         msg = msg + 1
+         note(msg) = 1
+         lmes(msg) = text
+         imes(msg) = 25
+         xpos(msg) = rvsmax-0.5_dp
+         ypos(msg) = zvsmin-0.1_dp
+         ht(msg) = 0.10_dp
+         write (6,*) 'Ivt(ka) = ',sumif
 !         msg = msg + 1
 !         note(msg) = 2
 !         lmes(msg) = 'Iv(ka)=   '
@@ -777,7 +769,7 @@
 !         xpos(msg) = rvsmax-0.5_dp
 !         ypos(msg) = zvsmin-0.1_dp
 !         ht(msg) = hgt
-!        call rlreal(sumif,0,rvsmax,zvsmin-0.1_dp)
+!         call rlreal(sumif,0,rvsmax,zvsmin-0.1_dp)
 !         msg = msg + 1
 !         note(msg) = 4
 !         anum(msg) = sumif
@@ -793,7 +785,7 @@
 !         ypos(msg) = zvsmin-0.2_dp
 !         ht(msg) = hgt
 !         sumif=fzpol/1000.
-!        call rlreal(sumif,0,rvsmax,zvsmin-0.2_dp)
+!         call rlreal(sumif,0,rvsmax,zvsmin-0.2_dp)
 !         msg = msg + 1
 !         note(msg) = 4
 !         anum(msg) = sumif
@@ -809,7 +801,7 @@
 !         ypos(msg) = zvsmin-0.3_dp
 !         ht(msg) = hgt
 !         sumif=fztor/1000.
-!        call rlreal(sumif,0,rvsmax,zvsmin-0.3_dp)
+!         call rlreal(sumif,0,rvsmax,zvsmin-0.3_dp)
 !         msg = msg + 1
 !         note(msg) = 4
 !         anum(msg) = sumif
@@ -835,7 +827,7 @@
          xpos(msg) = rvsmax
          ypos(msg) = zvsmin-0.2_dp
          ht(msg) = 0.10_dp
-!        call rlreal(sumif,0,rvsmax,zvsmin-0.4_dp)
+!         call rlreal(sumif,0,rvsmax,zvsmin-0.4_dp)
 !         msg = msg + 1
 !         note(msg) = 4
 !         anum(msg) = sumif
@@ -851,7 +843,7 @@
 !         ypos(msg) = zvsmin-0.5_dp
 !         ht(msg) = hgt
          sumif=fpolvs/1000.
-!        call rlreal(sumif,0,rvsmax,zvsmin-0.5_dp)
+!         call rlreal(sumif,0,rvsmax,zvsmin-0.5_dp)
          write(text,96254) sumif
          write (6,*) 'Ivp(ka) = ',sumif
          msg = msg + 1
@@ -861,46 +853,81 @@
          xpos(msg) = rvsmax
          ypos(msg) = zvsmin-0.3_dp
          ht(msg) = 0.10_dp
+      endif ! icutfp.eq.2.and.kframe.ne.1
+      endif ! ipass.le.1
+      if ((iplim.le.0).or.((iplim.ne.10) &
+          .and.((limitr.ne.(limid+1)).or.(xlim(limitr+1).eq.0.0)))) then
+      nn = nn + 1
+      nxy(nn) = limitr
+      do ii = 1, limitr
+         xx(ii,nn) = xlim(ii)
+         yy(ii,nn) = ylim(ii)
+      enddo
+      if (kwripre.gt.0) then
+         dataname=dataname(1:lprx)//'_lim'
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
+         do i=1,limitr
+            write (62,*) xlim(i),ylim(i)
+         enddo
+         close(unit=62)
       endif
-  252 continue
-      if (iplim.le.0) go to 270
+!--------------------------------------------------------------------
+!--   Plot W strips                                                --
+!--------------------------------------------------------------------
+      nn = nn + 1
+      nxy(nn) = 2
+      clearx(nn)='PINK'
+      thcrv(nn) = 0.030_dp
+      do ii = 1, 2
+         xx(ii,nn) = rwstrip1(ii)
+         yy(ii,nn) = zwstrip1(ii)
+      enddo
+!
+      nn = nn + 1
+      nxy(nn) = 2
+      clearx(nn)='PINK'
+      thcrv(nn) = 0.030_dp
+      do ii = 1, 2
+         xx(ii,nn) = rwstrip2(ii)
+         yy(ii,nn) = zwstrip2(ii)
+      enddo
+      else
 !-------------------------------------------------------------------
-!-- plot vessel                                                   --
+!--   plot vessel                                                 --
 !-------------------------------------------------------------------
       if (iplim.eq.10) then
-         call pltcol(nvesel,rvs,zvs,wvs,hvs,avs,avs2,n00, &
-         nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
-         nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
-         nn = nn + 1
-         thcrv(nn) = 0.02_dp
-         nxy(nn) = limbot-limup + 1
-         do ii = limup, limup+nxy(nn)-1
-            xx(ii,nn) = xlim(ii)
-            yy(ii,nn) = ylim(ii)
-         enddo
-         xplt(1)=xlim((limup+limbot)/2)
-         yplt(1)=ylim((limup+limbot)/2)
-         xplt(2)=rvs(12)-wvs(12)/2.
-         yplt(2)=yplt(1)
-         nn = nn + 1
-         nxy(nn) = 2
-         do ii = 1, nxy(nn)
-            xx(ii,nn) = xplt(ii)
-            yy(ii,nn) = yplt(ii)
-         enddo
-         go to 280
-      endif
+      call pltcol(nvesel,rvs,zvs,wvs,hvs,avs,avs2,n00, &
+      nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
+      nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
+      nn = nn + 1
+      thcrv(nn) = 0.02_dp
+      nxy(nn) = limbot-limup + 1
+      do ii = limup, limup+nxy(nn)-1
+         xx(ii,nn) = xlim(ii)
+         yy(ii,nn) = ylim(ii)
+      enddo
+      xplt(1)=xlim((limup+limbot)/2)
+      yplt(1)=ylim((limup+limbot)/2)
+      xplt(2)=rvs(12)-wvs(12)/2.
+      yplt(2)=yplt(1)
+      nn = nn + 1
+      nxy(nn) = 2
+      do ii = 1, nxy(nn)
+         xx(ii,nn) = xplt(ii)
+         yy(ii,nn) = yplt(ii)
+      enddo
+      else !iplim.ne.10
 !
-      if ((limitr.ne.(limid+1)).or. &
-      (xlim(limitr+1).eq.0.0)) go to 270
       iupper=0
       ilower=0
-      do 254 i=1,limitr
+      do i=1,limitr
          if ((xlim(i).eq.xlim(limitr+1)).and.(ylim(i).eq.ylim(limitr+1)) &
          ) iupper=i
          if ((xlim(i).eq.xlim(limitr+12)).and.(ylim(i).eq. &
          ylim(limitr+12))) ilower=i
-  254 continue
+      enddo
       nn = nn + 1
       nxy(nn) = iupper
       do ii = 1, nxy(nn)
@@ -919,11 +946,10 @@
          xx(ii,nn) = xlim(ii)
          yy(ii,nn) = ylim(ii)
       enddo
-      open(unit=lfile,                       status='old', &
-        file=filimt         )
+      open(unit=lfile,status='old',file=filimt)
       read (lfile,14980) npts
       read (lfile,15000) (workc(1),workd(1),i=1,npts) &
-      ,(workc(1),workd(1),i=npts+2,npts+13)
+                 ,(workc(1),workd(1),i=npts+2,npts+13)
       read (lfile,14980) npts
       read (lfile,15000) (workc(i),workd(i),i=1,npts)
       nn = nn + 1
@@ -935,7 +961,7 @@
 !
       read (lfile,14980) npts
       read (lfile,15000) (workc(i),workd(i),i=1,npts)
-!     call shade(workc,workd,npts,30.,0.1_dp,1,0,0)
+!      call shade(workc,workd,npts,30.,0.1_dp,1,0,0)
       nshd = nshd + 1
       nsxy(nshd) = npts
       sangle(nshd) = 30.0
@@ -962,7 +988,7 @@
 
       read (lfile,14980) npts
       read (lfile,15000) (workc(i),workd(i),i=1,npts)
-!     call shade(workc,workd,npts,30.,0.1_dp,1,0,0)
+!      call shade(workc,workd,npts,30.,0.1_dp,1,0,0)
       nshd = nshd + 1
       nsxy(nshd) = npts
       sangle(nshd) = 30.0
@@ -995,7 +1021,7 @@
          xx(ii,nn) = workc(ii)
          yy(ii,nn) = workd(ii)
       enddo
-!     call shade(workc,workd,npts,90.,0.01_dp,1,0,0)
+!      call shade(workc,workd,npts,90.,0.01_dp,1,0,0)
       nshd = nshd + 1
       nsxy(nshd) = npts
       sangle(nshd) = 90.0
@@ -1006,7 +1032,7 @@
          syy(ii,nshd) = workd(ii)
       enddo
 !
-      do 257 j=1,2
+      do j=1,2
          read (lfile,14980) npts
          read (lfile,15000) (workc(i),workd(i),i=1,npts)
          nn = nn + 1
@@ -1015,7 +1041,7 @@
             xx(ii,nn) = workc(ii)
             yy(ii,nn) = workd(ii)
          enddo
-!        call shade(workc,workd,npts,45.,0.05_dp,1,0,0)
+!         call shade(workc,workd,npts,45.,0.05_dp,1,0,0)
          nshd = nshd + 1
          nsxy(nshd) = npts
          sangle(nshd) = 45.0
@@ -1025,7 +1051,7 @@
             sxx(ii,nshd) = workc(ii)
             syy(ii,nshd) = workd(ii)
          enddo
-!        call shade(workc,workd,npts,135.,0.05_dp,1,0,0)
+!         call shade(workc,workd,npts,135.,0.05_dp,1,0,0)
          nshd = nshd + 1
          nsxy(nshd) = npts
          sangle(nshd) = 135.0
@@ -1035,7 +1061,7 @@
             sxx(ii,nshd) = workc(ii)
             syy(ii,nshd) = workd(ii)
          enddo
-  257 continue
+      enddo
 !
       read (lfile,14980) npts
       read (lfile,15000) (workc(i),workd(i),i=1,npts)
@@ -1055,62 +1081,21 @@
          sxx(ii,nshd) = workc(ii)
          syy(ii,nshd) = workd(ii)
       enddo
-  260 continue
       close(unit=lfile)
-      go to 280
-  270 continue
-      nn = nn + 1
-      nxy(nn) = limitr
-      do ii = 1, limitr
-         xx(ii,nn) = xlim(ii)
-         yy(ii,nn) = ylim(ii)
-      enddo
-      if (kwripre.gt.0) then
-         dataname=dataname(1:lprx)//'_lim'
-        open(unit=62,file=dataname,status='old',err=12945)
-        close(unit=62,status='delete')
-12945  continue
-        open(unit=62,file=dataname,status='new')
-         do 40100 i=1,limitr
-            write (62,*) xlim(i),ylim(i)
-40100    continue
-         close(unit=62)
+      endif ! iplim.ne.10
       endif
 !--------------------------------------------------------------------
-!-- Plot W strips                                                  --
-!--------------------------------------------------------------------
-      nn = nn + 1
-      nxy(nn) = 2
-      clearx(nn)='PINK'
-      thcrv(nn) = 0.030_dp
-      do ii = 1, 2
-         xx(ii,nn) = rwstrip1(ii)
-         yy(ii,nn) = zwstrip1(ii)
-      enddo
-!
-      nn = nn + 1
-      nxy(nn) = 2
-      clearx(nn)='PINK'
-      thcrv(nn) = 0.030_dp
-      do ii = 1, 2
-         xx(ii,nn) = rwstrip2(ii)
-         yy(ii,nn) = zwstrip2(ii)
-      enddo
-
-
-  280 continue
-!--------------------------------------------------------------------
-!-- vertical feedback ?                                            --
+!--   vertical feedback ?                                          --
 !--------------------------------------------------------------------
       if (isetfb.ne.0) then
          kct(1)=kct1
          kct(2)=kct2
          kct(3)=kct3
          kct(4)=kct4
-         do 40122 ms=1,4
+         do ms=1,4
             if(kct(ms).ne.0)then
-               do 40119 i=1,nw
-                  do 40119 j=1,nh
+               do i=1,nw
+                  do j=1,nh
                      kk=(i-1)*nh+j
                      if(kk.eq.kct(ms))then
                         nn = nn + 1
@@ -1121,11 +1106,12 @@
                         xx(1,nn) = rgrid(i)
                         yy(1,nn) = zgrid(j)
                      endif
-40119          continue
+                  enddo
+               enddo
             endif
-40122    continue
+         enddo
       endif
-      if (iprobe.eq.0) go to 310
+      if (iprobe.ne.0) then
       nn = nn + 1
       markme(nn) = 16
       sclpc(nn) = 0.5_dp
@@ -1137,7 +1123,7 @@
          yy(ii,nn) = zsi(ii)
       enddo
       if (klabel.eq.0) then
-         do 290 i=1,nsilop,idelm
+         do i=1,nsilop,idelm
 !           call rlint(i,rsi(i),zsi(i))
             msg = msg + 1
             note(msg) = 6
@@ -1145,7 +1131,7 @@
             xpos(msg) = rsi(i)
             ypos(msg) = zsi(i)
             ht(msg) = 0.04_dp
-  290    continue
+         enddo
       else
          hgt = 0.13_dp
 !        if (klabel.lt.0) call hgt = 0.16_dp
@@ -1178,7 +1164,7 @@
          yy(ii,nn) = ymp2(ii)
       enddo
       if (klabel.eq.0) then
-         do 300 i=ibm,iem,idelm
+         do i=ibm,iem,idelm
 !           call rlint(i,xmp2(i),ymp2(i))
             msg = msg + 1
             note(msg) = 6
@@ -1186,7 +1172,7 @@
             xpos(msg) = xmp2(i)
             ypos(msg) = ymp2(i)
             ht(msg) = 0.04_dp
-  300    continue
+         enddo
       else
          hgt = 0.13_dp
 !vas f90 modifi.
@@ -1208,7 +1194,6 @@
          xto(nvec) = xmp2(8)
          yto(nvec) = ymp2(8)
          ivec(nvec) = 1
-
          ifcoil=0
          workd(1)=0.0
          workd(2)=0.0
@@ -1232,7 +1217,6 @@
          xpos(msg) = workc(3)
          ypos(msg) = workd(3)
          ht(msg) = hgt
-
 !        call mixalf('INSTRU')
          mxalf(msg) = 'INSTRU'
          workd(3)=0.10_dp
@@ -1250,7 +1234,6 @@
          xto(nvec) = workc(2)
          yto(nvec) = workd(2)
          ivec(nvec) = 1
-
          workd(1)=zuperts(jtime)*0.012_dp
          workd(2)=zlowerts*0.01_dp-0.400_dp
          workc(1)=rmajts
@@ -1313,7 +1296,6 @@
          xpos(msg) = workc(3)
          ypos(msg) = workd(3)
          ht(msg) = hgt
-
          workc(1)=chordv(3)
          workc(2)=chordv(3)
          workd(1)=workd(1)-0.2_dp
@@ -1335,7 +1317,6 @@
          xto(nvec) = workc(2)
          yto(nvec) = workd(2)
          ivec(nvec) = 1
-
          msg = msg + 1
          note(msg) = 2
          lmes(msg) = 'CO(LH.8)2(LXHX) chord $'
@@ -1343,9 +1324,8 @@
          xpos(msg) = workc(3)
          ypos(msg) = workd(3)
          ht(msg) = hgt
-
 !-----------------------------------------------------------------------
-!--  motional Stark                                                   --
+!--      motional Stark                                               --
 !-----------------------------------------------------------------------
          workc(1)=1.90_dp
          workd(1)=0.0
@@ -1357,7 +1337,6 @@
          nxy(nn) = 1
          xx(1,nn) = workc(1)
          yy(1,nn) = workd(1)
-
          workc(2)=workc(1)-0.32_dp
          workd(2)=workd(1)+0.17_dp
          msg = msg + 1
@@ -1367,7 +1346,6 @@
          xpos(msg) = workc(2)
          ypos(msg) = workd(2)
          ht(msg) = hgt
-
          workc(3)=workc(2)+0.08_dp
          workd(3)=workd(2)-0.03_dp
          workc(4)=workc(1)-0.02_dp
@@ -1379,7 +1357,6 @@
          xto(nvec) = workc(4)
          yto(nvec) = workd(4)
          ivec(nvec) = 1
-
          if (klabel.lt.0) then
            if (klabel.gt.-100) then
              klabela=iabs(klabel)
@@ -1410,38 +1387,38 @@
            ! call title('$',-100,'R(m)$',0,'Z(m)$',0,xll,yll)
          endif
       endif
-  310 continue
+      endif !iprobe.ne.0
 !
-      if (ixray.eq.0) go to 400
-      do 380 i=ixraystart,ixrayend
+      if (ixray.ne.0) then
+      do i=ixraystart,ixrayend
          xplt(1)=rxray(i)
          yplt(1)=zxray(i)
          theta=xangle(i)*radeg
          mdot = 1
          iddsxr=0
          if (i.le.nangle/2) then
-            do 317 ii=1,10
+            do ii=1,10
                if (i.eq.ksxr0(ii)) then
                   mdot = 0
                   iddsxr=ii
                endif
-  317       continue
+            enddo
          else
             j=i-nangle/2
-            do 319 ii=1,10
+            do ii=1,10
                if (j.eq.ksxr2(ii)) then
                   mdot = 0
                   iddsxr=ii
                endif
-  319       continue
+            enddo
          endif
-         do 360 k=2,npoint
+         do k=2,npoint
             xplt(k)=k*0.08_dp*cos(theta)+rxray(i)
             yplt(k)=k*0.08_dp*sin(theta)+zxray(i)
-            if ((xplt(k).lt.almin).or.(xplt(k).gt.almax)) go to 370
-            if ((yplt(k).lt.blmin).or.(yplt(k).gt.blmax)) go to 370
-  360    continue
-  370    if (iddsxr.gt.0.or.idosxr.eq.1) then
+            if ((xplt(k).lt.almin).or.(xplt(k).gt.almax)) exit
+            if ((yplt(k).lt.blmin).or.(yplt(k).gt.blmax)) exit
+         enddo
+         if (iddsxr.gt.0.or.idosxr.eq.1) then
             nn = nn + 1
             ndotme(nn) = mdot
             nxy(nn) = k
@@ -1451,56 +1428,54 @@
             enddo
          endif
 !----------------------------------------------------------------------
-!-- write out SXR files                                              --
+!--      write out SXR files                                         --
 !----------------------------------------------------------------------
          if (kwripre.gt.0.and.iddsxr.gt.0) then
-          write(iname,40023) iddsxr
+            write(iname,40023) iddsxr
             if (i.le.nangle/2) then
                dataname=dataname(1:lprx)//'_sxr0'//iname
             else
                dataname=dataname(1:lprx)//'_sxr2'//iname
             endif
-        open(unit=62,file=dataname,status='old',err=12946)
-        close(unit=62,status='delete')
-12946  continue
-        open(unit=62,file=dataname,status='new')
-            do 40921 iii=1,k
+            open(unit=62,file=dataname,status='old',iostat=ioerr)
+            if (ioerr.eq.0) close(unit=62,status='delete')
+            open(unit=62,file=dataname,status='new')
+            do iii=1,k
                call zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(iii), &
                yplt(iii),limfag)
                if (zeron.gt.0.001_dp) write (62,*) xplt(iii),yplt(iii)
-40921       continue
+            enddo
             close(unit=62)
          endif
-  380 continue
+      enddo
 !
-  400 continue
-      if (ifcoil.le.0) go to 405
-
-      call pltcol(mfcoil,rf,zf,wf,hf,af,af2,n11, &
-      nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
-      nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
-
-  405 continue
-      if (iecoil.le.0) go to 420
-      do 410 i=1,necoil
-        ae(i)=0.0
-        ae2(i)=0.0
-        ishade=-ecid(i)
-        call pltcol(n11,re(i),ze(i),we(i),he(i),ae(i),ae2(i),ishade, &
-         nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
-         nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
-        if (ecid(i).eq.1) clearx(nn)='PINK'
-        if (ecid(i).eq.2) clearx(nn)='FORE'
-        if (ecid(i).eq.3) clearx(nn)='GREE'
-        if (ecid(i).eq.4) clearx(nn)='CYAN'
-        if (ecid(i).eq.5) clearx(nn)='YELL'
-        if (ecid(i).eq.6) clearx(nn)='ORAN'
-  410 continue
-  420 continue
-
+      endif !ixray.ne.0
+      if (ifcoil.gt.0) then
+        call pltcol(mfcoil,rf,zf,wf,hf,af,af2,n11, &
+          nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
+          nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
+      endif
+      if (iecoil.gt.0) then
+        do i=1,necoil
+          ae(i)=0.0
+          ae2(i)=0.0
+          ishade=-ecid(i)
+          call pltcol(n11,re(i),ze(i),we(i),he(i),ae(i),ae2(i),ishade, &
+            nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
+            nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
+          if (ecid(i).eq.1) clearx(nn)='PINK'
+          if (ecid(i).eq.2) clearx(nn)='FORE'
+          if (ecid(i).eq.3) clearx(nn)='GREE'
+          if (ecid(i).eq.4) clearx(nn)='CYAN'
+          if (ecid(i).eq.5) clearx(nn)='YELL'
+          if (ecid(i).eq.6) clearx(nn)='ORAN'
+        enddo
+      endif
+!
       pasmac=cpasma(jtime)/1000.
       pasmap=pasmat(jtime)/1000.
-      if (klabel.lt.0) go to 19999
+!
+      if (klabel.ge.0) then
       xabs=-3.0
       yabs=7.0
       dyabs = 0.22_dp
@@ -1677,26 +1652,26 @@
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
 
-      if (ipass.gt.1) go to 430
-      write(text,9230) errorm,nitera
-      msg = msg + 1
-      note(msg) = 1
-      lmes(msg) = text
-      imes(msg) = 26
-      xpos(msg) = xabs
-      ypos(msg) = yabs
-      yabs = yabs - dyabs
-      ht(msg) = 0.14_dp
-      write(text,9240) delerb,delerr
-      msg = msg + 1
-      note(msg) = 1
-      lmes(msg) = text
-      imes(msg) = 29
-      xpos(msg) = xabs
-      ypos(msg) = yabs
-      yabs = yabs - dyabs
-      ht(msg) = 0.14_dp
-  430 continue
+      if (ipass.le.1) then
+        write(text,9230) errorm,nitera
+        msg = msg + 1
+        note(msg) = 1
+        lmes(msg) = text
+        imes(msg) = 26
+        xpos(msg) = xabs
+        ypos(msg) = yabs
+        yabs = yabs - dyabs
+        ht(msg) = 0.14_dp
+        write(text,9240) delerb,delerr
+        msg = msg + 1
+        note(msg) = 1
+        lmes(msg) = text
+        imes(msg) = 29
+        xpos(msg) = xabs
+        ypos(msg) = yabs
+        yabs = yabs - dyabs
+        ht(msg) = 0.14_dp
+      endif
       fpolss=fpolvs/1000.
       write(text,9262) dminux(jtime),dminlx(jtime)
       msg = msg + 1
@@ -1728,9 +1703,7 @@
         endif
       endif
 !
-      if (icurrt.eq.4.or.icurrt.eq.1) then
-             edgej=cjor(nw)/edgej
-      endif
+      if (icurrt.eq.4.or.icurrt.eq.1) edgej=cjor(nw)/edgej
       write (text,9265) cjor0(jtime),edgej
       msg = msg + 1
       note(msg) = 1
@@ -1876,29 +1849,29 @@
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
       if (mmbmsels.eq.0) then
-           write(text,9385) idlopc(jtime),kmtark,klibim
+        write(text,9385) idlopc(jtime),kmtark,klibim
       else
-           write(text,99385) idlopc(jtime),kmtark,mmbmsels
+        write(text,99385) idlopc(jtime),kmtark,mmbmsels
       endif
-         msg = msg + 1
-         note(msg) = 1
-         lmes(msg) = text
-         imes(msg) = 25
-         xpos(msg) = xabs
-         ypos(msg) = yabs
-         yabs = yabs - dyabs
-         ht(msg) = 0.14_dp
-      if(nextra.eq.0)go to 435
-      write(text,9395)(scraps(i),i=1,iabs(nextra))
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
-      imes(msg) = 40
+      imes(msg) = 25
       xpos(msg) = xabs
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-  435 continue
+      if(nextra.ne.0) then
+        write(text,9395)(scraps(i),i=1,iabs(nextra))
+        msg = msg + 1
+        note(msg) = 1
+        lmes(msg) = text
+        imes(msg) = 40
+        xpos(msg) = xabs
+        ypos(msg) = yabs
+        yabs = yabs - dyabs
+        ht(msg) = 0.14_dp
+      endif
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = ' '
@@ -2094,7 +2067,7 @@
          ht(msg) = 0.14_dp
       endif
 !
-19999 continue
+      endif ! klabel.ge.0
       if (ipass.gt.1) then
          return
       endif
@@ -2127,19 +2100,16 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif         ! itek
+      endif ! itek
 !
-  450 continue
-      if (ivacum.gt.0) then
-         call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
-      endif
-      do 460 i=1,nh
+      endif ! ivacum.le.0
+      do i=1,nh
          call seva2d(bkx,lkx,bky,lky,c,rmaxis,zgrid(i),pds,ier,n333)
          workj(i)=-pds(3)/rmaxis
-  460 continue
+      enddo
       dxnow=(rmaxzm-rminzm)/(nw-1)
       drnow=(xlmax-xlmin)/(nw-1)
-      do 465 i=1,nw
+      do i=1,nw
          xnow=rminzm+(i-1)*dxnow
          call seva2d(bkx,lkx,bky,lky,c,xnow,zmaxis,pds,ier,n111)
          workc(i)=xnow
@@ -2149,19 +2119,20 @@
          workf(i)=pds(1)+psiref(jtime)
          workg(i)=pds(2)/xnow
          workk(i)=xnow
-  465 continue
-      if (ivacum.gt.0) go to 495
+      enddo
+      if (ivacum.le.0) then
       if (kwripre.gt.0) then
          delz=(zuperts(jtime)-zlowerts)/(mpress-1)
-         do 42100 i=1,mpress
+         do i=1,mpress
             zqthom(i)=(zlowerts+(i-1)*delz)/100.
-42100    continue
+         enddo
       endif
-      do 467 i=1,nw
-         do 467 j=1,nh
+      do i=1,nw
+         do j=1,nh
             kk=(i-1)*nh+j
             copyn(kk)=pcurrt(kk)/darea/1.0e+03_dp
-  467 continue
+         enddo
+      enddo
       call sets2d(copyn,cj,rgrid,nw,bjx,ljx,zgrid,nh,bjy,ljy,wkj,ier)
       if (kvtor.gt.0) then
         n1set=1
@@ -2171,10 +2142,10 @@
         n1set=0
         if (icurrt.eq.1) then
           do i=1,nw
-          do j=1,nh
-            kk=(i-1)*nh+j
-            copyn(kk)=pcurrw(kk)/darea/1.0e+03_dp
-          enddo
+            do j=1,nh
+              kk=(i-1)*nh+j
+              copyn(kk)=pcurrw(kk)/darea/1.0e+03_dp
+            enddo
           enddo
           call sets2d(copyn,cv,rgrid,nw,bvx,lvx,zgrid,nh,bvy, &
                       lvy,wkv,ier)
@@ -2182,15 +2153,15 @@
       endif
       call zpline(nw,worke,pres,bpmid,cpmid,dpmid)
       if (kwripre.gt.0) then
-         do 42120 i=1,mpress
+         do i=1,mpress
             call seva2d(bkx,lkx,bky,lky,c,rmajts,zqthom(i), &
                         pds,ier,n111)
             sinow=(pds(1)-simag)/(psibry-simag)
             qthom(i)=seval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
-42120    continue
+         enddo
       endif
       delscr=(rmaxzm-rminzm)/2./(nw-1)*0.6_dp
-      do 470 i=1,nw
+      do i=1,nw
          rpmid(i)=workc(i)
          rscrap(i)=rmaxzm+(i-1)*delscr
          call seva2d(bkx,lkx,bky,lky,c,workc(i),zmaxis,pds,ier,n111)
@@ -2284,7 +2255,7 @@
            endif
          endif
 !-------------------------------------------------------------------
-!--  total current density                                        --
+!--      total current density                                    --
 !-------------------------------------------------------------------
          call seva2d(bkx,lkx,bky,lky,c,rscrap(i),zmaxis,pds,ier,n111)
          xpsiss=(pds(1)-simag)/(psibry-simag)
@@ -2292,15 +2263,15 @@
             if (xpsikk.lt.0.0) xpsikk=0.0
             if (xpsikk.gt.1.0001_dp.and.icutfp.eq.0) then
                worka(i)=0.0
-               go to 11470
-            endif
-            worka(i)=workc(i)*ppcurr(xpsikk,kppcur) &
+            else
+               worka(i)=workc(i)*ppcurr(xpsikk,kppcur) &
                       +fpcurr(xpsikk,kffcur)/workc(i)
-            worka(i)=worka(i)/darea/1.0e+03_dp
-11470       if (xpsiss.lt.0.0) xpsiss=0.0
+               worka(i)=worka(i)/darea/1.0e+03_dp
+            endif
+            if (xpsiss.lt.0.0) xpsiss=0.0
             if (xpsiss.gt.1.0001_dp.and.icutfp.eq.0) then
                curscr(i)=0.0
-               go to 470
+               cycle
             endif
             curscr(i)=rscrap(i)*ppcurr(xpsiss,kppcur) &
                          +fpcurr(xpsiss,kffcur)/rscrap(i)
@@ -2310,11 +2281,11 @@
                        pds,ier,n111)
            worka(i)=pds(1)
          endif
-  470 continue
+      enddo
 !
       curmin=worka(1)
       curmax=worka(1)
-      do 480 i=1,nw
+      do i=1,nw
          curmin=min(curmin,worka(i))
          curmax=max(curmax,worka(i))
          if (kvtor.gt.0) then
@@ -2322,7 +2293,7 @@
            curmax=max(curmax,workaw(i))
          endif
          curmid(i)=worka(i)
-  480 continue
+      enddo
       drrrr=(workc(nw)-workc(1))/2.
       drpmid=drrrr
       dcurn=curmax-curmin
@@ -2332,7 +2303,7 @@
 !
       if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
-! Initialize plot parameters     c
+!        Initialize plot parameters     c
 !-----------------------------------------------------------------------c
          call init2d
          ibrdr = 1
@@ -2358,40 +2329,37 @@
            yy(ii,nn) = worka(ii)
          enddo
          if (kwripre.gt.0) then
-         dataname=dataname(1:lprx)//'_jmid'
-        open(unit=62,file=dataname,status='old',err=12917)
-        close(unit=62,status='delete')
-12917  continue
-        open(unit=62,file=dataname,status='new')
-         do i=1,nw
-           write (62,*) workc(i),worka(i),xdum,xdum
-         enddo
-         close(unit=62)
-         if (keecur.gt.0) then
-         dataname=dataname(1:lprx)//'_ermid'
-        open(unit=62,file=dataname,status='old',err=12918)
-        close(unit=62,status='delete')
-12918  continue
-        open(unit=62,file=dataname,status='new')
-         do i=1,nw
-           write (62,*) rpmid(i),ermid(i),xdum,xdum
-         enddo
-         close(unit=62)
-         endif
-         if (kvtor.gt.0) then
-         dataname=dataname(1:lprx)//'_jwmid'
-        open(unit=62,file=dataname,status='old',err=12919)
-        close(unit=62,status='delete')
-12919  continue
-        open(unit=62,file=dataname,status='new')
-         do i=1,nw
-           write (62,*) workc(i),workaw(i),xdum,xdum
-         enddo
-         close(unit=62)
-         endif
+           dataname=dataname(1:lprx)//'_jmid'
+           open(unit=62,file=dataname,status='old',iostat=ioerr)
+           if (ioerr.eq.0) close(unit=62,status='delete')
+           open(unit=62,file=dataname,status='new')
+           do i=1,nw
+             write (62,*) workc(i),worka(i),xdum,xdum
+           enddo
+           close(unit=62)
+           if (keecur.gt.0) then
+             dataname=dataname(1:lprx)//'_ermid'
+             open(unit=62,file=dataname,status='old',iostat=ioerr)
+             if (ioerr.eq.0) close(unit=62,status='delete')
+             open(unit=62,file=dataname,status='new')
+             do i=1,nw
+               write (62,*) rpmid(i),ermid(i),xdum,xdum
+             enddo
+             close(unit=62)
+           endif
+           if (kvtor.gt.0) then
+             dataname=dataname(1:lprx)//'_jwmid'
+             open(unit=62,file=dataname,status='old',iostat=ioerr)
+             if (ioerr.eq.0) close(unit=62,status='delete')
+             open(unit=62,file=dataname,status='new')
+             do i=1,nw
+               write (62,*) workc(i),workaw(i),xdum,xdum
+             enddo
+             close(unit=62)
+           endif
          endif
 !--------------------------------------------------------------------
-!--  zero line                                                     --
+!--      zero line                                                 --
 !--------------------------------------------------------------------
          nn=nn+1
          nxy(nn) = 2
@@ -2411,38 +2379,38 @@
          endif
          ncurve=nn
 !-----------------------------------------------------------------------c
-!       Write Plot Parameters    c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
-        call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
-        iorel, xorl, yorl, hight, bngle, bshft, &
-        ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
-        almin, xstp, almax, blmin, ystp, blmax, &
-        iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
-        isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
-        igridx, igridy, idash, idot, ichdsh, ichdot, &
-        thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
-        markme, clearx, mrc, tlen, nmrk, rat, &
-        xx, yy, nxy, ncnct, &
-        icont, nword, zz, ix, iy, zinc, line, mode, &
-        lbflg, ithk, ipri, nline, draw, &
-        nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-        nvec, xfm, yfm, xto, yto, ivec, &
-        msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif   ! itek
+         call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
+         iorel, xorl, yorl, hight, bngle, bshft, &
+         ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
+         almin, xstp, almax, blmin, ystp, blmax, &
+         iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+         isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
+         igridx, igridy, idash, idot, ichdsh, ichdot, &
+         thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
+         markme, clearx, mrc, tlen, nmrk, rat, &
+         xx, yy, nxy, ncnct, &
+         icont, nword, zz, ix, iy, zinc, line, mode, &
+         lbflg, ithk, ipri, nline, draw, &
+         nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
+         nvec, xfm, yfm, xto, yto, ivec, &
+         msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      endif ! itek
       endif
 !
-      do 485 i=1,nw
+      do i=1,nw
          sinow=(workd(i)-simag)/(psibry-simag)
          if (sinow.le.0.0) sinow=0.
          if (sinow.gt.1.) sinow=1.
          worka(i)=seval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
-  485 continue
+      enddo
       curmin=worka(1)
       curmax=worka(1)
-      do 490 i=1,nw
+      do i=1,nw
          curmin=min(curmin,worka(i))
          curmax=max(curmax,worka(i))
-  490 continue
+      enddo
       drrrr=(workc(nw)-workc(1))/2.
       dcurn=curmax-curmin
       curmax=curmax+0.05_dp*dcurn
@@ -2450,7 +2418,7 @@
       if (klabel.ge.0) then
          ibrdr = 1
 !-----------------------------------------------------------------------c
-! Initialize plot parameters     c
+!        Initialize plot parameters     c
 !-----------------------------------------------------------------------c
          call init2d
          nn = nn + 1
@@ -2467,10 +2435,10 @@
          xx(2,nn)=rmaxis
          yy(2,nn)=curmax
          if (nqwant.gt.0) then
-            do 88485 i=1,nqwant
+            do i=1,nqwant
                sinow=siwantq(i)
                worka(i)=seval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
-88485       continue
+            enddo
             nn = nn + 1
             nxy(nn) = nqwant
             markme(nn) = 3
@@ -2480,234 +2448,215 @@
                yy(ii,nn) = worka(ii)
             enddo
          endif
-         if(kwripre.gt.0)then
+         if (kwripre.gt.0) then
             dataname=dataname(1:lprx)//'_qmid'
-          open(unit=62,                       file=dataname, &
-               status='old',err=12990)
-          close(unit=62,status='delete')
-12990 continue
-          open(unit=62,                       file=dataname, &
-               status='new')
+            open(unit=62,file=dataname,status='old',iostat=ioerr)
+            if (ioerr.eq.0) close(unit=62,status='delete')
+            open(unit=62,file=dataname,status='new')
             do ip=1,nw
                write(62,*)workc(ip),worka(ip)
             enddo
             close(62)
          endif
          if (kstark.gt.0.or.kdomse.gt.0) then
-          do 491 i=1,nstark
-           sinow=(sistark(i)-simag)/(psibry-simag)
-           if (sinow.gt.0.0.and.sinow.lt.1.0) then
-           qstark(i)=seval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
-           else
-           qstark(i)=0.0
-           endif
-  491     continue
+          do i=1,nstark
+            sinow=(sistark(i)-simag)/(psibry-simag)
+            if (sinow.gt.0.0.and.sinow.lt.1.0) then
+              qstark(i)=seval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
+            else
+              qstark(i)=0.0
+            endif
+          enddo
           if (kwripre.gt.0) then
             dataname=dataname(1:lprx)//'_rzmse'
-          open(unit=62,                       file=dataname, &
-               status='old',err=12993)
-          close(unit=62,status='delete')
-12993 continue
-          open(unit=62,                       file=dataname, &
-               status='new')
+            open(unit=62,file=dataname,status='old',iostat=ioerr)
+            if (ioerr.eq.0) close(unit=62,status='delete')
+            open(unit=62,file=dataname,status='new')
             do ip=1,nstark
-               write(62,*)rrgam(jtime,ip),zzgam(jtime,ip)
+              write(62,*)rrgam(jtime,ip),zzgam(jtime,ip)
             enddo
             close(62)
             dataname=dataname(1:lprx)//'_bzmse'
-          open(unit=62,                       file=dataname, &
-               status='old',err=12996)
-          close(unit=62,status='delete')
-12996 continue
-          open(unit=62,                       file=dataname, &
-               status='new')
+            open(unit=62,file=dataname,status='old',iostat=ioerr)
+            if (ioerr.eq.0) close(unit=62,status='delete')
+            open(unit=62,file=dataname,status='new')
             zerono = 0.0
             do ip=1,nmtark
-               if (kstark.gt.0) then
-                 sigmabz = 0.0
-                 if (fwtgam(ip).gt.0.0) sigmabz=bzmse(ip)* &
-                         siggam(jtime,ip)/tangam(jtime,ip)
-                 write(62,*) rrgam(jtime,ip),bzmse(ip), &
-                              zerono,abs(sigmabz)
-               else
-                 write(62,*) rrgam(jtime,ip),bzmsec(ip), &
-                              zerono,zerono
-               endif
-               rrgams(ip)=rrgam(jtime,ip)
+              if (kstark.gt.0) then
+                sigmabz = 0.0
+                if (fwtgam(ip).gt.0.0) sigmabz=bzmse(ip)* &
+                       siggam(jtime,ip)/tangam(jtime,ip)
+                write(62,*) rrgam(jtime,ip),bzmse(ip), &
+                            zerono,abs(sigmabz)
+              else
+                write(62,*) rrgam(jtime,ip),bzmsec(ip), &
+                            zerono,zerono
+              endif
+              rrgams(ip)=rrgam(jtime,ip)
             enddo
             close(62)
             dataname=dataname(1:lprx)//'_bzlim'
-          open(unit=62,                       file=dataname, &
-               status='old',err=12997)
-          close(unit=62,status='delete')
-12997 continue
-          open(unit=62,                       file=dataname, &
-               status='new')
+            open(unit=62,file=dataname,status='old',iostat=ioerr)
+            if (ioerr.eq.0) close(unit=62,status='delete')
+            open(unit=62,file=dataname,status='new')
             do ip=nmtark+1,nstark
-               if (nstark.gt.nmtark) then
-                 if (kstark.gt.0) then
+              if (nstark.gt.nmtark) then
+                if (kstark.gt.0) then
                   sigmabz = 0.0
                   if (fwtgam(ip).gt.0.0) sigmabz=bzmse(ip)* &
                          siggam(jtime,ip)/tangam(jtime,ip)
-                   write(62,*) rrgam(jtime,ip),bzmse(ip), &
-                         zerono,abs(sigmabz)
-                 else
-                   write(62,*) rrgam(jtime,ip),bzmsec(ip), &
-                         zerono, zerono
-                 endif
-                 rrgaml(ip-nmtark)=rrgam(jtime,ip)
-               endif
+                  write(62,*) rrgam(jtime,ip),bzmse(ip), &
+                              zerono,abs(sigmabz)
+                else
+                  write(62,*) rrgam(jtime,ip),bzmsec(ip), &
+                              zerono, zerono
+                endif
+                rrgaml(ip-nmtark)=rrgam(jtime,ip)
+              endif
             enddo
             close(62)
-           dataname=dataname(1:lprx)//'_bzmsec'
-          open(unit=62,                       file=dataname, &
-               status='old',err=12999)
-          close(unit=62,status='delete')
-12999 continue
-          open(unit=62,                       file=dataname, &
-               status='new')
+            dataname=dataname(1:lprx)//'_bzmsec'
+            open(unit=62,file=dataname,status='old',iostat=ioerr)
+            if (ioerr.eq.0) close(unit=62,status='delete')
+            open(unit=62,file=dataname,status='new')
             do jp=1,nmtark
-             rrgamn=rrgams(1)
-             bzgamn=bzmsec(1)
-             igamn=1
-             do ip=1,nmtark
-              if (rrgams(ip).lt.rrgamn) then
-                rrgamn=rrgams(ip)
-                bzgamn=bzmsec(ip)
-                igamn=ip
-              endif
-             enddo
-             write(62,*)rrgamn,bzgamn
-             rrgams(igamn)=1.e10_dp
+              rrgamn=rrgams(1)
+              bzgamn=bzmsec(1)
+              igamn=1
+              do ip=1,nmtark
+                if (rrgams(ip).lt.rrgamn) then
+                  rrgamn=rrgams(ip)
+                  bzgamn=bzmsec(ip)
+                  igamn=ip
+                endif
+              enddo
+              write(62,*)rrgamn,bzgamn
+              rrgams(igamn)=1.e10_dp
             enddo
             close(62)
-           dataname=dataname(1:lprx)//'_bzlimc'
-          open(unit=62,                       file=dataname, &
-               status='old',err=13001)
-          close(unit=62,status='delete')
-13001 continue
-          open(unit=62,                       file=dataname, &
-               status='new')
+            dataname=dataname(1:lprx)//'_bzlimc'
+            open(unit=62,file=dataname,status='old',iostat=ioerr)
+            if (ioerr.eq.0) close(unit=62,status='delete')
+            open(unit=62,file=dataname,status='new')
             do jp=nmtark+1,nstark
-             rrgamn=rrgaml(1)
-             bzgamn=bzmsec(1+nmtark)
-             igamn=1
-             do ip=1,nstark-nmtark
-              if (rrgaml(ip).lt.rrgamn) then
-                rrgamn=rrgaml(ip)
-                bzgamn=bzmsec(ip+nmtark)
-                igamn=ip
-              endif
-             enddo
-             write(62,*)rrgamn,bzgamn
-             rrgaml(igamn)=1.e10_dp
+              rrgamn=rrgaml(1)
+              bzgamn=bzmsec(1+nmtark)
+              igamn=1
+              do ip=1,nstark-nmtark
+                if (rrgaml(ip).lt.rrgamn) then
+                  rrgamn=rrgaml(ip)
+                  bzgamn=bzmsec(ip+nmtark)
+                  igamn=ip
+                endif
+              enddo
+              write(62,*)rrgamn,bzgamn
+              rrgaml(igamn)=1.e10_dp
             enddo
             close(62)
           endif
          endif
-        if (kstark.eq.0.and.mmbmsels.gt.0) then
+         if (kstark.eq.0.and.mmbmsels.gt.0) then
           do i=1,nmsels
-           sinow=sinmls(i)
-           if (sinow.gt.0.0.and.sinow.lt.1.0) then
-           qstark(i)=seval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
-           else
-           qstark(i)=0.0
-           endif
+            sinow=sinmls(i)
+            if (sinow.gt.0.0.and.sinow.lt.1.0) then
+              qstark(i)=seval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
+            else
+              qstark(i)=0.0
+            endif
           enddo
          endif
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-
-        ibrdr = 1
-        xphy = 4.1_dp
-        yphy = 2.7_dp
-        hight = 0.10_dp
-        nplen = 100
-        nxlen = 100
-        nylen = 100
-        iytck = 1
-        if (keecur.gt.0) then
-          igridx = 0
-        else
-          igridx = 1
-        endif
-        igridy = 1
-        idot = 1
-        xtitle = 'R(m)$'
-        ytitle = 'q$'
-        iexit = 2
+         if (itek.ge.5.and.idotek.eq.0) then
+           ibrdr = 1
+           xphy = 4.1_dp
+           yphy = 2.7_dp
+           hight = 0.10_dp
+           nplen = 100
+           nxlen = 100
+           nylen = 100
+           iytck = 1
+           if (keecur.gt.0) then
+             igridx = 0
+           else
+             igridx = 1
+           endif
+           igridy = 1
+           idot = 1
+           xtitle = 'R(m)$'
+           ytitle = 'q$'
+           iexit = 2
 !-----------------------------------------------------------------------
-!-- overlay ER plot                                                   --
+!--        overlay ER plot                                            --
 !-----------------------------------------------------------------------
-      if (keecur.gt.0) then
-      eurmin=1.0e+10_dp
-      eurmax=-1.0e+10_dp
-      do i=1,nw
-         eurmin=min(eurmin,ermid(i))
-         eurmax=max(eurmax,ermid(i))
-      enddo
-      ecurn=eurmax-eurmin
-      eurmax=eurmax+0.05_dp*ecurn
-      eurmin=eurmin-0.05_dp*ecurn
-      eurmax=max(abs(eurmin),abs(eurmax))
-      eurmin=-eurmax
-      ecurn=(eurmax-eurmin)
-      sorg = eurmin
-      stp = ecurn
-      smax = eurmax
-      slen = xmm
-      sname = 'ER(kV/m)$'
-      nslen = -100
-      xps = xmm
-      yps = 0.0
-      nn = nn + 1
-      isaxs = nn
-      nxy(nn) = nw
-      ndshme(nn) = 1
-      do ii = 1, nxy(nn)
-         xx(ii,nn) = rpmid(ii)
-         yy(ii,nn) = ermid(ii)
-      enddo
-      ncurve = nn
-      endif
+           if (keecur.gt.0) then
+             eurmin=1.0e+10_dp
+             eurmax=-1.0e+10_dp
+             do i=1,nw
+               eurmin=min(eurmin,ermid(i))
+               eurmax=max(eurmax,ermid(i))
+             enddo
+             ecurn=eurmax-eurmin
+             eurmax=eurmax+0.05_dp*ecurn
+             eurmin=eurmin-0.05_dp*ecurn
+             eurmax=max(abs(eurmin),abs(eurmax))
+             eurmin=-eurmax
+             ecurn=(eurmax-eurmin)
+             sorg = eurmin
+             stp = ecurn
+             smax = eurmax
+             slen = xmm
+             sname = 'ER(kV/m)$'
+             nslen = -100
+             xps = xmm
+             yps = 0.0
+             nn = nn + 1
+             isaxs = nn
+             nxy(nn) = nw
+             ndshme(nn) = 1
+             do ii = 1, nxy(nn)
+               xx(ii,nn) = rpmid(ii)
+               yy(ii,nn) = ermid(ii)
+             enddo
+             ncurve = nn
+           endif
 !-----------------------------------------------------------------------c
-!     Write Plot Parameters    c
+!          Write Plot Parameters    c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
-      iorel, xorl, yorl, hight, bngle, bshft, &
-      ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
-      almin, xstp, almax, blmin, ystp, blmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
-      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
-      igridx, igridy, idash, idot, ichdsh, ichdot, &
-      thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
-      markme, clearx, mrc, tlen, nmrk, rat, &
-      xx, yy, nxy, ncnct, &
-      icont, nword, zz, ix, iy, zinc, line, mode, &
-      lbflg, ithk, ipri, nline, draw, &
-      nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto, ivec, &
-      msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif     ! itek
+           call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
+           iorel, xorl, yorl, hight, bngle, bshft, &
+           ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
+           almin, xstp, almax, blmin, ystp, blmax, &
+           iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+           isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
+           igridx, igridy, idash, idot, ichdsh, ichdot, &
+           thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
+           markme, clearx, mrc, tlen, nmrk, rat, &
+           xx, yy, nxy, ncnct, &
+           icont, nword, zz, ix, iy, zinc, line, mode, &
+           lbflg, ithk, ipri, nline, draw, &
+           nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
+           nvec, xfm, yfm, xto, yto, ivec, &
+           msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+         endif ! itek
       endif
 !
-  495 continue
+      endif ! ivacum.le.0
       istrpl=1
       if (itek.eq.1) call tekall(4010,960,0,0,0)
       call grace(0.0)
       xmm=1.6_dp
 !
       iexpand=1
-      if(oring(jtime).lt.100.*scrape)iexpand=0
-      if(iexpand.eq.0)then
+      if (oring(jtime).lt.100.*scrape) iexpand=0
+      if (iexpand.eq.0) then
          call expand(npltbdry,npltxpt,nexexx,xmm,jtime)
       else
          curmin=workg(1)
          curmax=workg(1)
-         do 510 i=1,nw
+         do i=1,nw
             curmin=min(curmin,workg(i))
             curmax=max(curmax,workg(i))
-  510    continue
+         enddo
          dcurn=curmax-curmin
          curmax=curmax+0.05_dp*dcurn
          curmin=curmin-0.05_dp*dcurn
@@ -2715,54 +2664,54 @@
          dcurn=(curmax-curmin)
          xmm=1.6_dp
 !
-      if (itek.ge.5.and.idotek.eq.0) then
+         if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
-!       Initialize plot parameters     c
+!        Initialize plot parameters     c
 !-----------------------------------------------------------------------c
-        call init2d
-        ibrdr = 1
-        xphy = 9.0
-        yphy = 1.4_dp
-        hight = 0.12_dp
-        nplen = 100
-        nxlen = 100
-        nylen = 100
-        ixtck = 2
-        iytck = 2
-        igridx = 2
-        igridy = 2
-        idot = 1
-        ipag = 0
-        xtitle = 'R(m)$'
-        ytitle = 'Bz(T)$'
-        iexit = 1
+         call init2d
+         ibrdr = 1
+         xphy = 9.0
+         yphy = 1.4_dp
+         hight = 0.12_dp
+         nplen = 100
+         nxlen = 100
+         nylen = 100
+         ixtck = 2
+         iytck = 2
+         igridx = 2
+         igridy = 2
+         idot = 1
+         ipag = 0
+         xtitle = 'R(m)$'
+         ytitle = 'Bz(T)$'
+         iexit = 1
 !-----------------------------------------------------------------------c
-!       Write Plot Parameters    c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
-        call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
-        iorel, xorl, yorl, hight, bngle, bshft, &
-        ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
-        almin, xstp, almax, blmin, ystp, blmax, &
-        iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
-        isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
-        igridx, igridy, idash, idot, ichdsh, ichdot, &
-        thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
-        markme, clearx, mrc, tlen, nmrk, rat, &
-        xx, yy, nxy, ncnct, &
-        icont, nword, zz, ix, iy, zinc, line, mode, &
-        lbflg, ithk, ipri, nline, draw, &
-        nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-        nvec, xfm, yfm, xto, yto, ivec, &
-        msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif  ! itek
-      endif
+         call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
+         iorel, xorl, yorl, hight, bngle, bshft, &
+         ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
+         almin, xstp, almax, blmin, ystp, blmax, &
+         iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+         isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
+         igridx, igridy, idash, idot, ichdsh, ichdot, &
+         thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
+         markme, clearx, mrc, tlen, nmrk, rat, &
+         xx, yy, nxy, ncnct, &
+         icont, nword, zz, ix, iy, zinc, line, mode, &
+         lbflg, ithk, ipri, nline, draw, &
+         nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
+         nvec, xfm, yfm, xto, yto, ivec, &
+         msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      endif ! itek
+      endif ! iexpand.ne.0
 !
       curmin=workf(1)
       curmax=workf(1)
-      do 500 i=1,nw
+      do i=1,nw
          curmin=min(curmin,workf(i))
          curmax=max(curmax,workf(i))
-  500 continue
+      enddo
       drrrr=(workk(nw)-workk(1))
       dcurn=curmax-curmin
       curmax=curmax+0.05_dp*dcurn
@@ -2770,7 +2719,7 @@
       dcurn=(curmax-curmin)
       xmm=1.6_dp
 !-----------------------------------------------------------------------c
-! Initialize plot parameters     c
+!     Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       ibrdr = 1
@@ -2795,68 +2744,68 @@
          ixnon = 1
       endif
       iexit = 1
-
 !
       if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
-!     Write Plot Parameters    c
+!        Write Plot Parameters    c
 !-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
-      iorel, xorl, yorl, hight, bngle, bshft, &
-      ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
-      almin, xstp, almax, blmin, ystp, blmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
-      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
-      igridx, igridy, idash, idot, ichdsh, ichdot, &
-      thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
-      markme, clearx, mrc, tlen, nmrk, rat, &
-      xx, yy, nxy, ncnct, &
-      icont, nword, zz, ix, iy, zinc, line, mode, &
-      lbflg, ithk, ipri, nline, draw, &
-      nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto, ivec, &
-      msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+         call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
+         iorel, xorl, yorl, hight, bngle, bshft, &
+         ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
+         almin, xstp, almax, blmin, ystp, blmax, &
+         iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+         isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
+         igridx, igridy, idash, idot, ichdsh, ichdot, &
+         thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
+         markme, clearx, mrc, tlen, nmrk, rat, &
+         xx, yy, nxy, ncnct, &
+         icont, nword, zz, ix, iy, zinc, line, mode, &
+         lbflg, ithk, ipri, nline, draw, &
+         nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
+         nvec, xfm, yfm, xto, yto, ivec, &
+         msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
 !
-      do 550 i=1,nw
-         do 550 j=1,nh
+      do i=1,nw
+         do j=1,nh
             kk=(i-1)*nh+j
             copyj(i,j)=0.0
-            do 520 m=1,nfcoil
+            do m=1,nfcoil
                copyj(i,j)=copyj(i,j)+gridfc(kk,m)*brsp(m)
-  520       continue
-            if (ivesel.le.0) go to 526
-            do 523 m=1,nvesel
-               copyj(i,j)=copyj(i,j)+gridvs(kk,m)*vcurrt(m)
-  523       continue
-  526       continue
-            if (iecurr.le.0) go to 530
-            do 528 m=1,nesum
-               copyj(i,j)=copyj(i,j)+gridec(kk,m)*ecurrt(m)
-  528       continue
-  530       continue
-  550 continue
-      do i=1,nw
-      do j=1,nh
-        k=(i-1)*nh+j
-        copyn(k)=copyj(i,j)
+            enddo
+            if (ivesel.gt.0) then
+               do m=1,nvesel
+                  copyj(i,j)=copyj(i,j)+gridvs(kk,m)*vcurrt(m)
+               enddo
+            endif
+            if (iecurr.gt.0) then
+               do m=1,nesum
+                  copyj(i,j)=copyj(i,j)+gridec(kk,m)*ecurrt(m)
+               enddo
+            endif
+         enddo
       enddo
+      do i=1,nw
+        do j=1,nh
+          k=(i-1)*nh+j
+          copyn(k)=copyj(i,j)
+        enddo
       enddo
       call sets2d(copyn,cj,rgrid,nw,bjx,ljx,zgrid,nh,bjy,ljy,wkj,ier)
-      do 552 i=1,nw
+      do i=1,nw
          call seva2d(bjx,ljx,bjy,ljy,cj,workk(i),zmaxis,pds,ier,n555)
          workh(i)=1.-pds(5)/pds(2)*workk(i)
-  552 continue
+      enddo
       rcur=rcurrt(jtime)/100! m
       zcur=zcurrt(jtime)/100! m
       call seva2d(bjx,ljx,bjy,ljy,cj,rcur,zcur,pds,ier,n555)
       vertn(jtime)=1.-pds(5)/pds(2)*rcur
       curmin=workh(1)
       curmax=workh(1)
-      do 555 i=1,nw
+      do i=1,nw
          curmin=min(curmin,workh(i))
          curmax=max(curmax,workh(i))
-  555 continue
+      enddo
       dcurn=(curmax-curmin)/2.
       curmax=curmax+dcurn*0.05_dp
       curmin=curmin-dcurn*0.05_dp
@@ -2867,7 +2816,7 @@
       workh(1)=0.
       workh(2)=0.
 !-----------------------------------------------------------------------c
-! Initialize plot parameters     c
+!     Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       ncurve = 2
@@ -2921,15 +2870,15 @@
       lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
-       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
 !
       curmin=workj(1)
       curmax=workj(1)
-      do 560 i=1,nh
+      do i=1,nh
          curmin=min(curmin,workj(i))
          curmax=max(curmax,workj(i))
-  560 continue
+      enddo
       drrrr=(zgrid(nh)-zgrid(1))
       dcurn=curmax-curmin
       curmax=curmax+0.05_dp*dcurn
@@ -2977,16 +2926,16 @@
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
 !
-      if (ivacum.gt.0) go to 570
+      if (ivacum.le.0) then
       curmin=1.0e+10_dp
       curmax=-1.0e+10_dp
-      do 564 i=1,nw
+      do i=1,nw
          sinow=worke(i)
          worka(i)=speval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
          worka(i)=worka(i)/qpsi(i)
          curmin=min(curmin,worka(i))
          curmax=max(curmax,worka(i))
-  564 continue
+      enddo
       dcurn=curmax-curmin
       curmax=curmax+0.05_dp*dcurn
       curmin=curmin-0.05_dp*dcurn
@@ -3032,16 +2981,16 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif    ! itek
-  570 continue
-!
-      if (ivacum.gt.0) go to 580
+      endif ! itek
+      endif ! ivacum.le.0
+! TODO: can ivacum get changed before this?
+      if (ivacum.le.0) then
       curmin=1.0e+10_dp
       curmax=-1.0e+10_dp
-      do 574 i=1,nw
+      do i=1,nw
          curmin=min(curmin,pmid(i))
          curmax=max(curmax,pmid(i))
-  574 continue
+      enddo
       dcurn=curmax-curmin
       curmax=curmax+0.05_dp*dcurn
       curmin=curmin
@@ -3071,19 +3020,19 @@
 !
       if (kwripre.gt.0) then
          dataname=dataname(1:lprx)//'_pmid'
-        open(unit=62,file=dataname,status='old',err=17940)
-        close(unit=62,status='delete')
-17940  continue
-        open(unit=62,file=dataname,status='new')
+         open(unit=62,file=dataname,status='old',err=17940)
+         close(unit=62,status='delete')
+17940    continue
+         open(unit=62,file=dataname,status='new')
          do i=1,nw
             write (62,*) rpmid(i),pmid(i)
          enddo
          close(unit=62)
          dataname=dataname(1:lprx)//'_pwmid'
-        open(unit=62,file=dataname,status='old',err=17950)
-        close(unit=62,status='delete')
-17950  continue
-        open(unit=62,file=dataname,status='new')
+         open(unit=62,file=dataname,status='old',err=17950)
+         close(unit=62,status='delete')
+17950    continue
+         open(unit=62,file=dataname,status='new')
          do i=1,nw
             write (62,*) rpmid(i),pmidw(i)
          enddo
@@ -3123,16 +3072,16 @@
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
-  580 continue
-!
-      if (ivacum.gt.0) go to 590
+      endif ! ivacum.le.0
+! TODO: can ivacum get changed before this?
+      if (ivacum.le.0) then
       curmin=1.0e+10_dp
       curmax=-1.0e+10_dp
-      do 584 i=1,nitera
+      do i=1,nitera
          curmin=min(curmin,cerror(i))
          curmax=max(curmax,cerror(i))
          xiter(i)=i
-  584 continue
+      enddo
       xdel=(xiter(nitera)-xiter(1))/2.
       ibrdr = 1
       if (abs(curmin).gt.1.e-10_dp) then
@@ -3186,17 +3135,17 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif   ! itek
-  590 continue
-!
-      if (ivacum.gt.0) go to 599
+      endif ! itek
+      endif ! ivacum.le.0
+! TODO: can ivacum get changed before this?
+      if (ivacum.le.0) then
       if (iconvr.ne.3) then
          curmin=1.0e+10_dp
          curmax=-1.0e+10_dp
-         do 594 i=1,nitera
+         do i=1,nitera
             curmin=min(curmin,cchisq(i))
             curmax=max(curmax,cchisq(i))
-  594    continue
+         enddo
          ibrdr = 1
          ycycle= log10(curmax)
          ycycle=max(one,ycycle)
@@ -3245,16 +3194,16 @@
           nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
           nvec, xfm, yfm, xto, yto, ivec, &
           msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-        endif       ! itek
-      endif
-  599 continue
+        endif ! itek
+      endif ! iconvr.ne.3
+      endif ! ivacum.le.0
 !-----------------------------------------------------------------
-!-- F coil current limits from Hyatt                LLao 970423 --
+!--   F coil current limits from Hyatt              LLao 970423 --
 !-----------------------------------------------------------------
-      do 600 i=1,4
+      do i=1,4
          workc(i)=348.
          workc(i+9)=348.
-  600 continue
+      enddo
       workc(5)=319.
       workc(14)=319.
       workc(6)=687.
@@ -3265,7 +3214,7 @@
       workc(17)=348.
       workc(9)=495.
       workc(18)=495.
-      do 604 i=1,nfcoil
+      do i=1,nfcoil
          workb(i)=brsp(i)/1000.
          worka(i)=i
          workd(i)=-workc(i)
@@ -3273,13 +3222,13 @@
             workc(i)=fccurt(jtime,i)/1000.
             workd(i)=workc(i)
          endif
-  604 continue
+      enddo
       curmin=workb(1)
       curmax=workb(1)
-      do 608 i=1,nfcoil
+      do i=1,nfcoil
          curmin=min(curmin,workb(i),workc(i),workd(i))
          curmax=max(curmax,workb(i),workc(i),workd(i))
-  608 continue
+      enddo
       dcurn=(curmax-curmin)/10.
       curmax=curmax+dcurn
       curmin=curmin-dcurn
@@ -3287,13 +3236,12 @@
       ibrdr = 1
       iline=1
       if (fwtfc(1).ne.0.0) iline=-1
-
 !-----------------------------------------------------------------------c
-! Initialize plot parameters     c
+!     Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
 !-----------------------------------------------------------------------c
-!       Computed F-coil currents, solid line, open circles, cyan        c
+!     Computed F-coil currents, solid line, open circles, cyan        c
 !-----------------------------------------------------------------------c
       nn = nn + 1
       nxy(nn) = nfcoil
@@ -3305,7 +3253,7 @@
          xx(i,nn) = worka(i)
          yy(i,nn) = workb(i)
       enddo
-      if (ifcurr.gt.0) go to 615
+      if (ifcurr.le.0) then
       if (imag2(jtime).eq.0) then
          nn = nn + 1
          nxy(nn) = nfcoil
@@ -3329,7 +3277,7 @@
          enddo
       else
 !------------------------------------------------------------------------c
-!  Measured F-coil currents, dot curve, solid pink symbols               c
+!        Measured F-coil currents, dot curve, solid pink symbols         c
 !------------------------------------------------------------------------c
          nn = nn + 1
          nxy(nn) = nfcoil
@@ -3343,18 +3291,15 @@
             yy(i,nn) = workc(i)
          enddo
       endif
-  615 continue
-
-  620 continue
+      endif ! ifcurr.le.0
 !-----------------------------------------------------------------------
-!--  write out plasma parameters                                      --
+!--   write out plasma parameters                                     --
 !-----------------------------------------------------------------------
       xabs=-6.0
       yabs=1.8_dp
       dyabs = 0.22_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
-      write(text,8950) trim(ch1),trim(ch2), &
-                       (mfvers(i),i=1,2)
+      write(text,8950) trim(ch1),trim(ch2),(mfvers(i),i=1,2)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -3517,9 +3462,8 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-
 !-----------------------------------------------------------------------
-!-- vertical stability parameter,  reference Nuc Fusion  18(1978)1331 --
+!--   vertical stability parameter, reference Nuc Fusion 18(1978)1331 --
 !-----------------------------------------------------------------------
       if (ivacum.le.0) then
          rx=rmagx(jtime)/100.
@@ -3527,7 +3471,7 @@
          f_0=log(8*rout(jtime)/abar)-2+betap(jtime)+ali(jtime)/2+.5_dp
          delr=rout(jtime)/100.-1.67_dp
 !-----------------------------------------------------------------------
-!-- metal wall                                                        --
+!--      metal wall                                                   --
 !-----------------------------------------------------------------------
          xnnc(jtime)=vertn(jtime)/((10.77_dp*delr**2+8.08_dp*delr+2.54_dp)/f_0)
       endif
@@ -3600,8 +3544,7 @@
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
 !----------------------------------------------------------------------------
-!--  dummy write statement added for HP version 9.01 optimization problems --
-!--   llao 93/09                                                           --
+!--   dummy write statement added for HP version 9.01 optimization problems--
 !----------------------------------------------------------------------------
 !      if (iand(iout,1).ne.0) write (nout,*) jtime
       write (text,9494) aaq1(jtime),aaq2(jtime)
@@ -3751,17 +3694,17 @@
          yabs = yabs - dyabs
          ht(msg) = 0.14_dp
       endif
-      if (fwtdlc.le.0.0) go to 680
-      write (text,9495) chidlc
-      msg = msg + 1
-      note(msg) = 1
-      lmes(msg) = text
-      imes(msg) = 25
-      xpos(msg) = xabs
-      ypos(msg) = yabs
-      yabs = yabs - dyabs
-      ht(msg) = 0.14_dp
-  680 continue
+      if (fwtdlc.gt.0.0) then
+         write (text,9495) chidlc
+         msg = msg + 1
+         note(msg) = 1
+         lmes(msg) = text
+         imes(msg) = 25
+         xpos(msg) = xabs
+         ypos(msg) = yabs
+         yabs = yabs - dyabs
+         ht(msg) = 0.14_dp
+      endif
       if (nqwant.gt.0) then
          kstnow=min(nqwant,8)
          write (text,9945) (qsiw(i),i=1,kstnow)
@@ -3823,25 +3766,22 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif    !   itek
-  700 continue
+      endif ! itek
 !----------------------------------------------------------------------
-!-- plot flux loop chi squares                                       --
+!--   plot flux loop chi squares                                     --
 !----------------------------------------------------------------------
       if (iconvr.eq.3.and.kdata.eq.2) then
-!        if (ivacum.eq.0) go to 730
-         if (itek.eq.1) call tekall(4010,960,0,0,0)
-         xmm=1.6_dp*2
-         go to 17594
-      endif
-  705 continue
+!     if (ivacum.eq.0) go to 730
+      if (itek.eq.1) call tekall(4010,960,0,0,0)
+      xmm=1.6_dp*2
+      else
       chsmin=1.0e30_dp
       chsmax=-1.0e30_dp
-      do 710 i=1,nsilop
+      do i=1,nsilop
          chsmin=min(chsmin,saisil(i))
          chsmax=max(chsmax,saisil(i))
          si(i)=i
-  710 continue
+      enddo
 !
       if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
@@ -3899,17 +3839,17 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif      ! itek
+      endif ! itek
 !----------------------------------------------------------------------
 !--  plot the probes chi squares                                     --
 !----------------------------------------------------------------------
       chsmin=1.0e30_dp
       chsmax=-1.0e30_dp
-      do 720 i=1,magpri
+      do i=1,magpri
          chsmin=min(saimpi(i),chsmin)
          chsmax=max(saimpi(i),chsmax)
          rmpi(i)=i
-  720 continue
+      enddo
 !-----------------------------------------------------------------------c
 ! Initialize plot parameters     c
 !-----------------------------------------------------------------------c
@@ -3976,7 +3916,7 @@
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
 !-----------------------------------------------------------------------
-!--  print out pointnames                                             --
+!--   print out pointnames                                            --
 !-----------------------------------------------------------------------
       if (kstark.le.1) then
          yabs=1.5_dp
@@ -3999,7 +3939,7 @@
       ypos(msg) = yabs - 0.25_dp
       ht(msg) = 0.10_dp
       yabs=yabs0-0.5_dp
-      do 722 i=magpri67+1,magpri67+16
+      do i=magpri67+1,magpri67+16
 !        call intno(i,xabs,yabs)
          msg = msg + 1
          note(msg) = 5
@@ -4017,11 +3957,11 @@
          ypos(msg) = yabs
          ht(msg) = 0.07_dp
          yabs=yabs-.13_dp
-  722 continue
+      enddo
       xabs=-5.8_dp
       if (ivacum.eq.1) xabs=-2.8_dp
       yabs=yabs0-0.5_dp
-      do 724 i=magpri67+17,magpri67+magpri322
+      do i=magpri67+17,magpri67+magpri322
 !        call intno(i,xabs,yabs)
          msg = msg + 1
          note(msg) = 5
@@ -4039,7 +3979,7 @@
          ypos(msg) = yabs
          ht(msg) = 0.07_dp
          yabs=yabs-.13_dp
-  724 continue
+      enddo
 !
       xabs=-7.3_dp
       if (ivacum.eq.1) xabs=-4.3_dp
@@ -4061,7 +4001,7 @@
 !     call height(.07)
       yabs=yabs-.37_dp
       yyabs=yabs
-      do 726 i=1,21
+      do i=1,21
          yabs=yabs-.13_dp
 !        call intno(i,xabs,yabs)
          msg = msg + 1
@@ -4079,10 +4019,9 @@
          if (ivacum.eq.1) xpos(msg) = -3.8_dp
          ypos(msg) = yabs
          ht(msg) = 0.07_dp
-
-  726 continue
+      enddo
       yabs=yyabs
-      do 728 i=22,nsilop
+      do i=22,nsilop
          yabs=yabs-.13
 !        call intno(i,-5.8,yabs)
          msg = msg + 1
@@ -4100,7 +4039,7 @@
          if (ivacum.eq.1) xpos(msg) = -2.2_dp
          ypos(msg) = yabs
          ht(msg) = 0.07_dp
-  728 continue
+      enddo
 !
       if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
@@ -4142,18 +4081,18 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif  ! itek
+      endif ! itek
 !--------------------------------------------------------------------
-!--  plot chi2 for polarimetry                                     --
+!--   plot chi2 for polarimetry                                    --
 !--------------------------------------------------------------------
       if (kstark.gt.1) then
        chsmin=1.0e30_dp
        chsmax=-1.0e30_dp
-       do 729 i=1,nstark
-            chsmin=min(chigam(i),chsmin)
-            chsmax=max(chigam(i),chsmax)
-            rmpi(i)=i
-  729  continue
+       do i=1,nstark
+         chsmin=min(chigam(i),chsmin)
+         chsmax=max(chigam(i),chsmax)
+         rmpi(i)=i
+       enddo
 !
        if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
@@ -4173,14 +4112,14 @@
 !
          chsmin=1.0e30_dp
          chsmax=-1.0e30_dp
-         do 731 i=1,nstark
+         do i=1,nstark
             anglem(i)=atand(tangam(jtime,i))
             anglec(i)=atand(cmgam(i,jtime))
             chsmin=min(anglem(i),chsmin)
             chsmax=max(anglem(i),chsmax)
             chsmin=min(anglec(i),chsmin)
             chsmax=max(anglec(i),chsmax)
-  731    continue
+         enddo
          dangle=chsmax-chsmin
          chsmax=chsmax+0.1_dp*dangle
          chsmin=chsmin-0.1_dp*dangle
@@ -4246,21 +4185,21 @@
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-       endif        !   itek
-      endif
+       endif ! itek
+      endif ! kstark.gt.1
 !-------------------------------------------------------------------------
 !--   plot P', FF', and Zm                                              --
 !-------------------------------------------------------------------------
-      if (ivacum.gt.0) go to 17600
+      if (ivacum.le.0) then
       curmin=1.0e+10_dp
       curmax=-1.0e+10_dp
-      do 17584 i=1,nitera
+      do i=1,nitera
          curmin=min(curmin,czmaxi(i))
          curmax=max(curmax,czmaxi(i))
          xiter(i)=i
-17584 continue
+      enddo
 !-----------------------------------------------------------------------c
-! Initialize plot parameters     c
+!     Initialize plot parameters     c
 !-----------------------------------------------------------------------c
       call init2d
       xtitle = 'ITERS$'
@@ -4282,70 +4221,69 @@
       yorg = curmin
       ynmax = curmax
       ystp = ynmax - yorg
-      if (fitdelz) go to 17593
 !---------------------------------------------------------------------
-!-- plot feedback currents                                          --
+!--   plot feedback currents                                        --
 !---------------------------------------------------------------------
-      if (abs(vcurfb(1)).le.1.e-6_dp) go to 17593
-      curmin=1.0e+10_dp
-      curmax=-1.0e+10_dp
-      do 17590 i=1,nitera
-         czmcm(i)=tvfbrt(i)
-         curmin=min(curmin,czmcm(i))
-         curmax=max(curmax,czmcm(i))
-17590 continue
-      dcurn=curmax-curmin
-      curmax=curmax+0.05_dp*dcurn
-      curmin=curmin-0.05_dp*dcurn
-      dcurn=(curmax-curmin)
-      isaxs = 2
-      sorg = curmin
-      stp = dcurn
-      smax = curmax
-      slen = xmm
-      sname = 'Ifb(A)$'
-      nslen = -100
-      xps = xmm
-      yps = 0.0
-      nn = nn + 1
-      nxy(nn) = nitera
-      ndshme(nn) = 1
-      do ii = 1, nxy(nn)
-         xx(ii,nn) = xiter(ii)
-         yy(ii,nn) = czmcm(ii)
-      enddo
-17593 continue
+      if (.not.fitdelz.and.(abs(vcurfb(1)).gt.1.e-6_dp)) then
+         curmin=1.0e+10_dp
+         curmax=-1.0e+10_dp
+         do i=1,nitera
+            czmcm(i)=tvfbrt(i)
+            curmin=min(curmin,czmcm(i))
+            curmax=max(curmax,czmcm(i))
+         enddo
+         dcurn=curmax-curmin
+         curmax=curmax+0.05_dp*dcurn
+         curmin=curmin-0.05_dp*dcurn
+         dcurn=(curmax-curmin)
+         isaxs = 2
+         sorg = curmin
+         stp = dcurn
+         smax = curmax
+         slen = xmm
+         sname = 'Ifb(A)$'
+         nslen = -100
+         xps = xmm
+         yps = 0.0
+         nn = nn + 1
+         nxy(nn) = nitera
+         ndshme(nn) = 1
+         do ii = 1, nxy(nn)
+            xx(ii,nn) = xiter(ii)
+            yy(ii,nn) = czmcm(ii)
+         enddo
+      endif
 !-------------------------------------------------------------
-!-- add DELZ iterations                                     --
+!--   add DELZ iterations                                   --
 !-------------------------------------------------------------
       if (fitdelz) then
-      curmin=1.0e+10_dp
-      curmax=-1.0e+10_dp
-      do i=1,nitera
-         czmcm(i)=cdelz(i)
-         curmin=min(curmin,czmcm(i))
-         curmax=max(curmax,czmcm(i))
-      enddo
-      dcurn=curmax-curmin
-      curmax=curmax+0.05_dp*dcurn
-      curmin=curmin-0.05_dp*dcurn
-      dcurn=(curmax-curmin)
-      isaxs = 2
-      sorg = curmin
-      stp = dcurn
-      smax = curmax
-      slen = xmm
-      sname = 'dZ(cm)$'
-      nslen = -100
-      xps = xmm
-      yps = 0.0
-      nn = nn + 1
-      nxy(nn) = nitera
-      ndshme(nn) = 1
-      do ii = 1, nxy(nn)
-         xx(ii,nn) = xiter(ii)
-         yy(ii,nn) = czmcm(ii)
-      enddo
+         curmin=1.0e+10_dp
+         curmax=-1.0e+10_dp
+         do i=1,nitera
+            czmcm(i)=cdelz(i)
+            curmin=min(curmin,czmcm(i))
+            curmax=max(curmax,czmcm(i))
+         enddo
+         dcurn=curmax-curmin
+         curmax=curmax+0.05_dp*dcurn
+         curmin=curmin-0.05_dp*dcurn
+         dcurn=(curmax-curmin)
+         isaxs = 2
+         sorg = curmin
+         stp = dcurn
+         smax = curmax
+         slen = xmm
+         sname = 'dZ(cm)$'
+         nslen = -100
+         xps = xmm
+         yps = 0.0
+         nn = nn + 1
+         nxy(nn) = nitera
+         ndshme(nn) = 1
+         do ii = 1, nxy(nn)
+            xx(ii,nn) = xiter(ii)
+            yy(ii,nn) = czmcm(ii)
+         enddo
       endif
       ncurve = nn
 !
@@ -4384,15 +4322,16 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif     !   itek
+      endif ! itek
+      endif ! iconvr.eq.3.and.kdata.eq.2
 !
-17594 curmin=1.0e+10_dp
+      curmin=1.0e+10_dp
       curmax=-1.0e+10_dp
-      do 17595 i=1,nw
+      do i=1,nw
          curmin=min(curmin,pprime(i))
          curmax=max(curmax,pprime(i))
          xiter(i)=real(i-1,dp)/(nw-1)
-17595 continue
+      enddo
       xdel=0.5_dp
       dcurn=curmax-curmin
       if (abs(dcurn).le.1.e-4_dp) dcurn=5.*curmax
@@ -4400,7 +4339,7 @@
       curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
 !-----------------------------------------------------------------------c
-! Initialize plot parameters  c
+!     Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       yorg = curmin
@@ -4414,11 +4353,11 @@
       enddo
       curmin=1.0e+10_dp
       curmax=-1.0e+10_dp
-      do 17597 i=1,nw
+      do i=1,nw
          czmcm(i)=ffprim(i)/tmu/twopi
          curmin=min(curmin,czmcm(i))
          curmax=max(curmax,czmcm(i))
-17597 continue
+      enddo
       dcurn=curmax-curmin
       if (abs(dcurn).le.1.e-4_dp) dcurn=5.*curmax
       curmax=curmax+0.05_dp*dcurn
@@ -4448,11 +4387,11 @@
       xabs= -0.5_dp
       xabs= -0.7_dp
       yabs= -0.8_dp
-!
-      if (ivacum.gt.0) go to 29999
+! TODO: can ivacum change before this? (already in if statement...)
+      if (ivacum.le.0) then
       if ((icurrt.eq.2.or.icurrt.eq.5) &
                .and.abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
-         do 17598 i=nfcoil+1,nfcoil+kppcur
+         do i=nfcoil+1,nfcoil+kppcur
             xxnorm=brsp(i)/brsp(nfcoil+1)
             if (i.eq.nfcoil+1) then
                write (text,18950) xxnorm
@@ -4475,7 +4414,7 @@
                yabs = yabs - dyabs
                ht(msg) = 0.13_dp*0.7_dp
             endif
-17598    continue
+         enddo
          xxnorm=brsp(nfcoil+1)/darea
          write (text,18980) xxnorm
       else
@@ -4556,7 +4495,7 @@
       yabs= -0.8_dp
       if ((icurrt.eq.2.or.icurrt.eq.5).and. &
                    abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
-         do 17599 i=nfcoil+1+kppcur,nfcoil+kppcur+kffcur
+         do i=nfcoil+1+kppcur,nfcoil+kppcur+kffcur
             xxnorm=brsp(i)/brsp(nfcoil+1)
             write (text,18970) xxnorm
             msg = msg + 1
@@ -4567,7 +4506,7 @@
             ypos(msg) = yabs
             yabs = yabs - dyabs
             ht(msg) = 0.13_dp*0.7_dp
-17599    continue
+         enddo
       endif
 !
       if (itek.ge.5.and.idotek.eq.0) then
@@ -4606,35 +4545,34 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif     !   itek
-17600 continue
+      endif ! itek
+      endif ! ivacum.le.0
 !      call endpl(0)
 
       xmm=1.6_dp
-  730 continue
-29999 continue
+!  730 continue
+      endif ! ivacum.le.0
 !-----------------------------------------------------------------------
-!-  plot experimental vs calculated magnetic signals                  --
+!-    plot experimental vs calculated magnetic signals                --
 !-----------------------------------------------------------------------
-  732 continue
-      if (iexcal.le.0) go to 795
-      do 734 kk=1,nsilop
+      if (iexcal.gt.0) then
+      do kk=1,nsilop
          expsi(kk)=silopt(jtime,kk)
          si(kk)=kk
-  734 continue
-      do 736 kk=1,magpri
+      enddo
+      do kk=1,magpri
          expmp(kk)=expmpi(jtime,kk)
          rmpi(kk)=kk
-  736 continue
+      enddo
 !-----------------------------------------------------------------------
-!--  limits of psi loops & probes                                     --
+!--   limits of psi loops & probes                                    --
 !-----------------------------------------------------------------------
       cslmin=1.0e30_dp
       cslmax=-1.0e30_dp
       silmin=1.0e30_dp
       silmax=-1.0e30_dp
       z000=0.0
-      do 750 i=1,nsilop
+      do i=1,nsilop
          cslmin=min(cslmin,csilop(i,jtime))
          cslmax=max(cslmax,csilop(i,jtime))
          if (fwtsi(i).gt.0.0) then
@@ -4644,7 +4582,7 @@
            silmin=min(silmin,z000)
            silmax=max(silmax,z000)
          endif
-  750 continue
+      enddo
       cslmin=min(cslmin,silmin)
       cslmax=max(cslmax,silmax)
 !
@@ -4652,7 +4590,7 @@
       cmpmax=-1.0e30_dp
       empmin=1.0e30_dp
       empmax=-1.0e30_dp
-      do 760 i=1,magpri
+      do i=1,magpri
          cmpmin=min(cmpmin,cmpr2(i,jtime))
          cmpmax=max(cmpmax,cmpr2(i,jtime))
          if (fwtmp2(i).gt.0.0) then
@@ -4662,7 +4600,7 @@
            empmin=min(empmin,z000)
            empmax=max(empmax,z000)
          endif
-  760 continue
+      enddo
       cmpmin=min(cmpmin,empmin)
       cmpmax=max(cmpmax,empmax)
 !
@@ -4679,9 +4617,9 @@
          xx(ii,nn) = si(ii)
          yy(ii,nn) = csilop(ii,jtime)
       enddo
-      do 42220 i=1,nsilop
+      do i=1,nsilop
          write (96,*) si(i),csilop(i,jtime)
-42220 continue
+      enddo
       nn = nn + 1
       markme(nn) = 18
       ncnct(nn) = -1
@@ -4696,9 +4634,9 @@
            yy(ii,nn) = 0.0
          endif
       enddo
-      do 42230 i=1,nsilop
+      do i=1,nsilop
          write (96,*) si(i),expsi(i)
-42230 continue
+      enddo
       ibrdr = 1
       xphy = 4.7_dp
       yphy = 1.0
@@ -4736,15 +4674,13 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
        msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif    !  itek
+      endif ! itek
 !-----------------------------------------------------------------------
-!--  plot exp vs calc magnetic probes                                 --
+!--   plot exp vs calc magnetic probes                                --
 !-----------------------------------------------------------------------
-
       if (itek.ge.5.and.idotek.eq.0) then
-
 !-----------------------------------------------------------------------c
-! Initialize plot parameters  c
+!     Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
@@ -4771,13 +4707,12 @@
          endif
       enddo
 
-      do 42240 i=1,magpri
+      do i=1,magpri
          write (96,*) rmpi(i),cmpr2(i,jtime)
-42240 continue
-      do 42250 i=1,magpri
+      enddo
+      do i=1,magpri
          write (96,*) rmpi(i),expmp(i)
-42250 continue
-  770 continue
+      enddo
       xabs=-4.3_dp
       yabs=3.0
       dyabs = 0.22_dp
@@ -4819,9 +4754,8 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.12_dp
-
 !-----------------------------------------------------------------------
-!--  print out pointnames                                             --
+!--   print out pointnames                                            --
 !-----------------------------------------------------------------------
       yabs=1.5_dp
 !     call messag('       probe identification$',100,xabs,yabs)
@@ -4842,7 +4776,7 @@
       ypos(msg) = yabs-.25_dp
       ht(msg) = 0.10_dp
       yabs=1.0
-      do 775 i=magpri67+1,magpri67+16
+      do i=magpri67+1,magpri67+16
 !        call intno(i,xabs,yabs)
          msg = msg + 1
          note(msg) = 5
@@ -4860,10 +4794,10 @@
          ypos(msg) = yabs
          ht(msg) = 0.07_dp
          yabs=yabs-.13_dp
-  775 continue
+      enddo
       xabs=-2.6_dp
       yabs=1.0
-      do 780 i=magpri67+17,magpri67+magpri322
+      do i=magpri67+17,magpri67+magpri322
 !        call intno(i,xabs,yabs)
          msg = msg + 1
          note(msg) = 5
@@ -4880,7 +4814,7 @@
          ypos(msg) = yabs
          ht(msg) = 0.07_dp
          yabs=yabs-.13_dp
-  780 continue
+      enddo
 !
       xabs=-4.3_dp
       yabs=yabs-.5_dp
@@ -4905,7 +4839,7 @@
 !     call height(.07_dp)
       yabs=yabs-.37_dp
       yyabs=yabs
-      do 782 i=1,21
+      do i=1,21
          yabs=yabs-.13_dp
 !        call intno(i,xabs,yabs)
          msg = msg + 1
@@ -4922,9 +4856,9 @@
          xpos(msg) = -3.8_dp
          ypos(msg) = yabs
          ht(msg) = 0.07_dp
-  782 continue
+      enddo
       yabs=yyabs
-      do 785 i=22,nsilop
+      do i=22,nsilop
          yabs=yabs-.13_dp
 !        call intno(i,-2.6,yabs)
          msg = msg + 1
@@ -4941,7 +4875,7 @@
          xpos(msg) = -2.0
          ypos(msg) = yabs
          ht(msg) = 0.07_dp
-  785 continue
+      enddo
       ibrdr = 1
       xphy = 4.7_dp
       yphy = 5.0
@@ -4979,31 +4913,30 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif    !   itek
-  795 continue
-      if (ivacum.gt.0) go to 1000
+      endif ! itek
+      endif ! iexcal.gt.0
+      if (ivacum.le.0) then
 !
       if (kwripre.gt.0) then
          dataname=dataname(1:lprx)//'_presf'
-        open(unit=62,file=dataname,status='old',err=12947)
-        close(unit=62,status='delete')
-12947  continue
-        open(unit=62,file=dataname,status='new')
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
          nnww=nw
          xdum=0.
          delvn=1.0_dp/(nw-1)
-         do 42262 i=1,nw
+         do i=1,nw
             workb(i)=sqrt(volp(i)/volp(nw))
             voln(i)=(i-1)*delvn
-42262    continue
+         enddo
          call zpline(nw,workb,pres,bvoln,cvoln,dvoln)
          voln(1)=0.0
          voln(nw)=1.0
-         do 42264 i=1,nw
+         do i=1,nw
             presnow=seval(nw,voln(i),workb,pres,bvoln,cvoln,dvoln)
             write (62,*) voln(i),presnow,xdum,xdum
             presv(i)=presnow
-42264    continue
+         enddo
          close(unit=62)
          if (nomegat.gt.0.and.kprfit.eq.3) then
            call zpline(nw,voln,workb,bvoln,cvoln,dvoln)
@@ -5014,149 +4947,136 @@
          endif
          mmpress=mpress
          dataname=dataname(1:lprx)//'_qthom'
-        open(unit=62,file=dataname,status='old',err=12948)
-        close(unit=62,status='delete')
-12948  continue
-        open(unit=62,file=dataname,status='new')
-         do 42370 i=1,mmpress
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
+         do i=1,mmpress
             write (62,*) zqthom(i),qthom(i),xdum,xdum
-42370    continue
+         enddo
          close(unit=62)
          dataname=dataname(1:lprx)//'_jscrap'
-        open(unit=62,file=dataname,status='old',err=12960)
-        close(unit=62,status='delete')
-12960  continue
-        open(unit=62,file=dataname,status='new')
-         do 42377 i=1,nw
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
+         do i=1,nw
             write (62,*) rscrap(i),curscr(i),xdum,xdum
-42377    continue
+         enddo
          close(unit=62)
          dataname=dataname(1:lprx)//'_qpsi'
-        open(unit=62,file=dataname,status='old',err=12949)
-        close(unit=62,status='delete')
-12949  continue
-        open(unit=62,file=dataname,status='new')
-         do 42360 i=1,nw
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
+         do i=1,nw
             write (62,*) workb(i),qpsi(i),xdum,xdum
-42360    continue
+         enddo
          close(unit=62)
          dataname=dataname(1:lprx)//'_jor'
-        open(unit=62,file=dataname,status='old',err=12950)
-        close(unit=62,status='delete')
-12950  continue
-        open(unit=62,file=dataname,status='new')
-         do 42350 i=1,nw
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
+         do i=1,nw
             cjorka=cjor(i)/1000.
             write (62,*) workb(i),cjorka,xdum,xdum
-42350    continue
+         enddo
          close(unit=62)
          dataname=dataname(1:lprx)//'_jorec'
-        open(unit=62,file=dataname,status='old',err=17953)
-        close(unit=62,status='delete')
-17953  continue
-        open(unit=62,file=dataname,status='new')
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
          do i=1,nw
             cjorka=cjorec(i)/1000.
             write (62,*) workb(i),cjorka,xdum,xdum
          enddo
          close(unit=62)
 !-----------------------------------------------------------------------
-!--  shear   dqdx/q                                                   --
+!--      shear   dqdx/q                                               --
 !-----------------------------------------------------------------------
          dataname=dataname(1:lprx)//'_shear'
-        open(unit=62,file=dataname,status='old',err=12951)
-        close(unit=62,status='delete')
-12951  continue
-        open(unit=62,file=dataname,status='new')
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
          call zpline(nw,workb,qpsi,bvoln,cvoln,dvoln)
-         do 42367 i=1,nw
+         do i=1,nw
             qqqnow=seval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)
             qshear=speval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)/ &
-            qqqnow
+                   qqqnow
             write (62,*) voln(i),qshear,xdum,xdum
-42367    continue
+         enddo
          close(unit=62)
 !-----------------------------------------------------------------------
-!--  shear ballooning   x*dqdx/q                                      --
+!--      shear ballooning   x*dqdx/q                                  --
 !-----------------------------------------------------------------------
          dataname=dataname(1:lprx)//'_shearbal'
-        open(unit=62,file=dataname,status='old',err=31310)
-        close(unit=62,status='delete')
-31310  continue
-        open(unit=62,file=dataname,status='new')
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
          call zpline(nw,workb,qpsi,bvoln,cvoln,dvoln)
-         do 31320 i=1,nw
+         do i=1,nw
             qqqnow=seval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)
             qshear=speval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)/ &
-            qqqnow &
-            *voln(i)
+                   qqqnow*voln(i)
             write (62,*) voln(i),qshear,xdum,xdum
-31320    continue
+         enddo
          close(unit=62)
 !-----------------------------------------------------------------------
-!--  avearage poloidal magnetic field in T                            --
+!--      avearage poloidal magnetic field in T                        --
 !-----------------------------------------------------------------------
          dataname=dataname(1:lprx)//'_bpol'
-        open(unit=62,file=dataname,status='old',err=31330)
-        close(unit=62,status='delete')
-31330  continue
-        open(unit=62,file=dataname,status='new')
-         do 31340 i=1,nw
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
+         do i=1,nw
             qshear=sqrt(volp(i)/volp(nw))
             write (62,*) qshear,bpolss(i),xdum,xdum
-31340    continue
+         enddo
          close(unit=62)
 !-----------------------------------------------------------------------
-!--  avearage poloidal magnetic field in T versus R at Z=0            --
+!--      avearage poloidal magnetic field in T versus R at Z=0        --
 !-----------------------------------------------------------------------
          dataname=dataname(1:lprx)//'_bpolrmaj'
-        open(unit=62,file=dataname,status='old',err=31430)
-        close(unit=62,status='delete')
-31430  continue
-        open(unit=62,file=dataname,status='new')
-         do 31440 i=1,nw
+         open(unit=62,file=dataname,status='old',err=31430)
+         close(unit=62,status='delete')
+31430    continue
+         open(unit=62,file=dataname,status='new')
+         do i=1,nw
             write (62,*) rmajz0(i),bpolss(i),xdum,xdum
-31440    continue
+         enddo
          close(unit=62)
 !-----------------------------------------------------------------------
-!--  R at Z=0                                                         --
+!--      R at Z=0                                                     --
 !-----------------------------------------------------------------------
          dataname=dataname(1:lprx)//'_rmajz0'
-        open(unit=62,file=dataname,status='old',err=31450)
-        close(unit=62,status='delete')
-31450  continue
-        open(unit=62,file=dataname,status='new')
-         do 31460 i=1,nw
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
+         do i=1,nw
             qshear=sqrt(volp(i)/volp(nw))
             write (62,*) qshear,rmajz0(i),xdum,xdum
-31460    continue
+         enddo
          close(unit=62)
 !-----------------------------------------------------------------------
-!--  shearbal/q2  11/01/92  Lao                                       --
+!--      shearbal/q2  11/01/92  Lao                                   --
 !-----------------------------------------------------------------------
          dataname=dataname(1:lprx)//'_sq2'
-        open(unit=62,file=dataname,status='old',err=31350)
-        close(unit=62,status='delete')
-31350  continue
-        open(unit=62,file=dataname,status='new')
-         do 31360 i=1,nw
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
+         do i=1,nw
             qqqnow=seval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)
             qshear=speval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)/ &
-            qqqnow &
-            *voln(i)
+                   qqqnow*voln(i)
             qshear=qshear/qqqnow**2
             write (62,*) voln(i),qshear,xdum,xdum
-31360    continue
+         enddo
          close(unit=62)
 !---------------------------------------------------------------------
-!-- angular speed                                                   --
+!--      angular speed                                              --
 !---------------------------------------------------------------------
          if (nomegat.gt.0.and.kprfit.eq.3) then
          dataname=dataname(1:lprx)//'_omegafit'
-        open(unit=62,file=dataname,status='old',err=17960)
-        close(unit=62,status='delete')
-17960  continue
-        open(unit=62,file=dataname,status='new')
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
          do i=1,nomegat
             yxn=rpreswv(i)
             write (62,*) yxn,omegat(i)
@@ -5165,26 +5085,25 @@
         endif
       endif
 !-----------------------------------------------------------------------
-!-- plots for kinetic fitting option                                  --
+!--   plots for kinetic fitting option                                --
 !-----------------------------------------------------------------------
-      if (kprfit.le.0) go to 890
-      if (npress.le.0) go to 890
+      if ((kprfit.gt.0).and.(npress.gt.0)) then
       if (itek.eq.1) call tekall(4010,960,0,0,0)
       chsmin=1.0e+10_dp
       chsmax=-1.0e+10_dp
       pressbb=0.0
       dsi=1.0_dp/(nw-1)
-      do 835 i=1,nw
+      do i=1,nw
          workb(i)=sqrt(volp(i)/volp(nw))
          workc(i)=(pres(i)-pressbb)
          worke(i)=(i-1)*dsi
-  835 continue
-      do 840 i=1,npress
+      enddo
+      do i=1,npress
          workd(i)=(pressr(i)-pressbb)
          chsmin=min(chsmin,saipre(i))
          chsmax=max(chsmax,saipre(i))
          si(i)=i
-  840 continue
+      enddo
       call zpline(nw,worke,workb,bworkb,cworkb,dworkb)
 !
       if (itek.ge.5.and.idotek.eq.0) then
@@ -5239,22 +5158,21 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif     !   itek
+      endif ! itek
 !----------------------------------------------------------------------
-!--  plot the pressure profile                                       --
+!--   plot the pressure profile                                      --
 !----------------------------------------------------------------------
       chsmin=1.e10_dp
       chsmax=-1.e10_dp
-      do 870 i=1,npress
+      do i=1,npress
          chsmin=min(workd(i),chsmin)
          chsmax=max(workd(i)+sigpre(i),chsmax)
          chsmax=max(chsmax,workc(i))
          saipre(i)=seval(nw,-rpress(i),worke,workb,bworkb,cworkb,dworkb)
-  870 continue
+      enddo
       chsmin=0.0
-
 !-----------------------------------------------------------------------c
-! Initialize plot parameters  c
+!     Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
@@ -5273,11 +5191,10 @@
          xx(ii,nn) = saipre(ii)
          yy(ii,nn) = workd(ii)
       enddo
-
 !-----------------------------------------------------------------------
-!--  add error bars to pressure plot                                  --
+!--   add error bars to pressure plot                                 --
 !-----------------------------------------------------------------------
-      do 872 i=1,npress
+      do i=1,npress
          workd(1)=(pressr(i)-pressbb-sigpre(i))
          workd(2)=(pressr(i)-pressbb+sigpre(i))
          workc(1)=saipre(i)
@@ -5291,200 +5208,192 @@
             xx(ii,nn) = workc(ii)
             yy(ii,nn) = workd(ii)
          enddo
-  872 continue
+      enddo
       bimbf=0.0
       bimbe=0.0
 !-----------------------------------------------------------------------
-!-- write out QPLOT data files                                        --
+!--   write out QPLOT data files                                      --
 !-----------------------------------------------------------------------
       if (kwripre.gt.0) then
          nnww=nw
          xdum=0.0
          if (kprfit.eq.2.or.kprfit.eq.3) then
             dataname=dataname(1:lprx)//'_presd'
-        open(unit=62,file=dataname,status='old',err=12952)
-        close(unit=62,status='delete')
-12952  continue
-        open(unit=62,file=dataname,status='new')
-            do 42272 i=1,npress
-               write (62,*) saipre(i),pressr(i),xdum,sigpre(i)
-42272       continue
-            close(unit=62)
-         endif
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
+         do i=1,npress
+            write (62,*) saipre(i),pressr(i),xdum,sigpre(i)
+         enddo
+         close(unit=62)
+      endif
 !-----------------------------------------------------------------------
-!--  pressure input in flux space                                     --
+!--   pressure input in flux space                                    --
 !-----------------------------------------------------------------------
-         if (kprfit.eq.1) then
-            do 42295 i=1,npress
-               rpressv(i)=seval(nw,-rpress(i),worke,workb,bworkb, &
+      if (kprfit.eq.1) then
+         do i=1,npress
+            rpressv(i)=seval(nw,-rpress(i),worke,workb,bworkb, &
+            cworkb,dworkb)
+         enddo
+         if (nbeam.gt.0) then
+            do i=1,nbeam
+               vnbeam(i)=seval(nw,sibeam(i),worke,workb,bworkb, &
                cworkb,dworkb)
-42295       continue
-            if (nbeam.gt.0) then
-               do 42297 i=1,nbeam
-                  vnbeam(i)=seval(nw,sibeam(i),worke,workb,bworkb, &
-                  cworkb,dworkb)
-42297          continue
-            endif
-            if (npteth.gt.0) then
-               do 42300 i=1,npteth
-                  call seva2d(bkx,lkx,bky,lky,c,rteth(i),zteth(i), &
-                              pds,ier,n111)
-                  workc(i)=(pds(1)-simag)/(psibry-simag)
-                  workc(i)=seval(nw,workc(i),worke, &
-                                 workb,bworkb,cworkb,dworkb)
-42300          continue
-            endif
-            if (nption.gt.0) then
-               do 42310 i=npteth+1,npteth+nption
-                  j=i-npteth
-                  call seva2d(bkx,lkx,bky,lky,c,rion(j),zion(j), &
-                              pds,ier,n111)
-                  workc(i)=(pds(1)-simag)/(psibry-simag)
-                  workc(i)=seval(nw,workc(i),worke, &
-                                 workb,bworkb,cworkb,dworkb)
-42310          continue
-            endif
-            call zpline(npress,saipre,pressr,bworkb,cworkb,dworkb)
-            dataname=dataname(1:lprx)//'_presd'
-            open(unit=62,file=dataname,status='old',err=12953)
-            close(unit=62,status='delete')
-12953  continue
-            open(unit=62,file=dataname,status='new')
-            if (npteth+nption.gt.0) then
-               ydumin=.03*seval(npress,workc(npteth+1), &
-                                saipre,pressr,bworkb,cworkb,dworkb)
-               do 42320 i=1,npteth+nption
-                  workd(i)=seval(npress,workc(i),saipre, &
-                  pressr,bworkb,cworkb,dworkb)
-                  ydum=.10_dp*workd(i)
-                  ydum=max(ydum,ydumin)
-                  write (62,*) workc(i),workd(i),xdum,ydum
-42320          continue
-               close(unit=62)
-            endif
-!-----------------------------------------------------------------------
-!-- write out pressure data points in flux space for KPRFIT=1         --
-!-----------------------------------------------------------------------
-            dataname=dataname(1:lprx)//'_presd'//'_psi'
-            open(unit=62,file=dataname,status='old',err=12954)
-            close(unit=62,status='delete')
-12954  continue
-            open(unit=62,file=dataname,status='new')
-            do 42323 i=1,npress
-               write (62,*) rpressv(i),pressr(i),xdum,sigpre(i)
-42323       continue
+            enddo
+         endif
+         if (npteth.gt.0) then
+            do i=1,npteth
+               call seva2d(bkx,lkx,bky,lky,c,rteth(i),zteth(i), &
+                           pds,ier,n111)
+               workc(i)=(pds(1)-simag)/(psibry-simag)
+               workc(i)=seval(nw,workc(i),worke, &
+                              workb,bworkb,cworkb,dworkb)
+            enddo
+         endif
+         if (nption.gt.0) then
+            do i=npteth+1,npteth+nption
+               j=i-npteth
+               call seva2d(bkx,lkx,bky,lky,c,rion(j),zion(j), &
+                           pds,ier,n111)
+                workc(i)=(pds(1)-simag)/(psibry-simag)
+                workc(i)=seval(nw,workc(i),worke, &
+                              workb,bworkb,cworkb,dworkb)
+            enddo
+         endif
+         call zpline(npress,saipre,pressr,bworkb,cworkb,dworkb)
+         dataname=dataname(1:lprx)//'_presd'
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
+         if (npteth+nption.gt.0) then
+            ydumin=.03*seval(npress,workc(npteth+1), &
+                             saipre,pressr,bworkb,cworkb,dworkb)
+            do i=1,npteth+nption
+               workd(i)=seval(npress,workc(i),saipre, &
+               pressr,bworkb,cworkb,dworkb)
+               ydum=.10_dp*workd(i)
+               ydum=max(ydum,ydumin)
+               write (62,*) workc(i),workd(i),xdum,ydum
+            enddo
             close(unit=62)
-!-----------------------------------------------------------------------
-!-- now dpdr                                                          --
-!-----------------------------------------------------------------------
-            dataname=dataname(1:lprx)//'_prespf'//'_psi'
-            call zpline(nw,voln,presv,bpresv,cpresv,dpresv)
-            open(unit=62,file=dataname,status='old',err=12955)
-            close(unit=62,status='delete')
-12955  continue
-            open(unit=62,file=dataname,status='new')
-            do 42327 i=1,npress
-               prespv=- &
-               speval(nw,rpressv(i),voln,presv,bpresv,cpresv,dpresv)
-               write (62,*) rpressv(i),prespv,xdum,xdum
-42327       continue
-            close(unit=62)
-!-----------------------------------------------------------------------
-!-- now dpdr thermal                                                  --
-!-----------------------------------------------------------------------
-            if (nbeam.gt.0) then
-               dataname=dataname(1:lprx)//'_pbeamf'
-               open(unit=62,file=dataname,status='old',err=12956)
-               close(unit=62,status='delete')
-12956     continue
-               open(unit=62,file=dataname,status='new')
-               do 42331 i=1,npress
-                  ptherm(i)=pressr(i)-pbeam(i)
-42331          continue
-               call zpline(npress,rpressv,ptherm,bpressv,cpressv,dpressv)
-               do 42333 i=1,nw
-                 pbimf(i)=seval(npress,voln(i),rpressv, &
-                                ptherm,bpressv,cpressv,dpressv)
-                 pbimf(i)=presv(i)-pbimf(i)
-                 write (62,*) voln(i),pbimf(i),xdum,xdum
-42333          continue
-               close(unit=62)
-!-----------------------------------------------------------------------
-!-- get fitted beam beta                                              --
-!-----------------------------------------------------------------------
-               do 42337 i=1,nw-1
-                  delvol=(voln(i+1)**2-voln(i)**2)
-                  bimbf=bimbf+(pbimf(i)+pbimf(i+1))*delvol
-42337          continue
-               bimbf=bimbf*0.5_dp*vout(jtime)/1.e6_dp*1.5_dp
-               bimbf=bimbf*betat(jtime)/wplasm(jtime)
-!-----------------------------------------------------------------------
-!-- now beam data                                                     --
-!-----------------------------------------------------------------------
-               dataname=dataname(1:lprx)//'_pbeam'
-               open(unit=62,file=dataname,status='old',err=12958)
-               close(unit=62,status='delete')
-12958     continue
-               open(unit=62,file=dataname,status='new')
-               call zpline(nbeam,sibeam,pbeam,bpressv,cpressv,dpressv)
-               call zpline(nw,workb,voln,bvoln,cvoln,dvoln)
-               do 42710 i=1,nw
-                 sivol(i)=seval(nw,voln(i),workb, &
-                                voln,bvoln,cvoln,dvoln)
-                 xn=sivol(i)
-                 workc(i)=seval(nbeam,xn,sibeam,pbeam, &
-                               bpressv,cpressv,dpressv)
-42710          continue
-               xdum=0.0
-               do 42720 i=1,nw
-                  write (62,*) voln(i),workc(i),xdum,xdum
-42720          continue
-               close(unit=62)
-!-----------------------------------------------------------------------
-!--  plot beam pressures                                              --
-!-----------------------------------------------------------------------
-               nn = nn + 1
-               ndotme(nn) = 1
-               nxy(nn) = nw
-               do ii = 1, nxy(nn)
-                  xx(ii,nn) = voln(ii)
-                  yy(ii,nn) = pbimf(ii)
-               enddo
-               nn = nn + 1
-               ndshme(nn) = 1
-               nxy(nn) = nw
-               do ii = 1, nxy(nn)
-                  xx(ii,nn) = voln(ii)
-                  yy(ii,nn) = workc(ii)
-               enddo
-
-!-----------------------------------------------------------------------
-!-- get input beam beta                                               --
-!-----------------------------------------------------------------------
-               do 42723 i=1,nw-1
-                  delvol=(voln(i+1)**2-voln(i)**2)
-                  bimbe=bimbe+(workc(i)+workc(i+1))*delvol
-42723          continue
-               bimbe=bimbe*0.5_dp*vout(jtime)/1.e6_dp*1.5_dp
-               bimbe=bimbe*betat(jtime)/wplasm(jtime)
-            endif
-!-----------------------------------------------------------------------
-!-- end of beam option                                                --
-!-----------------------------------------------------------------------
          endif
 !-----------------------------------------------------------------------
-!--  end of KPRFIT=1                                                  --
+!--      write out pressure data points in flux space for KPRFIT=1    --
+!-----------------------------------------------------------------------
+         dataname=dataname(1:lprx)//'_presd'//'_psi'
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
+         do i=1,npress
+            write (62,*) rpressv(i),pressr(i),xdum,sigpre(i)
+         enddo
+         close(unit=62)
+!-----------------------------------------------------------------------
+!--      now dpdr                                                     --
+!-----------------------------------------------------------------------
+         dataname=dataname(1:lprx)//'_prespf'//'_psi'
+         call zpline(nw,voln,presv,bpresv,cpresv,dpresv)
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
+         do i=1,npress
+            prespv=- &
+            speval(nw,rpressv(i),voln,presv,bpresv,cpresv,dpresv)
+            write (62,*) rpressv(i),prespv,xdum,xdum
+         enddo
+         close(unit=62)
+!-----------------------------------------------------------------------
+!--      now dpdr thermal                                             --
+!-----------------------------------------------------------------------
+         if (nbeam.gt.0) then
+            dataname=dataname(1:lprx)//'_pbeamf'
+            open(unit=62,file=dataname,status='old',iostat=ioerr)
+            if (ioerr.eq.0) close(unit=62,status='delete')
+            open(unit=62,file=dataname,status='new')
+            do i=1,npress
+               ptherm(i)=pressr(i)-pbeam(i)
+            enddo
+            call zpline(npress,rpressv,ptherm,bpressv,cpressv,dpressv)
+            do i=1,nw
+              pbimf(i)=seval(npress,voln(i),rpressv, &
+                             ptherm,bpressv,cpressv,dpressv)
+              pbimf(i)=presv(i)-pbimf(i)
+              write (62,*) voln(i),pbimf(i),xdum,xdum
+            enddo
+            close(unit=62)
+!-----------------------------------------------------------------------
+!--         get fitted beam beta                                      --
+!-----------------------------------------------------------------------
+            do i=1,nw-1
+               delvol=(voln(i+1)**2-voln(i)**2)
+               bimbf=bimbf+(pbimf(i)+pbimf(i+1))*delvol
+            enddo
+            bimbf=bimbf*0.5_dp*vout(jtime)/1.e6_dp*1.5_dp
+            bimbf=bimbf*betat(jtime)/wplasm(jtime)
+!-----------------------------------------------------------------------
+!--         now beam data                                             --
+!-----------------------------------------------------------------------
+            dataname=dataname(1:lprx)//'_pbeam'
+            open(unit=62,file=dataname,status='old',iostat=ioerr)
+            if (ioerr.eq.0) close(unit=62,status='delete')
+            open(unit=62,file=dataname,status='new')
+            call zpline(nbeam,sibeam,pbeam,bpressv,cpressv,dpressv)
+            call zpline(nw,workb,voln,bvoln,cvoln,dvoln)
+            do i=1,nw
+              sivol(i)=seval(nw,voln(i),workb, &
+                             voln,bvoln,cvoln,dvoln)
+              xn=sivol(i)
+              workc(i)=seval(nbeam,xn,sibeam,pbeam, &
+                            bpressv,cpressv,dpressv)
+            enddo
+            xdum=0.0
+            do i=1,nw
+               write (62,*) voln(i),workc(i),xdum,xdum
+            enddo
+            close(unit=62)
+!-----------------------------------------------------------------------
+!--         plot beam pressures                                       --
+!-----------------------------------------------------------------------
+            nn = nn + 1
+            ndotme(nn) = 1
+            nxy(nn) = nw
+            do ii = 1, nxy(nn)
+               xx(ii,nn) = voln(ii)
+               yy(ii,nn) = pbimf(ii)
+            enddo
+            nn = nn + 1
+            ndshme(nn) = 1
+            nxy(nn) = nw
+            do ii = 1, nxy(nn)
+               xx(ii,nn) = voln(ii)
+               yy(ii,nn) = workc(ii)
+            enddo
+!-----------------------------------------------------------------------
+!--         get input beam beta                                       --
+!-----------------------------------------------------------------------
+            do i=1,nw-1
+               delvol=(voln(i+1)**2-voln(i)**2)
+               bimbe=bimbe+(workc(i)+workc(i+1))*delvol
+            enddo
+            bimbe=bimbe*0.5_dp*vout(jtime)/1.e6_dp*1.5_dp
+            bimbe=bimbe*betat(jtime)/wplasm(jtime)
+         endif
+!-----------------------------------------------------------------------
+!--      end of beam option                                           --
 !-----------------------------------------------------------------------
       endif
 !-----------------------------------------------------------------------
-!--  end of KWRIPRE=1 option                                          --
+!--   end of KPRFIT=1                                                 --
+!-----------------------------------------------------------------------
+      endif
+!-----------------------------------------------------------------------
+!--   end of KWRIPRE=1 option                                         --
 !-----------------------------------------------------------------------
       xabs=-4.5_dp
       yabs=3.0
       dyabs = 0.22_dp
 !vas      write (text,8950) (mfvers(i),i=1,2)
-      write(text,8950) trim(ch1),trim(ch2), &
-                       (mfvers(i),i=1,2)
+      write(text,8950) trim(ch1),trim(ch2),(mfvers(i),i=1,2)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -5538,7 +5447,6 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-
       pressbn=prbdry/pres(1)
       write (text,9560) pressbn
       msg = msg + 1
@@ -5549,7 +5457,6 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-
       pressbn=pressb/pres(1)
       write (text,9562) pressbn
       msg = msg + 1
@@ -5605,7 +5512,6 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-
       x111=1.0
       dp1dxf=ppcurr(x111,kppcur)/darea*(psibry-simag)
       write (text,9835) dp1dxf
@@ -5714,21 +5620,22 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif    !   itek
-  890 continue
+      endif ! itek
+      endif ! (kprfit.gt.0).and.(npress.gt.0)
 !----------------------------------------------------------------------
-!--  rotational page, first plot total pressure contour              --
+!--   rotational page, first plot total pressure contour             --
 !----------------------------------------------------------------------
-      if (kvtor.le.0) go to 37890
+      if (kvtor.gt.0) then
       if (itek.eq.1) call tekall(4010,960,0,0,0)
 !-----------------------------------------------------------------------
-!--  make Pt array into 2-d array                                    --
+!--   make Pt array into 2-d array                                    --
 !-----------------------------------------------------------------------
-      do 38120 ih=1,nh
-         do 38120 iw=1,nw
+      do ih=1,nh
+         do iw=1,nw
             icnt=(iw-1)*nh+ih
             bfield(iw,ih)=presst(icnt)
-38120 continue
+         enddo
+      enddo
       almin=rgrid(1)
       almax=rgrid(nw)
       blmin=zgrid(1)
@@ -5736,7 +5643,7 @@
       xll = 2.8_dp
       yll = xll*(blmax-blmin)/(almax-almin)
 !-----------------------------------------------------------------------c
-! Initialize plot parameters  c
+!     Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       npplot=15
@@ -5745,7 +5652,7 @@
       endif
       siinc=(rmax-rmaxis)/npplot
 !-----------------------------------------------------------------------
-!-- plot pressure contours                                            --
+!--   plot pressure contours                                          --
 !-----------------------------------------------------------------------
       do i=1,npplot-1
            nn=nn+1
@@ -5765,7 +5672,7 @@
            enddo
       enddo
 !-------------------------------------------------------------------
-!--  plot boundary                                                --
+!--   plot boundary                                               --
 !-------------------------------------------------------------------
       nn = nn + 1
       nxy(nn) = nbnow
@@ -5906,7 +5813,7 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif    !   itek
+      endif ! itek
 !
       do i=1,nw
          worka(i)=bfield(i,nh/2+1)
@@ -5973,11 +5880,11 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif     !   itek
+      endif ! itek
 !----------------------------------------------------------------------
-!--  plot Pw and fitted values                                       --
+!--   plot Pw and fitted values                                      --
 !----------------------------------------------------------------------
-      if (kprfit.ne.3) go to 37890
+      if (kprfit.eq.3) then
       chsmin=1.0e+10_dp
       chsmax=-1.0e+10_dp
       pressbb=0.0
@@ -6045,9 +5952,9 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif     !   itek
+      endif ! itek
 !----------------------------------------------------------------------
-!--  plot the pressure profile                                       --
+!--   plot the pressure profile                                      --
 !----------------------------------------------------------------------
       chsmin=1.e10_dp
       chsmax=-1.e10_dp
@@ -6059,7 +5966,7 @@
       enddo
       chsmin=0.0
 !-----------------------------------------------------------------------c
-! Initialize plot parameters  c
+!     Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
@@ -6079,7 +5986,7 @@
          yy(ii,nn) = workd(ii)
       enddo
 !-----------------------------------------------------------------------
-!--  add error bars to pressure plot                                  --
+!--   add error bars to pressure plot                                 --
 !-----------------------------------------------------------------------
       do i=1,npresw
          workd(1)=(presw(i)-preswb-sigprw(i))
@@ -6097,27 +6004,25 @@
          enddo
       enddo
 !-----------------------------------------------------------------------
-!-- write out QPLOT data files                                        --
+!--   write out QPLOT data files                                      --
 !-----------------------------------------------------------------------
       if (kwripre.gt.0) then
         nnww=nw
         xdum=0.0
         dataname=dataname(1:lprx)//'_preswd'
-        open(unit=62,file=dataname,status='old',err=37952)
-        close(unit=62,status='delete')
-37952  continue
+        open(unit=62,file=dataname,status='old',iostat=ioerr)
+        if (ioerr.eq.0) close(unit=62,status='delete')
         open(unit=62,file=dataname,status='new')
         do i=1,npresw
-               write (62,*) saiprw(i),presw(i),xdum,sigprw(i)
+          write (62,*) saiprw(i),presw(i),xdum,sigprw(i)
         enddo
         close(unit=62)
         dataname=dataname(1:lprx)//'_presw'
-        open(unit=62,file=dataname,status='old',err=37961)
-        close(unit=62,status='delete')
-37961  continue
+        open(unit=62,file=dataname,status='old',iostat=ioerr)
+        if (ioerr.eq.0) close(unit=62,status='delete')
         open(unit=62,file=dataname,status='new')
         do i=1,nw
-               write (62,*) workb(i),pressw(i),xdum,xdum
+          write (62,*) workb(i),pressw(i),xdum,xdum
         enddo
         close(unit=62)
       endif
@@ -6160,36 +6065,37 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif    !   itek
-37890 continue
+      endif ! itek
+      endif ! kprfit.eq.3
+      endif ! kvtor.gt.0
 !----------------------------------------------------------------------
-!-- end rotational page                                              --
+!--   end rotational page                                            --
 !----------------------------------------------------------------------
-      if (kprfit.ne.2) go to 21000
+      if (kprfit.eq.2) then
       if (itek.eq.1) call tekall(4010,960,0,0,0)
       chsmin=1.0e+10_dp
       chsmax=-1.0e+10_dp
       if (nptef.gt.0) then
-         do 20035 i=1,nw
+         do i=1,nw
             xn=worke(i)
             workc(i)=tefit(1)
-            do 42400 j=2,nptef
+            do j=2,nptef
                workc(i)=workc(i)+tefit(j)*xn**(j-1)
-42400       continue
+            enddo
             chsmin=min(chsmin,workc(i))
             chsmax=max(chsmax,workc(i))
-20035    continue
+         enddo
       endif
       rsimin=saipre(1)
-      do 20040 i=1,npress
+      do i=1,npress
          rsimin=min(rsimin,saipre(i))
          chsmin=min(chsmin,tethom(i))
          chsmax=max(chsmax,tethom(i)+sgteth(i))
-20040 continue
-      do 42410 i=1,nw
-         if (workb(i).ge.rsimin) go to 20042
-42410 continue
-20042 iiim=i
+      enddo
+      do i=1,nw
+         if (workb(i).ge.rsimin) exit
+      enddo
+      iiim=i
 !
       ibrdr = 1
 !-----------------------------------------------------------------------c
@@ -6218,15 +6124,15 @@
       if (kwripre.eq.1) then
          xdum=0.0
          write (87,*) npress
-         do 42420 i=1,npress
+         do i=1,npress
             write (87,*) saipre(i),tethom(i),xdum,sgteth(i)
-42420    continue
+         enddo
          write (87,*) nnww
-         do 42430 i=1,nw
+         do i=1,nw
             write (87,*) workb(i),workc(i),xdum,xdum
-42430    continue
+         enddo
       endif
-      do 20050 i=1,ndodo
+      do i=1,ndodo
          workd(1)=(tethom(i)-sgteth(i))
          workd(2)=(tethom(i)+sgteth(i))
          workc(1)=saipre(i)
@@ -6240,7 +6146,7 @@
             xx(ii,nn) = workc(ii)
             yy(ii,nn) = workd(ii)
          enddo
-20050 continue
+      enddo
 !
       if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
@@ -6281,29 +6187,28 @@
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
 !----------------------------------------------------------------------
-!--  plot the ne profile                                             --
+!--   plot the ne profile                                            --
 !----------------------------------------------------------------------
-
 !-----------------------------------------------------------------------c
-! Initialize plot parameters  c
+!     Initialize plot parameters  c
 !-----------------------------------------------------------------------c
       call init2d
       chsmin=0.0
       chsmax=1.0
       if (npnef.gt.0) then
-         do 20070 i=1,nw
+         do i=1,nw
             xn=worke(i)
             workc(i)=defit(1)
-            do 42440 j=2,npnef
+            do j=2,npnef
                workc(i)=workc(i)+defit(j)*xn**(j-1)
-42440       continue
+            enddo
             chsmin=min(workc(i),chsmin)
             chsmax=max(workc(i),chsmax)
-20070    continue
+         enddo
       endif
-      do 42450 i=1,ndodo
+      do i=1,ndodo
          chsmax=max(dnethom(i)+sgneth(i),chsmax)
-42450 continue
+      enddo
       chsmin=0.0
       if (npnef.gt.0) then
          nn = nn + 1
@@ -6327,15 +6232,15 @@
       if (kwripre.eq.1) then
          xdum=0.0
          write (87,*) npress
-         do 42460 i=1,npress
+         do i=1,npress
             write (87,*) saipre(i),dnethom(i),xdum,sgneth(i)
-42460    continue
+         enddo
          write (87,*) nnww
-         do 42470 i=1,nw
+         do i=1,nw
             write (87,*) workb(i),workc(i),xdum,xdum
-42470    continue
+         enddo
       endif
-      do 20072 i=1,ndodo
+      do i=1,ndodo
          workd(1)=(dnethom(i)-sgneth(i))
          workd(2)=(dnethom(i)+sgneth(i))
          workc(1)=saipre(i)
@@ -6349,7 +6254,7 @@
             xx(ii,nn) = workc(ii)
             yy(ii,nn) = workd(ii)
          enddo
-20072 continue
+      enddo
 !
       xabs=-4.5_dp
       yabs=3.0
@@ -6475,33 +6380,33 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif   !   itek
+      endif ! itek
 !
       if (itek.eq.1) call tekall(4010,960,0,0,0)
       chsmin=1.0e+10_dp
       chsmax=-1.0e+10_dp
       if (nptionf.ge.50) &
       call zpline(nption,xsiion,tionex,bwork,cwork,dwork)
-      do 20135 i=1,nw
+      do i=1,nw
          xn=worke(i)
          if (nptionf.lt.50) then
             workc(i)=tifit(1)
-            do 42500 j=2,nptionf
+            do j=2,nptionf
                workc(i)=workc(i)+tifit(j)*xn**(j-1)
-42500       continue
+            enddo
          else
             workc(i)=seval(nption,xn,xsiion,tionex,bwork,cwork,dwork)
          endif
          chsmin=min(chsmin,workc(i))
          chsmax=max(chsmax,workc(i))
-20135 continue
-      do 20140 i=1,nption+1
+      enddo
+      do i=1,nption+1
          chsmin=min(chsmin,tionex(i))
          chsmax=max(chsmax,tionex(i)+sigti(i))
-20140 continue
+      enddo
       chsmin=0.0
 !-----------------------------------------------------------------------c
-! Initialize plot parameters             c
+!     Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       ibrdr = 1
@@ -6511,9 +6416,9 @@
          xx(ii,nn) = workb(ii)
          yy(ii,nn) = workc(ii)
       enddo
-      do 42510 i=1,nption+1
+      do i=1,nption+1
          workj(i)=seval(nw,xsiion(i),worke,workb,bworkb,cworkb,dworkb)
-42510 continue
+      enddo
       nn = nn + 1
       sclpc(nn) = 0.5_dp
       ncnct(nn) = -1
@@ -6522,7 +6427,7 @@
          xx(ii,nn) = workj(ii)
          yy(ii,nn) = tionex(ii)
       enddo
-      do 20150 i=1,nption+1
+      do i=1,nption+1
          workd(1)=(tionex(i)-sigti(i))
          workd(2)=(tionex(i)+sigti(i))
          workc(1)=workj(i)
@@ -6536,7 +6441,7 @@
             xx(ii,nn) = workc(ii)
             yy(ii,nn) = workd(ii)
          enddo
-20150 continue
+      enddo
 !
       if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
@@ -6575,31 +6480,31 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif    !  itek
+      endif ! itek
       if (kwripre.eq.1) then
          xdum=0.0
          write (87,*) nption
-         do 42520 i=1,nption
+         do i=1,nption
             write (87,*) workj(i),tionex(i),xdum,sigti(i)
-42520    continue
+         enddo
          write (87,*) nnww
-         do 42530 i=1,nw
+         do i=1,nw
             write (87,*) workb(i),workc(i),xdum,xdum
-42530    continue
+         enddo
       endif
-!     ----------------------------------------------------------------------
-!     --  plot the beam profile                                           --
-!     ----------------------------------------------------------------------
+!----------------------------------------------------------------------
+!--   plot the beam profile                                          --
+!----------------------------------------------------------------------
 !-----------------------------------------------------------------------c
-! Initialize plot parameters             c
+!     Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       chsmin=0.0
       chsmax=0.0
-      do 42540 i=1,npress
+      do i=1,npress
          workc(i)=pbimth(i)/(pres(1)-pressbb)
          chsmax=max(workc(i),chsmax)
-42540 continue
+      enddo
       chsmin=0.0
       nn = nn + 1
       sclpc(nn) = 0.5_dp
@@ -6614,42 +6519,40 @@
          if (nbeam.gt.0) then
             call zpline(nbeam,sibeam,pbeam,bwork,cwork,dwork)
             call zpline(nw,workb,voln,bvoln,cvoln,dvoln)
-            do 42550 i=1,nw
+            do i=1,nw
                sivol(i)=seval(nw,voln(i),workb,voln,bvoln,cvoln,dvoln)
                xn=sivol(i)
                workc(i)=seval(nbeam,xn,sibeam,pbeam,bwork,cwork,dwork)
-42550       continue
+            enddo
          endif
          xdum=0.0
          dataname=dataname(1:lprx)//'_pbeam'
-        open(unit=62,file=dataname,status='old',err=12929)
-        close(unit=62,status='delete')
-12929   continue
-        open(unit=62,file=dataname,status='new')
-         do 42560 i=1,nw
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
+         do i=1,nw
             write (62,*) voln(i),workc(i),xdum,xdum
-42560    continue
+         enddo
          close(unit=62)
-!        ---------------------------------------------------------------------
-!        -- beam ion density                                                --
-!        ---------------------------------------------------------------------
+!---------------------------------------------------------------------
+!--      beam ion density                                                --
+!---------------------------------------------------------------------
          if (nbeam.gt.0) then
             call zpline(nbeam,sibeam,dnbeam,bwork,cwork,dwork)
-            do 42563 i=1,nw
+            do i=1,nw
                xn=sivol(i)
                workc(i)=seval(nbeam,xn,sibeam,dnbeam,bwork,cwork,dwork)
                workc(i)=workc(i)*1.e19_dp
-42563       continue
+            enddo
          endif
          xdum=0.0
          dataname=dataname(1:lprx)//'_nbeam'
-        open(unit=62,file=dataname,status='old',err=12963)
-        close(unit=62,status='delete')
-12963   continue
-        open(unit=62,file=dataname,status='new')
-         do 42567 i=1,nw
+         open(unit=62,file=dataname,status='old',iostat=ioerr)
+         if (ioerr.eq.0) close(unit=62,status='delete')
+         open(unit=62,file=dataname,status='new')
+         do i=1,nw
             write (62,*) voln(i),workc(i),xdum,xdum
-42567    continue
+         enddo
          close(unit=62)
       endif
 !
@@ -6733,7 +6636,7 @@
       ncurve = nn
       iexit = 2
 !-----------------------------------------------------------------------c
-!      Write Plot Parameters            c
+!     Write Plot Parameters            c
 !-----------------------------------------------------------------------c
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
@@ -6750,36 +6653,36 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif   !   itek
+      endif ! itek
 !
-      if (kplotpr.eq.0) go to 21000
+      if (kplotpr.ne.0) then
       if (itek.eq.1) call tekall(4010,960,0,0,0)
       chsmin=1.0e+10_dp
       chsmax=-1.0e+10_dp
       delz=(zuperts(jtime)-zlowerts)/(nw-1)*0.01_dp
-      do 20335 i=1,nw
+      do i=1,nw
          worke(i)=zlowerts*0.01_dp+(i-1)*delz
          call seva2d(bkx,lkx,bky,lky,c,rmajts,worke(i),pds,ier,n111)
          xn=(pds(1)-simag)/(psibry-simag)
          workb(i)=xn
          workc(i)=tefit(1)
-         do 42610 j=2,nptef
+         do j=2,nptef
             workc(i)=workc(i)+tefit(j)*xn**(j-1)
-42610    continue
+         enddo
          chsmin=min(chsmin,workc(i))
          chsmax=max(chsmax,workc(i))
-20335 continue
+      enddo
       xxxmin=worke(1)
       xxxmax=worke(nw)
-      do 20340 i=1,npteth
+      do i=1,npteth
          chsmin=min(chsmin,tethom(i))
          chsmax=max(chsmax,tethom(i)+sgteth(i))
          xxxmin=min(xxxmin,zteth(i))
          xxxmax=max(xxxmax,zteth(i))
-20340 continue
+      enddo
       chsmin=0.0
 !-----------------------------------------------------------------------c
-! Initialize plot parameters             c
+!     Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       ibrdr = 1
@@ -6797,7 +6700,7 @@
          xx(ii,nn) = zteth(ii)
          yy(ii,nn) = tethom(ii)
       enddo
-      do 20350 i=1,npteth
+      do i=1,npteth
          workd(1)=(tethom(i)-sgteth(i))
          workd(2)=(tethom(i)+sgteth(i))
          workc(1)=zteth(i)
@@ -6811,7 +6714,7 @@
             xx(ii,nn) = workc(ii)
             yy(ii,nn) = workd(ii)
          enddo
-20350 continue
+      enddo
       workc(1)=zuperts(jtime)*0.01_dp
       workc(2)=workc(1)
       workd(1)=chsmin
@@ -6844,7 +6747,7 @@
       ncurve = nn
       iexit = 1
 !-----------------------------------------------------------------------c
-!      Write Plot Parameters            c
+!     Write Plot Parameters            c
 !-----------------------------------------------------------------------c
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
@@ -6861,29 +6764,29 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif    !    itek
+      endif ! itek
 !----------------------------------------------------------------------
-!--  plot the ne profile                                             --
+!--   plot the ne profile                                            --
 !----------------------------------------------------------------------
 
 !-----------------------------------------------------------------------c
-! Initialize plot parameters             c
+!     Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       chsmin=0.0
       chsmax=1.0
-      do 20370 i=1,nw
+      do i=1,nw
          xn=workb(i)
          workc(i)=defit(1)
-         do 42620 j=2,npnef
+         do j=2,npnef
             workc(i)=workc(i)+defit(j)*xn**(j-1)
-42620    continue
+         enddo
          chsmin=min(workc(i),chsmin)
          chsmax=max(workc(i),chsmax)
-20370 continue
-      do 42630 i=1,npneth
+      enddo
+      do i=1,npneth
          chsmax=max(dnethom(i)+sgneth(i),chsmax)
-42630 continue
+      enddo
       chsmin=0.0
       nn = nn + 1
       nxy(nn) = nw
@@ -6899,7 +6802,7 @@
          xx(ii,nn) = zteth(ii)
          yy(ii,nn) = dnethom(ii)
       enddo
-      do 20472 i=1,npneth
+      do i=1,npneth
          workd(1)=(dnethom(i)-sgneth(i))
          workd(2)=(dnethom(i)+sgneth(i))
          workc(1)=zteth(i)
@@ -6913,7 +6816,7 @@
             xx(ii,nn) = workc(ii)
             yy(ii,nn) = workd(ii)
          enddo
-20472 continue
+      enddo
       workc(1)=zuperts(jtime)*0.01_dp
       workc(2)=workc(1)
       workd(1)=chsmin
@@ -7012,7 +6915,6 @@
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
       write (text,9828) zuperts(jtime),rlibim(jtime)
-
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -7021,7 +6923,6 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      
 !
       if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
@@ -7060,37 +6961,39 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif    !   itek
-21000 continue
+      endif ! itek
+      endif ! kplotpr.ne.0
+      endif ! kprfit.eq.2
 !
-      if (nextra.ge.0) go to 980
-      do 970 k=1,2
+      if (nextra.lt.0) then
+      do k=1,2
          fpxmin=fpxtra(1,1)
          fpxmax=fpxmin
          bpxmin=bpxtra(1,1)
          bpxmax=bpxmin
          flxmin=flxtra(1,1)
          flxmax=flxmin
-         do 900 j=1,iabs(nextra)
+         do j=1,iabs(nextra)
             jj=(k-1)*iabs(nextra)+j
-            do 900 i=1,npxtra(jj)
+            do i=1,npxtra(jj)
                fpxmin=min(fpxmin,fpxtra(i,jj))
                fpxmax=max(fpxmax,fpxtra(i,jj))
                bpxmin=min(bpxmin,bpxtra(i,jj))
                bpxmax=max(bpxmax,bpxtra(i,jj))
                flxmin=min(flxmin,flxtra(i,jj))
                flxmax=max(flxmax,flxtra(i,jj))
-  900    continue
+            enddo
+         enddo
          dfpx=(fpxmax-fpxmin)/2.
          dbpx=(bpxmax-bpxmin)/2.
          dflx=(flxmax-flxmin)/2.
          if (itek.eq.1) call tekall(4010,960,0,0,0)
          ibrdr = 1
 !-----------------------------------------------------------------------c
-! Initialize plot parameters             c
+!        Initialize plot parameters             c
 !-----------------------------------------------------------------------c
          call init2d
-         do 910 j=1,iabs(nextra)
+         do j=1,iabs(nextra)
             jj=(k-1)*iabs(nextra)+j
 !           call mrscod(0.5_dp,j*2,ratray)
             nn = nn + 1
@@ -7110,9 +7013,9 @@
             xpos(msg) = fpxtra(npxtra(jj),jj)
             ypos(msg) = bpxtra(npxtra(jj),jj)
             ht(msg) = 0.14_dp
-  910    continue
+         enddo
 !
-      if (itek.ge.5.and.idotek.eq.0) then
+         if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
 !        Initialize plot parameters             c
 !-----------------------------------------------------------------------c
@@ -7149,12 +7052,12 @@
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif    !     itek
+         endif ! itek
 !-----------------------------------------------------------------------c
-! Initialize plot parameters             c
+!        Initialize plot parameters             c
 !-----------------------------------------------------------------------c
          call init2d
-         do 950 j=1,iabs(nextra)
+         do j=1,iabs(nextra)
             jj=(k-1)*iabs(nextra)+j
 !           call mrscod(0.5_dp,j*2,ratray)
             nn = nn + 1
@@ -7167,17 +7070,16 @@
             mrc(nn) = 1
             tlen(nn) = 0.5_dp
             nmrk(nn) = j*2
-!           call rlint(jj,fpxtra(npxtra(jj),jj),flxtra(npxtra(jj),jj))
+!            call rlint(jj,fpxtra(npxtra(jj),jj),flxtra(npxtra(jj),jj))
             msg = msg + 1
             note(msg) = 6
             inum(msg) = jj
             xpos(msg) = fpxtra(npxtra(jj),jj)
             ypos(msg) = flxtra(npxtra(jj),jj)
             ht(msg) = 0.14_dp
-  950    continue
-         
+         enddo   
 !
-      if (itek.ge.5.and.idotek.eq.0) then
+         if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
 !        Initialize plot parameters             c
 !-----------------------------------------------------------------------c
@@ -7214,23 +7116,24 @@
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-         endif     !   itek
-  970 continue
-  980 continue
+         endif ! itek
+      enddo
+      endif ! nextra.lt.0
+      endif ! ivacum.le.0
 !-----------------------------------------------------------------------
-!--  plot psi contours                                                --
+!--   plot psi contours                                               --
 !-----------------------------------------------------------------------
- 1000 continue
-      if (iconsi.le.0) go to 1300
+      if (iconsi.gt.0) then
       if (itek.eq.1) call tekall(4010,960,0,0,0)
 !-----------------------------------------------------------------------
-!--  make psi array into 2-d array                                    --
+!--   make psi array into 2-d array                                   --
 !-----------------------------------------------------------------------
-      do 1020 ih=1,nh
-         do 1020 iw=1,nw
+      do ih=1,nh
+         do iw=1,nw
             icnt=(iw-1)*nh+ih
             bfield(iw,ih)=psi(icnt)*1000.
- 1020 continue
+         enddo
+      enddo
       almin=rgrid(1)
       almax=rgrid(nw)
       blmin=zgrid(1)
@@ -7252,11 +7155,12 @@
       ipri = 1
       cslmin=1.0e+30_dp
       cslmax=1.0e-30_dp
-      do 1030 i=1,nw
-         do 1030 j=1,nh
+      do i=1,nw
+         do j=1,nh
             cslmin=min(bfield(i,j),cslmin)
             cslmax=max(bfield(i,j),cslmax)
- 1030 continue
+         enddo
+      enddo
       siinc=(cslmax-cslmin)/8.
       if (iconsi.ge.5) then
          siinc=(cslmax-cslmin)/iconsi
@@ -7282,22 +7186,20 @@
               nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
 
       endif
-      if (ifcoil.le.0) go to 1040
-      call pltcol(mfcoil,rf,zf,wf,hf,af,af2,n11, &
-         nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
-         nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
-
- 1040 continue
-      if (iecoil.le.0) go to 1050
-      do 1045 i=1,necoil
-         ae(i)=0.0
-         ae2(i)=0.0
- 1045 continue
-      call pltcol(necoil,re,ze,we,he,ae,ae2,n00, &
-               nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
-               nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
-
- 1050 continue
+      if (ifcoil.gt.0) then
+         call pltcol(mfcoil,rf,zf,wf,hf,af,af2,n11, &
+            nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
+            nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
+      endif
+      if (iecoil.gt.0) then
+         do i=1,necoil
+            ae(i)=0.0
+            ae2(i)=0.0
+         enddo
+         call pltcol(necoil,re,ze,we,he,ae,ae2,n00, &
+                  nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
+                  nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
+      endif
       xabs=-3.
       yabs=7.85_dp
       dyabs = 0.16_dp
@@ -7313,15 +7215,15 @@
       yabs = yabs - dyabs
       ht(msg) = 0.10_dp
       if (kdata.eq.2) then
-      write (text,8948) ifname(jtime)
-      msg = msg + 1
-      note(msg) = 1
-      lmes(msg) = text
-      imes(msg) = 25
-      xpos(msg) = xabs
-      ypos(msg) = yabs
-      yabs = yabs - dyabs
-      ht(msg) = 0.10_dp
+         write (text,8948) ifname(jtime)
+         msg = msg + 1
+         note(msg) = 1
+         lmes(msg) = text
+         imes(msg) = 25
+         xpos(msg) = xabs
+         ypos(msg) = yabs
+         yabs = yabs - dyabs
+         ht(msg) = 0.10_dp
       endif
       xabs=.5_dp
       yabs=7.8_dp
@@ -7361,7 +7263,6 @@
       xpos(msg) = 0.0
       ypos(msg) = -.35_dp
       ht(msg) = 0.16_dp
-
       if (iconsi.lt.5) then
          msg = msg + 1
          note(msg) = 1
@@ -7419,8 +7320,7 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif    !   itek
-
+      endif ! itek
       do i=1,nw
          worka(i)=bfield(i,nh/2+1)
       enddo
@@ -7431,7 +7331,7 @@
          cslmax=max(worka(i),cslmax)
       enddo
 !-----------------------------------------------------------------------c
-! Initialize plot parameters             c
+!     Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       iorel = 1
@@ -7450,7 +7350,6 @@
       xpos(msg) = 1.0
       ypos(msg) = -.25_dp
       ht(msg) = 0.10_dp
-
       if (iconsi.lt.5) then
          msg = msg + 1
          note(msg) = 1
@@ -7515,43 +7414,44 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif     !   itek
+      endif ! itek
       do i=1,nw
          worka(i)=0
       enddo
 !-----------------------------------------------------------------------
-!--  calculate and plot contours of constant poloidal field           --
+!--   calculate and plot contours of constant poloidal field          --
 !-----------------------------------------------------------------------
- 1100 continue
       delvn=1.0_dp/(nw-1)
-      do 1217 i=1,nw
+      do i=1,nw
          voln(i)=(i-1)*delvn
- 1217 continue
+      enddo
       call zpline(nw,voln,fpol,bvoln,cvoln,dvoln)
-      do 1250 ih=1,nh
-         do 1250 iw=1,nw
+      do ih=1,nh
+         do iw=1,nw
             rw=rgrid(iw)
             rh=zgrid(ih)
             kk=(iw-1)*nh+ih
             fnow=fbrdy*tmu
             call seva2d(bkx,lkx,bky,lky,c,rw,rh,pds,ier,n333)
-            if (ier.eq.0) go to 1230
-            write (nttyo,9910) ier,rw,rh
-            return
- 1230       dumnow=sqrt(pds(2)**2+pds(3)**2)
+            if (ier.ne.0) then
+               write (nttyo,9910) ier,rw,rh
+               return
+            endif
+            dumnow=sqrt(pds(2)**2+pds(3)**2)
             bfield(iw,ih)=(dumnow)/rgrid(iw)*1.e4_dp
             if (ih.eq.nh/2+1) worka(iw)=bfield(iw,ih)
-            if (xpsi(kk).gt.1.0.or.ivacum.gt.0) go to 1233
-            fnow=seval(nw,xpsi(kk),voln,fpol,bvoln,cvoln,dvoln)
- 1233       btttt=fnow/rgrid(iw)*10000.
+            if (xpsi(kk).le.1.0.and.ivacum.le.0) &
+               fnow=seval(nw,xpsi(kk),voln,fpol,bvoln,cvoln,dvoln)
+            btttt=fnow/rgrid(iw)*10000.
             if (iconsi.ge.5) then
                dumnow=sqrt(bfield(iw,ih)**2+btttt**2)
                bfield(iw,ih)=dumnow
                if (ih.eq.nh/2+1) worka(iw)=abs(btttt)
             endif
- 1250 continue
+         enddo
+      enddo
 !-----------------------------------------------------------------------c
-! Initialize plot parameters             c
+!     Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
@@ -7564,16 +7464,15 @@
       xdv=6.
       cslmin=1.0e+30_dp
       cslmax=1.0e-30_dp
-      do 1254 i=1,nw
-         do 1254 j=1,nh
+      do i=1,nw
+         do j=1,nh
             cslmin=min(bfield(i,j),cslmin)
             cslmax=max(bfield(i,j),cslmax)
- 1254 continue
+         enddo
+      enddo
       siinc=(cslmax-cslmin)/5.0
       if (iconsi.ge.3) siinc= 0.0
-      if (iconsi.ge.6) then
-         siinc=(cslmax-cslmin)/iconsi
-      endif
+      if (iconsi.ge.6) siinc=(cslmax-cslmin)/iconsi
       nline = 1
       draw = 'DRAW'
       nn = nn + 1
@@ -7597,21 +7496,19 @@
               nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
               nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
       endif
-      if (ifcoil.le.0) go to 1260
-      call pltcol(mfcoil,rf,zf,wf,hf,af,af2,n11, &
+      if (ifcoil.gt.0) &
+         call pltcol(mfcoil,rf,zf,wf,hf,af,af2,n11, &
             nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
             nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
-
- 1260 continue
-      if (iecoil.le.0) go to 1270
-      do 1265 i=1,necoil
-         ae(i)=0.0
-         ae2(i)=0.0
- 1265 continue
-      call pltcol(necoil,re,ze,we,he,ae,ae2,n00, &
-         nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
-         nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
- 1270 continue
+      if (iecoil.gt.0) then
+         do i=1,necoil
+            ae(i)=0.0
+            ae2(i)=0.0
+         enddo
+         call pltcol(necoil,re,ze,we,he,ae,ae2,n00, &
+            nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
+            nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
+      endif
 !
       if (itek.ge.5.and.idotek.eq.0) then
 !-----------------------------------------------------------------------c
@@ -7649,9 +7546,9 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif     !   itek
+      endif ! itek
 !-----------------------------------------------------------------------c
-! Initialize plot parameters             c
+!     Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       iorel = 1
@@ -7664,32 +7561,32 @@
          yy(ii,nn) = worka(ii)
       enddo
       if (iconsi.ge.5) then
-      do i=1,nw
-         dumnow=1.e4_dp*bcentr(jtime)*rcentr/rgrid(i)
-         worka(i)=abs(dumnow)
-      enddo
+         do i=1,nw
+            dumnow=1.e4_dp*bcentr(jtime)*rcentr/rgrid(i)
+            worka(i)=abs(dumnow)
+         enddo
 !
-      cslmin=1.0e+30_dp
-      cslmax=1.0e-30_dp
-      do i=1,nw
-               cslmin=min(worka(i) ,cslmin)
-               cslmax=max(worka(i) ,cslmax)
-      enddo
+         cslmin=1.0e+30_dp
+         cslmax=1.0e-30_dp
+         do i=1,nw
+            cslmin=min(worka(i) ,cslmin)
+            cslmax=max(worka(i) ,cslmax)
+         enddo
 !
-      nn = nn + 1
-      ndotme(nn) = 1
-      nxy(nn) = nw
-      do ii = 1, nxy(nn)
-         xx(ii,nn) = rgrid(ii)
-         yy(ii,nn) = worka(ii)
-      enddo
-      do i=1,nw
-               cslmin=min(worka(i) ,cslmin)
-               cslmax=max(worka(i) ,cslmax)
-      enddo
-      delcsl=0.10_dp*(cslmax-cslmin)
-      cslmax=cslmax+delcsl
-      cslmin=cslmin-delcsl
+         nn = nn + 1
+         ndotme(nn) = 1
+         nxy(nn) = nw
+         do ii = 1, nxy(nn)
+            xx(ii,nn) = rgrid(ii)
+            yy(ii,nn) = worka(ii)
+         enddo
+         do i=1,nw
+            cslmin=min(worka(i) ,cslmin)
+            cslmax=max(worka(i) ,cslmax)
+         enddo
+         delcsl=0.10_dp*(cslmax-cslmin)
+         cslmax=cslmax+delcsl
+         cslmin=cslmin-delcsl
       endif
 !
       if (itek.ge.5.and.idotek.eq.0) then
@@ -7736,19 +7633,22 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif      !     itek
+      endif ! itek
       if (iconsi.ge.5) then  ! do Bp contours
-         do 12501 ih=1,nh
-            do 12501 iw=1,nw
+         do ih=1,nh
+            do iw=1,nw
                rw=rgrid(iw)
                rh=zgrid(ih)
                kk=(iw-1)*nh+ih
                call seva2d(bkx,lkx,bky,lky,c,rw,rh,pds,ier,n333)
-               if (ier.eq.0) go to 12599
-               write (nttyo,9910) ier,rw,rh
-               return
-12599    dumnow=sqrt(pds(2)**2+pds(3)**2)
-12501    bfield(iw,ih)=(dumnow)/rgrid(iw)*1.e4_dp
+               if (ier.ne.0) then
+                  write (nttyo,9910) ier,rw,rh
+                  return
+               endif
+               dumnow=sqrt(pds(2)**2+pds(3)**2)
+               bfield(iw,ih)=(dumnow)/rgrid(iw)*1.e4_dp
+            enddo
+         enddo
 !-----------------------------------------------------------------------c
 !        Initialize plot parameters             c
 !-----------------------------------------------------------------------c
@@ -7764,11 +7664,12 @@
          ipri = 1
          cslmin=1.0e+30_dp
          cslmax=1.0e-30_dp
-         do 12541 i=1,nw
-            do 12541 j=1,nh
+         do i=1,nw
+            do j=1,nh
                cslmin=min(bfield(i,j),cslmin)
                cslmax=max(bfield(i,j),cslmax)
-12541    continue
+            enddo
+         enddo
          siinc=(cslmax-cslmin)/iconsi
          nline = 1
          draw = 'DRAW'
@@ -7792,26 +7693,22 @@
             call pltcol(nvesel,rvs,zvs,wvs,hvs,avs,avs2,n00, &
             nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
             nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
-
          endif
-         if (ifcoil.le.0) go to 12601
-         call pltcol(mfcoil,rf,zf,wf,hf,af,af2,n11, &
-         nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
-         nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
-
-12601    continue
-         if (iecoil.le.0) go to 12701
-         do 12651 i=1,necoil
-            ae(i)=0.0
-            ae2(i)=0.0
-12651    continue
-         call pltcol(necoil,re,ze,we,he,ae,ae2,n00, &
-         nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
-         nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
-
-12701    continue
+         if (ifcoil.gt.0) &
+            call pltcol(mfcoil,rf,zf,wf,hf,af,af2,n11, &
+            nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
+            nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
+         if (iecoil.gt.0) then
+            do i=1,necoil
+               ae(i)=0.0
+               ae2(i)=0.0
+            enddo
+            call pltcol(necoil,re,ze,we,he,ae,ae2,n00, &
+            nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
+            nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
+         endif
 !
-      if (itek.ge.5.and.idotek.eq.0) then
+         if (itek.ge.5.and.idotek.eq.0) then
          ncurve = nn
          ibrdr = 1
          xphy = 0.675_dp
@@ -7843,7 +7740,7 @@
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-         endif    !  itek
+         endif ! itek
 !-----------------------------------------------------------------------c
 !        Initialize plot parameters             c
 !-----------------------------------------------------------------------c
@@ -7863,12 +7760,12 @@
          cslmin=1.0e+30_dp
          cslmax=1.0e-30_dp
          do i=1,nw
-               cslmin=min(worka(i) ,cslmin)
-               cslmax=max(worka(i) ,cslmax)
+            cslmin=min(worka(i),cslmin)
+            cslmax=max(worka(i),cslmax)
          enddo
          z000=0.0
-         cslmin=min(cslmin   ,z000  )
-         cslmax=max(cslmax   ,z000  )
+         cslmin=min(cslmin,z000)
+         cslmax=max(cslmax,z000)
          delcsl=0.10_dp*(cslmax-cslmin)
          cslmax=cslmax+delcsl
          cslmin=cslmin-delcsl
@@ -7881,7 +7778,7 @@
          yy(1,nn)=0.0
          yy(2,nn)=0.0
 !
-      if (itek.ge.5.and.idotek.eq.0) then
+         if (itek.ge.5.and.idotek.eq.0) then
          ncurve = nn
          ibrdr = 1
          xphy = 0.675_dp
@@ -7917,18 +7814,17 @@
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-         endif     !   itek
-      endif  ! if iconsi
-
- 1300 continue
+         endif ! itek
+      endif ! iconsi.ge.5
+      endif ! iconsi.gt.0
 !-----------------------------------------------------------------------c
 !     Initialize plot parameters for basis function page              c
 !-----------------------------------------------------------------------c
       call ppstore
       call ffstore
       call wwstore
-                        call eestore
-      if (ivacum.gt.0) go to 13377
+      call eestore
+      if (ivacum.le.0) then
       call init2d
       xmm=1.5_dp
       curmin=1.0e+10_dp
@@ -7997,7 +7893,7 @@
       ypos(msg) = yabs
       yabs = yabs - 2.0 * dyabs
       ht(msg) = 0.14_dp
-
+!
       msg = msg + 1
       write(text,1001) kppcur,kffcur,kwwcur 
  1001 format(' kppcur = ',i2,' kffcur = ',i2,' kwwcur = ',i2)
@@ -8049,18 +7945,18 @@
       yabs = yabs - dyabs
       ht(msg) = 0.10_dp
       do i=1,kppknt
-      write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") ppknt(i),ppbdry(i),pp2bdry(i)
-      msg = msg + 1
-      note(msg) = 1
-      lmes(msg) = text
-      imes(msg) = 45
-      xpos(msg) = xabs
-      ypos(msg) = yabs
-      yabs = yabs - dyabs
-      ht(msg) = 0.10_dp
+        write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") ppknt(i),ppbdry(i),pp2bdry(i)
+        msg = msg + 1
+        note(msg) = 1
+        lmes(msg) = text
+        imes(msg) = 45
+        xpos(msg) = xabs
+        ypos(msg) = yabs
+        yabs = yabs - dyabs
+        ht(msg) = 0.10_dp
       enddo
       yabs = yabs - dyabs
-
+!
       msg = msg + 1
       write(text,1003)kfffnc,kffknt,fftens 
  1003 format(' kfffnc = ',i2,' kffknt = ',i2,' fftens = ',f5.2)
@@ -8090,18 +7986,18 @@
       yabs = yabs - dyabs
       ht(msg) = 0.10_dp
       do i=1,kffknt
-      write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") ffknt(i),ffbdry(i),ff2bdry(i)
-      msg = msg + 1
-      note(msg) = 1
-      lmes(msg) = text
-      imes(msg) = 45
-      xpos(msg) = xabs
-      ypos(msg) = yabs
-      yabs = yabs - dyabs
-      ht(msg) = 0.10_dp
+        write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") ffknt(i),ffbdry(i),ff2bdry(i)
+        msg = msg + 1
+        note(msg) = 1
+        lmes(msg) = text
+        imes(msg) = 45
+        xpos(msg) = xabs
+        ypos(msg) = yabs
+        yabs = yabs - dyabs
+        ht(msg) = 0.10_dp
       enddo
       yabs = yabs - dyabs
-
+!
       msg = msg + 1
       write(text,1004) kwwfnc,kwwknt,wwtens
  1004 format(' kwwfnc = ',i2,' kwwknt = ',i2,' wwtens = ',f5.2)
@@ -8131,83 +8027,85 @@
       yabs = yabs - dyabs
       ht(msg) = 0.10_dp
       if (kwwknt.gt.0) then
-      do i=1,kwwknt
-      write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") wwknt(i),wwbdry(i),ww2bdry(i)
-      msg = msg + 1
-      note(msg) = 1
-      lmes(msg) = text
-      imes(msg) = 45
-      xpos(msg) = xabs
-      ypos(msg) = yabs
-      yabs = yabs - dyabs
-      ht(msg) = 0.10_dp
-      enddo
-      yabs = yabs - dyabs
+        do i=1,kwwknt
+          write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") wwknt(i),wwbdry(i),ww2bdry(i)
+          msg = msg + 1
+          note(msg) = 1
+          lmes(msg) = text
+          imes(msg) = 45
+          xpos(msg) = xabs
+          ypos(msg) = yabs
+          yabs = yabs - dyabs
+          ht(msg) = 0.10_dp
+        enddo
+        yabs = yabs - dyabs
       endif
 !
       if (kedgep.gt.0) then
-      write(text,1005) 
- 1005 format(' pe_psin       pe_width         pedge       pedgep       ')
-      msg = msg + 1
-      note(msg) = 1
-      lmes(msg) = text
-      imes(msg) = 60
-      xpos(msg) = xabs
-      ypos(msg) = yabs
-      yabs = yabs - dyabs
-      ht(msg) = 0.10_dp
-      write(text,1006) 
- 1006 format('----------------------------------------------------------')
-      msg = msg + 1
-      note(msg) = 1
-      lmes(msg) = text
-      imes(msg) = 60
-      xpos(msg) = xabs
-      ypos(msg) = yabs
-      yabs = yabs - dyabs
-      ht(msg) = 0.10_dp
-      pedgea=pedge/darea
-      pedgep=pedgea/pe_width/sidif
-      write(text,"(' ',f4.2,4x,g15.5,2x,g15.5,2x,g15.5)") &
-                   pe_psin,pe_width,pedgea,pedgep
-      msg = msg + 1
-      note(msg) = 1
-      lmes(msg) = text
-      imes(msg) = 60
-      xpos(msg) = xabs
-      ypos(msg) = yabs
-      yabs = yabs - dyabs
-      ht(msg) = 0.10_dp
+        write(text,1005) 
+ 1005   format( &
+          ' pe_psin       pe_width         pedge       pedgep       ')
+        msg = msg + 1
+        note(msg) = 1
+        lmes(msg) = text
+        imes(msg) = 60
+        xpos(msg) = xabs
+        ypos(msg) = yabs
+        yabs = yabs - dyabs
+        ht(msg) = 0.10_dp
+        write(text,1006) 
+ 1006   format( &
+          '----------------------------------------------------------')
+        msg = msg + 1
+        note(msg) = 1
+        lmes(msg) = text
+        imes(msg) = 60
+        xpos(msg) = xabs
+        ypos(msg) = yabs
+        yabs = yabs - dyabs
+        ht(msg) = 0.10_dp
+        pedgea=pedge/darea
+        pedgep=pedgea/pe_width/sidif
+        write(text,"(' ',f4.2,4x,g15.5,2x,g15.5,2x,g15.5)") &
+                     pe_psin,pe_width,pedgea,pedgep
+        msg = msg + 1
+        note(msg) = 1
+        lmes(msg) = text
+        imes(msg) = 60
+        xpos(msg) = xabs
+        ypos(msg) = yabs
+        yabs = yabs - dyabs
+        ht(msg) = 0.10_dp
       endif
 !
       if (kedgef.gt.0) then
-      write(text,"(' fe_psin       fe_width         f2edge  ')")
-      msg = msg + 1
-      note(msg) = 1
-      lmes(msg) = text
-      imes(msg) = 45
-      xpos(msg) = xabs
-      ypos(msg) = yabs
-      yabs = yabs - dyabs
-      ht(msg) = 0.10_dp
-      write(text,"('-----------------------------------------')")
-      msg = msg + 1
-      note(msg) = 1
-      lmes(msg) = text
-      imes(msg) = 45
-      xpos(msg) = xabs
-      ypos(msg) = yabs
-      yabs = yabs - dyabs
-      ht(msg) = 0.10_dp
-      write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") fe_psin,fe_width,f2edge
-      msg = msg + 1
-      note(msg) = 1
-      lmes(msg) = text
-      imes(msg) = 45
-      xpos(msg) = xabs
-      ypos(msg) = yabs
-      yabs = yabs - dyabs
-      ht(msg) = 0.10_dp
+        write(text,"(' fe_psin       fe_width         f2edge  ')")
+        msg = msg + 1
+        note(msg) = 1
+        lmes(msg) = text
+        imes(msg) = 45
+        xpos(msg) = xabs
+        ypos(msg) = yabs
+        yabs = yabs - dyabs
+        ht(msg) = 0.10_dp
+        write(text,"('-----------------------------------------')")
+        msg = msg + 1
+        note(msg) = 1
+        lmes(msg) = text
+        imes(msg) = 45
+        xpos(msg) = xabs
+        ypos(msg) = yabs
+        yabs = yabs - dyabs
+        ht(msg) = 0.10_dp
+        write(text,"(' ',f4.2,4x,g15.5,2x,g15.5)") fe_psin,fe_width,f2edge
+        msg = msg + 1
+        note(msg) = 1
+        lmes(msg) = text
+        imes(msg) = 45
+        xpos(msg) = xabs
+        ypos(msg) = yabs
+        yabs = yabs - dyabs
+        ht(msg) = 0.10_dp
       endif
       write(text,9852) psiecn, dpsiecn
       msg = msg + 1
@@ -8255,7 +8153,7 @@
       igridy = 2
       idot = 1
 !-----------------------------------------------------------------------c
-!      Write Plot Parameters            c
+!     Write Plot Parameters            c
 !-----------------------------------------------------------------------c
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
@@ -8272,7 +8170,7 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif     !   itek
+      endif ! itek
       call init2d
       xmm=1.6_dp
       curmin=1.0e+10_dp
@@ -8342,7 +8240,7 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif     !   itek
+      endif ! itek
 !
       if (kvtor.gt.0) then
       call init2d
@@ -8413,16 +8311,20 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif     !   itek
-      endif
-13377 continue
+      endif ! itek
+      endif ! kvtor.gt.0
+      endif ! ivacum.le.0
       if (idebug /= 0) write (6,*) 'End  PLTOUT'
-      if (kfitece.gt.0) go to 1700
-!     return
-      Go to 8971
- 1500 continue
+      if (kfitece.le.0) then
+         if (idebug /= 0) write (6,*) 'Before Exit PLTOUT'
+         deallocate(bfield,sivol,voln, &
+            bvoln,cvoln,dvoln,rscrap,curscr,pbimf,pmid,pmidw,bpmid, &
+            cpmid,dpmid,workj,copyn,copy1,xbnow,ybnow)
+         if (idebug /= 0) write (6,*) 'After Exit PLTOUT'
+         return
+      endif
 !----------------------------------------------------------------------
-!--  plot time history for kdata=4                                   --
+!--   plot time history for kdata=4                                   --
 !----------------------------------------------------------------------
       dataname=' '
       let = 'q'
@@ -8430,11 +8332,11 @@
       dataname=dataname(3:7)//'_efitipmhd.dat '
       call curvec(dataname,jerror,time,cpasma,ktime,0_i8)
       call zpline(ktime,time,sibdry,bscra,cscra,dscra)
-      do 1605 i=1,ktime
-         if (jerror(i).le.0) go to 1605
+      do i=1,ktime
+         if (jerror(i).le.0) cycle
          scrat(i)=-speval(ktime,time(i),time,sibdry,bscra,cscra,dscra)
          scrat(i)=twopi*scrat(i)*1000.+vloopt(i)
- 1605 continue
+      enddo
       dataname=dataname(3:7)//'_efitvsurf.dat '
       call curvec(dataname,jerror,time,scrat,ktime,0_i8)
       dataname=dataname(3:7)//'_efitkappa.dat '
@@ -8457,9 +8359,8 @@
       call curvec(dataname,jerror,time,dco2v(1,2),ktime,0_i8)
       dataname=dataname(3:7)//'_efitwmhd.dat  '
       call curvec(dataname,jerror,time,wplasm,ktime,0_i8)
-
 !-----------------------------------------------------------------------c
-! Initialize plot parameters             c
+!     Initialize plot parameters             c
 !-----------------------------------------------------------------------c
       call init2d
       yorg = curmin
@@ -8571,7 +8472,7 @@
             ht(msg) = 0.13_dp*0.7_dp
          enddo
       endif
-      endif
+      endif ! kvtor.ge.1.and.kvtor.le.3
 !
       xabs= 1.2_dp
       yabs= -0.8_dp
@@ -8626,12 +8527,12 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif     !   itek
+      endif ! itek
+      endif ! kfitece.le.0
 !---------------------------------------------------------------------
-!--     plot for ece                                                --
-!--    Assign value to work arrays. workg: Bz. workk: R. workf: Psi --
+!--   plot for ece                                                  --
+!--   Assign value to work arrays. workg: Bz. workk: R. workf: Psi  --
 !---------------------------------------------------------------------
- 1700 continue
       if (kfitece.eq.0) return
       dxnow=(rmaxzm-rminzm)/(nw-1)
       drnow=(xlmax-xlmin)/(nw-1)
@@ -8643,7 +8544,7 @@
          workk(i)=xnow
       enddo
 !---------------------------------------------------------------------
-!--     writing to xece and yece , for Bz plot                      --
+!--   writing to xece and yece , for Bz plot                        --
 !---------------------------------------------------------------------
       nplece(1)=nw
       do i=1,nw
@@ -8661,7 +8562,7 @@
       xece(2,3)=xlmax
       yece(2,3)=0.0
 !---------------------------------------------------------------------
-!--     writing to pltout.out, for Bz plot                          --
+!--   writing to pltout.out, for Bz plot                            --
 !---------------------------------------------------------------------
       curmin=workg(1)
       curmax=workg(1)
@@ -8678,7 +8579,7 @@
 !
       if (itek.ge.5.and.idotek.eq.0) then
 !------------------------------------------------------------------------
-!--      Initialize plot parameters                                   --
+!--      Initialize plot parameters                                    --
 !------------------------------------------------------------------------
          call init2d
          ibrdr = 1
@@ -8700,32 +8601,32 @@
          ncurve=3
          thcece(1)=0.0
          sclece(1)=0.0
-        dshece(1)=0
-        dotece(1)=0
-        cdhece(1)=0
-        cdtece(1)=0
-        mrkece(1)=0
-        clrece(1)='FOREGROUND'
-        cntece(1)=0
-        thcece(2)=0.0
-        sclece(2)=0.70_dp
-        dshece(2)=0
-        dotece(2)=0
-        cdhece(2)=0
-        cdtece(2)=0
-        mrkece(2)=0
-        clrece(2)='PINK'
-        cntece(2)=-1
-        thcece(3)=0.0
-        sclece(3)=0.0
-        dshece(3)=0
-        dotece(3)=1
-        cdhece(3)=0
-        cdtece(3)=0
-        mrkece(3)=0
-        clrece(3)='GREE'
-        cntece(3)=0
-        call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
+         dshece(1)=0
+         dotece(1)=0
+         cdhece(1)=0
+         cdtece(1)=0
+         mrkece(1)=0
+         clrece(1)='FOREGROUND'
+         cntece(1)=0
+         thcece(2)=0.0
+         sclece(2)=0.70_dp
+         dshece(2)=0
+         dotece(2)=0
+         cdhece(2)=0
+         cdtece(2)=0
+         mrkece(2)=0
+         clrece(2)='PINK'
+         cntece(2)=-1
+         thcece(3)=0.0
+         sclece(3)=0.0
+         dshece(3)=0
+         dotece(3)=1
+         cdhece(3)=0
+         cdtece(3)=0
+         mrkece(3)=0
+         clrece(3)='GREE'
+         cntece(3)=0
+         call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft,             &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm,&
          workk(1), drrrr, workk(nw), curmin, dcurn, curmax,&
@@ -8740,10 +8641,10 @@
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps,&
          nvec, xfm, yfm, xto, yto, ivec,&
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif  ! itek
+      endif ! itek
 !      endif
 !------------------------------------------------------------------------------
-!--     writing to xece and yece, for psi plot                               --
+!--   writing to xece and yece, for psi plot                                 --
 !------------------------------------------------------------------------------
       nplece(1)=nw
       do i=1,nw
@@ -8759,9 +8660,9 @@
          call seva2d(bkx,lkx,bky,lky,c,xnow,zeceo,pds,ier,n333)
          psecep(i)=pds(1)+psiref(jtime)
       enddo
-         xnow=receo
-         call seva2d(bkx,lkx,bky,lky,c,xnow,zeceo,pds,ier,n333)
-         pseceo=pds(1)+psiref(jtime)
+      xnow=receo
+      call seva2d(bkx,lkx,bky,lky,c,xnow,zeceo,pds,ier,n333)
+      pseceo=pds(1)+psiref(jtime)
       do i=1,nece
          xece(nece+1-i,2)=recem(i)
          yece(nece+1-i,2)=psecem(i)
@@ -8771,7 +8672,7 @@
       xece(nece+1,2)=receo
       yece(nece+1,2)=pseceo
 !------------------------------------------------------------------------------
-!--     write to coloumn 3 to 2+nece                                         --
+!--   write to coloumn 3 to 2+nece                                           --
 !------------------------------------------------------------------------------
       do i=1,nece
         nplece(2+i)=2
@@ -8794,7 +8695,7 @@
       dcurn=(curmax-curmin)
       xmm=1.6_dp
 !------------------------------------------------------------------------------
-!--       Initialize plot parameters                                         --
+!--   Initialize plot parameters                                             --
 !------------------------------------------------------------------------------
       call init2d
       ibrdr = 1
@@ -8811,8 +8712,8 @@
       idot = 1
       ipag = 0
 !      if (iexpand .eq. 0) then
-         xtitle = 'R(m)$'
-         ytitle = 'PSI(VS/r)$'
+       xtitle = 'R(m)$'
+       ytitle = 'PSI(VS/r)$'
 !      else
 !         xtitle = '$'
 !         ytitle = 'ABS PSI(V-S/rad)$'
@@ -8821,24 +8722,24 @@
       iexit = 1
 !
       ncurve=2+nece
-        thcece(1)=0.0
-        sclece(1)=0.0
-        dshece(1)=0
-        dotece(1)=0
-        cdhece(1)=0
-        cdtece(1)=0
-        mrkece(1)=0
-        clrece(1)='FOREGROUND'
-        cntece(1)=0
-        thcece(2)=0.0
-        sclece(2)=0.70_dp
-        dshece(2)=0
-        dotece(2)=0
-        cdhece(2)=0
-        cdtece(2)=0
-        mrkece(2)=0
-        clrece(2)='PINK'
-        cntece(2)=-1
+      thcece(1)=0.0
+      sclece(1)=0.0
+      dshece(1)=0
+      dotece(1)=0
+      cdhece(1)=0
+      cdtece(1)=0
+      mrkece(1)=0
+      clrece(1)='FOREGROUND'
+      cntece(1)=0
+      thcece(2)=0.0
+      sclece(2)=0.70_dp
+      dshece(2)=0
+      dotece(2)=0
+      cdhece(2)=0
+      cdtece(2)=0
+      mrkece(2)=0
+      clrece(2)='PINK'
+      cntece(2)=-1
       do i=3,ncurve
         thcece(i)=0.0
         sclece(i)=0.0
@@ -8851,24 +8752,24 @@
         cntece(i)=0
       enddo
       if (itek.ge.5.and.idotek.eq.0) then
-      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,&
-       iorel, xorl, yorl, hight, bngle, bshft,&
-       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm,&
-       workk(1), drrrr, workk(nw), curmin, dcurn, curmax,&
-       iaxis, ixtck, iytck, ixnon, iynon, intax, intay,&
-       isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps,&
-       igridx, igridy, idash, idot, ichdsh, ichdot,&
-       thcece, sclece, dshece, dotece, cdhece, cdtece,&
-       mrkece, clrece, mrc, tlen, nmrk, rat,&
-       xece, yece, nplece,       cntece,&
-       icont, nword, zz, ix, iy, zinc, line, mode,&
-       lbflg, ithk, ipri, nline, draw,&
-       nshd, sxx, syy, nsxy, sangle, sgap, ngaps,&
-       nvec, xfm, yfm, xto, yto, ivec,&
-       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+        call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,&
+        iorel, xorl, yorl, hight, bngle, bshft,&
+        ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm,&
+        workk(1), drrrr, workk(nw), curmin, dcurn, curmax,&
+        iaxis, ixtck, iytck, ixnon, iynon, intax, intay,&
+        isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps,&
+        igridx, igridy, idash, idot, ichdsh, ichdot,&
+        thcece, sclece, dshece, dotece, cdhece, cdtece,&
+        mrkece, clrece, mrc, tlen, nmrk, rat,&
+        xece, yece, nplece,       cntece,&
+        icont, nword, zz, ix, iy, zinc, line, mode,&
+        lbflg, ithk, ipri, nline, draw,&
+        nshd, sxx, syy, nsxy, sangle, sgap, ngaps,&
+        nvec, xfm, yfm, xto, yto, ivec,&
+        msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
 !------------------------------------------------------------------------------
-!-- psip-psim plot                                                           --
+!--   psip-psim plot                                                         --
 !------------------------------------------------------------------------------
       nplece(1)=nece
       ddpsi=abs(simagx(jtime)-sibdry(jtime))
@@ -8909,47 +8810,47 @@
       igridy = 2
       idot = 1
       ipag = 0
-         xtitle = 'ECE$'
-         ytitle = 'dPSI(%)$'
+      xtitle = 'ECE$'
+      ytitle = 'dPSI(%)$'
       iexit = 1
       ncurve=2
-        thcece(1)=0.0
-        sclece(1)=0.7_dp
-        dshece(1)=0
-        dotece(1)=0
-        cdhece(1)=0
-        cdtece(1)=0
-        mrkece(1)=16
-        clrece(1)='PINK'
-        cntece(1)=-1
-        thcece(2)=0.0
-        sclece(2)=0.0
-        dshece(2)=0
-        dotece(2)=1
-        cdhece(2)=0
-        cdtece(2)=0
-        mrkece(2)=0
-        clrece(2)='FOREGROUND'
-        cntece(2)=0
+      thcece(1)=0.0
+      sclece(1)=0.7_dp
+      dshece(1)=0
+      dotece(1)=0
+      cdhece(1)=0
+      cdtece(1)=0
+      mrkece(1)=16
+      clrece(1)='PINK'
+      cntece(1)=-1
+      thcece(2)=0.0
+      sclece(2)=0.0
+      dshece(2)=0
+      dotece(2)=1
+      cdhece(2)=0
+      cdtece(2)=0
+      mrkece(2)=0
+      clrece(2)='FOREGROUND'
+      cntece(2)=0
       if (itek.ge.5.and.idotek.eq.0) then
-      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,&
-       iorel, xorl, yorl, hight, bngle, bshft,&
-       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm,&
-       xorg, drrrr, xmax, curmin, dcurn, curmax,&
-       iaxis, ixtck, iytck, ixnon, iynon, intax, intay,&
-       isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps,&
-       igridx, igridy, idash, idot, ichdsh, ichdot,&
-       thcece, sclece, dshece, dotece, cdhece, cdtece,&
-       mrkece, clrece, mrc, tlen, nmrk, rat,&
-       xece, yece, nplece,       cntece,&
-       icont, nword, zz, ix, iy, zinc, line, mode,&
-       lbflg, ithk, ipri, nline, draw,&
-       nshd, sxx, syy, nsxy, sangle, sgap, ngaps,&
-       nvec, xfm, yfm, xto, yto, ivec,&
-       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+        call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,&
+        iorel, xorl, yorl, hight, bngle, bshft,&
+        ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm,&
+        xorg, drrrr, xmax, curmin, dcurn, curmax,&
+        iaxis, ixtck, iytck, ixnon, iynon, intax, intay,&
+        isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps,&
+        igridx, igridy, idash, idot, ichdsh, ichdot,&
+        thcece, sclece, dshece, dotece, cdhece, cdtece,&
+        mrkece, clrece, mrc, tlen, nmrk, rat,&
+        xece, yece, nplece,       cntece,&
+        icont, nword, zz, ix, iy, zinc, line, mode,&
+        lbflg, ithk, ipri, nline, draw,&
+        nshd, sxx, syy, nsxy, sangle, sgap, ngaps,&
+        nvec, xfm, yfm, xto, yto, ivec,&
+        msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
 !------------------------------------------------------------------------------
-!-- chi2ece plot                                                             --
+!--   chi2ece plot                                                           --
 !------------------------------------------------------------------------------
       nplece(1)=nece
       do i=1,nece
@@ -8957,8 +8858,8 @@
         yece(i,1)=chiece(i)
       enddo
       nplece(2)=1
-        xece(1,2)=nece+1
-        yece(1,2)=chiecebz
+      xece(1,2)=nece+1
+      yece(1,2)=chiecebz
       xorg=0
       drrrr=2
       xmax=nece+2.0
@@ -8986,29 +8887,29 @@
       igridy =1
       idot = 1
       ipag = 0
-         xtitle = 'ECE$'
-         ytitle = 'CHI**2$'
+      xtitle = 'ECE$'
+      ytitle = 'CHI**2$'
       iexit = 1
       if ((kfixro.gt.0).and.(kfixrece.gt.0)) iexit = 2
       ncurve=2
-        thcece(1)=0.0
-        sclece(1)=0.7_dp
-        dshece(1)=0
-        dotece(1)=0
-        cdhece(1)=0
-        cdtece(1)=0
-        mrkece(1)=16
-        clrece(1)='PINK'
-        cntece(1)=1
-        thcece(2)=0.0
-        sclece(2)=0.7_dp
-        dshece(2)=0
-        dotece(2)=1
-        cdhece(2)=0
-        cdtece(2)=0
-        mrkece(2)=15
-        clrece(2)='GREEN'
-        cntece(2)=-1
+      thcece(1)=0.0
+      sclece(1)=0.7_dp
+      dshece(1)=0
+      dotece(1)=0
+      cdhece(1)=0
+      cdtece(1)=0
+      mrkece(1)=16
+      clrece(1)='PINK'
+      cntece(1)=1
+      thcece(2)=0.0
+      sclece(2)=0.7_dp
+      dshece(2)=0
+      dotece(2)=1
+      cdhece(2)=0
+      cdtece(2)=0
+      mrkece(2)=15
+      clrece(2)='GREEN'
+      cntece(2)=-1
 !
       xabs=-6.0
       yabs=1.8_dp
@@ -9136,21 +9037,21 @@
       ht(msg) = 0.14_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
-      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,&
-       iorel, xorl, yorl, hight, bngle, bshft,&
-       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm,&
-       xorg, drrrr, xmax, curmin, dcurn, curmax,&
-       iaxis, ixtck, iytck, ixnon, iynon, intax, intay,&
-       isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps,&
-       igridx, igridy, idash, idot, ichdsh, ichdot,&
-       thcece, sclece, dshece, dotece, cdhece, cdtece,&
-       mrkece, clrece, mrc, tlen, nmrk, rat,&
-       xece, yece, nplece,       cntece,&
-       icont, nword, zz, ix, iy, zinc, line, mode,&
-       lbflg, ithk, ipri, nline, draw,&
-       nshd, sxx, syy, nsxy, sangle, sgap, ngaps,&
-       nvec, xfm, yfm, xto, yto, ivec,&
-       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+        call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,&
+        iorel, xorl, yorl, hight, bngle, bshft,&
+        ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm,&
+        xorg, drrrr, xmax, curmin, dcurn, curmax,&
+        iaxis, ixtck, iytck, ixnon, iynon, intax, intay,&
+        isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps,&
+        igridx, igridy, idash, idot, ichdsh, ichdot,&
+        thcece, sclece, dshece, dotece, cdhece, cdtece,&
+        mrkece, clrece, mrc, tlen, nmrk, rat,&
+        xece, yece, nplece,       cntece,&
+        icont, nword, zz, ix, iy, zinc, line, mode,&
+        lbflg, ithk, ipri, nline, draw,&
+        nshd, sxx, syy, nsxy, sangle, sgap, ngaps,&
+        nvec, xfm, yfm, xto, yto, ivec,&
+        msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
 !-----------------------------------------------------------------------
 !     writing to xece and yece, for ECE data fitting
@@ -9158,8 +9059,7 @@
 !         kfixro kfixrece =0, fitting Te(R)
 !         kfixro kfixrece <0, fitting Te(B)
 !-----------------------------------------------------------------------
-      if ((kfixro.gt.0).and.(kfixrece.gt.0)) go to 8900
-      if ((kfixro.lt.0).and.(kfixrece.lt.0)) go to 8905
+      if ((kfixro.eq.0).or.(kfixrece.eq.0)) then
 !
       nplece(1)=mecein
       curmax=teeceinr(1)
@@ -9177,7 +9077,7 @@
       enddo
       curmax=int(curmax)+1.
 !------------------------------------------------------------------------------
-!-- writing to pltout.out. For ECE data fitting                              --
+!--   writing to pltout.out. For ECE data fitting                            --
 !------------------------------------------------------------------------------
       xorg=1.2_dp
       drrrr=0.4_dp
@@ -9201,51 +9101,51 @@
       igridy = 1
       idot = 1
       ipag = 0
-         xtitle = 'R(m)$'
-         ytitle = 'Te(keV)$'
+      xtitle = 'R(m)$'
+      ytitle = 'Te(keV)$'
       iexit = 2
       ncurve=2
-        thcece(1)=0.0
-        sclece(1)=0.7_dp
-        dshece(1)=0
-        dotece(1)=0
-        cdhece(1)=0
-        cdtece(1)=0
-        mrkece(1)=16
-        clrece(1)='PINK'
-        cntece(1)=-1
-        thcece(2)=0.0
-        sclece(2)=0
-        dshece(2)=0
-        dotece(2)=0
-        cdhece(2)=0
-        cdtece(2)=0
-        mrkece(2)=0
-        clrece(2)='FOREGROUND'
-        cntece(2)=0
+      thcece(1)=0.0
+      sclece(1)=0.7_dp
+      dshece(1)=0
+      dotece(1)=0
+      cdhece(1)=0
+      cdtece(1)=0
+      mrkece(1)=16
+      clrece(1)='PINK'
+      cntece(1)=-1
+      thcece(2)=0.0
+      sclece(2)=0
+      dshece(2)=0
+      dotece(2)=0
+      cdhece(2)=0
+      cdtece(2)=0
+      mrkece(2)=0
+      clrece(2)='FOREGROUND'
+      cntece(2)=0
       if (itek.ge.5.and.idotek.eq.0) then
-      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,&
-       iorel, xorl, yorl, hight, bngle, bshft,&
-       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm,&
-       xorg, drrrr, xmax, curmin, dcurn, curmax,&
-       iaxis, ixtck, iytck, ixnon, iynon, intax, intay,&
-       isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps,&
-       igridx, igridy, idash, idot, ichdsh, ichdot,&
-       thcece, sclece, dshece, dotece, cdhece, cdtece,&
-       mrkece, clrece, mrc, tlen, nmrk, rat,&
-       xece, yece, nplece,       cntece,&
-       icont, nword, zz, ix, iy, zinc, line, mode,&
-       lbflg, ithk, ipri, nline, draw,&
-       nshd, sxx, syy, nsxy, sangle, sgap, ngaps,&
-       nvec, xfm, yfm, xto, yto, ivec,&
-       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+        call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,&
+        iorel, xorl, yorl, hight, bngle, bshft,&
+        ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm,&
+        xorg, drrrr, xmax, curmin, dcurn, curmax,&
+        iaxis, ixtck, iytck, ixnon, iynon, intax, intay,&
+        isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps,&
+        igridx, igridy, idash, idot, ichdsh, ichdot,&
+        thcece, sclece, dshece, dotece, cdhece, cdtece,&
+        mrkece, clrece, mrc, tlen, nmrk, rat,&
+        xece, yece, nplece,       cntece,&
+        icont, nword, zz, ix, iy, zinc, line, mode,&
+        lbflg, ithk, ipri, nline, draw,&
+        nshd, sxx, syy, nsxy, sangle, sgap, ngaps,&
+        nvec, xfm, yfm, xto, yto, ivec,&
+        msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
 !
-       go to 8900
+      elseif ((kfixro.lt.0).and.(kfixrece.lt.0)) then
 !----------------------------------------------------------------------
-!--         Te(B)
+!--   Te(B)
 !----------------------------------------------------------------------
-8905   nplece(1)=necein
+      nplece(1)=necein
       do i=1,necein
         xece(i,1)=becein(i)
         yece(i,1)=teecein0(i)
@@ -9278,47 +9178,47 @@
       igridy =0
       idot = 1
       ipag = 0
-         xtitle = 'B(T)$'
-         ytitle = 'Te(keV)$'
+      xtitle = 'B(T)$'
+      ytitle = 'Te(keV)$'
       iexit = 1
       ncurve=2
-        thcece(1)=0.0
-        sclece(1)=0.7_dp
-        dshece(1)=0
-        dotece(1)=0
-        cdhece(1)=0
-        cdtece(1)=0
-        mrkece(1)=16
-        clrece(1)='PINK'
-        cntece(1)=-1
-        thcece(2)=0.0
-        sclece(2)=0
-        dshece(2)=0
-        dotece(2)=0
-        cdhece(2)=0
-        cdtece(2)=0
-        mrkece(2)=0
-        clrece(2)='FOREGROUND'
-        cntece(2)=0
+      thcece(1)=0.0
+      sclece(1)=0.7_dp
+      dshece(1)=0
+      dotece(1)=0
+      cdhece(1)=0
+      cdtece(1)=0
+      mrkece(1)=16
+      clrece(1)='PINK'
+      cntece(1)=-1
+      thcece(2)=0.0
+      sclece(2)=0
+      dshece(2)=0
+      dotece(2)=0
+      cdhece(2)=0
+      cdtece(2)=0
+      mrkece(2)=0
+      clrece(2)='FOREGROUND'
+      cntece(2)=0
       if (itek.ge.5.and.idotek.eq.0) then
-      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,&
-       iorel, xorl, yorl, hight, bngle, bshft,&
-       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm,&
-       xorg, drrrr, xmax, curmin, dcurn, curmax,&
-       iaxis, ixtck, iytck, ixnon, iynon, intax, intay,&
-       isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps,&
-       igridx, igridy, idash, idot, ichdsh, ichdot,&
-       thcece, sclece, dshece, dotece, cdhece, cdtece,&
-       mrkece, clrece, mrc, tlen, nmrk, rat,&
-       xece, yece, nplece,       cntece,&
-       icont, nword, zz, ix, iy, zinc, line, mode,&
-       lbflg, ithk, ipri, nline, draw,&
-       nshd, sxx, syy, nsxy, sangle, sgap, ngaps,&
-       nvec, xfm, yfm, xto, yto, ivec,&
-       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+        call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,&
+        iorel, xorl, yorl, hight, bngle, bshft,&
+        ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm,&
+        xorg, drrrr, xmax, curmin, dcurn, curmax,&
+        iaxis, ixtck, iytck, ixnon, iynon, intax, intay,&
+        isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps,&
+        igridx, igridy, idash, idot, ichdsh, ichdot,&
+        thcece, sclece, dshece, dotece, cdhece, cdtece,&
+        mrkece, clrece, mrc, tlen, nmrk, rat,&
+        xece, yece, nplece,       cntece,&
+        icont, nword, zz, ix, iy, zinc, line, mode,&
+        lbflg, ithk, ipri, nline, draw,&
+        nshd, sxx, syy, nsxy, sangle, sgap, ngaps,&
+        nvec, xfm, yfm, xto, yto, ivec,&
+        msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
 !
-8900  continue
+      endif ! (kfixro.lt.0).and.(kfixrece.lt.0)
       xabs=-6.0
       yabs=1.8_dp
       dyabs = 0.22_dp
@@ -9351,9 +9251,8 @@
       ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
 !
-8971  continue
       if (idebug /= 0) write (6,*) 'Before Exit PLTOUT'
-      DEALLOCATE(bfield,sivol,voln, &
+      deallocate(bfield,sivol,voln, &
          bvoln,cvoln,dvoln,rscrap,curscr,pbimf,pmid,pmidw,bpmid, &
          cpmid,dpmid,workj,copyn,copy1,xbnow,ybnow)
       if (idebug /= 0) write (6,*) 'After Exit PLTOUT'
@@ -9529,7 +9428,7 @@
       subroutine expand(n1,n2,nexexx,xmm,jtime)
       use set_kinds
       use commonblocks,only: worka,byringr,byringz,xxtra,yxtra, &
-           bpxtra,flxtra,fpxtra
+                             bpxtra,flxtra,fpxtra
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -9542,7 +9441,7 @@
 !      equivalence (xplxloc,flxtra(1,2))
 !      equivalence (yplxloc,fpxtra(1,2))
       data almin,almax,blmin,blmax/1.51_dp,1.79_dp,-1.38_dp,-1.21_dp/
-5     almin=1.62_dp
+      almin=1.62_dp
       blmax=-1.20_dp
       call nobrdr
       call grace(0.0)
@@ -9550,7 +9449,7 @@
       call yticks(2)
       call physor(9.0,1.4)
 !
-      ALLOCATE(xpltloc(npoint),ypltloc(npoint),xplxloc(npoint),yplxloc(npoint))
+      allocate(xpltloc(npoint),ypltloc(npoint),xplxloc(npoint),yplxloc(npoint))
 !
       ilow=0  
       if(zseps(1,jtime).gt.-900.)ilow=1
@@ -9560,12 +9459,12 @@
 !      blmax=max(zseps(ilow,jtime)/100.,blmax)
 !      almin=min(rseps(ilow,jtime)/100.,almin)
 !      endif
-6     call title('$',-100,'R(m)$',100,'Z(m)$',100,xmm,xmm)
+      call title('$',-100,'R(m)$',100,'Z(m)$',100,xmm,xmm)
       call graf(almin,'SCAL',almax,blmin,'SCAL',blmax)
       call frame
       call grid(0,0)
       call thkcrv(0.02_dp)
-  270 call curve(xlim,ylim,limitr,0)
+      call curve(xlim,ylim,limitr,0)
       call dash
       call curve(xpltloc,ypltloc,n1,0)
       call dot
@@ -9576,18 +9475,18 @@
       call curve(xplxloc,yplxloc,n2,-1)
       call reset('sclpic')
       call reset('marker')
-      do 226 i=1,nexexx
-      if(npxtra(i).le.2)go to 226
-      call curve(xxtra(1,i),yxtra(1,i),npxtra(i),0)
-  226 continue
-      do i=1,nxtrap
-      do j=1,nxtram
-       fpxtra(i,j)=0
-       flxtra(i,j)=0
+      do i=1,nexexx
+       if(npxtra(i).le.2) cycle
+       call curve(xxtra(1,i),yxtra(1,i),npxtra(i),0)
       enddo
+      do i=1,nxtrap
+       do j=1,nxtram
+        fpxtra(i,j)=0
+        flxtra(i,j)=0
+       enddo
       enddo
 !
-      DEALLOCATE(xpltloc,ypltloc,xplxloc,yplxloc)
+      deallocate(xpltloc,ypltloc,xplxloc,yplxloc)
 !
       return
       end
@@ -9629,36 +9528,35 @@
          sn2=sind(ac2(i))
          cos2=cosd(ac2(i))
          tac2=sn2/cos2
-         if(ac2(i).eq.0) go to 40
-         nn = nn + 1
-         xx(1,nn)=x-dx-dy/tac2
-         xx(3,nn)=x+dx+dy/tac2
-         xx(5,nn)=xx(1,nn)
-         xx(2,nn)=xx(3,nn)-wc(i)
-         xx(4,nn)=xx(1,nn)+wc(i)
+         if(ac2(i).ne.0) then
+            nn = nn + 1
+            xx(1,nn)=x-dx-dy/tac2
+            xx(3,nn)=x+dx+dy/tac2
+            xx(5,nn)=xx(1,nn)
+            xx(2,nn)=xx(3,nn)-wc(i)
+            xx(4,nn)=xx(1,nn)+wc(i)
 !
-         yy(1,nn)=y-dy
-         yy(2,nn)=y+dy
-         yy(3,nn)=y+dy
-         yy(4,nn)=y-dy
-         yy(5,nn)=y-dy
-         go to 50
-   40    continue
+            yy(1,nn)=y-dy
+            yy(2,nn)=y+dy
+            yy(3,nn)=y+dy
+            yy(4,nn)=y-dy
+            yy(5,nn)=y-dy
+         else
 !
-         dac=0.5_dp*wc(i)*tac
-         nn = nn + 1
-         xx(1,nn)=x-dx
-         xx(2,nn)=x-dx
-         xx(3,nn)=x+dx
-         xx(4,nn)=x+dx
-         xx(5,nn)=x-dx
+            dac=0.5_dp*wc(i)*tac
+            nn = nn + 1
+            xx(1,nn)=x-dx
+            xx(2,nn)=x-dx
+            xx(3,nn)=x+dx
+            xx(4,nn)=x+dx
+            xx(5,nn)=x-dx
 !
-         yy(1,nn)=y-dy-dac
-         yy(2,nn)=y+dy-dac
-         yy(3,nn)=y+dy+dac
-         yy(4,nn)=y-dy+dac
-         yy(5,nn)=y-dy-dac
-   50    continue
+            yy(1,nn)=y-dy-dac
+            yy(2,nn)=y+dy-dac
+            yy(3,nn)=y+dy+dac
+            yy(4,nn)=y-dy+dac
+            yy(5,nn)=y-dy-dac
+         endif
          nxy(nn) = 5
          if (inum.eq.-100) then
             nshd = nshd + 1
@@ -9683,6 +9581,7 @@
       enddo
       return
       end
+
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
@@ -9700,18 +9599,18 @@
       dimension jerror(1),xp(1),yp(1)
       character*(*) dataname
 !
-        open(unit=62,file=dataname,status='old',err=82941)
-        close(unit=62,status='delete')
-82941  continue
-        open(unit=62,file=dataname,status='new')
-      do 120 i=1,np
-        if (jerror(i).gt.0) go to 120
+      open(unit=62,file=dataname,status='old',iostat=ioerr)
+      if (ioerr.eq.0) close(unit=62,status='delete')
+      open(unit=62,file=dataname,status='new')
+      do i=1,np
+        if (jerror(i).gt.0) cycle
         write (62,6200) xp(i),yp(i)
-  120 continue
+      enddo
       close(unit=62)
  6200 format (1x,e12.5,1x,e12.5)
       return
       end
+
 !***********************************************************************
 !**                                                                   **
 !**   SUBPROGRAM DESCRIPTION:                                         **
@@ -9902,9 +9801,9 @@
 
       if (m_write .eq. 1) then
 !-----------------------------------------------------------------------c
-!    Write curve2d parameters in ASCII format     c
+!       Write curve2d parameters in ASCII format     c
 !-----------------------------------------------------------------------c
-      call curve2d_asci(ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
+        call curve2d_asci(ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
            xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle,  &
            xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
            ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
@@ -9921,7 +9820,7 @@
 
       elseif (m_write .eq. 0) then
 !-----------------------------------------------------------------------c
-!    Write curve2d parameters in BINARY format     c
+!       Write curve2d parameters in BINARY format     c
 !-----------------------------------------------------------------------c
         call curve2d_bin (ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
            xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle, &
@@ -10572,7 +10471,7 @@
       write(iunit) iexit
 
       return
-    end
+      end
 
 !***********************************************************************
 !**                                                                   **
@@ -10789,13 +10688,13 @@
       iy = 1
 
       return
-    end
+      end
 
-    subroutine altplt
+      subroutine altplt
       return
-    end
+      end
 
-    subroutine closepl
+      subroutine closepl
       close(unit=35)
       return
-    end
+      end

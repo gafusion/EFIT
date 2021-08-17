@@ -4,8 +4,6 @@
 #    module switch gcc-4.7.2 gcc-9.2.0
 #    module load mpich/3.2-gcc9.2.0
 #
-# Note: if ENABLE_PARALLEL is on then you will have to submit a job to run the tests, e.g.
-#    srun -p interactive --pty /bin/bash
 # If you don't want MPI (slower in serial) simply remove the FC=...
 #   and -DENABLE_PARALLEL... lines
 

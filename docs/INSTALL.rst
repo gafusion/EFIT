@@ -16,18 +16,18 @@ iris::
     export link_efit=/fusion/projects/codes/efit/efitai/efit_support_files/{device}/
     /fusion/projects/codes/efit/efitai/efit/build_{compiler}/efit/efit {grid_size}
 
+cori (intallation is pending ERCAP approval)::
+
+    module switch PrgEnv-gnu PrgEnv-{compiler}
+    export link_efit=/global/common/software/efitai/efit_support_files/{device}/
+    /global/common/software/efitai/efit/build_{compiler}/efit/efit {grid_size}
+
 portal::
 
     module purge
     module load gcc/9.3.0
     export link_efit=/p/nstx/EFIT_GA/efit_support_files/{device}/
     /p/nstx/EFIT_GA/efit/build/efit/efit {grid_size}
-
-cori::
-
-    module switch PrgEnv-gnu PrgEnv-{compiler}
-    export link_efit=/global/common/software/efitai/efit_support_files/{device}/
-    /global/common/software/efitai/efit/build_{compiler}/efit/efit {grid_size}
 
 Installing from source
 ----------------------
@@ -93,9 +93,33 @@ The following flags are still underdevelopment::
 
 For debugging, set:: 
 
-        -DCMAKE_BUILD_TYPE:STRIND=Debug
+        -DCMAKE_BUILD_TYPE:STRING=Debug
 
-Config scripts for a number of systems have already been made and can be found
-in the `share/config_examples/` directory.  The required dependencies for
-these systems is described in those scripts as well (for best results read
-before executing).  Please consider adding yours if it can help out other users.
+Config scripts for a number of supercomputers and compilers have already been made
+and can be found in the `share/config_examples/` directory, including::
+
+    config_iris_gnu.sh
+    config_iris_intel.sh
+    config_iris_pgi.sh
+    config_nersc_gnu.sh
+    config_nersc_intel.sh
+    config_portal.sh
+
+The required environments for building on these systems are described in the scripts as well 
+(for best results read before executing).
+
+They can be used to install with the following commands::
+
+    mkdir build
+    cd build
+    ../share/config_examples/config_{machine}_{compiler}.sh
+    make 
+    make test
+
+If you are trying to build for the first time on a different supercomputer or with a
+different compiler, the best starting point is to change environment library paths from an 
+existing configure script (e.g. try the most similar or iris_gnu.sh first) to match what
+is available.  If you run into problems, contact a developer.
+
+Once you have successfully built on a different system/compiler, please add your working
+script to the collection to aid future users.

@@ -210,16 +210,16 @@
       DATA init/0/
 !
       init=0
-      IF (init.gt.0) go to 100
+      IF (init.le.0) THEN
 !vas introduced to make it ok in hydra
-!org      ngaus1=mgaus1
-!org      ngaus2=mgaus2
-!org      call lgauss(post1,wght1,ngaus1,ner)
-!org      call lgauss(post2,wght2,ngaus2,ner)
-      CALL lgauss(post1,wght1,mgaus1,ner)
-      CALL lgauss(post2,wght2,mgaus2,ner)
-      init=1
-  100 CONTINUE
+!org         ngaus1=mgaus1
+!org         ngaus2=mgaus2
+!org         call lgauss(post1,wght1,ngaus1,ner)
+!org         call lgauss(post2,wght2,ngaus2,ner)
+         CALL lgauss(post1,wght1,mgaus1,ner)
+         CALL lgauss(post2,wght2,mgaus2,ner)
+         init=1
+      ENDIF
 !
       x = 0.
       fuxx = 0.
@@ -228,24 +228,24 @@
       hf2 = h1*.5
       hs2 = h2*.5
 !
-      IF (t12.eq.0) go to 200
-      xl1 = r1-0.5*w1-0.5*h1/abs(t12)
-      xr1 = r1+0.5*w1+0.5*h1/abs(t12)
-      xbm1 = xl1+w1
-      xtm1 = xr1-w1
-      IF (t12 .lt. 0.) xbm1 = xr1 - w1
-      IF (t12 .lt. 0.) xtm1 = xl1 + w1
+      IF (t12.ne.0) THEN
+         xl1 = r1-0.5*w1-0.5*h1/abs(t12)
+         xr1 = r1+0.5*w1+0.5*h1/abs(t12)
+         xbm1 = xl1+w1
+         xtm1 = xr1-w1
+         IF (t12 .lt. 0.) xbm1 = xr1 - w1
+         IF (t12 .lt. 0.) xtm1 = xl1 + w1
+      ENDIF
 !
-  200 IF (t22.eq.0) go to 300
-      xl2 = r2-0.5*w2-0.5*h2/abs(t22)
-      xr2 = r2+0.5*w2+0.5*h2/abs(t22)
-      xbm2 = xl2+w2
-      xtm2 = xr2-w2
-      IF (t22 .lt. 0.) xbm2 = xr2 - w2
-      IF (t22 .lt. 0.) xtm2 = xl2 + w2
+      IF (t22.ne.0) THEN
+         xl2 = r2-0.5*w2-0.5*h2/abs(t22)
+         xr2 = r2+0.5*w2+0.5*h2/abs(t22)
+         xbm2 = xl2+w2
+         xtm2 = xr2-w2
+         IF (t22 .lt. 0.) xbm2 = xr2 - w2
+         IF (t22 .lt. 0.) xtm2 = xl2 + w2
+      ENDIF
 !
-  300 CONTINUE
-      
       DO i = 1,mgaus1
 !org      DO i = 1,ngaus1
          rf = r1+.5*w1*post1(i)
@@ -478,31 +478,30 @@
                rsum = 0.
                dwc = wf(in)/ndr
                dhc = hf(in)/ndz
-               IF (af2(in) .ne. 0.) go to 640
-               z1 = zf(in) - taf(in)*(wf(in)-dwc)/2. - .5*hf(in) + .5*dhc
-               ab = rf(in) - .5*wf(in) + .5*dwc
-               DO iw = 1, isplit
-                  drc = ab + (iw-1)*dwc + iw*tole
-                  z2 = z1 + (iw-1)*taf(in)*dwc
-                  DO ih = 1, isplit
-                     dzc = z2 + (ih-1)*dhc
-                     rtmp = psical(drc,rgrid(ni),zgrid(nj)-dzc)
-                     rsum = rsum + rtmp
-                  ENDDO 
-               ENDDO
-               go to 660
-  640          CONTINUE
-               DO ih = 1, ndz
-                  dzc = zf(in) - .5*hf(in) + .5*dhc + dhc*(ih-1)
-                  DO iw = 1, ndr
-                     drc = rf(in) - .5*wf(in) - .5*hf(in)/taf2(in) &
-                           + .5*dwc + .5*dhc/taf2(in) &
-                           + dhc/taf2(in)*(ih-1) + dwc*(iw-1)
-                     rtmp = psical(drc,rgrid(ni),zgrid(nj)-dzc)
-                     rsum = rsum + rtmp
-                  ENDDO 
-               ENDDO
-  660          CONTINUE
+               IF (af2(in) .eq. 0.) then
+                  z1 = zf(in) - taf(in)*(wf(in)-dwc)/2. - .5*hf(in) + .5*dhc
+                  ab = rf(in) - .5*wf(in) + .5*dwc
+                  DO iw = 1, isplit
+                     drc = ab + (iw-1)*dwc + iw*tole
+                     z2 = z1 + (iw-1)*taf(in)*dwc
+                     DO ih = 1, isplit
+                        dzc = z2 + (ih-1)*dhc
+                        rtmp = psical(drc,rgrid(ni),zgrid(nj)-dzc)
+                        rsum = rsum + rtmp
+                     ENDDO 
+                  ENDDO
+               ELSE
+                  DO ih = 1, ndz
+                     dzc = zf(in) - .5*hf(in) + .5*dhc + dhc*(ih-1)
+                     DO iw = 1, ndr
+                        drc = rf(in) - .5*wf(in) - .5*hf(in)/taf2(in) &
+                              + .5*dwc + .5*dhc/taf2(in) &
+                              + dhc/taf2(in)*(ih-1) + dwc*(iw-1)
+                        rtmp = psical(drc,rgrid(ni),zgrid(nj)-dzc)
+                        rsum = rsum + rtmp
+                     ENDDO 
+                  ENDDO
+               ENDIF
                cmut = rsum*2.e-07/(isplit*isplit)
                gridfc(kk,in) = cmut
             ENDDO
@@ -615,40 +614,40 @@
       in=ns
         taf(in) = tan(as(in)*pi/180.0)
         taf2(in) = tan(as2(in)*pi/180.0)
-        do 1500 nc=1,nr
-        do 1500 nd=1,nz
-        nk=(nc-1)*nz+nd
-        rsum = 0.
-        dwc = wsi(in)/ndr
-        dhc = hsi(in)/ndz
-        if (as2(in) .ne. 0.) go to 640
-        z1 = zsi(in) - taf(in)*(wsi(in)-dwc)/2. - .5*hsi(in) + .5*dhc
-        ab = rsi(in) - .5*wsi(in) + .5*dwc
-        do 620 iw = 1, isplit
-          drc = ab + (iw-1)*dwc + iw*tole
-          z2 = z1 + (iw-1)*taf(in)*dwc
-          do 610 ih = 1, isplit
-            dzc = z2 + (ih-1)*dhc
-            rtmp = psical(drc,rr(nc),zz(nd)-dzc)
-            rsum = rsum + rtmp
-  610     continue
-  620   continue
-        go to 660
-  640   continue
-        do 655 ih = 1, ndz
-          dzc = zsi(in) - .5*hsi(in) + .5*dhc + dhc*(ih-1)
-          do 645 iw = 1, ndr
-            drc = rsi(in) - .5*wsi(in) - .5*hsi(in)/taf2(in)&
-                   + .5*dwc + .5*dhc/taf2(in)&
-                   + dhc/taf2(in)*(ih-1) + dwc*(iw-1)
-            rtmp = psical(drc,rr(nc),zz(nd)-dzc)
-            rsum = rsum + rtmp
-  645     continue
-  655   continue
-  660   continue
-        cmut = rsum*2.e-07/(isplit*isplit)
-        rspfun(in,nk)=cmut
- 1500   continue
+        do nc=1,nr
+          do nd=1,nz
+            nk=(nc-1)*nz+nd
+            rsum = 0.
+            dwc = wsi(in)/ndr
+            dhc = hsi(in)/ndz
+            if (as2(in) .eq. 0.) then
+              z1 = zsi(in) - taf(in)*(wsi(in)-dwc)/2. - .5*hsi(in) + .5*dhc
+              ab = rsi(in) - .5*wsi(in) + .5*dwc
+              do iw = 1, isplit
+                drc = ab + (iw-1)*dwc + iw*tole
+                z2 = z1 + (iw-1)*taf(in)*dwc
+                do ih = 1, isplit
+                  dzc = z2 + (ih-1)*dhc
+                  rtmp = psical(drc,rr(nc),zz(nd)-dzc)
+                  rsum = rsum + rtmp
+                enddo
+              enddo
+            else
+              do ih = 1, ndz
+                dzc = zsi(in) - .5*hsi(in) + .5*dhc + dhc*(ih-1)
+                do iw = 1, ndr
+                  drc = rsi(in) - .5*wsi(in) - .5*hsi(in)/taf2(in)&
+                         + .5*dwc + .5*dhc/taf2(in)&
+                         + dhc/taf2(in)*(ih-1) + dwc*(iw-1)
+                  rtmp = psical(drc,rr(nc),zz(nd)-dzc)
+                  rsum = rsum + rtmp
+                enddo
+              enddo
+            endif
+            cmut = rsum*2.e-07/(isplit*isplit)
+            rspfun(in,nk)=cmut
+          enddo
+        enddo
 
       return
       END SUBROUTINE gsilop
@@ -779,75 +778,78 @@
       REAL*8,DIMENSION(n) ::  x,w
 !
       nn = 0
-      IF (n-1) 10,20,30
-   10 CONTINUE
-      nn = 1
-      RETURN
+      IF (n-1.lt.0) then 
+         nn = 1
+         RETURN
+      ELSEIF (n-1.eq.0) then
 !----------------------------------------------------------------------
-!-- request for a zero point formula is meaningless                  --
+!--      request for a zero point formula is meaningless             --
 !----------------------------------------------------------------------
-   20 x(1) = 0.
-      w(1) = 2.
-      RETURN
+         x(1) = 0.
+         w(1) = 2.
+         RETURN
+      ENDIF
 !----------------------------------------------------------------------
-!-- for a one point formula, send back                               --
-!-- results without computing.                                       --
+!--   for a one point formula, send back                             --
+!--   results without computing.                                     --
 !----------------------------------------------------------------------
-   30 r = n
+      r = n
       g = -1.
 !----------------------------------------------------------------------
-!-- the initial guess for the smallest root                          --
-!-- of p(n) is taken as -1.                                          --
+!--   the initial guess for the smallest root                        --
+!--   of p(n) is taken as -1.                                        --
 !----------------------------------------------------------------------
       DO i = 1,n
-      test = -2.
-      ic = n+1-i
+         test = -2.
+         ic = n+1-i
 !----------------------------------------------------------------------
-!-- whenever we find a root of the                                   --
-!-- polynomial, its negative is also a root.                         --
-!-- the index ic tells WHERE to store the other root                 --
+!--      whenever we find a root of the                              --
+!--      polynomial, its negative is also a root.                    --
+!--      the index ic tells WHERE to store the other root            --
 !----------------------------------------------------------------------
-      IF (ic.lt.i) go to 950
-   40 s = g
-      t = 1.
-      u = 1.
-      v = 0.
+         IF (ic.lt.i) RETURN
+   40    s = g
+         t = 1.
+         u = 1.
+         v = 0.
 !----------------------------------------------------------------------
-!-- evaluation of the n-th legendre polynomial                       --
-!-- and its first derivative.                                        --
-!-- WHERE   u = ds/dx                                                --
-!--         v = dt/dx                                                --
-!--         dp=dp/dx                                                 --
+!--      evaluation of the n-th legendre polynomial                  --
+!--      and its first derivative.                                   --
+!--      WHERE   u = ds/dx                                           --
+!--              v = dt/dx                                           --
+!--              dp=dp/dx                                            --
 !----------------------------------------------------------------------
-      DO k = 2,n
-      a = k
-      p = ((2.0*a-1.0)*s*g-(a-1.0)*t)/a
-      dp = ((2.0*a-1.0)*(s+g*u)-(a-1.0)*v)/a
-      v = u
-      u = dp
-      t = s
-      s = p
-      ENDDO 
-      IF (abs((test-g)/(test+g)).lt.0.0000005) go to 100
-      sum = 0.
-      IF (i.eq.1) go to 70
+         DO k = 2,n
+            a = k
+            p = ((2.0*a-1.0)*s*g-(a-1.0)*t)/a
+             dp = ((2.0*a-1.0)*(s+g*u)-(a-1.0)*v)/a
+            v = u
+            u = dp
+            t = s
+            s = p
+         ENDDO 
+         IF (abs((test-g)/(test+g)).ge.0.0000005) THEN
+            sum = 0.
+            IF (i.ne.1) THEN
 !----------------------------------------------------------------------
-!-- the following computes the reduced                               --
-!-- legendre polynomial and its derivative.                          --
+!--            the following computes the reduced                    --
+!--            legendre polynomial and its derivative.               --
 !----------------------------------------------------------------------
-      DO k = 2,i
-         sum = sum+1./(g-x(k-1))
-      ENDDO 
-   70 test = g
-      g = g-p/(dp-p*sum)
-      go to 40
-  100 x(ic) = -g
-      x(i) = g
-      w(i) = 2./(r*t*dp)
-      w(ic) = w(i)
-  900 g = g-r*t/((r+2.)*g*dp+r*v-2.*r*t*sum)
-        ENDDO
-  950 RETURN
+               DO k = 2,i
+                  sum = sum+1./(g-x(k-1))
+               ENDDO
+            ENDIF
+            test = g
+            g = g-p/(dp-p*sum)
+            go to 40
+         ENDIF
+         x(ic) = -g
+         x(i) = g
+         w(i) = 2./(r*t*dp)
+         w(ic) = w(i)
+         g = g-r*t/((r+2.)*g*dp+r*v-2.*r*t*sum)
+      ENDDO
+      RETURN
       END SUBROUTINE lgauss
 !**********************************************************************
 !**                                                                  **
@@ -935,12 +937,12 @@
       DIMENSION coef(mp,nc)
 !
       IF (.NOT. ALLOCATED(brgridfc)) THEN
-        ALLOCATE(brgridfc(nwnh,nfcoil))
-        brgridfc(:,:) = 0.0
+         ALLOCATE(brgridfc(nwnh,nfcoil))
+         brgridfc(:,:) = 0.0
       ENDIF
       IF (.NOT. ALLOCATED(bzgridfc)) THEN
-        ALLOCATE(bzgridfc(nwnh,nfcoil))
-        bzgridfc(:,:) = 0.0
+         ALLOCATE(bzgridfc(nwnh,nfcoil))
+         bzgridfc(:,:) = 0.0
       ENDIF
 !
       radeg=pi/180.
@@ -956,7 +958,7 @@
             delsy=smp2(m)/nsmp2*sinm
          ELSE
 !------------------------------------------------------------------------------
-!--  perpendicular probes    96/02/04                                        --
+!--      perpendicular probes                                                --
 !------------------------------------------------------------------------------
             sinm=sin(radeg*amp2(m))
             cosm=cos(radeg*amp2(m))
@@ -989,7 +991,7 @@
          ELSE
             DO k=1,nfcoil
 !---------------------------------------------------------------
-!-- Shifted F-coil                                            --
+!--         Shifted F-coil                                    --
 !---------------------------------------------------------------
                IF (k.eq.nshiftrz(k)) THEN
                   pmnow=radeg*pmprobe(m)
@@ -1006,7 +1008,7 @@
                      r1=xmp20+(mmm-1)*delsx
                      z1=ymp20+(mmm-1)*delsy-zsplt(l)
 !---------------------------------------------------------------
-!-- Shifted F-coil                                            --
+!--                  Shifted F-coil                           --
 !---------------------------------------------------------------
                      IF (k.eq.nshiftrz(k)) THEN
                         rcos=r1*cos(pmnow)-rshift(k)*cos(pfnow)
@@ -1019,7 +1021,7 @@
                      bzc=bz(a,r1,z1)*tmu
                      bzct=bzct+bzc/fitot
 !---------------------------------------------------------------
-!-- Shifted F-coil ?                                          --
+!--                  Shifted F-coil ?                         --
 !---------------------------------------------------------------
                      IF (k.eq.nshiftrz(k)) THEN
                         cospp=rcos/r1
@@ -1037,7 +1039,7 @@
          ENDIF
       ENDDO
 !----------------------------------------------------------------
-!-- BR, BZ at grid due to F-coils                              --
+!--   BR, BZ at grid due to F-coils                            --
 !----------------------------------------------------------------
       IF (nz.gt.0) THEN
          return
@@ -1156,189 +1158,185 @@
         gridac(:,:) = 0.0
       ENDIF
 !
-      IF (ifcoil.le.0) go to 1100
+      IF (ifcoil.gt.0) THEN
 !----------------------------------------------------------------------
-!-- calculate the response FUNCTION of psi loops due to f coils      --
+!--      calculate the response FUNCTION of psi loops due to f coils --
 !----------------------------------------------------------------------
-      DO i=1,nfcoil
-         taf(i)=tan(af(i)*pi/180.)
-         taf2(i)=tan(af2(i)*pi/180.)
-      ENDDO 
-      IF (islpfc.le.0) GO TO 300
-      DO i=1,nfcoil
-         DO j=1,nfcoil
-            
-            CALL flux(rf(i),zf(i),wf(i),hf(i),taf(i),taf2(i), &
-                      rf(j),zf(j),wf(j),hf(j),taf(j),taf2(j), &
-                      rfcfc(j,i))
-            rfcfc(j,i)=rfcfc(j,i)*0.5/pi
-
+         DO i=1,nfcoil
+            taf(i)=tan(af(i)*pi/180.)
+            taf2(i)=tan(af2(i)*pi/180.)
          ENDDO 
-         ii=i
-         CALL gsilop(rgrid,nw,zgrid,nh,rfcpc,ii,rf,zf,wf,hf,af,af2 &
-            ,nfcoil)
-      ENDDO
-!vas
-      print*,'file name : ','fc'//trim(ch1)// & 
-                        trim(ch2)//'.ddd' 
-!vasorg      OPEN(unit=nrspfc,status='unknown',file='fcfcpc.dat', &
-      OPEN(unit=nrspfc,status='unknown',file='fc'//trim(ch1)// & 
-                         trim(ch2)//'.ddd' , &
-           form='unformatted')
-      WRITE (nrspfc) rfcfc
-      WRITE (nrspfc) rfcpc
-      CLOSE(unit=nrspfc)
- 300  CONTINUE  
-!---------------------------------------------------------------------
-!-- flux loops                                          --
-!---------------------------------------------------------------------
-      IF (nsilop.gt.1) THEN
-!---------------------------------------------------------------------
-!       finite size flux loops                              --
-!---------------------------------------------------------------------
-        IF (isize.gt.0) THEN
+         IF (islpfc.gt.0) THEN
             DO i=1,nfcoil
-               DO j=1,isize
-                  taz=tan(as(j)*pi/180.)
-                  taz2=tan(as2(j)*pi/180.)
+               DO j=1,nfcoil
+            
                   CALL flux(rf(i),zf(i),wf(i),hf(i),taf(i),taf2(i), &
-                              rsi(j),zsi(j),wsi(j),hsi(j),taz,taz2, &
-                              rsilfc(j,i))
-                  rsilfc(j,i)=rsilfc(j,i)*0.5/pi
-               ENDDO 
-            ENDDO
-        ENDIF
-!---------------------------------------------------------------------
-!      thin flux loops                                       --
-!---------------------------------------------------------------------
-        IF (isize.lt.nsilop) then
-            DO i=1,nfcoil
+                            rf(j),zf(j),wf(j),hf(j),taf(j),taf2(j), &
+                            rfcfc(j,i))
+                  rfcfc(j,i)=rfcfc(j,i)*0.5/pi
+
+               ENDDO
                ii=i
-               DO j=isize+1,nsilop
-                  jj=j
-                  CALL m1coef(xdum,xdum,nsilop,nfcoil,rsilfc,jj,ii)
+               CALL gsilop(rgrid,nw,zgrid,nh,rfcpc,ii,rf,zf,wf,hf,af,af2 &
+                          ,nfcoil)
+            ENDDO
+
+            print*,'file name : ','fc'//trim(ch1)//trim(ch2)//'.ddd' 
+!vasorg      OPEN(unit=nrspfc,status='unknown',file='fcfcpc.dat', &
+            OPEN(unit=nrspfc,status='unknown',file='fc'//trim(ch1)// & 
+                 trim(ch2)//'.ddd' , &
+                 form='unformatted')
+            WRITE (nrspfc) rfcfc
+            WRITE (nrspfc) rfcpc
+            CLOSE(unit=nrspfc)
+         ENDIF
+!---------------------------------------------------------------------
+!--      flux loops                                                 --
+!---------------------------------------------------------------------
+         IF (nsilop.gt.1) THEN
+!---------------------------------------------------------------------
+!           finite size flux loops                                  --
+!---------------------------------------------------------------------
+            IF (isize.gt.0) THEN
+               DO i=1,nfcoil
+                  DO j=1,isize
+                     taz=tan(as(j)*pi/180.)
+                     taz2=tan(as2(j)*pi/180.)
+                     CALL flux(rf(i),zf(i),wf(i),hf(i),taf(i),taf2(i), &
+                               rsi(j),zsi(j),wsi(j),hsi(j),taz,taz2, &
+                               rsilfc(j,i))
+                     rsilfc(j,i)=rsilfc(j,i)*0.5/pi
+                  ENDDO 
+               ENDDO
+            ENDIF
+!---------------------------------------------------------------------
+!           thin flux loops                                         --
+!---------------------------------------------------------------------
+            IF (isize.lt.nsilop) then
+               DO i=1,nfcoil
+                  ii=i
+                  DO j=isize+1,nsilop
+                     jj=j
+                     CALL m1coef(xdum,xdum,nsilop,nfcoil,rsilfc,jj,ii)
+                  ENDDO 
                ENDDO 
-            ENDDO 
-        ENDIF 
-      ENDIF 
+            ENDIF 
+         ENDIF 
+!-----------------------------------------------------------------------
+!--      compute the response FUNCTION of magnetic probes due to f coils
+!-----------------------------------------------------------------------
+         magprr=magpr2
+         IF (magprr.gt.1) THEN
+            CALL m2coef(xdum,0,ydum,0,rmp2fc,magpr2,nfcoil)
+         ENDIF
 !----------------------------------------------------------------------
-!-- compute the response FUNCTION of magnetic probes due to f coils  --
+!--      compute the response FUNCTION of partial rogowski loops due to
+!--      f coils
 !----------------------------------------------------------------------
-      magprr=magpr2
-      IF (magprr.gt.1) THEN
-         CALL m2coef(xdum,0,ydum,0,rmp2fc,magpr2,nfcoil)
-      ENDIF
+         mrogow=nrogow
+         IF (mrogow.gt.1) THEN
+            CALL rogowc(xdum,0,ydum,0,rgowfc,nrogow,nfcoil)
+         ENDIF 
 !----------------------------------------------------------------------
-!-- compute the response FUNCTION of partial rogowski loops due to   --
-!-- f coils                                                          --
+!--      WRITE f coil response functions                             --
 !----------------------------------------------------------------------
-      mrogow=nrogow
-      IF (mrogow.gt.1) THEN
-         CALL rogowc(xdum,0,ydum,0,rgowfc,nrogow,nfcoil)
-      ENDIF
-!----------------------------------------------------------------------
-!-- WRITE f coil response functions                                  --
-!----------------------------------------------------------------------
-      DO i=1,nfsum
-         DO j=1,nsilop
-            gsilfc(j,i)=0.0
+         DO i=1,nfsum
+            DO j=1,nsilop
+               gsilfc(j,i)=0.0
+            ENDDO
+            DO j=1,magpr2
+               gmp2fc(j,i)=0.0
+            ENDDO
          ENDDO
-         DO j=1,magpr2
-            gmp2fc(j,i)=0.0
-         ENDDO
-      ENDDO
 !
-      DO i=1,nfcoil
-         k=abs(fcid(i))
-         DO j=1,nsilop
-            gsilfc(j,k)=gsilfc(j,k)+fcturn(i)*rsilfc(j,i)
+         DO i=1,nfcoil
+            k=abs(fcid(i))
+            DO j=1,nsilop
+               gsilfc(j,k)=gsilfc(j,k)+fcturn(i)*rsilfc(j,i)
+            ENDDO
+            DO j=1,magpr2
+               gmp2fc(j,k)=gmp2fc(j,k)+fcturn(i)*rmp2fc(j,i)
+            ENDDO
          ENDDO
-         DO j=1,magpr2
-            gmp2fc(j,k)=gmp2fc(j,k)+fcturn(i)*rmp2fc(j,i)
-         ENDDO
-      ENDDO
 !
-!vas
-      print*,'file name : ','rfcoil.ddd' 
+         print*,'file name : ','rfcoil.ddd' 
 !vasorg      OPEN(unit=nrspfc,status='unknown',file='rfcoil.dat', &
-      OPEN(unit=nrspfc,status='unknown',file='rfcoil.ddd', &
-           form='unformatted')
-      WRITE (nrspfc) gsilfc
-      WRITE (nrspfc) gmp2fc
-      CLOSE(unit=nrspfc)
+         OPEN(unit=nrspfc,status='unknown',file='rfcoil.ddd', &
+              form='unformatted')
+         WRITE (nrspfc) gsilfc
+         WRITE (nrspfc) gmp2fc
+         CLOSE(unit=nrspfc)
 !
-      DO i=1,nfsum
-         DO j=1,nwnh
-            brgrfc(j,i)=0.0
-            bzgrfc(j,i)=0.0
+         DO i=1,nfsum
+            DO j=1,nwnh
+               brgrfc(j,i)=0.0
+               bzgrfc(j,i)=0.0
+            ENDDO
          ENDDO
-      ENDDO
-      DO i=1,nfcoil
-         k=abs(fcid(i))
-         DO j=1,nwnh
-            brgrfc(j,k)=brgrfc(j,k)+fcturn(i)*brgridfc(j,i)
-            bzgrfc(j,k)=bzgrfc(j,k)+fcturn(i)*bzgridfc(j,i)
+         DO i=1,nfcoil
+            k=abs(fcid(i))
+            DO j=1,nwnh
+               brgrfc(j,k)=brgrfc(j,k)+fcturn(i)*brgridfc(j,i)
+               bzgrfc(j,k)=bzgrfc(j,k)+fcturn(i)*bzgridfc(j,i)
+            ENDDO
          ENDDO
-      ENDDO
 !
-      OPEN(unit=nrspfc,status='unknown',file='brzgfc.dat', &
-           form='unformatted')
-      WRITE (nrspfc) brgrfc
-      WRITE (nrspfc) bzgrfc
-      CLOSE(unit=nrspfc)
- 1100 CONTINUE
-!----------------------------------------------------------------------
-!-- plasma response functions                                        --
-!----------------------------------------------------------------------
-      IF (igrid.le.0) go to 3200
-      msilop=nsilop
-      IF (msilop.le.1) go to 1220
-!----------------------------------------------------------------------
-!-- filament plasma current model                                    --
-!----------------------------------------------------------------------
-      IF (isize.le.0) go to 1160
-      DO j=1,isize
-         jj=j
-         CALL gsilop(rgrid,nw,zgrid,nh,rsilpc,jj,rsi,zsi,wsi,hsi,as,as2 &
-              ,nsilop)
-      ENDDO 
- 1160 CONTINUE
-      IF (isize.ge.nsilop) go to 1220
-      DO j=isize+1,nsilop
-         jj=j
-         CALL m1coef(rgrid,zgrid,nw,nh,rsilpc,jj,0)
-      ENDDO 
- 1220 CONTINUE
-      magprr=magpr2
-      IF (magprr.gt.1) THEN
-         CALL m2coef(rgrid,nw,zgrid,nh,rmp2pc,magpr2,nwnh)
-      ENDIF
-      mrogow=nrogow
-      IF (mrogow.gt.1) THEN
-         CALL rogowc(rgrid,nw,zgrid,nh,rgowpc,nrogow,nwnh)
+         OPEN(unit=nrspfc,status='unknown',file='brzgfc.dat', &
+              form='unformatted')
+         WRITE (nrspfc) brgrfc
+         WRITE (nrspfc) bzgrfc
+         CLOSE(unit=nrspfc)
       ENDIF
 !----------------------------------------------------------------------
-!-- WRITE the plasma response FUNCTION                               --
+!--   plasma response functions                                      --
 !----------------------------------------------------------------------
-!vas
-      print*,'file name : ','ep'//trim(ch1)// & 
-                        trim(ch2)//'.ddd' 
+      IF (igrid.gt.0) THEN
+         msilop=nsilop
+         IF (msilop.gt.1) THEN
+!----------------------------------------------------------------------
+!--         filament plasma current model                            --
+!----------------------------------------------------------------------
+            IF (isize.gt.0) THEN
+               DO j=1,isize
+                  jj=j
+                  CALL gsilop(rgrid,nw,zgrid,nh,rsilpc,jj, &
+                              rsi,zsi,wsi,hsi,as,as2,nsilop)
+               ENDDO
+            ENDIF
+         ENDIF
+         IF (isize.lt.nsilop) THEN
+            DO j=isize+1,nsilop
+               jj=j
+               CALL m1coef(rgrid,zgrid,nw,nh,rsilpc,jj,0)
+            ENDDO 
+         ENDIF
+         magprr=magpr2
+         IF (magprr.gt.1) THEN
+            CALL m2coef(rgrid,nw,zgrid,nh,rmp2pc,magpr2,nwnh)
+         ENDIF
+         mrogow=nrogow
+         IF (mrogow.gt.1) THEN
+            CALL rogowc(rgrid,nw,zgrid,nh,rgowpc,nrogow,nwnh)
+         ENDIF
+!----------------------------------------------------------------------
+!--      WRITE the plasma response FUNCTION                          --
+!----------------------------------------------------------------------
+         print*,'file name : ','ep'//trim(ch1)//trim(ch2)//'.ddd' 
 !vasorg      OPEN(unit=nrsppc,status='unknown',file='eplasm.dat', &
-      OPEN(unit=nrsppc,status='unknown',file='ep'//trim(ch1)// & 
-                         trim(ch2)//'.ddd' , &
-           form='unformatted')
-      WRITE (nrsppc) rsilpc
-      WRITE (nrsppc) rmp2pc
-      CLOSE(unit=nrsppc)
+         OPEN(unit=nrsppc,status='unknown',file='ep'//trim(ch1)// & 
+              trim(ch2)//'.ddd' , &
+              form='unformatted')
+         WRITE (nrsppc) rsilpc
+         WRITE (nrsppc) rmp2pc
+         CLOSE(unit=nrsppc)
 !
- 3200 CONTINUE
+      ENDIF
       IF (iecoil.gt.0) THEN
          CALL gecoil(rsilec,rmp2ec,gridec,rgrid,nw, &
                      zgrid,nh,rfcec,recec,rsisec)
       ENDIF
-!vas
-      print*,'file name : ','re'//trim(ch1)// & 
-                        trim(ch2)//'.ddd' 
+!
+      print*,'file name : ','re'//trim(ch1)//trim(ch2)//'.ddd' 
 !vasorg      OPEN(unit=nrsppc,status='unknown',file='recoil.dat', &
       OPEN(unit=nrsppc,status='unknown',file='re'//trim(ch1)// & 
                      trim(ch2)//'.ddd', &
@@ -1390,11 +1388,10 @@
          ENDDO
 !
 !vas
-      print*,'file name : ','rv'//trim(ch1)// & 
-                        trim(ch2)//'.ddd' 
+      print*,'file name : ','rv'//trim(ch1)//trim(ch2)//'.ddd' 
 !vasorg         OPEN(unit=nrsppc,status='unknown',file='rvesel.dat', &
          OPEN(unit=nrsppc,status='unknown',file='rv'//trim(ch1)// & 
-                          trim(ch2)//'.ddd' , &
+              trim(ch2)//'.ddd' , &
               form='unformatted')
          WRITE (nrsppc) gsilvs
          WRITE (nrsppc) gmp2vs
@@ -1402,17 +1399,16 @@
          CLOSE(unit=nrsppc)
       ENDIF
 !---------------------------------------------------------------------
-!-- advance divertor coil                                           --
+!--   advance divertor coil                                         --
 !---------------------------------------------------------------------
       IF (iacoil.gt.0) THEN
          CALL gacoil(rsilac,rmp2ac,gridac,rgrid,nw, &
                      zgrid,nh)
 !vas
-      print*,'file name : ','ra'//trim(ch1)// & 
-                        trim(ch2)//'.ddd' 
+      print*,'file name : ','ra'//trim(ch1)//trim(ch2)//'.ddd' 
 !vasorg         OPEN(unit=nrsppc,status='unknown',file='racoil.dat', &
          OPEN(unit=nrsppc,status='unknown',file='ra'//trim(ch1)// & 
-                         trim(ch2)//'.ddd' , &
+              trim(ch2)//'.ddd' , &
               form='unformatted')
          WRITE (nrsppc) gridac
          WRITE (nrsppc) rsilac
@@ -1420,16 +1416,16 @@
          CLOSE(unit=nrsppc)
       ENDIF
 !
-      IF ( ALLOCATED(rfcpc)) DEALLOCATE(rfcpc)
-      IF ( ALLOCATED(brgrfc)) DEALLOCATE(brgrfc)
-      IF ( ALLOCATED(bzgrfc)) DEALLOCATE(bzgrfc)
-      IF ( ALLOCATED(rsilpc)) DEALLOCATE(rsilpc)
-      IF ( ALLOCATED(rmp2pc)) DEALLOCATE(rmp2pc)
-      IF ( ALLOCATED(rgowpc)) DEALLOCATE(rgowpc)
-      IF ( ALLOCATED(gridec)) DEALLOCATE(gridec)
-      IF ( ALLOCATED(gridvs)) DEALLOCATE(gridvs)
-      IF ( ALLOCATED(ggridvs)) DEALLOCATE(ggridvs)
-      IF ( ALLOCATED(gridac)) DEALLOCATE(gridac)
+      IF (ALLOCATED(rfcpc)) DEALLOCATE(rfcpc)
+      IF (ALLOCATED(brgrfc)) DEALLOCATE(brgrfc)
+      IF (ALLOCATED(bzgrfc)) DEALLOCATE(bzgrfc)
+      IF (ALLOCATED(rsilpc)) DEALLOCATE(rsilpc)
+      IF (ALLOCATED(rmp2pc)) DEALLOCATE(rmp2pc)
+      IF (ALLOCATED(rgowpc)) DEALLOCATE(rgowpc)
+      IF (ALLOCATED(gridec)) DEALLOCATE(gridec)
+      IF (ALLOCATED(gridvs)) DEALLOCATE(gridvs)
+      IF (ALLOCATED(ggridvs)) DEALLOCATE(ggridvs)
+      IF (ALLOCATED(gridac)) DEALLOCATE(gridac)
 !
       RETURN
       END SUBROUTINE efund_matrix
@@ -1476,22 +1472,26 @@
       IF (x1.lt.1.0e-10) x1=1.0e-10
       cay=xmdelk(x1)
       ee=xmdele(x1)
-      go to (20,30,40),isw
+      select case (isw)
+      case (1)
 !----------------------------------------------------------------------
-!--   psi computation                                                --
+!--      psi computation                                             --
 !----------------------------------------------------------------------
-   20 psical= sqrt(den)*((1.e+00-0.5e+00*xk)*cay-ee)
-      RETURN
+         psical= sqrt(den)*((1.e+00-0.5e+00*xk)*cay-ee)
+         RETURN
+      case (2)
 !----------------------------------------------------------------------
-!--   br  computation                                                --
+!--      br  computation                                             --
 !----------------------------------------------------------------------
-   30 psical=z/(r* sqrt(den))*(-cay+(a*a+r*r+z*z)/((a-r)*(a-r)+z*z)*ee)
-      RETURN
+         psical=z/(r*sqrt(den))*(-cay+(a*a+r*r+z*z)/((a-r)*(a-r)+z*z)*ee)
+         RETURN
+      case (3)
 !----------------------------------------------------------------------
-!--   bz  computation                                                --
+!--      bz  computation                                             --
 !----------------------------------------------------------------------
-   40 psical=(cay+(a*a-r*r-z*z)/((a-r)*(a-r)+z*z)*ee)/ sqrt(den)
-      RETURN
+         psical=(cay+(a*a-r*r-z*z)/((a-r)*(a-r)+z*z)*ee)/ sqrt(den)
+         RETURN
+      END SELECT
       END FUNCTION psical
 !**********************************************************************
 !**                                                                  **
@@ -1696,43 +1696,47 @@
       csq = fr/trsq
       cpsq = 1.-csq
 !
-   10 IF (t12.ne.0.) go to 20
-      r = rf-ra+0.5*w1
-      zc1 = z1-0.5*h1-0.5*w1*t1
-      zb1 = zc1+t1*r
-      zt1 = zb1+h1
-      go to 30
+      IF (t12.eq.0.) THEN
+         r = rf-ra+0.5*w1
+         zc1 = z1-0.5*h1-0.5*w1*t1
+         zb1 = zc1+t1*r
+         zt1 = zb1+h1
 !
-   20 zb1 = z1-h1/2.
-      IF (t12 .lt. 0.) go to 25
-      IF (rf.gt.xbm1) zb1 = zb1+t12*(rf-xbm1)
-      zt1 = z1+h1/2.
-      IF (rf.lt.xtm1) zt1 = zt1-t12*(xtm1-rf)
-      go to 30
+      ELSE
+         zb1 = z1-h1/2.
+         IF (t12.lt.0.) THEN
+            IF (rf .lt. xbm1) zb1 = zb1 + t12*(rf-xbm1)
+            zt1 = z1 + h1/2.
+            IF (rf .gt. xtm1) zt1 = zt1 - t12*(xtm1-rf)
 !
-   25 IF (rf .lt. xbm1) zb1 = zb1 + t12*(rf-xbm1)
-      zt1 = z1 + h1/2.
-      IF (rf .gt. xtm1) zt1 = zt1 - t12*(xtm1-rf)
+         ELSE
+            IF (rf.gt.xbm1) zb1 = zb1+t12*(rf-xbm1)
+            zt1 = z1+h1/2.
+            IF (rf.lt.xtm1) zt1 = zt1-t12*(xtm1-rf)
+         ENDIF
+      ENDIF
 !
-   30 IF (t22.ne.0.) go to 40
-      r = rs-r2+0.5*w2
-      zc2 = z2-0.5*h2-0.5*w2*t2
-      zb2 = zc2+t2*r
-      zt2 = zb2+h2
-      go to 50
+      IF (t22.eq.0.) THEN
+         r = rs-r2+0.5*w2
+         zc2 = z2-0.5*h2-0.5*w2*t2
+         zb2 = zc2+t2*r
+         zt2 = zb2+h2
 !
-   40 zb2 = z2-h2/2.
-      IF (t22 .lt. 0.) go to 45
-      IF (rs.gt.xbm2) zb2 = zb2+t22*(rs-xbm2)
-      zt2 = z2+h2/2.
-      IF (rs.lt.xtm2) zt2 = zt2-t22*(xtm2-rs)
-      go to 50
+      ELSE
+         zb2 = z2-h2/2.
+         IF (t22 .lt. 0.) THEN
+            IF (rs .lt. xbm2) zb2 = zb2 + t22*(rs-xbm2)
+            zt2 = z2 + h2/2.
+            IF (rs .gt. xtm2) zt2 = zt2 - t22*(xtm2-rs)
 !
-   45 IF (rs .lt. xbm2) zb2 = zb2 + t22*(rs-xbm2)
-      zt2 = z2 + h2/2.
-      IF (rs .gt. xtm2) zt2 = zt2 - t22*(xtm2-rs)
+         ELSE
+            IF (rs.gt.xbm2) zb2 = zb2+t22*(rs-xbm2)
+            zt2 = z2+h2/2.
+            IF (rs.lt.xtm2) zt2 = zt2-t22*(xtm2-rs)
+         ENDIF
+      ENDIF
 !
-   50 z(1,1) = zb1
+      z(1,1) = zb1
       z(2,1) = zb2
       z(1,2) = zt1
       z(2,2) = zt2
@@ -1740,56 +1744,56 @@
       hsa = zt2-zb2
 !
       DO i = 1,2
-      DO j = 1,2
-      sign = -.25
-      IF (i .ne. j) sign = .25
-      dz = z(1,i)-z(2,j)
-      dzsq = dz*dz
-      r2sq = dzsq+drsq
-      r1sq = dzsq+trsq
-      r1 = sqrt(r1sq)
-      ksq = fr/r1sq
-      t = 2./ksq-1.
-      kpsq = 1.-ksq
-      alpha = 1.
+         DO j = 1,2
+            sign = -.25
+            IF (i .ne. j) sign = .25
+            dz = z(1,i)-z(2,j)
+            dzsq = dz*dz
+            r2sq = dzsq+drsq
+            r1sq = dzsq+trsq
+            r1 = sqrt(r1sq)
+            ksq = fr/r1sq
+            t = 2./ksq-1.
+            kpsq = 1.-ksq
+            alpha = 1.
 !--------------------------------------------------------------------------
-!--  To avoid numerical truncation                                       --
+!--         To avoid numerical truncation                                --
 !--------------------------------------------------------------------------
-      IF (kpsq .lt. 1.0e-30) kpsq = 1.0e-30
-      beta = sqrt(kpsq)
-      IF (beta .lt. 1.0e-30) beta = 1.0e-10
-      IF (cpsq .lt. 1.0e-30) cpsq = 1.0e-10
-      delta = cpsq/beta
-      epsi = csq/cpsq
-      zeta = 0.
-      sinf = 0.
-      sa = .25
+            IF (kpsq .lt. 1.0e-30) kpsq = 1.0e-30
+            beta = sqrt(kpsq)
+            IF (beta .lt. 1.0e-30) beta = 1.0e-10
+            IF (cpsq .lt. 1.0e-30) cpsq = 1.0e-10
+            delta = cpsq/beta
+            epsi = csq/cpsq
+            zeta = 0.
+            sinf = 0.
+            sa = .25
 !
-  100 CONTINUE
-      sa = 2.*sa
-      ambsq = (alpha-beta)*(alpha-beta)
-      sinf = sinf+sa*ambsq
-      alphat = alpha
-      epsit = epsi
-      alpha = .5*(alpha+beta)
-      beta = sqrt(alphat*beta)
-      epsi = (delta*epsi+zeta)/(1.+delta)
-      delta = beta/4./alpha*(2.+delta+1./delta)
-      zeta = .5*(epsit+zeta)
-      IF (abs(delta-1.) .gt. err) go to 100
-      IF (ambsq .gt. 1.e-14) go to 100
-      cay = rpi2/alpha
-      pik = cay*zeta
-      ek = .5*cay*(ksq+sinf)
-      msl = rh*dzsq*(r1*ek-drsq*pik/r1)
-      IF (csq-1.) 290,190,290
-  190 msl = rh*dzsq*(r1*ek-cay*fr/r1*.5)
-  290 CONTINUE
+  100       CONTINUE
+            sa = 2.*sa
+            ambsq = (alpha-beta)*(alpha-beta)
+            sinf = sinf+sa*ambsq
+            alphat = alpha
+            epsit = epsi
+            alpha = .5*(alpha+beta)
+            beta = sqrt(alphat*beta)
+            epsi = (delta*epsi+zeta)/(1.+delta)
+            delta = beta/4./alpha*(2.+delta+1./delta)
+            zeta = .5*(epsit+zeta)
+            IF (abs(delta-1.) .gt. err) go to 100
+            IF (ambsq .gt. 1.e-14) go to 100
+            cay = rpi2/alpha
+            pik = cay*zeta
+            ek = .5*cay*(ksq+sinf)
+            msl = rh*dzsq*(r1*ek-drsq*pik/r1)
+            IF (csq==1.) THEN
+               msl = rh*dzsq*(r1*ek-cay*fr/r1*.5)
+            ENDIF
 !
-      mut = msl+ut*fr*r1*(cay-t*ek)
-      sol = sol+sign*mut
-      ENDDO 
-      ENDDO 
+            mut = msl+ut*fr*r1*(cay-t*ek)
+            sol = sol+sign*mut
+         ENDDO
+      ENDDO
 !
       RETURN
       END SUBROUTINE soleno
@@ -1810,7 +1814,7 @@
 !
       frd=pi/180.
 !----------------------------------------------------------------------
-!-- rectangle                                                        --
+!--   rectangle                                                      --
 !----------------------------------------------------------------------
       IF(ac+ac2.eq.0.) THEN
           wdelt=wc/is
@@ -1833,7 +1837,7 @@
           ENDDO
           RETURN
 !----------------------------------------------------------------------
-!-- ac .ne. 0                                                        --
+!--   ac .ne. 0                                                      --
 !----------------------------------------------------------------------
       ELSEIF(ac.ne.0.) THEN
           side=tan(frd*ac)*wc
@@ -1859,7 +1863,7 @@
           ENDDO
           RETURN
 !----------------------------------------------------------------------
-!-- ac2 .ne. 0                                                       --
+!--   ac2 .ne. 0                                                     --
 !----------------------------------------------------------------------
       ELSEIF(ac2.ne.0.) THEN
           side=hc/tan(frd*ac2)
@@ -1970,7 +1974,7 @@
          delsy=smp2(m)/nsmp2*sinm
       ELSE
 !------------------------------------------------------------------------------
-!--  perpendicular probes    96/02/04                                        --
+!--      perpendicular probes                                                --
 !------------------------------------------------------------------------------
          sinm=sin(radeg*amp2(m))
          cosm=cos(radeg*amp2(m))
@@ -2127,7 +2131,7 @@
          delsy=smp2(m)/nsmp2*sinm
       ELSE
 !------------------------------------------------------------------------------
-!--  perpendicular probes    96/02/04                                        --
+!--      perpendicular probes                                                --
 !------------------------------------------------------------------------------
          sinm=sin(radeg*amp2(m))
          cosm=cos(radeg*amp2(m))

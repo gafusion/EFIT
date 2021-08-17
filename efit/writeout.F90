@@ -172,30 +172,27 @@
         endif
 #endif
         if (comfile.ne.'0' .and. comfile.ne.'') then
-          open(unit=nffile,status='old',file=comfile,err=12928)
-          close(unit=nffile,status='delete')
-12928     continue
+          open(unit=nffile,status='old',file=comfile,iostat=ioerr)
+          if (ioerr.eq.0) close(unit=nffile,status='delete')
           open(unit=nffile,status='new',file=comfile)
           write (nffile,4958)
         endif
         if (filenm.ne.'0' .and. filenm.ne.'') &
-          open(unit=nout,status='old',file=filenm,err=3025)
-        go to 3028
- 3025   open(unit=nout,status='old', &
-            file='phys_data:[d3phys.diiid.gsl]'//filenm,err=3020)
+          open(unit=nout,status='old',file=filenm,iostat=ioerr)
+        if (ioerr.eq.0) open(unit=nout,status='old', &
+             file='phys_data:[d3phys.diiid.gsl]'//filenm,err=3020)
       endif
- 3028 continue
-      open(unit=neqdsk,status='old',file='efit_snap.dat',err=3030)
-      snapfile='efit_snap.dat'
-      go to 3032
- 3030 continue
-      open(unit=neqdsk,status='old', &
+      open(unit=neqdsk,status='old',file='efit_snap.dat',iostat=ioerr)
+      if (ioerr.eq.0) then
+        snapfile='efit_snap.dat'
+      else
+        open(unit=neqdsk,status='old', &
            file= input_dir(1:lindir)//'efit_snap.dat')
-      snapfile=input_dir(1:lindir)//'efit_snap.dat'
- 3032 continue
-      do 3034 i=1,nfcoil
+        snapfile=input_dir(1:lindir)//'efit_snap.dat'
+      endif
+      do i=1,nfcoil
         fwtfc(i)=0.
- 3034 continue
+      enddo
       do i=1,nesum
         fwtec(i)=0.
       enddo
@@ -205,17 +202,17 @@
        sigrbd(i)=1.e10_dp
        sigzbd(i)=1.e10_dp
       enddo
-      do 3036 i=1,magpri
+      do i=1,magpri
         fwtmp2(i)=0.
         bitmpi(i)=0.0
- 3036 continue
-      do 3037 i=1,nstark
+      enddo
+      do i=1,nstark
         fwtgam(i)=0.0
- 3037 continue
-      do 3038 i=1,nsilop
+      enddo
+      do i=1,nsilop
         fwtsi(i)=0.
         psibit(i)=0.0
- 3038 continue
+      enddo
       error=1.e-03_dp
       fcurbd=1.
       fwtcur=1.
@@ -251,28 +248,26 @@
       ifindopt = 2
       tolbndpsi = 1.0e-12_dp
 !
-      read (neqdsk,efitin,end=111)
- 111  continue
-      read (neqdsk,efitink,err=3039,end=112)
- 112  continue
- 3039 close(unit=neqdsk)
+      read (neqdsk,efitin)
+      read (neqdsk,efitink,iostat=ioerr)
+      if (ioerr.ne.0) close(unit=neqdsk)
       if (imagsigma.eq.1) then
-         do_spline_fit=.false.
-         saimin=150.
+        do_spline_fit=.false.
+        saimin=150.
       endif
       if (idebug>=2) then
         write (6,*) 'WRITE_K fwtbmsels= ',(fwtbmsels(i),i=1,nmsels)
       endif
 !----------------------------------------------------------------------
-!-- recalculate length of default directories in case any change     --
+!--   recalculate length of default directories in case any change   --
 !----------------------------------------------------------------------
       ltbdir=0
       lindir=0
       lstdir=0
       do i=1,len(table_dir)
-         if (table_dir(i:i).ne.' ') ltbdir=ltbdir+1
-         if (input_dir(i:i).ne.' ') lindir=lindir+1
-         if (store_dir(i:i).ne.' ') lstdir=lstdir+1
+        if (table_dir(i:i).ne.' ') ltbdir=ltbdir+1
+        if (input_dir(i:i).ne.' ') lindir=lindir+1
+        if (store_dir(i:i).ne.' ') lstdir=lstdir+1
       enddo
       if (lshot.ge.112000.and.jtime.le.1) then
         if (lshot.lt.156000) then
@@ -282,9 +277,9 @@
             table_di2 = table_dir(1:ltbdir)//'156014/'
           else
             if (efitversion <= 20140331) then
-               table_di2 = table_dir(1:ltbdir)//'112000/'
+              table_di2 = table_dir(1:ltbdir)//'112000/'
             else
-               table_di2 = table_dir(1:ltbdir)//'156014/'
+              table_di2 = table_dir(1:ltbdir)//'156014/'
             endif
           endif
         elseif (ishot.lt.181292) then
@@ -296,7 +291,7 @@
        endif
        ksstime = ktime
 !---------------------------------------------------------------------
-!--  specific choice of current profile                             --
+!--    specific choice of current profile                           --
 !--       ICPROF=1  no edge current density allowed                 --
 !--       ICPROF=2  free edge current density                       --
 !--       ICPROF=3  weak edge current density constraint            --
@@ -336,67 +331,71 @@
         cgama(3,1)=0.1_dp
         xgama(1)=0.0
       endif
-      if(mse_usecer .eq. 1)keecur = 0
-      if(mse_usecer .eq. 2 .and. keecur .eq. 0) then
-           keecur = 2
-           keefnc = 0
-           itek = 5
+      if (mse_usecer .eq. 1) keecur = 0
+      if (mse_usecer .eq. 2 .and. keecur .eq. 0) then
+        keecur = 2
+        keefnc = 0
+        itek = 5
       endif
 !
       limitr=-limid
-      do 3040 i=1,nfcoil
+      do i=1,nfcoil
         swtfc(i)=fwtfc(i)
- 3040 continue
+      enddo
       do i=1,nesum
         swtec(i)=fwtec(i)
       enddo
-      do 3042 i=1,magpri
+      do i=1,magpri
         swtmp2(i)=fwtmp2(i)
- 3042 continue
-      do 3044 i=1,nsilop
+      enddo
+      do i=1,nsilop
         swtsi(i)=fwtsi(i)
- 3044 continue
+      enddo
       swtcur=fwtcur
-      do 3045 i=1,nstark
+      do i=1,nstark
         swtgam(i)=fwtgam(i)
- 3045 continue
+      enddo
       do i=1,nmsels
         swtbmsels(i)=fwtbmsels(i)
         swtemsels(i)=fwtemsels(i)
       enddo
  3046 continue
       if (idebug >= 2) then
-         write (6,*) 'WRITE_K fwtbmsels= ',(fwtbmsels(i),i=1,nmsels)
-         write (6,*) 'WRITE_K swtbmsels= ',(swtbmsels(i),i=1,nmsels)
+        write (6,*) 'WRITE_K fwtbmsels= ',(fwtbmsels(i),i=1,nmsels)
+        write (6,*) 'WRITE_K swtbmsels= ',(swtbmsels(i),i=1,nmsels)
       endif
 !
       if (filenm.ne.'0' .and. filenm.ne.'') then
-        read (nout,4970,end=3200) ishotime
-        read (ishotime,fmt='(i6,1x,i5)',err=3046) ishot,itime
-        times=itime/1000.
-        delt=0.002_dp
-        ktime=1
-        timeb=itime
-        dtime=0.
+        read (nout,4970,iostat=ioerr) ishotime
+        if (ioerr.eq.0) then
+          read (ishotime,fmt='(i6,1x,i5)',err=3046) ishot,itime
+          times=itime/1000.
+          delt=0.002_dp
+          ktime=1
+          timeb=itime
+          dtime=0.
+        endif
       else
         times=timeb/1000.
         delt=dtime/1000.
         ishot=lshot
+        ioerr=0
       endif
+      if (ioerr.eq.0) then
       if (ifitvs.gt.0) then
-          istop=-1
+        istop=-1
       else
-          istop=0
+        istop=0
       endif
       if (ishot.gt.108281) n1coil = 0
 !----------------------------------------------------------------------
-!-- Fetch data                                                       --
+!--   Fetch data                                                     --
 !----------------------------------------------------------------------
 #if defined(USEMPI)
       if (nproc == 1) then
-          call getpts(ishot,times,delt,ktime,istop)
+        call getpts(ishot,times,delt,ktime,istop)
       else
-          call getpts_mpi(ishot,times,delt,ktime,istop)
+        call getpts_mpi(ishot,times,delt,ktime,istop)
       endif
 #else
       call getpts(ishot,times,delt,ktime,istop)
@@ -407,35 +406,36 @@
           go to 3046
         else
           kerror = 1
-          call errctrl_msg('write_K','shot data not on disk and filename="0"')
+          call errctrl_msg('write_K', &
+            'shot data not on disk and filename="0"')
           return
         endif
       endif
 !
       mmstark=0
-      do 3056 i=1,nstark
-         if (swtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
- 3056 continue
+      do i=1,nstark
+        if (swtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
+      enddo
       if (mmstark.gt.0) then
 #if defined(USEMPI)
-          if (nproc == 1) then
-            call getstark(ktime)
-          else
-            call getstark_mpi(ktime)
-          endif
-#else
+        if (nproc == 1) then
           call getstark(ktime)
+        else
+          call getstark_mpi(ktime)
+        endif
+#else
+        call getstark(ktime)
 #endif
       endif
 !
       mmbmsels=0
       mmemsels=0
-      do 99142 i=1,nmsels
+      do i=1,nmsels
         if (swtbmsels(i).gt.1.e-06_dp) mmbmsels=mmbmsels+1
         if (swtemsels(i).gt.1.e-06_dp) mmemsels=mmemsels+1
-99142 continue
+      enddo
       if (idebug >= 2) then
-         write (6,*) 'WRITE_K mmbmsels= ', mmbmsels
+        write (6,*) 'WRITE_K mmbmsels= ', mmbmsels
       endif
       if (mmbmsels.gt.0) then
 #if defined(USEMPI)
@@ -449,49 +449,49 @@
 #endif
       endif
 !----------------------------------------------------------------------
-! --- get xltype, xltype_180 without reading limiters                --
+!--   get xltype, xltype_180 without reading limiters                --
 !----------------------------------------------------------------------
       call getlim(0,xltype,xltype_180)
 !----------------------------------------------------------------------
-!-- adjust fitting weights based on FITWEIGHT.DAT                    --
+!--   adjust fitting weights based on FITWEIGHT.DAT                  --
 !----------------------------------------------------------------------
       if (lookfw.ge.0) then
-        do 3048 i=1,magpri
-        rwtmp2(i)=0.0
- 3048   continue
+        do i=1,magpri
+          rwtmp2(i)=0.0
+        enddo
         do i=1,nsilop
          rwtsi(i)=0.0
         enddo
         open(unit=neqdsk,status='old', &
-             file=table_di2(1:ltbdi2)//'fitweight.dat'         )
- 3050   read (neqdsk,*,end=3052) irshot
-        if (irshot.gt.ishot) go to 3052
-        if (irshot.lt.124985) then
-        read (neqdsk,*) (rwtsi(i),i=1,nsilol)
-        else
-        read (neqdsk,*) (rwtsi(i),i=1,nsilop)
+             file=table_di2(1:ltbdi2)//'fitweight.dat')
+ 3050   read (neqdsk,*,iostat=ioerr) irshot
+        if ((ioerr.ne.0).and.(irshot.le.ishot)) then
+          if (irshot.lt.124985) then
+            read (neqdsk,*) (rwtsi(i),i=1,nsilol)
+          else
+            read (neqdsk,*) (rwtsi(i),i=1,nsilop)
+          endif
+          if (irshot.lt.59350) then
+            read (neqdsk,*) (rwtmp2(i),i=1,magpri67)
+          elseif (irshot.lt.91000) then
+            read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322)
+          elseif (irshot.lt.100771) then
+            read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322 &
+                                                   +magprirdp)
+          elseif (irshot.lt.124985) then
+            read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322 &
+                                         +magprirdp+magudom)
+          else
+            read (neqdsk,*) (rwtmp2(i),i=1,magpri)
+          endif
+          go to 3050
         endif
-        if (irshot.lt.59350) then
-        read (neqdsk,*) (rwtmp2(i),i=1,magpri67)
-        elseif (irshot.lt.91000) then
-        read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322)
-        elseif (irshot.lt.100771) then
-        read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322 &
-                                               +magprirdp)
-        elseif (irshot.lt.124985) then
-        read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322 &
-                                   +magprirdp+magudom)
-        else
-        read (neqdsk,*) (rwtmp2(i),i=1,magpri)
-        endif
-        go to 3050
- 3052   continue
         close(unit=neqdsk)
       endif
 !
-      do 3060 i=1,ktime
+      do i=1,ktime
         time(i)=time(i)*1000.
- 3060 continue
+      enddo
       do i=1,magpri
         if (lookfw.gt.0) then
            if (fwtmp2(i).gt.0.0) fwtmp2(i)=rwtmp2(i)
@@ -505,92 +505,92 @@
         swtsi(i)=fwtsi(i)
       enddo
 !-----------------------------------------------------------------------
-!-- Get edge pedestal tanh paramters                                  --
+!--   Get edge pedestal tanh paramters                                --
 !-----------------------------------------------------------------------
       if (fitzts.eq.'te') then
         call gettanh(ishot,fitzts,ktime,time,ztssym,ztswid, &
-                          ptssym,ztserr)
+                     ptssym,ztserr)
       endif
 !
-      do 3190 jtime=1,ktime
+      do jtime=1,ktime
         itime=time(jtime)
         timems=itime
         timeus=(time(jtime)-timems)*1000.
         itimeu=timeus
 !-----------------------------------------------------------------------
-!--  correction for truncation                                        --
+!--     correction for truncation                                     --
 !-----------------------------------------------------------------------
         if (itimeu.ge.990) then
           itime=itime+1
           itimeu=0
           time(jtime)=itime
         endif
-        do 3068 i=1,nsilop
+        do i=1,nsilop
           coils(i)=silopt(jtime,i)
           fwtsi(i)=swtsi(i)
           if (lookfw.gt.0.and.fwtsi(i).gt.0.0) fwtsi(i)=rwtsi(i)
           if (ierpsi(i).ne.0) fwtsi(i)=0.0
- 3068   continue
-        do 3070 i=1,magpri
+        enddo
+        do i=1,magpri
           expmp2(i)=expmpi(jtime,i)
           fwtmp2(i)=swtmp2(i)
           if (lookfw.gt.0.and.fwtmp2(i).gt.0.0) fwtmp2(i)=rwtmp2(i)
           if (iermpi(i).ne.0) fwtmp2(i)=0.0
- 3070   continue
-        do 3072 i=1,nfcoil
+        enddo
+        do i=1,nfcoil
           brsp(i)=fccurt(jtime,i)
           fwtfc(i)=swtfc(i)
           if (ierfc(i).ne.0) fwtfc(i)=0.0
- 3072   continue
-        do 3074 i=1,nesum
+        enddo
+        do i=1,nesum
           ecurrt(i)=eccurt(jtime,i)
           fwtec(i)=swtec(i)
           if (ierec(i).ne.0) fwtec(i)=0.0
- 3074   continue
-        do 3080 i=1,nco2r
+        enddo
+        do i=1,nco2r
           denr(i)=denrt(jtime,i)
- 3080   continue
-        do 3085 i=1,nco2v
+        enddo
+        do i=1,nco2v
           denv(i)=denvt(jtime,i)
- 3085   continue
+        enddo
         if (mmstark.gt.0) then
-         do 3090 i=1,nmtark
-          tgamma(i)=tangam(jtime,i)
-          tgammauncor(i)=tangam_uncor(jtime,i)
-          sgamma(i)=siggam(jtime,i)
-          rrrgam(i)=rrgam(jtime,i)
-          zzzgam(i)=zzgam(jtime,i)
-          aa1gam(i)=a1gam(jtime,i)
-          aa2gam(i)=a2gam(jtime,i)
-          aa3gam(i)=a3gam(jtime,i)
-          aa4gam(i)=a4gam(jtime,i)
-          aa5gam(i)=a5gam(jtime,i)
-          aa6gam(i)=a6gam(jtime,i)
-          aa7gam(i)=a7gam(jtime,i)
-          fwtgam(i)=swtgam(i)
-          if (iergam(i).ne.0) fwtgam(i)=0.0
- 3090    continue
+          do i=1,nmtark
+            tgamma(i)=tangam(jtime,i)
+            tgammauncor(i)=tangam_uncor(jtime,i)
+            sgamma(i)=siggam(jtime,i)
+            rrrgam(i)=rrgam(jtime,i)
+            zzzgam(i)=zzgam(jtime,i)
+            aa1gam(i)=a1gam(jtime,i)
+            aa2gam(i)=a2gam(jtime,i)
+            aa3gam(i)=a3gam(jtime,i)
+            aa4gam(i)=a4gam(jtime,i)
+            aa5gam(i)=a5gam(jtime,i)
+            aa6gam(i)=a6gam(jtime,i)
+            aa7gam(i)=a7gam(jtime,i)
+            fwtgam(i)=swtgam(i)
+            if (iergam(i).ne.0) fwtgam(i)=0.0
+          enddo
         endif
 !
-      if (mmbmsels.gt.0) then
-        do i=1,nmsels
-          bmsels(i)=bmselt(jtime,i)
-          sbmsels(i)=sbmselt(jtime,i)
-          fwtbmsels(i)=swtbmsels(i)
-          rrmsels(i)=rrmselt(jtime,i)
-          zzmsels(i)=zzmselt(jtime,i)
-          l1msels(i)=l1mselt(jtime,i)
-          l2msels(i)=l2mselt(jtime,i)
-          l4msels(i)=l4mselt(jtime,i)
-          emsels(i)=emselt(jtime,i)
-          semsels(i)=semselt(jtime,i)
-          fwtemsels(i)=swtemsels(i)
-          if (iermselt(jtime,i).ne.0) then
-            fwtbmsels(i)= 0.0
-            fwtemsels(i)= 0.0
-          endif
-        enddo
-      endif
+        if (mmbmsels.gt.0) then
+          do i=1,nmsels
+            bmsels(i)=bmselt(jtime,i)
+            sbmsels(i)=sbmselt(jtime,i)
+            fwtbmsels(i)=swtbmsels(i)
+            rrmsels(i)=rrmselt(jtime,i)
+            zzmsels(i)=zzmselt(jtime,i)
+            l1msels(i)=l1mselt(jtime,i)
+            l2msels(i)=l2mselt(jtime,i)
+            l4msels(i)=l4mselt(jtime,i)
+            emsels(i)=emselt(jtime,i)
+            semsels(i)=semselt(jtime,i)
+            fwtemsels(i)=swtemsels(i)
+            if (iermselt(jtime,i).ne.0) then
+              fwtbmsels(i)= 0.0
+              fwtemsels(i)= 0.0
+            endif
+          enddo
+        endif
 !
         fwtcur=swtcur
         if (ierpla.ne.0) fwtcur=0.0
@@ -614,22 +614,20 @@
         curril90=curil90(jtime)
         curril150=curil150(jtime)
 !-----------------------------------------------------------------------
-!-- Set edge pedestal tanh paramters                                  --
+!--     Set edge pedestal tanh paramters                              --
 !-----------------------------------------------------------------------
         if (fitzts.eq.'te'.and.ztserr(jtime)) then
           nbdry=1
           rbdry(1)=1.94_dp
           zbdry(1)=ztssym(jtime)+0.5_dp*ztswid(jtime)
         endif
- 3180   continue
         call getfnmu(itimeu,'k',ishot,itime,eqdsk)
-        open(unit=neqdsk,status='old',file=eqdsk,err=12915, &
-           recl=72,delim='APOSTROPHE')
-        close(unit=neqdsk,status='delete')
-12915   continue
-!-------------------------------------------------------------------------------
-!--  Set bit noise for ishot > 152000                                         --
-!-------------------------------------------------------------------------------
+        open(unit=neqdsk,status='old',file=eqdsk,iostat=ioerr, &
+             recl=72,delim='APOSTROPHE')
+        if (ioerr.eq.0) close(unit=neqdsk,status='delete')
+!-----------------------------------------------------------------------
+!--     Set bit noise for ishot > 152000                              --
+!-----------------------------------------------------------------------
 !
 !05-03-2016 Bob Johnson - problem seen on iris but not sun
 !The next line gets rid of valgrind complaints on the
@@ -643,8 +641,8 @@
         if (ktear.gt.100) write(6,*) 'weird value of ktear=',ktear
         if (ishot.gt.152000) vbit = 80
         open(unit=neqdsk,file=eqdsk,status='new', &
-           recl=72,delim='quote')
-!           recl=72,delim='APOSTROPHE')
+             recl=72,delim='quote')
+!             recl=72,delim='APOSTROPHE')
         write (neqdsk,machinein)
         write (neqdsk,in1)
         write (neqdsk,inwant)
@@ -655,7 +653,7 @@
         if (kfitece.gt.0) write (neqdsk,inece)
         if (keecur.gt.0) write (neqdsk,iner)
 !-----------------------------------------------------------------------
-!--  fitting type flag                                                --
+!--     fitting type flag                                             --
 !-----------------------------------------------------------------------
         if ((kprfit.gt.0).and.(mmstark.gt.0)) then
           fit_type = 'KIM'
@@ -673,29 +671,33 @@
         call db_header(ishot,itime,header)
         write (neqdsk,4042) header,fit_type
 !---------------------------------------------------------------------
-!-- Append SNAP file                                                --
+!--     Append SNAP file                                            --
 !---------------------------------------------------------------------
         if (appendsnap.eq.'K'.or.appendsnap.eq.'KG') then
-        if (snapfile/='none') then
-          open(unit=nsnapf,status='old', &
-            file=snapfile,err=9981)
-        do i=1,1000000
-          read (nsnapf,9991,end=9981) tmpdata
-          if (INDEX(tmpdata,'&efitin')/=0) go to 381
-        enddo
- 381    continue
-        do i=1,1000000
-           write (neqdsk,9991) tmpdata
-           read (nsnapf,9991,end=9981) tmpdata
-           if (INDEX(tmpdata,'/')/=0) then
-             write (neqdsk,9991) tmpdata
-             go to 9979
-           endif
-        enddo
- 9979   close (unit=nsnapf)
- 9981   continue
- 9991   format (a)
-        endif
+          if (snapfile/='none') then
+            open(unit=nsnapf,status='old', &
+                 file=snapfile,iostat=ioerr)
+            if (ioerr.eq.0) then
+              do i=1,1000000
+                read (nsnapf,9991,iostat=ioerr) tmpdata
+                if (ioerr.ne.0) exit
+                if (INDEX(tmpdata,'&efitin')/=0) exit
+              enddo
+            endif
+            if (ioerr.eq.0) then
+              do i=1,1000000
+                write (neqdsk,9991) tmpdata
+                read (nsnapf,9991,iostat=ioerr) tmpdata
+                if (ioerr.ne.0) exit
+                if (INDEX(tmpdata,'/')/=0) then
+                  write (neqdsk,9991) tmpdata
+                  exit
+                endif
+              enddo
+            endif
+            if (ioerr.eq.0) close (unit=nsnapf)
+ 9991       format (a)
+          endif
         endif
 !
         close(unit=neqdsk)
@@ -704,9 +706,9 @@
         endif
         if (comfile.ne.'0' .and. comfile.ne.'') &
           write (nffile,4960) ishotime
- 3190 continue
+      enddo
       if (filenm.ne.'0' .and. filenm.ne.'') go to 3046
- 3200 continue
+      endif ! ioerr.eq.0
       if (comfile.ne.'0' .and. comfile.ne.'') then
         write (nffile,4962)
         close(unit=nffile)
@@ -731,7 +733,8 @@
        '       sense of tracing (+1 for down, -1 for up),'/ &
        '       ixstrt (+1 for start on outside, -1' &
        ' for start inside):')
- 6100 format (/,1x,'type plot mode (0=none, 1=tektronix, 2=versatec, 3=qms, -=x ray):')
+ 6100 format (/,1x,'type plot mode (0=none, 1=tektronix, 2=versatec,', &
+                   ' 3=qms, -=x ray):')
  6200 format (/,1x,'number of time slices?')
  6220 format (/,1x,'type input file names:')
  6230 format (1x,'#')
@@ -867,61 +870,60 @@
 
       kerror = 0
 !----------------------------------------------------------------
-!-- recover the value of table_dir for mode 3 or 7             --
+!--   recover the value of table_dir for mode 3 or 7           --
 !----------------------------------------------------------------
       if (ishot.ge.112000) then
         ltbdis =ltbdir
         ltbdir = ltbdir-7
         table_s = table_dir
-        table_dir = table_dir(1:ltbdir)
+        table_dir = table_dir(1:ltbdir)  ! necessary??
       endif
- 3028 continue
 !
       itime=time(jtime)
       timems=itime
       timeus=(time(jtime)-timems)*1000.
       itimeu=timeus
       siref=psirefs(jtime)
-      do 3068 i=1,nsilop
+      do i=1,nsilop
         coils(i)=silopt(jtime,i)-siref
         fwtsi(i)=swtsi(i)
- 3068 continue
-      do 3070 i=1,magpri
+      enddo
+      do i=1,magpri
         expmp2(i)=expmpi(jtime,i)
         fwtmp2(i)=swtmp2(i)
- 3070 continue
+      enddo
       brspss=brsp
       brsp=0.0
-      do 3072 i=1,nfcoil
+      do i=1,nfcoil
         brsp(i)=fccurt(jtime,i)
         fwtfc(i)=swtfc(i)
- 3072 continue
-      do 3074 i=1,nesum
+      enddo
+      do i=1,nesum
         ecurrt(i)=eccurt(jtime,i)
         fwtec(i)=swtec(i)
- 3074 continue
-      do 3080 i=1,nco2r
+      enddo
+      do i=1,nco2r
         denr(i)=denrt(jtime,i)
- 3080 continue
-      do 3085 i=1,nco2v
+      enddo
+      do i=1,nco2v
         denv(i)=denvt(jtime,i)
- 3085 continue
+      enddo
       if (mmstark.gt.0) then
-      do 3090 i=1,nmtark
-        tgamma(i)=tangam(jtime,i)
-        tgammauncor(i)=tangam_uncor(jtime,i)
-        sgamma(i)=siggam(jtime,i)
-        rrrgam(i)=rrgam(jtime,i)
-        zzzgam(i)=zzgam(jtime,i)
-        aa1gam(i)=a1gam(jtime,i)
-        aa2gam(i)=a2gam(jtime,i)
-        aa3gam(i)=a3gam(jtime,i)
-        aa4gam(i)=a4gam(jtime,i)
-        aa5gam(i)=a5gam(jtime,i)
-        aa6gam(i)=a6gam(jtime,i)
-        aa7gam(i)=a7gam(jtime,i)
-        fwtgam(i)=swtgam(i)
- 3090 continue
+        do i=1,nmtark
+          tgamma(i)=tangam(jtime,i)
+          tgammauncor(i)=tangam_uncor(jtime,i)
+          sgamma(i)=siggam(jtime,i)
+          rrrgam(i)=rrgam(jtime,i)
+          zzzgam(i)=zzgam(jtime,i)
+          aa1gam(i)=a1gam(jtime,i)
+          aa2gam(i)=a2gam(jtime,i)
+          aa3gam(i)=a3gam(jtime,i)
+          aa4gam(i)=a4gam(jtime,i)
+          aa5gam(i)=a5gam(jtime,i)
+          aa6gam(i)=a6gam(jtime,i)
+          aa7gam(i)=a7gam(jtime,i)
+          fwtgam(i)=swtgam(i)
+        enddo
       endif
       fwtcur=swtcur
       btor=bcentr(jtime)
@@ -986,15 +988,13 @@
       n1coil=n1coils
       zelip=zelipss
       if (ishot.gt.108281) n1coil = 0
- 3180 continue
       call getfnmu(itimeu,'k',ishot,itime,eqdsk)
-      open(unit=neqdsk,status='old',file=eqdsk,err=12915, &
+      open(unit=neqdsk,status='old',file=eqdsk,iostat=ioerr, &
            recl=72,delim='APOSTROPHE')
-      close(unit=neqdsk,status='delete')
-12915 continue
-!-------------------------------------------------------------------------------
-!--  Write K file                                                             --
-!-------------------------------------------------------------------------------
+      if (ioerr.eq.0) close(unit=neqdsk,status='delete')
+!-----------------------------------------------------------------------
+!--   Write K file                                                    --
+!-----------------------------------------------------------------------
       open(unit=neqdsk,file=eqdsk,status='new', &
            recl=72,delim='quote')
 !           recl=72,delim='APOSTROPHE')
@@ -1007,22 +1007,22 @@
       if (kfitece.gt.0) write (neqdsk,inece)
       if (keecur.gt.0) write (neqdsk,iner)
 !-----------------------------------------------------------------------
-!--  fitting type flag                                                --
+!--   fitting type flag                                               --
 !-----------------------------------------------------------------------
       if ((kprfit.gt.0).and.(mmstark.gt.0)) then
-          fit_type = 'KIM'
+        fit_type = 'KIM'
       elseif (kprfit.gt.0) then
-          fit_type = 'KIN'
+        fit_type = 'KIN'
       elseif (mmstark.gt.0) then
-          fit_type = 'MSE'
+        fit_type = 'MSE'
       else
-          fit_type = 'MAG'
+        fit_type = 'MAG'
       endif
 !
       call db_header(ishot,itime,header)
       write (neqdsk,4042) header,fit_type
 !----------------------------------------------------------------------
-!-- Restore variables                                                --
+!--   Restore variables                                              --
 !----------------------------------------------------------------------
       limitr=limitrss
       if (ishot.ge.112000) then
@@ -1050,55 +1050,62 @@
       n1coil=n1coilt
       zelip=zeliptt
 !---------------------------------------------------------------------
-!-- Append SNAP file                                                --
+!--   Append SNAP file                                              --
 !---------------------------------------------------------------------
-      if (kdata .eq.  7) then
-         open(unit=nsnapf,status='old', &
-           file= snap_file,err=81)
-         snapfile=snap_file
-         go to 3032
- 81    continue
-         open(unit=nsnapf,status='old', &
-           file= input_dir(1:lindir)//snap_file,err=83  )
-         snapfile=input_dir(1:lindir)//snap_file
-         go to 3032
-  83   continue
-         open(unit=nsnapf,status='old', &
-           file= snapextin       )
-         snapfile=snapextin
+      if (kdata.eq.7) then
+        open(unit=nsnapf,status='old', &
+             file=snap_file,iostat=ioerr)
+        if (ioerr.eq.0) then
+          snapfile=snap_file
+        else
+          open(unit=nsnapf,status='old', &
+               file=input_dir(1:lindir)//snap_file,iostat=ioerr)
+          if (ioerr.eq.0) then
+            snapfile=input_dir(1:lindir)//snap_file
+          else
+            open(unit=nsnapf,status='old', &
+                 file=snapextin)
+            snapfile=snapextin
+          endif
+        endif
       else
-      open(unit=nsnapf,status='old', &
-           file='efit_snap.dat',err=3030)
-      snapfile='efit_snap.dat'
-      go to 3032
- 3030 continue
-      open(unit=nsnapf,status='old', &
-           file= input_dir(1:lindir)//'efit_snap.dat'         )
-      snapfile=input_dir(1:lindir)//'efit_snap.dat'
+        open(unit=nsnapf,status='old', &
+             file='efit_snap.dat',iostat=ioerr)
+        if (ioerr.eq.0) then
+          snapfile='efit_snap.dat'
+        else
+          open(unit=nsnapf,status='old', &
+               file= input_dir(1:lindir)//'efit_snap.dat')
+          snapfile=input_dir(1:lindir)//'efit_snap.dat'
+        endif
       endif
- 3032 continue
       if (appendsnap.eq.'K'.or.appendsnap.eq.'KG') then
-      do i=1,1000000
-         read (nsnapf,9991,end=9981) tmpdata
-         if (INDEX(tmpdata,'&efitin')/=0) go to 381
-      enddo
- 381  continue
-      do i=1,1000000
-         write (neqdsk,9991) tmpdata
-         read (nsnapf,9991,end=9981) tmpdata
-         if (INDEX(tmpdata,'/')/=0) then
+        do i=1,1000000
+          read (nsnapf,9991,iostat=ioerr) tmpdata
+          if (ioerr.ne.0) exit
+          if (INDEX(tmpdata,'&efitin')/=0) exit
+        enddo
+        if (ioerr.eq.0) then
+          do i=1,1000000
             write (neqdsk,9991) tmpdata
-            go to 9979
-         endif
-      enddo
- 9979 close (unit=nsnapf)
- 9981 continue
- 9991 format (a)
+            read (nsnapf,9991,iostat=ioerr) tmpdata
+            if (ioerr.ne.0) exit
+            if (INDEX(tmpdata,'/')/=0) then
+              write (neqdsk,9991) tmpdata
+              exit
+            endif
+          enddo
+        endif
+        if (ioerr.eq.0) close (unit=nsnapf)
+ 9991   format (a)
       endif
 !
       close(unit=neqdsk)
       ltbdir=ltbdis
-      table_dir = table_s(1:ltbdis)
+      ! TODO: which is best?
+      table_dir = table_s
+!      table_dir(1:ltbdis) = table_s(1:ltbdis)
+!      table_dir = table_s(1:ltbdis) !compilers do not like...
  4042 format (1x,a42,1x,a3)
  4958 format ('#!/bin/csh -f')
  4960 format ('      runefit.sc k',a12)
@@ -1117,7 +1124,8 @@
        '       sense of tracing (+1 for down, -1 for up),'/ &
        '       ixstrt (+1 for start on outside, -1' &
        ' for start inside):')
- 6100 format(/,1x,'type plot mode (0=none, 1=tektronix, 2=versatec, 3=qms, -=x ray):')
+ 6100 format(/,1x,'type plot mode (0=none, 1=tektronix, 2=versatec,', &
+                  ' 3=qms, -=x ray):')
  6200 format (/,1x,'number of time slices?')
  6220 format (/,1x,'type input file names:')
  6230 format (1x,'#')
@@ -1160,9 +1168,8 @@
       call getfnm2('ot',ishot,itime00,ofname)
 !
       ofname=ofname(1:14)//'_chi2mag'
-      open(unit=74,status='old',file=ofname,err=10010)
-      close(unit=74,status='delete')
-10010 continue
+      open(unit=74,status='old',file=ofname,iostat=ioerr)
+      if (ioerr.eq.0) close(unit=74,status='delete')
       open(unit=74,status='new',file=ofname)
       xxtitle='Time(ms)'
       yytitle='Magnetic Chi Square'
@@ -1177,98 +1184,95 @@
       enddo
       close(unit=74)
 !
-      if (kstark.le.0) go to 10028
-      ofname=ofname(1:14)//'_chi2mse'
-      open(unit=74,status='old',file=ofname,err=10020)
-      close(unit=74,status='delete')
-10020 continue
-      open(unit=74,status='new',file=ofname)
-      xxtitle='Time(ms)'
-      yytitle='MSE Chi Square'
-      zztitle='EFIT'
-      write (74,93024) xxtitle
-      write (74,93024) yytitle
-      write (74,93024) zztitle
-      do i=1,kwtime
-        if (kerrot(i).eq.0) then
-          write (74,92924) time(i),chi2gamt(i),xdum,xdum
-        endif
-      enddo
-      close(unit=74)
-10028 continue
-!
-      if (mmbmsels.le.0) go to 11038
-      ofname=ofname(1:14)//'_chi2mls'
-      open(unit=74,status='old',file=ofname,err=10030)
-      close(unit=74,status='delete')
-10030 continue
-      open(unit=74,status='new',file=ofname)
-      xxtitle='Time(ms)'
-      yytitle='MSE-LS Chi Square'
-      zztitle='EFIT'
-      write (74,93024) xxtitle
-      write (74,93024) yytitle
-      write (74,93024) zztitle
-      do i=1,kwtime
-        if (kerrot(i).eq.0) then
-          write (74,92924) time(i),chi2mls(i),xdum,xdum
-        endif
-      enddo
-      close(unit=74)
-!
-      do j=1,nmsels
-      if (sinmls(j).gt.0.0) then
-      ichan00=j
-      call getfnm2('ot',ishot,ichan00,chname)
-      ofname=ofname(1:14)//'_echan'//chname(13:14)
-      open(unit=74,status='old',file=ofname,err=10040)
-      close(unit=74,status='delete')
-10040 continue
-      open(unit=74,status='new',file=ofname)
-      xxtitle='Time(ms)'
-      yytitle='Measured B MSE-LS (T)'
-      zztitle='MSE-LS Channel '//chname(13:14)
-      write (74,93024) xxtitle
-      write (74,93024) yytitle
-      write (74,93024) zztitle
-      do i=1,kwtime
-        if (kerrot(i).eq.0) then
-          iges=i
-          ydum=sbmselt(iges,j)
-          if (swtbmselt(iges,j).gt.1.e-06_dp) ydum=ydum/swtbmselt(iges,j)
-          write (74,92924) time(i),bmselt(iges,j),xdum,ydum
-        endif
-      enddo
-      close(unit=74)
+      if (kstark.gt.0) then
+        ofname=ofname(1:14)//'_chi2mse'
+        open(unit=74,status='old',file=ofname,iostat=ioerr)
+        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='new',file=ofname)
+        xxtitle='Time(ms)'
+        yytitle='MSE Chi Square'
+        zztitle='EFIT'
+        write (74,93024) xxtitle
+        write (74,93024) yytitle
+        write (74,93024) zztitle
+        do i=1,kwtime
+          if (kerrot(i).eq.0) then
+            write (74,92924) time(i),chi2gamt(i),xdum,xdum
+          endif
+        enddo
+        close(unit=74)
       endif
-      enddo
 !
-      do j=1,nmsels
-      if (sinmls(j).gt.0.0) then
-      ichan00=j
-      call getfnm2('ot',ishot,ichan00,chname)
-      ofname=ofname(1:14)//'_cchan'//chname(13:14)
-      open(unit=74,status='old',file=ofname,err=10050)
-      close(unit=74,status='delete')
-10050 continue
-      open(unit=74,status='new',file=ofname)
-      xxtitle='Time(ms)'
-      yytitle='Computed B MSE-LS (T)'
-      zztitle='MSE-LS Channel '//chname(13:14)
-      write (74,93024) xxtitle
-      write (74,93024) yytitle
-      write (74,93024) zztitle
-      do i=1,kwtime
-        if (kerrot(i).eq.0) then
-          iges=i
-          write (74,92924) time(i),cmmls(iges,j),xdum,xdum
-        endif
-      enddo
-      close(unit=74)
+      if (mmbmsels.gt.0) then
+        ofname=ofname(1:14)//'_chi2mls'
+        open(unit=74,status='old',file=ofname,iostat=ioerr)
+        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='new',file=ofname)
+        xxtitle='Time(ms)'
+        yytitle='MSE-LS Chi Square'
+        zztitle='EFIT'
+        write (74,93024) xxtitle
+        write (74,93024) yytitle
+        write (74,93024) zztitle
+        do i=1,kwtime
+          if (kerrot(i).eq.0) then
+            write (74,92924) time(i),chi2mls(i),xdum,xdum
+          endif
+        enddo
+        close(unit=74)
+!
+        do j=1,nmsels
+          if (sinmls(j).gt.0.0) then
+            ichan00=j
+            call getfnm2('ot',ishot,ichan00,chname)
+            ofname=ofname(1:14)//'_echan'//chname(13:14)
+            open(unit=74,status='old',file=ofname,iostat=ioerr)
+            if (ioerr.eq.0) close(unit=74,status='delete')
+            open(unit=74,status='new',file=ofname)
+            xxtitle='Time(ms)'
+            yytitle='Measured B MSE-LS (T)'
+            zztitle='MSE-LS Channel '//chname(13:14)
+            write (74,93024) xxtitle
+            write (74,93024) yytitle
+            write (74,93024) zztitle
+            do i=1,kwtime
+              if (kerrot(i).eq.0) then
+                iges=i
+                ydum=sbmselt(iges,j)
+                if (swtbmselt(iges,j).gt.1.e-06_dp) ydum=ydum/ &
+                                                       swtbmselt(iges,j)
+                write (74,92924) time(i),bmselt(iges,j),xdum,ydum
+              endif
+            enddo
+            close(unit=74)
+          endif
+        enddo
+!
+        do j=1,nmsels
+          if (sinmls(j).gt.0.0) then
+            ichan00=j
+            call getfnm2('ot',ishot,ichan00,chname)
+            ofname=ofname(1:14)//'_cchan'//chname(13:14)
+            open(unit=74,status='old',file=ofname,iostat=ioerr)
+            if (ioerr.eq.0) close(unit=74,status='delete')
+            open(unit=74,status='new',file=ofname)
+            xxtitle='Time(ms)'
+            yytitle='Computed B MSE-LS (T)'
+            zztitle='MSE-LS Channel '//chname(13:14)
+            write (74,93024) xxtitle
+            write (74,93024) yytitle
+            write (74,93024) zztitle
+            do i=1,kwtime
+              if (kerrot(i).eq.0) then
+                iges=i
+                write (74,92924) time(i),cmmls(iges,j),xdum,xdum
+              endif
+            enddo
+            close(unit=74)
+          endif
+        enddo
+!
       endif
-      enddo
-!
-11038 continue
       return
 92924 format (4(1pe12.5,1x))
 93024 format (a28)

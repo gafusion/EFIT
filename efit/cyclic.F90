@@ -3,8 +3,6 @@
 !! and then modified for use as an option here by Dylan Brennan.  These
 !! routines continue up to the mark END_CYCLIC_ROUTINES
 
-
-
 !********************************************************************** 
 !!
 !> ef_init_cycred_data
@@ -29,27 +27,28 @@
       u0 = 4.0 * pi * 1.0e-7_dp
 
 ! ----------------------------------------------------------------------
-! Power of 2 that specifies the grid height.
+!     Power of 2 that specifies the grid height.
       i=1
       nhpwr = -1
-      do 10 j=0,14
+      do j=0,14
         i = i*2
         if (i.eq.(nh - 1)) then
           nhpwr = j+1
-          go to 15
+          exit
         endif
-   10 continue
+      enddo
 
-   15 if (nhpwr.eq.-1) then
+      if (nhpwr.eq.-1) then
          nhpwr = 5
          ef_init_cycred_data=1
-         call errctrl_msg('ef_init_cycred_data','grid height must be a power of 2 + 1')
+         call errctrl_msg('ef_init_cycred_data',&
+                          'grid height must be a power of 2 + 1')
          return 
       endif  
 
 ! ----------------------------------------------------------------------
-! Elements of the tridiagonal matrix.
-! todo: replace these with the common block couterparts
+!     Elements of the tridiagonal matrix.
+!     todo: replace these with the common block couterparts
 
       dr = rgrid(2) - rgrid(1)
       dz = zgrid(2) - zgrid(1)
@@ -61,28 +60,27 @@
 
 !     All elements of the matrix diagonal have the same value
       diag = dumy1 
-      do 20 i=0,nw-3
+      do i=0,nw-3
          denom = dumy/rgrid(i+2)
          diagl(i+1) = -1.0 * dzdrsq - denom
          diagu(i+1) = -1.0 * dzdrsq + denom
-   20 continue 
+      enddo
 
 ! ----------------------------------------------------------------------
-! Misc. constants used in computing the rhs vector.
+!     Misc. constants used in computing the rhs vector.
 !
-! 
       rhs_a_dumy = dzdrsq + dzsq/(2.0 * rgrid(2) * dr)
       rhs_b_dumy = dzdrsq - dzsq/(2.0 * rgrid(nw-1) * dr)
 
 ! ----------------------------------------------------------------------
-! Constants used during the forward reduction procedure.
+!     Constants used during the forward reduction procedure.
 
       index = 0
 !     nred steps are required
       nred = nhpwr - 1    
       jpow = 1   
 !     k is the reduction step index
-      do 90 k=1,nred   
+      do k=1,nred   
 !                2**(k-1)
         jpowm1 = jpow   
 !                2**k
@@ -94,15 +92,16 @@
 !                2**k 
         jstep  = jpow    
 
-        do 80 j=jstart,jend,jstep
+        do j=jstart,jend,jstep
           m1 = -1.0
-          do 70 l=1,jpowm1
+          do l=1,jpowm1
             m1 = -1.0 * m1
  
             index = index + 1
             if (index.gt.icycred_loopmax) then
               ef_init_cycred_data=1
-              call errctrl_msg('ef_init_cycred_data','constant data index in forward reduction is > max')
+              call errctrl_msg('ef_init_cycred_data', &
+                   'constant data index in forward reduction is > max')
               return
             endif
 
@@ -110,37 +109,38 @@
               sindi = sin( (2.0 * l - 1.0) * pi/jpow)
               alphab(index) = m1 * sindi/jpowm1
               diag1(index) = diag + cosdii
-   70     continue 
+          enddo 
 
-          if (index.gt.icycred_loopmax) go to 90
+          if (index.gt.icycred_loopmax) exit
               
-   80   continue
-   90 continue
+        enddo
+      enddo
 
 ! ----------------------------------------------------------------------
-! Constants used during the back solution procedure.
+!     Constants used during the back solution procedure.
 
 !            nhpwr
       nred = nred + 1 
 !            2**nhpwr
       jpow = 2**nred 
 
-      do 120 k=nred,1,-1
+      do k=nred,1,-1
 !               2**k
         jstep = jpow
 !              2**(k-1)
         jpow = jpow/2   
         jstart = jpow + 1
         jend = nh - jpow
-        do 110 j=jstart,jend,jstep
+        do j=jstart,jend,jstep
           m1 = -1.0
-          do 100 l=1,jpow
+          do l=1,jpow
             m1 = -1.0 * m1
 
             index = index + 1
             if (index.gt.icycred_loopmax) then
               ef_init_cycred_data=1
-              call errctrl_msg('ef_init_cycred_data','constant data index in back solution is > max')
+              call errctrl_msg('ef_init_cycred_data', &
+                   'constant data index in back solution is > max')
               return
             endif 
 
@@ -148,33 +148,34 @@
             sindi = sin( (2.0 * l - 1.0) * pi/(2**k))
             alphab(index) = m1 * sindi/jpow
             diag1(index) = diag + cosdii
-  100     continue 
+          enddo 
 
-          if(index.gt.icycred_loopmax) go to 120
+          if(index.gt.icycred_loopmax) cycle
              
-  110   continue
-  120 continue   
+        enddo 
+      enddo 
 
 ! ----------------------------------------------------------------------
-! Vectors of precalculated values used by the tridiag routine.
-! These vectors are various combinations of the diagonals of the matrices
-! that are solved.
+!     Vectors of precalculated values used by the tridiag routine.
+!     These vectors are various combinations of the diagonals of the
+!     matrices that are solved.
 
-! At this point "index" holds the number of reduction loops that are used.
-      do 130 i=1,index
+!     At this point "index" holds the number of reduction loops that are used.
+      do i=1,index
         beti(i,1) = 1.0/diag1(i)
 !       not actually used
         abeti(i,1) = 0.0 
 !       not actually used
         wk1(i,1) = 0.0   
 
-        do 130 j=2,nw-2
+        do j=2,nw-2
           wk1(i,j) = diagu(j-1) * beti(i,j-1)
           beti(i,j) =  &
             1.0/( diag1(i) - diagl(j) * wk1(i,j))
           abeti(i,j) =  &
             diagl(j) * beti(i,j)
-  130 continue    
+        enddo
+      enddo  
 
       end function ef_init_cycred_data
 
@@ -198,7 +199,7 @@
 
       constant=0.5_dp
 ! ----------------------------------------------------------------------
-! Forward reduction.
+!     Forward reduction.
 
       nv = nw - 2
 
@@ -206,12 +207,12 @@
 !     nred steps are required.
       nred = nhpwr - 1
       jpow = 1   
-      do 5 i=0,nv
+      do i=0,nv
         wk2(i+1) = 0.0
-    5 continue
+      enddo
 
 !     k is the reduction step index. 
-      do 20 k=1,nred   
+      do k=1,nred   
 !                2**(k-1)
         jpowm1 = jpow 
 !                2**k
@@ -223,7 +224,7 @@
 !                2**k     
         jstep  = jpow  
 
-        do 20 j=jstart,jend,jstep
+        do j=jstart,jend,jstep
        
 !         Index of the first element of jth row 
           jd = (j-1) * nw + 1
@@ -234,27 +235,28 @@
 
           call ef_vadd_shrt(f(jdm+1),f(jdp+1),phi,nv)
           
-          do 10 l=1,jpowm1
+          do l=1,jpowm1
             index = index + 1
             call ef_tridiag2(f(jd+1),nv,index)
-   10     continue
+          enddo
 
 !         use the declared var constant, instead of 0.5 directly because
 !         of change in alignment for different compilations
 
           call ef_vmul_const_shrt(f(jd+1),constant,f(jd+1),nv)
 
-   20 continue
+        enddo
+      enddo
 
 ! ----------------------------------------------------------------------
-! Back solution.
+!     Back solution.
 
 !            nhpwr
       nred = nred + 1
 !            2**nhpwr 
       jpow = 2**nred 
 
-      do 30 k=nred,1,-1
+      do k=nred,1,-1
 !               2**k
         jstep = jpow    
 !              2**(k-1) 
@@ -262,7 +264,7 @@
         jstart = jpow + 1
         jend = nh - jpow
 
-        do 30 j=jstart,jend,jstep
+        do j=jstart,jend,jstep
 !         Index of the first element of jth row 
           jd = (j-1) * nw   
 !         Next row up 
@@ -271,7 +273,7 @@
           jdm = jd - jpow*nw  
  
           call ef_vadd_shrt(f(jdm+2),f(jdp+2),phi,nv)
-          do 30 l=1,jpow
+          do l=1,jpow
             index = index + 1
 
             if (l.eq.1) then
@@ -279,7 +281,9 @@
             else
               call ef_tridiag2(f(jd+2),nv,index)
             endif
-   30 continue
+          enddo
+        enddo
+      enddo
 
 ! All done.
 
@@ -306,7 +310,7 @@
       kerror = 0
 
 ! ----------------------------------------------------------------------
-! Call the initialization and check the result
+!     Call the initialization and check the result
       initresult=ef_init_cycred_data()
       if (initresult.eq.1) then
           kerror = 1
@@ -314,18 +318,19 @@
       endif
 
 ! ----------------------------------------------------------------------
-! transpose the matrix, solver needs transposition (same as buneto)
+!     transpose the matrix, solver needs transposition (same as buneto)
 
-      do 2 i = 1,nw
+      do i = 1,nw
         ii = (i-1)*nh 
-        do 2 j = 1,nh
+        do j = 1,nh
           sia(i+(j-1)*nw) = psigrid(ii+j)
-    2 continue
+        enddo
+      enddo
 
 ! ----------------------------------------------------------------------
-! Add the finite difference expressions for the second and nw-1 grid columns
-! to the rhs. These terms are known boundary terms and
-! hence do not form part of the tridiagonal matrix.
+!     Add the finite difference expressions for the second and nw-1 grid
+!     columns to the rhs. These terms are known boundary terms and
+!     hence do not form part of the tridiagonal matrix.
 
       ius = nw
       ivs = nw
@@ -342,18 +347,19 @@
           sia(2*nw-1), iys, &
           nn)
 ! ----------------------------------------------------------------------
-! Do the cyclic reduction to get psigrid.
+!     Do the cyclic reduction to get psigrid.
 
       call cyclic_reduction(sia)
 
 ! ----------------------------------------------------------------------
-! transpose the matrix back
+!     transpose the matrix back
 
-      do 6 i = 1,nh
+      do i = 1,nh
         ii = (i-1)*nw
-        do 6 j = 1,nw
+        do j = 1,nw
           psigrid(i+(j-1)*nh) = sia(ii+j)
-    6 continue
+        enddo
+      enddo
 
 ! All done.
 
@@ -378,12 +384,12 @@
       ici = 1
       idi = 1
 
-      do 10 i=1,n 
+      do i=1,n 
         d(idi) = a(iai)*b + c(ici)
         iai = iai + ia
         ici = ici + ic
         idi = idi + id
-   10 continue
+      enddo
       return
       end subroutine vsma_
 
@@ -442,19 +448,19 @@
 
       v(1)=(wk2(1)+alphab(index)*phi(1))* &
            beti(index,1)
-      do 10 j=2,n
+      do j=2,n
         v(j)=wk2(j)*beti(index,j)+  &
           alphab(index)*phi(j)*beti(index,j)-  &
           v(j-1) * abeti(index,j)
-   10 continue
+      enddo
 
       usave = v(n)
       f(n) = usave + f(n)
 
-      do 20 j=n-1,1,-1
+      do j=n-1,1,-1
         usave = v(j)-wk1(index,j+1)*usave
         f(j) = usave + f(j)
-   20 continue 
+      enddo
       return
       end subroutine ef_tridiag2
 
@@ -496,20 +502,20 @@
       v(1)=(f(1)+alphab(index)*phi(1))* &
                     beti(index,1)
  
-      do 10 j=2,n
+      do j=2,n
        v(j) = f(j)*beti(index,j)+  &
          alphab(index)*phi(j)*beti(index,j)-  &
          v(j-1)*abeti(index,j)
-   10 continue
+      enddo
  
       wk2(n) = f(n)
       f(n) = v(n)
  
-      do 20 j=n-1,1,-1
+      do j=n-1,1,-1
         wk2(j) = f(j)
         v(j)=v(j)-wk1(index,j+1)*v(j+1)
         f(j) = v(j)
-   20 continue 
+      enddo
       return
       end subroutine ef_tridiag1
 
@@ -533,9 +539,9 @@
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension vector1(1),vector2(1),vector_out(1)
 
-      do 10 i=1,nelements
+      do i=1,nelements
         vector_out(i) = vector1(i) + vector2(i)
-   10 continue
+      enddo
       return
       end subroutine ef_vadd_shrt
 
@@ -556,12 +562,10 @@
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension vector1(1),vector_out(1)
 
-      do 10 i=1,nelements
+      do i=1,nelements
         vector_out(i) = vector1(i) * constant
-   10 continue
+      enddo
       return
       end subroutine ef_vmul_const_shrt
 
 !  END_CYCLIC_ROUTINES This ends the fast cyclic reduction routines
-
-

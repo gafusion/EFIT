@@ -53,33 +53,33 @@
 !        !write(nttyo,*) ishot,int(time(it)),tsaisq(it) ! handy for debugging
 !      end if
 !#endif
-      if (itek.gt.0) go to 100
+      if (itek.le.0) then
 ! MPI >>>
-      if (rank == 0) then
-        !write (nttyo,10000) trim(ch1),trim(ch2)
-        jtime=time(it)
-        saisq=tsaisq(it)
-        write (nttyo,9300)
-        write (nttyo,9320) ipsi(it)
-        write (nttyo,9340) imag2(it)
-        write (nttyo,9380) iplasm(it)
-        write (nttyo,9385) idlopc(it)
-        write (nttyo,10480)
-        write (nttyo,10500) ishot,jtime,saisq
-        write (nttyo,10520) betat(it),betap(it),ali(it)
-        write (nttyo,10540) vout(it),rout(it),zout(it)
-        write (nttyo,10560) eout(it),doutu(it),doutl(it)
-        write (nttyo,10580) aout(it),oleft(it),oright(it)
-        write (nttyo,10600) otop(it),qsta(it),rcurrt(it)
-        write (nttyo,10610) zcurrt(it),bcentr(it),qout(it)
-      endif
+       if (rank == 0) then
+         !write (nttyo,10000) trim(ch1),trim(ch2)
+         jtime=time(it)
+         saisq=tsaisq(it)
+         write (nttyo,9300)
+         write (nttyo,9320) ipsi(it)
+         write (nttyo,9340) imag2(it)
+         write (nttyo,9380) iplasm(it)
+         write (nttyo,9385) idlopc(it)
+         write (nttyo,10480)
+         write (nttyo,10500) ishot,jtime,saisq
+         write (nttyo,10520) betat(it),betap(it),ali(it)
+         write (nttyo,10540) vout(it),rout(it),zout(it)
+         write (nttyo,10560) eout(it),doutu(it),doutl(it)
+         write (nttyo,10580) aout(it),oleft(it),oright(it)
+         write (nttyo,10600) otop(it),qsta(it),rcurrt(it)
+         write (nttyo,10610) zcurrt(it),bcentr(it),qout(it)
+       endif
 ! MPI <<<
-  100 continue
+      endif
 !
 ! --- delete fitout.dat if IOUT does not contain 1
 !
       if (iand(iout,1).eq.0) then ! if iout is even, including zero
-         close(unit=nout,status='delete',err=300)
+         close(unit=nout,status='delete')
       else
         !write (nout,10000) trim(ch1),trim(ch2)
         jtime=time(it)
@@ -132,292 +132,295 @@
         write (nout,10020) sumif,sumift,sumifs
         write (nout,11010)
         write (nout,11020) (rsisfc(i),i=1,nfcoil)
-        if (ivacum.gt.0) go to 228
-        if (icurrt.ne.2.and.icurrt.ne.5) go to 228
-        xnorm=brsp(nfcoil+1)
-        write (nout,11040) xnorm
-        do i=1,kwcurn
-          xrsp(i)=brsp(nfcoil+i)/xnorm
-        end do
-        write (nout,11020) (xrsp(i),i=1,kwcurn)
-        xnorm=darea
-        write (nout,11043) xnorm
-        do i=1,kwcurn
-          xrsp(i)=brsp(nfcoil+i)/xnorm
-        end do
-        write (nout,11020) (xrsp(i),i=1,kwcurn)
-        if (keecur.gt.0) then
-          write (nout,11032)
-          write (nout,11020) (cerer(i),i=1,keecur)
+        if (ivacum.le.0.or.(icurrt.eq.2.and.icurrt.eq.5)) then
+          xnorm=brsp(nfcoil+1)
+          write (nout,11040) xnorm
+          do i=1,kwcurn
+            xrsp(i)=brsp(nfcoil+i)/xnorm
+          end do
+          write (nout,11020) (xrsp(i),i=1,kwcurn)
+          xnorm=darea
+          write (nout,11043) xnorm
+          do i=1,kwcurn
+            xrsp(i)=brsp(nfcoil+i)/xnorm
+          end do
+          write (nout,11020) (xrsp(i),i=1,kwcurn)
+          if (keecur.gt.0) then
+            write (nout,11032)
+            write (nout,11020) (cerer(i),i=1,keecur)
+          endif
+          if (kedgep.gt.0) then
+            write (nout,11034) pedge
+          endif
+          if (kedgef.gt.0) then
+            write (nout,11036) f2edge
+          endif
         endif
-        if (kedgep.gt.0) then
-          write (nout,11034) pedge
-        endif
-        if (kedgef.gt.0) then
-          write (nout,11036) f2edge
-        endif
-228     continue
 
         write (nout,11005)
         write (nout,11020) (cecurr(i),i=1,nesum)
         write (nout,11008)
         write (nout,11020) (rsisec(i),i=1,nesum)
 
-        if (ivesel.le.0) go to 300
-        sumif=0.0
-        do i=1,nvesel
-          sumif=sumif+vcurrt(i)
-        end do
-        nves2=nvesel/2
-        sumift=0.0
-        do i=1,nves2
-          sumift=sumift+vcurrt(i)
-        end do
-        sumifb=0.0
-        do i=nves2+1,nvesel
-          sumifb=sumifb+vcurrt(i)
-        end do
-        if (ivesel.eq.11) sumif=sumvs0
-        write (nout,11060) sumif,sumift,sumifb
-        write (nout,11020) (vcurrt(i),i=1,nvesel)
-        write (nout,11022) fzpol
-        write (nout,11020) (vforcep(i),i=1,nvesel)
-        write (nout,11024) fztor
-        write (nout,11020) (vforcet(i),i=1,nvesel)
-      endif
-  300 continue
-
-      if (patmp2(1).gt.0.0) go to 340
-      open(unit=80,status='old', &
-           file=table_di2(1:ltbdi2)//'dprobe.dat' &
-                                          )
-      read (80,in3)
-      close(unit=80)
-      if (xmp2(1).le.0.0) go to 360
-      if (patmp2(1).gt.0.0) go to 340
-      xmin=xmp2(1)
-      xmax=xmin
-      ymin=ymp2(1)
-      ymax=ymin
-      do 305 i=1,magpri67
-        xmpz(i)=xmp2(i)
-        ympz(i)=ymp2(i)
-        xmin=min(xmin,xmp2(i))
-        xmax=max(xmax,xmp2(i))
-        ymin=min(ymin,ymp2(i))
-        ymax=max(ymax,ymp2(i))
-  305 continue
-      xtest=(xmin+xmax)/2.
-      ytest=(ymin+ymax)/2.
-      nzz=0
-      call packps(xmpz,ympz,magpri67,xtest,ytest,nzz)
-      do 310 i=1,magpri67
-        do 310 k=1,magpri67
-          if ((xmp2(k).eq.xmpz(i)).and.(ymp2(k).eq.ympz(i))) &
-           ampz(i)=amp2(k)
-  310 continue
-      do 320 i=1,magpri67
-        ip1=i+1
-        im1=i-1
-        if (i.eq.1) im1=magpri67
-        if (i.eq.magpri67) ip1=1
-        dang90=abs(abs(ampz(i))-90.)
-        dang270=abs(abs(ampz(i))-270.)
-        danm90=abs(abs(ampz(im1))-90.)
-        danm270=abs(abs(ampz(im1))-270.)
-        danp90=abs(abs(ampz(ip1))-90.)
-        danp270=abs(abs(ampz(ip1))-270.)
-        if (dang90.lt.1.0.or.dang270.lt.1.0) then
-         xxm=xmpz(i)
-         xxp=xmpz(i)
-         if (danm90.lt.1.0.or.danm270.lt.1.0) then
-          yym=(ympz(i)+ympz(im1))/2.
-         else
-          sm1=tand(ampz(im1))
-          yym=sm1*(xxm-xmpz(im1))+ympz(im1)
-         endif
-         if (danp90.lt.1.0.or.danp270.lt.1.0) then
-          yyp=(ympz(i)+ympz(ip1))/2.
-         else
-          sm2=tand(ampz(ip1))
-          yym=sm2*(xxm-xmpz(ip1))+ympz(ip1)
-         endif
-        else
-         if (danm90.lt.1.0.or.danm270.lt.1.0) then
-          xxm=xmpz(im1)
-          sm2=tand(ampz(i))
-          yym=sm2*(xxm-xmpz(i))+ympz(i)
-         else
-          dampz1=abs(ampz(im1)-ampz(i))
-          dampz2=abs(dampz1-360.)
-          if (dampz1.lt.1.0.or.dampz2.lt.1.0) then
-           xxm=(xmpz(i)+xmpz(im1))/2.
-           yym=(ympz(i)+ympz(im1))/2.
-          else
-           sm1=tand(ampz(im1))
-           sm2=tand(ampz(i))
-           xxm=(sm1*xmpz(im1)-sm2*xmpz(i)-ympz(im1)+ympz(i))/(sm1-sm2)
-           yym=sm1*(xxm-xmpz(im1))+ympz(im1)
-          endif
-         endif
-         if (danp90.lt.1.0.or.danp270.lt.1.0) then
-          xxp=xmpz(ip1)
-          sm1=tand(ampz(i))
-          yyp=sm1*(xxp-xmpz(i))+ympz(i)
-         else
-          dampz1=abs(ampz(ip1)-ampz(i))
-          dampz2=abs(dampz1-360.)
-          if (dampz1.lt.1.0.or.dampz2.lt.1.0) then
-           xxp=(xmpz(i)+xmpz(ip1))/2.
-           yyp=(ympz(i)+ympz(ip1))/2.
-          else
-           sm1=tand(ampz(i))
-           sm2=tand(ampz(ip1))
-           xxp=(sm1*xmpz(i)-sm2*xmpz(ip1)-ympz(i)+ympz(ip1))/(sm1-sm2)
-           yyp=sm1*(xxp-xmpz(i))+ympz(i)
-          endif
-         endif
+        if (ivesel.gt.0) then
+          sumif=0.0
+          do i=1,nvesel
+            sumif=sumif+vcurrt(i)
+          end do
+          nves2=nvesel/2
+          sumift=0.0
+          do i=1,nves2
+            sumift=sumift+vcurrt(i)
+          end do
+          sumifb=0.0
+          do i=nves2+1,nvesel
+            sumifb=sumifb+vcurrt(i)
+          end do
+          if (ivesel.eq.11) sumif=sumvs0
+          write (nout,11060) sumif,sumift,sumifb
+          write (nout,11020) (vcurrt(i),i=1,nvesel)
+          write (nout,11022) fzpol
+          write (nout,11020) (vforcep(i),i=1,nvesel)
+          write (nout,11024) fztor
+          write (nout,11020) (vforcet(i),i=1,nvesel)
         endif
-        patmpz(i)=sqrt((xxp-xxm)**2+(yyp-yym)**2)
-  320 continue
-      do 330 i=1,magpri67
-        do 330 k=1,magpri67
-          if ((xmpz(k).eq.xmp2(i)).and.(ympz(k).eq.ymp2(i))) &
-           patmp2(i)=patmpz(k)
-  330 continue
-  340 continue
-      cipmp2=0.0
-      do 350 i=1,magpri67
-        cipmp2=cipmp2+cmpr2(i,it)*patmp2(i)
-  350 continue
-      cipmp2=cipmp2/tmu/twopi
-  360 continue
+      endif
+
+      if (patmp2(1).le.0.0) then
+        open(unit=80,status='old', &
+             file=table_di2(1:ltbdi2)//'dprobe.dat')
+        read (80,in3)
+        close(unit=80)
+        if (xmp2(1).le.0.0) write(*,*) "bad code detected"
+      endif
+      if (xmp2(1).gt.0.0) then
+       if (patmp2(1).le.0.0) then
+        xmin=xmp2(1)
+        xmax=xmin
+        ymin=ymp2(1)
+        ymax=ymin
+        do i=1,magpri67
+          xmpz(i)=xmp2(i)
+          ympz(i)=ymp2(i)
+          xmin=min(xmin,xmp2(i))
+          xmax=max(xmax,xmp2(i))
+          ymin=min(ymin,ymp2(i))
+          ymax=max(ymax,ymp2(i))
+        enddo
+        xtest=(xmin+xmax)/2.
+        ytest=(ymin+ymax)/2.
+        nzz=0
+        call packps(xmpz,ympz,magpri67,xtest,ytest,nzz)
+        do i=1,magpri67
+          do k=1,magpri67
+            if ((xmp2(k).eq.xmpz(i)).and.(ymp2(k).eq.ympz(i))) &
+             ampz(i)=amp2(k)
+          enddo
+        enddo
+        do i=1,magpri67
+          ip1=i+1
+          im1=i-1
+          if (i.eq.1) im1=magpri67
+          if (i.eq.magpri67) ip1=1
+          dang90=abs(abs(ampz(i))-90.)
+          dang270=abs(abs(ampz(i))-270.)
+          danm90=abs(abs(ampz(im1))-90.)
+          danm270=abs(abs(ampz(im1))-270.)
+          danp90=abs(abs(ampz(ip1))-90.)
+          danp270=abs(abs(ampz(ip1))-270.)
+          if (dang90.lt.1.0.or.dang270.lt.1.0) then
+           xxm=xmpz(i)
+           xxp=xmpz(i)
+           if (danm90.lt.1.0.or.danm270.lt.1.0) then
+            yym=(ympz(i)+ympz(im1))/2.
+           else
+            sm1=tand(ampz(im1))
+            yym=sm1*(xxm-xmpz(im1))+ympz(im1)
+           endif
+           if (danp90.lt.1.0.or.danp270.lt.1.0) then
+            yyp=(ympz(i)+ympz(ip1))/2.
+           else
+            sm2=tand(ampz(ip1))
+            yym=sm2*(xxm-xmpz(ip1))+ympz(ip1)
+           endif
+          else
+           if (danm90.lt.1.0.or.danm270.lt.1.0) then
+            xxm=xmpz(im1)
+            sm2=tand(ampz(i))
+            yym=sm2*(xxm-xmpz(i))+ympz(i)
+           else
+            dampz1=abs(ampz(im1)-ampz(i))
+            dampz2=abs(dampz1-360.)
+            if (dampz1.lt.1.0.or.dampz2.lt.1.0) then
+             xxm=(xmpz(i)+xmpz(im1))/2.
+             yym=(ympz(i)+ympz(im1))/2.
+            else
+             sm1=tand(ampz(im1))
+             sm2=tand(ampz(i))
+             xxm=(sm1*xmpz(im1)-sm2*xmpz(i)-ympz(im1)+ympz(i))/(sm1-sm2)
+             yym=sm1*(xxm-xmpz(im1))+ympz(im1)
+            endif
+           endif
+           if (danp90.lt.1.0.or.danp270.lt.1.0) then
+            xxp=xmpz(ip1)
+            sm1=tand(ampz(i))
+            yyp=sm1*(xxp-xmpz(i))+ympz(i)
+           else
+            dampz1=abs(ampz(ip1)-ampz(i))
+            dampz2=abs(dampz1-360.)
+            if (dampz1.lt.1.0.or.dampz2.lt.1.0) then
+             xxp=(xmpz(i)+xmpz(ip1))/2.
+             yyp=(ympz(i)+ympz(ip1))/2.
+            else
+             sm1=tand(ampz(i))
+             sm2=tand(ampz(ip1))
+             xxp=(sm1*xmpz(i)-sm2*xmpz(ip1)-ympz(i)+ympz(ip1))/(sm1-sm2)
+             yyp=sm1*(xxp-xmpz(i))+ympz(i)
+            endif
+           endif
+          endif
+          patmpz(i)=sqrt((xxp-xxm)**2+(yyp-yym)**2)
+        enddo
+        do i=1,magpri67
+          do k=1,magpri67
+            if ((xmpz(k).eq.xmp2(i)).and.(ympz(k).eq.ymp2(i))) &
+             patmp2(i)=patmpz(k)
+          enddo
+        enddo
+       endif
+       cipmp2=0.0
+       do i=1,magpri67
+         cipmp2=cipmp2+cmpr2(i,it)*patmp2(i)
+       enddo
+       cipmp2=cipmp2/tmu/twopi
+      endif
 !-----------------------------------------------------------------
 !--   322 degree probes                                         --
 !-----------------------------------------------------------------
       mb=magpri67+1
       mbb=magpri322
-      if (xmp2(mb).le.0.0) go to 22360
-      if (patmp2(mb).gt.0.0) go to 22340
-      xmin=xmp2(mb)
-      xmax=xmin
-      ymin=ymp2(mb)
-      ymax=ymin
-      do 22305 i=mb,magpri67+magpri322
-        xmpz(i)=xmp2(i)
-        ympz(i)=ymp2(i)
-        xmin=min(xmin,xmp2(i))
-        xmax=max(xmax,xmp2(i))
-        ymin=min(ymin,ymp2(i))
-        ymax=max(ymax,ymp2(i))
-22305 continue
-      xtest=(xmin+xmax)/2.
-      ytest=(ymin+ymax)/2.
-      nzz=0
-      call packps(xmpz(mb),ympz(mb),mbb,xtest,ytest,nzz)
-      do 22310 i=mb,magpri67+magpri322
-        do 22310 k=mb,magpri67+magpri322
-          if ((xmp2(k).eq.xmpz(i)).and.(ymp2(k).eq.ympz(i))) &
-           ampz(i)=amp2(k)
-22310 continue
-      do 22320 i=mb,magpri67+magpri322
-        ip1=i+1
-        im1=i-1
-        if (i.eq.mb) im1=magpri67+magpri322
-        if (i.eq.magpri67+magpri322) ip1=mb
-        dang90=abs(abs(ampz(i))-90.)
-        dang270=abs(abs(ampz(i))-270.)
-        danm90=abs(abs(ampz(im1))-90.)
-        danm270=abs(abs(ampz(im1))-270.)
-        danp90=abs(abs(ampz(ip1))-90.)
-        danp270=abs(abs(ampz(ip1))-270.)
-        if (dang90.lt.1.0.or.dang270.lt.1.0) then
-         xxm=xmpz(i)
-         xxp=xmpz(i)
-         if (danm90.lt.1.0.or.danm270.lt.1.0) then
-          yym=(ympz(i)+ympz(im1))/2.
-         else
-          sm1=tand(ampz(im1))
-          yym=sm1*(xxm-xmpz(im1))+ympz(im1)
-         endif
-         if (danp90.lt.1.0.or.danp270.lt.1.0) then
-          yyp=(ympz(i)+ympz(ip1))/2.
-         else
-          sm2=tand(ampz(ip1))
-          yym=sm2*(xxm-xmpz(ip1))+ympz(ip1)
-         endif
-        else
-         if (danm90.lt.1.0.or.danm270.lt.1.0) then
-          xxm=xmpz(im1)
-          sm2=tand(ampz(i))
-          yym=sm2*(xxm-xmpz(i))+ympz(i)
-         else
-          dampz1=abs(ampz(im1)-ampz(i))
-          dampz2=abs(dampz1-360.)
-          if (dampz1.lt.1.0.or.dampz2.lt.1.0) then
-           xxm=(xmpz(i)+xmpz(im1))/2.
-           yym=(ympz(i)+ympz(im1))/2.
+      if (xmp2(mb).gt.0.0) then
+       if (patmp2(mb).le.0.0) then
+        xmin=xmp2(mb)
+        xmax=xmin
+        ymin=ymp2(mb)
+        ymax=ymin
+        do i=mb,magpri67+magpri322
+          xmpz(i)=xmp2(i)
+          ympz(i)=ymp2(i)
+          xmin=min(xmin,xmp2(i))
+          xmax=max(xmax,xmp2(i))
+          ymin=min(ymin,ymp2(i))
+          ymax=max(ymax,ymp2(i))
+        enddo
+        xtest=(xmin+xmax)/2.
+        ytest=(ymin+ymax)/2.
+        nzz=0
+        call packps(xmpz(mb),ympz(mb),mbb,xtest,ytest,nzz)
+        do i=mb,magpri67+magpri322
+          do k=mb,magpri67+magpri322
+            if ((xmp2(k).eq.xmpz(i)).and.(ymp2(k).eq.ympz(i))) &
+             ampz(i)=amp2(k)
+          enddo
+        enddo
+        do i=mb,magpri67+magpri322
+          ip1=i+1
+          im1=i-1
+          if (i.eq.mb) im1=magpri67+magpri322
+          if (i.eq.magpri67+magpri322) ip1=mb
+          dang90=abs(abs(ampz(i))-90.)
+          dang270=abs(abs(ampz(i))-270.)
+          danm90=abs(abs(ampz(im1))-90.)
+          danm270=abs(abs(ampz(im1))-270.)
+          danp90=abs(abs(ampz(ip1))-90.)
+          danp270=abs(abs(ampz(ip1))-270.)
+          if (dang90.lt.1.0.or.dang270.lt.1.0) then
+           xxm=xmpz(i)
+           xxp=xmpz(i)
+           if (danm90.lt.1.0.or.danm270.lt.1.0) then
+            yym=(ympz(i)+ympz(im1))/2.
+           else
+            sm1=tand(ampz(im1))
+            yym=sm1*(xxm-xmpz(im1))+ympz(im1)
+           endif
+           if (danp90.lt.1.0.or.danp270.lt.1.0) then
+            yyp=(ympz(i)+ympz(ip1))/2.
+           else
+            sm2=tand(ampz(ip1))
+            yym=sm2*(xxm-xmpz(ip1))+ympz(ip1)
+           endif
           else
-           sm1=tand(ampz(im1))
-           sm2=tand(ampz(i))
-           xxm=(sm1*xmpz(im1)-sm2*xmpz(i)-ympz(im1)+ympz(i))/(sm1-sm2)
-           yym=sm1*(xxm-xmpz(im1))+ympz(im1)
+           if (danm90.lt.1.0.or.danm270.lt.1.0) then
+            xxm=xmpz(im1)
+            sm2=tand(ampz(i))
+            yym=sm2*(xxm-xmpz(i))+ympz(i)
+           else
+            dampz1=abs(ampz(im1)-ampz(i))
+            dampz2=abs(dampz1-360.)
+            if (dampz1.lt.1.0.or.dampz2.lt.1.0) then
+             xxm=(xmpz(i)+xmpz(im1))/2.
+             yym=(ympz(i)+ympz(im1))/2.
+            else
+             sm1=tand(ampz(im1))
+             sm2=tand(ampz(i))
+             xxm=(sm1*xmpz(im1)-sm2*xmpz(i)-ympz(im1)+ympz(i))/(sm1-sm2)
+             yym=sm1*(xxm-xmpz(im1))+ympz(im1)
+            endif
+           endif
+           if (danp90.lt.1.0.or.danp270.lt.1.0) then
+            xxp=xmpz(ip1)
+            sm1=tand(ampz(i))
+            yyp=sm1*(xxp-xmpz(i))+ympz(i)
+           else
+            dampz1=abs(ampz(ip1)-ampz(i))
+            dampz2=abs(dampz1-360.)
+            if (dampz1.lt.1.0.or.dampz2.lt.1.0) then
+             xxp=(xmpz(i)+xmpz(ip1))/2.
+             yyp=(ympz(i)+ympz(ip1))/2.
+            else
+             sm1=tand(ampz(i))
+             sm2=tand(ampz(ip1))
+             xxp=(sm1*xmpz(i)-sm2*xmpz(ip1)-ympz(i)+ympz(ip1))/(sm1-sm2)
+             yyp=sm1*(xxp-xmpz(i))+ympz(i)
+            endif
+           endif
           endif
-         endif
-         if (danp90.lt.1.0.or.danp270.lt.1.0) then
-          xxp=xmpz(ip1)
-          sm1=tand(ampz(i))
-          yyp=sm1*(xxp-xmpz(i))+ympz(i)
-         else
-          dampz1=abs(ampz(ip1)-ampz(i))
-          dampz2=abs(dampz1-360.)
-          if (dampz1.lt.1.0.or.dampz2.lt.1.0) then
-           xxp=(xmpz(i)+xmpz(ip1))/2.
-           yyp=(ympz(i)+ympz(ip1))/2.
-          else
-           sm1=tand(ampz(i))
-           sm2=tand(ampz(ip1))
-           xxp=(sm1*xmpz(i)-sm2*xmpz(ip1)-ympz(i)+ympz(ip1))/(sm1-sm2)
-           yyp=sm1*(xxp-xmpz(i))+ympz(i)
-          endif
-         endif
-        endif
-        patmpz(i)=sqrt((xxp-xxm)**2+(yyp-yym)**2)
-22320 continue
-      do 22330 i=mb,magpri67+magpri322
-        do 22330 k=mb,magpri67+magpri322
-          if ((xmpz(k).eq.xmp2(i)).and.(ympz(k).eq.ymp2(i))) &
-           patmp2(i)=patmpz(k)
-22330 continue
+          patmpz(i)=sqrt((xxp-xxm)**2+(yyp-yym)**2)
+        enddo
+        do i=mb,magpri67+magpri322
+          do k=mb,magpri67+magpri322
+            if ((xmpz(k).eq.xmp2(i)).and.(ympz(k).eq.ymp2(i))) &
+             patmp2(i)=patmpz(k)
+          enddo
+        enddo
 !
-      open(unit=80,status='old',file='dprobe.new',err=12914)
-      close(unit=80,status='delete')
-12914 continue
-      open(unit=80,status='new',file='dprobe.new',delim='quote')
-      write (80,in3)
-      close(unit=80)
-22340 continue
+        open(unit=80,status='old',file='dprobe.new',iostat=ioerr)
+        if (ioerr.eq.0) close(unit=80,status='delete')
+        open(unit=80,status='new',file='dprobe.new',delim='quote')
+        write (80,in3)
+        close(unit=80)
+       endif
 !
-      cipmp3=0.0
-      do 22350 i=magpri67+1,magpri67+magpri322
-        cipmp3=cipmp3+cmpr2(i,it)*patmp2(i)
-22350 continue
-      cipmp3=cipmp3/tmu/twopi
-22360 continue
-!
-      if (.not.fitsiref) then
-      ssiref=csilop(iabs(nslref),it)
-      do 363 i=1,nsilop
-        workb_jw4(i)=csilop(i,it)-ssiref
-  363 continue
-      else
-      ssiref=0.0
-      do i=1,nsilop
-        workb_jw4(i)=csilop(i,it)+csiref
-      enddo
+       cipmp3=0.0
+       do i=magpri67+1,magpri67+magpri322
+         cipmp3=cipmp3+cmpr2(i,it)*patmp2(i)
+       enddo
+       cipmp3=cipmp3/tmu/twopi
       endif
 !
-      if (iand(iout,1).ne.0) then  ! go to 850
+      if (.not.fitsiref) then
+       ssiref=csilop(iabs(nslref),it)
+       do i=1,nsilop
+         workb_jw4(i)=csilop(i,it)-ssiref
+       enddo
+      else
+       ssiref=0.0
+       do i=1,nsilop
+         workb_jw4(i)=csilop(i,it)+csiref
+       enddo
+      endif
+!
+      if (iand(iout,1).ne.0) then
 !
         write (nout,11100) ssiref
         write (nout,11020) (workb_jw4(i),i=1,nsilop)
@@ -460,17 +463,16 @@
         write (nout,11294)
         write (nout,11020) (eccurt(it,i),i=1,nesum)
 !
-      if (abs(sigdia(it)).le.1.0e-08) go to 520
-      write (nout,11300) chidlc
-  520 continue
-      if (iconvr.ne.3) go to 540
-      write (nout,11320) emf,emp,enf,enp,betap0,rzero
-      write (nout,11330) cbetap,cli,cqqxis,cbetat,ci0
-  540 continue
-      if (nbdry.le.0) go to 544
-      write (nout,11324) erbmax,erbave
-      write (nout,11326) (erbloc(i),i=1,nbdry)
-  544 continue
+      if (abs(sigdia(it)).gt.1.0e-08) &
+        write (nout,11300) chidlc
+      if (iconvr.eq.3) then
+        write (nout,11320) emf,emp,enf,enp,betap0,rzero
+        write (nout,11330) cbetap,cli,cqqxis,cbetat,ci0
+      endif
+      if (nbdry.gt.0) then
+        write (nout,11324) erbmax,erbave
+        write (nout,11326) (erbloc(i),i=1,nbdry)
+      endif
 !
       if (kvtor.gt.0) then
         write (nout,13000)
@@ -478,27 +480,26 @@
       endif
 !
       write (nout,12000)
-      do 600 i=1,nitera
+      do i=1,nitera
         write (nout,12020) i,cerror(i),csibry(i),csimag(i),cvolp(i), &
                   crmaxi(i),czmaxi(i),cemaxi(i),cqmaxi(i),cchisq(i)
-  600 continue
+      enddo
       if ((kwripre.gt.0).and.(kwripre.le.9)) then
           call getfnmd('n',ishot,itime,sfname)
           sfname=sfname(1:13)//'_error'
-          open(unit=74,status='old',file=sfname,err=12918)
-          close(unit=74,status='delete')
-12918     continue
-          open(unit=74,status='new',file=sfname                       )
+          open(unit=74,status='old',file=sfname,iostat=ioerr)
+          if (ioerr.eq.0) close(unit=74,status='delete')
+          open(unit=74,status='new',file=sfname)
           do i=1,nitera
            write (74,*) i,cerror(i),xdum,xdum
           enddo
           close(unit=74)
       endif
       write (nout,12010)
-      do 620 i=1,nitera
+      do i=1,nitera
         write (nout,12025) i,aveerr(i),csumip(i),tratio(i),iermax(i), &
                   jermax(i)
-  620 continue
+      enddo
 !
       if ((kecebz.gt.0).or.(kece.gt.0)) then
         write (nout,12015)
@@ -513,20 +514,19 @@
 !
       dsi=1.0_dp/(nw-1)
       write (nout,12040)
-      do 700 i=1,nw
+      do i=1,nw
         sinow=dsi*(i-1)
         write (nout,12020) i,sinow,volp(i),pprime(i),curmid(i),ffprim(i) &
                 ,pres(i),fpol(i),qpsi(i),rpres(i)
-  700 continue
+      enddo
 !
       write (nout,12043)
-      do 800 i=1,nw
+      do i=1,nw
         sinow=dsi*(i-1)
         write (nout,12020) i,sinow,cjor(i)
-  800 continue
+      enddo
 !
       endif
-  850 continue
       return
  9300 format (/,4x,'   data used:   ')
  9320 format (1x,i2,' flux loops')
@@ -654,12 +654,11 @@
       subroutine prtoutheader()
       include 'modules1.inc'
 
-      if (itek.gt.0) go to 100
-
-      if (rank == 0) then
-        write (nttyo,10000) trim(ch1),trim(ch2)
+      if (itek.le.0) then
+        if (rank == 0) then
+          write (nttyo,10000) trim(ch1),trim(ch2)
+        end if
       end if
-100 continue
 
       if (iand(iout,1).ne.0) then ! if iout is odd
         write (nout,10000) trim(ch1),trim(ch2)

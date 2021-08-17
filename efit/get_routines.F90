@@ -12,32 +12,33 @@
 !      include 'ecomdu2.f90'
       dimension bwork(ndata),cwork(ndata),dwork(ndata)
 !
-      if (nbeam.lt.0) go to 2000
+      if (nbeam.lt.0) return
 !-----------------------------------------------------------------
-!--  interpolate beam pressure into Thomson grid                --
+!--   interpolate beam pressure into Thomson grid               --
 !-----------------------------------------------------------------
       call zpline(nbeam,sibeam,pbeam,bwork,cwork,dwork)
-      do 3000 i=1,npress
+      do i=1,npress
         xn=-rpress(i)
         pbimth(i)=seval(nbeam,xn,sibeam,pbeam,bwork,cwork,dwork)
- 3000 continue
+      enddo
       pbeamb=seval(nbeam,x111,sibeam,pbeam,bwork,cwork,dwork)
       pbimpb=speval(nbeam,x111,sibeam,pbeam,bwork,cwork,dwork)
 !-----------------------------------------------------------------
-!--  interpolate beam ion density into Thomson grid             --
+!--   interpolate beam ion density into Thomson grid            --
 !-----------------------------------------------------------------
       call zpline(nbeam,sibeam,dnbeam,bwork,cwork,dwork)
-      do 4000 i=1,npress
+      do i=1,npress
         xn=-rpress(i)
         dnbthom(i)=seval(nbeam,xn,sibeam,dnbeam,bwork,cwork,dwork)
- 4000 continue
+      enddo
       return
- 2000 continue
 !------------------------------------------------------------------
-!--  compute beam pressure analytically                          --
+!--   compute beam pressure analytically                         --
 !------------------------------------------------------------------
       return
       end subroutine getbeam
+
+      
 !**********************************************************************
 !>
 !!    geteceb obtains the receo, R+ R-
@@ -71,7 +72,7 @@
 
       kerror = 0
 !-------------------------------------------------------------------
-      ALLOCATE(rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
+      allocate(rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
          bout(kbre,nw),babs(kbre,nw),bbb(nw),ccc(nw), &
          ddd(nw),btttt(nw),dsidr(nw),ddsiddr(nw),bx(nw), &
          ry(nw),bbk(nw),dbdr(nw))
@@ -96,18 +97,18 @@
        enddo
       enddo
 !-------------------------------------------------------------------
-!--     input kgeteceb=0 from input file
+!--   input kgeteceb=0 from input file
 !-------------------------------------------------------------------
-      if (kgeteceb.gt.0) go to 539
+      if (kgeteceb.le.0) then
       kgeteceb=kgeteceb+1
 !---------------------------------------------------------------------
-!--  Calculation of |B| array from fe array ( harmonic nharm)       --
+!--   Calculation of |B| array from fe array ( harmonic nharm)      --
 !--     becein(necein),   fe(GHz),|B|(T)                            --
 !--     !!! becein  from Low field to high field !!!                --
 !---------------------------------------------------------------------
-      do 500 k=1,necein
-      becein(k)=0.001_dp*6.0*9.1095_dp*pi/4.8032_dp*feece0(k)/nharm
-500   continue
+      do k=1,necein
+        becein(k)=0.001_dp*6.0*9.1095_dp*pi/4.8032_dp*feece0(k)/nharm
+      enddo
 !EALW      write(*,*)'becein'
 !EALW      write(*,*)becein
 !--------------------------------------------------------------------
@@ -124,21 +125,21 @@
         an(i)=(becein(i)-b00)/baa
         tebit(i)=max(errorece0(i),1.e-4_dp)
       enddo
-      do 1110 nj=1,necein
-      do 1100 nk=1,nfit
-      if (nk.eq.1) then
-        arspfit(nj,nk)=1./tebit(nj)
-      else
-        arspfit(nj,nk)=an(nj)**(nk-1)/tebit(nj)
-      endif
-1100   continue
-1110   continue
+      do nj=1,necein
+        do nk=1,nfit
+          if (nk.eq.1) then
+            arspfit(nj,nk)=1./tebit(nj)
+          else
+            arspfit(nj,nk)=an(nj)**(nk-1)/tebit(nj)
+          endif
+        enddo
+      enddo
 !---------------------------------------------------------------------
 !--   teecein0,errorece0  from low field to high field
 !---------------------------------------------------------------------
-      do 1200 nj=1,necein
-      brspfit(nj)=teecein0(nj)/tebit(nj)
-1200   continue
+      do nj=1,necein
+        brspfit(nj)=teecein0(nj)/tebit(nj)
+      enddo
 !
       mnow=necein
       if (kcmin.gt.0) then
@@ -166,181 +167,180 @@
         return
       end if
       toler=1.0e-06_dp*s(1)
-      DO 2010 I = 1,nfit
-            T = 0.0
-            IF (S(I).gt.toler) T = Brspfit(I)/S(I)
-            Brspfit(I) = T
-2010    CONTINUE
-2015    DO 2025 I = 1, Nfit
-            X(I) = 0.0
-            DO 2020 J = 1,nfit
-2020                X(I) = X(I) + Arspfit(I,J)*Brspfit(J)
-2025    CONTINUE
+      do I = 1,nfit
+        T = 0.0
+        if (S(I).gt.toler) T = Brspfit(I)/S(I)
+        Brspfit(I) = T
+      enddo
+      do I = 1, Nfit
+        X(I) = 0.0
+        do J = 1,nfit
+          X(I) = X(I) + Arspfit(I,J)*Brspfit(J)
+        enddo
+      enddo
       do k=1,nfit
-      xfit(k)=x(k)
+        xfit(k)=x(k)
       enddo
 !EALW      write(*,*)'x'
 !EALW      write(*,*)x
       chisqfit=0.0
-      do 2400 k=1,necein
-      tte(k)=0.
-      do 2500 nk=1,nfit
-      tte(k)=tte(k)+x(nk)*an(k)**(nk-1)
-2500   continue
-      chisqfit=chisqfit+(tte(k)-teecein0(k))**2/tebit(k)
-2400   continue
+      do k=1,necein
+        tte(k)=0.
+        do nk=1,nfit
+          tte(k)=tte(k)+x(nk)*an(k)**(nk-1)
+        enddo
+        chisqfit=chisqfit+(tte(k)-teecein0(k))**2/tebit(k)
+      enddo
 !EALW      write(*,*) 'chisqfit='
 !EALW      write(*,*) chisqfit
 !EALW      write(*,*)'tte'
 !EALW      write(*,*)tte
 !--------------------------------------------------------------------
-!--  get Teeceb(bbf) in ECE data region, (Te(B)), bbf-B            --
+!--   get Teeceb(bbf) in ECE data region, (Te(B)), bbf-B           --
 !--------------------------------------------------------------------
       dbbf=(becein(necein)-becein(1))/(nnnte-1)
-      do 3016 i=1,nnnte
-          bbf(i)=becein(1)+dbbf*(i-1)
-          bbx=(bbf(i)-b00)/baa
-          teeceb(i)=0.
-      do 3012 nk=1,nfit
-         teeceb(i)=teeceb(i)+x(nk)*bbx**(nk-1)
-3012  continue
-3016  continue
+      do i=1,nnnte
+        bbf(i)=becein(1)+dbbf*(i-1)
+        bbx=(bbf(i)-b00)/baa
+        teeceb(i)=0.
+        do nk=1,nfit
+          teeceb(i)=teeceb(i)+x(nk)*bbx**(nk-1)
+        enddo
+      enddo
 !---------------------------------------------------------------------
-!--   find  beceo which is the B value of Te peak point             --
+!--   find beceo which is the B value of Te peak point             --
 !---------------------------------------------------------------------
-      if (kfixro.eq.1) go to 3019
+      if (kfixro.ne.1) then
         teeceo=teeceb(1)
         iio=1
-        do 3018 i=2,nnnte
+        do i=2,nnnte
           if (teeceb(i).gt.teeceo) then
              iio=i
              teeceo=teeceb(i)
           endif
-3018    continue
-         beceo=bbf(iio)
+        enddo
+        beceo=bbf(iio)
 !EALW           write(*,*) 'find beceo, iio,bbf(iio),teeceo'
 !EALW           write(*,*) iio,bbf(iio),teeceo
 !EALW        write(*,*)'beceo'
 !EALW        write(*,*)beceo
 !--------------------------------------------------------------------
-!--    find becein(idesto), it close to beceo                      --
+!--     find becein(idesto), it close to beceo                     --
 !--       dTe on beceo from tebit(idesto)                          --
 !--------------------------------------------------------------------
         desto=abs(beceo-becein(1))
         idesto=1
         do i=2,necein
-        if (abs(beceo-becein(i)).lt.desto) then
-        desto=abs(beceo-becein(i))
-        idesto=i
-        endif
+          if (abs(beceo-becein(i)).lt.desto) then
+            desto=abs(beceo-becein(i))
+            idesto=i
+          endif
         enddo
 !EALW        write(*,*)'idesto'
 !EALW        write(*,*)idesto
 !--------------------------------------------------------------------
-!--    get bobit=dB=sqrt(dTe/Te'')                                 --
-!--    Te''-- (d2Te/dB2) at beceo--ppteppbo, dTe=tebit(idesto)     --
+!--     get bobit=dB=sqrt(dTe/Te'')                                --
+!--     Te''-- (d2Te/dB2) at beceo--ppteppbo, dTe=tebit(idesto)    --
 !--------------------------------------------------------------------
-         bbx1=(bbf(iio+1)-b00)/baa
-         bbx2=(bbf(iio-1)-b00)/baa
-         ptpr1=0.
-         ptpr2=0.
+        bbx1=(bbf(iio+1)-b00)/baa
+        bbx2=(bbf(iio-1)-b00)/baa
+        ptpr1=0.
+        ptpr2=0.
         do nk=2,nfit
            ptpr1=ptpr1+x(nk)*bbx1**(nk-2)
            ptpr2=ptpr2+x(nk)*bbx2**(nk-2)
         enddo
-          ptpr1=ptpr1/baa
-          ptpr2=ptpr2/baa
+        ptpr1=ptpr1/baa
+        ptpr2=ptpr2/baa
         ppteppbo=abs(0.5_dp*(ptpr1-ptpr2)/dbbf)
         dtero=abs(tebit(idesto))
         bobit=sqrt(dtero/ppteppbo)
 !EALW        write(*,*)'bobit'
 !EALW        write(*,*)bobit
+      endif ! kfixro.ne.1
 !---------------------------------------------------------------------
-!-- take B+ (becep) from becein>beceo and get B- (becem)            --
-!-- find nece (the number of B+)                                    --
-!--   B+, B- from centre to edge                                    --
+!--   take B+ (becep) from becein>beceo and get B- (becem)          --
+!--   find nece (the number of B+)                                  --
+!--       B+, B- from centre to edge                                --
 !---------------------------------------------------------------------
-3019    continue
-      if ((kfitece.eq.1).or.(kfixrece.eq.1)) go to 3069
-        ii=0
-        do k=1,necein
-          if ((beceo-becein(k)).lt.0.) then
-              ii=ii+1
-              becep(ii)=becein(k)
-          endif
+      if ((kfitece.ne.1).and.(kfixrece.ne.1)) then
+      ii=0
+      do k=1,necein
+        if ((beceo-becein(k)).lt.0.) then
+            ii=ii+1
+            becep(ii)=becein(k)
+        endif
+      enddo
+      nece=ii
+      do k=1,nece
+        bbx=(becep(k)-b00)/baa
+        teece(k)=0.
+        do nk=1,nfit
+          teece(k)=teece(k)+x(nk)*bbx**(nk-1)
         enddo
-        nece=ii
-        do k=1,nece
-           bbx=(becep(k)-b00)/baa
-           teece(k)=0.
-          do 3020 nk=1,nfit
-             teece(k)=teece(k)+x(nk)*bbx**(nk-1)
-3020      continue
-        enddo
+      enddo
 !
-        ii=0
-        do 3025 i=1,nnnte
-         if (bbf(i).lt.beceo) then
+      ii=0
+      do i=1,nnnte
+        if (bbf(i).lt.beceo) then
           ii=ii+1
           blowf(ii)=bbf(i)
           telowf(ii)=teeceb(i)
-         endif
-3025    continue
+        endif
+      enddo
 !
-        nlowf=ii
-        call zpline(nlowf,telowf,blowf,bb,cc,dd)
-        do 3028 k=1,nece
-          becem(k)=seval(nlowf,teece(k),telowf,blowf,bb,cc,dd)
-         if ((becem(k).ge.becein(1)).and.(becem(k).lt.beceo)) &
-           go to 3028
-         fwtece0(k)=0.0
-         becem(k)=1.E-6_dp
-3028    continue
+      nlowf=ii
+      call zpline(nlowf,telowf,blowf,bb,cc,dd)
+      do k=1,nece
+        becem(k)=seval(nlowf,teece(k),telowf,blowf,bb,cc,dd)
+        if ((becem(k).ge.becein(1)).and.(becem(k).lt.beceo)) &
+          cycle
+        fwtece0(k)=0.0
+        becem(k)=1.E-6_dp
+      enddo
 !--------------------------------------------------------------------
 !--   idestm(nece)- the point becein(idestm) close to B-(nece)
-!---------------------------------------------------------------------
+!--------------------------------------------------------------------
 !
-       do k=1,nece
+      do k=1,nece
         dest=abs(becem(k)-becein(1))
-          idestm(k)=1
-          do i=2,necein
-           if (abs(becem(k)-becein(i)).lt.dest) then
+        idestm(k)=1
+        do i=2,necein
+          if (abs(becem(k)-becein(i)).lt.dest) then
             dest=abs(becem(k)-becein(i))
             idestm(k)=i
-           endif
-          enddo
-       enddo
+          endif
+        enddo
+      enddo
 !---------------------------------------------------------------------
-!--  iteration from 539, before 539 only once calculated            --
-!--  Calculation of |B| on rgrid (z=zeceo)   bfield(nw)             --
+!--   Calculation of |B| on rgrid (z=zeceo)   bfield(nw)            --
 !---------------------------------------------------------------------
- 539  continue
-      if (icurrt.ne.1) go to 540
-      ffprim(1)=cratio*srma*2.*salpha/darea*twopi*tmu
-      ffprim(nw)=ffprim(1)
-  540 continue
-      if (icurrt.ne.2.and.icurrt.ne.5) go to 550
-      ffprim(nw)=fpcurr(x111,kffcur)/darea*twopi*tmu
-      ffprim(1)=fpcurr(x000,kffcur)/darea*twopi*tmu
-  550 continue
-      if (icurrt.ne.4) go to 600
-      call currnt(n222,jtime,n222,n222,kerror)
-      if (kerror.gt.0) return
-      ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
-      ffprim(nw)=ffprim(1)*gammaf
-  600 continue
-      do 699 i=2,nw-1
+      endif ! kgeteceb.le.0
+      if (icurrt.eq.1) then
+        ffprim(1)=cratio*srma*2.*salpha/darea*twopi*tmu
+        ffprim(nw)=ffprim(1)
+      endif
+      if (icurrt.ne.2.and.icurrt.ne.5) then
+        ffprim(nw)=fpcurr(x111,kffcur)/darea*twopi*tmu
+        ffprim(1)=fpcurr(x000,kffcur)/darea*twopi*tmu
+      endif
+      if (icurrt.eq.4) then
+        call currnt(n222,jtime,n222,n222,kerror)
+        if (kerror.gt.0) return
+        ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
+        ffprim(nw)=ffprim(1)*gammaf
+      endif
+      do i=2,nw-1
       siii=sigrid(i)
-        if (icurrt.ne.2.and.icurrt.ne.5) go to 692
-        ffprim(i)=fpcurr(siii,kffcur)/darea*twopi*tmu
-  692   continue
-        if (icurrt.ne.4) go to 694
-        ffprim(i)=ffprim(1)*(1.-siii**enp)**emp*(1.-gammap)+gammap
-  694   continue
-        if (icurrt.ne.1) go to 696
-        ffprim(i)=ffprim(1)
-  696   continue
-  699 continue
+        select case (icurrt)
+        case (2,5)
+          ffprim(i)=fpcurr(siii,kffcur)/darea*twopi*tmu
+        case (4)
+          ffprim(i)=ffprim(1)*(1.-siii**enp)**emp*(1.-gammap)+gammap
+        case (1)
+          ffprim(i)=ffprim(1)
+        end select
+      enddo
       fpol(nw)=fbrdy*tmu
 !EALW      write(*,*)'fpol(nw)'
 !EALW      write(*,*)fpol(nw)
@@ -350,100 +350,100 @@
 !EALW      write(*,*)'simag'
 !EALW      write(*,*)simag
       delsi=-(psibry-simag)/(nw-1)
-      do 700 i=1,nw-1
+      do i=1,nw-1
         sumf=sumf+0.5_dp*delsi*(ffprim(nw-i+1)+ffprim(nw-i))
         if(sumf .ge. 0.0) then
           fpol(nw-i)=sqrt(2.*sumf)*fpol(nw)/abs(fpol(nw))
         else
           fpol(nw-i)=fpol(nw)
         endif
- 700  continue
+      enddo
 !EALW      write(*,*)'fpol'
 !EALW      write(*,*)fpol
 !EALW      write(*,*)'sigrid'
 !EALW      write(*,*)sigrid
       call zpline(nw,sigrid,fpol,bbb,ccc,ddd)
-      do 702 iw=1,nw
-            kk=(iw-1)*nh+jo
-            if (xpsi(kk).gt.1.0.or.ivacum.gt.0) then
-            fnow=fbrdy*tmu
+      do iw=1,nw
+        kk=(iw-1)*nh+jo
+        if (xpsi(kk).gt.1.0.or.ivacum.gt.0) then
+          fnow=fbrdy*tmu
 !EALW            write(*,*)'iw, fnow'
 !EALW            write(*,*)iw,fnow
-            else
-            fnow=seval(nw,xpsi(kk),sigrid,fpol,bbb,ccc,ddd)
+        else
+          fnow=seval(nw,xpsi(kk),sigrid,fpol,bbb,ccc,ddd)
 !EALW            write(*,*)'iw, xpsi(kk),fnow'
 !EALW            write(*,*)iw, xpsi(kk),fnow
-            endif
-            btttt(iw)=fnow/rgrid(iw)
-702   continue
-           ier = 0
+        endif
+        btttt(iw)=fnow/rgrid(iw)
+      enddo
+      ier = 0
       call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
-         do 708 iw=1,nw
-            rw=rgrid(iw)
-            rh=zgrid(jo)
-            kk=(iw-1)*nh+jo
-            call seva2d(bkx,lkx,bky,lky,c,rw,rh,pds,ier,n555)
-            if (ier.eq.0) go to 706
-            write (nttyo,9910) ier,rw,rh
+      do iw=1,nw
+        rw=rgrid(iw)
+        rh=zgrid(jo)
+        kk=(iw-1)*nh+jo
+        call seva2d(bkx,lkx,bky,lky,c,rw,rh,pds,ier,n555)
+        if (ier.ne.0) then
+          write (nttyo,9910) ier,rw,rh
 !EALW            write(*,*) 'ier,rw,rh'
 !EALW            write(*,*) ier,rw,rh
-            return
- 706      continue
-            bfield(iw)=sqrt(pds(2)**2+pds(3)**2)/rgrid(iw)
-            dsidr(iw)=pds(2)
-            ddsiddr(iw)=pds(5)
-            bfield(iw)=sqrt(bfield(iw)**2+btttt(iw)**2)
- 708   continue
+          return
+        endif
+        bfield(iw)=sqrt(pds(2)**2+pds(3)**2)/rgrid(iw)
+        dsidr(iw)=pds(2)
+        ddsiddr(iw)=pds(5)
+        bfield(iw)=sqrt(bfield(iw)**2+btttt(iw)**2)
+      enddo
 !EALW       write(*,*)'bfield'
 !EALW       write(*,*)bfield
  9910 format('  error in spline =',i4,' (r,z)= ( ',f5.2,',',f5.2,')')
 !--------------------------------------------------------------------
-!--     get d|B|/dr on rgrid
+!--   get d|B|/dr on rgrid
 !--------------------------------------------------------------------
-       do i=2,nw-1
-          dbdr(i)=(bfield(i+1)-bfield(i-1))/(rgrid(i+1)-rgrid(i-1))
-       enddo
-       dbdr(1)=(bfield(2)-bfield(1))/(rgrid(2)-rgrid(1))
-       dbdr(nw)=(bfield(nw)-bfield(nw-1))/(rgrid(nw)-rgrid(nw-1))
+      do i=2,nw-1
+        dbdr(i)=(bfield(i+1)-bfield(i-1))/(rgrid(i+1)-rgrid(i-1))
+      enddo
+      dbdr(1)=(bfield(2)-bfield(1))/(rgrid(2)-rgrid(1))
+      dbdr(nw)=(bfield(nw)-bfield(nw-1))/(rgrid(nw)-rgrid(nw-1))
 !--------------------------------------------------------------------
 !--   find the number of bmink and bmaxk (local min and max)
 !--------------------------------------------------------------------
       kmin=0
       kmax=0
       do k=2,nw-1
-         if((bfield(k).lt.bfield(k+1)).and.(bfield(k).lt.bfield &
-                (k-1))) then
+         if ((bfield(k).lt.bfield(k+1)).and. &
+             (bfield(k).lt.bfield(k-1))) then
             kmin=kmin+1
             bmink(kmin)=bfield(k)
          endif
-         if((bfield(k).gt.bfield(k+1)).and.(bfield(k).gt.bfield &
-                 (k-1))) then
+         if ((bfield(k).gt.bfield(k+1)).and. &
+             (bfield(k).gt.bfield(k-1))) then
             kmax=kmax+1
             bmaxk(kmax)=bfield(k)
          endif
       enddo
       if (kmin.eq.(kmax+1)) then
-           kmax=kmax+1
-           bmaxk(kmax)=bfield(nw)
+         kmax=kmax+1
+         bmaxk(kmax)=bfield(nw)
       endif
       if (kmin.eq.(kmax-1)) then
-           kmin=kmin+1
-           bmink(1)=bfield(1)
-           do k=2,kmin
-             bbk(k)=bmink(k-1)
-           enddo
-           do k=2,kmin
-             bmink(k)=bbk(k)
-           enddo
+         kmin=kmin+1
+         bmink(1)=bfield(1)
+         do k=2,kmin
+            bbk(k)=bmink(k-1)
+         enddo
+         do k=2,kmin
+            bmink(k)=bbk(k)
+         enddo
       endif
 !
-      if (kmax.eq.0) go to 1012
+      if (kmax.ne.0) then
 !
 !--------------------------------------------------------------------
 !--   get babsk array (kmax+1) is strictly increasing order
 !--------------------------------------------------------------------
       do k=1,kmax
-        if(bmaxk(k).lt.bmink(k)) then
+        if (bmaxk(k).lt.bmink(k)) then
           kerror = 1
           call errctrl_msg('geteceb','bmax < bmin')
           return
@@ -460,14 +460,14 @@
       enddo
       nnout(1)=iout1
       do k=2,kmax
-          ioutk=0
+        ioutk=0
         do i=1,nw
-         if((bfield(i).gt.bmaxk(k)).and.(bfield(i).lt.bmink &
-             (k-1))) then
-          ioutk=ioutk+1
-          bout(k,ioutk)=bfield(i)
-          rrout(k,ioutk)=rgrid(i)
-         endif
+          if ((bfield(i).gt.bmaxk(k)).and. &
+              (bfield(i).lt.bmink(k-1))) then
+            ioutk=ioutk+1
+            bout(k,ioutk)=bfield(i)
+            rrout(k,ioutk)=rgrid(i)
+          endif
         enddo
         nnout(k)=ioutk
       enddo
@@ -477,17 +477,17 @@
           ioutk1=ioutk1+1
           bout(kmax+1,ioutk1)=bfield(i)
           rrout(kmax+1,ioutk1)=rgrid(i)
-         endif    
-       enddo
-        nnout(kmax+1)=ioutk1
+        endif    
+      enddo
+      nnout(kmax+1)=ioutk1
 !
       do k=1,kmax+1
         if (nnout(k).gt.3) then
-         n=nnout(k)
-         do i=1,n
-           babs(k,i)=bout(k,n-i+1)
-           rrgrid(k,i)=rrout(k,n-i+1)
-         enddo
+          n=nnout(k)
+          do i=1,n
+            babs(k,i)=bout(k,n-i+1)
+            rrgrid(k,i)=rrout(k,n-i+1)
+          enddo
         endif
       enddo
 !EALW       write(*,*)'kmax,kmin'
@@ -498,105 +498,105 @@
 !EALW       write(*,*)nnout
 !EALW       write(*,*) 'babs, rrgrid'
       do k=1,kmax+1
-       n=nnout(k)
-       do i=1,n
+        n=nnout(k)
+!EALW       do i=1,n
 !EALW         write(*,*) babs(k,i)
 !EALW         write(*,*)rrgrid(k,i)
-       enddo
+!EALW       enddo
       enddo
 !-------------------------------------------------------------------
 !--   get R-,R+,Ro  where |B| = B+,B-,Bo                          --
 !-------------------------------------------------------------------
       do m=1,nece
-          recem(m)=1.E-6_dp
-          recep(m)=1.E-6_dp
+        recem(m)=1.E-6_dp
+        recep(m)=1.E-6_dp
       enddo
       receo=1.e-6_dp
 !
       if (nnout(1).gt.3) then
         n=nnout(1)
         do i=1,n
-             bx(i)=babs(1,i)
-             ry(i)=rrgrid(1,i)
+          bx(i)=babs(1,i)
+          ry(i)=rrgrid(1,i)
         enddo
         call zpline(n,bx,ry,bbb,ccc,ddd)
 !
         if (beceo.ge.bmaxk(1)) then
-           receo=seval(n,beceo,bx,ry,bbb,ccc,ddd)
+          receo=seval(n,beceo,bx,ry,bbb,ccc,ddd)
         endif
         do m=1,nece
-         if (becep(m).ge.bmaxk(1)) then
-          recem(m)=seval(n,becep(m),bx,ry,bbb,ccc,ddd)
-         endif
-         if (becem(m).ge.bmaxk(1)) then
-          recep(m)=seval(n,becem(m),bx,ry,bbb,ccc,ddd)
-         endif
+          if (becep(m).ge.bmaxk(1)) then
+            recem(m)=seval(n,becep(m),bx,ry,bbb,ccc,ddd)
+          endif
+          if (becem(m).ge.bmaxk(1)) then
+            recep(m)=seval(n,becem(m),bx,ry,bbb,ccc,ddd)
+          endif
         enddo
       endif
 !
       do k=2,kmax
-       if (nnout(k).gt.3) then
-         n=nnout(k)
-         do i=1,n
-             bx(i)=babs(k,i)
-             ry(i)=rrgrid(k,i)
-         enddo
-         call zpline(n,bx,ry,bbb,ccc,ddd)
-        if ((beceo.ge.bmaxk(k)).and.(beceo.le.bmink(k-1))) then
-           receo=seval(n,beceo,bx,ry,bbb,ccc,ddd)
+        if (nnout(k).gt.3) then
+          n=nnout(k)
+          do i=1,n
+            bx(i)=babs(k,i)
+            ry(i)=rrgrid(k,i)
+          enddo
+          call zpline(n,bx,ry,bbb,ccc,ddd)
+          if ((beceo.ge.bmaxk(k)).and.(beceo.le.bmink(k-1))) then
+            receo=seval(n,beceo,bx,ry,bbb,ccc,ddd)
+          endif
+          do m=1,nece
+            if ((becep(m).ge.bmaxk(k)).and.(becep(m).le.bmink(k-1))) then
+              recem(m)=seval(n,becep(m),bx,ry,bbb,ccc,ddd)
+            endif
+            if ((becem(m).ge.bmaxk(k)).and.(becem(m).le.bmink(k-1))) then
+              recep(m)=seval(n,becem(m),bx,ry,bbb,ccc,ddd)
+            endif
+          enddo
         endif
-        do m=1,nece
-         if((becep(m).ge.bmaxk(k)).and.(becep(m).le.bmink(k-1)))then
-          recem(m)=seval(n,becep(m),bx,ry,bbb,ccc,ddd)
-         endif
-         if((becem(m).ge.bmaxk(k)).and.(becem(m).le.bmink(k-1)))then
-          recep(m)=seval(n,becem(m),bx,ry,bbb,ccc,ddd)
-         endif
-        enddo
-       endif
       enddo
 !
-        if (nnout(kmax+1).gt.3) then
-         n=nnout(kmax+1)
-         do i=1,n
-             bx(i)=babs(kmax+1,i)
-             ry(i)=rrgrid(kmax+1,i)
-         enddo
-         call zpline(n,bx,ry,bbb,ccc,ddd)
+      if (nnout(kmax+1).gt.3) then
+        n=nnout(kmax+1)
+        do i=1,n
+          bx(i)=babs(kmax+1,i)
+          ry(i)=rrgrid(kmax+1,i)
+        enddo
+        call zpline(n,bx,ry,bbb,ccc,ddd)
         if (beceo.le.bmink(kmax)) then
            receo=seval(n,beceo,bx,ry,bbb,ccc,ddd)
         endif
-         do m=1,nece
-           if(becep(m).le.bmink(kmax))then
-             recem(m)=seval(n,becep(m),bx,ry,bbb,ccc,ddd)
-           endif
-           if(becem(m).le.bmink(kmax))then
-             recep(m)=seval(n,becem(m),bx,ry,bbb,ccc,ddd)
-           endif
-         enddo
-        endif
+        do m=1,nece
+          if (becep(m).le.bmink(kmax)) then
+            recem(m)=seval(n,becep(m),bx,ry,bbb,ccc,ddd)
+          endif
+          if (becem(m).le.bmink(kmax)) then
+            recep(m)=seval(n,becem(m),bx,ry,bbb,ccc,ddd)
+          endif
+        enddo
+      endif
 !
       do m=1,nece
-          if((recep(m).lt.1.E-5_dp).or.(recem(m).lt.1.E-5_dp)) then
-            fwtece0(m)=0.0
-            recep(m)=1.0E-6_dp
-            recem(m)=1.0E-6_dp
-          endif
+        if ((recep(m).lt.1.E-5_dp).or.(recem(m).lt.1.E-5_dp)) then
+          fwtece0(m)=0.0
+          recep(m)=1.0E-6_dp
+          recem(m)=1.0E-6_dp
+        endif
       enddo
       if (receo.lt.1.E-5_dp) fwtecebz0=0.0
-      go to 1015
 !
-1012  do i=1,nw
-          bx(i)=bfield(nw-i+1)
-          ry(i)=rgrid(nw-i+1)
+      else ! kmax.eq.0
+      do i=1,nw
+        bx(i)=bfield(nw-i+1)
+        ry(i)=rgrid(nw-i+1)
       enddo
       call zpline(nw,bx,ry,bbb,ccc,ddd)
-       do m=1,nece
-         recep(m)=seval(nw,becem(m),bx,ry,bbb,ccc,ddd)
-         recem(m)=seval(nw,becep(m),bx,ry,bbb,ccc,ddd)
+      do m=1,nece
+        recep(m)=seval(nw,becem(m),bx,ry,bbb,ccc,ddd)
+        recem(m)=seval(nw,becep(m),bx,ry,bbb,ccc,ddd)
       enddo
       receo=seval(nw,beceo,bx,ry,bbb,ccc,ddd)
-1015    continue
+      endif ! kmax.eq.0
 !EALW      write(*,*)'recem'
 !EALW      write(*,*)recem
 !EALW      write(*,*)'recep'
@@ -609,73 +609,75 @@
 !--   get dB/dr at receo (dbdro) and recep,recem (dbdrp,dbdrm)
 !------------------------------------------------------------------
       call zpline(nw,rgrid,dbdr,bbb,ccc,ddd)
-         if (fwtecebz0.gt.1.e-6_dp) then
-                 dbdro=seval(nw,receo,rgrid,dbdr,bbb,ccc,ddd)
-         endif
-         do k=1,nece
-           if (fwtece0(k).gt.1.e-6_dp) then
-                 dbdrp(k)=seval(nw,recep(k),rgrid,dbdr,bbb,ccc,ddd)
-                 dbdrm(k)=seval(nw,recem(k),rgrid,dbdr,bbb,ccc,ddd)
-           endif
-         enddo  
+      if (fwtecebz0.gt.1.e-6_dp) then
+        dbdro=seval(nw,receo,rgrid,dbdr,bbb,ccc,ddd)
+      endif
+      do k=1,nece
+        if (fwtece0(k).gt.1.e-6_dp) then
+          dbdrp(k)=seval(nw,recep(k),rgrid,dbdr,bbb,ccc,ddd)
+          dbdrm(k)=seval(nw,recem(k),rgrid,dbdr,bbb,ccc,ddd)
+        endif
+      enddo  
 !--------------------------------------------------------------------
 !--   get robit-- from bobit and dB/dr, (robit=dB/(dB/dr),bobit--dB)
 !--------------------------------------------------------------------
-         robit=bobit/dbdro
+      robit=bobit/dbdro
 !--------------------------------------------------------------------
-!--       get ecebit from sqrt(bitm**2+bitp**2) ,
+!--   get ecebit from sqrt(bitm**2+bitp**2) ,
 !--         bit(m,p)=dTe *(dpsi/dR)/(dTe/dB)/(dB/dR)
 !--         dTe(m)=tebit(idestm),  dTe(p)=tebit(idestp)
 !--         (dTe/dB)*(dB/dR)--pteprp,pteprm
 !--         (dpsi/dR)--dsidrp,dsidrm
 !---------------------------------------------------------------------
-        do k=1,nece
-         if (fwtece0(k).gt.1.e-6_dp) then
-           bbxp=(becep(k)-b00)/baa
-           bbxm=(becem(k)-b00)/baa
-           pteprp(k)=0.
-           pteprm(k)=0.
-          do 3030 nk=2,nfit
+      do k=1,nece
+        if (fwtece0(k).gt.1.e-6_dp) then
+          bbxp=(becep(k)-b00)/baa
+          bbxm=(becem(k)-b00)/baa
+          pteprp(k)=0.
+          pteprm(k)=0.
+          do nk=2,nfit
              pteprp(k)=pteprp(k)+x(nk)*bbx**(nk-2)
              pteprm(k)=pteprm(k)+x(nk)*bbx**(nk-2)
-3030      continue
+          enddo
           pteprp(k)=pteprp(k)/baa
           pteprm(k)=pteprm(k)/baa
           pteprp(k)=pteprp(k)*dbdrp(k)
           pteprm(k)=pteprm(k)*dbdrm(k)
-         endif
-        enddo
-!
-        call zpline(nw,rgrid,dsidr,bbb,ccc,ddd)
-      do 3036 k=1,nece
-       if (fwtece0(k).gt.1.e-6_dp) then
-         dsidrm=seval(nw,recem(k),rgrid,dsidr,bbb,ccc,ddd)
-         dsidrp=seval(nw,recep(k),rgrid,dsidr,bbb,ccc,ddd)
-        if((abs(pteprm(k)).gt.1.E-10_dp).and.(abs(pteprp(k)).gt.1.E-10_dp)) &
-           then
-         imk=idestm(k)
-          rmbit(k)=tebit(imk)/pteprm(k)
-          bitm=rmbit(k)*dsidrm
-         ipk=idestp(k)
-          rpbit(k)=tebit(ipk)/pteprp(k)
-          bitp=rpbit(k)*dsidrp
-          ecebit(k)=sqrt(bitm**2+bitp**2)
-         else
-          fwtece0(k)=0.
-         endif
         endif
-3036  continue
+      enddo
+!
+      call zpline(nw,rgrid,dsidr,bbb,ccc,ddd)
+      do k=1,nece
+        if (fwtece0(k).gt.1.e-6_dp) then
+          dsidrm=seval(nw,recem(k),rgrid,dsidr,bbb,ccc,ddd)
+          dsidrp=seval(nw,recep(k),rgrid,dsidr,bbb,ccc,ddd)
+          if ((abs(pteprm(k)).gt.1.E-10_dp).and.(abs(pteprp(k)).gt.1.E-10_dp)) &
+            then
+            imk=idestm(k)
+            rmbit(k)=tebit(imk)/pteprm(k)
+            bitm=rmbit(k)*dsidrm
+            ipk=idestp(k)
+            rpbit(k)=tebit(ipk)/pteprp(k)
+            bitp=rpbit(k)*dsidrp
+            ecebit(k)=sqrt(bitm**2+bitp**2)
+          else
+            fwtece0(k)=0.
+          endif
+        endif
+      enddo
 !EALW       write(*,*)'rmbit'
 !EALW       write(*,*)rmbit
 !EALW       write(*,*)'rpbit'
 !EALW       write(*,*)rpbit
-3069  continue
+      endif ! (kfitece.ne.1).and.(kfixrece.ne.1)
 !
-      DEALLOCATE(rrgrid,bfield,rrout,bout,babs,bbb,ccc,ddd,btttt, &
-          dsidr,ddsiddr,bx,ry,bbk,dbdr)
+      deallocate(rrgrid,bfield,rrout,bout,babs,bbb,ccc,ddd,btttt, &
+                 dsidr,ddsiddr,bx,ry,bbk,dbdr)
 !
       return
       end subroutine geteceb
+
+
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
@@ -711,97 +713,96 @@
       integer, intent(inout) :: kerror
 !
       kerror = 0
-      ALLOCATE(rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
+      allocate(rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
          bout(kbre,nw),babs(kbre,nw),bbb(nw),ccc(nw), &
          ddd(nw),btttt(nw),dsidr(nw),ddsiddr(nw),bx(nw), &
          ry(nw),bbk(nw))
 !
       do k=1,nnece
-         fwtece0(k)=swtece(k) 
+        fwtece0(k)=swtece(k) 
       enddo
       fwtecebz0=swtecebz
       do k=1,kbre
-       do i=1,nw
-         babs(k,i)=0.0
-         bout(k,i)=0.0
-         rrout(k,i)=0.0
-         rrgrid(k,i)=0.0
-       enddo
+        do i=1,nw
+          babs(k,i)=0.0
+          bout(k,i)=0.0
+          rrout(k,i)=0.0
+          rrgrid(k,i)=0.0
+        enddo
       enddo
 !---------------------------------------------------------------------
-!--  Calculation of |B| array from fe array ( harmonic nharm)       --
+!--   Calculation of |B| array from fe array ( harmonic nharm)      --
 !--     becein(necein),   fe(GHz),|B|(T) becein form H.f to L.f     --
 !---------------------------------------------------------------------
-      do 500 k=1,necein
+      do k=1,necein
         becein(k)=0.001_dp*6.0*9.1095_dp*pi/4.8032_dp*feece(k)/nharm
-500   continue
+      enddo
 !---------------------------------------------------------------------
-!--  Calculation of |B| on rgrid (z=zeceo)   bfield(nw)             --
+!--   Calculation of |B| on rgrid (z=zeceo)   bfield(nw)            --
 !---------------------------------------------------------------------
-      if (icurrt.ne.1) go to 540
-      ffprim(1)=cratio*srma*2.*salpha/darea*twopi*tmu
-      ffprim(nw)=ffprim(1)
-  540 continue
-      if (icurrt.ne.2.and.icurrt.ne.5) go to 550
-      ffprim(nw)=fpcurr(x111,kffcur)/darea*twopi*tmu
-      ffprim(1)=fpcurr(x000,kffcur)/darea*twopi*tmu
-  550 continue
-      if (icurrt.ne.4) go to 600
-      call currnt(n222,jtime,n222,n222,kerror)
-      if (kerror.gt.0) return
-      ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
-      ffprim(nw)=ffprim(1)*gammaf
-  600 continue
-      do 699 i=2,nw-1
+      if (icurrt.eq.1) then
+        ffprim(1)=cratio*srma*2.*salpha/darea*twopi*tmu
+        ffprim(nw)=ffprim(1)
+      endif
+      if (icurrt.eq.2.or.icurrt.eq.5) then
+        ffprim(nw)=fpcurr(x111,kffcur)/darea*twopi*tmu
+        ffprim(1)=fpcurr(x000,kffcur)/darea*twopi*tmu
+      endif
+      if (icurrt.eq.4) then
+        call currnt(n222,jtime,n222,n222,kerror)
+        if (kerror.gt.0) return
+        ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
+        ffprim(nw)=ffprim(1)*gammaf
+      endif
+      do i=2,nw-1
         siii=sigrid(i)
-        if (icurrt.ne.2.and.icurrt.ne.5) go to 692
-        ffprim(i)=fpcurr(siii,kffcur)/darea*twopi*tmu
-  692   continue
-        if (icurrt.ne.4) go to 694
-        ffprim(i)=ffprim(1)*(1.-siii**enp)**emp*(1.-gammap)+gammap
-  694   continue
-        if (icurrt.ne.1) go to 696
-        ffprim(i)=ffprim(1)
-  696   continue
-  699 continue
+        select case (icurrt)
+        case (2,5)
+          ffprim(i)=fpcurr(siii,kffcur)/darea*twopi*tmu
+        case (4)
+          ffprim(i)=ffprim(1)*(1.-siii**enp)**emp*(1.-gammap)+gammap
+        case (1)
+          ffprim(i)=ffprim(1)
+        end select
+      enddo
       fpol(nw)=fbrdy*tmu
       sumf=fpol(nw)**2/2.
       delsi=-(psibry-simag)/(nw-1)
-      do 700 i=1,nw-1
+      do i=1,nw-1
         sumf=sumf+0.5_dp*delsi*(ffprim(nw-i+1)+ffprim(nw-i))
         if(sumf .ge. 0.0) then
           fpol(nw-i)=sqrt(2.*sumf)*fpol(nw)/abs(fpol(nw))
         else
           fpol(nw-i)=fpol(nw)
         endif
- 700  continue
+      enddo
       call zpline(nw,sigrid,fpol,bbb,ccc,ddd)
-      do 702 iw=1,nw
-            kk=(iw-1)*nh+jo
-            if (xpsi(kk).gt.1.0.or.ivacum.gt.0) then
-            fnow=fbrdy*tmu
-            else
-            fnow=seval(nw,xpsi(kk),sigrid,fpol,bbb,ccc,ddd)
-            endif
-            btttt(iw)=fnow/rgrid(iw)
-702   continue
+      do iw=1,nw
+        kk=(iw-1)*nh+jo
+        if (xpsi(kk).gt.1.0.or.ivacum.gt.0) then
+          fnow=fbrdy*tmu
+        else
+          fnow=seval(nw,xpsi(kk),sigrid,fpol,bbb,ccc,ddd)
+        endif
+        btttt(iw)=fnow/rgrid(iw)
+      enddo
 !
       ier = 0
       call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
-      do 708 iw=1,nw
-            rw=rgrid(iw)
-            rh=zgrid(jo)
-            kk=(iw-1)*nh+jo
-            call seva2d(bkx,lkx,bky,lky,c,rw,rh,pds,ier,n555)
-            if (ier.eq.0) go to 706
-            write (nttyo,9910) ier,rw,rh
-            return
- 706        continue
-            bfield(iw)=sqrt(pds(2)**2+pds(3)**2)/rgrid(iw)
-            dsidr(iw)=pds(2)
-            ddsiddr(iw)=pds(5)            
-            bfield(iw)=sqrt(bfield(iw)**2+btttt(iw)**2)
- 708  continue
+      do iw=1,nw
+        rw=rgrid(iw)
+        rh=zgrid(jo)
+        kk=(iw-1)*nh+jo
+        call seva2d(bkx,lkx,bky,lky,c,rw,rh,pds,ier,n555)
+        if (ier.ne.0) then
+          write (nttyo,9910) ier,rw,rh
+          return
+        endif
+        bfield(iw)=sqrt(pds(2)**2+pds(3)**2)/rgrid(iw)
+        dsidr(iw)=pds(2)
+        ddsiddr(iw)=pds(5)            
+        bfield(iw)=sqrt(bfield(iw)**2+btttt(iw)**2)
+      enddo
  9910 format('  error in spline =',i4,' (r,z)= ( ',f5.2,',',f5.2,')')
 !--------------------------------------------------------------------
 !--   find the number of bmink and bmaxk (local min and max)
@@ -809,41 +810,41 @@
       kmin=0
       kmax=0
       do k=2,nw-1
-         if((bfield(k).lt.bfield(k+1)).and.(bfield(k).lt.bfield &
-                (k-1))) then
-            kmin=kmin+1
-            bmink(kmin)=bfield(k)
-         endif
-         if((bfield(k).gt.bfield(k+1)).and.(bfield(k).gt.bfield &
-                 (k-1))) then
-            kmax=kmax+1
-            bmaxk(kmax)=bfield(k)
-         endif
+        if ((bfield(k).lt.bfield(k+1)).and. &
+            (bfield(k).lt.bfield(k-1))) then
+          kmin=kmin+1
+          bmink(kmin)=bfield(k)
+        endif
+        if ((bfield(k).gt.bfield(k+1)).and. &
+            (bfield(k).gt.bfield(k-1))) then
+          kmax=kmax+1
+          bmaxk(kmax)=bfield(k)
+        endif
       enddo
       if (kmin.eq.(kmax+1)) then
-           kmax=kmax+1  
-           bmaxk(kmax)=bfield(nw)
+        kmax=kmax+1  
+        bmaxk(kmax)=bfield(nw)
       endif
       if (kmin.eq.(kmax-1)) then
-           kmin=kmin+1
-           bmink(1)=bfield(1)
-           do k=2,kmin
-             bbk(k)=bmink(k-1)
-           enddo
-           do k=2,kmin
-             bmink(k)=bbk(k)
-           enddo
+        kmin=kmin+1
+        bmink(1)=bfield(1)
+        do k=2,kmin
+          bbk(k)=bmink(k-1)
+        enddo
+        do k=2,kmin
+          bmink(k)=bbk(k)
+        enddo
       endif 
 !
       if (idebug.ge.3) write (6,*) 'GETECER, kmin/kmax = ', kmin, kmax
-      if (kmax.eq.0) go to 1012
+      if (kmax.ne.0) then
 !--------------------------------------------------------------------
 !--   get babsk array (kmax+1) is strictly increasing order
 !-------------------------------------------------------------------- 
       do k=1,kmax
-         if(bmaxk(k).lt.bmink(k)) then
-           stop
-         endif
+        if (bmaxk(k).lt.bmink(k)) then
+          stop
+        endif
       enddo
 !
       iout1=0
@@ -858,12 +859,12 @@
       do k=2,kmax
         ioutk=0
         do i=1,nw
-         if((bfield(i).gt.bmaxk(k)).and.(bfield(i).lt.bmink &
-             (k-1))) then
-          ioutk=ioutk+1
-          bout(k,ioutk)=bfield(i)
-          rrout(k,ioutk)=rgrid(i)
-         endif
+          if ((bfield(i).gt.bmaxk(k)).and. &
+              (bfield(i).lt.bmink(k-1))) then
+            ioutk=ioutk+1
+            bout(k,ioutk)=bfield(i)
+            rrout(k,ioutk)=rgrid(i)
+          endif
         enddo
         nnout(k)=ioutk
       enddo
@@ -873,17 +874,17 @@
           ioutk1=ioutk1+1
           bout(kmax+1,ioutk1)=bfield(i)
           rrout(kmax+1,ioutk1)=rgrid(i)
-         endif       
-       enddo
-        nnout(kmax+1)=ioutk1
+        endif       
+      enddo
+      nnout(kmax+1)=ioutk1
 !
       do k=1,kmax+1
         if (nnout(k).gt.3) then
-         n=nnout(k)
-         do i=1,n
-           babs(k,i)=bout(k,n-i+1)
-           rrgrid(k,i)=rrout(k,n-i+1)
-         enddo
+          n=nnout(k)
+          do i=1,n
+            babs(k,i)=bout(k,n-i+1)
+            rrgrid(k,i)=rrout(k,n-i+1)
+          enddo
         endif
       enddo 
 !-------------------------------------------------------------------
@@ -901,67 +902,67 @@
       call zpline(n,bx,ry,bbb,ccc,ddd)
       do m=1,necein
         if (becein(m).ge.bmaxk(1)) then
-         kout=kout+1
-         recein(kout)=seval(n,becein(m),bx,ry,bbb,ccc,ddd) 
-         teeceinr(kout)=teecein(m)
+          kout=kout+1
+          recein(kout)=seval(n,becein(m),bx,ry,bbb,ccc,ddd) 
+          teeceinr(kout)=teecein(m)
           tebit(kout)=errorece(m)         
         endif
       enddo
       endif
 !
       do k=2,kmax
-       if (nnout(k).gt.3) then
-         n=nnout(k)
-         do i=1,n
-             bx(i)=babs(k,i)
-             ry(i)=rrgrid(k,i)
-         enddo
-         call zpline(n,bx,ry,bbb,ccc,ddd)
-         do m=1,necein
-          if((becein(m).ge.bmaxk(k)).and.(becein(m).le.bmink(k-1)))then
+        if (nnout(k).gt.3) then
+          n=nnout(k)
+          do i=1,n
+            bx(i)=babs(k,i)
+            ry(i)=rrgrid(k,i)
+          enddo
+          call zpline(n,bx,ry,bbb,ccc,ddd)
+          do m=1,necein
+            if ((becein(m).ge.bmaxk(k)).and.(becein(m).le.bmink(k-1))) then
+              kout=kout+1
+              recein(kout)=seval(n,becein(m),bx,ry,bbb,ccc,ddd)
+              teeceinr(kout)=teecein(m)
+              tebit(kout)=errorece(m)
+            endif
+          enddo
+        endif
+      enddo
+!
+      if (nnout(kmax+1).gt.3) then
+        n=nnout(kmax+1)
+        do i=1,n
+          bx(i)=babs(kmax+1,i)
+          ry(i)=rrgrid(kmax+1,i)
+        enddo
+        call zpline(n,bx,ry,bbb,ccc,ddd)
+        do m=1,necein
+          if (becein(m).le.bmink(kmax)) then
             kout=kout+1
             recein(kout)=seval(n,becein(m),bx,ry,bbb,ccc,ddd)
             teeceinr(kout)=teecein(m)
             tebit(kout)=errorece(m)
           endif
-         enddo
-       endif
-      enddo
-!
-        if (nnout(kmax+1).gt.3) then
-         n=nnout(kmax+1)
-         do i=1,n
-             bx(i)=babs(kmax+1,i)
-             ry(i)=rrgrid(kmax+1,i)
-         enddo
-         call zpline(n,bx,ry,bbb,ccc,ddd)
-         do m=1,necein
-           if(becein(m).le.bmink(kmax))then
-             kout=kout+1
-             recein(kout)=seval(n,becein(m),bx,ry,bbb,ccc,ddd)
-             teeceinr(kout)=teecein(m)
-             tebit(kout)=errorece(m)
-           endif
-         enddo
-        endif
+        enddo
+      endif
 ! 
       mecein=kout
 !
-      go to 1015
 !
-1012    do  i=1,nw
-          bx(i)=bfield(nw-i+1)
-          ry(i)=rgrid(nw-i+1)
-        enddo
-       call zpline(nw,bx,ry,bbb,ccc,ddd)
-       do m=1,necein
-         recein(m)=seval(nw,becein(m),bx,ry,bbb,ccc,ddd)
-         teeceinr(m)=teecein(m)
-         tebit(m)=errorece(m)
+      else ! kmax.eq.0
+      do i=1,nw
+        bx(i)=bfield(nw-i+1)
+        ry(i)=rgrid(nw-i+1)
+      enddo
+      call zpline(nw,bx,ry,bbb,ccc,ddd)
+      do m=1,necein
+        recein(m)=seval(nw,becein(m),bx,ry,bbb,ccc,ddd)
+        teeceinr(m)=teecein(m)
+        tebit(m)=errorece(m)
       enddo
       mecein=necein
 !
-1015    continue
+      endif ! kmax.eq.0
 !--------------------------------------------------------------------
 !--   fitting data from teeceinr,tebit and recein (nnecein)        --
 !--     rx=(R-r00)/raa                                             --
@@ -976,34 +977,34 @@
         an(i)=(recein(i)-r00)/raa
         tebit(i)=max(tebit(i),1.e-4_dp)
       enddo
-      do 1110 nj=1,mecein
-      do 1100 nk=1,nfit
-      if (nk.eq.1) then
-        arspfit(nj,nk)=1./tebit(nj)
-      else
-        arspfit(nj,nk)=an(nj)**(nk-1)/tebit(nj)
-      endif
-1100   continue
-1110   continue
-      do 1200 nj=1,mecein
-      brspfit(nj)=teeceinr(nj)/tebit(nj)
-1200   continue
+      do nj=1,mecein
+        do nk=1,nfit
+          if (nk.eq.1) then
+            arspfit(nj,nk)=1./tebit(nj)
+          else
+            arspfit(nj,nk)=an(nj)**(nk-1)/tebit(nj)
+          endif
+        enddo
+      enddo
+      do nj=1,mecein
+        brspfit(nj)=teeceinr(nj)/tebit(nj)
+      enddo
 !
       mnow=mecein
       if (kcmin.gt.0) then
-      fwtnow=0.001_dp
-      fwtcm =1.0
-      do j=1,nfit
-      mnow=mnow+1
-      do k=1,nfit
-        if (j.ne.k) then
-          arspfit(mecein+j,k)=0.0
-        else
-          arspfit(mecein+j,k)=fwtcm/fwtnow
-        endif
-      enddo
-      brspfit(mecein+j)=0.0
-      enddo
+        fwtnow=0.001_dp
+        fwtcm =1.0
+        do j=1,nfit
+          mnow=mnow+1
+          do k=1,nfit
+            if (j.ne.k) then
+              arspfit(mecein+j,k)=0.0
+            else
+              arspfit(mecein+j,k)=fwtcm/fwtnow
+            endif
+          enddo
+          brspfit(mecein+j)=0.0
+        enddo
       endif
 !
       nnn1=1
@@ -1015,87 +1016,88 @@
         return
       end if
       toler=1.0e-06_dp*s(1)
-      DO 2010 I = 1,nfit
-            T = 0.0
-            IF (S(I).gt.toler) T = Brspfit(I)/S(I)
-            Brspfit(I) = T
-2010  CONTINUE
-2015  DO 2025 I = 1, Nfit
-            X(I) = 0.0
-            DO 2020 J = 1,nfit
-2020                X(I) = X(I) + Arspfit(I,J)*Brspfit(J)
-2025  CONTINUE
+      do I = 1,nfit
+        T = 0.0
+        if (S(I).gt.toler) T = Brspfit(I)/S(I)
+        Brspfit(I) = T
+      enddo
+      do I = 1, Nfit
+        X(I) = 0.0
+        do J = 1,nfit
+          X(I) = X(I) + Arspfit(I,J)*Brspfit(J)
+        enddo
+      enddo
       do k=1,nfit
-      xfit(k)=x(k)
+        xfit(k)=x(k)
       enddo
       chisqfit=0.0
-      do 2400 k=1,mecein
-      tte(k)=0.
-      do 2500 nk=1,nfit
-      tte(k)=tte(k)+x(nk)*an(k)**(nk-1)
-2500  continue
-      chisqfit=chisqfit+(tte(k)-teeceinr(k))**2/tebit(k)
-2400  continue
+      do k=1,mecein
+        tte(k)=0.
+        do nk=1,nfit
+          tte(k)=tte(k)+x(nk)*an(k)**(nk-1)
+        enddo
+        chisqfit=chisqfit+(tte(k)-teeceinr(k))**2/tebit(k)
+      enddo
 !--------------------------------------------------------------------
-!--  get Teecer(rrr) in ECE data region                            --
+!--   get Teecer(rrr) in ECE data region                           --
 !--------------------------------------------------------------------
       drrr=(recein(mecein)-recein(1))/(nnnte-1)
-      do 3016 i=1,nnnte
-          rrr(i)=recein(1)+drrr*(i-1)
-          rx=(rrr(i)-r00)/raa
-          teecer(i)=0.
-      do 3012 nk=1,nfit
-         teecer(i)=teecer(i)+x(nk)*rx**(nk-1)
-3012  continue
-3016  continue  
+      do i=1,nnnte
+        rrr(i)=recein(1)+drrr*(i-1)
+        rx=(rrr(i)-r00)/raa
+        teecer(i)=0.
+        do nk=1,nfit
+          teecer(i)=teecer(i)+x(nk)*rx**(nk-1)
+        enddo
+      enddo 
 !---------------------------------------------------------------------
-!--   find receo  which is Te peak point                            --
+!--   find receo which is Te peak point                            --
 !---------------------------------------------------------------------
-      if (kfixro.eq.1) go to 3019      
+      if (kfixro.ne.1) then      
         teeceo=teecer(1)
         iio=1
-        do 3018 i=2,nnnte
+        do i=2,nnnte
           if (teecer(i).gt.teeceo) then
-             iio=i
-             teeceo=teecer(i)
+            iio=i
+            teeceo=teecer(i)
           endif
-3018    continue
+        enddo
         receo=rrr(iio)
 !--------------------------------------------------------------------
-!--    find recein(idesto), it close to receo                      --
+!--     find recein(idesto), it close to receo                     --
 !--       dTe on receo from tebit(idesto)                          --
 !--------------------------------------------------------------------
         desto=abs(receo-recein(1))
         idesto=1
         do i=2,mecein
-        if (abs(receo-recein(i)).lt.desto) then
-        desto=abs(receo-recein(i))
-        idesto=i
-        endif
+          if (abs(receo-recein(i)).lt.desto) then
+            desto=abs(receo-recein(i))
+            idesto=i
+          endif
         enddo
 !--------------------------------------------------------------------
-!--    get robit,  robit=sqrt(dTe/Te'')                            --
-!--    Te''-- (d2Te/dR2) at receo--ppteppro, dTe=tebit(idesto)     --
+!--     get robit,  robit=sqrt(dTe/Te'')                           --
+!--     Te''-- (d2Te/dR2) at receo--ppteppro, dTe=tebit(idesto)    --
 !--------------------------------------------------------------------
         rx1=(rrr(iio+1)-r00)/raa
         rx2=(rrr(iio-1)-r00)/raa
         ptpr1=0.
         ptpr2=0.
         do nk=2,nfit
-           ptpr1=ptpr1+x(nk)*rx1**(nk-2)
-           ptpr2=ptpr2+x(nk)*rx2**(nk-2)
+          ptpr1=ptpr1+x(nk)*rx1**(nk-2)
+          ptpr2=ptpr2+x(nk)*rx2**(nk-2)
         enddo
         ptpr1=ptpr1/raa
         ptpr2=ptpr2/raa
         ppteppro=abs(0.5_dp*(ptpr1-ptpr2)/drrr)
         dtero=abs(tebit(idesto))
         robit=sqrt(dtero/ppteppro)
+      endif ! kfixro.ne.1
 !---------------------------------------------------------------------
-!-- take R- and get R+                                              --
-!--         nece=the number of R-,  recem(nece), recep(nece)        --
+!--   take R- and get R+                                            --
+!--       nece=the number of R-,  recem(nece), recep(nece)          --
 !---------------------------------------------------------------------
-3019  continue
-      if ((kfitece.eq.1).or.(kfixrece.eq.1)) go to 3069
+      if ((kfitece.ne.1).and.(kfixrece.ne.1)) then
         ii=0
         do k=mecein,1,-1
           if ((receo-recein(k)).gt.0.) then
@@ -1105,79 +1107,79 @@
         enddo
         nece=ii
         do k=1,nece
-           rx=(recem(k)-r00)/raa
-           teece(k)=0.
-           pteprm(k)=0.
-          do 3020 nk=1,nfit
-             teece(k)=teece(k)+x(nk)*rx**(nk-1)
-3020      continue
-          do 3021 nk=2,nfit
-             pteprm(k)=pteprm(k)+x(nk)*rx**(nk-2)
-3021      continue          
+          rx=(recem(k)-r00)/raa
+          teece(k)=0.
+          pteprm(k)=0.
+          do nk=1,nfit
+            teece(k)=teece(k)+x(nk)*rx**(nk-1)
+          enddo
+          do nk=2,nfit
+            pteprm(k)=pteprm(k)+x(nk)*rx**(nk-2)
+          enddo         
           pteprm(k)=pteprm(k)/raa
         enddo
 !
         ii=0
-        do 3025 i=nnnte,1,-1
-         if (rrr(i).gt.receo) then
-          ii=ii+1
-          rlowf(ii)=rrr(i)
-          telowf(ii)=teecer(i)
-         endif
-3025    continue
+        do i=nnnte,1,-1
+          if (rrr(i).gt.receo) then
+            ii=ii+1
+            rlowf(ii)=rrr(i)
+            telowf(ii)=teecer(i)
+          endif
+        enddo
         nlowf=ii
         call zpline(nlowf,telowf,rlowf,bb,cc,dd)
-        do 3028 k=1,nece
+        do k=1,nece
           recep(k)=seval(nlowf,teece(k),telowf,rlowf,bb,cc,dd)
-         if ((recep(k).gt.receo).and.(recep(k).lt.recein(mecein))) &
-           go to 3028
-         fwtece0(k)=0.0
-3028    continue
+          if ((recep(k).gt.receo).and.(recep(k).lt.recein(mecein))) &
+            cycle
+          fwtece0(k)=0.0
+        enddo
 !--------------------------------------------------------------------
-!--   idestp(nece)- the point recein(idestp) close to R+(nece)
-!--   idestm(nece)- the point recein(idestm) close to R-(nece)
+!--     idestp(nece)- the point recein(idestp) close to R+(nece)
+!--     idestm(nece)- the point recein(idestm) close to R-(nece)
 !---------------------------------------------------------------------
-       do k=1,nece
-        dest=abs(recep(k)-recein(1))
+        do k=1,nece
+          dest=abs(recep(k)-recein(1))
           idestp(k)=1
           do i=2,mecein
-           if (abs(recep(k)-recein(i)).lt.dest) then
-            dest=abs(recep(k)-recein(i))
-            idestp(k)=i
-           endif
+            if (abs(recep(k)-recein(i)).lt.dest) then
+              dest=abs(recep(k)-recein(i))
+              idestp(k)=i
+            endif
           enddo
-       enddo 
+        enddo 
 ! 
-       do k=1,nece
-        dest=abs(recem(k)-recein(1))
+        do k=1,nece
+          dest=abs(recem(k)-recein(1))
           idestm(k)=1
           do i=2,mecein
-           if (abs(recem(k)-recein(i)).lt.dest) then
-            dest=abs(recem(k)-recein(i))
-            idestm(k)=i
-           endif
+            if (abs(recem(k)-recein(i)).lt.dest) then
+              dest=abs(recem(k)-recein(i))
+              idestm(k)=i
+            endif
           enddo
-       enddo 
+        enddo 
 !--------------------------------------------------------------------
-!--       get ecebit from sqrt(bitm**2+bitp**2) ,
+!--     get ecebit from sqrt(bitm**2+bitp**2) ,
 !--         bit(m,p)=dTe *(dpsi/dR)/(dTe/dR)
 !--         dTe(m)=tebit(idestm),  dTe(p)=tebit(idestp)
 !---------------------------------------------------------------------
         do k=1,nece
-           rx=(recep(k)-r00)/raa
-           pteprp(k)=0.
-          do 3030 nk=2,nfit
-             pteprp(k)=pteprp(k)+x(nk)*rx**(nk-2)
-3030      continue
+          rx=(recep(k)-r00)/raa
+          pteprp(k)=0.
+          do nk=2,nfit
+            pteprp(k)=pteprp(k)+x(nk)*rx**(nk-2)
+          enddo
           pteprp(k)=pteprp(k)/raa
         enddo
 !
         call zpline(nw,rgrid,dsidr,bbb,ccc,ddd)
-        do 3036 k=1,nece
-         dsidrm=seval(nw,recem(k),rgrid,dsidr,bbb,ccc,ddd)
-         dsidrp=seval(nw,recep(k),rgrid,dsidr,bbb,ccc,ddd)
-         if((abs(pteprm(k)).gt.1.E-10_dp).and.(abs(pteprp(k)).gt.1.E-10_dp)) &
-           then
+        do k=1,nece
+          dsidrm=seval(nw,recem(k),rgrid,dsidr,bbb,ccc,ddd)
+          dsidrp=seval(nw,recep(k),rgrid,dsidr,bbb,ccc,ddd)
+          if((abs(pteprm(k)).gt.1.E-10_dp).and.(abs(pteprp(k)).gt.1.E-10_dp)) &
+            then
             imk=idestm(k)
             rmbit(k)=tebit(imk)/pteprm(k)
             bitm=rmbit(k)*dsidrm
@@ -1185,14 +1187,14 @@
             rpbit(k)=tebit(ipk)/pteprp(k)  
             bitp=rpbit(k)*dsidrp
             ecebit(k)=sqrt(bitm**2+bitp**2) 
-           else
+          else
             fwtece0(k)=0.
-         endif
-3036    continue
-3069  continue
+          endif
+        enddo
+      endif ! (kfitece.ne.1).and.(kfixrece.ne.1)
 !
-      DEALLOCATE(rrgrid,bfield,rrout,bout,babs,bbb,ccc,ddd,btttt, &
-          dsidr,ddsiddr,bx,ry,bbk)
+      deallocate(rrgrid,bfield,rrout,bout,babs,bbb,ccc,ddd,btttt, &
+                 dsidr,ddsiddr,bx,ry,bbk)
 !
       return
       end subroutine
@@ -1238,47 +1240,47 @@
       if (idebug.ge.3) write (6,*) 'Enter GETTIR, kfitece/kfixrece = ',&
          kfitece, kfixrece
       kerror = 0
-      ALLOCATE(rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
+      allocate(rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
          bout(kbre,nw),babs(kbre,nw),bbb(nw),ccc(nw), &
          ddd(nw),btttt(nw),dsidr(nw),ddsiddr(nw),bx(nw), &
          ry(nw),bbk(nw))
 !
       do k=1,nnece
-         fwtece0(k)=swtece(k) 
+        fwtece0(k)=swtece(k) 
       enddo
       fwtecebz0=swtecebz
       do k=1,kbre
-       do i=1,nw
-         babs(k,i)=0.0
-         bout(k,i)=0.0
-         rrout(k,i)=0.0
-         rrgrid(k,i)=0.0
-       enddo
+        do i=1,nw
+          babs(k,i)=0.0
+          bout(k,i)=0.0
+          rrout(k,i)=0.0
+          rrgrid(k,i)=0.0
+        enddo
       enddo
 !---------------------------------------------------------------------
-!--  Copy Ti  array                                                 --
+!--   Copy Ti  array                                                --
 !---------------------------------------------------------------------
-      do 500 k=1,necein
+      do k=1,necein
         becein(k)=feece(k)
         recein(k)=becein(k)
         teeceinr(k)=teecein(k)
         tebit(k)=errorece(k)
-500   continue
+      enddo
 !---------------------------------------------------------------------
-!--  Calculation of |B| on rgrid (z=zeceo)   bfield(nw)             --
+!--   Calculation of |B| on rgrid (z=zeceo)   bfield(nw)            --
 !---------------------------------------------------------------------
-      do 708 iw=1,nw
-            rw=rgrid(iw)
-            rh=zteo
-            kk=(iw-1)*nh+jo
-            call seva2d(bkx,lkx,bky,lky,c,rw,rh,pds,ier,n555)
-            if (ier.eq.0) go to 706
-              write (nttyo,9910) ier,rw,rh
-            return
- 706        continue
-            dsidr(iw)=pds(2)
-            ddsiddr(iw)=pds(5)            
- 708  continue
+      do iw=1,nw
+        rw=rgrid(iw)
+        rh=zteo
+        kk=(iw-1)*nh+jo
+        call seva2d(bkx,lkx,bky,lky,c,rw,rh,pds,ier,n555)
+        if (ier.ne.0) then
+          write (nttyo,9910) ier,rw,rh
+          return
+        endif
+        dsidr(iw)=pds(2)
+        ddsiddr(iw)=pds(5)            
+      enddo
  9910 format('  error in getecer/spline = ',i4,' (r,z)= ( ', &
                 f5.2,',',f5.2,')')
 !--------------------------------------------------------------------
@@ -1296,25 +1298,25 @@
         an(i)=(recein(i)-r00)/raa
         tebit(i)=max(tebit(i),1.e-4_dp)
       enddo
-      do 1110 nj=1,mecein
-      do 1100 nk=1,nfit
-        if (nk.eq.1) then
-          arspfit(nj,nk)=1./tebit(nj)
-        else
-          arspfit(nj,nk)=an(nj)**(nk-1)/tebit(nj)
-        endif
-1100  continue
-1110  continue
-      do 1200 nj=1,mecein
-      brspfit(nj)=teeceinr(nj)/tebit(nj)
-1200   continue
+      do nj=1,mecein
+        do nk=1,nfit
+          if (nk.eq.1) then
+            arspfit(nj,nk)=1./tebit(nj)
+          else
+            arspfit(nj,nk)=an(nj)**(nk-1)/tebit(nj)
+          endif
+        enddo
+      enddo
+      do nj=1,mecein
+        brspfit(nj)=teeceinr(nj)/tebit(nj)
+      enddo
 !
       if (idebug.ge.3) write (6,*) 'GETTIR/SDECM, mecein/raa/r00 = ',&
-         mecein, raa, r00, nfit
+        mecein, raa, r00, nfit
       if (idebug.ge.3) write (6,*) 'GETTIR teeceinr = ', &
-           (teeceinr(i),i=1,mecein)
+        (teeceinr(i),i=1,mecein)
       if (idebug.ge.3) write (6,*) 'GETTIR tebit = ', &
-           (tebit(i),i=1,mecein)
+        (tebit(i),i=1,mecein)
       nnn1=1
       iieerr=0
       mnow=mecein
@@ -1325,103 +1327,104 @@
         return
       end if
       toler=1.0e-06_dp*s(1)
-      DO 2010 I = 1,nfit
+      do I = 1,nfit
         T = 0.0
-        IF (S(I).gt.toler) T = Brspfit(I)/S(I)
+        if (S(I).gt.toler) T = Brspfit(I)/S(I)
         Brspfit(I) = T
-2010  CONTINUE
-2015  DO 2025 I = 1, Nfit
+      enddo
+      do I = 1, Nfit
         X(I) = 0.0
-        DO 2020 J = 1,nfit
-2020      X(I) = X(I) + Arspfit(I,J)*Brspfit(J)
-2025  CONTINUE
+        do J = 1,nfit
+          X(I) = X(I) + Arspfit(I,J)*Brspfit(J)
+        enddo
+      enddo
 !
       do k=1,nfit
         xfit(k)=x(k)
       enddo
       chisqfit=0.0
-      do 2400 k=1,mecein
-      tte(k)=0.
-      do 2500 nk=1,nfit
-        tte(k)=tte(k)+x(nk)*an(k)**(nk-1)
-2500  continue
-      chisqfit=chisqfit+(tte(k)-teeceinr(k))**2/tebit(k)
-2400  continue
+      do k=1,mecein
+        tte(k)=0.
+        do nk=1,nfit
+          tte(k)=tte(k)+x(nk)*an(k)**(nk-1)
+        enddo
+        chisqfit=chisqfit+(tte(k)-teeceinr(k))**2/tebit(k)
+      enddo
       mmmte = nnnte
       if (idebug.ge.3) write (6,*) 'GETTIR chisqfit/kfixro/mnow = ', &
-         chisqfit, kfixro, mnow
+        chisqfit, kfixro, mnow
       if (idebug.ge.3) write (6,*) 'GETTIR tte = ', &
-           (tte(i),i=1,mecein)
+        (tte(i),i=1,mecein)
 !--------------------------------------------------------------------
-!--  get Teecer(rrr) in ECE data region                            --
+!--   get Teecer(rrr) in ECE data region                           --
 !--------------------------------------------------------------------
       drrr=(recein(mecein)-recein(1))/(nnnte-1)
-      do 3016 i=1,nnnte
-          rrr(i)=recein(1)+drrr*(i-1)
-          rx=(rrr(i)-r00)/raa
-          teecer(i)=0.
-      do 3012 nk=1,nfit
-         teecer(i)=teecer(i)+x(nk)*rx**(nk-1)
-3012  continue
-3016  continue  
+      do i=1,nnnte
+        rrr(i)=recein(1)+drrr*(i-1)
+        rx=(rrr(i)-r00)/raa
+        teecer(i)=0.
+        do nk=1,nfit
+          teecer(i)=teecer(i)+x(nk)*rx**(nk-1)
+        enddo
+      enddo 
 !---------------------------------------------------------------------
-!--   find receo  which is Te peak point                            --
+!--   find receo which is Te peak point                            --
 !---------------------------------------------------------------------
-      if (kfixro.eq.1) go to 3019
+      if (kfixro.ne.1) then
         teeceo=teecer(1)
         iio=1
-        do 3018 i=2,nnnte
+        do i=2,nnnte
           if (teecer(i).gt.teeceo) then
-             iio=i
-             teeceo=teecer(i)
+            iio=i
+            teeceo=teecer(i)
           endif
-3018    continue
+        enddo
         receo=rrr(iio)
         if (idebug.ge.3) write (6,*) 'GETTIR teece, receo, iio = ', &
-           teeceo, receo, iio
+          teeceo, receo, iio
 !--------------------------------------------------------------------
-!--    find recein(idesto), it close to receo                      --
+!--     find recein(idesto), it close to receo                     --
 !--       dTe on receo from tebit(idesto)                          --
 !--------------------------------------------------------------------
         desto=abs(receo-recein(1))
         idesto=1
         do i=2,mecein
-        if (abs(receo-recein(i)).lt.desto) then
-        desto=abs(receo-recein(i))
-        idesto=i
-        endif
+          if (abs(receo-recein(i)).lt.desto) then
+            desto=abs(receo-recein(i))
+            idesto=i
+          endif
         enddo
 !--------------------------------------------------------------------
-!--    get robit,  robit=sqrt(2dTe/Te'')                            --
-!--    Te''-- (d2Te/dR2) at receo--ppteppro, dTe=tebit(idesto)     --
+!--     get robit,  robit=sqrt(2dTe/Te'')                          --
+!--     Te''-- (d2Te/dR2) at receo--ppteppro, dTe=tebit(idesto)    --
 !--------------------------------------------------------------------
         rx1=(rrr(iio+1)-r00)/raa
         rx2=(rrr(iio-1)-r00)/raa
         ptpr1=0.
         ptpr2=0.
         do nk=2,nfit
-           ptpr1=ptpr1+x(nk)*rx1**(nk-2)*(nk-1)
-           ptpr2=ptpr2+x(nk)*rx2**(nk-2)*(nk-1)
+          ptpr1=ptpr1+x(nk)*rx1**(nk-2)*(nk-1)
+          ptpr2=ptpr2+x(nk)*rx2**(nk-2)*(nk-1)
         enddo
         ptpr1=ptpr1/raa
         ptpr2=ptpr2/raa
         ppteppro=abs(0.5_dp*(ptpr1-ptpr2)/drrr)
         dtero=abs(tebit(idesto))
         robit=sqrt(2*dtero/ppteppro)
+      endif ! kfixro.ne.1
 !---------------------------------------------------------------------
-!-- take R- and get R+                                              --
-!--         nece=the number of R-,  recem(nece), recep(nece)        --
+!--   take R- and get R+                                            --
+!--       nece=the number of R-,  recem(nece), recep(nece)          --
 !---------------------------------------------------------------------
-3019  continue
       if (idebug.ge.3) write (6,*) 'GETTIR R-, kfitece/kfixrece  = ', &
         kfitece, kfixrece
-      if ((kfitece.eq.1).or.(kfixrece.eq.1)) go to 3069
+      if ((kfitece.ne.1).and.(kfixrece.ne.1)) then
         ii=0
 !       do k=mecein,1,-1
         do k=1,mecein
           if ((receo-recein(k)).gt.0.) then
-              ii=ii+1
-              recem(ii)=recein(k)
+            ii=ii+1
+            recem(ii)=recein(k)
           endif
         enddo
         nece=ii
@@ -1429,12 +1432,12 @@
           rx=(recem(k)-r00)/raa
           teece(k)=0.
           pteprm(k)=0.
-          do 3020 nk=1,nfit
+          do nk=1,nfit
             teece(k)=teece(k)+x(nk)*rx**(nk-1)
-3020      continue
-          do 3021 nk=2,nfit
+          enddo
+          do nk=2,nfit
             pteprm(k)=pteprm(k)+x(nk)*rx**(nk-2)*(nk-1)
-3021      continue          
+          enddo         
           pteprm(k)=pteprm(k)/raa
         enddo
         if (idebug.ge.3) write (6,*) 'GETTIR R-, nece = ', &
@@ -1447,71 +1450,70 @@
           (pteprm(i),i=1,nece)
 !
         ii=0
-        do 3025 i=nnnte,1,-1
-!       do 3025 i=1,nnnte
-         if (rrr(i).gt.receo) then
-          ii=ii+1
-          rlowf(ii)=rrr(i)
-          telowf(ii)=teecer(i)
-         endif
-3025    continue
+        do i=nnnte,1,-1
+!       do i=1,nnnte
+          if (rrr(i).gt.receo) then
+            ii=ii+1
+            rlowf(ii)=rrr(i)
+            telowf(ii)=teecer(i)
+          endif
+        enddo
         nlowf=ii
-
 !
         call zpline(nlowf,telowf,rlowf,bb,cc,dd)
-        do 3028 k=1,nece
-         recep(k)=seval(nlowf,teece(k),telowf,rlowf,bb,cc,dd)
-         if ((recep(k).gt.receo).and.(recep(k).lt.recein(mecein))) &
-           go to 3028
-         fwtece0(k)=0.0
-3028    continue
+        do k=1,nece
+          recep(k)=seval(nlowf,teece(k),telowf,rlowf,bb,cc,dd)
+          if ((recep(k).gt.receo).and.(recep(k).lt.recein(mecein))) &
+            cycle
+          fwtece0(k)=0.0
+        enddo
         if (idebug.ge.3) write (6,*) 'GETTIR R+, recep = ', &
           (recep(i),i=1,nece)
 !--------------------------------------------------------------------
-!--   idestp(nece)- the point recein(idestp) close to R+(nece)
-!--   idestm(nece)- the point recein(idestm) close to R-(nece)
+!--     idestp(nece)- the point recein(idestp) close to R+(nece)
+!--     idestm(nece)- the point recein(idestm) close to R-(nece)
 !---------------------------------------------------------------------
-       do k=1,nece
-        dest=abs(recep(k)-recein(1))
+        do k=1,nece
+          dest=abs(recep(k)-recein(1))
           idestp(k)=1
           do i=2,mecein
-           if (abs(recep(k)-recein(i)).lt.dest) then
-            dest=abs(recep(k)-recein(i))
-            idestp(k)=i
-           endif
+            if (abs(recep(k)-recein(i)).lt.dest) then
+              dest=abs(recep(k)-recein(i))
+              idestp(k)=i
+            endif
           enddo
-       enddo 
+        enddo 
 ! 
-       do k=1,nece
-        dest=abs(recem(k)-recein(1))
+        do k=1,nece
+          dest=abs(recem(k)-recein(1))
           idestm(k)=1
           do i=2,mecein
-           if (abs(recem(k)-recein(i)).lt.dest) then
-            dest=abs(recem(k)-recein(i))
-            idestm(k)=i
-           endif
+            if (abs(recem(k)-recein(i)).lt.dest) then
+              dest=abs(recem(k)-recein(i))
+              idestm(k)=i
+            endif
           enddo
-       enddo 
+        enddo 
 !--------------------------------------------------------------------
-!--       get ecebit from sqrt(bitm**2+bitp**2) ,
+!--     get ecebit from sqrt(bitm**2+bitp**2) ,
 !--         bit(m,p)=dTe *(dpsi/dR)/(dTe/dR)
 !--         dTe(m)=tebit(idestm),  dTe(p)=tebit(idestp)
 !---------------------------------------------------------------------
         do k=1,nece
-           rx=(recep(k)-r00)/raa
-           pteprp(k)=0.
-          do 3030 nk=2,nfit
-             pteprp(k)=pteprp(k)+x(nk)*rx**(nk-2)*(nk-1)
-3030      continue
+          rx=(recep(k)-r00)/raa
+          pteprp(k)=0.
+          do nk=2,nfit
+            pteprp(k)=pteprp(k)+x(nk)*rx**(nk-2)*(nk-1)
+          enddo
           pteprp(k)=pteprp(k)/raa
         enddo
 !
         call zpline(nw,rgrid,dsidr,bbb,ccc,ddd)
-        do 3036 k=1,nece
-         dsidrm=seval(nw,recem(k),rgrid,dsidr,bbb,ccc,ddd)
-         dsidrp=seval(nw,recep(k),rgrid,dsidr,bbb,ccc,ddd)
-         if((abs(pteprm(k)).gt.1.E-10_dp).and.(abs(pteprp(k)).gt.1.E-10_dp)) &
-           then
+        do k=1,nece
+          dsidrm=seval(nw,recem(k),rgrid,dsidr,bbb,ccc,ddd)
+          dsidrp=seval(nw,recep(k),rgrid,dsidr,bbb,ccc,ddd)
+          if ((abs(pteprm(k)).gt.1.E-10_dp).and.(abs(pteprp(k)).gt.1.E-10_dp)) &
+            then
             imk=idestm(k)
             rmbit(k)=tebit(imk)/pteprm(k)
             bitm=rmbit(k)*dsidrm
@@ -1519,17 +1521,17 @@
             rpbit(k)=tebit(ipk)/pteprp(k)  
             bitp=rpbit(k)*dsidrp
             ecebit(k)=sqrt(bitm**2+bitp**2) 
-           else
+          else
             fwtece0(k)=0.
-         endif
-3036    continue
-3069  continue
+          endif
+        enddo
+      endif ! (kfitece.ne.1).and.(kfixrece.ne.1)
       if (idebug.ge.3) write (6,*) 'GETTIR, ecebit = ', &
           (ecebit(i),i=1,nece)
 
 !
-      DEALLOCATE(rrgrid,bfield,rrout,bout,babs,bbb,ccc,ddd,btttt, &
-          dsidr,ddsiddr,bx,ry,bbk)
+      deallocate(rrgrid,bfield,rrout,bout,babs,bbb,ccc,ddd,btttt, &
+                 dsidr,ddsiddr,bx,ry,bbk)
 !
       return
       end subroutine
@@ -1563,16 +1565,16 @@
       kerror = 0
 ! MPI <<<
 !
-      ALLOCATE(bt(nwnh),br(nwnh),bzt(nwnh),bz(nwnh), &
+      allocate(bt(nwnh),br(nwnh),bzt(nwnh),bz(nwnh), &
          bwork(nw),cwork(nw),dwork(nw))
 !
       if (keecur .gt. 0 .and. ifirst .eq. 0) then
-      write(6,*) "Spatial averaging correction of MSE data"
-      write(6,*) "not supported with Er fit at this time."
-      write(6,*) "Going ahead with correction anyway,at this"
-      write(6,*) "time, on channels requested."
-!      write(6,*) "Calculating but not applying correction."
-!      where(mse_spave_on .ne. 0) mse_spave_on = -1
+        write(6,*) "Spatial averaging correction of MSE data"
+        write(6,*) "not supported with Er fit at this time."
+        write(6,*) "Going ahead with correction anyway,at this"
+        write(6,*) "time, on channels requested."
+!        write(6,*) "Calculating but not applying correction."
+!        where(mse_spave_on .ne. 0) mse_spave_on = -1
       endif
 
       ltime = jtime
@@ -1587,7 +1589,6 @@
         ifirst = 1
         write(6,*)"Calculate pitch angle corrections", &
           " using spatial averaging"
-
         do ichan=1,nstark
           save_gam(ltime,ichan) = atan(tangam(ltime,ichan))
           save_tangam(ltime,ichan) = tangam(ltime,ichan)
@@ -1597,7 +1598,7 @@
 
       ip_sign = - cpasma(ltime) / abs(cpasma(ltime))
 
-       call sets2d(psi,ct,rgrid,nw,bkrt,lkrt,zgrid,nh,bkzt,lkzt,wkt,ier)
+      call sets2d(psi,ct,rgrid,nw,bkrt,lkrt,zgrid,nh,bkzt,lkzt,wkt,ier)
   
       if (pasmat(ltime).gt.0.0) then
         ssimag=-simag
@@ -1607,65 +1608,63 @@
         ssibry=psibry
       endif
 
-
       if (jtime .gt. 0.0) then
 !---------------------------------------------------------------------
-!-- set up P' and FF', then integration                             --
-!-- ffprim = (RBt) * d/dpsi(RBt)                                    --
+!--   set up P' and FF', then integration                             --
+!--   ffprim = (RBt) * d/dpsi(RBt)                                    --
 !---------------------------------------------------------------------
-      if (icurrt.ne.1) go to 7540
-      pprime(1)=cratio*sbeta/darea/srma
-      ffprim(1)=cratio*srma*2.*salpha/darea*twopi*tmu
-      pprime(nw)=pprime(1)
-      ffprim(nw)=ffprim(1)
- 7540 continue
-      if (icurrt.ne.2.and.icurrt.ne.5) go to 7550
-      pprime(nw)=ppcurr(x111,kppcur)/darea
-      ffprim(nw)=fpcurr(x111,kffcur)/darea*twopi*tmu
-      pprime(1)=ppcurr(x000,kppcur)/darea
-      ffprim(1)=fpcurr(x000,kffcur)/darea*twopi*tmu
-      if (kfffnc.eq.8) then
-         ffprec(nw)=fpecrr(x111,kffcur)/darea*twopi*tmu
-         ffprec(1)=fpecrr(x000,kffcur)/darea*twopi*tmu
-      else
-         ffprec(nw)=0.0
-         ffprec(1)=0.0
+      if (icurrt.eq.1) then
+        pprime(1)=cratio*sbeta/darea/srma
+        ffprim(1)=cratio*srma*2.*salpha/darea*twopi*tmu
+        pprime(nw)=pprime(1)
+        ffprim(nw)=ffprim(1)
       endif
- 7550 continue
-      if (icurrt.ne.4) go to 7600
-      call currnt(n222,iges,n222,n222,kerror)
-      if (kerror.gt.0) return
-      pprime(1)=cratio/darea/rzero
-      ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
-      ffprim(nw)=ffprim(1)*gammaf
-      pprime(nw)=pprime(1)*gammap
- 7600 continue
+      if (icurrt.eq.2.or.icurrt.eq.5) then
+        pprime(nw)=ppcurr(x111,kppcur)/darea
+        ffprim(nw)=fpcurr(x111,kffcur)/darea*twopi*tmu
+        pprime(1)=ppcurr(x000,kppcur)/darea
+        ffprim(1)=fpcurr(x000,kffcur)/darea*twopi*tmu
+        if (kfffnc.eq.8) then
+          ffprec(nw)=fpecrr(x111,kffcur)/darea*twopi*tmu
+          ffprec(1)=fpecrr(x000,kffcur)/darea*twopi*tmu
+        else
+          ffprec(nw)=0.0
+          ffprec(1)=0.0
+        endif
+      endif
+      if (icurrt.eq.4) then
+        call currnt(n222,iges,n222,n222,kerror)
+        if (kerror.gt.0) return
+        pprime(1)=cratio/darea/rzero
+        ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
+        ffprim(nw)=ffprim(1)*gammaf
+        pprime(nw)=pprime(1)*gammap
+      endif
 
       do i=2,nw-1
         ii=nw-i+1
         siii=1.0_dp-1.0_dp/(nw-1)*(i-1)
         sigrid(ii)=siii
-        if (icurrt.ne.2.and.icurrt.ne.5) go to 7792
-        pprime(ii)=ppcurr(siii,kppcur)/darea
-        ffprim(ii)=fpcurr(siii,kffcur)/darea*twopi*tmu
-         if (kfffnc.eq.8) then
-           ffprec(ii)=fpecrr(siii,kffcur)/darea*twopi*tmu
-         else
-           ffprec(ii)=0.0
-         endif
- 7792   continue
-        if (icurrt.ne.4) go to 7794
-        pprime(ii)=(1.-siii**enp)**emp*(1.-gammap)+gammap
-        ffprim(ii)=ffprim(1)*pprime(ii)
-        pprime(ii)=pprime(1)*pprime(ii)
- 7794   continue
-        if (icurrt.ne.1) go to 7796
-        pprime(ii)=pprime(1)
-        ffprim(ii)=ffprim(1)
- 7796   continue
+        select case (icurrt)
+        case (2,5)
+          pprime(ii)=ppcurr(siii,kppcur)/darea
+          ffprim(ii)=fpcurr(siii,kffcur)/darea*twopi*tmu
+          if (kfffnc.eq.8) then
+            ffprec(ii)=fpecrr(siii,kffcur)/darea*twopi*tmu
+          else
+            ffprec(ii)=0.0
+          endif
+        case(4)
+          pprime(ii)=(1.-siii**enp)**emp*(1.-gammap)+gammap
+          ffprim(ii)=ffprim(1)*pprime(ii)
+          pprime(ii)=pprime(1)*pprime(ii)
+        case(1)
+          pprime(ii)=pprime(1)
+          ffprim(ii)=ffprim(1)
+        end select
       enddo
+      endif ! jtime .gt. 0.0
 
-      endif
       fpol(nw)=fbrdy*tmu
       sumf=fpol(nw)**2/2.
       delsi=-(psibry+psimag)/(nw-1)
@@ -1679,7 +1678,6 @@
       enddo
 
       call zpline(nw,sigrid,fpol,bwork,cwork,dwork)
-
 
       do ichan = 1,nmtark
         if (mse_spave_on(ichan) .ne. 0) then
@@ -1733,10 +1731,11 @@
         ifirst = 0
       endif
       
-      DEALLOCATE(bt,br,bzt,bz,bwork,cwork,dwork)
+      deallocate(bt,br,bzt,bz,bwork,cwork,dwork)
 
       return
       end subroutine 
+
 
 !**********************************************************************
 !>
@@ -1757,7 +1756,6 @@
              rrmls(ntime), zzmls(ntime),                              &
              l1mls(ntime), l2mls(ntime), l4mls(ntime),                &
              epotpmls(ntime), sigepmls(ntime)
-      
 !
       avemlt=avemsels
       synmlt=synmsels
@@ -1816,7 +1814,7 @@
                           ,oldfit
       dimension pds(6)
 !----------------------------------------------------------------------
-!--    BR=-1/R dpsi/dZ           BZ=1/R dpsi/dR                      --
+!--   BR=-1/R dpsi/dZ           BZ=1/R dpsi/dR                       --
 !--            Bprobe= BR cost + BZ sint                             --
 !--            gradsdr= dBRdR cost + dBZdR sint         dBprobe/dR   --
 !--            gradsdz= dBRdZ cost + dBZdZ sint         dBrpobe/dZ   --
@@ -1833,53 +1831,53 @@
         open(unit=38,file='bandcur.err',form='formatted',status='unknown')
       endif
       do i=1,magpri
-         call seva2d(bkx,lkx,bky,lky,c,xmp2(i),ymp2(i),pds,ier,n666)
+        call seva2d(bkx,lkx,bky,lky,c,xmp2(i),ymp2(i),pds,ier,n666)
 !----------------------------------------------------------------------
-!-- Calculate dBR/dr, dBR/dz, dBZ/dr, dBZ/dz                         --
+!--     Calculate dBR/dr, dBR/dz, dBZ/dr, dBZ/dz                     --
 !----------------------------------------------------------------------
-         brdr=(-pds(4)+pds(3)/xmp2(i))/xmp2(i)
-         brdz=(-pds(6))/xmp2(i)
-         bzdr=(pds(5)-(pds(2)/xmp2(i)))/xmp2(i)
-         bzdz=pds(4)/xmp2(i)
+        brdr=(-pds(4)+pds(3)/xmp2(i))/xmp2(i)
+        brdz=(-pds(6))/xmp2(i)
+        bzdr=(pds(5)-(pds(2)/xmp2(i)))/xmp2(i)
+        bzdz=pds(4)/xmp2(i)
 !----------------------------------------------------------------------
-!--  Form dBprobe/dR and dBprobe/dZ, then gradient                   --
+!--     Form dBprobe/dR and dBprobe/dZ, then gradient                --
 !----------------------------------------------------------------------
-         sinm=sin(radeg*amp2(i))
-         cosm=cos(radeg*amp2(i))
-         gradsdr=brdr*cosm + bzdr*sinm
-         gradsdz=brdz*cosm + bzdz*sinm
-         gradsmp(jtimex,i)=sqrt(gradsdr**2+gradsdz**2)
+        sinm=sin(radeg*amp2(i))
+        cosm=cos(radeg*amp2(i))
+        gradsdr=brdr*cosm + bzdr*sinm
+        gradsdz=brdz*cosm + bzdz*sinm
+        gradsmp(jtimex,i)=sqrt(gradsdr**2+gradsdz**2)
 !----------------------------------------------------------------------
-!-- Calculate B perpendicular to magnetic probe                      --
+!--     Calculate B perpendicular to magnetic probe                  --
 !----------------------------------------------------------------------
-         bpermp(jtimex,i)=(pds(2)*cosm + pds(3)*sinm) &
+        bpermp(jtimex,i)=(pds(2)*cosm + pds(3)*sinm) &
                              /xmp2(i)
       enddo
 !----------------------------------------------------------------------
-!-- calc gradient of flux loops                                      --
+!--   calc gradient of flux loops                                    --
 !----------------------------------------------------------------------
       do i=1,nsilop
-         call seva2d(bkx,lkx,bky,lky,c,rsi(i),zsi(i),pds,ier,n333)
-         gradsfl(jtimex,i)=sqrt(pds(2)**2+pds(3)**2)
+        call seva2d(bkx,lkx,bky,lky,c,rsi(i),zsi(i),pds,ier,n333)
+        gradsfl(jtimex,i)=sqrt(pds(2)**2+pds(3)**2)
       enddo
       write(33,*) '#', ishot,time(jtimex),jtimex
       write(33,*)'#magprobe no.,gradsmp,bpermp'
       do i=1,magpri
-         write(33,'(i5,2e13.5)')i,gradsmp(jtimex,i),bpermp(jtimex,i)
+        write(33,'(i5,2e13.5)')i,gradsmp(jtimex,i),bpermp(jtimex,i)
       enddo
       write(33,*)'#fluxloop no., gradsfl'
       do i=1,nsilop
-         write(33,'(i5,2e13.5)') i,gradsfl(jtimex,i)
+        write(33,'(i5,2e13.5)') i,gradsfl(jtimex,i)
       enddo
       call magsigma(ishot,time(jtimex),jtimex,gradsmp,gradsfl, &
            bpermp,sigmaf,sigmab,sigmae,sigmaip,sigmafl,sigmamp)
 !----------------------------------------------------------------------
-!-- Set fitting weights                                              --
+!--   Set fitting weights                                            --
 !----------------------------------------------------------------------
       do i=33,38
-         write(i,*) '#', ishot,time(jtimex),jtimex
-         write(i,*) '#errorm=', errorm
-         write(i,*) '#errmag=', errmag
+        write(i,*) '#', ishot,time(jtimex),jtimex
+        write(i,*) '#errorm=', errorm
+        write(i,*) '#errmag=', errmag
       enddo
       write(38,*) '#sigmab'
       write(38,'(e13.5)') sigmab(jtimex)
@@ -1887,77 +1885,77 @@
       write(38, '(2e13.5)') sigmaip0,sigmaip(jtimex)
       write(34,*) '#sigmamp0,sigmamp'
       do i=1,magpri
-         write(34,'(i5,2e13.5)') i,sigmamp0(i),sigmamp(jtimex,i)
+        write(34,'(i5,2e13.5)') i,sigmamp0(i),sigmamp(jtimex,i)
       end do
       write(34,*) ' '
       write(34,*) '#t0mp,mp_k, mprcg, vresmp, devmp'
       do i=1,magpri
-         write(34,'(6e13.5)') t0xmp(i),xmp_k(i),xmprcg(i),vresxmp(i), &
+        write(34,'(6e13.5)') t0xmp(i),xmp_k(i),xmprcg(i),vresxmp(i), &
                  devxmp(jtimex,i),rnavxmp(jtimex,i)
       enddo
       write(34,*) ' '
       write(36,*) '#sigmaf0,sigmaf'
       do i=1,nfcoil
-         write(36,'(i5,2e13.5)') i,sigmaf0(i),sigmaf(jtimex,i)
+        write(36,'(i5,2e13.5)') i,sigmaf0(i),sigmaf(jtimex,i)
       end do
       write(36,*) ' '
       write(37,*) '#sigmae0,sigmae'
       do i=1,nesum
-         write(37,'(i5, 2e13.5)') i, sigmae0(i),sigmae(jtimex,i)
+        write(37,'(i5, 2e13.5)') i, sigmae0(i),sigmae(jtimex,i)
       end do
       write(37,*) ' '
       write(35,*) '#sigmafl0,sigmafl'
       do i=1,nsilop
-         write(35,'(i5,2e13.5)') i, sigmafl0(i),sigmafl(jtimex,i)
+        write(35,'(i5,2e13.5)') i, sigmafl0(i),sigmafl(jtimex,i)
       enddo
       write(35,*) ' '
       write(35,*) '#t0psi,psi_k, psircg, vrespsi, devpsi'
       do i=1,nsilop
-         write(35,'(6e13.5)') t0psi(i),psi_k(i),psircg(i),vrespsi(i), &
+        write(35,'(6e13.5)') t0psi(i),psi_k(i),psircg(i),vrespsi(i), &
                devpsi(jtimex,i),rnavpsi(jtimex,i)
       enddo
       write(35,*) ' '
       do i=1,nsilop
-         oldfit = fwtsi(i)
-         if (sigmafl(jtimex,i)/=0.0) then
-            fwtsi(i)=swtsi(i)/sigmafl(jtimex,i)
-         else
-            fwtsi(i)=0.0
-         endif
-         write (99,*) i, swtsi(i), oldfit, fwtsi(i)
+        oldfit = fwtsi(i)
+        if (sigmafl(jtimex,i)/=0.0) then
+          fwtsi(i)=swtsi(i)/sigmafl(jtimex,i)
+        else
+          fwtsi(i)=0.0
+        endif
+        write (99,*) i, swtsi(i), oldfit, fwtsi(i)
       enddo
       do i=1,magpri
-         oldfit = fwtmp2(i)
-         if (sigmamp(jtimex,i)/=0.0) then
-            fwtmp2(i)=swtmp2(i)/sigmamp(jtimex,i)
-         else
-            fwtmp2(i)=0.0
+        oldfit = fwtmp2(i)
+        if (sigmamp(jtimex,i)/=0.0) then
+          fwtmp2(i)=swtmp2(i)/sigmamp(jtimex,i)
+        else
+          fwtmp2(i)=0.0
          endif
          write (99,*) i, swtmp2(i), oldfit, fwtmp2(i)
       enddo
       do i=1,nesum
-         oldfit = fwtec(i)
-         if (sigmae(jtimex,i)/=0.0) then
-           fwtec(i)=swtec(i)/sigmae(jtimex,i)
-         else
-           fwtec(i)=0.0
-         endif
-         write (99,*) i, swtec(i), oldfit, fwtec(i)
+        oldfit = fwtec(i)
+        if (sigmae(jtimex,i)/=0.0) then
+          fwtec(i)=swtec(i)/sigmae(jtimex,i)
+        else
+          fwtec(i)=0.0
+        endif
+        write (99,*) i, swtec(i), oldfit, fwtec(i)
       enddo
       do i=1,nfcoil
-         oldfit = fwtfc(i)
-         if (sigmaf(jtimex,i)/=0.0) then
-           fwtfc(i)=swtfc(i)/sigmaf(jtimex,i)
-         else
-           fwtfc(i)=0.0
-         endif
-         write (99,*) i, swtfc(i), oldfit, fwtfc(i)
+        oldfit = fwtfc(i)
+        if (sigmaf(jtimex,i)/=0.0) then
+          fwtfc(i)=swtfc(i)/sigmaf(jtimex,i)
+        else
+          fwtfc(i)=0.0
+        endif
+        write (99,*) i, swtfc(i), oldfit, fwtfc(i)
       enddo
       oldfit = fwtcur
       if (sigmaip(jtimex)/=0.0) then
-           fwtcur=swtcur/sigmaip(jtimex)
+        fwtcur=swtcur/sigmaip(jtimex)
       else
-           fwtcur=0.0
+        fwtcur=0.0
       endif
       write (99,*) swtcur, oldfit, fwtcur
 !
@@ -1995,13 +1993,13 @@
          ! SEK TODO:   I'm not even sure we can do MSE EFIT's without this but I
          ! can't find the routines here
 #if 0
-      do 10 i=1,ktime
+      do i=1,ktime
         atime(i)=time(i)
-   10 continue
-      if(dtmsefull .gt. 0.0) then
-         avem=dtmsefull / 1000.0
+      enddo
+      if (dtmsefull .gt. 0.0) then
+        avem=dtmsefull / 1000.0
       else
-         avem=2.0*iavem / 1000.0
+        avem=2.0*iavem / 1000.0
       endif
       max_beamOff = t_max_beam_off / 1000.0
       call  set_mse_beam_logic(mse_strict,max_beamOff,ok_210lt,ok_30rt)
@@ -2022,7 +2020,7 @@
       call get_mse_calibration(msefitfun,hgain, &
         hslope,hscale,hoffset)
       kfixstark = 0
-      do 200 n=1,nmtark
+      do n=1,nmtark
         rmse_gain(n) = hgain(n)
         rmse_slope(n) = hslope(n)
         rmse_scale(n) = hscale(n)
@@ -2036,7 +2034,7 @@
           enddo
         enddo
 
-        do 100 i=1,ktime
+        do i=1,ktime
           tangam(i,n)=tanham(i,n)
           tangam_uncor(i,n)=tanham_uncor(i,n)
           siggam(i,n)=sigham(i,n)
@@ -2064,8 +2062,8 @@
             fwtgam(n)=0.0
             siggam(i,n)=0.0
           endif
-100     continue
-200   continue
+        enddo
+      enddo
 
       !
       ! kfixstark is zero when none of the individual channels is turned on
@@ -2091,7 +2089,7 @@
 !!    @param kerror : error flag
 !!
 !**********************************************************************
-    subroutine gette(kerror)
+      subroutine gette(kerror)
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -2102,37 +2100,39 @@
       kerror = 0
 ! MPI <<<
 !----------------------------------------------------------------------
-!--  singular decomposition                                          --
+!--   singular decomposition                                         --
 !----------------------------------------------------------------------
-      do 1100 nj=1,npress
-        do 1000 nk=1,nptef
+      do nj=1,npress
+        do nk=1,nptef
           xn=-rpress(nj)
           arsp_cw2(nj,nk)=xn**(nk-1)/sgteth(nj)
- 1000   continue
+        enddo
         bdata_cw2(nj)=tethom(nj)/sgteth(nj)
- 1100 continue
+      enddo
       ntedat=npress
       if (cstabte.gt.0.0) then
         nj=npress
-        do 1120 jj=ncstte,nptef
-         nj=nj+1
-         do 1110 nk=1,nptef
-          arsp_cw2(nj,nk)=0.0
-          if (jj.eq.nk) arsp_cw2(nj,nk)=cstabte
- 1110    continue
-         bdata_cw2(nj)=0.0
- 1120   continue
+        do jj=ncstte,nptef
+          nj=nj+1
+          do nk=1,nptef
+            arsp_cw2(nj,nk)=0.0
+            if (jj.eq.nk) arsp_cw2(nj,nk)=cstabte
+          enddo
+          bdata_cw2(nj)=0.0
+        enddo
         ntedat=ntedat+nptef-ncstte+1
       endif
 !---------------------------------------------------------------------
-!-- form error matrix                                               --
+!--   form error matrix                                             --
 !---------------------------------------------------------------------
-      do 1900 i=1,nptef
-      do 1900 j=1,nptef
-        ematrix_cw2(i,j)=0.0
-        do 1900 k=1,npress
-          ematrix_cw2(i,j)=ematrix_cw2(i,j)+arsp_cw2(k,i)*arsp_cw2(k,j)
- 1900   continue
+      do i=1,nptef
+        do j=1,nptef
+          ematrix_cw2(i,j)=0.0
+          do k=1,npress
+            ematrix_cw2(i,j)=ematrix_cw2(i,j)+arsp_cw2(k,i)*arsp_cw2(k,j)
+          enddo
+        enddo
+      enddo
 
       call sdecm(arsp_cw2,ndata,ntedat,nptef,bdata_cw2,ntedat,n111,wrsp_cw2,work_cw2,ier)
       if (ier.eq.129) then
@@ -2143,55 +2143,58 @@
 
       cond=ier
       toler=1.0e-06_dp*wrsp_cw2(1)
-      do 1600 i=1,nptef
+      do i=1,nptef
         t=0.0
         if (wrsp_cw2(i).gt.toler) t=bdata_cw2(i)/wrsp_cw2(i)
         work_cw2(i)=t
- 1600 continue
-      do 1650 i=1,nptef
+      enddo
+      do i=1,nptef
         tefit(i)=0.0
-        do 1650 j=1,nptef
+        do j=1,nptef
           tefit(i)=tefit(i)+arsp_cw2(i,j)*work_cw2(j)
- 1650   continue
+        enddo
+      enddo
 !------------------------------------------------------------------
-!-- compute chi square                                           --
+!--   compute chi square                                         --
 !------------------------------------------------------------------
       chisqte=0.0
-      do 1700 i=1,npress
+      do i=1,npress
         tenow=0.0
         xn=-rpress(i)
-        do 1670 j=1,nptef
- 1670     tenow=tenow+tefit(j)*xn**(j-1)
+        do j=1,nptef
+          tenow=tenow+tefit(j)*xn**(j-1)
+        enddo
         chisqte=chisqte+((tenow-tethom(i))/sgteth(i))**2
- 1700 continue
+      enddo
 !---------------------------------------------------------------------
-!-- get inverse of error matrix                                     --
+!--   get inverse of error matrix                                   --
 !---------------------------------------------------------------------
       call linv1f(ematrix_cw2,nptef,nppcur,einv_cw2,n444,work_cw2,ier)
 !----------------------------------------------------------------------
-!--  boundary values                                                 --
+!--   boundary values                                                --
 !----------------------------------------------------------------------
-        tebdry=0.0
-        stebdry=0.0
-        tepbry=0.0
-        sigtepb=0.0
-        do 1850 j=1,nptef
-          do 1840 i=1,nptef
-            stebdry=stebdry+einv_cw2(i,j)
-            sigtepb=sigtepb+(i-1)*(j-1)*einv_cw2(i,j)
- 1840     continue
-          tepbry=tepbry+(j-1)*tefit(j)
- 1850     tebdry=tebdry+tefit(j)
-        if (stebdry.gt.0.0) then
-          stebdry=sqrt(stebdry)
-        else
-          stebdry=tebdry
-        endif
-        if (sigtepb.gt.0.0) then
-          sigtepb=sqrt(sigtepb)
-        else
-          sigtepb=tepbry
-        endif
+      tebdry=0.0
+      stebdry=0.0
+      tepbry=0.0
+      sigtepb=0.0
+      do j=1,nptef
+        do i=1,nptef
+          stebdry=stebdry+einv_cw2(i,j)
+          sigtepb=sigtepb+(i-1)*(j-1)*einv_cw2(i,j)
+        enddo
+        tepbry=tepbry+(j-1)*tefit(j)
+        tebdry=tebdry+tefit(j)
+      enddo
+      if (stebdry.gt.0.0) then
+        stebdry=sqrt(stebdry)
+      else
+        stebdry=tebdry
+      endif
+      if (sigtepb.gt.0.0) then
+        sigtepb=sqrt(sigtepb)
+      else
+        sigtepb=tepbry
+      endif
 !
       return
       end subroutine gette
@@ -2218,50 +2221,52 @@
       kerror = 0
 
       if (rion(2).lt.0.0) then
-      do 2900 i=1,nption
-       xsiion(i)=-rion(i)
-       sigti(i)=sgtimin*tionex(i)
- 2900 continue
-      call zpline(nption,xsiion,tionex,bwork,cwork,dwork)
-      do 3000 i=1,npress
-        xn=-rpress(i)
-        tithom(i)=seval(nption,xn,xsiion,tionex,bwork,cwork,dwork)
-        stitho(i)=sgtimin*tithom(i)
- 3000 continue
-      tibdry=seval(nption,x111,xsiion,tionex,bwork,cwork,dwork)
-      tipbry=speval(nption,x111,xsiion,tionex,bwork,cwork,dwork)
-      stibdry=sgtimin*tibdry
-      sigtipb=sgtimin*tipbry
-      return
+        do i=1,nption
+          xsiion(i)=-rion(i)
+          sigti(i)=sgtimin*tionex(i)
+        enddo
+        call zpline(nption,xsiion,tionex,bwork,cwork,dwork)
+        do i=1,npress
+          xn=-rpress(i)
+          tithom(i)=seval(nption,xn,xsiion,tionex,bwork,cwork,dwork)
+          stitho(i)=sgtimin*tithom(i)
+        enddo
+        tibdry=seval(nption,x111,xsiion,tionex,bwork,cwork,dwork)
+        tipbry=speval(nption,x111,xsiion,tionex,bwork,cwork,dwork)
+        stibdry=sgtimin*tibdry
+        sigtipb=sgtimin*tipbry
+        return
       endif
 !----------------------------------------------------------------------
-!--  singular decomposition                                          --
+!--   singular decomposition                                         --
 !----------------------------------------------------------------------
-      do 200 i=1,nption
+      do i=1,nption
         call seva2d(bkx,lkx,bky,lky,c,rion(i),zion(i),pds,ier,n111)
         xsiion(i)=(simag-pds(1))/sidif
-  200 continue
+      enddo
       need=nption+1
       xsiion(need)=1.0
       tionex(need)=tebdry
       sigti(need)=stebdry
 !
-      do 1100 nj=1,need
-        do 1000 nk=1,nptionf
+      do nj=1,need
+        do nk=1,nptionf
           xn=xsiion(nj)
           arsp_cw2(nj,nk)=xn**(nk-1)/sigti(nj)
- 1000   continue
+        enddo
         bdata_cw2(nj)=tionex(nj)/sigti(nj)
- 1100 continue
+      enddo
 !---------------------------------------------------------------------
-!-- form error matrix                                               --
+!--   form error matrix                                             --
 !---------------------------------------------------------------------
-      do 1900 i=1,nptionf
-      do 1900 j=1,nptionf
-        ematrix_cw2(i,j)=0.0
-        do 1900 k=1,need
-          ematrix_cw2(i,j)=ematrix_cw2(i,j)+arsp_cw2(k,i)*arsp_cw2(k,j)
- 1900   continue
+      do i=1,nptionf
+        do j=1,nptionf
+          ematrix_cw2(i,j)=0.0
+          do k=1,need
+            ematrix_cw2(i,j)=ematrix_cw2(i,j)+arsp_cw2(k,i)*arsp_cw2(k,j)
+          enddo
+        enddo
+      enddo
 !
       nnn=1
       call sdecm(arsp_cw2,ndata,need,nptionf,bdata_cw2,need,nnn,wrsp_cw2,work_cw2,ier)
@@ -2273,72 +2278,76 @@
 
       cond=ier
       toler=1.0e-06_dp*wrsp_cw2(1)
-      do 1600 i=1,nptionf
+      do i=1,nptionf
         t=0.0
         if (wrsp_cw2(i).gt.toler) t=bdata_cw2(i)/wrsp_cw2(i)
         work_cw2(i)=t
- 1600 continue
-      do 1650 i=1,nptionf
+      enddo
+      do i=1,nptionf
         tifit(i)=0.0
-        do 1650 j=1,nptionf
+        do j=1,nptionf
           tifit(i)=tifit(i)+arsp_cw2(i,j)*work_cw2(j)
- 1650   continue
+        enddo
+      enddo
 !------------------------------------------------------------------
-!-- compute chi square                                           --
+!--   compute chi square                                         --
 !------------------------------------------------------------------
       chisqti=0.0
-      do 1700 i=1,need
+      do i=1,need
         tinow=0.0
-        do 1670 j=1,nptionf
- 1670     tinow=tinow+tifit(j)*xsiion(i)**(j-1)
+        do j=1,nptionf
+          tinow=tinow+tifit(j)*xsiion(i)**(j-1)
+        enddo
         chisqti=chisqti+((tinow-tionex(i))/sigti(i))**2
- 1700 continue
+      enddo
 !---------------------------------------------------------------------
-!-- get inverse of error matrix                                     --
+!--   get inverse of error matrix                                   --
 !---------------------------------------------------------------------
       call linv1f(ematrix_cw2,nptionf,nppcur,einv_cw2,n444,work_cw2,ier)
 !---------------------------------------------------------------------
-!--  project ion temperature into Thompson flux grid                --
+!--   project ion temperature into Thompson flux grid               --
 !---------------------------------------------------------------------
-      do 1800 i=1,npress
+      do i=1,npress
         tithom(i)=0.0
         stitho(i)=0.0
         xn=-rpress(i)
-        do 1750 j=1,nptionf
-          do 1740 k=1,nptionf
-          stitho(i)=stitho(i)+einv_cw2(k,j)*xn**(j-1)*xn**(k-1)
- 1740     continue
- 1750     tithom(i)=tithom(i)+tifit(j)*xn**(j-1)
+        do j=1,nptionf
+          do k=1,nptionf
+            stitho(i)=stitho(i)+einv_cw2(k,j)*xn**(j-1)*xn**(k-1)
+          enddo
+          tithom(i)=tithom(i)+tifit(j)*xn**(j-1)
+        enddo
         if (stitho(i).gt.0.0) then
           stitho(i)=sqrt(stitho(i))
         else
           stitho(i)=0.5_dp*tithom(i)
         endif
- 1800 continue
+      enddo
 !----------------------------------------------------------------------
-!--  boundary values                                                 --
+!--   boundary values                                                 --
 !----------------------------------------------------------------------
-        tibdry=0.0
-        stibdry=0.0
-        tipbry=0.0
-        sigtipb=0.0
-        do 1850 j=1,nptionf
-          do 1840 i=1,nptionf
-            stibdry=stibdry+einv_cw2(i,j)
-            sigtipb=sigtipb+(i-1)*(j-1)*einv_cw2(i,j)
- 1840     continue
-          tipbry=tipbry+(j-1)*tifit(j)
- 1850     tibdry=tibdry+tifit(j)
-        if (stibdry.gt.0.0) then
-          stibdry=sqrt(stibdry)
-        else
-          stibdry=tibdry
-        endif
-        if (sigtipb.gt.0.0) then
-          sigtipb=sqrt(sigtipb)
-        else
-          sigtipb=tipbry
-        endif
+      tibdry=0.0
+      stibdry=0.0
+      tipbry=0.0
+      sigtipb=0.0
+      do j=1,nptionf
+        do i=1,nptionf
+          stibdry=stibdry+einv_cw2(i,j)
+          sigtipb=sigtipb+(i-1)*(j-1)*einv_cw2(i,j)
+        enddo
+        tipbry=tipbry+(j-1)*tifit(j)
+        tibdry=tibdry+tifit(j)
+      enddo
+      if (stibdry.gt.0.0) then
+        stibdry=sqrt(stibdry)
+      else
+        stibdry=tibdry
+      endif
+      if (sigtipb.gt.0.0) then
+        sigtipb=sqrt(sigtipb)
+      else
+        sigtipb=tipbry
+      endif
 !
       return
       end subroutine gettion
@@ -2371,9 +2380,9 @@
       endif
       erpote=0.0
       call seter(ypsi,xpsii)
-      do 1400 iiij=1,nnn
+      do iiij=1,nnn
         erpote=erpote+cerer(iiij)*xpsii(iiij)
- 1400 continue
+      enddo
       return
 !
       entry erppote(ypsi,nnn)
@@ -2383,9 +2392,9 @@
       endif
       erppote=0.0
       call seterp(ypsi,xpsii)
-      do 2400 iiij=1,nnn
+      do iiij=1,nnn
         erppote=erppote+cerer(iiij)*xpsii(iiij)
- 2400 continue
+      enddo
       erppote=-erppote/sidif
       return
       end function erpote
@@ -2418,7 +2427,7 @@
         eradial=0.0
         return
       endif
-        call seva2d(bkx,lkx,bky,lky,c,reee,zeee,pds,ier,n333)
+      call seva2d(bkx,lkx,bky,lky,c,reee,zeee,pds,ier,n333)
       eradial=erpote(ypsi,nnn)
       eradial=-pds(2)*eradial
       return
@@ -2472,12 +2481,12 @@
       endif
       fpcurr=0.0
       call setfp(ypsi,xpsii)
-      do 1400 iiij=nbase+1,nbase+nnn
+      do iiij=nbase+1,nbase+nnn
         iijj=iiij-nbase
         fpcurr=fpcurr+brsp(iiij)*xpsii(iijj)
- 1400 continue
+      enddo
 !----------------------------------------------------------------------
-!-- edge hyperbolic tangent component                                --
+!--   edge hyperbolic tangent component                              --
 !----------------------------------------------------------------------
       if (kedgef.eq.0) return
       siedge=(ypsi-fe_psin)/fe_width
@@ -2498,10 +2507,10 @@
       endif
       fpecrr=0.0
       call setfp(ypsi,xpsii)
-      do 1500 iiij=nbase+nnn,nbase+nnn
+      do iiij=nbase+nnn,nbase+nnn
         iijj=iiij-nbase
         fpecrr=fpecrr+brsp(iiij)*xpsii(iijj)
- 1500 continue
+      enddo
       return
 !
       entry ffcurr(upsi,nnn)
@@ -2518,16 +2527,16 @@
       endif
       ffcurr=0.0
       call setff(ypsi,xpsii)
-      do 1600 i=nbase+1,nbase+nnn
+      do i=nbase+1,nbase+nnn
         nn=i-nbase
         ffcurr=ffcurr+brsp(i)*xpsii(nn)
- 1600 continue
+      enddo
       fb22=fbrdy**2
       ff22=fb22+xsidif*ffcurr/constf2
       if (ff22.lt.0.0) ff22=fb22
       ffcurr=sqrt(ff22)*fbrdy/abs(fbrdy)
 !----------------------------------------------------------------------
-!-- edge hyperbolic tangent component                                --
+!--   edge hyperbolic tangent component                              --
 !----------------------------------------------------------------------
       if (kedgef.eq.0) return
       siedge=(ypsi-fe_psin)/fe_width
