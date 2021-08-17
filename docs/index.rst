@@ -19,6 +19,8 @@ Documentation contents
 .. toctree::
    :maxdepth: 3
    
+   INSTALL
+   RUN   
    subroutines
    modules
    namelist

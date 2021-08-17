@@ -1,10 +1,35 @@
+Installation
+============
 
+Public Installations
+--------------------
 
+Public installations of the EFIT-AI are available on the GA iris cluster, PPPL portal cluster
+and nersc cori supercomputer
+
+iris::
+
+    module purge
+    module load env/gcc9.2
+    export link_efit=/fusion/projects/codes/efitai/efit_support_files/{device}/
+    /fusion/projects/codes/efit/efit/build/efit/efit {grid_size}
+
+	
+portal::
+
+    module purge
+    module load gcc/9.3.0
+    export link_efit=/p/nstx/EFIT_GA/efit_support_files/{device}/
+    /p/nstx/EFIT_GA/efit/build/efit/efit {grid_size}
+
+cori::
+
+    /a/path/to/cori
+
+Installing from source
+----------------------
 
 This gives installation instructions to EFIT using the CMake build system
-
-Quickstart
-==========
 
 Minimum requirements: cmake (>=3.8), fortran compiler, blas and lapack fortran
 libraries
@@ -20,12 +45,14 @@ all other third-party libraries and simply build with::
 
 This will work on Ubuntu (18.04 and 20.04) as long as the following
 packages have been installed (call apt-get to install)::
+
     git (optional)
     build-essential
     cmake
     gfortran
     libblas-dev or libopenblas-dev (or libopenblas-serial-dev)
     liblapack-dev or libopenblas-dev (or libopenblas-serial-dev)
+
 (18.04 only builds with libopenblas-dev - not libblas-dev)
 (16.04 and older requires non-standard CMake and gfortran versions)
 
@@ -33,7 +60,7 @@ It will also work on Mac with similar libraries (TO DO: list) (can be obtained w
 brew install)
 
 Configuring third-party libraries
-=================================
+---------------------------------
 
 To build with all of the libraries and specify the compilers, one can use a
 longer shell script to store the required flags.  Here is an example 

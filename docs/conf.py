@@ -22,7 +22,7 @@ project = 'EFIT'
 copyright = '2021, Joseph McClenaghan'
 author = 'Joseph McClenaghan'
 
-extensions = ['breathe' ]
+extensions = ['breathe']
 # The full version, including alpha/beta/rc tags
 
 breathe_projects = { "EFIT": "xml/" }
