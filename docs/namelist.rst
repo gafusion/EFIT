@@ -10,7 +10,7 @@ See input namelists for other options.
 
 .. csv-table:: IN1 general
    :file: tables/in1.csv
-   :widths: 20, 100
+   :widths: 15,15,70
    :header-rows: 1
 
 IN1 BASIS
