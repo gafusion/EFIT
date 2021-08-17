@@ -11,10 +11,11 @@ iris::
 
     module purge
     module load env/gcc9.2
-    export link_efit=/fusion/projects/codes/efitai/efit_support_files/{device}/
-    /fusion/projects/codes/efit/efit/build/efit/efit {grid_size}
+    module load {intel/2018, pfg/18.7}
+    module load {mpich/3.2-gcc9.2.0, mpich/3.2-intel2018, mpich/3.2-pgf18.7}
+    export link_efit=/fusion/projects/codes/efit/efitai/efit_support_files/{device}/
+    /fusion/projects/codes/efit/efitai/efit/build_{compiler}/efit/efit {grid_size}
 
-	
 portal::
 
     module purge
@@ -24,7 +25,9 @@ portal::
 
 cori::
 
-    /a/path/to/cori
+    module switch PrgEnv-gnu PrgEnv-{compiler}
+    export link_efit=/global/common/software/efitai/efit_support_files/{device}/
+    /global/common/software/efitai/efit/build_{compiler}/efit/efit {grid_size}
 
 Installing from source
 ----------------------
