@@ -7,7 +7,7 @@ Public Installations
 Public installations of the EFIT-AI are available on the GA iris cluster, PPPL portal cluster
 and nersc cori supercomputer
 
-iris::
+iris (some installs are pending)::
 
     module purge
     module load env/gcc9.2
@@ -16,7 +16,7 @@ iris::
     export link_efit=/fusion/projects/codes/efit/efitai/efit_support_files/{device}/
     /fusion/projects/codes/efit/efitai/efit/build_{compiler}/efit/efit {grid_size}
 
-cori (intallation is pending ERCAP approval)::
+cori (intallation is pending ERCAP setup)::
 
     module switch PrgEnv-gnu PrgEnv-{compiler}
     export link_efit=/global/common/software/efitai/efit_support_files/{device}/
@@ -103,6 +103,7 @@ and can be found in the `share/config_examples/` directory, including::
     config_iris_pgi.sh
     config_nersc_gnu.sh
     config_nersc_intel.sh
+    config_nersc_cray.sh
     config_portal.sh
 
 The required environments for building on these systems are described in the scripts as well 

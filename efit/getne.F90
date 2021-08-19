@@ -125,6 +125,7 @@
 !----------------------------------------------------------------------
 !--   get co2 v2 chord normalization factor                          --
 !----------------------------------------------------------------------
+      factor=1.0 ! TODO: this appears to be unset (should it be removed?)
       call lenco2(xout,yout,nfound,jtime)
       delz=(zuperts(jtime)-zlowerts)/(nh-1)*0.01_dp
       dneco2=debdry

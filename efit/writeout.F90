@@ -908,6 +908,10 @@
       do i=1,nco2v
         denv(i)=denvt(jtime,i)
       enddo
+      mmstark=0
+      do i=1,nstark
+        if (swtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
+      enddo
       if (mmstark.gt.0) then
         do i=1,nmtark
           tgamma(i)=tangam(jtime,i)

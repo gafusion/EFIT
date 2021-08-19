@@ -123,7 +123,7 @@ install(FILES ${CMAKE_BINARY_DIR}/config.f
 #---------------------------------------------------------------------
 if (${CMAKE_Fortran_COMPILER_ID} MATCHES "Cray")
   option(__cray "using Cray FC Compiler" on)
-  set(CMAKE_Fortran_FLAGS "-h nosecond_underscore -s real64 ${CMAKE_Fortran_FLAGS}")
+  set(CMAKE_Fortran_FLAGS "-s real64 ${CMAKE_Fortran_FLAGS}")
   if (NOT ${ENABLE_NATIVE_ENDIAN})
     set(CMAKE_Fortran_FLAGS "-h byteswapio ${CMAKE_Fortran_FLAGS}")
   endif ()

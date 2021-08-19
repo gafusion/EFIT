@@ -1189,8 +1189,6 @@
       endif
       ilo = middle
       go to 50
-      ihi = middle
-      go to 50
       end subroutine interv
 
 

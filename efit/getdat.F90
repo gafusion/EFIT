@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !>
 !!    PRIMARY CALLING SEQUENCE USED BY REVIEW AND OTHER CODES. \n
@@ -137,7 +138,7 @@
 
 !----------------------------------------------------------------------
 !
-! Alternate entry point for use by the EFIT code.
+!     Alternate entry point for use by the EFIT code.
 !
 !----------------------------------------------------------------------
 
@@ -149,23 +150,30 @@
       efit = .true.
       iwait = 0
 
-        rcfact = 1.0
+      rcfact = 1.0
 
-        IF (ircfact .eq. 1) THEN
-                filnam='rcfact.dat'
-                cname=to_upper(name)
-                open(unit=21,file=filnam,status='old',err=1000)
-1001            read (21,9,end=1000,err=1000) cname1, fact
-9               format(x,a10,f15.5)
-                if(cname .ne. cname1)   go to 1001
-                if(fact .gt. 0.) rcfact = fact
-1000            close(unit=21)
-        ENDIF
+      IF (ircfact .eq. 1) THEN
+        filnam='rcfact.dat'
+        cname=to_upper(name)
+        open(unit=21,file=filnam,status='old',iostat=ioerr)
+        if (ioerr.ne.0) then
+1001      read (21,9,iostat=ioerr) cname1, fact
+          if (ioerr.ne.0) then
+9           format(x,a10,f15.5)
+            if(cname .ne. cname1) go to 1001
+            if(fact .gt. 0.) rcfact = fact
+          else
+            close(unit=21)
+          endif
+        else
+          close(unit=21)
+        endif
+      ENDIF
 
 !----------------------------------------------------------------------
 11111 kount=0
 
-1      IASCII(1)=5
+1     IASCII(1)=5
       INT16(1)=0
       INT32(1)=0
       REAL32(1)=50
@@ -178,16 +186,21 @@
       nint = 1
       iarr(4) = nint  ! point interval
       pzero = 0.0
-!
-!  PTDATA CALL ... GET ALL THE DATA!!
-!  Request to get data by point sampling with PTDATA returning time array
-!
-!vas f90 modifi
-!10 call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,
-!vas 1 iascii,int16,int32,real32)
-
-10    call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,&
+      !
+      !  PTDATA CALL ... GET ALL THE DATA!!
+      !  Request to get data by point sampling with PTDATA returning time array
+      !
+10    continue
+#ifdef __cray
+      call ptdata(itype,nshot,phase,name,temp,ier,iarr,rarr,&
         iascii,int16,int32,real32)
+#else
+!vas f90 modifi
+!vas call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,
+!vas 1 iascii,int16,int32,real32)
+      call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,&
+        iascii,int16,int32,real32)
+#endif
 
 ! write(13,91300)(rarr(klg),klg=540,640)
 91300 format(x,1pe17.10)
@@ -195,32 +208,34 @@
       if (ier .eq. 4 .or. ier.eq.2) ier = 0
       VPBIT  = real32(51)
       RC     = real32(52)
+      !
+      !  CHECK DATA FORMAT, TRY AGAIN IF NECESSARY
+      !  Attempt to get data based on time sampling, using a computed
+      !  start and delta time.
+      !
+      if (ier .eq. 35) then ! ier=35 ... wrong call type for dfi
 
-!
-!  CHECK DATA FORMAT, TRY AGAIN IF NECESSARY
-!  Attempt to get data based on time sampling, using a computed
-!  start and delta time.
-!
-
-      IF (ier .ne. 35) go to 30 ! ier=35 ... wrong call type for dfi
-
-      itype = 2
+        itype = 2
+20      continue
+#ifdef __cray
+        call ptdata(itype,nshot,phase,name,temp,ier,iarr,rarr,&
+          iascii,int16,int32,real32)
+#else
 !vas f90 modifi
-!vas20 call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,
+!vas call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,
 !vas 1 iascii,int16,int32,real32)
-20    call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,&
-        iascii,int16,int32,real32)
-      if (ier .eq. 4 .or. ier.eq.2) ier = 0
+        call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,&
+          iascii,int16,int32,real32)
+#endif
+        if (ier .eq. 4 .or. ier.eq.2) ier = 0
 
-      VPBIT  = real32(13)
-      RC     = 1.0
+        VPBIT  = real32(13)
+        RC     = 1.0
 
-30    continue
-
-!
-!  WAIT FOR THE DATA TO COME IN
-!
-
+      endif
+      !
+      !  WAIT FOR THE DATA TO COME IN
+      !
 !vas IF (iwait .eq. 1 .and. (ier .eq. 3 .or. ier .eq. 1)
 !vas 1   .and. kount .lt. kmax .and. itrapa .eq. 0) THEN
       IF (iwait .eq. 1 .and. (ier .eq. 3 .or. ier .eq. 1) &
@@ -246,11 +261,9 @@
         data(2)=0.
         RETURN
       ENDIF
-
       !
       !  At this point, data is available.  Save some required information.
       !
-
       idfi = iarr(31)
       nret = iarr(2)
       nsampl = iarr(32)   ! number of 16-bit words
@@ -275,32 +288,32 @@
       if ((idfi .eq. 125 .or. idfi .eq. 158 .OR. IDFI.EQ.2158) &
         .and. ical .eq. 1)  pzero = real32(8)
 
-        !--- Rely on PTDATA's time-type call if the
-        !    pointname is too big for the buffer.
-        !--- This approach may return less than optimum resolution if the requested
-        !    interval crosses a clock domain boundary.
-        !
-        !  Must handle data from new (4-95) Plasma Control System separately.
-        !  Assume that PCS data will be less than max qty asked for already.
-        !  (Apr 5, 1994:  John Ferron said some waveforms could have as much
-        !  as 90K samples.  Max data requested in 1st PTDATA call 128K.)
-        !
-        !  If data is NOT PCS, then compute appropriate start and delta times
-        !  in order to do 2nd PTDATA call.
+      !--- Rely on PTDATA's time-type call if the
+      !    pointname is too big for the buffer.
+      !--- This approach may return less than optimum resolution if the requested
+      !    interval crosses a clock domain boundary.
+      !
+      !  Must handle data from new (4-95) Plasma Control System separately.
+      !  Assume that PCS data will be less than max qty asked for already.
+      !  (Apr 5, 1994:  John Ferron said some waveforms could have as much
+      !  as 90K samples.  Max data requested in 1st PTDATA call 128K.)
+      !
+      !  If data is NOT PCS, then compute appropriate start and delta times
+      !  in order to do 2nd PTDATA call.
 
-        if (idfi.eq.2201 .or. idfi.eq.2202 .or. idfi.eq.2203) then
-          if (idfi.eq.2201) then  ! digitizer data, int
-            vpbit = real32(5)
-            yzero = real32(6)
-            if (real32(2).ge.5) rc = real32(7)
-          else if (idfi.eq.2202) then  ! processed data, int
-            vpbit = -1.0
-            pzero = real32(3)
-            yzero = 0.0
-          else if (idfi.eq.2203) then  ! processed data, real
-            vpbit = -1.0
-            pzero = real32(3)
-            yzero = 0.0
+      if (idfi.eq.2201 .or. idfi.eq.2202 .or. idfi.eq.2203) then
+        if (idfi.eq.2201) then  ! digitizer data, int
+          vpbit = real32(5)
+          yzero = real32(6)
+          if (real32(2).ge.5) rc = real32(7)
+        else if (idfi.eq.2202) then  ! processed data, int
+          vpbit = -1.0
+          pzero = real32(3)
+          yzero = 0.0
+        else if (idfi.eq.2203) then  ! processed data, real
+          vpbit = -1.0
+          pzero = real32(3)
+          yzero = 0.0
         end if
         ichar = iascii(3)
         pcst(1:4) = char4
@@ -316,8 +329,13 @@
         int32(1) = 0
         real32(1) = 0
         real64(1) = 0
+#ifdef __cray
+        call ptdata64(64,nshot,phase,pcstime,time64,ker, &
+          iarr,rarr,iascii,int16,int32,real32,real64,tdum)
+#else
         call ptdata64(64,nshot,%ref(phase),%ref(pcstime),time64,ker, &
           iarr,rarr,iascii,int16,int32,real32,real64,tdum)
+#endif
         if (ker.ne.0 .and. ker.ne.2 .and. ker.ne.4) then
           ier = 1
           np = 2
@@ -331,39 +349,40 @@
         do k = 1,nrettim
           tt(k) = time64(k)
         end do
-        go to 85000
-      else IF (itype .eq. 12 .or. itype .eq. 2) THEN
-      !
-      !  at this point, is there more digitizer data available?
-      !
-      IF (nret .lt. nsampl) THEN
-        itype = itype - 1  ! call ptdata by time
-        rarr(1) = tmin   ! start time
-        rarr(2) = (tmax-tmin)/(npmax-1) ! minimum delta-time
-        iarr(1) = npmax   ! guaranteed to cover tmax-tmin
-        IF (itype .eq. 11) THEN
-          go to 10
-        ELSE
-          go to 20
-        ENDIF    ! itype = 11
-      endif     ! nret < nsample
-      endif     ! itype = 12
+      else if (itype .eq. 12 .or. itype .eq. 2) then
+        !
+        !  at this point, is there more digitizer data available?
+        !
+        if (nret .lt. nsampl) then
+          itype = itype - 1  ! call ptdata by time
+          rarr(1) = tmin   ! start time
+          rarr(2) = (tmax-tmin)/(npmax-1) ! minimum delta-time
+          iarr(1) = npmax   ! guaranteed to cover tmax-tmin
+          IF (itype .eq. 11) THEN
+            go to 10
+          ELSE
+            go to 20
+          ENDIF    ! itype = 11
+        endif     ! nret < nsample
+      endif     ! itype = 2, 12
 
-      !--- ier = -7 for time type call ... possible loss of time resolution
+      if (idfi.ne.2201 .and. idfi.ne.2202 .and. idfi.ne.2203) then
 
-      if ((itype .eq. 1 .or. itype .eq. 11)  .and. ier .le. 0) ier = -7
+        !--- ier = -7 for time type call ... possible loss of time resolution
 
-      !  FILL IN TIME ARRAY IF NECESSARY
+        if ((itype .eq. 1 .or. itype .eq. 11)  .and. ier .le. 0) ier = -7
 
-      IF (itype .eq. 2) THEN
-        dt = rarr(9)
-        t0 = rarr(8) - dt
-        DO i=1, nret
-          tt(i) = t0 + i * dt
-        ENDDO
-      ENDIF
+        !  FILL IN TIME ARRAY IF NECESSARY
 
-85000 continue
+        IF (itype .eq. 2) THEN
+          dt = rarr(9)
+          t0 = rarr(8) - dt
+          DO i=1, nret
+            tt(i) = t0 + i * dt
+          ENDDO
+        ENDIF
+
+      endif
 
       !  FIND START AND STOP TIME OF DATA TO BE RETURNED
       !  --- THE OVERLAP OF THE REQUESTED AND DIGITIZED TIME INTERVALS
@@ -560,8 +579,6 @@
 
       ENDDO
 
-
-
       ! --- actual number of points returned
       np = ii
 
@@ -616,27 +633,26 @@
       RETURN
 
       CONTAINS
-          Function to_upper (str)
-
           !   ==============================
           !   Changes a string to upper case
           !   ==============================
+          Function to_upper (str)
 
-              Implicit None
-              Character(*), Intent(In) :: str
-              Character(LEN(str))      :: to_upper
+          Implicit None
+          Character(*), Intent(In) :: str
+          Character(LEN(str))      :: to_upper
 
-              Integer :: ic, i
+          Integer :: ic, i
 
-              Character(26), Parameter :: cap = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-              Character(26), Parameter :: low = 'abcdefghijklmnopqrstuvwxyz'
+          Character(26), Parameter :: cap = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+          Character(26), Parameter :: low = 'abcdefghijklmnopqrstuvwxyz'
 
           !   Capitalize each letter if it is lowecase
-              to_upper = str
-              do i = 1, LEN_TRIM(str)
-                  ic = INDEX(low, str(i:i))
-                  if (ic > 0) to_upper(i:i) = cap(ic:ic)
-              end do
+          to_upper = str
+          do i = 1, LEN_TRIM(str)
+            ic = INDEX(low, str(i:i))
+            if (ic > 0) to_upper(i:i) = cap(ic:ic)
+          end do
 
            End Function to_upper
       END SUBROUTINE

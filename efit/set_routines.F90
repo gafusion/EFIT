@@ -20,7 +20,7 @@
       dimension zece(nnece),pds(6),rsplt(2500),zsplt(2500),csplt(2500)
       real*8,dimension(:),allocatable :: dsidr,ddsiddr
       character*40 filenmme
-      data nset/20/
+      data nset/20/,cdum/1.0/
       save nset
       integer, intent(inout) :: kerror
       kerror = 0
@@ -864,7 +864,7 @@
       dimension rsplt(2500),zsplt(2500),csplt(2500) &
                 ,rrgamin(nstark),zzgamin(nstark)
       character*40 filenmme
-      data nset/20/
+      data nset/20/,cdum/1.0/
       save nset
 !---------------------------------------------------------------------
 !--  try read in, first locally, then efit area                     --

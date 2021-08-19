@@ -30,16 +30,15 @@
            rf,zf,fcid,wf,hf,wvs,hvs,avs,af,af2, &
            re,ze,ecid,rvs,zvs,we,he
 
-      OPEN(unit=nout,status='unknown',file='dprobe.dat',access='append',&
-           delim='quote')
+      OPEN(unit=nout,status='unknown',file='dprobe.dat', &
+           position='append',delim='quote')
 
       WRITE (nout,in3)
       CLOSE (nout)
       RETURN
       END SUBROUTINE dprobe
-      
-      
-      
+
+
 !**********************************************************************
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          write general machinein for dprobe.dat                  **

@@ -60,8 +60,8 @@
       psict=0
       aaa=0.0
       bbb=0.0
-      CALL splitc(isplit,rsplt,zsplt,csplt, &
-                  re(k),ze(k),we(k),he(k),aaa,bbb,cdum)
+      CALL splitc(isplit,rsplt,zsplt, &
+                  re(k),ze(k),we(k),he(k),aaa,bbb)
       DO l=1,itot
          a=rsplt(l)
          r1=rsi(m)
@@ -123,8 +123,8 @@
       bzct=0
       aaa=0.0
       bbb=0.0
-      CALL splitc(isplit,rsplt,zsplt,csplt, &
-                  re(k),ze(k),we(k),he(k),aaa,bbb,cdum)
+      CALL splitc(isplit,rsplt,zsplt, &
+                  re(k),ze(k),we(k),he(k),aaa,bbb)
       DO l=1,itot
          a=rsplt(l)
          DO mmm=1,nsmp2
@@ -174,8 +174,8 @@
       psict=0
       aaa=0.0
       bbb=0.0
-      CALL splitc(isplit,rsplt,zsplt,csplt, &
-                  re(k),ze(k),we(k),he(k),aaa,bbb,cdum)
+      CALL splitc(isplit,rsplt,zsplt, &
+                  re(k),ze(k),we(k),he(k),aaa,bbb)
       DO l=1,itot
          a=rsplt(l)
          r1=rgrid(nr)
@@ -895,8 +895,8 @@
       ELSE
          k=nf
          psict=0
-         CALL splitc(isplit,rsplt,zsplt,csplt, &
-                     rf(k),zf(k),wf(k),hf(k),af(k),af2(k),cdum)
+         CALL splitc(isplit,rsplt,zsplt, &
+                     rf(k),zf(k),wf(k),hf(k),af(k),af2(k))
          DO l=1,itot
             a=rsplt(l)
             r1=rsi(m)
@@ -1000,8 +1000,8 @@
 !
                brct=0
                bzct=0
-               CALL splitc(isplit,rsplt,zsplt,csplt, &
-                           rf(k),zf(k),wf(k),hf(k),af(k),af2(k),cdum)
+               CALL splitc(isplit,rsplt,zsplt, &
+                           rf(k),zf(k),wf(k),hf(k),af(k),af2(k))
                DO l=1,itot
                   a=rsplt(l)
                   DO mmm=1,nsmp2
@@ -1050,8 +1050,8 @@
                DO k=1,nfcoil
                   brct=0
                   bzct=0
-                  CALL splitc(isplit,rsplt,zsplt,csplt, &
-                              rf(k),zf(k),wf(k),hf(k),af(k),af2(k),cdum)
+                  CALL splitc(isplit,rsplt,zsplt, &
+                              rf(k),zf(k),wf(k),hf(k),af(k),af2(k))
                   DO l=1,itot
                      a=rsplt(l)
                      r1=rgrid(ii)
@@ -1477,19 +1477,19 @@
 !----------------------------------------------------------------------
 !--      psi computation                                             --
 !----------------------------------------------------------------------
-         psical= sqrt(den)*((1.e+00-0.5e+00*xk)*cay-ee)
+         psical=sqrt(den)*((1.e+00-0.5e+00*xk)*cay-ee)
          RETURN
       case (2)
 !----------------------------------------------------------------------
 !--      br  computation                                             --
 !----------------------------------------------------------------------
-         psical=z/(r*sqrt(den))*(-cay+(a*a+r*r+z*z)/((a-r)*(a-r)+z*z)*ee)
+         br=z/(r*sqrt(den))*(-cay+(a*a+r*r+z*z)/((a-r)*(a-r)+z*z)*ee)
          RETURN
       case (3)
 !----------------------------------------------------------------------
 !--      bz  computation                                             --
 !----------------------------------------------------------------------
-         psical=(cay+(a*a-r*r-z*z)/((a-r)*(a-r)+z*z)*ee)/ sqrt(den)
+         bz=(cay+(a*a-r*r-z*z)/((a-r)*(a-r)+z*z)*ee)/sqrt(den)
          RETURN
       END SELECT
       END FUNCTION psical
@@ -1510,7 +1510,7 @@
       USE consta
       USE fcoil
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
-      DIMENSION rogpth(nrogow)
+!      DIMENSION rogpth(nrogow)
       REAL*8,DIMENSION(nr) :: rr
       REAL*8,DIMENSION(nz) :: zz
       DIMENSION coef(nr,nc)
@@ -1553,8 +1553,8 @@
 !
             IF (nz.le.0) THEN
                DO k=1,nfcoil
-                  CALL splitc(isplit,rsplt,zsplt,csplt, &
-                           rf(k),zf(k),wf(k),hf(k),af(k),af2(k),cdum)
+                  CALL splitc(isplit,rsplt,zsplt, &
+                           rf(k),zf(k),wf(k),hf(k),af(k),af2(k))
                   DO l=1,itot
                      a=rsplt(l)
                      r1=rpg(i)
@@ -1563,7 +1563,8 @@
                      bzc=bz(a,r1,z1)*tmu/fitot
                      part=brc*cost+bzc*sint
                      CALL simpf(iii,fact)
-                     coef(m,k)=coef(m,k)+fact*part*dels/rogpth(m)
+                     ! TODO: rogpth is never defined in efit...
+                     coef(m,k)=coef(m,k)+fact*part*dels !/rogpth(m)
                   ENDDO 
                ENDDO
             ELSE
@@ -1577,7 +1578,8 @@
                      bzg=bz(a,r1,z1)*tmu
                      part=brg*cost+bzg*sint
                      CALL simpf(iii,fact)
-                     coef(m,ikk)=coef(m,ikk)+fact*part*dels/rogpth(m)
+                     ! TODO: rogpth is never defined in efit...
+                     coef(m,ikk)=coef(m,ikk)+fact*part*dels !/rogpth(m)
                   ENDDO 
                ENDDO 
             ENDIF
@@ -1807,10 +1809,10 @@
 !**          26/04/83..........first created                         **
 !**                                                                  **
 !**********************************************************************
-      SUBROUTINE splitc(is,rs,zs,cs,rc,zc,wc,hc,ac,ac2,cc)
+      SUBROUTINE splitc(is,rs,zs,rc,zc,wc,hc,ac,ac2)
       USE consta
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
-      REAL*8,DIMENSION(is*is) :: rs,zs,cs
+      REAL*8,DIMENSION(is*is) :: rs,zs
 !
       frd=pi/180.
 !----------------------------------------------------------------------
@@ -1823,14 +1825,12 @@
           zstrt=zc-hc/2.+hdelt/2.
           zz=zstrt
           ic=0
-          c=cc/(is*is)
           DO ii=1,is
              rr=rstrt
              DO jj=1,is
                 ic=ic+1
                 zs(ic)=zz
                 rs(ic)=rr
-                cs(ic)=c
                 rr=rr+wdelt
              ENDDO 
              zz=zz+hdelt
@@ -1849,14 +1849,12 @@
           zstrt =zc-tsid/2.+tsid/2.*1./is
           rr=rstrt
           ic=0
-          c=cc/(is*is)
           DO ii=1,is
              zz=zstrt+(ii-1)*zdelt
              DO jj=1,is
                 ic=ic+1
                 zs(ic)=zz
                 rs(ic)=rr
-                cs(ic)=c
                 zz=zz+hdelt
              ENDDO 
              rr=rr+wdelt
@@ -1881,14 +1879,12 @@
           rstrt=(rcorn+rcorn2)/2.
           zz=zstrt
           ic=0
-          c=cc/(is*is)
           DO ii=1,is
              rr=rstrt+(ii-1)*rdelt
              DO jj=1,is
                 ic=ic+1
                 zs(ic)=zz
                 rs(ic)=rr
-                cs(ic)=c
                 rr=rr+wdelt
              ENDDO 
              zz=zz+hdelt
@@ -1927,8 +1923,8 @@
       m=nl
       k=ne
       psict=0
-      CALL splitc(isplit,rsplt,zsplt,csplt, &
-                  rvs(k),zvs(k),wvs(k),hvs(k),avs(k),avs2(k),cdum)
+      CALL splitc(isplit,rsplt,zsplt, &
+                  rvs(k),zvs(k),wvs(k),hvs(k),avs(k),avs2(k))
       DO l=1,itot
          a=rsplt(l)
          r1=rsi(m)
@@ -1988,8 +1984,8 @@
       k=ne
       brct=0
       bzct=0
-      CALL splitc(isplit,rsplt,zsplt,csplt, &
-                  rvs(k),zvs(k),wvs(k),hvs(k),avs(k),avs2(k),cdum)
+      CALL splitc(isplit,rsplt,zsplt, &
+                  rvs(k),zvs(k),wvs(k),hvs(k),avs(k),avs2(k))
       DO l=1,itot
          a=rsplt(l)
          DO mmm=1,nsmp2
@@ -2039,8 +2035,8 @@
 !
       k=ne
       psict=0
-      CALL splitc(isplit,rsplt,zsplt,csplt, &
-                  rvs(k),zvs(k),wvs(k),hvs(k),avs(k),avs2(k),cdum)
+      CALL splitc(isplit,rsplt,zsplt, &
+                  rvs(k),zvs(k),wvs(k),hvs(k),avs(k),avs2(k))
       DO l=1,itot
          a=rsplt(l)
          r1=rgrid(nr)
@@ -2084,8 +2080,8 @@
       psict=0
       aaa=0.0
       bbb=0.0
-      CALL splitc(isplit,rsplt,zsplt,csplt, &
-                  racoil(k),zacoil(k),wacoil(k),hacoil(k),aaa,bbb,cdum)
+      CALL splitc(isplit,rsplt,zsplt, &
+                  racoil(k),zacoil(k),wacoil(k),hacoil(k),aaa,bbb)
       DO l=1,itot
          a=rsplt(l)
          r1=rsi(m)
@@ -2147,8 +2143,8 @@
       bzct=0
       aaa=0.0
       bbb=0.0
-      CALL splitc(isplit,rsplt,zsplt,csplt, &
-                  racoil(k),zacoil(k),wacoil(k),hacoil(k),aaa,bbb,cdum)
+      CALL splitc(isplit,rsplt,zsplt, &
+                  racoil(k),zacoil(k),wacoil(k),hacoil(k),aaa,bbb)
       DO l=1,itot
          a=rsplt(l)
          DO mmm=1,nsmp2
@@ -2197,8 +2193,8 @@
       psict=0
       aaa=0.0
       bbb=0.0
-      CALL splitc(isplit,rsplt,zsplt,csplt, &
-                  racoil(k),zacoil(k),wacoil(k),hacoil(k),aaa,bbb,cdum)
+      CALL splitc(isplit,rsplt,zsplt, &
+                  racoil(k),zacoil(k),wacoil(k),hacoil(k),aaa,bbb)
       DO l=1,itot
          a=rsplt(l)
          r1=rgrid(nr)

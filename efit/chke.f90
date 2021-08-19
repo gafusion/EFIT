@@ -14,9 +14,9 @@
       data ercmin/0.01_dp/
 !
       m=mtime
-      do 20 k=1,30
+      do k=1,30
         erflag(m,k)=0
-   20 continue
+      enddo
       if (imagsigma.eq.0) then
         chisqerr=80.0
       elseif (imagsigma.gt.0) then
@@ -36,86 +36,87 @@
       if (betat(m).lt.0..or.betat(m).gt.25.) erflag(m,14)=14
       if (oleft(m).lt.-0.2_dp .or. oright(m).lt.-0.2_dp .or. otop(m).lt.-0.2_dp) &
                 erflag(m,15)=15
-      if (olefs(m).lt.-90.0) go to 32
-      if (qout(m).gt.200..or.qout(m).lt.1.) erflag(m,18)=18
-      go to 34
-   32 continue
-      if (qout(m).lt.1.) erflag(m,18)=18
-   34 continue
+      if (olefs(m).lt.-90.0) then
+        if (qout(m).lt.1.) erflag(m,18)=18
+      else
+        if (qout(m).gt.200..or.qout(m).lt.1.) erflag(m,18)=18
+      endif
       if (terror(m).ge.ercmin) erflag(m,19)=19
       if (dbpli(m).ge.0.05_dp) erflag(m,20)=20
       if (delbp(m).ge.0.08_dp) erflag(m,21)=21
-      if ((eout(m).gt.elomin).or.(fwtdlc.gt.0.0)) go to 50
-      betap(m)=0.0
-      betat(m)=0.0
-      ali(m)=0.0
-      wplasm(m)=0.0
-      terror(m)=0.0
-      erflag(m,3)=0
-      erflag(m,2)=0
-      erflag(m,14)=0
-      erflag(m,19)=0
-   50 continue
-      do 55 j=1,30
+      if ((eout(m).le.elomin).and.(fwtdlc.le.0.0)) then
+        betap(m)=0.0
+        betat(m)=0.0
+        ali(m)=0.0
+        wplasm(m)=0.0
+        terror(m)=0.0
+        erflag(m,3)=0
+        erflag(m,2)=0
+        erflag(m,14)=0
+        erflag(m,19)=0
+      endif
+      do j=1,30
         kflag(j)=0
-   55 continue
+      enddo
       lflag=0
 !
-      do 65 k = 1,30
-      if(erflag(m,k).ne.0)go to 68
-   65 continue
-      return
-   68 continue
+      ierrfl=0
+      do k = 1,30
+        if (erflag(m,k).ne.0) then
+          ierrfl=1
+          exit
+        endif
+      enddo
+      if (ierrfl.eq.0) return
 !----------------------------------------------------------------------
-!-- now write out errors to the erminal and error file ...
+!--   now write out errors to the erminal and error file ...
 !----------------------------------------------------------------------
-      open(unit=40,file='errfil.out',status='unknown',access='append' &
-                                 )
+      open(unit=40,file='errfil.out',status='unknown',position='append')
       ktimeo=0
       ictr=mtime+ktimeo
-      write (nttyo,1000)ishot,time(ictr)
-      write(40,1000)ishot,time(ictr)
+      write(nttyo,1000) ishot,time(ictr)
+      write(40,1000) ishot,time(ictr)
 !
-      do 60 k=1,30
-      if (erflag(m,k).gt.0) kflag(k)=erflag(m,k)
-      if (erflag(m,k).gt.0) lflag=kflag(k)
-      if(kflag(k).eq.1)write (nttyo,1010) chisqerr
-      if(kflag(k).eq.1)write(40,1010) chisqerr
-      if(kflag(k).eq.2)write (nttyo,1020)
-      if(kflag(k).eq.2)write(40,1020)
-      if(kflag(k).eq.3)write (nttyo,1025)
-      if(kflag(k).eq.3)write(40,1025)
-      if(kflag(k).eq.4)write (nttyo,1030)
-      if(kflag(k).eq.4)write(40,1030)
-      if(kflag(k).eq.5)write (nttyo,1040)
-      if(kflag(k).eq.5)write(40,1040)
-      if(kflag(k).eq.6)write (nttyo,1050)
-      if(kflag(k).eq.6)write(40,1050)
-      if(kflag(k).eq.7)write (nttyo,1060)
-      if(kflag(k).eq.7)write(40,1060)
-      if(kflag(k).eq.8)write (nttyo,1070)
-      if(kflag(k).eq.8)write(40,1070)
-      if(kflag(k).eq.9)write (nttyo,1080)
-      if(kflag(k).eq.9)write(40,1080)
-      if(kflag(k).eq.10)write (nttyo,1090)
-      if(kflag(k).eq.10)write(40,1090)
-      if(kflag(k).eq.13)write (nttyo,1100)
-      if(kflag(k).eq.13)write(40,1100)
-      if(kflag(k).eq.14)write (nttyo,1110)
-      if(kflag(k).eq.14)write(40,1110)
-      if(kflag(k).eq.15)write (nttyo,1120)
-      if(kflag(k).eq.15)write(40,1120)
-      if(kflag(k).eq.16)write (nttyo,1130)
-      if(kflag(k).eq.16)write(40,1130)
-      if(kflag(k).eq.18)write (nttyo,1150)
-      if(kflag(k).eq.18)write(40,1150)
-      if(kflag(k).eq.19)write (nttyo,1170) errmin
-      if(kflag(k).eq.19)write(40,1170) errmin
-      if(kflag(k).eq.20)write (nttyo,1180) dbpli(m)
-      if(kflag(k).eq.20)write(40,1180) dbpli(m)
-      if(kflag(k).eq.21)write (nttyo,1190) delbp(m)
-      if(kflag(k).eq.21)write(40,1190) delbp(m)
-   60 continue
+      do k=1,30
+        if (erflag(m,k).gt.0) kflag(k)=erflag(m,k)
+        if (erflag(m,k).gt.0) lflag=kflag(k)
+        if (kflag(k).eq.1) write(nttyo,1010) chisqerr
+        if (kflag(k).eq.1) write(40,1010) chisqerr
+        if (kflag(k).eq.2) write(nttyo,1020)
+        if (kflag(k).eq.2) write(40,1020)
+        if (kflag(k).eq.3) write(nttyo,1025)
+        if (kflag(k).eq.3) write(40,1025)
+        if (kflag(k).eq.4) write(nttyo,1030)
+        if (kflag(k).eq.4) write(40,1030)
+        if (kflag(k).eq.5) write(nttyo,1040)
+        if (kflag(k).eq.5) write(40,1040)
+        if (kflag(k).eq.6) write(nttyo,1050)
+        if (kflag(k).eq.6) write(40,1050)
+        if (kflag(k).eq.7) write(nttyo,1060)
+        if (kflag(k).eq.7) write(40,1060)
+        if (kflag(k).eq.8) write(nttyo,1070)
+        if (kflag(k).eq.8) write(40,1070)
+        if (kflag(k).eq.9) write(nttyo,1080)
+        if (kflag(k).eq.9) write(40,1080)
+        if (kflag(k).eq.10) write(nttyo,1090)
+        if (kflag(k).eq.10) write(40,1090)
+        if (kflag(k).eq.13) write(nttyo,1100)
+        if (kflag(k).eq.13) write(40,1100)
+        if (kflag(k).eq.14) write(nttyo,1110)
+        if (kflag(k).eq.14) write(40,1110)
+        if (kflag(k).eq.15) write(nttyo,1120)
+        if (kflag(k).eq.15) write(40,1120)
+        if (kflag(k).eq.16) write(nttyo,1130)
+        if (kflag(k).eq.16) write(40,1130)
+        if (kflag(k).eq.18) write(nttyo,1150)
+        if (kflag(k).eq.18) write(40,1150)
+        if (kflag(k).eq.19) write(nttyo,1170) errmin
+        if (kflag(k).eq.19) write(40,1170) errmin
+        if (kflag(k).eq.20) write(nttyo,1180) dbpli(m)
+        if (kflag(k).eq.20) write(40,1180) dbpli(m)
+        if (kflag(k).eq.21) write(nttyo,1190) delbp(m)
+        if (kflag(k).eq.21) write(40,1190) delbp(m)
+      enddo
       close(unit=40)
 !
       return
@@ -160,55 +161,55 @@
       dimension xplt(*),yplt(*)
       dimension zuper(nco2v),zlower(nco2v),rco2(nco2r),rco2in(nco2r)
 !
-      do 45 i=1,nco2r
+      do i=1,nco2r
         rco2(i)=100.
         rco2in(i)=0.
-   45 continue
-      do 50 i=1,nco2v
+      enddo
+      do i=1,nco2v
         zuper(i)=100.
         zlower(i)=0.
-   50 continue
+      enddo
       zuperts(jges)=100.
       zlowerts=0.
-      do 300 i=1,nplt-1
-        do 200 k=1,nco2r
+      do i=1,nplt-1
+        do k=1,nco2r
           yr1=chordr(k)-yplt(i)
           yr2=chordr(k)-yplt(i+1)
-          if (yr1*yr2.gt.0.0) go to 200
+          if (yr1*yr2.gt.0.0) cycle
           rpath=xplt(i)+yr1*(xplt(i+1)-xplt(i))/(yplt(i+1)-yplt(i))
           if (rpath.ge.rcentr) rco2(k)=rpath
           if (rpath.le.rcentr) rco2in(k)=rpath
-  200   continue
-          yr1=zlibim   -yplt(i)
-          yr2=zlibim   -yplt(i+1)
-          if (yr1*yr2.gt.0.0) go to 202
-          rpath=xplt(i)+yr1*(xplt(i+1)-xplt(i))/(yplt(i+1)-yplt(i))
-          if (rpath.ge.rcentr) rlibim(jges)=rpath*100.0
-  202     continue
-        do 100 k=1,nco2v
+        enddo
+          yr1=zlibim-yplt(i)
+          yr2=zlibim-yplt(i+1)
+          if (yr1*yr2.le.0.0) then
+            rpath=xplt(i)+yr1*(xplt(i+1)-xplt(i))/(yplt(i+1)-yplt(i))
+            if (rpath.ge.rcentr) rlibim(jges)=rpath*100.0
+          endif
+        do k=1,nco2v
           yr1=chordv(k)-xplt(i)
           yr2=chordv(k)-xplt(i+1)
-          if (yr1*yr2.gt.0.0) go to 100
+          if (yr1*yr2.gt.0.0) cycle
           zpath=yplt(i)+yr1*(yplt(i+1)-yplt(i))/(xplt(i+1)-xplt(i))
           if (zpath.ge.zcentr) zuper(k)=zpath
           if (zpath.le.zcentr) zlower(k)=zpath
-  100   continue
-          yr1=rmajts-xplt(i)
-          yr2=rmajts-xplt(i+1)
-          if (yr1*yr2.gt.0.0) go to 280
+        enddo
+        yr1=rmajts-xplt(i)
+        yr2=rmajts-xplt(i+1)
+        if (yr1*yr2.le.0.0) then
           zpath=yplt(i)+yr1*(yplt(i+1)-yplt(i))/(xplt(i+1)-xplt(i))
           if (zpath.ge.zcentr) zuperts(jges)=zpath*100.
           if (zpath.le.zcentr) zlowerts=zpath*100.
-  280   continue
-  300 continue
-      do 320 k=1,nco2v
+        endif
+      enddo
+      do k=1,nco2v
         rco2v(k,jges)=100.0*(zuper(k)-zlower(k))
         dco2v(jges,k)=denvt(jges,k)/rco2v(k,jges)
-  320 continue
-      do 330 k=1,nco2r
+      enddo
+      do k=1,nco2r
         rco2r(k,jges)=100.0*(rco2(k)-rco2in(k))
         dco2r(jges,k)=denrt(jges,k)/rco2r(k,jges)
-  330 continue
+      enddo
 !
       return
       end

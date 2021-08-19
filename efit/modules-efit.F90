@@ -167,7 +167,7 @@
 
           write(*, '(a,a,a,a,i3,a,i6,a,a)') trim(labelstr),' in ',subrstr,' at r=',currrank,', t=',int(currtime),': ',msgstr
 
-          open(unit=40,file='errfil.out',status='unknown',access='append')
+          open(unit=40,file='errfil.out',status='unknown',position='append')
           write(40,'(a,a,a,a,i3,a,i6,a,a)') trim(labelstr),' in ',subrstr,' at r=',currrank,', t=',int(currtime),': ',msgstr
           close(unit=40)
 

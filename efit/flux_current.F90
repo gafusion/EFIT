@@ -585,26 +585,25 @@
       dimension pds(6)
       integer iii
       real :: zmaxis_last = 0.0
-      data isplit/8/,psitol/1.0e-04_dp/
+      data isplit/8/,psitol/1.0e-04_dp/,cdum/1.0/
       save xguess, yguess, xltrac, radbou
 !
       if (ivacum.gt.0) return
-      if (ixt.gt.1) go to 100
-      xguess=(rgrid(1)+rgrid(nw))/2.
-      yguess=(zgrid(1)+zgrid(nh))/2.
-      if (zbound.ne.0.0) yguess=zbound
-      if (rbound.ne.0.0) xguess=rbound
-      xltrac=xlmin
-      if (ibound.eq.-1) xltrac=xlmax
-      radbou=(xguess+xltrac)/2.
-
+      if (ixt.le.1) then
+        xguess=(rgrid(1)+rgrid(nw))/2.
+        yguess=(zgrid(1)+zgrid(nh))/2.
+        if (zbound.ne.0.0) yguess=zbound
+        if (rbound.ne.0.0) xguess=rbound
+        xltrac=xlmin
+        if (ibound.eq.-1) xltrac=xlmax
+        radbou=(xguess+xltrac)/2.
       !DBG
-      !idebug=2
+      !  idebug=2
       !DBG
 !
-  100 continue
+      endif
 !----------------------------------------------------------------------
-!-- first set up bi-cubic spline interpolation in findax             --
+!--   first set up bi-cubic spline interpolation in findax           --
 !----------------------------------------------------------------------
       m10=10
 
@@ -626,21 +625,21 @@
 
       if (kerror.gt.0) return
       if (nsol.gt.0) then
-   
-          write (6,*) 'STEPS R,Z,Si,Err = ', rsol(1),zsol(1),wsisol,ier
-          call seva2d(bkx,lkx,bky,lky,c,rbdry(1),zbdry(1),pds,ier,n111)
-          write (6,*) 'STEPS R,Z,Si,Err = ', rbdry(1),zbdry(1),pds(1),ier
-          call seva2d(bkx,lkx,bky,lky,c,rbdry(nbdry),zbdry(nbdry),pds,ier &
-             ,n111)
-          write (6,*) 'STEPS R,Z,Si,Err = ', rbdry(nbdry),zbdry(nbdry) &
-            ,pds(1),ier
 
-            write(6,*) 'rsplt(kk),zsplt(kk)',rbdry(nbdry),zbdry(nbdry)
-            write(6,*) 'lkx, lky',lkx,lky
-            write(6,*) 'pds,ier,n111', pds,ier,n111
+        ier=0 ! set only for consistent output? (not useful...)   
+        write (6,*) 'STEPS R,Z,Si,Err = ', rsol(1),zsol(1),wsisol,ier
+        call seva2d(bkx,lkx,bky,lky,c,rbdry(1),zbdry(1),pds,ier,n111)
+        write (6,*) 'STEPS R,Z,Si,Err = ', rbdry(1),zbdry(1),pds(1),ier
+        call seva2d(bkx,lkx,bky,lky,c,rbdry(nbdry),zbdry(nbdry),pds,ier &
+                   ,n111)
+        write (6,*) 'STEPS R,Z,Si,Err = ', rbdry(nbdry),zbdry(nbdry) &
+                    ,pds(1),ier
+
+        write(6,*) 'rsplt(kk),zsplt(kk)',rbdry(nbdry),zbdry(nbdry)
+        write(6,*) 'lkx, lky',lkx,lky
+        write(6,*) 'pds,ier,n111', pds,ier,n111
 
         if (idebug >= 2) then
-
           call seva2d(bkx,lkx,bky,lky,c,xout(1),yout(1),pds,ier &
              ,n111)
           write (6,*) 'STEPS simag,psibry,n1,si = ',simag,psibry,n111,pds(1)
@@ -652,7 +651,7 @@
         endif
       endif
 !-----------------------------------------------------------------------
-!--  Trace boundary, first check for counter beam injection           --
+!--   Trace boundary, first check for counter beam injection          --
 !-----------------------------------------------------------------------
       if (pasmat(jtime).lt.-1.e3_dp) then
         nnerr=10000
@@ -669,7 +668,7 @@
         return
       endif
 !----------------------------------------------------------------------
-!--  find magnetic axis and poloidal flux at axis simag              --
+!--   find magnetic axis and poloidal flux at axis simag             --
 !----------------------------------------------------------------------
       m20=20
       if (idebug >= 2) write (6,*) 'Entering findax after m20 set'
@@ -683,137 +682,140 @@
       eouter=(ymax-ymin)/(xmax-xmin)
       zplasm=(ymin+ymax)/2.
       aouter=(xmax-xmin)/2.
-
 !-----------------------------------------------------------------------
 !--   force free current in the scrape-off layer                      --
 !-----------------------------------------------------------------------
       if (icutfp.eq.2) then
-        xvsmaxo=xvsmax
         xvsmin=1.e10_dp
         xvsmax=-1.e10_dp
         if (limvs.eq.0) then
-        itot=isplit*isplit
-        do 51000 k=1,nvesel
-          call splitc(isplit,rsplt,zsplt,csplt, &
+          itot=isplit*isplit
+          do k=1,nvesel
+            call splitc(isplit,rsplt,zsplt,csplt, &
                   rvs(k),zvs(k),wvs(k),hvs(k),avs(k),avs2(k),cdum)
-          do 50900 kk=2,itot
-            call seva2d(bkx,lkx,bky,lky,c,rsplt(kk),zsplt(kk), &
-                        pds,ier,n111)
-            write(6,*) 'rgrid(i),zgrid(j)',rsplt(kk),zsplt(kk)
-            write(6,*) 'lkx, lky',lkx,lky
-            write(6,*) 'pds,ier,n111', pds,ier,n111
-            xvsmin=min(xvsmin,pds(1))
-            xvsmax=max(xvsmax,pds(1))
-50900     continue
-51000   continue
+            do kk=2,itot
+              call seva2d(bkx,lkx,bky,lky,c,rsplt(kk),zsplt(kk), &
+                          pds,ier,n111)
+              write(6,*) 'rgrid(i),zgrid(j)',rsplt(kk),zsplt(kk)
+              write(6,*) 'lkx, lky',lkx,lky
+              write(6,*) 'pds,ier,n111', pds,ier,n111
+              xvsmin=min(xvsmin,pds(1))
+              xvsmax=max(xvsmax,pds(1))
+            enddo
+          enddo
         else
-        do 51009 k=1,limitr-1
-           delx=xlim(k+1)-xlim(k)
-           dely=ylim(k+1)-ylim(k)
-           dels=sqrt(delx**2+dely**2)
-           nn=dels/0.002_dp
-           nn=max(5,nn)
-           delx=delx/(nn-1)
-           dely=dely/(nn-1)
-           do 51007 kk=2,nn
-            xww=xlim(k)+delx *(kk-1)
-            yww=ylim(k)+dely *(kk-1)
-            call seva2d(bkx,lkx,bky,lky,c,xww,yww,pds,ier,n111)
-            xvsmin=min(xvsmin,pds(1))
-            xvsmax=max(xvsmax,pds(1))
-51007      continue
-51009   continue
+          do k=1,limitr-1
+            delx=xlim(k+1)-xlim(k)
+            dely=ylim(k+1)-ylim(k)
+            dels=sqrt(delx**2+dely**2)
+            nn=dels/0.002_dp
+            nn=max(5,nn)
+            delx=delx/(nn-1)
+            dely=dely/(nn-1)
+            do kk=2,nn
+              xww=xlim(k)+delx *(kk-1)
+              yww=ylim(k)+dely *(kk-1)
+              call seva2d(bkx,lkx,bky,lky,c,xww,yww,pds,ier,n111)
+              xvsmin=min(xvsmin,pds(1))
+              xvsmax=max(xvsmax,pds(1))
+            enddo
+          enddo
         endif
 !--------------------------------------------------------------
-!--  exclude private region flux                             --
+!--     exclude private region flux                          --
 !--------------------------------------------------------------
         xvsmax=psibry
 !--------------------------------------------------------------
-!--  possible second separatrix                              --
+!--     possible second separatrix                           --
 !--------------------------------------------------------------
         rsepex=-999.
         yvs2=1000.
-        if (kskipvs.eq.0) go to 10000
+        if (kskipvs.ne.0) then
         avebp=cpasma(jtime)*tmu/aouter
         bpmin=avebp
-        sibpold=sibpmin
-        do 51100 i=1,nw
-        do 51090 j=1,nh
-          kk=(i-1)*nh+j
-          if (zero(kk).gt.0.0005_dp.and.www(kk).lt.0.1_dp) then
-           call seva2d(bkx,lkx,bky,lky,c,rgrid(i),zgrid(j),pds,ier,n333)
-           write(6,*) 'rgrid(i),zgrid(j)',rgrid(i),zgrid(j)
-           write(6,*) 'lkx, lky',lkx,lky
-           write(6,*) 'pds,ier,n111', pds,ier,n333
-           bpnow=sqrt(pds(2)**2+pds(3)**2)/rgrid(i)
-           if (bpnow.le.bpmin) then
-           if ((abs(dpsi).le.psitol).or.((abs(dpsi).gt.psitol).and. &
-               (zgrid(j)*zseps(1,jtime).lt.0.0))) then
-              bpmin=bpnow
-              xs=rgrid(i)
-              ys=zgrid(j)
-              sibpmin=pds(1)
-           endif
-           endif
-!          endif
-          endif
-51090   continue
-51100   continue
-
-        if (bpmin.eq.avebp) go to 9320
-        relsi=abs((sibpmin-psibry)/sidif)
-        if (bpmin.le.0.10_dp*avebp.and.relsi.gt.0.005_dp) then
-!------------------------------------------------------------------
-!-- find second separatrix                                       --
-!------------------------------------------------------------------
-          do j=1,40
-            call seva2d(bkx,lkx,bky,lky,c,xs,ys,pds,ier,n666)
-            write(6,*) 'xs,ys',xs, ys
-            write(6,*) 'lkx, lky',lkx,lky
-            write(6,*) 'pds,ier,n111', pds,ier,n111
-
-            det=pds(5)*pds(6)-pds(4)*pds(4)
-            if (abs(det).lt.1.0e-15_dp) exit
-            xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
-            yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
-            xs=xs+xerr
-            ys=ys+yerr
-            if (xerr*xerr+yerr*yerr.lt.1.0e-12_dp) go to 9310
+        ! TODO: sibpmin has not yet been defined...
+!        sibpold=sibpmin
+        do i=1,nw
+          do j=1,nh
+            kk=(i-1)*nh+j
+            if (zero(kk).gt.0.0005_dp.and.www(kk).lt.0.1_dp) then
+              call seva2d(bkx,lkx,bky,lky,c,rgrid(i),zgrid(j),pds,ier,n333)
+              write(6,*) 'rgrid(i),zgrid(j)',rgrid(i),zgrid(j)
+              write(6,*) 'lkx, lky',lkx,lky
+              write(6,*) 'pds,ier,n111', pds,ier,n333
+              bpnow=sqrt(pds(2)**2+pds(3)**2)/rgrid(i)
+              if (bpnow.le.bpmin) then
+                if ((abs(dpsi).le.psitol).or.((abs(dpsi).gt.psitol).and. &
+                    (zgrid(j)*zseps(1,jtime).lt.0.0))) then
+                  bpmin=bpnow
+                  xs=rgrid(i)
+                  ys=zgrid(j)
+                  sibpmin=pds(1)
+                endif
+              endif
+            endif
           enddo
-          epssep=xerr*xerr+yerr*yerr
-          write (nttyo,11001) epssep,ixt
-          if (iand(iout,1).ne.0) write (nout,11001) epssep,ixt
-          if (epssep.lt.1.0e-10_dp) go to 9310
-          go to 9320
- 9310     continue
-         sibpmin=pds(1)
-         yvs2=ys
-         rsepex=xs
-         relsi=abs((sibpmin-psibry)/sidif)
-         if (relsi.gt.0.005_dp) then
-         if (ixt.gt.1) sibpmin=sibpmin*(1.-vsdamp)+sibpold*vsdamp
-         xvsmin=max(xvsmin,sibpmin)
-         endif
-        endif
-10000   continue
- 9320   continue
+        enddo
+
+        if (bpmin.ne.avebp) then
+          relsi=abs((sibpmin-psibry)/sidif)
+          if (bpmin.le.0.10_dp*avebp.and.relsi.gt.0.005_dp) then
+!------------------------------------------------------------------
+!--         find second separatrix                               --
+!------------------------------------------------------------------
+            do j=1,40
+              call seva2d(bkx,lkx,bky,lky,c,xs,ys,pds,ier,n666)
+              write(6,*) 'xs,ys',xs, ys
+              write(6,*) 'lkx, lky',lkx,lky
+              write(6,*) 'pds,ier,n111', pds,ier,n111
+
+              det=pds(5)*pds(6)-pds(4)*pds(4)
+              if (abs(det).lt.1.0e-15_dp) exit
+              xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
+              yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
+              xs=xs+xerr
+              ys=ys+yerr
+              if (xerr*xerr+yerr*yerr.lt.1.0e-12_dp) exit
+            enddo
+            if (xerr*xerr+yerr*yerr.ge.1.0e-12_dp) then
+              epssep=xerr*xerr+yerr*yerr
+              write (nttyo,11001) epssep,ixt
+              if (iand(iout,1).ne.0) write (nout,11001) epssep,ixt
+            else
+              epssep=-1.0
+            endif
+            if (epssep.lt.1.0e-10_dp) then
+              sibpmin=pds(1)
+              yvs2=ys
+              rsepex=xs
+              relsi=abs((sibpmin-psibry)/sidif)
+              if (relsi.gt.0.005_dp) then
+                ! TODO: what is the intention here? sibpold is unset...
+!                if (ixt.gt.1) sibpmin=sibpmin*(1.-vsdamp)+sibpold*vsdamp
+                xvsmin=max(xvsmin,sibpmin)
+              endif
+            endif
+          endif
+        endif ! bpmin.ne.avebp
+        endif ! kskipvs.ne.0
         if (alphafp.ge.0.0) then
-           xpsimin=xvsmin+alphafp*(xvsmax-xvsmin)
+          xpsimin=xvsmin+alphafp*(xvsmax-xvsmin)
         else
-           xpsimino=xpsimins
-           xpsimin=abs(alphafp)*xvsmax
-           xpsimins=xpsimin
-           if (ixt.gt.1) xpsimin=xpsimin*(1.-vsdamp)+xpsimino*vsdamp
-           alphamu=(xpsimin-xvsmin)/(xvsmax-xvsmin)
+          ! TODO: xpsipmins has not yet been defined...
+!          xpsimino=xpsimins
+          xpsimin=abs(alphafp)*xvsmax
+          xpsimins=xpsimin
+          ! TODO: what is the intention here? xpsimino is unset...
+!          if (ixt.gt.1) xpsimin=xpsimin*(1.-vsdamp)+xpsimino*vsdamp
         endif
         xpsialp=xpsimin
         xpsimin=sidif/(simag-xpsimin)
       endif 
 !-----------------------------------------------------------------------
-!-- get normalized flux function XPSI                                 --
+!--   get normalized flux function XPSI                               --
 !-----------------------------------------------------------------------
       do i=1,nw
-      do j=1,nh
+       do j=1,nh
         kk=(i-1)*nh+j
         if (icutfp.eq.0) then
           xpsi(kk)=1.1_dp
@@ -838,10 +840,10 @@
             xpsi(kk)=1000.
           endif
         endif
-      enddo
+       enddo
       enddo
 !-----------------------------------------------------------------------
-!-- get SOL flux if needed                                            --
+!--   get SOL flux if needed                                          --
 !-----------------------------------------------------------------------
       if (nsol.gt.0) then
         call seva2d(bkx,lkx,bky,lky,c,rsol(1),zsol(1), &
@@ -856,8 +858,8 @@
           write (6,*) 'STEPS R,Z,Si,Err = ', rbdry(nbdry),zbdry(nbdry) &
             ,pds(1),ier
         endif
-
       endif
+
       if (idebug >= 2) then
         call seva2d(bkx,lkx,bky,lky,c,xout(1),yout(1),pds,ier &
              ,n111)
@@ -868,16 +870,13 @@
              ,n111)
         write (6,*) 'STEPS R,Z,si = ', rgrid(45),zgrid(33),pds(1)
         write (6,*) 'STEPS lkx,lky = ',lkx,lky
-
       endif
-
 !-----------------------------------------------------------------------
-!-- get weighting function                                            --
+!--   get weighting function                                          --
 !-----------------------------------------------------------------------
-
       call weight(rgrid,zgrid)
 !-----------------------------------------------------------------------
-!--  get response functions for MSE                                   --
+!--   get response functions for MSE                                  --
 !-----------------------------------------------------------------------
       if (kstark.gt.0.or.kdomse.gt.0) then
         do k=1,nstark
@@ -889,11 +888,10 @@
           sigam(k)=sisinow
           fpnow=ffcurr(sisinow,kffcur)
           btgam(k)=fpnow*tmu/rrgam(jtime,k)
-       enddo
-     endif
-
+        enddo
+      endif
 !-----------------------------------------------------------------------
-!--  get response functions for MSE-LS                                --
+!--   get response functions for MSE-LS                               --
 !-----------------------------------------------------------------------
       if (mmbmsels.gt.0.or.kdomsels.gt.0) then
         do k=1,nmsels
@@ -911,12 +909,11 @@
           brmls(k)=-pds(3)/rrmselt(jtime,k)
           bzmls(k)=pds(2)/rrmselt(jtime,k)
           if (idebug >= 2) then
-            write (6,*) 'STEPS MSE-LS k,rrmselt,br,bz,bt= ',               &
-                         k,rrmselt(jtime,k),brmls(k),bzmls(k),btmls(k)
+             write (6,*) 'STEPS MSE-LS k,rrmselt,br,bz,bt= ',  &
+                          k,rrmselt(jtime,k),brmls(k),bzmls(k),btmls(k)
           endif
-      enddo
-
-    endif
+        enddo
+      endif
 !
       do k=1,nfound
         xouts(k)=1./xout(k)**2
@@ -930,62 +927,62 @@
       call fluxav(xouts,xout,yout,nfound,psi,rgrid,nw,zgrid,nh, &
                   r1bdry,nzz,sdlobp,sdlbp)
 !-----------------------------------------------------------------------
-!--  get metric elements at PSIWANT for edge constraint if needed     --
-!----------------------------------------------------------------------
+!--   get metric elements at PSIWANT for edge constraint if needed    --
+!-----------------------------------------------------------------------
       r1sdry(1)=r1bdry
       r2sdry(1)=r2bdry
       nnn=1
-      if (abs(sizeroj(1)-1.0).le.1.e-05_dp.and.kzeroj.eq.1) go to 51977
-      if (kzeroj.gt.0) then
-       do i=1,kzeroj
-       if (sizeroj(i).ge.1.0) sizeroj(i)=0.99999_dp
-       siwant=simag+sizeroj(i)*(psibry-simag)
-       call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc, &
-                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur,kerror)
-       if (kerror.gt.0) return
-       do k=1,nfounc
-        csplt(k)=1./rsplt(k)**2
-      enddo
-       call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
-                  r2sdry(i),nzz,sdlobp,sdlbp)
-       do k=1,nfounc
-        csplt(k)=1./rsplt(k)
-       enddo
-       call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
-                  r1sdry(i),nzz,sdlobp,sdlbp)
-       r2surs = r2sdry(i)*sdlobp
-       fpnow = ffcurr(psiwant,kffcur)
-       fpnow = fpnow*tmu
-       enddo
+      if (abs(sizeroj(1)-1.0).gt.1.e-05_dp.or.kzeroj.ne.1) then
+        if (kzeroj.gt.0) then
+          do i=1,kzeroj
+            if (sizeroj(i).ge.1.0) sizeroj(i)=0.99999_dp
+            siwant=simag+sizeroj(i)*(psibry-simag)
+            call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc, &
+                        npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                        rmaxis,zmaxis,negcur,kerror)
+            if (kerror.gt.0) return
+            do k=1,nfounc
+              csplt(k)=1./rsplt(k)**2
+            enddo
+            call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
+                        r2sdry(i),nzz,sdlobp,sdlbp)
+            do k=1,nfounc
+              csplt(k)=1./rsplt(k)
+            enddo
+            call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
+                        r1sdry(i),nzz,sdlobp,sdlbp)
+            r2surs = r2sdry(i)*sdlobp
+            fpnow = ffcurr(psiwant,kffcur)
+            fpnow = fpnow*tmu
+          enddo
+        endif
       endif
-51977 continue
 !-----------------------------------------------------------------------
-!--  get metric elements at PSIWANT for q constraint if needed        --
+!--   get metric elements at PSIWANT for q constraint if needed       --
 !-----------------------------------------------------------------------
       if (nqwant.gt.0) then
-      do i=1,nqwant
-       siwant=simag+siwantq(i)*(psibry-simag)
-       call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc, &
-                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur,kerror)
-       if (kerror.gt.0) return
-       do k=1,nfounc
-        csplt(k)=1./rsplt(k)**2
-       enddo
-       call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
-                  r2qdry,nzz,sdlobp,sdlbp)
-       do k=1,nfounc
-        csplt(k)=1./rsplt(k)
-       enddo
-       call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
-                  r1qdry,nzz,sdlobp,sdlbp)
-       r2surq = r2qdry*sdlobp
-       fpnow = ffcurr(siwantq(i),kffcur)
-       fpnow = fpnow*tmu
-       qsiw(i)= abs(fpnow)/twopi*r2surq
-       pasmsw(i)=sdlbp/tmu/twopi
-      enddo
+        do i=1,nqwant
+         siwant=simag+siwantq(i)*(psibry-simag)
+         call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc, &
+                     npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                     rmaxis,zmaxis,negcur,kerror)
+         if (kerror.gt.0) return
+         do k=1,nfounc
+           csplt(k)=1./rsplt(k)**2
+         enddo
+         call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
+                     r2qdry,nzz,sdlobp,sdlbp)
+         do k=1,nfounc
+           csplt(k)=1./rsplt(k)
+         enddo
+         call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
+                     r1qdry,nzz,sdlobp,sdlbp)
+         r2surq = r2qdry*sdlobp
+         fpnow = ffcurr(siwantq(i),kffcur)
+         fpnow = fpnow*tmu
+         qsiw(i)= abs(fpnow)/twopi*r2surq
+         pasmsw(i)=sdlbp/tmu/twopi
+        enddo
       endif
 !
       cvolp(ixt)=0.0
@@ -1018,14 +1015,14 @@
       csumip(ixt)=sumip
       tratio(ixt)=cratio
 !---------------------------------------------------------------------
-!--  get beta and li for constraints                                --
+!--   get beta and li for constraints                               --
 !---------------------------------------------------------------------
       if (fli.gt.0.0.or.fbetan.gt.0.0) then
-           call betsli(jtime,rgrid,zgrid,kerror)
-           if (kerror.gt.0) return
+        call betsli(jtime,rgrid,zgrid,kerror)
+        if (kerror.gt.0) return
       endif
 !----------------------------------------------------------------------
-!--  vertical stabilization information                              --
+!--   vertical stabilization information                             --
 !----------------------------------------------------------------------
       if (itell.gt.0.and.isetfb.ge.0) then
         delzmm = zmaxis - zmaxis_last
@@ -1040,95 +1037,121 @@
         zmaxis_last=zmaxis
       endif
 !----------------------------------------------------------------------
-!--  magnetic axis parameters if needed                              --
+!--   magnetic axis parameters if needed                             --
 !----------------------------------------------------------------------
-      if (icinit.gt.0) then
-        if ((iconvr.ne.3).and.(ixout.le.1)) go to 1580
+      if (((icinit.gt.0).and.(iconvr.ne.3).and.(ixout.le.1)).or. &
+          (((icurrt.eq.2).or.(icurrt.eq.5)).and.(ixt.le.1).and.(icinit.gt.0))) then
+        nqend=1
+        n22=2
+        if (errorm.lt.0.1_dp.and.icurrt.eq.4) nqend=nqiter
+        do i=1,nqend
+          if (i.gt.1) then
+            call currnt(n22,jtime,n22,n22,kerror)
+            if (kerror.gt.0) return
+          endif
+
+          fcentr=fbrdy**2+sidif*dfsqe
+          if (fcentr.lt.0.0) fcentr=fbrdy**2
+          fcentr=sqrt(fcentr)*fbrdy/abs(fbrdy)
+          rdiml=rmaxis/rzero
+          cjmaxi=cratio/darea*(rdiml+rbetap/rdiml)
+          if (kvtor.eq.1) then
+            rgmvt=(rmaxis/rvtor)**2-1.
+            cjmaxi=cjmaxi+cratio/darea*rdiml*rbetaw*rgmvt
+          elseif (kvtor.eq.11) then
+            ypsm=0.0
+            n1set=1
+            pres0=prcur4(n1set,ypsm,kppcur)
+            prew0=pwcur4(n1set,ypsm,kwwcur)
+            rgmvt=(rmaxis/rvtor)**2-1.
+            pwop0=prew0/pres0
+            ptop0=exp(pwop0*rgmvt)
+            pp0= 1.-pwop0*rgmvt
+            ppw=rbetaw*rgmvt
+            cjmaxi=cjmaxi+(pp0+ppw)*rdiml*ptop0
+          endif
+          cqmaxi(ixt)=(emaxis**2+1.)*abs(fcentr)/twopi/emaxis &
+                      /rmaxis**2/abs(cjmaxi)
+          qmaxis=cqmaxi(ixt)
+          if (icurrt.eq.4) then
+            if (qenp.gt.0.0) enp=enp*qenp/qmaxis
+            if (qemp.gt.0.0) emp=emp*qmaxis/qemp
+            enf=enp
+            emf=emp
+          endif
+        enddo
+        return
       endif
-        select case (icurrt)
-        case (1)
-          go to 1570
-        case (2)
-          go to 1590
-        case (3)
-          go to 1595
-        case (4)
-          go to 1580
-        case (5)
-          go to 1590
-        end select
-!
- 1570 continue
-      rdiml=rmaxis/srma
-      cjmaxi=cratio*(sbeta*rdiml+2.*salpha/rdiml)/darea
-      if (kvtor.gt.0) then
+      select case (icurrt)
+      case default ! 1
+        rdiml=rmaxis/srma
+        cjmaxi=cratio*(sbeta*rdiml+2.*salpha/rdiml)/darea
+        if (kvtor.gt.0) then
           cjmaxi=cjmaxi+cratio/darea*sbetaw*rdiml*(rdiml**2-1.)
-      endif
-      go to 1600
- 1580 continue
-      nqend=1
-      n22=2
-      if (errorm.lt.0.1_dp.and.icurrt.eq.4) nqend=nqiter
-      do 1585 i=1,nqend
-      if (i.gt.1) then
-        call currnt(n22,jtime,n22,n22,kerror)
-        if (kerror.gt.0) return
-      end if
+        endif
+      case (2,5)
+        fcentr=ffcurr(x000,kffcur)
+        if (kvtor.eq.0) then
+          cjmaxi=(rmaxis*ppcurr(x000,kppcur) &
+               +fpcurr(x000,kffcur)/rmaxis)*cratio/darea
+        else
+          cjmaxi=0.0
+          do j=1,kppcur
+            cjmaxi=rjjjx(j)*brsp(nfcoil+j)+cjmaxi
+          enddo
+          do j=1,kffcur
+            cjmaxi=rjjfx(j)*brsp(nfcoil+kppcur+j)+cjmaxi
+          enddo
+          do j=1,kwwcur
+            cjmaxi=rjjwx(j)*brsp(nfnpcr+j)+cjmaxi
+          enddo
+          cjmaxi=cjmaxi/darea
+        endif
+      case (3)
+        ! continue
+      case (4)
+        nqend=1
+        n22=2
+        if (errorm.lt.0.1_dp.and.icurrt.eq.4) nqend=nqiter
+        do i=1,nqend
+          if (i.gt.1) then
+            call currnt(n22,jtime,n22,n22,kerror)
+            if (kerror.gt.0) return
+          endif
 
-      fcentr=fbrdy**2+sidif*dfsqe
-      if (fcentr.lt.0.0) fcentr=fbrdy**2
-      fcentr=sqrt(fcentr)*fbrdy/abs(fbrdy)
-      rdiml=rmaxis/rzero
-      cjmaxi=cratio/darea*(rdiml+rbetap/rdiml)
-      if (kvtor.eq.1) then
-        rgmvt=(rmaxis/rvtor)**2-1.
-        cjmaxi=cjmaxi+cratio/darea*rdiml*rbetaw*rgmvt
-      elseif (kvtor.eq.11) then
-         ypsm=0.0
-         n1set=1
-         pres0=prcur4(n1set,ypsm,kppcur)
-         prew0=pwcur4(n1set,ypsm,kwwcur)
-         rgmvt=(rmaxis/rvtor)**2-1.
-         pwop0=prew0/pres0
-         ptop0=exp(pwop0*rgmvt)
-         pp0= 1.-pwop0*rgmvt
-         ppw=rbetaw*rgmvt
-         cjmaxi=cjmaxi+(pp0+ppw)*rdiml*ptop0
-      endif
-      cqmaxi(ixt)=(emaxis**2+1.)*abs(fcentr)/twopi/emaxis &
-                  /rmaxis**2/abs(cjmaxi)
-      qmaxis=cqmaxi(ixt)
-      if (icurrt.eq.4) then
-      if (qenp.gt.0.0) enp=enp*qenp/qmaxis
-      if (qemp.gt.0.0) emp=emp*qmaxis/qemp
-      enf=enp
-      emf=emp
-      endif
- 1585 continue
-
-      return
- 1590 continue
-      if ((ixt.le.1).and.(icinit.gt.0)) go to 1580
-      fcentr=ffcurr(x000,kffcur)
-      if (kvtor.eq.0) then
-        cjmaxi=(rmaxis*ppcurr(x000,kppcur) &
-             +fpcurr(x000,kffcur)/rmaxis)*cratio/darea
-      else
-        cjmaxi=0.0
-        do j=1,kppcur
-          cjmaxi=rjjjx(j)*brsp(nfcoil+j)+cjmaxi
+          fcentr=fbrdy**2+sidif*dfsqe
+          if (fcentr.lt.0.0) fcentr=fbrdy**2
+          fcentr=sqrt(fcentr)*fbrdy/abs(fbrdy)
+          rdiml=rmaxis/rzero
+          cjmaxi=cratio/darea*(rdiml+rbetap/rdiml)
+          if (kvtor.eq.1) then
+            rgmvt=(rmaxis/rvtor)**2-1.
+            cjmaxi=cjmaxi+cratio/darea*rdiml*rbetaw*rgmvt
+          elseif (kvtor.eq.11) then
+            ypsm=0.0
+            n1set=1
+            pres0=prcur4(n1set,ypsm,kppcur)
+            prew0=pwcur4(n1set,ypsm,kwwcur)
+            rgmvt=(rmaxis/rvtor)**2-1.
+            pwop0=prew0/pres0
+            ptop0=exp(pwop0*rgmvt)
+            pp0= 1.-pwop0*rgmvt
+            ppw=rbetaw*rgmvt
+            cjmaxi=cjmaxi+(pp0+ppw)*rdiml*ptop0
+          endif
+          cqmaxi(ixt)=(emaxis**2+1.)*abs(fcentr)/twopi/emaxis &
+                      /rmaxis**2/abs(cjmaxi)
+          qmaxis=cqmaxi(ixt)
+          if (icurrt.eq.4) then
+            if (qenp.gt.0.0) enp=enp*qenp/qmaxis
+            if (qemp.gt.0.0) emp=emp*qmaxis/qemp
+            enf=enp
+            emf=emp
+          endif
         enddo
-        do j=1,kffcur
-          cjmaxi=rjjfx(j)*brsp(nfcoil+kppcur+j)+cjmaxi
-        enddo
-        do j=1,kwwcur
-          cjmaxi=rjjwx(j)*brsp(nfnpcr+j)+cjmaxi
-        enddo
-        cjmaxi=cjmaxi/darea
-      endif
-      go to 1600
- 1595 continue
- 1600 continue
+        return
+      end select
+!
       cqmaxi(ixt)=(emaxis**2+1.)*abs(fcentr)/twopi/emaxis &
                    /rmaxis**2/abs(cjmaxi)
       qmaxis=cqmaxi(ixt)

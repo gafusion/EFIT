@@ -2744,7 +2744,7 @@
         tmp1(:) = dist_data(:)*nsize
         tmp2(:) = dist_data_displs(:)*nsize
         ! SIZE = SIZEOF(DOUBLE) * SUM(DIST_DATA(2:)) * NSIZE bytes
-        total_bytes = total_bytes + 8*sum(dist_data(2:))*nsize
+        total_bytes = 8*sum(dist_data(2:))*nsize
         if (rank == 0) then
           ! NOTE : DIST_DATA and DIST_DATA_DISPLS should be saved between calls since part of MPI_INFO module
           call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION, &

@@ -572,7 +572,9 @@
             rhsmls(jtime,m)=-l1mselt(jtime,m)* &
               (rcentr*bcentr(jtime)/rrmselt(jtime,m))**2
             ecorrect=1.0
-            if (mmemsels.gt.0) then
+            ! TODO: mmemsels never defined here, was mmbmsels intended?
+!            if (mmemsels.gt.0) then
+            if (mmbmsels.gt.0) then
               epotp=erpote(ypsi,keecur)
               ecorrect=ecorrect-l4mselt(jtime,m)*rrmselt(jtime,m)*epotp
             endif
@@ -583,7 +585,9 @@
             rhsmls(jtime,m)=rhsmls(jtime,m)-(l3mselt(jtime,m)*ecorrect**2+ &
               l1mselt(jtime,m))*bzmls(m)**2
           endif
-          if (mmemsels.gt.0) then
+          ! TODO: see above
+!          if (mmemsels.gt.0) then
+          if (mmbmsels.gt.0) then
             call seter(xn,xsier)
             do jj=1,keecur
               relser(m,jj)=xsier(jj)

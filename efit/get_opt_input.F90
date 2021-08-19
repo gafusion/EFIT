@@ -75,7 +75,8 @@
 
       elseif (kdata.eq.3 .or. kdata.eq.7) then
     
-       if (kwake.eq.0) then
+       ! TODO: kwake is undefined here... is it necessary?
+!       if (kwake.eq.0) then
         if (rank == 0) then
           if (use_opt_input .eqv. .false.) then
             write (nttyo,6040)
@@ -91,10 +92,10 @@
             ktime = steps_in
           endif
         endif
-       endif
-    else
-     return
-    endif
+!       endif
+      else
+       return
+      endif
      
 #if defined(USEMPI)
         if (nproc > 1) then

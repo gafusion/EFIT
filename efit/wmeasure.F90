@@ -62,106 +62,96 @@
 !vas f90 modifi
       character*85 vastext
 !-----------------------------------------------------------------------
-!--  write out t(shot).(time)_X files                                    --
+!--   write out t(shot).(time)_X files                                --
 !-----------------------------------------------------------------------
       if ((kwripre.eq.11).and.(itype.eq.2)) then
+        xdum=0.0
         call getfnmd('t',ishot,itime,sfname)
         sfname=sfname(1:13)//'_chi2'
-          open(unit=74,status='old',file=sfname,err=19920)
-          close(unit=74,status='delete')
-19920     continue
-          open(unit=74,status='new',file=sfname                       )
+        open(unit=74,status='old',file=sfname,iostat=ioerr)
+        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),tsaisq(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_error'
-          open(unit=74,status='old',file=sfname,err=19922)
-          close(unit=74,status='delete')
-19922     continue
-          open(unit=74,status='new',file=sfname                       )
+        open(unit=74,status='old',file=sfname,iostat=ioerr)
+        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),terror(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_j1ave'
-          open(unit=74,status='old',file=sfname,err=19930)
-          close(unit=74,status='delete')
-19930     continue
-          open(unit=74,status='new',file=sfname                       )
+        open(unit=74,status='old',file=sfname,iostat=ioerr)
+        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),cj1ave(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_li'
-          open(unit=74,status='old',file=sfname,err=19940)
-          close(unit=74,status='delete')
-19940     continue
-          open(unit=74,status='new',file=sfname                       )
+        open(unit=74,status='old',file=sfname,iostat=ioerr)
+        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),ali(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_betat'
-          open(unit=74,status='old',file=sfname,err=19950)
-          close(unit=74,status='delete')
-19950     continue
-          open(unit=74,status='new',file=sfname                       )
+        open(unit=74,status='old',file=sfname,iostat=ioerr)
+        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),betat(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_q95'
-          open(unit=74,status='old',file=sfname,err=19960)
-          close(unit=74,status='delete')
-19960     continue
-          open(unit=74,status='new',file=sfname                       )
+        open(unit=74,status='old',file=sfname,iostat=ioerr)
+        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),qpsib(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_q0'
-          open(unit=74,status='old',file=sfname,err=19970)
-          close(unit=74,status='delete')
-19970     continue
-          open(unit=74,status='new',file=sfname                       )
+        open(unit=74,status='old',file=sfname,iostat=ioerr)
+        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),qqmagx(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_q0'
-          open(unit=74,status='old',file=sfname,err=19980)
-          close(unit=74,status='delete')
-19980     continue
-          open(unit=74,status='new',file=sfname                       )
+        open(unit=74,status='old',file=sfname,iostat=ioerr)
+        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),qqmagx(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_eout'
-          open(unit=74,status='old',file=sfname,err=19990)
-          close(unit=74,status='delete')
-19990     continue
-          open(unit=74,status='new',file=sfname                       )
+        open(unit=74,status='old',file=sfname,iostat=ioerr)
+        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),eout(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_vout'
-          open(unit=74,status='old',file=sfname,err=19992)
-          close(unit=74,status='delete')
-19992     continue
-          open(unit=74,status='new',file=sfname                       )
+        open(unit=74,status='old',file=sfname,iostat=ioerr)
+        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           vm3=vout(i)/1.e6_dp
           write (74,*) time(i),vm3,xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_betan'
-          open(unit=74,status='old',file=sfname,err=19995)
-          close(unit=74,status='delete')
-19995     continue
-          open(unit=74,status='new',file=sfname                       )
+        open(unit=74,status='old',file=sfname,iostat=ioerr)
+        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           pasman=cpasma(i)/1.e4_dp/aout(i)/abs(bcentr(i))
           pasman=pasman*rout(i)/100./rcentr
@@ -170,10 +160,9 @@
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_zts'
-          open(unit=74,status='old',file=sfname,err=19998)
-          close(unit=74,status='delete')
-19998     continue
-          open(unit=74,status='new',file=sfname                       )
+        open(unit=74,status='old',file=sfname,iostat=ioerr)
+        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),zuperts(i),xdum,xdum
         enddo
@@ -181,18 +170,18 @@
       endif
 !
       if ((iand(iout,2).eq.0).and.(iand(iout,4).eq.0)) &
-           return
+        return
 !
-      call NCPOPT (NCVERBOS)              ! get nc error message but not fatal
+      call NCPOPT(NCVERBOS)  ! get nc error message but not fatal
 !
 ! --- time-dependent and the first slice and first time called, 
 ! --- create file and enter define mode
 ! --- if iout.and.2.ne.0 = create m0sssss.nc
 ! --- if iout.and.6.ne.0 = create m0sssss.0tttt_nnnn, 
 ! ---    while tttt is the first time and nnn is the number of slices.
-
+      ijump=0
       if ((iand(iout,2).ne.0).and.(iand(iout,4).ne.0).and. &
-           ((ifirsttime.eq.1).and.(itype.eq.1))) then
+          ((ifirsttime.eq.1).and.(itype.eq.1))) then
          let = 'm'
          iitime = time(ifirsttime)
          call getfnmd(let,ishot,iitime,eqdsk)
@@ -229,344 +218,344 @@
 ! --- skip define mode and go to write directly
 !
       else
-         go to 100
+         ijump=1
       endif
       
+      if (ijump.eq.0) then
       if (ierr.ne.0) return
 !
 ! --- nc file has been created successfully, now define variables, etc.
 !
       title = 'EFIT measurement file Mssssss.ttttt/Mssssss.nc'
-      call NCAPTC (nceq,NC_GLOBAL,'title',NCCHAR,46,title,ierr)
+      call NCAPTC(nceq,NC_GLOBAL,'title',NCCHAR,46,title,ierr)
 ! 
 ! --- define unlimited time dimension and scalar and array dimensions
 !
-      idim_time = NCDDEF (nceq,'dim_time',NCUNLIM,ierr)
-      idim_1 = NCDDEF (nceq,'dim_scalar',1,ierr)
-      idim_nstark = NCDDEF (nceq,'dim_nstark',nstark,ierr)
-      idim_nsilop = NCDDEF (nceq,'dim_nsilop',nsilop,ierr)
-      idim_magpri = NCDDEF (nceq,'dim_magpri',magpri,ierr)
-      idim_nfcoil = NCDDEF (nceq,'dim_nfcoil',nfcoil,ierr)
-      idim_nesum  = NCDDEF (nceq,'dim_nesum' ,nesum ,ierr)
+      idim_time = NCDDEF(nceq,'dim_time',NCUNLIM,ierr)
+      idim_1 = NCDDEF(nceq,'dim_scalar',1,ierr)
+      idim_nstark = NCDDEF(nceq,'dim_nstark',nstark,ierr)
+      idim_nsilop = NCDDEF(nceq,'dim_nsilop',nsilop,ierr)
+      idim_magpri = NCDDEF(nceq,'dim_magpri',magpri,ierr)
+      idim_nfcoil = NCDDEF(nceq,'dim_nfcoil',nfcoil,ierr)
+      idim_nesum  = NCDDEF(nceq,'dim_nesum' ,nesum ,ierr)
       npress1 = npress
       if (npress.eq.0) npress1 = 1
-      idim_npress = NCDDEF (nceq,'dim_npress',npress1,ierr)
-      idim_npcurn = NCDDEF (nceq,'dim_npcurn',npcurn,ierr)
-      idim_nitera = NCDDEF (nceq,'dim_nitera',nitera,ierr)
+      idim_npress = NCDDEF(nceq,'dim_npress',npress1,ierr)
+      idim_npcurn = NCDDEF(nceq,'dim_npcurn',npcurn,ierr)
+      idim_nitera = NCDDEF(nceq,'dim_nitera',nitera,ierr)
       dim2(2) = idim_time
 !
 ! --- define variables
 !
-      id_shot = NCVDEF (nceq,'shot',NCLONG,1,idim_1,ierr)
-      call NCAPTC (nceq,id_shot,'long_name',NCCHAR,11, &
+      id_shot = NCVDEF(nceq,'shot',NCLONG,1,idim_1,ierr)
+      call NCAPTC(nceq,id_shot,'long_name',NCCHAR,11, &
                   'shot number',ierr)
 !
-      id_time = NCVDEF (nceq,'time',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC (nceq,id_time,'units',NCCHAR,4,'msec',ierr)
+      id_time = NCVDEF(nceq,'time',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_time,'units',NCCHAR,4,'msec',ierr)
 !
 ! --- MSE measurements
 !
-      id_fungam = NCVDEF (nceq,'msefitfun',NCLONG,1,idim_1,ierr)
-      call NCAPTC (nceq,id_fungam,'long_name',NCCHAR,16, &
+      id_fungam = NCVDEF(nceq,'msefitfun',NCLONG,1,idim_1,ierr)
+      call NCAPTC(nceq,id_fungam,'long_name',NCCHAR,16, &
                   'MSE fit function',ierr)
 
       dim2(1) = idim_nstark
-      id_tangam = NCVDEF (nceq,'tangam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_tangam,'long_name',NCCHAR,35, &
-      'tangent of measured MSE pitch angle',ierr)
+      id_tangam = NCVDEF(nceq,'tangam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_tangam,'long_name',NCCHAR,35, &
+                  'tangent of measured MSE pitch angle',ierr)
 !
-      id_tangam_uncor = NCVDEF (nceq,'tangam_uncor',NCFLOAT,&
-                             2,dim2,ierr)
-      call NCAPTC (nceq,id_tangam_uncor,'long_name',NCCHAR,54, &
-      'tangent of measured MSE pitch angle w/o cer correction',ierr)
+      id_tangam_uncor = NCVDEF(nceq,'tangam_uncor',NCFLOAT,&
+                                2,dim2,ierr)
+      call NCAPTC(nceq,id_tangam_uncor,'long_name',NCCHAR,54, &
+            'tangent of measured MSE pitch angle w/o cer correction',ierr)
 !
-      id_fgam = NCVDEF (nceq,'fixgam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_fgam,'long_name',NCCHAR,58, &
-      'radians correction of tangam for spatial averaging effects',ierr)
+      id_fgam = NCVDEF(nceq,'fixgam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_fgam,'long_name',NCCHAR,58, &
+        'radians correction of tangam for spatial averaging effects',ierr)
 !
-      id_cmgam = NCVDEF (nceq,'cmgam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_cmgam,'long_name',NCCHAR,30, &
-      'calculated polarimetry signals',ierr)
+      id_cmgam = NCVDEF(nceq,'cmgam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_cmgam,'long_name',NCCHAR,30, &
+                  'calculated polarimetry signals',ierr)
 !
-      id_siggam = NCVDEF (nceq,'siggam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_siggam,'long_name',NCCHAR,21, &
-      'uncertainty of tangam',ierr)
+      id_siggam = NCVDEF(nceq,'siggam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_siggam,'long_name',NCCHAR,21, &
+                  'uncertainty of tangam',ierr)
 !
-      id_rrgam = NCVDEF (nceq,'rrgam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_rrgam,'long_name',NCCHAR,22, &
-      'radius of MSE channels',ierr)
+      id_rrgam = NCVDEF(nceq,'rrgam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_rrgam,'long_name',NCCHAR,22, &
+                  'radius of MSE channels',ierr)
 !
-      id_zzgam = NCVDEF (nceq,'zzgam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_zzgam,'long_name',NCCHAR,26, &
-      'Z position of MSE channels',ierr)
+      id_zzgam = NCVDEF(nceq,'zzgam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_zzgam,'long_name',NCCHAR,26, &
+                  'Z position of MSE channels',ierr)
 !
-      id_a1gam = NCVDEF (nceq,'a1gam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_a1gam,'long_name',NCCHAR,45, &
-      'viewing geometry coefficients of MSE channels',ierr)
+      id_a1gam = NCVDEF(nceq,'a1gam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_a1gam,'long_name',NCCHAR,45, &
+                  'viewing geometry coefficients of MSE channels',ierr)
 !
-      id_a2gam = NCVDEF (nceq,'a2gam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_a2gam,'long_name',NCCHAR,45, &
-      'viewing geometry coefficients of MSE channels',ierr)
+      id_a2gam = NCVDEF(nceq,'a2gam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_a2gam,'long_name',NCCHAR,45, &
+                  'viewing geometry coefficients of MSE channels',ierr)
 !
-      id_a3gam = NCVDEF (nceq,'a3gam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_a3gam,'long_name',NCCHAR,45, &
-      'viewing geometry coefficients of MSE channels',ierr)
+      id_a3gam = NCVDEF(nceq,'a3gam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_a3gam,'long_name',NCCHAR,45, &
+                  'viewing geometry coefficients of MSE channels',ierr)
 !
-      id_a4gam = NCVDEF (nceq,'a4gam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_a4gam,'long_name',NCCHAR,45, &
-      'viewing geometry coefficients of MSE channels',ierr)
+      id_a4gam = NCVDEF(nceq,'a4gam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_a4gam,'long_name',NCCHAR,45, &
+                  'viewing geometry coefficients of MSE channels',ierr)
 !
-      id_a5gam = NCVDEF (nceq,'a5gam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_a5gam,'long_name',NCCHAR,45, &
-      'viewing geometry coefficients of MSE channels',ierr)
+      id_a5gam = NCVDEF(nceq,'a5gam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_a5gam,'long_name',NCCHAR,45, &
+                  'viewing geometry coefficients of MSE channels',ierr)
 !
-      id_a6gam = NCVDEF (nceq,'a6gam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_a6gam,'long_name',NCCHAR,45, &
-      'viewing geometry coefficients of MSE channels',ierr)
+      id_a6gam = NCVDEF(nceq,'a6gam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_a6gam,'long_name',NCCHAR,45, &
+                  'viewing geometry coefficients of MSE channels',ierr)
 !
-      id_a7gam = NCVDEF (nceq,'a7gam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_a7gam,'long_name',NCCHAR,45, &
-      'viewing geometry coefficients of MSE channels',ierr)
+      id_a7gam = NCVDEF(nceq,'a7gam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_a7gam,'long_name',NCCHAR,45, &
+                  'viewing geometry coefficients of MSE channels',ierr)
 !
-      id_a8gam = NCVDEF (nceq,'a8gam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_a8gam,'long_name',NCCHAR,45, &
-      'viewing geometry coefficients of MSE channels',ierr)
+      id_a8gam = NCVDEF(nceq,'a8gam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_a8gam,'long_name',NCCHAR,45, &
+                  'viewing geometry coefficients of MSE channels',ierr)
 !
-      id_fwtgam = NCVDEF (nceq,'fwtgam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_fwtgam,'long_name',NCCHAR,31, &
-      'fitting weight for MSE channels',ierr)
+      id_fwtgam = NCVDEF(nceq,'fwtgam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_fwtgam,'long_name',NCCHAR,31, &
+                  'fitting weight for MSE channels',ierr)
 !
-      id_msebkp = NCVDEF (nceq,'msebkp',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC (nceq,id_msebkp,'long_name',NCCHAR,30, &
-      'background substraction switch',ierr)
+      id_msebkp = NCVDEF(nceq,'msebkp',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_msebkp,'long_name',NCCHAR,30, &
+                  'background substraction switch',ierr)
 !     
-      id_mseport = NCVDEF (nceq,'vport',NCLONG,1,idim_nstark,ierr)
-      call NCAPTC (nceq,id_mseport,'long_name',NCCHAR,33, &
-      'view port locations of MSE system',ierr)
+      id_mseport = NCVDEF(nceq,'vport',NCLONG,1,idim_nstark,ierr)
+      call NCAPTC(nceq,id_mseport,'long_name',NCCHAR,33, &
+                  'view port locations of MSE system',ierr)
 !
-      if( msefitfun .eq. 1)then
+      if (msefitfun .eq. 1) then
 
-          id_gaingam = NCVDEF (nceq,'mcal_gain',NCFLOAT,2,dim2,ierr)
-          call NCAPTC (nceq,id_gaingam,'long_name',NCCHAR,38, &
-      'gain param for tangent offset function',ierr)
+         id_gaingam = NCVDEF(nceq,'mcal_gain',NCFLOAT,2,dim2,ierr)
+         call NCAPTC(nceq,id_gaingam,'long_name',NCCHAR,38, &
+                     'gain param for tangent offset function',ierr)
 
-          id_slopegam = NCVDEF (nceq,'mcal_slope',NCFLOAT, &
+         id_slopegam = NCVDEF(nceq,'mcal_slope',NCFLOAT, &
                               2,dim2,ierr)
-          call NCAPTC (nceq,id_slopegam,'long_name',NCCHAR,39, &
-      'slope param for tangent offset function',ierr)
+         call NCAPTC(nceq,id_slopegam,'long_name',NCCHAR,39, &
+                     'slope param for tangent offset function',ierr)
 
-          id_scalegam = NCVDEF (nceq,'mcal_scale',NCFLOAT, &
+         id_scalegam = NCVDEF(nceq,'mcal_scale',NCFLOAT, &
                               2,dim2,ierr)
-          call NCAPTC (nceq,id_scalegam,'long_name',NCCHAR,39, &
-      'scale param for tangent offset function',ierr)
+         call NCAPTC(nceq,id_scalegam,'long_name',NCCHAR,39, &
+                     'scale param for tangent offset function',ierr)
 
-          id_offsetgam = NCVDEF (nceq,'mcal_offset',NCFLOAT, &
-                              2,dim2,ierr)
-          call NCAPTC (nceq,id_offsetgam,'long_name',NCCHAR,40, &
-      'offset param for tangent offset function',ierr)
+         id_offsetgam = NCVDEF(nceq,'mcal_offset',NCFLOAT, &
+                               2,dim2,ierr)
+         call NCAPTC(nceq,id_offsetgam,'long_name',NCCHAR,40, &
+                     'offset param for tangent offset function',ierr)
 
+      elseif  ( msefitfun .eq. 3) then
 
-      else if( msefitfun .eq. 3)then
+          id_gaingam = NCVDEF(nceq,'mcal3_gain',NCFLOAT,2,dim2,ierr)
+          call NCAPTC(nceq,id_gaingam,'long_name',NCCHAR,37, &
+                      'gain param for tangent slope function',ierr)
 
-          id_gaingam = NCVDEF (nceq,'mcal3_gain',NCFLOAT,2,dim2,ierr)
-          call NCAPTC (nceq,id_gaingam,'long_name',NCCHAR,37, &
-      'gain param for tangent slope function',ierr)
+          id_slopegam = NCVDEF(nceq,'mcal3_phase',NCFLOAT,2,dim2,ierr)
+          call NCAPTC(nceq,id_slopegam,'long_name',NCCHAR,38, &
+                      'phase param for tangent slope function',ierr)
 
-          id_slopegam = NCVDEF (nceq,'mcal3_phase',NCFLOAT,2,dim2,ierr)
-          call NCAPTC (nceq,id_slopegam,'long_name',NCCHAR,38, &
-      'phase param for tangent slope function',ierr)
+          id_scalegam = NCVDEF(nceq,'mcal3_btscale',NCFLOAT, &
+                               2,dim2,ierr)
+          call NCAPTC(nceq,id_scalegam,'long_name',NCCHAR,40, &
+                      'btscale param for tangent slope function',ierr)
 
-          id_scalegam = NCVDEF (nceq,'mcal3_btscale',NCFLOAT, &
-                              2,dim2,ierr)
-          call NCAPTC (nceq,id_scalegam,'long_name',NCCHAR,40, &
-      'btscale param for tangent slope function',ierr)
-
-          id_offsetgam = NCVDEF (nceq,'mcal3_dc_offset',NCFLOAT, &
-                              2,dim2,ierr)
-          call NCAPTC (nceq,id_offsetgam,'long_name',NCCHAR,42, &
-      'dc_offset param for tangent slope function',ierr)
+          id_offsetgam = NCVDEF(nceq,'mcal3_dc_offset',NCFLOAT, &
+                                2,dim2,ierr)
+          call NCAPTC(nceq,id_offsetgam,'long_name',NCCHAR,42, &
+                      'dc_offset param for tangent slope function',ierr)
 
       else if( msefitfun .eq. 4)then
 
-          id_gaingam = NCVDEF (nceq,'mcal4_gain',NCFLOAT,2,dim2,ierr)
-          call NCAPTC (nceq,id_gaingam,'long_name',NCCHAR,37, &
-      'gain param for tangent slope function',ierr)
+          id_gaingam = NCVDEF(nceq,'mcal4_gain',NCFLOAT,2,dim2,ierr)
+          call NCAPTC(nceq,id_gaingam,'long_name',NCCHAR,37, &
+                      'gain param for tangent slope function',ierr)
 
-          id_slopegam = NCVDEF (nceq,'mcal4_phase',NCFLOAT,2,dim2,ierr)
-          call NCAPTC (nceq,id_slopegam,'long_name',NCCHAR,38, &
-      'phase param for tangent slope function',ierr)
+          id_slopegam = NCVDEF(nceq,'mcal4_phase',NCFLOAT,2,dim2,ierr)
+          call NCAPTC(nceq,id_slopegam,'long_name',NCCHAR,38, &
+                      'phase param for tangent slope function',ierr)
 
-          id_scalegam = NCVDEF (nceq,'mcal4_btscale',NCFLOAT, &
+          id_scalegam = NCVDEF(nceq,'mcal4_btscale',NCFLOAT, &
                               2,dim2,ierr)
-          call NCAPTC (nceq,id_scalegam,'long_name',NCCHAR,40, &
-      'btscale param for tangent slope function',ierr)
+          call NCAPTC(nceq,id_scalegam,'long_name',NCCHAR,40, &
+                      'btscale param for tangent slope function',ierr)
 
-          id_offsetgam = NCVDEF (nceq,'mcal4_dc_offset',NCFLOAT, &
+          id_offsetgam = NCVDEF(nceq,'mcal4_dc_offset',NCFLOAT, &
                               2,dim2,ierr)
-          call NCAPTC (nceq,id_offsetgam,'long_name',NCCHAR,42, &
-      'dc_offset param for tangent slope function',ierr)
+          call NCAPTC(nceq,id_offsetgam,'long_name',NCCHAR,42, &
+                      'dc_offset param for tangent slope function',ierr)
 
       endif
 !
 ! --- Magnetic measurements
 !
       dim2(1) = idim_nsilop
-      id_silopt = NCVDEF (nceq,'silopt',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_silopt,'long_name',NCCHAR,19, &
-      'measured flux loops',ierr)
+      id_silopt = NCVDEF(nceq,'silopt',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_silopt,'long_name',NCCHAR,19, &
+                  'measured flux loops',ierr)
 !
-      id_csilop = NCVDEF (nceq,'csilop',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_csilop,'long_name',NCCHAR,21, &
-      'calculated flux loops',ierr)
+      id_csilop = NCVDEF(nceq,'csilop',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_csilop,'long_name',NCCHAR,21, &
+                  'calculated flux loops',ierr)
 !
-      id_fwtsi = NCVDEF (nceq,'fwtsi',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_fwtsi,'long_name',NCCHAR,21, &
-      'weight for flux loops',ierr)
+      id_fwtsi = NCVDEF(nceq,'fwtsi',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_fwtsi,'long_name',NCCHAR,21, &
+                  'weight for flux loops',ierr)
 !
       dim2(1) = idim_magpri
-      id_expmpi = NCVDEF (nceq,'expmpi',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_expmpi,'long_name',NCCHAR,24, &
-      'measured magnetic probes',ierr)
+      id_expmpi = NCVDEF(nceq,'expmpi',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_expmpi,'long_name',NCCHAR,24, &
+                  'measured magnetic probes',ierr)
 !
-      id_fwtmp2 = NCVDEF (nceq,'fwtmp2',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_fwtmp2,'long_name',NCCHAR,26, &
-      'weight for magnetic probes',ierr)
+      id_fwtmp2 = NCVDEF(nceq,'fwtmp2',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_fwtmp2,'long_name',NCCHAR,26, &
+                  'weight for magnetic probes',ierr)
 !
-      id_cmpr2 = NCVDEF (nceq,'cmpr2',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_cmpr2,'long_name',NCCHAR,26, &
-      'calculated magnetic probes',ierr)
+      id_cmpr2 = NCVDEF(nceq,'cmpr2',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_cmpr2,'long_name',NCCHAR,26, &
+                  'calculated magnetic probes',ierr)
 !
       dim2(1) = idim_nfcoil
-      id_fccurt = NCVDEF (nceq,'fccurt',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_fccurt,'long_name',NCCHAR,30, &
-      'measured F-coil currents (Amp)',ierr)
+      id_fccurt = NCVDEF(nceq,'fccurt',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_fccurt,'long_name',NCCHAR,30, &
+                  'measured F-coil currents (Amp)',ierr)
 !
-      id_ccbrsp = NCVDEF (nceq,'ccbrsp',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_ccbrsp,'long_name',NCCHAR,32, &
-      'calculated F-coil currents (Amp)',ierr)
+      id_ccbrsp = NCVDEF(nceq,'ccbrsp',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_ccbrsp,'long_name',NCCHAR,32, &
+                  'calculated F-coil currents (Amp)',ierr)
 !
-      id_fwtfc = NCVDEF (nceq,'fwtfc',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_fwtfc,'long_name',NCCHAR,26, &
-      'weight for F-coil currents',ierr)
+      id_fwtfc = NCVDEF(nceq,'fwtfc',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_fwtfc,'long_name',NCCHAR,26, &
+                  'weight for F-coil currents',ierr)
 !
       dim2(1) = idim_nesum
-      id_eccurt = NCVDEF (nceq,'eccurt',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_eccurt,'long_name',NCCHAR,30, &
-      'measured E-coil currents (Amp)',ierr)
+      id_eccurt = NCVDEF(nceq,'eccurt',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_eccurt,'long_name',NCCHAR,30, &
+                  'measured E-coil currents (Amp)',ierr)
 !
-      id_cecurr = NCVDEF (nceq,'cecurr',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_cecurr,'long_name',NCCHAR,32, &
-      'calculated E-coil currents (Amp)',ierr)
+      id_cecurr = NCVDEF(nceq,'cecurr',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_cecurr,'long_name',NCCHAR,32, &
+                  'calculated E-coil currents (Amp)',ierr)
 !
-      id_fwtec = NCVDEF (nceq,'fwtec',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_fwtec,'long_name',NCCHAR,26, &
-      'weight for E-coil currents',ierr)
+      id_fwtec = NCVDEF(nceq,'fwtec',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_fwtec,'long_name',NCCHAR,26, &
+                  'weight for E-coil currents',ierr)
 !
-      id_diamag = NCVDEF (nceq,'diamag',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC (nceq,id_diamag,'long_name',NCCHAR,25, &
-      'measured diamagnetic flux',ierr)
+      id_diamag = NCVDEF(nceq,'diamag',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_diamag,'long_name',NCCHAR,25, &
+                  'measured diamagnetic flux',ierr)
 !
-      id_cdflux = NCVDEF (nceq,'cdflux',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC (nceq,id_cdflux,'long_name',NCCHAR,27, &
-      'calculated diamagnetic flux',ierr)
+      id_cdflux = NCVDEF(nceq,'cdflux',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_cdflux,'long_name',NCCHAR,27, &
+                  'calculated diamagnetic flux',ierr)
 !
-      id_sigdia = NCVDEF (nceq,'sigdia',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC (nceq,id_sigdia,'long_name',NCCHAR,31, &
-      'uncertainty of diamagnetic flux',ierr)
+      id_sigdia = NCVDEF(nceq,'sigdia',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_sigdia,'long_name',NCCHAR,31, &
+                  'uncertainty of diamagnetic flux',ierr)
 !
 ! --- plasma current
 !
-      id_plasma = NCVDEF (nceq,'plasma',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC (nceq,id_plasma,'long_name',NCCHAR,29, &
-      'measured plasma current (Amp)',ierr)
+      id_plasma = NCVDEF(nceq,'plasma',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_plasma,'long_name',NCCHAR,29, &
+                  'measured plasma current (Amp)',ierr)
 !
-      id_cpasma = NCVDEF (nceq,'cpasma',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC (nceq,id_cpasma,'long_name',NCCHAR,31, &
-      'calculated plasma current (Amp)',ierr)
+      id_cpasma = NCVDEF(nceq,'cpasma',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_cpasma,'long_name',NCCHAR,31, &
+                  'calculated plasma current (Amp)',ierr)
 !
-      id_darea = NCVDEF (nceq,'darea',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC (nceq,id_darea,'long_name',NCCHAR,33, &
-      'plasma coefficients normalization',ierr)
+      id_darea = NCVDEF(nceq,'darea',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_darea,'long_name',NCCHAR,33, &
+                  'plasma coefficients normalization',ierr)
 !
       dim2(1) = idim_npcurn
-      id_xrsp = NCVDEF (nceq,'xrsp',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_xrsp,'long_name',NCCHAR,19, &
-      'plasma coefficients',ierr)
+      id_xrsp = NCVDEF(nceq,'xrsp',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_xrsp,'long_name',NCCHAR,19, &
+                  'plasma coefficients',ierr)
 !
 ! --- pressure
 !
       dim2(1) = idim_npress
-      id_pressr = NCVDEF (nceq,'pressr',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_pressr,'long_name',NCCHAR,57, &
-      'measured pressure vs. normalized flux (kinetic fits only)',ierr)      
+      id_pressr = NCVDEF(nceq,'pressr',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_pressr,'long_name',NCCHAR,57, &
+         'measured pressure vs. normalized flux (kinetic fits only)',ierr)
 !
-      id_cpress = NCVDEF (nceq,'cpress',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_cpress,'long_name',NCCHAR,59, &
-      'calculated pressure vs. normalized flux (kinetic fits only)', &
-      ierr)      
+      id_cpress = NCVDEF(nceq,'cpress',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_cpress,'long_name',NCCHAR,59, &
+         'calculated pressure vs. normalized flux (kinetic fits only)', &
+         ierr)      
 !
-      id_rpress = NCVDEF (nceq,'rpress',NCFLOAT,2,dim2,ierr)
+      id_rpress = NCVDEF(nceq,'rpress',NCFLOAT,2,dim2,ierr)
 !vas f90 modifi.
-vastext(1:59) = '<0 - input pressure profile vs. flux; >0 - R coordinates of'
-vastext(60:85)= 'input pressure profile (m)'
-
-      call NCAPTC (nceq,id_rpress,'long_name',NCCHAR,86, &
+      vastext(1:59) = &
+         '<0 - input pressure profile vs. flux; >0 - R coordinates of'
+      vastext(60:85)= 'input pressure profile (m)'
+      call NCAPTC(nceq,id_rpress,'long_name',NCCHAR,86, &
 !vas      '<0 - input pressure profile vs. flux; >0 - R coordinates of input &
-!vas       pressure profile (m)',ierr)
-      vastext,ierr)
+!vas              pressure profile (m)',ierr)
+                  vastext,ierr)
 !
-      id_zpress = NCVDEF (nceq,'zpress',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_zpress,'long_name',NCCHAR,43, &
-      'Z coordinates of input pressure profile (m)',ierr)
+      id_zpress = NCVDEF(nceq,'zpress',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_zpress,'long_name',NCCHAR,43, &
+                  'Z coordinates of input pressure profile (m)',ierr)
 !
-      id_sigpre = NCVDEF (nceq,'sigpre',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_sigpre,'long_name',NCCHAR,24, &
-      'uncertainty for pressure',ierr)
+      id_sigpre = NCVDEF(nceq,'sigpre',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_sigpre,'long_name',NCCHAR,24, &
+                  'uncertainty for pressure',ierr)
 !
-      id_saipre = NCVDEF (nceq,'saipre',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_saipre,'long_name',NCCHAR,17, &
-      'chisq of pressure',ierr)
+      id_saipre = NCVDEF(nceq,'saipre',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_saipre,'long_name',NCCHAR,17, &
+                  'chisq of pressure',ierr)
 
 !
 ! --- fitting parameters
 !
       dim2(1) = idim_nstark
-      id_chigam = NCVDEF (nceq,'chigam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_chigam,'long_name',NCCHAR,23, &
-      'chisq vs. polarimetries',ierr)
+      id_chigam = NCVDEF(nceq,'chigam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_chigam,'long_name',NCCHAR,23, &
+                  'chisq vs. polarimetries',ierr)
 !
       dim2(1) = idim_magpri
-      id_saimpi = NCVDEF (nceq,'saimpi',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_saimpi,'long_name',NCCHAR,25, &
-      'chisq vs. magnetic probes',ierr)
+      id_saimpi = NCVDEF(nceq,'saimpi',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_saimpi,'long_name',NCCHAR,25, &
+                  'chisq vs. magnetic probes',ierr)
 !
       dim2(1) = idim_nsilop
-      id_saisil = NCVDEF (nceq,'saisil',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_saisil,'long_name',NCCHAR,19, &
-      'chisq vs. PSI loops',ierr)
+      id_saisil = NCVDEF(nceq,'saisil',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_saisil,'long_name',NCCHAR,19, &
+                  'chisq vs. PSI loops',ierr)
 !
       dim2(1) = idim_nitera
-      id_czmaxi = NCVDEF (nceq,'czmaxi',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_czmaxi,'long_name',NCCHAR,21, &
-      'Zm (cm) vs. iteration',ierr)
+      id_czmaxi = NCVDEF(nceq,'czmaxi',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_czmaxi,'long_name',NCCHAR,21, &
+                  'Zm (cm) vs. iteration',ierr)
 !
-      id_cchisq = NCVDEF (nceq,'cchisq',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_cchisq,'long_name',NCCHAR,19, &
-      'chisq vs. iteration',ierr)
+      id_cchisq = NCVDEF(nceq,'cchisq',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_cchisq,'long_name',NCCHAR,19, &
+                  'chisq vs. iteration',ierr)
 !
-      id_cerror = NCVDEF (nceq,'cerror',NCFLOAT,2,dim2,ierr)
-      call NCAPTC (nceq,id_cerror,'long_name',NCCHAR,19, &
-      'error vs. iteration',ierr)
+      id_cerror = NCVDEF(nceq,'cerror',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_cerror,'long_name',NCCHAR,19, &
+                  'error vs. iteration',ierr)
 !
-      call NCENDF (nceq,ierr)             ! leave define mode
+      call NCENDF(nceq,ierr)             ! leave define mode
 !
 ! --- write values of variables
 !
-      call NCVPT1 (nceq,id_shot,1,ishot,ierr)
- 100  continue
+      call NCVPT1(nceq,id_shot,1,ishot,ierr)
+      endif ! ijump.eq.0
       m = 1
       if (iand(iout,2).ne.0) &
-      m = ifirsttime
+         m = ifirsttime
       n = ilast-ifirsttime+1
       c11(1) = 1
       c11(2) = m
@@ -581,30 +570,30 @@ vastext(60:85)= 'input pressure profile (m)'
       do j=1, nstark
          zwork(j) = real(fwtgam(j))
       enddo
-      call NCVPT (nceq,id_fwtgam,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_fwtgam,c11,cnn,zwork,ierr)
 
-      call NCVPT (nceq,id_msebkp,m,n,real(msebkp),ierr)
+      call NCVPT(nceq,id_msebkp,m,n,real(msebkp),ierr)
 !
       cnn(1) = nsilop
       do j=1, nsilop
          zwork(j) = real(fwtsi(j))
       enddo
-      call NCVPT (nceq,id_fwtsi,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_fwtsi,c11,cnn,zwork,ierr)
       cnn(1) = magpri
       do j=1, magpri
          zwork(j) = real(fwtmp2(j))
       enddo
-      call NCVPT (nceq,id_fwtmp2,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_fwtmp2,c11,cnn,zwork,ierr)
       cnn(1) = nfcoil
       do j=1, nfcoil
          zwork(j) = real(fwtfc(j))
       enddo
-      call NCVPT (nceq,id_fwtfc,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_fwtfc,c11,cnn,zwork,ierr)
       cnn(1) = nesum
       do j=1, nesum
          zwork(j) = real(fwtec(j))
       enddo
-      call NCVPT (nceq,id_fwtec,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_fwtec,c11,cnn,zwork,ierr)
 !
 !     Note that pressr has been changed to calculated pressure from the 
 !     measured one. It is switched back in measurement file.
@@ -613,74 +602,74 @@ vastext(60:85)= 'input pressure profile (m)'
       do j=1, npress1
          zwork(j) = real(premea(j))
       enddo
-      call NCVPT (nceq,id_pressr,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_pressr,c11,cnn,zwork,ierr)
       do j=1, npress1
          zwork(j) = real(pressr(j))
       enddo
-      call NCVPT (nceq,id_cpress,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_cpress,c11,cnn,zwork,ierr)
       do j=1, npress1
          zwork(j) = real(rpress(j))
       enddo
-      call NCVPT (nceq,id_rpress,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_rpress,c11,cnn,zwork,ierr)
       do j=1, npress1
          zwork(j) = real(zpress(j))
       enddo
-      call NCVPT (nceq,id_zpress,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_zpress,c11,cnn,zwork,ierr)
       do j=1, npress1
          zwork(j) = real(sigpre(j))
       enddo
-      call NCVPT (nceq,id_sigpre,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_sigpre,c11,cnn,zwork,ierr)
       do j=1, npress1
          zwork(j) = real(saipre2(j))
       enddo
-      call NCVPT (nceq,id_saipre,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_saipre,c11,cnn,zwork,ierr)
 !
       cnn(1) = nesum
       do j=1, nesum
          zwork(j) = real(cecurr(j))
       enddo
-      call NCVPT (nceq,id_cecurr,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_cecurr,c11,cnn,zwork,ierr)
       cnn(1) = kwcurn
       do i=1,kwcurn
          zwork(i)=brsp(nfcoil+i)/darea
       enddo
-      call NCVPT (nceq,id_darea,m,n,real(darea),ierr)
-      call NCVPT (nceq,id_xrsp,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_darea,m,n,real(darea),ierr)
+      call NCVPT(nceq,id_xrsp,c11,cnn,zwork,ierr)
 !
       cnn(1) = nstark
       do i=1, nstark
          zwork(i) = real(chigam(i))
       enddo
-      call NCVPT (nceq,id_chigam,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_chigam,c11,cnn,zwork,ierr)
       cnn(1) = magpri
       do i=1, magpri
          zwork(i) = real(saimpi(i))
       enddo
-      call NCVPT (nceq,id_saimpi,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_saimpi,c11,cnn,zwork,ierr)
       cnn(1) = nsilop
       do i=1, nsilop
          zwork(i) = real(saisil(i))
       enddo
-      call NCVPT (nceq,id_saisil,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_saisil,c11,cnn,zwork,ierr)
 !
       cnn(1) = nitera
       do i=1, nitera
          zwork(i) = real(czmaxi(i))
       enddo
-      call NCVPT (nceq,id_czmaxi,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_czmaxi,c11,cnn,zwork,ierr)
       do i=1, nitera
          zwork(i) = real(cchisq(i))
       enddo
-      call NCVPT (nceq,id_cchisq,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_cchisq,c11,cnn,zwork,ierr)
       do i=1, nitera
          zwork(i) = real(cerror(i))
       enddo
-      call NCVPT (nceq,id_cerror,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_cerror,c11,cnn,zwork,ierr)
 !
 ! --- following variables do NOT have time dimension.
 !
-      call NCVPT (nceq,id_mseport,1,nstark,mseport,ierr)
-      endif
+      call NCVPT(nceq,id_mseport,1,nstark,mseport,ierr)
+      endif ! itype.eq.1
 !
       if (((itype.eq.1).and.(iand(iout,2).eq.0)).or. &
           ((itype.eq.2).and.(iand(iout,2).ne.0))) then
@@ -694,62 +683,62 @@ vastext(60:85)= 'input pressure profile (m)'
       do i=1, ntime
          zwork(i) = real(time(i))
       enddo
-      call NCVPT (nceq,id_time,m,n,zwork(ifirsttime),ierr)
+      call NCVPT(nceq,id_time,m,n,zwork(ifirsttime),ierr)
       cnn(1) = nstark
       do i=1, nstark
-      do j=1, ntime
-         zcmgam(i,j) = real(cmgam(i,j))
+         do j=1, ntime
+            zcmgam(i,j) = real(cmgam(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPT (nceq,id_cmgam,c11,cnn,zcmgam(1,ifirsttime),ierr)
+      call NCVPT(nceq,id_cmgam,c11,cnn,zcmgam(1,ifirsttime),ierr)
       cnn(1) = nsilop
       do i=1, nsilop
-      do j=1, ntime
-         zcsilop(i,j) = real(csilop(i,j))
+         do j=1, ntime
+            zcsilop(i,j) = real(csilop(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPT (nceq,id_csilop,c11,cnn,zcsilop(1,ifirsttime),ierr)
+      call NCVPT(nceq,id_csilop,c11,cnn,zcsilop(1,ifirsttime),ierr)
       cnn(1) = magpri
       do i=1, magpri
-      do j=1, ntime
-         zcmpr2(i,j) = real(cmpr2(i,j))
+         do j=1, ntime
+            zcmpr2(i,j) = real(cmpr2(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPT (nceq,id_cmpr2,c11,cnn,zcmpr2(1,ifirsttime),ierr)
+      call NCVPT(nceq,id_cmpr2,c11,cnn,zcmpr2(1,ifirsttime),ierr)
       cnn(1) = nfcoil
       do i=1, nfcoil
-      do j=1, ntime
-         zccbrsp(i,j) = real(ccbrsp(i,j))
+         do j=1, ntime
+            zccbrsp(i,j) = real(ccbrsp(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPT (nceq,id_ccbrsp,c11,cnn,zccbrsp(1,ifirsttime),ierr)
+      call NCVPT(nceq,id_ccbrsp,c11,cnn,zccbrsp(1,ifirsttime),ierr)
       cnn(1) = nesum
       do i=1, ntime
          zwork(i) = real(diamag(i))
       enddo
-      call NCVPT (nceq,id_diamag,m,n,zwork(ifirsttime),ierr)
+      call NCVPT(nceq,id_diamag,m,n,zwork(ifirsttime),ierr)
       do i=1, ntime
          zwork(i) = real(sigdia(i))
       enddo
-      call NCVPT (nceq,id_sigdia,m,n,zwork(ifirsttime),ierr)
+      call NCVPT(nceq,id_sigdia,m,n,zwork(ifirsttime),ierr)
       do i=1, ntime
          zwork(i) = real(cdflux(i))
       enddo
-      call NCVPT (nceq,id_cdflux,m,n,zwork(ifirsttime),ierr)
+      call NCVPT(nceq,id_cdflux,m,n,zwork(ifirsttime),ierr)
 !
       do i=1, ntime
          zwork(i) = real(pasmat(i))
       enddo
-      call NCVPT (nceq,id_plasma,m,n,zwork(ifirsttime),ierr)
+      call NCVPT(nceq,id_plasma,m,n,zwork(ifirsttime),ierr)
       do i=1, ntime
          zwork(i) = real(cpasma(i))
       enddo
-      call NCVPT (nceq,id_cpasma,m,n,zwork(ifirsttime),ierr)
+      call NCVPT(nceq,id_cpasma,m,n,zwork(ifirsttime),ierr)
 !
 ! --- following data and their corresponding ncdf variables have 
 ! --- reversed dimensions
 !
-      call NCVPT1 (nceq,id_fungam,1,msefitfun,ierr)
+      call NCVPT1(nceq,id_fungam,1,msefitfun,ierr)
 
       stride(1) = 1
       stride(2) = 1
@@ -758,168 +747,169 @@ vastext(60:85)= 'input pressure profile (m)'
 !     imap(2) = imap(2)*2                 ! number of bytes in double
       imap(1) = imap(2)*ntime
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(tangam(i,j))
+         do j=1, nstark
+            zstark(i,j) = real(tangam(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_tangam,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_tangam,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(tangam_uncor(i,j))
+         do j=1, nstark
+            zstark(i,j) = real(tangam_uncor(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_tangam_uncor,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_tangam_uncor,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(spatial_fix(j,i))
+         do j=1, nstark
+            zstark(i,j) = real(spatial_fix(j,i))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_fgam,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_fgam,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(siggam(i,j))
+         do j=1, nstark
+            zstark(i,j) = real(siggam(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_siggam,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_siggam,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(rrgam(i,j))
+         do j=1, nstark
+            zstark(i,j) = real(rrgam(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_rrgam,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_rrgam,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(zzgam(i,j))
+         do j=1, nstark
+            zstark(i,j) = real(zzgam(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_zzgam,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_zzgam,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(a1gam(i,j))
+         do j=1, nstark
+            zstark(i,j) = real(a1gam(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_a1gam,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_a1gam,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(a2gam(i,j))
+         do j=1, nstark
+            zstark(i,j) = real(a2gam(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_a2gam,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_a2gam,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(a3gam(i,j))
+         do j=1, nstark
+            zstark(i,j) = real(a3gam(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_a3gam,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_a3gam,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(a4gam(i,j))
+         do j=1, nstark
+            zstark(i,j) = real(a4gam(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_a4gam,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_a4gam,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(a5gam(i,j))
+         do j=1, nstark
+            zstark(i,j) = real(a5gam(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_a5gam,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_a5gam,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(a6gam(i,j))
+         do j=1, nstark
+            zstark(i,j) = real(a6gam(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_a6gam,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_a6gam,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(a7gam(i,j))
+         do j=1, nstark
+            zstark(i,j) = real(a7gam(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_a7gam,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_a7gam,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(a8gam(i,j))
+         do j=1, nstark
+            zstark(i,j) = real(a8gam(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_a8gam,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_a8gam,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
 
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(rmse_gain(j))
+         do j=1, nstark
+            zstark(i,j) = real(rmse_gain(j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_gaingam,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_gaingam,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(rmse_slope(j))
+         do j=1, nstark
+            zstark(i,j) = real(rmse_slope(j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_slopegam,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_slopegam,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(rmse_scale(j))
+         do j=1, nstark
+            zstark(i,j) = real(rmse_scale(j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_scalegam,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_scalegam,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
       do i=1, ntime
-      do j=1, nstark
-         zstark(i,j) = real(rmse_offset(j))
+         do j=1, nstark
+            zstark(i,j) = real(rmse_offset(j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_offsetgam,c11,cnn,stride,imap, &
-           zstark(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_offsetgam,c11,cnn,stride,imap, &
+                  zstark(ifirsttime,1),ierr)
 !
       cnn(1) = nsilop
       do i=1, ntime
-      do j=1, nsilop
-         zsilopt(i,j) = real(silopt(i,j))
+         do j=1, nsilop
+            zsilopt(i,j) = real(silopt(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_silopt,c11,cnn,stride,imap, &
-           zsilopt(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_silopt,c11,cnn,stride,imap, &
+                  zsilopt(ifirsttime,1),ierr)
       cnn(1) = magpri
       do i=1, ntime
-      do j=1, magpri
-         zexpmpi(i,j) = real(expmpi(i,j))
+         do j=1, magpri
+            zexpmpi(i,j) = real(expmpi(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_expmpi,c11,cnn,stride,imap, &
-           zexpmpi(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_expmpi,c11,cnn,stride,imap, &
+                  zexpmpi(ifirsttime,1),ierr)
       cnn(1) = nfcoil
       do i=1, ntime
-      do j=1, nfcoil
-         zfccurt(i,j) = real(fccurt(i,j))
+         do j=1, nfcoil
+            zfccurt(i,j) = real(fccurt(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_fccurt,c11,cnn,stride,imap, &
-           zfccurt(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_fccurt,c11,cnn,stride,imap, &
+                  zfccurt(ifirsttime,1),ierr)
       cnn(1) = nesum
       do i=1, ntime
-      do j=1, nesum
-         zeccurt(i,j) = real(eccurt(i,j))
+         do j=1, nesum
+            zeccurt(i,j) = real(eccurt(i,j))
+         enddo
       enddo
-      enddo
-      call NCVPTG (nceq,id_eccurt,c11,cnn,stride,imap, &
-           zeccurt(ifirsttime,1),ierr)
+      call NCVPTG(nceq,id_eccurt,c11,cnn,stride,imap, &
+                  zeccurt(ifirsttime,1),ierr)
 !
-      call NCCLOS (nceq,ierr)             ! close the file
-      endif
+      call NCCLOS(nceq,ierr)             ! close the file
+      endif ! (((itype.eq.1).and.(iand(iout,2).eq.0)).or. &
+            !  ((itype.eq.2).and.(iand(iout,2).ne.0)))
 !
       return
       end subroutine wmeasure

@@ -42,13 +42,13 @@
       select case (isw)
       case (1)
         !--   psi computation
-        psical= sqrt(den)*((1.0-0.5_dp*xk)*cay-ee)
+        psical=sqrt(den)*((1.0-0.5_dp*xk)*cay-ee)
       case (2)
         !--   br  computation
-        psical=z/(r* sqrt(den))*(-cay+(a*a+r*r+z*z)/((a-r)*(a-r)+z*z)*ee)
+        br=z/(r* sqrt(den))*(-cay+(a*a+r*r+z*z)/((a-r)*(a-r)+z*z)*ee)
       case (3)
         !--   bz  computation
-        psical=(cay+(a*a-r*r-z*z)/((a-r)*(a-r)+z*z)*ee)/ sqrt(den)
+        bz=(cay+(a*a-r*r-z*z)/((a-r)*(a-r)+z*z)*ee)/sqrt(den)
       end select
       return
       end function psical

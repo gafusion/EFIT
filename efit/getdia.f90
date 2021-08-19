@@ -1,4 +1,4 @@
- !**********************************************************************
+!**********************************************************************
 !>
 !!    This routine returns the average of the compensated diamagnetic
 !!    fluxes and error in the diamagnetic fluxes.
@@ -36,34 +36,34 @@
 
         ndia=3
         call dlcomp(tim,diamag,diamagc,sig,nshot,npts,idlc,ierr, &
-            tavg)
+                    tavg)
         ierr(1)=1
         ierr(2)=1 !do not use diamag2
-        do 50 j=1,3 
-        iwght(j)=1
-        if (ierr(j).ne.0) then
-            iwght(j)=0
-            ndia=ndia-1
-        endif
-  50    continue
+        do j=1,3 
+            iwght(j)=1
+            if (ierr(j).ne.0) then
+                iwght(j)=0
+                ndia=ndia-1
+            endif
+        enddo
 
         if (ndia.eq.0) then
-            do 70 i=1,npts
+            do i=1,npts
                 phidia(i)=0.0
                 sigphi(i)=0.0
-  70        continue
+            enddo
         else
 
-            do 100 i=1,npts
+            do i=1,npts
                 phidia(i)=0.0
                 sigphi(i)=0.0
-                do 80 j=1,3
+                do j=1,3
                     phidia(i)=phidia(i)+iwght(j)*diamagc(i,j)
                     sigphi(i)=sigphi(i)+iwght(j)*sig(i,j)
-  80            continue
+                enddo
                 phidia(i)=phidia(i)/ndia
                 sigphi(i)=sigphi(i)/ndia
- 100        continue
+            enddo
         endif
         return
         end
@@ -78,6 +78,7 @@
         SUBROUTINE DLCOMP(TIM,DIAMAG,DIAMAGC,SIG,NSHOT,NPTS,IDLC &
         ,IERR,TAVG)
         use expath
+        use var_exdata, only: ishot
         PARAMETER (NTIMS=8192,NPOINT=42)
         DIMENSION DIAMAG(NTIMS,3),DIAMAGC(NTIMS,3),SIG(NTIMS,3)
         DIMENSION TIM(NTIMS),TTEMP(NTIMS)
@@ -92,8 +93,8 @@
         CHARACTER*100 FILIN
         CHARACTER*10 POINT(NPOINT),IPOINT,DNAME(3),DNAMES(3)
 
-            integer*2 iipoint(5)
-            equivalence (iipoint,ipoint)
+        INTEGER*2 iipoint(5)
+        EQUIVALENCE (iipoint,ipoint)
         DATA SOURCE/'.PLA'/
         DATA DNAME/'DIAMAG1   ','DIAMAG2   ','DIAMAG3   '/
         DATA DNAMES/'DIAMAG1S  ','DIAMAG2S  ','DIAMAG3S  '/
@@ -103,7 +104,7 @@
 
         EQUIVALENCE (RAR(21),TTEMP(1))
 
-     	filin = 'dcoef.dat'
+        filin = 'dcoef.dat'
         if (nshot.lt.85885) then
             EBCOUP(3)=-2.0
         else
@@ -129,22 +130,42 @@
         SIGMAF=0.1
 
 !
-!   GET COMPENSATION COEFFICIENTS
+!       GET COMPENSATION COEFFICIENTS
 !
         OPEN(UNIT=NIN,ACCESS='SEQUENTIAL', &
-        STATUS='OLD',FILE=FILIN,err=2000)
+             STATUS='OLD',FILE=FILIN,iostat=ioerr)
+        if (ioerr.ne.0) then
+          do i=1,3
+            ierr(i)=1
+          enddo
+          write(6,2020)
+          return
+        endif
 
-41000   READ (NIN,*,err=2000,END=42000) idiashot
-
-        DO I=1,NPOINT
-          READ(NIN,1001,err=2000) POINT(I),(COUP(I,J),J=1,3)
-        ENDDO
-        IF (nshot.ge.idiashot) then
-          GOTO 42000
-        ELSE
-          GOTO 41000
-        ENDIF
-42000   CLOSE(UNIT=NIN)
+41000   READ (NIN,*,iostat=ioerr) idiashot
+        if (.not.is_iostat_end(ioerr)) then
+          if (ioerr.ne.0) then
+            do j=1,3
+              ierr(j)=1
+            enddo
+            write(6,2020)
+            return
+          endif
+          DO I=1,NPOINT
+            READ(NIN,1001,iostat=ioerr) POINT(I),(COUP(I,J),J=1,3)
+            if (ioerr.ne.0) then
+              do j=1,3
+                ierr(j)=1
+              enddo
+              write(6,2020)
+              return
+            endif
+          ENDDO
+          IF (nshot.lt.idiashot) then
+            GOTO 41000
+          ENDIF
+        endif
+        CLOSE(UNIT=NIN)
 
 !
 !  CALCULATE COEFFICIENTS FOR BT COMPENSATION. THIS IS DONE BY
@@ -173,8 +194,8 @@
 ! 100 CONTINUE
 
 !
-!   adjust for an error in the rc/g for all three loops. The correct value was
-!   measured on 9/4/87 and is correct for all shots after 56600.
+!       adjust for an error in the rc/g for all three loops. The correct value was
+!       measured on 9/4/87 and is correct for all shots after 56600.
 !
         if (nshot.lt.56600) then
             fix(1)=1.017
@@ -186,9 +207,9 @@
             fix(3)=1.000
         endif             
 !
-!   GET DIAMAGNETIC FLUXES
+!       GET DIAMAGNETIC FLUXES
 !
-        DO 130 J=1,3
+        DO J=1,3
           IERR(J)=0
           IPOINT=DNAME(J)
           CALL PTDATA(ITYP,NSHOT,SOURCE,iIPOINT, IDAT,IER,IAR,RAR, &
@@ -198,143 +219,141 @@
               WRITE (6,1013) IPOINT,NSHOT,IER,RAR(1),RAR(7), &
                              TTEMP(NPTS)
               IERR(J)=IER
-              GO TO 130
+              CYCLE
           ENDIF
           IF (IER.EQ.4) THEN
               IF (IAR(2).LT.NPTS) NPTS=IAR(2)
-              IF (NPTS.LE.0) GO TO 130
+              IF (NPTS.LE.0) CYCLE
           ENDIF
 
-          DO 125 N=1,NPTS
+          DO N=1,NPTS
               DIAMAG(N,J)=(RAR(6)-IDAT(N))*RAR(5)*RAR(4)*IADJ(J)*fix(j)
 !        
-!   COMPENSATE FOR BT PICKUP (0.1 MV-SEC IS UNCERTAINTY IN BT PICKUP)
-!   NOV 21, 1994: NEW CALIB INCREASES BY 5%.
+!             COMPENSATE FOR BT PICKUP (0.1 MV-SEC IS UNCERTAINTY IN BT PICKUP)
+!             NOV 21, 1994: NEW CALIB INCREASES BY 5%.
 !
               DIAMAGC(N,J)=1.05*DIAMAG(N,J)-BTCOMP(J)
               SIG(N,J)=(DIAMAG(N,J)*SIGMAD)**2+0.1
-  125     CONTINUE
-        if (navg.gt.1) then
+          ENDDO
+          if (navg.gt.1) then
             CALL LOWPASS (DIAMAG(1,J),DIAMAG(1,J),NAVG,NPTS)
             CALL LOWPASS (DIAMAGC(1,J),DIAMAGC(1,J),NAVG,NPTS)
-        endif
-  130   CONTINUE
+          endif
+        ENDDO
 
-!   CREATE TIME ARRAY BASED ON THE DIAMAGNETIC LOOP TIME ARRAY
+!       CREATE TIME ARRAY BASED ON THE DIAMAGNETIC LOOP TIME ARRAY
 
         IF (NPTS.GT.0) THEN
-        DO N=1,NPTS
+          DO N=1,NPTS
             TIM(N)=TTEMP(N)
-        ENDDO
+          ENDDO
         ENDIF
 !
-!   COMPENSATE FOR E AND F-COIL PICKUP
+!       COMPENSATE FOR E AND F-COIL PICKUP
 !
-        DO 200 I=1,26
-        IPOINT=POINT(I)
-        IREPLACE=0
-        ier=0
-        IF (IPOINT.EQ.'ECOILB    ' .or. IPOINT.EQ.'VLOOPBS   ') THEN
+        DO I=1,26
+          IPOINT=POINT(I)
+          IREPLACE=0
+          ier=0
+          IF (IPOINT.EQ.'ECOILB    ' .or. IPOINT.EQ.'VLOOPBS   ') THEN
             IAR(1)=8180
-        ELSE
+          ELSE
             IAR(1)=8160
-        ENDIF
-        IERSAV=0
-        IF (IPOINT.EQ.'VLOOPBS   ' .AND. NSHOT.EQ.52400) THEN
+          ENDIF
+          IERSAV=0
+          IF (IPOINT.EQ.'VLOOPBS   ' .AND. NSHOT.EQ.52400) THEN
             IPOINT='VLOOPB    '
             IREPLACE=1
-        ENDIF
-        IF ((ISHOT .GE. 83350) .AND. (I .GE. 24)) THEN 
-        CALL PTDATA(ITYP,NSHOT,SOURCE,iIPOINT ,IDAT,IER,IAR,RAR, &
-        ASCII,INT16,INT32,REAL32)
-        ELSEIF ((ISHOT .LT. 83350) .AND. (I .LT. 24)) THEN 
-        CALL PTDATA(ITYP,NSHOT,SOURCE,iIPOINT ,IDAT,IER,IAR,RAR, &
-        ASCII,INT16,INT32,REAL32)
-        ENDIF
-        if (ier.ne.0 .and. ier.ne.2 .and. ier.ne.4) then
+          ENDIF
+          IF ((ISHOT .GE. 83350) .AND. (I .GE. 24)) THEN 
+          CALL PTDATA(ITYP,NSHOT,SOURCE,iIPOINT ,IDAT,IER,IAR,RAR, &
+          ASCII,INT16,INT32,REAL32)
+          ELSEIF ((ISHOT .LT. 83350) .AND. (I .LT. 24)) THEN 
+          CALL PTDATA(ITYP,NSHOT,SOURCE,iIPOINT ,IDAT,IER,IAR,RAR, &
+          ASCII,INT16,INT32,REAL32)
+          ENDIF
+          if (ier.ne.0 .and. ier.ne.2 .and. ier.ne.4) then
             write (6,1012)
             write (6,1013) POINT(I),NSHOT,IER,RAR(1),TTEMP(1)
             idlc=idlc+1
-            go to 200
-        endif       
+            CYCLE
+          endif       
 
    
-        IF (IPOINT.EQ.'VLOOPBS   ' .OR. IREPLACE.EQ.1) THEN
+          IF (IPOINT.EQ.'VLOOPBS   ' .OR. IREPLACE.EQ.1) THEN
             NPTS2=IAR(2)
             TAU=0.125
             SUM=0.0
             DO N=1,NPTS2-1
-                IF (TTEMP(N).GT.TIM(NPTS)) go to 150
+                IF (TTEMP(N).GT.TIM(NPTS)) EXIT
                 YTEMP(N)=(RAR(6)-IDAT(N))*RAR(5)*RAR(4)
                 SUM=SUM+EXP(TTEMP(N)/TAU)*YTEMP(N)*(TTEMP(N+1)-TTEMP(N))
                 YTEMP(N)=YTEMP(N)-EXP(-1.*TTEMP(N)/TAU)/TAU*SUM
             ENDDO
 
-  150       call interp(ttemp,ytemp,N,tim,ydat,npts)
+            call interp(ttemp,ytemp,N,tim,ydat,npts)
 
-        ELSE IF (IPOINT.EQ.'ECOILB    ' .OR. (ABS(RAR(1)-TTEMP(1)).GT. &
+          ELSE IF (IPOINT.EQ.'ECOILB    ' .OR. (ABS(RAR(1)-TTEMP(1)).GT. &
                RAR(3) .OR. ABS(TTEMP(NPTS)-TIM(NPTS)).GT.1.0E-6)) then
             npts2=iar(2)
             do n=1,npts2
                 ytemp(n)=(rar(6)-idat(n))*rar(5)*rar(4)
             enddo
             call interp(ttemp,ytemp,iar(2),tim,ydat,npts)
-        else
+          ELSE
             do n=1,npts
                 ydat(n)=(rar(6)-idat(n))*rar(5)*rar(4)
             enddo
-        endif 
+          ENDIF 
 
-        IF (ipoint.eq.'ECOILB    ') then
+          IF (ipoint.eq.'ECOILB    ') then
             do n=1,npts
-                prod=((ydat(n)/6.6e4)**2)*bt(n)/2.13
+                ! TODO: bt is undefined here...
+!                prod=((ydat(n)/6.6e4)**2)*bt(n)/2.13
+                prod=((ydat(n)/6.6e4)**2)/2.13
                 do j=1,3
                     DIAMAGC(N,J)=DIAMAGC(N,J)-EBCOUP(J)*PROD
                     sig(n,j)=sig(n,j)+(ebcoup(j)*prod)**2
                 enddo
             enddo
-        endif
+          ENDIF
 
 
-        DO 160 J=1,3
+          DO J=1,3
             const=coup(i,j)*iadj(j)
-            DO 155 N=1,NPTS
-                DIAMAGC(N,J)=DIAMAGC(N,J)-YDAT(N)*const
-                SIG(N,J)=SIG(N,J)+(YDAT(N)*CONST*SIGMAF)**2
-  155       CONTINUE
-  160   CONTINUE
+            DO N=1,NPTS
+              DIAMAGC(N,J)=DIAMAGC(N,J)-YDAT(N)*const
+              SIG(N,J)=SIG(N,J)+(YDAT(N)*CONST*SIGMAF)**2
+            ENDDO
+          ENDDO
 
-  200 CONTINUE
+        ENDDO
 
 
 
-        DO 475 J=1,3
-        IF (IERR(J).NE.0) THEN
-            DO 450 N=1,NPTS
+        DO J=1,3
+          IF (IERR(J).NE.0) THEN
+            DO N=1,NPTS
                 DIAMAG(N,J)=0.0
                 DIAMAGC(N,J)=0.0
-  450       CONTINUE
-        ENDIF
-  475   CONTINUE  
+            ENDDO
+          ENDIF
+        ENDDO
 
-        DO 550 J=1,3
-            DO 500 N=1,NPTS
+        DO J=1,3
+            DO N=1,NPTS
                 SIG(N,J)=SQRT(SIG(N,J))
-  500       CONTINUE
-  550   CONTINUE
+            ENDDO
+        ENDDO
 
  1001   FORMAT(A10,3E12.4)
- !1002   FORMAT(' ',I3,2X,A10,3E12.4)
+! 1002   FORMAT(' ',I3,2X,A10,3E12.4)
  1012   FORMAT(' *********************  ERROR IN PTDATA CALL ********')
  1013   FORMAT(' ',A10,2I6,4F9.4)
 
         RETURN
 
- 2000   do 2010 i=1,3
-        ierr(i)=1
- 2010   continue
-        write (6,2020)
- 2020   format(' error in open or read for file DCOEF.DAT')
+ 2020   FORMAT(' error in open or read for file DCOEF.DAT')
         return
         END
 
@@ -349,25 +368,25 @@
         PARAMETER (NTIMS=8192)
         REAL XIN(1),XOUT(1),XTMP(NTIMS)
 
-        DO 300 J=1,NPTS
-        IND=(NAVG-1)/2
-        IF (J.LE.IND) IND=J-1
-        IF ((J+IND).GT.NPTS) IND=NPTS-J
-        ICNT=0
-        XTMP(J)=0
+        DO J=1,NPTS
+          IND=(NAVG-1)/2
+          IF (J.LE.IND) IND=J-1
+          IF ((J+IND).GT.NPTS) IND=NPTS-J
+          ICNT=0
+          XTMP(J)=0
 
-        DO 200 I=J-IND,J+IND
-        XTMP(J)=XTMP(J)+XIN(I)
-        ICNT=ICNT+1
-  200   CONTINUE
+          DO I=J-IND,J+IND
+            XTMP(J)=XTMP(J)+XIN(I)
+            ICNT=ICNT+1
+          ENDDO
 
-        XTMP(J)=XTMP(J)/ICNT
+          XTMP(J)=XTMP(J)/ICNT
 
-  300   CONTINUE
+        ENDDO
 
-        DO 400 J=1,NPTS
-        XOUT(J)=XTMP(J)
-  400   CONTINUE
+        DO J=1,NPTS
+          XOUT(J)=XTMP(J)
+        ENDDO
 
         RETURN
         END
@@ -383,27 +402,27 @@
         REAL XIN(NTIMS),YIN(NTIMS),XOUT(NTIMS),YOUT(NTIMS)
         INTEGER NIN,NOUT
 
-        DO 5 I=1,NOUT
-        IF (XOUT(I).GE.XIN(1)) go to 20
-        YOUT(I)=YIN(1)
-    5   CONTINUE
-        go to 500
+        DO I=1,NOUT
+          IF (XOUT(I).GE.XIN(1)) go to 20
+          YOUT(I)=YIN(1)
+        ENDDO
+        RETURN
 
    20   JLAST=1
-   25   DO 100 J=JLAST,NIN-1
-        IF ((XOUT(I).GE.XIN(J)).AND.(XOUT(I).LT.XIN(J+1))) go to 200
-  100   CONTINUE
+   25   DO J=JLAST,NIN-1
+          IF ((XOUT(I).GE.XIN(J)).AND.(XOUT(I).LT.XIN(J+1))) go to 200
+        ENDDO
 
         go to 300
   200   YOUT(I)=YIN(J)+(YIN(J)-YIN(J+1))*(XOUT(I)-XIN(J))/(XIN(J)- &
         XIN(J+1))
         I=I+1
-        IF (I.GT.NOUT) go to 500
+        IF (I.GT.NOUT) RETURN
         JLAST=J
         go to 25
   300   CONTINUE
-        DO 400 K=I,NOUT
-        YOUT(K)=YIN(NIN)
-  400   CONTINUE
-  500   RETURN
+        DO K=I,NOUT
+          YOUT(K)=YIN(NIN)
+        ENDDO
+        RETURN
         END

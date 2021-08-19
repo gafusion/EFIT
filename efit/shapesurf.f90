@@ -61,25 +61,25 @@
       xdum=0.0
       ydum=0.0
       if (idebug /= 0) write (6,*) 'Enter SHAPE kerror = ', kerror
-      if (ivacum.gt.0) go to 1500
-      if (iges.gt.1) go to 100
-      xguess=(rgrid(1)+rgrid(nw))/2.
-      yguess=(zgrid(1)+zgrid(nh))/2.
-      xlims(1)=rgrid(2)+0.2_dp*(rgrid(2)-rgrid(1))
-      xlims(2)=xlims(1)
-      xlims(3)=rgrid(nw-1)-0.2_dp*(rgrid(nw)-rgrid(nw-1))
-      xlims(4)=xlims(3)
-      xlims(5)=xlims(1)
-      ylims(1)=zgrid(2)+0.2_dp*(zgrid(2)-zgrid(1))
-      ylims(2)=zgrid(nh-1)-0.2_dp*(zgrid(nh)-zgrid(nh-1))
-      ylims(3)=ylims(2)
-      ylims(4)=ylims(1)
-      ylims(5)=ylims(1)
-      xlmins=xlims(1)
-      call zlim(zeros,nw,nh,limtrs,xlims,ylims,rgrid,zgrid,limfag)
-  100 continue
+      if (ivacum.le.0) then
+      if (iges.le.1) then
+        xguess=(rgrid(1)+rgrid(nw))/2.
+        yguess=(zgrid(1)+zgrid(nh))/2.
+        xlims(1)=rgrid(2)+0.2_dp*(rgrid(2)-rgrid(1))
+        xlims(2)=xlims(1)
+        xlims(3)=rgrid(nw-1)-0.2_dp*(rgrid(nw)-rgrid(nw-1))
+        xlims(4)=xlims(3)
+        xlims(5)=xlims(1)
+        ylims(1)=zgrid(2)+0.2_dp*(zgrid(2)-zgrid(1))
+        ylims(2)=zgrid(nh-1)-0.2_dp*(zgrid(nh)-zgrid(nh-1))
+        ylims(3)=ylims(2)
+        ylims(4)=ylims(1)
+        ylims(5)=ylims(1)
+        xlmins=xlims(1)
+        call zlim(zeros,nw,nh,limtrs,xlims,ylims,rgrid,zgrid,limfag)
+      endif
 !----------------------------------------------------------------------
-!--  get outermost flux surface and its shape parameters             --
+!--   get outermost flux surface and its shape parameters            --
 !----------------------------------------------------------------------
       jges=iges
       itime=time(iges)
@@ -98,27 +98,27 @@
       xoutp=xout(2)-xout(1)
       xout(nfound+1)=xout(2)
       yout(nfound+1)=yout(2)
-      do 400 i=2,nfound
+      do i=2,nfound
         xoutm=xoutp
         xoutp=xout(i+1)-xout(i)
-        if (xoutp*xoutm.ge.0.0) go to 400
-        if (xoutp.gt.0.) go to 370
-        if (abs(xout(i)-xmax).le.1.0e-04_dp) go to 400
-        if (abs(yout(i)-zout(iges)).ge.abs(zxmin-zout(iges))) go to &
-             400
-        if (xout(i).ge.rout(iges)) go to 400
-        xminn=xout(i)
-        go to 400
-  370   if (abs(xout(i)-xmin).le.1.0e-04_dp) go to 400
-        if (abs(yout(i)-zout(iges)).ge.abs(zxmax-zout(iges))) go to 400
-        if (xout(i).le.rout(iges)) go to 400
-        xmaxx=xout(i)
-  400 continue
+        if (xoutp*xoutm.ge.0.0) cycle
+        if (xoutp.le.0.) then
+          if (abs(xout(i)-xmax).le.1.0e-04_dp) cycle
+          if (abs(yout(i)-zout(iges)).ge.abs(zxmin-zout(iges))) cycle
+          if (xout(i).ge.rout(iges)) cycle
+          xminn=xout(i)
+        else
+          if (abs(xout(i)-xmin).le.1.0e-04_dp) cycle
+          if (abs(yout(i)-zout(iges)).ge.abs(zxmax-zout(iges))) cycle
+          if (xout(i).le.rout(iges)) cycle
+          xmaxx=xout(i)
+        endif
+      enddo
       xndnt(iges)=(xminn-xmin+xmax-xmaxx)/2./aout(iges)*100.
       rout(iges)=100.*rout(iges)
       zout(iges)=100.*zout(iges)
 !-----------------------------------------------------------------------
-!--  the distance to the top limiter is found only for values of yout(i)
+!--   the distance to the top limiter is found only for values of yout(i)
 !--   which are greater than yulim below.
 !-----------------------------------------------------------------------
       crymin=100.*rymin
@@ -126,59 +126,57 @@
       doutu(iges)=(rout(iges)-crymax)/aout(iges)
       doutl(iges)=(rout(iges)-crymin)/aout(iges)
 !---------------------------------------------------------------------
-!-- set up P' and FF', then integration                             --
-!-- ffprim = (RBt) * d/dpsi(RBt)                                    --
+!--   set up P' and FF', then integration                           --
+!--   ffprim = (RBt) * d/dpsi(RBt)                                  --
 !---------------------------------------------------------------------
-      if (icurrt.ne.1) go to 7540
-      pprime(1)=cratio*sbeta/darea/srma
-      ffprim(1)=cratio*srma*2.*salpha/darea*twopi*tmu
-      pprime(nw)=pprime(1)
-      ffprim(nw)=ffprim(1)
- 7540 continue
-      if (icurrt.ne.2.and.icurrt.ne.5) go to 7550
-      pprime(nw)=ppcurr(x111,kppcur)/darea
-      ffprim(nw)=fpcurr(x111,kffcur)/darea*twopi*tmu
-      pprime(1)=ppcurr(x000,kppcur)/darea
-      ffprim(1)=fpcurr(x000,kffcur)/darea*twopi*tmu
-      if (kfffnc.eq.8) then
-         ffprec(nw)=fpecrr(x111,kffcur)/darea*twopi*tmu
-         ffprec(1)=fpecrr(x000,kffcur)/darea*twopi*tmu
-      else
-         ffprec(nw)=0.0
-         ffprec(1)=0.0
-      endif
- 7550 continue
-      if (icurrt.ne.4) go to 7600
-      call currnt(n222,iges,n222,n222,kerror)
-      if (kerror.gt.0) return
-      pprime(1)=cratio/darea/rzero
-      ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
-      ffprim(nw)=ffprim(1)*gammaf
-      pprime(nw)=pprime(1)*gammap
- 7600 continue
+      select case (icurrt)
+      case (1)
+        pprime(1)=cratio*sbeta/darea/srma
+        ffprim(1)=cratio*srma*2.*salpha/darea*twopi*tmu
+        pprime(nw)=pprime(1)
+        ffprim(nw)=ffprim(1)
+      case (2,5)
+        pprime(nw)=ppcurr(x111,kppcur)/darea
+        ffprim(nw)=fpcurr(x111,kffcur)/darea*twopi*tmu
+        pprime(1)=ppcurr(x000,kppcur)/darea
+        ffprim(1)=fpcurr(x000,kffcur)/darea*twopi*tmu
+        if (kfffnc.eq.8) then
+          ffprec(nw)=fpecrr(x111,kffcur)/darea*twopi*tmu
+          ffprec(1)=fpecrr(x000,kffcur)/darea*twopi*tmu
+        else
+          ffprec(nw)=0.0
+          ffprec(1)=0.0
+        endif
+      case (4)
+        call currnt(n222,iges,n222,n222,kerror)
+        if (kerror.gt.0) return
+        pprime(1)=cratio/darea/rzero
+        ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
+        ffprim(nw)=ffprim(1)*gammaf
+        pprime(nw)=pprime(1)*gammap
+      end select
 !
       do i=2,nw-1
         ii=nw-i+1
         siii=1.0_dp-1.0_dp/(nw-1)*(i-1)
         sigrid(ii)=siii
-        if (icurrt.ne.2.and.icurrt.ne.5) go to 7792
-        pprime(ii)=ppcurr(siii,kppcur)/darea
-        ffprim(ii)=fpcurr(siii,kffcur)/darea*twopi*tmu
-         if (kfffnc.eq.8) then
-           ffprec(ii)=fpecrr(siii,kffcur)/darea*twopi*tmu
-         else
-           ffprec(ii)=0.0
-         endif
- 7792   continue
-        if (icurrt.ne.4) go to 7794
-        pprime(ii)=(1.-siii**enp)**emp*(1.-gammap)+gammap
-        ffprim(ii)=ffprim(1)*pprime(ii)
-        pprime(ii)=pprime(1)*pprime(ii)
- 7794   continue
-        if (icurrt.ne.1) go to 7796
-        pprime(ii)=pprime(1)
-        ffprim(ii)=ffprim(1)
- 7796   continue
+        select case (icurrt)
+        case (1)
+          pprime(ii)=pprime(1)
+          ffprim(ii)=ffprim(1)
+        case (2,5)
+          pprime(ii)=ppcurr(siii,kppcur)/darea
+          ffprim(ii)=fpcurr(siii,kffcur)/darea*twopi*tmu
+          if (kfffnc.eq.8) then
+            ffprec(ii)=fpecrr(siii,kffcur)/darea*twopi*tmu
+          else
+            ffprec(ii)=0.0
+          endif
+        case (4)
+          pprime(ii)=(1.-siii**enp)**emp*(1.-gammap)+gammap
+          ffprim(ii)=ffprim(1)*pprime(ii)
+          pprime(ii)=pprime(1)*pprime(ii)
+        end select
       enddo
 !
       sigrid(1)=0.0
@@ -203,20 +201,20 @@
       xym=xout(1)*yout(1)
       yoxm=yout(1)/xout(1)
 !------------------------------------------------------------------
-!-- integration over z from 0 to bpolz                           --
+!--   integration over z from 0 to bpolz                         --
 !------------------------------------------------------------------
       xww=xout(1)
       dyww=yout(1)/(nh-1)
       bpolzs=0.5_dp*fpol(nw)
       do kz=2,nh-1
-           yww=dyww*(kz-1)
-          call seva2d(bkx,lkx,bky,lky,c,xww,yww,pds,ier,n111)
-           ypsz=(simag-pds(1))/sidif
-           fnow=seval(nw,ypsz,sigrid,fpol,bbfpol,ccfpol,ddfpol)
-           bpolzs=bpolzs+fnow
+        yww=dyww*(kz-1)
+        call seva2d(bkx,lkx,bky,lky,c,xww,yww,pds,ier,n111)
+        ypsz=(simag-pds(1))/sidif
+        fnow=seval(nw,ypsz,sigrid,fpol,bbfpol,ccfpol,ddfpol)
+        bpolzs=bpolzs+fnow
       enddo
       yww=0.0
-          call seva2d(bkx,lkx,bky,lky,c,xww,yww,pds,ier,n111)
+      call seva2d(bkx,lkx,bky,lky,c,xww,yww,pds,ier,n111)
       ypsz=(simag-pds(1))/sidif
       fnow=seval(nw,ypsz,sigrid,fpol,bbfpol,ccfpol,ddfpol)
       bpolzs=bpolzs+fnow*0.5_dp
@@ -225,10 +223,10 @@
       area=0.0
       xyma=yout(1)
       zzm=zmaxis-yout(1)
-      do 450 i=2,nfound
+      do i=2,nfound
         xyp=xout(i)*yout(i)
 !------------------------------------------------------------------
-!-- integration over z from 0 to bpolz                           --
+!--     integration over z from 0 to bpolz                       --
 !------------------------------------------------------------------
         xww=xout(i)
         dyww=yout(i)/(nh-1)
@@ -262,7 +260,7 @@
           if (xout(i).gt.rmaxis) rmaxzm=xout(i)+zzp*slope
         endif
         zzm=zzp
-  450 continue
+      enddo
       vout(iges)=abs(vout(iges))*1.0e+06_dp*twopi
       area=abs(area)
       areao(iges)=area*1.0e+04_dp
@@ -273,7 +271,7 @@
       terror(iges)=errorm
       tflux(iges)=rhovn(nw)
 !---------------------------------------------------------------------
-!--  gap calculation                                                --
+!--   gap calculation                                               --
 !---------------------------------------------------------------------
       dleft=1.0e+10_dp
       dright=1.0e+10_dp
@@ -310,7 +308,7 @@
         if (dbott.eq.dismin) limloc(iges)='BOT'
       else
 !--------------------------------------------------------------------
-!-- diverted configuration                                         --
+!--   diverted configuration                                       --
 !--------------------------------------------------------------------
         deltaa=0.0025_dp
         if (delrmax1.lt.deltaa.and.delrmax2.lt.deltaa) then
@@ -335,46 +333,46 @@
         endif
       endif
 !---------------------------------------------------------------------
-!--  Helicon gap calculation                                        --
+!--   Helicon gap calculation                                       --
 !---------------------------------------------------------------------
       twagap(iges)=1.0e+10_dp
       if (ishot.ge.139282) then
-      do j=jtwagap,jtwagap
-        call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
-              xlim(j),ylim(j),xlim(j+1),ylim(j+1),disnow)
-        twagap(iges) = min(twagap(iges),disnow)
-      enddo
+        do j=jtwagap,jtwagap
+          call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
+                xlim(j),ylim(j),xlim(j+1),ylim(j+1),disnow)
+          twagap(iges) = min(twagap(iges),disnow)
+        enddo
       endif
 !
       xlimxs=0.0
       ylimys=0.0
-      if (dismin.lt.0.500_dp) go to 830
-      xsepsl=100.
-      if (zseps(1,iges).lt.0.0) xsepsl=rseps(1,iges)/100.
-      if (zseps(2,iges).lt.0.0) xsepsl=rseps(2,iges)/100.
-      call seva2d(bkx,lkx,bky,lky,c,xlim(1),ylim(1),pds,ier,n111)
-      silimp=pds(1)-psibry
-      do 820 i=2,limitr
-        call seva2d(bkx,lkx,bky,lky,c,xlim(i),ylim(i),pds,ier,n111)
-        silimm=silimp
+      if (dismin.ge.0.500_dp) then
+        xsepsl=100.
+        if (zseps(1,iges).lt.0.0) xsepsl=rseps(1,iges)/100.
+        if (zseps(2,iges).lt.0.0) xsepsl=rseps(2,iges)/100.
+        call seva2d(bkx,lkx,bky,lky,c,xlim(1),ylim(1),pds,ier,n111)
         silimp=pds(1)-psibry
-        if (silimp*silimm.gt.0.0) go to 820
-        dsilim=silimp-silimm
-        xlimxx=xlim(i-1)-(xlim(i)-xlim(i-1))/dsilim*silimm
-        ylimyy=ylim(i-1)-(ylim(i)-ylim(i-1))/dsilim*silimm
-        if (ylimyy.ge.0.0) go to 820
-        if (xlimxx.lt.xsepsl) go to 820
-        xlimxs=xlimxx
-        ylimys=ylimyy
-        go to 830
-  820 continue
-  830 continue
+        do i=2,limitr
+          call seva2d(bkx,lkx,bky,lky,c,xlim(i),ylim(i),pds,ier,n111)
+          silimm=silimp
+          silimp=pds(1)-psibry
+          if (silimp*silimm.gt.0.0) cycle
+          dsilim=silimp-silimm
+          xlimxx=xlim(i-1)-(xlim(i)-xlim(i-1))/dsilim*silimm
+          ylimyy=ylim(i-1)-(ylim(i)-ylim(i-1))/dsilim*silimm
+          if (ylimyy.ge.0.0) cycle
+          if (xlimxx.lt.xsepsl) cycle
+          xlimxs=xlimxx
+          ylimys=ylimyy
+          exit
+        enddo
+      endif
 !----------------------------------------------------------------------
-!--    find separatrix outside a limited plasma if one exists.       --
-!--    if the plasma is diverted skip this calculation.              --
-!--    the distances are defaulted to 99.0 cm.                       --
-!--    DPSI > PSITOL  diverted plasma                                --
-!--           1.e10   well diverted                                  --
+!--   find separatrix outside a limited plasma if one exists.        --
+!--   if the plasma is diverted skip this calculation.               --
+!--   the distances are defaulted to 99.0 cm.                        --
+!--   DPSI > PSITOL  diverted plasma                                 --
+!--          1.e10   well diverted                                   --
 !----------------------------------------------------------------------
       m20=-20
       olefs(iges)=-50.0
@@ -431,53 +429,66 @@
 !----------------------------------------------------------------------
 !--    start distance calculation                                    --
 !----------------------------------------------------------------------
+      ! TODO: xleft, zleft, xright, zright, xztop, ytop, xzbot, and ybot
+      !       are never defined in efit... this affects the computation
+      !       of olefs, orighs, otops, and obots
       zhp=zout(iges)*0.01_dp
       radp=rout(iges)*0.01_dp
-      do 1080 j=1,nfouns-1
-      if(xouts(j).gt.radp)go to 1030
-      dxll=(youts(j)-zleft)*(youts(j+1)-zleft)
-      if(dxll.gt.0.0)go to 1030
-      if(youts(j).eq.zleft)olefs(iges)=(xouts(j)-xleft)*100.0
-      if(youts(j+1).eq.zleft)olefs(iges)=(xouts(j+1)-xleft)*100.0
-      if(xouts(j).eq.xouts(j+1))olefs(iges)=(xouts(j)-xleft)*100.0
-      if(xouts(j).eq.xouts(j+1))go to 1030
-      slope=(youts(j+1)-youts(j))/(xouts(j+1)-xouts(j))
-      if(slope.eq.0.0)go to 1030
-      bincp=youts(j)-slope*xouts(j)
-      xl=(zleft-bincp)/slope
-      olefs(iges)=(xl-xleft)*100.0
- 1030 if(xouts(j).lt.radp)go to 1040
-      dxrr=(youts(j+1)-zright)*(youts(j)-zright)
-      if(dxrr.gt.0.0)go to 1040
-      if(youts(j).eq.zright)orighs(iges)=(xright-xouts(j))*100.0
-      if(youts(j+1).eq.zright)orighs(iges)=(xright-xouts(j+1))*100.0
-      if(xouts(j).eq.xouts(j+1))orighs(iges)=(xright-xouts(j))*100.0
-      if(xouts(j).eq.xouts(j+1))go to 1040
-      slope=(youts(j+1)-youts(j))/(xouts(j+1)-xouts(j))
-      if(slope.eq.0.0)go to 1040
-      bincp=youts(j)-slope*xouts(j)
-      xr=(zright-bincp)/slope
-      orighs(iges)=(xright-xr)*100.0
- 1040 if(youts(j).lt.zhp)go to 1050
-      dytt=(xouts(j)-xztop)*(xouts(j+1)-xztop)
-      if(dytt.gt.0.0)go to 1050
-      if(xouts(j).eq.xouts(j+1))otops(iges)=(ytop-youts(j))*100.0
-      if(xouts(j).eq.xouts(j+1))go to 1050
-      slope=(youts(j+1)-youts(j))/(xouts(j+1)-xouts(j))
-      bincp=youts(j)-slope*xouts(j)
-      yt=slope*xztop+bincp
-      otops(iges)=(ytop-yt)*100.0
- 1050 continue
-      if(youts(j).gt.zhp)go to 1080
-      dybb=(xouts(j)-xzbot)*(xouts(j+1)-xzbot)
-      if(dybb.gt.0.0)go to 1080
-      if(xouts(j).eq.xouts(j+1))obots(iges)=(youts(j)-ybot)*100.0
-      if(xouts(j).eq.xouts(j+1))go to 1080
-      slope=(youts(j+1)-youts(j))/(xouts(j+1)-xouts(j))
-      bincp=youts(j)-slope*xouts(j)
-      yb=slope*xzbot+bincp
-      obots(iges)=(yb-ybot)*100.0
- 1080 continue
+      do j=1,nfouns-1
+       if (xouts(j).le.radp) then
+!        dxll=(youts(j)-zleft)*(youts(j+1)-zleft)
+!        if (dxll.le.0.0) then
+!        if (youts(j).eq.zleft) olefs(iges)=(xouts(j)-xleft)*100.0
+!        if (youts(j+1).eq.zleft) olefs(iges)=(xouts(j+1)-xleft)*100.0
+!        if (xouts(j).eq.xouts(j+1)) olefs(iges)=(xouts(j)-xleft)*100.0
+        if (xouts(j).ne.xouts(j+1)) then
+         slope=(youts(j+1)-youts(j))/(xouts(j+1)-xouts(j))
+         if (slope.ne.0.0) then
+          bincp=youts(j)-slope*xouts(j)
+!          xl=(zleft-bincp)/slope
+!          olefs(iges)=(xl-xleft)*100.0
+         endif
+        endif
+!        endif
+       endif
+       if (xouts(j).ge.radp) then
+!        dxrr=(youts(j+1)-zright)*(youts(j)-zright)
+!        if (dxrr.le.0.0) then
+!        if (youts(j).eq.zright) orighs(iges)=(xright-xouts(j))*100.0
+!        if (youts(j+1).eq.zright) orighs(iges)=(xright-xouts(j+1))*100.0
+!        if (xouts(j).eq.xouts(j+1)) orighs(iges)=(xright-xouts(j))*100.0
+        if (xouts(j).ne.xouts(j+1)) then
+         slope=(youts(j+1)-youts(j))/(xouts(j+1)-xouts(j))
+         if (slope.ne.0.0) then
+          bincp=youts(j)-slope*xouts(j)
+!          xr=(zright-bincp)/slope
+!          orighs(iges)=(xright-xr)*100.0
+         endif
+        endif
+!        endif
+       endif
+       if (youts(j).ge.zhp) then
+!        dytt=(xouts(j)-xztop)*(xouts(j+1)-xztop)
+!        if (dytt.le.0.0) then
+!        if (xouts(j).eq.xouts(j+1)) otops(iges)=(ytop-youts(j))*100.0
+        if (xouts(j).ne.xouts(j+1)) then
+         slope=(youts(j+1)-youts(j))/(xouts(j+1)-xouts(j))
+         bincp=youts(j)-slope*xouts(j)
+!         yt=slope*xztop+bincp
+!         otops(iges)=(ytop-yt)*100.0
+        endif
+!        endif
+       endif
+       if (youts(j).gt.zhp) cycle
+!       dybb=(xouts(j)-xzbot)*(xouts(j+1)-xzbot)
+!       if (dybb.gt.0.0) cycle
+!       if (xouts(j).eq.xouts(j+1)) obots(iges)=(youts(j)-ybot)*100.0
+       if (xouts(j).eq.xouts(j+1)) cycle
+       slope=(youts(j+1)-youts(j))/(xouts(j+1)-xouts(j))
+       bincp=youts(j)-slope*xouts(j)
+!       yb=slope*xzbot+bincp
+!       obots(iges)=(yb-ybot)*100.0
+      enddo
 !
  1085 continue
       call chisqr(iges)
@@ -485,57 +496,56 @@
       call betali(iges,rgrid,zgrid,nnn,kerror)
       if (kerror.gt.0) return
       peak(iges)=pres(1)/(.667_dp*wplasm(iges)/(vout(iges)/1.e6_dp))
-        do 1088 i=2,nw
-          if (rzzmax(i).gt.0.0) go to 1090
- 1088   continue
- 1090   continue
-        amer(1,1)=2.*(rzzmax(1)-rzzmax(i))
-        amer(1,2)=2.*(zzmax(1)-zzmax(i))
-        amer(2,1)=2.*(rzzmax(1)-rzzmax(i))
-        amer(2,2)=2.*(zzmax(1)-(zzmax(1)-zzmax(i)))
-        bmer(1)=rzzmax(1)**2+zzmax(1)**2-rzzmax(i)**2-(zzmax(1)- &
-                                                  zzmax(i))**2
-        bmer(2)=rzzmax(1)**2+zzmax(1)**2-rzzmax(i)**2-(zzmax(1)- &
-                                                  zzmax(i))**2
-        n22=2
-        x11=-1.0
-        call decomp(n22,n22,amer,x11 ,imer,wmer)
-        call solve(n22,n22,amer,bmer,imer)
-        rmer=sqrt((bmer(1)-rzzmax(1))**2+(bmer(2)-zzmax(1))**2)
-        i=i+1
-        if (rzzmax(i).gt.0.0.and.rzzmax(i).lt.rzzmax(i-1)) then
-        amer(1,1)=2.*(rzzmax(1)-rzzmax(i))
-        amer(1,2)=2.*(zzmax(1)-zzmax(i))
-        amer(2,1)=2.*(rzzmax(1)-rzzmax(i))
-        amer(2,2)=2.*(zzmax(1)-(zzmax(1)-zzmax(i)))
-        bmer(1)=rzzmax(1)**2+zzmax(1)**2-rzzmax(i)**2-(zzmax(1)- &
-                                                  zzmax(i))**2
-        bmer(2)=rzzmax(1)**2+zzmax(1)**2-rzzmax(i)**2-(zzmax(1)- &
-                                                  zzmax(i))**2
-        call decomp(n22,n22,amer,x11 ,imer,wmer)
-        call solve(n22,n22,amer,bmer,imer)
+      do i=2,nw
+        if (rzzmax(i).gt.0.0) exit
+      enddo
+      amer(1,1)=2.*(rzzmax(1)-rzzmax(i))
+      amer(1,2)=2.*(zzmax(1)-zzmax(i))
+      amer(2,1)=2.*(rzzmax(1)-rzzmax(i))
+      amer(2,2)=2.*(zzmax(1)-(zzmax(1)-zzmax(i)))
+      bmer(1)=rzzmax(1)**2+zzmax(1)**2-rzzmax(i)**2-(zzmax(1)- &
+                                                zzmax(i))**2
+      bmer(2)=rzzmax(1)**2+zzmax(1)**2-rzzmax(i)**2-(zzmax(1)- &
+                                                zzmax(i))**2
+      n22=2
+      x11=-1.0
+      call decomp(n22,n22,amer,x11 ,imer,wmer)
+      call solve(n22,n22,amer,bmer,imer)
+      rmer=sqrt((bmer(1)-rzzmax(1))**2+(bmer(2)-zzmax(1))**2)
+      i=i+1
+      if (rzzmax(i).gt.0.0.and.rzzmax(i).lt.rzzmax(i-1)) then
+      amer(1,1)=2.*(rzzmax(1)-rzzmax(i))
+      amer(1,2)=2.*(zzmax(1)-zzmax(i))
+      amer(2,1)=2.*(rzzmax(1)-rzzmax(i))
+      amer(2,2)=2.*(zzmax(1)-(zzmax(1)-zzmax(i)))
+      bmer(1)=rzzmax(1)**2+zzmax(1)**2-rzzmax(i)**2-(zzmax(1)- &
+                                                zzmax(i))**2
+      bmer(2)=rzzmax(1)**2+zzmax(1)**2-rzzmax(i)**2-(zzmax(1)- &
+                                                zzmax(i))**2
+      call decomp(n22,n22,amer,x11 ,imer,wmer)
+      call solve(n22,n22,amer,bmer,imer)
 !-----------------------------------------------------------------------
-!--  need check for RMER 10/91 llao                                   --
+!--   need check for RMER 10/91 llao                                  --
 !-----------------------------------------------------------------------
-        rmer=(sqrt((bmer(1)-rzzmax(1))**2+(bmer(2)-zzmax(1))**2) &
-              +rmer)/2.
-        endif
-        qmerci(iges)=2./(1.+elongm(iges)**2)-2.*(elongm(iges)-1.) &
-                   *betap(iges)/elongm(iges)**2/(1.+elongm(iges)) &
-                   +(elongm(iges)**2-1.)/(elongm(iges)**2+1.) &
-                   *rmaxis/rmer
-        if (qmerci(iges).gt.1.e-10_dp) then
-          qmerci(iges)=sqrt(1./qmerci(iges))
-        else
-          qmerci(iges)=-99.
-        endif
+      rmer=(sqrt((bmer(1)-rzzmax(1))**2+(bmer(2)-zzmax(1))**2) &
+            +rmer)/2.
+      endif
+      qmerci(iges)=2./(1.+elongm(iges)**2)-2.*(elongm(iges)-1.) &
+                 *betap(iges)/elongm(iges)**2/(1.+elongm(iges)) &
+                 +(elongm(iges)**2-1.)/(elongm(iges)**2+1.) &
+                 *rmaxis/rmer
+      if (qmerci(iges).gt.1.e-10_dp) then
+        qmerci(iges)=sqrt(1./qmerci(iges))
+      else
+        qmerci(iges)=-99.
+      endif
 !
-      do 1102 i=1,nw-1
+      do i=1,nw-1
         xsisii(i)=real(i-1,dp)/(nw-1)
- 1102 continue
+      enddo
       xsisii(nw)=1.
 !-----------------------------------------------------------------------
-!--  write out S(shot).(time)_X files in flux space                   --
+!--   write out S(shot).(time)_X files in flux space                  --
 !-----------------------------------------------------------------------
       if (kwripre.eq.2) then
         call getfnmd('s',ishot,itime,sfname)
@@ -913,14 +923,13 @@
 !
       idoqn=1
       call zpline(nw,xsisii,qpsi,bfpol,cfpol,dfpol)
-      do 1103 i=1,nw
+      do i=1,nw
          qpwant=speval(nw,xsisii(i),xsisii,qpsi,bfpol,cfpol,dfpol)
          if (qpwant.le.0.0) then
            idoqn=2
-           go to 1107
+           exit
          endif
- 1103 continue
- 1107 continue
+      enddo
 !
       if (idebug >= 2) write (6,*) 'SHAPE q=1,2,3 q= ',idoqn,qpsi(1),qpsi(nw)
       nnn=1
@@ -930,9 +939,9 @@
       nzz=0
       n22=2
       zxx=0.0
-      do 1104 i=1,3
+      do i=1,3
         pds(i)=100.
- 1104 continue
+      enddo
       iend=3
       if (idoqn.eq.1) then
         call zpline(nw,qpsi,xsisii,bfpol,cfpol,dfpol)
@@ -942,13 +951,13 @@
       if (qpsi(nw).gt.3.0) iend=3
       jstart=2
       double=(idoqn.eq.2).and.(qpsi(1).gt.1.)
-      do 1108 i=1,iend
+      do i=1,iend
         qwant=i
         if (idoqn.eq.1.and.i.ge.2) then
-         if (qwant.lt.qpsi(1)+0.001_dp) go to 1108
+         if (qwant.lt.qpsi(1)+0.001_dp) cycle
          siwant=seval(nw,qwant,qpsi,xsisii,bfpol,cfpol,dfpol)
         else
-         do 40010 jjj=jstart,nw
+         do jjj=jstart,nw
           jj=jjj
           qppp=qwant-qpsi(jj)
           qmmm=qwant-qpsi(jj-1)
@@ -959,50 +968,51 @@
             jstart=jj+1
             go to 1105
           endif
-40010    continue
-         go to 1108
+         enddo
+         cycle
         endif
  1105   continue
         if (idebug >= 2) then
             write (6,*) 'i, iend, sw, qw = ',i, iend,siwant, qwant
         endif
-        if (siwant.lt.0.0) go to 1108
+        if (siwant.lt.0.0) cycle
         siwant=simag-siwant*(simag-psibry)
         call surfac(siwant,psi,nw,nh,rgrid,zgrid,xxtra(1,1),yxtra(1,1), &
                     nfind,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nzz &
                     ,rmaxis,zmaxis,negcur,kerror)
         if (kerror.gt.0) return
         if (nfind.le.40.and.icntour.eq.0) then
-        if (idebug >= 2) write (6,*) ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
-                            kerror,i,nfind,qppp,qmmm,siwant
-        call cntour(rmaxis,zmaxis,siwant,rqmin,rqmax,ycmin,ycmax, &
-                    yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
-                    d33 ,d33 ,xmin,xmax,ymin,ymax,nzz,iautoc, &
-                    xxtra(1,1),yxtra(1,1),nfind,rgrid,nw,zgrid,nh, &
-                    c,n22,nh2,nttyo,npoint, &
-                    negcur,bkx,lkx,bky,lky,kerror)
-        if (idebug >= 2) write (6,*) ' SHAPE/CNTOUR kerror,i,nfind = ',kerror,i,nfind
-        if (kerror.gt.0) return
+         if (idebug >= 2) write (6,*) &
+                             ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
+                             kerror,i,nfind,qppp,qmmm,siwant
+         call cntour(rmaxis,zmaxis,siwant,rqmin,rqmax,ycmin,ycmax, &
+                     yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
+                     d33 ,d33 ,xmin,xmax,ymin,ymax,nzz,iautoc, &
+                     xxtra(1,1),yxtra(1,1),nfind,rgrid,nw,zgrid,nh, &
+                     c,n22,nh2,nttyo,npoint, &
+                     negcur,bkx,lkx,bky,lky,kerror)
+         if (idebug >= 2) write (6,*) ' SHAPE/CNTOUR kerror,i,nfind = ',kerror,i,nfind
+         if (kerror.gt.0) return
 
         else
-        rqmax=xxtra(1,1)
-        rqmin=rqmax
-        do 1106 k=2,nfind
+         rqmax=xxtra(1,1)
+         rqmin=rqmax
+         do k=2,nfind
           rqmax=max(xxtra(k,1),rqmax)
           rqmin=min(xxtra(k,1),rqmin)
- 1106   continue
+         enddo
         endif
         pds(i)=50.*(rqmax-rqmin)
-         if (i.eq.1) then
+        if (i.eq.1) then
          if(.not.double)psiq1=siwant
 !
 !     This code will not compile on the HP or SuperCard.  The logic
 !     needs to be fixed so that it will compile and then this code
 !     can be put back in.
 !
-       if(double.and.(.not.onedone))psiq1=psiq1+siwant  ! second value
+         if(double.and.(.not.onedone))psiq1=psiq1+siwant  ! second value
         endif
- 1108 continue
+      enddo
       aaq1(iges)=pds(1)
       aaq2(iges)=pds(2)
       aaq3(iges)=pds(3)
@@ -1090,9 +1100,9 @@
                     npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
                     rmaxis,zmaxis,negcur,kerror)
        if (kerror.gt.0) return
-       do 51900 k=1,nfounc
+       do k=1,nfounc
         cfpol(k)=1./bfpol(k)**2
-51900  continue
+       enddo
        call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid,nh, &
                   r2sdry(i),nzz ,sdlobp,sdlbp)
        do 51920 k=1,nfounc
@@ -2186,9 +2196,9 @@
       endif
 76000 continue
 !---------------------------------------------------------------------------
-!-- trace external field lines                                            --
+!--   trace external field lines                                          --
 !---------------------------------------------------------------------------
-      if(nextra.eq.0)go to 900
+      if (nextra.ne.0) then
       if(ixstrt.eq.-1)go to 832
       xxtraa=xmax
       yxtraa=zxmax
@@ -2200,77 +2210,77 @@
       ixyz=-1
   420 continue
       dxtra=scrape/iabs(nextra)
-      do 40000 kkk=1,iabs(ixstrt)
-      do 875 i=1,iabs(nextra)
-      ixl=i+ixtpls*iabs(ixstrt)+(kkk-1)*iabs(nextra)
-      scraps(ixl)=1000.*i*dxtra
-      if (ixstrt.eq.2) then
-      if (kkk.eq.2) then
-        xxtraa=xmin
-        yxtraa=zxmin
-      else
-        xxtraa=xmax
-        yxtraa=zxmax
-      endif
-      endif
-      xxtras=xxtraa+dxtra*i
-      yxtras=yxtraa
-      if (kkk.eq.2.or.ixstrt.eq.-1) then
-      xxtras=xxtraa-dxtra*i
-      yxtras=yxtraa
-      endif
-      if (xxtras.le.rgrid(1).or.xxtras.ge.rgrid(nw)) go to 875
-      if (pasmat(iges).lt.-1.e3_dp) then
+      do kkk=1,iabs(ixstrt)
+       do i=1,iabs(nextra)
+        ixl=i+ixtpls*iabs(ixstrt)+(kkk-1)*iabs(nextra)
+        scraps(ixl)=1000.*i*dxtra
+        if (ixstrt.eq.2) then
+         if (kkk.eq.2) then
+          xxtraa=xmin
+          yxtraa=zxmin
+         else
+          xxtraa=xmax
+          yxtraa=zxmax
+         endif
+        endif
+        xxtras=xxtraa+dxtra*i
+        yxtras=yxtraa
+        if (kkk.eq.2.or.ixstrt.eq.-1) then
+         xxtras=xxtraa-dxtra*i
+         yxtras=yxtraa
+        endif
+        if (xxtras.le.rgrid(1).or.xxtras.ge.rgrid(nw)) cycle
+        if (pasmat(iges).lt.-1.e3_dp) then
          nerr=10000
-      else
+        else
          nerr=0
-      endif
-      call bound(psi,nw,nh,nwnh,psiout,xmin,xmax,ymin,ymax, &
+        endif
+        call bound(psi,nw,nh,nwnh,psiout,xmin,xmax,ymin,ymax, &
           zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
           xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
           rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
           limfag,radum,kbound,tolbndpsi)
-      if (nerr.gt.0) then
-        kerror = 1
-        return
-      end if
-      if ((i.gt.1).or.(ixyz.ne.-2)) go to 620
-      if (xlimxs.le.0.0) go to 620
-      do 615 n=1,npxtra(ixl)
-        sepnow=sqrt((xlimxs-xxtra(n,ixl))**2+(ylimys- &
-                     yxtra(n,ixl))**2)
-        sepexp(iges)=min(abs(sepexp(iges)),sepnow)
-  615 continue
-      sepexp(iges)=sepexp(iges)*100.
-  620 continue
-      if (nextra.gt.0) go to 875
-      do 623 n=1,npxtra(ixl)
-        call seva2d(bkx,lkx,bky,lky,c,xxtra(n,ixl),yxtra(n,ixl), &
-                    pds,ier,n333)
-        bpxtra(n,ixl)=sqrt(pds(2)**2+pds(3)**2)/xxtra(n,ixl)
-  623 continue
-      fpxtra(1,ixl)=0.0
-      flxtra(1,ixl)=0.0
-      do 627 n=2,npxtra(ixl)
-        nm1=n-1
-        dlpol=sqrt((xxtra(n,ixl)-xxtra(nm1,ixl))**2 &
-                   +(yxtra(n,ixl)-yxtra(nm1,ixl))**2)
-        btnow=abs(fbrdy)*tmu/2.*(1./xxtra(n,ixl)+1./xxtra(nm1,ixl))
-        bpnow=(bpxtra(n,ixl)+bpxtra(nm1,ixl))/2.
-        dltol=dlpol*btnow/bpnow
-        dlll=sqrt(dlpol**2+dltol**2)
-        fpxtra(n,ixl)=fpxtra(nm1,ixl)+dlpol
-        flxtra(n,ixl)=flxtra(nm1,ixl)+dlll
-  627 continue
-  875 continue
-40000 continue
-      if(ixyz.eq.-2)go to 900
-      ixyz=-2
-      ixtpls=iabs(nextra)
-      go to 420
-  900 continue
+        if (nerr.gt.0) then
+         kerror = 1
+         return
+        endif
+        if ((i.le.1).and.(ixyz.eq.-2).and.(xlimxs.ge.0.0)) then
+         do n=1,npxtra(ixl)
+          sepnow=sqrt((xlimxs-xxtra(n,ixl))**2+(ylimys- &
+                       yxtra(n,ixl))**2)
+          sepexp(iges)=min(abs(sepexp(iges)),sepnow)
+         enddo
+         sepexp(iges)=sepexp(iges)*100.
+        endif
+        if (nextra.gt.0) cycle
+        do n=1,npxtra(ixl)
+         call seva2d(bkx,lkx,bky,lky,c,xxtra(n,ixl),yxtra(n,ixl), &
+                     pds,ier,n333)
+         bpxtra(n,ixl)=sqrt(pds(2)**2+pds(3)**2)/xxtra(n,ixl)
+        enddo
+        fpxtra(1,ixl)=0.0
+        flxtra(1,ixl)=0.0
+        do n=2,npxtra(ixl)
+         nm1=n-1
+         dlpol=sqrt((xxtra(n,ixl)-xxtra(nm1,ixl))**2 &
+                    +(yxtra(n,ixl)-yxtra(nm1,ixl))**2)
+         btnow=abs(fbrdy)*tmu/2.*(1./xxtra(n,ixl)+1./xxtra(nm1,ixl))
+         bpnow=(bpxtra(n,ixl)+bpxtra(nm1,ixl))/2.
+         dltol=dlpol*btnow/bpnow
+         dlll=sqrt(dlpol**2+dltol**2)
+         fpxtra(n,ixl)=fpxtra(nm1,ixl)+dlpol
+         flxtra(n,ixl)=flxtra(nm1,ixl)+dlll
+        enddo
+       enddo
+      enddo
+      if (ixyz.ne.-2) then
+       ixyz=-2
+       ixtpls=iabs(nextra)
+       go to 420
+      endif
+      endif ! nextra.ne.0
 !-----------------------------------------------------------------------------
-!--  compute the diamagnetic flux                                           --
+!--   compute the diamagnetic flux                                          --
 !-----------------------------------------------------------------------------
       vbtot2=0.0
       vbtvac2=0.0
@@ -2592,33 +2602,33 @@
       endif
 !
       if (dco2v(iges,2).gt.1.e+10_dp) then
-      partic=dco2v(iges,2)*vout(iges)
-      if (partic.gt.1.0e+10_dp) tave(iges)=wplasm(iges)/partic/3. &
-            /1.602e-16_dp
-      resist=vloopt(iges)/cpasma(iges)
-      zeta=resist*areao(iges)/twopi/rout(iges)
-      xlam=20.
-      if (tave(iges).gt.0.001_dp) then
-         tevolt=sqrt((tave(iges)*1000.)**3)
-      endif
-      zeffr(iges)=zeta*tevolt/xlam/1.03e-02_dp*2.
-      if (iges.eq.igmax) then
-      do 1100 m=1,igmax
-        temp(m)=dco2v(m,2)
- 1100 continue
-         dttt=time(2)-time(1)
-         if (igmax.eq.1) dttt=5.
-         call getzeff(ishot,igmax,time(1),dttt,temp,tave,zeff,ier)
-      endif
+        partic=dco2v(iges,2)*vout(iges)
+        if (partic.gt.1.0e+10_dp) tave(iges)=wplasm(iges)/partic/3. &
+                                                         /1.602e-16_dp
+        resist=vloopt(iges)/cpasma(iges)
+        zeta=resist*areao(iges)/twopi/rout(iges)
+        xlam=20.
+        if (tave(iges).gt.0.001_dp) then
+          tevolt=sqrt((tave(iges)*1000.)**3)
+        endif
+        zeffr(iges)=zeta*tevolt/xlam/1.03e-02_dp*2.
+        if (iges.eq.igmax) then
+          do m=1,igmax
+            temp(m)=dco2v(m,2)
+          enddo
+          dttt=time(2)-time(1)
+          if (igmax.eq.1) dttt=5.
+          call getzeff(ishot,igmax,time(1),dttt,temp,tave,zeff,ier)
+        endif
       endif
 !------------------------------------------------------------------
-!-- compute vessel forces                                        --
+!--  compute vessel forces                                       --
 !------------------------------------------------------------------
       if (ifitvs.gt.0.or.icutfp.eq.2) then
         call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
         fztor=0.0
         fzpol=0.0
-        do 50030 i=1,nvesel
+        do i=1,nvesel
           signz=zvs(i)/abs(zvs(i))
           signr=(rvs(i)-rcentr)/abs(rvs(i)-rcentr)
           if (avs(i).eq.0.0.and.avs2(i).eq.0.0) then
@@ -2643,7 +2653,7 @@
           zsnow0=zvs(i)+(hvs(i)/2.+hvs(i)/40.)*signr
           sbrrs=0.0
           sumfzp=0.0
-          do 50025 k=1,20
+          do k=1,20
             rsnow=rsnow0+wvs(i)*k/20.*signz
             zsnow=zsnow0-hvs(i)*k/20.*signr
             call seva2d(bkx,lkx,bky,lky,c,rsnow,zsnow,pds,ier,n333)
@@ -2658,12 +2668,12 @@
             delfp=fpnow -fbrdy
             btnow=fpnow*tmu/rsnow
             sumfzp=sumfzp+btnow*delfp
-50025     continue
+          enddo
           vforcet(i)=-sbrrs/20.*twopi*vcurrt(i)
           fztor=fztor+vforcet(i)
           vforcep(i)= cosalp*sumfzp*dells/20.
           fzpol=fzpol+vforcep(i)
-50030   continue
+        enddo
       endif
       if (icutfp.eq.2) then
         xxxx=1./xpsimin
@@ -2722,7 +2732,7 @@
       if ((ilaser.gt.0).and.(iges.eq.igmax)) call donepl
       go to 1900
 
- 1500 continue
+      endif ! ivacum.le.0
       call chisqr(iges)
       if (itek.gt.0) then
         call pltout(xout,yout,nzz,iges,nnn,zxx,zxx,zxx,zxx,igmax,kerror)

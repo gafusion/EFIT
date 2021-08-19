@@ -1556,8 +1556,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension pds(6)
-      real*8,dimension(:),allocatable :: bt,br,bzt,bz,bwork, &
-             cwork,dwork
+      real*8,dimension(:),allocatable :: bwork,cwork,dwork
 
       common/cworkbt/lkrt,lkzt
 ! MPI >>>
@@ -1565,8 +1564,7 @@
       kerror = 0
 ! MPI <<<
 !
-      allocate(bt(nwnh),br(nwnh),bzt(nwnh),bz(nwnh), &
-         bwork(nw),cwork(nw),dwork(nw))
+      allocate(bwork(nw),cwork(nw),dwork(nw))
 !
       if (keecur .gt. 0 .and. ifirst .eq. 0) then
         write(6,*) "Spatial averaging correction of MSE data"
@@ -1667,10 +1665,12 @@
 
       fpol(nw)=fbrdy*tmu
       sumf=fpol(nw)**2/2.
-      delsi=-(psibry+psimag)/(nw-1)
+      ! TODO: psimag is undefined... was ssimag intended?
+!      delsi=-(psibry+psimag)/(nw-1)
+      delsi=-(psibry+ssimag)/(nw-1)
       do i=1,nw-1
         sumf=sumf+0.5_dp*delsi*(ffprim(nw-i+1)+ffprim(nw-i))
-        if(sumf .ge. 0.0) then
+        if (sumf .ge. 0.0) then
           fpol(nw-i)=sqrt(2.*sumf)*fpol(nw)/abs(fpol(nw))
         else
           fpol(nw-i)=fpol(nw)
@@ -1731,7 +1731,7 @@
         ifirst = 0
       endif
       
-      deallocate(bt,br,bzt,bz,bwork,cwork,dwork)
+      deallocate(bwork,cwork,dwork)
 
       return
       end subroutine 
