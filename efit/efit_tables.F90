@@ -185,7 +185,7 @@
         i = 0
         do
           read(31,FMT='(I10)',iostat=reason) shot_tables(i+1)
-          if (reason>0) EXIT
+          if (reason/=0) EXIT
           i = i+1
         end do
         nfiles = i 
