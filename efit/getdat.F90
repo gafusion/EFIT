@@ -213,7 +213,7 @@
       !  Attempt to get data based on time sampling, using a computed
       !  start and delta time.
       !
-      if (ier .eq. 35) then ! ier=35 ... wrong call type for dfi
+      if (ier .ne. 35) go to 666 ! ier=35 ... wrong call type for dfi
 
         itype = 2
 20      continue
@@ -232,7 +232,7 @@
         VPBIT  = real32(13)
         RC     = 1.0
 
-      endif
+666   continue
       !
       !  WAIT FOR THE DATA TO COME IN
       !
