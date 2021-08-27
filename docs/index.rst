@@ -24,7 +24,8 @@ Documentation contents
    subroutines
    modules
    namelist
-
+   LICENSE
+   
 Indices and tables
 ==================
 
