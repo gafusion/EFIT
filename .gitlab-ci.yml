@@ -34,8 +34,14 @@ variables:
       - merge_requests
   dependencies: []
 
-pause-for-approval:
+.test:
   extends: .test-basic
+  except:
+    variables:
+      - $EFIT_CI_SCHEDULED =~ /yes/
+
+pause-for-approval:
+  extends: .test
   stage: .pre
   tags:
     - stage0
