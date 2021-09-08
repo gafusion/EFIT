@@ -44,8 +44,6 @@ pause-for-approval:
   extends: .test
   stage: .pre
   image: registry.gitlab.com/efit-ai/efit/clang
-  tags:
-    - stage0
   only:
     refs:
       - merge_requests
