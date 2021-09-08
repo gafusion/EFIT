@@ -43,6 +43,7 @@ variables:
 pause-for-approval:
   extends: .test
   stage: .pre
+  image: registry.gitlab.com/efit-ai/efit/clang
   tags:
     - stage0
   only:
@@ -57,6 +58,18 @@ pause-for-approval:
     GIT_STRATEGY: none
   when: manual
   allow_failure: false
+
+clang-docker:
+  stage: build
+  image: registry.gitlab.com/efit-ai/efit/clang
+  script:
+    - mkdir build && cd build # Build out of place
+    - cmake -DTRAP_FP_EXCEPTIONS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING="RelWithDebInfo" ..
+    - make -j4
+    - ctest j4 -D ExperimentalTest --force-new-ctest-process --output-on-failure
+    - ctest j4 -D ExperimentalMemCheck --force-new-ctest-process --output-on-failure -E test_timer
+
+
 
 linux-clang:
   extends: .test-basic
