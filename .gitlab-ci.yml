@@ -43,7 +43,6 @@ variables:
 pause-for-approval:
   extends: .test
   stage: .pre
-  image: registry.gitlab.com/efit-ai/efit/clang
   only:
     refs:
       - merge_requests
@@ -66,8 +65,6 @@ clang-docker:
     - make -j4
     - ctest j4 -D ExperimentalTest --force-new-ctest-process --output-on-failure
     - ctest j4 -D ExperimentalMemCheck --force-new-ctest-process --output-on-failure -E test_timer
-
-
 
 linux-clang:
   extends: .test-basic
