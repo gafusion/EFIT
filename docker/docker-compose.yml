@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  efitai-clang:
+    build: 
+      context: .
+      dockerfile: Dockerfile.clang
+    image: registry.gitlab.com/efit-ai/efit/clang
+    volumes:
+      - ..:/efit
+    working_dir: /efit
+    stdin_open: true
+    tty: true
