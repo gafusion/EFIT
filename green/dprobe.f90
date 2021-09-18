@@ -76,15 +76,15 @@
       magprirdp=1
       magudom=1
       maglds=1
-      magpri322=magpr2_efund-magpri67-magprirdp - magudom
+      magpri322 = magpr2_efund - magpri67 - magprirdp - magudom - maglds
 
       ! Remaining default to DIII-D values
       ! efund knows nothing about mse and ece array lengths
 
-      nnece=1
-      nnecein=1
+      nnece=40
+      nnecein=80
       neceo=1
-      mse315=1
+      mse315=40
       mse45=0
       mse15=0
       mse1h=0
