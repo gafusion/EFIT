@@ -165,10 +165,13 @@
             labelstr = 'ERROR'
           end select
 
-          write(*, '(a,a,a,a,i3,a,i6,a,a)') trim(labelstr),' in ',subrstr,' at r=',currrank,', t=',int(currtime),': ',msgstr
+          write(*, '(a,a,a,a,i3,a,i6,a,a)') trim(labelstr),' in ', &
+            subrstr,' at r=',currrank,', t=',int(currtime),': ',msgstr
 
-          open(unit=40,file='errfil.out',status='unknown',position='append')
-          write(40,'(a,a,a,a,i3,a,i6,a,a)') trim(labelstr),' in ',subrstr,' at r=',currrank,', t=',int(currtime),': ',msgstr
+          open(unit=40,file='errfil.out',status='unknown', &
+               position='append')
+          write(40,'(a,a,a,a,i3,a,i6,a,a)') trim(labelstr),' in ', &
+            subrstr,' at r=',currrank,', t=',int(currtime),': ',msgstr
           close(unit=40)
 
         end subroutine
@@ -567,3 +570,20 @@
          integer :: nvtime = -1
          real*8,dimension(:), allocatable :: vtime
       end module vtime_mod
+
+      subroutine set_mod_arrays()
+      use set_kinds
+      use var_hist, only: taumhd,taudia,vsurfa,wpdot,wbdot,slantu,slantl
+      implicit none
+
+      ! initialize variables
+      taumhd=0.0
+      taudia=0.0
+      vsurfa=0.0
+      wpdot=0.0
+      wbdot=0.0
+      slantu=0.0
+      slantl=0.0
+
+      end subroutine
+

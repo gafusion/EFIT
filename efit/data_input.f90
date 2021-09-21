@@ -165,15 +165,22 @@
                ,devfcin(nfcoil),rnavfcin(nfcoil) & 
                ,devein(nesum),rnavecin(nesum),brsptu(nfcoil)) 
  
-      brsptu(1)=-1.e-20_dp 
+      brsptu(1)=-1.e-20_dp
+      sbmsels=0.0
+      tlibim=0.0
+      slibim=0.0
+      aa1lib=0.0
+      aa8lib=0.0
+      dflux=0.0
+      acoil=0.0
 ! 
       kerror = 0 
       idone=0 
       sicont=tmu*drslop/aaslop 
 ! 
-      if (kdata.eq.2) go to 180 
+      if (kdata.ne.2) then
 !---------------------------------------------------------------------- 
-!-- normalize fitting weights, SNAP mode                             -- 
+!--   normalize fitting weights, SNAP mode                           -- 
 !---------------------------------------------------------------------- 
       if (jtime.le.1) then
         do i=1,nsilop 
@@ -236,7 +243,7 @@
         enddo 
       else
 !--------------------------------------------------------------------- 
-!--  Restore fitting weights for time slices > 1                    -- 
+!--     Restore fitting weights for time slices > 1                 -- 
 !--------------------------------------------------------------------- 
         fwtdlc=swtdlc 
         fwtcur=swtcur 
@@ -259,18 +266,17 @@
         enddo 
       endif
 !----------------------------------------------------------------------- 
-!-- Set edge pedestal tanh paramters                                  -- 
+!--   Set edge pedestal tanh paramters                                -- 
 !----------------------------------------------------------------------- 
       if (fitzts.eq.'te'.and.ztserr(jtime)) then 
         nbdry=1 
         rbdry(1)=1.94_dp 
         zbdry(1)=ztssym(jtime)+0.5_dp*ztswid(jtime) 
       endif 
-      go to 280 
 !---------------------------------------------------------------------- 
-!-- file mode                                                        -- 
+!--   file mode                                                      -- 
 !---------------------------------------------------------------------- 
-  180 continue 
+      else ! kdata.eq.2
       do i=1,nsilop 
         psibit(i)=0.0 
       enddo
@@ -317,21 +323,21 @@
       fwtbp=0.0 
       fwtdlc=0.0 
       do i=1,nstark 
-       fwtgam(i)=0.0 
+        fwtgam(i)=0.0 
       enddo 
       do i=1,nmsels 
         fwtbmsels(i)=0.0 
         fwtemsels(i)=0.0 
       enddo 
       do i=1,nnece 
-       fwtece0(i)=0.0 
+        fwtece0(i)=0.0 
       enddo 
       fwtecebz0=0.0 
       do i=1,mbdry 
-       fwtbdry(i)=1.0 
-       sigrbd(i)=1.e10_dp 
-       sigzbd(i)=1.e10_dp 
-       fwtsol(i)=1.0 
+        fwtbdry(i)=1.0 
+        sigrbd(i)=1.e10_dp 
+        sigzbd(i)=1.e10_dp 
+        fwtsol(i)=1.0 
       enddo 
       akchiwt=1.0 
       akprewt=0.0 
@@ -486,11 +492,11 @@
 !
       if (nbdryp==-1) nbdryp=nbdry 
       read (nin,ink,err=11111,end=101) 
-101    continue 
+101   continue 
 11111 close(unit=nin) 
       open(unit=nin,status='old',file=ifname(jtime)) 
       read (nin,ins,err=11113,end=103) 
-103    continue 
+103   continue 
 11113 close(unit=nin) 
       open(unit=nin,status='old',file=ifname(jtime)) 
       rrmsels(1)=-10. 
@@ -505,24 +511,24 @@
 !--   Read msels_all.dat if needed                                   -- 
 !---------------------------------------------------------------------- 
       if (kdomsels.gt.0) then 
-       if (rrmsels(1).lt.-5.0) then 
-             close(unit=nin) 
-             open(unit=nin,status='old',file='msels_all.dat') 
-             do i=1,nmsels 
-               read(nin,91008,iostat=istat) bmsels(i),sbmsels(i),rrmsels(i), & 
-                    zzmsels(i), l1msels(i),l2msels(i),l4msels(i),emsels(i), & 
-                    semsels(i),iemsels(i) 
-               iermselt(jtime,i)=iemsels(i) 
-             enddo 
-             if (istat>0) then 
-                 im1=i-1 
-                 write (6,*) 'msels_all i=',i,' bmsels(i-1)= ',bmsels(im1) 
-                 stop 
-             endif
-       endif 
+        if (rrmsels(1).lt.-5.0) then 
+          close(unit=nin) 
+          open(unit=nin,status='old',file='msels_all.dat') 
+          do i=1,nmsels 
+            read(nin,91008,iostat=istat) bmsels(i),sbmsels(i),rrmsels(i), & 
+                 zzmsels(i), l1msels(i),l2msels(i),l4msels(i),emsels(i), & 
+                 semsels(i),iemsels(i) 
+            iermselt(jtime,i)=iemsels(i) 
+          enddo 
+          if (istat>0) then 
+            im1=i-1 
+            write (6,*) 'msels_all i=',i,' bmsels(i-1)= ',bmsels(im1) 
+            stop 
+          endif
+        endif 
       endif 
 91008 format(9e12.5,i2) 
-91113 close(unit=nin) 
+      close(unit=nin) 
 
       open(unit=nin,status='old',file=ifname(jtime)) 
       read (nin,ina,iostat=istat)
@@ -562,7 +568,7 @@
       rnavfc(jtime,:)=rnavfcin(:) 
       deve(jtime,:)=devein(:) 
       rnavec(jtime,:)=rnavecin(:) 
-! ERROR: devbcin, rnavbcin, devpin, and rnavpin are never defined or set...
+! TODO: devbcin, rnavbcin, devpin, and rnavpin are never defined or set...
 !      devbc(jtime)=devbcin
 !      rnavbc(jtime)=rnavbcin
 !      devp(jtime)=devpin
@@ -609,7 +615,7 @@
         read (neqdsk,11775) (case_ext(i),i=1,6),nh_ext,nw_ext,nh_ext 
         npsi_ext=nw_ext 
         if (idebug /= 0) write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext, & 
-           nw_ext 
+          nw_ext 
         do i = 1,2 
           read (neqdsk,11773) 
         enddo 
@@ -713,7 +719,7 @@
         call zpline(npsi_ext,psin_ext,ffprim_ext,bfp_ext,cfp_ext,dfp_ext) 
       endif 
 !---------------------------------------------------------------------- 
-!-- Scale boundary points                                            -- 
+!--   Scale boundary points                                          -- 
 !---------------------------------------------------------------------- 
       rbdry(1:nbdry)=rbdry(1:nbdry)+dr_ext 
       zbdry(1:nbdry)=zbdry(1:nbdry)+dz_ext 
@@ -761,211 +767,208 @@
             rbdry(i)=rc_ext+a_ext*(rbdry0(i)-r0ave)/a0ave               & 
                  +a_ext*(d0top-dup_ext)*((zbdry0(i)-z0ave)/e0top/a0ave)**2 
             zbdry(i)=zc_ext+eup_ext*a_ext*(zbdry0(i)-z0ave)/a0ave/e0top 
-          endif 
+          endif
           if (zbdry0(i).le.z0ave) then 
             rbdry(i)=rc_ext+a_ext*(rbdry0(i)-r0ave)/a0ave               & 
                 +a_ext*(d0bot-dlow_ext)*((z0ave-zbdry0(i))/e0bot/a0ave)**2 
             zbdry(i)=zc_ext+elow_ext*a_ext*(zbdry0(i)-z0ave)/a0ave/e0bot 
-          endif 
-        enddo 
-      endif 
-      if (reflect_ext.eq.'UL') then 
-        rbdry0(1:nbdry)=rbdry(1:nbdry) 
-        zbdry0(1:nbdry)=zbdry(1:nbdry) 
-        zbdry(1:nbdry)=-zbdry0(1:nbdry) 
-      endif 
+          endif
+        enddo
+      endif
+      if (reflect_ext.eq.'UL') then
+        rbdry0(1:nbdry)=rbdry(1:nbdry)
+        zbdry0(1:nbdry)=zbdry(1:nbdry)
+        zbdry(1:nbdry)=-zbdry0(1:nbdry)
+      endif
 !---------------------------------------------------------------------- 
-!-- Reflection, Lower = -Upper                                       -- 
+!--   Reflection, Lower = -Upper                                     -- 
 !---------------------------------------------------------------------- 
-      if (reflect_ext.eq.'UU') then 
-        rbdry0(1:nbdry)=rbdry(1:nbdry) 
-        zbdry0(1:nbdry)=zbdry(1:nbdry) 
-        nbdry0=nbdry 
-        if (zbdry0(1).le.0.0) then 
-        nbdry=0 
-        do i=1,nbdry0 
-          if (zbdry0(i).ge.0.0) then 
-            nbdry=nbdry+1 
-            rbdry(nbdry)=rbdry0(i) 
-            zbdry(nbdry)=zbdry0(i) 
-          endif 
-        enddo 
-        nbdry0=nbdry 
-        do i=1,nbdry0 
-          j=nbdry0-i+1 
-          if (zbdry(j).gt.0.0) then 
-            nbdry=nbdry+1 
-            rbdry(nbdry)=rbdry(j) 
-            zbdry(nbdry)=-zbdry(j) 
-          endif 
-        enddo 
-        endif 
-! 
-        if (zbdry0(1).gt.0.0) then 
-        nbdry=0 
-        nbranch=0 
-        do i=1,nbdry0 
-          if ((zbdry0(i).ge.0.0).and.(nbranch.eq.0)) then 
-            nbdry=nbdry+1 
-            rbdry(nbdry)=rbdry0(i) 
-            zbdry(nbdry)=zbdry0(i) 
-          else 
-            nbranch=1 
-          endif 
-        enddo 
-        nbdry1=nbdry 
-        do i=1,nbdry1 
-          if (zbdry(i).gt.0.0) then 
-            nbdry=nbdry+1 
-            rbdry(nbdry)=rbdry(i) 
-            zbdry(nbdry)=-zbdry(i) 
-          endif 
-        enddo 
-        nbdry2=nbdry 
-        nbranch=0 
-        do i=1,nbdry0 
-          j=nbdry0-i+1 
-          if ((zbdry0(j).ge.0.0).and.(nbranch.eq.0)) then 
-            nbdry=nbdry+1 
-            rbdry(nbdry)=rbdry0(j) 
-            zbdry(nbdry)=-zbdry0(j) 
-          else 
-            nbranch=1 
-          endif 
-        enddo 
-        nbdry3=nbdry 
-        do i=1,nbdry3-nbdry2 
-          j=nbdry3-i+1 
-          if (zbdry(j).lt.0.0) then 
-            nbdry=nbdry+1 
-            rbdry(nbdry)=rbdry(j) 
-            zbdry(nbdry)=-zbdry(j) 
-          endif 
-        enddo 
-        endif 
-      endif 
+      if (reflect_ext.eq.'UU') then
+        rbdry0(1:nbdry)=rbdry(1:nbdry)
+        zbdry0(1:nbdry)=zbdry(1:nbdry)
+        nbdry0=nbdry
+        if (zbdry0(1).le.0.0) then
+          nbdry=0
+          do i=1,nbdry0
+            if (zbdry0(i).ge.0.0) then
+              nbdry=nbdry+1
+              rbdry(nbdry)=rbdry0(i)
+              zbdry(nbdry)=zbdry0(i)
+            endif
+          enddo
+          nbdry0=nbdry
+          do i=1,nbdry0
+            j=nbdry0-i+1
+            if (zbdry(j).gt.0.0) then
+              nbdry=nbdry+1
+              rbdry(nbdry)=rbdry(j)
+              zbdry(nbdry)=-zbdry(j)
+            endif
+          enddo
+        else
+          nbdry=0
+          nbranch=0
+          do i=1,nbdry0
+            if ((zbdry0(i).ge.0.0).and.(nbranch.eq.0)) then
+              nbdry=nbdry+1
+              rbdry(nbdry)=rbdry0(i)
+              zbdry(nbdry)=zbdry0(i)
+            else
+              nbranch=1
+            endif
+          enddo
+          nbdry1=nbdry
+          do i=1,nbdry1
+            if (zbdry(i).gt.0.0) then
+              nbdry=nbdry+1
+              rbdry(nbdry)=rbdry(i)
+              zbdry(nbdry)=-zbdry(i)
+            endif
+          enddo
+          nbdry2=nbdry
+          nbranch=0
+          do i=1,nbdry0
+            j=nbdry0-i+1
+            if ((zbdry0(j).ge.0.0).and.(nbranch.eq.0)) then
+              nbdry=nbdry+1
+              rbdry(nbdry)=rbdry0(j)
+              zbdry(nbdry)=-zbdry0(j)
+            else
+              nbranch=1
+            endif
+          enddo
+          nbdry3=nbdry
+          do i=1,nbdry3-nbdry2
+            j=nbdry3-i+1
+            if (zbdry(j).lt.0.0) then
+              nbdry=nbdry+1
+              rbdry(nbdry)=rbdry(j)
+              zbdry(nbdry)=-zbdry(j)
+            endif
+          enddo
+        endif
+      endif
 !---------------------------------------------------------------------- 
-!-- Reflection, Upper = - Lower                                      -- 
+!--   Reflection, Upper = - Lower                                    -- 
 !---------------------------------------------------------------------- 
-      if (reflect_ext.eq.'LL') then 
-        rbdry0(1:nbdry)=rbdry(1:nbdry) 
-        zbdry0(1:nbdry)=zbdry(1:nbdry) 
-        nbdry0=nbdry 
-        if (zbdry0(1).ge.0.0) then 
-        nbdry=0 
-        do i=1,nbdry0 
-          if (zbdry0(i).le.0.0) then 
-            nbdry=nbdry+1 
-            rbdry(nbdry)=rbdry0(i) 
-            zbdry(nbdry)=zbdry0(i) 
-          endif 
-        enddo 
-        nbdry0=nbdry 
-        do i=1,nbdry0 
-          j=nbdry0-i+1 
-          if (zbdry(j).lt.0.0) then 
-            nbdry=nbdry+1 
-            rbdry(nbdry)=rbdry(j) 
-            zbdry(nbdry)=-zbdry(j) 
-          endif 
-        enddo 
-        endif 
-! 
-        if (zbdry0(1).lt.0.0) then 
-        nbdry=0 
-        nbranch=0 
-        do i=1,nbdry0 
-          if ((zbdry0(i).le.0.0).and.(nbranch.eq.0)) then 
-            nbdry=nbdry+1 
-            rbdry(nbdry)=rbdry0(i) 
-            zbdry(nbdry)=zbdry0(i) 
-          else 
-            nbranch=1 
-          endif 
-        enddo 
-        nbdry1=nbdry 
-        do i=1,nbdry1 
-          if (zbdry(i).lt.0.0) then 
-            nbdry=nbdry+1 
-            rbdry(nbdry)=rbdry(i) 
-            zbdry(nbdry)=-zbdry(i) 
-          endif 
-        enddo 
-        nbdry2=nbdry 
-        nbranch=0 
-        do i=1,nbdry0 
-          j=nbdry0-i+1 
-          if ((zbdry0(j).le.0.0).and.(nbranch.eq.0)) then 
-            nbdry=nbdry+1 
-            rbdry(nbdry)=rbdry0(j) 
-            zbdry(nbdry)=-zbdry0(j) 
-          else 
-            nbranch=1 
-          endif 
-        enddo 
-        nbdry3=nbdry 
-        do i=1,nbdry3-nbdry2 
-          j=nbdry3-i+1 
-          if (zbdry(j).gt.0.0) then 
-            nbdry=nbdry+1 
-            rbdry(nbdry)=rbdry(j) 
-            zbdry(nbdry)=-zbdry(j) 
-          endif 
-        enddo 
-        endif 
-      endif 
+      if (reflect_ext.eq.'LL') then
+        rbdry0(1:nbdry)=rbdry(1:nbdry)
+        zbdry0(1:nbdry)=zbdry(1:nbdry)
+        nbdry0=nbdry
+        if (zbdry0(1).ge.0.0) then
+          nbdry=0
+          do i=1,nbdry0
+            if (zbdry0(i).le.0.0) then
+              nbdry=nbdry+1
+              rbdry(nbdry)=rbdry0(i)
+              zbdry(nbdry)=zbdry0(i)
+            endif
+          enddo
+          nbdry0=nbdry
+          do i=1,nbdry0
+            j=nbdry0-i+1
+            if (zbdry(j).lt.0.0) then
+              nbdry=nbdry+1
+              rbdry(nbdry)=rbdry(j)
+              zbdry(nbdry)=-zbdry(j)
+            endif
+          enddo
+        else
+          nbdry=0
+          nbranch=0
+          do i=1,nbdry0
+            if ((zbdry0(i).le.0.0).and.(nbranch.eq.0)) then
+              nbdry=nbdry+1
+              rbdry(nbdry)=rbdry0(i)
+              zbdry(nbdry)=zbdry0(i)
+            else
+              nbranch=1
+            endif
+          enddo
+          nbdry1=nbdry
+          do i=1,nbdry1
+            if (zbdry(i).lt.0.0) then
+              nbdry=nbdry+1
+              rbdry(nbdry)=rbdry(i)
+              zbdry(nbdry)=-zbdry(i)
+            endif
+          enddo
+          nbdry2=nbdry
+          nbranch=0
+          do i=1,nbdry0
+            j=nbdry0-i+1
+            if ((zbdry0(j).le.0.0).and.(nbranch.eq.0)) then
+              nbdry=nbdry+1
+              rbdry(nbdry)=rbdry0(j)
+              zbdry(nbdry)=-zbdry0(j)
+            else
+              nbranch=1
+            endif
+          enddo
+          nbdry3=nbdry
+          do i=1,nbdry3-nbdry2
+            j=nbdry3-i+1
+            if (zbdry(j).gt.0.0) then
+              nbdry=nbdry+1
+              rbdry(nbdry)=rbdry(j)
+              zbdry(nbdry)=-zbdry(j)
+            endif
+          enddo
+        endif
+      endif
 !---------------------------------------------------------------------- 
-!-- Scale limiter                                                    -- 
+!--   Scale limiter                                                  -- 
 !---------------------------------------------------------------------- 
-      if (setlim_ext.gt.-10.0) then 
-        rbdry0(1:nbdry)=rbdry(1:nbdry) 
-        zbdry0(1:nbdry)=zbdry(1:nbdry) 
-        r0min=rbdry0(1) 
-        r0max=r0min 
-        z0min=zbdry0(1) 
-        z0max=z0min 
-        do i=1,nbdry 
-          if (rbdry0(i).le.r0min) then 
-             r0min=rbdry0(i) 
-             zr0min=zbdry0(i) 
-          endif 
-          if (rbdry0(i).ge.r0max) then 
-             r0max=rbdry0(i) 
-             zr0max=zbdry0(i) 
-          endif 
-          if (zbdry0(i).le.z0min) then 
-            z0min=zbdry0(i) 
-            rz0min=rbdry0(i) 
-          endif 
-          if (zbdry0(i).ge.z0max) then 
-            z0max=zbdry0(i) 
-            rz0max=rbdry0(i) 
-          endif 
-        enddo 
-        limitr=7 
-        xlim(1)=r0min-setlim_ext*(r0max-r0min) 
-        ylim(1)=0.5_dp*(z0min+z0max) 
-        xlim(2)=xlim(1) 
-        ylim(2)=z0max+setlim_ext*(z0max-z0min) 
-        xlim(3)=r0max+setlim_ext*(r0max-r0min) 
-        ylim(3)=ylim(2) 
-        xlim(4)=xlim(3) 
-        ylim(4)=ylim(1) 
-        xlim(5)=xlim(4) 
-        ylim(5)=z0min-setlim_ext*(z0max-z0min) 
-        xlim(6)=xlim(1) 
-        ylim(6)=ylim(5) 
-        xlim(7)=xlim(1) 
-        ylim(7)=ylim(1) 
-      endif 
+      if (setlim_ext.gt.-10.0) then
+        rbdry0(1:nbdry)=rbdry(1:nbdry)
+        zbdry0(1:nbdry)=zbdry(1:nbdry)
+        r0min=rbdry0(1)
+        r0max=r0min
+        z0min=zbdry0(1)
+        z0max=z0min
+        do i=1,nbdry
+          if (rbdry0(i).le.r0min) then
+             r0min=rbdry0(i)
+             zr0min=zbdry0(i)
+          endif
+          if (rbdry0(i).ge.r0max) then
+             r0max=rbdry0(i)
+             zr0max=zbdry0(i)
+          endif
+          if (zbdry0(i).le.z0min) then
+            z0min=zbdry0(i)
+            rz0min=rbdry0(i)
+          endif
+          if (zbdry0(i).ge.z0max) then
+            z0max=zbdry0(i)
+            rz0max=rbdry0(i)
+          endif
+        enddo
+        limitr=7
+        xlim(1)=r0min-setlim_ext*(r0max-r0min)
+        ylim(1)=0.5_dp*(z0min+z0max)
+        xlim(2)=xlim(1)
+        ylim(2)=z0max+setlim_ext*(z0max-z0min)
+        xlim(3)=r0max+setlim_ext*(r0max-r0min)
+        ylim(3)=ylim(2)
+        xlim(4)=xlim(3)
+        ylim(4)=ylim(1)
+        xlim(5)=xlim(4)
+        ylim(5)=z0min-setlim_ext*(z0max-z0min)
+        xlim(6)=xlim(1)
+        ylim(6)=ylim(5)
+        xlim(7)=xlim(1)
+        ylim(7)=ylim(1)
+      endif
 !---------------------------------------------------------------------- 
 !--   Read Li beam data                                              -- 
 !---------------------------------------------------------------------- 
-      do i=1,libim 
-        fwtlib(i)=0.0 
-        rrrlib(i)=0.0 
-      enddo 
-      open(unit=nin,status='old',file=ifname(jtime)) 
+      do i=1,libim
+        fwtlib(i)=0.0
+        rrrlib(i)=0.0
+        zzzlib(i)=0.0
+      enddo
+      open(unit=nin,status='old',file=ifname(jtime))
       read (nin,inlibim,err=11237,end=11233) 
 11233 continue 
 11237 close(unit=nin) 
@@ -975,69 +978,69 @@
 !      call set_table_dir 
 !      call efit_read_tables 
  
-11337 continue 
 !--------------------------------------------------------------------- 
-!--  specific choice of current profile                             -- 
+!--   specific choice of current profile                            -- 
 !--       ICPROF=1  no edge current density allowed                 -- 
 !--       ICPROF=2  free edge current density                       -- 
 !--       ICPROF=3  weak edge current density constraint            -- 
 !--------------------------------------------------------------------- 
-      if (icprof.eq.1) then 
-        kffcur=2 
-        kppcur=2 
-        fcurbd=1. 
-        pcurbd=1. 
-        fwtbp=1. 
-        fwtqa=0. 
-        qvfit=0. 
-      elseif (icprof.eq.2) then 
-        kffcur=2 
-        kppcur=2 
-        fcurbd=0. 
-        pcurbd=0. 
-        fwtbp=0. 
-        fwtqa=0. 
-        qvfit=0. 
-      elseif (icprof.eq.3) then 
-        kffcur=3 
-        kppcur=2 
-        fcurbd=0. 
-        pcurbd=0. 
-        fwtbp=0. 
-        fwtqa=0. 
-        qvfit=0. 
-        kcalpa=1 
-        calpa(1,1)=0.1_dp 
-        calpa(2,1)=0.1_dp 
-        calpa(3,1)=0.1_dp 
-        xalpa(1)=0.0 
-        kcgama=1 
-        cgama(1,1)=0.1_dp 
-        cgama(2,1)=0.1_dp 
-        cgama(3,1)=0.1_dp 
-        xgama(1)=0.0 
-      endif 
-      if(mse_usecer .eq. 1)keecur = 0 
-      if(mse_usecer .eq. 2 .and. keecur .eq. 0) then 
-           keecur = 2 
-           keefnc = 0 
-           itek = 5 
-      endif 
-      mtear=ktear 
-      if (kedgep.gt.0) then 
-        s1edge=(1.0-pe_psin)/pe_width 
-        tpedge=tanh(s1edge) 
-        s1edge=(1.0-fe_psin)/fe_width 
-        tfedge=tanh(s1edge) 
-      endif 
-      if (imagsigma.gt.0) then 
-         do_spline_fit=.false. 
-         saimin=300. 
-      endif 
+      select case (icprof)
+      case (1)
+        kffcur=2
+        kppcur=2
+        fcurbd=1.
+        pcurbd=1.
+        fwtbp=1.
+        fwtqa=0.
+        qvfit=0.
+      case (2) 
+        kffcur=2
+        kppcur=2
+        fcurbd=0.
+        pcurbd=0.
+        fwtbp=0.
+        fwtqa=0.
+        qvfit=0.
+      case (3)
+        kffcur=3
+        kppcur=2
+        fcurbd=0.
+        pcurbd=0.
+        fwtbp=0.
+        fwtqa=0.
+        qvfit=0.
+        kcalpa=1
+        calpa(1,1)=0.1_dp
+        calpa(2,1)=0.1_dp
+        calpa(3,1)=0.1_dp
+        xalpa(1)=0.0
+        kcgama=1
+        cgama(1,1)=0.1_dp
+        cgama(2,1)=0.1_dp
+        cgama(3,1)=0.1_dp
+        xgama(1)=0.0
+      end select
+      if (mse_usecer .eq. 1) keecur = 0
+      if (mse_usecer .eq. 2 .and. keecur .eq. 0) then
+        keecur=2
+        keefnc=0
+        itek=5
+      endif
+      mtear=ktear
+      if (kedgep.gt.0) then
+        s1edge=(1.0-pe_psin)/pe_width
+        tpedge=tanh(s1edge)
+        s1edge=(1.0-fe_psin)/fe_width
+        tfedge=tanh(s1edge)
+      endif
+      if (imagsigma.gt.0) then
+        do_spline_fit=.false.
+        saimin=300.
+      endif
       if (kzeroj.eq.1.and.sizeroj(1).lt.0.0) sizeroj(1)=psiwant
-      print *, 'before save fitting weights' 
+      print *, 'before save fitting weights'
 !--------------------------------------------------------------------- 
-!--  save fitting weights for FILE mode                             -- 
+!--   save fitting weights for FILE mode                            -- 
 !--------------------------------------------------------------------- 
       swtdlc=fwtdlc 
       swtcur=fwtcur 
@@ -1066,48 +1069,48 @@
       swtecebz=fwtecebz0
       print *, 'adjust fit parameters based on basis function selected ' 
 !----------------------------------------------------------------------- 
-!-- adjust fit parameters based on basis function selected            -- 
+!--   adjust fit parameters based on basis function selected          -- 
 !----------------------------------------------------------------------- 
       select case (kppfnc)
-        case (3)
-          kppcur = 4 * (kppknt - 1) 
-        case (4)
-          kppcur = 4 * (kppknt - 1) 
-        case (5)
-          kppcur = kppcur * (kppknt - 1) 
-        case (6)
-          kppcur = kppknt * 2 
+      case (3)
+        kppcur = 4 * (kppknt - 1) 
+      case (4)
+        kppcur = 4 * (kppknt - 1) 
+      case (5)
+        kppcur = kppcur * (kppknt - 1) 
+      case (6)
+        kppcur = kppknt * 2 
       end select
       select case (kfffnc)
-        case (3)
-          kffcur = 4 * (kffknt - 1) 
-        case (4)
-          kffcur = 4 * (kffknt - 1) 
-        case (5)
-          kffcur = kffcur * (kffknt - 1) 
-        case (6)
-          kffcur = kffknt * 2 
+      case (3)
+        kffcur = 4 * (kffknt - 1) 
+      case (4)
+        kffcur = 4 * (kffknt - 1) 
+      case (5)
+        kffcur = kffcur * (kffknt - 1) 
+      case (6)
+        kffcur = kffknt * 2 
       end select 
       select case (kwwfnc)
-        case (3)
-          kwwcur = 4 * (kwwknt - 1) 
-        case (4)
-          kwwcur = 4 * (kwwknt - 1) 
-        case (5)
-          kwwcur = kwwcur * (kwwknt - 1) 
-        case (6)
-          kwwcur = kwwknt * 2 
+      case (3)
+        kwwcur = 4 * (kwwknt - 1) 
+      case (4)
+        kwwcur = 4 * (kwwknt - 1) 
+      case (5)
+        kwwcur = kwwcur * (kwwknt - 1) 
+      case (6)
+        kwwcur = kwwknt * 2 
       end select 
       if (keecur.gt.0) then 
         select case (keefnc)
-          case (3)
-            keecur = 4 * (keeknt - 1) 
-          case (4)
-            keecur = 4 * (keeknt - 1) 
-          case (5)
-            keecur = keecur * (keeknt - 1) 
-          case (6)
-            keecur = keeknt * 2 
+        case (3)
+          keecur = 4 * (keeknt - 1) 
+        case (4)
+          keecur = 4 * (keeknt - 1) 
+        case (5)
+          keecur = keecur * (keeknt - 1) 
+        case (6)
+          keecur = keeknt * 2 
         end select 
       endif 
 ! 
@@ -1127,7 +1130,7 @@
 
       print *, 'itek > 100, write out PLTOUT.OUT individually ' 
 !-------------------------------------------------------------------------- 
-!-- itek > 100, write out PLTOUT.OUT individually                        -- 
+!--   itek > 100, write out PLTOUT.OUT individually                      -- 
 !-------------------------------------------------------------------------- 
       kgraph=0 
       if (itek.gt.100) then 
@@ -1143,17 +1146,17 @@
       if (nxiter.lt.0) then 
         nxiter=-nxiter 
         itell=1 
-        if (fbetan.gt.0.0) itell=2 
-        if (fli.gt.0.0)    itell=2 
-        if (nqwant.gt.0.0)  itell=2 
+        if (fbetan.gt.0.0) itell=2
+        if (fli.gt.0.0) itell=2
+        if (nqwant.gt.0.0) itell=2
         if ((symmetrize).and.(nbdry.gt.1)) itell=3 
       endif 
       if ((iconvr.ne.3).and.(qvfit.gt.0.0)) qenp=qvfit 
-      if (ishot.eq.-1) then 
-          kerror = 1 
-          call errctrl_msg('data_input','shot number not set') 
-          return 
-      end if 
+      if (ishot.eq.-1) then
+        kerror = 1
+        call errctrl_msg('data_input','shot number not set')
+        return
+      endif
       if ((limitr.gt.0).and.(xlim(1).le.-1.0)) then
         read (nin,5000) (xlim(i),ylim(i),i=1,limitr) 
         ylim(i)=ylim(i)-1.e-10_dp
@@ -1168,10 +1171,10 @@
       if (kprfit.gt.0.and.sigpre(1).lt.0.0) then 
         scalep=abs(sigpre(1)) 
         scalemin=abs(sigpre(2)) 
-        do 40010 i=1,npress 
+        do i=1,npress 
           sigpre(i)=scalep*pressr(i) 
           sigpre(i)=max(sigpre(i),scalemin) 
-40010   continue 
+        enddo
       endif 
       if (kprfit.gt.0.and.scalepr(1).gt.0.0) then 
         do i=1,npress 
@@ -1194,12 +1197,12 @@
       endif
       print *, 'option to symmetrize added 8/14/91 eal  ' 
 !-------------------------------------------------------------- 
-!-- option to symmetrize added 8/14/91 eal                   -- 
+!--   option to symmetrize added 8/14/91 eal                 -- 
 !-------------------------------------------------------------- 
       if (symmetrize) then  ! symmetrize the fixed boundery 
         isetfb=0  ! be sure vertical feedback is off 
         zelip=0 ! must be symmetric about midplane 
-        if(nbdry.gt.1)then  ! remove duplicate point 
+        if (nbdry.gt.1) then  ! remove duplicate point 
           nbryup=0 
           delx2=(rbdry(1)-rbdry(nbdry))**2 
           dely2=(zbdry(1)-zbdry(nbdry))**2 
@@ -1210,15 +1213,15 @@
           enddo 
           do i=1,nbdry 
             ilower(i)=-1 
-            if(zbdry(i).gt.0.)then 
+            if (zbdry(i).gt.0.) then
               aup=atan2(zbdry(i),rbdry(i)-rbar) 
               iup=i 
               close=1e30 
               do j=1,nbdry 
-                if(zbdry(j).lt.0.)then 
+                if (zbdry(j).lt.0.) then
                   adn=atan2(zbdry(j),rbdry(j)-rbar) 
                   val=abs(aup+adn) 
-                  if(val.lt.close)then 
+                  if (val.lt.close) then
                     close=val 
                     idn=j 
                   endif 
@@ -1237,67 +1240,65 @@
         endif 
       endif ! end boundary symmertization 
 !--------------------------------------------------------------------- 
-!--  Symmetrize the limiter positions for fixed boundary if request -- 
-!--  set LIMITR=1000+points for this option                         -- 
+!--   Symmetrize the limiter positions for fixed boundary if request-- 
+!--   set LIMITR=1000+points for this option                        -- 
 !--------------------------------------------------------------------- 
-      if ((symmetrize).and.(nbdry.gt.1)) then 
-       if (limitr.gt.1000) then 
-        limitr=limitr-1000 
-        limupper=limitr 
-        limitr=limupper+limupper-2 
-        do i=2,limupper-1 
-          lwant=limupper-i+1 
-          xlim(i-1+limupper)=xlim(lwant) 
-          ylim(i-1+limupper)=-ylim(lwant) 
-        enddo 
-       endif 
+      if ((symmetrize).and.(nbdry.gt.1)) then
+        if (limitr.gt.1000) then 
+          limitr=limitr-1000 
+          limupper=limitr 
+          limitr=limupper+limupper-2 
+          do i=2,limupper-1 
+            lwant=limupper-i+1 
+            xlim(i-1+limupper)=xlim(lwant) 
+            ylim(i-1+limupper)=-ylim(lwant) 
+          enddo 
+        endif 
       endif 
 ! 
       if (kpressb.eq.2) pcurbd=0.0 
       if (kzeroj.gt.0) then 
-       pcurbd=0.0 
-       fcurbd=0.0 
+        pcurbd=0.0 
+        fcurbd=0.0 
       endif 
       close(unit=nin) 
       if (kprfit.eq.1) then 
         if (npress.lt.0) then 
-        call getfnmu(itimeu,'k',ishot,itime,edatname) 
-        edatname='edat_'//edatname(2:7)// & 
+          call getfnmu(itimeu,'k',ishot,itime,edatname) 
+          edatname='edat_'//edatname(2:7)// & 
                        '_'//edatname(9:13)//'.pressure' 
-        open(unit=nin,status='old',file=edatname & 
-                                 ) 
-        read (nin,edat) 
-        close(unit=nin) 
+          open(unit=nin,status='old',file=edatname)
+          read (nin,edat)
+          close(unit=nin) 
         endif 
       endif 
 ! 
       if (kprfit.eq.2) then 
         if (npteth.lt.0) then 
-        nptef=-npteth 
-        npnef=-npneth 
-        call getfnmu(itimeu,'k',ishot,itime,edatname) 
-        edatname='edat_'//edatname(2:7)// & 
+          nptef=-npteth 
+          npnef=-npneth 
+          call getfnmu(itimeu,'k',ishot,itime,edatname) 
+          edatname='edat_'//edatname(2:7)// & 
                        '_'//edatname(9:13)//'.thomson' 
-        open(unit=nin,status='old',file=edatname & 
-                                 ) 
-        bfract=-1. 
-        if (tethom(1).lt.0.0) bfract=-tethom(1) 
-        read (nin,edat) 
-        close(unit=nin) 
+          open(unit=nin,status='old',file=edatname)
+          bfract=-1. 
+          if (tethom(1).lt.0.0) bfract=-tethom(1) 
+          read (nin,edat) 
+          close(unit=nin) 
         endif 
         if (nbeam.gt.0) then 
           do i=1,nbeam 
-           dnbeam(i)=dnbeam(i)*1.e-19_dp 
+            dnbeam(i)=dnbeam(i)*1.e-19_dp
           enddo
         endif
 
-      print *, 'reorder TS data points '   
+        print *, 'reorder TS data points '   
 !--------------------------------------------------------------------- 
-!--  reorder TS data points                                         -- 
+!--     reorder TS data points                                      -- 
 !--------------------------------------------------------------------- 
         call tsorder(npteth,zteth,dnethom,tethom,sgneth,sgteth) 
         if (sgnemin.lt.0.0) sgnemin=abs(sgnemin)*dnethom(1)*1.e-19_dp & 
-                                    *co2cor 
+                                                *co2cor 
         do i=1,npneth 
           dnethom(i)=dnethom(i)*1.e-19_dp*co2cor 
           sgneth(i)=sgneth(i)*1.e-19_dp*sgnethi*co2cor 
@@ -1319,35 +1320,35 @@
         if (cstabte.lt.0.0) cstabte=abs(cstabte)*100./temax 
         if (cstabne.lt.0.0) cstabne=abs(cstabne)*100./demax 
         if (nption.lt.0) then 
-        nptionf=-nption 
-        if (nptionf.lt.100) then 
-        call getfnmu(itimeu,'k',ishot,itime,edatname) 
-        edatname='edat_'//edatname(2:7)//'_'//edatname(9:13)//'.cer' 
-        open(unit=nin,status='old',file=edatname) 
-        bfract=-1. 
-        if (tionex(1).lt.0.0) bfract=-tionex(1) 
-        read (nin,edat) 
-        close(unit=nin) 
-        do i=1,nption 
-          sigti(i)=sigti(i)*sigtii 
-          if (bfract.gt.0.0) then 
-            sigti(i)=sigti(i)*bfract 
-            tionex(i)=tionex(i)*bfract 
+          nptionf=-nption 
+          if (nptionf.lt.100) then 
+            call getfnmu(itimeu,'k',ishot,itime,edatname) 
+            edatname='edat_'//edatname(2:7)//'_'//edatname(9:13)//'.cer' 
+            open(unit=nin,status='old',file=edatname) 
+            bfract=-1. 
+            if (tionex(1).lt.0.0) bfract=-tionex(1) 
+            read (nin,edat) 
+            close(unit=nin) 
+            do i=1,nption 
+              sigti(i)=sigti(i)*sigtii 
+              if (bfract.gt.0.0) then 
+                sigti(i)=sigti(i)*bfract 
+                tionex(i)=tionex(i)*bfract 
+              endif 
+            enddo
           endif 
-        enddo
-        endif 
-        if (nptionf.gt.100) then 
-          nptionf=nptionf-100 
-          nption=npteth 
-          nptionf=nptef 
-          bfract=tionex(1) 
-          do i=1,nption 
-            sigti(i)=sgteth(i) 
-            tionex(i)=tethom(i)*bfract 
-            rion(i)=rteth(i) 
-            zion(i)=zteth(i) 
-          enddo
-        endif 
+          if (nptionf.gt.100) then 
+            nptionf=nptionf-100 
+            nption=npteth 
+            nptionf=nptef 
+            bfract=tionex(1) 
+            do i=1,nption 
+              sigti(i)=sgteth(i) 
+              tionex(i)=tethom(i)*bfract 
+              rion(i)=rteth(i) 
+              zion(i)=zteth(i) 
+            enddo
+          endif 
         endif 
       endif
 
@@ -1357,34 +1358,34 @@
 !----------------------------------------------------------------------- 
       call getlim(1,xltype,xltype_180) 
 ! 
-      if (iconvr.ge.0) go to 214 
-      iecurr=1 
-      ivesel=1 
-  214 continue 
+      if (iconvr.lt.0) then
+        iecurr=1
+        ivesel=1
+      endif
       if (iand(iout,1).ne.0) then 
-      write (nout,in1) 
-      write (nout,inwant) 
-      write (nout,ink) 
-      write (nout,ins) 
-      write (nout,in_msels) 
-      if (kwaitmse.ne.0) write (neqdsk,ina) 
-      write (nout,inece) 
-      write (nout,insxr) 
-      write (nout,invt) 
-      write (nout,inlibim) 
+        write (nout,in1) 
+        write (nout,inwant) 
+        write (nout,ink) 
+        write (nout,ins) 
+        write (nout,in_msels) 
+        if (kwaitmse.ne.0) write (neqdsk,ina) 
+        write (nout,inece) 
+        write (nout,insxr) 
+        write (nout,invt) 
+        write (nout,inlibim) 
       endif 
       if (islve.gt.0) nbdry=40 
 ! 
       diamag(jtime)=1.0e-03_dp*dflux 
       sigdia(jtime)=1.0e-03_dp*abs(sigdlc) 
       pbinj(jtime)=pnbeam 
-      do 220 i=1,nsilop 
+      do i=1,nsilop 
         silopt(jtime,i)=coils(i) 
-  220 continue 
-      do 230 i=1,nfcoil 
+      enddo
+      do i=1,nfcoil 
         fccurt(jtime,i)=brsp(i) 
-  230 continue 
-      do 240 i=1,nmtark 
+      enddo
+      do i=1,nmtark 
         tangam(jtime,i)=tgamma(i) 
         tangam_uncor(jtime,i)=tgammauncor(i) 
         siggam(jtime,i)=sgamma(i) 
@@ -1398,7 +1399,7 @@
         a6gam(jtime,i)=aa6gam(i) 
         a7gam(jtime,i)=aa7gam(i) 
         a8gam(jtime,i)=0.0 
-  240 continue 
+      enddo
       do i=nmtark+1, nstark 
         ii = i - nmtark 
         tangam(jtime,i)=tlibim(ii) 
@@ -1417,7 +1418,7 @@
         swtgam(i)=fwtlib(ii) 
       enddo 
 ! 
-      do 91240 i=1,nmsels 
+      do i=1,nmsels 
         bmselt(jtime,i)=bmsels(i) 
         sbmselt(jtime,i)=sbmsels(i) 
         fwtbmselt(jtime,i)=fwtbmsels(i) 
@@ -1430,27 +1431,27 @@
         emselt(jtime,i)=emsels(i) 
         semselt(jtime,i)=semsels(i) 
         fwtemselt(jtime,i)=fwtemsels(i) 
-91240 continue 
+      enddo
 !---------------------------------------------------------------------- 
-!  give the constraint value for matrix routine 
+!     give the constraint value for matrix routine 
 !---------------------------------------------------------------------- 
-      do 250 i=1,nnece 
+      do i=1,nnece 
         brspece(jtime,i)=ecefit(i) 
-  250 continue 
+      enddo 
       brspecebz(jtime)=ecebzfit 
-      do 260 i=1,magpri 
+      do i=1,magpri 
         expmpi(jtime,i)=expmp2(i) 
-  260 continue 
+      enddo 
 !------------------------------------------------------------------------ 
-!--  New E-coil connections                   LLao, 95/07/11           -- 
+!--   New E-coil connections                   LLao, 95/07/11          --
 !------------------------------------------------------------------------ 
       if (ecurrt(3).le.-1.e10_dp) ecurrt(3)=ecurrt(1) 
       if (ecurrt(5).le.-1.e10_dp) ecurrt(5)=ecurrt(1) 
       if (ecurrt(4).le.-1.e10_dp) ecurrt(4)=ecurrt(2) 
       if (ecurrt(6).le.-1.e10_dp) ecurrt(6)=ecurrt(2) 
-      do 261 i=1,nesum 
+      do i=1,nesum 
         eccurt(jtime,i)=ecurrt(i) 
-  261 continue 
+      enddo
       pasmat(jtime)=plasma 
       curtn1(jtime)=currn1 
       curc79(jtime)=currc79 
@@ -1463,22 +1464,22 @@
       curil90(jtime)=curril90 
       curil150(jtime)=curril150 
 !----------------------------------------------------------------------- 
-!--  + 0.01 to take care of truncation problem      03/16/91          -- 
+!--   + 0.01 to take care of truncation problem      03/16/91         --
 !----------------------------------------------------------------------- 
       timeus=itimeu 
       timems=itime 
       time(jtime)=timems+timeus/1000. 
       bcentr(jtime)=btor 
-      do 262 i=1,nco2v 
+      do i=1,nco2v 
         denvt(jtime,i)=denv(i) 
-  262 continue 
-      do 264 i=1,nco2r 
+      enddo
+      do i=1,nco2r 
         denrt(jtime,i)=denr(i) 
-  264 continue 
-      do 267 i=1,nacoil 
+      enddo
+      do i=1,nacoil 
         accurt(jtime,i)=acoilc(i) 
         caccurt(jtime,i)=acoilc(i) 
-  267 continue 
+      enddo
       vloopt(jtime)=vloop 
       psiref(jtime)=siref 
 ! 
@@ -1490,145 +1491,141 @@
       xlmint=xlmin 
       xlmaxt=xlmax 
 !
-      call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag) 
+      call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
+      endif ! kdata.eq.2
 !----------------------------------------------------------------------- 
-!--  set up parameters for all modes                                  -- 
+!--   set up parameters for all modes                                 --
 !----------------------------------------------------------------------- 
-  280 continue 
       if (kfffnc.eq.8) then 
         rkec=pi/(2.0*dpsiecn) 
       endif 
       chigam=0.0 
       tchimls=0.0 
 !----------------------------------------------------------------------- 
-!-- DIII-D shot > 112000 use a new set of table for magnetic probes   -- 
-!--        shot > 156000 new 2014 set                                 -- 
-!--        shot >= 168191 new 2017 set                                -- 
+!--   DIII-D shot > 112000 use a new set of table for magnetic probes --
+!--          shot > 156000 new 2014 set                               --
+!--          shot >= 168191 new 2017 set                              --
 !----------------------------------------------------------------------- 
-! 
       if (pasmat(jtime).le.-1.e3_dp) then 
         negcur=1 
       else 
         negcur=0 
       endif 
-      if (abs(pasmat(jtime)).gt.cutip.or.iconvr.lt.0) go to 285 
-      if (iconsi.eq.-1) iconsi=55 
-      if (ivesel.gt.10) iconsi=0 
-      iexcal=1 
-      ivacum=1 
-      ibunmn=0 
-      ierchk=0 
-      nxiter=1 
-      iconvr=3 
-  285 continue 
+      if (abs(pasmat(jtime)).le.cutip.and.iconvr.ge.0) then
+        if (iconsi.eq.-1) iconsi=55 
+        if (ivesel.gt.10) iconsi=0 
+        iexcal=1 
+        ivacum=1 
+        ibunmn=0 
+        ierchk=0 
+        nxiter=1 
+        iconvr=3 
+      endif
 !--------------------------------------------------------------------- 
-!--  correction to 322 degree probes due to N1 coil                 -- 
+!--   correction to 322 degree probes due to N1 coil                -- 
 !--------------------------------------------------------------------- 
       if (oldccomp) then 
-      if (n1coil.eq.2.and.ishot.le.108281) then 
-      open(unit=60,file=input_dir(1:lindir)//'n1coil.ddd', & 
-           status='old'                                ) 
-      j=jtime 
-      do 11368 i=30,magpri67+magpri322 
-       read(60,*)   namedum,xxxdum,signn1(i) 
-        expmpi(j,i)=expmpi(j,i)-signn1(i)*curtn1(j) 
-11368 continue 
-      close(unit=60) 
-      endif 
+        if (n1coil.eq.2.and.ishot.le.108281) then 
+          open(unit=60,file=input_dir(1:lindir)//'n1coil.ddd', & 
+               status='old')
+          j=jtime
+          do i=30,magpri67+magpri322 
+            read(60,*) namedum,xxxdum,signn1(i) 
+            expmpi(j,i)=expmpi(j,i)-signn1(i)*curtn1(j) 
+          enddo
+          close(unit=60) 
+        endif 
       endif 
 !--------------------------------------------------------------------- 
-!--  correction to 322 and 67 degree probes due to C coil           -- 
+!--   correction to 322 and 67 degree probes due to C coil          -- 
 !--------------------------------------------------------------------- 
       if (nccoil.eq.1.and.oldccomp) then 
-      open(unit=60,file=input_dir(1:lindir)//'ccoil.ddd', & 
-           status='old'                                ) 
-      j=jtime 
-      do i=30,magpri67+magpri322 
-       read(60,*)   namedum,signc139 
-        expmpi(j,i)=expmpi(j,i)-signc139*curc139(j) 
-      enddo 
-      do i=1,29 
-       read(60,*)   namedum,signc79 
-        expmpi(j,i)=expmpi(j,i)-signc79*curc79(j) 
-      enddo 
-      close(unit=60) 
+        open(unit=60,file=input_dir(1:lindir)//'ccoil.ddd', & 
+             status='old') 
+        j=jtime
+        do i=30,magpri67+magpri322 
+          read(60,*) namedum,signc139 
+          expmpi(j,i)=expmpi(j,i)-signc139*curc139(j) 
+        enddo 
+        do i=1,29 
+          read(60,*) namedum,signc79 
+          expmpi(j,i)=expmpi(j,i)-signc79*curc79(j) 
+        enddo 
+        close(unit=60) 
       endif 
 ! 
       if (ifitvs.gt.0) then 
         ivesel=5 
       endif 
       if (.not.fitsiref) then 
-      if (iecurr.gt.0.or.nslref.lt.0) then 
-        do 287 m=1,nsilop 
-          silopt(jtime,m)=silopt(jtime,m)+psiref(jtime) 
-  287   continue 
-        psirefs(jtime)=psiref(jtime) 
-        psiref(jtime)=0. 
-      endif 
+        if (iecurr.gt.0.or.nslref.lt.0) then 
+          do m=1,nsilop 
+            silopt(jtime,m)=silopt(jtime,m)+psiref(jtime) 
+          enddo
+          psirefs(jtime)=psiref(jtime) 
+          psiref(jtime)=0. 
+        endif 
       endif 
       kconvr=iconvr 
-      do 290 kk=1,nwnh 
+      do kk=1,nwnh 
         www(kk)=zero(kk) 
-  290 continue 
+      enddo
 ! 
       fwtref=fwtsi(iabs(nslref)) 
-      if (kersil.eq.2) go to 325 
-      if (kersil.eq.3) go to 325 
-      do 300 m=1,nsilop 
+      if ((kersil.ne.2).and.(kersil.ne.3)) then
+      do m=1,nsilop
         tdata1=serror*abs(silopt(jtime,m)) 
         tdata2=abs(psibit(m))*vbit 
         tdata=max(tdata1,tdata2) 
         sigmafl0(m)=tdata 
         if (tdata.gt.1.0e-10_dp) fwtsi(m)=fwtsi(m)/tdata**nsq 
         if (tdata.le.1.0e-10_dp) fwtsi(m)=0.0 
-  300 continue 
+      enddo
 !---------------------------------------------------------------------- 
-!--  signal at psi loop # NSLREF is used as reference                -- 
+!--   signal at psi loop # NSLREF is used as reference               -- 
 !---------------------------------------------------------------------- 
-      if (abs(psibit(iabs(nslref))).gt.1.0e-10_dp) go to 340 
-      coilmx=abs(silopt(jtime,1)) 
-      do 320 i=2,nsilop 
-        abcoil=abs(silopt(jtime,i)) 
-        coilmx=max(abcoil,coilmx) 
-  320 continue 
-      fwtsi(iabs(nslref))=1.0/coilmx**nsq/serror**nsq*fwtref 
-      go to 340 
-! 
-  325 continue 
-
-!----------------------------------------------------------------------- 
-!--  Fourier expansion of vessel sgments                              -- 
-!----------------------------------------------------------------------- 
-      if (ifitvs.gt.0. .and. nfourier.gt.1) then 
-      do i=1,nvesel 
-      if(rvs(i).ge.1.75_dp.and.zvs(i).ge.0.) & 
-      thetav(i)=dasin(zvs(i)/sqrt ((rvs(i)-1.75_dp)**2+(zvs(i))**2)) 
-      if(rvs(i).lt.1.75_dp.and.zvs(i).ge.0.) & 
-      thetav(i)=pi-dasin(zvs(i)/sqrt ((rvs(i)-1.75_dp)**2+(zvs(i))**2)) 
-      if(rvs(i).lt.1.75_dp.and.zvs(i).lt.0.) & 
-      thetav(i)=pi-dasin(zvs(i)/sqrt ((rvs(i)-1.75_dp)**2+(zvs(i))**2)) 
-      if(rvs(i).ge.1.75_dp.and.zvs(i).lt.0.) & 
-      thetav(i)=2*pi+dasin(zvs(i)/sqrt ((rvs(i)-1.75_dp)**2+(zvs(i))**2)) 
-        do j=1,nfourier 
-          sinta(j,i)=sin(thetav(i)*j) 
-          costa(j,i)=cos(thetav(i)*j) 
-        enddo 
-      enddo 
-      do i=1,(2*nfourier+1) 
-        do j=1,nvesel 
-          if(i.eq.1) vecta(i,j)=1.0 
-          if(i.gt.1.and.i.le.(nfourier+1)) vecta(i,j)=costa(i,j) 
-          if(i.gt.(nfourier+1))  vecta(i,j)=sinta(i,j) 
-        enddo 
-      enddo 
+      if (abs(psibit(iabs(nslref))).le.1.0e-10_dp) then
+        coilmx=abs(silopt(jtime,1))
+        do i=2,nsilop 
+          abcoil=abs(silopt(jtime,i)) 
+          coilmx=max(abcoil,coilmx) 
+        enddo
+        fwtsi(iabs(nslref))=1.0/coilmx**nsq/serror**nsq*fwtref
       endif 
+!----------------------------------------------------------------------- 
+!--   Fourier expansion of vessel sgments                             -- 
+!----------------------------------------------------------------------- 
+      else !kersil.eq.2.or.kersil.eq.3
+      if (ifitvs.gt.0. .and. nfourier.gt.1) then
+        do i=1,nvesel 
+          if (rvs(i).ge.1.75_dp.and.zvs(i).ge.0.) & 
+            thetav(i)=dasin(zvs(i)/sqrt ((rvs(i)-1.75_dp)**2+(zvs(i))**2)) 
+          if (rvs(i).lt.1.75_dp.and.zvs(i).ge.0.) & 
+            thetav(i)=pi-dasin(zvs(i)/sqrt ((rvs(i)-1.75_dp)**2+(zvs(i))**2)) 
+          if (rvs(i).lt.1.75_dp.and.zvs(i).lt.0.) & 
+            thetav(i)=pi-dasin(zvs(i)/sqrt ((rvs(i)-1.75_dp)**2+(zvs(i))**2)) 
+          if (rvs(i).ge.1.75_dp.and.zvs(i).lt.0.) & 
+            thetav(i)=2*pi+dasin(zvs(i)/sqrt ((rvs(i)-1.75_dp)**2+(zvs(i))**2)) 
+          do j=1,nfourier 
+            sinta(j,i)=sin(thetav(i)*j) 
+            costa(j,i)=cos(thetav(i)*j) 
+          enddo 
+        enddo 
+        do i=1,(2*nfourier+1) 
+          do j=1,nvesel 
+            if (i.eq.1) vecta(i,j)=1.0 
+            if (i.gt.1.and.i.le.(nfourier+1)) vecta(i,j)=costa(i,j) 
+            if (i.gt.(nfourier+1)) vecta(i,j)=sinta(i,j) 
+          enddo 
+        enddo 
+      endif
 ! 
 !     if (brsptu(1).le.-1.e-20_dp) & 
 !        brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil) 
       if (brsptu(1).gt.-1.e-20_dp) & 
          brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil) 
       reflux=silopt(jtime,iabs(nslref)) 
-      do 330 m=1,nsilop 
+      do m=1,nsilop 
         tdata1=errsil*abs(silopt(jtime,m)-reflux) 
         tdata2=sicont*rsi(m)*abs(pasmat(jtime)) 
         tdata=max(tdata1,tdata2) 
@@ -1637,16 +1634,16 @@
         sigmafl0(m)=tdata 
         if (tdata.gt.1.0e-10_dp) fwtsi(m)=fwtsi(m)/tdata**nsq 
         if (tdata.le.1.0e-10_dp) fwtsi(m)=0.0 
-  330 continue 
+      enddo
 !---------------------------------------------------------------------- 
-!--  signal at psi loop #8 is set to zero and used as reference      -- 
+!--   signal at psi loop #8 is set to zero and used as reference     -- 
 !---------------------------------------------------------------------- 
-      if (kersil.ne.3) then 
-        fwtsi(iabs(nslref))=1.0/ersil8**nsq*fwtref 
+      if (kersil.ne.3) then
+        fwtsi(iabs(nslref))=1.0/ersil8**nsq*fwtref
+      else
 !---------------------------------------------------------------------- 
-!-- New option for reference flux loop uncertainty                   -- 
+!--     New option for reference flux loop uncertainty               -- 
 !---------------------------------------------------------------------- 
-      else 
         m=iabs(nslref) 
         tdata1=errsil*abs(silopt(jtime,m)) 
         tdata2=sicont*rsi(m)*abs(pasmat(jtime)) 
@@ -1661,25 +1658,25 @@
       endif 
 !SEK: ???      sigmafl0(m)=tdata 
 ! 
-  340 continue 
+      endif !kersil.eq.2.or.kersil.eq.3
       fwtref=fwtsi(iabs(nslref)) 
-      do 350 m=1,magpri 
+      do m=1,magpri 
         tdata1=serror*abs(expmpi(jtime,m)) 
         tdata2=abs(bitmpi(m))*vbit 
         tdata=max(tdata1,tdata2) 
         sigmamp0(m)=tdata 
         if (tdata.gt.1.0e-10_dp) fwtmp2(m)=fwtmp2(m)/tdata**nsq 
         if (tdata.le.1.0e-10_dp) fwtmp2(m)=0.0 
-  350 continue 
-      do 400 m=1,nstark 
+      enddo
+      do m=1,nstark 
         tdata=abs(siggam(jtime,m)) 
         if (tdata.gt.1.0e-10_dp) fwtgam(m)=fwtgam(m)/tdata**nsq 
         if (tdata.le.1.0e-10_dp) fwtgam(m)=0.0 
-  400 continue 
+      enddo
 ! 
       if (idebug >= 2) then 
-         write (6,*) 'DATA fwtbmselt = ',(fwtbmselt(jtime,i),i=1,nmsels) 
-         write (6,*) 'DATA sbmselt = ',(sbmselt(jtime,i),i=1,nmsels) 
+        write (6,*) 'DATA fwtbmselt = ',(fwtbmselt(jtime,i),i=1,nmsels) 
+        write (6,*) 'DATA sbmselt = ',(sbmselt(jtime,i),i=1,nmsels) 
       endif 
       do i=1,nmsels 
         tdata=abs(sbmselt(jtime,i)) 
@@ -1693,23 +1690,23 @@
       enddo 
       if (idebug >= 2) write (6,*) 'DATA fwtbmselt = ', (fwtbmselt(jtime,i),i=1,nmsels) 
 ! 
-      do 402 m=1,nfcoil 
+      do m=1,nfcoil 
         tdata1=serror*abs(fccurt(jtime,m)) 
         tdata2=abs(bitfc(m))*vbit 
         tdata=max(tdata1,tdata2) 
         sigmaf0(m)=tdata 
         if (tdata.gt.1.0e-10_dp) fwtfc(m)=fwtfc(m)/tdata**nsq 
         if (tdata.le.1.0e-10_dp) fwtfc(m)=0.0 
-  402 continue 
+      enddo
       if (iecurr.eq.2) then 
-      do m=1,nesum 
-        tdata1=serror*abs(ecurrt(m)) 
-        tdata2=abs(bitec(m))*vbit 
-        tdata=max(tdata1,tdata2) 
-        sigmae0(m)=tdata 
-        if (tdata.gt.1.0e-10_dp) fwtec(m)=fwtec(m)/tdata**nsq 
-        if (tdata.le.1.0e-10_dp) fwtec(m)=0.0 
-      enddo 
+        do m=1,nesum 
+          tdata1=serror*abs(ecurrt(m)) 
+          tdata2=abs(bitec(m))*vbit 
+          tdata=max(tdata1,tdata2) 
+          sigmae0(m)=tdata 
+          if (tdata.gt.1.0e-10_dp) fwtec(m)=fwtec(m)/tdata**nsq 
+          if (tdata.le.1.0e-10_dp) fwtec(m)=0.0 
+        enddo 
       endif 
       tdata1=serror*abs(pasmat(jtime)) 
       tdata2=abs(bitip)*vbit 
@@ -1718,7 +1715,7 @@
       if (tdata.gt.1.0e-10_dp) fwtcur=fwtcur/tdata**nsq 
       if (tdata.le.1.0e-10_dp) fwtcur=0.0 
 !---------------------------------------------------------------------- 
-!-- diamagetic flux                                                  -- 
+!--   diamagetic flux                                                -- 
 !---------------------------------------------------------------------- 
       tdata=abs(sigdia(jtime)) 
       if (tdata.gt.1.0e-10_dp) fwtdlc=fwtdlc/tdata**nsq 
@@ -1759,26 +1756,26 @@
       if (fbetap.gt.0.0) betap0=fbetap 
 ! 
       ipsi(jtime)=0 
-      do 420 i=1,nsilop 
+      do i=1,nsilop 
         if (fwtsi(i).gt.0.0) ipsi(jtime)=ipsi(jtime)+1 
-  420 continue 
+      enddo
       ifc(jtime)=0 
-      do 428 i=1,nfcoil 
+      do i=1,nfcoil 
         if (fwtfc(i).gt.0.0) ifc(jtime)=ifc(jtime)+1 
-  428 continue 
+      enddo
       iec(jtime)=0 
       do i=1,nesum 
         if (fwtec(i).gt.0.0) iec(jtime)=iec(jtime)+1 
       enddo 
       imag2(jtime)=0 
-      do 460 i=1,magpri 
+      do i=1,magpri 
         if (fwtmp2(i).gt.0.0) imag2(jtime)=imag2(jtime)+1 
-  460 continue 
+      enddo
       kmtark=0 
       klibim=0 
-      do 463 i=1,nmtark 
+      do i=1,nmtark 
         if (fwtgam(i).gt.0.0) kmtark=kmtark+1 
-  463 continue 
+      enddo
       do i=nmtark+1, nstark 
         if (fwtgam(i).gt.0.0) klibim=klibim+1 
       enddo 
@@ -1791,9 +1788,9 @@
         if (fwtemselt(jtime,i).gt.1.e-06_dp) mmemsels=mmemsels+1 
       enddo 
       if (jdebug.eq.'MSEL') then 
-         write (6,*) 'DATA mmbmsels = ', mmbmsels 
-         write (6,*) 'bmselt ',(bmselt(1,i),i=1,nmsels) 
-         write (6,*) 'iermselt ',(iermselt(1,i),i=1,nmsels) 
+        write (6,*) 'DATA mmbmsels = ', mmbmsels 
+        write (6,*) 'bmselt ',(bmselt(1,i),i=1,nmsels) 
+        write (6,*) 'iermselt ',(iermselt(1,i),i=1,nmsels) 
       endif 
 ! 
       iplasm(jtime)=0 
@@ -1802,20 +1799,20 @@
       if (fwtdlc.gt.0.0) idlopc(jtime)=1 
       cpasma(jtime)=pasmat(jtime) 
       if (iconvr.eq.3.and.ivesel.eq.1) then 
-        do 469 i=1,nvesel 
+        do i=1,nvesel 
           cpasma(jtime)=cpasma(jtime)-vcurrt(i) 
-  469   continue 
+        enddo
       endif 
-      do 500 n=1,nsilop 
+      do n=1,nsilop 
         csilop(n,jtime)=silopt(jtime,n) 
-  500 continue 
+      enddo
       itime=time(jtime) 
       timems=itime 
       timeus=(time(jtime)-timems)*1000. 
       timeus=timeus+0.4_dp 
       itimeu=timeus 
 !----------------------------------------------------------------------- 
-!-- correction for truncation                                         -- 
+!--   correction for truncation                                       -- 
 !----------------------------------------------------------------------- 
       if (itimeu.ge.990) then 
         itime=itime+1 
@@ -1823,20 +1820,20 @@
         time(jtime)=itime 
       endif 
       csiref=psiref(jtime) 
-      do 510 i=1,nesum 
+      do i=1,nesum 
         ecurrt(i)=eccurt(jtime,i) 
         cecurr(i)=ecurrt(i) 
-  510 continue 
- !     if (kdata.ne.2) then 
- !     if ((iecurr.le.0).or.(idodo.gt.0)) go to 520 
- !     open(unit=nrsppc,status='old',form='unformatted', & 
- !          file=table_dir(1:ltbdir)//'re'//trim(ch1)//trim(ch2)//'.ddd') 
- !     read (nrsppc) rsilec 
- !     read (nrsppc) rmp2ec 
- !     read (nrsppc) gridec 
- !     close(unit=nrsppc) 
- !     idodo=1 
- ! 520 continue 
+      enddo
+!      if (kdata.ne.2) then 
+!      if ((iecurr.le.0).or.(idodo.gt.0)) go to 520 
+!      open(unit=nrsppc,status='old',form='unformatted', & 
+!           file=table_dir(1:ltbdir)//'re'//trim(ch1)//trim(ch2)//'.ddd') 
+!      read (nrsppc) rsilec 
+!      read (nrsppc) rmp2ec 
+!      read (nrsppc) gridec 
+!      close(unit=nrsppc) 
+!      idodo=1 
+! 520  continue 
 ! 
 !      if ((ivesel.le.0).or.(idovs.gt.0)) go to 525 
 !      open(unit=nrsppc,status='old',form='unformatted', & 
@@ -1853,17 +1850,17 @@
 !      close(unit=nffile) 
 !      endif 
 ! 
-      do 522 i=1,nfcoil 
+      do i=1,nfcoil 
         if (rsisfc(i).le.-1.0) & 
         rsisfc(i)=turnfc(i)**2*twopi*rf(i)/wf(i)/hf(i)*zetafc 
-  522 continue 
-  525 continue 
+      enddo
+!  525 continue 
 !----------------------------------------------------------------------- 
-!-- read in the advance divertor coil response functions if needed    -- 
+!--   read in the advance divertor coil response functions if needed  -- 
 !----------------------------------------------------------------------- 
       if ((iacoil.gt.0).and.(idoac.eq.0)) then 
         open(unit=nrsppc,status='old',form='unformatted', & 
-             file=table_di2(1:ltbdi2)//'ra'//trim(ch1)//trim(ch2)//'.ddd') 
+           file=table_di2(1:ltbdi2)//'ra'//trim(ch1)//trim(ch2)//'.ddd')
         read (nrsppc) gridac 
         read (nrsppc) rsilac 
         read (nrsppc) rmp2ac 
@@ -1871,50 +1868,50 @@
         idoac=1 
       endif 
 !-------------------------------------------------------------------- 
-!--  optional vertical feedback                                    -- 
+!--   optional vertical feedback                                  -- 
 !-------------------------------------------------------------------- 
       if (isetfb.ne.0.and.idofb.le.0) then 
         open(unit=mcontr,status='old',form='unformatted', & 
-             file=table_di2(1:ltbdi2)//'ef'//trim(ch1)//trim(ch2)//'.ddd') 
+           file=table_di2(1:ltbdi2)//'ef'//trim(ch1)//trim(ch2)//'.ddd')
         read (mcontr) mw,mh 
         read (mcontr) rgrid,zgrid 
         read (mcontr) grdfdb 
 !       read (mcontr) grddum 
         close(unit=mcontr) 
 !--------------------------------------------------------------------- 
-!--   DO DOUBLE PRECISION SUM OF GRDFDB IN M=1 CONFIGURATION        -- 
+!--     DO DOUBLE PRECISION SUM OF GRDFDB IN M=1 CONFIGURATION      -- 
 !--------------------------------------------------------------------- 
-        do i=1,nw 
-        do j=1,nh 
-          kk=(i-1)*nh+j 
-          gsum=0 
-          do mmf=1,nfbcoil/2 
-            gsum=gsum+grdfdb(kk,mmf) 
-            gsum=gsum-grdfdb(kk,mmf+nfbcoil/2) 
+        do i=1,nw
+          do j=1,nh
+            kk=(i-1)*nh+j 
+            gsum=0 
+            do mmf=1,nfbcoil/2 
+              gsum=gsum+grdfdb(kk,mmf) 
+              gsum=gsum-grdfdb(kk,mmf+nfbcoil/2) 
+            enddo
+            grdfdb(kk,1)=gsum 
           enddo
-          grdfdb(kk,1)=gsum 
-        enddo
         enddo
         idofb=1 
       endif 
 !--------------------------------------------------------------------- 
-!--  polarimetry ?                                                  -- 
+!--   polarimetry ?                                                 -- 
 !--------------------------------------------------------------------- 
       if (kstark.gt.0.or.kdomse.gt.0) then 
-         call setstark(jtime) 
+        call setstark(jtime) 
       endif 
       if (kdomse.gt.0.and.keecur.gt.0) then 
         do i=1,keecur 
-         if (keefnc.le.2) then 
-          cerer(i)=eebdry(i) 
-         elseif (keefnc.eq.6) then 
-          cerer(2*i-1)=eebdry(i) 
-          cerer(2*i)=ee2bdry(i) 
-         endif 
+          if (keefnc.le.2) then 
+            cerer(i)=eebdry(i) 
+          elseif (keefnc.eq.6) then 
+            cerer(2*i-1)=eebdry(i) 
+            cerer(2*i)=ee2bdry(i) 
+          endif 
         enddo 
       endif 
 !--------------------------------------------------------------------- 
-!--  ECE --set kece, kecebz=0 before call setece                    -- 
+!--   ECE --set kece, kecebz=0 before call setece                   -- 
 !--------------------------------------------------------------------- 
       kece=0 
       kecebz=0 
@@ -1924,55 +1921,54 @@
         sigrid(i)=1./real(nw-1,dp)*(i-1) 
       enddo
 !-------------------------------------------------------------------- 
-!-- kinputece=1, get Te, fe, error array from ECE data routine 
+!--   kinputece=1, get Te, fe, error array from ECE data routine 
 !--     hecedata.for with get_hece.for,fftabl.11,fts.pst( copy from 
 !--     /u/austin/efit/hecefit/     (MAX AUSTIN)) 
 !--     necein,teecein0(necein),feece0(necein),errorece0(necein) 
 !--     fe(GHz), Te(Kev) 
-!--( when kinputece>1,data from K-file ) 
+!--   ( when kinputece>1,data from K-file ) 
 !--    (data order: from low field to high field) 
 !--   change data order :( from high field to low field) 
 !-------------------------------------------------------------------- 
       do k=1,necein 
-         kk=necein-k+1 
-         if (kfitece.eq.3) kk = k 
-         feece(kk)=feece0(k) 
-         teecein(kk)=teecein0(k) 
-         errorece(kk)=errorece0(k) 
+        kk=necein-k+1 
+        if (kfitece.eq.3) kk = k 
+        feece(kk)=feece0(k) 
+        teecein(kk)=teecein0(k) 
+        errorece(kk)=errorece0(k) 
       enddo 
 !--------------------------------------------------------------------- 
-!--  toroidal rotation ? Then set up geometric parameters           -- 
+!--   toroidal rotation ? Then set up geometric parameters          -- 
 !--------------------------------------------------------------------- 
       if (kvtor.gt.0) then 
         do i=1,nw 
-         rgrvt(i)=(rgrid(i)/rvtor)**2 
-         rgrvt(i)=rgrvt(i)-1. 
-         rgsvt(i)=rgrid(i)*rgrvt(i) 
+          rgrvt(i)=(rgrid(i)/rvtor)**2 
+          rgrvt(i)=rgrvt(i)-1. 
+          rgsvt(i)=rgrid(i)*rgrvt(i) 
         enddo 
       endif 
 !---------------------------------------------------------------------- 
-!-- make filement Green's tables only                                -- 
+!--   make filement Green's tables only                              -- 
 !---------------------------------------------------------------------- 
-      if (iconvr.ge.0) go to 990 
-      if (iconvr.le.-20) go to 700 
+      if ((iconvr.lt.0).and.(iconvr.gt.-20)) then
       mx=iabs(iconvr) 
       do k=1,mx 
         if (aelip.le.0.0) then 
-        i=irfila(k) 
-        j=jzfila(k) 
+          i=irfila(k) 
+          j=jzfila(k) 
         else 
-        th=twopi*(k-1)/real(mx,dp) 
-        rmx(k)=relip-aelip*cos(th) 
-        zmx(k)=zelip+eelip*aelip*sin(th) 
-        ix=1 
-        if (k.gt.(mx/2+1)) ix=2 
-        i=(rmx(k)-rgrid(1))/drgrid+1 
-        j=(zmx(k)-zgrid(1))/dzgrid+ix 
-        zdif=zmx(k)-zgrid(j) 
-        if (abs(zdif).gt.0.6_dp*dzgrid) then 
-          if (zdif.gt.0.0) j=j+1 
-          if (zdif.lt.0.0) j=j-1 
-        endif 
+          th=twopi*(k-1)/real(mx,dp) 
+          rmx(k)=relip-aelip*cos(th) 
+          zmx(k)=zelip+eelip*aelip*sin(th) 
+          ix=1 
+          if (k.gt.(mx/2+1)) ix=2 
+          i=(rmx(k)-rgrid(1))/drgrid+1 
+          j=(zmx(k)-zgrid(1))/dzgrid+ix 
+          zdif=zmx(k)-zgrid(j) 
+          if (abs(zdif).gt.0.6_dp*dzgrid) then 
+            if (zdif.gt.0.0) j=j+1 
+            if (zdif.lt.0.0) j=j-1 
+          endif 
         endif 
         irfila(k)=i 
         jzfila(k)=j 
@@ -1986,20 +1982,19 @@
           rmp2pf(m,k)=gmp2pc(m,kk) 
         enddo
         do ii=1,nw 
-        do jj=1,nh 
-          kkkk=(ii-1)*nh+jj 
-          mj=iabs(j-jj)+1 
-          mk=(i-1)*nh+mj 
-          gridpf(kkkk,k)=gridpc(mk,ii) 
-        enddo
+          do jj=1,nh 
+            kkkk=(ii-1)*nh+jj 
+            mj=iabs(j-jj)+1 
+            mk=(i-1)*nh+mj 
+            gridpf(kkkk,k)=gridpc(mk,ii) 
+          enddo
         enddo
       enddo
       mw=nw 
       mh=nh 
       open(unit=nffile,status='old',form='unformatted', & 
-           file='rpfxx.dat',err=12925) 
-      close(unit=nffile,status='delete') 
-12925 continue 
+           file='rpfxx.dat',iostat=ioerr)
+      if (ioerr.eq.0) close(unit=nffile,status='delete')
       open(unit=nffile,status='new',form='unformatted', & 
            file='rpfxx.dat') 
       write (nffile) mx,rmx,zmx 
@@ -2010,9 +2005,8 @@
       close(unit=nffile) 
       write (nttyo,6550) (irfila(i),i=1,mx) 
       write (nttyo,6555) (jzfila(i),i=1,mx) 
-      go to 2000 
 ! 
-  700 continue 
+      elseif (iconvr.le.-20) then
       if (aelip.gt.0.0) then 
         do i=1,nw 
           do j=1,nh 
@@ -2021,7 +2015,6 @@
             xpsi(kk)=(erho/aelip)**2 
           enddo
         enddo
-      else 
       endif 
       do m=1,nsilop 
         wsilpc(m)=0.0 
@@ -2045,42 +2038,42 @@
       npc=0 
 ! 
       open(unit=nffile,status='old',form='unformatted', & 
-               file=table_di2(1:ltbdi2)//'fc'//trim(ch1)//trim(ch2)//'.ddd') 
+           file=table_di2(1:ltbdi2)//'fc'//trim(ch1)//trim(ch2)//'.ddd')
       read (nffile) rfcfc 
       read (nffile) rfcpc 
       close(unit=nffile) 
 ! 
       do i=1,nw 
-      do j=1,nh 
-        kk=(i-1)*nh+j 
-        if (xpsi(kk).lt.0.0.or.xpsi(kk).gt.1.0) cycle
-        npc=npc+1 
-        do m=1,nsilop 
-          wsilpc(m)=wsilpc(m)+gsilpc(m,kk) 
+        do j=1,nh 
+          kk=(i-1)*nh+j 
+          if (xpsi(kk).lt.0.0.or.xpsi(kk).gt.1.0) cycle
+          npc=npc+1 
+          do m=1,nsilop 
+            wsilpc(m)=wsilpc(m)+gsilpc(m,kk) 
+          enddo
+          do m=1,magpri 
+            wmp2pc(m)=wmp2pc(m)+gmp2pc(m,kk) 
+          enddo
+          do m=1,nfcoil 
+            wfcpc(m)=wfcpc(m)+rfcpc(m,kk) 
+          enddo
+          do m=1,nesum 
+            wecpc(m)=wecpc(m)+gridec(kk,m) 
+          enddo
+          do m=1,nvesel 
+            wvspc(m)=wvspc(m)+gridvs(kk,m) 
+          enddo
+          do ii=1,nw 
+            do jj=1,nh 
+              kkkk=(ii-1)*nh+jj 
+              mj=iabs(j-jj)+1 
+              mk=(i-1)*nh+mj 
+              wgridpc(kkkk)=wgridpc(kkkk)+gridpc(mk,ii) 
+              if (xpsi(kkkk).lt.0.0.or.xpsi(kkkk).gt.1.0) cycle
+              wpcpc=wpcpc+gridpc(mk,ii) 
+            enddo
+          enddo
         enddo
-        do m=1,magpri 
-          wmp2pc(m)=wmp2pc(m)+gmp2pc(m,kk) 
-        enddo
-        do m=1,nfcoil 
-          wfcpc(m)=wfcpc(m)+rfcpc(m,kk) 
-        enddo
-        do m=1,nesum 
-          wecpc(m)=wecpc(m)+gridec(kk,m) 
-        enddo
-        do m=1,nvesel 
-           wvspc(m)=wvspc(m)+gridvs(kk,m) 
-        enddo
-        do ii=1,nw 
-        do jj=1,nh 
-          kkkk=(ii-1)*nh+jj 
-          mj=iabs(j-jj)+1 
-          mk=(i-1)*nh+mj 
-          wgridpc(kkkk)=wgridpc(kkkk)+gridpc(mk,ii) 
-          if (xpsi(kkkk).lt.0.0.or.xpsi(kkkk).gt.1.0) cycle
-          wpcpc=wpcpc+gridpc(mk,ii) 
-        enddo
-        enddo
-      enddo
       enddo
       xnpc=real(npc,dp) 
       do m=1,nsilop 
@@ -2104,9 +2097,8 @@
       wpcpc=wpcpc/xnpc**2 
 ! 
       open(unit=nffile,status='old',form='unformatted', & 
-           file='rpcxx.dat',err=12926) 
-      close(unit=nffile,status='delete') 
-12926 continue 
+           file='rpcxx.dat',iostat=ioerr)
+      if (ioerr.eq.0) close(unit=nffile,status='delete')
       open(unit=nffile,status='new',form='unformatted', & 
            file='rpcxx.dat') 
       write (nffile) wsilpc 
@@ -2120,116 +2112,115 @@
       write (nffile) relip,zelip,aelip,eelip 
       close(unit=nffile) 
       write (nttyo,6557) npc 
-      go to 2000 
 ! 
-  990 continue 
+      else ! iconvr.ge.0
       if (ivesel.gt.0) call vescur(jtime) 
-      if (nbdry.le.0) go to 2000 
-      if (islve.le.0) go to 1180 
+      if (nbdry.gt.0) then
+      if (islve.gt.0) then
 !------------------------------------------------------------------------------ 
-!--  Solve equilibrium                                                      -- 
+!--     Solve equilibrium                                                    -- 
 !------------------------------------------------------------------------------ 
-      icurrt=1 
-      iecurr=0 
-      iconvr=3 
-      itrace=0 
-      ierchk=0 
-      nextra=0 
-      ssrm=srm 
-      srm=abs(srm) 
-      seee=1./srm/sqrt(salpha) 
-      rbetaw=0.0 
+        icurrt=1 
+        iecurr=0 
+        iconvr=3 
+        itrace=0 
+        ierchk=0 
+        nextra=0 
+        ssrm=srm 
+        srm=abs(srm) 
+        seee=1./srm/sqrt(salpha) 
+        rbetaw=0.0 
+        if (kvtor.le.0) then 
 !--------------------------------------------------------------------- 
-!-- no rotation                                                     -- 
+!--       no rotation                                               -- 
 !--------------------------------------------------------------------- 
-      if (kvtor.le.0) then 
-        scc1=sqrt(2./sbeta)/srm**2 
-        if (ssrm.lt.0.0) saaa=xlmint/srm/sqrt(1.-2.*scc1) 
-        if (ssrm.gt.0.0) saaa=xlmax/srm/sqrt(1.+2.*scc1) 
-        srma=srm*saaa 
-        dth=twopi/real(nbdry,dp) 
-        do i=1,nbdry 
-          th=(i-1)*dth 
-          rbdry(i)=srma*sqrt(1.-2.*scc1*cos(th)) 
-          zbdry(i)=sin(th) 
-          zbdry(i)=saaa*zbdry(i)*seee 
-        enddo
-      else 
+          scc1=sqrt(2./sbeta)/srm**2 
+          if (ssrm.lt.0.0) saaa=xlmint/srm/sqrt(1.-2.*scc1) 
+          if (ssrm.gt.0.0) saaa=xlmax/srm/sqrt(1.+2.*scc1) 
+          srma=srm*saaa 
+          dth=twopi/real(nbdry,dp) 
+          do i=1,nbdry 
+            th=(i-1)*dth 
+            rbdry(i)=srma*sqrt(1.-2.*scc1*cos(th)) 
+            zbdry(i)=sin(th) 
+            zbdry(i)=saaa*zbdry(i)*seee 
+          enddo
+        else 
 !---------------------------------------------------------------------- 
-!--  toroidal rotation                                               -- 
+!--       toroidal rotation                                          -- 
 !---------------------------------------------------------------------- 
-        saaa=0.50_dp 
-        do i=1,nw 
-          rgrids(i)=rgrid(i)/saaa 
-        enddo 
-        do i=1,nh 
-          zgrids(i)=zgrid(i)/saaa 
-        enddo 
-        do i=1,nw 
-          xrm2=(rgrids(i)-srm)*(rgrids(i)+srm) 
-          xrm2=xrm2*xrm2 
-          xrvt=(rgrids(i)/srm)**2-1. 
-          do j=1,nh 
-            kk=(i-1)*nh+j 
-            psi(kk)=sbeta/8.*xrm2+(zgrids(j)/seee)**2 & 
-                    +sbetaw/24.*xrm2*xrvt 
+          saaa=0.50_dp 
+          do i=1,nw 
+            rgrids(i)=rgrid(i)/saaa 
           enddo 
-        enddo 
-        siwant=1.0 
-        drgrids=rgrids(2)-rgrids(1) 
-        dzgrids=zgrids(2)-zgrids(1) 
-        xmin=rgrids(3) 
-        xmax=rgrids(nw-2) 
-        ymin=zgrids(3) 
-        ymax=zgrids(nh-2) 
-        npack=1 
-        rnow=0.5_dp*(rgrids(1)+rgrids(nw)) 
-        znow=0.0 
-        call surfac(siwant,psi,nw,nh,rgrids,zgrids,xout,yout,nfound, & 
-                    npoint,drgrids,dzgrids,xmin,xmax,ymin,ymax,npack, & 
-                    rnow,znow,negcur,kerror) 
-        if (kerror.gt.0) return 
-        xmin=xout(1) 
-        xmax=xmin 
-        do i=2,nfound 
-          if (xout(i).lt.xmin) xmin=xout(i) 
-          if (xout(i).gt.xmax) xmax=xout(i) 
-        enddo 
-        if (ssrm.lt.0.0) saaa=xlmint/xmin 
-        if (ssrm.gt.0.0) saaa=xlmax/xmax 
-        nskip=nfound/mbdry+1 
-        j=0 
-        do i=1,nfound,nskip 
-          j=j+1 
-          rbdry(j)=xout(i)*saaa 
-          zbdry(j)=yout(i)*saaa 
-        enddo 
-        nbdry=j 
-        srma=srm*saaa 
-        rvtor=srma 
-        rbetaw=sbetaw/sbeta 
-      endif 
- 1180 continue 
+          do i=1,nh 
+            zgrids(i)=zgrid(i)/saaa 
+          enddo 
+          do i=1,nw 
+            xrm2=(rgrids(i)-srm)*(rgrids(i)+srm) 
+            xrm2=xrm2*xrm2 
+            xrvt=(rgrids(i)/srm)**2-1. 
+            do j=1,nh 
+              kk=(i-1)*nh+j 
+              psi(kk)=sbeta/8.*xrm2+(zgrids(j)/seee)**2 & 
+                      +sbetaw/24.*xrm2*xrvt 
+            enddo 
+          enddo 
+          siwant=1.0 
+          drgrids=rgrids(2)-rgrids(1) 
+          dzgrids=zgrids(2)-zgrids(1) 
+          xmin=rgrids(3) 
+          xmax=rgrids(nw-2) 
+          ymin=zgrids(3) 
+          ymax=zgrids(nh-2) 
+          npack=1 
+          rnow=0.5_dp*(rgrids(1)+rgrids(nw)) 
+          znow=0.0 
+          call surfac(siwant,psi,nw,nh,rgrids,zgrids,xout,yout,nfound, & 
+                      npoint,drgrids,dzgrids,xmin,xmax,ymin,ymax,npack, & 
+                      rnow,znow,negcur,kerror) 
+          if (kerror.gt.0) return 
+          xmin=xout(1) 
+          xmax=xmin 
+          do i=2,nfound 
+            if (xout(i).lt.xmin) xmin=xout(i) 
+            if (xout(i).gt.xmax) xmax=xout(i) 
+          enddo 
+          if (ssrm.lt.0.0) saaa=xlmint/xmin 
+          if (ssrm.gt.0.0) saaa=xlmax/xmax 
+          nskip=nfound/mbdry+1 
+          j=0 
+          do i=1,nfound,nskip 
+            j=j+1 
+            rbdry(j)=xout(i)*saaa 
+            zbdry(j)=yout(i)*saaa 
+          enddo 
+          nbdry=j 
+          srma=srm*saaa 
+          rvtor=srma 
+          rbetaw=sbetaw/sbeta 
+        endif 
+      endif
 !----------------------------------------------------------------------------- 
 !--   set up plasma response                                                -- 
 !----------------------------------------------------------------------------- 
       do m=1,nbdry 
         do i=1,nw 
-        rdif=rbdry(m)-rgrid(i) 
-        do j=1,nh 
-          k=(i-1)*nh+j 
-          zdif=zbdry(m)-zgrid(j) 
-          rsum=rdif**2+zdif**2 
-          if (rsum.gt.dselsum) then
-             rbdrpc(m,k)=psical(rbdry(m),rgrid(i),zdif)*tmu 
-          else
-!          mk=(i-1)*nh+1 
-!          rbdrpc(m,k)=gridpc(mk,i) 
-            zdif=dselsum 
-            rselsum=rgrid(i)-dselsum 
-            rbdrpc(m,k)=psical(rbdry(m),rselsum,zdif)*tmu 
-          endif
-        enddo
+          rdif=rbdry(m)-rgrid(i) 
+          do j=1,nh 
+            k=(i-1)*nh+j 
+            zdif=zbdry(m)-zgrid(j) 
+            rsum=rdif**2+zdif**2 
+            if (rsum.gt.dselsum) then
+              rbdrpc(m,k)=psical(rbdry(m),rgrid(i),zdif)*tmu 
+            else
+!              mk=(i-1)*nh+1 
+!              rbdrpc(m,k)=gridpc(mk,i) 
+              zdif=dselsum 
+              rselsum=rgrid(i)-dselsum 
+              rbdrpc(m,k)=psical(rbdry(m),rselsum,zdif)*tmu 
+            endif
+          enddo
         enddo
       enddo
 !----------------------------------------------------------------------------- 
@@ -2244,8 +2235,8 @@
               zdif=zsol(m)-zgrid(j) 
               rsum=rdif**2+zdif**2 
               if (rsum.le.dselsum) then 
-!                mk=(i-1)*nh+1 
-!                rsolpc(m,k)=gridpc(mk,i) 
+!                 mk=(i-1)*nh+1 
+!                 rsolpc(m,k)=gridpc(mk,i) 
                  zdif=dselsum 
                  rselsum=rgrid(i)-dselsum 
                  rsolpc(m,k)=psical(rsol(m),rselsum,zdif)*tmu 
@@ -2257,7 +2248,7 @@
         enddo 
       endif 
 !----------------------------------------------------------------------- 
-!--  set up parameters for fixed boundary calculations                -- 
+!--   set up parameters for fixed boundary calculations               -- 
 !----------------------------------------------------------------------- 
       if (ifref.eq.-1) ifref=1 
       if (nbdry.gt.1) then 
@@ -2265,44 +2256,44 @@
         dely2=(zbdry(1)-zbdry(nbdry))**2 
         if ((delx2+dely2).le.1.0e-08_dp) nbdry=nbdry-1 
       endif 
-      if (nbdry.lt.10) go to 1210 
-      xmin=rbdry(1) 
-      xmax=xmin 
-      ymin=zbdry(1) 
-      ymax=ymin 
-      do i=2,nbdry 
-        xmin=min(xmin,rbdry(i)) 
-        xmax=max(xmax,rbdry(i)) 
-        ymin=min(ymin,zbdry(i)) 
-        ymax=max(ymax,zbdry(i)) 
-      enddo
-      relip=(xmin+xmax)/2. 
-      zelip=(ymin+ymax)/2. 
-      aelip=(xmax-xmin)/2. 
-      eelip=(ymax-ymin)/(xmax-xmin) 
- 1210 continue 
+      if (nbdry.ge.10) then
+        xmin=rbdry(1) 
+        xmax=xmin 
+        ymin=zbdry(1) 
+        ymax=ymin 
+        do i=2,nbdry 
+          xmin=min(xmin,rbdry(i)) 
+          xmax=max(xmax,rbdry(i)) 
+          ymin=min(ymin,zbdry(i)) 
+          ymax=max(ymax,zbdry(i)) 
+        enddo
+        relip=(xmin+xmax)/2. 
+        zelip=(ymin+ymax)/2. 
+        aelip=(xmax-xmin)/2. 
+        eelip=(ymax-ymin)/(xmax-xmin) 
+      endif
       if (cfcoil.lt.0.) cfcoil=100./pasmat(jtime)*abs(cfcoil) 
       if (cupdown.lt.0.) cupdown=100./pasmat(jtime)*abs(cupdown) 
 !----------------------------------------------------------------------- 
-!--  symmetrize  F coil responses if needed                           -- 
+!--   symmetrize  F coil responses if needed                          -- 
 !----------------------------------------------------------------------- 
       if ((symmetrize).and.(nbdry.gt.1)) then 
         do i=1,nw 
-         do j=1,nh 
-          kkl=(i-1)*nh+j 
-          kku=i*nh-j+1 
-          do m=nfcoil/2+1,nfcoil 
-            gridfc(kkl,m)=gridfc(kku,m-nfcoil/2) 
+          do j=1,nh 
+            kkl=(i-1)*nh+j 
+            kku=i*nh-j+1 
+            do m=nfcoil/2+1,nfcoil 
+              gridfc(kkl,m)=gridfc(kku,m-nfcoil/2) 
+            enddo 
           enddo 
-         enddo 
         enddo 
       endif 
 !----------------------------------------------------------------------- 
-!--  interpolate to get boundary response functions, first F coils    -- 
+!--   interpolate to get boundary response functions, first F coils   -- 
 !----------------------------------------------------------------------- 
-      do n=1,nfcoil 
-      call sets2d(gridfc(1,n),c,rgrid,nw,bkx,lkx,zgrid,nh,bky, & 
-                       lky,wk,ier) 
+      do n=1,nfcoil
+        call sets2d(gridfc(1,n),c,rgrid,nw,bkx,lkx,zgrid,nh,bky, & 
+                    lky,wk,ier) 
         do i=1,nbdry 
           call seva2d(bkx,lkx,bky,lky,c,rbdry(i),zbdry(i),pds,ier,n111) 
           rbdrfc(i,n)=pds(1) 
@@ -2315,64 +2306,67 @@
         endif 
       enddo
 !---------------------------------------------------------------------- 
-!--  make sure interpolations are symmetrized                        -- 
+!--   make sure interpolations are symmetrized                       -- 
 !---------------------------------------------------------------------- 
       if ((symmetrize).and.(nbdry.gt.1)) then 
         do i=1,nbryup 
-        if (ilower(i).ne.-1) then 
-        do j=nfcoil/2 +1, nfcoil 
-           jupper=j-nfcoil/2 
-           rbdrfc(i,j)=rbdrfc(ilower(i),jupper) 
-           rbdrfc(ilower(i),j)=rbdrfc(i,jupper) 
-        enddo 
-        endif 
+          if (ilower(i).ne.-1) then 
+            do j=nfcoil/2 +1, nfcoil 
+              jupper=j-nfcoil/2 
+              rbdrfc(i,j)=rbdrfc(ilower(i),jupper) 
+              rbdrfc(ilower(i),j)=rbdrfc(i,jupper) 
+            enddo 
+          endif 
         enddo 
       endif 
 !----------------------------------------------------------------------- 
-!--  advance divertor coil                                            -- 
+!--   advance divertor coil                                           -- 
 !----------------------------------------------------------------------- 
       if (iacoil.gt. 0) then 
-      do n=1,nacoil 
-      call sets2d(gridac(1,n),c,rgrid,nw,bkx,lkx,zgrid,nh,bky, & 
-                       lky,wk,ier) 
-        do i=1,nbdry 
-          call seva2d(bkx,lkx,bky,lky,c,rbdry(i),zbdry(i),pds,ier,n111) 
-          rbdrac(i,n)=pds(1) 
+        do n=1,nacoil 
+        call sets2d(gridac(1,n),c,rgrid,nw,bkx,lkx,zgrid,nh,bky, & 
+                    lky,wk,ier) 
+          do i=1,nbdry 
+            call seva2d(bkx,lkx,bky,lky,c,rbdry(i),zbdry(i),pds,ier,n111) 
+            rbdrac(i,n)=pds(1) 
+          enddo
         enddo
-      enddo
       endif 
 !----------------------------------------------------------------------- 
-!-- Ohmic coils                                                       -- 
+!--   Ohmic coils                                                     -- 
 !----------------------------------------------------------------------- 
-      if (iecurr.le.0) go to 1710 
-      do 1700 n=1,nesum 
-      call sets2d(gridec(1,n),c,rgrid,nw,bkx,lkx,zgrid,nh,bky, & 
-                       lky,wk,ier) 
-        do 1650 i=1,nbdry 
-        call seva2d(bkx,lkx,bky,lky,c,rbdry(i),zbdry(i),pds,ier,n111) 
-        rbdrec(i,n)=pds(1) 
- 1650   continue 
-        if (nsol.gt.0) then 
-          do i=1,nsol 
-            call seva2d(bkx,lkx,bky,lky,c,rsol(i),zsol(i),pds,ier,n111) 
-            rsolec(i,n)=pds(1) 
-          enddo 
-        endif 
- 1700 continue 
+      if (iecurr.gt.0) then
+        do n=1,nesum 
+          call sets2d(gridec(1,n),c,rgrid,nw,bkx,lkx,zgrid,nh,bky, & 
+                    lky,wk,ier) 
+          do i=1,nbdry 
+            call seva2d(bkx,lkx,bky,lky,c,rbdry(i),zbdry(i),pds,ier,n111) 
+            rbdrec(i,n)=pds(1) 
+          enddo
+          if (nsol.gt.0) then 
+            do i=1,nsol 
+              call seva2d(bkx,lkx,bky,lky,c,rsol(i),zsol(i),pds,ier,n111) 
+              rsolec(i,n)=pds(1) 
+            enddo 
+          endif 
+        enddo
+      endif
 !----------------------------------------------------------------------- 
-!-- now vessel                                                        -- 
+!--   now vessel                                                      -- 
 !----------------------------------------------------------------------- 
- 1710 if (ivesel.le.0) go to 2000 
-      do 1800 n=1,nvesel 
-      call sets2d(gridvs(1,n),c,rgrid,nw,bkx,lkx,zgrid,nh,bky, & 
-                       lky,wk,ier) 
-        do 1750 i=1,nbdry 
-        call seva2d(bkx,lkx,bky,lky,c,rbdry(i),zbdry(i),pds,ier,n111) 
-        rbdrvs(i,n)=pds(1) 
- 1750   continue 
- 1800 continue 
+      if (ivesel.gt.0) then
+        do n=1,nvesel 
+          call sets2d(gridvs(1,n),c,rgrid,nw,bkx,lkx,zgrid,nh,bky, & 
+                      lky,wk,ier) 
+          do i=1,nbdry 
+            call seva2d(bkx,lkx,bky,lky,c,rbdry(i),zbdry(i),pds,ier,n111) 
+            rbdrvs(i,n)=pds(1) 
+          enddo
+        enddo
+      endif
 ! 
- 2000 continue 
+      endif ! nbgry.gt.0 
+      endif ! iconvr.ge.0
 ! 
       DEALLOCATE(rgrids,zgrids,gridpf,gwork) 
 ! 

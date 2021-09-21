@@ -15,8 +15,6 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
       integer ef_init_cycred_data
       real*8 u0, cosdii, sindi, denom, dr, dumy, dumy1
       real*8 dzsq, dz, dzdrsq, dzdr
@@ -193,8 +191,6 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
       dimension f(*)
 
       constant=0.5_dp
@@ -303,7 +299,6 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
       dimension psigrid(*),sia(*)
       integer initresult, ef_init_cycred_data
 
@@ -443,7 +438,6 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
       dimension f(n)
 
       v(1)=(wk2(1)+alphab(index)*phi(1))* &
@@ -496,7 +490,6 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
       dimension f(n)
  
       v(1)=(f(1)+alphab(index)*phi(1))* &

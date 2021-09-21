@@ -5,13 +5,12 @@
 !!
 !**********************************************************************
       block data exp_bdata
-      use commonblocks,only: byringr,byringz
+      ! not used here
+!      use commonblocks,only: byringr,byringz
       include 'eparm.inc'
 !vas      include 'modules2.inc' !to avoid the clash with allocat..
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
 !
 !      common/adp/byringr(nh2),byringz(nh2),ringr(6),ringz(6),ringap
       common/adp/ringr(6),ringz(6),ringap

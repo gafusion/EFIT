@@ -1,6 +1,9 @@
 Installation
 ============
 
+An editable tutorial document describing the installation process can be found at:
+https://docs.google.com/document/d/1S8nYPoQVrPGiOJK7EuyNVBG61W51oXVofmNpmNoQo20
+
 Public Installations
 --------------------
 
@@ -9,18 +12,17 @@ and nersc cori supercomputer
 
 iris (some installs are pending)::
 
-    module purge
-    module load env/gcc9.2
+    module switch gcc-4.7.2 gcc-9.2.0
     module load {intel/2018, pfg/18.7}
     module load {mpich/3.2-gcc9.2.0, mpich/3.2-intel2018, mpich/3.2-pgf18.7}
     export link_efit=/fusion/projects/codes/efit/efitai/efit_support_files/{device}/
-    /fusion/projects/codes/efit/efitai/efit/build_{compiler}/efit/efit {grid_size}
+    /fusion/projects/codes/efit/efitai/efit/build_{gnu,intel,pgi}/efit/efit {grid_size}
 
 cori (intallation is pending ERCAP setup)::
 
-    module switch PrgEnv-gnu PrgEnv-{compiler}
+    module switch PrgEnv-gnu PrgEnv-{gnu,intel,cray}
     export link_efit=/global/common/software/efitai/efit_support_files/{device}/
-    /global/common/software/efitai/efit/build_{compiler}/efit/efit {grid_size}
+    /global/common/software/efitai/efit/build_{gnu,intel,cray}/efit/efit {grid_size}
 
 portal::
 
@@ -44,7 +46,6 @@ all other third-party libraries and simply build with::
     cd build
     cmake ..
     make 
-    make test
 
 This will work on Ubuntu (18.04 and 20.04) as long as the following
 packages have been installed (call apt-get to install)::
@@ -114,13 +115,16 @@ They can be used to install with the following commands::
     mkdir build
     cd build
     ../share/config_examples/config_{machine}_{compiler}.sh
-    make 
-    make test
+    make
 
 If you are trying to build for the first time on a different supercomputer or with a
 different compiler, the best starting point is to change environment library paths from an 
 existing configure script (e.g. try the most similar or iris_gnu.sh first) to match what
 is available.  If you run into problems, contact a developer.
 
+To ensure your build was successful, it is recommended that you run the included tests.
+See RUN.rst for more info.
+
 Once you have successfully built on a different system/compiler, please add your working
 script to the collection to aid future users.
+

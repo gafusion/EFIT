@@ -1922,8 +1922,6 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
-!      include 'ecomdu2.f90'
 !
       dimension sigmafx(1),sigmabx(1)
       dimension sigmaex(1)

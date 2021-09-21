@@ -2,7 +2,7 @@
 #   execute the following module commands: (not required to build)
 #
 #    module switch gcc-4.7.2 gcc-9.2.0
-#    module load pfg/18.7
+#    module load pgf/18.7
 #    module load mpich/3.2-pgf18.7
 #
 # If you don't want MPI (slower in serial) simply remove the FC=...
@@ -18,4 +18,5 @@
     -DENABLE_NETCDF:BOOL=ON \
     -DNetCDF_DIR:PATH='/fusion/usc/opt/netcdf/netcdf-4.4.1_mpich-3.2_pgf-18.3/' \
     -DENABLE_PARALLEL:BOOL=ON \
+    -DCMAKE_BUILD_TYPE:STRING=RELEASE \
     ..

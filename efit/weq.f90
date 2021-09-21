@@ -193,6 +193,8 @@
 !--     binary format                                             --
 !-------------------------------------------------------------------
         else ! keqdsk.lt.1
+! TO DO: version info needs to be establised (match Gitlab?)
+! unchanged for now to ensure compatability
         write (neqdsk) uday,(mfvers(j),j=1,2)
         if (ishot.le.99999) then
           write (neqdsk) ishot,ktime1
@@ -550,7 +552,6 @@
       if (ioerr.eq.0) close(unit=neqdsk,status='delete')
       open(unit=neqdsk,file=eqdsk,status='new', &
            form=wform,delim='quote')
-      idum=3
       if (pasmat(jtime).gt.0.0) then
         ssimag=-simag
         ssibry=-psibry
@@ -559,7 +560,7 @@
         ssibry=psibry
       endif
       if (keqdsk.eq.1) then
-      write (neqdsk,2000) (case(i),i=1,6),idum,mw,mh
+      write (neqdsk,2000) (case(i),i=1,6),0,mw,mh
       write (neqdsk,2020) xdim,zdim,rzero,rgrid(1),zmid
       write (neqdsk,2020) rmaxis,zmaxis,ssimag,ssibry,bcentr(jtime)
       write (neqdsk,2020) cpasma(jtime),ssimag,xdum,rmaxis,xdum
@@ -782,7 +783,7 @@
 !--   binary format                                                   --
 !-----------------------------------------------------------------------
       else ! keqdsk.ne.1
-      write (neqdsk) (case(i),i=1,6),idum,mw,mh
+      write (neqdsk) (case(i),i=1,6),0,mw,mh
       write (neqdsk) real(xdim),real(zdim),real(rzero), &
                      real(rgrid(1)),real(zmid)
       write (neqdsk) real(rmaxis),real(zmaxis),real(ssimag), &
@@ -899,7 +900,9 @@
 !
       return
  1020 format ('x',i5,'.',i3)
- 1040 format ('  EFITD ')
+ 1040 format ('EFIT-AI ')
+! TO DO: version info needs to be establised (match Gitlab?)
+! unchanged for now to ensure compatability
  1042 format (1x,a42,1x,a3)
  1050 format ('   ',a5)
  1060 format (a5,'   ')

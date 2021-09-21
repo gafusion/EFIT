@@ -5,7 +5,8 @@
 !!
 !**********************************************************************
       block data efit_bdata
-      use commonblocks,only: zeros,xouts,youts,bpoo,bpooz,bpooc
+      ! not used here
+!      use commonblocks,only: zeros,xouts,youts,bpoo,bpooz,bpooc
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*8 (i-n), real*8 (a-h,o-z)

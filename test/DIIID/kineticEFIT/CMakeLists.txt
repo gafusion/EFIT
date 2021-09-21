@@ -22,10 +22,6 @@ endforeach()
 string(REPLACE ";" " " EFIT_LABEL "${EFIT_LABEL}")
 string(REPLACE ";" "\n" EFIT_IN "${EFIT_IN}")
 
-if (${ENABLE_PARALLEL})
-  set(EFIT_EXEC "srun --mpi=pmi2 -n 4 ${CMAKE_BINARY_DIR}/efit/efit")
-endif()
-
 configure_file(${EFIT_TEST_CONFIGFILE}
                ${CMAKE_CURRENT_BINARY_DIR}/run_efit.sh @ONLY)
 configure_file(${EFIT_RESULTS_CONFIGFILE}

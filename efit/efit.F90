@@ -159,6 +159,7 @@
 !--   Global Allocations                                             --
 !----------------------------------------------------------------------
       include 'global_allocs.f90'
+      call set_mod_arrays
       call set_ecom_mod1_arrays
       call set_ecom_mod2_arrays
 !----------------------------------------------------------------------

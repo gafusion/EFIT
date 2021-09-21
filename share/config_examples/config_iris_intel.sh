@@ -18,4 +18,5 @@
     -DENABLE_NETCDF:BOOL=ON \
     -DNetCDF_DIR:PATH='/fusion/usc/opt/netcdf/netcdf-4.4.1_mpich-3.2_intel2018/' \
     -DENABLE_PARALLEL:BOOL=ON \
+    -DCMAKE_BUILD_TYPE:STRING=RELEASE \
     ..

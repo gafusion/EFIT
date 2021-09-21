@@ -365,6 +365,7 @@
 
       character*12 mfitpop
       character*5 mfvers(2)
+! TO DO: version automation needs to be establised (match Gitlab?)
       data mfvers(1)/'11/23'/,mfvers(2)/'/2020'/
       character(4),dimension(:),allocatable :: limloc
       character(10),dimension(:),allocatable :: vsname
@@ -820,21 +821,31 @@
       subroutine set_ecom_mod1_arrays()
       use set_kinds
       use eparm
-      use var_parame, only: vzeroj,sizeroj
-      use var_exdata, only: fwacoil
+      use var_parame, only: vzeroj,sizeroj,qpsi
+      use var_exdata, only: fwacoil,fwtsi,fwtmp2,fwtcur
       use var_comco2, only: chordv,chordr
       use var_cxray, only: ksxr0,ksxr2,idosxr,xangle,zxray,rxray
       use var_fcoil, only: fcid
-      use var_limite, only: rwstrip1, zwstrip1,rwstrip2,zwstrip2
+      use var_limite, only: rwstrip1, zwstrip1,rwstrip2,zwstrip2, &
+                            xlim,ylim
       use var_delnfit, only: fco2ne
-      use var_rmatri, only: tsaisq
-      use var_consum, only: cdelz
-      implicit none   
+      use var_rmatri, only: tsaisq,brsp
+      use var_consum, only: cdelz,condno
+      use var_fwtdz, only: cdeljsum,rdjdz
+      use var_cpsi, only: psi
+      use var_fxbry, only: rbdry,zbdry
+      use var_prdata, only: pressr,rpress,sigpre
+      use var_vtor, only: pressw
+      use var_cerfit, only: eeknt,eebdry,ee2bdry
+      use var_calchi, only: saipr,chipre
+      use var_cstark, only: bzmse,tangam_uncor,chigamt,chilibt
+      use var_input1, only: rzeroj
+      implicit none
 
       tsaisq=0.0
       cdelz=0.0
 
-      vzeroj(1)=0.0
+      vzeroj=0.0
       sizeroj(1)=-1.0
       fwacoil=1*0.
       
@@ -885,4 +896,31 @@
       rwstrip2(2)=1.4575
       zwstrip2(2)=-1.250
       fco2ne=1.0
+      cdeljsum=0.0
+      psi=0.0
+      fwtsi=0.0
+      fwtmp2=0.0
+      fwtcur=0.0
+      rdjdz=0.0
+      rbdry=0.0
+      zbdry=0.0
+      xlim=0.0
+      ylim=0.0
+      pressr=0.0
+      rpress=0.0
+      pressw=0.0
+      sigpre=0.0
+      eeknt=0.0
+      eebdry=0.0
+      ee2bdry=0.0
+      saipr=0.0
+      bzmse=0.0
+      tangam_uncor=0.0
+      brsp=0.0
+      qpsi=0.0
+      rzeroj=0.0
+      condno=0.0
+      chipre=0.0
+      chigamt=0.0
+      chilibt=0.0
       end subroutine

@@ -23,7 +23,9 @@
       ! ONLY root process allowed to interface with terminal
       if (rank == 0) then
         if (use_opt_input .eqv. .false.) then
-          write (nttyo,5500) (mfvers(i),i=1,2)
+! TO DO: version info needs to be establised (match Gitlab?)
+!          write (nttyo,5500) (mfvers(i),i=1,2)
+          write (nttyo,5500)
           write (nttyo,6000)
           read (ntty,*) kdata
         else
@@ -144,7 +146,8 @@
       endif
 #endif
 
- 5500 format (/,10x,'EFITD Version  ',2a5,/)
+! 5500 format (/,10x,'EFITD Version  ',2a5,/)
+ 5500 format (/,10x,'EFIT-AI'/)
  6000 format (/,1x,'type mode (2=file, 3=snap, 4=time', &
                ', 5=input, 6=com file, 7=snap_ext,',' 8=pefit):')
  6040 format (/,1x,'type shot #, start time(ms), time step(ms), steps', &

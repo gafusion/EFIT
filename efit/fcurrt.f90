@@ -396,8 +396,9 @@
          write (106,*) 'rbdrec(24,*)= ',(rbdrec(24,m),m=1,nesum)
          zdif=zbdry(24)-zgrid(104*nh/129)
          bdrmax=psical(rbdry(24),rgrid(75*nw/129),zdif)*tmu
-         bdrmaxs=gridpc(9547,75*nw/129)
-         write (106,*) 'mbdrmax,bdrmaxs,bdrmax= ',mbdrmax,bdrmaxs,bdrmax
+         ! TODO: this goes out of bounds
+!         bdrmaxs=gridpc(9547,75*nw/129)
+         write (106,*) 'mbdrmax,bdrmax,bdrmaxs= ',mbdrmax,bdrmax!,bdrmaxs
         endif
       endif
 !-----------------------------------------------------------------------

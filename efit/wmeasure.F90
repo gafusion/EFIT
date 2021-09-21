@@ -27,7 +27,6 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
       include 'netcdf.inc'   ! from the netCDF package..
 !                            ..this must be symlinked to local directory
 ! --- common block ids is local to wmeasure

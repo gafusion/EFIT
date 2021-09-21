@@ -1,24 +1,12 @@
-      SUBROUTINE efund_getsizes
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          getset performs inputing and initialization.            **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
+!**     getset performs inputing and initialization.                 **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          02/02/20..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE efund_getsizes
       
       USE exparm
       USE siloop
@@ -52,11 +40,11 @@
 
       OPEN(unit=nin,status='old',file='mhdin.dat' )
 
-      READ (nin,machinein,err=10)
+      READ (nin,machinein)
 
-   10 CLOSE(nin)
+      CLOSE(nin)
 
-      allocate(rsi(nsilop),zsi(nsilop),wsi(nsilop),hsi(nsilop),&
+      ALLOCATE(rsi(nsilop),zsi(nsilop),wsi(nsilop),hsi(nsilop),&
                as(nsilop),as2(nsilop))
       rsi(:) = 0.0
       zsi(:) = 0.0
@@ -65,7 +53,7 @@
       as(:) = 0.0
       as2(:) = 0.0
 
-      allocate(re(necoil),ze(necoil),he(necoil),we(necoil), &
+      ALLOCATE(re(necoil),ze(necoil),he(necoil),we(necoil), &
                ecid(necoil),ecturn(necoil))
       re(:) = 0.0
       ze(:) = 0.0
@@ -74,7 +62,7 @@
       ecid(:) = 0.0
       ecturn(:) = 0.0
 
-      allocate(rf(nfcoil),zf(nfcoil),wf(nfcoil),hf(nfcoil), &
+      ALLOCATE(rf(nfcoil),zf(nfcoil),wf(nfcoil),hf(nfcoil), &
                af(nfcoil),af2(nfcoil),turnfc(nfcoil), fcid(nfcoil), & 
                fcturn(nfcoil))
       rf(:) = 0.0
@@ -86,18 +74,18 @@
       turnfc(:) = 0.0
       fcturn(:) = 0.0
 
-      allocate(racoil(nacoil),zacoil(nacoil),wacoil(nacoil),hacoil(nacoil))
+      ALLOCATE(racoil(nacoil),zacoil(nacoil),wacoil(nacoil),hacoil(nacoil))
       racoil(:) = 0.0
       zacoil(:) = 0.0
       wacoil(:) = 0.0
       hacoil(:) = 0.0
 
-      allocate(xmp2(magpr2),ymp2(magpr2),amp2(magpr2),smp2(magpr2))
+      ALLOCATE(xmp2(magpr2),ymp2(magpr2),amp2(magpr2),smp2(magpr2))
       xmp2(:) = 0.0
       ymp2(:) = 0.0
       amp2(:) = 0.0
       smp2(:) = 0.0
-      allocate(rvs(nvesel),zvs(nvesel),wvs(nvesel),hvs(nvesel),&
+      ALLOCATE(rvs(nvesel),zvs(nvesel),wvs(nvesel),hvs(nvesel),&
                avs(nvesel),avs2(nvesel),rsisvs(nvesel),vsid(nvesel))
       rvs(:) = 0.0
       zvs(:) = 0.0
@@ -109,39 +97,28 @@
 
       vsid(:) = 0.0
 
-      allocate(nshiftrz(nfcoil))
+      ALLOCATE(nshiftrz(nfcoil))
       nshiftrz(:) = 0.
 
-      allocate(rshift(nfcoil),zshift(nfcoil),pshift(nfcoil))
+      ALLOCATE(rshift(nfcoil),zshift(nfcoil),pshift(nfcoil))
       rshift(:) = 0.0
       zshift(:) = 0.0
       pshift(:) = 0.0
 
-      allocate(pmprobe(magpr2))
+      ALLOCATE(pmprobe(magpr2))
       pmprobe(:) = 0.
       END SUBROUTINE efund_getsizes
 
-      SUBROUTINE efund_getset
 !**********************************************************************
 !**                                                                  **
-!**     MAIN PROGRAM:  MHD FITTING CODE                              **
-!**                                                                  **
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          getset performs inputing and initialization.            **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     REFERENCES:                                                  **
-!**          (1)                                                     **
-!**          (2)                                                     **
+!**     getset performs inputing and initialization.                 **
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          26/04/83..........first created                         **
 !**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
+      SUBROUTINE efund_getset
+
       USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
                       nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh,device
       USE siloop
@@ -155,7 +132,6 @@
       USE mprobe
       USE cvesel
       USE fshift
-!vas
       use var_filech
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
       REAL*8, dimension (:), allocatable :: patmp2
@@ -170,12 +146,10 @@
            ,nshiftrz,rshift,zshift,pshift,pmprobe &
            ,nw,nh
 !
-      OPEN(unit=nin,status='old',file='mhdin.dat' &
-          )
-      OPEN(unit=nout,status='unknown',file='mhdout.dat' &
-          )
+      OPEN(unit=nin,status='old',file='mhdin.dat')
+      OPEN(unit=nout,status='unknown',file='mhdout.dat')
 !
-      allocate(patmp2(magpr2),mpnam2(magpr2),lpname(nsilop),vsname(nvesel))
+      ALLOCATE(patmp2(magpr2),mpnam2(magpr2),lpname(nsilop),vsname(nvesel))
       nw = 65
       nh = 65
 !
@@ -194,10 +168,11 @@
       DO i=1,nfcoil
         nshiftrz(i)=0
       ENDDO
+      patmp2=0.
 !---------------------------------------------------------------------
-!--  isize=0      no finite size correction for flux loops          --
-!--        1         finite size correction for flux loops          --
-!--  islpfc=1     flux loops at F coils                             --
+!--   isize=0      no finite size correction for flux loops         --
+!--         1         finite size correction for flux loops         --
+!--   islpfc=1     flux loops at F coils                            --
 !---------------------------------------------------------------------
       READ (nin,in3)
 !
@@ -212,10 +187,9 @@
 !
       nwnh = nw * nh
 !make the file names for green-table
-      call inp_file_ch(nw,nh,ch1,ch2)
-
+      CALL inp_file_ch(nw,nh,ch1,ch2)
 !----------------------------------------------------------------------
-!-- READ f coil and psi loop dimensions                              --
+!--   READ f coil and psi loop dimensions                            --
 !----------------------------------------------------------------------
       IF (rf(1).lt.0.0) THEN
          READ (nin,10000) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
@@ -240,9 +214,8 @@
             ENDIF
          ENDIF
       ENDIF
-  200 CONTINUE
 !----------------------------------------------------------------------
-!--  compute r and z arrays                                          --
+!--   compute r and z arrays                                         --
 !----------------------------------------------------------------------
       dr=(rright-rleft)/dble(nw-1)
       dz=(ztop-zbotto)/dble(nh-1)
@@ -252,21 +225,19 @@
       DO i=1,nh
          zgrid(i)=zbotto+dz*(i-1)
       ENDDO 
-  300 CONTINUE
-!
-!vas
+
       WRITE (nout,in3)
-      close(nin)
-      close(nout)
+      CLOSE(nin)
+      CLOSE(nout)
       
-      if (trim(device)=='DIII-D') then
-         call dprobe_machinein_d3d
-      else
-         call dprobe_machinein(nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                          nfsum,nvsum,nvesel,nacoil)
-      endif
+      IF (trim(device)=='DIII-D') THEN
+         CALL dprobe_machinein_d3d
+      ELSE
+         CALL dprobe_machinein(nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
+                               nfsum,nvsum,nvesel,nacoil)
+      ENDIF
       
-      call dprobe(mpnam2,lpname,patmp2)
+      CALL dprobe(mpnam2,lpname,patmp2)
       
       RETURN
 10000 FORMAT (6e12.6)

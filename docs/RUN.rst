@@ -1,8 +1,24 @@
 Quick-start
 ===========
 
+This gives instructions for running EFIT once the executables are built.
 
-This gives instructions for running EFIT once the executables are built
+Running tests
+-------------
+
+If you are maintaining your own installation (e.g. not using a system install
+or someone else's build) then it is recommended that you ensure all tests pass
+before running any other cases.
+
+The packaged tests are run by executing `make test` from the build directory.  
+If you have a parallel build on a supercomputer, then you should launch an 
+interactive session on a compute node before executing the tests.
+
+For information about why a test failed, see 
+`Testing/Temporary/LastTest.log`.
+
+The complete ouput from each test can be found in the `test` subdirectrory of
+the build (not the test source directory with the same name a level up).
 
 Executable location
 -------------------
@@ -53,14 +69,3 @@ Example::
 For more information on the input variables see https://fusion.gat.com/theory/Efitin1 (requires GA login).  A description of the different input and output
 types can be found at https://fusion.gat.com/theory/Efitiofiles .
 
-Running tests
--------------
-
-The packaged tests for the code can be run by executing `make test` from the
-build directory.  
-
-For more information about why a test failed, see 
-`Testing/Temporary/LastTest.log`.
-
-The complete ouput from each test can be found in the `test` subdirectrory of
-the build (not the test source directory with the same name).

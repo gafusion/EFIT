@@ -3380,7 +3380,6 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      dflux=1.0e+03*cdflux(jtime)
       write (text,9467) zuperts(jtime),rlibim(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -9259,6 +9258,8 @@
 !
       return
  8948 format (a25)
+! TO DO: version info needs to be establised (match Gitlab?)
+! unchanged for now to ensure compatability
  8950 format (1x,1('h'),' EFITD',a3,' x',a3,' ',2a5,1('h'))
  8960 format (' date ran = ',a10)
  9000 format (' shot #   = ',i10)

@@ -119,7 +119,14 @@
 
       subroutine set_ecom_mod2_arrays()
       use set_kinds
-      use var_cecoil
+      use var_cecoil, only: ecurrt
+      use var_bscom, only: ppknt,ffknt,wwknt,pptens,fftens,wwtens, &
+                           ppbdry,pp2bdry,kppbdry,kpp2bdry, &
+                           ffbdry,ff2bdry,wwbdry,ww2bdry,kww2bdry
+      use var_cvesel, only: rmp2vs, vcurrt
+      use var_atable, only: rmp2ac
+      implicit none
+
       ecurrt(3)=-1.e10_dp
       ecurrt(4)=-1.e10_dp
       
@@ -128,6 +135,26 @@
       
       ecurrt(1)=0.0
       ecurrt(2)=0.0
+
+      ! initialze varialbes
+      ppknt=0.0
+      ffknt=0.0
+      wwknt=0.0
+      pptens=0.0
+      fftens=0.0
+      wwtens=0.0
+      ppbdry=0.0
+      pp2bdry=0.0
+      kppbdry=0.0
+      kppb2dry=0.0
+      ffbdry=0.0
+      ff2bdry=0.0
+      wwbdry=0.0
+      ww2bdry=0.0
+      kww2bdry=0.0
+      rmp2vs=0.0
+      vcurrt=0.0
+      rmp2ac=0.0
 
       end subroutine 
       

@@ -127,10 +127,12 @@ if (${CMAKE_Fortran_COMPILER_ID} MATCHES "Cray")
   if (NOT ${ENABLE_NATIVE_ENDIAN})
     set(CMAKE_Fortran_FLAGS "-h byteswapio ${CMAKE_Fortran_FLAGS}")
   endif ()
+  set(CMAKE_Fortran_FLAGS_DEFAULT "-O2") # for reference
+  set(CMAKE_C_FLAGS_DEFAULT "-O2") # for reference
   set(CMAKE_Fortran_FLAGS_RELEASE "-O3")
   set(CMAKE_C_FLAGS_RELEASE "-O3")
-  set(CMAKE_Fortran_FLAGS_RELWITHDEBINFO "-O2 -g -DNDEBUG")
-  set(CMAKE_Fortran_FLAGS_MINSIZEREL "-Os -DNDEBUG")
+  set(CMAKE_Fortran_FLAGS_MINSIZEREL "-O3") # no small compile options available
+  set(CMAKE_C_FLAGS_MINSIZEREL "-O3") # no small compile options available
   set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -g -Rb -ei0")
   set(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "GNU")
@@ -159,18 +161,28 @@ elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "GNU")
       set(CMAKE_Fortran_FLAGS "-g -fbounds-check -finit-real=nan -fbacktrace -ffpe-trap=invalid,zero,overflow ${CMAKE_Fortran_FLAGS}")
     endif ()
   endif ()
-  set(CMAKE_Fortran_FLAGS_RELEASE "-Ofast")
-  set(CMAKE_C_FLAGS_RELEASE "-Ofast")
-  set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -g -fbounds-check -finit-real=nan -fbacktrace")
-  set(CMAKE_C_FLAGS_DEBUG "-O0 -g -fbounds-check")
+  set(CMAKE_Fortran_FLAGS_DEFAULT "-O0") # for reference
+  set(CMAKE_C_FLAGS_DEFAULT "-O0") # for reference
+  #  set(CMAKE_Fortran_FLAGS_RELEASE "-O2") # this and stronger optimizations cause the code to fail (why?)
+  set(CMAKE_Fortran_FLAGS_RELEASE "-O1 -falign-functions -falign-jumps -falign-labels -falign-loops -fcaller-saves -fcode-hoisting -fcrossjumping -fcse-follow-jumps -fcse-skip-blocks -fdelete-null-pointer-checks -fdevirtualize -fdevirtualize-speculatively -fexpensive-optimizations -fgcse -fgcse-lm -fhoist-adjacent-loads -finline-small-functions -findirect-inlining -fipa-bit-cp -fipa-cp -fipa-icf -fipa-ra -fipa-sra -fipa-vrp -fisolate-erroneous-paths-dereference -flra-remat -foptimize-sibling-calls -foptimize-strlen -fpartial-inlining -fpeephole2 -freorder-blocks-algorithm=stc -freorder-blocks-and-partition -freorder-functions -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -fsched-interblock -fsched-spec -fstore-merging -fstrict-aliasing -fthread-jumps -ftree-builtin-call-dce -ftree-pre -ftree-switch-conversion -ftree-tail-merge -ftree-vrp -fgcse-after-reload -finline-functions -fipa-cp-clone -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-paths -ftree-loop-distribute-patterns -ftree-loop-distribution -ftree-loop-vectorize -ftree-partial-pre -ftree-slp-vectorize -funswitch-loops -fvect-cost-model -ffast-math -fno-protect-parens") # all -Ofast optimizations in documentation except -fstack-arrays (breaks code)
+  set(CMAKE_C_FLAGS_RELEASE "-Ofast -DNDEBUG")
+  #  set(CMAKE_Fortran_FLAGS_MINSIZEREL "-Os") # doesn't work because -O2 base
+  set(CMAKE_Fortran_FLAGS_MINSIZEREL "-O1 -fcaller-saves -fcode-hoisting -fcrossjumping -fcse-follow-jumps -fcse-skip-blocks -fdelete-null-pointer-checks -fdevirtualize -fdevirtualize-speculatively -fexpensive-optimizations -fgcse -fgcse-lm -fhoist-adjacent-loads -finline-small-functions -findirect-inlining -fipa-bit-cp -fipa-cp -fipa-icf -fipa-ra -fipa-sra -fipa-vrp -fisolate-erroneous-paths-dereference -flra-remat -foptimize-sibling-calls -foptimize-strlen -fpartial-inlining -fpeephole2 -freorder-blocks-and-partition -freorder-functions -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -fsched-interblock -fsched-spec -fstore-merging -fstrict-aliasing -fthread-jumps -ftree-builtin-call-dce -ftree-pre -ftree-switch-conversion -ftree-tail-merge -ftree-vrp -finline-functions") # all -Os optimizations in documentation
+  set(CMAKE_C_FLAGS_MINSIZEREL "-Os -DNDEBUG")
+  set(CMAKE_Fortran_FLAGS_DEBUG "-Og -g -fbounds-check -finit-real=nan -fbacktrace")
+  set(CMAKE_C_FLAGS_DEBUG "-Og -g -fbounds-check")
 elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "Intel")
   option(__ifort "using Intel FC Compiler" on)
   set(CMAKE_Fortran_FLAGS "-assume no2underscores,protect_parens -autodouble ${CMAKE_Fortran_FLAGS}")
   if (NOT ${ENABLE_NATIVE_ENDIAN})
     set(CMAKE_Fortran_FLAGS "-convert big_endian ${CMAKE_Fortran_FLAGS}")
   endif ()
-  set(CMAKE_Fortran_FLAGS_RELEASE "-Ofast")
-  set(CMAKE_C_FLAGS_RELEASE "-Ofast")
+  set(CMAKE_Fortran_FLAGS_DEFAULT "-O2") # for reference
+  set(CMAKE_C_FLAGS_DEFAULT "-O2") # for reference
+  set(CMAKE_Fortran_FLAGS_RELEASE "-Ofast -ipo -fast")
+  set(CMAKE_C_FLAGS_RELEASE "-Ofast -ipo -fast")
+  set(CMAKE_Fortran_FLAGS_RELEASE "-Os")
+  set(CMAKE_C_FLAGS_RELEASE "-Os")
   set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -g -check all -traceback")
   set(CMAKE_C_FLAGS_DEBUG "-O0 -g -traceback")
 elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "PGI")
@@ -179,10 +191,12 @@ elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "PGI")
   if (NOT ${ENABLE_NATIVE_ENDIAN})
     set(CMAKE_Fortran_FLAGS "-byteswapio ${CMAKE_Fortran_FLAGS}")
   endif ()
-  set(CMAKE_Fortran_FLAGS_RELEASE "-O4 -fastsse")
-  set(CMAKE_C_FLAGS_RELEASE "-O4 -fastsse")
-  set(CMAKE_Fortran_FLAGS_FASTBUILD "-O3")
-  set(CMAKE_C_FLAGS_FASTBUILD "-O3")
+  set(CMAKE_Fortran_FLAGS_DEFAULT "-O1") # from man page, contradicts online refs
+  set(CMAKE_C_FLAGS_DEFAULT "-O1") # from man page, contradicts online refs
+  set(CMAKE_Fortran_FLAGS_RELEASE "-O4 -fast")
+  set(CMAKE_C_FLAGS_RELEASE "-O4 -fast")
+  set(CMAKE_Fortran_FLAGS_MINSIZEREL "-O4 -fast") # no small compile options available
+  set(CMAKE_C_FLAGS_MINSIZEREL "-O4 -fast") # no small compile options available
   set(CMAKE_Fortran_FLAGS_DEBUG "-g -O0 -Mbounds")
   set(CMAKE_C_FLAGS_DEBUG "-g -O0 -Mbounds")
 endif ()
@@ -191,11 +205,13 @@ endif ()
 string(REPLACE "-fpic" "" CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}")
 string(REPLACE "-fPIC" "" CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS}")
 
+message(STATUS "Build type is (blank is DEFAULT): ${CMAKE_BUILD_TYPE}")
+
 # Write flags
 message(STATUS "")
 message(STATUS "--------- Final compiler flags ---------")
 foreach (cmp C Fortran)
-  foreach (bld FULL RELEASE RELWITHDEBINFO MINSIZEREL DEBUG)
+  foreach (bld DEFAULT RELEASE MINSIZEREL DEBUG)
     message(STATUS "CMAKE_${cmp}_FLAGS_${bld}= ${CMAKE_${cmp}_FLAGS_${bld}}")
   endforeach ()
   message(STATUS "CMAKE_${cmp}_FLAGS= ${CMAKE_${cmp}_FLAGS}")

@@ -10,7 +10,6 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
       data ercmin/0.01_dp/
 !
       m=mtime
@@ -157,7 +156,6 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-!      include 'ecomdu1.f90'
       dimension xplt(*),yplt(*)
       dimension zuper(nco2v),zlower(nco2v),rco2(nco2r),rco2in(nco2r)
 !

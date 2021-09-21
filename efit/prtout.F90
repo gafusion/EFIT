@@ -664,5 +664,7 @@
         write (nout,10000) trim(ch1),trim(ch2)
       end if
 
+! TO DO: version info needs to be establised (match Gitlab?)
+! unchanged for now to ensure compatability
 10000 format(/,6x,20('*'),' EFITD',a3,' x ',a3,'  output ',20('*'))
       end

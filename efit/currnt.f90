@@ -559,9 +559,9 @@
          do i=1,nw
           do j=1,nh
            kk=(i-1)*nh+j
-           call seva2d(bkx,lkx,bky,lky,c,rgrid(i),zgrid(j),pds,ier,n333)
 !sri-feb09
-!          cdeljnow=cdelznow*pds(3)*rdjdz(kk)
+!           call seva2d(bkx,lkx,bky,lky,c,rgrid(i),zgrid(j),pds,ier,n333)
+!           cdeljnow=cdelznow*pds(3)*rdjdz(kk)
            cdeljnow=cdelznow*rdjdz(kk)
            pcurrt(kk)=pcurrt(kk)+cdeljnow
            cdeljsum=cdeljsum+abs(cdeljnow)

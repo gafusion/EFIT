@@ -17,4 +17,5 @@
     -DENABLE_NETCDF:BOOL=ON \
     -DNetCDF_DIR:PATH='/fusion/usc/opt/env/gcc9.2' \
     -DENABLE_PARALLEL:BOOL=ON \
+    -DCMAKE_BUILD_TYPE:STRING=RELEASE \
     ..
