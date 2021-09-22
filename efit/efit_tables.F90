@@ -1,9 +1,7 @@
 #include "config.f"
-
-
 !*********************************************************************
 !! 
-!>          reads Green's function table  and dprobe.dat data
+!> reads Green's function tables and dprobe.dat data
 !!
 !*********************************************************************
    subroutine efit_read_tables()
@@ -22,7 +20,7 @@
         
       mcontr = 35
 !---------------------------------------------------------------------
-!-- Read Green's tables from table_di2            --
+!--   Read Green's tables from table_di2                            --
 !---------------------------------------------------------------------
       open(unit=mcontr,status='old',form='unformatted', &
            file=table_di2(1:ltbdi2)//'ec'//trim(ch1)//trim(ch2)//'.ddd')
@@ -50,9 +48,8 @@
       endif
       read (mcontr) gridpc
       close(unit=mcontr)
-
 !----------------------------------------------------------------------
-!-- read in the f coil response functions                            --
+!--   read in the f coil response functions                          --
 !----------------------------------------------------------------------
       open(unit=mcontr,form='unformatted', &
            status='old',file=table_di2(1:ltbdi2)//'rfcoil.ddd')
@@ -85,7 +82,7 @@
       close(unit=mcontr)
 
 !----------------------------------------------------------------------
-!-- read in the E-coil response function                             --
+!--   read in the E-coil response function                           --
 !----------------------------------------------------------------------
       if (iecurr.gt.0) then
         open(unit=mcontr,status='old',form='unformatted', &
@@ -96,7 +93,7 @@
         close(unit=mcontr)
       endif
 !----------------------------------------------------------------------
-!-- read in the vessel response function                             --
+!--   read in the vessel response function                           --
 !----------------------------------------------------------------------
       if (ivesel.gt.0) then
         open(unit=mcontr,status='old',form='unformatted', &
@@ -146,7 +143,7 @@
 
 !**********************************************************************
 !*
-!>          reads Green's function table  and dprobe.dat data
+!> set the directory for Green's function tables and dprobe.dat
 !*
 !**********************************************************************
    subroutine set_table_dir()

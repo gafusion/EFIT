@@ -146,7 +146,7 @@
       ppbdry=0.0
       pp2bdry=0.0
       kppbdry=0.0
-      kppb2dry=0.0
+      kpp2bdry=0.0
       ffbdry=0.0
       ff2bdry=0.0
       wwbdry=0.0

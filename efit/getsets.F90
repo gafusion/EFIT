@@ -78,7 +78,7 @@
       ilaser=0
 
 !----------------------------------------------------------------------
-!--  look up magnetic data directly                                  --
+!--   look up magnetic data directly                                 --
 !----------------------------------------------------------------------
       do i=1,nsilop
         psibit(i)=0.0
@@ -124,10 +124,10 @@
         fwtec(i)=0.0
       enddo
       do i=1,mbdry
-       fwtbdry(i)=1.0
-       fwtsol(i)=1.0
-       sigrbd(i)=1.e10_dp
-       sigzbd(i)=1.e10_dp
+        fwtbdry(i)=1.0
+        fwtsol(i)=1.0
+        sigrbd(i)=1.e10_dp
+        sigzbd(i)=1.e10_dp
       enddo
       fli=0.0
       fwtbp=0.0
@@ -330,7 +330,7 @@
 !
 
 !----------------------------------------------------------------------
-!-- news and help information                                        --
+!--   news and help information                                      --
 !----------------------------------------------------------------------
 ! MPI >>>
       ! ONLY root process displays EFIT news and help information
@@ -355,14 +355,23 @@
 !----------------------------------------------------------------------
 !--   Snap-Extension mode = 7                                        --
 !----------------------------------------------------------------------
-      if (kdata.eq.5.or.kdata.eq.6.or.kdata.eq.8) go to 3000
+      if (kdata.eq.5.or.kdata.eq.6.or.kdata.eq.8) then
+        call write_K(ksstime,kerror)
+        ktime = ksstime
+        !if (kerror.gt.0) return ! don't return here because we're stopping anyway
+        call errctrl_msg('getsets','Done writing k-files',3)
+#if defined(USEMPI)
+        call mpi_finalize(ierr)
+#endif
+        stop
+      endif
+
 ! MPI >>>
 ! ONLY root process can check for existence of fitout.dat file
       if (rank == 0) then
         ! Delete fitout.dat if already exists
-        open(unit=nout,status='old',file='fitout.dat',err=12913)
-        close(unit=nout,status='delete')
-12913   continue
+        open(unit=nout,status='old',file='fitout.dat',iostat=ioerr)
+        if (ioerr.eq.0) close(unit=nout,status='delete')
       endif
       if (iand(iout,1).ne.0) then
 #if defined(USEMPI)
@@ -382,8 +391,8 @@
 #endif
       endif
 ! MPI <<<
-      if (kdata.eq.2) go to 200
 
+      if (kdata.ne.2) then
 !----------------------------------------------------------------------
 !--   Snap-Extension mode              --
 !--   Initialize istore = 0                                          --
@@ -392,64 +401,63 @@
 !----------------------------------------------------------------------
       istore = 0
 !
-   75 continue
-      if (kdata.eq.3) then
+      select case (kdata)
+      case (3)
 
-      open(unit=neqdsk,status='old', &
-           file='efit_snap.dat',err=80)
-      snapfile='efit_snap.dat'
-      go to 95
-   80 continue
-      open(unit=neqdsk,status='old',       &
-           file= input_dir(1:lindir)//'efit_snap.dat'         )
-      snapfile=input_dir(1:lindir)//'efit_snap.dat'
-      endif
-      if (kdata.eq.4) then
-      open(unit=neqdsk,status='old', &
-           file='efit_time.dat',err=85)
-      go to 95
-   85 continue
-      open(unit=neqdsk,status='old', &
-           file= input_dir(1:lindir)//'efit_time.dat'         )
-      endif
+        open(unit=neqdsk,status='old', &
+             file='efit_snap.dat',iostat=ioerr)
+        if (ioerr.eq.0) then
+          snapfile='efit_snap.dat'
+        else
+          open(unit=neqdsk,status='old',       &
+               file= input_dir(1:lindir)//'efit_snap.dat')
+          snapfile=input_dir(1:lindir)//'efit_snap.dat'
+        endif
+      case (4)
+        open(unit=neqdsk,status='old', &
+             file='efit_time.dat',iostat=ioerr)
+        if (ioerr.ne.0) then
+          open(unit=neqdsk,status='old', &
+               file= input_dir(1:lindir)//'efit_time.dat')
+        endif
+      case (7)
 !----------------------------------------------------------------------
-!--    Snap-Extension mode                                           --
+!--     Snap-Extension mode                                          --
 !----------------------------------------------------------------------
-      if (kdata.eq.7) then
 
-         snap_ext = adjustl(snap_ext)
+        snap_ext = adjustl(snap_ext)
 
-         snap_file = 'efit_snap.dat_'//snap_ext
-         open(unit=neqdsk,status='old', &
-           file= snap_file,err=81)
-         snapfile=snap_file
-         go to 95
- 81    continue
-         open(unit=neqdsk,status='old', &
-           file= input_dir(1:lindir)//snap_file,err=83  )
-          snapfile=input_dir(1:lindir)//snap_file
-         go to 95
-  83   continue
-       snap_file = snap_ext
-         open(unit=neqdsk,status='old', &
-           file= snap_file       )
-         snapfile=snap_file
-      endif
+        snap_file = 'efit_snap.dat_'//snap_ext
+        open(unit=neqdsk,status='old', &
+             file=snap_file,iostat=ioerr)
+        if (ioerr.eq.0) then
+          snapfile=snap_file
+        else
+          open(unit=neqdsk,status='old', &
+               file= input_dir(1:lindir)//snap_file,iostat=ioerr)
+          if (ioerr.eq.0) then
+            snapfile=input_dir(1:lindir)//snap_file
+          else
+            snap_file = snap_ext
+            open(unit=neqdsk,status='old',file= snap_file)
+            snapfile=snap_file
+          endif
+        endif
+      end select
 
-95    continue
       read (neqdsk,efitin,end=108)
- 108   continue
+ 108  continue
       read (neqdsk,efitink,err=96,end=109)
- 109   continue
-   96 close(unit=neqdsk)
+ 109  continue
+  96  close(unit=neqdsk)
 !----------------------------------------------------------------------
 !--   writes out the efitin namelist. Flag iout = 32.                --
 !----------------------------------------------------------------------
       if (iand(iout,32).ne.0) then
-         open(unit=nin,status='unknown',file='efit_snap.dat_out', &
-              delim='quote',err=11231)
-         write(nin,efitin)
-11231    close(unit=nin)
+        open(unit=nin,status='unknown',file='efit_snap.dat_out', &
+             delim='quote',iostat=ioerr)
+        if (ioerr.eq.0) write(nin,efitin)
+        close(unit=nin)
       endif
 
       iteks=itek
@@ -465,7 +473,7 @@
         itek=iabs(itek)
       endif
 !--------------------------------------------------------------------------
-!-- itek > 100, write out PLTOUT.OUT individually                        --
+!--   itek > 100, write out PLTOUT.OUT individually                      --
 !--------------------------------------------------------------------------
       kgraph=0
       if (itek.gt.100) then
@@ -479,12 +487,13 @@
         if (fitdelz) itell=4
       endif
 !---------------------------------------------------------------------
-!--  specific choice of current profile                             --
+!--   specific choice of current profile                            --
 !--       ICPROF=1  no edge current density allowed                 --
 !--       ICPROF=2  free edge current density                       --
 !--       ICPROF=3  weak edge current density constraint            --
 !---------------------------------------------------------------------
-      if (icprof.eq.1) then
+      select case (icprof)
+      case (1)
         kffcur=2
         kppcur=2
         fcurbd=1.
@@ -492,7 +501,7 @@
         fwtbp=1.
         fwtqa=0.
         qvfit=0.
-      elseif (icprof.eq.2) then
+      case (2)
         kffcur=2
         kppcur=2
         fcurbd=0.
@@ -500,7 +509,7 @@
         fwtbp=0.
         fwtqa=0.
         qvfit=0.
-      elseif (icprof.eq.3) then
+      case (3)
         kffcur=3
         kppcur=2
         fcurbd=0.
@@ -518,74 +527,58 @@
         cgama(2,1)=0.1_dp
         cgama(3,1)=0.1_dp
         xgama(1)=0.0
-      endif
-      if(mse_usecer .eq. 1)keecur = 0
-      if(mse_usecer .eq. 2 .and. keecur .eq. 0) then
-           keecur = 2
-           keefnc = 0
-           itek = 5
+      end select
+      if (mse_usecer .eq. 1) keecur = 0
+      if (mse_usecer .eq. 2 .and. keecur .eq. 0) then
+        keecur = 2
+        keefnc = 0
+        itek = 5
       endif
       if (imagsigma.gt.0) then
-         do_spline_fit=.false.
-         saimin=300.
+        do_spline_fit=.false.
+        saimin=300.
       endif
 !---------------------------------------------------------------------
-!-- adjust fit parameters based on basis function selected          --
+!--   adjust fit parameters based on basis function selected        --
 !---------------------------------------------------------------------
-       if (kppfnc .eq. 3) then
-          kppcur = 4 * (kppknt - 1)
-       endif
-       if (kppfnc .eq. 4) then
-          kppcur = 4 * (kppknt - 1)
-       endif
-       if (kppfnc .eq. 5) then
-          kppcur = kppcur * (kppknt - 1)
-       endif
-       if (kppfnc .eq. 6) then
-          kppcur = kppknt * 2
-       endif
-       if (kfffnc .eq. 3) then
-          kffcur = 4 * (kffknt - 1)
-       endif
-       if (kfffnc .eq. 4) then
-          kffcur = 4 * (kffknt - 1)
-       endif
-       if (kfffnc .eq. 5) then
-          kffcur = kffcur * (kffknt - 1)
-       endif
-       if (kfffnc .eq. 6) then
-          kffcur = kffknt * 2
-       endif
-       if (kwwfnc .eq. 3) then
-          kwwcur = 4 * (kwwknt - 1)
-       endif
-       if (kwwfnc .eq. 4) then
-          kwwcur = 4 * (kwwknt - 1)
-       endif
-       if (kwwfnc .eq. 5) then
-          kwwcur = kwwcur * (kwwknt - 1)
-       endif
-       if (kwwfnc .eq. 6) then
-          kwwcur = kwwknt * 2
-       endif
-       if (keecur.gt.0) then
-       if (keefnc .eq. 3) then
+      select case (kppfnc)
+      case (3,4)
+        kppcur = 4 * (kppknt - 1)
+      case (5)
+        kppcur = kppcur * (kppknt - 1)
+      case (6)
+        kppcur = kppknt * 2
+      end select
+      select case (kfffnc)
+      case (3,4)
+        kffcur = 4 * (kffknt - 1)
+      case (5)
+        kffcur = kffcur * (kffknt - 1)
+      case (6)
+        kffcur = kffknt * 2
+      end select
+      select case (kwwfnc)
+      case (3,4)
+        kwwcur = 4 * (kwwknt - 1)
+      case (5)
+        kwwcur = kwwcur * (kwwknt - 1)
+      case (6)
+        kwwcur = kwwknt * 2
+      end select
+      if (keecur.gt.0) then
+        select case (kwwfnc)
+        case (3,4)
           keecur = 4 * (keeknt - 1)
-       endif
-       if (keefnc .eq. 4) then
-          keecur = 4 * (keeknt - 1)
-       endif
-       if (keefnc .eq. 5) then
+        case (5)
           keecur = keecur * (keeknt - 1)
-       endif
-       if (keefnc .eq. 6) then
+        case (6)
           keecur = keeknt * 2
-       endif
-       endif
+        end select
+      endif
 !
       if (kzeroj.eq.1.and.sizeroj(1).lt.0.0) sizeroj(1)=psiwant
 !---------------------------------------------------------------------
-!-- wakeup mode KDATA=16                                            --
+!--   wakeup mode KDATA=16                                          --
 !---------------------------------------------------------------------
 10999 continue
       if (kwake.eq.1) then
@@ -625,25 +618,25 @@
 !----------------------------------------------------------------------
 !      call set_table_dir
 !-------------------------------------------------------------------------------
-!--  Set bit noise for ishot > 152000                                         --
+!--   Set bit noise for ishot > 152000                                        --
 !-------------------------------------------------------------------------------
       if (ishot.gt.152000) vbit = 80
 !-------------------------------------------------------------------------------
-!-- read in limiter data                                                      --
+!--   read in limiter data                                                    --
 !-------------------------------------------------------------------------------
       WRITE(*,*) 'HERE 1'
       call getlim(1,xltype,xltype_180)
 !
   100 continue
       if (lookfw.ge.0) then
-        do 102 i=1,magpri
-        rwtmp2(i)=0.0
-  102   continue
+        do i=1,magpri
+          rwtmp2(i)=0.0
+        enddo
         do i=1,nsilop
-         rwtsi(i)=0.0
+          rwtsi(i)=0.0
         enddo
         open(unit=neqdsk,status='old', &
-             file=table_di2(1:ltbdi2)//'fitweight.dat'         )
+             file=table_di2(1:ltbdi2)//'fitweight.dat')
   105   read (neqdsk,*,end=107) irshot
         if (irshot.gt.ishot) go to 107
         if (irshot.lt.124985) then
@@ -652,17 +645,17 @@
         read (neqdsk,*) (rwtsi(i),i=1,nsilop)
         endif
         if (irshot.lt.59350) then
-        read (neqdsk,*) (rwtmp2(i),i=1,magpri67)
+          read (neqdsk,*) (rwtmp2(i),i=1,magpri67)
         elseif (irshot.lt.91000) then
-        read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322)
+          read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322)
         elseif (irshot.lt.100771) then
-        read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322 &
-                                               +magprirdp)
+          read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322 &
+                                                 +magprirdp)
         elseif (irshot.lt.124985) then
-        read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322 &
-                                   +magprirdp+magudom)
+          read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322 &
+                                         +magprirdp+magudom)
         else
-        read (neqdsk,*) (rwtmp2(i),i=1,magpri)
+          read (neqdsk,*) (rwtmp2(i),i=1,magpri)
         endif
         go to 105
   107   continue
@@ -695,10 +688,10 @@
       endif
 
       mmstark=0
-      do 142 i=1,nstark
+      do i=1,nstark
         swtgam(i)=fwtgam(i)
         if (fwtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
-  142 continue
+      enddo
       if (mmstark.gt.0) then
 #if defined(USEMPI)
         if (nproc == 1) then
@@ -712,18 +705,18 @@
       endif
 !
       do jtime=1,ktime
-        do 99142 i=1,nmsels
+        do i=1,nmsels
           swtbmselt(jtime,i)=fwtbmsels(i)
           swtemselt(jtime,i)=fwtemsels(i)
-99142   continue
+        enddo
       enddo
       mmbmsels=0
       mmemsels=0
-      do 99144 i=1,nmsels
+      do i=1,nmsels
         swtbmsels(i)=fwtbmsels(i)
         if (fwtbmsels(i).gt.1.e-06_dp) mmbmsels=mmbmsels+1
         if (fwtemsels(i).gt.1.e-06_dp) mmemsels=mmemsels+1
-99144 continue
+      enddo
       if (mmbmsels.gt.0) then
 #if defined(USEMPI)
         if (nproc == 1) then
@@ -736,18 +729,18 @@
 #endif
       endif
 !
-      do 145 i=1,ktime
+      do i=1,ktime
         time(i)=time(i)*1000.
-  145 continue
+      enddo
 !-----------------------------------------------------------------------
-!-- Get edge pedestal tanh paramters                                  --
+!--   Get edge pedestal tanh paramters                                --
 !-----------------------------------------------------------------------
       if (fitzts.eq.'te') then
         call gettanh(ishot,fitzts,ktime,time,ztssym,ztswid, &
-                          ptssym,ztserr)
+                     ptssym,ztserr)
       endif
 !----------------------------------------------------------------------
-!-- save fitting weights for SNAP modes                              --
+!--   save fitting weights for SNAP modes                            --
 !----------------------------------------------------------------------
       swtdlc=fwtdlc
       swtcur=fwtcur
@@ -769,33 +762,21 @@
         endif
         swtsi(i)=fwtsi(i)
       enddo
-      go to 1000
 !
-  200 continue
-
- 1000 continue
+      endif ! kdata.ne.2
 !      call set_table_dir
 !      call efit_read_tables
      
 !----------------------------------------------------------------------
-!-- read in the plasma response function                             --
+!--   read in the plasma response function                           --
 !----------------------------------------------------------------------
 !
       if (kdata.ne.2) &
-      call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
+        call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
       drgrid=rgrid(2)-rgrid(1)
       dzgrid=zgrid(2)-zgrid(1)
       darea=drgrid*dzgrid
       tmu2=-pi*tmu*dzgrid/drgrid
 !
       return
- 3000 continue
-      call write_K(ksstime,kerror)
-      ktime = ksstime
-      !if (kerror.gt.0) return ! don't return here because we're stopping anyway
-      call errctrl_msg('getsets','Done writing k-files',3)
-#if defined(USEMPI)
-      call mpi_finalize(ierr)
-#endif
-      stop
       end subroutine getsets
