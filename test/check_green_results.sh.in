@@ -19,5 +19,5 @@ done
 
 # Check the output of the run itself.  use petscdiff because it's an easily
 # portable way of avoiding testing the numbers -- it's testing the text
-@CMAKE_SOURCE_DIR@/bin/petscdiff -j ${OUTPUT_STORE_DIR}/run_efund.out run_efund.out
+@CMAKE_SOURCE_DIR@/bin/petscdiff -j ${OUTPUT_STORE_DIR}/run_green.out run_green.out
 exit $?

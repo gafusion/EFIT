@@ -1,10 +1,8 @@
 #!/bin/bash
 
-# It is probably best to remove these variables from mhdin.dat
-# (to avoid confusion), but we can keep the replacements here as safe gaurds
-#! grep -q 'NW = [0-9]\{1,5\}' mhdin.dat && echo 'NW not found' && exit 1
+! grep -q 'NW = [0-9]\{1,5\}' mhdin.dat && echo 'NW not found' && exit 1
 sed 's/NW = [0-9]\{1,5\}/NW = @GRID_SIZE@/g' mhdin.dat > mhdin.dat.new && mv mhdin.dat.new mhdin.dat
-#! grep -q 'NH = [0-9]\{1,5\}' mhdin.dat && echo 'NH not found' && exit 1
+! grep -q 'NH = [0-9]\{1,5\}' mhdin.dat && echo 'NH not found' && exit 1
 sed 's/NH = [0-9]\{1,5\}/NH = @GRID_SIZE@/g' mhdin.dat > mhdin.dat.new && mv mhdin.dat.new mhdin.dat
 
 # Remove output to avoid errors, ensure clean test
@@ -15,7 +13,7 @@ for prefix in ec ep fc ra re rv; do
     rm -f ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd
 done
 
-@EFUND_EXEC@ @GRID_SIZE@ > run_efund.out
+@EFUND_EXEC@ @GRID_SIZE@ > run_green.out
 
 # Pass the results of the efit command up so that CTest knows what happened
 exit $?

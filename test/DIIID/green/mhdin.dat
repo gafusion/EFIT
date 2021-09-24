@@ -2,6 +2,8 @@
  &machinein
  /
  &in3
+     NW = 65
+     NH = 65
      IGRID = 1
      RLEFT = 0.84
      RRIGHT = 2.54

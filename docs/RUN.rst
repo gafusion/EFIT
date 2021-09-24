@@ -34,10 +34,9 @@ An mhdin.dat file describing the machine geometry must be in the
 same location that you run `efund` from.
 
 Once this requirement is satisfied, the tables can be formed by calling
-`efund` with the target mesh size, specified as a single integer describing
-both R and Z dimensions.  Example::
+`efund`.  Example::
 
-    green/efund 129
+    green/efund
 
 This also creates a `dprobe.dat` file containing all the limiter and other
 necessary information about the machine.
