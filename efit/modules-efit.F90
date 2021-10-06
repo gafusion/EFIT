@@ -546,17 +546,17 @@
 ! jm.s
 ! NOTE : array sizes are grid size-dependent so they should be dynamically allocated, but
 !        we cannot make them dynamic since they are included in a namelist
-! NOTE : we assume the largest usefule grid size is 1025
+! NOTE : we assume the largest usefule grid size is 2049
 ! NOTE : npsi_ext (actual dimension of _ext arrays) used in code logic and intentially set
 !        to default value of -1
       module profile_ext_mod
         integer :: npsi_ext=-1,nbdry_ext,limitr_ext
-        real*8,dimension(1025) :: pprime_ext
-        real*8,dimension(1025) :: ffprim_ext
-        real*8,dimension(1025) :: psin_ext
-        real*8,dimension(1025) :: qpsi_ext
-        real*8,dimension(1025) :: bpp_ext, cpp_ext, dpp_ext
-        real*8,dimension(1025) :: bfp_ext, cfp_ext, dfp_ext
+        real*8,dimension(2049) :: pprime_ext
+        real*8,dimension(2049) :: ffprim_ext
+        real*8,dimension(2049) :: psin_ext
+        real*8,dimension(2049) :: qpsi_ext
+        real*8,dimension(2049) :: bpp_ext, cpp_ext, dpp_ext
+        real*8,dimension(2049) :: bfp_ext, cfp_ext, dfp_ext
         real*8,dimension(:),allocatable :: rbdry_ext,zbdry_ext,xlim_ext,ylim_ext
         real*8 :: sign_ext, scalepp_ext, scaleffp_ext, cratio_ext, cratiop_ext, &
                   cratiof_ext,psirz_ext
