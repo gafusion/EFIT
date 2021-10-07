@@ -1,0 +1,59 @@
+
+          EFIT-AI
+
+
+ type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+
+ number of time slices?
+
+ type input file names:
+ #
+ #
+ #
+ #
+ table_di2 = </home/mcclenaghanj/efit_ai/efit/build/test/NSTX/green/>
+
+      ******************** EFITD 65 x  65  output ********************
+ before save fitting weights
+ adjust fit parameters based on basis function selected 
+ itek > 100, write out PLTOUT.OUT individually 
+ option to symmetrize added 8/14/91 eal  
+ read in limiter data
+ before save fitting weights
+ adjust fit parameters based on basis function selected 
+ itek > 100, write out PLTOUT.OUT individually 
+ option to symmetrize added 8/14/91 eal  
+ read in limiter data
+ before save fitting weights
+ adjust fit parameters based on basis function selected 
+ itek > 100, write out PLTOUT.OUT individually 
+ option to symmetrize added 8/14/91 eal  
+ read in limiter data
+ before save fitting weights
+ adjust fit parameters based on basis function selected 
+ itek > 100, write out PLTOUT.OUT individually 
+ option to symmetrize added 8/14/91 eal  
+ read in limiter data
+ERROR in findax at r=  3, t=   429: 1st separatrix point is off grid
+INFO in efit at r=  3, t=   429: Done processing
+WARNING in fit at r=  1, t=   389: not converged, reached max iterations
+WARNING in fit at r=  2, t=   409: not converged, reached max iterations
+WARNING in fit at r=  0, t=   369: not converged, reached max iterations
+
+       data used:   
+ 45 flux loops
+ 73 magnetic probes(i)
+  1 full rogowski
+  1 diamagnetic loop
+
+
+ shot #   =     204202 time(ms) =        369 chi**2   =  1.761E+02
+ betat(%) =      3.622 betap    =      0.516 li       =      1.069
+ vol(cm3) =  9.022E+06 rout(cm) =     92.125 zout(cm) =     -4.367
+ elong    =      1.707 utriang  =      0.362 ltriang  =      0.514
+ a(cm)    =     57.699 lin(cm)  =      2.947 lout(cm) = **********
+ ltop(cm) =     41.018 q*       =      7.190 rc(cm)   =     97.371
+ zc(cm)   =     -0.891 bt0(t)   =     -0.630 qout     =     10.914
+INFO in efit at r=  1, t=   389: Done processing
+INFO in efit at r=  2, t=   409: Done processing
+INFO in efit at r=  0, t=   369: Done processing

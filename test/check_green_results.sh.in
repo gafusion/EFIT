@@ -10,12 +10,13 @@ for file in mhdout.dat dprobe.dat rfcoil.ddd brzgfc.dat; do
   fi
 done
 
-for prefix in ec ep fc ra re rv; do
-  if ! test -e ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd; then
-    echo "File does not exist: ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd"
-    exit 1
-  fi
-done
+# The files can generated be different for each device
+#for prefix in ec ep fc ra re rv; do
+#  if ! test -e ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd; then
+#    echo "File does not exist: ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd"
+#    exit 1
+#  fi
+#done
 
 # Check the output of the run itself.  use petscdiff because it's an easily
 # portable way of avoiding testing the numbers -- it's testing the text
