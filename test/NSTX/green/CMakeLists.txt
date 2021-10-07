@@ -12,5 +12,5 @@ configure_file(${EFUND_TEST_CONFIGFILE}
 configure_file(${EFUND_RESULTS_CONFIGFILE}
                ${CMAKE_CURRENT_BINARY_DIR}/check_green_results.sh @ONLY)
 
-add_test(NAME green COMMAND run_green.sh)
-add_test(NAME green-results COMMAND check_green_results.sh)
+add_test(NAME NSTX-green COMMAND run_green.sh)
+add_test(NAME NSTX-green-results COMMAND check_green_results.sh)

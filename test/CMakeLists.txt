@@ -30,6 +30,8 @@ set(EFIT_TIME 1)
 set(EFIT_TEST_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/run_efit.sh.in)
 set(EFIT_RESULTS_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/check_efit_results.sh.in)
 
+set(IS_DIIID true)
 add_subdirectory(DIIID)
+set(IS_DIIID false)
 add_subdirectory(NSTX)
 add_subdirectory(ITER)

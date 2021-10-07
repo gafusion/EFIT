@@ -22,5 +22,5 @@ configure_file(${EFIT_TEST_CONFIGFILE}
 configure_file(${EFIT_RESULTS_CONFIGFILE}
                ${CMAKE_CURRENT_BINARY_DIR}/check_efit_results.sh @ONLY)
 
-add_test(NAME rfile COMMAND run_efit.sh)
-add_test(NAME rfile-results COMMAND check_efit_results.sh)
+add_test(NAME ITER-rfile COMMAND run_efit.sh)
+add_test(NAME ITER-rfile-results COMMAND check_efit_results.sh)
