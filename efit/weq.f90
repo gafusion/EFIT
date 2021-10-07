@@ -435,7 +435,8 @@
       character eqdsk*72,header*42,wform*20,let,fit_type*3
       character*10 case(6)
       integer :: pltnw
-      parameter (pltnw=1025)
+      !TODO: can this be set to match mesh rather than hard-coded limit?
+      parameter (pltnw=2049)
       real*8,dimension(:),allocatable :: workk,dmion,bworm,cworm,  dworm
 !
       allocate(workk(pltnw),dmion(pltnw),bworm(pltnw),cworm(pltnw), &
