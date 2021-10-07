@@ -21,7 +21,6 @@ set(EFUND_RESULTS_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/check_green_results.sh.
 
 # This is a shell script used to drive running efit
 if (${ENABLE_PARALLEL})
-   # required to run on NERSC
    set(EFIT_EXEC "srun --mpi=pmi2 -n 4 ${CMAKE_BINARY_DIR}/efit/efit")
 else ()
    set(EFIT_EXEC ${CMAKE_BINARY_DIR}/efit/efit)
@@ -33,4 +32,4 @@ set(EFIT_RESULTS_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/check_efit_results.sh.in
 
 add_subdirectory(DIIID)
 add_subdirectory(NSTX)
-#add_subdirectory(ITER)
+add_subdirectory(ITER)
