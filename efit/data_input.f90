@@ -1445,10 +1445,18 @@
 !------------------------------------------------------------------------ 
 !--   New E-coil connections                   LLao, 95/07/11          --
 !------------------------------------------------------------------------ 
-      if (ecurrt(3).le.-1.e10_dp) ecurrt(3)=ecurrt(1) 
-      if (ecurrt(5).le.-1.e10_dp) ecurrt(5)=ecurrt(1) 
-      if (ecurrt(4).le.-1.e10_dp) ecurrt(4)=ecurrt(2) 
-      if (ecurrt(6).le.-1.e10_dp) ecurrt(6)=ecurrt(2) 
+      if (size(ecurrt).ge.3) then
+        if (ecurrt(3).le.-1.e10_dp) ecurrt(3)=ecurrt(1)
+      endif
+      if (size(ecurrt).ge.5) then
+        if (ecurrt(5).le.-1.e10_dp) ecurrt(5)=ecurrt(1) 
+      endif
+      if (size(ecurrt).ge.4) then
+        if (ecurrt(4).le.-1.e10_dp) ecurrt(4)=ecurrt(2) 
+      endif
+      if (size(ecurrt).ge.6) then
+        if (ecurrt(6).le.-1.e10_dp) ecurrt(6)=ecurrt(2)
+      endif 
       do i=1,nesum 
         eccurt(jtime,i)=ecurrt(i) 
       enddo

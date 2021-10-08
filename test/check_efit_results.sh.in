@@ -16,12 +16,24 @@ for prefix in ${outputs[*]}; do
   done
 done
 
+if [ @RFILE_TEST@ = True ]; then
+  if ! test -e x@EFIT_NEXT@; then
+    echo "File does not exist: x${next}"
+    exit 1
+  fi
+  # fit data can be output for any test, but we only use it with rfile tests for simplicity
+  if ! test -e fitout.dat; then
+    echo "File does not exist: fitout.dat"
+    exit 1
+  fi
+fi
+
 # Check the output of the run itself.  use petscdiff because it's an easily
 # portable way of avoiding testing the numbers -- it's testing the text
 if [ @ENABLE_PARALLEL@ = ON ]; then
-  @CMAKE_SOURCE_DIR@/bin/petscdiff -j -f 'grep -v table_di | grep -v netcdf | grep -v /green | grep -v r= | grep -v msec | grep -v consistent | grep -v Chisq | grep -v Ip-Exp | grep -v -e "^$" | grep -v weights | grep -v parameters | grep -v symmetrize | grep -v limiter | grep -v individually | grep -v Version' -F 'grep -v table_di | grep -v netcdf | grep -v /green | grep -v r= | grep -v msec | grep -v consistent | grep -v Chisq | grep -v Ip-Exp | grep -v -e "^$" | grep -v weights | grep -v parameters | grep -v symmetrize | grep -v limiter | grep -v individually | grep -v EFIT-AI' ${OUTPUT_STORE_DIR}/run_efit_mpi.out run_efit.out
+  @CMAKE_SOURCE_DIR@/bin/petscdiff -j -f 'grep -v table_di | grep -v netcdf | grep -v /green | grep -v r= | grep -v msec | grep -v consistent | grep -v Chisq | grep -v Ip-Exp | grep -v -e "^$" | grep -v weights | grep -v parameters | grep -v symmetrize | grep -v limiter | grep -v individually | grep -v Version | grep -v EFIT-AI' -F 'grep -v table_di | grep -v netcdf | grep -v /green | grep -v r= | grep -v msec | grep -v consistent | grep -v Chisq | grep -v Ip-Exp | grep -v -e "^$" | grep -v weights | grep -v parameters | grep -v symmetrize | grep -v limiter | grep -v individually | grep -v EFIT-AI' ${OUTPUT_STORE_DIR}/run_efit_mpi.out run_efit.out
   exit $?
 else
-  @CMAKE_SOURCE_DIR@/bin/petscdiff -j -f 'grep -v table_di | grep -v netcdf | grep -v /green | grep -v Version' -F 'grep -v table_di | grep -v netcdf | grep -v /green | grep -v EFIT-AI' ${OUTPUT_STORE_DIR}/run_efit.out run_efit.out
+  @CMAKE_SOURCE_DIR@/bin/petscdiff -j -f 'grep -v table_di | grep -v netcdf | grep -v /green | grep -v Version | grep -v EFIT-AI' -F 'grep -v table_di | grep -v netcdf | grep -v /green | grep -v EFIT-AI' ${OUTPUT_STORE_DIR}/run_efit.out run_efit.out
   exit $?
 fi

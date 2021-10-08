@@ -11,7 +11,7 @@
  #
  #
  #
- table_di2 = </home/mcclenaghanj/efit_ai/efit/build/test/NSTX/green/>
+ table_di2 = <>
 
       ******************** EFITD 65 x  65  output ********************
  before save fitting weights
@@ -36,9 +36,8 @@
  read in limiter data
 ERROR in findax at r=  3, t=   429: 1st separatrix point is off grid
 INFO in efit at r=  3, t=   429: Done processing
-WARNING in fit at r=  1, t=   389: not converged, reached max iterations
-WARNING in fit at r=  2, t=   409: not converged, reached max iterations
 WARNING in fit at r=  0, t=   369: not converged, reached max iterations
+WARNING in fit at r=  2, t=   409: not converged, reached max iterations
 
        data used:   
  45 flux loops
@@ -54,6 +53,7 @@ WARNING in fit at r=  0, t=   369: not converged, reached max iterations
  a(cm)    =     57.699 lin(cm)  =      2.947 lout(cm) = **********
  ltop(cm) =     41.018 q*       =      7.190 rc(cm)   =     97.371
  zc(cm)   =     -0.891 bt0(t)   =     -0.630 qout     =     10.914
-INFO in efit at r=  1, t=   389: Done processing
-INFO in efit at r=  2, t=   409: Done processing
 INFO in efit at r=  0, t=   369: Done processing
+INFO in efit at r=  2, t=   409: Done processing
+WARNING in fit at r=  1, t=   389: not converged, reached max iterations
+INFO in efit at r=  1, t=   389: Done processing

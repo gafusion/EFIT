@@ -12,6 +12,5 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/lim.dat
      DESTINATION ${CURRENT_MACHINE_LINK_DIR})
 
 add_subdirectory(green)
-#add_subdirectory(efit01)
-add_subdirectory(rfile)
-#add_subdirectory(kineticEFIT)
+add_subdirectory(rfile-modify)
+add_subdirectory(rfile-specify)

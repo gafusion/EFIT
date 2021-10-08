@@ -17,7 +17,7 @@ for prefix in ec ep re; do
   fi
 done
 
-if @IS_DIIID@; then
+if [ @IS_DIIID@ = True ]; then
   for prefix in fc ra rv; do
     if ! test -e ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd; then
       echo "File does not exist: ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd"

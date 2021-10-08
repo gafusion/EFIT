@@ -1,0 +1,51 @@
+INFO in efit at r=  1, t=  2400: Done processing
+WARNING in fit at r=  2, t=  2500: not converged, reached max iterations
+
+  fit errors, shot  186610  2500. msec. no eqdsks will be written
+     Error #1, Chisq >    80.
+     Error #4, (MHD Ip-Exp Ip)/MHD Ip > 8%
+INFO in efit at r=  2, t=  2500: Done processing
+WARNING in fit at r=  0, t=  2300: not converged, reached max iterations
+
+  fit errors, shot  186610  2300. msec. no eqdsks will be written
+     Error #1, Chisq >    80.
+INFO in efit at r=  0, t=  2300: Done processing
+WARNING in fit at r=  3, t=  2600: not converged, reached max iterations
+
+  fit errors, shot  186610  2600. msec. no eqdsks will be written
+     Error #1, Chisq >    80.
+INFO in efit at r=  3, t=  2600: Done processing
+INFO in efit at r=  1, t=  2400: Done processing
+WARNING in fit at r=  0, t=  2300: not converged, reached max iterations
+
+  fit errors, shot  186610  2300. msec. no eqdsks will be written
+     Error #1, Chisq >    80.
+INFO in efit at r=  0, t=  2300: Done processing
+WARNING in fit at r=  2, t=  2500: not converged, reached max iterations
+
+  fit errors, shot  186610  2500. msec. no eqdsks will be written
+     Error #1, Chisq >    80.
+     Error #4, (MHD Ip-Exp Ip)/MHD Ip > 8%
+INFO in efit at r=  2, t=  2500: Done processing
+WARNING in fit at r=  3, t=  2600: not converged, reached max iterations
+
+  fit errors, shot  186610  2600. msec. no eqdsks will be written
+     Error #1, Chisq >    80.
+INFO in efit at r=  3, t=  2600: Done processing
+INFO in efit at r=  1, t=  2400: Done processing
+WARNING in fit at r=  3, t=  2600: not converged, reached max iterations
+
+  fit errors, shot  186610  2600. msec. no eqdsks will be written
+     Error #1, Chisq >    80.
+INFO in efit at r=  3, t=  2600: Done processing
+WARNING in fit at r=  2, t=  2500: not converged, reached max iterations
+
+  fit errors, shot  186610  2500. msec. no eqdsks will be written
+     Error #1, Chisq >    80.
+     Error #4, (MHD Ip-Exp Ip)/MHD Ip > 8%
+INFO in efit at r=  2, t=  2500: Done processing
+WARNING in fit at r=  0, t=  2300: not converged, reached max iterations
+
+  fit errors, shot  186610  2300. msec. no eqdsks will be written
+     Error #1, Chisq >    80.
+INFO in efit at r=  0, t=  2300: Done processing

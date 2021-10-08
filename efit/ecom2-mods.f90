@@ -127,14 +127,12 @@
       use var_atable, only: rmp2ac
       implicit none
 
-      ecurrt(3)=-1.e10_dp
-      ecurrt(4)=-1.e10_dp
-      
-      ecurrt(5)=-1.e10_dp
-      ecurrt(6)=-1.e10_dp
-      
-      ecurrt(1)=0.0
-      ecurrt(2)=0.0
+      if (size(ecurrt).gt.0) ecurrt(1)=0.0
+      if (size(ecurrt).gt.1) ecurrt(2)=0.0
+      if (size(ecurrt).gt.2) ecurrt(3)=-1.e10_dp
+      if (size(ecurrt).gt.3) ecurrt(4)=-1.e10_dp
+      if (size(ecurrt).gt.4) ecurrt(5)=-1.e10_dp
+      if (size(ecurrt).gt.5) ecurrt(6)=-1.e10_dp
 
       ! initialze varialbes
       ppknt=0.0

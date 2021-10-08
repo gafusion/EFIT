@@ -59,6 +59,8 @@
          !write (nttyo,10000) trim(ch1),trim(ch2)
          jtime=time(it)
          saisq=tsaisq(it)
+         ! avoid roundoff
+         if (abs(saisq).lt.1.e-20_dp) saisq=0_dp
          write (nttyo,9300)
          write (nttyo,9320) ipsi(it)
          write (nttyo,9340) imag2(it)
@@ -79,7 +81,11 @@
 ! --- delete fitout.dat if IOUT does not contain 1
 !
       if (iand(iout,1).eq.0) then ! if iout is even, including zero
-         close(unit=nout,status='delete')
+! MPI >>>
+         if (rank == 0) then
+           close(unit=nout,status='delete')
+         endif
+! MPI <<<
       else
         !write (nout,10000) trim(ch1),trim(ch2)
         jtime=time(it)
