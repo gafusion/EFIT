@@ -16,6 +16,33 @@
  itek > 100, write out PLTOUT.OUT individually 
  option to symmetrize added 8/14/91 eal  
  read in limiter data
+
+ r=  0 t=   369 it=  1 chi2=6.27E+02 zm=-9.40E-04 err=4.615E+00 dz=-9.401E-04 chigam= 0.00E+00
+ r=  0 t=   369 it=  2 chi2=1.83E+02 zm=-2.15E-03 err=3.576E-01 dz=-1.205E-03 chigam= 0.00E+00
+ r=  0 t=   369 it=  3 chi2=1.74E+02 zm=-2.29E-03 err=6.677E-02 dz=-1.422E-04 chigam= 0.00E+00
+ r=  0 t=   369 it=  4 chi2=1.72E+02 zm=-2.72E-03 err=3.613E-02 dz=-4.306E-04 chigam= 0.00E+00
+ r=  0 t=   369 it=  5 chi2=1.72E+02 zm=-3.05E-03 err=1.752E-02 dz=-3.368E-04 chigam= 0.00E+00
+ r=  0 t=   369 it=  6 chi2=1.72E+02 zm=-3.42E-03 err=8.105E-03 dz=-3.628E-04 chigam= 0.00E+00
+ r=  0 t=   369 it=  7 chi2=1.73E+02 zm=-3.78E-03 err=4.216E-03 dz=-3.663E-04 chigam= 0.00E+00
+ r=  0 t=   369 it=  8 chi2=1.73E+02 zm=-4.13E-03 err=1.856E-03 dz=-3.500E-04 chigam= 0.00E+00
+ r=  0 t=   369 it=  9 chi2=1.74E+02 zm=-4.43E-03 err=1.827E-03 dz=-2.970E-04 chigam= 0.00E+00
+ r=  0 t=   369 it= 10 chi2=1.74E+02 zm=-4.69E-03 err=1.099E-03 dz=-2.640E-04 chigam= 0.00E+00
+ r=  0 t=   369 it= 11 chi2=1.74E+02 zm=-4.95E-03 err=8.978E-04 dz=-2.509E-04 chigam= 0.00E+00
+ r=  0 t=   369 it= 12 chi2=1.75E+02 zm=-5.17E-03 err=6.030E-04 dz=-2.194E-04 chigam= 0.00E+00
+ r=  0 t=   369 it= 13 chi2=1.75E+02 zm=-5.36E-03 err=4.612E-04 dz=-1.920E-04 chigam= 0.00E+00
+ r=  0 t=   369 it= 14 chi2=1.75E+02 zm=-5.53E-03 err=3.788E-04 dz=-1.679E-04 chigam= 0.00E+00
+ r=  0 t=   369 it= 15 chi2=1.75E+02 zm=-5.67E-03 err=3.174E-04 dz=-1.448E-04 chigam= 0.00E+00
+ r=  0 t=   369 it= 16 chi2=1.75E+02 zm=-5.80E-03 err=2.700E-04 dz=-1.257E-04 chigam= 0.00E+00
+ r=  0 t=   369 it= 17 chi2=1.75E+02 zm=-5.90E-03 err=2.321E-04 dz=-1.091E-04 chigam= 0.00E+00
+ r=  0 t=   369 it= 18 chi2=1.76E+02 zm=-6.00E-03 err=2.007E-04 dz=-9.463E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 19 chi2=1.76E+02 zm=-6.08E-03 err=1.742E-04 dz=-8.213E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 20 chi2=1.76E+02 zm=-6.15E-03 err=1.516E-04 dz=-7.128E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 21 chi2=1.76E+02 zm=-6.21E-03 err=1.320E-04 dz=-6.187E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 22 chi2=1.76E+02 zm=-6.27E-03 err=1.150E-04 dz=-5.370E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 23 chi2=1.76E+02 zm=-6.31E-03 err=1.003E-04 dz=-4.662E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 24 chi2=1.76E+02 zm=-6.36E-03 err=8.737E-05 dz=-4.047E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 25 chi2=1.76E+02 zm=-6.39E-03 err=7.612E-05 dz=-3.514E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 26 chi2=1.76E+02 zm=-6.42E-03 err=6.630E-05 dz=-3.051E-05 chigam= 0.00E+00
 WARNING in fit at r=  0, t=   369: not converged, reached max iterations
 
        data used:   

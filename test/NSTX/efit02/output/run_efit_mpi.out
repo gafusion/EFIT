@@ -17,6 +17,11 @@
  before save fitting weights
  adjust fit parameters based on basis function selected 
  itek > 100, write out PLTOUT.OUT individually 
+ before save fitting weights
+ adjust fit parameters based on basis function selected 
+ itek > 100, write out PLTOUT.OUT individually 
+ option to symmetrize added 8/14/91 eal  
+ read in limiter data
  option to symmetrize added 8/14/91 eal  
  read in limiter data
  before save fitting weights
@@ -29,15 +34,96 @@
  itek > 100, write out PLTOUT.OUT individually 
  option to symmetrize added 8/14/91 eal  
  read in limiter data
- before save fitting weights
- adjust fit parameters based on basis function selected 
- itek > 100, write out PLTOUT.OUT individually 
- option to symmetrize added 8/14/91 eal  
- read in limiter data
+
+
+ r=  0 t=   369 it=  1 chi2=6.27E+02 zm=-9.40E-04 err=4.615E+00 dz=-9.401E-04 chigam= 0.00E+00
+ r=  1 t=   389 it=  1 chi2=6.22E+02 zm=-8.71E-04 err=4.797E+00 dz=-8.707E-04 chigam= 0.00E+00
+
+ r=  2 t=   409 it=  1 chi2=6.28E+02 zm=-1.71E-03 err=4.962E+00 dz=-1.715E-03 chigam= 0.00E+00
+
+ r=  3 t=   429 it=  1 chi2=6.33E+02 zm=-1.14E-03 err=5.189E+00 dz=-1.141E-03 chigam= 0.00E+00
+ r=  1 t=   389 it=  2 chi2=1.84E+02 zm=-1.75E-03 err=3.628E-01 dz=-8.841E-04 chigam= 0.00E+00
 ERROR in findax at r=  3, t=   429: 1st separatrix point is off grid
+ r=  1 t=   389 it=  3 chi2=1.75E+02 zm=-1.96E-03 err=6.207E-02 dz=-2.029E-04 chigam= 0.00E+00
+ r=  0 t=   369 it=  2 chi2=1.83E+02 zm=-2.15E-03 err=3.576E-01 dz=-1.205E-03 chigam= 0.00E+00
+ r=  2 t=   409 it=  2 chi2=1.81E+02 zm=-3.79E-03 err=3.984E-01 dz=-2.072E-03 chigam= 0.00E+00
+ r=  0 t=   369 it=  3 chi2=1.74E+02 zm=-2.29E-03 err=6.677E-02 dz=-1.422E-04 chigam= 0.00E+00
+ r=  1 t=   389 it=  4 chi2=1.74E+02 zm=-2.23E-03 err=3.014E-02 dz=-2.762E-04 chigam= 0.00E+00
+ r=  0 t=   369 it=  4 chi2=1.72E+02 zm=-2.72E-03 err=3.613E-02 dz=-4.306E-04 chigam= 0.00E+00
+ r=  1 t=   389 it=  5 chi2=1.74E+02 zm=-2.47E-03 err=2.006E-02 dz=-2.378E-04 chigam= 0.00E+00
+ r=  2 t=   409 it=  3 chi2=1.70E+02 zm=-3.82E-03 err=6.059E-02 dz=-3.205E-05 chigam= 0.00E+00
 INFO in efit at r=  3, t=   429: Done processing
-WARNING in fit at r=  0, t=   369: not converged, reached max iterations
+ r=  1 t=   389 it=  6 chi2=1.75E+02 zm=-2.76E-03 err=1.023E-02 dz=-2.884E-04 chigam= 0.00E+00
+ r=  0 t=   369 it=  5 chi2=1.72E+02 zm=-3.05E-03 err=1.752E-02 dz=-3.368E-04 chigam= 0.00E+00
+ r=  2 t=   409 it=  4 chi2=1.70E+02 zm=-4.45E-03 err=2.857E-02 dz=-6.346E-04 chigam= 0.00E+00
+ r=  1 t=   389 it=  7 chi2=1.75E+02 zm=-9.22E-07 err=5.725E-03 dz= 2.759E-03 chigam= 0.00E+00
+ r=  2 t=   409 it=  5 chi2=1.70E+02 zm=-5.03E-03 err=2.123E-02 dz=-5.786E-04 chigam= 0.00E+00
+ r=  1 t=   389 it=  8 chi2=1.75E+02 zm=-3.31E-03 err=3.652E-03 dz=-3.305E-03 chigam= 0.00E+00
+ r=  2 t=   409 it=  6 chi2=1.70E+02 zm=-5.62E-03 err=1.027E-02 dz=-5.840E-04 chigam= 0.00E+00
+ r=  1 t=   389 it=  9 chi2=1.76E+02 zm=-3.54E-03 err=1.931E-03 dz=-2.327E-04 chigam= 0.00E+00
+ r=  2 t=   409 it=  7 chi2=1.71E+02 zm=-6.10E-03 err=7.319E-03 dz=-4.870E-04 chigam= 0.00E+00
+ r=  0 t=   369 it=  6 chi2=1.72E+02 zm=-3.42E-03 err=8.105E-03 dz=-3.628E-04 chigam= 0.00E+00
+ r=  2 t=   409 it=  8 chi2=1.71E+02 zm=-6.56E-03 err=3.181E-03 dz=-4.555E-04 chigam= 0.00E+00
+ r=  1 t=   389 it= 10 chi2=1.76E+02 zm=-3.75E-03 err=1.496E-03 dz=-2.097E-04 chigam= 0.00E+00
+ r=  2 t=   409 it=  9 chi2=1.72E+02 zm=-6.95E-03 err=1.516E-03 dz=-3.866E-04 chigam= 0.00E+00
+ r=  0 t=   369 it=  7 chi2=1.73E+02 zm=-3.78E-03 err=4.216E-03 dz=-3.663E-04 chigam= 0.00E+00
+ r=  2 t=   409 it= 10 chi2=1.72E+02 zm=-7.27E-03 err=3.671E-03 dz=-3.258E-04 chigam= 0.00E+00
+ r=  0 t=   369 it=  8 chi2=1.73E+02 zm=-4.13E-03 err=1.856E-03 dz=-3.500E-04 chigam= 0.00E+00
+ r=  2 t=   409 it= 11 chi2=1.72E+02 zm=-7.60E-03 err=2.066E-03 dz=-3.264E-04 chigam= 0.00E+00
+ r=  1 t=   389 it= 11 chi2=1.76E+02 zm=-3.94E-03 err=9.468E-04 dz=-1.897E-04 chigam= 0.00E+00
+ r=  2 t=   409 it= 12 chi2=1.73E+02 zm=-7.85E-03 err=1.105E-03 dz=-2.542E-04 chigam= 0.00E+00
+ r=  1 t=   389 it= 12 chi2=1.76E+02 zm=-4.11E-03 err=6.566E-04 dz=-1.696E-04 chigam= 0.00E+00
+ r=  0 t=   369 it=  9 chi2=1.74E+02 zm=-4.43E-03 err=1.827E-03 dz=-2.970E-04 chigam= 0.00E+00
+ r=  2 t=   409 it= 13 chi2=1.73E+02 zm=-8.09E-03 err=7.616E-04 dz=-2.370E-04 chigam= 0.00E+00
+ r=  1 t=   389 it= 13 chi2=1.77E+02 zm=-4.26E-03 err=4.807E-04 dz=-1.510E-04 chigam= 0.00E+00
+ r=  0 t=   369 it= 10 chi2=1.74E+02 zm=-4.69E-03 err=1.099E-03 dz=-2.640E-04 chigam= 0.00E+00
+ r=  1 t=   389 it= 14 chi2=1.77E+02 zm=-4.39E-03 err=3.699E-04 dz=-1.339E-04 chigam= 0.00E+00
+ r=  1 t=   389 it= 15 chi2=1.77E+02 zm=-4.51E-03 err=2.956E-04 dz=-1.184E-04 chigam= 0.00E+00
+ r=  2 t=   409 it= 14 chi2=1.73E+02 zm=-8.28E-03 err=2.487E-03 dz=-1.962E-04 chigam= 0.00E+00
+ r=  1 t=   389 it= 16 chi2=1.77E+02 zm=-4.62E-03 err=2.434E-04 dz=-1.046E-04 chigam= 0.00E+00
+ r=  1 t=   389 it= 17 chi2=1.77E+02 zm=-4.71E-03 err=2.052E-04 dz=-9.228E-05 chigam= 0.00E+00
+ r=  2 t=   409 it= 15 chi2=1.74E+02 zm=-8.44E-03 err=3.333E-03 dz=-1.550E-04 chigam= 0.00E+00
+ r=  1 t=   389 it= 18 chi2=1.77E+02 zm=-4.79E-03 err=1.757E-04 dz=-8.137E-05 chigam= 0.00E+00
+ r=  1 t=   389 it= 19 chi2=1.77E+02 zm=-4.86E-03 err=1.522E-04 dz=-7.172E-05 chigam= 0.00E+00
+ r=  2 t=   409 it= 16 chi2=1.74E+02 zm=-8.60E-03 err=2.825E-03 dz=-1.647E-04 chigam= 0.00E+00
+ r=  0 t=   369 it= 11 chi2=1.74E+02 zm=-4.95E-03 err=8.978E-04 dz=-2.509E-04 chigam= 0.00E+00
+ r=  1 t=   389 it= 20 chi2=1.77E+02 zm=-4.92E-03 err=1.328E-04 dz=-6.320E-05 chigam= 0.00E+00
+ r=  1 t=   389 it= 21 chi2=1.77E+02 zm=-4.98E-03 err=1.170E-04 dz=-5.569E-05 chigam= 0.00E+00
+ r=  1 t=   389 it= 22 chi2=1.77E+02 zm=-5.03E-03 err=1.033E-04 dz=-4.906E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 12 chi2=1.75E+02 zm=-5.17E-03 err=6.030E-04 dz=-2.194E-04 chigam= 0.00E+00
+ r=  1 t=   389 it= 23 chi2=1.77E+02 zm=-5.06E-03 err=1.484E-03 dz=-3.372E-05 chigam= 0.00E+00
+ r=  2 t=   409 it= 17 chi2=1.74E+02 zm=-8.72E-03 err=2.294E-03 dz=-1.105E-04 chigam= 0.00E+00
+ r=  1 t=   389 it= 24 chi2=1.78E+02 zm=-5.09E-03 err=1.514E-03 dz=-2.776E-05 chigam= 0.00E+00
+ r=  1 t=   389 it= 25 chi2=1.78E+02 zm=-5.12E-03 err=1.566E-03 dz=-2.517E-05 chigam= 0.00E+00
+ r=  2 t=   409 it= 18 chi2=1.74E+02 zm=-8.84E-03 err=1.829E-03 dz=-1.242E-04 chigam= 0.00E+00
+ r=  0 t=   369 it= 13 chi2=1.75E+02 zm=-5.36E-03 err=4.612E-04 dz=-1.920E-04 chigam= 0.00E+00
+ r=  1 t=   389 it= 26 chi2=1.78E+02 zm=-5.14E-03 err=1.552E-03 dz=-2.066E-05 chigam= 0.00E+00
+WARNING in fit at r=  1, t=   389: not converged, reached max iterations
+ r=  0 t=   369 it= 14 chi2=1.75E+02 zm=-5.53E-03 err=3.788E-04 dz=-1.679E-04 chigam= 0.00E+00
+ r=  2 t=   409 it= 19 chi2=1.74E+02 zm=-8.92E-03 err=4.358E-04 dz=-8.320E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 15 chi2=1.75E+02 zm=-5.67E-03 err=3.174E-04 dz=-1.448E-04 chigam= 0.00E+00
+ r=  2 t=   409 it= 20 chi2=1.74E+02 zm=-9.00E-03 err=2.030E-04 dz=-8.110E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 16 chi2=1.75E+02 zm=-5.80E-03 err=2.700E-04 dz=-1.257E-04 chigam= 0.00E+00
+ r=  2 t=   409 it= 21 chi2=1.75E+02 zm=-9.07E-03 err=1.565E-04 dz=-7.038E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 17 chi2=1.75E+02 zm=-5.90E-03 err=2.321E-04 dz=-1.091E-04 chigam= 0.00E+00
+ r=  2 t=   409 it= 22 chi2=1.75E+02 zm=-9.14E-03 err=1.610E-04 dz=-6.312E-05 chigam= 0.00E+00
+ r=  2 t=   409 it= 23 chi2=1.75E+02 zm=-9.19E-03 err=1.574E-04 dz=-5.652E-05 chigam= 0.00E+00
+INFO in efit at r=  1, t=   389: Done processing
+ r=  2 t=   409 it= 24 chi2=1.75E+02 zm=-9.24E-03 err=1.493E-04 dz=-5.069E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 18 chi2=1.76E+02 zm=-6.00E-03 err=2.007E-04 dz=-9.463E-05 chigam= 0.00E+00
+ r=  2 t=   409 it= 25 chi2=1.75E+02 zm=-9.29E-03 err=1.390E-04 dz=-4.547E-05 chigam= 0.00E+00
+ r=  2 t=   409 it= 26 chi2=1.75E+02 zm=-9.33E-03 err=1.278E-04 dz=-4.079E-05 chigam= 0.00E+00
 WARNING in fit at r=  2, t=   409: not converged, reached max iterations
+ r=  0 t=   369 it= 19 chi2=1.76E+02 zm=-6.08E-03 err=1.742E-04 dz=-8.213E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 20 chi2=1.76E+02 zm=-6.15E-03 err=1.516E-04 dz=-7.128E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 21 chi2=1.76E+02 zm=-6.21E-03 err=1.320E-04 dz=-6.187E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 22 chi2=1.76E+02 zm=-6.27E-03 err=1.150E-04 dz=-5.370E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 23 chi2=1.76E+02 zm=-6.31E-03 err=1.003E-04 dz=-4.662E-05 chigam= 0.00E+00
+INFO in efit at r=  2, t=   409: Done processing
+ r=  0 t=   369 it= 24 chi2=1.76E+02 zm=-6.36E-03 err=8.737E-05 dz=-4.047E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 25 chi2=1.76E+02 zm=-6.39E-03 err=7.612E-05 dz=-3.514E-05 chigam= 0.00E+00
+ r=  0 t=   369 it= 26 chi2=1.76E+02 zm=-6.42E-03 err=6.630E-05 dz=-3.051E-05 chigam= 0.00E+00
+WARNING in fit at r=  0, t=   369: not converged, reached max iterations
 
        data used:   
  45 flux loops
@@ -54,6 +140,3 @@ WARNING in fit at r=  2, t=   409: not converged, reached max iterations
  ltop(cm) =     41.018 q*       =      7.190 rc(cm)   =     97.371
  zc(cm)   =     -0.891 bt0(t)   =     -0.630 qout     =     10.914
 INFO in efit at r=  0, t=   369: Done processing
-INFO in efit at r=  2, t=   409: Done processing
-WARNING in fit at r=  1, t=   389: not converged, reached max iterations
-INFO in efit at r=  1, t=   389: Done processing
