@@ -41,9 +41,6 @@
  r=  0 t=   369 it= 22 chi2=1.64E+02 zm=-6.10E-03 err=1.711E-03 dz=-4.090E-05 chigam= 0.00E+00
  r=  0 t=   369 it= 23 chi2=1.64E+02 zm=-6.13E-03 err=2.261E-04 dz=-3.277E-05 chigam= 0.00E+00
  r=  0 t=   369 it= 24 chi2=1.65E+02 zm=-6.16E-03 err=8.218E-05 dz=-2.791E-05 chigam= 0.00E+00
- r=  0 t=   369 it= 25 chi2=1.65E+02 zm=-6.18E-03 err=5.402E-05 dz=-2.443E-05 chigam= 0.00E+00
- r=  0 t=   369 it= 26 chi2=1.65E+02 zm=-6.21E-03 err=4.271E-05 dz=-2.146E-05 chigam= 0.00E+00
-WARNING in fit at r=  0, t=   369: not converged, reached max iterations
 
        data used:   
  45 flux loops
@@ -52,10 +49,10 @@ WARNING in fit at r=  0, t=   369: not converged, reached max iterations
   0 diamagnetic loop
 
 
- shot #   =     204202 time(ms) =        369 chi**2   =  1.646E+02
+ shot #   =     204202 time(ms) =        369 chi**2   =  1.645E+02
  betat(%) =      3.883 betap    =      0.544 li       =      1.075
- vol(cm3) =  9.112E+06 rout(cm) =     92.476 zout(cm) =     -4.249
+ vol(cm3) =  9.113E+06 rout(cm) =     92.476 zout(cm) =     -4.241
  elong    =      1.714 utriang  =      0.368 ltriang  =      0.518
- a(cm)    =     57.727 lin(cm)  =      3.269 lout(cm) = **********
- ltop(cm) =     40.578 q*       =      7.197 rc(cm)   =     98.196
- zc(cm)   =     -0.831 bt0(t)   =     -0.630 qout     =     10.795
+ a(cm)    =     57.728 lin(cm)  =      3.268 lout(cm) = **********
+ ltop(cm) =     40.561 q*       =      7.198 rc(cm)   =     98.195
+ zc(cm)   =     -0.825 bt0(t)   =     -0.630 qout     =     10.798
