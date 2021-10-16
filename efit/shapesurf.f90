@@ -57,6 +57,7 @@
       kerror = 0
       oring(iges)=999 ! initialize at ridiculous value
       ringap=999
+      zavs=0.0
 !
       xdum=0.0
       ydum=0.0
@@ -1421,8 +1422,8 @@
         dmaxfs=dmaxfs0*nmaxfs
         if (nmaxfs.le.20) go to 77723
       endif
-      if (dis2p.ge.0.1_dp*drgrid) then
       rsepnose=-999.
+      if (dis2p.ge.0.1_dp*drgrid) then
       do i=1,npxtra(ixl)-1
         if ((yxtra(i,ixl)-znose)*(yxtra(i+1,ixl)-znose).le.0.0) then
           rsepnose=xxtra(i,ixl)+(xxtra(i+1,ixl)-xxtra(i,ixl))/ &

@@ -158,11 +158,15 @@
  PPTENS = 5
  PPKNT = 0.0 0.3 1.0
  KCALPA = 1
- CALPA(1,1) = 1.0 80*0.0
+ CALPA = 0.0
+ CALPA(1,1) = 1.0
  XALPA = 9*0.0
  KCGAMA = 1
  XGAMA = 9*0.0
- CGAMA(1,1) = 0.0 1.0 2.0 3.0 77*0.0
+ CGAMA = 0.0
+ CGAMA(2,1) = 1.0
+ CGAMA(3,1) = 2.0
+ CGAMA(4,1) = 3.0
  FWTQA = 0.0
  QVFIT = 0.0
  FWTBP = 0.0

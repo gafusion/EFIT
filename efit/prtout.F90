@@ -24,7 +24,13 @@
       namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi,as, &
         as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
         hacoil,wacoil,rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2,fcturn, &
-        re,ze,ecid,ecturn,vsid,rvs,zvs,we,he 
+        re,ze,ecid,ecturn,vsid,rvs,zvs,we,he
+
+      ! avoid write garbage when oleft or oright not update (e.g. 1.e10)
+      tleft=oleft(it)
+      if (tleft.gt.1.e9_dp) tleft=0.0
+      tright=oright(it)
+      if (tright.gt.1.e9_dp) tright=0.0
 !
 !#if defined(USEMPI)
 !      ! TODO: Currently this ONLY works if nproc == total number of time slices.
@@ -71,7 +77,7 @@
          write (nttyo,10520) betat(it),betap(it),ali(it)
          write (nttyo,10540) vout(it),rout(it),zout(it)
          write (nttyo,10560) eout(it),doutu(it),doutl(it)
-         write (nttyo,10580) aout(it),oleft(it),oright(it)
+         write (nttyo,10580) aout(it),tleft,tright
          write (nttyo,10600) otop(it),qsta(it),rcurrt(it)
          write (nttyo,10610) zcurrt(it),bcentr(it),qout(it)
        endif
@@ -100,7 +106,7 @@
         write (nout,10520) betat(it),betap(it),ali(it)
         write (nout,10540) vout(it),rout(it),zout(it)
         write (nout,10560) eout(it),doutu(it),doutl(it)
-        write (nout,10580) aout(it),oleft(it),oright(it)
+        write (nout,10580) aout(it),tleft,tright
         write (nout,10600) otop(it),qsta(it),rcurrt(it)
         write (nout,10610) zcurrt(it),bcentr(it),qout(it)
         write (nout,10620) olefs(it),orighs(it),otops(it)
@@ -400,11 +406,13 @@
           enddo
         enddo
 !
-        open(unit=80,status='old',file='dprobe.new',iostat=ioerr)
-        if (ioerr.eq.0) close(unit=80,status='delete')
-        open(unit=80,status='new',file='dprobe.new',delim='quote')
-        write (80,in3)
-        close(unit=80)
+        if (rank == 0) then
+          open(unit=80,status='old',file='dprobe.new',iostat=ioerr)
+          if (ioerr.eq.0) close(unit=80,status='delete')
+          open(unit=80,status='new',file='dprobe.new',delim='quote')
+          write (80,in3)
+          close(unit=80)
+        endif
        endif
 !
        cipmp3=0.0

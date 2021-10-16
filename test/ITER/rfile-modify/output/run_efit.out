@@ -58,6 +58,6 @@
  betat(%) =      0.242 betap    =      0.067 li       =      1.069
  vol(cm3) =  8.532E+08 rout(cm) =    621.464 zout(cm) =     28.390
  elong    =      1.923 utriang  =      0.440 ltriang  =      0.613
- a(cm)    =    199.221 lin(cm)  = ********** lout(cm) =      6.766
+ a(cm)    =    199.221 lin(cm)  =      0.000 lout(cm) =      6.766
  ltop(cm) =      9.546 q*       =      4.341 rc(cm)   =    612.405
  zc(cm)   =     53.711 bt0(t)   =     -5.060 qout     =      6.031
