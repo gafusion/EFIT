@@ -1,0 +1,47 @@
+
+          EFIT-AI
+
+
+ type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+
+ number of time slices?
+
+ type input file names:
+ #
+ table_di2 = <>
+
+      ******************** EFITD 65 x  65  output ********************
+ before save fitting weights
+ adjust fit parameters based on basis function selected 
+ itek > 100, write out PLTOUT.OUT individually 
+ option to symmetrize added 8/14/91 eal  
+ read in limiter data
+
+ r=  0 t=  4910 it=  1 chi2=0.00E+00 zm= 3.07E-01 err=3.450E+00 dz= 3.073E-01 chigam= 0.00E+00
+ r=  0 t=  4910 it=  2 chi2=0.00E+00 zm= 4.68E-01 err=1.262E+00 dz= 1.603E-01 chigam= 0.00E+00
+ r=  0 t=  4910 it=  3 chi2=0.00E+00 zm= 5.28E-01 err=2.484E-01 dz= 6.015E-02 chigam= 0.00E+00
+ r=  0 t=  4910 it=  4 chi2=0.00E+00 zm= 5.56E-01 err=9.947E-02 dz= 2.831E-02 chigam= 0.00E+00
+ r=  0 t=  4910 it=  5 chi2=0.00E+00 zm= 5.69E-01 err=4.191E-02 dz= 1.331E-02 chigam= 0.00E+00
+ r=  0 t=  4910 it=  6 chi2=0.00E+00 zm= 5.76E-01 err=1.832E-02 dz= 6.217E-03 chigam= 0.00E+00
+ r=  0 t=  4910 it=  7 chi2=0.00E+00 zm= 5.78E-01 err=8.268E-03 dz= 2.890E-03 chigam= 0.00E+00
+ r=  0 t=  4910 it=  8 chi2=0.00E+00 zm= 5.80E-01 err=3.783E-03 dz= 1.340E-03 chigam= 0.00E+00
+ r=  0 t=  4910 it=  9 chi2=0.00E+00 zm= 5.80E-01 err=1.739E-03 dz= 6.201E-04 chigam= 0.00E+00
+ r=  0 t=  4910 it= 10 chi2=0.00E+00 zm= 5.81E-01 err=8.000E-04 dz= 2.870E-04 chigam= 0.00E+00
+ r=  0 t=  4910 it= 11 chi2=0.00E+00 zm= 5.81E-01 err=3.677E-04 dz= 1.330E-04 chigam= 0.00E+00
+ r=  0 t=  4910 it= 12 chi2=0.00E+00 zm= 5.81E-01 err=1.685E-04 dz= 6.194E-05 chigam= 0.00E+00
+ r=  0 t=  4910 it= 13 chi2=0.00E+00 zm= 5.81E-01 err=7.666E-05 dz= 2.912E-05 chigam= 0.00E+00
+
+       data used:   
+  0 flux loops
+  0 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     600803 time(ms) =       4910 chi**2   =  0.000E+00
+ betat(%) =      0.976 betap    =      0.258 li       =      1.048
+ vol(cm3) =  8.304E+08 rout(cm) =    619.456 zout(cm) =     34.197
+ elong    =      1.839 utriang  =      0.469 ltriang  =      0.536
+ a(cm)    =    200.192 lin(cm)  =      0.000 lout(cm) =      7.963
+ ltop(cm) =     11.499 q*       =      4.002 rc(cm)   =    617.008
+ zc(cm)   =     57.002 bt0(t)   =      5.300 qout     =      6.132

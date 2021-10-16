@@ -49,7 +49,6 @@ subroutine get_eparmdud_defaults()
   nppcur=32
   nercur=32
 
-  nwcur2=nwcurn*2
   ntime=1001
   ndim=3200
   kxiter=515
@@ -100,9 +99,11 @@ subroutine get_eparmdud_dependents()
   nrsma2=2*nrsmat
 
   nwcurn=nwwcur+npcurn
+  nwcur2=nwcurn*2
+  npcur2=npcurn*2
 
   ncurrt=nvesel+nesum+nfcoil
-  end subroutine
+end subroutine
 
 
 !**********************************************************************
@@ -111,7 +112,7 @@ subroutine get_eparmdud_dependents()
 !!    set up directory paths
 !!
 !**********************************************************************
-  subroutine read_dirs_shot(filename)
+subroutine read_dirs_shot(filename)
   use var_exdata, only: ishot
   use var_cecoil, only: iecurr
   use var_vessel, only: ivesel
@@ -173,4 +174,4 @@ subroutine get_eparmdud_dependents()
       'Invalid line in namelist: '//trim(line)
   end if
   close(nin)
-  end subroutine
+end subroutine

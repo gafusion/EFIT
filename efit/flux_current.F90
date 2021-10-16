@@ -1240,14 +1240,30 @@
 !----------------------------------------------------------------
 !--       set zelip=0.0 if bad signals              96/06/24   --
 !----------------------------------------------------------------
-          if (abs(fwtmp2(37)).le.1.0e-30_dp) zelip=0.0
-          if (abs(fwtmp2(43)).le.1.0e-30_dp) zelip=0.0
-          if (abs(fwtmp2(57)).le.1.0e-30_dp) zelip=0.0
-          if (abs(fwtmp2(53)).le.1.0e-30_dp) zelip=0.0
-          if (abs(fwtsi(27)).le.1.0e-30_dp)  zelip=0.0
-          if (abs(fwtsi(37)).le.1.0e-30_dp)  zelip=0.0
-          if (abs(fwtsi(2)).le.1.0e-30_dp)   zelip=0.0
-          if (abs(fwtsi(11)).le.1.0e-30_dp)  zelip=0.0
+          if (size(fwtmp2).ge.37) then
+            if (abs(fwtmp2(37)).le.1.0e-30_dp) zelip=0.0
+          endif
+          if (size(fwtmp2).ge.43) then
+            if (abs(fwtmp2(43)).le.1.0e-30_dp) zelip=0.0
+          endif
+          if (size(fwtmp2).ge.57) then
+            if (abs(fwtmp2(57)).le.1.0e-30_dp) zelip=0.0
+          endif
+          if (size(fwtmp2).ge.53) then
+            if (abs(fwtmp2(53)).le.1.0e-30_dp) zelip=0.0
+          endif
+          if (size(fwtsi).ge.27) then
+            if (abs(fwtsi(27)).le.1.0e-30_dp)  zelip=0.0
+          endif
+          if (size(fwtsi).ge.37) then
+            if (abs(fwtsi(37)).le.1.0e-30_dp)  zelip=0.0
+          endif
+          if (size(fwtsi).ge.2) then
+            if (abs(fwtsi(2)).le.1.0e-30_dp)   zelip=0.0
+          endif
+          if (size(fwtsi).ge.11) then
+            if (abs(fwtsi(11)).le.1.0e-30_dp)  zelip=0.0
+          endif
 !
           do i=1,nw
             do j=1,nh
