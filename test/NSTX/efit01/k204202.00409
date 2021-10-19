@@ -1,0 +1,356 @@
+!------------------------------------------------------------------------------      
+! Default input file for EFITD - NSTX equilibria                                     
+!                                                                                    
+! Comments:                                                                          
+!       - 2/12/95: First version: Input variables are "loosely"                      
+!                  arranged in the following manner in NAMELIST IN1:                 
+!                   1) ID variables                                                  
+!                   2) Code control variables                                        
+!                   3) Physical modelling parameters                                 
+!                   4) Output/plot control variables                                 
+!                   5) Initial conditions for current                                
+!                   6) "Static" modelling parameters (Limiter, etc.)                 
+!                   7) Parameters supplied by VMI2EFIT                               
+!                   8) GAQ code parameters                                           
+!                   9) Fixed boundary modelling parameters                           
+!                  10) Filament code modelling parameters                            
+!                  11) Solov'ev equilibrium modelling parameters                     
+!                  12) DIII-D modelling parameters                                   
+!                  13) Obsolete variables                                            
+!                                                                                    
+! Note: 1) TURNFC is not used to compute threading current                           
+!          in EFUND/EFIT.                                                            
+!                                                                                    
+! File revised for use with NSTX on ARTEMIS                                          
+! S.A. Sabbagh - 8/28/99                                                             
+!                                                                                    
+! - Main input NAMELIST IN1 moved to the end of the file to allow a quick            
+!   concatentation of machine data to the default file.                              
+! - File is missing the last "$" to terminate the NAMELIST. Add this when            
+!   running the file as standalone.                                                  
+!                                                                                    
+! S.A. Sabbagh - 9/20/99                                                             
+! - Version PhIV1 - for start of Phase I plasma run                                  
+!                                                                                    
+! S.A. Sabbagh - 08/06/03                                                            
+! - Version V5g: taken from file kdefPhIV4g.NSTX. The file is indentical             
+!                except that it replaces "$" with "&" and "$" with                
+!                "$" in Namelists                                                 
+!                                                                                    
+! S.A. Sabbagh - 09/18/03: "$ now terminates each NAMELIST,               
+!                          including the main IN1 NAMELIST. Data insertion           
+!                          being done for each NAMELIST using SED.                   
+!                                                                                    
+! S.A. Sabbagh - 02/02/15: First file for NSTX-U, taken from kdefV5m1001d.NSTX       
+!                          Changes made to support device changes for NSTX-U         
+!                          (limiter, R0, array dimensions, initial conditions        
+!                           for plasma) with no changes to constraint model.         
+!                                                                                    
+! S.A. Sabbagh - 08/05/15: kdefV5m1001d4b.NSTXU (from version d4) decrease           
+!                          CUTIP to 10e3 for low plasma current reconstruction       
+!                                                                                    
+! S.A. Sabbagh - 08/10/15: kdefV5m1001d4c.NSTXU (from version d4b)                   
+!                          MXITER from 15 to 25                                      
+!                                                                                    
+!------------------------------------------------------------------------------      
+! Constraint Model Notes: kdefV5m1001c.NSTX                                          
+! SAS 4/27/05                                                                        
+!   Number of limiter points made consistent with K file kdefV5h1004d.NSTX           
+! Constraint Model Notes: kdefV5m1001b.NSTX                                          
+! SAS 4/12/05                                                                        
+!   2005 measured RF limiter position (new specs and two new points added)           
+! Constraint Model Notes: kdefV5m1001.NSTX                                           
+! SAS 8/26/00                                                                        
+!    - allow J finite at plasma edge to handle periods                               
+!      of large dV/dt properly                                                       
+!                                                                                    
+! DEFAULT FILE Notes:                                                                
+!    - Fit vacuum vessel currents                                                    
+!    - P2G4 P and RBt function model (default)                                       
+!    - p'(0) = p'(1) = 0, (ff')'(1) = 0, ff'(1) float                                
+!---------------------------------------------------------------------------         
+! Shot Notes:                                                                        
+!---------------------------------------------------------------------------         
+!                                                                                    
+! Vertical feedback module
+ &INK
+ SYMMETRIZE = .false.
+ BACKAVERAGE = .false.
+ IOFFR = -7
+ IOFFZ = 7
+ GAIN = 0.22
+ GAINP = 0.75
+ /
+! Motional Stark effect
+ &INS
+ KDOMSE = 0
+ FWTGAM = 16*0.0
+ RRRGAM = 16*1.0
+ ZZZGAM = 16*1.0
+ TGAMMA = 16*1.0
+ SGAMMA = 16*1.0
+ AA1GAM = 16*1.0
+ AA2GAM = 16*1.0
+ AA3GAM = 16*0.0
+ AA4GAM = 16*0.0
+ IPLOTS = 1
+ /
+! Soft X-ray module (to determine q = 1 surface)
+ &INSXR
+ IDOSXR = 0
+ /
+! Constraints on global parameters (equilibrium mode)
+ &INWANT
+ FITDELZ = .false.
+ PSIWANT = 1.0
+ VZEROJ = 0.0
+ JWANTM = 0
+ FBETAP = 0.0
+ FBETAN = 0.0
+ JBETA = 1
+ ALPAX = 4*10000.0 6*0.0
+ FLI = 0.0
+ JLI = 2
+ GAMAX = -10.0 100.0 -100.0 100.0 6*0.0
+ FQ95 = 0.0
+ FQSIW = 66*0.0
+ ZNOSE = 0.0
+ NQWANT = 0
+ SIWANTQ = 66*0.0
+ N_WRITE = 1
+ /
+! Defaults from INWANT Namelist
+! FWTXXJ  = 1.0
+! FWTXXQ  = 1.0
+! FWTXXB  = 1.0
+! FWTXLI  = 1.0
+! Kinetic input data
+ &EDAT
+ /
+! Main EFIT namelist input
+ &IN1
+ ISHOT = 204202
+ ITIME = 409
+ ITIMEU = 0
+ ICONVR = 2
+ IBUNMN = 3
+ RELAX = 1.0
+ MXITER = -25
+ NXITER = 1
+ SERROR = 0.003
+ ERROR = 0.0001
+ ERRMIN = 0.01
+ SAIMIN = 200.0
+ SAICON = 60.0
+ IERCHK = 0
+ ICURRT = 2
+ KFFCUR = 4
+ KPPCUR = 2
+ FCURBD = 0.0
+ PCURBD = 1.0
+ ICPROF = 0
+ KFFFNC = 0
+ KFFKNT = 3
+ FFTENS = 5
+ FFKNT = 0.0 0.3 1.0
+ KPPFNC = 0
+ KPPKNT = 3
+ PPTENS = 5
+ PPKNT = 0.0 0.3 1.0
+ KCALPA = 1
+ CALPA = 0.0
+ CALPA(1,1) = 1.0
+ XALPA = 9*0.0
+ KCGAMA = 1
+ XGAMA = 9*0.0
+ CGAMA = 0.0
+ CGAMA(2,1) = 1.0
+ CGAMA(3,1) = 2.0
+ CGAMA(4,1) = 3.0
+ FWTQA = 0.0
+ QVFIT = 0.0
+ FWTBP = 0.0
+ KZEROJ = 0
+ RZEROJ = 0.0
+ IAVEM = 5
+ DENR = 999.0
+ DENV = 999.0
+ VLOOP = 0.270941
+ PNBEAM = 0.0
+ NSLREF = 25
+ SIREF = 0.0
+ VCURFB = 0.0 2*500.0
+ ICUTFP = 0
+ CUTIP = 50000.0
+ ALPHAFP = 0.0
+ SCRAPE = 0.04
+ VSDAMP = 0.0
+ KEQDSK = 1
+ KINPUT = 0
+ KWRIPRE = 0
+ ICONSI = -1
+ IPROBE = 0
+ NEXTRA = 2
+ ITRACE = 1
+ IXSTRT = 1
+ IQPLOT = 0
+ IEXCAL = 0
+ KBOUND = 0
+ RBOUND = 0.0
+ ITEK = 0
+ IOUT = 20
+ ICNTOUR = 1
+ KFRAME = 0
+ KLABEL = 0
+ ICINIT = 2
+ RELIP = 0.941
+ ZELIP = 0.0
+ AELIP = 0.625
+ EELIP = 2.0
+ IFITVS = 0
+ IVESEL = 0
+ VCURRT = 2*0.0
+ KSKIPVS = 0
+ LIMVS = 1
+ RMINVS = 0.0
+ RMAXVS = 100.0
+ ZMINVS = -100.0
+ ZMAXVS = 100.0
+ LIMITR = 33
+ XLIM = 2*0.3148 2*0.415 0.5715 0.617 1.194 1.0433 1.3192 1.3358 1.4851 
+ 1.4791 1.5174 1.5313 1.5464 1.5608 1.567 1.5657 1.5543 1.5341 1.5181 1.4818 
+ 1.4851 1.3358 1.3192 1.0433 1.194 0.617 0.5715 2*0.415 2*0.3148 87*0.0
+ YLIM = 0.0 1.05 1.27 2*1.6234 1.628 1.401 1.43 1.0397 0.9976 0.545 0.4995 
+ 0.306 0.2355 0.1586 0.0801 0.0 -0.0177 -0.1123 -0.221 -0.3026 -0.486 -0.545 
+ -0.9976 -1.0397 -1.43 -1.401 -1.628 2*-1.6234 -1.27 -1.05 88*0.0
+ RCENTR = 0.941
+ BTOR = -0.630045
+ FWTCUR = 1.0
+ PLASMA = 690657.0
+ BITIP = 1057.94702
+ FWTDLC = 0.0
+ DFLUX = 1.0
+ SIGDLC = 1.0
+ KPRFIT = 1
+ NDOKIN = 1
+ NPRESS = 1
+ FWTPRE = 1.0 131*0.0
+ RPRESS = -0.9 131*1.0
+ PRESSR = 100.0 131*1.0
+ SIGPRE = 10000.0 131*1.0
+ IWEIGH = 0
+ BETAP0 = 0.5
+ RZERO = 0.941
+ GAMMAP = 10000000000.0
+ QENP = 0.95
+ QEMP = 0.0
+ EMP = 1.0
+ ENP = 1.0
+ NBDRY = 0
+ RBDRY = -1.0 191*0.0
+ ZBDRY = 200*0.0
+ FWTXX = 0.2
+ CFCOIL = -1.0
+ IFREF = -1
+ FCZERO = 11*1.0
+ FCSUM = 11*1.0
+ ERRBRY = 0.0001
+ IRFILA = 0
+ JZFILA = 0
+ ISLVE = 0
+ SRM = -3.5
+ SALPHA = 0.025
+ SBETA = 0.125
+ IECURR = 1
+ IECOIL = 1
+ FWACOIL = 0.0
+ ACOILC = 0.0
+ CURRN1 = 0.0
+ N1COIL = 0
+ IPLIM = 0
+ IFCURR = 0
+ CO2COR = 1.0
+ IBTCOMP = 0
+ ELOMIN = 0.6
+ DNMIN = 1.0
+ SIGPPB = 1000.0
+ LIMFAG = 2
+ LIMID = 33
+ ECURRT(1) = 1971.55603
+ BITEC(1) = 2.80838633
+ FWTEC(1) = 1.0
+ COILS = 0.053034991 0.00884282961 -0.0621847473 -0.0827276185 -0.0844022706 
+ -0.0541665256 0.0498097874 0.0135675147 -0.0652330369 -0.0808758885 
+ -0.0839115083 -0.0507588536 -0.0715994611 -0.0774508789 -0.0694223046 
+ -0.0771492049 0.0524374805 0.0348693989 0.00935546495 0.0283186957 
+ 0.0494737774 0.00715830363 0.0 0.0235604066 0.0 0.0231864545 0.0264019463 
+ 0.0 0.0233810842 0.0 0.022570027 0.0 0.0795331523 0.0 0.0633810312 0.0 
+ 0.0769623965 0.0 0.0615723021 -0.0224184357 -0.0242352765 -0.0254943073 
+ -0.0261016265 -0.0219291542 -0.0235968232 0.0 -0.0287111793 -0.0303249881 
+ -0.0269222688 -0.0255424902 -0.0194337051 -0.0301919095 -0.027170226 0.0 
+ -0.0216430184 11*0.0
+ PSIBIT = 7.13613117e-05 6.21545478e-05 0.000283875561 0.000143276178 
+ 0.000216051107 0.000139178039 6.89981316e-05 4.96367211e-05 0.000154581619 
+ 0.00011346137 0.000283783098 0.000106642015 0.000122459503 9.09855225e-05 
+ 0.000131058579 9.07288631e-05 7.09183805e-05 5.91236167e-05 4.8654405e-05 
+ 8.32692531e-05 0.000135649563 4.8280097e-05 0.0 9.73353381e-05 0.0 
+ 9.88403626e-05 9.14301781e-05 0.0 9.06040223e-05 0.0 9.19401282e-05 0.0 
+ 0.000140797856 0.0 0.000106741791 0.0 0.000139361859 0.0 0.000127290972 
+ 5.27476332e-05 5.35450745e-05 0.000259375578 5.44152717e-05 5.67650131e-05 
+ 5.32591475e-05 0.0 5.78880718e-05 5.65626324e-05 5.48136413e-05 
+ 5.41492918e-05 5.15499305e-05 5.64913971e-05 5.49358519e-05 0.0 
+ 5.07889308e-05 11*0.0
+ FWTSI = 22*1.0 0.0 1.0 0.0 2*1.0 0.0 1.0 0.0 1.0 0.0 1.0 0.0 1.0 0.0 1.0 0.0 
+ 7*1.0 0.0 7*1.0 0.0 1.0 11*0.0
+ FWTFC = 54*1.0
+ BRSP = 11288.6074 0.0 0.122597016 3532.95117 -5663.55078 -0.908063948 
+ 2*-7301.55176 -0.908063948 -5971.11377 4003.31421 2.65663409 0.0 11781.7061 
+ 1227.87549 1119.52722 2428.64062 3070.76318 885.158936 -880.906799 
+ 1892.33618 1817.00952 -30.4762859 -661.838135 -983.343384 568.256409 
+ 999.078186 390.214844 333.959778 294.361572 320.063843 971.677795 827.845215 
+ -1060.63965 -2080.01025 -43.4030914 1213.06128 1860.70117 -1355.58044 
+ 1277.33557 4419.15723 3883.9436 1117.89709 1215.78772 -524.177246 
+ -767.518433 0.000405052997 322.812195 0.000461237069 206.763977 137.721298 
+ 0.0003524762 225.889679 0.000270941033
+ BITFC = 5.70071602 0.001 2.0 2.66841459 8.4863987 2.0 2*4.16271114 2.0 
+ 8.53894329 2.82959914 2.0 0.001 5.94492674 102.971214 105.489372 123.727394 
+ 135.965546 2*100.0 114.990623 113.89193 12*200.0 204.28064 200.0 106.416008 
+ 114.525063 107.952942 107.090752 166.06041 153.546463 105.473816 102.913834 
+ 2*100.0 1500.0 100.0 1500.0 2*100.0 1500.0 100.0 1500.0
+ FWTMP2 = 2*1.0 0.0 9*1.0 2*0.0 1.0 3*0.0 3*1.0 3*0.0 4*1.0 2*0.0 8*1.0 0.0 
+ 18*1.0 2*0.0 9*1.0 5*0.0 1.0 0.0 1.0 3*0.0 1.0 4*0.0 5*1.0 0.0 8*1.0 2*0.0 
+ 3*1.0 5*0.0
+ EXPMP2 = 0.288931519 0.281061143 1.0 0.225416586 0.190618336 0.16272068 
+ 0.278629631 0.257635325 0.226384208 0.18665041 0.1545012 0.151115566 2*1.0 
+ 0.293238252 3*1.0 0.0409890674 0.142641634 0.00296820351 3*1.0 0.135976076 
+ -0.0265844725 0.144814342 0.039818041 2*1.0 -0.160478637 -0.143295825 
+ -0.138717368 -0.165442511 -0.148407787 -0.136278585 -0.135560229 
+ -0.149578214 1.0 -0.130772963 -0.13789399 -0.153414264 -0.134533197 
+ -0.137010232 -0.152329028 -0.165121332 -0.176516905 -0.127422884 
+ -0.136070102 -0.138930485 -0.166427642 -0.17567943 -0.150627941 -0.150665402 
+ -0.141383529 -0.132535324 -0.150686532 2*1.0 -0.134243712 -0.0597856715 
+ -0.23577641 0.0601864085 -0.225121528 0.054750111 -0.222517297 -0.060352888 
+ -0.222114712 5*1.0 -0.0482392609 1.0 0.441629201 3*1.0 0.0500017852 4*1.0 
+ -0.0149524705 -0.135590032 -0.0287523046 -0.153022856 -0.0820345879 1.0 
+ 0.0145741338 -0.12577036 0.0303510167 -0.145566657 0.0879799575 -0.163543031 
+ -0.00987242162 -0.167494476 2*1.0 0.0118651185 -0.139085725 0.0535445847 
+ 5*1.0
+ BITMPI = 0.00177913776 0.000419825374 1.0 0.000847676129 0.000643216132 
+ 0.000910195464 0.00112956739 0.000465774501 0.00129089004 0.000382081576 
+ 0.0010261297 0.00034493595 2*1.0 0.000510954473 3*1.0 0.000895879813 
+ 0.000438324845 0.000400000019 3*1.0 0.0003304563 0.000263040216 
+ 0.00033879964 0.000266772055 2*1.0 0.000950639253 0.000625868968 
+ 0.000652520393 0.00091686286 0.000431805471 0.000593335251 0.000412888097 
+ 0.00038983798 1.0 0.00054017111 0.000487860438 0.000265050941 0.000415803603 
+ 0.000380311132 0.000827566371 0.000610660762 0.000764322001 0.000547526695 
+ 0.00064415083 0.000697824522 0.000633878924 0.000488930556 0.00102475658 
+ 0.000764265016 0.000346348388 0.000530907186 0.00123572629 2*1.0 
+ 0.000566963921 0.000353255164 0.000497957866 0.000270692544 0.00159715547 
+ 0.000441906275 0.00158084894 0.000501060684 0.00162428827 5*1.0 
+ 0.000425374281 1.0 0.00155858777 3*1.0 0.000500011432 4*1.0 0.000365315267 
+ 0.00098150305 0.000657743949 0.000522727438 0.000899022736 1.0 
+ 0.000172919652 0.000287876261 0.000350945367 0.000301917986 0.000910573755 
+ 0.00115540798 0.000260421395 0.000361555518 2*1.0 0.000260608445 
+ 0.000333355478 0.000272122765 5*1.0
+ /
+!---End of file

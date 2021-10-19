@@ -120,18 +120,18 @@
       end if
  
       if (rf(1).lt.0)&
-      read (mcontr,10200) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
-                i=1,mfcoil)
+        read (mcontr,10200) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
+                             i=1,mfcoil)
       if (rsi(1).lt.0.) &
         read (mcontr,10200) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
-                i=1,nsilop)
+                             i=1,nsilop)
       if (re(1).lt.0.) &
         read (mcontr,10220) (re(i),ze(i),we(i),he(i),ecid(i), &
-                                        i=1,necoil)
+                             i=1,necoil)
      
       if (rvs(1).lt.0 .and. (ifitvs.gt.0.or.icutfp.eq.2)) then
         read (mcontr,10200) (rvs(i),zvs(i),wvs(i),hvs(i), &
-                                        avs(i),avs2(i),i=1,nvesel)
+                             avs(i),avs2(i),i=1,nvesel)
       endif
       close(unit=mcontr)
 

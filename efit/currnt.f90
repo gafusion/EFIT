@@ -16,8 +16,8 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension pds(6)
-      dimension alipc(npcur3,nwcurn),xpspp(nppcur),xpsfp(nffcur)
-      dimension wlipc(nwcurn),work(nwcur2),xrsp(npcur3),xpspwp(nwwcur)
+      dimension alipc(npcur2,nwcurn),xpspp(nppcur),xpsfp(nffcur)
+      dimension wlipc(nwcurn),work(nwcur2),xrsp(npcur2),xpspwp(nwwcur)
       dimension crsp(4*(npcurn-2)+6+npcurn*npcurn,nrsmat)
       dimension b(nrsmat),z(4*(npcurn-2)+6+npcurn*npcurn)
       real*8 :: tcurrt, tcurrtpp, tcurrtffp
@@ -368,7 +368,7 @@
              call ffcnst(ncrsp,crsp,z,nzzzz)
            endif
            if (ncrsp .le. 0) then
-             call sdecm(alipc,npcur3,nj,nownow,xrsp,npcur3,nnn,wlipc, &
+             call sdecm(alipc,npcur2,nj,nownow,xrsp,npcur2,nnn,wlipc, &
                         work,ier)
              if (ier.eq.129) then
                kerror = 1
@@ -395,7 +395,7 @@
              enddo
              info=0
              call dgglse(int(nj,8),int(nownow,8),int(ncrsp,8),alipc, &
-                         int(npcur3,8),crsp, &
+                         int(npcur2,8),crsp, &
                          int(4*(npcurn-2)+6+npcurn*npcurn,8), &
                          b,z,xrsp,work,int(nrsma2,8),int(info,8),condno)
              if (info.gt.0) then ! special hack to info in dgglse
@@ -817,7 +817,7 @@
 !
        if (nj.gt.0) then
          nnn=1
-         call sdecm(alipc,npcur3,nj,kwcurn,xrsp,npcur3,nnn,wlipc,work,ier)
+         call sdecm(alipc,npcur2,nj,kwcurn,xrsp,npcur2,nnn,wlipc,work,ier)
          if (ier.eq.129) then
            kerror = 1
            call errctrl_msg('currnt', &

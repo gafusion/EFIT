@@ -5,7 +5,9 @@
 ######################################################################
 
 set(EFIT_LABEL 186610.02300)
+set(EFIT_NEXT 186610.02301)
 set(EFIT_IN rfile.txt)
+set(RFILE_TEST True)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${EFIT_IN}
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/gin
@@ -22,5 +24,6 @@ configure_file(${EFIT_TEST_CONFIGFILE}
 configure_file(${EFIT_RESULTS_CONFIGFILE}
                ${CMAKE_CURRENT_BINARY_DIR}/check_efit_results.sh @ONLY)
 
-add_test(NAME rfile COMMAND run_efit.sh)
-add_test(NAME rfile-results COMMAND check_efit_results.sh)
+add_test(NAME DIIID-rfile COMMAND run_efit.sh)
+add_test(NAME DIIID-rfile-results COMMAND check_efit_results.sh)
+set(RFILE_TEST False)
