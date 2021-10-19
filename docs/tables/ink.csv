@@ -1,0 +1,11 @@
+BACKAVERAGE, .false.,
+CUPDOWN	,, to force F coil currents to be up-down symmetric. Defaulted to be -100000 for symmetrized solutions.
+GAIN, 0.22,
+GAINP, 0.75,
+ISETFB,0,
+IOFFR,-7,
+IOFFZ, 7,
+ISHIFTZ, 0,
+IDPLACE	, 0,
+LRING, 0,
+SYMMETRIZE,.false.,
