@@ -133,6 +133,16 @@
         end subroutine
      end module global_constants
 
+!var_nio
+     module var_nio
+     integer*4 nin,nout,ntty,nrsppc,nrspfc,nttyo,neqdsk,nffile,nsave
+     integer*4 nsnapf
+     character*2 appendsnap
+     character*100 snapfile, tmpdata, snapextin
+     data nin/11/,nout/10/,ntty/5/nrsppc/25/,nrspfc/26/, &
+     neqdsk/38/,nffile/40/,nsave/49/,nttyo/6/
+     end module var_nio
+
       ! Error control and write out error messages consistently.
       module error_control
         use set_kinds
@@ -149,6 +159,7 @@
         end subroutine
 
         subroutine errctrl_msg(subrstr,msgstr,mtype0)
+          use var_nio, only: nttyo
           character(len=*), intent(in) :: subrstr,msgstr
           integer, optional :: mtype0
           integer :: mtype
@@ -166,14 +177,15 @@
             labelstr = 'ERROR'
           end select
 
-          write(*, '(a,a,a,a,i3,a,i6,a,a)') trim(labelstr),' in ', &
+          write(nttyo, '(a,a,a,a,i3,a,i6,a,a)') trim(labelstr),' in ', &
             subrstr,' at r=',currrank,', t=',int(currtime),': ',msgstr
 
-          open(unit=40,file='errfil.out',status='unknown', &
-               position='append')
-          write(40,'(a,a,a,a,i3,a,i6,a,a)') trim(labelstr),' in ', &
-            subrstr,' at r=',currrank,', t=',int(currtime),': ',msgstr
-          close(unit=40)
+!         TODO: can cause race condition with MPI
+!          open(unit=40,file='errfil.out',status='unknown', &
+!               position='append')
+!          write(40,'(a,a,a,a,i3,a,i6,a,a)') trim(labelstr),' in ', &
+!            subrstr,' at r=',currrank,', t=',int(currtime),': ',msgstr
+!          close(unit=40)
 
         end subroutine
      end module error_control
@@ -507,8 +519,8 @@
       use set_kinds
       real*8,dimension(:),allocatable :: xout,yout
       real*8 dpsi,rymin,rymax, &
-        zxmin,zxmax,xmin,xmax,ymin,ymax,rmaxis,zmaxis, emaxis, &
-        rminzm,rmaxzm,dismins,simins,delrmax1,delrmax2
+        zxmin,zxmax,xmin,xmax,ymin,ymax,rmaxis,zmaxis,emaxis, &
+        rminzm,rmaxzm,delrmax1,delrmax2
       integer*8 nfound
       data emaxis/1.3_dp/
       end module var_cshape

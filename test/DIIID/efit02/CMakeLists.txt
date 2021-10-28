@@ -27,5 +27,5 @@ configure_file(${EFIT_TEST_CONFIGFILE}
 configure_file(${EFIT_RESULTS_CONFIGFILE}
                ${CMAKE_CURRENT_BINARY_DIR}/check_efit_results.sh @ONLY)
 
-add_test(NAME efit02 COMMAND run_efit.sh)
-add_test(NAME efit02-results COMMAND check_efit_results.sh)
+add_test(NAME DIIID-efit02 COMMAND run_efit.sh)
+add_test(NAME DIIID-efit02-results COMMAND check_efit_results.sh)

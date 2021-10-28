@@ -72,6 +72,10 @@
       data one/1./
       save n00,n11
 
+      ! TODO: this requirement suggests there is a problem somewhere
+      ! else in the code...
+      if (npoint.gt.nplt) return
+
       kerror = 0
       pleng = 0
 !
@@ -289,7 +293,9 @@
       lprx = 13
       if (istore .eq. 1) lprx = lstdir+lprx
 !
-      do i=1,nfound-1
+      ! TODO: nfound never defined... using nplt instead?
+!      do i=1,nfound-1
+      do i=1,nplt-1
          ip1=i+1
          dli=sqrt((xout(ip1)-xout(i))**2+(yout(ip1)-yout(i))**2)
          pleng=pleng+dli

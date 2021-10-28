@@ -1,0 +1,7 @@
+WARNING in fit at r=  1, t=   389: not converged, reached max iterations
+INFO in efit at r=  0, t=   369: Done processing
+INFO in efit at r=  1, t=   389: Done processing
+WARNING in fit at r=  3, t=   429: not converged, reached max iterations
+WARNING in fit at r=  2, t=   409: not converged, reached max iterations
+INFO in efit at r=  3, t=   429: Done processing
+INFO in efit at r=  2, t=   409: Done processing

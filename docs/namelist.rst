@@ -67,21 +67,45 @@ INWANT is specified in input file (K or boundary inputs) for advanced options. V
 
 .. csv-table:: INWANT
    :file: tables/inwant.csv
-   :widths: 20, 100
+   :widths: 15,15, 70
    :header-rows: 1
+   
+   
+INS
+---
+
+INS is specified in input K file for MSE data. Variables which have no defaults and thus require inputs are printed in bold.
+
+.. csv-table:: INS
+   :file: tables/ins.csv
+   :widths: 15,15, 70
+   :header-rows: 1
+
 
 
 INVT 
-----------------------------------------
+----
 
 INVT is specified in input file (K or boundary inputs) for toroidal rotation. Variables which have no defaults (and thus require inputs??) are printed in bold.
-
 To turn on toroidal rotation, must set KPRFIT=3 and ICURRT=5 in namelist IN1. If no pressure data, set NPRESS=0.
-
 
 .. csv-table:: INVT
    :file: tables/invt.csv
-   :widths: 20, 100
+   :widths: 15,15, 70
    :header-rows: 1
 
 and thats the nameslist
+
+
+INK 
+---
+
+INK is specified in input K or boundary file for vertical stablization.
+
+
+.. csv-table:: INK
+   :file: tables/ink.csv
+   :widths: 15,15, 70
+   :header-rows: 1
+
+and thats the namelists

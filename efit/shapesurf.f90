@@ -57,6 +57,7 @@
       kerror = 0
       oring(iges)=999 ! initialize at ridiculous value
       ringap=999
+      zavs=0.0
 !
       xdum=0.0
       ydum=0.0
@@ -1016,7 +1017,8 @@
               rmaxis,zmaxis,negcur,kerror)
             if (kerror.gt.0) return
             if (nfind.le.40.and.icntour.eq.0) then
-              if (idebug >= 2) write (6,*) ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
+              if (idebug >= 2) write (6,*) &
+                ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
                 kerror,i,nfind,qppp,qmmm,psiwan
               call cntour(rmaxis,zmaxis,psiwan,rqmin,rqmax,ycmin,ycmax, &
                 yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
@@ -1024,7 +1026,8 @@
                 xxtra(1,1),yxtra(1,1),nfind,rgrid,nw,zgrid,nh, &
                 c,n22,nh2,nttyo,npoint, &
                 negcur,bkx,lkx,bky,lky,kerror)
-              if (idebug >= 2) write (6,*) ' SHAPE/CNTOUR kerror,i,nfind = ',kerror,i,nfind
+              if (idebug >= 2) write (6,*) &
+                ' SHAPE/CNTOUR kerror,i,nfind = ',kerror,i,nfind
               if (kerror.gt.0) return
             endif
             if (i.eq.1) then
@@ -1419,8 +1422,8 @@
         dmaxfs=dmaxfs0*nmaxfs
         if (nmaxfs.le.20) go to 77723
       endif
-      if (dis2p.ge.0.1_dp*drgrid) then
       rsepnose=-999.
+      if (dis2p.ge.0.1_dp*drgrid) then
       do i=1,npxtra(ixl)-1
         if ((yxtra(i,ixl)-znose)*(yxtra(i+1,ixl)-znose).le.0.0) then
           rsepnose=xxtra(i,ixl)+(xxtra(i+1,ixl)-xxtra(i,ixl))/ &
