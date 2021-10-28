@@ -1479,7 +1479,7 @@
       xabs=-3.0
       yabs=7.0
       dyabs = 0.22_dp
-      if (kdata.eq.2) then
+      if ((kdata.eq.2).or.(kdata.eq.9)) then
          write(text, 8948) ifname(jtime)
          msg = msg + 1
          note(msg) = 1
@@ -3769,7 +3769,7 @@
 !----------------------------------------------------------------------
 !--   plot flux loop chi squares                                     --
 !----------------------------------------------------------------------
-      if (iconvr.eq.3.and.kdata.eq.2) then
+      if (iconvr.eq.3.and.((kdata.eq.2).or.(kdata.eq.9))) then
 !     if (ivacum.eq.0) go to 730
       if (itek.eq.1) call tekall(4010,960,0,0,0)
       xmm=1.6_dp*2
@@ -4322,7 +4322,7 @@
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif ! itek
-      endif ! iconvr.eq.3.and.kdata.eq.2
+      endif ! iconvr.eq.3.and.((kdata.eq.2).or.(kdata.eq.9))
 !
       curmin=1.0e+10_dp
       curmax=-1.0e+10_dp
@@ -7213,7 +7213,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.10_dp
-      if (kdata.eq.2) then
+      if ((kdata.eq.2).or.(kdata.eq.9)) then
          write (text,8948) ifname(jtime)
          msg = msg + 1
          note(msg) = 1

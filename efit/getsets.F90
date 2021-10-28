@@ -392,7 +392,7 @@
       endif
 ! MPI <<<
 
-      if (kdata.ne.2) then
+      if ((kdata.ne.2).and.(kdata.ne.9)) then
 !----------------------------------------------------------------------
 !--   Snap-Extension mode              --
 !--   Initialize istore = 0                                          --
@@ -763,7 +763,7 @@
         swtsi(i)=fwtsi(i)
       enddo
 !
-      endif ! kdata.ne.2
+      endif ! (kdata.ne.2).and.(kdata.ne.9)
 !      call set_table_dir
 !      call efit_read_tables
      
@@ -771,7 +771,7 @@
 !--   read in the plasma response function                           --
 !----------------------------------------------------------------------
 !
-      if (kdata.ne.2) &
+      if ((kdata.ne.2).and.(kdata.ne.9)) &
         call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
       drgrid=rgrid(2)-rgrid(1)
       dzgrid=zgrid(2)-zgrid(1)

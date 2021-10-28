@@ -17,11 +17,12 @@ set(HAVE_HDF5 False)   # Used in defines
 if (${ENABLE_HDF5})
     set(HDF5_USE_STATIC_LIBRARIES TRUE)
     find_package(HDF5 COMPONENTS Fortran)
+#    find_package(HDF5 COMPONENTS Fortran HL)
     if (${HDF5_FOUND})
       message(STATUS "Found HDF5")
       set(HAVE_HDF5 True)
       set(io_libs ${HDF5_LIBRARIES} ${Z_LIBRARIES} ${io_libs})
-      add_subdirectory(vshdf5)
+#      include_directories(${HDF5_INCLUDE_DIRS})
       if (UNIX)
         # Required for hdf5 version 1.8.11 and greater
         set(io_libs ${io_libs} ${CMAKE_DL_LIBS}) 

@@ -1,3 +1,4 @@
+#include "config.f"
       module set_kinds
 !**     set the type of variables like integer, real, etc...
         !HP integer, parameter :: rprec = selected_real_kind(20,100)
@@ -309,12 +310,44 @@
 
 !var_nio
      module var_nio
+#ifdef HAVE_HDF5
+     use hdf5_api
+#endif
      integer*4 nin,nout,ntty,nrsppc,nrspfc,nttyo,neqdsk,nffile,nsave
      integer*4 nsnapf
      character*2 appendsnap
      character*100 snapfile, tmpdata, snapextin
      data nin/11/,nout/10/,ntty/5/nrsppc/25/,nrspfc/26/, &
      neqdsk/38/,nffile/40/,nsave/49/,nttyo/6/
+#ifdef HAVE_HDF5
+      type(hdf5ErrorType) :: h5err
+      type(hdf5InOpts), save :: h5in
+      integer(HID_T) :: fileid,rootgid,eqid,cid,pid,tid,sid,nid
+      contains
+!     subprogram 1. fch5init.
+!     initialize fcio h5 information for writes and reads.
+      subroutine fch5init
+      logical, save :: h5init=.false.
+      if (.not.h5init) then
+        call vshdf5_fcinit
+        call vshdf5_inith5vars(h5in, h5err)
+        h5in%verbose=.false.
+        h5in%debug=.false.
+        h5init=.true.
+      endif
+      end subroutine fch5init
+!     subprogram 2. fch5resetvars.
+!     reset h5 information for writes and reads.
+      subroutine fch5resetvars
+      h5in%mesh =  " "
+      h5in%vsAxisLabels = " " 
+      h5in%units =  " "
+      h5in%vsCentering =  " "
+      h5in%vsMD =  " "
+      h5in%vsIndexOrder = " "
+      h5in%vsLabels = " "
+      end subroutine fch5resetvars
+#endif
      end module var_nio
 
 !var_cfit

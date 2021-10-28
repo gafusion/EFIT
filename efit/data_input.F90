@@ -1,3 +1,4 @@
+#include "config.f"
 !********************************************************************** 
 !**                                                                  ** 
 !**     SUBPROGRAM DESCRIPTION:                                      ** 
@@ -40,9 +41,14 @@
       real*8,dimension(:),allocatable ::  devxmpin,rnavxmpin & 
                ,devpsiin,rnavpsiin,devfcin,rnavfcin & 
                ,devein,rnavecin,brsptu 
-      integer :: nw_ext, nh_ext 
-      real*8 :: c_ext, dr_ext, dz_ext,rc_ext,zc_ext, a_ext 
-      real*8 :: eup_ext, elow_ext, dup_ext, dlow_ext, setlim_ext 
+      real*8,dimension(nppcur*nppcur) ::  calpa_flat
+      real*8,dimension(nffcur*nffcur) ::  cgama_flat
+      integer :: nw_ext,nh_ext
+      integer :: dims,fitsiref_int,scalea_int,fitfcsum_int,fitdelz_int
+      integer :: writepc_int,oldccomp_int,oldcomp_int
+      integer :: symmetrize_int,backaverage_int,shape_ext_int,fixpp_int
+      real*8 :: c_ext,dr_ext,dz_ext,rc_ext,zc_ext,a_ext 
+      real*8 :: eup_ext,elow_ext,dup_ext,dlow_ext,setlim_ext 
       real*8 :: r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max 
       real*8 :: r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot 
       character*10 case_ext(6) 
@@ -51,6 +57,7 @@
       character*10 namedum 
       character*2 :: reflect_ext 
       logical :: shape_ext 
+      logical :: file_stat
       !real*4 spatial_avg_ham(nmtark,ngam_vars,ngam_u,ngam_w) 
       data nsq/1/ 
       data ersil8/1.0e-03_dp/,currn1/0.0/ 
@@ -59,7 +66,7 @@
       data mcontr/35/ 
       data ten2m3/1.0e-03_dp/ 
       data idtime/0/,itimeb/0/ 
-      save idodo, idovs, idoac 
+      save idodo,idovs,idoac 
 
       namelist/in1/ishot,itime,plasma,itek,itrace,nxiter,fwtcur,kffcur & 
       ,coils,fwtsi,expmp2,fwtmp2,kppcur,mxiter,ierchk,fwtqa,qemp,error & 
@@ -176,9 +183,19 @@
 ! 
       kerror = 0 
       idone=0 
-      sicont=tmu*drslop/aaslop 
+      sicont=tmu*drslop/aaslop
+      fitsiref_int=0
+      scalea_int=0
+      fitfcsum_int=0
+      writepc_int=0
+      oldccomp_int=0
+      oldcomp_int=0
+      symmetrize_int=0
+      backaverage_int=0
+      shape_ext_int=0
+      fixpp_int=0
 ! 
-      if (kdata.ne.2) then
+      if ((kdata.ne.2).and.(kdata.ne.9)) then
 !---------------------------------------------------------------------- 
 !--   normalize fitting weights, SNAP mode                           -- 
 !---------------------------------------------------------------------- 
@@ -273,10 +290,10 @@
         rbdry(1)=1.94_dp 
         zbdry(1)=ztssym(jtime)+0.5_dp*ztswid(jtime) 
       endif 
+      else ! (kdata.eq.2).or.(kdata.eq.9)
 !---------------------------------------------------------------------- 
-!--   file mode                                                      -- 
+!--   file mode - initialize inputs                                  -- 
 !---------------------------------------------------------------------- 
-      else ! kdata.eq.2
       do i=1,nsilop 
         psibit(i)=0.0 
       enddo
@@ -441,29 +458,1412 @@
       isolve=0 
       ifindopt = 2 
       tolbndpsi = 1.0e-12_dp 
-!---------------------------------------------------------------------- 
-!--   Read input file for KDATA = 2                                  -- 
-!---------------------------------------------------------------------- 
-      open(unit=nin,status='old',file=ifname(jtime)) 
 
       xlim(1)=-1.0 
       rbdry(1)=-1.0 
       itimeu=0 
       nbdryp=-1 
-      ktear=0 
- 
-      read (nin,in1,iostat=istat) 
-!--roundoff differences can throw off zlim if limiter corners
-!--are too close to grid points (maybe zlim needs fixing...)
-      do i=1,limitr
-        ylim(i)=ylim(i)-1.e-10_dp
+      ktear=0
+      rrmsels(1)=-10. 
+      ecefit = 0.0 
+      ecebzfit = 0.0 
+
+      geqdsk_ext = 'none' 
+      psin_ext(1) = -1000.0 
+      sign_ext = 1.0 
+      cratio_ext = 1.0 
+      cratiop_ext = 1.0 
+      cratiof_ext = 1.0 
+      scalepp_ext=1.0 
+      scaleffp_ext=1.0 
+      dr_ext=0.0 
+      dz_ext=0.0 
+      shape_ext=.false. 
+      rc_ext=-10. 
+      zc_ext=-10. 
+      a_ext=-10. 
+      eup_ext=-10. 
+      elow_ext=-10. 
+      dup_ext=-10. 
+      dlow_ext=-10. 
+      setlim_ext=-10. 
+      reflect_ext='no' 
+
+      do i=1,libim
+        fwtlib(i)=0.0
+        rrrlib(i)=0.0
+        zzzlib(i)=0.0
       enddo
+
+      if (kdata.eq.2) then 
+!---------------------------------------------------------------------- 
+!--   Read ascii input files                                         -- 
+!---------------------------------------------------------------------- 
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,in1,iostat=istat) 
       if (istat>0) then 
         backspace(nin) 
         read(nin,fmt='(A)') line 
         write(*,'(A)') 'Invalid line in namelist in1: '//trim(line) 
       endif
-!--protect against underflow in fitting weights 
+
+      read (nin,ink,err=11111,end=101) 
+101   continue 
+11111 close(unit=nin) 
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,ins,err=11113,end=103) 
+103   continue 
+11113 close(unit=nin) 
+      open(unit=nin,status='old',file=ifname(jtime)) 
+
+      read (nin,in_msels,iostat=istat) 
+      if (istat>0) then 
+        backspace(nin) 
+        read(nin,fmt='(A)') line 
+        !if (trim(line)/="/") write(*,'(A)') 'Invalid line in namelist in_msels: '//trim(line) 
+      endif
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,ina,iostat=istat)
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,inece,iostat=istat) 
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,edgep,iostat=istat) 
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,iner,iostat=istat) 
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,insxr,iostat=istat) 
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime))
+      read (nin,inms,iostat=istat) 
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,inwant,iostat=istat) 
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,invt,iostat=istat) 
+      close(unit=nin) 
+
+!--   Input FF', P' arrays
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      if (idebug /= 0) write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext 
+      read(nin,profile_ext,err=11777,iostat=istat) 
+      if (idebug /= 0) write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext 
+!      if (geqdsk_ext.ne.'none') then 
+!        open(unit=neqdsk,status='old',file=geqdsk_ext) 
+!        read (neqdsk,11775) (case_ext(i),i=1,6),nh_ext,nw_ext,nh_ext 
+!        do i = 1,2 
+!          read (neqdsk,11773) 
+!        enddo 
+!        read (neqdsk,11776) plasma_ext,c_ext,c_ext,c_ext,c_ext 
+!        read (neqdsk,11773) 
+!        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext) 
+!        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext) 
+!        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext) 
+!        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext) 
+!        read (neqdsk,11776) ((psirz_ext,i=1,nw_ext),j=1,nh_ext) 
+!        read (neqdsk,11776,err=11777) (qpsi_ext(i),i=1,nw_ext) 
+!        read (neqdsk,11774,err=11777) nbdry_ext,limitr_ext 
+!        read (neqdsk,11776,err=11777) (rbdry_ext(i),zbdry_ext(i),i=1,nbdry_ext) 
+!        read (neqdsk,11776,err=11777) (xlim_ext(i),ylim_ext(i),i=1,limitr_ext) 
+!11773   format (a) 
+!11774   format (2i5) 
+!11775   format (6a8,3i4) 
+!11776   format (5e16.9)
+!      endif
+11777 close(nin) 
+
+!--   Read Li beam data 
+      open(unit=nin,status='old',file=ifname(jtime))
+      read (nin,inlibim,err=11237,end=11233) 
+11233 continue 
+11237 close(unit=nin) 
+!---------------------------------------------------------------------- 
+!--   HDF5 file mode                                                 -- 
+!---------------------------------------------------------------------- 
+      else ! kdata.eq.9
+#ifdef HAVE_HDF5
+        inquire(file=trim(ifname(1)),exist=file_stat)
+        if (.not. file_stat) then
+          call errctrl_msg('data_input',trim(line)//' not found')
+          stop
+        endif
+        call fch5init
+        call open_oldh5file(trim(ifname(1)),fileid,rootgid,h5in,h5err)
+        call test_group(rootgid,"equilibrium",file_stat,h5err)
+        if (.not. file_stat) then
+          call errctrl_msg('data_input','equilibrium group not found')
+          stop
+        endif
+        call open_group(rootgid,"equilibrium",eqid,h5err)
+        call test_group(eqid,"code",file_stat,h5err)
+        if (.not. file_stat) then
+          call errctrl_msg('data_input','code group not found')
+          stop
+        endif
+        call open_group(eqid,"code",cid,h5err)
+        call test_group(cid,"parameters",file_stat,h5err)
+        if (.not. file_stat) then
+          call errctrl_msg('data_input','parameters group not found')
+          stop
+        endif
+        call open_group(cid,"parameters",pid,h5err)
+        call test_group(pid,"time_slice",file_stat,h5err)
+        if (.not. file_stat) then
+          call errctrl_msg('data_input','time_slice group not found')
+          stop
+        endif
+        call open_group(pid,"time_slice",tid,h5err)
+        write(line,"(I0)") jtime-1
+        call test_group(tid,trim(line),file_stat,h5err)
+        if (.not. file_stat) then
+          call errctrl_msg('data_input',trim(line)//' group not found')
+          stop
+        endif
+        call open_group(tid,trim(line),sid,h5err)
+
+        call test_group(sid,"in1",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"in1",nid,h5err)
+          if (obj_exists(nid,"ishot",h5err)) &
+            call read_h5(nid,"ishot",ishot,h5in,h5err)
+          if (obj_exists(nid,"itime",h5err)) &
+            call read_h5(nid,"itime",itime,h5in,h5err)
+          if (obj_exists(nid,"plasma",h5err)) &
+            call read_h5(nid,"plasma",plasma,h5in,h5err)
+          if (obj_exists(nid,"itek",h5err)) &
+            call read_h5(nid,"itek",itek,h5in,h5err)
+          if (obj_exists(nid,"itrace",h5err)) &
+            call read_h5(nid,"itrace",itrace,h5in,h5err)
+          if (obj_exists(nid,"nxiter",h5err)) &
+            call read_h5(nid,"nxiter",nxiter,h5in,h5err)
+          if (obj_exists(nid,"fwtcur",h5err)) &
+            call read_h5(nid,"fwtcur",fwtcur,h5in,h5err)
+          if (obj_exists(nid,"kffcur",h5err)) &
+            call read_h5(nid,"kffcur",kffcur,h5in,h5err)
+          if (obj_exists(nid,"coils",h5err)) &
+            call read_h5(nid,"coils",coils,h5in,h5err)
+          if (obj_exists(nid,"fwtsi",h5err)) &
+            call read_h5(nid,"fwtsi",fwtsi,h5in,h5err)
+          if (obj_exists(nid,"expmp2",h5err)) &
+            call read_h5(nid,"expmp2",expmp2,h5in,h5err)
+          if (obj_exists(nid,"fwtmp2",h5err)) &
+            call read_h5(nid,"fwtmp2",fwtmp2,h5in,h5err)
+          if (obj_exists(nid,"kppcur",h5err)) &
+            call read_h5(nid,"kppcur",kppcur,h5in,h5err)
+          if (obj_exists(nid,"mxiter",h5err)) &
+            call read_h5(nid,"mxiter",mxiter,h5in,h5err)
+          if (obj_exists(nid,"ierchk",h5err)) &
+            call read_h5(nid,"ierchk",ierchk,h5in,h5err)
+          if (obj_exists(nid,"fwtqa",h5err)) &
+            call read_h5(nid,"fwtqa",fwtqa,h5in,h5err)
+          if (obj_exists(nid,"qemp",h5err)) &
+            call read_h5(nid,"qemp",qemp,h5in,h5err)
+          if (obj_exists(nid,"error",h5err)) &
+            call read_h5(nid,"error",error,h5in,h5err)
+          if (obj_exists(nid,"limitr",h5err)) &
+            call read_h5(nid,"limitr",limitr,h5in,h5err)
+          if (obj_exists(nid,"xlim",h5err)) &
+            call read_h5(nid,"xlim",xlim,h5in,h5err)
+          if (obj_exists(nid,"ylim",h5err)) &
+            call read_h5(nid,"ylim",ylim,h5in,h5err)
+          if (obj_exists(nid,"serror",h5err)) &
+            call read_h5(nid,"serror",serror,h5in,h5err)
+          if (obj_exists(nid,"nbdry",h5err)) &
+            call read_h5(nid,"nbdry",nbdry,h5in,h5err)
+          ! Not currently in OMAS files!
+          rbdry=0.0
+          zbdry=0.0
+!          if (obj_exists(nid,"rbdry",h5err)) &
+!            call read_h5(nid,"rbdry",rbdry,h5in,h5err)
+!          if (obj_exists(nid,"zbdry",h5err)) &
+!            call read_h5(nid,"zbdry",zbdry,h5in,h5err)
+          if (obj_exists(nid,"psibry",h5err)) &
+            call read_h5(nid,"psibry",psibry,h5in,h5err)
+          if (obj_exists(nid,"nslref",h5err)) &
+            call read_h5(nid,"nslref",nslref,h5in,h5err)
+          if (obj_exists(nid,"ibunmn",h5err)) &
+            call read_h5(nid,"ibunmn",ibunmn,h5in,h5err)
+          if (obj_exists(nid,"btor",h5err)) &
+            call read_h5(nid,"btor",btor,h5in,h5err)
+          if (obj_exists(nid,"psibit",h5err)) &
+            call read_h5(nid,"psibit",psibit,h5in,h5err)
+          if (obj_exists(nid,"bitmpi",h5err)) &
+            call read_h5(nid,"bitmpi",bitmpi,h5in,h5err)
+          if (obj_exists(nid,"bitip",h5err)) &
+            call read_h5(nid,"bitip",bitip,h5in,h5err)
+          if (obj_exists(nid,"icurrt",h5err)) &
+            call read_h5(nid,"icurrt",icurrt,h5in,h5err)
+          if (obj_exists(nid,"icinit",h5err)) &
+            call read_h5(nid,"icinit",icinit,h5in,h5err)
+          if (obj_exists(nid,"brsp",h5err)) &
+            call read_h5(nid,"brsp",brsp,h5in,h5err)
+          if (obj_exists(nid,"iweigh",h5err)) &
+            call read_h5(nid,"iweigh",iweigh,h5in,h5err)
+          if (obj_exists(nid,"qenp",h5err)) &
+            call read_h5(nid,"qenp",qenp,h5in,h5err)
+          if (obj_exists(nid,"fwtbp",h5err)) &
+            call read_h5(nid,"fwtbp",fwtbp,h5in,h5err)
+          if (obj_exists(nid,"relip",h5err)) &
+            call read_h5(nid,"relip",relip,h5in,h5err)
+          if (obj_exists(nid,"zelip",h5err)) &
+            call read_h5(nid,"zelip",zelip,h5in,h5err)
+          if (obj_exists(nid,"aelip",h5err)) &
+            call read_h5(nid,"aelip",aelip,h5in,h5err)
+          if (obj_exists(nid,"eelip",h5err)) &
+            call read_h5(nid,"eelip",eelip,h5in,h5err)
+          if (obj_exists(nid,"qvfit",h5err)) &
+            call read_h5(nid,"qvfit",qvfit,h5in,h5err)
+          if (obj_exists(nid,"fwtdlc",h5err)) &
+            call read_h5(nid,"fwtdlc",fwtdlc,h5in,h5err)
+          if (obj_exists(nid,"betap0",h5err)) &
+            call read_h5(nid,"betap0",betap0,h5in,h5err)
+          if (obj_exists(nid,"emp",h5err)) &
+            call read_h5(nid,"emp",emp,h5in,h5err)
+          if (obj_exists(nid,"enp",h5err)) &
+            call read_h5(nid,"enp",enp,h5in,h5err)
+          if (obj_exists(nid,"iconvr",h5err)) &
+            call read_h5(nid,"iconvr",iconvr,h5in,h5err)
+          if (obj_exists(nid,"icprof",h5err)) &
+            call read_h5(nid,"icprof",icprof,h5in,h5err)
+          if (obj_exists(nid,"nextra",h5err)) &
+            call read_h5(nid,"nextra",nextra,h5in,h5err)
+          if (obj_exists(nid,"ixstrt",h5err)) &
+            call read_h5(nid,"ixstrt",ixstrt,h5in,h5err)
+          if (obj_exists(nid,"scrape",h5err)) &
+            call read_h5(nid,"scrape",scrape,h5in,h5err)
+          if (obj_exists(nid,"errmin",h5err)) &
+            call read_h5(nid,"errmin",errmin,h5in,h5err)
+          if (obj_exists(nid,"rbound",h5err)) &
+            call read_h5(nid,"rbound",rbound,h5in,h5err)
+          if (obj_exists(nid,"npnef",h5err)) &
+            call read_h5(nid,"npnef",npnef,h5in,h5err)
+          if (obj_exists(nid,"nptef",h5err)) &
+            call read_h5(nid,"nptef",nptef,h5in,h5err)
+          if (obj_exists(nid,"fwacoil",h5err)) &
+            call read_h5(nid,"fwacoil",fwacoil,h5in,h5err)
+          if (obj_exists(nid,"itimeu",h5err)) &
+            call read_h5(nid,"itimeu",itimeu,h5in,h5err)
+          if (obj_exists(nid,"rcentr",h5err)) &
+            call read_h5(nid,"rcentr",rcentr,h5in,h5err)
+          if (obj_exists(nid,"rzero",h5err)) &
+            call read_h5(nid,"rzero",rzero,h5in,h5err)
+          if (obj_exists(nid,"gammap",h5err)) &
+            call read_h5(nid,"gammap",gammap,h5in,h5err)
+          if (obj_exists(nid,"cfcoil",h5err)) &
+            call read_h5(nid,"cfcoil",cfcoil,h5in,h5err)
+          if (obj_exists(nid,"fczero",h5err)) &
+            call read_h5(nid,"fczero",fczero,h5in,h5err)
+          if (obj_exists(nid,"fcsum",h5err)) &
+            call read_h5(nid,"fcsum",fcsum,h5in,h5err)
+          if (obj_exists(nid,"islve",h5err)) &
+            call read_h5(nid,"islve",islve,h5in,h5err)
+          if (obj_exists(nid,"icntour",h5err)) &
+            call read_h5(nid,"icntour",icntour,h5in,h5err)
+          if (obj_exists(nid,"iprobe",h5err)) &
+            call read_h5(nid,"iprobe",iprobe,h5in,h5err)
+          if (obj_exists(nid,"salpha",h5err)) &
+            call read_h5(nid,"salpha",salpha,h5in,h5err)
+          if (obj_exists(nid,"srm",h5err)) &
+           call read_h5(nid,"srm",srm,h5in,h5err)
+          if (obj_exists(nid,"sbeta",h5err)) &
+            call read_h5(nid,"sbeta",sbeta,h5in,h5err)
+          if (obj_exists(nid,"ifref",h5err)) &
+            call read_h5(nid,"ifref",ifref,h5in,h5err)
+          if (obj_exists(nid,"isumip",h5err)) &
+            call read_h5(nid,"isumip",isumip,h5in,h5err)
+          if (obj_exists(nid,"n1coil",h5err)) &
+            call read_h5(nid,"n1coil",n1coil,h5in,h5err)
+          if (obj_exists(nid,"ifcurr",h5err)) &
+            call read_h5(nid,"ifcurr",ifcurr,h5in,h5err)
+          if (obj_exists(nid,"iecurr",h5err)) &
+            call read_h5(nid,"iecurr",iecurr,h5in,h5err)
+          if (obj_exists(nid,"ecurrt",h5err)) &
+            call read_h5(nid,"ecurrt",ecurrt,h5in,h5err)
+          if (obj_exists(nid,"iecoil",h5err)) &
+            call read_h5(nid,"iecoil",iecoil,h5in,h5err)
+          if (obj_exists(nid,"co2cor",h5err)) &
+            call read_h5(nid,"co2cor",co2cor,h5in,h5err)
+          if (obj_exists(nid,"vcurrt",h5err)) &
+            call read_h5(nid,"vcurrt",vcurrt,h5in,h5err)
+          if (obj_exists(nid,"dflux",h5err)) &
+            call read_h5(nid,"dflux",dflux,h5in,h5err)
+          if (obj_exists(nid,"sigdlc",h5err)) &
+            call read_h5(nid,"sigdlc",sigdlc,h5in,h5err)
+          if (obj_exists(nid,"iplim",h5err)) &
+            call read_h5(nid,"iplim",iplim,h5in,h5err)
+          if (obj_exists(nid,"kinput",h5err)) &
+            call read_h5(nid,"kinput",kinput,h5in,h5err)
+          if (obj_exists(nid,"limfag",h5err)) &
+            call read_h5(nid,"limfag",limfag,h5in,h5err)
+          if (obj_exists(nid,"sigprebi",h5err)) &
+            call read_h5(nid,"sigprebi",sigprebi,h5in,h5err)
+          if (obj_exists(nid,"fwtxx",h5err)) &
+            call read_h5(nid,"fwtxx",fwtxx,h5in,h5err)
+          if (obj_exists(nid,"kprfit",h5err)) &
+            call read_h5(nid,"kprfit",kprfit,h5in,h5err)
+          if (obj_exists(nid,"pressr",h5err)) &
+            call read_h5(nid,"pressr",pressr,h5in,h5err)
+          if (obj_exists(nid,"rpress",h5err)) &
+            call read_h5(nid,"rpress",rpress,h5in,h5err)
+          if (obj_exists(nid,"zpress",h5err)) &
+            call read_h5(nid,"zpress",zpress,h5in,h5err)
+          if (obj_exists(nid,"sigpre",h5err)) &
+            call read_h5(nid,"sigpre",sigpre,h5in,h5err)
+          if (obj_exists(nid,"npress",h5err)) &
+            call read_h5(nid,"npress",npress,h5in,h5err)
+          if (obj_exists(nid,"tethom",h5err)) &
+            call read_h5(nid,"tethom",tethom,h5in,h5err)
+          if (obj_exists(nid,"rteth",h5err)) &
+            call read_h5(nid,"rteth",rteth,h5in,h5err)
+          if (obj_exists(nid,"keqdsk",h5err)) &
+            call read_h5(nid,"keqdsk",keqdsk,h5in,h5err)
+          if (obj_exists(nid,"zteth",h5err)) &
+            call read_h5(nid,"zteth",zteth,h5in,h5err)
+          if (obj_exists(nid,"sgteth",h5err)) &
+            call read_h5(nid,"sgteth",sgteth,h5in,h5err)
+          if (obj_exists(nid,"npteth",h5err)) &
+            call read_h5(nid,"npteth",npteth,h5in,h5err)
+          if (obj_exists(nid,"tionex",h5err)) &
+            call read_h5(nid,"tionex",tionex,h5in,h5err)
+          if (obj_exists(nid,"rion",h5err)) &
+            call read_h5(nid,"rion",rion,h5in,h5err)
+          if (obj_exists(nid,"zion",h5err)) &
+            call read_h5(nid,"zion",zion,h5in,h5err)
+          if (obj_exists(nid,"sigti",h5err)) &
+            call read_h5(nid,"sigti",sigti,h5in,h5err)
+          if (obj_exists(nid,"nption",h5err)) &
+            call read_h5(nid,"nption",nption,h5in,h5err)
+          if (obj_exists(nid,"dnethom",h5err)) &
+            call read_h5(nid,"dnethom",dnethom,h5in,h5err)
+          if (obj_exists(nid,"zeffvs",h5err)) &
+            call read_h5(nid,"zeffvs",zeffvs,h5in,h5err)
+          if (obj_exists(nid,"rneth",h5err)) &
+            call read_h5(nid,"rneth",rneth,h5in,h5err)
+          if (obj_exists(nid,"zneth",h5err)) &
+            call read_h5(nid,"zneth",zneth,h5in,h5err)
+          if (obj_exists(nid,"sgneth",h5err)) &
+            call read_h5(nid,"sgneth",sgneth,h5in,h5err)
+          if (obj_exists(nid,"npneth",h5err)) &
+            call read_h5(nid,"npneth",npneth,h5in,h5err)
+          if (obj_exists(nid,"pbeam",h5err)) &
+            call read_h5(nid,"pbeam",pbeam,h5in,h5err)
+          if (obj_exists(nid,"sibeam",h5err)) &
+            call read_h5(nid,"sibeam",sibeam,h5in,h5err)
+          if (obj_exists(nid,"nbeam",h5err)) &
+            call read_h5(nid,"nbeam",nbeam,h5in,h5err)
+          if (obj_exists(nid,"rzeroj",h5err)) &
+            call read_h5(nid,"rzeroj",rzeroj,h5in,h5err)
+          if (obj_exists(nid,"xalpa",h5err)) &
+            call read_h5(nid,"xalpa",xalpa,h5in,h5err)
+!          DIIID files have 1d arrays here
+          if (obj_exists(nid,"cgama",h5err)) then
+            call read_ndims(nid,"cgama",dims,h5in,h5err)
+            if (dims.eq.2) then
+              call read_h5(nid,"cgama",cgama,h5in,h5err)
+            elseif (dims.eq.1) then
+              call read_h5(nid,"cgama",cgama_flat,h5in,h5err)
+              cgama=reshape(cgama_flat,(/nffcur,nffcur/))
+            else
+              call errctrl_msg('data_input','cgama abnormal dimension')
+              stop
+            endif
+          endif
+          if (obj_exists(nid,"ivesel",h5err)) &
+            call read_h5(nid,"ivesel",ivesel,h5in,h5err)
+          if (obj_exists(nid,"iexcal",h5err)) &
+            call read_h5(nid,"iexcal",iexcal,h5in,h5err)
+          if (obj_exists(nid,"iconsi",h5err)) &
+            call read_h5(nid,"iconsi",iconsi,h5in,h5err)
+          if (obj_exists(nid,"fwtfc",h5err)) &
+            call read_h5(nid,"fwtfc",fwtfc,h5in,h5err)
+          if (obj_exists(nid,"xltype",h5err)) &
+            call read_h5(nid,"xltype",xltype,h5in,h5err)
+          if (obj_exists(nid,"kcalpa",h5err)) &
+            call read_h5(nid,"kcalpa",kcalpa,h5in,h5err)
+          if (obj_exists(nid,"kcgama",h5err)) &
+            call read_h5(nid,"kcgama",kcgama,h5in,h5err)
+!          DIIID files have 1d arrays here
+          if (obj_exists(nid,"calpa",h5err)) then
+            call read_ndims(nid,"calpa",dims,h5in,h5err)
+            if (dims.eq.2) then
+              call read_h5(nid,"calpa",calpa,h5in,h5err)
+            elseif (dims.eq.1) then
+              call read_h5(nid,"calpa",calpa_flat,h5in,h5err)
+              calpa=reshape(calpa_flat,(/nppcur,nppcur/))
+            else
+              call errctrl_msg('data_input','calpa abnormal dimension')
+              stop
+            endif
+          endif
+          if (obj_exists(nid,"iacoil",h5err)) &
+            call read_h5(nid,"iacoil",iacoil,h5in,h5err)
+          if (obj_exists(nid,"limid",h5err)) &
+            call read_h5(nid,"limid",limid,h5in,h5err)
+          if (obj_exists(nid,"irfila",h5err)) &
+            call read_h5(nid,"irfila",irfila,h5in,h5err)
+          if (obj_exists(nid,"jzfila",h5err)) &
+            call read_h5(nid,"jzfila",jzfila,h5in,h5err)
+          if (obj_exists(nid,"vloop",h5err)) &
+            call read_h5(nid,"vloop",vloop,h5in,h5err)
+          if (obj_exists(nid,"iqplot",h5err)) &
+            call read_h5(nid,"iqplot",iqplot,h5in,h5err)
+          if (obj_exists(nid,"siref",h5err)) &
+            call read_h5(nid,"siref",siref,h5in,h5err)
+          if (obj_exists(nid,"denr",h5err)) &
+            call read_h5(nid,"denr",denr,h5in,h5err)
+          if (obj_exists(nid,"denv",h5err)) &
+            call read_h5(nid,"denv",denv,h5in,h5err)
+          if (obj_exists(nid,"xgama",h5err)) &
+            call read_h5(nid,"xgama",xgama,h5in,h5err)
+          if (obj_exists(nid,"sgnemin",h5err)) &
+            call read_h5(nid,"sgnemin",sgnemin,h5in,h5err)
+          if (obj_exists(nid,"nptionf",h5err)) &
+            call read_h5(nid,"nptionf",nptionf,h5in,h5err)
+          if (obj_exists(nid,"currn1",h5err)) &
+            call read_h5(nid,"currn1",currn1,h5in,h5err)
+          if (obj_exists(nid,"ifitvs",h5err)) &
+            call read_h5(nid,"ifitvs",ifitvs,h5in,h5err)
+          if (obj_exists(nid,"bitfc",h5err)) &
+            call read_h5(nid,"bitfc",bitfc,h5in,h5err)
+          if (obj_exists(nid,"idfila",h5err)) &
+            call read_h5(nid,"idfila",idfila,h5in,h5err)
+          if (obj_exists(nid,"relax",h5err)) &
+            call read_h5(nid,"relax",relax,h5in,h5err)
+          if (obj_exists(nid,"saimin",h5err)) &
+            call read_h5(nid,"saimin",saimin,h5in,h5err)
+          if (obj_exists(nid,"icutfp",h5err)) &
+            call read_h5(nid,"icutfp",icutfp,h5in,h5err)
+          if (obj_exists(nid,"acoilc",h5err)) &
+            call read_h5(nid,"acoilc",acoilc,h5in,h5err)
+          if (obj_exists(nid,"sigtii",h5err)) &
+            call read_h5(nid,"sigtii",sigtii,h5in,h5err)
+          if (obj_exists(nid,"cutip",h5err)) &
+            call read_h5(nid,"cutip",cutip,h5in,h5err)
+          if (obj_exists(nid,"iavem",h5err)) &
+            call read_h5(nid,"iavem",iavem,h5in,h5err)
+          if (obj_exists(nid,"pnbeam",h5err)) &
+            call read_h5(nid,"pnbeam",pnbeam,h5in,h5err)
+          if (obj_exists(nid,"xltype_180",h5err)) &
+            call read_h5(nid,"xltype_180",xltype_180,h5in,h5err)
+          if (obj_exists(nid,"sgtemin",h5err)) &
+            call read_h5(nid,"sgtemin",sgtemin,h5in,h5err)
+          if (obj_exists(nid,"sgprmin",h5err)) &
+            call read_h5(nid,"sgprmin",sgprmin,h5in,h5err)
+          if (obj_exists(nid,"elomin",h5err)) &
+            call read_h5(nid,"elomin",elomin,h5in,h5err)
+          if (obj_exists(nid,"dnmin",h5err)) &
+            call read_h5(nid,"dnmin",dnmin,h5in,h5err)
+          if (obj_exists(nid,"sgnethi",h5err)) &
+            call read_h5(nid,"sgnethi",sgnethi,h5in,h5err)
+          if (obj_exists(nid,"fcurbd",h5err)) &
+            call read_h5(nid,"fcurbd",fcurbd,h5in,h5err)
+          if (obj_exists(nid,"pcurbd",h5err)) &
+            call read_h5(nid,"pcurbd",pcurbd,h5in,h5err)
+          if (obj_exists(nid,"prbdry",h5err)) &
+            call read_h5(nid,"prbdry",prbdry,h5in,h5err)
+          if (obj_exists(nid,"sgtethi",h5err)) &
+            call read_h5(nid,"sgtethi",sgtethi,h5in,h5err)
+          if (obj_exists(nid,"ndokin",h5err)) &
+            call read_h5(nid,"ndokin",ndokin,h5in,h5err)
+          if (obj_exists(nid,"zlowimp",h5err)) &
+            call read_h5(nid,"zlowimp",zlowimp,h5in,h5err)
+          if (obj_exists(nid,"kskipvs",h5err)) &
+            call read_h5(nid,"kskipvs",kskipvs,h5in,h5err)
+          if (obj_exists(nid,"limvs",h5err)) &
+            call read_h5(nid,"limvs",limvs,h5in,h5err)
+          if (obj_exists(nid,"vcurfb",h5err)) &
+            call read_h5(nid,"vcurfb",vcurfb,h5in,h5err)
+          if (obj_exists(nid,"kpressb",h5err)) &
+            call read_h5(nid,"kpressb",kpressb,h5in,h5err)
+          if (obj_exists(nid,"pressbi",h5err)) &
+            call read_h5(nid,"pressbi",pressbi,h5in,h5err)
+          if (obj_exists(nid,"prespb",h5err)) &
+            call read_h5(nid,"prespb",prespb,h5in,h5err)
+          if (obj_exists(nid,"sigppb",h5err)) &
+            call read_h5(nid,"sigppb",sigppb,h5in,h5err)
+          if (obj_exists(nid,"kzeroj",h5err)) &
+            call read_h5(nid,"kzeroj",kzeroj,h5in,h5err)
+          if (obj_exists(nid,"rminvs",h5err)) &
+            call read_h5(nid,"rminvs",rminvs,h5in,h5err)
+          if (obj_exists(nid,"rmaxvs",h5err)) &
+            call read_h5(nid,"rmaxvs",rmaxvs,h5in,h5err)
+          if (obj_exists(nid,"errbry",h5err)) &
+            call read_h5(nid,"errbry",errbry,h5in,h5err)
+          if (obj_exists(nid,"fwtpre",h5err)) &
+            call read_h5(nid,"fwtpre",fwtpre,h5in,h5err)
+          if (obj_exists(nid,"ibtcomp",h5err)) &
+            call read_h5(nid,"ibtcomp",ibtcomp,h5in,h5err)
+          if (obj_exists(nid,"klabel",h5err)) &
+            call read_h5(nid,"klabel",klabel,h5in,h5err)
+          if (obj_exists(nid,"zmaxvs",h5err)) &
+            call read_h5(nid,"zmaxvs",zmaxvs,h5in,h5err)
+          if (obj_exists(nid,"dnbeam",h5err)) &
+            call read_h5(nid,"dnbeam",dnbeam,h5in,h5err)
+          if (obj_exists(nid,"dmass",h5err)) &
+            call read_h5(nid,"dmass",dmass,h5in,h5err)
+          if (obj_exists(nid,"nmass",h5err)) &
+            call read_h5(nid,"nmass",nmass,h5in,h5err)
+          if (obj_exists(nid,"condin",h5err)) &
+            call read_h5(nid,"condin",condin,h5in,h5err)
+          if (obj_exists(nid,"iaveus",h5err)) &
+            call read_h5(nid,"iaveus",iaveus,h5in,h5err)
+          if (obj_exists(nid,"sgtimin",h5err)) &
+            call read_h5(nid,"sgtimin",sgtimin,h5in,h5err)
+          if (obj_exists(nid,"kwripre",h5err)) &
+            call read_h5(nid,"kwripre",kwripre,h5in,h5err)
+          if (obj_exists(nid,"kbound",h5err)) &
+            call read_h5(nid,"kbound",kbound,h5in,h5err)
+          if (obj_exists(nid,"alphafp",h5err)) &
+            call read_h5(nid,"alphafp",alphafp,h5in,h5err)
+          if (obj_exists(nid,"kframe",h5err)) &
+            call read_h5(nid,"kframe",kframe,h5in,h5err)
+          if (obj_exists(nid,"zbound",h5err)) &
+            call read_h5(nid,"zbound",zbound,h5in,h5err)
+          if (obj_exists(nid,"vsdamp",h5err)) &
+            call read_h5(nid,"vsdamp",vsdamp,h5in,h5err)
+          if (obj_exists(nid,"zminvs",h5err)) &
+            call read_h5(nid,"zminvs",zminvs,h5in,h5err)
+          if (obj_exists(nid,"saicon",h5err)) &
+            call read_h5(nid,"saicon",saicon,h5in,h5err)
+          if (obj_exists(nid,"kppfnc",h5err)) &
+            call read_h5(nid,"kppfnc",kppfnc,h5in,h5err)
+          if (obj_exists(nid,"kppknt",h5err)) &
+            call read_h5(nid,"kppknt",kppknt,h5in,h5err)
+          if (obj_exists(nid,"ppknt",h5err)) &
+            call read_h5(nid,"ppknt",ppknt,h5in,h5err)
+          if (obj_exists(nid,"pptens",h5err)) &
+            call read_h5(nid,"pptens",pptens,h5in,h5err)
+          if (obj_exists(nid,"kfffnc",h5err)) &
+            call read_h5(nid,"kfffnc",kfffnc,h5in,h5err)
+          if (obj_exists(nid,"kffknt",h5err)) &
+            call read_h5(nid,"kffknt",kffknt,h5in,h5err)
+          if (obj_exists(nid,"ffknt",h5err)) &
+            call read_h5(nid,"ffknt",ffknt,h5in,h5err)
+          if (obj_exists(nid,"fftens",h5err)) &
+            call read_h5(nid,"fftens",fftens,h5in,h5err)
+          if (obj_exists(nid,"fwtbdry",h5err)) &
+            call read_h5(nid,"fwtbdry",fwtbdry,h5in,h5err)
+          if (obj_exists(nid,"kwwfnc",h5err)) &
+            call read_h5(nid,"kwwfnc",kwwfnc,h5in,h5err)
+          if (obj_exists(nid,"kwwknt",h5err)) &
+            call read_h5(nid,"kwwknt",kwwknt,h5in,h5err)
+          if (obj_exists(nid,"wwknt",h5err)) &
+            call read_h5(nid,"wwknt",wwknt,h5in,h5err)
+          if (obj_exists(nid,"wwtens",h5err)) &
+            call read_h5(nid,"wwtens",wwtens,h5in,h5err)
+          if (obj_exists(nid,"fwtec",h5err)) &
+            call read_h5(nid,"fwtec",fwtec,h5in,h5err)
+          if (obj_exists(nid,"fitsiref",h5err)) &
+            call read_h5(nid,"fitsiref",fitsiref_int,h5in,h5err)
+          if (fitsiref_int.ne.0) fitsiref=.true.  ! default off
+          if (obj_exists(nid,"bitec",h5err)) &
+            call read_h5(nid,"bitec",bitec,h5in,h5err)
+          if (obj_exists(nid,"scalepr",h5err)) &
+            call read_h5(nid,"scalepr",scalepr,h5in,h5err)
+          if (obj_exists(nid,"scalesir",h5err)) &
+            call read_h5(nid,"scalesir",scalesir,h5in,h5err)
+          if (obj_exists(nid,"ppbdry",h5err)) &
+            call read_h5(nid,"ppbdry",ppbdry,h5in,h5err)
+          if (obj_exists(nid,"kppbdry",h5err)) &
+            call read_h5(nid,"kppbdry",kppbdry,h5in,h5err)
+          if (obj_exists(nid,"pp2bdry",h5err)) &
+            call read_h5(nid,"pp2bdry",pp2bdry,h5in,h5err)
+          if (obj_exists(nid,"kpp2bdry",h5err)) &
+            call read_h5(nid,"kpp2bdry",kpp2bdry,h5in,h5err)
+          if (obj_exists(nid,"scalea",h5err)) &
+            call read_h5(nid,"scalea",scalea_int,h5in,h5err)
+          if (scalea_int.ne.0) scalea=.true.  ! default off
+          if (obj_exists(nid,"sigrbd",h5err)) &
+            call read_h5(nid,"sigrbd",sigrbd,h5in,h5err)
+          if (obj_exists(nid,"sigzbd",h5err)) &
+            call read_h5(nid,"sigzbd",sigzbd,h5in,h5err)
+          if (obj_exists(nid,"nbskip",h5err)) &
+            call read_h5(nid,"nbskip",nbskip,h5in,h5err)
+          if (obj_exists(nid,"ffbdry",h5err)) &
+            call read_h5(nid,"ffbdry",ffbdry,h5in,h5err)
+          if (obj_exists(nid,"kffbdry",h5err)) &
+            call read_h5(nid,"kffbdry",kffbdry,h5in,h5err)
+          if (obj_exists(nid,"ff2bdry",h5err)) &
+            call read_h5(nid,"ff2bdry",ff2bdry,h5in,h5err)
+          if (obj_exists(nid,"kff2bdry",h5err)) &
+            call read_h5(nid,"kff2bdry",kff2bdry,h5in,h5err)
+          if (obj_exists(nid,"errsil",h5err)) &
+            call read_h5(nid,"errsil",errsil,h5in,h5err)
+          if (obj_exists(nid,"vbit",h5err)) &
+            call read_h5(nid,"vbit",vbit,h5in,h5err)
+          if (obj_exists(nid,"wwbdry",h5err)) &
+            call read_h5(nid,"wwbdry",wwbdry,h5in,h5err)
+          if (obj_exists(nid,"kwwbdry",h5err)) &
+            call read_h5(nid,"kwwbdry",kwwbdry,h5in,h5err)
+          if (obj_exists(nid,"ww2bdry",h5err)) &
+            call read_h5(nid,"ww2bdry",ww2bdry,h5in,h5err)
+          if (obj_exists(nid,"kww2bdry",h5err)) &
+            call read_h5(nid,"kww2bdry",kww2bdry,h5in,h5err)
+          if (obj_exists(nid,"f2edge",h5err)) &
+            call read_h5(nid,"f2edge",f2edge,h5in,h5err)
+          if (obj_exists(nid,"fe_width",h5err)) &
+            call read_h5(nid,"fe_width",fe_width,h5in,h5err)
+          if (obj_exists(nid,"fe_psin",h5err)) &
+            call read_h5(nid,"fe_psin",fe_psin,h5in,h5err)
+          if (obj_exists(nid,"kedgef",h5err)) &
+            call read_h5(nid,"kedgef",kedgef,h5in,h5err)
+          if (obj_exists(nid,"ktear",h5err)) &
+            call read_h5(nid,"ktear",ktear,h5in,h5err)
+          if (obj_exists(nid,"kersil",h5err)) &
+            call read_h5(nid,"kersil",kersil,h5in,h5err)
+          if (obj_exists(nid,"iout",h5err)) &
+            call read_h5(nid,"iout",iout,h5in,h5err)
+          if (obj_exists(nid,"ixray",h5err)) &
+            call read_h5(nid,"ixray",ixray,h5in,h5err)
+          if (obj_exists(nid,"pedge",h5err)) &
+            call read_h5(nid,"pedge",pedge,h5in,h5err)
+          if (obj_exists(nid,"kedgep",h5err)) &
+            call read_h5(nid,"kedgep",kedgep,h5in,h5err)
+          if (obj_exists(nid,"pe_width",h5err)) &
+            call read_h5(nid,"pe_width",pe_width,h5in,h5err)
+          if (obj_exists(nid,"pe_psin",h5err)) &
+            call read_h5(nid,"pe_psin",pe_psin,h5in,h5err)
+          ! H5: testing
+!          if (obj_exists(nid,"table_dir",h5err)) &
+!            call read_h5(nid,"table_dir",table_dir,h5in,h5err)
+!          if (obj_exists(nid,"input_dir",h5err)) &
+!            call read_h5(nid,"input_dir",input_dir,h5in,h5err)
+!          if (obj_exists(nid,"store_dir",h5err)) &
+!            call read_h5(nid,"store_dir",store_dir,h5in,h5err)
+          if (obj_exists(nid,"kautoknt",h5err)) &
+            call read_h5(nid,"kautoknt",kautoknt,h5in,h5err)
+          if (obj_exists(nid,"akchiwt",h5err)) &
+            call read_h5(nid,"akchiwt",akchiwt,h5in,h5err)
+          if (obj_exists(nid,"akerrwt",h5err)) &
+            call read_h5(nid,"akerrwt",akerrwt,h5in,h5err)
+          if (obj_exists(nid,"kakloop",h5err)) &
+            call read_h5(nid,"kakloop",kakloop,h5in,h5err)
+          if (obj_exists(nid,"aktol",h5err)) &
+            call read_h5(nid,"aktol",aktol,h5in,h5err)
+          if (obj_exists(nid,"kakiter",h5err)) &
+            call read_h5(nid,"kakiter",kakiter,h5in,h5err)
+          if (obj_exists(nid,"akgamwt",h5err)) &
+            call read_h5(nid,"akgamwt",akgamwt,h5in,h5err)
+          if (obj_exists(nid,"akprewt",h5err)) &
+            call read_h5(nid,"akprewt",akprewt,h5in,h5err)
+          if (obj_exists(nid,"kpphord",h5err)) &
+            call read_h5(nid,"kpphord",kpphord,h5in,h5err)
+          if (obj_exists(nid,"kffhord",h5err)) &
+            call read_h5(nid,"kffhord",kffhord,h5in,h5err)
+          if (obj_exists(nid,"keehord",h5err)) &
+            call read_h5(nid,"keehord",keehord,h5in,h5err)
+          if (obj_exists(nid,"psiecn",h5err)) &
+            call read_h5(nid,"psiecn",psiecn,h5in,h5err)
+          if (obj_exists(nid,"dpsiecn",h5err)) &
+            call read_h5(nid,"dpsiecn",dpsiecn,h5in,h5err)
+          if (obj_exists(nid,"fitzts",h5err)) &
+            call read_h5(nid,"fitzts",fitzts,h5in,h5err)
+          if (obj_exists(nid,"isolve",h5err)) &
+            call read_h5(nid,"isolve",isolve,h5in,h5err)
+          if (obj_exists(nid,"iplcout",h5err)) &
+            call read_h5(nid,"iplcout",iplcout,h5in,h5err)
+          if (obj_exists(nid,"imagsigma",h5err)) &
+            call read_h5(nid,"imagsigma",imagsigma,h5in,h5err)
+          if (obj_exists(nid,"errmag",h5err)) &
+            call read_h5(nid,"errmag",errmag,h5in,h5err)
+          if (obj_exists(nid,"ksigma",h5err)) &
+            call read_h5(nid,"ksigma",ksigma,h5in,h5err)
+          if (obj_exists(nid,"errmagb",h5err)) &
+            call read_h5(nid,"errmagb",errmagb,h5in,h5err)
+          if (obj_exists(nid,"brsptu",h5err)) &
+            call read_h5(nid,"brsptu",brsptu,h5in,h5err)
+          if (obj_exists(nid,"fitfcsum",h5err)) &
+            call read_h5(nid,"fitfcsum",fitfcsum_int,h5in,h5err)
+          fitfcsum=.false.  ! default off?
+          if (fitfcsum_int.ne.0) fitfcsum=.true.
+          if (obj_exists(nid,"fwtfcsum",h5err)) &
+            call read_h5(nid,"fwtfcsum",fwtfcsum,h5in,h5err)
+          if (obj_exists(nid,"appendsnap",h5err)) &
+            call read_h5(nid,"appendsnap",appendsnap,h5in,h5err)
+          if (obj_exists(nid,"idebug",h5err)) &
+            call read_h5(nid,"idebug",idebug,h5in,h5err)
+          if (obj_exists(nid,"nbdrymx",h5err)) &
+            call read_h5(nid,"nbdrymx",nbdrymx,h5in,h5err)
+          if (obj_exists(nid,"nsol",h5err)) &
+            call read_h5(nid,"nsol",nsol,h5in,h5err)
+          if (obj_exists(nid,"rsol",h5err)) &
+            call read_h5(nid,"rsol",rsol,h5in,h5err)
+          if (obj_exists(nid,"zsol",h5err)) &
+            call read_h5(nid,"zsol",zsol,h5in,h5err)
+          if (obj_exists(nid,"fwtsol",h5err)) &
+            call read_h5(nid,"fwtsol",fwtsol,h5in,h5err)
+          if (obj_exists(nid,"efitversion",h5err)) &
+            call read_h5(nid,"efitversion",efitversion,h5in,h5err)
+          if (obj_exists(nid,"kbetapr",h5err)) &
+            call read_h5(nid,"kbetapr",kbetapr,h5in,h5err)
+          if (obj_exists(nid,"nbdryp",h5err)) &
+            call read_h5(nid,"nbdryp",nbdryp,h5in,h5err)
+          if (obj_exists(nid,"jdebug",h5err)) &
+            call read_h5(nid,"jdebug",jdebug,h5in,h5err)
+          if (obj_exists(nid,"ifindopt",h5err)) &
+            call read_h5(nid,"ifindopt",ifindopt,h5in,h5err)
+          if (obj_exists(nid,"tolbndpsi",h5err)) &
+            call read_h5(nid,"tolbndpsi",tolbndpsi,h5in,h5err)
+          call close_group("in1",nid,h5err)
+        endif
+   
+        call test_group(sid,"ink",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"ink",nid,h5err)
+          if (obj_exists(nid,"isetfb",h5err)) &
+            call read_h5(nid,"isetfb",isetfb,h5in,h5err)
+          if (obj_exists(nid,"ioffr",h5err)) &
+            call read_h5(nid,"ioffr",ioffr,h5in,h5err)
+          if (obj_exists(nid,"ioffz",h5err)) &
+            call read_h5(nid,"ioffz",ioffz,h5in,h5err)
+          if (obj_exists(nid,"ishiftz",h5err)) &
+            call read_h5(nid,"ishiftz",ishiftz,h5in,h5err)
+          if (obj_exists(nid,"gain",h5err)) &
+            call read_h5(nid,"gain",gain,h5in,h5err)
+          if (obj_exists(nid,"gainp",h5err)) &
+            call read_h5(nid,"gainp",gainp,h5in,h5err)
+          if (obj_exists(nid,"idplace",h5err)) &
+            call read_h5(nid,"idplace",idplace,h5in,h5err)
+          if (obj_exists(nid,"symmetrize",h5err)) &
+            call read_h5(nid,"symmetrize",symmetrize_int,h5in,h5err)
+          if (symmetrize_int.ne.0) symmetrize=.true.  ! default off
+          if (obj_exists(nid,"backaverage",h5err)) &
+            call read_h5(nid,"backaverage",backaverage_int,h5in,h5err)
+          if (backaverage_int.ne.0) backaverage=.true.  ! default off
+          if (obj_exists(nid,"lring",h5err)) &
+            call read_h5(nid,"lring",lring,h5in,h5err)
+          if (obj_exists(nid,"cupdown",h5err)) &
+            call read_h5(nid,"cupdown",cupdown,h5in,h5err)
+          call close_group("ink",nid,h5err)
+        endif
+   
+        call test_group(sid,"ins",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"ins",nid,h5err)
+          if (obj_exists(nid,"tgamma",h5err)) &
+            call read_h5(nid,"tgamma",tgamma,h5in,h5err)
+          if (obj_exists(nid,"sgamma",h5err)) &
+            call read_h5(nid,"sgamma",sgamma,h5in,h5err)
+          if (obj_exists(nid,"fwtgam",h5err)) &
+            call read_h5(nid,"fwtgam",fwtgam,h5in,h5err)
+          if (obj_exists(nid,"rrrgam",h5err)) &
+            call read_h5(nid,"rrrgam",rrrgam,h5in,h5err)
+          if (obj_exists(nid,"zzzgam",h5err)) &
+            call read_h5(nid,"zzzgam",zzzgam,h5in,h5err)
+          if (obj_exists(nid,"aa1gam",h5err)) &
+            call read_h5(nid,"aa1gam",aa1gam,h5in,h5err)
+          if (obj_exists(nid,"aa2gam",h5err)) &
+            call read_h5(nid,"aa2gam",aa2gam,h5in,h5err)
+          if (obj_exists(nid,"aa3gam",h5err)) &
+            call read_h5(nid,"aa3gam",aa3gam,h5in,h5err)
+          if (obj_exists(nid,"aa4gam",h5err)) &
+            call read_h5(nid,"aa4gam",aa4gam,h5in,h5err)
+          if (obj_exists(nid,"aa5gam",h5err)) &
+            call read_h5(nid,"aa5gam",aa5gam,h5in,h5err)
+          if (obj_exists(nid,"aa6gam",h5err)) &
+            call read_h5(nid,"aa6gam",aa6gam,h5in,h5err)
+          if (obj_exists(nid,"aa7gam",h5err)) &
+            call read_h5(nid,"aa7gam",aa7gam,h5in,h5err)
+          if (obj_exists(nid,"iplots",h5err)) &
+            call read_h5(nid,"iplots",iplots,h5in,h5err)
+          if (obj_exists(nid,"kdomse",h5err)) &
+            call read_h5(nid,"kdomse",kdomse,h5in,h5err)
+          if (obj_exists(nid,"msebkp",h5err)) &
+            call read_h5(nid,"msebkp",msebkp,h5in,h5err)
+          if (obj_exists(nid,"msefitfun",h5err)) &
+            call read_h5(nid,"msefitfun",msefitfun,h5in,h5err)
+          if (obj_exists(nid,"mse_quiet",h5err)) &
+            call read_h5(nid,"mse_quiet",mse_quiet,h5in,h5err)
+          if (obj_exists(nid,"mse_spave_on",h5err)) &
+            call read_h5(nid,"mse_spave_on",mse_spave_on,h5in,h5err)
+          if (obj_exists(nid,"kwaitmse",h5err)) &
+            call read_h5(nid,"kwaitmse",kwaitmse,h5in,h5err)
+          if (obj_exists(nid,"dtmsefull",h5err)) &
+            call read_h5(nid,"dtmsefull",dtmsefull,h5in,h5err)
+          if (obj_exists(nid,"mse_strict",h5err)) &
+            call read_h5(nid,"mse_strict",mse_strict,h5in,h5err)
+          if (obj_exists(nid,"t_max_beam_off",h5err)) &
+            call read_h5(nid,"t_max_beam_off",t_max_beam_off,h5in,h5err)
+          if (obj_exists(nid,"ok_30rt",h5err)) &
+            call read_h5(nid,"ok_30rt",ok_30rt,h5in,h5err)
+          if (obj_exists(nid,"ok_210lt",h5err)) &
+            call read_h5(nid,"ok_210lt",ok_210lt,h5in,h5err)
+          if (obj_exists(nid,"mse_usecer",h5err)) &
+            call read_h5(nid,"mse_usecer",mse_usecer,h5in,h5err)
+          if (obj_exists(nid,"mse_certree",h5err)) &
+            call read_h5(nid,"mse_certree",mse_certree,h5in,h5err)
+          if (obj_exists(nid,"mse_use_cer330",h5err)) &
+            call read_h5(nid,"mse_use_cer330",mse_use_cer330,h5in,h5err)
+          if (obj_exists(nid,"mse_use_cer210",h5err)) &
+            call read_h5(nid,"mse_use_cer210",mse_use_cer210,h5in,h5err)
+          if (obj_exists(nid,"tgammauncor",h5err)) &
+            call read_h5(nid,"tgammauncor",tgammauncor,h5in,h5err)
+          if (obj_exists(nid,"v30lt",h5err)) &
+            call read_h5(nid,"v30lt",v30lt,h5in,h5err)
+          if (obj_exists(nid,"v30rt",h5err)) &
+            call read_h5(nid,"v30rt",v30rt,h5in,h5err)
+          if (obj_exists(nid,"v210lt",h5err)) &
+            call read_h5(nid,"v210lt",v210lt,h5in,h5err)
+          if (obj_exists(nid,"v210rt",h5err)) &
+            call read_h5(nid,"v210rt",v210rt,h5in,h5err) 
+          call close_group("ins",nid,h5err)
+        endif
+   
+        call test_group(sid,"in_msels",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"in_msels",nid,h5err)
+          if (obj_exists(nid,"bmsels",h5err)) &
+            call read_h5(nid,"bmsels",bmsels,h5in,h5err)
+          if (obj_exists(nid,"sbmsels",h5err)) &
+            call read_h5(nid,"sbmsels",sbmsels,h5in,h5err)
+          if (obj_exists(nid,"fwtbmsels",h5err)) &
+            call read_h5(nid,"fwtbmsels",fwtbmsels,h5in,h5err)
+          if (obj_exists(nid,"rrmsels",h5err)) &
+            call read_h5(nid,"rrmsels",rrmsels,h5in,h5err)
+          if (obj_exists(nid,"zzmsels",h5err)) &
+            call read_h5(nid,"zzmsels",zzmsels,h5in,h5err)
+          if (obj_exists(nid,"l1msels",h5err)) &
+            call read_h5(nid,"l1msels",l1msels,h5in,h5err)
+          if (obj_exists(nid,"l2msels",h5err)) &
+            call read_h5(nid,"l2msels",l2msels,h5in,h5err)
+          if (obj_exists(nid,"l4msels",h5err)) &
+            call read_h5(nid,"l4msels",l4msels,h5in,h5err)
+          if (obj_exists(nid,"emsels",h5err)) &
+            call read_h5(nid,"emsels",emsels,h5in,h5err)
+          if (obj_exists(nid,"semsels",h5err)) &
+            call read_h5(nid,"semsels",semsels,h5in,h5err)
+          if (obj_exists(nid,"fwtemsels",h5err)) &
+            call read_h5(nid,"fwtemsels",fwtemsels,h5in,h5err)
+          if (obj_exists(nid,"kdomsels",h5err)) &
+            call read_h5(nid,"kdomsels",kdomsels,h5in,h5err)
+          if (obj_exists(nid,"fmlscut",h5err)) &
+            call read_h5(nid,"fmlscut",fmlscut,h5in,h5err)
+          if (obj_exists(nid,"synmsels",h5err)) &
+            call read_h5(nid,"synmsels",synmsels,h5in,h5err)
+          if (obj_exists(nid,"avemsels",h5err)) &
+            call read_h5(nid,"avemsels",avemsels,h5in,h5err)
+          call close_group("in_msels",nid,h5err)
+        endif
+
+        call test_group(sid,"ina",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"ina",nid,h5err)
+          if (obj_exists(nid,"spatial_avg_gam",h5err)) &
+            call read_h5(nid,"spatial_avg_gam",spatial_avg_gam,h5in,h5err)
+          call close_group("ina",nid,h5err)
+        endif
+
+        call test_group(sid,"inece",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"inece",nid,h5err)
+          if (obj_exists(nid,"necein",h5err)) &
+            call read_h5(nid,"necein",necein,h5in,h5err)
+          if (obj_exists(nid,"teecein0",h5err)) &
+            call read_h5(nid,"teecein0",teecein0,h5in,h5err)
+          if (obj_exists(nid,"feece0",h5err)) &
+            call read_h5(nid,"feece0",feece0,h5in,h5err)
+          if (obj_exists(nid,"errorece0",h5err)) &
+            call read_h5(nid,"errorece0",errorece0,h5in,h5err)
+          if (obj_exists(nid,"fwtece0",h5err)) &
+            call read_h5(nid,"fwtece0",fwtece0,h5in,h5err)
+          if (obj_exists(nid,"fwtecebz0",h5err)) &
+            call read_h5(nid,"fwtecebz0",fwtecebz0,h5in,h5err)
+          if (obj_exists(nid,"ecefit",h5err)) &
+            call read_h5(nid,"ecefit",ecefit,h5in,h5err)
+          if (obj_exists(nid,"ecebzfit",h5err)) &
+            call read_h5(nid,"ecebzfit",ecebzfit,h5in,h5err)
+          if (obj_exists(nid,"kfitece",h5err)) &
+            call read_h5(nid,"kfitece",kfitece,h5in,h5err)
+          if (obj_exists(nid,"kinputece",h5err)) &
+            call read_h5(nid,"kinputece",kinputece,h5in,h5err)
+          if (obj_exists(nid,"kcallece",h5err)) &
+            call read_h5(nid,"kcallece",kcallece,h5in,h5err)
+          if (obj_exists(nid,"nharm",h5err)) &
+            call read_h5(nid,"nharm",nharm,h5in,h5err)
+          if (obj_exists(nid,"kfixro",h5err)) &
+            call read_h5(nid,"kfixro",kfixro,h5in,h5err)
+          if (obj_exists(nid,"rteo",h5err)) &
+            call read_h5(nid,"rteo",rteo,h5in,h5err)
+          if (obj_exists(nid,"zteo",h5err)) &
+            call read_h5(nid,"zteo",zteo,h5in,h5err)
+          if (obj_exists(nid,"kfixrece",h5err)) &
+            call read_h5(nid,"kfixrece",kfixrece,h5in,h5err)
+          if (obj_exists(nid,"rtep",h5err)) &
+            call read_h5(nid,"rtep",rtep,h5in,h5err)
+          if (obj_exists(nid,"rtem",h5err)) &
+            call read_h5(nid,"rtem",rtem,h5in,h5err)
+          if (obj_exists(nid,"rpbit",h5err)) &
+            call read_h5(nid,"rpbit",rpbit,h5in,h5err)
+          if (obj_exists(nid,"rmbit",h5err)) &
+            call read_h5(nid,"rmbit",rmbit,h5in,h5err)
+          if (obj_exists(nid,"robit",h5err)) &
+            call read_h5(nid,"robit",robit,h5in,h5err)
+          if (obj_exists(nid,"nfit",h5err)) &
+            call read_h5(nid,"nfit",nfit,h5in,h5err)
+          if (obj_exists(nid,"kcmin",h5err)) &
+            call read_h5(nid,"kcmin",kcmin,h5in,h5err)
+          if (obj_exists(nid,"fwtnow",h5err)) &
+            call read_h5(nid,"fwtnow",fwtnow,h5in,h5err)
+          if (obj_exists(nid,"kdoece",h5err)) &
+            call read_h5(nid,"kdoece",kdoece,h5in,h5err)
+          if (obj_exists(nid,"mtxece",h5err)) &
+            call read_h5(nid,"mtxece",mtxece,h5in,h5err)
+          if (obj_exists(nid,"nconstr",h5err)) &
+            call read_h5(nid,"nconstr",nconstr,h5in,h5err)
+          if (obj_exists(nid,"eceiter",h5err)) &
+            call read_h5(nid,"eceiter",eceiter,h5in,h5err)
+          if (obj_exists(nid,"eceerror",h5err)) &
+            call read_h5(nid,"eceerror",eceerror,h5in,h5err)
+          call close_group("inece",nid,h5err)
+        endif
+
+        call test_group(sid,"edgep",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"edgep",nid,h5err)
+          if (obj_exists(nid,"symmetrize",h5err)) &
+            call read_h5(nid,"symmetrize",symmetrize_int,h5in,h5err)
+          if (symmetrize_int.ne.0) symmetrize=.true.  ! default off
+          if (obj_exists(nid,"rpress",h5err)) &
+            call read_h5(nid,"rpress",rpress,h5in,h5err)
+          if (obj_exists(nid,"pressr",h5err)) &
+            call read_h5(nid,"pressr",pressr,h5in,h5err)
+          if (obj_exists(nid,"sigpre",h5err)) &
+            call read_h5(nid,"sigpre",sigpre,h5in,h5err)
+          if (obj_exists(nid,"npress",h5err)) &
+            call read_h5(nid,"npress",npress,h5in,h5err)
+          if (obj_exists(nid,"kprfit",h5err)) &
+            call read_h5(nid,"kprfit",kprfit,h5in,h5err)
+          if (obj_exists(nid,"kpressb",h5err)) &
+            call read_h5(nid,"kpressb",kpressb,h5in,h5err)
+          if (obj_exists(nid,"ndokin",h5err)) &
+            call read_h5(nid,"ndokin",ndokin,h5in,h5err)
+          if (obj_exists(nid,"kppfnc",h5err)) &
+            call read_h5(nid,"kppfnc",kppfnc,h5in,h5err)
+          if (obj_exists(nid,"kfffnc",h5err)) &
+            call read_h5(nid,"kfffnc",kfffnc,h5in,h5err)
+          if (obj_exists(nid,"kffcur",h5err)) &
+            call read_h5(nid,"kffcur",kffcur,h5in,h5err)
+          if (obj_exists(nid,"kppcur",h5err)) &
+            call read_h5(nid,"kppcur",kppcur,h5in,h5err)
+          if (obj_exists(nid,"mxiter",h5err)) &
+            call read_h5(nid,"mxiter",mxiter,h5in,h5err)
+          if (obj_exists(nid,"error",h5err)) &
+            call read_h5(nid,"error",error,h5in,h5err)
+          if (obj_exists(nid,"errmin",h5err)) &
+            call read_h5(nid,"errmin",errmin,h5in,h5err)
+          if (obj_exists(nid,"keecur",h5err)) &
+            call read_h5(nid,"keecur",keecur,h5in,h5err)
+          call close_group("edgep",nid,h5err)
+        endif
+
+        call test_group(sid,"iner",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"iner",nid,h5err)
+          if (obj_exists(nid,"keecur",h5err)) &
+            call read_h5(nid,"keecur",keecur,h5in,h5err)
+          if (obj_exists(nid,"ecurbd",h5err)) &
+            call read_h5(nid,"ecurbd",ecurbd,h5in,h5err)
+          if (obj_exists(nid,"keefnc",h5err)) &
+            call read_h5(nid,"keefnc",keefnc,h5in,h5err)
+          if (obj_exists(nid,"eetens",h5err)) &
+            call read_h5(nid,"eetens",eetens,h5in,h5err)
+          if (obj_exists(nid,"keebdry",h5err)) &
+            call read_h5(nid,"keebdry",keebdry,h5in,h5err)
+          if (obj_exists(nid,"kee2bdry",h5err)) &
+            call read_h5(nid,"kee2bdry",kee2bdry,h5in,h5err)
+          if (obj_exists(nid,"eebdry",h5err)) &
+            call read_h5(nid,"eebdry",eebdry,h5in,h5err)
+          if (obj_exists(nid,"ee2bdry",h5err)) &
+            call read_h5(nid,"ee2bdry",ee2bdry,h5in,h5err)
+          if (obj_exists(nid,"eeknt",h5err)) &
+            call read_h5(nid,"eeknt",eeknt,h5in,h5err)
+          if (obj_exists(nid,"keeknt",h5err)) &
+            call read_h5(nid,"keeknt",keeknt,h5in,h5err)
+          if (obj_exists(nid,"keehord",h5err)) &
+            call read_h5(nid,"keehord",keehord,h5in,h5err)
+          call close_group("iner",nid,h5err)
+        endif
+
+        call test_group(sid,"insxr",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"insxr",nid,h5err)
+          if (obj_exists(nid,"ksxr0",h5err)) &
+            call read_h5(nid,"ksxr0",ksxr0,h5in,h5err)
+          if (obj_exists(nid,"ksxr2",h5err)) &
+            call read_h5(nid,"ksxr2",ksxr2,h5in,h5err)
+          if (obj_exists(nid,"idosxr",h5err)) &
+            call read_h5(nid,"idosxr",idosxr,h5in,h5err)
+          call close_group("insxr",nid,h5err)
+        endif
+
+        call test_group(sid,"inms",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"inms",nid,h5err)
+          if (obj_exists(nid,"xmprcg",h5err)) &
+            call read_h5(nid,"xmprcg",xmprcg,h5in,h5err)
+          if (obj_exists(nid,"xmp_k",h5err)) &
+            call read_h5(nid,"xmp_k",xmp_k,h5in,h5err)
+          if (obj_exists(nid,"vresxmp",h5err)) &
+            call read_h5(nid,"vresxmp",vresxmp,h5in,h5err)
+          if (obj_exists(nid,"t0xmp",h5err)) &
+            call read_h5(nid,"t0xmp",t0xmp,h5in,h5err)
+          if (obj_exists(nid,"psircg",h5err)) &
+            call read_h5(nid,"psircg",psircg,h5in,h5err)
+          if (obj_exists(nid,"psi_k",h5err)) &
+            call read_h5(nid,"psi_k",psi_k,h5in,h5err)
+          if (obj_exists(nid,"vrespsi",h5err)) &
+            call read_h5(nid,"vrespsi",vrespsi,h5in,h5err)
+          if (obj_exists(nid,"t0psi",h5err)) &
+            call read_h5(nid,"t0psi",t0psi,h5in,h5err)
+          if (obj_exists(nid,"fcrcg",h5err)) &
+            call read_h5(nid,"fcrcg",fcrcg,h5in,h5err)
+          if (obj_exists(nid,"fc_k",h5err)) &
+            call read_h5(nid,"fc_k",fc_k,h5in,h5err)
+          if (obj_exists(nid,"vresfc",h5err)) &
+            call read_h5(nid,"vresfc",vresfc,h5in,h5err)
+          if (obj_exists(nid,"t0fc",h5err)) &
+            call read_h5(nid,"t0fc",t0fc,h5in,h5err)
+          if (obj_exists(nid,"ercg",h5err)) &
+            call read_h5(nid,"ercg",ercg,h5in,h5err)
+          if (obj_exists(nid,"e_k",h5err)) &
+            call read_h5(nid,"e_k",e_k,h5in,h5err)
+          if (obj_exists(nid,"vrese",h5err)) &
+            call read_h5(nid,"vrese",vrese,h5in,h5err)
+          if (obj_exists(nid,"t0e",h5err)) &
+            call read_h5(nid,"t0e",t0e,h5in,h5err)
+          if (obj_exists(nid,"bcrcg",h5err)) &
+            call read_h5(nid,"bcrcg",bcrcg,h5in,h5err)
+          if (obj_exists(nid,"bc_k",h5err)) &
+            call read_h5(nid,"bc_k",bc_k,h5in,h5err)
+          if (obj_exists(nid,"vresbc",h5err)) &
+            call read_h5(nid,"vresbc",vresbc,h5in,h5err)
+          if (obj_exists(nid,"t0bc",h5err)) &
+            call read_h5(nid,"t0bc",t0bc,h5in,h5err)
+          if (obj_exists(nid,"prcg",h5err)) &
+            call read_h5(nid,"prcg",prcg,h5in,h5err)
+          if (obj_exists(nid,"p_k",h5err)) &
+            call read_h5(nid,"p_k",p_k,h5in,h5err)
+          if (obj_exists(nid,"vresp",h5err)) &
+            call read_h5(nid,"vresp",vresp,h5in,h5err)
+          if (obj_exists(nid,"t0p",h5err)) &
+            call read_h5(nid,"t0p",t0p,h5in,h5err)
+          if (obj_exists(nid,"bti322in",h5err)) &
+            call read_h5(nid,"bti322in",bti322in,h5in,h5err)
+          if (obj_exists(nid,"curc79in",h5err)) &
+            call read_h5(nid,"curc79in",curc79in,h5in,h5err)
+          if (obj_exists(nid,"curc139in",h5err)) &
+            call read_h5(nid,"curc139in",curc139in,h5in,h5err)
+          if (obj_exists(nid,"curc199in",h5err)) &
+            call read_h5(nid,"curc199in",curc199in,h5in,h5err)
+          if (obj_exists(nid,"devxmpin",h5err)) &
+            call read_h5(nid,"devxmpin",devxmpin,h5in,h5err)
+          if (obj_exists(nid,"rnavxmpin",h5err)) &
+            call read_h5(nid,"rnavxmpin",rnavxmpin,h5in,h5err)
+          if (obj_exists(nid,"devpsii",h5err)) &
+            call read_h5(nid,"devpsii",devpsii,h5in,h5err)
+          if (obj_exists(nid,"rnavpsiin",h5err)) &
+            call read_h5(nid,"rnavpsiin",rnavpsiin,h5in,h5err)
+          if (obj_exists(nid,"devfcin",h5err)) &
+            call read_h5(nid,"devfcin",devfcin,h5in,h5err)
+          if (obj_exists(nid,"rnavfcin",h5err)) &
+            call read_h5(nid,"rnavfcin",rnavfcin,h5in,h5err)
+          if (obj_exists(nid,"devein",h5err)) &
+            call read_h5(nid,"devein",devein,h5in,h5err)
+          if (obj_exists(nid,"rnavecin",h5err)) &
+            call read_h5(nid,"rnavecin",rnavecin,h5in,h5err)
+          call close_group("inms",nid,h5err)
+        endif
+   
+        call test_group(sid,"inwant",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"inwant",nid,h5err)
+          if (obj_exists(nid,"psiwant",h5err)) &
+            call read_h5(nid,"psiwant",psiwant,h5in,h5err)
+          if (obj_exists(nid,"vzeroj",h5err)) &
+            call read_h5(nid,"vzeroj",vzeroj,h5in,h5err)
+          if (obj_exists(nid,"fwtxxj",h5err)) &
+            call read_h5(nid,"fwtxxj",fwtxxj,h5in,h5err)
+          if (obj_exists(nid,"fbetap",h5err)) &
+            call read_h5(nid,"fbetap",fbetap,h5in,h5err)
+          if (obj_exists(nid,"fbetan",h5err)) &
+            call read_h5(nid,"fbetan",fbetan,h5in,h5err)
+          if (obj_exists(nid,"fli",h5err)) &
+            call read_h5(nid,"fli",fli,h5in,h5err)
+          if (obj_exists(nid,"fq95",h5err)) &
+            call read_h5(nid,"fq95",fq95,h5in,h5err)
+          if (obj_exists(nid,"fqsiw",h5err)) &
+            call read_h5(nid,"fqsiw",fqsiw,h5in,h5err)
+          if (obj_exists(nid,"jbeta",h5err)) &
+            call read_h5(nid,"jbeta",jbeta,h5in,h5err)
+          if (obj_exists(nid,"jli",h5err)) &
+            call read_h5(nid,"jli",jli,h5in,h5err)
+          if (obj_exists(nid,"alpax",h5err)) &
+            call read_h5(nid,"alpax",alpax,h5in,h5err)
+          if (obj_exists(nid,"gamax",h5err)) &
+            call read_h5(nid,"gamax",gamax,h5in,h5err)
+          if (obj_exists(nid,"jwantm",h5err)) &
+            call read_h5(nid,"jwantm",jwantm,h5in,h5err)
+          if (obj_exists(nid,"fwtxxq",h5err)) &
+            call read_h5(nid,"fwtxxq",fwtxxq,h5in,h5err)
+          if (obj_exists(nid,"fwtxxb",h5err)) &
+            call read_h5(nid,"fwtxxb",fwtxxb,h5in,h5err)
+          if (obj_exists(nid,"fwtxli",h5err)) &
+            call read_h5(nid,"fwtxli",fwtxli,h5in,h5err)
+          if (obj_exists(nid,"znose",h5err)) &
+            call read_h5(nid,"znose",znose,h5in,h5err)
+          if (obj_exists(nid,"fwtbdry",h5err)) &
+            call read_h5(nid,"fwtbdry",fwtbdry,h5in,h5err)
+          if (obj_exists(nid,"nqwant",h5err)) &
+            call read_h5(nid,"nqwant",nqwant,h5in,h5err)
+          if (obj_exists(nid,"siwantq",h5err)) &
+            call read_h5(nid,"siwantq",siwantq,h5in,h5err)
+          if (obj_exists(nid,"n_write",h5err)) &
+            call read_h5(nid,"n_write",n_write,h5in,h5err)
+          if (obj_exists(nid,"kccoils",h5err)) &
+            call read_h5(nid,"kccoils",kccoils,h5in,h5err)
+          if (obj_exists(nid,"ccoils",h5err)) &
+            call read_h5(nid,"ccoils",ccoils,h5in,h5err)
+          if (obj_exists(nid,"rexpan",h5err)) &
+            call read_h5(nid,"rexpan",rexpan,h5in,h5err)
+          if (obj_exists(nid,"xcoils",h5err)) &
+            call read_h5(nid,"xcoils",xcoils,h5in,h5err)
+          if (obj_exists(nid,"kcloops",h5err)) &
+            call read_h5(nid,"kcloops",kcloops,h5in,h5err)
+          if (obj_exists(nid,"cloops",h5err)) &
+            call read_h5(nid,"cloops",cloops,h5in,h5err)
+          if (obj_exists(nid,"xloops",h5err)) &
+            call read_h5(nid,"xloops",xloops,h5in,h5err)
+          if (obj_exists(nid,"currc79",h5err)) &
+            call read_h5(nid,"currc79",currc79,h5in,h5err)
+          if (obj_exists(nid,"currc139",h5err)) &
+            call read_h5(nid,"currc139",currc139,h5in,h5err)
+          if (obj_exists(nid,"nccoil",h5err)) &
+            call read_h5(nid,"nccoil",nccoil,h5in,h5err)
+          if (obj_exists(nid,"sizeroj",h5err)) &
+            call read_h5(nid,"sizeroj",sizeroj,h5in,h5err)
+          if (obj_exists(nid,"fitdelz",h5err)) &
+            call read_h5(nid,"fitdelz",fitdelz_int,h5in,h5err)
+          if (fitdelz_int.ne.0) fitdelz=.true.  ! default off
+          if (obj_exists(nid,"ndelzon",h5err)) &
+            call read_h5(nid,"ndelzon",ndelzon,h5in,h5err)
+          if (obj_exists(nid,"relaxdz",h5err)) &
+            call read_h5(nid,"relaxdz",relaxdz,h5in,h5err)
+          if (obj_exists(nid,"stabdz",h5err)) &
+            call read_h5(nid,"stabdz",stabdz,h5in,h5err)
+          if (obj_exists(nid,"writepc",h5err)) &
+            call read_h5(nid,"writepc",writepc_int,h5in,h5err)
+          if (writepc_int.ne.0) writepc=.true.  ! default off
+          if (obj_exists(nid,"table_dir",h5err)) &
+            call read_h5(nid,"table_dir",table_dir,h5in,h5err)
+          if (obj_exists(nid,"errdelz",h5err)) &
+            call read_h5(nid,"errdelz",errdelz,h5in,h5err)
+          if (obj_exists(nid,"oldccomp",h5err)) &
+            call read_h5(nid,"oldccomp",oldccomp_int,h5in,h5err)
+          if (oldccomp_int.ne.0) oldccomp=.true.  ! default off
+          if (obj_exists(nid,"nicoil",h5err)) &
+            call read_h5(nid,"nicoil",nicoil,h5in,h5err)
+          if (obj_exists(nid,"oldcomp",h5err)) &
+            call read_h5(nid,"oldcomp",oldcomp_int,h5in,h5err)
+          if (oldcomp_int.ne.0) oldcomp=.true.  ! default off
+          if (obj_exists(nid,"currc199",h5err)) &
+            call read_h5(nid,"currc199",currc199,h5in,h5err)
+          if (obj_exists(nid,"curriu30",h5err)) &
+            call read_h5(nid,"curriu30",curriu30,h5in,h5err)
+          if (obj_exists(nid,"curriu90",h5err)) &
+            call read_h5(nid,"curriu90",curriu90,h5in,h5err)
+          if (obj_exists(nid,"curriu150",h5err)) &
+            call read_h5(nid,"curriu150",curriu150,h5in,h5err)
+          if (obj_exists(nid,"curril30",h5err)) &
+            call read_h5(nid,"curril30",curril30,h5in,h5err)
+          if (obj_exists(nid,"curril90",h5err)) &
+            call read_h5(nid,"curril90",curril90,h5in,h5err)
+          if (obj_exists(nid,"curril150",h5err)) &
+            call read_h5(nid,"curril150",curril150,h5in,h5err)
+          if (obj_exists(nid,"ifitdelz",h5err)) &
+            call read_h5(nid,"ifitdelz",ifitdelz,h5in,h5err)
+          if (obj_exists(nid,"scaledz",h5err)) &
+            call read_h5(nid,"scaledz",scaledz,h5in,h5err)
+          call close_group("inwant",nid,h5err)
+        endif
+   
+        call test_group(sid,"invt",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"invt",nid,h5err)
+          if (obj_exists(nid,"omegat",h5err)) &
+            call read_h5(nid,"omegat",omegat,h5in,h5err)
+          if (obj_exists(nid,"nomegat",h5err)) &
+            call read_h5(nid,"nomegat",nomegat,h5in,h5err)
+          if (obj_exists(nid,"enw",h5err)) &
+            call read_h5(nid,"enw",enw,h5in,h5err)
+          if (obj_exists(nid,"emw",h5err)) &
+            call read_h5(nid,"emw",emw,h5in,h5err)
+          if (obj_exists(nid,"betapw0",h5err)) &
+            call read_h5(nid,"betapw0",betapw0,h5in,h5err)
+          if (obj_exists(nid,"kvtor",h5err)) &
+            call read_h5(nid,"kvtor",kvtor,h5in,h5err)
+          if (obj_exists(nid,"kwwcur",h5err)) &
+            call read_h5(nid,"kwwcur",kwwcur,h5in,h5err)
+          if (obj_exists(nid,"rvtor",h5err)) &
+            call read_h5(nid,"rvtor",rvtor,h5in,h5err)
+          if (obj_exists(nid,"wcurbd",h5err)) &
+            call read_h5(nid,"wcurbd",wcurbd,h5in,h5err)
+          if (obj_exists(nid,"preswb",h5err)) &
+            call read_h5(nid,"preswb",preswb,h5in,h5err)
+          if (obj_exists(nid,"fwtprw",h5err)) &
+            call read_h5(nid,"fwtprw",fwtprw,h5in,h5err)
+          if (obj_exists(nid,"npresw",h5err)) &
+            call read_h5(nid,"npresw",npresw,h5in,h5err)
+          if (obj_exists(nid,"presw",h5err)) &
+            call read_h5(nid,"presw",presw,h5in,h5err)
+          if (obj_exists(nid,"sigprw",h5err)) &
+            call read_h5(nid,"sigprw",sigprw,h5in,h5err)
+          if (obj_exists(nid,"rpresw",h5err)) &
+            call read_h5(nid,"rpresw",rpresw,h5in,h5err)
+          if (obj_exists(nid,"zpresw",h5err)) &
+            call read_h5(nid,"zpresw",zpresw,h5in,h5err)
+          if (obj_exists(nid,"kplotp",h5err)) &
+            call read_h5(nid,"kplotp",kplotp,h5in,h5err)
+          if (obj_exists(nid,"sbetaw",h5err)) &
+            call read_h5(nid,"sbetaw",sbetaw,h5in,h5err)
+          if (obj_exists(nid,"nsplot",h5err)) &
+            call read_h5(nid,"nsplot",nsplot,h5in,h5err)
+          if (obj_exists(nid,"comega",h5err)) &
+            call read_h5(nid,"comega",comega,h5in,h5err)
+          if (obj_exists(nid,"kcomega",h5err)) &
+            call read_h5(nid,"kcomega",kcomega,h5in,h5err)
+          if (obj_exists(nid,"xomega",h5err)) &
+            call read_h5(nid,"xomega",xomega,h5in,h5err)
+          if (obj_exists(nid,"kdovt",h5err)) &
+            call read_h5(nid,"kdovt",kdovt,h5in,h5err)
+          if (obj_exists(nid,"romegat",h5err)) &
+            call read_h5(nid,"romegat",romegat,h5in,h5err)
+          if (obj_exists(nid,"zomegat",h5err)) &
+            call read_h5(nid,"zomegat",zomegat,h5in,h5err)
+          if (obj_exists(nid,"sigome",h5err)) &
+            call read_h5(nid,"sigome",sigome,h5in,h5err)
+          if (obj_exists(nid,"scalep",h5err)) &
+            call read_h5(nid,"scalep",scalep,h5in,h5err)
+          if (obj_exists(nid,"kwwfnc",h5err)) &
+            call read_h5(nid,"kwwfnc",kwwfnc,h5in,h5err)
+          if (obj_exists(nid,"kwwknt",h5err)) &
+            call read_h5(nid,"kwwknt",kwwknt,h5in,h5err)
+          if (obj_exists(nid,"wwknt",h5err)) &
+            call read_h5(nid,"wwknt",wwknt,h5in,h5err)
+          if (obj_exists(nid,"wwtens",h5err)) &
+            call read_h5(nid,"wwtens",wwtens,h5in,h5err)
+          call close_group("invt",nid,h5err)
+        endif
+
+        call test_group(sid,"profile_ext",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"profile_ext",nid,h5err)
+          if (obj_exists(nid,"npsi_ext",h5err)) &
+            call read_h5(nid,"npsi_ext",npsi_ext,h5in,h5err)
+          if (obj_exists(nid,"pprime_ext",h5err)) &
+            call read_h5(nid,"pprime_ext",pprime_ext,h5in,h5err)
+          if (obj_exists(nid,"ffprim_ext",h5err)) &
+            call read_h5(nid,"ffprim_ext",ffprim_ext,h5in,h5err)
+          if (obj_exists(nid,"psin_ext",h5err)) &
+            call read_h5(nid,"psin_ext",psin_ext,h5in,h5err)
+          if (obj_exists(nid,"geqdsk_ext",h5err)) &
+            call read_h5(nid,"geqdsk_ext",geqdsk_ext,h5in,h5err)
+          if (obj_exists(nid,"sign_ext",h5err)) &
+            call read_h5(nid,"sign_ext",sign_ext,h5in,h5err)
+          if (obj_exists(nid,"scalepp_ext",h5err)) &
+            call read_h5(nid,"scalepp_ext",scalepp_ext,h5in,h5err)
+          if (obj_exists(nid,"scaleffp_ext",h5err)) &
+            call read_h5(nid,"scaleffp_ext",scaleffp_ext,h5in,h5err)
+          if (obj_exists(nid,"shape_ext",h5err)) &
+            call read_h5(nid,"shape_ext",shape_ext_int,h5in,h5err)
+          if (shape_ext_int.ne.0) shape_ext=.true.  ! default off
+          if (obj_exists(nid,"dr_ext",h5err)) &
+            call read_h5(nid,"dr_ext",dr_ext,h5in,h5err)
+          if (obj_exists(nid,"dz_ext",h5err)) &
+            call read_h5(nid,"dz_ext",dz_ext,h5in,h5err)
+          if (obj_exists(nid,"rc_ext",h5err)) &
+            call read_h5(nid,"rc_ext",rc_ext,h5in,h5err)
+          if (obj_exists(nid,"zc_ext",h5err)) &
+            call read_h5(nid,"zc_ext",zc_ext,h5in,h5err)
+          if (obj_exists(nid,"a_ext",h5err)) &
+            call read_h5(nid,"a_ext",a_ext,h5in,h5err)
+          if (obj_exists(nid,"eup_ext",h5err)) &
+            call read_h5(nid,"eup_ext",eup_ext,h5in,h5err)
+          if (obj_exists(nid,"elow_ext",h5err)) &
+            call read_h5(nid,"elow_ext",elow_ext,h5in,h5err)
+          if (obj_exists(nid,"dup_ext",h5err)) &
+            call read_h5(nid,"dup_ext",dup_ext,h5in,h5err)
+          if (obj_exists(nid,"dlow_ext",h5err)) &
+            call read_h5(nid,"dlow_ext",dlow_ext,h5in,h5err)
+          if (obj_exists(nid,"setlim_ext",h5err)) &
+            call read_h5(nid,"setlim_ext",setlim_ext,h5in,h5err)
+          if (obj_exists(nid,"reflect_ext",h5err)) &
+            call read_h5(nid,"reflect_ext",reflect_ext,h5in,h5err)
+          if (obj_exists(nid,"fixpp",h5err)) &
+            call read_h5(nid,"fixpp",fixpp_int,h5in,h5err)
+          if (fixpp_int.ne.0) fixpp=.true.  ! default off
+          call close_group("profile_ext",nid,h5err)
+        endif
+
+        !H5: TODO: read neqdsk (from geqdsk_ext)?
+
+        call test_group(sid,"inlibim",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"inlibim",nid,h5err)
+          if (obj_exists(nid,"tlibim",h5err)) &
+            call read_h5(nid,"tlibim",tlibim,h5in,h5err)
+          if (obj_exists(nid,"slibim",h5err)) &
+            call read_h5(nid,"slibim",slibim,h5in,h5err)
+          if (obj_exists(nid,"fwtlib",h5err)) &
+            call read_h5(nid,"fwtlib",fwtlib,h5in,h5err)
+          if (obj_exists(nid,"rrrlib",h5err)) &
+            call read_h5(nid,"rrrlib",rrrlib,h5in,h5err)
+          if (obj_exists(nid,"zzzlib",h5err)) &
+            call read_h5(nid,"zzzlib",zzzlib,h5in,h5err)
+          if (obj_exists(nid,"aa1lib",h5err)) &
+            call read_h5(nid,"aa1lib",aa1lib,h5in,h5err)
+          if (obj_exists(nid,"aa8lib",h5err)) &
+            call read_h5(nid,"aa8lib",aa8lib,h5in,h5err)
+          call close_group("inlibim",nid,h5err)
+        endif
+
+        !H5: not used efitin and auxquant?
+
+        call close_group(trim(line),sid,h5err)
+        call close_group("time_slice",tid,h5err)
+        call close_group("parameters",pid,h5err)
+        call close_group("code",cid,h5err)
+        call close_group("equilibrium",eqid,h5err)
+        call close_h5file(fileid,rootgid,h5err)
+
+#else
+        ! this code should not be reachable
+        call errctrl_msg('data_input','HDF5 needs to be linked')
+        stop
+#endif
+      endif ! kdata.eq.9
+
+!----------------------------------------------------------------------- 
+!--   post-process inputs                                             --
+!-----------------------------------------------------------------------
+!--   roundoff differences can throw off zlim if limiter corners
+!--   are too close to grid points (maybe zlim needs fixing...)
+      do i=1,limitr
+        ylim(i)=ylim(i)-1.e-10_dp
+      enddo
+!--   protect against underflow in fitting weights 
       if (abs(fwtdlc).le.1.e-30_dp)  fwtdlc=0.0
       if (abs(fwtcur).le.1.e-30_dp)  fwtcur=0.0
       do i=1,nfcoil
@@ -491,28 +1891,10 @@
       if (abs(fwtecebz0).le.1.e-30_dp)  fwtecebz0=0.0
 !
       if (nbdryp==-1) nbdryp=nbdry 
-      read (nin,ink,err=11111,end=101) 
-101   continue 
-11111 close(unit=nin) 
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,ins,err=11113,end=103) 
-103   continue 
-11113 close(unit=nin) 
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      rrmsels(1)=-10. 
 
-      read (nin,in_msels,iostat=istat) 
-      if (istat>0) then 
-        backspace(nin) 
-        read(nin,fmt='(A)') line 
-        !if (trim(line)/="/") write(*,'(A)') 'Invalid line in namelist in_msels: '//trim(line) 
-      endif
-!---------------------------------------------------------------------- 
-!--   Read msels_all.dat if needed                                   -- 
-!---------------------------------------------------------------------- 
+!--   Read msels_all.dat if needed
       if (kdomsels.gt.0) then 
         if (rrmsels(1).lt.-5.0) then 
-          close(unit=nin) 
           open(unit=nin,status='old',file='msels_all.dat') 
           do i=1,nmsels 
             read(nin,91008,iostat=istat) bmsels(i),sbmsels(i),rrmsels(i), & 
@@ -520,6 +1902,7 @@
                  semsels(i),iemsels(i) 
             iermselt(jtime,i)=iemsels(i) 
           enddo 
+          close(unit=nin) 
           if (istat>0) then 
             im1=i-1 
             write (6,*) 'msels_all i=',i,' bmsels(i-1)= ',bmsels(im1) 
@@ -528,33 +1911,6 @@
         endif 
       endif 
 91008 format(9e12.5,i2) 
-      close(unit=nin) 
-
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,ina,iostat=istat)
-      close(unit=nin) 
-
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      ecefit = 0.0 
-      ecebzfit = 0.0 
-      read (nin,inece,iostat=istat) 
-      close(unit=nin) 
-
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,edgep,iostat=istat) 
-      close(unit=nin) 
-
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,iner,iostat=istat) 
-      close(unit=nin) 
-
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,insxr,iostat=istat) 
-      close(unit=nin) 
-
-      open(unit=nin,status='old',file=ifname(jtime))
-      read (nin,inms,iostat=istat) 
-      close(unit=nin) 
 
       bti322(jtime)=bti322in 
       curc79(jtime)=curc79in 
@@ -574,42 +1930,10 @@
 !      devp(jtime)=devpin
 !      rnavp(jtime)=rnavpin 
 ! 
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,inwant,iostat=istat) 
-      close(unit=nin) 
-
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,invt,iostat=istat) 
-      close(unit=nin) 
 !---------------------------------------------------------------------- 
-!--   Input FF', P' arrays                                           -- 
+!--   Input FF', P' arrays
 !---------------------------------------------------------------------- 
-      geqdsk_ext = 'none' 
-      psin_ext(1) = -1000.0 
-      sign_ext = 1.0 
-      cratio_ext = 1.0 
-      cratiop_ext = 1.0 
-      cratiof_ext = 1.0 
-      scalepp_ext=1.0 
-      scaleffp_ext=1.0 
-      dr_ext=0.0 
-      dz_ext=0.0 
-      shape_ext=.false. 
-      rc_ext=-10. 
-      zc_ext=-10. 
-      a_ext=-10. 
-      eup_ext=-10. 
-      elow_ext=-10. 
-      dup_ext=-10. 
-      dlow_ext=-10. 
-      setlim_ext=-10. 
-      reflect_ext='no' 
-! 
-
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      if (idebug /= 0) write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext 
-      read(nin,profile_ext,err=11777,iostat=istat) 
-      if (idebug /= 0) write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext 
+! H5: should this come from OMAS file? (need to replace go to 11777...)
       if (geqdsk_ext.ne.'none') then 
         open(unit=neqdsk,status='old',file=geqdsk_ext) 
         read (neqdsk,11775) (case_ext(i),i=1,6),nh_ext,nw_ext,nh_ext 
@@ -623,24 +1947,29 @@
         if (plasma_ext > 0.0) then 
           sign_ext = -1.0 
         endif 
-        do i = 1,1 
-          read (neqdsk,11773) 
-        enddo 
+        read (neqdsk,11773) 
         read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext) 
         read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext) 
         prbdry=pprime_ext(nw_ext) 
         read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext) 
         read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext) 
         read (neqdsk,11776) ((psirz_ext,i=1,nw_ext),j=1,nh_ext) 
-        read (neqdsk,11776,err=11777) (qpsi_ext(i),i=1,nw_ext) 
-        read (neqdsk,11774,err=11777) nbdry_ext,limitr_ext 
-        read (neqdsk,11776,err=11777) (rbdry_ext(i),zbdry_ext(i),i=1,nbdry_ext) 
-        read (neqdsk,11776,err=11777) (xlim_ext(i),ylim_ext(i),i=1,limitr_ext) 
+        read (neqdsk,11776,err=11778) (qpsi_ext(i),i=1,nw_ext) 
+        read (neqdsk,11774,err=11778) nbdry_ext,limitr_ext 
+        read (neqdsk,11776,err=11778) (rbdry_ext(i),zbdry_ext(i),i=1,nbdry_ext) 
+        read (neqdsk,11776,err=11778) (xlim_ext(i),ylim_ext(i),i=1,limitr_ext) 
 11773   format (a) 
 11774   format (2i5) 
 11775   format (6a8,3i4) 
-11776   format (5e16.9) 
-! 
+11776   format (5e16.9)
+!      if (geqdsk_ext.ne.'none') then 
+!        npsi_ext=nw_ext 
+!        if (idebug /= 0) write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext, & 
+!          nw_ext 
+!        if (plasma_ext > 0.0) then 
+!          sign_ext = -1.0 
+!        endif 
+!        prbdry=pprime_ext(nw_ext) 
         if (nbdry.le.0) then 
           nbabs_ext=nbdry_ext/mbdry1+1 
           jb_ext=0 
@@ -691,8 +2020,7 @@
           enddo 
         endif 
       endif 
-11777 close(nin) 
-      if (idebug /= 0) write (nttyo,*) 'npsi_ext=',npsi_ext 
+11778 if (idebug /= 0) write (nttyo,*) 'npsi_ext=',npsi_ext 
       if (npsi_ext > 0) then 
         if (idebug /= 0) then 
           write (nttyo,*) 'scalepp_ext,pprime_ext= ',scalepp_ext, & 
@@ -960,18 +2288,7 @@
         xlim(7)=xlim(1)
         ylim(7)=ylim(1)
       endif
-!---------------------------------------------------------------------- 
-!--   Read Li beam data                                              -- 
-!---------------------------------------------------------------------- 
-      do i=1,libim
-        fwtlib(i)=0.0
-        rrrlib(i)=0.0
-        zzzlib(i)=0.0
-      enddo
-      open(unit=nin,status='old',file=ifname(jtime))
-      read (nin,inlibim,err=11237,end=11233) 
-11233 continue 
-11237 close(unit=nin) 
+
 !---------------------------------------------------------------------- 
 !--   recalculate length of default directories in case any change   -- 
 !---------------------------------------------------------------------- 
@@ -1067,7 +2384,7 @@
         swtece(i)=fwtece0(i) 
       enddo 
       swtecebz=fwtecebz0
-      print *, 'adjust fit parameters based on basis function selected ' 
+      print *, 'adjust fit parameters based on basis function selected '
 !----------------------------------------------------------------------- 
 !--   adjust fit parameters based on basis function selected          -- 
 !----------------------------------------------------------------------- 
@@ -1130,7 +2447,9 @@
 
       print *, 'itek > 100, write out PLTOUT.OUT individually ' 
 !-------------------------------------------------------------------------- 
-!--   itek > 100, write out PLTOUT.OUT individually                      -- 
+!--   itek > 100, write out PLTOUT.OUT individually                      --
+!--
+!--   TODO: nin is closed, what are read statements supposed to do here? 
 !-------------------------------------------------------------------------- 
       kgraph=0 
       if (itek.gt.100) then 
@@ -1158,11 +2477,11 @@
         return
       endif
       if ((limitr.gt.0).and.(xlim(1).le.-1.0)) then
-        read (nin,5000) (xlim(i),ylim(i),i=1,limitr) 
+!        read (nin,5000) (xlim(i),ylim(i),i=1,limitr) 
         ylim(i)=ylim(i)-1.e-10_dp
       endif
-      if ((nbdry.gt.0).and.(rbdry(1).le.-1.0)) read (nin,5020) & 
-          (rbdry(i),zbdry(i),i=1,nbdry) 
+!      if ((nbdry.gt.0).and.(rbdry(1).le.-1.0)) read (nin,5020) & 
+!          (rbdry(i),zbdry(i),i=1,nbdry) 
       if (kprfit.gt.0) then 
         do i=1,npress 
           premea(i)=pressr(i) 
@@ -1195,11 +2514,11 @@
           enddo 
         endif 
       endif
-      print *, 'option to symmetrize added 8/14/91 eal  ' 
 !-------------------------------------------------------------- 
 !--   option to symmetrize added 8/14/91 eal                 -- 
 !-------------------------------------------------------------- 
       if (symmetrize) then  ! symmetrize the fixed boundery 
+        print *, 'option to symmetrize added 8/14/91 eal  ' 
         isetfb=0  ! be sure vertical feedback is off 
         zelip=0 ! must be symmetric about midplane 
         if (nbdry.gt.1) then  ! remove duplicate point 
@@ -1492,7 +2811,8 @@
       xlmaxt=xlmax 
 !
       call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
-      endif ! kdata.eq.2
+
+      endif ! (kdata.eq.2).or.(kdata.eq.9)
 !----------------------------------------------------------------------- 
 !--   set up parameters for all modes                                 --
 !----------------------------------------------------------------------- 
