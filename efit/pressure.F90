@@ -155,9 +155,9 @@
 !!    pressure profile fitting.
 !!    
 !!
-!!    @param jtime :
+!!    @param jtime : time index
 !!
-!!    @param niter :
+!!    @param niter : 
 !!
 !**********************************************************************
       subroutine presurw(jtime,niter)
@@ -167,12 +167,17 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
-      dimension pds(6),ybase(nwwcur),ybaseb(nwwcur)
-      dimension bwork(ndata),cwork(ndata),dwork(ndata)
+
+      dimension pds(6)
+      real*8,dimension(:),allocatable ::ybase,ybaseb
+      real*8,dimension(:),allocatable :: bwork,cwork,dwork
       data init/0/
       save init
+
+      allocate(ybase(nwwcur),ybaseb(nwwcur),bwork(nmass),cwork(nmass),dwork(nmass))
 !
       kdofit=1
+      
 !--   construct rotational pressure from kinetic data has not been setup
       if (kprfit-2.eq.2) return
       if (nmass*nomegat.le.0) then
@@ -205,16 +210,18 @@
         enddo
         return
       endif
+
 !------------------------------------------------------------------------
 !--   form rotational pressure from mass density and rotaional frequency
 !------------------------------------------------------------------------
-      if (init.eq.0) then
+      !if (init.eq.0) then
 !------------------------------------------------------------------------
 !--     set up interpolation                                           --
 !------------------------------------------------------------------------
-        call zpline(nmass,sibeam,dmass,bwork,cwork,dwork)
-        init=1
-      endif
+
+      call zpline(nmass,sibeam,dmass,bwork,cwork,dwork)
+      !  init=1
+      !endif
       do i=1,nomegat
         xn=-romegat(i)
         if (romegat(i).gt.0.0) then
@@ -226,6 +233,7 @@
         rpresw(i)=-xn
         rpresws(i)=xn
         dmnow=seval(nmass,xn,sibeam,dmass,bwork,cwork,dwork)
+        
         presw(i)=dmnow*omegat(i)*rvtor**2
         sigprw(i)=abs(presw(i))*sigome(i)
         presw(i)=0.5_dp*presw(i)*omegat(i)
@@ -247,7 +255,9 @@
         endif
       enddo
       npresw=nomegat
+!
       return
+
       end subroutine presurw
 
 
