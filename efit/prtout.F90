@@ -147,9 +147,12 @@
         if (ivacum.le.0.or.(icurrt.eq.2.and.icurrt.eq.5)) then
           xnorm=brsp(nfcoil+1)
           write (nout,11040) xnorm
-          do i=1,kwcurn
-            xrsp(i)=brsp(nfcoil+i)/xnorm
-          end do
+          xrsp=0.0
+          if (xnorm.ne.0.0) then
+            do i=1,kwcurn
+              xrsp(i)=brsp(nfcoil+i)/xnorm
+            end do
+          endif
           write (nout,11020) (xrsp(i),i=1,kwcurn)
           xnorm=darea
           write (nout,11043) xnorm

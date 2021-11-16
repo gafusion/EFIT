@@ -821,7 +821,7 @@
       subroutine set_ecom_mod1_arrays()
       use set_kinds
       use eparm
-      use var_parame, only: vzeroj,sizeroj,qpsi
+      use var_parame, only: vzeroj,sizeroj,qpsi,curmid
       use var_exdata, only: fwacoil,fwtsi,fwtmp2,fwtcur
       use var_comco2, only: chordv,chordr
       use var_cxray, only: ksxr0,ksxr2,idosxr,xangle,zxray,rxray
@@ -840,6 +840,7 @@
       use var_calchi, only: saipr,chipre
       use var_cstark, only: bzmse,tangam_uncor,chigamt,chilibt
       use var_input1, only: rzeroj
+      use var_fitec, only: saiec
       implicit none
 
       tsaisq=0.0
@@ -926,4 +927,6 @@
       chipre=0.0
       chigamt=0.0
       chilibt=0.0
+      saiec=0.0
+      curmid=0.0
       end subroutine

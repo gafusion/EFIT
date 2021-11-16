@@ -2242,7 +2242,8 @@
         call sdecm(arsp,nrsmat,nj,need,brsp,nrsmat,nnn,wrsp,work,ier)
         if (ier.eq.129) then
           kerror = 1
-          call errctrl_msg('matrix','problem in decomposition, sdecm failed to converge')
+          call errctrl_msg('matrix', &
+                 'problem in decomposition, sdecm failed to converge')
           return
         end if
 
@@ -2251,7 +2252,8 @@
         !-----------------------------------------------------------------------
         if ( wrsp(need).eq.0 ) then
           kerror = 1
-          call errctrl_msg('matrix','problem in decomposition, wrsp(need).eq.0')
+          call errctrl_msg('matrix', &
+                 'problem in decomposition, wrsp(need).eq.0')
           return
         end if
         condno=wrsp(1)/wrsp(need)
@@ -2411,20 +2413,14 @@
         do n=1,kwcurn
           cm=cm+rsilpc(m,n)*brsp(nfcoil+n)
         enddo
-        if (fitsiref) then
-            cm=cm-csiref
-        endif
-        if (kedgep.gt.0) then
-          cm=cm+rsilpe(m)*pedge
-        endif
-        if (kedgef.gt.0) then
-          cm=cm+rsilfe(m)*f2edge
-        endif
+        if (fitsiref) cm=cm-csiref
+        if (kedgep.gt.0) cm=cm+rsilpe(m)*pedge
+        if (kedgef.gt.0) cm=cm+rsilfe(m)*f2edge
         if (swtsi(m).ne.0.0) then
-        saisil(m)=fwtsi(m)**nsq*(silopt(jtime,m)-cm)**2
-        saisil(m)=saisil(m)/swtsi(m)**nsq
+          saisil(m)=fwtsi(m)**nsq*(silopt(jtime,m)-cm)**2
+          saisil(m)=saisil(m)/swtsi(m)**nsq
         else
-        saisil(m)=0.0
+          saisil(m)=0.0
         endif
         saisq=saisq+saisil(m)
         csilop(m,jtime)=cm
@@ -2460,17 +2456,13 @@
         do n=1,kwcurn
           cm=cm+rmp2pc(m,n)*brsp(nfcoil+n)
         enddo
-        if (kedgep.gt.0) then
-          cm=cm+rmp2pe(m)*pedge
-        endif
-        if (kedgef.gt.0) then
-          cm=cm+rmp2fe(m)*f2edge
-        endif
+        if (kedgep.gt.0) cm=cm+rmp2pe(m)*pedge
+        if (kedgef.gt.0) cm=cm+rmp2fe(m)*f2edge
         if (swtmp2(m).ne.0.0) then
-        saimpi(m)=fwtmp2(m)**nsq*(expmpi(jtime,m)-cm)**2
-        saimpi(m)=saimpi(m)/swtmp2(m)**nsq
+          saimpi(m)=fwtmp2(m)**nsq*(expmpi(jtime,m)-cm)**2
+          saimpi(m)=saimpi(m)/swtmp2(m)**nsq
         else
-        saimpi(m)=0.0
+          saimpi(m)=0.0
         endif
         saisq=saisq+saimpi(m)
         cmpr2(m,jtime)=cm

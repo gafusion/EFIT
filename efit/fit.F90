@@ -536,7 +536,7 @@
  7470 format (10x,'chi pressure:         ',/,1x,e12.5)
  7480 format (10x,'chi F-coils:          ',/,10x,e12.5)
  7482 format (10x,'chi psiref:',/,15x,e12.5)
- 7485 format (10x,'chi E-coils:          ',/,1x,e12.5)
+ 7485 format (10x,'chi E-coils:          ')
  7486 format (10x,'chi ecebz:            ',/,1x,e12.5)
  7487 format (10x,'chi total eceR+R-:    ',/,1x,e12.5)
  7488 format (10x,'chi eceR+R-:          ')

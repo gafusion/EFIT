@@ -575,7 +575,10 @@
 
       subroutine set_mod_arrays()
       use set_kinds
-      use var_hist, only: taumhd,taudia,vsurfa,wpdot,wbdot,slantu,slantl
+      use var_hist, only: taumhd,taudia,vsurfa,wpdot,wbdot,slantu,slantl, &
+                          rvsin,zvsin,rvsout,zvsout
+      use var_fitsiref, only: saisref
+      use var_cvalue, only: csilopv,cmpr2v,cbetap,cli,cqqxis,cbetat,ci0
       implicit none
 
       ! initialize variables
@@ -586,6 +589,17 @@
       wbdot=0.0
       slantu=0.0
       slantl=0.0
+      saisref=0.0
+      csilopv=0.0
+      cmpr2v=0.0
+      cbetap=0.0
+      cli=0.0
+      cqqxis=0.0
+      cbetat=0.0
+      ci0=0.0
+      rvsin=0.0
+      zvsin=0.0
+      rvsout=0.0
+      zvsout=0.0
 
       end subroutine
-
