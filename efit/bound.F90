@@ -1,3 +1,4 @@
+#include "config.f"
 !*********************************************************************
 !>     Bound finds the outermost contour of a function        
 !!     given in the array psi. note that the contoured     
@@ -1451,16 +1452,18 @@
 !       c - (out) 4-d array of spline coefficients
 !       bkx, bky - (out) interval coefficients w/ lkx,lky terms
 
-        if (idebug >= 2) write (6,*)  'Entering sets2d'
+#ifdef DEBUG_LEVEL2
+        write (6,*)  'Entering sets2d'
+#endif
         call sets2d(psipsi,c,x,nx,bkx,lkx,y,nz,bky,lky,wk,ier)
-        if (idebug >= 2) then
-          write (6,*) 'FINDAX Z,R = ', y(33),(x(i),i=45,45)
-          write (6,*) 'FINDAX si = ',(psipsi((i-1)*nx+33),i=45,45)
-          call seva2d(bkx,lkx,bky,lky,c,x(45),y(33),pds,ier,n111)
-          write (6,*) 'FINDAX R,Z,si = ', x(45),y(33),pds(1)
-          write (6,*) 'FINDAX lkx,lky = ',lkx,lky
-          write (6,*) 'FINDAX lkx,lky,c = ',bkx(33),bky(33),c(1,33,1,33)
-        end if
+#ifdef DEBUG_LEVEL2
+        write (6,*) 'FINDAX Z,R = ', y(33),(x(i),i=45,45)
+        write (6,*) 'FINDAX si = ',(psipsi((i-1)*nx+33),i=45,45)
+        call seva2d(bkx,lkx,bky,lky,c,x(45),y(33),pds,ier,n111)
+        write (6,*) 'FINDAX R,Z,si = ', x(45),y(33),pds(1)
+        write (6,*) 'FINDAX lkx,lky = ',lkx,lky
+        write (6,*) 'FINDAX lkx,lky,c = ',bkx(33),bky(33),c(1,33,1,33)
+#endif
         if (kaxis.eq.10) return ! if only the bicubic spline is wanted return
       end if
 

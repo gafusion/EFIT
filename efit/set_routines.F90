@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !>
 !!    setece obtains the response matrix
@@ -25,10 +26,14 @@
       integer, intent(inout) :: kerror
       kerror = 0
 !
-      if (idebug.ge.3) write (6,*) 'Enter SETECE, nw = ',nw
+#ifdef DEBUG_LEVEL3
+      write (6,*) 'Enter SETECE, nw = ',nw
+#endif
       ALLOCATE(dsidr(nw),ddsiddr(nw))
 !
-      if (idebug.ge.3) write (6,*) 'Enter SETECE, ksetece = ',ksetece
+#ifdef DEBUG_LEVEL3
+      write (6,*) 'Enter SETECE, ksetece = ',ksetece
+#endif
       kece=0
       kecebz=0
 !
@@ -46,7 +51,9 @@
           jo=jh
         endif
       enddo
-      if (idebug.ge.3) write (6,*) 'SETECE, receo/zeteo = ',receo,zeceo
+#ifdef DEBUG_LEVEL3
+      write (6,*) 'SETECE, receo/zeteo = ',receo,zeceo
+#endif
 !-------------------------------------------------------------------
 !--   kfixro=1, receo  from k-file
 !------------------------------------------------------------------- 
@@ -170,7 +177,9 @@
 !--   compute the response function about Te peak point constraint    
 !--    response due to F coils --- recebzfc(ncoil)
 !-------------------------------------------------------------------
-      if (idebug.ge.3) write (6,*) 'SETECE, rf/zf = ',rf(1),zf(1)
+#ifdef DEBUG_LEVEL3
+      write (6,*) 'SETECE, rf/zf = ',rf(1),zf(1)
+#endif
       isplit=10
       itot=isplit*isplit
       fitot=itot 
@@ -399,8 +408,10 @@
           endif
           brspece(jtime,i)=pds(1)
         enddo
-        if (idebug.ge.3) write (6,*) 'SETECE, recem/brspece = ',(recem(ii), &
+#ifdef DEBUG_LEVEL3
+        write (6,*) 'SETECE, recem/brspece = ',(recem(ii), &
             brspece(jtime,ii),ii=1,nece)
+#endif
       endif
  9910 format('  error in spline =',i4,' (r,z)= ( ',f5.2,',',f5.2,')')
 !----------------------------------------------------------------------
@@ -453,10 +464,10 @@
          endif
       enddo
 !
-      if (idebug.ge.3) then 
-         write (6,*) 'SETECE, serror/eceerror = ',serror,eceerror
-         write (6,*) 'SETECE, nece/fwtece = ',nece,(fwtece(i),i=1,nece)
-      endif
+#ifdef DEBUG_LEVEL3
+      write (6,*) 'SETECE, serror/eceerror = ',serror,eceerror
+      write (6,*) 'SETECE, nece/fwtece = ',nece,(fwtece(i),i=1,nece)
+#endif
 
       DEALLOCATE(dsidr,ddsiddr)
 !

@@ -39,19 +39,19 @@
 #endif 
 
       if (kdata.eq.7) then
-         if (rank == 0) then
-           if (use_opt_input .eqv. .false.) then
-             write (nttyo,6617)
-             read (ntty,6620) snap_ext
-           else
-             snap_ext = snapext_in
-           endif
-         endif
-         snapextin=snap_ext
+        if (rank == 0) then
+          if (use_opt_input .eqv. .false.) then
+            write (nttyo,6617)
+            read (ntty,6620) snap_ext
+          else
+            snap_ext = snapext_in
+          endif
+        endif
+        snapextin=snap_ext
 #if defined(USEMPI)
-         if (nproc > 1) then
-           call MPI_BCAST(snap_ext,82,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
-         endif
+        if (nproc > 1) then
+          call MPI_BCAST(snap_ext,82,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+        endif
 #endif 
       endif
 
@@ -100,12 +100,23 @@
       endif
      
 #if defined(USEMPI)
-        if (nproc > 1) then
-          call MPI_BCAST(ishot,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-          call MPI_BCAST(ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-          call MPI_BCAST(timeb,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-          call MPI_BCAST(dtime,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+      if (nproc > 1) then
+! Ensure there are not more processors than time slices
+        if (nproc > ktime) then
+          call errctrl_msg('get_opt_input', &
+                  'MPI processes have nothing to do')
+          stop
         endif
+! Warn if the time slice distribution is not balanced
+        if (mod(ktime,nproc) .ne. 0)
+          write(nttyo,*) 'Warning: time slices are not balanced across processors'
+        endif
+! Broadcast inputs 
+        call MPI_BCAST(ishot,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+        call MPI_BCAST(ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+        call MPI_BCAST(timeb,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+        call MPI_BCAST(dtime,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+      endif
 ! Distribute steps among ALL processes if necessary
       if (nproc > 1) then
         dist_data(:) = 0

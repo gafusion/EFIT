@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !>
 !!    matrix calculates the appropriate response matrix and
@@ -348,12 +349,12 @@
           nj=nj+1
           arsp(nj,nk)=fwtbmselt(jtime,m)*rmlspc(m,n)
         enddo
-        if (jdebug.eq.'MSEL') then
-          m=3
-          write (6,*) 'MATRIX jtime, m,n,fwtbmselt,rmlspc = ',jtime, &
-               m,n,fwtbmselt(jtime,m),rmlspc(m,n)
-          write (6,*) 'nj,nk,arsp= ',nj,nk,arsp(nj,nk)
-        endif
+#ifdef DEBUG_MSELS
+        m=3
+        write (6,*) 'MATRIX jtime, m,n,fwtbmselt,rmlspc = ',jtime, &
+             m,n,fwtbmselt(jtime,m),rmlspc(m,n)
+        write (6,*) 'nj,nk,arsp= ',nj,nk,arsp(nj,nk)
+#endif
         do m=1,nmsels
           if (fwtemselt(jtime,m).le.0.0) cycle
           nj=nj+1

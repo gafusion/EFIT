@@ -548,7 +548,8 @@
 ! jm.s
 ! NOTE : array sizes are grid size-dependent so they should be dynamically allocated, but
 !        we cannot make them dynamic since they are included in a namelist
-! NOTE : we assume the largest usefule grid size is 2049
+! NOTE : the largest possible grid size with Buneman's algorithm is 2049
+!        (will not be the case with pefit)
 ! NOTE : npsi_ext (actual dimension of _ext arrays) used in code logic and intentially set
 !        to default value of -1
       module profile_ext_mod

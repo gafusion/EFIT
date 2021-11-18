@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
@@ -86,7 +87,9 @@
          dpmid(nw),workj(nh),copyn(nwnh),copy1(nwnh),xbnow(npoint), &
          ybnow(npoint),rat(ndim))
 !
-      if (idebug /= 0) write (6,*) 'Enter PLTOUT'
+#ifdef DEBUG_LEVEL1
+      write (6,*) 'Enter PLTOUT'
+#endif      
       if (kdot.gt.0.and.jtime.ne.kdot+1) return
       if (kdata.eq.4) then
          dismin=min(oleft(jtime),oright(jtime),otop(jtime),obott(jtime))
@@ -8319,13 +8322,19 @@
       endif ! itek
       endif ! kvtor.gt.0
       endif ! ivacum.le.0
-      if (idebug /= 0) write (6,*) 'End  PLTOUT'
+#ifdef DEBUG_LEVEL1
+      write (6,*) 'End  PLTOUT'
+#endif
       if (kfitece.le.0) then
-         if (idebug /= 0) write (6,*) 'Before Exit PLTOUT'
+#ifdef DEBUG_LEVEL1
+         write (6,*) 'Before Exit PLTOUT'
+#endif
          deallocate(bfield,sivol,voln, &
             bvoln,cvoln,dvoln,rscrap,curscr,pbimf,pmid,pmidw,bpmid, &
             cpmid,dpmid,workj,copyn,copy1,xbnow,ybnow)
-         if (idebug /= 0) write (6,*) 'After Exit PLTOUT'
+#ifdef DEBUG_LEVEL1
+         write (6,*) 'After Exit PLTOUT'
+#endif
          return
       endif
 !----------------------------------------------------------------------
@@ -9256,11 +9265,15 @@
       ht(msg) = 0.14_dp
       write (text,9020) itime,itimeu
 !
-      if (idebug /= 0) write (6,*) 'Before Exit PLTOUT'
+#ifdef DEBUG_LEVEL1
+      write (6,*) 'Before Exit PLTOUT'
+#endif
       deallocate(bfield,sivol,voln, &
          bvoln,cvoln,dvoln,rscrap,curscr,pbimf,pmid,pmidw,bpmid, &
          cpmid,dpmid,workj,copyn,copy1,xbnow,ybnow)
-      if (idebug /= 0) write (6,*) 'After Exit PLTOUT'
+#ifdef DEBUG_LEVEL1
+      write (6,*) 'After Exit PLTOUT'
+#endif
 !
       return
  8948 format (a25)

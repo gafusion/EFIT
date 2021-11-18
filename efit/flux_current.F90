@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !>
 !!    pflux computes the poloidal fluxes on the r-z grid.
@@ -514,12 +515,12 @@
         write (6,10009) rank,itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm &
           ,brfb(1)
       endif
-      if (idebug /= 0) then
-        write (nttyo,*) 'cratio,cratio_ext,cratiop_ext,cratiof_ext= ', &
-          cratio,cratio_ext,cratiop_ext,cratiof_ext
-        write (nttyo,*) 'scalepp_ext,scaleffp_ext= ', &
-          scalepp_ext,scaleffp_ext
-      endif
+#ifdef DEBUG_LEVEL1
+      write (nttyo,*) 'cratio,cratio_ext,cratiop_ext,cratiof_ext= ', &
+        cratio,cratio_ext,cratiop_ext,cratiof_ext
+      write (nttyo,*) 'scalepp_ext,scaleffp_ext= ', &
+        scalepp_ext,scaleffp_ext
+#endif
       return
 10009 format (x,'r=',i3,1x,'t=',i6,1x,'iter',i3.3, &
       ' chsq=',1pe8.2,' zmag=',1pe9.2,' err=',1pe8.2,' dz=',1pe10.3, &
@@ -590,9 +591,6 @@
         xltrac=xlmin
         if (ibound.eq.-1) xltrac=xlmax
         radbou=(xguess+xltrac)/2.
-      !DBG
-      !  idebug=2
-      !DBG
 !
       endif
 !----------------------------------------------------------------------
@@ -600,7 +598,9 @@
 !----------------------------------------------------------------------
       m10=10
 
-      if (idebug >= 2) write (6,*) 'Entering findax'
+#ifdef DEBUG_LEVEL2
+      write (6,*) 'Entering findax'
+#endif
       !print *, 'nw,nh,rgrid,zgrid',nw,nh,rgrid,zgrid
       !print *, 'rmaxis,zmaxis,simag', rmaxis,zmaxis,simag
       !print *, 'psibry,rseps(1,jtime),zseps(1,jtime),m10', psibry,rseps(1,jtime),zseps(1,jtime),m10
@@ -632,16 +632,14 @@
         write(6,*) 'lkx, lky',lkx,lky
         write(6,*) 'pds,ier,n111', pds,ier,n111
 
-        if (idebug >= 2) then
-          call seva2d(bkx,lkx,bky,lky,c,xout(1),yout(1),pds,ier &
-             ,n111)
-          write (6,*) 'STEPS simag,psibry,n1,si = ',simag,psibry,n111,pds(1)
-          write (6,*) 'STEPS Z,R = ', zgrid(33),(rgrid(i),i=45,45)
-          write (6,*) 'STEPS si = ',(psi((i-1)*65+33),i=45,45)
-          call seva2d(bkx,lkx,bky,lky,c,rgrid(45),zgrid(33),pds,ier &
-             ,n111)
-          write (6,*) 'STEPS R,Z,si = ', rgrid(45),zgrid(33),pds(1)
-        endif
+#ifdef DEBUG_LEVEL2
+        call seva2d(bkx,lkx,bky,lky,c,xout(1),yout(1),pds,ier,n111)
+        write (6,*) 'STEPS simag,psibry,n1,si = ',simag,psibry,n111,pds(1)
+        write (6,*) 'STEPS Z,R = ', zgrid(33),(rgrid(i),i=45,45)
+        write (6,*) 'STEPS si = ',(psi((i-1)*65+33),i=45,45)
+        call seva2d(bkx,lkx,bky,lky,c,rgrid(45),zgrid(33),pds,ier,n111)
+        write (6,*) 'STEPS R,Z,si = ', rgrid(45),zgrid(33),pds(1)
+#endif
       endif
 !-----------------------------------------------------------------------
 !--   Trace boundary, first check for counter beam injection          --
@@ -664,7 +662,9 @@
 !--   find magnetic axis and poloidal flux at axis simag             --
 !----------------------------------------------------------------------
       m20=20
-      if (idebug >= 2) write (6,*) 'Entering findax after m20 set'
+#ifdef DEBUG_LEVEL2
+      write (6,*) 'Entering findax after m20 set'
+#endif
       call findax(nw,nh,rgrid,zgrid,rmaxis,zmaxis,simag, &
                   psibry,rseps(1,jtime),zseps(1,jtime),m20, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
@@ -842,28 +842,26 @@
         call seva2d(bkx,lkx,bky,lky,c,rsol(1),zsol(1), &
                      pds,ier,n111)
         wsisol=pds(1)
-        if (idebug >= 2) then
-          write (6,*) 'STEPS R,Z,Si,Err = ', rsol(1),zsol(1),wsisol,ier 
-          call seva2d(bkx,lkx,bky,lky,c,rbdry(1),zbdry(1),pds,ier,n111)
-          write (6,*) 'STEPS R,Z,Si,Err = ', rbdry(1),zbdry(1),pds(1),ier
-          call seva2d(bkx,lkx,bky,lky,c,rbdry(nbdry),zbdry(nbdry),pds,ier &
+#ifdef DEBUG_LEVEL2
+        write (6,*) 'STEPS R,Z,Si,Err = ', rsol(1),zsol(1),wsisol,ier 
+        call seva2d(bkx,lkx,bky,lky,c,rbdry(1),zbdry(1),pds,ier,n111)
+        write (6,*) 'STEPS R,Z,Si,Err = ', rbdry(1),zbdry(1),pds(1),ier
+        call seva2d(bkx,lkx,bky,lky,c,rbdry(nbdry),zbdry(nbdry),pds,ier &
              ,n111)
-          write (6,*) 'STEPS R,Z,Si,Err = ', rbdry(nbdry),zbdry(nbdry) &
+        write (6,*) 'STEPS R,Z,Si,Err = ', rbdry(nbdry),zbdry(nbdry) &
             ,pds(1),ier
-        endif
+#endif
       endif
 
-      if (idebug >= 2) then
-        call seva2d(bkx,lkx,bky,lky,c,xout(1),yout(1),pds,ier &
-             ,n111)
-        write (6,*) 'STEPS simag,psibry,n1,si = ',simag,psibry,n111,pds(1)
-        write (6,*) 'STEPS Z,R = ', zgrid(33),(rgrid(i),i=45,45)
-        write (6,*) 'STEPS si = ',(psi((i-1)*nw+33),i=45,45)
-        call seva2d(bkx,lkx,bky,lky,c,rgrid(45),zgrid(33),pds,ier &
-             ,n111)
-        write (6,*) 'STEPS R,Z,si = ', rgrid(45),zgrid(33),pds(1)
-        write (6,*) 'STEPS lkx,lky = ',lkx,lky
-      endif
+#ifdef DEBUG_LEVEL2
+      call seva2d(bkx,lkx,bky,lky,c,xout(1),yout(1),pds,ier,n111)
+      write (6,*) 'STEPS simag,psibry,n1,si = ',simag,psibry,n111,pds(1)
+      write (6,*) 'STEPS Z,R = ', zgrid(33),(rgrid(i),i=45,45)
+      write (6,*) 'STEPS si = ',(psi((i-1)*nw+33),i=45,45)
+      call seva2d(bkx,lkx,bky,lky,c,rgrid(45),zgrid(33),pds,ier,n111)
+      write (6,*) 'STEPS R,Z,si = ', rgrid(45),zgrid(33),pds(1)
+      write (6,*) 'STEPS lkx,lky = ',lkx,lky
+#endif
 !-----------------------------------------------------------------------
 !--   get weighting function                                          --
 !-----------------------------------------------------------------------
@@ -888,9 +886,9 @@
 !-----------------------------------------------------------------------
       if (mmbmsels.gt.0.or.kdomsels.gt.0) then
         do k=1,nmsels
-          if (idebug >= 2) then
-            write (6,*) 'STEPS MSE-LS k,rrmselt= ', k,rrmselt(jtime,k)
-          endif
+#ifdef DEBUG_LEVEL2
+          write (6,*) 'STEPS MSE-LS k,rrmselt= ', k,rrmselt(jtime,k)
+#endif
           if (rrmselt(jtime,k).le.0.0) cycle
           call seva2d(bkx,lkx,bky,lky,c,rrmselt(jtime,k) &
                       ,zzmselt(jtime,k),pds,ier,n333)
@@ -901,10 +899,10 @@
           btmls(k)=fpnow*tmu/rrmselt(jtime,k)
           brmls(k)=-pds(3)/rrmselt(jtime,k)
           bzmls(k)=pds(2)/rrmselt(jtime,k)
-          if (idebug >= 2) then
-             write (6,*) 'STEPS MSE-LS k,rrmselt,br,bz,bt= ',  &
-                          k,rrmselt(jtime,k),brmls(k),bzmls(k),btmls(k)
-          endif
+#ifdef DEBUG_LEVEL2
+          write (6,*) 'STEPS MSE-LS k,rrmselt,br,bz,bt= ',  &
+                      k,rrmselt(jtime,k),brmls(k),bzmls(k),btmls(k)
+#endif
         enddo
       endif
 !

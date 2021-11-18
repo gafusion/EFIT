@@ -1,6 +1,6 @@
 !**********************************************************************
 !>
-!!    This subroutine read efit.input file
+!!   This subroutine read efit.input file
 !!
 !**********************************************************************
 subroutine read_efitin()
@@ -21,19 +21,19 @@ subroutine read_efitin()
 
      namelist/optin/mode,cmdfile,shotfile,shot,starttime,deltatime,steps,snapext,inpfile
 ! OPT_INPUT >>>
-      use_opt_input = .false.
-      input_flag = .false.
-      if (rank == 0) then
-        inquire(file='efit.input',exist=input_flag)
-      endif
+     use_opt_input = .false.
+     input_flag = .false.
+     if (rank == 0) then
+       inquire(file='efit.input',exist=input_flag)
+     endif
 #if defined(USEMPI)
-      if (nproc > 1) then
-        call MPI_BCAST(input_flag,1,MPI_LOGICAL,0,MPI_COMM_WORLD,ierr)
-      endif
+     if (nproc > 1) then
+       call MPI_BCAST(input_flag,1,MPI_LOGICAL,0,MPI_COMM_WORLD,ierr)
+     endif
 #endif
-      if (input_flag) then
+     if (input_flag) then
        if (rank == 0) then
-          write(*,*) ' Using efit.input file...'
+         write(*,*) ' Using efit.input file...'
        endif
        ! ALL processes open and read efit.input file
        open(unit=nin,status='old',file='efit.input')
@@ -57,28 +57,28 @@ end subroutine read_efitin
 
 !**********************************************************************
 !>
-!!    This subroutine reads eparmdud machine dependent parameters
+!!   This subroutine reads eparmdud machine dependent parameters
 !!
 !**********************************************************************
 subroutine read_eparmdud()
-  use eparm
-  use var_nio
-  use expath
-  implicit none
-  integer ::istatus
+     use eparm
+     use var_nio
+     use expath
+     implicit none
+     integer ::istatus
 
-  NAMELIST/machinein/nsilds,nsilol,nfcoil,nrogow,nacoil,mfcoil,necoil,nvesel, &
-      mpress,nesum,magpri67,magpri322,magprirdp,magudom,maglds,mse315,mse45, &
-      mse15,mse1h,mse315_2,mse210,libim,nmsels,nnece,nnecein,neceo,nnnte, &
-      ngam_vars,ngam_u,ngam_w,nlimit,nlimbd,nangle,ntangle,nfbcoil,mccoil, &
-      micoil,ndata,nwwcur,nffcur,nppcur,nercur,ntime,ndim,kxiter,mqwant, &
-      mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef,modep,modew,kubics, &
-      icycred_loopmax,nfourier
+     NAMELIST/machinein/nsilds,nsilol,nfcoil,nrogow,nacoil,mfcoil,necoil,nvesel, &
+       mpress,nesum,magpri67,magpri322,magprirdp,magudom,maglds,mse315,mse45, &
+       mse15,mse1h,mse315_2,mse210,libim,nmsels,nnece,nnecein,neceo,nnnte, &
+       ngam_vars,ngam_u,ngam_w,nlimit,nlimbd,nangle,ntangle,nfbcoil,mccoil, &
+       micoil,ndata,nwwcur,nffcur,nppcur,nercur,ntime,ndim,kxiter,mqwant, &
+       mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef,modep,modew,kubics, &
+       icycred_loopmax,nfourier
 
-  open(unit=nin,status='old',file=table_di2(1:ltbdi2)//'dprobe.dat')
-  read (nin,machinein,iostat=istatus)
-  close(unit=nin)
+     open(unit=nin,status='old',file=table_di2(1:ltbdi2)//'dprobe.dat')
+     read (nin,machinein,iostat=istatus)
+     close(unit=nin)
 
-  return
+     return
 end subroutine read_eparmdud
 

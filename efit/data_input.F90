@@ -1,3 +1,4 @@
+#include "config.f"
 !********************************************************************** 
 !**                                                                  ** 
 !**     SUBPROGRAM DESCRIPTION:                                      ** 
@@ -558,6 +559,11 @@
       ktear=0 
  
       read (nin,in1,iostat=istat) 
+!--warn that idebug and jdebug inputs are depreciated
+      if (idebug.ne.0) write(*,*) &
+      "idebug input variable is depreciated, set cmake variable instead"
+      if (jdebug.ne."NONE") write(*,*) &
+      "jdebug input variable is depreciated, set cmake variable instead"
 !--roundoff differences can throw off zlim if limiter corners
 !--are too close to grid points (maybe zlim needs fixing...)
       do i=1,limitr
@@ -712,15 +718,20 @@
 ! 
 
       open(unit=nin,status='old',file=ifname(jtime)) 
-      if (idebug /= 0) write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext 
+#ifdef DEBUG_LEVEL1
+      write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext
+#endif
       read(nin,profile_ext,err=11777,iostat=istat) 
-      if (idebug /= 0) write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext 
+#ifdef DEBUG_LEVEL1
+      write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext
+#endif
       if (geqdsk_ext.ne.'none') then 
         open(unit=neqdsk,status='old',file=geqdsk_ext) 
         read (neqdsk,11775) (case_ext(i),i=1,6),nh_ext,nw_ext,nh_ext 
         npsi_ext=nw_ext 
-        if (idebug /= 0) write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext, & 
-          nw_ext 
+#ifdef DEBUG_LEVEL1
+        write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext,nw_ext
+#endif
         do i = 1,2 
           read (neqdsk,11773) 
         enddo 
@@ -797,23 +808,25 @@
         endif 
       endif 
 11777 close(nin) 
-      if (idebug /= 0) write (nttyo,*) 'npsi_ext=',npsi_ext 
+#ifdef DEBUG_LEVEL1
+      write (nttyo,*) 'npsi_ext=',npsi_ext
+#endif
       if (npsi_ext > 0) then 
-        if (idebug /= 0) then 
-          write (nttyo,*) 'scalepp_ext,pprime_ext= ',scalepp_ext, & 
-             pprime_ext(1) 
-          write (nttyo,*) 'scaleffp_ext,ffpprim_ext= ',scaleffp_ext, & 
-             ffprim_ext(1) 
-        endif 
+#ifdef DEBUG_LEVEL1
+        write (nttyo,*) 'scalepp_ext,pprime_ext= ',scalepp_ext, & 
+           pprime_ext(1) 
+        write (nttyo,*) 'scaleffp_ext,ffpprim_ext= ',scaleffp_ext, & 
+           ffprim_ext(1) 
+#endif 
         pprime_ext = pprime_ext*darea*sign_ext*scalepp_ext 
         ffprim_ext = ffprim_ext*darea/twopi/tmu*sign_ext*scaleffp_ext 
         prbdry=prbdry*scalepp_ext*scalepp_ext 
-        if (idebug /= 0) then 
-          write (nttyo,*) 'scalepp_ext,pprime_ext= ',scalepp_ext, & 
-             pprime_ext(1) 
-          write (nttyo,*) 'scaleffp_ext,ffpprim_ext= ',scaleffp_ext, & 
-             ffprim_ext(1) 
-        endif 
+#ifdef DEBUG_LEVEL1
+        write (nttyo,*) 'scalepp_ext,pprime_ext= ',scalepp_ext, & 
+           pprime_ext(1) 
+        write (nttyo,*) 'scaleffp_ext,ffpprim_ext= ',scaleffp_ext, & 
+           ffprim_ext(1) 
+#endif 
  
         if (psin_ext(1) < 0) then 
           do i = 1, npsi_ext 
@@ -1599,7 +1612,9 @@
       gammap=1./gammap 
       gammaf=gammap 
       psibry0=psibry 
-      if (idebug >= 2) write (6,*) 'DATA_INPUT PSIBRY0= ', psibry0 
+#ifdef DEBUG_LEVEL2
+      write (6,*) 'DATA_INPUT PSIBRY0= ', psibry0
+#endif
 ! 
       xlmint=xlmin 
       xlmaxt=xlmax 
@@ -1787,10 +1802,10 @@
         if (tdata.le.1.0e-10_dp) fwtgam(m)=0.0 
       enddo
 ! 
-      if (idebug >= 2) then 
-        write (6,*) 'DATA fwtbmselt = ',(fwtbmselt(jtime,i),i=1,nmsels) 
-        write (6,*) 'DATA sbmselt = ',(sbmselt(jtime,i),i=1,nmsels) 
-      endif 
+#ifdef DEBUG_LEVEL2
+      write (6,*) 'DATA fwtbmselt = ',(fwtbmselt(jtime,i),i=1,nmsels) 
+      write (6,*) 'DATA sbmselt = ',(sbmselt(jtime,i),i=1,nmsels) 
+#endif 
       do i=1,nmsels 
         tdata=abs(sbmselt(jtime,i)) 
         if (tdata.gt.1.0e-10_dp) fwtbmselt(jtime,i)=fwtbmselt(jtime,i)/tdata**nsq 
@@ -1801,7 +1816,9 @@
         if (tdata.gt.1.0e-10_dp) fwtemselt(jtime,i)=fwtemselt(jtime,i)/tdata**nsq 
         if (tdata.le.1.0e-10_dp) fwtemselt(jtime,i)=0.0 
       enddo 
-      if (idebug >= 2) write (6,*) 'DATA fwtbmselt = ', (fwtbmselt(jtime,i),i=1,nmsels) 
+#ifdef DEBUG_LEVEL2
+      write (6,*) 'DATA fwtbmselt = ', (fwtbmselt(jtime,i),i=1,nmsels)
+#endif
 ! 
       do m=1,nfcoil 
         tdata1=serror*abs(fccurt(jtime,m)) 
@@ -1900,11 +1917,11 @@
         if (fwtbmselt(jtime,i).gt.1.e-06_dp) mmbmsels=mmbmsels+1 
         if (fwtemselt(jtime,i).gt.1.e-06_dp) mmemsels=mmemsels+1 
       enddo 
-      if (jdebug.eq.'MSEL') then 
-        write (6,*) 'DATA mmbmsels = ', mmbmsels 
-        write (6,*) 'bmselt ',(bmselt(1,i),i=1,nmsels) 
-        write (6,*) 'iermselt ',(iermselt(1,i),i=1,nmsels) 
-      endif 
+#ifdef DEBUG_MSELS
+      write (6,*) 'DATA mmbmsels = ', mmbmsels 
+      write (6,*) 'bmselt ',(bmselt(1,i),i=1,nmsels) 
+      write (6,*) 'iermselt ',(iermselt(1,i),i=1,nmsels) 
+#endif 
 ! 
       iplasm(jtime)=0 
       if (fwtcur.gt.0.0) iplasm(jtime)=1 

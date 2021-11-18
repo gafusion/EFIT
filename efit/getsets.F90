@@ -241,6 +241,11 @@
       read (neqdsk,efitink,err=96,end=109)
  109  continue
   96  close(unit=neqdsk)
+!--warn that idebug and jdebug inputs are depreciated
+      if (idebug.ne.0) write(*,*) &
+      "idebug input variable is depreciated, set cmake variable instead"
+      if (jdebug.ne."NONE") write(*,*) &
+      "jdebug input variable is depreciated, set cmake variable instead"
 !----------------------------------------------------------------------
 !--   writes out the efitin namelist. Flag iout = 32.                --
 !----------------------------------------------------------------------

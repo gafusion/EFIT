@@ -12,6 +12,10 @@
 #cmakedefine HAVE_NETCDF
 #cmakedefine TIME_LEVEL1
 #cmakedefine TIME_LEVEL2
+#cmakedefine DEBUG_LEVEL1
+#cmakedefine DEBUG_LEVEL2
+#cmakedefine DEBUG_LEVEL3
+#cmakedefine DEBUG_MSEL
 #cmakedefine __cray
 #cmakedefine __ifort
 #cmakedefine __gfortran
