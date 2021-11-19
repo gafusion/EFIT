@@ -144,7 +144,7 @@
         write (nout,10020) sumif,sumift,sumifs
         write (nout,11010)
         write (nout,11020) (rsisfc(i),i=1,nfcoil)
-        if (ivacum.le.0.or.(icurrt.eq.2.and.icurrt.eq.5)) then
+        if (ivacum.le.0.and.(icurrt.eq.2.or.icurrt.eq.5)) then
           xnorm=brsp(nfcoil+1)
           write (nout,11040) xnorm
           xrsp=0.0

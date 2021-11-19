@@ -315,29 +315,28 @@
 !--   Calculation of |B| on rgrid (z=zeceo)   bfield(nw)            --
 !---------------------------------------------------------------------
       endif ! kgeteceb.le.0
-      if (icurrt.eq.1) then
+      select case (icurrt)
+      case (1)
         ffprim(1)=cratio*srma*2.*salpha/darea*twopi*tmu
         ffprim(nw)=ffprim(1)
-      endif
-      if (icurrt.ne.2.and.icurrt.ne.5) then
+      case (2,5)
         ffprim(nw)=fpcurr(x111,kffcur)/darea*twopi*tmu
         ffprim(1)=fpcurr(x000,kffcur)/darea*twopi*tmu
-      endif
-      if (icurrt.eq.4) then
+      case (4)
         call currnt(n222,jtime,n222,n222,kerror)
         if (kerror.gt.0) return
         ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
         ffprim(nw)=ffprim(1)*gammaf
-      endif
+      end select
       do i=2,nw-1
       siii=sigrid(i)
         select case (icurrt)
+        case (1)
+          ffprim(i)=ffprim(1)
         case (2,5)
           ffprim(i)=fpcurr(siii,kffcur)/darea*twopi*tmu
         case (4)
           ffprim(i)=ffprim(1)*(1.-siii**enp)**emp*(1.-gammap)+gammap
-        case (1)
-          ffprim(i)=ffprim(1)
         end select
       enddo
       fpol(nw)=fbrdy*tmu
@@ -739,29 +738,28 @@
 !---------------------------------------------------------------------
 !--   Calculation of |B| on rgrid (z=zeceo)   bfield(nw)            --
 !---------------------------------------------------------------------
-      if (icurrt.eq.1) then
+      select case (icurrt)
+      case (1)
         ffprim(1)=cratio*srma*2.*salpha/darea*twopi*tmu
         ffprim(nw)=ffprim(1)
-      endif
-      if (icurrt.eq.2.or.icurrt.eq.5) then
+      case (2,5)
         ffprim(nw)=fpcurr(x111,kffcur)/darea*twopi*tmu
         ffprim(1)=fpcurr(x000,kffcur)/darea*twopi*tmu
-      endif
-      if (icurrt.eq.4) then
+      case (4)
         call currnt(n222,jtime,n222,n222,kerror)
         if (kerror.gt.0) return
         ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
         ffprim(nw)=ffprim(1)*gammaf
-      endif
+      end select
       do i=2,nw-1
         siii=sigrid(i)
         select case (icurrt)
+        case (1)
+          ffprim(i)=ffprim(1)
         case (2,5)
           ffprim(i)=fpcurr(siii,kffcur)/darea*twopi*tmu
         case (4)
           ffprim(i)=ffprim(1)*(1.-siii**enp)**emp*(1.-gammap)+gammap
-        case (1)
-          ffprim(i)=ffprim(1)
         end select
       enddo
       fpol(nw)=fbrdy*tmu
@@ -1617,13 +1615,13 @@
 !--   set up P' and FF', then integration                             --
 !--   ffprim = (RBt) * d/dpsi(RBt)                                    --
 !---------------------------------------------------------------------
-      if (icurrt.eq.1) then
+      select case (icurrt)
+      case (1)
         pprime(1)=cratio*sbeta/darea/srma
         ffprim(1)=cratio*srma*2.*salpha/darea*twopi*tmu
         pprime(nw)=pprime(1)
         ffprim(nw)=ffprim(1)
-      endif
-      if (icurrt.eq.2.or.icurrt.eq.5) then
+      case (2,5)
         pprime(nw)=ppcurr(x111,kppcur)/darea
         ffprim(nw)=fpcurr(x111,kffcur)/darea*twopi*tmu
         pprime(1)=ppcurr(x000,kppcur)/darea
@@ -1635,21 +1633,23 @@
           ffprec(nw)=0.0
           ffprec(1)=0.0
         endif
-      endif
-      if (icurrt.eq.4) then
+      case (4)
         call currnt(n222,iges,n222,n222,kerror)
         if (kerror.gt.0) return
         pprime(1)=cratio/darea/rzero
         ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
         ffprim(nw)=ffprim(1)*gammaf
         pprime(nw)=pprime(1)*gammap
-      endif
+      end select
 
       do i=2,nw-1
         ii=nw-i+1
         siii=1.0_dp-1.0_dp/(nw-1)*(i-1)
         sigrid(ii)=siii
         select case (icurrt)
+        case(1)
+          pprime(ii)=pprime(1)
+          ffprim(ii)=ffprim(1)
         case (2,5)
           pprime(ii)=ppcurr(siii,kppcur)/darea
           ffprim(ii)=fpcurr(siii,kffcur)/darea*twopi*tmu
@@ -1662,9 +1662,6 @@
           pprime(ii)=(1.-siii**enp)**emp*(1.-gammap)+gammap
           ffprim(ii)=ffprim(1)*pprime(ii)
           pprime(ii)=pprime(1)*pprime(ii)
-        case(1)
-          pprime(ii)=pprime(1)
-          ffprim(ii)=ffprim(1)
         end select
       enddo
       endif ! jtime .gt. 0.0
