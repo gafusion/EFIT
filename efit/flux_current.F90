@@ -1030,7 +1030,7 @@
 !----------------------------------------------------------------------
 !--   magnetic axis parameters if needed                             --
 !----------------------------------------------------------------------
-      if (((icinit.gt.0).and.(iconvr.ne.3).and.(ixout.le.1)).or. &
+      if (((icinit.gt.0).and.(iconvr.ne.3).and.(ixout.le.1)).or.(icurrt.eq.4).or. &
           (((icurrt.eq.2).or.(icurrt.eq.5)).and.(ixt.le.1).and.(icinit.gt.0))) then
         nqend=1
         n22=2
@@ -1100,47 +1100,7 @@
         endif
       case (3)
         ! continue
-      case (4)
-        nqend=1
-        n22=2
-        if (errorm.lt.0.1_dp.and.icurrt.eq.4) nqend=nqiter
-        do i=1,nqend
-          if (i.gt.1) then
-            call currnt(n22,jtime,n22,n22,kerror)
-            if (kerror.gt.0) return
-          endif
-
-          fcentr=fbrdy**2+sidif*dfsqe
-          if (fcentr.lt.0.0) fcentr=fbrdy**2
-          fcentr=sqrt(fcentr)*fbrdy/abs(fbrdy)
-          rdiml=rmaxis/rzero
-          cjmaxi=cratio/darea*(rdiml+rbetap/rdiml)
-          if (kvtor.eq.1) then
-            rgmvt=(rmaxis/rvtor)**2-1.
-            cjmaxi=cjmaxi+cratio/darea*rdiml*rbetaw*rgmvt
-          elseif (kvtor.eq.11) then
-            ypsm=0.0
-            n1set=1
-            pres0=prcur4(n1set,ypsm,kppcur)
-            prew0=pwcur4(n1set,ypsm,kwwcur)
-            rgmvt=(rmaxis/rvtor)**2-1.
-            pwop0=prew0/pres0
-            ptop0=exp(pwop0*rgmvt)
-            pp0= 1.-pwop0*rgmvt
-            ppw=rbetaw*rgmvt
-            cjmaxi=cjmaxi+(pp0+ppw)*rdiml*ptop0
-          endif
-          cqmaxi(ixt)=(emaxis**2+1.)*abs(fcentr)/twopi/emaxis &
-                      /rmaxis**2/abs(cjmaxi)
-          qmaxis=cqmaxi(ixt)
-          if (icurrt.eq.4) then
-            if (qenp.gt.0.0) enp=enp*qenp/qmaxis
-            if (qemp.gt.0.0) emp=emp*qmaxis/qemp
-            enf=enp
-            emf=emp
-          endif
-        enddo
-        return
+      ! case (4) handled by preceeding if statement
       end select
 !
       cqmaxi(ixt)=(emaxis**2+1.)*abs(fcentr)/twopi/emaxis &

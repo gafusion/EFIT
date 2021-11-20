@@ -243,22 +243,22 @@
         do i=1,nesum
           recebzec(i)=0.0
         enddo
-      endif
-      if ((iecurr.gt.0).and.(receo.gt.1.e-8_dp)) then
-        r1=receo
-        do k=1,necoil
-          bzct=0.0
-          call splitc(isplit,rsplt,zsplt,csplt, &
-                      re(k),ze(k),we(k),he(k),zzx,zzx,cdum)
-          do l=1,itot
-            a=rsplt(l)
-            z1=zeceo-zsplt(l)      
-            bzct=bzct+bz(a,r1,z1)
+        if (receo.gt.1.e-8_dp) then
+          r1=receo
+          do k=1,necoil
+            bzct=0.0
+            call splitc(isplit,rsplt,zsplt,csplt, &
+                        re(k),ze(k),we(k),he(k),zzx,zzx,cdum)
+            do l=1,itot
+              a=rsplt(l)
+              z1=zeceo-zsplt(l)      
+              bzct=bzct+bz(a,r1,z1)
+            enddo
+            bzct=bzct*tmu/fitot
+            kkm=ecid(k)  
+            recebzec(kkm)=recebzec(kkm)+bzct
           enddo
-          bzct=bzct*tmu/fitot
-          kkm=ecid(k)  
-          recebzec(kkm)=recebzec(kkm)+bzct
-        enddo
+        endif
       endif
 !-------------------------------------------------------------------------
 !--   compute the response function about R+ R- constraint     

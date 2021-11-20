@@ -274,10 +274,10 @@
       if(nbits .gt. 16) nsampl = nsampl/2 !       available samples
       mzero = iarr(30)
       yzero = mzero
-      IF (idfi.eq.158 .OR. IDFI.EQ.2158) THEN !-- NEW DFI WITH MORE ACCURATE OFFSET
+      if (idfi.eq.158 .or. idfi.eq.2158) then !-- NEW DFI WITH MORE ACCURATE OFFSET
         yzero = real32(14)
         mzero = anint(yzero)
-      ENDIF
+      endif
 
 !--- WAVEFORMS HAVE AN ADDITIONAL OFFSET FOR CONVERSION TO PHYSICAL UNITS
 ! --- this offset makes sense only with ical=1 or 11,
@@ -285,7 +285,7 @@
 !vas f90 modifi
 !vas if ((idfi .eq. 125 .or. idfi .eq. 158 .OR. IDFI.EQ.2158)
 !vas 1 .and. ical .eq. 1)  pzero = real32(8)
-      if ((idfi .eq. 125 .or. idfi .eq. 158 .OR. IDFI.EQ.2158) &
+      if ((idfi .eq. 125 .or. idfi .eq. 158 .OR. idfi.eq.2158) &
         .and. ical .eq. 1)  pzero = real32(8)
 
       !--- Rely on PTDATA's time-type call if the
@@ -302,19 +302,20 @@
       !  in order to do 2nd PTDATA call.
 
       if (idfi.eq.2201 .or. idfi.eq.2202 .or. idfi.eq.2203) then
-        if (idfi.eq.2201) then  ! digitizer data, int
+        select case (idfi)
+        case (2201) ! digitizer data, int
           vpbit = real32(5)
           yzero = real32(6)
           if (real32(2).ge.5) rc = real32(7)
-        else if (idfi.eq.2202) then  ! processed data, int
+        case (2202)  ! processed data, int
           vpbit = -1.0
           pzero = real32(3)
           yzero = 0.0
-        else if (idfi.eq.2203) then  ! processed data, real
+        case (2203) ! processed data, real
           vpbit = -1.0
           pzero = real32(3)
           yzero = 0.0
-        end if
+        end select
         ichar = iascii(3)
         pcst(1:4) = char4
         ichar = iascii(4)
@@ -445,16 +446,16 @@
       ! JUST LIKE DIGITIZER DATA EXCEPT IN
       ! REAL FORMAT
 
-      IF(IDFI .EQ. 119 .or. idfi.eq.2119) THEN      !ICH STUFF EXISTS IN FLOATING FORMAT
-        II=0
-        DO I = NFIRST, NLAST, NINT
-          II=II+1
-          T(II) = TT(I)
-          DATA(II) = FPDATA(I)
-        ENDDO
-        NP = II
-        RETURN
-      ENDIF
+      if(idfi .eq. 119 .or. idfi.eq.2119) then      !ICH STUFF EXISTS IN FLOATING FORMAT
+        ii=0
+        do i = nfirst, nlast, nint
+          ii=ii+1
+          t(ii) = tt(i)
+          data(ii) = fpdata(i)
+        enddo
+        np = ii
+        return
+      endif
 
       !  CHECK FOR ZERO OFFSET OUT OF RANGE
       !  2013/04/03 Revised for new digitzers signed binary numbers  LL/ES
@@ -476,24 +477,24 @@
       !  THE NEW LINE IS A MODIFIED FORM TO MAKE SURE THAT INTEGER OVERFLOW
       !  DOES NOT OCCUR
       !
-      IF (NBITS.GE.16) THEN  !  NECESSARY ONLY FOR 16-BIT DATA
+      if (nbits.ge.16) then  !  NECESSARY ONLY FOR 16-BIT DATA
         min =-(2 ** (nbits - 2) - 1) * 2 + 1
         max = (2 ** (nbits - 2) - 1) * 2 + 1
-      ELSE    !  12-BIT DIG.S NEED THIS ONE
+      else    !  12-BIT DIG.S NEED THIS ONE
         min = 0
-        MAX = 2**NBITS - 1
-      END IF
+        max = 2**nbits - 1
+      end if
 
 
       !--- WAVEFORMS ARE ALLOWED TO HAVE ZERO OFFSET OUTSIDE THE GENERATOR RANGE
       !vas f90 modifi
       !vas IF ((mzero .lt. min .or. mzero .gt. max) .AND.
       !vas 1 (idfi .ne. 125 .and. idfi .ne. 158 .AND. &
-      IF ((mzero .lt. min .or. mzero .gt. max) .AND. &
-        (idfi .ne. 125 .and. idfi .ne. 158 .AND. &
-        IDFI.NE.2158)) THEN
-        IF (ier .eq. 0 ) ier = -3
-      ENDIF
+      if ((mzero .lt. min .or. mzero .gt. max) .and. &
+        (idfi .ne. 125 .and. idfi .ne. 158 .and. &
+        idfi.ne.2158)) then
+        if (ier .eq. 0 ) ier = -3
+      endif
 
       !  CALIBRATION CODES TO RETURN ABSOLUTE SIGNAL LEVEL, NO BASELINE SUBTRACTION
       !  MUST ASSUME DIGITIZER ZERO IS IN THE MIDDLE OF ITS RANGE, SINCE THIS
@@ -501,19 +502,19 @@
       !  WAVEFORMS (idfi = 125, 158, 2158) DO NOT HAVE A BASELINE, SINCE WE ARCHIVE
       !  ONLY THE PROGRAMMED VALUE AND NOT THE ACTUAL VALUE.
       ical0 = ical
-      IF (ical .ge. 10) THEN
+      if (ical .ge. 10) then
         if (idfi .ne. 125 .and. idfi .ne. 158 &
-          .AND. IDFI.NE.2158) mzero = 2**(nbits-1)
+          .and. idfi.ne.2158) mzero = 2**(nbits-1)
         yzero = mzero
         ical0 = ical-10
-      ENDIF
+      endif
 
       !   FILL UP PLOT ARRAYS
 
       nclip = 0
       ii = 0
 
-      DO i=nfirst, nlast, nint
+      do i=nfirst, nlast, nint
 
         ii = ii + 1
         !
@@ -537,47 +538,49 @@
         if(y .ge. max .or. y .le. min) nclip = nclip + 1
 
         ! --- offset for all but calibration code 0
-        IF (ical .ne. 0) THEN
+        if (ical .ne. 0) then
           y = y - yzero
         !  y = y - yzero - deltab   ! ICAL > 0
-        ENDIF
+        endif
 
         ! --  scale factors for the different calibration codes
 
-        IF (ical0 .eq. 0) THEN
+        select case (ical0)
+        case (0)
           y = y    ! ICAL = 0
-        ELSE IF (ical0 .eq. 2) THEN
+        case (2)
           y = -y * vpbit   ! ICAL = 2
-        ELSE IF (ical0 .eq. 3) THEN
+        case (3)
           y = -y * rcg / rc  ! ICAL = 3
-        ELSE IF (ical0 .eq. 4) THEN
+        case (4)
           y = -y * rcg   ! ICAL = 4
-        ELSE
+        case default
           y = -y * rcg * zinhno + pzero ! ICAL = 1 or other
-        ENDIF
+        end select
 
         y = scale * y * rcfact    ! user's scale factor
 
         ! --- arithmetic combinations as determined by mop code
-        IF (mop .eq. 0) THEN
+        select case (mop)
+        case (0)
           data(ii) = y
-        ELSE IF (mop .eq. 1) THEN
+        case (1)
           data(ii) = data(ii) + y
-        ELSE IF (mop .eq. 2) THEN
+        case (2)
           data(ii) = data(ii) - y
-        ELSE IF (mop .eq. 3) THEN
+        case (3)
           data(ii) = data(ii) * y
-        ELSE IF (mop .eq. 4) THEN
+        case (4)
           if (y.ne.0) then
             data(ii) = data(ii) / y
           else
             data(ii) = 0.
           end if
-        ELSE
+        case default
           data(ii) = y
-        ENDIF
+        end select
 
-      ENDDO
+      enddo
 
       ! --- actual number of points returned
       np = ii
@@ -589,48 +592,49 @@
         if (fclip .gt. tolclip .and.  &
           ier .le. 0) ier = -1
       endif
-      IF (INTCAL) then
+      if (intcal) then
         !
         !   ADDITIONAL ARGUMENTS FOR INTEGRATOR CALIBRATION CALL.
         ! THESE DUMMY ARGUMENTS MUST ONLY BE REFERENCED WHEN USING THE
         ! ENTRY POINT GETDAT_I.  OTHERWISE ACCESS VIOLATION ERRORS OCCUR.
         !
-        RC_I = RC
-        RCG_I = RCG
-        VPBIT_I = VPBIT
-        MZERO_I = MZERO
-        NBITS_I = NBITS
-        WRITE(SDATE,880) IARR(19),MONTH(IARR(18)), &
-          IARR(20)-IARR(20)/100*100
-        WRITE(STIME,881) IARR(15),IARR(16),IARR(17)
-880     FORMAT(I2,'-',A3,'-',I2)
-881     FORMAT(I2,':',I2,':',I2)
+        rc_i = rc
+        rcg_i = rcg
+        vpbit_i = vpbit
+        mzero_i = mzero
+        nbits_i = nbits
+        write(sdate,880) iarr(19),month(iarr(18)), &
+          iarr(20)-iarr(20)/100*100
+        write(stime,881) iarr(15),iarr(16),iarr(17)
+880     format(I2,'-',A3,'-',I2)
+881     format(I2,':',I2,':',I2)
       !
       endif
 
-      if(efit) then
-        if (ical0 .eq. 0) then
+      if (efit) then
+        select case (ical0)
+        case (0)
           bitone = 1                              ! ical = 0
-        else if (ical0 .eq. 2) then
+        case (2)
           bitone = vpbit                          ! ical = 2
-        else if (ical0 .eq. 3) then
+        case (3)
           bitone = rcg / rc                       ! ical = 3
-        else
+        case default
           bitone = rcg * zinhno                   ! ical = 1 or other
-        endif
+        end select
 
         bitone = scale * abs(bitone)
         !--------------------------------------------------------------------
         !-- New returned values for new error matrix                       --
         !--------------------------------------------------------------------
-        RC_E = RC
-        RCG_E = RCG
-        VPBIT_E = VPBIT
-        ZINHNO_E = ZINHNO
-        T0_E = TT(1)
+        rc_e = rc
+        rcg_e = rcg
+        vpbit_e = vpbit
+        zinhno_e = zinhno
+        t0_e = tt(1)
       endif
 
-      RETURN
+      return
 
       CONTAINS
           !   ==============================

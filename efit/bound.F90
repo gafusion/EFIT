@@ -1009,7 +1009,7 @@
       serr=-dpsi/dpsids
       if ((abs(serr).ge.serrt).and.(abs(dpsi).ge.derrt)) then
         delx=serr*cost
-       dely=serr*sint
+        dely=serr*sint
         xn=xn+delx
         yn=yn+dely
         newti=newti+1

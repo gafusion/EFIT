@@ -97,28 +97,7 @@
                  'Must specify grid dimensions as arguments')
           stop
         endif
-! Check that the grid sizes are compatible with Buneman's algorithm
-! (this is not relevant to pefit - not yet integrated)
-        if (nh == 0) then
-          nh = nw
-        else
-          select case (nh)
-          case (3,5,9,17,33,65,129,257,513,1025,2049)
-            ! all good
-          case default
-            call errctrl_msg('efit', &
-                 'Chosen grid dimensions cannot be run')
-            stop
-          end select
-        endif
-        select case (nw)
-        case (3,5,9,17,33,65,129,257,513,1025,2049)
-          ! all good
-        case default
-          call errctrl_msg('efit', &
-               'Chosen grid dimensions cannot be run')
-          stop
-        end select
+        if(nh == 0) nh = nw
       endif
 
 #if defined(USEMPI)
@@ -210,8 +189,7 @@
 !----------------------------------------------------------------------
 !--   start simulation for KTIME time slices per rank                --
 !----------------------------------------------------------------------
-      k=0
-  100 k=k+1
+      do k=1,ktime
         ks=k ! ks=1,2,3... in serial, but ks=1,1,1,... in parallel
 !----------------------------------------------------------------------
 !--     set up data                                                  --
@@ -227,13 +205,40 @@
 
         call data_input(ks,iconvr,ktime,mtear,kerror)
 
+! Check that the grid sizes are compatible with Buneman's algorithm
+! (this is not relevant to pefit - not yet available)
+        if (ibunmn.ne.0) then
+          if (nh .ne. 0) then
+            select case (nh)
+            case (3,5,9,17,33,65,129,257,513,1025,2049)
+              ! all good
+            case default
+              call errctrl_msg('efit', &
+                   'Chosen grid dimensions cannot be run')
+              stop
+            end select
+          endif
+          select case (nw)
+          case (3,5,9,17,33,65,129,257,513,1025,2049)
+            ! all good
+          case default
+            call errctrl_msg('efit', &
+                 'Chosen grid dimensions cannot be run')
+            stop
+          end select
+        endif
+
 #ifdef DEBUG_LEVEL2
         write(6,*) ' Entering errctrl_setstate'
 #endif
         call errctrl_setstate(rank,time(ks))
-        if (((kerror.gt.0).or.(iconvr.lt.0)).and.(k.lt.ktime)) then
-          kerrot(ks)=kerror
-          go to 100
+        if ((kerror.gt.0).or.(iconvr.lt.0)) then
+          if (k.lt.ktime) then
+            kerrot(ks)=kerror
+            cycle
+          else
+            exit
+          endif
         endif
         if (kautoknt .eq. 1) then
           call autoknot(ks,iconvr,ktime,mtear,kerror)
@@ -252,9 +257,13 @@
           write(6,*) 'Entering fit subroutine'
 #endif
           call fit(ks,kerror)
-          if ((kerror.gt.0).and.(k.lt.ktime)) then
-            kerrot(ks)=kerror
-            go to 100
+          if (kerror.gt.0) then
+            if (k.lt.ktime) then
+              kerrot(ks)=kerror
+              cycle
+            else
+              exit
+            endif
           endif
         endif
 !----------------------------------------------------------------------
@@ -264,14 +273,22 @@
         write(6,*) 'Entering shapesurf'
 #endif
         call shapesurf(ks,ktime,kerror)
-        if ((kerror.gt.0).and.(k.lt.ktime)) then
-          kerrot(ks)=kerror
-          go to 100
+        if (kerror.gt.0) then
+          if (k.lt.ktime) then
+            kerrot(ks)=kerror
+            cycle
+          else
+            exit
+          endif
         endif
 !DEPRECATED        if (mtear.ne.0) call tearing(ks,mtear,kerror)
-!DEPRECATED        if ((kerror.gt.0).and.(k.lt.ktime)) then
-!DEPRECATED          kerrot(ks)=kerror
-!DEPRECATED          go to 100
+!DEPRECATED        if (kerror.gt.0) then
+!DEPRECATED          if (k.lt.ktime) then
+!DEPRECATED            kerrot(ks)=kerror
+!DEPRECATED            cycle
+!DEPRECATED          else
+!DEPRECATED            exit
+!DEPRECATED          endif
 !DEPRECATED        endif
 #ifdef DEBUG_LEVEL1
         write (6,*) 'Main/PRTOUT ks/kerror = ', ks, kerror
@@ -299,15 +316,12 @@
 ! --    write Kfile if needed                                        --
 !----------------------------------------------------------------------
         if (kdata.eq.3 .or. kdata.eq.7) then
-          if (write_Kfile) then
-            call write_K2(ks,kerror)
-          endif
+          if (write_Kfile) call write_K2(ks,kerror)
         endif
-        if (k.lt.ktime) then
-          kerrot(ks)=kerror
-          go to 100
-        endif
-        if (kwake.ne.0) go to 20
+        if (k.lt.ktime) kerrot(ks)=kerror
+      enddo
+
+      if (kwake.ne.0) go to 20
 #ifdef USE_NETCDF
       call wmeasure(ktime,1,ktime,2)
 #else
