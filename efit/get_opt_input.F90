@@ -101,24 +101,23 @@
      
 #if defined(USEMPI)
       if (nproc > 1) then
+        if (rank == 0) then
 ! Ensure there are not more processors than time slices
-        if (nproc > ktime) then
-          call errctrl_msg('get_opt_input', &
-                  'MPI processes have nothing to do')
-          stop
-        endif
+          if (nproc > ktime) then
+            call errctrl_msg('get_opt_input', &
+                             'MPI processes have nothing to do')
+            stop
+          endif
 ! Warn if the time slice distribution is not balanced
-        if (mod(ktime,nproc) .ne. 0)
-          write(nttyo,*) 'Warning: time slices are not balanced across processors'
+          if (mod(ktime,nproc) .ne. 0) &
+            write(nttyo,*) 'Warning: time slices are not balanced across processors'
         endif
 ! Broadcast inputs 
         call MPI_BCAST(ishot,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
         call MPI_BCAST(ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
         call MPI_BCAST(timeb,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         call MPI_BCAST(dtime,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-      endif
-! Distribute steps among ALL processes if necessary
-      if (nproc > 1) then
+! Distribute steps among ALL processes
         dist_data(:) = 0
         dist_data_displs(:) = 0
         if (rank == 0) then
