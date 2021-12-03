@@ -14,7 +14,7 @@ import sys
 import subprocess
 sys.path.insert(0, os.path.abspath('../xml'))
 
-project = 'EFIT-AI'
+project = 'EFIT-AI Documentation'
 copyright = '2021, EFIT-AI team'
 author = 'EFIT-AI Team'
 
