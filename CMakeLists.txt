@@ -108,6 +108,17 @@ install(FILES ${CMAKE_BINARY_DIR}/config.f
 )
 
 #---------------------------------------------------------------------
+# OpenMP creates link errors
+#---------------------------------------------------------------------
+if(ENABLE_OpenMP)
+    find_package(OpenMP)
+    if (OPENMP_FOUND)
+        set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+        set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${OpenMP_Fortran_FLAGS}")
+        set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+    endif()
+endif()
+#---------------------------------------------------------------------
 # Set default fortran format to free and preprocess all files
 #---------------------------------------------------------------------
 # Worry about later
