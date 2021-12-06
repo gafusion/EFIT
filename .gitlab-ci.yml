@@ -57,6 +57,7 @@ pause-for-approval:
   allow_failure: false
 
 clang-docker:
+  extends: .test
   stage: stage0
   image: registry.gitlab.com/efit-ai/efit/clang
   script:
@@ -67,7 +68,7 @@ clang-docker:
     - ctest j4 -D ExperimentalMemCheck --force-new-ctest-process --output-on-failure -E test_timer
 
 linux-clang:
-  extends: .test-basic
+  extends: .test
   stage: stage1
   tags:
     - name:hip.txcorp_efitai
