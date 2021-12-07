@@ -27,7 +27,7 @@
       NAMELIST/in3/ mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi, &
            as,as2,lpname,rsisvs,turnfc,patmp2, &
            zacoil,wacoil,hacoil, &
-           rf,zf,fcid,wf,hf,wvs,hvs,avs,af,af2, &
+           rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2, &
            re,ze,ecid,rvs,zvs,we,he
 
       OPEN(unit=nout,status='unknown',file='dprobe.dat', &
