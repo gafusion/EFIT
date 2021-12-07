@@ -1,3 +1,5 @@
+.. _install:
+
 Installation
 ============
 
@@ -34,21 +36,34 @@ portal::
 Installing from source
 ----------------------
 
-This gives installation instructions to EFIT using the CMake build system
+This gives installation instructions to EFIT using the CMake build system.
+`CMake <https://cmake.org>`__ provides many additional tools (GUI, TUI) that
+allows for more advanced workflows.  Here, we provide the simplest workflow.
 
-Minimum requirements: cmake (>=3.8), fortran compiler, blas and lapack fortran
-libraries
+Minimum requirements: 
+   + cmake (>=3.8) 
+   + fortran compiler 
+   + blas and lapack libraries
 
 If these are already in your path or other standard locations, you can ignore
 all other third-party libraries and simply build with::
 
+    cd $EFIT_ROOT
     mkdir build
     cd build
     cmake ..
     make 
 
-This will work on Ubuntu (18.04 and 20.04) as long as the following
-packages have been installed (call apt-get to install)::
+where ``EFIT_ROOT`` is an environment variable set to the EFIT source code
+directory.
+This will work on most systems and has been specifically tested on Mac 
+and Ubuntu (18.04 and 20.04).   Note that in this example, the build directory
+is a subdirectory of ``EFIT_ROOT``, but it can be located anywhere on the
+filesystem.  The only thing that would change, is to replace the ``cmake ..`` with
+``cmake $EFIT_ROOT``.  See the CMake documentation for more details.
+
+For Ubuntu, the following packages need to be installed (call apt-get to
+install)::
 
     git (optional)
     build-essential
@@ -60,20 +75,41 @@ packages have been installed (call apt-get to install)::
 (18.04 only builds with libopenblas-dev - not libblas-dev)
 (16.04 and older requires non-standard CMake and gfortran versions)
 
-It will also work on Mac with similar libraries (TO DO: list) (can be obtained with
-brew install)
+For MacOS, XCode needs to be installed.  We recommend that one use brew to
+install the gfortran library::
+
+    brew install gcc
+
+Once gfortran is in your path (follow instructions), then it can use the
+Accelerate library from XCode for blas and lapack.   Here is an example CMake
+configure script that is more complicated the just invoking the ``cmake ..`` as
+shown above::
+
+    #!/bin/sh
+
+    rm -rf CMake*
+
+    cmake \
+        -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING='10.9' \
+        ..
+
+additional configure options shown below can be added to any OS.
+
 
 Configuring third-party libraries
 ---------------------------------
 
 To build with all of the libraries and specify the compilers, one can use a
 longer shell script to store the required flags.  Here is an example 
-`config.sh` with all of the bells and whistles turned on (assuming everything
+``config.sh`` with all of the bells and whistles turned on (assuming everything
 is built in your $HOME/software directory)::
 
+    #!/bin/sh
+
     cmake \
+        -DENABLE_DOCS:BOOL=FALSE \
         -DCMAKE_INSTALL_PREFIX:PATH=$HOME/software \
-        -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo \
+        -DCMAKE_BUILD_TYPE:STRING=Release \
         -DCMAKE_COLOR_MAKEFILE:BOOL=FALSE \
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=TRUE \
         -DENABLE_SHARED_LIBS:BOOL=TRUE \
@@ -87,7 +123,7 @@ is built in your $HOME/software directory)::
         -DNetCDF_DIR:PATH='$HOME/software/netcdf' \
         ..
 
-The following flags are still underdevelopment::
+The following flags are still under development::
 
         -DHDF5_DIR:PATH='$HOME/software/hdf5' \
         -DMDSPLUS_DIR:PATH='$HOME/software/mdsplus' \
@@ -97,7 +133,7 @@ For debugging, set::
         -DCMAKE_BUILD_TYPE:STRING=Debug
 
 Config scripts for a number of supercomputers and compilers have already been made
-and can be found in the `share/config_examples/` directory, including::
+and can be found in the ``share/config_examples/`` directory, including::
 
     config_iris_gnu.sh
     config_iris_intel.sh
@@ -117,14 +153,16 @@ They can be used to install with the following commands::
     ../share/config_examples/config_{machine}_{compiler}.sh
     make
 
-If you are trying to build for the first time on a different supercomputer or with a
-different compiler, the best starting point is to change environment library paths from an 
-existing configure script (e.g. try the most similar or iris_gnu.sh first) to match what
-is available.  If you run into problems, contact a developer.
+If you are trying to build for the first time on a different supercomputer
+or with a different compiler, the best starting point is to change
+environment library paths from an existing configure script (e.g. try the
+most similar or ``iris_gnu.sh`` first) to match what is available.  If you run
+into problems, contact a developer.
 
-To ensure your build was successful, it is recommended that you run the included tests.
-See RUN.rst for more info.
+To ensure your build was successful, it is recommended that you run the included
+tests.  See :ref:`quickstart` for more info.
 
-Once you have successfully built on a different system/compiler, please add your working
-script to the collection to aid future users.
+Once you have successfully built on a different system/compiler, please add your
+working script to the collection in ``$EFIT_ROOT/share/config_examples`` to aid
+future users.
 

@@ -21,6 +21,7 @@ cmake_minimum_required(VERSION 3.8.0)
 #TODO: Can we turn off?
 #set(ENABLE_CERLIB FALSE CACHE BOOL "Whether to build cerlib ")
 
+set(ENABLE_DOCS FALSE CACHE BOOL "Whether to build the docs or not.")
 set(ENABLE_PRODUCTION FALSE CACHE BOOL "This is meant to be installed.")
 
 set(TABLE_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of tables")
@@ -258,6 +259,13 @@ add_subdirectory(efit)
 #---------------------------------------------------------------------
 enable_testing()
 add_subdirectory(test)
+
+#---------------------------------------------------------------------
+# Documentation
+#---------------------------------------------------------------------
+if (ENABLE_DOCS)
+add_subdirectory(docs)
+endif()
 
 #---------------------------------------------------------------------
 #
