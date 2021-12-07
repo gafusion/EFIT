@@ -100,7 +100,6 @@ subroutine get_eparmdud_dependents()
 
   nwcurn=nwwcur+npcurn
   nwcur2=nwcurn*2
-  npcur2=npcurn*2
 
   ncurrt=nvesel+nesum+nfcoil
 end subroutine

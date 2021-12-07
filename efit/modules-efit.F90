@@ -95,7 +95,6 @@
       integer*8 :: nwwcur
       integer*8 :: nffcur,nppcur, npcurn, necur, necur2, &
                    mfnpcr,nercur,npcur2,nrsmat, nwcurn,nwcur2
-      integer*8 :: npcur3
       integer*8 :: msbdr2
       integer*8 :: ndim_crv
       integer*8 :: ndim,kxiter,mqwant
