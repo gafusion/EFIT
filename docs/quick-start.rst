@@ -102,3 +102,16 @@ For more information on the input variables see namelists.rst.
 A description of the different input and output types can be found at
 `EFIT IO Files <https://fusion.gat.com/theory/Efitiofiles>__` (requires GA login).
 
+Running EFIT with OMFIT
+-----------------------
+
+The recommedned tool for developing more compilicated workflows and analyzing results
+is `OMFIT <https://omfit.io/>__`.  Interested users should refer to the documentation
+on that page for setting up and using their software.  EFIT-AI (this version) can be
+used in place of legacy EFIT within the 
+`EFIT <https://omfit.io/modules/mod_EFIT.html/>__`, 
+`EFITtime <https://omfit.io/modules/mod_EFITtime.html/>__`, and
+`kineticEFITtime <https://omfit.io/modules/mod_kineticEFITtime.html/>__`, modules by
+selecting the check-box in the GUI before executing.  Additional functionality and
+integration is on going.  These modules have a variety of built in plotting options and 
+more detailed analysis can be performed with the EFITviewer suite.
