@@ -76,3 +76,5 @@ linux-clang:
     - ../share/config_examples/config_ci_hip.sh
     - make -j4
     - make test
+  variables:
+    PATH: /scratch/soft/bin:/scratch/soft/mpich/bin:/opt/rh/devtoolset-7/root/usr/bin:/usr/bin:/bin

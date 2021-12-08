@@ -9,6 +9,15 @@ There, you can find the history and development version of the source code,
 `see or create merge requests <https://gitlab.com/efit-ai/efit/-/merge_requests>`__,
 and more. 
 
+For submitting the merge request, the developer should:
+  
+  + Set a reviewer to someone other than themself
+  + Set the labels to the workflow stage
+  + Before setting the workflow as ReadyToMerge, the developer should launch a
+    pipeline (note that the play button has to be hit from the MR page) and
+    ensure that the pipeline passes
+  + The actual merge should always be done by someone other than the developer
+    who submitted the MR
 
 
 
