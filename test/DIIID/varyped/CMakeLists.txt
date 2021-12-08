@@ -2,7 +2,7 @@
 #
 # CMakeLists.txt for efit tests
 #
-# note, the "time-steps" in this test are duplicates
+# note, the "time-steps" in this test are different variations
 #
 ######################################################################
 
