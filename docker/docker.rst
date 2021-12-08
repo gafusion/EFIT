@@ -25,16 +25,17 @@ To start a container from the EFIT pre-built Docker image on GitLab, run:
 
     cd docker
     echo COMPOSE_PROJECT_NAME=$USER > .env  # [optional] specify a project name
-    docker-compose pull  # Get the most updated image from the repo
+    DNAME=aocc
+    docker-compose pull efitai-$DNAME   # Get the most updated image from the repo
     docker images   # Show all images in your local docker.  Should have efit
-    docker-compose up -d  # start the container 
-    docker ps             # Show the running container
+    docker-compose up -d efitai-$DNAME  # start the container 
+    docker ps                           # Show the running container
 
 Then to launch an interactive Bash session inside that container, do:
 
 .. code:: bash
 
-    docker-compose exec efitai-clang bash
+    docker-compose exec efitai-$DNAME bash
 
 By default, you are placed into `/efit` directory, which is mounted from your
 local file system.  This allows you to the edit on your local file system, but
@@ -45,7 +46,7 @@ container, do:
 
     mkdir ../build   # Need to be in container file system
     cd ../build
-    ../efit/docker/config_docker_clang.sh
+    ../efit/docker/config_docker_$DNAME.sh
     make
     make test
 
@@ -67,13 +68,13 @@ Creating your own docker image::
 Basic steps for registering at gitlab::
 
     docker login registry.gitlab.com   # Only need to do once.  Use gitlab creds
-    DNAME=clang
+    DNAME=aocc
     docker build -f Dockerfile.$DNAME -t registry.gitlab.com/efit-ai/efit/$DNAME .
     docker push registry.gitlab.com/efit-ai/efit/$DNAME
 
 Alternatively to build and run it, you can use `docker-compose`::
 
-    docker-compose up --build -d  # build the container using Dockerfile and start it
+    docker-compose up --build -d efitai-$DNAME  # build the container using Dockerfile and start it
 
 Alternative to docker compose
 -----------------------------

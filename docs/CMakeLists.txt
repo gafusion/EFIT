@@ -34,6 +34,7 @@ set(MATHJAXJS "MathJax/MathJax.js?config=TeX-AMS-MML_SVG-full.js")
 set(RST_FILE_BASE index)
 file(GLOB_RECURSE EFITDOC_DEPS RELATIVE ${SRCDIR} *.rst */*.rst)
 set(EFITDOC_DEPS ${EFITDOC_DEPS} ../INSTALL.rst ../LICENSE.rst)
+set(EFITDOC_DEPS ${EFITDOC_DEPS} ../docker/docker.rst)
 
 # Copy stuff over from docs because sphinxbuild doesn't allow full paths
 configure_file(${SRCDIR}/conf.py.in ${BLDDIR}/conf.py)  # 1 copy

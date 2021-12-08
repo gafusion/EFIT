@@ -60,12 +60,11 @@ clang-docker:
   extends: .test
   stage: stage0
   image: registry.gitlab.com/efit-ai/efit/clang
+  # Note that currently I'm not actually running make test
   script:
     - mkdir build && cd build # Build out of place
-    - cmake -DTRAP_FP_EXCEPTIONS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING="RelWithDebInfo" ..
+    - ../docker/config_docker_clang.sh
     - make -j4
-    - ctest j4 -D ExperimentalTest --force-new-ctest-process --output-on-failure
-    - ctest j4 -D ExperimentalMemCheck --force-new-ctest-process --output-on-failure -E test_timer
 
 linux-clang:
   extends: .test
@@ -74,6 +73,8 @@ linux-clang:
     - name:hip.txcorp_efitai
   script:
     - mkdir build && cd build # Build out of place
-    - cmake -DTRAP_FP_EXCEPTIONS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING="RelWithDebInfo" ..
+    - ../share/config_examples/config_ci_hip.sh
     - make -j4
     - make test
+  variables:
+    PATH: /scratch/soft/bin:/scratch/soft/mpich/bin:/opt/rh/devtoolset-7/root/usr/bin:/usr/bin:/bin
