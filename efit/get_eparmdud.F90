@@ -629,13 +629,12 @@ subroutine read_omas_in1(filename)
       call read_h5(nid,"pe_width",pe_width,h5in,h5err)
     if (obj_exists(nid,"pe_psin",h5err)) &
       call read_h5(nid,"pe_psin",pe_psin,h5in,h5err)
-    ! H5: testing
-!    if (obj_exists(nid,"table_dir",h5err)) &
-!      call read_h5(nid,"table_dir",table_dir,h5in,h5err)
-!    if (obj_exists(nid,"input_dir",h5err)) &
-!      call read_h5(nid,"input_dir",input_dir,h5in,h5err)
-!    if (obj_exists(nid,"store_dir",h5err)) &
-!      call read_h5(nid,"store_dir",store_dir,h5in,h5err)
+    if (obj_exists(nid,"table_dir",h5err)) &
+      call read_h5(nid,"table_dir",table_dir,h5in,h5err)
+    if (obj_exists(nid,"input_dir",h5err)) &
+      call read_h5(nid,"input_dir",input_dir,h5in,h5err)
+    if (obj_exists(nid,"store_dir",h5err)) &
+      call read_h5(nid,"store_dir",store_dir,h5in,h5err)
     if (obj_exists(nid,"kautoknt",h5err)) &
       call read_h5(nid,"kautoknt",kautoknt,h5in,h5err)
     if (obj_exists(nid,"akchiwt",h5err)) &
