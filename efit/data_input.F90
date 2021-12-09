@@ -179,9 +179,114 @@
       aa1lib=0.0
       aa8lib=0.0
       dflux=0.0
-      acoil=0.0
+      coils=0.0
+      acoilc=0.0
+      expmp2=0.0
+      sigdlc=0.0
+      sigprebi=0.0
+      zpress=0.0
+      tethom=0.0
+      rteth=0.0
+      zteth=0.0
+      sgteth=0.0
+      tionex=0.0
+      rion=0.0
+      zion=0.0
+      sigti=0.0
+      dnethom=0.0
+      zeffvs=0.0
+      rneth=0.0
+      zneth=0.0
+      sgneth=0.0
+      pbeam=0.0
+      sibeam=0.0
+      xalpa=0.0
+      cgama=0.0
+      calpa=0.0
+      xgama=0.0
+      bitfc=0.0
+      sigtii=0.0
+      sgnethi=0.0
+      sgtethi=0.0
+      zlowimp=0.0
+      pressbi=0.0
+      prespb=0.0
+      sigppb=0.0
+      dnbeam=0.0
+      dmass=0.0
+      sgtimin=0.0
+      bitec=0.0
+      scalepr=0.0
+      brsptu=0.0
+      fwtfcsum=0.0
+      rsol=0.0
+      zsol=0.0
+      fbetan=0.0
+      fqsiw=0.0
+      alpax=0.0
+      gamax=0.0
+      siwantq=0.0
+      ccoils=0.0
+      xcoils=0.0
+      cloops=0.0
+      xloops=0.0
+      currc79=0.0
+      currc139=0.0
+      sizeroj=0.0
+      currc199=0.0
+      curriu30=0.0
+      curriu90=0.0
+      curriu150=0.0
+      curril30=0.0
+      curril90=0.0
+      curril150=0.0
+      tgamma=0.0
+      sgamma=0.0
+      rrrgam=0.0
+      zzzgam=0.0
+      aa1gam=0.0
+      aa2gam=0.0
+      aa3gam=0.0
+      aa4gam=0.0
+      aa5gam=0.0
+      aa6gam=0.0
+      aa7gam=0.0
+      tgammauncor=0.0
+      bmsels=0.0
+      rrmsels=0.0
+      zzmsels=0.0
+      l1msels=0.0
+      l2msels=0.0
+      l4msels=0.0
+      emsels=0.0
+      semsels=0.0
+      teecein0=0.0
+      feece0=0.0
+      errorece0=0.0
+      rteo=0.0
+      zteo=0.0
+      rtep=0.0
+      rtem=0.0
+      rpbit=0.0
+      rmbit=0.0
+      robit=0.0
+      fwtnow=0.0
+      omegat=0.0
+      enw=0.0
+      emw=0.0
+      fwtprw=0.0
+      presw=0.0
+      sigprw=0.0
+      rpresw=0.0
+      zpresw=0.0
+      comega=0.0
+      xomega=0.0
+      romegat=0.0
+      zomegat=0.0
+      sigome=0.0
+      scalepw=0.0
 ! 
-      kerror = 0 
+      kerror=0 
       idone=0 
       sicont=tmu*drslop/aaslop
       fitsiref_int=0
@@ -1857,6 +1962,11 @@
 !----------------------------------------------------------------------- 
 !--   post-process inputs                                             --
 !-----------------------------------------------------------------------
+!--warn that idebug and jdebug inputs are depreciated
+      if (idebug.ne.0) write(*,*) &
+      "idebug input variable is depreciated, set cmake variable instead"
+      if (jdebug.ne."NONE") write(*,*) &
+      "jdebug input variable is depreciated, set cmake variable instead"
 !--   roundoff differences can throw off zlim if limiter corners
 !--   are too close to grid points (maybe zlim needs fixing...)
       do i=1,limitr
@@ -1937,8 +2047,9 @@
         open(unit=neqdsk,status='old',file=geqdsk_ext) 
         read (neqdsk,11775) (case_ext(i),i=1,6),nh_ext,nw_ext,nh_ext 
         npsi_ext=nw_ext 
-        if (idebug /= 0) write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext, & 
-          nw_ext 
+#ifdef DEBUG_LEVEL1
+        write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext,nw_ext
+#endif
         do i = 1,2 
           read (neqdsk,11773) 
         enddo 
@@ -2019,23 +2130,26 @@
           enddo 
         endif 
       endif 
-11778 if (idebug /= 0) write (nttyo,*) 'npsi_ext=',npsi_ext 
+11778 continue
+#ifdef DEBUG_LEVEL1
+      write (nttyo,*) 'npsi_ext=',npsi_ext
+#endif
       if (npsi_ext > 0) then 
-        if (idebug /= 0) then 
-          write (nttyo,*) 'scalepp_ext,pprime_ext= ',scalepp_ext, & 
-             pprime_ext(1) 
-          write (nttyo,*) 'scaleffp_ext,ffpprim_ext= ',scaleffp_ext, & 
-             ffprim_ext(1) 
-        endif 
+#ifdef DEBUG_LEVEL1
+        write (nttyo,*) 'scalepp_ext,pprime_ext= ',scalepp_ext, & 
+           pprime_ext(1) 
+        write (nttyo,*) 'scaleffp_ext,ffpprim_ext= ',scaleffp_ext, & 
+           ffprim_ext(1) 
+#endif 
         pprime_ext = pprime_ext*darea*sign_ext*scalepp_ext 
         ffprim_ext = ffprim_ext*darea/twopi/tmu*sign_ext*scaleffp_ext 
         prbdry=prbdry*scalepp_ext*scalepp_ext 
-        if (idebug /= 0) then 
-          write (nttyo,*) 'scalepp_ext,pprime_ext= ',scalepp_ext, & 
-             pprime_ext(1) 
-          write (nttyo,*) 'scaleffp_ext,ffpprim_ext= ',scaleffp_ext, & 
-             ffprim_ext(1) 
-        endif 
+#ifdef DEBUG_LEVEL1
+        write (nttyo,*) 'scalepp_ext,pprime_ext= ',scalepp_ext, & 
+           pprime_ext(1) 
+        write (nttyo,*) 'scaleffp_ext,ffpprim_ext= ',scaleffp_ext, & 
+           ffprim_ext(1) 
+#endif 
  
         if (psin_ext(1) < 0) then 
           do i = 1, npsi_ext 
@@ -2812,7 +2926,9 @@
       gammap=1./gammap 
       gammaf=gammap 
       psibry0=psibry 
-      if (idebug >= 2) write (6,*) 'DATA_INPUT PSIBRY0= ', psibry0 
+#ifdef DEBUG_LEVEL2
+      write (6,*) 'DATA_INPUT PSIBRY0= ', psibry0
+#endif
 ! 
       xlmint=xlmin 
       xlmaxt=xlmax 
@@ -3001,10 +3117,10 @@
         if (tdata.le.1.0e-10_dp) fwtgam(m)=0.0 
       enddo
 ! 
-      if (idebug >= 2) then 
-        write (6,*) 'DATA fwtbmselt = ',(fwtbmselt(jtime,i),i=1,nmsels) 
-        write (6,*) 'DATA sbmselt = ',(sbmselt(jtime,i),i=1,nmsels) 
-      endif 
+#ifdef DEBUG_LEVEL2
+      write (6,*) 'DATA fwtbmselt = ',(fwtbmselt(jtime,i),i=1,nmsels) 
+      write (6,*) 'DATA sbmselt = ',(sbmselt(jtime,i),i=1,nmsels) 
+#endif 
       do i=1,nmsels 
         tdata=abs(sbmselt(jtime,i)) 
         if (tdata.gt.1.0e-10_dp) fwtbmselt(jtime,i)=fwtbmselt(jtime,i)/tdata**nsq 
@@ -3015,7 +3131,9 @@
         if (tdata.gt.1.0e-10_dp) fwtemselt(jtime,i)=fwtemselt(jtime,i)/tdata**nsq 
         if (tdata.le.1.0e-10_dp) fwtemselt(jtime,i)=0.0 
       enddo 
-      if (idebug >= 2) write (6,*) 'DATA fwtbmselt = ', (fwtbmselt(jtime,i),i=1,nmsels) 
+#ifdef DEBUG_LEVEL2
+      write (6,*) 'DATA fwtbmselt = ', (fwtbmselt(jtime,i),i=1,nmsels)
+#endif
 ! 
       do m=1,nfcoil 
         tdata1=serror*abs(fccurt(jtime,m)) 
@@ -3114,11 +3232,11 @@
         if (fwtbmselt(jtime,i).gt.1.e-06_dp) mmbmsels=mmbmsels+1 
         if (fwtemselt(jtime,i).gt.1.e-06_dp) mmemsels=mmemsels+1 
       enddo 
-      if (jdebug.eq.'MSEL') then 
-        write (6,*) 'DATA mmbmsels = ', mmbmsels 
-        write (6,*) 'bmselt ',(bmselt(1,i),i=1,nmsels) 
-        write (6,*) 'iermselt ',(iermselt(1,i),i=1,nmsels) 
-      endif 
+#ifdef DEBUG_MSELS
+      write (6,*) 'DATA mmbmsels = ', mmbmsels 
+      write (6,*) 'bmselt ',(bmselt(1,i),i=1,nmsels) 
+      write (6,*) 'iermselt ',(iermselt(1,i),i=1,nmsels) 
+#endif 
 ! 
       iplasm(jtime)=0 
       if (fwtcur.gt.0.0) iplasm(jtime)=1 

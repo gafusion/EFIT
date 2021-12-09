@@ -1,0 +1,3 @@
+ERROR in efitd at r= -1, t=    -1: Must specify grid dimensions as arguments
+WARNING in fit at r=  0, t=     0: not converged, reached max iterations
+INFO in efitd at r=  0, t=     0: Done processing

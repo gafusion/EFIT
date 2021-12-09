@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !>                                                                  
 !!     SUBPROGRAM DESCRIPTION:                                      
@@ -251,16 +252,18 @@
                     rmaxis,zmaxis,negcur,kerror)
         if (kerror.gt.0) return
         if (nfind.le.40.and.icntour.eq.0) then
-        if (idebug >= 2) write (6,*) ' SHAPE/BETALI kerror,i,nfind = ', & 
-                            kerror,i,nfind
+#ifdef DEBUG_LEVEL2
+        write (6,*) ' SHAPE/BETALI kerror,i,nfind = ',kerror,i,nfind
+#endif
         call cntour(rmaxis,zmaxis,siwant,xcmin,xcmax,ycmin,ycmax, &
                     yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
                     d33 ,d33 ,xmin,xmax,ymin,ymax,nzz,iautoc, &
                     bpol,bpolz,nfind,rgrid,nw,zgrid,nh, &
                     c,n222,nh2,nttyo,npoint, &
                     negcur,bkx,lkx,bky,lky,kerror)
-        if (idebug >= 2) write (6,*) ' BETALI/CNTOUR kerror,nfind = ', &
-                            kerror,nfind
+#ifdef DEBUG_LEVEL2
+        write (6,*) ' BETALI/CNTOUR kerror,nfind = ',kerror,nfind
+#endif
         if (kerror /= 0) return
         endif
         if (nfind.ge.10) then

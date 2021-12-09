@@ -11,3 +11,14 @@ services:
     working_dir: /efit
     stdin_open: true
     tty: true
+
+  efitai-aocc:
+    build: 
+      context: .
+      dockerfile: Dockerfile.aocc
+    image: registry.gitlab.com/efit-ai/efit/aocc
+    volumes:
+      - ..:/efit
+    working_dir: /efit
+    stdin_open: true
+    tty: true

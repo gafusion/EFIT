@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !>
 !!    fit carries out the fitting and equilibrium iterations.
@@ -17,7 +18,9 @@
 !--   inner equilibrium do loop and outer current profile parameters   --
 !--   do loop                                                          --
 !-----------------------------------------------------------------------
-      if (idebug /= 0) write (6,*) 'Enter FIT'
+#ifdef DEBUG_LEVEL1
+      write (6,*) 'Enter FIT'
+#endif
       kerror=0
       jerror(jtime)=0
       nitera=0
@@ -38,12 +41,12 @@
           if ((nitera.ge.kcallece).and.(kfitece.gt.0)) then
             nleft=abs(mxiter)-nitera
             if(nleft .ge. mtxece*nconstr) then
-              if (idebug.ge.2) then
-                write (6,*) 'Call FIT/SETECE',ix
-                write (6,*) &
-                  '  nitera/kcallece/kfitece/nleft/mtxece/nconstr = ', &
-                  nitera,kcallece,kfitece,nleft,mtxece,nconstr
-              endif
+#ifdef DEBUG_LEVEL2
+              write (6,*) 'Call FIT/SETECE',ix
+              write (6,*) &
+                '  nitera/kcallece/kfitece/nleft/mtxece/nconstr = ', &
+                nitera,kcallece,kfitece,nleft,mtxece,nconstr
+#endif
               call setece(jtime,kerror)
               if (kerror /= 0) then
                 jerror(jtime) = 1
@@ -69,7 +72,9 @@
               idosigma=2
             endif
           endif
-          if (idebug.ge.2) write (6,*) 'Call FIT/MATRIX',ix
+#ifdef DEBUG_LEVEL2
+          write (6,*) 'Call FIT/MATRIX',ix
+#endif
           call matrix(jtime,ix,ichisq,nitera,kerror)
            
           if (kerror /= 0) then
@@ -86,7 +91,9 @@
           ixnn=in
           nitera=nitera+1
 
-          if (idebug.ge.2) write(6,*) 'Entering currnt' 
+#ifdef DEBUG_LEVEL2
+          write(6,*) 'Entering currnt'
+#endif
           call currnt(ix,jtime,ixnn,nitera,kerror)
           if (kerror /= 0) then
             jerror(jtime) = 1
@@ -94,25 +101,33 @@
           endif
            
           if (ivesel.ge.2) then
-             if (idebug.ge.2) write(6,*) 'Entering vescur'
+#ifdef DEBUG_LEVEL2
+             write(6,*) 'Entering vescur'
+#endif
              call vescur(jtime)
           endif
           if ((i.le.1).or.(in.gt.1)) then
-              if (idebug.ge.2) write(6,*) 'Entering fcurrt'
+#ifdef DEBUG_LEVEL2
+             write(6,*) 'Entering fcurrt'
+#endif
              call fcurrt(jtime,ix,nitera,kerror)
           endif 
           if (kerror /= 0) then
             jerror(jtime) = 1
             return
           endif
-          if (idebug.ge.2) write(6,*) 'Entering pflux' 
+#ifdef DEBUG_LEVEL2
+          write(6,*) 'Entering pflux'
+#endif
           call pflux(ix,ixnn,nitera,jtime,kerror)
           if (kerror.gt.0) then
             jerror(jtime) = 1
             return
           endif
 
-          if (idebug.ge.2) write(6,*) 'Entering steps'
+#ifdef DEBUG_LEVEL2
+          write(6,*) 'Entering steps'
+#endif
           call steps(ixnn,nitera,ix,jtime,kerror)
           if (kerror.gt.0) then
             jerror(jtime) = 1
@@ -120,7 +135,9 @@
           endif
           if (kmtark.gt.0) then
             if (kwaitmse.ne.0 .and. i.ge.kwaitmse) then
-              if (idebug.ge.2) write(6,*) 'Entering fixstark'
+#ifdef DEBUG_LEVEL2
+              write(6,*) 'Entering fixstark'
+#endif
               call fixstark(jtime,kerror)
               if (kerror.gt.0) then
                 jerror(jtime) = 1
@@ -129,7 +146,9 @@
             end if
           endif
 
-          if (idebug.ge.2) write(6,*) 'Entering residu'
+#ifdef DEBUG_LEVEL2
+          write(6,*) 'Entering residu'
+#endif
           call residu(nitera,jtime)
           if ((nitera.lt.kcallece).and.(kfitece.gt.0.0)) exit
           if ((in.eq.1).and.(idone.gt.0).and.(tsaisq(jtime).le.saimin)) then
@@ -147,7 +166,9 @@
 !--    update pressure if needed                                    --
 !---------------------------------------------------------------------
       if (kprfit.gt.1) then
-        if (idebug.ge.2) write(6,*) 'Entering presur'
+#ifdef DEBUG_LEVEL2
+        write(6,*) 'Entering presur'
+#endif
         call presur(jtime,nitera,kerror)
         if (kerror /= 0) then
           jerror(jtime) = 1
@@ -171,9 +192,9 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !
-      if (idebug>=2) then
-        write (6,*) 'CHISQR, jtime= ',jtime
-      endif
+#ifdef DEBUG_LEVEL2
+      write (6,*) 'CHISQR, jtime= ',jtime
+#endif
 !
       if (ivesel.gt.10) return
       if (nbdry.gt.0) then
@@ -536,7 +557,7 @@
  7470 format (10x,'chi pressure:         ',/,1x,e12.5)
  7480 format (10x,'chi F-coils:          ',/,10x,e12.5)
  7482 format (10x,'chi psiref:',/,15x,e12.5)
- 7485 format (10x,'chi E-coils:          ',/,1x,e12.5)
+ 7485 format (10x,'chi E-coils:          ')
  7486 format (10x,'chi ecebz:            ',/,1x,e12.5)
  7487 format (10x,'chi total eceR+R-:    ',/,1x,e12.5)
  7488 format (10x,'chi eceR+R-:          ')

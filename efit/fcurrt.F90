@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !>
 !!    fcurrt computes the currents in the f coils.
@@ -121,11 +122,11 @@
            fwtbry(i)=fwtbdr*fwtbdry(i)
          enddo
        endif
-       if (idebug>=2) then
-        write (106,*) 'FCURRT NBDRY,PSIBRY,WSIRY = ', nbdry,psibry,wsibry
-        write (106,*) '       SIDIF,FWTBDR,ERRBRY= ', sidif,fwtbdr,errbry
-        write (106,*) '       PSIBRY0= ', psibry0
-       endif
+#ifdef DEBUG_LEVEL2
+      write (106,*) 'FCURRT NBDRY,PSIBRY,WSIRY = ', nbdry,psibry,wsibry
+      write (106,*) '       SIDIF,FWTBDR,ERRBRY= ', sidif,fwtbdr,errbry
+      write (106,*) '       PSIBRY0= ', psibry0
+#endif
 !-----------------------------------------------------------------------
 !--    set up response matrix, first fixed boundary, then flux loops  --
 !--    and F coil currents                                            --
@@ -210,8 +211,10 @@
              nj=nj+1
              abry(nj,nk)=fwtsolw(i)*rsolfc(i,nk)
            enddo
-           if (idebug >= 2) write (6,*) 'FCURRT nsol,fwtsolw = ', &
-                                        nsol,(fwtsolw(i),i=1,nsol)
+#ifdef DEBUG_LEVEL2
+           write (6,*) 'FCURRT nsol,fwtsolw = ', &
+                       nsol,(fwtsolw(i),i=1,nsol)
+#endif
          endif
        enddo
 !-----------------------------------------------------------------------
@@ -302,7 +305,9 @@
 !--    compute inverse of abry in least squares sence with singular   --
 !--    value decomposition                                            --
 !-----------------------------------------------------------------------
-       if (idebug >= 2) write (106,*) 'FCURRT nj,neqn = ', nj,neqn
+#ifdef DEBUG_LEVEL2
+       write (106,*) 'FCURRT nj,neqn = ', nj,neqn
+#endif
        call sdecm(abry,msbdry,nj,neqn,ut,msbdry,nj,wbry,work,ier)
        if (ier.eq.129) then
          kerror = 1
@@ -373,33 +378,33 @@
           bbry(m)=fwtbry(m)*(wsibry-bbry(m))
         enddo
         nj=nbdry
-        if (idebug >= 2) then
-         write (106,*) 'ivesel,iecurr,iacoil= ',ivesel,iecurr,iacoil
-         write (106,*) 'pbry= ',(pbry(m),m=1,nbdry)
-         write (106,*) 'bbry= ',(bbry(m),m=1,nbdry)
-         write (106,*) 'pbry(24),bbry(24)= ',pbry(24),bbry(24)
-         write (106,*) 'rgrid,zgrid= ',rgrid(75*nw/129),zgrid(104*nh/129)
-         write (106,*) 'rbdry,zbdry= ',rbdry(24),zbdry(24)
-         bdrav=abs(rbdrpc(24,1))
-         bdrmax=abs(rbdrpc(24,1))
-         mbdrmax=1
-         do m=2,nwnh
-           bdrav=bdrav+abs(rbdrpc(24,m))
-           if (bdrmax.lt.abs(rbdrpc(24,m))) then
-              bdrmax=abs(rbdrpc(24,m))
-              mbdrmax=m
-           endif
-         enddo
-         bdrav=bdrav/nwnh
-         write (106,*) 'mbdrmax,bdrav,bdrmax= ',mbdrmax,bdrav,bdrmax
-         write (106,*) 'rbdrpc(24,*)= ',(rbdrpc(24,m),m=1,nwnh)
-         write (106,*) 'rbdrec(24,*)= ',(rbdrec(24,m),m=1,nesum)
-         zdif=zbdry(24)-zgrid(104*nh/129)
-         bdrmax=psical(rbdry(24),rgrid(75*nw/129),zdif)*tmu
-         ! TODO: this goes out of bounds
-!         bdrmaxs=gridpc(9547,75*nw/129)
-         write (106,*) 'mbdrmax,bdrmax,bdrmaxs= ',mbdrmax,bdrmax!,bdrmaxs
-        endif
+#ifdef DEBUG_LEVEL2
+        write (106,*) 'ivesel,iecurr,iacoil= ',ivesel,iecurr,iacoil
+        write (106,*) 'pbry= ',(pbry(m),m=1,nbdry)
+        write (106,*) 'bbry= ',(bbry(m),m=1,nbdry)
+        write (106,*) 'pbry(24),bbry(24)= ',pbry(24),bbry(24)
+        write (106,*) 'rgrid,zgrid= ',rgrid(75*nw/129),zgrid(104*nh/129)
+        write (106,*) 'rbdry,zbdry= ',rbdry(24),zbdry(24)
+        bdrav=abs(rbdrpc(24,1))
+        bdrmax=abs(rbdrpc(24,1))
+        mbdrmax=1
+        do m=2,nwnh
+          bdrav=bdrav+abs(rbdrpc(24,m))
+          if (bdrmax.lt.abs(rbdrpc(24,m))) then
+             bdrmax=abs(rbdrpc(24,m))
+             mbdrmax=m
+          endif
+        enddo
+        bdrav=bdrav/nwnh
+        write (106,*) 'mbdrmax,bdrav,bdrmax= ',mbdrmax,bdrav,bdrmax
+        write (106,*) 'rbdrpc(24,*)= ',(rbdrpc(24,m),m=1,nwnh)
+        write (106,*) 'rbdrec(24,*)= ',(rbdrec(24,m),m=1,nesum)
+        zdif=zbdry(24)-zgrid(104*nh/129)
+        bdrmax=psical(rbdry(24),rgrid(75*nw/129),zdif)*tmu
+        ! TODO: this goes out of bounds
+!        bdrmaxs=gridpc(9547,75*nw/129)
+        write (106,*) 'mbdrmax,bdrmax,bdrmaxs= ',mbdrmax,bdrmax!,bdrmaxs
+#endif
       endif
 !-----------------------------------------------------------------------
 !--   flux loops portion                                              --
@@ -509,7 +514,9 @@
 !--   SOL Constraints RHS                                             --
 !-----------------------------------------------------------------------
       if (nsol.gt.0) then
-        if (idebug >= 2) write (6,*) 'FCURRT wsisol = ', wsisol
+#ifdef DEBUG_LEVEL2
+        write (6,*) 'FCURRT wsisol = ', wsisol
+#endif
         do m=1,nsol
           nj=nj+1
           bbry(nj)=0.0
@@ -617,10 +624,10 @@
           wsisol=wsisol+ssiref
         endif
 
-        if (idebug >= 2) then
-          write (106,*) '      PSIBRY0,PSIBRY,WSIBRY= ',&
-                        psibry0,psibry,wsibry
-        endif
+#ifdef DEBUG_LEVEL2
+        write (106,*) '      PSIBRY0,PSIBRY,WSIBRY= ',&
+                      psibry0,psibry,wsibry
+#endif
 !-----------------------------------------------------------------------
 !--     done, estimated errors for fixed boundary calculations        --
 !-----------------------------------------------------------------------
@@ -638,12 +645,13 @@
         erbave=erbave+erbloc(i)
       enddo
       erbave=erbave/nbdry
-      if (idebug /= 0) write (6,*) 'FCURRT erbmax,erbave,si = ', &
-                       erbmax,erbave,wsibry
-      if (idebug >= 2) then
-         write (106,*) 'XSIBRY,PBRY(1),BRSP= ', &
-                       xsibry,pbry(1),(brsp(m),m=1,nfcoil)
-      endif
+#ifdef DEBUG_LEVEL1
+      write (6,*) 'FCURRT erbmax,erbave,si = ',erbmax,erbave,wsibry
+#endif
+#ifdef DEBUG_LEVEL2
+      write (106,*) 'XSIBRY,PBRY(1),BRSP= ', &
+                    xsibry,pbry(1),(brsp(m),m=1,nfcoil)
+#endif
       endif
 !
       if (nsol.gt.0.and.iconvr.eq.3) then
@@ -659,8 +667,9 @@
           erbsave=erbsave+erbsloc(i)
         enddo
         erbsave=erbsave/nsol
-        if (idebug /= 0) write (6,*) 'FCURRT erbsmax,erbsave,si = ', &
-                                     erbsmax,erbsave,wsisol
+#ifdef DEBUG_LEVEL1
+        write (6,*) 'FCURRT erbsmax,erbsave,si = ',erbsmax,erbsave,wsisol
+#endif
       endif
 !
       return

@@ -1,0 +1,33 @@
+
+          EFIT-AI
+
+
+ type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+
+ number of time slices?
+
+ type input file names:
+ #
+ table_di2 = </global/homes/t/tbechtel/efitall/efit/build_gnu_ser/test/DIIID/green/>
+
+      ******************** EFITD 65 x  65  output ********************
+ before save fitting weights
+ adjust fit parameters based on basis function selected 
+ itek > 100, write out PLTOUT.OUT individually 
+ option to symmetrize added 8/14/91 eal  
+ read in limiter data
+
+       data used:   
+  0 flux loops
+  0 magnetic probes(i)
+  0 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     186610 time(ms) =          0 chi**2   =  0.000E+00
+ betat(%) =      0.436 betap    =      0.115 li       =      1.150
+ vol(cm3) =  1.786E+07 rout(cm) =    172.962 zout(cm) =      5.546
+ elong    =      1.786 utriang  =      0.759 ltriang  =      0.352
+ a(cm)    =     56.470 lin(cm)  =     14.759 lout(cm) =      5.637
+ ltop(cm) =     16.495 q*       =      3.867 rc(cm)   =    170.546
+ zc(cm)   =     -2.393 bt0(t)   =      1.631 qout     =      6.599

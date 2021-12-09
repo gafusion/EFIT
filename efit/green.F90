@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !>
 !!    green sets up the appropriate response functions for use
@@ -545,8 +546,10 @@
 !----------------------------------------------------------------------
 !--   response functions for MSE-LS                                  --
 !----------------------------------------------------------------------
-      if (jdebug.eq.'MSEL') write (6,*) 'GREEN mmbmsels = ',mmbmsels
-        if (mmbmsels.gt.0.or.kdomsels.gt.0) then
+#ifdef DEBUG_MSELS
+      write (6,*) 'GREEN mmbmsels = ',mmbmsels
+#endif
+      if (mmbmsels.gt.0.or.kdomsels.gt.0) then
         do m=1,nmsels
           if ((fwtbmselt(jtime,m).gt.0.0).or.(kdomsels.ne.0)) then
             if (rrmselt(jtime,m).le.0.0) cycle
@@ -559,10 +562,10 @@
               enddo
             else
               call setff(xn,xnsi)
-              if (idebug>=2) then
-                write (6,*) 'GREEN MSELS m,xn,xnsi,tmu02,dsi,dA= ',m,xn, &
-                            xnsi(1),xnsi(2),xnsi(3),tmu02,sidif,darea
-              endif
+#ifdef DEBUG_LEVEL2
+              write (6,*) 'GREEN MSELS m,xn,xnsi,tmu02,dsi,dA= ',m,xn, &
+                          xnsi(1),xnsi(2),xnsi(3),tmu02,sidif,darea
+#endif
               do jj=kppcur+1,kpcurn
                 mjj=jj-kppcur
                 rmlspc(m,jj)=-l1mselt(jtime,m)*sidif/darea*xnsi(mjj)*tmu02
@@ -594,11 +597,17 @@
             enddo
           endif
         enddo
-        if (idebug>=2.or.jdebug.eq.'MSEL') then
-          m=3
-          write (6,*) 'GREEN MSELS m,rmlspc,rhsmls= ',m,rmlspc(m,3), &
-                      rhsmls(1,m)
-        endif
+#ifdef DEBUG_LEVEL2
+        m=3
+        write (6,*) 'GREEN MSELS m,rmlspc,rhsmls= ',m,rmlspc(m,3), &
+                    rhsmls(1,m)
+#else
+#ifdef DEBUG_MSELS
+        m=3
+        write (6,*) 'GREEN MSELS m,rmlspc,rhsmls= ',m,rmlspc(m,3), &
+                    rhsmls(1,m)
+#endif
+#endif
       endif
 !-----------------------------------------------------------------------
 !--   response functions for q constraints at PSIWANT                 --

@@ -90,8 +90,14 @@
 #endif
         read (inp1,'(i4)',iostat=ioerr) nw
         if (ioerr.ne.0) read (inp2,'(i4)') nh
-        if (nh == 0) nh = nw
 
+! Ensure grid size is defined
+        if (nw == 0) then
+          call errctrl_msg('efit', &
+                 'Must specify grid dimensions as arguments')
+          stop
+        endif
+        if(nh == 0) nh = nw
       endif
 
 #if defined(USEMPI)
@@ -101,25 +107,14 @@
         call MPI_BCAST(nh,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
       endif
 #endif
-      if (nw == 0 .or. nh == 0) then
-        if (rank == 0) then
-          call errctrl_msg('efit', &
-                 'Must specify grid dimensions as arguments')
-        endif
-#if defined(USEMPI)
-        deallocate(dist_data,dist_data_displs,fwtgam_mpi)
-        call mpi_finalize(ierr)
-#endif
-        STOP
-      endif
 
-      IF (nw .le. 129) THEN
+      if (nw .le. 129) then
         npoint=800
-      ELSEIF (nw .le. 516) THEN
+      elseif (nw .le. 516) then
         npoint=3200
-      ELSE
+      else
         npoint=12800
-      ENDIF
+      endif
       nwnh=nw*nh
       nh2=2*nh
       nwrk=2*(nw+1)*nh
@@ -197,24 +192,56 @@
 !----------------------------------------------------------------------
 !--   start simulation for KTIME time slices per rank                --
 !----------------------------------------------------------------------
-      k=0
-  100 k=k+1
+      do k=1,ktime
         ks=k ! ks=1,2,3... in serial, but ks=1,1,1,... in parallel
 !----------------------------------------------------------------------
 !--     set up data                                                  --
 !----------------------------------------------------------------------
         
-        if(idebug>=2) write(6,*) ' Entering prtoutheader subroutine'
+#ifdef DEBUG_LEVEL2
+        write(6,*) ' Entering prtoutheader subroutine'
+#endif
         call prtoutheader()
-        if(idebug>=2) write(6,*) ' Entering data_input subroutine'
+#ifdef DEBUG_LEVEL2
+        write(6,*) ' Entering data_input subroutine'
+#endif
 
         call data_input(ks,iconvr,ktime,mtear,kerror)
 
-        if(idebug>=2) write(6,*) ' Entering errctrl_setstate'
+! Check that the grid sizes are compatible with Buneman's algorithm
+! (this is not relevant to pefit - not yet available)
+        if (ibunmn.ne.0) then
+          if (nh .ne. 0) then
+            select case (nh)
+            case (3,5,9,17,33,65,129,257,513,1025,2049)
+              ! all good
+            case default
+              call errctrl_msg('efit', &
+                   'Chosen grid dimensions cannot be run')
+              stop
+            end select
+          endif
+          select case (nw)
+          case (3,5,9,17,33,65,129,257,513,1025,2049)
+            ! all good
+          case default
+            call errctrl_msg('efit', &
+                 'Chosen grid dimensions cannot be run')
+            stop
+          end select
+        endif
+
+#ifdef DEBUG_LEVEL2
+        write(6,*) ' Entering errctrl_setstate'
+#endif
         call errctrl_setstate(rank,time(ks))
-        if (((kerror.gt.0).or.(iconvr.lt.0)).and.(k.lt.ktime)) then
-          kerrot(ks)=kerror
-          go to 100
+        if ((kerror.gt.0).or.(iconvr.lt.0)) then
+          if (k.lt.ktime) then
+            kerrot(ks)=kerror
+            cycle
+          else
+            exit
+          endif
         endif
         if (kautoknt .eq. 1) then
           call autoknot(ks,iconvr,ktime,mtear,kerror)
@@ -222,61 +249,82 @@
 !----------------------------------------------------------------------
 !--       initialize current profile                                 --
 !----------------------------------------------------------------------
-          if(idebug>=2) write(6,*) 'Entering inicur subroutine'
+#ifdef DEBUG_LEVEL2
+          write(6,*) 'Entering inicur subroutine'
+#endif
           call inicur(ks)
 !----------------------------------------------------------------------
 !--       get equilibrium                                            --
 !----------------------------------------------------------------------
-          if(idebug>=2) write(6,*) 'Entering fit subroutine'
+#ifdef DEBUG_LEVEL2
+          write(6,*) 'Entering fit subroutine'
+#endif
           call fit(ks,kerror)
-          if ((kerror.gt.0).and.(k.lt.ktime)) then
-            kerrot(ks)=kerror
-            go to 100
+          if (kerror.gt.0) then
+            if (k.lt.ktime) then
+              kerrot(ks)=kerror
+              cycle
+            else
+              exit
+            endif
           endif
         endif
 !----------------------------------------------------------------------
 !--     post processing for graphic and text outputs                 --
 !----------------------------------------------------------------------
-        if(idebug>=2) write(6,*) 'Entering shapesurf'
+#ifdef DEBUG_LEVEL2
+        write(6,*) 'Entering shapesurf'
+#endif
         call shapesurf(ks,ktime,kerror)
-        if ((kerror.gt.0).and.(k.lt.ktime)) then
-          kerrot(ks)=kerror
-          go to 100
+        if (kerror.gt.0) then
+          if (k.lt.ktime) then
+            kerrot(ks)=kerror
+            cycle
+          else
+            exit
+          endif
         endif
 !DEPRECATED        if (mtear.ne.0) call tearing(ks,mtear,kerror)
-!DEPRECATED        if ((kerror.gt.0).and.(k.lt.ktime)) then
-!DEPRECATED          kerrot(ks)=kerror
-!DEPRECATED          go to 100
+!DEPRECATED        if (kerror.gt.0) then
+!DEPRECATED          if (k.lt.ktime) then
+!DEPRECATED            kerrot(ks)=kerror
+!DEPRECATED            cycle
+!DEPRECATED          else
+!DEPRECATED            exit
+!DEPRECATED          endif
 !DEPRECATED        endif
-        if (idebug /= 0) write (6,*) 'Main/PRTOUT ks/kerror = ', ks, kerror
+#ifdef DEBUG_LEVEL1
+        write (6,*) 'Main/PRTOUT ks/kerror = ', ks, kerror
+#endif
         call prtout(ks)
         if ((kwaitmse.ne.0).and.(kmtark.gt.0)) call fixstark(-ks,kerror)
 !----------------------------------------------------------------------
 !--     write A and G EQDSKs                                         --
 !----------------------------------------------------------------------
-        if (idebug /= 0) write (6,*) 'Main/WQEDSK ks/kerror = ', ks, kerror
+#ifdef DEBUG_LEVEL1
+        write (6,*) 'Main/WQEDSK ks/kerror = ', ks, kerror
+#endif
         call weqdsk(ks)
         if (iconvr.ge.0) then
            call shipit(ktime,ks,ks)
 !DEPRECATED           call wtear(mtear,ks)
         endif
 #ifdef USE_NETCDF
-        if (idebug /= 0) write (6,*) 'Main/wmeasure ks/kerror = ', ks, kerror
+#ifdef DEBUG_LEVEL2
+        write (6,*) 'Main/wmeasure ks/kerror = ', ks, kerror
+#endif
         call wmeasure(ktime,ks,ks,1)
 #endif
 !----------------------------------------------------------------------
 ! --    write Kfile if needed                                        --
 !----------------------------------------------------------------------
         if (kdata.eq.3 .or. kdata.eq.7) then
-          if (write_Kfile) then
-            call write_K2(ks,kerror)
-          endif
+          if (write_Kfile) call write_K2(ks,kerror)
         endif
-        if (k.lt.ktime) then
-          kerrot(ks)=kerror
-          go to 100
-        endif
-        if (kwake.ne.0) go to 20
+        if (k.lt.ktime) kerrot(ks)=kerror
+      enddo
+
+      if (kwake.ne.0) go to 20
 #ifdef USE_NETCDF
       call wmeasure(ktime,1,ktime,2)
 #else

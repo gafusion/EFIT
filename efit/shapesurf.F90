@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !>
 !!    shape finds the outermost plasma surface
@@ -61,7 +62,9 @@
 !
       xdum=0.0
       ydum=0.0
-      if (idebug /= 0) write (6,*) 'Enter SHAPE kerror = ', kerror
+#ifdef DEBUG_LEVEL1
+      write (6,*) 'Enter SHAPE kerror = ', kerror
+#endif
       if (ivacum.le.0) then
       if (iges.le.1) then
         xguess=(rgrid(1)+rgrid(nw))/2.
@@ -907,7 +910,9 @@
          endif
       enddo
 !
-      if (idebug >= 2) write (6,*) 'SHAPE q=1,2,3 q= ',idoqn,qpsi(1),qpsi(nw)
+#ifdef DEBUG_LEVEL2
+      write (6,*) 'SHAPE q=1,2,3 q= ',idoqn,qpsi(1),qpsi(nw)
+#endif
       nnn=1
       d11=30.
       d22=0.03_dp
@@ -948,9 +953,9 @@
          cycle
         endif
  1105   continue
-        if (idebug >= 2) then
-            write (6,*) 'i, iend, sw, qw = ',i, iend,siwant, qwant
-        endif
+#ifdef DEBUG_LEVEL2
+        write (6,*) 'i, iend, sw, qw = ',i, iend,siwant, qwant
+#endif
         if (siwant.lt.0.0) cycle
         siwant=simag-siwant*(simag-psibry)
         call surfac(siwant,psi,nw,nh,rgrid,zgrid,xxtra(1,1),yxtra(1,1), &
@@ -958,16 +963,19 @@
                     ,rmaxis,zmaxis,negcur,kerror)
         if (kerror.gt.0) return
         if (nfind.le.40.and.icntour.eq.0) then
-         if (idebug >= 2) write (6,*) &
-                             ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
-                             kerror,i,nfind,qppp,qmmm,siwant
+#ifdef DEBUG_LEVEL2
+         write (6,*) ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
+                      kerror,i,nfind,qppp,qmmm,siwant
+#endif
          call cntour(rmaxis,zmaxis,siwant,rqmin,rqmax,ycmin,ycmax, &
                      yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
                      d33 ,d33 ,xmin,xmax,ymin,ymax,nzz,iautoc, &
                      xxtra(1,1),yxtra(1,1),nfind,rgrid,nw,zgrid,nh, &
                      c,n22,nh2,nttyo,npoint, &
                      negcur,bkx,lkx,bky,lky,kerror)
-         if (idebug >= 2) write (6,*) ' SHAPE/CNTOUR kerror,i,nfind = ',kerror,i,nfind
+#ifdef DEBUG_LEVEL2
+         write (6,*) ' SHAPE/CNTOUR kerror,i,nfind = ',kerror,i,nfind
+#endif
          if (kerror.gt.0) return
 
         else
@@ -995,7 +1003,9 @@
 !---------------------------------------------------------------------
 !--   Get 3/2 and 2/1 surface information        2002Jan25          --
 !---------------------------------------------------------------------
-      if (idebug >= 2) write (6,*) 'SHAPE q=3/2, 2/1'
+#ifdef DEBUG_LEVEL2
+      write (6,*) 'SHAPE q=3/2, 2/1'
+#endif
       iend=2
       psin32(iges)=-99.0
       rq32in(iges)=-99.0
@@ -1017,17 +1027,19 @@
               rmaxis,zmaxis,negcur,kerror)
             if (kerror.gt.0) return
             if (nfind.le.40.and.icntour.eq.0) then
-              if (idebug >= 2) write (6,*) &
-                ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
-                kerror,i,nfind,qppp,qmmm,psiwan
+#ifdef DEBUG_LEVEL2
+              write (6,*) ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
+                           kerror,i,nfind,qppp,qmmm,psiwan
+#endif
               call cntour(rmaxis,zmaxis,psiwan,rqmin,rqmax,ycmin,ycmax, &
                 yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
                 d33 ,d33 ,xmin,xmax,ymin,ymax,nzz,iautoc, &
                 xxtra(1,1),yxtra(1,1),nfind,rgrid,nw,zgrid,nh, &
                 c,n22,nh2,nttyo,npoint, &
                 negcur,bkx,lkx,bky,lky,kerror)
-              if (idebug >= 2) write (6,*) &
-                ' SHAPE/CNTOUR kerror,i,nfind = ',kerror,i,nfind
+#ifdef DEBUG_LEVEL2
+              write (6,*) ' SHAPE/CNTOUR kerror,i,nfind = ',kerror,i,nfind
+#endif
               if (kerror.gt.0) return
             endif
             if (i.eq.1) then
@@ -2673,10 +2685,10 @@
         abar=100.*pleng/2./pi
       endif
 !
-      if (idebug /= 0) then
-        write (6,*) 'Call SHAPE/PLTOUT kerror = ', kerror
-        write (6,*) 'ifitvs, icutfp, fpolvs(ka) = ', ifitvs,icutfp,fpolvs/1000.
-      endif
+#ifdef DEBUG_LEVEL1
+      write (6,*) 'Call SHAPE/PLTOUT kerror = ', kerror
+      write (6,*) 'ifitvs, icutfp, fpolvs(ka) = ', ifitvs,icutfp,fpolvs/1000.
+#endif
       if (ifitvs.gt.0.or.icutfp.eq.2) then
         write (6,*) 'ifitvs, icutfp, fpolvs(ka) = ', ifitvs,icutfp,fpolvs/1000.
       endif
@@ -2685,14 +2697,20 @@
           call altplt(xout,yout,nfound,iges,nnn, &
                       xmin,xmax,ymin,ymax,igmax)
         else
-          if (idebug /= 0) write (6,*) 'Before SHAPE/PLTOUT'
+#ifdef DEBUG_LEVEL1
+          write (6,*) 'Before SHAPE/PLTOUT'
+#endif
           call pltout(xout,yout,nfound,iges,nnn, &
                       xmin,xmax,ymin,ymax,igmax,kerror)
           if (kerror.gt.0) return
-          if (idebug /= 0) write (6,*) 'After SHAPE/PLTOUT'
+#ifdef DEBUG_LEVEL1
+          write (6,*) 'After SHAPE/PLTOUT'
+#endif
         endif
       endif
-      if (idebug /= 0) write (6,*) 'exit SHAPE/PLTOUT kerror = ', kerror
+#ifdef DEBUG_LEVEL1
+      write (6,*) 'exit SHAPE/PLTOUT kerror = ', kerror
+#endif
       if ((itrace.gt.1) .and. (abs(dpsi).le.psitol)) then
         if (itek.gt.0) then
            if (idplace.ne.0) then

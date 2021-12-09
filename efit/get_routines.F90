@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !>
 !!    This subroutine gets the beam pressure.
@@ -314,29 +315,28 @@
 !--   Calculation of |B| on rgrid (z=zeceo)   bfield(nw)            --
 !---------------------------------------------------------------------
       endif ! kgeteceb.le.0
-      if (icurrt.eq.1) then
+      select case (icurrt)
+      case (1)
         ffprim(1)=cratio*srma*2.*salpha/darea*twopi*tmu
         ffprim(nw)=ffprim(1)
-      endif
-      if (icurrt.ne.2.and.icurrt.ne.5) then
+      case (2,5)
         ffprim(nw)=fpcurr(x111,kffcur)/darea*twopi*tmu
         ffprim(1)=fpcurr(x000,kffcur)/darea*twopi*tmu
-      endif
-      if (icurrt.eq.4) then
+      case (4)
         call currnt(n222,jtime,n222,n222,kerror)
         if (kerror.gt.0) return
         ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
         ffprim(nw)=ffprim(1)*gammaf
-      endif
+      end select
       do i=2,nw-1
       siii=sigrid(i)
         select case (icurrt)
+        case (1)
+          ffprim(i)=ffprim(1)
         case (2,5)
           ffprim(i)=fpcurr(siii,kffcur)/darea*twopi*tmu
         case (4)
           ffprim(i)=ffprim(1)*(1.-siii**enp)**emp*(1.-gammap)+gammap
-        case (1)
-          ffprim(i)=ffprim(1)
         end select
       enddo
       fpol(nw)=fbrdy*tmu
@@ -738,29 +738,28 @@
 !---------------------------------------------------------------------
 !--   Calculation of |B| on rgrid (z=zeceo)   bfield(nw)            --
 !---------------------------------------------------------------------
-      if (icurrt.eq.1) then
+      select case (icurrt)
+      case (1)
         ffprim(1)=cratio*srma*2.*salpha/darea*twopi*tmu
         ffprim(nw)=ffprim(1)
-      endif
-      if (icurrt.eq.2.or.icurrt.eq.5) then
+      case (2,5)
         ffprim(nw)=fpcurr(x111,kffcur)/darea*twopi*tmu
         ffprim(1)=fpcurr(x000,kffcur)/darea*twopi*tmu
-      endif
-      if (icurrt.eq.4) then
+      case (4)
         call currnt(n222,jtime,n222,n222,kerror)
         if (kerror.gt.0) return
         ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
         ffprim(nw)=ffprim(1)*gammaf
-      endif
+      end select
       do i=2,nw-1
         siii=sigrid(i)
         select case (icurrt)
+        case (1)
+          ffprim(i)=ffprim(1)
         case (2,5)
           ffprim(i)=fpcurr(siii,kffcur)/darea*twopi*tmu
         case (4)
           ffprim(i)=ffprim(1)*(1.-siii**enp)**emp*(1.-gammap)+gammap
-        case (1)
-          ffprim(i)=ffprim(1)
         end select
       enddo
       fpol(nw)=fbrdy*tmu
@@ -834,7 +833,9 @@
         enddo
       endif 
 !
-      if (idebug.ge.3) write (6,*) 'GETECER, kmin/kmax = ', kmin, kmax
+#ifdef DEBUG_LEVEL3
+      write (6,*) 'GETECER, kmin/kmax = ', kmin, kmax
+#endif
       if (kmax.ne.0) then
 !--------------------------------------------------------------------
 !--   get babsk array (kmax+1) is strictly increasing order
@@ -1235,8 +1236,10 @@
          ,idestp(nnece),idestm(nnece)
       integer, intent(inout) :: kerror
 !
-      if (idebug.ge.3) write (6,*) 'Enter GETTIR, kfitece/kfixrece = ',&
+#ifdef DEBUG_LEVEL3
+      write (6,*) 'Enter GETTIR, kfitece/kfixrece = ',&
          kfitece, kfixrece
+#endif
       kerror = 0
       allocate(rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
          bout(kbre,nw),babs(kbre,nw),bbb(nw),ccc(nw), &
@@ -1309,12 +1312,12 @@
         brspfit(nj)=teeceinr(nj)/tebit(nj)
       enddo
 !
-      if (idebug.ge.3) write (6,*) 'GETTIR/SDECM, mecein/raa/r00 = ',&
+#ifdef DEBUG_LEVEL3
+      write (6,*) 'GETTIR/SDECM, mecein/raa/r00 = ',&
         mecein, raa, r00, nfit
-      if (idebug.ge.3) write (6,*) 'GETTIR teeceinr = ', &
-        (teeceinr(i),i=1,mecein)
-      if (idebug.ge.3) write (6,*) 'GETTIR tebit = ', &
-        (tebit(i),i=1,mecein)
+      write (6,*) 'GETTIR teeceinr = ',(teeceinr(i),i=1,mecein)
+      write (6,*) 'GETTIR tebit = ',(tebit(i),i=1,mecein)
+#endif
       nnn1=1
       iieerr=0
       mnow=mecein
@@ -1349,10 +1352,11 @@
         chisqfit=chisqfit+(tte(k)-teeceinr(k))**2/tebit(k)
       enddo
       mmmte = nnnte
-      if (idebug.ge.3) write (6,*) 'GETTIR chisqfit/kfixro/mnow = ', &
+#ifdef DEBUG_LEVEL3
+      write (6,*) 'GETTIR chisqfit/kfixro/mnow = ', &
         chisqfit, kfixro, mnow
-      if (idebug.ge.3) write (6,*) 'GETTIR tte = ', &
-        (tte(i),i=1,mecein)
+      write (6,*) 'GETTIR tte = ',(tte(i),i=1,mecein)
+#endif
 !--------------------------------------------------------------------
 !--   get Teecer(rrr) in ECE data region                           --
 !--------------------------------------------------------------------
@@ -1378,8 +1382,9 @@
           endif
         enddo
         receo=rrr(iio)
-        if (idebug.ge.3) write (6,*) 'GETTIR teece, receo, iio = ', &
-          teeceo, receo, iio
+#ifdef DEBUG_LEVEL3
+        write (6,*) 'GETTIR teece, receo, iio = ',teeceo, receo, iio
+#endif
 !--------------------------------------------------------------------
 !--     find recein(idesto), it close to receo                     --
 !--       dTe on receo from tebit(idesto)                          --
@@ -1414,8 +1419,9 @@
 !--   take R- and get R+                                            --
 !--       nece=the number of R-,  recem(nece), recep(nece)          --
 !---------------------------------------------------------------------
-      if (idebug.ge.3) write (6,*) 'GETTIR R-, kfitece/kfixrece  = ', &
-        kfitece, kfixrece
+#ifdef DEBUG_LEVEL3
+      write (6,*) 'GETTIR R-, kfitece/kfixrece  = ',kfitece, kfixrece
+#endif
       if ((kfitece.ne.1).and.(kfixrece.ne.1)) then
         ii=0
 !       do k=mecein,1,-1
@@ -1438,14 +1444,12 @@
           enddo         
           pteprm(k)=pteprm(k)/raa
         enddo
-        if (idebug.ge.3) write (6,*) 'GETTIR R-, nece = ', &
-          nece
-        if (idebug.ge.3) write (6,*) 'GETTIR R-, recem = ', &
-          (recem(i),i=1,nece)
-        if (idebug.ge.3) write (6,*) 'GETTIR R-, teece = ', &
-          (teece(i),i=1,nece)
-        if (idebug.ge.3) write (6,*) 'GETTIR R-, pteprm = ', &
-          (pteprm(i),i=1,nece)
+#ifdef DEBUG_LEVEL3
+        write (6,*) 'GETTIR R-, nece = ',nece
+        write (6,*) 'GETTIR R-, recem = ',(recem(i),i=1,nece)
+        write (6,*) 'GETTIR R-, teece = ',(teece(i),i=1,nece)
+        write (6,*) 'GETTIR R-, pteprm = ',(pteprm(i),i=1,nece)
+#endif
 !
         ii=0
         do i=nnnte,1,-1
@@ -1465,8 +1469,9 @@
             cycle
           fwtece0(k)=0.0
         enddo
-        if (idebug.ge.3) write (6,*) 'GETTIR R+, recep = ', &
-          (recep(i),i=1,nece)
+#ifdef DEBUG_LEVEL3
+        write (6,*) 'GETTIR R+, recep = ',(recep(i),i=1,nece)
+#endif
 !--------------------------------------------------------------------
 !--     idestp(nece)- the point recein(idestp) close to R+(nece)
 !--     idestm(nece)- the point recein(idestm) close to R-(nece)
@@ -1524,8 +1529,9 @@
           endif
         enddo
       endif ! (kfitece.ne.1).and.(kfixrece.ne.1)
-      if (idebug.ge.3) write (6,*) 'GETTIR, ecebit = ', &
-          (ecebit(i),i=1,nece)
+#ifdef DEBUG_LEVEL3
+      write (6,*) 'GETTIR, ecebit = ',(ecebit(i),i=1,nece)
+#endif
 
 !
       deallocate(rrgrid,bfield,rrout,bout,babs,bbb,ccc,ddd,btttt, &
@@ -1609,13 +1615,13 @@
 !--   set up P' and FF', then integration                             --
 !--   ffprim = (RBt) * d/dpsi(RBt)                                    --
 !---------------------------------------------------------------------
-      if (icurrt.eq.1) then
+      select case (icurrt)
+      case (1)
         pprime(1)=cratio*sbeta/darea/srma
         ffprim(1)=cratio*srma*2.*salpha/darea*twopi*tmu
         pprime(nw)=pprime(1)
         ffprim(nw)=ffprim(1)
-      endif
-      if (icurrt.eq.2.or.icurrt.eq.5) then
+      case (2,5)
         pprime(nw)=ppcurr(x111,kppcur)/darea
         ffprim(nw)=fpcurr(x111,kffcur)/darea*twopi*tmu
         pprime(1)=ppcurr(x000,kppcur)/darea
@@ -1627,21 +1633,23 @@
           ffprec(nw)=0.0
           ffprec(1)=0.0
         endif
-      endif
-      if (icurrt.eq.4) then
+      case (4)
         call currnt(n222,iges,n222,n222,kerror)
         if (kerror.gt.0) return
         pprime(1)=cratio/darea/rzero
         ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
         ffprim(nw)=ffprim(1)*gammaf
         pprime(nw)=pprime(1)*gammap
-      endif
+      end select
 
       do i=2,nw-1
         ii=nw-i+1
         siii=1.0_dp-1.0_dp/(nw-1)*(i-1)
         sigrid(ii)=siii
         select case (icurrt)
+        case(1)
+          pprime(ii)=pprime(1)
+          ffprim(ii)=ffprim(1)
         case (2,5)
           pprime(ii)=ppcurr(siii,kppcur)/darea
           ffprim(ii)=fpcurr(siii,kffcur)/darea*twopi*tmu
@@ -1654,9 +1662,6 @@
           pprime(ii)=(1.-siii**enp)**emp*(1.-gammap)+gammap
           ffprim(ii)=ffprim(1)*pprime(ii)
           pprime(ii)=pprime(1)*pprime(ii)
-        case(1)
-          pprime(ii)=pprime(1)
-          ffprim(ii)=ffprim(1)
         end select
       enddo
       endif ! jtime .gt. 0.0
@@ -1763,7 +1768,9 @@
         call msels_data(ishot,atime,ktime,avemlt,synmlt,icmls,       &
              bbmls,sigbmls,rrmls,zzmls,l1mls,l2mls,l4mls,epotpmls,   &
              sigepmls,iermls)
-        if (idebug>=2) write (6,*) 'GETMSELS bbmls,sigbmls= ',bbmls(1),sigbmls(1)
+#ifdef DEBUG_LEVEL2
+        write (6,*) 'GETMSELS bbmls,sigbmls= ',bbmls(1),sigbmls(1)
+#endif
         do j=1,ktime
           bmselt(j,i)=bbmls(j)
           sbmselt(j,i)=sigbmls(j)

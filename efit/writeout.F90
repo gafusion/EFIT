@@ -255,9 +255,9 @@
         do_spline_fit=.false.
         saimin=150.
       endif
-      if (idebug>=2) then
-        write (6,*) 'WRITE_K fwtbmsels= ',(fwtbmsels(i),i=1,nmsels)
-      endif
+#ifdef DEBUG_LEVEL2
+      write (6,*) 'WRITE_K fwtbmsels= ',(fwtbmsels(i),i=1,nmsels)
+#endif
 !----------------------------------------------------------------------
 !--   recalculate length of default directories in case any change   --
 !----------------------------------------------------------------------
@@ -360,10 +360,10 @@
         swtemsels(i)=fwtemsels(i)
       enddo
  3046 continue
-      if (idebug >= 2) then
-        write (6,*) 'WRITE_K fwtbmsels= ',(fwtbmsels(i),i=1,nmsels)
-        write (6,*) 'WRITE_K swtbmsels= ',(swtbmsels(i),i=1,nmsels)
-      endif
+#ifdef DEBUG_LEVEL2
+      write (6,*) 'WRITE_K fwtbmsels= ',(fwtbmsels(i),i=1,nmsels)
+      write (6,*) 'WRITE_K swtbmsels= ',(swtbmsels(i),i=1,nmsels)
+#endif
 !
       if (filenm.ne.'0' .and. filenm.ne.'') then
         read (nout,4970,iostat=ioerr) ishotime
@@ -434,9 +434,9 @@
         if (swtbmsels(i).gt.1.e-06_dp) mmbmsels=mmbmsels+1
         if (swtemsels(i).gt.1.e-06_dp) mmemsels=mmemsels+1
       enddo
-      if (idebug >= 2) then
-        write (6,*) 'WRITE_K mmbmsels= ', mmbmsels
-      endif
+#ifdef DEBUG_LEVEL2
+      write (6,*) 'WRITE_K mmbmsels= ', mmbmsels
+#endif
       if (mmbmsels.gt.0) then
 #if defined(USEMPI)
         if (nproc == 1) then

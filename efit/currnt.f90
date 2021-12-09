@@ -30,9 +30,8 @@
       initc=initc+1
       if (ivacum.gt.0) return
       if ((nitett.le.1).and.(icinit.eq.1)) return
-      if ((icurrt.eq.4).or.(((icurrt.eq.2).or.(icurrt.eq.5)) & 
-                            .and.(nitett.le.1).and.(icinit.gt.0)) &
-          .or.((icinit.gt.0).and.(iconvr.ne.3).and.(iter.le.1))) then
+      if (((icinit.gt.0).and.(iconvr.ne.3).and.(iter.le.1)).or.(icurrt.eq.4).or. &
+        (((icurrt.eq.2).or.(icurrt.eq.5)).and.(nitett.le.1).and.(icinit.gt.0))) then
 !-----------------------------------------------------------------------
 !--    GAQ type current profile                                       --
 !-----------------------------------------------------------------------
@@ -118,7 +117,7 @@
       select case (icurrt)
       case default ! 1
 !------------------------------------------------------------------------------
-!--    uniform current for Solove equilibrium                                  --
+!--    uniform current for Solove equilibrium                                --
 !------------------------------------------------------------------------------
        tcurrt=0.0
        do i=1,nw
@@ -147,7 +146,6 @@
        fcentr=twopi*2.*saaa**2*cj0
        fbrdy=fcentr*sqrt(1.-4.*salpha)
        bcentr(jtime)=fbrdy*tmu/rcentr
-       return
 !
       case (2)
 !----------------------------------------------------------------------
@@ -570,14 +568,11 @@
          cdeljsum=abs(cdeljsum/tcurrp)
         endif
        endif
-       return
 !
       case (3)
-       return
+       ! continue
 !
-      case (4)
-       ! already completed (above)
-       return
+      ! case (4) handled by preceeding if statement
       case (5)
 !---------------------------------------------------------------------
 !--    toroidal rotation, node points, bases :  ICURRT=5            --
@@ -980,7 +975,7 @@
        do i=nfcoil+1,nfcoil+kwcurn
          brsp(i)=cratio*brsp(i)
        enddo
-       return
 !
       end select
+      return
       end
