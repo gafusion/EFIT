@@ -13,7 +13,7 @@ if ! test -e ${link_efit}/lim.dat; then
   exit 1
 fi
 
-# Remove output
+# Remove any previous outputs
 if [ @HAVE_NETCDF@ = True ]; then
   outputs=( a g m )
 else

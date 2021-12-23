@@ -115,7 +115,8 @@
       ntime=1001
       ndim=3200
       kxiter=515
-      mqwant=30
+!      mqwant=30 ! DIIID default
+      mqwant=66 ! number used in NSTX
       mbdry=300
       mbdry1=110
       nxtram=10

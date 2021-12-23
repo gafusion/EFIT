@@ -8,80 +8,109 @@
 !-----------------------------------------------------------------------
 !     code organization for hdf_api.
 !-----------------------------------------------------------------------
-!     0. check_dims 
-!     1. h5accessMethod
-!     2. vshdf5_fcinit
-!     3. vshdf5_inith5vars
-!     4. open_h5file
-!     5. open_oldh5file
-!     6. open_newh5file
-!     7. close_h5file
-!     8. open_group
-!     9. make_group
+!      0. check_dims 
+!      1. h5accessMethod
+!      2. vshdf5_fcinit
+!      3. vshdf5_inith5vars
+!      4. open_h5file
+!      5. open_oldh5file
+!      6. open_newh5file
+!      7. close_h5file
+!      8. open_group
+!      9. make_group
 !     10. close_group
 !     11. test_group
 !     12. get_nmember
-!     12.a obj_exists
-!     12.b attr_exists
-!     13. make reference
-!     14. make_mesh_group
-!     15. make_time_group
-!     16. make_vec_group
-!     17. make_limits_group
-!     18. write_attribute_ch_sc
-!     19. write_attribute_ch_vec
-!     20. write_attribute_int_sc
-!     21. write_attribute_int_vec
-!     22. write_attribute_intl_sc
+!     13. obj_exists
+!     14. attr_exists
+!     15. make reference
+!     16. make_mesh_group
+!     17. make_time_group
+!     18. make_vec_group
+!     19. make_limits_group
+!     20. write_attribute_ch_sc
+!     21. write_attribute_ch_vec
+!     22. write_attribute_int_sc
 !     23. write_attribute_int_vec
-!     24. write_attribute_rl_sc
-!     25. write_attribute_rl_vec
-!     26. write_attribute_rls_sc
-!     27.a dump_h5in_attributes
-!     27.b dump_ch_sc
-!     27.c dump_ch_vec
-!     28. dump_int
-!     29. dump_int_1d
-!     30. dump_int_2d
-!     31. dump_intl
-!     32. dump_intl_1d
-!     33. dump_rl
-!     34. dump_rls
-!     35. dump_rl_1d
-!     36. dump_rl_2d
-!     37. dump_rl_3d
-!     38. dump_rl_4d
-!     39. dump_rl_5d
-!     40. dump_rls_1d
-!     41. dump_rls_2d
-!     42. dump_rls_3d
-!     43. dump_rls_4d
-!     44. add_h5_int
-!     45. add_h5_dbl
-!     46. add_h5_int_1d
-!     47. add_h5_1d
-!     48. add_h5_2d
-!     49. add_h5_3d
-!     50. add_h5_4d
-!     51.a data_dims
-!     51.b read_dims
-!     51.c read_ch_sc
-!     51.d read_ch_vec
-!     52. read_int
-!     53. read_int_1d
-!     54. read_int_2d
-!     55. read_intl
-!     56. read_intl_1d
-!     57.a read_rl
-!     57.b read_rl_1d
-!     58. read_rl_2d
-!     59. read_rl_3d
-!     60. read_rl_4d
-!     61. read_5d
-!     62. read_attribute_int_sc
-!     63. read_attribute_intl_sc
-!     64. read_attribute_rl_sc
-!     65. read_attribute_intl_vec
+!     24. write_attribute_intl_sc
+!     25. write_attribute_int_vec
+!     26. write_attribute_rl_sc
+!     27. write_attribute_rl_vec
+!     28. write_attribute_rls_sc
+!     29. write_attribute_log_sc
+!     30. write_attribute_log_vec
+!     31. dump_h5in_attributes
+!     32. dump_ch_sc
+!     33. dump_ch_vec
+!     34. dump_int
+!     35. dump_int_1d
+!     36. dump_int_2d
+!     37. dump_h5_int_dum
+!     38. dump_intl
+!     39. dump_intl_1d
+!     40. dump_h5_intl_dum
+!     41. dump_rl
+!     42. dump_rls
+!     43. dump_rl_1d
+!     44. dump_rl_2d
+!     45. dump_rl_3d
+!     46. dump_rl_4d
+!     47. dump_rl_5d
+!     48. dump_h5_rl_dum
+!     49. dump_rls_1d
+!     50. dump_rls_2d
+!     51. dump_rls_3d
+!     52. dump_rls_4d
+!     53. dump_h5_rls_dum   
+!     54. add_h5_int
+!     55. add_h5_dbl
+!     56. add_h5_int_1d
+!     57. add_h5_1d
+!     58. add_h5_2d
+!     59. add_h5_3d
+!     60. add_h5_4d
+!     61. dset_dims
+!     62. read_dims
+!     63. read_ndims
+!     64. read_ch_sc
+!     65. read_ch_vec
+!     66. read_int
+!     67. read_int_1d
+!     68. read_int_2d
+!     69. read_intl
+!     70. read_intl_1d
+!     71. read_rl
+!     72. read_rl_1d
+!     73. read_rl_2d
+!     74. read_rl_3d
+!     75. read_rl_4d
+!     76. read_5d
+!     77. read_attribute_int_sc
+!     78. read_attribute_int_vec
+!     79. read_attribute_intl_sc
+!     80. read_attribute_intl_vec
+!     81. read_attribute_rl_sc
+!     82. read_attribute_rl_vec
+!     83. read_attribute_ch_sc
+!     84. read_attribute_ch_vec
+!     85. read_attribute_log_sc
+!     86. read_attribute_log_sc
+!     87. read_ch_sc_ex
+!     88. read_ch_vec_ex
+!     89. read_int_ex
+!     90. read_int_1d_ex
+!     91. read_int_2d_ex
+!     92. read_intl_ex
+!     93. read_intl_1d_ex
+!     94. read_rl_ex
+!     95. read_rl_1d_ex
+!     96. read_rl_2d_ex
+!     97. read_rl_3d_ex
+!     98. read_rl_4d_ex
+!     99. read_rl_5d_ex
+!    100. read_log_ex
+!    101. read_int_2d_sq
+!    102. read_rl_2d_sq
 !------------------------------------------------------------------
 !     module hdf_api
 !-----------------------------------------------------------------------
@@ -121,39 +150,39 @@
 !      initializing correctly.
 !-----------------------------------------------------------------------
       type hdf5inopts
-         integer(hid_t) :: wrd_type       ! depricated, use typeconvert=T
-         integer :: data_xfer_mode        ! always F (serial IO)
-         logical :: noWrite               ! disable writes for parallel operation
-         logical :: dotranspose           ! whether to tranpose 2D arrays
-         logical :: verbose               ! whether to write verbose output
-         logical :: debug                 ! write even more verbose output for debugging
-         logical :: pio                   ! whether parallel i/o is used
-         logical :: wrvstime              ! whether to write time to attribute
-         logical :: typeconvert           ! whether to demote the type
-         logical :: unitconvert           ! whether to write vsunitcnv
-         integer(i4) :: comm     ! Communicator associated w/ open file
-         integer(i4) :: info
-         character(len=30) :: mesh             ! See above
-         character(len=30) :: units            ! Units
-         character(len=30) :: vsAxisLabels     ! Axis labels
-         character(len=30) :: vsCentering      ! How to center variables on mesh
-         character(len=30) :: vsMD             ! Multidomain variable
-         character(len=30) :: vsTimeGroup      ! Time group label
-         character(len=30) :: vsIndexOrder     ! Data ordering
-         character(len=10000) :: vsLabels      ! Labels for (ic) (nqty)
-         integer(i4) :: vsSpatialIndices(3)    ! Spatial indicies (<0 if 1 or 2D)
-         real(r8) :: vsTime                    ! Time
-         integer(i4) :: vsStep=0            ! Step # associated with time
-         real(r8) :: vsUnitCnv=1.              ! conversion factor
-         character(len=30), dimension(3) :: vsAxis   ! For rectilinear meshes
+        integer(hid_t) :: wrd_type       ! depricated, use typeconvert=T
+        integer :: data_xfer_mode        ! always F (serial IO)
+        logical :: noWrite               ! disable writes for parallel operation
+        logical :: dotranspose           ! whether to tranpose 2D arrays
+        logical :: verbose               ! whether to write verbose output
+        logical :: debug                 ! write even more verbose output for debugging
+        logical :: pio                   ! whether parallel i/o is used
+        logical :: wrvstime              ! whether to write time to attribute
+        logical :: typeconvert           ! whether to demote the type
+        logical :: unitconvert           ! whether to write vsunitcnv
+        integer(i4) :: comm     ! Communicator associated w/ open file
+        integer(i4) :: info
+        character(len=30) :: mesh             ! See above
+        character(len=30) :: units            ! Units
+        character(len=30) :: vsAxisLabels     ! Axis labels
+        character(len=30) :: vsCentering      ! How to center variables on mesh
+        character(len=30) :: vsMD             ! Multidomain variable
+        character(len=30) :: vsTimeGroup      ! Time group label
+        character(len=30) :: vsIndexOrder     ! Data ordering
+        character(len=10000) :: vsLabels      ! Labels for (ic) (nqty)
+        integer(i4) :: vsSpatialIndices(3)    ! Spatial indicies (<0 if 1 or 2D)
+        real(r8) :: vsTime                    ! Time
+        integer(i4) :: vsStep=0            ! Step # associated with time
+        real(r8) :: vsUnitCnv=1.              ! conversion factor
+        character(len=30), dimension(3) :: vsAxis   ! For rectilinear meshes
       end type
 !-----------------------------------------------------------------------
 !     Example of how to use h5err type after an fcapi call.
 !     if(h5err%errBool) WRITE(*,fmt='(/,a,/)') h5err%errorMsg
 !-----------------------------------------------------------------------
       type hdf5errortype
-         logical :: errbool
-         character(64) :: errormsg
+        logical :: errbool
+        character(64) :: errormsg
       end type
 !-----------------------------------------------------------------------
 !     subprogram name interfaces, types defined as
@@ -180,9 +209,9 @@
       end interface
       ! This is like dump but does an append
       interface add_h5
-        module procedure  add_h5_int, add_h5_dbl, &
-                          add_h5_int_1d, add_h5_1d, add_h5_2d, &
-                          add_h5_3d, add_h5_4d
+        module procedure  add_h5_int,add_h5_dbl, &
+                          add_h5_int_1d, add_h5_1d,add_h5_2d, &
+                          add_h5_3d,add_h5_4d
       end interface
       interface read_h5
         module procedure read_ch_sc,read_ch_vec, &
@@ -198,6 +227,17 @@
                          read_attribute_rl_sc,read_attribute_rl_vec, &
                          read_attribute_log_sc,read_attribute_log_vec
       end interface
+      interface read_h5_ex
+        module procedure read_ch_sc_ex,read_ch_vec_ex, &
+                         read_int_ex,read_int_1d_ex,read_int_2d_ex, &
+                         read_intl_ex,read_intl_1d_ex, &
+                         read_rl_ex,read_rl_1d_ex,read_rl_2d_ex, &
+                         read_rl_3d_ex,read_rl_4d_ex,read_rl_5d_ex, &
+                         read_log_ex
+      end interface
+      interface read_h5_sq
+        module procedure read_int_2d_sq,read_rl_2d_sq
+      end interface
     
       contains
 !-----------------------------------------------------------------------
@@ -207,21 +247,20 @@
       subroutine check_dims(dims, fdims, errval)
       integer(hsize_t), dimension(:), intent(in) :: dims, fdims
       type(hdf5errortype), intent(inout) :: errval
-         integer i
-         do i = 1, size(dims)
-           if (dims(i) /= fdims(i)) then
-             write(*, *) "error: dims (", dims, ")"
-             write(*, *) "  /=  fdims (", fdims, ")"
-             write(*, *) "fdims = dims in the file (use h5ls)"
-             write(*, *) "dims  = dims allocated for array to read"
-             errval%errormsg = 'error: dims /= fdims'
-             errval%errbool = .true.
-             return
-           endif
-         enddo
-         errval%errbool = .false.
+        integer i
+        do i = 1, size(dims)
+          if (dims(i) /= fdims(i)) then
+            write(*, *) "error: dims (", dims, ")"
+            write(*, *) "  /=  fdims (", fdims, ")"
+            write(*, *) "fdims = dims in the file (use h5ls)"
+            write(*, *) "dims  = dims allocated for array to read"
+            errval%errormsg = 'error: dims /= fdims'
+            errval%errbool = .true.
+            return
+          endif
+        enddo
+        errval%errbool = .false.
       end subroutine check_dims
-    
 !-----------------------------------------------------------------------
 !     subprogram 1. h5accessMethod
 !     Return something the correct hdf5 access method given a more
@@ -232,15 +271,14 @@
       character(*), intent(in) :: access_method
       select case(access_method)
       case("overwr")
-         h5accessmethod=h5f_acc_trunc_f                   ! overwrite file
+        h5accessmethod=h5f_acc_trunc_f                   ! overwrite file
       case("rdwr")
-         h5accessmethod=h5f_acc_rdwr_f                    ! read-write
+        h5accessmethod=h5f_acc_rdwr_f                    ! read-write
       case("rdonly")
-         h5accessmethod=h5f_acc_rdonly_f                  ! read only
+        h5accessmethod=h5f_acc_rdonly_f                  ! read only
       end select
       return
       end function h5accessmethod
-    
 !-----------------------------------------------------------------------
 !     subprogram 2. vshdf5_fcinit
 !     Open fortran hdf5 and set open/close parameters.
@@ -256,7 +294,6 @@
       ! write(*, *) "vshdf5_fcinit: leaving."
       return
       end subroutine vshdf5_fcinit
-    
 !-----------------------------------------------------------------------
 !     subprogram 3. vshdf5_inith5vars
 !     Initialize these variables to default values.
@@ -296,7 +333,6 @@
       h5err%errorMsg =  " "
       return
       end subroutine vshdf5_inith5vars
-    
 !-----------------------------------------------------------------------
 !     subprogram 4. open_h5file
 !     Open file for writing and write file attributes
@@ -358,14 +394,12 @@
 !-----------------------------------------------------------------------
       inquire(file=trim(fname),exist=file_exists)
       if (.not. file_exists) then
-         h5err%errormsg = 'error: file does not exist: '//fname
-         if (h5in%verbose) then
-           write(*, *) 'error: file does not exist: ', fname
-         endif
-         h5err%errbool = .true.
-         return
+        h5err%errormsg = 'error: file does not exist: '//fname
+        if (h5in%verbose) &
+          write(*, *) 'error: file does not exist: ', fname
+        h5err%errbool = .true.
+        return
       endif
-    
 !-----------------------------------------------------------------------
 !     Open file
 !-----------------------------------------------------------------------
@@ -380,20 +414,18 @@
       if (h5in%verbose) then
         write(*, *) "open_oldh5file: h5fopen_f returned."
       endif
-    
 !-----------------------------------------------------------------------
 !     Grab the root group id which is created by default
 !-----------------------------------------------------------------------
       call h5gopen_f(fileId,"/",rootGid,error)
       if (error==FAIL) then
-         h5err%errorMsg = 'ERROR: Error grabbing root ID: '//fname
-         h5err%errBool = .true.
-         return
+        h5err%errorMsg = 'ERROR: Error grabbing root ID: '//fname
+        h5err%errBool = .true.
+        return
       endif
       h5err%errBool = .false.
       return
       end subroutine open_oldh5file
-    
 !-----------------------------------------------------------------------
 !     subprogram 6. open_newh5file
 !     Open file for writing and write file attributes
@@ -415,29 +447,29 @@
 !-----------------------------------------------------------------------
       INQUIRE(FILE=TRIM(fname),EXIST=file_exists)
       if (.NOT. file_exists) then
-         ! Always create with over-write to avoid errors
-         access_mode=h5accessMethod("overwr")
-         call h5fcreate_f(TRIM(fname),access_mode,fileId,error)
+        ! Always create with over-write to avoid errors
+        access_mode=h5accessMethod("overwr")
+        call h5fcreate_f(TRIM(fname),access_mode,fileId,error)
       else
-         OPEN(UNIT=999,FILE=TRIM(fname),FORM='UNFORMATTED', &
-           POSITION='REWIND',STATUS='REPLACE')
-         CLOSE(UNIT=999)
-         access_mode=h5accessMethod("overwr")
-         call h5fcreate_f(TRIM(fname),access_mode,fileId,error)
+        OPEN(UNIT=999,FILE=TRIM(fname),FORM='UNFORMATTED', &
+             POSITION='REWIND',STATUS='REPLACE')
+        CLOSE(UNIT=999)
+        access_mode=h5accessMethod("overwr")
+        call h5fcreate_f(TRIM(fname),access_mode,fileId,error)
       endif
       if (error==FAIL) then
-         h5err%errorMsg = 'ERROR: Error opening file: '//fname
-         h5err%errBool = .true.
-         return
+        h5err%errorMsg = 'ERROR: Error opening file: '//fname
+        h5err%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Grab the root group id which is created by default
 !-----------------------------------------------------------------------
       call h5gopen_f(fileId,"/",rootGid,error)
       if (error==FAIL) then
-         h5err%errorMsg = 'ERROR: Error grabbing root ID: '//fname
-         h5err%errBool = .true.
-         return
+        h5err%errorMsg = 'ERROR: Error grabbing root ID: '//fname
+        h5err%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Put in things which describe the api
@@ -451,7 +483,6 @@
       h5err%errBool = .false.
       return
       end subroutine open_newh5file
-    
 !-----------------------------------------------------------------------
 !     subprogram 7. close_h5file
 !         Close the file associated with fileId.
@@ -470,15 +501,14 @@
       call h5gclose_f(root_id, error)
       call h5fclose_f(fileId, error)
       if (error==FAIL) then
-         h5err%errorMsg = 'ERROR: Error in close_h5file'
-         h5err%errBool = .true.
-         return
+        h5err%errorMsg = 'ERROR: Error in close_h5file'
+        h5err%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       h5err%errBool = .false.
       return
       end subroutine close_h5file
-    
 !-----------------------------------------------------------------------
 !     subprogram 8. open_group
 !         Open a group in a safe way
@@ -495,14 +525,13 @@
 !-----------------------------------------------------------------------
       call h5gopen_f(inid,gname,gid,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Error opening group: '//gname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Error opening group: '//gname
+        errval%errBool = .true.
+        return
       endif
       errval%errBool = .false.
       return
       end subroutine open_group
-    
 !-----------------------------------------------------------------------
 !     subprogram 9. make_group
 !     Create a group in a safe way
@@ -525,9 +554,9 @@
       ! If it failed, most likely it doesn't exist
       call h5gcreate_f(inid,gname,gid,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Error opening group: '//gname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Error opening group: '//gname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Add the VisSchema attributes
@@ -541,11 +570,11 @@
          if(h5in%debug) WRITE(*,*) 'Writing vsMesh attributes',h5in%mesh(6:)
          call write_attribute(gid,'vsKind',h5in%mesh(6:),h5in,errval)
          do i=1,3
-            if(len_trim(h5in%vsAxis(i))>0) then
-               write(alabel,fmt='(i1.1)') i-1
-               axisstr="vsAxis"//alabel
-               call write_attribute(gid,axisstr,h5in%vsAxis(i),h5in,errval)
-            endif
+           if (len_trim(h5in%vsAxis(i))>0) then
+             write(alabel,fmt='(i1.1)') i-1
+             axisstr="vsAxis"//alabel
+             call write_attribute(gid,axisstr,h5in%vsAxis(i),h5in,errval)
+           endif
          enddo
 !SEK: Not sure 
 !       else
@@ -563,7 +592,6 @@
       errval%errBool = .false.
       return
       end subroutine make_group
-    
 !-----------------------------------------------------------------------
 !     subprogram 10. close_group
 !     Close a group in a safe way
@@ -579,15 +607,14 @@
 !-----------------------------------------------------------------------
       call h5gclose_f(inid,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Error closing group: '//TRIM(gname)
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Error closing group: '//TRIM(gname)
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine close_group
-    
 !-----------------------------------------------------------------------
 !     subprogram 11. test_group
 !     See if group exists
@@ -623,7 +650,6 @@
       errval%errBool = .false.
       return
       end subroutine test_group
-    
 !-----------------------------------------------------------------------
 !     subprogram 12. get_nmember
 !     Get the number of members of a group
@@ -641,17 +667,16 @@
 !-----------------------------------------------------------------------
       call h5gn_members_f(inid,gname,nmembers,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Error in get_nmembers for'//gname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Error in get_nmembers for'//gname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine get_nmembers
-    
 !-----------------------------------------------------------------------
-!     subprogram 12.a obj_exists
+!     subprogram 13. obj_exists
 !     Determine whether object oname at location inid exists
 !-----------------------------------------------------------------------
       function obj_exists(inid,oname,errval)
@@ -668,16 +693,15 @@
       call h5oexists_by_name_f(inid,oname,obj_exists,error)
       call h5eset_auto_f(1_i4,error) ! enable errors
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Error in obj_exists for'//oname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Error in obj_exists for'//oname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       end function obj_exists
-    
 !-----------------------------------------------------------------------
-!     subprogram 12.b attr_exists
+!     subprogram 14. attr_exists
 !     Determine whether attribute aname at location inid exists
 !-----------------------------------------------------------------------
       function attr_exists(inid,oname,aname,errval)
@@ -695,16 +719,15 @@
       call h5aexists_by_name_f(inid,oname,aname,attr_exists,error)
       call h5eset_auto_f(1_i4,error) ! enable errors
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Error in attr_exists for'//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Error in attr_exists for'//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       end function attr_exists
-    
 !-----------------------------------------------------------------------
-!     subprogram 13. make reference
+!     subprogram 15. make reference
 !     Simplify referencing of one object (source) to another (target)
 !-----------------------------------------------------------------------
       subroutine make_reference(inid,tname,errval)
@@ -735,7 +758,7 @@
       return
       end subroutine make_reference
 !-----------------------------------------------------------------------
-!     subprogram 14. make_mesh_group
+!     subprogram 16. make_mesh_group
 !     Defines a mesh group that points to other variables that define
 !      the actual mesh
 !-----------------------------------------------------------------------
@@ -763,25 +786,25 @@
       h5in%vsAxisLabels=trim(axis0)//", "//trim(axis1)
       h5in%vsAxisLabels=h5in%vsAxisLabels//", "//trim(axis2)
       call write_attribute(gridId,'vsAxisLabels',h5in%vsAxisLabels,h5in,errval)
-      if(len_trim(transform)>0) then
-         call write_attribute(gridId,'vsTransform',transform,h5in,errval)
-         call write_attribute(gridId,'vsTransformedMesh',trName,h5in,errval)
+      if (len_trim(transform)>0) then
+        call write_attribute(gridId,'vsTransform',transform,h5in,errval)
+        call write_attribute(gridId,'vsTransformedMesh',trName,h5in,errval)
       endif
-      if(len_trim(h5in%vsCentering)>0) then
+      if (len_trim(h5in%vsCentering)>0) then
         call write_attribute(gridId,'vsCentering',h5in%vsCentering,&
-                                  h5in,errval)
+                             h5in,errval)
       endif
 !-----------------------------------------------------------------------
 !     vsMD: Multidomain cabilities
 !-----------------------------------------------------------------------
-      if(len_trim(h5in%vsMD)>0) then
-         call write_attribute(gridId,"vsMD",h5in%vsMD,h5in,errval)
+      if (len_trim(h5in%vsMD)>0) then
+        call write_attribute(gridId,"vsMD",h5in%vsMD,h5in,errval)
       endif
 !-----------------------------------------------------------------------
       return
       end subroutine make_mesh_group
 !-----------------------------------------------------------------------
-!     subprogram 15. make_time_group
+!     subprogram 17. make_time_group
 !     Make a group that contains the time data.  See:
 !        https://ice.txcorp.com/trac/vizschema/wiki/OtherMetaData
 !-----------------------------------------------------------------------
@@ -802,16 +825,15 @@
       write(*,*) h5in%vsStep
       call write_attribute(timeId,'vsStep',h5in%vsStep,h5in,h5err)
       call write_attribute(timeId,'vsTime',h5in%vsTime,h5in,h5err)
-      if(len_trim(h5in%units)>0) then
-         if(h5in%debug) WRITE(*,*) 'Writing time units',h5in%units
-         call write_attribute(timeId,"units",h5in%units,h5in,h5err)
+      if (len_trim(h5in%units)>0) then
+        if(h5in%debug) WRITE(*,*) 'Writing time units',h5in%units
+        call write_attribute(timeId,"units",h5in%units,h5in,h5err)
       endif
       call close_group(h5in%vstimegroup,timeId,h5err)
       return
       end subroutine make_time_group
-    
 !-----------------------------------------------------------------------
-!     subprogram 16. make_vec_group
+!     subprogram 18. make_vec_group
 !     Make a group that defines a vector.  See:
 !        https://ice.txcorp.com/trac/vizschema/wiki/OtherMetaData
 !-----------------------------------------------------------------------
@@ -834,7 +856,7 @@
       return
       end subroutine make_vec_group
 !-----------------------------------------------------------------------
-!     subprogram 17. make_limits_group
+!     subprogram 19. make_limits_group
 !     Make a group that contains the visualization region data.  See:
 !        https://ice.txcorp.com/trac/vizschema/wiki/OtherMetaData
 !-----------------------------------------------------------------------
@@ -861,7 +883,7 @@
       return
       end subroutine make_limits_group
 !-----------------------------------------------------------------------
-!     subprogram 18. write_attribute_ch_sc
+!     subprogram 20. write_attribute_ch_sc
 !     Create a group for the independent vars (aka dimensions, scales)
 !-----------------------------------------------------------------------
       subroutine write_attribute_ch_sc(inid,aname,attribute,h5in,errval)
@@ -881,8 +903,8 @@
 !     If it is a null value then no need to write it out.
 !-----------------------------------------------------------------------
       if (len_trim(attribute)==0) then
-         errval%errBool = .false.
-         return
+        errval%errBool = .false.
+        return
       endif
 !-----------------------------------------------------------------------
 !     See attrexample.f90
@@ -901,9 +923,9 @@
       call h5acreate_f(inid, aname, atype_id, aspace_id, attr_id, error)
     
       if (error==FAIL) then
-         errval%errorMsg = 'Cannot create attribute '//aname//attribute
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'Cannot create attribute '//aname//attribute
+        errval%errBool = .true.
+        return
       else
         ! Write the attribute data.
         if (.not.h5in%noWrite) &
@@ -919,7 +941,7 @@
       return
       end subroutine write_attribute_ch_sc
 !-----------------------------------------------------------------------
-!     subprogram 19. write_attribute_ch_vec
+!     subprogram 21. write_attribute_ch_vec
 !     Create a group for the independent vars (aka dimensions, scales)
 !-----------------------------------------------------------------------
       subroutine write_attribute_ch_vec(inid,aname,attribute,h5in,errval)
@@ -944,8 +966,8 @@
 !     If it is a null value then no need to write it out.
 !-----------------------------------------------------------------------
       if (len_trim(attribute(1))==0) then
-         errval%errBool = .false.
-         return
+        errval%errBool = .false.
+        return
       endif
 !-----------------------------------------------------------------------
 !     See attrexample.f90
@@ -954,8 +976,8 @@
       adims(:) = (/data_dims(1)/)
       attrlen=0
       do i=1,data_dims(1)
-         ati = len_trim(attribute(i))
-         attrlen = max(attrlen,ati)
+        ati = len_trim(attribute(i))
+        attrlen = max(attrlen,ati)
       enddo
     
       ! Create the data space for the attribute.
@@ -969,9 +991,9 @@
       call h5acreate_f(inid, aname, atype_id, aspace_id,attr_id, error)
     
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Can not create attribute '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Can not create attribute '//aname
+        errval%errBool = .true.
+        return
       else
         ! Write the attribute data.
         if (.not.h5in%noWrite) &
@@ -986,9 +1008,8 @@
       errval%errBool = .false.
       return
       end subroutine write_attribute_ch_vec
-    
 !-----------------------------------------------------------------------
-!     subprogram 20. write_attribute_int_sc
+!     subprogram 22. write_attribute_int_sc
 !     Create a group for the independent vars (aka dimensions, scales)
 !-----------------------------------------------------------------------
       subroutine write_attribute_int_sc(inid,aname,attribute,h5in,errval)
@@ -1019,9 +1040,9 @@
       call h5acreate_f(inid,aname,atype_id,aspace_id,attr_id,error)
     
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Can not create attribute '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Can not create attribute '//aname
+        errval%errBool = .true.
+        return
       else
         ! Write the attribute data.
         if (.not.h5in%noWrite) &
@@ -1036,9 +1057,8 @@
       errval%errBool = .false.
       return
       end subroutine write_attribute_int_sc
-    
 !-----------------------------------------------------------------------
-!     subprogram 21. write_attribute_int_vec
+!     subprogram 23. write_attribute_int_vec
 !     Create a group for the independent vars (aka dimensions, scales)
 !-----------------------------------------------------------------------
       subroutine write_attribute_int_vec(inid,aname,attribute,h5in,errval)
@@ -1059,7 +1079,7 @@
 !-----------------------------------------------------------------------
 !     See attrexample.f90
 !-----------------------------------------------------------------------
-      data_dims(1) = SIZE(attribute)
+      data_dims(1) = size(attribute)
       adims(:) = (/data_dims(1)/)
     
       ! Create the data space for the attribute.
@@ -1071,9 +1091,9 @@
     
     
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Can not create attribute '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Can not create attribute '//aname
+        errval%errBool = .true.
+        return
       else
         ! Write the attribute data.
         if (.not.h5in%noWrite) &
@@ -1088,9 +1108,8 @@
       errval%errBool = .false.
       return
       end subroutine write_attribute_int_vec
-    
 !-----------------------------------------------------------------------
-!     subprogram 22. write_attribute_intl_sc
+!     subprogram 24. write_attribute_intl_sc
 !     Create a group for the independent vars (aka dimensions, scales)
 !-----------------------------------------------------------------------
       subroutine write_attribute_intl_sc(inid,aname,attribute,h5in,errval)
@@ -1121,9 +1140,9 @@
       call h5acreate_f(inid,aname,atype_id,aspace_id,attr_id,error)
     
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Can not create attribute '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Can not create attribute '//aname
+        errval%errBool = .true.
+        return
       else
         ! Write the attribute data.
         if (.not.h5in%noWrite) &
@@ -1138,9 +1157,8 @@
       errval%errBool = .false.
       return
       end subroutine write_attribute_intl_sc
-    
 !-----------------------------------------------------------------------
-!     subprogram 23. write_attribute_int_vec
+!     subprogram 25. write_attribute_int_vec
 !     Create a group for the independent vars (aka dimensions, scales)
 !-----------------------------------------------------------------------
       subroutine write_attribute_intl_vec(inid,aname,attribute,h5in,errval)
@@ -1161,7 +1179,7 @@
 !-----------------------------------------------------------------------
 !     See attrexample.f90
 !-----------------------------------------------------------------------
-      data_dims(1) = SIZE(attribute)
+      data_dims(1) = size(attribute)
       adims(:) = (/data_dims(1)/)
     
       ! Create the data space for the attribute.
@@ -1173,9 +1191,9 @@
     
     
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Can not create attribute '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Can not create attribute '//aname
+        errval%errBool = .true.
+        return
       else
         ! Write the attribute data.
         if (.not.h5in%noWrite) &
@@ -1190,9 +1208,8 @@
       errval%errBool = .false.
       return
       end subroutine write_attribute_intl_vec
-    
 !-----------------------------------------------------------------------
-!     subprogram 24. write_attribute_rl_sc
+!     subprogram 26. write_attribute_rl_sc
 !-----------------------------------------------------------------------
       subroutine write_attribute_rl_sc(inid,aname,attribute,h5in,errval)
       integer(HID_T), intent(in) :: inid
@@ -1221,9 +1238,9 @@
       call h5acreate_f(inid,aname,atype_id,aspace_id,attr_id,error)
     
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Can not create attribute '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Can not create attribute '//aname
+        errval%errBool = .true.
+        return
       else
         ! Write the attribute data.
 !-PRE        if (h5in%typeConvert) then
@@ -1242,9 +1259,8 @@
       errval%errBool = .false.
       return
       end subroutine write_attribute_rl_sc
-    
 !-----------------------------------------------------------------------
-!     subprogram 25. write_attribute_rl_vec
+!     subprogram 27. write_attribute_rl_vec
 !     Create a group for the independent vars (aka dimensions, scales)
 !-----------------------------------------------------------------------
       subroutine write_attribute_rl_vec(inid,aname,attribute,h5in,errval)
@@ -1265,7 +1281,7 @@
 !-------------------------------------------------------------------
 !     See attrexample.f90
 !-------------------------------------------------------------------
-      data_dims(1) = SIZE(attribute)
+      data_dims(1) = size(attribute)
       adims(:) = (/data_dims(1)/)
     
       ! Create the data space for the attribute.
@@ -1276,9 +1292,9 @@
       call h5acreate_f(inid,aname,atype_id,aspace_id,attr_id,error)
     
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Can not create attribute '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Can not create attribute '//aname
+        errval%errBool = .true.
+        return
       else
         ! Write the attribute data.
 !-PRE        if(h5in%typeConvert) then
@@ -1297,9 +1313,8 @@
       errval%errBool = .false.
       return
       end subroutine write_attribute_rl_vec
-    
 !-----------------------------------------------------------------------
-!     subprogram 26. write_attribute_rls_sc
+!     subprogram 28. write_attribute_rls_sc
 !-----------------------------------------------------------------------
       subroutine write_attribute_rls_sc(inid,aname,attribute,h5in,errval)
       integer(HID_T), intent(in) :: inid
@@ -1328,9 +1343,9 @@
       call h5acreate_f(inid,aname,atype_id,aspace_id,attr_id,error)
     
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Can not create attribute '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Can not create attribute '//aname
+        errval%errBool = .true.
+        return
       else
         ! Write the attribute data.
         if (.not.h5in%noWrite) &
@@ -1345,9 +1360,8 @@
       errval%errBool = .false.
       return
       end subroutine write_attribute_rls_sc
-    
 !-----------------------------------------------------------------------
-!     subprogram 20. write_attribute_log_sc
+!     subprogram 29. write_attribute_log_sc
 !-----------------------------------------------------------------------
       subroutine write_attribute_log_sc(inid,aname,attribute,h5in,errval)
       integer(HID_T), intent(in) :: inid
@@ -1384,9 +1398,9 @@
       call h5acreate_f(inid,aname,atype_id,aspace_id,attr_id,error)
     
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Can not create attribute '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Can not create attribute '//aname
+        errval%errBool = .true.
+        return
       else
         ! Write the attribute data.
         if (.not.h5in%noWrite) &
@@ -1401,9 +1415,8 @@
       errval%errBool = .false.
       return
       end subroutine write_attribute_log_sc
-    
 !-----------------------------------------------------------------------
-!     subprogram 23. write_attribute_log_vec
+!     subprogram 30. write_attribute_log_vec
 !     Create a group for the independent vars (aka dimensions, scales)
 !-----------------------------------------------------------------------
       subroutine write_attribute_log_vec(inid,aname,attribute,h5in,errval)
@@ -1425,7 +1438,7 @@
 !-----------------------------------------------------------------------
 !     See attrexample.f90
 !-----------------------------------------------------------------------
-      data_dims(1) = SIZE(attribute)
+      data_dims(1) = size(attribute)
       allocate(iattribute(data_dims(1)))
       do ii=1,data_dims(1)
         if (attribute(ii)) then
@@ -1446,9 +1459,9 @@
     
     
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Can not create attribute '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Can not create attribute '//aname
+        errval%errBool = .true.
+        return
       else
         ! Write the attribute data.
         if (.not.h5in%noWrite) &
@@ -1464,9 +1477,8 @@
       errval%errBool = .false.
       return
       end subroutine write_attribute_log_vec
-    
 !-----------------------------------------------------------------------
-!     subprogram 27.a dump_h5in_attributes
+!     subprogram 31. dump_h5in_attributes
 !     Write an hdf5 array + references to independent vars
 !-----------------------------------------------------------------------
       subroutine dump_h5in_attributes(dset_id,h5in,h5err)
@@ -1478,19 +1490,19 @@
 !-----------------------------------------------------------------------
 !     Add the VisSchema attributes
 !-----------------------------------------------------------------------
-      if(len_trim(h5in%mesh)>0) then
-       if(h5in%mesh(1:5)=="mesh-") then
-         if(h5in%debug) WRITE(*,*) 'Writing vsType attribute'
+      if (len_trim(h5in%mesh)>0) then
+       if (h5in%mesh(1:5)=="mesh-") then
+         if (h5in%debug) WRITE(*,*) 'Writing vsType attribute'
          call write_attribute(dset_id,'vsType',"mesh",h5in,h5err)
-         if(h5in%debug) WRITE(*,*) 'Writing vsMesh attribute ',h5in%mesh(6:)
+         if (h5in%debug) WRITE(*,*) 'Writing vsMesh attribute ',h5in%mesh(6:)
          call write_attribute(dset_id,'vsKind',h5in%mesh(6:),h5in,h5err)
-         if(len_trim(h5in%vsAxisLabels)>0) then
-           if(h5in%debug) WRITE(*,*) 'Writing vsAxisLabels'
+         if (len_trim(h5in%vsAxisLabels)>0) then
+           if (h5in%debug) WRITE(*,*) 'Writing vsAxisLabels'
            call write_attribute(dset_id,'vsAxisLabels',&
                                   h5in%vsAxisLabels,h5in,h5err)
          endif
-       elseif(h5in%mesh(1:16)=="variableWithMesh") then
-         if(h5in%debug) WRITE(*,*) 'Writing vsType attribute'
+       elseif (h5in%mesh(1:16)=="variableWithMesh") then
+         if (h5in%debug) WRITE(*,*) 'Writing vsType attribute'
          call write_attribute(dset_id,'vsType',"variableWithMesh",h5in,h5err)
          if (h5in%vsSpatialIndices(1)>=0) then
            nspat=1
@@ -1501,67 +1513,67 @@
            call write_attribute(dset_id,'vsSpatialIndices', &
                                 h5in%vsSpatialIndices(1:nspat),h5in,h5err)
          endif
-         if(len_trim(h5in%vsLabels)>0) then
-           if(h5in%debug) WRITE(*,*) 'Writing vsLabels attribute'
+         if (len_trim(h5in%vsLabels)>0) then
+           if (h5in%debug) WRITE(*,*) 'Writing vsLabels attribute'
            call write_attribute(dset_id,'vsLabels',h5in%vsLabels,h5in,h5err)
          endif
-         if(len_trim(h5in%vstimegroup)>0 .and. h5in%wrvstime) then
-            if(h5in%debug) WRITE(*,*) 'Writing vsTimeGroup attribute'
-            call write_attribute(dset_id,'vsTimeGroup',h5in%vstimegroup,h5in,h5err)
+         if (len_trim(h5in%vstimegroup)>0 .and. h5in%wrvstime) then
+           if (h5in%debug) WRITE(*,*) 'Writing vsTimeGroup attribute'
+           call write_attribute(dset_id,'vsTimeGroup',h5in%vstimegroup,h5in,h5err)
          endif
        else
-         if(h5in%debug) WRITE(*,*) 'Writing vsType attribute'
+         if (h5in%debug) WRITE(*,*) 'Writing vsType attribute'
          call write_attribute(dset_id,'vsType',"variable",h5in,h5err)
-         if(h5in%debug) WRITE(*,*) 'Writing vsMesh attribute ',h5in%mesh
+         if (h5in%debug) WRITE(*,*) 'Writing vsMesh attribute ',h5in%mesh
          call write_attribute(dset_id,'vsMesh',h5in%mesh,h5in,h5err)
-         if(len_trim(h5in%vsCentering)>0) then
-           if(h5in%debug) WRITE(*,*) 'Writing vsCentering attribute'
+         if (len_trim(h5in%vsCentering)>0) then
+           if (h5in%debug) WRITE(*,*) 'Writing vsCentering attribute'
            call write_attribute(dset_id,'vsCentering',h5in%vsCentering, &
                                   h5in,h5err)
          endif
-         if(len_trim(h5in%vsLabels)>0) then
-           if(h5in%debug) WRITE(*,*) 'Writing vsLabels attribute'
+         if (len_trim(h5in%vsLabels)>0) then
+           if (h5in%debug) WRITE(*,*) 'Writing vsLabels attribute'
            call write_attribute(dset_id,'vsLabels',h5in%vsLabels,h5in,h5err)
          endif
-         if(len_trim(h5in%vstimegroup)>0 .and. h5in%wrvstime) then
-            if(h5in%debug) WRITE(*,*) 'Writing vsTimeGroup attribute'
-            call write_attribute(dset_id,'vsTimeGroup',h5in%vstimegroup,h5in,h5err)
+         if (len_trim(h5in%vstimegroup)>0 .and. h5in%wrvstime) then
+           if (h5in%debug) WRITE(*,*) 'Writing vsTimeGroup attribute'
+           call write_attribute(dset_id,'vsTimeGroup',h5in%vstimegroup,h5in,h5err)
          endif
        endif
       endif
 !-----------------------------------------------------------------------
 !     vsIndexOrder: set ordering (defined in initialization)
 !-----------------------------------------------------------------------
-      if(len_trim(h5in%vsIndexOrder)>0) then
-        if(h5in%debug) WRITE(*,*) 'Writing vsIndexOrder attribute'
+      if (len_trim(h5in%vsIndexOrder)>0) then
+        if (h5in%debug) WRITE(*,*) 'Writing vsIndexOrder attribute'
         call write_attribute(dset_id,'vsIndexOrder',h5in%vsIndexOrder,h5in,h5err)
       endif
 !-----------------------------------------------------------------------
 !     vsMD: Multidomain cabilities
 !-----------------------------------------------------------------------
-      if(len_trim(h5in%vsMD)>0) then
-         if(h5in%debug) WRITE(*,*) 'Writing vsMD attribute ',h5in%vsMD
-         call write_attribute(dset_id,"vsMD",h5in%vsMD,h5in,h5err)
+      if (len_trim(h5in%vsMD)>0) then
+        if (h5in%debug) WRITE(*,*) 'Writing vsMD attribute ',h5in%vsMD
+        call write_attribute(dset_id,"vsMD",h5in%vsMD,h5in,h5err)
       endif
 !-----------------------------------------------------------------------
 !     Label the units
 !-----------------------------------------------------------------------
-      if(len_trim(h5in%units)>0) then
-         if(h5in%debug) WRITE(*,*) 'Writing units attribute ',h5in%units
-         call write_attribute(dset_id,"units",h5in%units,h5in,h5err)
+      if (len_trim(h5in%units)>0) then
+        if (h5in%debug) WRITE(*,*) 'Writing units attribute ',h5in%units
+        call write_attribute(dset_id,"units",h5in%units,h5in,h5err)
       endif
 !-----------------------------------------------------------------------
 !     If we have the ability to write the conversion factors than do so
 !-----------------------------------------------------------------------
-      if(h5in%unitConvert) then
-         call write_attribute(dset_id,'vsUnitConvert',h5in%vsUnitCnv,h5in,h5err)
+      if (h5in%unitConvert) then
+        call write_attribute(dset_id,'vsUnitConvert',h5in%vsUnitCnv,h5in,h5err)
       endif
 !-----------------------------------------------------------------------
-      if(h5in%debug) WRITE(*,*) "Returning from h5in_attributes"
+      if (h5in%debug) WRITE(*,*) "Returning from h5in_attributes"
       return
       end subroutine dump_h5in_attributes
 !-----------------------------------------------------------------------
-!     subprogram 27.b dump_ch_sc
+!     subprogram 32. dump_ch_sc
 !     Write an hdf5 string
       ! H5: needs to be tested!
 !-----------------------------------------------------------------------
@@ -1582,8 +1594,8 @@
 !     If it is a null value then no need to write it out.
 !-----------------------------------------------------------------------
       if (len_trim(dataset)==0) then
-         errval%errBool = .false.
-         return
+        errval%errBool = .false.
+        return
       endif
 !-------------------------------------------------------------------
       if(h5in%verbose) WRITE(*,*) 'Writing ', aname
@@ -1594,9 +1606,9 @@
 !-------------------------------------------------------------------
       call h5screate_f(H5S_SCALAR_F,dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-------------------------------------------------------------------
 !     Create the datatype.
@@ -1609,9 +1621,9 @@
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dcreate_f(inid,aname,dtype_id,dspace_id,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
@@ -1620,31 +1632,31 @@
       ! H5: clean-up
 !      call h5dwrite_f(dset_id,h5t_ieee_f64le,dataset,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Data set write failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Data set write failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset and dataspace
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_ch_sc
 !-----------------------------------------------------------------------
-!     subprogram 27.c dump_ch_vec
+!     subprogram 33. dump_ch_vec
 !     Write an hdf5 character array
       ! H5: needs to be tested!
 !-----------------------------------------------------------------------
@@ -1670,8 +1682,8 @@
 !     If it is a null value then no need to write it out.
 !-----------------------------------------------------------------------
       if (len_trim(array(1))==0) then
-         errval%errBool = .false.
-         return
+        errval%errBool = .false.
+        return
       endif
 !-------------------------------------------------------------------
       if(h5in%verbose) WRITE(*,*) 'Writing ', aname
@@ -1679,17 +1691,17 @@
       adims(:) = (/dims(1)/)
       arrlen=0
       do i=1,adims(1)
-         ari = len_trim(array(i))
-         arrlen = max(arrlen,ari)
+        ari = len_trim(array(i))
+        arrlen = max(arrlen,ari)
       enddo
 !-------------------------------------------------------------------
 !     Create the data space.
 !-------------------------------------------------------------------
       call h5screate_simple_f(arank,adims,dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-------------------------------------------------------------------
 !     Create the datatype.
@@ -1702,9 +1714,9 @@
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dcreate_f(inid,aname,dtype_id,dspace_id,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
@@ -1713,37 +1725,37 @@
       ! H5: clean-up
 !      call h5dwrite_f(dset_id,h5t_ieee_f64le,array,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Data set write failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Data set write failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset and dataspace
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_ch_vec
 !-----------------------------------------------------------------------
-!     subprogram 28. dump_int
+!     subprogram 34. dump_int
 !     Write an hdf5 array + references to independent vars
 !-----------------------------------------------------------------------
-      subroutine dump_int(inid,aname,value,h5in,errval)
+      subroutine dump_int(inid,aname,val,h5in,errval)
       integer(HID_T), intent(in) :: inid
       character*(*), intent(in) :: aname
-      integer(i4), intent(in) :: value
+      integer(i4), intent(in) :: val
       type(hdf5ErrorType) :: errval
       type(hdf5InOpts), intent(in) :: h5in
       integer,parameter :: FAIL=-1
@@ -1758,9 +1770,9 @@
 !-----------------------------------------------------------------------
       call h5screate_f(H5S_SCALAR_F, dspace_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Create the data set.
@@ -1769,18 +1781,18 @@
       call h5dcreate_f(inid,aname, &
                        h5t_std_i32le,dspace_id,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
 !-----------------------------------------------------------------------
-      call h5dwrite_f(dset_id,h5t_std_i32le,value,dims,error)
+      call h5dwrite_f(dset_id,h5t_std_i32le,val,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Data set write failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Data set write failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Add the VisSchema attributes
@@ -1791,22 +1803,22 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_int
 !-----------------------------------------------------------------------
-!     subprogram 29. dump_int_1d
+!     subprogram 35. dump_int_1d
 !     Write an hdf5 array + references to independent vars
 !-----------------------------------------------------------------------
       subroutine dump_int_1d(inid,aname,array,h5in,errval)
@@ -1824,15 +1836,15 @@
 !     Define the rank and dimensions of the data set to be created.
 !-----------------------------------------------------------------------
       if(h5in%verbose) WRITE(*,*) 'Writing ', aname
-      rank = 1;            dims(:) = (/SIZE(array,1)/)
+      rank = 1;            dims(:) = (/size(array,1)/)
 !-----------------------------------------------------------------------
 !     Create the data space.
 !-----------------------------------------------------------------------
       call h5screate_simple_f(rank,dims,dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Create the data set.
@@ -1840,23 +1852,23 @@
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dcreate_f(inid,aname,h5t_std_i32le,dspace_id,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
 !-----------------------------------------------------------------------
-      if(h5in%typeConvert) then
+      if (h5in%typeConvert) then
         call h5dwrite_f(dset_id,h5t_std_i32le,real(array,r4),dims, &
                         error)
       else
         call h5dwrite_f(dset_id,h5t_std_i32le,array,dims,error)
       endif
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Data set write failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Data set write failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Add the VisSchema attributes
@@ -1867,23 +1879,22 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_int_1d
-    
 !-----------------------------------------------------------------------
-!     subprogram 30. dump_int_2d
+!     subprogram 36. dump_int_2d
 !     Create a "simple dataset" and write it out.
 !-----------------------------------------------------------------------
       subroutine dump_int_2d(inid,aname,array,h5in,errval)
@@ -1901,21 +1912,21 @@
 !-----------------------------------------------------------------------
 !     Define the rank and dimensions of the data set to be created.
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) 'Writing ', aname
+      if (h5in%verbose) WRITE(*,*) 'Writing ', aname
       rank = 2
-      if(h5in%doTranspose) then
-         dims(2) = SIZE(array,1);  dims(1) = SIZE(array,2)
+      if (h5in%doTranspose) then
+        dims(2) = size(array,1);  dims(1) = size(array,2)
       else
-         dims(1) = SIZE(array,1);  dims(2) = SIZE(array,2)
+        dims(1) = size(array,1);  dims(2) = size(array,2)
       endif
 !-----------------------------------------------------------------------
 !     Create the data space.
 !-----------------------------------------------------------------------
       call h5screate_simple_f(rank,dims,dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Create the data set.
@@ -1923,23 +1934,23 @@
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dcreate_f(inid,aname,h5t_std_i32le,dspace_id,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
 !-----------------------------------------------------------------------
-      if(h5in%doTranspose) then
-       call h5dwrite_f(dset_id,h5t_std_i32le,TRANSPOSE(array),dims, &
-                      error)
+      if (h5in%doTranspose) then
+        call h5dwrite_f(dset_id,h5t_std_i32le,transpose(array),dims, &
+                        error)
       else
-       call h5dwrite_f(dset_id,h5t_std_i32le,array,dims,error)
+        call h5dwrite_f(dset_id,h5t_std_i32le,array,dims,error)
       endif
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Writing data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Writing data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Add the VisSchema attributes
@@ -1950,23 +1961,22 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_int_2d
-    
 !-----------------------------------------------------------------------
-!     subprogram 30b. dump_h5_int_dum
+!     subprogram 37. dump_h5_int_dum
 !-----------------------------------------------------------------------
       subroutine dump_h5_int_dum(inid,aname,dims,h5in,errval)
       integer(HID_T), intent(in) :: inid
@@ -1984,11 +1994,11 @@
 !-----------------------------------------------------------------------
 !     Define the rank and dimensions of the data set to be created.
 !-----------------------------------------------------------------------
-      rank=SIZE(dims)
+      rank=size(dims)
       allocate(tdims(rank))
-      if(h5in%doTranspose) then
-        do ii=1,SIZE(dims)
-          tdims(SIZE(dims)-ii+1)=dims(ii)
+      if (h5in%doTranspose) then
+        do ii=1,size(dims)
+          tdims(size(dims)-ii+1)=dims(ii)
         enddo
       else
         tdims=dims
@@ -2023,29 +2033,28 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_h5_int_dum
-    
 !-----------------------------------------------------------------------
-!     subprogram 31. dump_intl
+!     subprogram 38. dump_intl
 !     Write an hdf5 array + references to independent vars
 !-----------------------------------------------------------------------
-      subroutine dump_intl(inid,aname,value,h5in,errval)
+      subroutine dump_intl(inid,aname,val,h5in,errval)
       integer(HID_T), intent(in) :: inid
       character*(*), intent(in) :: aname
-      integer(i8), intent(in) :: value
+      integer(i8), intent(in) :: val
       type(hdf5ErrorType) :: errval
       type(hdf5InOpts), intent(in) :: h5in
       integer,parameter :: FAIL=-1
@@ -2060,29 +2069,29 @@
 !-----------------------------------------------------------------------
       call h5screate_f(H5S_SCALAR_F, dspace_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Create the data set.
 !-----------------------------------------------------------------------
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dcreate_f(inid,aname, &
-                      h5t_std_i64le,dspace_id,dset_id,error)
+                       h5t_std_i64le,dspace_id,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
 !-----------------------------------------------------------------------
-      call h5dwrite_f(dset_id,h5t_std_i32le,int(value,i4),dims,error)
+      call h5dwrite_f(dset_id,h5t_std_i32le,int(val,i4),dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Data set write failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Data set write failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Add the VisSchema attributes
@@ -2093,23 +2102,22 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_intl
-    
 !-----------------------------------------------------------------------
-!     subprogram 32. dump_intl_1d
+!     subprogram 39. dump_intl_1d
 !     Write an hdf5 array + references to independent vars
 !-----------------------------------------------------------------------
       subroutine dump_intl_1d(inid,aname,array,h5in,errval)
@@ -2128,7 +2136,7 @@
 !     Define the rank and dimensions of the data set to be created.
 !-----------------------------------------------------------------------
       if(h5in%verbose) WRITE(*,*) 'Writing ', aname
-      rank = 1;            dims(:) = (/SIZE(array,1)/)
+      rank = 1;            dims(:) = (/size(array,1)/)
       allocate(intarray(dims(1)))
       intarray=array
 !-----------------------------------------------------------------------
@@ -2136,9 +2144,9 @@
 !-----------------------------------------------------------------------
       call h5screate_simple_f(rank,dims,dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Create the data set.
@@ -2147,18 +2155,18 @@
       call h5dcreate_f(inid,aname,h5t_std_i64le,dspace_id,dset_id, &
                        error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
 !-----------------------------------------------------------------------
       call h5dwrite_f(dset_id,h5t_std_i64le,intarray,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Data set write failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Data set write failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       deallocate(intarray)
 !-----------------------------------------------------------------------
@@ -2170,23 +2178,22 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_intl_1d
-    
 !-----------------------------------------------------------------------
-!     subprogram 32b. dump_h5_intl_dum
+!     subprogram 40. dump_h5_intl_dum
 !-----------------------------------------------------------------------
       subroutine dump_h5_intl_dum(inid,aname,dims,h5in,errval)
       integer(HID_T), intent(in) :: inid
@@ -2204,11 +2211,11 @@
 !-----------------------------------------------------------------------
 !     Define the rank and dimensions of the data set to be created.
 !-----------------------------------------------------------------------
-      rank=SIZE(dims)
+      rank=size(dims)
       allocate(tdims(rank))
-      if(h5in%doTranspose) then
-        do ii=1,SIZE(dims)
-          tdims(SIZE(dims)-ii+1)=dims(ii)
+      if (h5in%doTranspose) then
+        do ii=1,size(dims)
+          tdims(size(dims)-ii+1)=dims(ii)
         enddo
       else
         tdims=dims
@@ -2243,29 +2250,28 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_h5_intl_dum
-    
 !-----------------------------------------------------------------------
-!     subprogram 33. dump_rl
+!     subprogram 41. dump_rl
 !     Write an hdf5 array + references to independent vars
 !-------------------------------------------------------------------
-      subroutine dump_rl(inid,aname,value,h5in,errval)
+      subroutine dump_rl(inid,aname,val,h5in,errval)
       integer(HID_T), intent(in) :: inid
       character*(*), intent(in) :: aname
-      real(r8), intent(in) :: value
+      real(r8), intent(in) :: val
       type(hdf5ErrorType) :: errval
       type(hdf5InOpts), intent(in) :: h5in
       integer,parameter :: FAIL=-1
@@ -2279,9 +2285,9 @@
 !-------------------------------------------------------------------
       call h5screate_f(H5S_SCALAR_F, dspace_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-------------------------------------------------------------------
 !     Create the data set.
@@ -2289,22 +2295,22 @@
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dcreate_f(inid,aname,h5t_ieee_f64le,dspace_id,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
 !-----------------------------------------------------------------------
       if(h5in%typeConvert) then
-        call h5dwrite_f(dset_id,h5t_ieee_f32le,real(value,r4),dims,error)
+        call h5dwrite_f(dset_id,h5t_ieee_f32le,real(val,r4),dims,error)
       else
-        call h5dwrite_f(dset_id,h5t_ieee_f64le,value,dims,error)
+        call h5dwrite_f(dset_id,h5t_ieee_f64le,val,dims,error)
       endif
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Data set write failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Data set write failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Add the VisSchema attributes
@@ -2315,29 +2321,28 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_rl
-    
 !-------------------------------------------------------------------
-!     subprogram 34. dump_rls
+!     subprogram 42. dump_rls
 !     Write an hdf5 array + references to independent vars
 !-------------------------------------------------------------------
-      subroutine dump_rls(inid,aname,value,h5in,errval)
+      subroutine dump_rls(inid,aname,val,h5in,errval)
       integer(HID_T), intent(in) :: inid
       character*(*), intent(in) :: aname
-      real(r4), intent(in) :: value
+      real(r4), intent(in) :: val
       type(hdf5ErrorType) :: errval
       type(hdf5InOpts), intent(in) :: h5in
       integer,parameter :: FAIL=-1
@@ -2351,9 +2356,9 @@
 !-------------------------------------------------------------------
       call h5screate_f(H5S_SCALAR_F, dspace_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-------------------------------------------------------------------
 !     Create the data set.
@@ -2361,18 +2366,18 @@
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dcreate_f(inid,aname,h5t_ieee_f32le,dspace_id,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
 !-----------------------------------------------------------------------
-      call h5dwrite_f(dset_id,h5t_ieee_f32le,value,dims,error)
+      call h5dwrite_f(dset_id,h5t_ieee_f32le,val,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Data set write failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Data set write failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Add the VisSchema attributes
@@ -2383,23 +2388,22 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_rls
-    
 !-----------------------------------------------------------------------
-!     subprogram 35. dump_rl_1d
+!     subprogram 43. dump_rl_1d
 !     Write an hdf5 array + references to independent vars
 !-----------------------------------------------------------------------
       subroutine dump_rl_1d(inid,aname,array,h5in,errval)
@@ -2417,15 +2421,15 @@
 !     Define the rank and dimensions of the data set to be created.
 !-----------------------------------------------------------------------
       if(h5in%verbose) WRITE(*,*) 'Writing ', aname
-      rank = 1;            dims(:) = (/SIZE(array,1)/)
+      rank = 1;            dims(:) = (/size(array,1)/)
 !-----------------------------------------------------------------------
 !     Create the data space.
 !-----------------------------------------------------------------------
       call h5screate_simple_f(rank,dims,dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Create the data set.
@@ -2433,9 +2437,9 @@
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dcreate_f(inid,aname,h5t_ieee_f64le,dspace_id,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
@@ -2446,9 +2450,9 @@
        call h5dwrite_f(dset_id,h5t_ieee_f64le,array,dims,error)
       endif
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Data set write failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Data set write failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Add the VisSchema attributes
@@ -2459,22 +2463,22 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_rl_1d
 !-----------------------------------------------------------------------
-!     subprogram 36. dump_rl_2d
+!     subprogram 44. dump_rl_2d
 !     Create a "simple dataset" and write it out.
 !-----------------------------------------------------------------------
       subroutine dump_rl_2d(inid,aname,array,h5in,errval)
@@ -2494,19 +2498,19 @@
 !-----------------------------------------------------------------------
       if(h5in%verbose) WRITE(*,*) 'Writing ', aname
       rank = 2
-      if(h5in%doTranspose) then
-         dims(2) = SIZE(array,1);  dims(1) = SIZE(array,2)
+      if (h5in%doTranspose) then
+        dims(2) = size(array,1);  dims(1) = size(array,2)
       else
-         dims(1) = SIZE(array,1);  dims(2) = SIZE(array,2)
+        dims(1) = size(array,1);  dims(2) = size(array,2)
       endif
 !-----------------------------------------------------------------------
 !     Create the data space.
 !-----------------------------------------------------------------------
       call h5screate_simple_f(rank,dims,dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Create the data set.
@@ -2514,32 +2518,32 @@
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dcreate_f(inid,aname,h5t_ieee_f64le,dspace_id,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
 !-----------------------------------------------------------------------
-      if(h5in%typeConvert) then
-       if(h5in%doTranspose) then
-        call h5dwrite_f(dset_id,h5t_ieee_f32le,TRANSPOSE(real(array,r4)), &
-                        dims,error)
-       else
-        call h5dwrite_f(dset_id,h5t_ieee_f32le,real(array,r4),dims,error)
-       endif
+      if (h5in%typeConvert) then
+        if (h5in%doTranspose) then
+          call h5dwrite_f(dset_id,h5t_ieee_f32le,transpose(real(array,r4)), &
+                          dims,error)
+        else
+          call h5dwrite_f(dset_id,h5t_ieee_f32le,real(array,r4),dims,error)
+        endif
       else
-       if(h5in%doTranspose) then
-        call h5dwrite_f(dset_id,h5t_ieee_f64le,TRANSPOSE(array),dims, &
-                        error)
-       else
-        call h5dwrite_f(dset_id,h5t_ieee_f64le,array,dims,error)
-       endif
+        if (h5in%doTranspose) then
+          call h5dwrite_f(dset_id,h5t_ieee_f64le,transpose(array),dims, &
+                          error)
+        else
+          call h5dwrite_f(dset_id,h5t_ieee_f64le,array,dims,error)
+        endif
       endif
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Writing data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Writing data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Add the VisSchema attributes
@@ -2550,23 +2554,22 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_rl_2d
-    
 !-----------------------------------------------------------------------
-!     subprogram 37. dump_rl_3d
+!     subprogram 45. dump_rl_3d
 !-----------------------------------------------------------------------
       subroutine dump_rl_3d(inid,aname,array,h5in,errval)
       integer(HID_T), intent(in) :: inid
@@ -2585,25 +2588,25 @@
 !-----------------------------------------------------------------------
 !     Define the rank and dimensions of the data set to be created.
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) 'Writing ', aname
+      if (h5in%verbose) WRITE(*,*) 'Writing ', aname
       rank = 3
-      if(h5in%doTranspose) then
-       dims(3)=SIZE(array,1);dims(2)=SIZE(array,2);dims(1)=SIZE(array,3)
-       allocate(tmparray(dims(1),dims(2),dims(3)))
-       do i=1,dims(1); do j=1,dims(2)
+      if (h5in%doTranspose) then
+        dims(3)=size(array,1);dims(2)=size(array,2);dims(1)=size(array,3)
+        allocate(tmparray(dims(1),dims(2),dims(3)))
+        do i=1,dims(1); do j=1,dims(2)
           tmparray(i,j,:)=array(:,j,i)
-       enddo; enddo
+        enddo; enddo
       else
-       dims(1)=SIZE(array,1);dims(2)=SIZE(array,2);dims(3)=SIZE(array,3)
+        dims(1)=size(array,1);dims(2)=size(array,2);dims(3)=size(array,3)
       endif
 !-----------------------------------------------------------------------
 !     Create the data space.
 !-----------------------------------------------------------------------
       call h5screate_simple_f(rank,dims,dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Create the data set.
@@ -2611,32 +2614,32 @@
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dcreate_f(inid,aname,h5t_ieee_f64le,dspace_id,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
 !-----------------------------------------------------------------------
-      if(h5in%typeConvert) then
-       if(h5in%doTranspose) then
-        call h5dwrite_f(dset_id,h5t_ieee_f32le,real(tmparray,r4),dims,error)
-        deallocate(tmparray)
-       else
-        call h5dwrite_f(dset_id,h5t_ieee_f32le,real(array,r4),dims,error)
-       endif
+      if (h5in%typeConvert) then
+        if (h5in%doTranspose) then
+          call h5dwrite_f(dset_id,h5t_ieee_f32le,real(tmparray,r4),dims,error)
+          deallocate(tmparray)
+        else
+          call h5dwrite_f(dset_id,h5t_ieee_f32le,real(array,r4),dims,error)
+        endif
       else
-       if(h5in%doTranspose) then
-        call h5dwrite_f(dset_id,h5t_ieee_f64le,tmparray,dims,error)
-        deallocate(tmparray)
-       else
-        call h5dwrite_f(dset_id,h5t_ieee_f64le,array,dims,error)
-       endif
+        if (h5in%doTranspose) then
+          call h5dwrite_f(dset_id,h5t_ieee_f64le,tmparray,dims,error)
+          deallocate(tmparray)
+        else
+          call h5dwrite_f(dset_id,h5t_ieee_f64le,array,dims,error)
+        endif
       endif
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Writing data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Writing data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Add the VisSchema attributes
@@ -2647,24 +2650,23 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       if(allocated(tmparray)) deallocate(tmparray)
       return
       end subroutine dump_rl_3d
-    
 !-----------------------------------------------------------------------
-!     subprogram 38. dump_rl_4d
+!     subprogram 46. dump_rl_4d
 !-----------------------------------------------------------------------
       subroutine dump_rl_4d(inid,aname,array,h5in,errval)
       integer(HID_T), intent(in) :: inid
@@ -2683,27 +2685,27 @@
 !-----------------------------------------------------------------------
 !     Define the rank and dimensions of the data set to be created.
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) 'Writing ', aname
+      if (h5in%verbose) WRITE(*,*) 'Writing ', aname
       rank = 4
-      if(h5in%doTranspose) then
-       dims(4)=SIZE(array,1);  dims(2)=SIZE(array,3)
-       dims(3)=SIZE(array,2);  dims(1)=SIZE(array,4)
-       allocate(tmparray(dims(1),dims(2),dims(3),dims(4)))
-       do i=1,dims(1); do j=1,dims(2); do k=1,dims(3)
+      if (h5in%doTranspose) then
+        dims(4)=size(array,1);  dims(2)=size(array,3)
+        dims(3)=size(array,2);  dims(1)=size(array,4)
+        allocate(tmparray(dims(1),dims(2),dims(3),dims(4)))
+        do i=1,dims(1); do j=1,dims(2); do k=1,dims(3)
           tmparray(i,j,k,:)=array(:,k,j,i)
-      enddo; enddo; enddo
+        enddo; enddo; enddo
       else
-       dims(1)=SIZE(array,1);  dims(2)=SIZE(array,2)
-       dims(3)=SIZE(array,3);  dims(4)=SIZE(array,4)
+        dims(1)=size(array,1);  dims(2)=size(array,2)
+        dims(3)=size(array,3);  dims(4)=size(array,4)
       endif
 !-----------------------------------------------------------------------
 !     Create the data space.
 !-----------------------------------------------------------------------
       call h5screate_simple_f(rank,dims,dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Create the data set.
@@ -2711,15 +2713,15 @@
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dcreate_f(inid,aname,h5t_ieee_f64le,dspace_id,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
 !-----------------------------------------------------------------------
-      if(h5in%typeConvert) then
-        if(h5in%doTranspose) then
+      if (h5in%typeConvert) then
+        if (h5in%doTranspose) then
           call h5dwrite_f(dset_id,h5t_ieee_f32le,real(tmparray,r4),dims, &
                           error)
           deallocate(tmparray)
@@ -2736,9 +2738,9 @@
         endif
       endif
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Writing data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Writing data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Add the VisSchema attributes
@@ -2749,24 +2751,23 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
-      if(allocated(tmparray)) deallocate(tmparray)
+      if (allocated(tmparray)) deallocate(tmparray)
       return
       end subroutine dump_rl_4d
-    
 !-----------------------------------------------------------------------
-!     subprogram 39. dump_rl_5d
+!     subprogram 47. dump_rl_5d
 !-----------------------------------------------------------------------
       subroutine dump_rl_5d(inid,aname,array,h5in,errval)
       integer(HID_T), intent(in) :: inid
@@ -2787,27 +2788,27 @@
 !-----------------------------------------------------------------------
       if(h5in%verbose) WRITE(*,*) 'Writing ', aname
       rank = 5
-      if(h5in%doTranspose) then
-       dims(5)=SIZE(array,1);
-       dims(4)=SIZE(array,2);  dims(2)=SIZE(array,4)
-       dims(3)=SIZE(array,3);  dims(1)=SIZE(array,5)
-       allocate(tmparray(dims(1),dims(2),dims(3),dims(4),dims(5)))
-       do i=1,dims(1); do j=1,dims(2); do k=1,dims(3); do l=1,dims(4)
+      if (h5in%doTranspose) then
+        dims(5)=size(array,1);
+        dims(4)=size(array,2);  dims(2)=size(array,4)
+        dims(3)=size(array,3);  dims(1)=size(array,5)
+        allocate(tmparray(dims(1),dims(2),dims(3),dims(4),dims(5)))
+        do i=1,dims(1); do j=1,dims(2); do k=1,dims(3); do l=1,dims(4)
           tmparray(i,j,k,l,:)=array(:,l,k,j,i)
-      enddo; enddo; enddo; enddo
+        enddo; enddo; enddo; enddo
       else
-       dims(1)=SIZE(array,1);  dims(2)=SIZE(array,2)
-       dims(3)=SIZE(array,3);  dims(4)=SIZE(array,4)
-       dims(5)=SIZE(array,5);
+        dims(1)=size(array,1);  dims(2)=size(array,2)
+        dims(3)=size(array,3);  dims(4)=size(array,4)
+        dims(5)=size(array,5);
       endif
 !-----------------------------------------------------------------------
 !     Create the data space.
 !-----------------------------------------------------------------------
       call h5screate_simple_f(rank,dims,dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Create the data set.
@@ -2815,15 +2816,15 @@
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dcreate_f(inid,aname,h5t_ieee_f64le,dspace_id,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
 !-----------------------------------------------------------------------
-      if(h5in%typeConvert) then
-        if(h5in%doTranspose) then
+      if (h5in%typeConvert) then
+        if (h5in%doTranspose) then
           call h5dwrite_f(dset_id,h5t_ieee_f32le,real(tmparray,r4),dims, &
                           error)
           deallocate(tmparray)
@@ -2832,7 +2833,7 @@
                           error)
         endif
       else
-        if(h5in%doTranspose) then
+        if (h5in%doTranspose) then
           call h5dwrite_f(dset_id,h5t_ieee_f64le,tmparray,dims,error)
           deallocate(tmparray)
         else
@@ -2840,9 +2841,9 @@
         endif
       endif
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Writing data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Writing data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Add the VisSchema attributes
@@ -2853,24 +2854,23 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
-      if(allocated(tmparray)) deallocate(tmparray)
+      if (allocated(tmparray)) deallocate(tmparray)
       return
       end subroutine dump_rl_5d
-    
 !-----------------------------------------------------------------------
-!     subprogram 39b. dump_h5_rl_dum
+!     subprogram 48. dump_h5_rl_dum
 !-----------------------------------------------------------------------
       subroutine dump_h5_rl_dum(inid,aname,dims,h5in,errval)
       integer(HID_T), intent(in) :: inid
@@ -2888,11 +2888,11 @@
 !-----------------------------------------------------------------------
 !     Define the rank and dimensions of the data set to be created.
 !-----------------------------------------------------------------------
-      rank=SIZE(dims)
+      rank=size(dims)
       allocate(tdims(rank))
-      if(h5in%doTranspose) then
-        do ii=1,SIZE(dims)
-          tdims(SIZE(dims)-ii+1)=dims(ii)
+      if (h5in%doTranspose) then
+        do ii=1,size(dims)
+          tdims(size(dims)-ii+1)=dims(ii)
         enddo
       else
         tdims=dims
@@ -2926,23 +2926,22 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_h5_rl_dum
-    
 !-----------------------------------------------------------------------
-!     subprogram 40. dump_rls_1d
+!     subprogram 49. dump_rls_1d
 !     Write an hdf5 array + references to independent vars
 !-----------------------------------------------------------------------
       subroutine dump_rls_1d(inid,aname,array,h5in,errval)
@@ -2960,15 +2959,15 @@
 !     Define the rank and dimensions of the data set to be created.
 !-----------------------------------------------------------------------
       if(h5in%verbose) WRITE(*,*) 'Writing ', aname
-      rank = 1;            dims(:) = (/SIZE(array,1)/)
+      rank = 1;            dims(:) = (/size(array,1)/)
 !-----------------------------------------------------------------------
 !     Create the data space.
 !-----------------------------------------------------------------------
       call h5screate_simple_f(rank,dims,dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Create the data set.
@@ -2976,18 +2975,18 @@
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dcreate_f(inid,aname,h5t_ieee_f32le,dspace_id,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
 !-----------------------------------------------------------------------
       call h5dwrite_f(dset_id,h5t_ieee_f32le,array,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Data set write failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Data set write failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Add the VisSchema attributes
@@ -2998,22 +2997,22 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_rls_1d
 !-----------------------------------------------------------------------
-!     subprogram 41. dump_rls_2d
+!     subprogram 50. dump_rls_2d
 !     Create a "simple dataset" and write it out.
 !-----------------------------------------------------------------------
       subroutine dump_rls_2d(inid,aname,array,h5in,errval)
@@ -3031,21 +3030,21 @@
 !-----------------------------------------------------------------------
 !     Define the rank and dimensions of the data set to be created.
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) 'Writing ', aname
+      if (h5in%verbose) WRITE(*,*) 'Writing ', aname
       rank = 2
-      if(h5in%doTranspose) then
-         dims(2) = SIZE(array,1);  dims(1) = SIZE(array,2)
+      if (h5in%doTranspose) then
+        dims(2) = size(array,1);  dims(1) = size(array,2)
       else
-         dims(1) = SIZE(array,1);  dims(2) = SIZE(array,2)
+        dims(1) = size(array,1);  dims(2) = size(array,2)
       endif
 !-----------------------------------------------------------------------
 !     Create the data space.
 !-----------------------------------------------------------------------
       call h5screate_simple_f(rank,dims,dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Create the data set.
@@ -3053,23 +3052,23 @@
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dcreate_f(inid,aname,h5t_ieee_f32le,dspace_id,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
 !-----------------------------------------------------------------------
-      if(h5in%doTranspose) then
-        call h5dwrite_f(dset_id,h5t_ieee_f32le,TRANSPOSE(array),dims, &
+      if (h5in%doTranspose) then
+        call h5dwrite_f(dset_id,h5t_ieee_f32le,transpose(array),dims, &
                         error)
       else
         call h5dwrite_f(dset_id,h5t_ieee_f32le,array,dims,error)
       endif
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Writing data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Writing data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Add the VisSchema attributes
@@ -3080,23 +3079,22 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_rls_2d
-    
 !-----------------------------------------------------------------------
-!     subprogram 42. dump_rls_3d
+!     subprogram 51. dump_rls_3d
 !-----------------------------------------------------------------------
       subroutine dump_rls_3d(inid,aname,array,h5in,errval)
       integer(HID_T), intent(in) :: inid
@@ -3115,25 +3113,25 @@
 !-----------------------------------------------------------------------
 !     Define the rank and dimensions of the data set to be created.
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) 'Writing ', aname
+      if (h5in%verbose) WRITE(*,*) 'Writing ', aname
       rank = 3
       if(h5in%doTranspose) then
-       dims(3)=SIZE(array,1);dims(2)=SIZE(array,2);dims(1)=SIZE(array,3)
-       allocate(tmparray(dims(1),dims(2),dims(3)))
-       do i=1,dims(1); do j=1,dims(2)
+        dims(3)=size(array,1);dims(2)=size(array,2);dims(1)=size(array,3)
+        allocate(tmparray(dims(1),dims(2),dims(3)))
+        do i=1,dims(1); do j=1,dims(2)
           tmparray(i,j,:)=array(:,j,i)
-       enddo; enddo
+        enddo; enddo
       else
-       dims(1)=SIZE(array,1);dims(2)=SIZE(array,2);dims(3)=SIZE(array,3)
+        dims(1)=size(array,1);dims(2)=size(array,2);dims(3)=size(array,3)
       endif
 !-----------------------------------------------------------------------
 !     Create the data space.
 !-----------------------------------------------------------------------
       call h5screate_simple_f(rank,dims,dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Create the data set.
@@ -3141,23 +3139,23 @@
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dcreate_f(inid,aname,h5t_ieee_f32le,dspace_id,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
 !-----------------------------------------------------------------------
-      if(h5in%doTranspose) then
+      if (h5in%doTranspose) then
         call h5dwrite_f(dset_id,h5t_ieee_f32le,tmparray,dims,error)
         deallocate(tmparray)
       else
         call h5dwrite_f(dset_id,h5t_ieee_f32le,array,dims,error)
       endif
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Writing data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Writing data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Add the VisSchema attributes
@@ -3168,22 +3166,22 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_rls_3d
 !-----------------------------------------------------------------------
-!     subprogram 43. dump_rls_4d
+!     subprogram 52. dump_rls_4d
 !-----------------------------------------------------------------------
       subroutine dump_rls_4d(inid,aname,array,h5in,errval)
       integer(HID_T), intent(in) :: inid
@@ -3202,27 +3200,27 @@
 !-----------------------------------------------------------------------
 !     Define the rank and dimensions of the data set to be created.
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) 'Writing ', aname
+      if (h5in%verbose) WRITE(*,*) 'Writing ', aname
       rank = 4
-      if(h5in%doTranspose) then
-       dims(4)=SIZE(array,1);  dims(3)=SIZE(array,2)
-       dims(3)=SIZE(array,2);  dims(1)=SIZE(array,4)
-       allocate(tmparray(dims(1),dims(2),dims(3),dims(4)))
-       do i=1,dims(1); do j=1,dims(2); do k=1,dims(3)
+      if (h5in%doTranspose) then
+        dims(4)=size(array,1);  dims(3)=size(array,2)
+        dims(3)=size(array,2);  dims(1)=size(array,4)
+        allocate(tmparray(dims(1),dims(2),dims(3),dims(4)))
+        do i=1,dims(1); do j=1,dims(2); do k=1,dims(3)
           tmparray(i,j,k,:)=array(:,k,j,i)
-      enddo; enddo; enddo
+        enddo; enddo; enddo
       else
-       dims(1)=SIZE(array,1);  dims(2)=SIZE(array,2)
-       dims(3)=SIZE(array,3);  dims(4)=SIZE(array,4)
+        dims(1)=size(array,1);  dims(2)=size(array,2)
+        dims(3)=size(array,3);  dims(4)=size(array,4)
       endif
 !-----------------------------------------------------------------------
 !     Create the data space.
 !-----------------------------------------------------------------------
       call h5screate_simple_f(rank,dims,dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Create the data set.
@@ -3230,23 +3228,23 @@
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dcreate_f(inid,aname,h5t_ieee_f32le,dspace_id,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Create data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Create data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Write stored data to "name" data set.
 !-----------------------------------------------------------------------
-      if(h5in%doTranspose) then
+      if (h5in%doTranspose) then
         call h5dwrite_f(dset_id,h5t_ieee_f32le,tmparray,dims,error)
         deallocate(tmparray)
       else
         call h5dwrite_f(dset_id,h5t_ieee_f32le,array,dims,error)
       endif
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Writing data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Writing data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Add the VisSchema attributes
@@ -3257,23 +3255,22 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_rls_4d
-    
 !-----------------------------------------------------------------------
-!     subprogram 43b. dump_h5_rls_dum
+!     subprogram 53. dump_h5_rls_dum
 !-----------------------------------------------------------------------
       subroutine dump_h5_rls_dum(inid,aname,dims,h5in,errval)
       integer(HID_T), intent(in) :: inid
@@ -3291,11 +3288,11 @@
 !-----------------------------------------------------------------------
 !     Define the rank and dimensions of the data set to be created.
 !-----------------------------------------------------------------------
-      rank=SIZE(dims)
+      rank=size(dims)
       allocate(tdims(rank))
-      if(h5in%doTranspose) then
-        do ii=1,SIZE(dims)
-          tdims(SIZE(dims)-ii+1)=dims(ii)
+      if (h5in%doTranspose) then
+        do ii=1,size(dims)
+          tdims(size(dims)-ii+1)=dims(ii)
         enddo
       else
         tdims=dims
@@ -3329,31 +3326,30 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine dump_h5_rls_dum
-    
 !-----------------------------------------------------------------------
-!     subprogram 44. add_h5_int
+!     subprogram 54. add_h5_int
 !     This adds data to an unlimited data space.  This is used for
 !     writing things like time data
 !     You pass in a scalar, and it adds it to a 1D array
 !-----------------------------------------------------------------------
-      subroutine add_h5_int(inid,aname,value,h5in,errval)
+      subroutine add_h5_int(inid,aname,val,h5in,errval)
       integer(HID_T), intent(in) :: inid
       character(*), intent(in) :: aname
-      integer(i4), intent(in) :: value
+      integer(i4), intent(in) :: val
       type(hdf5ErrorType) :: errval
       type(hdf5InOpts), intent(in) :: h5in
       integer,parameter :: FAIL=-1
@@ -3372,7 +3368,6 @@
 !     whether data exists or not.
 !-----------------------------------------------------------------------
       call h5lexists_f(inid, aname, dset_exists, error)
-    
 !-----------------------------------------------------------------------
 !     Do the case of creating the data
 !-----------------------------------------------------------------------
@@ -3382,10 +3377,10 @@
         maxdims = (/H5S_UNLIMITED_f/)
         dims = (/1/)
         call h5screate_simple_f(rank, dims, dspace_id, error, maxdims)
-         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Create data space failed for '//aname
-           errval%errBool = .true.
-           return
+        if (error==FAIL) then
+          errval%errorMsg = 'ERROR: Create data space failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Modify dataset creation properties, i.e. enable chunking
         call h5pcreate_f(H5P_DATASET_CREATE_F, cparms, error)
@@ -3395,22 +3390,22 @@
         ! Create a new dataset within the file using cparms creation properties.
         call h5dcreate_f(inid,aname,h5t_std_i32le,dspace_id,dset_id,error,cparms)
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Create data set failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Create data set failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Write stored data to "name" data set.
-        call h5dwrite_f(dset_id,h5t_std_i32le,value,dims,error)
+        call h5dwrite_f(dset_id,h5t_std_i32le,val,dims,error)
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Data set write failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Data set write failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         call h5pclose_f(cparms, error) !Close the property list.
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Close property list failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Close property list failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Add the VisSchema attributes on the first step
         call dump_h5in_attributes(dset_id,h5in,errval)
@@ -3442,7 +3437,7 @@
         call h5sselect_hyperslab_f(filespace, H5S_SELECT_SET_F, offset, dims, error) 
         
         ! Write the data to the hyperslab.
-        call H5Dwrite_f(dset_id,h5t_std_i32le,value,dims,error,  &
+        call H5Dwrite_f(dset_id,h5t_std_i32le,val,dims,error,  &
                         file_space_id=filespace,mem_space_id=dspace_id)
         call h5sclose_f(filespace, error)
       endif
@@ -3451,30 +3446,30 @@
 !-----------------------------------------------------------------------
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine add_h5_int
 !-----------------------------------------------------------------------
-!     subprogram 45. add_h5_dbl
+!     subprogram 55. add_h5_dbl
 !     This adds data to an unlimited data space.  This is used for
 !     writing things like time data
 !     You pass in a scalar, and it adds it to a 1D array
 !-----------------------------------------------------------------------
-      subroutine add_h5_dbl(inid,aname,value,h5in,errval)
+      subroutine add_h5_dbl(inid,aname,val,h5in,errval)
       integer(HID_T), intent(in) :: inid
       character(*), intent(in) :: aname
-      double precision, intent(in) :: value
+      double precision, intent(in) :: val
       type(hdf5ErrorType) :: errval
       type(hdf5InOpts), intent(in) :: h5in
       integer,parameter :: FAIL=-1
@@ -3486,13 +3481,12 @@
       integer(HID_T) :: cparms        !dataset creatation property identifier 
       LOGICAL(i4) :: dset_exists
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) 'Writing ', aname
+      if (h5in%verbose) WRITE(*,*) 'Writing ', aname
 !-----------------------------------------------------------------------
 !     First determine whether the dataset exists because different
 !     whether data exists or not.
 !-----------------------------------------------------------------------
       call h5lexists_f(inid, aname, dset_exists, error)
-
 !-----------------------------------------------------------------------
 !     Do the case of creating the data
 !-----------------------------------------------------------------------
@@ -3515,24 +3509,24 @@
         ! Create a new dataset within the file using cparms creation properties.
         call h5dcreate_f(inid,aname,h5t_ieee_f64le,dspace_id,dset_id,error,cparms)
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Create data set failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Create data set failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         call h5pclose_f(cparms, error) !Close the property list.
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Close property list failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Close property list failed for '//aname
+          errval%errBool = .true.
+          return
         endif
     
         ! Write stored data to "name" data set.
-        !call h5dwrite_f(dset_id,h5t_ieee_f64le,value,dims,error)
-        call H5Dwrite_f(dset_id,h5t_ieee_f64le,value,dims,error)
+        !call h5dwrite_f(dset_id,h5t_ieee_f64le,val,dims,error)
+        call H5Dwrite_f(dset_id,h5t_ieee_f64le,val,dims,error)
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Data set write failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Data set write failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Add the VisSchema attributes on the first time step
         call dump_h5in_attributes(dset_id,h5in,errval)
@@ -3564,7 +3558,7 @@
         call h5sselect_hyperslab_f(filespace, H5S_SELECT_SET_F, offset, dims, error) 
         
         ! Write the data to the hyperslab.
-        call H5Dwrite_f(dset_id,h5t_ieee_f64le,value,dims,error, &
+        call H5Dwrite_f(dset_id,h5t_ieee_f64le,val,dims,error, &
                         file_space_id=filespace,mem_space_id=dspace_id)
         call h5sclose_f(filespace, error)
       endif
@@ -3573,22 +3567,22 @@
 !-----------------------------------------------------------------------
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine add_h5_dbl
 !-----------------------------------------------------------------------
-!     subprogram 46. add_h5_int_1d
+!     subprogram 56. add_h5_int_1d
 !     This adds data to an unlimited data space.  This is used for
 !     writing things like time data
 !     You pass in a scalar, and it adds it to a array array
@@ -3615,8 +3609,7 @@
 !     whether data exists or not.
 !-----------------------------------------------------------------------
       call h5lexists_f(inid, aname, dset_exists, error)
-      asize=SIZE(array)
-
+      asize=size(array)
 !-----------------------------------------------------------------------
 !     Do the case of creating the data
 !-----------------------------------------------------------------------
@@ -3627,10 +3620,10 @@
         ! For convenience, put the time step (extendible set, as the first index
         dims = (/1, asize/)
         call h5screate_simple_f(rank, dims, dspace_id, error, maxdims)
-         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Create data space failed for '//aname
-           errval%errBool = .true.
-           return
+        if (error==FAIL) then
+          errval%errorMsg = 'ERROR: Create data space failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Modify dataset creation properties, i.e. enable chunking
         call h5pcreate_f(H5P_DATASET_CREATE_F, cparms, error)
@@ -3640,22 +3633,22 @@
         ! Create a new dataset within the file using cparms creation properties.
         call h5dcreate_f(inid,aname,h5t_std_i32le,dspace_id,dset_id,error,cparms)
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Create data set failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Create data set failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Write stored data to "name" data set.
         call h5dwrite_f(dset_id,h5t_std_i32le,array,dims,error)
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Data set write failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Data set write failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         call h5pclose_f(cparms, error) !Close the property list.
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Close property list failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Close property list failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Add the VisSchema attributes on the first step
         call dump_h5in_attributes(dset_id,h5in,errval)
@@ -3697,22 +3690,22 @@
 !-----------------------------------------------------------------------
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine add_h5_int_1d
 !-----------------------------------------------------------------------
-!     subprogram 47. add_h5_1d
+!     subprogram 57. add_h5_1d
 !     This adds data to an unlimited data space.  This is used for
 !     writing things like time data
 !     You pass in a scalar, and it adds it to a array array
@@ -3739,7 +3732,7 @@
 !     whether data exists or not.
 !-----------------------------------------------------------------------
       call h5lexists_f(inid, aname, dset_exists, error)
-      asize=SIZE(array)
+      asize=size(array)
 
 !-----------------------------------------------------------------------
 !     Do the case of creating the data
@@ -3751,10 +3744,10 @@
         ! For convenience, put the time step (extendible set, as the first index
         dims = (/1, asize/)
         call h5screate_simple_f(rank, dims, dspace_id, error, maxdims)
-         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Create data space failed for '//aname
-           errval%errBool = .true.
-           return
+        if (error==FAIL) then
+          errval%errorMsg = 'ERROR: Create data space failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Modify dataset creation properties, i.e. enable chunking
         call h5pcreate_f(H5P_DATASET_CREATE_F, cparms, error)
@@ -3764,22 +3757,22 @@
         ! Create a new dataset within the file using cparms creation properties.
         call h5dcreate_f(inid,aname,h5t_ieee_f64le,dspace_id,dset_id,error,cparms)
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Create data set failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Create data set failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Write stored data to "name" data set.
         call h5dwrite_f(dset_id,h5t_ieee_f64le,array,dims,error)
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Data set write failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Data set write failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         call h5pclose_f(cparms, error) !Close the property list.
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Close property list failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Close property list failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Add the VisSchema attributes on the first step
         call dump_h5in_attributes(dset_id,h5in,errval)
@@ -3821,22 +3814,22 @@
 !-----------------------------------------------------------------------
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine add_h5_1d
 !-----------------------------------------------------------------------
-!     subprogram 48. add_h5_2d
+!     subprogram 58. add_h5_2d
 !     This adds data to an unlimited data space.  This is used for
 !     writing things like time data
 !     You pass in a scalar, and it adds it to a array array
@@ -3863,16 +3856,15 @@
 !     whether data exists or not.
 !-----------------------------------------------------------------------
       call h5lexists_f(inid, aname, dset_exists, error)
-      asize(1)=SIZE(array,1)
-      asize(2)=SIZE(array,2)
-      if(h5in%verbose) WRITE(*,*) 'Writing ', aname
+      asize(1)=size(array,1)
+      asize(2)=size(array,2)
+      if (h5in%verbose) WRITE(*,*) 'Writing ', aname
     
-      if(h5in%doTranspose) then
+      if (h5in%doTranspose) then
         dims = (/1, asize(2), asize(1)/)
       else
         dims = (/1, asize(1), asize(2)/)
       endif
-    
 !-----------------------------------------------------------------------
 !     Do the case of creating the data
 !-----------------------------------------------------------------------
@@ -3882,10 +3874,10 @@
         maxdims = (/H5S_UNLIMITED_f, H5S_UNLIMITED_f, H5S_UNLIMITED_f/)
         ! For convenience, put the time step (extendible set, as the first index
         call h5screate_simple_f(rank, dims, dspace_id, error, maxdims)
-         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Create data space failed for '//aname
-           errval%errBool = .true.
-           return
+        if (error==FAIL) then
+          errval%errorMsg = 'ERROR: Create data space failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Modify dataset creation properties, i.e. enable chunking
         call h5pcreate_f(H5P_DATASET_CREATE_F, cparms, error)
@@ -3895,27 +3887,27 @@
         ! Create a new dataset within the file using cparms creation properties.
         call h5dcreate_f(inid,aname,h5t_ieee_f64le,dspace_id,dset_id,error,cparms)
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Create data set failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Create data set failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Write stored data to "name" data set.
-        if(h5in%doTranspose) then
-          call h5dwrite_f(dset_id,h5t_ieee_f64le,TRANSPOSE(array),dims,error)
+        if (h5in%doTranspose) then
+          call h5dwrite_f(dset_id,h5t_ieee_f64le,transpose(array),dims,error)
         else
           call h5dwrite_f(dset_id,h5t_ieee_f64le,array,dims,error)
         endif
     
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Data set write failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Data set write failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         call h5pclose_f(cparms, error) !Close the property list.
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Close property list failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Close property list failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Add the VisSchema attributes on the first step
         call dump_h5in_attributes(dset_id,h5in,errval)
@@ -3951,8 +3943,8 @@
         call h5sselect_hyperslab_f(filespace, H5S_SELECT_SET_F, offset, dims, error) 
         
         ! Write the data to the hyperslab.
-        if(h5in%doTranspose) then
-          call H5Dwrite_f(dset_id,h5t_ieee_f64le,TRANSPOSE(array),dims,error,  &
+        if (h5in%doTranspose) then
+          call H5Dwrite_f(dset_id,h5t_ieee_f64le,transpose(array),dims,error,  &
                         file_space_id=filespace,mem_space_id=dspace_id)
         else
           call H5Dwrite_f(dset_id,h5t_ieee_f64le,array,dims,error,  &
@@ -3966,23 +3958,22 @@
 !-----------------------------------------------------------------------
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine add_h5_2d
-    
 !-----------------------------------------------------------------------
-!     subprogram 49. add_h5_3d
+!     subprogram 59. add_h5_3d
 !     This adds data to an unlimited data space.  This is used for
 !     writing things like time data
 !     You pass in a scalar, and it adds it to a array array
@@ -4005,18 +3996,18 @@
       integer ::i,j
       real(r8), dimension(:,:,:), allocatable :: tmparray
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) 'Writing ', aname
+      if (h5in%verbose) WRITE(*,*) 'Writing ', aname
 !-----------------------------------------------------------------------
 !     First determine whether the dataset exists because different
 !     whether data exists or not.
 !-----------------------------------------------------------------------
       call h5lexists_f(inid, aname, dset_exists, error)
-      asize(1)=SIZE(array,1)
-      asize(2)=SIZE(array,2)
-      asize(3)=SIZE(array,3)
+      asize(1)=size(array,1)
+      asize(2)=size(array,2)
+      asize(3)=size(array,3)
       ! For convenience, put the time step (extendible set, as the first index
-      if(h5in%verbose) WRITE(*,*) 'Writing ', aname
-      if(h5in%doTranspose) then
+      if (h5in%verbose) WRITE(*,*) 'Writing ', aname
+      if (h5in%doTranspose) then
         dims = (/1, asize(3), asize(2),asize(1)/)
         allocate(tmparray(dims(2),dims(3),dims(4)))
         do i=1,dims(2); do j=1,dims(3)
@@ -4025,7 +4016,6 @@
       else
         dims = (/1, asize(1), asize(2),asize(3)/)
       endif
-    
 !-----------------------------------------------------------------------
 !     Do the case of creating the data
 !-----------------------------------------------------------------------
@@ -4035,10 +4025,10 @@
         maxdims = (/H5S_UNLIMITED_f, H5S_UNLIMITED_f, H5S_UNLIMITED_f, H5S_UNLIMITED_f/)
     
         call h5screate_simple_f(rank, dims, dspace_id, error, maxdims)
-         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Create data space failed for '//aname
-           errval%errBool = .true.
-           return
+        if (error==FAIL) then
+          errval%errorMsg = 'ERROR: Create data space failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Modify dataset creation properties, i.e. enable chunking
         call h5pcreate_f(H5P_DATASET_CREATE_F, cparms, error)
@@ -4048,27 +4038,27 @@
         ! Create a new dataset within the file using cparms creation properties.
         call h5dcreate_f(inid,aname,h5t_ieee_f64le,dspace_id,dset_id,error,cparms)
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Create data set failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Create data set failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Write stored data to "name" data set.
-        if(h5in%doTranspose) then
+        if (h5in%doTranspose) then
           call h5dwrite_f(dset_id,h5t_ieee_f64le,tmparray,dims,error)
         else 
           call h5dwrite_f(dset_id,h5t_ieee_f64le,array,dims,error)
         endif
     
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Data set write failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Data set write failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         call h5pclose_f(cparms, error) !Close the property list.
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Close property list failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Close property list failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Add the VisSchema attributes on the first step
         call dump_h5in_attributes(dset_id,h5in,errval)
@@ -4106,7 +4096,7 @@
         call h5sselect_hyperslab_f(filespace, H5S_SELECT_SET_F, offset, dims, error) 
         
         ! Write the data to the hyperslab.
-        if(h5in%doTranspose) then
+        if (h5in%doTranspose) then
           call H5Dwrite_f(dset_id,h5t_ieee_f64le,tmparray,dims,error,  &
                         file_space_id=filespace,mem_space_id=dspace_id)
         else 
@@ -4120,23 +4110,23 @@
 !-----------------------------------------------------------------------
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
-      if(allocated(tmparray)) deallocate(tmparray)
+      if (allocated(tmparray)) deallocate(tmparray)
       return
       end subroutine add_h5_3d
 !-----------------------------------------------------------------------
-!     subprogram 50. add_h5_4d
+!     subprogram 60. add_h5_4d
 !     This adds data to an unlimited data space.  This is used for
 !     writing things like time data
 !     You pass in a scalar, and it adds it to a array array
@@ -4159,26 +4149,26 @@
       integer :: i,j,k
       real(r8), dimension(:,:,:,:), allocatable :: tmparray
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) 'Writing ', aname
+      if (h5in%verbose) WRITE(*,*) 'Writing ', aname
 !-----------------------------------------------------------------------
 !     First determine whether the dataset exists because different
 !     whether data exists or not.
 !-----------------------------------------------------------------------
       call h5lexists_f(inid, aname, dset_exists, error)
-      asize(1)=SIZE(array,1)
-      asize(2)=SIZE(array,2)
-      asize(3)=SIZE(array,3)
-      asize(4)=SIZE(array,4)
+      asize(1)=size(array,1)
+      asize(2)=size(array,2)
+      asize(3)=size(array,3)
+      asize(4)=size(array,4)
     
-      if(h5in%verbose) WRITE(*,*) 'Writing ', aname
-      if(h5in%doTranspose) then
-       dims = (/1, asize(4), asize(3),asize(2),asize(1)/)
-       allocate(tmparray(dims(2),dims(3),dims(4),dims(5)))
-       do i=1,dims(2); do j=1,dims(3); do k=1,dims(4)
+      if (h5in%verbose) WRITE(*,*) 'Writing ', aname
+      if (h5in%doTranspose) then
+        dims = (/1, asize(4), asize(3),asize(2),asize(1)/)
+        allocate(tmparray(dims(2),dims(3),dims(4),dims(5)))
+        do i=1,dims(2); do j=1,dims(3); do k=1,dims(4)
           tmparray(i,j,k,:)=array(:,k,j,i)
-      enddo; enddo; enddo
+        enddo; enddo; enddo
       else
-       dims = (/1, asize(1), asize(2),asize(3),asize(4)/)
+        dims = (/1, asize(1), asize(2),asize(3),asize(4)/)
       endif
 !-----------------------------------------------------------------------
 !     Do the case of creating the data
@@ -4189,10 +4179,10 @@
         maxdims = (/H5S_UNLIMITED_f, H5S_UNLIMITED_f, H5S_UNLIMITED_f, H5S_UNLIMITED_f, H5S_UNLIMITED_f/)
         ! For convenience, put the time step (extendible set, as the first index
         call h5screate_simple_f(rank, dims, dspace_id, error, maxdims)
-         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Create data space failed for '//aname
-           errval%errBool = .true.
-           return
+        if (error==FAIL) then
+          errval%errorMsg = 'ERROR: Create data space failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Modify dataset creation properties, i.e. enable chunking
         call h5pcreate_f(H5P_DATASET_CREATE_F, cparms, error)
@@ -4202,26 +4192,26 @@
         ! Create a new dataset within the file using cparms creation properties.
         call h5dcreate_f(inid,aname,h5t_ieee_f64le,dspace_id,dset_id,error,cparms)
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Create data set failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Create data set failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Write stored data to "name" data set.
-        if(h5in%doTranspose) then
+        if (h5in%doTranspose) then
           call h5dwrite_f(dset_id,h5t_ieee_f64le,tmparray,dims,error)
         else
           call h5dwrite_f(dset_id,h5t_ieee_f64le,array,dims,error)
         endif
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Data set write failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Data set write failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         call h5pclose_f(cparms, error) !Close the property list.
         if (error==FAIL) then
-           errval%errorMsg = 'ERROR: Close property list failed for '//aname
-           errval%errBool = .true.
-           return
+          errval%errorMsg = 'ERROR: Close property list failed for '//aname
+          errval%errBool = .true.
+          return
         endif
         ! Add the VisSchema attributes on the first step
         call dump_h5in_attributes(dset_id,h5in,errval)
@@ -4260,7 +4250,7 @@
         call h5sselect_hyperslab_f(filespace, H5S_SELECT_SET_F, offset, dims, error) 
         
         ! Write the data to the hyperslab.
-        if(h5in%doTranspose) then
+        if (h5in%doTranspose) then
           call H5Dwrite_f(dset_id,h5t_ieee_f64le,tmparray,dims,error,  &
                         file_space_id=filespace,mem_space_id=dspace_id)
         else
@@ -4274,23 +4264,23 @@
 !-----------------------------------------------------------------------
       call h5sclose_f(dspace_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data space failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data space failed for '//aname
+        errval%errBool = .true.
+        return
       endif
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
-      if(allocated(tmparray)) deallocate(tmparray)
+      if (allocated(tmparray)) deallocate(tmparray)
       return
       end subroutine add_h5_4d
 !-----------------------------------------------------------------------
-!     subprogram 51.a dset_dims
+!     subprogram 61. dset_dims
 !     Read the dimensions of dataset associated (for internal use)
 !-----------------------------------------------------------------------
       subroutine dset_dims(dset_id,dims,errval)
@@ -4305,7 +4295,7 @@
 !-----------------------------------------------------------------------
 !     Get dataset's dataspace handle.
 !-----------------------------------------------------------------------
-      allocate(maxdims(SIZE(dims)))
+      allocate(maxdims(size(dims)))
       call h5dget_space_f(dset_id,dspace_id,error)
 !-----------------------------------------------------------------------
 !     Get dataspace's dimensinons.
@@ -4317,7 +4307,56 @@
       return
       end subroutine dset_dims
 !-----------------------------------------------------------------------
-!     subprogram 51.b read_ndims
+!     subprogram 62. read_dims
+!     Read the dimensions of dataset associated with aname
+!-----------------------------------------------------------------------
+      subroutine read_dims(fid,aname,dims,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      integer(HSIZE_T), dimension(:), intent(inout) :: dims
+      type(hdf5InOpts), intent(in) :: h5in
+      type(hdf5ErrorType), intent(inout) :: errval
+      integer,parameter :: FAIL=-1
+      integer :: error
+      integer(HID_T) :: dset_id
+
+      integer(HSIZE_T), dimension(:), allocatable :: maxdims
+      integer(HID_T) dspace_id
+!-----------------------------------------------------------------------
+!     Open the dataset specified by aname
+!-----------------------------------------------------------------------
+      if (h5in%verbose) WRITE(*,*) ' Reading size of: ', aname
+      call h5dopen_f(fid, aname,dset_id,error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-----------------------------------------------------------------------
+!     Get dataset's dataspace handle.
+!-----------------------------------------------------------------------
+      allocate(maxdims(size(dims)))
+      call h5dget_space_f(dset_id,dspace_id,error)
+!-----------------------------------------------------------------------
+!     Get dataspace's dimensinons.
+!-----------------------------------------------------------------------
+      call h5sget_simple_extent_dims_f(dspace_id,dims,maxdims,error)
+!-----------------------------------------------------------------------
+!     Terminate access to the dataset
+!-----------------------------------------------------------------------
+      call h5dclose_f(dset_id,error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-----------------------------------------------------------------------
+      errval%errBool = .false.
+      deallocate(maxdims)
+      return
+      end subroutine read_dims
+!-----------------------------------------------------------------------
+!     subprogram 63. read_ndims
 !     Read the number of dimensions of dataset associated with aname
 !-----------------------------------------------------------------------
       subroutine read_ndims(fid,aname,rank,h5in,errval)
@@ -4329,17 +4368,17 @@
       integer,parameter :: FAIL=-1
       integer :: error
       integer(HID_T) :: dset_id
-    
+
       integer(HID_T) dspace_id
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading dimensions of: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading dimensions of: ', aname
       call h5dopen_f(fid, aname,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Get dataset's dataspace handle.
@@ -4354,16 +4393,16 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
-      end subroutine read_ndims 
+      end subroutine read_ndims
 !-----------------------------------------------------------------------
-!     subprogram 51.c read_ch_sc
+!     subprogram 64. read_ch_sc
 !     Read simple data set
 !-----------------------------------------------------------------------
       subroutine read_ch_sc(fid,aname,dataset,h5in,errval)
@@ -4374,7 +4413,7 @@
       type(hdf5ErrorType), intent(inout) :: errval
       integer,parameter :: FAIL=-1
       integer :: error
-    
+
       integer(HID_T) :: dtype_id      ! Datatype identifier
       integer(HID_T) :: dset_id       ! Dataset identifier
       integer(SIZE_T) :: dsetlen    ! Length of the string
@@ -4382,12 +4421,12 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname.
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading character string: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading character string: ', aname
       call h5dopen_f(fid,aname,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-------------------------------------------------------------------
 !     Create the datatype.
@@ -4402,26 +4441,26 @@
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dread_f(dset_id,dtype_id,dataset,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5dclose_f(dset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5dclose_f(dset_id,error)
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset.
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_ch_sc
 !-----------------------------------------------------------------------
-!     subprogram 51.d read_ch_vec
+!     subprogram 65. read_ch_vec
 !     Read simple data set: 1d array
       ! H5: needs to be tested!
 !-----------------------------------------------------------------------
@@ -4444,25 +4483,25 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname.
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading string array: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading string array: ', aname
       call h5dopen_f(fid,aname,dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-------------------------------------------------------------------
 !     Check size and create the datatype.
 !-------------------------------------------------------------------
-      dims(1)=SIZE(array)
+      dims(1)=size(array)
       call dset_dims(dset_id,fdims,errval)
       call check_dims(dims,fdims,errval)
       if (errval%errBool) return
       adims(:) = (/dims(1)/)
       arrlen=0
       do i=1,adims(1)
-         ari = len_trim(array(i))
-         arrlen = max(arrlen,ari)
+        ari = len_trim(array(i))
+        arrlen = max(arrlen,ari)
       enddo
       call h5tcopy_f(h5t_native_character,dtype_id,error)
       call h5tset_size_f(dtype_id,arrlen,error)
@@ -4472,33 +4511,33 @@
       if(h5in%debug) write(*,*) 'creating dataspace ',aname,' with dims',dims
       call h5dread_f(dset_id,dtype_id,array(1:arrlen),dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5dclose_f(dset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5dclose_f(dset_id,error)
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset.
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_ch_vec
 !-----------------------------------------------------------------------
-!     subprogram 52. read_int
+!     subprogram 66. read_int
 !     Read simple data scalar
 !-----------------------------------------------------------------------
-      subroutine read_int(fid,aname,value,h5in,errval)
+      subroutine read_int(fid,aname,val,h5in,errval)
       integer(HID_T), intent(in) :: fid
       character*(*), intent(in) :: aname
       type(hdf5InOpts), intent(in) :: h5in
-      integer(i4), intent(inout) :: value
+      integer(i4), intent(inout) :: val
       type(hdf5ErrorType), intent(inout) :: errval
       integer(HSIZE_T), dimension(1) :: dims
       integer,parameter :: FAIL=-1
@@ -4507,39 +4546,39 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading integer value: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading integer value: ', aname
       call h5dopen_f(fid, aname, dset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Read data set
 !-----------------------------------------------------------------------
       if (errval%errBool) return
-      call h5dread_f(dset_id,h5t_std_i32le,value,dims,error)
+      call h5dread_f(dset_id,h5t_std_i32le,val,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5dclose_f(dset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5dclose_f(dset_id,error)
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_int
 !-----------------------------------------------------------------------
-!     subprogram 53. read_int_1d
+!     subprogram 67. read_int_1d
 !     Read simple data set: 1d array
 !-----------------------------------------------------------------------
       subroutine read_int_1d(fid,aname,array,h5in,errval)
@@ -4555,43 +4594,42 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading 1d i4 array: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading 1d i4 array: ', aname
       call h5dopen_f(fid, aname, dset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Read data set
 !-----------------------------------------------------------------------
-      dims(1)=SIZE(array)
+      dims(1)=size(array)
       call dset_dims(dset_id,fdims,errval)
       call check_dims(dims,fdims, errval)
       if (errval%errBool) return
       call h5dread_f(dset_id,h5t_std_i32le,array,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5dclose_f(dset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5dclose_f(dset_id,error)
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_int_1d
-    
 !-----------------------------------------------------------------------
-!     subprogram 54. read_int_2d
+!     subprogram 68. read_int_2d
 !     Read simple data set: 2d array
 !-----------------------------------------------------------------------
       subroutine read_int_2d(fid,aname,array,h5in,errval)
@@ -4610,20 +4648,20 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading 2d i4 array: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading 2d i4 array: ', aname
       call h5dopen_f(fid, aname, dset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Check dims
 !-----------------------------------------------------------------------
-      if(.NOT. h5in%doTranspose) then
-         dims(1)=SIZE(array,1); dims(2)=SIZE(array,2)
+      if (.NOT. h5in%doTranspose) then
+        dims(1)=size(array,1); dims(2)=size(array,2)
       else
-         dims(1)=SIZE(array,2); dims(2)=SIZE(array,1)
+        dims(1)=size(array,2); dims(2)=size(array,1)
       endif
       call dset_dims(dset_id,fdims,errval)
       call check_dims(dims,fdims, errval)
@@ -4634,88 +4672,86 @@
 !-----------------------------------------------------------------------
 !     Read data set
 !-----------------------------------------------------------------------
-      if(.NOT. h5in%doTranspose) then
-         call h5dread_f(dset_id,h5t_std_i32le,array,dims,error)
+      if (.NOT. h5in%doTranspose) then
+        call h5dread_f(dset_id,h5t_std_i32le,array,dims,error)
       else
-         allocate(tmparray(dims(1),dims(2)))
-         call h5dread_f(dset_id,h5t_std_i32le,tmparray,dims,error)
-         do i=1,dims(1);      array(:,i)=tmparray(i,:);     enddo
-         deallocate(tmparray)
+        allocate(tmparray(dims(1),dims(2)))
+        call h5dread_f(dset_id,h5t_std_i32le,tmparray,dims,error)
+        do i=1,dims(1);      array(:,i)=tmparray(i,:);     enddo
+        deallocate(tmparray)
       endif
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Read data set failed for '//aname
-         errval%errBool = .true.
-         call h5dclose_f(dset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Read data set failed for '//aname
+        errval%errBool = .true.
+        call h5dclose_f(dset_id,error)
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_int_2d
-    
 !-----------------------------------------------------------------------
-!     subprogram 55. read_intl
+!     subprogram 69. read_intl
 !     Read simple data set: scalar
 !-----------------------------------------------------------------------
-      subroutine read_intl(fid,aname,value,h5in,errval)
+      subroutine read_intl(fid,aname,val,h5in,errval)
       integer(HID_T), intent(in) :: fid
       character*(*), intent(in) :: aname
       type(hdf5InOpts), intent(in) :: h5in
-      integer(i8), intent(inout) :: value
+      integer(i8), intent(inout) :: val
       type(hdf5ErrorType), intent(inout) :: errval
       integer(HSIZE_T), dimension(1) :: dims
       integer,parameter :: FAIL=-1
       integer :: error
       integer(HID_T) :: dset_id
     
-      integer(i4) :: intvalue
+      integer(i4) :: intval
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading integer value: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading integer value: ', aname
       call h5dopen_f(fid, aname, dset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Read data set
 !-----------------------------------------------------------------------
       if (errval%errBool) return
-      call h5dread_f(dset_id,h5t_std_i64le,intvalue,dims,error)
+      call h5dread_f(dset_id,h5t_std_i64le,intval,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5dclose_f(dset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5dclose_f(dset_id,error)
+        return
       endif
-      value = intvalue
+      val = intval
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_intl
-    
 !-----------------------------------------------------------------------
-!     subprogram 56. read_intl_1d
+!     subprogram 70. read_intl_1d
 !     Read simple data set: 1d array
 !-----------------------------------------------------------------------
       subroutine read_intl_1d(fid,aname,array,h5in,errval)
@@ -4730,32 +4766,31 @@
       integer(HID_T) :: dset_id
     
       integer(i4), dimension(:), allocatable :: intarray
-      
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading 1d i8 array: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading 1d i8 array: ', aname
       call h5dopen_f(fid, aname, dset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Read data set
 !-----------------------------------------------------------------------
-      dims(1)=SIZE(intarray)
+      dims(1)=size(array)
       allocate(intarray(dims(1)))
-      intarray=array
+!      intarray=array  ! PRE-necessary?
       call dset_dims(dset_id,fdims,errval)
       call check_dims(dims,fdims, errval)
       if (errval%errBool) return
       call h5dread_f(dset_id,h5t_std_i64le,intarray,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5dclose_f(dset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5dclose_f(dset_id,error)
+        return
       endif
       array = intarray
       deallocate(intarray)
@@ -4764,16 +4799,16 @@
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_intl_1d
 !-----------------------------------------------------------------------
-!     subprogram 57.a read_rl
+!     subprogram 71. read_rl
 !     Read simple data set: scalar
 !-----------------------------------------------------------------------
       subroutine read_rl(fid,aname,val,h5in,errval)
@@ -4790,12 +4825,12 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading r8 val: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading r8 val: ', aname
       call h5dopen_f(fid, aname, dset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Read data set
@@ -4804,26 +4839,26 @@
       if (errval%errBool) return
       call h5dread_f(dset_id,h5t_ieee_f64le,val,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5dclose_f(dset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5dclose_f(dset_id,error)
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_rl
 !-----------------------------------------------------------------------
-!     subprogram 57.b read_rl_1d
+!     subprogram 72. read_rl_1d
 !     Read simple data set: 1d array
 !-----------------------------------------------------------------------
       subroutine read_rl_1d(fid,aname,array,h5in,errval)
@@ -4840,42 +4875,42 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading 1d r8 array: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading 1d r8 array: ', aname
       call h5dopen_f(fid, aname, dset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Read data set
 !-----------------------------------------------------------------------
-      dims(1)=SIZE(array)
+      dims(1)=size(array)
       call dset_dims(dset_id,fdims,errval)
       call check_dims(dims,fdims, errval)
       if (errval%errBool) return
       call h5dread_f(dset_id,h5t_ieee_f64le,array,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5dclose_f(dset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5dclose_f(dset_id,error)
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_rl_1d
 !-----------------------------------------------------------------------
-!     subprogram 58. read_rl_2d
+!     subprogram 73. read_rl_2d
 !     Read simple data set: 2d array
 !-----------------------------------------------------------------------
       subroutine read_rl_2d(fid,aname,array,h5in,errval)
@@ -4894,20 +4929,20 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading 2d r8 array: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading 2d r8 array: ', aname
       call h5dopen_f(fid, aname, dset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Check dims
 !-----------------------------------------------------------------------
-      if(.NOT. h5in%doTranspose) then
-         dims(1)=SIZE(array,1); dims(2)=SIZE(array,2)
+      if (.NOT. h5in%doTranspose) then
+        dims(1)=size(array,1); dims(2)=size(array,2)
       else
-         dims(1)=SIZE(array,2); dims(2)=SIZE(array,1)
+        dims(1)=size(array,2); dims(2)=size(array,1)
       endif
       call dset_dims(dset_id,fdims,errval)
       call check_dims(dims,fdims, errval)
@@ -4918,35 +4953,35 @@
 !-----------------------------------------------------------------------
 !     Read data set
 !-----------------------------------------------------------------------
-      if(.NOT. h5in%doTranspose) then
-         call h5dread_f(dset_id,h5t_ieee_f64le,array,dims,error)
+      if (.NOT. h5in%doTranspose) then
+        call h5dread_f(dset_id,h5t_ieee_f64le,array,dims,error)
       else
-         allocate(tmparray(dims(1),dims(2)))
-         call h5dread_f(dset_id,h5t_ieee_f64le,tmparray,dims,error)
-         do i=1,dims(1);      array(:,i)=tmparray(i,:);     enddo
-         deallocate(tmparray)
+        allocate(tmparray(dims(1),dims(2)))
+        call h5dread_f(dset_id,h5t_ieee_f64le,tmparray,dims,error)
+        do i=1,dims(1);      array(:,i)=tmparray(i,:);     enddo
+        deallocate(tmparray)
       endif
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Read data set failed for '//aname
-         errval%errBool = .true.
-         call h5dclose_f(dset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Read data set failed for '//aname
+        errval%errBool = .true.
+        call h5dclose_f(dset_id,error)
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_rl_2d
 !-----------------------------------------------------------------------
-!     subprogram 59. read_rl_3d
+!     subprogram 74. read_rl_3d
 !     Read simple data set: 3d array
 !-----------------------------------------------------------------------
       subroutine read_rl_3d(fid,aname,array,h5in,errval)
@@ -4968,21 +5003,21 @@
       if(h5in%verbose) WRITE(*,*) ' Reading 3d array: ', aname
       call h5dopen_f(fid, TRIM(aname), dset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Check dims
 !-----------------------------------------------------------------------
-      if(.NOT. h5in%doTranspose) then
-         dims(1)=SIZE(array,1)
-         dims(2)=SIZE(array,2)
-         dims(3)=SIZE(array,3)
+      if (.NOT. h5in%doTranspose) then
+        dims(1)=size(array,1)
+        dims(2)=size(array,2)
+        dims(3)=size(array,3)
       else
-         dims(1)=SIZE(array,3)
-         dims(2)=SIZE(array,2)
-         dims(3)=SIZE(array,1)
+        dims(1)=size(array,3)
+        dims(2)=size(array,2)
+        dims(3)=size(array,1)
       endif
       call dset_dims(dset_id,fdims,errval)
       !call check_dims(dims,fdims, errval)
@@ -4993,36 +5028,36 @@
 !-----------------------------------------------------------------------
 !     Read data set
 !-----------------------------------------------------------------------
-      if(.NOT. h5in%doTranspose) then
-         call h5dread_f(dset_id,h5t_ieee_f64le,array,dims,error)
+      if (.NOT. h5in%doTranspose) then
+        call h5dread_f(dset_id,h5t_ieee_f64le,array,dims,error)
       else
-         allocate(tmparray(dims(1),dims(2),dims(3)))
-         call h5dread_f(dset_id,h5t_ieee_f64le,tmparray,dims,error)
-         do i=1,dims(1); do j=1,dims(2)
+        allocate(tmparray(dims(1),dims(2),dims(3)))
+        call h5dread_f(dset_id,h5t_ieee_f64le,tmparray,dims,error)
+        do i=1,dims(1); do j=1,dims(2)
           array(:,j,i)=tmparray(i,j,:)
-         enddo; enddo
-         deallocate(tmparray)
+        enddo; enddo
+        deallocate(tmparray)
       endif
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Read data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Read data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_rl_3d
 !-----------------------------------------------------------------------
-!     subprogram 60. read_rl_4d
+!     subprogram 75. read_rl_4d
 !     Read simple data set: 4d array
 !-----------------------------------------------------------------------
       subroutine read_rl_4d(fid,aname,array,h5in,errval)
@@ -5041,26 +5076,26 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading 4d array: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading 4d array: ', aname
       call h5dopen_f(fid, TRIM(aname), dset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Check dims
 !-----------------------------------------------------------------------
-      if(.NOT. h5in%doTranspose) then
-         dims(1)=SIZE(array,1)
-         dims(2)=SIZE(array,2)
-         dims(3)=SIZE(array,3)
-         dims(4)=SIZE(array,4)
+      if (.NOT. h5in%doTranspose) then
+        dims(1)=size(array,1)
+        dims(2)=size(array,2)
+        dims(3)=size(array,3)
+        dims(4)=size(array,4)
       else
-         dims(1)=SIZE(array,4)
-         dims(2)=SIZE(array,3)
-         dims(3)=SIZE(array,2)
-         dims(4)=SIZE(array,1)
+        dims(1)=size(array,4)
+        dims(2)=size(array,3)
+        dims(3)=size(array,2)
+        dims(4)=size(array,1)
       endif
       call dset_dims(dset_id,fdims,errval)
       !call check_dims(dims,fdims, errval)
@@ -5071,36 +5106,36 @@
 !-----------------------------------------------------------------------
 !     Read data set
 !-----------------------------------------------------------------------
-      if(.NOT. h5in%doTranspose) then
-         call h5dread_f(dset_id,h5t_ieee_f64le,array,dims,error)
+      if (.NOT. h5in%doTranspose) then
+        call h5dread_f(dset_id,h5t_ieee_f64le,array,dims,error)
       else
-         allocate(tmparray(dims(1),dims(2),dims(3),dims(4)))
-         call h5dread_f(dset_id,h5t_ieee_f64le,tmparray,dims,error)
-         do i=1,dims(1); do j=1,dims(2); do k=1,dims(3)
+        allocate(tmparray(dims(1),dims(2),dims(3),dims(4)))
+        call h5dread_f(dset_id,h5t_ieee_f64le,tmparray,dims,error)
+        do i=1,dims(1); do j=1,dims(2); do k=1,dims(3)
           array(:,k,j,i)=tmparray(i,j,k,:)
-         enddo; enddo; enddo
-         deallocate(tmparray)
+        enddo; enddo; enddo
+        deallocate(tmparray)
       endif
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Read data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Read data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_rl_4d
 !-----------------------------------------------------------------------
-!     subprogram 61. read_5d
+!     subprogram 76. read_5d
 !     Read simple data set: 5d array
 !-----------------------------------------------------------------------
       subroutine read_rl_5d(fid,aname,array,h5in,errval)
@@ -5119,28 +5154,28 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading 5d array: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading 5d array: ', aname
       call h5dopen_f(fid, TRIM(aname), dset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Check dims
 !-----------------------------------------------------------------------
-      if(.NOT. h5in%doTranspose) then
-         dims(1)=SIZE(array,1)
-         dims(2)=SIZE(array,2)
-         dims(3)=SIZE(array,3)
-         dims(4)=SIZE(array,4)
-         dims(5)=SIZE(array,5)
+      if (.NOT. h5in%doTranspose) then
+        dims(1)=size(array,1)
+        dims(2)=size(array,2)
+        dims(3)=size(array,3)
+        dims(4)=size(array,4)
+        dims(5)=size(array,5)
       else
-         dims(1)=SIZE(array,5)
-         dims(2)=SIZE(array,4)
-         dims(3)=SIZE(array,3)
-         dims(4)=SIZE(array,2)
-         dims(5)=SIZE(array,1)
+        dims(1)=size(array,5)
+        dims(2)=size(array,4)
+        dims(3)=size(array,3)
+        dims(4)=size(array,2)
+        dims(5)=size(array,1)
       endif
       call dset_dims(dset_id,fdims,errval)
       !call check_dims(dims,fdims, errval)
@@ -5151,36 +5186,36 @@
 !-----------------------------------------------------------------------
 !     Read data set
 !-----------------------------------------------------------------------
-      if(.NOT. h5in%doTranspose) then
-         call h5dread_f(dset_id,h5t_ieee_f64le,array,dims,error)
+      if (.NOT. h5in%doTranspose) then
+        call h5dread_f(dset_id,h5t_ieee_f64le,array,dims,error)
       else
-         allocate(tmparray(dims(1),dims(2),dims(3),dims(4),dims(5)))
-         call h5dread_f(dset_id,h5t_ieee_f64le,tmparray,dims,error)
-         do i=1,dims(1); do j=1,dims(2); do k=1,dims(3); do l=1,dims(4)
+        allocate(tmparray(dims(1),dims(2),dims(3),dims(4),dims(5)))
+        call h5dread_f(dset_id,h5t_ieee_f64le,tmparray,dims,error)
+        do i=1,dims(1); do j=1,dims(2); do k=1,dims(3); do l=1,dims(4)
           array(:,l,k,j,i)=tmparray(i,j,k,l,:)
-         enddo; enddo; enddo; enddo
-         deallocate(tmparray)
+        enddo; enddo; enddo; enddo
+        deallocate(tmparray)
       endif
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Read data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Read data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset
 !-----------------------------------------------------------------------
       call h5dclose_f(dset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_rl_5d
 !-----------------------------------------------------------------------
-!     subprogram 62. read_attribute_int_sc
+!     subprogram 77. read_attribute_int_sc
 !     Read real scalar attribute
 !-----------------------------------------------------------------------
       subroutine read_attribute_int_sc(fid,aname,val,h5in,errval)
@@ -5197,12 +5232,12 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
       call h5aopen_name_f(fid, aname, aset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Read attribute
@@ -5210,26 +5245,26 @@
       dims(1)=1
       call h5aread_f(aset_id,h5t_std_i32le,val,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5aclose_f(aset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5aclose_f(aset_id,error)
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset
 !-----------------------------------------------------------------------
       call h5aclose_f(aset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_attribute_int_sc
 !-----------------------------------------------------------------------
-!     subprogram 65. read_attribute_int_vec
+!     subprogram 78. read_attribute_int_vec
 !     Read integer vector attribute
 !-----------------------------------------------------------------------
       subroutine read_attribute_int_vec(fid,aname,array,h5in,errval)
@@ -5245,12 +5280,12 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
       call h5aopen_name_f(fid, aname, aset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Read attribute
@@ -5258,26 +5293,26 @@
       dims(1)=size(array)
       call h5aread_f(aset_id,h5t_std_i32le,array,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5aclose_f(aset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5aclose_f(aset_id,error)
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset
 !-----------------------------------------------------------------------
       call h5aclose_f(aset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_attribute_int_vec
 !-----------------------------------------------------------------------
-!     subprogram 63. read_attribute_intl_sc
+!     subprogram 79. read_attribute_intl_sc
 !     Read real scalar attribute
 !-----------------------------------------------------------------------
       subroutine read_attribute_intl_sc(fid,aname,val,h5in,errval)
@@ -5295,12 +5330,12 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
       call h5aopen_name_f(fid, aname, aset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Read attribute
@@ -5308,10 +5343,10 @@
       dims(1)=1
       call h5aread_f(aset_id,h5t_std_i64le,intval,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5aclose_f(aset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5aclose_f(aset_id,error)
+        return
       endif
       val = intval
 !-----------------------------------------------------------------------
@@ -5319,113 +5354,16 @@
 !-----------------------------------------------------------------------
       call h5aclose_f(aset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_attribute_intl_sc
 !-----------------------------------------------------------------------
-!     subprogram 64. read_attribute_rl_sc
-!     Read real scalar attribute
-!-----------------------------------------------------------------------
-      subroutine read_attribute_rl_sc(fid,aname,val,h5in,errval)
-      integer(HID_T), intent(in) :: fid
-      character*(*), intent(in) :: aname
-      type(hdf5InOpts), intent(in) :: h5in
-      real(r8), intent(inout) :: val
-      type(hdf5ErrorType), intent(inout) :: errval
-      integer(HSIZE_T), dimension(1) :: dims
-      integer,parameter :: FAIL=-1
-      integer :: error
-    
-      integer(HID_T) aset_id
-!-----------------------------------------------------------------------
-!     Open the dataset specified by aname
-!-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
-      call h5aopen_name_f(fid, aname, aset_id, error)
-      if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
-      endif
-!-----------------------------------------------------------------------
-!     Read attribute
-!-----------------------------------------------------------------------
-      dims(1)=1
-      call h5aread_f(aset_id,h5t_ieee_f64le,val,dims,error)
-      if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5aclose_f(aset_id,error)
-         return
-      endif
-!-----------------------------------------------------------------------
-!     Terminate access to the dataset
-!-----------------------------------------------------------------------
-      call h5aclose_f(aset_id,error)
-      if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
-      endif
-!-----------------------------------------------------------------------
-      errval%errBool = .false.
-      return
-      end subroutine read_attribute_rl_sc
-!-----------------------------------------------------------------------
-!     subprogram 65. read_attribute_rl_vec
-!     Read integer vector attribute
-!-----------------------------------------------------------------------
-      subroutine read_attribute_rl_vec(fid,aname,array,h5in,errval)
-      integer(HID_T), intent(in) :: fid
-      character*(*), intent(in) :: aname
-      type(hdf5InOpts), intent(in) :: h5in
-      real(r8), dimension(:), intent(inout) :: array
-      type(hdf5ErrorType), intent(inout) :: errval
-      integer(HSIZE_T), dimension(1) :: dims
-      integer,parameter :: FAIL=-1
-      integer :: error
-      integer(HID_T) aset_id
-!-----------------------------------------------------------------------
-!     Open the dataset specified by aname
-!-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
-      call h5aopen_name_f(fid, aname, aset_id, error)
-      if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
-      endif
-!-----------------------------------------------------------------------
-!     Read attribute
-!-----------------------------------------------------------------------
-      dims(1)=size(array)
-      call h5aread_f(aset_id,h5t_ieee_f64le,array,dims,error)
-      if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5aclose_f(aset_id,error)
-         return
-      endif
-!-----------------------------------------------------------------------
-!     Terminate access to the dataset
-!-----------------------------------------------------------------------
-      call h5aclose_f(aset_id,error)
-      if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
-      endif
-!-----------------------------------------------------------------------
-      errval%errBool = .false.
-      return
-      end subroutine read_attribute_rl_vec
-!-----------------------------------------------------------------------
-!     subprogram 65. read_attribute_intl_vec
+!     subprogram 80. read_attribute_intl_vec
 !     Read integer vector attribute
 !-----------------------------------------------------------------------
       subroutine read_attribute_intl_vec(fid,aname,array,h5in,errval)
@@ -5443,12 +5381,12 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
       call h5aopen_name_f(fid, aname, aset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Read attribute
@@ -5458,10 +5396,10 @@
       intarray = array
       call h5aread_f(aset_id,h5t_std_i64le,intarray,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5aclose_f(aset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5aclose_f(aset_id,error)
+        return
       endif
       array = intarray
       deallocate(intarray)
@@ -5470,16 +5408,113 @@
 !-----------------------------------------------------------------------
       call h5aclose_f(aset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_attribute_intl_vec
 !-----------------------------------------------------------------------
-!     subprogram 66. read_attribute_ch_sc
+!     subprogram 81. read_attribute_rl_sc
+!     Read real scalar attribute
+!-----------------------------------------------------------------------
+      subroutine read_attribute_rl_sc(fid,aname,val,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      type(hdf5InOpts), intent(in) :: h5in
+      real(r8), intent(inout) :: val
+      type(hdf5ErrorType), intent(inout) :: errval
+      integer(HSIZE_T), dimension(1) :: dims
+      integer,parameter :: FAIL=-1
+      integer :: error
+    
+      integer(HID_T) aset_id
+!-----------------------------------------------------------------------
+!     Open the dataset specified by aname
+!-----------------------------------------------------------------------
+      if (h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
+      call h5aopen_name_f(fid, aname, aset_id, error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-----------------------------------------------------------------------
+!     Read attribute
+!-----------------------------------------------------------------------
+      dims(1)=1
+      call h5aread_f(aset_id,h5t_ieee_f64le,val,dims,error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5aclose_f(aset_id,error)
+        return
+      endif
+!-----------------------------------------------------------------------
+!     Terminate access to the dataset
+!-----------------------------------------------------------------------
+      call h5aclose_f(aset_id,error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-----------------------------------------------------------------------
+      errval%errBool = .false.
+      return
+      end subroutine read_attribute_rl_sc
+!-----------------------------------------------------------------------
+!     subprogram 82. read_attribute_rl_vec
+!     Read integer vector attribute
+!-----------------------------------------------------------------------
+      subroutine read_attribute_rl_vec(fid,aname,array,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      type(hdf5InOpts), intent(in) :: h5in
+      real(r8), dimension(:), intent(inout) :: array
+      type(hdf5ErrorType), intent(inout) :: errval
+      integer(HSIZE_T), dimension(1) :: dims
+      integer,parameter :: FAIL=-1
+      integer :: error
+      integer(HID_T) aset_id
+!-----------------------------------------------------------------------
+!     Open the dataset specified by aname
+!-----------------------------------------------------------------------
+      if (h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
+      call h5aopen_name_f(fid, aname, aset_id, error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-----------------------------------------------------------------------
+!     Read attribute
+!-----------------------------------------------------------------------
+      dims(1)=size(array)
+      call h5aread_f(aset_id,h5t_ieee_f64le,array,dims,error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5aclose_f(aset_id,error)
+        return
+      endif
+!-----------------------------------------------------------------------
+!     Terminate access to the dataset
+!-----------------------------------------------------------------------
+      call h5aclose_f(aset_id,error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-----------------------------------------------------------------------
+      errval%errBool = .false.
+      return
+      end subroutine read_attribute_rl_vec
+!-----------------------------------------------------------------------
+!     subprogram 83. read_attribute_ch_sc
 !     Read character scalar attribute
 !-----------------------------------------------------------------------
       subroutine read_attribute_ch_sc(fid,aname,val,h5in,errval)
@@ -5498,12 +5533,12 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
       call h5aopen_name_f(fid, aname, aset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Read attribute
@@ -5517,26 +5552,26 @@
     
       call h5aread_f(aset_id, atype_id, val, dims, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5aclose_f(aset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5aclose_f(aset_id,error)
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset
 !-----------------------------------------------------------------------
       call h5aclose_f(aset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_attribute_ch_sc
 !-----------------------------------------------------------------------
-!     subprogram 67. read_attribute_ch_vec
+!     subprogram 84. read_attribute_ch_vec
 !     Read integer vector attribute
 !-----------------------------------------------------------------------
       subroutine read_attribute_ch_vec(fid,aname,attribute,h5in,errval)
@@ -5557,23 +5592,23 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
       call h5aopen_name_f(fid, aname, aset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Read attribute
 !-----------------------------------------------------------------------
-      data_dims(1) = SIZE(attribute)
+      data_dims(1) = size(attribute)
       adims(:) = (/data_dims(1)/)
       attrlen=0
       do i=1,data_dims(1)
-         ! attrlen=MAX(attrlen,LEN(attribute(i)))
-         ati = len(attribute(i))
-         attrlen=max(attrlen,ati)
+        ! attrlen=max(attrlen,len(attribute(i)))
+        ati = len(attribute(i))
+        attrlen=max(attrlen,ati)
       enddo
     
       ! Create datatype for the attribute.
@@ -5582,26 +5617,26 @@
     
       call h5aread_f(aset_id, atype_id, attribute, adims, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5aclose_f(aset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5aclose_f(aset_id,error)
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset
 !-----------------------------------------------------------------------
       call h5aclose_f(aset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_attribute_ch_vec
 !-----------------------------------------------------------------------
-!     subprogram 62. read_attribute_log_sc
+!     subprogram 85. read_attribute_log_sc
 !     Read real scalar attribute
 !-----------------------------------------------------------------------
       subroutine read_attribute_log_sc(fid,aname,val,h5in,errval)
@@ -5618,12 +5653,12 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
       call h5aopen_name_f(fid, aname, aset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Read attribute
@@ -5631,19 +5666,19 @@
       dims(1)=1
       call h5aread_f(aset_id,h5t_std_i32le,ival,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5aclose_f(aset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5aclose_f(aset_id,error)
+        return
       endif
 !-----------------------------------------------------------------------
 !     Terminate access to the dataset
 !-----------------------------------------------------------------------
       call h5aclose_f(aset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
@@ -5652,7 +5687,7 @@
       return
       end subroutine read_attribute_log_sc
 !-----------------------------------------------------------------------
-!     subprogram 65. read_attribute_log_vec
+!     subprogram 86. read_attribute_log_vec
 !     Read integer vector attribute
 !-----------------------------------------------------------------------
       subroutine read_attribute_log_vec(fid,aname,array,h5in,errval)
@@ -5670,12 +5705,12 @@
 !-----------------------------------------------------------------------
 !     Open the dataset specified by aname
 !-----------------------------------------------------------------------
-      if(h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
+      if (h5in%verbose) WRITE(*,*) ' Reading attribute: ', aname
       call h5aopen_name_f(fid, aname, aset_id, error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Find data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
 !     Read attribute
@@ -5684,10 +5719,10 @@
       allocate(intarray(dims(1)))
       call h5aread_f(aset_id,h5t_std_i32le,intarray,dims,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Reading data set failed for '//aname
-         errval%errBool = .true.
-         call h5aclose_f(aset_id,error)
-         return
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5aclose_f(aset_id,error)
+        return
       endif
       do ii=1,dims(1)
         if (intarray(ii)==0) then
@@ -5702,14 +5737,852 @@
 !-----------------------------------------------------------------------
       call h5aclose_f(aset_id,error)
       if (error==FAIL) then
-         errval%errorMsg = 'ERROR: Close data set failed for '//aname
-         errval%errBool = .true.
-         return
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
       endif
 !-----------------------------------------------------------------------
       errval%errBool = .false.
       return
       end subroutine read_attribute_log_vec
+!-----------------------------------------------------------------------
+!     subprogram 87. read_ch_sc_ex
+!     Read character scalar if the object exists, but leave the input
+!       unchanged if it doesn't
+!-----------------------------------------------------------------------
+      subroutine read_ch_sc_ex(fid,aname,dataset,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      character*(*), intent(inout) :: dataset
+      type(hdf5InOpts), intent(in) :: h5in
+      type(hdf5ErrorType), intent(inout) :: errval
+
+      if (obj_exists(fid,aname,errval)) &
+        call read_ch_sc(fid,aname,dataset,h5in,errval)
+
+      return
+      end subroutine read_ch_sc_ex
+!-----------------------------------------------------------------------
+!     subprogram 88. read_ch_vec_ex
+!     Read character vector if the object exists, but leave the input
+!       unchanged if it doesn't
+!     Only read the number of elements included in the file
+      ! H5: needs to be tested!
+!-----------------------------------------------------------------------
+      subroutine read_ch_vec_ex(fid,aname,array,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      character*(*), dimension(:), intent(inout) :: array
+      type(hdf5InOpts), intent(in) :: h5in
+      type(hdf5ErrorType), intent(inout) :: errval
+      integer,parameter :: FAIL=-1
+      integer :: error
+    
+      integer(i4) :: i
+      integer(HID_T) :: dtype_id      ! Datatype identifier
+      integer(HID_T) :: dset_id       ! Dataset identifier
+      integer(HSIZE_T), dimension(1) :: adims  ! Array dimension
+      integer(SIZE_T) :: arrlen    ! Length of the array
+      integer(i4) :: ndims     ! Dataset rank
+      integer(SIZE_T) :: dims    ! Dataset length
+      integer(HSIZE_T), dimension(1) :: fdims
+      integer(SIZE_T) :: ari
+!-----------------------------------------------------------------------
+!     Check that the object exists.
+!-----------------------------------------------------------------------
+      if (.NOT.obj_exists(fid,aname,errval)) return
+!-----------------------------------------------------------------------
+!     Read dataset as a scalar if it is not an array.
+!-----------------------------------------------------------------------
+      call read_ndims(fid,aname,ndims,h5in,errval)
+      if (ndims < 1) then
+        call read_ch_sc(fid,aname,array(1),h5in,errval)
+        return
+      elseif (ndims > 1) then
+        write(*, *) "error: dataset is not 1d"
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-----------------------------------------------------------------------
+!     Open the dataset specified by aname.
+!-----------------------------------------------------------------------
+      if (h5in%verbose) WRITE(*,*) ' Reading string array: ', aname
+      call h5dopen_f(fid,aname,dset_id,error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-------------------------------------------------------------------
+!     Check size and create the datatype.
+!-------------------------------------------------------------------
+      dims=size(array,1)
+      call dset_dims(dset_id,fdims,errval)
+      if (errval%errBool) return
+      if (fdims(1) > dims) then
+        write(*, *) "error: reading ",aname," from hdf5"
+        write(*, *) "fdims (", fdims(1), ")  >  dims (", dims, ")"
+        write(*, *) "fdims = dims in the file (use h5ls)"
+        write(*, *) "dims  = dims allocated for array to read"
+        errval%errormsg = 'error: fdims > dims'
+        errval%errbool = .true.
+        return
+      endif
+      adims(:) = (/fdims(1)/)
+      arrlen=0
+      do i=1,adims(1)
+        ari = len_trim(array(i))
+        arrlen = max(arrlen,ari)
+      enddo
+      call h5tcopy_f(h5t_native_character,dtype_id,error)
+      call h5tset_size_f(dtype_id,arrlen,error)
+!-------------------------------------------------------------------
+!     Read data set.
+!-------------------------------------------------------------------
+      if (h5in%debug) write(*,*) 'creating dataspace ',aname, &
+                                 ' with dims ',fdims(1)
+      call h5dread_f(dset_id,dtype_id,array(1:arrlen),fdims,error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5dclose_f(dset_id,error)
+        return
+      endif
+!-----------------------------------------------------------------------
+!     Terminate access to the dataset.
+!-----------------------------------------------------------------------
+      call h5dclose_f(dset_id,error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-----------------------------------------------------------------------
+      errval%errBool = .false.
+      return
+      end subroutine read_ch_vec_ex
+!-----------------------------------------------------------------------
+!     subprogram 89. read_int_ex
+!     Read integer scalar if the object exists, but leave the input
+!       unchanged if it doesn't
+!-----------------------------------------------------------------------
+      subroutine read_int_ex(fid,aname,val,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      type(hdf5InOpts), intent(in) :: h5in
+      integer(i4), intent(inout) :: val
+      type(hdf5ErrorType), intent(inout) :: errval
+    
+      if (obj_exists(fid,aname,errval)) &
+        call read_int(fid,aname,val,h5in,errval)
+
+      return
+      end subroutine read_int_ex
+!-----------------------------------------------------------------------
+!     subprogram 90. read_int_1d_ex
+!     Read integer vector if the object exists, but leave the input
+!       unchanged if it doesn't
+!     Only read the number of elements included in the file
+!-----------------------------------------------------------------------
+      subroutine read_int_1d_ex(fid,aname,array,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      type(hdf5InOpts), intent(in) :: h5in
+      integer(i4), dimension(:), intent(inout) :: array
+      type(hdf5ErrorType), intent(inout) :: errval
+      integer(i4) :: ndims
+      integer(HSIZE_T) :: dims
+      integer(HSIZE_T), dimension(1) :: fdims
+      integer,parameter :: FAIL=-1
+      integer :: error
+      integer(HID_T) :: dset_id
+!-----------------------------------------------------------------------
+!     Check that the object exists.
+!-----------------------------------------------------------------------
+      if (.NOT.obj_exists(fid,aname,errval)) return
+!-----------------------------------------------------------------------
+!     Read dataset as a scalar if it is not an array.
+!-----------------------------------------------------------------------
+      call read_ndims(fid,aname,ndims,h5in,errval)
+      if (ndims < 1) then
+        call read_int(fid,aname,array(1),h5in,errval)
+        return
+      elseif (ndims > 1) then
+        write(*, *) "error: dataset is not 1d"
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-----------------------------------------------------------------------
+!     Open the dataset specified by aname
+!-----------------------------------------------------------------------
+      if (h5in%verbose) WRITE(*,*) ' Reading 1d i4 array: ', aname
+      call h5dopen_f(fid, aname, dset_id, error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-------------------------------------------------------------------
+!     Check size.
+!-------------------------------------------------------------------
+      dims=size(array)
+      call dset_dims(dset_id,fdims,errval)
+      if (errval%errBool) return
+      if (fdims(1) > dims) then
+        write(*, *) "error: reading ",aname," from hdf5"
+        write(*, *) "fdims (", fdims(1), ")  >  dims (", dims, ")"
+        write(*, *) "dims  = dims allocated for array to read"
+        errval%errormsg = 'error: fdims > dims'
+        errval%errbool = .true.
+        return
+      endif
+!-----------------------------------------------------------------------
+!     Read data set.
+!-----------------------------------------------------------------------
+      call h5dread_f(dset_id,h5t_std_i32le,array(1:fdims(1)),fdims, &
+                     error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5dclose_f(dset_id,error)
+        return
+      endif
+!-----------------------------------------------------------------------
+!     Terminate access to the dataset
+!-----------------------------------------------------------------------
+      call h5dclose_f(dset_id,error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-----------------------------------------------------------------------
+      errval%errBool = .false.
+      return
+      end subroutine read_int_1d_ex
+!-----------------------------------------------------------------------
+!     subprogram 91. read_int_2d_ex
+!     Read integer 2d array if the object exists, but leave the input
+!       unchanged if it doesn't
+!     Also read the array if it has been flattened into 1d with
+!       consistent length
+!-----------------------------------------------------------------------
+      subroutine read_int_2d_ex(fid,aname,array,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      integer(i4), dimension(:,:), intent(inout) :: array
+      type(hdf5InOpts), intent(in) :: h5in
+      type(hdf5ErrorType), intent(inout) :: errval
+      integer(i4) :: ndims
+      integer(HSIZE_T), dimension(1) :: fdims1
+      integer(HSIZE_T), dimension(2) :: dims,fdims
+      integer(i4), allocatable, dimension(:,:) :: flat
+      integer(i4), allocatable, dimension(:)  :: vec
+!-----------------------------------------------------------------------
+!     Check that the object exists.
+!-----------------------------------------------------------------------
+      if (.NOT.obj_exists(fid,aname,errval)) return
+!-----------------------------------------------------------------------
+!     Fit the dataset to the specified dimensions if possible.
+!-----------------------------------------------------------------------
+      dims(1)=size(array,1)
+      dims(2)=size(array,2)
+      call read_ndims(fid,aname,ndims,h5in,errval)
+      if (ndims.eq.2) then
+        call read_dims(fid,aname,fdims,h5in,errval)
+        if ((fdims(1).le.dims(1)).and.(fdims(2).le.dims(2))) then
+          call read_int_2d(fid,aname,array(1:fdims(1),1:fdims(2)),h5in,errval)
+        elseif ((fdims(1).eq.dims(2)).and.(fdims(2).eq.dims(1))) then
+          allocate(flat(dims(2),dims(1)))
+          call read_int_2d(fid,aname,flat,h5in,errval)
+          array=transpose(flat)
+          deallocate(flat)
+        elseif ((fdims(1).eq.1).and.(fdims(2).eq.dims(1)*dims(2))) then
+          allocate(flat(1,dims(1)*dims(2)))
+          call read_int_2d(fid,aname,flat,h5in,errval)
+          array=reshape(flat,(/dims(1),dims(2)/))
+          deallocate(flat)
+        elseif ((fdims(1).eq.dims(1)*dims(2)).and.(fdims(2).eq.1)) then
+          allocate(flat(dims(1)*dims(2),1))
+          call read_int_2d(fid,aname,flat,h5in,errval)
+          array=reshape(flat,(/dims(1),dims(2)/))
+          deallocate(flat)
+        else
+          write(*, *) "error: reading ",aname," from hdf5"
+          write(*, *) "fdims (", fdims(1), ",", fdims(2), ")"
+          write(*, *) "inconsistent with  dims (", dims(1), &
+                      ",", dims(2), ")"
+          write(*, *) "fdims = dims in the file (use h5ls)"
+          write(*, *) "dims  = dims specified for array to read"
+          errval%errormsg = 'error: fdims inconsistent with dims'
+          errval%errbool = .true.
+        endif
+      elseif (ndims.eq.1) then
+        call read_dims(fid,aname,fdims1,h5in,errval)
+        if (fdims1(1).eq.dims(1)*dims(2)) then
+          allocate(vec(fdims1(1)))
+          call read_int_1d(fid,aname,vec,h5in,errval)
+          array=reshape(vec,(/dims(1),dims(2)/))
+          deallocate(vec)
+        else
+          write(*, *) "error: reading ",aname," from hdf5"
+          write(*, *) "fdims (", fdims1(1), ")"
+          write(*, *) "inconsistent with  dims (", dims(1), &
+                      ",", dims(2), ")"
+          write(*, *) "fdims = dims in the file (use h5ls)"
+          write(*, *) "dims  = dims specified for array to read"
+          errval%errormsg = 'error: fdims inconsistent with dims'
+          errval%errbool = .true.
+        endif
+      else
+        write(*, *) "error: reading ",aname," from hdf5"
+        write(*, *) "ndims (", ndims, ") inconsistent"
+        write(*, *) "with 2d array"
+        write(*, *) "ndims = #dims in the file (use h5ls)"
+        errval%errormsg = 'error: ndims /= 2'
+        errval%errbool = .true.
+      endif
+      return
+      end subroutine read_int_2d_ex
+!-----------------------------------------------------------------------
+!     subprogram 92. read_intl_ex
+!     Read integer scalar if the object exists, but leave the input
+!       unchanged if it doesn't
+!-----------------------------------------------------------------------
+      subroutine read_intl_ex(fid,aname,val,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      type(hdf5InOpts), intent(in) :: h5in
+      integer(i8), intent(inout) :: val
+      type(hdf5ErrorType), intent(inout) :: errval
+    
+      if (obj_exists(fid,aname,errval)) &
+        call read_intl(fid,aname,val,h5in,errval)
+
+      return
+      end subroutine read_intl_ex
+!-----------------------------------------------------------------------
+!     subprogram 93. read_intl_1d_ex
+!     Read integer vector if the object exists, but leave the input
+!       unchanged if it doesn't
+!     Only read the number of elements included in the file
+!-----------------------------------------------------------------------
+      subroutine read_intl_1d_ex(fid,aname,array,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      type(hdf5InOpts), intent(in) :: h5in
+      integer(i8), dimension(:), intent(inout) :: array
+      type(hdf5ErrorType), intent(inout) :: errval
+      integer(i4) :: ndims
+      integer(HSIZE_T) :: dims
+      integer(HSIZE_T), dimension(1) :: fdims
+      integer,parameter :: FAIL=-1
+      integer :: error
+      integer(HID_T) :: dset_id
+    
+      integer(i4), dimension(:), allocatable :: intarray
+!-----------------------------------------------------------------------
+!     Check that the object exists.
+!-----------------------------------------------------------------------
+      if (.NOT.obj_exists(fid,aname,errval)) return
+!-----------------------------------------------------------------------
+!     Read dataset as a scalar if it is not an array.
+!-----------------------------------------------------------------------
+      call read_ndims(fid,aname,ndims,h5in,errval)
+      if (ndims < 1) then
+        call read_intl(fid,aname,array(1),h5in,errval)
+        return
+      elseif (ndims > 1) then
+        write(*, *) "error: dataset is not 1d"
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-----------------------------------------------------------------------
+!     Open the dataset specified by aname
+!-----------------------------------------------------------------------
+      if (h5in%verbose) WRITE(*,*) ' Reading 1d i8 array: ', aname
+      call h5dopen_f(fid, aname, dset_id, error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-------------------------------------------------------------------
+!     Check size.
+!-------------------------------------------------------------------
+      dims=size(array)
+      call dset_dims(dset_id,fdims,errval)
+      allocate(intarray(fdims(1)))
+!      intarray=array(1:fdims(1))
+      if (errval%errBool) return
+      if (fdims(1) > dims) then
+        write(*, *) "error: reading ",aname," from hdf5"
+        write(*, *) "fdims (", fdims(1), ")  >  dims (", dims, ")"
+        write(*, *) "fdims = dims in the file (use h5ls)"
+        write(*, *) "dims  = dims allocated for array to read"
+        errval%errormsg = 'error: fdims > dims'
+        errval%errbool = .true.
+        return
+      endif
+!-----------------------------------------------------------------------
+!     Read data set.
+!-----------------------------------------------------------------------
+      call h5dread_f(dset_id,h5t_std_i64le,intarray,fdims,error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5dclose_f(dset_id,error)
+        return
+      endif
+      array(1:fdims(1)) = intarray
+      deallocate(intarray)
+!-----------------------------------------------------------------------
+!     Terminate access to the dataset
+!-----------------------------------------------------------------------
+      call h5dclose_f(dset_id,error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-----------------------------------------------------------------------
+      errval%errBool = .false.
+      return
+      end subroutine read_intl_1d_ex
+!-----------------------------------------------------------------------
+!     subprogram 94. read_rl_ex
+!     Read floating point scalar if the object exists, but leave the
+!       input unchanged if it doesn't
+!-----------------------------------------------------------------------
+      subroutine read_rl_ex(fid,aname,val,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      type(hdf5InOpts), intent(in) :: h5in
+      real(r8), intent(inout) :: val
+      type(hdf5ErrorType), intent(inout) :: errval
+    
+      if (obj_exists(fid,aname,errval)) &
+        call read_rl(fid,aname,val,h5in,errval)
+
+      return
+      end subroutine read_rl_ex
+!-----------------------------------------------------------------------
+!     subprogram 95. read_rl_1d_ex
+!     Read floating point vector if the object exists, but leave the
+!       input unchanged if it doesn't
+!     Only read the number of elements included in the file
+!-----------------------------------------------------------------------
+      subroutine read_rl_1d_ex(fid,aname,array,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      type(hdf5InOpts), intent(in) :: h5in
+      real(r8), dimension(:), intent(inout) :: array
+      type(hdf5ErrorType), intent(inout) :: errval
+      integer(i4) :: ndims
+      integer(HSIZE_T) :: dims
+      integer(HSIZE_T), dimension(1) :: fdims
+      integer,parameter :: FAIL=-1
+      integer :: error
+    
+      integer(HID_T) :: dset_id
+!-----------------------------------------------------------------------
+!     Check that the object exists.
+!-----------------------------------------------------------------------
+      if (.NOT.obj_exists(fid,aname,errval)) return
+!-----------------------------------------------------------------------
+!     Read dataset as a scalar if it is not an array.
+!-----------------------------------------------------------------------
+      call read_ndims(fid,aname,ndims,h5in,errval)
+      if (ndims < 1) then
+        call read_rl(fid,aname,array(1),h5in,errval)
+        return
+      elseif (ndims > 1) then
+        write(*, *) "error: dataset is not 1d"
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-----------------------------------------------------------------------
+!     Open the dataset specified by aname
+!-----------------------------------------------------------------------
+      if(h5in%verbose) WRITE(*,*) ' Reading 1d r8 array: ', aname
+      call h5dopen_f(fid, aname, dset_id, error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Find data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-------------------------------------------------------------------
+!     Check size.
+!-------------------------------------------------------------------
+      dims=size(array)
+      call dset_dims(dset_id,fdims,errval)
+      if (errval%errBool) return
+      if (fdims(1) > dims) then
+        write(*, *) "error: reading ",aname," from hdf5"
+        write(*, *) "fdims (", fdims(1), ")  >  dims (", dims, ")"
+        write(*, *) "fdims = dims in the file (use h5ls)"
+        write(*, *) "dims  = dims allocated for array to read"
+        errval%errormsg = 'error: fdims > dims'
+        errval%errbool = .true.
+        return
+      endif
+!-----------------------------------------------------------------------
+!     Read data set.
+!-----------------------------------------------------------------------
+      call h5dread_f(dset_id,h5t_ieee_f64le,array(1:fdims(1)),fdims, &
+                     error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Reading data set failed for '//aname
+        errval%errBool = .true.
+        call h5dclose_f(dset_id,error)
+        return
+      endif
+!-----------------------------------------------------------------------
+!     Terminate access to the dataset
+!-----------------------------------------------------------------------
+      call h5dclose_f(dset_id,error)
+      if (error==FAIL) then
+        errval%errorMsg = 'ERROR: Close data set failed for '//aname
+        errval%errBool = .true.
+        return
+      endif
+!-----------------------------------------------------------------------
+      errval%errBool = .false.
+      return
+      end subroutine read_rl_1d_ex
+!-----------------------------------------------------------------------
+!     subprogram 96. read_rl_2d_ex
+!     Read floating point 2d array if the object exists, but leave the
+!       input unchanged if it doesn't
+!     Also read the array if it has been flattened into 1d with
+!       consistent length
+!-----------------------------------------------------------------------
+      subroutine read_rl_2d_ex(fid,aname,array,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      real(r8), dimension(:,:), intent(inout) :: array
+      type(hdf5InOpts), intent(in) :: h5in
+      type(hdf5ErrorType), intent(inout) :: errval
+      integer(i4) :: ndims
+      integer(HSIZE_T), dimension(1) :: fdims1
+      integer(HSIZE_T), dimension(2) :: dims,fdims
+      real(r8), allocatable, dimension(:,:) :: flat
+      real(r8), allocatable, dimension(:)  :: vec
+!-----------------------------------------------------------------------
+!     Check that the object exists.
+!-----------------------------------------------------------------------
+      if (.NOT.obj_exists(fid,aname,errval)) return
+!-----------------------------------------------------------------------
+!     Fit the dataset to the specified dimensions if possible.
+!-----------------------------------------------------------------------
+      dims(1)=size(array,1)
+      dims(2)=size(array,2)
+      call read_ndims(fid,aname,ndims,h5in,errval)
+      if (ndims.eq.2) then
+        call read_dims(fid,aname,fdims,h5in,errval)
+        if ((fdims(1).le.dims(1)).and.(fdims(2).le.dims(2))) then
+          call read_rl_2d(fid,aname,array(1:fdims(1),1:fdims(2)),h5in,errval)
+        elseif ((fdims(1).eq.dims(2)).and.(fdims(2).eq.dims(1))) then
+          allocate(flat(dims(2),dims(1)))
+          call read_rl_2d(fid,aname,flat,h5in,errval)
+          array=transpose(flat)
+          deallocate(flat)
+        elseif ((fdims(1).eq.1).and.(fdims(2).eq.dims(1)*dims(2))) then
+          allocate(flat(1,dims(1)*dims(2)))
+          call read_rl_2d(fid,aname,flat,h5in,errval)
+          array=reshape(flat,(/dims(1),dims(2)/))
+          deallocate(flat)
+        elseif ((fdims(1).eq.dims(1)*dims(2)).and.(fdims(2).eq.1)) then
+          allocate(flat(dims(1)*dims(2),1))
+          call read_rl_2d(fid,aname,flat,h5in,errval)
+          array=reshape(flat,(/dims(1),dims(2)/))
+          deallocate(flat)
+        else
+          write(*, *) "error: reading ",aname," from hdf5"
+          write(*, *) "fdims (", fdims(1), ",", fdims(2), ")"
+          write(*, *) "inconsistent with  dims (", dims(1), &
+                      ",", dims(2), ")"
+          write(*, *) "fdims = dims in the file (use h5ls)"
+          write(*, *) "dims  = dims specified for array to read"
+          errval%errormsg = 'error: fdims inconsistent with dims'
+          errval%errbool = .true.
+        endif
+      elseif (ndims.eq.1) then
+        call read_dims(fid,aname,fdims1,h5in,errval)
+        if (fdims1(1).eq.dims(1)*dims(2)) then
+          allocate(vec(fdims1(1)))
+          call read_rl_1d(fid,aname,vec,h5in,errval)
+          array=reshape(vec,(/dims(1),dims(2)/))
+          deallocate(vec)
+        else
+          write(*, *) "error: reading ",aname," from hdf5"
+          write(*, *) "fdims (", fdims1(1), ")"
+          write(*, *) "inconsistent with  dims (", dims(1), &
+                      ",", dims(2), ")"
+          write(*, *) "fdims = dims in the file (use h5ls)"
+          write(*, *) "dims  = dims specified for array to read"
+          errval%errormsg = 'error: fdims inconsistent with dims'
+          errval%errbool = .true.
+        endif
+      else
+        write(*, *) "error: reading ",aname," from hdf5"
+        write(*, *) "ndims (", ndims, ") inconsistent"
+        write(*, *) "with 2d array"
+        write(*, *) "ndims = #dims in the file (use h5ls)"
+        errval%errormsg = 'error: ndims /= 2'
+        errval%errbool = .true.
+      endif
+      return
+      end subroutine read_rl_2d_ex
+!-----------------------------------------------------------------------
+!     subprogram 97. read_rl_3d_ex
+!     Read floating point 3d array if the object exists, but leave the
+!       input unchanged if it doesn't
+!-----------------------------------------------------------------------
+      subroutine read_rl_3d_ex(fid,aname,array,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      real(r8), dimension(:,:,:), intent(inout) :: array
+      type(hdf5InOpts), intent(in) :: h5in
+      type(hdf5ErrorType), intent(inout) :: errval
+    
+      if (obj_exists(fid,aname,errval)) &
+        call read_rl_3d(fid,aname,array,h5in,errval)
+
+      return
+      end subroutine read_rl_3d_ex
+!-----------------------------------------------------------------------
+!     subprogram 98. read_rl_4d_ex
+!     Read floating point 4d array if the object exists, but leave the
+!       input unchanged if it doesn't
+!-----------------------------------------------------------------------
+      subroutine read_rl_4d_ex(fid,aname,array,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      real(r8), dimension(:,:,:,:), intent(inout) :: array
+      type(hdf5InOpts), intent(in) :: h5in
+      type(hdf5ErrorType), intent(inout) :: errval
+    
+      if (obj_exists(fid,aname,errval)) &
+        call read_rl_4d(fid,aname,array,h5in,errval)
+
+      end subroutine read_rl_4d_ex
+!-----------------------------------------------------------------------
+!     subprogram 99. read_5d_ex
+!     Read floating point 5d array if the object exists, but leave the
+!       input unchanged if it doesn't
+!-----------------------------------------------------------------------
+      subroutine read_rl_5d_ex(fid,aname,array,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      real(r8), dimension(:,:,:,:,:), intent(inout) :: array
+      type(hdf5InOpts), intent(in) :: h5in
+      type(hdf5ErrorType), intent(inout) :: errval
+    
+      if (obj_exists(fid,aname,errval)) &
+        call read_rl_5d(fid,aname,array,h5in,errval)
+
+      return
+      end subroutine read_rl_5d_ex
+!-----------------------------------------------------------------------
+!     subprogram 100. read_log_ex
+!     Read logical as an integer if the object exists, but leave the
+!       input unchanged if it doesn't
+!-----------------------------------------------------------------------
+      subroutine read_log_ex(fid,aname,bool,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      type(hdf5InOpts), intent(in) :: h5in
+      logical, intent(inout) :: bool
+      type(hdf5ErrorType), intent(inout) :: errval
+      integer(i4) :: val
+!-----------------------------------------------------------------------
+!     Check that the object exists.
+!-----------------------------------------------------------------------
+      if (.NOT.obj_exists(fid,aname,errval)) return
+!-----------------------------------------------------------------------
+!     Read data as an integer and convert to logical
+!-----------------------------------------------------------------------
+      call read_int(fid,aname,val,h5in,errval)
+      if (errval%errBool) return
+      bool=.false.
+      if (val.ne.0) bool=.true.
+      return
+      end subroutine read_log_ex
+!-----------------------------------------------------------------------
+!     subprogram 100. read_int_2d_sq
+!     Read integer 2d array if the object exists, but leave the input
+!       unchanged if it doesn't
+!     If the dataset is smaller than available space, ensure that it is
+!       read into the subdominant square
+!-----------------------------------------------------------------------
+      subroutine read_int_2d_sq(fid,aname,array,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      integer(i4), dimension(:,:), intent(inout) :: array
+      type(hdf5InOpts), intent(in) :: h5in
+      type(hdf5ErrorType), intent(inout) :: errval
+      integer(i4) :: ndims
+      integer(HSIZE_T), dimension(1) :: fdims1,sqdims1
+      integer(HSIZE_T), dimension(2) :: dims,fdims,sqdims
+      integer(i4), allocatable, dimension(:,:) :: flat
+      integer(i4), allocatable, dimension(:)  :: vec
+!-----------------------------------------------------------------------
+!     Check that the object exists.
+!-----------------------------------------------------------------------
+      if (.NOT.obj_exists(fid,aname,errval)) return
+!-----------------------------------------------------------------------
+!     Fit the dataset into a square if possible.
+!-----------------------------------------------------------------------
+      dims(1)=size(array,1)
+      dims(2)=size(array,2)
+      call read_ndims(fid,aname,ndims,h5in,errval)
+      if (ndims.eq.2) then
+        call read_dims(fid,aname,fdims,h5in,errval)
+        sqdims=int(sqrt(real(fdims)))
+        if ((fdims(1).eq.fdims(2)).and.(fdims(1).le.dims(1)) &
+            .and.(fdims(2).le.dims(2))) then
+          call read_int_2d(fid,aname,array(1:fdims(1),1:fdims(2)),h5in,errval)
+        elseif ((fdims(1).eq.1).and.(fdims(2).eq.sqdims(2)**2) &
+                .and.(sqdims(2).le.dims(1)).and.(sqdims(2).le.dims(2))) then
+          allocate(flat(1,fdims(2)))
+          call read_int_2d(fid,aname,flat,h5in,errval)
+          array(1:sqdims(2),1:sqdims(2))=reshape(flat,(/sqdims(2),sqdims(2)/))
+          deallocate(flat)
+        elseif ((fdims(2).eq.1).and.(fdims(1).eq.sqdims(1)**2) &
+                .and.(sqdims(1).le.dims(1)).and.(sqdims(1).le.dims(2))) then
+          allocate(flat(fdims(1),1))
+          call read_int_2d(fid,aname,flat,h5in,errval)
+          array(1:sqdims(1),1:sqdims(1))=reshape(flat,(/sqdims(1),sqdims(1)/))
+          deallocate(flat)
+        else
+          write(*, *) "error: reading ",aname," from hdf5"
+          write(*, *) "fdims (", fdims(1), ",", fdims(2), ")"
+          write(*, *) "cannot be fit into square subset of"
+          write(*, *) "dims (", dims(1), ",", dims(2), ")"
+          write(*, *) "fdims = dims in the file (use h5ls)"
+          write(*, *) "dims  = dims specified for array to read"
+          errval%errormsg = 'error: fdims inconsistent with dims'
+          errval%errbool = .true.
+        endif
+      elseif (ndims.eq.1) then
+        call read_dims(fid,aname,fdims1,h5in,errval)
+        sqdims1=int(sqrt(real(fdims1)))
+        if ((fdims1(1).eq.sqdims1(1)**2).and.(sqdims1(1).le.dims(1)) &
+            .and.(sqdims1(1).le.dims(2))) then
+          allocate(vec(fdims1(1)))
+          call read_int_1d(fid,aname,vec,h5in,errval)
+          array(1:sqdims1(1),1:sqdims1(1))=reshape(vec,(/sqdims1(1),sqdims1(1)/))
+          deallocate(vec)
+        else
+          write(*, *) "error: reading ",aname," from hdf5"
+          write(*, *) "fdims (", fdims1(1), ")"
+          write(*, *) "cannot be fit into square subset of"
+          write(*, *) "dims (", dims(1), ",", dims(2), ")"
+          write(*, *) "fdims = dims in the file (use h5ls)"
+          write(*, *) "dims  = dims specified for array to read"
+          errval%errormsg = 'error: fdims inconsistent with dims'
+          errval%errbool = .true.
+        endif
+      else
+        write(*, *) "error: reading ",aname," from hdf5"
+        write(*, *) "ndims (", ndims, ") inconsistent"
+        write(*, *) "with 2d array"
+        write(*, *) "ndims = #dims in the file (use h5ls)"
+        errval%errormsg = 'error: ndims /= 2'
+        errval%errbool = .true.
+      endif
+      return
+      end subroutine read_int_2d_sq
+!-----------------------------------------------------------------------
+!     subprogram 101. read_rl_2d_sq
+!     Read floating point 2d array if the object exists, but leave the
+!       input unchanged if it doesn't
+!     If the dataset is smaller than available space, ensure that it is
+!       read into the subdominant square
+!-----------------------------------------------------------------------
+      subroutine read_rl_2d_sq(fid,aname,array,h5in,errval)
+      integer(HID_T), intent(in) :: fid
+      character*(*), intent(in) :: aname
+      real(r8), dimension(:,:), intent(inout) :: array
+      type(hdf5InOpts), intent(in) :: h5in
+      type(hdf5ErrorType), intent(inout) :: errval
+      integer(i4) :: ndims
+      integer(HSIZE_T), dimension(1) :: fdims1,sqdims1
+      integer(HSIZE_T), dimension(2) :: dims,fdims,sqdims
+      real(r8), allocatable, dimension(:,:) :: flat
+      real(r8), allocatable, dimension(:)  :: vec
+!-----------------------------------------------------------------------
+!     Check that the object exists.
+!-----------------------------------------------------------------------
+      if (.NOT.obj_exists(fid,aname,errval)) return
+!-----------------------------------------------------------------------
+!     Fit the dataset to the specified dimensions if possible.
+!-----------------------------------------------------------------------
+      dims(1)=size(array,1)
+      dims(2)=size(array,2)
+      call read_ndims(fid,aname,ndims,h5in,errval)
+      if (ndims.eq.2) then
+        call read_dims(fid,aname,fdims,h5in,errval)
+        sqdims=int(sqrt(real(fdims)))
+        if ((fdims(1).eq.fdims(2)).and.(fdims(1).le.dims(1)) &
+            .and.(fdims(2).le.dims(2))) then
+          call read_rl_2d(fid,aname,array(1:fdims(1),1:fdims(2)),h5in,errval)
+        elseif ((fdims(1).eq.1).and.(fdims(2).eq.sqdims(2)**2) &
+                .and.(sqdims(2).le.dims(1)).and.(sqdims(2).le.dims(2))) then
+          allocate(flat(1,fdims(2)))
+          call read_rl_2d(fid,aname,flat,h5in,errval)
+          array(1:sqdims(2),1:sqdims(2))=reshape(flat,(/sqdims(2),sqdims(2)/))
+          deallocate(flat)
+        elseif ((fdims(2).eq.1).and.(fdims(1).eq.sqdims(1)**2) &
+                .and.(sqdims(1).le.dims(1)).and.(sqdims(1).le.dims(2))) then
+          allocate(flat(fdims(1),1))
+          call read_rl_2d(fid,aname,flat,h5in,errval)
+          array(1:sqdims(1),1:sqdims(1))=reshape(flat,(/sqdims(1),sqdims(1)/))
+          deallocate(flat)
+        else
+          write(*, *) "error: reading ",aname," from hdf5"
+          write(*, *) "fdims (", fdims(1), ",", fdims(2), ")"
+          write(*, *) "cannot be fit into square subset of"
+          write(*, *) "dims (", dims(1), ",", dims(2), ")"
+          write(*, *) "fdims = dims in the file (use h5ls)"
+          write(*, *) "dims  = dims specified for array to read"
+          errval%errormsg = 'error: fdims inconsistent with dims'
+          errval%errbool = .true.
+        endif
+      elseif (ndims.eq.1) then
+        call read_dims(fid,aname,fdims1,h5in,errval)
+        sqdims1=int(sqrt(real(fdims1)))
+        if ((fdims1(1).eq.sqdims1(1)**2).and.(sqdims1(1).le.dims(1)) &
+            .and.(sqdims1(1).le.dims(2))) then
+          allocate(vec(fdims1(1)))
+          call read_rl_1d(fid,aname,vec,h5in,errval)
+          array(1:sqdims1(1),1:sqdims1(1))=reshape(vec,(/sqdims1(1),sqdims1(1)/))
+          deallocate(vec)
+        else
+          write(*, *) "error: reading ",aname," from hdf5"
+          write(*, *) "fdims (", fdims1(1), ")"
+          write(*, *) "cannot be fit into square subset of"
+          write(*, *) "dims (", dims(1), ",", dims(2), ")"
+          write(*, *) "fdims = dims in the file (use h5ls)"
+          write(*, *) "dims  = dims specified for array to read"
+          errval%errormsg = 'error: fdims inconsistent with dims'
+          errval%errbool = .true.
+        endif
+      else
+        write(*, *) "error: reading ",aname," from hdf5"
+        write(*, *) "ndims (", ndims, ") inconsistent"
+        write(*, *) "with 2d array"
+        write(*, *) "ndims = #dims in the file (use h5ls)"
+        errval%errormsg = 'error: ndims /= 2'
+        errval%errbool = .true.
+      endif
+      return
+      end subroutine read_rl_2d_sq
 !-----------------------------------------------------------------------
 !     close module.
 !-----------------------------------------------------------------------

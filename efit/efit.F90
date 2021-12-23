@@ -140,12 +140,12 @@
       call get_eparmdud_defaults()
 
       select case (kdata)
+      case (1)
+        call read_omas_in1(ifname(1))     !this assume machine is always the same
       case (2)
         call read_dirs_shot(ifname(1))     !this assume machine is always the same
       case(7)
         call read_dirs_shot('efit_snap.dat_'//adjustl(snapext_in))     !this assume machine is always the same
-      case (9)
-        call read_omas_in1(ifname(1))     !this assume machine is always the same
       case default
         call read_dirs_shot('efit_snap.dat')
       end select

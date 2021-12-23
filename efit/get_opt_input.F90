@@ -8,7 +8,7 @@
 !!              which has not been setup yet, so it does the same
 !!              as kdata=6 right now
 !!
-!!     10/12/21: kdata=9 replaces input and eventually output files
+!!     10/12/21: kdata=1 replaces input and eventually output files
 !!               with hdf5 files that have the OMAS-equilibrium format
 !!
 !**********************************************************************
@@ -79,7 +79,7 @@
           endif
         endif
 
-      elseif (kdata.eq.9) then
+      elseif (kdata.eq.1) then
         ALLOCATE(ifname(1))
         if (rank == 0) then
           if (use_opt_input .eqv. .false.) then
@@ -185,7 +185,7 @@
         call MPI_BARRIER(MPI_COMM_WORLD,ierr)
 ! Distribute time step and filename information to ALL processes
         call MPI_SCATTER(dist_data,1,MPI_INTEGER,ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-        if (kdata.ne.9) then
+        if (kdata.ne.1) then
 ! Recall each filename 80 characters
           if (rank == 0) then
             dist_data(:) = dist_data(:)*80

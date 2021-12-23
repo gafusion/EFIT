@@ -17,7 +17,7 @@ If you have a parallel build on a supercomputer, then you should launch an
 interactive session on a compute node before executing the tests.
 
 For information about why a test failed, see 
-``Testing/Temporary/LastTest.log``.
+``${EFIT_BUILDDIR}/Testing/Temporary/LastTest.log``.
 
 You can also execute::
 
