@@ -60,7 +60,7 @@ endif()
 option(ENABLE_MDSPLUS "Enable MDS+" off)
 set(HAVE_MDSPLUS False)   # Used in defines
 if (${ENABLE_MDSPLUS})
-    find_package(Mdsplus COMPONENTS 
+    find_package(MDSPLUS COMPONENTS 
                  INSTALL_DIR "mdsplus"
                  HEADERS "mdsdescrip.h" "mdslib.h"
                  LIBRARIES "MdsLib"
@@ -70,6 +70,7 @@ if (${ENABLE_MDSPLUS})
     if (${Mdsplus_FOUND})
       message(STATUS "Found MDS+")
       set(HAVE_MDSPLUS True)
+      set(USE_MDS TRUE)                 # ifdef
       set(io_libs ${Mdsplus_LIBRARIES} ${io_libs})
     endif()
 endif()

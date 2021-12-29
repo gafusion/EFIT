@@ -123,11 +123,10 @@ is built in your $HOME/software directory)::
         -DNetCDF_DIR:PATH='$HOME/software/netcdf' \
         -DENABLE_HDF5:BOOL=ON \
         -DHDF5_DIR:PATH='$HOME/software/hdf5' \
-        ..
-
-The following flags are still under development::
-
+        -DENABLE_MDSPLUS:BOOL=ON \
         -DMDSPLUS_DIR:PATH='$HOME/software/mdsplus' \
+        -DMSE_LIB:PATH='/fusion/projects/codes/mse/lib/libmse.a' \
+        ..
 
 For debugging, set:: 
 

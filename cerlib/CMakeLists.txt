@@ -1,7 +1,7 @@
-######################################################################          
-#                                                                               
+######################################################################
+#
 # CMakeLists.txt for cerlib
-#                                                                               
+#
 ######################################################################
 
 # Need to find MDS+ ?
@@ -20,7 +20,7 @@ install(TARGETS cerlib DESTINATION lib
 )
 
 # Need a find MDS+
-#target_link_libraries(cerlib libMdsLib_client)
+target_link_libraries(cerlib libMdsLib_client)
 
-# It would be nice to have tests
+# It would be nice to have dedicated tests
 #add_subdirectory(tests)

@@ -18,5 +18,8 @@
     -DENABLE_NETCDF:BOOL=ON \
     -DNetCDF_DIR:PATH='/fusion/usc/opt/netcdf/netcdf-4.4.1_mpich-3.2_intel2018/' \
     -DENABLE_PARALLEL:BOOL=ON \
+    -DENABLE_MDSPLUS:BOOL=ON \
+    -DMDSPLUS_DIR:PATH='/fusion/usc/src/mdsplus/mdsplus-stable_release-7-96-9' \
+    -DMSE_LIB:PATH='/fusion/projects/codes/mse/lib/libmse.a' \
     -DCMAKE_BUILD_TYPE:STRING=RELEASE \
     ..

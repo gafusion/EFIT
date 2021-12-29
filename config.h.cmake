@@ -2,6 +2,7 @@
 #define CONFIG_H
 
 #cmakedefine USEMPI
+#cmakedefine USE_MDS
 #cmakedefine USE_NETCDF
 #cmakedefine MPI_THREAD_FUNNELED
 #cmakedefine OBJ_MEM_PROF
@@ -10,6 +11,7 @@
 #cmakedefine HAVE_LAPACK
 #cmakedefine HAVE_HDF5
 #cmakedefine HAVE_NETCDF
+#cmakedefine HAVE_MDSPLUS
 #cmakedefine TIME_LEVEL1
 #cmakedefine TIME_LEVEL2
 #cmakedefine DEBUG_LEVEL1

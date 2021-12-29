@@ -17,5 +17,8 @@
     -DENABLE_NETCDF:BOOL=ON \
     -DNetCDF_DIR:PATH='/fusion/usc/opt/env/gcc9.2' \
     -DENABLE_PARALLEL:BOOL=ON \
+    -DENABLE_MDSPLUS:BOOL=ON \
+    -DMDSPLUS_DIR:PATH='/fusion/usc/src/mdsplus/mdsplus-stable_release-7-96-9' \
+    -DMSE_LIB:PATH='/fusion/projects/codes/mse/lib/libmse.a' \
     -DCMAKE_BUILD_TYPE:STRING=RELEASE \
     ..
