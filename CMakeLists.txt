@@ -15,6 +15,9 @@ set(PROJECT_URL "https://gitlab.com/efit-ai/efit")
 # Required version
 cmake_minimum_required(VERSION 3.8.0)
 
+# where to find the Find<PACKAGE>.cmake files
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/io)
+
 #---------------------------------------------------------------------
 # EFIT options
 #---------------------------------------------------------------------
