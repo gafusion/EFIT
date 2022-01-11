@@ -8,6 +8,9 @@
 !!              which has not been setup yet, so it does the same
 !!              as kdata=6 right now
 !!
+!!     10/12/21: kdata=1 replaces input and eventually output files
+!!               with hdf5 files that have the OMAS-equilibrium format
+!!
 !**********************************************************************
       subroutine get_opt_input(ktime)
       use set_kinds
@@ -15,6 +18,7 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
+      logical file_stat
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
@@ -56,24 +60,62 @@
       endif
 
       if (kdata.eq.2) then 
-       if (rank == 0) then
-        if (use_opt_input .eqv. .false.) then
-          write (nttyo,6200)
-          read (ntty,*) ktime
-          ALLOCATE(ifname(ktime))
-          write (nttyo,6220)
-          do i=1,ktime
-            write (nttyo,6230)
-            read (ntty,6240) ifname(i)
-          enddo
-        else
-          ktime = steps_in
-          ALLOCATE(ifname(ktime))
-          do i=1,ktime
-             ifname(i) = inpfile_in(i)
-          enddo
+        if (rank == 0) then
+          if (use_opt_input .eqv. .false.) then
+            write (nttyo,6200)
+            read (ntty,*) ktime
+            ALLOCATE(ifname(ktime))
+            write (nttyo,6220)
+            do i=1,ktime
+              write (nttyo,6230)
+              read (ntty,6240) ifname(i)
+            enddo
+          else
+            ktime = steps_in
+            ALLOCATE(ifname(ktime))
+            do i=1,ktime
+              ifname(i) = inpfile_in(i)
+            enddo
+          endif
         endif
-       endif
+
+      elseif (kdata.eq.1) then
+        ALLOCATE(ifname(1))
+        if (rank == 0) then
+          if (use_opt_input .eqv. .false.) then
+            write (nttyo,6220)
+            read (ntty,6240) ifname(1)
+          else
+            ifname(1) = inpfile_in(1)
+          endif
+#ifdef HAVE_HDF5
+          inquire(file=trim(ifname(1)),exist=file_stat)
+          if (.not. file_stat) then
+            call errctrl_msg('get_opt_input',trim(ifname(1))//' not found')
+            stop
+          endif
+          call fch5init
+          call open_oldh5file(trim(ifname(1)),fileid,rootgid,h5in,h5err)
+          call test_group(rootgid,"equilibrium",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('get_opt_input','equilibrium group not found')
+            stop
+          endif
+          call open_group(rootgid,"equilibrium",eqid,h5err)
+          call test_group(eqid,"time_slice",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('get_opt_input','time_slice group not found')
+            stop
+          endif
+          call get_nmembers(eqid,"time_slice",ktime,h5err)
+          call close_group("equilibrium",eqid,h5err)
+          call close_h5file(fileid,rootgid,h5err)
+#else
+          ! this code should not be reachable
+          call errctrl_msg('get_opt_input','HDF5 needs to be linked')
+          stop
+#endif
+        endif
 
       elseif (kdata.eq.3 .or. kdata.eq.7) then
     
@@ -96,7 +138,7 @@
         endif
 !       endif
       else
-       return
+        return
       endif
      
 #if defined(USEMPI)
@@ -143,23 +185,32 @@
         call MPI_BARRIER(MPI_COMM_WORLD,ierr)
 ! Distribute time step and filename information to ALL processes
         call MPI_SCATTER(dist_data,1,MPI_INTEGER,ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+        if (kdata.ne.1) then
 ! Recall each filename 80 characters
-        if (rank == 0) then
-          dist_data(:) = dist_data(:)*80
-          call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER, &
-                 MPI_IN_PLACE,dist_data(rank+1),MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+          if (rank == 0) then
+            dist_data(:) = dist_data(:)*80
+            call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER, &
+                   MPI_IN_PLACE,dist_data(rank+1),MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+          else
+            ALLOCATE(ifname(ktime))
+            call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER, &
+                   ifname,ktime*80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+          endif
         else
-          ALLOCATE(ifname(ktime))
-          call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER, &
-                 ifname,ktime*80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+            call MPI_BCAST(ifname(1),80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
         endif
       endif
 #endif
 
 ! 5500 format (/,10x,'EFITD Version  ',2a5,/)
  5500 format (/,10x,'EFIT-AI'/)
+#ifdef HAVE_HDF5
  6000 format (/,1x,'type mode (2=file, 3=snap, 4=time', &
-               ', 5=input, 6=com file, 7=snap_ext,',' 8=pefit):')
+               ', 5=input, 6=com file, 7=snap_ext, 8=pefit, 9=omas):')
+#else
+ 6000 format (/,1x,'type mode (2=file, 3=snap, 4=time', &
+               ', 5=input, 6=com file, 7=snap_ext, 8=pefit):')
+#endif
  6040 format (/,1x,'type shot #, start time(ms), time step(ms), steps', &
               '(<1001):')
  6200 format (/,1x,'number of time slices?')

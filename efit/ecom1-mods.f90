@@ -818,6 +818,25 @@
            bpxtra(:,:),flxtra(:,:),fpxtra(:,:),worka2(:)
       end module commonblocks
 
+      module efit_bdata
+      use set_kinds
+      implicit integer*8 (i-n), real*8 (a-h,o-z)
+      integer*8 iunit,m_write
+      integer*8 limtrs
+      real*8 xlims(5),ylims(5),xlmins
+      data iunit/35/, m_write/1/
+      data limtrs/5/
+      end
+
+      module exp_bdata
+      use set_kinds
+      real*8 ringr(6),ringz(6),ringap
+!---D3D-----------------------D3D----------------------------D3D-----
+      data ringr/1.766,1.680,1.674,2*1.671,1.681/
+      data ringz/2*-1.255,-1.258,-1.264,-1.327,-1.335/
+!---D3D-----------------------D3D----------------------------D3D-----
+      end
+
       subroutine set_ecom_mod1_arrays()
       use set_kinds
       use eparm
@@ -842,9 +861,6 @@
       use var_input1, only: rzeroj
       use var_fitec, only: saiec
       implicit none
-
-      tsaisq=0.0
-      cdelz=0.0
 
       vzeroj=0.0
       sizeroj(1)=-1.0
@@ -900,6 +916,10 @@
       rwstrip2(2)=1.4575
       zwstrip2(2)=-1.250
       fco2ne=1.0
+
+      ! initialize zeros
+      tsaisq=0.0
+      cdelz=0.0
       cdeljsum=0.0
       psi=0.0
       fwtsi=0.0

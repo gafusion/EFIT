@@ -117,6 +117,20 @@
 
       end module var_jwork4
 
+      module var_gggttt
+      integer*4, parameter :: ntims=4096
+      integer*4 navxx(ntims)
+      real*8 w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims), &
+             ew(ntims),stdevxx(ntims)
+
+      end module var_gggttt
+
+
+      module var_cww
+      integer*4 lwx,lwy
+
+      end module var_cww
+
       subroutine set_ecom_mod2_arrays()
       use set_kinds
       use var_cecoil, only: ecurrt
