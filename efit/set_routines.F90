@@ -938,8 +938,8 @@
           do l=1,itot
             a=rsplt(l)
             z1=zzgam(jtime,mmm)-zsplt(l)
-            brct=brct+br(a,r1,z1)
-            bzct=bzct+bz(a,r1,z1)
+            brct=brct+fcturn(k)*br(a,r1,z1)
+            bzct=bzct+fcturn(k)*bz(a,r1,z1)
           enddo
           kkm=fcid(k)
           rbrfc(mmm,kkm)=rbrfc(mmm,kkm)+brct/fitot*tmu
