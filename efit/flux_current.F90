@@ -505,6 +505,7 @@
           endif
         endif
       endif
+      call flush(6)
       if (isetfb.ne.0) then
         write (4,10009) rank,itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm &
           ,brfb(1)
@@ -515,6 +516,7 @@
         write (6,10009) rank,itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm &
           ,brfb(1)
       endif
+      call flush(6)
 #ifdef DEBUG_LEVEL1
       write (nttyo,*) 'cratio,cratio_ext,cratiop_ext,cratiof_ext= ', &
         cratio,cratio_ext,cratiop_ext,cratiof_ext

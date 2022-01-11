@@ -1880,7 +1880,8 @@
         saimin=300.
       endif
       if (kzeroj.eq.1.and.sizeroj(1).lt.0.0) sizeroj(1)=psiwant
-      print *, 'before save fitting weights'
+      write(*,*)  'before save fitting weights'
+      call flush(6)
 !--------------------------------------------------------------------- 
 !--   save fitting weights for FILE mode                            -- 
 !--------------------------------------------------------------------- 
@@ -1909,7 +1910,8 @@
         swtece(i)=fwtece0(i) 
       enddo 
       swtecebz=fwtecebz0
-      print *, 'adjust fit parameters based on basis function selected '
+      write(*,*)'adjust fit parameters based on basis function selected'
+      call flush(6)
 !----------------------------------------------------------------------- 
 !--   adjust fit parameters based on basis function selected          -- 
 !----------------------------------------------------------------------- 
@@ -1970,7 +1972,8 @@
       endif 
       if (psiwant.le.0.0) psiwant=1.e-5_dp
 
-      print *, 'itek > 100, write out PLTOUT.OUT individually ' 
+      write(*,*) 'itek > 100, write out PLTOUT.OUT individually ' 
+      call flush(6)
 !-------------------------------------------------------------------------- 
 !--   itek > 100, write out PLTOUT.OUT individually                      --
 !--
@@ -2043,7 +2046,8 @@
 !--   option to symmetrize added 8/14/91 eal                 -- 
 !-------------------------------------------------------------- 
       if (symmetrize) then  ! symmetrize the fixed boundery 
-        print *, 'option to symmetrize added 8/14/91 eal  ' 
+        write(*,*) 'option to symmetrize added 8/14/91 eal  ' 
+        call flush(6)
         isetfb=0  ! be sure vertical feedback is off 
         zelip=0 ! must be symmetric about midplane 
         if (nbdry.gt.1) then  ! remove duplicate point 
@@ -2136,7 +2140,8 @@
           enddo
         endif
 
-        print *, 'reorder TS data points '   
+        write(*,*) 'reorder TS data points '   
+        call flush(6)
 !--------------------------------------------------------------------- 
 !--     reorder TS data points                                      -- 
 !--------------------------------------------------------------------- 
@@ -2196,7 +2201,8 @@
         endif 
       endif
 
-      print *, 'read in limiter data' 
+      write(*,*) 'read in limiter data' 
+      call flush(6)
 !----------------------------------------------------------------------- 
 !---- read in limiter data                                            -- 
 !----------------------------------------------------------------------- 
