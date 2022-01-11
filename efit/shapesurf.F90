@@ -17,14 +17,13 @@
       use commonblocks,only: c,wk,copy,bkx,bky,psiold,psipold,psipp, &
                 worka,zeros,byringr,byringz,xouts,youts,bpoo,bpooz, &
                 bpooc,bfpol,cfpol,dfpol,xxtra,yxtra,bpxtra,flxtra,fpxtra
+      use efit_bdata,only: xlims,ylims,limtrs,xlmins
+      use exp_bdata,only: ringr,ringz,ringap
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
-      integer*8 limtrs
-      common/wwork1/xlims(5),ylims(5),limtrs,xlmins
-      common/adp/ringr(6),ringz(6),ringap
       dimension pds(6),amer(2,2),bmer(2),wmer(2),imer(2),temp(ntime)
       dimension rmid2(2)
       dimension sigams(nstark)

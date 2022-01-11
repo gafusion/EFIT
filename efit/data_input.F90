@@ -1,66 +1,67 @@
 #include "config.f"
-!********************************************************************** 
-!**                                                                  ** 
-!**     SUBPROGRAM DESCRIPTION:                                      ** 
-!**          data sets up the magnetic data and weighting arrays.    ** 
-!**                                                                  ** 
-!**     CALLING ARGUMENTS:                                           ** 
-!**                                                                  ** 
-!**     RECORD OF MODIFICATION:                                      ** 
-!**          29/06/83..........first created                         ** 
-!**          24/07/85..........revised                               ** 
-!**          23/04/04...JAL iplcout added to namelist                ** 
-!**          01/08/07...DPB namelist for mag uncertainty added       ** 
-!**                                                                  ** 
-!********************************************************************** 
-      subroutine data_input(jtime,kconvr,ktime,mtear,kerror) 
-      use commonblocks,only: c,wk,copy,bkx,bky,wgridpc,rfcpc 
-      use set_kinds 
-      include 'eparm.inc' 
-      include 'modules2.inc' 
-      include 'modules1.inc' 
-      implicit integer*4 (i-n), real*8 (a-h,o-z) 
-      parameter(mfila=10) 
-      parameter (m_ext=101) 
+!**********************************************************************
+!**                                                                  **
+!**     SUBPROGRAM DESCRIPTION:                                      **
+!**          data sets up the magnetic data and weighting arrays.    **
+!**                                                                  **
+!**     CALLING ARGUMENTS:                                           **
+!**                                                                  **
+!**     RECORD OF MODIFICATION:                                      **
+!**          29/06/83..........first created                         **
+!**          24/07/85..........revised                               **
+!**          23/04/04...JAL iplcout added to namelist                **
+!**          01/08/07...DPB namelist for mag uncertainty added       **
+!**                                                                  **
+!**********************************************************************
+      subroutine data_input(jtime,kconvr,ktime,mtear,kerror)
+      use commonblocks,only: c,wk,copy,bkx,bky,wgridpc,rfcpc
+      use set_kinds
+      include 'eparm.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      parameter(mfila=10)
+      parameter (m_ext=101)
        
-      character(len=1000) :: line 
+      character(len=1000) :: line
  
-      real*8,allocatable :: gridpf(:,:),gwork(:,:),rgrids(:),zgrids(:) 
-      real*8,dimension(:),allocatable ::  coils,expmp2,acoilc & 
-         ,tgamma,sgamma,rrrgam,zzzgam & 
-         ,aa1gam,aa2gam,aa3gam,aa4gam & 
-         ,aa5gam,aa6gam,aa7gam,tgammauncor 
-      real*8,dimension(:),allocatable ::  bmsels,sbmsels,fwtbmsels, & 
-         rrmsels,zzmsels,l1msels,l2msels, & 
-         l4msels,emsels,semsels,fwtemsels 
-      integer*4,dimension(:),allocatable ::  iemsels 
-      real*8,dimension(:),allocatable ::  tlibim,slibim,rrrlib & 
-         ,zzzlib,aa1lib,aa8lib,fwtlib 
-      real*8,dimension(:),allocatable ::  pds,denr,denv 
-      integer*8,dimension(:),allocatable ::  ilower 
-      real*8,dimension(:),allocatable ::  devxmpin,rnavxmpin & 
-               ,devpsiin,rnavpsiin,devfcin,rnavfcin & 
-               ,devein,rnavecin,brsptu 
-      integer :: nw_ext, nh_ext 
-      real*8 :: c_ext, dr_ext, dz_ext,rc_ext,zc_ext, a_ext 
-      real*8 :: eup_ext, elow_ext, dup_ext, dlow_ext, setlim_ext 
-      real*8 :: r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max 
-      real*8 :: r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot 
-      character*10 case_ext(6) 
-      character*50 edatname 
-      character*82 table_nam 
-      character*10 namedum 
-      character*2 :: reflect_ext 
-      logical :: shape_ext 
-      !real*4 spatial_avg_ham(nmtark,ngam_vars,ngam_u,ngam_w) 
-      data nsq/1/ 
-      data ersil8/1.0e-03_dp/,currn1/0.0/ 
-      data idodo/0/,idovs/0/,zetafc/2.5e-08_dp/ 
-      data co2cor/1.0/,idoac/0/,fq95/0.0/ 
-      data mcontr/35/ 
-      data ten2m3/1.0e-03_dp/ 
-      data idtime/0/,itimeb/0/ 
-      save idodo, idovs, idoac 
+      real*8,allocatable :: gridpf(:,:),gwork(:,:),rgrids(:),zgrids(:)
+      real*8,dimension(:),allocatable :: coils,expmp2,acoilc &
+         ,tgamma,sgamma,rrrgam,zzzgam &
+         ,aa1gam,aa2gam,aa3gam,aa4gam &
+         ,aa5gam,aa6gam,aa7gam,tgammauncor
+      real*8,dimension(:),allocatable :: bmsels,sbmsels,fwtbmsels, &
+         rrmsels,zzmsels,l1msels,l2msels, &
+         l4msels,emsels,semsels,fwtemsels
+      integer*4,dimension(:),allocatable :: iemsels
+      real*8,dimension(:),allocatable :: tlibim,slibim,rrrlib &
+         ,zzzlib,aa1lib,aa8lib,fwtlib
+      real*8,dimension(:),allocatable :: pds,denr,denv
+      integer*8,dimension(:),allocatable :: ilower
+      real*8,dimension(:),allocatable :: devxmpin,rnavxmpin &
+               ,devpsiin,rnavpsiin,devfcin,rnavfcin &
+               ,devein,rnavecin,brsptu
+      integer :: nw_ext,nh_ext
+      real*8 :: c_ext,dr_ext,dz_ext,rc_ext,zc_ext,a_ext
+      real*8 :: eup_ext,elow_ext,dup_ext,dlow_ext,setlim_ext
+      real*8 :: r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max
+      real*8 :: r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot
+      character*10 case_ext(6)
+      character*50 edatname
+      character*82 table_nam
+      character*10 namedum
+      character*2 :: reflect_ext
+      logical :: shape_ext
+      logical :: file_stat
+      !real*4 spatial_avg_ham(nmtark,ngam_vars,ngam_u,ngam_w)
+      data nsq/1/
+      data ersil8/1.0e-03_dp/,currn1/0.0/
+      data idodo/0/,idovs/0/,zetafc/2.5e-08_dp/
+      data co2cor/1.0/,idoac/0/,fq95/0.0/
+      data mcontr/35/
+      data ten2m3/1.0e-03_dp/
+      data idtime/0/,itimeb/0/
+      save idodo,idovs,idoac
 
       namelist/in1/ishot,itime,plasma,itek,itrace,nxiter,fwtcur,kffcur & 
       ,coils,fwtsi,expmp2,fwtmp2,kppcur,mxiter,ierchk,fwtqa,qemp,error & 
@@ -279,12 +280,14 @@
       zomegat=0.0
       sigome=0.0
       scalepw=0.0
+      rbdry=0.0
+      zbdry=0.0
 ! 
       kerror=0 
       idone=0 
-      sicont=tmu*drslop/aaslop 
+      sicont=tmu*drslop/aaslop
 ! 
-      if (kdata.ne.2) then
+      if ((kdata.ne.1).and.(kdata.ne.2)) then
 !---------------------------------------------------------------------- 
 !--   normalize fitting weights, SNAP mode                           -- 
 !---------------------------------------------------------------------- 
@@ -379,10 +382,10 @@
         rbdry(1)=1.94_dp 
         zbdry(1)=ztssym(jtime)+0.5_dp*ztswid(jtime) 
       endif 
+      else ! (kdata.eq.1).or.(kdata.eq.2)
 !---------------------------------------------------------------------- 
-!--   file mode                                                      -- 
+!--   file mode - initialize inputs                                  -- 
 !---------------------------------------------------------------------- 
-      else ! kdata.eq.2
       do i=1,nsilop 
         psibit(i)=0.0 
       enddo
@@ -449,8 +452,8 @@
       akprewt=0.0 
       akgamwt=0.0 
       akerrwt=0.0 
-      aktol=0.1_dp 
-      fwtqa=0.0 
+      aktol=0.1_dp
+      fwtqa=0.0
       gammap=1.0e+10_dp 
       gamax(jli)=-1.e6_dp 
       iavem=5 
@@ -547,34 +550,841 @@
       isolve=0 
       ifindopt = 2 
       tolbndpsi = 1.0e-12_dp 
-!---------------------------------------------------------------------- 
-!--   Read input file for KDATA = 2                                  -- 
-!---------------------------------------------------------------------- 
-      open(unit=nin,status='old',file=ifname(jtime)) 
 
       xlim(1)=-1.0 
       rbdry(1)=-1.0 
       itimeu=0 
       nbdryp=-1 
-      ktear=0 
- 
-      read (nin,in1,iostat=istat) 
-!--warn that idebug and jdebug inputs are depreciated
-      if (idebug.ne.0) write(*,*) &
-      "idebug input variable is depreciated, set cmake variable instead"
-      if (jdebug.ne."NONE") write(*,*) &
-      "jdebug input variable is depreciated, set cmake variable instead"
-!--roundoff differences can throw off zlim if limiter corners
-!--are too close to grid points (maybe zlim needs fixing...)
-      do i=1,limitr
-        ylim(i)=ylim(i)-1.e-10_dp
+      ktear=0
+      rrmsels(1)=-10. 
+      ecefit = 0.0 
+      ecebzfit = 0.0 
+
+      geqdsk_ext = 'none' 
+      psin_ext(1) = -1000.0 
+      sign_ext = 1.0 
+      cratio_ext = 1.0 
+      cratiop_ext = 1.0 
+      cratiof_ext = 1.0 
+      scalepp_ext=1.0 
+      scaleffp_ext=1.0 
+      dr_ext=0.0 
+      dz_ext=0.0 
+      shape_ext=.false. 
+      rc_ext=-10. 
+      zc_ext=-10. 
+      a_ext=-10. 
+      eup_ext=-10. 
+      elow_ext=-10. 
+      dup_ext=-10. 
+      dlow_ext=-10. 
+      setlim_ext=-10. 
+      reflect_ext='no' 
+
+      do i=1,libim
+        fwtlib(i)=0.0
+        rrrlib(i)=0.0
+        zzzlib(i)=0.0
       enddo
+
+      if (kdata.eq.2) then 
+!---------------------------------------------------------------------- 
+!--   Read ascii input files                                         -- 
+!---------------------------------------------------------------------- 
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,in1,iostat=istat) 
       if (istat>0) then 
         backspace(nin) 
         read(nin,fmt='(A)') line 
         write(*,'(A)') 'Invalid line in namelist in1: '//trim(line) 
       endif
-!--protect against underflow in fitting weights 
+
+      read (nin,ink,err=11111,end=101) 
+101   continue 
+11111 close(unit=nin) 
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,ins,err=11113,end=103) 
+103   continue 
+11113 close(unit=nin) 
+      open(unit=nin,status='old',file=ifname(jtime)) 
+
+      read (nin,in_msels,iostat=istat) 
+      if (istat>0) then 
+        backspace(nin) 
+        read(nin,fmt='(A)') line 
+        !if (trim(line)/="/") write(*,'(A)') 'Invalid line in namelist in_msels: '//trim(line) 
+      endif
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,ina,iostat=istat)
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,inece,iostat=istat) 
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,edgep,iostat=istat) 
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,iner,iostat=istat) 
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,insxr,iostat=istat) 
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime))
+      read (nin,inms,iostat=istat) 
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,inwant,iostat=istat) 
+      close(unit=nin) 
+
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      read (nin,invt,iostat=istat) 
+      close(unit=nin) 
+
+!--   Input FF', P' arrays
+      open(unit=nin,status='old',file=ifname(jtime)) 
+      if (idebug /= 0) write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext 
+      read(nin,profile_ext,err=11777,iostat=istat) 
+      if (idebug /= 0) write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext 
+!      if (geqdsk_ext.ne.'none') then 
+!        open(unit=neqdsk,status='old',file=geqdsk_ext) 
+!        read (neqdsk,11775) (case_ext(i),i=1,6),nh_ext,nw_ext,nh_ext 
+!        do i = 1,2 
+!          read (neqdsk,11773) 
+!        enddo 
+!        read (neqdsk,11776) plasma_ext,c_ext,c_ext,c_ext,c_ext 
+!        read (neqdsk,11773) 
+!        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext) 
+!        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext) 
+!        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext) 
+!        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext) 
+!        read (neqdsk,11776) ((psirz_ext,i=1,nw_ext),j=1,nh_ext) 
+!        read (neqdsk,11776,err=11777) (qpsi_ext(i),i=1,nw_ext) 
+!        read (neqdsk,11774,err=11777) nbdry_ext,limitr_ext 
+!        read (neqdsk,11776,err=11777) (rbdry_ext(i),zbdry_ext(i),i=1,nbdry_ext) 
+!        read (neqdsk,11776,err=11777) (xlim_ext(i),ylim_ext(i),i=1,limitr_ext) 
+!11773   format (a) 
+!11774   format (2i5) 
+!11775   format (6a8,3i4) 
+!11776   format (5e16.9)
+!      endif
+11777 close(nin) 
+
+!--   Read Li beam data 
+      open(unit=nin,status='old',file=ifname(jtime))
+      read (nin,inlibim,err=11237,end=11233) 
+11233 continue 
+11237 close(unit=nin) 
+!---------------------------------------------------------------------- 
+!--   HDF5 file mode                                                 -- 
+!---------------------------------------------------------------------- 
+      else ! kdata.eq.1
+#ifdef HAVE_HDF5
+        inquire(file=trim(ifname(1)),exist=file_stat)
+        if (.not. file_stat) then
+          call errctrl_msg('data_input',trim(line)//' not found')
+          stop
+        endif
+        call fch5init
+        call open_oldh5file(trim(ifname(1)),fileid,rootgid,h5in,h5err)
+        call test_group(rootgid,"equilibrium",file_stat,h5err)
+        if (.not. file_stat) then
+          call errctrl_msg('data_input','equilibrium group not found')
+          stop
+        endif
+        call open_group(rootgid,"equilibrium",eqid,h5err)
+        call test_group(eqid,"code",file_stat,h5err)
+        if (.not. file_stat) then
+          call errctrl_msg('data_input','code group not found')
+          stop
+        endif
+        call open_group(eqid,"code",cid,h5err)
+        call test_group(cid,"parameters",file_stat,h5err)
+        if (.not. file_stat) then
+          call errctrl_msg('data_input','parameters group not found')
+          stop
+        endif
+        call open_group(cid,"parameters",pid,h5err)
+        call test_group(pid,"time_slice",file_stat,h5err)
+        if (.not. file_stat) then
+          call errctrl_msg('data_input','time_slice group not found')
+          stop
+        endif
+        call open_group(pid,"time_slice",tid,h5err)
+        write(line,"(I0)") jtime+rank-1
+        call test_group(tid,trim(line),file_stat,h5err)
+        if (.not. file_stat) then
+          call errctrl_msg('data_input',trim(line)//' group not found')
+          stop
+        endif
+        call open_group(tid,trim(line),sid,h5err)
+
+        call test_group(sid,"in1",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"in1",nid,h5err)
+          call read_h5_ex(nid,"ishot",ishot,h5in,h5err)
+          call read_h5_ex(nid,"itime",itime,h5in,h5err)
+          call read_h5_ex(nid,"plasma",plasma,h5in,h5err)
+          call read_h5_ex(nid,"itek",itek,h5in,h5err)
+          call read_h5_ex(nid,"itrace",itrace,h5in,h5err)
+          call read_h5_ex(nid,"nxiter",nxiter,h5in,h5err)
+          call read_h5_ex(nid,"fwtcur",fwtcur,h5in,h5err)
+          call read_h5_ex(nid,"kffcur",kffcur,h5in,h5err)
+          call read_h5_ex(nid,"coils",coils,h5in,h5err)
+          call read_h5_ex(nid,"fwtsi",fwtsi,h5in,h5err)
+          call read_h5_ex(nid,"expmp2",expmp2,h5in,h5err)
+          call read_h5_ex(nid,"fwtmp2",fwtmp2,h5in,h5err)
+          call read_h5_ex(nid,"kppcur",kppcur,h5in,h5err)
+          call read_h5_ex(nid,"mxiter",mxiter,h5in,h5err)
+          call read_h5_ex(nid,"ierchk",ierchk,h5in,h5err)
+          call read_h5_ex(nid,"fwtqa",fwtqa,h5in,h5err)
+          call read_h5_ex(nid,"qemp",qemp,h5in,h5err)
+          call read_h5_ex(nid,"error",error,h5in,h5err)
+          call read_h5_ex(nid,"limitr",limitr,h5in,h5err)
+          call read_h5_ex(nid,"xlim",xlim,h5in,h5err)
+          call read_h5_ex(nid,"ylim",ylim,h5in,h5err)
+          call read_h5_ex(nid,"serror",serror,h5in,h5err)
+          call read_h5_ex(nid,"nbdry",nbdry,h5in,h5err)
+          call read_h5_ex(nid,"rbdry",rbdry,h5in,h5err)
+          call read_h5_ex(nid,"zbdry",zbdry,h5in,h5err)
+          call read_h5_ex(nid,"psibry",psibry,h5in,h5err)
+          call read_h5_ex(nid,"nslref",nslref,h5in,h5err)
+          call read_h5_ex(nid,"ibunmn",ibunmn,h5in,h5err)
+          call read_h5_ex(nid,"btor",btor,h5in,h5err)
+          call read_h5_ex(nid,"psibit",psibit,h5in,h5err)
+          call read_h5_ex(nid,"bitmpi",bitmpi,h5in,h5err)
+          call read_h5_ex(nid,"bitip",bitip,h5in,h5err)
+          call read_h5_ex(nid,"icurrt",icurrt,h5in,h5err)
+          call read_h5_ex(nid,"icinit",icinit,h5in,h5err)
+          call read_h5_ex(nid,"brsp",brsp,h5in,h5err)
+          call read_h5_ex(nid,"iweigh",iweigh,h5in,h5err)
+          call read_h5_ex(nid,"qenp",qenp,h5in,h5err)
+          call read_h5_ex(nid,"fwtbp",fwtbp,h5in,h5err)
+          call read_h5_ex(nid,"relip",relip,h5in,h5err)
+          call read_h5_ex(nid,"zelip",zelip,h5in,h5err)
+          call read_h5_ex(nid,"aelip",aelip,h5in,h5err)
+          call read_h5_ex(nid,"eelip",eelip,h5in,h5err)
+          call read_h5_ex(nid,"qvfit",qvfit,h5in,h5err)
+          call read_h5_ex(nid,"fwtdlc",fwtdlc,h5in,h5err)
+          call read_h5_ex(nid,"betap0",betap0,h5in,h5err)
+          call read_h5_ex(nid,"emp",emp,h5in,h5err)
+          call read_h5_ex(nid,"enp",enp,h5in,h5err)
+          call read_h5_ex(nid,"iconvr",iconvr,h5in,h5err)
+          call read_h5_ex(nid,"icprof",icprof,h5in,h5err)
+          call read_h5_ex(nid,"nextra",nextra,h5in,h5err)
+          call read_h5_ex(nid,"ixstrt",ixstrt,h5in,h5err)
+          call read_h5_ex(nid,"scrape",scrape,h5in,h5err)
+          call read_h5_ex(nid,"errmin",errmin,h5in,h5err)
+          call read_h5_ex(nid,"rbound",rbound,h5in,h5err)
+          call read_h5_ex(nid,"npnef",npnef,h5in,h5err)
+          call read_h5_ex(nid,"nptef",nptef,h5in,h5err)
+          call read_h5_ex(nid,"fwacoil",fwacoil,h5in,h5err)
+          call read_h5_ex(nid,"itimeu",itimeu,h5in,h5err)
+          call read_h5_ex(nid,"rcentr",rcentr,h5in,h5err)
+          call read_h5_ex(nid,"rzero",rzero,h5in,h5err)
+          call read_h5_ex(nid,"gammap",gammap,h5in,h5err)
+          call read_h5_ex(nid,"cfcoil",cfcoil,h5in,h5err)
+          call read_h5_ex(nid,"fczero",fczero,h5in,h5err)
+          call read_h5_ex(nid,"fcsum",fcsum,h5in,h5err)
+          call read_h5_ex(nid,"islve",islve,h5in,h5err)
+          call read_h5_ex(nid,"icntour",icntour,h5in,h5err)
+          call read_h5_ex(nid,"iprobe",iprobe,h5in,h5err)
+          call read_h5_ex(nid,"salpha",salpha,h5in,h5err)
+          call read_h5_ex(nid,"srm",srm,h5in,h5err)
+          call read_h5_ex(nid,"sbeta",sbeta,h5in,h5err)
+          call read_h5_ex(nid,"ifref",ifref,h5in,h5err)
+          call read_h5_ex(nid,"isumip",isumip,h5in,h5err)
+          call read_h5_ex(nid,"n1coil",n1coil,h5in,h5err)
+          call read_h5_ex(nid,"ifcurr",ifcurr,h5in,h5err)
+          call read_h5_ex(nid,"iecurr",iecurr,h5in,h5err)
+          call read_h5_ex(nid,"ecurrt",ecurrt,h5in,h5err)
+          call read_h5_ex(nid,"iecoil",iecoil,h5in,h5err)
+          call read_h5_ex(nid,"co2cor",co2cor,h5in,h5err)
+          call read_h5_ex(nid,"vcurrt",vcurrt,h5in,h5err)
+          call read_h5_ex(nid,"dflux",dflux,h5in,h5err)
+          call read_h5_ex(nid,"sigdlc",sigdlc,h5in,h5err)
+          call read_h5_ex(nid,"iplim",iplim,h5in,h5err)
+          call read_h5_ex(nid,"kinput",kinput,h5in,h5err)
+          call read_h5_ex(nid,"limfag",limfag,h5in,h5err)
+          call read_h5_ex(nid,"sigprebi",sigprebi,h5in,h5err)
+          call read_h5_ex(nid,"fwtxx",fwtxx,h5in,h5err)
+          call read_h5_ex(nid,"kprfit",kprfit,h5in,h5err)
+          call read_h5_ex(nid,"pressr",pressr,h5in,h5err)
+          call read_h5_ex(nid,"rpress",rpress,h5in,h5err)
+          call read_h5_ex(nid,"zpress",zpress,h5in,h5err)
+          call read_h5_ex(nid,"sigpre",sigpre,h5in,h5err)
+          call read_h5_ex(nid,"npress",npress,h5in,h5err)
+          call read_h5_ex(nid,"tethom",tethom,h5in,h5err)
+          call read_h5_ex(nid,"rteth",rteth,h5in,h5err)
+          call read_h5_ex(nid,"keqdsk",keqdsk,h5in,h5err)
+          call read_h5_ex(nid,"zteth",zteth,h5in,h5err)
+          call read_h5_ex(nid,"sgteth",sgteth,h5in,h5err)
+          call read_h5_ex(nid,"npteth",npteth,h5in,h5err)
+          call read_h5_ex(nid,"tionex",tionex,h5in,h5err)
+          call read_h5_ex(nid,"rion",rion,h5in,h5err)
+          call read_h5_ex(nid,"zion",zion,h5in,h5err)
+          call read_h5_ex(nid,"sigti",sigti,h5in,h5err)
+          call read_h5_ex(nid,"nption",nption,h5in,h5err)
+          call read_h5_ex(nid,"dnethom",dnethom,h5in,h5err)
+          call read_h5_ex(nid,"zeffvs",zeffvs,h5in,h5err)
+          call read_h5_ex(nid,"rneth",rneth,h5in,h5err)
+          call read_h5_ex(nid,"zneth",zneth,h5in,h5err)
+          call read_h5_ex(nid,"sgneth",sgneth,h5in,h5err)
+          call read_h5_ex(nid,"npneth",npneth,h5in,h5err)
+          call read_h5_ex(nid,"pbeam",pbeam,h5in,h5err)
+          call read_h5_ex(nid,"sibeam",sibeam,h5in,h5err)
+          call read_h5_ex(nid,"nbeam",nbeam,h5in,h5err)
+          call read_h5_ex(nid,"rzeroj",rzeroj,h5in,h5err)
+          call read_h5_ex(nid,"xalpa",xalpa,h5in,h5err)
+          ! need to ensure array is square
+          call read_h5_sq(nid,"cgama",cgama,h5in,h5err)
+          call read_h5_ex(nid,"ivesel",ivesel,h5in,h5err)
+          call read_h5_ex(nid,"iexcal",iexcal,h5in,h5err)
+          call read_h5_ex(nid,"iconsi",iconsi,h5in,h5err)
+          call read_h5_ex(nid,"fwtfc",fwtfc,h5in,h5err)
+          call read_h5_ex(nid,"xltype",xltype,h5in,h5err)
+          call read_h5_ex(nid,"kcalpa",kcalpa,h5in,h5err)
+          call read_h5_ex(nid,"kcgama",kcgama,h5in,h5err)
+          ! need to ensure array is square
+          call read_h5_sq(nid,"calpa",calpa,h5in,h5err)
+          call read_h5_ex(nid,"iacoil",iacoil,h5in,h5err)
+          call read_h5_ex(nid,"limid",limid,h5in,h5err)
+          call read_h5_ex(nid,"irfila",irfila,h5in,h5err)
+          call read_h5_ex(nid,"jzfila",jzfila,h5in,h5err)
+          call read_h5_ex(nid,"vloop",vloop,h5in,h5err)
+          call read_h5_ex(nid,"iqplot",iqplot,h5in,h5err)
+          call read_h5_ex(nid,"siref",siref,h5in,h5err)
+          call read_h5_ex(nid,"denr",denr,h5in,h5err)
+          call read_h5_ex(nid,"denv",denv,h5in,h5err)
+          call read_h5_ex(nid,"xgama",xgama,h5in,h5err)
+          call read_h5_ex(nid,"sgnemin",sgnemin,h5in,h5err)
+          call read_h5_ex(nid,"nptionf",nptionf,h5in,h5err)
+          call read_h5_ex(nid,"currn1",currn1,h5in,h5err)
+          call read_h5_ex(nid,"ifitvs",ifitvs,h5in,h5err)
+          call read_h5_ex(nid,"bitfc",bitfc,h5in,h5err)
+          call read_h5_ex(nid,"idfila",idfila,h5in,h5err)
+          call read_h5_ex(nid,"relax",relax,h5in,h5err)
+          call read_h5_ex(nid,"saimin",saimin,h5in,h5err)
+          call read_h5_ex(nid,"icutfp",icutfp,h5in,h5err)
+          call read_h5_ex(nid,"acoilc",acoilc,h5in,h5err)
+          call read_h5_ex(nid,"sigtii",sigtii,h5in,h5err)
+          call read_h5_ex(nid,"cutip",cutip,h5in,h5err)
+          call read_h5_ex(nid,"iavem",iavem,h5in,h5err)
+          call read_h5_ex(nid,"pnbeam",pnbeam,h5in,h5err)
+          call read_h5_ex(nid,"xltype_180",xltype_180,h5in,h5err)
+          call read_h5_ex(nid,"sgtemin",sgtemin,h5in,h5err)
+          call read_h5_ex(nid,"sgprmin",sgprmin,h5in,h5err)
+          call read_h5_ex(nid,"elomin",elomin,h5in,h5err)
+          call read_h5_ex(nid,"dnmin",dnmin,h5in,h5err)
+          call read_h5_ex(nid,"sgnethi",sgnethi,h5in,h5err)
+          call read_h5_ex(nid,"fcurbd",fcurbd,h5in,h5err)
+          call read_h5_ex(nid,"pcurbd",pcurbd,h5in,h5err)
+          call read_h5_ex(nid,"prbdry",prbdry,h5in,h5err)
+          call read_h5_ex(nid,"sgtethi",sgtethi,h5in,h5err)
+          call read_h5_ex(nid,"ndokin",ndokin,h5in,h5err)
+          call read_h5_ex(nid,"zlowimp",zlowimp,h5in,h5err)
+          call read_h5_ex(nid,"kskipvs",kskipvs,h5in,h5err)
+          call read_h5_ex(nid,"limvs",limvs,h5in,h5err)
+          call read_h5_ex(nid,"vcurfb",vcurfb,h5in,h5err)
+          call read_h5_ex(nid,"kpressb",kpressb,h5in,h5err)
+          call read_h5_ex(nid,"pressbi",pressbi,h5in,h5err)
+          call read_h5_ex(nid,"prespb",prespb,h5in,h5err)
+          call read_h5_ex(nid,"sigppb",sigppb,h5in,h5err)
+          call read_h5_ex(nid,"kzeroj",kzeroj,h5in,h5err)
+          call read_h5_ex(nid,"rminvs",rminvs,h5in,h5err)
+          call read_h5_ex(nid,"rmaxvs",rmaxvs,h5in,h5err)
+          call read_h5_ex(nid,"errbry",errbry,h5in,h5err)
+          call read_h5_ex(nid,"fwtpre",fwtpre,h5in,h5err)
+          call read_h5_ex(nid,"ibtcomp",ibtcomp,h5in,h5err)
+          call read_h5_ex(nid,"klabel",klabel,h5in,h5err)
+          call read_h5_ex(nid,"zmaxvs",zmaxvs,h5in,h5err)
+          call read_h5_ex(nid,"dnbeam",dnbeam,h5in,h5err)
+          call read_h5_ex(nid,"dmass",dmass,h5in,h5err)
+          call read_h5_ex(nid,"nmass",nmass,h5in,h5err)
+          call read_h5_ex(nid,"condin",condin,h5in,h5err)
+          call read_h5_ex(nid,"iaveus",iaveus,h5in,h5err)
+          call read_h5_ex(nid,"sgtimin",sgtimin,h5in,h5err)
+          call read_h5_ex(nid,"kwripre",kwripre,h5in,h5err)
+          call read_h5_ex(nid,"kbound",kbound,h5in,h5err)
+          call read_h5_ex(nid,"alphafp",alphafp,h5in,h5err)
+          call read_h5_ex(nid,"kframe",kframe,h5in,h5err)
+          call read_h5_ex(nid,"zbound",zbound,h5in,h5err)
+          call read_h5_ex(nid,"vsdamp",vsdamp,h5in,h5err)
+          call read_h5_ex(nid,"zminvs",zminvs,h5in,h5err)
+          call read_h5_ex(nid,"saicon",saicon,h5in,h5err)
+          call read_h5_ex(nid,"kppfnc",kppfnc,h5in,h5err)
+          call read_h5_ex(nid,"kppknt",kppknt,h5in,h5err)
+          call read_h5_ex(nid,"ppknt",ppknt,h5in,h5err)
+          call read_h5_ex(nid,"pptens",pptens,h5in,h5err)
+          call read_h5_ex(nid,"kfffnc",kfffnc,h5in,h5err)
+          call read_h5_ex(nid,"kffknt",kffknt,h5in,h5err)
+          call read_h5_ex(nid,"ffknt",ffknt,h5in,h5err)
+          call read_h5_ex(nid,"fftens",fftens,h5in,h5err)
+          call read_h5_ex(nid,"fwtbdry",fwtbdry,h5in,h5err)
+          call read_h5_ex(nid,"kwwfnc",kwwfnc,h5in,h5err)
+          call read_h5_ex(nid,"kwwknt",kwwknt,h5in,h5err)
+          call read_h5_ex(nid,"wwknt",wwknt,h5in,h5err)
+          call read_h5_ex(nid,"wwtens",wwtens,h5in,h5err)
+          call read_h5_ex(nid,"fwtec",fwtec,h5in,h5err)
+          call read_h5_ex(nid,"fitsiref",fitsiref,h5in,h5err)
+          call read_h5_ex(nid,"bitec",bitec,h5in,h5err)
+          call read_h5_ex(nid,"scalepr",scalepr,h5in,h5err)
+          call read_h5_ex(nid,"scalesir",scalesir,h5in,h5err)
+          call read_h5_ex(nid,"ppbdry",ppbdry,h5in,h5err)
+          call read_h5_ex(nid,"kppbdry",kppbdry,h5in,h5err)
+          call read_h5_ex(nid,"pp2bdry",pp2bdry,h5in,h5err)
+          call read_h5_ex(nid,"kpp2bdry",kpp2bdry,h5in,h5err)
+          call read_h5_ex(nid,"scalea",scalea,h5in,h5err)
+          call read_h5_ex(nid,"sigrbd",sigrbd,h5in,h5err)
+          call read_h5_ex(nid,"sigzbd",sigzbd,h5in,h5err)
+          call read_h5_ex(nid,"nbskip",nbskip,h5in,h5err)
+          call read_h5_ex(nid,"ffbdry",ffbdry,h5in,h5err)
+          call read_h5_ex(nid,"kffbdry",kffbdry,h5in,h5err)
+          call read_h5_ex(nid,"ff2bdry",ff2bdry,h5in,h5err)
+          call read_h5_ex(nid,"kff2bdry",kff2bdry,h5in,h5err)
+          call read_h5_ex(nid,"errsil",errsil,h5in,h5err)
+          call read_h5_ex(nid,"vbit",vbit,h5in,h5err)
+          call read_h5_ex(nid,"wwbdry",wwbdry,h5in,h5err)
+          call read_h5_ex(nid,"kwwbdry",kwwbdry,h5in,h5err)
+          call read_h5_ex(nid,"ww2bdry",ww2bdry,h5in,h5err)
+          call read_h5_ex(nid,"kww2bdry",kww2bdry,h5in,h5err)
+          call read_h5_ex(nid,"f2edge",f2edge,h5in,h5err)
+          call read_h5_ex(nid,"fe_width",fe_width,h5in,h5err)
+          call read_h5_ex(nid,"fe_psin",fe_psin,h5in,h5err)
+          call read_h5_ex(nid,"kedgef",kedgef,h5in,h5err)
+          call read_h5_ex(nid,"ktear",ktear,h5in,h5err)
+          call read_h5_ex(nid,"kersil",kersil,h5in,h5err)
+          call read_h5_ex(nid,"iout",iout,h5in,h5err)
+          call read_h5_ex(nid,"ixray",ixray,h5in,h5err)
+          call read_h5_ex(nid,"pedge",pedge,h5in,h5err)
+          call read_h5_ex(nid,"kedgep",kedgep,h5in,h5err)
+          call read_h5_ex(nid,"pe_width",pe_width,h5in,h5err)
+          call read_h5_ex(nid,"pe_psin",pe_psin,h5in,h5err)
+          call read_h5_ex(nid,"table_dir",table_dir,h5in,h5err)
+          call read_h5_ex(nid,"input_dir",input_dir,h5in,h5err)
+          call read_h5_ex(nid,"store_dir",store_dir,h5in,h5err)
+          call read_h5_ex(nid,"kautoknt",kautoknt,h5in,h5err)
+          call read_h5_ex(nid,"akchiwt",akchiwt,h5in,h5err)
+          call read_h5_ex(nid,"akerrwt",akerrwt,h5in,h5err)
+          call read_h5_ex(nid,"kakloop",kakloop,h5in,h5err)
+          call read_h5_ex(nid,"aktol",aktol,h5in,h5err)
+          call read_h5_ex(nid,"kakiter",kakiter,h5in,h5err)
+          call read_h5_ex(nid,"akgamwt",akgamwt,h5in,h5err)
+          call read_h5_ex(nid,"akprewt",akprewt,h5in,h5err)
+          call read_h5_ex(nid,"kpphord",kpphord,h5in,h5err)
+          call read_h5_ex(nid,"kffhord",kffhord,h5in,h5err)
+          call read_h5_ex(nid,"keehord",keehord,h5in,h5err)
+          call read_h5_ex(nid,"psiecn",psiecn,h5in,h5err)
+          call read_h5_ex(nid,"dpsiecn",dpsiecn,h5in,h5err)
+          call read_h5_ex(nid,"fitzts",fitzts,h5in,h5err)
+          call read_h5_ex(nid,"isolve",isolve,h5in,h5err)
+          call read_h5_ex(nid,"iplcout",iplcout,h5in,h5err)
+          call read_h5_ex(nid,"imagsigma",imagsigma,h5in,h5err)
+          call read_h5_ex(nid,"errmag",errmag,h5in,h5err)
+          call read_h5_ex(nid,"ksigma",ksigma,h5in,h5err)
+          call read_h5_ex(nid,"errmagb",errmagb,h5in,h5err)
+          call read_h5_ex(nid,"brsptu",brsptu,h5in,h5err)
+          call read_h5_ex(nid,"fitfcsum",fitfcsum,h5in,h5err)
+          call read_h5_ex(nid,"fwtfcsum",fwtfcsum,h5in,h5err)
+          call read_h5_ex(nid,"appendsnap",appendsnap,h5in,h5err)
+          call read_h5_ex(nid,"idebug",idebug,h5in,h5err)
+          call read_h5_ex(nid,"nbdrymx",nbdrymx,h5in,h5err)
+          call read_h5_ex(nid,"nsol",nsol,h5in,h5err)
+          call read_h5_ex(nid,"rsol",rsol,h5in,h5err)
+          call read_h5_ex(nid,"zsol",zsol,h5in,h5err)
+          call read_h5_ex(nid,"fwtsol",fwtsol,h5in,h5err)
+          call read_h5_ex(nid,"efitversion",efitversion,h5in,h5err)
+          call read_h5_ex(nid,"kbetapr",kbetapr,h5in,h5err)
+          call read_h5_ex(nid,"nbdryp",nbdryp,h5in,h5err)
+          call read_h5_ex(nid,"jdebug",jdebug,h5in,h5err)
+          call read_h5_ex(nid,"ifindopt",ifindopt,h5in,h5err)
+          call read_h5_ex(nid,"tolbndpsi",tolbndpsi,h5in,h5err)
+          call close_group("in1",nid,h5err)
+        endif
+   
+        call test_group(sid,"ink",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"ink",nid,h5err)
+          call read_h5_ex(nid,"isetfb",isetfb,h5in,h5err)
+          call read_h5_ex(nid,"ioffr",ioffr,h5in,h5err)
+          call read_h5_ex(nid,"ioffz",ioffz,h5in,h5err)
+          call read_h5_ex(nid,"ishiftz",ishiftz,h5in,h5err)
+          call read_h5_ex(nid,"gain",gain,h5in,h5err)
+          call read_h5_ex(nid,"gainp",gainp,h5in,h5err)
+          call read_h5_ex(nid,"idplace",idplace,h5in,h5err)
+          call read_h5_ex(nid,"symmetrize",symmetrize,h5in,h5err)
+          call read_h5_ex(nid,"backaverage",backaverage,h5in,h5err)
+          call read_h5_ex(nid,"lring",lring,h5in,h5err)
+          call read_h5_ex(nid,"cupdown",cupdown,h5in,h5err)
+          call close_group("ink",nid,h5err)
+        endif
+   
+        call test_group(sid,"ins",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"ins",nid,h5err)
+          call read_h5_ex(nid,"tgamma",tgamma,h5in,h5err)
+          call read_h5_ex(nid,"sgamma",sgamma,h5in,h5err)
+          call read_h5_ex(nid,"fwtgam",fwtgam,h5in,h5err)
+          call read_h5_ex(nid,"rrrgam",rrrgam,h5in,h5err)
+          call read_h5_ex(nid,"zzzgam",zzzgam,h5in,h5err)
+          call read_h5_ex(nid,"aa1gam",aa1gam,h5in,h5err)
+          call read_h5_ex(nid,"aa2gam",aa2gam,h5in,h5err)
+          call read_h5_ex(nid,"aa3gam",aa3gam,h5in,h5err)
+          call read_h5_ex(nid,"aa4gam",aa4gam,h5in,h5err)
+          call read_h5_ex(nid,"aa5gam",aa5gam,h5in,h5err)
+          call read_h5_ex(nid,"aa6gam",aa6gam,h5in,h5err)
+          call read_h5_ex(nid,"aa7gam",aa7gam,h5in,h5err)
+          call read_h5_ex(nid,"iplots",iplots,h5in,h5err)
+          call read_h5_ex(nid,"kdomse",kdomse,h5in,h5err)
+          call read_h5_ex(nid,"msebkp",msebkp,h5in,h5err)
+          call read_h5_ex(nid,"msefitfun",msefitfun,h5in,h5err)
+          call read_h5_ex(nid,"mse_quiet",mse_quiet,h5in,h5err)
+          call read_h5_ex(nid,"mse_spave_on",mse_spave_on,h5in,h5err)
+          call read_h5_ex(nid,"kwaitmse",kwaitmse,h5in,h5err)
+          call read_h5_ex(nid,"dtmsefull",dtmsefull,h5in,h5err)
+          call read_h5_ex(nid,"mse_strict",mse_strict,h5in,h5err)
+          call read_h5_ex(nid,"t_max_beam_off",t_max_beam_off,h5in,h5err)
+          call read_h5_ex(nid,"ok_30rt",ok_30rt,h5in,h5err)
+          call read_h5_ex(nid,"ok_210lt",ok_210lt,h5in,h5err)
+          call read_h5_ex(nid,"mse_usecer",mse_usecer,h5in,h5err)
+          call read_h5_ex(nid,"mse_certree",mse_certree,h5in,h5err)
+          call read_h5_ex(nid,"mse_use_cer330",mse_use_cer330,h5in,h5err)
+          call read_h5_ex(nid,"mse_use_cer210",mse_use_cer210,h5in,h5err)
+          call read_h5_ex(nid,"tgammauncor",tgammauncor,h5in,h5err)
+          call read_h5_ex(nid,"v30lt",v30lt,h5in,h5err)
+          call read_h5_ex(nid,"v30rt",v30rt,h5in,h5err)
+          call read_h5_ex(nid,"v210lt",v210lt,h5in,h5err)
+          call read_h5_ex(nid,"v210rt",v210rt,h5in,h5err)
+          call close_group("ins",nid,h5err)
+        endif
+   
+        call test_group(sid,"in_msels",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"in_msels",nid,h5err)
+          call read_h5_ex(nid,"bmsels",bmsels,h5in,h5err)
+          call read_h5_ex(nid,"sbmsels",sbmsels,h5in,h5err)
+          call read_h5_ex(nid,"fwtbmsels",fwtbmsels,h5in,h5err)
+          call read_h5_ex(nid,"rrmsels",rrmsels,h5in,h5err)
+          call read_h5_ex(nid,"zzmsels",zzmsels,h5in,h5err)
+          call read_h5_ex(nid,"l1msels",l1msels,h5in,h5err)
+          call read_h5_ex(nid,"l2msels",l2msels,h5in,h5err)
+          call read_h5_ex(nid,"l4msels",l4msels,h5in,h5err)
+          call read_h5_ex(nid,"emsels",emsels,h5in,h5err)
+          call read_h5_ex(nid,"semsels",semsels,h5in,h5err)
+          call read_h5_ex(nid,"fwtemsels",fwtemsels,h5in,h5err)
+          call read_h5_ex(nid,"kdomsels",kdomsels,h5in,h5err)
+          call read_h5_ex(nid,"fmlscut",fmlscut,h5in,h5err)
+          call read_h5_ex(nid,"synmsels",synmsels,h5in,h5err)
+          call read_h5_ex(nid,"avemsels",avemsels,h5in,h5err)
+          call close_group("in_msels",nid,h5err)
+        endif
+
+        call test_group(sid,"ina",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"ina",nid,h5err)
+          call read_h5_ex(nid,"spatial_avg_gam",spatial_avg_gam,h5in,h5err)
+          call close_group("ina",nid,h5err)
+        endif
+
+        call test_group(sid,"inece",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"inece",nid,h5err)
+          call read_h5_ex(nid,"necein",necein,h5in,h5err)
+          call read_h5_ex(nid,"teecein0",teecein0,h5in,h5err)
+          call read_h5_ex(nid,"feece0",feece0,h5in,h5err)
+          call read_h5_ex(nid,"errorece0",errorece0,h5in,h5err)
+          call read_h5_ex(nid,"fwtece0",fwtece0,h5in,h5err)
+          call read_h5_ex(nid,"fwtecebz0",fwtecebz0,h5in,h5err)
+          call read_h5_ex(nid,"ecefit",ecefit,h5in,h5err)
+          call read_h5_ex(nid,"ecebzfit",ecebzfit,h5in,h5err)
+          call read_h5_ex(nid,"kfitece",kfitece,h5in,h5err)
+          call read_h5_ex(nid,"kinputece",kinputece,h5in,h5err)
+          call read_h5_ex(nid,"kcallece",kcallece,h5in,h5err)
+          call read_h5_ex(nid,"nharm",nharm,h5in,h5err)
+          call read_h5_ex(nid,"kfixro",kfixro,h5in,h5err)
+          call read_h5_ex(nid,"rteo",rteo,h5in,h5err)
+          call read_h5_ex(nid,"zteo",zteo,h5in,h5err)
+          call read_h5_ex(nid,"kfixrece",kfixrece,h5in,h5err)
+          call read_h5_ex(nid,"rtep",rtep,h5in,h5err)
+          call read_h5_ex(nid,"rtem",rtem,h5in,h5err)
+          call read_h5_ex(nid,"rpbit",rpbit,h5in,h5err)
+          call read_h5_ex(nid,"rmbit",rmbit,h5in,h5err)
+          call read_h5_ex(nid,"robit",robit,h5in,h5err)
+          call read_h5_ex(nid,"nfit",nfit,h5in,h5err)
+          call read_h5_ex(nid,"kcmin",kcmin,h5in,h5err)
+          call read_h5_ex(nid,"fwtnow",fwtnow,h5in,h5err)
+          call read_h5_ex(nid,"kdoece",kdoece,h5in,h5err)
+          call read_h5_ex(nid,"mtxece",mtxece,h5in,h5err)
+          call read_h5_ex(nid,"nconstr",nconstr,h5in,h5err)
+          call read_h5_ex(nid,"eceiter",eceiter,h5in,h5err)
+          call read_h5_ex(nid,"eceerror",eceerror,h5in,h5err)
+          call close_group("inece",nid,h5err)
+        endif
+
+        call test_group(sid,"edgep",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"edgep",nid,h5err)
+          call read_h5_ex(nid,"symmetrize",symmetrize,h5in,h5err)
+          call read_h5_ex(nid,"rpress",rpress,h5in,h5err)
+          call read_h5_ex(nid,"pressr",pressr,h5in,h5err)
+          call read_h5_ex(nid,"sigpre",sigpre,h5in,h5err)
+          call read_h5_ex(nid,"npress",npress,h5in,h5err)
+          call read_h5_ex(nid,"kprfit",kprfit,h5in,h5err)
+          call read_h5_ex(nid,"kpressb",kpressb,h5in,h5err)
+          call read_h5_ex(nid,"ndokin",ndokin,h5in,h5err)
+          call read_h5_ex(nid,"kppfnc",kppfnc,h5in,h5err)
+          call read_h5_ex(nid,"kfffnc",kfffnc,h5in,h5err)
+          call read_h5_ex(nid,"kffcur",kffcur,h5in,h5err)
+          call read_h5_ex(nid,"kppcur",kppcur,h5in,h5err)
+          call read_h5_ex(nid,"mxiter",mxiter,h5in,h5err)
+          call read_h5_ex(nid,"error",error,h5in,h5err)
+          call read_h5_ex(nid,"errmin",errmin,h5in,h5err)
+          call read_h5_ex(nid,"keecur",keecur,h5in,h5err)
+          call close_group("edgep",nid,h5err)
+        endif
+
+        call test_group(sid,"iner",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"iner",nid,h5err)
+          call read_h5_ex(nid,"keecur",keecur,h5in,h5err)
+          call read_h5_ex(nid,"ecurbd",ecurbd,h5in,h5err)
+          call read_h5_ex(nid,"keefnc",keefnc,h5in,h5err)
+          call read_h5_ex(nid,"eetens",eetens,h5in,h5err)
+          call read_h5_ex(nid,"keebdry",keebdry,h5in,h5err)
+          call read_h5_ex(nid,"kee2bdry",kee2bdry,h5in,h5err)
+          call read_h5_ex(nid,"eebdry",eebdry,h5in,h5err)
+          call read_h5_ex(nid,"ee2bdry",ee2bdry,h5in,h5err)
+          call read_h5_ex(nid,"eeknt",eeknt,h5in,h5err)
+          call read_h5_ex(nid,"keeknt",keeknt,h5in,h5err)
+          call read_h5_ex(nid,"keehord",keehord,h5in,h5err)
+          call close_group("iner",nid,h5err)
+        endif
+
+        call test_group(sid,"insxr",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"insxr",nid,h5err)
+          call read_h5_ex(nid,"ksxr0",ksxr0,h5in,h5err)
+          call read_h5_ex(nid,"ksxr2",ksxr2,h5in,h5err)
+          call read_h5_ex(nid,"idosxr",idosxr,h5in,h5err)
+          call close_group("insxr",nid,h5err)
+        endif
+
+        call test_group(sid,"inms",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"inms",nid,h5err)
+          call read_h5_ex(nid,"xmprcg",xmprcg,h5in,h5err)
+          call read_h5_ex(nid,"xmp_k",xmp_k,h5in,h5err)
+          call read_h5_ex(nid,"vresxmp",vresxmp,h5in,h5err)
+          call read_h5_ex(nid,"t0xmp",t0xmp,h5in,h5err)
+          call read_h5_ex(nid,"psircg",psircg,h5in,h5err)
+          call read_h5_ex(nid,"psi_k",psi_k,h5in,h5err)
+          call read_h5_ex(nid,"vrespsi",vrespsi,h5in,h5err)
+          call read_h5_ex(nid,"t0psi",t0psi,h5in,h5err)
+          call read_h5_ex(nid,"fcrcg",fcrcg,h5in,h5err)
+          call read_h5_ex(nid,"fc_k",fc_k,h5in,h5err)
+          call read_h5_ex(nid,"vresfc",vresfc,h5in,h5err)
+          call read_h5_ex(nid,"t0fc",t0fc,h5in,h5err)
+          call read_h5_ex(nid,"ercg",ercg,h5in,h5err)
+          call read_h5_ex(nid,"e_k",e_k,h5in,h5err)
+          call read_h5_ex(nid,"vrese",vrese,h5in,h5err)
+          call read_h5_ex(nid,"t0e",t0e,h5in,h5err)
+          call read_h5_ex(nid,"bcrcg",bcrcg,h5in,h5err)
+          call read_h5_ex(nid,"bc_k",bc_k,h5in,h5err)
+          call read_h5_ex(nid,"vresbc",vresbc,h5in,h5err)
+          call read_h5_ex(nid,"t0bc",t0bc,h5in,h5err)
+          call read_h5_ex(nid,"prcg",prcg,h5in,h5err)
+          call read_h5_ex(nid,"p_k",p_k,h5in,h5err)
+          call read_h5_ex(nid,"vresp",vresp,h5in,h5err)
+          call read_h5_ex(nid,"t0p",t0p,h5in,h5err)
+          call read_h5_ex(nid,"bti322in",bti322in,h5in,h5err)
+          call read_h5_ex(nid,"curc79in",curc79in,h5in,h5err)
+          call read_h5_ex(nid,"curc139in",curc139in,h5in,h5err)
+          call read_h5_ex(nid,"curc199in",curc199in,h5in,h5err)
+          call read_h5_ex(nid,"devxmpin",devxmpin,h5in,h5err)
+          call read_h5_ex(nid,"rnavxmpin",rnavxmpin,h5in,h5err)
+          call read_h5_ex(nid,"devpsii",devpsii,h5in,h5err)
+          call read_h5_ex(nid,"rnavpsiin",rnavpsiin,h5in,h5err)
+          call read_h5_ex(nid,"devfcin",devfcin,h5in,h5err)
+          call read_h5_ex(nid,"rnavfcin",rnavfcin,h5in,h5err)
+          call read_h5_ex(nid,"devein",devein,h5in,h5err)
+          call read_h5_ex(nid,"rnavecin",rnavecin,h5in,h5err)
+          call close_group("inms",nid,h5err)
+        endif
+   
+        call test_group(sid,"inwant",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"inwant",nid,h5err)
+          call read_h5_ex(nid,"psiwant",psiwant,h5in,h5err)
+          call read_h5_ex(nid,"vzeroj",vzeroj,h5in,h5err)
+          call read_h5_ex(nid,"fwtxxj",fwtxxj,h5in,h5err)
+          call read_h5_ex(nid,"fbetap",fbetap,h5in,h5err)
+          call read_h5_ex(nid,"fbetan",fbetan,h5in,h5err)
+          call read_h5_ex(nid,"fli",fli,h5in,h5err)
+          call read_h5_ex(nid,"fq95",fq95,h5in,h5err)
+          call read_h5_ex(nid,"fqsiw",fqsiw,h5in,h5err)
+          call read_h5_ex(nid,"jbeta",jbeta,h5in,h5err)
+          call read_h5_ex(nid,"jli",jli,h5in,h5err)
+          call read_h5_ex(nid,"alpax",alpax,h5in,h5err)
+          call read_h5_ex(nid,"gamax",gamax,h5in,h5err)
+          call read_h5_ex(nid,"jwantm",jwantm,h5in,h5err)
+          call read_h5_ex(nid,"fwtxxq",fwtxxq,h5in,h5err)
+          call read_h5_ex(nid,"fwtxxb",fwtxxb,h5in,h5err)
+          call read_h5_ex(nid,"fwtxli",fwtxli,h5in,h5err)
+          call read_h5_ex(nid,"znose",znose,h5in,h5err)
+          call read_h5_ex(nid,"fwtbdry",fwtbdry,h5in,h5err)
+          call read_h5_ex(nid,"nqwant",nqwant,h5in,h5err)
+          call read_h5_ex(nid,"siwantq",siwantq,h5in,h5err)
+          call read_h5_ex(nid,"n_write",n_write,h5in,h5err)
+          call read_h5_ex(nid,"kccoils",kccoils,h5in,h5err)
+          ! need to ensure array is square
+          call read_h5_sq(nid,"ccoils",ccoils,h5in,h5err)
+          call read_h5_ex(nid,"rexpan",rexpan,h5in,h5err)
+          call read_h5_ex(nid,"xcoils",xcoils,h5in,h5err)
+          call read_h5_ex(nid,"kcloops",kcloops,h5in,h5err)
+          call read_h5_ex(nid,"cloops",cloops,h5in,h5err)
+          call read_h5_ex(nid,"xloops",xloops,h5in,h5err)
+          call read_h5_ex(nid,"currc79",currc79,h5in,h5err)
+          call read_h5_ex(nid,"currc139",currc139,h5in,h5err)
+          call read_h5_ex(nid,"nccoil",nccoil,h5in,h5err)
+          call read_h5_ex(nid,"sizeroj",sizeroj,h5in,h5err)
+          call read_h5_ex(nid,"fitdelz",fitdelz,h5in,h5err)
+          call read_h5_ex(nid,"ndelzon",ndelzon,h5in,h5err)
+          call read_h5_ex(nid,"relaxdz",relaxdz,h5in,h5err)
+          call read_h5_ex(nid,"stabdz",stabdz,h5in,h5err)
+          call read_h5_ex(nid,"writepc",writepc,h5in,h5err)
+          call read_h5_ex(nid,"table_dir",table_dir,h5in,h5err)
+          call read_h5_ex(nid,"errdelz",errdelz,h5in,h5err)
+          call read_h5_ex(nid,"oldccomp",oldccomp,h5in,h5err)
+          call read_h5_ex(nid,"nicoil",nicoil,h5in,h5err)
+          call read_h5_ex(nid,"oldcomp",oldcomp,h5in,h5err)
+          call read_h5_ex(nid,"currc199",currc199,h5in,h5err)
+          call read_h5_ex(nid,"curriu30",curriu30,h5in,h5err)
+          call read_h5_ex(nid,"curriu90",curriu90,h5in,h5err)
+          call read_h5_ex(nid,"curriu150",curriu150,h5in,h5err)
+          call read_h5_ex(nid,"curril30",curril30,h5in,h5err)
+          call read_h5_ex(nid,"curril90",curril90,h5in,h5err)
+          call read_h5_ex(nid,"curril150",curril150,h5in,h5err)
+          call read_h5_ex(nid,"ifitdelz",ifitdelz,h5in,h5err)
+          call read_h5_ex(nid,"scaledz",scaledz,h5in,h5err)
+          call close_group("inwant",nid,h5err)
+        endif
+   
+        call test_group(sid,"invt",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"invt",nid,h5err)
+          call read_h5_ex(nid,"omegat",omegat,h5in,h5err)
+          call read_h5_ex(nid,"nomegat",nomegat,h5in,h5err)
+          call read_h5_ex(nid,"enw",enw,h5in,h5err)
+          call read_h5_ex(nid,"emw",emw,h5in,h5err)
+          call read_h5_ex(nid,"betapw0",betapw0,h5in,h5err)
+          call read_h5_ex(nid,"kvtor",kvtor,h5in,h5err)
+          call read_h5_ex(nid,"kwwcur",kwwcur,h5in,h5err)
+          call read_h5_ex(nid,"rvtor",rvtor,h5in,h5err)
+          call read_h5_ex(nid,"wcurbd",wcurbd,h5in,h5err)
+          call read_h5_ex(nid,"preswb",preswb,h5in,h5err)
+          call read_h5_ex(nid,"fwtprw",fwtprw,h5in,h5err)
+          call read_h5_ex(nid,"npresw",npresw,h5in,h5err)
+          call read_h5_ex(nid,"presw",presw,h5in,h5err)
+          call read_h5_ex(nid,"sigprw",sigprw,h5in,h5err)
+          call read_h5_ex(nid,"rpresw",rpresw,h5in,h5err)
+          call read_h5_ex(nid,"zpresw",zpresw,h5in,h5err)
+          call read_h5_ex(nid,"kplotp",kplotp,h5in,h5err)
+          call read_h5_ex(nid,"sbetaw",sbetaw,h5in,h5err)
+          call read_h5_ex(nid,"nsplot",nsplot,h5in,h5err)
+          call read_h5_ex(nid,"comega",comega,h5in,h5err)
+          call read_h5_ex(nid,"kcomega",kcomega,h5in,h5err)
+          call read_h5_ex(nid,"xomega",xomega,h5in,h5err)
+          call read_h5_ex(nid,"kdovt",kdovt,h5in,h5err)
+          call read_h5_ex(nid,"romegat",romegat,h5in,h5err)
+          call read_h5_ex(nid,"zomegat",zomegat,h5in,h5err)
+          call read_h5_ex(nid,"sigome",sigome,h5in,h5err)
+          call read_h5_ex(nid,"scalepr",scalepr,h5in,h5err)
+          call read_h5_ex(nid,"kwwfnc",kwwfnc,h5in,h5err)
+          call read_h5_ex(nid,"kwwknt",kwwknt,h5in,h5err)
+          call read_h5_ex(nid,"wwknt",wwknt,h5in,h5err)
+          call read_h5_ex(nid,"wwtens",wwtens,h5in,h5err)
+          call close_group("invt",nid,h5err)
+        endif
+
+        call test_group(sid,"profile_ext",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"profile_ext",nid,h5err)
+          call read_h5_ex(nid,"npsi_ext",npsi_ext,h5in,h5err)
+          call read_h5_ex(nid,"pprime_ext",pprime_ext,h5in,h5err)
+          call read_h5_ex(nid,"ffprim_ext",ffprim_ext,h5in,h5err)
+          call read_h5_ex(nid,"psin_ext",psin_ext,h5in,h5err)
+          call read_h5_ex(nid,"geqdsk_ext",geqdsk_ext,h5in,h5err)
+          call read_h5_ex(nid,"sign_ext",sign_ext,h5in,h5err)
+          call read_h5_ex(nid,"scalepp_ext",scalepp_ext,h5in,h5err)
+          call read_h5_ex(nid,"scaleffp_ext",scaleffp_ext,h5in,h5err)
+          call read_h5_ex(nid,"shape_ext",shape_ext,h5in,h5err)
+          call read_h5_ex(nid,"dr_ext",dr_ext,h5in,h5err)
+          call read_h5_ex(nid,"dz_ext",dz_ext,h5in,h5err)
+          call read_h5_ex(nid,"rc_ext",rc_ext,h5in,h5err)
+          call read_h5_ex(nid,"zc_ext",zc_ext,h5in,h5err)
+          call read_h5_ex(nid,"a_ext",a_ext,h5in,h5err)
+          call read_h5_ex(nid,"eup_ext",eup_ext,h5in,h5err)
+          call read_h5_ex(nid,"elow_ext",elow_ext,h5in,h5err)
+          call read_h5_ex(nid,"dup_ext",dup_ext,h5in,h5err)
+          call read_h5_ex(nid,"dlow_ext",dlow_ext,h5in,h5err)
+          call read_h5_ex(nid,"setlim_ext",setlim_ext,h5in,h5err)
+          call read_h5_ex(nid,"reflect_ext",reflect_ext,h5in,h5err)
+          call read_h5_ex(nid,"fixpp",fixpp,h5in,h5err)
+          call close_group("profile_ext",nid,h5err)
+        endif
+
+        !H5: TODO: read neqdsk (from geqdsk_ext)?
+
+        call test_group(sid,"inlibim",file_stat,h5err)
+        if (file_stat) then
+          call open_group(sid,"inlibim",nid,h5err)
+          call read_h5_ex(nid,"tlibim",tlibim,h5in,h5err)
+          call read_h5_ex(nid,"slibim",slibim,h5in,h5err)
+          call read_h5_ex(nid,"fwtlib",fwtlib,h5in,h5err)
+          call read_h5_ex(nid,"rrrlib",rrrlib,h5in,h5err)
+          call read_h5_ex(nid,"zzzlib",zzzlib,h5in,h5err)
+          call read_h5_ex(nid,"aa1lib",aa1lib,h5in,h5err)
+          call read_h5_ex(nid,"aa8lib",aa8lib,h5in,h5err)
+          call close_group("inlibim",nid,h5err)
+        endif
+
+        !H5: not used efitin and auxquant?
+
+        call close_group(trim(line),sid,h5err)
+        call close_group("time_slice",tid,h5err)
+        call close_group("parameters",pid,h5err)
+        call close_group("code",cid,h5err)
+        call close_group("equilibrium",eqid,h5err)
+        call close_h5file(fileid,rootgid,h5err)
+
+#else
+        ! this code should not be reachable
+        call errctrl_msg('data_input','HDF5 needs to be linked')
+        stop
+#endif
+      endif ! kdata.eq.1
+
+!----------------------------------------------------------------------- 
+!--   post-process inputs                                             --
+!-----------------------------------------------------------------------
+!--warn that idebug and jdebug inputs are depreciated
+      if (idebug.ne.0) write(*,*) &
+      "idebug input variable is depreciated, set cmake variable instead"
+      if (jdebug.ne."NONE") write(*,*) &
+      "jdebug input variable is depreciated, set cmake variable instead"
+!--   roundoff differences can throw off zlim if limiter corners
+!--   are too close to grid points (maybe zlim needs fixing...)
+      do i=1,limitr
+        ylim(i)=ylim(i)-1.e-10_dp
+      enddo
+!--   protect against underflow in fitting weights 
       if (abs(fwtdlc).le.1.e-30_dp)  fwtdlc=0.0
       if (abs(fwtcur).le.1.e-30_dp)  fwtcur=0.0
       do i=1,nfcoil
@@ -602,28 +1412,10 @@
       if (abs(fwtecebz0).le.1.e-30_dp)  fwtecebz0=0.0
 !
       if (nbdryp==-1) nbdryp=nbdry 
-      read (nin,ink,err=11111,end=101) 
-101   continue 
-11111 close(unit=nin) 
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,ins,err=11113,end=103) 
-103   continue 
-11113 close(unit=nin) 
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      rrmsels(1)=-10. 
 
-      read (nin,in_msels,iostat=istat) 
-      if (istat>0) then 
-        backspace(nin) 
-        read(nin,fmt='(A)') line 
-        !if (trim(line)/="/") write(*,'(A)') 'Invalid line in namelist in_msels: '//trim(line) 
-      endif
-!---------------------------------------------------------------------- 
-!--   Read msels_all.dat if needed                                   -- 
-!---------------------------------------------------------------------- 
+!--   Read msels_all.dat if needed
       if (kdomsels.gt.0) then 
         if (rrmsels(1).lt.-5.0) then 
-          close(unit=nin) 
           open(unit=nin,status='old',file='msels_all.dat') 
           do i=1,nmsels 
             read(nin,91008,iostat=istat) bmsels(i),sbmsels(i),rrmsels(i), & 
@@ -631,6 +1423,7 @@
                  semsels(i),iemsels(i) 
             iermselt(jtime,i)=iemsels(i) 
           enddo 
+          close(unit=nin) 
           if (istat>0) then 
             im1=i-1 
             write (6,*) 'msels_all i=',i,' bmsels(i-1)= ',bmsels(im1) 
@@ -639,33 +1432,6 @@
         endif 
       endif 
 91008 format(9e12.5,i2) 
-      close(unit=nin) 
-
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,ina,iostat=istat)
-      close(unit=nin) 
-
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      ecefit = 0.0 
-      ecebzfit = 0.0 
-      read (nin,inece,iostat=istat) 
-      close(unit=nin) 
-
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,edgep,iostat=istat) 
-      close(unit=nin) 
-
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,iner,iostat=istat) 
-      close(unit=nin) 
-
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,insxr,iostat=istat) 
-      close(unit=nin) 
-
-      open(unit=nin,status='old',file=ifname(jtime))
-      read (nin,inms,iostat=istat) 
-      close(unit=nin) 
 
       bti322(jtime)=bti322in 
       curc79(jtime)=curc79in 
@@ -685,46 +1451,10 @@
 !      devp(jtime)=devpin
 !      rnavp(jtime)=rnavpin 
 ! 
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,inwant,iostat=istat) 
-      close(unit=nin) 
-
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,invt,iostat=istat) 
-      close(unit=nin) 
 !---------------------------------------------------------------------- 
-!--   Input FF', P' arrays                                           -- 
+!--   Input FF', P' arrays
 !---------------------------------------------------------------------- 
-      geqdsk_ext = 'none' 
-      psin_ext(1) = -1000.0 
-      sign_ext = 1.0 
-      cratio_ext = 1.0 
-      cratiop_ext = 1.0 
-      cratiof_ext = 1.0 
-      scalepp_ext=1.0 
-      scaleffp_ext=1.0 
-      dr_ext=0.0 
-      dz_ext=0.0 
-      shape_ext=.false. 
-      rc_ext=-10. 
-      zc_ext=-10. 
-      a_ext=-10. 
-      eup_ext=-10. 
-      elow_ext=-10. 
-      dup_ext=-10. 
-      dlow_ext=-10. 
-      setlim_ext=-10. 
-      reflect_ext='no' 
-! 
-
-      open(unit=nin,status='old',file=ifname(jtime)) 
-#ifdef DEBUG_LEVEL1
-      write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext
-#endif
-      read(nin,profile_ext,err=11777,iostat=istat) 
-#ifdef DEBUG_LEVEL1
-      write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext
-#endif
+! H5: should this come from OMAS file? (need to replace go to 11777...)
       if (geqdsk_ext.ne.'none') then 
         open(unit=neqdsk,status='old',file=geqdsk_ext) 
         read (neqdsk,11775) (case_ext(i),i=1,6),nh_ext,nw_ext,nh_ext 
@@ -739,24 +1469,29 @@
         if (plasma_ext > 0.0) then 
           sign_ext = -1.0 
         endif 
-        do i = 1,1 
-          read (neqdsk,11773) 
-        enddo 
+        read (neqdsk,11773) 
         read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext) 
         read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext) 
         prbdry=pprime_ext(nw_ext) 
         read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext) 
         read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext) 
         read (neqdsk,11776) ((psirz_ext,i=1,nw_ext),j=1,nh_ext) 
-        read (neqdsk,11776,err=11777) (qpsi_ext(i),i=1,nw_ext) 
-        read (neqdsk,11774,err=11777) nbdry_ext,limitr_ext 
-        read (neqdsk,11776,err=11777) (rbdry_ext(i),zbdry_ext(i),i=1,nbdry_ext) 
-        read (neqdsk,11776,err=11777) (xlim_ext(i),ylim_ext(i),i=1,limitr_ext) 
+        read (neqdsk,11776,err=11778) (qpsi_ext(i),i=1,nw_ext) 
+        read (neqdsk,11774,err=11778) nbdry_ext,limitr_ext 
+        read (neqdsk,11776,err=11778) (rbdry_ext(i),zbdry_ext(i),i=1,nbdry_ext) 
+        read (neqdsk,11776,err=11778) (xlim_ext(i),ylim_ext(i),i=1,limitr_ext) 
 11773   format (a) 
 11774   format (2i5) 
 11775   format (6a8,3i4) 
-11776   format (5e16.9) 
-! 
+11776   format (5e16.9)
+!      if (geqdsk_ext.ne.'none') then 
+!        npsi_ext=nw_ext 
+!        if (idebug /= 0) write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext, & 
+!          nw_ext 
+!        if (plasma_ext > 0.0) then 
+!          sign_ext = -1.0 
+!        endif 
+!        prbdry=pprime_ext(nw_ext) 
         if (nbdry.le.0) then 
           nbabs_ext=nbdry_ext/mbdry1+1 
           jb_ext=0 
@@ -807,7 +1542,7 @@
           enddo 
         endif 
       endif 
-11777 close(nin) 
+11778 continue
 #ifdef DEBUG_LEVEL1
       write (nttyo,*) 'npsi_ext=',npsi_ext
 #endif
@@ -1078,18 +1813,7 @@
         xlim(7)=xlim(1)
         ylim(7)=ylim(1)
       endif
-!---------------------------------------------------------------------- 
-!--   Read Li beam data                                              -- 
-!---------------------------------------------------------------------- 
-      do i=1,libim
-        fwtlib(i)=0.0
-        rrrlib(i)=0.0
-        zzzlib(i)=0.0
-      enddo
-      open(unit=nin,status='old',file=ifname(jtime))
-      read (nin,inlibim,err=11237,end=11233) 
-11233 continue 
-11237 close(unit=nin) 
+
 !---------------------------------------------------------------------- 
 !--   recalculate length of default directories in case any change   -- 
 !---------------------------------------------------------------------- 
@@ -1156,7 +1880,8 @@
         saimin=300.
       endif
       if (kzeroj.eq.1.and.sizeroj(1).lt.0.0) sizeroj(1)=psiwant
-      print *, 'before save fitting weights'
+      write(*,*)  'before save fitting weights'
+      call flush(6)
 !--------------------------------------------------------------------- 
 !--   save fitting weights for FILE mode                            -- 
 !--------------------------------------------------------------------- 
@@ -1185,7 +1910,8 @@
         swtece(i)=fwtece0(i) 
       enddo 
       swtecebz=fwtecebz0
-      print *, 'adjust fit parameters based on basis function selected ' 
+      write(*,*)'adjust fit parameters based on basis function selected'
+      call flush(6)
 !----------------------------------------------------------------------- 
 !--   adjust fit parameters based on basis function selected          -- 
 !----------------------------------------------------------------------- 
@@ -1246,9 +1972,12 @@
       endif 
       if (psiwant.le.0.0) psiwant=1.e-5_dp
 
-      print *, 'itek > 100, write out PLTOUT.OUT individually ' 
+      write(*,*) 'itek > 100, write out PLTOUT.OUT individually ' 
+      call flush(6)
 !-------------------------------------------------------------------------- 
-!--   itek > 100, write out PLTOUT.OUT individually                      -- 
+!--   itek > 100, write out PLTOUT.OUT individually                      --
+!--
+!--   TODO: nin is closed, what are read statements supposed to do here? 
 !-------------------------------------------------------------------------- 
       kgraph=0 
       if (itek.gt.100) then 
@@ -1276,11 +2005,11 @@
         return
       endif
       if ((limitr.gt.0).and.(xlim(1).le.-1.0)) then
-        read (nin,5000) (xlim(i),ylim(i),i=1,limitr) 
+!        read (nin,5000) (xlim(i),ylim(i),i=1,limitr) 
         ylim(i)=ylim(i)-1.e-10_dp
       endif
-      if ((nbdry.gt.0).and.(rbdry(1).le.-1.0)) read (nin,5020) & 
-          (rbdry(i),zbdry(i),i=1,nbdry) 
+!      if ((nbdry.gt.0).and.(rbdry(1).le.-1.0)) read (nin,5020) & 
+!          (rbdry(i),zbdry(i),i=1,nbdry) 
       if (kprfit.gt.0) then 
         do i=1,npress 
           premea(i)=pressr(i) 
@@ -1313,11 +2042,12 @@
           enddo 
         endif 
       endif
-      print *, 'option to symmetrize added 8/14/91 eal  ' 
 !-------------------------------------------------------------- 
 !--   option to symmetrize added 8/14/91 eal                 -- 
 !-------------------------------------------------------------- 
       if (symmetrize) then  ! symmetrize the fixed boundery 
+        write(*,*) 'option to symmetrize added 8/14/91 eal  ' 
+        call flush(6)
         isetfb=0  ! be sure vertical feedback is off 
         zelip=0 ! must be symmetric about midplane 
         if (nbdry.gt.1) then  ! remove duplicate point 
@@ -1410,7 +2140,8 @@
           enddo
         endif
 
-        print *, 'reorder TS data points '   
+        write(*,*) 'reorder TS data points '   
+        call flush(6)
 !--------------------------------------------------------------------- 
 !--     reorder TS data points                                      -- 
 !--------------------------------------------------------------------- 
@@ -1470,7 +2201,8 @@
         endif 
       endif
 
-      print *, 'read in limiter data' 
+      write(*,*) 'read in limiter data' 
+      call flush(6)
 !----------------------------------------------------------------------- 
 !---- read in limiter data                                            -- 
 !----------------------------------------------------------------------- 
@@ -1620,7 +2352,8 @@
       xlmaxt=xlmax 
 !
       call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
-      endif ! kdata.eq.2
+
+      endif ! (kdata.eq.1).or.(kdata.eq.2)
 !----------------------------------------------------------------------- 
 !--   set up parameters for all modes                                 --
 !----------------------------------------------------------------------- 

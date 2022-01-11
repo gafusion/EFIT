@@ -5,9 +5,11 @@
 # stage1 is done at hip.txcorp.com and is not debug
 #
 # Goal is to eventually have stages for testing:
-#    1. Higher resolution (make separate stage to save time)
-#    2. At NERSC
-#    3. At GA with MDS+
+#    1. More complete build (with NetCDF, MPI, and HDF5)
+#    2. Testing more compilers (Intel, PGI, Cray)
+#    3. Higher resolution (make separate stage to save time)
+#    4. At NERSC
+#    5. At GA with MDS+
 
 stages:
   - stage0

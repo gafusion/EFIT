@@ -119,13 +119,16 @@ is built in your $HOME/software directory)::
         -DCMAKE_Fortran_FLAGS:STRING='-fPIC -pipe' \
         -DBLAS_DIR:PATH='$HOME/software/blas' \
         -DLAPACK_DIR:PATH='$HOME/software/lapack' \
+        -DENABLE_PARALLEL:BOOL=ON \
+        -DMPIEXEC:STRING=mpirun \
         -DENABLE_NETCDF:BOOL=ON \
         -DNetCDF_DIR:PATH='$HOME/software/netcdf' \
+        -DENABLE_HDF5:BOOL=ON \
+        -DHDF5_DIR:PATH='$HOME/software/hdf5' \
         ..
 
 The following flags are still under development::
 
-        -DHDF5_DIR:PATH='$HOME/software/hdf5' \
         -DMDSPLUS_DIR:PATH='$HOME/software/mdsplus' \
 
 For debugging, set:: 

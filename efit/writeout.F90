@@ -273,7 +273,7 @@
         if (lshot.lt.156000) then
           table_di2 = table_dir(1:ltbdir)//'112000/'
         elseif  (ishot.lt.168191) then
-          if (kdata.ne.2) then
+          if ((kdata.ne.1).and.(kdata.ne.2)) then
             table_di2 = table_dir(1:ltbdir)//'156014/'
           else
             if (efitversion <= 20140331) then

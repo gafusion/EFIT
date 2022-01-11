@@ -139,14 +139,17 @@
       ntime = ktime
       call get_eparmdud_defaults()
 
-      if (kdata==2) then
+      select case (kdata)
+      case (1)
+        call read_omas_in1(ifname(1))     !this assume machine is always the same
+      case (2)
         call read_dirs_shot(ifname(1))     !this assume machine is always the same
-      elseif(kdata==7) then
+      case(7)
         call read_dirs_shot('efit_snap.dat_'//adjustl(snapext_in))     !this assume machine is always the same
-      else
+      case default
         call read_dirs_shot('efit_snap.dat')
-      endif
-      
+      end select
+
       call set_table_dir
       call read_eparmdud
       call get_eparmdud_dependents

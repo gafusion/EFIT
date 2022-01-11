@@ -1,7 +1,7 @@
 
 
 GitLab
-======
+=======
 
 Day-to-day development happens at the `EFIT GitLab repository <https://gitlab.com/efit-ai/efit>`__.
 There, you can find the history and development version of the source code,
@@ -22,7 +22,7 @@ For submitting the merge request, the developer should:
 
 
 Slack and Mailing Lists
-=========================
+========================
 
 Discussion occurs on the EFIT-AI slack channel.
 
@@ -43,8 +43,41 @@ formal workflow rules to be set up, but rather rely on conventions.  Our
 conventions are:
 
   + All development is in a branch
+  + Additional tests should be added to cover new functionality
   + Merge requests are submitted by developer
   + Merges to main must be done by another developer to ensure code review
 
 
+Adding tests
+=============
 
+New tests will have many commonalities with the ones that already exist,
+so a good starting point would be to copy an existing test directory and
+replace the inputs and outputs.  All tests for a given machine should use
+the same Green tables that are in the test and if possible have the same
+shot number.  Tests should include all of the following components when
+applicable:
+
+  + Input files (k, r, etc.) for 4 different time slices
+  + Output files (g, m, a, etc.) for each time slice
+  + OMAS files containing the inputs and outputs of both a single time
+    slice and all 4 time slices
+
+Note: OMAS files can be constructed with OMFIT using the `to_omas` script
+in the EFITtime module and the `ods.save("/path/to/file.hdf5")` method.
+The OMAS conversion does not know the expected dimensions and sizes for
+arrays, however, so it cannot properly interpret the matrix syntax (e.g.
+`CALPA(2,3) = ...`).  Therefore, all 2D arrays (`calpa`, `cgama`,
+`ccoils`, etc.) should be flattened into 1D arrays with the same total
+number of elements that EFIT is expecting (described in the `dprobe.dat`
+file).
+
+Once the correct input and output files are added, the following files
+need to be edited to include the test:
+
+  + ``$EFIT_ROOT/test/CMakeLists.txt`` (if a new machine is being added)
+  + ``$EFIT_ROOT/test/<machine>/CMakeLists.txt`` add the subdirectory for
+    the new test
+  + ``$EFIT_ROOT/test/<machine>/<new_test>/CMakeLists.txt`` can mostly be
+    kept the same as other tests aside from changing the test name (shot
+    number and time slice numbers should match the new test as well)

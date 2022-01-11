@@ -29,21 +29,6 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       include 'netcdf.inc'   ! from the netCDF package..
 !                            ..this must be symlinked to local directory
-! --- common block ids is local to wmeasure
-!
-      common/ids/nceq,idim_time,idim_1,idim_nstark,idim_nsilop &
-      ,idim_magpri,idim_nfcoil,idim_nesum,idim_npress,idim_npcurn &
-      ,idim_nitera &
-      ,id_shot,id_time,id_tangam,id_cmgam,id_siggam,id_rrgam,id_zzgam &
-      ,id_a1gam,id_a2gam,id_a3gam,id_a4gam,id_a5gam,id_a6gam,id_a7gam &
-      ,id_a8gam,id_fgam, id_tangam_uncor &
-      ,id_fwtgam,id_msebkp,id_mseport &
-      ,id_silopt,id_csilop,id_fwtsi,id_expmpi,id_fwtmp2,id_cmpr2 &
-      ,id_fccurt,id_ccbrsp,id_fwtfc,id_eccurt,id_cecurr,id_fwtec &
-      ,id_diamag,id_cdflux,id_sigdia,id_plasma,id_cpasma &
-      ,id_pressr,id_cpress,id_rpress,id_zpress,id_sigpre,id_saipre &
-      ,id_chigam,id_saimpi,id_saisil,id_czmaxi,id_cchisq,id_cerror &
-      ,id_fungam,id_gaingam,id_slopegam,id_scalegam,id_offsetgam
       dimension xrsp(npcurn)
 !sri  to make it compatiable to mpi version
 !      character eqdsk*20,let,title*80,last*3
