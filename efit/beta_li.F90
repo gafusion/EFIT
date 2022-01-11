@@ -17,11 +17,11 @@
       subroutine betali(jtime,rgrid,zgrid,idovol,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky,cw,wkw,copyw,bwx, &
                   bwy,sifprw,bwprw,cwprw,dwprw,sfprw,sprwp
+      use var_cww
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
-      common/cww/lwx,lwy
       dimension pds(6),rgrid(*),zgrid(*)
       real*8,dimension(:),allocatable :: worksi,workrm,bwork, &
              cwork,dwork,x,y,dpleng

@@ -574,8 +574,6 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
-      integer*8 limtrs
-      common/wwork1/xlims(5),ylims(5),limtrs,xlmins
       dimension pds(6)
       integer iii
       real :: zmaxis_last = 0.0

@@ -251,7 +251,6 @@
        real*8 dpsip,dpsip_last
        data vfeed/.false./
        end module var_updown
-
 !var_test
       module var_test
       real*8 zcontr,zcurnow
@@ -261,14 +260,12 @@
       integer*4 ivnit,n_write
       data ivnit/35/,n_write/1/
       end module var_graphic
-
 !var_errslop
        module var_errslop
        use set_kinds
        real*8 aaslop,drslop
        data aaslop/0.6_dp/,drslop/0.003_dp/
        end module var_errslop
-
 !var_fitsiref
        module var_fitsiref
        use set_kinds
@@ -276,7 +273,6 @@
        logical fitsiref
        data scalesir/1.0e-3_dp/,fitsiref/.false./
        end module var_fitsiref
-
 !var_cnnn
        module var_cnnn
        integer*4 n111,n222,n333,n444,n555,n666
@@ -284,19 +280,15 @@
        data n111/1/,n222/2/,x111/1.0/,x000/0.0/,n333/3/,n444/4/,n555/5/ &
            ,n666/6/
        end module var_cnnn
-
 !var_pcsys
        module var_pcsys
        integer*4 use_alternate_pointnames
        character*80 alternate_pointname_file
         logical*4          do_spline_fit
-      data do_spline_fit/.true./
-      data use_alternate_pointnames/0/
-      data alternate_pointname_file/'/link/efit/pcsnames.dat'/
-
+       data do_spline_fit/.true./
+       data use_alternate_pointnames/0/
+       data alternate_pointname_file/'/link/efit/pcsnames.dat'/
        end module var_pcsys
-
-
 !var_pfedge
       module var_pfedge
       use set_kinds
@@ -306,17 +298,12 @@
       tpedge,tfedge,rdlcfe,rqape,rqafe,betped,betnped
       data kedgep/0/,pe_width/0.02_dp/,pe_psin/0.98_dp/,pedge/0.0/, &
            kedgef/0/,fe_width/0.02_dp/,fe_psin/0.98_dp/,f2edge/0.0/
-
       end module var_pfedge
-
-
-
 !var_sxpoint
        module var_sxpoint
        real*8 sissep,rssep,zssep,sifsep,rfsep,zfsep,rminss, &
               zminss,rmaxss,zmaxss,rminfs,rmaxfs,zminfs,zmaxfs
        end module var_sxpoint
-
 !var_consta
       module var_consta
         use set_kinds
@@ -324,7 +311,6 @@
         real*8 :: tmu2,errcut,tmu0,tmu02
         integer*4 :: ibunmn,kinput,kcaldia=0
      end module var_consta
-
 !var_rcfact
      module var_rcfact
      use set_kinds
@@ -335,14 +321,11 @@
      module var_curpro
      use set_kinds
      real*8 emf,emp,enf,enp,rbetap,rzero,pbetap,qenp,qemp,qenf
-
 !vas      common/curpro/emf,emp,enf,enp,rbetap,rzero,pbetap,qenp,qemp,qenf
       data rzero/1.6955_dp/
      end module var_curpro
-
 !var_pfterm
      module var_pfterm
-
      integer*4 kffcur,kppcur,kpcurn,icalbet 
      real*8    chidlc,gammaf,gammap,cstabz ,cstab0 &
             ,vbtot2,vbtvac2,vbtor2,vbtvac,vbeta0 &
@@ -350,7 +333,6 @@
      data cstabz/0.0e-13/
      data icalbet/1/
      end module var_pfterm
-
 !var_cfit
      module var_cfit
      use set_kinds
@@ -379,22 +361,17 @@
      omega/1.0/,errorq/1.0e-03_dp/
      data jjmax/1/
      end module var_conveg
-
 !var_limmm
      module var_limmm
      real*8 xlmin,xlmax,ylmin,ylmax
      integer*4 limid,limup,limbot
      data limid/33/
      end module var_limmm
-
 !var_inaver
      module var_inaver
-     
      integer*4 iavem,iaved,iavev,iaveus
      data iaveus/0/
-
      end module var_inaver
-!
 !var_vessel
      module var_vessel
      real*8,dimension(:),allocatable :: volecs,volecc,rsisec
@@ -402,7 +379,6 @@
      real*8,dimension(:),allocatable :: rvs,zvs,hvs,wvs,avs,avs2,rsisvs 
      real*8 powvs,pvscur,pscurn,ppscur,efreq,sumvs0
      integer*4 ivesel
-
 !      common/vessel/ivesel,volecs(nesum),volecc(nesum),rsisvs(nvesel) & 
 !        ,efreq,sumvs0,volfcs(nfcoil),volfcc(nfcoil) &  
 !        ,rsisec(nesum),powvs,pvscur,pscurn,ppscur &  
@@ -418,14 +394,12 @@
      real*8,dimension(:),allocatable :: tempgrid,tempgrid2
      real*8 diag,rhs_a_dumy,rhs_b_dumy
      integer*4 nhpwr
-       
 !vas      common/cyclic_red/beti(icycred_loopmax,nw-2), &
 !vas       abeti(icycred_loopmax,nw-2),wk1(icycred_loopmax,nw-2), &
 !vas       alphab(icycred_loopmax),diag1(icycred_loopmax), &
 !vas       rhsdumy1(nwnh),phi(nw),v(nw),wk2(nw),diagl(nw),diagu(nw), &
 !vas       tempgrid(ncurrt),tempgrid2(ncurrt),diag,rhs_a_dumy,rhs_b_dumy, &
      end module var_cyclic_red
-
 !var_scalem
      module var_scalem
        use eparm,only:nrsmat,mfnpcr
@@ -489,12 +463,10 @@
       real*8 pasman,betatn,psiq1,betat2
       integer jtwagap
       data jtwagap/59/
-
       end module var_hist
 !var_hist2
       module var_hist2
       use set_kinds
-
       real*8,dimension(:), allocatable :: qsiwant,cjorsw,cjor0, &
         ssiwant,ssi95,cjor99,cj1ave &
         ,rmidin,rmidout,psurfa
@@ -502,7 +474,6 @@
         ,sepnose,ssi01,znose,rqqmin
       data psiwant/1.0/,rexpan/0.010_dp/,znose/-1.276_dp/
       end module var_hist2
-
 !var_cshape
       module var_cshape
       use set_kinds
@@ -513,11 +484,9 @@
       integer*8 nfound
       data emaxis/1.3_dp/
       end module var_cshape
-
 !var_divdis
       module var_divdis
       use set_kinds
-
       real*8,dimension(:), allocatable :: dolubaf,dolubafm,diludom, &
         diludomm,dminux,dminlx, &
         ratsol,rvsiu,zvsiu,rvsou, &
@@ -526,7 +495,6 @@
         real*8 rubaf,zubaf,rlbaf,zlbaf,rudom,zudom
       data rubaf/1.372_dp/,rudom/1.0420_dp/,rlbaf/1.6810_dp/
       data zubaf/1.310_dp/,zudom/1.1624_dp/,zlbaf/-1.339_dp/
-
 !vas      common/divdis/dolubaf(ntime),dolubafm(ntime),diludom(ntime), &
 !vas        diludomm(ntime),dminux(ntime),dminlx(ntime), &
 !vas        ratsol(ntime),rvsiu(ntime),zvsiu(ntime),rvsou(ntime), &
@@ -544,7 +512,6 @@
       end module var_cpsi
 !var_cvalue
       module var_cvalue
-
       real*8,dimension(:,:), allocatable :: csilop,csilopv 
       real*8,dimension(:,:), allocatable :: crogow
       real*8,dimension(:,:), allocatable :: cmpr2,cmpr2v 
@@ -558,9 +525,6 @@
 !vas       ,ccbrsp(nfcoil,ntime),caccurt(ntime,nacoil) &
 !vas       ,csilopv(nsilop,ntime),cmpr2v(magpri,ntime)
       end module var_cvalue
-
-
-
 !-- modules from ecomdu2
 !var_gtable
       module var_gtable
@@ -574,9 +538,7 @@
       real*8,dimension(:,:),allocatable,save :: gmp2pc
       real*8,dimension(:,:),allocatable,save :: rfcfc
       integer*4 iallocate_stat
-
       end module var_gtable
-
 ! jm.s
 ! NOTE : array sizes are grid size-dependent so they should be dynamically allocated, but
 !        we cannot make them dynamic since they are included in a namelist
@@ -598,7 +560,6 @@
         character*80 :: geqdsk_ext
         logical :: fixpp = .false.
       end module profile_ext_mod
-
 
 ! NOTE : keep track of times for which BCOIL and ECOIL data exist (see getecd.f90)
       module vtime_mod
