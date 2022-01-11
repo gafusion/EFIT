@@ -195,7 +195,7 @@
           bzct=bzct+bz(a,r1,z1)      
         enddo
         kkm=fcid(k)
-        recebzfc(kkm)=recebzfc(kkm)+bzct/fitot*tmu
+        recebzfc(kkm)=recebzfc(kkm)+fcturn(k)*bzct/fitot*tmu
       enddo
 !---------------------------------------------------------------------
 !--   plasma response   gecebzpc(nwnh)                              --
@@ -938,12 +938,12 @@
           do l=1,itot
             a=rsplt(l)
             z1=zzgam(jtime,mmm)-zsplt(l)
-            brct=brct+fcturn(k)*br(a,r1,z1)
-            bzct=bzct+fcturn(k)*bz(a,r1,z1)
+            brct=brct+br(a,r1,z1)
+            bzct=bzct+bz(a,r1,z1)
           enddo
           kkm=fcid(k)
-          rbrfc(mmm,kkm)=rbrfc(mmm,kkm)+brct/fitot*tmu
-          rbzfc(mmm,kkm)=rbzfc(mmm,kkm)+bzct/fitot*tmu
+          rbrfc(mmm,kkm)=rbrfc(mmm,kkm)+fcturn(k)*brct/fitot*tmu
+          rbzfc(mmm,kkm)=rbzfc(mmm,kkm)+fcturn(k)*bzct/fitot*tmu
         enddo
       enddo
 !---------------------------------------------------------------------

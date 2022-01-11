@@ -421,7 +421,10 @@
         fwtfc(i)=0. 
         rsisfc(i)=-1. 
       enddo
-      do i=1,nesum 
+      do i=1,mfcoil
+        fcturn(i)=1.0
+      enddo
+      do i=1,nesum
         fwtec(i)=0.0 
       enddo 
       do i=1,mpress 
