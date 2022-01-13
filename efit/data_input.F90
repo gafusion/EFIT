@@ -282,6 +282,10 @@
       scalepw=0.0
       rbdry=0.0
       zbdry=0.0
+      bti322in=0.0
+      curc79in=0.0
+      curc139in=0.0
+      curc199in=0.0
 ! 
       kerror=0 
       idone=0 
