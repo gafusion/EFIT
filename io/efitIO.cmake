@@ -48,7 +48,7 @@ if (${ENABLE_HDF5})
       getAdditionalHdf5Libs()
       set(HAVE_HDF5 True)
       set(io_libs ${HDF5_LIBRARIES} ${io_libs})
-      #include_directories(${HDF5_INCLUDE_DIRS})
+      include_directories(${HDF5_INCLUDE_DIRS})
       if (UNIX)
         # Required for hdf5 version 1.8.11 and greater
         set(io_libs ${io_libs} ${CMAKE_DL_LIBS}) 
