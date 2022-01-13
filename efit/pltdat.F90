@@ -21,7 +21,6 @@
            bwy,cj,wkj,copyj,bjx,bjy,cv,wkv,copyv,bvx,bvy,byringr,byringz, &
            xxtra,yxtra,bpxtra,flxtra,fpxtra
       use efit_bdata,only:iunit,m_write
-      use eparm,only: ndim
       use curve2d_mod
       use var_cww
       include 'eparm.inc'

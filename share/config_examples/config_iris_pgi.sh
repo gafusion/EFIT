@@ -4,6 +4,7 @@
 #    module switch gcc-4.7.2 gcc-9.2.0
 #    module load pgf/18.7
 #    module load mpich/3.2-pgf18.7
+#    module load hdf5/1.8.19-mpich3.2-pgf18.7
 #
 # If you don't want MPI (slower in serial) simply remove the FC=...
 #   and -DENABLE_PARALLEL... lines
@@ -15,8 +16,9 @@
     cmake \
     -DBLAS_LIBRARIES:PATH='/fusion/usc/opt/pgi/linux86-64/18.7/lib/libblas.a' \
     -DLAPACK_LIBRARIES:PATH='/fusion/usc/opt/pgi/linux86-64/18.7/lib/liblapack.a' \
+    -DENABLE_PARALLEL:BOOL=ON \
     -DENABLE_NETCDF:BOOL=ON \
     -DNetCDF_DIR:PATH='/fusion/usc/opt/netcdf/netcdf-4.4.1_mpich-3.2_pgf-18.3/' \
-    -DENABLE_PARALLEL:BOOL=ON \
+    -DENABLE_HDF5:BOOL=TRUE \
     -DCMAKE_BUILD_TYPE:STRING=RELEASE \
     ..
