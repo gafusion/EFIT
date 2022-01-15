@@ -39,14 +39,14 @@ target_link_libraries(efitlib cerlib)
 target_link_libraries(efitlib lsode r8slatec)
 # IO libs
 target_link_libraries(efitlib dissplalib ptdatalib)
+if (${HDF5_FOUND})
+target_link_libraries(efitlib hdf5lib)
+endif()
 if (NOT ${HAVE_NETCDF})
 target_link_libraries(efitlib netcdflib)
 endif()
 if (NOT ${HAVE_MDSPLUS})
 target_link_libraries(efitlib mdspluslib)
-endif()
-if (${HAVE_HDF5})
-target_link_libraries(efitlib hdf5lib)
 endif()
 
 install(TARGETS efitlib DESTINATION lib
@@ -59,7 +59,9 @@ install(TARGETS efitlib DESTINATION lib
 #elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "Lahey")
 #endif ()
 
-add_executable(efit  efit.F90 get_opt_input.F90)
+add_executable(efit efit.F90 get_opt_input.F90)
+# TODO: linking could be done more cleanly
+#target_link_libraries(efit efitlib)
 target_link_libraries(efit efitlib ${io_libs} ${math_libs})
 
 # Premature...

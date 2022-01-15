@@ -201,7 +201,7 @@ subroutine read_omas_in1(filename)
   logical :: fitsiref,fitfcsum
   logical :: file_stat
  
-#ifdef HAVE_HDF5
+#if defined(USE_HDF5)
   inquire(file=trim(filename),exist=file_stat)
   if (.not. file_stat) then
     call errctrl_msg('read_omas_in1',trim(filename)//' not found')

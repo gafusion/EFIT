@@ -275,7 +275,7 @@ message("Here")
    
     # Define the LIBRARIES and INCLUDE_DORS
     set(NetCDF_INCLUDE_DIRS ${NetCDF_INCLUDE_DIR})
-    set(NetCDF_LIBRARIES    ${NetCDF_C_LIBRARY} ${NetCDF_Fortran_LIBRARY})
+    set(NetCDF_LIBRARIES ${NetCDF_Fortran_LIBRARY} ${NetCDF_C_LIBRARY})
 
    
 

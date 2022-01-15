@@ -16,9 +16,9 @@
     cmake \
     -DBLAS_LIBRARIES:PATH='-L'$MKLROOT' -lmkl_core -lmkl_intel_ilp64 -lmkl_sequential -lmkl_blas95_ilp64' \
     -DLAPACK_LIBRARIES:PATH='-lmkl_lapack95_ilp64' \
-    -DENABLE_PARALLEL:BOOL=ON \
     -DENABLE_NETCDF:BOOL=ON \
     -DNetCDF_DIR:PATH='/fusion/usc/opt/netcdf/netcdf-4.4.1_mpich-3.2_intel2018/' \
     -DENABLE_HDF5:BOOL=ON \
+    -DENABLE_PARALLEL:BOOL=ON \
     -DCMAKE_BUILD_TYPE:STRING=RELEASE \
     ..

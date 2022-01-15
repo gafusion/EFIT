@@ -2,6 +2,7 @@
 #   execute the following module commands: (not required to build)
 #
 #    module switch gcc-4.7.2 gcc7/default
+#    module load hdf5/1.8.19-gcc7
 #
 # If you don't want MPI (slower in serial) simply remove the FC=...
 #   and -DENABLE_PARALLEL... lines
@@ -13,9 +14,9 @@
     cmake \
     -DBLAS_LIBRARIES:PATH='/usr/lib64/libblas.a' \
     -DLAPACK_LIBRARIES:PATH='/usr/lib64/liblapack.a' \
-    -DENABLE_PARALLEL:BOOL=ON \
     -DENABLE_NETCDF:BOOL=ON \
     -DNetCDF_DIR:PATH='/fusion/usc/opt/netcdf/netcdf-4.4.1_gcc7' \
     -DENABLE_HDF5:BOOL=ON \
+    -DENABLE_PARALLEL:BOOL=ON \
     -DCMAKE_BUILD_TYPE:STRING=RELEASE \
     ..

@@ -47,6 +47,21 @@ else()
     file(RENAME ${GEN_CONF_FILE} ${GEN_SRC_FILE})
 endif()
 
+set(IDEBUG "0" CACHE STRING "Debug output level (3 max)")
+if(IDEBUG GREATER 0)
+	set(DEBUG_LEVEL1 TRUE)
+endif()
+if(IDEBUG GREATER 1)
+	set(DEBUG_LEVEL2 TRUE)
+endif()
+if(IDEBUG GREATER 2)
+	set(DEBUG_LEVEL3 TRUE)
+endif()
+
+set(JDEBUG "NONE" CACHE STRING "Further debug output from section")
+if(JDEBUG MATCHES "MSEL")
+	set(DEBUG_MSEL TRUE)
+endif()
 #---------------------------------------------------------------------
 # Set default values for performance issues if necessary
 #---------------------------------------------------------------------

@@ -690,7 +690,7 @@
 !--   HDF5 file mode                                                 -- 
 !---------------------------------------------------------------------- 
       else ! kdata.eq.1
-#ifdef HAVE_HDF5
+#if defined(USE_HDF5)
         inquire(file=trim(ifname(1)),exist=file_stat)
         if (.not. file_stat) then
           call errctrl_msg('data_input',trim(line)//' not found')
