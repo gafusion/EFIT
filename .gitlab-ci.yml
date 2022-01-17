@@ -35,15 +35,12 @@ variables:
       - web
       - merge_requests
   dependencies: []
-
-.test:
-  extends: .test-basic
   except:
     variables:
       - $EFIT_CI_SCHEDULED =~ /yes/
 
 pause-for-approval:
-  extends: .test
+  extends: .test-basic
   stage: .pre
   only:
     refs:
@@ -58,6 +55,12 @@ pause-for-approval:
   when: manual
   allow_failure: false
 
+.test:
+  extends: .test-basic
+  after_script:
+    - date
+
+
 clang-docker:
   extends: .test
   stage: stage0
@@ -65,8 +68,17 @@ clang-docker:
   # Note that currently I'm not actually running make test
   script:
     - mkdir build && cd build # Build out of place
-    - ../docker/config_docker_clang.sh
-    - make -j4
+    - ../docker/config_docker_clang.sh | tee config.log
+    - make -j4 | tee make.log
+    - make docs | tee docs.log
+  artifacts:
+    name: "$CI_JOB_NAME"
+    when: always
+    paths:
+    - build/*.log
+    - build/CMakeCache.txt
+    - docs/html
+    expire_in: 4 days
 
 linux-clang:
   extends: .test
@@ -75,8 +87,43 @@ linux-clang:
     - name:hip.txcorp_efitai
   script:
     - mkdir build && cd build # Build out of place
-    - ../share/config_examples/config_ci_hip.sh
-    - make -j4
-    - make test
+    - ../share/config_examples/config_ci_hip.sh | tee config.log
+    - make -j4  | tee make.log
+    - make test | test.log
   variables:
     PATH: /scratch/soft/bin:/scratch/soft/mpich/bin:/opt/rh/devtoolset-7/root/usr/bin:/usr/bin:/bin
+  artifacts:
+    name: "$CI_JOB_NAME"
+    when: always
+    paths:
+    - build/*.log
+    - build/CMakeCache.txt
+    - build/Testing/Temporary/LastTest.log
+    expire_in: 4 days
+
+
+#
+# Base job for a documentation build
+#
+.docs:
+  stage: stage1
+  tags:
+    - name:hip.txcorp_efitai
+
+#
+# Deploy documentation using GitLab pages
+#
+pages:  # this job name has special meaning to GitLab
+  extends: .docs
+  interruptible: true
+  script:
+    - mkdir build-docs && cd build-docs # Build out of place
+    - ../share/config_examples/config_ci_hip.sh | tee config.log
+    - make docs
+    - mv docs/html ../public
+  only:
+    variables:
+      - $EFIT_CI_SCHEDULED == "yes"
+  artifacts:
+    paths:
+      - public

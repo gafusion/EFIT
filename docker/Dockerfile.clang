@@ -23,6 +23,8 @@ RUN apt-get update && apt-get install -y \
         tmux \
         unzip \
         valgrind \
+        texlive-bibtex-extra \
+        doxygen \
         vim \
         wget \
         && \
@@ -34,5 +36,11 @@ RUN mkdir -p ${PREFIX} && \
     cd ${PREFIX} && \
     mkdir build && \
     mkdir install
+
+RUN python3 -m pip install --no-cache-dir -U pip
+RUN python3 -m pip install --no-cache-dir Sphinx
+RUN python3 -m pip install --no-cache-dir pydata-sphinx-theme
+RUN python3 -m pip install --no-cache-dir sphinxcontrib-bibtex
+RUN python3 -m pip install --no-cache-dir breathe
 
 ENV HOME=/root
