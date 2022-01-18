@@ -71,13 +71,14 @@ clang-docker:
     - ../docker/config_docker_clang.sh | tee config.log
     - make -j4 | tee make.log
     - make docs | tee docs.log
+    - mv docs/html ../public
   artifacts:
     name: "$CI_JOB_NAME"
     when: always
     paths:
     - build/*.log
     - build/CMakeCache.txt
-    - docs/html
+    - public
     expire_in: 4 days
 
 linux-clang:
