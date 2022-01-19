@@ -810,10 +810,8 @@
                         ktime_err)
       use eparm,only:ntime
       use vtime_mod
-      parameter (ntims=8192)
-      common/gggttt/w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims) &
-                    ,ew(ntims),stdevxx(ntims),navxx(ntims)
-      common/inaver/iavem,iaved,iavev,iaveus
+      use var_gggttt
+      use var_inaver
       character*10 name
       integer, intent(out) :: ktime_err
       real*8 y(ntime),time(ntime),deltd,xxd,bitvld,timesd &
@@ -1252,9 +1250,7 @@
       subroutine apdata(nshot,name,mmm,ierror,y, &
         np,timesd,deltd,mm,xxd,nn,bitvld,kave,time, &
         do_spline_fit,rcx,rcgx,vbitx,zinhnox,t0x,stdevx,navx)
-      parameter (ntims=8192)
-      common/gggttt/w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims) &
-                    ,ew(ntims),stdevxx(ntims),navxx(ntims)
+      use var_gggttt
       real*8 y(np),time(np),deltd,xxd,bitvld,timesd &
              , rcx,rcgx,vbitx,zinhnox,t0x &
              , stdevx(1)
@@ -1377,9 +1373,7 @@
 !*********************************************************************
       subroutine gettanh(ishot,fitzts,ktime,time,ztssym,ztswid, &
                           ptssym,ztserr)
-      parameter (ntims=8192)
-      common/gggttt/w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims) &
-                    ,ew(ntims),stdevxx(ntims),navxx(ntims)
+      use var_gggttt
       real*8 time(ktime),ztssym(ktime),ztswid(ktime),ptssym(ktime)
       character*2 fitzts,ztsfit
       logical ztserr(ktime)
@@ -1410,7 +1404,7 @@
 
 !**********************************************************************
 !>
-!!    avdata gets the compensated diamagnetic data and
+!!    avdiam gets the compensated diamagnetic data and
 !!    and optionally performs the average.
 !!
 !!    @param nshot : shot number
@@ -1446,12 +1440,10 @@
 !!    @param ierdia :
 !!
 !**********************************************************************
-      subroutine avdiam(nshot,name,mmm,ierror,y, &
-                    np,timesd,deltd,mm,xxd,nn,bitvl,kave,time,sigmay, &
+      subroutine avdiam(nshot,name,mmm,ierror,y,np, &
+                        timesd,deltd,mm,xxd,nn,bitvl,kave,time,sigmay, &
                         ierdia)
-      parameter (ntims=8192)
-      common/gggttt/w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims) &
-                    ,ew(ntims),stdevxx(ntims),navxx(ntims)
+      use var_gggttt
       dimension ierdia(3)
       real*8 y(np),time(np),sigmay(np),deltd,xxd,timesd,bitvl,xlen(1)
       character*10 name
@@ -1510,7 +1502,7 @@
 !**********************************************************************
       subroutine zmooth(y,npts,nave)
       parameter (ntims=8192)
-      common/gwork1/yave(ntims)
+      real*8 yave(ntims)
       dimension y(npts)
 !
       if (nave.eq.0) return

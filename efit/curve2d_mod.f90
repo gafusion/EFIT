@@ -1,6 +1,6 @@
 !*************************************************************************
 !**                                                                   **
-!** INCLUDE FILE: curve2d.inc                                        **
+!** MODULE FILE: curve2d_mod.f90                                        **
 !**                                                                   **
 !**     FILE DESCRIPTION:                                        **
 !**       Declares and defines dimensioned variables, and common  **
@@ -111,62 +111,36 @@
 !**                                                                      **
 !**     REFERENCES:                             **
 !**          (1)  CA-DISSPLA manual                     **
-!**          (2)                                                         **
-!**                                                                      **
-!**     RECORD OF MODIFICATION:                                          **
-!**          03/26/93..........first created                             **
-!**          05/10/93..........revised                      **
-!**                                                                      **
-!**
-!**     $Date: 2009/02/12 22:43:48 $ $Author: radhakri $
-!**
-!**     @(#)$RCSfile: curve2d.inc,v $ $Revision: 1.1.2.3 $
 !**
 !*************************************************************************
+      module curve2d_mod
 
-!sri-feb122009    parameter    (ndim = 700, ncrv=180, mdim = 200)
-      parameter (ncrv=180, mdim = 300)
+      integer*4, parameter:: ndimc=3200 ! needs to be consistent with eparm
+      integer*4, parameter:: ncrv=180
+      integer*4, parameter:: mdim = 300
 
-      dimension xx(ndim,ncrv), yy(ndim,ncrv), nxy(ncrv), &
-              thcrv(ncrv), sclpc(ncrv), bshft(2), &
-              ndotme(ncrv), ndshme(ncrv), ncdtme(ncrv), ncdhme(ncrv), &
-              markme(ncrv), ncnct(ncrv), &
-              imes(mdim), xpos(mdim), ypos(mdim), note(mdim), anum(mdim), &
-              inum(mdim), iplce(mdim), ht(mdim), &
-              sangle(ncrv), sgap(ncrv), ngaps(ncrv), &
-              nsxy(ncrv), sxx(ncrv,ncrv), syy(ncrv,ncrv), &
-              xfm(ncrv), yfm(ncrv), xto(ncrv), yto(ncrv), ivec(ncrv), &
-              mrc(ncrv), tlen(ncrv), nmrk(ncrv)
-
+      real*8 xx(ndimc,ncrv), yy(ndimc,ncrv), &
+             sxx(ncrv,ncrv), syy(ncrv,ncrv)
 
       character*24 ptitle, xtitle, ytitle, sname, clearx(ncrv)
       character*72 lmes(mdim)
       character*24 lbflg, draw, mode, mxalf(mdim)
 
       integer*8 nn, ncurve, ipag, ibrdr, iorel, nplen, nxlen, nylen
-      common /var2d_page/ nn, ncurve, ipag, ibrdr, grce, xphy, yphy, &
-              iorel, xorl, yorl, hight, bngle, bshft, &
-              ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, &
-              ylen, xomin, xstp, xomax, yomin, ystp, yomax
+      real*8 grce, xphy, yphy, xorl, yorl, hight, bngle, bshft(2), &
+             xlen, ylen, xomin, xstp, xomax, yomin, ystp, yomax
       integer*8 iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
                 ixaxs, nslen, igridx, igridy, idash, idot, ichdsh, ichdot
-      common /var2d_axis/ iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
-              isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
-              igridx, igridy, idash, idot, ichdsh, ichdot
-      integer*8 ndshm, ndotme, ncdhme, ncdtme, markme, mrc, nmrk, nxy, &
-                ncnct
-      common /var2d_curve/ thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
-              markme, clearx, mrc, tlen, nmrk, &
-              nxy, ncnct
-!    .        ,xx, yy
-      integer*8 icont, nword, line, ithk, ipri, nline
-      common /var2d_contur/ icont(ncrv), nword, ix, iy, zinc, line, &
-              ithk, ipri, nline
-!    .        ,zmat
-      integer*8 nshd, nsxy, ngaps, nvec, ivec
-      common /var2d_shade/ nshd, nsxy, sangle, sgap, ngaps, &
-              nvec, xfm, yfm, xto, yto, ivec
-!    .        ,sxx, syy
-      integer*8 msg, note, imes, iplce, inum, iexit
-      common /anote / msg, note, lmes, imes, anum, iplce, inum, xpos,  &
-              ypos, ht, iexit
+      real*8 sorg, stp, smax, slen, xps, yps
+      integer*8 ndshme(ncrv), ndotme(ncrv), ncdhme(ncrv), ncdtme(ncrv), &
+                markme(ncrv), mrc(ncrv), nmrk(ncrv), nxy(ncrv), ncnct(ncrv)
+      real*8 thcrv(ncrv), sclpc(ncrv), tlen(ncrv)
+      integer*8 icont(ncrv), nword, ix, iy, line, ithk, ipri, nline
+      real*8 zinc
+      integer*8 nshd, nsxy(ncrv), ngaps(ncrv), nvec, ivec(ncrv)
+      real*8 sangle(ncrv), sgap(ncrv), xfm(ncrv), yfm(ncrv), xto(ncrv), &
+             yto(ncrv)
+      integer*8 msg, note(mdim), imes(mdim), iplce(mdim), inum(mdim), iexit
+      real*8 anum(mdim), xpos(mdim), ypos(mdim), ht(mdim) 
+      
+      end module curve2d_mod

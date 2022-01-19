@@ -6,6 +6,31 @@
 
 set(io_libs "")
 
+
+# Ideally, we would use the HDF5 installed cmake file, but in practice you
+# can't do that with  most distros.  Rather than find_package all of those 
+# dependencies, this does a simpler method based on find_library
+# Based on a snippet found at the kitware gitlab site
+macro(getAdditionalHdf5Libs)
+	set(_additional_libs sz z dl m)
+	foreach(_additional_lib IN LISTS _additional_libs)
+		if(HDF5_USE_STATIC_LIBRARIES)
+			set(_libnames ${_additional_lib} lib${_additional_lib}.a)
+		else()
+			set(_libnames ${_additional_lib})
+		endif(HDF5_USE_STATIC_LIBRARIES)
+		set(_libvar "LIB_${_additional_lib}")
+		find_library(${_libvar}
+			NAMES ${_libnames}
+			HINTS ${HDF5_ROOT}
+			PATH_SUFFIXES lib Lib)
+		if(NOT ${${_libvar}} STREQUAL "${_libvar}-NOTFOUND")
+		   list(APPEND HDF5_LIBRARIES ${${_libvar}})
+		endif()
+	endforeach()
+list(REMOVE_DUPLICATES HDF5_LIBRARIES)
+endmacro(getAdditionalHdf5Libs)
+
 #---------------------------------------------------------------------
 #
 # Find HDF5
@@ -17,12 +42,13 @@ set(HAVE_HDF5 False)   # Used in defines
 if (${ENABLE_HDF5})
     set(HDF5_USE_STATIC_LIBRARIES TRUE)
     find_package(HDF5 COMPONENTS Fortran)
-#    find_package(HDF5 COMPONENTS Fortran HL)
+    #find_package(HDF5 COMPONENTS Fortran HL)
     if (${HDF5_FOUND})
       message(STATUS "Found HDF5")
+      getAdditionalHdf5Libs()
       set(HAVE_HDF5 True)
-      set(io_libs ${HDF5_LIBRARIES} ${Z_LIBRARIES} ${io_libs})
-#      include_directories(${HDF5_INCLUDE_DIRS})
+      set(io_libs ${HDF5_LIBRARIES} ${io_libs})
+      include_directories(${HDF5_INCLUDE_DIRS})
       if (UNIX)
         # Required for hdf5 version 1.8.11 and greater
         set(io_libs ${io_libs} ${CMAKE_DL_LIBS}) 

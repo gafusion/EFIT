@@ -1562,7 +1562,6 @@
       dimension pds(6)
       real*8,dimension(:),allocatable :: bwork,cwork,dwork
 
-      common/cworkbt/lkrt,lkzt
 ! MPI >>>
       integer, intent(inout) :: kerror
       kerror = 0

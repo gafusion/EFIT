@@ -25,4 +25,3 @@
 
       integer*8 imes(mdim), inum(mdim), note(mdim), iplce(mdim), m
       character*72  lmes(mdim)
-      integer*8 iunit, m_write, m_read

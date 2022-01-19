@@ -14,7 +14,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${EFIT_IN}
 # This test can only be run serially
 # Must be run on execute node at NERSC to use MPI
 if (${ENABLE_PARALLEL})
-  set(EFIT_EXEC "srun --mpi=pmi2 -n 1 ${CMAKE_BINARY_DIR}/efit/efit")
+    set(NPROC "-n 1")
 endif()
 
 configure_file(${EFIT_TEST_CONFIGFILE}

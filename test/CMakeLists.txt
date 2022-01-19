@@ -19,12 +19,20 @@ set(EFUND_EXEC ${CMAKE_BINARY_DIR}/green/efund)
 set(EFUND_TEST_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/run_green.sh.in)
 set(EFUND_RESULTS_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/check_green_results.sh.in)
 
+set(MPIEXEC "" CACHE STRING "Command to invoke ")
 # This is a shell script used to drive running efit
 if (${ENABLE_PARALLEL})
-   set(EFIT_EXEC "srun --mpi=pmi2 -n 4 ${CMAKE_BINARY_DIR}/efit/efit")
+    if (NOT EXISTS ${MPIEXEC})
+       # mpiexec most common on laptops but we run
+       # parallel at iris and nersc which are srun
+       set(MPIEXEC "srun --mpi=pmi2")
+    endif()
+    set(NPROC "-n 4")
 else ()
-   set(EFIT_EXEC ${CMAKE_BINARY_DIR}/efit/efit)
+    set(MPIEXEC "")
+    set(NPROC "") 
 endif ()
+set(EFIT_EXEC ${CMAKE_BINARY_DIR}/efit/efit)
 set(EFIT_MODE 2)
 set(EFIT_TIME 1)
 set(EFIT_TEST_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/run_efit.sh.in)

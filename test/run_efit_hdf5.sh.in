@@ -23,7 +23,9 @@ if [ @HAVE_NETCDF@ = True ]; then
 else
   outputs=( a g )
 fi
-mv run_efit.out std_out
+if test -e run_efit.out; then
+   mv run_efit.out std_out
+fi
 for prefix in ${outputs[*]}; do
   for label in @EFIT_LABEL@; do
     mv ${prefix}${label} std_out
@@ -31,7 +33,7 @@ for prefix in ${outputs[*]}; do
 done
 
 # Now run efit
-@EFIT_EXEC@ @GRID_SIZE@ << __c__MATCHING_EOF__c__ > run_efit.out
+@MPIEXEC@ @NPROC@ @EFIT_EXEC@ @GRID_SIZE@ << __c__MATCHING_EOF__c__ > run_efit.out
 
 @EFIT_MODE@
 @EFIT_IN@

@@ -20,15 +20,13 @@
       use commonblocks,only: worka,c,wk,copy,bkx,bky,cw,wkw,copyw,bwx, &
            bwy,cj,wkj,copyj,bjx,bjy,cv,wkv,copyv,bvx,bvy,byringr,byringz, &
            xxtra,yxtra,bpxtra,flxtra,fpxtra
+      use efit_bdata,only:iunit,m_write
+      use curve2d_mod
+      use var_cww
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*8 (i-n), real*8 (a-h,o-z)
-      include 'curve2d.inc'
-      include 'env2d.inc'
-      common/cww/lwx,lwy
-      common/cwj/ljx,ljy 
-      common/cwv/lvx,lvy
       dimension rrgams(nstark),rrgaml(nstark)
       namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi,as, &
         as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
@@ -68,7 +66,6 @@
 !      equivalence (copy(1,1),copy1(1))
       data ratray/2.,1.,1.,2.,2.,1.,1.,1.,2.,1./
       data istrpl/0/,lfile/36/,iseplim/1/
-      common/adp/ringr(6),ringz(6),ringap
       data n00/0/,n11/1/
       data one/1./
       save n00,n11
@@ -9455,7 +9452,6 @@
       implicit integer*8 (i-n), real*8 (a-h,o-z)
 
       real*4,dimension(:),allocatable :: xpltloc,ypltloc,xplxloc,yplxloc
-      common/adp/ringr(6),ringz(6),ringap
 !      equivalence (xpltloc,flxtra(1,1))
 !      equivalence (ypltloc,fpxtra(1,1))
 !      equivalence (xplxloc,flxtra(1,2))
@@ -9528,7 +9524,6 @@
       use set_kinds
       use eparm,only:ndim
       implicit integer*8 (i-n), real*8 (a-h, o-z)
-!      parameter (ndim = 700, ncrv=180)
       parameter (ncrv=180)
       dimension rc(ncoil), zc(ncoil), wc(ncoil), &
       hc(ncoil), xx(ndim,ncrv), yy(ndim,ncrv), nxy(1), &
@@ -9813,11 +9808,10 @@
            iexit)
       use set_kinds
       use eparm,only:ndim
+      use efit_bdata,only:m_write
       implicit integer*8 (i-n), real*8 (a-h, o-z)
-      ! parameter (ndim = 700, ncrv=180, mdim = 200)
       parameter (ncrv=180, mdim = 300)
       include 'curve2d_var.inc'
-      include 'env2d.inc'
 
       if (m_write .eq. 1) then
 !-----------------------------------------------------------------------c
@@ -10041,12 +10035,11 @@
            iexit)
       use set_kinds
       use eparm,only:ndim
+      use efit_bdata,only:iunit
       implicit integer*8 (i-n), real*8 (a-h, o-z)
 
-      ! parameter (ndim = 700, ncrv=180, mdim = 200)
       parameter (ncrv=180, mdim = 300)
       include 'curve2d_var.inc'
-      include 'env2d.inc'
 
       !-----------------------------------------------------------------------c
       ! Write page parameters                 c
@@ -10374,12 +10367,11 @@
            iexit)
       use set_kinds
       use eparm,only:ndim
+      use efit_bdata,only:iunit
       implicit integer*8 (i-n), real*8 (a-h, o-z)
 
-      ! parameter (ndim = 700, ncrv=180, mdim = 200)
       parameter (ncrv=180, mdim = 300)
       include 'curve2d_var.inc'
-      include 'env2d.inc'
 
       !-----------------------------------------------------------------------c
       ! Write page parameters                 c
@@ -10504,9 +10496,9 @@
 !***********************************************************************
       subroutine init2d
       use set_kinds
-      use eparm,only:ndim
+      use eparm,only: ndim
+      use curve2d_mod
       implicit integer*8 (i-n), real*8 (a-h, o-z)
-      include 'curve2d.inc'
 
       !-----------------------------------------------------------------------c
       ! Initialize plot parameters             c
