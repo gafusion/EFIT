@@ -1,15 +1,19 @@
 #include "config.f"
 !**********************************************************************
 !>
-!!          getsets performs inputing, pulled out of getsets for
-!!          generalization of EFIT \n
+!!    get_opt_input performs inputing, pulled out of getsets for
+!!       generalization of EFIT
 !!
-!!     7/15/21: kdata=8 is indended for CUDA parallel execution
-!!              which has not been setup yet, so it does the same
-!!              as kdata=6 right now
-!!
-!!     10/12/21: kdata=1 replaces input and eventually output files
-!!               with hdf5 files that have the OMAS-equilibrium format
+!!    kdata:
+!!      1: mimics option 2 but reads input from an hdf5
+!!               file that has the OMAS-equilibrium format
+!!      2: produces g-files (and others) from k-files
+!!      3-7: query MDS+ database for diagnostic inputs
+!!        3,7: produces g-files (and others)
+!!        5: produces k-files from a snap file
+!!        4,6: varitions of snap files??
+!!      8: indended for CUDA parallel execution which has not been setup
+!!      -#: behaves the same as #, but sets ilaser=1
 !!
 !**********************************************************************
       subroutine get_opt_input(ktime)
@@ -42,7 +46,39 @@
       endif
 #endif 
 
-      if (kdata.eq.7) then
+      ! Check that input option is valid
+#if defined(USE_HDF5)
+#if defined(USE_MDS)
+      if (abs(kdata).lt.1 .or. abs(kdata).gt.7) then
+        call errctrl_msg('get_opt_input', 'kdata run type is not available')
+        stop
+      endif
+#else
+      if (abs(kdata).lt.1 .or. abs(kdata).gt.2) then
+        call errctrl_msg('get_opt_input', 'kdata run type is not available')
+        stop
+      endif
+#endif
+#else
+#if defined(USE_MDS)
+      if (abs(kdata).lt.2 .or. abs(kdata).gt.7) then
+        call errctrl_msg('get_opt_input', 'kdata run type is not available')
+        stop
+      endif
+#else
+      if (abs(kdata).ne.2) then
+        call errctrl_msg('get_opt_input', 'kdata run type is not available')
+        stop
+      endif
+#endif
+#endif
+! TODO: pefit has not been setup
+!      if (abs(kdata).lt.1 .or. abs(kdata).gt.8) then
+!        call errctrl_msg('get_opt_input', 'kdata run type is not available')
+!        stop
+!      endif
+      
+      if (abs(kdata).eq.7) then
         if (rank == 0) then
           if (use_opt_input .eqv. .false.) then
             write (nttyo,6617)
@@ -59,7 +95,7 @@
 #endif 
       endif
 
-      if (kdata.eq.2) then 
+      if (abs(kdata).eq.2) then 
         if (rank == 0) then
           if (use_opt_input .eqv. .false.) then
             write (nttyo,6200)
@@ -79,7 +115,7 @@
           endif
         endif
 
-      elseif (kdata.eq.1) then
+      elseif (abs(kdata).eq.1) then
         ALLOCATE(ifname(1))
         if (rank == 0) then
           if (use_opt_input .eqv. .false.) then
@@ -117,7 +153,7 @@
 #endif
         endif
 
-      elseif (kdata.eq.3 .or. kdata.eq.7) then
+      elseif (abs(kdata).eq.3 .or. abs(kdata).eq.7) then
     
        ! TODO: kwake is undefined here... is it necessary?
 !       if (kwake.eq.0) then
@@ -185,7 +221,7 @@
         call MPI_BARRIER(MPI_COMM_WORLD,ierr)
 ! Distribute time step and filename information to ALL processes
         call MPI_SCATTER(dist_data,1,MPI_INTEGER,ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-        if (kdata.ne.1) then
+        if (abs(kdata).ne.1) then
 ! Recall each filename 80 characters
           if (rank == 0) then
             dist_data(:) = dist_data(:)*80
@@ -202,15 +238,26 @@
       endif
 #endif
 
-! 5500 format (/,10x,'EFITD Version  ',2a5,/)
+! 5500 format (/,10x,'EFIT-AI Version ',2a5,/)
  5500 format (/,10x,'EFIT-AI'/)
 #if defined(USE_HDF5)
+#if defined(USE_MDS)
  6000 format (/,1x,'type mode (1=omas, 2=file, 3=snap, 4=time', &
-               ', 5=input, 6=com file, 7=snap_ext, 8=pefit):')
+               ', 5=input, 6=com file, 7=snap_ext):')
 #else
- 6000 format (/,1x,'type mode (2=file, 3=snap, 4=time', &
-               ', 5=input, 6=com file, 7=snap_ext, 8=pefit):')
+ 6000 format (/,1x,'type mode (1=omas, 2=file):')
 #endif
+#else
+#if defined(USE_MDS)
+ 6000 format (/,1x,'type mode (2=file, 3=snap, 4=time', &
+               ', 5=input, 6=com file, 7=snap_ext):')
+#else
+ 6000 format (/,1x,'type mode (2=file):')
+#endif
+#endif
+! TODO: pefit has not been setup
+! 6000 format (/,1x,'type mode (1=omas, 2=file, 3=snap, 4=time', &
+!               ', 5=input, 6=com file, 7=snap_ext, 8=pefit):')
  6040 format (/,1x,'type shot #, start time(ms), time step(ms), steps', &
               '(<1001):')
  6200 format (/,1x,'number of time slices?')

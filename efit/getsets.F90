@@ -146,7 +146,7 @@
 !----------------------------------------------------------------------
 !--   K-file from snap mode                                          --
 !----------------------------------------------------------------------
-      if (kdata.eq.5.or.kdata.eq.6.or.kdata.eq.8) then
+      if (kdata.eq.5.or.kdata.eq.6) then
         call write_K(ksstime,kerror)
         ktime = ksstime
         !if (kerror.gt.0) return ! don't return here because we're stopping anyway
@@ -370,7 +370,7 @@
 !
       if (kzeroj.eq.1.and.sizeroj(1).lt.0.0) sizeroj(1)=psiwant
 !---------------------------------------------------------------------
-!--   wakeup mode KDATA=16                                          --
+!--   wakeup mode (KDATA=16?)                                       --
 !---------------------------------------------------------------------
 10999 continue
       if (kwake.eq.1) then

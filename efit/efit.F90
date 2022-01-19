@@ -144,6 +144,8 @@
         call read_omas_in1(ifname(1))     !this assume machine is always the same
       case (2)
         call read_dirs_shot(ifname(1))     !this assume machine is always the same
+      case (4)
+        call read_dirs_shot('efit_time.dat')
       case (7)
         call read_dirs_shot('efit_snap.dat_'//adjustl(snapextin))     !this assume machine is always the same
       case default

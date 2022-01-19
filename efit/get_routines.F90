@@ -1992,7 +1992,7 @@
          tanham_uncor(ktime,nmtark)
          real*4 fv30lt,fv30rt,fv210lt,fv210rt
 
-#ifdef USE_MSE
+#ifdef USE_MDS
       do i=1,ktime
         atime(i)=time(i)
       enddo

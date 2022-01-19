@@ -133,8 +133,7 @@
 !---------------------------------------------------------------------
 !--  generate input files and command file for running EFIT-AI      --
 !---------------------------------------------------------------------
-!      if (kdata .eq. 5 .or. kdata .eq. 6) then
-      if (kdata .eq. 5 .or. kdata .eq. 6 .or. kdata.eq.8) then
+      if (kdata .eq. 5 .or. kdata .eq. 6) then
         if (rank == 0) then
           if (use_opt_input .eqv. .false.) then
             write (nttyo,6610)

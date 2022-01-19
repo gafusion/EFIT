@@ -51,7 +51,7 @@ if(${ENABLE_HDF5})
     endif()
     getAdditionalHdf5Libs()
     set(USE_HDF5 1 CACHE BOOL "Whether HDF5 is linked")  # Used in directives
-    set(io_libs ${HDF5_HL_LIBRARIES} ${io_libs})
+    set(io_libs ${HDF5_HL_LIBRARIES} ${HDF5_LIBRARIES} ${io_libs})
     # include_directories(${HDF5_INCLUDE_DIRS})
     if(UNIX)
       # Required for hdf5 version 1.8.11 and greater
@@ -89,7 +89,7 @@ endif()
 option(ENABLE_MDSPLUS "Enable MDS+" off)
 set(HAVE_MDSPLUS False)   # Used in defines
 if(${ENABLE_MDSPLUS})
-  find_package(Mdsplus COMPONENTS 
+  find_package(MDSPlus COMPONENTS 
                INSTALL_DIR "mdsplus"
                HEADERS "mdsdescrip.h" "mdslib.h"
                LIBRARIES "MdsLib"
@@ -100,14 +100,16 @@ if(${ENABLE_MDSPLUS})
     message(STATUS "Found MDS+")
     set(HAVE_MDSPLUS True)
     set(io_libs ${MDSPLUS_LIBRARIES} ${io_libs})
-    # This may only be necessary for DIIID...
-    if(NOT EXISTS ${MSE_LIB})
-      message(STATUS "MSE_LIB not found, DIIID efit02 snap files will fail")
+    # MDS+ is only set up for DIIID currently and requires 2
+    # additional external libraries
+    if(NOT EXISTS ${D3_LIB})
+      message(STATUS "D3_LIB not found, MDS+ cannot be used")
     else()
-      if(NOT EXISTS ${D3_LIB})
-        message(STATUS "D3_LIB not found, MSE is not being linked")
+      # Note: this seems to be required even for non-MSE (EFIT01)
+      if(NOT EXISTS ${MSE_LIB})
+        message(STATUS "MSE_LIB not found, MDS+ cannot be used")
       else()
-        set(USE_MSE TRUE)                 # ifdef
+        set(USE_MDS TRUE)                 # ifdef
       endif()
     endif()
   endif()

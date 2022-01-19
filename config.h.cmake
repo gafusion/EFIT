@@ -2,9 +2,9 @@
 #define CONFIG_H
 
 #cmakedefine USEMPI
-#cmakedefine USE_MSE
 #cmakedefine USE_NETCDF
 #cmakedefine USE_HDF5
+#cmakedefine USE_MDS
 #cmakedefine MPI_THREAD_FUNNELED
 #cmakedefine OBJ_MEM_PROF
 #cmakedefine HAVE_OPENMP

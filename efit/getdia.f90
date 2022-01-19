@@ -3,7 +3,7 @@
 !!    This routine returns the average of the compensated diamagnetic
 !!    fluxes and error in the diamagnetic fluxes.
 !!
-!!    @param nshot :
+!!    @param nshot : shot number
 !!
 !!    @param tim :
 !!
@@ -27,7 +27,7 @@
 !********************************************************************** 
         subroutine getdia(nshot,tim,npts,tavg,ierr,phidia,sigphi)
 
-        parameter (ntims=8192)
+        use var_gggttt, only: ntims
         dimension diamag(ntims,3),diamagc(ntims,3), &
                   sig(ntims,3),tim(ntims)
         dimension phidia(ntims),sigphi(ntims)
@@ -79,7 +79,8 @@
         ,IERR,TAVG)
         use expath
         use var_exdata, only: ishot
-        PARAMETER (NTIMS=8192,NPOINT=42)
+        use var_gggttt, only: ntims
+        PARAMETER (NPOINT=42)
         REAL*4 RAR
         INTEGER*2 IIPOINT(5)
         INTEGER*4 IDAT,IAR,ASCII,INT16,INT32,REAL32
@@ -367,7 +368,7 @@
 !!
 !**********************************************************************
         SUBROUTINE LOWPASS(XIN,XOUT,NAVG,NPTS)
-        PARAMETER (NTIMS=8192)
+        USE VAR_GGGTTT, ONLY: NTIMS
         REAL XIN(1),XOUT(1),XTMP(NTIMS)
 
         DO J=1,NPTS
@@ -400,9 +401,11 @@
 !!
 !**********************************************************************
         SUBROUTINE INTERP(XIN,YIN,NIN,XOUT,YOUT,NOUT)
-        PARAMETER (NTIMS=8192)
+        USE VAR_GGGTTT, ONLY: NTIMS
         REAL XIN(NTIMS),YIN(NTIMS),XOUT(NTIMS),YOUT(NTIMS)
         INTEGER NIN,NOUT
+
+        IF (NIN.LT.1) RETURN
 
         DO I=1,NOUT
           IF (XOUT(I).GE.XIN(1)) go to 20

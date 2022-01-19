@@ -1501,7 +1501,7 @@
 !!
 !**********************************************************************
       subroutine zmooth(y,npts,nave)
-      parameter (ntims=8192)
+      use var_gggttt, only: ntims
       real*8 yave(ntims)
       dimension y(npts)
 !
@@ -1592,7 +1592,7 @@
 !**********************************************************************
       subroutine smoothit(times,data,nts,timint)
         use error_control, only: errctrl_msg
-        parameter (ntims=8192)
+        use var_gggttt, only: ntims
         dimension work(ntims)
         dimension times(ntims),data(ntims)
         !
@@ -1646,7 +1646,7 @@
 !**********************************************************************
       subroutine smoothit2(times,data,nts,timint,stdev,nave)
         use error_control, only: errctrl_msg
-        parameter (ntims=8192)
+        use var_gggttt, only: ntims
         dimension work(ntims)
         dimension times(ntims),data(ntims),stdev(ntims),nave(ntims)
         !

@@ -146,7 +146,7 @@ endif()
 
 #---------------------------------------------------------------------
 # Set compiler specific definitions and flags. Flags are set to 
-# good values for NIMROD. Valid build types are Debug, RelWithDebInfo 
+# good values for EFIT. Valid build types are Default, Debug, MinSizeRel
 # and Release. For the PGI compiler a custom build type FastBuild is 
 # defined to aid develpment without the fastsse flag. Set endian and 
 # underscore flags for all builds.
