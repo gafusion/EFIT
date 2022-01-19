@@ -51,7 +51,7 @@ if(${ENABLE_HDF5})
     endif()
     getAdditionalHdf5Libs()
     set(USE_HDF5 1 CACHE BOOL "Whether HDF5 is linked")  # Used in directives
-    set(io_libs ${HDF5_HL_LIBRARIES} ${io_libs})
+    set(io_libs ${HDF5_HL_LIBRARIES} ${HDF5_LIBRARIES} ${io_libs})
     # include_directories(${HDF5_INCLUDE_DIRS})
     if(UNIX)
       # Required for hdf5 version 1.8.11 and greater
