@@ -88,7 +88,7 @@
           else
             ifname(1) = inpfile_in(1)
           endif
-#ifdef HAVE_HDF5
+#if defined(USE_HDF5)
           inquire(file=trim(ifname(1)),exist=file_stat)
           if (.not. file_stat) then
             call errctrl_msg('get_opt_input',trim(ifname(1))//' not found')
@@ -204,9 +204,9 @@
 
 ! 5500 format (/,10x,'EFITD Version  ',2a5,/)
  5500 format (/,10x,'EFIT-AI'/)
-#ifdef HAVE_HDF5
- 6000 format (/,1x,'type mode (2=file, 3=snap, 4=time', &
-               ', 5=input, 6=com file, 7=snap_ext, 8=pefit, 9=omas):')
+#if defined(USE_HDF5)
+ 6000 format (/,1x,'type mode (1=omas, 2=file, 3=snap, 4=time', &
+               ', 5=input, 6=com file, 7=snap_ext, 8=pefit):')
 #else
  6000 format (/,1x,'type mode (2=file, 3=snap, 4=time', &
                ', 5=input, 6=com file, 7=snap_ext, 8=pefit):')

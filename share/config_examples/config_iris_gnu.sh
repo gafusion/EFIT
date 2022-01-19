@@ -2,6 +2,7 @@
 #   execute the following module commands: (not required to build)
 #
 #    module switch gcc-4.7.2 gcc7/default
+#    module load hdf5/1.8.19-gcc7
 #
 # If you don't want MPI (slower in serial) simply remove the FC=...
 #   and -DENABLE_PARALLEL... lines

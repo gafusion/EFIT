@@ -134,7 +134,7 @@
 
 !var_nio
      module var_nio
-#ifdef HAVE_HDF5
+#if defined(USE_HDF5)
      use hdf5_api
 #endif
      integer*4 nin,nout,ntty,nrsppc,nrspfc,nttyo,neqdsk,nffile,nsave
@@ -143,7 +143,7 @@
      character*100 snapfile, tmpdata, snapextin
      data nin/11/,nout/10/,ntty/5/nrsppc/25/,nrspfc/26/, &
      neqdsk/38/,nffile/40/,nsave/49/,nttyo/6/
-#ifdef HAVE_HDF5
+#if defined(USE_HDF5)
       type(hdf5ErrorType) :: h5err
       type(hdf5InOpts), save :: h5in
       integer(HID_T) :: fileid,rootgid,eqid,cid,pid,tid,sid,nid

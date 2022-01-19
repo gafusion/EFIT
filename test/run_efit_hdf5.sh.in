@@ -3,6 +3,9 @@
 export link_efit="@CURRENT_MACHINE_LINK_DIR@"
 export link_store=""
 
+# Necessary on NERSC
+export HDF5_USE_FILE_LOCKING=FALSE
+
 # Sanity checks
 if ! test -e ${link_efit}/green/dprobe.dat; then
   echo "not running test because Greens tables were not found"

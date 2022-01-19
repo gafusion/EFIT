@@ -67,7 +67,9 @@ install(TARGETS efitlib DESTINATION lib
 #elseif(${CMAKE_Fortran_COMPILER_ID} MATCHES "Lahey")
 #endif()
 
-add_executable(efit  efit.F90 get_opt_input.F90)
+add_executable(efit efit.F90 get_opt_input.F90)
+# TODO: linking could be done more cleanly
+#target_link_libraries(efit efitlib)
 target_link_libraries(efit efitlib ${io_libs} ${math_libs})
 
 # Premature...
