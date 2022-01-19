@@ -30,7 +30,7 @@
         parameter (ntims=8192)
         dimension diamag(ntims,3),diamagc(ntims,3), &
                   sig(ntims,3),tim(ntims)
-        dimension phidia(1),sigphi(1)
+        dimension phidia(ntims),sigphi(ntims)
         dimension ierr(3),iwght(3)
 
 
@@ -80,6 +80,9 @@
         use expath
         use var_exdata, only: ishot
         PARAMETER (NTIMS=8192,NPOINT=42)
+        REAL*4 RAR
+        INTEGER*2 IIPOINT(5)
+        INTEGER*4 IDAT,IAR,ASCII,INT16,INT32,REAL32
         DIMENSION DIAMAG(NTIMS,3),DIAMAGC(NTIMS,3),SIG(NTIMS,3)
         DIMENSION TIM(NTIMS),TTEMP(NTIMS)
         DIMENSION IDAT(NTIMS),YDAT(NTIMS),YTEMP(NTIMS),BT(NTIMS)
@@ -88,13 +91,12 @@
         DIMENSION ASCII(11),INT16(11),INT32(11),REAL32(11)
 
         DIMENSION COUP(NPOINT,3)
-        INTEGER ASCII, IDIASHOT
+        INTEGER IDIASHOT
         CHARACTER*4 SOURCE
         CHARACTER*100 FILIN
         CHARACTER*10 POINT(NPOINT),IPOINT,DNAME(3),DNAMES(3)
 
-        INTEGER*2 iipoint(5)
-        EQUIVALENCE (iipoint,ipoint)
+        EQUIVALENCE (IIPOINT,IPOINT)
         DATA SOURCE/'.PLA'/
         DATA DNAME/'DIAMAG1   ','DIAMAG2   ','DIAMAG3   '/
         DATA DNAMES/'DIAMAG1S  ','DIAMAG2S  ','DIAMAG3S  '/
@@ -212,8 +214,8 @@
         DO J=1,3
           IERR(J)=0
           IPOINT=DNAME(J)
-          CALL PTDATA(ITYP,NSHOT,SOURCE,iIPOINT, IDAT,IER,IAR,RAR, &
-              ASCII,INT16,INT32,REAL32)
+          CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR,RAR, &
+                      ASCII,INT16,INT32,REAL32)
           IF (IER.NE.0 .AND. IER.NE.2 .AND. IER.NE.4) THEN
               WRITE (6,1012)
               WRITE (6,1013) IPOINT,NSHOT,IER,RAR(1),RAR(7), &
@@ -266,11 +268,11 @@
             IREPLACE=1
           ENDIF
           IF ((ISHOT .GE. 83350) .AND. (I .GE. 24)) THEN 
-          CALL PTDATA(ITYP,NSHOT,SOURCE,iIPOINT ,IDAT,IER,IAR,RAR, &
-          ASCII,INT16,INT32,REAL32)
+            CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR,RAR, &
+                        ASCII,INT16,INT32,REAL32)
           ELSEIF ((ISHOT .LT. 83350) .AND. (I .LT. 24)) THEN 
-          CALL PTDATA(ITYP,NSHOT,SOURCE,iIPOINT ,IDAT,IER,IAR,RAR, &
-          ASCII,INT16,INT32,REAL32)
+            CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR,RAR, &
+                        ASCII,INT16,INT32,REAL32)
           ENDIF
           if (ier.ne.0 .and. ier.ne.2 .and. ier.ne.4) then
             write (6,1012)

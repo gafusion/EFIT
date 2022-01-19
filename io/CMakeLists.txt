@@ -1,9 +1,8 @@
-######################################################################          
-#                                                                               
-# CMakeLists.txt for extlibs
-#                                                                               
 ######################################################################
-
+#
+# CMakeLists.txt for extlibs
+#
+######################################################################
 
 if (${HDF5_FOUND})
     include_directories(
@@ -26,13 +25,6 @@ install(TARGETS dissplalib DESTINATION lib
               GROUP_READ GROUP_EXECUTE GROUP_WRITE
               WORLD_READ WORLD_EXECUTE
 )
-add_library(ptdatalib  ptdata_dummy.F)
-install(TARGETS ptdatalib DESTINATION lib
-  PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE
-              GROUP_READ GROUP_EXECUTE GROUP_WRITE
-              WORLD_READ WORLD_EXECUTE
-)
-
 
 if (NOT ${HAVE_NETCDF})
     add_library(netcdflib  netcdf_dummy.F)
@@ -53,3 +45,12 @@ if (NOT ${HAVE_MDSPLUS})
     )
     set(io_libs mdspluslib ${io_libs})
 endif ()
+
+if (NOT EXISTS ${USE_MSE})
+  add_library(ptdatalib  ptdata_dummy.F)
+  install(TARGETS ptdatalib DESTINATION lib
+    PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE
+                GROUP_READ GROUP_EXECUTE GROUP_WRITE
+                WORLD_READ WORLD_EXECUTE
+  )
+endif()

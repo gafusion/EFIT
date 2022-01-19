@@ -21,5 +21,6 @@
     -DENABLE_MDSPLUS:BOOL=ON \
     -DMDSPLUS_DIR:PATH='/fusion/usc/src/mdsplus/mdsplus-stable_release-7-96-9' \
     -DMSE_LIB:PATH='/fusion/projects/codes/mse/lib/libmse.a' \
+    -DD3_LIB:PATH='/fusion/projects/codes/efit/dev/d3lib_gcc9.2.0/libd3share.a' \
     -DCMAKE_BUILD_TYPE:STRING=RELEASE \
     ..

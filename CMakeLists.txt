@@ -260,9 +260,6 @@ add_subdirectory(io)
 #---------------------------------------------------------------------
 # Add subdirectories 
 #---------------------------------------------------------------------
-# These are DIII-D libraries that we are trying to avoid
-#add_subdirectory(d3lib)
-
 add_subdirectory(cerlib)
 add_subdirectory(green)
 add_subdirectory(efit)

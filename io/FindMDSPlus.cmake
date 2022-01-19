@@ -5,11 +5,11 @@
 # Variables used by this module which can be used to change the default
 # behaviour, and hence need to be set before calling find_package:
 #
-#  MDSPLUS_ROOT_DIR
+#  MDSPLUS_DIR
 #       The preferred installation prefix for searching for MDSPLUS
 #       Set this if the module has problems finding the proper MDSPLUS installation.
 #
-# If you don't supply MDSPLUS_ROOT_DIR, the module will search on the standard
+# If you don't supply MDSPLUS_DIR, the module will search on the standard
 # system paths.
 #
 # ============================================================================
@@ -36,9 +36,9 @@
 
 #-----------------------------------------------------------------------------
 
-find_path(MDSPLUS_ROOT_DIR
+find_path(MDSPLUS_DIR
     NAMES include/mdsplus.h mdsplus/include/mdsplus.h include/mdsplus/mdsplus.h
-    HINTS ENV MDSPLUS_ROOT_DIR
+    HINTS ENV MDSPLUS_DIR
     PATH_SUFFIXES lib lib64
     DOC "MDSPLUS root installation directory")
 
@@ -46,7 +46,7 @@ find_path(MDSPLUS_ROOT_DIR
 
 find_path(MDSPLUS_INCLUDE_DIR
     NAMES mdsplus.h mdsdescrip.h
-    HINTS ${MDSPLUS_ROOT_DIR} ENV MDSPLUS_ROOT_DIR ENV CPATH
+    HINTS ${MDSPLUS_DIR} ENV MDSPLUS_DIR ENV CPATH
     PATH_SUFFIXES include include/mdsplus mdsplus/include
     DOC "Path to the MDSPLUS headers")
 
@@ -54,7 +54,7 @@ find_path(MDSPLUS_INCLUDE_DIR
 
 find_library(MDSPLUS_LIBRARY
     NAMES MdsLib
-    HINTS ${MDSPLUS_ROOT_DIR} ENV MDSPLUS_ROOT_DIR ENV LD_LIBRARY_PATH
+    HINTS ${MDSPLUS_DIR} ENV MDSPLUS_DIR ENV LD_LIBRARY_PATH
         ENV LIBRARY_PATH ENV DYLD_LIBRARY_PATH
     PATH_SUFFIXES
         lib lib64 mdsplus lib/mdsplus lib64/mdsplus

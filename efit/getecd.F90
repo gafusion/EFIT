@@ -4,13 +4,13 @@
 !!    getpts gets the magnetic data for use with EFIT
 !!    and MFIT.
 !!
-!!    @param nshot :
+!!    @param nshot : shot number
 !!
-!!    @param times :
+!!    @param times : first time requested (in seconds)
 !!
-!!    @param delt :
+!!    @param delt : length between time slices (in seconds)
 !!
-!!    @param np :
+!!    @param np : number of time slices
 !!
 !!    @param iierr :
 !!
@@ -29,7 +29,8 @@
       character*150 textline     !EJS(2014)
       character*10,dimension(:),allocatable :: ndenv,ndenr,fcname,ecname
       character*10 namedum
-      real*8 dumccc(3),dumcic(6),dumbtc
+      real*8 dumbtc
+      real*8,dimension(:),allocatable :: dumccc,dumcic
 
       namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi,as, &
         as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
@@ -89,7 +90,7 @@
 !--   read in pointnames ...                                         --
 !----------------------------------------------------------------------
       open(unit=60,file=table_di2(1:ltbdi2)//'dprobe.dat', &
-           status='old'                                )
+           status='old')
       read(60,in3)
       close(unit=60)
 !
@@ -99,8 +100,7 @@
 !
       if(use_alternate_pointnames .ne. 0) then
 !
-         open(unit=60,file=alternate_pointname_file,status='old' &
-                                             )
+         open(unit=60,file=alternate_pointname_file,status='old')
          read(60,in4)
          close(unit=60)
       endif
@@ -385,6 +385,8 @@
         textline = textline(len(trim(ncname(nccomp)))+3:len(textline))
 
       enddo
+
+      allocate(dumccc(nccomp))
 !----------------------------------------------- end of new section - EJS(2014)
       if (nshot.ge.ibtcshot) then
 !----------------------------------------------------------------------
@@ -482,6 +484,7 @@
       endif
 34000 continue
       close(unit=60)
+      deallocate(dumccc)
       endif
 !
       do j=1,np
@@ -529,6 +532,7 @@
         textline = textline(len(trim(niname(nicomp)))+3:len(textline))
 
       enddo
+      allocate(dumcic(nicomp))
 !----------------------------------------------- end of new section - EJS(2014)
 !      write (6,*) 'ICOMP', nshot,ibtcshot,nicomp,niname
       if (nshot.ge.ibtcshot) then
@@ -601,6 +605,7 @@
       endif
 36000 continue
       close(unit=60)
+      deallocate(dumcic)
       endif
       do j=1,np
         curiu30(j)=curicoi(j,1)
@@ -620,7 +625,6 @@
 !----------------------------------------------------------------------
 !--        get toroidal B field                                      --
 !----------------------------------------------------------------------
-      print *, nshot,times
       call avdata(nshot,nsingl(3),i1,ierbto,bcentr, &
                   np,times,delt,i0,r1,i1,bitbto,iavem,time,ircfact, &
                   do_spline_fit,bc_rc,bcrcg,vresbc,bc_k,t0bc,devbc(1), &
@@ -682,7 +686,8 @@
             write(*,*) ''
           else
             write(*,*) ''
-            write(*,*) 'ERROR: ECOIL data unavailable for following times'
+            write(*,*) &
+              'ERROR: ECOIL data unavailable for following times'
             do j=1,nvtime-1
               write(*,'(F8.1)') vtime(j)
             enddo
@@ -752,7 +757,7 @@
 !!
 !!    @param nshot : shot number
 !!
-!!    @param name :
+!!    @param name : 
 !!
 !!    @param mmm :
 !!
@@ -796,7 +801,7 @@
 !!
 !!    @param navx :
 !!
-!!    @param ktime_err :
+!!    @param ktime_err : error flag for time not found in database
 !!
 !**********************************************************************
       subroutine avdata(nshot,name,mmm,ierror,y, &
@@ -805,13 +810,13 @@
                         ktime_err)
       use eparm,only:ntime
       use vtime_mod
-      parameter (ntims=4096)
+      parameter (ntims=8192)
       common/gggttt/w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims) &
                     ,ew(ntims),stdevxx(ntims),navxx(ntims)
       common/inaver/iavem,iaved,iavev,iaveus
       character*10 name
       integer, intent(out) :: ktime_err
-      real*8 y(1),time(ntime),deltd,xxd,bitvld,timesd &
+      real*8 y(ntime),time(ntime),deltd,xxd,bitvld,timesd &
             , rcx,rcgx,vbitx,zinhnox,t0x &
             , stdevx(1)
       integer navx(1)
@@ -984,7 +989,7 @@
       endif
       if (mave .ne. 0) then
          dtave = mave*dtmin*2.
-         call smoothit2(xw,w,npn,dtave,stdevxx,navx)
+         call smoothit2(xw,w,npn,dtave,stdevxx,navxx)
       endif
 !
       if (do_spline_fit) then !JRF
@@ -1058,7 +1063,7 @@
                do_spline_fit)
       include 'mdslib.inc'
       character*10 name, MyTree
-      real*8 y(1),time(1),deltd,xxd,bitvld,timesd
+      real*8 y(np),time(np),deltd,xxd,bitvld,timesd
       real*8, allocatable :: yw(:),xw(:),bw(:),cw(:),dw(:),ew(:)
       real*8 dtmin, xm5, dtave, xx, delt, times, delta_min, delta, &
              timenow, ynow
@@ -1247,10 +1252,10 @@
       subroutine apdata(nshot,name,mmm,ierror,y, &
         np,timesd,deltd,mm,xxd,nn,bitvld,kave,time, &
         do_spline_fit,rcx,rcgx,vbitx,zinhnox,t0x,stdevx,navx)
-      parameter (ntims=4096)
+      parameter (ntims=8192)
       common/gggttt/w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims) &
                     ,ew(ntims),stdevxx(ntims),navxx(ntims)
-      real*8 y(1),time(1),deltd,xxd,bitvld,timesd &
+      real*8 y(np),time(np),deltd,xxd,bitvld,timesd &
              , rcx,rcgx,vbitx,zinhnox,t0x &
              , stdevx(1)
       integer navx(1)
@@ -1372,12 +1377,12 @@
 !*********************************************************************
       subroutine gettanh(ishot,fitzts,ktime,time,ztssym,ztswid, &
                           ptssym,ztserr)
-      parameter (ntims=4096)
+      parameter (ntims=8192)
       common/gggttt/w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims) &
                     ,ew(ntims),stdevxx(ntims),navxx(ntims)
-      real*8 y(1),time(1),ztssym(1),ztswid(1),ptssym(1)
+      real*8 time(ktime),ztssym(ktime),ztswid(ktime),ptssym(ktime)
       character*2 fitzts,ztsfit
-      logical ztserr(1)
+      logical ztserr(ktime)
       logical errzts(ntims)
       integer*4 iishot,kktime
 !-----------------------------------------------------------------------
@@ -1444,11 +1449,11 @@
       subroutine avdiam(nshot,name,mmm,ierror,y, &
                     np,timesd,deltd,mm,xxd,nn,bitvl,kave,time,sigmay, &
                         ierdia)
-      parameter (ntims=4096)
+      parameter (ntims=8192)
       common/gggttt/w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims) &
                     ,ew(ntims),stdevxx(ntims),navxx(ntims)
       dimension ierdia(3)
-      real*8 y(1),time(1),sigmay(1),deltd,xxd,timesd,bitvl
+      real*8 y(np),time(np),sigmay(np),deltd,xxd,timesd,bitvl,xlen(1)
       character*10 name
       data dtmin/0.001001/,xm5/0.00001/
       save dtmin,xm5
@@ -1456,11 +1461,11 @@
       delt=deltd
       ierror=0
       dtmin=0.001001
-      dtmin= min (dtmin,delt)
-      dtmin= max (dtmin,xm5)
+      dtmin=min(dtmin,delt)
+      dtmin=max(dtmin,xm5)
       mave=iabs(kave)
-      npn = ntims
-      tavg = 1.0
+      npn=ntims
+      tavg=1.0
       call getdia(nshot,xw,npn,tavg,ierdia,w,ew)
       if (ierdia(2).gt.0.and.ierdia(3).gt.0) then
         ierror=1
@@ -1469,6 +1474,8 @@
 !------------------------------------------------------------------
 !--   average data over mave ms                                  --
 !------------------------------------------------------------------
+      xlen=maxloc(xw)
+      npn=xlen(1)
       if (mave.ne.0) then
         dtave=mave*dtmin*2.
         call smoothit(xw,w,npn,dtave)
@@ -1483,7 +1490,7 @@
       call zplines(npn,xw,ew,bw,cw,dw)
       do i=1,np
           timenow=time(i)
-          ynow   =sevals(npn,timenow,xw,ew,bw,cw,dw)
+          ynow=sevals(npn,timenow,xw,ew,bw,cw,dw)
           sigmay(i)=ynow
       enddo
       return
@@ -1502,9 +1509,9 @@
 !!
 !**********************************************************************
       subroutine zmooth(y,npts,nave)
-      parameter (ntims=4096)
+      parameter (ntims=8192)
       common/gwork1/yave(ntims)
-      dimension y(1)
+      dimension y(npts)
 !
       if (nave.eq.0) return
       if (nave.ge.0) then
@@ -1592,10 +1599,15 @@
 !!
 !**********************************************************************
       subroutine smoothit(times,data,nts,timint)
-        parameter (npmax=16384)
-        dimension work(npmax)
-        dimension times(2),data(2)
+        use error_control, only: errctrl_msg
+        parameter (ntims=8192)
+        dimension work(ntims)
+        dimension times(ntims),data(ntims)
         !
+        if (times(nts) .ne. maxval(times)) then
+          call errctrl_msg('smoothit', 'times do not match nts')
+          stop
+        endif
         if (timint .le. 0.) return
         dtt = timint*.5005
         do kount=1,2
@@ -1641,10 +1653,15 @@
 !!
 !**********************************************************************
       subroutine smoothit2(times,data,nts,timint,stdev,nave)
-        parameter (npmax=16384)
-        dimension work(npmax)
-        dimension times(2),data(2),stdev(1),nave(1)
+        use error_control, only: errctrl_msg
+        parameter (ntims=8192)
+        dimension work(ntims)
+        dimension times(ntims),data(ntims),stdev(ntims),nave(ntims)
         !
+        if (times(nts) .ne. maxval(times)) then
+          call errctrl_msg('smoothit2', 'times do not match nts')
+          stop
+        endif
         if (timint .le. 0.) return
         dtt = timint*.5005
         do kount=1,2

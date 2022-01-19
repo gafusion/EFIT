@@ -60,17 +60,26 @@ endif()
 option(ENABLE_MDSPLUS "Enable MDS+" off)
 set(HAVE_MDSPLUS False)   # Used in defines
 if (${ENABLE_MDSPLUS})
-    find_package(MDSPLUS COMPONENTS 
-                 INSTALL_DIR "mdsplus"
-                 HEADERS "mdsdescrip.h" "mdslib.h"
-                 LIBRARIES "MdsLib"
-                 INCLUDE_SUBDIRS "include"
-                 LIBRARY_SUBDIRS "lib"
-                 )
-    if (${Mdsplus_FOUND})
-      message(STATUS "Found MDS+")
-      set(HAVE_MDSPLUS True)
-      set(USE_MDS TRUE)                 # ifdef
-      set(io_libs ${Mdsplus_LIBRARIES} ${io_libs})
+  find_package(MDSPlus COMPONENTS 
+               INSTALL_DIR "mdsplus"
+               HEADERS "mdsdescrip.h" "mdslib.h"
+               LIBRARIES "MdsLib"
+               INCLUDE_SUBDIRS "include"
+               LIBRARY_SUBDIRS "lib"
+               )
+  if (${MDSPLUS_FOUND})
+    message(STATUS "Found MDS+")
+    set(HAVE_MDSPLUS True)
+    set(io_libs ${MDSPLUS_LIBRARIES} ${io_libs})
+    # This may only be necessary for DIIID...
+    if(NOT EXISTS ${MSE_LIB})
+      message(STATUS "MSE_LIB not found, DIIID efit02 snap files will fail")
+    else()
+      if(NOT EXISTS ${D3_LIB})
+        message(STATUS "D3_LIB not found, MSE is not being linked")
+      else()
+        set(USE_MSE TRUE)                 # ifdef
+      endif()
     endif()
+  endif()
 endif()

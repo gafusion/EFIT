@@ -4,10 +4,6 @@
 #
 ######################################################################
 
-# Need to find MDS+ ?
-#include_directories(
-#)
-
 set(CERLIB_SOURCES
  mds_rg.f90 mds_mtanh.f90 mds_mtanh_rdts.f90 mds_write_rg.f90  
 )
@@ -19,8 +15,11 @@ install(TARGETS cerlib DESTINATION lib
               WORLD_READ WORLD_EXECUTE
 )
 
-# Need a find MDS+
-target_link_libraries(cerlib libMdsLib_client)
+# Need to link MDS+ (found in io)
+if(${HAVE_MDSPLUS})
+  #include_directories(${MDSPLUS_INCLUDE_DIRS})
+  target_link_libraries(cerlib ${MDSPLUS_LIBRARIES})
+endif()
 
 # It would be nice to have dedicated tests
 #add_subdirectory(tests)
