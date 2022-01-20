@@ -118,7 +118,7 @@
       end module var_jwork4
 
       module var_gggttt
-      integer*4, parameter :: ntims=4096
+      integer*4, parameter :: ntims=8192
       integer*4 navxx(ntims)
       real*8 w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims), &
              ew(ntims),stdevxx(ntims)

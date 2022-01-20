@@ -133,11 +133,7 @@
 !---------------------------------------------------------------------
 !--  generate input files and command file for running EFIT-AI      --
 !---------------------------------------------------------------------
-      print *, nmtark, nstark
-
-!      if (kdata .eq. 5 .or. kdata .eq. 6) then
-      if (kdata .eq. 5 .or. kdata .eq. 6 .or. kdata.eq.8) then
- 3020   continue
+      if (kdata .eq. 5 .or. kdata .eq. 6) then
         if (rank == 0) then
           if (use_opt_input .eqv. .false.) then
             write (nttyo,6610)
@@ -173,14 +169,20 @@
 #endif
         if (comfile.ne.'0' .and. comfile.ne.'') then
           open(unit=nffile,status='old',file=comfile,iostat=ioerr)
-          if (ioerr.eq.0) close(unit=nffile,status='delete')
+          if (ioerr.ne.0) close(unit=nffile,status='delete')
           open(unit=nffile,status='new',file=comfile)
           write (nffile,4958)
         endif
-        if (filenm.ne.'0' .and. filenm.ne.'') &
+        if (filenm.ne.'0' .and. filenm.ne.'') then
           open(unit=nout,status='old',file=filenm,iostat=ioerr)
-        if (ioerr.eq.0) open(unit=nout,status='old', &
-             file='phys_data:[d3phys.diiid.gsl]'//filenm,err=3020)
+          if (ioerr.ne.0) open(unit=nout,status='old', &
+            file='phys_data:[d3phys.diiid.gsl]'//filenm,iostat=ioerr)
+          if (ioerr.ne.0) then
+            call errctrl_msg('write_K', &
+                             'could not open good shot list file')
+            stop
+          endif
+        endif
       endif
       open(unit=neqdsk,status='old',file='efit_snap.dat',iostat=ioerr)
       if (ioerr.eq.0) then
@@ -269,7 +271,9 @@
         if (input_dir(i:i).ne.' ') lindir=lindir+1
         if (store_dir(i:i).ne.' ') lstdir=lstdir+1
       enddo
-      if (lshot.ge.112000.and.jtime.le.1) then
+      ! TODO: jtime is undefined here...
+!      if (lshot.ge.112000.and.jtime.le.1) then
+      if (lshot.ge.112000) then
         if (lshot.lt.156000) then
           table_di2 = table_dir(1:ltbdir)//'112000/'
         elseif  (ishot.lt.168191) then
@@ -406,8 +410,7 @@
           go to 3046
         else
           kerror = 1
-          call errctrl_msg('write_K', &
-            'shot data not on disk and filename="0"')
+          call errctrl_msg('write_K', 'shot data not on disk')
           return
         endif
       endif

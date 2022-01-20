@@ -1992,9 +1992,7 @@
          tanham_uncor(ktime,nmtark)
          real*4 fv30lt,fv30rt,fv210lt,fv210rt
 
-         ! SEK TODO:   I'm not even sure we can do MSE EFIT's without this but I
-         ! can't find the routines here
-#if 0
+#ifdef USE_MDS
       do i=1,ktime
         atime(i)=time(i)
       enddo

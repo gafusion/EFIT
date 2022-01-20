@@ -347,7 +347,7 @@
            ,dp1dxf, sgtimin, alphafp,xpsialp, vsdamp &
            ,rminvs,rmaxvs,zminvs,zmaxvs,relbps,zbound,yvs2,saimin &
            ,fztor,fzpol,tcurrp,fpolvs, rbound, dnmin, sigprebi,pressbi &
-           ,alphamu,saicon,rsepex, ttimeb,ddtime
+           ,alphamu,saicon,rsepex,timeb,dtime
       data alphafp/0./,sigppb/1000./
       data kframe/0/,rminvs/0/,rmaxvs/100./,zminvs/-100./,zmaxvs/100./
       data kskipvs/0/,vsdamp/0/,relbps/0.004_dp/,zbound/0.0/,rbound/0.0/

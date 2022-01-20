@@ -33,20 +33,28 @@ add_dependencies(efitlib config_f)
 target_link_libraries(efitlib green)
 # Diagnostic libs
 target_link_libraries(efitlib cerlib)
-#target_link_libraries(efitlib cerlib d3lib)
-#target_link_libraries(efitlib cerlib mselib)
+if(${HAVE_MDSPLUS})
+  if(EXISTS ${USE_MDS})
+    add_library(mselib STATIC IMPORTED)
+    set_target_properties(mselib PROPERTIES IMPORTED_LOCATION ${MSE_LIB})
+    add_library(d3lib STATIC IMPORTED)
+    set_target_properties(d3lib PROPERTIES IMPORTED_LOCATION ${D3_LIB})
+    target_link_libraries(efitlib mselib d3lib)
+  else()
+    target_link_libraries(efitlib ptdatalib)
+  endif()
+else()
+  target_link_libraries(efitlib mdspluslib ptdatalib)
+endif()
 # Math libs
 target_link_libraries(efitlib lsode r8slatec)
 # IO libs
-target_link_libraries(efitlib dissplalib ptdatalib)
+target_link_libraries(efitlib dissplalib)
+if(NOT ${HAVE_NETCDF})
+  target_link_libraries(efitlib netcdflib)
+endif()
 if (${HDF5_FOUND})
-target_link_libraries(efitlib hdf5lib)
-endif()
-if (NOT ${HAVE_NETCDF})
-target_link_libraries(efitlib netcdflib)
-endif()
-if (NOT ${HAVE_MDSPLUS})
-target_link_libraries(efitlib mdspluslib)
+  target_link_libraries(efitlib hdf5lib)
 endif()
 
 install(TARGETS efitlib DESTINATION lib
@@ -55,9 +63,9 @@ install(TARGETS efitlib DESTINATION lib
               WORLD_READ WORLD_EXECUTE
 )
 
-#if (${CMAKE_Fortran_COMPILER_ID} MATCHES "PGI")
-#elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "Lahey")
-#endif ()
+#if(${CMAKE_Fortran_COMPILER_ID} MATCHES "PGI")
+#elseif(${CMAKE_Fortran_COMPILER_ID} MATCHES "Lahey")
+#endif()
 
 add_executable(efit efit.F90 get_opt_input.F90)
 # TODO: linking could be done more cleanly
@@ -65,6 +73,6 @@ add_executable(efit efit.F90 get_opt_input.F90)
 target_link_libraries(efit efitlib ${io_libs} ${math_libs})
 
 # Premature...
-#add_executable(efitai  efitai.F90 get_opt_input_args.F90)
-#add_executable(efitai  efitai.F90)
+#add_executable(efitai efitai.F90 get_opt_input_args.F90)
+#add_executable(efitai efitai.F90)
 #target_link_libraries(efitai efitlib ${io_libs} ${math_libs})

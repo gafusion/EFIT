@@ -4,12 +4,14 @@
 #cmakedefine USEMPI
 #cmakedefine USE_NETCDF
 #cmakedefine USE_HDF5
+#cmakedefine USE_MDS
 #cmakedefine MPI_THREAD_FUNNELED
 #cmakedefine OBJ_MEM_PROF
 #cmakedefine HAVE_OPENMP
 #cmakedefine HAVE_BLAS
 #cmakedefine HAVE_LAPACK
 #cmakedefine HAVE_NETCDF
+#cmakedefine HAVE_MDSPLUS
 #cmakedefine TIME_LEVEL1
 #cmakedefine TIME_LEVEL2
 #cmakedefine DEBUG_LEVEL1

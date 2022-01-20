@@ -3,7 +3,7 @@
 !>
 !!    getsets performs inputing and initialization.
 !!
-!!    @param ktime :
+!!    @param ktime : number of time slices requested
 !!
 !!    @param kwake :
 !!
@@ -113,7 +113,7 @@
       mdoskip=0
       iout=1                 ! default - write fitout.dat
       appendsnap='KG'
-      snapextin='none'
+!      snapextin='none'
       patmp2(1)=-1.
       tmu0=twopi*tmu
       tmu02=tmu0*2.0
@@ -144,9 +144,9 @@
       endif
 
 !----------------------------------------------------------------------
-!--   Snap-Extension mode = 7                                        --
+!--   K-file from snap mode                                          --
 !----------------------------------------------------------------------
-      if (kdata.eq.5.or.kdata.eq.6.or.kdata.eq.8) then
+      if (kdata.eq.5.or.kdata.eq.6) then
         call write_K(ksstime,kerror)
         ktime = ksstime
         !if (kerror.gt.0) return ! don't return here because we're stopping anyway
@@ -185,7 +185,6 @@
 
       if ((kdata.ne.1).and.(kdata.ne.2)) then
 !----------------------------------------------------------------------
-!--   Snap-Extension mode              --
 !--   Initialize istore = 0                                          --
 !--   Central directory to collect EFIT results is the default       --
 !--   directory. Otherwise in store_dir (default to /link/store/)    --
@@ -194,7 +193,6 @@
 !
       select case (kdata)
       case (3)
-
         open(unit=neqdsk,status='old', &
              file='efit_snap.dat',iostat=ioerr)
         if (ioerr.eq.0) then
@@ -215,9 +213,7 @@
 !----------------------------------------------------------------------
 !--     Snap-Extension mode                                          --
 !----------------------------------------------------------------------
-
-        snap_ext = adjustl(snap_ext)
-
+        snap_ext = adjustl(snapextin)
         snap_file = 'efit_snap.dat_'//snap_ext
         open(unit=neqdsk,status='old', &
              file=snap_file,iostat=ioerr)
@@ -374,7 +370,7 @@
 !
       if (kzeroj.eq.1.and.sizeroj(1).lt.0.0) sizeroj(1)=psiwant
 !---------------------------------------------------------------------
-!--   wakeup mode KDATA=16                                          --
+!--   wakeup mode (KDATA=16?)                                       --
 !---------------------------------------------------------------------
 10999 continue
       if (kwake.eq.1) then
@@ -406,8 +402,6 @@
 !
 ! -- Qilong Ren
       iishot = ishot
-      ttimeb = timeb
-      ddtime = dtime
       kktime = ktime
 !----------------------------------------------------------------------
 !--   Set proper Green's directory table_dir based on shot number    --
@@ -420,7 +414,6 @@
 !-------------------------------------------------------------------------------
 !--   read in limiter data                                                    --
 !-------------------------------------------------------------------------------
-      WRITE(*,*) 'HERE 1'
       call getlim(1,xltype,xltype_180)
 !
   100 continue

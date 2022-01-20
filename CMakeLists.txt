@@ -15,6 +15,9 @@ set(PROJECT_URL "https://gitlab.com/efit-ai/efit")
 # Required version
 cmake_minimum_required(VERSION 3.8.0)
 
+# where to find the Find<PACKAGE>.cmake files
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/io)
+
 #---------------------------------------------------------------------
 # EFIT options
 #---------------------------------------------------------------------
@@ -143,7 +146,7 @@ endif()
 
 #---------------------------------------------------------------------
 # Set compiler specific definitions and flags. Flags are set to 
-# good values for NIMROD. Valid build types are Debug, RelWithDebInfo 
+# good values for EFIT. Valid build types are Default, Debug, MinSizeRel
 # and Release. For the PGI compiler a custom build type FastBuild is 
 # defined to aid develpment without the fastsse flag. Set endian and 
 # underscore flags for all builds.
@@ -272,10 +275,6 @@ add_subdirectory(io)
 #---------------------------------------------------------------------
 # Add subdirectories 
 #---------------------------------------------------------------------
-# These are DIII-D libraries that we are trying to avoid
-#add_subdirectory(d3lib)
-#add_subdirectory(mselib)
-
 add_subdirectory(cerlib)
 add_subdirectory(green)
 add_subdirectory(efit)
