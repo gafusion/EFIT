@@ -806,7 +806,7 @@
       use eparm,only:ntime
       use vtime_mod
       use var_gggttt
-!      use var_inaver
+      use var_inaver
       character*10 name
       integer, intent(out) :: ktime_err
       real*8 y(1),time(ntime),deltd,xxd,bitvld,timesd &

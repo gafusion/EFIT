@@ -3203,7 +3203,7 @@
       if (h5in%verbose) WRITE(*,*) 'Writing ', aname
       rank = 4
       if (h5in%doTranspose) then
-        dims(4)=size(array,1);  dims(3)=size(array,2)
+        dims(4)=size(array,1);  dims(2)=size(array,3)
         dims(3)=size(array,2);  dims(1)=size(array,4)
         allocate(tmparray(dims(1),dims(2),dims(3),dims(4)))
         do i=1,dims(1); do j=1,dims(2); do k=1,dims(3)

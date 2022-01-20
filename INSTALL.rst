@@ -106,6 +106,8 @@ is built in your $HOME/software directory)::
 
     #!/bin/sh
 
+    export PATH='$HOME/software/hdf5':${PATH}
+    
     cmake \
         -DENABLE_DOCS:BOOL=FALSE \
         -DCMAKE_INSTALL_PREFIX:PATH=$HOME/software \
@@ -124,7 +126,6 @@ is built in your $HOME/software directory)::
         -DENABLE_NETCDF:BOOL=ON \
         -DNetCDF_DIR:PATH='$HOME/software/netcdf' \
         -DENABLE_HDF5:BOOL=ON \
-        -DHDF5_DIR:PATH='$HOME/software/hdf5' \
         ..
 
 The following flags are still under development::

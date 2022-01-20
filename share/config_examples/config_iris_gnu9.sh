@@ -16,8 +16,8 @@
     cmake \
     -DBLAS_LIBRARIES:PATH='/usr/lib64/libblas.a' \
     -DLAPACK_LIBRARIES:PATH='/usr/lib64/liblapack.a' \
-    -DENABLE_PARALLEL:BOOL=ON \
     -DENABLE_NETCDF:BOOL=ON \
     -DNetCDF_DIR:PATH='/fusion/usc/opt/env/gcc9.2' \
+    -DENABLE_PARALLEL:BOOL=ON \
     -DCMAKE_BUILD_TYPE:STRING=RELEASE \
     ..
