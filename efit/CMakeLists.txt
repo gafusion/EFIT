@@ -34,7 +34,7 @@ target_link_libraries(efitlib green)
 # Diagnostic libs
 target_link_libraries(efitlib cerlib)
 if(${HAVE_MDSPLUS})
-  if(EXISTS ${USE_MDS})
+  if(DEFINED USE_MDS)
     add_library(mselib STATIC IMPORTED)
     set_target_properties(mselib PROPERTIES IMPORTED_LOCATION ${MSE_LIB})
     add_library(d3lib STATIC IMPORTED)

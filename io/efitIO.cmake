@@ -11,7 +11,7 @@ set(io_libs "")
 # dependencies, this does a simpler method based on find_library
 # Based on a snippet found at the kitware gitlab site
 macro(getAdditionalHdf5Libs)
-  set(_additional_libs sz z dl m)
+  set(_additional_libs sz z)
   foreach(_additional_lib IN LISTS _additional_libs)
     if(HDF5_USE_STATIC_LIBRARIES)
       set(_libnames ${_additional_lib} lib${_additional_lib}.a)
@@ -52,7 +52,7 @@ if(${ENABLE_HDF5})
     getAdditionalHdf5Libs()
     set(USE_HDF5 1 CACHE BOOL "Whether HDF5 is linked")  # Used in directives
     set(io_libs ${HDF5_HL_LIBRARIES} ${HDF5_LIBRARIES} ${io_libs})
-    # include_directories(${HDF5_INCLUDE_DIRS})
+    include_directories(${HDF5_INCLUDE_DIRS})
     if(UNIX)
       # Required for hdf5 version 1.8.11 and greater
       set(io_libs ${io_libs} ${CMAKE_DL_LIBS}) 
