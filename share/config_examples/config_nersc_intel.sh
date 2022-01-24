@@ -18,7 +18,7 @@ case $NERSC_HOST in
 # Determine architecture from programming environment
     comp=intel
     math_ver=16.0
-    io_ver=19.1 # unclear why these are different
+    io_ver=19.0 # unclear why these are different
     arch=haswell
     if modulecmd bash list 2>&1 | grep craype-mic-knl 1>/dev/null 2>&1; then
       arch=mic_knl

@@ -22,7 +22,7 @@ set(EFUND_RESULTS_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/check_green_results.sh.
 set(MPIEXEC "" CACHE STRING "Command to invoke ")
 # This is a shell script used to drive running efit
 if (${ENABLE_PARALLEL})
-    if (NOT EXISTS ${MPIEXEC})
+    if (NOT DEFINED MPIEXEC)
        # mpiexec most common on laptops but we run
        # parallel at iris and nersc which are srun
        set(MPIEXEC "srun --mpi=pmi2")

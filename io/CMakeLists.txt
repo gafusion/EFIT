@@ -46,7 +46,7 @@ if (NOT ${HAVE_MDSPLUS})
   set(io_libs mdspluslib ${io_libs})
 endif ()
 
-if (NOT EXISTS ${USE_MDS})
+if (NOT DEFINED USE_MDS)
   add_library(ptdatalib  ptdata_dummy.F)
   install(TARGETS ptdatalib DESTINATION lib
     PERMISSIONS OWNER_READ OWNER_EXECUTE OWNER_WRITE
