@@ -19,7 +19,6 @@ set(EFUND_EXEC ${CMAKE_BINARY_DIR}/green/efund)
 set(EFUND_TEST_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/run_green.sh.in)
 set(EFUND_RESULTS_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/check_green_results.sh.in)
 
-set(MPIEXEC "" CACHE STRING "Command to invoke ")
 # This is a shell script used to drive running efit
 if (${ENABLE_PARALLEL})
     if (NOT DEFINED MPIEXEC)
