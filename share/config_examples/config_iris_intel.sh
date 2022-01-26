@@ -15,6 +15,7 @@
     export FC=/fusion/usc/opt/mpich/mpich-3.2/intel2018/bin/mpifort
 
     cmake \
+    -DMPICMD:STRING='srun --mpi=pmi2' \
     -DBLAS_LIBRARIES:PATH='-L'$MKLROOT' -lmkl_core -lmkl_intel_ilp64 -lmkl_sequential -lmkl_blas95_ilp64' \
     -DLAPACK_LIBRARIES:PATH='-lmkl_lapack95_ilp64' \
     -DENABLE_NETCDF:BOOL=ON \

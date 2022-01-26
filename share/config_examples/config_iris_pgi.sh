@@ -14,6 +14,7 @@
     export FC=/fusion/usc/opt/mpich/mpich-3.2/gcc7.1.0-pgf18.7/bin/mpifort
 
     cmake \
+    -DMPICMD:STRING='srun --mpi=pmi2' \
     -DBLAS_LIBRARIES:PATH='/fusion/usc/opt/pgi/linux86-64/18.7/lib/libblas.a' \
     -DLAPACK_LIBRARIES:PATH='/fusion/usc/opt/pgi/linux86-64/18.7/lib/liblapack.a' \
     -DENABLE_NETCDF:BOOL=ON \

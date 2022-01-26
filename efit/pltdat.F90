@@ -1499,9 +1499,7 @@
       xabs=-6.5_dp
       yabs=7.0
       dyabs = 0.22_dp
-!vas      write(text,8950) (mfvers(i),i=1,2)
-      write(text,8950) trim(ch1),trim(ch2), &
-                       (mfvers(i),i=1,2)
+      write(text,8950) trim(ch1),trim(ch2),efitver
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -3304,8 +3302,7 @@
       xabs=-6.0
       yabs=1.8_dp
       dyabs = 0.22_dp
-!vas      write (text,8950) (mfvers(i),i=1,2)
-      write(text,8950) trim(ch1),trim(ch2),(mfvers(i),i=1,2)
+      write(text,8950) trim(ch1),trim(ch2),efitver
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -3882,9 +3879,7 @@
          yabs=4.5_dp
       endif
       dyabs = 0.22_dp
-!vas      write (text,8950) (mfvers(i),i=1,2)
-      write(text,8950) trim(ch1),trim(ch2), &
-                       (mfvers(i),i=1,2)
+      write(text,8950) trim(ch1),trim(ch2),efitver
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -4721,9 +4716,7 @@
       xabs=-4.3_dp
       yabs=3.0
       dyabs = 0.22_dp
-!vas      write (text,8950) (mfvers(i),i=1,2)
-      write(text,8950) trim(ch1),trim(ch2), &
-                       (mfvers(i),i=1,2)
+      write(text,8950) trim(ch1),trim(ch2),efitver
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -5397,8 +5390,7 @@
       xabs=-4.5_dp
       yabs=3.0
       dyabs = 0.22_dp
-!vas      write (text,8950) (mfvers(i),i=1,2)
-      write(text,8950) trim(ch1),trim(ch2),(mfvers(i),i=1,2)
+      write(text,8950) trim(ch1),trim(ch2),efitver
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -5702,9 +5694,7 @@
       xabs=-7.0
       yabs=7.85_dp
       dyabs = 0.22_dp
-!vas      write (text,8950) (mfvers(i),i=1,2)
-      write(text,8950) trim(ch1),trim(ch2), &
-                       (mfvers(i),i=1,2)
+      write(text,8950) trim(ch1),trim(ch2),efitver
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -6264,9 +6254,7 @@
       xabs=-4.5_dp
       yabs=3.0
       dyabs = 0.22_dp
-!vas      write (text,8950) (mfvers(i),i=1,2)
-      write(text,8950) trim(ch1),trim(ch2), &
-                       (mfvers(i),i=1,2)
+      write(text,8950) trim(ch1),trim(ch2),efitver
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -6564,9 +6552,7 @@
       xabs=-4.5_dp
       yabs=3.0
       dyabs = 0.22_dp
-!vas      write (text,8950) (mfvers(i),i=1,2)
-      write(text,8950) trim(ch1),trim(ch2), &
-                       (mfvers(i),i=1,2)
+      write(text,8950) trim(ch1),trim(ch2),efitver
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -6836,9 +6822,7 @@
 !
       xabs=-4.5_dp
       yabs=3.0
-!vas      write (text,8950) (mfvers(i),i=1,2)
-      write(text,8950) trim(ch1),trim(ch2), &
-                       (mfvers(i),i=1,2)
+      write(text,8950) trim(ch1),trim(ch2),efitver
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -7208,9 +7192,7 @@
       xabs=-3.
       yabs=7.85_dp
       dyabs = 0.16_dp
-!vas      write (text,8950) (mfvers(i),i=1,2)
-      write(text,8950) trim(ch1),trim(ch2), &
-                       (mfvers(i),i=1,2)
+      write(text,8950) trim(ch1),trim(ch2),efitver
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -7862,7 +7844,7 @@
       yabs=1.5_dp
       dyabs = 0.28_dp
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),(mfvers(i),i=1,2)
+      write(text,8950) trim(ch1),trim(ch2),efitver
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8925,7 +8907,7 @@
       xabs=-6.0
       yabs=1.8_dp
       dyabs = 0.22_dp
-      write (text,8950) (mfvers(i),i=1,2)
+      write(text,8950) trim(ch1),trim(ch2),efitver
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -9233,7 +9215,7 @@
       xabs=-6.0
       yabs=1.8_dp
       dyabs = 0.22_dp
-      write (text,8950) (mfvers(i),i=1,2)
+      write(text,8950) trim(ch1),trim(ch2),efitver
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -9274,9 +9256,7 @@
 !
       return
  8948 format (a25)
-! TO DO: version info needs to be establised (match Gitlab?)
-! unchanged for now to ensure compatability
- 8950 format (1x,1('h'),' EFITD',a3,' x',a3,' ',2a5,1('h'))
+ 8950 format (1x,1('h'),'EFITAI',a3,' x',a3,' ',a10,1('h'))
  8960 format (' date ran = ',a10)
  9000 format (' shot #   = ',i10)
  9002 format (' shot #   = ',i10,' date ran = ',a10)

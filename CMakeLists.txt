@@ -4,13 +4,18 @@
 #
 ######################################################################
 # Project information
-project(efit)
-set(VERSION_MAJOR "0")
-set(VERSION_MINOR "1")
-set(VERSION_PATCH "0")
-set(PROJECT_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
-set(NIMROD_VERSION "${PROJECT_VERSION}-${PROJECT_REV}")
-set(PROJECT_URL "https://gitlab.com/efit-ai/efit")
+project(efit-ai)
+include(io/git.cmake)
+set(PROJECT_VERSION ${GIT_BRANCH}-${GIT_COMMIT_HASH})
+set(PROJECT_URL ${GIT_URL})
+
+# Alternative if we would rather do things by hand...
+#set(VERSION_MAJOR "0")
+#set(VERSION_MINOR "1")
+#set(VERSION_PATCH "0")
+#set(PROJECT_VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+#set(EFIT_VERSION "${PROJECT_VERSION}-${PROJECT_REV}")
+#set(PROJECT_URL "https://gitlab.com/efit-ai/efit")
 
 # Required version
 cmake_minimum_required(VERSION 3.8.0)

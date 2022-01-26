@@ -1,6 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+
 #cmakedefine USEMPI
 #cmakedefine USE_NETCDF
 #cmakedefine USE_HDF5
@@ -18,6 +19,8 @@
 #cmakedefine DEBUG_LEVEL2
 #cmakedefine DEBUG_LEVEL3
 #cmakedefine DEBUG_MSEL
+#cmakedefine PROJECT_REV ${PROJECT_REV}
+#cmakedefine PROJECT_URL ${PROJECT_URL}
 #cmakedefine __cray
 #cmakedefine __ifort
 #cmakedefine __gfortran

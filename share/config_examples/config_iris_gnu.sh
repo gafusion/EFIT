@@ -15,6 +15,7 @@
     export FC=/fusion/usc/opt/mpich/mpich-3.2/gcc-9.2.0/bin/mpifort
 
     cmake \
+    -DMPICMD:STRING='srun --mpi=pmi2' \
     -DBLAS_LIBRARIES:PATH='/usr/lib64/libblas.a' \
     -DLAPACK_LIBRARIES:PATH='/usr/lib64/liblapack.a' \
     -DENABLE_NETCDF:BOOL=ON \
