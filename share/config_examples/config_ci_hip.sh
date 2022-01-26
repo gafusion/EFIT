@@ -9,7 +9,7 @@
         -DCMAKE_COLOR_MAKEFILE:BOOL=TRUE \
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=TRUE \
         -DENABLE_PARALLEL:BOOL=ON \
-        -DMPIEXEC:STRING=/scratch/soft/mpich/bin/mpiexec \
+        -DMPICMD:STRING=/scratch/soft/mpich/bin/mpiexec \
         -DBLAS_blas_LIBRARY:FILEPATH=/scratch/soft/lib/libfblas.a \
         -DBLAS_blas_LIBRARY:FILEPATH=/scratch/soft/lib/libfblas.a \
         -DLAPACK_lapack_LIBRARY:FILEPATH=/scratch/soft/lib/libflapack.a \

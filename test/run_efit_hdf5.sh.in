@@ -36,7 +36,7 @@ for prefix in ${outputs[*]}; do
 done
 
 # Now run efit
-@MPIEXEC@ @NPROC@ @EFIT_EXEC@ @GRID_SIZE@ << __c__MATCHING_EOF__c__ > run_efit.out
+@MPICMD@ @NPROC@ @EFIT_EXEC@ @GRID_SIZE@ << __c__MATCHING_EOF__c__ > run_efit.out
 
 @EFIT_MODE@
 @EFIT_IN@

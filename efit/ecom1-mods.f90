@@ -362,19 +362,16 @@
       end module var_input1
 
       module var_inputc
-
       character*12 mfitpop
-      character*5 mfvers(2)
-! TO DO: version automation needs to be establised (match Gitlab?)
-      data mfvers(1)/'11/23'/,mfvers(2)/'/2020'/
+      character*10 efitver
+      character*8 efitversion
       character(4),dimension(:),allocatable :: limloc
       character(10),dimension(:),allocatable :: vsname
       character(10),dimension(:),allocatable :: mpnam2
       character(10),dimension(:),allocatable :: lpname
-      character  filimt*100,cshot*6,jdebug*4
-      integer idebug,efitversion
-      data idebug/0/,efitversion/20201123/
-      data jdebug/'NONE'/
+      character filimt*100,cshot*6,jdebug*4
+      integer idebug ! DEPRECIATED
+      data idebug/0/,jdebug/'NONE'/ ! DEPRECIATED
       end module var_inputc
 
       module var_input4
