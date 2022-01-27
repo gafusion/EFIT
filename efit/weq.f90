@@ -114,7 +114,7 @@
 !
         xbetapr=kbetapr
         if (keqdsk.ge.1) then
-        write (neqdsk,1055) uday,(mfvers(j),j=1,2)
+        write (neqdsk,1055) uday,efitver
         if (ishot.le.99999) then
           write (neqdsk,1050) ishot,ktime1
         else
@@ -193,9 +193,7 @@
 !--     binary format                                             --
 !-------------------------------------------------------------------
         else ! keqdsk.lt.1
-! TO DO: version info needs to be establised (match Gitlab?)
-! unchanged for now to ensure compatability
-        write (neqdsk) uday,(mfvers(j),j=1,2)
+        write (neqdsk) uday,efitver
         if (ishot.le.99999) then
           write (neqdsk) ishot,ktime1
         else
@@ -377,7 +375,7 @@
  1042 format (1x,a42,1x,a3)
  1050 format (1x,i5,11x,i5)
  1053 format (1x,i6,11x,i5)
- 1055 format (1x,a10,2a5)
+ 1055 format (1x,2a10)
  1060 format ('*',f8.3,9x,i5,11x,i5,1x,a3,1x,i3,1x,i3,1x,a3,1x,2i5)
  1070 format(16a5)
       end subroutine shipit
@@ -433,7 +431,7 @@
       namelist/eccd/kkstark,chigamt,chigam,bzmse,psiecn,dpsiecn, &
               saisq,cjeccd
       character eqdsk*72,header*42,wform*20,let,fit_type*3
-      character*10 case(6)
+      character*10 vers(6)
       integer :: pltnw
       !TODO: can this be set to match mesh rather than hard-coded limit?
       parameter (pltnw=2049)
@@ -529,16 +527,16 @@
           endif
         enddo
       enddo
-      write (case(1),1040)
-      write (case(2),1050) mfvers(1)
-      write (case(3),1060) mfvers(2)
+      write (vers(1),1040)
+      write (vers(2),1050) efitver(1:5)
+      write (vers(3),1060) efitver(6:10)
       if (ishot.le.99999) then
-        write (case(4),1070) ishot
+        write (vers(4),1070) ishot
       else
-        write (case(4),1073) ishot
+        write (vers(4),1073) ishot
       endif
-      write (case(5),1080) ijtime
-      case(6)=' '
+      write (vers(5),1080) ijtime
+      vers(6)=' '
       let = 'g'
       call getfnmu(itimeu,let,ishot,ijtime,eqdsk)
 !----------------------------------------------------------------------
@@ -561,7 +559,7 @@
         ssibry=psibry
       endif
       if (keqdsk.eq.1) then
-      write (neqdsk,2000) (case(i),i=1,6),0,mw,mh
+      write (neqdsk,2000) (vers(i),i=1,6),0,mw,mh
       write (neqdsk,2020) xdim,zdim,rzero,rgrid(1),zmid
       write (neqdsk,2020) rmaxis,zmaxis,ssimag,ssibry,bcentr(jtime)
       write (neqdsk,2020) cpasma(jtime),ssimag,xdum,rmaxis,xdum
@@ -784,7 +782,7 @@
 !--   binary format                                                   --
 !-----------------------------------------------------------------------
       else ! keqdsk.ne.1
-      write (neqdsk) (case(i),i=1,6),0,mw,mh
+      write (neqdsk) (vers(i),i=1,6),0,mw,mh
       write (neqdsk) real(xdim),real(zdim),real(rzero), &
                      real(rgrid(1)),real(zmid)
       write (neqdsk) real(rmaxis),real(zmaxis),real(ssimag), &
@@ -902,8 +900,6 @@
       return
  1020 format ('x',i5,'.',i3)
  1040 format ('EFIT-AI ')
-! TO DO: version info needs to be establised (match Gitlab?)
-! unchanged for now to ensure compatability
  1042 format (1x,a42,1x,a3)
  1050 format ('   ',a5)
  1060 format (a5,'   ')

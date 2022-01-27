@@ -49,7 +49,7 @@ endif()
 # Math libs
 target_link_libraries(efitlib lsode r8slatec)
 # IO libs
-target_link_libraries(efitlib dissplalib)
+target_link_libraries(efitlib efitversion dissplalib)
 if(NOT ${HAVE_NETCDF})
   target_link_libraries(efitlib netcdflib)
 endif()

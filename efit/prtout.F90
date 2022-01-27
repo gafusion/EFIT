@@ -552,7 +552,7 @@
  9380 format (1x,i2,' full rogowski')
  9385 format (1x,i2,' diamagnetic loop')
  9390 format (1x,' bt0(t)   = ',f10.3)
-!10000 format(/,6x,20('*'),' EFITD',a3,' x ',a3,'  output ',20('*'))
+!10000 format(/,6x,20('*'),'EFITAI',a3,' x ',a3,'  output ',20('*'))
 10020 format (1x,'  sumif(amp) = ',e10.3,' sumift(amp) = ',e10.3, &
            ' sumifs(amp) = ',e10.3)
 10480 format (1x,/)
@@ -681,7 +681,5 @@
         write (nout,10000) trim(ch1),trim(ch2)
       end if
 
-! TO DO: version info needs to be establised (match Gitlab?)
-! unchanged for now to ensure compatability
-10000 format(/,6x,20('*'),' EFITD',a3,' x ',a3,'  output ',20('*'))
+10000 format(/,6x,20('*'),'EFITAI',a3,' x ',a3,'  output ',20('*'))
       end

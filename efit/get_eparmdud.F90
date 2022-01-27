@@ -116,6 +116,7 @@ subroutine read_dirs_shot(filename)
   use var_exdata, only: ishot
   use var_cecoil, only: iecurr
   use var_vessel, only: ivesel
+  use var_inputc, only: efitversion
   use expath, only: table_dir,input_dir,store_dir
   implicit integer*4 (i-n), real*8 (a-h,o-z)
   real*8, dimension(2000):: expmp2,coils,fwtsi,fwtmp2,psibit,bitmpi,denr,denv,fwtfc, &
@@ -191,6 +192,7 @@ subroutine read_omas_in1(filename)
   use var_exdata, only: ishot
   use var_cecoil, only: iecurr
   use var_vessel, only: ivesel
+  use var_inputc, only: efitversion
   use var_nio
   use error_control
   use expath, only: table_dir,input_dir,store_dir
@@ -457,7 +459,8 @@ subroutine read_omas_in1(filename)
     call read_h5_ex(nid,"rsol",rsol,h5in,h5err)
     call read_h5_ex(nid,"zsol",zsol,h5in,h5err)
     call read_h5_ex(nid,"fwtsol",fwtsol,h5in,h5err)
-    call read_h5_ex(nid,"efitversion",efitversion,h5in,h5err)
+    ! H5 TODO: this could be a string or a vector so we need a type check...
+!    call read_h5_ex(nid,"efitversion",efitversion,h5in,h5err)
     call read_h5_ex(nid,"kbetapr",kbetapr,h5in,h5err)
     call read_h5_ex(nid,"nbdryp",nbdryp,h5in,h5err)
     call read_h5_ex(nid,"jdebug",jdebug,h5in,h5err)

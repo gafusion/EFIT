@@ -30,10 +30,9 @@
 
       ! ONLY root process allowed to interface with terminal
       if (rank == 0) then
+        write (nttyo,5500)
+        call efit_version(efitver)
         if (use_opt_input .eqv. .false.) then
-! TO DO: version info needs to be establised (match Gitlab?)
-!          write (nttyo,5500) (mfvers(i),i=1,2)
-          write (nttyo,5500)
           write (nttyo,6000)
           read (ntty,*) kdata
         else
@@ -42,9 +41,11 @@
       endif
 #if defined(USEMPI)
       if (nproc > 1) then
+        call MPI_BCAST(efitver,10,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
         call MPI_BCAST(kdata,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
       endif
-#endif 
+#endif
+      efitversion=efitver(1:8)
 
       ! Check that input option is valid
 #if defined(USE_HDF5)
@@ -238,7 +239,6 @@
       endif
 #endif
 
-! 5500 format (/,10x,'EFIT-AI Version ',2a5,/)
  5500 format (/,10x,'EFIT-AI'/)
 #if defined(USE_HDF5)
 #if defined(USE_MDS)

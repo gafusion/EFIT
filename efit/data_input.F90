@@ -1007,7 +1007,8 @@
           call read_h5_ex(nid,"rsol",rsol,h5in,h5err)
           call read_h5_ex(nid,"zsol",zsol,h5in,h5err)
           call read_h5_ex(nid,"fwtsol",fwtsol,h5in,h5err)
-          call read_h5_ex(nid,"efitversion",efitversion,h5in,h5err)
+          ! H5 TODO: this could be a string or a vector so we need a type check...
+!          call read_h5_ex(nid,"efitversion",efitversion,h5in,h5err)
           call read_h5_ex(nid,"kbetapr",kbetapr,h5in,h5err)
           call read_h5_ex(nid,"nbdryp",nbdryp,h5in,h5err)
           call read_h5_ex(nid,"jdebug",jdebug,h5in,h5err)
