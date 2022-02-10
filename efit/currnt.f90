@@ -579,7 +579,7 @@
 !---------------------------------------------------------------------
        nnn=1
        call green(nnn,jtime,nitett)
-       if (((nitett.gt.1).or.(icinit.ge.0)).and.(iconvr.ne.3)) then
+       if (((nitett.gt.1).or.(icinit.ge.0)).and.(iconvr.eq.3)) then
 !----------------------------------------------------------------------
 !--    Adjust current profile to keep q(0), I, J(1), and others fixed--
 !----------------------------------------------------------------------
@@ -845,7 +845,7 @@
          endif
 !
        endif
-       endif ! ((nitett.gt.1).or.(icinit.ge.0)).and.(iconvr.ne.3)
+       endif ! ((nitett.gt.1).or.(icinit.ge.0)).and.(iconvr.eq.3)
        tcurrt=0.0
        tcurrp=0.0
        do i=1,nw
