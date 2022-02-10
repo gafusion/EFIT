@@ -2691,40 +2691,11 @@
       if (ifitvs.gt.0.or.icutfp.eq.2) then
         write (6,*) 'ifitvs, icutfp, fpolvs(ka) = ', ifitvs,icutfp,fpolvs/1000.
       endif
-      if (itek.gt.0) then
-        if (idplace.ne.0) then
-          call altplt(xout,yout,nfound,iges,nnn, &
-                      xmin,xmax,ymin,ymax,igmax)
-        else
-#ifdef DEBUG_LEVEL1
-          write (6,*) 'Before SHAPE/PLTOUT'
-#endif
-          call pltout(xout,yout,nfound,iges,nnn, &
-                      xmin,xmax,ymin,ymax,igmax,kerror)
-          if (kerror.gt.0) return
-#ifdef DEBUG_LEVEL1
-          write (6,*) 'After SHAPE/PLTOUT'
-#endif
-        endif
-      endif
 #ifdef DEBUG_LEVEL1
       write (6,*) 'exit SHAPE/PLTOUT kerror = ', kerror
 #endif
       if ((itrace.gt.1) .and. (abs(dpsi).le.psitol)) then
-        if (itek.gt.0) then
-           if (idplace.ne.0) then
-             call altplt(xouts,youts,nfouns,jges,n22, &
-                         xmins,xmaxs,ymins,ymaxs,igmax)
-           else
-             call pltout(xouts,youts,nfouns,jges,n22, &
-                         xmins,xmaxs,ymins,ymaxs,igmax,kerror)
-             if (kerror.gt.0) return
-           endif
-        endif
       endif
-      if ((itek.eq.2).and.(iges.eq.igmax)) call donepl
-      if ((itek.eq.4).and.(iges.eq.igmax)) call donepl
-      if ((itek.ge.5).and.(iges.eq.igmax)) call closepl
       if ((ilaser.gt.0).and.(iges.eq.igmax)) call donepl
 
       else ! ivacum.ge.0
