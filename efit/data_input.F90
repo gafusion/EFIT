@@ -288,7 +288,11 @@
       curc199in=0.0
 ! 
       kerror=0 
-      idone=0 
+      idone=0
+      fpol(:)=0.0
+      pres(:) = 0.0
+      ffprim(:) = 0.0
+      pprime(:)= 0.0 
       sicont=tmu*drslop/aaslop
 ! 
       if ((kdata.ne.1).and.(kdata.ne.2)) then

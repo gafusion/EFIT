@@ -364,18 +364,18 @@
           enddo
         endif
         psipla(kk)=psi(kk)
-        if (ivacum.gt.0) exit
-        do ii=1,nw
-          do jj=1,nh
-            kkkk=(ii-1)*nh+jj
-            mj=abs(j-jj)+1
-            mk=(i-1)*nh+mj
-            psi(kk)=psi(kk)+gridpc(mk,ii)*pcurrt(kkkk)
+        if (ivacum.le.0)then
+          do ii=1,nw
+            do jj=1,nh
+              kkkk=(ii-1)*nh+jj
+              mj=abs(j-jj)+1
+              mk=(i-1)*nh+mj
+              psi(kk)=psi(kk)+gridpc(mk,ii)*pcurrt(kkkk)
+            enddo
           enddo
-        enddo
-        psipla(kk)=psi(kk)-psipla(kk)
+          psipla(kk)=psi(kk)-psipla(kk)
+        endif 
        enddo
-       if (ivacum.gt.0) exit
       enddo
 !
       ibunmn=0
