@@ -373,8 +373,8 @@
               psi(kk)=psi(kk)+gridpc(mk,ii)*pcurrt(kkkk)
             enddo
           enddo
-         psipla(kk)=psi(kk)-psipla(kk)
-         endif 
+          psipla(kk)=psi(kk)-psipla(kk)
+        endif 
        enddo
       enddo
 !
