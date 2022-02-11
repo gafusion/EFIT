@@ -1499,7 +1499,7 @@
       xabs=-6.5_dp
       yabs=7.0
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitversion
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -3302,7 +3302,7 @@
       xabs=-6.0
       yabs=1.8_dp
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitversion
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -3879,7 +3879,7 @@
          yabs=4.5_dp
       endif
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitversion
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -4716,7 +4716,7 @@
       xabs=-4.3_dp
       yabs=3.0
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitversion
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -5390,7 +5390,7 @@
       xabs=-4.5_dp
       yabs=3.0
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitversion
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -5694,7 +5694,7 @@
       xabs=-7.0
       yabs=7.85_dp
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitversion
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -6254,7 +6254,7 @@
       xabs=-4.5_dp
       yabs=3.0
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitversion
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -6552,7 +6552,7 @@
       xabs=-4.5_dp
       yabs=3.0
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitversion
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -6822,7 +6822,7 @@
 !
       xabs=-4.5_dp
       yabs=3.0
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitversion
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -7192,7 +7192,7 @@
       xabs=-3.
       yabs=7.85_dp
       dyabs = 0.16_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitversion
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -7844,7 +7844,7 @@
       yabs=1.5_dp
       dyabs = 0.28_dp
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitversion
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8907,7 +8907,7 @@
       xabs=-6.0
       yabs=1.8_dp
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitversion
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -9215,7 +9215,7 @@
       xabs=-6.0
       yabs=1.8_dp
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitversion
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
