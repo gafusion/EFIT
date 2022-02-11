@@ -3,7 +3,7 @@
 !-----------------------------------------------------------------------
       SUBROUTINE efit_version(efitver)
       IMPLICIT NONE
-      CHARACTER(8), INTENT(OUT) :: efitver
+      CHARACTER(7), INTENT(OUT) :: efitver
       CHARACTER(512) :: giturl,gitbranch,githash,lmods
       CHARACTER(512) :: fc,fcid,fcver
       CHARACTER(5096) :: fcflags
@@ -37,9 +37,9 @@
       WRITE(6,'(2a,/)') ' and flags ',TRIM(fcflags)
 !-----------------------------------------------------------------------
 !     set output variables to efit match efit convention
-!     use git hashes (first 8 or 10 chars) instead of compilation dates
+!     use git hashes (first 7 chars) instead of compilation dates
 !-----------------------------------------------------------------------
-      efitver=githash(1:8)
+      efitver=githash(1:7)
 !-----------------------------------------------------------------------
 !     terminate
 !-----------------------------------------------------------------------

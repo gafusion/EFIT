@@ -114,7 +114,7 @@
 !
         xbetapr=kbetapr
         if (keqdsk.ge.1) then
-        write (neqdsk,1055) uday,efitver
+        write (neqdsk,1055) uday,efitversion//"   "
         if (ishot.le.99999) then
           write (neqdsk,1050) ishot,ktime1
         else
@@ -193,7 +193,7 @@
 !--     binary format                                             --
 !-------------------------------------------------------------------
         else ! keqdsk.lt.1
-        write (neqdsk) uday,efitver
+        write (neqdsk) uday,efitversion
         if (ishot.le.99999) then
           write (neqdsk) ishot,ktime1
         else
@@ -528,8 +528,8 @@
         enddo
       enddo
       write (vers(1),1040)
-      write (vers(2),1050) efitver(1:5)
-      write (vers(3),1060) efitver(6:10)
+      write (vers(2),1050) efitversion(1:5)
+      write (vers(3),1060) efitversion(6:7)//"   "
       if (ishot.le.99999) then
         write (vers(4),1070) ishot
       else

@@ -363,8 +363,7 @@
 
       module var_inputc
       character*12 mfitpop
-      character*10 efitver
-      character*8 efitversion
+      character*7 efitversion
       character(4),dimension(:),allocatable :: limloc
       character(10),dimension(:),allocatable :: vsname
       character(10),dimension(:),allocatable :: mpnam2
