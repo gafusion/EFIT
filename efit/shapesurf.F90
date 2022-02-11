@@ -2674,15 +2674,15 @@
 ! --- prepare for vertical stability parameters
 ! --- calculation is done after pltout calls
 !
-      if (ivacum.le.0) then
-        pleng=0.0
-        do i=1,nfound-1
-          ip1=i+1
-          dli=sqrt((xout(ip1)-xout(i))**2+(yout(ip1)-yout(i))**2)
-          pleng=pleng+dli
-        enddo
-        abar=100.*pleng/2./pi
-      endif
+
+      pleng=0.0
+      do i=1,nfound-1
+        ip1=i+1
+        dli=sqrt((xout(ip1)-xout(i))**2+(yout(ip1)-yout(i))**2)
+        pleng=pleng+dli
+      enddo
+      abar=100.*pleng/2./pi
+
 !
 #ifdef DEBUG_LEVEL1
       write (6,*) 'Call SHAPE/PLTOUT kerror = ', kerror
