@@ -2727,7 +2727,7 @@
       if ((itek.ge.5).and.(iges.eq.igmax)) call closepl
       if ((ilaser.gt.0).and.(iges.eq.igmax)) call donepl
 
-      else ! ivacum.ge.0
+      else ! ivacum.le.0
       call chisqr(iges)
       if (itek.gt.0) then
         call pltout(xout,yout,nzz,iges,nnn,zxx,zxx,zxx,zxx,igmax,kerror)
@@ -2738,7 +2738,7 @@
       if ((itek.ge.5).and.(iges.eq.igmax)) call closepl
       if ((ilaser.gt.0).and.(iges.eq.igmax)) call donepl
 !
-      endif ! ivacum.ge.0
+      endif ! ivacum.le.0
 !
 !-----------------------------------------------------------------------
 !-- vertical stability parameter,  reference Nuc Fusion  18(1978)1331 --
