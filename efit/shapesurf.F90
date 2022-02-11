@@ -2674,15 +2674,15 @@
 ! --- prepare for vertical stability parameters
 ! --- calculation is done after pltout calls
 !
-      if (ivacum.le.0) then
-        pleng=0.0
-        do i=1,nfound-1
-          ip1=i+1
-          dli=sqrt((xout(ip1)-xout(i))**2+(yout(ip1)-yout(i))**2)
-          pleng=pleng+dli
-        enddo
-        abar=100.*pleng/2./pi
-      endif
+
+      pleng=0.0
+      do i=1,nfound-1
+        ip1=i+1
+        dli=sqrt((xout(ip1)-xout(i))**2+(yout(ip1)-yout(i))**2)
+        pleng=pleng+dli
+      enddo
+      abar=100.*pleng/2./pi
+
 !
 #ifdef DEBUG_LEVEL1
       write (6,*) 'Call SHAPE/PLTOUT kerror = ', kerror
@@ -2727,7 +2727,8 @@
       if ((itek.ge.5).and.(iges.eq.igmax)) call closepl
       if ((ilaser.gt.0).and.(iges.eq.igmax)) call donepl
 
-      else ! ivacum.ge.0
+      else ! ivacum.gt.0
+      limloc(iges)='VAC'
       call chisqr(iges)
       if (itek.gt.0) then
         call pltout(xout,yout,nzz,iges,nnn,zxx,zxx,zxx,zxx,igmax,kerror)
@@ -2738,7 +2739,7 @@
       if ((itek.ge.5).and.(iges.eq.igmax)) call closepl
       if ((ilaser.gt.0).and.(iges.eq.igmax)) call donepl
 !
-      endif ! ivacum.ge.0
+      endif ! ivacum.le.0
 !
 !-----------------------------------------------------------------------
 !-- vertical stability parameter,  reference Nuc Fusion  18(1978)1331 --

@@ -79,10 +79,11 @@
 
         do i=1,nfcoil
           brsp(i)=0.0
-          if (ivacum.gt.0) exit
-          do j=1,nwnh
-            brsp(i)=brsp(i)+rfcpc(i,j)*pcurrt(j)
-          enddo
+          if (ivacum.le.0) then
+            do j=1,nwnh
+              brsp(i)=brsp(i)+rfcpc(i,j)*pcurrt(j)
+            enddo
+          endif
           if (iecurr.gt.0) then
             do j=1,nesum
               brsp(i)=brsp(i)+rfcec(i,j)*ecurrt(j)
