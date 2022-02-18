@@ -1478,7 +1478,7 @@
         go to 73723
       endif
       if (dis2p.ge.0.1_dp*drgrid) then
-      call seva2d(bkx,lkx,bky,lky,c,ravs,zavs,pds,ier,n111)
+      call seva2d(bkx,lkx,bky,lky,c,ravs(1),zavs(1),pds,ier,n111)
       ssinow=pds(1)
 !------------------------------------------------------------------
 !--   get distance between inner leg and upper dome              --
@@ -1685,7 +1685,7 @@
         go to 26199
       endif
       if (dis2p.ge.0.1_dp*drgrid) then
-        call seva2d(bkx,lkx,bky,lky,c,ravs,zavs,pds,ier,n111)
+        call seva2d(bkx,lkx,bky,lky,c,ravs(1),zavs(1),pds,ier,n111)
         ssinow=pds(1)
 !------------------------------------------------------------------
 !--     get distance between inner leg and upper dome            --
@@ -1829,7 +1829,7 @@
         rvsnow=0.
         zvsnow=0.
       endif
-      call seva2d(bkx,lkx,bky,lky,c,ravs,zavs,pds,ier,n111)
+      call seva2d(bkx,lkx,bky,lky,c,ravs(1),zavs(1),pds,ier,n111)
       ssinow=pds(1)
 !------------------------------------------------------------------
 !--   get distance between inner leg and upper dome              --
