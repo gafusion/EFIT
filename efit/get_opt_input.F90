@@ -30,8 +30,6 @@
 
       ! ONLY root process allowed to interface with terminal
       if (rank == 0) then
-        write (nttyo,5500)
-        call efit_version(efitversion)
         if (use_opt_input .eqv. .false.) then
           write (nttyo,6000)
           read (ntty,*) kdata
@@ -41,7 +39,6 @@
       endif
 #if defined(USEMPI)
       if (nproc > 1) then
-        call MPI_BCAST(efitversion,7,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
         call MPI_BCAST(kdata,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
       endif
 #endif
@@ -238,7 +235,6 @@
       endif
 #endif
 
- 5500 format (/,10x,'EFIT-AI'/)
 #if defined(USE_HDF5)
 #if defined(USE_MDS)
  6000 format (/,1x,'type mode (1=omas, 2=file, 3=snap, 4=time', &

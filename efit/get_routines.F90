@@ -67,7 +67,7 @@
          ,teece(nnece),pteprm(nnece),pteprp(nnece) &
          ,idestp(nnece),idestm(nnece),becem(nnece),becep(nnece) &
          ,dbdrp(nnece),dbdrm(nnece)
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
 
       kerror = 0
 !-------------------------------------------------------------------
@@ -708,7 +708,7 @@
          ,rlowf(nnnte),bb(nnnte),cc(nnnte),dd(nnnte) &
          ,teece(nnece),pteprm(nnece),pteprp(nnece) &
          ,idestp(nnece),idestm(nnece)
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
 !
       kerror = 0
       allocate(rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
@@ -1234,7 +1234,7 @@
          ,rlowf(nnnte),bb(nnnte),cc(nnnte),dd(nnnte) &
          ,teece(nnece),pteprm(nnece),pteprp(nnece) &
          ,idestp(nnece),idestm(nnece)
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
 !
 #ifdef DEBUG_LEVEL3
       write (6,*) 'Enter GETTIR, kfitece/kfixrece = ',&
@@ -1563,7 +1563,7 @@
       real*8,dimension(:),allocatable :: bwork,cwork,dwork
 
 ! MPI >>>
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
       kerror = 0
 ! MPI <<<
 !
@@ -1813,7 +1813,7 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
-      integer jtimex,niterax
+      integer*4 jtimex,niterax
       real*8             :: gradsdr,gradsdz,brdr,brdz,bzdr,bzdz,cost,sint &
                           ,oldfit
       dimension pds(6)
@@ -2096,7 +2096,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
 ! MPI >>>
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
       kerror = 0
 ! MPI <<<
 !----------------------------------------------------------------------
@@ -2216,7 +2216,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension pds(6),bwork(ndata),cwork(ndata),dwork(ndata)
 ! MPI >>>
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
 ! MPI <<<
       kerror = 0
 

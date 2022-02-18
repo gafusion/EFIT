@@ -17,7 +17,7 @@
 !**********************************************************************
       subroutine pflux(niter,nnin,ntotal,jtime,kerror)
       use set_kinds 
-      use var_bunemn
+      use var_buneman
       use commonblocks,only: c,wk,copy,bkx,bky,psiold,psipold, psipp
       include 'eparm.inc'
       include 'modules2.inc'
@@ -25,7 +25,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       real(dp), dimension(:), allocatable ::   work
-      integer initresult
+      integer*4 initresult
       dimension pds(6)
       real*8,dimension(:),allocatable :: psikkk,gfbsum
       data initfb/0/,init/0/
@@ -577,7 +577,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension pds(6)
-      integer iii
+      integer*4 iii
       real :: zmaxis_last = 0.0
       data isplit/8/,psitol/1.0e-04_dp/,cdum/1.0/
       save xguess, yguess, xltrac, radbou

@@ -117,25 +117,25 @@
       select case (icurrt)
       case default ! 1
 !------------------------------------------------------------------------------
-!--    uniform current for Solove equilibrium                                --
+!--    uniform current for Solovev equilibrium                               --
 !------------------------------------------------------------------------------
        tcurrt=0.0
        do i=1,nw
-        do j=1,nh
-         kk=(i-1)*nh+j
-         pcurrt(kk)=0.0
-         pcurrw(kk)=0.0
-         if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) cycle
-         rdiml=rgrid(i)/srma
-         pcurrt(kk)=sbeta*rdiml+2.*salpha/rdiml
-         if (kvtor.gt.0) then
-           pcurrw(kk)=sbetaw*rdiml*(rdiml**2-1.)
-           pcurrt(kk)=pcurrt(kk)+pcurrw(kk)
-         endif
-         pcurrt(kk)=pcurrt(kk)*www(kk)
-         pcurrw(kk)=pcurrw(kk)*www(kk)
-         tcurrt=tcurrt+pcurrt(kk)
-        enddo
+         do j=1,nh
+           kk=(i-1)*nh+j
+           pcurrt(kk)=0.0
+           pcurrw(kk)=0.0
+           if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) cycle
+           rdiml=rgrid(i)/srma
+           pcurrt(kk)=sbeta*rdiml+2.*salpha/rdiml
+           if (kvtor.gt.0) then
+             pcurrw(kk)=sbetaw*rdiml*(rdiml**2-1.)
+             pcurrt(kk)=pcurrt(kk)+pcurrw(kk)
+           endif
+           pcurrt(kk)=pcurrt(kk)*www(kk)
+           pcurrw(kk)=pcurrw(kk)*www(kk)
+           tcurrt=tcurrt+pcurrt(kk)
+         enddo
        enddo
        cratio=cpasma(jtime)/tcurrt
        do kk=1,nwnh

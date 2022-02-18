@@ -77,7 +77,7 @@
                       ,curriu30/0.0/,curriu90/0.0/,curriu150/0.0/ &
                       ,curril30/0.0/,curril90/0.0/,curril150/0.0/
       logical exists
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
 
       ALLOCATE(coils(nsilop),expmp2(magpri), &
                 denr(nco2r),denv(nco2v), &
@@ -118,7 +118,7 @@
       tmu0=twopi*tmu
       tmu02=tmu0*2.0
       errorm=1.
-      ibatch=0
+      ibatch=0 ! never used in code (just gets output)
       ilaser=0
 !----------------------------------------------------------------------
 !--   news and help information                                      --

@@ -63,9 +63,9 @@ end subroutine read_efitin
 subroutine read_eparmdud()
      use eparm
      use var_nio
-     use expath
+     use exvars
      implicit none
-     integer ::istatus
+     integer*4 :: istatus
 
      NAMELIST/machinein/nsilds,nsilol,nfcoil,nrogow,nacoil,mfcoil,necoil,nvesel, &
        mpress,nesum,magpri67,magpri322,magprirdp,magudom,maglds,mse315,mse45, &

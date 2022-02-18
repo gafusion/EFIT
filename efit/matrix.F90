@@ -31,11 +31,11 @@
       dimension b(nrsmat),z(4*(npcurn-2)+6+npcurn*npcurn)
       dimension pds(6)
       dimension rxxx(ndata),rxxxf(ndata),rxx2(ndata),rxxw(ndata)
-      integer, dimension(mfnpcr)       :: ipvttmp
+      integer*4, dimension(mfnpcr)       :: ipvttmp
       real*8, dimension(2)             :: arspdet2(1:2)
       real*8, dimension(mfnpcr)        :: worktmp
       real*8, dimension(nrsmat,mfnpcr) :: arsptmp
-      integer, intent(inout) :: jtime,iter,ichisq,nniter,kerror
+      integer*4, intent(inout) :: jtime,iter,ichisq,nniter,kerror
       character(len=128) tmpstr
 
 !---------------------------------------------------------------------

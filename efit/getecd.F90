@@ -25,7 +25,7 @@
                    ,nc79name,nc139name,ncname(mccoil),niname(micoil)  !EJS(2014)
 !                         ---  or ---  ncname(mccoil),niname(micoil)  !EJS(2014)
 
-      integer :: time_err
+      integer*4 :: time_err
       character*150 textline     !EJS(2014)
       character*10,dimension(:),allocatable :: ndenv,ndenr,fcname,ecname
       character*10 namedum
@@ -811,11 +811,11 @@
       use var_gggttt
       use var_inaver
       character*10 name
-      integer, intent(out) :: ktime_err
-      real*8 y(ntime),time(ntime),deltd,xxd,bitvld,timesd &
-            , rcx,rcgx,vbitx,zinhnox,t0x &
-            , stdevx(1)
-      integer navx(1)
+      integer*4, intent(out) :: ktime_err
+      real*8 y(ntime),time(ntime),deltd,xxd,bitvld,timesd, &
+             rcx,rcgx,vbitx,zinhnox,t0x, &
+             stdevx(1)
+      integer*4 navx(1)
       data dtmin/0.001001/,xm5/0.00001/
       save dtmin,xm5
       logical*4 do_spline_fit
@@ -1063,9 +1063,9 @@
       real*8, allocatable :: yw(:),xw(:),bw(:),cw(:),dw(:),ew(:)
       real*8 dtmin, xm5, dtave, xx, delt, times, delta_min, delta, &
              timenow, ynow
-      integer :: status, nshot, lenname, errallot, npn, mmm, ierror, &
-                 np, mm, nn, kave, ircfact, ktime_err, nnp, mylen, &
-                 i, j, j_save, dsc, f_dsc, t_dsc
+      integer*4 :: status, nshot, lenname, errallot, npn, mmm, ierror, &
+                   np, mm, nn, kave, ircfact, ktime_err, nnp, mylen, &
+                   i, j, j_save, dsc, f_dsc, t_dsc
       logical*4 do_spline_fit
       data dtmin/0.001001/,xm5/0.00001/
       save dtmin,xm5
@@ -1249,10 +1249,10 @@
         np,timesd,deltd,mm,xxd,nn,bitvld,kave,time, &
         do_spline_fit,rcx,rcgx,vbitx,zinhnox,t0x,stdevx,navx)
       use var_gggttt
-      real*8 y(np),time(np),deltd,xxd,bitvld,timesd &
-             , rcx,rcgx,vbitx,zinhnox,t0x &
-             , stdevx(1)
-      integer navx(1)
+      real*8 y(np),time(np),deltd,xxd,bitvld,timesd, &
+             rcx,rcgx,vbitx,zinhnox,t0x, &
+             stdevx(1)
+      integer*4 navx(1)
       character*10 name
       data dtmin/0.001001/,xm5/0.00001/
       save dtmin,xm5
@@ -1714,9 +1714,9 @@
 !!
 !**********************************************************************
       subroutine zplines(n, x, y, b, c, d)
-      integer n
+      integer*4 n
       real x(n), y(n), b(n), c(n), d(n)
-      integer nm1, ib, i
+      integer*4 nm1, ib, i
       real t
 !
       nm1 = n-1
@@ -1821,9 +1821,9 @@
 !!
 !**********************************************************************
       real function sevals(n, u, x, y, b, c, d)
-      integer n
+      integer*4 n
       real  u, x(n), y(n), b(n), c(n), d(n)
-      integer i, j, k
+      integer*4 i, j, k
       real dx
       data i/1/
       if ( i .ge. n ) i = 1
@@ -2370,16 +2370,16 @@
         !   BITFC  1:nfcoil
         !   BITEC  1:nesum ! added by MK
         !   IERMPI to fix FWTMP2 1:magpri! added by MK
-        integer :: i,j,ktime_all,offset,nsize,nsize2
-        integer,dimension(:),allocatable :: tmp1,tmp2
+        integer*4 :: i,j,ktime_all,offset,nsize,nsize2
+        integer*4,dimension(:),allocatable :: tmp1,tmp2
         double precision :: zwork(18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum,ntime),&
                             zwork2(5+nsilop+magpri+nfcoil+nesum+magpri),timeb_list(nproc)
 
         ! TIMING >>>
-        integer :: clock0,clock1,clockmax,clockrate,ticks
+        integer*4 :: clock0,clock1,clockmax,clockrate,ticks
         double precision :: secs
         ! TIMING <<<
-        integer :: total_bytes
+        integer*4 :: total_bytes
         zwork(:,:) = 0.0
         nsize=18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum
         nsize2=5+nsilop+magpri+nfcoil+nesum+magpri
@@ -2682,14 +2682,14 @@
         ! WARNING : A7GAM explicitly set to zero by original GETSTARK_MPI code
         ! KWAITMSE
         ! FWTGAM (nstark)
-        integer :: i,j,ktime_all,nsize
-        integer,dimension(:),allocatable :: tmp1,tmp2
+        integer*4 :: i,j,ktime_all,nsize
+        integer*4,dimension(:),allocatable :: tmp1,tmp2
         double precision :: zwork(nmtark*12,ntime)
         ! TIMING >>>
-        integer :: clock0,clock1,clockmax,clockrate,ticks
+        integer*4 :: clock0,clock1,clockmax,clockrate,ticks
         double precision :: secs
         ! TIMING <<<
-        integer :: total_bytes
+        integer*4 :: total_bytes
         nsize = 12*nmtark
         zwork(:,:) = 0.0
         allocate(tmp1(nproc),tmp2(nproc))

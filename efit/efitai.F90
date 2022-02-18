@@ -20,34 +20,22 @@
 !!              48 (2005) 968.                                     
 !!                                                                 
 !**********************************************************************
-     program efitai
-     use commonblocks
-     use set_kinds
-     use mpi_efit
-     include 'eparm.inc'
-     include 'modules2.inc'
-     include 'modules1.inc'
-     implicit integer*4 (i-n), real*8 (a-h,o-z)
-     data kwake/0/
-     parameter (krord=4,kzord=4)
-     character inp1*4,inp2*4
-     integer :: nargs, iargc, finfo, kerror, terr
+      program efitai
+      use commonblocks
+      use set_kinds
+      use mpi_efit
+      include 'eparm.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      data kwake/0/
+      parameter (krord=4,kzord=4)
+      character inp1*4,inp2*4
+      integer*4 :: nargs, iargc, finfo, kerror, terr
 
-     integer :: iend1, iend2
+      integer*4 :: iend1, iend2
 
-     kerror = 0
-!------------------------------------------------------------------------------
-!--   Set paths
-!------------------------------------------------------------------------------ 
-      call set_expath
-      call getenv("link_efit",link_efitx)
-      call getenv("link_store",link_storex)
-      if (link_efitx(1:1).ne.' ') then
-          table_dir=trim(link_efitx)//'green/'
-          input_dir=trim(link_efitx)
-      endif
-      if (link_storex(1:1).ne.' ')  store_dir=trim(link_storex)           
-
+      kerror = 0
 !------------------------------------------------------------------------------
 !     Initialize MPI environment
 !------------------------------------------------------------------------------
@@ -57,6 +45,18 @@
 
       ! Set global constants for each rank
       call set_constants()
+!------------------------------------------------------------------------------
+!--   Set external variables and print build info
+!------------------------------------------------------------------------------ 
+      call set_exvars
+      ! If environment variable exists, then override values from set_exvars
+      call getenv("link_efit",link_efitx)
+      call getenv("link_store",link_storex)
+      if (link_efitx(1:1).ne.' ') then
+        table_dir=trim(link_efitx)//'green/'
+        input_dir=trim(link_efitx)
+      endif
+      if (link_storex(1:1).ne.' ')  store_dir=trim(link_storex)
 !----------------------------------------------------------------------
 !-- Read in grid size from command line and set global variables     --
 !-- ONLY root process reads command-line arguments                   --
@@ -79,7 +79,8 @@
       endif
       if (nw == 0 .or. nh == 0) then
         if (rank == 0) then
-          call errctrl_msg('efitd','Must specify grid dimensions as arguments')
+          call errctrl_msg('efit', &
+                           'Must specify grid dimensions as arguments')
         endif
         deallocate(dist_data,dist_data_displs,fwtgam_mpi)
         call mpi_finalize(ierr)

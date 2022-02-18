@@ -3,6 +3,9 @@
 export link_efit="@CURRENT_MACHINE_LINK_DIR@"
 export link_store=""
 
+# Ubuntu tries to use threads even without implementation in program
+export OMP_NUM_THREADS=1
+
 # Necessary on NERSC
 export HDF5_USE_FILE_LOCKING=FALSE
 

@@ -37,11 +37,11 @@
       real*8,dimension(:),allocatable :: tlibim,slibim,rrrlib &
          ,zzzlib,aa1lib,aa8lib,fwtlib
       real*8,dimension(:),allocatable :: pds,denr,denv
-      integer*8,dimension(:),allocatable :: ilower
+      integer*4,dimension(:),allocatable :: ilower
       real*8,dimension(:),allocatable :: devxmpin,rnavxmpin &
                ,devpsiin,rnavpsiin,devfcin,rnavfcin &
                ,devein,rnavecin,brsptu
-      integer :: nw_ext,nh_ext
+      integer*4 :: nw_ext,nh_ext
       real*8 :: c_ext,dr_ext,dz_ext,rc_ext,zc_ext,a_ext
       real*8 :: eup_ext,elow_ext,dup_ext,dlow_ext,setlim_ext
       real*8 :: r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max
@@ -468,7 +468,7 @@
       gammap=1.0e+10_dp 
       gamax(jli)=-1.e6_dp 
       iavem=5 
-      ibatch=0 
+      ibatch=0 ! never used in code (just gets output) 
       ibound=0 
       ibunmn=3 
       icinit=2 

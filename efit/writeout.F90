@@ -115,8 +115,8 @@
       data currn1/0.0/,currc79/0.0/,currc139/0.0/,currc199/0.0/ &
                       ,curriu30/0.0/,curriu90/0.0/,curriu150/0.0/ &
                       ,curril30/0.0/,curril90/0.0/,curril150/0.0/
-      integer, intent(out) :: ksstime
-      integer, intent(inout) :: kerror
+      integer*4, intent(out) :: ksstime
+      integer*4, intent(inout) :: kerror
 
       ALLOCATE(coils(nsilop),expmp2(magpri), &
                 denr(nco2r),denv(nco2v), &
@@ -294,8 +294,9 @@
           table_di2 = table_dir(1:ltbdir)//'181292/'
         endif
         ltbdi2=ltbdir+7
-       endif
-       ksstime = ktime
+      endif
+      efitversion = efitvers//" "
+      ksstime = ktime
 !---------------------------------------------------------------------
 !--    specific choice of current profile                           --
 !--       ICPROF=1  no edge current density allowed                 --
@@ -840,8 +841,8 @@
       data currn1/0.0/,currc79/0.0/,currc139/0.0/,currc199/0.0/ &
                       ,curriu30/0.0/,curriu90/0.0/,curriu150/0.0/ &
                       ,curril30/0.0/,curril90/0.0/,curril150/0.0/
-      integer, intent(in) :: jtime
-      integer, intent(inout) :: kerror
+      integer*4, intent(in) :: jtime
+      integer*4, intent(inout) :: kerror
 
 
       ALLOCATE(coils(nsilop),expmp2(magpri), &
@@ -853,6 +854,7 @@
       ALLOCATE(tlibim(libim),slibim(libim),rrrlib(libim))
 
       kerror = 0
+      efitversion = efitvers//" "
 !----------------------------------------------------------------
 !--   recover the value of table_dir for mode 3 or 7           --
 !----------------------------------------------------------------

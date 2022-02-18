@@ -36,7 +36,7 @@
       character(len=4) last
       character(len=80) eqdsk
       character*30 sfname
-      integer dim2(2),c11(2),cnn(2),imap(2),stride(2)
+      integer*4 dim2(2),c11(2),cnn(2),imap(2),stride(2)
 ! --- temporay variables to convert double to single
       real*4 zwork(ntime+nsilop+nstark+nfcoil+nesum+magpri+npress) &
       ,zcmgam(nstark,ntime),zcsilop(nsilop,ntime) &

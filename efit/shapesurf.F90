@@ -36,7 +36,7 @@
       Character(8) jchisq
       character(1) jchisq2
       logical byring,double,onedone
-      integer kerror
+      integer*4 kerror
       data floorz/-1.366_dp/
       data psitol/1.0e-04_dp/,idiart/1/
       data czero/0.0/
@@ -236,13 +236,13 @@
         bpolzs=0.5_dp*fpol(nw)
         do kz=2,nh-1
            yww=dyww*(kz-1)
-          call seva2d(bkx,lkx,bky,lky,c,xww,yww,pds,ier,n111)
+           call seva2d(bkx,lkx,bky,lky,c,xww,yww,pds,ier,n111)
            ypsz=(simag-pds(1))/sidif
            fnow=seval(nw,ypsz,sigrid,fpol,bbfpol,ccfpol,ddfpol)
            bpolzs=bpolzs+fnow
         enddo
         yww=0.0
-          call seva2d(bkx,lkx,bky,lky,c,xww,yww,pds,ier,n111)
+        call seva2d(bkx,lkx,bky,lky,c,xww,yww,pds,ier,n111)
         ypsz=(simag-pds(1))/sidif
         fnow=seval(nw,ypsz,sigrid,fpol,bbfpol,ccfpol,ddfpol)
         bpolzs=bpolzs+fnow*0.5_dp
@@ -2159,7 +2159,7 @@
           return
         end if
 !-------------------------------------------------------------------------
-!--     get engineering slot parameter in cm, SEPNOSE                     --
+!--     get engineering slot parameter in cm, SEPNOSE                   --
 !-------------------------------------------------------------------------
         sepnose=-999.
         do i=1,npxtra(ixl)-1
@@ -2693,8 +2693,7 @@
       endif
       if (itek.gt.0) then
         if (idplace.ne.0) then
-          call altplt(xout,yout,nfound,iges,nnn, &
-                      xmin,xmax,ymin,ymax,igmax)
+          continue ! do nothing...
         else
 #ifdef DEBUG_LEVEL1
           write (6,*) 'Before SHAPE/PLTOUT'
@@ -2713,8 +2712,7 @@
       if ((itrace.gt.1) .and. (abs(dpsi).le.psitol)) then
         if (itek.gt.0) then
            if (idplace.ne.0) then
-             call altplt(xouts,youts,nfouns,jges,n22, &
-                         xmins,xmaxs,ymins,ymaxs,igmax)
+             continue ! do nothing...
            else
              call pltout(xouts,youts,nfouns,jges,n22, &
                          xmins,xmaxs,ymins,ymaxs,igmax,kerror)
@@ -2956,11 +2954,12 @@
 !**********************************************************************
       subroutine dslant(x,y,np,xmin,xmax,ymin,ymax,x1,y1,x2,y2,dismin)
       use set_kinds
-      implicit integer*8 (i-n), real*8 (a-h, o-z)
+      use eparm, only: npoint
+      implicit integer*4 (i-n), real*8 (a-h, o-z)
       data nn/30/
       real, intent(in) :: xmin, xmax, ymin, ymax, x1, y1, x2, y2
       real, intent(inout) :: dismin
-      real, intent(in) :: x(np), y(np)
+      real, intent(in) :: x(npoint), y(npoint)
 
       dismin=1.0e+20_dp
       delx=x2-x1

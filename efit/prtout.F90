@@ -18,7 +18,7 @@
       dimension xrsp(npcurn)
       dimension patmpz(magpri),xmpz(magpri),ympz(magpri),ampz(magpri)
       character*30 sfname
-      integer, dimension(:), allocatable :: ishotall
+      integer*4, dimension(:), allocatable :: ishotall
       real*8, dimension(:), allocatable :: ch2all,timeall
 
       namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi,as, &
@@ -59,30 +59,30 @@
 !        !write(nttyo,*) ishot,int(time(it)),tsaisq(it) ! handy for debugging
 !      end if
 !#endif
-      if (itek.le.0) then
+!      if (itek.le.0) then
 ! MPI >>>
-       if (rank == 0) then
-         !write (nttyo,10000) trim(ch1),trim(ch2)
-         jtime=time(it)
-         saisq=tsaisq(it)
-         ! avoid roundoff
-         if (abs(saisq).lt.1.e-20_dp) saisq=0_dp
-         write (nttyo,9300)
-         write (nttyo,9320) ipsi(it)
-         write (nttyo,9340) imag2(it)
-         write (nttyo,9380) iplasm(it)
-         write (nttyo,9385) idlopc(it)
-         write (nttyo,10480)
-         write (nttyo,10500) ishot,jtime,saisq
-         write (nttyo,10520) betat(it),betap(it),ali(it)
-         write (nttyo,10540) vout(it),rout(it),zout(it)
-         write (nttyo,10560) eout(it),doutu(it),doutl(it)
-         write (nttyo,10580) aout(it),tleft,tright
-         write (nttyo,10600) otop(it),qsta(it),rcurrt(it)
-         write (nttyo,10610) zcurrt(it),bcentr(it),qout(it)
-       endif
-! MPI <<<
+      if (rank == 0) then
+        !write (nttyo,10000) trim(ch1),trim(ch2)
+        jtime=time(it)
+        saisq=tsaisq(it)
+        ! avoid roundoff
+        if (abs(saisq).lt.1.e-20_dp) saisq=0_dp
+        write (nttyo,9300)
+        write (nttyo,9320) ipsi(it)
+        write (nttyo,9340) imag2(it)
+        write (nttyo,9380) iplasm(it)
+        write (nttyo,9385) idlopc(it)
+        write (nttyo,10480)
+        write (nttyo,10500) ishot,jtime,saisq
+        write (nttyo,10520) betat(it),betap(it),ali(it)
+        write (nttyo,10540) vout(it),rout(it),zout(it)
+        write (nttyo,10560) eout(it),doutu(it),doutl(it)
+        write (nttyo,10580) aout(it),tleft,tright
+        write (nttyo,10600) otop(it),qsta(it),rcurrt(it)
+        write (nttyo,10610) zcurrt(it),bcentr(it),qout(it)
       endif
+! MPI <<<
+!      endif
 !
 ! --- delete fitout.dat if IOUT does not contain 1
 !

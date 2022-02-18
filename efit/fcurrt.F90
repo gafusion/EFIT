@@ -25,7 +25,7 @@
                 ainbry(nfcoil+nvesel,msbdry)
       dimension fcref(nfcoil)
       dimension pbry(msbdry),psbry(msbdry)
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
       data iskip/0/,idoit/0/
 
       kerror = 0
@@ -278,7 +278,7 @@
              enddo
            endif
            do m=1,nfcoil
-            if (fwtfc(m).le.0.0) cycle
+             if (fwtfc(m).le.0.0) cycle
              nj=nj+1
              abry(nj,nk)=0.
            enddo

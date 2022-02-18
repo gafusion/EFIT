@@ -1054,7 +1054,7 @@
                   return
                endif
                jmax = min(ilo,n-i)
-               if(jmax .lt. 1) cycle
+               if (jmax .lt. 1) cycle
                kmax = min(ihi,n-i)
                do j=1,jmax
                   mmj = middle-j

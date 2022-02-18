@@ -30,7 +30,7 @@ IAVED,See namelist IN1.
 IAVEM,See namelist IN1.
 IAVEUS,See namelist IN1.
 IAVEV,See namelist IN1.
-IBATCH,See namelist IN1.
+IBATCH,UNUSED (input and output only).
 IBTCOMP,See namelist IN1.
 ICINIT,See namelist IN1.
 ICPROF,See namelist IN1.

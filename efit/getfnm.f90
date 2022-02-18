@@ -162,9 +162,8 @@
 !!
 !**********************************************************************      
       subroutine setfnme(let,ishot,itime,istore,fname)
-      use expath
+      use exvars
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-!vasoct3,08      include 'expath.inc'
       character*(*) let
       character*(*) fname
       character*5 sec_msec

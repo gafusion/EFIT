@@ -23,7 +23,7 @@
       character*40 filenmme
       data nset/20/,cdum/1.0/
       save nset
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
       kerror = 0
 !
 #ifdef DEBUG_LEVEL3
@@ -901,9 +901,11 @@
         read (nffile,iostat=ioerr)  zzgamin
         if (ioerr.ne.0) exit
         do ii=1,nstark
-          if (abs(rrgamin(ii)-rrgam(jtime,ii)).gt.1.e-4_dp) cycle
-          if (abs(zzgamin(ii)-zzgam(jtime,ii)).gt.1.e-4_dp) cycle
+          if (abs(rrgamin(ii)-rrgam(jtime,ii)).gt.1.e-4_dp) exit
+          if (abs(zzgamin(ii)-zzgam(jtime,ii)).gt.1.e-4_dp) exit
         enddo
+        if (abs(rrgamin(ii)-rrgam(jtime,ii)).gt.1.e-4_dp) cycle
+        if (abs(zzgamin(ii)-zzgam(jtime,ii)).gt.1.e-4_dp) cycle
         read (nffile,iostat=ioerr) rbrfc
         if (ioerr.ne.0) exit
         read (nffile,iostat=ioerr) rbzfc
@@ -956,7 +958,7 @@
       do mmm=1,nstark
         gbrpc(mmm,kk)=0.0
         gbzpc(mmm,kk)=0.0
-        if (rrgam(jtime,mmm).le.1.e-8_dp) exit
+        if (rrgam(jtime,mmm).le.1.e-8_dp) cycle
         r=rrgam(jtime,mmm)
         do ii=1,nw
           a=rgrid(ii)

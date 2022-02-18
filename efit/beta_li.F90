@@ -26,7 +26,7 @@
       real*8,dimension(:),allocatable :: worksi,workrm,bwork, &
              cwork,dwork,x,y,dpleng
       dimension xsier(nercur)
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
       data inorm/3/,ibtcal/2/
 
       kerror = 0
@@ -572,7 +572,7 @@
       real*8,dimension(:),allocatable :: x,y,dpleng,xxs,yys
       data inorm/3/,ibtcal/2/
 ! MPI >>>
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
       kerror = 0
 ! MPI <<<
 !

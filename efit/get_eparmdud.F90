@@ -116,8 +116,8 @@ subroutine read_dirs_shot(filename)
   use var_exdata, only: ishot
   use var_cecoil, only: iecurr
   use var_vessel, only: ivesel
+  use exvars, only: table_dir,input_dir,store_dir
   use var_inputc, only: efitversion
-  use expath, only: table_dir,input_dir,store_dir
   implicit integer*4 (i-n), real*8 (a-h,o-z)
   real*8, dimension(2000):: expmp2,coils,fwtsi,fwtmp2,psibit,bitmpi,denr,denv,fwtfc, &
                             brsp,bitfc,ecurrt,xalpa,xgama,rzeroj,fwtec,bitec, &
@@ -192,13 +192,13 @@ subroutine read_omas_in1(filename)
   use var_exdata, only: ishot
   use var_cecoil, only: iecurr
   use var_vessel, only: ivesel
-  use var_inputc, only: efitversion
   use var_nio
   use error_control
-  use expath, only: table_dir,input_dir,store_dir
+  use exvars, only: table_dir,input_dir,store_dir
+  use var_inputc, only: efitversion
   implicit integer*4 (i-n), real*8 (a-h,o-z)
   integer*4  :: istat
-  integer :: dims
+  integer*4 :: dims
   character (*) :: filename
   logical :: fitsiref,fitfcsum
   logical :: file_stat

@@ -53,7 +53,7 @@ IAVEUS, ,"| ""IAverage usec"". Changes units on averaging times (IAVED, IAVEM, I
 | ,>0 change units to microseconds
 | ,<=0 leave units in milliseconds"
 IAVEV, 10, """IAverage Voltage"". Time in milliseconds for averaging loop voltage."
-IBATCH,0,1 = write out flux surface coordinates in P(SHOT).TIME file.
+IBATCH, 0, UNUSED (input and output only)
 IBOUND,0,"| 0 = trace from inside wall. (default)
 | - -1 = trace from outside wall."
 IBTCOMP,1,"| ""(Integer flag) BT Compensation"". Toroidal field pickup compensation. Subtract
@@ -148,9 +148,9 @@ ITEK,,"| plotting option. For MSE electric field corrections KEECUR > 0 must set
 | - - = include x-ray arrays plot. (implies IXRAY=1)
 | - 5 = produce plot data file PLTOUT.OUT, to be processed using EFITPLOT on Vaxs or tek, plotps in UNIX workstations.
 | - >10 = same as 5 except only ITEK-10 number of plots over whole time interval of analysis.
-| - >100= the plot data file for each timeslice wil have a specific name p(shot).(time).
-| - 105=plot data file p(shot).(time) for every time step.
-| - 110+n= p(shot).(time0 for every n time steps."
+| - >100= the plot data file for each timeslice wil have a specific name pl(shot).(time).
+| - 105=plot data file pl(shot).(time) for every time step.
+| - 110+n= pl(shot).(time0 for every n time steps."
 ITIME,,"""Integer Time"". Time in milliseconds of slice to analyze."
 ITIMEU,0,"""Integer Time usec"". Time in microseconds of slice to analyze. (which value supersedes?)"
 ITRACE,-1,"| - 1 = compute external separatrix distance. (default)

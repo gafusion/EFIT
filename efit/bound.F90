@@ -846,7 +846,7 @@
       real*8 piov2,piov4,fpiov4,spiov4,tpiov4,tpiov2
       data n111/1/,n333/3/
       save n111,n333
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
 
       kerror = 0
       ier = 0
@@ -2034,7 +2034,7 @@
       use commonblocks,only: cjrf,wxin,wyin,wxout,wyout
       include 'eparm.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xp(*),yp(*)
+      dimension xp(npoint),yp(npoint)
       data iflag/2/
 !
       if (iflag.ne.2) then
@@ -2210,7 +2210,7 @@
       use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension xout(*),yout(*),psi(*),rgrid(*),zgrid(*)
+      dimension xout(npoint),yout(npoint),psi(nw*nh),rgrid(nw),zgrid(nh)
 
       kerror = 0
       n111=1

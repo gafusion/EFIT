@@ -308,7 +308,7 @@
 
       ! MPI >>>
       module mpi_info
-         integer :: rank, nproc, ierr
+         integer*4 :: rank, nproc, ierr
          integer*4,dimension(:),allocatable :: dist_data
          integer*4,dimension(:),allocatable :: dist_data_displs
          double precision,dimension(:,:),allocatable :: fwtgam_mpi
@@ -320,16 +320,16 @@
       use set_kinds
       logical write_Kfile ,fitfcsum
 
-      integer icondn,itek,kdata,itrace,ierchk,iconvr,ixray,itell &
-           ,kprfit,licalc,ibound,ibatch,idite,ilaser, lookfw &
-            ,kdot, icutfp, keqdsk,kdofit,kbetapr,kplotpr,kpressb &
-            ,kdoqn,kfcurb,kpcurb, kzeroj, ncstne,ncstte,ncstfp,ncstpp &
-            ,kwripre,negcur, kframe,kskipvs,icntour, iavdpl &
-            ,jwake,limvs, kbound,kgraph,istore,iout,kdopre &
-            ,iishot,kktime,iplcout,ksigma, kwritime 
-      integer iteks, mxiters, zelipss, n1coils
-      integer itekt, mxitert, zeliptt, n1coilt
-      integer*8 kgrid
+      integer*4 icondn,itek,kdata,itrace,ierchk,iconvr,ixray,itell, &
+                kprfit,licalc,ibound,ibatch,idite,ilaser,lookfw, &
+                kdot,icutfp,keqdsk,kdofit,kbetapr,kplotpr,kpressb, &
+                kdoqn,kfcurb,kpcurb,kzeroj,ncstne,ncstte,ncstfp,ncstpp, &
+                kwripre,negcur,kframe,kskipvs,icntour,iavdpl, &
+                jwake,limvs,kbound,kgraph,istore,iout,kdopre, &
+                iishot,kktime,iplcout,ksigma,kwritime 
+      integer*4 iteks, mxiters, zelipss, n1coils
+      integer*4 itekt, mxitert, zeliptt, n1coilt
+      integer*4 kgrid
 
       data kgrid/1/,kwripre/0/,kwritime/0/
       data licalc/1/
@@ -363,13 +363,12 @@
 
       module var_inputc
       character*12 mfitpop
-      character*7 efitversion
       character(4),dimension(:),allocatable :: limloc
       character(10),dimension(:),allocatable :: vsname
       character(10),dimension(:),allocatable :: mpnam2
       character(10),dimension(:),allocatable :: lpname
-      character filimt*100,cshot*6,jdebug*4
-      integer idebug ! DEPRECIATED
+      character efitversion*8,filimt*100,cshot*6,jdebug*4
+      integer*4 idebug ! DEPRECIATED
       data idebug/0/,jdebug/'NONE'/ ! DEPRECIATED
       end module var_inputc
 
@@ -816,11 +815,12 @@
 
       module efit_bdata
       use set_kinds
-      implicit integer*8 (i-n), real*8 (a-h,o-z)
-      integer*8 iunit,m_write
-      integer*8 limtrs
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      integer*4 iunit,m_write
+      integer*4 limtrs
       real*8 xlims(5),ylims(5),xlmins
-      data iunit/35/, m_write/1/
+      data iunit/35/
+      data m_write/1/ ! TODO: output file type option should not be hard coded...
       data limtrs/5/
       end
 

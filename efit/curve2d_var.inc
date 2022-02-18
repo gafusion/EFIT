@@ -1,8 +1,10 @@
-!
-! $Date: 2008/07/29 23:42:31 $ $Author: radhakri $
-!
-! @(#)$RCSfile: curve2d_var.inc,v $ $Revision: 1.1.2.2 $
-!
+      use set_kinds
+      use eparm, only: ndim
+      use curve2d_mod, only: ncrv, mdim
+      use efit_bdata, only: iunit, m_write
+
+      implicit integer*4 (i-n), real*8 (a-h, o-z)
+
       dimension x(ndim,ncrv), y(ndim,ncrv), bshft(2), thcrv(ncrv), &
          sclpc(ncrv), sx(ncrv,ncrv), &
          sy(ncrv,ncrv), sangle(ncrv), sgap(ncrv), &
@@ -10,7 +12,7 @@
          tlen(ncrv), zmat(ix,iy), &
          xmpos(mdim), ympos(mdim), anum(mdim), hgt(mdim)
 
-      integer*8 nplt(ncrv), ncnct(ncrv), ncurve, &
+      integer*4 nplt(ncrv), ncnct(ncrv), ncurve, &
           pltlen, xnlen, ynlen, xtck, ytck, ixnon, iynon,  &
           intax, intay, iaxis, igridx, igridy, ibrdr,  &
           idash, idot, ichdot, ichdsh, &
@@ -23,5 +25,5 @@
       character*20 ptitle, xtitle, ytitle, clearx(ncrv), sname
       character*20 mode, lbflg, draw
 
-      integer*8 imes(mdim), inum(mdim), note(mdim), iplce(mdim), m
+      integer*4 imes(mdim), inum(mdim), note(mdim), iplce(mdim), m
       character*72  lmes(mdim)
