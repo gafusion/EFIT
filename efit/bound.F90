@@ -49,8 +49,8 @@
       use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension psi(*),zero(*),x(*),y(*),xcontr(*),ycontr(*)
-      dimension dist(5),xlim(*),ylim(*)
+      dimension psi(nwh),zero(nwh),x(nw),y(nh),xcontr(npoint),ycontr(npoint)
+      dimension dist(5),xlim(limitr),ylim(limitr)
       dimension zerol(1),xt(1),yt(1),rad(1),yctr(1)
       data etolc,etol,nloop/1.e-06_dp,1.e-04_dp,60/
       data nttyo/6/,psitol/1.0e-04_dp/,mecopy/0/,n111/1/
@@ -840,7 +840,7 @@
       use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension pds(6),xc(*),yc(*)
+      dimension pds(6),xc(ipts),yc(ipts),bkx(lubicx+1),bky(lubicy+1)
       dimension cspln(kubicx,lubicx,kubicy,lubicy)
       real*8 piov2,piov4,fpiov4,spiov4,tpiov4,tpiov2
       data n111/1/,n333/3/
@@ -1427,8 +1427,8 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       real(dp), intent(inout) :: xseps(2),yseps(2) ! this is an address of a location inside a 2-d array
-      dimension x(nx),y(nz),pds(6),xxout(*),yyout(*),psipsi(nx*nz)
-      dimension bpoo(*),bpooz(*),pdss(6),xlimv(*),ylimv(*)
+      dimension x(nx),y(nz),pds(6),xxout(kfound),yyout(kfound),psipsi(nx*nz)
+      dimension bpoo(kfound),bpooz(kfound),pdss(6),xlimv(limtrv),ylimv(limtrv)
       dimension pdsold(6),zeross(1),xs(1),ys(1)
       data psitol/1.0e-04_dp/
       character(len=80) :: strtmp

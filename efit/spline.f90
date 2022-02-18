@@ -35,28 +35,38 @@
 !!
 !**********************************************************************
       subroutine seva2d(bkx,lx,bky,ly,cs,xl,yl,fs,ier,icalc)
+      use error_control, only: errctrl_msg
       include 'eparm.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !
       INTEGER*4 ier, lx, ly
-      REAL*8 cs(kubicx,lubicx,kubicy,lubicy),xl,yl,fs(6),bkx(*),bky(*)
+      REAL*8 cs(kubicx,lubicx,kubicy,lubicy),xl,yl,fs(6), &
+             bkx(lubicx+1),bky(lubicy+1)
 !
 !     Local Variable Specifications:
 !
       dimension work0(4),work1(4),work2(4)
       data n00/0/,n11/1/,n22/2/
+      save n00,n11,n22
+!
+!     Check for consistent variable size inputs
+!
+      ier = 0
+      if ((lx.gt.lubicx+1).or.(ly.gt.lubicy+1)) then
+        ier = 1
+        call errctrl_msg('seva2d', &
+                         'input variables are not consistent')
+        stop
+      endif
 !
 !     Evaluate function and its partial derivatives at (XL, YL):
-!
-      save n00,n11,n22
 !
 !     First do all the lookup and interpolation stuff.
 !     This is the most time consuming part of the evaluation, so
 !     don't do more than needed.
 !
-      ier = 0
-      call interv(bky,ly,yl,lef,mflag)
-      call interv(bkx,lx,xl,ibk,ndummy)
+      call interv(bky(1:ly),ly,yl,lef,mflag)
+      call interv(bkx(1:lx),lx,xl,ibk,ndummy)
       h = xl - bkx(ibk)
       do jj=1,4
          work0(jj) = ppvalw(cs(1,ibk,jj,lef),h,n00)
@@ -474,7 +484,7 @@
 !
       call bspp2d(rknot,copy,nw,krord,nh,work4,breakr,work5,lr)
       ndum=lr*krord
-      call bspp2d(zknot,work5,nh,kzord,ndum    ,work6,breakz,coef,lz)
+      call bspp2d(zknot,work5,nh,kzord,ndum,work6,breakz,coef,lz)
 ! 
       DEALLOCATE(work4,work5,work6) 
       return
@@ -702,7 +712,7 @@
       subroutine bspp2d ( t, bcoef, n, k, m, scrtch, break, coef, l )
       implicit integer*4 (i-n), real*8 (a-h, o-z)
         parameter (kmax=4)
-      INTEGER*4 k,l,m,n,   i,j,jp1,kmj,left
+      INTEGER*4 k,l,m,n,i,j,jp1,kmj,left
       dimension bcoef(n,m),break(*),coef(m,k,*),scrtch(k,k,m),t(*), &
            biatx(kmax)
       REAL*8 diff,fkmj,sum

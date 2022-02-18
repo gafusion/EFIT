@@ -25,7 +25,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension pds(6),amer(2,2),bmer(2),wmer(2),imer(2),temp(ntime)
-      dimension rmid2(2),zerovs(1)
+      dimension rmid2(2),zerovs(1),ravs(1),zavs(1)
       dimension sigams(nstark)
       real*8,dimension(:),allocatable :: xsisii,bpres,cpres, &
                     dpres,sjtli,sjtlir,sjtliz,rjtli,bpresw, &
@@ -57,7 +57,7 @@
       kerror = 0
       oring(iges)=999 ! initialize at ridiculous value
       ringap=999
-      zavs=0.0
+      zavs(1)=0.0
 !
       xdum=0.0
       ydum=0.0
@@ -1455,25 +1455,25 @@
         routvs=xxtra(i,ixl)
         zoutvs=yxtra(i,ixl)
         do i=1,20
-          ravs=0.5_dp*(rinvs+routvs)
-          zavs=0.5_dp*(zinvs+zoutvs)
+          ravs(1)=0.5_dp*(rinvs+routvs)
+          zavs(1)=0.5_dp*(zinvs+zoutvs)
           call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
           if (zerovs(1).gt.0.01_dp) then
-            rinvs=ravs
-            zinvs=zavs
+            rinvs=ravs(1)
+            zinvs=zavs(1)
           else
-            routvs=ravs
-            zoutvs=zavs
+            routvs=ravs(1)
+            zoutvs=zavs(1)
           endif
         enddo
-        rvsout(iges)=ravs*100.
-        zvsout(iges)=zavs*100.
+        rvsout(iges)=ravs(1)*100.
+        zvsout(iges)=zavs(1)*100.
       else
         rvsout(iges)=0.
         zvsout(iges)=0.
       endif
       endif ! dis2p.ge.0.1_dp*drgrid
-      if ((zavs*zfsep.le.0.0).and.(ixyz.eq.-2)) then
+      if ((zavs(1)*zfsep.le.0.0).and.(ixyz.eq.-2)) then
         ixyz=-1
         go to 73723
       endif
@@ -1485,7 +1485,7 @@
 !------------------------------------------------------------------
       ycut=ymax*0.5_dp
       ycutm=ymin*0.5_dp
-      if (zavs.gt.ycut.and.ravs.lt.rymax) then
+      if (zavs(1).gt.ycut.and.ravs(1).lt.rymax) then
         rvsiu(iges)=rvsout(iges)
         zvsiu(iges)=zvsout(iges)
         if (ishot.ge.100771) then
@@ -1503,7 +1503,7 @@
           diludom(iges)=100.0*sqrt(diludom(iges))
           if (zilnow.lt.zudom) diludom(iges)=-diludom(iges)
         endif
-      elseif (zavs.gt.ycut.and.ravs.gt.rymax) then
+      elseif (zavs(1).gt.ycut.and.ravs(1).gt.rymax) then
 !------------------------------------------------------------------
 !--     get distance between outer leg and upper baffle          --
 !------------------------------------------------------------------
@@ -1524,13 +1524,13 @@
           dolubaf(iges)=100.0*sqrt(dolubaf(iges))
           if (rolnow.gt.rubaf) dolubaf(iges)=-dolubaf(iges)
         endif
-      elseif (zavs.lt.ycutm.and.ravs.gt.rymin) then
+      elseif (zavs(1).lt.ycutm.and.ravs(1).gt.rymin) then
 !------------------------------------------------------------------
 !--     get lower strike points                                  --
 !------------------------------------------------------------------
         rvsod(iges)=rvsout(iges)
         zvsod(iges)=zvsout(iges)
-      elseif (zavs.lt.ycutm.and.ravs.lt.rymin) then
+      elseif (zavs(1).lt.ycutm.and.ravs(1).lt.rymin) then
         rvsid(iges)=rvsout(iges)
         zvsid(iges)=zvsout(iges)
       endif
@@ -1662,25 +1662,25 @@
           routvs=xxtra(i,ixl)
           zoutvs=yxtra(i,ixl)
           do i=1,20
-            ravs=0.5_dp*(rinvs+routvs)
-            zavs=0.5_dp*(zinvs+zoutvs)
+            ravs(1)=0.5_dp*(rinvs+routvs)
+            zavs(1)=0.5_dp*(zinvs+zoutvs)
             call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
             if (zerovs(1).gt.0.01_dp) then
-              rinvs=ravs
-              zinvs=zavs
+              rinvs=ravs(1)
+              zinvs=zavs(1)
             else
-              routvs=ravs
-              zoutvs=zavs
+              routvs=ravs(1)
+              zoutvs=zavs(1)
             endif
           enddo
-          rvsin(iges)=ravs*100.
-          zvsin(iges)=zavs*100.
+          rvsin(iges)=ravs(1)*100.
+          zvsin(iges)=zavs(1)*100.
         else
           rvsin(iges)=0.
           zvsin(iges)=0.
         endif
       endif
-      if ((zavs*zfsep.le.0.0).and.(ixyz.eq.-2)) then
+      if ((zavs(1)*zfsep.le.0.0).and.(ixyz.eq.-2)) then
         ixyz=-1
         go to 26199
       endif
@@ -1692,7 +1692,7 @@
 !------------------------------------------------------------------
         ycut=ymax*0.5_dp
         ycutm=ymin*0.5_dp
-        if (zavs.gt.ycut.and.ravs.lt.rymax) then
+        if (zavs(1).gt.ycut.and.ravs(1).lt.rymax) then
           rvsiu(iges)=rvsin(iges)
           zvsiu(iges)=zvsin(iges)
           if (ishot.ge.100771) then
@@ -1710,7 +1710,7 @@
             diludom(iges)=100.0*sqrt(diludom(iges))
             if (zilnow.lt.zudom) diludom(iges)=-diludom(iges)
           endif
-        elseif (zavs.gt.ycut.and.ravs.gt.rymax) then
+        elseif (zavs(1).gt.ycut.and.ravs(1).gt.rymax) then
 !------------------------------------------------------------------
 !--       get distance between outer leg and upper baffle        --
 !------------------------------------------------------------------
@@ -1731,13 +1731,13 @@
             dolubaf(iges)=100.0*sqrt(dolubaf(iges))
             if (rolnow.gt.rubaf ) dolubaf(iges)=-dolubaf(iges)
           endif
-        elseif (zavs.lt.ycutm.and.ravs.gt.rymin) then
+        elseif (zavs(1).lt.ycutm.and.ravs(1).gt.rymin) then
 !------------------------------------------------------------------
 !--       get lower strike points                                --
 !------------------------------------------------------------------
           rvsod(iges)=rvsin(iges)
           zvsod(iges)=zvsin(iges)
-        elseif (zavs.lt.ycutm.and.ravs.lt.rymin) then
+        elseif (zavs(1).lt.ycutm.and.ravs(1).lt.rymin) then
           rvsid(iges)=rvsin(iges)
           zvsid(iges)=zvsin(iges)
         endif
@@ -1808,23 +1808,23 @@
         routvs=xxtra(i,ixl)
         zoutvs=yxtra(i,ixl)
         do i=1,20
-          ravs=0.5_dp*(rinvs+routvs)
-          zavs=0.5_dp*(zinvs+zoutvs)
+          ravs(1)=0.5_dp*(rinvs+routvs)
+          zavs(1)=0.5_dp*(zinvs+zoutvs)
           call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
           if (zerovs(1).gt.0.01_dp) then
-            rinvs=ravs
-            zinvs=zavs
+            rinvs=ravs(1)
+            zinvs=zavs(1)
           else
-            routvs=ravs
-            zoutvs=zavs
+            routvs=ravs(1)
+            zoutvs=zavs(1)
           endif
         enddo
-        if ((zavs*zssep.lt.0.0).and.(ixyz.eq.-2)) then
+        if ((zavs(1)*zssep.lt.0.0).and.(ixyz.eq.-2)) then
           ixyz=-1
           go to 66501
         endif
-        rvsnow=ravs*100.
-        zvsnow=zavs*100.
+        rvsnow=ravs(1)*100.
+        zvsnow=zavs(1)*100.
       else
         rvsnow=0.
         zvsnow=0.
@@ -1840,13 +1840,13 @@
       rsymin=rymin
       if (zssep.lt.ymin) rsymin=rssep
       if (zssep.gt.ymax) rsymax=rssep
-      if (zavs*zssep.lt.0.0) then
+      if (zavs(1)*zssep.lt.0.0) then
         ravssa=0.0
         zavssa=0.0
       else
-        ravssa=ravs
-        zavssa=zavs
-        if (zavs.gt.ycut.and.ravs.lt.rsymax) then
+        ravssa=ravs(1)
+        zavssa=zavs(1)
+        if (zavs(1).gt.ycut.and.ravs(1).lt.rsymax) then
           rvsiu(iges)=rvsnow
           zvsiu(iges)=zvsnow
           if (ishot.lt.100771) go to 6500
@@ -1863,7 +1863,7 @@
           enddo
           diludom(iges)=100.0*sqrt(diludom(iges))
           if (zilnow.lt.zudom) diludom(iges)=-diludom(iges)
-        elseif (zavs.gt.ycut.and.ravs.gt.rsymax) then
+        elseif (zavs(1).gt.ycut.and.ravs(1).gt.rsymax) then
 !------------------------------------------------------------------
 !--       get distance between outer leg and upper baffle        --
 !------------------------------------------------------------------
@@ -1883,13 +1883,13 @@
           enddo
           dolubaf(iges)=100.0*sqrt(dolubaf(iges))
           if (rolnow.gt.rubaf) dolubaf(iges)=-dolubaf(iges)
-        elseif (zavs.lt.ycutm.and.ravs.gt.rsymin) then
+        elseif (zavs(1).lt.ycutm.and.ravs(1).gt.rsymin) then
 !------------------------------------------------------------------
 !--       get lower strike points                                --
 !------------------------------------------------------------------
           rvsod(iges)=rvsnow
           zvsod(iges)=zvsnow
-        elseif (zavs.lt.ycutm.and.ravs.lt.rsymin) then
+        elseif (zavs(1).lt.ycutm.and.ravs(1).lt.rsymin) then
           rvsid(iges)=rvsnow
           zvsid(iges)=zvsnow
         endif
@@ -1960,28 +1960,28 @@
         routvs=xxtra(i,ixl)
         zoutvs=yxtra(i,ixl)
         do i=1,20
-          ravs=0.5_dp*(rinvs+routvs)
-          zavs=0.5_dp*(zinvs+zoutvs)
+          ravs(1)=0.5_dp*(rinvs+routvs)
+          zavs(1)=0.5_dp*(zinvs+zoutvs)
           call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
           if (zerovs(1).gt.0.01_dp) then
-            rinvs=ravs
-            zinvs=zavs
+            rinvs=ravs(1)
+            zinvs=zavs(1)
           else
-            routvs=ravs
-            zoutvs=zavs
+            routvs=ravs(1)
+            zoutvs=zavs(1)
           endif
         enddo
-        if (((abs(ravssa-ravs).le.1.e-04_dp).and. &
-          (abs(zavssa-zavs).le.1.e-04_dp)).and.(ixyz.eq.-1)) then
+        if (((abs(ravssa-ravs(1)).le.1.e-04_dp).and. &
+          (abs(zavssa-zavs(1)).le.1.e-04_dp)).and.(ixyz.eq.-1)) then
           ixyz=-2
           go to 66199
         endif
-        if ((zavs*zssep.lt.0.0).and.(ixyz.eq.-1)) then
+        if ((zavs(1)*zssep.lt.0.0).and.(ixyz.eq.-1)) then
           ixyz=-2
           go to 66199
         endif
-        rvsnow=ravs*100.
-        zvsnow=zavs*100.
+        rvsnow=ravs(1)*100.
+        zvsnow=zavs(1)*100.
       else
         rvsnow=0.
         zvsnow=0.
@@ -1989,10 +1989,10 @@
 !------------------------------------------------------------------
 !--   get distance between inner leg and upper dome              --
 !------------------------------------------------------------------
-      if (zavs*zssep.ge.0.0) then
+      if (zavs(1)*zssep.ge.0.0) then
         ycut=ymax*0.5_dp
         ycutm=ymin*0.5_dp
-        if (zavs.gt.ycut.and.ravs.lt.rsymax) then
+        if (zavs(1).gt.ycut.and.ravs(1).lt.rsymax) then
           rvsiu(iges)=rvsnow
           zvsiu(iges)=zvsnow
           if (ishot.ge.100771) then
@@ -2010,7 +2010,7 @@
             diludom(iges)=100.0*sqrt(diludom(iges))
             if (zilnow.lt.zudom) diludom(iges)=-diludom(iges)
           endif
-        elseif (zavs.gt.ycut.and.ravs.gt.rsymax) then
+        elseif (zavs(1).gt.ycut.and.ravs(1).gt.rsymax) then
 !------------------------------------------------------------------
 !--       get distance between outer leg and upper baffle          --
 !------------------------------------------------------------------
@@ -2031,13 +2031,13 @@
             dolubaf(iges)=100.0*sqrt(dolubaf(iges))
             if (rolnow.gt.rubaf) dolubaf(iges)=-dolubaf(iges)
           endif
-        elseif (zavs.lt.ycutm.and.ravs.gt.rsymin) then
+        elseif (zavs(1).lt.ycutm.and.ravs(1).gt.rsymin) then
 !------------------------------------------------------------------
 !--       get lower strike points                                  --
 !------------------------------------------------------------------
           rvsod(iges)=rvsnow
           zvsod(iges)=zvsnow
-        elseif (zavs.lt.ycutm.and.ravs.lt.rsymin) then
+        elseif (zavs(1).lt.ycutm.and.ravs(1).lt.rsymin) then
           rvsid(iges)=rvsnow
           zvsid(iges)=zvsnow
         endif
