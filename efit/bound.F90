@@ -841,8 +841,7 @@
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension pds(6),xc(*),yc(*)
-!      dimension cspln(kubicx,lubicx,kubicy,lubicy)
-      dimension cspln(*)
+      dimension cspln(kubicx,lubicx,kubicy,lubicy)
       real*8 piov2,piov4,fpiov4,spiov4,tpiov4,tpiov2
       data n111/1/,n333/3/
       save n111,n333

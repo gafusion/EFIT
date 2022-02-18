@@ -9441,7 +9441,7 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
-      real*4,dimension(:),allocatable :: xpltloc,ypltloc,xplxloc,yplxloc
+      real*8,dimension(:),allocatable :: xpltloc,ypltloc,xplxloc,yplxloc
 !      equivalence (xpltloc,flxtra(1,1))
 !      equivalence (ypltloc,fpxtra(1,1))
 !      equivalence (xplxloc,flxtra(1,2))

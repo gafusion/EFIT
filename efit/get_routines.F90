@@ -1754,7 +1754,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       character*3 synmlt
       integer*4 ktime, icmls, iermls(ntime)
-      real*4 avemlt, atime(ntime), bbmls(ntime), sigbmls(ntime),      &
+      real*8 avemlt, atime(ntime), bbmls(ntime), sigbmls(ntime),      &
              rrmls(ntime), zzmls(ntime),                              &
              l1mls(ntime), l2mls(ntime), l4mls(ntime),                &
              epotpmls(ntime), sigepmls(ntime)
@@ -1981,7 +1981,7 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*4 avem,tanham(ktime,nmtark),sigham(ktime,nmtark), &
+      real*8 avem,tanham(ktime,nmtark),sigham(ktime,nmtark), &
          rrham(nmtark),zzham(nmtark), &
          sarkar,sarkaz,a1ham(nmtark), &
          a2ham(nmtark),a3ham(nmtark),a4ham(nmtark), &
@@ -1990,7 +1990,7 @@
          hgain(nmtark),hslope(nmtark),hscale(nmtark), &
          hoffset(nmtark),max_beamOff, &
          tanham_uncor(ktime,nmtark)
-         real*4 fv30lt,fv30rt,fv210lt,fv210rt
+      real*8 fv30lt,fv30rt,fv210lt,fv210rt
 
 #ifdef USE_MDS
       do i=1,ktime

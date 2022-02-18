@@ -2957,9 +2957,9 @@
       use eparm, only: npoint
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       data nn/30/
-      real, intent(in) :: xmin, xmax, ymin, ymax, x1, y1, x2, y2
-      real, intent(inout) :: dismin
-      real, intent(in) :: x(npoint), y(npoint)
+      real*8, intent(in) :: xmin, xmax, ymin, ymax, x1, y1, x2, y2
+      real*8, intent(inout) :: dismin
+      real*8, intent(in) :: x(npoint), y(npoint)
 
       dismin=1.0e+20_dp
       delx=x2-x1

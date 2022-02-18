@@ -578,7 +578,7 @@
 
       dimension pds(6)
       integer*4 iii
-      real :: zmaxis_last = 0.0
+      real*8 :: zmaxis_last = 0.0
       data isplit/8/,psitol/1.0e-04_dp/,cdum/1.0/
       save xguess, yguess, xltrac, radbou
 !

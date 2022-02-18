@@ -1715,9 +1715,9 @@
 !**********************************************************************
       subroutine zplines(n, x, y, b, c, d)
       integer*4 n
-      real x(n), y(n), b(n), c(n), d(n)
+      real*8 x(n), y(n), b(n), c(n), d(n)
       integer*4 nm1, ib, i
-      real t
+      real*8 t
 !
       nm1 = n-1
       if ( n .lt. 2 ) return
@@ -1820,11 +1820,11 @@
 !!    @param d : array of spline coefficients
 !!
 !**********************************************************************
-      real function sevals(n, u, x, y, b, c, d)
+      real*8 function sevals(n, u, x, y, b, c, d)
       integer*4 n
-      real  u, x(n), y(n), b(n), c(n), d(n)
+      real*8  u, x(n), y(n), b(n), c(n), d(n)
       integer*4 i, j, k
-      real dx
+      real*8 dx
       data i/1/
       if ( i .ge. n ) i = 1
 !
