@@ -25,7 +25,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension pds(6),amer(2,2),bmer(2),wmer(2),imer(2),temp(ntime)
-      dimension rmid2(2)
+      dimension rmid2(2),zerovs(1)
       dimension sigams(nstark)
       real*8,dimension(:),allocatable :: xsisii,bpres,cpres, &
                     dpres,sjtli,sjtlir,sjtliz,rjtli,bpresw, &
@@ -1442,14 +1442,14 @@
           exit
         endif
       enddo
-      zerovs=1.0
+      zerovs(1)=1.0
       do i=1,npxtra(ixl)
-        zerold=zerovs
+        zerold=zerovs(1)
         call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,xxtra(i,ixl), &
                   yxtra(i,ixl),limfag)
-        if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) exit
+        if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) exit
       enddo
-      if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) then
+      if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) then
         rinvs=xxtra(i-1,ixl)
         zinvs=yxtra(i-1,ixl)
         routvs=xxtra(i,ixl)
@@ -1458,7 +1458,7 @@
           ravs=0.5_dp*(rinvs+routvs)
           zavs=0.5_dp*(zinvs+zoutvs)
           call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
-          if (zerovs.gt.0.01_dp) then
+          if (zerovs(1).gt.0.01_dp) then
             rinvs=ravs
             zinvs=zavs
           else
@@ -1649,14 +1649,14 @@
         if (nminfs.le.20) go to 16199
       endif
       if (dis2p.ge.0.1_dp*drgrid) then
-        zerovs=1.0
+        zerovs(1)=1.0
         do i=1,npxtra(ixl)
-          zerold=zerovs
+          zerold=zerovs(1)
           call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,xxtra(i,ixl), &
                     yxtra(i,ixl),limfag)
-          if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) exit
+          if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) exit
         enddo
-        if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) then
+        if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) then
           rinvs=xxtra(i-1,ixl)
           zinvs=yxtra(i-1,ixl)
           routvs=xxtra(i,ixl)
@@ -1665,7 +1665,7 @@
             ravs=0.5_dp*(rinvs+routvs)
             zavs=0.5_dp*(zinvs+zoutvs)
             call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
-            if (zerovs.gt.0.01_dp) then
+            if (zerovs(1).gt.0.01_dp) then
               rinvs=ravs
               zinvs=zavs
             else
@@ -1795,14 +1795,14 @@
         kerror = 1
         return
       end if
-      zerovs=1.0
+      zerovs(1)=1.0
       do i=1,npxtra(ixl)
-        zerold=zerovs
+        zerold=zerovs(1)
         call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,xxtra(i,ixl), &
                   yxtra(i,ixl),limfag)
-        if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) exit
+        if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) exit
       enddo
-      if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp.and.i>1) then
+      if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp.and.i>1) then
         rinvs=xxtra(i-1,ixl)
         zinvs=yxtra(i-1,ixl)
         routvs=xxtra(i,ixl)
@@ -1811,7 +1811,7 @@
           ravs=0.5_dp*(rinvs+routvs)
           zavs=0.5_dp*(zinvs+zoutvs)
           call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
-          if (zerovs.gt.0.01_dp) then
+          if (zerovs(1).gt.0.01_dp) then
             rinvs=ravs
             zinvs=zavs
           else
@@ -1947,14 +1947,14 @@
         kerror = 1
         return
       endif
-      zerovs=1.0
+      zerovs(1)=1.0
       do i=1,npxtra(ixl)
-        zerold=zerovs
+        zerold=zerovs(1)
         call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,xxtra(i,ixl), &
                   yxtra(i,ixl),limfag)
-        if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) exit
+        if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) exit
       enddo
-      if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) then
+      if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) then
         rinvs=xxtra(i-1,ixl)
         zinvs=yxtra(i-1,ixl)
         routvs=xxtra(i,ixl)
@@ -1963,7 +1963,7 @@
           ravs=0.5_dp*(rinvs+routvs)
           zavs=0.5_dp*(zinvs+zoutvs)
           call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
-          if (zerovs.gt.0.01_dp) then
+          if (zerovs(1).gt.0.01_dp) then
             rinvs=ravs
             zinvs=zavs
           else
