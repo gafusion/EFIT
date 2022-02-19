@@ -67,7 +67,7 @@ subroutine get_eparmdud_defaults()
   icycred_loopmax=1290
   nfourier=5
 
-end subroutine
+end subroutine get_eparmdud_defaults
 
 
 !**********************************************************************
@@ -103,7 +103,7 @@ subroutine get_eparmdud_dependents()
   nwcur2=nwcurn*2
 
   ncurrt=nvesel+nesum+nfcoil
-end subroutine
+end subroutine get_eparmdud_dependents
 
 
 !**********************************************************************
@@ -175,7 +175,7 @@ subroutine read_dirs_shot(filename)
       'Invalid line in namelist: '//trim(line)
   end if
   close(nin)
-end subroutine
+end subroutine read_dirs_shot
 !**********************************************************************
 !>
 !!    read the in1 namelist from an OMAS equilibrium hdf5 file
@@ -481,4 +481,4 @@ subroutine read_omas_in1(filename)
   call errctrl_msg('read_omas_in1','HDF5 needs to be linked')
   stop
 #endif
-end subroutine
+end subroutine read_omas_in1

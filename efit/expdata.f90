@@ -224,8 +224,7 @@
  6678 format ('lim200330.',i3)
 !
       return
-      end
-
+      end subroutine getlim
 
 !**********************************************************************
 !>
@@ -287,4 +286,4 @@
       endif
 !      
       return
-      end
+      end subroutine getsxr

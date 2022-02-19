@@ -13,9 +13,8 @@
 !**          93/04   ..........revised to dump plot data             **
 !**                                                                  **
 !**********************************************************************
-
       subroutine pltout(xplt,yplt,nplt,jtime,ipass, &
-      rmin,rmax,zmin,zmax,ktime,kerror)
+                        rmin,rmax,zmin,zmax,ktime,kerror)
       use set_kinds
       use commonblocks,only: worka,c,wk,copy,bkx,bky,cw,wkw,copyw,bwx, &
            bwy,cj,wkj,copyj,bjx,bjy,cv,wkv,copyv,bvx,bvy,byringr,byringz, &
@@ -9430,7 +9429,7 @@
 19610 format (' saaa(cm) = ',f7.3)
 28971 format (' w    = ',1pe11.4,1x,1pe11.4)
 28973 format ('        ',1pe11.4,1x,1pe11.4)
-      end
+      end subroutine pltout
 
       subroutine expand(n1,n2,nexexx,xmm,jtime)
       use set_kinds
@@ -9495,7 +9494,7 @@
       deallocate(xpltloc,ypltloc,xplxloc,yplxloc)
 !
       return
-      end
+      end subroutine expand
 
 !**********************************************************************
 !**                                                                  **
@@ -9585,7 +9584,7 @@
          endif
       enddo
       return
-      end
+      end subroutine pltcol
 
 !**********************************************************************
 !**                                                                  **
@@ -9614,7 +9613,7 @@
       close(unit=62)
  6200 format (1x,e12.5,1x,e12.5)
       return
-      end
+      end subroutine curvec
 
 !***********************************************************************
 !**                                                                   **
@@ -9782,7 +9781,7 @@
 !**          04/19/93..........first created                          **
 !**                                                                   **
 !*************************************************************************
-      subroutine curve2d (ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
+      subroutine curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
            xorl, yorl, hight, bngle, bshft, ptitle, pltlen, xtitle, &
            xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
            ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
@@ -9837,7 +9836,7 @@
            iexit)
       endif
       return
-      end
+      end subroutine curve2d
 
 !*************************************************************************
 !**                                                                   **
@@ -10004,7 +10003,7 @@
 !**          04/19/93..........first created                          **
 !**                                                                   **
 !*************************************************************************
-      subroutine curve2d_asci (ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
+      subroutine curve2d_asci(ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
            xorl, yorl, hight, bngle, bshft, ptitle, pltlen, xtitle, &
            xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
            ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
@@ -10163,7 +10162,7 @@
 131   format(i5)
 
       return
-      end
+      end subroutine curve2d_asci
 
 !*************************************************************************
 !**                                                                   **
@@ -10330,7 +10329,7 @@
 !**          03/26/93..........first created                          **
 !**                                                                   **
 !*************************************************************************
-      subroutine curve2d_bin (ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
+      subroutine curve2d_bin(ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
            xorl, yorl, hight, bngle, bshft, ptitle, pltlen, xtitle, &
            xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
            ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
@@ -10456,7 +10455,7 @@
       write(iunit) iexit
 
       return
-      end
+      end subroutine curve2d_bin
 
 !***********************************************************************
 !**                                                                   **
@@ -10672,9 +10671,9 @@
       iy = 1
 
       return
-      end
+      end subroutine init2d
 
       subroutine closepl
       close(unit=35)
       return
-      end
+      end subroutine closepl

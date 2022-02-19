@@ -2845,4 +2845,4 @@
  7445 format (10x,'fitting parameters:   ',i5)
  7450 format (8(1x,e12.5,1x))
  7460 format (10x,'chi ip:',/,15x,e12.5)
-      end
+      end subroutine matrix

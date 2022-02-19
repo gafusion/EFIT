@@ -262,4 +262,4 @@
  6617 format (/,1x,'type snap file extension (def for default):')
  6620 format (a)
      return
-end subroutine
+end subroutine get_opt_input

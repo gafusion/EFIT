@@ -732,8 +732,7 @@
  6620 format (a)
  6700 format (a1,a12)
 20000 format (/,1x,'shot data not on disk')
-      end
-
+      end subroutine write_K
 
 !**********************************************************************
 !>
@@ -1097,7 +1096,7 @@
 !      table_dir(1:ltbdis) = table_s(1:ltbdis)
 !      table_dir = table_s(1:ltbdis) !compilers do not like...
  4042 format (1x,a42,1x,a3)
-      end
+      end subroutine write_K2
 
 !**********************************************************************
 !>
@@ -1236,4 +1235,4 @@
       return
 92924 format (4(1pe12.5,1x))
 93024 format (a28)
-      end
+      end subroutine wtime

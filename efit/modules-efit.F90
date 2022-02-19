@@ -110,7 +110,7 @@
           twopi = 2.0*pi
           radeg = pi/180.0
           tmu = 2.0e-07_dp
-        end subroutine
+        end subroutine set_constants
       end module global_constants
 !var_nio
       module var_nio
@@ -167,7 +167,7 @@
           real(dp), intent(in) :: currtime0
           currrank = currrank0
           currtime = currtime0
-        end subroutine
+        end subroutine errctrl_setstate
 
         subroutine errctrl_msg(subrstr,msgstr,mtype0)
           use var_nio, only: nttyo
@@ -198,7 +198,7 @@
 !            subrstr,' at r=',currrank,', t=',int(currtime),': ',msgstr
 !          close(unit=40)
 
-        end subroutine
+        end subroutine errctrl_msg
       end module error_control
 !var_filech
       module var_filech
@@ -575,4 +575,4 @@
         rvsout=0.0
         zvsout=0.0
 
-      end subroutine
+      end subroutine set_mod_arrays

@@ -659,5 +659,5 @@
           end do
 
            End Function to_upper
-      END SUBROUTINE
+      END SUBROUTINE GETDAT
 

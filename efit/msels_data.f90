@@ -132,4 +132,4 @@
 101   FORMAT (A, I6)
 102   FORMAT (A, g15.4)
       RETURN
-      END
+      end subroutine msels_data

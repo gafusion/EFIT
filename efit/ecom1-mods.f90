@@ -822,7 +822,7 @@
       data iunit/35/
       data m_write/1/ ! TODO: output file type option should not be hard coded...
       data limtrs/5/
-      end
+      end module efit_bdata
 
       module exp_bdata
       use set_kinds
@@ -831,7 +831,7 @@
       data ringr/1.766,1.680,1.674,2*1.671,1.681/
       data ringz/2*-1.255,-1.258,-1.264,-1.327,-1.335/
 !---D3D-----------------------D3D----------------------------D3D-----
-      end
+      end module exp_bdata
 
       subroutine set_ecom_mod1_arrays()
       use set_kinds
@@ -945,4 +945,4 @@
       chilibt=0.0
       saiec=0.0
       curmid=0.0
-      end subroutine
+      end subroutine set_ecom_mod1_arrays

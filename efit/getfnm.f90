@@ -28,8 +28,7 @@
       write(fname,1020) let,ishot,sec_msec
  1020 format(a1,i6.6,'.',a5)
       return
-      end
-
+      end subroutine getfnmd
 
 !**********************************************************************
 !>
@@ -61,8 +60,7 @@
       write(fname,1020) let,ishot,sec_msec
  1020 format(a2,i6.6,'.',a5)
       return
-      end
-
+      end subroutine getfnm2
 
 !**********************************************************************
 !>
@@ -101,8 +99,7 @@
  1020 format(a1,i6.6,'.',a5)
  1030 format(a1,i6.6,'.',a5,'_',i3.3)
       return
-      end
-
+      end subroutine getfnmu
 
 !**********************************************************************
 !>
@@ -141,7 +138,7 @@
  1020 format(a2,i6.6,'.',a5)
  1030 format(a2,i6.6,'.',a5,'_',i3.3)
       return
-      end
+      end subroutine getfnmu2
 
 !**********************************************************************
 !>
@@ -180,4 +177,4 @@
  1020 format(a1,i6.6,'.',a5)
       if (istore .eq. 1) fname = store_dir(1:lstdir)//fname
       return
-      end
+      end subroutine setfnme

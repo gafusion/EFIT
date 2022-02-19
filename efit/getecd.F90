@@ -745,8 +745,7 @@
       endif
 !
       return
-      end
-
+      end subroutine getpts
 
 !**********************************************************************
 !>
@@ -1013,8 +1012,7 @@
       endif
 !
       return
-      end
-
+      end subroutine avdata
 
 !**********************************************************************
 !>
@@ -1192,8 +1190,7 @@
       endif
 !
       return
-      end
-
+      end subroutine amdata
 
 !**********************************************************************
 !>
@@ -1344,8 +1341,7 @@
       endif
 !
       return
-      end
-
+      end subroutine apdata
 
 !**********************************************************************
 !>
@@ -1397,8 +1393,7 @@
       endif
 !
       return
-      end
-
+      end subroutine gettanh
 
 !**********************************************************************
 !>
@@ -1484,8 +1479,7 @@
           sigmay(i)=ynow
       enddo
       return
-      end
-
+      end subroutine avdiam
 
 !**********************************************************************
 !>
@@ -1572,8 +1566,7 @@
         y(m)=yave(m)
       enddo
       return
-      end
-
+      end subroutine zmooth
 
 !**********************************************************************
 !>
@@ -1626,8 +1619,7 @@
         enddo
         !
         return
-      end
-
+      end subroutine smoothit
 
 !**********************************************************************
 !>
@@ -1688,8 +1680,7 @@
         enddo
         !
         return
-      end
-
+      end subroutine smoothit2
 
 !**********************************************************************
 !>
@@ -1788,8 +1779,7 @@
       c(2) = 0.
       d(2) = 0.
       return
-      end
-
+      end subroutine zplines
 
 !**********************************************************************
 !>
@@ -1844,8 +1834,7 @@
       dx = u - x(i)
       sevals= y(i) + dx*(b(i) + dx*(c(i) + dx*d(i)))
       return
-      end
-
+      end function sevals
 
 !*************************************************************************
 !>
@@ -1922,8 +1911,8 @@
 !!
 !**********************************************************************
       subroutine magsigma(ishotx,timexy,jtimex,gradsmpx,gradsflx, &
-                        bpermpx,sigmafx,sigmabx,sigmaex, &
-                        sigmaipx,sigmaflx,sigmampx)
+                          bpermpx,sigmafx,sigmabx,sigmaex, &
+                          sigmaipx,sigmaflx,sigmampx)
 
       include 'eparm.inc'
       include 'modules2.inc'
@@ -2327,8 +2316,7 @@
 !99    format(5e12.4)
 
       return
-      end
-
+      end subroutine magsigma
 
 ! =========================================================
 

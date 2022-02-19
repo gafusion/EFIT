@@ -3253,4 +3253,4 @@
  6557 format (/,' npc = ',i4) 
 10200 format (6e12.6) 
 10220 format (5e10.4) 
-      end 
+      end subroutine data_input

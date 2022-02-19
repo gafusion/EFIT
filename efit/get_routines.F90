@@ -1196,7 +1196,7 @@
                  dsidr,ddsiddr,bx,ry,bbk)
 !
       return
-      end subroutine
+      end subroutine getecer
 
 
 !**********************************************************************
@@ -1538,7 +1538,7 @@
                  dsidr,ddsiddr,bx,ry,bbk)
 !
       return
-      end subroutine
+      end subroutine gettir
 
 
 !**********************************************************************
@@ -1736,7 +1736,7 @@
       deallocate(bwork,cwork,dwork)
 
       return
-      end subroutine 
+      end subroutine fixstark
 
 
 !**********************************************************************
@@ -1792,7 +1792,7 @@
       enddo
 !
       return
-      end subroutine 
+      end subroutine getmsels
 
 
 !**********************************************************************
@@ -2444,7 +2444,7 @@
       bbnow=sqrt(fnow**2+pds(2)**2+pds(3)**2)/reee
       esradial=esradial/bbnow
       return
-      end function
+      end function eradial
 
 
 !**********************************************************************

@@ -33,7 +33,6 @@
         dimension phidia(ntims),sigphi(ntims)
         dimension ierr(3),iwght(3)
 
-
         ndia=3
         call dlcomp(tim,diamag,diamagc,sig,nshot,npts,idlc,ierr, &
                     tavg)
@@ -66,8 +65,7 @@
             enddo
         endif
         return
-        end
-
+        end subroutine getdia
 
 !**********************************************************************
 !>
@@ -75,8 +73,8 @@
 !!    
 !!
 !**********************************************************************
-        SUBROUTINE DLCOMP(TIM,DIAMAG,DIAMAGC,SIG,NSHOT,NPTS,IDLC &
-        ,IERR,TAVG)
+        SUBROUTINE DLCOMP(TIM,DIAMAG,DIAMAGC,SIG,NSHOT,NPTS,IDLC, &
+                          IERR,TAVG)
         use exvars
         use var_exdata, only: ishot
         use var_gggttt, only: ntims
@@ -131,7 +129,6 @@
         IDLC=0
         SIGMAD=0.01
         SIGMAF=0.1
-
 !
 !       GET COMPENSATION COEFFICIENTS
 !
@@ -169,7 +166,6 @@
           ENDIF
         endif
         CLOSE(UNIT=NIN)
-
 !
 !  CALCULATE COEFFICIENTS FOR BT COMPENSATION. THIS IS DONE BY
 !  COMPUTING THE RATIO OF THE RESIDUAL TOROIDAL FIELD PICKUP ON THE
@@ -281,7 +277,6 @@
             idlc=idlc+1
             CYCLE
           endif       
-
    
           IF (IPOINT.EQ.'VLOOPBS   ' .OR. IREPLACE.EQ.1) THEN
             NPTS2=IAR(2)
@@ -321,7 +316,6 @@
             enddo
           ENDIF
 
-
           DO J=1,3
             const=coup(i,j)*iadj(j)
             DO N=1,NPTS
@@ -331,8 +325,6 @@
           ENDDO
 
         ENDDO
-
-
 
         DO J=1,3
           IF (IERR(J).NE.0) THEN
@@ -358,8 +350,7 @@
 
  2020   FORMAT(' error in open or read for file DCOEF.DAT')
         return
-        END
-
+        END SUBROUTINE DLCOMP
 
 !**********************************************************************
 !>
@@ -392,7 +383,7 @@
         ENDDO
 
         RETURN
-        END
+        END SUBROUTINE LOWPASS
 
 !**********************************************************************
 !>
@@ -430,4 +421,4 @@
           YOUT(K)=YIN(NIN)
         ENDDO
         RETURN
-        END
+        END SUBROUTINE INTERP

@@ -139,7 +139,7 @@
  1170 format(5x,'Error #19, error > ',e10.3)
  1180 format(5x,'Error #20, Bp+li/2 not consistent , error = ',e10.3)
  1190 format(5x,'Error #21, Bp not consistent , error = ',e10.3)
-      end
+      end subroutine chkerr
 
 !**********************************************************************
 !!
@@ -210,4 +210,4 @@
       enddo
 !
       return
-      end
+      end subroutine lenco2

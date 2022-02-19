@@ -158,7 +158,7 @@
           if (i.eq.mxiter+1) exit
         end do ! in
       end do ! i
-      if (nbdry.le.0) then
+      if ((nbdry.le.0).and.(ivacum.le.0)) then
         call errctrl_msg('fit','not converged, reached max iterations',2)
       endif
 2020  continue

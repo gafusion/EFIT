@@ -300,6 +300,4 @@
       eeakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm &
         + akgamwt * chigamt + akprewt * chipre
       return
-      end function
-
-
+      end function eeakfunc
