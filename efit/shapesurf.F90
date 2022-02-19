@@ -2743,37 +2743,37 @@
 !-- vertical stability parameter,  reference Nuc Fusion  18(1978)1331 --
 !-- move out of pltout so that vertn, xnnc are indepent of itek value --
 !-----------------------------------------------------------------------
-      do i=1,nw
-        do j=1,nh
-          kk=(i-1)*nh+j
-          copy(i,j)=0.0
-          do m=1,nfcoil
-            copy(i,j)=copy(i,j)+gridfc(kk,m)*brsp(m)
-          enddo
-          if (ivesel.gt.0) then
-            do m=1,nvesel
-              copy(i,j)=copy(i,j)+gridvs(kk,m)*vcurrt(m)
-            enddo
-          endif
-          if (iecurr.gt.0) then
-            do m=1,nesum
-              copy(i,j)=copy(i,j)+gridec(kk,m)*ecurrt(m)
-            enddo
-          endif
-        enddo
-      enddo
-      do i=1,nw
-        do j=1,nh
-          k=(i-1)*nh+j
-          copyn(k)=copy(i,j)
-        enddo
-      enddo
-      call sets2d(copyn,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
-      rcur=rcurrt(jges)/100! m
-      zcur=zcurrt(jges)/100! m
-      call seva2d(bkx,lkx,bky,lky,c,rcur,zcur,pds,ier,n555)
-      vertn(jges)=1.-pds(5)/pds(2)*rcur
       if (ivacum.le.0) then
+        do i=1,nw
+          do j=1,nh
+            kk=(i-1)*nh+j
+            copy(i,j)=0.0
+            do m=1,nfcoil
+              copy(i,j)=copy(i,j)+gridfc(kk,m)*brsp(m)
+            enddo
+            if (ivesel.gt.0) then
+              do m=1,nvesel
+                copy(i,j)=copy(i,j)+gridvs(kk,m)*vcurrt(m)
+              enddo
+            endif
+            if (iecurr.gt.0) then
+              do m=1,nesum
+                copy(i,j)=copy(i,j)+gridec(kk,m)*ecurrt(m)
+              enddo
+            endif
+          enddo
+        enddo
+        do i=1,nw
+          do j=1,nh
+            k=(i-1)*nh+j
+            copyn(k)=copy(i,j)
+          enddo
+        enddo
+        call sets2d(copyn,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
+        rcur=rcurrt(jges)/100
+        zcur=zcurrt(jges)/100
+        call seva2d(bkx,lkx,bky,lky,c,rcur,zcur,pds,ier,n555)
+        vertn(jges)=1.-pds(5)/pds(2)*rcur
         rx=rmagx(jges)/100.
         f_0=log(8*rout(jges)/abar)-2+betap(jges)+ali(jges)/2+.5_dp
         delr=rout(jges)/100.-1.67_dp
