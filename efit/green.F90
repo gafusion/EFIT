@@ -6,9 +6,9 @@
 !!
 !!    @param ifag :
 !!
-!!    @param jtime :
+!!    @param jtime : time index
 !!
-!!    @param niter :
+!!    @param niter : iteration number
 !!
 !**********************************************************************
       subroutine green(ifag,jtime,niter)
@@ -34,7 +34,7 @@
             do m=1,nstark
               rbrpc(m,jj)=0.0
               rbzpc(m,jj)=0.0
-           enddo
+            enddo
           endif
           if (mmbmsels.gt.0.or.kdomsels.gt.0) then
             do m=1,nmsels
@@ -339,7 +339,7 @@
 !----------------------------------------------------------------------
 !--       toroidal rotation terms                                    --
 !----------------------------------------------------------------------
-          if ((kvtor.gt.0).and.(xpsi(kk).ge.0.0).and.(xpsi(kk).le.1.0)) &
+          rotation: if ((kvtor.gt.0).and.(xpsi(kk).ge.0.0).and.(xpsi(kk).le.1.0)) &
             then
             call setpwp(xpsi(kk),xpsii)
             do jj=kpcurn+1,kwcurn
@@ -384,7 +384,7 @@
               endif
               fgowpc(jj)=fgowpc(jj) + factor
             enddo
-          endif
+          endif rotation
         enddo
       enddo
 !----------------------------------------------------------------------
@@ -419,8 +419,7 @@
           endif
           rmvtor=rmvtor*(1.-0.5_dp*pwp0r2**2)
           rmvjj=rmvjj*(1.-0.5_dp*pwp0r2**2)
-        endif
-        if (kvtor.eq.3) then
+        elseif (kvtor.eq.3) then
           prew0=pwcurr(xpzero,kwwcur)
           pres0=prcurr(xpzero,kppcur)
           if (abs(pres0).gt.1.e-10_dp) then
@@ -483,7 +482,7 @@
 !----------------------------------------------------------------------
 !--   response functions for MSE                                     --
 !----------------------------------------------------------------------
-      if (kstark.gt.0.or.kdomse.gt.0) then
+      MSE: if (kstark.gt.0.or.kdomse.gt.0) then
         do m=1,nstark
           if (fwtgam(m).gt.0.0) then
             do jj=1,kwcurn
@@ -542,7 +541,7 @@
             enddo
           endif
         enddo
-      endif
+      endif MSE
 !----------------------------------------------------------------------
 !--   response functions for MSE-LS                                  --
 !----------------------------------------------------------------------
@@ -744,7 +743,7 @@
 !----------------------------------------------------------------------
 !--         toroidal rotation contributions                      --
 !----------------------------------------------------------------------
-            if ((kvtor.gt.0).and.(xpsi(kk).ge.0.0).and.(xpsi(kk).le.1.0)) &
+            tor_rot: if ((kvtor.gt.0).and.(xpsi(kk).ge.0.0).and.(xpsi(kk).le.1.0)) &
               then
               call setpwpp(xpsi(kk),xpsii)
               do jj=kpcurn+1,kwcurn
@@ -782,7 +781,7 @@
                 endif
                 fgowdz=fgowdz + factor
               enddo
-            endif
+            endif tor_rot
           enddo
         enddo
 !----------------------------------------------------------------------

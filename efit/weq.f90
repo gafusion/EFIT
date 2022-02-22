@@ -714,7 +714,7 @@
       call eestore
       write (neqdsk,basis)
       limitr=limitr+1
-      if (kdomse.gt.0.or.kstark.gt.0) then
+      MSE: if (kdomse.gt.0.or.kstark.gt.0) then
         do i=1,nstark
           if (kdomse.gt.0) then
             tgamma(i)=cmgam(i,jtime)
@@ -740,7 +740,7 @@
         kkstark=nstark
         saisq=tsaisq(jtime)
         write (neqdsk,eccd)
-      endif
+      endif MSE
 !-----------------------------------------------------------------------
 !--   Write out MSE-LS namelist                                       --
 !-----------------------------------------------------------------------
@@ -860,7 +860,7 @@
 !
       close(unit=neqdsk)
       nbdry=nbsave
-      if (nbdry.gt.2) then
+      fixed_bdry: if (nbdry.gt.2) then
         ierold=ierchk
         ierchk=0
         ibunmn=3
@@ -893,7 +893,7 @@
         limitr=limitr+1
         itime=itime-1
         ierchk=ierold
-      endif
+      endif fixed_bdry
 !
       deallocate(workk,dmion,bworm,cworm,dworm)
 !

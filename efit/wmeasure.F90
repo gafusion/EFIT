@@ -48,7 +48,7 @@
 !-----------------------------------------------------------------------
 !--   write out t(shot).(time)_X files                                --
 !-----------------------------------------------------------------------
-      if ((kwripre.eq.11).and.(itype.eq.2)) then
+      plot_t: if ((kwripre.eq.11).and.(itype.eq.2)) then
         xdum=0.0
         call getfnmd('t',ishot,itime,sfname)
         sfname=sfname(1:13)//'_chi2'
@@ -151,7 +151,7 @@
           write (74,*) time(i),zuperts(i),xdum,xdum
         enddo
         close(unit=74)
-      endif
+      endif plot_t
 !
       if ((iand(iout,2).eq.0).and.(iand(iout,4).eq.0)) &
         return

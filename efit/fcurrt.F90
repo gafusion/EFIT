@@ -3,13 +3,13 @@
 !>
 !!    fcurrt computes the currents in the f coils.
 !!
-!!    @param jtime :
+!!    @param jtime : time index
 !!
-!!    @param iter :
+!!    @param iter : inner equilibrium loop iteration index
 !!
-!!    @param itertt :
+!!    @param itertt : current profile loop iteration index?
 !!
-!!    @param kerror :
+!!    @param kerror : error flag
 !!
 !**********************************************************************
       subroutine fcurrt(jtime,iter,itertt,kerror)
@@ -103,7 +103,7 @@
 !--     standard option, flux loops away from F coils                 --
 !-----------------------------------------------------------------------
       endif
-      if (idoit.le.0.or.itertt.le.1) then
+      first_iter: if (idoit.le.0.or.itertt.le.1) then
 !-----------------------------------------------------------------------
 !--    set up response matrix once for all                            --
 !-----------------------------------------------------------------------
@@ -198,7 +198,7 @@
            enddo
          endif
 !-----------------------------------------------------------------------
-!--      SOL constraints 2014/05/20 LL                                --
+!--      SOL constraints                                              --
 !-----------------------------------------------------------------------
          if (nsol.gt.0) then
 !-----------------------------------------------------------------------
@@ -222,7 +222,7 @@
 !--    optional vessel current model                                  --
 !-----------------------------------------------------------------------
        neqn=nfcoil
-       if (ifitvs.gt.0) then
+       fit_vessel: if (ifitvs.gt.0) then
 !
          if (nfourier.gt.1) then
            nuuu=nfourier*2+1
@@ -290,7 +290,7 @@
            endif
          enddo
          neqn=neqn+nvesel
-       endif
+       endif fit_vessel
 !-----------------------------------------------------------------------
 !--    set up working matrix                                          --
 !-----------------------------------------------------------------------
@@ -346,12 +346,12 @@
            enddo
          enddo
        endif
-      endif
+      endif first_iter
 !-----------------------------------------------------------------------
 !--   RHS of response matrix, start here if got inverse matrix already--
 !-----------------------------------------------------------------------
       nj=0
-      if (nbdry.gt.0.and.iconvr.eq.3) then
+      fixed_bdry: if (nbdry.gt.0.and.iconvr.eq.3) then
 !-----------------------------------------------------------------------
 !--     fixed boundary portion                                        --
 !-----------------------------------------------------------------------
@@ -406,7 +406,7 @@
 !        bdrmaxs=gridpc(9547,75*nw/129)
         write (106,*) 'mbdrmax,bdrmax,bdrmaxs= ',mbdrmax,bdrmax!,bdrmaxs
 #endif
-      endif
+      endif fixed_bdry
 !-----------------------------------------------------------------------
 !--   flux loops portion                                              --
 !-----------------------------------------------------------------------
@@ -447,7 +447,7 @@
 !-----------------------------------------------------------------------
 !--   magnetic probes used only for vacuum error field analysis       --
 !-----------------------------------------------------------------------
-      if (ivacum.gt.0) then
+      vacuum: if (ivacum.gt.0) then
         do m=1,magpri
           if (fwtmp2(m).le.0.0) cycle
           nj=nj+1
@@ -475,7 +475,7 @@
           endif
           bbry(nj)=fwtmp2(m)*(expmpi(jtime,m)-bbry(nj))
         enddo
-      endif
+      endif vacuum
 !-----------------------------------------------------------------------
 !--   F-coil currents specification                                   --
 !-----------------------------------------------------------------------
@@ -569,14 +569,14 @@
 !-----------------------------------------------------------------------
 !--   adjustments for various boundary flux options                   --
 !-----------------------------------------------------------------------
-      if (ifref.gt.0.and.iconvr.eq.3) then
+      bdry_flux: if (ifref.gt.0.and.iconvr.eq.3) then
         sumif = 0.0
         sumifr = 0.0
-!-----------------------------------------------------------------------
-!--     sum of inner F-coils 1-5 A and B zero IFREF=1                 --
-!-----------------------------------------------------------------------
         select case (ifref)
         case(1)
+!-----------------------------------------------------------------------
+!--       sum of inner F-coils 1-5 A and B zero IFREF=1               --
+!-----------------------------------------------------------------------
           do i=1,5
             sumif = sumif + brsp(i) + brsp(i+9)
             sumifr = sumifr + fcref(i) + fcref(i+9)
@@ -584,22 +584,22 @@
           sumif = sumif + brsp(8) + brsp(17)
           sumifr = sumifr + fcref(8) + fcref(17)
 !-----------------------------------------------------------------------
-!--     sum of F coils selected through FCSUM vanish IFREF=2          --
+!--       sum of F coils selected through FCSUM vanish IFREF=2        --
 !-----------------------------------------------------------------------
         case(2)
           do i=1,nfcoil
             sumif = sumif + fcsum(i)*brsp(i)/turnfc(i)
             sumifr = sumifr + fcref(i)*fcsum(i)/turnfc(i)
           enddo
+        case(3)
 !----------------------------------------------------------------------
 !--     choose boundary flux by minimize coil currents IFREF=3       --
 !----------------------------------------------------------------------
-        case(3)
           do i=1,nfcoil
             sumif = sumif + fcref(i)*brsp(i)*fczero(i)
             sumifr = sumifr + fcref(i)**2*fczero(i)
           enddo
-        endselect
+        end select
 !-----------------------------------------------------------------------
 !--     update boundary flux for IFREF=1-3                            --
 !-----------------------------------------------------------------------
@@ -629,10 +629,10 @@
         write (106,*) '      PSIBRY0,PSIBRY,WSIBRY= ',&
                       psibry0,psibry,wsibry
 #endif
+      endif bdry_flux
 !-----------------------------------------------------------------------
-!--     done, estimated errors for fixed boundary calculations        --
+!--   estimated errors for fixed boundary calculations                --
 !-----------------------------------------------------------------------
-      endif
       if (nbdry.gt.0.and.iconvr.eq.3) then
       erbmax=0.0
       erbave=0.0

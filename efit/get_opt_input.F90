@@ -92,7 +92,7 @@
 #endif 
       endif
 
-      if (abs(kdata).eq.2) then 
+      kdata_opt: if (abs(kdata).eq.2) then 
         if (rank == 0) then
           if (use_opt_input .eqv. .false.) then
             write (nttyo,6200)
@@ -112,7 +112,7 @@
           endif
         endif
 
-      elseif (abs(kdata).eq.1) then
+      elseif (abs(kdata).eq.1) then kdata_opt
         ALLOCATE(ifname(1))
         if (rank == 0) then
           if (use_opt_input .eqv. .false.) then
@@ -150,7 +150,7 @@
 #endif
         endif
 
-      elseif (abs(kdata).eq.3 .or. abs(kdata).eq.7) then
+      elseif (abs(kdata).eq.3 .or. abs(kdata).eq.7) then kdata_opt
     
        ! TODO: kwake is undefined here... is it necessary?
 !       if (kwake.eq.0) then
@@ -170,9 +170,9 @@
           endif
         endif
 !       endif
-      else
+      else kdata_opt
         return
-      endif
+      endif kdata_opt
      
 #if defined(USEMPI)
       if (nproc > 1) then

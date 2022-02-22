@@ -292,7 +292,6 @@
       real*8,dimension(:),allocatable :: rzzmax,zzmax
       end module var_mercie
 
-      ! OPT_INPUT >>>
       module opt_input
          integer*4 mode_in
          character cmdfile_in*15, shotfile_in*15
@@ -304,16 +303,13 @@
          character snapext_in*82
          character(80),dimension(:),allocatable :: inpfile_in
       end module opt_input
-      ! OPT_INPUT <<<
 
-      ! MPI >>>
       module mpi_info
          integer*4 :: rank, nproc, ierr
          integer*4,dimension(:),allocatable :: dist_data
          integer*4,dimension(:),allocatable :: dist_data_displs
          double precision,dimension(:,:),allocatable :: fwtgam_mpi
       end module mpi_info
-      ! MPI <<<
 
 !jal 2/23/04 add iplcout=1 print plasma and pf currents to gfile
       module var_input1

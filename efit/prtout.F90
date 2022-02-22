@@ -61,8 +61,7 @@
 !#endif
 !      if ((ivacum.le.0).and.(itek.le.0)) then
       if (ivacum.le.0) then
-! MPI >>>
-        if (rank == 0) then
+        mpi_rank: if (rank == 0) then
           !write (nttyo,10000) trim(ch1),trim(ch2)
           jtime=time(it)
           saisq=tsaisq(it)
@@ -81,18 +80,15 @@
           write (nttyo,10580) aout(it),tleft,tright
           write (nttyo,10600) otop(it),qsta(it),rcurrt(it)
           write (nttyo,10610) zcurrt(it),bcentr(it),qout(it)
-        endif
-! MPI <<<
+        endif mpi_rank
       endif
 !
 ! --- delete fitout.dat if IOUT does not contain 1
 !
       if (iand(iout,1).eq.0) then ! if iout is even, including zero
-! MPI >>>
-         if (rank == 0) then
-           close(unit=nout,status='delete')
-         endif
-! MPI <<<
+        mpi_rank0: if (rank == 0) then
+          close(unit=nout,status='delete')
+        endif mpi_rank0
       else
         !write (nout,10000) trim(ch1),trim(ch2)
         jtime=time(it)

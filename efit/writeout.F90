@@ -133,7 +133,7 @@
 !---------------------------------------------------------------------
 !--  generate input files and command file for running EFIT-AI      --
 !---------------------------------------------------------------------
-      if (kdata .eq. 5 .or. kdata .eq. 6) then
+      make_k_file: if (kdata .eq. 5 .or. kdata .eq. 6) then
         if (rank == 0) then
           if (use_opt_input .eqv. .false.) then
             write (nttyo,6610)
@@ -183,7 +183,7 @@
             stop
           endif
         endif
-      endif
+      endif make_k_file
       open(unit=neqdsk,status='old',file='efit_snap.dat',iostat=ioerr)
       if (ioerr.eq.0) then
         snapfile='efit_snap.dat'
@@ -1041,7 +1041,7 @@
 !---------------------------------------------------------------------
 !--   Append SNAP file                                              --
 !---------------------------------------------------------------------
-      if (kdata.eq.7) then
+      snap: if (kdata.eq.7) then
         open(unit=nsnapf,status='old', &
              file=snap_file,iostat=ioerr)
         if (ioerr.eq.0) then
@@ -1057,7 +1057,7 @@
             snapfile=snapextin
           endif
         endif
-      else
+      else snap
         open(unit=nsnapf,status='old', &
              file='efit_snap.dat',iostat=ioerr)
         if (ioerr.eq.0) then
@@ -1067,7 +1067,7 @@
                file= input_dir(1:lindir)//'efit_snap.dat')
           snapfile=input_dir(1:lindir)//'efit_snap.dat'
         endif
-      endif
+      endif snap
       if (appendsnap.eq.'K'.or.appendsnap.eq.'KG') then
         do i=1,1000000
           read (nsnapf,9991,iostat=ioerr) tmpdata

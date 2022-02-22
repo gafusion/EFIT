@@ -98,7 +98,7 @@
 !-------------------------------------------------------------------
 !--   input kgeteceb=0 from input file
 !-------------------------------------------------------------------
-      if (kgeteceb.le.0) then
+      getECE: if (kgeteceb.le.0) then
       kgeteceb=kgeteceb+1
 !---------------------------------------------------------------------
 !--   Calculation of |B| array from fe array ( harmonic nharm)      --
@@ -142,19 +142,19 @@
 !
       mnow=necein
       if (kcmin.gt.0) then
-      fwtnow=0.001_dp
-      fwtcm =1.0
-      do j=1,nfit
-      mnow=mnow+1
-      do k=1,nfit
-        if (j.ne.k) then
-          arspfit(necein+j,k)=0.0
-        else
-          arspfit(necein+j,k)=fwtcm/fwtnow
-        endif
-      enddo
-      brspfit(necein+j)=0.0
-      enddo
+        fwtnow=0.001_dp
+        fwtcm =1.0
+        do j=1,nfit
+        mnow=mnow+1
+        do k=1,nfit
+          if (j.ne.k) then
+            arspfit(necein+j,k)=0.0
+          else
+            arspfit(necein+j,k)=fwtcm/fwtnow
+          endif
+        enddo
+        brspfit(necein+j)=0.0
+        enddo
       endif
 !
       nnn1=1
@@ -164,7 +164,7 @@
         kerror = 1
         call errctrl_msg('geteceb','sdecm failed to converge')
         return
-      end if
+      endif
       toler=1.0e-06_dp*s(1)
       do I = 1,nfit
         T = 0.0
@@ -209,7 +209,7 @@
 !---------------------------------------------------------------------
 !--   find beceo which is the B value of Te peak point             --
 !---------------------------------------------------------------------
-      if (kfixro.ne.1) then
+      fixro: if (kfixro.ne.1) then
         teeceo=teeceb(1)
         iio=1
         do i=2,nnnte
@@ -256,13 +256,13 @@
         bobit=sqrt(dtero/ppteppbo)
 !EALW        write(*,*)'bobit'
 !EALW        write(*,*)bobit
-      endif ! kfixro.ne.1
+      endif fixro
 !---------------------------------------------------------------------
 !--   take B+ (becep) from becein>beceo and get B- (becem)          --
 !--   find nece (the number of B+)                                  --
 !--       B+, B- from centre to edge                                --
 !---------------------------------------------------------------------
-      if ((kfitece.ne.1).and.(kfixrece.ne.1)) then
+      ECE: if ((kfitece.ne.1).and.(kfixrece.ne.1)) then
       ii=0
       do k=1,necein
         if ((beceo-becein(k)).lt.0.) then
@@ -314,7 +314,7 @@
 !---------------------------------------------------------------------
 !--   Calculation of |B| on rgrid (z=zeceo)   bfield(nw)            --
 !---------------------------------------------------------------------
-      endif ! kgeteceb.le.0
+      endif ECE
       select case (icurrt)
       case (1)
         ffprim(1)=cratio*srma*2.*salpha/darea*twopi*tmu
@@ -435,7 +435,7 @@
          enddo
       endif
 !
-      if (kmax.ne.0) then
+      k_max: if (kmax.ne.0) then
 !
 !--------------------------------------------------------------------
 !--   get babsk array (kmax+1) is strictly increasing order
@@ -583,7 +583,7 @@
       enddo
       if (receo.lt.1.E-5_dp) fwtecebz0=0.0
 !
-      else ! kmax.eq.0
+      else k_max
       do i=1,nw
         bx(i)=bfield(nw-i+1)
         ry(i)=rgrid(nw-i+1)
@@ -594,7 +594,7 @@
         recem(m)=seval(nw,becep(m),bx,ry,bbb,ccc,ddd)
       enddo
       receo=seval(nw,beceo,bx,ry,bbb,ccc,ddd)
-      endif ! kmax.eq.0
+      endif k_max
 !EALW      write(*,*)'recem'
 !EALW      write(*,*)recem
 !EALW      write(*,*)'recep'
@@ -667,7 +667,7 @@
 !EALW       write(*,*)rmbit
 !EALW       write(*,*)'rpbit'
 !EALW       write(*,*)rpbit
-      endif ! (kfitece.ne.1).and.(kfixrece.ne.1)
+      endif getECE
 !
       deallocate(rrgrid,bfield,rrout,bout,babs,bbb,ccc,ddd,btttt, &
                  dsidr,ddsiddr,bx,ry,bbk,dbdr)
@@ -1052,7 +1052,7 @@
 !---------------------------------------------------------------------
 !--   find receo which is Te peak point                            --
 !---------------------------------------------------------------------
-      if (kfixro.ne.1) then      
+      fixro: if (kfixro.ne.1) then      
         teeceo=teecer(1)
         iio=1
         do i=2,nnnte
@@ -1091,12 +1091,12 @@
         ppteppro=abs(0.5_dp*(ptpr1-ptpr2)/drrr)
         dtero=abs(tebit(idesto))
         robit=sqrt(dtero/ppteppro)
-      endif ! kfixro.ne.1
+      endif fixro
 !---------------------------------------------------------------------
 !--   take R- and get R+                                            --
 !--       nece=the number of R-,  recem(nece), recep(nece)          --
 !---------------------------------------------------------------------
-      if ((kfitece.ne.1).and.(kfixrece.ne.1)) then
+      ECE: if ((kfitece.ne.1).and.(kfixrece.ne.1)) then
         ii=0
         do k=mecein,1,-1
           if ((receo-recein(k)).gt.0.) then
@@ -1190,7 +1190,7 @@
             fwtece0(k)=0.
           endif
         enddo
-      endif ! (kfitece.ne.1).and.(kfixrece.ne.1)
+      endif ECE
 !
       deallocate(rrgrid,bfield,rrout,bout,babs,bbb,ccc,ddd,btttt, &
                  dsidr,ddsiddr,bx,ry,bbk)
@@ -1372,7 +1372,7 @@
 !---------------------------------------------------------------------
 !--   find receo which is Te peak point                            --
 !---------------------------------------------------------------------
-      if (kfixro.ne.1) then
+      fixro: if (kfixro.ne.1) then
         teeceo=teecer(1)
         iio=1
         do i=2,nnnte
@@ -1414,7 +1414,7 @@
         ppteppro=abs(0.5_dp*(ptpr1-ptpr2)/drrr)
         dtero=abs(tebit(idesto))
         robit=sqrt(2*dtero/ppteppro)
-      endif ! kfixro.ne.1
+      endif fixro
 !---------------------------------------------------------------------
 !--   take R- and get R+                                            --
 !--       nece=the number of R-,  recem(nece), recep(nece)          --
@@ -1422,7 +1422,7 @@
 #ifdef DEBUG_LEVEL3
       write (6,*) 'GETTIR R-, kfitece/kfixrece  = ',kfitece, kfixrece
 #endif
-      if ((kfitece.ne.1).and.(kfixrece.ne.1)) then
+      ECE: if ((kfitece.ne.1).and.(kfixrece.ne.1)) then
         ii=0
 !       do k=mecein,1,-1
         do k=1,mecein
@@ -1528,7 +1528,7 @@
             fwtece0(k)=0.
           endif
         enddo
-      endif ! (kfitece.ne.1).and.(kfixrece.ne.1)
+      endif ECE
 #ifdef DEBUG_LEVEL3
       write (6,*) 'GETTIR, ecebit = ',(ecebit(i),i=1,nece)
 #endif
@@ -1561,11 +1561,9 @@
 
       dimension pds(6)
       real*8,dimension(:),allocatable :: bwork,cwork,dwork
-
-! MPI >>>
       integer*4, intent(inout) :: kerror
+
       kerror = 0
-! MPI <<<
 !
       allocate(bwork(nw),cwork(nw),dwork(nw))
 !
@@ -2095,10 +2093,9 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
-! MPI >>>
       integer*4, intent(inout) :: kerror
+
       kerror = 0
-! MPI <<<
 !----------------------------------------------------------------------
 !--   singular decomposition                                         --
 !----------------------------------------------------------------------
@@ -2215,9 +2212,8 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension pds(6),bwork(ndata),cwork(ndata),dwork(ndata)
-! MPI >>>
       integer*4, intent(inout) :: kerror
-! MPI <<<
+
       kerror = 0
 
       if (rion(2).lt.0.0) then

@@ -186,7 +186,7 @@
             psi(k2)=val
           enddo
         enddo
-      endif ! end symmetrize loop
+      endif
 !------------------------------------------------------------------------
 !--   optional damping out the m=1 vertical eigen mode                 --
 !------------------------------------------------------------------------
@@ -678,7 +678,7 @@
 !-----------------------------------------------------------------------
 !--   force free current in the scrape-off layer                      --
 !-----------------------------------------------------------------------
-      if (icutfp.eq.2) then
+      SOL_curr: if (icutfp.eq.2) then
         xvsmin=1.e10_dp
         xvsmax=-1.e10_dp
         if (limvs.eq.0) then
@@ -803,7 +803,7 @@
         endif
         xpsialp=xpsimin
         xpsimin=sidif/(simag-xpsimin)
-      endif 
+      endif SOL_curr 
 !-----------------------------------------------------------------------
 !--   get normalized flux function XPSI                               --
 !-----------------------------------------------------------------------
@@ -1241,7 +1241,7 @@
 !!    vescur computes the currents induced in the vessel
 !!    segments due to E coils and F coils
 !!
-!!    @param jtime :
+!!    @param jtime : time index
 !!
 !**********************************************************************
       subroutine vescur(jtime)

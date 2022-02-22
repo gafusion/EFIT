@@ -143,7 +143,7 @@
       print *, 'Entering getsets'
   20  call getsets(ktime,kwake,mtear,kerror)
       print * ,'exiting getsets'
-! MPI >>>
+
 #if defined(USEMPI)
       if (nproc > 1) then
         call MPI_ALLREDUCE(kerror,MPI_IN_PLACE,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
@@ -157,8 +157,6 @@
         stop
       end if
 #endif
-
-! MPI <<<
 
 ! Looping (below) on the number of time slices depends on the number of ranks.
 ! Time slices are assigned to ranks in groups as follows:
@@ -240,7 +238,6 @@
       call wmeasure(ktime,1,ktime,2)
       call wtime(ktime)
 
-! MPI >>>
 #if defined(USEMPI)
       ! Finalize MPI
       if (allocated(dist_data)) deallocate(dist_data)
@@ -250,5 +247,4 @@
       call mpi_finalize(ierr)
 #endif
       stop
-! MPI <<<
       end program

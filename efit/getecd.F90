@@ -2363,10 +2363,10 @@
         double precision :: zwork(18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum,ntime),&
                             zwork2(5+nsilop+magpri+nfcoil+nesum+magpri),timeb_list(nproc)
 
-        ! TIMING >>>
+        ! timing variables
         integer*4 :: clock0,clock1,clockmax,clockrate,ticks
         double precision :: secs
-        ! TIMING <<<
+
         integer*4 :: total_bytes
         zwork(:,:) = 0.0
         nsize=18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum
@@ -2374,21 +2374,17 @@
         allocate(tmp1(nproc),tmp2(nproc))
 
         ! Process with rank == 0 gets data from PTDATA/MDS+ database by calling GETPTS
-        if (rank == 0) then
+        timing: if (rank == 0) then
           ! NOTE : Need to retrive data for ALL times
           ktime_all = sum(dist_data)
-          ! TIMING >>>
           call system_clock(count_max=clockmax,count_rate=clockrate)
           call system_clock(count=clock0)
-          ! TIMING <<<
           call getpts(nshot,times,delt,ktime,istop)
-          ! TIMING >>>
           call system_clock(count=clock1)
           ticks = clock1-clock0
           secs = real(ticks,dp)/real(clockrate,dp)
           write (*,"(' GETPTS call ',f6.2,' sec')") secs
-          ! TIMING <<<
-        endif
+        endif timing
         ! ALL processes get error information
         ! SIZE = SIZEOF(INT4) * (NPROC - 1) bytes
         total_bytes = 4*(nproc-1)
@@ -2399,12 +2395,10 @@
         endif
         call MPI_BCAST(oldccomp,1,MPI_LOGICAL,0,MPI_COMM_WORLD,ierr)
 
-        ! TIMING >>>
-        if (rank == 0) then
+        timing_rank: if (rank == 0) then
           call system_clock(count_max=clockmax,count_rate=clockrate)
           call system_clock(count=clock0)
-        endif
-        ! TIMING <<<
+        endif timing_rank
         
         ! Each process computes KTIME and TIMEB by computing distribution data
         ! NOTE : Avoids need to distribute KTIME and TIMEB information via individual MPI_SEND/MPI_RECV calls
@@ -2625,15 +2619,13 @@
         
         call MPI_BARRIER(MPI_COMM_WORLD,ierr)
         
-        ! TIMING >>>
-        if (rank == 0) then
+        timing_rank0: if (rank == 0) then
           call system_clock(count=clock1)
           ticks = clock1-clock0
           secs = real(ticks,dp)/real(clockrate,dp)
           write (*,"(' GETPTS transfer ',i10,' bytes in ',f6.2,'sec')") &
                 total_bytes,secs
-        endif
-        ! TIMING <<<
+        endif timing_rank0
 
       end subroutine getpts_mpi
 
@@ -2673,38 +2665,29 @@
         integer*4 :: i,j,ktime_all,nsize
         integer*4,dimension(:),allocatable :: tmp1,tmp2
         double precision :: zwork(nmtark*12,ntime)
-        ! TIMING >>>
+        ! timing variables
         integer*4 :: clock0,clock1,clockmax,clockrate,ticks
         double precision :: secs
-        ! TIMING <<<
+        
         integer*4 :: total_bytes
         nsize = 12*nmtark
         zwork(:,:) = 0.0
         allocate(tmp1(nproc),tmp2(nproc))
 
         ! Process with rank == 0 gets data from PTDATA/MDS+ database by calling GETSTARK
-        if (rank == 0) then
+        timing_rank: if (rank == 0) then
           ! NOTE : Need to retrive data for ALL times
           ktime_all = sum(dist_data)
-          ! TIMING >>>
           call system_clock(count_max=clockmax,count_rate=clockrate)
           call system_clock(count=clock0)
-          ! TIMING <<<
           call getstark(ktime_all)
-          ! TIMING >>>
           call system_clock(count=clock1)
           ticks = clock1-clock0
           secs = real(ticks,dp)/real(clockrate,dp)
           write (*,"(' GETSTARK call ',f6.2,' sec')") secs
-          ! TIMING <<<
-        endif
-
-        ! TIMING >>>
-        if (rank == 0) then
           call system_clock(count_max=clockmax,count_rate=clockrate)
           call system_clock(count=clock0)
-        endif
-        ! TIMING <<<
+        endif timing_rank
         
         ! Process with rank == 0 gets distributes data
         if (rank == 0) then
@@ -2792,13 +2775,10 @@
         call MPI_BCAST(rmse_offset,nmtark,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         call MPI_BCAST(mse_spave_on,nmtark,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 
-        ! TEMP >>>
         ! SPATIAL_AVG_GAM
         call MPI_BCAST(spatial_avg_gam,nstark*ngam_vars*ngam_u*ngam_w, &
                        MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        ! TEMP <<<
 
-        ! TEMP >>>
         !! SWTGAM
         !tmp1(:) = dist_data(:)
         !tmp2(:) = 0
@@ -2811,21 +2791,18 @@
         !  call MPI_SCATTERV(swtgam,tmp1,tmp2,MPI_DOUBLE_PRECISION,swtgam,tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         !endif
         !!call MPI_BCAST(swtgam,sum(dist_data),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        ! TEMP <<<
 
         deallocate(tmp1,tmp2)
         
         call MPI_BARRIER(MPI_COMM_WORLD,ierr)
         
-        ! TIMING >>>
-        if (rank == 0) then
+        timing_rank0: if (rank == 0) then
           call system_clock(count=clock1)
           ticks = clock1-clock0
           secs = real(ticks,dp)/real(clockrate,dp)
           write (*,"(' GETSTARK transfer ',i10,' bytes in ',f6.2,'sec')") &
                 total_bytes,secs
-        endif
-        ! TIMING <<<
+        endif timing_rank0
 
       end subroutine getstark_mpi
 

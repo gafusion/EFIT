@@ -20,7 +20,6 @@ subroutine read_efitin()
      real*8 starttime, deltatime
 
      namelist/optin/mode,cmdfile,shotfile,shot,starttime,deltatime,steps,snapext,inpfile
-! OPT_INPUT >>>
      use_opt_input = .false.
      input_flag = .false.
      if (rank == 0) then

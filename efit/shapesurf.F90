@@ -64,7 +64,7 @@
 #ifdef DEBUG_LEVEL1
       write (6,*) 'Enter SHAPE kerror = ', kerror
 #endif
-      if (ivacum.le.0) then
+      is_vacuum: if (ivacum.le.0) then
       if (iges.le.1) then
         xguess=(rgrid(1)+rgrid(nw))/2.
         yguess=(zgrid(1)+zgrid(nh))/2.
@@ -550,7 +550,7 @@
 !-----------------------------------------------------------------------
 !--   write out S(shot).(time)_X files in flux space                  --
 !-----------------------------------------------------------------------
-      if (kwripre.eq.2) then
+      kwripre_s: if (kwripre.eq.2) then
         call getfnmd('s',ishot,itime,sfname)
         call getfnmd('o',ishot,itime,ofname)
         if (npress.gt.0) then
@@ -826,11 +826,9 @@
 92924   format (4(1pe12.5,1x))
 93024   format (a28)
         endif
-      endif
 !-----------------------------------------------------------------------
-!--   write out MSE O files in normalized poloidal flux space         --
+!--     write out MSE O files in normalized poloidal flux space       --
 !-----------------------------------------------------------------------
-      if (kwripre.eq.2) then
         if (kstark.gt.0.or.kdomse.gt.0) then
           ofname=ofname(1:13)//'_cmse'
           open(unit=74,status='old',file=ofname,iostat=ioerr)
@@ -893,7 +891,7 @@
           enddo
           close(unit=74)
         endif
-      endif
+      endif kwripre_s
 !
       psiq1=-1000.
 ! if two q=1 surfaces, both psi values will be encoded in psiq1
@@ -1098,7 +1096,7 @@
        enddo
        call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid,nh, &
                   r1sdry(i),nzz ,sdlobp,sdlbp)
-       if (kvtor.gt.0) then
+       rotation_1: if (kvtor.gt.0) then
          do k=1,nfounc
            cfpol(k)= bfpol(k)**2
          enddo
@@ -1130,7 +1128,7 @@
            call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
                   nh,rpwdry,nzz ,sdlobp,sdlbp)
          endif
-       endif
+       endif rotation_1
        r2surs = r2sdry(i)*sdlobp
        fpnow = ffcurr(psiwant,kffcur)
        fpnow = fpnow*tmu
@@ -2193,7 +2191,7 @@
 !---------------------------------------------------------------------------
 !--   trace external field lines                                          --
 !---------------------------------------------------------------------------
-      if (nextra.ne.0) then
+      extra_surfs: if (nextra.ne.0) then
       if (ixstrt.ne.-1) then
         xxtraa=xmax
         yxtraa=zxmax
@@ -2273,7 +2271,7 @@
        ixtpls=iabs(nextra)
        go to 420
       endif
-      endif ! nextra.ne.0
+      endif extra_surfs
 !-----------------------------------------------------------------------------
 !--   compute the diamagnetic flux                                          --
 !-----------------------------------------------------------------------------
@@ -2328,7 +2326,7 @@
                 -prbdry
          fnow=fnow/tmu
          prettt=presss
-         if (kvtor.gt.0) then
+         rotation_2: if (kvtor.gt.0) then
            preww0=seval(nw,xpsi(kk),xsisii,pressw,bpresw,cpresw,dpresw) &
                   -preswb
            press0=presss
@@ -2350,7 +2348,7 @@
              presss=press0*exp(pwp0r2)
            endif
            prettt=prewww+presss
-         endif
+         endif rotation_2
         endif
         cdflux(iges)=cdflux(iges)+(fbrdy-fnow)/rgrid(i)*www(kk)
         edflux(iges)=edflux(iges)+(fbrdy**2-fnow**2)/rgrid(i)*www(kk)
@@ -2534,7 +2532,7 @@
 !----------------------------------------------------------------
 !--   Current at Z=Z_Libeam                                    --
 !----------------------------------------------------------------
-      if (kwripre.gt.0) then
+      kwripre_li: if (kwripre.gt.0) then
        if (nstark.gt.nmtark) then
         znow=zzgam(iges,nmtark+1)
         delrnow=(xmax-rmaxis)/(nw-1)
@@ -2590,7 +2588,7 @@
         enddo
         close(unit=74)
        endif
-      endif
+      endif kwripre_li
 !
       if (dco2v(iges,2).gt.1.e+10_dp) then
         partic=dco2v(iges,2)*vout(iges)
@@ -2615,7 +2613,7 @@
 !------------------------------------------------------------------
 !--   compute vessel forces                                      --
 !------------------------------------------------------------------
-      if (ifitvs.gt.0.or.icutfp.eq.2) then
+      vessel_force: if (ifitvs.gt.0.or.icutfp.eq.2) then
         call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
         fztor=0.0
         fzpol=0.0
@@ -2665,7 +2663,7 @@
           vforcep(i)= cosalp*sumfzp*dells/20.
           fzpol=fzpol+vforcep(i)
         enddo
-      endif
+      endif vessel_force
       if (icutfp.eq.2) then
         xxxx=1./xpsimin
         fpolvs=ffcurr(xxxx  ,kffcur)-ffcurr(x111,kffcur)
@@ -2725,7 +2723,7 @@
       if ((itek.ge.5).and.(iges.eq.igmax)) call closepl
       if ((ilaser.gt.0).and.(iges.eq.igmax)) call donepl
 
-      else ! ivacum.gt.0
+      else is_vacuum 
       limloc(iges)='VAC'
       call chisqr(iges)
       if (itek.gt.0) then
@@ -2737,13 +2735,13 @@
       if ((itek.ge.5).and.(iges.eq.igmax)) call closepl
       if ((ilaser.gt.0).and.(iges.eq.igmax)) call donepl
 !
-      endif ! ivacum.le.0
+      endif is_vacuum
 !
 !-----------------------------------------------------------------------
 !-- vertical stability parameter,  reference Nuc Fusion  18(1978)1331 --
 !-- move out of pltout so that vertn, xnnc are indepent of itek value --
 !-----------------------------------------------------------------------
-      if (ivacum.le.0) then
+      not_vacuum: if (ivacum.le.0) then
         do i=1,nw
           do j=1,nh
             kk=(i-1)*nh+j
@@ -2781,7 +2779,7 @@
 !--     metal wall                                                    --
 !-----------------------------------------------------------------------
         xnnc(jges)=vertn(jges)/((10.77_dp*delr**2+8.08_dp*delr+2.54_dp)/f_0)
-      endif
+      endif not_vacuum
 !
 !------------------------------------------------------------------
 !--   compute shearing rate eshear                               --
@@ -2794,7 +2792,7 @@
 !-----------------------------------------------------------------------
 !--   write out r(shot).(time)_X files in rho space                   --
 !-----------------------------------------------------------------------
-      if (kwripre.eq.3) then
+      kwripre_r: if (kwripre.eq.3) then
         call getfnmd('r',ishot,itime,sfname)
         sfname=sfname(1:13)//'_qpsi'
         open(unit=74,status='old',file=sfname,iostat=ioerr)
@@ -2911,7 +2909,7 @@
           enddo
           close(unit=74)
         endif
-      endif
+      endif kwripre_r
 !
       DEALLOCATE(xsisii,bpres,cpres,dpres,sjtli,sjtlir,sjtliz, &
                  rjtli,bpresw,cpresw,dpresw,copyn,cjtli,x,y)

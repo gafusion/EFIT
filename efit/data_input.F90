@@ -295,7 +295,7 @@
       pprime(:)= 0.0 
       sicont=tmu*drslop/aaslop
 ! 
-      if ((kdata.ne.1).and.(kdata.ne.2)) then
+      snap: if ((kdata.ne.1).and.(kdata.ne.2)) then
 !---------------------------------------------------------------------- 
 !--   normalize fitting weights, SNAP mode                           -- 
 !---------------------------------------------------------------------- 
@@ -390,7 +390,7 @@
         rbdry(1)=1.94_dp 
         zbdry(1)=ztssym(jtime)+0.5_dp*ztswid(jtime) 
       endif 
-      else ! (kdata.eq.1).or.(kdata.eq.2)
+      else snap
 !---------------------------------------------------------------------- 
 !--   file mode - initialize inputs                                  -- 
 !---------------------------------------------------------------------- 
@@ -598,7 +598,7 @@
         zzzlib(i)=0.0
       enddo
 
-      if (kdata.eq.2) then 
+      file_type: if (kdata.eq.2) then 
 !---------------------------------------------------------------------- 
 !--   Read ascii input files                                         -- 
 !---------------------------------------------------------------------- 
@@ -693,10 +693,10 @@
       read (nin,inlibim,err=11237,end=11233) 
 11233 continue 
 11237 close(unit=nin) 
+      else file_type
 !---------------------------------------------------------------------- 
-!--   HDF5 file mode                                                 -- 
+!--     HDF5 file mode                                                 -- 
 !---------------------------------------------------------------------- 
-      else ! kdata.eq.1
 #if defined(USE_HDF5)
         inquire(file=trim(ifname(1)),exist=file_stat)
         if (.not. file_stat) then
@@ -1381,7 +1381,7 @@
         call errctrl_msg('data_input','HDF5 needs to be linked')
         stop
 #endif
-      endif ! kdata.eq.1
+      endif file_type
 
 !----------------------------------------------------------------------- 
 !--   post-process inputs                                             --
@@ -1504,7 +1504,7 @@
 !          sign_ext = -1.0 
 !        endif 
 !        prbdry=pprime_ext(nw_ext) 
-        if (nbdry.le.0) then 
+        write_boundary: if (nbdry.le.0) then 
           nbabs_ext=nbdry_ext/mbdry1+1 
           jb_ext=0 
           do i=1,nbdry_ext,nbabs_ext 
@@ -1545,7 +1545,7 @@
           fwtbdry(nrmax_e)=10. 
           fwtbdry(nzmin_e)=10. 
           fwtbdry(nzmax_e)=10. 
-        endif 
+        endif write_boundary 
 ! 
         if (limitr.le.0) then 
           do i=1,limitr_ext 
@@ -2057,12 +2057,12 @@
 !-------------------------------------------------------------- 
 !--   option to symmetrize added 8/14/91 eal                 -- 
 !-------------------------------------------------------------- 
-      if (symmetrize) then  ! symmetrize the fixed boundery 
+      sym: if (symmetrize) then
         write(*,*) 'option to symmetrize added 8/14/91 eal  ' 
         call flush(6)
         isetfb=0  ! be sure vertical feedback is off 
         zelip=0 ! must be symmetric about midplane 
-        if (nbdry.gt.1) then  ! remove duplicate point 
+        fixed_bdry_1: if (nbdry.gt.1) then  ! remove duplicate point 
           nbryup=0 
           delx2=(rbdry(1)-rbdry(nbdry))**2 
           dely2=(zbdry(1)-zbdry(nbdry))**2 
@@ -2097,8 +2097,8 @@
               ilower(iup)=idn 
             endif 
           enddo 
-        endif 
-      endif ! end boundary symmertization 
+        endif fixed_bdry_1 
+      endif sym
 !--------------------------------------------------------------------- 
 !--   Symmetrize the limiter positions for fixed boundary if request-- 
 !--   set LIMITR=1000+points for this option                        -- 
@@ -2122,7 +2122,7 @@
         fcurbd=0.0 
       endif 
       close(unit=nin) 
-      if (kprfit.eq.1) then 
+      kinetic: if (kprfit.eq.1) then 
         if (npress.lt.0) then 
           call getfnmu(itimeu,'k',ishot,itime,edatname) 
           edatname='edat_'//edatname(2:7)// & 
@@ -2130,10 +2130,8 @@
           open(unit=nin,status='old',file=edatname)
           read (nin,edat)
           close(unit=nin) 
-        endif 
-      endif 
-! 
-      if (kprfit.eq.2) then 
+        endif
+      else if (kprfit.eq.2) then kinetic
         if (npteth.lt.0) then 
           nptef=-npteth 
           npnef=-npneth 
@@ -2211,7 +2209,7 @@
             enddo
           endif 
         endif 
-      endif
+      endif kinetic
 
       write(*,*) 'read in limiter data' 
       call flush(6)
@@ -2365,7 +2363,7 @@
 !
       call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
 
-      endif ! (kdata.eq.1).or.(kdata.eq.2)
+      endif snap
 !----------------------------------------------------------------------- 
 !--   set up parameters for all modes                                 --
 !----------------------------------------------------------------------- 
@@ -2445,7 +2443,7 @@
       enddo
 ! 
       fwtref=fwtsi(iabs(nslref)) 
-      if ((kersil.ne.2).and.(kersil.ne.3)) then
+      kersil_23: if ((kersil.ne.2).and.(kersil.ne.3)) then
       do m=1,nsilop
         tdata1=serror*abs(silopt(jtime,m)) 
         tdata2=abs(psibit(m))*vbit 
@@ -2465,10 +2463,10 @@
         enddo
         fwtsi(iabs(nslref))=1.0/coilmx**nsq/serror**nsq*fwtref
       endif 
+      else kersil_23
 !----------------------------------------------------------------------- 
 !--   Fourier expansion of vessel sgments                             -- 
 !----------------------------------------------------------------------- 
-      else !kersil.eq.2.or.kersil.eq.3
       if (ifitvs.gt.0. .and. nfourier.gt.1) then
         do i=1,nvesel 
           if (rvs(i).ge.1.75_dp.and.zvs(i).ge.0.) & 
@@ -2531,7 +2529,7 @@
       endif 
 !SEK: ???      sigmafl0(m)=tdata 
 ! 
-      endif !kersil.eq.2.or.kersil.eq.3
+      endif kersil_23
       fwtref=fwtsi(iabs(nslref)) 
       do m=1,magpri 
         tdata1=serror*abs(expmpi(jtime,m)) 
@@ -2813,7 +2811,7 @@
         errorece(kk)=errorece0(k) 
       enddo 
 !--------------------------------------------------------------------- 
-!--   toroidal rotation ? Then set up geometric parameters          -- 
+!--   toroidal rotation - set up geometric parameters               -- 
 !--------------------------------------------------------------------- 
       if (kvtor.gt.0) then 
         do i=1,nw 
@@ -2823,9 +2821,9 @@
         enddo 
       endif 
 !---------------------------------------------------------------------- 
-!--   make filement Green's tables only                              -- 
+!--   make filament Green's tables only                              -- 
 !---------------------------------------------------------------------- 
-      if ((iconvr.lt.0).and.(iconvr.gt.-20)) then
+      solution_mode: if ((iconvr.lt.0).and.(iconvr.gt.-20)) then
       mx=iabs(iconvr) 
       do k=1,mx 
         if (aelip.le.0.0) then 
@@ -2881,7 +2879,7 @@
       write (nttyo,6550) (irfila(i),i=1,mx) 
       write (nttyo,6555) (jzfila(i),i=1,mx) 
 ! 
-      elseif (iconvr.le.-20) then
+      elseif (iconvr.le.-20) then solution_mode
       if (aelip.gt.0.0) then 
         do i=1,nw 
           do j=1,nh 
@@ -2988,12 +2986,12 @@
       close(unit=nffile) 
       write (nttyo,6557) npc 
 ! 
-      else ! iconvr.ge.0
+      else solution_mode
       if (ivesel.gt.0) call vescur(jtime) 
-      if (nbdry.gt.0) then
-      if (islve.gt.0) then
+      fixed_bdry_2: if (nbdry.gt.0) then
+      Solovev: if (islve.gt.0) then
 !------------------------------------------------------------------------------ 
-!--     Solve equilibrium                                                    -- 
+!--     Solovev equilibrium                                                    -- 
 !------------------------------------------------------------------------------ 
         icurrt=1 
         iecurr=0 
@@ -3005,7 +3003,7 @@
         srm=abs(srm) 
         seee=1./srm/sqrt(salpha) 
         rbetaw=0.0 
-        if (kvtor.le.0) then 
+        rotation: if (kvtor.le.0) then 
 !--------------------------------------------------------------------- 
 !--       no rotation                                               -- 
 !--------------------------------------------------------------------- 
@@ -3020,7 +3018,7 @@
             zbdry(i)=sin(th) 
             zbdry(i)=saaa*zbdry(i)*seee 
           enddo
-        else 
+        else rotation
 !---------------------------------------------------------------------- 
 !--       toroidal rotation                                          -- 
 !---------------------------------------------------------------------- 
@@ -3070,12 +3068,12 @@
             rbdry(j)=xout(i)*saaa 
             zbdry(j)=yout(i)*saaa 
           enddo 
-          nbdry=j 
+          nbdry=j ! nbdry change inside of .gt.0 block
           srma=srm*saaa 
           rvtor=srma 
           rbetaw=sbetaw/sbeta 
-        endif 
-      endif
+        endif rotation
+      endif Solovev
 !----------------------------------------------------------------------------- 
 !--   set up plasma response                                                -- 
 !----------------------------------------------------------------------------- 
@@ -3101,7 +3099,7 @@
 !----------------------------------------------------------------------------- 
 !--   SOL plasma response                                                   -- 
 !----------------------------------------------------------------------------- 
-      if (nsol.gt.0) then 
+      SOL: if (nsol.gt.0) then 
         do m=1,nsol 
           do i=1,nw 
             rdif=rsol(m)-rgrid(i) 
@@ -3121,12 +3119,12 @@
             enddo 
           enddo 
         enddo 
-      endif 
+      endif SOL
 !----------------------------------------------------------------------- 
 !--   set up parameters for fixed boundary calculations               -- 
 !----------------------------------------------------------------------- 
       if (ifref.eq.-1) ifref=1 
-      if (nbdry.gt.1) then 
+      if (nbdry.gt.1) then ! nbdry changed above
         delx2=(rbdry(1)-rbdry(nbdry))**2 
         dely2=(zbdry(1)-zbdry(nbdry))**2 
         if ((delx2+dely2).le.1.0e-08_dp) nbdry=nbdry-1 
@@ -3183,7 +3181,7 @@
 !---------------------------------------------------------------------- 
 !--   make sure interpolations are symmetrized                       -- 
 !---------------------------------------------------------------------- 
-      if ((symmetrize).and.(nbdry.gt.1)) then 
+      if ((symmetrize).and.(nbdry.gt.1)) then ! nbdry changed above
         do i=1,nbryup 
           if (ilower(i).ne.-1) then 
             do j=nfcoil/2 +1, nfcoil 
@@ -3240,8 +3238,8 @@
         enddo
       endif
 ! 
-      endif ! nbgry.gt.0 
-      endif ! iconvr.ge.0
+      endif fixed_bdry_2
+      endif solution_mode
 ! 
       DEALLOCATE(rgrids,zgrids,gridpf,gwork) 
 ! 

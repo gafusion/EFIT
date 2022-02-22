@@ -1541,8 +1541,8 @@
         call seva2d(bkx,lkx,bky,lky,c,xax,yax,pds,ier,n666)
         if (dodebugplts) write(99,'(3(1x,1pe12.5))') xax,yax,pds(1) ! for debugging
 
-        ! Gradient Ascent Method - better for sharp peaks
-        if (ifindopt==2) then
+        search_method: if (ifindopt==2) then
+          ! Gradient Ascent Method - better for sharp peaks
           xerr=signcur*pds(2) ! find max or min depending on current direction
           yerr=signcur*pds(3)
           ! Adapt step size using Barzilai and Borwein approach
@@ -1561,8 +1561,8 @@
           errtmp = gamman**2*(xerr**2+yerr**2)
           if (errtmp.lt.1.0e-12_dp) go to 310
 
-        ! Original Newton's Method for optimization, xn+1 = xn - f'/f''
-        else ! ifindopt==1
+        else search_method
+          ! Original Newton's Method for optimization, xn+1 = xn - f'/f''
           det=pds(5)*pds(6)-pds(4)*pds(4)
           if (abs(det).lt.1.0e-15_dp) then
             kerror = 1
@@ -1585,7 +1585,7 @@
           end if
           if ((abs(pds(2)).lt.1.0e-06_dp).and.(abs(pds(3)).lt.1.0e-06_dp)) go to 310
           if (errtmp.lt.1.0e-12_dp) go to 310
-        end if
+        end if search_method
       end do
       if (errtmp.gt.1.0e-6_dp) then
         call errctrl_msg('findax', &
@@ -2204,8 +2204,8 @@
 !!    @param kerror : error flag
 !*********************************************************************
       subroutine surfac(siwant,psi,nw,nh,rgrid,zgrid,xout,yout, &
-                    nfound,npoint,drgrid,dzgrid,xmin, &
-                    xmax,ymin,ymax,ipack,rmaxis,zmaxis,negcur,kerror)
+                        nfound,npoint,drgrid,dzgrid,xmin, &
+                        xmax,ymin,ymax,ipack,rmaxis,zmaxis,negcur,kerror)
       use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)

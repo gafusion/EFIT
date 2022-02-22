@@ -264,7 +264,7 @@
 !--   compute the response function about R+ R- constraint     
 !--   F coils response -----recefc(nece,nfcoil)
 !-------------------------------------------------------------------------
-      if (kfitece.ne.1) then
+      ECE: if (kfitece.ne.1) then
       do n=1,nfcoil
         call sets2d(gridfc(1,n),c,rgrid,nw,bkx,lkx,zgrid,nh,bky, &
                        lky,wk,ier)
@@ -329,7 +329,7 @@
 !-----------------------------------------------------------------------
 !--   Ohmic coils   receec(nece,nesum)                                --
 !-----------------------------------------------------------------------
-      if (iecurr.gt.0) then
+      ohmic: if (iecurr.gt.0) then
         do n=1,nesum
           call sets2d(gridec(1,n),c,rgrid,nw,bkx,lkx,zgrid,nh,bky, &
                       lky,wk,ier)
@@ -349,8 +349,8 @@
             receec(i,n)=pds(1)-receec(i,n)
           enddo
         enddo
-      endif
-      endif ! (kfitece.ne.1)
+      endif ohmic
+      endif ECE
 !----------------------------------------------------------------------
       open(unit=nffile,status='old',form='unformatted',iostat=ioerr, &
            file='recexx.dat')
