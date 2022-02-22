@@ -25,7 +25,7 @@
                    ,nc79name,nc139name,ncname(mccoil),niname(micoil)  !EJS(2014)
 !                         ---  or ---  ncname(mccoil),niname(micoil)  !EJS(2014)
 
-      integer :: time_err
+      integer*4 :: time_err
       character*150 textline     !EJS(2014)
       character*10,dimension(:),allocatable :: ndenv,ndenr,fcname,ecname
       character*10 namedum
@@ -745,8 +745,7 @@
       endif
 !
       return
-      end
-
+      end subroutine getpts
 
 !**********************************************************************
 !>
@@ -811,11 +810,11 @@
       use var_gggttt
       use var_inaver
       character*10 name
-      integer, intent(out) :: ktime_err
-      real*8 y(ntime),time(ntime),deltd,xxd,bitvld,timesd &
-            , rcx,rcgx,vbitx,zinhnox,t0x &
-            , stdevx(1)
-      integer navx(1)
+      integer*4, intent(out) :: ktime_err
+      real*8 y(ntime),time(ntime),deltd,xxd,bitvld,timesd, &
+             rcx,rcgx,vbitx,zinhnox,t0x, &
+             stdevx(1)
+      integer*4 navx(1)
       data dtmin/0.001001/,xm5/0.00001/
       save dtmin,xm5
       logical*4 do_spline_fit
@@ -1013,8 +1012,7 @@
       endif
 !
       return
-      end
-
+      end subroutine avdata
 
 !**********************************************************************
 !>
@@ -1063,9 +1061,9 @@
       real*8, allocatable :: yw(:),xw(:),bw(:),cw(:),dw(:),ew(:)
       real*8 dtmin, xm5, dtave, xx, delt, times, delta_min, delta, &
              timenow, ynow
-      integer :: status, nshot, lenname, errallot, npn, mmm, ierror, &
-                 np, mm, nn, kave, ircfact, ktime_err, nnp, mylen, &
-                 i, j, j_save, dsc, f_dsc, t_dsc
+      integer*4 :: status, nshot, lenname, errallot, npn, mmm, ierror, &
+                   np, mm, nn, kave, ircfact, ktime_err, nnp, mylen, &
+                   i, j, j_save, dsc, f_dsc, t_dsc
       logical*4 do_spline_fit
       data dtmin/0.001001/,xm5/0.00001/
       save dtmin,xm5
@@ -1192,8 +1190,7 @@
       endif
 !
       return
-      end
-
+      end subroutine amdata
 
 !**********************************************************************
 !>
@@ -1249,10 +1246,10 @@
         np,timesd,deltd,mm,xxd,nn,bitvld,kave,time, &
         do_spline_fit,rcx,rcgx,vbitx,zinhnox,t0x,stdevx,navx)
       use var_gggttt
-      real*8 y(np),time(np),deltd,xxd,bitvld,timesd &
-             , rcx,rcgx,vbitx,zinhnox,t0x &
-             , stdevx(1)
-      integer navx(1)
+      real*8 y(np),time(np),deltd,xxd,bitvld,timesd, &
+             rcx,rcgx,vbitx,zinhnox,t0x, &
+             stdevx(1)
+      integer*4 navx(1)
       character*10 name
       data dtmin/0.001001/,xm5/0.00001/
       save dtmin,xm5
@@ -1344,8 +1341,7 @@
       endif
 !
       return
-      end
-
+      end subroutine apdata
 
 !**********************************************************************
 !>
@@ -1397,8 +1393,7 @@
       endif
 !
       return
-      end
-
+      end subroutine gettanh
 
 !**********************************************************************
 !>
@@ -1484,8 +1479,7 @@
           sigmay(i)=ynow
       enddo
       return
-      end
-
+      end subroutine avdiam
 
 !**********************************************************************
 !>
@@ -1572,8 +1566,7 @@
         y(m)=yave(m)
       enddo
       return
-      end
-
+      end subroutine zmooth
 
 !**********************************************************************
 !>
@@ -1626,8 +1619,7 @@
         enddo
         !
         return
-      end
-
+      end subroutine smoothit
 
 !**********************************************************************
 !>
@@ -1688,8 +1680,7 @@
         enddo
         !
         return
-      end
-
+      end subroutine smoothit2
 
 !**********************************************************************
 !>
@@ -1714,10 +1705,10 @@
 !!
 !**********************************************************************
       subroutine zplines(n, x, y, b, c, d)
-      integer n
-      real x(n), y(n), b(n), c(n), d(n)
-      integer nm1, ib, i
-      real t
+      integer*4 n
+      real*8 x(n), y(n), b(n), c(n), d(n)
+      integer*4 nm1, ib, i
+      real*8 t
 !
       nm1 = n-1
       if ( n .lt. 2 ) return
@@ -1788,8 +1779,7 @@
       c(2) = 0.
       d(2) = 0.
       return
-      end
-
+      end subroutine zplines
 
 !**********************************************************************
 !>
@@ -1820,11 +1810,11 @@
 !!    @param d : array of spline coefficients
 !!
 !**********************************************************************
-      real function sevals(n, u, x, y, b, c, d)
-      integer n
-      real  u, x(n), y(n), b(n), c(n), d(n)
-      integer i, j, k
-      real dx
+      real*8 function sevals(n, u, x, y, b, c, d)
+      integer*4 n
+      real*8  u, x(n), y(n), b(n), c(n), d(n)
+      integer*4 i, j, k
+      real*8 dx
       data i/1/
       if ( i .ge. n ) i = 1
 !
@@ -1844,8 +1834,7 @@
       dx = u - x(i)
       sevals= y(i) + dx*(b(i) + dx*(c(i) + dx*d(i)))
       return
-      end
-
+      end function sevals
 
 !*************************************************************************
 !>
@@ -1922,8 +1911,8 @@
 !!
 !**********************************************************************
       subroutine magsigma(ishotx,timexy,jtimex,gradsmpx,gradsflx, &
-                        bpermpx,sigmafx,sigmabx,sigmaex, &
-                        sigmaipx,sigmaflx,sigmampx)
+                          bpermpx,sigmafx,sigmabx,sigmaex, &
+                          sigmaipx,sigmaflx,sigmampx)
 
       include 'eparm.inc'
       include 'modules2.inc'
@@ -2327,8 +2316,7 @@
 !99    format(5e12.4)
 
       return
-      end
-
+      end subroutine magsigma
 
 ! =========================================================
 
@@ -2370,37 +2358,33 @@
         !   BITFC  1:nfcoil
         !   BITEC  1:nesum ! added by MK
         !   IERMPI to fix FWTMP2 1:magpri! added by MK
-        integer :: i,j,ktime_all,offset,nsize,nsize2
-        integer,dimension(:),allocatable :: tmp1,tmp2
+        integer*4 :: i,j,ktime_all,offset,nsize,nsize2
+        integer*4,dimension(:),allocatable :: tmp1,tmp2
         double precision :: zwork(18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum,ntime),&
                             zwork2(5+nsilop+magpri+nfcoil+nesum+magpri),timeb_list(nproc)
 
-        ! TIMING >>>
-        integer :: clock0,clock1,clockmax,clockrate,ticks
+        ! timing variables
+        integer*4 :: clock0,clock1,clockmax,clockrate,ticks
         double precision :: secs
-        ! TIMING <<<
-        integer :: total_bytes
+
+        integer*4 :: total_bytes
         zwork(:,:) = 0.0
         nsize=18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum
         nsize2=5+nsilop+magpri+nfcoil+nesum+magpri
         allocate(tmp1(nproc),tmp2(nproc))
 
         ! Process with rank == 0 gets data from PTDATA/MDS+ database by calling GETPTS
-        if (rank == 0) then
+        timing: if (rank == 0) then
           ! NOTE : Need to retrive data for ALL times
           ktime_all = sum(dist_data)
-          ! TIMING >>>
           call system_clock(count_max=clockmax,count_rate=clockrate)
           call system_clock(count=clock0)
-          ! TIMING <<<
           call getpts(nshot,times,delt,ktime,istop)
-          ! TIMING >>>
           call system_clock(count=clock1)
           ticks = clock1-clock0
           secs = real(ticks,dp)/real(clockrate,dp)
           write (*,"(' GETPTS call ',f6.2,' sec')") secs
-          ! TIMING <<<
-        endif
+        endif timing
         ! ALL processes get error information
         ! SIZE = SIZEOF(INT4) * (NPROC - 1) bytes
         total_bytes = 4*(nproc-1)
@@ -2411,12 +2395,10 @@
         endif
         call MPI_BCAST(oldccomp,1,MPI_LOGICAL,0,MPI_COMM_WORLD,ierr)
 
-        ! TIMING >>>
-        if (rank == 0) then
+        timing_rank: if (rank == 0) then
           call system_clock(count_max=clockmax,count_rate=clockrate)
           call system_clock(count=clock0)
-        endif
-        ! TIMING <<<
+        endif timing_rank
         
         ! Each process computes KTIME and TIMEB by computing distribution data
         ! NOTE : Avoids need to distribute KTIME and TIMEB information via individual MPI_SEND/MPI_RECV calls
@@ -2637,15 +2619,13 @@
         
         call MPI_BARRIER(MPI_COMM_WORLD,ierr)
         
-        ! TIMING >>>
-        if (rank == 0) then
+        timing_rank0: if (rank == 0) then
           call system_clock(count=clock1)
           ticks = clock1-clock0
           secs = real(ticks,dp)/real(clockrate,dp)
           write (*,"(' GETPTS transfer ',i10,' bytes in ',f6.2,'sec')") &
                 total_bytes,secs
-        endif
-        ! TIMING <<<
+        endif timing_rank0
 
       end subroutine getpts_mpi
 
@@ -2682,41 +2662,32 @@
         ! WARNING : A7GAM explicitly set to zero by original GETSTARK_MPI code
         ! KWAITMSE
         ! FWTGAM (nstark)
-        integer :: i,j,ktime_all,nsize
-        integer,dimension(:),allocatable :: tmp1,tmp2
+        integer*4 :: i,j,ktime_all,nsize
+        integer*4,dimension(:),allocatable :: tmp1,tmp2
         double precision :: zwork(nmtark*12,ntime)
-        ! TIMING >>>
-        integer :: clock0,clock1,clockmax,clockrate,ticks
+        ! timing variables
+        integer*4 :: clock0,clock1,clockmax,clockrate,ticks
         double precision :: secs
-        ! TIMING <<<
-        integer :: total_bytes
+        
+        integer*4 :: total_bytes
         nsize = 12*nmtark
         zwork(:,:) = 0.0
         allocate(tmp1(nproc),tmp2(nproc))
 
         ! Process with rank == 0 gets data from PTDATA/MDS+ database by calling GETSTARK
-        if (rank == 0) then
+        timing_rank: if (rank == 0) then
           ! NOTE : Need to retrive data for ALL times
           ktime_all = sum(dist_data)
-          ! TIMING >>>
           call system_clock(count_max=clockmax,count_rate=clockrate)
           call system_clock(count=clock0)
-          ! TIMING <<<
           call getstark(ktime_all)
-          ! TIMING >>>
           call system_clock(count=clock1)
           ticks = clock1-clock0
           secs = real(ticks,dp)/real(clockrate,dp)
           write (*,"(' GETSTARK call ',f6.2,' sec')") secs
-          ! TIMING <<<
-        endif
-
-        ! TIMING >>>
-        if (rank == 0) then
           call system_clock(count_max=clockmax,count_rate=clockrate)
           call system_clock(count=clock0)
-        endif
-        ! TIMING <<<
+        endif timing_rank
         
         ! Process with rank == 0 gets distributes data
         if (rank == 0) then
@@ -2804,13 +2775,10 @@
         call MPI_BCAST(rmse_offset,nmtark,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         call MPI_BCAST(mse_spave_on,nmtark,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 
-        ! TEMP >>>
         ! SPATIAL_AVG_GAM
         call MPI_BCAST(spatial_avg_gam,nstark*ngam_vars*ngam_u*ngam_w, &
                        MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        ! TEMP <<<
 
-        ! TEMP >>>
         !! SWTGAM
         !tmp1(:) = dist_data(:)
         !tmp2(:) = 0
@@ -2823,21 +2791,18 @@
         !  call MPI_SCATTERV(swtgam,tmp1,tmp2,MPI_DOUBLE_PRECISION,swtgam,tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         !endif
         !!call MPI_BCAST(swtgam,sum(dist_data),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        ! TEMP <<<
 
         deallocate(tmp1,tmp2)
         
         call MPI_BARRIER(MPI_COMM_WORLD,ierr)
         
-        ! TIMING >>>
-        if (rank == 0) then
+        timing_rank0: if (rank == 0) then
           call system_clock(count=clock1)
           ticks = clock1-clock0
           secs = real(ticks,dp)/real(clockrate,dp)
           write (*,"(' GETSTARK transfer ',i10,' bytes in ',f6.2,'sec')") &
                 total_bytes,secs
-        endif
-        ! TIMING <<<
+        endif timing_rank0
 
       end subroutine getstark_mpi
 

@@ -96,21 +96,15 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension xpsii(nppcur)
 !
-! jm.s
-      !real*8 :: linearinterp
-! jm.e
       if (abs(ypsi).gt.1.0) then
         ppcurr=0.0
         return
       endif
-! jm.s
       if (npsi_ext > 0) then
-!        ppcurr = linearinterp(ypsi,psin_ext,pprime_ext,npsi_ext)
         ppcurr = seval(npsi_ext,ypsi,psin_ext,pprime_ext,bpp_ext,cpp_ext,dpp_ext)
         ppcurr = ppcurr * cratiop_ext
         return
       endif
-! jm.e
       ppcurr=0.0
       call setpp(ypsi,xpsii)
       do iiij=nfcoil+1,nnn+nfcoil
@@ -269,7 +263,7 @@
 !!
 !!    @param jtime : time index
 !!
-!!    @param niter :
+!!    @param niter : iteration number
 !!
 !!    @param kerror : error flag
 !!
@@ -288,7 +282,7 @@
 
       kerror = 0
       kdofit=1
-      if (kprfit.ne.2) then
+      input_pressure: if (kprfit.ne.2) then
 !---------------------------------------------------------------------
 !--   input pressure profile                                        --
 !---------------------------------------------------------------------
@@ -322,7 +316,7 @@
         endif
       enddo
       return
-      endif ! (kprfit.ne.2)
+      endif input_pressure
 !----------------------------------------------------------------
 !--   construct pressure from kinetic data                     --
 !--   use psi grid defined by Thompson data                    --

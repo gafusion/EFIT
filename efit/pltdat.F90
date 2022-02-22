@@ -13,9 +13,8 @@
 !**          93/04   ..........revised to dump plot data             **
 !**                                                                  **
 !**********************************************************************
-
       subroutine pltout(xplt,yplt,nplt,jtime,ipass, &
-      rmin,rmax,zmin,zmax,ktime,kerror)
+                        rmin,rmax,zmin,zmax,ktime,kerror)
       use set_kinds
       use commonblocks,only: worka,c,wk,copy,bkx,bky,cw,wkw,copyw,bwx, &
            bwy,cj,wkj,copyj,bjx,bjy,cv,wkv,copyv,bvx,bvy,byringr,byringz, &
@@ -26,20 +25,22 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*8 (i-n), real*8 (a-h,o-z)
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension rrgams(nstark),rrgaml(nstark)
       namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi,as, &
         as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
-        wacoil,hacoil
+        hacoil,wacoil,rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2,fcturn, &
+        re,ze,ecid,ecturn,vsid,rvs,zvs,we,he 
       character(10) :: uday, clocktime
       character(5)  :: zone
-      integer,dimension(8) :: values
+      integer*4, dimension(8) :: values
       character(50) dataname,plotname
       character iname,let
       character(2) let2
+      character(1000) :: lline
       dimension ae(necoil),ae2(necoil),si(nwf),rmpi(magpri)
       dimension anglem(nstark),anglec(nstark)
-      dimension xplt(nplt),yplt(nplt),workb(nwf),workc(nwf),workd(nwf),kct(4) &
+      dimension xplt(npoint),yplt(npoint),workb(nwf),workc(nwf),workd(nwf),kct(4) &
       ,worke(nwf),bworkb(nwf),cworkb(nwf),dworkb(nwf),workk(nwf) &
       ,workf(nwf),workg(nwf),workh(nwf),rpressv(mpress) &
       ,bpressv(mpress),cpressv(mpress),dpressv(mpress) &
@@ -60,7 +61,7 @@
          bpmid(:),cpmid(:),dpmid(:),workj(:),copyn(:),copy1(:),xbnow(:), &
          ybnow(:),rat(:)
       character*20 clrece(3+nece)
-      integer*8 dshece(3+nece),dotece(3+nece),cdhece(3+nece), &
+      integer*4 dshece(3+nece),dotece(3+nece),cdhece(3+nece), &
             cdtece(3+nece),mrkece(3+nece),nplece(3+nece), &
             cntece(3+nece)
 !      equivalence (copy(1,1),copy1(1))
@@ -70,12 +71,14 @@
       data one/1./
       save n00,n11
 
-      ! TODO: this requirement suggests there is a problem somewhere
-      ! else in the code...
-      if (npoint.gt.nplt) return
-
       kerror = 0
       pleng = 0
+!
+      if (ndimc.ne.ndim) then
+        call errctrl_msg('pltout', &
+                         'ndimc is not consistent with ndim')
+        stop
+      endif
 !
       allocate(bfield(nw,nh),  &
          sivol(nw),voln(nw),bvoln(nw), &
@@ -114,11 +117,13 @@
 !          idotek = mod (jtime+ktime, mdotek)
            idotek = mod (jtime, mtek)
 !          write (6,*) itek, ktime, mdotek, jtime, idotek
-        if (istrpl.eq.0) idotek=0
+           if (istrpl.eq.0) idotek=0
         endif
       endif
 !
-      if (istrpl.le.0.and.jwake.ne.0) then
+      ! TODO: jwake appears to never be set...
+!      if (istrpl.le.0.and.jwake.ne.0) then
+      istrpl0: if (istrpl.le.0) then
       almin=xlmin
       almax=xlmax
       blmin=ylmin
@@ -132,7 +137,7 @@
          if (ixray.eq.1) then           ! poroidal xray only
             ixraystart = 1
             ixrayend = nangle
-         else if (ixray.eq.2) then      ! toroidal xray only
+         elseif (ixray.eq.2) then      ! toroidal xray only
             ixraystart = nangle+1
             ixrayend = nangle+ntangle
          else                           ! both
@@ -151,17 +156,25 @@
       open(unit=80,status='old', &
            file=table_di2(1:ltbdi2)//'dprobe.dat')
       rsi(1)=-1.
-      read (80,in3)
-      read (80,10000) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
-      i=1,mfcoil)
+      read (80,in3,iostat=istat)
+      if (istat>0) then
+        backspace(80)
+        read(80,fmt='(A)') lline
+        write(*,'(A)') &
+         'Invalid line in namelist: '//trim(lline)
+      endif
+      if (rf(1).lt.0) &
+        read (80,10000) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
+                         i=1,mfcoil)
       if (rsi(1).lt.0.) &
-      read (80,10000) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
-      i=1,nsilop)
-      if ((iecoil.gt.0).or.(ivesel.gt.0)) &
-      read (80,10020) (re(i),ze(i),we(i),he(i),ecid(i), &
-      i=1,necoil)
-      if (ivesel.gt.0) read (80,10000) (rvs(i),zvs(i),wvs(i),hvs(i), &
-      avs(i),avs2(i),i=1,nvesel)
+        read (80,10000) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
+                         i=1,nsilop)
+      if (((iecoil.gt.0).or.(ivesel.gt.0)).and.(re(1).lt.0.)) &
+        read (80,10020) (re(i),ze(i),we(i),he(i),ecid(i), &
+                         i=1,necoil)
+      if ((ivesel.gt.0).and.(rvs(1).lt.0)) &
+        read (80,10000) (rvs(i),zvs(i),wvs(i),hvs(i), &
+                         avs(i),avs2(i),i=1,nvesel)
       close(unit=80)
       if (iprobe.ne.0) then
          do i=1,nsilop
@@ -223,17 +236,16 @@
          endif
       endif
       xll=yll/elim
-!-----------------------------------------------------------------------c
-!     Open file PLTOUT.OUT to output plot parameters                    c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Open file PLTOUT.OUT to output plot parameters
+!-----------------------------------------------------------------------
       if (itek.ge.5.and.idotek.eq.0) then
-      m_write = 1
       iunit = 59
       if (kgraph.eq.0) then
         plotname='pltout.out'
       else
         if (ifitvs.gt.0.or.icutfp.eq.2) then
-        write (6,*) 'itimeu = ',itimeu
+           write (6,*) 'itimeu = ',itimeu
         endif
         let2 = 'pl'
         call getfnmu2(itimeu,let2,ishot,itime,plotname)
@@ -251,36 +263,35 @@
         open (unit=iunit, file = plotname, form = 'unformatted', &
               status = 'new')
       endif
-      endif ! itek
-!
       endif
+!
+      endif istrpl0
       xmm=2.0
       if (itek.ge.5.and.idotek.eq.0) then
-      if (kgraph.eq.1.and.istrpl.gt.0) then
+        if (kgraph.eq.1.and.istrpl.gt.0) then
 !--------------------------------------------------------------------
-!--   ITEK > 100, specific pltout.out name                         --
+!--       ITEK > 100, specific pltout.out name                     --
 !--------------------------------------------------------------------
-      let2 = 'pl'
-      plotname = ' '
-      call getfnmu2(itimeu,let2,ishot,itime,plotname)
-      if (istore .eq. 1)  &
-           plotname = store_dir(1:lstdir)//plotname
-      m_write = 1
-      iunit = 35
-      close(unit=iunit)
-      if (m_write .eq. 1) then
-        open(unit=iunit,file = plotname, status = 'old',iostat=ioerr)
-        if (ioerr.eq.0) close(unit=iunit,status='delete')
-        open (unit=iunit, file = plotname, status = 'new')
-      elseif (m_write .eq. 0) then
-        open (unit=iunit, file = plotname, form = 'unformatted', &
-              status = 'old',iostat=ioerr)
-        if (ioerr.eq.0) close(unit=iunit,status='delete')
-        open (unit=iunit, file = plotname, form = 'unformatted', &
-              status = 'new')
+          let2 = 'pl'
+          plotname = ' '
+          call getfnmu2(itimeu,let2,ishot,itime,plotname)
+          if (istore .eq. 1)  &
+               plotname = store_dir(1:lstdir)//plotname
+          iunit = 35
+          close(unit=iunit)
+          if (m_write .eq. 1) then
+            open(unit=iunit,file = plotname, status = 'old',iostat=ioerr)
+            if (ioerr.eq.0) close(unit=iunit,status='delete')
+            open (unit=iunit, file = plotname, status = 'new')
+          elseif (m_write .eq. 0) then
+            open (unit=iunit, file = plotname, form = 'unformatted', &
+                  status = 'old',iostat=ioerr)
+            if (ioerr.eq.0) close(unit=iunit,status='delete')
+            open (unit=iunit, file = plotname, form = 'unformatted', &
+                  status = 'new')
+          endif
+        endif
       endif
-      endif ! kgraph.eq.1.and.istrpl.gt.0
-      endif ! itek
 !--------------------------------------------------------------------
 !--   Set q-files dataname                                         --
 !--   If ISTORE = 0 Then dataname is prefixed by qshot.time        --
@@ -302,14 +313,14 @@
       enddo
       abar=100.*pleng/2./pi
 !
-      if (ivacum.gt.0) then
-         call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
-      else
-      if (kdata.ne.4) then
+      is_vacuum: if (ivacum.gt.0) then
+      call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
+      else is_vacuum
+      not_time_snap: if (kdata.ne.4) then
       ibrdr = 1
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       if (klabel.ge.0) then
          xphy = 7.0
@@ -375,9 +386,9 @@
         enddo
         close(unit=62)
       endif
-      if (ipass.le.1) then
+      single_pass: if (ipass.le.1) then
       dismin=min(oleft(jtime),oright(jtime),otop(jtime),obott(jtime))
-      if (dismin.gt.0.1_dp) then
+      dis_min: if (dismin.gt.0.1_dp) then
       if (kwripre.gt.0) then
         dataname=dataname(1:lprx)//'_sep'
         open(unit=62,file=dataname,status='old',iostat=ioerr)
@@ -413,10 +424,8 @@
          endif
       enddo
       if (kwripre.gt.0) close(unit=62)
-      endif ! ipass.le.1
-      endif ! dismin.gt.0.1
-      if (ipass.le.1) then
-      if (nextra.ne.0) then
+      endif dis_min
+      extra_surfs: if (nextra.ne.0) then
       nxcurv=0
       nexexx=2*iabs(nextra)*iabs(ixstrt)
       do i=1,nexexx
@@ -446,10 +455,11 @@
           endif
         endif
       enddo
-      endif ! ipass.le.1
-      endif ! nextra.ne.0
-      if (nbdry.gt.0) then
-      if (nbdry.le.20) then
+      endif extra_surfs
+      endif single_pass
+      fixed_bdry: if (nbdry.gt.0) then
+      bdry: if (nbdry.le.20) then
+      ! TODO: it is impossible to reach this code...
       nn = nn + 1
       markme(nn) = 16
       ncnct(nn) = -1
@@ -458,8 +468,8 @@
          xx(ii,nn) = rbdry(ii)
          yy(ii,nn) = zbdry(ii)
       enddo
-      else ! nbdry.gt.20
-      if (nbdryp <= 0) then
+      else bdry
+      bdryp: if (nbdryp <= 0) then
       nbdrz=nbdry+1
       rbdry(nbdrz)=rbdry(1)
       zbdry(nbdrz)=zbdry(1)
@@ -470,7 +480,7 @@
          xx(ii,nn) = rbdry(ii)
          yy(ii,nn) = zbdry(ii)
       enddo
-      else ! nbdryp > 0
+      else bdryp
       nn = nn + 1
       nxy(nn) = nbdryp + 1
       ndotme(nn) = 1
@@ -491,21 +501,21 @@
          xx(ii,nn) = rbdry(iijj)
          yy(ii,nn) = zbdry(iijj)
       enddo
-      endif ! nbdryp > 0
-      endif ! nbdry.gt.20
-      endif ! nbdry.gt.0
+      endif bdryp
+      endif bdry
+      endif fixed_bdry
       if (nsol > 0) then
-      nn = nn + 1
-      markme(nn) = 2
-      ncnct(nn) = -1
-      clearx(nn) = 'GREE'
-      nxy(nn) = nsol
-      do ii = 1,nsol
-         xx(ii,nn) = rsol(ii)
-         yy(ii,nn) = zsol(ii)
-      enddo
+         nn = nn + 1
+         markme(nn) = 2
+         ncnct(nn) = -1
+         clearx(nn) = 'GREE'
+         nxy(nn) = nsol
+         do ii = 1,nsol
+            xx(ii,nn) = rsol(ii)
+            yy(ii,nn) = zsol(ii)
+         enddo
       endif
-      if (ipass.le.1) then
+      one_pass: if (ipass.le.1) then
       do i=1,nw-1
          worke(i)=real(i-1,dp)/(nw-1)
       enddo
@@ -633,7 +643,7 @@
       enddo
 40023 format (i1)
 !-----------------------------------------------------------------------
-!--   plot polarimetry viewing points                                 --
+!--   plot MSE locations                                              --
 !-----------------------------------------------------------------------
       if (iplots.gt.0.and.kstark.gt.0) then
          nn = nn + 1
@@ -665,7 +675,7 @@
          nxy(nn) =  innn
          ncnct(nn)=-1
       endif
-      if (kframe.eq.2) then
+      kframe2: if (kframe.eq.2) then
          idelx=1
          idely=1
          mmw=nw
@@ -697,8 +707,8 @@
             enddo
          enddo
          nxy(nn) = innn
-      endif
-      if (icutfp.eq.2.and.kframe.ne.1) then
+      endif kframe2
+      plot_SOL_curr: if (icutfp.eq.2.and.kframe.ne.1) then
          innn=0
          nn = nn + 1
          sclpc(nn) = 0.3_dp
@@ -859,9 +869,9 @@
          xpos(msg) = rvsmax
          ypos(msg) = zvsmin-0.3_dp
          ht(msg) = 0.10_dp
-      endif ! icutfp.eq.2.and.kframe.ne.1
-      endif ! ipass.le.1
-      if ((iplim.le.0).or.((iplim.ne.10) &
+      endif plot_SOL_curr
+      endif one_pass
+      plot_limiter: if ((iplim.le.0).or.((iplim.ne.10) &
           .and.((limitr.ne.(limid+1)).or.(xlim(limitr+1).eq.0.0)))) then
       nn = nn + 1
       nxy(nn) = limitr
@@ -899,11 +909,11 @@
          xx(ii,nn) = rwstrip2(ii)
          yy(ii,nn) = zwstrip2(ii)
       enddo
-      else
+      else plot_limiter
 !-------------------------------------------------------------------
 !--   plot vessel                                                 --
 !-------------------------------------------------------------------
-      if (iplim.eq.10) then
+      lim_opt: if (iplim.eq.10) then
       call pltcol(nvesel,rvs,zvs,wvs,hvs,avs,avs2,n00, &
       nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
@@ -924,15 +934,15 @@
          xx(ii,nn) = xplt(ii)
          yy(ii,nn) = yplt(ii)
       enddo
-      else !iplim.ne.10
+      else lim_opt
 !
       iupper=0
       ilower=0
       do i=1,limitr
-         if ((xlim(i).eq.xlim(limitr+1)).and.(ylim(i).eq.ylim(limitr+1)) &
-         ) iupper=i
+         if ((xlim(i).eq.xlim(limitr+1)).and.(ylim(i).eq.ylim(limitr+1))) &
+           iupper=i
          if ((xlim(i).eq.xlim(limitr+12)).and.(ylim(i).eq. &
-         ylim(limitr+12))) ilower=i
+           ylim(limitr+12))) ilower=i
       enddo
       nn = nn + 1
       nxy(nn) = iupper
@@ -1088,8 +1098,8 @@
          syy(ii,nshd) = workd(ii)
       enddo
       close(unit=lfile)
-      endif ! iplim.ne.10
-      endif
+      endif lim_opt
+      endif plot_limiter
 !--------------------------------------------------------------------
 !--   vertical feedback ?                                          --
 !--------------------------------------------------------------------
@@ -1117,7 +1127,7 @@
             endif
          enddo
       endif
-      if (iprobe.ne.0) then
+      plot_probes: if (iprobe.ne.0) then
       nn = nn + 1
       markme(nn) = 16
       sclpc(nn) = 0.5_dp
@@ -1169,7 +1179,7 @@
          xx(ii,nn) = xmp2(ii)
          yy(ii,nn) = ymp2(ii)
       enddo
-      if (klabel.eq.0) then
+      klabel0: if (klabel.eq.0) then
          do i=ibm,iem,idelm
 !           call rlint(i,xmp2(i),ymp2(i))
             msg = msg + 1
@@ -1179,7 +1189,7 @@
             ypos(msg) = ymp2(i)
             ht(msg) = 0.04_dp
          enddo
-      else
+      else klabel0
          hgt = 0.13_dp
 !vas f90 modifi.
 !vas         if (klabel.lt.0) call hgt = 0.16_dp
@@ -1392,10 +1402,10 @@
            ylen = yll
            ! call title('$',-100,'R(m)$',0,'Z(m)$',0,xll,yll)
          endif
-      endif
-      endif !iprobe.ne.0
+      endif klabel0
+      endif plot_probes
 !
-      if (ixray.ne.0) then
+      SXR: if (ixray.ne.0) then
       do i=ixraystart,ixrayend
          xplt(1)=rxray(i)
          yplt(1)=zxray(i)
@@ -1455,7 +1465,7 @@
          endif
       enddo
 !
-      endif !ixray.ne.0
+      endif SXR
       if (ifcoil.gt.0) then
         call pltcol(mfcoil,rf,zf,wf,hf,af,af2,n11, &
           nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
@@ -1481,7 +1491,7 @@
       pasmac=cpasma(jtime)/1000.
       pasmap=pasmat(jtime)/1000.
 !
-      if (klabel.ge.0) then
+      klabel_1: if (klabel.ge.0) then
       xabs=-3.0
       yabs=7.0
       dyabs = 0.22_dp
@@ -1499,7 +1509,7 @@
       xabs=-6.5_dp
       yabs=7.0
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitvers
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -1958,8 +1968,7 @@
            ypos(msg) = yabs
            yabs = yabs - dyabs
            ht(msg) = 0.14_dp
-         endif
-         if (kvtor.eq.11) then
+         elseif (kvtor.eq.11) then
            write(text,9614) kvtor
            msg = msg + 1
            note(msg) = 1
@@ -2071,42 +2080,40 @@
          ht(msg) = 0.14_dp
       endif
 !
-      endif ! klabel.ge.0
+      endif klabel_1
       if (ipass.gt.1) then
          return
       endif
 !
-!vas f90 modifi.
-!vas      if (itek.ge.5.and .idotek.eq.0) then
       if (itek.ge.5.and.idotek.eq.0) then
-      ncurve = nn
-      ipag = 0
-      ibrdr = 1
-      grce = -1.0
-      iexit = 1
-      nplen = 100
-      hight = 0.14_dp
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters    c
-!-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
-      iorel, xorl, yorl, hight, bngle, bshft, &
-      ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
-      almin, xstp, almax, blmin, ystp, blmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
-      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
-      igridx, igridy, idash, idot, ichdsh, ichdot, &
-      thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
-      markme, clearx, mrc, tlen, nmrk, rat, &
-      xx, yy, nxy, ncnct, &
-      icont, nword, zz, ix, iy, zinc, line, mode, &
-      lbflg, ithk, ipri, nline, draw, &
-      nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto, ivec, &
-      msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+        ncurve = nn
+        ipag = 0
+        ibrdr = 1
+        grce = -1.0
+        iexit = 1
+        nplen = 100
+        hight = 0.14_dp
+!-----------------------------------------------------------------------
+!       Write Plot Parameters
+!-----------------------------------------------------------------------
+        call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
+        iorel, xorl, yorl, hight, bngle, bshft, &
+        ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
+        almin, xstp, almax, blmin, ystp, blmax, &
+        iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+        isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
+        igridx, igridy, idash, idot, ichdsh, ichdot, &
+        thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
+        markme, clearx, mrc, tlen, nmrk, rat, &
+        xx, yy, nxy, ncnct, &
+        icont, nword, zz, ix, iy, zinc, line, mode, &
+        lbflg, ithk, ipri, nline, draw, &
+        nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
+        nvec, xfm, yfm, xto, yto, ivec, &
+        msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      endif
 !
-      endif ! ivacum.le.0
+      endif not_time_snap
       do i=1,nh
          call seva2d(bkx,lkx,bky,lky,c,rmaxis,zgrid(i),pds,ier,n333)
          workj(i)=-pds(3)/rmaxis
@@ -2124,7 +2131,6 @@
          workg(i)=pds(2)/xnow
          workk(i)=xnow
       enddo
-      if (ivacum.le.0) then
       if (kwripre.gt.0) then
          delz=(zuperts(jtime)-zlowerts)/(mpress-1)
          do i=1,mpress
@@ -2173,11 +2179,11 @@
          sipmid(i)=xpsikk
          rhopmid(i)=seval(nw,xpsikk,sigrid,rhovn,brhovn,crhovn,drhovn)
          if (keecur.gt.0) then
-          if (xpsikk.lt.0.0.or.xpsikk.gt.1.0) then
-           ermid(i)=0.0
-          else
-           ermid(i)=eradial(xpsikk,keecur,workc(i),zmaxis)/1000.
-          endif
+            if (xpsikk.lt.0.0.or.xpsikk.gt.1.0) then
+               ermid(i)=0.0
+            else
+               ermid(i)=eradial(xpsikk,keecur,workc(i),zmaxis)/1000.
+            endif
          endif
          if (xpsikk.lt.0.0.or.xpsikk.gt.1.0) then
             pmid(i)=0.0
@@ -2186,7 +2192,7 @@
             xmid(i)=xpsikk
          endif
          pmidw(i)=0.0
-         if (kvtor.gt.0.and.icurrt.ne.2) then
+         rot: if (kvtor.gt.0.and.icurrt.ne.2) then
            call seva2d(bwx,lwx,bwy,lwy,cw,workc(i),zmaxis, &
                        pds,ier,n111)
            pmid(i)=pds(1)
@@ -2228,8 +2234,7 @@
                if (kvtor.eq.1) then
                  ppw=ppw*rgrvn*workc(i)
                  workaw(i)=ppw/darea/1.e3_dp
-               endif
-               if (kvtor.eq.2) then
+               elseif (kvtor.eq.2) then
                  if (abs(pres0).gt.1.e-10_dp) then
                     pwop0=prew0/pres0
                     ptop0=exp(pwop0*rgrvv)
@@ -2239,8 +2244,7 @@
                  endif
                  ppw=ppw*(1.+pwop0*rgrvn)*rgrvn*workc(i)
                  workaw(i)=ppw/darea/1.e3_dp
-               endif
-               if (kvtor.eq.3) then
+               elseif (kvtor.eq.3) then
                  if (abs(pres0).gt.1.e-10_dp) then
                     pwop0=prew0/pres0
                     ptop0=exp(pwop0*rgrvn)
@@ -2257,7 +2261,7 @@
                workaw(i)=pds(1)
              endif
            endif
-         endif
+         endif rot
 !-------------------------------------------------------------------
 !--      total current density                                    --
 !-------------------------------------------------------------------
@@ -2303,12 +2307,12 @@
       dcurn=curmax-curmin
       curmax=curmax+0.05_dp*dcurn
       dcurn=(curmax-curmin)/2.
-      if (klabel.ge.0) then
+      klabel_2: if (klabel.ge.0) then
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!        Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+      pl_files_1: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!        Initialize plot parameters
+!-----------------------------------------------------------------------
          call init2d
          ibrdr = 1
          xphy = 4.1_dp
@@ -2332,7 +2336,7 @@
            xx(ii,nn) = workc(ii)
            yy(ii,nn) = worka(ii)
          enddo
-         if (kwripre.gt.0) then
+         plot_mid: if (kwripre.gt.0) then
            dataname=dataname(1:lprx)//'_jmid'
            open(unit=62,file=dataname,status='old',iostat=ioerr)
            if (ioerr.eq.0) close(unit=62,status='delete')
@@ -2361,7 +2365,7 @@
              enddo
              close(unit=62)
            endif
-         endif
+         endif plot_mid
 !--------------------------------------------------------------------
 !--      zero line                                                 --
 !--------------------------------------------------------------------
@@ -2382,9 +2386,9 @@
            enddo
          endif
          ncurve=nn
-!-----------------------------------------------------------------------c
-!        Write Plot Parameters    c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!        Write Plot Parameters
+!-----------------------------------------------------------------------
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
@@ -2400,8 +2404,8 @@
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
-      endif
+      endif pl_files_1
+      endif klabel_2
 !
       do i=1,nw
          sinow=(workd(i)-simag)/(psibry-simag)
@@ -2419,11 +2423,11 @@
       dcurn=curmax-curmin
       curmax=curmax+0.05_dp*dcurn
       dcurn=(curmax-curmin)/2.
-      if (klabel.ge.0) then
+      klabel_3: if (klabel.ge.0) then
          ibrdr = 1
-!-----------------------------------------------------------------------c
-!        Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!        Initialize plot parameters
+!-----------------------------------------------------------------------
          call init2d
          nn = nn + 1
          nxy(1) = nw
@@ -2462,7 +2466,7 @@
             enddo
             close(62)
          endif
-         if (kstark.gt.0.or.kdomse.gt.0) then
+         MSE: if (kstark.gt.0.or.kdomse.gt.0) then
           do i=1,nstark
             sinow=(sistark(i)-simag)/(psibry-simag)
             if (sinow.gt.0.0.and.sinow.lt.1.0) then
@@ -2471,7 +2475,7 @@
               qstark(i)=0.0
             endif
           enddo
-          if (kwripre.gt.0) then
+          plot_mse: if (kwripre.gt.0) then
             dataname=dataname(1:lprx)//'_rzmse'
             open(unit=62,file=dataname,status='old',iostat=ioerr)
             if (ioerr.eq.0) close(unit=62,status='delete')
@@ -2557,8 +2561,8 @@
               rrgaml(igamn)=1.e10_dp
             enddo
             close(62)
-          endif
-         endif
+          endif plot_mse
+         endif MSE
          if (kstark.eq.0.and.mmbmsels.gt.0) then
           do i=1,nmsels
             sinow=sinmls(i)
@@ -2570,7 +2574,7 @@
           enddo
          endif
 !
-         if (itek.ge.5.and.idotek.eq.0) then
+         pl_files_2: if (itek.ge.5.and.idotek.eq.0) then
            ibrdr = 1
            xphy = 4.1_dp
            yphy = 2.7_dp
@@ -2623,9 +2627,9 @@
              enddo
              ncurve = nn
            endif
-!-----------------------------------------------------------------------c
-!          Write Plot Parameters    c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!          Write Plot Parameters
+!-----------------------------------------------------------------------
            call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
            iorel, xorl, yorl, hight, bngle, bshft, &
            ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
@@ -2641,10 +2645,9 @@
            nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
            nvec, xfm, yfm, xto, yto, ivec, &
            msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-         endif ! itek
-      endif
+         endif pl_files_2
+      endif klabel_3
 !
-      endif ! ivacum.le.0
       istrpl=1
       if (itek.eq.1) call tekall(4010,960,0,0,0)
       call grace(0.0)
@@ -2652,9 +2655,9 @@
 !
       iexpand=1
       if (oring(jtime).lt.100.*scrape) iexpand=0
-      if (iexpand.eq.0) then
+      iexp: if (iexpand.eq.0) then
          call expand(npltbdry,npltxpt,nexexx,xmm,jtime)
-      else
+      else iexp
          curmin=workg(1)
          curmax=workg(1)
          do i=1,nw
@@ -2668,10 +2671,10 @@
          dcurn=(curmax-curmin)
          xmm=1.6_dp
 !
-         if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!        Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+         pl_files_3: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!        Initialize plot parameters
+!-----------------------------------------------------------------------
          call init2d
          ibrdr = 1
          xphy = 9.0
@@ -2689,9 +2692,9 @@
          xtitle = 'R(m)$'
          ytitle = 'Bz(T)$'
          iexit = 1
-!-----------------------------------------------------------------------c
-!        Write Plot Parameters    c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!        Write Plot Parameters
+!-----------------------------------------------------------------------
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
@@ -2707,8 +2710,8 @@
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
-      endif ! iexpand.ne.0
+      endif pl_files_3
+      endif iexp
 !
       curmin=workf(1)
       curmax=workf(1)
@@ -2722,9 +2725,9 @@
       curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
       xmm=1.6_dp
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       ibrdr = 1
       xphy = 9.0
@@ -2750,9 +2753,9 @@
       iexit = 1
 !
       if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!        Write Plot Parameters    c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!        Write Plot Parameters
+!-----------------------------------------------------------------------
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
@@ -2768,7 +2771,7 @@
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif
 !
       do i=1,nw
          do j=1,nh
@@ -2819,9 +2822,9 @@
       workg(2)=workk(nw)
       workh(1)=0.
       workh(2)=0.
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       ncurve = 2
       nxy(1) = nw
@@ -2836,10 +2839,10 @@
       enddo
       ndshme(2) = 1
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+      pl_files_4: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ibrdr = 1
       xphy = 9.0
       yphy = 6.0
@@ -2857,9 +2860,9 @@
       xtitle = '$'
       ytitle = 'n$'
       iexit = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters    c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
@@ -2875,7 +2878,7 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif pl_files_4
 !
       curmin=workj(1)
       curmax=workj(1)
@@ -2889,10 +2892,10 @@
       curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+      pl_files_5: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       ipag = 0
       ibrdr = 1
@@ -2910,9 +2913,9 @@
       xtitle = 'Z(m)$'
       ytitle = 'Br(T)$'
       iexit = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters    c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
@@ -2928,9 +2931,8 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif pl_files_5
 !
-      if (ivacum.le.0) then
       curmin=1.0e+10_dp
       curmax=-1.0e+10_dp
       do i=1,nw
@@ -2945,10 +2947,10 @@
       curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+      pl_files_6: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       ibrdr = 1
       xphy = 6.5_dp
@@ -2967,9 +2969,9 @@
       xtitle = 'PSI$'
       ytitle = 'SHEAR$'
       iexit = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters    c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
@@ -2985,10 +2987,7 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
-      endif ! ivacum.le.0
-! TODO: can ivacum get changed before this?
-      if (ivacum.le.0) then
+      endif pl_files_6
       curmin=1.0e+10_dp
       curmax=-1.0e+10_dp
       do i=1,nw
@@ -3001,10 +3000,10 @@
       dcurn=(curmax-curmin)
       drpmid=drpmid*2.
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+      pl_files_7: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       xtitle = 'R(m)$'
       ytitle = 'P(n/m2)$'
@@ -3057,9 +3056,9 @@
         yy(ii,nn) = pmidw(ii)
       enddo
       ncurve=nn
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters    c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
@@ -3075,10 +3074,7 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
-      endif ! ivacum.le.0
-! TODO: can ivacum get changed before this?
-      if (ivacum.le.0) then
+      endif pl_files_7
       curmin=1.0e+10_dp
       curmax=-1.0e+10_dp
       do i=1,nitera
@@ -3100,10 +3096,10 @@
       idel=nitera/xmm
       xdel=idel+1
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+      pl_files_8: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       ibrdr = 1
       xphy = 4.0
@@ -3121,9 +3117,9 @@
       xtitle = 'ITERS$'
       ytitle = 'ERR$'
       iexit = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters    c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
@@ -3139,11 +3135,8 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
-      endif ! ivacum.le.0
-! TODO: can ivacum get changed before this?
-      if (ivacum.le.0) then
-      if (iconvr.ne.3) then
+      endif pl_files_8
+      not_eq_mode: if (iconvr.ne.3) then
          curmin=1.0e+10_dp
          curmax=-1.0e+10_dp
          do i=1,nitera
@@ -3160,10 +3153,10 @@
          kcycle=curmin
          curmin=10.**(kcycle)
 !
-         if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!          Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+         pl_files_9: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!          Initialize plot parameters
+!-----------------------------------------------------------------------
            call init2d
            ibrdr = 1
            xphy = 4.0
@@ -3180,9 +3173,9 @@
            xtitle = 'ITERS$'
            ytitle = 'CHI2$'
            iexit = 1
-!-----------------------------------------------------------------------c
-!         Write Plot Parameters    c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!         Write Plot Parameters
+!-----------------------------------------------------------------------
           call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
           iorel, xorl, yorl, hight, bngle, bshft, &
           ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
@@ -3198,9 +3191,8 @@
           nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
           nvec, xfm, yfm, xto, yto, ivec, &
           msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-        endif ! itek
-      endif ! iconvr.ne.3
-      endif ! ivacum.le.0
+        endif pl_files_9
+      endif not_eq_mode
 !-----------------------------------------------------------------
 !--   F coil current limits from Hyatt              LLao 970423 --
 !-----------------------------------------------------------------
@@ -3222,6 +3214,7 @@
          workb(i)=brsp(i)/1000.
          worka(i)=i
          workd(i)=-workc(i)
+         ! TODO: inside ivacum.le.0 block...
          if (fwtfc(1).ne.0.0.or.ivacum.gt.0.or.imag2(jtime).gt.0) then
             workc(i)=fccurt(jtime,i)/1000.
             workd(i)=workc(i)
@@ -3240,13 +3233,13 @@
       ibrdr = 1
       iline=1
       if (fwtfc(1).ne.0.0) iline=-1
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
-!-----------------------------------------------------------------------c
-!     Computed F-coil currents, solid line, open circles, cyan        c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Computed F-coil currents, solid line, open circles, cyan
+!-----------------------------------------------------------------------
       nn = nn + 1
       nxy(nn) = nfcoil
       ncnct(nn) = 1
@@ -3257,7 +3250,7 @@
          xx(i,nn) = worka(i)
          yy(i,nn) = workb(i)
       enddo
-      if (ifcurr.le.0) then
+      F_coils: if (ifcurr.le.0) then
       if (imag2(jtime).eq.0) then
          nn = nn + 1
          nxy(nn) = nfcoil
@@ -3280,9 +3273,9 @@
             yy(i,nn) = workd(i)
          enddo
       else
-!------------------------------------------------------------------------c
-!        Measured F-coil currents, dot curve, solid pink symbols         c
-!------------------------------------------------------------------------c
+!------------------------------------------------------------------------
+!        Measured F-coil currents, dot curve, solid pink symbols
+!------------------------------------------------------------------------
          nn = nn + 1
          nxy(nn) = nfcoil
          ncnct(nn) = 1
@@ -3295,14 +3288,14 @@
             yy(i,nn) = workc(i)
          enddo
       endif
-      endif ! ifcurr.le.0
+      endif F_coils
 !-----------------------------------------------------------------------
 !--   write out plasma parameters                                     --
 !-----------------------------------------------------------------------
       xabs=-6.0
       yabs=1.8_dp
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitvers
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -3467,7 +3460,6 @@
 !-----------------------------------------------------------------------
 !--   vertical stability parameter, reference Nuc Fusion 18(1978)1331 --
 !-----------------------------------------------------------------------
-      if (ivacum.le.0) then
          rx=rmagx(jtime)/100.
          pleng=0.0
          f_0=log(8*rout(jtime)/abar)-2+betap(jtime)+ali(jtime)/2+.5_dp
@@ -3476,7 +3468,6 @@
 !--      metal wall                                                   --
 !-----------------------------------------------------------------------
          xnnc(jtime)=vertn(jtime)/((10.77_dp*delr**2+8.08_dp*delr+2.54_dp)/f_0)
-      endif
       write (text,9399) xnnc(jtime),qmerci(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3643,7 +3634,7 @@
          ypos(msg) = yabs
          yabs = yabs - dyabs
          ht(msg) = 0.14_dp
-      elseif(symmetrize)then
+      elseif (symmetrize) then
          write (text,9937)
          msg = msg + 1
          note(msg) = 1
@@ -3728,10 +3719,10 @@
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+      pl_files_10: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ncurve = nn
       ibrdr = 1
       xphy = 6.5_dp
@@ -3749,9 +3740,9 @@
       xtitle = 'F coils$'
       ytitle = 'I(kA)$'
       iexit = 2
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters    c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       xfcoil=nfcoil-1
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
@@ -3768,12 +3759,11 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif pl_files_10
 !----------------------------------------------------------------------
 !--   plot flux loop chi squares                                     --
 !----------------------------------------------------------------------
-      if (iconvr.eq.3.and.((kdata.eq.1).or.(kdata.eq.2))) then
-!     if (ivacum.eq.0) go to 730
+      eq_file_mode: if (iconvr.eq.3.and.((kdata.eq.1).or.(kdata.eq.2))) then
       if (itek.eq.1) call tekall(4010,960,0,0,0)
       xmm=1.6_dp*2
       else
@@ -3785,10 +3775,10 @@
          si(i)=i
       enddo
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+      pl_files_11: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       if (kstark.le.1) then
          yxxx=3.0
@@ -3805,6 +3795,7 @@
       nxlen = 100
       nylen = 100
       xlen = 3.0
+      ! TODO: inside ivacum.le.0 block...
       if (ivacum.eq.1) then
          xlen = 6.0
          xphy = 4.7_dp
@@ -3823,9 +3814,9 @@
       sclpc(1) = 0.5_dp
       ncnct(1) = 1
       iexit = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters    c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
@@ -3841,9 +3832,9 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif pl_files_11
 !----------------------------------------------------------------------
-!--  plot the probes chi squares                                     --
+!--   plot the probes chi squares                                     --
 !----------------------------------------------------------------------
       chsmin=1.0e30_dp
       chsmax=-1.0e30_dp
@@ -3852,9 +3843,9 @@
          chsmax=max(saimpi(i),chsmax)
          rmpi(i)=i
       enddo
-!-----------------------------------------------------------------------c
-! Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       if (kstark.le.1) then
          xphy = 7.7_dp
@@ -3867,11 +3858,13 @@
       ytitle = 'CHI**2$'
       ipag = 1
       iexit = 1
+      ! TODO: inside ivacum.le.0 block...
       if (ivacum.gt.0) iexit=2
       sclpc(1) = 0.5_dp
       ncnct(1) = 1
 
       xabs=-7.3_dp
+      ! TODO: inside ivacum.le.0 block...
       if (ivacum.eq.1) xabs=-4.3_dp
       if (kstark.le.1) then
          yabs=3.0
@@ -3879,7 +3872,7 @@
          yabs=4.5_dp
       endif
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitvers
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -3953,12 +3946,14 @@
          lmes(msg) = mpnam2(i)
          imes(msg) = 10
          xpos(msg) = -6.8_dp
+         ! TODO: inside ivacum.le.0 block...
          if (ivacum.eq.1) xpos(msg) = -3.8_dp
          ypos(msg) = yabs
          ht(msg) = 0.07_dp
          yabs=yabs-.13_dp
       enddo
       xabs=-5.8_dp
+      ! TODO: inside ivacum.le.0 block...
       if (ivacum.eq.1) xabs=-2.8_dp
       yabs=yabs0-0.5_dp
       do i=magpri67+17,magpri67+magpri322
@@ -3975,6 +3970,7 @@
          lmes(msg) = mpnam2(i)
          imes(msg) = 10
          xpos(msg) = -5.2_dp
+         ! TODO: inside ivacum.le.0 block...
          if (ivacum.eq.1) xpos(msg) = -2.2_dp
          ypos(msg) = yabs
          ht(msg) = 0.07_dp
@@ -3982,6 +3978,7 @@
       enddo
 !
       xabs=-7.3_dp
+      ! TODO: inside ivacum.le.0 block...
       if (ivacum.eq.1) xabs=-4.3_dp
       yabs=yabs-.5_dp
       msg = msg + 1
@@ -4016,6 +4013,7 @@
          lmes(msg) = lpname(i)
          imes(msg) = 10
          xpos(msg) = -6.8_dp
+         ! TODO: inside ivacum.le.0 block...
          if (ivacum.eq.1) xpos(msg) = -3.8_dp
          ypos(msg) = yabs
          ht(msg) = 0.07_dp
@@ -4036,21 +4034,23 @@
          lmes(msg) = lpname(i)
          imes(msg) = 10
          xpos(msg) = -5.2_dp
+         ! TODO: inside ivacum.le.0 block...
          if (ivacum.eq.1) xpos(msg) = -2.2_dp
          ypos(msg) = yabs
          ht(msg) = 0.07_dp
       enddo
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+      pl_files_12: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ibrdr = 1
       hight = 0.12_dp
       nplen = 100
       nxlen = 100
       nylen = 100
       xlen = 3.0
+      ! TODO: inside ivacum.le.0 block...
       if (ivacum.eq.1) then
          xlen = 6.0
          xphy = 4.7_dp
@@ -4063,9 +4063,9 @@
       ixtck = 2
       iytck = 2
       idot = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters    c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
@@ -4081,11 +4081,11 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif pl_files_12
 !--------------------------------------------------------------------
-!--   plot chi2 for polarimetry                                    --
+!--   plot chi2 for MSE                                            --
 !--------------------------------------------------------------------
-      if (kstark.gt.1) then
+      MSE_chi: if (kstark.gt.1) then
        chsmin=1.0e30_dp
        chsmax=-1.0e30_dp
        do i=1,nstark
@@ -4094,10 +4094,10 @@
          rmpi(i)=i
        enddo
 !
-       if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!        Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+       pl_files_13: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!        Initialize plot parameters
+!-----------------------------------------------------------------------
          call init2d
          yorg = chsmin
          ynmax = chsmax
@@ -4167,9 +4167,9 @@
          ytitle = 'CHI**2$'
          ncurve = nn
          iexit = 1
-!-----------------------------------------------------------------------c
-!        Write Plot Parameters    c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!        Write Plot Parameters
+!-----------------------------------------------------------------------
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
@@ -4185,12 +4185,11 @@
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-       endif ! itek
-      endif ! kstark.gt.1
+       endif pl_files_13
+      endif MSE_chi
 !-------------------------------------------------------------------------
 !--   plot P', FF', and Zm                                              --
 !-------------------------------------------------------------------------
-      if (ivacum.le.0) then
       curmin=1.0e+10_dp
       curmax=-1.0e+10_dp
       do i=1,nitera
@@ -4198,9 +4197,9 @@
          curmax=max(curmax,czmaxi(i))
          xiter(i)=i
       enddo
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       xtitle = 'ITERS$'
       ytitle = 'Zm(cm)$'
@@ -4288,42 +4287,41 @@
       ncurve = nn
 !
       if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters     c
-!-----------------------------------------------------------------------c
-      ibrdr = 1
-      xphy = 4.2_dp
-      yphy = 5.7_dp
-      hight = 0.12_dp
-      nplen = 100
-      nxlen = 100
-      nylen = 100
-      ixtck = 2
-      iytck = 2
-      intax = 1
-      igridx = 2
-      igridy = 2
-      idot = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters            c
-!-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
-      iorel, xorl, yorl, hight, bngle, bshft, &
-      ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
-      xiter(1), xdel, xiter(nitera), yorg  , ystp   ,ynmax , &
-      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
-      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
-      igridx, igridy, idash, idot, ichdsh, ichdot, &
-      thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
-      markme, clearx, mrc, tlen, nmrk, rat, &
-      xx   , yy    , nxy   , ncnct, &
-      icont, nword, zz, ix, iy, zinc, line, mode, &
-      lbflg, ithk, ipri, nline, draw, &
-      nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto, ivec, &
-      msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
-      endif ! iconvr.eq.3.and.((kdata.eq.1).or.(kdata.eq.2))
+!-----------------------------------------------------------------------
+!       Initialize plot parameters
+!-----------------------------------------------------------------------
+        ibrdr = 1
+        xphy = 4.2_dp
+        yphy = 5.7_dp
+        hight = 0.12_dp
+        nplen = 100
+        nxlen = 100
+        nylen = 100
+        ixtck = 2
+        iytck = 2
+        intax = 1
+        igridx = 2
+        igridy = 2
+        idot = 1
+!-----------------------------------------------------------------------
+!       Write Plot Parameters
+!-----------------------------------------------------------------------
+        call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
+        iorel, xorl, yorl, hight, bngle, bshft, &
+        ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
+        xiter(1), xdel, xiter(nitera), yorg  , ystp   ,ynmax , &
+        iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+        isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
+        igridx, igridy, idash, idot, ichdsh, ichdot, &
+        thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
+        markme, clearx, mrc, tlen, nmrk, rat, &
+        xx   , yy    , nxy   , ncnct, &
+        icont, nword, zz, ix, iy, zinc, line, mode, &
+        lbflg, ithk, ipri, nline, draw, &
+        nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
+        nvec, xfm, yfm, xto, yto, ivec, &
+        msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      endif
 !
       curmin=1.0e+10_dp
       curmax=-1.0e+10_dp
@@ -4338,9 +4336,9 @@
       curmax=curmax+0.05_dp*dcurn
       curmin=curmin-0.05_dp*dcurn
       dcurn=(curmax-curmin)
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters  c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       yorg = curmin
       ystp = dcurn
@@ -4387,8 +4385,6 @@
       xabs= -0.5_dp
       xabs= -0.7_dp
       yabs= -0.8_dp
-! TODO: can ivacum change before this? (already in if statement...)
-      if (ivacum.le.0) then
       if ((icurrt.eq.2.or.icurrt.eq.5) &
                .and.abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
          do i=nfcoil+1,nfcoil+kppcur
@@ -4461,23 +4457,23 @@
          yabs = yabs - dyabs
          ht(msg) = 0.13_dp*0.7_dp
       endif
-      if (kvtor.ge.1.and.kvtor.le.3) then
-      if (icurrt.eq.5.and. abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
+      rot_form: if (kvtor.ge.1.and.kvtor.le.3) then
+      rot_exists: if (icurrt.eq.5.and. abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
          do i=nfnpcr+1,nfnpcr+kwwcur,2
             xxnorm=brsp(i)/brsp(nfcoil+1)
             if (i+1.gt.nfnpcr+kwwcur) then
-            if (i.eq.nfnpcr+1) then
-              write (text,18971) xxnorm
+               if (i.eq.nfnpcr+1) then
+                  write (text,18971) xxnorm
+               else
+                  write (text,18973) xxnorm
+               endif
             else
-              write (text,18973) xxnorm
-            endif
-            else
-            xynorm=brsp(i+1)/brsp(nfcoil+1)
-            if (i.eq.nfnpcr+1) then
-              write (text,28971) xxnorm,xynorm
-            else
-              write (text,28973) xxnorm,xynorm
-            endif
+               xynorm=brsp(i+1)/brsp(nfcoil+1)
+               if (i.eq.nfnpcr+1) then
+                  write (text,28971) xxnorm,xynorm
+               else
+                  write (text,28973) xxnorm,xynorm
+               endif
             endif
             msg = msg + 1
             note(msg) = 1
@@ -4488,8 +4484,8 @@
             yabs = yabs - dyabs
             ht(msg) = 0.13_dp*0.7_dp
          enddo
-      endif
-      endif
+      endif rot_exists
+      endif rot_form
 !
       xabs= 1.2_dp
       yabs= -0.8_dp
@@ -4509,10 +4505,10 @@
          enddo
       endif
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters     c
-!-----------------------------------------------------------------------c
+      pl_files_14: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ibrdr = 1
       xphy = 4.2_dp
       yphy = 2.80_dp
@@ -4527,9 +4523,9 @@
       igridx = 1
       igridy = 2
       idot = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
@@ -4545,17 +4541,15 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
-      endif ! ivacum.le.0
+      endif pl_files_14
 !      call endpl(0)
 
       xmm=1.6_dp
-!  730 continue
-      endif ! ivacum.le.0
+      endif eq_file_mode
 !-----------------------------------------------------------------------
 !-    plot experimental vs calculated magnetic signals                --
 !-----------------------------------------------------------------------
-      if (iexcal.gt.0) then
+      B_signals: if (iexcal.gt.0) then
       do kk=1,nsilop
          expsi(kk)=silopt(jtime,kk)
          si(kk)=kk
@@ -4604,10 +4598,10 @@
       cmpmin=min(cmpmin,empmin)
       cmpmax=max(cmpmax,empmax)
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters  c
-!-----------------------------------------------------------------------c
+      pl_files_15: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       nn = nn + 1
       sclpc(nn) = 0.5_dp
@@ -4656,9 +4650,9 @@
       ytitle = 'exp vs calc (v-s/r)$'
       ncurve = nn
       iexit = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
@@ -4673,15 +4667,12 @@
       lbflg, ithk, ipri, nline, draw, &
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
-       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
 !-----------------------------------------------------------------------
-!--   plot exp vs calc magnetic probes                                --
+!     plot exp vs calc magnetic probes
+!
+!     Initialize plot parameters
 !-----------------------------------------------------------------------
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters  c
-!-----------------------------------------------------------------------c
       call init2d
       nn = nn + 1
       sclpc(nn) = 0.5_dp
@@ -4716,7 +4707,7 @@
       xabs=-4.3_dp
       yabs=3.0
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitvers
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -4893,9 +4884,9 @@
       ytitle = 'exp vs calc (T)$'
       ncurve = nn
       iexit = 2
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
@@ -4911,11 +4902,10 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
-      endif ! iexcal.gt.0
-      if (ivacum.le.0) then
+      endif pl_files_15
+      endif B_signals
 !
-      if (kwripre.gt.0) then
+      plot_extra: if (kwripre.gt.0) then
          dataname=dataname(1:lprx)//'_presf'
          open(unit=62,file=dataname,status='old',iostat=ioerr)
          if (ioerr.eq.0) close(unit=62,status='delete')
@@ -5071,21 +5061,21 @@
 !--      angular speed                                              --
 !---------------------------------------------------------------------
          if (nomegat.gt.0.and.kprfit.eq.3) then
-         dataname=dataname(1:lprx)//'_omegafit'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         do i=1,nomegat
-            yxn=rpreswv(i)
-            write (62,*) yxn,omegat(i)
-         enddo
-         close(unit=62)
-        endif
-      endif
+            dataname=dataname(1:lprx)//'_omegafit'
+            open(unit=62,file=dataname,status='old',iostat=ioerr)
+            if (ioerr.eq.0) close(unit=62,status='delete')
+            open(unit=62,file=dataname,status='new')
+            do i=1,nomegat
+               yxn=rpreswv(i)
+               write (62,*) yxn,omegat(i)
+            enddo
+            close(unit=62)
+          endif
+      endif plot_extra
 !-----------------------------------------------------------------------
 !--   plots for kinetic fitting option                                --
 !-----------------------------------------------------------------------
-      if ((kprfit.gt.0).and.(npress.gt.0)) then
+      kinetic: if ((kprfit.gt.0).and.(npress.gt.0)) then
       if (itek.eq.1) call tekall(4010,960,0,0,0)
       chsmin=1.0e+10_dp
       chsmax=-1.0e+10_dp
@@ -5104,10 +5094,10 @@
       enddo
       call zpline(nw,worke,workb,bworkb,cworkb,dworkb)
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters  c
-!-----------------------------------------------------------------------c
+      pl_files_16: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       nn = nn + 1
       sclpc(nn) = 0.5_dp
@@ -5138,9 +5128,9 @@
       ncurve = nn
       kgrid=1
       iexit = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
@@ -5156,7 +5146,7 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif pl_files_16
 !----------------------------------------------------------------------
 !--   plot the pressure profile                                      --
 !----------------------------------------------------------------------
@@ -5169,9 +5159,9 @@
          saipre(i)=seval(nw,-rpress(i),worke,workb,bworkb,cworkb,dworkb)
       enddo
       chsmin=0.0
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters  c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       nn = nn + 1
       sclpc(nn) = 0.5_dp
@@ -5212,11 +5202,11 @@
 !-----------------------------------------------------------------------
 !--   write out QPLOT data files                                      --
 !-----------------------------------------------------------------------
-      if (kwripre.gt.0) then
-         nnww=nw
-         xdum=0.0
-         if (kprfit.eq.2.or.kprfit.eq.3) then
-            dataname=dataname(1:lprx)//'_presd'
+      plot_pres: if (kwripre.gt.0) then
+      nnww=nw
+      xdum=0.0
+      kin: if (kprfit.eq.2.or.kprfit.eq.3) then
+         dataname=dataname(1:lprx)//'_presd'
          open(unit=62,file=dataname,status='old',iostat=ioerr)
          if (ioerr.eq.0) close(unit=62,status='delete')
          open(unit=62,file=dataname,status='new')
@@ -5224,11 +5214,10 @@
             write (62,*) saipre(i),pressr(i),xdum,sigpre(i)
          enddo
          close(unit=62)
-      endif
+      elseif (kprfit.eq.1) then kin
 !-----------------------------------------------------------------------
-!--   pressure input in flux space                                    --
+!--      pressure input in flux space                                 --
 !-----------------------------------------------------------------------
-      if (kprfit.eq.1) then
          do i=1,npress
             rpressv(i)=seval(nw,-rpress(i),worke,workb,bworkb, &
             cworkb,dworkb)
@@ -5303,7 +5292,7 @@
 !-----------------------------------------------------------------------
 !--      now dpdr thermal                                             --
 !-----------------------------------------------------------------------
-         if (nbeam.gt.0) then
+         beams: if (nbeam.gt.0) then
             dataname=dataname(1:lprx)//'_pbeamf'
             open(unit=62,file=dataname,status='old',iostat=ioerr)
             if (ioerr.eq.0) close(unit=62,status='delete')
@@ -5375,22 +5364,13 @@
             enddo
             bimbe=bimbe*0.5_dp*vout(jtime)/1.e6_dp*1.5_dp
             bimbe=bimbe*betat(jtime)/wplasm(jtime)
-         endif
-!-----------------------------------------------------------------------
-!--      end of beam option                                           --
-!-----------------------------------------------------------------------
-      endif
-!-----------------------------------------------------------------------
-!--   end of KPRFIT=1                                                 --
-!-----------------------------------------------------------------------
-      endif
-!-----------------------------------------------------------------------
-!--   end of KWRIPRE=1 option                                         --
-!-----------------------------------------------------------------------
+         endif beams
+      endif kin
+      endif plot_pres
       xabs=-4.5_dp
       yabs=3.0
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitvers
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -5577,10 +5557,10 @@
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+      pl_files_17: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ibrdr = 1
       xphy = 4.7_dp
       yphy = 5.0
@@ -5599,9 +5579,9 @@
       ytitle = 'P(J/m3)$'
       ncurve = nn
       iexit = 2
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
@@ -5617,12 +5597,12 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
-      endif ! (kprfit.gt.0).and.(npress.gt.0)
+      endif pl_files_17
+      endif kinetic
 !----------------------------------------------------------------------
 !--   rotational page, first plot total pressure contour             --
 !----------------------------------------------------------------------
-      if (kvtor.gt.0) then
+      rotation: if (kvtor.gt.0) then
       if (itek.eq.1) call tekall(4010,960,0,0,0)
 !-----------------------------------------------------------------------
 !--   make Pt array into 2-d array                                    --
@@ -5639,9 +5619,9 @@
       blmax=zgrid(nh)
       xll = 2.8_dp
       yll = xll*(blmax-blmin)/(almax-almin)
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters  c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       npplot=15
       if (iabs(kplotp).ge.5) then
@@ -5694,7 +5674,7 @@
       xabs=-7.0
       yabs=7.85_dp
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitvers
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -5776,39 +5756,39 @@
       ht(msg) = 0.16_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
-      ncurve = nn
-      ibrdr = 1
-      hight = 0.10_dp
-      nplen = 100
-      nxlen = 0
-      nylen = 0
-      xtitle = 'r(m)$'
-      ytitle = 'z(m)$'
-      igridx = -1
-      grce  = -1.0
-      iexit = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters c
-!-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
-      iorel, xorl, yorl, hight, bngle, bshft, &
-      ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, yll, &
-      almin, almax-almin, almax, blmin, blmax-blmin, blmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
-      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
-      igridx, igridy, idash, idot, ichdsh, ichdot, &
-      thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
-      markme, clearx, mrc, tlen, nmrk, rat, &
-      xx, yy, nxy, ncnct, &
-      icont, nword, bfield , ix, iy, zinc, line, mode, &
-      lbflg, ithk, ipri, nline, draw, &
-      nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto, ivec, &
-      msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+!-----------------------------------------------------------------------
+!       Initialize plot parameters
+!-----------------------------------------------------------------------
+        ncurve = nn
+        ibrdr = 1
+        hight = 0.10_dp
+        nplen = 100
+        nxlen = 0
+        nylen = 0
+        xtitle = 'r(m)$'
+        ytitle = 'z(m)$'
+        igridx = -1
+        grce  = -1.0
+        iexit = 1
+!-----------------------------------------------------------------------
+!       Write Plot Parameters
+!-----------------------------------------------------------------------
+        call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
+        iorel, xorl, yorl, hight, bngle, bshft, &
+        ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, yll, &
+        almin, almax-almin, almax, blmin, blmax-blmin, blmax, &
+        iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+        isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
+        igridx, igridy, idash, idot, ichdsh, ichdot, &
+        thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
+        markme, clearx, mrc, tlen, nmrk, rat, &
+        xx, yy, nxy, ncnct, &
+        icont, nword, bfield , ix, iy, zinc, line, mode, &
+        lbflg, ithk, ipri, nline, draw, &
+        nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
+        nvec, xfm, yfm, xto, yto, ivec, &
+        msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      endif
 !
       do i=1,nw
          worka(i)=bfield(i,nh/2+1)
@@ -5819,9 +5799,9 @@
          cslmin=min(worka(i),cslmin)
          cslmax=max(worka(i),cslmax)
       enddo
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters  c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       xphy = 7.625_dp
       yphy = 0.5_dp
@@ -5843,43 +5823,43 @@
       ht(msg) = 0.10_dp
 !
       if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
-      ncurve = nn
-      ibrdr = 1
-      hight = 0.10_dp
-      nplen = -100
-      nxlen = 100
-      nylen = 100
-      ylen = xll*.67_dp
-      xtitle = '$'
-      ytitle = 'Pt(nt/m2)$'
-      iexit = 1
-      if (kprfit.ne.3) iexit=2
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters c
-!-----------------------------------------------------------------------c
-      call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
-      iorel, xorl, yorl, hight, bngle, bshft, &
-      ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, ylen, &
-      almin, almax-almin, almax, cslmin, cslmax-cslmin, cslmax, &
-      iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
-      isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
-      igridx, igridy, idash, idot, ichdsh, ichdot, &
-      thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
-      markme, clearx, mrc, tlen, nmrk, rat, &
-      xx, yy, nxy, ncnct, &
-      icont, nword, bfield, ix, iy, zinc, line, mode, &
-      lbflg, ithk, ipri, nline, draw, &
-      nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
-      nvec, xfm, yfm, xto, yto, ivec, &
-      msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+!-----------------------------------------------------------------------
+!       Initialize plot parameters
+!-----------------------------------------------------------------------
+        ncurve = nn
+        ibrdr = 1
+        hight = 0.10_dp
+        nplen = -100
+        nxlen = 100
+        nylen = 100
+        ylen = xll*.67_dp
+        xtitle = '$'
+        ytitle = 'Pt(nt/m2)$'
+        iexit = 1
+        if (kprfit.ne.3) iexit=2
+!-----------------------------------------------------------------------
+!       Write Plot Parameters
+!-----------------------------------------------------------------------
+        call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
+        iorel, xorl, yorl, hight, bngle, bshft, &
+        ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, ylen, &
+        almin, almax-almin, almax, cslmin, cslmax-cslmin, cslmax, &
+        iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+        isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
+        igridx, igridy, idash, idot, ichdsh, ichdot, &
+        thcrv, sclpc, ndshme, ndotme, ncdhme, ncdtme, &
+        markme, clearx, mrc, tlen, nmrk, rat, &
+        xx, yy, nxy, ncnct, &
+        icont, nword, bfield, ix, iy, zinc, line, mode, &
+        lbflg, ithk, ipri, nline, draw, &
+        nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
+        nvec, xfm, yfm, xto, yto, ivec, &
+        msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
+      endif
 !----------------------------------------------------------------------
 !--   plot Pw and fitted values                                      --
 !----------------------------------------------------------------------
-      if (kprfit.eq.3) then
+      rotational_pressure: if (kprfit.eq.3) then
       chsmin=1.0e+10_dp
       chsmax=-1.0e+10_dp
       pressbb=0.0
@@ -5899,10 +5879,10 @@
       chsmax=max(x111,chsmax)
       call zpline(nw,worke,workb,bworkb,cworkb,dworkb)
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters  c
-!-----------------------------------------------------------------------c
+      pl_files_18: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       nn = nn + 1
       sclpc(nn) = 0.5_dp
@@ -5929,9 +5909,9 @@
       ytitle = 'CHI**2$'
       ncurve = nn
       iexit = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
@@ -5947,7 +5927,7 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif pl_files_18
 !----------------------------------------------------------------------
 !--   plot the pressure profile                                      --
 !----------------------------------------------------------------------
@@ -5960,9 +5940,9 @@
          saiprw(i)=seval(nw,-rpresw(i),worke,workb,bworkb,cworkb,dworkb)
       enddo
       chsmin=0.0
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters  c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       nn = nn + 1
       sclpc(nn) = 0.5_dp
@@ -6022,10 +6002,10 @@
         close(unit=62)
       endif
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+      pl_files_19: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ibrdr = 1
       xphy = 4.0
       yphy = 5.0
@@ -6042,9 +6022,9 @@
       ytitle = 'Pw(J/m3)$'
       ncurve = nn
       iexit = 2
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
@@ -6060,13 +6040,13 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
-      endif ! kprfit.eq.3
-      endif ! kvtor.gt.0
+      endif pl_files_19
+      endif rotational_pressure
+      endif rotation
 !----------------------------------------------------------------------
 !--   end rotational page                                            --
 !----------------------------------------------------------------------
-      if (kprfit.eq.2) then
+      raw_kinetic: if (kprfit.eq.2) then
       if (itek.eq.1) call tekall(4010,960,0,0,0)
       chsmin=1.0e+10_dp
       chsmax=-1.0e+10_dp
@@ -6093,9 +6073,9 @@
       iiim=i
 !
       ibrdr = 1
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters  c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       if (nptef.gt.0) then
          nn = nn + 1
@@ -6143,10 +6123,10 @@
          enddo
       enddo
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+      pl_files_20: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ibrdr = 1
       xphy = 4.7_dp
       yphy = 1.0
@@ -6162,9 +6142,9 @@
       ytitle = 'Te(KeV)$'
       ncurve = nn
       iexit = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
@@ -6180,13 +6160,13 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif pl_files_20
 !----------------------------------------------------------------------
 !--   plot the ne profile                                            --
 !----------------------------------------------------------------------
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters  c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       chsmin=0.0
       chsmax=1.0
@@ -6254,7 +6234,7 @@
       xabs=-4.5_dp
       yabs=3.0
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitvers
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -6336,10 +6316,10 @@
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+      pl_files_21: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ibrdr = 1
       xphy = 4.7_dp
       yphy = 5.0
@@ -6355,9 +6335,9 @@
       ytitle = 'ne(cm-3)$'
       ncurve = nn
       iexit = 2
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters            c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
@@ -6373,13 +6353,13 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif pl_files_21
 !
       if (itek.eq.1) call tekall(4010,960,0,0,0)
       chsmin=1.0e+10_dp
       chsmax=-1.0e+10_dp
       if (nptionf.ge.50) &
-      call zpline(nption,xsiion,tionex,bwork,cwork,dwork)
+         call zpline(nption,xsiion,tionex,bwork,cwork,dwork)
       do i=1,nw
          xn=worke(i)
          if (nptionf.lt.50) then
@@ -6398,9 +6378,9 @@
          chsmax=max(chsmax,tionex(i)+sigti(i))
       enddo
       chsmin=0.0
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       ibrdr = 1
       nn = nn + 1
@@ -6436,10 +6416,10 @@
          enddo
       enddo
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters  c
-!-----------------------------------------------------------------------c
+      pl_files_22: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ibrdr = 1
       xphy = 4.7_dp
       yphy = 1.0
@@ -6455,9 +6435,9 @@
       ytitle = 'Ti(KeV)$'
       ncurve = nn
       iexit = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters            c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
@@ -6473,7 +6453,7 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif pl_files_22
       if (kwripre.eq.1) then
          xdum=0.0
          write (87,*) nption
@@ -6488,9 +6468,9 @@
 !----------------------------------------------------------------------
 !--   plot the beam profile                                          --
 !----------------------------------------------------------------------
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       chsmin=0.0
       chsmax=0.0
@@ -6508,7 +6488,7 @@
          yy(ii,nn) = workc(ii)
       enddo
 !
-      if (kwripre.eq.1) then
+      plot_beam: if (kwripre.eq.1) then
          if (nbeam.gt.0) then
             call zpline(nbeam,sibeam,pbeam,bwork,cwork,dwork)
             call zpline(nw,workb,voln,bvoln,cvoln,dvoln)
@@ -6547,12 +6527,12 @@
             write (62,*) voln(i),workc(i),xdum,xdum
          enddo
          close(unit=62)
-      endif
+      endif plot_beam
 !
       xabs=-4.5_dp
       yabs=3.0
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitvers
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -6607,10 +6587,10 @@
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters  c
-!-----------------------------------------------------------------------c
+      pl_files_23: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ibrdr = 1
       xphy = 4.7_dp
       yphy = 5.0
@@ -6626,9 +6606,9 @@
       ytitle = 'rel Pb$'
       ncurve = nn
       iexit = 2
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters            c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
@@ -6644,9 +6624,9 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif pl_files_23
 !
-      if (kplotpr.ne.0) then
+      plotpr: if (kplotpr.ne.0) then
       if (itek.eq.1) call tekall(4010,960,0,0,0)
       chsmin=1.0e+10_dp
       chsmax=-1.0e+10_dp
@@ -6672,9 +6652,9 @@
          xxxmax=max(xxxmax,zteth(i))
       enddo
       chsmin=0.0
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       ibrdr = 1
       nn = nn + 1
@@ -6718,10 +6698,10 @@
          yy(ii,nn) = workd(ii)
       enddo
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+      pl_files_24: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ibrdr = 1
       xphy = 4.7_dp
       yphy = 1.0
@@ -6737,9 +6717,9 @@
       ytitle = 'Te(KeV)$'
       ncurve = nn
       iexit = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters            c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
@@ -6755,14 +6735,14 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif pl_files_24
 !----------------------------------------------------------------------
 !--   plot the ne profile                                            --
 !----------------------------------------------------------------------
 
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       chsmin=0.0
       chsmax=1.0
@@ -6822,7 +6802,7 @@
 !
       xabs=-4.5_dp
       yabs=3.0
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitvers
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -6913,10 +6893,10 @@
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+      pl_files_25: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ibrdr = 1
       xphy = 4.7_dp
       yphy = 5.0
@@ -6932,9 +6912,9 @@
       ytitle = 'ne(cm-3)$'
       ncurve = nn
       iexit = 2
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters            c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
@@ -6950,11 +6930,11 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
-      endif ! kplotpr.ne.0
-      endif ! kprfit.eq.2
+      endif pl_files_25
+      endif plotpr
+      endif raw_kinetic
 !
-      if (nextra.lt.0) then
+      plot_fieldlines: if (nextra.lt.0) then
       do k=1,2
          fpxmin=fpxtra(1,1)
          fpxmax=fpxmin
@@ -6978,9 +6958,9 @@
          dflx=(flxmax-flxmin)/2.
          if (itek.eq.1) call tekall(4010,960,0,0,0)
          ibrdr = 1
-!-----------------------------------------------------------------------c
-!        Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!        Initialize plot parameters
+!-----------------------------------------------------------------------
          call init2d
          do j=1,iabs(nextra)
             jj=(k-1)*iabs(nextra)+j
@@ -7004,10 +6984,10 @@
             ht(msg) = 0.14_dp
          enddo
 !
-         if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!        Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+         pl_files_26: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!        Initialize plot parameters
+!-----------------------------------------------------------------------
          ibrdr = 1
          xphy = 1.5_dp
          yphy = 5.0
@@ -7023,9 +7003,9 @@
          ytitle = 'bp(T)$'
          ncurve = nn
          iexit = 1
-!-----------------------------------------------------------------------c
-!        Write Plot Parameters            c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!        Write Plot Parameters
+!-----------------------------------------------------------------------
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, xlen, ylen, &
@@ -7041,10 +7021,10 @@
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-         endif ! itek
-!-----------------------------------------------------------------------c
-!        Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+         endif pl_files_26
+!-----------------------------------------------------------------------
+!        Initialize plot parameters
+!-----------------------------------------------------------------------
          call init2d
          do j=1,iabs(nextra)
             jj=(k-1)*iabs(nextra)+j
@@ -7068,10 +7048,10 @@
             ht(msg) = 0.14_dp
          enddo   
 !
-         if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!        Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+         pl_files_27: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!        Initialize plot parameters
+!-----------------------------------------------------------------------
          ibrdr = 1
          xphy = 1.5_dp
          yphy = 5.0
@@ -7087,9 +7067,9 @@
          ytitle = 'Ls(m)$'
          ncurve = nn
          iexit = 2
-!-----------------------------------------------------------------------c
-!        Write Plot Parameters            c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!        Write Plot Parameters
+!-----------------------------------------------------------------------
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
@@ -7105,14 +7085,13 @@
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-         endif ! itek
+         endif pl_files_27
       enddo
-      endif ! nextra.lt.0
-      endif ! ivacum.le.0
+      endif plot_fieldlines
 !-----------------------------------------------------------------------
 !--   plot psi contours                                               --
 !-----------------------------------------------------------------------
-      if (iconsi.gt.0) then
+      contour_plots: if (iconsi.gt.0) then
       if (itek.eq.1) call tekall(4010,960,0,0,0)
 !-----------------------------------------------------------------------
 !--   make psi array into 2-d array                                   --
@@ -7129,9 +7108,9 @@
       blmax=zgrid(nh)
       xll = 2.8_dp
       yll = xll*(blmax-blmin)/(almax-almin)
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       nn = nn + 1
       icont(nn) =1
@@ -7192,7 +7171,7 @@
       xabs=-3.
       yabs=7.85_dp
       dyabs = 0.16_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitvers
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -7275,7 +7254,7 @@
          ht(msg) = 0.16_dp
       endif
 !
-      if (itek.ge.5.and.idotek.eq.0) then
+      pl_files_28: if (itek.ge.5.and.idotek.eq.0) then
       ncurve = nn
       ibrdr = 1
       xphy = 4.1_dp
@@ -7289,9 +7268,9 @@
       igridx = -1
       grce  = -1.0
       iexit = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters            c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, yll, &
@@ -7307,7 +7286,7 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif pl_files_28
       do i=1,nw
          worka(i)=bfield(i,nh/2+1)
       enddo
@@ -7317,9 +7296,9 @@
          cslmin=min(worka(i),cslmin)
          cslmax=max(worka(i),cslmax)
       enddo
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       iorel = 1
       xorl = 0.0
@@ -7362,10 +7341,10 @@
          ht(msg) = 0.10_dp
       endif
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+      pl_files_29: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ncurve = nn
       ibrdr = 1
       xphy = 4.1_dp
@@ -7383,9 +7362,9 @@
       xtitle = '$'
       ytitle = 'psi(mv-s/r)$'
       iexit = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters            c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xll, ylen, &
@@ -7401,7 +7380,7 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif pl_files_29
       do i=1,nw
          worka(i)=0
       enddo
@@ -7427,7 +7406,7 @@
             dumnow=sqrt(pds(2)**2+pds(3)**2)
             bfield(iw,ih)=(dumnow)/rgrid(iw)*1.e4_dp
             if (ih.eq.nh/2+1) worka(iw)=bfield(iw,ih)
-            if (xpsi(kk).le.1.0.and.ivacum.le.0) &
+            if (xpsi(kk).le.1.0) &
                fnow=seval(nw,xpsi(kk),voln,fpol,bvoln,cvoln,dvoln)
             btttt=fnow/rgrid(iw)*10000.
             if (iconsi.ge.5) then
@@ -7437,9 +7416,9 @@
             endif
          enddo
       enddo
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       nn = nn + 1
       icont(nn) =1
@@ -7497,10 +7476,10 @@
             nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
       endif
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+      pl_files_30: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ncurve = nn
       ibrdr = 1
       xphy = 7.625_dp
@@ -7515,9 +7494,9 @@
       igridx = -1
       grce = -1.0
       iexit = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters            c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
@@ -7533,10 +7512,10 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+      endif pl_files_30
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       iorel = 1
       xorl = 0.0
@@ -7576,10 +7555,10 @@
          cslmin=cslmin-delcsl
       endif
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+      pl_files_31: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ncurve = nn
       ibrdr = 1
       xphy = 7.625_dp
@@ -7602,9 +7581,9 @@
       endif
       iexit = 1
       if (iconsi.lt.5) iexit=2
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters            c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
@@ -7620,8 +7599,8 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
-      if (iconsi.ge.5) then  ! do Bp contours
+      endif pl_files_31
+      Bp_contours: if (iconsi.ge.5) then
          do ih=1,nh
             do iw=1,nw
                rw=rgrid(iw)
@@ -7636,9 +7615,9 @@
                bfield(iw,ih)=(dumnow)/rgrid(iw)*1.e4_dp
             enddo
          enddo
-!-----------------------------------------------------------------------c
-!        Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!        Initialize plot parameters
+!-----------------------------------------------------------------------
          call init2d
          nn = nn + 1
          icont(nn) =1
@@ -7695,7 +7674,7 @@
             nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
          endif
 !
-         if (itek.ge.5.and.idotek.eq.0) then
+         pl_files_32: if (itek.ge.5.and.idotek.eq.0) then
          ncurve = nn
          ibrdr = 1
          xphy = 0.675_dp
@@ -7709,9 +7688,9 @@
          igridx = -1
          grce = -1.0
          iexit = 1
-!-----------------------------------------------------------------------c
-!        Write Plot Parameters            c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!        Write Plot Parameters
+!-----------------------------------------------------------------------
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
@@ -7727,10 +7706,10 @@
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-         endif ! itek
-!-----------------------------------------------------------------------c
-!        Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+         endif pl_files_32
+!-----------------------------------------------------------------------
+!        Initialize plot parameters
+!-----------------------------------------------------------------------
          call init2d
          iorel = 1
          xorl = 0.0
@@ -7765,7 +7744,7 @@
          yy(1,nn)=0.0
          yy(2,nn)=0.0
 !
-         if (itek.ge.5.and.idotek.eq.0) then
+         pl_files_33: if (itek.ge.5.and.idotek.eq.0) then
          ncurve = nn
          ibrdr = 1
          xphy = 0.675_dp
@@ -7783,9 +7762,9 @@
          xtitle = '$'
          ytitle = 'mod-Bp(gauss)$'
          iexit = 2
-!-----------------------------------------------------------------------c
-!        Write Plot Parameters            c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!        Write Plot Parameters
+!-----------------------------------------------------------------------
          call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
          iorel, xorl, yorl, hight, bngle, bshft, &
          ptitle, nplen, xtitle, nxlen, ytitle, nylen, x11x, y11y, &
@@ -7801,17 +7780,16 @@
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
          nvec, xfm, yfm, xto, yto, ivec, &
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-         endif ! itek
-      endif ! iconsi.ge.5
-      endif ! iconsi.gt.0
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters for basis function page              c
-!-----------------------------------------------------------------------c
+         endif pl_files_33
+      endif Bp_contours
+      endif contour_plots
+!-----------------------------------------------------------------------
+!     Initialize plot parameters for basis function page
+!-----------------------------------------------------------------------
       call ppstore
       call ffstore
       call wwstore
       call eestore
-      if (ivacum.le.0) then
       call init2d
       xmm=1.5_dp
       curmin=1.0e+10_dp
@@ -7844,7 +7822,7 @@
       yabs=1.5_dp
       dyabs = 0.28_dp
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitvers
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -8122,10 +8100,10 @@
       yabs = yabs - dyabs
       ht(msg) = 0.10_dp
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+      pl_files_34: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ibrdr = 1
       xphy = 6.5_dp
       yphy = 6.0
@@ -8139,9 +8117,9 @@
       igridx = 1
       igridy = 2
       idot = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters            c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, 2.0*xmm, xmm, &
@@ -8157,7 +8135,7 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif pl_files_34
       call init2d
       xmm=1.6_dp
       curmin=1.0e+10_dp
@@ -8192,10 +8170,10 @@
       yabs=1.5_dp
       dyabs = 0.28_dp
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+      pl_files_35: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ibrdr = 1
       xphy = 6.5_dp
       yphy = 3.5_dp
@@ -8209,9 +8187,9 @@
       igridx = 1
       igridy = 2
       idot = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters            c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, 2.0*xmm, xmm, &
@@ -8227,9 +8205,9 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif pl_files_35
 !
-      if (kvtor.gt.0) then
+      tor_rotation: if (kvtor.gt.0) then
       call init2d
       xmm=1.5_dp
       curmin=1.0e+10_dp
@@ -8263,10 +8241,10 @@
       yabs=1.5_dp
       dyabs = 0.28_dp
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+      pl_files_36: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ibrdr = 1
       xphy = 6.5_dp
       yphy = 1.0
@@ -8280,9 +8258,9 @@
       igridx = 1
       igridy = 2
       idot = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters            c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, 2.0*xmm, xmm, &
@@ -8298,9 +8276,8 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
-      endif ! kvtor.gt.0
-      endif ! ivacum.le.0
+      endif pl_files_36
+      endif tor_rotation
 #ifdef DEBUG_LEVEL1
       write (6,*) 'End  PLTOUT'
 #endif
@@ -8323,7 +8300,7 @@
       let = 'q'
       call getfnm2(let,ishot,itime,dataname)
       dataname=dataname(3:7)//'_efitipmhd.dat '
-      call curvec(dataname,jerror,time,cpasma,ktime,0_i8)
+      call curvec(dataname,jerror,time,cpasma,ktime,0_i4)
       call zpline(ktime,time,sibdry,bscra,cscra,dscra)
       do i=1,ktime
          if (jerror(i).le.0) cycle
@@ -8331,30 +8308,30 @@
          scrat(i)=twopi*scrat(i)*1000.+vloopt(i)
       enddo
       dataname=dataname(3:7)//'_efitvsurf.dat '
-      call curvec(dataname,jerror,time,scrat,ktime,0_i8)
+      call curvec(dataname,jerror,time,scrat,ktime,0_i4)
       dataname=dataname(3:7)//'_efitkappa.dat '
-      call curvec(dataname,jerror,time,eout,ktime,0_i8)
+      call curvec(dataname,jerror,time,eout,ktime,0_i4)
       dataname=dataname(3:7)//'_efitaminor.dat'
-      call curvec(dataname,jerror,time,aout,ktime,0_i8)
+      call curvec(dataname,jerror,time,aout,ktime,0_i4)
       dataname=dataname(3:7)//'_efitzsurf.dat '
-      call curvec(dataname,jerror,time,zout,ktime,0_i8)
+      call curvec(dataname,jerror,time,zout,ktime,0_i4)
       dataname=dataname(3:7)//'_efitrsurf.dat '
-      call curvec(dataname,jerror,time,rout,ktime,0_i8)
+      call curvec(dataname,jerror,time,rout,ktime,0_i4)
       dataname=dataname(3:7)//'_efitbetap.dat '
-      call curvec(dataname,jerror,time,betap,ktime,0_i8)
+      call curvec(dataname,jerror,time,betap,ktime,0_i4)
       dataname=dataname(3:7)//'_efitli.dat    '
-      call curvec(dataname,jerror,time,ali,ktime,0_i8)
+      call curvec(dataname,jerror,time,ali,ktime,0_i4)
       dataname=dataname(3:7)//'_efitq95.dat   '
-      call curvec(dataname,jerror,time,qpsi,ktime,0_i8)
+      call curvec(dataname,jerror,time,qpsi,ktime,0_i4)
       dataname=dataname(3:7)//'_efitbetat.dat '
-      call curvec(dataname,jerror,time,betat,ktime,0_i8)
+      call curvec(dataname,jerror,time,betat,ktime,0_i4)
       dataname=dataname(3:7)//'_efitdensv2.dat'
-      call curvec(dataname,jerror,time,dco2v(1,2),ktime,0_i8)
+      call curvec(dataname,jerror,time,dco2v(1,2),ktime,0_i4)
       dataname=dataname(3:7)//'_efitwmhd.dat  '
-      call curvec(dataname,jerror,time,wplasm,ktime,0_i8)
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+      call curvec(dataname,jerror,time,wplasm,ktime,0_i4)
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       call init2d
       yorg = curmin
       ystp = dcurn
@@ -8436,36 +8413,36 @@
          yabs = yabs - dyabs
          ht(msg) = 0.13_dp*0.7_dp
       endif
-      if (kvtor.ge.1.and.kvtor.le.3) then
-      if (icurrt.eq.5.and. &
-                   abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
-         do i=nfnpcr+1,nfnpcr+kwwcur,2
-            xxnorm=brsp(i)/brsp(nfcoil+1)
-            if (i+1.gt.nfnpcr+kwwcur) then
-            if (i.eq.nfnpcr+1) then
-              write (text,18971) xxnorm
-            else
-              write (text,18973) xxnorm
-            endif
-            else
-            xynorm=brsp(i+1)/brsp(nfcoil+1)
-            if (i.eq.nfnpcr+1) then
-              write (text,28971) xxnorm,xynorm
-            else
-              write (text,28973) xxnorm,xynorm
-            endif
-            endif
-            msg = msg + 1
-            note(msg) = 1
-            lmes(msg) = text
-            imes(msg) = 31
-            xpos(msg) = xabs
-            ypos(msg) = yabs
-            yabs = yabs - dyabs
-            ht(msg) = 0.13_dp*0.7_dp
-         enddo
-      endif
-      endif ! kvtor.ge.1.and.kvtor.le.3
+      poly_rotation: if (kvtor.ge.1.and.kvtor.le.3) then
+         if (icurrt.eq.5.and. &
+                      abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
+            do i=nfnpcr+1,nfnpcr+kwwcur,2
+               xxnorm=brsp(i)/brsp(nfcoil+1)
+               if (i+1.gt.nfnpcr+kwwcur) then
+                  if (i.eq.nfnpcr+1) then
+                     write (text,18971) xxnorm
+                  else
+                     write (text,18973) xxnorm
+                  endif
+               else
+                  xynorm=brsp(i+1)/brsp(nfcoil+1)
+                  if (i.eq.nfnpcr+1) then
+                     write (text,28971) xxnorm,xynorm
+                  else
+                     write (text,28973) xxnorm,xynorm
+                  endif
+               endif
+               msg = msg + 1
+               note(msg) = 1
+               lmes(msg) = text
+               imes(msg) = 31
+               xpos(msg) = xabs
+               ypos(msg) = yabs
+               yabs = yabs - dyabs
+               ht(msg) = 0.13_dp*0.7_dp
+            enddo
+         endif
+      endif poly_rotation
 !
       xabs= 1.2_dp
       yabs= -0.8_dp
@@ -8485,10 +8462,10 @@
          enddo
       endif
 !
-      if (itek.ge.5.and.idotek.eq.0) then
-!-----------------------------------------------------------------------c
-!     Initialize plot parameters             c
-!-----------------------------------------------------------------------c
+      pl_files_37: if (itek.ge.5.and.idotek.eq.0) then
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       ibrdr = 1
       xphy = 4.2_dp
       yphy = 2.80_dp
@@ -8502,9 +8479,9 @@
       igridx = 1
       igridy = 2
       idot = 1
-!-----------------------------------------------------------------------c
-!     Write Plot Parameters            c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write Plot Parameters
+!-----------------------------------------------------------------------
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
@@ -8520,8 +8497,8 @@
       nshd, sxx, syy, nsxy, sangle, sgap, ngaps, &
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
-      endif ! kfitece.le.0
+      endif pl_files_37
+      endif is_vacuum
 !---------------------------------------------------------------------
 !--   plot for ece                                                  --
 !--   Assign value to work arrays. workg: Bz. workk: R. workf: Psi  --
@@ -8537,7 +8514,7 @@
          workk(i)=xnow
       enddo
 !---------------------------------------------------------------------
-!--   writing to xece and yece , for Bz plot                        --
+!--   writing to xece and yece, for Bz plot                         --
 !---------------------------------------------------------------------
       nplece(1)=nw
       do i=1,nw
@@ -8570,7 +8547,7 @@
       dcurn=(curmax-curmin)
       xmm=1.6_dp
 !
-      if (itek.ge.5.and.idotek.eq.0) then
+      pl_files_38: if (itek.ge.5.and.idotek.eq.0) then
 !------------------------------------------------------------------------
 !--      Initialize plot parameters                                    --
 !------------------------------------------------------------------------
@@ -8634,8 +8611,7 @@
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps,&
          nvec, xfm, yfm, xto, yto, ivec,&
          msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
-!      endif
+      endif pl_files_38
 !------------------------------------------------------------------------------
 !--   writing to xece and yece, for psi plot                                 --
 !------------------------------------------------------------------------------
@@ -8744,7 +8720,7 @@
         clrece(i)='GREE'
         cntece(i)=0
       enddo
-      if (itek.ge.5.and.idotek.eq.0) then
+      pl_files_39: if (itek.ge.5.and.idotek.eq.0) then
         call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,&
         iorel, xorl, yorl, hight, bngle, bshft,&
         ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm,&
@@ -8760,7 +8736,7 @@
         nshd, sxx, syy, nsxy, sangle, sgap, ngaps,&
         nvec, xfm, yfm, xto, yto, ivec,&
         msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif pl_files_39
 !------------------------------------------------------------------------------
 !--   psip-psim plot                                                         --
 !------------------------------------------------------------------------------
@@ -8841,7 +8817,7 @@
         nshd, sxx, syy, nsxy, sangle, sgap, ngaps,&
         nvec, xfm, yfm, xto, yto, ivec,&
         msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif
 !------------------------------------------------------------------------------
 !--   chi2ece plot                                                           --
 !------------------------------------------------------------------------------
@@ -8907,7 +8883,7 @@
       xabs=-6.0
       yabs=1.8_dp
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitvers
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -9045,14 +9021,14 @@
         nshd, sxx, syy, nsxy, sangle, sgap, ngaps,&
         nvec, xfm, yfm, xto, yto, ivec,&
         msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif
 !-----------------------------------------------------------------------
 !     writing to xece and yece, for ECE data fitting
 !         kfixro kfixrece >0 real space, no mapping
 !         kfixro kfixrece =0, fitting Te(R)
 !         kfixro kfixrece <0, fitting Te(B)
 !-----------------------------------------------------------------------
-      if ((kfixro.eq.0).or.(kfixrece.eq.0)) then
+      ECE: if ((kfixro.eq.0).or.(kfixrece.eq.0)) then
 !
       nplece(1)=mecein
       curmax=teeceinr(1)
@@ -9132,9 +9108,9 @@
         nshd, sxx, syy, nsxy, sangle, sgap, ngaps,&
         nvec, xfm, yfm, xto, yto, ivec,&
         msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif
 !
-      elseif ((kfixro.lt.0).and.(kfixrece.lt.0)) then
+      elseif ((kfixro.lt.0).and.(kfixrece.lt.0)) then ECE
 !----------------------------------------------------------------------
 !--   Te(B)
 !----------------------------------------------------------------------
@@ -9209,13 +9185,13 @@
         nshd, sxx, syy, nsxy, sangle, sgap, ngaps,&
         nvec, xfm, yfm, xto, yto, ivec,&
         msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
-      endif ! itek
+      endif
 !
-      endif ! (kfixro.lt.0).and.(kfixrece.lt.0)
+      endif ECE
       xabs=-6.0
       yabs=1.8_dp
       dyabs = 0.22_dp
-      write(text,8950) trim(ch1),trim(ch2),efitver
+      write(text,8950) trim(ch1),trim(ch2),efitvers
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -9420,7 +9396,7 @@
 19610 format (' saaa(cm) = ',f7.3)
 28971 format (' w    = ',1pe11.4,1x,1pe11.4)
 28973 format ('        ',1pe11.4,1x,1pe11.4)
-      end
+      end subroutine pltout
 
       subroutine expand(n1,n2,nexexx,xmm,jtime)
       use set_kinds
@@ -9429,9 +9405,9 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*8 (i-n), real*8 (a-h,o-z)
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
 
-      real*4,dimension(:),allocatable :: xpltloc,ypltloc,xplxloc,yplxloc
+      real*8,dimension(:),allocatable :: xpltloc,ypltloc,xplxloc,yplxloc
 !      equivalence (xpltloc,flxtra(1,1))
 !      equivalence (ypltloc,fpxtra(1,1))
 !      equivalence (xplxloc,flxtra(1,2))
@@ -9451,9 +9427,9 @@
       if(zseps(1,jtime).gt.-900.)ilow=1
       if((zseps(2,jtime).gt.-900.).and. &
        (zseps(2,jtime).lt.zseps(1,jtime)))ilow=2
-!      if(ilow.ne.0)then
-!      blmax=max(zseps(ilow,jtime)/100.,blmax)
-!      almin=min(rseps(ilow,jtime)/100.,almin)
+!      if(ilow.ne.0) then
+!         blmax=max(zseps(ilow,jtime)/100.,blmax)
+!         almin=min(rseps(ilow,jtime)/100.,almin)
 !      endif
       call title('$',-100,'R(m)$',100,'Z(m)$',100,xmm,xmm)
       call graf(almin,'SCAL',almax,blmin,'SCAL',blmax)
@@ -9485,7 +9461,7 @@
       deallocate(xpltloc,ypltloc,xplxloc,yplxloc)
 !
       return
-      end
+      end subroutine expand
 
 !**********************************************************************
 !**                                                                  **
@@ -9502,14 +9478,14 @@
       nn, xx, yy, nxy, nmg, note, num, xpos, ypos, ht, &
       nshd, sx, sy, nsxy, sangle, sgap, ngaps)
       use set_kinds
-      use eparm,only:ndim
-      implicit integer*8 (i-n), real*8 (a-h, o-z)
-      parameter (ncrv=180)
+      use eparm, only: ndim
+      use curve2d_mod, only: ncrv, mdim
+      implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension rc(ncoil), zc(ncoil), wc(ncoil), &
-      hc(ncoil), xx(ndim,ncrv), yy(ndim,ncrv), nxy(1), &
-      num(1)  , note(1)  , xpos(1)  , ypos(1)  , ht(1)  , &
-      sx(ncrv,ncrv), sy(ncrv,ncrv), nsxy(1)  , sangle(1)  , &
-      sgap(1)  , ngaps(1)
+      hc(ncoil), xx(ndim,ncrv), yy(ndim,ncrv), nxy(ncrv), &
+      num(mdim), note(mdim), xpos(mdim), ypos(mdim), ht(mdim), &
+      sx(ncrv,ncrv), sy(ncrv,ncrv), nsxy(ncrv), sangle(ncrv), &
+      sgap(ncrv), ngaps(ncrv)
       dimension ac(ncoil),ac2(ncoil)
 !
       do i=1,ncoil
@@ -9575,7 +9551,7 @@
          endif
       enddo
       return
-      end
+      end subroutine pltcol
 
 !**********************************************************************
 !**                                                                  **
@@ -9590,7 +9566,7 @@
 !**********************************************************************
       subroutine curvec(dataname,jerror,xp,yp,np,ns)
       use set_kinds
-      implicit integer*8 (i-n), real*8 (a-h, o-z)
+      implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension jerror(1),xp(1),yp(1)
       character*(*) dataname
 !
@@ -9604,7 +9580,7 @@
       close(unit=62)
  6200 format (1x,e12.5,1x,e12.5)
       return
-      end
+      end subroutine curvec
 
 !***********************************************************************
 !**                                                                   **
@@ -9772,7 +9748,7 @@
 !**          04/19/93..........first created                          **
 !**                                                                   **
 !*************************************************************************
-      subroutine curve2d (ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
+      subroutine curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
            xorl, yorl, hight, bngle, bshft, ptitle, pltlen, xtitle, &
            xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
            ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
@@ -9786,17 +9762,12 @@
            sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
            m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
            iexit)
-      use set_kinds
-      use eparm,only:ndim
-      use efit_bdata,only:m_write
-      implicit integer*8 (i-n), real*8 (a-h, o-z)
-      parameter (ncrv=180, mdim = 300)
       include 'curve2d_var.inc'
 
       if (m_write .eq. 1) then
-!-----------------------------------------------------------------------c
-!       Write curve2d parameters in ASCII format     c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!       Write curve2d parameters in ASCII format
+!-----------------------------------------------------------------------
         call curve2d_asci(ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
            xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle,  &
            xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
@@ -9813,9 +9784,9 @@
            iexit)
 
       elseif (m_write .eq. 0) then
-!-----------------------------------------------------------------------c
-!       Write curve2d parameters in BINARY format     c
-!-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!       Write curve2d parameters in BINARY format
+!-----------------------------------------------------------------------
         call curve2d_bin (ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
            xorl, yorl,hight, bngle, bshft, ptitle, pltlen,  xtitle, &
            xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
@@ -9832,7 +9803,7 @@
            iexit)
       endif
       return
-      end
+      end subroutine curve2d
 
 !*************************************************************************
 !**                                                                   **
@@ -9999,7 +9970,7 @@
 !**          04/19/93..........first created                          **
 !**                                                                   **
 !*************************************************************************
-      subroutine curve2d_asci (ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
+      subroutine curve2d_asci(ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
            xorl, yorl, hight, bngle, bshft, ptitle, pltlen, xtitle, &
            xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
            ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
@@ -10013,17 +9984,11 @@
            sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
            m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
            iexit)
-      use set_kinds
-      use eparm,only:ndim
-      use efit_bdata,only:iunit
-      implicit integer*8 (i-n), real*8 (a-h, o-z)
-
-      parameter (ncrv=180, mdim = 300)
       include 'curve2d_var.inc'
 
-      !-----------------------------------------------------------------------c
-      ! Write page parameters                 c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write page parameters
+!-----------------------------------------------------------------------
       write(iunit,100) ncurve, ipag, ibrdr, grce, xphy, yphy
 100   format(3i5, 3f9.3)
       write(iunit,101) iorel, xorl, yorl
@@ -10031,46 +9996,46 @@
       write(iunit,102) hight, bngle, bshft
 102   format(4f9.3)
 
-      !-----------------------------------------------------------------------c
-      ! Write title parameters                 c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write title parameters
+!-----------------------------------------------------------------------
       write(iunit,103) ptitle, pltlen,  xtitle, xnlen
 103   format(a20, i5, a20, i5)
       write(iunit,104) ytitle, ynlen, xlen, ylen
 104   format(a20, i5, 2f9.3)
 
-      !-----------------------------------------------------------------------c
-      ! Write axis parameters                 c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write axis parameters
+!-----------------------------------------------------------------------
       write(iunit,105) xorg, xstp, xmax
       write(iunit,105) yorg, ystp, ymax
 105   format(3f15.5)
       write(iunit,106) iaxis, xtck, ytck, ixnon, iynon, intax, intay
 106   format(7i5)
 
-      !-----------------------------------------------------------------------c
-      ! Write secondary axis parameters             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write secondary axis parameters
+!-----------------------------------------------------------------------
       write(iunit,117) isaxs
       write(iunit,107) sorg, stp, smax, slen, sname
 107   format(4f15.5, a20)
       write(iunit,108) nslen,xpos,ypos
 108   format(i5, 2f9.3)
 
-      !-----------------------------------------------------------------------c
-      ! Write grid parameters                 c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write grid parameters
+!-----------------------------------------------------------------------
       write(iunit,109) igridx, igridy, idash, idot, ichdsh, ichdot
 109   format(6i5)
 
-      !-----------------------------------------------------------------------c
-      ! Do for ncurve                 c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Do for ncurve
+!-----------------------------------------------------------------------
       if (ncurve.gt.0) then
         do i = 1, ncurve
-          !-----------------------------------------------------------------------c
-          !    Write curve parameters             c
-          !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!         Write curve parameters
+!-----------------------------------------------------------------------
           write(iunit,110) thcrv(i), sclpc(i), dashme(i), dotme(i)
 110       format(2f9.3,2i5)
           write(iunit,111) chdhme(i), chdtme(i), markme(i), clearx(i)
@@ -10083,9 +10048,9 @@
           enddo
           write(iunit,115) nplt(i), ncnct(i)
 115       format(2i5)
-          !-----------------------------------------------------------------------c
-          !       Write (X,Y) co-ordinates             c
-          !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!         Write (X,Y) co-ordinates
+!-----------------------------------------------------------------------
           if (nplt(i).gt.0) then
             write(iunit,116) (x(j,i), y(j,i),j=1,nplt(i))
 116         format (1x,6e12.5)
@@ -10093,9 +10058,9 @@
 
           write(iunit,117) icont(i)
 117       format(i5)
-          !-----------------------------------------------------------------------c
-          !    Write contour parameters             c
-          !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!         Write contour parameters
+!-----------------------------------------------------------------------
           if (icont(i).gt.0) then
             write(iunit,118) nword, ix, iy, zinc, line, mode
 118         format(3i5, f15.5, i5, a20)
@@ -10109,9 +10074,9 @@
 121       format(i5)
 
           if (nshd.gt.0) then
-            !-----------------------------------------------------------------------c
-            !       Write shade parameters             c
-            !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!           Write shade parameters
+!-----------------------------------------------------------------------
             do j = 1, nshd
               write(iunit,122) nsxy(j)
 122           format (i5)
@@ -10124,18 +10089,18 @@
 
           write(iunit,125) nvec
 125       format(i5)
-          !-----------------------------------------------------------------------c
-          !       Write vector parameters             c
-          !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!         Write vector parameters
+!-----------------------------------------------------------------------
           if (nvec.gt.0) then
             do j = 1,nvec
               write(iunit,126) xfm(j), yfm(j), xto(j), yto(j), ivec(j)
 126           format(1x,4e10.3, i5)
             enddo
           endif      ! vector
-        !-----------------------------------------------------------------------c
-        ! EndDo for ncurve                 c
-        !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!       EndDo for ncurve
+!-----------------------------------------------------------------------
         enddo
       endif    !  ncurve
 
@@ -10143,9 +10108,9 @@
 127   format(i5)
       if (m .gt. 0) then
         do i = 1, m
-          !-----------------------------------------------------------------------c
-          !    Write annotation parameters             c
-          !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!         Write annotation parameters
+!-----------------------------------------------------------------------
           write(iunit,128) note(i), imes(i)
 128       format(i5, i5)
           write(iunit,132) lmes(i)
@@ -10157,14 +10122,14 @@
         enddo
       endif
 
-      !-----------------------------------------------------------------------c
-      ! Write plot exit parameters             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write plot exit parameters
+!-----------------------------------------------------------------------
       write(iunit,131) iexit
 131   format(i5)
 
       return
-      end
+      end subroutine curve2d_asci
 
 !*************************************************************************
 !**                                                                   **
@@ -10331,7 +10296,7 @@
 !**          03/26/93..........first created                          **
 !**                                                                   **
 !*************************************************************************
-      subroutine curve2d_bin (ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
+      subroutine curve2d_bin(ncurve, ipag, ibrdr, grce, xphy, yphy, iorel, &
            xorl, yorl, hight, bngle, bshft, ptitle, pltlen, xtitle, &
            xnlen, ytitle, ynlen, xlen, ylen, xorg, xstp, xmax, yorg, &
            ystp, ymax, iaxis, xtck, ytck, ixnon, iynon, intax, intay, &
@@ -10345,54 +10310,48 @@
            sangle, sgap, ngaps, nvec, xfm, yfm, xto, yto, ivec, &
            m, note, lmes, imes, anum, iplce, inum, xmpos, ympos, hgt, &
            iexit)
-      use set_kinds
-      use eparm,only:ndim
-      use efit_bdata,only:iunit
-      implicit integer*8 (i-n), real*8 (a-h, o-z)
-
-      parameter (ncrv=180, mdim = 300)
       include 'curve2d_var.inc'
 
-      !-----------------------------------------------------------------------c
-      ! Write page parameters                 c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write page parameters
+!-----------------------------------------------------------------------
       write(iunit) ncurve, ipag, ibrdr, grce, xphy, yphy
       write(iunit) iorel, xorl, yorl
       write(iunit) hight, bngle, bshft
 
-      !-----------------------------------------------------------------------c
-      ! Write title parameters                 c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write title parameters
+!-----------------------------------------------------------------------
       write(iunit) ptitle, pltlen,  xtitle, xnlen
       write(iunit) ytitle, ynlen, xlen, ylen
 
-      !-----------------------------------------------------------------------c
-      ! Write axis parameters                 c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write axis parameters
+!-----------------------------------------------------------------------
       write(iunit) xorg, xstp, xmax
       write(iunit) yorg, ystp, ymax
       write(iunit) iaxis, xtck, ytck, ixnon, iynon, intax, intay
 
-      !-----------------------------------------------------------------------c
-      ! Write secondary axis parameters             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write secondary axis parameters
+!-----------------------------------------------------------------------
       write(iunit) isaxs
       write(iunit) sorg, stp, smax, slen, sname
       write(iunit) nslen,xpos,ypos
 
-      !-----------------------------------------------------------------------c
-      ! Write grid parameters                 c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write grid parameters
+!-----------------------------------------------------------------------
       write(iunit) igridx, igridy, idash, idot, ichdsh, ichdot
 
-      !-----------------------------------------------------------------------c
-      ! Do for ncurve                 c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Do for ncurve
+!-----------------------------------------------------------------------
       if (ncurve.gt.0) then
         do i = 1, ncurve
-          !-----------------------------------------------------------------------c
-          !    Write curve parameters             c
-          !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!         Write curve parameters
+!-----------------------------------------------------------------------
           write(iunit) thcrv(i), sclpc(i), dashme(i), dotme(i)
           write(iunit) chdhme(i), chdtme(i), markme(i), clearx(i)
           write(iunit) mrc(i), tlen(i), nmrk(i)
@@ -10400,17 +10359,17 @@
             write(iunit)  (rat(k), k=j,j+3)
           enddo
           write(iunit) nplt(i), ncnct(i)
-          !-----------------------------------------------------------------------c
-          !       Write (X,Y) coordinates             c
-          !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!         Write (X,Y) coordinates
+!-----------------------------------------------------------------------
           if (nplt(i).gt.0) then
             write(iunit) (x(j,i), y(j,i), j=1, nplt(i))
           endif
           write(iunit) icont(i)
 
-          !-----------------------------------------------------------------------c
-          !    Write contour parameters             c
-          !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!         Write contour parameters
+!-----------------------------------------------------------------------
           if (icont(i).gt.0) then
             write (iunit) nword, ix, iy, zinc, line, mode
             write (iunit) ((zmat(k,j) ,k=1,ix),j=1,iy)
@@ -10420,9 +10379,9 @@
           write(iunit) nshd
           if (nshd.gt.0) then
             do j = 1, nshd
-              !-----------------------------------------------------------------------c
-              !       Write shade parameters             c
-              !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!             Write shade parameters
+!-----------------------------------------------------------------------
               write(iunit) nsxy(j)
               write(iunit) (sx(k,j), sy(k,j), k = 1, nsxy(j))
               write(iunit) sangle(j), sgap(j), ngaps(j)
@@ -10432,24 +10391,24 @@
           write(iunit) nvec
           if (nvec.gt.0) then
             do j = 1,nvec
-              !-----------------------------------------------------------------------c
-              !      Write vector parameters             c
-              !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!             Write vector parameters
+!-----------------------------------------------------------------------
               write(iunit) xfm(j), yfm(j), xto(j), yto(j), ivec(j)
             enddo
           endif
-        !-----------------------------------------------------------------------c
-        ! Do for ncurve                 c
-        !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!       Do for ncurve
+!-----------------------------------------------------------------------
         enddo
       endif   !    ncurve
 
       write(iunit) m
       if (m .gt. 0) then
         do i = 1, m
-          !-----------------------------------------------------------------------c
-          ! Write annotation parameters             c
-          !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!         Write annotation parameters
+!-----------------------------------------------------------------------
           write(iunit) note(i), imes(i)
           write(iunit) lmes(i)
           write(iunit) anum(i), iplce(i), inum(i)
@@ -10457,13 +10416,13 @@
         enddo
       endif
 
-      !-----------------------------------------------------------------------c
-      ! Write plot exit parameters             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Write plot exit parameters
+!-----------------------------------------------------------------------
       write(iunit) iexit
 
       return
-      end
+      end subroutine curve2d_bin
 
 !***********************************************************************
 !**                                                                   **
@@ -10476,78 +10435,77 @@
 !***********************************************************************
       subroutine init2d
       use set_kinds
-      use eparm,only: ndim
       use curve2d_mod
-      implicit integer*8 (i-n), real*8 (a-h, o-z)
+      implicit integer*4 (i-n), real*8 (a-h, o-z)
 
-      !-----------------------------------------------------------------------c
-      ! Initialize plot parameters             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot parameters
+!-----------------------------------------------------------------------
       nn = 0
       ncurve = 1
-      !-----------------------------------------------------------------------c
-      ! Initialize page size to 11x8.5             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize page size to 11x8.5
+!-----------------------------------------------------------------------
       ipag = 0
-      !-----------------------------------------------------------------------c
-      ! Initialize grace margin be coincident with the grid frame c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize grace margin be coincident with the grid frame
+!-----------------------------------------------------------------------
       grce = 0.0
-      !-----------------------------------------------------------------------c
-      ! Initialize page border "do not suppress page border"     c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize page border "do not suppress page border"
+!-----------------------------------------------------------------------
       ibrdr = 0
-      !-----------------------------------------------------------------------c
-      ! Initialize page dimension             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize page dimension
+!-----------------------------------------------------------------------
       xpag = 0.0
       ypag = 0.0
-      !-----------------------------------------------------------------------c
-      ! Initialize physical origin parameters            c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize physical origin parameters
+!-----------------------------------------------------------------------
       xphy = 1.0
       yphy = 1.0
-      !-----------------------------------------------------------------------c
-      ! Initialize relative origin parameters            c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize relative origin parameters
+!-----------------------------------------------------------------------
       iorel = 0
       xorl = 0.0
       yorl = 0.0
-      !-----------------------------------------------------------------------c
-      ! Initialize font size                 c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize font size
+!-----------------------------------------------------------------------
       hight = 0.5_dp
-      !-----------------------------------------------------------------------c
-      ! Initialize base rotation             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize base rotation
+!-----------------------------------------------------------------------
       bngle = 0.0
-      !-----------------------------------------------------------------------c
-      ! Initialize translation                 c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize translation
+!-----------------------------------------------------------------------
       bshft(1) = 0.0
       bshft(2) = 0.0
-      !-----------------------------------------------------------------------c
-      ! Initialize type of coordinate system (Cartesian coordinate) c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize type of coordinate system (Cartesian coordinate)
+!-----------------------------------------------------------------------
       iaxis = 0
-      !-----------------------------------------------------------------------c
-      ! Initialize axes tick marks off             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize axes tick marks off
+!-----------------------------------------------------------------------
       ixtck = 0
       iytck = 0
-      !-----------------------------------------------------------------------c
-      ! Initialize axes labels not to be suppressed     c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize axes labels not to be suppressed
+!-----------------------------------------------------------------------
       ixnon = 0
       iynon = 0
-      !-----------------------------------------------------------------------c
-      ! Initialize trailing zeroes on axes             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize trailing zeroes on axes
+!-----------------------------------------------------------------------
       intax = 0
       intay = 0
-      !-----------------------------------------------------------------------c
-      ! Initialize secondary axes parameters            c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize secondary axes parameters
+!-----------------------------------------------------------------------
       isaxs = 0
       sorg = 0.0
       stp = 0.0
@@ -10557,111 +10515,111 @@
       nslen = 0
       xps = 0.0
       yps = 0.0
-      !-----------------------------------------------------------------------c
-      ! Initialize plot title legend             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize plot title legend
+!-----------------------------------------------------------------------
       ptitle = '$'
       nplen = -100
-      !-----------------------------------------------------------------------c
-      ! Initialize x-axis title legend             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize x-axis title legend
+!-----------------------------------------------------------------------
       xtitle = '$'
       nxlen = 100
-      !-----------------------------------------------------------------------c
-      ! Initialize y-axis title legend             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize y-axis title legend
+!-----------------------------------------------------------------------
       ytitle = '$'
       nylen = 100
-      !-----------------------------------------------------------------------c
-      ! Initialize grids to be turned off            c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize grids to be turned off
+!-----------------------------------------------------------------------
       igridx = 0
       igridy = 0
-      !-----------------------------------------------------------------------c
-      ! Initialize, grid dashes off             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize, grid dashes off
+!-----------------------------------------------------------------------
       idash = 0
-      !-----------------------------------------------------------------------c
-      ! Initialize grid dots off             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize grid dots off
+!-----------------------------------------------------------------------
       idot = 0
-      !-----------------------------------------------------------------------c
-      ! Initialize grid chain dot off             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize grid chain dot off
+!-----------------------------------------------------------------------
       ichdot = 0
-      !-----------------------------------------------------------------------c
-      ! Initialize grid chain dash off             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize grid chain dash off
+!-----------------------------------------------------------------------
       ichdsh = 0
-      !-----------------------------------------------------------------------c
-      ! Initialize number of text lines to zero            c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize number of text lines to zero
+!-----------------------------------------------------------------------
       msg = 0
-      !-----------------------------------------------------------------------c
-      ! Initialize number of shades to zero            c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize number of shades to zero
+!-----------------------------------------------------------------------
       nshd = 0
-      !-----------------------------------------------------------------------c
-      ! Initialize number of vectors to zero            c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize number of vectors to zero
+!-----------------------------------------------------------------------
       nvec = 0
-      !-----------------------------------------------------------------------c
-      ! Initialize contour drawing to none            c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize contour drawing to none
+!-----------------------------------------------------------------------
       do i = 1, ncrv
         icont(i) = 0
       enddo
-      !-----------------------------------------------------------------------c
-      ! Initialize curve drawing parameters            c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize curve drawing parameters
+!-----------------------------------------------------------------------
       do i = 1, ncrv
-        !-----------------------------------------------------------------------c
-        ! Initialize thickness of curve             c
-        !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!       Initialize thickness of curve
+!-----------------------------------------------------------------------
         thcrv(i) = 0.0
-        !-----------------------------------------------------------------------c
-        ! Initialize scaling of marker             c
-        !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!       Initialize scaling of marker
+!-----------------------------------------------------------------------
         sclpc(i) = 0.0
-        !-----------------------------------------------------------------------c
-        ! Initialize curve dot off             c
-        !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!       Initialize curve dot off
+!-----------------------------------------------------------------------
         ndotme(i) = 0
-        !-----------------------------------------------------------------------c
-        ! Initialize curve dash off             c
-        !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!       Initialize curve dash off
+!-----------------------------------------------------------------------
         ndshme(i) = 0
-        !-----------------------------------------------------------------------c
-        ! Initialize curve chain dot off             c
-        !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!       Initialize curve chain dot off
+!-----------------------------------------------------------------------
         ncdtme(i) = 0
-        !-----------------------------------------------------------------------c
-        ! Initialize curve chain dash off             c
-        !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!       Initialize curve chain dash off
+!-----------------------------------------------------------------------
         ncdhme(i) = 0
-        !-----------------------------------------------------------------------c
-        ! Initialize marker                 c
-        !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!       Initialize marker
+!-----------------------------------------------------------------------
         markme(i) = -2
-        !-----------------------------------------------------------------------c
-        ! Initialize curve to be drawn with solid line wit no symbols c
-        !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!       Initialize curve to be drawn with solid line wit no symbols
+!-----------------------------------------------------------------------
         ncnct(i) = 0
-        !-----------------------------------------------------------------------c
-        ! Initialize color                 c
-        !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!       Initialize color
+!-----------------------------------------------------------------------
         clearx(i) = 'FOREGROUND'
-        !-----------------------------------------------------------------------c
-        ! Initialize shade parameters             c
-        !-----------------------------------------------------------------------c
-        !    sangle(i) = 0.0
-        !    sgap(i) = 0.0
-        !    ngaps(i) = 0
-        !    mrc(i) = 0
+!-----------------------------------------------------------------------
+!       Initialize shade parameters
+!-----------------------------------------------------------------------
+!        sangle(i) = 0.0
+!        sgap(i) = 0.0
+!        ngaps(i) = 0
+!        mrc(i) = 0
       enddo
-      !-----------------------------------------------------------------------c
-      ! Initialize Annotation parameters            c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize Annotation parameters
+!-----------------------------------------------------------------------
       do i = 1, mdim
         note(i) = 0
         lmes(i) = ' '
@@ -10673,20 +10631,16 @@
         ypos(i) = 0.0
         ht(i) = 0.14_dp
       enddo
-      !-----------------------------------------------------------------------c
-      ! Initialize Contour Dimension             c
-      !-----------------------------------------------------------------------c
+!-----------------------------------------------------------------------
+!     Initialize Contour Dimension
+!-----------------------------------------------------------------------
       ix = 1
       iy = 1
 
       return
-      end
-
-      subroutine altplt
-      return
-      end
+      end subroutine init2d
 
       subroutine closepl
       close(unit=35)
       return
-      end
+      end subroutine closepl

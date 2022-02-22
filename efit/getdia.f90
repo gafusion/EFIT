@@ -33,7 +33,6 @@
         dimension phidia(ntims),sigphi(ntims)
         dimension ierr(3),iwght(3)
 
-
         ndia=3
         call dlcomp(tim,diamag,diamagc,sig,nshot,npts,idlc,ierr, &
                     tavg)
@@ -66,8 +65,7 @@
             enddo
         endif
         return
-        end
-
+        end subroutine getdia
 
 !**********************************************************************
 !>
@@ -75,9 +73,9 @@
 !!    
 !!
 !**********************************************************************
-        SUBROUTINE DLCOMP(TIM,DIAMAG,DIAMAGC,SIG,NSHOT,NPTS,IDLC &
-        ,IERR,TAVG)
-        use expath
+        SUBROUTINE DLCOMP(TIM,DIAMAG,DIAMAGC,SIG,NSHOT,NPTS,IDLC, &
+                          IERR,TAVG)
+        use exvars
         use var_exdata, only: ishot
         use var_gggttt, only: ntims
         PARAMETER (NPOINT=42)
@@ -131,7 +129,6 @@
         IDLC=0
         SIGMAD=0.01
         SIGMAF=0.1
-
 !
 !       GET COMPENSATION COEFFICIENTS
 !
@@ -169,7 +166,6 @@
           ENDIF
         endif
         CLOSE(UNIT=NIN)
-
 !
 !  CALCULATE COEFFICIENTS FOR BT COMPENSATION. THIS IS DONE BY
 !  COMPUTING THE RATIO OF THE RESIDUAL TOROIDAL FIELD PICKUP ON THE
@@ -201,13 +197,13 @@
 !       measured on 9/4/87 and is correct for all shots after 56600.
 !
         if (nshot.lt.56600) then
-            fix(1)=1.017
-            fix(2)=1.019
-            fix(3)=1.035
+          fix(1)=1.017
+          fix(2)=1.019
+          fix(3)=1.035
         else
-            fix(1)=1.000
-            fix(2)=1.000
-            fix(3)=1.000
+          fix(1)=1.000
+          fix(2)=1.000
+          fix(3)=1.000
         endif             
 !
 !       GET DIAMAGNETIC FLUXES
@@ -218,25 +214,25 @@
           CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR,RAR, &
                       ASCII,INT16,INT32,REAL32)
           IF (IER.NE.0 .AND. IER.NE.2 .AND. IER.NE.4) THEN
-              WRITE (6,1012)
-              WRITE (6,1013) IPOINT,NSHOT,IER,RAR(1),RAR(7), &
-                             TTEMP(NPTS)
-              IERR(J)=IER
-              CYCLE
+            WRITE (6,1012)
+            WRITE (6,1013) IPOINT,NSHOT,IER,RAR(1),RAR(7), &
+                           TTEMP(NPTS)
+            IERR(J)=IER
+            CYCLE
           ENDIF
           IF (IER.EQ.4) THEN
-              IF (IAR(2).LT.NPTS) NPTS=IAR(2)
-              IF (NPTS.LE.0) CYCLE
+            IF (IAR(2).LT.NPTS) NPTS=IAR(2)
+            IF (NPTS.LE.0) CYCLE
           ENDIF
 
           DO N=1,NPTS
-              DIAMAG(N,J)=(RAR(6)-IDAT(N))*RAR(5)*RAR(4)*IADJ(J)*fix(j)
+            DIAMAG(N,J)=(RAR(6)-IDAT(N))*RAR(5)*RAR(4)*IADJ(J)*fix(j)
 !        
-!             COMPENSATE FOR BT PICKUP (0.1 MV-SEC IS UNCERTAINTY IN BT PICKUP)
-!             NOV 21, 1994: NEW CALIB INCREASES BY 5%.
+!           COMPENSATE FOR BT PICKUP (0.1 MV-SEC IS UNCERTAINTY IN BT PICKUP)
+!           NOV 21, 1994: NEW CALIB INCREASES BY 5%.
 !
-              DIAMAGC(N,J)=1.05*DIAMAG(N,J)-BTCOMP(J)
-              SIG(N,J)=(DIAMAG(N,J)*SIGMAD)**2+0.1
+            DIAMAGC(N,J)=1.05*DIAMAG(N,J)-BTCOMP(J)
+            SIG(N,J)=(DIAMAG(N,J)*SIGMAD)**2+0.1
           ENDDO
           if (navg.gt.1) then
             CALL LOWPASS (DIAMAG(1,J),DIAMAG(1,J),NAVG,NPTS)
@@ -281,46 +277,44 @@
             idlc=idlc+1
             CYCLE
           endif       
-
    
           IF (IPOINT.EQ.'VLOOPBS   ' .OR. IREPLACE.EQ.1) THEN
             NPTS2=IAR(2)
             TAU=0.125
             SUM=0.0
             DO N=1,NPTS2-1
-                IF (TTEMP(N).GT.TIM(NPTS)) EXIT
-                YTEMP(N)=(RAR(6)-IDAT(N))*RAR(5)*RAR(4)
-                SUM=SUM+EXP(TTEMP(N)/TAU)*YTEMP(N)*(TTEMP(N+1)-TTEMP(N))
-                YTEMP(N)=YTEMP(N)-EXP(-1.*TTEMP(N)/TAU)/TAU*SUM
+              IF (TTEMP(N).GT.TIM(NPTS)) EXIT
+              YTEMP(N)=(RAR(6)-IDAT(N))*RAR(5)*RAR(4)
+              SUM=SUM+EXP(TTEMP(N)/TAU)*YTEMP(N)*(TTEMP(N+1)-TTEMP(N))
+              YTEMP(N)=YTEMP(N)-EXP(-1.*TTEMP(N)/TAU)/TAU*SUM
             ENDDO
 
             call interp(ttemp,ytemp,N,tim,ydat,npts)
 
           ELSE IF (IPOINT.EQ.'ECOILB    ' .OR. (ABS(RAR(1)-TTEMP(1)).GT. &
-               RAR(3) .OR. ABS(TTEMP(NPTS)-TIM(NPTS)).GT.1.0E-6)) then
+              RAR(3) .OR. ABS(TTEMP(NPTS)-TIM(NPTS)).GT.1.0E-6)) then
             npts2=iar(2)
             do n=1,npts2
-                ytemp(n)=(rar(6)-idat(n))*rar(5)*rar(4)
+              ytemp(n)=(rar(6)-idat(n))*rar(5)*rar(4)
             enddo
             call interp(ttemp,ytemp,iar(2),tim,ydat,npts)
           ELSE
             do n=1,npts
-                ydat(n)=(rar(6)-idat(n))*rar(5)*rar(4)
+              ydat(n)=(rar(6)-idat(n))*rar(5)*rar(4)
             enddo
           ENDIF 
 
           IF (ipoint.eq.'ECOILB    ') then
             do n=1,npts
-                ! TODO: bt is undefined here...
-!                prod=((ydat(n)/6.6e4)**2)*bt(n)/2.13
-                prod=((ydat(n)/6.6e4)**2)/2.13
-                do j=1,3
-                    DIAMAGC(N,J)=DIAMAGC(N,J)-EBCOUP(J)*PROD
-                    sig(n,j)=sig(n,j)+(ebcoup(j)*prod)**2
-                enddo
+              ! TODO: bt is undefined here...
+!              prod=((ydat(n)/6.6e4)**2)*bt(n)/2.13
+              prod=((ydat(n)/6.6e4)**2)/2.13
+              do j=1,3
+                DIAMAGC(N,J)=DIAMAGC(N,J)-EBCOUP(J)*PROD
+                sig(n,j)=sig(n,j)+(ebcoup(j)*prod)**2
+              enddo
             enddo
           ENDIF
-
 
           DO J=1,3
             const=coup(i,j)*iadj(j)
@@ -332,21 +326,19 @@
 
         ENDDO
 
-
-
         DO J=1,3
           IF (IERR(J).NE.0) THEN
             DO N=1,NPTS
-                DIAMAG(N,J)=0.0
-                DIAMAGC(N,J)=0.0
+              DIAMAG(N,J)=0.0
+              DIAMAGC(N,J)=0.0
             ENDDO
           ENDIF
         ENDDO
 
         DO J=1,3
-            DO N=1,NPTS
-                SIG(N,J)=SQRT(SIG(N,J))
-            ENDDO
+          DO N=1,NPTS
+            SIG(N,J)=SQRT(SIG(N,J))
+          ENDDO
         ENDDO
 
  1001   FORMAT(A10,3E12.4)
@@ -358,8 +350,7 @@
 
  2020   FORMAT(' error in open or read for file DCOEF.DAT')
         return
-        END
-
+        END SUBROUTINE DLCOMP
 
 !**********************************************************************
 !>
@@ -392,7 +383,7 @@
         ENDDO
 
         RETURN
-        END
+        END SUBROUTINE LOWPASS
 
 !**********************************************************************
 !>
@@ -430,4 +421,4 @@
           YOUT(K)=YIN(NIN)
         ENDDO
         RETURN
-        END
+        END SUBROUTINE INTERP

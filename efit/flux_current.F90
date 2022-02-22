@@ -17,7 +17,7 @@
 !**********************************************************************
       subroutine pflux(niter,nnin,ntotal,jtime,kerror)
       use set_kinds 
-      use var_bunemn
+      use var_buneman
       use commonblocks,only: c,wk,copy,bkx,bky,psiold,psipold, psipp
       include 'eparm.inc'
       include 'modules2.inc'
@@ -25,7 +25,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       real(dp), dimension(:), allocatable ::   work
-      integer initresult
+      integer*4 initresult
       dimension pds(6)
       real*8,dimension(:),allocatable :: psikkk,gfbsum
       data initfb/0/,init/0/
@@ -186,7 +186,7 @@
             psi(k2)=val
           enddo
         enddo
-      endif ! end symmetrize loop
+      endif
 !------------------------------------------------------------------------
 !--   optional damping out the m=1 vertical eigen mode                 --
 !------------------------------------------------------------------------
@@ -577,8 +577,8 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension pds(6)
-      integer iii
-      real :: zmaxis_last = 0.0
+      integer*4 iii
+      real*8 :: zmaxis_last = 0.0
       data isplit/8/,psitol/1.0e-04_dp/,cdum/1.0/
       save xguess, yguess, xltrac, radbou
 !
@@ -678,7 +678,7 @@
 !-----------------------------------------------------------------------
 !--   force free current in the scrape-off layer                      --
 !-----------------------------------------------------------------------
-      if (icutfp.eq.2) then
+      SOL_curr: if (icutfp.eq.2) then
         xvsmin=1.e10_dp
         xvsmax=-1.e10_dp
         if (limvs.eq.0) then
@@ -803,7 +803,7 @@
         endif
         xpsialp=xpsimin
         xpsimin=sidif/(simag-xpsimin)
-      endif 
+      endif SOL_curr 
 !-----------------------------------------------------------------------
 !--   get normalized flux function XPSI                               --
 !-----------------------------------------------------------------------
@@ -1241,7 +1241,7 @@
 !!    vescur computes the currents induced in the vessel
 !!    segments due to E coils and F coils
 !!
-!!    @param jtime :
+!!    @param jtime : time index
 !!
 !**********************************************************************
       subroutine vescur(jtime)

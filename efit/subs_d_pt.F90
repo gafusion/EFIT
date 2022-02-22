@@ -22,13 +22,13 @@
      character*(*) header
      header = ' '
      return
-     end
+     end subroutine db_header
      subroutine getzeff()
      return
-     end
-     SUBROUTINE DONEPL()
-     RETURN
-     END
+     end subroutine getzeff
+     subroutine donepl()
+     return
+     end subroutine donepl
 
 
 !**********************************************************************

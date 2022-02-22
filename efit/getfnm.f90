@@ -28,8 +28,7 @@
       write(fname,1020) let,ishot,sec_msec
  1020 format(a1,i6.6,'.',a5)
       return
-      end
-
+      end subroutine getfnmd
 
 !**********************************************************************
 !>
@@ -61,8 +60,7 @@
       write(fname,1020) let,ishot,sec_msec
  1020 format(a2,i6.6,'.',a5)
       return
-      end
-
+      end subroutine getfnm2
 
 !**********************************************************************
 !>
@@ -101,8 +99,7 @@
  1020 format(a1,i6.6,'.',a5)
  1030 format(a1,i6.6,'.',a5,'_',i3.3)
       return
-      end
-
+      end subroutine getfnmu
 
 !**********************************************************************
 !>
@@ -141,7 +138,7 @@
  1020 format(a2,i6.6,'.',a5)
  1030 format(a2,i6.6,'.',a5,'_',i3.3)
       return
-      end
+      end subroutine getfnmu2
 
 !**********************************************************************
 !>
@@ -162,9 +159,8 @@
 !!
 !**********************************************************************      
       subroutine setfnme(let,ishot,itime,istore,fname)
-      use expath
+      use exvars
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-!vasoct3,08      include 'expath.inc'
       character*(*) let
       character*(*) fname
       character*5 sec_msec
@@ -181,4 +177,4 @@
  1020 format(a1,i6.6,'.',a5)
       if (istore .eq. 1) fname = store_dir(1:lstdir)//fname
       return
-      end
+      end subroutine setfnme

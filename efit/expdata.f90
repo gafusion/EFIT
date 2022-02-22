@@ -17,7 +17,7 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      integer limmode,ilimshot
+      integer*4 limmode,ilimshot
       character*100 filin
       namelist/lim/xlim,ylim,limitr
       data lfile/36/
@@ -224,8 +224,7 @@
  6678 format ('lim200330.',i3)
 !
       return
-      end
-
+      end subroutine getlim
 
 !**********************************************************************
 !>
@@ -239,41 +238,52 @@
 !**********************************************************************
       subroutine getsxr(ishot,ixray)
       include 'eparm.inc'
+      use error_control, only: errctrl_msg
       use var_cxray
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !vas      common/cxray/rxray(nangle+ntangle),zxray(nangle+ntangle), &
 !vas                   xangle(nangle+ntangle) &
 !vas                   ,ksxr0(10),ksxr2(10),idosxr
 !------------------------------------------------------------------------
-!--  read in new SXR detectors geometry for shot > 80744               --
+!--   read in new SXR detectors geometry for shot > 80744              --
 !------------------------------------------------------------------------
       if ((ishot.ge.80744).and.(iand(ixray,1).ne.0)) then
         open(unit=80,status='old', &
-           file=input_dir(1:lindir)//'sxr94.dat')
+             file=input_dir(1:lindir)//'sxr94.dat',iostat=ioerr)
+        if (ioerr.ne.0) then
+          call errctrl_msg('getsxr', &
+                           'could not open SXR file')
+          stop
+        endif
         do i=1,4
           ii=(i-1)*16
           read (80,*) rxrayi,zxrayi
           do j=ii+1,ii+16
-           rxray(j)=rxrayi
-           zxray(j)=zxrayi
-           read (80,*) idumdum,xangle(j)
+            rxray(j)=rxrayi
+            zxray(j)=zxrayi
+            read (80,*) idumdum,xangle(j)
           enddo
         enddo
       endif
 !------------------------------------------------------------------------
-!--  read in new Toroidal x-ray geometry for shot > 91000 (since '97)  --
+!--   read in new Toroidal x-ray geometry for shot > 91000 (since '97) --
 !------------------------------------------------------------------------
       if ((ishot.lt.91000).and.(iand(ixray,2).ne.0)) ixray = ixray-2
       if ((ishot.ge.91000).and.(iand(ixray,2).ne.0)) then
         open(unit=80,status='old', &
-           file=input_dir(1:lindir)//'sxrt97.dat')
+             file=input_dir(1:lindir)//'sxrt97.dat')
+        if (ioerr.ne.0) then
+          call errctrl_msg('getsxr', &
+                           'could not open SXR file')
+          stop
+        endif
         read (80,*) rxrayi,zxrayi
         do j=nangle+1,nangle+ntangle
-           rxray(j)=rxrayi
-           zxray(j)=zxrayi
-           read (80,*) idumdum,xangle(j)
+          rxray(j)=rxrayi
+          zxray(j)=zxrayi
+          read (80,*) idumdum,xangle(j)
         enddo
       endif
 !      
       return
-      end
+      end subroutine getsxr

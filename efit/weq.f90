@@ -34,7 +34,7 @@
       character(10) :: uday, clocktime
       character(14) :: sfile
       character(5)  :: zone
-      integer,dimension(8) :: values
+      integer*4, dimension(8) :: values
       character eqdsk*72,header*42,qmflag*3,fit_type*3
       character wform*20,let
 !     data nlold/39/,nlnew/40/
@@ -114,7 +114,7 @@
 !
         xbetapr=kbetapr
         if (keqdsk.ge.1) then
-        write (neqdsk,1055) uday,efitver
+        write (neqdsk,1055) uday,efitvers//"   "
         if (ishot.le.99999) then
           write (neqdsk,1050) ishot,ktime1
         else
@@ -193,7 +193,7 @@
 !--     binary format                                             --
 !-------------------------------------------------------------------
         else ! keqdsk.lt.1
-        write (neqdsk) uday,efitver
+        write (neqdsk) uday,efitvers
         if (ishot.le.99999) then
           write (neqdsk) ishot,ktime1
         else
@@ -432,7 +432,7 @@
               saisq,cjeccd
       character eqdsk*72,header*42,wform*20,let,fit_type*3
       character*10 vers(6)
-      integer :: pltnw
+      integer*4 :: pltnw
       !TODO: can this be set to match mesh rather than hard-coded limit?
       parameter (pltnw=2049)
       real*8,dimension(:),allocatable :: workk,dmion,bworm,cworm,  dworm
@@ -528,8 +528,8 @@
         enddo
       enddo
       write (vers(1),1040)
-      write (vers(2),1050) efitver(1:5)
-      write (vers(3),1060) efitver(6:10)
+      write (vers(2),1050) efitvers(1:5)
+      write (vers(3),1060) efitvers(6:7)//"   "
       if (ishot.le.99999) then
         write (vers(4),1070) ishot
       else
@@ -714,7 +714,7 @@
       call eestore
       write (neqdsk,basis)
       limitr=limitr+1
-      if (kdomse.gt.0.or.kstark.gt.0) then
+      MSE: if (kdomse.gt.0.or.kstark.gt.0) then
         do i=1,nstark
           if (kdomse.gt.0) then
             tgamma(i)=cmgam(i,jtime)
@@ -740,7 +740,7 @@
         kkstark=nstark
         saisq=tsaisq(jtime)
         write (neqdsk,eccd)
-      endif
+      endif MSE
 !-----------------------------------------------------------------------
 !--   Write out MSE-LS namelist                                       --
 !-----------------------------------------------------------------------
@@ -860,7 +860,7 @@
 !
       close(unit=neqdsk)
       nbdry=nbsave
-      if (nbdry.gt.2) then
+      fixed_bdry: if (nbdry.gt.2) then
         ierold=ierchk
         ierchk=0
         ibunmn=3
@@ -893,7 +893,7 @@
         limitr=limitr+1
         itime=itime-1
         ierchk=ierold
-      endif
+      endif fixed_bdry
 !
       deallocate(workk,dmion,bworm,cworm,dworm)
 !

@@ -29,7 +29,7 @@
 !!    @param d : rrays of spline coefficients as defined above.
 !!
 !**********************************************************************
-subroutine zpline (n, x, y, b, c, d)
+ subroutine zpline (n, x, y, b, c, d)
   integer*4 n
   real*8 x(n), y(n), b(n), c(n), d(n)
 
@@ -102,8 +102,7 @@ subroutine zpline (n, x, y, b, c, d)
    c(2) = 0.
    d(2) = 0.
    return
- end
-
+ end subroutine zpline
 
 !**********************************************************************
 !>
@@ -208,8 +207,7 @@ subroutine zpline (n, x, y, b, c, d)
    c(2) = 0.
    d(2) = 0.
    return
- end
-
+ end subroutine spleen
 
 !**********************************************************************
 !>
@@ -314,8 +312,7 @@ subroutine zpline (n, x, y, b, c, d)
    c(2) = 0.
    d(2) = 0.
    return
- end
-
+ end subroutine splaan
 
 !**********************************************************************
 !>
@@ -370,8 +367,7 @@ subroutine zpline (n, x, y, b, c, d)
 30 dx = u - x(i)
    seval = y(i) + dx*(b(i) + dx*(c(i) + dx*d(i)))
    return
- end
-
+ end function seval
 
 !**********************************************************************
 !>
@@ -421,4 +417,4 @@ subroutine zpline (n, x, y, b, c, d)
 30 dx = u - x(i)
    speval = b(i) + dx*(2.*c(i) + 3.*dx*d(i))
    return
- end
+ end function speval

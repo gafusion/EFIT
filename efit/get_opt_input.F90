@@ -30,8 +30,6 @@
 
       ! ONLY root process allowed to interface with terminal
       if (rank == 0) then
-        write (nttyo,5500)
-        call efit_version(efitver)
         if (use_opt_input .eqv. .false.) then
           write (nttyo,6000)
           read (ntty,*) kdata
@@ -41,11 +39,9 @@
       endif
 #if defined(USEMPI)
       if (nproc > 1) then
-        call MPI_BCAST(efitver,10,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
         call MPI_BCAST(kdata,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
       endif
 #endif
-      efitversion=efitver(1:8)
 
       ! Check that input option is valid
 #if defined(USE_HDF5)
@@ -96,7 +92,7 @@
 #endif 
       endif
 
-      if (abs(kdata).eq.2) then 
+      kdata_opt: if (abs(kdata).eq.2) then 
         if (rank == 0) then
           if (use_opt_input .eqv. .false.) then
             write (nttyo,6200)
@@ -116,7 +112,7 @@
           endif
         endif
 
-      elseif (abs(kdata).eq.1) then
+      elseif (abs(kdata).eq.1) then kdata_opt
         ALLOCATE(ifname(1))
         if (rank == 0) then
           if (use_opt_input .eqv. .false.) then
@@ -154,7 +150,7 @@
 #endif
         endif
 
-      elseif (abs(kdata).eq.3 .or. abs(kdata).eq.7) then
+      elseif (abs(kdata).eq.3 .or. abs(kdata).eq.7) then kdata_opt
     
        ! TODO: kwake is undefined here... is it necessary?
 !       if (kwake.eq.0) then
@@ -174,9 +170,9 @@
           endif
         endif
 !       endif
-      else
+      else kdata_opt
         return
-      endif
+      endif kdata_opt
      
 #if defined(USEMPI)
       if (nproc > 1) then
@@ -239,7 +235,6 @@
       endif
 #endif
 
- 5500 format (/,10x,'EFIT-AI'/)
 #if defined(USE_HDF5)
 #if defined(USE_MDS)
  6000 format (/,1x,'type mode (1=omas, 2=file, 3=snap, 4=time', &
@@ -267,4 +262,4 @@
  6617 format (/,1x,'type snap file extension (def for default):')
  6620 format (a)
      return
-end subroutine
+end subroutine get_opt_input

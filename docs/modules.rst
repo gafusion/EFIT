@@ -112,7 +112,7 @@ modules-efit.F90
 ----------------
 
 .. doxygennamespace:: set_kinds
-.. doxygennamespace:: expath
+.. doxygennamespace:: exvars
 .. doxygennamespace:: eparm
 .. doxygennamespace:: global_constants
 .. doxygennamespace:: error_control

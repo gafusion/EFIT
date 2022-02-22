@@ -68,7 +68,7 @@
       enddo
       if (ierrfl.eq.0) return
 !----------------------------------------------------------------------
-!--   now write out errors to the erminal and error file ...
+!--   now write out errors to the terminal and error file ...
 !----------------------------------------------------------------------
       open(unit=40,file='errfil.out',status='unknown',position='append')
       ktimeo=0
@@ -139,7 +139,7 @@
  1170 format(5x,'Error #19, error > ',e10.3)
  1180 format(5x,'Error #20, Bp+li/2 not consistent , error = ',e10.3)
  1190 format(5x,'Error #21, Bp not consistent , error = ',e10.3)
-      end
+      end subroutine chkerr
 
 !**********************************************************************
 !!
@@ -156,7 +156,7 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xplt(*),yplt(*)
+      dimension xplt(npoint),yplt(npoint)
       dimension zuper(nco2v),zlower(nco2v),rco2(nco2r),rco2in(nco2r)
 !
       do i=1,nco2r
@@ -210,4 +210,4 @@
       enddo
 !
       return
-      end
+      end subroutine lenco2

@@ -2,11 +2,11 @@
 !!
 !>    currnt computes the current density on the r-z mesh.
 !!
-!!    @param iter :
-!!    @param jtime :
+!!    @param iter : inner equilibrium loop iteration index
+!!    @param jtime : time index
 !!    @param ixn :
-!!    @param nitett :
-!!    @param kerror :
+!!    @param nitett : current profile loop iteration index?
+!!    @param kerror : error flag
 !*********************************************************************
       subroutine currnt(iter,jtime,ixn,nitett,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
@@ -30,7 +30,7 @@
       initc=initc+1
       if (ivacum.gt.0) return
       if ((nitett.le.1).and.(icinit.eq.1)) return
-      if (((icinit.gt.0).and.(iconvr.ne.3).and.(iter.le.1)).or.(icurrt.eq.4).or. &
+      GAQ: if (((icinit.gt.0).and.(iconvr.ne.3).and.(iter.le.1)).or.(icurrt.eq.4).or. &
         (((icurrt.eq.2).or.(icurrt.eq.5)).and.(nitett.le.1).and.(icinit.gt.0))) then
 !-----------------------------------------------------------------------
 !--    GAQ type current profile                                       --
@@ -53,7 +53,7 @@
          pcurrt(kk)=  rbetap/rdiml*((1.-xpsi(kk)**enf)**emf &
                  *(1.-gammaf)+gammaf)
 !-----------------------------------------------------------------
-!--      toroidal rotation ?                                    --
+!--      toroidal rotation                                      --
 !-----------------------------------------------------------------
          if (kvtor.eq.0) then
           pcurrt(kk)=pcurrt(kk)+pp0*rdiml
@@ -112,30 +112,30 @@
        brsp(nfcoil+2)=-brsp(nfcoil+1)
        brsp(nbase+2)=-brsp(nbase+1)
        return
-      endif
+      endif GAQ
 !
       select case (icurrt)
       case default ! 1
 !------------------------------------------------------------------------------
-!--    uniform current for Solove equilibrium                                --
+!--    uniform current for Solovev equilibrium                               --
 !------------------------------------------------------------------------------
        tcurrt=0.0
        do i=1,nw
-        do j=1,nh
-         kk=(i-1)*nh+j
-         pcurrt(kk)=0.0
-         pcurrw(kk)=0.0
-         if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) cycle
-         rdiml=rgrid(i)/srma
-         pcurrt(kk)=sbeta*rdiml+2.*salpha/rdiml
-         if (kvtor.gt.0) then
-           pcurrw(kk)=sbetaw*rdiml*(rdiml**2-1.)
-           pcurrt(kk)=pcurrt(kk)+pcurrw(kk)
-         endif
-         pcurrt(kk)=pcurrt(kk)*www(kk)
-         pcurrw(kk)=pcurrw(kk)*www(kk)
-         tcurrt=tcurrt+pcurrt(kk)
-        enddo
+         do j=1,nh
+           kk=(i-1)*nh+j
+           pcurrt(kk)=0.0
+           pcurrw(kk)=0.0
+           if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) cycle
+           rdiml=rgrid(i)/srma
+           pcurrt(kk)=sbeta*rdiml+2.*salpha/rdiml
+           if (kvtor.gt.0) then
+             pcurrw(kk)=sbetaw*rdiml*(rdiml**2-1.)
+             pcurrt(kk)=pcurrt(kk)+pcurrw(kk)
+           endif
+           pcurrt(kk)=pcurrt(kk)*www(kk)
+           pcurrw(kk)=pcurrw(kk)*www(kk)
+           tcurrt=tcurrt+pcurrt(kk)
+         enddo
        enddo
        cratio=cpasma(jtime)/tcurrt
        do kk=1,nwnh
@@ -153,9 +153,9 @@
 !----------------------------------------------------------------------
        nnn=1
        call green(nnn,jtime,nitett)
-       if ((nitett.gt.1).or.(icinit.ge.0)) then
-       if (iconvr.eq.3) then
-         if (kcgama.gt.0.or.kcalpa.gt.0) then
+       init_current: if ((nitett.gt.1).or.(icinit.ge.0)) then
+       eq_mode: if (iconvr.eq.3) then
+         constrain_profs: if (kcgama.gt.0.or.kcalpa.gt.0) then
 !----------------------------------------------------------------------
 !--      Adjust current profile to keep q(0), I, J(1), and others fixed
 !----------------------------------------------------------------------
@@ -438,8 +438,9 @@
              cpasma(jtime)=cm
              pasmat(jtime)=cm
            endif
-         endif
-       endif
+         endif constrain_profs
+       endif eq_mode
+       ! TODO: why does qenp value matter?
        if ((qenp.gt.0.0).and.(nitett.gt.1).and.(qvfit.gt.0.0).and. &
            (fwtqa.gt.0.0).and.(kedgep.le.0).and.(kedgef.le.0)) then
          tz = 0.0
@@ -472,7 +473,7 @@
          enddo
 !
        endif
-       endif ! (nitett.gt.1).or.(icinit.ge.0)
+       endif init_current
        tcurrt=0.0
        tcurrp=0.0
        tcurrtpp=0.0
@@ -551,7 +552,7 @@
 !----------------------------------------------------------------------------
        if (ifitdelz.eq.3) then
         if (fitdelz.and.nitett.ge.ndelzon) then
-        call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
+         call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
          cdelznow=cdelz(nitett-1)/100.
          cdeljsum=0.0
          do i=1,nw
@@ -579,7 +580,7 @@
 !---------------------------------------------------------------------
        nnn=1
        call green(nnn,jtime,nitett)
-       if (((nitett.gt.1).or.(icinit.ge.0)).and.(iconvr.eq.3)) then
+       init_curr: if (((nitett.gt.1).or.(icinit.ge.0)).and.(iconvr.eq.3)) then
 !----------------------------------------------------------------------
 !--    Adjust current profile to keep q(0), I, J(1), and others fixed--
 !----------------------------------------------------------------------
@@ -845,7 +846,7 @@
          endif
 !
        endif
-       endif ! ((nitett.gt.1).or.(icinit.ge.0)).and.(iconvr.eq.3)
+       endif init_curr
        tcurrt=0.0
        tcurrp=0.0
        do i=1,nw
@@ -853,7 +854,7 @@
            kk=(i-1)*nh+j
            pcurrt(kk)=0.0
            pcurrw(kk)=0.0
-           if (icutfp.eq.0) then
+           SOL_curr: if (icutfp.eq.0) then
 !----------------------------------------------------------------------
 !--          no attached current                                     --
 !----------------------------------------------------------------------
@@ -902,9 +903,9 @@
              endif
              pcurrt(kk)=pcurrt(kk)*www(kk)
              pcurrw(kk)=pcurrw(kk)*www(kk)
-           else
+           else SOL_curr
 !-----------------------------------------------------------------------
-!--        attached current                                           --
+!--          attached current                                         --
 !-----------------------------------------------------------------------
              if ((xpsi(kk).ge.0.0).and.(xpsi(kk).le.1.0)) then
                 pp0=ppcurr(xpsi(kk),kppcur)
@@ -953,7 +954,7 @@
              if ((upsi.ge.0.0).and.(upsi.le.1.0)) &
                pcurrt(kk)=pcurrt(kk)+fpcurr(xpsi(kk),kffcur)/rgrid(i)
              pcurrt(kk)=pcurrt(kk)*zero(kk)
-           endif
+           endif SOL_curr
            tcurrt=tcurrt+pcurrt(kk)
          enddo
        enddo
@@ -978,4 +979,4 @@
 !
       end select
       return
-      end
+      end subroutine currnt
