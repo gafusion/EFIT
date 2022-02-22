@@ -30,7 +30,7 @@ IAVED,See namelist IN1.
 IAVEM,See namelist IN1.
 IAVEUS,See namelist IN1.
 IAVEV,See namelist IN1.
-IBATCH,See namelist IN1.
+IBATCH,UNUSED (input and output only).
 IBTCOMP,See namelist IN1.
 ICINIT,See namelist IN1.
 ICPROF,See namelist IN1.
@@ -38,7 +38,7 @@ ICUTFP,See namelist IN1.
 IDITE,plot DITE diagram? default = 0
 IECURR,See namelist IN1.
 IEXCAL,See namelist IN1.
-IFCURR,See namelist IN1.
+IFCURR,See namelist IN1 (equilibrium).
 IFITVS,See namelist IN1.
 INPUT_DIR,"area where following input files are to be found, n1coil.d3d, ccoil.d3d, btcomp.d3d, dcoef.dat, fitweight.dat, sxr94.dat, efithelp.txt, limiter files and snap files. default = /link/efit/ (UNIX), sys$d3efit (VAX)"
 IOUT,See namelist IN1.
@@ -52,13 +52,13 @@ ITRACE,See namelist IN1.
 IVESEL,See namelist IN1.
 IXRAY,See namelist IN1.
 KBOUND,See namelist IN1.
-KCALPA,See namelist IN1.
+KCALPA,See namelist IN1 (basis).
 KCALDIA,See namelist IN1.
-KCGAMA,See namelist IN1.
+KCGAMA,See namelist IN1 (basis).
 KEQDSK,See namelist IN1.
-KFFCUR,See namelist IN1.
+KFFCUR,See namelist IN1 (basis).
 KFRAME,See namelist IN1.
-KPPCUR,See namelist IN1.
+KPPCUR,See namelist IN1 (basis).
 KSKIPVS,See namelist IN1.
 KTEAR,See namelist IN1.
 KWAITMSE,See namelist INS.
@@ -111,7 +111,7 @@ FITSIREF,See namelist IN1.
 NDELZON,What iteration to turn on vertical shifting of flux surfaces (see FITDELZ). default = 3
 SCALEDZ,Scale factor for column in response matrix corresponding to difference in z position from 0? default = 10-3
 STABDZ,default = -10-4
-NBDRY,See namelist IN1.
+NBDRY,See namelist IN1 (equilibrium).
 RBDRY,See namelist IN1.
 ZBDRY,See namelist IN1.
 WRITE_KFILE,"For the snap modes (3 & 7), write the k file, as if EFIT were run in mode 5 to get those k files, then mode 2 to get the equilibria."

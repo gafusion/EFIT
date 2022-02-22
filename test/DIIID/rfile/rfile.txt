@@ -1,5 +1,5 @@
  &IN1
- ITEK = 0
+ ITEK = 5
  ITRACE = 1
  NXITER = -101
  ERROR = 0.0001

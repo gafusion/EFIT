@@ -26,7 +26,7 @@
       real*8,dimension(:),allocatable :: worksi,workrm,bwork, &
              cwork,dwork,x,y,dpleng
       dimension xsier(nercur)
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
       data inorm/3/,ibtcal/2/
 
       kerror = 0
@@ -182,7 +182,7 @@
 !----------------------------------------------------------------------
 !--   rotational terms                                               --
 !----------------------------------------------------------------------
-      if (kvtor.gt.0) then
+      rotation: if (kvtor.gt.0) then
         sumprt=0.0
         sumprw=0.0
         n1set=1
@@ -228,7 +228,7 @@
         sumprt=sumprt*darea*twopi
         sumprw=sumprw*darea*twopi
         call sets2d(presst,cw,rgrid,nw,bwx,lwx,zgrid,nh,bwy,lwy,wkw,ier)
-      endif
+      endif rotation
 !
       sumpre=0.0
       rzzmax(1)=rmaxis
@@ -245,7 +245,7 @@
         siii=(i-1)*dsi
         siwant=psibry-siii
         siii=1.0_dp-1.0_dp/(nw-1)*(i-1)
-        if (idovol.le.1) then
+        single_volume: if (idovol.le.1) then
         rzzmax(ii)=-99.0
         call surfac(siwant,psi,nw,nh,rgrid,zgrid,bpol,bpolz,nfind, &
                     npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
@@ -253,20 +253,20 @@
         if (kerror.gt.0) return
         if (nfind.le.40.and.icntour.eq.0) then
 #ifdef DEBUG_LEVEL2
-        write (6,*) ' SHAPE/BETALI kerror,i,nfind = ',kerror,i,nfind
+          write (6,*) ' SHAPE/BETALI kerror,i,nfind = ',kerror,i,nfind
 #endif
-        call cntour(rmaxis,zmaxis,siwant,xcmin,xcmax,ycmin,ycmax, &
-                    yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
-                    d33 ,d33 ,xmin,xmax,ymin,ymax,nzz,iautoc, &
-                    bpol,bpolz,nfind,rgrid,nw,zgrid,nh, &
-                    c,n222,nh2,nttyo,npoint, &
-                    negcur,bkx,lkx,bky,lky,kerror)
+          call cntour(rmaxis,zmaxis,siwant,xcmin,xcmax,ycmin,ycmax, &
+                      yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
+                      d33 ,d33 ,xmin,xmax,ymin,ymax,nzz,iautoc, &
+                      bpol,bpolz,nfind,rgrid,nw,zgrid,nh, &
+                      c,n222,nh2,nttyo,npoint, &
+                      negcur,bkx,lkx,bky,lky,kerror)
 #ifdef DEBUG_LEVEL2
-        write (6,*) ' BETALI/CNTOUR kerror,nfind = ',kerror,nfind
+          write (6,*) ' BETALI/CNTOUR kerror,nfind = ',kerror,nfind
 #endif
-        if (kerror /= 0) return
+          if (kerror /= 0) return
         endif
-        if (nfind.ge.10) then
+        found: if (nfind.ge.10) then
         r2surf(ii)=0.0
         r1surf(ii)=0.0
         volp(ii)=0.0
@@ -360,7 +360,7 @@
         zzmax(ii)=zaaa*rzzmax(ii)**2+zbbb*rzzmax(ii)+zccc
         volp(ii)=abs(volp(ii))*twopi
         rhovn(ii)=rhovn(ii)/rhovn(nw)
-        else ! nfind.lt.10
+        else found
         bpolss(ii)=0.0
         rmajz0(ii)=0.0
         sisi=simag-siwant
@@ -415,8 +415,8 @@
         end select
         r2surf(ii)=(eesi**2+1.)/rmaxis**2/tmu/cjmaxi
         r1surf(ii)=1./rmaxis
-        endif ! nfind.lt.10
-        endif ! idovol.le.1
+        endif found
+        endif single_volume
         sumpre=sumpre+volp(ii)*pprime(ii)
       enddo
       sumpre=sumpre+volp(nw)*pprime(nw)/2.
@@ -571,10 +571,8 @@
       dimension pds(6),rgrid(*),zgrid(*)
       real*8,dimension(:),allocatable :: x,y,dpleng,xxs,yys
       data inorm/3/,ibtcal/2/
-! MPI >>>
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
       kerror = 0
-! MPI <<<
 !
       ALLOCATE(x(nw),y(nh),dpleng(npoint),xxs(npoint),yys(npoint))
 !

@@ -13,9 +13,9 @@ KDOVT, 0.0,"not used"
 KPLOTP,,See namelist IN1.
 KVTOR,0,"| toroidal rotation switch, must set ICURRT=5.
 | - 0 = no rotation (default).
-| -1 = turn on toroidal rotation in approximate first order form.
-| -2 = include second order terms.
-| -3 = exact two-fluid form. Polynomial basis. (exponential form???)
+| - 1 = turn on toroidal rotation in approximate first order form.
+| - 2 = include second order terms.
+| - 3 = exact two-fluid form. Polynomial basis. (exponential form???)
 | - 11= toroidal rotation in exact two-fluid form. Exponential form."
 KWWCUR, 2, "Number of rotational pressure terms, for polynomial representation KWWFNC=0 only."
 KWWFNC,,See namelist IN1.

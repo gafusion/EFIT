@@ -1,7 +1,7 @@
 ﻿Variable, Default, Description
 NBDRY,, "| ""Number Boundary"". This is the parameter which specifies that solution method
 | is to be fixed boundary or free boundary equilibrium mode. Must set ICONVR=3.
-| - n = write out boundary points in S(shot).t every other n points.
+| - -n = write out boundary points in S(shot).t every other n points.
 | - 0 = do free boundary equilibrium solution (Default).
 | - n = fixed boundary calculation given n boundary points or boundary constraints.
 | In fixed boundary mode, if successful will write out a x(shot).(time+1) file for free boundary runs using computed flux loop signals."

@@ -12,7 +12,7 @@
 !!    @param ypsi : independent variable value
 !!
 !**********************************************************************
-      Function bswwel(ifunc,iparm,ypsi)
+      function bswwel(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
       include 'modules2.inc'
@@ -25,14 +25,14 @@
           if(iparm.eq.1)then
             bswwel=1.0 - ypsi**kwwcur*wcurbd
           else
-            bswwel = ypsi**(iparm - 1) - ypsi**kwwcur*wcurbd                
+            bswwel = ypsi**(iparm - 1) - ypsi**kwwcur*wcurbd
           endif
         elseif (ifunc .eq. 1)then
           tpsi = ypsi - 1.0
           if(iparm.eq.1)then
             bswwel=1.0 - tpsi**kwwcur*wcurbd
           else
-            bswwel = tpsi**(iparm - 1) - tpsi**kwwcur*wcurbd                
+            bswwel = tpsi**(iparm - 1) - tpsi**kwwcur*wcurbd
           endif
         elseif (ifunc .eq. 2)then
           if(iparm.eq.1)then
@@ -129,8 +129,7 @@
         if ( ifunc .ne. kwwfnc)  &
           write(6,*)'ifunc .ne. kwwfnc ',ifunc,kwwfnc
         return
-      end
-
+      end function bswwel
 
 !**********************************************************************
 !>
@@ -145,7 +144,7 @@
 !!    @param ypsi : independent variable value
 !!
 !********************************************************************** 
-      Function bswwpel(ifunc,iparm,ypsi)
+      function bswwpel(ifunc,iparm,ypsi)
 
       include 'eparm.inc'
       include 'modules2.inc'
@@ -284,8 +283,7 @@
 
         endif
         return
-      end
-
+      end function bswwpel
  
 !**********************************************************************
 !>
@@ -300,7 +298,7 @@
 !!    @param ypsi : independent variable value
 !!
 !**********************************************************************      
-      Function bswwin(ifunc,iparm,ypsi)
+      function bswwin(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
       include 'modules2.inc'
@@ -522,8 +520,7 @@
       if ( ifunc .ne. kwwfnc)  &
            write(6,*)'ifunc .ne. kwwfnc ',ifunc,kwwfnc
       return
-      end
-      
+      end function bswwin 
           
 !**********************************************************************
 !>
@@ -932,13 +929,11 @@
             enddo
             z(ncrsp) = 0.0
             do j = 1,kwwcur
-               crsp(ncrsp,nffcoi+kppcur+kffcur+j) =  &
-      							 bswwel(kwwfnc,j,1.0)
+               crsp(ncrsp,nffcoi+kppcur+kffcur+j) = bswwel(kwwfnc,j,1.0)
             enddo
       endif
       return
-      end
-
+      end subroutine wwcnst
 
 !**********************************************************************
 !>
@@ -968,8 +963,7 @@
          enddo
       endif
       return
-      end
-
+      end subroutine wwstore
 
 !**********************************************************************
 !>
@@ -984,7 +978,7 @@
 !!    @param ypsi : independent variable value
 !!
 !**********************************************************************     
-      Function bserel(ifunc,iparm,ypsi)
+      function bserel(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
       include 'modules2.inc'
@@ -1100,8 +1094,7 @@
       if ( ifunc .ne. keefnc) &
         write(6,*)'ifunc .ne. keefnc ',ifunc,keefnc
       return
-    end
-
+      end function bserel
 
 !**********************************************************************
 !>
@@ -1116,7 +1109,7 @@
 !!    @param ypsi : independent variable value
 !!
 !**********************************************************************  
-      Function bserpel(ifunc,iparm,ypsi)
+      function bserpel(ifunc,iparm,ypsi)
 
       include 'eparm.inc'
       include 'modules2.inc'
@@ -1255,8 +1248,7 @@
 
       endif
       return
-      end
-
+      end function bserpel
 
 !**********************************************************************
 !>
@@ -1271,7 +1263,7 @@
 !!    @param ypsi : independent variable value
 !!
 !**********************************************************************        
-      Function bserin(ifunc,iparm,ypsi)
+      function bserin(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
       include 'modules2.inc'
@@ -1491,8 +1483,7 @@
       if ( ifunc .ne. keefnc) &
         write(6,*)'ifunc .ne. keefnc ',ifunc,keefnc
       return
-      end
-      
+      end function bserin 
        
 !**********************************************************************
 !>
@@ -1893,8 +1884,7 @@
          
       endif
       return
-      end
-
+      end subroutine eecnst
 
 !**********************************************************************
 !>
@@ -1924,4 +1914,4 @@
          enddo
       endif
       return
-      end
+      end subroutine eestore

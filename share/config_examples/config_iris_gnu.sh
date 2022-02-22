@@ -1,5 +1,3 @@
-# WARNING: there is currently no system HDF5 install that works
-#   with this compiler version
 # In order to run this version of EFIT on the system you must
 #   execute the following module commands: (not required to build)
 #

@@ -36,25 +36,6 @@ set(TABLE_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of tables")
 set(INPUT_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of input files")
 set(STORE_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of sources")
 
-set(GEN_CONF_FILE ${PROJECT_BINARY_DIR}/efit/set_expath_conf.F90)
-set(GEN_SRC_FILE ${PROJECT_BINARY_DIR}/efit/set_expath.F90)
-configure_file(${PROJECT_SOURCE_DIR}/efit/set_expath_conf.F90.in
-               ${GEN_CONF_FILE})
-
-# Only update the src file if needed.  This reduces compilation
-if(EXISTS ${GEN_SRC_FILE})
-    message("File exists:  testing diff")
-    execute_process( COMMAND ${CMAKE_COMMAND} -E compare_files 
-                     ${GEN_CONF_FILE} ${GEN_SRC_FILE}
-                     RESULT_VARIABLE compare_result)
-    if( compare_result EQUAL 1)
-        file(RENAME ${GEN_CONF_FILE} ${GEN_SRC_FILE})
-    endif()
-else()
-    message("File does not exist")
-    file(RENAME ${GEN_CONF_FILE} ${GEN_SRC_FILE})
-endif()
-
 set(IDEBUG "0" CACHE STRING "Debug output level (3 max)")
 if(IDEBUG GREATER 0)
 	set(DEBUG_LEVEL1 TRUE)
@@ -254,6 +235,28 @@ endforeach ()
 message(STATUS "")
 set(CMAKE_Fortran_BUILD_TYPE_FLAGS "${CMAKE_Fortran_FLAGS_${CMAKE_BUILD_TYPE_UC}}")
 message(STATUS "CMAKE_Fortran_BUILD_TYPE_FLAGS= ${CMAKE_Fortran_BUILD_TYPE_FLAGS}")
+
+#---------------------------------------------------------------------
+# Need to configure set_exvars after all other flags are set.
+#---------------------------------------------------------------------
+set(GEN_CONF_FILE ${PROJECT_BINARY_DIR}/efit/set_exvars_conf.F90)
+set(GEN_SRC_FILE ${PROJECT_BINARY_DIR}/efit/set_exvars.F90)
+configure_file(${PROJECT_SOURCE_DIR}/efit/set_exvars_conf.F90.in
+               ${GEN_CONF_FILE})
+
+# Only update the src file if needed.  This reduces compilation
+if(EXISTS ${GEN_SRC_FILE})
+    message("File exists:  testing diff")
+    execute_process( COMMAND ${CMAKE_COMMAND} -E compare_files 
+                     ${GEN_CONF_FILE} ${GEN_SRC_FILE}
+                     RESULT_VARIABLE compare_result)
+    if( compare_result EQUAL 1)
+        file(RENAME ${GEN_CONF_FILE} ${GEN_SRC_FILE})
+    endif()
+else()
+    message("File does not exist")
+    file(RENAME ${GEN_CONF_FILE} ${GEN_SRC_FILE})
+endif()
 
 #---------------------------------------------------------------------
 # Always use rpath to greatest extent.

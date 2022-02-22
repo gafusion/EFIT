@@ -4,7 +4,7 @@
 #
 ######################################################################
 
-# TO DO: add test option that skips efund
+# TODO: add test option that skips efund
 
 set(CURRENT_MACHINE_LINK_DIR ${CMAKE_CURRENT_BINARY_DIR}/)
 
@@ -32,3 +32,4 @@ add_subdirectory(efit02er)
 add_subdirectory(rfile)
 add_subdirectory(kineticEFIT)
 add_subdirectory(varyped)
+add_subdirectory(vacuum)

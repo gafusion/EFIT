@@ -24,12 +24,12 @@
       subroutine decomp(ndim,n,a,cond,ipvt,work)
       integer*4 ndim,n
       real*8 a(ndim,n),cond,work(n)
-      integer*4 ipvt(n)                                                   
-      real*8 ek, t, anorm, ynorm, znorm                                   
-      integer*4 nm1, i, j, k, kp1, kb, km1, m                             
-      ipvt(n) = 1                                                       
-      if (n .eq. 1) go to 80                                            
-      nm1 = n - 1                                                       
+      integer*4 ipvt(n)
+      real*8 ek, t, anorm, ynorm, znorm
+      integer*4 nm1, i, j, k, kp1, kb, km1, m
+      ipvt(n) = 1
+      if (n .eq. 1) go to 80
+      nm1 = n - 1
 !---------------------------------------------------------------------- 
 !--   compute 1-norm of a                                            -- 
 !---------------------------------------------------------------------- 
@@ -148,8 +148,7 @@
 !---------------------------------------------------------------------- 
    90 cond = 1.0e+32   
       return                                                            
-      end                                                               
-
+      end subroutine decomp 
 
 !**********************************************************************
 !>
@@ -168,11 +167,11 @@
 !!    @param ipvt : pivot vector from decomp
 !!
 !**********************************************************************   
-      subroutine solve(ndim, n, a, b, ipvt)                             
-      integer*4 ndim, n, ipvt(n)                                          
+      subroutine solve(ndim, n, a, b, ipvt)
+      integer*4 ndim, n, ipvt(n)
       real*8 a(ndim,n),b(n)
-      integer*4 kb, km1, nm1, kp1, i, k, m                                
-      real*8 t               
+      integer*4 kb, km1, nm1, kp1, i, k, m
+      real*8 t
 !---------------------------------------------------------------------- 
 !--   forward elimination                                            -- 
 !---------------------------------------------------------------------- 
@@ -202,4 +201,4 @@
    40 continue                                                          
    50 b(1) = b(1)/a(1,1)  
       return                                                            
-      end                                                               
+      end subroutine solve 

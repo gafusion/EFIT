@@ -58,7 +58,7 @@ get_opt_input.F90
 
 .. doxygenfunction:: get_opt_input
 
-vas_sub1.f90
+inp_file_ch.f90
 ------------
 
 .. doxygenfunction:: inp_file_ch
@@ -88,7 +88,7 @@ weight.F90
 
 .. doxygenfunction:: weight
 
-getfnmdud.f90
+getfnm.f90
 -------------
 
 .. doxygenfunction:: getfnmd
@@ -151,7 +151,7 @@ subs_d_pt.F90
 .. doxygenfunction:: donepl
 
 
-bunemad.f90
+buneman.f90
 -----------
 
 .. doxygenfunction:: buneto
@@ -217,7 +217,7 @@ read_namelist.F90
 .. doxygenfunction:: read_efitin
 .. doxygenfunction:: read_eparmdud
 
-zplined.f90
+zpline.f90
 -----------
 
 .. doxygenfunction:: zpline

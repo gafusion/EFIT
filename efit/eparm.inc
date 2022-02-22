@@ -1,2 +1,2 @@
       use eparm
-      use expath
+      use exvars

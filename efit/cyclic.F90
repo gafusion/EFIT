@@ -15,10 +15,10 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
-      integer ef_init_cycred_data
+      integer*4 ef_init_cycred_data
       real*8 u0, cosdii, sindi, denom, dr, dumy, dumy1
       real*8 dzsq, dz, dzdrsq, dzdr
-      integer i,j,k,l, nred, m1,jpow, jpowm1, jstep, jend, jstart, index
+      integer*4 i,j,k,l, nred, m1,jpow, jpowm1, jstep, jend, jstart, index
 
       ef_init_cycred_data = 0
 
@@ -46,7 +46,7 @@
 
 ! ----------------------------------------------------------------------
 !     Elements of the tridiagonal matrix.
-!     todo: replace these with the common block couterparts
+!     TODO: replace these with the common block couterparts
 
       dr = rgrid(2) - rgrid(1)
       dz = zgrid(2) - zgrid(1)
@@ -148,7 +148,7 @@
             diag1(index) = diag + cosdii
           enddo 
 
-          if(index.gt.icycred_loopmax) cycle
+          if(index.gt.icycred_loopmax) exit
              
         enddo 
       enddo 
@@ -300,7 +300,7 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension psigrid(*),sia(*)
-      integer initresult, ef_init_cycred_data
+      integer*4 initresult, ef_init_cycred_data
 
       kerror = 0
 
@@ -359,7 +359,7 @@
 ! All done.
 
       return
-      end subroutine
+      end subroutine pflux_cycred
 
 ! ======================================================================
 ! ======================================================================

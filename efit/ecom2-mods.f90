@@ -168,5 +168,4 @@
       vcurrt=0.0
       rmp2ac=0.0
 
-      end subroutine 
-      
+      end subroutine set_ecom_mod2_arrays

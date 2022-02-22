@@ -31,24 +31,12 @@
       data kwake/0/
       parameter (krord=4,kzord=4)
       character inp1*4,inp2*4
-      integer :: nargs, iargc, finfo, kerror, terr
+      integer*4 :: nargs, iargc, finfo, kerror, terr
 
-      integer :: iend1, iend2
+      integer*4 :: iend1, iend2
       character*80 :: cmdline
 
       kerror = 0
-!------------------------------------------------------------------------------
-!--   Set paths
-!------------------------------------------------------------------------------ 
-      call set_expath
-      ! If environment variable exists, then override values from set_expath
-      call getenv("link_efit",link_efitx)
-      call getenv("link_store",link_storex)
-      if (link_efitx(1:1).ne.' ') then
-        table_dir=trim(link_efitx)//'green/'
-        input_dir=trim(link_efitx)
-      endif
-      if (link_storex(1:1).ne.' ')  store_dir=trim(link_storex)
 !------------------------------------------------------------------------------
 !--   MPI if we have it
 !------------------------------------------------------------------------------ 
@@ -66,6 +54,18 @@
 
       ! Set global constants for each rank
       call set_constants()
+!------------------------------------------------------------------------------
+!--   Set external variables and print build info
+!------------------------------------------------------------------------------ 
+      call set_exvars
+      ! If environment variable exists, then override values from set_exvars
+      call getenv("link_efit",link_efitx)
+      call getenv("link_store",link_storex)
+      if (link_efitx(1:1).ne.' ') then
+        table_dir=trim(link_efitx)//'green/'
+        input_dir=trim(link_efitx)
+      endif
+      if (link_storex(1:1).ne.' ')  store_dir=trim(link_storex)
 !----------------------------------------------------------------------
 !--   Read in grid size from command line and set global variables   --
 !--   ONLY root process reads command-line arguments                 --

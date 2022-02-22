@@ -114,10 +114,11 @@
 !**
 !*************************************************************************
       module curve2d_mod
+!      use eparm, only: ndim
 
-      integer*4, parameter:: ndimc=3200 ! needs to be consistent with eparm
+      integer*4, parameter:: ndimc=3200 ! must be consistent with ndim in eparm
       integer*4, parameter:: ncrv=180
-      integer*4, parameter:: mdim = 300
+      integer*4, parameter:: mdim=300
 
       real*8 xx(ndimc,ncrv), yy(ndimc,ncrv), &
              sxx(ncrv,ncrv), syy(ncrv,ncrv)
@@ -126,21 +127,21 @@
       character*72 lmes(mdim)
       character*24 lbflg, draw, mode, mxalf(mdim)
 
-      integer*8 nn, ncurve, ipag, ibrdr, iorel, nplen, nxlen, nylen
+      integer*4 nn, ncurve, ipag, ibrdr, iorel, nplen, nxlen, nylen
       real*8 grce, xphy, yphy, xorl, yorl, hight, bngle, bshft(2), &
              xlen, ylen, xomin, xstp, xomax, yomin, ystp, yomax
-      integer*8 iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
+      integer*4 iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
                 ixaxs, nslen, igridx, igridy, idash, idot, ichdsh, ichdot
       real*8 sorg, stp, smax, slen, xps, yps
-      integer*8 ndshme(ncrv), ndotme(ncrv), ncdhme(ncrv), ncdtme(ncrv), &
+      integer*4 ndshme(ncrv), ndotme(ncrv), ncdhme(ncrv), ncdtme(ncrv), &
                 markme(ncrv), mrc(ncrv), nmrk(ncrv), nxy(ncrv), ncnct(ncrv)
       real*8 thcrv(ncrv), sclpc(ncrv), tlen(ncrv)
-      integer*8 icont(ncrv), nword, ix, iy, line, ithk, ipri, nline
+      integer*4 icont(ncrv), nword, ix, iy, line, ithk, ipri, nline
       real*8 zinc
-      integer*8 nshd, nsxy(ncrv), ngaps(ncrv), nvec, ivec(ncrv)
+      integer*4 nshd, nsxy(ncrv), ngaps(ncrv), nvec, ivec(ncrv)
       real*8 sangle(ncrv), sgap(ncrv), xfm(ncrv), yfm(ncrv), xto(ncrv), &
              yto(ncrv)
-      integer*8 msg, note(mdim), imes(mdim), iplce(mdim), inum(mdim), iexit
+      integer*4 msg, note(mdim), imes(mdim), iplce(mdim), inum(mdim), iexit
       real*8 anum(mdim), xpos(mdim), ypos(mdim), ht(mdim) 
       
       end module curve2d_mod

@@ -11,13 +11,13 @@
       subroutine buneto(psi,nwb,nhb,sia) 
 !vas  f90 modifi. 
       use set_kinds 
-      use var_bunemn 
+      use var_buneman 
  
       implicit integer*4 (i-n), real*8 (a-h, o-z) 
       real(dp), dimension(nwb*nhb), intent(inout) ::   psi, sia
       integer(i4), intent(in) ::   nwb, nhb
 !vas  f90 modifi 
-!vas      common/bunemn/mno,m,n,s,shift,dr,dz 
+!vas      common/buneman/mno,m,n,s,shift,dr,dz 
       mno = nbmdim 
       m = nww 
       n = nhh 
@@ -55,7 +55,7 @@
         enddo
       enddo
       return 
-      end subroutine
+      end subroutine buneto
  
  
 !********************************************************************** 
@@ -70,20 +70,20 @@
       subroutine rzpois(nq,q) 
 !vas  f90 modifi 
       use set_kinds 
-      use var_bunemn 
+      use var_buneman 
  
 !vas      implicit integer*4 (i-n), real*8 (a-h, o-z) 
-!vas      common/bunemn/mno,m,n,s,shift,dr,dz 
+!vas      common/buneman/mno,m,n,s,shift,dr,dz 
 !vas      dimension   g(mno),p(mno),c(mno),d(mno),temp(mno) 
 !vas      dimension  q(1) 
 !vas  f90 modifi 
       implicit none 
-      integer, intent(in) :: nq
+      integer*4, intent(in) :: nq
       real(dp), dimension(nq), intent(inout) :: q
       real(dp) flag 
       real(dp) shftdr,a,pitmp,as 
-      integer i,l,lo,ju,n222,id,jd,ko,k4,li,jh,jt,ji,jo
-      integer j2,iu,j,ii,io,iallocate_stat 
+      integer*4 i,l,lo,ju,n222,id,jd,ko,k4,li,jh,jt,ji,jo
+      integer*4 j2,iu,j,ii,io,iallocate_stat 
  
       real(dp),dimension(:), allocatable :: g 
       real(dp),dimension(:), allocatable :: p 

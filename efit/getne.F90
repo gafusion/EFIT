@@ -18,8 +18,8 @@
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
-      integer :: ier_all
-      integer, intent(inout) :: kerror
+      integer*4 :: ier_all
+      integer*4, intent(inout) :: kerror
       dimension pds(6)
 
       kerror = 0
@@ -171,4 +171,4 @@
       enddo
 !
       return
-      end
+      end subroutine getne

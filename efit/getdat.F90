@@ -240,9 +240,10 @@
 !vas 1   .and. kount .lt. kmax .and. itrapa .eq. 0) THEN
       IF (iwait .eq. 1 .and. (ier .eq. 3 .or. ier .eq. 1) &
          .and. kount .lt. kmax .and. itrapa .eq. 0) THEN
-! MPI >>>
+
+        ! MPI subroutine that is never defined...
         !call rev_wait(iwait, nshot)
-! MPI <<<
+
         if (itrapa .eq. 0) go to 1
       ENDIF
 
@@ -659,5 +660,5 @@
           end do
 
            End Function to_upper
-      END SUBROUTINE
+      END SUBROUTINE GETDAT
 

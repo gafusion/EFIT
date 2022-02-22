@@ -6,6 +6,6 @@ ISETFB,0,
 IOFFR,-7,
 IOFFZ, 7,
 ISHIFTZ, 0,
-IDPLACE	, 0,
+IDPLACE	, 0, turns off some of the ITEK plot file outputs (basically unused option)
 LRING, 0,
 SYMMETRIZE,.false.,
