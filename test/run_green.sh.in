@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Ubuntu tries to use threads even without implementation in program
+export OMP_NUM_THREADS=1
+
 ! grep -q 'NW = [0-9]\{1,5\}' mhdin.dat && echo 'NW not found' && exit 1
 sed 's/NW = [0-9]\{1,5\}/NW = @GRID_SIZE@/g' mhdin.dat > mhdin.dat.new && mv mhdin.dat.new mhdin.dat
 ! grep -q 'NH = [0-9]\{1,5\}' mhdin.dat && echo 'NH not found' && exit 1

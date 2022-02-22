@@ -17,7 +17,7 @@
 
       subroutine inp_file_ch(nw,nh,ch1,ch2)
         
-        integer,     intent(in)  :: nw, nh 
+        integer*4,   intent(in)  :: nw, nh 
         character*4, intent(out) :: ch1, ch2
         
         write(ch1,'(i4)') nw

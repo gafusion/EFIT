@@ -115,8 +115,8 @@
       data currn1/0.0/,currc79/0.0/,currc139/0.0/,currc199/0.0/ &
                       ,curriu30/0.0/,curriu90/0.0/,curriu150/0.0/ &
                       ,curril30/0.0/,curril90/0.0/,curril150/0.0/
-      integer, intent(out) :: ksstime
-      integer, intent(inout) :: kerror
+      integer*4, intent(out) :: ksstime
+      integer*4, intent(inout) :: kerror
 
       ALLOCATE(coils(nsilop),expmp2(magpri), &
                 denr(nco2r),denv(nco2v), &
@@ -133,7 +133,7 @@
 !---------------------------------------------------------------------
 !--  generate input files and command file for running EFIT-AI      --
 !---------------------------------------------------------------------
-      if (kdata .eq. 5 .or. kdata .eq. 6) then
+      make_k_file: if (kdata .eq. 5 .or. kdata .eq. 6) then
         if (rank == 0) then
           if (use_opt_input .eqv. .false.) then
             write (nttyo,6610)
@@ -183,7 +183,7 @@
             stop
           endif
         endif
-      endif
+      endif make_k_file
       open(unit=neqdsk,status='old',file='efit_snap.dat',iostat=ioerr)
       if (ioerr.eq.0) then
         snapfile='efit_snap.dat'
@@ -294,8 +294,9 @@
           table_di2 = table_dir(1:ltbdir)//'181292/'
         endif
         ltbdi2=ltbdir+7
-       endif
-       ksstime = ktime
+      endif
+      efitversion = efitvers//" "
+      ksstime = ktime
 !---------------------------------------------------------------------
 !--    specific choice of current profile                           --
 !--       ICPROF=1  no edge current density allowed                 --
@@ -731,8 +732,7 @@
  6620 format (a)
  6700 format (a1,a12)
 20000 format (/,1x,'shot data not on disk')
-      end
-
+      end subroutine write_K
 
 !**********************************************************************
 !>
@@ -840,8 +840,8 @@
       data currn1/0.0/,currc79/0.0/,currc139/0.0/,currc199/0.0/ &
                       ,curriu30/0.0/,curriu90/0.0/,curriu150/0.0/ &
                       ,curril30/0.0/,curril90/0.0/,curril150/0.0/
-      integer, intent(in) :: jtime
-      integer, intent(inout) :: kerror
+      integer*4, intent(in) :: jtime
+      integer*4, intent(inout) :: kerror
 
 
       ALLOCATE(coils(nsilop),expmp2(magpri), &
@@ -853,6 +853,7 @@
       ALLOCATE(tlibim(libim),slibim(libim),rrrlib(libim))
 
       kerror = 0
+      efitversion = efitvers//" "
 !----------------------------------------------------------------
 !--   recover the value of table_dir for mode 3 or 7           --
 !----------------------------------------------------------------
@@ -1040,7 +1041,7 @@
 !---------------------------------------------------------------------
 !--   Append SNAP file                                              --
 !---------------------------------------------------------------------
-      if (kdata.eq.7) then
+      snap: if (kdata.eq.7) then
         open(unit=nsnapf,status='old', &
              file=snap_file,iostat=ioerr)
         if (ioerr.eq.0) then
@@ -1056,7 +1057,7 @@
             snapfile=snapextin
           endif
         endif
-      else
+      else snap
         open(unit=nsnapf,status='old', &
              file='efit_snap.dat',iostat=ioerr)
         if (ioerr.eq.0) then
@@ -1066,7 +1067,7 @@
                file= input_dir(1:lindir)//'efit_snap.dat')
           snapfile=input_dir(1:lindir)//'efit_snap.dat'
         endif
-      endif
+      endif snap
       if (appendsnap.eq.'K'.or.appendsnap.eq.'KG') then
         do i=1,1000000
           read (nsnapf,9991,iostat=ioerr) tmpdata
@@ -1095,7 +1096,7 @@
 !      table_dir(1:ltbdis) = table_s(1:ltbdis)
 !      table_dir = table_s(1:ltbdis) !compilers do not like...
  4042 format (1x,a42,1x,a3)
-      end
+      end subroutine write_K2
 
 !**********************************************************************
 !>
@@ -1234,4 +1235,4 @@
       return
 92924 format (4(1pe12.5,1x))
 93024 format (a28)
-      end
+      end subroutine wtime

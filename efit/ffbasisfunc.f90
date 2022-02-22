@@ -7,7 +7,7 @@
 !!    @param iparm : basis function parameter number
 !!    @param ypsi : independent variable value
 !**********************************************************************
-      Function bsffel(ifunc,iparm,ypsi)
+      function bsffel(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
       include 'modules2.inc'
@@ -140,7 +140,7 @@
       if ( ifunc .ne. kfffnc)  &
            write(6,*)'ifunc .ne. kfffnc ',ifunc,kfffnc
       return
-      end
+      end function bsffel
 
 !**********************************************************************
 !>
@@ -155,7 +155,7 @@
 !!    @param ypsi : ndependent variable value
 !!
 !**********************************************************************
-      Function bsffpel(ifunc,iparm,ypsi)
+      function bsffpel(ifunc,iparm,ypsi)
 
       include 'eparm.inc'
       include 'modules2.inc'
@@ -319,8 +319,7 @@
         endif
       endif
       return
-      end
-
+      end function bsffpel
 
 !**********************************************************************
 !>
@@ -338,7 +337,7 @@
 !!    @param nffcoi : array index for setting up crsp
 !!
 !********************************************************************** 
-      Function bsffin(ifunc,iparm,ypsi)
+      function bsffin(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
       include 'modules2.inc'
@@ -577,8 +576,7 @@
       endif
       if ( ifunc .ne. kfffnc) write(6,*)'ifunc .ne. kfffnc ',ifunc,kfffnc
       return
-      end
-
+      end function bsffin
 
 !**********************************************************************
 !>
@@ -595,8 +593,7 @@
 !!
 !!    @param nffcoi : array index for setting up crsp
 !!
-!********************************************************************** 
-      
+!**********************************************************************  
       subroutine ffcnst(ncrsp,crsp,z,nffcoi)
       include 'eparm.inc'
       include 'modules2.inc'
@@ -935,8 +932,7 @@
         enddo
       endif
       return
-      end
-
+      end subroutine ffcnst
       
 !**********************************************************************
 !>
@@ -965,4 +961,4 @@
          enddo
       endif
       return
-      end
+      end subroutine ffstore

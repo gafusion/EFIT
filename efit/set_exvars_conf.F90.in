@@ -1,0 +1,62 @@
+!**********************************************************************
+!>
+!!    set_exvars stores external variables including git defintions, 
+!!      cmake setup, and environment options.  Build information is
+!!      then output to the terminal.
+!!
+!!    @param tval : temporary variable for formatting output
+!*********************************************************************
+      SUBROUTINE set_exvars
+      USE exvars
+      USE mpi_info
+      USE var_nio
+      IMPLICIT NONE
+      INTEGER, DIMENSION(8) :: tval
+
+      giturl= "${GIT_URL}"
+      gitbranch= "${GIT_BRANCH}"
+      githash= "${GIT_COMMIT_HASH}"
+      efitvers=githash(1:7)
+      lmods= "${GIT_MODIFICATIONS}"
+      fc="${CMAKE_Fortran_COMPILER}"
+      fc_id= "${CMAKE_Fortran_COMPILER_ID}"
+      fcver= "${CMAKE_Fortran_COMPILER_VERSION}"
+!      fcflags= "${not_CMAKE_Fortran_FLAGS}"
+!      fcflags= TRIM(fcflags)//" ${not_CMAKE_Fortran_BUILD_TYPE_FLAGS}"
+
+      table_dir="${TABLE_DIR}/"
+      input_dir="${INPUT_DIR}/"
+      store_dir="${STORE_DIR}/"
+
+      !arch_type="${HOSTTYPE}"
+      !hostname="${UQHOSTNAME}"
+
+!-----------------------------------------------------------------------
+!     write version # 
+!     ONLY root process allowed to interface with terminal
+!-----------------------------------------------------------------------
+      IF (rank == 0) then
+        WRITE (nttyo,5500)
+        WRITE(nttyo,'(2a,/)') 'Git repository url ',TRIM(giturl)
+        WRITE(nttyo,'(2a,/)') 'Git branch ',TRIM(gitbranch)
+        WRITE(nttyo,'(4a,/)') 'Git hash ',TRIM(githash),' ',TRIM(lmods)
+!-----------------------------------------------------------------------
+!       simulation date and time
+!-----------------------------------------------------------------------
+        CALL DATE_AND_TIME(VALUES=tval)
+        WRITE(nttyo,'(a,i2,a,i2,a,i4,a,i2,a,i2,a,i2,/)')                &
+          'Simulation started on ',tval(2),'/',tval(3),'/',tval(1),     &
+          ' at ',tval(5),':',tval(6),':',tval(7)
+!-----------------------------------------------------------------------
+!       compiler and flags
+!-----------------------------------------------------------------------
+        WRITE(nttyo,'(4a,/)') 'Code compiled with ',TRIM(fc_id),         &
+                              ' ',TRIM(fcver)
+!        WRITE(nttyo,'(2a,/)') ' and flags ',TRIM(fcflags)
+      ENDIF
+ 5500 format (/,10x,'EFIT-AI'/)
+!-----------------------------------------------------------------------
+!     terminate
+!-----------------------------------------------------------------------
+      RETURN
+      END SUBROUTINE set_exvars

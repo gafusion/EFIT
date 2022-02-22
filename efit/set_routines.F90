@@ -23,7 +23,7 @@
       character*40 filenmme
       data nset/20/,cdum/1.0/
       save nset
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
       kerror = 0
 !
 #ifdef DEBUG_LEVEL3
@@ -264,7 +264,7 @@
 !--   compute the response function about R+ R- constraint     
 !--   F coils response -----recefc(nece,nfcoil)
 !-------------------------------------------------------------------------
-      if (kfitece.ne.1) then
+      ECE: if (kfitece.ne.1) then
       do n=1,nfcoil
         call sets2d(gridfc(1,n),c,rgrid,nw,bkx,lkx,zgrid,nh,bky, &
                        lky,wk,ier)
@@ -329,7 +329,7 @@
 !-----------------------------------------------------------------------
 !--   Ohmic coils   receec(nece,nesum)                                --
 !-----------------------------------------------------------------------
-      if (iecurr.gt.0) then
+      ohmic: if (iecurr.gt.0) then
         do n=1,nesum
           call sets2d(gridec(1,n),c,rgrid,nw,bkx,lkx,zgrid,nh,bky, &
                       lky,wk,ier)
@@ -349,8 +349,8 @@
             receec(i,n)=pds(1)-receec(i,n)
           enddo
         enddo
-      endif
-      endif ! (kfitece.ne.1)
+      endif ohmic
+      endif ECE
 !----------------------------------------------------------------------
       open(unit=nffile,status='old',form='unformatted',iostat=ioerr, &
            file='recexx.dat')
@@ -901,9 +901,11 @@
         read (nffile,iostat=ioerr)  zzgamin
         if (ioerr.ne.0) exit
         do ii=1,nstark
-          if (abs(rrgamin(ii)-rrgam(jtime,ii)).gt.1.e-4_dp) cycle
-          if (abs(zzgamin(ii)-zzgam(jtime,ii)).gt.1.e-4_dp) cycle
+          if (abs(rrgamin(ii)-rrgam(jtime,ii)).gt.1.e-4_dp) exit
+          if (abs(zzgamin(ii)-zzgam(jtime,ii)).gt.1.e-4_dp) exit
         enddo
+        if (abs(rrgamin(ii)-rrgam(jtime,ii)).gt.1.e-4_dp) cycle
+        if (abs(zzgamin(ii)-zzgam(jtime,ii)).gt.1.e-4_dp) cycle
         read (nffile,iostat=ioerr) rbrfc
         if (ioerr.ne.0) exit
         read (nffile,iostat=ioerr) rbzfc
@@ -956,7 +958,7 @@
       do mmm=1,nstark
         gbrpc(mmm,kk)=0.0
         gbzpc(mmm,kk)=0.0
-        if (rrgam(jtime,mmm).le.1.e-8_dp) exit
+        if (rrgam(jtime,mmm).le.1.e-8_dp) cycle
         r=rrgam(jtime,mmm)
         do ii=1,nw
           a=rgrid(ii)

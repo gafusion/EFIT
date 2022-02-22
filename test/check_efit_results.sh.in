@@ -25,9 +25,13 @@ if [ @RFILE_TEST@ = True ]; then
     echo "File does not exist: esave.dat"
     exit 1
   fi
-  # fit data can be output for any test, but we only use it with rfile tests for simplicity
+  # fit and plot data can be output for any test, but we only check them in rfile tests for simplicity
   if ! test -e fitout.dat; then
     echo "File does not exist: fitout.dat"
+    exit 1
+  fi
+  if ! test -e pltout.out; then
+    echo "File does not exist: pltout.out"
     exit 1
   fi
 elif [ @ENABLE_PARALLEL@ = ON ]; then

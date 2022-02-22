@@ -49,8 +49,8 @@
       use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension psi(*),zero(*),x(*),y(*),xcontr(*),ycontr(*)
-      dimension dist(5),xlim(*),ylim(*)
+      dimension psi(nwh),zero(nwh),x(nw),y(nh),xcontr(npoint),ycontr(npoint)
+      dimension dist(5),xlim(limitr),ylim(limitr)
       dimension zerol(1),xt(1),yt(1),rad(1),yctr(1)
       data etolc,etol,nloop/1.e-06_dp,1.e-04_dp,60/
       data nttyo/6/,psitol/1.0e-04_dp/,mecopy/0/,n111/1/
@@ -840,13 +840,12 @@
       use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension pds(6),xc(*),yc(*)
-!      dimension cspln(kubicx,lubicx,kubicy,lubicy)
-      dimension cspln(*)
+      dimension pds(6),xc(*),yc(*),bkx(lubicx+1),bky(lubicy+1)
+      dimension cspln(kubicx,lubicx,kubicy,lubicy)
       real*8 piov2,piov4,fpiov4,spiov4,tpiov4,tpiov2
       data n111/1/,n333/3/
       save n111,n333
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
 
       kerror = 0
       ier = 0
@@ -1428,8 +1427,8 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       real(dp), intent(inout) :: xseps(2),yseps(2) ! this is an address of a location inside a 2-d array
-      dimension x(nx),y(nz),pds(6),xxout(*),yyout(*),psipsi(nx*nz)
-      dimension bpoo(*),bpooz(*),pdss(6),xlimv(*),ylimv(*)
+      dimension x(nx),y(nz),pds(6),xxout(kfound),yyout(kfound),psipsi(nx*nz)
+      dimension bpoo(kfound),bpooz(kfound),pdss(6),xlimv(limtrv),ylimv(limtrv)
       dimension pdsold(6),zeross(1),xs(1),ys(1)
       data psitol/1.0e-04_dp/
       character(len=80) :: strtmp
@@ -1542,8 +1541,8 @@
         call seva2d(bkx,lkx,bky,lky,c,xax,yax,pds,ier,n666)
         if (dodebugplts) write(99,'(3(1x,1pe12.5))') xax,yax,pds(1) ! for debugging
 
-        ! Gradient Ascent Method - better for sharp peaks
-        if (ifindopt==2) then
+        search_method: if (ifindopt==2) then
+          ! Gradient Ascent Method - better for sharp peaks
           xerr=signcur*pds(2) ! find max or min depending on current direction
           yerr=signcur*pds(3)
           ! Adapt step size using Barzilai and Borwein approach
@@ -1562,8 +1561,8 @@
           errtmp = gamman**2*(xerr**2+yerr**2)
           if (errtmp.lt.1.0e-12_dp) go to 310
 
-        ! Original Newton's Method for optimization, xn+1 = xn - f'/f''
-        else ! ifindopt==1
+        else search_method
+          ! Original Newton's Method for optimization, xn+1 = xn - f'/f''
           det=pds(5)*pds(6)-pds(4)*pds(4)
           if (abs(det).lt.1.0e-15_dp) then
             kerror = 1
@@ -1586,7 +1585,7 @@
           end if
           if ((abs(pds(2)).lt.1.0e-06_dp).and.(abs(pds(3)).lt.1.0e-06_dp)) go to 310
           if (errtmp.lt.1.0e-12_dp) go to 310
-        end if
+        end if search_method
       end do
       if (errtmp.gt.1.0e-6_dp) then
         call errctrl_msg('findax', &
@@ -2034,7 +2033,7 @@
       use commonblocks,only: cjrf,wxin,wyin,wxout,wyout
       include 'eparm.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xp(*),yp(*)
+      dimension xp(npoint),yp(npoint)
       data iflag/2/
 !
       if (iflag.ne.2) then
@@ -2205,12 +2204,12 @@
 !!    @param kerror : error flag
 !*********************************************************************
       subroutine surfac(siwant,psi,nw,nh,rgrid,zgrid,xout,yout, &
-                    nfound,npoint,drgrid,dzgrid,xmin, &
-                    xmax,ymin,ymax,ipack,rmaxis,zmaxis,negcur,kerror)
+                        nfound,npoint,drgrid,dzgrid,xmin, &
+                        xmax,ymin,ymax,ipack,rmaxis,zmaxis,negcur,kerror)
       use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension xout(*),yout(*),psi(*),rgrid(*),zgrid(*)
+      dimension xout(npoint),yout(npoint),psi(nw*nh),rgrid(nw),zgrid(nh)
 
       kerror = 0
       n111=1

@@ -1,0 +1,50 @@
+
+          EFIT-AI
+
+Git repository url https://gitlab.com/efit-ai/efit
+
+Git branch torrin-fixes
+
+Git hash e8d5fc3 with local modifications
+
+Simulation started on  2/18/2022 at 12:54:38
+
+Code compiled with GNU 7.5.0
+
+
+ type mode (2=file):
+
+ number of time slices?
+
+ type input file names:
+ #
+ #
+ #
+ #
+ table_di2 = </home/tbtel/efit_new/build_par/test/DIIID/green/>
+
+      ********************EFITAI 65 x  65  output ********************
+ before save fitting weights
+ adjust fit parameters based on basis function selected
+ itek > 100, write out PLTOUT.OUT individually 
+ before save fitting weights
+ adjust fit parameters based on basis function selected
+ itek > 100, write out PLTOUT.OUT individually 
+ read in limiter data
+ read in limiter data
+ before save fitting weights
+ adjust fit parameters based on basis function selected
+ itek > 100, write out PLTOUT.OUT individually 
+ read in limiter data
+ before save fitting weights
+ adjust fit parameters based on basis function selected
+ itek > 100, write out PLTOUT.OUT individually 
+ read in limiter data
+ netcdf needs to be linked to write m-files
+INFO in efit at r=  3, t=  2600: Done processing
+ netcdf needs to be linked to write m-files
+ netcdf needs to be linked to write m-files
+INFO in efit at r=  0, t=  2300: Done processing
+INFO in efit at r=  2, t=  2500: Done processing
+ netcdf needs to be linked to write m-files
+INFO in efit at r=  1, t=  2400: Done processing

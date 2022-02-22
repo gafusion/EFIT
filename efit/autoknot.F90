@@ -15,7 +15,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       external ppakfunc,ffakfunc,wwakfunc,eeakfunc
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
       kerror = 0
 
 !
@@ -300,6 +300,4 @@
       eeakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm &
         + akgamwt * chigamt + akprewt * chipre
       return
-      end function
-
-
+      end function eeakfunc

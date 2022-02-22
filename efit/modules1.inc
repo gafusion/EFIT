@@ -46,14 +46,12 @@
  
       use var_acoilrz
       use var_ccurrn
-!--ok
       use var_czero
       use var_parame
       use var_cqfit
       use var_rmatri
       use var_chimag
       use var_exdat2
-!--ok
       use var_exdata
       use var_texdat
       use var_savfit
@@ -139,14 +137,9 @@
       use var_cwork4
 
       use var_jwork4
-! jm.s
+
       use profile_ext_mod
-! jm.e
 
-! OPT_INPUT >>>
       use opt_input
-! OPT_INPUT <<<
 
-! MPI >>>
       use mpi_info
-! MPI <<<

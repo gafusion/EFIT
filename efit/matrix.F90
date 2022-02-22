@@ -31,11 +31,11 @@
       dimension b(nrsmat),z(4*(npcurn-2)+6+npcurn*npcurn)
       dimension pds(6)
       dimension rxxx(ndata),rxxxf(ndata),rxx2(ndata),rxxw(ndata)
-      integer, dimension(mfnpcr)       :: ipvttmp
+      integer*4, dimension(mfnpcr)       :: ipvttmp
       real*8, dimension(2)             :: arspdet2(1:2)
       real*8, dimension(mfnpcr)        :: worktmp
       real*8, dimension(nrsmat,mfnpcr) :: arsptmp
-      integer, intent(inout) :: jtime,iter,ichisq,nniter,kerror
+      integer*4, intent(inout) :: jtime,iter,ichisq,nniter,kerror
       character(len=128) tmpstr
 
 !---------------------------------------------------------------------
@@ -151,6 +151,9 @@
             arsp(nj,nk)=0.0
           enddo
         endif
+!--------------------------------------------------------------------
+!--     P'(1)                                                      --
+!--------------------------------------------------------------------
         if (kpressb.eq.2) then
           nj=nj+1
           arsp(nj,nk)=0.0
@@ -260,7 +263,7 @@
         endif
         brspmin=max(ten24,abs(brsp(nfcoil+1)))
         fwtxxzj=fwtxxj*1000./brspmin
-        if (kvtor.gt.0) then
+        rotation: if (kvtor.gt.0) then
           call setpwp(ysiwant,xpspwp)
           if (nniter.gt.0) then
           if (kvtor.eq.2.or.kvtor.eq.3) then
@@ -320,7 +323,7 @@
               endif
               endif
           endif
-        endif
+        endif rotation
        enddo
       endif
 !----------------------------------------------------------------------
@@ -392,7 +395,6 @@
           nj=nj+1
           arsp(nj,nk)=0.
         enddo
-
 !--------------------------------------------------------------------
 !--     pressure                                                   --
 !--------------------------------------------------------------------
@@ -534,7 +536,7 @@
 !----------------------------------------------------------------------
 !--   fit vessel currents                                            --
 !----------------------------------------------------------------------
-      if (ifitvs.gt.0) then
+      fit_vessel: if (ifitvs.gt.0) then
       if (nfourier.gt.1) then
        need=need+nfourier*2+1
       else
@@ -640,6 +642,9 @@
           nj=nj+1
           arsp(nj,nk)=0.
         enddo
+!--------------------------------------------------------------------------
+!--     pressure                                                         --
+!--------------------------------------------------------------------------
         if (kprfit.gt.0.and.kdofit.ne.0.and.npress.gt.0) then
           do m=1,npress
             if (fwtpre(m).le.0.0) cycle
@@ -647,10 +652,16 @@
             arsp(nj,nk)=0.0
           enddo
         endif
+!--------------------------------------------------------------------
+!--     P'(1)                                                      --
+!--------------------------------------------------------------------
         if (kpressb.eq.2) then
           nj=nj+1
           arsp(nj,nk)=0.0
         endif
+!--------------------------------------------------------------------------
+!--     rotational pressure                                              --
+!--------------------------------------------------------------------------
         if (kprfit.ge.3.and.npresw.gt.0) then
           do m=1,npresw
             if (fwtprw(m).gt.0.0) then
@@ -731,12 +742,12 @@
 !            endif
 !        endif
       enddo
-      endif ! ifitvs.gt.0
+      endif fit_vessel
 !-----------------------------------------------------------------------
 !--   boundary pressure term for kinetic fitting P(1)                 --
 !--   P(1) is an additional fitting parameter in kinetic fitting      --
 !-----------------------------------------------------------------------
-      if (kprfit.gt.0.and.kdofit.ne.0.and.npress.gt.0) then
+      kinetic: if (kprfit.gt.0.and.kdofit.ne.0.and.npress.gt.0) then
       need=need+1
       nk=need
       nj=0
@@ -802,7 +813,6 @@
         nj=nj+1
         arsp(nj,nk)=1./sigpre(m)*fwtpre(m)
       enddo
-
 !-----------------------------------------------------------------------
 !--   boundary pressure constraint on P'(1), no coupling to P(1)      --
 !-----------------------------------------------------------------------
@@ -877,7 +887,7 @@
          nj = nj + 1
          arsp(nj,nk) = 0.0
       endif
-      endif ! kprfit.gt.0.and.kdofit.ne.0.and.npress.gt.0
+      endif kinetic
 !-----------------------------------------------------------------------
 !--   DELZ rigid vertical shift   96/01                               --
 !-----------------------------------------------------------------------
@@ -943,6 +953,9 @@
           nj=nj+1
           arsp(nj,nk)=0.
         enddo
+!--------------------------------------------------------------------------
+!--     pressure                                                         --
+!--------------------------------------------------------------------------
         if (kprfit.gt.0.and.kdofit.ne.0.and.npress.gt.0) then
           do m=1,npress
             if (fwtpre(m).le.0.0) cycle
@@ -950,10 +963,16 @@
             arsp(nj,nk)=rpredz(m)/sigpre(m)*fwtpre(m)*scadelz
           enddo
         endif
+!--------------------------------------------------------------------------
+!--     P'(1)                                                            --
+!--------------------------------------------------------------------------
         if (kpressb.eq.2) then
           nj=nj+1
           arsp(nj,nk)=0.0
         endif
+!--------------------------------------------------------------------------
+!--     rotational pressure                                              --
+!--------------------------------------------------------------------------
         if (kprfit.ge.3.and.npresw.gt.0) then
           do m=1,npresw
             if (fwtprw(m).gt.0.0) then
@@ -1073,6 +1092,9 @@
           nj=nj+1
           arsp(nj,nk)=0.
         enddo
+!--------------------------------------------------------------------------
+!--     pressure                                                         --
+!--------------------------------------------------------------------------
         if (kprfit.gt.0.and.kdofit.ne.0.and.npress.gt.0) then
           do m=1,npress
             if (fwtpre(m).le.0.0) cycle
@@ -1080,6 +1102,9 @@
             arsp(nj,nk)=0.0
           enddo
         endif
+!--------------------------------------------------------------------------
+!--     P'(1)                                                            --
+!--------------------------------------------------------------------------
         if (kpressb.eq.2) then
           nj=nj+1
           arsp(nj,nk)=0.0
@@ -1214,6 +1239,9 @@
           nj=nj+1
           arsp(nj,nk)=0.
         enddo
+!--------------------------------------------------------------------------
+!--     pressure                                                         --
+!--------------------------------------------------------------------------
         if (kprfit.gt.0.and.kdofit.ne.0.and.npress.gt.0) then
           do m=1,npress
             if (fwtpre(m).le.0.0) cycle
@@ -1221,6 +1249,9 @@
             arsp(nj,nk)=0.0
           enddo
         endif
+!--------------------------------------------------------------------------
+!--     P'(1)                                                            --
+!--------------------------------------------------------------------------
         if (kpressb.eq.2) then
           nj=nj+1
           arsp(nj,nk)=0.0
@@ -1372,6 +1403,9 @@
             arsp(nj,nk)=0.0
           enddo
         endif
+!--------------------------------------------------------------------------
+!--     P'(1)                                                            --
+!--------------------------------------------------------------------------
         if (kpressb.eq.2) then
           nj=nj+1
           arsp(nj,nk)=0.0
@@ -1522,6 +1556,9 @@
           nj=nj+1
           arsp(nj,nk)=0.
         enddo
+!--------------------------------------------------------------------------
+!--     pressure                                                         --
+!--------------------------------------------------------------------------
         if (kprfit.gt.0.and.kdofit.ne.0.and.npress.gt.0) then
           do m=1,npress
             if (fwtpre(m).le.0.0) cycle
@@ -1529,10 +1566,16 @@
             arsp(nj,nk)=0.0
           enddo
         endif
+!--------------------------------------------------------------------------
+!--     P'(1)                                                            --
+!--------------------------------------------------------------------------
         if (kpressb.eq.2) then
           nj=nj+1
           arsp(nj,nk)=0.0
         endif
+!--------------------------------------------------------------------------
+!--     rotational pressure                                                         --
+!--------------------------------------------------------------------------
         if (kprfit.ge.3.and.npresw.gt.0) then
           do m=1,npresw
             if (fwtprw(m).gt.0.0) then
@@ -2104,6 +2147,9 @@
           brsp(nj)=pressr(i)/sigpre(i)*fwtpre(i)
         enddo
       endif
+!--------------------------------------------------------------------
+!--     P'(1)                                                      --
+!--------------------------------------------------------------------
       if (kpressb.eq.2) then
         nj=nj+1
         brsp(nj)=prespb/sigppb
@@ -2470,7 +2516,7 @@
         cmpr2v(m,jtime)=cmv
       enddo
 !
-      if (kstark.gt.0) then
+      MSE: if (kstark.gt.0) then
       chigamt=0.0
       do m=1,nstark
         chigam(m)=0.0
@@ -2566,7 +2612,7 @@
         cjmse(m)=-(bzmse(mp1)-bzmse(m))/drgam/twopi/tmu
         cjmsec(m)=-(bzmsec(mp1)-bzmsec(m))/drgam/twopi/tmu
       enddo
-      endif ! kstark.gt.0
+      endif MSE
 !
       tchimls=0.0
       do m=1,nmsels
@@ -2736,7 +2782,9 @@
         saisq=saisq+saisref
       endif
       tsaisq(jtime)=saisq
-!
+!--------------------------------------------------------------------------
+!--   pressure                                                           --
+!--------------------------------------------------------------------------
       chipre=0.0
       if (kprfit.gt.0.and.kdofit.ne.0.and.npress.gt.0) then
         do m=1,npress
@@ -2758,9 +2806,11 @@
           precal(m)=cm
         enddo
       endif
-!
+!--------------------------------------------------------------------------
+!--   rotational pressure                                                --
+!--------------------------------------------------------------------------
       chiprw=0.0
-      if (kprfit.ge.3.and.npresw.gt.0) then
+      rotational_pressure: if (kprfit.ge.3.and.npresw.gt.0) then
         do m=1,npresw
           cm=0.0
           do n=1,kwwcur
@@ -2775,7 +2825,7 @@
           chiprw=chiprw+saiprw(m)
           prwcal(m)=cm
         enddo
-      endif
+      endif rotational_pressure
 !
       if ((nniter.ge.minite).or.((eouter.le.elomin).and.(fwtdlc.le.0.0))) then
        if ((nniter.ge.kcallece).or.(kfitece.le.0.0)) then
@@ -2845,4 +2895,4 @@
  7445 format (10x,'fitting parameters:   ',i5)
  7450 format (8(1x,e12.5,1x))
  7460 format (10x,'chi ip:',/,15x,e12.5)
-      end
+      end subroutine matrix

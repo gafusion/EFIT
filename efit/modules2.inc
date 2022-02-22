@@ -1,5 +1,4 @@
       use var_gtable
-!--ok
       use var_cecoil
       use var_cvesel
       use var_stable

@@ -158,7 +158,7 @@
           if (i.eq.mxiter+1) exit
         end do ! in
       end do ! i
-      if (nbdry.le.0) then
+      if ((nbdry.le.0).and.(ivacum.le.0)) then
         call errctrl_msg('fit','not converged, reached max iterations',2)
       endif
 2020  continue
@@ -197,7 +197,7 @@
 #endif
 !
       if (ivesel.gt.10) return
-      if (nbdry.gt.0) then
+      fixed_bdry: if (nbdry.gt.0) then
 !----------------------------------------------------------------------
 !--   read in the plasma response function                           --
 !----------------------------------------------------------------------
@@ -207,7 +207,7 @@
         read (nrsppc) gmp2pc
         close(unit=nrsppc)
 !
-      endif
+      endif fixed_bdry
       nsq=2
       saisq=0.0
       chi2rm(jtime)=0.0

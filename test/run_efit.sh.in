@@ -3,6 +3,9 @@
 export link_efit="@CURRENT_MACHINE_LINK_DIR@"
 export link_store=""
 
+# Ubuntu tries to use threads even without implementation in program
+export OMP_NUM_THREADS=1
+
 # Sanity checks
 if ! test -e ${link_efit}/green/dprobe.dat; then
   echo "not running test because Greens tables were not found"

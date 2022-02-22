@@ -77,7 +77,7 @@
                       ,curriu30/0.0/,curriu90/0.0/,curriu150/0.0/ &
                       ,curril30/0.0/,curril90/0.0/,curril150/0.0/
       logical exists
-      integer, intent(inout) :: kerror
+      integer*4, intent(inout) :: kerror
 
       ALLOCATE(coils(nsilop),expmp2(magpri), &
                 denr(nco2r),denv(nco2v), &
@@ -118,14 +118,13 @@
       tmu0=twopi*tmu
       tmu02=tmu0*2.0
       errorm=1.
-      ibatch=0
+      ibatch=0 ! never used in code (just gets output)
       ilaser=0
 !----------------------------------------------------------------------
 !--   news and help information                                      --
 !----------------------------------------------------------------------
-! MPI >>>
       ! ONLY root process displays EFIT news and help information
-      if (rank == 0) then
+      mpi_rank: if (rank == 0) then
         open(unit=80,status='old', &
              file=input_dir(1:lindir)//'efithelp.txt',err=83220)
         do i=1,100
@@ -133,9 +132,8 @@
           write (nttyo,83210) news
         enddo
         close(unit=80)
-      endif
+      endif mpi_rank
 83210 format (a)
-! MPI <<<
 !
 83220 continue
       if (kdata.lt.0) then
@@ -157,13 +155,12 @@
         stop
       endif
 
-! MPI >>>
 ! ONLY root process can check for existence of fitout.dat file
-      if (rank == 0) then
+      mpi_rank0: if (rank == 0) then
         ! Delete fitout.dat if already exists
         open(unit=nout,status='old',file='fitout.dat',iostat=ioerr)
         if (ioerr.eq.0) close(unit=nout,status='delete')
-      endif
+      endif mpi_rank0
       if (iand(iout,1).ne.0) then
 #if defined(USEMPI)
         if (nproc > 1) then
@@ -181,9 +178,8 @@
         open(unit=nout,status='new',file='fitout.dat',delim='quote')
 #endif
       endif
-! MPI <<<
 
-      if ((kdata.ne.1).and.(kdata.ne.2)) then
+      snap: if ((kdata.ne.1).and.(kdata.ne.2)) then
 !----------------------------------------------------------------------
 !--   Initialize istore = 0                                          --
 !--   Central directory to collect EFIT results is the default       --
@@ -552,7 +548,7 @@
         swtsi(i)=fwtsi(i)
       enddo
 !
-      endif ! (kdata.ne.1).and.(kdata.ne.2)
+      endif snap
 !      call set_table_dir
 !      call efit_read_tables
      

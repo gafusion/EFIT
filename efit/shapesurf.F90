@@ -25,7 +25,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       dimension pds(6),amer(2,2),bmer(2),wmer(2),imer(2),temp(ntime)
-      dimension rmid2(2)
+      dimension rmid2(2),zerovs(1),ravs(1),zavs(1)
       dimension sigams(nstark)
       real*8,dimension(:),allocatable :: xsisii,bpres,cpres, &
                     dpres,sjtli,sjtlir,sjtliz,rjtli,bpresw, &
@@ -36,7 +36,7 @@
       Character(8) jchisq
       character(1) jchisq2
       logical byring,double,onedone
-      integer kerror
+      integer*4 kerror
       data floorz/-1.366_dp/
       data psitol/1.0e-04_dp/,idiart/1/
       data czero/0.0/
@@ -57,14 +57,14 @@
       kerror = 0
       oring(iges)=999 ! initialize at ridiculous value
       ringap=999
-      zavs=0.0
+      zavs(1)=0.0
 !
       xdum=0.0
       ydum=0.0
 #ifdef DEBUG_LEVEL1
       write (6,*) 'Enter SHAPE kerror = ', kerror
 #endif
-      if (ivacum.le.0) then
+      is_vacuum: if (ivacum.le.0) then
       if (iges.le.1) then
         xguess=(rgrid(1)+rgrid(nw))/2.
         yguess=(zgrid(1)+zgrid(nh))/2.
@@ -236,13 +236,13 @@
         bpolzs=0.5_dp*fpol(nw)
         do kz=2,nh-1
            yww=dyww*(kz-1)
-          call seva2d(bkx,lkx,bky,lky,c,xww,yww,pds,ier,n111)
+           call seva2d(bkx,lkx,bky,lky,c,xww,yww,pds,ier,n111)
            ypsz=(simag-pds(1))/sidif
            fnow=seval(nw,ypsz,sigrid,fpol,bbfpol,ccfpol,ddfpol)
            bpolzs=bpolzs+fnow
         enddo
         yww=0.0
-          call seva2d(bkx,lkx,bky,lky,c,xww,yww,pds,ier,n111)
+        call seva2d(bkx,lkx,bky,lky,c,xww,yww,pds,ier,n111)
         ypsz=(simag-pds(1))/sidif
         fnow=seval(nw,ypsz,sigrid,fpol,bbfpol,ccfpol,ddfpol)
         bpolzs=bpolzs+fnow*0.5_dp
@@ -550,7 +550,7 @@
 !-----------------------------------------------------------------------
 !--   write out S(shot).(time)_X files in flux space                  --
 !-----------------------------------------------------------------------
-      if (kwripre.eq.2) then
+      kwripre_s: if (kwripre.eq.2) then
         call getfnmd('s',ishot,itime,sfname)
         call getfnmd('o',ishot,itime,ofname)
         if (npress.gt.0) then
@@ -826,11 +826,9 @@
 92924   format (4(1pe12.5,1x))
 93024   format (a28)
         endif
-      endif
 !-----------------------------------------------------------------------
-!--   write out MSE O files in normalized poloidal flux space         --
+!--     write out MSE O files in normalized poloidal flux space       --
 !-----------------------------------------------------------------------
-      if (kwripre.eq.2) then
         if (kstark.gt.0.or.kdomse.gt.0) then
           ofname=ofname(1:13)//'_cmse'
           open(unit=74,status='old',file=ofname,iostat=ioerr)
@@ -893,7 +891,7 @@
           enddo
           close(unit=74)
         endif
-      endif
+      endif kwripre_s
 !
       psiq1=-1000.
 ! if two q=1 surfaces, both psi values will be encoded in psiq1
@@ -1098,7 +1096,7 @@
        enddo
        call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid,nh, &
                   r1sdry(i),nzz ,sdlobp,sdlbp)
-       if (kvtor.gt.0) then
+       rotation_1: if (kvtor.gt.0) then
          do k=1,nfounc
            cfpol(k)= bfpol(k)**2
          enddo
@@ -1130,7 +1128,7 @@
            call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
                   nh,rpwdry,nzz ,sdlobp,sdlbp)
          endif
-       endif
+       endif rotation_1
        r2surs = r2sdry(i)*sdlobp
        fpnow = ffcurr(psiwant,kffcur)
        fpnow = fpnow*tmu
@@ -1442,50 +1440,50 @@
           exit
         endif
       enddo
-      zerovs=1.0
+      zerovs(1)=1.0
       do i=1,npxtra(ixl)
-        zerold=zerovs
+        zerold=zerovs(1)
         call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,xxtra(i,ixl), &
                   yxtra(i,ixl),limfag)
-        if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) exit
+        if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) exit
       enddo
-      if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) then
+      if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) then
         rinvs=xxtra(i-1,ixl)
         zinvs=yxtra(i-1,ixl)
         routvs=xxtra(i,ixl)
         zoutvs=yxtra(i,ixl)
         do i=1,20
-          ravs=0.5_dp*(rinvs+routvs)
-          zavs=0.5_dp*(zinvs+zoutvs)
+          ravs(1)=0.5_dp*(rinvs+routvs)
+          zavs(1)=0.5_dp*(zinvs+zoutvs)
           call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
-          if (zerovs.gt.0.01_dp) then
-            rinvs=ravs
-            zinvs=zavs
+          if (zerovs(1).gt.0.01_dp) then
+            rinvs=ravs(1)
+            zinvs=zavs(1)
           else
-            routvs=ravs
-            zoutvs=zavs
+            routvs=ravs(1)
+            zoutvs=zavs(1)
           endif
         enddo
-        rvsout(iges)=ravs*100.
-        zvsout(iges)=zavs*100.
+        rvsout(iges)=ravs(1)*100.
+        zvsout(iges)=zavs(1)*100.
       else
         rvsout(iges)=0.
         zvsout(iges)=0.
       endif
       endif ! dis2p.ge.0.1_dp*drgrid
-      if ((zavs*zfsep.le.0.0).and.(ixyz.eq.-2)) then
+      if ((zavs(1)*zfsep.le.0.0).and.(ixyz.eq.-2)) then
         ixyz=-1
         go to 73723
       endif
       if (dis2p.ge.0.1_dp*drgrid) then
-      call seva2d(bkx,lkx,bky,lky,c,ravs,zavs,pds,ier,n111)
+      call seva2d(bkx,lkx,bky,lky,c,ravs(1),zavs(1),pds,ier,n111)
       ssinow=pds(1)
 !------------------------------------------------------------------
 !--   get distance between inner leg and upper dome              --
 !------------------------------------------------------------------
       ycut=ymax*0.5_dp
       ycutm=ymin*0.5_dp
-      if (zavs.gt.ycut.and.ravs.lt.rymax) then
+      if (zavs(1).gt.ycut.and.ravs(1).lt.rymax) then
         rvsiu(iges)=rvsout(iges)
         zvsiu(iges)=zvsout(iges)
         if (ishot.ge.100771) then
@@ -1503,7 +1501,7 @@
           diludom(iges)=100.0*sqrt(diludom(iges))
           if (zilnow.lt.zudom) diludom(iges)=-diludom(iges)
         endif
-      elseif (zavs.gt.ycut.and.ravs.gt.rymax) then
+      elseif (zavs(1).gt.ycut.and.ravs(1).gt.rymax) then
 !------------------------------------------------------------------
 !--     get distance between outer leg and upper baffle          --
 !------------------------------------------------------------------
@@ -1524,13 +1522,13 @@
           dolubaf(iges)=100.0*sqrt(dolubaf(iges))
           if (rolnow.gt.rubaf) dolubaf(iges)=-dolubaf(iges)
         endif
-      elseif (zavs.lt.ycutm.and.ravs.gt.rymin) then
+      elseif (zavs(1).lt.ycutm.and.ravs(1).gt.rymin) then
 !------------------------------------------------------------------
 !--     get lower strike points                                  --
 !------------------------------------------------------------------
         rvsod(iges)=rvsout(iges)
         zvsod(iges)=zvsout(iges)
-      elseif (zavs.lt.ycutm.and.ravs.lt.rymin) then
+      elseif (zavs(1).lt.ycutm.and.ravs(1).lt.rymin) then
         rvsid(iges)=rvsout(iges)
         zvsid(iges)=zvsout(iges)
       endif
@@ -1649,50 +1647,50 @@
         if (nminfs.le.20) go to 16199
       endif
       if (dis2p.ge.0.1_dp*drgrid) then
-        zerovs=1.0
+        zerovs(1)=1.0
         do i=1,npxtra(ixl)
-          zerold=zerovs
+          zerold=zerovs(1)
           call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,xxtra(i,ixl), &
                     yxtra(i,ixl),limfag)
-          if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) exit
+          if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) exit
         enddo
-        if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) then
+        if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) then
           rinvs=xxtra(i-1,ixl)
           zinvs=yxtra(i-1,ixl)
           routvs=xxtra(i,ixl)
           zoutvs=yxtra(i,ixl)
           do i=1,20
-            ravs=0.5_dp*(rinvs+routvs)
-            zavs=0.5_dp*(zinvs+zoutvs)
+            ravs(1)=0.5_dp*(rinvs+routvs)
+            zavs(1)=0.5_dp*(zinvs+zoutvs)
             call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
-            if (zerovs.gt.0.01_dp) then
-              rinvs=ravs
-              zinvs=zavs
+            if (zerovs(1).gt.0.01_dp) then
+              rinvs=ravs(1)
+              zinvs=zavs(1)
             else
-              routvs=ravs
-              zoutvs=zavs
+              routvs=ravs(1)
+              zoutvs=zavs(1)
             endif
           enddo
-          rvsin(iges)=ravs*100.
-          zvsin(iges)=zavs*100.
+          rvsin(iges)=ravs(1)*100.
+          zvsin(iges)=zavs(1)*100.
         else
           rvsin(iges)=0.
           zvsin(iges)=0.
         endif
       endif
-      if ((zavs*zfsep.le.0.0).and.(ixyz.eq.-2)) then
+      if ((zavs(1)*zfsep.le.0.0).and.(ixyz.eq.-2)) then
         ixyz=-1
         go to 26199
       endif
       if (dis2p.ge.0.1_dp*drgrid) then
-        call seva2d(bkx,lkx,bky,lky,c,ravs,zavs,pds,ier,n111)
+        call seva2d(bkx,lkx,bky,lky,c,ravs(1),zavs(1),pds,ier,n111)
         ssinow=pds(1)
 !------------------------------------------------------------------
 !--     get distance between inner leg and upper dome            --
 !------------------------------------------------------------------
         ycut=ymax*0.5_dp
         ycutm=ymin*0.5_dp
-        if (zavs.gt.ycut.and.ravs.lt.rymax) then
+        if (zavs(1).gt.ycut.and.ravs(1).lt.rymax) then
           rvsiu(iges)=rvsin(iges)
           zvsiu(iges)=zvsin(iges)
           if (ishot.ge.100771) then
@@ -1710,7 +1708,7 @@
             diludom(iges)=100.0*sqrt(diludom(iges))
             if (zilnow.lt.zudom) diludom(iges)=-diludom(iges)
           endif
-        elseif (zavs.gt.ycut.and.ravs.gt.rymax) then
+        elseif (zavs(1).gt.ycut.and.ravs(1).gt.rymax) then
 !------------------------------------------------------------------
 !--       get distance between outer leg and upper baffle        --
 !------------------------------------------------------------------
@@ -1731,13 +1729,13 @@
             dolubaf(iges)=100.0*sqrt(dolubaf(iges))
             if (rolnow.gt.rubaf ) dolubaf(iges)=-dolubaf(iges)
           endif
-        elseif (zavs.lt.ycutm.and.ravs.gt.rymin) then
+        elseif (zavs(1).lt.ycutm.and.ravs(1).gt.rymin) then
 !------------------------------------------------------------------
 !--       get lower strike points                                --
 !------------------------------------------------------------------
           rvsod(iges)=rvsin(iges)
           zvsod(iges)=zvsin(iges)
-        elseif (zavs.lt.ycutm.and.ravs.lt.rymin) then
+        elseif (zavs(1).lt.ycutm.and.ravs(1).lt.rymin) then
           rvsid(iges)=rvsin(iges)
           zvsid(iges)=zvsin(iges)
         endif
@@ -1795,41 +1793,41 @@
         kerror = 1
         return
       end if
-      zerovs=1.0
+      zerovs(1)=1.0
       do i=1,npxtra(ixl)
-        zerold=zerovs
+        zerold=zerovs(1)
         call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,xxtra(i,ixl), &
                   yxtra(i,ixl),limfag)
-        if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) exit
+        if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) exit
       enddo
-      if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp.and.i>1) then
+      if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp.and.i>1) then
         rinvs=xxtra(i-1,ixl)
         zinvs=yxtra(i-1,ixl)
         routvs=xxtra(i,ixl)
         zoutvs=yxtra(i,ixl)
         do i=1,20
-          ravs=0.5_dp*(rinvs+routvs)
-          zavs=0.5_dp*(zinvs+zoutvs)
+          ravs(1)=0.5_dp*(rinvs+routvs)
+          zavs(1)=0.5_dp*(zinvs+zoutvs)
           call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
-          if (zerovs.gt.0.01_dp) then
-            rinvs=ravs
-            zinvs=zavs
+          if (zerovs(1).gt.0.01_dp) then
+            rinvs=ravs(1)
+            zinvs=zavs(1)
           else
-            routvs=ravs
-            zoutvs=zavs
+            routvs=ravs(1)
+            zoutvs=zavs(1)
           endif
         enddo
-        if ((zavs*zssep.lt.0.0).and.(ixyz.eq.-2)) then
+        if ((zavs(1)*zssep.lt.0.0).and.(ixyz.eq.-2)) then
           ixyz=-1
           go to 66501
         endif
-        rvsnow=ravs*100.
-        zvsnow=zavs*100.
+        rvsnow=ravs(1)*100.
+        zvsnow=zavs(1)*100.
       else
         rvsnow=0.
         zvsnow=0.
       endif
-      call seva2d(bkx,lkx,bky,lky,c,ravs,zavs,pds,ier,n111)
+      call seva2d(bkx,lkx,bky,lky,c,ravs(1),zavs(1),pds,ier,n111)
       ssinow=pds(1)
 !------------------------------------------------------------------
 !--   get distance between inner leg and upper dome              --
@@ -1840,13 +1838,13 @@
       rsymin=rymin
       if (zssep.lt.ymin) rsymin=rssep
       if (zssep.gt.ymax) rsymax=rssep
-      if (zavs*zssep.lt.0.0) then
+      if (zavs(1)*zssep.lt.0.0) then
         ravssa=0.0
         zavssa=0.0
       else
-        ravssa=ravs
-        zavssa=zavs
-        if (zavs.gt.ycut.and.ravs.lt.rsymax) then
+        ravssa=ravs(1)
+        zavssa=zavs(1)
+        if (zavs(1).gt.ycut.and.ravs(1).lt.rsymax) then
           rvsiu(iges)=rvsnow
           zvsiu(iges)=zvsnow
           if (ishot.lt.100771) go to 6500
@@ -1863,7 +1861,7 @@
           enddo
           diludom(iges)=100.0*sqrt(diludom(iges))
           if (zilnow.lt.zudom) diludom(iges)=-diludom(iges)
-        elseif (zavs.gt.ycut.and.ravs.gt.rsymax) then
+        elseif (zavs(1).gt.ycut.and.ravs(1).gt.rsymax) then
 !------------------------------------------------------------------
 !--       get distance between outer leg and upper baffle        --
 !------------------------------------------------------------------
@@ -1883,13 +1881,13 @@
           enddo
           dolubaf(iges)=100.0*sqrt(dolubaf(iges))
           if (rolnow.gt.rubaf) dolubaf(iges)=-dolubaf(iges)
-        elseif (zavs.lt.ycutm.and.ravs.gt.rsymin) then
+        elseif (zavs(1).lt.ycutm.and.ravs(1).gt.rsymin) then
 !------------------------------------------------------------------
 !--       get lower strike points                                --
 !------------------------------------------------------------------
           rvsod(iges)=rvsnow
           zvsod(iges)=zvsnow
-        elseif (zavs.lt.ycutm.and.ravs.lt.rsymin) then
+        elseif (zavs(1).lt.ycutm.and.ravs(1).lt.rsymin) then
           rvsid(iges)=rvsnow
           zvsid(iges)=zvsnow
         endif
@@ -1947,41 +1945,41 @@
         kerror = 1
         return
       endif
-      zerovs=1.0
+      zerovs(1)=1.0
       do i=1,npxtra(ixl)
-        zerold=zerovs
+        zerold=zerovs(1)
         call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,xxtra(i,ixl), &
                   yxtra(i,ixl),limfag)
-        if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) exit
+        if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) exit
       enddo
-      if (zerold.gt.0.01_dp.and.zerovs.lt.0.01_dp) then
+      if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) then
         rinvs=xxtra(i-1,ixl)
         zinvs=yxtra(i-1,ixl)
         routvs=xxtra(i,ixl)
         zoutvs=yxtra(i,ixl)
         do i=1,20
-          ravs=0.5_dp*(rinvs+routvs)
-          zavs=0.5_dp*(zinvs+zoutvs)
+          ravs(1)=0.5_dp*(rinvs+routvs)
+          zavs(1)=0.5_dp*(zinvs+zoutvs)
           call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
-          if (zerovs.gt.0.01_dp) then
-            rinvs=ravs
-            zinvs=zavs
+          if (zerovs(1).gt.0.01_dp) then
+            rinvs=ravs(1)
+            zinvs=zavs(1)
           else
-            routvs=ravs
-            zoutvs=zavs
+            routvs=ravs(1)
+            zoutvs=zavs(1)
           endif
         enddo
-        if (((abs(ravssa-ravs).le.1.e-04_dp).and. &
-          (abs(zavssa-zavs).le.1.e-04_dp)).and.(ixyz.eq.-1)) then
+        if (((abs(ravssa-ravs(1)).le.1.e-04_dp).and. &
+          (abs(zavssa-zavs(1)).le.1.e-04_dp)).and.(ixyz.eq.-1)) then
           ixyz=-2
           go to 66199
         endif
-        if ((zavs*zssep.lt.0.0).and.(ixyz.eq.-1)) then
+        if ((zavs(1)*zssep.lt.0.0).and.(ixyz.eq.-1)) then
           ixyz=-2
           go to 66199
         endif
-        rvsnow=ravs*100.
-        zvsnow=zavs*100.
+        rvsnow=ravs(1)*100.
+        zvsnow=zavs(1)*100.
       else
         rvsnow=0.
         zvsnow=0.
@@ -1989,10 +1987,10 @@
 !------------------------------------------------------------------
 !--   get distance between inner leg and upper dome              --
 !------------------------------------------------------------------
-      if (zavs*zssep.ge.0.0) then
+      if (zavs(1)*zssep.ge.0.0) then
         ycut=ymax*0.5_dp
         ycutm=ymin*0.5_dp
-        if (zavs.gt.ycut.and.ravs.lt.rsymax) then
+        if (zavs(1).gt.ycut.and.ravs(1).lt.rsymax) then
           rvsiu(iges)=rvsnow
           zvsiu(iges)=zvsnow
           if (ishot.ge.100771) then
@@ -2010,7 +2008,7 @@
             diludom(iges)=100.0*sqrt(diludom(iges))
             if (zilnow.lt.zudom) diludom(iges)=-diludom(iges)
           endif
-        elseif (zavs.gt.ycut.and.ravs.gt.rsymax) then
+        elseif (zavs(1).gt.ycut.and.ravs(1).gt.rsymax) then
 !------------------------------------------------------------------
 !--       get distance between outer leg and upper baffle          --
 !------------------------------------------------------------------
@@ -2031,13 +2029,13 @@
             dolubaf(iges)=100.0*sqrt(dolubaf(iges))
             if (rolnow.gt.rubaf) dolubaf(iges)=-dolubaf(iges)
           endif
-        elseif (zavs.lt.ycutm.and.ravs.gt.rsymin) then
+        elseif (zavs(1).lt.ycutm.and.ravs(1).gt.rsymin) then
 !------------------------------------------------------------------
 !--       get lower strike points                                  --
 !------------------------------------------------------------------
           rvsod(iges)=rvsnow
           zvsod(iges)=zvsnow
-        elseif (zavs.lt.ycutm.and.ravs.lt.rsymin) then
+        elseif (zavs(1).lt.ycutm.and.ravs(1).lt.rsymin) then
           rvsid(iges)=rvsnow
           zvsid(iges)=zvsnow
         endif
@@ -2159,7 +2157,7 @@
           return
         end if
 !-------------------------------------------------------------------------
-!--     get engineering slot parameter in cm, SEPNOSE                     --
+!--     get engineering slot parameter in cm, SEPNOSE                   --
 !-------------------------------------------------------------------------
         sepnose=-999.
         do i=1,npxtra(ixl)-1
@@ -2193,7 +2191,7 @@
 !---------------------------------------------------------------------------
 !--   trace external field lines                                          --
 !---------------------------------------------------------------------------
-      if (nextra.ne.0) then
+      extra_surfs: if (nextra.ne.0) then
       if (ixstrt.ne.-1) then
         xxtraa=xmax
         yxtraa=zxmax
@@ -2273,7 +2271,7 @@
        ixtpls=iabs(nextra)
        go to 420
       endif
-      endif ! nextra.ne.0
+      endif extra_surfs
 !-----------------------------------------------------------------------------
 !--   compute the diamagnetic flux                                          --
 !-----------------------------------------------------------------------------
@@ -2328,7 +2326,7 @@
                 -prbdry
          fnow=fnow/tmu
          prettt=presss
-         if (kvtor.gt.0) then
+         rotation_2: if (kvtor.gt.0) then
            preww0=seval(nw,xpsi(kk),xsisii,pressw,bpresw,cpresw,dpresw) &
                   -preswb
            press0=presss
@@ -2350,7 +2348,7 @@
              presss=press0*exp(pwp0r2)
            endif
            prettt=prewww+presss
-         endif
+         endif rotation_2
         endif
         cdflux(iges)=cdflux(iges)+(fbrdy-fnow)/rgrid(i)*www(kk)
         edflux(iges)=edflux(iges)+(fbrdy**2-fnow**2)/rgrid(i)*www(kk)
@@ -2534,7 +2532,7 @@
 !----------------------------------------------------------------
 !--   Current at Z=Z_Libeam                                    --
 !----------------------------------------------------------------
-      if (kwripre.gt.0) then
+      kwripre_li: if (kwripre.gt.0) then
        if (nstark.gt.nmtark) then
         znow=zzgam(iges,nmtark+1)
         delrnow=(xmax-rmaxis)/(nw-1)
@@ -2590,7 +2588,7 @@
         enddo
         close(unit=74)
        endif
-      endif
+      endif kwripre_li
 !
       if (dco2v(iges,2).gt.1.e+10_dp) then
         partic=dco2v(iges,2)*vout(iges)
@@ -2615,7 +2613,7 @@
 !------------------------------------------------------------------
 !--   compute vessel forces                                      --
 !------------------------------------------------------------------
-      if (ifitvs.gt.0.or.icutfp.eq.2) then
+      vessel_force: if (ifitvs.gt.0.or.icutfp.eq.2) then
         call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
         fztor=0.0
         fzpol=0.0
@@ -2665,7 +2663,7 @@
           vforcep(i)= cosalp*sumfzp*dells/20.
           fzpol=fzpol+vforcep(i)
         enddo
-      endif
+      endif vessel_force
       if (icutfp.eq.2) then
         xxxx=1./xpsimin
         fpolvs=ffcurr(xxxx  ,kffcur)-ffcurr(x111,kffcur)
@@ -2693,8 +2691,7 @@
       endif
       if (itek.gt.0) then
         if (idplace.ne.0) then
-          call altplt(xout,yout,nfound,iges,nnn, &
-                      xmin,xmax,ymin,ymax,igmax)
+          continue ! do nothing...
         else
 #ifdef DEBUG_LEVEL1
           write (6,*) 'Before SHAPE/PLTOUT'
@@ -2713,8 +2710,7 @@
       if ((itrace.gt.1) .and. (abs(dpsi).le.psitol)) then
         if (itek.gt.0) then
            if (idplace.ne.0) then
-             call altplt(xouts,youts,nfouns,jges,n22, &
-                         xmins,xmaxs,ymins,ymaxs,igmax)
+             continue ! do nothing...
            else
              call pltout(xouts,youts,nfouns,jges,n22, &
                          xmins,xmaxs,ymins,ymaxs,igmax,kerror)
@@ -2727,7 +2723,7 @@
       if ((itek.ge.5).and.(iges.eq.igmax)) call closepl
       if ((ilaser.gt.0).and.(iges.eq.igmax)) call donepl
 
-      else ! ivacum.gt.0
+      else is_vacuum 
       limloc(iges)='VAC'
       call chisqr(iges)
       if (itek.gt.0) then
@@ -2739,43 +2735,43 @@
       if ((itek.ge.5).and.(iges.eq.igmax)) call closepl
       if ((ilaser.gt.0).and.(iges.eq.igmax)) call donepl
 !
-      endif ! ivacum.le.0
+      endif is_vacuum
 !
 !-----------------------------------------------------------------------
 !-- vertical stability parameter,  reference Nuc Fusion  18(1978)1331 --
 !-- move out of pltout so that vertn, xnnc are indepent of itek value --
 !-----------------------------------------------------------------------
-      do i=1,nw
-        do j=1,nh
-          kk=(i-1)*nh+j
-          copy(i,j)=0.0
-          do m=1,nfcoil
-            copy(i,j)=copy(i,j)+gridfc(kk,m)*brsp(m)
+      not_vacuum: if (ivacum.le.0) then
+        do i=1,nw
+          do j=1,nh
+            kk=(i-1)*nh+j
+            copy(i,j)=0.0
+            do m=1,nfcoil
+              copy(i,j)=copy(i,j)+gridfc(kk,m)*brsp(m)
+            enddo
+            if (ivesel.gt.0) then
+              do m=1,nvesel
+                copy(i,j)=copy(i,j)+gridvs(kk,m)*vcurrt(m)
+              enddo
+            endif
+            if (iecurr.gt.0) then
+              do m=1,nesum
+                copy(i,j)=copy(i,j)+gridec(kk,m)*ecurrt(m)
+              enddo
+            endif
           enddo
-          if (ivesel.gt.0) then
-            do m=1,nvesel
-              copy(i,j)=copy(i,j)+gridvs(kk,m)*vcurrt(m)
-            enddo
-          endif
-          if (iecurr.gt.0) then
-            do m=1,nesum
-              copy(i,j)=copy(i,j)+gridec(kk,m)*ecurrt(m)
-            enddo
-          endif
         enddo
-      enddo
-      do i=1,nw
-        do j=1,nh
-          k=(i-1)*nh+j
-          copyn(k)=copy(i,j)
+        do i=1,nw
+          do j=1,nh
+            k=(i-1)*nh+j
+            copyn(k)=copy(i,j)
+          enddo
         enddo
-      enddo
-      call sets2d(copyn,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
-      rcur=rcurrt(jges)/100! m
-      zcur=zcurrt(jges)/100! m
-      call seva2d(bkx,lkx,bky,lky,c,rcur,zcur,pds,ier,n555)
-      vertn(jges)=1.-pds(5)/pds(2)*rcur
-      if (ivacum.le.0) then
+        call sets2d(copyn,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
+        rcur=rcurrt(jges)/100
+        zcur=zcurrt(jges)/100
+        call seva2d(bkx,lkx,bky,lky,c,rcur,zcur,pds,ier,n555)
+        vertn(jges)=1.-pds(5)/pds(2)*rcur
         rx=rmagx(jges)/100.
         f_0=log(8*rout(jges)/abar)-2+betap(jges)+ali(jges)/2+.5_dp
         delr=rout(jges)/100.-1.67_dp
@@ -2783,7 +2779,7 @@
 !--     metal wall                                                    --
 !-----------------------------------------------------------------------
         xnnc(jges)=vertn(jges)/((10.77_dp*delr**2+8.08_dp*delr+2.54_dp)/f_0)
-      endif
+      endif not_vacuum
 !
 !------------------------------------------------------------------
 !--   compute shearing rate eshear                               --
@@ -2796,7 +2792,7 @@
 !-----------------------------------------------------------------------
 !--   write out r(shot).(time)_X files in rho space                   --
 !-----------------------------------------------------------------------
-      if (kwripre.eq.3) then
+      kwripre_r: if (kwripre.eq.3) then
         call getfnmd('r',ishot,itime,sfname)
         sfname=sfname(1:13)//'_qpsi'
         open(unit=74,status='old',file=sfname,iostat=ioerr)
@@ -2913,7 +2909,7 @@
           enddo
           close(unit=74)
         endif
-      endif
+      endif kwripre_r
 !
       DEALLOCATE(xsisii,bpres,cpres,dpres,sjtli,sjtlir,sjtliz, &
                  rjtli,bpresw,cpresw,dpresw,copyn,cjtli,x,y)
@@ -2956,11 +2952,12 @@
 !**********************************************************************
       subroutine dslant(x,y,np,xmin,xmax,ymin,ymax,x1,y1,x2,y2,dismin)
       use set_kinds
-      implicit integer*8 (i-n), real*8 (a-h, o-z)
+      use eparm, only: npoint
+      implicit integer*4 (i-n), real*8 (a-h, o-z)
       data nn/30/
-      real, intent(in) :: xmin, xmax, ymin, ymax, x1, y1, x2, y2
-      real, intent(inout) :: dismin
-      real, intent(in) :: x(np), y(np)
+      real*8, intent(in) :: xmin, xmax, ymin, ymax, x1, y1, x2, y2
+      real*8, intent(inout) :: dismin
+      real*8, intent(in) :: x(npoint), y(npoint)
 
       dismin=1.0e+20_dp
       delx=x2-x1

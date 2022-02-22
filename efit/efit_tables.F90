@@ -159,9 +159,9 @@
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
-      integer :: i, reason, nFiles, itmp, imin 
+      integer*4 :: i, reason, nFiles, itmp, imin 
       character(LEN=100), dimension(:), allocatable :: filenames
-      integer:: shot_tables(100)
+      integer*4 :: shot_tables(100)
 
 !----------------------------------------------------------------------
 !--   recalculate length of default directories in case any change   --
