@@ -22,7 +22,7 @@
       namelist/lim/xlim,ylim,limitr
       data lfile/36/
 !
-      if ((limitr.gt.0).and.(limmode.ne.0)) go to 50240
+      if ((limitr_ext.gt.0 .or. limitr.gt.0).and.(limmode.ne.0)) go to 50240
 !
 ! --- read in limiter data
 !
