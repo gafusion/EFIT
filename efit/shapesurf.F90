@@ -2723,15 +2723,8 @@
       if ((itek.ge.5).and.(iges.eq.igmax)) call closepl
       if ((ilaser.gt.0).and.(iges.eq.igmax)) call donepl
 
-<<<<<<< HEAD
-      else ! ivacum.gt.0
-      limloc(iges)='VAC'
-||||||| f992f4e
-      else ! ivacum.ge.0
-=======
       else is_vacuum 
       limloc(iges)='VAC'
->>>>>>> main
       call chisqr(iges)
       if (itek.gt.0) then
         call pltout(xout,yout,nzz,iges,nnn,zxx,zxx,zxx,zxx,igmax,kerror)
