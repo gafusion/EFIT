@@ -839,6 +839,7 @@
       use global_constants
       use set_kinds
       use error_control
+      use eparm, only: kubicx,lubicx,kubicy,lubicy
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension pds(6),xc(*),yc(*),bkx(lubicx+1),bky(lubicy+1)
       dimension cspln(kubicx,lubicx,kubicy,lubicy)

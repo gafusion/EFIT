@@ -840,7 +840,7 @@
       use var_limite, only: rwstrip1, zwstrip1,rwstrip2,zwstrip2, &
                             xlim,ylim
       use var_delnfit, only: fco2ne
-      use var_rmatri, only: tsaisq,brsp
+      use var_rmatri, only: tsaisq
       use var_consum, only: cdelz,condno
       use var_fwtdz, only: cdeljsum,rdjdz
       use var_cpsi, only: psi
@@ -932,7 +932,6 @@
       saipr=0.0
       bzmse=0.0
       tangam_uncor=0.0
-      brsp=0.0
       qpsi=0.0
       rzeroj=0.0
       condno=0.0

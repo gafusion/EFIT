@@ -45,6 +45,8 @@
       data iupdat/0/,minite/8/,ten24/1.e4_dp/,z04/1.0e-04_dp/
       save z04
       kerror = 0
+      csilopv = 0.0
+      cmpr2v = 0.0
       if (iconvr.eq.3) return
 !----------------------------------------------------------------------
 !--   Variable fitdelz                                               --

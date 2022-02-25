@@ -73,6 +73,7 @@
 
       kerror = 0
       pleng = 0
+      tlen = 0
 !
       if (ndimc.ne.ndim) then
         call errctrl_msg('pltout', &
@@ -313,10 +314,8 @@
       enddo
       abar=100.*pleng/2./pi
 !
-      is_vacuum: if (ivacum.gt.0) then
-      call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
-      else is_vacuum
-      not_time_snap: if (kdata.ne.4) then
+      not_time_snap: if ((kdata.ne.4).and.(ivacum.le.0)) then
+      is_vacuum_1: if (ivacum.le.0) then
       ibrdr = 1
 !-----------------------------------------------------------------------
 !     Initialize plot parameters
@@ -2113,7 +2112,9 @@
         msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif
 !
-      endif not_time_snap
+      else is_vacuum_1
+      call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
+      endif is_vacuum_1
       do i=1,nh
          call seva2d(bkx,lkx,bky,lky,c,rmaxis,zgrid(i),pds,ier,n333)
          workj(i)=-pds(3)/rmaxis
@@ -2131,6 +2132,7 @@
          workg(i)=pds(2)/xnow
          workk(i)=xnow
       enddo
+      is_vacuum_2: if (ivacum.le.0) then
       if (kwripre.gt.0) then
          delz=(zuperts(jtime)-zlowerts)/(mpress-1)
          do i=1,mpress
@@ -2648,6 +2650,7 @@
          endif pl_files_2
       endif klabel_3
 !
+      endif is_vacuum_2
       istrpl=1
       if (itek.eq.1) call tekall(4010,960,0,0,0)
       call grace(0.0)
@@ -2713,6 +2716,7 @@
       endif pl_files_3
       endif iexp
 !
+      is_vacuum_3: if (ivacum.le.0) then
       curmin=workf(1)
       curmax=workf(1)
       do i=1,nw
@@ -3174,7 +3178,7 @@
            ytitle = 'CHI2$'
            iexit = 1
 !-----------------------------------------------------------------------
-!         Write Plot Parameters
+!         Write Plot Para((kfitece.le.0).and.(kdata.ne.4).and.(ivacuum.le.0))meters
 !-----------------------------------------------------------------------
           call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
           iorel, xorl, yorl, hight, bngle, bshft, &
@@ -3193,8 +3197,9 @@
           msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
         endif pl_files_9
       endif not_eq_mode
+      endif is_vacuum_3
 !-----------------------------------------------------------------
-!--   F coil current limits from Hyatt              LLao 970423 --
+!--   F coil current limits from Hyatt                          --
 !-----------------------------------------------------------------
       do i=1,4
          workc(i)=348.
@@ -3214,7 +3219,6 @@
          workb(i)=brsp(i)/1000.
          worka(i)=i
          workd(i)=-workc(i)
-         ! TODO: inside ivacum.le.0 block...
          if (fwtfc(1).ne.0.0.or.ivacum.gt.0.or.imag2(jtime).gt.0) then
             workc(i)=fccurt(jtime,i)/1000.
             workd(i)=workc(i)
@@ -3460,6 +3464,7 @@
 !-----------------------------------------------------------------------
 !--   vertical stability parameter, reference Nuc Fusion 18(1978)1331 --
 !-----------------------------------------------------------------------
+      if (ivacum.le.0) then
          rx=rmagx(jtime)/100.
          pleng=0.0
          f_0=log(8*rout(jtime)/abar)-2+betap(jtime)+ali(jtime)/2+.5_dp
@@ -3468,6 +3473,7 @@
 !--      metal wall                                                   --
 !-----------------------------------------------------------------------
          xnnc(jtime)=vertn(jtime)/((10.77_dp*delr**2+8.08_dp*delr+2.54_dp)/f_0)
+      endif
       write (text,9399) xnnc(jtime),qmerci(jtime)
       msg = msg + 1
       note(msg) = 1
@@ -3795,7 +3801,6 @@
       nxlen = 100
       nylen = 100
       xlen = 3.0
-      ! TODO: inside ivacum.le.0 block...
       if (ivacum.eq.1) then
          xlen = 6.0
          xphy = 4.7_dp
@@ -3858,13 +3863,11 @@
       ytitle = 'CHI**2$'
       ipag = 1
       iexit = 1
-      ! TODO: inside ivacum.le.0 block...
       if (ivacum.gt.0) iexit=2
       sclpc(1) = 0.5_dp
       ncnct(1) = 1
 
       xabs=-7.3_dp
-      ! TODO: inside ivacum.le.0 block...
       if (ivacum.eq.1) xabs=-4.3_dp
       if (kstark.le.1) then
          yabs=3.0
@@ -3946,14 +3949,12 @@
          lmes(msg) = mpnam2(i)
          imes(msg) = 10
          xpos(msg) = -6.8_dp
-         ! TODO: inside ivacum.le.0 block...
          if (ivacum.eq.1) xpos(msg) = -3.8_dp
          ypos(msg) = yabs
          ht(msg) = 0.07_dp
          yabs=yabs-.13_dp
       enddo
       xabs=-5.8_dp
-      ! TODO: inside ivacum.le.0 block...
       if (ivacum.eq.1) xabs=-2.8_dp
       yabs=yabs0-0.5_dp
       do i=magpri67+17,magpri67+magpri322
@@ -3970,7 +3971,6 @@
          lmes(msg) = mpnam2(i)
          imes(msg) = 10
          xpos(msg) = -5.2_dp
-         ! TODO: inside ivacum.le.0 block...
          if (ivacum.eq.1) xpos(msg) = -2.2_dp
          ypos(msg) = yabs
          ht(msg) = 0.07_dp
@@ -3978,7 +3978,6 @@
       enddo
 !
       xabs=-7.3_dp
-      ! TODO: inside ivacum.le.0 block...
       if (ivacum.eq.1) xabs=-4.3_dp
       yabs=yabs-.5_dp
       msg = msg + 1
@@ -4013,7 +4012,6 @@
          lmes(msg) = lpname(i)
          imes(msg) = 10
          xpos(msg) = -6.8_dp
-         ! TODO: inside ivacum.le.0 block...
          if (ivacum.eq.1) xpos(msg) = -3.8_dp
          ypos(msg) = yabs
          ht(msg) = 0.07_dp
@@ -4034,7 +4032,6 @@
          lmes(msg) = lpname(i)
          imes(msg) = 10
          xpos(msg) = -5.2_dp
-         ! TODO: inside ivacum.le.0 block...
          if (ivacum.eq.1) xpos(msg) = -2.2_dp
          ypos(msg) = yabs
          ht(msg) = 0.07_dp
@@ -4050,7 +4047,6 @@
       nxlen = 100
       nylen = 100
       xlen = 3.0
-      ! TODO: inside ivacum.le.0 block...
       if (ivacum.eq.1) then
          xlen = 6.0
          xphy = 4.7_dp
@@ -4190,6 +4186,7 @@
 !-------------------------------------------------------------------------
 !--   plot P', FF', and Zm                                              --
 !-------------------------------------------------------------------------
+      is_vacuum_4: if (ivacum.le.0) then
       curmin=1.0e+10_dp
       curmax=-1.0e+10_dp
       do i=1,nitera
@@ -4542,6 +4539,7 @@
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif pl_files_14
+      endif is_vacuum_4
 !      call endpl(0)
 
       xmm=1.6_dp
@@ -4905,6 +4903,7 @@
       endif pl_files_15
       endif B_signals
 !
+      is_vacuum_5: if (ivacum.le.0) then
       plot_extra: if (kwripre.gt.0) then
          dataname=dataname(1:lprx)//'_presf'
          open(unit=62,file=dataname,status='old',iostat=ioerr)
@@ -7088,6 +7087,7 @@
          endif pl_files_27
       enddo
       endif plot_fieldlines
+      endif is_vacuum_5
 !-----------------------------------------------------------------------
 !--   plot psi contours                                               --
 !-----------------------------------------------------------------------
@@ -7406,7 +7406,7 @@
             dumnow=sqrt(pds(2)**2+pds(3)**2)
             bfield(iw,ih)=(dumnow)/rgrid(iw)*1.e4_dp
             if (ih.eq.nh/2+1) worka(iw)=bfield(iw,ih)
-            if (xpsi(kk).le.1.0) &
+            if (xpsi(kk).le.1.0.and.ivacum.le.0) &
                fnow=seval(nw,xpsi(kk),voln,fpol,bvoln,cvoln,dvoln)
             btttt=fnow/rgrid(iw)*10000.
             if (iconsi.ge.5) then
@@ -7790,6 +7790,7 @@
       call ffstore
       call wwstore
       call eestore
+      is_vacuum_6: if (ivacum.le.0) then
       call init2d
       xmm=1.5_dp
       curmin=1.0e+10_dp
@@ -8278,21 +8279,23 @@
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif pl_files_36
       endif tor_rotation
+      endif is_vacuum_6
 #ifdef DEBUG_LEVEL1
       write (6,*) 'End  PLTOUT'
 #endif
-      if (kfitece.le.0) then
+      endif not_time_snap
+      ECE_or_time_snap: if ((kfitece.le.0).and.(kdata.ne.4)) then
 #ifdef DEBUG_LEVEL1
-         write (6,*) 'Before Exit PLTOUT'
+      write (6,*) 'Before Exit PLTOUT'
 #endif
-         deallocate(bfield,sivol,voln, &
-            bvoln,cvoln,dvoln,rscrap,curscr,pbimf,pmid,pmidw,bpmid, &
-            cpmid,dpmid,workj,copyn,copy1,xbnow,ybnow)
+      deallocate(bfield,sivol,voln, &
+         bvoln,cvoln,dvoln,rscrap,curscr,pbimf,pmid,pmidw,bpmid, &
+         cpmid,dpmid,workj,copyn,copy1,xbnow,ybnow)
 #ifdef DEBUG_LEVEL1
-         write (6,*) 'After Exit PLTOUT'
+      write (6,*) 'After Exit PLTOUT'
 #endif
-         return
-      endif
+      return
+      elseif (kdata.eq.4) then ECE_or_time_snap
 !----------------------------------------------------------------------
 !--   plot time history for kdata=4                                   --
 !----------------------------------------------------------------------
@@ -8498,7 +8501,7 @@
       nvec, xfm, yfm, xto, yto, ivec, &
       msg, note, lmes, imes, anum, iplce, inum, xpos, ypos, ht, iexit)
       endif pl_files_37
-      endif is_vacuum
+      endif ECE_or_time_snap
 !---------------------------------------------------------------------
 !--   plot for ece                                                  --
 !--   Assign value to work arrays. workg: Bz. workk: R. workf: Psi  --
