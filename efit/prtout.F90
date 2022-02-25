@@ -26,6 +26,10 @@
         hacoil,wacoil,rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2,fcturn, &
         re,ze,ecid,ecturn,vsid,rvs,zvs,we,he
 
+      ! initialize variables
+      cbetat=0.0
+      cbetap=0.0
+
       ! avoid write garbage when oleft or oright not update (e.g. 1.e10)
       tleft=oleft(it)
       if (tleft.gt.1.e9_dp) tleft=0.0
@@ -481,7 +485,7 @@
         write (nout,11300) chidlc
       if (iconvr.eq.3) then
         write (nout,11320) emf,emp,enf,enp,betap0,rzero
-        write (nout,11330) cbetap,cli,cqqxis,cbetat,ci0
+        write (nout,11330) cbetap,cli,cqqxis,cbetat,ci0 ! cbetap, cbetat never set
       endif
       if (nbdry.gt.0) then
         write (nout,11324) erbmax,erbave
