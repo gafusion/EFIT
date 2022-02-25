@@ -363,8 +363,8 @@
       character(10),dimension(:),allocatable :: vsname
       character(10),dimension(:),allocatable :: mpnam2
       character(10),dimension(:),allocatable :: lpname
-      character efitversion*8,filimt*100,cshot*6,jdebug*4
-      integer*4 idebug ! DEPRECIATED
+      character filimt*100,cshot*6,jdebug*4
+      integer*4 idebug
       data idebug/0/,jdebug/'NONE'/ ! DEPRECIATED
       end module var_inputc
 
