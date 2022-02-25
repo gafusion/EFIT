@@ -113,7 +113,7 @@
              form=wform,delim='quote')
 !
         xbetapr=kbetapr
-        if (keqdsk.ge.1) then
+        a_eqdsk_format: if (keqdsk.ge.1) then
         write (neqdsk,1055) uday,efitvers//"   "
         if (ishot.le.99999) then
           write (neqdsk,1050) ishot,ktime1
@@ -192,7 +192,7 @@
 !-------------------------------------------------------------------
 !--     binary format                                             --
 !-------------------------------------------------------------------
-        else ! keqdsk.lt.1
+        else a_eqdsk_format
         write (neqdsk) uday,efitvers
         if (ishot.le.99999) then
           write (neqdsk) ishot,ktime1
@@ -292,7 +292,7 @@
                        real(tchimls),real(twagap(jj))
 !
         write (neqdsk) header,fit_type
-        endif ! keqdsk.lt.1
+        endif a_eqdsk_format
 !
         close(unit=neqdsk)
       enddo
@@ -558,7 +558,7 @@
         ssimag=simag
         ssibry=psibry
       endif
-      if (keqdsk.eq.1) then
+      eqdsk_format: if (keqdsk.eq.1) then
       write (neqdsk,2000) (vers(i),i=1,6),0,mw,mh
       write (neqdsk,2020) xdim,zdim,rzero,rgrid(1),zmid
       write (neqdsk,2020) rmaxis,zmaxis,ssimag,ssibry,bcentr(jtime)
@@ -781,7 +781,7 @@
 !-----------------------------------------------------------------------
 !--   binary format                                                   --
 !-----------------------------------------------------------------------
-      else ! keqdsk.ne.1
+      else eqdsk_format
       write (neqdsk) (vers(i),i=1,6),0,mw,mh
       write (neqdsk) real(xdim),real(zdim),real(rzero), &
                      real(rgrid(1)),real(zmid)
@@ -856,7 +856,7 @@
 !
       call db_header(ishot,itime,header)
       write (neqdsk) header,fit_type
-      endif ! keqdsk.ne.1
+      endif eqdsk_format
 !
       close(unit=neqdsk)
       nbdry=nbsave

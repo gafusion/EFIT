@@ -5,11 +5,11 @@
 !!    and computes various global plasma parameters.
 !!    
 !!
-!!    @param iges :
+!!    @param iges : time index
 !!
 !!    @param igmax :
 !!
-!!    @param kerror :
+!!    @param kerror : error flag
 !!
 !**********************************************************************
       subroutine shapesurf(iges,igmax,kerror)
@@ -58,6 +58,11 @@
       oring(iges)=999 ! initialize at ridiculous value
       ringap=999
       zavs(1)=0.0
+      rhovn=0.0
+      betapw(iges)=0.0
+      betatw(iges)=0.0
+      wplasw(iges)=0.0
+      tave(iges)=0.0
 !
       xdum=0.0
       ydum=0.0
@@ -2722,8 +2727,49 @@
       if ((itek.eq.4).and.(iges.eq.igmax)) call donepl
       if ((itek.ge.5).and.(iges.eq.igmax)) call closepl
       if ((ilaser.gt.0).and.(iges.eq.igmax)) call donepl
-
-      else is_vacuum 
+!-----------------------------------------------------------------------
+!--   vertical stability parameter,  reference Nuc Fusion  18(1978)1331
+!--   move out of pltout so that vertn, xnnc are indepent of itek value
+!-----------------------------------------------------------------------
+      do i=1,nw
+        do j=1,nh
+          kk=(i-1)*nh+j
+          copy(i,j)=0.0
+          do m=1,nfcoil
+            copy(i,j)=copy(i,j)+gridfc(kk,m)*brsp(m)
+          enddo
+          if (ivesel.gt.0) then
+            do m=1,nvesel
+              copy(i,j)=copy(i,j)+gridvs(kk,m)*vcurrt(m)
+            enddo
+          endif
+          if (iecurr.gt.0) then
+            do m=1,nesum
+              copy(i,j)=copy(i,j)+gridec(kk,m)*ecurrt(m)
+            enddo
+          endif
+        enddo
+      enddo
+      do i=1,nw
+        do j=1,nh
+          k=(i-1)*nh+j
+          copyn(k)=copy(i,j)
+        enddo
+      enddo
+      call sets2d(copyn,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
+      rcur=rcurrt(jges)/100
+      zcur=zcurrt(jges)/100
+      call seva2d(bkx,lkx,bky,lky,c,rcur,zcur,pds,ier,n555)
+      vertn(jges)=1.-pds(5)/pds(2)*rcur
+      rx=rmagx(jges)/100.
+      f_0=log(8*rout(jges)/abar)-2+betap(jges)+ali(jges)/2+.5_dp
+      delr=rout(jges)/100.-1.67_dp
+!-----------------------------------------------------------------------
+!--   metal wall                                                    --
+!-----------------------------------------------------------------------
+      xnnc(jges)=vertn(jges)/((10.77_dp*delr**2+8.08_dp*delr+2.54_dp)/f_0)
+!
+      else is_vacuum
       limloc(iges)='VAC'
       call chisqr(iges)
       if (itek.gt.0) then
@@ -2734,52 +2780,107 @@
       if ((itek.eq.4).and.(iges.eq.igmax)) call donepl
       if ((itek.ge.5).and.(iges.eq.igmax)) call closepl
       if ((ilaser.gt.0).and.(iges.eq.igmax)) call donepl
+      ! initialize output variables that weren't set
+      zout=0.0
+      eout=0.0
+      doutu=0.0
+      doutl=0.0
+      qsta=0.0
+      oleft=0.0
+      oright=0.0
+      otop=0.0
+      obott=0.0
+      olefs=0.0
+      orighs=0.0
+      otops=0.0
+      obots=0.0
+      qpsib=0.0
+      shearb=0.0
+      vertn=0.0
+      rco2v=0.0
+      dco2v=0.0
+      rco2r=0.0
+      dco2r=0.0
+      sibdry=0.0
+      areao=0.0
+      terror=0.0
+      elongm=0.0
+      qmerci=0.0
+      qqmagx=0.0
+      cdflux=0.0
+      alpha=0.0
+      rttt=0.0
+      xndnt=0.0
+      rseps=0.0
+      zseps=0.0
+      sepexp=0.0
+      seplim=0.0
+      aaq1=0.0
+      aaq2=0.0
+      aaq3=0.0
+      rmagx=0.0
+      zmagx=0.0
+      simagx=0.0
+      rcurrt=0.0
+      zcurrt=0.0
+      ali=0.0
+      ali3=0.0
+      betap=0.0
+      betat=0.0
+      wplasm=0.0
+      betapd=0.0
+      betatd=0.0
+      wplasmd=0.0
+      bpolav=0.0
+      s1=0.0
+      s2=0.0
+      s3=0.0
+      qout=0.0
+      btaxp=0.0
+      btaxv=0.0
+      zuperts=0.0
+      cjor0=0.0
+      cjor95=0.0
+      cjor99=0.0
+      cj1ave=0.0
+      pp95=0.0
+      ssep=0.0
+      yyy2=0.0
+      xnnc=0.0
+      fexpan=0.0
+      qqmin=0.0
+      rqqmin=0.0
+      ssi01=0.0
+      ssi95=0.0
+      fexpvs=0.0
+      sepnose=0.0
+      rmidin=0.0
+      rmidout=0.0
+      psurfa=0.0
+      peak=0.0
+      dminux=0.0
+      dminlx=0.0
+      dolubaf=0.0
+      dolubafm=0.0
+      diludom=0.0
+      diludomm=0.0
+      ratsol=0.0
+      rvsiu=0.0
+      zvsiu=0.0
+      rvsid=0.0
+      zvsid=0.0
+      rvsou=0.0
+      zvsou=0.0
+      rvsod=0.0
+      zvsod=0.0
+      psin21=0.0
+      psin32=0.0
+      rq21top=0.0
+      rq32in=0.0
+      tflux=0.0
+      twagap=0.0
 !
       endif is_vacuum
-!
-!-----------------------------------------------------------------------
-!-- vertical stability parameter,  reference Nuc Fusion  18(1978)1331 --
-!-- move out of pltout so that vertn, xnnc are indepent of itek value --
-!-----------------------------------------------------------------------
-      not_vacuum: if (ivacum.le.0) then
-        do i=1,nw
-          do j=1,nh
-            kk=(i-1)*nh+j
-            copy(i,j)=0.0
-            do m=1,nfcoil
-              copy(i,j)=copy(i,j)+gridfc(kk,m)*brsp(m)
-            enddo
-            if (ivesel.gt.0) then
-              do m=1,nvesel
-                copy(i,j)=copy(i,j)+gridvs(kk,m)*vcurrt(m)
-              enddo
-            endif
-            if (iecurr.gt.0) then
-              do m=1,nesum
-                copy(i,j)=copy(i,j)+gridec(kk,m)*ecurrt(m)
-              enddo
-            endif
-          enddo
-        enddo
-        do i=1,nw
-          do j=1,nh
-            k=(i-1)*nh+j
-            copyn(k)=copy(i,j)
-          enddo
-        enddo
-        call sets2d(copyn,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
-        rcur=rcurrt(jges)/100
-        zcur=zcurrt(jges)/100
-        call seva2d(bkx,lkx,bky,lky,c,rcur,zcur,pds,ier,n555)
-        vertn(jges)=1.-pds(5)/pds(2)*rcur
-        rx=rmagx(jges)/100.
-        f_0=log(8*rout(jges)/abar)-2+betap(jges)+ali(jges)/2+.5_dp
-        delr=rout(jges)/100.-1.67_dp
-!-----------------------------------------------------------------------
-!--     metal wall                                                    --
-!-----------------------------------------------------------------------
-        xnnc(jges)=vertn(jges)/((10.77_dp*delr**2+8.08_dp*delr+2.54_dp)/f_0)
-      endif not_vacuum
 !
 !------------------------------------------------------------------
 !--   compute shearing rate eshear                               --

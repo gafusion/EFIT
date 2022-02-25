@@ -364,7 +364,7 @@
           enddo
         endif
         psipla(kk)=psi(kk)
-        if (ivacum.le.0)then
+        if (ivacum.le.0) then
           do ii=1,nw
             do jj=1,nh
               kkkk=(ii-1)*nh+jj
@@ -581,6 +581,13 @@
       real*8 :: zmaxis_last = 0.0
       data isplit/8/,psitol/1.0e-04_dp/,cdum/1.0/
       save xguess, yguess, xltrac, radbou
+!
+      ! initialize variables
+      zmaxis=0.0
+      simag=0.0
+      vout=0.0
+      rout=0.0
+      aout=0.0
 !
       if (ivacum.gt.0) return
       if (ixt.le.1) then
@@ -1126,6 +1133,7 @@
       save isicinit,zelips
       character(14) :: sfile
 !
+      pcurrt=0.0
       if (ivacum.gt.0) return
 !----------------------------------------------------------------------
 !--   icinit=1 uniform and elliptical flux surfaces                  --

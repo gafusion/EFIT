@@ -497,10 +497,10 @@
         real*8,dimension(:), allocatable :: cpasma,xndnt 
         real*8,dimension(:,:), allocatable :: ccbrsp
         real*8,dimension(:,:), allocatable :: caccurt
-        real*8 cbetap,cli,cqqxis,cbetat,ci0,cipmp2 
+        real*8 cli,cqqxis,ci0,cipmp2 
 !vas      common/cvalue/csilop(nsilop,ntime),crogow(nrogow,ntime), &
 !vas        cmpr2(magpri,ntime),cpasma(ntime),xndnt(ntime) &
-!vas       ,cbetap,cli,cqqxis,cbetat,ci0,cipmp2 &
+!vas       ,cli,cqqxis,ci0,cipmp2 &
 !vas       ,ccbrsp(nfcoil,ntime),caccurt(ntime,nacoil) &
 !vas       ,csilopv(nsilop,ntime),cmpr2v(magpri,ntime)
       end module var_cvalue
@@ -551,7 +551,7 @@
         use var_hist, only: taumhd,taudia,vsurfa,wpdot,wbdot,slantu,slantl, &
                             rvsin,zvsin,rvsout,zvsout
         use var_fitsiref, only: saisref
-        use var_cvalue, only: csilopv,cmpr2v,cbetap,cli,cqqxis,cbetat,ci0
+        use var_cvalue, only: csilopv,cli,cqqxis,ci0
         implicit none
 
         ! initialize variables
@@ -563,12 +563,8 @@
         slantu=0.0
         slantl=0.0
         saisref=0.0
-        csilopv=0.0
-        cmpr2v=0.0
-        cbetap=0.0
         cli=0.0
         cqqxis=0.0
-        cbetat=0.0
         ci0=0.0
         rvsin=0.0
         zvsin=0.0

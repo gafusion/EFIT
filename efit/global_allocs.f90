@@ -229,17 +229,17 @@ ALLOCATE(volecs(nesum),volecc(nesum),rsisec(nesum),volfcs(nfcoil),volfcc(nfcoil)
    yyy2(ntime),xnnc(ntime),wtherm(ntime),wfbeam(ntime),taujd3(ntime),tauthn(ntime), &
    ali3(ntime),tflux(ntime),twagap(ntime), rseps(2,ntime),zseps(2,ntime))
 
-ALLOCATE(csilop(nsilop,ntime),csilopv(nsilop,ntime), crogow(nrogow,ntime), &
-   cmpr2(magpri,ntime),cmpr2v(magpri,ntime), cpasma(ntime),xndnt(ntime), &
-   ccbrsp(nfcoil,ntime), caccurt(ntime,nacoil), qsiwant(ntime), &
-   cjorsw(ntime),cjor0(ntime), ssiwant(ntime), ssi95(ntime),cjor99(ntime), &
-   cj1ave(ntime),rmidin(ntime),rmidout(ntime), psurfa(ntime), &
+ALLOCATE(csilop(nsilop,ntime),csilopv(nsilop,ntime),crogow(nrogow,ntime), &
+   cmpr2(magpri,ntime),cmpr2v(magpri,ntime),cpasma(ntime),xndnt(ntime), &
+   ccbrsp(nfcoil,ntime),caccurt(ntime,nacoil),qsiwant(ntime), &
+   cjorsw(ntime),cjor0(ntime),ssiwant(ntime),ssi95(ntime),cjor99(ntime), &
+   cj1ave(ntime),rmidin(ntime),rmidout(ntime),psurfa(ntime), &
    dolubaf(ntime),dolubafm(ntime),diludom(ntime), &
    diludomm(ntime),dminux(ntime),dminlx(ntime), &
    ratsol(ntime),rvsiu(ntime),zvsiu(ntime),rvsou(ntime), &
-   zvsou(ntime),rvsid(ntime),zvsid(ntime),rvsod(ntime), zvsod(ntime), &
+   zvsou(ntime),rvsid(ntime),zvsid(ntime),rvsod(ntime),zvsod(ntime), &
    vtime(ntime), &
-   s1(ntime),s2(ntime),s3(ntime),bpolav(ntime), rfcfc(nfcoil,nfcoil), &
+   s1(ntime),s2(ntime),s3(ntime),bpolav(ntime),rfcfc(nfcoil,nfcoil), &
    rbdry_ext(mbdry),zbdry_ext(mbdry),xlim_ext(nlimit),ylim_ext(nlimit))
 
 !
