@@ -26,6 +26,7 @@
       nitera=0
       ndelzon=999
       iwantk=0
+      cjeccd=0.0
       iend=mxiter+1
       if (iconvr.eq.3) iend=1
       idosigma=1

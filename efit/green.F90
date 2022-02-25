@@ -20,7 +20,7 @@
       dimension xpsii(nwcurn),xpsis(nwcurn),xpsisb(nwcurn)
       dimension xsier(nercur)
       dimension pds(6),xnsi(nppcur)
-!
+!      
       kffp1=kffcur+1
       do jj=1,kwcurn
         if (ifag.ne.1) then
@@ -529,7 +529,7 @@
             rmsnow=rrgam(jtime,m)
             zmsnow=zzgam(jtime,m)
             call seva2d(bkx,lkx,bky,lky,c,rmsnow,zmsnow,pds,ier,n333)
-            xmsinow=(simag-pds(1))/sidif
+            xmsinow=(simag-pds(1))/sidif ! TODO: simag is unset here...
             call seter(xmsinow,xsier)
             do jj=1,keecur
               e1rbz(m,jj)=a5gam(jtime,m)*pds(2)*xsier(jj)
@@ -554,7 +554,7 @@
             if (rrmselt(jtime,m).le.0.0) cycle
             call seva2d(bkx,lkx,bky,lky,c,rrmselt(jtime,m), &
                         zzmselt(jtime,m),pds,ier,n333)
-            xn=(simag-pds(1))/sidif
+            xn=(simag-pds(1))/sidif ! TODO: simag is unset here...
             if (xn.ge.1.0) then
               do jj=kppcur+1,kpcurn
                 rmlspc(m,jj)=fmlscut

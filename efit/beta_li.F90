@@ -29,12 +29,11 @@
       integer*4, intent(inout) :: kerror
       data inorm/3/,ibtcal/2/
 
-      kerror = 0
-
       ALLOCATE(worksi(nw),workrm(nw),bwork(nw), &
          cwork(nw),dwork(nw),x(nw),y(nh),dpleng(npoint))
 
-      if (ivacum.gt.0) return
+      kerror = 0
+
       sumbp2=0.0
       select case (licalc)
       case (1)
@@ -428,8 +427,8 @@
         if (kbetapr.eq.2) pxxxxx=pressb
         sumpre=-sumpre*dsi/volp(nw)+pxxxxx
       endif
-      betat(jtime)=sumpre*2.0*twopi*tmu/bcentr(jtime)**2
       betap(jtime)=sumpre*2.0*twopi*tmu/bp2flx
+      betat(jtime)=sumpre*2.0*twopi*tmu/bcentr(jtime)**2
       betat(jtime)=100.*betat(jtime)*(rout(jtime)/100./rcentr)**2
       wplasm(jtime)=1.5_dp*betap(jtime)*bp2flx/2./tmu/2./pi*vout(jtime) &
                     /1.0e+06_dp
@@ -449,8 +448,8 @@
       if (kvtor.gt.0) then
         sumprt=sumprt/volp(nw)
         sumprw=sumprw/volp(nw)
-        betat(jtime)=sumprt/sumpre*betat(jtime)
         betap(jtime)=sumprt/sumpre*betap(jtime)
+        betat(jtime)=sumprt/sumpre*betat(jtime)
         wplasm(jtime)=sumprt/sumpre*wplasm(jtime)
         betapw(jtime)=sumprw/sumprt*betap(jtime)
         betatw(jtime)=sumprw/sumprt*betat(jtime)
@@ -682,8 +681,8 @@
         if (kbetapr.eq.2) pxxxxx=pressb
         sumpre=-sumpre*dsi/volp(nw)+pxxxxx
       endif
-      betat(jtime)=sumpre*2.0*twopi*tmu/bcentr(jtime)**2
       betap(jtime)=sumpre*2.0*twopi*tmu/bp2flx
+      betat(jtime)=sumpre*2.0*twopi*tmu/bcentr(jtime)**2
       betat(jtime)=100.*betat(jtime)*(rout(jtime)/100./rcentr)**2
       pasman=cpasma(jtime)/1.e4_dp/aout(jtime)/abs(bcentr(jtime))
       pasman=pasman*rout(jtime)/100./rcentr

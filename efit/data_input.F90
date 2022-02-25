@@ -167,7 +167,7 @@
                ,devfcin(nfcoil),rnavfcin(nfcoil) & 
                ,devein(nesum),rnavecin(nesum),brsptu(nfcoil)) 
  
-      brsptu(1)=-1.e-20_dp
+      brsp=0.0
       sbmsels=0.0
       tlibim=0.0
       slibim=0.0
