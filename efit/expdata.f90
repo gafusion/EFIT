@@ -13,16 +13,17 @@
 !!            Initialization is passed in.
 !!
 !**********************************************************************
-      subroutine getlim(limmode,xltype,xltype_180)
+      subroutine getlim(limmode,xltype,xltype_180,shape_ext)
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       integer*4 limmode,ilimshot
+      logical shape_ext
       character*100 filin
       namelist/lim/xlim,ylim,limitr
       data lfile/36/
 !
-      if ((limitr_ext.gt.0 .or. limitr.gt.0).and.(limmode.ne.0)) go to 50240
+      if ((shape_ext .or. limitr.gt.0).and.(limmode.ne.0)) go to 50240
 !
 ! --- read in limiter data
 !
