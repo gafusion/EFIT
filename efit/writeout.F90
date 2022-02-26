@@ -1087,10 +1087,7 @@
 !
       close(unit=neqdsk)
       ltbdir=ltbdis
-      ! TODO: which is best?
       table_dir = table_s
-!      table_dir(1:ltbdis) = table_s(1:ltbdis)
-!      table_dir = table_s(1:ltbdis) !compilers do not like...
  4042 format (1x,a42,1x,a3)
       end subroutine write_K2
 

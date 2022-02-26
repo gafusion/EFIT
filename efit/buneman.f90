@@ -9,18 +9,16 @@
 !!    @param sia :
 !!********************************************************************* 
       subroutine buneto(psi,nwb,nhb,sia) 
-!vas  f90 modifi. 
       use set_kinds 
-      use var_buneman 
+      use var_buneman
+      use eparm, only: nw, nh
  
       implicit integer*4 (i-n), real*8 (a-h, o-z) 
-      real(dp), dimension(nwb*nhb), intent(inout) ::   psi, sia
-      integer(i4), intent(in) ::   nwb, nhb
-!vas  f90 modifi 
-!vas      common/buneman/mno,m,n,s,shift,dr,dz 
-      mno = nbmdim 
-      m = nww 
-      n = nhh 
+      real(dp), dimension(nwb*nhb), intent(inout) :: psi, sia
+      integer(i4), intent(in) :: nwb, nhb
+      mno = max(nw,nh)+1 
+      m = nw-1
+      n = nh-1
       s = drdz2 
       shift = rgrid1 
       dr = delrgrid 
@@ -57,7 +55,6 @@
       return 
       end subroutine buneto
  
- 
 !********************************************************************** 
 !!
 !>    rzpois solves for the poloidal flux using the
@@ -68,15 +65,9 @@
 !!
 !!********************************************************************* 
       subroutine rzpois(nq,q) 
-!vas  f90 modifi 
       use set_kinds 
       use var_buneman 
  
-!vas      implicit integer*4 (i-n), real*8 (a-h, o-z) 
-!vas      common/buneman/mno,m,n,s,shift,dr,dz 
-!vas      dimension   g(mno),p(mno),c(mno),d(mno),temp(mno) 
-!vas      dimension  q(1) 
-!vas  f90 modifi 
       implicit none 
       integer*4, intent(in) :: nq
       real(dp), dimension(nq), intent(inout) :: q
@@ -92,7 +83,6 @@
       real(dp),dimension(:), allocatable :: temp 
  
       flag = 0.0 
-!vas  f90 modifi 
       allocate(g(mno),stat=iallocate_stat) 
       if(iallocate_stat/=0) stop "*** Not enough space for g ***" 
       allocate(p(mno),stat=iallocate_stat) 
@@ -104,22 +94,11 @@
       allocate(temp(mno),stat=iallocate_stat) 
       if(iallocate_stat/=0) stop "*** Not enough space for temp ***" 
  
-!vas  f90 modifi 
-!vas    do i = 1,mno 
-!vas      g(i) = 0. 
-!vas      p(i) = 0. 
-!vas      d(i) = 0. 
-!vas    enddo
       g = 0. 
       p = 0. 
       d = 0. 
  
       if (flag .eq. 0.) then 
-!vas  f90 modifi 
-!vas    do i = 1,mno 
-!vas      temp(i) = 0. 
-!vas      c(i) = 0. 
-!vas    enddo
         temp = 0. 
         c = 0. 
  
@@ -227,7 +206,6 @@
         if (lo.eq.1) ko = 1 
         go to 15 
       end select
-!vas  f90 modifi. 
       deallocate(g) 
       deallocate(p) 
       deallocate(c) 

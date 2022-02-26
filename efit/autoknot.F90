@@ -197,7 +197,7 @@
 ! used by autoknot which passes the routine to a minimization subroutine
 ! which calls it to evaulate the function being minimized
 !
-      function ppakfunc(xknot) ! TODO: kerror is not returned
+      function ppakfunc(xknot)
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -224,7 +224,7 @@
 ! used by autoknot which passes the routine to a minimization subroutine
 ! which calls it to evaulate the function being minimized
 !
-      function ffakfunc(xknot) ! TODO: kerror is not returned
+      function ffakfunc(xknot)
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -251,7 +251,7 @@
 ! used by autoknot which passes the routine to a minimization subroutine
 ! which calls it to evaulate the function being minimized
 !
-      function wwakfunc(xknot) ! TODO: kerror is not returned
+      function wwakfunc(xknot)
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -278,7 +278,7 @@
 ! used by autoknot which passes the routine to a minimization subroutine
 ! which calls it to evaulate the function being minimized
 !
-      function eeakfunc(xknot) ! TODO: kerror is not returned
+      function eeakfunc(xknot)
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'

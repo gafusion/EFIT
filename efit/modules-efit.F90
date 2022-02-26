@@ -398,7 +398,6 @@
 
       module var_buneman
         integer*4 :: mno,m,n
-        integer*4 :: nbmdim,nww,nhh
         real*8    :: drdz2,rgrid1,delrgrid,delz
         real*8    :: s,shift,dr,dz
       end module var_buneman
