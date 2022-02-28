@@ -2215,7 +2215,7 @@
 !----------------------------------------------------------------------- 
 !---- read in limiter data                                            -- 
 !----------------------------------------------------------------------- 
-      call getlim(1,xltype,xltype_180) 
+      call getlim(1,xltype,xltype_180,shape_ext) 
 ! 
       if (iconvr.lt.0) then
         iecurr=1

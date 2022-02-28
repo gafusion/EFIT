@@ -130,7 +130,7 @@
       icycred_loopmax=1290
       nfourier=5
           
-      OPEN(unit=nout,status='new',file='dprobe.dat')
+      OPEN(unit=nout,status='unknown',file='dprobe.dat')
 
       WRITE (nout,machinein)
       CLOSE (nout)
@@ -224,7 +224,7 @@
       icycred_loopmax=1290
       nfourier=5
           
-      OPEN(unit=nout,status='new',file='dprobe.dat')
+      OPEN(unit=nout,status='unknown',file='dprobe.dat')
 
       WRITE (nout,machinein)
       CLOSE (nout)
