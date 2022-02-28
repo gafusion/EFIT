@@ -935,16 +935,7 @@
             REAL*8,DIMENSION(nr) :: rr
             REAL*8,DIMENSION(nz) :: zz
       DIMENSION coef(mp,nc)
-!
-      IF (.NOT. ALLOCATED(brgridfc)) THEN
-         ALLOCATE(brgridfc(nwnh,nfcoil))
-         brgridfc(:,:) = 0.0
-      ENDIF
-      IF (.NOT. ALLOCATED(bzgridfc)) THEN
-         ALLOCATE(bzgridfc(nwnh,nfcoil))
-         bzgridfc(:,:) = 0.0
-      ENDIF
-!
+
       radeg=pi/180.
       isplit=17
       itot=isplit*isplit
@@ -1222,6 +1213,17 @@
                ENDDO 
             ENDIF 
          ENDIF 
+
+         !
+         IF (.NOT. ALLOCATED(brgridfc)) THEN
+            ALLOCATE(brgridfc(nwnh,nfcoil))
+            brgridfc(:,:) = 0.0
+         ENDIF
+         IF (.NOT. ALLOCATED(bzgridfc)) THEN
+            ALLOCATE(bzgridfc(nwnh,nfcoil))
+            bzgridfc(:,:) = 0.0
+         ENDIF
+!
 !-----------------------------------------------------------------------
 !--      compute the response FUNCTION of magnetic probes due to f coils
 !-----------------------------------------------------------------------
