@@ -240,7 +240,7 @@ NICOIL,,"| Magnetic compensation from I coils
 | - 1 = compensation on (default).
 | - 0 = no compensation."
 NMASS,,"""Number Mass"". Number of valid data points in DMASS."
-NPNEF,,???
+NPNEF,," - = number of electron density profile constraints."
 NPNETH,, "- = number of terms in polynomial(?) fit of ne for kinetic option. Requires 
 | appropriate EDAT file (from ENERGY code). (Get ne as a function of normalized flux?)"
 NPTEF,,"if kprfit=2 and npteth<0, then nptef=-npteth"
