@@ -24,7 +24,7 @@
 
       kerror = 0
 
-      if (npnef.ne.0) then
+      ne_constraint: if (npnef.ne.0) then
 !----------------------------------------------------------------------
 !--   singular decomposition                                         --
 !----------------------------------------------------------------------
@@ -125,7 +125,6 @@
 !----------------------------------------------------------------------
 !--   get co2 v2 chord normalization factor                          --
 !----------------------------------------------------------------------
-      factor=1.0 ! TODO: this appears to be unset (should it be removed?)
       call lenco2(xout,yout,nfound,jtime)
       delz=(zuperts(jtime)-zlowerts)/(nh-1)*0.01_dp
       dneco2=debdry
@@ -151,12 +150,12 @@
       enddo
       debdry=debdry*fco2now
       sdebdry=sdebdry*fco2now
-      dibdry=factor*debdry
-      dipbry=factor*depbry
-      sigdipb=factor*sigdepb
-      sdibdry=factor*sdebdry
+      dibdry=debdry
+      dipbry=depbry
+      sigdipb=sigdepb
+      sdibdry=sdebdry
 !
-      endif ! npnef.ne.0
+      endif ne_constraint
 !-----------------------------------------------------------------------
 !--   get ion density profile from zeff                               --
 !-----------------------------------------------------------------------

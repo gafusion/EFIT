@@ -22,7 +22,7 @@
 
       character filenm*15,ishotime*12,news*72,table_s*72, &
                 eqdsk*20,comfile*15,prefix1*1,header*42,fit_type*3
-      integer*4 ltbdis,versiondate
+      integer*4 ltbdis
       real*8,dimension(:),allocatable :: coils,expmp2, &
                 denr,denv, tgamma,sgamma,rrrgam, &
                 zzzgam,aa1gam,aa2gam, aa3gam,aa4gam,aa5gam, &
@@ -280,9 +280,7 @@
           if ((kdata.ne.1).and.(kdata.ne.2)) then
             table_di2 = table_dir(1:ltbdir)//'156014/'
           else
-            read(efitversion,*,iostat=ioerr) versiondate
-            if (ioerr.ne.0) versiondate = 99999999 ! EFIT-AI hash string
-            if (versiondate <= 20140331) then
+            if (efitversion <= 20140331) then
               table_di2 = table_dir(1:ltbdir)//'112000/'
             else
               table_di2 = table_dir(1:ltbdir)//'156014/'
@@ -295,7 +293,6 @@
         endif
         ltbdi2=ltbdir+7
       endif
-      efitversion = efitvers//" "
       ksstime = ktime
 !---------------------------------------------------------------------
 !--    specific choice of current profile                           --
@@ -853,7 +850,6 @@
       ALLOCATE(tlibim(libim),slibim(libim),rrrlib(libim))
 
       kerror = 0
-      efitversion = efitvers//" "
 !----------------------------------------------------------------
 !--   recover the value of table_dir for mode 3 or 7           --
 !----------------------------------------------------------------
@@ -1091,10 +1087,7 @@
 !
       close(unit=neqdsk)
       ltbdir=ltbdis
-      ! TODO: which is best?
       table_dir = table_s
-!      table_dir(1:ltbdis) = table_s(1:ltbdis)
-!      table_dir = table_s(1:ltbdis) !compilers do not like...
  4042 format (1x,a42,1x,a3)
       end subroutine write_K2
 

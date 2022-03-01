@@ -14,6 +14,7 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
+      use var_buneman, only: delrgrid, delz
       implicit none
       integer*4 ef_init_cycred_data
       real*8 u0, cosdii, sindi, denom, dr, dumy, dumy1
@@ -46,10 +47,9 @@
 
 ! ----------------------------------------------------------------------
 !     Elements of the tridiagonal matrix.
-!     TODO: replace these with the common block couterparts
 
-      dr = rgrid(2) - rgrid(1)
-      dz = zgrid(2) - zgrid(1)
+      dr = delrgrid
+      dz = delz
 
       dzsq = dz*dz
       dzdrsq = (dz/dr) * (dz/dr)

@@ -17,8 +17,8 @@
 !**********************************************************************
       subroutine pflux(niter,nnin,ntotal,jtime,kerror)
       use set_kinds 
-      use var_buneman
-      use commonblocks,only: c,wk,copy,bkx,bky,psiold,psipold, psipp
+      use var_buneman, only: rgrid1,delrgrid,delz,drdz2
+      use commonblocks, only: c,wk,copy,bkx,bky,psiold,psipold,psipp
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -51,9 +51,6 @@
 !--   only plasma contribution                                              --
 !-----------------------------------------------------------------------------
       if (init.le.0) then
-        nww=nw-1
-        nhh=nh-1
-        nbmdim=max(nw,nh)+1
 !-----  These must be brought into the integrals 
         rgrid1=rgrid(1)
         delrgrid=rgrid(2)-rgrid(1)

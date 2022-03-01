@@ -23,8 +23,9 @@
         character(256) table_dir,input_dir,store_dir,table_di2,link_efitx,link_storex
         integer*4 ltbdir,lindir,lstdir,ltbdi2
 
-        character(7) :: efitvers
-        character(512) :: giturl,gitbranch,githash,lmods
+        character(7) :: efitvers ! git hash
+        integer*4 :: efitversion ! commit date (legacy name...)
+        character(512) :: giturl,gitbranch,githash,gitdate,lmods
         character(512) :: fc,fc_id,fcver
         character(5096) :: fcflags
         character(256) :: arch_type,hostname
@@ -397,7 +398,6 @@
 
       module var_buneman
         integer*4 :: mno,m,n
-        integer*4 :: nbmdim,nww,nhh
         real*8    :: drdz2,rgrid1,delrgrid,delz
         real*8    :: s,shift,dr,dz
       end module var_buneman

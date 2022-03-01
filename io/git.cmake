@@ -36,3 +36,10 @@ execute_process(
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
+# Get date of the working branch
+execute_process(
+  COMMAND git log -1 --format=%cs
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE GIT_COMMIT_DATE
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
