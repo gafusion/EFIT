@@ -421,14 +421,14 @@
 
       character*12 mfitpop
       character*5 mfvers(2)
-      data mfvers(1)/'05/19'/,mfvers(2)/'/2021'/
+      data mfvers(1)/'03/16'/,mfvers(2)/'/2022'/
       character(4),dimension(ntime) :: limloc
       character(10),dimension(nvesel) :: vsname
       character(10),dimension(magpri) :: mpnam2
       character(10),dimension(nsilop) :: lpname
       character  filimt*100,cshot*6,jdebug*4
       integer idebug,efitversion
-      data idebug/0/,efitversion/20210519/
+      data idebug/0/,efitversion/20220316/
       data jdebug/'NONE'/
       end module var_inputc
 

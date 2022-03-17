@@ -255,7 +255,7 @@
       if (lshot.ge.112000.and.jtime.le.1) then
         if (lshot.lt.156000) then
           table_di2 = table_dir(1:ltbdir)//'112000/'
-        elseif  (ishot.lt.168191) then
+        elseif  (lshot.lt.168191) then
           if (kdata.ne.2) then
             table_di2 = table_dir(1:ltbdir)//'156014/'
           else
@@ -265,9 +265,9 @@
                table_di2 = table_dir(1:ltbdir)//'156014/'
             endif
           endif
-        elseif (ishot.lt.181292) then
+        elseif (lshot.lt.181292) then
           table_di2 = table_dir(1:ltbdir)//'168191/'
-        elseif (ishot.ge.181292) then
+        elseif (lshot.ge.181292) then
           table_di2 = table_dir(1:ltbdir)//'181292/'
         endif
         ltbdi2=ltbdir+7
