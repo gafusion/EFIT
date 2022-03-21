@@ -1,0 +1,55 @@
+
+          EFITD Version  03/16/2022
+
+
+ type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+
+ command file name ( 0=none) ?
+
+ good shot list file name ( 0=tty) ?
+
+ type shot #, start time(ms), time step(ms), steps(<1001):
+ GETPTS call   4.82 sec
+ GETPTS transfer       9396 bytes in   0.00 sec
+ Calling $Name: V3_07 $ of the mse shared library
+ (mse_lib2:read_mse_files)       186610
+ (mse_lib2:read_msetup)
+ /fusion/projects/codes/mse/calib/msetup2.dat                                                                                    
+  Using users msetup file: 
+ /fusion/projects/codes/mse/calib/msetup2.dat                                                                                    
+ (mse_lib2:read_mcalgain) 
+ /fusion/projects/codes/mse/calib/mcalgain_798.dat                                                                               
+ (mse_lib2:read_mcalgain_rows) 
+ /fusion/projects/codes/mse/calib/mcalgain_798.dat                                                                               
+  Using users mcalgain file: 
+ /fusion/projects/codes/mse/calib/mcalgain_798.dat                                                                               
+ (mse_lib2:read_mrz) 
+ /fusion/projects/codes/mse/calib/mrz_47.dat                                                                                     
+  Using users mrz file: 
+ /fusion/projects/codes/mse/calib/mrz_47.dat                                                                                     
+ (mselib2:read_mcalgain3) 
+ /fusion/projects/codes/mse/calib/mcalgain3_2002.dat                                                                             
+  Using users mcalgain3 file: 
+ /fusion/projects/codes/mse/calib/mcalgain3_2002.dat                                                                             
+ (mselib2:read_mcalgain4) 
+ /fusion/projects/codes/mse/calib/mcalgain4_2002.dat                                                                             
+ (mselib2:read_mcalgain4) 
+ /d/diags/mse/calib/mcalgain4_2002.dat                                                                                           
+ (mse_lib2:do_setup_and_beams) Beam on volts 
+           30left       79000.00    
+           210right     79000.00    
+           210left      58000.00    
+           30right      58000.00    
+ (mse_lib2:mse_fastEr_correction)
+            cerbranch    CERQUICK  
+ (mse_lib2:average_data) Cer correction done
+                        use_cer            1
+                        certree            0
+                        use_cer330            1
+                        use_cer210            0
+ GETSTARK call   1.45 sec
+ GETSTARK transfer      21540 bytes in   0.00 sec
+INFO in getsets at r= -1, t=    -1: Done writing k-files
+INFO in getsets at r= -1, t=    -1: Done writing k-files
+INFO in getsets at r= -1, t=    -1: Done writing k-files
+INFO in getsets at r= -1, t=    -1: Done writing k-files

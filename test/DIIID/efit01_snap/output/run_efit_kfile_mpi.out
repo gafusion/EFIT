@@ -1,0 +1,26 @@
+
+          EFIT-AI
+
+Git repository url git@gitlab.com:efit-ai/efit.git
+
+Git branch main
+
+Git hash 2218630 with local modifications
+
+Simulation started on  3/21/2022 at 12:33:24
+
+Code compiled with PGI 18.7.0
+
+
+ type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
+
+ command file name ( 0=none) ?
+
+ good shot list file name ( 0=tty) ?
+
+ type shot #, start time(ms), time step(ms), steps(<1001):
+ table_di2 = </home/bechtelt/efitall/efit/build_pgi_default/test/DIIID/green/>
+INFO in getsets at r= -1, t=    -1: Done writing k-files
+INFO in getsets at r= -1, t=    -1: Done writing k-files
+INFO in getsets at r= -1, t=    -1: Done writing k-files
+INFO in getsets at r= -1, t=    -1: Done writing k-files

@@ -24,11 +24,11 @@
       REAL*8 :: patmp2(magpr2)
       CHARACTER*10:: mpnam2(magpr2),lpname(nsilop)
       
-      NAMELIST/in3/ mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi, &
-           as,as2,lpname,rsisvs,turnfc,patmp2, &
-           zacoil,wacoil,hacoil, &
-           rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2, &
-           re,ze,ecid,rvs,zvs,we,he,fcturn
+      NAMELIST/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi, &
+                   as,as2,lpname,rsisvs,turnfc,patmp2, &
+                   zacoil,wacoil,hacoil, &
+                   rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2, &
+                   re,ze,ecid,rvs,zvs,we,he,fcturn
 
       OPEN(unit=nout,status='unknown',file='dprobe.dat', &
            position='append',delim='quote')
@@ -48,8 +48,8 @@
 !**                                                                  **
 !**********************************************************************
       SUBROUTINE dprobe_machinein(nfcoil_efund,nsilop_efund,magpr2_efund,&
-                                 nrogow_efund,necoil_efund,nesum_efund,&
-                                 nfsum_efund,nvsum_efund,nvesel_efund,nacoil_efund)
+                                  nrogow_efund,necoil_efund,nesum_efund,&
+                                  nfsum_efund,nvsum_efund,nvesel_efund,nacoil_efund)
      
       USE nio
       

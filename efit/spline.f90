@@ -77,21 +77,20 @@
       enddo
       h = yl - bky(lef)
       fs(1) = ppvalw(work0,h,n00)
-      if (icalc.eq.1) return
+      if(icalc.eq.1) return
       fs(2) = ppvalw(work1,h,n00)
-      if (icalc.eq.2) return
+      if(icalc.eq.2) return
       fs(3) = ppvalw(work0,h,n11)
-      if (icalc.eq.3) return
+      if(icalc.eq.3) return
       fs(4) = ppvalw(work1,h,n11)
-      if (icalc.eq.4) return
+      if(icalc.eq.4) return
       fs(5) = ppvalw(work2,h,n00)
-      if (icalc.eq.5) return
+      if(icalc.eq.5) return
       fs(6) = ppvalw(work0,h,n22)
 !
       return
       end subroutine seva2d
 
-      
 !------------------------------------------------------------------------------
 !--  S.Thompson  92/05/18                                                    --
 !--    Bicubic spline routines.                                              --
@@ -137,13 +136,13 @@
 
       ier = 0
       ALLOCATE(xknot(kubicx + nw),yknot(kubicy + nh), &
-         rknot(nw+krord),rgrid(nw),zgrid(nh), &
-         zknot(nh+kzord),copynew(nw,nh))
+               rknot(nw+krord),rgrid(nw),zgrid(nh), &
+               zknot(nh+kzord),copynew(nw,nh))
 !
 !     Set up knots:
 !     
-      call eknot (nx, x, kubicx, xknot)
-      call eknot (ny, y, kubicy, yknot)
+      call eknot(nx, x, kubicx, xknot)
+      call eknot(ny, y, kubicy, yknot)
 !
 !     Save the original, use the work array
 !
@@ -157,17 +156,16 @@
 !     Calculate spline coefficients:
 !
 
-      call spl2bc (x, y, xknot, yknot, wk)
+      call spl2bc(x, y, xknot, yknot, wk)
 !
 !     Coefficients stored in bkx, bky, and c:
 
-      call spl2pp (xknot, yknot, wk, bkx, lx, bky, ly, cs)
+      call spl2pp(xknot, yknot, wk, bkx, lx, bky, ly, cs)
 !
       DEALLOCATE(xknot,yknot,rknot,rgrid,zgrid,zknot,copynew)
 !
       return
       end subroutine sets2d
-
 
 !**********************************************************************
 !>
@@ -381,33 +379,23 @@
       if (s(n)/s(1) .le. 1.e-7_dp) ier = 33         ! Ill-conditioned or rank-deficient matrix
 !
       DO I = 1, N            ! Copy V into A
-         DO J = 1, N
-!           A(I, J) = V(I, J)
-            A(I, J) = V(J, I)
-         ENDDO
+!        A(I, 1:N) = V(I, 1:N)
+         A(I, 1:N) = V(1:N, I)
       ENDDO
-      IF (NB.EQ.1) THEN                   ! B is a vector
-         DO I = 1, M     ! Compute U**T * B
-            BB(I) = 0.0
-            DO J = 1, M
-               BB(I) = BB(I) + U(J, I)*B(J, 1)
-            ENDDO
+      IF (NB.EQ.1) THEN      ! B is a vector
+         DO I = 1, M         ! Compute U**T * B
+            BB(I) = SUM(U(1:M, I)*B(1:M, 1))
          ENDDO
-         DO I = 1, M    ! Replace B with U**T * B
-            B(I, 1) = BB(I)    
-         ENDDO
-      ELSE                                       ! B is a matrix
-         DO I = 1, NB                  ! Replace B with U**T
-            DO J = 1, M
-               B(J, I) = U(I, J)
-            ENDDO
+         B(1:M, 1) = BB(1:M) ! Replace B with U**T * B 
+      ELSE                   ! B is a matrix
+         DO I = 1, NB        ! Replace B with U**T
+            B(1:M, I) = U(I, 1:M)
          ENDDO
       ENDIF
 !
  100  format(' Array dimensions', 2i6 ,' too large. Recompile.')
       RETURN
       END SUBROUTINE SDECM
-
 
 !**********************************************************************
 !>
@@ -447,7 +435,6 @@
 !
       return
       end subroutine spl2bc
-
 
 !**********************************************************************
 !>
@@ -490,7 +477,6 @@
       return
       end subroutine spl2pp
 
-
 !**********************************************************************
 !>
 !!    given the ordered data points x(1)<...<x(n), this subroutine generates
@@ -522,18 +508,13 @@
       k2=kh+kh
       if (k2.eq.k) then
 !       even k, place knots at data points
-        do i=k+1,n
-          xk(i)=x(i-kh)
-        enddo
+        xk(k+1:n)=x(k+1-kh:n-kh)
       else
 !       odd k, place knots in between data points
-        do i=k+1,n
-          xk(i)=.5_dp*(x(i-kh)+x(i-1-kh))
-        enddo
+        xk(k+1:n)=.5_dp*(x(k+1-kh:n-kh)+x(k-kh:n-1-kh))
       end if
       return
       end subroutine eknot
-
 
 !**********************************************************************
 !>
@@ -594,7 +575,6 @@
 !!    REAL8 bcoef(m,n),gtau(n,m),q(n,7),t(n+k),tau(n),work(n),taui
 !!    
 !!    
-!!
 !**********************************************************************
       subroutine spli2d ( tau, gtau, t, n, k, m, work, q, bcoef, iflag )
       implicit integer*4 (i-n), real*8 (a-h, o-z)
@@ -611,9 +591,7 @@
          taui = tau(iindex)
          ilp1mx = min(iindex+k,np1)
 !        *** zero out all entries in row  i  of  a (in the 2k-1 bands)
-         do j=1,kpkm1
-            q(iindex,j) = 0.
-         enddo
+         q(iindex,1:kpkm1) = 0.
 !        *** find  left  in the closed interval (i,i+k-1) such that
 !                t(left) .le. tau(i) .lt. t(left+1)
 !        matrix is singular if this is not possible
@@ -626,7 +604,7 @@
 
    15    if (taui .ge. t(left+1)) then
             left = left + 1
-            if (left .lt. ilp1mx)       go to 15
+            if(left .lt. ilp1mx) go to 15
             left = left - 1
             if (taui .gt. t(left+1)) then
                iflag = 2
@@ -639,7 +617,7 @@
 !        left-k+1,...,left actually might be nonzero. these  k  numbers
 !        are returned, in  work  (used for temp.storage here), by the
 !        following
-         call bsplvb ( t, k, nnn, taui, left, work )
+         call bsplvb( t, k, nnn, taui, left, work )
 !        we therefore want  work(j) = b(left-k+j)(taui) to go into
 !        a(i,left-k+j), i.e., into  q(i,left-i+j), since the i-th row of
 !        a  is so stored in the i-th row of  q  that the (i,i)-entry of
@@ -652,24 +630,19 @@
       enddo
 !
 !     ***obtain factorization of  a  , stored again in  q.
-      call banfac ( q, n, n, kpkm1, k, iflag )
+      call banfac( q, n, n, kpkm1, k, iflag )
       if (iflag.eq.2) then
          write(*,*) ' linear system in  splint  not invertible'
          return
       endif
 !     *** solve  a*bcoef = gtau  by backsubstitution
       do j=1,m
-         do i=1,n
-            work(i) = gtau(i,j)
-         enddo
-         call banslv ( q, n, n, kpkm1, k, work )
-         do i=1,n
-            bcoef(j,i) = work(i)
-         enddo
+         work(1:n) = gtau(1:n,j)
+         call banslv( q, n, n, kpkm1, k, work )
+         bcoef(j,1:n) = work(1:n)
       enddo
       return
       end subroutine spli2d
-
 
 !**********************************************************************
 !>
@@ -715,7 +688,7 @@
       INTEGER*4 k,l,m,n,i,j,jp1,kmj,left
       dimension bcoef(n,m),break(*),coef(m,k,*),scrtch(k,k,m),t(*), &
            biatx(kmax)
-      REAL*8 diff,fkmj,sum
+      REAL*8 diff,fkmj,sm
 !
       n11=1
       n22=2
@@ -723,21 +696,17 @@
       break(1) = t(k)
       do left=k,n
 !        find the next nontrivial knot interval.
-         if (t(left+1) .eq. t(left)) cycle
+         if(t(left+1) .eq. t(left)) cycle
          l = l + 1
          break(l+1) = t(left+1)
          if (k .le. 1) then
-            do mm=1,m
-               coef(mm,1,l) = bcoef(left,mm)
-            enddo
+            coef(1:m,1,l) = bcoef(left,1:m)
             cycle
          endif
 !        store the k b-spline coeff.s relevant to current knot interval
 !        in  scrtch(.,1) .
          do i=1,k
-            do mm=1,m
-               scrtch(i,1,mm) = bcoef(left-k+i,mm)
-            enddo
+            scrtch(i,1,1:m) = bcoef(left-k+i,1:m)
          enddo
 !        for j=1,...,k-1, compute the k-j b-spline coeff.s relevant to
 !        current knot interval for the j-th derivative by differencing
@@ -748,11 +717,9 @@
             fkmj = kmj
             do i=1,kmj
                diff = (t(left+i) - t(left+i - kmj))/fkmj
-               if (diff .le. 0.) cycle
-               do mm=1,m
-                 scrtch(i,jp1,mm) = &
-                  (scrtch(i+1,j,mm) - scrtch(i,j,mm))/diff
-               enddo
+               if(diff .le. 0.) cycle
+               scrtch(i,jp1,1:m) = &
+                (scrtch(i+1,j,1:m) - scrtch(i,j,1:m))/diff
             enddo
          enddo
 !        starting with the one b-spline of order 1 not zero at t(left),
@@ -760,30 +727,22 @@
 !        not identically zero there from those of order j, then combine
 !        with the b-spline coeff.s found earlier to compute the (k-j)-
 !        th derivative at t(left) of the given spline.
-         call bsplvb ( t, n11, n11, t(left), left, biatx )
-         do mm=1,m
-            coef(mm,k,l) = scrtch(1  ,k,mm)
-         enddo
+         call bsplvb( t, n11, n11, t(left), left, biatx )
+         coef(1:m,k,l) = scrtch(1,k,1:m)
          do jp1=2,k
-            call bsplvb ( t, jp1, n22, t(left), left, biatx )
+            call bsplvb( t, jp1, n22, t(left), left, biatx )
             kmj = k+1 - jp1
             do mm=1,m
-               sum = 0.
-               do i=1,jp1
-                  sum = biatx(i)*scrtch(i,kmj,mm) + sum
-               enddo
-               coef(mm,kmj,l) = sum
+               coef(mm,kmj,l) = sum(biatx(1:jp1)*scrtch(1:jp1,kmj,mm))
            enddo
          enddo
       enddo
       return
       end subroutine bspp2d
 
-
 !**********************************************************************
 !>
 !!    
-!!    -----------------------------------------------------------------------
 !!    Calculates the value of all possibly nonzero b-splines at  x  of order
 !!    
 !!    jout  =  max( jhigh , (j+1)(index-1) )
@@ -826,25 +785,6 @@
 !!    the b-spline  b(left-jout+i,jout,t)  on the interval (t(left),
 !!    t(left+1)) .
 !!    
-!!    m e t h o d
-!!    the recurrence relation
-!!    
-!!    x - t(i)              t(i+j+1) - x
-!!    b(i,j+1)(x)  =  -----------b(i,j)(x) + ---------------b(i+1,j)(x)
-!!    t(i+j)-t(i)            t(i+j+1)-t(i+1)
-!!    
-!!    is used (repeatedly) to generate the (j+1)-vector  b(left-j,j+1)(x),
-!!    ...,b(left,j+1)(x)  from the j-vector  b(left-j+1,j)(x),...,
-!!    b(left,j)(x), storing the new values in  biatx  over the old. the
-!!    facts that
-!!    b(i,1) = 1  if  t(i) .le. x .lt. t(i+1)
-!!    and that
-!!    b(i,j)(x) = 0  unless  t(i) .le. x .lt. t(i+j)
-!!    are used. the particular organization of the calculations follows al-
-!!    gorithm  (8)  in chapter x of the text.
-!!    
-!!    -----------------------------------------------------------------------
-!!    
 !!
 !**********************************************************************
       subroutine bsplvb( t, jhigh, index, x, left, biatx )
@@ -864,7 +804,7 @@
       if (index .ne. 2) then
          j = 1
          biatx(1) = 1.
-         if (j .ge. jhigh) return
+         if(j .ge. jhigh) return
       endif
 !
    20 continue 
@@ -879,10 +819,9 @@
       enddo
       biatx(jp1) = saved
       j = jp1
-      if (j .lt. jhigh) go to 20
+      if(j .lt. jhigh) go to 20
       return
       end subroutine bsplvb
-
 
 !**********************************************************************
 !>
@@ -956,10 +895,9 @@
       return
       end function ppvalw
 
-
 !**********************************************************************
 !>
-!!    This subroutine does
+!!    This subroutine does ?
 !!    
 !!
 !!    @param a :
@@ -1003,10 +941,9 @@
       return
       end subroutine banslv
 
-
 !**********************************************************************
 !>
-!!    This subroutine does
+!!    This subroutine does ?
 !!    
 !!
 !!    @param a :
@@ -1080,10 +1017,8 @@
       endif
       end subroutine banfac
 
-
 !**********************************************************************
 !>
-!!    -----------------------------------------------------------------------
 !!    Computes  left = max( i ; 1 .le. i .le. lxt  .and.  xt(i) .le. x )  .
 !!    
 !!    i n p u t
@@ -1157,7 +1092,7 @@
    31    ihi = ilo
          ilo = ihi - istep
          if (ilo .gt. 1) then
-            if (x .ge. xt(ilo)) go to 50
+            if(x .ge. xt(ilo)) go to 50
             istep = istep*2
             go to 31
          endif
@@ -1174,7 +1109,7 @@
    41 ilo = ihi
       ihi = ilo + istep
       if (ihi .lt. lxt) then
-         if (x .lt. xt(ihi)) go to 50
+         if(x .lt. xt(ihi)) go to 50
          istep = istep*2
          go to 41
       endif
@@ -1200,7 +1135,6 @@
       ilo = middle
       go to 50
       end subroutine interv
-
 
 !**********************************************************************
 !>
@@ -1241,22 +1175,18 @@
       SUBROUTINE LINV1F(A,N,IA,AINV,IDGT,WK,IER)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       !
-      REAL*4   A(IA,IA),AINV(IA,IA),WK(N)
-      REAL*4   DET(2)
+      REAL*8   A(IA,IA),AINV(IA,IA),WK(N)
+      REAL*8   DET(2)
       INTEGER*4 IPVT(9)
       !
       CALL DGEFA(A,IA,N,IPVT,IER)
       IF (IER .NE. 0) THEN                   ! return if error
         IER = 129
         RETURN
-      END IF
+      ENDIF
       nnn=1
       CALL DGEDI(A,IA,N,IPVT,DET,WK,nnn)
       ! move result to output array
-      DO I=1,N                         
-        DO J=1,N
-          AINV(J,I) = A(J,I)
-        END DO
-      END DO
+      AINV(1:N,1:N) = A(1:N,1:N)
       RETURN
       END SUBROUTINE LINV1F

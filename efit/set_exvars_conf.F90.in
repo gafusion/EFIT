@@ -15,20 +15,20 @@
       CHARACTER(8) :: versiondate
       INTEGER :: ioerr
 
-      giturl= "${GIT_URL}"
-      gitbranch= "${GIT_BRANCH}"
-      githash= "${GIT_COMMIT_HASH}"
+      giturl="${GIT_URL}"
+      gitbranch="${GIT_BRANCH}"
+      githash="${GIT_COMMIT_HASH}"
       efitvers=githash(1:7)
-      gitdate= "${GIT_COMMIT_DATE}"
+      gitdate="${GIT_COMMIT_DATE}"
       versiondate=gitdate(1:4)//gitdate(6:7)//gitdate(9:10)
       read(versiondate,*,iostat=ioerr) efitversion
       if (ioerr.ne.0) efitversion = 99999999
-      lmods= "${GIT_MODIFICATIONS}"
+      lmods="${GIT_MODIFICATIONS}"
       fc="${CMAKE_Fortran_COMPILER}"
-      fc_id= "${CMAKE_Fortran_COMPILER_ID}"
-      fcver= "${CMAKE_Fortran_COMPILER_VERSION}"
-!      fcflags= "${not_CMAKE_Fortran_FLAGS}"
-!      fcflags= TRIM(fcflags)//" ${not_CMAKE_Fortran_BUILD_TYPE_FLAGS}"
+      fc_id="${CMAKE_Fortran_COMPILER_ID}"
+      fcver="${CMAKE_Fortran_COMPILER_VERSION}"
+!      fcflags="${not_CMAKE_Fortran_FLAGS}"
+!      fcflags=TRIM(fcflags)//" ${not_CMAKE_Fortran_BUILD_TYPE_FLAGS}"
 
       table_dir="${TABLE_DIR}/"
       input_dir="${INPUT_DIR}/"

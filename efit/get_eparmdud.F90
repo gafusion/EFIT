@@ -6,6 +6,7 @@
 !**********************************************************************
 subroutine get_eparmdud_defaults()
   use eparm
+  use var_cecoil, only: iecurr
   nsilds=3
   nsilol=41
   nfcoil=18
@@ -66,6 +67,8 @@ subroutine get_eparmdud_defaults()
   kubics=4
   icycred_loopmax=1290
   nfourier=5
+
+  iecurr=1
 
 end subroutine get_eparmdud_defaults
 
@@ -172,7 +175,7 @@ subroutine read_dirs_shot(filename)
     read(nin,fmt='(A)') line
     write(*,'(A)') &
       'Invalid line in namelist: '//trim(line)
-  end if
+  endif
   close(nin)
 end subroutine read_dirs_shot
 !**********************************************************************

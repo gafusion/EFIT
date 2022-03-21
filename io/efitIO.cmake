@@ -104,10 +104,12 @@ if(${ENABLE_MDSPLUS})
     # additional external libraries
     if(NOT EXISTS ${D3_LIB})
       message(STATUS "D3_LIB not found, MDS+ cannot be used")
+      set(HAVE_MDSPLUS False)
     else()
       # Note: this seems to be required even for non-MSE (EFIT01)
       if(NOT EXISTS ${MSE_LIB})
         message(STATUS "MSE_LIB not found, MDS+ cannot be used")
+        set(HAVE_MDSPLUS False)
       else()
         set(USE_MDS TRUE)                 # ifdef
       endif()

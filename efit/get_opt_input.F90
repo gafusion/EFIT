@@ -13,6 +13,7 @@
 !!        5: produces k-files from a snap file
 !!        4,6: varitions of snap files??
 !!      8: indended for CUDA parallel execution which has not been setup
+!!      16: kwake mode, some modification to opt 3
 !!      -#: behaves the same as #, but sets ilaser=1
 !!
 !**********************************************************************
@@ -38,62 +39,67 @@
         endif
       endif
 #if defined(USEMPI)
-      if (nproc > 1) then
+      if(nproc > 1) &
         call MPI_BCAST(kdata,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-      endif
 #endif
+!----------------------------------------------------------------------
+!--   Turn on ilaser                                                 --
+!----------------------------------------------------------------------
+      if (kdata.lt.0) then
+        kdata=-kdata
+        ilaser=1
+      endif
 
-      ! Check that input option is valid
+      if (kdata.eq.4) return
+!---------------------------------------------------------------------
+!--   KDATA=16, wake-up mode driven by file WAKEMFIT.DAT consisting --
+!--   of shot # and time, -shot # for quit                          --
+!---------------------------------------------------------------------
+      if (kdata.eq.16) then
+        kwake=1
+        kdata=3
+        jwake=kwake
+        mdoskip=1
+      endif
+!----------------------------------------------------------------------
+!--   Check that input option is valid                               --
+!----------------------------------------------------------------------
 #if defined(USE_HDF5)
 #if defined(USE_MDS)
-      if (abs(kdata).lt.1 .or. abs(kdata).gt.7) then
+      if (kdata.lt.1 .or. kdata.gt.7) then
         call errctrl_msg('get_opt_input', 'kdata run type is not available')
         stop
       endif
 #else
-      if (abs(kdata).lt.1 .or. abs(kdata).gt.2) then
+      if (kdata.lt.1 .or. kdata.gt.2) then
         call errctrl_msg('get_opt_input', 'kdata run type is not available')
         stop
       endif
 #endif
 #else
 #if defined(USE_MDS)
-      if (abs(kdata).lt.2 .or. abs(kdata).gt.7) then
+      if (kdata.lt.2 .or. kdata.gt.7) then
         call errctrl_msg('get_opt_input', 'kdata run type is not available')
         stop
       endif
 #else
-      if (abs(kdata).ne.2) then
+      if (kdata.ne.2) then
         call errctrl_msg('get_opt_input', 'kdata run type is not available')
         stop
       endif
 #endif
 #endif
-! TODO: pefit has not been setup
-!      if (abs(kdata).lt.1 .or. abs(kdata).gt.8) then
+!      TODO: pefit has not been setup
+!      if (kdata.lt.1 .or. kdata.gt.8) then
 !        call errctrl_msg('get_opt_input', 'kdata run type is not available')
 !        stop
 !      endif
-      
-      if (abs(kdata).eq.7) then
-        if (rank == 0) then
-          if (use_opt_input .eqv. .false.) then
-            write (nttyo,6617)
-            read (ntty,6620) snap_ext
-          else
-            snap_ext = snapext_in
-          endif
-        endif
-        snapextin=snap_ext
-#if defined(USEMPI)
-        if (nproc > 1) then
-          call MPI_BCAST(snap_ext,82,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
-        endif
-#endif 
-      endif
-
-      kdata_opt: if (abs(kdata).eq.2) then 
-        if (rank == 0) then
+!----------------------------------------------------------------------
+!--   Get command-line input for each mode                           --
+!----------------------------------------------------------------------
+      if(kdata.eq.1) ALLOCATE(ifname(1))
+      rank0: if (rank == 0) then
+        kdata_opt: if (kdata.eq.2) then 
           if (use_opt_input .eqv. .false.) then
             write (nttyo,6200)
             read (ntty,*) ktime
@@ -106,15 +112,10 @@
           else
             ktime = steps_in
             ALLOCATE(ifname(ktime))
-            do i=1,ktime
-              ifname(i) = inpfile_in(i)
-            enddo
+            ifname(1:ktime) = inpfile_in(1:ktime)
           endif
-        endif
 
-      elseif (abs(kdata).eq.1) then kdata_opt
-        ALLOCATE(ifname(1))
-        if (rank == 0) then
+        elseif (kdata.eq.1) then kdata_opt
           if (use_opt_input .eqv. .false.) then
             write (nttyo,6220)
             read (ntty,6240) ifname(1)
@@ -148,89 +149,137 @@
           call errctrl_msg('get_opt_input','HDF5 needs to be linked')
           stop
 #endif
-        endif
 
-      elseif (abs(kdata).eq.3 .or. abs(kdata).eq.7) then kdata_opt
-    
-       ! TODO: kwake is undefined here... is it necessary?
-!       if (kwake.eq.0) then
-        if (rank == 0) then
+        elseif (kdata.eq.3 .or. kdata.eq.7) then kdata_opt
+          ! Snap-Extension mode
+          if (kdata.eq.7) then
+            if (use_opt_input .eqv. .false.) then
+              write (nttyo,6617)
+              read (ntty,6620) snap_ext
+            else
+              snap_ext = snapext_in
+            endif
+          endif
+          snapextin=snap_ext
+          if (kwake.eq.0) then
+            if (use_opt_input .eqv. .false.) then
+              write (nttyo,6040)
+              read (ntty,*) ishot,timeb,dtime,ktime
+              shot_in = ishot
+              starttime_in = timeb
+              deltatime_in = dtime
+              steps_in= ktime 
+            else
+              ishot = shot_in
+              timeb = starttime_in
+              dtime = deltatime_in
+              ktime = steps_in
+            endif
+          endif
+
+        elseif (kdata.eq.5 .or. kdata.eq.6) then kdata_opt
           if (use_opt_input .eqv. .false.) then
-            write (nttyo,6040)
-            read (ntty,*) ishot,timeb,dtime,ktime
-            shot_in = ishot
-            starttime_in = timeb
-            deltatime_in = dtime
-            steps_in= ktime 
+            write (nttyo,6610)
+            read (ntty,6620) cmdfile_in
+            write (nttyo,6600)
+            read (ntty,6620) shotfile_in
+            if (shotfile_in.eq.'0' .or. shotfile_in.eq.'') then
+              write (nttyo,6040)
+              read (ntty,*) ishot,timeb,dtime,ktime
+            endif
           else
-            ishot = shot_in
-            timeb = starttime_in
-            dtime = deltatime_in
-            ktime = steps_in
+            if (shotfile_in.eq.'0' .or. shotfile_in.eq.'') then
+              ishot = shot_in
+              timeb = starttime_in
+              dtime = deltatime_in
+              ktime = steps_in
+            endif
+          endif
+
+        endif kdata_opt
+      endif rank0
+
+
+      if (kdata.eq.3 .or. kdata.eq.7) then
+#if defined(USEMPI)
+          if (nproc > 1) &
+            call MPI_BCAST(snap_ext,82,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+#endif 
+      elseif (kdata.eq.5 .or. kdata.eq.6) then
+#if defined(USEMPI)
+        if (nproc > 1) then
+          call MPI_BCAST(cmdfile_in,15,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+          call MPI_BCAST(shotfile_in,15,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+          if (shotfile_in.eq.'0' .or. shotfile_in.eq.'') then
+            call MPI_BCAST(ishot,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+            call MPI_BCAST(ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+            call MPI_BCAST(timeb,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+            call MPI_BCAST(dtime,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
           endif
         endif
-!       endif
-      else kdata_opt
+#endif
         return
-      endif kdata_opt
+      endif
      
 #if defined(USEMPI)
       if (nproc > 1) then
         if (rank == 0) then
-! Ensure there are not more processors than time slices
+          ! Ensure there are not more processors than time slices
           if (nproc > ktime) then
             call errctrl_msg('get_opt_input', &
                              'MPI processes have nothing to do')
-            stop
           endif
-! Warn if the time slice distribution is not balanced
+          ! Warn if the time slice distribution is not balanced
           if (mod(ktime,nproc) .ne. 0) &
             write(nttyo,*) 'Warning: time slices are not balanced across processors'
         endif
-! Broadcast inputs 
+
+        ! Broadcast inputs 
         call MPI_BCAST(ishot,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
         call MPI_BCAST(ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
         call MPI_BCAST(timeb,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         call MPI_BCAST(dtime,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-! Distribute steps among ALL processes
-        dist_data(:) = 0
-        dist_data_displs(:) = 0
-        if (rank == 0) then
-! Compute number of steps per process
-          i = 1
-          do while (i <= ktime)
-            do j=1,nproc
-              if (i <= ktime) then
-                dist_data(j) = dist_data(j)+1
-                i = i+1
-              endif
-            enddo
-          enddo
-! Compute array displacements
-          do i=2,nproc
-            do j=1,i-1
-! Input filenames are up to 80 characters and displacements given as number of bytes
-              dist_data_displs(i) = dist_data_displs(i)+dist_data(j)*80
-            enddo
-          enddo
-        endif
-! Explicitly synchronize processes
-        call MPI_BARRIER(MPI_COMM_WORLD,ierr)
-! Distribute time step and filename information to ALL processes
-        call MPI_SCATTER(dist_data,1,MPI_INTEGER,ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-        if (abs(kdata).ne.1) then
-! Recall each filename 80 characters
+        ! if (nproc > ktime) stop ! optional?...
+
+        if (kdata.eq. 1 .or. kdata.eq.2) then
+          ! Distribute steps among ALL processes
+          dist_data(:) = 0
+          dist_data_displs(:) = 0
           if (rank == 0) then
-            dist_data(:) = dist_data(:)*80
-            call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER, &
-                   MPI_IN_PLACE,dist_data(rank+1),MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
-          else
-            ALLOCATE(ifname(ktime))
-            call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER, &
-                   ifname,ktime*80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+          ! Compute number of steps per process
+            i = 1
+            do while (i <= ktime)
+              do j=1,nproc
+                if (i <= ktime) then
+                  dist_data(j) = dist_data(j)+1
+                  i = i+1
+                endif
+              enddo
+            enddo
+            ! Compute array displacements
+            do i=2,nproc
+              ! Input filenames are up to 80 characters and displacements given as number of bytes
+              dist_data_displs(i) = sum(dist_data(1:i-1))*80
+            enddo
           endif
-        else
+          ! Explicitly synchronize processes
+          call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+          ! Distribute time step and filename information to ALL processes
+          call MPI_SCATTER(dist_data,1,MPI_INTEGER,ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+          if (kdata.eq.2) then
+            ! Recall each filename 80 characters
+            if (rank == 0) then
+              dist_data(:) = dist_data(:)*80
+              call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER, &
+                     MPI_IN_PLACE,dist_data(rank+1),MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+            else
+              ALLOCATE(ifname(ktime))
+              call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER, &
+                                ifname,ktime*80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+            endif
+          else
             call MPI_BCAST(ifname(1),80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+          endif
         endif
       endif
 #endif
@@ -259,6 +308,8 @@
  6220 format (/,1x,'type input file names:')
  6230 format (1x,'#')
  6240 format (a)
+ 6600 format (/,1x,'good shot list file name ( 0=tty) ?')
+ 6610 format (/,1x,'command file name ( 0=none) ?')
  6617 format (/,1x,'type snap file extension (def for default):')
  6620 format (a)
      return

@@ -28,7 +28,6 @@
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
-      data kwake/0/
       parameter (krord=4,kzord=4)
       character inp1*4,inp2*4
       integer*4 :: nargs, iargc, finfo, kerror, terr
@@ -37,6 +36,7 @@
       character*80 :: cmdline
 
       kerror = 0
+      kwake = 0
 !------------------------------------------------------------------------------
 !--   MPI if we have it
 !------------------------------------------------------------------------------ 
@@ -89,7 +89,7 @@
         call getarg(2,inp2)
 #endif
         read (inp1,'(i4)',iostat=ioerr) nw
-        if (ioerr.ne.0) read (inp2,'(i4)') nh
+        if(ioerr.ne.0) read (inp2,'(i4)') nh
 
 ! Ensure grid size is defined
         if (nw == 0) then
@@ -121,33 +121,33 @@
 !     nwwf=2*nw
       nwwf=3*nw
       nwf=nwwf
-      kubicx = 4
-      kubicy = 4
-      lubicx = nw - kubicx + 1
-      lubicy = nh - kubicy + 1
-      kujunk = kubicx*kubicy*lubicx*lubicy
+      kubicx=4
+      kubicy=4
+      lubicx=nw-kubicx+1
+      lubicy=nh-kubicy+1
+      kujunk=kubicx*kubicy*lubicx*lubicy
       boundary_count=2*nh+2*(nw-2)
       lr0=nw-krord+1
       lz0=nh-kzord+1
       nxtrap=npoint
-      mfila = 10
+      mfila=10
       
       call read_efitin
       call inp_file_ch(nw,nh,ch1,ch2)
 
       call get_opt_input(ktime)
-      ntime = ktime
       call get_eparmdud_defaults()
+      ntime = ktime
 
       select case (kdata)
       case (1)
-        call read_omas_in1(ifname(1))     !this assume machine is always the same
+        call read_omas_in1(ifname(1))     !this assumes machine is always the same
       case (2)
-        call read_dirs_shot(ifname(1))     !this assume machine is always the same
+        call read_dirs_shot(ifname(1))     !this assumes machine is always the same
       case (4)
         call read_dirs_shot('efit_time.dat')
       case (7)
-        call read_dirs_shot('efit_snap.dat_'//adjustl(snapextin))     !this assume machine is always the same
+        call read_dirs_shot('efit_snap.dat_'//adjustl(snapextin))     !this assumes machine is always the same
       case default
         call read_dirs_shot('efit_snap.dat')
       end select
@@ -166,19 +166,16 @@
 !--   get data                                                       --
 !----------------------------------------------------------------------
       call efit_read_tables
-  20  call getsets(ktime,kwake,mtear,kerror)
+  20  call getsets(ktime,mtear,kerror)
 #if defined(USEMPI)
-      if (nproc > 1) then
+      if (nproc > 1) &
         call MPI_ALLREDUCE(kerror,MPI_IN_PLACE,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
-      endif
       if (kerror.gt.0) then
         call errctrl_msg('efit','Aborting due to fatal error in getsets')
         call mpi_abort(MPI_COMM_WORLD,ierr) ! kill all processes, something is wrong with the setup.
       endif
 #else
-      if (kerror.gt.0) then
-        stop
-      end if
+      if(kerror.gt.0) stop
 #endif
 
 ! Looping (below) on the number of time slices depends on the number of ranks.
@@ -299,7 +296,7 @@
         write (6,*) 'Main/PRTOUT ks/kerror = ', ks, kerror
 #endif
         call prtout(ks)
-        if ((kwaitmse.ne.0).and.(kmtark.gt.0)) call fixstark(-ks,kerror)
+        if((kwaitmse.ne.0).and.(kmtark.gt.0)) call fixstark(-ks,kerror)
 !----------------------------------------------------------------------
 !--     write A and G EQDSKs                                         --
 !----------------------------------------------------------------------
@@ -321,26 +318,25 @@
 ! --    write Kfile if needed                                        --
 !----------------------------------------------------------------------
         if (kdata.eq.3 .or. kdata.eq.7) then
-          if (write_Kfile) call write_K2(ks,kerror)
+          if(write_Kfile) call write_K2(ks,kerror)
         endif
-        if (k.lt.ktime) kerrot(ks)=kerror
+        if(k.lt.ktime) kerrot(ks)=kerror
       enddo
 
-      if (kwake.ne.0) go to 20
+      if(kwake.ne.0) go to 20
 #ifdef USE_NETCDF
       call wmeasure(ktime,1,ktime,2)
 #else
-      if (.not.((iand(iout,2).eq.0).and.(iand(iout,4).eq.0))) then
+      if (.not.((iand(iout,2).eq.0).and.(iand(iout,4).eq.0))) &
         write(nttyo,*) 'netcdf needs to be linked to write m-files'
-      endif
 #endif
       call wtime(ktime)
 
 #if defined(USEMPI)
       ! Finalize MPI
-      if (allocated(dist_data)) deallocate(dist_data)
-      if (allocated(dist_data_displs)) deallocate(dist_data_displs)
-      if (allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
+      if(allocated(dist_data)) deallocate(dist_data)
+      if(allocated(dist_data_displs)) deallocate(dist_data_displs)
+      if(allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
       call errctrl_msg('efit','Done processing',3)
       call mpi_finalize(ierr)
 #endif

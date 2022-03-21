@@ -28,7 +28,6 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      data kwake/0/
       parameter (krord=4,kzord=4)
       character inp1*4,inp2*4
       integer*4 :: nargs, iargc, finfo, kerror, terr
@@ -36,6 +35,7 @@
       integer*4 :: iend1, iend2
 
       kerror = 0
+      kwake = 0
 !------------------------------------------------------------------------------
 !     Initialize MPI environment
 !------------------------------------------------------------------------------
@@ -141,7 +141,7 @@
       !call efit_read_tables
       !TODO: SEK: ZZ: Stopping here for now
       print *, 'Entering getsets'
-  20  call getsets(ktime,kwake,mtear,kerror)
+  20  call getsets(ktime,mtear,kerror)
       print * ,'exiting getsets'
 
 #if defined(USEMPI)

@@ -1,8 +1,12 @@
- !**********************************************************************
+!**********************************************************************
 !>
 !!    msels_hist returns synthetic or experimental MSE-LS
 !!    data to EFIT
 !!    For a given shot, returns complete time history
+!!
+!!    Note: this subroutine only uses REAL*4 for floating point
+!!          variables to be consistent with mse files
+!!
 !!
 !!    @param ishot : shot number   
 !!
@@ -39,64 +43,62 @@
 !!                 1=error (ignore data)
 !!
 !**********************************************************************
-      SUBROUTINE  MSELS_HIST(ishot,synmls,icmls,ntimes,l_time,        &
-           l_bbmls,l_sigbmls,l_rrmls,l_zzmls,l_L1mls,l_L2mls,         &
+      subroutine msels_hist(ishot,synmls,icmls,ntimes,l_time, &
+           l_bbmls,l_sigbmls,l_rrmls,l_zzmls,l_L1mls,l_L2mls, &
            l_L4mls,l_epotpmls,l_sigepmls,iermls)
 
-      INTEGER*4 ishot,icmls,iermls,i
-      REAL*4 time,bbmls,sigbmls,rrmls,zzmls, &
-           L1mls,L2mls,L4mls, &
-           epotmls,sigepmls
-      CHARACTER*3 synmls
+      integer*4 ishot,icmls,iermls,i
+      real*4 time,bbmls,sigbmls,rrmls,zzmls, &
+             L1mls,L2mls,L4mls, &
+             epotmls,sigepmls
+      character*3 synmls
       
       ! Local variables
-      LOGICAL file_exists
-      CHARACTER(len=100) filename
-      INTEGER*4 iostat,file_shot,ntimes,issyn,l_ntimes
-      REAL*4 l_time(ntimes),l_bbmls(ntimes),l_sigbmls(ntimes),&
-           l_rrmls(ntimes),l_zzmls(ntimes),l_L1mls(ntimes),l_L2mls(ntimes),&
-           l_L4mls(ntimes),l_epotpmls(ntimes),l_sigepmls(ntimes)
+      logical file_exists
+      character(len=100) filename
+      integer*4 iostat,file_shot,ntimes,issyn,l_ntimes
+      real*4 l_time(ntimes),l_bbmls(ntimes),l_sigbmls(ntimes), &
+             l_rrmls(ntimes),l_zzmls(ntimes),l_L1mls(ntimes), &
+             l_L2mls(ntimes),l_L4mls(ntimes),l_epotpmls(ntimes), &
+             l_sigepmls(ntimes)
 
       ! Define the filename that has the time history beginning
-      IF (synmls == 'SYN') THEN
-         WRITE(filename,"(A23,I6,A15,I2.2,A4)") "/u/grierson/efit/msels/", &
-              ishot,"/msels_syn_chan",icmls,".dat"
-      END IF
+      if(synmls == 'SYN') &
+         write(filename,"(A23,I6,A15,I2.2,A4)") &
+          "/u/grierson/efit/msels/",ishot,"/msels_syn_chan",icmls,".dat"
 
-      IF (synmls == 'MSE') THEN
-         WRITE(filename,"(A23,I6,A15,I2.2,A4)") "/u/grierson/efit/msels/", &
-              ishot,"/msels_mse_chan",icmls,".dat"
-      END IF
+      if(synmls == 'MSE') &
+         write(filename,"(A23,I6,A15,I2.2,A4)") &
+          "/u/grierson/efit/msels/",ishot,"/msels_mse_chan",icmls,".dat"
 
-      IF (synmls == 'EXP') THEN
-         WRITE(filename,"(A23,I6,A11,I2.2,A4)") "/u/grierson/efit/msels/", &
-              ishot,"/msels_chan",icmls,".dat"
-      END IF
+      if(synmls == 'EXP') &
+         write(filename,"(A23,I6,A11,I2.2,A4)") &
+          "/u/grierson/efit/msels/",ishot,"/msels_chan",icmls,".dat"
 
-      WRITE(*,*) "Using file ",filename
+      write(*,*) "Using file ",filename
 
       ! See if file exists.  If not, return error code.
-      INQUIRE(FILE=filename,EXIST=file_exists)
-      IF (.NOT. file_exists) THEN
-         WRITE(*,*) 'File Does not exist'
+      inquire(file=filename,exist=file_exists)
+      if (.not. file_exists) then
+         write(*,*) 'File Does not exist'
          iermls=1
-         RETURN
-      END IF
+         return
+      endif
 
       ! Read the data
-      OPEN(UNIT=1,FILE=filename,IOSTAT=iostat)
-      WRITE(*,101) 'iostat: ',iostat
+      open(unit=1,file=filename,iostat=iostat)
+      write(*,101) 'iostat: ',iostat
       ! Read the shot number in the file
-      READ(1,*) file_shot
-      WRITE(*,101) 'file shot:', file_shot
+      read(1,*) file_shot
+      write(*,101) 'file shot:', file_shot
 
       ! Read the number of timeslices
-      READ(1,*) l_ntimes
-      WRITE(*,101) '# slices:', l_ntimes
+      read(1,*) l_ntimes
+      write(*,101) '# slices:', l_ntimes
 
       ! Read if synthetic(1) or measured(0)
-      READ(1,*) issyn
-      WRITE(*,101) 'issyn: ', issyn
+      read(1,*) issyn
+      write(*,101) 'issyn: ', issyn
 
       !      Assign logical to map 1->true and 0->false
       !      This doesn't work.
@@ -105,54 +107,51 @@
       !      END IF
       
       ! Read the channel number (1,2,etc...)
-      READ(1,*) icmls
-      WRITE(*,101) 'icmls: ', icmls
+      read(1,*) icmls
+      write(*,101) 'icmls: ', icmls
 
       ! Read the error code
-      READ(1,*) iermls
-      WRITE(*,101) 'iermls: ', iermls
+      read(1,*) iermls
+      write(*,101) 'iermls: ', iermls
 
-      WRITE(*,100) 'Starting time loop'
-      DO i=1,l_ntimes
+      write(*,100) 'Starting time loop'
+      do i=1,l_ntimes
 
-         READ(1,*) l_time(i)
-!         WRITE(*,102) 'Time:', l_time(i)
+         read(1,*) l_time(i)
+!         write(*,102) 'Time:', l_time(i)
 
-         READ(1,*) l_bbmls(i)
-!         WRITE(*,102) 'B_LS:', l_bbmls(i)
+         read(1,*) l_bbmls(i)
+!         write(*,102) 'B_LS:', l_bbmls(i)
          
-         READ(1,*) l_sigbmls(i)
-!         WRITE(*,102) 'sig B_LS:', l_sigbmls(i)
+         read(1,*) l_rrmls(i)
+!         write(*,102) 'sig B_LS:', l_sigbmls(i)
          
-         READ(1,*) l_rrmls(i)
-!         WRITE(*,102) 'R:', l_rrmls(i)
+         read(1,*) l_zzmls(i)
+!         write(*,102) 'Z:', l_zzmls(i)
          
-         READ(1,*) l_zzmls(i)
-!         WRITE(*,102) 'Z:', l_zzmls(i)
+         read(1,*) l_L1mls(i)
+!         write(*,102) 'L1:', l_L1mls(i)
          
-         READ(1,*) l_L1mls(i)
-!         WRITE(*,102) 'L1:', l_L1mls(i)
-         
-         READ(1,*) l_L2mls(i)
-!         WRITE(*,102) 'L2:', l_L2mls(i)
+         read(1,*) l_L2mls(i)
+!         write(*,102) 'L2:', l_L2mls(i)
          
 !!         L3mls(i) = 1.0 - L1mls(i)
          
-         READ(1,*) l_L4mls(i)
-!         WRITE(*,102) 'L4:', l_L4mls(i)
+         read(1,*) l_L4mls(i)
+!         write(*,102) 'L4:', l_L4mls(i)
          
-         READ(1,*) l_epotpmls(i)
-!         WRITE(*,102) 'epot:', l_epotpmls(i)
+         read(1,*) l_epotpmls(i)
+!         write(*,102) 'epot:', l_epotpmls(i)
          
-         READ(1,*) l_sigepmls(i)
-!         WRITE(*,102) 'sigep:', l_sigepmls(i)
+         read(1,*) l_sigepmls(i)
+!         write(*,102) 'sigep:', l_sigepmls(i)
          
-      END DO
-      CLOSE(1)
+      enddo
+      close(1)
 
-100   FORMAT (A)
-101   FORMAT (A, I6)
-102   FORMAT (A, g15.4)
-      RETURN
+100   format (a)
+101   format (a, i6)
+102   format (a, g15.4)
+      return
 
-      END SUBROUTINE MSELS_HIST
+      end subroutine msels_hist

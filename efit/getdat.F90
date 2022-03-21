@@ -1,105 +1,104 @@
 #include "config.f"
 !**********************************************************************
 !>
-!!    PRIMARY CALLING SEQUENCE USED BY REVIEW AND OTHER CODES. \n
+!!    PRIMARY CALLING SEQUENCE USED BY REVIEW AND OTHER CODES.
 !!
-!!    ! 1% tolerance for signal clipping added 8/14/89
+!!    1% tolerance for signal clipping added 8/14/89
 !!    at present the clipping errors (ier = -1, -2) are used only by the
 !!    yoka routine in NEWSPEC.
+!!
+!!    WARNING: this subroutine uses both REAL*4 (used by PTDATA) and
+!!             REAL*8 variables conversions must be handled carefully
+!!
 !!
 !!    @param NSHOT :  THE SHOT NUMBER
 !!
 !!    @param NAME : THE POINT NAME(10 ASCII CHARACTERS)
 !!
-!!    @param ICAL : ICAL=0 RETURNS DATA IN DIGITIZER COUNTS\n
-!!         1 RETURNS CALIBRATED DATA IN PHYSICAL UNITS\n
-!!          2 RETURNS THE VOLTAGE INPUT TO THE DIGITIZER\n
-!!          3 RETURNS THE VOLTAGE AT THE INTEGRATOR OUTPUT\n
-!!          4 RETURNS THE INTEGRATED SIGNAL IN V-SEC\n
-!!          10-19 ARE THE SAME AS 0-9 EXCEPT FOR BASELINE ALGORITHM\n
-!!     ICAL=0 HAS NO BASELINE SUBTRACTION\n
-!!           1-9 USES BASELINE FROM PTDATA (OBTAINED FROM EARLY SAMPLES)\n
-!!           10-19 USE DIGITIZER MIDPOINT AS ZERO\n
+!!    @param ICAL : ICAL=0 RETURNS DATA IN DIGITIZER COUNTS
+!!                       1 RETURNS CALIBRATED DATA IN PHYSICAL UNITS
+!!                       2 RETURNS THE VOLTAGE INPUT TO THE DIGITIZER
+!!                       3 RETURNS THE VOLTAGE AT THE INTEGRATOR OUTPUT
+!!                       4 RETURNS THE INTEGRATED SIGNAL IN V-SEC
+!!                       10-19 ARE THE SAME AS 0-9 EXCEPT FOR BASELINE ALGORITHM
+!!                  ICAL=0 HAS NO BASELINE SUBTRACTION
+!!                       1-9 USES BASELINE FROM PTDATA (OBTAINED FROM EARLY SAMPLES)
+!!                       10-19 USE DIGITIZER MIDPOINT AS ZERO
 !!
-!!    @param IER : POSITIVE NUMBER IS THE ERROR RETURN FROM PTDATA\n
-!!     IER = -1 IS FOR OVERFLOW OF THE DATA IN THE DIGITIZER\n
-!!     IER = -2 IS FOR UNDERFLOW OF THE DATA\n
-!!     IER = -3 IS FOR BASELINE(ZERO) OUTSIDE THE RANGE OF DIGITIZER\n
-!!     IER = -6 DATA ARE RETURNED WITH SOME LOSS OF TIME RESOLUTION\n
-!!  (TOO MANY SAMPLES FOR BUFFER SIZE)\n
-!!     IER = -7 DATA MAY HAVE SOME LOSS OF TIME RESOLUTION \n
-!!  (TOO MANY SAMPLES FOR BUFFER SIZE)\n
-!!  STATUS UNKNOWN DUE TO NECESSITY OF CALLINBG PTDATA BY TIME\n
+!!    @param IER : POSITIVE NUMBER IS THE ERROR RETURN FROM PTDATA
+!!           IER = -1 IS FOR OVERFLOW OF THE DATA IN THE DIGITIZER
+!!           IER = -2 IS FOR UNDERFLOW OF THE DATA
+!!           IER = -3 IS FOR BASELINE(ZERO) OUTSIDE THE RANGE OF DIGITIZER
+!!           IER = -6 DATA ARE RETURNED WITH SOME LOSS OF TIME RESOLUTION
+!!                    (TOO MANY SAMPLES FOR BUFFER SIZE)
+!!           IER = -7 DATA MAY HAVE SOME LOSS OF TIME RESOLUTION
+!!                    (TOO MANY SAMPLES FOR BUFFER SIZE)
+!!                    STATUS UNKNOWN DUE TO NECESSITY OF CALLING PTDATA BY TIME
 !!
 !!    @param T :  THE ARRAY IN WHICH THE TIMES OF THE DATA SAMPLES WILL BE RETURNED
 !!
 !!    @param DATA : IS THE ARRAY IN WHICH THE DATA WILL BE RETURNED
 !!
 !!    @param NP : THE MAXIMUM NUMBER OF DATA POINTS YOU WANT BACK
-!!       ACTUAL NUMBER IS RETURNED
+!!                ACTUAL NUMBER IS RETURNED
 !!
 !!    @param &TMIN : DEFINE THE TIME INTERVAL ON WHICH YOU WANT
-!!       DATA.  ACTUAL VALUES ARE RETURNED.
+!!                   DATA.  ACTUAL VALUES ARE RETURNED.
 !!
 !!    @param TMAX : DEFINE THE TIME INTERVAL ON WHICH YOU WANT
-!!       DATA.  ACTUAL VALUES ARE RETURNED.
+!!                  DATA.  ACTUAL VALUES ARE RETURNED.
 !!
-!!    @param MOP : WHICH IS THE OP CODE.\n
-!!     IF MOP=0 THE POINT IS WRITTEN INTO DATA, OVERWRITING THE
-!!        PREVIOUS CONTENTS.\n
-!!     IF MOP=1,THE POINT IS ADDED INTO THE ARRAY DATA.\n
-!!     IF MOP=2,THE POINT IS SUBTRACTED FROM THE CURRENT CONTENTS OF DATA.\n
-!!     IF MOP=3 MULTIPLY CURRENT CONTENTS OF DATA BY POINTNAME\n
-!!     IF MOP=4 DIVIDE CURRENT CONTENTS OF DATA BY POINTNAME\n
+!!    @param MOP : WHICH IS THE OP CODE.
+!!           MOP=0 THE POINT IS WRITTEN INTO DATA, OVERWRITING THE
+!!                 PREVIOUS CONTENTS.
+!!           MOP=1,THE POINT IS ADDED INTO THE ARRAY DATA.
+!!           MOP=2,THE POINT IS SUBTRACTED FROM THE CURRENT CONTENTS OF DATA.
+!!           MOP=3 MULTIPLY CURRENT CONTENTS OF DATA BY POINTNAME
+!!           MOP=4 DIVIDE CURRENT CONTENTS OF DATA BY POINTNAME
 !!
 !!    @param SCALE :
 !!
 !!    @param jWAIT :
+!!
 !**********************************************************************
       SUBROUTINE GETDAT(NSHOT,NAME,ICAL,IER,T,DATA,NP, &
-      TMIN,TMAX,MOP,SCALE,jWAIT)
+                        TMIN,TMAX,MOP,SCALE,jWAIT)
 
       use set_kinds
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
       parameter (npmax=262144)
 
       character*4 char4
 
-! 20140905 tbt Dimension of 1 bombs when array bounds checked!
-!     DIMENSION  DATA(1)
-!     DIMENSION  FPDATA(1)
+      DIMENSION DATA(*)
+      DIMENSION FPDATA(npmax)
 
-      DIMENSION  DATA(*)
-      DIMENSION  FPDATA(npmax)
-
-      dimension  int16(2),int32(2),iarr(50)
-      dimension  iascii(12)
-      CHARACTER*3  MONTH(12)
-      CHARACTER  NAME*(*)
-      character*12  pcst
+      dimension int16(2),int32(2),iarr(50)
+      dimension iascii(12)
+      CHARACTER*3 MONTH(12)
+      CHARACTER NAME*(*)
+      character*12 pcst
       CHARACTER*10 PCSTIME
-      CHARACTER  PHASE*4
-      dimension  rarr(20+npmax)
-      dimension  real32(100)
-      REAL*8  REAL64(100)
-      CHARACTER*10  SDATE, STIME
+      CHARACTER PHASE*4
+      real*4 rarr, real32, tt, dt, t0
+      dimension rarr(20+npmax)
+      dimension real32(100)
+      REAL*8 REAL64(100)
+      CHARACTER*10 SDATE, STIME
 
-! 20140905 tbt Dimension of 1 bombs when array bounds checked!
-!     DIMENSION  T(1)
-      DIMENSION  T(*)
+      DIMENSION T(*)
 
-      REAL*8  TDUM(2+NPMAX)
-      INTEGER*4  TEMP(npmax)
-      REAL*8  TIME64(NPMAX)
+      REAL*8 TDUM(2+NPMAX)
+      INTEGER*4 TEMP(npmax)
+      REAL*8 TIME64(NPMAX)
 
-! 20140905 tbt Dimension of 1 bombs when array bounds checked!
-!     DIMENSION  TT(1)
-      DIMENSION  TT(npmax)
+      DIMENSION TT(npmax)
 
       COMMON /TRAPPER/ IT_CHAN, ITRAPA
 
       equivalence (ichar,char4)
       equivalence (pcst,pcstime)
-      EQUIVALENCE (TT,RARR(21)), (FPDATA(1),TEMP(1))
+      equivalence (tt,rarr(21)), (fpdata(1),temp(1))
 
       DATA MONTH/'JAN','FEB','MAR','APR','MAY','JUN', &
          'JUL','AUG','SEP','OCT','NOV','DEC' /
@@ -125,16 +124,16 @@
 !  THE ONLY DIFFERENCE IS THE RETURN OF ADDITIONAL PARAMETERS.
 !
 !---------------------------------------------------------------
-      ENTRY GETDAT_I(NSHOT,NAME,ICAL,IER,T,DATA,NP, &
-        TMIN,TMAX,MOP,SCALE,jWAIT, &
-        RC_I,RCG_I,VPBIT_I,MZERO_I,NBITS_I,SDATE,STIME)
+!      ENTRY GETDAT_I(NSHOT,NAME,ICAL,IER,T,DATA,NP, &
+!                     TMIN,TMAX,MOP,SCALE,jWAIT, &
+!                     RC_I,RCG_I,VPBIT_I,MZERO_I,NBITS_I,SDATE,STIME)
 
-      INTCAL = .TRUE.
-      efit = .false.
-      rcfact = 1.0
-      iwait = jwait
+!      INTCAL = .TRUE.
+!      efit = .false.
+!      rcfact = 1.0
+!      iwait = jwait
 
-      GO TO 11111
+!      GO TO 11111
 
 !----------------------------------------------------------------------
 !
@@ -143,8 +142,8 @@
 !----------------------------------------------------------------------
 
       ENTRY GETDAT_E(NSHOT,NAME,ICAL,IER,T,DATA,NP, &
-      TMIN,TMAX,MOP,SCALE,bitone,ircfact,RC_E,RCG_E,VPBIT_E, &
-       ZINHNO_E,T0_E)
+                     TMIN,TMAX,MOP,SCALE,bitone,ircfact,RC_E,RCG_E, &
+                     VPBIT_E,ZINHNO_E,T0_E)
 
       INTCAL = .FALSE.
       efit = .true.
@@ -193,59 +192,45 @@
 10    continue
 #ifdef __cray
       call ptdata(itype,nshot,phase,name,temp,ier,iarr,rarr,&
-        iascii,int16,int32,real32)
+                  iascii,int16,int32,real32)
 #else
-!vas f90 modifi
-!vas call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,
-!vas 1 iascii,int16,int32,real32)
       call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,&
-        iascii,int16,int32,real32)
+                  iascii,int16,int32,real32)
 #endif
 
 ! write(13,91300)(rarr(klg),klg=540,640)
 91300 format(x,1pe17.10)
 
-      if (ier .eq. 4 .or. ier.eq.2) ier = 0
-      VPBIT  = real32(51)
-      RC     = real32(52)
+      if(ier .eq. 4 .or. ier.eq.2) ier = 0
+      VPBIT = real(real32(51),dp)
+      RC    = real(real32(52),dp)
       !
       !  CHECK DATA FORMAT, TRY AGAIN IF NECESSARY
       !  Attempt to get data based on time sampling, using a computed
       !  start and delta time.
       !
-      if (ier .ne. 35) go to 666 ! ier=35 ... wrong call type for dfi
+      if(ier .ne. 35) go to 666 ! ier=35 ... wrong call type for dfi
 
         itype = 2
 20      continue
 #ifdef __cray
         call ptdata(itype,nshot,phase,name,temp,ier,iarr,rarr,&
-          iascii,int16,int32,real32)
+                    iascii,int16,int32,real32)
 #else
-!vas f90 modifi
-!vas call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,
-!vas 1 iascii,int16,int32,real32)
         call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,&
-          iascii,int16,int32,real32)
+                    iascii,int16,int32,real32)
 #endif
-        if (ier .eq. 4 .or. ier.eq.2) ier = 0
+        if(ier .eq. 4 .or. ier.eq.2) ier = 0
 
-        VPBIT  = real32(13)
-        RC     = 1.0
+        VPBIT = real(real32(13),dp)
+        RC    = 1.0
 
 666   continue
       !
       !  WAIT FOR THE DATA TO COME IN
       !
-!vas IF (iwait .eq. 1 .and. (ier .eq. 3 .or. ier .eq. 1)
-!vas 1   .and. kount .lt. kmax .and. itrapa .eq. 0) THEN
-      IF (iwait .eq. 1 .and. (ier .eq. 3 .or. ier .eq. 1) &
-         .and. kount .lt. kmax .and. itrapa .eq. 0) THEN
-
-        ! MPI subroutine that is never defined...
-        !call rev_wait(iwait, nshot)
-
-        if (itrapa .eq. 0) go to 1
-      ENDIF
+!      IF (iwait .eq. 1 .and. (ier .eq. 3 .or. ier .eq. 1) &
+!         .and. kount .lt. kmax .and. itrapa .eq. 0) go to 1
 
       !-- AT THIS POINT ANY REMAINING POSITIVE ERROR VALUE IS FATAL.
       !-- NON-FATAL POSITIVE ERRORS HAVE BEEN HANDLED AS FOLLOWS:
@@ -269,25 +254,22 @@
       nret = iarr(2)
       nsampl = iarr(32)   ! number of 16-bit words
       nbits = iarr(33)   ! number of bits per word
-      ZINHNO = rarr(4)                        ! inherent number
-      RCG    = rarr(5)
+      ZINHNO = real(rarr(4),dp)             ! inherent number
+      RCG    = real(rarr(5),dp)
       if(nbits .le.  8) nsampl = nsampl*2   ! correct number of
       if(nbits .gt. 16) nsampl = nsampl/2 !       available samples
       mzero = iarr(30)
       yzero = mzero
       if (idfi.eq.158 .or. idfi.eq.2158) then !-- NEW DFI WITH MORE ACCURATE OFFSET
-        yzero = real32(14)
+        yzero = real(real32(14),dp)
         mzero = anint(yzero)
       endif
 
 !--- WAVEFORMS HAVE AN ADDITIONAL OFFSET FOR CONVERSION TO PHYSICAL UNITS
 ! --- this offset makes sense only with ical=1 or 11,
 ! --- by convention we will add offset in ical=1 but not 11
-!vas f90 modifi
-!vas if ((idfi .eq. 125 .or. idfi .eq. 158 .OR. IDFI.EQ.2158)
-!vas 1 .and. ical .eq. 1)  pzero = real32(8)
-      if ((idfi .eq. 125 .or. idfi .eq. 158 .OR. idfi.eq.2158) &
-        .and. ical .eq. 1)  pzero = real32(8)
+      if((idfi .eq. 125 .or. idfi .eq. 158 .OR. idfi.eq.2158) &
+        .and. ical .eq. 1)  pzero = real(real32(8),dp)
 
       !--- Rely on PTDATA's time-type call if the
       !    pointname is too big for the buffer.
@@ -302,19 +284,19 @@
       !  If data is NOT PCS, then compute appropriate start and delta times
       !  in order to do 2nd PTDATA call.
 
-      if (idfi.eq.2201 .or. idfi.eq.2202 .or. idfi.eq.2203) then
+      pt_again: if (idfi.eq.2201 .or. idfi.eq.2202 .or. idfi.eq.2203) then
         select case (idfi)
         case (2201) ! digitizer data, int
-          vpbit = real32(5)
-          yzero = real32(6)
-          if (real32(2).ge.5) rc = real32(7)
+          vpbit = real(real32(5),dp)
+          yzero = real(real32(6),dp)
+          if (real32(2).ge.5) rc = real(real32(7),dp)
         case (2202)  ! processed data, int
           vpbit = -1.0
-          pzero = real32(3)
+          pzero = real(real32(3),dp)
           yzero = 0.0
         case (2203) ! processed data, real
           vpbit = -1.0
-          pzero = real32(3)
+          pzero = real(real32(3),dp)
           yzero = 0.0
         end select
         ichar = iascii(3)
@@ -333,10 +315,10 @@
         real64(1) = 0
 #ifdef __cray
         call ptdata64(64,nshot,phase,pcstime,time64,ker, &
-          iarr,rarr,iascii,int16,int32,real32,real64,tdum)
+                      iarr,rarr,iascii,int16,int32,real32,real64,tdum)
 #else
         call ptdata64(64,nshot,%ref(phase),%ref(pcstime),time64,ker, &
-          iarr,rarr,iascii,int16,int32,real32,real64,tdum)
+                      iarr,rarr,iascii,int16,int32,real32,real64,tdum)
 #endif
         if (ker.ne.0 .and. ker.ne.2 .and. ker.ne.4) then
           ier = 1
@@ -346,27 +328,27 @@
           data(1)=0.
           data(2)=0.
           RETURN
-        end if
+        endif
         nrettim = iarr(2)
         do k = 1,nrettim
-          tt(k) = time64(k)
-        end do
-      else if (itype .eq. 12 .or. itype .eq. 2) then
+          tt(k) = real(time64(k),r4)
+        enddo
+      elseif (itype .eq. 12 .or. itype .eq. 2) then pt_again
         !
         !  at this point, is there more digitizer data available?
         !
         if (nret .lt. nsampl) then
           itype = itype - 1  ! call ptdata by time
-          rarr(1) = tmin   ! start time
-          rarr(2) = (tmax-tmin)/(npmax-1) ! minimum delta-time
+          rarr(1) = real(tmin,r4)   ! start time
+          rarr(2) = real((tmax-tmin)/(npmax-1),r4) ! minimum delta-time
           iarr(1) = npmax   ! guaranteed to cover tmax-tmin
           IF (itype .eq. 11) THEN
             go to 10
           ELSE
             go to 20
-          ENDIF    ! itype = 11
-        endif     ! nret < nsample
-      endif     ! itype = 2, 12
+          ENDIF
+        endif
+      endif pt_again
 
       if (idfi.ne.2201 .and. idfi.ne.2202 .and. idfi.ne.2203) then
 
@@ -389,8 +371,8 @@
       !  FIND START AND STOP TIME OF DATA TO BE RETURNED
       !  --- THE OVERLAP OF THE REQUESTED AND DIGITIZED TIME INTERVALS
 
-      tmind = tt(1)
-      tmaxd = tt(nret)
+      tmind = real(tt(1),dp)
+      tmaxd = real(tt(nret),dp)
 
       IF (tmax .le. tmin) THEN
         tmin = tmind
@@ -413,21 +395,13 @@
       nfirst = 1
       nlast  = 0
       ITOTALPTS = NRET
-      IF (NSAMPL.LT.ITOTALPTS) ITOTALPTS = NSAMPL
+      IF(NSAMPL.LT.ITOTALPTS) ITOTALPTS = NSAMPL
 
-      if (efit) then
-        DO i=1,ITOTALPTS
-          ttime = tt(i)
-          if (ttime .lt. tmin) nfirst=i+1
-          if (ttime .lt. tmax) nlast =i
-        ENDDO
-      else
-        DO i=1,ITOTALPTS
-          ttime = tt(i)
-          if (ttime .lt. tmin) nfirst=i+1
-          if (ttime .le. tmax) nlast =i
-        ENDDO
-      endif
+      DO i=1,ITOTALPTS
+        ttime = real(tt(i),dp)
+        if (ttime .lt. tmin) nfirst=i+1
+        if (ttime .lt. tmax) nlast =i
+      ENDDO
 
       ndata = nlast - nfirst + 1
 
@@ -441,17 +415,17 @@
 
       nint = (ndata-1) / np + 1
       ! if (nint .gt. 1 .and. ier .le. 0) ier = -6
-      if (nint.gt.1) ier = -6
+      if(nint.gt.1) ier = -6
 
       ! SOME OF THE ICH DATA  (ICHPWR) IS
       ! JUST LIKE DIGITIZER DATA EXCEPT IN
       ! REAL FORMAT
 
-      if(idfi .eq. 119 .or. idfi.eq.2119) then      !ICH STUFF EXISTS IN FLOATING FORMAT
+      if (idfi .eq. 119 .or. idfi.eq.2119) then      !ICH STUFF EXISTS IN FLOATING FORMAT
         ii=0
         do i = nfirst, nlast, nint
           ii=ii+1
-          t(ii) = tt(i)
+          t(ii) = real(tt(i),dp)
           data(ii) = fpdata(i)
         enddo
         np = ii
@@ -484,18 +458,13 @@
       else    !  12-BIT DIG.S NEED THIS ONE
         min = 0
         max = 2**nbits - 1
-      end if
+      endif
 
 
       !--- WAVEFORMS ARE ALLOWED TO HAVE ZERO OFFSET OUTSIDE THE GENERATOR RANGE
-      !vas f90 modifi
-      !vas IF ((mzero .lt. min .or. mzero .gt. max) .AND.
-      !vas 1 (idfi .ne. 125 .and. idfi .ne. 158 .AND. &
       if ((mzero .lt. min .or. mzero .gt. max) .and. &
         (idfi .ne. 125 .and. idfi .ne. 158 .and. &
-        idfi.ne.2158)) then
-        if (ier .eq. 0 ) ier = -3
-      endif
+        idfi.ne.2158) .and. (ier .eq. 0 )) ier = -3
 
       !  CALIBRATION CODES TO RETURN ABSOLUTE SIGNAL LEVEL, NO BASELINE SUBTRACTION
       !  MUST ASSUME DIGITIZER ZERO IS IN THE MIDDLE OF ITS RANGE, SINCE THIS
@@ -504,13 +473,13 @@
       !  ONLY THE PROGRAMMED VALUE AND NOT THE ACTUAL VALUE.
       ical0 = ical
       if (ical .ge. 10) then
-        if (idfi .ne. 125 .and. idfi .ne. 158 &
+        if(idfi .ne. 125 .and. idfi .ne. 158 &
           .and. idfi.ne.2158) mzero = 2**(nbits-1)
         yzero = mzero
         ical0 = ical-10
       endif
 
-      !   FILL UP PLOT ARRAYS
+      ! FILL UP PLOT ARRAYS
 
       nclip = 0
       ii = 0
@@ -521,7 +490,7 @@
         !
         ! --- time array
         !
-        t(ii) = tt(i)
+        t(ii) = real(tt(i),dp)
         ! write(14,91300)t(ii)
         !
         ! --- data calibration
@@ -588,9 +557,9 @@
 
       ! --- clipping tolerance:
       !     set error flag only if clipped fraction is outside tolerance
-      if(np .gt. 0) then
+      if (np .gt. 0) then
         fclip = real(nclip,dp)/np
-        if (fclip .gt. tolclip .and.  &
+        if(fclip .gt. tolclip .and.  &
           ier .le. 0) ier = -1
       endif
       if (intcal) then
@@ -632,7 +601,7 @@
         rcg_e = rcg
         vpbit_e = vpbit
         zinhno_e = zinhno
-        t0_e = tt(1)
+        t0_e = real(tt(1),dp)
       endif
 
       return
@@ -656,7 +625,7 @@
           to_upper = str
           do i = 1, LEN_TRIM(str)
             ic = INDEX(low, str(i:i))
-            if (ic > 0) to_upper(i:i) = cap(ic:ic)
+            if(ic > 0) to_upper(i:i) = cap(ic:ic)
           end do
 
            End Function to_upper

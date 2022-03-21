@@ -5,6 +5,10 @@
 !!    For list of k-file times returs the available MSE-LS
 !!    data for a given chord, averaged over avgtim.
 !!
+!!    Note: this subroutine only uses REAL*4 for floating point
+!!          variables to be consistent with mse files
+!!
+!!
 !!    @param ishot : shot number
 !!
 !!    @param atime : time array for MSE-LS data (k-file times) 
@@ -42,24 +46,25 @@
 !!                 1=error (ignore data) 
 !!
 !**********************************************************************
-      subroutine msels_data(ishot,atime,ktime,avem,synmls,icmls,     &
-             bbmls,sigbmls,rrmls,zzmls,L1mls,L2mls,L4mls,epotpmls,   &
+      subroutine msels_data(ishot,atime,ktime,avem,synmls,icmls, &
+             bbmls,sigbmls,rrmls,zzmls,L1mls,L2mls,L4mls,epotpmls, &
              sigepmls,iermls) 
       integer*4, parameter :: ntimes=2000
       character*3 synmls
       integer*4 i,j,count
-      integer*4 ishot, ktime, icmls, iermls(ktime), l_iermls
-      real*8 avem, atime(ktime), bbmls(ktime), sigbmls(ktime),        &
-             rrmls(ktime), zzmls(ktime),                              &
-             L1mls(ktime), L2mls(ktime), L4mls(ktime),                &
-             epotpmls(ktime), sigepmls(ktime)
+      integer*4 ishot,ktime,icmls,iermls(ktime),l_iermls
+      real*4 avem,atime(ktime),bbmls(ktime),sigbmls(ktime), &
+             rrmls(ktime),zzmls(ktime), &
+             L1mls(ktime),L2mls(ktime),L4mls(ktime), &
+             epotpmls(ktime),sigepmls(ktime)
 
       ! local variables
       character(len=100) filename
       integer*4 file_shot
-      REAL*4 :: l_time(ntimes),l_bbmls(ntimes),l_sigbmls(ntimes),&
-           l_rrmls(ntimes),l_zzmls(ntimes),l_L1mls(ntimes),l_L2mls(ntimes),&
-           l_L4mls(ntimes),l_epotpmls(ntimes),l_sigepmls(ntimes)
+      real*4 :: l_time(ntimes),l_bbmls(ntimes),l_sigbmls(ntimes), &
+                l_rrmls(ntimes),l_zzmls(ntimes),l_L1mls(ntimes), &
+                l_L2mls(ntimes),l_L4mls(ntimes),l_epotpmls(ntimes), &
+                l_sigepmls(ntimes)
 
       l_time=0.0
       l_bbmls=0.0
@@ -75,15 +80,15 @@
 
       ! Read complete time histories from
       ! /u/grierson/efit/msels/[shot]/msels_chan[xx].dat
-      WRITE(*,*)
-      WRITE(*,101) 'Getting data for channel ',icmls
-      CALL MSELS_HIST(ishot,synmls,icmls,ntimes,l_time,l_bbmls,l_sigbmls,    &
-           l_rrmls,l_zzmls,l_L1mls,l_L2mls,l_L4mls,l_epotpmls,        &
-           l_sigepmls,l_iermls)
+      write(*,*)
+      write(*,101) 'Getting data for channel ',icmls
+      call msels_hist(ishot,synmls,icmls,ntimes,l_time,l_bbmls,l_sigbmls, &
+                      l_rrmls,l_zzmls,l_L1mls,l_L2mls,l_L4mls,l_epotpmls, &
+                      l_sigepmls,l_iermls)
       
       ! For each k-file time average the data for this chord
-      WRITE(*,*) ' Filling ktime arrays'
-      DO i=1,ktime
+      write(*,*) ' Filling ktime arrays'
+      do i=1,ktime
          ! Initialize counter
          count=0
          ! Zero arrays
@@ -97,10 +102,10 @@
          epotpmls(i) = 0.0
          sigepmls(i) = 0.0
          iermls(i)=1
-         IF (l_iermls .EQ. 0) THEN 
-            DO j=1,ntimes
-               IF (l_time(j) .GE. atime(i)-avem .AND. l_time(j) .LE. atime(i)+avem) THEN
-                  bbmls(i) = bbmls(i)+l_bbmls(j)
+         if (l_iermls .eq. 0) then 
+            do j=1,ntimes
+               if (l_time(j) .ge. atime(i)-avem .and. l_time(j) .le. atime(i)+avem) then
+                  bbmls(i) = bbmls(i) + l_bbmls(j)
                   sigbmls(i) = sigbmls(i) + l_sigbmls(j)
                   rrmls(i) = rrmls(i) + l_rrmls(j)
                   zzmls(i) = zzmls(i) + l_zzmls(j)
@@ -112,9 +117,9 @@
                   
                   ! Increase couter for mean
                   count = count+1
-               END IF
-            END DO
-            IF (count .GT. 0) THEN
+               endif
+            enddo
+            if (count .gt. 0) then
                bbmls(i) = bbmls(i)/count
                sigbmls(i) = sigbmls(i)/count
                rrmls(i) = rrmls(i)/count
@@ -125,11 +130,11 @@
                epotpmls(i) = epotpmls(i)/count
                sigepmls(i) = sigepmls(i)/count
                iermls(i)=0
-            END IF
-         END IF
-      END DO
+            endif
+         endif
+      enddo
       
-101   FORMAT (A, I6)
-102   FORMAT (A, g15.4)
-      RETURN
+101   format (a, i6)
+102   format (a, g15.4)
+      return
       end subroutine msels_data
