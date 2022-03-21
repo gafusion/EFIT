@@ -190,3 +190,32 @@ EFITINK
 -------
 
 (TODO: need to add/describe namelist)
+
+IN3
+---
+
+IN3 is used to read machine parameters from a dprobe.dat file.
+.. csv-table:: IN3
+   :file: tables/in3.csv
+   :widths: 15,15, 70
+   :header-rows: 1
+
+
+IN4
+---
+
+IN4 is used to read an alternate set of pointnames
+from a file.
+(TODO: need to add/describe namelist)
+
+Hardcoded
+---------
+
+Unfortunately some variables are not a part of any namelists and can only be manipulated from
+within the source code...
+Example: see IBOUND
+
+.. csv-table:: hardcoded
+   :file: tables/hardcoded.csv
+   :widths: 15,15,70
+   :header-rows: 1

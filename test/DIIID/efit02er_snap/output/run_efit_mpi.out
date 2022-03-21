@@ -1,0 +1,121 @@
+
+          EFITD Version  03/16/2022
+
+
+ type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+
+ type shot #, start time(ms), time step(ms), steps(<1001):
+ GETPTS call   4.85 sec
+ GETPTS transfer       9396 bytes in   0.00 sec
+ Calling $Name: V3_07 $ of the mse shared library
+ (mse_lib2:read_mse_files)       186610
+ (mse_lib2:read_msetup)
+ /fusion/projects/codes/mse/calib/msetup2.dat                                                                                    
+  Using users msetup file: 
+ /fusion/projects/codes/mse/calib/msetup2.dat                                                                                    
+ (mse_lib2:read_mcalgain) 
+ /fusion/projects/codes/mse/calib/mcalgain_798.dat                                                                               
+ (mse_lib2:read_mcalgain_rows) 
+ /fusion/projects/codes/mse/calib/mcalgain_798.dat                                                                               
+  Using users mcalgain file: 
+ /fusion/projects/codes/mse/calib/mcalgain_798.dat                                                                               
+ (mse_lib2:read_mrz) 
+ /fusion/projects/codes/mse/calib/mrz_47.dat                                                                                     
+  Using users mrz file: 
+ /fusion/projects/codes/mse/calib/mrz_47.dat                                                                                     
+ (mselib2:read_mcalgain3) 
+ /fusion/projects/codes/mse/calib/mcalgain3_2002.dat                                                                             
+  Using users mcalgain3 file: 
+ /fusion/projects/codes/mse/calib/mcalgain3_2002.dat                                                                             
+ (mselib2:read_mcalgain4) 
+ /fusion/projects/codes/mse/calib/mcalgain4_2002.dat                                                                             
+ (mselib2:read_mcalgain4) 
+ /d/diags/mse/calib/mcalgain4_2002.dat                                                                                           
+ (mse_lib2:do_setup_and_beams) Beam on volts 
+           30left       79000.00    
+           210right     79000.00    
+           210left      58000.00    
+           30right      58000.00    
+ (mse_lib2:mse_fastEr_correction)
+            cerbranch    CERQUICK  
+ (mse_lib2:average_data) Cer correction done
+                        use_cer            1
+                        certree            0
+                        use_cer330            1
+                        use_cer210            0
+ GETSTARK call   1.40 sec
+ GETSTARK transfer      21540 bytes in   0.00 sec
+
+      ******************** EFITD 65 x  65  output ********************
+ table_dir = </fusion/projects/codes/efit/support_files/2006/181292/>
+
+ r=  3 t=  2700 it=  1 chi2=7.75E+01 zm=-2.28E-02 err=1.948E+00 dz=-2.279E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+
+ r=  1 t=  2500 it=  1 chi2=4.47E+01 zm=-2.26E-02 err=1.861E+00 dz=-2.258E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+
+ r=  2 t=  2600 it=  1 chi2=4.17E+01 zm=-2.28E-02 err=1.921E+00 dz=-2.276E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+
+ r=  0 t=  2400 it=  1 chi2=4.13E+01 zm=-2.21E-02 err=1.805E+00 dz=-2.212E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+ r=  3 t=  2700 it=  2 chi2=2.46E+01 zm=-2.30E-02 err=6.368E-02 dz=-2.516E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 4.06E+00
+ r=  1 t=  2500 it=  2 chi2=2.89E+01 zm=-2.29E-02 err=7.486E-02 dz=-3.267E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.21E+01
+ r=  2 t=  2600 it=  2 chi2=2.80E+01 zm=-2.31E-02 err=6.828E-02 dz=-3.172E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.38E+01
+ r=  0 t=  2400 it=  2 chi2=2.76E+01 zm=-2.23E-02 err=7.086E-02 dz=-2.276E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 9.94E+00
+ r=  3 t=  2700 it=  3 chi2=2.55E+01 zm=-2.31E-02 err=4.067E-02 dz=-1.682E-05 delz= 0.000E+00 dj=0.000E+00 chigam= 3.91E+00
+ r=  1 t=  2500 it=  3 chi2=3.01E+01 zm=-2.30E-02 err=4.890E-02 dz=-8.104E-05 delz= 0.000E+00 dj=0.000E+00 chigam= 1.20E+01
+ r=  2 t=  2600 it=  3 chi2=2.88E+01 zm=-2.32E-02 err=4.530E-02 dz=-8.883E-05 delz= 0.000E+00 dj=0.000E+00 chigam= 1.38E+01
+ r=  0 t=  2400 it=  3 chi2=2.86E+01 zm=-2.23E-02 err=4.644E-02 dz= 3.784E-06 delz= 0.000E+00 dj=0.000E+00 chigam= 9.76E+00
+ r=  3 t=  2700 it=  4 chi2=3.65E+01 zm=-2.76E-02 err=2.364E-02 dz=-4.541E-03 delz= 9.052E-01 dj=2.029E-02 chigam= 4.26E+00
+ r=  1 t=  2500 it=  4 chi2=4.54E+01 zm=-2.86E-02 err=2.732E-02 dz=-5.601E-03 delz= 1.080E+00 dj=2.596E-02 chigam= 1.28E+01
+ r=  2 t=  2600 it=  4 chi2=4.13E+01 zm=-2.82E-02 err=2.421E-02 dz=-5.013E-03 delz= 9.777E-01 dj=2.226E-02 chigam= 1.45E+01
+ r=  0 t=  2400 it=  4 chi2=4.32E+01 zm=-2.76E-02 err=2.522E-02 dz=-5.235E-03 delz= 1.036E+00 dj=2.399E-02 chigam= 1.07E+01
+ r=  3 t=  2700 it=  5 chi2=2.50E+01 zm=-3.00E-02 err=1.326E-02 dz=-2.439E-03 delz= 5.276E-01 dj=1.170E-02 chigam= 4.07E+00
+ r=  1 t=  2500 it=  5 chi2=2.85E+01 zm=-3.16E-02 err=1.483E-02 dz=-3.043E-03 delz= 6.290E-01 dj=1.465E-02 chigam= 1.25E+01
+ r=  2 t=  2600 it=  5 chi2=2.73E+01 zm=-3.09E-02 err=1.306E-02 dz=-2.683E-03 delz= 5.519E-01 dj=1.254E-02 chigam= 1.41E+01
+ r=  0 t=  2400 it=  5 chi2=2.77E+01 zm=-3.04E-02 err=1.373E-02 dz=-2.816E-03 delz= 5.919E-01 dj=1.373E-02 chigam= 1.01E+01
+ r=  3 t=  2700 it=  6 chi2=2.17E+01 zm=-3.13E-02 err=7.561E-03 dz=-1.232E-03 delz= 3.017E-01 dj=6.743E-03 chigam= 4.03E+00
+ r=  1 t=  2500 it=  6 chi2=2.37E+01 zm=-3.31E-02 err=8.216E-03 dz=-1.494E-03 delz= 3.366E-01 dj=7.963E-03 chigam= 1.24E+01
+ r=  2 t=  2600 it=  6 chi2=2.34E+01 zm=-3.22E-02 err=7.168E-03 dz=-1.329E-03 delz= 2.961E-01 dj=6.874E-03 chigam= 1.41E+01
+ r=  0 t=  2400 it=  6 chi2=2.33E+01 zm=-3.18E-02 err=7.641E-03 dz=-1.429E-03 delz= 3.332E-01 dj=7.793E-03 chigam= 9.86E+00
+ r=  3 t=  2700 it=  7 chi2=2.08E+01 zm=-3.19E-02 err=4.377E-03 dz=-6.582E-04 delz= 1.929E-01 dj=4.366E-03 chigam= 4.05E+00
+ r=  1 t=  2500 it=  7 chi2=2.24E+01 zm=-3.39E-02 err=4.629E-03 dz=-7.608E-04 delz= 1.940E-01 dj=4.636E-03 chigam= 1.24E+01
+ r=  2 t=  2600 it=  7 chi2=2.24E+01 zm=-3.29E-02 err=4.024E-03 dz=-7.065E-04 delz= 1.768E-01 dj=4.122E-03 chigam= 1.41E+01
+ r=  0 t=  2400 it=  7 chi2=2.21E+01 zm=-3.26E-02 err=4.329E-03 dz=-7.415E-04 delz= 2.007E-01 dj=4.744E-03 chigam= 9.82E+00
+ r=  1 t=  2500 it=  8 chi2=2.21E+01 zm=-3.43E-02 err=2.697E-03 dz=-4.059E-04 delz= 1.241E-01 dj=2.972E-03 chigam= 1.24E+01
+ r=  3 t=  2700 it=  8 chi2=2.06E+01 zm=-3.23E-02 err=2.591E-03 dz=-3.629E-04 delz= 1.360E-01 dj=3.101E-03 chigam= 4.07E+00
+ r=  2 t=  2600 it=  8 chi2=2.21E+01 zm=-3.33E-02 err=2.455E-03 dz=-3.851E-04 delz= 1.143E-01 dj=2.677E-03 chigam= 1.41E+01
+ r=  0 t=  2400 it=  8 chi2=2.17E+01 zm=-3.30E-02 err=2.524E-03 dz=-4.061E-04 delz= 1.352E-01 dj=3.218E-03 chigam= 9.83E+00
+ r=  1 t=  2500 it=  9 chi2=2.21E+01 zm=-3.45E-02 err=1.796E-03 dz=-2.204E-04 delz= 8.519E-02 dj=2.036E-03 chigam= 1.24E+01
+ r=  3 t=  2700 it=  9 chi2=2.05E+01 zm=-3.25E-02 err=1.635E-03 dz=-2.093E-04 delz= 1.061E-01 dj=2.432E-03 chigam= 4.09E+00
+ r=  0 t=  2400 it=  9 chi2=2.17E+01 zm=-3.32E-02 err=1.789E-03 dz=-2.328E-04 delz= 1.009E-01 dj=2.416E-03 chigam= 9.84E+00
+ r=  2 t=  2600 it=  9 chi2=2.20E+01 zm=-3.35E-02 err=1.758E-03 dz=-2.198E-04 delz= 8.146E-02 dj=1.920E-03 chigam= 1.42E+01
+ r=  1 t=  2500 it= 10 chi2=2.21E+01 zm=-3.46E-02 err=1.293E-03 dz=-1.277E-04 delz= 6.582E-02 dj=1.581E-03 chigam= 1.24E+01
+ r=  3 t=  2700 it= 10 chi2=2.05E+01 zm=-3.26E-02 err=1.177E-03 dz=-1.263E-04 delz= 8.986E-02 dj=2.068E-03 chigam= 4.11E+00
+ r=  0 t=  2400 it= 10 chi2=2.16E+01 zm=-3.33E-02 err=1.287E-03 dz=-1.402E-04 delz= 8.250E-02 dj=1.984E-03 chigam= 9.85E+00
+ r=  2 t=  2600 it= 10 chi2=2.19E+01 zm=-3.36E-02 err=1.272E-03 dz=-1.299E-04 delz= 6.328E-02 dj=1.494E-03 chigam= 1.42E+01
+ r=  1 t=  2500 it= 11 chi2=2.21E+01 zm=-3.47E-02 err=9.322E-04 dz=-7.790E-05 delz= 5.529E-02 dj=1.332E-03 chigam= 1.24E+01
+ Enter SHAPE kerror =             1            0
+ r=  3 t=  2700 it= 11 chi2=2.05E+01 zm=-3.27E-02 err=8.474E-04 dz=-7.968E-05 delz= 8.074E-02 dj=1.864E-03 chigam= 4.11E+00
+ Enter SHAPE kerror =             1            0
+ r=  0 t=  2400 it= 11 chi2=2.16E+01 zm=-3.34E-02 err=9.280E-04 dz=-8.853E-05 delz= 7.229E-02 dj=1.745E-03 chigam= 9.85E+00
+ Enter SHAPE kerror =             1            0
+ r=  2 t=  2600 it= 11 chi2=2.19E+01 zm=-3.37E-02 err=9.207E-04 dz=-8.159E-05 delz= 5.355E-02 dj=1.269E-03 chigam= 1.42E+01
+ Enter SHAPE kerror =             1            0
+
+       data used:   
+ 39 flux loops
+ 69 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     186610 time(ms) =       2400 chi**2   =  2.152E+01
+ betat(%) =      0.255 betap    =      0.067 li       =      1.188
+ vol(cm3) =  1.774E+07 rout(cm) =    172.800 zout(cm) =      5.959
+ elong    =      1.788 utriang  =      0.745 ltriang  =      0.349
+ a(cm)    =     56.490 lin(cm)  =     14.579 lout(cm) =      5.780
+ ltop(cm) =     16.388 q*       =      3.877 rc(cm)   =    170.293
+ zc(cm)   =     -2.655 bt0(t)   =      1.638 qout     =      7.137
+INFO in efitd at r=  1, t=  2500: Done processing
+INFO in efitd at r=  3, t=  2700: Done processing
+INFO in efitd at r=  2, t=  2600: Done processing
+INFO in efitd at r=  0, t=  2400: Done processing

@@ -3,31 +3,31 @@
 !!    weight computes the weighting function w.
 !!    
 !!
-!!    @param x :
+!!    @param x : R axis of the grid (nw points)
 !!
-!!    @param y :
+!!    @param y : Z axis of the grid (nh points)
 !!
 !**********************************************************************
       subroutine weight(x,y)
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension x(1),y(1)
+      dimension x(nw),y(nh)
 !
       if (iweigh.le.0) then
         do kk=1,nwnh
-          www(kk)=0.0
-          if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) cycle
-          www(kk)=zero(kk)
+          if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) then
+            www(kk)=0.0
+          else
+            www(kk)=zero(kk)
+          endif
         enddo
         return
       endif
 !----------------------------------------------------------------------
 !--   find a rectangle to search based on output from subroutine bound
 !----------------------------------------------------------------------
-      do j=1,nwnh
-        www(j)=0.0
-      enddo
+      www(1:nwnh)=0.0
       do i=1,nw-1
         ileft=i
         if((x(i).le.xmin).and.(x(i+1).gt.xmin)) exit
@@ -114,9 +114,8 @@
           case (5)
             www(kk) = 0.
           end select
-!          do kk = 1,nwnh
           www(kk) = www(kk)*zero(kk)
-!          enddo
+!          www(1:nwnh) = www(1:nwnh)*zero(1:nwnh)
         enddo
       enddo
       return

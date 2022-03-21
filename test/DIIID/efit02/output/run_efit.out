@@ -1,46 +1,55 @@
 
-          EFITD Version  11/23/2020
+          EFIT-AI
+
+Git repository url git@gitlab.com:efit-ai/efit.git
+
+Git branch main
+
+Git hash 2218630 with local modifications
+
+Simulation started on  3/19/2022 at 20:12:22
+
+Code compiled with PGI 18.7.0
 
 
- type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
-
- number of time slices?
+ type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
 
  type input file names:
- #
- table_di2 = <>
+ table_di2 = <
+ /home/bechtelt/efitall/efit/build_pgi_ser_default/test/DIIID/green/>
 
-      ******************** EFITD 65 x  65  output ********************
+      ********************EFITAI 65 x  65  output ********************
  before save fitting weights
- adjust fit parameters based on basis function selected 
+ adjust fit parameters based on basis function selected
  itek > 100, write out PLTOUT.OUT individually 
- option to symmetrize added 8/14/91 eal  
  read in limiter data
 
- r=  0 t=  2300 it=  1 chi2=4.31E+01 zm=-2.02E-02 err=1.738E+00 dz=-2.021E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
- r=  0 t=  2300 it=  2 chi2=2.69E+01 zm=-2.07E-02 err=6.221E-02 dz=-4.508E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 4.86E+00
- r=  0 t=  2300 it=  3 chi2=2.75E+01 zm=-2.08E-02 err=4.153E-02 dz=-1.318E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 4.97E+00
- r=  0 t=  2300 it=  4 chi2=4.53E+01 zm=-2.71E-02 err=2.603E-02 dz=-6.282E-03 delz= 1.392E+00 dj=2.903E-02 chigam= 5.20E+00
- r=  0 t=  2300 it=  5 chi2=2.81E+01 zm=-3.13E-02 err=1.375E-02 dz=-4.269E-03 delz= 1.129E+00 dj=2.657E-02 chigam= 5.03E+00
- r=  0 t=  2300 it=  6 chi2=2.34E+01 zm=-3.30E-02 err=7.328E-03 dz=-1.667E-03 delz= 5.569E-01 dj=1.248E-02 chigam= 4.87E+00
- r=  0 t=  2300 it=  7 chi2=2.19E+01 zm=-3.35E-02 err=3.987E-03 dz=-4.484E-04 delz= 2.652E-01 dj=5.931E-03 chigam= 4.86E+00
- r=  0 t=  2300 it=  8 chi2=2.18E+01 zm=-3.37E-02 err=2.274E-03 dz=-2.332E-04 delz= 2.011E-01 dj=4.496E-03 chigam= 4.86E+00
- r=  0 t=  2300 it=  9 chi2=2.17E+01 zm=-3.39E-02 err=1.507E-03 dz=-1.665E-04 delz= 1.909E-01 dj=4.265E-03 chigam= 4.87E+00
- r=  0 t=  2300 it= 10 chi2=2.16E+01 zm=-3.39E-02 err=1.853E-03 dz=-4.644E-05 delz= 1.450E-01 dj=3.239E-03 chigam= 4.87E+00
- r=  0 t=  2300 it= 11 chi2=2.16E+01 zm=-3.40E-02 err=9.014E-04 dz=-5.106E-05 delz= 1.499E-01 dj=3.352E-03 chigam= 4.87E+00
+ r=  0 t=  2400 it=  1 chi2=5.66E+01 zm=-2.21E-02 err=1.805E+00 dz=-2.212E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+ r=  0 t=  2400 it=  2 chi2=4.01E+01 zm=-2.24E-02 err=6.671E-02 dz=-2.577E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.41E+01
+ r=  0 t=  2400 it=  3 chi2=4.11E+01 zm=-2.24E-02 err=4.340E-02 dz=-3.710E-05 delz= 0.000E+00 dj=0.000E+00 chigam= 1.37E+01
+ r=  0 t=  2400 it=  4 chi2=7.25E+01 zm=-3.04E-02 err=2.881E-02 dz=-7.974E-03 delz= 1.751E+00 dj=3.809E-02 chigam= 1.60E+01
+ r=  0 t=  2400 it=  5 chi2=3.85E+01 zm=-3.54E-02 err=1.514E-02 dz=-5.015E-03 delz= 1.307E+00 dj=3.410E-02 chigam= 1.45E+01
+ r=  0 t=  2400 it=  6 chi2=3.18E+01 zm=-3.70E-02 err=7.797E-03 dz=-1.584E-03 delz= 5.223E-01 dj=1.270E-02 chigam= 1.34E+01
+ r=  0 t=  2400 it=  7 chi2=3.07E+01 zm=-3.77E-02 err=4.231E-03 dz=-7.298E-04 delz= 3.494E-01 dj=8.635E-03 chigam= 1.32E+01
+ r=  0 t=  2400 it=  8 chi2=3.03E+01 zm=-3.79E-02 err=2.404E-03 dz=-1.823E-04 delz= 2.206E-01 dj=5.464E-03 chigam= 1.32E+01
+ r=  0 t=  2400 it=  9 chi2=3.01E+01 zm=-3.78E-02 err=1.829E-03 dz= 1.498E-04 delz= 1.184E-01 dj=2.925E-03 chigam= 1.31E+01
+ r=  0 t=  2400 it= 10 chi2=3.02E+01 zm=-3.77E-02 err=1.045E-03 dz= 1.251E-05 delz= 1.481E-01 dj=3.650E-03 chigam= 1.31E+01
+ r=  0 t=  2400 it= 11 chi2=3.02E+01 zm=-3.78E-02 err=8.077E-04 dz=-1.854E-05 delz= 1.547E-01 dj=3.820E-03 chigam= 1.30E+01
 
        data used:   
  39 flux loops
- 65 magnetic probes(i)
+ 69 magnetic probes(i)
   1 full rogowski
   0 diamagnetic loop
 
 
- shot #   =     186610 time(ms) =       2300 chi**2   =  2.141E+01
- betat(%) =      0.328 betap    =      0.086 li       =      1.161
- vol(cm3) =  1.775E+07 rout(cm) =    172.993 zout(cm) =      6.956
- elong    =      1.805 utriang  =      0.756 ltriang  =      0.307
- a(cm)    =     56.311 lin(cm)  =     14.951 lout(cm) =      5.766
- ltop(cm) =     14.902 q*       =      3.877 rc(cm)   =    170.243
- zc(cm)   =     -2.389 bt0(t)   =      1.631 qout     =      6.343
- netcdf needs to be linked to write m-files
+ shot #   =     186610 time(ms) =       2400 chi**2   =  3.006E+01
+ betat(%) =      0.232 betap    =      0.062 li       =      1.201
+ vol(cm3) =  1.761E+07 rout(cm) =    172.766 zout(cm) =      6.957
+ elong    =      1.801 utriang  =      0.754 ltriang  =      0.350
+ a(cm)    =     56.327 lin(cm)  =     14.710 lout(cm) =      5.977
+ ltop(cm) =     15.001 q*       =      3.924 rc(cm)   =    170.005
+ zc(cm)   =     -2.754 bt0(t)   =      1.638 qout     =      6.307
+
+  fit errors, shot  186610  2400. msec. no eqdsks will be written
+     Error #21, Bp not consistent , error =  0.986E-01

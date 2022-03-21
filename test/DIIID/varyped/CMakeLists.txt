@@ -14,7 +14,6 @@ else()
   set(TIMES 00000)
 endif()
 
-
 foreach( t ${TIMES})
   set(EFIT_LABEL ${EFIT_LABEL} ${RUNID}.${t})
   set(EFIT_IN ${EFIT_IN} k${RUNID}.${t})

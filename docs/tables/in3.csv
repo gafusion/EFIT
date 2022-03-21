@@ -1,0 +1,5 @@
+Variable, Default, Description
+PATMP2,,"| Path length of closed loop magnetic probes in the poloidal plan."
+RSIVS,,"| Resistivity of vessel component."
+VSNAME,,"| Name of vessel component."
+TURNFC,,"| Turns per coil (DIII-D)."

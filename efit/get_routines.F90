@@ -37,7 +37,6 @@
       return
       end subroutine getbeam
 
-      
 !**********************************************************************
 !>
 !!    geteceb obtains the receo, R+ R-
@@ -675,7 +674,6 @@
       return
       end subroutine geteceb
 
-
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
@@ -1198,7 +1196,6 @@
       return
       end subroutine getecer
 
-
 !**********************************************************************
 !>
 !!    gettir obtains the receo, R+ R-
@@ -1540,7 +1537,6 @@
       return
       end subroutine gettir
 
-
 !**********************************************************************
 !>
 !!    fixstark adjusts the internal pitch angles
@@ -1736,11 +1732,13 @@
       return
       end subroutine fixstark
 
-
 !**********************************************************************
 !>
 !!    getmsels obtains MSE-LS data
 !!    
+!!    WARNING: this subroutine uses both REAL*4 (used in mse files) and
+!!             REAL*8 variables conversions must be handled carefully
+!!
 !!
 !!    @param ktime : number of time slices
 !!
@@ -1752,14 +1750,14 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       character*3 synmlt
       integer*4 ktime, icmls, iermls(ntime)
-      real*8 avemlt, atime(ntime), bbmls(ntime), sigbmls(ntime),      &
+      real*4 avemlt, atime(ntime), bbmls(ntime), sigbmls(ntime),      &
              rrmls(ntime), zzmls(ntime),                              &
              l1mls(ntime), l2mls(ntime), l4mls(ntime),                &
              epotpmls(ntime), sigepmls(ntime)
 !
-      avemlt=avemsels
+      avemlt=real(avemsels,r4)
       synmlt=synmsels
-      atime=time*1000.0
+      atime=real(time*1000.0,r4)
       do i=1,nmsels
         icmls=i
         call msels_data(ishot,atime,ktime,avemlt,synmlt,icmls,       &
@@ -1768,20 +1766,20 @@
 #ifdef DEBUG_LEVEL2
         write (6,*) 'GETMSELS bbmls,sigbmls= ',bbmls(1),sigbmls(1)
 #endif
+        bmselt(1:ktime,i)=real(bbmls(1:ktime),dp)
+        sbmselt(1:ktime,i)=real(sigbmls(1:ktime),dp)
+        rrmselt(1:ktime,i)=real(rrmls(1:ktime),dp)
+        zzmselt(1:ktime,i)=real(zzmls(1:ktime),dp)
+        l1mselt(1:ktime,i)=real(l1mls(1:ktime),dp)
+        l2mselt(1:ktime,i)=real(l2mls(1:ktime),dp)
+        l3mselt(1:ktime,i)=1.0-real(l1mls(1:ktime),dp)
+        l4mselt(1:ktime,i)=real(l4mls(1:ktime),dp)
+        emselt(1:ktime,i)=real(epotpmls(1:ktime),dp)
+        semselt(1:ktime,i)=real(sigepmls(1:ktime),dp)
+        iermselt(1:ktime,i)=real(iermls(1:ktime),dp)
+        fwtbmselt(1:ktime,i)=real(swtbmsels(1:ktime),dp)
+        fwtemselt(1:ktime,i)=real(swtemsels(1:ktime),dp)
         do j=1,ktime
-          bmselt(j,i)=bbmls(j)
-          sbmselt(j,i)=sigbmls(j)
-          rrmselt(j,i)=rrmls(j)
-          zzmselt(j,i)=zzmls(j)
-          l1mselt(j,i)=l1mls(j)
-          l2mselt(j,i)=l2mls(j)
-          l3mselt(j,i)=1.0-l1mls(j)
-          l4mselt(j,i)=l4mls(j)
-          emselt(j,i)=epotpmls(j)
-          semselt(j,i)=sigepmls(j)
-          iermselt(j,i)=iermls(j)
-          fwtbmselt(j,i)=swtbmsels(i)
-          fwtemselt(j,i)=swtemsels(i)
           if (iermselt(j,i).ne.0) then
             fwtbmselt(j,i)=0.0
             fwtemselt(j,i)=0.0
@@ -1791,7 +1789,6 @@
 !
       return
       end subroutine getmsels
-
 
 !**********************************************************************
 !>
@@ -1964,12 +1961,14 @@
       return
       end
 
-
 !**********************************************************************
 !>
 !!    getstark obtains the internal pitch angles
 !!    from polarimetry measurement using Wroblewski's routine
 !!    
+!!    WARNING: this subroutine uses both REAL*4 (used by mselib) and
+!!             REAL*8 variables conversions must be handled carefully
+!!
 !!
 !!    @param ktime : number of time slices
 !!
@@ -1979,7 +1978,7 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*8 avem,tanham(ktime,nmtark),sigham(ktime,nmtark), &
+      real*4 avem,tanham(ktime,nmtark),sigham(ktime,nmtark), &
          rrham(nmtark),zzham(nmtark), &
          sarkar,sarkaz,a1ham(nmtark), &
          a2ham(nmtark),a3ham(nmtark),a4ham(nmtark), &
@@ -1988,75 +1987,71 @@
          hgain(nmtark),hslope(nmtark),hscale(nmtark), &
          hoffset(nmtark),max_beamOff, &
          tanham_uncor(ktime,nmtark)
-      real*8 fv30lt,fv30rt,fv210lt,fv210rt
+      real*4 fv30lt,fv30rt,fv210lt,fv210rt
 
 #ifdef USE_MDS
-      do i=1,ktime
-        atime(i)=time(i)
-      enddo
+      atime(1:ktime) = real(time(1:ktime),r4)
       if (dtmsefull .gt. 0.0) then
-        avem=dtmsefull / 1000.0
+        avem = real(dtmsefull,r4) / 1000.0
       else
-        avem=2.0*iavem / 1000.0
+        avem = 2.0*iavem / 1000.0
       endif
-      max_beamOff = t_max_beam_off / 1000.0
+      max_beamOff = real(t_max_beam_off,r4) / 1000.0
       call  set_mse_beam_logic(mse_strict,max_beamOff,ok_210lt,ok_30rt)
       tanham = 0.0
       tanham_uncor = 0.0
       sigham = 0.0
-      fv30lt = v30lt
-      fv30rt = v30rt
-      fv210rt = v210rt
-      fv210lt = v210lt
-      call  set_cer_correction(mse_usecer,mse_certree, &
-        mse_use_cer330,mse_use_cer210)
+      fv30lt = real(v30lt,r4)
+      fv30rt = real(v30rt,r4)
+      fv210rt = real(v210rt,r4)
+      fv210lt = real(v210lt,r4)
+      call set_cer_correction(mse_usecer,mse_certree, &
+                              mse_use_cer330,mse_use_cer210)
       call set_mse_beam_on_vlevel(fv30lt,fv210rt,fv210lt,fv30rt)
-      call  stark2cer(ishot,atime,ktime,avem,msefitfun,tanham,sigham, &
-        rrham,zzham,a1ham,a2ham,a3ham,a4ham,a5ham,a6ham,a7ham, &
-        iergam,msebkp,mse_quiet,tanham_uncor)
+      call stark2cer(ishot,atime,ktime,avem,msefitfun,tanham,sigham, &
+                     rrham,zzham,a1ham,a2ham,a3ham,a4ham,a5ham,a6ham, &
+                     a7ham,iergam,msebkp,mse_quiet,tanham_uncor)
       call get_mse_spatial_data(spatial_avg_ham)
-      call get_mse_calibration(msefitfun,hgain, &
-        hslope,hscale,hoffset)
+      call get_mse_calibration(msefitfun,hgain,hslope,hscale,hoffset)
       kfixstark = 0
       do n=1,nmtark
-        rmse_gain(n) = hgain(n)
-        rmse_slope(n) = hslope(n)
-        rmse_scale(n) = hscale(n)
-        rmse_offset(n) = hoffset(n)
+        rmse_gain(n) = real(hgain(n),dp)
+        rmse_slope(n) = real(hslope(n),dp)
+        rmse_scale(n) = real(hscale(n),dp)
+        rmse_offset(n) = real(hoffset(n),dp)
         if(mse_spave_on(n) .ne. 0) kfixstark = 1
         do i=1,ngam_vars
           do j=1,ngam_u
-            do k=1,ngam_w
-              spatial_avg_gam(n,i,j,k)= spatial_avg_ham(n,i,j,k)
-            enddo
+            spatial_avg_gam(n,i,j,1:ngam_w) =  &
+              real(spatial_avg_ham(n,i,j,1:ngam_w),dp)
           enddo
         enddo
 
         do i=1,ktime
-          tangam(i,n)=tanham(i,n)
-          tangam_uncor(i,n)=tanham_uncor(i,n)
-          siggam(i,n)=sigham(i,n)
-          rrgam(i,n)=rrham(n)
-          zzgam(i,n)=zzham(n)
-          starkar(i,n)=sarkar
-          starkaz(i,n)=sarkaz
-          a1gam(i,n)=a1ham(n)
-          a2gam(i,n)=a2ham(n)
-          a3gam(i,n)=a3ham(n)
-          a4gam(i,n)=a4ham(n)
-          a5gam(i,n)=a5ham(n)
-          a6gam(i,n)=a6ham(n)
-          a7gam(i,n)=a7ham(n)
+          tangam(i,n) = real(tanham(i,n),dp)
+          tangam_uncor(i,n) = real(tanham_uncor(i,n),dp)
+          siggam(i,n) = real(sigham(i,n),dp)
+          rrgam(i,n) = real(rrham(n),dp)
+          zzgam(i,n) = real(zzham(n),dp)
+          starkar(i,n) = real(sarkar,dp)
+          starkaz(i,n) = real(sarkaz,dp)
+          a1gam(i,n) = real(a1ham(n),dp)
+          a2gam(i,n) = real(a2ham(n),dp)
+          a3gam(i,n) = real(a3ham(n),dp)
+          a4gam(i,n) = real(a4ham(n),dp)
+          a5gam(i,n) = real(a5ham(n),dp)
+          a6gam(i,n) = real(a6ham(n),dp)
+          a7gam(i,n) = real(a7ham(n),dp)
           a8gam(i,n)=0.0
           if (abs(tangam(i,n)).le.1.e-10_dp.and. &
-            abs(siggam(i,n)).le.1.e-10_dp)then
+            abs(siggam(i,n)).le.1.e-10_dp) then
             fwtgam(n)=0.0
             siggam(i,n)=0.0
-          else if (abs(tangam(i,n)).le.1.e-10_dp.and. &
+          elseif (abs(tangam(i,n)).le.1.e-10_dp.and. &
             abs(siggam(i,n)).le.100.0) then
             fwtgam(n)=0.0
             siggam(i,n)=0.0
-          else if (iergam(n).gt.0) then
+          elseif (iergam(n).gt.0) then
             fwtgam(n)=0.0
             siggam(i,n)=0.0
           endif
@@ -2076,7 +2071,6 @@
 #endif
       return
       end subroutine getstark
-
 
 !**********************************************************************
 !>
@@ -2195,7 +2189,6 @@
 !
       return
       end subroutine gette
-
 
 !**********************************************************************
 !>
@@ -2348,7 +2341,6 @@
       return
       end subroutine gettion
 
-
 !**********************************************************************
 !>
 !!    erpote computes the stream function for the
@@ -2395,7 +2387,6 @@
       return
       end function erpote
 
-
 !**********************************************************************
 !>
 !!    eradial computes the radial electric field.
@@ -2441,7 +2432,6 @@
       esradial=esradial/bbnow
       return
       end function eradial
-
 
 !**********************************************************************
 !>
@@ -2542,5 +2532,3 @@
       ffcurr=sqrt(ff22)*fbrdy/abs(fbrdy)
       return
       end function fpcurr
-
-

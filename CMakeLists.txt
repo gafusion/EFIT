@@ -207,11 +207,14 @@ elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "PGI")
   if (NOT ${ENABLE_NATIVE_ENDIAN})
     set(CMAKE_Fortran_FLAGS "-byteswapio ${CMAKE_Fortran_FLAGS}")
   endif ()
-  set(CMAKE_Fortran_FLAGS_DEFAULT "-O1") # from man page, contradicts online refs
+#  set(CMAKE_Fortran_FLAGS_DEFAULT "-O1") # from man page, contradicts online refs
+  set(CMAKE_Fortran_FLAGS_DEFAULT "-O0") # required for running snap mode...
   set(CMAKE_C_FLAGS_DEFAULT "-O1") # from man page, contradicts online refs
-  set(CMAKE_Fortran_FLAGS_RELEASE "-O4 -fast")
+#  set(CMAKE_Fortran_FLAGS_RELEASE "-O4 -fast")
+  set(CMAKE_Fortran_FLAGS_RELEASE "-O0") # required for running snap mode...
   set(CMAKE_C_FLAGS_RELEASE "-O4 -fast")
-  set(CMAKE_Fortran_FLAGS_MINSIZEREL "-O4 -fast") # no small compile options available
+#  set(CMAKE_Fortran_FLAGS_MINSIZEREL "-O4 -fast") # no small compile options available
+  set(CMAKE_Fortran_FLAGS_MINSIZEREL "-O0") # required for running snap mode...
   set(CMAKE_C_FLAGS_MINSIZEREL "-O4 -fast") # no small compile options available
   set(CMAKE_Fortran_FLAGS_DEBUG "-g -O0 -Mbounds")
   set(CMAKE_C_FLAGS_DEBUG "-g -O0 -Mbounds")

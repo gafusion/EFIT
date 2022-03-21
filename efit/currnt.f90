@@ -47,41 +47,42 @@
         do j=1,nh
          kk=(i-1)*nh+j
          pcurrt(kk)=0.0
-         if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) cycle
+         if((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) cycle
          rdiml=rgrid(i)/rzero
          pp0       = (1.-xpsi(kk)**enp)**emp*(1.-gammap)+gammap
-         pcurrt(kk)=  rbetap/rdiml*((1.-xpsi(kk)**enf)**emf &
-                 *(1.-gammaf)+gammaf)
+         pcurrt(kk)= rbetap/rdiml*((1.-xpsi(kk)**enf)**emf &
+                     *(1.-gammaf)+gammaf)
 !-----------------------------------------------------------------
 !--      toroidal rotation                                      --
 !-----------------------------------------------------------------
          if (kvtor.eq.0) then
-          pcurrt(kk)=pcurrt(kk)+pp0*rdiml
+           pcurrt(kk)=pcurrt(kk)+pp0*rdiml
          elseif (kvtor.ge.1 .and. kvtor.le.3) then
-          ppw= (1.-xpsi(kk)**enw)**emw*(1.-gammaw)+gammaw
-          ppw=rbetaw*ppw*rgrvt(i)
-          pcurrt(kk)=pcurrt(kk)+(pp0+ppw)*rdiml
+           ppw=(1.-xpsi(kk)**enw)**emw*(1.-gammaw)+gammaw
+           ppw=rbetaw*ppw*rgrvt(i)
+           pcurrt(kk)=pcurrt(kk)+(pp0+ppw)*rdiml
          elseif (kvtor.eq.11) then
-          ypsi=xpsi(kk)
-          pres0=prcur4(n1set,ypsi,kppcur)
-          prew0=pwcur4(n1set,ypsi,kwwcur)
-          if (abs(pres0).gt.1.e-10_dp) then
-           pwop0=prew0/pres0
-           ptop0=exp(pwop0*rgrvt(i))
-          else
-           ptop0=1.0
-           pwop0=0.0
-          endif
-          pp0=pp0*(1.-pwop0*rgrvt(i))
-          ppw= (1.-xpsi(kk)**enw)**emw*(1.-gammaw)+gammaw
-          ppw=rbetaw*ppw*rgrvt(i)
-          pcurrt(kk)=pcurrt(kk)+(pp0+ppw)*rdiml*ptop0
+           ypsi=xpsi(kk)
+           pres0=prcur4(n1set,ypsi,kppcur)
+           prew0=pwcur4(n1set,ypsi,kwwcur)
+           if (abs(pres0).gt.1.e-10_dp) then
+             pwop0=prew0/pres0
+             ptop0=exp(pwop0*rgrvt(i))
+           else
+             ptop0=1.0
+             pwop0=0.0
+           endif
+           pp0=pp0*(1.-pwop0*rgrvt(i))
+           ppw=(1.-xpsi(kk)**enw)**emw*(1.-gammaw)+gammaw
+           ppw=rbetaw*ppw*rgrvt(i)
+           pcurrt(kk)=pcurrt(kk)+(pp0+ppw)*rdiml*ptop0
          endif
          pcurrt(kk)=pcurrt(kk)*www(kk)
          tcurrt=tcurrt+pcurrt(kk)
         enddo
        enddo
        if (abs(tcurrt).le.1.0e-10_dp) then
+         ! there is likely a problem with the weights (www)
          kerror=1
          call errctrl_msg('currnt','abs(tcurrt) <= 1.0e-10')
          return

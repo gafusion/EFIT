@@ -54,8 +54,6 @@ IAVEUS, ,"| ""IAverage usec"". Changes units on averaging times (IAVED, IAVEM, I
 | ,<=0 leave units in milliseconds"
 IAVEV, 10, """IAverage Voltage"". Time in milliseconds for averaging loop voltage."
 IBATCH, 0, UNUSED (input and output only)
-IBOUND,0,"| 0 = trace from inside wall. (default)
-| - -1 = trace from outside wall."
 IBTCOMP,1,"| ""(Integer flag) BT Compensation"". Toroidal field pickup compensation. Subtract
 |  contributions to poloidal magnetic field probe measurements due to pickup from toroidal field coil
 | <=0 no compensation

@@ -1,0 +1,12 @@
+INFO in getsets at r= -1, t=    -1: Done writing k-files
+INFO in getsets at r= -1, t=    -1: Done writing k-files
+INFO in efitd at r=  3, t=  2700: Done processing
+
+  fit errors, shot  186610  2500. msec. no eqdsks will be written
+     Error #21, Bp not consistent , error =  0.112E+00
+INFO in efitd at r=  1, t=  2500: Done processing
+INFO in efitd at r=  2, t=  2600: Done processing
+
+  fit errors, shot  186610  2400. msec. no eqdsks will be written
+     Error #21, Bp not consistent , error =  0.815E-01
+INFO in efitd at r=  0, t=  2400: Done processing

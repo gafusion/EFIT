@@ -38,7 +38,8 @@ execute_process(
 
 # Get date of the working branch
 execute_process(
-  COMMAND git log -1 --format=%cs
+#  COMMAND git log -1 --format=%cs # does not work on older systems (Iris...)
+  COMMAND git log -1 --format=%ai
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   OUTPUT_VARIABLE GIT_COMMIT_DATE
   OUTPUT_STRIP_TRAILING_WHITESPACE

@@ -1,45 +1,52 @@
 
           EFIT-AI
 
+Git repository url git@gitlab.com:efit-ai/efit.git
 
- type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+Git branch main
 
- number of time slices?
+Git hash 2218630 with local modifications
+
+Simulation started on  3/19/2022 at 20:18:16
+
+Code compiled with PGI 18.7.0
+
+
+ type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
 
  type input file names:
- #
- table_di2 = <>
+ table_di2 = <
+ /home/bechtelt/efitall/efit/build_pgi_ser_default/test/DIIID/green/>
 
-      ******************** EFITD 65 x  65  output ********************
+      ********************EFITAI 65 x  65  output ********************
  before save fitting weights
- adjust fit parameters based on basis function selected 
+ adjust fit parameters based on basis function selected
  itek > 100, write out PLTOUT.OUT individually 
- option to symmetrize added 8/14/91 eal  
  read in limiter data
 
- r=  0 t=  2300 it=  1 chi2=0.00E+00 zm=-1.63E-02 err=1.833E+00 dz=-1.633E-02 chigam= 0.00E+00
- r=  0 t=  2300 it=  2 chi2=0.00E+00 zm=-1.96E-02 err=3.913E-01 dz=-3.287E-03 chigam= 0.00E+00
- r=  0 t=  2300 it=  3 chi2=0.00E+00 zm=-2.18E-02 err=2.068E-01 dz=-2.187E-03 chigam= 0.00E+00
- r=  0 t=  2300 it=  4 chi2=0.00E+00 zm=-2.34E-02 err=1.129E-01 dz=-1.610E-03 chigam= 0.00E+00
- r=  0 t=  2300 it=  5 chi2=0.00E+00 zm=-2.47E-02 err=6.314E-02 dz=-1.244E-03 chigam= 0.00E+00
- r=  0 t=  2300 it=  6 chi2=0.00E+00 zm=-2.56E-02 err=3.633E-02 dz=-9.843E-04 chigam= 0.00E+00
- r=  0 t=  2300 it=  7 chi2=0.00E+00 zm=-2.64E-02 err=2.132E-02 dz=-7.884E-04 chigam= 0.00E+00
- r=  0 t=  2300 it=  8 chi2=0.00E+00 zm=-2.71E-02 err=1.289E-02 dz=-6.353E-04 chigam= 0.00E+00
- r=  0 t=  2300 it=  9 chi2=0.00E+00 zm=-2.76E-02 err=8.014E-03 dz=-5.122E-04 chigam= 0.00E+00
- r=  0 t=  2300 it= 10 chi2=0.00E+00 zm=-2.80E-02 err=5.122E-03 dz=-4.135E-04 chigam= 0.00E+00
- r=  0 t=  2300 it= 11 chi2=0.00E+00 zm=-2.83E-02 err=3.363E-03 dz=-3.334E-04 chigam= 0.00E+00
- r=  0 t=  2300 it= 12 chi2=0.00E+00 zm=-2.86E-02 err=2.265E-03 dz=-2.683E-04 chigam= 0.00E+00
- r=  0 t=  2300 it= 13 chi2=0.00E+00 zm=-2.88E-02 err=1.562E-03 dz=-2.157E-04 chigam= 0.00E+00
- r=  0 t=  2300 it= 14 chi2=0.00E+00 zm=-2.90E-02 err=1.100E-03 dz=-1.731E-04 chigam= 0.00E+00
- r=  0 t=  2300 it= 15 chi2=0.00E+00 zm=-2.91E-02 err=7.892E-04 dz=-1.387E-04 chigam= 0.00E+00
- r=  0 t=  2300 it= 16 chi2=0.00E+00 zm=-2.92E-02 err=5.754E-04 dz=-1.109E-04 chigam= 0.00E+00
- r=  0 t=  2300 it= 17 chi2=0.00E+00 zm=-2.93E-02 err=4.253E-04 dz=-8.867E-05 chigam= 0.00E+00
- r=  0 t=  2300 it= 18 chi2=0.00E+00 zm=-2.94E-02 err=3.181E-04 dz=-7.077E-05 chigam= 0.00E+00
- r=  0 t=  2300 it= 19 chi2=0.00E+00 zm=-2.95E-02 err=2.402E-04 dz=-5.648E-05 chigam= 0.00E+00
- r=  0 t=  2300 it= 20 chi2=0.00E+00 zm=-2.95E-02 err=1.830E-04 dz=-4.503E-05 chigam= 0.00E+00
- r=  0 t=  2300 it= 21 chi2=0.00E+00 zm=-2.95E-02 err=1.403E-04 dz=-3.587E-05 chigam= 0.00E+00
- r=  0 t=  2300 it= 22 chi2=0.00E+00 zm=-2.96E-02 err=1.082E-04 dz=-2.857E-05 chigam= 0.00E+00
- r=  0 t=  2300 it= 23 chi2=0.00E+00 zm=-2.96E-02 err=8.390E-05 dz=-2.274E-05 chigam= 0.00E+00
+ r=  0 t=     0 it=  1 chi2=0.00E+00 zm=-1.63E-02 err=1.833E+00 dz=-1.633E-02 chigam= 0.00E+00
+ r=  0 t=     0 it=  2 chi2=0.00E+00 zm=-1.96E-02 err=3.913E-01 dz=-3.287E-03 chigam= 0.00E+00
+ r=  0 t=     0 it=  3 chi2=0.00E+00 zm=-2.18E-02 err=2.068E-01 dz=-2.187E-03 chigam= 0.00E+00
+ r=  0 t=     0 it=  4 chi2=0.00E+00 zm=-2.34E-02 err=1.129E-01 dz=-1.610E-03 chigam= 0.00E+00
+ r=  0 t=     0 it=  5 chi2=0.00E+00 zm=-2.47E-02 err=6.314E-02 dz=-1.244E-03 chigam= 0.00E+00
+ r=  0 t=     0 it=  6 chi2=0.00E+00 zm=-2.56E-02 err=3.633E-02 dz=-9.843E-04 chigam= 0.00E+00
+ r=  0 t=     0 it=  7 chi2=0.00E+00 zm=-2.64E-02 err=2.132E-02 dz=-7.884E-04 chigam= 0.00E+00
+ r=  0 t=     0 it=  8 chi2=0.00E+00 zm=-2.71E-02 err=1.289E-02 dz=-6.353E-04 chigam= 0.00E+00
+ r=  0 t=     0 it=  9 chi2=0.00E+00 zm=-2.76E-02 err=8.014E-03 dz=-5.122E-04 chigam= 0.00E+00
+ r=  0 t=     0 it= 10 chi2=0.00E+00 zm=-2.80E-02 err=5.122E-03 dz=-4.135E-04 chigam= 0.00E+00
+ r=  0 t=     0 it= 11 chi2=0.00E+00 zm=-2.83E-02 err=3.363E-03 dz=-3.334E-04 chigam= 0.00E+00
+ r=  0 t=     0 it= 12 chi2=0.00E+00 zm=-2.86E-02 err=2.265E-03 dz=-2.683E-04 chigam= 0.00E+00
+ r=  0 t=     0 it= 13 chi2=0.00E+00 zm=-2.88E-02 err=1.562E-03 dz=-2.157E-04 chigam= 0.00E+00
+ r=  0 t=     0 it= 14 chi2=0.00E+00 zm=-2.90E-02 err=1.100E-03 dz=-1.731E-04 chigam= 0.00E+00
+ r=  0 t=     0 it= 15 chi2=0.00E+00 zm=-2.91E-02 err=7.892E-04 dz=-1.387E-04 chigam= 0.00E+00
+ r=  0 t=     0 it= 16 chi2=0.00E+00 zm=-2.92E-02 err=5.754E-04 dz=-1.109E-04 chigam= 0.00E+00
+ r=  0 t=     0 it= 17 chi2=0.00E+00 zm=-2.93E-02 err=4.253E-04 dz=-8.867E-05 chigam= 0.00E+00
+ r=  0 t=     0 it= 18 chi2=0.00E+00 zm=-2.94E-02 err=3.181E-04 dz=-7.077E-05 chigam= 0.00E+00
+ r=  0 t=     0 it= 19 chi2=0.00E+00 zm=-2.95E-02 err=2.402E-04 dz=-5.648E-05 chigam= 0.00E+00
+ r=  0 t=     0 it= 20 chi2=0.00E+00 zm=-2.95E-02 err=1.830E-04 dz=-4.503E-05 chigam= 0.00E+00
+ r=  0 t=     0 it= 21 chi2=0.00E+00 zm=-2.95E-02 err=1.403E-04 dz=-3.587E-05 chigam= 0.00E+00
+ r=  0 t=     0 it= 22 chi2=0.00E+00 zm=-2.96E-02 err=1.082E-04 dz=-2.857E-05 chigam= 0.00E+00
+ r=  0 t=     0 it= 23 chi2=0.00E+00 zm=-2.96E-02 err=8.390E-05 dz=-2.274E-05 chigam= 0.00E+00
 
        data used:   
   0 flux loops
@@ -48,11 +55,10 @@
   0 diamagnetic loop
 
 
- shot #   =     186610 time(ms) =       2300 chi**2   =  0.000E+00
+ shot #   =     186610 time(ms) =          0 chi**2   =  0.000E+00
  betat(%) =      0.229 betap    =      0.107 li       =      1.129
  vol(cm3) =  1.784E+07 rout(cm) =    173.132 zout(cm) =      6.729
  elong    =      1.813 utriang  =      0.716 ltriang  =      0.309
  a(cm)    =     56.326 lin(cm)  =     15.206 lout(cm) =      7.064
  ltop(cm) =     16.427 q*       =      5.197 rc(cm)   =    170.446
  zc(cm)   =     -2.231 bt0(t)   =     -2.008 qout     =      9.106
-INFO in efit at r=  0, t=  2300: Done processing

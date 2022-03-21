@@ -1,0 +1,47 @@
+
+          EFIT-AI
+
+Git repository url git@gitlab.com:efit-ai/efit.git
+
+Git branch main
+
+Git hash 2218630 with local modifications
+
+Simulation started on  3/21/2022 at 13: 0:12
+
+Code compiled with PGI 18.7.0
+
+
+ type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
+
+ type shot #, start time(ms), time step(ms), steps(<1001):
+ table_di2 = </home/bechtelt/efitall/efit/build_pgi_ser_debug/test/DIIID/green/>
+
+      ********************EFITAI 65 x  65  output ********************
+
+ r=  0 t=  2400 it=  1 chi2=4.13E+01 zm=-2.21E-02 err=1.805E+00 dz=-2.212E-02 delz= 0.000E+00 dj=0.000E+00
+ r=  0 t=  2400 it=  2 chi2=2.47E+01 zm=-2.30E-02 err=1.048E-01 dz=-8.285E-04 delz= 0.000E+00 dj=0.000E+00
+ r=  0 t=  2400 it=  3 chi2=2.43E+01 zm=-2.35E-02 err=4.815E-02 dz=-5.587E-04 delz= 0.000E+00 dj=0.000E+00
+ r=  0 t=  2400 it=  4 chi2=4.25E+01 zm=-2.78E-02 err=1.494E-01 dz=-4.282E-03 delz= 7.850E-01 dj=1.917E-02
+ r=  0 t=  2400 it=  5 chi2=1.92E+01 zm=-2.98E-02 err=8.836E-02 dz=-2.026E-03 delz= 0.000E+00 dj=1.917E-02
+ r=  0 t=  2400 it=  6 chi2=1.94E+01 zm=-3.00E-02 err=4.154E-03 dz=-2.109E-04 delz= 0.000E+00 dj=1.917E-02
+ r=  0 t=  2400 it=  7 chi2=2.25E+01 zm=-3.32E-02 err=5.156E-02 dz=-3.144E-03 delz= 4.202E-01 dj=9.174E-03
+ r=  0 t=  2400 it=  8 chi2=1.89E+01 zm=-3.43E-02 err=1.476E-02 dz=-1.100E-03 delz= 1.284E-01 dj=2.656E-03
+ r=  0 t=  2400 it=  9 chi2=1.88E+01 zm=-3.44E-02 err=1.764E-03 dz=-1.553E-04 delz= 8.336E-02 dj=1.779E-03
+ r=  0 t=  2400 it= 10 chi2=1.88E+01 zm=-3.45E-02 err=3.746E-04 dz=-4.574E-05 delz= 8.170E-02 dj=1.738E-03
+ r=  0 t=  2400 it= 11 chi2=1.88E+01 zm=-3.45E-02 err=3.030E-05 dz=-1.414E-05 delz= 8.080E-02 dj=1.717E-03
+
+       data used:   
+ 39 flux loops
+ 65 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     186610 time(ms) =       2400 chi**2   =  1.871E+01
+ betat(%) =      0.358 betap    =      0.095 li       =      1.153
+ vol(cm3) =  1.774E+07 rout(cm) =    172.892 zout(cm) =      5.711
+ elong    =      1.796 utriang  =      0.749 ltriang  =      0.352
+ a(cm)    =     56.341 lin(cm)  =     14.821 lout(cm) =      5.836
+ ltop(cm) =     16.450 q*       =      3.899 rc(cm)   =    170.182
+ zc(cm)   =     -2.793 bt0(t)   =      1.638 qout     =      7.189
