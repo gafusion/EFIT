@@ -619,14 +619,21 @@
                       np,times,delt,i0,r1,i1,bitdia,iavem,time(1:np), &
                       ircfact,do_spline_fit,diam_rc,diamrcg,vresdiam, &
                       diam_k,t0diam,devdiam(1:np),navdiam(1:np),time_err)
-      endif
-      if (kcaldia.eq.1) &
+      elseif (kcaldia.eq.1) then
         call avdata(nshot,nsingl(4),i1,ierrdi,diamag(1:np), &
                     np,times,delt,i0,r1,i1,bitdia,iavem,time(1:np), &
                     ircfact,do_spline_fit,diam_rc,diamrcg,vresdiam, &
                     diam_k,t0diam,devdiam(1:np),navdiam(1:np),time_err)
+      endif
       diamag(1:np)=1.0e-03*diamag(1:np)
       sigdia(1:np)=1.0e-03*abs(sigdia(1:np))
+
+      ! some kind of write statement is required here in order to keep
+      ! optimized (-O2 and greater) builds from hanging for mysterious
+      ! reasons... this seems like the least obtrusive way
+      open(unit=40,file='errfil.out',status='unknown',position='append')
+      write(40,*) ""
+      close(unit=40)
 !------------------------------------------------------------------------
 !--   get beam power                                                   --
 !------------------------------------------------------------------------

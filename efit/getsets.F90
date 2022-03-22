@@ -108,7 +108,7 @@
       ibatch=0 ! never used in code (just gets output)
       ilaser=0
       mtime=ktime
-!      table_save=table_dir
+      table_save=table_dir
 !----------------------------------------------------------------------
 !--   news and help information                                      --
 !----------------------------------------------------------------------
@@ -503,12 +503,12 @@
 !----------------------------------------------------------------------- 
 !--   reset table dir if necessary                                    --
 !-----------------------------------------------------------------------
-!      if (table_dir.ne.table_save) then
-!        call set_table_dir
-!        call read_eparmdud
-!        call get_eparmdud_dependents
-!        call efit_read_tables
-!      endif
+      if (table_dir.ne.table_save) then
+        call set_table_dir
+        call read_eparmdud
+        call get_eparmdud_dependents
+        call efit_read_tables
+      endif
 !-------------------------------------------------------------------------------
 !--   Set bit noise for ishot > 152000                                        --
 !-------------------------------------------------------------------------------
@@ -516,7 +516,7 @@
 !-------------------------------------------------------------------------------
 !--   read in limiter data                                                    --
 !-------------------------------------------------------------------------------
-      call getlim(1,xltype,xltype_180)
+      call getlim(1,xltype,xltype_180,.false.)
 !
   100 continue
       if (lookfw.ge.0) then

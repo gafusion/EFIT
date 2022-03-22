@@ -2610,7 +2610,11 @@
           do m=1,igmax
             temp(m)=dco2v(m,2)
           enddo
-          dttt=time(2)-time(1)
+          if (size(time,1).gt.1) then
+            dttt=time(2)-time(1)
+          else
+            dttt=0.0
+          endif
           if (igmax.eq.1) dttt=5.
           call getzeff(ishot,igmax,time(1),dttt,temp,tave,zeff,ier)
         endif

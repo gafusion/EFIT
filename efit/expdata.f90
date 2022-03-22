@@ -12,6 +12,8 @@
 !!    @param xltype_180 : Inward distance of 180 degree outside limiter in cm.
 !!            Initialization is passed in.
 !!
+!!    @param shape_ext : Flag for whether profile_ext data is used. 
+!!
 !**********************************************************************
       subroutine getlim(limmode,xltype,xltype_180,shape_ext)
       include 'eparm.inc'
