@@ -7,7 +7,7 @@
 !!
 !!     REFERENCES:\n
 !!          (1) f.w. mcclain and b.b. brown, ga technologies
-!*!             report ga-a14490 (1977)
+!!             report ga-a14490 (1977)
 !!
 !!    @param a1 : first filament radius 
 !!

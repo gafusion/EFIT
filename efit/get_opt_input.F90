@@ -2,7 +2,7 @@
 !**********************************************************************
 !>
 !!    get_opt_input performs inputing, pulled out of getsets for
-!!       generalization of EFIT
+!!       generalization of EFIT\n
 !!
 !!    kdata:
 !!      1: mimics option 2 but reads input from an hdf5

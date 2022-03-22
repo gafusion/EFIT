@@ -20,8 +20,8 @@
 !!
 !!    @param ilast :  index of ending time  
 !!
-!!    @param itype :  1 called from main routine with time loop.
-!!                    2 called from main routine out of time loop.
+!!    @param itype :  1 called from main routine with time loop.\n
+!!                    2 called from main routine out of time loop.\n
 !!                    write all slices at one time    
 !!
 !**********************************************************************

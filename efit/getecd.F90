@@ -26,12 +26,13 @@
                    nc79name,nc139name,ncname(mccoil),niname(micoil)  !EJS(2014)
 !                        ---  or ---  ncname(mccoil),niname(micoil)  !EJS(2014)
 
-      integer*4 :: time_err
+      integer*4 time_err,ioerr
       character*150 textline     !EJS(2014)
       character*10,dimension(:),allocatable :: ndenv,ndenr,fcname,ecname
       character*10 namedum
       real*8 dumbtc
       real*8,dimension(:),allocatable :: dumccc,dumcic
+      logical read_btcshot
 
       NAMELIST/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi, &
                    as,as2,lpname,rsisvs,turnfc,patmp2,vsname, &
@@ -39,7 +40,7 @@
                    rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2, &
                    re,ze,ecid,ecturn,vsid,rvs,zvs,we,he,fcturn
 !
-      namelist/in4/mpnam2,lpname,vsname,nsingl,n1name,btcname, & !JRF 
+      namelist/in4/mpnam2,lpname,vsname,nsingl,n1name, & !JRF 
                    nc79name,nc139name,btcname,ndenv,ndenr, &
                    fcname,ecname
 !
@@ -243,54 +244,49 @@
 !--------------------------------------------------------------------
       have_btc: if (ibtcomp.gt.0) then
       open(unit=60,file=input_dir(1:lindir)//'btcomp.dat', &
-           status='old')
-!     TODO: This code could be problematic... its intentions should be
-!           checked
-!31000 read (60,*,err=31000,end=32000) ibtcshot, btcname  !EJS(2014)
-31000 read (60,*,end=32000) ibtcshot, btcname  !EJS(2014)
-
-      if (nshot.ge.ibtcshot) then
-        bti322(1:np)=0.
-        ierbtc=0
-        call avdata(nshot,btcname,i1,ierbtc,bti322(1:np), &
-                    np,times,delt,i0,r1,i1,bitbt,iavem,time(1:np),ircfact, &
-                    do_spline_fit,bt_rc,btrcg,vresbt,bt_k,t0bt, &
-                    devbt(1:np),navbt(1:np),time_err)
-        if (ierbtc.ne.0) then
-          bti322(1:np)=0.0
-          go to 32000
-        endif
-31200   read (60,*,err=32000,end=32000) namedum,dumbtc
-        do i=1,magpri
-          if (mpnam2(i).eq.namedum) then
-            expmpi(1:np,i)=expmpi(1:np,i)-dumbtc*bti322(1:np)
-            go to 31200
-          endif
-        enddo
-        do i=1,nsilop
-          if (lpname(i).eq.namedum) then
-            silopt(1:np,i)=silopt(1:np,i)-dumbtc*bti322(1:np)
-            go to 31200
-          endif
-        enddo
-        go to 31200
-      else
-!------------------------------------------------------------------ EJS(2014)
-! The following loop was intended to skip to the next shot number in the file,
-! if the current shot number (nshot) is not in the range defined by ibtcshot.
-! This loop may fail, if the number of intervening lines is not exactly  
-! equal to magpol+nsilol.
-! ==> It is simpler and more reliable to go directly to 31000 and begin looking
-! for a line that starts with a shot number.  
-! The lines that need to be skipped begin with a probe name, not a shot number.
-!------------------------------------------------------------------ 
-!        do i=1,magpol+nsilol
-!          read(60,*,err=31000,end=32000) namedum,dumbtc
-!        enddo
-!------------------------------------------------------------------ 
-        go to 31000
+           status='old',iostat=ioerr)
+      if (ioerr.ne.0) then
+        call errctrl_msg('getpts', &
+                         input_dir(1:lindir)//'btcomp.dat not found')
+        stop
       endif
-32000 continue
+      read_btcshot=.true.
+      do while (read_btcshot)
+        read (60,*,iostat=ioerr) ibtcshot, btcname
+        if(is_iostat_end(ioerr)) exit
+        if(ioerr.ne.0) cycle
+        if (nshot.ge.ibtcshot) then
+          bti322(1:np)=0.
+          ierbtc=0
+          call avdata(nshot,btcname,i1,ierbtc,bti322(1:np), &
+                      np,times,delt,i0,r1,i1,bitbt,iavem,time(1:np), &
+                      ircfact,do_spline_fit,bt_rc,btrcg,vresbt,bt_k, &
+                      t0bt,devbt(1:np),navbt(1:np),time_err)
+          if (ierbtc.ne.0) then
+            bti322(1:np)=0.0
+            exit
+          endif
+          do while (ioerr.eq.0)
+            read (60,*,iostat=ioerr) namedum,dumbtc
+            if (ioerr.ne.0) then
+              read_btcshot=.false.
+              exit
+            endif
+            do i=1,magpri
+              if (mpnam2(i).eq.namedum) then
+                expmpi(1:np,i)=expmpi(1:np,i)-dumbtc*bti322(1:np)
+                cycle
+              endif
+            enddo
+            do i=1,nsilop
+              if (lpname(i).eq.namedum) then
+                silopt(1:np,i)=silopt(1:np,i)-dumbtc*bti322(1:np)
+                cycle
+              endif
+            enddo
+          enddo
+        endif
+      enddo
       close(unit=60)
       endif have_btc
 !---------------------------------------------------------------------
@@ -334,6 +330,7 @@
 
       enddo
 
+      if(allocated(dumccc)) deallocate(dumccc)
       allocate(dumccc(nccomp))
 !----------------------------------------------- end of new section - EJS(2014)
       if (nshot.ge.ibtcshot) then
@@ -456,6 +453,7 @@
         textline = textline(len(trim(niname(nicomp)))+3:len(textline))
 
       enddo
+      if(allocated(dumcic)) deallocate(dumcic)
       allocate(dumcic(nicomp))
 !----------------------------------------------- end of new section - EJS(2014)
 !      write (6,*) 'ICOMP', nshot,ibtcshot,nicomp,niname
@@ -1467,7 +1465,6 @@
 !!
 !**********************************************************************
       subroutine smoothit(times,data,nts,timint)
-      use error_control, only: errctrl_msg
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension work(nts)
       dimension times(nts),data(nts)
@@ -1515,7 +1512,6 @@
 !!
 !**********************************************************************
       subroutine smoothit2(times,data,nts,timint,stdev,nave)
-      use error_control, only: errctrl_msg
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension work(nts)
       dimension times(nts),data(nts),stdev(nts),nave(nts)
@@ -2495,8 +2491,8 @@
 
 !**********************************************************************
 !>
-!!    wrapper around getstark subroutine to handle MPI communication
-!! NOTE : NO error condition returned
+!!    wrapper around getstark subroutine to handle MPI communication\n
+!!    NOTE : NO error condition returned
 !!
 !!
 !!    @param ktime : number of time slices
