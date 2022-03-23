@@ -176,9 +176,12 @@ instead of using the interactive command line inputs.
 MACHINEIN
 ---------
 
-MACHINEIN is the namelist specified for efund in the mhdin.dat file and 
-communicated to efit through the dprobe.dat file.
-(TODO: need to add/describe namelist)
+MACHINEIN is the namelist specified for efund in dprobe.dat file.
+
+.. csv-table:: MACHINEIN
+   :file: tables/machinein.csv
+   :widths: 15,15, 70
+   :header-rows: 1
 
 EFITIN
 ------
@@ -190,3 +193,14 @@ EFITINK
 -------
 
 (TODO: need to add/describe namelist)
+
+MACHINEIN (EFUND)
+-----------------
+
+MACHINEIN is the namelist specified for efund in the mhdin.dat file and 
+communicated to efit through the dprobe.dat file.
+
+.. csv-table:: MACHINEIN
+   :file: tables/machinein_efund.csv
+   :widths: 15,15, 70
+   :header-rows: 1
