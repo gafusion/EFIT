@@ -21,8 +21,8 @@
       USE cvesel
       USE fshift
 
-      NAMELIST/machinein/nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil,mgaus1,mgaus2,device
+      NAMELIST/machinein/nfcoil,nsilop,magpr2,nrogow,necoil,nesum, &
+                         nfsum,nvsum,nvesel,nacoil,mgaus1,mgaus2,device
 
       device = 'DIII-D'
       nfcoil = 18
@@ -137,19 +137,21 @@
       REAL*8, dimension (:), allocatable :: patmp2
       CHARACTER*10,dimension (:), allocatable:: mpnam2,lpname,vsname
 
-      NAMELIST/in3/igrid,rleft,rright,zbotto,ztop,ifcoil &
-           ,islpfc,iecoil,mpnam2,xmp2,ymp2,amp2,smp2,isize,rsi,zsi,wsi &
-           ,hsi,as,as2,lpname,nsmp2,ivesel,rsisvs,vsname,turnfc,patmp2 &
-           ,iacoil,racoil,zacoil,wacoil,hacoil &
-           ,rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2,fcturn &
-           ,re,ze,ecid,ecturn,vsid,rvs,zvs,we,he &
-           ,nshiftrz,rshift,zshift,pshift,pmprobe &
-           ,nw,nh
+      NAMELIST/in3/igrid,rleft,rright,zbotto,ztop,ifcoil, &
+                   islpfc,iecoil,mpnam2,xmp2,ymp2,amp2,smp2,isize, &
+                   rsi,zsi,wsi,hsi,as,as2,lpname,nsmp2,ivesel,rsisvs, &
+                   vsname,turnfc,patmp2, &
+                   iacoil,racoil,zacoil,wacoil,hacoil, &
+                   rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2,fcturn, &
+                   re,ze,ecid,ecturn,vsid,rvs,zvs,we,he, &
+                   nshiftrz,rshift,zshift,pshift,pmprobe, &
+                   nw,nh
 !
       OPEN(unit=nin,status='old',file='mhdin.dat')
       OPEN(unit=nout,status='unknown',file='mhdout.dat')
 !
       ALLOCATE(patmp2(magpr2),mpnam2(magpr2),lpname(nsilop),vsname(nvesel))
+      vsname=''
       nw = 65
       nh = 65
 !
@@ -165,9 +167,7 @@
       re(1)=-1.
       rvs(1)=-1.
       wvs(1)=-1.
-      DO i=1,nfcoil
-        nshiftrz(i)=0
-      ENDDO
+      nshiftrz(1:nfcoil)=0
       patmp2=0.
 !---------------------------------------------------------------------
 !--   isize=0      no finite size correction for flux loops         --

@@ -3,7 +3,7 @@
 !!   This subroutine read efit.input file
 !!
 !**********************************************************************
-subroutine read_efitin()
+     subroutine read_efitin()
      use commonblocks
      use set_kinds
      include 'eparm.inc'
@@ -11,7 +11,7 @@ subroutine read_efitin()
      include 'modules1.inc'
      implicit integer*4 (i-n), real*8 (a-h,o-z)
 #if defined(USEMPI)
-      include 'mpif.h'
+     include 'mpif.h'
 #endif
      character(80),dimension(1001) :: inpfile
      logical input_flag
@@ -22,18 +22,13 @@ subroutine read_efitin()
      namelist/optin/mode,cmdfile,shotfile,shot,starttime,deltatime,steps,snapext,inpfile
      use_opt_input = .false.
      input_flag = .false.
-     if (rank == 0) then
-       inquire(file='efit.input',exist=input_flag)
-     endif
+     if (rank == 0) inquire(file='efit.input',exist=input_flag)
 #if defined(USEMPI)
-     if (nproc > 1) then
+     if (nproc > 1) &
        call MPI_BCAST(input_flag,1,MPI_LOGICAL,0,MPI_COMM_WORLD,ierr)
-     endif
 #endif
      if (input_flag) then
-       if (rank == 0) then
-         write(*,*) ' Using efit.input file...'
-       endif
+       if (rank == 0) write(*,*) ' Using efit.input file...'
        ! ALL processes open and read efit.input file
        open(unit=nin,status='old',file='efit.input')
        read(nin,optin)
@@ -51,15 +46,14 @@ subroutine read_efitin()
      endif
      return
 
-end subroutine read_efitin
-
+     end subroutine read_efitin
 
 !**********************************************************************
 !>
 !!   This subroutine reads eparmdud machine dependent parameters
 !!
 !**********************************************************************
-subroutine read_eparmdud()
+     subroutine read_eparmdud()
      use eparm
      use var_nio
      use exvars
@@ -79,5 +73,4 @@ subroutine read_eparmdud()
      close(unit=nin)
 
      return
-end subroutine read_eparmdud
-
+     end subroutine read_eparmdud

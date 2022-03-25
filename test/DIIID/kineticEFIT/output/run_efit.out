@@ -8,7 +8,7 @@
 
  type input file names:
  #
- table_di2 = <>
+ table_di2 = <../green>
 
       ******************** EFITD 65 x  65  output ********************
  before save fitting weights

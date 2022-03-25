@@ -6,10 +6,10 @@
         !integer*4, parameter :: rprec = selected_real_kind(13,307)
         !integer*4, parameter :: iprec = selected_real_kind(4)
         !integer*4, parameter :: dp=rprec
-        integer*4, parameter :: dp = selected_real_kind(15,307) ! REAL*8
+        integer*4, parameter :: dp=selected_real_kind(15,307) ! REAL*8
         integer*4, parameter :: i4=selected_int_kind(9)
         integer*4, parameter :: i8=selected_int_kind(18)
-        !integer*4, parameter :: r4=selected_real_kind(6,37)
+        integer*4, parameter :: r4=selected_real_kind(6,37)
         !integer*4, parameter :: r8=selected_real_kind(13,307)
       end module set_kinds
 !exvars
@@ -19,7 +19,6 @@
 !       table_dir    area where green tables are stored
 !       input_dir    area where other input files are stored
 !       store_dir    central directory to collect EFIT results
-
         character(256) table_dir,input_dir,store_dir,table_di2,link_efitx,link_storex
         integer*4 ltbdir,lindir,lstdir,ltbdi2
 

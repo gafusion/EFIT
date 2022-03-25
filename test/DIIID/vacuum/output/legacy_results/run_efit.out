@@ -1,0 +1,31 @@
+
+          EFITD Version  03/16/2022
+
+
+ type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+
+ number of time slices?
+
+ type input file names:
+ #
+
+      ******************** EFITD 65 x  65  output ********************
+ table_dir = </fusion/projects/codes/efit/support_files/2006/181292/>
+WARNING in fit at r=  0, t=  2400: not converged, reached max iterations
+ Enter SHAPE kerror =             1            1
+
+       data used:   
+ 39 flux loops
+ 69 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     186610 time(ms) =       2400 chi**2   =  5.085E+04
+ betat(%) =      0.000 betap    =      0.000 li       =      0.000
+ vol(cm3) =  0.000E+00 rout(cm) =      0.000 zout(cm) =      0.000
+ elong    =      0.000 utriang  =      0.000 ltriang  =      0.000
+ a(cm)    =      0.000 lin(cm)  =      0.000 lout(cm) =      0.000
+ ltop(cm) =      0.000 q*       =      0.000 rc(cm)   =      0.000
+ zc(cm)   =      0.000 bt0(t)   =      1.638 qout     =      0.000
+INFO in efitd at r=  0, t=  2400: Done processing

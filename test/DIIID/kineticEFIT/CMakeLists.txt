@@ -4,6 +4,8 @@
 #
 ######################################################################
 
+# TODO: need to update this case...
+
 set(RUNID 186610)
 if (${ENABLE_PARALLEL})
   set(TIMES 02300 02400 02500 02600)
@@ -11,7 +13,6 @@ if (${ENABLE_PARALLEL})
 else()
   set(TIMES 02300)
 endif()
-
 
 foreach( t ${TIMES})
   set(EFIT_LABEL ${EFIT_LABEL} ${RUNID}.${t})

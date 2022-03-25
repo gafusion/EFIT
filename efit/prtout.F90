@@ -21,10 +21,11 @@
       integer*4, dimension(:), allocatable :: ishotall
       real*8, dimension(:), allocatable :: ch2all,timeall
 
-      namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi,as, &
-        as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
-        hacoil,wacoil,rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2,fcturn, &
-        re,ze,ecid,ecturn,vsid,rvs,zvs,we,he
+      NAMELIST/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi, &
+                   as,as2,lpname,rsisvs,turnfc,patmp2,vsname, &
+                   racoil,zacoil,wacoil,hacoil, &
+                   rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2, &
+                   re,ze,ecid,ecturn,vsid,rvs,zvs,we,he,fcturn
 
       ! initialize variables
       cbetat=0.0

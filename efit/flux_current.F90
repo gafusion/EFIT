@@ -3,6 +3,7 @@
 !>
 !!    pflux computes the poloidal fluxes on the r-z grid.
 !!
+!!
 !!    @param niter inner equilibrium loop iteration index
 !!
 !!    @param nnin current profile loop iteration index?
@@ -34,23 +35,21 @@
       ALLOCATE(psikkk(nwnh),gfbsum(nwnh))
 
       vfeed=(isetfb.ne.0).and.(init.ne.0).and.(niter.gt.2.or.nnin.gt.2)
-      if (ivesel.gt.10) return
+      if(ivesel.gt.10) return
 !----------------------------------------------------------------------------
 !--   save flux from current iterations before update                      --
 !----------------------------------------------------------------------------
-      do kk=1,nwnh
-        psiold(kk)=psi(kk)
-        psipold(kk)=psipla(kk)
-      enddo
+      psiold(1:nwnh)=psi(1:nwnh)
+      psipold(1:nwnh)=psipla(1:nwnh)
 !
-      if ((ibunmn.eq.1).or.(ibunmn.eq.3).or. &
+      buneman_green: if ((ibunmn.eq.1).or.(ibunmn.eq.3).or. &
          ((ibunmn.eq.2).and.(errorm.gt.errcut)).or. &
          ((ibunmn.eq.4).and.(errorm.gt.errcut))) then
 !-----------------------------------------------------------------------------
 !--   Buneman's method of obtaining psi at the inner grid points            --
 !--   only plasma contribution                                              --
 !-----------------------------------------------------------------------------
-      if (init.le.0) then
+      if(init.le.0) then
 !-----  These must be brought into the integrals 
         rgrid1=rgrid(1)
         delrgrid=rgrid(2)-rgrid(1)
@@ -82,18 +81,10 @@
       if (abs(vcurfb(1)).gt.1.e-6_dp) then
         iinow=vcurfb(3)
         if (ntotal.lt.iinow) then
-          if (ntotal.eq.1) then
-            do kk=1,nwnh
-              psikkk(kk)=0.0
-            enddo
-          endif
+          if(ntotal.eq.1) psikkk(1:nwnh)=0.0
         else
           icurfb=vcurfb(2)
-          if (mod(ntotal-iinow,icurfb).eq.0) then
-            do kk=1,nwnh
-              psikkk(kk)=psiold(kk)
-            enddo
-          endif
+          if(mod(ntotal-iinow,icurfb).eq.0) psikkk(1:nwnh)=psiold(1:nwnh)
         endif
       endif
 !-----------------------------------------------------------------------
@@ -161,9 +152,7 @@
         if (kerror.gt.0) return
       endif
       deallocate(work)
-      do i=1,nwnh
-        psi(i)=-psi(i)
-      enddo
+      psi(1:nwnh)=-psi(1:nwnh)
 !----------------------------------------------------------------------------
 !--   optional symmetrized solution                                        --
 !----------------------------------------------------------------------------
@@ -228,25 +217,23 @@
 !---------------------------------------------------------------------
         tvfbrt(ntotal)=0.0
         do i=1+idelr,nw-idelr
-         do j=jtop-idelz,jtop+idelz
+          do j=jtop-idelz,jtop+idelz
             kk=(i-1)*nh+j
             tvfbrt(ntotal)=tvfbrt(ntotal)+(psikkk(kk)-psiold(kk))
-         enddo
+          enddo
         enddo
         do i=1+idelr,nw-idelr
-         do j=jlow-idelz,jlow+idelz
+          do j=jlow-idelz,jlow+idelz
             kk=(i-1)*nh+j
             tvfbrt(ntotal)=tvfbrt(ntotal)-(psikkk(kk)-psiold(kk))
-         enddo
+          enddo
         enddo
         if (initfb.eq.-1) then
           vcurfi=vcurfb(1)*cpasma(jtime)/abs(tvfbrt(ntotal))
           initfb=1
         endif
         tvfbrt(ntotal)=tvfbrt(ntotal)*vcurfi
-        do kk=1,nwnh
-          psi(kk)=psi(kk)+gfbsum(kk)*tvfbrt(ntotal)
-        enddo
+        psi(1:nwnh)=psi(1:nwnh)+gfbsum(1:nwnh)*tvfbrt(ntotal)
       endif
 !--------------------------------------------------------------------
 !--   optional vertical feedback control                           --
@@ -260,19 +247,15 @@
         psilu_psill=grdfdb(kct1,1)
         zdwn_now=0
         zup_now=0
-        zcontr=0
         zcurnow=0
-        sumc=0
         rcurnow=0
-        do icontr=1,nfound
-          zcontr=zcontr+yout(icontr)/nfound
-        enddo
+        zcontr=sum(yout(1:nfound))/nfound
+        sumc=sum(pcurrt(1:nwnh))
         do i=1,nw
          do j=1,nh
           kk=(i-1)*nh+j
           zcurnow=zcurnow+pcurrt(kk)*zgrid(j)
           rcurnow=rcurnow+pcurrt(kk)*rgrid(j)
-          sumc=sumc+pcurrt(kk)
          enddo
         enddo
         zcurnow=zcurnow/sumc
@@ -299,35 +282,19 @@
 !----------------------------------------------------------------------------
       do kk=1,nwnh
         psipla(kk)=psi(kk)
-        if (ivesel.gt.0) then
-          do m=1,nvesel
-            psi(kk)=psi(kk)+gridvs(kk,m)*vcurrt(m)
-          enddo
-        endif
-        if (iecurr.eq.1) then
-          do m=1,nesum
-            psi(kk)=psi(kk)+gridec(kk,m)*ecurrt(m)
-          enddo
-        endif
-        if (iecurr.eq.2) then
-          do  m=1,nesum
-            psi(kk)=psi(kk)+gridec(kk,m)*cecurr(m)
-          enddo
-        endif
-        if (vfeed) then
-          psi(kk)=psi(kk)+grdfdb(kk,1)*brfb(2)
-        endif
-        do m=1,nfcoil
-          psi(kk)=psi(kk)+gridfc(kk,m)*brsp(m)
-        enddo
-        if (iacoil.gt.0) then
-          do m=1,nacoil
-            psi(kk)=psi(kk)+gridac(kk,m)*caccurt(jtime,m)
-          enddo
-        endif
+        if(ivesel.gt.0) &
+          psi(kk)=psi(kk)+sum(gridvs(kk,1:nvesel)*vcurrt(1:nvesel))
+        if (iecurr.eq.1) &
+          psi(kk)=psi(kk)+sum(gridec(kk,1:nesum)*ecurrt(1:nesum))
+        if (iecurr.eq.2) &
+          psi(kk)=psi(kk)+sum(gridec(kk,1:nesum)*cecurr(1:nesum))
+        if (vfeed) psi(kk)=psi(kk)+grdfdb(kk,1)*brfb(2)
+        psi(kk)=psi(kk)+sum(gridfc(kk,1:nfcoil)*brsp(1:nfcoil))
+        if (iacoil.gt.0) &
+          psi(kk)=psi(kk)+sum(gridac(kk,1:nacoil)*caccurt(jtime,1:nacoil))
       enddo
 
-      else ! ibunmn
+      else buneman_green
 !-----------------------------------------------------------------------------
 !--   ibunmn=0, and 2,4 when errorm less than errcut                        --
 !--   Green's integral method of obtaining flux, can be computationally     --
@@ -336,30 +303,15 @@
       do i=1,nw
        do j=1,nh
         kk=(i-1)*nh+j
-        psi(kk)=0.0
-        do m=1,nfcoil
-          psi(kk)=psi(kk)+gridfc(kk,m)*brsp(m)
-        enddo
-        if (ivesel.gt.0) then
-          do m=1,nvesel
-            psi(kk)=psi(kk)+gridvs(kk,m)*vcurrt(m)
-          enddo
-        endif
-        if (iecurr.eq.1) then
-          do m=1,nesum
-            psi(kk)=psi(kk)+gridec(kk,m)*ecurrt(m)
-          enddo
-        endif
-        if (iecurr.eq.2) then
-          do  m=1,nesum
-            psi(kk)=psi(kk)+gridec(kk,m)*cecurr(m)
-          enddo
-        endif
-        if (iacoil.gt.0) then
-          do m=1,nacoil
-            psi(kk)=psi(kk)+gridac(kk,m)*caccurt(jtime,m)
-          enddo
-        endif
+        psi(kk)=psi(kk)+sum(gridfc(kk,1:nfcoil)*brsp(1:nfcoil))
+        if(ivesel.gt.0) &
+          psi(kk)=psi(kk)+sum(gridvs(kk,1:nvesel)*vcurrt(1:nvesel))
+        if (iecurr.eq.1) &
+          psi(kk)=psi(kk)+sum(gridec(kk,1:nesum)*ecurrt(1:nesum))
+        if (iecurr.eq.2) &
+          psi(kk)=psi(kk)+sum(gridec(kk,1:nesum)*cecurr(1:nesum))
+        if (iacoil.gt.0) &
+          psi(kk)=psi(kk)+sum(gridac(kk,1:nacoil)*caccurt(jtime,1:nacoil))
         psipla(kk)=psi(kk)
         if (ivacum.le.0) then
           do ii=1,nw
@@ -379,7 +331,7 @@
 !------------------------------------------------------------------------------
 !--   relaxation before return                                               --
 !------------------------------------------------------------------------------
-      endif ! ibunmn
+      endif buneman_green
 !----------------------------------------------------------------------------
 !--   rigid vertical shift correction ?                                    --
 !----------------------------------------------------------------------------
@@ -399,10 +351,8 @@
 !--   relax flux if needed                                                 --
 !----------------------------------------------------------------------------
       if ((ntotal.gt.1) .and. (abs(relax-1.0).ge.1.0e-03_dp)) then
-        do kk=1,nwnh
-          psi(kk)=relax*psi(kk)+(1.-relax)*psiold(kk)
-          psipla(kk)=relax*psipla(kk)+(1.-relax)*psipold(kk)
-        enddo
+        psi(1:nwnh)=relax*psi(1:nwnh)+(1.-relax)*psiold(1:nwnh)
+        psipla(1:nwnh)=relax*psipla(1:nwnh)+(1.-relax)*psipold(1:nwnh)
       endif
 !
       DEALLOCATE(psikkk,gfbsum)
@@ -410,10 +360,10 @@
       return
       end subroutine pflux
 
-
 !**********************************************************************
 !>
 !!    residu computes the flux variations on the r-z grid.
+!!
 !!
 !!    @param nx :
 !!
@@ -426,7 +376,7 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
-      if (ivacum.gt.0) return
+      if(ivacum.gt.0) return
       errold=errorm
       errave=0.0
       errorm=0.0
@@ -448,7 +398,7 @@
       aveerr(nx)=errave/abs(sidif)/nwnh
       cerror(nx)=errorm
       idone=0
-      if (errorm.le.error) idone=1
+      if(errorm.le.error) idone=1
       !----------------------------------------------------------------------
       !--  Turn on vertical stabilization if error small                   --
       !----------------------------------------------------------------------
@@ -463,7 +413,7 @@
       if (itell.gt.0.and.isetfb.ge.0) then
         if (itell.eq.1) then
           !if (nx.eq.1) write (nttyo,10017) itime, rank
-          if (nx.eq.1) write (nttyo,'(x)')
+          if(nx.eq.1) write (nttyo,'(x)')
           if (nsol.eq.0) then
             if (mmbmsels.eq.0) then
               write (nttyo,10019) rank,itime,nx,tsaisq(jtime),zmaxis,errorm,delzmm, &
@@ -548,11 +498,11 @@
       ' dz=',1pe10.3,' delz=',1pe10.3,' dj=',1pe9.3)
       end subroutine residu
 
-
 !**********************************************************************
 !>
 !!    step computes the dimensionless poloidal fluxes for
 !!    the r-z grid
+!!
 !!
 !!    @param ix :
 !!
@@ -586,16 +536,15 @@
       rout=0.0
       aout=0.0
 !
-      if (ivacum.gt.0) return
+      if(ivacum.gt.0) return
       if (ixt.le.1) then
         xguess=(rgrid(1)+rgrid(nw))/2.
         yguess=(zgrid(1)+zgrid(nh))/2.
-        if (zbound.ne.0.0) yguess=zbound
-        if (rbound.ne.0.0) xguess=rbound
+        if(zbound.ne.0.0) yguess=zbound
+        if(rbound.ne.0.0) xguess=rbound
         xltrac=xlmin
-        if (ibound.eq.-1) xltrac=xlmax
+        if(ibound.eq.-1) xltrac=xlmax ! hardcoded option only...
         radbou=(xguess+xltrac)/2.
-!
       endif
 !----------------------------------------------------------------------
 !--   first set up bi-cubic spline interpolation in findax           --
@@ -620,7 +569,7 @@
                   zxmin,zxmax,rymin,rymax,dpsi,bpol,bpolz, &
                   limitr,xlim,ylim,limfag,ixt,jtime,kerror)
 
-      if (kerror.gt.0) return
+      if(kerror.gt.0) return
       if (nsol.gt.0) then
 
         ier=0 ! set only for consistent output? (not useful...)   
@@ -674,7 +623,7 @@
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
                   zxmin,zxmax,rymin,rymax,dpsi,bpol,bpolz, &
                   limitr,xlim,ylim,limfag,ixt,jtime,kerror)
-      if (kerror.gt.0) return
+      if(kerror.gt.0) return
       sidif=simag-psibry
       eouter=(ymax-ymin)/(xmax-xmin)
       zplasm=(ymin+ymax)/2.
@@ -727,7 +676,7 @@
 !--------------------------------------------------------------
         rsepex=-999.
         yvs2=1000.
-        if (kskipvs.ne.0) then
+        skipvs: if (kskipvs.ne.0) then
         avebp=cpasma(jtime)*tmu/aouter
         bpmin=avebp
         ! TODO: sibpmin has not yet been defined...
@@ -754,7 +703,7 @@
           enddo
         enddo
 
-        if (bpmin.ne.avebp) then
+        bmin_ave: if (bpmin.ne.avebp) then
           relsi=abs((sibpmin-psibry)/sidif)
           if (bpmin.le.0.10_dp*avebp.and.relsi.gt.0.005_dp) then
 !------------------------------------------------------------------
@@ -793,8 +742,8 @@
               endif
             endif
           endif
-        endif ! bpmin.ne.avebp
-        endif ! kskipvs.ne.0
+        endif bmin_ave
+        endif skipvs
         if (alphafp.ge.0.0) then
           xpsimin=xvsmin+alphafp*(xvsmax-xvsmin)
         else
@@ -816,21 +765,21 @@
         kk=(i-1)*nh+j
         if (icutfp.eq.0) then
           xpsi(kk)=1.1_dp
-          if ((rgrid(i).lt.xmin).or.(rgrid(i).gt.xmax)) cycle
-          if ((zgrid(j).lt.ymin).or.(zgrid(j).gt.ymax)) cycle
+          if((rgrid(i).lt.xmin).or.(rgrid(i).gt.xmax)) cycle
+          if((zgrid(j).lt.ymin).or.(zgrid(j).gt.ymax)) cycle
           xpsi(kk)=(simag-psi(kk))/sidif
         else
           if (zero(kk).gt.0.0005_dp) then
             xpsi(kk)=(simag-psi(kk))/sidif
             if (xpsi(kk)*xpsimin.le.1.0.and.xpsi(kk)*xpsimin.ge.0.0) then
-              if ((rgrid(i).lt.rminvs).or.(rgrid(i).gt.rmaxvs)) &
+              if((rgrid(i).lt.rminvs).or.(rgrid(i).gt.rmaxvs)) &
                    xpsi(kk)=1000.
               if ((zgrid(j).lt.zminvs).or.(zgrid(j).gt.zmaxvs)) then
                    xpsi(kk)=1000.
               endif
-              if (xpsi(kk).lt.1.0.and.zgrid(j).lt.ymin) xpsi(kk)=1000.
-              if (xpsi(kk).lt.1.0.and.zgrid(j).gt.ymax) xpsi(kk)=1000.
-              if (abs(zgrid(j)).gt.abs(yvs2).and. &
+              if(xpsi(kk).lt.1.0.and.zgrid(j).lt.ymin) xpsi(kk)=1000.
+              if(xpsi(kk).lt.1.0.and.zgrid(j).gt.ymax) xpsi(kk)=1000.
+              if(abs(zgrid(j)).gt.abs(yvs2).and. &
                 zgrid(j)*yvs2.gt.0.0) xpsi(kk)=1000.
             endif
           else
@@ -910,15 +859,11 @@
         enddo
       endif
 !
-      do k=1,nfound
-        xouts(k)=1./xout(k)**2
-      enddo
+      xouts(1:nfound)=1./xout(1:nfound)**2
       nzz=0
       call fluxav(xouts,xout,yout,nfound,psi,rgrid,nw,zgrid,nh, &
                   r2bdry,nzz,sdlobp,sdlbp)
-      do k=1,nfound
-        xouts(k)=1./xout(k)
-      enddo
+      xouts(1:nfound)=1./xout(1:nfound)
       call fluxav(xouts,xout,yout,nfound,psi,rgrid,nw,zgrid,nh, &
                   r1bdry,nzz,sdlobp,sdlbp)
 !-----------------------------------------------------------------------
@@ -930,20 +875,16 @@
       if (abs(sizeroj(1)-1.0).gt.1.e-05_dp.or.kzeroj.ne.1) then
         if (kzeroj.gt.0) then
           do i=1,kzeroj
-            if (sizeroj(i).ge.1.0) sizeroj(i)=0.99999_dp
+            if(sizeroj(i).ge.1.0) sizeroj(i)=0.99999_dp
             siwant=simag+sizeroj(i)*(psibry-simag)
             call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc, &
                         npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
                         rmaxis,zmaxis,negcur,kerror)
-            if (kerror.gt.0) return
-            do k=1,nfounc
-              csplt(k)=1./rsplt(k)**2
-            enddo
+            if(kerror.gt.0) return
+            csplt(1:nfounc)=1./rsplt(1:nfounc)**2
             call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
                         r2sdry(i),nzz,sdlobp,sdlbp)
-            do k=1,nfounc
-              csplt(k)=1./rsplt(k)
-            enddo
+            csplt(1:nfounc)=1./rsplt(1:nfounc)
             call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
                         r1sdry(i),nzz,sdlobp,sdlbp)
             r2surs = r2sdry(i)*sdlobp
@@ -957,26 +898,22 @@
 !-----------------------------------------------------------------------
       if (nqwant.gt.0) then
         do i=1,nqwant
-         siwant=simag+siwantq(i)*(psibry-simag)
-         call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc, &
-                     npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                     rmaxis,zmaxis,negcur,kerror)
-         if (kerror.gt.0) return
-         do k=1,nfounc
-           csplt(k)=1./rsplt(k)**2
-         enddo
-         call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
-                     r2qdry,nzz,sdlobp,sdlbp)
-         do k=1,nfounc
-           csplt(k)=1./rsplt(k)
-         enddo
-         call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
-                     r1qdry,nzz,sdlobp,sdlbp)
-         r2surq = r2qdry*sdlobp
-         fpnow = ffcurr(siwantq(i),kffcur)
-         fpnow = fpnow*tmu
-         qsiw(i)= abs(fpnow)/twopi*r2surq
-         pasmsw(i)=sdlbp/tmu/twopi
+          siwant=simag+siwantq(i)*(psibry-simag)
+          call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc, &
+                      npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                      rmaxis,zmaxis,negcur,kerror)
+          if(kerror.gt.0) return
+          csplt(1:nfounc)=1./rsplt(1:nfounc)**2
+          call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
+                      r2qdry,nzz,sdlobp,sdlbp)
+          csplt(1:nfounc)=1./rsplt(1:nfounc)
+          call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
+                      r1qdry,nzz,sdlobp,sdlbp)
+          r2surq = r2qdry*sdlobp
+          fpnow = ffcurr(siwantq(i),kffcur)
+          fpnow = fpnow*tmu
+          qsiw(i)= abs(fpnow)/twopi*r2surq
+          pasmsw(i)=sdlbp/tmu/twopi
         enddo
       endif
 !
@@ -995,7 +932,7 @@
       enddo
       carea=abs(carea)
       if (iconvr.ne.3) then
-        if ((ix.gt.1).or.(ixout.le.1)) call chisqr(jtime)
+        if((ix.gt.1).or.(ixout.le.1)) call chisqr(jtime)
       endif
       cvolp(ixt)=abs(cvolp(ixt))*1.0e+06_dp
       vout(jtime)=cvolp(ixt)
@@ -1014,7 +951,7 @@
 !---------------------------------------------------------------------
       if (fli.gt.0.0.or.fbetan.gt.0.0) then
         call betsli(jtime,rgrid,zgrid,kerror)
-        if (kerror.gt.0) return
+        if(kerror.gt.0) return
       endif
 !----------------------------------------------------------------------
 !--   vertical stabilization information                             --
@@ -1038,11 +975,11 @@
           (((icurrt.eq.2).or.(icurrt.eq.5)).and.(ixt.le.1).and.(icinit.gt.0))) then
         nqend=1
         n22=2
-        if (errorm.lt.0.1_dp.and.icurrt.eq.4) nqend=nqiter
+        if(errorm.lt.0.1_dp.and.icurrt.eq.4) nqend=nqiter
         do i=1,nqend
           if (i.gt.1) then
             call currnt(n22,jtime,n22,n22,kerror)
-            if (kerror.gt.0) return
+            if(kerror.gt.0) return
           endif
 
           fcentr=fbrdy**2+sidif*dfsqe
@@ -1069,8 +1006,8 @@
                       /rmaxis**2/abs(cjmaxi)
           qmaxis=cqmaxi(ixt)
           if (icurrt.eq.4) then
-            if (qenp.gt.0.0) enp=enp*qenp/qmaxis
-            if (qemp.gt.0.0) emp=emp*qmaxis/qemp
+            if(qenp.gt.0.0) enp=enp*qenp/qmaxis
+            if(qemp.gt.0.0) emp=emp*qmaxis/qemp
             enf=enp
             emf=emp
           endif
@@ -1081,26 +1018,18 @@
       case default ! 1
         rdiml=rmaxis/srma
         cjmaxi=cratio*(sbeta*rdiml+2.*salpha/rdiml)/darea
-        if (kvtor.gt.0) then
+        if(kvtor.gt.0) &
           cjmaxi=cjmaxi+cratio/darea*sbetaw*rdiml*(rdiml**2-1.)
-        endif
       case (2,5)
         fcentr=ffcurr(x000,kffcur)
         if (kvtor.eq.0) then
           cjmaxi=(rmaxis*ppcurr(x000,kppcur) &
-               +fpcurr(x000,kffcur)/rmaxis)*cratio/darea
+                +fpcurr(x000,kffcur)/rmaxis)*cratio/darea
         else
-          cjmaxi=0.0
-          do j=1,kppcur
-            cjmaxi=rjjjx(j)*brsp(nfcoil+j)+cjmaxi
-          enddo
-          do j=1,kffcur
-            cjmaxi=rjjfx(j)*brsp(nfcoil+kppcur+j)+cjmaxi
-          enddo
-          do j=1,kwwcur
-            cjmaxi=rjjwx(j)*brsp(nfnpcr+j)+cjmaxi
-          enddo
-          cjmaxi=cjmaxi/darea
+          cjmaxi=(sum(rjjjx(1:kppcur)*brsp(nfcoil+1:nfcoil+kppcur)) &
+                 +sum(rjjfx(1:kffcur)*brsp(nfcoil+kppcur+1:nfcoil+kppcur+kffcur)) &
+                 +sum(rjjwx(1:kwwcur)*brsp(nfnpcr+1:nfnpcr+kwwcur))) &
+                 /darea
         endif
       case (3)
         ! continue
@@ -1115,12 +1044,13 @@
 11001 format(/,1x,'** 2nd seperatrix **',2x,e10.3,2x,i4)
       end subroutine steps
 
-
 !**********************************************************************
 !>
 !!    inicur initializes the current density distribution
 !!
+!!
 !!    @param ks : time index
+!!
 !**********************************************************************
       subroutine inicur(ks)
       include 'eparm.inc'
@@ -1131,7 +1061,7 @@
       character(14) :: sfile
 !
       pcurrt=0.0
-      if (ivacum.gt.0) return
+      if(ivacum.gt.0) return
 !----------------------------------------------------------------------
 !--   icinit=1 uniform and elliptical flux surfaces                  --
 !--          2 parabolic and elliptical                              --
@@ -1139,37 +1069,31 @@
 !--        -12 parabolic and elliptical first slice and previous     --
 !--            slice subsequently                                    --
 !----------------------------------------------------------------------
-      if (ks.eq.1) isicinit=icinit
+      if(ks.eq.1) isicinit=icinit
       if (isicinit.lt.0) then
         if (ks.gt.1) then
           icinit=isicinit
           return
         endif
-        if (isicinit.eq.-12) icinit=2
+        if(isicinit.eq.-12) icinit=2
       endif
       select case (abs(icinit))
       case (1)
-        if (aelip.le.0.0) then
-          aelip=0.50_dp
-          do i=1,limitr
-            erho=sqrt((xlim(i)-relip)**2+((ylim(i)-zelip)/eelip)**2)
-            aelip=min(aelip,erho)
-          enddo
-        endif
+        if (aelip.le.0.0) &
+          aelip=min(0.50_dp, &
+                minval(sqrt((xlim(1:limitr)-relip)**2 &
+                          +((ylim(1:limitr)-zelip)/eelip)**2)))
         delcur=1.
         sumi=0.0
         do i=1,nw
           do j=1,nh
             kk=(i-1)*nh+j
-            erho=sqrt((rgrid(i)-relip)**2+((zgrid(j)-zelip)/eelip)**2)
             pcurrt(kk)=delcur*zero(kk)/rgrid(i)
             sumi=sumi+pcurrt(kk)
           enddo
         enddo
         cratio=pasmat(ks)/sumi
-        do i=1,nwnh
-          pcurrt(i)=pcurrt(i)*cratio*zero(i)
-        enddo
+        pcurrt(1:nwnh)=pcurrt(1:nwnh)*cratio*zero(1:nwnh)
 !
       case (2)
         if (icinit.le.0) then
@@ -1190,7 +1114,7 @@
             close(unit=nsave)
           endif
         else
-          if (ks.eq.1) zelips=zelip
+          if(ks.eq.1) zelips=zelip
           if (zelip.gt.1.e5_dp .or. zelips.gt.1.e5_dp) then
             zelip=1.447310_dp*(expmpi(ks,37)-expmpi(ks,43)) &
                  +0.692055_dp*(expmpi(ks,57)-expmpi(ks,53)) &
@@ -1204,28 +1128,28 @@
 !--       set zelip=0.0 if bad signals              96/06/24   --
 !----------------------------------------------------------------
           if (size(fwtmp2).ge.37) then
-            if (abs(fwtmp2(37)).le.1.0e-30_dp) zelip=0.0
+            if(abs(fwtmp2(37)).le.1.0e-30_dp) zelip=0.0
           endif
           if (size(fwtmp2).ge.43) then
-            if (abs(fwtmp2(43)).le.1.0e-30_dp) zelip=0.0
+            if(abs(fwtmp2(43)).le.1.0e-30_dp) zelip=0.0
           endif
           if (size(fwtmp2).ge.57) then
-            if (abs(fwtmp2(57)).le.1.0e-30_dp) zelip=0.0
+            if(abs(fwtmp2(57)).le.1.0e-30_dp) zelip=0.0
           endif
           if (size(fwtmp2).ge.53) then
-            if (abs(fwtmp2(53)).le.1.0e-30_dp) zelip=0.0
+            if(abs(fwtmp2(53)).le.1.0e-30_dp) zelip=0.0
           endif
           if (size(fwtsi).ge.27) then
-            if (abs(fwtsi(27)).le.1.0e-30_dp)  zelip=0.0
+            if(abs(fwtsi(27)).le.1.0e-30_dp)  zelip=0.0
           endif
           if (size(fwtsi).ge.37) then
-            if (abs(fwtsi(37)).le.1.0e-30_dp)  zelip=0.0
+            if(abs(fwtsi(37)).le.1.0e-30_dp)  zelip=0.0
           endif
           if (size(fwtsi).ge.2) then
-            if (abs(fwtsi(2)).le.1.0e-30_dp)   zelip=0.0
+            if(abs(fwtsi(2)).le.1.0e-30_dp)   zelip=0.0
           endif
           if (size(fwtsi).ge.11) then
-            if (abs(fwtsi(11)).le.1.0e-30_dp)  zelip=0.0
+            if(abs(fwtsi(11)).le.1.0e-30_dp)  zelip=0.0
           endif
 !
           do i=1,nw
@@ -1240,11 +1164,11 @@
       return
       end subroutine inicur
 
-
 !**********************************************************************
 !>
 !!    vescur computes the currents induced in the vessel
 !!    segments due to E coils and F coils
+!!
 !!
 !!    @param jtime : time index
 !!
@@ -1255,11 +1179,10 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !
-      if (ivesel.eq.5) return
+      if(ivesel.eq.5) return
 !
-      if (ivesel.eq.1) return
-      do i=1,nvesel
-        vcurrt(i)=vloopt(jtime)/rsisvs(i)
-      enddo
+      if(ivesel.eq.1) return
+!
+      vcurrt(1:nvesel)=vloopt(jtime)/rsisvs(1:nvesel)
       return
       end subroutine vescur

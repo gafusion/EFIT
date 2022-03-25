@@ -4,8 +4,8 @@
 #
 ######################################################################
 
-set(EFIT_LABEL 186610.02300)
-set(EFIT_NEXT 186610.02301)
+set(EFIT_LABEL 186610.00000)
+set(EFIT_NEXT 186610.00001)
 set(EFIT_IN rfile.txt)
 set(RFILE_TEST True)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${EFIT_IN}

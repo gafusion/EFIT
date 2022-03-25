@@ -17,8 +17,9 @@
                         rmin,rmax,zmin,zmax,ktime,kerror)
       use set_kinds
       use commonblocks,only: worka,c,wk,copy,bkx,bky,cw,wkw,copyw,bwx, &
-           bwy,cj,wkj,copyj,bjx,bjy,cv,wkv,copyv,bvx,bvy,byringr,byringz, &
-           xxtra,yxtra,bpxtra,flxtra,fpxtra
+                             bwy,cj,wkj,copyj,bjx,bjy,cv,wkv,copyv,bvx, &
+                             bvy,byringr,byringz, &
+                             xxtra,yxtra,bpxtra,flxtra,fpxtra
       use efit_bdata,only:iunit,m_write
       use curve2d_mod
       use var_cww
@@ -27,10 +28,11 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension rrgams(nstark),rrgaml(nstark)
-      namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi,as, &
-        as2,lpname,rsisvs,vsname,turnfc,patmp2,racoil,zacoil, &
-        hacoil,wacoil,rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2,fcturn, &
-        re,ze,ecid,ecturn,vsid,rvs,zvs,we,he 
+      NAMELIST/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi, &
+                   as,as2,lpname,rsisvs,turnfc,patmp2,vsname, &
+                   racoil,zacoil,wacoil,hacoil, &
+                   rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2, &
+                   re,ze,ecid,ecturn,vsid,rvs,zvs,we,he,fcturn
       character(10) :: uday, clocktime
       character(5)  :: zone
       integer*4, dimension(8) :: values
@@ -40,30 +42,31 @@
       character(1000) :: lline
       dimension ae(necoil),ae2(necoil),si(nwf),rmpi(magpri)
       dimension anglem(nstark),anglec(nstark)
-      dimension xplt(npoint),yplt(npoint),workb(nwf),workc(nwf),workd(nwf),kct(4) &
-      ,worke(nwf),bworkb(nwf),cworkb(nwf),dworkb(nwf),workk(nwf) &
-      ,workf(nwf),workg(nwf),workh(nwf),rpressv(mpress) &
-      ,bpressv(mpress),cpressv(mpress),dpressv(mpress) &
-      ,qthom(mpress),zqthom(mpress),vnbeam(mpress) &
-      ,xiter(kxiter),czmcm(kxiter),workaw(nwf),ptherm(mpress) &
-      ,presv(nwf),bpresv(nwf),cpresv(nwf),dpresv(nwf)
+      dimension xplt(npoint),yplt(npoint),workb(nwf),workc(nwf),workd(nwf), &
+                worke(nwf),bworkb(nwf),cworkb(nwf),dworkb(nwf),workk(nwf), &
+                workf(nwf),workg(nwf),workh(nwf),rpressv(mpress), &
+                bpressv(mpress),cpressv(mpress),dpressv(mpress), &
+                qthom(mpress),zqthom(mpress),vnbeam(mpress),kct(4), &
+                xiter(kxiter),czmcm(kxiter),workaw(nwf),ptherm(mpress), &
+                presv(nwf),bpresv(nwf),cpresv(nwf),dpresv(nwf)
       character(72) text
       dimension ratray(10),expsi(nsilop),expmp(magpri),pds(6)
       dimension scrat(ntime),bscra(ntime),cscra(ntime), &
-            dscra(ntime),bwork(ndata),cwork(ndata),dwork(ndata)
+                dscra(ntime),bwork(ndata),cwork(ndata),dwork(ndata)
       dimension psecem(nece),psecep(nece), &
-            xece(ndim_crv,3+nece),yece(ndim,3+nece)
+                xece(ndim_crv,3+nece),yece(ndim,3+nece)
       dimension thcece(3+nece),sclece(3+nece)
       dimension zz(ix,iy)
-      real*8,allocatable :: bfield(:,:), &
-         sivol(:),voln(:),bvoln(:),cvoln(:), &
-         dvoln(:),rscrap(:),curscr(:),pbimf(:),pmid(:),pmidw(:), &
-         bpmid(:),cpmid(:),dpmid(:),workj(:),copyn(:),copy1(:),xbnow(:), &
-         ybnow(:),rat(:)
+      real*8, allocatable :: bfield(:,:), &
+                             sivol(:),voln(:),bvoln(:),cvoln(:), &
+                             dvoln(:),rscrap(:),curscr(:),pbimf(:), &
+                             pmid(:),pmidw(:),bpmid(:),cpmid(:),dpmid(:), &
+                             workj(:),copyn(:),copy1(:),xbnow(:), &
+                             ybnow(:),rat(:)
       character*20 clrece(3+nece)
       integer*4 dshece(3+nece),dotece(3+nece),cdhece(3+nece), &
-            cdtece(3+nece),mrkece(3+nece),nplece(3+nece), &
-            cntece(3+nece)
+                cdtece(3+nece),mrkece(3+nece),nplece(3+nece), &
+                cntece(3+nece)
 !      equivalence (copy(1,1),copy1(1))
       data ratray/2.,1.,1.,2.,2.,1.,1.,1.,2.,1./
       data istrpl/0/,lfile/36/,iseplim/1/
@@ -1190,8 +1193,6 @@
          enddo
       else klabel0
          hgt = 0.13_dp
-!vas f90 modifi.
-!vas         if (klabel.lt.0) call hgt = 0.16_dp
          if (klabel.lt.0) hgt = 0.16_dp
          rrff=(rf(8)+rf(9))*0.5_dp
          zzff=(zf(8)+zf(9))*0.5_dp
@@ -9401,6 +9402,14 @@
 28973 format ('        ',1pe11.4,1x,1pe11.4)
       end subroutine pltout
 
+!**********************************************************************
+!**                                                                  **
+!**     SUBPROGRAM DESCRIPTION:                                      **
+!**          expand.                                                 **
+!**                                                                  **
+!**     CALLING ARGUMENTS:                                           **
+!**                                                                  **
+!**********************************************************************
       subroutine expand(n1,n2,nexexx,xmm,jtime)
       use set_kinds
       use commonblocks,only: worka,byringr,byringz,xxtra,yxtra, &
@@ -9427,9 +9436,9 @@
       allocate(xpltloc(npoint),ypltloc(npoint),xplxloc(npoint),yplxloc(npoint))
 !
       ilow=0  
-      if(zseps(1,jtime).gt.-900.)ilow=1
+      if(zseps(1,jtime).gt.-900.) ilow=1
       if((zseps(2,jtime).gt.-900.).and. &
-       (zseps(2,jtime).lt.zseps(1,jtime)))ilow=2
+       (zseps(2,jtime).lt.zseps(1,jtime))) ilow=2
 !      if(ilow.ne.0) then
 !         blmax=max(zseps(ilow,jtime)/100.,blmax)
 !         almin=min(rseps(ilow,jtime)/100.,almin)
@@ -9454,12 +9463,8 @@
        if(npxtra(i).le.2) cycle
        call curve(xxtra(1,i),yxtra(1,i),npxtra(i),0)
       enddo
-      do i=1,nxtrap
-       do j=1,nxtram
-        fpxtra(i,j)=0
-        flxtra(i,j)=0
-       enddo
-      enddo
+      fpxtra(1:nxtrap,1:nxtram)=0
+      flxtra(1:nxtrap,1:nxtram)=0
 !
       deallocate(xpltloc,ypltloc,xplxloc,yplxloc)
 !

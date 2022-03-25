@@ -1383,8 +1383,8 @@
 !! 
 !!    @param nx :
 !!    @param nz :
-!!    @param x :
-!!    @param y :
+!!    @param x : 1-d array of coordinate values
+!!    @param y : 1-d array of coordinate values
 !!    @param xax :
 !!    @param yax :
 !!    @param psimx :
@@ -1397,7 +1397,7 @@
 !!    @param xxout :
 !!    @param yyout :
 !!    @param kfound :
-!!    @param psipsi :
+!!    @param psipsi : psi function to spline, 1-d array (nx by nz)
 !!    @param rmin :
 !!    @param rmax :
 !!    @param zmin :
@@ -1414,8 +1414,8 @@
 !!    @param ylimv :
 !!    @param limfagv :
 !!    @param ifit :
-!!    @param jtime :
-!!    @param kerror :
+!!    @param jtime : time index
+!!    @param kerror : error flag
 !*********************************************************************
       subroutine findax(nx,nz,x,y,xax,yax,psimx,psiout,xseps,yseps, &
         kaxis,xxout,yyout,kfound,psipsi,rmin,rmax, &
@@ -1435,9 +1435,9 @@
       character(len=80) :: strtmp
       logical :: dodebugplts = .false. ! write surface files for debugging/plotting. Serial only, not parallel
 
-      kerror = 0
-      orelax = 1.0 ! Newton's Method relaxation constant (0.0-1.0)
-      niter = 20   ! Number of iterations
+      kerror=0
+      orelax=1.0 ! Newton's Method relaxation constant (0.0-1.0)
+      niter=20   ! Number of iterations
       n111=1
       xseps(1)=-999.
       yseps(1)=-999.
@@ -1464,8 +1464,8 @@
         write (6,*) 'FINDAX lkx,lky = ',lkx,lky
         write (6,*) 'FINDAX lkx,lky,c = ',bkx(33),bky(33),c(1,33,1,33)
 #endif
-        if (kaxis.eq.10) return ! if only the bicubic spline is wanted return
-      end if
+        if(kaxis.eq.10) return ! if only the bicubic spline is wanted return
+      endif
 
       do n=1,kfound
         ! xxout,yyout - (in) interp points outlining (psipsi=0) the raised mag flux region
@@ -1474,7 +1474,7 @@
         call seva2d(bkx,lkx,bky,lky,c,xxout(n),yyout(n),pds,ier,n333)
         bpooz(n)=pds(2)/xxout(n)
         bpoo(n)=sqrt(bpooz(n)**2+(pds(3)/xxout(n))**2)
-      end do
+      enddo
 
       sumip=0.
       do i=2,kfound
@@ -1483,9 +1483,9 @@
         dell=sqrt(delx**2+dely**2)
         abpol=(bpoo(i-1)+bpoo(i))/2.0
         sumip=sumip+abpol*dell
-      end do
+      enddo
       sumip=sumip/tmu/twopi
-      if (kaxis.le.0) go to 1000
+      if(kaxis.le.0) go to 1000
 !----------------------------------------------------------------------
 !--   find magnetic axis, its elongation, and flux value             --
 !----------------------------------------------------------------------
@@ -1493,20 +1493,20 @@
         psimx=-1.0e+10_dp
       else
         psimx=1.0e+10_dp
-      end if
+      endif
       ! Find psi max/min w/in r,z limits depending on current sign
       do i=1,nx
         do j=1,nz
           kk=(i-1)*nz+j
-          if ((x(i).lt.rmin).or.(x(i).gt.rmax)) cycle
-          if ((y(j).lt.zmin).or.(y(j).gt.zmax)) cycle
-          if (psipsi(kk).le.psimx.and.negcur.eq.0) cycle
-          if (psipsi(kk).ge.psimx.and.negcur.eq.1) cycle
+          if((x(i).lt.rmin).or.(x(i).gt.rmax)) cycle
+          if((y(j).lt.zmin).or.(y(j).gt.zmax)) cycle
+          if(psipsi(kk).le.psimx.and.negcur.eq.0) cycle
+          if(psipsi(kk).ge.psimx.and.negcur.eq.1) cycle
           psimx=psipsi(kk)
           xax=x(i)
           yax=y(j)
-        end do
-      end do
+        enddo
+      enddo
 
       xs(1)=xax
       ys(1)=yax
@@ -1533,14 +1533,14 @@
         yaxold = yax
         pdsold = pds
         signcur = -1.0
-        if (negcur.eq.0) signcur = 1.0
+        if(negcur.eq.0) signcur = 1.0
       end if
 
       errtmp = 0.0
       do j=1,niter
         ! pds(1)=f, pds(2)=fx, pds(3)=fy, pds(4)=fxy, pds(5)=fxx, pds(6)=fyy
         call seva2d(bkx,lkx,bky,lky,c,xax,yax,pds,ier,n666)
-        if (dodebugplts) write(99,'(3(1x,1pe12.5))') xax,yax,pds(1) ! for debugging
+        if(dodebugplts) write(99,'(3(1x,1pe12.5))') xax,yax,pds(1) ! for debugging
 
         search_method: if (ifindopt==2) then
           ! Gradient Ascent Method - better for sharp peaks
@@ -1553,14 +1553,14 @@
             gamman = 0.001_dp
           else
             gamman = abs((xax-xaxold)*dfx + (yax-yaxold)*dfy)/(dfx**2+dfy**2)
-          end if
+          endif
           xaxold = xax
           yaxold = yax
           pdsold = pds
           xax = xax + gamman*xerr
           yax = yax + gamman*yerr
           errtmp = gamman**2*(xerr**2+yerr**2)
-          if (errtmp.lt.1.0e-12_dp) go to 310
+          if(errtmp.lt.1.0e-12_dp) go to 310
 
         else search_method
           ! Original Newton's Method for optimization, xn+1 = xn - f'/f''
@@ -1569,9 +1569,9 @@
             kerror = 1
             call errctrl_msg('findax', &
               'Newtons method to find magnetic axis has det=0')
-            if (iand(iout,1).ne.0) write (nout,5000) xax,yax
+            if(iand(iout,1).ne.0) write (nout,5000) xax,yax
             return
-          end if
+          endif
           xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
           yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
           xax=xax+orelax*xerr
@@ -1581,17 +1581,17 @@
             kerror = 1
             call errctrl_msg('findax', &
               'Newtons method to find separatrix point is off grid')
-            if (iand(iout,1).ne.0) write (nout,5000) xax,yax
+            if(iand(iout,1).ne.0) write (nout,5000) xax,yax
             return
-          end if
+          endif
           if ((abs(pds(2)).lt.1.0e-06_dp).and.(abs(pds(3)).lt.1.0e-06_dp)) go to 310
           if (errtmp.lt.1.0e-12_dp) go to 310
-        end if search_method
-      end do
+        endif search_method
+      enddo
       if (errtmp.gt.1.0e-6_dp) then
         call errctrl_msg('findax', &
          'Iterative method to find magnetic axis reached max iterations',2)
-      end if
+      endif
       !if (iand(iout,1).ne.0) write (nout,5000) xax,yax
       xax=xs(1)
       yax=ys(1)
@@ -1615,12 +1615,10 @@
       siar=-0.5_dp*ar
       siaz=-0.5_dp*az
       emaxis=ar/az
-      if (emaxis.gt.0.0) emaxis=sqrt(emaxis)
-      if (emaxis.le.0.0) emaxis=1.3_dp
+      if(emaxis.gt.0.0) emaxis=sqrt(emaxis)
+      if(emaxis.le.0.0) emaxis=1.3_dp
  1000 continue
-      if (dodebugplts) then ! for debugging
-        close(unit=99)
-      end if
+      if(dodebugplts) close(unit=99) ! for debugging
       delrmax1=0.40_dp
       delrmax2=0.40_dp
       sifsep=-1.e10_dp
@@ -1629,7 +1627,7 @@
       zfsep=-89.0
       rssep=-89.0
       zssep=-89.0
-      if (abs(dpsipsi).le.0.5_dp*psitol) return
+      if(abs(dpsipsi).le.0.5_dp*psitol) return
 !----------------------------------------------------------------------
 !--   find the separatrix                                            --
 !--   relaxd criteria for searching, 02/23/90                        --
@@ -1639,40 +1637,40 @@
       xs(1)=xxout(1)
       ys(1)=yyout(1)
       do n=2,kfound
-        if (bpoo(n).ge.bpols) cycle
+        if(bpoo(n).ge.bpols) cycle
         bpols=bpoo(n)
         xs(1)=xxout(n)
         ys(1)=yyout(n)
         ns=n
-      end do
+      enddo
 
       errtmp = 0.0
       do j=1,niter
         if (xs(1).le.x(2) .or. xs(1).ge.x(nx-1) .or. ys(1).le.y(2) .or. ys(1).ge.y(nz-1)) then
           kerror = 1
           call errctrl_msg('findax','1st separatrix point is off grid')
-          if (iand(iout,1).ne.0) write (nout,5020) xs,ys
+          if(iand(iout,1).ne.0) write (nout,5020) xs,ys
           return
-        end if
+        endif
         call seva2d(bkx,lkx,bky,lky,c,xs(1),ys(1),pds,ier,n666)
         det=pds(5)*pds(6)-pds(4)*pds(4)
         if (abs(det).lt.1.0e-15_dp) then
           kerror = 1
           call errctrl_msg('findax','1st separatrix has det=0')
-          if (iand(iout,1).ne.0) write (nout,5020) xs,ys
+          if(iand(iout,1).ne.0) write (nout,5020) xs,ys
           return
-        end if
+        endif
         xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
         yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
         xs(1)=xs(1)+orelax*xerr
         ys(1)=ys(1)+orelax*yerr
         errtmp = xerr*xerr+yerr*yerr
-        if (errtmp.lt.1.0e-12_dp*100.0) exit
-      end do ! j
+        if(errtmp.lt.1.0e-12_dp*100.0) exit
+      enddo
       if (errtmp.gt.1.0e-6_dp*100.0) then
        call errctrl_msg('findax', &
         'Iterative method to find 1st separatrix reached max iterations',2)
-      end if
+      endif
 !-----------------------------------------------------------------------
 !--   found x separatrix point, check to see if inside vessel         --
 !-----------------------------------------------------------------------
@@ -1682,7 +1680,7 @@
         call errctrl_msg('findax', &
           'Separatrix point is not inside vessel, zeross.le.0.1')
         return
-      end if
+      endif
       xseps(1)=xs(1)*100.
       yseps(1)=ys(1)*100.
 !-----------------------------------------------------------------------
@@ -1699,7 +1697,7 @@
         call errctrl_msg('findax', &
          'Separatrix point is not on surface, delrmax1.gt.0.004_dp*anow',2)
         return
-      end if
+      endif
       sifsep=pds(1)
       rfsep=xs(1)
       zfsep=ys(1)
@@ -1710,26 +1708,18 @@
       yyout(ns-1)=0.5_dp*(yyout(ns)+yyout(ns-2))
       xxout(ns+1)=0.5_dp*(xxout(ns)+xxout(ns+2))
       yyout(ns+1)=0.5_dp*(yyout(ns)+yyout(ns+2))
-      rmin=xxout(1)
-      rmax=xxout(1)
-      zmin=yyout(1)
-      zmax=yyout(1)
-      rzmin=xxout(1)
-      rzmax=xxout(1)
-      zrmin=yyout(1)
-      zrmax=yyout(1)
-      bpave=0.
-      do i=2,kfound
-        if (xxout(i).lt.rmin) zrmin=yyout(i)
-        if (xxout(i).gt.rmax) zrmax=yyout(i)
-        if (yyout(i).lt.zmin) rzmin=xxout(i)
-        if (yyout(i).gt.zmax) rzmax=xxout(i)
-        bpave=bpave+bpoo(i)
-        rmin=min(rmin,xxout(i))
-        rmax=max(rmax,xxout(i))
-        zmin=min(zmin,yyout(i))
-        zmax=max(zmax,yyout(i))
-      end do
+      loc=minloc(xxout(1:kfound),1)
+      rmin=xxout(loc)
+      zrmin=yyout(loc)
+      loc=maxloc(xxout(1:kfound),1)
+      rmax=xxout(loc)
+      zrmax=yyout(loc)
+      loc=minloc(yyout(1:kfound),1)
+      zmin=yyout(loc)
+      rzmin=xxout(loc)
+      loc=maxloc(yyout(1:kfound),1)
+      zmax=yyout(loc)
+      rzmax=xxout(loc)
 !----------------------------------------------------------------
 !--   find tracing points                                      --
 !----------------------------------------------------------------
@@ -1741,17 +1731,16 @@
         zminus=zmaxfs-yyout(i)
         zplus=zmaxfs-yyout(i+1)
         if (xxout(i).gt.rminmax.and.zminus*zplus.le.0.0) then
-         rmaxfs=xxout(i)+(xxout(i+1)-xxout(i))/(yyout(i+1)- &
-                  yyout(i))*zminus
+          rmaxfs=xxout(i)+(xxout(i+1)-xxout(i))/(yyout(i+1)- &
+                 yyout(i))*zminus
         elseif (xxout(i).lt.rminmax.and.zminus*zplus.le.0.0) then
-         rminfs=xxout(i)+(xxout(i+1)-xxout(i))/(yyout(i+1)- &
-                  yyout(i))*zminus
-        end if
-      end do
+          rminfs=xxout(i)+(xxout(i+1)-xxout(i))/(yyout(i+1)- &
+                 yyout(i))*zminus
+        endif
+      enddo
 !
       znow=(zmax+zmin)/2.
       anow=(rmax-rmin)/2.
-      bpave=bpave/real(kfound-1,dp)
 !-----------------------------------------------------------------------
 !--   find possible second separatrix                                 --
 !-----------------------------------------------------------------------
@@ -1761,13 +1750,13 @@
         if ((ys(1)-znow)*(yyout(i)-znow).lt.0.0.and.bpoo(i).lt.bpmins) then
           bpmins=bpoo(i)
           ns=i
-        end if
-      end do
+        endif
+      enddo
       if (ns.eq.-1) then
         kerror = 1
         call errctrl_msg('findax','2nd separatrix not found, ns.eq.-1')
         return
-      end if
+      endif
       xs(1)=xxout(ns)
       ys(1)=yyout(ns)
 !
@@ -1776,28 +1765,28 @@
         if (xs(1).le.x(2) .or. xs(1).ge.x(nx-1) .or. ys(1).le.y(2) .or. ys(1).ge.y(nz-1)) then
           !kerror = 1
           call errctrl_msg('findax','2nd separatrix point is off grid',2)
-          if (iand(iout,1).ne.0) write (nout,5025) xs,ys
+          if(iand(iout,1).ne.0) write (nout,5025) xs,ys
           return
-        end if
+        endif
         call seva2d(bkx,lkx,bky,lky,c,xs(1),ys(1),pds,ier,n666)
         det=pds(5)*pds(6)-pds(4)*pds(4)
         if (abs(det).lt.1.0e-15_dp) then
           kerror = 1
           call errctrl_msg('findax','2nd separatrix has det=0')
-          if (iand(iout,1).ne.0) write (nout,5025) xs,ys
+          if(iand(iout,1).ne.0) write (nout,5025) xs,ys
           return
-        end if
+        endif
         xerr=(-pds(2)*pds(6)+pds(4)*pds(3))/det
         yerr=(-pds(5)*pds(3)+pds(2)*pds(4))/det
         xs(1)=xs(1)+orelax*xerr
         ys(1)=ys(1)+orelax*yerr
         errtmp = xerr*xerr+yerr*yerr
-        if (errtmp.lt.1.0e-12_dp*100.0) exit
-      end do
+        if(errtmp.lt.1.0e-12_dp*100.0) exit
+      enddo
       if (errtmp.gt.1.0e-6_dp*100.0) then
        call errctrl_msg('findax', &
         'Iterative method to find 2nd separatrix reached max iterations',2)
-      end if
+      endif
 !-----------------------------------------------------------------------
 !--   make sure 2nd seperatrix inside vessel                          --
 !-----------------------------------------------------------------------
@@ -1809,12 +1798,12 @@
         call errctrl_msg('findax', &
           '2nd separatrix point is not inside vessel, zeross.le.0.1',2)
         return
-      end if
+      endif
       if (abs(ys(1)*100.-yseps(1)).lt.2.0*anow) then
         !kerror = 1
         call errctrl_msg('findax','2nd seperatrix too far away',2)
         return
-      end if
+      endif
       ! TODO: If 2nd separatrix errors out (returns) above, the following variables
       ! (xseps=-999, rssep=-89, sissep=-1.0e-10, delrmax2=0.4) have default values that
       ! are used elsewhere. Check that they do not cause problems.
@@ -1833,7 +1822,7 @@
         !kerror = 1
         !call errctrl_msg('findax','2nd separatrix point is not on surface, delrmax2.gt.0.004_dp*anow',2)
         return
-      end if
+      endif
 
       xxout(ns)=xs(1)
       yyout(ns)=ys(1)
@@ -1841,24 +1830,18 @@
       yyout(ns-1)=0.5_dp*(yyout(ns)+yyout(ns-2))
       xxout(ns+1)=0.5_dp*(xxout(ns)+xxout(ns+2))
       yyout(ns+1)=0.5_dp*(yyout(ns)+yyout(ns+2))
-      rmin=xxout(1)
-      rmax=xxout(1)
-      zmin=yyout(1)
-      zmax=yyout(1)
-      rzmin=xxout(1)
-      rzmax=xxout(1)
-      zrmin=yyout(1)
-      zrmax=yyout(1)
-      do i=2,kfound
-        if (xxout(i).lt.rmin) zrmin=yyout(i)
-        if (xxout(i).gt.rmax) zrmax=yyout(i)
-        if (yyout(i).lt.zmin) rzmin=xxout(i)
-        if (yyout(i).gt.zmax) rzmax=xxout(i)
-        rmin=min(rmin,xxout(i))
-        rmax=max(rmax,xxout(i))
-        zmin=min(zmin,yyout(i))
-        zmax=max(zmax,yyout(i))
-      end do
+      loc=minloc(xxout(1:kfound),1)
+      rmin=xxout(loc)
+      zrmin=yyout(loc)
+      loc=maxloc(xxout(1:kfound),1)
+      rmax=xxout(loc)
+      zrmax=yyout(loc)
+      loc=minloc(yyout(1:kfound),1)
+      zmin=yyout(loc)
+      rzmin=xxout(loc)
+      loc=maxloc(yyout(1:kfound),1)
+      zmax=yyout(loc)
+      rzmax=xxout(loc)
 
       return
 

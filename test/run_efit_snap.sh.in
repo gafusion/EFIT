@@ -1,0 +1,43 @@
+#!/bin/bash
+
+export link_efit="@CURRENT_MACHINE_LINK_DIR@"
+export link_store=""
+
+# Ubuntu tries to use threads even without implementation in program
+export OMP_NUM_THREADS=1
+
+# Sanity checks
+if ! test -e ${link_efit}/green/dprobe.dat; then
+  echo "not running test because Greens tables were not found"
+  exit 1
+fi
+if ! test -e ${link_efit}/lim.dat; then
+  echo "not running test because limiter was not found"
+  exit 1
+fi
+
+# Remove any previous outputs
+if [ @HAVE_NETCDF@ = True ]; then
+  outputs=( k a g m )
+else
+  outputs=( k a g )
+fi
+mv run_efit.out run_efit_kfile.out
+for prefix in ${outputs[*]}; do
+  for label in @EFIT_LABEL@; do
+    rm -f ${prefix}${label}
+  done
+done
+
+# Now run efit
+@MPICMD@ @NPROC@ @EFIT_EXEC@ @GRID_SIZE@ << __c__MATCHING_EOF__c__ > run_efit.out
+
+@EFIT_MODE@
+
+
+@RUNID@,@TIME@,@STEP@,@EFIT_TIME@
+
+__c__MATCHING_EOF__c__
+
+# Pass the results of the efit command up so that CTest knows what happened
+exit $result
