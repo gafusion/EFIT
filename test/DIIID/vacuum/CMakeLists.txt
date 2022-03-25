@@ -6,12 +6,11 @@
 
 set(RUNID 186610)
 if (${ENABLE_PARALLEL})
-  set(TIMES 02300 02400 02500 02600)
+  set(TIMES 02400 02500 02600 02700)
   set(EFIT_TIME 4)
 else()
-  set(TIMES 02300)
+  set(TIMES 02400)
 endif()
-
 
 foreach( t ${TIMES})
   set(EFIT_LABEL ${EFIT_LABEL} ${RUNID}.${t})

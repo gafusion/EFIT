@@ -3,10 +3,15 @@
 !!          autoknot minimizes chi-squared as a function of knot
 !!          location                                               
 !!                                                                  
+!!                                                                  
 !!     @param ks:
+!!                                                                  
 !!     @param lconvr:
+!!                                                                  
 !!     @param ktime: 
+!!                                                                  
 !!     @param kerror: error flag                                                                
+!!                                                                  
 !*******************************************************************
       subroutine autoknot(ks,lconvr,ktime,mtear,kerror)
       include 'eparm.inc'
@@ -17,7 +22,6 @@
       external ppakfunc,ffakfunc,wwakfunc,eeakfunc
       integer*4, intent(inout) :: kerror
       kerror = 0
-
 !
 !    Store the values away so the functions can restore them 
 !    after reading the k file. 
@@ -31,15 +35,14 @@
       saveiter = mxiter
       call store_autoknotvals
       mxiter_a = kakiter
-   
 !
 !     Minimize chi^2 and error for pp knot location
 !
-      if(kppfnc .eq. 6)then
+      if (kppfnc .eq. 6) then
         kakpploop = kakloop
         if(kppknt .le. 3) kakpploop = 1
-        do j= 1, kakpploop
-          do i= 2,kppknt-1
+        do j=1,kakpploop
+          do i=2,kppknt-1
             kappknt = kppknt
             kadknt = i
             dzero = appknt(i-1)
@@ -48,47 +51,42 @@
             appknt(kadknt) = fmin(dzero,done,ppakfunc,tol)
             write(6,*) 'pp knot ',kadknt,' set to ',appknt(kadknt)
           enddo
-          if(abs(prevknt - appknt(kadknt)) .le. aktol)then
-            write(6,*)'Last PPknot changed by less that use tolerance'
-            go to 10
+          if (abs(prevknt - appknt(kadknt)) .le. aktol) then
+            write(6,*) 'Last PPknot changed by less that use tolerance'
+            exit
           endif
         enddo
       endif
-
 !
 !     Minimize chi^2 and error for ff knot location
 !
-10    continue
-      if(kfffnc .eq. 6)then
-      kakffloop = kakloop
-      if(kffknt .le. 3) kakffloop = 1
-      do j= 1, kakffloop
-      do i= 2,kffknt-1
-         kaffknt = kffknt
-         kadknt = i
-         dzero = affknt(i-1)
-         done = affknt(i+1)
-         prevknt = affknt(kadknt)
-         affknt(kadknt) = fmin(dzero,done,ffakfunc,tol)
-         write(6,*) 'ff knot ',kadknt,' set to ',affknt(kadknt)
-      enddo
-         if(abs(prevknt - affknt(kadknt)) .le. aktol)then
-           write(6,*)'Last FFknot changed by less that use tolerance'
-           go to 20
-         endif
-      enddo
+      if (kfffnc .eq. 6) then
+        kakffloop = kakloop
+        if(kffknt .le. 3) kakffloop = 1
+        do j=1,kakffloop
+          do i=2,kffknt-1
+            kaffknt = kffknt
+            kadknt = i
+            dzero = affknt(i-1)
+            done = affknt(i+1)
+            prevknt = affknt(kadknt)
+            affknt(kadknt) = fmin(dzero,done,ffakfunc,tol)
+            write(6,*) 'ff knot ',kadknt,' set to ',affknt(kadknt)
+          enddo
+           if (abs(prevknt - affknt(kadknt)) .le. aktol) then
+             write(6,*) 'Last FFknot changed by less that use tolerance'
+             exit
+           endif
+        enddo
       endif
-
 !
 !     Minimize chi^2 and error for ww knot location
 !
-
-20    continue
-      if(kwwfnc .eq. 6)then
-         kakwwloop = kakloop
-         if(kwwknt .le. 3) kakwwloop = 1
-         do j= 1, kakwwloop
-         do i= 2,kwwknt-1
+      if (kwwfnc .eq. 6) then
+        kakwwloop = kakloop
+        if(kwwknt .le. 3) kakwwloop = 1
+        do j=1,kakwwloop
+          do i=2,kwwknt-1
             kawwknt = kwwknt
             kadknt = i
             dzero = awwknt(i-1)
@@ -96,25 +94,21 @@
             prevknt = awwknt(kadknt)
             awwknt(kadknt) = fmin(dzero,done,wwakfunc,tol)
             write(6,*) 'ww knot ',kadknt,' set to ',awwknt(kadknt)
-         enddo
-            if(abs(prevknt - awwknt(kadknt)) .le. aktol)then
-              write(6,*)'Last WWknot changed by less that use tolerance'
-              go to 30
-            endif
-         enddo
+          enddo
+          if (abs(prevknt - awwknt(kadknt)) .le. aktol) then
+            write(6,*) 'Last WWknot changed by less that use tolerance'
+            exit
+          endif
+        enddo
       endif
-
-
 !
 !     Minimize chi^2 and error for ee knot location
 !
-
-30    continue
-      if(keefnc .eq. 6)then
-         kakeeloop = kakloop
-         if(keeknt .le. 3) kakeeloop = 1
-         do j= 1, kakeeloop
-         do i= 2,keeknt-1
+      if (keefnc .eq. 6) then
+        kakeeloop = kakloop
+        if(keeknt .le. 3) kakeeloop = 1
+        do j=1,kakeeloop
+          do i=2,keeknt-1
             kaeeknt = keeknt
             kadknt = i
             dzero = aeeknt(i-1)
@@ -122,21 +116,19 @@
             prevknt = aeeknt(kadknt)
             aeeknt(kadknt) = fmin(dzero,done,eeakfunc,tol)
             write(6,*) 'ee knot ',kadknt,' set to ',aeeknt(kadknt)
-         enddo
-            if(abs(prevknt - aeeknt(kadknt)) .le. aktol)then
-              write(6,*)'Last EEknot changed by less that use tolerance'
-              go to 40
-            endif
-         enddo
+          enddo
+          if (abs(prevknt - aeeknt(kadknt)) .le. aktol) then
+            write(6,*) 'Last EEknot changed by less that use tolerance'
+            exit
+          endif
+        enddo
       endif
 !
 !     Now do the final fit with adjusted knots and full iterations
 !
-
-40    continue
       call data_input(ks_a,lconvr_a,ktime_a,mtear_a,kerror)
-      if (kerror.gt.0) return
-      if (lconvr_a.lt.0) return
+      if(kerror.gt.0) return
+      if(lconvr_a.lt.0) return
       mxiter_a = saveiter
       call restore_autoknotvals
       call inicur(ks_a)
@@ -157,12 +149,10 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
-      do i = 1,npcurn
-          ppknt(i) = appknt(i)
-          ffknt(i) = affknt(i)
-          wwknt(i) = awwknt(i)
-          eeknt(i) = aeeknt(i)
-      enddo
+      ppknt(1:npcurn) = appknt(1:npcurn)
+      ffknt(1:npcurn) = affknt(1:npcurn)
+      wwknt(1:npcurn) = awwknt(1:npcurn)
+      eeknt(1:npcurn) = aeeknt(1:npcurn)
       kppknt = kappknt
       kffknt = kaffknt
       kwwknt = kawwknt
@@ -180,12 +170,10 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
-      do i = 1,npcurn
-          appknt(i) = ppknt(i)
-          affknt(i) = ffknt(i)
-          awwknt(i) = wwknt(i)
-          aeeknt(i) = eeknt(i)
-      enddo
+      appknt(1:npcurn) = ppknt(1:npcurn)
+      affknt(1:npcurn) = ffknt(1:npcurn)
+      awwknt(1:npcurn) = wwknt(1:npcurn)
+      aeeknt(1:npcurn) = eeknt(1:npcurn)
       kappknt = kppknt
       kaffknt = kffknt
       kawwknt = kwwknt
@@ -206,18 +194,18 @@
       kerror = 0
       ppakfunc = 1000.0
       write(6,*)
-      write(6,*)' trying pp knot ',kadknt,' at location ',xknot, &
-        ' out of ',kappknt,' knots'
+      write(6,*) ' trying pp knot ',kadknt,' at location ',xknot, &
+                 ' out of ',kappknt,' knots'
       call data_input(ks_a,lconvr_a,ktime_a,mtear_a,kerror)
-      if (kerror.gt.0) return
-      if (lconvr_a.lt.0) return
+      if(kerror.gt.0) return
+      if(lconvr_a.lt.0) return
       call restore_autoknotvals
       ppknt(kadknt) = xknot
       call inicur(ks_a)
       call fit(ks_a,kerror_a)
       if(kerror_a .gt. 0) return
       ppakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm  &
-        + akgamwt * chigamt + akprewt * chipre
+               + akgamwt * chigamt + akprewt * chipre
       return
       end function ppakfunc
 !
@@ -233,18 +221,18 @@
       kerror = 0
       ffakfunc = 1000.0
       write(6,*)
-      write(6,*)' trying ff knot ',kadknt,' at location ',xknot, &
-        ' out of ',kaffknt,' knots'
+      write(6,*) ' trying ff knot ',kadknt,' at location ',xknot, &
+                 ' out of ',kaffknt,' knots'
       call data_input(ks_a,lconvr_a,ktime_a,mtear_a,kerror)
-      if (kerror.gt.0) return
-      if (lconvr_a.lt.0) return
+      if(kerror.gt.0) return
+      if(lconvr_a.lt.0) return
       call restore_autoknotvals
       ffknt(kadknt) = xknot
       call inicur(ks_a)
       call fit(ks_a,kerror_a)
       if(kerror_a .gt. 0) return
       ffakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm  &
-        + akgamwt * chigamt + akprewt * chipre
+               + akgamwt * chigamt + akprewt * chipre
       return
       end function ffakfunc
 !
@@ -260,18 +248,18 @@
       kerror = 0
       wwakfunc = 1000.0
       write(6,*)
-      write(6,*)' trying ww knot ',kadknt,' at location ',xknot, &
+      write(6,*) ' trying ww knot ',kadknt,' at location ',xknot, &
                  ' out of ',kawwknt,' knots'
       call data_input(ks_a,lconvr_a,ktime_a,mtear_a,kerror)
-      if (kerror.gt.0) return
-      if (lconvr_a.lt.0) return
+      if(kerror.gt.0) return
+      if(lconvr_a.lt.0) return
       call restore_autoknotvals
       wwknt(kadknt) = xknot
       call inicur(ks_a)
       call fit(ks_a,kerror_a)
       if(kerror_a .gt. 0) return
       wwakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm &
-        + akgamwt * chigamt + akprewt * chipre
+               + akgamwt * chigamt + akprewt * chipre
       return
       end function wwakfunc
 !
@@ -287,17 +275,17 @@
       kerror = 0
       eeakfunc = 1000.0
       write(6,*)
-      write(6,*)' trying ee knot ',kadknt,' at location ',xknot, &
+      write(6,*) ' trying ee knot ',kadknt,' at location ',xknot, &
                  ' out of ',kaeeknt,' knots'
       call data_input(ks_a,lconvr_a,ktime_a,mtear_a,kerror)
-      if (kerror.gt.0) return
-      if (lconvr_a.lt.0) return
+      if(kerror.gt.0) return
+      if(lconvr_a.lt.0) return
       call restore_autoknotvals
       eeknt(kadknt) = xknot
       call inicur(ks_a)
       call fit(ks_a,kerror_a)
       if(kerror_a .gt. 0) return
       eeakfunc = akchiwt * tsaisq(ks_a)  + akerrwt * errorm &
-        + akgamwt * chigamt + akprewt * chipre
+               + akgamwt * chigamt + akprewt * chipre
       return
       end function eeakfunc

@@ -6,6 +6,8 @@
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/mhdin.dat 
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/fitweight.dat 
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
 
 configure_file(${EFUND_TEST_CONFIGFILE} 
                ${CMAKE_CURRENT_BINARY_DIR}/run_green.sh @ONLY)

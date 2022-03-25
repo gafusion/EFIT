@@ -50,9 +50,7 @@
       iyes=0
       idup=0
       tavem=2*iavem
-      do i=ifirsttime,ilasttime
-        jflag(i)=1
-      enddo
+      jflag(ifirsttime:ilasttime)=1
       uday = ' '
       call date_and_time(uday, clocktime, zone, values)
       rcencm=rcentr*100.
@@ -76,7 +74,7 @@
 !----------------------------------------------------------------------
       if (iconvr.eq.3) then
         fit_type = 'EQU'
-        if (npsi_ext.gt.0) fit_type='EQG'
+        if(npsi_ext.gt.0) fit_type='EQG'
       endif
       do i=ifirsttime,ilasttime
         ijtime=time(i)
@@ -86,10 +84,9 @@
 !-----------------------------------------------------------------------
         lflag=0
         jj=i
-        if (ierchk.gt.0) call chkerr(jj)
-        if (lflag.gt.0) then
+        if(ierchk.gt.0) call chkerr(jj)
+        if(lflag.gt.0) &
           jflag(jj)=0
-        endif
         if (keqdsk.ge.1) then
           wform='formatted'
         else
@@ -108,7 +105,7 @@
         call db_header(ishot,ijtime,header)
         open(unit=neqdsk,file=eqdsk,status='old', &
              form=wform,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=neqdsk,status='delete')
+        if(ioerr.eq.0) close(unit=neqdsk,status='delete')
         open(unit=neqdsk,file=eqdsk,status='new', &
              form=wform,delim='quote')
 !
@@ -124,8 +121,8 @@
         ltime=i
 !
         jj=i
-        if (fwtqa.gt.0.0.and.qvfit.gt.0.0) qmflag='FIX'
-        if (fwtqa.le.0.0) qmflag='CLC'
+        if(fwtqa.gt.0.0.and.qvfit.gt.0.0) qmflag='FIX'
+        if(fwtqa.le.0.0) qmflag='CLC'
 !
         write (neqdsk,1060) time(jj),jflag(jj),lflag,limloc(jj), &
                             mco2v,mco2r,qmflag,nlold,nlnew
@@ -203,8 +200,8 @@
         ltime=i
 !
         jj=i
-        if (fwtqa.gt.0.0.and.qvfit.gt.0.0) qmflag='FIX'
-        if (fwtqa.le.0.0) qmflag='CLC'
+        if(fwtqa.gt.0.0.and.qvfit.gt.0.0) qmflag='FIX'
+        if(fwtqa.le.0.0) qmflag='CLC'
 !
         write (neqdsk) real(time(jj)),jflag(jj),lflag,limloc(jj), &
                             mco2v,mco2r,qmflag,nlold,nlnew
@@ -308,7 +305,7 @@
         endif
         open(unit=nsave,status='old',form='unformatted',file=sfile, &
              iostat=ioerr)
-        if (ioerr.eq.0) close(unit=nsave,status='delete')
+        if(ioerr.eq.0) close(unit=nsave,status='delete')
         open(unit=nsave,status='new',form='unformatted',file=sfile)
         mw=nw
         mh=nh
@@ -325,21 +322,13 @@
           jtime=ij
           plasma=cpasma(jtime)
           btor=bcentr(jtime)
-          do i=1,nsilop
-            coils(i)=csilop(i,jtime)
-          enddo
-          do i=1,magpri
-            expmp2(i)=cmpr2(i,jtime)
-          enddo
+          coils(1:nsilop)=csilop(1:nsilop,jtime)
+          expmp2(1:magpri)=cmpr2(1:magpri,jtime)
           ierold=ierchk
           ierchk=0
           fwtcur=1.
-          do i=1,magpri
-            fwtmp2(i)=1.
-          enddo
-          do i=1,nsilop
-            fwtsi(i)=1.
-          enddo
+          fwtmp2(1:magpri)=1.
+          fwtsi(1:nsilop)=1.
           iitime=time(ij)
           iitime=iitime+1
           limitr=limitr-1
@@ -347,7 +336,7 @@
           let = 'm'
           call getfnmu(itimeu,let,ishot,iitime,eqdsk)
           open(unit=neqdsk,file=eqdsk,status='old',iostat=ioerr)
-          if (ioerr.eq.0) close(unit=neqdsk,status='delete')
+          if(ioerr.eq.0) close(unit=neqdsk,status='delete')
           open(unit=neqdsk,file=eqdsk,status='new',delim='quote')
           itsave=itime
           itime=iitime
@@ -358,9 +347,8 @@
           call eestore
           write (neqdsk,basis)
           write (neqdsk,inwant)
-          if (kvtor.gt.0) then
+          if(kvtor.gt.0) &
             write (neqdsk,invt)
-          endif
           itime=itsave
           close(unit=neqdsk)
           limitr=limitr+1

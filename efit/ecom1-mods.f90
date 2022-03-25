@@ -322,7 +322,7 @@
                 kdoqn,kfcurb,kpcurb,kzeroj,ncstne,ncstte,ncstfp,ncstpp, &
                 kwripre,negcur,kframe,kskipvs,icntour,iavdpl, &
                 jwake,limvs,kbound,kgraph,istore,iout,kdopre, &
-                iishot,kktime,iplcout,ksigma,kwritime 
+                iishot,kktime,iplcout,ksigma,kwritime,kwake 
       integer*4 iteks, mxiters, zelipss, n1coils
       integer*4 itekt, mxitert, zeliptt, n1coilt
       integer*4 kgrid

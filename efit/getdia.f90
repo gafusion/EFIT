@@ -28,6 +28,7 @@
         subroutine getdia(nshot,tim,npts,tavg,ierr,phidia,sigphi)
 
         use var_gggttt, only: ntims
+        implicit integer*4 (i-n), real*8 (a-h,o-z)
         dimension diamag(ntims,3),diamagc(ntims,3), &
                   sig(ntims,3),tim(ntims)
         dimension phidia(ntims),sigphi(ntims)
@@ -39,30 +40,21 @@
         ierr(1)=1
         ierr(2)=1 !do not use diamag2
         do j=1,3 
-            iwght(j)=1
-            if (ierr(j).ne.0) then
-                iwght(j)=0
-                ndia=ndia-1
-            endif
+          iwght(j)=1
+          if (ierr(j).ne.0) then
+            iwght(j)=0
+            ndia=ndia-1
+          endif
         enddo
 
         if (ndia.eq.0) then
-            do i=1,npts
-                phidia(i)=0.0
-                sigphi(i)=0.0
-            enddo
+          phidia(1:npts)=0.0
+          sigphi(1:npts)=0.0
         else
-
-            do i=1,npts
-                phidia(i)=0.0
-                sigphi(i)=0.0
-                do j=1,3
-                    phidia(i)=phidia(i)+iwght(j)*diamagc(i,j)
-                    sigphi(i)=sigphi(i)+iwght(j)*sig(i,j)
-                enddo
-                phidia(i)=phidia(i)/ndia
-                sigphi(i)=sigphi(i)/ndia
-            enddo
+          do i=1,npts
+            phidia(i)=sum(iwght(1:3)*diamagc(i,1:3))/ndia
+            sigphi(i)=sum(iwght(1:3)*sig(i,1:3))/ndia
+          enddo
         endif
         return
         end subroutine getdia
@@ -71,22 +63,28 @@
 !>
 !!    This subroutine applies diamagnetic compensations
 !!    
+!!    WARNING: this subroutine uses both REAL*4 (used by PTDATA) and
+!!             REAL*8 variables conversions must be handled carefully
+!!
 !!
 !**********************************************************************
         SUBROUTINE DLCOMP(TIM,DIAMAG,DIAMAGC,SIG,NSHOT,NPTS,IDLC, &
                           IERR,TAVG)
+        use set_kinds
         use exvars
         use var_exdata, only: ishot
         use var_gggttt, only: ntims
+        implicit integer*4 (i-n), real*8 (a-h,o-z)
         PARAMETER (NPOINT=42)
-        REAL*4 RAR
+        REAL*8 RAR,TTEMP
+        REAL*4 RAR4,REAL32
         INTEGER*2 IIPOINT(5)
-        INTEGER*4 IDAT,IAR,ASCII,INT16,INT32,REAL32
+        INTEGER*4 IDAT,IAR,ASCII,INT16,INT32
         DIMENSION DIAMAG(NTIMS,3),DIAMAGC(NTIMS,3),SIG(NTIMS,3)
         DIMENSION TIM(NTIMS),TTEMP(NTIMS)
         DIMENSION IDAT(NTIMS),YDAT(NTIMS),YTEMP(NTIMS),BT(NTIMS)
-        DIMENSION IAR(128),RAR(8400),IERR(3),IADJ(3),BTCOMP(3),EBCOUP(3)
-        DIMENSION FIX(3)
+        DIMENSION IAR(128),RAR(8400),RAR4(8400),IERR(3),IADJ(3)
+        DIMENSION FIX(3),BTCOMP(3),EBCOUP(3)
         DIMENSION ASCII(11),INT16(11),INT32(11),REAL32(11)
 
         DIMENSION COUP(NPOINT,3)
@@ -107,9 +105,9 @@
 
         filin = 'dcoef.dat'
         if (nshot.lt.85885) then
-            EBCOUP(3)=-2.0
+          EBCOUP(3)=-2.0
         else
-            EBCOUP(3)=0.0
+          EBCOUP(3)=0.0
         endif
 !
         filin=input_dir(1:lindir)//filin
@@ -125,7 +123,7 @@
         ASCII(1)=0
         INT16(1)=0
         INT32(1)=0
-        REAL32(1)=0
+        REAL32(1)=0.0
         IDLC=0
         SIGMAD=0.01
         SIGMAF=0.1
@@ -135,9 +133,7 @@
         OPEN(UNIT=NIN,ACCESS='SEQUENTIAL', &
              STATUS='OLD',FILE=FILIN,iostat=ioerr)
         if (ioerr.ne.0) then
-          do i=1,3
-            ierr(i)=1
-          enddo
+          ierr(1:3)=1
           write(6,2020)
           return
         endif
@@ -145,25 +141,19 @@
 41000   READ (NIN,*,iostat=ioerr) idiashot
         if (.not.is_iostat_end(ioerr)) then
           if (ioerr.ne.0) then
-            do j=1,3
-              ierr(j)=1
-            enddo
+            ierr(1:3)=1
             write(6,2020)
             return
           endif
           DO I=1,NPOINT
             READ(NIN,1001,iostat=ioerr) POINT(I),(COUP(I,J),J=1,3)
             if (ioerr.ne.0) then
-              do j=1,3
-                ierr(j)=1
-              enddo
+              ierr(1:3)=1
               write(6,2020)
               return
             endif
           ENDDO
-          IF (nshot.lt.idiashot) then
-            GOTO 41000
-          ENDIF
+          IF(nshot.lt.idiashot) GOTO 41000
         endif
         CLOSE(UNIT=NIN)
 !
@@ -211,8 +201,10 @@
         DO J=1,3
           IERR(J)=0
           IPOINT=DNAME(J)
-          CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR,RAR, &
-                      ASCII,INT16,INT32,REAL32)
+          RAR4=REAL(RAR,R4)
+          CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR, &
+                      RAR4,ASCII,INT16,INT32,REAL32)
+          RAR=REAL(RAR4,DP)
           IF (IER.NE.0 .AND. IER.NE.2 .AND. IER.NE.4) THEN
             WRITE (6,1012)
             WRITE (6,1013) IPOINT,NSHOT,IER,RAR(1),RAR(7), &
@@ -221,19 +213,18 @@
             CYCLE
           ENDIF
           IF (IER.EQ.4) THEN
-            IF (IAR(2).LT.NPTS) NPTS=IAR(2)
-            IF (NPTS.LE.0) CYCLE
+            IF(IAR(2).LT.NPTS) NPTS=IAR(2)
+            IF(NPTS.LE.0) CYCLE
           ENDIF
 
-          DO N=1,NPTS
-            DIAMAG(N,J)=(RAR(6)-IDAT(N))*RAR(5)*RAR(4)*IADJ(J)*fix(j)
+          DIAMAG(1:NPTS,J)=(RAR(6)-IDAT(1:NPTS)) &
+                           *RAR(5)*RAR(4)*IADJ(J)*fix(j)
 !        
-!           COMPENSATE FOR BT PICKUP (0.1 MV-SEC IS UNCERTAINTY IN BT PICKUP)
-!           NOV 21, 1994: NEW CALIB INCREASES BY 5%.
+!         COMPENSATE FOR BT PICKUP (0.1 MV-SEC IS UNCERTAINTY IN BT PICKUP)
+!         NOV 21, 1994: NEW CALIB INCREASES BY 5%.
 !
-            DIAMAGC(N,J)=1.05*DIAMAG(N,J)-BTCOMP(J)
-            SIG(N,J)=(DIAMAG(N,J)*SIGMAD)**2+0.1
-          ENDDO
+          DIAMAGC(1:NPTS,J)=1.05*DIAMAG(1:NPTS,J)-BTCOMP(J)
+          SIG(1:NPTS,J)=(DIAMAG(1:NPTS,J)*SIGMAD)**2+0.1
           if (navg.gt.1) then
             CALL LOWPASS (DIAMAG(1,J),DIAMAG(1,J),NAVG,NPTS)
             CALL LOWPASS (DIAMAGC(1,J),DIAMAGC(1,J),NAVG,NPTS)
@@ -242,11 +233,7 @@
 
 !       CREATE TIME ARRAY BASED ON THE DIAMAGNETIC LOOP TIME ARRAY
 
-        IF (NPTS.GT.0) THEN
-          DO N=1,NPTS
-            TIM(N)=TTEMP(N)
-          ENDDO
-        ENDIF
+        IF(NPTS.GT.0) TIM(1:NPTS)=TTEMP(1:NPTS)
 !
 !       COMPENSATE FOR E AND F-COIL PICKUP
 !
@@ -265,11 +252,15 @@
             IREPLACE=1
           ENDIF
           IF ((ISHOT .GE. 83350) .AND. (I .GE. 24)) THEN 
-            CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR,RAR, &
-                        ASCII,INT16,INT32,REAL32)
+            RAR4=REAL(RAR,R4)
+            CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR, &
+                      RAR4,ASCII,INT16,INT32,REAL32)
+            RAR=REAL(RAR4,DP)
           ELSEIF ((ISHOT .LT. 83350) .AND. (I .LT. 24)) THEN 
-            CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR,RAR, &
-                        ASCII,INT16,INT32,REAL32)
+            RAR4=REAL(RAR,R4)
+            CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR, &
+                      RAR4,ASCII,INT16,INT32,REAL32)
+            RAR=REAL(RAR4,DP)
           ENDIF
           if (ier.ne.0 .and. ier.ne.2 .and. ier.ne.4) then
             write (6,1012)
@@ -285,60 +276,50 @@
             DO N=1,NPTS2-1
               IF (TTEMP(N).GT.TIM(NPTS)) EXIT
               YTEMP(N)=(RAR(6)-IDAT(N))*RAR(5)*RAR(4)
-              SUM=SUM+EXP(TTEMP(N)/TAU)*YTEMP(N)*(TTEMP(N+1)-TTEMP(N))
+              SUM=SUM+EXP(TTEMP(N)/TAU) &
+                      *YTEMP(N)*(TTEMP(N+1)-TTEMP(N))
               YTEMP(N)=YTEMP(N)-EXP(-1.*TTEMP(N)/TAU)/TAU*SUM
             ENDDO
 
             call interp(ttemp,ytemp,N,tim,ydat,npts)
 
-          ELSE IF (IPOINT.EQ.'ECOILB    ' .OR. (ABS(RAR(1)-TTEMP(1)).GT. &
-              RAR(3) .OR. ABS(TTEMP(NPTS)-TIM(NPTS)).GT.1.0E-6)) then
+          ELSEIF (IPOINT.EQ.'ECOILB    ' .OR. &
+                  (ABS(RAR(1)-TTEMP(1)).GT.RAR(3) .OR. &
+                   ABS(TTEMP(NPTS)-TIM(NPTS)).GT.1.0E-6)) then
             npts2=iar(2)
-            do n=1,npts2
-              ytemp(n)=(rar(6)-idat(n))*rar(5)*rar(4)
-            enddo
+            ytemp(1:npts2)=(rar(6)-idat(1:npts2))*rar(5)*rar(4)
             call interp(ttemp,ytemp,iar(2),tim,ydat,npts)
           ELSE
-            do n=1,npts
-              ydat(n)=(rar(6)-idat(n))*rar(5)*rar(4)
-            enddo
-          ENDIF 
+            ydat(1:npts)=(rar(6)-idat(1:npts))*rar(5)*rar(4)
+          ENDIF
 
           IF (ipoint.eq.'ECOILB    ') then
             do n=1,npts
               ! TODO: bt is undefined here...
 !              prod=((ydat(n)/6.6e4)**2)*bt(n)/2.13
               prod=((ydat(n)/6.6e4)**2)/2.13
-              do j=1,3
-                DIAMAGC(N,J)=DIAMAGC(N,J)-EBCOUP(J)*PROD
-                sig(n,j)=sig(n,j)+(ebcoup(j)*prod)**2
-              enddo
+              DIAMAGC(N,1:3)=DIAMAGC(N,1:3)-EBCOUP(1:3)*PROD
+              sig(n,1:3)=sig(n,1:3)+(ebcoup(1:3)*prod)**2
             enddo
           ENDIF
 
           DO J=1,3
             const=coup(i,j)*iadj(j)
-            DO N=1,NPTS
-              DIAMAGC(N,J)=DIAMAGC(N,J)-YDAT(N)*const
-              SIG(N,J)=SIG(N,J)+(YDAT(N)*CONST*SIGMAF)**2
-            ENDDO
+            DIAMAGC(1:NPTS,J)=DIAMAGC(1:NPTS,J)-YDAT(1:NPTS)*const
+            SIG(1:NPTS,J)=SIG(1:NPTS,J)+(YDAT(1:NPTS)*CONST*SIGMAF)**2
           ENDDO
 
         ENDDO
 
         DO J=1,3
           IF (IERR(J).NE.0) THEN
-            DO N=1,NPTS
-              DIAMAG(N,J)=0.0
-              DIAMAGC(N,J)=0.0
-            ENDDO
+            DIAMAG(1:NPTS,J)=0.0
+            DIAMAGC(1:NPTS,J)=0.0
           ENDIF
         ENDDO
 
         DO J=1,3
-          DO N=1,NPTS
-            SIG(N,J)=SQRT(SIG(N,J))
-          ENDDO
+          SIG(1:NPTS,J)=SQRT(SIG(1:NPTS,J))
         ENDDO
 
  1001   FORMAT(A10,3E12.4)
@@ -360,27 +341,17 @@
 !**********************************************************************
         SUBROUTINE LOWPASS(XIN,XOUT,NAVG,NPTS)
         USE VAR_GGGTTT, ONLY: NTIMS
-        REAL XIN(1),XOUT(1),XTMP(NTIMS)
+        implicit integer*4 (i-n), real*8 (a-h,o-z)
+        REAL*8 XIN(1),XOUT(1),XTMP(NTIMS)
 
         DO J=1,NPTS
           IND=(NAVG-1)/2
-          IF (J.LE.IND) IND=J-1
-          IF ((J+IND).GT.NPTS) IND=NPTS-J
-          ICNT=0
-          XTMP(J)=0
-
-          DO I=J-IND,J+IND
-            XTMP(J)=XTMP(J)+XIN(I)
-            ICNT=ICNT+1
-          ENDDO
-
-          XTMP(J)=XTMP(J)/ICNT
-
+          IF(J.LE.IND) IND=J-1
+          IF((J+IND).GT.NPTS) IND=NPTS-J
+          XTMP(J)=SUM(XIN(J-IND:J+IND))/(2*IND)
         ENDDO
 
-        DO J=1,NPTS
-          XOUT(J)=XTMP(J)
-        ENDDO
+        XOUT(1:NPTS)=XTMP(1:NPTS)
 
         RETURN
         END SUBROUTINE LOWPASS
@@ -393,32 +364,31 @@
 !**********************************************************************
         SUBROUTINE INTERP(XIN,YIN,NIN,XOUT,YOUT,NOUT)
         USE VAR_GGGTTT, ONLY: NTIMS
-        REAL XIN(NTIMS),YIN(NTIMS),XOUT(NTIMS),YOUT(NTIMS)
+        implicit integer*4 (i-n), real*8 (a-h,o-z)
+        REAL*8 XIN(NTIMS),YIN(NTIMS),XOUT(NTIMS),YOUT(NTIMS)
         INTEGER NIN,NOUT
 
-        IF (NIN.LT.1) RETURN
+        IF(NIN.LT.1) RETURN
 
         DO I=1,NOUT
-          IF (XOUT(I).GE.XIN(1)) go to 20
+          IF(XOUT(I).GE.XIN(1)) go to 20
           YOUT(I)=YIN(1)
         ENDDO
         RETURN
 
    20   JLAST=1
    25   DO J=JLAST,NIN-1
-          IF ((XOUT(I).GE.XIN(J)).AND.(XOUT(I).LT.XIN(J+1))) go to 200
+          IF((XOUT(I).GE.XIN(J)).AND.(XOUT(I).LT.XIN(J+1))) go to 200
         ENDDO
 
         go to 300
   200   YOUT(I)=YIN(J)+(YIN(J)-YIN(J+1))*(XOUT(I)-XIN(J))/(XIN(J)- &
-        XIN(J+1))
+                                                           XIN(J+1))
         I=I+1
-        IF (I.GT.NOUT) RETURN
+        IF(I.GT.NOUT) RETURN
         JLAST=J
         go to 25
   300   CONTINUE
-        DO K=I,NOUT
-          YOUT(K)=YIN(NIN)
-        ENDDO
+        YOUT(I:NOUT)=YIN(NIN)
         RETURN
         END SUBROUTINE INTERP

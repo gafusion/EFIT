@@ -10,6 +10,9 @@
 !!    IOUT.and.6.ne.0 - one file for all m0sssss.0tttt_nnnn
 !!    tttt as the first time,nnnn as the number of slices
 !!    
+!!    WARNING: this subroutine uses both REAL*4 (to write files) and
+!!             REAL*8 variables, conversions must be handled carefully
+!!
 !!
 !!    @param ktime : total number of time slices 
 !!
@@ -18,7 +21,7 @@
 !!    @param ilast :  index of ending time  
 !!
 !!    @param itype :  1 called from main routine with time loop.\n
-!!                  2 called from main routine out of time loop.\n
+!!                    2 called from main routine out of time loop.\n
 !!                    write all slices at one time    
 !!
 !**********************************************************************
@@ -38,12 +41,11 @@
       character*30 sfname
       integer*4 dim2(2),c11(2),cnn(2),imap(2),stride(2)
 ! --- temporay variables to convert double to single
-      real*4 zwork(ntime+nsilop+nstark+nfcoil+nesum+magpri+npress) &
-      ,zcmgam(nstark,ntime),zcsilop(nsilop,ntime) &
-      ,zcmpr2(magpri,ntime),zccbrsp(nfcoil,ntime),zstark(ntime,nstark) &
-      ,zsilopt(ntime,nsilop),zexpmpi(ntime,magpri) &
-      ,zfccurt(ntime,nfcoil),zeccurt(ntime,nesum) 
-!vas f90 modifi
+      real*4 zwork(ntime+nsilop+nstark+nfcoil+nesum+magpri+npress), &
+             zcmgam(nstark,ntime),zcsilop(nsilop,ntime), &
+             zcmpr2(magpri,ntime),zccbrsp(nfcoil,ntime),zstark(ntime,nstark), &
+             zsilopt(ntime,nsilop),zexpmpi(ntime,magpri), &
+             zfccurt(ntime,nfcoil),zeccurt(ntime,nesum) 
       character*85 vastext
 !-----------------------------------------------------------------------
 !--   write out t(shot).(time)_X files                                --
@@ -479,7 +481,6 @@
          ierr)      
 !
       id_rpress = NCVDEF(nceq,'rpress',NCFLOAT,2,dim2,ierr)
-!vas f90 modifi.
       vastext(1:59) = &
          '<0 - input pressure profile vs. flux; >0 - R coordinates of'
       vastext(60:85)= 'input pressure profile (m)'
@@ -551,9 +552,7 @@
 ! --- writes variables that are time-dependent but do not have time dimension
 !
       cnn(1) = nstark
-      do j=1, nstark
-         zwork(j) = real(fwtgam(j))
-      enddo
+      zwork(1:nstark) = real(fwtgam(1:nstark))
       call NCVPT(nceq,id_fwtgam,c11,cnn,zwork,ierr)
 
       call NCVPT(nceq,id_msebkp,m,n,real(msebkp),ierr)

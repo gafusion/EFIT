@@ -1,0 +1,4 @@
+Variable, Default, Description
+IBOUND,0,"| 0 = trace from inside wall. (default)
+| - -1 = trace from outside wall."
+M_WRITE,1,

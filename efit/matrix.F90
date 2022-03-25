@@ -240,7 +240,6 @@
          arsp(nj,nk) = fwtfcsum(nk)
         endif
       enddo
-      
 !-----------------------------------------------------------------------
 !--  plasma current P', FF', and Pw', set up response matrix arsp     --
 !-----------------------------------------------------------------------
@@ -893,7 +892,7 @@
 !-----------------------------------------------------------------------
 !--   DELZ rigid vertical shift   96/01                               --
 !-----------------------------------------------------------------------
-      if (fitdelz.and.nniter.ge.ndelzon) then
+      delz_shift: if (fitdelz.and.nniter.ge.ndelzon) then
         need=need+1
         nsavdz=need
         nk=need
@@ -1036,12 +1035,12 @@
            nj = nj + 1
            arsp(nj,nk) = 0.0
         endif
-      endif
+      endif delz_shift
 !-----------------------------------------------------------------------
 !--   set up response matrix for advanced divertor coil               --
 !--   lacking boundary constraints                                    --
 !-----------------------------------------------------------------------
-      if (iacoil.gt.0) then
+      have_acoil: if (iacoil.gt.0) then
       nkb=need+1
       need=need+nacoil
       do nk=nkb,need
@@ -1174,11 +1173,11 @@
          arsp(nj,nk) = 0.0
         endif
       enddo
-      endif ! iacoil.gt.0
+      endif have_acoil
 !-----------------------------------------------------------------------
 !--   set up response matrix for E coils                              --
 !-----------------------------------------------------------------------
-      if (iecurr.eq.2) then
+      ecoil: if (iecurr.eq.2) then
       nkb=need+1
       need=need+nesum
       do nk=nkb,need
@@ -1330,11 +1329,11 @@
           arsp(nj,nk) = 0.0
         endif
       enddo
-      endif ! iecurr.eq.2
+      endif ecoil
 !------------------------------------------------------------------------------
 !--   fitting relative flux, set up response for fitted reference flux       --
 !------------------------------------------------------------------------------
-      if (fitsiref) then
+      fit_flux: if (fitsiref) then
         need=need+1
         nj=0
         nk=need
@@ -1491,11 +1490,11 @@
            nj = nj + 1
            arsp(nj,nk) = 0.0
         endif
-      endif
+      endif fit_flux
 !------------------------------------------------------------------------------
 !--   set up response matrix for ER, fitting ER                              --
 !------------------------------------------------------------------------------
-      if (keecur.gt.0.and.kdomse.le.0) then
+      er_fit: if (keecur.gt.0.and.kdomse.le.0) then
       needs=need
       need=need+keecur
       do nk=needs+1,need
@@ -1640,11 +1639,11 @@
            arsp(nj,nk) = 0.0
         endif
       enddo
-      endif ! keecur.gt.0.and.kdomse.le.0
+      endif er_fit
 !-----------------------------------------------------------------------
 !--   Response for Pedge hyperbolic tangent                           --
 !-----------------------------------------------------------------------
-      if (kedgep.ne.0) then
+      pedge_htan: if (kedgep.ne.0) then
         need=need+1
         nk=need
         npedge=need
@@ -1799,11 +1798,11 @@
            nj = nj + 1
            arsp(nj,nk) = 0.0
         endif
-      endif
+      endif pedge_htan
 !-----------------------------------------------------------------------
 !--   Response for f2edge hyperbolic tangent                          --
 !-----------------------------------------------------------------------
-      if (kedgef.ne.0) then
+      f2edge_htan: if (kedgef.ne.0) then
         need=need+1
         nk=need
         nfedge=need
@@ -1956,7 +1955,7 @@
           nj = nj + 1
           arsp(nj,nk) = 0.0
         endif
-      endif
+      endif f2edge_htan
 !-----------------------------------------------------------------------
 !--   stabilization constraint for dz, setup here for all fitting paras
 !-----------------------------------------------------------------------
@@ -2281,9 +2280,7 @@
          call dgeequ(nj,need,arsp,nrsmat,rowscale,colscale, &
                      rowcnd,colcnd,arspmax,infosc)
          do j = 1,nj
-         do i = 1,need
-            arsp(j,i) = arsp(j,i) * colscale(i)
-         enddo
+           arsp(j,1:need) = arsp(j,1:need) * colscale(1:need)
          enddo
       endif
 
@@ -2309,20 +2306,15 @@
         toler=condin*wrsp(1)
         do i=1,need
           t=0.0
-          if (wrsp(i).gt.toler) t=brsp(i)/wrsp(i)
+          if(wrsp(i).gt.toler) t=brsp(i)/wrsp(i)
           work(i)=t
         end do
         do i=1,need
-          brsp(i)=0.0
-          do j=1,need
-            brsp(i)=brsp(i)+arsp(i,j)*work(j)
-          end do
+          brsp(i)=sum(arsp(i,1:need)*work(1:need))
         end do
 
       else
-        do j=1,nrsmat
-          b(j) = brsp(j)
-        end do
+        b(1:nrsmat) = brsp(1:nrsmat)
         info=0
         call dgglse(int(nj,8),int(need,8),int(ncrsp,8),arsp,int(nrsmat,8), &
                     crsp,int(4*(npcurn-2)+6+npcurn*npcurn,8),b,z,brsp,work,&
