@@ -95,6 +95,7 @@
                devpsiin(nsilop),rnavpsiin(nsilop), &
                devfcin(nfcoil),rnavfcin(nfcoil), &
                devein(nesum),rnavecin(nesum))
+      fwtbmsels = 0.0
 
       kerror = 0
       mdoskip=0
@@ -125,6 +126,7 @@
 83210 format (a)
 !
 83220 continue
+#if defined(USE_SNAP)
 !----------------------------------------------------------------------
 !--   K-file from snap mode                                          --
 !----------------------------------------------------------------------
@@ -137,6 +139,7 @@
 #endif
         stop
       endif
+#endif
       if (kwake.eq.1.and.mdoskip.eq.0.and.(iand(iout,1).ne.0)) close(unit=nout)
 
 ! ONLY root process can check for existence of fitout.dat file
@@ -163,6 +166,7 @@
 #endif
       endif
 
+#if defined(USE_SNAP)
       snap: if ((kdata.ne.1).and.(kdata.ne.2)) then
       not_kwake: if ((kwake.ne.1).or.(mdoskip.ne.0)) then
 !----------------------------------------------------------------------
@@ -578,6 +582,7 @@
         if (fwtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
       enddo
       if (mmstark.gt.0) then
+#if defined(USE_MSE)
 #if defined(USEMPI)
         if (nproc == 1) then
           call getstark(ktime)
@@ -586,6 +591,11 @@
         endif
 #else
         call getstark(ktime)
+#endif
+#else
+        kerror = 1
+        call errctrl_msg('getsets','MSE library not available')
+        return
 #endif
       endif
 !
@@ -607,9 +617,16 @@
 !-----------------------------------------------------------------------
 !--   Get edge pedestal tanh paramters                                --
 !-----------------------------------------------------------------------
-      if(fitzts.eq.'te') &
+      if(fitzts.eq.'te') then
+#if defined(USE_MDS)
         call gettanh(ishot,fitzts,ktime,time,ztssym,ztswid, &
                      ptssym,ztserr)
+#else
+        kerror = 1
+        call errctrl_msg('getpts','Cannot fit pedestal without MDS+')
+        return
+#endif
+      endif
 !----------------------------------------------------------------------
 !--   save fitting weights for SNAP modes                            --
 !----------------------------------------------------------------------
@@ -630,13 +647,13 @@
       endif
       swtsi(1:nsilop)=fwtsi(1:nsilop)
 !
+      call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
       endif snap
+#endif
 !----------------------------------------------------------------------
 !--   read in the plasma response function                           --
 !----------------------------------------------------------------------
 !
-      if((kdata.ne.1).and.(kdata.ne.2)) &
-        call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
       drgrid=rgrid(2)-rgrid(1)
       dzgrid=zgrid(2)-zgrid(1)
       darea=drgrid*dzgrid

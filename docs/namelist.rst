@@ -173,12 +173,15 @@ OPTIN is the optional namelist that can be read from the efit.input
 instead of using the interactive command line inputs.
 (TODO: need to add/describe namelist)
 
-MACHINEIN
----------
+MACHINEIN (EFUND)
+-----------------
 
 MACHINEIN is the namelist specified for efund in the mhdin.dat file and 
 communicated to efit through the dprobe.dat file.
-(TODO: need to add/describe namelist)
+
+.. csv-table:: MACHINEIN
+   :file: tables/machinein_efund.csv
+   :widths: 15,15, 70
 
 EFITIN
 ------

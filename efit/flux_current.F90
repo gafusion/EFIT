@@ -39,10 +39,8 @@
 !----------------------------------------------------------------------------
 !--   save flux from current iterations before update                      --
 !----------------------------------------------------------------------------
-      do kk=1,nwnh
-        psiold(kk)=psi(kk)
-        psipold(kk)=psipla(kk)
-      enddo
+      psiold(1:nwnh)=psi(1:nwnh)
+      psipold(1:nwnh)=psipla(1:nwnh)
 !
       buneman_green: if ((ibunmn.eq.1).or.(ibunmn.eq.3).or. &
          ((ibunmn.eq.2).and.(errorm.gt.errcut)).or. &

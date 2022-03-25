@@ -317,9 +317,11 @@
 !----------------------------------------------------------------------
 ! --    write Kfile if needed                                        --
 !----------------------------------------------------------------------
+#if defined(USE_SNAP)
         if (kdata.eq.3 .or. kdata.eq.7) then
           if(write_Kfile) call write_K2(ks,kerror)
         endif
+#endif
         if(k.lt.ktime) kerrot(ks)=kerror
       enddo
 

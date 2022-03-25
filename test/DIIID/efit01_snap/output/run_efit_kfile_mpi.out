@@ -19,7 +19,7 @@ Code compiled with PGI 18.7.0
  good shot list file name ( 0=tty) ?
 
  type shot #, start time(ms), time step(ms), steps(<1001):
- table_di2 = </home/bechtelt/efitall/efit/build_pgi_default/test/DIIID/green/>
+ table_di2 = <../green/>
 INFO in getsets at r= -1, t=    -1: Done writing k-files
 INFO in getsets at r= -1, t=    -1: Done writing k-files
 INFO in getsets at r= -1, t=    -1: Done writing k-files

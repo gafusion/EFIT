@@ -15,8 +15,7 @@ Code compiled with PGI 18.7.0
  type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
 
  type input file names:
- table_di2 = <
- /home/bechtelt/efitall/efit/build_pgi_ser_default/test/DIIID/green/>
+ table_di2 = <../green/>
 
       ********************EFITAI 65 x  65  output ********************
  before save fitting weights

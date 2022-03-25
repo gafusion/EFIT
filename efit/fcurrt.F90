@@ -29,9 +29,9 @@
       data iskip/0/,idoit/0/
 
       kerror = 0
-      if (ifcurr.gt.0) return
-      if (itertt.le.1.and.icinit.lt.0) return
-      if (islpfc.eq.1) then
+      if(ifcurr.gt.0) return
+      if(itertt.le.1.and.icinit.lt.0) return
+      if(islpfc.eq.1) then
 !-----------------------------------------------------------------------
 !--     flux loop on F coils, seldom used for DIII-D                  --
 !-----------------------------------------------------------------------
@@ -53,11 +53,7 @@
             read (nffile) ifmatr
             close(unit=nffile)
           else
-            do i=1,nfcoil
-              do j=1,nfcoil
-                afma(i,j)=rfcfc(i,j)
-              enddo
-            enddo
+            afma(1:nfcoil,1:nfcoil)=rfcfc(1:nfcoil,1:nfcoil)
             m111=-1.0
             call decomp(nfcoil,nfcoil,afma,m111,ifmatr,wfmatr)
 !vas
@@ -65,7 +61,7 @@
 !vas                         trim(ch2)//'.ddd'
             open(unit=nffile,status='old',form='unformatted', &
                  file='fm'//trim(ch1)//trim(ch2)//'.ddd',iostat=ioerr)
-            if (ioerr.eq.0) close(unit=nffile,status='delete')
+            if(ioerr.eq.0) close(unit=nffile,status='delete')
 !vas
 !vas      print*,'file name : ','fm'//trim(ch1)// &
 !vas                          trim(ch2)//'.ddd'
@@ -79,23 +75,14 @@
 
         do i=1,nfcoil
           brsp(i)=0.0
-          if (ivacum.le.0) then
-            do j=1,nwnh
-              brsp(i)=brsp(i)+rfcpc(i,j)*pcurrt(j)
-            enddo
-          endif
-          if (iecurr.gt.0) then
-            do j=1,nesum
-              brsp(i)=brsp(i)+rfcec(i,j)*ecurrt(j)
-            enddo
-          endif
-          if (ivesel.gt.0.and.ifitvs.le.0) then
-            do j=1,nvesel
-              brsp(i)=brsp(i)+rfcvs(i,j)*vcurrt(j)
-            enddo
-          endif
+          if(ivacum.le.0) &
+            brsp(i)=brsp(i)+sum(rfcpc(i,1:nwnh)*pcurrt(1:nwnh))
+          if(iecurr.gt.0) &
+            brsp(i)=brsp(i)+sum(rfcec(i,1:nesum)*ecurrt(1:nesum))
+          if(ivesel.gt.0.and.ifitvs.le.0) &
+            brsp(i)=brsp(i)+sum(rfcvs(i,1:nvesel)*vcurrt(1:nvesel))
           brsp(i)=csilop(i,jtime)-brsp(i)
-          if (fitsiref) brsp(i)=brsp(i)+psiref(jtime)
+          if(fitsiref) brsp(i)=brsp(i)+psiref(jtime)
         enddo
         call solve(nfcoil,nfcoil,afma,brsp,ifmatr)
         return
@@ -119,9 +106,7 @@
          z04=1.0e-04_dp
          fwtbdr=abs(errbry)*max(abs(sidif),z04)
          fwtbdr=1.0/fwtbdr
-         do i=1,nbdry
-           fwtbry(i)=fwtbdr*fwtbdry(i)
-         enddo
+         fwtbry(1:nbdry)=fwtbdr*fwtbdry(1:nbdry)
        endif
 #ifdef DEBUG_LEVEL2
       write (106,*) 'FCURRT NBDRY,PSIBRY,WSIRY = ', nbdry,psibry,wsibry
@@ -135,16 +120,14 @@
        do nk=1,nfcoil
          nj=0
          if (nbdry.gt.0.and.iconvr.eq.3) then
-           do m=1,nbdry
-             abry(m,nk)=fwtbry(m)*rbdrfc(m,nk)
-           enddo
+           abry(1:nbdry,nk)=fwtbry(1:nbdry)*rbdrfc(1:nbdry,nk)
            nj=nbdry
          endif
 !-----------------------------------------------------------------------
 !--      flux loop option                                             --
 !-----------------------------------------------------------------------
          do m=1,nsilop
-           if (fwtsi(m).le.0.0) cycle
+           if(fwtsi(m).le.0.0) cycle
            nj=nj+1
            abry(nj,nk)=fwtsi(m)*rsilfc(m,nk)
          enddo
@@ -153,7 +136,7 @@
 !-----------------------------------------------------------------------
          if (ivacum.gt.0) then
            do m=1,magpri
-             if (fwtmp2(m).le.0.0) cycle
+             if(fwtmp2(m).le.0.0) cycle
              nj=nj+1
              abry(nj,nk)=fwtmp2(m)*rmp2fc(m,nk)
            enddo
@@ -162,7 +145,7 @@
 !--      F coil currents option                                       --
 !-----------------------------------------------------------------------
          do m=1,nfcoil
-           if (fwtfc(m).le.0.0) cycle
+           if(fwtfc(m).le.0.0) cycle
            nj=nj+1
            abry(nj,nk)=0.
            if (m.eq.nk) abry(nj,nk)=fwtfc(m)
@@ -174,7 +157,7 @@
            do m=1,nfcoil
              nj=nj+1
              abry(nj,nk)=0.0
-             if (nk.eq.m) abry(nj,nk)=cfcoil*fczero(m)
+             if(nk.eq.m) abry(nj,nk)=cfcoil*fczero(m)
            enddo
 !-----------------------------------------------------------------------
 !--        constraint F coil currents to be symmetric if requested    --
@@ -183,8 +166,8 @@
              do m=1,nfcoil/2
                nj=nj+1
                abry(nj,nk)=0.0
-               if (nk.eq.m) abry(nj,nk)=cupdown
-               if (nk.eq.(m+nfcoil/2)) abry(nj,nk)=-cupdown
+               if(nk.eq.m) abry(nj,nk)=cupdown
+               if(nk.eq.(m+nfcoil/2)) abry(nj,nk)=-cupdown
              enddo
            endif
          endif
@@ -234,12 +217,9 @@
            nj=0
            if (nbdry.gt.0.and.iconvr.eq.3) then
              do m=1,nbdry
-               if(nfourier.gt.1) then
-                 temp=0.
-                 do i=1,nvesel
-                   temp=temp+rbdrvs(m,i)*vecta(nkk,i)
-                 enddo
-                 abry(m,nk)=fwtbry(m)*temp
+               if (nfourier.gt.1) then
+                 abry(m,nk)=fwtbry(m)* &
+                   sum(rbdrvs(m,1:nvesel)*vecta(nkk,1:nvesel))
                else
                  abry(m,nk)=fwtbry(m)*rbdrvs(m,nkk)
                endif
@@ -247,14 +227,11 @@
              nj=nbdry
            endif
            do m=1,nsilop
-             if (fwtsi(m).le.0.0) cycle
+             if(fwtsi(m).le.0.0) cycle
              nj=nj+1
-             if(nfourier.gt.1) then
-               temp=0.
-               do i=1,nvesel
-                 temp=temp+rsilvs(m,i)*vecta(nkk,i)
-               enddo
-               abry(nj,nk)=fwtsi(m)*temp
+             if (nfourier.gt.1) then
+               abry(nj,nk)=fwtsi(m)* &
+                 sum(rsilvs(m,1:nvesel)*vecta(nkk,1:nvesel))
              else
                abry(nj,nk)=fwtsi(m)*rsilvs(m,nkk)
              endif
@@ -264,21 +241,18 @@
 !-----------------------------------------------------------------------
            if (ivacum.gt.0) then
              do m=1,magpri
-               if (fwtmp2(m).le.0.0) cycle
+               if(fwtmp2(m).le.0.0) cycle
                nj=nj+1
                if (nfourier.gt.1) then
-                 temp=0.
-                 do i=1,nvesel
-                   temp=temp+rmp2vs(m,i)*vecta(nkk,i)
-                 enddo
-                 abry(nj,nk)=fwtmp2(m)*temp
+                 abry(nj,nk)=fwtmp2(m)* &
+                   sum(rmp2vs(m,1:nvesel)*vecta(nkk,1:nvesel))
                else
                  abry(nj,nk)=fwtmp2(m)*rmp2vs(m,nkk)
                endif
              enddo
            endif
            do m=1,nfcoil
-             if (fwtfc(m).le.0.0) cycle
+             if(fwtfc(m).le.0.0) cycle
              nj=nj+1
              abry(nj,nk)=0.
            enddo
@@ -294,14 +268,7 @@
 !-----------------------------------------------------------------------
 !--    set up working matrix                                          --
 !-----------------------------------------------------------------------
-       do i=1,msbdry
-         do j=1,msbdry
-           ut(i,j)=0.0
-         enddo
-       enddo
-       do i=1,msbdry
-         ut(i,i) = 1.0
-       enddo
+       ut(1:msbdry,1:msbdry) = 1.0
 !-----------------------------------------------------------------------
 !--    compute inverse of abry in least squares sence with singular   --
 !--    value decomposition                                            --
@@ -314,7 +281,7 @@
          kerror = 1
          call errctrl_msg('fcurrt','sdecm failed to converge')
          return
-       end if
+       endif
        cond=ier
        toler=1.0e-06_dp*wbry(1)
        do i=1,neqn
@@ -322,7 +289,7 @@
            ainbry(i,j)=0.0
            do k=1,neqn
              t=0.0
-             if (wbry(k).gt.toler) t=1.0/wbry(k)
+             if(wbry(k).gt.toler) t=1.0/wbry(k)
              ainbry(i,j) = ainbry(i,j) + abry(i,k)*ut(k,j)*t
            enddo
          enddo
@@ -340,10 +307,7 @@
            endif
          enddo
          do i=1,nfcoil
-           fcref(i)=0.0
-           do j=1,nj
-             fcref(i)=fcref(i)+ainbry(i,j)*bbry(j)
-           enddo
+           fcref(i)=sum(ainbry(i,1:nj)*bbry(1:nj))
          enddo
        endif
       endif first_iter
@@ -357,24 +321,13 @@
 !-----------------------------------------------------------------------
         do m=1,nbdry
           bbry(m)=0.0
-          if (ivesel.gt.0.and.ifitvs.le.0) then
-            do k=1,nvesel
-              bbry(m)=bbry(m)+rbdrvs(m,k)*vcurrt(k)
-            enddo
-          endif
-          if (iecurr.gt.0) then
-            do k=1,nesum
-              bbry(m)=bbry(m)+rbdrec(m,k)*ecurrt(k)
-            enddo
-          endif
-          if (iacoil.gt.0) then
-            do k=1,nacoil
-              bbry(m)=bbry(m)+rbdrac(m,k)*caccurt(jtime,k)
-            enddo
-          endif
-          do k=1,nwnh
-            bbry(m)=bbry(m)+rbdrpc(m,k)*pcurrt(k)
-          enddo
+          if(ivesel.gt.0.and.ifitvs.le.0) &
+            bbry(m)=bbry(m)+sum(rbdrvs(m,1:nvesel)*vcurrt(1:nvesel))
+          if(iecurr.gt.0) &
+            bbry(m)=bbry(m)+sum(rbdrec(m,1:nesum)*ecurrt(1:nesum))
+          if(iacoil.gt.0) &
+            bbry(m)=bbry(m)+sum(rbdrac(m,1:nacoil)*caccurt(jtime,1:nacoil))
+          bbry(m)=bbry(m)+sum(rbdrpc(m,1:nwnh)*pcurrt(1:nwnh))
           pbry(m)=bbry(m)
           bbry(m)=fwtbry(m)*(wsibry-bbry(m))
         enddo
@@ -413,31 +366,19 @@
       do m=1,nsilop
         if (fwtsi(m).le.0.0) cycle
         nj=nj+1
-        bbry(nj)=0.0
-        do j=1,nwnh
-          bbry(nj)=bbry(nj)+gsilpc(m,j)*pcurrt(j)
-        enddo
-        if (iecurr.gt.0) then
-          do j=1,nesum
-            bbry(nj)=bbry(nj)+rsilec(m,j)*ecurrt(j)
-          enddo
-        endif
+        bbry(nj)=sum(gsilpc(m,1:nwnh)*pcurrt(1:nwnh))
+        if(iecurr.gt.0) &
+          bbry(nj)=bbry(nj)+sum(rsilec(m,1:nesum)*ecurrt(1:nesum))
 !-----------------------------------------------------------------------
 !--     specify vessel currents ?                                     --
 !-----------------------------------------------------------------------
-        if (ivesel.gt.0.and.ifitvs.le.0) then
-          do j=1,nvesel
-            bbry(nj)=bbry(nj)+rsilvs(m,j)*vcurrt(j)
-          enddo
-        endif
+        if(ivesel.gt.0.and.ifitvs.le.0) &
+          bbry(nj)=bbry(nj)+sum(rsilvs(m,1:nvesel)*vcurrt(1:nvesel))
 !-----------------------------------------------------------------------
 !--     use advance divertor coil ?                                   --
 !-----------------------------------------------------------------------
-        if (iacoil.gt.0) then
-          do j=1,nacoil
-            bbry(nj)=bbry(nj)+rsilac(m,j)*caccurt(jtime,j)
-          enddo
-        endif
+        if(iacoil.gt.0) &
+          bbry(nj)=bbry(nj)+sum(rsilac(m,1:nacoil)*caccurt(jtime,1:nacoil))
         if (fitsiref) then
           bbry(nj)=fwtsi(m)*(silopt(jtime,m)+psiref(jtime)-bbry(nj))
         else
@@ -449,30 +390,19 @@
 !-----------------------------------------------------------------------
       vacuum: if (ivacum.gt.0) then
         do m=1,magpri
-          if (fwtmp2(m).le.0.0) cycle
+          if(fwtmp2(m).le.0.0) cycle
           nj=nj+1
           bbry(nj)=0.0
-          do j=1,nwnh
-            bbry(nj)=bbry(nj)+gmp2pc(m,j)*pcurrt(j)
-          enddo
-          if (iecurr.gt.0) then
-            do j=1,nesum
-              bbry(nj)=bbry(nj)+rmp2ec(m,j)*ecurrt(j)
-            enddo
-          endif
+          bbry(nj)=bbry(nj)+sum(gmp2pc(m,1:nwnh)*pcurrt(1:nwnh))
+          if(iecurr.gt.0) &
+            bbry(nj)=bbry(nj)+sum(rmp2ec(m,1:nesum)*ecurrt(1:nesum))
 !-----------------------------------------------------------------------
 !--       specify vessel currents ?                                   --
 !-----------------------------------------------------------------------
-          if (ivesel.gt.0.and.ifitvs.le.0) then
-            do j=1,nvesel
-              bbry(nj)=bbry(nj)+rmp2vs(m,j)*vcurrt(j)
-            enddo
-          endif
-          if (iacoil.gt.0) then
-            do j=1,nacoil
-              bbry(nj)=bbry(nj)+rmp2ac(m,j)*caccurt(jtime,j)
-            enddo
-          endif
+          if(ivesel.gt.0.and.ifitvs.le.0) &
+            bbry(nj)=bbry(nj)+sum(rmp2vs(m,1:nvesel)*vcurrt(1:nvesel))
+          if(iacoil.gt.0) &
+            bbry(nj)=bbry(nj)+sum(rmp2ac(m,1:nacoil)*caccurt(jtime,1:nacoil))
           bbry(nj)=fwtmp2(m)*(expmpi(jtime,m)-bbry(nj))
         enddo
       endif vacuum
@@ -480,7 +410,7 @@
 !--   F-coil currents specification                                   --
 !-----------------------------------------------------------------------
       do m=1,nfcoil
-        if (fwtfc(m).le.0.0) cycle
+        if(fwtfc(m).le.0.0) cycle
         nj=nj+1
         bbry(nj)=fccurt(jtime,m)*fwtfc(m)
       enddo
@@ -521,47 +451,30 @@
         do m=1,nsol
           nj=nj+1
           bbry(nj)=0.0
-          if (ivesel.gt.0.and.ifitvs.lt.0) then
-            do k=1,nvesel
-              bbry(nj)=bbry(nj)+rsolvs(m,k)*vcurrt(k)
-            enddo
-          endif
-          if (iecurr.gt.0) then
-             do k=1,nesum
-                bbry(nj)=bbry(nj)+rsolec(m,k)*ecurrt(k)
-             enddo
-           endif
-           do k=1,nwnh
-             bbry(nj)=bbry(nj)+rsolpc(m,k)*pcurrt(k)
-           enddo
-           psbry(m)=bbry(nj)
-           bbry(nj)=fwtsolw(m)*(wsisol-bbry(nj))
+          if(ivesel.gt.0.and.ifitvs.lt.0) &
+            bbry(nj)=bbry(nj)+sum(rsolvs(m,1:nvesel)*vcurrt(1:nvesel))
+          if(iecurr.gt.0) &
+            bbry(nj)=bbry(nj)+sum(rsolec(m,1:nesum)*ecurrt(1:nesum))
+          bbry(nj)=bbry(nj)+sum(rsolpc(m,1:nwnh)*pcurrt(1:nwnh))
+          psbry(m)=bbry(nj)
+          bbry(nj)=fwtsolw(m)*(wsisol-bbry(nj))
         enddo
       endif
 !-----------------------------------------------------------------------
 !--   now get F coil currents from precomputed inverse matrix         --
 !-----------------------------------------------------------------------
       do i=1,nfcoil
-        brsp(i)=0.0
-        do j=1,nj
-          brsp(i)=brsp(i)+ainbry(i,j)*bbry(j)
-        enddo
+        brsp(i)=sum(ainbry(i,1:nj)*bbry(1:nj))
       enddo
       if (ifitvs.gt.0) then
         do ii=1,nvesel
           i=ii+nfcoil
-          vcurrt(ii)=0.0
-          do j=1,nj
-            vcurrt(ii)=vcurrt(ii)+ainbry(i,j)*bbry(j)
-          enddo
+          vcurrt(ii)=sum(ainbry(i,1:nj)*bbry(1:nj))
         enddo
 !
         if(nfourier.gt.1) then
           do j=1,nvesel
-            temp=0.
-            do i=1,(nfourier*2+1)
-              temp=temp+vcurrt(i)*vecta(i,j)
-            enddo
+            temp=sum(vcurrt(1:(nfourier*2+1))*vecta(1:(nfourier*2+1),j))
             vcurrt(j)=temp
           enddo
         endif
@@ -570,45 +483,35 @@
 !--   adjustments for various boundary flux options                   --
 !-----------------------------------------------------------------------
       bdry_flux: if (ifref.gt.0.and.iconvr.eq.3) then
-        sumif = 0.0
-        sumifr = 0.0
         select case (ifref)
         case(1)
 !-----------------------------------------------------------------------
 !--       sum of inner F-coils 1-5 A and B zero IFREF=1               --
 !-----------------------------------------------------------------------
-          do i=1,5
-            sumif = sumif + brsp(i) + brsp(i+9)
-            sumifr = sumifr + fcref(i) + fcref(i+9)
-          enddo
+          sumif = sum(brsp(1:5) + brsp(10:14))
+          sumifr = sum(fcref(1:5) + fcref(10:14))
           sumif = sumif + brsp(8) + brsp(17)
           sumifr = sumifr + fcref(8) + fcref(17)
 !-----------------------------------------------------------------------
 !--       sum of F coils selected through FCSUM vanish IFREF=2        --
 !-----------------------------------------------------------------------
         case(2)
-          do i=1,nfcoil
-            sumif = sumif + fcsum(i)*brsp(i)/turnfc(i)
-            sumifr = sumifr + fcref(i)*fcsum(i)/turnfc(i)
-          enddo
+          sumif = sum(fcsum(1:nfcoil)*brsp(1:nfcoil)/turnfc(1:nfcoil))
+          sumifr = sum(fcref(1:nfcoil)*fcsum(1:nfcoil)/turnfc(1:nfcoil))
         case(3)
 !----------------------------------------------------------------------
 !--     choose boundary flux by minimize coil currents IFREF=3       --
 !----------------------------------------------------------------------
-          do i=1,nfcoil
-            sumif = sumif + fcref(i)*brsp(i)*fczero(i)
-            sumifr = sumifr + fcref(i)**2*fczero(i)
-          enddo
+          sumif = sum(fcref(1:nfcoil)*brsp(1:nfcoil)*fczero(1:nfcoil))
+          sumifr = sum(fcref(1:nfcoil)**2*fczero(1:nfcoil))
         end select
 !-----------------------------------------------------------------------
 !--     update boundary flux for IFREF=1-3                            --
 !-----------------------------------------------------------------------
         if (ifref.le.3) then
           ssiref = sumif/sumifr
-          do m=1,nfcoil
-            silopt(jtime,m)=silopt(jtime,m)-ssiref
-            brsp(m) = brsp(m) - ssiref*fcref(m)
-          enddo
+          silopt(jtime,1:nfcoil)=silopt(jtime,1:nfcoil)-ssiref
+          brsp(1:nfcoil) = brsp(1:nfcoil) - ssiref*fcref(1:nfcoil)
           wsibry=wsibry-ssiref
           wsisol=wsisol-ssiref
         endif
@@ -617,10 +520,8 @@
 !------------------------------------------------------------------------
         if (ifref.eq.4) then
           ssiref=psibry0-psibry
-          do m=1,nfcoil
-            brsp(m)=brsp(m)+ssiref*fcref(m)
-            silopt(jtime,m)=silopt(jtime,m)+ssiref
-          enddo
+          brsp(1:nfcoil)=brsp(1:nfcoil)+ssiref*fcref(1:nfcoil)
+          silopt(jtime,1:nfcoil)=silopt(jtime,1:nfcoil)+ssiref
           wsibry=wsibry+ssiref
           wsisol=wsisol+ssiref
         endif
@@ -637,10 +538,7 @@
       erbmax=0.0
       erbave=0.0
       do i=1,nbdry
-        xsibry=pbry(i)
-        do m=1,nfcoil
-          xsibry=xsibry+rbdrfc(i,m)*brsp(m)
-        enddo
+        xsibry=pbry(i)+sum(rbdrfc(i,1:nfcoil)*brsp(1:nfcoil))
         erbloc(i)=abs((wsibry-xsibry)/sidif)
         erbmax=max(erbloc(i),erbmax)
         erbave=erbave+erbloc(i)
@@ -659,10 +557,7 @@
         erbsmax=0.0
         erbsave=0.0
         do i=1,nsol
-          xsisol=psbry(i)
-          do m=1,nfcoil
-            xsisol=xsisol+rsolfc(i,m)*brsp(m)
-          enddo
+          xsisol=psbry(i)+sum(rsolfc(i,1:nfcoil)*brsp(1:nfcoil))
           erbsloc(i)=abs((wsisol-xsisol)/sidif)
           erbsmax=max(erbsloc(i),erbsmax)
           erbsave=erbsave+erbsloc(i)

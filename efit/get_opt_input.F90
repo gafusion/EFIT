@@ -8,7 +8,7 @@
 !!      1: mimics option 2 but reads input from an hdf5
 !!               file that has the OMAS-equilibrium format
 !!      2: produces g-files (and others) from k-files
-!!      3-7: query MDS+ database for diagnostic inputs
+!!      3-7: query databases for diagnostic inputs
 !!        3,7: produces g-files (and others)
 !!        5: produces k-files from a snap file
 !!        4,6: varitions of snap files??
@@ -65,7 +65,7 @@
 !--   Check that input option is valid                               --
 !----------------------------------------------------------------------
 #if defined(USE_HDF5)
-#if defined(USE_MDS)
+#if defined(USE_SNAP)
       if (kdata.lt.1 .or. kdata.gt.7) then
         call errctrl_msg('get_opt_input', 'kdata run type is not available')
         stop
@@ -77,7 +77,7 @@
       endif
 #endif
 #else
-#if defined(USE_MDS)
+#if defined(USE_SNAP)
       if (kdata.lt.2 .or. kdata.gt.7) then
         call errctrl_msg('get_opt_input', 'kdata run type is not available')
         stop
@@ -285,14 +285,14 @@
 #endif
 
 #if defined(USE_HDF5)
-#if defined(USE_MDS)
+#if defined(USE_SNAP)
  6000 format (/,1x,'type mode (1=omas, 2=file, 3=snap, 4=time', &
                ', 5=input, 6=com file, 7=snap_ext):')
 #else
  6000 format (/,1x,'type mode (1=omas, 2=file):')
 #endif
 #else
-#if defined(USE_MDS)
+#if defined(USE_SNAP)
  6000 format (/,1x,'type mode (2=file, 3=snap, 4=time', &
                ', 5=input, 6=com file, 7=snap_ext):')
 #else

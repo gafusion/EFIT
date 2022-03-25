@@ -11,7 +11,7 @@
 !!    tttt as the first time,nnnn as the number of slices
 !!    
 !!    WARNING: this subroutine uses both REAL*4 (to write files) and
-!!             REAL*8 variables conversions must be handled carefully
+!!             REAL*8 variables, conversions must be handled carefully
 !!
 !!
 !!    @param ktime : total number of time slices 

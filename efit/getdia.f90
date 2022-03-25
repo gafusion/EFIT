@@ -76,14 +76,15 @@
         use var_gggttt, only: ntims
         implicit integer*4 (i-n), real*8 (a-h,o-z)
         PARAMETER (NPOINT=42)
-        REAL*4 RAR,REAL32,TTEMP
+        REAL*8 RAR,TTEMP
+        REAL*4 RAR4,REAL32
         INTEGER*2 IIPOINT(5)
         INTEGER*4 IDAT,IAR,ASCII,INT16,INT32
         DIMENSION DIAMAG(NTIMS,3),DIAMAGC(NTIMS,3),SIG(NTIMS,3)
         DIMENSION TIM(NTIMS),TTEMP(NTIMS)
         DIMENSION IDAT(NTIMS),YDAT(NTIMS),YTEMP(NTIMS),BT(NTIMS)
-        DIMENSION IAR(128),RAR(8400),IERR(3),IADJ(3),BTCOMP(3),EBCOUP(3)
-        DIMENSION FIX(3)
+        DIMENSION IAR(128),RAR(8400),RAR4(8400),IERR(3),IADJ(3)
+        DIMENSION FIX(3),BTCOMP(3),EBCOUP(3)
         DIMENSION ASCII(11),INT16(11),INT32(11),REAL32(11)
 
         DIMENSION COUP(NPOINT,3)
@@ -115,7 +116,7 @@
         IAR(1)=NPTS
         RAR(1)=-0.050000
         RAR(2)=0.0020005
-        NAVG=int((TAVG+.5)/1000./REAL(RAR(2),DP))
+        NAVG=int((TAVG+.5)/1000./RAR(2))
 
         NIN=21
         IER=1
@@ -176,7 +177,7 @@
 !     TYPE *,' NO BT COMPENSATION DONE FOR ',DNAME(J)
 !   ENDIF
 !   DO 40 N=1,NPTS
-!     DIAMAG(N,J)=REAL((RAR(6)-IDAT(N))*RAR(5)*RAR(4),DP)
+!     DIAMAG(N,J)=(RAR(6)-IDAT(N))*RAR(5)*RAR(4)
 !40 CONTINUE
 !   BTCOEF(J)=DIAMAG(N69,J)/BCOIL(N69)
 ! 100 CONTINUE
@@ -200,8 +201,10 @@
         DO J=1,3
           IERR(J)=0
           IPOINT=DNAME(J)
-          CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR,RAR, &
-                      ASCII,INT16,INT32,REAL32)
+          RAR4=REAL(RAR,R4)
+          CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR, &
+                      RAR4,ASCII,INT16,INT32,REAL32)
+          RAR=REAL(RAR4,DP)
           IF (IER.NE.0 .AND. IER.NE.2 .AND. IER.NE.4) THEN
             WRITE (6,1012)
             WRITE (6,1013) IPOINT,NSHOT,IER,RAR(1),RAR(7), &
@@ -214,8 +217,8 @@
             IF(NPTS.LE.0) CYCLE
           ENDIF
 
-          DIAMAG(1:NPTS,J)=(REAL(RAR(6),DP)-IDAT(1:NPTS)) &
-                           *REAL(RAR(5),DP)*REAL(RAR(4),DP)*IADJ(J)*fix(j)
+          DIAMAG(1:NPTS,J)=(RAR(6)-IDAT(1:NPTS)) &
+                           *RAR(5)*RAR(4)*IADJ(J)*fix(j)
 !        
 !         COMPENSATE FOR BT PICKUP (0.1 MV-SEC IS UNCERTAINTY IN BT PICKUP)
 !         NOV 21, 1994: NEW CALIB INCREASES BY 5%.
@@ -230,7 +233,7 @@
 
 !       CREATE TIME ARRAY BASED ON THE DIAMAGNETIC LOOP TIME ARRAY
 
-        IF(NPTS.GT.0) TIM(1:NPTS)=REAL(TTEMP(1:NPTS),DP)
+        IF(NPTS.GT.0) TIM(1:NPTS)=TTEMP(1:NPTS)
 !
 !       COMPENSATE FOR E AND F-COIL PICKUP
 !
@@ -249,11 +252,15 @@
             IREPLACE=1
           ENDIF
           IF ((ISHOT .GE. 83350) .AND. (I .GE. 24)) THEN 
-            CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR,RAR, &
-                        ASCII,INT16,INT32,REAL32)
+            RAR4=REAL(RAR,R4)
+            CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR, &
+                      RAR4,ASCII,INT16,INT32,REAL32)
+            RAR=REAL(RAR4,DP)
           ELSEIF ((ISHOT .LT. 83350) .AND. (I .LT. 24)) THEN 
-            CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR,RAR, &
-                        ASCII,INT16,INT32,REAL32)
+            RAR4=REAL(RAR,R4)
+            CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR, &
+                      RAR4,ASCII,INT16,INT32,REAL32)
+            RAR=REAL(RAR4,DP)
           ENDIF
           if (ier.ne.0 .and. ier.ne.2 .and. ier.ne.4) then
             write (6,1012)
@@ -267,23 +274,23 @@
             TAU=0.125
             SUM=0.0
             DO N=1,NPTS2-1
-              IF (REAL(TTEMP(N),DP).GT.TIM(NPTS)) EXIT
-              YTEMP(N)=REAL((RAR(6)-IDAT(N))*RAR(5)*RAR(4),DP)
-              SUM=SUM+EXP(REAL(TTEMP(N),DP)/TAU) &
-                      *YTEMP(N)*REAL(TTEMP(N+1)-TTEMP(N),DP)
-              YTEMP(N)=YTEMP(N)-EXP(-1.*REAL(TTEMP(N),DP)/TAU)/TAU*SUM
+              IF (TTEMP(N).GT.TIM(NPTS)) EXIT
+              YTEMP(N)=(RAR(6)-IDAT(N))*RAR(5)*RAR(4)
+              SUM=SUM+EXP(TTEMP(N)/TAU) &
+                      *YTEMP(N)*(TTEMP(N+1)-TTEMP(N))
+              YTEMP(N)=YTEMP(N)-EXP(-1.*TTEMP(N)/TAU)/TAU*SUM
             ENDDO
 
-            call interp(real(ttemp,dp),ytemp,N,tim,ydat,npts)
+            call interp(ttemp,ytemp,N,tim,ydat,npts)
 
           ELSEIF (IPOINT.EQ.'ECOILB    ' .OR. &
                   (ABS(RAR(1)-TTEMP(1)).GT.RAR(3) .OR. &
-                   ABS(REAL(TTEMP(NPTS),DP)-TIM(NPTS)).GT.1.0E-6)) then
+                   ABS(TTEMP(NPTS)-TIM(NPTS)).GT.1.0E-6)) then
             npts2=iar(2)
-            ytemp(1:npts2)=real((rar(6)-idat(1:npts2))*rar(5)*rar(4),dp)
-            call interp(real(ttemp,dp),ytemp,iar(2),tim,ydat,npts)
+            ytemp(1:npts2)=(rar(6)-idat(1:npts2))*rar(5)*rar(4)
+            call interp(ttemp,ytemp,iar(2),tim,ydat,npts)
           ELSE
-            ydat(1:npts)=real((rar(6)-idat(1:npts))*rar(5)*rar(4),dp)
+            ydat(1:npts)=(rar(6)-idat(1:npts))*rar(5)*rar(4)
           ENDIF
 
           IF (ipoint.eq.'ECOILB    ') then

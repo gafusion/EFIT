@@ -7,9 +7,6 @@
 !!    at present the clipping errors (ier = -1, -2) are used only by the
 !!    yoka routine in NEWSPEC.
 !!
-!!    WARNING: this subroutine uses both REAL*4 (used by PTDATA) and
-!!             REAL*8 variables conversions must be handled carefully
-!!
 !!
 !!    @param NSHOT :  THE SHOT NUMBER
 !!
@@ -80,9 +77,10 @@
       character*12 pcst
       CHARACTER*10 PCSTIME
       CHARACTER PHASE*4
-      real*4 rarr, real32, tt, dt, t0
-      dimension rarr(20+npmax)
-      dimension real32(100)
+      real*8 rarr, realdp, tt, dt, t0
+      real*4 rarr4, real32
+      dimension rarr(20+npmax),rarr4(20+npmax)
+      dimension real32(100),realdp(100)
       REAL*8 REAL64(100)
       CHARACTER*10 SDATE, STIME
 
@@ -190,20 +188,23 @@
       !  Request to get data by point sampling with PTDATA returning time array
       !
 10    continue
+      rarr4=real(rarr,r4)
 #ifdef __cray
-      call ptdata(itype,nshot,phase,name,temp,ier,iarr,rarr,&
+      call ptdata(itype,nshot,phase,name,temp,ier,iarr,rarr4,&
                   iascii,int16,int32,real32)
 #else
-      call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,&
-                  iascii,int16,int32,real32)
+      call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,&
+                  rarr4,iascii,int16,int32,real32)
 #endif
+      rarr=real(rarr4,dp)
+      realdp=real(real32,dp)
 
 ! write(13,91300)(rarr(klg),klg=540,640)
 91300 format(x,1pe17.10)
 
       if(ier .eq. 4 .or. ier.eq.2) ier = 0
-      VPBIT = real(real32(51),dp)
-      RC    = real(real32(52),dp)
+      VPBIT = realdp(51)
+      RC    = realdp(52)
       !
       !  CHECK DATA FORMAT, TRY AGAIN IF NECESSARY
       !  Attempt to get data based on time sampling, using a computed
@@ -213,16 +214,19 @@
 
         itype = 2
 20      continue
+        rarr4=real(rarr,r4)
 #ifdef __cray
-        call ptdata(itype,nshot,phase,name,temp,ier,iarr,rarr,&
+        call ptdata(itype,nshot,phase,name,temp,ier,iarr,rarr4,&
                     iascii,int16,int32,real32)
 #else
-        call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr,&
+        call ptdata(itype,nshot,%ref(phase),%ref(name),temp,ier,iarr,rarr4,&
                     iascii,int16,int32,real32)
 #endif
+        rarr=real(rarr4,dp)
+        realdp=real(real32,dp)
         if(ier .eq. 4 .or. ier.eq.2) ier = 0
 
-        VPBIT = real(real32(13),dp)
+        VPBIT = realdp(13)
         RC    = 1.0
 
 666   continue
@@ -254,14 +258,14 @@
       nret = iarr(2)
       nsampl = iarr(32)   ! number of 16-bit words
       nbits = iarr(33)   ! number of bits per word
-      ZINHNO = real(rarr(4),dp)             ! inherent number
-      RCG    = real(rarr(5),dp)
+      ZINHNO = rarr(4)             ! inherent number
+      RCG    = rarr(5)
       if(nbits .le.  8) nsampl = nsampl*2   ! correct number of
       if(nbits .gt. 16) nsampl = nsampl/2 !       available samples
       mzero = iarr(30)
       yzero = mzero
       if (idfi.eq.158 .or. idfi.eq.2158) then !-- NEW DFI WITH MORE ACCURATE OFFSET
-        yzero = real(real32(14),dp)
+        yzero = realdp(14)
         mzero = anint(yzero)
       endif
 
@@ -269,7 +273,7 @@
 ! --- this offset makes sense only with ical=1 or 11,
 ! --- by convention we will add offset in ical=1 but not 11
       if((idfi .eq. 125 .or. idfi .eq. 158 .OR. idfi.eq.2158) &
-        .and. ical .eq. 1)  pzero = real(real32(8),dp)
+        .and. ical .eq. 1)  pzero = realdp(8)
 
       !--- Rely on PTDATA's time-type call if the
       !    pointname is too big for the buffer.
@@ -287,16 +291,16 @@
       pt_again: if (idfi.eq.2201 .or. idfi.eq.2202 .or. idfi.eq.2203) then
         select case (idfi)
         case (2201) ! digitizer data, int
-          vpbit = real(real32(5),dp)
-          yzero = real(real32(6),dp)
-          if (real32(2).ge.5) rc = real(real32(7),dp)
+          vpbit = realdp(5)
+          yzero = realdp(6)
+          if (realdp(2).ge.5) rc = realdp(7)
         case (2202)  ! processed data, int
           vpbit = -1.0
-          pzero = real(real32(3),dp)
+          pzero = realdp(3)
           yzero = 0.0
         case (2203) ! processed data, real
           vpbit = -1.0
-          pzero = real(real32(3),dp)
+          pzero = realdp(3)
           yzero = 0.0
         end select
         ichar = iascii(3)
@@ -313,13 +317,17 @@
         int32(1) = 0
         real32(1) = 0
         real64(1) = 0
+        rarr4=real(rarr,r4)
 #ifdef __cray
         call ptdata64(64,nshot,phase,pcstime,time64,ker, &
-                      iarr,rarr,iascii,int16,int32,real32,real64,tdum)
+                      iarr,rarr4,iascii,int16,int32, &
+                      real32,real64,tdum)
 #else
         call ptdata64(64,nshot,%ref(phase),%ref(pcstime),time64,ker, &
-                      iarr,rarr,iascii,int16,int32,real32,real64,tdum)
+                      iarr,rarr4,iascii,int16,int32, &
+                      real32,real64,tdum)
 #endif
+        rarr=real(rarr4,dp)
         if (ker.ne.0 .and. ker.ne.2 .and. ker.ne.4) then
           ier = 1
           np = 2
@@ -331,7 +339,7 @@
         endif
         nrettim = iarr(2)
         do k = 1,nrettim
-          tt(k) = real(time64(k),r4)
+          tt(k) = time64(k)
         enddo
       elseif (itype .eq. 12 .or. itype .eq. 2) then pt_again
         !
@@ -339,8 +347,8 @@
         !
         if (nret .lt. nsampl) then
           itype = itype - 1  ! call ptdata by time
-          rarr(1) = real(tmin,r4)   ! start time
-          rarr(2) = real((tmax-tmin)/(npmax-1),r4) ! minimum delta-time
+          rarr(1) = tmin   ! start time
+          rarr(2) = (tmax-tmin)/(npmax-1) ! minimum delta-time
           iarr(1) = npmax   ! guaranteed to cover tmax-tmin
           IF (itype .eq. 11) THEN
             go to 10
@@ -371,16 +379,16 @@
       !  FIND START AND STOP TIME OF DATA TO BE RETURNED
       !  --- THE OVERLAP OF THE REQUESTED AND DIGITIZED TIME INTERVALS
 
-      tmind = real(tt(1),dp)
-      tmaxd = real(tt(nret),dp)
+      tmind = tt(1)
+      tmaxd = tt(nret)
 
       IF (tmax .le. tmin) THEN
         tmin = tmind
         tmax = tmaxd
       ENDIF
 
-      tmin = amax1(tmin,tmind)
-      tmax = amin1(tmax,tmaxd)
+      tmin = max(tmin,tmind)
+      tmax = min(tmax,tmaxd)
 
       IF (tmax .lt. tmin) THEN
         np = 0
@@ -398,7 +406,7 @@
       IF(NSAMPL.LT.ITOTALPTS) ITOTALPTS = NSAMPL
 
       DO i=1,ITOTALPTS
-        ttime = real(tt(i),dp)
+        ttime = tt(i)
         if (ttime .lt. tmin) nfirst=i+1
         if (ttime .lt. tmax) nlast =i
       ENDDO
@@ -425,7 +433,7 @@
         ii=0
         do i = nfirst, nlast, nint
           ii=ii+1
-          t(ii) = real(tt(i),dp)
+          t(ii) = tt(i)
           data(ii) = fpdata(i)
         enddo
         np = ii
@@ -435,7 +443,7 @@
       !  CHECK FOR ZERO OFFSET OUT OF RANGE
       !  2013/04/03 Revised for new digitzers signed binary numbers  LL/ES
 
-      ! min = 0
+      ! amin = 0
       !
       !  THIS NEXT LINE HAS BEEN MODIFIED TO (NBITS - 2) FOR TWO REASONS:
       !  (1)  THE FIRST BIT IS ACTUALLY BIT #0 (THEREFORE FOR A 32-BIT VARIABLE
@@ -453,16 +461,16 @@
       !  DOES NOT OCCUR
       !
       if (nbits.ge.16) then  !  NECESSARY ONLY FOR 16-BIT DATA
-        min =-(2 ** (nbits - 2) - 1) * 2 + 1
-        max = (2 ** (nbits - 2) - 1) * 2 + 1
+        amin =-(2 ** (nbits - 2) - 1) * 2 + 1
+        amax = (2 ** (nbits - 2) - 1) * 2 + 1
       else    !  12-BIT DIG.S NEED THIS ONE
-        min = 0
-        max = 2**nbits - 1
+        amin = 0
+        amax = 2**nbits - 1
       endif
 
 
       !--- WAVEFORMS ARE ALLOWED TO HAVE ZERO OFFSET OUTSIDE THE GENERATOR RANGE
-      if ((mzero .lt. min .or. mzero .gt. max) .and. &
+      if ((mzero .lt. amin .or. mzero .gt. amax) .and. &
         (idfi .ne. 125 .and. idfi .ne. 158 .and. &
         idfi.ne.2158) .and. (ier .eq. 0 )) ier = -3
 
@@ -490,7 +498,7 @@
         !
         ! --- time array
         !
-        t(ii) = real(tt(i),dp)
+        t(ii) = tt(i)
         ! write(14,91300)t(ii)
         !
         ! --- data calibration
@@ -505,7 +513,7 @@
         ! --- check for data out of digitizer range
         !      IF (TEMP(I) .GE. MAX .AND. IER.EQ.0)  IER = -1
         !      IF (TEMP(I) .LE. MIN .AND. IER.EQ.0)  IER = -2
-        if(y .ge. max .or. y .le. min) nclip = nclip + 1
+        if(y .ge. amax .or. y .le. amin) nclip = nclip + 1
 
         ! --- offset for all but calibration code 0
         if (ical .ne. 0) then
@@ -601,7 +609,7 @@
         rcg_e = rcg
         vpbit_e = vpbit
         zinhno_e = zinhno
-        t0_e = real(tt(1),dp)
+        t0_e = tt(1)
       endif
 
       return

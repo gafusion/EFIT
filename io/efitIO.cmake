@@ -89,30 +89,47 @@ endif()
 option(ENABLE_MDSPLUS "Enable MDS+" off)
 set(HAVE_MDSPLUS False)   # Used in defines
 if(${ENABLE_MDSPLUS})
-  find_package(MDSPlus COMPONENTS 
+	find_package(MDSPLUS COMPONENTS 
                INSTALL_DIR "mdsplus"
                HEADERS "mdsdescrip.h" "mdslib.h"
-               LIBRARIES "MdsLib"
+	       LIBRARIES "MdsLib" "MdsShr" "MdsIpShr" "TdiShr" "TreeShr"
                INCLUDE_SUBDIRS "include"
                LIBRARY_SUBDIRS "lib"
                )
   if (${MDSPLUS_FOUND})
     message(STATUS "Found MDS+")
     set(HAVE_MDSPLUS True)
+    set(USE_MDS True)                 # ifdef
     set(io_libs ${MDSPLUS_LIBRARIES} ${io_libs})
-    # MDS+ is only set up for DIIID currently and requires 2
-    # additional external libraries
-    if(NOT EXISTS ${D3_LIB})
-      message(STATUS "D3_LIB not found, MDS+ cannot be used")
-      set(HAVE_MDSPLUS False)
-    else()
-      # Note: this seems to be required even for non-MSE (EFIT01)
-      if(NOT EXISTS ${MSE_LIB})
-        message(STATUS "MSE_LIB not found, MDS+ cannot be used")
-        set(HAVE_MDSPLUS False)
-      else()
-        set(USE_MDS TRUE)                 # ifdef
-      endif()
-    endif()
+  endif()
+endif()
+
+
+#---------------------------------------------------------------------
+#
+# Setup Additional Libraries
+# These are specialized and purpose built so they are taken directly
+#   as input and not searched for as packages
+#
+#---------------------------------------------------------------------
+if(NOT EXISTS ${D3_LIB})
+  message(STATUS "D3_LIB not found, snap cannot be used")
+  set(HAVE_SNAP FALSE)
+else()
+  add_library(d3lib STATIC IMPORTED)
+  set_target_properties(d3lib PROPERTIES IMPORTED_LOCATION ${D3_LIB})
+  set(HAVE_SNAP TRUE)
+  set(USE_SNAP TRUE)  #ifdef
+  if(NOT ${HAVE_MDSPLUS})
+    message(STATUS "Without MDS+ density and dependents will be wrong")
+  endif()
+  if(NOT EXISTS ${MSE_LIB})
+    message(STATUS "MSE_LIB not found, some snap files will fail")
+    set(HAVE_MSE FALSE)
+  else()
+    add_library(mselib STATIC IMPORTED)
+    set_target_properties(mselib PROPERTIES IMPORTED_LOCATION ${MSE_LIB})
+    set(HAVE_MSE TRUE)
+    set(USE_MSE TRUE)  #ifdef
   endif()
 endif()

@@ -1734,64 +1734,6 @@
 
 !**********************************************************************
 !>
-!!    getmsels obtains MSE-LS data
-!!    
-!!    WARNING: this subroutine uses both REAL*4 (used in mse files) and
-!!             REAL*8 variables conversions must be handled carefully
-!!
-!!
-!!    @param ktime : number of time slices
-!!
-!**********************************************************************
-      subroutine getmsels(ktime)
-      include 'eparm.inc'
-      include 'modules2.inc'
-      include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      character*3 synmlt
-      integer*4 ktime, icmls, iermls(ntime)
-      real*4 avemlt, atime(ntime), bbmls(ntime), sigbmls(ntime),      &
-             rrmls(ntime), zzmls(ntime),                              &
-             l1mls(ntime), l2mls(ntime), l4mls(ntime),                &
-             epotpmls(ntime), sigepmls(ntime)
-!
-      avemlt=real(avemsels,r4)
-      synmlt=synmsels
-      atime=real(time*1000.0,r4)
-      do i=1,nmsels
-        icmls=i
-        call msels_data(ishot,atime,ktime,avemlt,synmlt,icmls,       &
-             bbmls,sigbmls,rrmls,zzmls,l1mls,l2mls,l4mls,epotpmls,   &
-             sigepmls,iermls)
-#ifdef DEBUG_LEVEL2
-        write (6,*) 'GETMSELS bbmls,sigbmls= ',bbmls(1),sigbmls(1)
-#endif
-        bmselt(1:ktime,i)=real(bbmls(1:ktime),dp)
-        sbmselt(1:ktime,i)=real(sigbmls(1:ktime),dp)
-        rrmselt(1:ktime,i)=real(rrmls(1:ktime),dp)
-        zzmselt(1:ktime,i)=real(zzmls(1:ktime),dp)
-        l1mselt(1:ktime,i)=real(l1mls(1:ktime),dp)
-        l2mselt(1:ktime,i)=real(l2mls(1:ktime),dp)
-        l3mselt(1:ktime,i)=1.0-real(l1mls(1:ktime),dp)
-        l4mselt(1:ktime,i)=real(l4mls(1:ktime),dp)
-        emselt(1:ktime,i)=real(epotpmls(1:ktime),dp)
-        semselt(1:ktime,i)=real(sigepmls(1:ktime),dp)
-        iermselt(1:ktime,i)=real(iermls(1:ktime),dp)
-        fwtbmselt(1:ktime,i)=real(swtbmsels(1:ktime),dp)
-        fwtemselt(1:ktime,i)=real(swtemsels(1:ktime),dp)
-        do j=1,ktime
-          if (iermselt(j,i).ne.0) then
-            fwtbmselt(j,i)=0.0
-            fwtemselt(j,i)=0.0
-          endif 
-        enddo
-      enddo
-!
-      return
-      end subroutine getmsels
-
-!**********************************************************************
-!>
 !!    GETSIGMA is the control for getting the uncertainty
 !!    in Magnetic Data
 !!    
@@ -1809,8 +1751,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       integer*4 jtimex,niterax
-      real*8             :: gradsdr,gradsdz,brdr,brdz,bzdr,bzdz,cost,sint &
-                          ,oldfit
+      real*8 :: gradsdr,gradsdz,brdr,brdz,bzdr,bzdz,cost,sint,oldfit
       dimension pds(6)
 !----------------------------------------------------------------------
 !--   BR=-1/R dpsi/dZ           BZ=1/R dpsi/dR                       --
@@ -1849,8 +1790,7 @@
 !----------------------------------------------------------------------
 !--     Calculate B perpendicular to magnetic probe                  --
 !----------------------------------------------------------------------
-        bpermp(jtimex,i)=(pds(2)*cosm + pds(3)*sinm) &
-                             /xmp2(i)
+        bpermp(jtimex,i)=(pds(2)*cosm + pds(3)*sinm)/xmp2(i)
       enddo
 !----------------------------------------------------------------------
 !--   calc gradient of flux loops                                    --
@@ -1869,7 +1809,7 @@
         write(33,'(i5,2e13.5)') i,gradsfl(jtimex,i)
       enddo
       call magsigma(ishot,time(jtimex),jtimex,gradsmp,gradsfl, &
-           bpermp,sigmaf,sigmab,sigmae,sigmaip,sigmafl,sigmamp)
+                    bpermp,sigmaf,sigmab,sigmae,sigmafl,sigmamp)
 !----------------------------------------------------------------------
 !--   Set fitting weights                                            --
 !----------------------------------------------------------------------
@@ -1959,118 +1899,465 @@
       write (99,*) swtcur, oldfit, fwtcur
 !
       return
-      end
+      end subroutine getsigma
 
-!**********************************************************************
+!*************************************************************************
 !>
-!!    getstark obtains the internal pitch angles
-!!    from polarimetry measurement using Wroblewski's routine
+!!    This subroutine calculates the uncertainties for the magnetic
+!!    diagnostics.  It is based on estimates described in
+!!    DIII-D Physics Memo D3DPM 0202, "Estimating the Uncertainty of DIII-D
+!!    Magnetic Data," by E.J. Strait (Aug. 30, 2002).
 !!    
-!!    WARNING: this subroutine uses both REAL*4 (used by mselib) and
-!!             REAL*8 variables conversions must be handled carefully
+!!    The following sources of uncertainty are included. (Further explanation
+!!    is given under the corresponding item numbers in the Physics Memo.)
+!!    The individual terms are combined in quadrature to give
+!!    the total uncertainty for each signal.
+!!    
+!!    1) Loop calibration   dS = a1 S
+!!    2) Loop cal. - Long-term change  dS = a2 S
+!!    3) Integrator calibration  dS = a3 S
+!!    4) Int. cal. - Long-term change  dS = a4 S
+!!    5) Integrator drift    dS = a5 K(RC/G) T
+!!    6) Loop position    dS = a6 grad(S)
+!!    7) Loop tilt angle   dS = a7 Bperp
+!!    8) Bt pickup     dS = a8 dBt
+!!    9) C-coil pickup   dS = a9 Cn
+!!    10) Bp pickup in leads   dS = a10 K integral(Bperp^2)ds
+!!    11) Bp pickup in ports   dS = a11 K Bport
+!!    12) Detector nonlinearity  dS = a12 S/Bt
+!!    13) Noise     dS = a13 (/<S^2> - <S>^2/)^0.5 / N^0.5
+!!    14) Digitizer resolution  dS = a14 K(RC/G)(Vres/2) / N^0.5
+!!    where
+!!    S  = measured signal: flux, field, or current (in physics units)
+!!    dS  = estimated uncertainty in the measured signal
+!!    grad(S)  = gradient of measured flux or field (physics units/meter)
+!!    N   = number of time samples averaged
+!!    Vres  = one-bit resolution of the digitizer (volts)
+!!    K   = inherent number (physics units/volt-second)
+!!    RC  = integrator time constant (seconds)
+!!    G   = integrator gain
+!!    T   = time elapsed since the start of integration (seconds)
+!!    dBt  = change in toroidal field since start of integration (seconds)
+!!    Bperp  = poloidal field normal to axis of mag. probe or leads (Tesla)
+!!    Cn  = current in a C-coil pair (Amps)
+!!    integral(f)ds = integral along leads from probe to connector (meters)
+!!    Bport  = poloidal field in port, perpendicular to leads (Tesla)
+!!    an  = numerical coefficient: units vary with n,
+!!    and values vary between types of signals
+!!    
+!!    Note that items 10 and 11 will not be implemented immediately due to
+!!    the additional difficulty in calculating the path integral (10) and in
+!!    estimating Bport outside the efit grid (11).
 !!
 !!
-!!    @param ktime : number of time slices
+!!    @param ishotx :  shot number
+!!
+!!    @param timexy : time slice
+!!
+!!    @param jtimex : time slice index
+!!
+!!    @param gradsmpx : Grad(S) of magnetic probe \n 
+!!    s   = BR cost + BZ sint
+!!
+!!    @param gradsflx : Grad(S) of flux loop
+!!
+!!    @param bpermpx : B perpendicular to the magnetic probe
+!!
+!!    @param sigmafx : uncertainty of f coil
+!!
+!!    @param sigmabx : uncertainty of b coil
+!!
+!!    @param sigmaex : uncertainty of e coil
+!!
+!!    @param sigmaflx : uncert. of flux loop
+!!
+!!    @param sigmampx : uncert. of magnetic probes
 !!
 !**********************************************************************
-      subroutine getstark(ktime)
+      subroutine magsigma(ishotx,timexy,jtimex,gradsmpx,gradsflx, &
+                          bpermpx,sigmafx,sigmabx,sigmaex, &
+                          sigmaflx,sigmampx)
+
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*4 avem,tanham(ktime,nmtark),sigham(ktime,nmtark), &
-         rrham(nmtark),zzham(nmtark), &
-         sarkar,sarkaz,a1ham(nmtark), &
-         a2ham(nmtark),a3ham(nmtark),a4ham(nmtark), &
-         a5ham(nmtark),a6ham(nmtark),a7ham(nmtark),atime(ktime), &
-         spatial_avg_ham(nmtark,ngam_vars,ngam_u,ngam_w), &
-         hgain(nmtark),hslope(nmtark),hscale(nmtark), &
-         hoffset(nmtark),max_beamOff, &
-         tanham_uncor(ktime,nmtark)
-      real*4 fv30lt,fv30rt,fv210lt,fv210rt
+!
+      dimension gradsmpx(ntime,magpri),gradsflx(ntime,nsilop)
+      dimension bpermpx(ntime,magpri)
+      dimension sigmafx(ntime,nfcoil),sigmabx(ntime)
+      dimension sigmaex(ntime,nesum),sigmaflx(ntime,nsilop)
+      dimension sigmampx(ntime,magpri)
 
-#ifdef USE_MDS
-      atime(1:ktime) = real(time(1:ktime),r4)
-      if (dtmsefull .gt. 0.0) then
-        avem = real(dtmsefull,r4) / 1000.0
-      else
-        avem = 2.0*iavem / 1000.0
+      !-----
+      ! LOCAL VARIABLES
+      !-----
+      dimension dd(8)
+      equivalence (dd(1), dpol), &
+                  (dd(2), drdp) , &
+                  (dd(3), dfl) , &
+                  (dd(4), df67) , &
+                  (dd(5), dvv) , &
+                  (dd(6), dfc) , &
+                  (dd(7), dbe) , &
+                  (dd(8), dip)
+
+      ! rindex diagnostic  units
+
+      ! 1 Pol. Mag. Probes   (Tesla)
+      ! 2 RDP Mag. Probes   (Tesla)
+      ! 3 F-coil Flux Loops (V-s/radian)
+      ! 4 F6, F7 Flux Loops (V-s/radian)
+      ! 5 Vessel Flux Loops (V-s/radian)
+      ! 6 F-coil Rogowskis  (Amps)
+      ! 7 E and B Rogowskis (Amps)
+      ! 8 Ip Rogowskis   (Amps)
+
+      !-----
+      ! ARRAYS TO ACCUMULATE THE UNCERTAINTIES
+      !-----
+      real*8 :: sigmp(magpri),sigfl(nsilop),sigfc(nfcoil),sige(nesum)
+      real*8 :: maskpol(magpri),maskrdp(magpri),maskff(nsilop), &
+                maskinf(nsilop),maskoutf(nsilop),maskvv(nsilop)
+      !-----
+      ! MASKS FOR SUBSETS WITHIN ARRAYS
+      !-----
+!-- poloidal array probes
+      maskpol = (/ 60*1., 16*0./)
+!-- RDP probes
+      maskrdp = (/ 60*0., 16*1./)
+!-- F-coil flux loops
+      maskff = (/18*1.,7*0.,1., 0., 1.,7*0.,1.,0.,1.,6*0./)
+!-- inner F-coil flux loops
+      maskinf = (/ 5*1., 2*0., 7*1., 2*0., 2*1., 26*0. /)
+!-- outer F-coil  loops
+      maskoutf = (/5*0., 2*1., 7*0., 2*1., 2*0., &
+                   7*0., 1., 0., 1., 7*0., 1., 0., 1., 6*0./)
+!-- vacuum vessel flux loops
+      maskvv=(/18*0.,7*1.,0., 1., 0., 7*1., 0., 1.,0.,6*1./)
+      !-----
+      ! INITIALIZE ARRAYS
+      !-----
+      sigmp = (/ (0., i=1, magpri) /)
+      sigfl = (/ (0., i=1, nsilop) /)
+      sigfc = (/ (0., i=1, nfcoil) /)
+      sige =  (/ (0., i=1, nesum)  /)
+      sigb =  0.
+      sigip = 0.
+
+      !-----
+      !  TESTING DIFFERENT CONTRIBUTIONS TO SIGMA
+      !-----
+      timex = timexy / 1000.
+      if (ksigma .eq. 0 .or. ksigma .eq. 1) then
+        !-------------------------------------------------------------------------
+        !***** (1) LOOP CALIBRATION
+        !-------------------------------------------------------------------------
+        dd = (/.0019, .0019, 0., 0., 0., .0017, .0017, .003/)
+        !-------------------------------------------------------------------------
+        sigmp = sigmp + ( expmpi(jtimex,:) * dpol )**2
+        sigfl = sigfl + 0
+        sigfc = sigfc + ( fccurt(jtimex,:) * dfc  )**2
+        sige  = sige  + ( eccurt(jtimex,:) * dbe  )**2
+        sigb  = sigb  + ( bcentr(jtimex)   * dbe  )**2
+        sigip = sigip + ( pasmat(jtimex)   * dip  )**2
       endif
-      max_beamOff = real(t_max_beam_off,r4) / 1000.0
-      call  set_mse_beam_logic(mse_strict,max_beamOff,ok_210lt,ok_30rt)
-      tanham = 0.0
-      tanham_uncor = 0.0
-      sigham = 0.0
-      fv30lt = real(v30lt,r4)
-      fv30rt = real(v30rt,r4)
-      fv210rt = real(v210rt,r4)
-      fv210lt = real(v210lt,r4)
-      call set_cer_correction(mse_usecer,mse_certree, &
-                              mse_use_cer330,mse_use_cer210)
-      call set_mse_beam_on_vlevel(fv30lt,fv210rt,fv210lt,fv30rt)
-      call stark2cer(ishot,atime,ktime,avem,msefitfun,tanham,sigham, &
-                     rrham,zzham,a1ham,a2ham,a3ham,a4ham,a5ham,a6ham, &
-                     a7ham,iergam,msebkp,mse_quiet,tanham_uncor)
-      call get_mse_spatial_data(spatial_avg_ham)
-      call get_mse_calibration(msefitfun,hgain,hslope,hscale,hoffset)
-      kfixstark = 0
-      do n=1,nmtark
-        rmse_gain(n) = real(hgain(n),dp)
-        rmse_slope(n) = real(hslope(n),dp)
-        rmse_scale(n) = real(hscale(n),dp)
-        rmse_offset(n) = real(hoffset(n),dp)
-        if(mse_spave_on(n) .ne. 0) kfixstark = 1
-        do i=1,ngam_vars
-          do j=1,ngam_u
-            spatial_avg_gam(n,i,j,1:ngam_w) =  &
-              real(spatial_avg_ham(n,i,j,1:ngam_w),dp)
-          enddo
-        enddo
 
-        do i=1,ktime
-          tangam(i,n) = real(tanham(i,n),dp)
-          tangam_uncor(i,n) = real(tanham_uncor(i,n),dp)
-          siggam(i,n) = real(sigham(i,n),dp)
-          rrgam(i,n) = real(rrham(n),dp)
-          zzgam(i,n) = real(zzham(n),dp)
-          starkar(i,n) = real(sarkar,dp)
-          starkaz(i,n) = real(sarkaz,dp)
-          a1gam(i,n) = real(a1ham(n),dp)
-          a2gam(i,n) = real(a2ham(n),dp)
-          a3gam(i,n) = real(a3ham(n),dp)
-          a4gam(i,n) = real(a4ham(n),dp)
-          a5gam(i,n) = real(a5ham(n),dp)
-          a6gam(i,n) = real(a6ham(n),dp)
-          a7gam(i,n) = real(a7ham(n),dp)
-          a8gam(i,n)=0.0
-          if (abs(tangam(i,n)).le.1.e-10_dp.and. &
-            abs(siggam(i,n)).le.1.e-10_dp) then
-            fwtgam(n)=0.0
-            siggam(i,n)=0.0
-          elseif (abs(tangam(i,n)).le.1.e-10_dp.and. &
-            abs(siggam(i,n)).le.100.0) then
-            fwtgam(n)=0.0
-            siggam(i,n)=0.0
-          elseif (iergam(n).gt.0) then
-            fwtgam(n)=0.0
-            siggam(i,n)=0.0
-          endif
-        enddo
-      enddo
-
-      !
-      ! kfixstark is zero when none of the individual channels is turned on
-      ! in this case set kwaitmse to zero which turns the mse spacial average
-      ! off globally
-      !
-      if (kfixstark .eq. 0) then
-        kwaitmse = 0
-      elseif (kwaitmse .eq. 0) then
-        kwaitmse = 5
+      if (ksigma .eq. 0 .or. ksigma .eq. 2) then
+        !-------------------------------------------------------------------------
+        !***** (2) LOOP CALIBRATION: LONG-TERM
+        !-------------------------------------------------------------------------
+        dd = (/.002, .002, 0., 0., 0., .003, .003, .006/)
+        !-------------------------------------------------------------------------
+        sigmp = sigmp + ( expmpi(jtimex,:) * dpol )**2
+        sigfl = sigfl + 0
+        sigfc = sigfc + ( fccurt(jtimex,:) * dfc  )**2
+        sige  = sige  + ( eccurt(jtimex,:) * dbe  )**2
+        sigb  = sigb  + ( bcentr(jtimex)   * dbe  )**2
+        sigip = sigip + ( pasmat(jtimex)   * dip  )**2
       endif
-#endif
+
+      if (ksigma .eq. 0 .or. ksigma .eq. 3) then
+        !-------------------------------------------------------------------------
+        !***** (3) INTEGRATOR CALIBRATION
+        !-------------------------------------------------------------------------
+        dd = (/.0013, .0013, .0013, .0013, .0013, .0013, .0013, .0013/)
+        !-------------------------------------------------------------------------
+        sigmp = sigmp + ( expmpi(jtimex,:) * dpol )**2
+        sigfl = sigfl + ( silopt(jtimex,:) * dfl  )**2
+        sigfc = sigfc + ( fccurt(jtimex,:) * dfc  )**2
+        sige  = sige  + ( eccurt(jtimex,:) * dbe  )**2
+        sigb  = sigb  + ( bcentr(jtimex)   * dbe  )**2
+        sigip = sigip + ( pasmat(jtimex)   * dip  )**2
+      endif
+
+      if (ksigma .eq. 0 .or. ksigma .eq. 4) then
+        !-------------------------------------------------------------------------
+        !***** (4) INTEGRATOR CAL.: LONG-TERM
+        !-------------------------------------------------------------------------
+        dd = (/.0017, .0017, .0017, .0017, .0017, .0017, .0017, .0017/)
+        !-------------------------------------------------------------------------
+        sigmp = sigmp + ( expmpi(jtimex,:) * dpol )**2
+        sigfl = sigfl + ( silopt(jtimex,:) * dfl  )**2
+        sigfc = sigfc + ( fccurt(jtimex,:) * dfc  )**2
+        sige  = sige  + ( eccurt(jtimex,:) * dbe  )**2
+        sigb  = sigb  + ( bcentr(jtimex)   * dbe  )**2
+        sigip = sigip + ( pasmat(jtimex)   * dip  )**2
+      endif
+
+      if (ksigma .eq. 0 .or. ksigma .eq. 5) then
+        !-------------------------------------------------------------------------
+        !***** (5) INTEGRATOR DRIFT
+        !-------------------------------------------------------------------------
+        dd = (/.0007, .0007, .0007, .0007, .0007, .0022, .0007, .0007/)
+        !-------------------------------------------------------------------------
+        sigmp = sigmp + (xmp_k  *xmprcg /vresxmp * (timex - t0xmp) &
+          * dpol )**2
+        sigfl = sigfl + ( psi_k * psircg/vrespsi * (timex - t0psi) &
+          * dfl  )**2
+        sigfc = sigfc + ( fc_k  * fcrcg /vresfc  * (timex - t0fc) &
+          * dfc  )**2
+        sige  = sige  + ( e_k   * ercg  /vrese   * (timex - t0e) &
+          * dbe  )**2
+        sigb  = sigb  + ( bc_k  * bcrcg /vresbc  * (timex - t0bc) &
+          * dbe  )**2
+        sigip = sigip + ( p_k   * prcg  /vresp   * (timex - t0p) &
+          * dip  )**2
+      endif
+
+      if (ksigma .eq. 0 .or. ksigma .eq. 6) then
+        !-------------------------------------------------------------------------
+        !***** (6) LOOP POSITION
+        !-------------------------------------------------------------------------
+        dd = (/.0020, .0020, .0030, .0045, .0020, 0., 0., 0./)
+        !-------------------------------------------------------------------------
+        !vas f90 modifi
+        !vas sigmp = sigmp + ( gradsmp(jtimex,:) *
+        !vas 1  (maskpol * dpol + maskrdp * drdp ) )**2
+        !vas sigfl = sigfl + ( gradsfl(jtimex,:) *
+        !vas 1  (maskinf * dfl + maskoutf * df67 + maskvv * dvv ) )**2
+        sigmp = sigmp + ( gradsmp(jtimex,:) * &
+          (maskpol * dpol + maskrdp * drdp ) )**2
+        sigfl = sigfl + ( gradsfl(jtimex,:) * &
+          (maskinf * dfl + maskoutf * df67 + maskvv * dvv ) )**2
+        sigfc = sigfc + 0
+        sige  = sige  + 0
+        sigb  = sigb  + 0
+        sigip = sigip + 0
+      endif
+
+      if (ksigma .eq. 0 .or. ksigma .eq. 7) then
+        !-------------------------------------------------------------------------
+        !***** (7) LOOP TILT ANGLE - revised
+        !-------------------------------------------------------------------------
+        dd = (/.017, .017, 0., 0., 0., 0., 0., 0./)
+        !-------------------------------------------------------------------------
+        sigmp = sigmp + ( bpermp(jtimex,:) * dpol )**2
+        sigfl = sigfl + 0
+        sigfc = sigfc + 0
+        sige  = sige  + 0
+        sigb  = sigb  + 0
+        sigip = sigip + 0
+      endif
+
+      if (ksigma .eq. 0 .or. ksigma .eq. 8) then
+        !-------------------------------------------------------------------------
+        !***** (8) BT PICKUP
+        !-------------------------------------------------------------------------
+        dd = (/.003, .003, .00044, .00044, .00044, 0., 0., 1.3e4/)
+        !-------------------------------------------------------------------------
+        sigmp = sigmp + ( bti322(jtimex) * dpol )**2
+        sigfl = sigfl + ( bti322(jtimex) * dfl  )**2
+        sigfc = sigfc + 0
+        sige  = sige  + 0
+        sigb  = sigb  + 0
+        sigip = sigip + ( bti322(jtimex) * dip  )**2
+      endif
+
+      if (ksigma .eq. 0 .or. ksigma .eq. 9) then
+        !-------------------------------------------------------------------------
+        !**** (9a) C79 PICKUP
+        !-------------------------------------------------------------------------
+        dd  = (/2.3e-08,  1.4e-08,  5.1e-08,  5.1e-08, &
+          3.6e-08, 0., 0., 0./)
+        !-------------------------------------------------------------------------
+        !vas f90 modifi
+        sigmp = sigmp + ( curc79(jtimex) * &
+          (maskpol * dpol + maskrdp * drdp ) )**2
+        sigfl = sigfl + ( curc79(jtimex) * &
+          (maskff * dfl   + maskvv * dvv   ) )**2
+
+        !-------------------------------------------------------------------------
+        !***** (9b) C139 PICKUP
+        !-------------------------------------------------------------------------
+        dd = (/8.1e-08,  2.3e-07,  4.1e-08,   4.1e-08, &
+          3.2e-08, 0., 0., 0./)
+        !-------------------------------------------------------------------------
+        !vas f90 modifi
+        sigmp = sigmp + ( curc139(jtimex) * &
+          (maskpol * dpol + maskrdp * drdp ) )**2
+        sigfl = sigfl + ( curc139(jtimex) * &
+          (maskff * dfl   + maskvv * dvv   ) )**2
+
+        !-------------------------------------------------------------------------
+        !***** (9c) C199 PICKUP
+        !-------------------------------------------------------------------------
+        dd = (/3.1e-08,  1.1e-07,  5.2e-08,   5.2e-08, &
+          3.9e-08, 0., 0., 0./)
+        !-------------------------------------------------------------------------
+        !vas f90 modifi
+        sigmp = sigmp + ( curc199(jtimex) * &
+          (maskpol * dpol + maskrdp * drdp ) )**2
+        sigfl = sigfl + ( curc199(jtimex) * &
+          (maskff * dfl   + maskvv * dvv   ) )**2
+        sigfc = sigfc + 0
+        sige  = sige  + 0
+        sigb  = sigb  + 0
+        sigip = sigip + 0
+      endif
+
+      if (ksigma .eq. 0 .or. ksigma .eq. 10) then
+        !-------------------------------------------------------------------------
+        !***** (10) BP PICKUP IN LEADS
+        !-------------------------------------------------------------------------
+        dd = (/.00016,  .00016,  0.,  0., .00016, 0., 0., 0./)
+        !-------------------------------------------------------------------------
+        Brleads = 0.
+        sigmp = sigmp + ( Brleads *xmp_k  * dpol )**2
+        sigfl = sigfl + ( Brleads * psi_k * &
+          (maskff * dfl + maskvv * dvv ) )**2
+        sigfc = sigfc + 0
+        sige  = sige  + 0
+        sigb  = sigb  + 0
+        sigip = sigip + 0
+      endif
+
+      if (ksigma .eq. 0 .or. ksigma .eq. 11) then
+        !-------------------------------------------------------------------------
+        !***** (11) BP PICKUP IN PORT
+        !-------------------------------------------------------------------------
+        dd = (/.0002,  .0002,  0., 0., .0002, 0., 0., 0./)
+        !-------------------------------------------------------------------------
+        Bport = 0.
+        sigmp = sigmp + ( Bport *xmp_k  * dpol )**2
+        sigfl = sigfl + ( Bport * psi_k * &
+          (maskff * dfl + maskvv * dvv ) )**2
+        sigfc = sigfc + 0
+        sige  = sige  + 0
+        sigb  = sigb  + 0
+        sigip = sigip + 0
+      endif
+
+      if (ksigma .eq. 0 .or. ksigma .eq. 12) then
+        !-------------------------------------------------------------------------
+        !***** (12) DETECTOR NONLINEARITY
+        !-------------------------------------------------------------------------
+        dd = (/.0025, .0025, 0., 0., 0., 0., 0., 0./)
+        !-------------------------------------------------------------------------
+        if (abs(bcentr(jtimex)) .gt. 0.1) then
+          sigmp = sigmp + ( expmpi(jtimex,:) &
+            / bcentr(jtimex) * dpol )**2
+        endif
+        sigfl = sigfl + 0
+        sigfc = sigfc + 0
+        sige  = sige  + 0
+        sigb  = sigb  + 0
+        sigip = sigip + 0
+      endif
+
+      if (ksigma .eq. 0 .or. ksigma .eq. 13) then
+        !-------------------------------------------------------------------------
+        !***** (13) NOISE
+        !-------------------------------------------------------------------------
+        dd = (/1., 1., 1., 1., 1., 1., 1., 1./)
+        !-------------------------------------------------------------------------
+        do i=1,magpri
+          if (rnavxmp(jtimex,i).ne.0.0) &
+            sigmp(i) = sigmp(i) + ( devxmp(jtimex,i) / &
+            sqrt(rnavxmp(jtimex,i)) * dpol )**2
+        enddo
+        do i=1,nsilop
+          if (rnavpsi(jtimex,i).ne.0.0) &
+            sigfl(i) = sigfl(i) + ( devpsi(jtimex,i)/ &
+            sqrt(rnavpsi(jtimex,i))* dfl  )**2
+        enddo
+        do i=1,nfcoil
+          if (rnavfc(jtimex,i).ne.0.0) &
+            sigfc(i) = sigfc(i) + ( devfc(jtimex,i) / &
+            sqrt(rnavfc(jtimex,i)) * dfc  )**2
+        enddo
+        do i=1,nesum
+          if (rnavec(jtimex,i).ne.0.0) &
+            sige(i)  = sige(i)  + ( deve(jtimex,i)  / &
+            sqrt(rnavec(jtimex,i))  * dbe  )**2
+        enddo
+        if (rnavbc(jtimex).ne.0.0) &
+          sigb  = sigb  + ( devbc(jtimex)   / &
+          sqrt(rnavbc(jtimex))   * dbe  )**2
+        if (rnavp(jtimex).ne.0.0) &
+          sigip = sigip + ( devp(jtimex)    / &
+          sqrt(rnavp(jtimex))    * dip  )**2
+      endif
+
+      if (ksigma .eq. 0 .or. ksigma .eq. 14) then
+        !-------------------------------------------------------------------------
+        !***** (14) DIGITIZER RESOLUTION
+        !-------------------------------------------------------------------------
+        dd = (/1., 1., 1., 1., 1., 1., 1., 1./)
+        !-------------------------------------------------------------------------
+        do i=1,magpri
+          if (rnavxmp(jtimex,i).ne.0.0) &
+            sigmp(i) = sigmp(i) + (xmp_k(i)  *xmprcg(i)  /2/ &
+            sqrt(rnavxmp(jtimex,i)) * dpol )**2
+        enddo
+        do i=1,nsilop
+          if (rnavpsi(jtimex,i).ne.0.0) &
+            sigfl(i) = sigfl(i) + ( psi_k(i) * psircg(i) /2/ &
+            sqrt(rnavpsi(jtimex,i))* dfl  )**2
+        enddo
+        do i=1,nfcoil
+          if (rnavfc(jtimex,i).ne.0.0) &
+            sigfc(i) = sigfc(i) + ( fc_k(i)  * fcrcg(i)  /2/ &
+            sqrt(rnavfc(jtimex,i)) * dfc  )**2
+        enddo
+        do i=1,nesum
+          if (rnavec(jtimex,i).ne.0.0) &
+            sige(i)  = sige(i)  + ( e_k(i)   * ercg(i)   /2/ &
+            sqrt(rnavec(jtimex,i))  * dbe  )**2
+        enddo
+        if (rnavbc(jtimex).ne.0.0) &
+          sigb  = sigb  + ( bc_k  * bcrcg  /2/ &
+          sqrt(rnavbc(jtimex))   * dbe  )**2
+        if (rnavp(jtimex).ne.0.0) &
+          sigip = sigip + ( p_k   * prcg   /2/ &
+          sqrt(rnavp(jtimex))    * dip  )**2
+      !------------------------------------------------------------
+      endif
+
+      sigmamp(jtimex,:) = sqrt(sigmp)
+      sigmafl(jtimex,:) = sqrt(sigfl)
+      sigmaf(jtimex,:)  = sqrt(sigfc)
+      sigmae(jtimex,:) = sqrt(sige)
+      sigmab(jtimex)  = sqrt(sigb)
+      sigmaip(jtimex) = sqrt(sigip)
+
+      ! print *,'sigmamp'
+      ! print 99,sigmamp
+      ! print *,'sigmafl'
+      ! print 99,sigmafl
+      ! print *,'sigmaf'
+      ! print 99,sigmaf
+      ! print *,'sigmae'
+      ! print 99,sigmae
+      ! print *,'sigmab'
+      ! print 99,sigmab
+      ! print *,'sigmaip'
+      ! print 99,sigmaip
+
+!99    format(5e12.4)
+
       return
-      end subroutine getstark
+      end subroutine magsigma
 
 !**********************************************************************
 !>

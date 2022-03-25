@@ -206,6 +206,7 @@
 !---------------------------------------------------------------------
 !--   Get density array from MDS+                                   --
 !---------------------------------------------------------------------
+#if defined(USE_MDS)
       do i=1,3
         ierlop=0
         call amdata(nshot,ndenv(i),i1,ierlop,denvt(1:np,i), &
@@ -218,6 +219,9 @@
                   np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact, &
                   do_spline_fit)
       if(ierlop.eq.0) denrt(1:np,1)=denrt(1:np,1)*50.0
+#else
+      write(nttyo,*) "WARNING: density not set because MDS+ is missing"
+#endif
       ierlop=0
       call avdata(nshot,ndenr(2),i1,ierlop,denrt(1:np,2), &
                   np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact, &
@@ -911,187 +915,6 @@
 
 !**********************************************************************
 !>
-!!    amdata gets the data and optionally performs the
-!!    average from MDS
-!!
-!!    WARNING: this subroutine uses both REAL*4 (used by MDS+) and
-!!             REAL*8 variables conversions must be handled carefully
-!!
-!!
-!!    @param nshot : shot number
-!!
-!!    @param name : the point name (10 ASCII characters)
-!!
-!!    @param mmm :
-!!
-!!    @param ierror : error flag
-!!
-!!    @param y : output data for each time
-!!
-!!    @param np : number of time slices
-!!
-!!    @param times : first time requested (in seconds)
-!!
-!!    @param deltd :
-!!
-!!    @param mm :
-!!
-!!    @param xxd :
-!!
-!!    @param nn :
-!!
-!!    @param bitvld : (unused)
-!!
-!!    @param kave :
-!!
-!!    @param time : array of times requested
-!!
-!!    @param ircfact :
-!!
-!!    @param do_spline_fit :
-!!
-!**********************************************************************
-      subroutine amdata(nshot,name,mmm,ierror,y, &
-                        np,times,deltd,mm,xxd,nn,bitvld,kave,time, &
-                        ircfact,do_spline_fit)
-      use set_kinds
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      include 'mdslib.inc'
-      character*10 name, MyTree
-      real*8 y(np),time(np),deltd,xxd,bitvld,times
-      real*4, allocatable :: yw(:),xw(:),bw(:),cw(:),dw(:),ew(:)
-      real*4 dtmin,xm5,dtave,xx,delt,delta_min,delta
-      integer*4 :: status,nshot,lenname,errallot,npn,mmm,ierror, &
-                   np,mm,nn,kave,ircfact,ktime_err,nnp,mylen, &
-                   i,j,j_save,dsc,f_dsc,t_dsc
-      logical*4 do_spline_fit
-      data dtmin/0.001001/,xm5/0.00001/
-      save dtmin,xm5
-!
-      delt=real(deltd,r4)
-      xx=real(xxd,r4)
-      ierror=0
-      if(name .eq. 'NONE      ') return !JRF
-!----------------------------------------------------------------------
-!--   Get data from MDS+                                             --
-!----------------------------------------------------------------------
-      lenname = 0
-      do i=1,len(name)
-        if(name(i:i).ne.' ') lenname=lenname+1
-      enddo
-      status = MdsConnect('atlas'//char(0))
-      if (status.eq.-1) then
-        ierror = 1
-        return
-      endif
-!
-      MyTree = 'bci'
-      status = MdsOpen('bci'//char(0), nshot)
-      if (mod(status,2) .eq. 0) then
-        ierror = 1
-        return
-      endif
-!
-      dsc = descr(IDTYPE_LONG, mylen, 0)  ! MDSPlus return a descriptor number
-      status = Mdsvalue('SIZE('//name(1:lenname)//')'//char(0), &
-                        dsc, 0, 1)
-      if (mod(status,2) .eq. 0) then
-        ierror = 1
-        return
-      endif
-
-!----------------------------------------------
-!     20140905 tbt Getting with pgf90 14.6:
-!       0: ALLOCATE: array already allocated
-!       Putting in check and deallocation
-      if(allocated(yw)) deallocate(yw)
-      if(allocated(xw)) deallocate(xw)
-      if(allocated(bw)) deallocate(bw)
-      if(allocated(cw)) deallocate(cw)
-      if(allocated(dw)) deallocate(dw)
-      if(allocated(ew)) deallocate(ew)
-!----------------------------------------------
-      allocate(yw(1:mylen),stat=errallot)
-      allocate(xw(1:mylen),stat=errallot)
-      allocate(bw(1:mylen),stat=errallot)
-      allocate(cw(1:mylen),stat=errallot)
-      allocate(dw(1:mylen),stat=errallot)
-      allocate(ew(1:mylen),stat=errallot)
-
-! 20140905 tbt NOTE: This IF only checks the last allocate!
-      if (errallot .ne. 0) then
-        ierror = 1
-        return
-      endif
-      npn=mylen
-!
-      f_dsc = descr(IDTYPE_FLOAT, yw, mylen, 0) ! MDSPlus return a descriptor number
-      t_dsc = descr(IDTYPE_FLOAT, xw, mylen, 0) ! MDSPlus return a descriptor number
-      status=MdsValue(name(1:lenname)//char(0), f_dsc, 0, 1)
-      if (mod(status,2) .eq. 0) then
-        ierror = 1
-        return
-      endif
-      status=MdsValue('DIM_OF('//name(1:lenname)//',0)'//char(0), &
-                      t_dsc, 0, 1)
-      xw(1:npn)=xw(1:npn)/1000.
-!
-      mave = iabs(kave)
-      if(ierror .gt. 0) return
-      if (mylen.lt.2) then
-        ierror = 1
-        return
-      endif
-!------------------------------------------------------------------------
-!--   Check valid range of time-slice data                             --
-!------------------------------------------------------------------------
-      ktime_err = 0
-      nnp = np
-      if(time(1) .lt. xw(1)) ktime_err = 1
-      if ((ktime_err .eq. 0) .and. (time(np) .gt. xw(npn))) then
-        nnp = 0
-        do i=1,np
-          if(time(i) .le. xw(npn)) nnp = i
-        enddo
-      endif
-      if(nnp .eq. 0) ktime_err = 1
-      if (ktime_err .eq. 1) then
-        ierror=1
-        return
-      endif
-      if (mave .ne. 0) then
-        dtave = mave*dtmin*2.
-        call smoothit(real(xw,dp),real(yw,dp),npn,real(dtave,dp))
-      endif
-      !
-      if (do_spline_fit) then       !JRF
-        call zplines(npn,real(xw,dp),real(yw,dp),real(bw,dp), &
-                     real(cw,dp),real(dw,dp))
-        do i=1,nnp
-          y(i)=sevals(npn,time(i),real(xw,dp),real(yw,dp),real(bw,dp), &
-                      real(cw,dp),real(dw,dp))
-        enddo
-      else
-        do i=1,nnp
-          delta_min = 1.0e30
-          do j=1,npn
-            delta = abs(xw(j) - real(time(i),r4))
-            if (delta .lt. delta_min) then
-              j_save = j
-              delta_min = delta
-            endif
-          enddo
-          y(i) = real(yw(j_save),dp)
-        !            write(6,999) xw(j_save),name
-        !999         format(1x,'match at ',f15.8,'for ',a)
-        enddo
-      endif
-!
-      return
-      end subroutine amdata
-
-!**********************************************************************
-!>
 !!    apdata gets the data and optionally performs the
 !!    average
 !!
@@ -1233,6 +1056,180 @@
       return
       end subroutine apdata
 
+! =========================================================
+
+#if defined(USE_MDS)
+
+!**********************************************************************
+!>
+!!    amdata gets the data and optionally performs the
+!!    average from MDS
+!!
+!!    WARNING: this subroutine uses both REAL*4 (used by MDS+) and
+!!             REAL*8 variables conversions must be handled carefully
+!!
+!!
+!!    @param nshot : shot number
+!!
+!!    @param name : the point name (10 ASCII characters)
+!!
+!!    @param mmm :
+!!
+!!    @param ierror : error flag
+!!
+!!    @param y : output data for each time
+!!
+!!    @param np : number of time slices
+!!
+!!    @param times : first time requested (in seconds)
+!!
+!!    @param deltd : (unused)
+!!
+!!    @param mm :
+!!
+!!    @param xxd : (unused)
+!!
+!!    @param nn :
+!!
+!!    @param bitvld : (unused)
+!!
+!!    @param kave :
+!!
+!!    @param time : array of times requested
+!!
+!!    @param ircfact :
+!!
+!!    @param do_spline_fit :
+!!
+!**********************************************************************
+      subroutine amdata(nshot,name,mmm,ierror,y, &
+                        np,times,deltd,mm,xxd,nn,bitvld,kave,time, &
+                        ircfact,do_spline_fit)
+      use set_kinds
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      include 'mdslib.inc'
+      character*10 name, MyTree
+      real*8 y(np),time(np),deltd,xxd,bitvld,times
+      real*4, allocatable :: yw4(:),xw4(:)
+      real*8, allocatable :: yw(:),xw(:),bw(:),cw(:),dw(:),ew(:)
+      real*8 dtmin,dtave,delta_min,delta
+      integer*4 :: status,nshot,lenname,errallot,npn,mmm,ierror, &
+                   np,mm,nn,kave,ircfact,ktime_err,nnp,mylen, &
+                   i,j,j_save,dsc,f_dsc,t_dsc
+      logical*4 do_spline_fit
+      data dtmin/0.001001/
+      save dtmin
+!
+      ierror=0
+      if(name .eq. 'NONE      ') return !JRF
+!----------------------------------------------------------------------
+!--   Get data from MDS+                                             --
+!----------------------------------------------------------------------
+      lenname = 0
+      do i=1,len(name)
+        if(name(i:i).ne.' ') lenname=lenname+1
+      enddo
+      status = MdsConnect('atlas'//char(0))
+      if (status.eq.-1) then
+        ierror = 1
+        return
+      endif
+!
+      MyTree = 'bci'
+      status = MdsOpen('bci'//char(0), nshot)
+      if (mod(status,2) .eq. 0) then
+        ierror = 1
+        return
+      endif
+!
+      dsc = descr(IDTYPE_LONG, mylen, 0)  ! MDSPlus return a descriptor number
+      status = Mdsvalue('SIZE('//name(1:lenname)//')'//char(0), &
+                        dsc, 0, 1)
+      if (mod(status,2) .eq. 0) then
+        ierror = 1
+        return
+      endif
+
+      allocate(yw4(1:mylen),stat=errallot)
+      allocate(xw4(1:mylen),stat=errallot)
+      allocate(yw(1:mylen),stat=errallot)
+      allocate(xw(1:mylen),stat=errallot)
+      allocate(bw(1:mylen),stat=errallot)
+      allocate(cw(1:mylen),stat=errallot)
+      allocate(dw(1:mylen),stat=errallot)
+      allocate(ew(1:mylen),stat=errallot)
+
+! 20140905 tbt NOTE: This IF only checks the last allocate!
+      if (errallot .ne. 0) then
+        ierror = 1
+        return
+      endif
+      npn=mylen
+!
+      f_dsc = descr(IDTYPE_FLOAT, yw4, mylen, 0) ! MDSPlus return a descriptor number
+      t_dsc = descr(IDTYPE_FLOAT, xw4, mylen, 0) ! MDSPlus return a descriptor number
+      status=MdsValue(name(1:lenname)//char(0), f_dsc, 0, 1)
+      if (mod(status,2) .eq. 0) then
+        ierror = 1
+        return
+      endif
+      status=MdsValue('DIM_OF('//name(1:lenname)//',0)'//char(0), &
+                      t_dsc, 0, 1)
+      yw(1:npn)=real(yw4(1:npn),dp)
+      xw(1:npn)=real(xw4(1:npn),dp)/1000.
+!
+      mave = iabs(kave)
+      if(ierror .gt. 0) return
+      if (mylen.lt.2) then
+        ierror = 1
+        return
+      endif
+!------------------------------------------------------------------------
+!--   Check valid range of time-slice data                             --
+!------------------------------------------------------------------------
+      ktime_err = 0
+      nnp = np
+      if(time(1) .lt. xw(1)) ktime_err = 1
+      if ((ktime_err .eq. 0) .and. (time(np) .gt. xw(npn))) then
+        nnp = 0
+        do i=1,np
+          if(time(i) .le. xw(npn)) nnp = i
+        enddo
+      endif
+      if(nnp .eq. 0) ktime_err = 1
+      if (ktime_err .eq. 1) then
+        ierror=1
+        return
+      endif
+      if (mave .ne. 0) then
+        dtave = mave*dtmin*2.
+        call smoothit(xw,yw,npn,dtave)
+      endif
+      !
+      if (do_spline_fit) then       !JRF
+        call zplines(npn,xw,yw,bw,cw,dw)
+        do i=1,nnp
+          y(i)=sevals(npn,time(i),xw,yw,bw,cw,dw)
+        enddo
+      else
+        do i=1,nnp
+          delta_min = 1.0e30
+          do j=1,npn
+            delta = abs(xw(j) - time(i))
+            if (delta .lt. delta_min) then
+              j_save = j
+              delta_min = delta
+            endif
+          enddo
+          y(i) = yw(j_save)
+        !            write(6,999) xw(j_save),name
+        !999         format(1x,'match at ',f15.8,'for ',a)
+        enddo
+      endif
+!
+      return
+      end subroutine amdata
+
 !**********************************************************************
 !>
 !!    gettanh gets the edge hyperbolic tangent fit parameters
@@ -1282,6 +1279,10 @@
 !
       return
       end subroutine gettanh
+
+#endif
+
+! =========================================================
 
 !**********************************************************************
 !>
@@ -1476,8 +1477,8 @@
         mlow = 1
         mhigh = 1
         do i=1,nts
-          dt = amin1(dtt, (times(i)-times(1))*1.001)
-          dt = amin1(dt, (times(nts)-times(i))*1.001)
+          dt = min(dtt, (times(i)-times(1))*1.001)
+          dt = min(dt, (times(nts)-times(i))*1.001)
           tlow = times(i) - dt
           thigh = times(i) + dt
 10        if(times(mlow) .ge. tlow) go to 20
@@ -1524,8 +1525,8 @@
         mlow = 1
         mhigh = 1
         do i=1,nts
-          dt = amin1(dtt, (times(i)-times(1))*1.001)
-          dt = amin1(dt, (times(nts)-times(i))*1.001)
+          dt = min(dtt, (times(i)-times(1))*1.001)
+          dt = min(dt, (times(nts)-times(i))*1.001)
           tlow = times(i) - dt
           thigh = times(i) + dt
 10        if(times(mlow) .ge. tlow) go to 20
@@ -1709,473 +1710,6 @@
       return
       end function sevals
 
-!*************************************************************************
-!>
-!!    This subroutine calculates the uncertainties for the magnetic
-!!    diagnostics.  It is based on estimates described in
-!!    DIII-D Physics Memo D3DPM 0202, "Estimating the Uncertainty of DIII-D
-!!    Magnetic Data," by E.J. Strait (Aug. 30, 2002).
-!!    
-!!    The following sources of uncertainty are included. (Further explanation
-!!    is given under the corresponding item numbers in the Physics Memo.)
-!!    The individual terms are combined in quadrature to give
-!!    the total uncertainty for each signal.
-!!    
-!!    1) Loop calibration   dS = a1 S
-!!    2) Loop cal. - Long-term change  dS = a2 S
-!!    3) Integrator calibration  dS = a3 S
-!!    4) Int. cal. - Long-term change  dS = a4 S
-!!    5) Integrator drift    dS = a5 K(RC/G) T
-!!    6) Loop position    dS = a6 grad(S)
-!!    7) Loop tilt angle   dS = a7 Bperp
-!!    8) Bt pickup     dS = a8 dBt
-!!    9) C-coil pickup   dS = a9 Cn
-!!    10) Bp pickup in leads   dS = a10 K integral(Bperp^2)ds
-!!    11) Bp pickup in ports   dS = a11 K Bport
-!!    12) Detector nonlinearity  dS = a12 S/Bt
-!!    13) Noise     dS = a13 (/<S^2> - <S>^2/)^0.5 / N^0.5
-!!    14) Digitizer resolution  dS = a14 K(RC/G)(Vres/2) / N^0.5
-!!    where
-!!    S  = measured signal: flux, field, or current (in physics units)
-!!    dS  = estimated uncertainty in the measured signal
-!!    grad(S)  = gradient of measured flux or field (physics units/meter)
-!!    N   = number of time samples averaged
-!!    Vres  = one-bit resolution of the digitizer (volts)
-!!    K   = inherent number (physics units/volt-second)
-!!    RC  = integrator time constant (seconds)
-!!    G   = integrator gain
-!!    T   = time elapsed since the start of integration (seconds)
-!!    dBt  = change in toroidal field since start of integration (seconds)
-!!    Bperp  = poloidal field normal to axis of mag. probe or leads (Tesla)
-!!    Cn  = current in a C-coil pair (Amps)
-!!    integral(f)ds = integral along leads from probe to connector (meters)
-!!    Bport  = poloidal field in port, perpendicular to leads (Tesla)
-!!    an  = numerical coefficient: units vary with n,
-!!    and values vary between types of signals
-!!    
-!!    Note that items 10 and 11 will not be implemented immediately due to
-!!    the additional difficulty in calculating the path integral (10) and in
-!!    estimating Bport outside the efit grid (11).
-!!
-!!
-!!    @param ishotx :  shot number
-!!
-!!    @param timexy : time slice
-!!
-!!    @param jtimex :
-!!
-!!    @param gradsmpx : Grad(S) of magnetic probe \n 
-!!    s   = BR cost + BZ sint
-!!
-!!    @param gradsflx : Grad(S) of flux loop
-!!
-!!    @param bpermpx : B perpendicular to the magnetic probe
-!!
-!!    @param sigmafx : uncertainty of f coil
-!!
-!!    @param sigmabx : uncertainty of b coil
-!!
-!!    @param sigmaex : uncertainty of e coil
-!!
-!!    @param sigmaipx : 
-!!
-!!    @param sigmaflx : uncert. of flux loop
-!!
-!!    @param sigmampx : uncert. of magnetic probes
-!!
-!**********************************************************************
-      subroutine magsigma(ishotx,timexy,jtimex,gradsmpx,gradsflx, &
-                          bpermpx,sigmafx,sigmabx,sigmaex, &
-                          sigmaipx,sigmaflx,sigmampx)
-
-      include 'eparm.inc'
-      include 'modules2.inc'
-      include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-!
-      dimension sigmafx(1),sigmabx(1)
-      dimension sigmaex(1)
-      dimension sigmaflx(1),gradsflx(1)
-      dimension sigmampx(1),gradsmpx(1),bpermpx(1)
-
-      !-----
-      ! LOCAL VARIABLES
-      !-----
-      dimension dd(8)
-      !vas equivalence  (dd(1), dpol) ,
-      !vas 1  (dd(2), drdp) ,
-      !vas 1  (dd(3), dfl) ,
-      !vas 1  (dd(4), df67) ,
-      !vas 1  (dd(5), dvv) ,
-      !vas 1  (dd(6), dfc) ,
-      !vas 1  (dd(7), dbe) ,
-      !vas 1  (dd(8), dip)
-      equivalence (dd(1), dpol), &
-        (dd(2), drdp) , &
-        (dd(3), dfl) , &
-        (dd(4), df67) , &
-        (dd(5), dvv) , &
-        (dd(6), dfc) , &
-        (dd(7), dbe) , &
-        (dd(8), dip)
-
-      ! rindex diagnostic  units
-
-      ! 1 Pol. Mag. Probes   (Tesla)
-      ! 2 RDP Mag. Probes   (Tesla)
-      ! 3 F-coil Flux Loops (V-s/radian)
-      ! 4 F6, F7 Flux Loops (V-s/radian)
-      ! 5 Vessel Flux Loops (V-s/radian)
-      ! 6 F-coil Rogowskis  (Amps)
-      ! 7 E and B Rogowskis (Amps)
-      ! 8 Ip Rogowskis   (Amps)
-
-      !-----
-      ! ARRAYS TO ACCUMULATE THE UNCERTAINTIES
-      !-----
-      real*8 :: sigmp(magpri),sigfl(nsilop),sigfc(nfcoil),sige(nesum)
-      real*8 :: maskpol(magpri),maskrdp(magpri),maskff(nsilop), &
-                maskinf(nsilop),maskoutf(nsilop),maskvv(nsilop)
-      !-----
-      ! MASKS FOR SUBSETS WITHIN ARRAYS
-      !-----
-!-- poloidal array probes
-      maskpol = (/ 60*1., 16*0./)
-!-- RDP probes
-      maskrdp =  (/ 60*0., 16*1./)
-!-- F-coil flux loops
-      maskff = (/18*1.,7*0.,1., 0., 1.,7*0.,1.,0.,1.,6*0./)
-!-- inner F-coil flux loops
-      maskinf = (/ 5*1., 2*0., 7*1., 2*0., 2*1., 26*0. /)
-!-- outer F-coil  loops
-      maskoutf = (/5*0., 2*1., 7*0., 2*1., 2*0., &
-                     7*0., 1., 0., 1., 7*0., 1., 0., 1., 6*0./)
-!-- vacuum vessel flux loops
-      maskvv=(/18*0.,7*1.,0., 1., 0., 7*1., 0., 1.,0.,6*1./)
-      !-----
-      ! INITIALIZE ARRAYS
-      !-----
-      sigmp = (/ (0., i=1, magpri) /)
-      sigfl = (/ (0., i=1, nsilop) /)
-      sigfc = (/ (0., i=1, nfcoil) /)
-      sige = (/ (0., i=1, nesum)  /)
-      sigb =   0.
-      sigip =   0.
-
-      !-----
-      !  TESTING DIFFERENT CONTRIBUTIONS TO SIGMA
-      !-----
-      timex = timexy / 1000.
-      if (ksigma .eq. 0 .or. ksigma .eq. 1) then
-        !-------------------------------------------------------------------------
-        !***** (1) LOOP CALIBRATION
-        !-------------------------------------------------------------------------
-        dd = (/.0019, .0019, 0., 0., 0., .0017, .0017, .003/)
-        !-------------------------------------------------------------------------
-        sigmp = sigmp + ( expmpi(jtimex,:) * dpol )**2
-        sigfl = sigfl + 0
-        sigfc = sigfc + ( fccurt(jtimex,:) * dfc  )**2
-        sige  = sige  + ( eccurt(jtimex,:) * dbe  )**2
-        sigb  = sigb  + ( bcentr(jtimex)   * dbe  )**2
-        sigip = sigip + ( pasmat(jtimex)   * dip  )**2
-      endif
-
-      if (ksigma .eq. 0 .or. ksigma .eq. 2) then
-        !-------------------------------------------------------------------------
-        !***** (2) LOOP CALIBRATION: LONG-TERM
-        !-------------------------------------------------------------------------
-        dd = (/.002, .002, 0., 0., 0., .003, .003, .006/)
-        !-------------------------------------------------------------------------
-        sigmp = sigmp + ( expmpi(jtimex,:) * dpol )**2
-        sigfl = sigfl + 0
-        sigfc = sigfc + ( fccurt(jtimex,:) * dfc  )**2
-        sige  = sige  + ( eccurt(jtimex,:) * dbe  )**2
-        sigb  = sigb  + ( bcentr(jtimex)   * dbe  )**2
-        sigip = sigip + ( pasmat(jtimex)   * dip  )**2
-      endif
-
-      if (ksigma .eq. 0 .or. ksigma .eq. 3) then
-        !-------------------------------------------------------------------------
-        !***** (3) INTEGRATOR CALIBRATION
-        !-------------------------------------------------------------------------
-        dd = (/.0013, .0013, .0013, .0013, .0013, .0013, .0013, .0013/)
-        !-------------------------------------------------------------------------
-        sigmp = sigmp + ( expmpi(jtimex,:) * dpol )**2
-        sigfl = sigfl + ( silopt(jtimex,:) * dfl  )**2
-        sigfc = sigfc + ( fccurt(jtimex,:) * dfc  )**2
-        sige  = sige  + ( eccurt(jtimex,:) * dbe  )**2
-        sigb  = sigb  + ( bcentr(jtimex)   * dbe  )**2
-        sigip = sigip + ( pasmat(jtimex)   * dip  )**2
-      endif
-
-      if (ksigma .eq. 0 .or. ksigma .eq. 4) then
-        !-------------------------------------------------------------------------
-        !***** (4) INTEGRATOR CAL.: LONG-TERM
-        !-------------------------------------------------------------------------
-        dd = (/.0017, .0017, .0017, .0017, .0017, .0017, .0017, .0017/)
-        !-------------------------------------------------------------------------
-        sigmp = sigmp + ( expmpi(jtimex,:) * dpol )**2
-        sigfl = sigfl + ( silopt(jtimex,:) * dfl  )**2
-        sigfc = sigfc + ( fccurt(jtimex,:) * dfc  )**2
-        sige  = sige  + ( eccurt(jtimex,:) * dbe  )**2
-        sigb  = sigb  + ( bcentr(jtimex)   * dbe  )**2
-        sigip = sigip + ( pasmat(jtimex)   * dip  )**2
-      endif
-
-      if (ksigma .eq. 0 .or. ksigma .eq. 5) then
-        !-------------------------------------------------------------------------
-        !***** (5) INTEGRATOR DRIFT
-        !-------------------------------------------------------------------------
-        dd = (/.0007, .0007, .0007, .0007, .0007, .0022, .0007, .0007/)
-        !-------------------------------------------------------------------------
-        sigmp = sigmp + (xmp_k  *xmprcg /vresxmp * (timex - t0xmp) &
-          * dpol )**2
-        sigfl = sigfl + ( psi_k * psircg/vrespsi * (timex - t0psi) &
-          * dfl  )**2
-        sigfc = sigfc + ( fc_k  * fcrcg /vresfc  * (timex - t0fc) &
-          * dfc  )**2
-        sige  = sige  + ( e_k   * ercg  /vrese   * (timex - t0e) &
-          * dbe  )**2
-        sigb  = sigb  + ( bc_k  * bcrcg /vresbc  * (timex - t0bc) &
-          * dbe  )**2
-        sigip = sigip + ( p_k   * prcg  /vresp   * (timex - t0p) &
-          * dip  )**2
-      endif
-
-      if (ksigma .eq. 0 .or. ksigma .eq. 6) then
-        !-------------------------------------------------------------------------
-        !***** (6) LOOP POSITION
-        !-------------------------------------------------------------------------
-        dd = (/.0020, .0020, .0030, .0045, .0020, 0., 0., 0./)
-        !-------------------------------------------------------------------------
-        !vas f90 modifi
-        !vas sigmp = sigmp + ( gradsmp(jtimex,:) *
-        !vas 1  (maskpol * dpol + maskrdp * drdp ) )**2
-        !vas sigfl = sigfl + ( gradsfl(jtimex,:) *
-        !vas 1  (maskinf * dfl + maskoutf * df67 + maskvv * dvv ) )**2
-        sigmp = sigmp + ( gradsmp(jtimex,:) * &
-          (maskpol * dpol + maskrdp * drdp ) )**2
-        sigfl = sigfl + ( gradsfl(jtimex,:) * &
-          (maskinf * dfl + maskoutf * df67 + maskvv * dvv ) )**2
-        sigfc = sigfc + 0
-        sige  = sige  + 0
-        sigb  = sigb  + 0
-        sigip = sigip + 0
-      endif
-
-      if (ksigma .eq. 0 .or. ksigma .eq. 7) then
-        !-------------------------------------------------------------------------
-        !***** (7) LOOP TILT ANGLE - revised
-        !-------------------------------------------------------------------------
-        dd = (/.017, .017, 0., 0., 0., 0., 0., 0./)
-        !-------------------------------------------------------------------------
-        sigmp = sigmp + ( bpermp(jtimex,:) * dpol )**2
-        sigfl = sigfl + 0
-        sigfc = sigfc + 0
-        sige  = sige  + 0
-        sigb  = sigb  + 0
-        sigip = sigip + 0
-      endif
-
-      if (ksigma .eq. 0 .or. ksigma .eq. 8) then
-        !-------------------------------------------------------------------------
-        !***** (8) BT PICKUP
-        !-------------------------------------------------------------------------
-        dd = (/.003, .003, .00044, .00044, .00044, 0., 0., 1.3e4/)
-        !-------------------------------------------------------------------------
-        sigmp = sigmp + ( bti322(jtimex) * dpol )**2
-        sigfl = sigfl + ( bti322(jtimex) * dfl  )**2
-        sigfc = sigfc + 0
-        sige  = sige  + 0
-        sigb  = sigb  + 0
-        sigip = sigip + ( bti322(jtimex) * dip  )**2
-      endif
-
-      if (ksigma .eq. 0 .or. ksigma .eq. 9) then
-        !-------------------------------------------------------------------------
-        !**** (9a) C79 PICKUP
-        !-------------------------------------------------------------------------
-        dd  = (/2.3e-08,  1.4e-08,  5.1e-08,  5.1e-08, &
-          3.6e-08, 0., 0., 0./)
-        !-------------------------------------------------------------------------
-        !vas f90 modifi
-        sigmp = sigmp + ( curc79(jtimex) * &
-          (maskpol * dpol + maskrdp * drdp ) )**2
-        sigfl = sigfl + ( curc79(jtimex) * &
-          (maskff * dfl   + maskvv * dvv   ) )**2
-
-        !-------------------------------------------------------------------------
-        !***** (9b) C139 PICKUP
-        !-------------------------------------------------------------------------
-        dd = (/8.1e-08,  2.3e-07,  4.1e-08,   4.1e-08, &
-          3.2e-08, 0., 0., 0./)
-        !-------------------------------------------------------------------------
-        !vas f90 modifi
-        sigmp = sigmp + ( curc139(jtimex) * &
-          (maskpol * dpol + maskrdp * drdp ) )**2
-        sigfl = sigfl + ( curc139(jtimex) * &
-          (maskff * dfl   + maskvv * dvv   ) )**2
-
-        !-------------------------------------------------------------------------
-        !***** (9c) C199 PICKUP
-        !-------------------------------------------------------------------------
-        dd = (/3.1e-08,  1.1e-07,  5.2e-08,   5.2e-08, &
-          3.9e-08, 0., 0., 0./)
-        !-------------------------------------------------------------------------
-        !vas f90 modifi
-        sigmp = sigmp + ( curc199(jtimex) * &
-          (maskpol * dpol + maskrdp * drdp ) )**2
-        sigfl = sigfl + ( curc199(jtimex) * &
-          (maskff * dfl   + maskvv * dvv   ) )**2
-        sigfc = sigfc + 0
-        sige  = sige  + 0
-        sigb  = sigb  + 0
-        sigip = sigip + 0
-      endif
-
-      if (ksigma .eq. 0 .or. ksigma .eq. 10) then
-        !-------------------------------------------------------------------------
-        !***** (10) BP PICKUP IN LEADS
-        !-------------------------------------------------------------------------
-        dd = (/.00016,  .00016,  0.,  0., .00016, 0., 0., 0./)
-        !-------------------------------------------------------------------------
-        Brleads = 0.
-        sigmp = sigmp + ( Brleads *xmp_k  * dpol )**2
-        sigfl = sigfl + ( Brleads * psi_k * &
-          (maskff * dfl + maskvv * dvv ) )**2
-        sigfc = sigfc + 0
-        sige  = sige  + 0
-        sigb  = sigb  + 0
-        sigip = sigip + 0
-      endif
-
-      if (ksigma .eq. 0 .or. ksigma .eq. 11) then
-        !-------------------------------------------------------------------------
-        !***** (11) BP PICKUP IN PORT
-        !-------------------------------------------------------------------------
-        dd = (/.0002,  .0002,  0., 0., .0002, 0., 0., 0./)
-        !-------------------------------------------------------------------------
-        Bport = 0.
-        sigmp = sigmp + ( Bport *xmp_k  * dpol )**2
-        sigfl = sigfl + ( Bport * psi_k * &
-          (maskff * dfl + maskvv * dvv ) )**2
-        sigfc = sigfc + 0
-        sige  = sige  + 0
-        sigb  = sigb  + 0
-        sigip = sigip + 0
-      endif
-
-      if (ksigma .eq. 0 .or. ksigma .eq. 12) then
-        !-------------------------------------------------------------------------
-        !***** (12) DETECTOR NONLINEARITY
-        !-------------------------------------------------------------------------
-        dd = (/.0025, .0025, 0., 0., 0., 0., 0., 0./)
-        !-------------------------------------------------------------------------
-        if (abs(bcentr(jtimex)) .gt. 0.1) then
-          sigmp = sigmp + ( expmpi(jtimex,:) &
-            / bcentr(jtimex) * dpol )**2
-        endif
-        sigfl = sigfl + 0
-        sigfc = sigfc + 0
-        sige  = sige  + 0
-        sigb  = sigb  + 0
-        sigip = sigip + 0
-      endif
-
-      if (ksigma .eq. 0 .or. ksigma .eq. 13) then
-        !-------------------------------------------------------------------------
-        !***** (13) NOISE
-        !-------------------------------------------------------------------------
-        dd = (/1., 1., 1., 1., 1., 1., 1., 1./)
-        !-------------------------------------------------------------------------
-        do i=1,magpri
-          if (rnavxmp(jtimex,i).ne.0.0) &
-            sigmp(i) = sigmp(i) + ( devxmp(jtimex,i) / &
-            sqrt(rnavxmp(jtimex,i)) * dpol )**2
-        enddo
-        do i=1,nsilop
-          if (rnavpsi(jtimex,i).ne.0.0) &
-            sigfl(i) = sigfl(i) + ( devpsi(jtimex,i)/ &
-            sqrt(rnavpsi(jtimex,i))* dfl  )**2
-        enddo
-        do i=1,nfcoil
-          if (rnavfc(jtimex,i).ne.0.0) &
-            sigfc(i) = sigfc(i) + ( devfc(jtimex,i) / &
-            sqrt(rnavfc(jtimex,i)) * dfc  )**2
-        enddo
-        do i=1,nesum
-          if (rnavec(jtimex,i).ne.0.0) &
-            sige(i)  = sige(i)  + ( deve(jtimex,i)  / &
-            sqrt(rnavec(jtimex,i))  * dbe  )**2
-        enddo
-        if (rnavbc(jtimex).ne.0.0) &
-          sigb  = sigb  + ( devbc(jtimex)   / &
-          sqrt(rnavbc(jtimex))   * dbe  )**2
-        if (rnavp(jtimex).ne.0.0) &
-          sigip = sigip + ( devp(jtimex)    / &
-          sqrt(rnavp(jtimex))    * dip  )**2
-      endif
-
-      if (ksigma .eq. 0 .or. ksigma .eq. 14) then
-        !-------------------------------------------------------------------------
-        !***** (14) DIGITIZER RESOLUTION
-        !-------------------------------------------------------------------------
-        dd = (/1., 1., 1., 1., 1., 1., 1., 1./)
-        !-------------------------------------------------------------------------
-        do i=1,magpri
-          if (rnavxmp(jtimex,i).ne.0.0) &
-            sigmp(i) = sigmp(i) + (xmp_k(i)  *xmprcg(i)  /2/ &
-            sqrt(rnavxmp(jtimex,i)) * dpol )**2
-        enddo
-        do i=1,nsilop
-          if (rnavpsi(jtimex,i).ne.0.0) &
-            sigfl(i) = sigfl(i) + ( psi_k(i) * psircg(i) /2/ &
-            sqrt(rnavpsi(jtimex,i))* dfl  )**2
-        enddo
-        do i=1,nfcoil
-          if (rnavfc(jtimex,i).ne.0.0) &
-            sigfc(i) = sigfc(i) + ( fc_k(i)  * fcrcg(i)  /2/ &
-            sqrt(rnavfc(jtimex,i)) * dfc  )**2
-        enddo
-        do i=1,nesum
-          if (rnavec(jtimex,i).ne.0.0) &
-            sige(i)  = sige(i)  + ( e_k(i)   * ercg(i)   /2/ &
-            sqrt(rnavec(jtimex,i))  * dbe  )**2
-        enddo
-        if (rnavbc(jtimex).ne.0.0) &
-          sigb  = sigb  + ( bc_k  * bcrcg  /2/ &
-          sqrt(rnavbc(jtimex))   * dbe  )**2
-        if (rnavp(jtimex).ne.0.0) &
-          sigip = sigip + ( p_k   * prcg   /2/ &
-          sqrt(rnavp(jtimex))    * dip  )**2
-      !------------------------------------------------------------
-      endif
-
-      sigmamp(jtimex,:) = sqrt(sigmp)
-      sigmafl(jtimex,:) = sqrt(sigfl)
-      sigmaf(jtimex,:)  = sqrt(sigfc)
-      sigmae(jtimex,:) = sqrt(sige)
-      sigmab(jtimex)  = sqrt(sigb)
-      sigmaip(jtimex) = sqrt(sigip)
-
-      ! print *,'sigmamp'
-      ! print 99,sigmamp
-      ! print *,'sigmafl'
-      ! print 99,sigmafl
-      ! print *,'sigmaf'
-      ! print 99,sigmaf
-      ! print *,'sigmae'
-      ! print 99,sigmae
-      ! print *,'sigmab'
-      ! print 99,sigmab
-      ! print *,'sigmaip'
-      ! print 99,sigmaip
-
-!99    format(5e12.4)
-
-      return
-      end subroutine magsigma
-
 ! =========================================================
 
 #if defined(USEMPI)
@@ -2202,25 +1736,29 @@
         include 'modules1.inc'
         implicit integer*4 (i-n), real*8 (a-h,o-z)
         include 'mpif.h'
+
+        ! Dimension ZWORK 1-D array
+        !   PSIBIT 1:nsilop
+        !   BITMPI 1:magpri
+        !   BITFC  1:nfcoil
+        !   BITEC  1:nesum
+        !   IERMPI to fix FWTMP2 1:magpri
+        !   IERPSI to fix FWTSI 1:nsilop
+        !   IERFC to fix FWTFC 1:nfcoil
         
-        ! Number columns ZWORK 2-D array
+        ! Number columns ZWORK2 2-D array
         !   EXPMPI 1:magpri
         !   SILOPT 1:nsilop
         !   FCCURT 1:nfcoil
         !   DENVT  1:nco2v
         !   DENRT  1:nco2r
         !   ECCURT 1:nesum
-
-        ! Dimension ZWORK2 1-D array
-        !   PSIBIT 1:nsilop
-        !   BITMPI 1:magpri
-        !   BITFC  1:nfcoil
-        !   BITEC  1:nesum ! added by MK
-        !   IERMPI to fix FWTMP2 1:magpri! added by MK
         integer*4 :: i,j,ktime_all,offset,stoff,endoff,nsize,nsize2
         integer*4,dimension(:),allocatable :: tmp1,tmp2
-        double precision :: zwork(18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum,ntime),&
-                            zwork2(5+nsilop+magpri+nfcoil+nesum+magpri),timeb_list(nproc)
+        double precision :: timeb_list(nproc), &
+                zwork(5+nsilop+magpri+nfcoil+nesum+magpri+nsilop+nfcoil), &
+                zwork2(18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum,ntime)
+                
 
 #ifdef DEBUG_LEVEL1
         ! timing variables
@@ -2229,9 +1767,9 @@
         integer*4 :: total_bytes
 #endif
 
-        zwork(:,:) = 0.0
-        nsize=18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum
-        nsize2=5+nsilop+magpri+nfcoil+nesum+magpri
+        zwork2 = 0.0
+        nsize=5+nsilop+magpri+nfcoil+nesum+magpri+nsilop+nfcoil
+        nsize2=18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum
         allocate(tmp1(nproc),tmp2(nproc))
 
         ! NOTE : ktime contains the total number of time slices at this point
@@ -2294,182 +1832,194 @@
         ktime = dist_data(rank+1)
         timeb = times*1000.0+dist_data_displs(rank+1)*delt*1000.0
         
-        ! ZWORK2
+        ! ZWORK
         if (rank == 0) then
-          ! Pack ZWORK2 array data
-          zwork2(1) = real(iavem,dp)   ! INT4  (1)
-          zwork2(2) = real(limitr,dp)  ! INT4  (1)
-          zwork2(3) = bitip         ! REAL8 (1)
-          zwork2(4) = rcentr        ! REAL8 (1)
+          ! Pack ZWORK array data
+          zwork(1) = real(iavem,dp)   ! INT4  (1)
+          zwork(2) = real(limitr,dp)  ! INT4  (1)
+          zwork(3) = bitip         ! REAL8 (1)
+          zwork(4) = rcentr        ! REAL8 (1)
           if (oldccomp) then
-             zwork2(5) = 1._dp
+             zwork(5) = 1._dp
           else
-             zwork2(5) = 0._dp
+             zwork(5) = 0._dp
           endif
           stoff = 5 + 1
           endoff = stoff + nsilop - 1
-          zwork2(stoff:endoff) = psibit(1:nsilop)  ! REAL8 (nsilop)
+          zwork(stoff:endoff) = psibit(1:nsilop)  ! REAL8 (nsilop)
           stoff = endoff + 1
           endoff = endoff + magpri
-          zwork2(stoff:endoff) = bitmpi(1:magpri)  ! REAL8 (magpri)
+          zwork(stoff:endoff) = bitmpi(1:magpri)  ! REAL8 (magpri)
           stoff = endoff + 1
           endoff = endoff + nfcoil
-          zwork2(stoff:endoff) = bitfc(1:nfcoil)   ! REAL8 (nfcoil)
+          zwork(stoff:endoff) = bitfc(1:nfcoil)   ! REAL8 (nfcoil)
           stoff = endoff + 1
           endoff = endoff + nesum
-          zwork2(stoff:endoff) = bitec(1:nesum)  ! Added by MK 2020.10.07
+          zwork(stoff:endoff) = bitec(1:nesum)  ! REAL8 (nesum)
           stoff = endoff + 1
           endoff = endoff + magpri
-          zwork2(stoff:endoff) = iermpi(1:magpri) ! Added by MK 2020.10.07
+          zwork(stoff:endoff) = iermpi(1:magpri) ! REAL8 (magpri)
+          stoff = endoff + 1
+          endoff = endoff + nsilop
+          zwork(stoff:endoff) = ierpsi(1:nsilop) ! REAL8 (nsilop)
+          stoff = endoff + 1
+          endoff = endoff + nfcoil
+          zwork(stoff:endoff) = ierfc(1:nfcoil) ! REAL8 (nfcoil)
 ! NOTE: all of the fwtmp2 are =1 at this point, for all ranks
 ! in order for the logic to be equivelant later, it is the error
 ! codes, iermpi that must be passed to other ranks
         endif
-        ! Distribute ZWORK2 array to ALL processes
+        ! Distribute ZWORK array to ALL processes
         ! SIZE = SIZEOF(DOUBLE) * NSIZE2 * (NPROC - 1) bytes
 #ifdef DEBUG_LEVEL1
-        total_bytes = total_bytes + 8*nsize2*(nproc-1)
+        total_bytes = total_bytes + 8*nsize*(nproc-1)
 #endif
-        call MPI_BCAST(zwork2,nsize2,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        ! Unpack ZWORK2 array data
+        call MPI_BCAST(zwork,nsize,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+        ! Unpack ZWORK array data
         ! NOTE : Only processes with rank > 0 need to unpack data
         if (rank > 0) then
-          iavem  = int(zwork2(1))
-          limitr = int(zwork2(2))
-          bitip  = zwork2(3)
-          rcentr = zwork2(4)
-          if (abs(zwork2(5))<1.e-8_dp) then  
+          iavem  = int(zwork(1))
+          limitr = int(zwork(2))
+          bitip  = zwork(3)
+          rcentr = zwork(4)
+          if (abs(zwork(5))<1.e-8_dp) then  
             oldccomp = .false.
           else
             oldccomp = .true.
           endif
           stoff = 5 + 1
           endoff = stoff + nsilop - 1
-          psibit(1:nsilop) = zwork2(stoff:endoff)
+          psibit(1:nsilop) = zwork(stoff:endoff)
           stoff = endoff + 1
           endoff = endoff + magpri
-          bitmpi(1:magpri) = zwork2(stoff:endoff)
+          bitmpi(1:magpri) = zwork(stoff:endoff)
           stoff = endoff + 1
           endoff = endoff + nfcoil
-          bitfc(1:nfcoil) = zwork2(stoff:endoff)
+          bitfc(1:nfcoil) = zwork(stoff:endoff)
           stoff = endoff + 1
           endoff = endoff + nesum
-          bitec(1:nesum) = zwork2(stoff:endoff) ! Added by MK 2020.10.07
+          bitec(1:nesum) = zwork(stoff:endoff)
           stoff = endoff + 1
           endoff = endoff + magpri
-          iermpi(1:magpri) = zwork2(stoff:endoff) ! Added by MK 2020.10.07
+          iermpi(1:magpri) = zwork(stoff:endoff)
+          stoff = endoff + 1
+          endoff = endoff + nsilop
+          ierpsi(1:nsilop) = zwork(stoff:endoff)
+          stoff = endoff + 1
+          endoff = endoff + nfcoil
+          ierfc(1:nfcoil) = zwork(stoff:endoff)
         endif
         
-        ! ZWORK
+        ! ZWORK2
         if (rank == 0) then
-          ! Pack ZWORK array data
-          zwork(1,1:ktime_all)  = time(1:ktime_all)     ! REAL8 (ntime)
-          zwork(2,1:ktime_all)  = bcentr(1:ktime_all)   ! REAL8 (ntime)
-          zwork(3,1:ktime_all)  = pasmat(1:ktime_all)   ! REAL8 (ntime)
-          zwork(4,1:ktime_all)  = vloopt(1:ktime_all)   ! REAL8 (ntime)
-          zwork(5,1:ktime_all)  = psiref(1:ktime_all)   ! REAL8 (ntime)
-          zwork(6,1:ktime_all)  = diamag(1:ktime_all)   ! REAL8 (ntime)
-          zwork(7,1:ktime_all)  = sigdia(1:ktime_all)   ! REAL8 (ntime)
-          zwork(8,1:ktime_all)  = pbinj(1:ktime_all)    ! REAL8 (ntime)
-          zwork(9,1:ktime_all)  = curtn1(1:ktime_all)   ! REAL8 (ntime)
-          zwork(10,1:ktime_all) = curc79(1:ktime_all)   ! REAL8 (ntime)
-          zwork(11,1:ktime_all) = curc139(1:ktime_all)  ! REAL8 (ntime)
+          ! Pack ZWORK2 array data
+          zwork2(1,1:ktime_all)  = time(1:ktime_all)     ! REAL8 (ntime)
+          zwork2(2,1:ktime_all)  = bcentr(1:ktime_all)   ! REAL8 (ntime)
+          zwork2(3,1:ktime_all)  = pasmat(1:ktime_all)   ! REAL8 (ntime)
+          zwork2(4,1:ktime_all)  = vloopt(1:ktime_all)   ! REAL8 (ntime)
+          zwork2(5,1:ktime_all)  = psiref(1:ktime_all)   ! REAL8 (ntime)
+          zwork2(6,1:ktime_all)  = diamag(1:ktime_all)   ! REAL8 (ntime)
+          zwork2(7,1:ktime_all)  = sigdia(1:ktime_all)   ! REAL8 (ntime)
+          zwork2(8,1:ktime_all)  = pbinj(1:ktime_all)    ! REAL8 (ntime)
+          zwork2(9,1:ktime_all)  = curtn1(1:ktime_all)   ! REAL8 (ntime)
+          zwork2(10,1:ktime_all) = curc79(1:ktime_all)   ! REAL8 (ntime)
+          zwork2(11,1:ktime_all) = curc139(1:ktime_all)  ! REAL8 (ntime)
 ! NOTE: only adding those missing from the CURRENT (183350) k-files -MK
-          zwork(12,1:ktime_all) = curc199(1:ktime_all)  ! Addd by MK 2020.10.07
-          zwork(13,1:ktime_all) = curiu30(1:ktime_all)  ! Addd by MK 2020.10.07
-          zwork(14,1:ktime_all) = curiu90(1:ktime_all)  ! Addd by MK 2020.10.07
-          zwork(15,1:ktime_all) = curiu150(1:ktime_all) ! Addd by MK 2020.10.07
-          zwork(16,1:ktime_all) = curil30(1:ktime_all)  ! Addd by MK 2020.10.07
-          zwork(17,1:ktime_all) = curil90(1:ktime_all)  ! Addd by MK 2020.10.07
-          zwork(18,1:ktime_all) = curil150(1:ktime_all) ! Addd by MK 2020.10.07
+          zwork2(12,1:ktime_all) = curc199(1:ktime_all)  ! Addd by MK 2020.10.07
+          zwork2(13,1:ktime_all) = curiu30(1:ktime_all)  ! Addd by MK 2020.10.07
+          zwork2(14,1:ktime_all) = curiu90(1:ktime_all)  ! Addd by MK 2020.10.07
+          zwork2(15,1:ktime_all) = curiu150(1:ktime_all) ! Addd by MK 2020.10.07
+          zwork2(16,1:ktime_all) = curil30(1:ktime_all)  ! Addd by MK 2020.10.07
+          zwork2(17,1:ktime_all) = curil90(1:ktime_all)  ! Addd by MK 2020.10.07
+          zwork2(18,1:ktime_all) = curil150(1:ktime_all) ! Addd by MK 2020.10.07
 
           offset = 18
           do j=1,magpri
-            zwork(j+offset,1:ktime_all) = expmpi(1:ktime_all,j)  ! REAL8 (ntime,magpri)
+            zwork2(j+offset,1:ktime_all) = expmpi(1:ktime_all,j)  ! REAL8 (ntime,magpri)
           enddo
           offset = offset+magpri
           do j=1,nsilop
-            zwork(j+offset,1:ktime_all) = silopt(1:ktime_all,j)  ! REAL8 (ntime,nsilop)
+            zwork2(j+offset,1:ktime_all) = silopt(1:ktime_all,j)  ! REAL8 (ntime,nsilop)
           enddo
           offset = offset+nsilop
           do j=1,nfcoil
-            zwork(j+offset,1:ktime_all) = fccurt(1:ktime_all,j)  ! REAL8 (ntime,nfcoil)
+            zwork2(j+offset,1:ktime_all) = fccurt(1:ktime_all,j)  ! REAL8 (ntime,nfcoil)
           enddo
           offset = offset+nfcoil
           do j=1,nco2v
-            zwork(j+offset,1:ktime_all) = denvt(1:ktime_all,j)   ! REAL8 (ntime,nco2v)
+            zwork2(j+offset,1:ktime_all) = denvt(1:ktime_all,j)   ! REAL8 (ntime,nco2v)
           enddo
           offset = offset+nco2v
           do j=1,nco2r
-            zwork(j+offset,1:ktime_all) = denrt(1:ktime_all,j)   ! REAL8 (ntime,nco2r)
+            zwork2(j+offset,1:ktime_all) = denrt(1:ktime_all,j)   ! REAL8 (ntime,nco2r)
           enddo
           offset = offset+nco2r
           do j=1,nesum
-            zwork(j+offset,1:ktime_all) = eccurt(1:ktime_all,j)  ! REAL8 (ntime,nesum)
+            zwork2(j+offset,1:ktime_all) = eccurt(1:ktime_all,j)  ! REAL8 (ntime,nesum)
           enddo
         endif
-        ! Distribute chunks of ZWORK array to processes
-        tmp1(:) = dist_data(:)*nsize
-        tmp2(:) = dist_data_displs(:)*nsize
+        ! Distribute chunks of ZWORK2 array to processes
+        tmp1(:) = dist_data(:)*nsize2
+        tmp2(:) = dist_data_displs(:)*nsize2
         ! SIZE = SIZEOF(DOUBLE) * SUM(DIST_DATA(2:)) * NSIZE bytes
 #ifdef DEBUG_LEVEL1
-        total_bytes = total_bytes + 8*sum(dist_data(2:))*nsize
+        total_bytes = total_bytes + 8*sum(dist_data(2:))*nsize2
 #endif
         if (rank == 0) then
-          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION, &
+          call MPI_SCATTERV(zwork2,tmp1,tmp2,MPI_DOUBLE_PRECISION, &
                             MPI_IN_PLACE,tmp1(rank+1), &
                             MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         else
-          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,zwork, &
+          call MPI_SCATTERV(zwork2,tmp1,tmp2,MPI_DOUBLE_PRECISION,zwork2, &
                             tmp1(rank+1),MPI_DOUBLE_PRECISION,0, &
                             MPI_COMM_WORLD,ierr)
         endif
-        ! Unpack ZWORK array data
+        ! Unpack ZWORK2 array data
         ! NOTE : Only processes with rank > 0 need to unpack data
         if (rank > 0) then
-          time(1:ktime)    = zwork(1,1:ktime)
-          bcentr(1:ktime)  = zwork(2,1:ktime)
-          pasmat(1:ktime)  = zwork(3,1:ktime)
-          vloopt(1:ktime)  = zwork(4,1:ktime)
-          psiref(1:ktime)  = zwork(5,1:ktime)
-          diamag(1:ktime)  = zwork(6,1:ktime)
-          sigdia(1:ktime)  = zwork(7,1:ktime)
-          pbinj(1:ktime)   = zwork(8,1:ktime)
-          curtn1(1:ktime)  = zwork(9,1:ktime)
-          curc79(1:ktime)  = zwork(10,1:ktime)
-          curc139(1:ktime) = zwork(11,1:ktime)
+          time(1:ktime)    = zwork2(1,1:ktime)
+          bcentr(1:ktime)  = zwork2(2,1:ktime)
+          pasmat(1:ktime)  = zwork2(3,1:ktime)
+          vloopt(1:ktime)  = zwork2(4,1:ktime)
+          psiref(1:ktime)  = zwork2(5,1:ktime)
+          diamag(1:ktime)  = zwork2(6,1:ktime)
+          sigdia(1:ktime)  = zwork2(7,1:ktime)
+          pbinj(1:ktime)   = zwork2(8,1:ktime)
+          curtn1(1:ktime)  = zwork2(9,1:ktime)
+          curc79(1:ktime)  = zwork2(10,1:ktime)
+          curc139(1:ktime) = zwork2(11,1:ktime)
 ! NOTE that I am only adding those missing from the CURRENT k-files -MK
-          curc199(1:ktime) = zwork(12,1:ktime) ! Addd by MK 2020.10.07
-          curiu30(1:ktime) = zwork(13,1:ktime) ! Addd by MK 2020.10.07
-          curiu90(1:ktime) = zwork(14,1:ktime) ! Addd by MK 2020.10.07
-          curiu150(1:ktime)= zwork(15,1:ktime) ! Addd by MK 2020.10.07
-          curil30(1:ktime) = zwork(16,1:ktime) ! Addd by MK 2020.10.07
-          curil90(1:ktime) = zwork(17,1:ktime) ! Addd by MK 2020.10.07
-          curil150(1:ktime)= zwork(18,1:ktime) ! Addd by MK 2020.10.07
+          curc199(1:ktime) = zwork2(12,1:ktime) ! Addd by MK 2020.10.07
+          curiu30(1:ktime) = zwork2(13,1:ktime) ! Addd by MK 2020.10.07
+          curiu90(1:ktime) = zwork2(14,1:ktime) ! Addd by MK 2020.10.07
+          curiu150(1:ktime)= zwork2(15,1:ktime) ! Addd by MK 2020.10.07
+          curil30(1:ktime) = zwork2(16,1:ktime) ! Addd by MK 2020.10.07
+          curil90(1:ktime) = zwork2(17,1:ktime) ! Addd by MK 2020.10.07
+          curil150(1:ktime)= zwork2(18,1:ktime) ! Addd by MK 2020.10.07
 
           offset = 18
           do j=1,magpri
-            expmpi(1:ktime,j) = zwork(j+offset,1:ktime)
+            expmpi(1:ktime,j) = zwork2(j+offset,1:ktime)
           enddo
           offset = offset+magpri
           do j=1,nsilop
-            silopt(1:ktime,j) = zwork(j+offset,1:ktime)
+            silopt(1:ktime,j) = zwork2(j+offset,1:ktime)
           enddo
           offset = offset+nsilop
           do j=1,nfcoil
-            fccurt(1:ktime,j) = zwork(j+offset,1:ktime)
+            fccurt(1:ktime,j) = zwork2(j+offset,1:ktime)
           enddo
           offset = offset+nfcoil
           do j=1,nco2v
-            denvt(1:ktime,j) = zwork(j+offset,1:ktime)
+            denvt(1:ktime,j) = zwork2(j+offset,1:ktime)
           enddo
           offset = offset+nco2v
           do j=1,nco2r
-            denrt(1:ktime,j) = zwork(j+offset,1:ktime)
+            denrt(1:ktime,j) = zwork2(j+offset,1:ktime)
           enddo
           offset = offset+nco2r
           do j=1,nesum
-            eccurt(1:ktime,j) = zwork(j+offset,1:ktime)
+            eccurt(1:ktime,j) = zwork2(j+offset,1:ktime)
           enddo
         endif
         
@@ -2488,199 +2038,5 @@
 #endif
 
       end subroutine getpts_mpi
-
-!**********************************************************************
-!>
-!!    wrapper around getstark subroutine to handle MPI communication\n
-!!    NOTE : NO error condition returned
-!!
-!!
-!!    @param ktime : number of time slices
-!!
-!**********************************************************************
-      subroutine getstark_mpi(ktime)
-
-        include 'eparm.inc'
-        include 'modules1.inc'
-        implicit integer*4 (i-n), real*8 (a-h,o-z)
-        include 'mpif.h'
-
-        ! NOTE : 12 scalar used because distributing 12 arrays amongst processes
-        ! Dimensions ZWORK 2-D array
-        !   TANGAM (ntime,nstark)
-        !   SIGGAM (ntime,nstark)
-        !   RRGAM  (ntime,nstark)
-        !   ZZGAM  (ntime,nstark)
-        !   A1GAM  (ntime,nstark)
-        !   A2GAM  (ntime,nstark)
-        !   A3GAM  (ntime,nstark)
-        !   A4GAM  (ntime,nstark)
-        !   A5GAM  (ntime,nstark)
-        !   A6GAM  (ntime,nstark)
-        !   A7GAM  (ntime,nstark)
-        !   0.0
-        ! WARNING : nsize < nstark (OKAY)
-        ! WARNING : A7GAM explicitly set to zero by original GETSTARK_MPI code
-        ! KWAITMSE
-        ! FWTGAM (nstark)
-        integer*4 :: i,j,ktime_all,offset,nsize
-        integer*4,dimension(:),allocatable :: tmp1,tmp2
-        double precision :: zwork(nmtark*12,ntime)
-
-#ifdef DEBUG_LEVEL1
-        ! timing variables
-        integer*4 :: clock0,clock1,clockmax,clockrate,ticks
-        double precision :: secs
-        integer*4 :: total_bytes
-#endif
-        
-        nsize = 12*nmtark
-        zwork(:,:) = 0.0
-        allocate(tmp1(nproc),tmp2(nproc))
-
-        ! Process with rank == 0 gets data from PTDATA/MDS+ database by calling GETSTARK
-        timing_rank: if (rank == 0) then
-          ! NOTE : Need to retrive data for ALL times
-          ktime_all = sum(dist_data)
-          ! TODO: it's not obvious why this info is always output for mpi
-          ! runs, but not serial, so I am making it a debug option (for now)
-#ifdef DEBUG_LEVEL1
-          call system_clock(count_max=clockmax,count_rate=clockrate)
-          call system_clock(count=clock0)
-#endif
-          call getstark(ktime_all)
-#ifdef DEBUG_LEVEL1
-          call system_clock(count=clock1)
-          ticks = clock1-clock0
-          secs = real(ticks,dp)/real(clockrate,dp)
-          write (*,"(' GETSTARK call ',f6.2,' sec')") secs
-          call system_clock(count_max=clockmax,count_rate=clockrate)
-          call system_clock(count=clock0)
-#endif
-        endif timing_rank
-        
-        ! Process with rank == 0 gets distributes data
-        if (rank == 0) then
-          ! Pack ZWORK data array
-          ! NOTE : Transposing data arrays (packing as consecutive chunks into each column of ZWORK array)
-          do j=1,nmtark
-            zwork(j,1:ktime_all)           = tangam(1:ktime_all,j)
-            zwork(j+nmtark,1:ktime_all)    = siggam(1:ktime_all,j)
-            zwork(j+nmtark*2,1:ktime_all)  = rrgam(1:ktime_all,j)
-            zwork(j+nmtark*3,1:ktime_all)  = zzgam(1:ktime_all,j)
-            zwork(j+nmtark*4,1:ktime_all)  = a1gam(1:ktime_all,j)
-            zwork(j+nmtark*5,1:ktime_all)  = a2gam(1:ktime_all,j)
-            zwork(j+nmtark*6,1:ktime_all)  = a3gam(1:ktime_all,j)
-            zwork(j+nmtark*7,1:ktime_all)  = a4gam(1:ktime_all,j)
-            zwork(j+nmtark*8,1:ktime_all)  = a5gam(1:ktime_all,j)
-            zwork(j+nmtark*9,1:ktime_all)  = a6gam(1:ktime_all,j)
-            ! WARNING : A7GAM explicitly set to zero by original
-            ! GETSTARK_MPI code
-            zwork(j+nmtark*10,1:ktime_all) = a7gam(1:ktime_all,j)
-            !zwork(j+nmtark*10,1:ktime_all) = 0.0
-            ! NOTE : Do NOT actually need to pack this data since
-            !        array explicitly set to zero and we could just set A8GAM
-            !        to zero
-            zwork(j+nmtark*11,1:ktime_all) = 0.0
-          enddo
-        endif
-        ! Distribute chunks of ZWORK array to processes
-        ! NOTE : We need to recalculate distribution data
-        tmp1(:) = dist_data(:)*nsize
-        tmp2(:) = dist_data_displs(:)*nsize
-        ! SIZE = SIZEOF(DOUBLE) * SUM(DIST_DATA(2:)) * NSIZE bytes
-#ifdef DEBUG_LEVEL1
-        total_bytes = 8*sum(dist_data(2:))*nsize
-#endif
-        if (rank == 0) then
-          ! NOTE : DIST_DATA and DIST_DATA_DISPLS should be saved between calls since part of MPI_INFO module
-          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION, &
-                            MPI_IN_PLACE,tmp1(rank+1), &
-                            MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        else
-          call MPI_SCATTERV(zwork,tmp1,tmp2,MPI_DOUBLE_PRECISION,zwork, &
-                            tmp1(rank+1),MPI_DOUBLE_PRECISION,0, &
-                            MPI_COMM_WORLD,ierr)
-        endif
-        ! Unpack ZWORK array data
-        ! NOTE : Only processes with rank > 0 need to unpack data
-        ! Determine local KTIME value before proceeding
-        ktime = dist_data(rank+1)
-        if (rank > 0) then
-          do j=1,nmtark
-            tangam(1:ktime,j) = zwork(j,1:ktime)
-            siggam(1:ktime,j) = zwork(j+nmtark,1:ktime)
-            rrgam(1:ktime,j)  = zwork(j+nmtark*2,1:ktime)
-            zzgam(1:ktime,j)  = zwork(j+nmtark*3,1:ktime)
-            a1gam(1:ktime,j)  = zwork(j+nmtark*4,1:ktime)
-            a2gam(1:ktime,j)  = zwork(j+nmtark*5,1:ktime)
-            a3gam(1:ktime,j)  = zwork(j+nmtark*6,1:ktime)
-            a4gam(1:ktime,j)  = zwork(j+nmtark*7,1:ktime)
-            a5gam(1:ktime,j)  = zwork(j+nmtark*8,1:ktime)
-            a6gam(1:ktime,j)  = zwork(j+nmtark*9,1:ktime)
-            a7gam(1:ktime,j)  = zwork(j+nmtark*10,1:ktime)
-            a8gam(1:ktime,j)  = zwork(j+nmtark*11,1:ktime)
-          enddo
-        endif
-
-        ! KWAITMSE
-        ! NOTE : Necessary to send KWAITMSE to ALL processes since controls main loop defined in EFITD
-        ! SIZE = SIZEOF(INTEGER) * (NPROC - 1)
-#ifdef DEBUG_LEVEL1
-        total_bytes = total_bytes + 4*(nproc-1)
-#endif
-        call MPI_BCAST(kwaitmse,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-        
-        ! Distribute chunks of FWTGAM array
-        ! NOTE : We need to recalculate distribution data
-        ! WARNING : Uncertain if FWTGAM should be broadcast or if doing so could possible cause issues
-        ! SIZE = SIZEOF(DOUBLE) * NMTARK * (NPROC - 1)
-#ifdef DEBUG_LEVEL1
-        total_bytes = total_bytes + 8*nmtark*(nproc-1)
-#endif
-        call MPI_BCAST(fwtgam,nmtark,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        !fwtgam(:) = fwtgam_mpi(:,rank+1)
-
-        !!call MPI_BCAST(msefitfun,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-        !!call MPI_BCAST(msebkp,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-        call MPI_BCAST(iergam,nstark,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-        call MPI_BCAST(rmse_gain,nmtark,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        call MPI_BCAST(rmse_slope,nmtark,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        call MPI_BCAST(rmse_scale,nmtark,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        call MPI_BCAST(rmse_offset,nmtark,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        call MPI_BCAST(mse_spave_on,nmtark,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-
-        ! SPATIAL_AVG_GAM
-        call MPI_BCAST(spatial_avg_gam,nstark*ngam_vars*ngam_u*ngam_w, &
-                       MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-
-        !! SWTGAM
-        !tmp1(:) = dist_data(:)
-        !tmp2(:) = 0
-        !! SIZE = SIZEOF(DOUBLE) * SUM(DIST_DATA(2:)) * NSIZE bytes
-        !!total_bytes = total_bytes + 8*sum(dist_data(2:))*nsize
-        !if (rank == 0) then
-        !  ! NOTE : DIST_DATA and DIST_DATA_DISPLS should be saved between calls since part of MPI_INFO module
-        !  call MPI_SCATTERV(swtgam,tmp1,tmp2,MPI_DOUBLE_PRECISION,MPI_IN_PLACE,tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        !else
-        !  call MPI_SCATTERV(swtgam,tmp1,tmp2,MPI_DOUBLE_PRECISION,swtgam,tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        !endif
-        !!call MPI_BCAST(swtgam,sum(dist_data),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-
-        deallocate(tmp1,tmp2)
-        
-        call MPI_BARRIER(MPI_COMM_WORLD,ierr)
-        
-#ifdef DEBUG_LEVEL1
-        timing_rank0: if (rank == 0) then
-          call system_clock(count=clock1)
-          ticks = clock1-clock0
-          secs = real(ticks,dp)/real(clockrate,dp)
-          write (*,"(' GETSTARK transfer ',i10,' bytes in ',f6.2,'sec')") &
-                total_bytes,secs
-        endif timing_rank0
-#endif
-
-      end subroutine getstark_mpi
 
 #endif
