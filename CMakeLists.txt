@@ -283,7 +283,9 @@ add_subdirectory(io)
 #---------------------------------------------------------------------
 # Add subdirectories 
 #---------------------------------------------------------------------
+if (HAVE_MDSPLUS)
 add_subdirectory(cerlib)
+endif()
 add_subdirectory(green)
 add_subdirectory(efit)
 
