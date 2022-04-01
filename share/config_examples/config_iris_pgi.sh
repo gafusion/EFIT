@@ -7,8 +7,6 @@
 #
 # If you don't want MPI (slower in serial) simply remove the FC=...
 #   and -DENABLE_PARALLEL... lines
-#
-# mselibs are not currently working
 
     module load cmake/3.8.2
     module load hdf5/1.8.19-mpich3.2-pgf18.7

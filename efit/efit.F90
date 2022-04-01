@@ -231,7 +231,7 @@
         endif
 
 #ifdef DEBUG_LEVEL2
-        write(6,*) ' Entering errctrl_setstate'
+        write(6,*) 'Entering errctrl_setstate'
 #endif
         call errctrl_setstate(rank,time(ks))
         if ((kerror.gt.0).or.(iconvr.lt.0)) then

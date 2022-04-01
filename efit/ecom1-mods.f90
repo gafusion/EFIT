@@ -95,7 +95,7 @@
       real*8,dimension(:),allocatable :: bitmpi
       real*8 :: vbit
            
-      real*8,dimension(:),allocatable :: vloopt,psiref,diamag,sigdia,psirefs 
+      real*8,dimension(:),allocatable :: vloopt,psiref,diamag,sigdia
       real*8,dimension(:),allocatable :: bitfc
       integer*4,dimension(:),allocatable :: ierfc
       real*8,dimension(:),allocatable :: bitec
@@ -836,7 +836,7 @@
       use var_exdata, only: fwacoil,fwtsi,fwtmp2,fwtcur
       use var_comco2, only: chordv,chordr
       use var_cxray, only: ksxr0,ksxr2,idosxr,xangle,zxray,rxray
-      use var_fcoil, only: fcid
+      use var_fcoil, only: fcid,fcturn
       use var_limite, only: rwstrip1, zwstrip1,rwstrip2,zwstrip2, &
                             xlim,ylim
       use var_delnfit, only: fco2ne
@@ -908,6 +908,7 @@
       rwstrip2(2)=1.4575
       zwstrip2(2)=-1.250
       fco2ne=1.0
+      fcturn(1:mfcoil)=1.0
 
       ! initialize zeros
       tsaisq=0.0

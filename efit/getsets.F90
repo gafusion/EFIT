@@ -95,9 +95,9 @@
                devpsiin(nsilop),rnavpsiin(nsilop), &
                devfcin(nfcoil),rnavfcin(nfcoil), &
                devein(nesum),rnavecin(nesum))
-      fwtbmsels = 0.0
+      fwtbmsels=0.0
 
-      kerror = 0
+      kerror=0
       mdoskip=0
       iout=1                 ! default - write fitout.dat
       appendsnap='KG'
@@ -108,6 +108,8 @@
       errorm=1.
       ibatch=0 ! never used in code (just gets output)
       ilaser=0
+      kffcurs=0
+      kppcurs=0
       mtime=ktime
       table_save=table_dir
 !----------------------------------------------------------------------
@@ -249,8 +251,8 @@
       ixray=0
       ixstrt=1
       keqdsk=1
-      kffcur=1
       kinput=0
+      kffcur=1
       kppcur=3
       kprfit=0
       limfag=2
@@ -355,11 +357,13 @@
       iteks=itek
       mxiters=mxiter
       zelipss=zelip
+      kffcurs=kffcur
+      kppcurs=kppcur
       n1coils=n1coil
 !
       ktime=mtime ! don't know why this would be wanted...
       mtear=ktear
-      qenp=qvfit
+      if((iconvr.ne.3).and.(qvfit.gt.0.0)) qenp=qvfit 
       if (itek.lt.0) then
         ixray=1
         itek=iabs(itek)
@@ -433,14 +437,6 @@
 !---------------------------------------------------------------------
 !--   adjust fit parameters based on basis function selected        --
 !---------------------------------------------------------------------
-      select case (kppfnc)
-      case (3,4)
-        kppcur = 4 * (kppknt - 1)
-      case (5)
-        kppcur = kppcur * (kppknt - 1)
-      case (6)
-        kppcur = kppknt * 2
-      end select
       select case (kfffnc)
       case (3,4)
         kffcur = 4 * (kffknt - 1)
@@ -448,6 +444,14 @@
         kffcur = kffcur * (kffknt - 1)
       case (6)
         kffcur = kffknt * 2
+      end select
+      select case (kppfnc)
+      case (3,4)
+        kppcur = 4 * (kppknt - 1)
+      case (5)
+        kppcur = kppcur * (kppknt - 1)
+      case (6)
+        kppcur = kppknt * 2
       end select
       select case (kwwfnc)
       case (3,4)

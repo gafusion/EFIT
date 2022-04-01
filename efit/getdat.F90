@@ -150,7 +150,7 @@
 !----------------------------------------------------------------------
 
       ENTRY GETDAT_E(NSHOT,NAME,ICAL,IER,T,DATA,NP, &
-                     TMIN,TMAX,MOP,SCALE,bitone,ircfact,RC_E,RCG_E, &
+                     TMIN_R8,TMAX_R8,MOP,SCALE_R8,bitone,ircfact,RC_E,RCG_E, &
                      VPBIT_E,ZINHNO_E,T0_E)
 
       INTCAL = .FALSE.
@@ -158,6 +158,10 @@
       iwait = 0
 
       rcfact = 1.0
+
+      tmin = tmin_r8
+      tmax = tmax_r8
+      scale = scale_r8
 
       IF (ircfact .eq. 1) THEN
         filnam='rcfact.dat'

@@ -1,43 +1,48 @@
 
-          EFITD Version  03/16/2022
+          EFIT-AI
+
+Git repository url git@gitlab.com:efit-ai/efit.git
+
+Git branch snap_mode
+
+Git hash bcecc76 with local modifications
+
+Simulation started on  4/ 1/2022 at 12:25:11
+
+Code compiled with PGI 18.7.0
 
 
- type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+ type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
 
  type shot #, start time(ms), time step(ms), steps(<1001):
+ table_di2 = <../green/>
  Calling $Name: V3_07 $ of the mse shared library
 
-      ******************** EFITD 65 x  65  output ********************
- table_dir = </fusion/projects/codes/efit/support_files/2006/181292/>
+      ********************EFITAI 65 x  65  output ********************
 
  r=  0 t=  2400 it=  1 chi2=4.13E+01 zm=-2.21E-02 err=1.805E+00 dz=-2.212E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
- r=  0 t=  2400 it=  2 chi2=2.77E+01 zm=-2.24E-02 err=6.783E-02 dz=-2.764E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.38E+01
- r=  0 t=  2400 it=  3 chi2=2.87E+01 zm=-2.25E-02 err=4.386E-02 dz=-1.161E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.36E+01
- r=  0 t=  2400 it=  4 chi2=5.07E+01 zm=-2.94E-02 err=2.782E-02 dz=-6.917E-03 delz= 1.531E+00 dj=3.352E-02 chigam= 1.50E+01
- r=  0 t=  2400 it=  5 chi2=2.72E+01 zm=-3.33E-02 err=1.437E-02 dz=-3.892E-03 delz= 1.011E+00 dj=2.584E-02 chigam= 1.37E+01
- r=  0 t=  2400 it=  6 chi2=2.35E+01 zm=-3.49E-02 err=7.559E-03 dz=-1.593E-03 delz= 5.175E-01 dj=1.247E-02 chigam= 1.32E+01
- r=  0 t=  2400 it=  7 chi2=2.23E+01 zm=-3.54E-02 err=4.172E-03 dz=-4.756E-04 delz= 2.491E-01 dj=6.047E-03 chigam= 1.29E+01
- r=  0 t=  2400 it=  8 chi2=2.23E+01 zm=-3.57E-02 err=2.419E-03 dz=-3.215E-04 delz= 2.218E-01 dj=5.383E-03 chigam= 1.29E+01
- r=  0 t=  2400 it=  9 chi2=2.22E+01 zm=-3.59E-02 err=1.717E-03 dz=-1.996E-04 delz= 1.985E-01 dj=4.829E-03 chigam= 1.29E+01
- r=  0 t=  2400 it= 10 chi2=2.22E+01 zm=-3.60E-02 err=1.229E-03 dz=-1.237E-04 delz= 1.834E-01 dj=4.467E-03 chigam= 1.29E+01
- r=  0 t=  2400 it= 11 chi2=2.22E+01 zm=-3.61E-02 err=8.106E-04 dz=-5.238E-05 delz= 1.658E-01 dj=4.042E-03 chigam= 1.28E+01
- Enter SHAPE kerror =             1            0
+ r=  0 t=  2400 it=  2 chi2=2.67E+01 zm=-2.24E-02 err=6.302E-02 dz=-2.999E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 7.09E+00
+ r=  0 t=  2400 it=  3 chi2=2.76E+01 zm=-2.24E-02 err=4.184E-02 dz=-2.685E-05 delz= 0.000E+00 dj=0.000E+00 chigam= 6.93E+00
+ r=  0 t=  2400 it=  4 chi2=5.53E+01 zm=-2.96E-02 err=2.703E-02 dz=-7.158E-03 delz= 1.572E+00 dj=3.392E-02 chigam= 8.12E+00
+ r=  0 t=  2400 it=  5 chi2=2.70E+01 zm=-3.39E-02 err=1.431E-02 dz=-4.335E-03 delz= 1.099E+00 dj=2.641E-02 chigam= 7.32E+00
+ r=  0 t=  2400 it=  6 chi2=2.07E+01 zm=-3.55E-02 err=7.458E-03 dz=-1.584E-03 delz= 4.866E-01 dj=1.114E-02 chigam= 6.83E+00
+ r=  0 t=  2400 it=  7 chi2=1.96E+01 zm=-3.63E-02 err=4.076E-03 dz=-7.386E-04 delz= 3.153E-01 dj=7.264E-03 chigam= 6.74E+00
+ r=  0 t=  2400 it=  8 chi2=1.93E+01 zm=-3.67E-02 err=2.496E-03 dz=-4.038E-04 delz= 2.492E-01 dj=5.764E-03 chigam= 6.71E+00
+ r=  0 t=  2400 it=  9 chi2=1.91E+01 zm=-3.67E-02 err=1.494E-03 dz=-6.124E-05 delz= 1.657E-01 dj=3.832E-03 chigam= 6.68E+00
+ r=  0 t=  2400 it= 10 chi2=1.91E+01 zm=-3.67E-02 err=1.540E-03 dz= 7.513E-05 delz= 1.152E-01 dj=2.659E-03 chigam= 6.66E+00
+ r=  0 t=  2400 it= 11 chi2=1.91E+01 zm=-3.66E-02 err=8.060E-04 dz= 7.273E-06 delz= 1.300E-01 dj=3.000E-03 chigam= 6.65E+00
 
        data used:   
  39 flux loops
- 69 magnetic probes(i)
+ 65 magnetic probes(i)
   1 full rogowski
   0 diamagnetic loop
 
 
- shot #   =     186610 time(ms) =       2400 chi**2   =  2.200E+01
- betat(%) =      0.270 betap    =      0.071 li       =      1.196
- vol(cm3) =  1.765E+07 rout(cm) =    172.790 zout(cm) =      6.903
- elong    =      1.798 utriang  =      0.751 ltriang  =      0.303
- a(cm)    =     56.367 lin(cm)  =     14.692 lout(cm) =      5.913
- ltop(cm) =     15.224 q*       =      3.878 rc(cm)   =    170.097
- zc(cm)   =     -2.647 bt0(t)   =      1.638 qout     =      6.452
-
-  fit errors, shot  186610  2400. msec. no eqdsks will be written
-     Error #21, Bp not consistent , error =  0.815E-01
-INFO in efitd at r=  0, t=  2400: Done processing
+ shot #   =     186610 time(ms) =       2400 chi**2   =  1.896E+01
+ betat(%) =      0.273 betap    =      0.072 li       =      1.186
+ vol(cm3) =  1.764E+07 rout(cm) =    172.799 zout(cm) =      6.711
+ elong    =      1.800 utriang  =      0.753 ltriang  =      0.350
+ a(cm)    =     56.312 lin(cm)  =     14.757 lout(cm) =      5.960
+ ltop(cm) =     15.301 q*       =      3.917 rc(cm)   =    170.031
+ zc(cm)   =     -2.746 bt0(t)   =      1.638 qout     =      6.472

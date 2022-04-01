@@ -297,24 +297,24 @@
 !---------------------------------------------------------------------- 
       if (jtime.le.1) then
         do i=1,nsilop 
-          if ((kdata.ge.3).and.(fwtsi(i).ne.0.0)) then 
+          if (fwtsi(i).ne.0.0) then 
             fwtsi(i)=swtsi(i) 
             if(lookfw.gt.0) fwtsi(i)=rwtsi(i) 
           endif 
           if(ierpsi(i).ne.0) fwtsi(i)=0.0 
         enddo
         do i=1,nfcoil 
-          if((kdata.ge.3).and.(fwtfc(i).ne.0.0)) fwtfc(i)=swtfc(i) 
+          if(fwtfc(i).ne.0.0) fwtfc(i)=swtfc(i) 
           if(ierfc(i).ne.0) fwtfc(i)=0.0 
         enddo
         if (iecurr.eq.2) then 
           do i=1,nesum 
-            if((kdata.ge.3).and.(fwtec(i).ne.0.0)) fwtec(i)=swtec(i) 
+            if(fwtec(i).ne.0.0) fwtec(i)=swtec(i) 
             if(ierec(i).ne.0) fwtec(i)=0.0 
           enddo 
         endif 
         do i=1,magpri 
-          if ((kdata.ge.3).and.(fwtmp2(i).ne.0.0)) then 
+          if (fwtmp2(i).ne.0.0) then 
             fwtmp2(i)=swtmp2(i) 
             if(lookfw.gt.0) fwtmp2(i)=rwtmp2(i) 
           endif 
@@ -394,7 +394,6 @@
       fczero(1:nfcoil)=1.0 
       fwtfc(1:nfcoil)=0. 
       rsisfc(1:nfcoil)=-1. 
-      fcturn(1:mfcoil)=1.0
       fwtec(1:nesum)=0.0 
       fwtpre(1:mpress)=1. 
       fcurbd=1.0 
@@ -2179,7 +2178,7 @@
       rrgam(jtime,nmtark+1:nstark)=rrrlib(1:nstark-nmtark)
       zzgam(jtime,nmtark+1:nstark)=zzzlib(1:nstark-nmtark)
       a1gam(jtime,nmtark+1:nstark)=aa1lib(1:nstark-nmtark)
-      a2gam(jtime,nmtark+1:nstark)=1.0
+      a2gam(jtime,nmtark+1:nstark)=0.0
       a3gam(jtime,nmtark+1:nstark)=0.0
       a4gam(jtime,nmtark+1:nstark)=0.0
       a5gam(jtime,nmtark+1:nstark)=0.0
@@ -2324,7 +2323,6 @@
       if (.not.fitsiref) then 
         if (iecurr.gt.0.or.nslref.lt.0) then 
           silopt(jtime,1:nsilop)=silopt(jtime,1:nsilop)+psiref(jtime) 
-          psirefs(jtime)=psiref(jtime) 
           psiref(jtime)=0. 
         endif 
       endif 
@@ -2338,8 +2336,11 @@
         tdata2=abs(psibit(m))*vbit 
         tdata=max(tdata1,tdata2) 
         sigmafl0(m)=tdata 
-        if(tdata.gt.1.0e-10_dp) fwtsi(m)=fwtsi(m)/tdata**nsq 
-        if(tdata.le.1.0e-10_dp) fwtsi(m)=0.0 
+        if (tdata.gt.1.0e-10_dp) then
+          fwtsi(m)=fwtsi(m)/tdata**nsq
+        else
+          fwtsi(m)=0.0
+        endif
       enddo
 !---------------------------------------------------------------------- 
 !--   signal at psi loop # NSLREF is used as reference               -- 
@@ -2388,8 +2389,11 @@
         tdata2=abs(psibit(m))*vbit 
         tdata=max(tdata,tdata2) 
         sigmafl0(m)=tdata 
-        if(tdata.gt.1.0e-10_dp) fwtsi(m)=fwtsi(m)/tdata**nsq 
-        if(tdata.le.1.0e-10_dp) fwtsi(m)=0.0 
+        if (tdata.gt.1.0e-10_dp) then
+          fwtsi(m)=fwtsi(m)/tdata**nsq
+        else
+          fwtsi(m)=0.0
+        endif
       enddo
 !---------------------------------------------------------------------- 
 !--   signal at psi loop #8 is set to zero and used as reference     -- 
@@ -2405,13 +2409,16 @@
         tdata2=sicont*rsi(m)*abs(pasmat(jtime)) 
         tdata=max(tdata1,tdata2) 
         tdata2=abs(psibit(m))*vbit 
-        tdata=max(tdata,tdata2) 
+        tdata=max(tdata,tdata2)
         !SEK: ??? this was commented out but I getting out of bounds error below
 !       sigmafl0(m)=tdata 
         !SEK: ???
-        if(tdata.gt.1.0e-10_dp) fwtsi(m)=fwtref/tdata**nsq 
-        if(tdata.le.1.0e-10_dp) fwtsi(m)=0.0 
-      endif 
+        if (tdata.gt.1.0e-10_dp) then
+          fwtsi(m)=fwtref/tdata**nsq
+        else
+          fwtsi(m)=0.0
+        endif
+      endif
 !SEK: ???      sigmafl0(m)=tdata 
 ! 
       endif kersil_23
@@ -2419,15 +2426,21 @@
       do m=1,magpri 
         tdata1=serror*abs(expmpi(jtime,m)) 
         tdata2=abs(bitmpi(m))*vbit 
-        tdata=max(tdata1,tdata2) 
-        sigmamp0(m)=tdata 
-        if(tdata.gt.1.0e-10_dp) fwtmp2(m)=fwtmp2(m)/tdata**nsq 
-        if(tdata.le.1.0e-10_dp) fwtmp2(m)=0.0 
+        tdata=max(tdata1,tdata2)
+        sigmamp0(m)=tdata
+        if (tdata.gt.1.0e-10_dp) then
+          fwtmp2(m)=fwtmp2(m)/tdata**nsq
+        else
+          fwtmp2(m)=0.0
+        endif
       enddo
       do m=1,nstark 
-        tdata=abs(siggam(jtime,m)) 
-        if(tdata.gt.1.0e-10_dp) fwtgam(m)=fwtgam(m)/tdata**nsq 
-        if(tdata.le.1.0e-10_dp) fwtgam(m)=0.0 
+        tdata=abs(siggam(jtime,m))
+        if (tdata.gt.1.0e-10_dp) then
+          fwtgam(m)=fwtgam(m)/tdata**nsq
+        else
+          fwtgam(m)=0.0
+        endif
       enddo
 ! 
 #ifdef DEBUG_LEVEL2
@@ -2436,13 +2449,19 @@
 #endif 
       do i=1,nmsels 
         tdata=abs(sbmselt(jtime,i)) 
-        if(tdata.gt.1.0e-10_dp) fwtbmselt(jtime,i)=fwtbmselt(jtime,i)/tdata**nsq 
-        if(tdata.le.1.0e-10_dp) fwtbmselt(jtime,i)=0.0 
-      enddo 
+        if (tdata.gt.1.0e-10_dp) then
+          fwtbmselt(jtime,i)=fwtbmselt(jtime,i)/tdata**nsq
+        else
+          fwtbmselt(jtime,i)=0.0
+        endif
+      enddo
       do i=1,nmsels 
         tdata=abs(semselt(jtime,i)) 
-        if(tdata.gt.1.0e-10_dp) fwtemselt(jtime,i)=fwtemselt(jtime,i)/tdata**nsq 
-        if(tdata.le.1.0e-10_dp) fwtemselt(jtime,i)=0.0 
+        if (tdata.gt.1.0e-10_dp) then
+          fwtemselt(jtime,i)=fwtemselt(jtime,i)/tdata**nsq
+        else
+          fwtemselt(jtime,i)=0.0
+        endif
       enddo 
 #ifdef DEBUG_LEVEL2
       write (6,*) 'DATA fwtbmselt = ', (fwtbmselt(jtime,i),i=1,nmsels)
@@ -2452,26 +2471,37 @@
         tdata1=serror*abs(fccurt(jtime,m)) 
         tdata2=abs(bitfc(m))*vbit 
         tdata=max(tdata1,tdata2) 
-        sigmaf0(m)=tdata 
-        if(tdata.gt.1.0e-10_dp) fwtfc(m)=fwtfc(m)/tdata**nsq 
-        if(tdata.le.1.0e-10_dp) fwtfc(m)=0.0 
+        sigmaf0(m)=tdata
+        if (tdata.gt.1.0e-10_dp) then
+          fwtfc(m)=fwtfc(m)/tdata**nsq
+        else
+          fwtfc(m)=0.0
+        endif
       enddo
+      ecurrt(1:nesum)=eccurt(jtime,1:nesum) 
+      cecurr(1:nesum)=ecurrt(1:nesum) 
       if (iecurr.eq.2) then 
         do m=1,nesum 
           tdata1=serror*abs(ecurrt(m)) 
           tdata2=abs(bitec(m))*vbit 
           tdata=max(tdata1,tdata2) 
           sigmae0(m)=tdata 
-          if(tdata.gt.1.0e-10_dp) fwtec(m)=fwtec(m)/tdata**nsq 
-          if(tdata.le.1.0e-10_dp) fwtec(m)=0.0 
+          if (tdata.gt.1.0e-10_dp) then
+            fwtec(m)=fwtec(m)/tdata**nsq
+          else
+            fwtec(m)=0.0
+          endif
         enddo 
       endif 
       tdata1=serror*abs(pasmat(jtime)) 
       tdata2=abs(bitip)*vbit 
       tdata=max(tdata1,tdata2) 
-      sigmaip0=tdata 
-      if(tdata.gt.1.0e-10_dp) fwtcur=fwtcur/tdata**nsq 
-      if(tdata.le.1.0e-10_dp) fwtcur=0.0 
+      sigmaip0=tdata
+      if (tdata.gt.1.0e-10_dp) then 
+        fwtcur=fwtcur/tdata**nsq
+      else
+        fwtcur=0.0
+      endif
 !---------------------------------------------------------------------- 
 !--   diamagetic flux                                                -- 
 !---------------------------------------------------------------------- 
@@ -2578,10 +2608,6 @@
         time(jtime)=itime 
       endif 
       csiref=psiref(jtime) 
-      do i=1,nesum 
-        ecurrt(i)=eccurt(jtime,i) 
-        cecurr(i)=ecurrt(i) 
-      enddo
 !      if (kdata.ne.2) then 
 !      if ((iecurr.le.0).or.(idodo.gt.0)) go to 520 
 !      open(unit=nrsppc,status='old',form='unformatted', & 

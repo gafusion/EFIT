@@ -499,7 +499,6 @@
       return
       end subroutine seter
 
-
 !**********************************************************************
 !>
 !!    seterp computes derivative of er.
@@ -579,7 +578,7 @@
         cgama(3,1)=0.1_dp
         xgama(1)=0.0
       end select
-      if (mse_usecer .eq. 1) keecur = 0
+      if(mse_usecer .eq. 1) keecur = 0
       if (mse_usecer .eq. 2 .and. keecur .eq. 0) then
         keecur = 2
         keefnc = 0
@@ -639,7 +638,6 @@
 
       end subroutine set_basis_params
 
-
 !**********************************************************************
 !>
 !!    setff sets up the basis functions for ff-ff(1).
@@ -662,7 +660,6 @@
       enddo
       return
       end subroutine setff
-
 
 !**********************************************************************
 !>
@@ -687,7 +684,6 @@
       return
       end subroutine setfp
 
-
 !**********************************************************************
 !>
 !!    setfpp computes derivative of ffp.
@@ -710,7 +706,6 @@
       enddo
       return
       end subroutine setfpp
-
 
 !**********************************************************************
 !>
@@ -735,7 +730,6 @@
       return
       end subroutine setpp
 
-
 !**********************************************************************
 !>
 !!    setppp computes derivative of pp.
@@ -759,7 +753,6 @@
       return
       end subroutine setppp
 
-
 !**********************************************************************
 !>
 !!    setpr sets up the basis functions for p-p(1).
@@ -782,7 +775,6 @@
       enddo
       return
       end subroutine setpr
-
 
 !**********************************************************************
 !>
@@ -829,7 +821,6 @@
       return
       end subroutine setpwp
 
-
 !**********************************************************************
 !>
 !!    setpwpp computes derivative of pwp.
@@ -853,7 +844,6 @@
       return
       end subroutine setpwpp
 
-
 !**********************************************************************
 !>
 !!    setstark obtains the response matrix
@@ -868,38 +858,36 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension rsplt(2500),zsplt(2500),csplt(2500) &
-                ,rrgamin(nstark),zzgamin(nstark)
+      dimension rsplt(2500),zsplt(2500),csplt(2500), &
+                rrgamin(nstark),zzgamin(nstark)
       character*40 filenmme
+      character*2 ich
       data nset/20/,cdum/1.0/
       save nset
 !---------------------------------------------------------------------
 !--   try read in, first locally, then efit area                    --
 !---------------------------------------------------------------------
       do iname=1,nset
-        if (iname.le.9) then
-          write(filenmme,6530) iname
-        else
-          write(filenmme,6540) iname
-        endif
+        write(ich,'(i2)') iname
+        filenmme='rs'//trim(ch1)//trim(ch2)//'_'//trim(ich)//'.ddd'
         open(unit=nffile, &
              status='old',form='unformatted', &
              file=filenmme,iostat=ioerr)
-        if (ioerr.ne.0) &
+        if(ioerr.ne.0) &
           open(unit=nffile, &
                status='old',form='unformatted', &
                file=table_dir(1:ltbdir)//filenmme,iostat=ioerr)
-        if (ioerr.ne.0) exit
+        if(ioerr.ne.0) exit
         read (nffile,iostat=ioerr) kkstark
-        if (ioerr.ne.0) exit
+        if(ioerr.ne.0) exit
         if (kkstark.ne.nstark) then
           close(unit=nffile)
           cycle
         endif
         read (nffile,iostat=ioerr)  rrgamin
-        if (ioerr.ne.0) exit
+        if(ioerr.ne.0) exit
         read (nffile,iostat=ioerr)  zzgamin
-        if (ioerr.ne.0) exit
+        if(ioerr.ne.0) exit
         do ii=1,nstark
           if (abs(rrgamin(ii)-rrgam(jtime,ii)).gt.1.e-4_dp) exit
           if (abs(zzgamin(ii)-zzgam(jtime,ii)).gt.1.e-4_dp) exit
@@ -907,17 +895,17 @@
         if (abs(rrgamin(ii)-rrgam(jtime,ii)).gt.1.e-4_dp) cycle
         if (abs(zzgamin(ii)-zzgam(jtime,ii)).gt.1.e-4_dp) cycle
         read (nffile,iostat=ioerr) rbrfc
-        if (ioerr.ne.0) exit
+        if(ioerr.ne.0) exit
         read (nffile,iostat=ioerr) rbzfc
-        if (ioerr.ne.0) exit
+        if(ioerr.ne.0) exit
         read (nffile,iostat=ioerr) gbrpc
-        if (ioerr.ne.0) exit
+        if(ioerr.ne.0) exit
         read (nffile,iostat=ioerr) gbzpc
-        if (ioerr.ne.0) exit
+        if(ioerr.ne.0) exit
         read (nffile,iostat=ioerr) rbrec
-        if (ioerr.ne.0) exit
+        if(ioerr.ne.0) exit
         read (nffile,iostat=ioerr) rbzec
-        if (ioerr.ne.0) exit
+        if(ioerr.ne.0) exit
         close(unit=nffile)
         return
       enddo
@@ -927,8 +915,8 @@
       isplit=10
       itot=isplit*isplit
       fitot=itot
-      rbrfc = 0.0
-      rbzfc = 0.0
+      rbrfc=0.0
+      rbzfc=0.0
       do k=1,mfcoil
         call splitc(isplit,rsplt,zsplt,csplt, &
                     rf(k),zf(k),wf(k),hf(k),af(k),af2(k),cdum)
@@ -954,7 +942,7 @@
       zzx=0.0
       drzg=(drgrid**2+dzgrid**2)*25.
       isplit=18
-      kk = 1
+      kk=1
       do mmm=1,nstark
         gbrpc(mmm,kk)=0.0
         gbzpc(mmm,kk)=0.0
@@ -999,10 +987,8 @@
       itot=isplit*isplit
       fitot=real(itot,dp)
       do m=1,nstark
-        do i=1,nesum
-          rbrec(m,i)=0.0
-          rbzec(m,i)=0.0
-        enddo
+        rbrec(m,1:nesum)=0.0
+        rbzec(m,1:nesum)=0.0
         if (rrgam(jtime,m).le.1.e-8_dp) cycle
         r1=rrgam(jtime,m)
         do k=1,necoil
@@ -1029,15 +1015,13 @@
       if (iand(iout,8).ne.0) then
         open(unit=nffile,status='old',form='unformatted',iostat=ioerr, &
              file='rstarkxx.dat')
-        if (ioerr.eq.0) close(unit=nffile,status='delete')
+        if(ioerr.eq.0) close(unit=nffile,status='delete')
         open(unit=nffile,status='new',form='unformatted', &
              file='rstarkxx.dat')
         kkstark=nstark
         write (nffile) kkstark
-        do ii=1,nstark
-          rrgamin(ii)=rrgam(jtime,ii)
-          zzgamin(ii)=zzgam(jtime,ii)
-        enddo
+        rrgamin(1:nstark)=rrgam(jtime,1:nstark)
+        zzgamin(1:nstark)=zzgam(jtime,1:nstark)
         write (nffile) rrgamin
         write (nffile) zzgamin
         write (nffile) rbrfc
@@ -1049,6 +1033,4 @@
         close(unit=nffile)
       endif
       return
- 6530 format ('rs129129_0',i1,'.ddd')
- 6540 format ('rs129129_',i2,'.ddd')
       end subroutine setstark
