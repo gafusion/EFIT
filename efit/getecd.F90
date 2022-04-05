@@ -1113,9 +1113,9 @@
       real*4, allocatable :: yw4(:),xw4(:)
       real*8, allocatable :: yw(:),xw(:),bw(:),cw(:),dw(:),ew(:)
       real*8 dtmin,dtave,delta_min,delta
-      integer*4 :: status,nshot,lenname,errallot,npn,mmm,ierror, &
+      integer*4 :: stat,nshot,lenname,errallot,npn,mmm,ierror, &
                    np,mm,nn,kave,ircfact,ktime_err,nnp,mylen, &
-                   i,j,j_save,dsc,f_dsc,t_dsc
+                   i,j,j_save,dsc,f_dsc,t_dsc,ldum
       logical*4 do_spline_fit
       data dtmin/0.001001/
       save dtmin
@@ -1129,23 +1129,23 @@
       do i=1,len(name)
         if(name(i:i).ne.' ') lenname=lenname+1
       enddo
-      status = MdsConnect('atlas'//char(0))
-      if (status.eq.-1) then
+      stat = MdsConnect('atlas'//char(0))
+      if (stat.eq.-1) then
         ierror = 1
         return
       endif
 !
       MyTree = 'bci'
-      status = MdsOpen('bci'//char(0), nshot)
-      if (mod(status,2) .eq. 0) then
+      stat = MdsOpen('bci'//char(0), nshot)
+      if (mod(stat,2) .eq. 0) then
         ierror = 1
         return
       endif
 !
       dsc = descr(IDTYPE_LONG, mylen, 0)  ! MDSPlus return a descriptor number
-      status = Mdsvalue('SIZE('//name(1:lenname)//')'//char(0), &
-                        dsc, 0, 1)
-      if (mod(status,2) .eq. 0) then
+      stat = MdsValue('SIZE('//name(1:lenname)//')'//char(0), &
+                      dsc, 0, ldum)
+      if (mod(stat,2) .eq. 0) then
         ierror = 1
         return
       endif
@@ -1168,13 +1168,13 @@
 !
       f_dsc = descr(IDTYPE_FLOAT, yw4, mylen, 0) ! MDSPlus return a descriptor number
       t_dsc = descr(IDTYPE_FLOAT, xw4, mylen, 0) ! MDSPlus return a descriptor number
-      status=MdsValue(name(1:lenname)//char(0), f_dsc, 0, 1)
-      if (mod(status,2) .eq. 0) then
+      stat=MdsValue(name(1:lenname)//char(0), f_dsc, 0, ldum)
+      if (mod(stat,2) .eq. 0) then
         ierror = 1
         return
       endif
-      status=MdsValue('DIM_OF('//name(1:lenname)//',0)'//char(0), &
-                      t_dsc, 0, 1)
+      stat=MdsValue('DIM_OF('//name(1:lenname)//',0)'//char(0), &
+                    t_dsc, 0, ldum)
       yw(1:npn)=real(yw4(1:npn),dp)
       xw(1:npn)=real(xw4(1:npn),dp)/1000.
 !
