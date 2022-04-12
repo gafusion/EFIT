@@ -385,7 +385,7 @@
         rwtmp2(1:magpri)=0.0
         rwtsi(1:nsilop)=0.0
         open(unit=neqdsk,status='old', &
-             file=table_di2(1:ltbdi2)//'fitweight.dat')
+             file=input_dir(1:lindir)//'fitweight.dat')
  3050   read (neqdsk,*,iostat=ioerr) irshot
         if ((ioerr.eq.0).and.(irshot.le.ishot)) then
           if (irshot.lt.124985) then
