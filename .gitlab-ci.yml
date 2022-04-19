@@ -15,6 +15,7 @@ stages:
   - stage0
   - stage1
   - stage2
+  - stage3
 
 variables:
   GIT_STRATEGY: fetch
