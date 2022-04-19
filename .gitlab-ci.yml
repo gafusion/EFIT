@@ -15,7 +15,6 @@ stages:
   - stage0
   - stage1
   - stage2
-  - stage3
 
 variables:
   GIT_STRATEGY: fetch
@@ -121,9 +120,6 @@ pages:  # this job name has special meaning to GitLab
     - ../share/config_examples/config_ci_hip.sh | tee config.log
     - make docs
     - mv docs/html ../public
-  only:
-    variables:
-      - $EFIT_CI_SCHEDULED == "yes"
   artifacts:
     paths:
       - public
