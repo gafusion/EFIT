@@ -7,6 +7,12 @@
 !!    at present the clipping errors (ier = -1, -2) are used only by the
 !!    yoka routine in NEWSPEC.
 !!
+!!    WARNING: this subroutine uses both REAL*4 and REAL*8 variables 
+!!             conversions must be handled carefully
+!!             REAL*4 variables are both used for PTDATA calls and as
+!!             inputs for non-EFIT entries to conform with use by other
+!!             libraries (e.g. mselib)
+!!
 !!
 !!    @param NSHOT :  THE SHOT NUMBER
 !!
@@ -53,22 +59,28 @@
 !!           MOP=3 MULTIPLY CURRENT CONTENTS OF DATA BY POINTNAME\n
 !!           MOP=4 DIVIDE CURRENT CONTENTS OF DATA BY POINTNAME\n
 !!
-!!    @param SCALE :
+!!    @param SCALE : FACTOR TO SCALE RESULTS BY
 !!
 !!    @param jWAIT :
 !!
 !**********************************************************************
-      SUBROUTINE GETDAT(NSHOT,NAME,ICAL,IER,T,DATA,NP, &
-                        TMIN,TMAX,MOP,SCALE,jWAIT)
+      SUBROUTINE GETDAT(NSHOT,NAME,ICAL,IER,T_R4,DATA_R4,NP, &
+                        TMIN_R4,TMAX_R4,MOP,SCALE_R4,jWAIT)
 
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       parameter (npmax=262144)
+      parameter (npefit=8192) ! needs to match ntims from var_gggttt module
 
       character*4 char4
+      real*4 t_r4, data_r4, tmin_r4, tmax_r4, scale_r4, rarr4, real32
 
-      DIMENSION DATA(*)
+      DIMENSION DATA_R4(*)
+      DIMENSION T_R4(*)
+      DIMENSION DATA(npefit)
+      DIMENSION T(npefit)
       DIMENSION FPDATA(npmax)
+      DIMENSION TT(npmax)
 
       dimension int16(2),int32(2),iarr(50)
       dimension iascii(12)
@@ -78,21 +90,14 @@
       CHARACTER*10 PCSTIME
       CHARACTER PHASE*4
       real*8 rarr, realdp, tt, dt, t0
-      real*4 rarr4, real32
       dimension rarr(20+npmax),rarr4(20+npmax)
       dimension real32(100),realdp(100)
       REAL*8 REAL64(100)
       CHARACTER*10 SDATE, STIME
 
-      DIMENSION T(*)
-
       REAL*8 TDUM(2+NPMAX)
       INTEGER*4 TEMP(npmax)
       REAL*8 TIME64(NPMAX)
-
-      DIMENSION TT(npmax)
-
-      COMMON /TRAPPER/ IT_CHAN, ITRAPA
 
       equivalence (ichar,char4)
       equivalence (pcst,pcstime)
@@ -113,6 +118,11 @@
       efit = .false.
       rcfact = 1.0
       iwait = jwait
+      np = min(np,npefit) ! this could be problematic for some codes...
+
+      tmin = real(tmin_r4,dp)
+      tmax = real(tmax_r4,dp)
+      scale = real(scale_r4,dp)
 
       GO TO 11111
 
@@ -140,7 +150,7 @@
 !----------------------------------------------------------------------
 
       ENTRY GETDAT_E(NSHOT,NAME,ICAL,IER,T,DATA,NP, &
-                     TMIN,TMAX,MOP,SCALE,bitone,ircfact,RC_E,RCG_E, &
+                     TMIN_R8,TMAX_R8,MOP,SCALE_R8,bitone,ircfact,RC_E,RCG_E, &
                      VPBIT_E,ZINHNO_E,T0_E)
 
       INTCAL = .FALSE.
@@ -148,6 +158,10 @@
       iwait = 0
 
       rcfact = 1.0
+
+      tmin = tmin_r8
+      tmax = tmax_r8
+      scale = scale_r8
 
       IF (ircfact .eq. 1) THEN
         filnam='rcfact.dat'
@@ -234,7 +248,7 @@
       !  WAIT FOR THE DATA TO COME IN
       !
 !      IF (iwait .eq. 1 .and. (ier .eq. 3 .or. ier .eq. 1) &
-!         .and. kount .lt. kmax .and. itrapa .eq. 0) go to 1
+!         .and. kount .lt. kmax) go to 1
 
       !-- AT THIS POINT ANY REMAINING POSITIVE ERROR VALUE IS FATAL.
       !-- NON-FATAL POSITIVE ERRORS HAVE BEEN HANDLED AS FOLLOWS:
@@ -245,10 +259,17 @@
 
       IF (IER .gt. 0 .AND. IER.NE.2) THEN
         np = 2
-        t(1)=tmin
-        t(2)=tmax
-        data(1)=0.
-        data(2)=0.
+        if (efit) then
+          t(1)=tmin
+          t(2)=tmax
+          data(1)=0.
+          data(2)=0.
+        else
+          t_r4(1)=tmin_r4
+          t_r4(2)=tmax_r4
+          data_r4(1)=0.
+          data_r4(2)=0.
+        endif
         RETURN
       ENDIF
       !
@@ -331,10 +352,17 @@
         if (ker.ne.0 .and. ker.ne.2 .and. ker.ne.4) then
           ier = 1
           np = 2
-          t(1)=tmin
-          t(2)=tmax
-          data(1)=0.
-          data(2)=0.
+          if (efit) then
+            t(1)=tmin
+            t(2)=tmax
+            data(1)=0.
+            data(2)=0.
+          else
+            t_r4(1)=tmin_r4
+            t_r4(2)=tmax_r4
+            data_r4(1)=0.
+            data_r4(2)=0.
+          endif
           RETURN
         endif
         nrettim = iarr(2)
@@ -390,6 +418,11 @@
       tmin = max(tmin,tmind)
       tmax = min(tmax,tmaxd)
 
+      if (.not. efit) then
+        tmin_r4 = real(tmin,r4)
+        tmax_r4 = real(tmax,r4)
+      endif
+
       IF (tmax .lt. tmin) THEN
         np = 0
         return
@@ -431,11 +464,19 @@
 
       if (idfi .eq. 119 .or. idfi.eq.2119) then      !ICH STUFF EXISTS IN FLOATING FORMAT
         ii=0
-        do i = nfirst, nlast, nint
-          ii=ii+1
-          t(ii) = tt(i)
-          data(ii) = fpdata(i)
-        enddo
+        if (efit) then
+          do i = nfirst, nlast, nint
+            ii=ii+1
+            t(ii) = tt(i)
+            data(ii) = fpdata(i)
+          enddo
+        else
+          do i = nfirst, nlast, nint
+            ii=ii+1
+            t_r4(ii) = real(tt(i),r4)
+            data_r4(ii) = real(fpdata(i),r4)
+          enddo
+        endif
         np = ii
         return
       endif
@@ -498,7 +539,11 @@
         !
         ! --- time array
         !
-        t(ii) = tt(i)
+        if (efit) then
+          t(ii) = tt(i)
+        else
+          t_r4(ii) = real(tt(i),r4)
+        endif
         ! write(14,91300)t(ii)
         !
         ! --- data calibration
@@ -540,22 +585,44 @@
 
         ! --- arithmetic combinations as determined by mop code
         select case (mop)
-        case (0)
-          data(ii) = y
         case (1)
-          data(ii) = data(ii) + y
+          if (efit) then
+            data(ii) = data(ii) + y
+          else
+            data_r4(ii) = data_r4(ii) + real(y,r4)
+          endif
         case (2)
-          data(ii) = data(ii) - y
+          if (efit) then
+            data(ii) = data(ii) - y
+          else
+            data_r4(ii) = data_r4(ii) - real(y,r4)
+          endif
         case (3)
-          data(ii) = data(ii) * y
+          if (efit) then
+            data(ii) = data(ii) * y
+          else
+            data_r4(ii) = data_r4(ii) * real(y,r4)
+          endif
         case (4)
           if (y.ne.0) then
-            data(ii) = data(ii) / y
+            if (efit) then
+              data(ii) = data(ii) / y
+            else
+              data_r4(ii) = data_r4(ii) / real(y,r4)
+            endif
           else
-            data(ii) = 0.
-          end if
-        case default
-          data(ii) = y
+            if (efit) then
+              data(ii) = 0.
+            else
+              data_r4(ii) = 0.
+            endif
+          endif
+        case default ! 0, ...
+          if (efit) then
+            data(ii) = y
+          else
+            data_r4(ii) = real(y,r4)
+          endif
         end select
 
       enddo
@@ -636,6 +703,6 @@
             if(ic > 0) to_upper(i:i) = cap(ic:ic)
           end do
 
-           End Function to_upper
+          End Function to_upper
       END SUBROUTINE GETDAT
 

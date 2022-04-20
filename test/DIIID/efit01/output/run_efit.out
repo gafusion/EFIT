@@ -3,11 +3,11 @@
 
 Git repository url git@gitlab.com:efit-ai/efit.git
 
-Git branch main
+Git branch snap_mode
 
-Git hash 2218630 with local modifications
+Git hash aa95d83 with local modifications
 
-Simulation started on  3/19/2022 at 20:12:20
+Simulation started on  4/12/2022 at 15:37: 4
 
 Code compiled with PGI 18.7.0
 
@@ -15,7 +15,7 @@ Code compiled with PGI 18.7.0
  type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
 
  type input file names:
- table_di2 = <../green/>
+ table_di2 = </home/bechtelt/efitall/efit/build_pgi_ser/test/DIIID/green/>
 
       ********************EFITAI 65 x  65  output ********************
  before save fitting weights
@@ -30,10 +30,10 @@ Code compiled with PGI 18.7.0
   0 diamagnetic loop
 
 
- shot #   =     186610 time(ms) =       2400 chi**2   =  2.931E+01
- betat(%) =      0.328 betap    =      0.087 li       =      1.164
- vol(cm3) =  1.773E+07 rout(cm) =    172.889 zout(cm) =      5.775
- elong    =      1.796 utriang  =      0.750 ltriang  =      0.352
- a(cm)    =     56.365 lin(cm)  =     14.794 lout(cm) =      5.816
- ltop(cm) =     16.316 q*       =      3.906 rc(cm)   =    170.152
- zc(cm)   =     -2.838 bt0(t)   =      1.638 qout     =      7.090
+ shot #   =     186610 time(ms) =       2400 chi**2   =  2.090E+01
+ betat(%) =      0.416 betap    =      0.110 li       =      1.130
+ vol(cm3) =  1.780E+07 rout(cm) =    172.912 zout(cm) =      5.468
+ elong    =      1.791 utriang  =      0.746 ltriang  =      0.352
+ a(cm)    =     56.361 lin(cm)  =     14.821 lout(cm) =      5.797
+ ltop(cm) =     16.924 q*       =      3.874 rc(cm)   =    170.276
+ zc(cm)   =     -2.694 bt0(t)   =      1.638 qout     =      7.495

@@ -93,15 +93,15 @@
         sumbp=dpleng(i)*abpol
         sumbzz=sumbzz+(bpolz(ip1)+bpolz(i))/2.*(yout(ip1)-yout(i))
         if (kbetapr.eq.0) then
-          sum=dpleng(i)*abpol**2*axout
+          sumvar=dpleng(i)*abpol**2*axout
         else
           if (kbetapr.eq.1) pxxxxx=prbdry
           if (kbetapr.eq.2) pxxxxx=pressb
-          sum=dpleng(i)*(abpol**2+4.0*pi*tmu*pxxxxx)*axout
+          sumvar=dpleng(i)*(abpol**2+4.0*pi*tmu*pxxxxx)*axout
         endif
-        s1(jtime)=s1(jtime)+sum*sdnrho*rho
-        s2(jtime)=s2(jtime)+sum*enr
-        s3(jtime)=s3(jtime)+sum*ayout*enz
+        s1(jtime)=s1(jtime)+sumvar*sdnrho*rho
+        s2(jtime)=s2(jtime)+sumvar*enr
+        s3(jtime)=s3(jtime)+sumvar*ayout*enz
         sbp=sbp+sumbp
         sumr2=sumr2+sumbp*axout**2
         sumz=sumz+sumbp*ayout
@@ -461,9 +461,7 @@
 !--     at uniform poloidal flux grid sigrid                         --
 !----------------------------------------------------------------------
       rhovn(nw)=1.0
-      do i=2,nw-1
-        rhovn(i)=sqrt(abs(rhovn(i)))
-      enddo
+      rhovn(2:(nw-1))=sqrt(abs(rhovn(2:(nw-1))))
       call zpline(nw,sigrid,rhovn,brhovn,crhovn,drhovn)
       if (kstark.gt.0.or.kdomse.gt.0) then
         do i=1,nstark
@@ -480,23 +478,16 @@
 !----------------------------------------------------------------------
       if (keecur.gt.0) then
         do i=1,nw
-          epoten(i)=0.0
           call seter(sigrid(i),xsier)
-          do j=1,keecur
-            epoten(i)=epoten(i)+cerer(j)*xsier(j)
-          enddo
+          epoten(i)=sum(cerer(1:keecur)*xsier(1:keecur))
         enddo
       endif
       if (idovol.gt.1) return
 !-----------------------------------------------------------------------
 !--   compute beta*, taking P(1)=0.0    10/25/90                      --
 !-----------------------------------------------------------------------
-      sumpr2=0.0
-      do i=2,nw-1
-        sumpr2=sumpr2+volp(i)*pprime(i)*pres(i)
-      enddo
-      sumpr2=-2.*sumpr2*dsi
-      sumpr2=sumpr2/volp(nw)
+      sumpr2=-2.*sum(volp(2:(nw-1))*pprime(2:(nw-1))*pres(2:(nw-1))) &
+                *dsi/volp(nw)
       if (sumpr2.ge.0.0) then
         sumpr2=sqrt(sumpr2)
       else
@@ -505,9 +496,7 @@
       betat2=sumpr2*2.0*twopi*tmu/bcentr(jtime)**2
       betat2=100.*betat2*(rout(jtime)/100./rcentr)**2
 !
-      do i=1,nw-1
-        qpsi(i)=abs(fpol(i))/twopi*r2surf(i)
-      enddo
+      qpsi(1:(nw-1))=abs(fpol(1:(nw-1)))/twopi*r2surf(1:(nw-1))
       qpsi(nw)=qout(jtime)
       qpsi(1)=qmaxis
       qqmin=qpsi(1)

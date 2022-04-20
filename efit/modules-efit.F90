@@ -308,7 +308,8 @@
         integer*4 kffcur,kppcur,kpcurn,icalbet 
         real*8 chidlc,gammaf,gammap,cstabz ,cstab0, &
                vbtot2,vbtvac2,vbtor2,vbtvac,vbeta0, &
-               vbtmag,btvvac2,btvtor2,btvtot2
+               vbtmag,btvvac2,btvtor2,btvtot2, &
+               kffcurs,kppcurs
         data cstabz/0.0e-13/
         data icalbet/1/
       end module var_pfterm
