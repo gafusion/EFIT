@@ -1,48 +1,54 @@
 
-          EFITD Version  11/23/2020
+          EFIT-AI
+
+Git repository url git@gitlab.com:efit-ai/efit.git
+
+Git branch snap_mode
+
+Git hash aa95d83 with local modifications
+
+Simulation started on  4/12/2022 at 15:37:12
+
+Code compiled with PGI 18.7.0
 
 
- type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
-
- number of time slices?
+ type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
 
  type input file names:
- #
- table_di2 = <../green>
+ table_di2 = </home/bechtelt/efitall/efit/build_pgi_ser/test/DIIID/green/>
 
-      ******************** EFITD 65 x  65  output ********************
+      ********************EFITAI 65 x  65  output ********************
  before save fitting weights
- adjust fit parameters based on basis function selected 
+ adjust fit parameters based on basis function selected
  itek > 100, write out PLTOUT.OUT individually 
- option to symmetrize added 8/14/91 eal  
  read in limiter data
 
  r=  0 t=  2300 it=  1 chi2=4.31E+01 zm=-2.02E-02 err=1.738E+00 dz=-2.021E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
- r=  0 t=  2300 it=  2 chi2=6.80E+01 zm=-2.06E-02 err=3.496E-02 dz=-3.668E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.90E+02
- r=  0 t=  2300 it=  3 chi2=7.81E+01 zm=-2.03E-02 err=2.665E-02 dz= 2.921E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.80E+02
+ r=  0 t=  2300 it=  2 chi2=6.80E+01 zm=-2.06E-02 err=3.496E-02 dz=-3.670E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.90E+02
+ r=  0 t=  2300 it=  3 chi2=7.81E+01 zm=-2.03E-02 err=2.665E-02 dz= 2.920E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.80E+02
  r=  0 t=  2300 it=  4 chi2=1.23E+02 zm=-2.79E-02 err=2.249E-02 dz=-7.661E-03 delz= 1.632E+00 dj=7.207E-02 chigam= 1.89E+02
  r=  0 t=  2300 it=  5 chi2=1.05E+02 zm=-3.28E-02 err=1.325E-02 dz=-4.853E-03 delz= 8.945E-01 dj=4.014E-02 chigam= 1.87E+02
- r=  0 t=  2300 it=  6 chi2=1.09E+02 zm=-3.54E-02 err=9.430E-03 dz=-2.571E-03 delz= 5.259E-01 dj=2.365E-02 chigam= 1.87E+02
+ r=  0 t=  2300 it=  6 chi2=1.09E+02 zm=-3.54E-02 err=9.430E-03 dz=-2.571E-03 delz= 5.258E-01 dj=2.365E-02 chigam= 1.87E+02
  r=  0 t=  2300 it=  7 chi2=1.17E+02 zm=-3.67E-02 err=6.889E-03 dz=-1.377E-03 delz= 2.937E-01 dj=1.330E-02 chigam= 1.87E+02
- r=  0 t=  2300 it=  8 chi2=1.24E+02 zm=-3.76E-02 err=5.201E-03 dz=-8.470E-04 delz= 1.751E-01 dj=7.970E-03 chigam= 1.88E+02
- r=  0 t=  2300 it=  9 chi2=1.30E+02 zm=-3.81E-02 err=3.928E-03 dz=-4.962E-04 delz= 9.051E-02 dj=4.126E-03 chigam= 1.89E+02
- r=  0 t=  2300 it= 10 chi2=1.35E+02 zm=-3.84E-02 err=3.050E-03 dz=-3.204E-04 delz= 4.994E-02 dj=2.279E-03 chigam= 1.89E+02
- r=  0 t=  2300 it= 11 chi2=1.39E+02 zm=-3.86E-02 err=2.297E-03 dz=-1.650E-04 delz= 1.249E-02 dj=5.703E-04 chigam= 1.90E+02
- r=  0 t=  2300 it= 12 chi2=1.41E+02 zm=-3.87E-02 err=1.778E-03 dz=-1.292E-04 delz= 4.735E-03 dj=2.163E-04 chigam= 1.91E+02
- r=  0 t=  2300 it= 13 chi2=1.43E+02 zm=-3.88E-02 err=1.462E-03 dz=-1.250E-04 delz=-6.023E-04 dj=2.742E-05 chigam= 1.91E+02
- r=  0 t=  2300 it= 14 chi2=1.45E+02 zm=-3.90E-02 err=1.233E-03 dz=-1.543E-04 delz= 4.521E-03 dj=2.057E-04 chigam= 1.92E+02
- r=  0 t=  2300 it= 15 chi2=1.47E+02 zm=-3.91E-02 err=1.023E-03 dz=-1.568E-04 delz= 3.686E-03 dj=1.676E-04 chigam= 1.92E+02
- r=  0 t=  2300 it= 16 chi2=1.48E+02 zm=-3.92E-02 err=7.634E-04 dz=-8.607E-05 delz=-1.359E-02 dj=6.180E-04 chigam= 1.93E+02
- r=  0 t=  2300 it= 17 chi2=1.49E+02 zm=-3.93E-02 err=5.894E-04 dz=-4.691E-05 delz=-2.267E-02 dj=1.030E-03 chigam= 1.93E+02
- r=  0 t=  2300 it= 18 chi2=1.50E+02 zm=-3.93E-02 err=4.575E-04 dz=-2.466E-05 delz=-2.944E-02 dj=1.338E-03 chigam= 1.93E+02
- r=  0 t=  2300 it= 19 chi2=1.50E+02 zm=-3.94E-02 err=4.515E-04 dz=-8.150E-05 delz=-1.770E-02 dj=8.037E-04 chigam= 1.94E+02
- r=  0 t=  2300 it= 20 chi2=1.51E+02 zm=-3.95E-02 err=3.775E-04 dz=-7.461E-05 delz=-2.055E-02 dj=9.337E-04 chigam= 1.94E+02
- r=  0 t=  2300 it= 21 chi2=1.52E+02 zm=-3.95E-02 err=2.685E-04 dz=-2.946E-05 delz=-3.209E-02 dj=1.458E-03 chigam= 1.94E+02
- r=  0 t=  2300 it= 22 chi2=1.52E+02 zm=-3.95E-02 err=2.194E-04 dz=-1.313E-05 delz=-3.513E-02 dj=1.596E-03 chigam= 1.94E+02
- r=  0 t=  2300 it= 23 chi2=1.52E+02 zm=-3.95E-02 err=1.746E-04 dz=-6.035E-06 delz=-3.709E-02 dj=1.685E-03 chigam= 1.94E+02
- r=  0 t=  2300 it= 24 chi2=1.53E+02 zm=-3.95E-02 err=1.370E-04 dz=-2.370E-06 delz=-3.824E-02 dj=1.737E-03 chigam= 1.94E+02
- r=  0 t=  2300 it= 25 chi2=1.53E+02 zm=-3.95E-02 err=1.108E-04 dz=-1.209E-06 delz=-3.881E-02 dj=1.763E-03 chigam= 1.94E+02
- r=  0 t=  2300 it= 26 chi2=1.53E+02 zm=-3.95E-02 err=9.194E-05 dz=-1.071E-06 delz=-3.911E-02 dj=1.777E-03 chigam= 1.95E+02
+ r=  0 t=  2300 it=  8 chi2=1.24E+02 zm=-3.76E-02 err=5.201E-03 dz=-8.469E-04 delz= 1.750E-01 dj=7.968E-03 chigam= 1.88E+02
+ r=  0 t=  2300 it=  9 chi2=1.30E+02 zm=-3.81E-02 err=3.928E-03 dz=-4.962E-04 delz= 9.049E-02 dj=4.125E-03 chigam= 1.89E+02
+ r=  0 t=  2300 it= 10 chi2=1.35E+02 zm=-3.84E-02 err=3.050E-03 dz=-3.204E-04 delz= 4.991E-02 dj=2.278E-03 chigam= 1.89E+02
+ r=  0 t=  2300 it= 11 chi2=1.39E+02 zm=-3.86E-02 err=2.297E-03 dz=-1.650E-04 delz= 1.246E-02 dj=5.692E-04 chigam= 1.90E+02
+ r=  0 t=  2300 it= 12 chi2=1.41E+02 zm=-3.87E-02 err=1.778E-03 dz=-1.292E-04 delz= 4.713E-03 dj=2.153E-04 chigam= 1.91E+02
+ r=  0 t=  2300 it= 13 chi2=1.43E+02 zm=-3.88E-02 err=1.462E-03 dz=-1.250E-04 delz=-6.245E-04 dj=2.843E-05 chigam= 1.91E+02
+ r=  0 t=  2300 it= 14 chi2=1.45E+02 zm=-3.90E-02 err=1.233E-03 dz=-1.543E-04 delz= 4.498E-03 dj=2.046E-04 chigam= 1.92E+02
+ r=  0 t=  2300 it= 15 chi2=1.47E+02 zm=-3.91E-02 err=1.023E-03 dz=-1.568E-04 delz= 3.664E-03 dj=1.665E-04 chigam= 1.92E+02
+ r=  0 t=  2300 it= 16 chi2=1.48E+02 zm=-3.92E-02 err=7.634E-04 dz=-8.606E-05 delz=-1.362E-02 dj=6.190E-04 chigam= 1.93E+02
+ r=  0 t=  2300 it= 17 chi2=1.49E+02 zm=-3.93E-02 err=5.894E-04 dz=-4.691E-05 delz=-2.269E-02 dj=1.031E-03 chigam= 1.93E+02
+ r=  0 t=  2300 it= 18 chi2=1.50E+02 zm=-3.93E-02 err=4.575E-04 dz=-2.465E-05 delz=-2.946E-02 dj=1.339E-03 chigam= 1.93E+02
+ r=  0 t=  2300 it= 19 chi2=1.50E+02 zm=-3.94E-02 err=4.515E-04 dz=-8.150E-05 delz=-1.772E-02 dj=8.048E-04 chigam= 1.94E+02
+ r=  0 t=  2300 it= 20 chi2=1.51E+02 zm=-3.95E-02 err=3.775E-04 dz=-7.461E-05 delz=-2.057E-02 dj=9.347E-04 chigam= 1.94E+02
+ r=  0 t=  2300 it= 21 chi2=1.52E+02 zm=-3.95E-02 err=2.685E-04 dz=-2.946E-05 delz=-3.211E-02 dj=1.459E-03 chigam= 1.94E+02
+ r=  0 t=  2300 it= 22 chi2=1.52E+02 zm=-3.95E-02 err=2.194E-04 dz=-1.313E-05 delz=-3.515E-02 dj=1.597E-03 chigam= 1.94E+02
+ r=  0 t=  2300 it= 23 chi2=1.52E+02 zm=-3.95E-02 err=1.746E-04 dz=-6.033E-06 delz=-3.711E-02 dj=1.686E-03 chigam= 1.94E+02
+ r=  0 t=  2300 it= 24 chi2=1.53E+02 zm=-3.95E-02 err=1.370E-04 dz=-2.369E-06 delz=-3.826E-02 dj=1.738E-03 chigam= 1.94E+02
+ r=  0 t=  2300 it= 25 chi2=1.53E+02 zm=-3.95E-02 err=1.171E-04 dz=-2.250E-06 delz=-3.864E-02 dj=1.755E-03 chigam= 1.94E+02
+ r=  0 t=  2300 it= 26 chi2=1.53E+02 zm=-3.95E-02 err=9.308E-05 dz=-1.111E-06 delz=-3.913E-02 dj=1.778E-03 chigam= 1.95E+02
 WARNING in fit at r=  0, t=  2300: not converged, reached max iterations
 
        data used:   
@@ -54,11 +60,11 @@ WARNING in fit at r=  0, t=  2300: not converged, reached max iterations
 
  shot #   =     186610 time(ms) =       2300 chi**2   =  1.526E+02
  betat(%) =      0.362 betap    =      0.103 li       =      1.177
- vol(cm3) =  1.757E+07 rout(cm) =    172.758 zout(cm) =      4.318
+ vol(cm3) =  1.757E+07 rout(cm) =    172.758 zout(cm) =      4.317
  elong    =      1.785 utriang  =      0.736 ltriang  =      0.350
  a(cm)    =     56.227 lin(cm)  =     14.801 lout(cm) =      6.072
- ltop(cm) =     18.656 q*       =      4.000 rc(cm)   =    170.370
- zc(cm)   =     -3.485 bt0(t)   =      1.631 qout     =      6.936
+ ltop(cm) =     18.657 q*       =      4.000 rc(cm)   =    170.370
+ zc(cm)   =     -3.485 bt0(t)   =      1.631 qout     =      6.931
 
   fit errors, shot  186610  2300. msec. no eqdsks will be written
      Error #1, Chisq >    80.

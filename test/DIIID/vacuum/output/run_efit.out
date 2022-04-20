@@ -3,11 +3,11 @@
 
 Git repository url git@gitlab.com:efit-ai/efit.git
 
-Git branch main
+Git branch snap_mode
 
-Git hash 2218630 with local modifications
+Git hash aa95d83 with local modifications
 
-Simulation started on  3/19/2022 at 20:12:39
+Simulation started on  4/12/2022 at 15:37:16
 
 Code compiled with PGI 18.7.0
 
@@ -15,7 +15,7 @@ Code compiled with PGI 18.7.0
  type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
 
  type input file names:
- table_di2 = <../green/>
+ table_di2 = </home/bechtelt/efitall/efit/build_pgi_ser/test/DIIID/green/>
 
       ********************EFITAI 65 x  65  output ********************
  before save fitting weights

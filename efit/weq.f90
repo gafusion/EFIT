@@ -57,6 +57,12 @@
       ktime1=1
       mco2v=nco2v
       mco2r=nco2r
+      ! zero unused variables before write (for consistency)
+      if (keecur.le.0) then
+        keefnc=0
+        keeknt=0
+        eeknt=0.0
+      endif
 !----------------------------------------------------------------------
 !--   set fit type                                                   --
 !----------------------------------------------------------------------
@@ -443,6 +449,12 @@
       ijtime=time(jtime)
       mw=nw
       mh=nh
+      ! zero unused variables before write (for consistency)
+      if (keecur.le.0) then
+        keefnc=0
+        keeknt=0
+        eeknt=0.0
+      endif
 !
       if (keqdsk.eq.1) then
         wform='formatted'
@@ -464,15 +476,9 @@
 !
       plasma=cpasma(jtime)
       btor=bcentr(jtime)
-      do i=1,nsilop
-        coils(i)=csilop(i,jtime)
-      enddo
-      do i=1,magpri
-        expmp2(i)=cmpr2(i,jtime)
-      enddo
-      do i=1,nrogow
-        prexp(i)=crogow(i,jtime)
-      enddo
+      coils(1:nsilop)=csilop(1:nsilop,jtime)
+      expmp2(1:magpri)=cmpr2(1:magpri,jtime)
+      prexp(1:nrogow)=crogow(1:nrogow,jtime)
       nbsave=nbdry
       nbabs=nbbbs/min(mbdry,nbdrymx)+1
       jb=0
@@ -482,11 +488,7 @@
         zbdry(jb)=zbbbs(i)
       enddo
       nbdry=jb
-      if (kdopre.eq.0) then
-        do i=1,npress
-          pressr(i)=precal(i)
-        enddo
-      endif
+      if(kdopre.eq.0) pressr(1:npress)=precal(1:npress)
 !----------------------------------------------------------------------
 !--   set up the ion mass density profile if available               --
 !----------------------------------------------------------------------
@@ -554,21 +556,17 @@
       write (neqdsk,2020) zmaxis,xdum,ssibry,xdum,xdum
       write (neqdsk,2020) (fpol(i),i=1,nw)
       write (neqdsk,2020) (pres(i),i=1,nw)
-      do i=1,nw
-        if (pasmat(jtime).gt.0.0) then
-          workk(i)=-ffprim(i)
-        else
-          workk(i)=ffprim(i)
-        endif
-      enddo
+      if (pasmat(jtime).gt.0.0) then
+        workk(1:nw)=-ffprim(1:nw)
+      else
+        workk(1:nw)=ffprim(1:nw)
+      endif
       write (neqdsk,2020) (workk(i),i=1,nw)
-      do i=1,nw
-        if (pasmat(jtime).gt.0.0) then
-          workk(i)=-pprime(i)
-        else
-          workk(i)=pprime(i)
-        endif
-      enddo
+      if (pasmat(jtime).gt.0.0) then
+        workk(1:nw)=-pprime(1:nw)
+      else
+        workk(1:nw)=pprime(1:nw)
+      endif
       write (neqdsk,2020) (workk(i),i=1,nw)
       write (neqdsk,2020) ((psirz(i,j),i=1,nw),j=1,nh)
       write (neqdsk,2020) (qpsi(i),i=1,nw)
@@ -581,13 +579,11 @@
       write (neqdsk,2024) kvtor,rvtor,nmass
       if (kvtor.gt.0) then
         write (neqdsk,2020) (pressw(i),i=1,nw)
-        do i=1,nw
-          if (pasmat(jtime).gt.0.0) then
-            workk(i)=-pwprim(i)
-          else
-            workk(i)=pwprim(i)
-          endif
-        enddo
+        if (pasmat(jtime).gt.0.0) then
+          workk(1:nw)=-pwprim(1:nw)
+        else
+          workk(1:nw)=pwprim(1:nw)
+        endif
         write (neqdsk,2020) (workk(i),i=1,nw)
       endif
 !----------------------------------------------------------------------
@@ -599,13 +595,11 @@
       write (neqdsk,2020) (rhovn(i),i=1,nw)
       write (neqdsk,2026) keecur
       if (keecur.gt.0) then
-        do i=1,nw
-          if (pasmat(jtime).gt.0.0) then
-            workk(i)=-epoten(i)
-          else
-            workk(i)=epoten(i)
-          endif
-        enddo
+        if (pasmat(jtime).gt.0.0) then
+          workk(1:nw)=-epoten(1:nw)
+        else
+          workk(1:nw)=epoten(1:nw)
+        endif
         write (neqdsk,2020) (workk(i),i=1,nw)
       endif
 !
@@ -703,27 +697,25 @@
       write (neqdsk,basis)
       limitr=limitr+1
       MSE: if (kdomse.gt.0.or.kstark.gt.0) then
-        do i=1,nstark
-          if (kdomse.gt.0) then
-            tgamma(i)=cmgam(i,jtime)
-            tgammauncor(i) = tgamma(i)
-            sgamma(i)=tgamma(i)*0.05_dp
-          else
-            tgamma(i)=tangam(jtime,i)
-            tgammauncor(i)=tangam_uncor(jtime,i)
-            sgamma(i)=siggam(jtime,i)
-          endif
-          rrrgam(i)=rrgam(jtime,i)
-          zzzgam(i)=zzgam(jtime,i)
-          aa1gam(i)=a1gam(jtime,i)
-          aa2gam(i)=a2gam(jtime,i)
-          aa3gam(i)=a3gam(jtime,i)
-          aa4gam(i)=a4gam(jtime,i)
-          aa5gam(i)=a5gam(jtime,i)
-          aa6gam(i)=a6gam(jtime,i)
-          aa7gam(i)=a7gam(jtime,i)
-          aa8gam(i)=a8gam(jtime,i)
-        enddo
+        if (kdomse.gt.0) then
+          tgamma(1:nstark)=cmgam(1:nstark,jtime)
+          tgammauncor(1:nstark)=tgamma(1:nstark)
+          sgamma(1:nstark)=tgamma(1:nstark)*0.05_dp
+        else
+          tgamma(1:nstark)=tangam(jtime,1:nstark)
+          tgammauncor(1:nstark)=tangam_uncor(jtime,1:nstark)
+          sgamma(1:nstark)=siggam(jtime,1:nstark)
+        endif
+        rrrgam(1:nstark)=rrgam(jtime,1:nstark)
+        zzzgam(1:nstark)=zzgam(jtime,1:nstark)
+        aa1gam(1:nstark)=a1gam(jtime,1:nstark)
+        aa2gam(1:nstark)=a2gam(jtime,1:nstark)
+        aa3gam(1:nstark)=a3gam(jtime,1:nstark)
+        aa4gam(1:nstark)=a4gam(jtime,1:nstark)
+        aa5gam(1:nstark)=a5gam(jtime,1:nstark)
+        aa6gam(1:nstark)=a6gam(jtime,1:nstark)
+        aa7gam(1:nstark)=a7gam(jtime,1:nstark)
+        aa8gam(1:nstark)=a8gam(jtime,1:nstark)
         write (neqdsk,mseout)
         kkstark=nstark
         saisq=tsaisq(jtime)
@@ -733,22 +725,20 @@
 !--   Write out MSE-LS namelist                                       --
 !-----------------------------------------------------------------------
       if (mmbmsels.gt.0.or.kdomsels.gt.0) then         
-        do i=1,nmsels
-          if (kdomsels.gt.0) then
-            bmsels(i)=cmmls(jtime,i)
-            sbmsels(i)=0.05_dp*bmsels(i)
-          else
-            bmsels(i)=bmselt(jtime,i)
-            sbmsels(i)=sbmselt(jtime,i)
-          endif
-          rrmsels(i)=rrmselt(jtime,i)
-          zzmsels(i)=zzmselt(jtime,i)
-          l1msels(i)=l1mselt(jtime,i)
-          l2msels(i)=l2mselt(jtime,i)
-          l4msels(i)=l4mselt(jtime,i)
-          emsels(i)=emselt(jtime,i)
-          semsels(i)=semselt(jtime,i)
-        enddo
+        if (kdomsels.gt.0) then
+          bmsels(1:nmsels)=cmmls(jtime,1:nmsels)
+          sbmsels(1:nmsels)=0.05_dp*bmsels(1:nmsels)
+        else
+          bmsels(1:nmsels)=bmselt(jtime,1:nmsels)
+          sbmsels(1:nmsels)=sbmselt(jtime,1:nmsels)
+        endif
+        rrmsels(1:nmsels)=rrmselt(jtime,1:nmsels)
+        zzmsels(1:nmsels)=zzmselt(jtime,1:nmsels)
+        l1msels(1:nmsels)=l1mselt(jtime,1:nmsels)
+        l2msels(1:nmsels)=l2mselt(jtime,1:nmsels)
+        l4msels(1:nmsels)=l4mselt(jtime,1:nmsels)
+        emsels(1:nmsels)=emselt(jtime,1:nmsels)
+        semsels(1:nmsels)=semselt(jtime,1:nmsels)
         write (neqdsk,in_msels)
       endif
 !
@@ -781,21 +771,17 @@
                      real(xdum),real(xdum)
       write (neqdsk) (real(fpol(i)),i=1,nw)
       write (neqdsk) (real(pres(i)),i=1,nw)
-      do i=1,nw
-        if (pasmat(jtime).gt.0.0) then
-          workk(i)=-ffprim(i)
-        else
-          workk(i)=ffprim(i)
-        endif
-      enddo
+      if (pasmat(jtime).gt.0.0) then
+        workk(1:nw)=-ffprim(1:nw)
+      else
+        workk(1:nw)=ffprim(1:nw)
+      endif
       write (neqdsk) (real(workk(i)),i=1,nw)
-      do i=1,nw
-        if (pasmat(jtime).gt.0.0) then
-          workk(i)=-pprime(i)
-        else
-          workk(i)=pprime(i)
-        endif
-      enddo
+      if (pasmat(jtime).gt.0.0) then
+        workk(1:nw)=-pprime(1:nw)
+      else
+        workk(1:nw)=pprime(1:nw)
+      endif
       write (neqdsk) (real(workk(i)),i=1,nw)
       write (neqdsk) ((real(psirz(i,j)),i=1,nw),j=1,nh)
       write (neqdsk) (real(qpsi(i)),i=1,nw)
@@ -819,13 +805,11 @@
       write (neqdsk) (real(rhovn(i)),i=1,nw)
       write (neqdsk) keecur
       if (keecur.gt.0) then
-        do i=1,nw
-          if (pasmat(jtime).gt.0.0) then
-            workk(i)=-epoten(i)
-          else
-            workk(i)=epoten(i)
-          endif
-        enddo
+        if (pasmat(jtime).gt.0.0) then
+          workk(1:nw)=-epoten(1:nw)
+        else
+          workk(1:nw)=epoten(1:nw)
+        endif
         write (neqdsk) (real(workk(i)),i=1,nw)
       endif
 !jal 4/23/2004
@@ -858,10 +842,8 @@
         error=1.0e-04_dp
         enps=enp
         enp=0.5_dp
-        do i=1,nsilop
-          fwtsi(i)=1.
-          if (i.gt.nfcoil) fwtsi(i)=0.0
-        enddo
+        fwtsi(1:nfcoil)=1.
+        fwtsi((nfcoil+1):nsilop)=0.0
         itime=itime+1
         limitr=limitr-1
         let = 'x'

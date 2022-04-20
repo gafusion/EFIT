@@ -38,18 +38,18 @@ set(STORE_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of sources")
 
 set(IDEBUG "0" CACHE STRING "Debug output level (3 max)")
 if(IDEBUG GREATER 0)
-	set(DEBUG_LEVEL1 TRUE)
+  set(DEBUG_LEVEL1 TRUE)
 endif()
 if(IDEBUG GREATER 1)
-	set(DEBUG_LEVEL2 TRUE)
+  set(DEBUG_LEVEL2 TRUE)
 endif()
 if(IDEBUG GREATER 2)
-	set(DEBUG_LEVEL3 TRUE)
+  set(DEBUG_LEVEL3 TRUE)
 endif()
 
 set(JDEBUG "NONE" CACHE STRING "Further debug output from section")
 if(JDEBUG MATCHES "MSEL")
-	set(DEBUG_MSEL TRUE)
+  set(DEBUG_MSELS TRUE)
 endif()
 #---------------------------------------------------------------------
 # Set default values for performance issues if necessary
@@ -283,7 +283,9 @@ add_subdirectory(io)
 #---------------------------------------------------------------------
 # Add subdirectories 
 #---------------------------------------------------------------------
+if (HAVE_MDSPLUS)
 add_subdirectory(cerlib)
+endif()
 add_subdirectory(green)
 add_subdirectory(efit)
 

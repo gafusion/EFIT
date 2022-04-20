@@ -7,8 +7,6 @@
 #
 # If you don't want MPI (slower in serial) simply remove the FC=...
 #   and -DENABLE_PARALLEL... lines
-#
-# mselibs are not currently working
 
     module load cmake/3.8.2
     module load hdf5/1.8.19-mpich3.2-pgf18.7
@@ -25,8 +23,8 @@
     -DD3_LIB:PATH='/fusion/projects/codes/efit/dev/d3lib_gcc7/libd3share.a' \
     -DENABLE_MDSPLUS:BOOL=ON \
     -DMDSPLUS_DIR:PATH='/fusion/usc/src/mdsplus/mdsplus-stable_release-7-96-9' \
+    -DMSE_LIB:PATH='/fusion/projects/codes/mse/lib/libmse.a' \
     -DENABLE_PARALLEL:BOOL=ON \
     -DCMAKE_BUILD_TYPE:STRING=RELEASE \
     ..
 
-#    -DMSE_LIB:PATH='/fusion/projects/codes/mse/lib/libmse.a' \

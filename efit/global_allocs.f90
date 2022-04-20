@@ -30,7 +30,7 @@ ALLOCATE(racoil(nacoil),zacoil(nacoil), wacoil(nacoil), hacoil(nacoil), &
    pasmat(ntime),time(ntime),pbinj(ntime),ierpsi(nsilop), &
    ierpr(nrogow),iermpi(magpri),psibit(nsilop),prbit(nrogow), &
    bitmpi(magpri),vloopt(ntime),psiref(ntime),diamag(ntime), &
-   sigdia(ntime),psirefs(ntime),swtsi(nsilop),swtmp2(magpri), &
+   sigdia(ntime),swtsi(nsilop),swtmp2(magpri), &
    swtfc(nfcoil),swtec(nesum),bitfc(nfcoil),ierfc(nfcoil),bitec(nesum), &
    ierec(nesum),bitic(micoil),ieric(micoil), &
    tangam(ntime,nstark),siggam(ntime,nstark),a1gam(ntime,nstark), &
