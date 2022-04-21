@@ -115,7 +115,10 @@ pages:  # this job name has special meaning to GitLab
   tags:
     - name:hip.txcorp_efitai
   interruptible: true
+  variables:
+    PATH: /scratch/soft/bin:/scratch/soft/mpich/bin:/opt/rh/devtoolset-7/root/usr/bin:/usr/bin:/bin
   script:
+    - source /scratch/soft/sphinx_load.sh
     - mkdir build-docs && cd build-docs # Build out of place
     - ../share/config_examples/config_ci_hip.sh | tee config.log
     - make docs
