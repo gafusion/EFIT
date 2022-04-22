@@ -1,9 +1,7 @@
 # In order to build and run this version of EFIT on the system you must
 #   execute the following module commands:
 #
-#    module load intel/2018
-#
-# *the module does not match the compiler used but that is the only way that a working compilation can be achieved on Omega right now...
+#    module load intel/2020
 #
 # If you don't want MPI (slower in serial) simply remove the FC=...
 #   and -DENABLE_PARALLEL... lines

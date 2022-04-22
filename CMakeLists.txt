@@ -134,9 +134,7 @@ endif()
 #---------------------------------------------------------------------
 # Set compiler specific definitions and flags. Flags are set to 
 # good values for EFIT. Valid build types are Default, Debug, MinSizeRel
-# and Release. For the PGI compiler a custom build type FastBuild is 
-# defined to aid develpment without the fastsse flag. Set endian and 
-# underscore flags for all builds.
+# and Release. Set endian and underscore flags for all builds.
 #---------------------------------------------------------------------
 if (${CMAKE_Fortran_COMPILER_ID} MATCHES "Cray")
   option(__cray "using Cray FC Compiler" on)
@@ -202,7 +200,7 @@ elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "Intel")
   set(CMAKE_C_FLAGS_RELEASE "-Os")
   set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -g -check all -traceback")
   set(CMAKE_C_FLAGS_DEBUG "-O0 -g -traceback")
-elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "PGI")
+elseif ((${CMAKE_Fortran_COMPILER_ID} MATCHES "PGI") OR (${CMAKE_Fortran_COMPILER_ID} MATCHES "NVHPC"))
   option(__pgi "using PGI FC Compiler" on)
   set(CMAKE_Fortran_FLAGS "-Mextend -r8 ${CMAKE_Fortran_FLAGS}")
   if (NOT ${ENABLE_NATIVE_ENDIAN})
