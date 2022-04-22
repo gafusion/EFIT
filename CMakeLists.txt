@@ -31,6 +31,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/io)
 
 set(ENABLE_DOCS FALSE CACHE BOOL "Whether to build the docs or not.")
 set(ENABLE_PRODUCTION FALSE CACHE BOOL "This is meant to be installed.")
+set(TEST_EFUND True CACHE BOOL "Whether to run efund with tests.")
 
 set(TABLE_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of tables")
 set(INPUT_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of input files")
