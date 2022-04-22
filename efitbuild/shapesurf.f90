@@ -365,6 +365,10 @@
         jtwagap = 47
         njtwagap = 1
       endif
+      if (ishot.ge.187873)then
+        jtwagap = 48
+        njtwagap = 1
+      endif
       do j=jtwagap,jtwagap+njtwagap
         call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
               xlim(j),ylim(j),xlim(j+1),ylim(j+1),disnow)
