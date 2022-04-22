@@ -111,12 +111,15 @@
       
       ! Function to return desired values interpolated onto time array.
       ! Written: 3/2/01 by rjg
-      function interp_mtanh (ntime,time,goodie)
+      ! Revised: 3/23/04 by rjg to fix syntax error
+      function interp_mtanh (ntime,time,goodie) result(mtanh_out)
+!      function interp_mtanh (ntime,time,goodie) 
       implicit none
       integer, intent(in) :: ntime
       real, dimension(ntime), intent(in) :: time
       character(len=*) :: goodie
-      real, dimension(ntime) :: interp_mtanh
+      real, dimension(ntime) :: mtanh_out
+!      real, dimension(ntime) :: interp_mtanh
       real, dimension(:), pointer :: p_goodie
       real :: delta
       integer :: it
@@ -135,14 +138,16 @@
       if (.not. associated(p_goodie)) then
          print *,' Coding error: do not recognize ', goodie
          print *,' Returning zeros for interpolation'
-         interp_mtanh = 0
+         mtanh_out = 0
+!         interp_mtanh = 0
          return
       endif          
            
       do it = 1, ntime
          delta = (p_goodie(index(2,it)) - p_goodie(index(1,it)))  / &
                  (cached_time(index(2,it)) - cached_time(index(1,it))) 
-         interp_mtanh(it) = p_goodie(index(1,it)) +                 &
+!         interp_mtanh(it) = p_goodie(index(1,it)) +                 &
+         mtanh_out(it) = p_goodie(index(1,it)) +                 &
                  delta * (time(it) - cached_time(index(1,it)))
       enddo 
    
