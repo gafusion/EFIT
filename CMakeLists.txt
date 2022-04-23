@@ -214,6 +214,22 @@ elseif ((${CMAKE_Fortran_COMPILER_ID} MATCHES "PGI") OR (${CMAKE_Fortran_COMPILE
   set(CMAKE_C_FLAGS_MINSIZEREL "-O4 -fast") # no small compile options available
   set(CMAKE_Fortran_FLAGS_DEBUG "-g -O0 -Mbounds")
   set(CMAKE_C_FLAGS_DEBUG "-g -O0 -Mbounds")
+elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "Flang")
+  option(__clang "using Clang FC Compiler" on)
+  set(CMAKE_Fortran_FLAGS "-fdefault-real-8 ${CMAKE_Fortran_FLAGS}")
+  #  set(CMAKE_Fortran_FLAGS "-fno-second-underscore -fdefault-real-8 -fdefault-double-8 ${CMAKE_Fortran_FLAGS}") # these flags are part of the standard but appear to be unused...
+  if (NOT ${ENABLE_NATIVE_ENDIAN})
+    set(CMAKE_Fortran_FLAGS "-byteswapio ${CMAKE_Fortran_FLAGS}")
+  endif ()
+  set(CMAKE_Fortran_FLAGS_DEFAULT "-O")
+  set(CMAKE_C_FLAGS_DEFAULT "-O")
+  set(CMAKE_Fortran_FLAGS_RELEASE "-Ofast")
+  set(CMAKE_C_FLAGS_RELEASE "-Ofast")
+  set(CMAKE_Fortran_FLAGS_MINSIZEREL "-Oz")
+  set(CMAKE_C_FLAGS_MINSIZEREL "-Oz")
+  set(CMAKE_Fortran_FLAGS_DEBUG "-Og -g")
+  #  set(CMAKE_Fortran_FLAGS_DEBUG "-Og -g -fbounds-check -finit-real=nan -fbacktrace") # these flags are part of the standard, but appear to be unused...
+  set(CMAKE_C_FLAGS_DEBUG "-Og -g")
 endif ()
 
 # Remove fpic flags

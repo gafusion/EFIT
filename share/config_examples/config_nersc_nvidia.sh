@@ -6,44 +6,19 @@
 
 #rm -rf CMake*
 
-if ! module list 2>&1 | grep PrgEnv-cray 1>/dev/null 2>&1; then
-  echo Wrong programming environment. Should be PrgEnv-cray.
+if ! module list 2>&1 | grep PrgEnv-nvidia 1>/dev/null 2>&1; then
+  echo Wrong programming environment. Should be PrgEnv-nvidia.
   exit
 fi
 
 arch=unknown
 case $NERSC_HOST in
-  cori*)
-
-# Determine architecture from programming environment
-    comp=crayclang
-    math_ver=9.0
-    io_ver=10.0
-    arch=haswell
-    if modulecmd bash list 2>&1 | grep craype-mic-knl 1>/dev/null 2>&1; then
-      arch=mic_knl
-    fi
-    crayroot=/opt/cray/pe
-
-# System linear algebra
-    SYSTEM_BLAS_SER_LIB=${crayroot}/libsci/default/${comp}/${math_ver}/${arch}/lib/libsci_cray.a
-    SYSTEM_LAPACK_SER_LIB=$SYSTEM_BLAS_SER_LIB
-#    MKL_ROOT_DIR=/opt/intel/compilers_and_libraries_2020/linux/mkl
-
-# System IO libs
-#    # System hdf5 ser library broken on head nodes 8/19
-    SYSTEM_HDF5_SER_DIR=${crayroot}/hdf5/default/${comp}/${io_ver}
-#    SYSTEM_HDF5_PAR_DIR=${crayroot}/hdf5-parallel/default/${comp}/${io_ver}
-    SYSTEM_NETCDF_SER_DIR=${crayroot}/netcdf/default/${comp}/${io_ver}
-#    SYSTEM_NETCDF_PAR_DIR=${crayroot}/netcdf-hdf5parallel/default/${comp}/${io_ver}
-    ;;
-
   perlmutter*)
 
 # Determine architecture from programming environment
-    comp=crayclang
-    math_ver=9.0
-    io_ver=10.0
+    comp=nvidia
+    math_ver=20.7
+    io_ver=20.7
     arch=x86_64
     crayroot=/opt/cray/pe
 
