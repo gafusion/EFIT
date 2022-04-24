@@ -1605,8 +1605,8 @@
 
       if (jtime .gt. 0.0) then
 !---------------------------------------------------------------------
-!--   set up P' and FF', then integration                             --
-!--   ffprim = (RBt) * d/dpsi(RBt)                                    --
+!--   set up P' and FF', then integration                           --
+!--   ffprim = (RBt) * d/dpsi(RBt)                                  --
 !---------------------------------------------------------------------
       select case (icurrt)
       case (1)

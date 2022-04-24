@@ -24,6 +24,7 @@
       parameter (m_ext=101)
        
       character(len=1000) :: line
+      integer*8 :: n1d(1),n2d(2)
  
       real*8,allocatable :: gridpf(:,:),gwork(:,:),rgrids(:),zgrids(:)
       real*8,dimension(:),allocatable :: coils,expmp2,acoilc, &
@@ -41,7 +42,7 @@
       real*8,dimension(:),allocatable :: devxmpin,rnavxmpin, &
          devpsiin,rnavpsiin,devfcin,rnavfcin, &
          devein,rnavecin,brsptu
-      integer*4 :: nw_ext,nh_ext
+      real*8,dimension(:,:),allocatable :: psirz_temp
       real*8 :: c_ext,dr_ext,dz_ext,rc_ext,zc_ext,a_ext
       real*8 :: eup_ext,elow_ext,dup_ext,dlow_ext,setlim_ext
       real*8 :: r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max
@@ -521,7 +522,9 @@
       ecefit = 0.0 
       ecebzfit = 0.0 
 
-      geqdsk_ext = 'none' 
+      geqdsk_ext = 'none'
+      nw_ext = 0
+      nh_ext = 0
       psin_ext(1) = -1000.0 
       sign_ext = 1.0 
       cratio_ext = 1.0 
@@ -614,42 +617,55 @@
       close(unit=nin) 
 
 !--   Input FF', P' arrays
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      if(idebug /= 0) write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext 
-      read(nin,profile_ext,err=11777,iostat=istat) 
-      if(idebug /= 0) write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext 
-!      if (geqdsk_ext.ne.'none') then 
-!        open(unit=neqdsk,status='old',file=geqdsk_ext) 
-!        read (neqdsk,11775) (case_ext(i),i=1,6),nh_ext,nw_ext,nh_ext 
-!        do i = 1,2 
-!          read (neqdsk,11773) 
-!        enddo 
-!        read (neqdsk,11776) plasma_ext,c_ext,c_ext,c_ext,c_ext 
-!        read (neqdsk,11773) 
-!        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext) 
-!        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext) 
-!        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext) 
-!        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext) 
-!        read (neqdsk,11776) ((psirz_ext,i=1,nw_ext),j=1,nh_ext) 
-!        read (neqdsk,11776,err=11777) (qpsi_ext(i),i=1,nw_ext) 
-!        read (neqdsk,11774,err=11777) nbdry_ext,limitr_ext 
-!        read (neqdsk,11776,err=11777) (rbdry_ext(i),zbdry_ext(i),i=1,nbdry_ext) 
-!        read (neqdsk,11776,err=11777) (xlim_ext(i),ylim_ext(i),i=1,limitr_ext) 
-!11773   format (a) 
-!11774   format (2i5) 
-!11775   format (6a8,3i4) 
-!11776   format (5e16.9)
-!      endif
-11777 close(nin) 
-
-!--   Read Li beam data 
       open(unit=nin,status='old',file=ifname(jtime))
-      read (nin,inlibim,err=11237,end=11233) 
-11233 continue 
-11237 close(unit=nin) 
+#ifdef DEBUG_LEVEL1
+      write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext
+#endif
+      read(nin,profile_ext,err=11777,iostat=istat)
+#ifdef DEBUG_LEVEL1
+      write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext
+#endif
+      if (geqdsk_ext.ne.'none') then
+        open(unit=neqdsk,status='old',file=geqdsk_ext)
+        read (neqdsk,11775) (case_ext(i),i=1,6),nh_ext,nw_ext,nh_ext
+        allocate(psirz_temp(nw_ext,nh_ext),psirz_ext(nw_ext*nh_ext), &
+                 pprime_ext(nw_ext),ffprim_ext(nw_ext),qpsi_ext(nw_ext))
+        read (neqdsk,11773)
+        read (neqdsk,11776) c_ext,c_ext,simag_ext,psibry_ext,c_ext
+        read (neqdsk,11776) plasma_ext,c_ext,c_ext,c_ext,c_ext
+        read (neqdsk,11773)
+        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext)
+        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext)
+        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext)
+        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext)
+        read (neqdsk,11776) ((psirz_temp(i,j),i=1,nw_ext),j=1,nh_ext)
+        do i=1,nw
+          do j=1,nh
+            kk=(i-1)*nh+j
+            psirz_ext(kk)=psirz_temp(i,j)
+          enddo
+        enddo
+        read (neqdsk,11776,err=11777) (qpsi_ext(i),i=1,nw_ext)
+        read (neqdsk,11774,err=11777) nbdry_ext,limitr_ext
+        allocate(rbdry_ext(nbdry_ext),zbdry_ext(nbdry_ext), &
+                 xlim_ext(limitr_ext),ylim_ext(limitr_ext))
+        read (neqdsk,11776,err=11777) (rbdry_ext(i),zbdry_ext(i),i=1,nbdry_ext)
+        read (neqdsk,11776,err=11777) (xlim_ext(i),ylim_ext(i),i=1,limitr_ext)
+11773   format (a)
+11774   format (2i5)
+11775   format (6a8,3i4)
+11776   format (5e16.9)
+      endif
+11777 close(nin)
+
+!--   Read Li beam data
+      open(unit=nin,status='old',file=ifname(jtime))
+      read (nin,inlibim,err=11237,end=11233)
+11233 continue
+11237 close(unit=nin)
       else file_type
 !---------------------------------------------------------------------- 
-!--     HDF5 file mode                                                 -- 
+!--     HDF5 file mode                                               -- 
 !---------------------------------------------------------------------- 
 #if defined(USE_HDF5)
         inquire(file=trim(ifname(1)),exist=file_stat)
@@ -1305,8 +1321,6 @@
           call close_group("profile_ext",nid,h5err)
         endif
 
-        !H5: TODO: read neqdsk (from geqdsk_ext)?
-
         call test_group(sid,"inlibim",file_stat,h5err)
         if (file_stat) then
           call open_group(sid,"inlibim",nid,h5err)
@@ -1326,9 +1340,152 @@
         call close_group("time_slice",tid,h5err)
         call close_group("parameters",pid,h5err)
         call close_group("code",cid,h5err)
+
+        ! read previous solution if requested
+        if ((geqdsk_ext.ne.'none').or.(abs(icinit).eq.4)) then 
+          call test_group(eqid,"time_slice",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('inicur','time_slice group not found')
+            stop
+          endif
+          call open_group(eqid,"time_slice",tid,h5err)
+          write(line,"(I0)") jtime+rank-1
+          call test_group(tid,trim(line),file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('inicur',trim(line)//' group not found')
+            stop
+          endif
+          call open_group(tid,trim(line),sid,h5err)
+          call test_group(sid,"profiles_2d",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('inicur','profiles_2d group not found')
+            stop
+          endif
+          call open_group(sid,"profiles_2d",cid,h5err)
+          call test_group(cid,"0",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('inicur','0 group not found')
+            stop
+          endif
+          call open_group(cid,"0",nid,h5err)
+          call read_dims(nid,"psi",n2d,h5in,h5err)
+          nw_ext=int(n2d(1))
+          nh_ext=int(n2d(2))
+          allocate(psirz_ext(nw_ext*nh_ext),pprime_ext(nw_ext), &
+                   ffprim_ext(nw_ext),qpsi_ext(nw_ext))
+          call read_h5_sq(nid,"psi",psirz_ext,h5in,h5err)
+          psirz_ext=psirz_ext/twopi
+          call close_group("0",nid,h5err)
+          call close_group("profiles_2d",cid,h5err)
+          call test_group(sid,"global_quantities",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('inicur', &
+                             'global_quantities group not found')
+            stop
+          endif
+          call open_group(sid,"global_quantities",nid,h5err)
+          call read_h5_ex(nid,"psi_axis",simag_ext,h5in,h5err)
+          simag_ext=simag_ext/twopi
+          call read_h5_ex(nid,"psi_boundary",psibry_ext,h5in,h5err)
+          psibry_ext=psibry_ext/twopi
+          call read_h5_ex(nid,"ip",plasma_ext,h5in,h5err) ! H5: could be missing twopi...
+          call close_group("global_quantities",nid,h5err)
+          call test_group(sid,"boundary",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('inicur','boundary group not found')
+            stop
+          endif
+          call open_group(sid,"boundary",cid,h5err)
+          call test_group(cid,"outline",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('inicur','outline group not found')
+            stop
+          endif
+          call open_group(cid,"outline",nid,h5err)
+          call read_dims(nid,"r",n1d,h5in,h5err)
+          nbdry_ext=int(n1d(1))
+          allocate(rbdry_ext(nbdry_ext),zbdry_ext(nbdry_ext))
+          call read_h5_ex(nid,"r",rbdry_ext,h5in,h5err)
+          call read_h5_ex(nid,"z",zbdry_ext,h5in,h5err)
+          call close_group("outline",nid,h5err)
+          call close_group("boundary",cid,h5err)
+          call test_group(sid,"profiles_1d",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('inicur','profiles_1d group not found')
+            stop
+          endif
+          call open_group(sid,"profiles_1d",nid,h5err)
+          call read_h5_ex(nid,"dpressure_dpsi",pprime_ext,h5in,h5err)
+          pprime_ext=pprime_ext*twopi
+          call read_h5_ex(nid,"f_df_dpsi",ffprim_ext,h5in,h5err)
+          ffprim_ext=ffprim_ext*twopi
+          call read_h5_ex(nid,"q",qpsi_ext,h5in,h5err)
+          call close_group("profiles_1d",nid,h5err)
+          call close_group(trim(line),sid,h5err)
+          call close_group("time_slice",tid,h5err)
+          call close_group("equilibrium",eqid,h5err)
+
+          call test_group(rootgid,"wall",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','wall group not found')
+            stop
+          endif
+          call open_group(rootgid,"wall",eqid,h5err)
+          call test_group(eqid,"description_2d",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input', &
+                             'description_2d group not found')
+            stop
+          endif
+          call open_group(eqid,"description_2d",cid,h5err)
+          call test_group(cid,"0",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','0 group not found')
+            stop
+          endif
+          call open_group(cid,"0",pid,h5err)
+          call test_group(pid,"limiter",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','limiter group not found')
+            stop
+          endif
+          call open_group(pid,"limiter",tid,h5err)
+          call test_group(tid,"unit",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','unit group not found')
+            stop
+          endif
+          call open_group(tid,"unit",sid,h5err)
+          call test_group(sid,"0",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','0 group not found')
+            stop
+          endif
+          call open_group(sid,"0",fid,h5err)
+          call test_group(fid,"outline",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','outline group not found')
+            stop
+          endif
+          call open_group(fid,"outline",nid,h5err)
+          call read_dims(nid,"r",n1d,h5in,h5err)
+          limitr_ext = int(n1d(1))
+          allocate(xlim_ext(limitr_ext),ylim_ext(limitr_ext))
+          call read_h5_ex(nid,"r",xlim_ext,h5in,h5err)
+          call read_h5_ex(nid,"z",ylim_ext,h5in,h5err)
+          call close_group("outline",nid,h5err)
+          call close_group("0",fid,h5err)
+          call close_group("unit",sid,h5err)
+          call close_group("limiter",tid,h5err)
+          call close_group("0",pid,h5err)
+          call close_group("description_2d",cid,h5err)
+          call close_group("wall",eqid,h5err)
+
+          call open_group(rootgid,"equilibrium",eqid,h5err)
+        endif
+
         call close_group("equilibrium",eqid,h5err)
         call close_h5file(fileid,rootgid,h5err)
-
 #else
         ! this code should not be reachable
         call errctrl_msg('data_input','HDF5 needs to be linked')
@@ -1449,44 +1606,15 @@
 !---------------------------------------------------------------------- 
 !--   Input FF', P' arrays
 !---------------------------------------------------------------------- 
-! H5: should this come from OMAS file? (need to replace go to 11777...)
-      if (geqdsk_ext.ne.'none') then 
-        open(unit=neqdsk,status='old',file=geqdsk_ext) 
-        read (neqdsk,11775) (case_ext(i),i=1,6),nh_ext,nw_ext,nh_ext 
+      if ((geqdsk_ext.ne.'none').and.(abs(icinit).ne.4)) then 
         npsi_ext=nw_ext 
 #ifdef DEBUG_LEVEL1
-        write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext,nw_ext
+        write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext,nw_ext 
 #endif
-        do i = 1,2 
-          read (neqdsk,11773) 
-        enddo 
-        read (neqdsk,11776) plasma_ext,c_ext,c_ext,c_ext,c_ext 
         if (plasma_ext > 0.0) then 
           sign_ext = -1.0 
         endif 
-        read (neqdsk,11773) 
-        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext) 
-        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext) 
         prbdry=pprime_ext(nw_ext) 
-        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext) 
-        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext) 
-        read (neqdsk,11776) ((psirz_ext,i=1,nw_ext),j=1,nh_ext) 
-        read (neqdsk,11776,err=11778) (qpsi_ext(i),i=1,nw_ext) 
-        read (neqdsk,11774,err=11778) nbdry_ext,limitr_ext 
-        read (neqdsk,11776,err=11778) (rbdry_ext(i),zbdry_ext(i),i=1,nbdry_ext) 
-        read (neqdsk,11776,err=11778) (xlim_ext(i),ylim_ext(i),i=1,limitr_ext) 
-11773   format (a) 
-11774   format (2i5) 
-11775   format (6a8,3i4) 
-11776   format (5e16.9)
-!      if (geqdsk_ext.ne.'none') then 
-!        npsi_ext=nw_ext 
-!        if (idebug /= 0) write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext, & 
-!          nw_ext 
-!        if (plasma_ext > 0.0) then 
-!          sign_ext = -1.0 
-!        endif 
-!        prbdry=pprime_ext(nw_ext) 
         write_boundary: if (nbdry.le.0) then 
           nbabs_ext=nbdry_ext/mbdry1+1 
           jb_ext=0 
@@ -1535,7 +1663,6 @@
           ylim(1:limitr_ext)=ylim_ext(1:limitr_ext)-1.e-10_dp
         endif
       endif
-11778 continue
 #ifdef DEBUG_LEVEL1
       write (nttyo,*) 'npsi_ext=',npsi_ext
 #endif
@@ -2377,10 +2504,10 @@
         enddo 
       endif
 ! 
-!     if (brsptu(1).le.-1.e-20_dp) & 
-!        brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil) 
-      if (brsptu(1).gt.-1.e-20_dp) & 
-         brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil) 
+!     if(brsptu(1).le.-1.e-20_dp) & 
+!       brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil) 
+      if((brsptu(1).gt.-1.e-20_dp).and.(abs(icinit).ne.4)) & 
+        brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil) 
       reflux=silopt(jtime,iabs(nslref)) 
       do m=1,nsilop 
         tdata1=errsil*abs(silopt(jtime,m)-reflux) 

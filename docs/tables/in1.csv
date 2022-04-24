@@ -1,7 +1,7 @@
 ﻿Variable, Default, Description
 ACOILC,, ADP ring?
 AELIP, 0.60, """A Ellipse"". Minor radius in meters of ellipse for current initialization."
-ALPHAFP, 0.0,"| Describes the width of the scrapeoff layer in which the halo currents flow. (Must set ICUTFP=2?)
+ALPHAFP, 0.0,"| Describes the width of the scrapeoff layer in which the halo currents flow. (When ICUTFP=2)
 | 0<= ALPHAFP <=1
 | 1 = zero thickness,
 | 0 = current layer extends either to the first separatrix surface surrounding the last 
@@ -67,7 +67,9 @@ ICALBET,1, "| - >0 compute beta with various normalizations and output to FITOUT
 ICINIT,,"| ""(Integer flag) Current Initialization"". Plasma current profile initialization parameter.
 | - 1 = elliptical and uniform flux surface (EELIP,AELIP,RELIP,ZELIP).
 | - 2 = elliptical and parabolic for all timeslices (default) .
+| - 4 = use previous solution from geqdsk_ext or hdf5 file for all timeslices.
 | - -2 = use information from ESAVE.DAT (from a previous EFIT run) first timeslice and previous timeslice subsequently.
+| - -4 = use previous solution from geqdsk_ext or hdf5 file for first timeslice and previous timeslice subsequently.
 | - -12= elliptical and parabolic first timeslice and previous timeslice subsequently."
 ICNTOUR,,"""(Integer flag) Contour"".
 | - + = bypass CNTOUR routine."
@@ -81,9 +83,8 @@ ICONVR,,"| Specify solution mode
 | - 2 = fitting mode until chisq reverse, must satisfy minimum error errmin and minimum number of iterations, as well as a minimum chisq (default).
 | - 3 = equilibrium mode.
 | - = Green's table calculations for -ICONVR filaments and write file RPFXX.DAT for use with MFIT."
-ICUTFP,-2,"| - 2 = to allow force-free current to flow in scrape-off layer.
-| - 0 = ???
-| - See also ALPHAFP."
+ICUTFP,0,"| - 0 = enforce vacuum outside of LCFS (Default).
+| - 2 = to allow force-free current to flow in scrape-off layer (width set by ALPHAFP)."
 ICURRT,,"| ""(Integer flag) Current"". Which current profile parametrization to use
 | - 1 = not implemented.
 | - 2 = linear polynomials for P' and FF' or spline(default).
