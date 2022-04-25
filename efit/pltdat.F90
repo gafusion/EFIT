@@ -9236,7 +9236,7 @@
 !
       return
  8948 format (a25)
- 8950 format (1x,1('h'),'EFITAI',a3,' x',a3,' ',a10,1('h'))
+ 8950 format (1x,1('h'),'EFIT-AI ',a4,' x ',a4,' ',a10,1('h'))
  8960 format (' date ran = ',a10)
  9000 format (' shot #   = ',i10)
  9002 format (' shot #   = ',i10,' date ran = ',a10)
