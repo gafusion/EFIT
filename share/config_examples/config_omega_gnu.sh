@@ -1,7 +1,6 @@
 # If you don't want MPI (slower in serial) simply remove the FC=...
 #   and -DENABLE_PARALLEL... lines
 #
-# MDS+ segfaults so it is cannot used
 # mselibs have not been build for GNU yet
 
     export CC=/usr/bin/gcc

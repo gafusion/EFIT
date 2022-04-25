@@ -3,6 +3,7 @@
 !
    MODULE mds_mtanh
 
+!!!!!!   use hpalias
    implicit none
 
    private
@@ -79,8 +80,8 @@
       SUBROUTINE Mtanh_Ts_Init (self, ishot, cdata, err) 
                                                                         
       use mds_rg
+      use mdslib
       IMPLICIT NONE 
-      Include 'mdslib.inc' 
 
                                                                         
       ! Data passed via argument list                                 
