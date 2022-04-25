@@ -226,8 +226,8 @@
       end module var_zcntrl
 !var_updown
       module var_updown
-        logical vfeed,symmetrize,backaverage
         real*8 dpsip,dpsip_last
+        logical vfeed,symmetrize,backaverage
         data vfeed/.false./
       end module var_updown
 !var_test
@@ -441,7 +441,6 @@
         real*8,dimension(:,:), allocatable :: rseps,zseps
         real*8 pasman,betatn,psiq1,betat2
         integer*4 jtwagap
-        data jtwagap/59/
       end module var_hist
 !var_hist2
       module var_hist2

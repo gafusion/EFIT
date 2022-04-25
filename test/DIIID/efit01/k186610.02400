@@ -1052,7 +1052,7 @@
  PNBEAM =    0.000000000000000     ,
  ERROR =   1.0000000000000000E-004,
  ERRMIN =   1.0000000000000000E-004,
- MXITER =           25,
+ MXITER =           -25,
  XLTYPE_180 =    0.000000000000000     ,
  ICUTFP =            0,
  KEQDSK =            1,
@@ -5045,7 +5045,7 @@
  ifitdelz = 3                                                                                       
  ERROR = 0.0001                                                                                     
  ERRMIN = 0.0001                                                                                    
- MXITER = 25                                                                                        
+ MXITER = -25                                                                                        
  FCURBD = 0.0                                                                                       
  PCURBD = 0.0                                                                                       
  KCALPA = 1                                                                                         

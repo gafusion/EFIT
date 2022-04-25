@@ -393,7 +393,7 @@
          ENDDO
       ENDIF
 !
- 100  format(' Array dimensions', 2i6 ,' too large. Recompile.')
+ 100  format(' Array dimensions', 2i5 ,' too large. Recompile.')
       RETURN
       END SUBROUTINE SDECM
 

@@ -1,26 +1,50 @@
 #!/bin/bash
 OUTPUT_STORE_DIR=@CMAKE_CURRENT_SOURCE_DIR@/output
 BINDIR=@CMAKE_BINARY_DIR@
+sufix=@GRID_SIZE@@GRID_SIZE@.ddd
 
-# Check to see if files exist
+# Make clean subdirectory to store computed tables
+if test -d green; then
+  rm -r green
+fi
+mkdir green
+
+# Copy machine files to this directory in case we want to run with built tables
+# (this makes directory messy, but I don't see a better option)
+for file in btcomp.dat ccoil.ddd ccomp.dat dcoef.dat fitweight.dat icomp.dat lim.dat n1coil.dat; do
+  if test -e ../${file}; then
+    cp ../${file} .
+  fi
+done
+
+# Check to see if files exist, if so move it to subdirectory and replace with stored result
 for file in mhdout.dat dprobe.dat rfcoil.ddd brzgfc.dat; do
-  if ! test -e ${file}; then
+  if test -e ${file}; then
+    mv ${file} green
+    cp ${OUTPUT_STORE_DIR}/${file} .
+  else
     echo "File does not exist: ${file}"
     exit 1
   fi
 done
 
 for prefix in ec ep re; do
-  if ! test -e ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd; then
-    echo "File does not exist: ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd"
+  if test -e ${prefix}${sufix}; then
+    mv ${prefix}${sufix} green
+    cp ${OUTPUT_STORE_DIR}/${prefix}${sufix} .
+  else
+    echo "File does not exist: ${prefix}${sufix}"
     exit 1
   fi
 done
 
 if [ @IS_DIIID@ = True ]; then
   for prefix in fc ra rv; do
-    if ! test -e ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd; then
-      echo "File does not exist: ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd"
+    if test -e ${prefix}${sufix}; then
+      mv ${prefix}${sufix} green
+      cp ${OUTPUT_STORE_DIR}/${prefix}${sufix} .
+    else
+      echo "File does not exist: ${prefix}${sufix}"
       exit 1
     fi
   done

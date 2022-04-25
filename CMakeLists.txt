@@ -31,6 +31,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/io)
 
 set(ENABLE_DOCS FALSE CACHE BOOL "Whether to build the docs or not.")
 set(ENABLE_PRODUCTION FALSE CACHE BOOL "This is meant to be installed.")
+set(TEST_EFUND True CACHE BOOL "Whether to run efund with tests.")
 
 set(TABLE_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of tables")
 set(INPUT_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of input files")
@@ -133,9 +134,7 @@ endif()
 #---------------------------------------------------------------------
 # Set compiler specific definitions and flags. Flags are set to 
 # good values for EFIT. Valid build types are Default, Debug, MinSizeRel
-# and Release. For the PGI compiler a custom build type FastBuild is 
-# defined to aid develpment without the fastsse flag. Set endian and 
-# underscore flags for all builds.
+# and Release. Set endian and underscore flags for all builds.
 #---------------------------------------------------------------------
 if (${CMAKE_Fortran_COMPILER_ID} MATCHES "Cray")
   option(__cray "using Cray FC Compiler" on)
@@ -201,7 +200,7 @@ elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "Intel")
   set(CMAKE_C_FLAGS_RELEASE "-Os")
   set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -g -check all -traceback")
   set(CMAKE_C_FLAGS_DEBUG "-O0 -g -traceback")
-elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "PGI")
+elseif ((${CMAKE_Fortran_COMPILER_ID} MATCHES "PGI") OR (${CMAKE_Fortran_COMPILER_ID} MATCHES "NVHPC"))
   option(__pgi "using PGI FC Compiler" on)
   set(CMAKE_Fortran_FLAGS "-Mextend -r8 ${CMAKE_Fortran_FLAGS}")
   if (NOT ${ENABLE_NATIVE_ENDIAN})
@@ -215,6 +214,22 @@ elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "PGI")
   set(CMAKE_C_FLAGS_MINSIZEREL "-O4 -fast") # no small compile options available
   set(CMAKE_Fortran_FLAGS_DEBUG "-g -O0 -Mbounds")
   set(CMAKE_C_FLAGS_DEBUG "-g -O0 -Mbounds")
+elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "Flang")
+  option(__clang "using Clang FC Compiler" on)
+  set(CMAKE_Fortran_FLAGS "-fdefault-real-8 ${CMAKE_Fortran_FLAGS}")
+  #  set(CMAKE_Fortran_FLAGS "-fno-second-underscore -fdefault-real-8 -fdefault-double-8 ${CMAKE_Fortran_FLAGS}") # these flags are part of the standard but appear to be unused...
+  if (NOT ${ENABLE_NATIVE_ENDIAN})
+    set(CMAKE_Fortran_FLAGS "-byteswapio ${CMAKE_Fortran_FLAGS}")
+  endif ()
+  set(CMAKE_Fortran_FLAGS_DEFAULT "-O")
+  set(CMAKE_C_FLAGS_DEFAULT "-O")
+  set(CMAKE_Fortran_FLAGS_RELEASE "-Ofast")
+  set(CMAKE_C_FLAGS_RELEASE "-Ofast")
+  set(CMAKE_Fortran_FLAGS_MINSIZEREL "-Oz")
+  set(CMAKE_C_FLAGS_MINSIZEREL "-Oz")
+  set(CMAKE_Fortran_FLAGS_DEBUG "-Og -g")
+  #  set(CMAKE_Fortran_FLAGS_DEBUG "-Og -g -fbounds-check -finit-real=nan -fbacktrace") # these flags are part of the standard, but appear to be unused...
+  set(CMAKE_C_FLAGS_DEBUG "-Og -g")
 endif ()
 
 # Remove fpic flags

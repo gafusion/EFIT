@@ -249,7 +249,7 @@
       ! Local variables
       logical file_exists
       character(len=100) filename
-      integer*4 iostat,file_shot,ntimes,issyn,l_ntimes
+      integer*4 ioerr,file_shot,ntimes,issyn,l_ntimes
       real*4 l_time(ntimes),l_bbmls(ntimes), &
              l_rrmls(ntimes),l_zzmls(ntimes),l_L1mls(ntimes), &
              l_L2mls(ntimes),l_L4mls(ntimes),l_epotpmls(ntimes), &
@@ -281,9 +281,9 @@
       endif
 
       ! Read the data
-      open(unit=1,file=filename,iostat=iostat)
+      open(unit=1,file=filename,iostat=ioerr)
 #ifdef DEBUG_LEVEL1
-      write(*,101) 'iostat: ',iostat
+      write(*,101) 'iostat: ',ioerr
 #endif
       ! Read the shot number in the file
       read(1,*) file_shot

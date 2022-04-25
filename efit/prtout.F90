@@ -670,11 +670,12 @@
 !!
 !**********************************************************************
       subroutine prtoutheader()
+      include 'eparm.inc'
       include 'modules1.inc'
 
       if (itek.le.0) then
         if (rank == 0) then
-          write (nttyo,10000) trim(ch1),trim(ch2)
+          write (nttyo,10001) nw,nh
         end if
       end if
 
@@ -683,4 +684,5 @@
       end if
 
 10000 format(/,6x,20('*'),'EFITAI',a3,' x ',a3,'  output ',20('*'))
+10001 format(/,20('*'),' EFIT-AI ',i0,' x ',i0,' grid ',20('*'))
       end subroutine prtoutheader

@@ -78,7 +78,6 @@
         PARAMETER (NPOINT=42)
         REAL*8 RAR,TTEMP
         REAL*4 RAR4,REAL32
-        INTEGER*2 IIPOINT(5)
         INTEGER*4 IDAT,IAR,ASCII,INT16,INT32
         DIMENSION DIAMAG(NTIMS,3),DIAMAGC(NTIMS,3),SIG(NTIMS,3)
         DIMENSION TIM(NTIMS),TTEMP(NTIMS)
@@ -93,7 +92,6 @@
         CHARACTER*100 FILIN
         CHARACTER*10 POINT(NPOINT),IPOINT,DNAME(3),DNAMES(3)
 
-        EQUIVALENCE (IIPOINT,IPOINT)
         DATA SOURCE/'.PLA'/
         DATA DNAME/'DIAMAG1   ','DIAMAG2   ','DIAMAG3   '/
         DATA DNAMES/'DIAMAG1S  ','DIAMAG2S  ','DIAMAG3S  '/
@@ -202,8 +200,8 @@
           IERR(J)=0
           IPOINT=DNAME(J)
           RAR4=REAL(RAR,R4)
-          CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR, &
-                      RAR4,ASCII,INT16,INT32,REAL32)
+          CALL PTDATA(ITYP,NSHOT,%ref(SOURCE),%ref(IPOINT),IDAT,IER, &
+                      IAR,RAR4,ASCII,INT16,INT32,REAL32)
           RAR=REAL(RAR4,DP)
           IF (IER.NE.0 .AND. IER.NE.2 .AND. IER.NE.4) THEN
             WRITE (6,1012)
@@ -253,13 +251,13 @@
           ENDIF
           IF ((ISHOT .GE. 83350) .AND. (I .GE. 24)) THEN 
             RAR4=REAL(RAR,R4)
-            CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR, &
-                      RAR4,ASCII,INT16,INT32,REAL32)
+            CALL PTDATA(ITYP,NSHOT,%ref(SOURCE),%ref(IPOINT),IDAT,IER, &
+                        IAR,RAR4,ASCII,INT16,INT32,REAL32)
             RAR=REAL(RAR4,DP)
           ELSEIF ((ISHOT .LT. 83350) .AND. (I .LT. 24)) THEN 
             RAR4=REAL(RAR,R4)
-            CALL PTDATA(ITYP,NSHOT,SOURCE,IIPOINT,IDAT,IER,IAR, &
-                      RAR4,ASCII,INT16,INT32,REAL32)
+            CALL PTDATA(ITYP,NSHOT,%ref(SOURCE),%ref(IPOINT),IDAT,IER, &
+                        IAR,RAR4,ASCII,INT16,INT32,REAL32)
             RAR=REAL(RAR4,DP)
           ENDIF
           if (ier.ne.0 .and. ier.ne.2 .and. ier.ne.4) then

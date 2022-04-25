@@ -1756,7 +1756,7 @@
         integer*4 :: i,j,ktime_all,offset,stoff,endoff,nsize,nsize2
         integer*4,dimension(:),allocatable :: tmp1,tmp2
         double precision :: timeb_list(nproc), &
-                zwork(5+nsilop+magpri+nfcoil+nesum+magpri+nsilop+nfcoil), &
+                zwork(4+nsilop+magpri+nfcoil+nesum+magpri+nsilop+nfcoil), &
                 zwork2(18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum,ntime)
                 
 
@@ -1768,7 +1768,7 @@
 #endif
 
         zwork2 = 0.0
-        nsize=5+nsilop+magpri+nfcoil+nesum+magpri+nsilop+nfcoil
+        nsize=4+nsilop+magpri+nfcoil+nesum+magpri+nsilop+nfcoil
         nsize2=18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum
         allocate(tmp1(nproc),tmp2(nproc))
 
@@ -1839,12 +1839,7 @@
           zwork(2) = real(limitr,dp)  ! INT4  (1)
           zwork(3) = bitip         ! REAL8 (1)
           zwork(4) = rcentr        ! REAL8 (1)
-          if (oldccomp) then
-             zwork(5) = 1._dp
-          else
-             zwork(5) = 0._dp
-          endif
-          stoff = 5 + 1
+          stoff = 4 + 1
           endoff = stoff + nsilop - 1
           zwork(stoff:endoff) = psibit(1:nsilop)  ! REAL8 (nsilop)
           stoff = endoff + 1
@@ -1882,12 +1877,7 @@
           limitr = int(zwork(2))
           bitip  = zwork(3)
           rcentr = zwork(4)
-          if (abs(zwork(5))<1.e-8_dp) then  
-            oldccomp = .false.
-          else
-            oldccomp = .true.
-          endif
-          stoff = 5 + 1
+          stoff = 4 + 1
           endoff = stoff + nsilop - 1
           psibit(1:nsilop) = zwork(stoff:endoff)
           stoff = endoff + 1
