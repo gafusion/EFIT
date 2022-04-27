@@ -67,9 +67,9 @@ ICALBET,1, "| - >0 compute beta with various normalizations and output to FITOUT
 ICINIT,,"| ""(Integer flag) Current Initialization"". Plasma current profile initialization parameter.
 | - 1 = elliptical and uniform flux surface (EELIP,AELIP,RELIP,ZELIP).
 | - 2 = elliptical and parabolic for all timeslices (default) .
-| - 4 = use previous solution from geqdsk_ext or hdf5 file for all timeslices.
 | - -2 = use information from ESAVE.DAT (from a previous EFIT run) first timeslice and previous timeslice subsequently.
-| - -4 = use previous solution from geqdsk_ext or hdf5 file for first timeslice and previous timeslice subsequently.
+| - -4 = use previous solution from geqdsk_ext or hdf5 file for all timeslices.
+| - -5 = use previous solution from geqdsk_ext or hdf5 file for first timeslice and previous timeslice subsequently.
 | - -12= elliptical and parabolic first timeslice and previous timeslice subsequently."
 ICNTOUR,,"""(Integer flag) Contour"".
 | - + = bypass CNTOUR routine."
@@ -268,6 +268,7 @@ PSIWANT,1.0,"Normalized flux value of surface where J constraint is desired. See
 QEMP,0.0,GAQ something.
 QENP,0.95,On axis q value for GAQ current profile ICURRT=4
 QVFIT,0.95,"""q Value Fit"". Axial q value for fitting. See FWTQA."
+RBDRY,0.0,Major radius coordinates of boundary.
 RBOUND,0.0,"""Radius Boundary"". Initial guess for radius in meters for tracing boundary. See also ZBOUND."
 RCENTR, 1.6955,"""Radius Center"". R of vacuum toroidal field in meters. (How do you know this??)"
 RELAX,-1.,"Equilibrium relaxation parameter (0<=RELAX<=1). Affects speed of convergence; 
@@ -346,6 +347,7 @@ XLTYPE_180, 0.0,"| - Inward distance of 180 degree outside limiter in cm.
 | - - = read from PTDATA if available, otherwise 0.0.
 | - + = specified."
 YLIM, ,"""Y Limiter"". Z of limiter contour in meters. See also XLIM."
+ZBDRY,0.0,Vertical coordinates of boundary.
 ZBOUND,0.0,"""Z Boundary"". Initial guess of Z location in meters for tracing boundary. See also RBOUND."
 ZEFFVS,,Zeff for kinetic fitting. (from ONETWO?)
 ZION,,"if nptionf > 100, zion = zteth"

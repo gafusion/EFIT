@@ -1069,9 +1069,9 @@
 !-----------------------------------------------------------------------
 !--   icinit=1 uniform and elliptical flux surfaces
 !--          2 parabolic and elliptical
-!--          4 use previous solution (geqdsk_ext or hdf5) for every time
 !--         -2 use ESAVE.DAT at first slice and previous slice later
-!--         -4 use previous solution for first slice only
+!--         -4 use previous solution (geqdsk_ext or hdf5) for every time
+!--         -5 use previous solution for first slice only
 !--        -12 parabolic and elliptical first slice and previous
 !--            slice subsequently
 !-----------------------------------------------------------------------
@@ -1080,8 +1080,8 @@
         if(jtime.gt.1) return
         if (isicinit.eq.-12) then
           icinit=2
-        elseif (isicinit.eq.-4) then
-          icinit=4
+        elseif (isicinit.eq.-5) then
+          icinit=-4
         endif
       endif
 !
@@ -1161,6 +1161,10 @@
              status='old',iostat=ioerr)
         if (ioerr.eq.0) then 
           read (nsave) mw,mh
+          if ((mw.ne.nw.or.mh.ne.nh)) then
+            call errctrl_msg('inicur','esave dimensions do not match')
+            stop
+          endif
           read (nsave) xpsi
           read (nsave) brsp
           read (nsave) www
@@ -1168,9 +1172,10 @@
           close(unit=nsave)
         endif
 !
-      case (4)
-        if ((kdata.eq.2).and.(nw_ext.le.0.or.nh_ext.le.0)) then
-          call errctrl_msg('inicur','geqdsk_ext not properly set')
+      case (-4)
+        if ((nw_ext.ne.nw.or.nh_ext.ne.nh)) then
+          call errctrl_msg('inicur', &
+                           'previous case had different dimensions')
           stop
         endif
 
@@ -1214,6 +1219,9 @@
           stop
         endif
 
+        ! need to use computed fcoil currents
+        brsp(1:nfcoil)=fcoil_ext
+
         ! fix signs
         ! note: plasma_ext does not appear to be useful for this...
         if (pasmat(jtime).gt.0.0) then
@@ -1232,6 +1240,9 @@
           call errctrl_msg('inicur','icurrt/=2 not set up')
           stop
         endif
+      case default
+        call errctrl_msg('inicur','icinit value not recognized')
+        stop
       end select
       if(jtime.eq.1) icinit=isicinit
       return

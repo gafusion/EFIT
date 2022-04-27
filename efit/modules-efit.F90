@@ -485,8 +485,8 @@
       module var_cpsi
         real*8,dimension(:),allocatable :: psi,xpsi,vfbrrt,psipla
         real*8 vcurfb(3)
-        real*8 psibry,simag,sidif,eouter,zplasm,zpwant,vertfb,difpsi &
-               ,cupdown
+        real*8 psibry,simag,sidif,eouter,zplasm,zpwant,vertfb,difpsi, &
+               cupdown
         data vertfb/0./,cupdown/-100000./ 
       end module var_cpsi
 !var_cvalue
@@ -532,7 +532,7 @@
         real*8,dimension(2049) :: bfp_ext,cfp_ext,dfp_ext
         real*8,dimension(:),allocatable :: rbdry_ext,zbdry_ext,xlim_ext, &
                                            ylim_ext,psirz_ext,pprime_ext,&
-                                           ffprim_ext,qpsi_ext
+                                           ffprim_ext,qpsi_ext,fcoil_ext
         real*8 :: sign_ext,scalepp_ext,scaleffp_ext,cratio_ext, &
                   cratiop_ext,cratiof_ext,simag_ext,psibry_ext
         character*80 :: geqdsk_ext

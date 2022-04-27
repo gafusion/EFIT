@@ -400,8 +400,7 @@
       namelist/out1/ishot,itime,betap0,rzero,qenp,enp,emp,plasma, &
            expmp2,coils,btor,rcentr,brsp,icurrt,rbdry,zbdry, &
            nbdry,fwtsi,fwtcur,mxiter,nxiter,limitr,xlim,ylim,error, &
-           iconvr,ibunmn,pressr,rpress,nqpsi, &
-           npress,sigpre
+           iconvr,ibunmn,pressr,rpress,nqpsi,npress,sigpre
       namelist/mseout/rrrgam,zzzgam,aa1gam,aa2gam,aa3gam,aa4gam, &
                       tgamma,sgamma,aa5gam,aa6gam,aa7gam,aa8gam, &
                       msebkp,fwtgam,tgammauncor
@@ -647,48 +646,7 @@
 !
       nqpsi=nw
       limitr=limitr-1
-!      write (neqdsk,out1)
-      write(neqdsk,*) '&OUT1'
-!       write (neqdsk,*) 'QPSI =', qpsi(1),','
-!       do i=2,SIZE(qpsi)
-!        write (neqdsk,*) '      ', qpsi(i),','
-!       enddo
-      write (neqdsk,*) 'ISHOT =',ishot
-      write (neqdsk,*) 'ITIME =',itime
-      write (neqdsk,*) 'BETAP0 =',betap0
-      write (neqdsk,*) 'RZERO =',rzero
-      write (neqdsk,*) 'QENP =',qenp
-      write (neqdsk,*) 'ENP =',enp
-      write (neqdsk,*) 'EMP =',emp
-      write (neqdsk,*) 'PLASMA =',plasma
-      write (neqdsk,*) 'EXPMP2 =',expmp2
-      write (neqdsk,*) 'COILS =',coils
-      write (neqdsk,*) 'BTOR =',btor
-      write (neqdsk,*) 'RCENTR =',rcentr
-      write (neqdsk,*) 'BRSP =',brsp
-      write (neqdsk,*) 'ICURRT =',icurrt
-      write (neqdsk,*) 'RBDRY =',rbdry
-      write (neqdsk,*) 'ZBDRY =',zbdry
-      write (neqdsk,*) 'NBDRY =',nbdry
-      write (neqdsk,*) 'FWTSI =',fwtsi
-      write (neqdsk,*) 'FWTCUR =',fwtcur
-      write (neqdsk,*) 'MXITER =',mxiter
-      write (neqdsk,*) 'NXITER =',nxiter
-      write (neqdsk,*) 'LIMITR =',limitr
-      write (neqdsk,*) 'XLIM =',xlim
-      write (neqdsk,*) 'YLIM =',ylim
-      write (neqdsk,*) 'ERROR =',error
-      write (neqdsk,*) 'ICONVR =',iconvr
-      write (neqdsk,*) 'IBUNMN =',ibunmn
-      write (neqdsk,*) 'PRESSR =',pressr
-      write (neqdsk,*) 'RPRESS =',rpress
-      write (neqdsk,*) 'QPSI =',qpsi
-      write (neqdsk,*) 'PRESSW =',pressw
-      write (neqdsk,*) 'PRES =',pres
-      write (neqdsk,*) 'NQPSI =',nqpsi
-      write (neqdsk,*) 'NPRESS =',npress
-      write (neqdsk,*) 'SIGPRE =',sigpre
-      write (neqdsk,*) '/'
+      write (neqdsk,out1)
 
       call ppstore
       call ffstore

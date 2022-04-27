@@ -47,6 +47,9 @@
       real*8 :: eup_ext,elow_ext,dup_ext,dlow_ext,setlim_ext
       real*8 :: r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max
       real*8 :: r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot
+      real*8 :: expmp2_save(magpri),coils_save(nsilop),brsp_save(nrsmat)
+      real*8 :: rbdry_save(mbdry),zbdry_save(mbdry),fwtsi_save(nsilop)
+      real*8 :: pressr_save(mpress),rpress_save(mpress),sigpre_save(mpress)
       character*10 case_ext(6)
       character*50 edatname
       character(256) table_save
@@ -96,56 +99,60 @@
            imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
            nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
            idebug,jdebug,ifindopt,tolbndpsi
-      namelist/inwant/psiwant,vzeroj,fwtxxj,fbetap,fbetan,fli,fq95,fqsiw, & 
-           jbeta,jli,alpax,gamax,jwantm,fwtxxq,fwtxxb,fwtxli,znose, & 
-           fwtbdry,nqwant,siwantq,n_write,kccoils,ccoils,rexpan, & 
-           xcoils,kcloops,cloops,xloops,currc79,currc139,nccoil,sizeroj, & 
-           fitdelz,ndelzon,relaxdz,stabdz,writepc,table_dir,errdelz, & 
-           oldccomp,nicoil,oldcomp,currc199,curriu30,curriu90, & 
-           curriu150,curril30,curril90,curril150,ifitdelz,scaledz 
-      namelist/inms/xmprcg,xmp_k,vresxmp,t0xmp,psircg,psi_k,vrespsi, & 
-           t0psi,fcrcg,fc_k,vresfc,t0fc,ercg,e_k,vrese,t0e,bcrcg, & 
-           bc_k,vresbc,t0bc,prcg,p_k,vresp,t0p,bti322in,curc79in, & 
-           curc139in,curc199in,devxmpin,rnavxmpin,devpsiin,rnavpsiin, & 
-           devfcin,rnavfcin,devein,rnavecin 
-      namelist/ink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, & 
-           symmetrize,backaverage,lring,cupdown 
-      namelist/ins/tgamma,sgamma,fwtgam,rrrgam,zzzgam,aa1gam,aa2gam, & 
-           aa3gam,aa4gam,aa5gam,aa6gam,aa7gam,iplots,kdomse, & 
-           msebkp,msefitfun,mse_quiet,mse_spave_on,kwaitmse, & 
-           dtmsefull,mse_strict,t_max_beam_off,ok_30rt,ok_210lt, & 
-           mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210, & 
-           tgammauncor,v30lt,v30rt,v210lt,v210rt 
-      namelist/in_msels/bmsels,sbmsels,fwtbmsels,rrmsels,zzmsels, & 
-           l1msels,l2msels,l4msels,emsels,semsels,fwtemsels,kdomsels, & 
-           fmlscut,synmsels,avemsels 
-      namelist/ina/spatial_avg_gam 
-      namelist/inlibim/tlibim,slibim,fwtlib,rrrlib,zzzlib,aa1lib,aa8lib 
+      namelist/inwant/psiwant,vzeroj,fwtxxj,fbetap,fbetan,fli,fq95,fqsiw, &
+           jbeta,jli,alpax,gamax,jwantm,fwtxxq,fwtxxb,fwtxli,znose, &
+           fwtbdry,nqwant,siwantq,n_write,kccoils,ccoils,rexpan, &
+           xcoils,kcloops,cloops,xloops,currc79,currc139,nccoil,sizeroj, &
+           fitdelz,ndelzon,relaxdz,stabdz,writepc,table_dir,errdelz, &
+           oldccomp,nicoil,oldcomp,currc199,curriu30,curriu90, &
+           curriu150,curril30,curril90,curril150,ifitdelz,scaledz
+      namelist/inms/xmprcg,xmp_k,vresxmp,t0xmp,psircg,psi_k,vrespsi, &
+           t0psi,fcrcg,fc_k,vresfc,t0fc,ercg,e_k,vrese,t0e,bcrcg, &
+           bc_k,vresbc,t0bc,prcg,p_k,vresp,t0p,bti322in,curc79in, &
+           curc139in,curc199in,devxmpin,rnavxmpin,devpsiin,rnavpsiin, &
+           devfcin,rnavfcin,devein,rnavecin
+      namelist/ink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
+           symmetrize,backaverage,lring,cupdown
+      namelist/ins/tgamma,sgamma,fwtgam,rrrgam,zzzgam,aa1gam,aa2gam, &
+           aa3gam,aa4gam,aa5gam,aa6gam,aa7gam,iplots,kdomse, &
+           msebkp,msefitfun,mse_quiet,mse_spave_on,kwaitmse, &
+           dtmsefull,mse_strict,t_max_beam_off,ok_30rt,ok_210lt, &
+           mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210, &
+           tgammauncor,v30lt,v30rt,v210lt,v210rt
+      namelist/in_msels/bmsels,sbmsels,fwtbmsels,rrmsels,zzmsels, &
+           l1msels,l2msels,l4msels,emsels,semsels,fwtemsels,kdomsels, &
+           fmlscut,synmsels,avemsels
+      namelist/ina/spatial_avg_gam
+      namelist/inlibim/tlibim,slibim,fwtlib,rrrlib,zzzlib,aa1lib,aa8lib
       namelist/inece/necein,teecein0,feece0,errorece0,fwtece0,fwtecebz0, &
            ecefit,ecebzfit,kfitece,kinputece,kcallece,nharm, &
            kfixro,rteo,zteo,kfixrece,rtep,rtem,rpbit,rmbit,robit, &
            nfit,kcmin,fwtnow,mtxece
-      namelist/iner/keecur,ecurbd,keefnc,eetens,keebdry,kee2bdry, & 
-           eebdry,ee2bdry,eeknt,keeknt,keehord 
-      namelist/insxr/ksxr0,ksxr2,idosxr 
-      namelist/edgep/symmetrize, & 
-           rpress,pressr,sigpre,npress,kprfit,kpressb,ndokin, & 
-           kppfnc,kfffnc,kffcur,kppcur,mxiter,error,errmin,keecur 
-      namelist/edat/nption,tionex,sigti,rion,zion, & 
-           npneth,dnethom,sgneth,rneth,zneth, & 
-           npteth,tethom,sgteth,rteth,zteth, & 
-           nbrmcrd,bremin,bremsig,brmrtan,brmzelev,ivbcuse, & 
-           sigtii,sgnethi,sgtethi,bremsigi, & 
-           npress,rpress,zpress,pressr,sigpre 
-      namelist/invt/omegat,nomegat,enw,emw,betapw0,kvtor,kwwcur,rvtor, & 
-           wcurbd,preswb,fwtprw,npresw,presw,sigprw,rpresw, & 
-           zpresw,kplotp,sbetaw,nsplot,comega,kcomega,xomega, & 
-           kdovt,romegat,zomegat,sigome,scalepw, & 
-           kwwfnc,kwwknt,wwknt,wwtens 
-      namelist/profile_ext/npsi_ext,pprime_ext,ffprim_ext,psin_ext, & 
-           geqdsk_ext,sign_ext,scalepp_ext,scaleffp_ext,shape_ext,dr_ext, & 
-           dz_ext,rc_ext,zc_ext,a_ext,eup_ext,elow_ext,dup_ext,dlow_ext, & 
-           setlim_ext,reflect_ext,fixpp 
+      namelist/iner/keecur,ecurbd,keefnc,eetens,keebdry,kee2bdry, &
+           eebdry,ee2bdry,eeknt,keeknt,keehord
+      namelist/insxr/ksxr0,ksxr2,idosxr
+      namelist/edgep/symmetrize, &
+           rpress,pressr,sigpre,npress,kprfit,kpressb,ndokin, &
+           kppfnc,kfffnc,kffcur,kppcur,mxiter,error,errmin,keecur
+      namelist/edat/nption,tionex,sigti,rion,zion, &
+           npneth,dnethom,sgneth,rneth,zneth, &
+           npteth,tethom,sgteth,rteth,zteth, &
+           nbrmcrd,bremin,bremsig,brmrtan,brmzelev,ivbcuse, &
+           sigtii,sgnethi,sgtethi,bremsigi, &
+           npress,rpress,zpress,pressr,sigpre
+      namelist/invt/omegat,nomegat,enw,emw,betapw0,kvtor,kwwcur,rvtor, &
+           wcurbd,preswb,fwtprw,npresw,presw,sigprw,rpresw, &
+           zpresw,kplotp,sbetaw,nsplot,comega,kcomega,xomega, &
+           kdovt,romegat,zomegat,sigome,scalepw, &
+           kwwfnc,kwwknt,wwknt,wwtens
+      namelist/profile_ext/npsi_ext,pprime_ext,ffprim_ext,psin_ext, &
+           geqdsk_ext,sign_ext,scalepp_ext,scaleffp_ext,shape_ext,dr_ext, &
+           dz_ext,rc_ext,zc_ext,a_ext,eup_ext,elow_ext,dup_ext,dlow_ext, &
+           setlim_ext,reflect_ext,fixpp
+      namelist/out1/ishot,itime,betap0,rzero,qenp,enp,emp,plasma, &
+           expmp2,coils,btor,rcentr,brsp,icurrt,rbdry,zbdry, &
+           nbdry,fwtsi,fwtcur,mxiter,nxiter,limitr,xlim,ylim,error, &
+           iconvr,ibunmn,pressr,rpress,nqpsi,npress,sigpre
 ! 
 ! 
       ALLOCATE(gridpf(nwnh,mfila),gwork(nbwork,nwnh), & 
@@ -1602,11 +1609,74 @@
 !      rnavbc(jtime)=rnavbcin
 !      devp(jtime)=devpin
 !      rnavp(jtime)=rnavpin 
-! 
-!---------------------------------------------------------------------- 
-!--   Input FF', P' arrays
-!---------------------------------------------------------------------- 
-      if ((geqdsk_ext.ne.'none').and.(abs(icinit).ne.4)) then 
+!
+      if ((geqdsk_ext.ne.'none').and.(icinit.eq.-4.or.icinit.eq.-5)) then
+!----------------------------------------------------------------------
+!--     Read fcoil currents
+!--     Avoid overwriting other variables that will impact restart
+!--     Warning: this will have problems if the machine is changed,
+!--              but there isn't a way to check for that
+!----------------------------------------------------------------------
+        ! H5: this is not part of OMFIT conversion but should be added
+        !     need to read g-file for now
+        ishot_save=ishot
+        itime_save=itime
+        plasma_save=plasma
+        expmp2_save=expmp2
+        coils_save=coils
+        btor_save=btor
+        rcentr_save=rcentr
+        brsp_save=brsp
+        nbdry_save=nbdry
+        rbdry_save=rbdry
+        zbdry_save=zbdry
+        fwtsi_save=fwtsi
+        fwtcur_save=fwtcur
+        nxiter_save=nxiter
+        mxiter_save=mxiter
+        error_save=error
+        iconvr_save=iconvr
+        ibunmn_save=ibunmn
+        pressr_save=pressr
+        rpress_save=rpress
+        npress_save=npress
+        sigpre_save=sigpre
+        open(unit=neqdsk,status='old',file=geqdsk_ext)
+        read (neqdsk,out1,iostat=ioerr)
+        close(unit=neqdsk)
+        if (iostat.ne.0) then
+          call errctrl_msg('data_input', &
+                           'cannot read out1 from geqdsk_ext')
+          stop
+        endif
+        allocate(fcoil_ext(nfcoil))
+        fcoil_ext=brsp(1:nfcoil)
+        ishot=ishot_save
+        itime=itime_save
+        plasma=plasma_save
+        expmp2=expmp2_save
+        coils=coils_save
+        btor=btor_save
+        rcentr=rcentr_save
+        brsp=brsp_save
+        nbdry=nbdry_save
+        rbdry=rbdry_save
+        zbdry=zbdry_save
+        fwtsi=fwtsi_save
+        fwtcur=fwtcur_save
+        nxiter=nxiter_save
+        mxiter=mxiter_save
+        error=error_save
+        iconvr=iconvr_save
+        ibunmn=ibunmn_save
+        pressr=pressr_save
+        rpress=rpress_save
+        npress=npress_save
+        sigpre=sigpre_save
+      elseif ((geqdsk_ext.ne.'none').and.(icinit.ne.-4).and.(icinit.ne.-5)) then
+!----------------------------------------------------------------------
+!--     Setup FF', P' arrays
+!----------------------------------------------------------------------
         npsi_ext=nw_ext 
 #ifdef DEBUG_LEVEL1
         write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext,nw_ext 
@@ -2506,7 +2576,7 @@
 ! 
 !     if(brsptu(1).le.-1.e-20_dp) & 
 !       brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil) 
-      if((brsptu(1).gt.-1.e-20_dp).and.(abs(icinit).ne.4)) & 
+      if((brsptu(1).gt.-1.e-20_dp).and.(icinit.ne.-4).and.(icinit.ne.-5)) &
         brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil) 
       reflux=silopt(jtime,iabs(nslref)) 
       do m=1,nsilop 
