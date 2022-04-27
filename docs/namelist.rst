@@ -208,7 +208,6 @@ IN3 is used to read machine parameters from a dprobe.dat file.
    :widths: 15,15, 70
    :header-rows: 1
 
-
 IN4
 ---
 
