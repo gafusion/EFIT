@@ -1349,7 +1349,8 @@
         call close_group("code",cid,h5err)
 
         ! read previous solution if requested
-        if ((geqdsk_ext.ne.'none').or.(abs(icinit).eq.4)) then 
+        !if ((geqdsk_ext.ne.'none').or.(icinit.eq.-3).or.(icinit.eq.-4)) then ! use once geqdsk_ext no longer required...
+        if (geqdsk_ext.ne.'none') then 
           call test_group(eqid,"time_slice",file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('inicur','time_slice group not found')
@@ -1610,129 +1611,131 @@
 !      devp(jtime)=devpin
 !      rnavp(jtime)=rnavpin 
 !
-      if ((geqdsk_ext.ne.'none').and.(icinit.eq.-4.or.icinit.eq.-5)) then
+      read_geqdsk: if (geqdsk_ext.ne.'none') then
+        if ((icinit.eq.-3).or.(icinit.eq.-4)) then
 !----------------------------------------------------------------------
-!--     Read fcoil currents
-!--     Avoid overwriting other variables that will impact restart
-!--     Warning: this will have problems if the machine is changed,
-!--              but there isn't a way to check for that
+!--       Read fcoil currents
+!--       Avoid overwriting other variables that will impact restart
+!--       Warning: this will have problems if the machine is changed,
+!--                but there isn't a way to check for that
 !----------------------------------------------------------------------
-        ! H5: this is not part of OMFIT conversion but should be added
-        !     need to read g-file for now
-        ishot_save=ishot
-        itime_save=itime
-        plasma_save=plasma
-        expmp2_save=expmp2
-        coils_save=coils
-        btor_save=btor
-        rcentr_save=rcentr
-        brsp_save=brsp
-        nbdry_save=nbdry
-        rbdry_save=rbdry
-        zbdry_save=zbdry
-        fwtsi_save=fwtsi
-        fwtcur_save=fwtcur
-        nxiter_save=nxiter
-        mxiter_save=mxiter
-        error_save=error
-        iconvr_save=iconvr
-        ibunmn_save=ibunmn
-        pressr_save=pressr
-        rpress_save=rpress
-        npress_save=npress
-        sigpre_save=sigpre
-        open(unit=neqdsk,status='old',file=geqdsk_ext)
-        read (neqdsk,out1,iostat=ioerr)
-        close(unit=neqdsk)
-        if (iostat.ne.0) then
-          call errctrl_msg('data_input', &
-                           'cannot read out1 from geqdsk_ext')
-          stop
-        endif
-        allocate(fcoil_ext(nfcoil))
-        fcoil_ext=brsp(1:nfcoil)
-        ishot=ishot_save
-        itime=itime_save
-        plasma=plasma_save
-        expmp2=expmp2_save
-        coils=coils_save
-        btor=btor_save
-        rcentr=rcentr_save
-        brsp=brsp_save
-        nbdry=nbdry_save
-        rbdry=rbdry_save
-        zbdry=zbdry_save
-        fwtsi=fwtsi_save
-        fwtcur=fwtcur_save
-        nxiter=nxiter_save
-        mxiter=mxiter_save
-        error=error_save
-        iconvr=iconvr_save
-        ibunmn=ibunmn_save
-        pressr=pressr_save
-        rpress=rpress_save
-        npress=npress_save
-        sigpre=sigpre_save
-      elseif ((geqdsk_ext.ne.'none').and.(icinit.ne.-4).and.(icinit.ne.-5)) then
+          ! H5: this is not part of OMFIT conversion but should be
+          !     added need to read g-file for now
+          ishot_save=ishot
+          itime_save=itime
+          plasma_save=plasma
+          expmp2_save=expmp2
+          coils_save=coils
+          btor_save=btor
+          rcentr_save=rcentr
+          brsp_save=brsp
+          nbdry_save=nbdry
+          rbdry_save=rbdry
+          zbdry_save=zbdry
+          fwtsi_save=fwtsi
+          fwtcur_save=fwtcur
+          nxiter_save=nxiter
+          mxiter_save=mxiter
+          error_save=error
+          iconvr_save=iconvr
+          ibunmn_save=ibunmn
+          pressr_save=pressr
+          rpress_save=rpress
+          npress_save=npress
+          sigpre_save=sigpre
+          open(unit=neqdsk,status='old',file=geqdsk_ext)
+          read (neqdsk,out1,iostat=ioerr)
+          close(unit=neqdsk)
+          if (iostat.ne.0) then
+            call errctrl_msg('data_input', &
+                             'cannot read out1 from geqdsk_ext')
+            stop
+          endif
+          allocate(fcoil_ext(nfcoil))
+          fcoil_ext=brsp(1:nfcoil)
+          ishot=ishot_save
+          itime=itime_save
+          plasma=plasma_save
+          expmp2=expmp2_save
+          coils=coils_save
+          btor=btor_save
+          rcentr=rcentr_save
+          brsp=brsp_save
+          nbdry=nbdry_save
+          rbdry=rbdry_save
+          zbdry=zbdry_save
+          fwtsi=fwtsi_save
+          fwtcur=fwtcur_save
+          nxiter=nxiter_save
+          mxiter=mxiter_save
+          error=error_save
+          iconvr=iconvr_save
+          ibunmn=ibunmn_save
+          pressr=pressr_save
+          rpress=rpress_save
+          npress=npress_save
+          sigpre=sigpre_save
+        else
 !----------------------------------------------------------------------
-!--     Setup FF', P' arrays
+!--       Setup FF', P' arrays
 !----------------------------------------------------------------------
-        npsi_ext=nw_ext 
+          npsi_ext=nw_ext 
 #ifdef DEBUG_LEVEL1
-        write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext,nw_ext 
+          write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext,nw_ext 
 #endif
-        if (plasma_ext > 0.0) then 
-          sign_ext = -1.0 
-        endif 
-        prbdry=pprime_ext(nw_ext) 
-        write_boundary: if (nbdry.le.0) then 
-          nbabs_ext=nbdry_ext/mbdry1+1 
-          jb_ext=0 
-          do i=1,nbdry_ext,nbabs_ext 
-            jb_ext=jb_ext+1 
-            rbdry(jb_ext)=rbdry_ext(i) 
-            zbdry(jb_ext)=zbdry_ext(i) 
-          enddo 
-          nbdry=jb_ext 
+          if (plasma_ext > 0.0) then 
+            sign_ext = -1.0 
+          endif 
+          prbdry=pprime_ext(nw_ext) 
+          write_boundary: if (nbdry.le.0) then 
+            nbabs_ext=nbdry_ext/mbdry1+1 
+            jb_ext=0 
+            do i=1,nbdry_ext,nbabs_ext 
+              jb_ext=jb_ext+1 
+              rbdry(jb_ext)=rbdry_ext(i) 
+              zbdry(jb_ext)=zbdry_ext(i) 
+            enddo 
+            nbdry=jb_ext 
 ! 
-          rbmin_e=rbdry(1)
-          rbmax_e=rbdry(1)
-          zbmin_e=zbdry(1)
-          zbmax_e=zbdry(1)
-          nrmin_e=1
-          nrmax_e=1
-          nzmin_e=1
-          nzmax_e=1
-          fwtbdry(1:nbdry)=1. 
-          do i=1,nbdry
-            if (rbdry(i).lt.rbmin_e) then
-              rbmin_e=rbdry(i)
-              nrmin_e=i
-            endif
-            if (rbdry(i).gt.rbmax_e) then
-              rbmax_e=rbdry(i)
-              nrmax_e=i
-            endif
-            if (zbdry(i).lt.zbmin_e) then
-              zbmin_e=zbdry(i)
-              nzmin_e=i
-            endif
-            if (zbdry(i).gt.zbmax_e) then
-              zbmax_e=zbdry(i)
-              nzmax_e=i
-            endif
-          enddo
-          fwtbdry(nrmin_e)=10.
-          fwtbdry(nrmax_e)=10.
-          fwtbdry(nzmin_e)=10.
-          fwtbdry(nzmax_e)=10.
-        endif write_boundary
+            rbmin_e=rbdry(1)
+            rbmax_e=rbdry(1)
+            zbmin_e=zbdry(1)
+            zbmax_e=zbdry(1)
+            nrmin_e=1
+            nrmax_e=1
+            nzmin_e=1
+            nzmax_e=1
+            fwtbdry(1:nbdry)=1. 
+            do i=1,nbdry
+              if (rbdry(i).lt.rbmin_e) then
+                rbmin_e=rbdry(i)
+                nrmin_e=i
+              endif
+              if (rbdry(i).gt.rbmax_e) then
+                rbmax_e=rbdry(i)
+                nrmax_e=i
+              endif
+              if (zbdry(i).lt.zbmin_e) then
+                zbmin_e=zbdry(i)
+                nzmin_e=i
+              endif
+              if (zbdry(i).gt.zbmax_e) then
+                zbmax_e=zbdry(i)
+                nzmax_e=i
+              endif
+            enddo
+            fwtbdry(nrmin_e)=10.
+            fwtbdry(nrmax_e)=10.
+            fwtbdry(nzmin_e)=10.
+            fwtbdry(nzmax_e)=10.
+          endif write_boundary
 ! 
-        if (limitr.le.0) then
-          xlim(1:limitr_ext)=xlim_ext(1:limitr_ext)
-          ylim(1:limitr_ext)=ylim_ext(1:limitr_ext)-1.e-10_dp
+          if (limitr.le.0) then
+            xlim(1:limitr_ext)=xlim_ext(1:limitr_ext)
+            ylim(1:limitr_ext)=ylim_ext(1:limitr_ext)-1.e-10_dp
+          endif
         endif
-      endif
+      endif read_geqdsk
 #ifdef DEBUG_LEVEL1
       write (nttyo,*) 'npsi_ext=',npsi_ext
 #endif
@@ -2576,7 +2579,7 @@
 ! 
 !     if(brsptu(1).le.-1.e-20_dp) & 
 !       brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil) 
-      if((brsptu(1).gt.-1.e-20_dp).and.(icinit.ne.-4).and.(icinit.ne.-5)) &
+      if((brsptu(1).gt.-1.e-20_dp).and.(icinit.ne.-3).and.(icinit.ne.-4)) &
         brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil) 
       reflux=silopt(jtime,iabs(nslref)) 
       do m=1,nsilop 

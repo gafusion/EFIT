@@ -12,7 +12,7 @@ else()
   set(TIMES 02400)
 endif()
 
-foreach( t ${TIMES})
+foreach(t ${TIMES})
   set(EFIT_LABEL ${EFIT_LABEL} ${RUNID}.${t})
   set(EFIT_IN ${EFIT_IN} k${RUNID}.${t})
   file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/k${RUNID}.${t}

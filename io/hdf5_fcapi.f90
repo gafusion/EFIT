@@ -4433,7 +4433,7 @@
 !     Create the datatype.
 !-------------------------------------------------------------------
       dims(1)=1
-      dsetlen=len_trim(dataset)
+      dsetlen=len(dataset)
       call h5tcopy_f(h5t_native_character,dtype_id,error)
       call h5tset_size_f(dtype_id,dsetlen,error)
 !-------------------------------------------------------------------
@@ -4501,7 +4501,7 @@
       adims(:) = (/dims(1)/)
       arrlen=0
       do i=1,adims(1)
-        ari = len_trim(array(i))
+        ari = len(array(i))
         arrlen = max(arrlen,ari)
       enddo
       call h5tcopy_f(h5t_native_character,dtype_id,error)
@@ -5833,7 +5833,7 @@
       adims(:) = (/fdims(1)/)
       arrlen=0
       do i=1,adims(1)
-        ari = len_trim(array(i))
+        ari = len(array(i))
         arrlen = max(arrlen,ari)
       enddo
       call h5tcopy_f(h5t_native_character,dtype_id,error)

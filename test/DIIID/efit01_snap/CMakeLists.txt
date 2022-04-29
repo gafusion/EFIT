@@ -14,7 +14,7 @@ else()
   set(TIMES 02400)
 endif()
 
-foreach( t ${TIMES})
+foreach(t ${TIMES})
   set(EFIT_LABEL ${EFIT_LABEL} ${RUNID}.${t})
 endforeach()
 string(REPLACE ";" " " EFIT_LABEL "${EFIT_LABEL}")

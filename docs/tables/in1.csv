@@ -68,8 +68,8 @@ ICINIT,,"| ""(Integer flag) Current Initialization"". Plasma current profile ini
 | - 1 = elliptical and uniform flux surface (EELIP,AELIP,RELIP,ZELIP).
 | - 2 = elliptical and parabolic for all timeslices (default) .
 | - -2 = use information from ESAVE.DAT (from a previous EFIT run) first timeslice and previous timeslice subsequently.
-| - -4 = use previous solution from geqdsk_ext or hdf5 file for all timeslices.
-| - -5 = use previous solution from geqdsk_ext or hdf5 file for first timeslice and previous timeslice subsequently.
+| - -3 = use previous solution from geqdsk_ext or hdf5 file for all timeslices.
+| - -4 = use previous solution from geqdsk_ext or hdf5 file for first timeslice and previous timeslice subsequently.
 | - -12= elliptical and parabolic first timeslice and previous timeslice subsequently."
 ICNTOUR,,"""(Integer flag) Contour"".
 | - + = bypass CNTOUR routine."

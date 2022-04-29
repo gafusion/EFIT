@@ -1070,8 +1070,8 @@
 !--   icinit=1 uniform and elliptical flux surfaces
 !--          2 parabolic and elliptical
 !--         -2 use ESAVE.DAT at first slice and previous slice later
-!--         -4 use previous solution (geqdsk_ext or hdf5) for every time
-!--         -5 use previous solution for first slice only
+!--         -3 use previous solution (geqdsk_ext or hdf5) for every time
+!--         -4 use previous solution for first slice only
 !--        -12 parabolic and elliptical first slice and previous
 !--            slice subsequently
 !-----------------------------------------------------------------------
@@ -1080,8 +1080,8 @@
         if(jtime.gt.1) return
         if (isicinit.eq.-12) then
           icinit=2
-        elseif (isicinit.eq.-5) then
-          icinit=-4
+        elseif (isicinit.eq.-4) then
+          icinit=-3
         endif
       endif
 !
@@ -1172,7 +1172,7 @@
           close(unit=nsave)
         endif
 !
-      case (-4)
+      case (-3)
         if ((nw_ext.ne.nw.or.nh_ext.ne.nh)) then
           call errctrl_msg('inicur', &
                            'previous case had different dimensions')
