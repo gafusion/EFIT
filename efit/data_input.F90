@@ -53,7 +53,7 @@
       character*10 case_ext(6)
       character*50 edatname
       character(256) table_save
-      character*10 namedum
+      character*10 namedum,tindex,probeind
       character*2 :: reflect_ext
       logical :: shape_ext
       logical :: file_stat
@@ -662,6 +662,64 @@
 11774   format (2i5)
 11775   format (6a8,3i4)
 11776   format (5e16.9)
+        if ((icinit.eq.-3).or.(icinit.eq.-4)) then
+!--       Read fcoil currents
+!--       Avoid overwriting other variables that will impact restart
+!--       Warning: this will have problems if the machine is changed,
+!--                but there isn't a way to check for that
+          ishot_save=ishot
+          itime_save=itime
+          plasma_save=plasma
+          expmp2_save=expmp2
+          coils_save=coils
+          btor_save=btor
+          rcentr_save=rcentr
+          brsp_save=brsp
+          nbdry_save=nbdry
+          rbdry_save=rbdry
+          zbdry_save=zbdry
+          fwtsi_save=fwtsi
+          fwtcur_save=fwtcur
+          nxiter_save=nxiter
+          mxiter_save=mxiter
+          error_save=error
+          iconvr_save=iconvr
+          ibunmn_save=ibunmn
+          pressr_save=pressr
+          rpress_save=rpress
+          npress_save=npress
+          sigpre_save=sigpre
+          read (neqdsk,out1,iostat=ioerr)
+          if (iostat.ne.0) then
+            call errctrl_msg('data_input', &
+                             'cannot read out1 from geqdsk_ext')
+            stop
+          endif
+          allocate(fcoil_ext(nfcoil))
+          fcoil_ext=brsp(1:nfcoil)
+          ishot=ishot_save
+          itime=itime_save
+          plasma=plasma_save
+          expmp2=expmp2_save
+          coils=coils_save
+          btor=btor_save
+          rcentr=rcentr_save
+          brsp=brsp_save
+          nbdry=nbdry_save
+          rbdry=rbdry_save
+          zbdry=zbdry_save
+          fwtsi=fwtsi_save
+          fwtcur=fwtcur_save
+          nxiter=nxiter_save
+          mxiter=mxiter_save
+          error=error_save
+          iconvr=iconvr_save
+          ibunmn=ibunmn_save
+          pressr=pressr_save
+          rpress=rpress_save
+          npress=npress_save
+          sigpre=sigpre_save
+        endif
       endif
 11777 close(nin)
 
@@ -706,13 +764,14 @@
           stop
         endif
         call open_group(pid,"time_slice",tid,h5err)
-        write(line,"(I0)") jtime+rank-1
-        call test_group(tid,trim(line),file_stat,h5err)
+        write(tindex,"(I0)") jtime+rank-1
+        call test_group(tid,trim(tindex),file_stat,h5err)
         if (.not. file_stat) then
-          call errctrl_msg('data_input',trim(line)//' group not found')
+          call errctrl_msg('data_input', &
+                           trim(tindex)//' group not found')
           stop
         endif
-        call open_group(tid,trim(line),sid,h5err)
+        call open_group(tid,trim(tindex),sid,h5err)
 
         call test_group(sid,"in1",file_stat,h5err)
         if (file_stat) then
@@ -1343,36 +1402,36 @@
 
         !H5: not used efitin and auxquant?
 
-        call close_group(trim(line),sid,h5err)
+        call close_group(trim(tindex),sid,h5err)
         call close_group("time_slice",tid,h5err)
         call close_group("parameters",pid,h5err)
         call close_group("code",cid,h5err)
 
         ! read previous solution if requested
-        !if ((geqdsk_ext.ne.'none').or.(icinit.eq.-3).or.(icinit.eq.-4)) then ! use once geqdsk_ext no longer required...
-        if (geqdsk_ext.ne.'none') then 
+        if ((geqdsk_ext.ne.'none').or.(icinit.eq.-3).or.(icinit.eq.-4)) then
           call test_group(eqid,"time_slice",file_stat,h5err)
           if (.not. file_stat) then
-            call errctrl_msg('inicur','time_slice group not found')
+            call errctrl_msg('data_input','time_slice group not found')
             stop
           endif
           call open_group(eqid,"time_slice",tid,h5err)
-          write(line,"(I0)") jtime+rank-1
-          call test_group(tid,trim(line),file_stat,h5err)
+          write(tindex,"(I0)") jtime+rank-1
+          call test_group(tid,trim(tindex),file_stat,h5err)
           if (.not. file_stat) then
-            call errctrl_msg('inicur',trim(line)//' group not found')
+            call errctrl_msg('data_input', &
+                             trim(tindex)//' group not found')
             stop
           endif
-          call open_group(tid,trim(line),sid,h5err)
+          call open_group(tid,trim(tindex),sid,h5err)
           call test_group(sid,"profiles_2d",file_stat,h5err)
           if (.not. file_stat) then
-            call errctrl_msg('inicur','profiles_2d group not found')
+            call errctrl_msg('data_input','profiles_2d group not found')
             stop
           endif
           call open_group(sid,"profiles_2d",cid,h5err)
           call test_group(cid,"0",file_stat,h5err)
           if (.not. file_stat) then
-            call errctrl_msg('inicur','0 group not found')
+            call errctrl_msg('data_input','0 group not found')
             stop
           endif
           call open_group(cid,"0",nid,h5err)
@@ -1385,9 +1444,11 @@
           psirz_ext=psirz_ext/twopi
           call close_group("0",nid,h5err)
           call close_group("profiles_2d",cid,h5err)
+
+          ! read in important scalars
           call test_group(sid,"global_quantities",file_stat,h5err)
           if (.not. file_stat) then
-            call errctrl_msg('inicur', &
+            call errctrl_msg('data_input', &
                              'global_quantities group not found')
             stop
           endif
@@ -1398,15 +1459,17 @@
           psibry_ext=psibry_ext/twopi
           call read_h5_ex(nid,"ip",plasma_ext,h5in,h5err) ! H5: could be missing twopi...
           call close_group("global_quantities",nid,h5err)
+
+          ! read in boundary points
           call test_group(sid,"boundary",file_stat,h5err)
           if (.not. file_stat) then
-            call errctrl_msg('inicur','boundary group not found')
+            call errctrl_msg('data_input','boundary group not found')
             stop
           endif
           call open_group(sid,"boundary",cid,h5err)
           call test_group(cid,"outline",file_stat,h5err)
           if (.not. file_stat) then
-            call errctrl_msg('inicur','outline group not found')
+            call errctrl_msg('data_input','outline group not found')
             stop
           endif
           call open_group(cid,"outline",nid,h5err)
@@ -1417,9 +1480,11 @@
           call read_h5_ex(nid,"z",zbdry_ext,h5in,h5err)
           call close_group("outline",nid,h5err)
           call close_group("boundary",cid,h5err)
+
+          ! read in p', FF', and q
           call test_group(sid,"profiles_1d",file_stat,h5err)
           if (.not. file_stat) then
-            call errctrl_msg('inicur','profiles_1d group not found')
+            call errctrl_msg('data_input','profiles_1d group not found')
             stop
           endif
           call open_group(sid,"profiles_1d",nid,h5err)
@@ -1429,10 +1494,45 @@
           ffprim_ext=ffprim_ext*twopi
           call read_h5_ex(nid,"q",qpsi_ext,h5in,h5err)
           call close_group("profiles_1d",nid,h5err)
-          call close_group(trim(line),sid,h5err)
+
+          ! read in fcoil currents (skip ecoils)
+          if ((icinit.eq.-3).or.(icinit.eq.-4)) then
+            allocate(fcoil_ext(nfcoil))
+            call test_group(sid,"constraints",file_stat,h5err)
+            if (.not. file_stat) then
+              call errctrl_msg('data_input', &
+                               'constraints group not found')
+              stop
+            endif
+            call open_group(sid,"constraints",cid,h5err)
+            call test_group(cid,"pf_current",file_stat,h5err)
+            if (.not. file_stat) then
+              call errctrl_msg('data_input', &
+                               'pf_current group not found')
+              stop
+            endif
+            call open_group(cid,"pf_current",nid,h5err)
+            do i=nesum,nesum+nfcoil-1
+              write(probeind,"(I0)") i
+              call test_group(nid,trim(probeind),file_stat,h5err)
+              if (.not. file_stat) then
+                call errctrl_msg('data_input', &
+                                 trim(probeind)//' group not found')
+                stop
+              endif
+              call open_group(nid,trim(probeind),fid,h5err)
+              call read_h5_ex(fid,"reconstructed",fcoil_ext(i-nesum+1), &
+                              h5in,h5err)
+              call close_group(trim(probeind),fid,h5err)
+            enddo
+            call close_group("pf_current",nid,h5err)
+            call close_group("constraints",cid,h5err)
+          endif 
+          call close_group(trim(tindex),sid,h5err)
           call close_group("time_slice",tid,h5err)
           call close_group("equilibrium",eqid,h5err)
 
+          ! read in limiter position
           call test_group(rootgid,"wall",file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('data_input','wall group not found')
@@ -1611,129 +1711,65 @@
 !      devp(jtime)=devpin
 !      rnavp(jtime)=rnavpin 
 !
-      read_geqdsk: if (geqdsk_ext.ne.'none') then
-        if ((icinit.eq.-3).or.(icinit.eq.-4)) then
 !----------------------------------------------------------------------
-!--       Read fcoil currents
-!--       Avoid overwriting other variables that will impact restart
-!--       Warning: this will have problems if the machine is changed,
-!--                but there isn't a way to check for that
+!--   Setup FF', P' arrays
 !----------------------------------------------------------------------
-          ! H5: this is not part of OMFIT conversion but should be
-          !     added need to read g-file for now
-          ishot_save=ishot
-          itime_save=itime
-          plasma_save=plasma
-          expmp2_save=expmp2
-          coils_save=coils
-          btor_save=btor
-          rcentr_save=rcentr
-          brsp_save=brsp
-          nbdry_save=nbdry
-          rbdry_save=rbdry
-          zbdry_save=zbdry
-          fwtsi_save=fwtsi
-          fwtcur_save=fwtcur
-          nxiter_save=nxiter
-          mxiter_save=mxiter
-          error_save=error
-          iconvr_save=iconvr
-          ibunmn_save=ibunmn
-          pressr_save=pressr
-          rpress_save=rpress
-          npress_save=npress
-          sigpre_save=sigpre
-          open(unit=neqdsk,status='old',file=geqdsk_ext)
-          read (neqdsk,out1,iostat=ioerr)
-          close(unit=neqdsk)
-          if (iostat.ne.0) then
-            call errctrl_msg('data_input', &
-                             'cannot read out1 from geqdsk_ext')
-            stop
-          endif
-          allocate(fcoil_ext(nfcoil))
-          fcoil_ext=brsp(1:nfcoil)
-          ishot=ishot_save
-          itime=itime_save
-          plasma=plasma_save
-          expmp2=expmp2_save
-          coils=coils_save
-          btor=btor_save
-          rcentr=rcentr_save
-          brsp=brsp_save
-          nbdry=nbdry_save
-          rbdry=rbdry_save
-          zbdry=zbdry_save
-          fwtsi=fwtsi_save
-          fwtcur=fwtcur_save
-          nxiter=nxiter_save
-          mxiter=mxiter_save
-          error=error_save
-          iconvr=iconvr_save
-          ibunmn=ibunmn_save
-          pressr=pressr_save
-          rpress=rpress_save
-          npress=npress_save
-          sigpre=sigpre_save
-        else
-!----------------------------------------------------------------------
-!--       Setup FF', P' arrays
-!----------------------------------------------------------------------
-          npsi_ext=nw_ext 
+      read_geqdsk: if (geqdsk_ext.ne.'none'.and.icinit.ne.-3 &
+                                           .and.icinit.ne.-4) then
+        npsi_ext=nw_ext 
 #ifdef DEBUG_LEVEL1
-          write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext,nw_ext 
+        write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext,nw_ext 
 #endif
-          if (plasma_ext > 0.0) then 
-            sign_ext = -1.0 
-          endif 
-          prbdry=pprime_ext(nw_ext) 
-          write_boundary: if (nbdry.le.0) then 
-            nbabs_ext=nbdry_ext/mbdry1+1 
-            jb_ext=0 
-            do i=1,nbdry_ext,nbabs_ext 
-              jb_ext=jb_ext+1 
-              rbdry(jb_ext)=rbdry_ext(i) 
-              zbdry(jb_ext)=zbdry_ext(i) 
-            enddo 
-            nbdry=jb_ext 
+        if (plasma_ext > 0.0) then 
+          sign_ext = -1.0 
+        endif 
+        prbdry=pprime_ext(nw_ext) 
+        write_boundary: if (nbdry.le.0) then 
+          nbabs_ext=nbdry_ext/mbdry1+1 
+          jb_ext=0 
+          do i=1,nbdry_ext,nbabs_ext 
+            jb_ext=jb_ext+1 
+            rbdry(jb_ext)=rbdry_ext(i) 
+            zbdry(jb_ext)=zbdry_ext(i) 
+          enddo 
+          nbdry=jb_ext 
 ! 
-            rbmin_e=rbdry(1)
-            rbmax_e=rbdry(1)
-            zbmin_e=zbdry(1)
-            zbmax_e=zbdry(1)
-            nrmin_e=1
-            nrmax_e=1
-            nzmin_e=1
-            nzmax_e=1
-            fwtbdry(1:nbdry)=1. 
-            do i=1,nbdry
-              if (rbdry(i).lt.rbmin_e) then
-                rbmin_e=rbdry(i)
-                nrmin_e=i
-              endif
-              if (rbdry(i).gt.rbmax_e) then
-                rbmax_e=rbdry(i)
-                nrmax_e=i
-              endif
-              if (zbdry(i).lt.zbmin_e) then
-                zbmin_e=zbdry(i)
-                nzmin_e=i
-              endif
-              if (zbdry(i).gt.zbmax_e) then
-                zbmax_e=zbdry(i)
-                nzmax_e=i
-              endif
-            enddo
-            fwtbdry(nrmin_e)=10.
-            fwtbdry(nrmax_e)=10.
-            fwtbdry(nzmin_e)=10.
-            fwtbdry(nzmax_e)=10.
-          endif write_boundary
+          rbmin_e=rbdry(1)
+          rbmax_e=rbdry(1)
+          zbmin_e=zbdry(1)
+          zbmax_e=zbdry(1)
+          nrmin_e=1
+          nrmax_e=1
+          nzmin_e=1
+          nzmax_e=1
+          fwtbdry(1:nbdry)=1. 
+          do i=1,nbdry
+            if (rbdry(i).lt.rbmin_e) then
+              rbmin_e=rbdry(i)
+              nrmin_e=i
+            endif
+            if (rbdry(i).gt.rbmax_e) then
+              rbmax_e=rbdry(i)
+              nrmax_e=i
+            endif
+            if (zbdry(i).lt.zbmin_e) then
+              zbmin_e=zbdry(i)
+              nzmin_e=i
+            endif
+            if (zbdry(i).gt.zbmax_e) then
+              zbmax_e=zbdry(i)
+              nzmax_e=i
+            endif
+          enddo
+          fwtbdry(nrmin_e)=10.
+          fwtbdry(nrmax_e)=10.
+          fwtbdry(nzmin_e)=10.
+          fwtbdry(nzmax_e)=10.
+        endif write_boundary
 ! 
-          if (limitr.le.0) then
-            xlim(1:limitr_ext)=xlim_ext(1:limitr_ext)
-            ylim(1:limitr_ext)=ylim_ext(1:limitr_ext)-1.e-10_dp
-          endif
+        if (limitr.le.0) then
+          xlim(1:limitr_ext)=xlim_ext(1:limitr_ext)
+          ylim(1:limitr_ext)=ylim_ext(1:limitr_ext)-1.e-10_dp
         endif
       endif read_geqdsk
 #ifdef DEBUG_LEVEL1

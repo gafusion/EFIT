@@ -1230,6 +1230,8 @@
         endif
 
         ! get p' and ff' coefficients
+        ! note: this could be read in from g-files directly, but needs
+        !       to be fit from omas files, so we treat both consistently
         if (icurrt.eq.2) then  !polynomial fitting
           call fitpp(pprime_ext,nw_ext,alpa,kppcur)
           brsp(1+nfcoil:nfcoil+kppcur)=alpa(1:kppcur)*darea
