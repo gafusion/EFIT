@@ -16,6 +16,17 @@
                            nrogow,necoil,nesum,&
                            nfsum,nvsum,nvesel,&
                            nacoil,mgaus1,mgaus2
+
       integer*4 :: nw,nh,nwnh
       character*10:: device
+
+
+      integer*4::magprirdp,magudom,maglds,&
+                 nnece,nnecein,neceo,mse315,mse45,mse15,&
+                 mse1h,mse315_2,mse210,mpress,libim,nmsels,&
+                 nnnte,ngam_vars,ngam_u,ngam_w,nlimit,nlimbd,nangle,&
+                 ntangle,nfbcoil,mccoil,micoil,ndata,nwwcur,&
+                 nffcur,nppcur,nercur,ntime,ndim,kxiter,mqwant,& 
+                 mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef,&
+                 modep,modew,kubics,icycred_loopmax,nfourier,nsilds
       end module exparm
