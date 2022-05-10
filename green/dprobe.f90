@@ -52,7 +52,8 @@
                                   nfsum_efund,nvsum_efund,nvesel_efund,nacoil_efund)
      
       USE nio
-      USE exparm, only : nnece,nnecein,neceo,mse315,mse45,mse15, &
+      USE exparm, only : magpri67,magpri322,magprirdp,magudom,maglds,& 
+                 nnece,nnecein,neceo,mse315,mse45,mse15, &
                  mse1h,mse315_2,mse210,mpress,libim,nmsels, &
                  nnnte,ngam_vars,ngam_u,ngam_w,nlimit,nlimbd,nangle, &
                  ntangle,nfbcoil,mccoil,micoil,ndata,nwwcur, &

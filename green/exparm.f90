@@ -21,7 +21,7 @@
       character*10:: device
 
 
-      integer*4::magprirdp,magudom,maglds,&
+      integer*4::magpri67,magpri322,magprirdp,magudom,maglds,&
                  nnece,nnecein,neceo,mse315,mse45,mse15,&
                  mse1h,mse315_2,mse210,mpress,libim,nmsels,&
                  nnnte,ngam_vars,ngam_u,ngam_w,nlimit,nlimbd,nangle,&

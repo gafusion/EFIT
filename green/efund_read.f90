@@ -95,18 +95,18 @@
       kubics=4
       icycred_loopmax=1290
       nfourier=5
-
       magpri67=1
       magprirdp=1
       magudom=1
       maglds=1
-      magpri322 = magpr2 - magpri67 - magprirdp - magudom - maglds
 
       OPEN(unit=nin,status='old',file='mhdin.dat' )
 
       READ (nin,machinein)
 
       CLOSE(nin)
+      magpri322 = magpr2 - magpri67 - magprirdp - magudom - maglds
+
 
       ! DIII-D special (I can't think of a better way of setting this)
       IF (trim(device)=='DIII-D') THEN
