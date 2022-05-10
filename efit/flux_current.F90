@@ -17,6 +17,7 @@
 !!
 !**********************************************************************
       subroutine pflux(niter,nnin,ntotal,jtime,kerror)
+      use openacc
       use set_kinds 
       use var_buneman, only: rgrid1,delrgrid,delz,drdz2
       use commonblocks, only: c,wk,copy,bkx,bky,psiold,psipold,psipp
@@ -39,8 +40,10 @@
 !----------------------------------------------------------------------------
 !--   save flux from current iterations before update                      --
 !----------------------------------------------------------------------------
+      !$acc kernels
       psiold(1:nwnh)=psi(1:nwnh)
       psipold(1:nwnh)=psipla(1:nwnh)
+      !$acc end kernels
 !
       buneman_green: if ((ibunmn.eq.1).or.(ibunmn.eq.3).or. &
          ((ibunmn.eq.2).and.(errorm.gt.errcut)).or. &
@@ -78,6 +81,7 @@
         dpsip=psic2-psic1
         psibar=(psic2+psic1)/2
       endif
+      !$acc kernels
       if (abs(vcurfb(1)).gt.1.e-6_dp) then
         iinow=vcurfb(3)
         if (ntotal.lt.iinow) then
@@ -87,31 +91,37 @@
           if(mod(ntotal-iinow,icurfb).eq.0) psikkk(1:nwnh)=psiold(1:nwnh)
         endif
       endif
+      !$acc end kernels
 !-----------------------------------------------------------------------
 !--   boundary terms                                                  --
 !-----------------------------------------------------------------------
+      !$acc parallel loop gang worker num_workers(4) vector_length(32)
       do j=1,nh
         kk=(nw-1)*nh+j
-        psipp(j)=0.
-        psipp(kk)=0.
+        tempsum1=0.
+        tempsum2=0.
+        !$acc loop vector reduction(+:tempsum1,tempsum2)
         do ii=1,nw
          do jj=1,nh
           kkkk=(ii-1)*nh+jj
           mj=abs(j-jj)+1
           mk=(nw-1)*nh+mj
-          psipp(j)=psipp(j)-gridpc(mj,ii)*pcurrt(kkkk)
-          psipp(kk)=psipp(kk)-gridpc(mk,ii)*pcurrt(kkkk)
-          psi(j)=psipp(j)
-          psi(kk)=psipp(kk)
+          tempsum1=tempsum1-gridpc(mj,ii)*pcurrt(kkkk)
+          tempsum2=tempsum2-gridpc(mk,ii)*pcurrt(kkkk)
          enddo
         enddo
+        psi(j)=tempsum1
+        psi(kk)=tempsum2
       enddo
+
+      !$acc parallel loop gang worker num_workers(4) vector_length(32)
       do i=2,nw-1
         kk1=(i-1)*nh
         kknh=kk1+nh
         kk1=kk1+1
-        psipp(kk1)=0.
-        psipp(kknh)=0.
+        tempsum1=0.
+        tempsum2=0.
+        !$acc loop vector reduction(+:tempsum1,tempsum2)
         do ii=1,nw
          do jj=1,nh
           kkkk=(ii-1)*nh+jj
@@ -119,12 +129,12 @@
           mjnh=abs(nh-jj)+1
           mk1=(i-1)*nh+mj1
           mknh=(i-1)*nh+mjnh
-          psipp(kk1)=psipp(kk1)-gridpc(mk1,ii)*pcurrt(kkkk)
-          psipp(kknh)=psipp(kknh)-gridpc(mknh,ii)*pcurrt(kkkk)
-          psi(kk1)=psipp(kk1)
-          psi(kknh)=psipp(kknh)
+          tempsum1=tempsum1-gridpc(mk1,ii)*pcurrt(kkkk)
+          tempsum2=tempsum2-gridpc(mknh,ii)*pcurrt(kkkk)
          enddo
         enddo
+        psi(kk1)=tempsum1
+        psi(kknh)=tempsum2
       enddo
 !-------------------------------------------------------------------------
 !--   get flux at inner points by inverting del*, only plasma flux
@@ -133,6 +143,7 @@
       allocate(work(SIZE(psi)))
       if (isolve.eq.0) then
 !       original buneman solver method
+        !$acc parallel loop gang worker num_workers(8) vector_length(32)
         do i=2,nw-1
           do j=2,nh-1
             kk=(i-1)*nh+j
@@ -152,7 +163,9 @@
         if (kerror.gt.0) return
       endif
       deallocate(work)
+      !$acc kernels
       psi(1:nwnh)=-psi(1:nwnh)
+      !$acc end kernels
 !----------------------------------------------------------------------------
 !--   optional symmetrized solution                                        --
 !----------------------------------------------------------------------------
@@ -280,6 +293,7 @@
 !----------------------------------------------------------------------------
 !--   add flux from external coils                                         --
 !----------------------------------------------------------------------------
+      !$acc kernels
       do kk=1,nwnh
         psipla(kk)=psi(kk)
         if(ivesel.gt.0) &
@@ -293,6 +307,7 @@
         if (iacoil.gt.0) &
           psi(kk)=psi(kk)+sum(gridac(kk,1:nacoil)*caccurt(jtime,1:nacoil))
       enddo
+      !$acc end kernels
 
       else buneman_green
 !-----------------------------------------------------------------------------
@@ -343,16 +358,18 @@
             kk=(i-1)*nh+j
             call seva2d(bkx,lkx,bky,lky,c,rgrid(i),zgrid(j),pds,ier,n333)
             psi(kk)=psi(kk)+cdelznow*pds(3)
+           enddo
           enddo
-         enddo
         endif
       endif
 !----------------------------------------------------------------------------
 !--   relax flux if needed                                                 --
 !----------------------------------------------------------------------------
       if ((ntotal.gt.1) .and. (abs(relax-1.0).ge.1.0e-03_dp)) then
+        !$acc kernels
         psi(1:nwnh)=relax*psi(1:nwnh)+(1.-relax)*psiold(1:nwnh)
         psipla(1:nwnh)=relax*psipla(1:nwnh)+(1.-relax)*psipold(1:nwnh)
+        !$acc end kernels
       endif
 !
       DEALLOCATE(psikkk,gfbsum)

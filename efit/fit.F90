@@ -9,6 +9,7 @@
 !!
 !**********************************************************************
       subroutine fit(jtime,kerror)
+      use openacc
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -120,7 +121,9 @@
 #ifdef DEBUG_LEVEL2
           write(6,*) 'Entering pflux'
 #endif
+!$acc data copyin(pcurrt,rgrid,gridpc) copy(psi,psipla,psiold,psipold,psipp)
           call pflux(ix,ixnn,nitera,jtime,kerror)
+!$acc end data
           if (kerror.gt.0) then
             jerror(jtime) = 1
             return
