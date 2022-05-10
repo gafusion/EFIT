@@ -239,9 +239,7 @@ ALLOCATE(csilop(nsilop,ntime),csilopv(nsilop,ntime),crogow(nrogow,ntime), &
    ratsol(ntime),rvsiu(ntime),zvsiu(ntime),rvsou(ntime), &
    zvsou(ntime),rvsid(ntime),zvsid(ntime),rvsod(ntime),zvsod(ntime), &
    vtime(ntime), &
-   s1(ntime),s2(ntime),s3(ntime),bpolav(ntime),rfcfc(nfcoil,nfcoil), &
-   rbdry_ext(mbdry),zbdry_ext(mbdry),xlim_ext(nlimit),ylim_ext(nlimit))
-
+   s1(ntime),s2(ntime),s3(ntime),bpolav(ntime),rfcfc(nfcoil,nfcoil))
 !
 !-------from commonblocks module------
 ALLOCATE(c(kubicx,lubicx,kubicy,lubicy),wk(nwrk), &

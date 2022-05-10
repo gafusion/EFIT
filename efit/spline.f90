@@ -1,15 +1,16 @@
 !**********************************************************************
 !>
-!!    Bicubic spline routines.                                              --
-!!    --    Put together with routines from E.Solano.
+!!    Bicubic spline routines.
+!!      Put together with routines from E.Solano.
+!!
 !!
 !!    @param bkx : interval coefficients of length lubicx+1 from
-!                 sets2d.
+!!                 sets2d.
 !!
 !!    @param lx : number of terms in bkx  from sets2d.
 !!
 !!    @param bky : interval coefficients of length lubicy+1 from
-!                 sets2d.
+!!                 sets2d.
 !!
 !!    @param ly : number of terms in bky  from sets2d.
 !!
@@ -21,13 +22,13 @@
 !!    @param yl : the point at which interpolations are desired.
 !!
 !!    @param fs : vector containing results depending on icalc\n
-!!                 icalc              fs\n
-!!                   1                f\n
-!!                   2                fx\n
-!!                   3                fy\n
-!!                   4                fxy\n
-!!                   5                fxx\n
-!!                   6                fyy
+!!                  icalc              fs\n
+!!                    1                f\n
+!!                    2                fx\n
+!!                    3                fy\n
+!!                    4                fxy\n
+!!                    5                fxx\n
+!!                    6                fyy
 !!
 !!    @param ier : error flag
 !!
@@ -91,37 +92,40 @@
       return
       end subroutine seva2d
 
-!------------------------------------------------------------------------------
-!--  S.Thompson  92/05/18                                                    --
-!--    Bicubic spline routines.                                              --
-!--    Put together with routines from E.Solano.                             --
-!--  SMWolfe     93/12/17                                                    --
-!--    Modifed to avoid over-writing the original array.                     --
-!--              94/04/28                                                    --
-!--    Updated.                                                              --
-!------------------------------------------------------------------------------
-!  Inputs:
-!
-!      s     - nx by ny array containing the function values at (x,y).
-!              This is a 1-d array, k=k=(i-1)*ny+j.
-!
-!      x, y  - (x,y) location, arrays of length nx and ny.
-!
-!  Outputs:
-!
-!      cs    - array of spline coefficients of dimension (kubicx,
-!              lubicx,kubicy,lubicy).
-!
-!      bkx, bky - interval coefficients of length lubicx+1 and lubicy+1.
-!
-!      lx, ly -   number of terms in bkx and bky.
-!
-!      ier   - error parameter.
-!
-!  Work arrays:
-!
-!      wk    - of dimension at least nx by ny.
-!------------------------------------------------------------------------------
+!**********************************************************************
+!>
+!!    Bicubic spline routines.
+!!      Put together with routines from E.Solano.
+!!
+!!    Inputs:
+!!
+!!    @param s : nx by ny array containing the function values at (x,y).
+!!                This is a 1-d array, k=k=(i-1)*ny+j.
+!! 
+!!    @param x : (x,y) location, arrays of length nx and ny.
+!!
+!!    @param y : (x,y) location, arrays of length nx and ny.
+!!
+!!    Outputs:
+!!
+!!    @param cs : array of spline coefficients of dimension (kubicx,
+!!                lubicx,kubicy,lubicy).
+!!
+!!    @param bkx : interval coefficients of length lubicx+1.
+!!
+!!    @param bky : interval coefficients of length lubicy+1.
+!!
+!!    @param lx : number of terms in bkx.
+!!
+!!    @param ly : number of terms in bky.
+!!
+!!    @param ier : error parameter.
+!!
+!!    Work arrays:
+!!
+!!    @param wk : of dimension at least nx by ny.
+!!
+!**********************************************************************
       subroutine sets2d(s,cs,x,nx,bkx,lx,y,ny,bky,ly,wk,ier)
 !!      use commonblocks,only: bkx,bky
       include 'eparm.inc'
@@ -166,236 +170,6 @@
 !
       return
       end subroutine sets2d
-
-!**********************************************************************
-!>
-!!    The singular value decomposition A = UQVT of an m-by-n matrix A
-!!    can be computed using the IMSL subroutine LSVDF:
-!!    
-!!    CALL LSVDF (A, IA, M, N, B, IB, NB, S, WK, IER)
-!!    
-!!    where:
-!!    
-!!    A   - REAL8 M-by-N matrix.  On input, A contains the matrix to be
-!!    decomposed.  On output, A contains the N-by-N matrix V in
-!!    it's first N rows.  Either M.GE.N or M.LT.N is permitted.
-!!    
-!!    IA  - Row dimension of matrix A exactly as specified in the dim-
-!!    ension statement in the calling program.  A is used by LSVDF
-!!    as work storage for an N-by-N matrix.  Therefore, IA must be
-!!    greater than or equal to MAX(M, N).
-!!    
-!!    M   - Number of rows in A.
-!!    
-!!    N   - Number of columns in A.
-!!    
-!!    B   - M-by-NB matrix.  B is not used if NB.LE.0.  Otherwise, B is
-!!    replaced by the matrix product UT  B.
-!!    
-!!    IB  - Row dimension of matrix B exactly as specified in the dimen-
-!!    sion statement in the calling program.
-!!    
-!!    NB  - Number of columns in B.  If NB.LE.0, B is not used.
-!!    
-!!    S   - Vector of length N.  On output, S contains the ordered singular
-!!    values of A.  S(1) .GE. S(2), ... , .GE. S(N) .GE. 0.
-!!    
-!!    WK  - Work vector of length 2N.
-!!    
-!!    IER - Error parameter.
-!!    Warning errors:
-!!    IER = 33  indicates that matrix A is not full rank or very ill-
-!!    conditioned.  Small singular values may not be very
-!!    accurate.
-!!    IER = 34  indicates that either N.LE.0 or M.LE.0.
-!!    Terminal error:
-!!    IER = 129 indicates that convergence was not obtained by LSVDB
-!!    and computation was discontinued.
-!!    
-!!    Remarks:
-!!    
-!!    1.  LSVDF computes the singular value decomposition of a REAL8 M-by-N
-!!    matrix
-!!    A = U  Q  VT    where
-!!    
-!!    U is an M-by-M orthogonal matrix, V is an N-by-N orthogonal matrix,
-!!    and Q is an M-by-N matrix with all elements zero except
-!!    
-!!    Q(I,I) = S(I)   I = 1, ..., MIN(M,N).
-!!    
-!!    V is returned in the first N rows of A.  U is obtained by setting
-!!    B to the M-by-M identity matrix, on input, and setting NB = M.  On
-!!    output, B is replaced by UT.
-!!    
-!!    2.  The notation UT and VT represents U transpose and V transpose,
-!!    respectively.  Q(+) denotes the generalized inverse of Q.
-!!    
-!!    3.  LSVDF is useful in analyzing and solving the least squares problem
-!!    
-!!    AX .APPR. B
-!!    
-!!    (where .APPR. means approximately equals).  In this case B is a
-!!    vector of length M and LSVDF is called with IB = M, NB = 1.  The
-!!    solution is
-!!    
-!!    X = VQ(+)UTB.
-!!    
-!!    UTB replaces B on output.  The solution X is obtained as follows:
-!!    (The user may wish to set small singular values S(I) to zero just
-!!    prior to computing X.)
-!!    
-!!    COMPUTE Q(+)  UT  B
-!!    L = MIN(M, N)
-!!    DO 10 I = 1, L
-!!    T = 0.0
-!!    IF (S(I).NE.0.0) T = B(I)/S(I)
-!!    B(I) = T
-!!    10    CONTINUE
-!!    COMPUTE V  Q(+)  UT  B
-!!    15    DO 25 I = 1, N
-!!    X(I) = 0.0
-!!    DO 20 J = 1, L
-!!    20                X(I) = X(I) + A(I, J)B(J)
-!!    25    CONTINUE
-!!    
-!!    If B is set to the Jth column of the M-by-M identity matrix on input,
-!!    X is the Jth column of A(+) (the generalized inverse of A).
-!!    
-!!    4.  The user should be aware of several practical aspects of the singular
-!!    value analysis.  One of these is the effect of the uncertainty of the
-!!    data and the need for scaling.
-!!    
-!!    -----------------------------------------------------------------------
-!!    LINPACK routine:
-!!    -----------------------------------------------------------------------
-!!    
-!!    The singular value decomposition A = USVT of an M-by-N matrix A can be
-!!    computed using the subroutine SSVDC:
-!!    
-!!    CALL SSVDC (A, ADIM, M, N, S, E, U, UDIM, V, VDIM, WORK, JOB, INFO)
-!!    
-!!    where
-!!    
-!!    A    - REAL8 M-by-N matrix A  [A(ADIM, N)].
-!!    
-!!    ADIM - Row dimension of the array A.
-!!    
-!!    M    - Row dimension of the matrix A.
-!!    
-!!    N    - Column dimension of matrix A.
-!!    
-!!    S    - Returns the singular values in descending order [S(N)].
-!!    
-!!    E    - REAL8 work vector [E(N)].
-!!    
-!!    U    - Returns the orthogonal matrix U if requested [U(UDIM, M)].
-!!    
-!!    UDIM - Row dimension of the array U.
-!!    
-!!    V    - Returns the orthogonal matrix V if requested [V(VDIM, N)].
-!!    
-!!    VDIM - Row dimension of the array V.
-!!    
-!!    WORK - Work vector [WORK(N)].
-!!    
-!!    JOB  - INTEGER4 which indicates "how much" of SVD to compute.
-!!    
-!!    INFO - INTEGER4 array [INFO(N)]:
-!!    INFO = 0 implies SVD is found
-!!    INFO > 0 implies SVD is not completed
-!!    
-!!    Remarks:
-!!    
-!!    The variable JOB is a two-digit INTEGER4 AB that prescribes "how
-!!    much" of the SVD to compute.  For example, U and/or V may not be
-!!    required.  Provision can also be made to form just the first N
-!!    columns of U, i.e., the matrix U1 in
-!!    
-!!    U = [U1  U2]
-!!    
-!!    N  M-N
-!!    
-!!    1.  Anything less than the full SVD allows for substantial overwriting
-!!    by identifying the arrays U and/or V with the array A in the calling
-!!    sequence.  Here are the possibilities:
-!!    
-!!    JOB     IDENTIFICATION     EFFECT
-!!    A     U     V
-!!    
-!!    00      A     A     A      No U or V.
-!!    00      A     U     U      No U or V.  A saved.
-!!    01      A     A     V      Matrix V returned in V.
-!!    01      A     A     A      Matrix V returned in top of A.
-!!    10      A     U     A      Matrix U returned in U. A saved.
-!!    11      A     U     V      Matrices U and V returned in U and V.
-!!    A saved.
-!!    20      A     U     A      Matrix U1 returned in U. A saved.
-!!    20      A     A     A      Matrix U1 returned in A.
-!!    21      A     U     V      Matrices U1 and V returned in U and V.
-!!    A saved.
-!!    21      A     U     A      Matrices U1 and V returned in U and A.
-!!    A saved.
-!!    21      A     A     V      Matrices U1 and V returned in A and V.
-!!    
-!!    2.  Any option that returns the matrix V in array A requires M >= N.
-!!    
-!!    3.  A leading application of the SVD is the linear least squares
-!!    problem, especially when the data matrix is numerically rank
-!!    deficient.
-!!    
-!!    -----------------------------------------------------------------------
-!!    Conversion from IMSL to LINPACK routine.
-!!    -----------------------------------------------------------------------
-!!    
-!**********************************************************************
-      SUBROUTINE SDECM (A, IA, M, N, B, IB, NB, S, WK, IER)
-      use set_kinds
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      PARAMETER (NN = 100, MM = 300)
-      PARAMETER (MM3 = 3*MM)
-      DIMENSION A(IA, N), S(N), WK(N), B(IB, NB) 
-      DIMENSION BB(MM), E(NN), U(MM, MM), V(NN, NN)
-      DIMENSION WK3(MM3)
-      CHARACTER*1 JOBU, JOBVT
-!
-      if ((nn .lt. n) .or. (mm .lt. m)) then 
-         write (6,100) n,m
-         ier = 129
-         return
-      endif
-      n11=11
-      jobu='A'
-      jobvt='A'
-      info=0
-!     CALL SSVDC(A, IA, M, N, S, E, U, MM, V, NN, WK, n11, INFO)
-!---------------------------------------------------------------------
-!--   Changed to LINPACK routine                                    --
-!---------------------------------------------------------------------
-      CALL DGESVD(JOBU,JOBVT,int(M,8),int(N,8),A,int(IA,8),S,U, &
-                  int(MM,8),V,int(NN,8),WK3,int(MM3,8),int(INFO,8))
-!
-      IF (INFO.GT.0) IER = 129                   ! Error message
-      if (s(1).le.0) IER = 129                   ! This better not happen
-      if (s(n)/s(1) .le. 1.e-7_dp) ier = 33         ! Ill-conditioned or rank-deficient matrix
-!
-      DO I = 1, N            ! Copy V into A
-!        A(I, 1:N) = V(I, 1:N)
-         A(I, 1:N) = V(1:N, I)
-      ENDDO
-      IF (NB.EQ.1) THEN      ! B is a vector
-         DO I = 1, M         ! Compute U**T * B
-            BB(I) = SUM(U(1:M, I)*B(1:M, 1))
-         ENDDO
-         B(1:M, 1) = BB(1:M) ! Replace B with U**T * B 
-      ELSE                   ! B is a matrix
-         DO I = 1, NB        ! Replace B with U**T
-            B(1:M, I) = U(I, 1:M)
-         ENDDO
-      ENDIF
-!
- 100  format(' Array dimensions', 2i5 ,' too large. Recompile.')
-      RETURN
-      END SUBROUTINE SDECM
 
 !**********************************************************************
 !>
@@ -518,7 +292,6 @@
 
 !**********************************************************************
 !>
-!!    -----------------------------------------------------------------------
 !!    alls bsplvb, banfac/slv
 !!    this is an extended version of  splint , for the use in tensor prod-
 !!    uct interpolation.
@@ -573,7 +346,6 @@
 !!    
 !!    INTEGER4 iflag,k,m,n,i,ilp1mx,j,jj,kpkm1,left,np1
 !!    REAL8 bcoef(m,n),gtau(n,m),q(n,7),t(n+k),tau(n),work(n),taui
-!!    
 !!    
 !**********************************************************************
       subroutine spli2d ( tau, gtau, t, n, k, m, work, q, bcoef, iflag )
@@ -646,7 +418,6 @@
 
 !**********************************************************************
 !>
-!!    
 !!    calls  bsplvb
 !!    this is an extended version of  bsplpp  for use with tensor products
 !!    
@@ -679,7 +450,6 @@
 !!    its first  k-1  derivatives are then evaluated at the left end
 !!    point of that interval, using  bsplvb  repeatedly to obtain the val-
 !!    ues of all b-splines of the appropriate order at that point.
-!!    
 !!
 !**********************************************************************
       subroutine bspp2d ( t, bcoef, n, k, m, scrtch, break, coef, l )
@@ -742,7 +512,6 @@
 
 !**********************************************************************
 !>
-!!    
 !!    Calculates the value of all possibly nonzero b-splines at  x  of order
 !!    
 !!    jout  =  max( jhigh , (j+1)(index-1) )
@@ -825,7 +594,6 @@
 
 !**********************************************************************
 !>
-!!    
 !!    Modified for optimization by S.J. Thompson, 30-Aug-1993
 !!    Revised to eliminate call to interv by S.M.Wolfe, 17-Dec-1993
 !!    and to use ASF's for evaluation
@@ -859,7 +627,6 @@
 !!    the interval index  i , appropriate for  x , is found through a
 !!    call to  interv . the formula above for the  jd-th derivative
 !!    of  f  is then evaluated (by nested multipication).
-!!    
 !!
 !**********************************************************************
       function ppvalw(coef, x, jd )

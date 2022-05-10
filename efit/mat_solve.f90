@@ -202,3 +202,115 @@
    50 b(1) = b(1)/a(1,1)  
       return                                                            
       end subroutine solve 
+
+!**********************************************************************
+!>
+!!    The singular value decomposition A = UQVT of an m-by-n matrix A
+!!    can be computed using the lapack subroutine DGESVD:
+!!    
+!!    CALL DGESVD(JOBU,JOBVT,M,N,A,IA,S,U,MM,V,NN,WK3,MM3,INFO)
+!!    
+!!    where
+!!    JOBU - Specifies options for computing all or part of the matrix U:
+!!         = 'A':  all M columns of U are returned in array U:
+!!         = 'S':  the first min(m,n) columns of U (the left singular
+!!                 vectors) are returned in the array U;
+!!         = 'O':  the first min(m,n) columns of U (the left singular
+!!                 vectors) are overwritten on the array A;
+!!         = 'N':  no columns of U (no left singular vectors) are
+!!                 computed.
+!!
+!!    JOBVT - Specifies options for computing all or part of the matrix V**T:
+!!          = 'A':  all N rows of V**T are returned in the array VT;
+!!          = 'S':  the first min(m,n) rows of V**T (the right singular
+!!                  vectors) are returned in the array VT;
+!!          = 'O':  the first min(m,n) rows of V**T (the right singular
+!!                  vectors) are overwritten on the array A;
+!!          = 'N':  no rows of V**T (no right singular vectors) are
+!!                  computed.
+!!    
+!!    M    - Row dimension of the matrix A.
+!!    
+!!    N    - Column dimension of matrix A.
+!!    
+!!    A    - REAL8 M-by-N matrix A  [A(IA,N)].
+!!    
+!!    IA   - Row dimension of the array A.
+!!    
+!!    S    - Returns the singular values in descending order [S(N)].
+!!    
+!!    U    - Returns the orthogonal matrix U if requested [U(MM,M)].
+!!    
+!!    MM   - Row dimension of the array U.
+!!    
+!!    V    - Returns the orthogonal matrix V if requested [V(NN,N)].
+!!    
+!!    NN   - Row dimension of the array V.
+!!    
+!!    WK3 - Work vector [WORK(3*MM)].
+!!    
+!!    INFO = 0 implies SVD is found
+!!    INFO > 0 implies SVD is did not converge
+!!    INFO < 0 implies illegal input
+!!    
+!!    Remarks:
+!!
+!!    1. JOBVT and JOBU cannot both be 'O'.
+!!    
+!!    2.  Anything less than the full SVD allows for substantial overwriting
+!!    by identifying the arrays U and/or V with the array A in the calling
+!!    sequence.
+!!
+!!    3.  Any option that returns the matrix V in array A requires M >= N.
+!!    
+!!    4.  A leading application of the SVD is the linear least squares
+!!    problem, especially when the data matrix is numerically rank
+!!    deficient.
+!!    
+!**********************************************************************
+      subroutine sdecm(a, ia, m, n, b, ib, nb, s, wk, ier)
+      use set_kinds
+      implicit integer*4 (i-n), real*8 (a-h, o-z)
+      parameter (nn = 100, mm = 300)
+      parameter (mm3 = 3*mm)
+      dimension a(ia,n), s(n), wk(n), b(ib,nb) 
+      dimension bb(mm), u(mm,mm), v(nn,nn)
+      dimension wk3(mm3)
+      character*1 jobu, jobvt
+!
+      if ((nn .lt. n) .or. (mm .lt. m)) then 
+         write (6,100) n,m
+         ier = 129
+         return
+      endif
+      n11=11
+      jobu='A'
+      jobvt='A'
+      info=0
+!---------------------------------------------------------------------
+!--   Changed to LAPACK routine                                     --
+!---------------------------------------------------------------------
+      call dgesvd(jobu,jobvt,int(m,8),int(n,8),a,int(ia,8),s,u, &
+                  int(mm,8),v,int(nn,8),wk3,int(mm3,8),int(info,8))
+!
+      if (info.gt.0) ier = 129                   ! Error message
+      if (s(1).le.0) ier = 129                   ! This better not happen
+      if (s(n)/s(1) .le. 1.e-7_dp) ier = 33      ! Ill-conditioned or rank-deficient matrix
+!
+      do i=1,n              ! Copy V into A
+        a(i,1:n) = v(1:n,i)
+      enddo
+      if (nb.eq.1) then     ! B is a vector
+        do i=1,m            ! Compute U**T * B
+          bb(I) = sum(u(1:m,i)*B(1:m,1))
+        enddo
+        b(1:m,1) = bb(1:m)  ! Replace B with U**T * B 
+      else                  ! B is a matrix
+        do i=1,nb           ! Replace B with U**T
+          b(1:m,i) = u(i,1:m)
+        enddo
+      endif
+!
+ 100  format(' Array dimensions', 2i6 ,' too large. Recompile.')
+      return
+      end subroutine sdecm
