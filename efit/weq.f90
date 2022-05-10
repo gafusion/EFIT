@@ -400,8 +400,7 @@
       namelist/out1/ishot,itime,betap0,rzero,qenp,enp,emp,plasma, &
            expmp2,coils,btor,rcentr,brsp,icurrt,rbdry,zbdry, &
            nbdry,fwtsi,fwtcur,mxiter,nxiter,limitr,xlim,ylim,error, &
-           iconvr,ibunmn,pressr,rpress,nqpsi, &
-           npress,sigpre
+           iconvr,ibunmn,pressr,rpress,nqpsi,npress,sigpre
       namelist/mseout/rrrgam,zzzgam,aa1gam,aa2gam,aa3gam,aa4gam, &
                       tgamma,sgamma,aa5gam,aa6gam,aa7gam,aa8gam, &
                       msebkp,fwtgam,tgammauncor
@@ -647,48 +646,7 @@
 !
       nqpsi=nw
       limitr=limitr-1
-!      write (neqdsk,out1)
-      write(neqdsk,*) '&OUT1'
-!       write (neqdsk,*) 'QPSI =', qpsi(1),','
-!       do i=2,SIZE(qpsi)
-!        write (neqdsk,*) '      ', qpsi(i),','
-!       enddo
-      write (neqdsk,*) 'ISHOT =',ishot
-      write (neqdsk,*) 'ITIME =',itime
-      write (neqdsk,*) 'BETAP0 =',betap0
-      write (neqdsk,*) 'RZERO =',rzero
-      write (neqdsk,*) 'QENP =',qenp
-      write (neqdsk,*) 'ENP =',enp
-      write (neqdsk,*) 'EMP =',emp
-      write (neqdsk,*) 'PLASMA =',plasma
-      write (neqdsk,*) 'EXPMP2 =',expmp2
-      write (neqdsk,*) 'COILS =',coils
-      write (neqdsk,*) 'BTOR =',btor
-      write (neqdsk,*) 'RCENTR =',rcentr
-      write (neqdsk,*) 'BRSP =',brsp
-      write (neqdsk,*) 'ICURRT =',icurrt
-      write (neqdsk,*) 'RBDRY =',rbdry
-      write (neqdsk,*) 'ZBDRY =',zbdry
-      write (neqdsk,*) 'NBDRY =',nbdry
-      write (neqdsk,*) 'FWTSI =',fwtsi
-      write (neqdsk,*) 'FWTCUR =',fwtcur
-      write (neqdsk,*) 'MXITER =',mxiter
-      write (neqdsk,*) 'NXITER =',nxiter
-      write (neqdsk,*) 'LIMITR =',limitr
-      write (neqdsk,*) 'XLIM =',xlim
-      write (neqdsk,*) 'YLIM =',ylim
-      write (neqdsk,*) 'ERROR =',error
-      write (neqdsk,*) 'ICONVR =',iconvr
-      write (neqdsk,*) 'IBUNMN =',ibunmn
-      write (neqdsk,*) 'PRESSR =',pressr
-      write (neqdsk,*) 'RPRESS =',rpress
-      write (neqdsk,*) 'QPSI =',qpsi
-      write (neqdsk,*) 'PRESSW =',pressw
-      write (neqdsk,*) 'PRES =',pres
-      write (neqdsk,*) 'NQPSI =',nqpsi
-      write (neqdsk,*) 'NPRESS =',npress
-      write (neqdsk,*) 'SIGPRE =',sigpre
-      write (neqdsk,*) '/'
+      write (neqdsk,out1)
 
       call ppstore
       call ffstore
@@ -884,75 +842,3 @@
  3000 format (4i5)
  3003 format (2i5,i6,i5)
       end subroutine weqdsk
-
-      
-!**********************************************************************
-!>
-!!    timedot does ...
-!!    
-!!
-!!    @param kdot :
-!!
-!!    @param time :
-!!
-!!    @param wplasm :
-!!
-!!    @param sibdry :
-!!
-!!    @param wbpol :
-!!
-!!    @param vloopt :
-!!
-!!    @param wpdot :
-!!
-!!    @param wbdot :
-!!
-!!    @param vsurfa :
-!!
-!!    @param pbinj :
-!!
-!!    @param taumhd :
-!!
-!!    @param cpasma :
-!!
-!!    @param wplasmd :
-!!
-!!    @param taudia :
-!!
-!**********************************************************************
-      subroutine timdot(kdot,time,wplasm,sibdry,wbpol,vloopt, &
-                        wpdot,wbdot,vsurfa,pbinj,taumhd,cpasma, &
-                        wplasmd,taudia)
-      use global_constants
-      use set_kinds
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension time(1),wplasm(1),sibdry(1),wbpol(1),vloopt(1), &
-                wpdot(1),wbdot(1),vsurfa(1),pbinj(1),taumhd(1), &
-                cpasma(1),wplasmd(1),taudia(1)
-      data mychoice/2/
-
-      if (kdot.eq.0) return
-      if (mychoice.ne.2) return
-!----------------------------------------------------------------------
-!--   derivative by finite differencing                              --
-!----------------------------------------------------------------------
-      kkkk=kdot+1
-      wpdot(kkkk)=0.
-      wbdot(kkkk)=0.
-      vsurfa(kkkk)=0.
-      wpddot=0.0
-      do i=1,kdot
-        ip=2*kdot+2-i
-        deltt=(time(ip)-time(i))/1000./kdot
-        wpdot(kkkk)=wpdot(kkkk)+(wplasm(ip)-wplasm(i))/deltt
-        wpddot=wpddot+(wplasmd(ip)-wplasmd(i))/deltt
-        wbdot(kkkk)=wbdot(kkkk)+(wbpol(ip)-wbpol(i))/deltt
-        vsurfa(kkkk)=vsurfa(kkkk)+(sibdry(ip)-sibdry(i))/deltt
-      enddo
-      vsurfa(kkkk)=vloopt(kkkk)-twopi*vsurfa(kkkk)
-      ptotal=vsurfa(kkkk)*cpasma(kkkk)-wbdot(kkkk)+pbinj(kkkk)
-      taumhd(kkkk)=wplasm(kkkk)/(ptotal-wpdot(kkkk))*1000.
-      taudia(kkkk)=wplasmd(kkkk)/(ptotal-wpddot)*1000.
-
-      return
-      end subroutine timdot
