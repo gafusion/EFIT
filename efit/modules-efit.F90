@@ -126,7 +126,7 @@
 #if defined(USE_HDF5)
         type(hdf5ErrorType) :: h5err
         type(hdf5InOpts), save :: h5in
-        integer(HID_T) :: fileid,rootgid,eqid,cid,pid,tid,sid,nid
+        integer(HID_T) :: fileid,rootgid,eqid,cid,pid,tid,sid,fid,nid
         contains
 !       subprogram 1. fch5init.
 !       initialize fcio h5 information for writes and reads.
@@ -226,8 +226,8 @@
       end module var_zcntrl
 !var_updown
       module var_updown
-        logical vfeed,symmetrize,backaverage
         real*8 dpsip,dpsip_last
+        logical vfeed,symmetrize,backaverage
         data vfeed/.false./
       end module var_updown
 !var_test
@@ -308,7 +308,8 @@
         integer*4 kffcur,kppcur,kpcurn,icalbet 
         real*8 chidlc,gammaf,gammap,cstabz ,cstab0, &
                vbtot2,vbtvac2,vbtor2,vbtvac,vbeta0, &
-               vbtmag,btvvac2,btvtor2,btvtot2
+               vbtmag,btvvac2,btvtor2,btvtot2, &
+               kffcurs,kppcurs
         data cstabz/0.0e-13/
         data icalbet/1/
       end module var_pfterm
@@ -440,7 +441,6 @@
         real*8,dimension(:,:), allocatable :: rseps,zseps
         real*8 pasman,betatn,psiq1,betat2
         integer*4 jtwagap
-        data jtwagap/59/
       end module var_hist
 !var_hist2
       module var_hist2
@@ -484,8 +484,8 @@
       module var_cpsi
         real*8,dimension(:),allocatable :: psi,xpsi,vfbrrt,psipla
         real*8 vcurfb(3)
-        real*8 psibry,simag,sidif,eouter,zplasm,zpwant,vertfb,difpsi &
-               ,cupdown
+        real*8 psibry,simag,sidif,eouter,zplasm,zpwant,vertfb,difpsi, &
+               cupdown
         data vertfb/0./,cupdown/-100000./ 
       end module var_cpsi
 !var_cvalue
@@ -525,16 +525,15 @@
 ! NOTE : npsi_ext (actual dimension of _ext arrays) used in code logic and intentially set
 !        to default value of -1
       module profile_ext_mod
-        integer*4 :: npsi_ext=-1,nbdry_ext,limitr_ext
-        real*8,dimension(2049) :: pprime_ext
-        real*8,dimension(2049) :: ffprim_ext
+        integer*4 :: npsi_ext=-1,nw_ext,nh_ext,nbdry_ext,limitr_ext
         real*8,dimension(2049) :: psin_ext
-        real*8,dimension(2049) :: qpsi_ext
-        real*8,dimension(2049) :: bpp_ext, cpp_ext, dpp_ext
-        real*8,dimension(2049) :: bfp_ext, cfp_ext, dfp_ext
-        real*8,dimension(:),allocatable :: rbdry_ext,zbdry_ext,xlim_ext,ylim_ext
-        real*8 :: sign_ext, scalepp_ext, scaleffp_ext, cratio_ext, cratiop_ext, &
-                  cratiof_ext,psirz_ext
+        real*8,dimension(2049) :: bpp_ext,cpp_ext,dpp_ext
+        real*8,dimension(2049) :: bfp_ext,cfp_ext,dfp_ext
+        real*8,dimension(:),allocatable :: rbdry_ext,zbdry_ext,xlim_ext, &
+                                           ylim_ext,psirz_ext,pprime_ext,&
+                                           ffprim_ext,qpsi_ext,fcoil_ext
+        real*8 :: sign_ext,scalepp_ext,scaleffp_ext,cratio_ext, &
+                  cratiop_ext,cratiof_ext,simag_ext,psibry_ext
         character*80 :: geqdsk_ext
         logical :: fixpp = .false.
       end module profile_ext_mod

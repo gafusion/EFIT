@@ -7,7 +7,7 @@ include_directories(
 
 # This calls out to routines needed in d3lib
 set(EFITLIB_SOURCES
-  modules-efit.F90 get_eparmdud.F90 psical.f90 lsolved.f90 
+  modules-efit.F90 get_eparmdud.F90 psical.f90 mat_solve.f90 
   subs_d_pt.F90 efit_tables.F90 read_namelist.F90
   buneman.f90 getfnm.f90 ecom1-mods.f90 zpline.f90 
   ecom2-mods.f90 curve2d_mod.f90 inp_file_ch.f90 data_input.F90
@@ -48,10 +48,11 @@ target_link_libraries(efitlib green)
 if(${HAVE_SNAP})
   target_link_libraries(efitlib d3lib)
   if(${HAVE_MDSPLUS})
-    target_link_libraries(efitlib cerlib)
-  endif()
-  if(${HAVE_MSE})
-    target_link_libraries(efitlib mselib)
+    if(${HAVE_MSE})
+      target_link_libraries(efitlib cerlib mselib)
+    else()
+      target_link_libraries(efitlib cerlib)
+    endif()
   endif()
 #else()
 #  target_link_libraries(efitlib ptdatalib)

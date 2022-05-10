@@ -1,6 +1,11 @@
 #!/bin/bash
 
-export link_efit="@CURRENT_MACHINE_LINK_DIR@"
+# Use tables that are built as an extra check that they work (if available)
+if [ @TEST_EFUND@ = True ]; then
+  export link_efit="@CURRENT_MACHINE_BUILT_DIR@"
+else
+  export link_efit="@CURRENT_MACHINE_LINK_DIR@"
+fi
 export link_store=""
 
 # Ubuntu tries to use threads even without implementation in program

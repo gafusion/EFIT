@@ -131,6 +131,7 @@ is built in your $HOME/software directory)::
         -DENABLE_MDSPLUS:BOOL=ON \
         -DD3_LIB:PATH='/fusion/projects/codes/efit/dev/d3lib_gcc9.2.0/libd3share.a' \
         -DMSE_LIB:PATH='/fusion/projects/codes/mse/lib/libmse.a' \
+        -DTEST_EFUND:BOOL=True \
         ..
 
 For debugging, set:: 

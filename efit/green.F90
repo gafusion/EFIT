@@ -24,72 +24,32 @@
       kffp1=kffcur+1
       do jj=1,kwcurn
         if (ifag.ne.1) then
-          do m=1,nsilop
-            rsilpc(m,jj)=0.0
-          enddo
-          do m=1,magpri
-            rmp2pc(m,jj)=0.0
-          enddo
+          rsilpc(1:nsilop,jj)=0.0
+          rmp2pc(1:magpri,jj)=0.0
           if (kstark.gt.0.or.kdomse.gt.0) then
-            do m=1,nstark
-              rbrpc(m,jj)=0.0
-              rbzpc(m,jj)=0.0
-            enddo
+            rbrpc(1:nstark,jj)=0.0
+            rbzpc(1:nstark,jj)=0.0
           endif
-          if (mmbmsels.gt.0.or.kdomsels.gt.0) then
-            do m=1,nmsels
-              rmlspc(m,jj)=0.0
-            enddo
-          endif
-          if (kece.gt.0) then
-            do m=1,nnece
-              recepc(m,jj)=0.0
-            enddo
-          endif
-          if (kecebz.gt.0) then
-            recebzpc(jj)=0.0
-          endif
-          if (nbdry.gt.0) then
-            do m=1,nbdry
-              gbdrpc(m,jj)=0.0
-            enddo
-          endif
+          if(mmbmsels.gt.0.or.kdomsels.gt.0) rmlspc(1:nmsels,jj)=0.0
+          if(kece.gt.0) recepc(1:nnece,jj)=0.0
+          if(kecebz.gt.0) recebzpc(jj)=0.0
+          if(nbdry.gt.0) gbdrpc(1:nbdry,jj)=0.0
         endif
         fgowpc(jj)=0.0
       enddo
       if (fitdelz.and.niter.ge.ndelzon) then
-        do m=1,nsilop
-          gsildz(m)=0.0
-        enddo
-        do m=1,magpri
-          gmp2dz(m)=0.0
-        enddo
+        gsildz(1:nsilop)=0.0
+        gmp2dz(1:magpri)=0.0
         fgowdz=0.0
         if (kstark.gt.0) then
-          do m=1,nstark
-            gbrdz(m)=0.0
-            gbzdz(m)=0.0
-          enddo
+          gbrdz(1:nstark)=0.0
+          gbzdz(1:nstark)=0.0
         endif
-        if (kece.gt.0) then
-          do m=1,nnece
-            gecedz(m)=0.0
-          enddo
-        endif
-        if (kecebz.gt.0) then
-          gecebzdz=0.0
-        endif
-        if (nbdry.gt.0) then
-          do m=1,nbdry
-            gbdrdz(m)=0.0
-          enddo
-        endif
+        if(kece.gt.0) gecedz(1:nnece)=0.0
+        if(kecebz.gt.0) gecebzdz=0.0
+        if(nbdry.gt.0) gbdrdz(1:nbdry)=0.0
       endif
-      if (ifag.ne.1) then
-        do jj=1,kffcur
-          rspdlc(jj)=0.0
-        enddo
-      endif
+      if(ifag.ne.1) rspdlc(1:kffcur)=0.0
 !
       if (fwtdlc.gt.0.0) then
         upsi1=1.0
@@ -100,46 +60,26 @@
 !------------------------------------------------------------------
       if (kedgep.gt.0) then
         if (ifag.ne.1) then
-          do m=1,nsilop
-            rsilpe(m)=0.0
-          enddo
-          do m=1,magpri
-            rmp2pe(m)=0.0
-          enddo
+          rsilpe(1:nsilop)=0.0
+          rmp2pe(1:magpri)=0.0
           if (kstark.gt.0.or.kdomse.gt.0) then
-            do m=1,nstark
-              rbrpe(m)=0.0
-              rbzpe(m)=0.0
-            enddo
+            rbrpe(1:nstark)=0.0
+            rbzpe(1:nstark)=0.0
           endif
-          if (nbdry.gt.0) then
-            do m=1,nbdry
-              gbdrpe(m)=0.0
-            enddo
-          endif
+          if(nbdry.gt.0) gbdrpe(1:nbdry)=0.0
         endif
         fgowpe=0.0
       endif
 !
       if (kedgef.gt.0) then
         if (ifag.ne.1) then
-          do m=1,nsilop
-            rsilfe(m)=0.0
-          enddo
-          do m=1,magpri
-            rmp2fe(m)=0.0
-          enddo
+          rsilfe(1:nsilop)=0.0
+          rmp2fe(1:magpri)=0.0
           if (kstark.gt.0.or.kdomse.gt.0) then
-            do m=1,nstark
-              rbrfe(m)=0.0
-              rbzfe(m)=0.0
-            enddo
+            rbrfe(1:nstark)=0.0
+            rbzfe(1:nstark)=0.0
           endif
-          if (nbdry.gt.0) then
-            do m=1,nbdry
-              gbdrfe(m)=0.0
-            enddo
-          endif
+          if(nbdry.gt.0) gbdrfe(1:nbdry)=0.0
           rdlcfe=0.0
         endif
         fgowfe=0.0
@@ -255,32 +195,30 @@
           endif
           if ((upsi.ge.0.0).and.(upsi.le.1.0)) then
             call setfp(upsi,xpsii)
-            if (fwtdlc.gt.0.0) then
-              call setff(upsi,xpsis)
-            endif
+            if(fwtdlc.gt.0.0) call setff(upsi,xpsis)
             do jj=kppcur+1,kpcurn
               jjk=jj-kppcur
               factor=xpsii(jjk)/rgrid(i)*wwwww
               if (ifag.ne.1) then
                 do m=1,nsilop
-                  rsilpc(m,jj)=rsilpc(m,jj) + gsilpc(m,kk)*factor
+                  rsilpc(m,jj)=rsilpc(m,jj)+gsilpc(m,kk)*factor
                 enddo
                 do m=1,magpri
-                  rmp2pc(m,jj)=rmp2pc(m,jj) + gmp2pc(m,kk)*factor
+                  rmp2pc(m,jj)=rmp2pc(m,jj)+gmp2pc(m,kk)*factor
                 enddo
                 if (kstark.gt.0.or.kdomse.gt.0) then
                   do m=1,nstark
-                    rbrpc(m,jj)=rbrpc(m,jj) + gbrpc(m,kk)*factor
-                    rbzpc(m,jj)=rbzpc(m,jj) + gbzpc(m,kk)*factor
+                    rbrpc(m,jj)=rbrpc(m,jj)+gbrpc(m,kk)*factor
+                    rbzpc(m,jj)=rbzpc(m,jj)+gbzpc(m,kk)*factor
                   enddo
                 endif
                 if (kece.gt.0) then
                   do m=1,nece
-                    recepc(m,jj)=recepc(m,jj) + gecepc(m,kk)*factor
+                    recepc(m,jj)=recepc(m,jj)+gecepc(m,kk)*factor
                   enddo
                 endif
                 if (kecebz.gt.0) then
-                  recebzpc(jj)=recebzpc(jj) + gecebzpc(kk)*factor
+                  recebzpc(jj)=recebzpc(jj)+gecebzpc(kk)*factor
                 endif
 !---------------------------------------------------------------------------
 !--             Boundary constraints                                      --
@@ -531,14 +469,12 @@
             call seva2d(bkx,lkx,bky,lky,c,rmsnow,zmsnow,pds,ier,n333)
             xmsinow=(simag-pds(1))/sidif ! TODO: simag is unset here...
             call seter(xmsinow,xsier)
-            do jj=1,keecur
-              e1rbz(m,jj)=a5gam(jtime,m)*pds(2)*xsier(jj)
-              e2rbz(m,jj)=a7gam(jtime,m)*pds(2)*xsier(jj)
-              e3rbr(m,jj)=a6gam(jtime,m)*pds(3)*xsier(jj)
-              rgamer(m,jj)=-(e2rbz(m,jj) &
-                           + e3rbr(m,jj))*tangam(jtime,m) &
-                           + e1rbz(m,jj)
-            enddo
+            e1rbz(m,1:keecur)=a5gam(jtime,m)*pds(2)*xsier(1:keecur)
+            e2rbz(m,1:keecur)=a7gam(jtime,m)*pds(2)*xsier(1:keecur)
+            e3rbr(m,1:keecur)=a6gam(jtime,m)*pds(3)*xsier(1:keecur)
+            rgamer(m,1:keecur)=-(e2rbz(m,1:keecur) &
+                               + e3rbr(m,1:keecur))*tangam(jtime,m) &
+                               + e1rbz(m,1:keecur)
           endif
         enddo
       endif MSE
@@ -556,9 +492,7 @@
                         zzmselt(jtime,m),pds,ier,n333)
             xn=(simag-pds(1))/sidif ! TODO: simag is unset here...
             if (xn.ge.1.0) then
-              do jj=kppcur+1,kpcurn
-                rmlspc(m,jj)=fmlscut
-              enddo
+              rmlspc(m,(kppcur+1):kpcurn)=fmlscut
             else
               call setff(xn,xnsi)
 #ifdef DEBUG_LEVEL2
@@ -591,9 +525,7 @@
 !          if (mmemsels.gt.0) then
           if (mmbmsels.gt.0) then
             call seter(xn,xsier)
-            do jj=1,keecur
-              relser(m,jj)=xsier(jj)
-            enddo
+            relser(m,1:keecur)=xsier(1:keecur)
           endif
         enddo
 #ifdef DEBUG_LEVEL2

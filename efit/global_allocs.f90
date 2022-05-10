@@ -30,7 +30,7 @@ ALLOCATE(racoil(nacoil),zacoil(nacoil), wacoil(nacoil), hacoil(nacoil), &
    pasmat(ntime),time(ntime),pbinj(ntime),ierpsi(nsilop), &
    ierpr(nrogow),iermpi(magpri),psibit(nsilop),prbit(nrogow), &
    bitmpi(magpri),vloopt(ntime),psiref(ntime),diamag(ntime), &
-   sigdia(ntime),psirefs(ntime),swtsi(nsilop),swtmp2(magpri), &
+   sigdia(ntime),swtsi(nsilop),swtmp2(magpri), &
    swtfc(nfcoil),swtec(nesum),bitfc(nfcoil),ierfc(nfcoil),bitec(nesum), &
    ierec(nesum),bitic(micoil),ieric(micoil), &
    tangam(ntime,nstark),siggam(ntime,nstark),a1gam(ntime,nstark), &
@@ -239,9 +239,7 @@ ALLOCATE(csilop(nsilop,ntime),csilopv(nsilop,ntime),crogow(nrogow,ntime), &
    ratsol(ntime),rvsiu(ntime),zvsiu(ntime),rvsou(ntime), &
    zvsou(ntime),rvsid(ntime),zvsid(ntime),rvsod(ntime),zvsod(ntime), &
    vtime(ntime), &
-   s1(ntime),s2(ntime),s3(ntime),bpolav(ntime),rfcfc(nfcoil,nfcoil), &
-   rbdry_ext(mbdry),zbdry_ext(mbdry),xlim_ext(nlimit),ylim_ext(nlimit))
-
+   s1(ntime),s2(ntime),s3(ntime),bpolav(ntime),rfcfc(nfcoil,nfcoil))
 !
 !-------from commonblocks module------
 ALLOCATE(c(kubicx,lubicx,kubicy,lubicy),wk(nwrk), &

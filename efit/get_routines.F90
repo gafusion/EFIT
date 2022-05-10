@@ -1605,8 +1605,8 @@
 
       if (jtime .gt. 0.0) then
 !---------------------------------------------------------------------
-!--   set up P' and FF', then integration                             --
-!--   ffprim = (RBt) * d/dpsi(RBt)                                    --
+!--   set up P' and FF', then integration                           --
+!--   ffprim = (RBt) * d/dpsi(RBt)                                  --
 !---------------------------------------------------------------------
       select case (icurrt)
       case (1)
@@ -2653,11 +2653,8 @@
         erpote=0.0
         return
       endif
-      erpote=0.0
       call seter(ypsi,xpsii)
-      do iiij=1,nnn
-        erpote=erpote+cerer(iiij)*xpsii(iiij)
-      enddo
+      erpote=sum(cerer(1:nnn)*xpsii(1:nnn))
       return
 !
       entry erppote(ypsi,nnn)
@@ -2665,12 +2662,8 @@
         erppote=0.0
         return
       endif
-      erppote=0.0
       call seterp(ypsi,xpsii)
-      do iiij=1,nnn
-        erppote=erppote+cerer(iiij)*xpsii(iiij)
-      enddo
-      erppote=-erppote/sidif
+      erppote=-sum(cerer(1:nnn)*xpsii(1:nnn))/sidif
       return
       end function erpote
 

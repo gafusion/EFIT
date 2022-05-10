@@ -3,11 +3,11 @@
 
 Git repository url git@gitlab.com:efit-ai/efit.git
 
-Git branch main
+Git branch snap_mode
 
-Git hash 2218630 with local modifications
+Git hash aa95d83 with local modifications
 
-Simulation started on  3/19/2022 at 20:24:52
+Simulation started on  4/12/2022 at 15:27:30
 
 Code compiled with PGI 18.7.0
 
@@ -21,20 +21,20 @@ Code compiled with PGI 18.7.0
  before save fitting weights
  adjust fit parameters based on basis function selected
  itek > 100, write out PLTOUT.OUT individually 
- before save fitting weights
- adjust fit parameters based on basis function selected
- itek > 100, write out PLTOUT.OUT individually 
- read in limiter data
  read in limiter data
  before save fitting weights
  adjust fit parameters based on basis function selected
  itek > 100, write out PLTOUT.OUT individually 
+ read in limiter data
  before save fitting weights
  adjust fit parameters based on basis function selected
  itek > 100, write out PLTOUT.OUT individually 
  read in limiter data
+ before save fitting weights
+ adjust fit parameters based on basis function selected
+ itek > 100, write out PLTOUT.OUT individually 
  read in limiter data
-INFO in efit at r=  1, t=  2500: Done processing
 INFO in efit at r=  0, t=  2400: Done processing
 INFO in efit at r=  3, t=  2700: Done processing
+INFO in efit at r=  1, t=  2500: Done processing
 INFO in efit at r=  2, t=  2600: Done processing

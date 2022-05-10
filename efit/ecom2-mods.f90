@@ -8,7 +8,6 @@
       real*8,dimension(:),allocatable :: ecurrt,pecur
       real*8,dimension(:,:),allocatable :: rbdrec, rsolec
       real*8,dimension(:,:),allocatable :: recec
-
       end module var_cecoil
 
       module var_cvesel
@@ -47,7 +46,6 @@
       end module var_fourier
 
       module var_bscom
-                   
       integer*4 :: kpphord,kffhord,kwwhord,kwwfnc,kwwknt, &
                    kfffnc,kffknt,kppfnc,kppknt
       real*8 :: pptens,fftens,wwtens
@@ -64,14 +62,11 @@
       real*8,dimension(:),allocatable ::ppbdryss,pp2bdryss, &
                    ffbdryss,ff2bdryss, &
                    wwbdryss,ww2bdryss
-
       end module var_bscomss
 
       module var_autokknot
-
       real*8 :: kautoknt,akchiwt,akerrwt,kakloop,aktol, &
                 kakiter,akgamwt,akprewt
-
       end module var_autokknot
 
       module var_autok
@@ -102,19 +97,16 @@
       real*8,dimension(:),allocatable :: rmx,zmx,wsilpc,wmp2pc, &
                                          wfcpc,wecpc,wvspc
       real*8,dimension(:,:),allocatable :: rsilpf, rmp2pf
-
       real*8 :: wpcpc
       end module var_gwork1
 
       module var_cwork4
       real*8,dimension(:),allocatable :: scraps
       integer*4,dimension(:),allocatable ::npxtra
-
       end module var_cwork4
 
       module var_jwork4
       real*8,dimension(:),allocatable :: workb_jw4
-
       end module var_jwork4
 
       module var_gggttt
@@ -122,13 +114,11 @@
       integer*4 navxx(ntims)
       real*8 w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims), &
              ew(ntims),stdevxx(ntims)
-
       end module var_gggttt
 
 
       module var_cww
       integer*4 lwx,lwy
-
       end module var_cww
 
       subroutine set_ecom_mod2_arrays()

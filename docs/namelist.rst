@@ -187,7 +187,11 @@ EFITIN
 ------
 
 EFITIN is the main namelist specified by a snap file.
-(TODO: need to add/describe namelist)
+
+.. csv-table:: EFITIN
+   :file: tables/efitin.csv
+   :widths: 15,15,70
+   :header-rows: 1
 
 EFITINK
 -------
@@ -198,11 +202,11 @@ IN3
 ---
 
 IN3 is used to read machine parameters from a dprobe.dat file.
+
 .. csv-table:: IN3
    :file: tables/in3.csv
    :widths: 15,15, 70
    :header-rows: 1
-
 
 IN4
 ---
@@ -210,6 +214,17 @@ IN4
 IN4 is used to read an alternate set of pointnames
 from a file.
 (TODO: need to add/describe namelist)
+
+OUT1
+----
+
+OUT1 has part of the results that are written to g-files.  Most variables are repeated from the IN1 or other namelists, but several are updated with computed values.  Unlike the main part of a g-file, this namelist is not designed to be useful externally.
+
+.. csv-table:: OUT1
+   :file: tables/out1.csv
+   :widths: 15,15,70
+   :header-rows: 1
+
 
 Hardcoded
 ---------

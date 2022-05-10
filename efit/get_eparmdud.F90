@@ -133,38 +133,38 @@ subroutine read_dirs_shot(filename)
   character (*) :: filename
   logical :: fitsiref, fitfcsum
  
-    NAMELIST/in1/ishot,itime,plasma,itek,itrace,nxiter,fwtcur,kffcur &
-      ,coils,fwtsi,expmp2,fwtmp2,kppcur,mxiter,ierchk,fwtqa,qemp,error &
-      ,limitr,xlim,ylim,serror,nbdry,rbdry,zbdry,psibry,nslref,ibunmn &
-      ,btor,psibit,bitmpi,bitip,icurrt,icinit,brsp,iweigh,qenp,fwtbp &
-      ,relip,zelip,aelip,eelip,qvfit,fwtdlc,betap0,emp,enp,iconvr,icprof &
-      ,nextra,ixstrt,scrape,errmin,rbound,npnef,nptef,fwacoil,itimeu &
-      ,rcentr,rzero,gammap,cfcoil,fczero,fcsum,islve,icntour,iprobe &
-      ,salpha,srm,sbeta,ifref,isumip,n1coil,ifcurr,iecurr,ecurrt,iecoil &
-      ,co2cor,vcurrt,dflux,sigdlc,iplim,kinput,limfag,sigprebi,fwtxx &
-      ,kprfit,pressr,rpress,zpress,sigpre,npress,tethom,rteth,keqdsk &
-      ,zteth,sgteth,npteth,tionex,rion,zion,sigti,nption,dnethom,zeffvs &
-      ,rneth,zneth,sgneth,npneth,pbeam,sibeam,nbeam,rzeroj,xalpa,cgama &
-      ,ivesel,iexcal,iconsi,fwtfc,xltype,kcalpa,kcgama,calpa,iacoil &
-      ,limid,irfila,jzfila,vloop,iqplot,siref,denr,denv,xgama,sgnemin &
-      ,nptionf,currn1,ifitvs,bitfc,idfila,relax,saimin,icutfp,acoilc &
-      ,sigtii,cutip,iavem,pnbeam,xltype_180,sgtemin,sgprmin,elomin,dnmin &
-      ,sgnethi,fcurbd,pcurbd,prbdry,sgtethi,ndokin,zlowimp,kskipvs,limvs &
-      ,vcurfb,kpressb,pressbi,prespb,sigppb,kzeroj,rminvs,rmaxvs,errbry &
-      ,fwtpre,ibtcomp,klabel,zmaxvs,dnbeam,dmass,nmass,condin,iaveus &
-      ,sgtimin,kwripre,kbound,alphafp,kframe,zbound,vsdamp,zminvs,saicon &
-      ,kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens,fwtbdry &
-      ,kwwfnc,kwwknt,wwknt,wwtens,fwtec,fitsiref,bitec,scalepr,scalesir &
-      ,ppbdry,kppbdry,pp2bdry,kpp2bdry,scalea,sigrbd,sigzbd,nbskip &
-      ,ffbdry,kffbdry,ff2bdry,kff2bdry,errsil,vbit &
-      ,wwbdry,kwwbdry,ww2bdry,kww2bdry,f2edge,fe_width,fe_psin,kedgef &
-      ,ktear,kersil,iout,ixray,pedge,kedgep,pe_width,pe_psin &
-      ,table_dir,input_dir,store_dir,kautoknt,akchiwt,akerrwt &
-      ,kakloop,aktol,kakiter,akgamwt,akprewt &
-      ,kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout &
-      ,imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap &
-      ,idebug,nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp,jdebug &
-      ,ifindopt,tolbndpsi
+    NAMELIST/in1/ishot,itime,plasma,itek,itrace,nxiter,fwtcur,kffcur, &
+      coils,fwtsi,expmp2,fwtmp2,kppcur,mxiter,ierchk,fwtqa,qemp,error, &
+      limitr,xlim,ylim,serror,nbdry,rbdry,zbdry,psibry,nslref,ibunmn, &
+      btor,psibit,bitmpi,bitip,icurrt,icinit,brsp,iweigh,qenp,fwtbp, &
+      relip,zelip,aelip,eelip,qvfit,fwtdlc,betap0,emp,enp,iconvr,icprof, &
+      nextra,ixstrt,scrape,errmin,rbound,npnef,nptef,fwacoil,itimeu, &
+      rcentr,rzero,gammap,cfcoil,fczero,fcsum,islve,icntour,iprobe, &
+      salpha,srm,sbeta,ifref,isumip,n1coil,ifcurr,iecurr,ecurrt,iecoil, &
+      co2cor,vcurrt,dflux,sigdlc,iplim,kinput,limfag,sigprebi,fwtxx, &
+      kprfit,pressr,rpress,zpress,sigpre,npress,tethom,rteth,keqdsk, &
+      zteth,sgteth,npteth,tionex,rion,zion,sigti,nption,dnethom,zeffvs, &
+      rneth,zneth,sgneth,npneth,pbeam,sibeam,nbeam,rzeroj,xalpa,cgama, &
+      ivesel,iexcal,iconsi,fwtfc,xltype,kcalpa,kcgama,calpa,iacoil, &
+      limid,irfila,jzfila,vloop,iqplot,siref,denr,denv,xgama,sgnemin, &
+      nptionf,currn1,ifitvs,bitfc,idfila,relax,saimin,icutfp,acoilc, &
+      sigtii,cutip,iavem,pnbeam,xltype_180,sgtemin,sgprmin,elomin,dnmin, &
+      sgnethi,fcurbd,pcurbd,prbdry,sgtethi,ndokin,zlowimp,kskipvs,limvs, &
+      vcurfb,kpressb,pressbi,prespb,sigppb,kzeroj,rminvs,rmaxvs,errbry, &
+      fwtpre,ibtcomp,klabel,zmaxvs,dnbeam,dmass,nmass,condin,iaveus, &
+      sgtimin,kwripre,kbound,alphafp,kframe,zbound,vsdamp,zminvs,saicon, &
+      kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens,fwtbdry, &
+      kwwfnc,kwwknt,wwknt,wwtens,fwtec,fitsiref,bitec,scalepr,scalesir, &
+      ppbdry,kppbdry,pp2bdry,kpp2bdry,scalea,sigrbd,sigzbd,nbskip, &
+      ffbdry,kffbdry,ff2bdry,kff2bdry,errsil,vbit, &
+      wwbdry,kwwbdry,ww2bdry,kww2bdry,f2edge,fe_width,fe_psin,kedgef, &
+      ktear,kersil,iout,ixray,pedge,kedgep,pe_width,pe_psin, &
+      table_dir,input_dir,store_dir,kautoknt,akchiwt,akerrwt, &
+      kakloop,aktol,kakiter,akgamwt,akprewt, &
+      kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout, &
+      imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
+      idebug,nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp,jdebug, &
+      ifindopt,tolbndpsi
 
   nin=343
   open(unit=nin,status='old',file=filename)

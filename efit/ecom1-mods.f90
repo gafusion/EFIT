@@ -62,15 +62,14 @@
       module var_exdata
       use set_kinds
       integer*4 ishot,itime,ifitvs,iacoil,itimeu,kersil
-      data errsil/0.03_dp/
-      data kersil/2/
-
       real*8 serror,fwtcur,elomin,fwtbp,fwtdlc,errsil 
       real*8,dimension(:),allocatable :: fwtsi,rwtsi
       real*8,dimension(:),allocatable :: fwtmp2,rwtmp2
       real*8,dimension(:),allocatable :: fwacoil
       real*8,dimension(:),allocatable :: fwtfc
       real*8,dimension(:),allocatable :: cbrspv
+      data errsil/0.03_dp/
+      data kersil/2/
       data elomin/0.90_dp/
       data iacoil/0/
       end module var_exdata
@@ -95,7 +94,7 @@
       real*8,dimension(:),allocatable :: bitmpi
       real*8 :: vbit
            
-      real*8,dimension(:),allocatable :: vloopt,psiref,diamag,sigdia,psirefs 
+      real*8,dimension(:),allocatable :: vloopt,psiref,diamag,sigdia
       real*8,dimension(:),allocatable :: bitfc
       integer*4,dimension(:),allocatable :: ierfc
       real*8,dimension(:),allocatable :: bitec
@@ -128,16 +127,6 @@
                  ,msebkp,msefitfun,kwaitmse,mse_quiet &
                  ,mse_strict,ok_30rt,ok_210lt,mse_usecer &
                  ,mse_certree,mse_use_cer330,mse_use_cer210
-      data iplots/1/
-      data  msebkp/0/,msefitfun/1/
-      data kwaitmse/0/,dtmsefull/0.0/
-      data mse_strict/0/,t_max_beam_off/0.0/,ok_30rt/0/,ok_210lt/0/
-      data kdomse/0/
-      data mse_usecer/0/,mse_certree/0/
-      data mse_use_cer210/0/,mse_use_cer330/0/
-      data v30lt/0.0/,v30rt/0.0/
-      data v210lt/0.0/,v210rt/0.0/
-
       real*8 chigamt,chilibt,dtmsefull,t_max_beam_off 
       real*8,dimension(:,:),allocatable :: rbrpc,rbzpc,rgampc
       real*8,dimension(:,:),allocatable :: rbrfc,rbzfc
@@ -152,6 +141,15 @@
            ,rmse_gain,rmse_slope,rmse_scale,rmse_offset,sigam &
            ,bzmse,bzmsec,cjmse,cjmsec,rhogam
       real*8,dimension(:,:,:,:),allocatable :: spatial_avg_gam
+      data iplots/1/
+      data msebkp/0/,msefitfun/1/
+      data kwaitmse/0/,dtmsefull/0.0/
+      data mse_strict/0/,t_max_beam_off/0.0/,ok_30rt/0/,ok_210lt/0/
+      data kdomse/0/
+      data mse_usecer/0/,mse_certree/0/
+      data mse_use_cer210/0/,mse_use_cer330/0/
+      data v30lt/0.0/,v30rt/0.0/
+      data v210lt/0.0/,v210rt/0.0/
       end module var_cstark
 
       module var_msels
@@ -315,7 +313,6 @@
       module var_input1
       use set_kinds
       logical write_Kfile ,fitfcsum
-
       integer*4 icondn,itek,kdata,itrace,ierchk,iconvr,ixray,itell, &
                 kprfit,licalc,ibound,ibatch,idite,ilaser,lookfw, &
                 kdot,icutfp,keqdsk,kdofit,kbetapr,kplotpr,kpressb, &
@@ -326,35 +323,32 @@
       integer*4 iteks, mxiters, zelipss, n1coils
       integer*4 itekt, mxitert, zeliptt, n1coilt
       integer*4 kgrid
-
-      data kgrid/1/,kwripre/0/,kwritime/0/
-      data licalc/1/
-      data ksigma/0/
-      data kdoqn/0/
-      data icntour/0/,cstabne/0.0/,cstabte/0.0/ &
-           ,limvs/1/,ncstpp/1/,ncstfp/1/,kzeroj/0/
-      data kbound/0/
-      data kdofit/0/
-      data kdopre/0/
-
-      real*8 cutip, dtdot, xpsimin,fcurbd,pcurbd,prbdry,sgprmin &
-           ,prespb,tipbry,tepbry,dipbry,depbry,pbimpb,sigppb,sigpreb &
-           ,sigtipb,sigtepb,sigdipb,sigdepb,fwtpd,fwtfd,cstabte,cstabne &
-           ,dp1dxf, sgtimin, alphafp,xpsialp, vsdamp &
-           ,rminvs,rmaxvs,zminvs,zmaxvs,relbps,zbound,yvs2,saimin &
-           ,fztor,fzpol,tcurrp,fpolvs, rbound, dnmin, sigprebi,pressbi &
-           ,alphamu,saicon,rsepex,timeb,dtime
-      data alphafp/0./,sigppb/1000./
-      data kframe/0/,rminvs/0/,rmaxvs/100./,zminvs/-100./,zmaxvs/100./
-      data kskipvs/0/,vsdamp/0/,relbps/0.004_dp/,zbound/0.0/,rbound/0.0/
-      data dnmin/1.0/
-      data saimin/60.0/,saicon/60.0/
-
+      real*8 cutip, dtdot, xpsimin,fcurbd,pcurbd,prbdry,sgprmin, &
+             prespb,tipbry,tepbry,dipbry,depbry,pbimpb,sigppb,sigpreb, &
+             sigtipb,sigtepb,sigdipb,sigdepb,fwtpd,fwtfd,cstabte,cstabne, &
+             dp1dxf, sgtimin, alphafp,xpsialp, vsdamp, &
+             rminvs,rmaxvs,zminvs,zmaxvs,relbps,zbound,yvs2,saimin, &
+             fztor,fzpol,tcurrp,fpolvs, rbound, dnmin, sigprebi,pressbi, &
+             alphamu,saicon,rsepex,timeb,dtime
       real*8,dimension(:),allocatable :: rzeroj
       real*8,dimension(:),allocatable :: fwtpre
       real*8,dimension(:),allocatable :: vforcep,vforcet
       real*8,dimension(:),allocatable :: fwtfcsum
       character*82  snap_file 
+      data kgrid/1/,kwripre/0/,kwritime/0/
+      data licalc/1/
+      data ksigma/0/
+      data kdoqn/0/
+      data icntour/0/,cstabne/0.0/,cstabte/0.0/, &
+           limvs/1/,ncstpp/1/,ncstfp/1/,kzeroj/0/
+      data kbound/0/
+      data kdofit/0/
+      data kdopre/0/
+      data alphafp/0./,sigppb/1000./
+      data kframe/0/,rminvs/0/,rmaxvs/100./,zminvs/-100./,zmaxvs/100./
+      data kskipvs/0/,vsdamp/0/,relbps/0.004_dp/,zbound/0.0/,rbound/0.0/
+      data dnmin/1.0/
+      data saimin/60.0/,saicon/60.0/
       end module var_input1
 
       module var_inputc
@@ -458,9 +452,6 @@
       use set_kinds
       logical fitdelz
       integer*4 ndelzon,ifitdelz 
-      data fitdelz/.false./,ndelzon/999/,relaxdz/1.0/, &
-           stabdz/-1.e-4_dp/,scaledz/1.e-03_dp/,ifitdelz/1/
-      data errdelz/0.06_dp/
       real*8 errdelz,fgowdz,scaledz,stabdz,relaxdz,cdeljsum
       real*8,dimension(:),allocatable :: gmp2dz
       real*8,dimension(:),allocatable :: gsildz
@@ -469,6 +460,9 @@
       real*8,dimension(:),allocatable :: rpredz,rprwdz
       real*8,dimension(:),allocatable :: gbdrdz
       real*8,dimension(:),allocatable :: rdjdz
+      data fitdelz/.false./,ndelzon/999/,relaxdz/1.0/, &
+           stabdz/-1.e-4_dp/,scaledz/1.e-03_dp/,ifitdelz/1/
+      data errdelz/0.06_dp/
       end module var_fwtdz
       
       module var_combry
@@ -692,13 +686,13 @@
       module var_magerror
       use set_kinds
       integer*4 imagsigma,icountmagsigma
-      data imagsigma/0/, errmag/1.0e-3_dp/, errmagb/1.e-2_dp/
       real*8 errmag,errmagb
       real*8,dimension(:,:),allocatable :: sigmaf
       real*8,dimension(:),allocatable :: sigmab,sigmaip
       real*8,dimension(:,:),allocatable :: sigmae
       real*8,dimension(:,:),allocatable :: sigmafl,gradsfl
       real*8,dimension(:,:),allocatable :: sigmamp,gradsmp,bpermp
+      data imagsigma/0/, errmag/1.0e-3_dp/, errmagb/1.e-2_dp/
       end module var_magerror
 
       module var_psilopdat
@@ -709,8 +703,8 @@
 
       module var_plasmacurrdat
       real*8 prcg,p_k,p_rc,vresp,t0p
-      real*8,dimension(:),allocatable :: devp,rnavp
       integer*4,dimension(:),allocatable :: navp
+      real*8,dimension(:),allocatable :: devp,rnavp
       end module var_plasmacurrdat
 
       module var_ccoilsdat
@@ -836,7 +830,7 @@
       use var_exdata, only: fwacoil,fwtsi,fwtmp2,fwtcur
       use var_comco2, only: chordv,chordr
       use var_cxray, only: ksxr0,ksxr2,idosxr,xangle,zxray,rxray
-      use var_fcoil, only: fcid
+      use var_fcoil, only: fcid,fcturn
       use var_limite, only: rwstrip1, zwstrip1,rwstrip2,zwstrip2, &
                             xlim,ylim
       use var_delnfit, only: fco2ne
@@ -908,6 +902,7 @@
       rwstrip2(2)=1.4575
       zwstrip2(2)=-1.250
       fco2ne=1.0
+      fcturn(1:mfcoil)=1.0
 
       ! initialize zeros
       tsaisq=0.0

@@ -37,7 +37,7 @@
  iout = 20
  fwtgam = 11*1.0 29*0.0 3*1.0 26*0.0
  msebkp = 2
- mse_quiet = 1
+ mse_quiet = 0
  msefitfun = 3
  mse_usecer = 1
  mse_certree = 0

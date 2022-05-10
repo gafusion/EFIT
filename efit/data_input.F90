@@ -24,6 +24,7 @@
       parameter (m_ext=101)
        
       character(len=1000) :: line
+      integer*8 :: n1d(1),n2d(2)
  
       real*8,allocatable :: gridpf(:,:),gwork(:,:),rgrids(:),zgrids(:)
       real*8,dimension(:),allocatable :: coils,expmp2,acoilc, &
@@ -41,15 +42,18 @@
       real*8,dimension(:),allocatable :: devxmpin,rnavxmpin, &
          devpsiin,rnavpsiin,devfcin,rnavfcin, &
          devein,rnavecin,brsptu
-      integer*4 :: nw_ext,nh_ext
+      real*8,dimension(:,:),allocatable :: psirz_temp
       real*8 :: c_ext,dr_ext,dz_ext,rc_ext,zc_ext,a_ext
       real*8 :: eup_ext,elow_ext,dup_ext,dlow_ext,setlim_ext
       real*8 :: r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max
       real*8 :: r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot
+      real*8 :: expmp2_save(magpri),coils_save(nsilop),brsp_save(nrsmat)
+      real*8 :: rbdry_save(mbdry),zbdry_save(mbdry),fwtsi_save(nsilop)
+      real*8 :: pressr_save(mpress),rpress_save(mpress),sigpre_save(mpress)
       character*10 case_ext(6)
       character*50 edatname
       character(256) table_save
-      character*10 namedum
+      character*10 namedum,tindex,probeind
       character*2 :: reflect_ext
       logical :: shape_ext
       logical :: file_stat
@@ -95,56 +99,60 @@
            imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
            nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
            idebug,jdebug,ifindopt,tolbndpsi
-      namelist/inwant/psiwant,vzeroj,fwtxxj,fbetap,fbetan,fli,fq95,fqsiw, & 
-           jbeta,jli,alpax,gamax,jwantm,fwtxxq,fwtxxb,fwtxli,znose, & 
-           fwtbdry,nqwant,siwantq,n_write,kccoils,ccoils,rexpan, & 
-           xcoils,kcloops,cloops,xloops,currc79,currc139,nccoil,sizeroj, & 
-           fitdelz,ndelzon,relaxdz,stabdz,writepc,table_dir,errdelz, & 
-           oldccomp,nicoil,oldcomp,currc199,curriu30,curriu90, & 
-           curriu150,curril30,curril90,curril150,ifitdelz,scaledz 
-      namelist/inms/xmprcg,xmp_k,vresxmp,t0xmp,psircg,psi_k,vrespsi, & 
-           t0psi,fcrcg,fc_k,vresfc,t0fc,ercg,e_k,vrese,t0e,bcrcg, & 
-           bc_k,vresbc,t0bc,prcg,p_k,vresp,t0p,bti322in,curc79in, & 
-           curc139in,curc199in,devxmpin,rnavxmpin,devpsiin,rnavpsiin, & 
-           devfcin,rnavfcin,devein,rnavecin 
-      namelist/ink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, & 
-           symmetrize,backaverage,lring,cupdown 
-      namelist/ins/tgamma,sgamma,fwtgam,rrrgam,zzzgam,aa1gam,aa2gam, & 
-           aa3gam,aa4gam,aa5gam,aa6gam,aa7gam,iplots,kdomse, & 
-           msebkp,msefitfun,mse_quiet,mse_spave_on,kwaitmse, & 
-           dtmsefull,mse_strict,t_max_beam_off,ok_30rt,ok_210lt, & 
-           mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210, & 
-           tgammauncor,v30lt,v30rt,v210lt,v210rt 
-      namelist/in_msels/bmsels,sbmsels,fwtbmsels,rrmsels,zzmsels, & 
-           l1msels,l2msels,l4msels,emsels,semsels,fwtemsels,kdomsels, & 
-           fmlscut,synmsels,avemsels 
-      namelist/ina/spatial_avg_gam 
-      namelist/inlibim/tlibim,slibim,fwtlib,rrrlib,zzzlib,aa1lib,aa8lib 
+      namelist/inwant/psiwant,vzeroj,fwtxxj,fbetap,fbetan,fli,fq95,fqsiw, &
+           jbeta,jli,alpax,gamax,jwantm,fwtxxq,fwtxxb,fwtxli,znose, &
+           fwtbdry,nqwant,siwantq,n_write,kccoils,ccoils,rexpan, &
+           xcoils,kcloops,cloops,xloops,currc79,currc139,nccoil,sizeroj, &
+           fitdelz,ndelzon,relaxdz,stabdz,writepc,table_dir,errdelz, &
+           oldccomp,nicoil,oldcomp,currc199,curriu30,curriu90, &
+           curriu150,curril30,curril90,curril150,ifitdelz,scaledz
+      namelist/inms/xmprcg,xmp_k,vresxmp,t0xmp,psircg,psi_k,vrespsi, &
+           t0psi,fcrcg,fc_k,vresfc,t0fc,ercg,e_k,vrese,t0e,bcrcg, &
+           bc_k,vresbc,t0bc,prcg,p_k,vresp,t0p,bti322in,curc79in, &
+           curc139in,curc199in,devxmpin,rnavxmpin,devpsiin,rnavpsiin, &
+           devfcin,rnavfcin,devein,rnavecin
+      namelist/ink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
+           symmetrize,backaverage,lring,cupdown
+      namelist/ins/tgamma,sgamma,fwtgam,rrrgam,zzzgam,aa1gam,aa2gam, &
+           aa3gam,aa4gam,aa5gam,aa6gam,aa7gam,iplots,kdomse, &
+           msebkp,msefitfun,mse_quiet,mse_spave_on,kwaitmse, &
+           dtmsefull,mse_strict,t_max_beam_off,ok_30rt,ok_210lt, &
+           mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210, &
+           tgammauncor,v30lt,v30rt,v210lt,v210rt
+      namelist/in_msels/bmsels,sbmsels,fwtbmsels,rrmsels,zzmsels, &
+           l1msels,l2msels,l4msels,emsels,semsels,fwtemsels,kdomsels, &
+           fmlscut,synmsels,avemsels
+      namelist/ina/spatial_avg_gam
+      namelist/inlibim/tlibim,slibim,fwtlib,rrrlib,zzzlib,aa1lib,aa8lib
       namelist/inece/necein,teecein0,feece0,errorece0,fwtece0,fwtecebz0, &
            ecefit,ecebzfit,kfitece,kinputece,kcallece,nharm, &
            kfixro,rteo,zteo,kfixrece,rtep,rtem,rpbit,rmbit,robit, &
            nfit,kcmin,fwtnow,mtxece
-      namelist/iner/keecur,ecurbd,keefnc,eetens,keebdry,kee2bdry, & 
-           eebdry,ee2bdry,eeknt,keeknt,keehord 
-      namelist/insxr/ksxr0,ksxr2,idosxr 
-      namelist/edgep/symmetrize, & 
-           rpress,pressr,sigpre,npress,kprfit,kpressb,ndokin, & 
-           kppfnc,kfffnc,kffcur,kppcur,mxiter,error,errmin,keecur 
-      namelist/edat/nption,tionex,sigti,rion,zion, & 
-           npneth,dnethom,sgneth,rneth,zneth, & 
-           npteth,tethom,sgteth,rteth,zteth, & 
-           nbrmcrd,bremin,bremsig,brmrtan,brmzelev,ivbcuse, & 
-           sigtii,sgnethi,sgtethi,bremsigi, & 
-           npress,rpress,zpress,pressr,sigpre 
-      namelist/invt/omegat,nomegat,enw,emw,betapw0,kvtor,kwwcur,rvtor, & 
-           wcurbd,preswb,fwtprw,npresw,presw,sigprw,rpresw, & 
-           zpresw,kplotp,sbetaw,nsplot,comega,kcomega,xomega, & 
-           kdovt,romegat,zomegat,sigome,scalepw, & 
-           kwwfnc,kwwknt,wwknt,wwtens 
-      namelist/profile_ext/npsi_ext,pprime_ext,ffprim_ext,psin_ext, & 
-           geqdsk_ext,sign_ext,scalepp_ext,scaleffp_ext,shape_ext,dr_ext, & 
-           dz_ext,rc_ext,zc_ext,a_ext,eup_ext,elow_ext,dup_ext,dlow_ext, & 
-           setlim_ext,reflect_ext,fixpp 
+      namelist/iner/keecur,ecurbd,keefnc,eetens,keebdry,kee2bdry, &
+           eebdry,ee2bdry,eeknt,keeknt,keehord
+      namelist/insxr/ksxr0,ksxr2,idosxr
+      namelist/edgep/symmetrize, &
+           rpress,pressr,sigpre,npress,kprfit,kpressb,ndokin, &
+           kppfnc,kfffnc,kffcur,kppcur,mxiter,error,errmin,keecur
+      namelist/edat/nption,tionex,sigti,rion,zion, &
+           npneth,dnethom,sgneth,rneth,zneth, &
+           npteth,tethom,sgteth,rteth,zteth, &
+           nbrmcrd,bremin,bremsig,brmrtan,brmzelev,ivbcuse, &
+           sigtii,sgnethi,sgtethi,bremsigi, &
+           npress,rpress,zpress,pressr,sigpre
+      namelist/invt/omegat,nomegat,enw,emw,betapw0,kvtor,kwwcur,rvtor, &
+           wcurbd,preswb,fwtprw,npresw,presw,sigprw,rpresw, &
+           zpresw,kplotp,sbetaw,nsplot,comega,kcomega,xomega, &
+           kdovt,romegat,zomegat,sigome,scalepw, &
+           kwwfnc,kwwknt,wwknt,wwtens
+      namelist/profile_ext/npsi_ext,pprime_ext,ffprim_ext,psin_ext, &
+           geqdsk_ext,sign_ext,scalepp_ext,scaleffp_ext,shape_ext,dr_ext, &
+           dz_ext,rc_ext,zc_ext,a_ext,eup_ext,elow_ext,dup_ext,dlow_ext, &
+           setlim_ext,reflect_ext,fixpp
+      namelist/out1/ishot,itime,betap0,rzero,qenp,enp,emp,plasma, &
+           expmp2,coils,btor,rcentr,brsp,icurrt,rbdry,zbdry, &
+           nbdry,fwtsi,fwtcur,mxiter,nxiter,limitr,xlim,ylim,error, &
+           iconvr,ibunmn,pressr,rpress,nqpsi,npress,sigpre
 ! 
 ! 
       ALLOCATE(gridpf(nwnh,mfila),gwork(nbwork,nwnh), & 
@@ -297,24 +305,24 @@
 !---------------------------------------------------------------------- 
       if (jtime.le.1) then
         do i=1,nsilop 
-          if ((kdata.ge.3).and.(fwtsi(i).ne.0.0)) then 
+          if (fwtsi(i).ne.0.0) then 
             fwtsi(i)=swtsi(i) 
             if(lookfw.gt.0) fwtsi(i)=rwtsi(i) 
           endif 
           if(ierpsi(i).ne.0) fwtsi(i)=0.0 
         enddo
         do i=1,nfcoil 
-          if((kdata.ge.3).and.(fwtfc(i).ne.0.0)) fwtfc(i)=swtfc(i) 
+          if(fwtfc(i).ne.0.0) fwtfc(i)=swtfc(i) 
           if(ierfc(i).ne.0) fwtfc(i)=0.0 
         enddo
         if (iecurr.eq.2) then 
           do i=1,nesum 
-            if((kdata.ge.3).and.(fwtec(i).ne.0.0)) fwtec(i)=swtec(i) 
+            if(fwtec(i).ne.0.0) fwtec(i)=swtec(i) 
             if(ierec(i).ne.0) fwtec(i)=0.0 
           enddo 
         endif 
         do i=1,magpri 
-          if ((kdata.ge.3).and.(fwtmp2(i).ne.0.0)) then 
+          if (fwtmp2(i).ne.0.0) then 
             fwtmp2(i)=swtmp2(i) 
             if(lookfw.gt.0) fwtmp2(i)=rwtmp2(i) 
           endif 
@@ -394,7 +402,6 @@
       fczero(1:nfcoil)=1.0 
       fwtfc(1:nfcoil)=0. 
       rsisfc(1:nfcoil)=-1. 
-      fcturn(1:mfcoil)=1.0
       fwtec(1:nesum)=0.0 
       fwtpre(1:mpress)=1. 
       fcurbd=1.0 
@@ -522,7 +529,9 @@
       ecefit = 0.0 
       ecebzfit = 0.0 
 
-      geqdsk_ext = 'none' 
+      geqdsk_ext = 'none'
+      nw_ext = 0
+      nh_ext = 0
       psin_ext(1) = -1000.0 
       sign_ext = 1.0 
       cratio_ext = 1.0 
@@ -615,42 +624,113 @@
       close(unit=nin) 
 
 !--   Input FF', P' arrays
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      if(idebug /= 0) write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext 
-      read(nin,profile_ext,err=11777,iostat=istat) 
-      if(idebug /= 0) write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext 
-!      if (geqdsk_ext.ne.'none') then 
-!        open(unit=neqdsk,status='old',file=geqdsk_ext) 
-!        read (neqdsk,11775) (case_ext(i),i=1,6),nh_ext,nw_ext,nh_ext 
-!        do i = 1,2 
-!          read (neqdsk,11773) 
-!        enddo 
-!        read (neqdsk,11776) plasma_ext,c_ext,c_ext,c_ext,c_ext 
-!        read (neqdsk,11773) 
-!        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext) 
-!        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext) 
-!        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext) 
-!        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext) 
-!        read (neqdsk,11776) ((psirz_ext,i=1,nw_ext),j=1,nh_ext) 
-!        read (neqdsk,11776,err=11777) (qpsi_ext(i),i=1,nw_ext) 
-!        read (neqdsk,11774,err=11777) nbdry_ext,limitr_ext 
-!        read (neqdsk,11776,err=11777) (rbdry_ext(i),zbdry_ext(i),i=1,nbdry_ext) 
-!        read (neqdsk,11776,err=11777) (xlim_ext(i),ylim_ext(i),i=1,limitr_ext) 
-!11773   format (a) 
-!11774   format (2i5) 
-!11775   format (6a8,3i4) 
-!11776   format (5e16.9)
-!      endif
-11777 close(nin) 
-
-!--   Read Li beam data 
       open(unit=nin,status='old',file=ifname(jtime))
-      read (nin,inlibim,err=11237,end=11233) 
-11233 continue 
-11237 close(unit=nin) 
+#ifdef DEBUG_LEVEL1
+      write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext
+#endif
+      read(nin,profile_ext,err=11777,iostat=istat)
+#ifdef DEBUG_LEVEL1
+      write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext
+#endif
+      if (geqdsk_ext.ne.'none') then
+        open(unit=neqdsk,status='old',file=geqdsk_ext)
+        read (neqdsk,11775) (case_ext(i),i=1,6),nh_ext,nw_ext,nh_ext
+        allocate(psirz_temp(nw_ext,nh_ext),psirz_ext(nw_ext*nh_ext), &
+                 pprime_ext(nw_ext),ffprim_ext(nw_ext),qpsi_ext(nw_ext))
+        read (neqdsk,11773)
+        read (neqdsk,11776) c_ext,c_ext,simag_ext,psibry_ext,c_ext
+        read (neqdsk,11776) plasma_ext,c_ext,c_ext,c_ext,c_ext
+        read (neqdsk,11773)
+        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext)
+        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext)
+        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext)
+        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext)
+        read (neqdsk,11776) ((psirz_temp(i,j),i=1,nw_ext),j=1,nh_ext)
+        do i=1,nw
+          do j=1,nh
+            kk=(i-1)*nh+j
+            psirz_ext(kk)=psirz_temp(i,j)
+          enddo
+        enddo
+        read (neqdsk,11776,err=11777) (qpsi_ext(i),i=1,nw_ext)
+        read (neqdsk,11774,err=11777) nbdry_ext,limitr_ext
+        allocate(rbdry_ext(nbdry_ext),zbdry_ext(nbdry_ext), &
+                 xlim_ext(limitr_ext),ylim_ext(limitr_ext))
+        read (neqdsk,11776,err=11777) (rbdry_ext(i),zbdry_ext(i),i=1,nbdry_ext)
+        read (neqdsk,11776,err=11777) (xlim_ext(i),ylim_ext(i),i=1,limitr_ext)
+11773   format (a)
+11774   format (2i5)
+11775   format (6a8,3i4)
+11776   format (5e16.9)
+        if ((icinit.eq.-3).or.(icinit.eq.-4)) then
+!--       Read fcoil currents
+!--       Avoid overwriting other variables that will impact restart
+!--       Warning: this will have problems if the machine is changed,
+!--                but there isn't a way to check for that
+          ishot_save=ishot
+          itime_save=itime
+          plasma_save=plasma
+          expmp2_save=expmp2
+          coils_save=coils
+          btor_save=btor
+          rcentr_save=rcentr
+          brsp_save=brsp
+          nbdry_save=nbdry
+          rbdry_save=rbdry
+          zbdry_save=zbdry
+          fwtsi_save=fwtsi
+          fwtcur_save=fwtcur
+          nxiter_save=nxiter
+          mxiter_save=mxiter
+          error_save=error
+          iconvr_save=iconvr
+          ibunmn_save=ibunmn
+          pressr_save=pressr
+          rpress_save=rpress
+          npress_save=npress
+          sigpre_save=sigpre
+          read (neqdsk,out1,iostat=ioerr)
+          if (iostat.ne.0) then
+            call errctrl_msg('data_input', &
+                             'cannot read out1 from geqdsk_ext')
+            stop
+          endif
+          allocate(fcoil_ext(nfcoil))
+          fcoil_ext=brsp(1:nfcoil)
+          ishot=ishot_save
+          itime=itime_save
+          plasma=plasma_save
+          expmp2=expmp2_save
+          coils=coils_save
+          btor=btor_save
+          rcentr=rcentr_save
+          brsp=brsp_save
+          nbdry=nbdry_save
+          rbdry=rbdry_save
+          zbdry=zbdry_save
+          fwtsi=fwtsi_save
+          fwtcur=fwtcur_save
+          nxiter=nxiter_save
+          mxiter=mxiter_save
+          error=error_save
+          iconvr=iconvr_save
+          ibunmn=ibunmn_save
+          pressr=pressr_save
+          rpress=rpress_save
+          npress=npress_save
+          sigpre=sigpre_save
+        endif
+      endif
+11777 close(nin)
+
+!--   Read Li beam data
+      open(unit=nin,status='old',file=ifname(jtime))
+      read (nin,inlibim,err=11237,end=11233)
+11233 continue
+11237 close(unit=nin)
       else file_type
 !---------------------------------------------------------------------- 
-!--     HDF5 file mode                                                 -- 
+!--     HDF5 file mode                                               -- 
 !---------------------------------------------------------------------- 
 #if defined(USE_HDF5)
         inquire(file=trim(ifname(1)),exist=file_stat)
@@ -684,13 +764,14 @@
           stop
         endif
         call open_group(pid,"time_slice",tid,h5err)
-        write(line,"(I0)") jtime+rank-1
-        call test_group(tid,trim(line),file_stat,h5err)
+        write(tindex,"(I0)") jtime+rank-1
+        call test_group(tid,trim(tindex),file_stat,h5err)
         if (.not. file_stat) then
-          call errctrl_msg('data_input',trim(line)//' group not found')
+          call errctrl_msg('data_input', &
+                           trim(tindex)//' group not found')
           stop
         endif
-        call open_group(tid,trim(line),sid,h5err)
+        call open_group(tid,trim(tindex),sid,h5err)
 
         call test_group(sid,"in1",file_stat,h5err)
         if (file_stat) then
@@ -1306,8 +1387,6 @@
           call close_group("profile_ext",nid,h5err)
         endif
 
-        !H5: TODO: read neqdsk (from geqdsk_ext)?
-
         call test_group(sid,"inlibim",file_stat,h5err)
         if (file_stat) then
           call open_group(sid,"inlibim",nid,h5err)
@@ -1323,13 +1402,198 @@
 
         !H5: not used efitin and auxquant?
 
-        call close_group(trim(line),sid,h5err)
+        call close_group(trim(tindex),sid,h5err)
         call close_group("time_slice",tid,h5err)
         call close_group("parameters",pid,h5err)
         call close_group("code",cid,h5err)
+
+        ! read previous solution if requested
+        if ((geqdsk_ext.ne.'none').or.(icinit.eq.-3).or.(icinit.eq.-4)) then
+          call test_group(eqid,"time_slice",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','time_slice group not found')
+            stop
+          endif
+          call open_group(eqid,"time_slice",tid,h5err)
+          write(tindex,"(I0)") jtime+rank-1
+          call test_group(tid,trim(tindex),file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input', &
+                             trim(tindex)//' group not found')
+            stop
+          endif
+          call open_group(tid,trim(tindex),sid,h5err)
+          call test_group(sid,"profiles_2d",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','profiles_2d group not found')
+            stop
+          endif
+          call open_group(sid,"profiles_2d",cid,h5err)
+          call test_group(cid,"0",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','0 group not found')
+            stop
+          endif
+          call open_group(cid,"0",nid,h5err)
+          call read_dims(nid,"psi",n2d,h5in,h5err)
+          nw_ext=int(n2d(1))
+          nh_ext=int(n2d(2))
+          allocate(psirz_ext(nw_ext*nh_ext),pprime_ext(nw_ext), &
+                   ffprim_ext(nw_ext),qpsi_ext(nw_ext))
+          call read_h5_sq(nid,"psi",psirz_ext,h5in,h5err)
+          psirz_ext=psirz_ext/twopi
+          call close_group("0",nid,h5err)
+          call close_group("profiles_2d",cid,h5err)
+
+          ! read in important scalars
+          call test_group(sid,"global_quantities",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input', &
+                             'global_quantities group not found')
+            stop
+          endif
+          call open_group(sid,"global_quantities",nid,h5err)
+          call read_h5_ex(nid,"psi_axis",simag_ext,h5in,h5err)
+          simag_ext=simag_ext/twopi
+          call read_h5_ex(nid,"psi_boundary",psibry_ext,h5in,h5err)
+          psibry_ext=psibry_ext/twopi
+          call read_h5_ex(nid,"ip",plasma_ext,h5in,h5err) ! H5: could be missing twopi...
+          call close_group("global_quantities",nid,h5err)
+
+          ! read in boundary points
+          call test_group(sid,"boundary",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','boundary group not found')
+            stop
+          endif
+          call open_group(sid,"boundary",cid,h5err)
+          call test_group(cid,"outline",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','outline group not found')
+            stop
+          endif
+          call open_group(cid,"outline",nid,h5err)
+          call read_dims(nid,"r",n1d,h5in,h5err)
+          nbdry_ext=int(n1d(1))
+          allocate(rbdry_ext(nbdry_ext),zbdry_ext(nbdry_ext))
+          call read_h5_ex(nid,"r",rbdry_ext,h5in,h5err)
+          call read_h5_ex(nid,"z",zbdry_ext,h5in,h5err)
+          call close_group("outline",nid,h5err)
+          call close_group("boundary",cid,h5err)
+
+          ! read in p', FF', and q
+          call test_group(sid,"profiles_1d",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','profiles_1d group not found')
+            stop
+          endif
+          call open_group(sid,"profiles_1d",nid,h5err)
+          call read_h5_ex(nid,"dpressure_dpsi",pprime_ext,h5in,h5err)
+          pprime_ext=pprime_ext*twopi
+          call read_h5_ex(nid,"f_df_dpsi",ffprim_ext,h5in,h5err)
+          ffprim_ext=ffprim_ext*twopi
+          call read_h5_ex(nid,"q",qpsi_ext,h5in,h5err)
+          call close_group("profiles_1d",nid,h5err)
+
+          ! read in fcoil currents (skip ecoils)
+          if ((icinit.eq.-3).or.(icinit.eq.-4)) then
+            allocate(fcoil_ext(nfcoil))
+            call test_group(sid,"constraints",file_stat,h5err)
+            if (.not. file_stat) then
+              call errctrl_msg('data_input', &
+                               'constraints group not found')
+              stop
+            endif
+            call open_group(sid,"constraints",cid,h5err)
+            call test_group(cid,"pf_current",file_stat,h5err)
+            if (.not. file_stat) then
+              call errctrl_msg('data_input', &
+                               'pf_current group not found')
+              stop
+            endif
+            call open_group(cid,"pf_current",nid,h5err)
+            do i=nesum,nesum+nfcoil-1
+              write(probeind,"(I0)") i
+              call test_group(nid,trim(probeind),file_stat,h5err)
+              if (.not. file_stat) then
+                call errctrl_msg('data_input', &
+                                 trim(probeind)//' group not found')
+                stop
+              endif
+              call open_group(nid,trim(probeind),fid,h5err)
+              call read_h5_ex(fid,"reconstructed",fcoil_ext(i-nesum+1), &
+                              h5in,h5err)
+              call close_group(trim(probeind),fid,h5err)
+            enddo
+            call close_group("pf_current",nid,h5err)
+            call close_group("constraints",cid,h5err)
+          endif 
+          call close_group(trim(tindex),sid,h5err)
+          call close_group("time_slice",tid,h5err)
+          call close_group("equilibrium",eqid,h5err)
+
+          ! read in limiter position
+          call test_group(rootgid,"wall",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','wall group not found')
+            stop
+          endif
+          call open_group(rootgid,"wall",eqid,h5err)
+          call test_group(eqid,"description_2d",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input', &
+                             'description_2d group not found')
+            stop
+          endif
+          call open_group(eqid,"description_2d",cid,h5err)
+          call test_group(cid,"0",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','0 group not found')
+            stop
+          endif
+          call open_group(cid,"0",pid,h5err)
+          call test_group(pid,"limiter",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','limiter group not found')
+            stop
+          endif
+          call open_group(pid,"limiter",tid,h5err)
+          call test_group(tid,"unit",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','unit group not found')
+            stop
+          endif
+          call open_group(tid,"unit",sid,h5err)
+          call test_group(sid,"0",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','0 group not found')
+            stop
+          endif
+          call open_group(sid,"0",fid,h5err)
+          call test_group(fid,"outline",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','outline group not found')
+            stop
+          endif
+          call open_group(fid,"outline",nid,h5err)
+          call read_dims(nid,"r",n1d,h5in,h5err)
+          limitr_ext = int(n1d(1))
+          allocate(xlim_ext(limitr_ext),ylim_ext(limitr_ext))
+          call read_h5_ex(nid,"r",xlim_ext,h5in,h5err)
+          call read_h5_ex(nid,"z",ylim_ext,h5in,h5err)
+          call close_group("outline",nid,h5err)
+          call close_group("0",fid,h5err)
+          call close_group("unit",sid,h5err)
+          call close_group("limiter",tid,h5err)
+          call close_group("0",pid,h5err)
+          call close_group("description_2d",cid,h5err)
+          call close_group("wall",eqid,h5err)
+
+          call open_group(rootgid,"equilibrium",eqid,h5err)
+        endif
+
         call close_group("equilibrium",eqid,h5err)
         call close_h5file(fileid,rootgid,h5err)
-
 #else
         ! this code should not be reachable
         call errctrl_msg('data_input','HDF5 needs to be linked')
@@ -1446,48 +1710,20 @@
 !      rnavbc(jtime)=rnavbcin
 !      devp(jtime)=devpin
 !      rnavp(jtime)=rnavpin 
-! 
-!---------------------------------------------------------------------- 
-!--   Input FF', P' arrays
-!---------------------------------------------------------------------- 
-! H5: should this come from OMAS file? (need to replace go to 11777...)
-      if (geqdsk_ext.ne.'none') then 
-        open(unit=neqdsk,status='old',file=geqdsk_ext) 
-        read (neqdsk,11775) (case_ext(i),i=1,6),nh_ext,nw_ext,nh_ext 
+!
+!----------------------------------------------------------------------
+!--   Setup FF', P' arrays
+!----------------------------------------------------------------------
+      read_geqdsk: if (geqdsk_ext.ne.'none'.and.icinit.ne.-3 &
+                                           .and.icinit.ne.-4) then
         npsi_ext=nw_ext 
 #ifdef DEBUG_LEVEL1
-        write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext,nw_ext
+        write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext,nw_ext 
 #endif
-        do i = 1,2 
-          read (neqdsk,11773) 
-        enddo 
-        read (neqdsk,11776) plasma_ext,c_ext,c_ext,c_ext,c_ext 
         if (plasma_ext > 0.0) then 
           sign_ext = -1.0 
         endif 
-        read (neqdsk,11773) 
-        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext) 
-        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext) 
         prbdry=pprime_ext(nw_ext) 
-        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext) 
-        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext) 
-        read (neqdsk,11776) ((psirz_ext,i=1,nw_ext),j=1,nh_ext) 
-        read (neqdsk,11776,err=11778) (qpsi_ext(i),i=1,nw_ext) 
-        read (neqdsk,11774,err=11778) nbdry_ext,limitr_ext 
-        read (neqdsk,11776,err=11778) (rbdry_ext(i),zbdry_ext(i),i=1,nbdry_ext) 
-        read (neqdsk,11776,err=11778) (xlim_ext(i),ylim_ext(i),i=1,limitr_ext) 
-11773   format (a) 
-11774   format (2i5) 
-11775   format (6a8,3i4) 
-11776   format (5e16.9)
-!      if (geqdsk_ext.ne.'none') then 
-!        npsi_ext=nw_ext 
-!        if (idebug /= 0) write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext, & 
-!          nw_ext 
-!        if (plasma_ext > 0.0) then 
-!          sign_ext = -1.0 
-!        endif 
-!        prbdry=pprime_ext(nw_ext) 
         write_boundary: if (nbdry.le.0) then 
           nbabs_ext=nbdry_ext/mbdry1+1 
           jb_ext=0 
@@ -1535,8 +1771,7 @@
           xlim(1:limitr_ext)=xlim_ext(1:limitr_ext)
           ylim(1:limitr_ext)=ylim_ext(1:limitr_ext)-1.e-10_dp
         endif
-      endif
-11778 continue
+      endif read_geqdsk
 #ifdef DEBUG_LEVEL1
       write (nttyo,*) 'npsi_ext=',npsi_ext
 #endif
@@ -2179,7 +2414,7 @@
       rrgam(jtime,nmtark+1:nstark)=rrrlib(1:nstark-nmtark)
       zzgam(jtime,nmtark+1:nstark)=zzzlib(1:nstark-nmtark)
       a1gam(jtime,nmtark+1:nstark)=aa1lib(1:nstark-nmtark)
-      a2gam(jtime,nmtark+1:nstark)=1.0
+      a2gam(jtime,nmtark+1:nstark)=0.0
       a3gam(jtime,nmtark+1:nstark)=0.0
       a4gam(jtime,nmtark+1:nstark)=0.0
       a5gam(jtime,nmtark+1:nstark)=0.0
@@ -2324,7 +2559,6 @@
       if (.not.fitsiref) then 
         if (iecurr.gt.0.or.nslref.lt.0) then 
           silopt(jtime,1:nsilop)=silopt(jtime,1:nsilop)+psiref(jtime) 
-          psirefs(jtime)=psiref(jtime) 
           psiref(jtime)=0. 
         endif 
       endif 
@@ -2338,8 +2572,11 @@
         tdata2=abs(psibit(m))*vbit 
         tdata=max(tdata1,tdata2) 
         sigmafl0(m)=tdata 
-        if(tdata.gt.1.0e-10_dp) fwtsi(m)=fwtsi(m)/tdata**nsq 
-        if(tdata.le.1.0e-10_dp) fwtsi(m)=0.0 
+        if (tdata.gt.1.0e-10_dp) then
+          fwtsi(m)=fwtsi(m)/tdata**nsq
+        else
+          fwtsi(m)=0.0
+        endif
       enddo
 !---------------------------------------------------------------------- 
 !--   signal at psi loop # NSLREF is used as reference               -- 
@@ -2376,10 +2613,10 @@
         enddo 
       endif
 ! 
-!     if (brsptu(1).le.-1.e-20_dp) & 
-!        brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil) 
-      if (brsptu(1).gt.-1.e-20_dp) & 
-         brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil) 
+!     if(brsptu(1).le.-1.e-20_dp) & 
+!       brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil) 
+      if((brsptu(1).gt.-1.e-20_dp).and.(icinit.ne.-3).and.(icinit.ne.-4)) &
+        brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil) 
       reflux=silopt(jtime,iabs(nslref)) 
       do m=1,nsilop 
         tdata1=errsil*abs(silopt(jtime,m)-reflux) 
@@ -2388,8 +2625,11 @@
         tdata2=abs(psibit(m))*vbit 
         tdata=max(tdata,tdata2) 
         sigmafl0(m)=tdata 
-        if(tdata.gt.1.0e-10_dp) fwtsi(m)=fwtsi(m)/tdata**nsq 
-        if(tdata.le.1.0e-10_dp) fwtsi(m)=0.0 
+        if (tdata.gt.1.0e-10_dp) then
+          fwtsi(m)=fwtsi(m)/tdata**nsq
+        else
+          fwtsi(m)=0.0
+        endif
       enddo
 !---------------------------------------------------------------------- 
 !--   signal at psi loop #8 is set to zero and used as reference     -- 
@@ -2405,13 +2645,16 @@
         tdata2=sicont*rsi(m)*abs(pasmat(jtime)) 
         tdata=max(tdata1,tdata2) 
         tdata2=abs(psibit(m))*vbit 
-        tdata=max(tdata,tdata2) 
+        tdata=max(tdata,tdata2)
         !SEK: ??? this was commented out but I getting out of bounds error below
 !       sigmafl0(m)=tdata 
         !SEK: ???
-        if(tdata.gt.1.0e-10_dp) fwtsi(m)=fwtref/tdata**nsq 
-        if(tdata.le.1.0e-10_dp) fwtsi(m)=0.0 
-      endif 
+        if (tdata.gt.1.0e-10_dp) then
+          fwtsi(m)=fwtref/tdata**nsq
+        else
+          fwtsi(m)=0.0
+        endif
+      endif
 !SEK: ???      sigmafl0(m)=tdata 
 ! 
       endif kersil_23
@@ -2419,15 +2662,21 @@
       do m=1,magpri 
         tdata1=serror*abs(expmpi(jtime,m)) 
         tdata2=abs(bitmpi(m))*vbit 
-        tdata=max(tdata1,tdata2) 
-        sigmamp0(m)=tdata 
-        if(tdata.gt.1.0e-10_dp) fwtmp2(m)=fwtmp2(m)/tdata**nsq 
-        if(tdata.le.1.0e-10_dp) fwtmp2(m)=0.0 
+        tdata=max(tdata1,tdata2)
+        sigmamp0(m)=tdata
+        if (tdata.gt.1.0e-10_dp) then
+          fwtmp2(m)=fwtmp2(m)/tdata**nsq
+        else
+          fwtmp2(m)=0.0
+        endif
       enddo
       do m=1,nstark 
-        tdata=abs(siggam(jtime,m)) 
-        if(tdata.gt.1.0e-10_dp) fwtgam(m)=fwtgam(m)/tdata**nsq 
-        if(tdata.le.1.0e-10_dp) fwtgam(m)=0.0 
+        tdata=abs(siggam(jtime,m))
+        if (tdata.gt.1.0e-10_dp) then
+          fwtgam(m)=fwtgam(m)/tdata**nsq
+        else
+          fwtgam(m)=0.0
+        endif
       enddo
 ! 
 #ifdef DEBUG_LEVEL2
@@ -2436,13 +2685,19 @@
 #endif 
       do i=1,nmsels 
         tdata=abs(sbmselt(jtime,i)) 
-        if(tdata.gt.1.0e-10_dp) fwtbmselt(jtime,i)=fwtbmselt(jtime,i)/tdata**nsq 
-        if(tdata.le.1.0e-10_dp) fwtbmselt(jtime,i)=0.0 
-      enddo 
+        if (tdata.gt.1.0e-10_dp) then
+          fwtbmselt(jtime,i)=fwtbmselt(jtime,i)/tdata**nsq
+        else
+          fwtbmselt(jtime,i)=0.0
+        endif
+      enddo
       do i=1,nmsels 
         tdata=abs(semselt(jtime,i)) 
-        if(tdata.gt.1.0e-10_dp) fwtemselt(jtime,i)=fwtemselt(jtime,i)/tdata**nsq 
-        if(tdata.le.1.0e-10_dp) fwtemselt(jtime,i)=0.0 
+        if (tdata.gt.1.0e-10_dp) then
+          fwtemselt(jtime,i)=fwtemselt(jtime,i)/tdata**nsq
+        else
+          fwtemselt(jtime,i)=0.0
+        endif
       enddo 
 #ifdef DEBUG_LEVEL2
       write (6,*) 'DATA fwtbmselt = ', (fwtbmselt(jtime,i),i=1,nmsels)
@@ -2452,26 +2707,37 @@
         tdata1=serror*abs(fccurt(jtime,m)) 
         tdata2=abs(bitfc(m))*vbit 
         tdata=max(tdata1,tdata2) 
-        sigmaf0(m)=tdata 
-        if(tdata.gt.1.0e-10_dp) fwtfc(m)=fwtfc(m)/tdata**nsq 
-        if(tdata.le.1.0e-10_dp) fwtfc(m)=0.0 
+        sigmaf0(m)=tdata
+        if (tdata.gt.1.0e-10_dp) then
+          fwtfc(m)=fwtfc(m)/tdata**nsq
+        else
+          fwtfc(m)=0.0
+        endif
       enddo
+      ecurrt(1:nesum)=eccurt(jtime,1:nesum) 
+      cecurr(1:nesum)=ecurrt(1:nesum) 
       if (iecurr.eq.2) then 
         do m=1,nesum 
           tdata1=serror*abs(ecurrt(m)) 
           tdata2=abs(bitec(m))*vbit 
           tdata=max(tdata1,tdata2) 
           sigmae0(m)=tdata 
-          if(tdata.gt.1.0e-10_dp) fwtec(m)=fwtec(m)/tdata**nsq 
-          if(tdata.le.1.0e-10_dp) fwtec(m)=0.0 
+          if (tdata.gt.1.0e-10_dp) then
+            fwtec(m)=fwtec(m)/tdata**nsq
+          else
+            fwtec(m)=0.0
+          endif
         enddo 
       endif 
       tdata1=serror*abs(pasmat(jtime)) 
       tdata2=abs(bitip)*vbit 
       tdata=max(tdata1,tdata2) 
-      sigmaip0=tdata 
-      if(tdata.gt.1.0e-10_dp) fwtcur=fwtcur/tdata**nsq 
-      if(tdata.le.1.0e-10_dp) fwtcur=0.0 
+      sigmaip0=tdata
+      if (tdata.gt.1.0e-10_dp) then 
+        fwtcur=fwtcur/tdata**nsq
+      else
+        fwtcur=0.0
+      endif
 !---------------------------------------------------------------------- 
 !--   diamagetic flux                                                -- 
 !---------------------------------------------------------------------- 
@@ -2578,10 +2844,6 @@
         time(jtime)=itime 
       endif 
       csiref=psiref(jtime) 
-      do i=1,nesum 
-        ecurrt(i)=eccurt(jtime,i) 
-        cecurr(i)=ecurrt(i) 
-      enddo
 !      if (kdata.ne.2) then 
 !      if ((iecurr.le.0).or.(idodo.gt.0)) go to 520 
 !      open(unit=nrsppc,status='old',form='unformatted', & 

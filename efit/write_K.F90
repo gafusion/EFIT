@@ -385,7 +385,7 @@
         rwtmp2(1:magpri)=0.0
         rwtsi(1:nsilop)=0.0
         open(unit=neqdsk,status='old', &
-             file=table_di2(1:ltbdi2)//'fitweight.dat')
+             file=input_dir(1:lindir)//'fitweight.dat')
  3050   read (neqdsk,*,iostat=ioerr) irshot
         if ((ioerr.eq.0).and.(irshot.le.ishot)) then
           if (irshot.lt.124985) then
@@ -734,8 +734,8 @@
       timems=itime
       timeus=(time(jtime)-timems)*1000.
       itimeu=timeus
-      siref=psirefs(jtime)
-      coils(1:nsilop)=silopt(jtime,1:nsilop)-siref
+      siref=psiref(jtime)
+      coils(1:nsilop)=silopt(jtime,1:nsilop) !-siref
       fwtsi(1:nsilop)=swtsi(1:nsilop)
       expmp2(1:magpri)=expmpi(jtime,1:magpri)
       fwtmp2(1:magpri)=swtmp2(1:magpri)
@@ -824,17 +824,25 @@
       mxitert=mxiter
       n1coilt=n1coil
       zeliptt=zelip
+      kffcurt=kffcur
+      kppcurt=kppcur
       itek=iteks
       mxiter=mxiters
       n1coil=n1coils
       zelip=zelipss
+      kffcur=kffcurs
+      kppcur=kppcurs
       if(ishot.gt.108281) n1coil = 0
-      call getfnmu(itimeu,'k',ishot,itime,eqdsk)
-      open(unit=neqdsk,status='old',file=eqdsk,iostat=ioerr)
-      if(ioerr.eq.0) close(unit=neqdsk,status='delete')
+!----------------------------------------------------------------------
+!--   get xltype, xltype_180 without reading limiters                --
+!----------------------------------------------------------------------
+      call getlim(0,xltype,xltype_180,.false.)
 !-----------------------------------------------------------------------
 !--   Write K file                                                    --
 !-----------------------------------------------------------------------
+      call getfnmu(itimeu,'k',ishot,itime,eqdsk)
+      open(unit=neqdsk,status='old',file=eqdsk,iostat=ioerr)
+      if(ioerr.eq.0) close(unit=neqdsk,status='delete')
       open(unit=neqdsk,file=eqdsk,status='new', &
            delim='quote')
 !           delim='APOSTROPHE')
@@ -885,6 +893,8 @@
       mxiter=mxitert
       n1coil=n1coilt
       zelip=zeliptt
+      kffcur=kffcurt
+      kppcur=kppcurt
 !---------------------------------------------------------------------
 !--   Append SNAP file                                              --
 !---------------------------------------------------------------------

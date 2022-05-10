@@ -5,9 +5,9 @@ Git repository url git@gitlab.com:efit-ai/efit.git
 
 Git branch main
 
-Git hash 2218630 with local modifications
+Git hash aa95d83 with local modifications
 
-Simulation started on  3/19/2022 at 20:12:20
+Simulation started on  4/12/2022 at 15:37:21
 
 Code compiled with PGI 18.7.0
 
@@ -23,6 +23,17 @@ Code compiled with PGI 18.7.0
  itek > 100, write out PLTOUT.OUT individually 
  read in limiter data
 
+ r=  0 t=  2400 it=  1 chi2=4.13E+01 zm=-2.21E-02 err=1.805E+00 dz=-2.212E-02 delz= 0.000E+00 dj=0.000E+00
+ r=  0 t=  2400 it=  2 chi2=2.51E+01 zm=-2.30E-02 err=1.033E-01 dz=-8.622E-04 delz= 0.000E+00 dj=0.000E+00
+ r=  0 t=  2400 it=  3 chi2=2.48E+01 zm=-2.36E-02 err=4.515E-02 dz=-5.902E-04 delz= 0.000E+00 dj=0.000E+00
+ r=  0 t=  2400 it=  4 chi2=3.57E+01 zm=-2.73E-02 err=1.216E-01 dz=-3.767E-03 delz= 6.156E-01 dj=1.498E-02
+ r=  0 t=  2400 it=  5 chi2=2.12E+01 zm=-2.88E-02 err=6.600E-02 dz=-1.483E-03 delz= 0.000E+00 dj=1.498E-02
+ r=  0 t=  2400 it=  6 chi2=2.14E+01 zm=-2.89E-02 err=3.334E-03 dz=-6.913E-05 delz= 0.000E+00 dj=1.498E-02
+ r=  0 t=  2400 it=  7 chi2=2.33E+01 zm=-3.13E-02 err=4.040E-02 dz=-2.391E-03 delz= 3.151E-01 dj=6.948E-03
+ r=  0 t=  2400 it=  8 chi2=2.11E+01 zm=-3.20E-02 err=1.300E-02 dz=-7.079E-04 delz= 8.906E-02 dj=1.879E-03
+ r=  0 t=  2400 it=  9 chi2=2.10E+01 zm=-3.21E-02 err=1.967E-04 dz=-8.874E-05 delz= 6.034E-02 dj=1.302E-03
+ r=  0 t=  2400 it= 10 chi2=2.10E+01 zm=-3.21E-02 err=6.111E-05 dz=-3.186E-05 delz= 5.957E-02 dj=1.281E-03
+
        data used:   
  39 flux loops
  69 magnetic probes(i)
@@ -30,10 +41,10 @@ Code compiled with PGI 18.7.0
   0 diamagnetic loop
 
 
- shot #   =     186610 time(ms) =       2400 chi**2   =  2.931E+01
- betat(%) =      0.328 betap    =      0.087 li       =      1.164
- vol(cm3) =  1.773E+07 rout(cm) =    172.889 zout(cm) =      5.775
- elong    =      1.796 utriang  =      0.750 ltriang  =      0.352
- a(cm)    =     56.365 lin(cm)  =     14.794 lout(cm) =      5.816
- ltop(cm) =     16.316 q*       =      3.906 rc(cm)   =    170.152
- zc(cm)   =     -2.838 bt0(t)   =      1.638 qout     =      7.090
+ shot #   =     186610 time(ms) =       2400 chi**2   =  2.090E+01
+ betat(%) =      0.416 betap    =      0.110 li       =      1.130
+ vol(cm3) =  1.780E+07 rout(cm) =    172.912 zout(cm) =      5.468
+ elong    =      1.791 utriang  =      0.746 ltriang  =      0.352
+ a(cm)    =     56.361 lin(cm)  =     14.821 lout(cm) =      5.797
+ ltop(cm) =     16.924 q*       =      3.874 rc(cm)   =    170.276
+ zc(cm)   =     -2.694 bt0(t)   =      1.638 qout     =      7.495
