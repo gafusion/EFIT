@@ -1,7 +1,7 @@
 # If you don't want MPI (slower in serial) simply remove the FC=...
 #   and -DENABLE_PARALLEL... lines
 #
-# mselibs have not been build for GNU yet
+# Omega does not appear to have working MDS+ yet
 
     export CC=/usr/bin/gcc
     export FC=/fusion/usc/c8/opt/env/gcc-8.3.1/bin/mpifort
@@ -20,3 +20,5 @@
     -DCMAKE_BUILD_TYPE:STRING=RELEASE \
     ..
 
+#    -DENABLE_MDSPLUS:BOOL=ON \
+#    -DMDSPLUS_DIR:PATH='/fusion/usc/c8/opt/mdsplus/alpha/7.130.1' \
