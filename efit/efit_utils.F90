@@ -261,6 +261,7 @@
 !!
 !**********************************************************************
       subroutine fitpp(y,ny,alpa,nalpa)
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       parameter (malpa=30)
       dimension x(ny),y(ny),xpsii(nalpa)
@@ -269,7 +270,7 @@
       y0=y(1)
       if(abs(y0).le.1.e-5) y0=y(ny)
       do i=1,ny
-         x(i)=float(i-1)/float(ny-1)
+         x(i)=real(i-1,dp)/real(ny-1,dp)
          y(i)=y(i)/y0
       enddo
 !--------------------------------------------------------------
@@ -335,6 +336,7 @@
 !!
 !**********************************************************************
       subroutine fitfp(y,ny,alpa,nalpa)
+      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       parameter (malpa=30)
       dimension x(ny),y(ny),xpsii(nalpa)
@@ -343,7 +345,7 @@
       y0=y(1)
       if(abs(y0).le.1.e-5) y0=y(ny)
       do i=1,ny
-         x(i)=float(i-1)/float(ny-1)
+         x(i)=real(i-1,dp)/real(ny-1,dp)
          y(i)=y(i)/y0
       enddo
 !--------------------------------------------------------------
