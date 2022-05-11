@@ -2634,6 +2634,7 @@
           else
             saiprw(m)=0.0
           endif
+          saiprw2(m)=saiprw(m)  ! preserve saiprw - changed later by pltout
           chiprw=chiprw+saiprw(m)
           prwcal(m)=cm
         enddo

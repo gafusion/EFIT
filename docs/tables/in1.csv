@@ -351,6 +351,6 @@ ZION,,"if nptionf > 100, zion = zteth"
 ZLOWIMP,, """Z Low Impurity"". Low Z impurity for kinetic fitting."
 ZMAXVS , 100.0,
 ZMINVS, -100.0, 
-ZPRESS, ,"""Z Pressure"". Z coordinates of input pressure profile in meters. Ignored unless RPRESS>0? (See RPRESS.)"
+ZPRESS, ,"""Z Pressure"". Z coordinates of input pressure profile in meters. Ignored when RPRESS<0 (See RPRESS.)"
 ZTETH, ,"""Z Te Thompson"". Z locations of Thompson?"
 ZZZGAM, ,Z in meters of MSE observation points.

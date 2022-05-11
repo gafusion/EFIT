@@ -529,13 +529,11 @@
 !!
 !**********************************************************************
       subroutine set_basis_params()
-
       use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-
 !---------------------------------------------------------------------
 !--   specific choice of current profile                            --
 !--       ICPROF=1  no edge current density allowed                 --
@@ -585,6 +583,9 @@
         itek = 5
       endif
       if (imagsigma.gt.0) then
+        call errctrl_msg('set_basis_params', &
+                         'mag sigma calculation is broken')
+        stop
         do_spline_fit=.false.
         saimin=300.
       endif
@@ -635,7 +636,6 @@
       endif
 !
       if (kzeroj.eq.1.and.sizeroj(1).lt.0.0) sizeroj(1)=psiwant
-
       end subroutine set_basis_params
 
 !**********************************************************************

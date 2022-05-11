@@ -1738,9 +1738,9 @@
 !!    in Magnetic Data
 !!    
 !!
-!!    @param jtime :  time slice number
+!!    @param jtimex :  time slice number
 !!
-!!    @param nitera :  iteration number
+!!    @param niterax :  iteration number
 !!
 !**********************************************************************
       subroutine getsigma(jtimex,niterax)

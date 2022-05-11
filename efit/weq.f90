@@ -421,7 +421,7 @@
                    keefnc,keeknt,eeknt,eetens, &
                    eebdry,ee2bdry,keebdry,kee2bdry
       namelist/inwant/psiwant,vzeroj
-      namelist/chiout/saisil,saimpi,saipr,saiip
+      namelist/chiout/saisil,saimpi,saiip
       namelist/eccd/kkstark,chigamt,chigam,bzmse,psiecn,dpsiecn, &
               saisq,cjeccd
       character eqdsk*72,header*42,wform*20,let,fit_type*3

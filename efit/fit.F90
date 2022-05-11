@@ -66,7 +66,7 @@
           endif
           if (kprfit.ge.3) call presurw(jtime,nitera)
           if (errorm.lt.errmagb) then
-            if ((imagsigma.eq.1) .AND. (errorm > errmag) ) &
+            if ((imagsigma.eq.1) .AND. (errorm > errmag)) &
               call getsigma(jtime,nitera)
             if ((imagsigma.eq.2).and.(idosigma.eq.1)) then
               call getsigma(jtime,nitera)

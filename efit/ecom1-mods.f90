@@ -1,6 +1,5 @@
       module var_acoilrz
-      real*8,dimension(:),allocatable  :: racoil,zacoil,wacoil, &
-                     hacoil
+      real*8,dimension(:),allocatable  :: racoil,zacoil,wacoil,hacoil
       end module var_acoilrz
 
       module var_ccurrn
@@ -18,10 +17,10 @@
       end module var_czero
 
       module var_parame
-      real*8,dimension(:),allocatable :: volp,pprime,pres,ffprim,fpol &
-         ,qpsi,r2surf,rpres,curmid,cjor,bpolss &
-         ,rmajz0,bprmaj,btrmaj,r1surf,r2surg &
-         ,bbfpol,ccfpol,ddfpol
+      real*8,dimension(:),allocatable :: volp,pprime,pres,ffprim,fpol, &
+        qpsi,r2surf,rpres,curmid,cjor,bpolss, &
+        rmajz0,bprmaj,btrmaj,r1surf,r2surg, &
+        bbfpol,ccfpol,ddfpol
       real*8 r1bdry,r2bdry,carea,jwantm,r2wdry,r4wdry,rpwdry,rp2wdry 
       real*8,dimension(:),allocatable :: r1sdry,r2sdry,vzeroj,sizeroj 
       data jwantm/3/
@@ -30,9 +29,9 @@
       module var_cqfit
       use set_kinds
 
-      real*8 fwtqa,qvfit,fbrdy,fcentr,cjmaxi &
-           ,goli,gocur,goqq,gobeta,cbrsp &
-           ,rqajtor,rqaftor,rqapetor,rqafetor
+      real*8 fwtqa,qvfit,fbrdy,fcentr,cjmaxi, &
+             goli,gocur,goqq,gobeta,cbrsp, &
+             rqajtor,rqaftor,rqapetor,rqafetor
       data cbrsp/3.0e-5_dp/
       integer*4 nqiter,ivacum 
       data nqiter/10/
@@ -77,11 +76,11 @@
       module var_texdat
       integer*4 ierpla,ico2,ierrdi 
       real*8 bitip
-      real*8,dimension(:,:),allocatable ::  silopt
-      real*8,dimension(:,:),allocatable ::  expmpi
-      real*8,dimension(:,:),allocatable ::  accurt
+      real*8,dimension(:,:),allocatable :: silopt
+      real*8,dimension(:,:),allocatable :: expmpi
+      real*8,dimension(:,:),allocatable :: accurt
       real*8,dimension(:,:),allocatable :: fccurt
-      real*8,dimension(:,:),allocatable ::eccurt
+      real*8,dimension(:,:),allocatable :: eccurt
       real*8,dimension(:,:),allocatable :: denvt
       real*8,dimension(:,:),allocatable :: denrt
       integer*4,dimension(:,:),allocatable :: iccurt
@@ -117,29 +116,29 @@
 
       module var_cstark
       use set_kinds
-      real*8,dimension(:,:),allocatable :: tangam, siggam,a1gam &
-           ,a2gam,a3gam,a4gam,tangam_uncor
+      real*8,dimension(:,:),allocatable :: tangam,siggam,a1gam,a2gam, &
+                                           a3gam,a4gam,tangam_uncor
       real*8,dimension(:),allocatable  :: fwtgam,chigam,swtgam
       real*8 v30lt,v30rt,v210rt,v210lt
       integer*4,dimension(:),allocatable :: iergam
       integer*4,dimension(:),allocatable :: mseport,mse_spave_on
-      integer*4  kstark,iplots,kmtark,klibim,kdomse &
-                 ,msebkp,msefitfun,kwaitmse,mse_quiet &
-                 ,mse_strict,ok_30rt,ok_210lt,mse_usecer &
-                 ,mse_certree,mse_use_cer330,mse_use_cer210
+      integer*4  kstark,iplots,kmtark,klibim,kdomse, &
+                 msebkp,msefitfun,kwaitmse,mse_quiet, &
+                 mse_strict,ok_30rt,ok_210lt,mse_usecer, &
+                 mse_certree,mse_use_cer330,mse_use_cer210
       real*8 chigamt,chilibt,dtmsefull,t_max_beam_off 
       real*8,dimension(:,:),allocatable :: rbrpc,rbzpc,rgampc
       real*8,dimension(:,:),allocatable :: rbrfc,rbzfc
       real*8,dimension(:,:),allocatable :: rbrec,rbzec,rgamec
       real*8,dimension(:,:),allocatable :: rbrvs,rbzvs,rgamvs
       real*8,dimension(:,:),allocatable :: rgamfc
-      real*8,dimension(:,:),allocatable :: rhsgam,rrgam,zzgam &
-           ,starkar,starkaz,a5gam,a6gam,a7gam,a8gam
+      real*8,dimension(:,:),allocatable :: rhsgam,rrgam,zzgam, &
+        starkar,starkaz,a5gam,a6gam,a7gam,a8gam
       real*8,dimension(:,:),allocatable :: cmgam,spatial_fix
       real*8,dimension(:,:),allocatable :: rgamac,rbrac,rbzac
-      real*8,dimension(:),allocatable :: btgam,sistark,qstark &
-           ,rmse_gain,rmse_slope,rmse_scale,rmse_offset,sigam &
-           ,bzmse,bzmsec,cjmse,cjmsec,rhogam
+      real*8,dimension(:),allocatable :: btgam,sistark,qstark, &
+        rmse_gain,rmse_slope,rmse_scale,rmse_offset,sigam, &
+        bzmse,bzmsec,cjmse,cjmsec,rhogam
       real*8,dimension(:,:,:,:),allocatable :: spatial_avg_gam
       data iplots/1/
       data msebkp/0/,msefitfun/1/
@@ -155,9 +154,9 @@
       module var_msels
       use set_kinds
       real*8,dimension(:,:),allocatable :: bmselt,sbmselt,fwtbmselt, &
-           rrmselt,zzmselt,l1mselt,l2mselt,l4mselt,emselt,semselt, &
-           fwtemselt,swtbmselt,swtemselt,cmmls,cmels,rhsmls,rhsels, &
-           l3mselt,cmmls2,cmmlsv
+        rrmselt,zzmselt,l1mselt,l2mselt,l4mselt,emselt,semselt, &
+        fwtemselt,swtbmselt,swtemselt,cmmls,cmels,rhsmls,rhsels, &
+        l3mselt,cmmls2,cmmlsv
       real*8,dimension(:),allocatable :: swtbmsels,swtemsels,chimls,chiels
       real*8 :: avemsels, fmlscut, tchimls, tchiels
       real*8,dimension(:,:),allocatable :: rmlspc
@@ -194,9 +193,9 @@
 
       module var_cece
       use set_kinds
-      integer*4 ierecebz,necein,jo,kfixro,nece,kece,kecebz,mecein &
-                ,kfitece,kinputece,kcallece,nharm,kdoece,kgeteceb & 
-                ,mtxece,ksetece,kfixrece,nfit,kcmin,nconstr
+      integer*4 ierecebz,necein,jo,kfixro,nece,kece,kecebz,mecein, &
+                kfitece,kinputece,kcallece,nharm,kdoece,kgeteceb, &
+                mtxece,ksetece,kfixrece,nfit,kcmin,nconstr
 
       data ksetece/0/,kgeteceb/0/,kcallece/2/
       data kdoece/0/,nconstr/1/,mtxece/0/
@@ -204,17 +203,17 @@
       character*4 eceiter
       data eceiter/'pair'/
 
-      real*8 receo,fwtecebz,fwtecebz0,rteo,zteo,robit,swtecebz,chiecebz &
-             ,ecebzfit,ecebzbit,fwtnow,zeceo,chisqfit,xfit(10),tchiece &
-             ,recebzdz,gecebzdz,eceerror
+      real*8 receo,fwtecebz,fwtecebz0,rteo,zteo,robit,swtecebz,chiecebz, &
+             ecebzfit,ecebzbit,fwtnow,zeceo,chisqfit,xfit(10),tchiece, &
+             recebzdz,gecebzdz,eceerror
 
       data eceerror/0.03_dp/
 
-      real*8,dimension(:),allocatable :: teecein,feece,errorece &
-           ,teecein0,feece0,errorece0 &
-           ,becein,recein,teeceinr
-      real*8,dimension(:),allocatable :: recem,recep,fwtece,fwtece0 &
-                                 ,swtece,chiece,ecefit,ecebit
+      real*8,dimension(:),allocatable :: teecein,feece,errorece, &
+                                         teecein0,feece0,errorece0, &
+                                         becein,recein,teeceinr
+      real*8,dimension(:),allocatable :: recem,recep,fwtece,fwtece0, &
+                                         swtece,chiece,ecefit,ecebit
       real*8,dimension(:),allocatable :: recebzfc
       real*8,dimension(:),allocatable :: gecebzpc
       real*8,dimension(:),allocatable :: recebzec
@@ -241,7 +240,6 @@
       real*8 chipre,chitot,saiip
       real*8,dimension(:),allocatable :: saisil
       real*8,dimension(:),allocatable :: saimpi
-      real*8,dimension(:),allocatable :: saipr
       real*8,dimension(:),allocatable :: saipre
       real*8,dimension(:),allocatable :: saifc
       end module var_calchi
@@ -275,14 +273,12 @@
       real*8 condno,condin 
       data condin/1.0e-06_dp/
       real*8,dimension(:),allocatable :: cerror,csibry,csimag, &
-                  cvolp,crmaxi,czmaxi,cemaxi,cqmaxi,cchisq &
-                  ,brfbc,tvfbrt,cdelz
+        cvolp,crmaxi,czmaxi,cemaxi,cqmaxi,cchisq,brfbc,tvfbrt,cdelz
       end module var_consum
 
       module var_cxray
       real*8,dimension(:),allocatable :: rxray,zxray,xangle
       integer*4 ksxr0(10),ksxr2(10),idosxr
-
       end module var_cxray
 
       module var_mercie
@@ -390,9 +386,8 @@
       end module var_ecoil 
 
       module var_fcoil
-      real*8,dimension(:),allocatable :: rf,zf,wf,hf, &
-           af,af2,rsisfc,turnfc,fcid,fcturn
- 
+      real*8,dimension(:),allocatable :: rf,zf,wf,hf,af,af2, &
+                                         rsisfc,turnfc,fcid,fcturn
       end module var_fcoil 
 
       module var_mprobe
@@ -418,8 +413,8 @@
       end module var_mimite
 
       module var_udata
-      integer*4,dimension(:),allocatable :: ipsi,irogw,imag2,iplasm &
-           ,idlopc,ifc,iec
+      integer*4,dimension(:),allocatable :: ipsi,irogw,imag2,iplasm, &
+                                            idlopc,ifc,iec
       end module var_udata
 
       module var_morsum
@@ -439,8 +434,8 @@
       data nsol/0/
       logical fitts 
       real*8 wsisol,dselsum/1.e-12_dp/
-      real*8,dimension(:),allocatable :: rbdry,zbdry,fwtbdry,fwtbry,sigrbd &
-                                 ,sigzbd,rbdry0, zbdry0,rbdryss,zbdryss
+      real*8,dimension(:),allocatable :: rbdry,zbdry,fwtbdry,fwtbry, &
+        sigrbd,sigzbd,rbdry0, zbdry0,rbdryss,zbdryss
       real*8,dimension(:),allocatable ::rsol, zsol, fwtsol, fwtsolw
       real*8,dimension(:,:),allocatable :: rbdrfc, rsolfc
       real*8,dimension(:,:),allocatable :: rbdrac
@@ -479,18 +474,18 @@
       end module var_fbysta
 
       module var_prdata
-      integer*4 npress,npteth,nption,npneth,nbeam,ndokin,nbrmcrd &
-               ,nptef,npnef,nptionf,nmass 
+      integer*4 npress,npteth,nption,npneth,nbeam,ndokin,nbrmcrd, &
+                nptef,npnef,nptionf,nmass 
       data ndokin/1/
       real*8 pbeamb,pressb,zeffvs,zlowimp
       integer*4,dimension(:),allocatable :: ivbcuse
 
-      real*8,dimension(:),allocatable :: pressr,rpress,zpress,tethom,rteth &
-                   ,zteth,tionex,rion,zion,dnethom,rneth,zneth &
-                   ,pbeam,sibeam,sgteth,sigti,sigpre,sgneth,precal &
-                   ,dnbeam,dmass,scalepr,premea,saipre2
+      real*8,dimension(:),allocatable :: pressr,rpress,zpress,tethom, &
+        rteth,zteth,tionex,rion,zion,dnethom,rneth,zneth, &
+        pbeam,sibeam,sgteth,sigti,sigpre,sgneth,precal, &
+        dnbeam,dmass,scalepr,premea,saipre2
       real*8,dimension(:),allocatable :: pbimth,bremin,bremsig,brmrtan, &
-                                 brmzelev,dnbthom
+                                         brmzelev,dnbthom
       end module var_prdata
 
       module var_cerfit
@@ -504,8 +499,8 @@
       real*8,dimension(:),allocatable :: ermse
       real*8,dimension(:,:),allocatable :: e1rbz,e2rbz,e3rbr
       real*8,dimension(:),allocatable :: ermid, eshear,epoten,rhovn, &
-                    rpmid,xmid,sigrid,sipmid, &
-                    brhovn,crhovn,drhovn,rhopmid
+                                         rpmid,xmid,sigrid,sipmid, &
+                                         brhovn,crhovn,drhovn,rhopmid
       data keecur/0/,ecurbd/0.0/,keefnc/0/,eetens/5.0_dp/
       end module var_cerfit
 
@@ -535,7 +530,7 @@
       end module var_cccoils
 
       module var_tionfit
-      real*8 chisqti, tibdry,stibdry
+      real*8 chisqti,tibdry,stibdry
       real*8,dimension(:),allocatable :: tifit
       real*8,dimension(:),allocatable :: stitho,xsiion,tithom
       end module var_tionfit
@@ -553,7 +548,6 @@
       module var_delnfit
       real*8,dimension(:),allocatable :: defit
       real*8 chisqne,debdry,sdebdry,fco2ne
-      
       end module var_delnfit
 
       module var_tsrz
@@ -603,11 +597,11 @@
 ! Are they only used in magsigma?  If so, the following changes are
 ! probably not needed until some future time when magsigma is updated.
 !*****
-      real*8,dimension(:),allocatable :: curc139,curc79,curc199,curiu30 &
-                    ,curiu90,curiu150,curil30,curil90,curil150 &
-                    ,curc259,curc319,curc19        & !EJS(2014)
-                    ,curiu210,curiu270,curiu330    & !EJS(2014)
-                    ,curil210,curil270,curil330      !EJS(2014)
+      real*8,dimension(:),allocatable :: curc139,curc79,curc199,curiu30, &
+        curiu90,curiu150,curil30,curil90,curil150, &
+        curc259,curc319,curc19, &       !EJS(2014)
+        curiu210,curiu270,curiu330, &   !EJS(2014)
+        curil210,curil270,curil330      !EJS(2014)
       real*8,dimension(:,:),allocatable :: curccoi
       real*8,dimension(:,:),allocatable :: curicoi
       end module var_coilcc
@@ -633,19 +627,19 @@
 
       module var_vtor
       use set_kinds
-      integer*4 nomegat,kvtor,kwwcur,kwcurn,kplotp,npresw &
-                ,nsplot,kdovt
+      integer*4 nomegat,kvtor,kwwcur,kwcurn,kplotp,npresw, &
+                nsplot,kdovt
       real*8 betapw0,enw,emw,rvtor,wcurbd,gammaw,rbetaw, & 
              preswb,chiprw
-      data kvtor/0/,rvtor/1.70_dp/,preswb/0.0/,wcurbd/0.0/,betapw0/0.0/ &
-           ,kwwcur/2/,kplotp/1/,kdovt/0/,nsplot/4/ 
+      data kvtor/0/,rvtor/1.70_dp/,preswb/0.0/,wcurbd/0.0/,betapw0/0.0/, &
+           kwwcur/2/,kplotp/1/,kdovt/0/,nsplot/4/ 
       real*8,dimension(:),allocatable :: omegat,rpresw,zpresw,presw, &
-                       sigprw,rpresws,fwtprw,romegat,zomegat &
-                       ,sigome,rpreswv,scalepw
+                                         sigprw,rpresws,fwtprw,scalepw, &
+                                         sigome,rpreswv,romegat,zomegat
       real*8,dimension(:,:),allocatable :: rprwpc
       real*8,dimension(:),allocatable :: betapw,betatw,wplasw
       real*8,dimension(:),allocatable :: rgrvt,pwprim,pressw,prwcal, &
-                              saiprw,rgsvt
+                                         saiprw,rgsvt,saiprw2,premew
       real*8,dimension(:),allocatable :: presst
       end module var_vtor
 
@@ -670,7 +664,7 @@
 
       module var_qsurfac
       real*8,dimension(:),allocatable :: psin32,psin21,rq32in, &
-                     rq21top
+                                         rq21top
       end module var_qsurfac
 !----------------------------------------------------------------------
 !-- New magnetic uncertainties commons                               --
@@ -787,20 +781,20 @@
 !
       module commonblocks
       real*8,allocatable :: c(:,:,:,:),wk(:),copy(:,:),bkx(:),bky(:), &
-           cw(:,:,:,:),wkw(:),copyw(:,:),bwx(:),bwy(:), &
-           sifprw(:),bwprw(:),cwprw(:),dwprw(:),psirz(:,:), &
-           sfprw(:),sprwp(:),wgridpc(:),rfcpc(:,:),ct(:,:,:,:), &
-           wkt(:),bkrt(:),bkzt(:),psiold(:),psipold(:),psipp(:), &
-           work(:),sifpre(:),bwpre(:),cwpre(:),dwpre(:),sfpre(:), &
-           sprep(:),worka(:),zeros(:),byringr(:),byringz(:), &
-           cjrf(:),cj(:,:,:,:),wkj(:),copyj(:,:),bjx(:),bjy(:), &
-           cv(:,:,:,:),wkv(:),copyv(:,:),bvx(:),bvy(:),xsisii(:), &
-           f_a(:),f_b(:),f_c(:),f_d(:),pp_a(:),pp_b(:),pp_c(:), &
-           pp_d(:),chi_c(:,:,:,:),chi_wk(:),chi_copy(:,:),chi_bkx(:), &
-           chi_bky(:),wxin(:),wyin(:),wxout(:),wyout(:),xouts(:), &
-           youts(:),bpoo(:),bpooz(:),bpooc(:),bfpol(:),cfpol(:), &
-           dfpol(:),rsplt(:),zsplt(:),csplt(:),xxtra(:,:),yxtra(:,:), &
-           bpxtra(:,:),flxtra(:,:),fpxtra(:,:),worka2(:)
+        cw(:,:,:,:),wkw(:),copyw(:,:),bwx(:),bwy(:), &
+        sifprw(:),bwprw(:),cwprw(:),dwprw(:),psirz(:,:), &
+        sfprw(:),sprwp(:),wgridpc(:),rfcpc(:,:),ct(:,:,:,:), &
+        wkt(:),bkrt(:),bkzt(:),psiold(:),psipold(:),psipp(:), &
+        work(:),sifpre(:),bwpre(:),cwpre(:),dwpre(:),sfpre(:), &
+        sprep(:),worka(:),zeros(:),byringr(:),byringz(:), &
+        cjrf(:),cj(:,:,:,:),wkj(:),copyj(:,:),bjx(:),bjy(:), &
+        cv(:,:,:,:),wkv(:),copyv(:,:),bvx(:),bvy(:),xsisii(:), &
+        f_a(:),f_b(:),f_c(:),f_d(:),pp_a(:),pp_b(:),pp_c(:), &
+        pp_d(:),chi_c(:,:,:,:),chi_wk(:),chi_copy(:,:),chi_bkx(:), &
+        chi_bky(:),wxin(:),wyin(:),wxout(:),wyout(:),xouts(:), &
+        youts(:),bpoo(:),bpooz(:),bpooc(:),bfpol(:),cfpol(:), &
+        dfpol(:),rsplt(:),zsplt(:),csplt(:),xxtra(:,:),yxtra(:,:), &
+        bpxtra(:,:),flxtra(:,:),fpxtra(:,:),worka2(:)
       end module commonblocks
 
       module efit_bdata
@@ -842,7 +836,7 @@
       use var_prdata, only: pressr,rpress,sigpre
       use var_vtor, only: pressw
       use var_cerfit, only: eeknt,eebdry,ee2bdry
-      use var_calchi, only: saipr,chipre
+      use var_calchi, only: chipre
       use var_cstark, only: bzmse,tangam_uncor,chigamt,chilibt
       use var_input1, only: rzeroj
       use var_fitec, only: saiec
@@ -857,25 +851,25 @@
       ksxr0=10*0
       ksxr2=10*0
       idosxr=1
-      xangle= (/    120.,124.,128.,132.,136.,140.,144.,148., &
-                     152.,156.,160.,164.,168.,172.,176.,180.,180., &
-                      184.,188.,192.,196.,200.,204.,208.,212.,216., &
-                      220.,224.,228.,232.,236.,240., &
-                   294.5,290.5,286.5,282.5,278.5,274.5,270.5,266.5, &
-                   262.5,258.5,254.5,250.5,246.5,242.5,238.5,234.5, &
-                   234.5,230.5,226.5,222.5,218.5,214.5,210.5,206.5, &
-                   202.5,198.5,194.5,190.5,186.5,182.5,178.5,174.5, &
-                   0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0./)
-      zxray= (/-10.7,-10.7,-10.7,-10.7,-10.7,-10.7, &
-                    -10.7,-10.7,-10.7,-10.7,-10.7,-10.7,-10.7,-10.7, &
-                    -10.7,-10.7,-14.7,-14.7,-14.7,-14.7,-14.7,-14.7, &
-                    -14.7,-14.7,-14.7,-14.7,-14.7,-14.7,-14.7,-14.7, &
-                    -14.7,-14.7, &
-                    130.1,130.1,130.1,130.1,130.1,130.1,130.1,130.1, &
-                    130.1,130.1,130.1,130.1,130.1,130.1,130.1,130.1, &
-                    132.6,132.6,132.6,132.6,132.6,132.6,132.6,132.6, &
-                    132.6,132.6,132.6,132.6,132.6,132.6,132.6,132.6, &
-                   0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0./)
+      xangle = (/120.,124.,128.,132.,136.,140.,144.,148., &
+                 152.,156.,160.,164.,168.,172.,176.,180.,180., &
+                 184.,188.,192.,196.,200.,204.,208.,212.,216., &
+                 220.,224.,228.,232.,236.,240., &
+                 294.5,290.5,286.5,282.5,278.5,274.5,270.5,266.5, &
+                 262.5,258.5,254.5,250.5,246.5,242.5,238.5,234.5, &
+                 234.5,230.5,226.5,222.5,218.5,214.5,210.5,206.5, &
+                 202.5,198.5,194.5,190.5,186.5,182.5,178.5,174.5, &
+                 0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0./)
+      zxray = (/-10.7,-10.7,-10.7,-10.7,-10.7,-10.7, &
+                -10.7,-10.7,-10.7,-10.7,-10.7,-10.7,-10.7,-10.7, &
+                -10.7,-10.7,-14.7,-14.7,-14.7,-14.7,-14.7,-14.7, &
+                -14.7,-14.7,-14.7,-14.7,-14.7,-14.7,-14.7,-14.7, &
+                -14.7,-14.7, &
+                130.1,130.1,130.1,130.1,130.1,130.1,130.1,130.1, &
+                130.1,130.1,130.1,130.1,130.1,130.1,130.1,130.1, &
+                132.6,132.6,132.6,132.6,132.6,132.6,132.6,132.6, &
+                132.6,132.6,132.6,132.6,132.6,132.6,132.6,132.6, &
+                0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0./)
       rxray = (/248.9,248.9,248.9,248.9,248.9,248.9,248.9, &
                 248.9,248.9,248.9,248.9,248.9,248.9,248.9,248.9,248.9, &
                 248.9,248.9,248.9,248.9,248.9,248.9,248.9,248.9, &
@@ -884,14 +878,14 @@
                 197.6,197.6,197.6,197.6,197.6,197.6,197.6,197.6, &
                 194.5,194.5,194.5,194.5,194.5,194.5,194.5,194.5, &
                 194.5,194.5,194.5,194.5,194.5,194.5,194.5,194.5, &
-                   0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0./)
+                0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0./)
 
 !---D3D-----------------------D3D----------------------------D3D-----
 
       fcid=1.
       if (mfcoil.eq.18) then 
-        fcid= (/1. ,2. ,3. ,4. ,5. ,6. ,7. ,8. ,9. , &
-                10.,11.,12.,13.,14.,15.,16.,17.,18./)
+        fcid = (/1. ,2. ,3. ,4. ,5. ,6. ,7. ,8. ,9. , &
+                 10.,11.,12.,13.,14.,15.,16.,17.,18./)
       endif
       rwstrip1(1)=1.33
       zwstrip1(1)=-1.363
@@ -924,7 +918,6 @@
       eeknt=0.0
       eebdry=0.0
       ee2bdry=0.0
-      saipr=0.0
       bzmse=0.0
       tangam_uncor=0.0
       qpsi=0.0

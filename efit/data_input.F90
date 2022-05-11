@@ -1786,54 +1786,7 @@
         xlim(7)=xlim(1)
         ylim(7)=ylim(1)
       endif
-!--------------------------------------------------------------------- 
-!--   specific choice of current profile                            -- 
-!--       ICPROF=1  no edge current density allowed                 -- 
-!--       ICPROF=2  free edge current density                       -- 
-!--       ICPROF=3  weak edge current density constraint            -- 
-!--------------------------------------------------------------------- 
-      select case (icprof)
-      case (1)
-        kffcur=2
-        kppcur=2
-        fcurbd=1.
-        pcurbd=1.
-        fwtbp=1.
-        fwtqa=0.
-        qvfit=0.
-      case (2) 
-        kffcur=2
-        kppcur=2
-        fcurbd=0.
-        pcurbd=0.
-        fwtbp=0.
-        fwtqa=0.
-        qvfit=0.
-      case (3)
-        kffcur=3
-        kppcur=2
-        fcurbd=0.
-        pcurbd=0.
-        fwtbp=0.
-        fwtqa=0.
-        qvfit=0.
-        kcalpa=1
-        calpa(1,1)=0.1_dp
-        calpa(2,1)=0.1_dp
-        calpa(3,1)=0.1_dp
-        xalpa(1)=0.0
-        kcgama=1
-        cgama(1,1)=0.1_dp
-        cgama(2,1)=0.1_dp
-        cgama(3,1)=0.1_dp
-        xgama(1)=0.0
-      end select
-      if(mse_usecer .eq. 1) keecur = 0
-      if (mse_usecer .eq. 2 .and. keecur .eq. 0) then
-        keecur=2
-        keefnc=0
-        itek=5
-      endif
+      call set_basis_params
       mtear=ktear
       if (kedgep.gt.0) then
         s1edge=(1.0-pe_psin)/pe_width
@@ -1841,11 +1794,6 @@
         s1edge=(1.0-fe_psin)/fe_width
         tfedge=tanh(s1edge)
       endif
-      if (imagsigma.gt.0) then
-        do_spline_fit=.false.
-        saimin=300.
-      endif
-      if(kzeroj.eq.1.and.sizeroj(1).lt.0.0) sizeroj(1)=psiwant
       write(*,*)  'before save fitting weights'
       call flush(6)
 !--------------------------------------------------------------------- 
@@ -1864,52 +1812,6 @@
       swtecebz=fwtecebz0
       write(*,*)'adjust fit parameters based on basis function selected'
       call flush(6)
-!----------------------------------------------------------------------- 
-!--   adjust fit parameters based on basis function selected          -- 
-!----------------------------------------------------------------------- 
-      select case (kppfnc)
-      case (3)
-        kppcur = 4 * (kppknt - 1)
-      case (4)
-        kppcur = 4 * (kppknt - 1)
-      case (5)
-        kppcur = kppcur * (kppknt - 1)
-      case (6)
-        kppcur = kppknt * 2
-      end select
-      select case (kfffnc)
-      case (3)
-        kffcur = 4 * (kffknt - 1)
-      case (4)
-        kffcur = 4 * (kffknt - 1)
-      case (5)
-        kffcur = kffcur * (kffknt - 1)
-      case (6)
-        kffcur = kffknt * 2
-      end select
-      select case (kwwfnc)
-      case (3)
-        kwwcur = 4 * (kwwknt - 1)
-      case (4)
-        kwwcur = 4 * (kwwknt - 1)
-      case (5)
-        kwwcur = kwwcur * (kwwknt - 1)
-      case (6)
-        kwwcur = kwwknt * 2
-      end select
-      if (keecur.gt.0) then
-        select case (keefnc)
-        case (3)
-          keecur = 4 * (keeknt - 1)
-        case (4)
-          keecur = 4 * (keeknt - 1)
-        case (5)
-          keecur = keecur * (keeknt - 1)
-        case (6)
-          keecur = keeknt * 2
-        end select
-      endif
-! 
       if(fbetan.gt.0.) brsp(nfcoil+jbeta)=alpax(jbeta)*darea
       if(fli.gt.0.) brsp(nfcoil+kppcur+jli)=gamax(jli)*darea
       if(kedgep.gt.0) pedge=pedge*darea
@@ -1962,7 +1864,11 @@
       endif
 !      if ((nbdry.gt.0).and.(rbdry(1).le.-1.0)) read (nin,5020) & 
 !          (rbdry(i),zbdry(i),i=1,nbdry) 
-      if(kprfit.gt.0) premea(1:npress)=pressr(1:npress)
+      if (kprfit.gt.0) then
+        ! save input values before being overwritten
+        premea(1:npress)=pressr(1:npress)
+        premew(1:npresw)=presw(1:npresw)
+      endif
       if (kprfit.gt.0.and.sigpre(1).lt.0.0) then 
         scalep=abs(sigpre(1)) 
         scalemin=abs(sigpre(2)) 
@@ -1977,7 +1883,7 @@
       endif 
       if (kprfit.gt.0.and.scalepw(1).gt.0.0) then 
         if (npresw.gt.0) then 
-          presw(1:npresw) = presw(1:npresw)*scalepw(1:npresw) 
+          presw(1:npresw)=presw(1:npresw)*scalepw(1:npresw) 
           sigprw(1:npresw)=sigprw(1:npresw)*scalepw(1:npresw) 
         elseif (nomegat.gt.0) then 
           omegat(1:nomegat)=omegat(1:nomegat)*scalepw(1:nomegat) 
