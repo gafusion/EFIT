@@ -291,4 +291,10 @@
  nacoil = 1
  mgaus1 = 8
  mgaus2 = 10
+ mqwant = 66
+ nwwcur=18
+ nffcur=18
+ nppcur=18
+ nercur=18
+ mse315=18
  /
