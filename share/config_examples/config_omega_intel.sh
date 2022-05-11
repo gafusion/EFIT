@@ -6,7 +6,7 @@
 # If you don't want MPI (slower in serial) simply remove the FC=...
 #   and -DENABLE_PARALLEL... lines
 #
-# Omega does not appear to have working MDS+ yet
+# ptdata calls hang when snap files are used (unclear why)
 
     export CC=/fusion/usc/opt/intel2020/bin/icc
     export FC=/fusion/usc/opt/mpich/mpich-3.2/intel2020/bin/mpifort

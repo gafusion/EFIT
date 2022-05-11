@@ -1,7 +1,5 @@
 # If you don't want MPI (slower in serial) simply remove the FC=...
 #   and -DENABLE_PARALLEL... lines
-#
-# Omega does not appear to have working MDS+ yet
 
     export CC=/usr/bin/gcc
     export FC=/fusion/usc/c8/opt/env/gcc-8.3.1/bin/mpifort
@@ -16,9 +14,9 @@
     -DENABLE_HDF5:BOOL=ON \
     -DHDF5_ROOT:PATH='/fusion/usc/c8/opt/env/gcc-8.3.1'\
     -DD3_LIB:PATH='/fusion/projects/codes/efit/dev/d3lib_gcc8.3.1/libd3share.a' \
+    -DENABLE_MDSPLUS:BOOL=ON \
+    -DMDSPLUS_DIR:PATH='/fusion/usc/c8/opt/mdsplus/alpha/7.130.1' \
     -DENABLE_PARALLEL:BOOL=ON \
     -DCMAKE_BUILD_TYPE:STRING=RELEASE \
     ..
 
-#    -DENABLE_MDSPLUS:BOOL=ON \
-#    -DMDSPLUS_DIR:PATH='/fusion/usc/c8/opt/mdsplus/alpha/7.130.1' \
