@@ -12,7 +12,7 @@ else()
   set(TIMES 00369)
 endif()
 
-foreach( t ${TIMES})
+foreach(t ${TIMES})
   set(EFIT_LABEL ${EFIT_LABEL} ${RUNID}.${t})
   set(EFIT_IN ${EFIT_IN} k${RUNID}.${t})
   file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/k${RUNID}.${t}
@@ -29,7 +29,6 @@ configure_file(${EFIT_RESULTS_CONFIGFILE}
 add_test(NAME NSTX-efit02 COMMAND run_efit.sh)
 add_test(NAME NSTX-efit02-results COMMAND check_efit_results.sh)
 
-# This test has a problem which needs to be tracked down...
 if (${ENABLE_HDF5})
   set(EFIT_MODE 1)
   if (${ENABLE_PARALLEL})

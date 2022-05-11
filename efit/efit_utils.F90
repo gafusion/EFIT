@@ -244,4 +244,150 @@
       return
       end subroutine tsorder
 
+!**********************************************************************
+!!
+!!    FITPP does polynomial fitting of p' by using a LAPACK singular
+!!      value decomposition routine
+!!
+!!    @param y : input array being fitted, supposing X is evenly
+!!               distributed between [0,1]
+!!
+!!    @param ny : number of points
+!!
+!!    @param alpa : return fitting coefficients in its first nalpa
+!!                  elements.  Y(x)=a0+a1*x+a2*x^2+...
+!!
+!!    @param nalpa : number of coefficients
+!!
+!**********************************************************************
+      subroutine fitpp(y,ny,alpa,nalpa)
+      implicit integer*4 (i-n), real*8 (a-h, o-z)
+      parameter (malpa=30)
+      dimension x(ny),y(ny),xpsii(nalpa)
+      dimension arsp(ny,malpa),work(ny*2),wrsp(malpa),alpa(ny)
 
+      y0=y(1)
+      if(abs(y0).le.1.e-5) y0=y(ny)
+      do i=1,ny
+         x(i)=float(i-1)/float(ny-1)
+         y(i)=y(i)/y0
+      enddo
+!--------------------------------------------------------------
+!--  fitting                                                 --
+!--------------------------------------------------------------
+      if (nalpa.gt.0) then
+        do i=1,ny
+           call setpp(x(i),arsp(i,1:nalpa))
+           alpa(i)=y(i)
+        enddo
+        nfit=ny
+!       write (6,*) nfit,nalpa,(x(i),i=1,nalpa)
+!       write (6,*) y(1),y0,y(nfit)
+!----------------------------------------------------------------
+! ---   LAPACK wrapper routine to do singular value decomposition
+!----------------------------------------------------------------
+        call sdecm(arsp,ny,nfit,nalpa,alpa,ny,1,wrsp,work,ier)
+        if (ier.eq.129) then
+          write (nttyo,8000) ier
+          stop
+        endif
+        cond=ier
+        toler=1.0e-06*wrsp(1)
+        do i=1,nalpa
+          t=0.0
+          if (wrsp(i).gt.toler) t=alpa(i)/wrsp(i)
+          work(i)=t
+        enddo
+        do i=1,nalpa
+          alpa(i)=0.0
+          do j=1,nalpa
+            alpa(i)=alpa(i)+arsp(i,j)*work(j)
+          enddo
+        enddo
+        alpa0=1.
+      endif
+!     write (nttyo,3187)
+! 3187 format (/,1x,' alphap = ')
+!     write(nttyo,*) (alpa(i),i=1,nalpa)
+
+      do i=1,nalpa
+        alpa(i)=alpa(i)*y0
+      enddo
+!      write (nttyo,*) (alpa(i),i=1,nalpa)
+      return
+ 8000 format (/,1x,'Problem in fitting pp')
+      end subroutine fitpp
+
+!**********************************************************************
+!!
+!!    FITFP does polynomial fitting of FF' by using a LAPACK singular
+!!      value decomposition routine
+!!
+!!    @param y : input array being fitted, supposing X is evenly
+!!               distributed between [0,1]
+!!
+!!    @param ny : number of points
+!!
+!!    @param alpa : return fitting coefficients in its first nalpa
+!!                  elements.  Y(x)=a0+a1*x+a2*x^2+...
+!!
+!!    @param nalpa : number of coefficients
+!!
+!**********************************************************************
+      subroutine fitfp(y,ny,alpa,nalpa)
+      implicit integer*4 (i-n), real*8 (a-h, o-z)
+      parameter (malpa=30)
+      dimension x(ny),y(ny),xpsii(nalpa)
+      dimension arsp(ny,malpa),work(ny*2),wrsp(malpa),alpa(ny)
+
+      y0=y(1)
+      if(abs(y0).le.1.e-5) y0=y(ny)
+      do i=1,ny
+         x(i)=float(i-1)/float(ny-1)
+         y(i)=y(i)/y0
+      enddo
+!--------------------------------------------------------------
+!--  fitting                                                 --
+!--------------------------------------------------------------
+      if (nalpa.gt.0) then
+        do i=1,ny
+           call setfp(x(i),arsp(i,1:nalpa))
+           alpa(i)=y(i)
+        enddo
+        nfit=ny
+!       write (6,*) nfit,nalpa,(x(i),i=1,nalpa)
+!       write (6,*) y(1),y0,y(nfit)
+!----------------------------------------------------------------
+! ---   LAPACK wrapper routine to do singular value decomposition
+!----------------------------------------------------------------
+        call sdecm(arsp,ny,nfit,nalpa,alpa,ny,1,wrsp,work,ier)
+        if (ier.eq.129) then
+          write (nttyo,8000) ier
+          stop
+        endif
+        cond=ier
+        toler=1.0e-06*wrsp(1)
+        do i=1,nalpa
+          t=0.0
+          if (wrsp(i).gt.toler) t=alpa(i)/wrsp(i)
+          work(i)=t
+        enddo
+        do i=1,nalpa
+          alpa(i)=0.0
+          do j=1,nalpa
+            alpa(i)=alpa(i)+arsp(i,j)*work(j)
+          enddo
+        enddo
+        alpa0=1.
+      endif
+!     write (nttyo,3187)
+! 3187 format (/,1x,' alphap = ')
+!     write(nttyo,*) (alpa(i),i=1,nalpa)
+
+      do i=1,nalpa
+        alpa(i)=alpa(i)*y0
+      enddo
+!      write (nttyo,*) (alpa(i),i=1,nalpa)
+      return
+ 8000 format (/,1x,'Problem in fitting Fp')
+      end subroutine fitfp

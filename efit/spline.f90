@@ -1,15 +1,16 @@
 !**********************************************************************
 !>
-!!    Bicubic spline routines.                                              --
-!!    --    Put together with routines from E.Solano.
+!!    Bicubic spline routines.
+!!      Put together with routines from E.Solano.
+!!
 !!
 !!    @param bkx : interval coefficients of length lubicx+1 from
-!                 sets2d.
+!!                 sets2d.
 !!
 !!    @param lx : number of terms in bkx  from sets2d.
 !!
 !!    @param bky : interval coefficients of length lubicy+1 from
-!                 sets2d.
+!!                 sets2d.
 !!
 !!    @param ly : number of terms in bky  from sets2d.
 !!
@@ -21,13 +22,13 @@
 !!    @param yl : the point at which interpolations are desired.
 !!
 !!    @param fs : vector containing results depending on icalc\n
-!!                 icalc              fs\n
-!!                   1                f\n
-!!                   2                fx\n
-!!                   3                fy\n
-!!                   4                fxy\n
-!!                   5                fxx\n
-!!                   6                fyy
+!!                  icalc              fs\n
+!!                    1                f\n
+!!                    2                fx\n
+!!                    3                fy\n
+!!                    4                fxy\n
+!!                    5                fxx\n
+!!                    6                fyy
 !!
 !!    @param ier : error flag
 !!
@@ -91,37 +92,40 @@
       return
       end subroutine seva2d
 
-!------------------------------------------------------------------------------
-!--  S.Thompson  92/05/18                                                    --
-!--    Bicubic spline routines.                                              --
-!--    Put together with routines from E.Solano.                             --
-!--  SMWolfe     93/12/17                                                    --
-!--    Modifed to avoid over-writing the original array.                     --
-!--              94/04/28                                                    --
-!--    Updated.                                                              --
-!------------------------------------------------------------------------------
-!  Inputs:
-!
-!      s     - nx by ny array containing the function values at (x,y).
-!              This is a 1-d array, k=k=(i-1)*ny+j.
-!
-!      x, y  - (x,y) location, arrays of length nx and ny.
-!
-!  Outputs:
-!
-!      cs    - array of spline coefficients of dimension (kubicx,
-!              lubicx,kubicy,lubicy).
-!
-!      bkx, bky - interval coefficients of length lubicx+1 and lubicy+1.
-!
-!      lx, ly -   number of terms in bkx and bky.
-!
-!      ier   - error parameter.
-!
-!  Work arrays:
-!
-!      wk    - of dimension at least nx by ny.
-!------------------------------------------------------------------------------
+!**********************************************************************
+!>
+!!    Bicubic spline routines.
+!!      Put together with routines from E.Solano.
+!!
+!!    Inputs:
+!!
+!!    @param s : nx by ny array containing the function values at (x,y).
+!!                This is a 1-d array, k=k=(i-1)*ny+j.
+!! 
+!!    @param x : (x,y) location, arrays of length nx and ny.
+!!
+!!    @param y : (x,y) location, arrays of length nx and ny.
+!!
+!!    Outputs:
+!!
+!!    @param cs : array of spline coefficients of dimension (kubicx,
+!!                lubicx,kubicy,lubicy).
+!!
+!!    @param bkx : interval coefficients of length lubicx+1.
+!!
+!!    @param bky : interval coefficients of length lubicy+1.
+!!
+!!    @param lx : number of terms in bkx.
+!!
+!!    @param ly : number of terms in bky.
+!!
+!!    @param ier : error parameter.
+!!
+!!    Work arrays:
+!!
+!!    @param wk : of dimension at least nx by ny.
+!!
+!**********************************************************************
       subroutine sets2d(s,cs,x,nx,bkx,lx,y,ny,bky,ly,wk,ier)
 !!      use commonblocks,only: bkx,bky
       include 'eparm.inc'
@@ -518,7 +522,6 @@
 
 !**********************************************************************
 !>
-!!    -----------------------------------------------------------------------
 !!    alls bsplvb, banfac/slv
 !!    this is an extended version of  splint , for the use in tensor prod-
 !!    uct interpolation.
@@ -573,7 +576,6 @@
 !!    
 !!    INTEGER4 iflag,k,m,n,i,ilp1mx,j,jj,kpkm1,left,np1
 !!    REAL8 bcoef(m,n),gtau(n,m),q(n,7),t(n+k),tau(n),work(n),taui
-!!    
 !!    
 !**********************************************************************
       subroutine spli2d ( tau, gtau, t, n, k, m, work, q, bcoef, iflag )
@@ -646,7 +648,6 @@
 
 !**********************************************************************
 !>
-!!    
 !!    calls  bsplvb
 !!    this is an extended version of  bsplpp  for use with tensor products
 !!    
@@ -679,7 +680,6 @@
 !!    its first  k-1  derivatives are then evaluated at the left end
 !!    point of that interval, using  bsplvb  repeatedly to obtain the val-
 !!    ues of all b-splines of the appropriate order at that point.
-!!    
 !!
 !**********************************************************************
       subroutine bspp2d ( t, bcoef, n, k, m, scrtch, break, coef, l )
@@ -742,7 +742,6 @@
 
 !**********************************************************************
 !>
-!!    
 !!    Calculates the value of all possibly nonzero b-splines at  x  of order
 !!    
 !!    jout  =  max( jhigh , (j+1)(index-1) )
@@ -825,7 +824,6 @@
 
 !**********************************************************************
 !>
-!!    
 !!    Modified for optimization by S.J. Thompson, 30-Aug-1993
 !!    Revised to eliminate call to interv by S.M.Wolfe, 17-Dec-1993
 !!    and to use ASF's for evaluation
@@ -859,7 +857,6 @@
 !!    the interval index  i , appropriate for  x , is found through a
 !!    call to  interv . the formula above for the  jd-th derivative
 !!    of  f  is then evaluated (by nested multipication).
-!!    
 !!
 !**********************************************************************
       function ppvalw(coef, x, jd )

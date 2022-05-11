@@ -154,7 +154,7 @@
         close(unit=74)
       endif plot_t
 !
-      if ((iand(iout,2).eq.0).and.(iand(iout,4).eq.0)) &
+      if((iand(iout,2).eq.0).and.(iand(iout,4).eq.0)) &
         return
 !
       call NCPOPT(NCVERBOS)  ! get nc error message but not fatal
@@ -172,7 +172,7 @@
         call getfnmd(let,ishot,iitime,eqdsk)
         write(last,'(i4.4)') ktime
         eqdsk = eqdsk(1:13)//'_'//last
-        nceq = NCCRE(eqdsk,NCCLOB,ierr)              
+        nceq = NCCRE(eqdsk,NCCLOB,ierr)
 !
       elseif ((iand(iout,2).ne.0).and.(iand(iout,4).eq.0).and. &
               (ifirsttime.eq.1).and.(itype.eq.1)) then
@@ -186,7 +186,7 @@
         let = 'm'
         iitime = time(ifirsttime)
         call getfnmu(itimeu,let,ishot,iitime,eqdsk)
-        nceq = NCCRE(eqdsk,NCCLOB,ierr)  
+        nceq = NCCRE(eqdsk,NCCLOB,ierr)
 !
 ! --- time-dependent but NOT the first slice NOR the first time,
 ! --- or single slice but NOT the first time, 

@@ -14,6 +14,7 @@
 stages:
   - stage0
   - stage1
+  - stage2
 
 variables:
   GIT_STRATEGY: fetch
@@ -110,18 +111,18 @@ linux-clang:
 # Deploy documentation using GitLab pages
 #
 pages:  # this job name has special meaning to GitLab
-  stage: stage1
+  stage: stage2
   tags:
     - name:hip.txcorp_efitai
   interruptible: true
+  variables:
+    PATH: /scratch/soft/bin:/scratch/soft/mpich/bin:/opt/rh/devtoolset-7/root/usr/bin:/usr/bin:/bin
   script:
+    - source /scratch/soft/sphinx_load.sh
     - mkdir build-docs && cd build-docs # Build out of place
     - ../share/config_examples/config_ci_hip.sh | tee config.log
     - make docs
     - mv docs/html ../public
-  only:
-    variables:
-      - $EFIT_CI_SCHEDULED == "yes"
   artifacts:
     paths:
       - public

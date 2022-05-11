@@ -1,0 +1,98 @@
+
+          EFIT-AI
+
+Git repository url git@gitlab.com:efit-ai/efit.git
+
+Git branch restart
+
+Git hash 4255f4b 
+
+Simulation started on  4/28/2022 at 17:36:35
+
+Code compiled with GNU 9.2.0
+
+
+ type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
+
+ number of time slices?
+
+ type input file names:
+ #
+ #
+ #
+ #
+ table_di2 = </home/bechtelt/efitall/efit_restart/build/test/DIIID/green/>
+
+******************** EFIT-AI 65 x 65 grid ********************
+ before save fitting weights
+ adjust fit parameters based on basis function selected
+ itek > 100, write out PLTOUT.OUT individually 
+ read in limiter data
+ before save fitting weights
+ adjust fit parameters based on basis function selected
+ itek > 100, write out PLTOUT.OUT individually 
+ read in limiter data
+ before save fitting weights
+ adjust fit parameters based on basis function selected
+ itek > 100, write out PLTOUT.OUT individually 
+ read in limiter data
+ before save fitting weights
+ adjust fit parameters based on basis function selected
+ itek > 100, write out PLTOUT.OUT individually 
+ read in limiter data
+
+ r=  1 t=  2500 it=  1 chi2=2.21E+01 zm=-3.72E-02 err=1.564E+00 dz=-3.723E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+
+ r=  3 t=  2700 it=  1 chi2=8.79E+01 zm=-3.30E-02 err=1.718E+00 dz=-3.299E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+ r=  1 t=  2500 it=  2 chi2=2.19E+01 zm=-3.66E-02 err=2.041E-03 dz= 6.154E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.27E+01
+
+ r=  2 t=  2600 it=  1 chi2=3.59E+01 zm=-3.57E-02 err=1.639E+00 dz=-3.572E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+ r=  3 t=  2700 it=  2 chi2=2.02E+01 zm=-3.25E-02 err=2.180E-03 dz= 5.262E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 3.66E+00
+ r=  1 t=  2500 it=  3 chi2=2.20E+01 zm=-3.60E-02 err=1.596E-03 dz= 5.707E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.27E+01
+
+ r=  0 t=  2400 it=  1 chi2=4.12E+01 zm=-3.47E-02 err=1.529E+00 dz=-3.470E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+ r=  2 t=  2600 it=  2 chi2=2.25E+01 zm=-3.51E-02 err=1.869E-03 dz= 5.825E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.48E+01
+ r=  3 t=  2700 it=  3 chi2=2.03E+01 zm=-3.20E-02 err=1.547E-03 dz= 4.964E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 3.67E+00
+ r=  1 t=  2500 it=  4 chi2=2.35E+01 zm=-3.79E-02 err=3.355E-03 dz=-1.823E-03 delz= 5.780E-01 dj=1.394E-02 chigam= 1.27E+01
+ r=  2 t=  2600 it=  3 chi2=2.27E+01 zm=-3.46E-02 err=1.484E-03 dz= 5.358E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.48E+01
+ r=  0 t=  2400 it=  2 chi2=2.23E+01 zm=-3.41E-02 err=1.941E-03 dz= 5.960E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.28E+01
+ r=  3 t=  2700 it=  4 chi2=2.18E+01 zm=-3.36E-02 err=3.029E-03 dz=-1.678E-03 delz= 5.297E-01 dj=1.111E-02 chigam= 3.75E+00
+ r=  1 t=  2500 it=  5 chi2=2.22E+01 zm=-3.85E-02 err=1.187E-03 dz=-6.468E-04 delz= 3.284E-01 dj=8.377E-03 chigam= 1.26E+01
+ r=  0 t=  2400 it=  3 chi2=2.24E+01 zm=-3.36E-02 err=1.502E-03 dz= 5.480E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.28E+01
+ r=  2 t=  2600 it=  4 chi2=2.41E+01 zm=-3.62E-02 err=3.034E-03 dz=-1.622E-03 delz= 5.182E-01 dj=1.214E-02 chigam= 1.48E+01
+ r=  3 t=  2700 it=  5 chi2=2.06E+01 zm=-3.45E-02 err=1.519E-03 dz=-8.435E-04 delz= 3.652E-01 dj=8.083E-03 chigam= 3.70E+00
+ r=  1 t=  2500 it=  6 chi2=2.20E+01 zm=-3.88E-02 err=5.554E-04 dz=-2.600E-04 delz= 2.426E-01 dj=6.102E-03 chigam= 1.26E+01
+ r=  0 t=  2400 it=  4 chi2=2.41E+01 zm=-3.53E-02 err=3.216E-03 dz=-1.701E-03 delz= 5.424E-01 dj=1.273E-02 chigam= 1.29E+01
+ r=  2 t=  2600 it=  5 chi2=2.29E+01 zm=-3.69E-02 err=1.254E-03 dz=-6.983E-04 delz= 3.304E-01 dj=8.163E-03 chigam= 1.48E+01
+ r=  3 t=  2700 it=  6 chi2=2.03E+01 zm=-3.48E-02 err=7.013E-04 dz=-3.442E-04 delz= 2.565E-01 dj=5.621E-03 chigam= 3.68E+00
+ r=  0 t=  2400 it=  5 chi2=2.28E+01 zm=-3.60E-02 err=1.376E-03 dz=-7.511E-04 delz= 3.478E-01 dj=8.619E-03 chigam= 1.28E+01
+ r=  2 t=  2600 it=  6 chi2=2.27E+01 zm=-3.72E-02 err=5.978E-04 dz=-2.937E-04 delz= 2.423E-01 dj=5.924E-03 chigam= 1.48E+01
+ r=  0 t=  2400 it=  6 chi2=2.24E+01 zm=-3.63E-02 err=5.805E-04 dz=-2.809E-04 delz= 2.411E-01 dj=5.902E-03 chigam= 1.28E+01
+
+  fit errors, shot  186610  2500. msec. no eqdsks will be written
+     Error #21, Bp not consistent , error =  0.127E+00
+INFO in efit at r=  1, t=  2500: Done processing
+INFO in efit at r=  3, t=  2700: Done processing
+
+  fit errors, shot  186610  2600. msec. no eqdsks will be written
+     Error #21, Bp not consistent , error =  0.105E+00
+INFO in efit at r=  2, t=  2600: Done processing
+
+       data used:   
+ 39 flux loops
+ 69 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     186610 time(ms) =       2400 chi**2   =  2.201E+01
+ betat(%) =      0.287 betap    =      0.076 li       =      1.195
+ vol(cm3) =  1.764E+07 rout(cm) =    172.799 zout(cm) =      6.926
+ elong    =      1.797 utriang  =      0.751 ltriang  =      0.303
+ a(cm)    =     56.383 lin(cm)  =     14.686 lout(cm) =      5.887
+ ltop(cm) =     15.203 q*       =      3.879 rc(cm)   =    170.132
+ zc(cm)   =     -2.639 bt0(t)   =      1.638 qout     =      6.440
+
+  fit errors, shot  186610  2400. msec. no eqdsks will be written
+     Error #21, Bp not consistent , error =  0.109E+00
+INFO in efit at r=  0, t=  2400: Done processing
