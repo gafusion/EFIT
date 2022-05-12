@@ -689,8 +689,11 @@
           rpress_save=rpress
           npress_save=npress
           sigpre_save=sigpre
-          read (neqdsk,out1,iostat=ioerr)
-          if (iostat.ne.0) then
+          read (neqdsk,out1,iostat=istat)
+          if (istat>0) then 
+            backspace(nin)
+            read(nin,fmt='(A)') line
+            write(*,'(A)') 'Invalid line in namelist out1: '//trim(line)
             call errctrl_msg('data_input', &
                              'cannot read out1 from geqdsk_ext')
             stop
@@ -2919,8 +2922,8 @@
       mw=nw 
       mh=nh 
       open(unit=nffile,status='old',form='unformatted', & 
-           file='rpfxx.dat',iostat=ioerr)
-      if (ioerr.eq.0) close(unit=nffile,status='delete')
+           file='rpfxx.dat',iostat=istat)
+      if (istat.eq.0) close(unit=nffile,status='delete')
       open(unit=nffile,status='new',form='unformatted', & 
            file='rpfxx.dat') 
       write (nffile) mx,rmx,zmx 
@@ -3023,8 +3026,8 @@
       wpcpc=wpcpc/xnpc**2 
 ! 
       open(unit=nffile,status='old',form='unformatted', & 
-           file='rpcxx.dat',iostat=ioerr)
-      if (ioerr.eq.0) close(unit=nffile,status='delete')
+           file='rpcxx.dat',iostat=istat)
+      if (istat.eq.0) close(unit=nffile,status='delete')
       open(unit=nffile,status='new',form='unformatted', & 
            file='rpcxx.dat') 
       write (nffile) wsilpc 
