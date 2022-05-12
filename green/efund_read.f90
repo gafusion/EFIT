@@ -23,7 +23,7 @@
 
       NAMELIST/machinein/nfcoil,nsilop,magpr2,nrogow,necoil,nesum, &
                          nfsum,nvsum,nvesel,nacoil,mgaus1,mgaus2,device, &
-                         magprirdp,magudom,maglds, &
+                         magpri322,magpri67,magprirdp,magudom,maglds, &
                          nnece,nnecein,neceo,mse315,mse45,mse15, &
                          mse1h,mse315_2,mse210,mpress,libim,nmsels, &
                          nnnte,ngam_vars,ngam_u,ngam_w,nlimit,nlimbd,nangle, &
@@ -99,14 +99,7 @@
       magprirdp=1
       magudom=1
       maglds=1
-
-      OPEN(unit=nin,status='old',file='mhdin.dat' )
-
-      READ (nin,machinein)
-
-      CLOSE(nin)
-      magpri322 = magpr2 - magpri67 - magprirdp - magudom - maglds
-
+      
 
       ! DIII-D special (I can't think of a better way of setting this)
       IF (trim(device)=='DIII-D') THEN
@@ -124,6 +117,15 @@
         nsilds=3
         nsilol=41
       ENDIF
+
+      OPEN(unit=nin,status='old',file='mhdin.dat' )
+
+      READ (nin,machinein)
+
+      CLOSE(nin)
+
+      magpri322 = magpr2 - magpri67 - magprirdp - magudom - maglds
+     
 
       ALLOCATE(rsi(nsilop),zsi(nsilop),wsi(nsilop),hsi(nsilop),&
                as(nsilop),as2(nsilop))
