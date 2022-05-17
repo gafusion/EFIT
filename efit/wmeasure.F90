@@ -254,13 +254,13 @@
       call NCAPTC(nceq,id_fgam,'long_name',NCCHAR,58, &
         'radians correction of tangam for spatial averaging effects',ierr)
 !
-      id_cmgam = NCVDEF(nceq,'cmgam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_cmgam,'long_name',NCCHAR,30, &
-                  'calculated polarimetry signals',ierr)
-!
       id_siggam = NCVDEF(nceq,'siggam',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_siggam,'long_name',NCCHAR,21, &
                   'uncertainty of tangam',ierr)
+!
+      id_fwtgam = NCVDEF(nceq,'fwtgam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_fwtgam,'long_name',NCCHAR,31, &
+                  'fitting weight for MSE channels',ierr)
 !
       id_rrgam = NCVDEF(nceq,'rrgam',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_rrgam,'long_name',NCCHAR,22, &
@@ -302,9 +302,9 @@
       call NCAPTC(nceq,id_a8gam,'long_name',NCCHAR,45, &
                   'viewing geometry coefficients of MSE channels',ierr)
 !
-      id_fwtgam = NCVDEF(nceq,'fwtgam',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_fwtgam,'long_name',NCCHAR,31, &
-                  'fitting weight for MSE channels',ierr)
+      id_cmgam = NCVDEF(nceq,'cmgam',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_cmgam,'long_name',NCCHAR,30, &
+                  'calculated polarimetry signals',ierr)
 !
       id_chigam = NCVDEF(nceq,'chigam',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_chigam,'long_name',NCCHAR,23, &
@@ -384,13 +384,17 @@
       call NCAPTC(nceq,id_silopt,'long_name',NCCHAR,19, &
                   'measured flux loops',ierr)
 !
-      id_csilop = NCVDEF(nceq,'csilop',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_csilop,'long_name',NCCHAR,21, &
-                  'calculated flux loops',ierr)
+      id_sigmafl0 = NCVDEF(nceq,'sigmafl0',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_sigmafl0,'long_name',NCCHAR,25, &
+                  'uncertainty in flux loops',ierr)
 !
       id_fwtsi = NCVDEF(nceq,'fwtsi',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_fwtsi,'long_name',NCCHAR,21, &
                   'weight for flux loops',ierr)
+!
+      id_csilop = NCVDEF(nceq,'csilop',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_csilop,'long_name',NCCHAR,21, &
+                  'calculated flux loops',ierr)
 !
       id_saisil = NCVDEF(nceq,'saisil',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_saisil,'long_name',NCCHAR,20, &
@@ -401,13 +405,17 @@
       call NCAPTC(nceq,id_expmpi,'long_name',NCCHAR,24, &
                   'measured magnetic probes',ierr)
 !
-      id_cmpr2 = NCVDEF(nceq,'cmpr2',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_cmpr2,'long_name',NCCHAR,26, &
-                  'calculated magnetic probes',ierr)
+      id_sigmamp0 = NCVDEF(nceq,'sigmamp0',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_sigmamp0,'long_name',NCCHAR,30, &
+                  'uncertainty in magnetic probes',ierr)
 !
       id_fwtmp2 = NCVDEF(nceq,'fwtmp2',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_fwtmp2,'long_name',NCCHAR,26, &
                   'weight for magnetic probes',ierr)
+!
+      id_cmpr2 = NCVDEF(nceq,'cmpr2',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_cmpr2,'long_name',NCCHAR,26, &
+                  'calculated magnetic probes',ierr)
 !
       id_saimpi = NCVDEF(nceq,'saimpi',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_saimpi,'long_name',NCCHAR,25, &
@@ -418,13 +426,17 @@
       call NCAPTC(nceq,id_fccurt,'long_name',NCCHAR,30, &
                   'measured F-coil currents (Amp)',ierr)
 !
-      id_ccbrsp = NCVDEF(nceq,'ccbrsp',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_ccbrsp,'long_name',NCCHAR,32, &
-                  'calculated F-coil currents (Amp)',ierr)
+      id_sigmaf0 = NCVDEF(nceq,'sigmaf0',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_sigmaf0,'long_name',NCCHAR,30, &
+                  'uncertainty in F-coil currents',ierr)
 !
       id_fwtfc = NCVDEF(nceq,'fwtfc',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_fwtfc,'long_name',NCCHAR,26, &
                   'weight for F-coil currents',ierr)
+!
+      id_ccbrsp = NCVDEF(nceq,'ccbrsp',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_ccbrsp,'long_name',NCCHAR,32, &
+                  'calculated F-coil currents (Amp)',ierr)
 !
       id_saifc = NCVDEF(nceq,'saifc',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_saifc,'long_name',NCCHAR,25, &
@@ -435,13 +447,17 @@
       call NCAPTC(nceq,id_eccurt,'long_name',NCCHAR,30, &
                   'measured E-coil currents (Amp)',ierr)
 !
-      id_cecurr = NCVDEF(nceq,'cecurr',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_cecurr,'long_name',NCCHAR,32, &
-                  'calculated E-coil currents (Amp)',ierr)
+      id_sigmae0 = NCVDEF(nceq,'sigmae0',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_sigmae0,'long_name',NCCHAR,30, &
+                  'uncertainty in E-coil currents',ierr)
 !
       id_fwtec = NCVDEF(nceq,'fwtec',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_fwtec,'long_name',NCCHAR,26, &
                   'weight for E-coil currents',ierr)
+!
+      id_cecurr = NCVDEF(nceq,'cecurr',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_cecurr,'long_name',NCCHAR,32, &
+                  'calculated E-coil currents (Amp)',ierr)
 !
       id_saiec = NCVDEF(nceq,'saiec',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_saiec,'long_name',NCCHAR,25, &
@@ -451,13 +467,15 @@
       call NCAPTC(nceq,id_psiref,'long_name',NCCHAR,28, &
                   'measured reference flux loop',ierr)
 !
-      id_csiref = NCVDEF(nceq,'csiref',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_csiref,'long_name',NCCHAR,30, &
-                  'calculated reference flux loop',ierr)
+!     uncertainty??  =sigmafl0(nslref)??
 !
       id_fwtref = NCVDEF(nceq,'fwtref',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_fwtref,'long_name',NCCHAR,30, &
                   'weight for reference flux loop',ierr)
+!
+      id_csiref = NCVDEF(nceq,'csiref',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_csiref,'long_name',NCCHAR,30, &
+                  'calculated reference flux loop',ierr)
 !
       id_saisref = NCVDEF(nceq,'saisref',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_saisref,'long_name',NCCHAR,29, &
@@ -467,10 +485,6 @@
       call NCAPTC(nceq,id_diamag,'long_name',NCCHAR,25, &
                   'measured diamagnetic flux',ierr)
 !
-      id_cdflux = NCVDEF(nceq,'cdflux',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_cdflux,'long_name',NCCHAR,27, &
-                  'calculated diamagnetic flux',ierr)
-!
       id_sigdia = NCVDEF(nceq,'sigdia',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_sigdia,'long_name',NCCHAR,31, &
                   'uncertainty of diamagnetic flux',ierr)
@@ -478,6 +492,10 @@
       id_fwtdlc = NCVDEF(nceq,'fwtdlc',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_fwtdlc,'long_name',NCCHAR,27, &
                   'weight for diamagnetic flux',ierr)
+!
+      id_cdflux = NCVDEF(nceq,'cdflux',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_cdflux,'long_name',NCCHAR,27, &
+                  'calculated diamagnetic flux',ierr)
 !
       id_chidlc = NCVDEF(nceq,'chidlc',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_chidlc,'long_name',NCCHAR,26, &
@@ -489,13 +507,17 @@
       call NCAPTC(nceq,id_plasma,'long_name',NCCHAR,29, &
                   'measured plasma current (Amp)',ierr)
 !
-      id_cpasma = NCVDEF(nceq,'cpasma',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_cpasma,'long_name',NCCHAR,31, &
-                  'calculated plasma current (Amp)',ierr)
+      id_sigmaip0 = NCVDEF(nceq,'sigmaip0',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_sigmaip0,'long_name',NCCHAR,29, &
+                  'uncertainty in plasma current',ierr)
 !
       id_fwtcur = NCVDEF(nceq,'fwtcur',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_fwtcur,'long_name',NCCHAR,25, &
                   'weight for plasma current',ierr)
+!
+      id_cpasma = NCVDEF(nceq,'cpasma',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_cpasma,'long_name',NCCHAR,31, &
+                  'calculated plasma current (Amp)',ierr)
 !
       id_saiip = NCVDEF(nceq,'saiip',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_saiip,'long_name',NCCHAR,24, &
@@ -508,11 +530,6 @@
       call NCAPTC(nceq,id_pressr,'long_name',NCCHAR,57, &
          'measured pressure vs. normalized flux (kinetic fits only)',ierr)
 !
-      id_cpress = NCVDEF(nceq,'cpress',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_cpress,'long_name',NCCHAR,59, &
-         'calculated pressure vs. normalized flux (kinetic fits only)', &
-         ierr)      
-!
       id_rpress = NCVDEF(nceq,'rpress',NCFLOAT,2,dim2,ierr)
       presstext(1:59) = &
          '<0 - input pressure profile vs. flux; >0 - R coordinates of'
@@ -524,13 +541,18 @@
       call NCAPTC(nceq,id_zpress,'long_name',NCCHAR,43, &
                   'Z coordinates of input pressure profile (m)',ierr)
 !
+      id_sigpre = NCVDEF(nceq,'sigpre',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_sigpre,'long_name',NCCHAR,24, &
+                  'uncertainty for pressure',ierr)
+!
       id_fwtpre = NCVDEF(nceq,'fwtpre',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_fwtpre,'long_name',NCCHAR,19, &
                   'weight for pressure',ierr)
 !
-      id_sigpre = NCVDEF(nceq,'sigpre',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_sigpre,'long_name',NCCHAR,24, &
-                  'uncertainty for pressure',ierr)
+      id_cpress = NCVDEF(nceq,'cpress',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_cpress,'long_name',NCCHAR,59, &
+         'calculated pressure vs. normalized flux (kinetic fits only)', &
+         ierr)      
 !
       id_saipre = NCVDEF(nceq,'saipre',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_saipre,'long_name',NCCHAR,17, &
@@ -540,11 +562,6 @@
       id_presw = NCVDEF(nceq,'presw',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_presw,'long_name',NCCHAR,57, &
          'measured rotational pressure vs. normalized flux (option)',ierr)
-!
-      id_cpresw = NCVDEF(nceq,'cpresw',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_cpresw,'long_name',NCCHAR,59, &
-         'calculated rotational pressure vs. normalized flux (option)', &
-         ierr)      
 !
       id_rpresw = NCVDEF(nceq,'rpresw',NCFLOAT,2,dim2,ierr)
       preswtext(1:49) = &
@@ -558,13 +575,18 @@
       call NCAPTC(nceq,id_zpresw,'long_name',NCCHAR,54, &
          'Z coordinates of input rotational pressure profile (m)',ierr)
 !
+      id_sigprw = NCVDEF(nceq,'sigprw',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_sigprw,'long_name',NCCHAR,35, &
+                  'uncertainty for rotational pressure',ierr)
+!
       id_fwtprw = NCVDEF(nceq,'fwtprw',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_fwtprw,'long_name',NCCHAR,30, &
                   'weight for rotational pressure',ierr)
 !
-      id_sigprw = NCVDEF(nceq,'sigprw',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_sigprw,'long_name',NCCHAR,35, &
-                  'uncertainty for rotational pressure',ierr)
+      id_cpresw = NCVDEF(nceq,'cpresw',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_cpresw,'long_name',NCCHAR,59, &
+         'calculated rotational pressure vs. normalized flux (option)', &
+         ierr)      
 !
       id_saiprw = NCVDEF(nceq,'saiprw',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_saiprw,'long_name',NCCHAR,28, &
@@ -627,32 +649,41 @@
       call NCVPT(nceq,id_msebkp,m,n,real(msebkp),ierr)
 !
       cnn(1) = nsilop
+      zwork(1:nsilop) = real(sigmafl0(1:nsilop))
+      call NCVPT(nceq,id_sigmafl0,c11,cnn,zwork,ierr)
       zwork(1:nsilop) = real(fwtsi(1:nsilop))
       call NCVPT(nceq,id_fwtsi,c11,cnn,zwork,ierr)
       zwork(1:nsilop) = real(saisil(1:nsilop))
       call NCVPT(nceq,id_saisil,c11,cnn,zwork,ierr)
       cnn(1) = magpri
+      zwork(1:magpri) = real(sigmamp0(1:magpri))
+      call NCVPT(nceq,id_sigmamp0,c11,cnn,zwork,ierr)
       zwork(1:magpri) = real(fwtmp2(1:magpri))
       call NCVPT(nceq,id_fwtmp2,c11,cnn,zwork,ierr)
       zwork(1:magpri) = real(saimpi(1:magpri))
       call NCVPT(nceq,id_saimpi,c11,cnn,zwork,ierr)
       cnn(1) = nfcoil
+      zwork(1:nfcoil) = real(sigmaf0(1:nfcoil))
+      call NCVPT(nceq,id_sigmaf0,c11,cnn,zwork,ierr)
       zwork(1:nfcoil) = real(fwtfc(1:nfcoil))
       call NCVPT(nceq,id_fwtfc,c11,cnn,zwork,ierr)
       zwork(1:nfcoil) = real(saifc(1:nfcoil))
       call NCVPT(nceq,id_saifc,c11,cnn,zwork,ierr)
       cnn(1) = nesum
-      zwork(1:nesum) = real(cecurr(1:nesum))
-      call NCVPT(nceq,id_cecurr,c11,cnn,zwork,ierr)
+      zwork(1:nesum) = real(sigmae0(1:nesum))
+      call NCVPT(nceq,id_sigmae0,c11,cnn,zwork,ierr)
       zwork(1:nesum) = real(fwtec(1:nesum))
       call NCVPT(nceq,id_fwtec,c11,cnn,zwork,ierr)
+      zwork(1:nesum) = real(cecurr(1:nesum))
+      call NCVPT(nceq,id_cecurr,c11,cnn,zwork,ierr)
       zwork(1:nesum) = real(saiec(1:nesum))
       call NCVPT(nceq,id_saiec,c11,cnn,zwork,ierr)
-      call NCVPT(nceq,id_csiref,m,n,real(csiref),ierr)
       call NCVPT(nceq,id_fwtref,m,n,real(fwtref),ierr)
+      call NCVPT(nceq,id_csiref,m,n,real(csiref),ierr)
       call NCVPT(nceq,id_saisref,m,n,real(saisref),ierr)
       call NCVPT(nceq,id_fwtdlc,m,n,real(fwtdlc),ierr)
       call NCVPT(nceq,id_chidlc,m,n,real(chidlc),ierr)
+      call NCVPT(nceq,id_sigmaip0,m,n,real(sigmaip0),ierr)
       call NCVPT(nceq,id_fwtcur,m,n,real(fwtcur),ierr)
       call NCVPT(nceq,id_saiip,m,n,real(saiip),ierr)
 !
