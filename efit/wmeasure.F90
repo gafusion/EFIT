@@ -448,20 +448,20 @@
                   'chisq for E-coil currents',ierr)
 !
       id_psiref = NCVDEF(nceq,'psiref',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_psiref,'long_name',NCCHAR,18, &
-                  'measured psi loop',ierr)
+      call NCAPTC(nceq,id_psiref,'long_name',NCCHAR,28, &
+                  'measured reference flux loop',ierr)
 !
       id_csiref = NCVDEF(nceq,'csiref',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_csiref,'long_name',NCCHAR,20, &
-                  'calculated psi loop',ierr)
+      call NCAPTC(nceq,id_csiref,'long_name',NCCHAR,30, &
+                  'calculated reference flux loop',ierr)
 !
       id_fwtref = NCVDEF(nceq,'fwtref',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_fwtref,'long_name',NCCHAR,20, &
-                  'weight for psi loop',ierr)
+      call NCAPTC(nceq,id_fwtref,'long_name',NCCHAR,30, &
+                  'weight for reference flux loop',ierr)
 !
       id_saisref = NCVDEF(nceq,'saisref',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_saisref,'long_name',NCCHAR,19, &
-                  'chisq for psi loop',ierr)
+      call NCAPTC(nceq,id_saisref,'long_name',NCCHAR,29, &
+                  'chisq for reference flux loop',ierr)
 !
       id_diamag = NCVDEF(nceq,'diamag',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_diamag,'long_name',NCCHAR,25, &
