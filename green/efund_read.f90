@@ -21,6 +21,9 @@
       USE cvesel
       USE fshift
 
+      integer*4:: istat
+      character(len=1000) :: line
+
       NAMELIST/machinein/nfcoil,nsilop,magpr2,nrogow,necoil,nesum, &
                          nfsum,nvsum,nvesel,nacoil,mgaus1,mgaus2,device, &
                          magpri322,magpri67,magprirdp,magudom,maglds, &
@@ -30,7 +33,8 @@
                          ntangle,nfbcoil,mccoil,micoil,ndata,nwwcur, &
                          nffcur,nppcur,nercur,ntime,ndim,kxiter,mqwant, & 
                          mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef, &
-                         modep,modew,kubics,icycred_loopmax,nfourier
+                         modep,modew,kubics,icycred_loopmax,nfourier, &
+                         nsilol,nsilds
 
       device = 'DIII-D'
       nfcoil = 18
@@ -95,37 +99,67 @@
       kubics=4
       icycred_loopmax=1290
       nfourier=5
-      magpri67=1
-      magprirdp=1
-      magudom=1
-      maglds=1
+      
+      magpri67=-1
+      magprirdp=-1
+      magudom=-1
+      maglds=-1
       
 
-      ! DIII-D special (I can't think of a better way of setting this)
-      IF (trim(device)=='DIII-D') THEN
-        magpri67=29
-        magpri322=31
-        magprirdp=8
-        magudom=5
-        maglds=3
-        mse315=11
-        mse45=15
-        mse15=10
-        mse1h=4
-        mse315_2=5
-        mse210=24
-        nsilds=3
-        nsilol=41
-      ENDIF
 
-      OPEN(unit=nin,status='old',file='mhdin.dat' )
+
+      OPEN(unit=nin,status='old',file='mhdin.dat',iostat=istat)
 
       READ (nin,machinein)
 
+       if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist in1: '//trim(line)
+        stop
+      endif
+
       CLOSE(nin)
 
-      magpri322 = magpr2 - magpri67 - magprirdp - magudom - maglds
-     
+      ! Handle if user probe array sizes aren't specified
+      IF (trim(device)=='DIII-D') THEN
+         mse315=11
+         mse45=15
+         mse15=10
+         mse1h=4
+         mse315_2=5
+         mse210=24
+      ENDIF
+
+      IF (magpri67<0 .or. magprirdp<0 .or. magudom<0 .or. magudom<0) then 
+         
+         ! DIII-D special (I can't think of a better way of setting this)
+         IF (trim(device)=='DIII-D') THEN
+            magpri67=29
+            magpri322=31
+            magprirdp=8
+            magudom=5
+            maglds=3
+         ELSE
+            magpri67 = abs(magpri67)
+            magprirdp = abs(magprirdp)
+            magudom = abs(magudom)
+            maglds = abs(maglds)
+            magpri322 = magpr2 - magpri67 - magprirdp - magudom - maglds
+         ENDIF
+      ENDIF
+
+      IF (nsilol<0 .or. nsilds<0) then 
+         
+         ! DIII-D special (I can't think of a better way of setting this)
+         IF (trim(device)=='DIII-D') THEN
+            nsilds = 3
+            nsilol = 41
+         ELSE
+            nsilol = nsilop
+            nsilds = nsilop - 1
+         ENDIF
+      ENDIF
 
       ALLOCATE(rsi(nsilop),zsi(nsilop),wsi(nsilop),hsi(nsilop),&
                as(nsilop),as2(nsilop))

@@ -28,5 +28,5 @@
                  ntangle,nfbcoil,mccoil,micoil,ndata,nwwcur,&
                  nffcur,nppcur,nercur,ntime,ndim,kxiter,mqwant,& 
                  mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef,&
-                 modep,modew,kubics,icycred_loopmax,nfourier,nsilds
+                 modep,modew,kubics,icycred_loopmax,nfourier,nsilds,nsilol
       end module exparm
