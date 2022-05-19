@@ -105,17 +105,14 @@
       magudom=-1
       maglds=-1
       
-
-
-
       OPEN(unit=nin,status='old',file='mhdin.dat',iostat=istat)
 
       READ (nin,machinein)
 
-       if (istat>0) then
+      if (istat>0) then
         backspace(nin)
         read(nin,fmt='(A)') line
-        write(*,'(A)') 'Invalid line in namelist in1: '//trim(line)
+        write(*,'(A)') 'Invalid line in namelist machinein: '//trim(line)
         stop
       endif
 
@@ -123,42 +120,40 @@
 
       ! Handle if user probe array sizes aren't specified
       IF (trim(device)=='DIII-D') THEN
-         mse315=11
-         mse45=15
-         mse15=10
-         mse1h=4
-         mse315_2=5
-         mse210=24
+        mse315=11
+        mse45=15
+        mse15=10
+        mse1h=4
+        mse315_2=5
+        mse210=24
       ENDIF
 
       IF (magpri67<0 .or. magprirdp<0 .or. magudom<0 .or. magudom<0) then 
-         
-         ! DIII-D special (I can't think of a better way of setting this)
-         IF (trim(device)=='DIII-D') THEN
-            magpri67=29
-            magpri322=31
-            magprirdp=8
-            magudom=5
-            maglds=3
-         ELSE
-            magpri67 = abs(magpri67)
-            magprirdp = abs(magprirdp)
-            magudom = abs(magudom)
-            maglds = abs(maglds)
-            magpri322 = magpr2 - magpri67 - magprirdp - magudom - maglds
-         ENDIF
+        ! DIII-D special (I can't think of a better way of setting this)
+        IF (trim(device)=='DIII-D') THEN
+          magpri67=29
+          magpri322=31
+          magprirdp=8
+          magudom=5
+          maglds=3
+        ELSE
+          magpri67 = abs(magpri67)
+          magprirdp = abs(magprirdp)
+          magudom = abs(magudom)
+          maglds = abs(maglds)
+          magpri322 = magpr2 - magpri67 - magprirdp - magudom - maglds
+        ENDIF
       ENDIF
 
       IF (nsilol<0 .or. nsilds<0) then 
-         
-         ! DIII-D special (I can't think of a better way of setting this)
-         IF (trim(device)=='DIII-D') THEN
-            nsilds = 3
-            nsilol = 41
-         ELSE
-            nsilol = nsilop
-            nsilds = nsilop - 1
-         ENDIF
+        ! DIII-D special (I can't think of a better way of setting this)
+        IF (trim(device)=='DIII-D') THEN
+          nsilds = 3
+          nsilol = 41
+        ELSE
+          nsilol = nsilop
+          nsilds = nsilop - 1
+        ENDIF
       ENDIF
 
       ALLOCATE(rsi(nsilop),zsi(nsilop),wsi(nsilop),hsi(nsilop),&
@@ -309,27 +304,27 @@
 !--   READ f coil and psi loop dimensions                            --
 !----------------------------------------------------------------------
       IF (rf(1).lt.0.0) THEN
-         READ (nin,10000) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
-                        i=1,nfcoil)
+        READ (nin,10000) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
+                          i=1,nfcoil)
       ENDIF
       IF (rsi(1).lt.0.0) THEN
-         READ (nin,10000) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
-                    i=1,nsilop)
+        READ (nin,10000) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
+                          i=1,nsilop)
       ENDIF
       IF ((iecoil.gt.0).or.(ivesel.gt.0)) THEN
-         IF (re(1).lt.0.0) THEN
-            READ (nin,10020) (re(i),ze(i),we(i),he(i),ecid(i),i=1,necoil)
-         ENDIF
-         IF (ivesel.gt.0.and.rvs(1).lt.0.0) THEN
-            IF (wvs(1).lt.0.0) THEN
-               READ (nin,10000) (rvs(i),zvs(i),wvs(i),hvs(i),avs(i),avs2(i), &
-                    i=1,nvesel)
-            ELSE
-               DO i=1,nvesel
-                  READ (nin,*) rvs(i),zvs(i)
-               ENDDO
-            ENDIF
-         ENDIF
+        IF (re(1).lt.0.0) THEN
+          READ (nin,10020) (re(i),ze(i),we(i),he(i),ecid(i),i=1,necoil)
+        ENDIF
+        IF (ivesel.gt.0.and.rvs(1).lt.0.0) THEN
+          IF (wvs(1).lt.0.0) THEN
+            READ (nin,10000) (rvs(i),zvs(i),wvs(i),hvs(i),avs(i),avs2(i), &
+                              i=1,nvesel)
+          ELSE
+            DO i=1,nvesel
+              READ (nin,*) rvs(i),zvs(i)
+            ENDDO
+          ENDIF
+        ENDIF
       ENDIF
 !----------------------------------------------------------------------
 !--   compute r and z arrays                                         --
@@ -337,20 +332,18 @@
       dr=(rright-rleft)/dble(nw-1)
       dz=(ztop-zbotto)/dble(nh-1)
       DO i=1,nw
-         rgrid(i)=rleft+dr*(i-1)
+        rgrid(i)=rleft+dr*(i-1)
       ENDDO 
       DO i=1,nh
-         zgrid(i)=zbotto+dz*(i-1)
+        zgrid(i)=zbotto+dz*(i-1)
       ENDDO 
 
       WRITE (nout,in3)
       CLOSE(nin)
       CLOSE(nout)
-      
 
       CALL dprobe_machinein(nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
                             nfsum,nvsum,nvesel,nacoil)
-
       
       CALL dprobe(mpnam2,lpname,patmp2)
       
