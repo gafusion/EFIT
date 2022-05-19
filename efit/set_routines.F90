@@ -584,10 +584,7 @@
       endif
       if (imagsigma.gt.0) then
         call errctrl_msg('set_basis_params', &
-                         'mag sigma calculation is broken')
-        stop
-        do_spline_fit=.false.
-        saimin=300.
+                         'nonlinear mag sigma calculation depreciated')
       endif
 !---------------------------------------------------------------------
 !--   adjust fit parameters based on basis function selected        --

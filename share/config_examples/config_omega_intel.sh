@@ -7,6 +7,7 @@
 #   and -DENABLE_PARALLEL... lines
 #
 # ptdata calls hang when snap files are used (unclear why)
+# there is no compatible MDS+ on the system...
 
     export CC=/fusion/usc/opt/intel2020/bin/icc
     export FC=/fusion/usc/opt/mpich/mpich-3.2/intel2020/bin/mpifort

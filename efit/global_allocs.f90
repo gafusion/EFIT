@@ -121,9 +121,6 @@ ALLOCATE(rbdry(mbdry),zbdry(mbdry),fwtbdry(mbdry),fwtbry(mbdry),sigrbd(mbdry), &
    xlimbd(nlimbd),ylimbd(nlimbd),fb_plasma(ntime),signn1(magpri), curtn1(ntime), &
    curc139(ntime),curc79(ntime),curc199(ntime),curiu30(ntime), &
    curiu90(ntime),curiu150(ntime),curil30(ntime),curil90(ntime),curil150(ntime), &
-   curc259(ntime),curc319(ntime),curc19(ntime), & 
-   curiu210(ntime),curiu270(ntime),curiu330(ntime), &
-   curil210(ntime),curil270(ntime),curil330(ntime), &
    curccoi(ntime,mccoil),curicoi(ntime,micoil))
    
 ALLOCATE(xnodef(modef),xnodep(modep),xnodew(modew),kbasef(modef), &
@@ -135,10 +132,7 @@ ALLOCATE(xnodef(modef),xnodep(modep),xnodew(modew),kbasef(modef), &
    fwtec(nesum),cecurr(nesum),saiec(nesum), &
    ztssym(ntime),ztswid(ntime),ptssym(ntime),ztserr(ntime), &
    psin32(ntime),psin21(ntime),rq32in(ntime),rq21top(ntime), &
-   sigmaf0(nfcoil),sigmae0(nesum),sigmafl0(nsilop),sigmamp0(magpri), &
-   sigmaf(ntime,nfcoil),sigmab(ntime),sigmaip(ntime),sigmae(ntime,nesum), &
-   sigmafl(ntime,nsilop),gradsfl(ntime,nsilop), &
-   sigmamp(ntime,magpri),gradsmp(ntime,magpri),bpermp(ntime,magpri), &
+   sigfc(nfcoil),sigec(nesum),sigsi(nsilop),sigmp2(magpri), &
    psircg(nsilop),psi_k(nsilop),psi_rc(nsilop),vrespsi(nsilop),t0psi(nsilop), &
    devpsi(ntime,nsilop),rnavpsi(ntime,nsilop),navpsi(ntime,nsilop), &
    devp(ntime),navp(ntime),rnavp(ntime),ccrcg(mccoil),cc_k(mccoil), &

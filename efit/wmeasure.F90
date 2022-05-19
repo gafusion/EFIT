@@ -384,8 +384,8 @@
       call NCAPTC(nceq,id_silopt,'long_name',NCCHAR,19, &
                   'measured flux loops',ierr)
 !
-      id_sigmafl0 = NCVDEF(nceq,'sigmafl0',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_sigmafl0,'long_name',NCCHAR,25, &
+      id_sigsi = NCVDEF(nceq,'sigsi',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_sigsi,'long_name',NCCHAR,25, &
                   'uncertainty in flux loops',ierr)
 !
       id_fwtsi = NCVDEF(nceq,'fwtsi',NCFLOAT,2,dim2,ierr)
@@ -405,8 +405,8 @@
       call NCAPTC(nceq,id_expmpi,'long_name',NCCHAR,24, &
                   'measured magnetic probes',ierr)
 !
-      id_sigmamp0 = NCVDEF(nceq,'sigmamp0',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_sigmamp0,'long_name',NCCHAR,30, &
+      id_sigmp2 = NCVDEF(nceq,'sigmp2',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_sigmp2,'long_name',NCCHAR,30, &
                   'uncertainty in magnetic probes',ierr)
 !
       id_fwtmp2 = NCVDEF(nceq,'fwtmp2',NCFLOAT,2,dim2,ierr)
@@ -426,8 +426,8 @@
       call NCAPTC(nceq,id_fccurt,'long_name',NCCHAR,30, &
                   'measured F-coil currents (Amp)',ierr)
 !
-      id_sigmaf0 = NCVDEF(nceq,'sigmaf0',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_sigmaf0,'long_name',NCCHAR,30, &
+      id_sigfc = NCVDEF(nceq,'sigfc',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_sigfc,'long_name',NCCHAR,30, &
                   'uncertainty in F-coil currents',ierr)
 !
       id_fwtfc = NCVDEF(nceq,'fwtfc',NCFLOAT,2,dim2,ierr)
@@ -447,8 +447,8 @@
       call NCAPTC(nceq,id_eccurt,'long_name',NCCHAR,30, &
                   'measured E-coil currents (Amp)',ierr)
 !
-      id_sigmae0 = NCVDEF(nceq,'sigmae0',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_sigmae0,'long_name',NCCHAR,30, &
+      id_sigec = NCVDEF(nceq,'sigec',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_sigec,'long_name',NCCHAR,30, &
                   'uncertainty in E-coil currents',ierr)
 !
       id_fwtec = NCVDEF(nceq,'fwtec',NCFLOAT,2,dim2,ierr)
@@ -467,7 +467,9 @@
       call NCAPTC(nceq,id_psiref,'long_name',NCCHAR,28, &
                   'measured reference flux loop',ierr)
 !
-!     uncertainty??  =sigmafl0(nslref)??
+      id_sigref = NCVDEF(nceq,'sigref',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_fwtref,'long_name',NCCHAR,34, &
+                  'uncertainty in reference flux loop',ierr)
 !
       id_fwtref = NCVDEF(nceq,'fwtref',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_fwtref,'long_name',NCCHAR,30, &
@@ -507,8 +509,8 @@
       call NCAPTC(nceq,id_plasma,'long_name',NCCHAR,29, &
                   'measured plasma current (Amp)',ierr)
 !
-      id_sigmaip0 = NCVDEF(nceq,'sigmaip0',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_sigmaip0,'long_name',NCCHAR,29, &
+      id_sigcur = NCVDEF(nceq,'sigcur',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_sigcur,'long_name',NCCHAR,29, &
                   'uncertainty in plasma current',ierr)
 !
       id_fwtcur = NCVDEF(nceq,'fwtcur',NCFLOAT,1,idim_time,ierr)
@@ -649,41 +651,42 @@
       call NCVPT(nceq,id_msebkp,m,n,real(msebkp),ierr)
 !
       cnn(1) = nsilop
-      zwork(1:nsilop) = real(sigmafl0(1:nsilop))
-      call NCVPT(nceq,id_sigmafl0,c11,cnn,zwork,ierr)
+      zwork(1:nsilop) = real(sigsi(1:nsilop))
+      call NCVPT(nceq,id_sigsi,c11,cnn,zwork,ierr)
       zwork(1:nsilop) = real(fwtsi(1:nsilop))
       call NCVPT(nceq,id_fwtsi,c11,cnn,zwork,ierr)
       zwork(1:nsilop) = real(saisil(1:nsilop))
       call NCVPT(nceq,id_saisil,c11,cnn,zwork,ierr)
       cnn(1) = magpri
-      zwork(1:magpri) = real(sigmamp0(1:magpri))
-      call NCVPT(nceq,id_sigmamp0,c11,cnn,zwork,ierr)
+      zwork(1:magpri) = real(sigmp2(1:magpri))
+      call NCVPT(nceq,id_sigmp2,c11,cnn,zwork,ierr)
       zwork(1:magpri) = real(fwtmp2(1:magpri))
       call NCVPT(nceq,id_fwtmp2,c11,cnn,zwork,ierr)
       zwork(1:magpri) = real(saimpi(1:magpri))
       call NCVPT(nceq,id_saimpi,c11,cnn,zwork,ierr)
       cnn(1) = nfcoil
-      zwork(1:nfcoil) = real(sigmaf0(1:nfcoil))
-      call NCVPT(nceq,id_sigmaf0,c11,cnn,zwork,ierr)
+      zwork(1:nfcoil) = real(sigfc(1:nfcoil))
+      call NCVPT(nceq,id_sigfc,c11,cnn,zwork,ierr)
       zwork(1:nfcoil) = real(fwtfc(1:nfcoil))
       call NCVPT(nceq,id_fwtfc,c11,cnn,zwork,ierr)
       zwork(1:nfcoil) = real(saifc(1:nfcoil))
       call NCVPT(nceq,id_saifc,c11,cnn,zwork,ierr)
       cnn(1) = nesum
-      zwork(1:nesum) = real(sigmae0(1:nesum))
-      call NCVPT(nceq,id_sigmae0,c11,cnn,zwork,ierr)
+      zwork(1:nesum) = real(sigec(1:nesum))
+      call NCVPT(nceq,id_sigec,c11,cnn,zwork,ierr)
       zwork(1:nesum) = real(fwtec(1:nesum))
       call NCVPT(nceq,id_fwtec,c11,cnn,zwork,ierr)
       zwork(1:nesum) = real(cecurr(1:nesum))
       call NCVPT(nceq,id_cecurr,c11,cnn,zwork,ierr)
       zwork(1:nesum) = real(saiec(1:nesum))
       call NCVPT(nceq,id_saiec,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_sigref,m,n,real(sigref),ierr)
       call NCVPT(nceq,id_fwtref,m,n,real(fwtref),ierr)
       call NCVPT(nceq,id_csiref,m,n,real(csiref),ierr)
       call NCVPT(nceq,id_saisref,m,n,real(saisref),ierr)
       call NCVPT(nceq,id_fwtdlc,m,n,real(fwtdlc),ierr)
       call NCVPT(nceq,id_chidlc,m,n,real(chidlc),ierr)
-      call NCVPT(nceq,id_sigmaip0,m,n,real(sigmaip0),ierr)
+      call NCVPT(nceq,id_sigcur,m,n,real(sigcur),ierr)
       call NCVPT(nceq,id_fwtcur,m,n,real(fwtcur),ierr)
       call NCVPT(nceq,id_saiip,m,n,real(saiip),ierr)
 !

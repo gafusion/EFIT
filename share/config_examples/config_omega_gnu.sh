@@ -1,3 +1,8 @@
+# In order to build and run this version of EFIT on the system you must
+#   execute the following module commands:
+#
+#    module load mdsplus
+#
 # If you don't want MPI (slower in serial) simply remove the FC=...
 #   and -DENABLE_PARALLEL... lines
 

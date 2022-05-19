@@ -61,14 +61,14 @@
       module var_exdata
       use set_kinds
       integer*4 ishot,itime,ifitvs,iacoil,itimeu,kersil
-      real*8 serror,fwtcur,elomin,fwtbp,fwtdlc,errsil 
+      real*8 serror,fwtcur,elomin,fwtbp,fwtdlc,errsil
       real*8,dimension(:),allocatable :: fwtsi,rwtsi
       real*8,dimension(:),allocatable :: fwtmp2,rwtmp2
       real*8,dimension(:),allocatable :: fwacoil
       real*8,dimension(:),allocatable :: fwtfc
       real*8,dimension(:),allocatable :: cbrspv
       data errsil/0.03_dp/
-      data kersil/2/
+      data kersil/3/
       data elomin/0.90_dp/
       data iacoil/0/
       end module var_exdata
@@ -333,7 +333,6 @@
       character*82  snap_file 
       data kgrid/1/,kwripre/0/,kwritime/0/
       data licalc/1/
-      data ksigma/0/
       data kdoqn/0/
       data icntour/0/,cstabne/0.0/,cstabte/0.0/, &
            limvs/1/,ncstpp/1/,ncstfp/1/,kzeroj/0/
@@ -580,28 +579,14 @@
       real*8,dimension(:),allocatable :: curtn1
       end module var_coiln1
 
-!***** !EJS(2014)
-!  Need to update values -- wherever they are specified:
-! mccoil = 6   (probably is 3 now)
-! micoil = 12  (probably is 6 now)
-!*****
       module var_coilcc
       use eparm,only:ntime,mccoil,micoil
       integer*4 nccoil,iercc,nicoil
       data nccoil/1/,nicoil/1/
       logical oldccomp,oldcomp 
       data oldccomp/.false./,oldcomp/.false./
-!***** !EJS(2014)
-! Not sure why these are separate arrays.
-! They seem to be the same as the columns of curccoi and curicoi
-! Are they only used in magsigma?  If so, the following changes are
-! probably not needed until some future time when magsigma is updated.
-!*****
       real*8,dimension(:),allocatable :: curc139,curc79,curc199,curiu30, &
-        curiu90,curiu150,curil30,curil90,curil150, &
-        curc259,curc319,curc19, &       !EJS(2014)
-        curiu210,curiu270,curiu330, &   !EJS(2014)
-        curil210,curil270,curil330      !EJS(2014)
+        curiu90,curiu150,curil30,curil90,curil150
       real*8,dimension(:,:),allocatable :: curccoi
       real*8,dimension(:,:),allocatable :: curicoi
       end module var_coilcc
@@ -667,26 +652,20 @@
                                          rq21top
       end module var_qsurfac
 !----------------------------------------------------------------------
-!-- New magnetic uncertainties commons                               --
+!--   Magnetic measurement uncertainties
 !----------------------------------------------------------------------
       module var_initerror
-      real*8 sigmaip0
-      real*8,dimension(:),allocatable :: sigmaf0
-      real*8,dimension(:),allocatable :: sigmae0
-      real*8,dimension(:),allocatable :: sigmafl0
-      real*8,dimension(:),allocatable :: sigmamp0
+      real*8 sigcur,sigref
+      real*8,dimension(:),allocatable :: sigfc
+      real*8,dimension(:),allocatable :: sigec
+      real*8,dimension(:),allocatable :: sigsi
+      real*8,dimension(:),allocatable :: sigmp2
       end module var_initerror
 
       module var_magerror
       use set_kinds
-      integer*4 imagsigma,icountmagsigma
+      integer*4 imagsigma
       real*8 errmag,errmagb
-      real*8,dimension(:,:),allocatable :: sigmaf
-      real*8,dimension(:),allocatable :: sigmab,sigmaip
-      real*8,dimension(:,:),allocatable :: sigmae
-      real*8,dimension(:,:),allocatable :: sigmafl,gradsfl
-      real*8,dimension(:,:),allocatable :: sigmamp,gradsmp,bpermp
-      data imagsigma/0/, errmag/1.0e-3_dp/, errmagb/1.e-2_dp/
       end module var_magerror
 
       module var_psilopdat

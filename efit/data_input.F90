@@ -6,12 +6,6 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          29/06/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**          23/04/04...JAL iplcout added to namelist                **
-!**          01/08/07...DPB namelist for mag uncertainty added       **
-!**                                                                  **
 !**********************************************************************
       subroutine data_input(jtime,kconvr,ktime,mtear,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky,wgridpc,rfcpc
@@ -2473,25 +2467,25 @@
       endif 
       kconvr=iconvr
       www(1:nwnh)=zero(1:nwnh) 
-! 
+!---------------------------------------------------------------------- 
+!--   signal at psi loop # NSLREF is used as reference               -- 
+!---------------------------------------------------------------------- 
       fwtref=fwtsi(iabs(nslref)) 
       kersil_23: if ((kersil.ne.2).and.(kersil.ne.3)) then
       do m=1,nsilop
         tdata1=serror*abs(silopt(jtime,m)) 
         tdata2=abs(psibit(m))*vbit 
         tdata=max(tdata1,tdata2) 
-        sigmafl0(m)=tdata 
+        sigsi(m)=tdata 
         if (tdata.gt.1.0e-10_dp) then
           fwtsi(m)=fwtsi(m)/tdata**nsq
         else
           fwtsi(m)=0.0
         endif
       enddo
-!---------------------------------------------------------------------- 
-!--   signal at psi loop # NSLREF is used as reference               -- 
-!---------------------------------------------------------------------- 
       if (abs(psibit(iabs(nslref))).le.1.0e-10_dp) then
         coilmx=maxval(abs(silopt(jtime,1:nsilop))) 
+        sigsi(iabs(nslref))=coilmx*serror
         fwtsi(iabs(nslref))=1.0/coilmx**nsq/serror**nsq*fwtref
       endif 
       else kersil_23
@@ -2533,46 +2527,45 @@
         tdata=max(tdata1,tdata2) 
         tdata2=abs(psibit(m))*vbit 
         tdata=max(tdata,tdata2) 
-        sigmafl0(m)=tdata 
+        sigsi(m)=tdata 
         if (tdata.gt.1.0e-10_dp) then
           fwtsi(m)=fwtsi(m)/tdata**nsq
         else
           fwtsi(m)=0.0
         endif
       enddo
-!---------------------------------------------------------------------- 
-!--   signal at psi loop #8 is set to zero and used as reference     -- 
-!---------------------------------------------------------------------- 
       if (kersil.ne.3) then
+!---------------------------------------------------------------------- 
+!--     signal at psi loop #8 in D-III is set to zero and used as ref
+!---------------------------------------------------------------------- 
+        sigsi(iabs(nslref))=ersil8
         fwtsi(iabs(nslref))=1.0/ersil8**nsq*fwtref
       else
 !---------------------------------------------------------------------- 
-!--     New option for reference flux loop uncertainty               -- 
+!--     Default option for reference flux loop uncertainty
 !---------------------------------------------------------------------- 
-        m=iabs(nslref) 
-        tdata1=errsil*abs(silopt(jtime,m)) 
-        tdata2=sicont*rsi(m)*abs(pasmat(jtime)) 
-        tdata=max(tdata1,tdata2) 
-        tdata2=abs(psibit(m))*vbit 
+        m=iabs(nslref)
+        tdata1=errsil*abs(silopt(jtime,m))
+        tdata2=sicont*rsi(m)*abs(pasmat(jtime))
+        tdata=max(tdata1,tdata2)
+        tdata2=abs(psibit(m))*vbit
         tdata=max(tdata,tdata2)
-        !SEK: ??? this was commented out but I getting out of bounds error below
-!       sigmafl0(m)=tdata 
-        !SEK: ???
+        sigsi(m)=tdata
         if (tdata.gt.1.0e-10_dp) then
           fwtsi(m)=fwtref/tdata**nsq
         else
           fwtsi(m)=0.0
         endif
       endif
-!SEK: ???      sigmafl0(m)=tdata 
-! 
       endif kersil_23
+      sigref=sigsi(iabs(nslref)) 
       fwtref=fwtsi(iabs(nslref)) 
+! 
       do m=1,magpri 
         tdata1=serror*abs(expmpi(jtime,m)) 
         tdata2=abs(bitmpi(m))*vbit 
         tdata=max(tdata1,tdata2)
-        sigmamp0(m)=tdata
+        sigmp2(m)=tdata
         if (tdata.gt.1.0e-10_dp) then
           fwtmp2(m)=fwtmp2(m)/tdata**nsq
         else
@@ -2616,7 +2609,7 @@
         tdata1=serror*abs(fccurt(jtime,m)) 
         tdata2=abs(bitfc(m))*vbit 
         tdata=max(tdata1,tdata2) 
-        sigmaf0(m)=tdata
+        sigfc(m)=tdata
         if (tdata.gt.1.0e-10_dp) then
           fwtfc(m)=fwtfc(m)/tdata**nsq
         else
@@ -2630,7 +2623,7 @@
           tdata1=serror*abs(ecurrt(m)) 
           tdata2=abs(bitec(m))*vbit 
           tdata=max(tdata1,tdata2) 
-          sigmae0(m)=tdata 
+          sigec(m)=tdata 
           if (tdata.gt.1.0e-10_dp) then
             fwtec(m)=fwtec(m)/tdata**nsq
           else
@@ -2641,7 +2634,7 @@
       tdata1=serror*abs(pasmat(jtime)) 
       tdata2=abs(bitip)*vbit 
       tdata=max(tdata1,tdata2) 
-      sigmaip0=tdata
+      sigcur=tdata
       if (tdata.gt.1.0e-10_dp) then 
         fwtcur=fwtcur/tdata**nsq
       else
