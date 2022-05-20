@@ -334,6 +334,12 @@
 
       enddo
 
+      if (nccomp.gt.mccoil) then
+        call errctrl_msg('getpts', &
+                         'insufficient C-coil length (mccoil) for data')
+        stop
+      endif
+
       if(allocated(dumccc)) deallocate(dumccc)
       allocate(dumccc(nccomp))
 !----------------------------------------------- end of new section - EJS(2014)
@@ -454,6 +460,13 @@
         textline = textline(len(trim(niname(nicomp)))+3:len(textline))
 
       enddo
+
+      if (nicomp.gt.micoil) then
+        call errctrl_msg('getpts', &
+                         'insufficient I-coil length (micoil) for data')
+        stop
+      endif
+
       if(allocated(dumcic)) deallocate(dumcic)
       allocate(dumcic(nicomp))
 !----------------------------------------------- end of new section - EJS(2014)

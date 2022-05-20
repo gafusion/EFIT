@@ -102,8 +102,8 @@
       nangle=64
       ntangle=12
       nfbcoil=12
-      mccoil=3 ! 6 in DIIID, but only 3 are used
-      micoil=6 ! 12 in DIIID, but only 6 are used     
+      mccoil=6
+      micoil=12
       ndata=61
       nwwcur=32
       nffcur=32

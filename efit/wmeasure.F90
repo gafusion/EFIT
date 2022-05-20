@@ -468,7 +468,7 @@
                   'measured reference flux loop',ierr)
 !
       id_sigref = NCVDEF(nceq,'sigref',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_fwtref,'long_name',NCCHAR,34, &
+      call NCAPTC(nceq,id_sigref,'long_name',NCCHAR,34, &
                   'uncertainty in reference flux loop',ierr)
 !
       id_fwtref = NCVDEF(nceq,'fwtref',NCFLOAT,1,idim_time,ierr)
@@ -609,7 +609,7 @@
       call NCAPTC(nceq,id_cerror,'long_name',NCCHAR,19, &
                   'error vs. iteration',ierr)
 !
-      id_chitot = NCVDEF(nceq,'chitot',NCFLOAT,2,1,ierr)
+      id_chitot = NCVDEF(nceq,'chitot',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_chitot,'long_name',NCCHAR,41, &
                   'more inclusive chisq (not typically used)',ierr)
 !
