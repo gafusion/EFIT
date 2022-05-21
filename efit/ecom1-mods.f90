@@ -763,7 +763,7 @@
         cw(:,:,:,:),wkw(:),copyw(:,:),bwx(:),bwy(:), &
         sifprw(:),bwprw(:),cwprw(:),dwprw(:),psirz(:,:), &
         sfprw(:),sprwp(:),wgridpc(:),rfcpc(:,:),ct(:,:,:,:), &
-        wkt(:),bkrt(:),bkzt(:),psiold(:),psipold(:),psipp(:), &
+        wkt(:),bkrt(:),bkzt(:),psiold(:),psipold(:), &
         work(:),sifpre(:),bwpre(:),cwpre(:),dwpre(:),sfpre(:), &
         sprep(:),worka(:),zeros(:),byringr(:),byringz(:), &
         cjrf(:),cj(:,:,:,:),wkj(:),copyj(:,:),bjx(:),bjy(:), &

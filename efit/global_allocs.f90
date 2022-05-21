@@ -246,7 +246,7 @@ ALLOCATE(c(kubicx,lubicx,kubicy,lubicy),wk(nwrk), &
    wgridpc(nwnh),rfcpc(nfcoil,nwnh), &
    ct(kubicx,lubicx,kubicy,lubicy), &
    wkt(nwrk),bkrt(lubicx+1),bkzt(lubicy+1), &
-   psiold(nwnh),psipold(nwnh),psipp(nwnh), &
+   psiold(nwnh),psipold(nwnh), &
    work(nwnh),sifpre(nw),bwpre(nw),cwpre(nw), &
    dwpre(nw),sfpre(nw),sprep(nw),worka(nwf),worka2(nw), &
    zeros(nwnh),byringr(nh2),byringz(nh2), &
