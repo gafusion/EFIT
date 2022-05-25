@@ -43,7 +43,8 @@
              zcmgam(nstark,ntime),zcsilop(nsilop,ntime), &
              zcmpr2(magpri,ntime),zccbrsp(nfcoil,ntime),zstark(ntime,nstark), &
              zsilopt(ntime,nsilop),zexpmpi(ntime,magpri), &
-             zfccurt(ntime,nfcoil),zeccurt(ntime,nesum) 
+             zfccurt(ntime,nfcoil),zeccurt(ntime,nesum), &
+             zaccurt(ntime,nacoil) 
       character*85 presstext
       character*109 preswtext
 !-----------------------------------------------------------------------
@@ -221,6 +222,7 @@
       idim_npresw = NCDDEF(nceq,'dim_npresw',npresw1,ierr)
       idim_npcurn = NCDDEF(nceq,'dim_npcurn',npcurn,ierr)
       idim_nitera = NCDDEF(nceq,'dim_nitera',nitera,ierr)
+      idim_nacoil = NCDDEF(nceq,'dim_nacoil',nacoil,ierr)
       dim2(2) = idim_time
 !-----------------------------------------------------------------------
 !--   define variables
@@ -624,6 +626,53 @@
       call NCAPTC(nceq,id_xrsp,'long_name',NCCHAR,19, &
                   'plasma coefficients',ierr)
 !
+! --- coil currents
+!
+      id_curc79 = NCVDEF(nceq,'curc79',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curc79,'long_name',NCCHAR,17, &
+                  'C coil 79 current',ierr)
+!
+      id_curc139 = NCVDEF(nceq,'curc139',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curc139,'long_name',NCCHAR,18, &
+                  'C coil 139 current',ierr)
+!
+      id_curc199 = NCVDEF(nceq,'curc199',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curc199,'long_name',NCCHAR,18, &
+                  'C coil 199 current',ierr)
+!
+      id_curiu30 = NCVDEF(nceq,'curiu30',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curiu30,'long_name',NCCHAR,23, &
+                  'I coil 30 upper current',ierr)
+!
+      id_curil30 = NCVDEF(nceq,'curil30',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curil30,'long_name',NCCHAR,23, &
+                  'I coil 30 lower current',ierr)
+!
+      id_curiu90 = NCVDEF(nceq,'curiu90',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curiu90,'long_name',NCCHAR,23, &
+                  'I coil 90 upper current',ierr)
+!
+      id_curil90 = NCVDEF(nceq,'curil90',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curil90,'long_name',NCCHAR,23, &
+                  'I coil 90 lower current',ierr)
+!
+      id_curiu150 = NCVDEF(nceq,'curiu150',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curiu150,'long_name',NCCHAR,24, &
+                  'I coil 150 upper current',ierr)
+!
+      id_curil150 = NCVDEF(nceq,'curil150',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curil150,'long_name',NCCHAR,24, &
+                  'I coil 150 lower current',ierr)
+!
+      dim2(1) = idim_nacoil
+      id_accurt = NCVDEF(nceq,'accurt',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_accurt,'long_name',NCCHAR,24, &
+                  'measured A coil currents',ierr)
+!
+      id_caccurt = NCVDEF(nceq,'caccurt',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_caccurt,'long_name',NCCHAR,26, &
+                  'calculated A coil currents',ierr)
+!
       call NCENDF(nceq,ierr)             ! leave define mode
 !-----------------------------------------------------------------------
 !--   write values of variables
@@ -783,6 +832,25 @@
       zwork(1:ntime) = real(cpasma(1:ntime))
       call NCVPT(nceq,id_cpasma,m,n,zwork(ifirsttime),ierr)
 !
+      zwork(1:ntime) = real(curc79(1:ntime))
+      call NCVPT(nceq,id_curc79,m,n,zwork(ifirsttime),ierr)
+      zwork(1:ntime) = real(curc139(1:ntime))
+      call NCVPT(nceq,id_curc139,m,n,zwork(ifirsttime),ierr)
+      zwork(1:ntime) = real(curc199(1:ntime))
+      call NCVPT(nceq,id_curc199,m,n,zwork(ifirsttime),ierr)
+      zwork(1:ntime) = real(curiu30(1:ntime))
+      call NCVPT(nceq,id_curiu30,m,n,zwork(ifirsttime),ierr)
+      zwork(1:ntime) = real(curil30(1:ntime))
+      call NCVPT(nceq,id_curil30,m,n,zwork(ifirsttime),ierr)
+      zwork(1:ntime) = real(curiu90(1:ntime))
+      call NCVPT(nceq,id_curiu90,m,n,zwork(ifirsttime),ierr)
+      zwork(1:ntime) = real(curil90(1:ntime))
+      call NCVPT(nceq,id_curil90,m,n,zwork(ifirsttime),ierr)
+      zwork(1:ntime) = real(curiu150(1:ntime))
+      call NCVPT(nceq,id_curiu150,m,n,zwork(ifirsttime),ierr)
+      zwork(1:ntime) = real(curil150(1:ntime))
+      call NCVPT(nceq,id_curil150,m,n,zwork(ifirsttime),ierr)
+!
 ! --- following data and their corresponding ncdf variables have 
 ! --- reversed dimensions
 !
@@ -876,6 +944,14 @@
       zeccurt(1:ntime,1:nesum) = real(eccurt(1:ntime,1:nesum))
       call NCVPTG(nceq,id_eccurt,c11,cnn,stride,imap, &
                   zeccurt(ifirsttime,1),ierr)
+!
+      cnn(1) = nacoil
+      zaccurt(1:ntime,1:nacoil) = real(accurt(1:ntime,1:nacoil))
+      call NCVPTG(nceq,id_accurt,c11,cnn,stride,imap, &
+                  zaccurt(ifirsttime,1),ierr)
+      zaccurt(1:ntime,1:nacoil) = real(caccurt(1:ntime,1:nacoil))
+      call NCVPTG(nceq,id_caccurt,c11,cnn,stride,imap, &
+                  zaccurt(ifirsttime,1),ierr)
 !
       call NCCLOS(nceq,ierr)             ! close the file
       endif itype_iout
