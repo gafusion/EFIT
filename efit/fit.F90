@@ -121,9 +121,7 @@
 #ifdef DEBUG_LEVEL2
           write(6,*) 'Entering pflux'
 #endif
-!$acc data copyin(pcurrt,rgrid,gridpc) copy(psi,psipla,psiold,psipold,psipp)
           call pflux(ix,ixnn,nitera,jtime,kerror)
-!$acc end data
           if (kerror.gt.0) then
             jerror(jtime) = 1
             return

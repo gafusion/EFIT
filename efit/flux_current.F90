@@ -17,7 +17,6 @@
 !!
 !**********************************************************************
       subroutine pflux(niter,nnin,ntotal,jtime,kerror)
-      use openacc
       use set_kinds 
       use var_buneman, only: rgrid1,delrgrid,delz,drdz2
       use commonblocks, only: c,wk,copy,bkx,bky,psiold,psipold,psipp
@@ -40,10 +39,8 @@
 !----------------------------------------------------------------------------
 !--   save flux from current iterations before update                      --
 !----------------------------------------------------------------------------
-      !$acc kernels
       psiold(1:nwnh)=psi(1:nwnh)
       psipold(1:nwnh)=psipla(1:nwnh)
-      !$acc end kernels
 !
       buneman_green: if ((ibunmn.eq.1).or.(ibunmn.eq.3).or. &
          ((ibunmn.eq.2).and.(errorm.gt.errcut)).or. &
@@ -81,7 +78,6 @@
         dpsip=psic2-psic1
         psibar=(psic2+psic1)/2
       endif
-      !$acc kernels
       if (abs(vcurfb(1)).gt.1.e-6_dp) then
         iinow=vcurfb(3)
         if (ntotal.lt.iinow) then
@@ -91,16 +87,15 @@
           if(mod(ntotal-iinow,icurfb).eq.0) psikkk(1:nwnh)=psiold(1:nwnh)
         endif
       endif
-      !$acc end kernels
 !-----------------------------------------------------------------------
 !--   boundary terms                                                  --
 !-----------------------------------------------------------------------
-      !$acc parallel loop gang worker num_workers(4) vector_length(32)
+      !$omp target teams loop thread_limit(32)
       do j=1,nh
         kk=(nw-1)*nh+j
         tempsum1=0.
         tempsum2=0.
-        !$acc loop vector reduction(+:tempsum1,tempsum2)
+        !omp parallel for reduction(+:tempsum1,tempsum2) collapse(2)
         do ii=1,nw
          do jj=1,nh
           kkkk=(ii-1)*nh+jj
@@ -114,14 +109,14 @@
         psi(kk)=tempsum2
       enddo
 
-      !$acc parallel loop gang worker num_workers(4) vector_length(32)
+      !$omp target teams loop thread_limit(32)
       do i=2,nw-1
         kk1=(i-1)*nh
         kknh=kk1+nh
         kk1=kk1+1
         tempsum1=0.
         tempsum2=0.
-        !$acc loop vector reduction(+:tempsum1,tempsum2)
+        !omp parallel for reduction(+:tempsum1,tempsum2) collapse(2)
         do ii=1,nw
          do jj=1,nh
           kkkk=(ii-1)*nh+jj
@@ -163,9 +158,7 @@
         if (kerror.gt.0) return
       endif
       deallocate(work)
-      !$acc kernels
       psi(1:nwnh)=-psi(1:nwnh)
-      !$acc end kernels
 !----------------------------------------------------------------------------
 !--   optional symmetrized solution                                        --
 !----------------------------------------------------------------------------
@@ -293,7 +286,6 @@
 !----------------------------------------------------------------------------
 !--   add flux from external coils                                         --
 !----------------------------------------------------------------------------
-      !$acc kernels
       do kk=1,nwnh
         psipla(kk)=psi(kk)
         if(ivesel.gt.0) &
@@ -307,7 +299,6 @@
         if (iacoil.gt.0) &
           psi(kk)=psi(kk)+sum(gridac(kk,1:nacoil)*caccurt(jtime,1:nacoil))
       enddo
-      !$acc end kernels
 
       else buneman_green
 !-----------------------------------------------------------------------------
@@ -366,10 +357,8 @@
 !--   relax flux if needed                                                 --
 !----------------------------------------------------------------------------
       if ((ntotal.gt.1) .and. (abs(relax-1.0).ge.1.0e-03_dp)) then
-        !$acc kernels
         psi(1:nwnh)=relax*psi(1:nwnh)+(1.-relax)*psiold(1:nwnh)
         psipla(1:nwnh)=relax*psipla(1:nwnh)+(1.-relax)*psipold(1:nwnh)
-        !$acc end kernels
       endif
 !
       DEALLOCATE(psikkk,gfbsum)
