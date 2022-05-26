@@ -90,12 +90,12 @@
 !-----------------------------------------------------------------------
 !--   boundary terms                                                  --
 !-----------------------------------------------------------------------
-      !$omp target teams loop thread_limit(32)
+      !$omp target teams loop
       do j=1,nh
         kk=(nw-1)*nh+j
         tempsum1=0.
         tempsum2=0.
-        !omp parallel for reduction(+:tempsum1,tempsum2) collapse(2)
+        !omp parallel for reduction(+:tempsum1,tempsum2)
         do ii=1,nw
          do jj=1,nh
           kkkk=(ii-1)*nh+jj
@@ -109,14 +109,14 @@
         psi(kk)=tempsum2
       enddo
 
-      !$omp target teams loop thread_limit(32)
+      !$omp target teams loop
       do i=2,nw-1
         kk1=(i-1)*nh
         kknh=kk1+nh
         kk1=kk1+1
         tempsum1=0.
         tempsum2=0.
-        !omp parallel for reduction(+:tempsum1,tempsum2) collapse(2)
+        !omp parallel for reduction(+:tempsum1,tempsum2)
         do ii=1,nw
          do jj=1,nh
           kkkk=(ii-1)*nh+jj
@@ -138,7 +138,7 @@
       allocate(work(SIZE(psi)))
       if (isolve.eq.0) then
 !       original buneman solver method
-        !$acc parallel loop gang worker num_workers(8) vector_length(32)
+        !$omp target teams loop
         do i=2,nw-1
           do j=2,nh-1
             kk=(i-1)*nh+j
