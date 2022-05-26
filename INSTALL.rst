@@ -12,14 +12,10 @@ Public Installations
 Public installations of the EFIT-AI are available on the GA iris cluster, PPPL portal cluster
 and nersc cori supercomputer
 
-iris ::
+iris (loads DIII-D Green functions by default, to use others set the environment variable link_efit=/fusion/projects/codes/efit/efitai/efit_support_files/{machine}/ after loading the module)::
 
-    module purge
-    module load env/gcc9.2
-    module load {intel/2018, pfg/18.7 gcc7/default mse}
-    module load {mpich/3.2-intel2018, mpich/3.2-pgf18.7}
-    export link_efit=/fusion/projects/codes/efit/efitai/efit_support_files/{device}/
-    /fusion/projects/codes/efit/efitai/{gnu,intel,pgi}{_ser}/efit/efit {grid_size}
+    module load efitai/{pgi pgi_ser gnu gnu_ser intel intel_ser}
+    efit {grid_size}
 
 cori (intallation is pending ERCAP setup) (you will need to be added to the project repo in order to access these installations - email kruger@txcorp.com) ::
 
