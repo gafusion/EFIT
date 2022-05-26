@@ -90,7 +90,7 @@
 !-----------------------------------------------------------------------
 !--   boundary terms                                                  --
 !-----------------------------------------------------------------------
-      !$omp target teams loop
+      !$omp target teams loop thread_limit(32)
       do j=1,nh
         kk=(nw-1)*nh+j
         tempsum1=0.
@@ -109,7 +109,7 @@
         psi(kk)=tempsum2
       enddo
 
-      !$omp target teams loop
+      !$omp target teams loop thread_limit(32)
       do i=2,nw-1
         kk1=(i-1)*nh
         kknh=kk1+nh
