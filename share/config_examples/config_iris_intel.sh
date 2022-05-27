@@ -1,8 +1,8 @@
 # In order to build and run this version of EFIT on the system you must
 #   execute the following module commands:
 #
-#    module switch gcc-4.7.2 gcc-9.2.0
-#    module load intel/2018 mpich/3.2-intel2018
+#    module purge
+#    module load env/gcc9.2 intel/2018 mpich/3.2-intel2018
 #
 # If you don't want MPI (slower in serial) simply remove the FC=...
 #   and -DENABLE_PARALLEL... lines

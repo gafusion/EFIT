@@ -210,10 +210,6 @@
       read (neqdsk,efitin)
       read (neqdsk,efitink,iostat=ioerr)
       if(ioerr.ne.0) close(unit=neqdsk)
-      if (imagsigma.eq.1) then
-        do_spline_fit=.false.
-        saimin=150.
-      endif
 #ifdef DEBUG_LEVEL2
       write (6,*) 'WRITE_K fwtbmsels= ',(fwtbmsels(i),i=1,nmsels)
 #endif

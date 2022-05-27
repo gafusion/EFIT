@@ -1,7 +1,7 @@
 # In order to build and run this version of EFIT on the system you must
 #   execute the following module commands: (not required to build)
 #
-#    module load env/pgf20.11
+#    module load env/pgf20.11 mdsplus
 #
 # If you don't want MPI (slower in serial) simply remove the FC=...
 #   and -DENABLE_PARALLEL... lines

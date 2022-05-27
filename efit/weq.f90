@@ -31,10 +31,7 @@
                    eebdry,ee2bdry,keebdry,kee2bdry
       namelist/inwant/psiwant,vzeroj
       namelist/invt/kwwcur,kvtor,rvtor,wcurbd
-      character(10) :: uday, clocktime
       character(14) :: sfile
-      character(5)  :: zone
-      integer*4, dimension(8) :: values
       character eqdsk*72,header*42,qmflag*3,fit_type*3
       character wform*20,let
 !     data nlold/39/,nlnew/40/
@@ -51,8 +48,6 @@
       idup=0
       tavem=2*iavem
       jflag(ifirsttime:ilasttime)=1
-      uday = ' '
-      call date_and_time(uday, clocktime, zone, values)
       rcencm=rcentr*100.
       ktime1=1
       mco2v=nco2v
@@ -117,7 +112,7 @@
 !
         xbetapr=kbetapr
         a_eqdsk_format: if (keqdsk.ge.1) then
-        write (neqdsk,1055) uday,efitvers//"   "
+        write (neqdsk,1055) efitdatealt,efitdate
         if (ishot.le.99999) then
           write (neqdsk,1050) ishot,ktime1
         else
@@ -196,7 +191,7 @@
 !--     binary format                                             --
 !-------------------------------------------------------------------
         else a_eqdsk_format
-        write (neqdsk) uday,efitvers
+        write (neqdsk) efitdatealt,efitdate
         if (ishot.le.99999) then
           write (neqdsk) ishot,ktime1
         else
@@ -420,7 +415,7 @@
                    keefnc,keeknt,eeknt,eetens, &
                    eebdry,ee2bdry,keebdry,kee2bdry
       namelist/inwant/psiwant,vzeroj
-      namelist/chiout/saisil,saimpi,saipr,saiip
+      namelist/chiout/saisil,saimpi,saiip
       namelist/eccd/kkstark,chigamt,chigam,bzmse,psiecn,dpsiecn, &
               saisq,cjeccd
       character eqdsk*72,header*42,wform*20,let,fit_type*3
@@ -517,8 +512,8 @@
         enddo
       enddo
       write (vers(1),1040)
-      write (vers(2),1050) efitvers(1:5)
-      write (vers(3),1060) efitvers(6:7)//"   "
+      write (vers(2),1050) efitdate(1:5)
+      write (vers(3),1060) efitdate(6:10)
       if (ishot.le.99999) then
         write (vers(4),1070) ishot
       else

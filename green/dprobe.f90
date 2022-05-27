@@ -103,7 +103,7 @@
       ntangle=12
       nfbcoil=12
       mccoil=6
-      micoil=12     
+      micoil=12
       ndata=61
       nwwcur=32
       nffcur=32
