@@ -16,11 +16,7 @@
       do k=1,30
         erflag(m,k)=0
       enddo
-      if (imagsigma.eq.0) then
-        chisqerr=80.0
-      elseif (imagsigma.gt.0) then
-        chisqerr=300.0
-      endif
+      chisqerr=80.0
       if (tsaisq(m).ge.chisqerr) erflag(m,1)=1
       if (ali(m).ge.2.5_dp.or.ali(m).le.0.05_dp) erflag(m,2)=2
       if (betap(m).ge.6.0.or.betap(m).le.0.) erflag(m,3)=3

@@ -19,7 +19,7 @@
       subroutine pflux(niter,nnin,ntotal,jtime,kerror)
       use set_kinds 
       use var_buneman, only: rgrid1,delrgrid,delz,drdz2
-      use commonblocks, only: c,wk,copy,bkx,bky,psiold,psipold,psipp
+      use commonblocks, only: c,wk,copy,bkx,bky,psiold,psipold
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -92,26 +92,26 @@
 !-----------------------------------------------------------------------
       do j=1,nh
         kk=(nw-1)*nh+j
-        psipp(j)=0.
-        psipp(kk)=0.
+        tempsum1=0.
+        tempsum2=0.
         do ii=1,nw
          do jj=1,nh
           kkkk=(ii-1)*nh+jj
           mj=abs(j-jj)+1
           mk=(nw-1)*nh+mj
-          psipp(j)=psipp(j)-gridpc(mj,ii)*pcurrt(kkkk)
-          psipp(kk)=psipp(kk)-gridpc(mk,ii)*pcurrt(kkkk)
-          psi(j)=psipp(j)
-          psi(kk)=psipp(kk)
+          tempsum1=tempsum1-gridpc(mj,ii)*pcurrt(kkkk)
+          tempsum2=tempsum2-gridpc(mk,ii)*pcurrt(kkkk)
          enddo
         enddo
+        psi(j) =tempsum1
+        psi(kk)=tempsum2
       enddo
       do i=2,nw-1
         kk1=(i-1)*nh
         kknh=kk1+nh
         kk1=kk1+1
-        psipp(kk1)=0.
-        psipp(kknh)=0.
+        tempsum1=0.
+        tempsum2=0.
         do ii=1,nw
          do jj=1,nh
           kkkk=(ii-1)*nh+jj
@@ -119,12 +119,12 @@
           mjnh=abs(nh-jj)+1
           mk1=(i-1)*nh+mj1
           mknh=(i-1)*nh+mjnh
-          psipp(kk1)=psipp(kk1)-gridpc(mk1,ii)*pcurrt(kkkk)
-          psipp(kknh)=psipp(kknh)-gridpc(mknh,ii)*pcurrt(kkkk)
-          psi(kk1)=psipp(kk1)
-          psi(kknh)=psipp(kknh)
+          tempsum1=tempsum1-gridpc(mk1 ,ii)*pcurrt(kkkk)
+          tempsum2=tempsum2-gridpc(mknh,ii)*pcurrt(kkkk)
          enddo
         enddo
+        psi(kk1 )=tempsum1
+        psi(kknh)=tempsum2
       enddo
 !-------------------------------------------------------------------------
 !--   get flux at inner points by inverting del*, only plasma flux
@@ -343,8 +343,8 @@
             kk=(i-1)*nh+j
             call seva2d(bkx,lkx,bky,lky,c,rgrid(i),zgrid(j),pds,ier,n333)
             psi(kk)=psi(kk)+cdelznow*pds(3)
+           enddo
           enddo
-         enddo
         endif
       endif
 !----------------------------------------------------------------------------
@@ -371,7 +371,7 @@
 !!
 !**********************************************************************
       subroutine residu(nx,jtime)
-      use commonblocks,only: psiold,psipold,psipp
+      use commonblocks,only: psiold,psipold
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)

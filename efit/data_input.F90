@@ -6,12 +6,6 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          29/06/83..........first created                         **
-!**          24/07/85..........revised                               **
-!**          23/04/04...JAL iplcout added to namelist                **
-!**          01/08/07...DPB namelist for mag uncertainty added       **
-!**                                                                  **
 !**********************************************************************
       subroutine data_input(jtime,kconvr,ktime,mtear,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky,wgridpc,rfcpc
@@ -689,8 +683,11 @@
           rpress_save=rpress
           npress_save=npress
           sigpre_save=sigpre
-          read (neqdsk,out1,iostat=ioerr)
-          if (iostat.ne.0) then
+          read (neqdsk,out1,iostat=istat)
+          if (istat>0) then 
+            backspace(nin)
+            read(nin,fmt='(A)') line
+            write(*,'(A)') 'Invalid line in namelist out1: '//trim(line)
             call errctrl_msg('data_input', &
                              'cannot read out1 from geqdsk_ext')
             stop
@@ -2022,54 +2019,7 @@
         xlim(7)=xlim(1)
         ylim(7)=ylim(1)
       endif
-!--------------------------------------------------------------------- 
-!--   specific choice of current profile                            -- 
-!--       ICPROF=1  no edge current density allowed                 -- 
-!--       ICPROF=2  free edge current density                       -- 
-!--       ICPROF=3  weak edge current density constraint            -- 
-!--------------------------------------------------------------------- 
-      select case (icprof)
-      case (1)
-        kffcur=2
-        kppcur=2
-        fcurbd=1.
-        pcurbd=1.
-        fwtbp=1.
-        fwtqa=0.
-        qvfit=0.
-      case (2) 
-        kffcur=2
-        kppcur=2
-        fcurbd=0.
-        pcurbd=0.
-        fwtbp=0.
-        fwtqa=0.
-        qvfit=0.
-      case (3)
-        kffcur=3
-        kppcur=2
-        fcurbd=0.
-        pcurbd=0.
-        fwtbp=0.
-        fwtqa=0.
-        qvfit=0.
-        kcalpa=1
-        calpa(1,1)=0.1_dp
-        calpa(2,1)=0.1_dp
-        calpa(3,1)=0.1_dp
-        xalpa(1)=0.0
-        kcgama=1
-        cgama(1,1)=0.1_dp
-        cgama(2,1)=0.1_dp
-        cgama(3,1)=0.1_dp
-        xgama(1)=0.0
-      end select
-      if(mse_usecer .eq. 1) keecur = 0
-      if (mse_usecer .eq. 2 .and. keecur .eq. 0) then
-        keecur=2
-        keefnc=0
-        itek=5
-      endif
+      call set_basis_params
       mtear=ktear
       if (kedgep.gt.0) then
         s1edge=(1.0-pe_psin)/pe_width
@@ -2077,11 +2027,6 @@
         s1edge=(1.0-fe_psin)/fe_width
         tfedge=tanh(s1edge)
       endif
-      if (imagsigma.gt.0) then
-        do_spline_fit=.false.
-        saimin=300.
-      endif
-      if(kzeroj.eq.1.and.sizeroj(1).lt.0.0) sizeroj(1)=psiwant
       write(*,*)  'before save fitting weights'
       call flush(6)
 !--------------------------------------------------------------------- 
@@ -2100,52 +2045,6 @@
       swtecebz=fwtecebz0
       write(*,*)'adjust fit parameters based on basis function selected'
       call flush(6)
-!----------------------------------------------------------------------- 
-!--   adjust fit parameters based on basis function selected          -- 
-!----------------------------------------------------------------------- 
-      select case (kppfnc)
-      case (3)
-        kppcur = 4 * (kppknt - 1)
-      case (4)
-        kppcur = 4 * (kppknt - 1)
-      case (5)
-        kppcur = kppcur * (kppknt - 1)
-      case (6)
-        kppcur = kppknt * 2
-      end select
-      select case (kfffnc)
-      case (3)
-        kffcur = 4 * (kffknt - 1)
-      case (4)
-        kffcur = 4 * (kffknt - 1)
-      case (5)
-        kffcur = kffcur * (kffknt - 1)
-      case (6)
-        kffcur = kffknt * 2
-      end select
-      select case (kwwfnc)
-      case (3)
-        kwwcur = 4 * (kwwknt - 1)
-      case (4)
-        kwwcur = 4 * (kwwknt - 1)
-      case (5)
-        kwwcur = kwwcur * (kwwknt - 1)
-      case (6)
-        kwwcur = kwwknt * 2
-      end select
-      if (keecur.gt.0) then
-        select case (keefnc)
-        case (3)
-          keecur = 4 * (keeknt - 1)
-        case (4)
-          keecur = 4 * (keeknt - 1)
-        case (5)
-          keecur = keecur * (keeknt - 1)
-        case (6)
-          keecur = keeknt * 2
-        end select
-      endif
-! 
       if(fbetan.gt.0.) brsp(nfcoil+jbeta)=alpax(jbeta)*darea
       if(fli.gt.0.) brsp(nfcoil+kppcur+jli)=gamax(jli)*darea
       if(kedgep.gt.0) pedge=pedge*darea
@@ -2198,7 +2097,11 @@
       endif
 !      if ((nbdry.gt.0).and.(rbdry(1).le.-1.0)) read (nin,5020) & 
 !          (rbdry(i),zbdry(i),i=1,nbdry) 
-      if(kprfit.gt.0) premea(1:npress)=pressr(1:npress)
+      if (kprfit.gt.0) then
+        ! save input values before being overwritten
+        premea(1:npress)=pressr(1:npress)
+        premew(1:npresw)=presw(1:npresw)
+      endif
       if (kprfit.gt.0.and.sigpre(1).lt.0.0) then 
         scalep=abs(sigpre(1)) 
         scalemin=abs(sigpre(2)) 
@@ -2213,7 +2116,7 @@
       endif 
       if (kprfit.gt.0.and.scalepw(1).gt.0.0) then 
         if (npresw.gt.0) then 
-          presw(1:npresw) = presw(1:npresw)*scalepw(1:npresw) 
+          presw(1:npresw)=presw(1:npresw)*scalepw(1:npresw) 
           sigprw(1:npresw)=sigprw(1:npresw)*scalepw(1:npresw) 
         elseif (nomegat.gt.0) then 
           omegat(1:nomegat)=omegat(1:nomegat)*scalepw(1:nomegat) 
@@ -2564,25 +2467,25 @@
       endif 
       kconvr=iconvr
       www(1:nwnh)=zero(1:nwnh) 
-! 
+!---------------------------------------------------------------------- 
+!--   signal at psi loop # NSLREF is used as reference               -- 
+!---------------------------------------------------------------------- 
       fwtref=fwtsi(iabs(nslref)) 
       kersil_23: if ((kersil.ne.2).and.(kersil.ne.3)) then
       do m=1,nsilop
         tdata1=serror*abs(silopt(jtime,m)) 
         tdata2=abs(psibit(m))*vbit 
         tdata=max(tdata1,tdata2) 
-        sigmafl0(m)=tdata 
+        sigsi(m)=tdata 
         if (tdata.gt.1.0e-10_dp) then
           fwtsi(m)=fwtsi(m)/tdata**nsq
         else
           fwtsi(m)=0.0
         endif
       enddo
-!---------------------------------------------------------------------- 
-!--   signal at psi loop # NSLREF is used as reference               -- 
-!---------------------------------------------------------------------- 
       if (abs(psibit(iabs(nslref))).le.1.0e-10_dp) then
         coilmx=maxval(abs(silopt(jtime,1:nsilop))) 
+        sigsi(iabs(nslref))=coilmx*serror
         fwtsi(iabs(nslref))=1.0/coilmx**nsq/serror**nsq*fwtref
       endif 
       else kersil_23
@@ -2624,46 +2527,45 @@
         tdata=max(tdata1,tdata2) 
         tdata2=abs(psibit(m))*vbit 
         tdata=max(tdata,tdata2) 
-        sigmafl0(m)=tdata 
+        sigsi(m)=tdata 
         if (tdata.gt.1.0e-10_dp) then
           fwtsi(m)=fwtsi(m)/tdata**nsq
         else
           fwtsi(m)=0.0
         endif
       enddo
-!---------------------------------------------------------------------- 
-!--   signal at psi loop #8 is set to zero and used as reference     -- 
-!---------------------------------------------------------------------- 
       if (kersil.ne.3) then
+!---------------------------------------------------------------------- 
+!--     signal at psi loop #8 in D-III is set to zero and used as ref
+!---------------------------------------------------------------------- 
+        sigsi(iabs(nslref))=ersil8
         fwtsi(iabs(nslref))=1.0/ersil8**nsq*fwtref
       else
 !---------------------------------------------------------------------- 
-!--     New option for reference flux loop uncertainty               -- 
+!--     Default option for reference flux loop uncertainty
 !---------------------------------------------------------------------- 
-        m=iabs(nslref) 
-        tdata1=errsil*abs(silopt(jtime,m)) 
-        tdata2=sicont*rsi(m)*abs(pasmat(jtime)) 
-        tdata=max(tdata1,tdata2) 
-        tdata2=abs(psibit(m))*vbit 
+        m=iabs(nslref)
+        tdata1=errsil*abs(silopt(jtime,m))
+        tdata2=sicont*rsi(m)*abs(pasmat(jtime))
+        tdata=max(tdata1,tdata2)
+        tdata2=abs(psibit(m))*vbit
         tdata=max(tdata,tdata2)
-        !SEK: ??? this was commented out but I getting out of bounds error below
-!       sigmafl0(m)=tdata 
-        !SEK: ???
+        sigsi(m)=tdata
         if (tdata.gt.1.0e-10_dp) then
           fwtsi(m)=fwtref/tdata**nsq
         else
           fwtsi(m)=0.0
         endif
       endif
-!SEK: ???      sigmafl0(m)=tdata 
-! 
       endif kersil_23
+      sigref=sigsi(iabs(nslref)) 
       fwtref=fwtsi(iabs(nslref)) 
+! 
       do m=1,magpri 
         tdata1=serror*abs(expmpi(jtime,m)) 
         tdata2=abs(bitmpi(m))*vbit 
         tdata=max(tdata1,tdata2)
-        sigmamp0(m)=tdata
+        sigmp2(m)=tdata
         if (tdata.gt.1.0e-10_dp) then
           fwtmp2(m)=fwtmp2(m)/tdata**nsq
         else
@@ -2707,7 +2609,7 @@
         tdata1=serror*abs(fccurt(jtime,m)) 
         tdata2=abs(bitfc(m))*vbit 
         tdata=max(tdata1,tdata2) 
-        sigmaf0(m)=tdata
+        sigfc(m)=tdata
         if (tdata.gt.1.0e-10_dp) then
           fwtfc(m)=fwtfc(m)/tdata**nsq
         else
@@ -2721,7 +2623,7 @@
           tdata1=serror*abs(ecurrt(m)) 
           tdata2=abs(bitec(m))*vbit 
           tdata=max(tdata1,tdata2) 
-          sigmae0(m)=tdata 
+          sigec(m)=tdata 
           if (tdata.gt.1.0e-10_dp) then
             fwtec(m)=fwtec(m)/tdata**nsq
           else
@@ -2732,7 +2634,7 @@
       tdata1=serror*abs(pasmat(jtime)) 
       tdata2=abs(bitip)*vbit 
       tdata=max(tdata1,tdata2) 
-      sigmaip0=tdata
+      sigcur=tdata
       if (tdata.gt.1.0e-10_dp) then 
         fwtcur=fwtcur/tdata**nsq
       else
@@ -3013,8 +2915,8 @@
       mw=nw 
       mh=nh 
       open(unit=nffile,status='old',form='unformatted', & 
-           file='rpfxx.dat',iostat=ioerr)
-      if (ioerr.eq.0) close(unit=nffile,status='delete')
+           file='rpfxx.dat',iostat=istat)
+      if (istat.eq.0) close(unit=nffile,status='delete')
       open(unit=nffile,status='new',form='unformatted', & 
            file='rpfxx.dat') 
       write (nffile) mx,rmx,zmx 
@@ -3117,8 +3019,8 @@
       wpcpc=wpcpc/xnpc**2 
 ! 
       open(unit=nffile,status='old',form='unformatted', & 
-           file='rpcxx.dat',iostat=ioerr)
-      if (ioerr.eq.0) close(unit=nffile,status='delete')
+           file='rpcxx.dat',iostat=istat)
+      if (istat.eq.0) close(unit=nffile,status='delete')
       open(unit=nffile,status='new',form='unformatted', & 
            file='rpcxx.dat') 
       write (nffile) wsilpc 

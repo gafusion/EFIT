@@ -23,8 +23,9 @@
         integer*4 ltbdir,lindir,lstdir,ltbdi2
 
         character(7) :: efitvers ! git hash
-        integer*4 :: efitversion ! commit date (legacy name...)
-        character(512) :: giturl,gitbranch,githash,gitdate,lmods
+        character(10) :: efitdate,efitdatealt ! commit dates (legacy formats)
+        integer*4 :: efitversion ! commit date (legacy form)
+        character(512) :: giturl,gitbranch,githash,gitdate,gitdatealt,lmods
         character(512) :: fc,fc_id,fcver
         character(5096) :: fcflags
         character(256) :: arch_type,hostname
@@ -306,7 +307,7 @@
 !var_pfterm
       module var_pfterm
         integer*4 kffcur,kppcur,kpcurn,icalbet 
-        real*8 chidlc,gammaf,gammap,cstabz ,cstab0, &
+        real*8 chidlc,gammaf,gammap,cstabz,cstab0, &
                vbtot2,vbtvac2,vbtor2,vbtvac,vbeta0, &
                vbtmag,btvvac2,btvtor2,btvtot2, &
                kffcurs,kppcurs

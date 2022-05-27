@@ -29,7 +29,6 @@
       cjeccd=0.0
       iend=mxiter+1
       if (iconvr.eq.3) iend=1
-      idosigma=1
       do i=1,iend
         ix=i
         if (i.gt.1) then
@@ -65,14 +64,6 @@
             iwantk=0
           endif
           if (kprfit.ge.3) call presurw(jtime,nitera)
-          if (errorm.lt.errmagb) then
-            if ((imagsigma.eq.1) .AND. (errorm > errmag) ) &
-              call getsigma(jtime,nitera)
-            if ((imagsigma.eq.2).and.(idosigma.eq.1)) then
-              call getsigma(jtime,nitera)
-              idosigma=2
-            endif
-          endif
 #ifdef DEBUG_LEVEL2
           write (6,*) 'Call FIT/MATRIX',ix
 #endif

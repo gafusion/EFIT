@@ -20,6 +20,9 @@
       githash="${GIT_COMMIT_HASH}"
       efitvers=githash(1:7)
       gitdate="${GIT_COMMIT_DATE}"
+      gitdatealt="${GIT_COMMIT_DATE_ALT}"
+      efitdate=gitdate(6:7)//'/'//gitdate(9:10)//'/'//gitdate(1:4)
+      efitdatealt=gitdatealt(6:7)//'-'//gitdatealt(9:11)//'-'//gitdatealt(15:16)
       versiondate=gitdate(1:4)//gitdate(6:7)//gitdate(9:10)
       read(versiondate,*,iostat=ioerr) efitversion
       if (ioerr.ne.0) efitversion = 99999999
@@ -46,6 +49,7 @@
         WRITE(nttyo,'(2a,/)') 'Git repository url ',TRIM(giturl)
         WRITE(nttyo,'(2a,/)') 'Git branch ',TRIM(gitbranch)
         WRITE(nttyo,'(4a,/)') 'Git hash ',TRIM(githash),' ',TRIM(lmods)
+        WRITE(nttyo,'(2a,/)') 'Git date ',TRIM(gitdate)
 !-----------------------------------------------------------------------
 !       simulation date and time
 !-----------------------------------------------------------------------
