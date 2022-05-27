@@ -95,7 +95,7 @@
         kk=(nw-1)*nh+j
         tempsum1=0.
         tempsum2=0.
-        !$omp loop bind(parallel) reduction(+:tempsum1,tempsum2) collapse(2)
+        !$omp loop reduction(+:tempsum1,tempsum2) collapse(2)
         do ii=1,nw
          do jj=1,nh
           kkkk=(ii-1)*nh+jj
@@ -116,7 +116,7 @@
         kk1=kk1+1
         tempsum1=0.
         tempsum2=0.
-        !$omp loop bind(parallel) reduction(+:tempsum1,tempsum2) collapse(2)
+        !$omp loop reduction(+:tempsum1,tempsum2) collapse(2)
         do ii=1,nw
          do jj=1,nh
           kkkk=(ii-1)*nh+jj
