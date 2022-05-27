@@ -334,6 +334,12 @@
 
       enddo
 
+      if (nccomp.gt.mccoil) then
+        call errctrl_msg('getpts', &
+                         'insufficient C-coil length (mccoil) for data')
+        stop
+      endif
+
       if(allocated(dumccc)) deallocate(dumccc)
       allocate(dumccc(nccomp))
 !----------------------------------------------- end of new section - EJS(2014)
@@ -421,9 +427,6 @@
       curc79(1:np)=curccoi(1:np,1)
       curc139(1:np)=curccoi(1:np,2)
       curc199(1:np)=curccoi(1:np,3)
-      curc259(1:np)=curccoi(1:np,4)
-      curc319(1:np)=curccoi(1:np,5)
-      curc19(1:np)=curccoi(1:np,6)
       oldccomp=.false.
       if(oldcomp) oldccomp=.true.
 !---------------------------------------------------------------------
@@ -457,6 +460,13 @@
         textline = textline(len(trim(niname(nicomp)))+3:len(textline))
 
       enddo
+
+      if (nicomp.gt.micoil) then
+        call errctrl_msg('getpts', &
+                         'insufficient I-coil length (micoil) for data')
+        stop
+      endif
+
       if(allocated(dumcic)) deallocate(dumcic)
       allocate(dumcic(nicomp))
 !----------------------------------------------- end of new section - EJS(2014)
@@ -528,12 +538,6 @@
       curil30(1:np)=curicoi(1:np,4)
       curil90(1:np)=curicoi(1:np,5)
       curil150(1:np)=curicoi(1:np,6)
-      curiu210(1:np)=curicoi(1:np,7)
-      curiu270(1:np)=curicoi(1:np,8)
-      curiu330(1:np)=curicoi(1:np,9)
-      curil210(1:np)=curicoi(1:np,10)
-      curil270(1:np)=curicoi(1:np,11)
-      curil330(1:np)=curicoi(1:np,12)
 !----------------------------------------------------------------------
 !--   get toroidal B field                                           --
 !----------------------------------------------------------------------

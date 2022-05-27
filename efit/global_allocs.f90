@@ -8,7 +8,7 @@ ALLOCATE(volp(nw),pprime(nw),pres(nw),ffprim(nw), &
    ddfpol(nw),rzzmax(nw),zzmax(nw),ermid(nw),eshear(nw), &
    epoten(nw),rhovn(nw),rpmid(nw),xmid(nw),sigrid(nw), &
    sipmid(nw),brhovn(nw),crhovn(nw),drhovn(nw),rhopmid(nw), &
-   rgrvt(nw),pwprim(nw),pressw(nw),prwcal(nw),saiprw(nw), &
+   rgrvt(nw),pwprim(nw),pressw(nw),prwcal(nw), &
    rgsvt(nw),cjorec(nw),ffprec(nw),pcurrt(nwnh), &
    pcurrw(nwnh),zero(nwnh),www(nwnh),gecebzpc(nwnh), &
    gecepc(nnece,nwnh),geceppc(nnece,nwnh),gecempc(nnece,nwnh), &
@@ -37,7 +37,7 @@ ALLOCATE(racoil(nacoil),zacoil(nacoil), wacoil(nacoil), hacoil(nacoil), &
    a2gam(ntime,nstark),a3gam(ntime,nstark),a4gam(ntime,nstark),tangam_uncor(ntime,nstark), &
    fwtgam(nstark),chigam(nstark),swtgam(nstark),iergam(nstark),mseport(nstark),mse_spave_on(nstark))
    
-ALLOCATE(rsilpe(nsilop),rmp2pe(magpri), rprepe(mpress), gbdrpe(mbdry), &
+ALLOCATE(rsilpe(nsilop),rmp2pe(magpri),rprepe(mpress),gbdrpe(mbdry), &
    rgampe(nstark),rbrpe(nstark),rbzpe(nstark),rmlspe(nmsels),relspe(nmsels), &
    bmselt(ntime,nmsels),sbmselt(ntime,nmsels),fwtbmselt(ntime,nmsels), &
    rrmselt(ntime,nmsels),zzmselt(ntime,nmsels),l1mselt(ntime,nmsels),l2mselt(ntime,nmsels), &
@@ -73,7 +73,7 @@ ALLOCATE(rbrpc(nstark,npcurn),rbzpc(nstark,npcurn),rgampc(nstark,npcurn),rbrfc(n
    rmse_gain(nstark),rmse_slope(nstark),rmse_scale(nstark),rmse_offset(nstark),sigam(nstark), &
    bzmse(nstark),bzmsec(nstark),cjmse(nstark),cjmsec(nstark),rhogam(nstark), &
    spatial_avg_gam(nstark,ngam_vars,ngam_u,ngam_w), &
-   saisil(nsilop),saimpi(magpri),saipr(nrogow),saipre(mpress),saifc(nfcoil), &
+   saisil(nsilop),saimpi(magpri),saipre(mpress),saifc(nfcoil), &
    dfluxc(ntime),cdflux(ntime),edflux(ntime),rspdlc(nffcur), &
    rco2r(nco2r,ntime),rco2v(nco2v,ntime),chordv(nco2v),chordr(nco2r), &
    dco2r(ntime,nco2r),dco2v(ntime,nco2v),erflag(ntime,30), &
@@ -121,23 +121,18 @@ ALLOCATE(rbdry(mbdry),zbdry(mbdry),fwtbdry(mbdry),fwtbry(mbdry),sigrbd(mbdry), &
    xlimbd(nlimbd),ylimbd(nlimbd),fb_plasma(ntime),signn1(magpri), curtn1(ntime), &
    curc139(ntime),curc79(ntime),curc199(ntime),curiu30(ntime), &
    curiu90(ntime),curiu150(ntime),curil30(ntime),curil90(ntime),curil150(ntime), &
-   curc259(ntime),curc319(ntime),curc19(ntime), & 
-   curiu210(ntime),curiu270(ntime),curiu330(ntime), &
-   curil210(ntime),curil270(ntime),curil330(ntime), &
    curccoi(ntime,mccoil),curicoi(ntime,micoil))
    
-ALLOCATE(xnodef(modef),xnodep(modep),xnodew(modew), kbasef(modef), &
+ALLOCATE(xnodef(modef),xnodep(modep),xnodew(modew),kbasef(modef), &
    kbasep(modep),kbasew(modew),omegat(mpress),rpresw(mpress),zpresw(mpress), &
    presw(mpress),sigprw(mpress),rpresws(mpress),fwtprw(mpress),romegat(mpress), &
    zomegat(mpress),sigome(mpress),rpreswv(mpress),scalepw(mpress), &
-   rprwpc(mpress,nwwcur),betapw(ntime),betatw(ntime),wplasw(ntime), &
+   saiprw(npress),premew(mpress),saiprw2(mpress),rprwpc(mpress,nwwcur), &
+   betapw(ntime),betatw(ntime),wplasw(ntime), &
    fwtec(nesum),cecurr(nesum),saiec(nesum), &
    ztssym(ntime),ztswid(ntime),ptssym(ntime),ztserr(ntime), &
    psin32(ntime),psin21(ntime),rq32in(ntime),rq21top(ntime), &
-   sigmaf0(nfcoil),sigmae0(nesum),sigmafl0(nsilop),sigmamp0(magpri), &
-   sigmaf(ntime,nfcoil),sigmab(ntime),sigmaip(ntime),sigmae(ntime,nesum), &
-   sigmafl(ntime,nsilop),gradsfl(ntime,nsilop), &
-   sigmamp(ntime,magpri),gradsmp(ntime,magpri),bpermp(ntime,magpri), &
+   sigfc(nfcoil),sigec(nesum),sigsi(nsilop),sigmp2(magpri), &
    psircg(nsilop),psi_k(nsilop),psi_rc(nsilop),vrespsi(nsilop),t0psi(nsilop), &
    devpsi(ntime,nsilop),rnavpsi(ntime,nsilop),navpsi(ntime,nsilop), &
    devp(ntime),navp(ntime),rnavp(ntime),ccrcg(mccoil),cc_k(mccoil), &
@@ -251,7 +246,7 @@ ALLOCATE(c(kubicx,lubicx,kubicy,lubicy),wk(nwrk), &
    wgridpc(nwnh),rfcpc(nfcoil,nwnh), &
    ct(kubicx,lubicx,kubicy,lubicy), &
    wkt(nwrk),bkrt(lubicx+1),bkzt(lubicy+1), &
-   psiold(nwnh),psipold(nwnh),psipp(nwnh), &
+   psiold(nwnh),psipold(nwnh), &
    work(nwnh),sifpre(nw),bwpre(nw),cwpre(nw), &
    dwpre(nw),sfpre(nw),sprep(nw),worka(nwf),worka2(nw), &
    zeros(nwnh),byringr(nh2),byringz(nh2), &

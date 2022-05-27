@@ -14,7 +14,7 @@
 !**********************************************************************
       subroutine shapesurf(iges,igmax,kerror)
       use set_kinds
-      use commonblocks,only: c,wk,copy,bkx,bky,psiold,psipold,psipp, &
+      use commonblocks,only: c,wk,copy,bkx,bky,psiold,psipold, &
                 worka,zeros,byringr,byringz,xouts,youts,bpoo,bpooz, &
                 bpooc,bfpol,cfpol,dfpol,xxtra,yxtra,bpxtra,flxtra,fpxtra
       use efit_bdata,only: xlims,ylims,limtrs,xlmins

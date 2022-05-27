@@ -27,6 +27,8 @@ EMP,1.0,GAQ current density profile parameter. Ignored unless ICURRT=4?
 ENP,1.0,GAQ current density profile parameter. Ignored unless ICURRT=4?
 EMW,,GAQ current density profile parameter for rotation. Ignored unless ICURRT=4?
 ENW,,GAQ current density profile parameter for rotation. Ignored unless ICURRT=4?
+ERRMAG,,See IMAGSIGMA (depreciated)
+ERRMAGB,,See IMAGSIGMA (depreciated)
 ERROR,1e-3,"| Specifies when EFIT should stop iterating to solution. If chi-squared decreases
 | monotonically, then iterations stop when the relative error (maximum flux 
 | difference between successive iterations) < ERROR.  See also ERRMIN."
@@ -117,6 +119,7 @@ IFITVS,,"| ""(Integer flag) Fit Vessel"". The DIII-D vessel can be modeled as 24
 | parameters to be solved for.
 | - 1 = Include vessel segment currents in solution.
 | - 0 = ignore vessel segment currents (default)."
+IMAGSIGMA,0, 1 = computed nonlinear magnetic uncertainties (depreciated).
 IOUT,,"| Output file option. This is a bitwise switch except that 6 overwrites 2 and 4.
 | - Multiple output options may be achieved by adding up the values of each option.
 | - 0 = do NOT write FITOUT.DAT, measurement file, rstarkxx.dat, esave.dat
@@ -184,10 +187,14 @@ KEQDSK,,"| Format of A and G EQDSK files
 | - 1 = ascii EQDSKs (default)
 | - 2 = ascii A EQDSK only, no G
 | - -1 = binary A EQDSK only, on G"
+KERSIL,3, "| ""Reference Flux Loop Uncertainty Switch"". This parameter controls how the uncertainty is set for the reference flux loop (NSLREF).
+| - 1 = use the maximum coil current to set the reference uncertainty
+| - 2 = use a hard-coded uncertainty of 0.001 for the reference (matches probe 8 on D-III)
+| - 3 = use the max of coil current, plasma current, and bit uncertainty for the reference (default)"
 KFRAME,0,Something to do with plotting?
 KINPUT,, "| Write out M(SHOT).(TIME+1) file during execution in equilibrium mode which can be 
 | used as input to execution in fitting mode. (Computed signals at probes are used
-| as simulated input for fitting. )
+| as simulated input for fitting.)
 | >0 write out M(SHOT).(TIME+1) file.
 | <=0 Don't write file"
 KLABEL,,Something to do with plotting.
@@ -201,6 +208,7 @@ KPRFIT,, "| Turn on kinetic fitting
 | - 2 = kinetic fitting inputing raw temperature, density, and beam profiles in real space.
 | - 3 = include rotation.
 | - Must set KPRFIT=3, ICURRT=5, if no pressure data NPRESS=0. (What does this mean?)"
+KSIGMA,, See IMAGSIGMA (depreciated)
 KSKIPVS, 0,1 = search for external separatrix for attached current model.
 KWRIPRE,,"| Make output files
 | - 1 = write out pressure and q profile as function of sqrt(Vn) in files Q(shot).(time)_ (q0 files).
@@ -252,7 +260,7 @@ NPRESS,,"| ""Number Pressure"". Number of valid points in PRESSR
 | - -= read in (NPRESS?) from EDAT file.
 | - 0= for rotational pressure only."
 NQITER,10,convergent parameter for axial safety factor. 
-NSLREF,1,"Index in set of flux loops of reference flux. Default = 8 for D-III, Default = 1 for D-IIID."
+NSLREF,1,"Index in set of flux loops of reference flux. Used to be 8 for D-III, but now is 1 (default) for DIII-D."
 NXITER,1,Number of inner equilibrium iterations. Set to 1 for fitting. See also MXITER.
 PBEAM,,"""Pressure Beam"". Beam pressure in n/m2 vs. normalized flux for kinetic fitting (typically calculated in ONETWO)."
 PCURBD,,"| ""P Current Boundary"".
@@ -354,6 +362,6 @@ ZION,,"if nptionf > 100, zion = zteth"
 ZLOWIMP,, """Z Low Impurity"". Low Z impurity for kinetic fitting."
 ZMAXVS , 100.0,
 ZMINVS, -100.0, 
-ZPRESS, ,"""Z Pressure"". Z coordinates of input pressure profile in meters. Ignored unless RPRESS>0? (See RPRESS.)"
+ZPRESS, ,"""Z Pressure"". Z coordinates of input pressure profile in meters. Ignored when RPRESS<0 (See RPRESS.)"
 ZTETH, ,"""Z Te Thompson"". Z locations of Thompson?"
 ZZZGAM, ,Z in meters of MSE observation points.

@@ -9,7 +9,7 @@
 !!
 !!    @param kerror : error flag
 !!
-!********************************************************************** 
+!********************************************************************* 
       subroutine setece(jtime,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
       include 'eparm.inc'
@@ -529,13 +529,11 @@
 !!
 !**********************************************************************
       subroutine set_basis_params()
-
       use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-
 !---------------------------------------------------------------------
 !--   specific choice of current profile                            --
 !--       ICPROF=1  no edge current density allowed                 --
@@ -585,36 +583,30 @@
         itek = 5
       endif
       if (imagsigma.gt.0) then
-        do_spline_fit=.false.
-        saimin=300.
+        call errctrl_msg('set_basis_params', &
+                         'nonlinear mag sigma calculation depreciated')
       endif
 !---------------------------------------------------------------------
 !--   adjust fit parameters based on basis function selected        --
 !---------------------------------------------------------------------
+      select case (kfffnc)
+      case (3,4)
+        kffcur = 4 * (kffknt - 1)
+      case (5)
+        kffcur = kffcur * (kffknt - 1)
+      case (6)
+        kffcur = kffknt * 2
+      end select
       select case (kppfnc)
-      case (3)
-        kppcur = 4 * (kppknt - 1)
-      case (4)
+      case (3,4)
         kppcur = 4 * (kppknt - 1)
       case (5)
         kppcur = kppcur * (kppknt - 1)
       case (6)
         kppcur = kppknt * 2
       end select
-      select case (kfffnc)
-      case (3)
-        kffcur = 4 * (kffknt - 1)
-      case (4)
-         kffcur = 4 * (kffknt - 1)
-      case (5)
-         kffcur = kffcur * (kffknt - 1)
-      case (6)
-         kffcur = kffknt * 2
-      end select
       select case (kwwfnc)
-      case (3)
-        kwwcur = 4 * (kwwknt - 1)
-      case (4)
+      case (3,4)
         kwwcur = 4 * (kwwknt - 1)
       case (5)
         kwwcur = kwwcur * (kwwknt - 1)
@@ -623,9 +615,7 @@
       end select
       if (keecur.gt.0) then
         select case (keefnc)
-        case (3)
-          keecur = 4 * (keeknt - 1)
-        case (4)
+        case (3,4)
           keecur = 4 * (keeknt - 1)
         case (5)
           keecur = keecur * (keeknt - 1)
@@ -635,7 +625,6 @@
       endif
 !
       if (kzeroj.eq.1.and.sizeroj(1).lt.0.0) sizeroj(1)=psiwant
-
       end subroutine set_basis_params
 
 !**********************************************************************
