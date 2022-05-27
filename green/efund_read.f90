@@ -39,7 +39,8 @@
       device = 'DIII-D'
       nfcoil = 18
       nsilop = 44
-      nsilds = 1 ! default all psi loops to one side except 1
+      nsilol = -43
+      nsilds = -1 ! default all psi loops to one side except 1
       magpr2 = 76
       nrogow = 1
       necoil = 122
@@ -156,8 +157,8 @@
             nsilds = 3
             nsilol = 41
          ELSE
-            nsilol = nsilop
-            nsilds = nsilop - 1
+            nsilol = nsilop -1
+            nsilds = 1
          ENDIF
       ENDIF
 
