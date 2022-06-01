@@ -26,8 +26,10 @@
 !---------------------------------------------------------------------- 
 !     copy psi into sia rowwise                                      -- 
 !---------------------------------------------------------------------- 
+      !$acc parallel loop gang worker
       do i = 1,nwb 
         ii = (i-1)*nhb + 1 
+        !$acc loop vector
         do j = 1, nhb 
           sia(i+j*nwb-nwb) = psi(ii-1+j) 
         enddo
@@ -37,6 +39,7 @@
 !----------------------------- 
 !     set up for rzpois 
 !----------------------------- 
+      !$acc parallel loop gang worker
       do i = ia,ju,nwb 
         sia(i-m+1) = sia(i-m+1)+(.5_dp+.25_dp/(1.0+shift/dr))*sia(i-m)/s 
         sia(i-1) = sia(i-1)+(.5_dp-.25_dp/(m-1+shift/dr))*sia(i)/s 
@@ -46,8 +49,10 @@
 !------------------------------------------------------------------------------ 
 !     copy sia back into psi columnwise                                      -- 
 !------------------------------------------------------------------------------ 
+      !$acc parallel loop gang worker
       do i = 2,n 
         ii = (i-1)*nwb + 1 
+        !$acc loop vector
         do j = 2,m 
           psi(i+j*nhb-nhb) = sia(ii-1+j) 
         enddo
@@ -103,6 +108,7 @@
         c = 0. 
  
         shftdr = shift/dr 
+        !$acc parallel loop gang worker
         do i = 2,m 
           temp(i) = 1. - .5_dp/(i+shftdr-1.) 
         enddo
