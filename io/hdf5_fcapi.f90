@@ -6420,6 +6420,7 @@
 !       unchanged if it doesn't
 !     If the dataset is smaller than available space, ensure that it is
 !       read into the subdominant square
+!     If it is larger, only read in the subdominant square
 !-----------------------------------------------------------------------
       subroutine read_int_2d_sq(fid,aname,array,h5in,errval)
       integer(HID_T), intent(in) :: fid
@@ -6428,9 +6429,10 @@
       type(hdf5InOpts), intent(in) :: h5in
       type(hdf5ErrorType), intent(inout) :: errval
       integer(i4) :: ndims
+      integer(HSIZE_T) :: dims1
       integer(HSIZE_T), dimension(1) :: fdims1,sqdims1
       integer(HSIZE_T), dimension(2) :: dims,fdims,sqdims
-      integer(i4), allocatable, dimension(:,:) :: flat
+      integer(i4), allocatable, dimension(:,:) :: mat
       integer(i4), allocatable, dimension(:)  :: vec
 !-----------------------------------------------------------------------
 !     Check that the object exists.
@@ -6441,29 +6443,42 @@
 !-----------------------------------------------------------------------
       dims(1)=size(array,1)
       dims(2)=size(array,2)
+      dims1=dims(1)*dims(2)
       call read_ndims(fid,aname,ndims,h5in,errval)
       if (ndims.eq.2) then
         call read_dims(fid,aname,fdims,h5in,errval)
         sqdims=int(sqrt(real(fdims)))
-        if ((fdims(1).eq.fdims(2)).and.(fdims(1).le.dims(1)) &
-            .and.(fdims(2).le.dims(2))) then
-          call read_int_2d(fid,aname,array(1:fdims(1),1:fdims(2)),h5in,errval)
-        elseif ((fdims(1).eq.1).and.(fdims(2).eq.sqdims(2)**2) &
-                .and.(sqdims(2).le.dims(1)).and.(sqdims(2).le.dims(2))) then
-          allocate(flat(1,fdims(2)))
-          call read_int_2d(fid,aname,flat,h5in,errval)
-          array(1:sqdims(2),1:sqdims(2))=reshape(flat,(/sqdims(2),sqdims(2)/))
-          deallocate(flat)
-        elseif ((fdims(2).eq.1).and.(fdims(1).eq.sqdims(1)**2) &
-                .and.(sqdims(1).le.dims(1)).and.(sqdims(1).le.dims(2))) then
-          allocate(flat(fdims(1),1))
-          call read_int_2d(fid,aname,flat,h5in,errval)
-          array(1:sqdims(1),1:sqdims(1))=reshape(flat,(/sqdims(1),sqdims(1)/))
-          deallocate(flat)
+        if (fdims(1).eq.fdims(2)) then
+          if ((fdims(1).le.dims(1)) .and.(fdims(2).le.dims(2))) then
+            call read_int_2d(fid,aname,array(1:fdims(1),1:fdims(2)),h5in,errval)
+          else
+            allocate(mat(fdims(1),fdims(2)))
+            call read_int_2d(fid,aname,mat,h5in,errval)
+            array=mat(1:dims(1),1:dims(2))
+            deallocate(mat)
+          endif
+        elseif ((fdims(1).eq.1).and.(fdims(2).eq.sqdims(2)**2)) then
+          allocate(mat(1,fdims(2)))
+          call read_int_2d(fid,aname,mat,h5in,errval)
+          if ((sqdims(2).le.dims(1)).and.(sqdims(2).le.dims(2))) then
+            array(1:sqdims(2),1:sqdims(2))=reshape(mat,(/sqdims(2),sqdims(2)/))
+          else
+            array=reshape(mat(1,1:dims1),(/dims(1),dims(2)/))
+          endif
+          deallocate(mat)
+        elseif ((fdims(2).eq.1).and.(fdims(1).eq.sqdims(1)**2)) then
+          allocate(mat(fdims(1),1))
+          call read_int_2d(fid,aname,mat,h5in,errval)
+          if ((sqdims(1).le.dims(1)).and.(sqdims(1).le.dims(2))) then
+            array(1:sqdims(1),1:sqdims(1))=reshape(mat,(/sqdims(1),sqdims(1)/))
+          else
+            array=reshape(mat(1:dims1,1),(/dims(1),dims(2)/))
+          endif
+          deallocate(mat)
         else
           write(*, *) "error: reading ",aname," from hdf5"
           write(*, *) "fdims (", fdims(1), ",", fdims(2), ")"
-          write(*, *) "cannot be fit into square subset of"
+          write(*, *) "cannot be made congruent to square"
           write(*, *) "dims (", dims(1), ",", dims(2), ")"
           write(*, *) "fdims = dims in the file (use h5ls)"
           write(*, *) "dims  = dims specified for array to read"
@@ -6473,16 +6488,22 @@
       elseif (ndims.eq.1) then
         call read_dims(fid,aname,fdims1,h5in,errval)
         sqdims1=int(sqrt(real(fdims1)))
-        if ((fdims1(1).eq.sqdims1(1)**2).and.(sqdims1(1).le.dims(1)) &
-            .and.(sqdims1(1).le.dims(2))) then
+        if ((fdims1(1).eq.sqdims1(1)**2)) then
           allocate(vec(fdims1(1)))
           call read_int_1d(fid,aname,vec,h5in,errval)
-          array(1:sqdims1(1),1:sqdims1(1))=reshape(vec,(/sqdims1(1),sqdims1(1)/))
+          if ((sqdims1(1).le.dims(1)).and.(sqdims1(1).le.dims(2))) then
+            array(1:sqdims1(1),1:sqdims1(1))=reshape(vec,(/sqdims1(1),sqdims1(1)/))
+          else
+            allocate(mat(sqdims1(1),sqdims1(1)))
+            mat=reshape(vec,(/sqdims1(1),sqdims1(1)/))
+            array=mat(1:dims(1),1:dims(2))
+            deallocate(mat)
+          endif
           deallocate(vec)
         else
           write(*, *) "error: reading ",aname," from hdf5"
           write(*, *) "fdims (", fdims1(1), ")"
-          write(*, *) "cannot be fit into square subset of"
+          write(*, *) "cannot be made congruent to square"
           write(*, *) "dims (", dims(1), ",", dims(2), ")"
           write(*, *) "fdims = dims in the file (use h5ls)"
           write(*, *) "dims  = dims specified for array to read"
@@ -6505,6 +6526,7 @@
 !       input unchanged if it doesn't
 !     If the dataset is smaller than available space, ensure that it is
 !       read into the subdominant square
+!     If it is larger, only read in the subdominant square
 !-----------------------------------------------------------------------
       subroutine read_rl_2d_sq(fid,aname,array,h5in,errval)
       integer(HID_T), intent(in) :: fid
@@ -6513,9 +6535,10 @@
       type(hdf5InOpts), intent(in) :: h5in
       type(hdf5ErrorType), intent(inout) :: errval
       integer(i4) :: ndims
+      integer(HSIZE_T) :: dims1
       integer(HSIZE_T), dimension(1) :: fdims1,sqdims1
       integer(HSIZE_T), dimension(2) :: dims,fdims,sqdims
-      real(r8), allocatable, dimension(:,:) :: flat
+      real(r8), allocatable, dimension(:,:) :: mat
       real(r8), allocatable, dimension(:)  :: vec
 !-----------------------------------------------------------------------
 !     Check that the object exists.
@@ -6526,29 +6549,42 @@
 !-----------------------------------------------------------------------
       dims(1)=size(array,1)
       dims(2)=size(array,2)
+      dims1=dims(1)*dims(2)
       call read_ndims(fid,aname,ndims,h5in,errval)
       if (ndims.eq.2) then
         call read_dims(fid,aname,fdims,h5in,errval)
         sqdims=int(sqrt(real(fdims)))
-        if ((fdims(1).eq.fdims(2)).and.(fdims(1).le.dims(1)) &
-            .and.(fdims(2).le.dims(2))) then
-          call read_rl_2d(fid,aname,array(1:fdims(1),1:fdims(2)),h5in,errval)
-        elseif ((fdims(1).eq.1).and.(fdims(2).eq.sqdims(2)**2) &
-                .and.(sqdims(2).le.dims(1)).and.(sqdims(2).le.dims(2))) then
-          allocate(flat(1,fdims(2)))
-          call read_rl_2d(fid,aname,flat,h5in,errval)
-          array(1:sqdims(2),1:sqdims(2))=reshape(flat,(/sqdims(2),sqdims(2)/))
-          deallocate(flat)
-        elseif ((fdims(2).eq.1).and.(fdims(1).eq.sqdims(1)**2) &
-                .and.(sqdims(1).le.dims(1)).and.(sqdims(1).le.dims(2))) then
-          allocate(flat(fdims(1),1))
-          call read_rl_2d(fid,aname,flat,h5in,errval)
-          array(1:sqdims(1),1:sqdims(1))=reshape(flat,(/sqdims(1),sqdims(1)/))
-          deallocate(flat)
+        if (fdims(1).eq.fdims(2)) then
+          if ((fdims(1).le.dims(1)) .and.(fdims(2).le.dims(2))) then
+            call read_rl_2d(fid,aname,array(1:fdims(1),1:fdims(2)),h5in,errval)
+          else
+            allocate(mat(fdims(1),fdims(2)))
+            call read_rl_2d(fid,aname,mat,h5in,errval)
+            array=mat(1:dims(1),1:dims(2))
+            deallocate(mat)
+          endif
+        elseif ((fdims(1).eq.1).and.(fdims(2).eq.sqdims(2)**2)) then
+          allocate(mat(1,fdims(2)))
+          call read_rl_2d(fid,aname,mat,h5in,errval)
+          if ((sqdims(2).le.dims(1)).and.(sqdims(2).le.dims(2))) then
+            array(1:sqdims(2),1:sqdims(2))=reshape(mat,(/sqdims(2),sqdims(2)/))
+          else
+            array=reshape(mat(1,1:dims1),(/dims(1),dims(2)/))
+          endif
+          deallocate(mat)
+        elseif ((fdims(2).eq.1).and.(fdims(1).eq.sqdims(1)**2)) then
+          allocate(mat(fdims(1),1))
+          call read_rl_2d(fid,aname,mat,h5in,errval)
+          if ((sqdims(1).le.dims(1)).and.(sqdims(1).le.dims(2))) then
+            array(1:sqdims(1),1:sqdims(1))=reshape(mat,(/sqdims(1),sqdims(1)/))
+          else
+            array=reshape(mat(1:dims1,1),(/dims(1),dims(2)/))
+          endif
+          deallocate(mat)
         else
           write(*, *) "error: reading ",aname," from hdf5"
           write(*, *) "fdims (", fdims(1), ",", fdims(2), ")"
-          write(*, *) "cannot be fit into square subset of"
+          write(*, *) "cannot be made congruent to square"
           write(*, *) "dims (", dims(1), ",", dims(2), ")"
           write(*, *) "fdims = dims in the file (use h5ls)"
           write(*, *) "dims  = dims specified for array to read"
@@ -6558,11 +6594,17 @@
       elseif (ndims.eq.1) then
         call read_dims(fid,aname,fdims1,h5in,errval)
         sqdims1=int(sqrt(real(fdims1)))
-        if ((fdims1(1).eq.sqdims1(1)**2).and.(sqdims1(1).le.dims(1)) &
-            .and.(sqdims1(1).le.dims(2))) then
+        if ((fdims1(1).eq.sqdims1(1)**2)) then
           allocate(vec(fdims1(1)))
           call read_rl_1d(fid,aname,vec,h5in,errval)
-          array(1:sqdims1(1),1:sqdims1(1))=reshape(vec,(/sqdims1(1),sqdims1(1)/))
+          if ((sqdims1(1).le.dims(1)).and.(sqdims1(1).le.dims(2))) then
+            array(1:sqdims1(1),1:sqdims1(1))=reshape(vec,(/sqdims1(1),sqdims1(1)/))
+          else
+            allocate(mat(sqdims1(1),sqdims1(1)))
+            mat=reshape(vec,(/sqdims1(1),sqdims1(1)/))
+            array=mat(1:dims(1),1:dims(2))
+            deallocate(mat)
+          endif
           deallocate(vec)
         else
           write(*, *) "error: reading ",aname," from hdf5"
@@ -6590,6 +6632,7 @@
 !       leave the input unchanged if it doesn't
 !     If the dataset is smaller than available space, ensure that it is
 !       read into the subdominant square
+!     If it is larger, only read in the subdominant square
 !-----------------------------------------------------------------------
       subroutine read_rl_1d_sq(fid,aname,array,h5in,errval)
       integer(HID_T), intent(in) :: fid
@@ -6601,7 +6644,7 @@
       integer(HSIZE_T) :: dims1,dims
       integer(HSIZE_T), dimension(1) :: fdims1,sqdims1
       integer(HSIZE_T), dimension(2) :: fdims,sqdims
-      real(r8), allocatable, dimension(:,:) :: flat,arrsq
+      real(r8), allocatable, dimension(:,:) :: mat,arrsq
       real(r8), allocatable, dimension(:)  :: vec
 !-----------------------------------------------------------------------
 !     Check that the object exists.
@@ -6617,27 +6660,40 @@
       if (ndims.eq.2) then
         call read_dims(fid,aname,fdims,h5in,errval)
         sqdims=int(sqrt(real(fdims)))
-        if ((fdims(1).eq.fdims(2)).and.(fdims(1).le.dims)) then
-          call read_rl_2d(fid,aname,arrsq(1:fdims(1),1:fdims(2)),h5in,errval)
+        if (fdims(1).eq.fdims(2)) then
+          if (fdims(1).le.dims) then
+            call read_rl_2d(fid,aname,arrsq(1:fdims(1),1:fdims(2)),h5in,errval)
+            array=reshape(arrsq,(/dims1/))
+          else
+            allocate(mat(fdims(1),fdims(2)))
+            call read_rl_2d(fid,aname,mat,h5in,errval)
+            array=reshape(mat(1:dims,1:dims),(/dims1/))
+            deallocate(mat)
+          endif
+        elseif ((fdims(1).eq.1).and.(fdims(2).eq.sqdims(2)**2)) then
+          allocate(mat(1,fdims(2)))
+          call read_rl_2d(fid,aname,mat,h5in,errval)
+          if (sqdims(2).le.dims) then
+            arrsq(1:sqdims(2),1:sqdims(2))=reshape(mat,(/sqdims(2),sqdims(2)/))
+          else
+            arrsq=reshape(mat(1,1:dims1),(/dims,dims/))
+          endif
           array=reshape(arrsq,(/dims1/))
-        elseif ((fdims(1).eq.1).and.(fdims(2).eq.sqdims(2)**2) &
-                .and.(sqdims(2).le.dims)) then
-          allocate(flat(1,fdims(2)))
-          call read_rl_2d(fid,aname,flat,h5in,errval)
-          arrsq(1:sqdims(2),1:sqdims(2))=reshape(flat,(/sqdims(2),sqdims(2)/))
+          deallocate(mat)
+        elseif ((fdims(2).eq.1).and.(fdims(1).eq.sqdims(1)**2)) then
+          allocate(mat(fdims(1),1))
+          call read_rl_2d(fid,aname,mat,h5in,errval)
+          if (sqdims(1).le.dims) then
+            arrsq(1:sqdims(1),1:sqdims(1))=reshape(mat,(/sqdims(1),sqdims(1)/))
+          else
+            arrsq=reshape(mat(1:dims1,1),(/dims,dims/))
+          endif
           array=reshape(arrsq,(/dims1/))
-          deallocate(flat)
-        elseif ((fdims(2).eq.1).and.(fdims(1).eq.sqdims(1)**2) &
-                .and.(sqdims(1).le.dims)) then
-          allocate(flat(fdims(1),1))
-          call read_rl_2d(fid,aname,flat,h5in,errval)
-          arrsq(1:sqdims(1),1:sqdims(1))=reshape(flat,(/sqdims(1),sqdims(1)/))
-          array=reshape(arrsq,(/dims1/))
-          deallocate(flat)
+          deallocate(mat)
         else
           write(*, *) "error: reading ",aname," from hdf5"
           write(*, *) "fdims (", fdims(1), ",", fdims(2), ")"
-          write(*, *) "cannot be fit into square subset of"
+          write(*, *) "cannot be made congruent to square"
           write(*, *) "dims (", dims, ",", dims, ")"
           write(*, *) "fdims = dims in the file (use h5ls)"
           write(*, *) "dims  = dims specified for array to read"
@@ -6647,10 +6703,18 @@
       elseif (ndims.eq.1) then
         call read_dims(fid,aname,fdims1,h5in,errval)
         sqdims1=int(sqrt(real(fdims1)))
-        if ((fdims1(1).eq.sqdims1(1)**2).and.(sqdims1(1).le.dims)) then
+        if ((fdims1(1).eq.sqdims1(1)**2)) then
           allocate(vec(fdims1(1)))
           call read_rl_1d(fid,aname,vec,h5in,errval)
-          arrsq(1:sqdims1(1),1:sqdims1(1))=reshape(vec,(/sqdims1(1),sqdims1(1)/))
+          if (sqdims1(1).le.dims) then
+            arrsq(1:sqdims1(1),1:sqdims1(1))=reshape(vec,(/sqdims1(1),sqdims1(1)/))
+          else
+            allocate(mat(sqdims1(1),sqdims1(1)))
+            mat=reshape(vec,(/sqdims1(1),sqdims1(1)/))
+            arrsq=mat(1:dims,1:dims)
+            arrsq=reshape(vec(1:dims1),(/dims,dims/))
+            deallocate(mat)
+          endif
           array=reshape(arrsq,(/dims1/))
           deallocate(vec)
         else
