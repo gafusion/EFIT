@@ -262,6 +262,7 @@
 !**********************************************************************
       subroutine fitpp(y,ny,alpa,nalpa)
       use set_kinds
+      use var_nio
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       parameter (malpa=30)
       dimension x(ny),y(ny),xpsii(nalpa)
@@ -270,16 +271,17 @@
       y0=y(1)
       if(abs(y0).le.1.e-5) y0=y(ny)
       do i=1,ny
-         x(i)=real(i-1,dp)/real(ny-1,dp)
-         y(i)=y(i)/y0
+        x(i)=real(i-1,dp)/real(ny-1,dp)
+        y(i)=y(i)/y0
       enddo
 !--------------------------------------------------------------
 !--  fitting                                                 --
 !--------------------------------------------------------------
+      arsp=0.0
       if (nalpa.gt.0) then
         do i=1,ny
-           call setpp(x(i),arsp(i,1:nalpa))
-           alpa(i)=y(i)
+          call setpp(x(i),arsp(i,1:nalpa))
+          alpa(i)=y(i)
         enddo
         nfit=ny
 !       write (6,*) nfit,nalpa,(x(i),i=1,nalpa)
@@ -337,6 +339,7 @@
 !**********************************************************************
       subroutine fitfp(y,ny,alpa,nalpa)
       use set_kinds
+      use var_nio
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       parameter (malpa=30)
       dimension x(ny),y(ny),xpsii(nalpa)
@@ -345,16 +348,17 @@
       y0=y(1)
       if(abs(y0).le.1.e-5) y0=y(ny)
       do i=1,ny
-         x(i)=real(i-1,dp)/real(ny-1,dp)
-         y(i)=y(i)/y0
+        x(i)=real(i-1,dp)/real(ny-1,dp)
+        y(i)=y(i)/y0
       enddo
 !--------------------------------------------------------------
 !--  fitting                                                 --
 !--------------------------------------------------------------
+      arsp=0.0
       if (nalpa.gt.0) then
         do i=1,ny
-           call setfp(x(i),arsp(i,1:nalpa))
-           alpa(i)=y(i)
+          call setfp(x(i),arsp(i,1:nalpa))
+          alpa(i)=y(i)
         enddo
         nfit=ny
 !       write (6,*) nfit,nalpa,(x(i),i=1,nalpa)

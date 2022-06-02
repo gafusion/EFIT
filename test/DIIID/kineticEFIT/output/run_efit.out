@@ -35,7 +35,7 @@ Code compiled with PGI 18.7.0
  r=  0 t=  2300 it= 10 chi2=1.35E+02 zm=-3.84E-02 err=3.050E-03 dz=-3.204E-04 delz= 4.991E-02 dj=2.278E-03 chigam= 1.89E+02
  r=  0 t=  2300 it= 11 chi2=1.39E+02 zm=-3.86E-02 err=2.297E-03 dz=-1.650E-04 delz= 1.246E-02 dj=5.692E-04 chigam= 1.90E+02
  r=  0 t=  2300 it= 12 chi2=1.41E+02 zm=-3.87E-02 err=1.778E-03 dz=-1.292E-04 delz= 4.713E-03 dj=2.153E-04 chigam= 1.91E+02
- r=  0 t=  2300 it= 13 chi2=1.43E+02 zm=-3.88E-02 err=1.462E-03 dz=-1.250E-04 delz=-6.245E-04 dj=2.842E-05 chigam= 1.91E+02
+ r=  0 t=  2300 it= 13 chi2=1.43E+02 zm=-3.88E-02 err=1.462E-03 dz=-1.250E-04 delz=-6.245E-04 dj=2.843E-05 chigam= 1.91E+02
  r=  0 t=  2300 it= 14 chi2=1.45E+02 zm=-3.90E-02 err=1.233E-03 dz=-1.543E-04 delz= 4.498E-03 dj=2.046E-04 chigam= 1.92E+02
  r=  0 t=  2300 it= 15 chi2=1.47E+02 zm=-3.91E-02 err=1.023E-03 dz=-1.568E-04 delz= 3.664E-03 dj=1.665E-04 chigam= 1.92E+02
  r=  0 t=  2300 it= 16 chi2=1.48E+02 zm=-3.92E-02 err=7.634E-04 dz=-8.606E-05 delz=-1.362E-02 dj=6.190E-04 chigam= 1.93E+02
