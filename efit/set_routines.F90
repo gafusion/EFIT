@@ -490,8 +490,8 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*8, intent(inout) :: ypsi
-      real*8, intent(inout) :: xpsii(keecur)
+      real*8, intent(in) :: ypsi
+      real*8, intent(out) :: xpsii(keecur)
 
       do i=1,keecur
         xpsii(i) = bserel(keefnc,i,ypsi)
@@ -513,8 +513,8 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*8, intent(inout) :: ypsi
-      real*8, intent(inout) :: xpsii(kffcur)
+      real*8, intent(in) :: ypsi
+      real*8, intent(out) :: xpsii(kffcur)
 
       do i=1,kffcur
         xpsii(i) = bserpel(keefnc,i,ypsi)
@@ -641,8 +641,8 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*8, intent(inout) :: ypsi
-      real*8, intent(inout) :: xpsii(kffcur)
+      real*8, intent(in) :: ypsi
+      real*8, intent(out) :: xpsii(kffcur)
 
       do i=1,kffcur
         xpsii(i) = bsffin(kfffnc,i,ypsi)
@@ -664,8 +664,8 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*8, intent(inout) :: ypsi
-      real*8, intent(inout) :: xpsii(kffcur)
+      real*8, intent(in) :: ypsi
+      real*8, intent(out) :: xpsii(kffcur)
 
       do i=1,kffcur
         xpsii(i) = bsffel(kfffnc,i,ypsi)
@@ -687,8 +687,8 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*8, intent(inout) :: ypsi
-      real*8, intent(inout) :: xpsii(kffcur)
+      real*8, intent(in) :: ypsi
+      real*8, intent(out) :: xpsii(kffcur)
 
       do i=1,kffcur
         xpsii(i) = bsffpel(kfffnc,i,ypsi)
@@ -710,8 +710,8 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*8, intent(inout) :: ypsi
-      real*8, intent(inout) :: xpsii(kppcur)
+      real*8, intent(in) :: ypsi
+      real*8, intent(out) :: xpsii(kppcur)
 
       do i=1,kppcur
         xpsii(i) = bsppel(kppfnc,i,ypsi)
@@ -733,8 +733,8 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*8, intent(inout) :: ypsi
-      real*8, intent(inout) :: xpsii(kppcur)
+      real*8, intent(in) :: ypsi
+      real*8, intent(out) :: xpsii(kppcur)
 
       do i=1,kppcur
         xpsii(i) = bspppel(kppfnc,i,ypsi)
@@ -756,8 +756,8 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*8, intent(inout) :: ypsi
-      real*8, intent(inout) :: xpsii(kppcur)
+      real*8, intent(in) :: ypsi
+      real*8, intent(out) :: xpsii(kppcur)
 
       do i=1,kppcur
         xpsii(i) = bsppin(kppfnc,i,ypsi)
@@ -779,8 +779,8 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*8, intent(inout) :: ypsi
-      real*8, intent(inout) :: xpsii(kwwcur)
+      real*8, intent(in) :: ypsi
+      real*8, intent(out) :: xpsii(kwwcur)
 
       do i=1,kwwcur
         xpsii(i) = bswwin(kwwfnc,i,ypsi)
@@ -801,8 +801,8 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*8, intent(inout) :: ypsi
-      real*8, intent(inout) :: xpsii(kwwcur)
+      real*8, intent(in) :: ypsi
+      real*8, intent(out) :: xpsii(kwwcur)
 
       do i=1,kwwcur
         xpsii(i) = bswwel(kwwfnc,i,ypsi)
@@ -824,8 +824,8 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*8, intent(inout) :: ypsi
-      real*8, intent(inout) :: xpsii(kwwcur)
+      real*8, intent(in) :: ypsi
+      real*8, intent(out) :: xpsii(kwwcur)
 
       do i=1,kwwcur
         xpsii(i) = bswwpel(kwwfnc,i,ypsi)

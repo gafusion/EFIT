@@ -640,12 +640,7 @@
         read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext)
         read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext)
         read (neqdsk,11776) ((psirz_temp(i,j),i=1,nw_ext),j=1,nh_ext)
-        do i=1,nw
-          do j=1,nh
-            kk=(i-1)*nh+j
-            psirz_ext(kk)=psirz_temp(i,j)
-          enddo
-        enddo
+        psirz_ext=0.0
         read (neqdsk,11776,err=11777) (qpsi_ext(i),i=1,nw_ext)
         read (neqdsk,11774,err=11777) nbdry_ext,limitr_ext
         allocate(rbdry_ext(nbdry_ext),zbdry_ext(nbdry_ext), &
@@ -657,6 +652,17 @@
 11775   format (6a8,3i4)
 11776   format (5e16.9)
         if ((icinit.eq.-3).or.(icinit.eq.-4)) then
+          if ((nw.ne.nw_ext) .or. (nh.ne.nh_ext)) then
+            call errctrl_msg('data_input', &
+                             'restart file must have same dimensions')
+            stop
+          endif
+          do i=1,nw
+            do j=1,nh
+              kk=(i-1)*nh+j
+              psirz_ext(kk)=psirz_temp(i,j)
+            enddo
+          enddo
 !--       Read fcoil currents
 !--       Avoid overwriting other variables that will impact restart
 !--       Warning: this will have problems if the machine is changed,
