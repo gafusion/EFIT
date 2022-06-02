@@ -39,8 +39,14 @@
 !----------------------------------------------------------------------------
 !--   save flux from current iterations before update                      --
 !----------------------------------------------------------------------------
-      psiold(1:nwnh)=psi(1:nwnh)
-      psipold(1:nwnh)=psipla(1:nwnh)
+      !$omp target teams loop bind(parallel) collapse(2)
+      do i=1,nw
+        do j=1,nh
+          kk=(i-1)*nh+j
+          psiold(kk)=psi(kk)
+          psipold(kk)=psipla(kk)
+        enddo
+      enddo
 !
       buneman_green: if ((ibunmn.eq.1).or.(ibunmn.eq.3).or. &
          ((ibunmn.eq.2).and.(errorm.gt.errcut)).or. &
@@ -81,21 +87,37 @@
       if (abs(vcurfb(1)).gt.1.e-6_dp) then
         iinow=vcurfb(3)
         if (ntotal.lt.iinow) then
-          if(ntotal.eq.1) psikkk(1:nwnh)=0.0
+          if(ntotal.eq.1) then
+            !$omp target teams loop bind(parallel) collapse(2)
+            do i=1,nw
+              do j=1,nh
+                kk=(i-1)*nh+j
+                psikkk(kk)=0.0
+              enddo
+            enddo 
+          endif
         else
           icurfb=vcurfb(2)
-          if(mod(ntotal-iinow,icurfb).eq.0) psikkk(1:nwnh)=psiold(1:nwnh)
+          if(mod(ntotal-iinow,icurfb).eq.0) then
+            !$omp target teams loop bind(parallel) collapse(2)
+            do i=1,nw
+              do j=1,nh
+                kk=(i-1)*nh+j
+                psikkk(kk)=psiold(kk)
+              enddo
+            enddo
+          endif
         endif
       endif
 !-----------------------------------------------------------------------
 !--   boundary terms                                                  --
 !-----------------------------------------------------------------------
-      !$omp target teams loop thread_limit(32)
+      !$omp target teams loop
       do j=1,nh
         kk=(nw-1)*nh+j
         tempsum1=0.
         tempsum2=0.
-        !$omp loop reduction(+:tempsum1,tempsum2) collapse(2)
+        !$omp loop bind(parallel) reduction(+:tempsum1,tempsum2) collapse(2)
         do ii=1,nw
          do jj=1,nh
           kkkk=(ii-1)*nh+jj
@@ -109,14 +131,14 @@
         psi(kk)=tempsum2
       enddo
 
-      !$omp target teams loop thread_limit(32)
+      !$omp target teams loop
       do i=2,nw-1
         kk1=(i-1)*nh
         kknh=kk1+nh
         kk1=kk1+1
         tempsum1=0.
         tempsum2=0.
-        !$omp loop reduction(+:tempsum1,tempsum2) collapse(2)
+        !$omp loop bind(parallel) reduction(+:tempsum1,tempsum2) collapse(2)
         do ii=1,nw
          do jj=1,nh
           kkkk=(ii-1)*nh+jj
@@ -138,7 +160,7 @@
       allocate(work(SIZE(psi)))
       if (isolve.eq.0) then
 !       original buneman solver method
-        !$omp target teams loop
+        !$omp target teams loop collapse(2)
         do i=2,nw-1
           do j=2,nh-1
             kk=(i-1)*nh+j
@@ -158,7 +180,13 @@
         if (kerror.gt.0) return
       endif
       deallocate(work)
-      psi(1:nwnh)=-psi(1:nwnh)
+      !$omp target teams loop collapse(2)
+      do i=1,nw
+        do j=1,nh
+          kk=(i-1)*nh+j
+          psi(kk)=-psi(kk)
+        enddo
+      enddo
 !----------------------------------------------------------------------------
 !--   optional symmetrized solution                                        --
 !----------------------------------------------------------------------------
@@ -286,6 +314,7 @@
 !----------------------------------------------------------------------------
 !--   add flux from external coils                                         --
 !----------------------------------------------------------------------------
+      !$omp target teams loop bind(parallel)
       do kk=1,nwnh
         psipla(kk)=psi(kk)
         if(ivesel.gt.0) &
