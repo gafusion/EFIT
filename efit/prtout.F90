@@ -18,6 +18,7 @@
       dimension xrsp(npcurn)
       dimension patmpz(magpri),xmpz(magpri),ympz(magpri),ampz(magpri)
       character*30 sfname
+      character(len=1000) :: line
       integer*4, dimension(:), allocatable :: ishotall
       real*8, dimension(:), allocatable :: ch2all,timeall
 
@@ -207,6 +208,12 @@
         open(unit=80,status='old', &
              file=table_di2(1:ltbdi2)//'dprobe.dat')
         read (80,in3)
+        if (istat>0) then
+          backspace(nin)
+          read(nin,fmt='(A)') line
+          write(*,'(A)') 'Invalid line in namelist in3: '//trim(line)
+          stop
+        endif
         close(unit=80)
         if (xmp2(1).le.0.0) write(*,*) "bad code detected"
       endif

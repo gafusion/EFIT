@@ -165,7 +165,8 @@
         backspace(80)
         read(80,fmt='(A)') lline
         write(*,'(A)') &
-         'Invalid line in namelist: '//trim(lline)
+          'Invalid line in namelist in3: '//trim(lline)
+        stop
       endif
       if (rf(1).lt.0) &
         read (80,10000) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &

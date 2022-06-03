@@ -22,7 +22,6 @@
       integer*4 limmode,ilimshot,ioerr
       logical shape_ext
       character*100 filin
-      namelist/lim/xlim,ylim,limitr
       data lfile/36/
 !
       read_lim: if ((.not.shape_ext .and. limitr.le.0).or.(limmode.eq.0)) then
