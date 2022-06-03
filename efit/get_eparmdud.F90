@@ -169,12 +169,12 @@ subroutine read_dirs_shot(filename)
   nin=343
   open(unit=nin,status='old',file=filename)
   read (nin,in1,iostat=istat)
-
   if (istat>0) then
     backspace(nin)
     read(nin,fmt='(A)') line
     write(*,'(A)') &
-      'Invalid line in namelist: '//trim(line)
+      'Invalid line in namelist in1: '//trim(line)
+    stop
   endif
   close(nin)
 end subroutine read_dirs_shot

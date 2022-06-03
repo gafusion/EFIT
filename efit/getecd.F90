@@ -30,6 +30,7 @@
       character*150 textline     !EJS(2014)
       character*10,dimension(:),allocatable :: ndenv,ndenr,fcname,ecname
       character*10 namedum
+      character(len=1000) :: line
       real*8 dumbtc
       real*8,dimension(:),allocatable :: dumccc,dumcic
       logical read_btcshot
@@ -93,7 +94,13 @@
 !----------------------------------------------------------------------
       open(unit=60,file=table_di2(1:ltbdi2)//'dprobe.dat', &
            status='old')
-      read(60,in3)
+      read(60,in3,iostat=istat)
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist in3: '//trim(line)
+        stop
+      endif
       close(unit=60)
 !
 ! !JRF The if statement here tests a flag from the snap file that
@@ -103,7 +110,13 @@
       if (use_alternate_pointnames .ne. 0) then
 !
         open(unit=60,file=alternate_pointname_file,status='old')
-        read(60,in4)
+        read(60,in4,iostat=istat)
+        if (istat>0) then
+          backspace(nin)
+          read(nin,fmt='(A)') line
+          write(*,'(A)') 'Invalid line in namelist in4: '//trim(line)
+          stop
+        endif
         close(unit=60)
       endif
 !

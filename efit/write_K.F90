@@ -33,6 +33,7 @@
       real*8,dimension(:),allocatable :: tlibim,slibim,rrrlib
       character(256) table_save
       character*82 snap_ext
+      character(len=1000) :: line
       namelist/machinein/nsilds,nsilol,nfcoil,nrogow,nacoil,mfcoil, &
            necoil,nvesel,mpress,nesum,magpri67,magpri322,magprirdp, &
            magudom,maglds,mse315,mse45,mse15,mse1h,mse315_2,mse210, &
@@ -207,8 +208,20 @@
       tolbndpsi = 1.0e-12_dp
       ktear=0
 !
-      read (neqdsk,efitin)
-      read (neqdsk,efitink,iostat=ioerr)
+      read (neqdsk,efitin,iostat=istat)
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist efitin: '//trim(line)
+        stop
+      endif
+      read (neqdsk,efitink,iostat=istat)
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist efitink: '//trim(line)
+        stop
+      endif
       if(ioerr.ne.0) close(unit=neqdsk)
 #ifdef DEBUG_LEVEL2
       write (6,*) 'WRITE_K fwtbmsels= ',(fwtbmsels(i),i=1,nmsels)

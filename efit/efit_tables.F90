@@ -114,12 +114,12 @@
       rvs(1) = -1.
 
       read (mcontr,in3, iostat=istat)
-
       if (istat>0) then
         backspace(mcontr)
         read(mcontr,fmt='(A)') line
         write(*,'(A)') &
-          'Invalid line in namelist: '//trim(line)
+          'Invalid line in namelist in3: '//trim(line)
+        stop
       end if
  
       if(rf(1).lt.0)&
