@@ -39,7 +39,7 @@
                 devpsiin,rnavpsiin,devfcin,rnavfcin,devein,rnavecin
       character*82 snap_ext
       character(256) table_save
-!vasorg      character*82 snap_file
+      character(len=1000) :: line
       namelist/efitin/ishot,istore,timeb,dtime,mtime,scrape,nextra, &
            iexcal,itrace,xltype,ivesel,fwtsi,fwtmp2,fwtcur,iprobe, &
            itek,limid,qvfit,fwtbp,kffcur,kppcur,fwtqa,mxiter,  &
@@ -334,11 +334,21 @@
         endif
       end select
 
-      read (neqdsk,efitin,end=108)
- 108  continue
-      read (neqdsk,efitink,err=96,end=109)
- 109  continue
-  96  close(unit=neqdsk)
+      read (neqdsk,efitin,iostat=istat)
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist efitin: '//trim(line)
+        stop
+      endif
+      read (neqdsk,efitink,iostat=istat)
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist efitink: '//trim(line)
+        stop
+      endif
+      close(unit=neqdsk)
 !--warn that idebug and jdebug inputs are depreciated
       if(idebug.ne.0) write(*,*) &
       "idebug input variable is depreciated, set cmake variable instead"

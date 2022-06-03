@@ -560,12 +560,13 @@
 !---------------------------------------------------------------------- 
 !--   Read ascii input files                                         -- 
 !---------------------------------------------------------------------- 
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,in1,iostat=istat) 
-      if (istat>0) then 
-        backspace(nin) 
-        read(nin,fmt='(A)') line 
-        write(*,'(A)') 'Invalid line in namelist in1: '//trim(line) 
+      open(unit=nin,status='old',file=ifname(jtime))
+      read (nin,in1,iostat=istat)
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist in1: '//trim(line)
+        stop
       endif
 
       read (nin,ink,err=11111,end=101) 
@@ -581,40 +582,91 @@
       if (istat>0) then 
         backspace(nin) 
         read(nin,fmt='(A)') line 
-        !if (trim(line)/="/") write(*,'(A)') 'Invalid line in namelist in_msels: '//trim(line) 
+!        if (trim(line)/="/") then
+          write(*,'(A)') 'Invalid line in namelist in_msels: '//trim(line)
+          stop
+!        endif
       endif
       close(unit=nin) 
 
       open(unit=nin,status='old',file=ifname(jtime)) 
       read (nin,ina,iostat=istat)
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist ina: '//trim(line)
+        stop
+      endif
       close(unit=nin) 
 
       open(unit=nin,status='old',file=ifname(jtime)) 
       read (nin,inece,iostat=istat) 
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist inece: '//trim(line)
+        stop
+      endif
       close(unit=nin) 
 
       open(unit=nin,status='old',file=ifname(jtime)) 
       read (nin,edgep,iostat=istat) 
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist edgep: '//trim(line)
+        stop
+      endif
       close(unit=nin) 
 
       open(unit=nin,status='old',file=ifname(jtime)) 
       read (nin,iner,iostat=istat) 
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist iner: '//trim(line)
+        stop
+      endif
       close(unit=nin) 
 
       open(unit=nin,status='old',file=ifname(jtime)) 
       read (nin,insxr,iostat=istat) 
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist insxr: '//trim(line)
+        stop
+      endif
       close(unit=nin) 
 
       open(unit=nin,status='old',file=ifname(jtime))
       read (nin,inms,iostat=istat) 
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist inms: '//trim(line)
+        stop
+      endif
       close(unit=nin) 
 
       open(unit=nin,status='old',file=ifname(jtime)) 
       read (nin,inwant,iostat=istat) 
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist inwant: '//trim(line)
+        stop
+      endif
       close(unit=nin) 
 
       open(unit=nin,status='old',file=ifname(jtime)) 
       read (nin,invt,iostat=istat) 
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist invt: '//trim(line)
+        stop
+      endif
       close(unit=nin) 
 
 !--   Input FF', P' arrays
@@ -694,8 +746,6 @@
             backspace(nin)
             read(nin,fmt='(A)') line
             write(*,'(A)') 'Invalid line in namelist out1: '//trim(line)
-            call errctrl_msg('data_input', &
-                             'cannot read out1 from geqdsk_ext')
             stop
           endif
           allocate(fcoil_ext(nfcoil))
