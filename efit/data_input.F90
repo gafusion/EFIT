@@ -568,16 +568,29 @@
         write(*,'(A)') 'Invalid line in namelist in1: '//trim(line)
         stop
       endif
+      close(unit=nin)
 
-      read (nin,ink,err=11111,end=101) 
-101   continue 
-11111 close(unit=nin) 
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,ins,err=11113,end=103) 
-103   continue 
-11113 close(unit=nin) 
-      open(unit=nin,status='old',file=ifname(jtime)) 
+      open(unit=nin,status='old',file=ifname(jtime))
+      read (nin,ink,iostat=istat)
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist ink: '//trim(line)
+        stop
+      endif
+      close(unit=nin)
 
+      open(unit=nin,status='old',file=ifname(jtime))
+      read (nin,ins,iostat=istat)
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist ink: '//trim(line)
+        stop
+      endif
+      close(unit=nin)
+
+      open(unit=nin,status='old',file=ifname(jtime))
       read (nin,in_msels,iostat=istat) 
       if (istat>0) then 
         backspace(nin) 
@@ -587,7 +600,7 @@
           stop
 !        endif
       endif
-      close(unit=nin) 
+      close(unit=nin)
 
       open(unit=nin,status='old',file=ifname(jtime)) 
       read (nin,ina,iostat=istat)
@@ -659,22 +672,29 @@
       endif
       close(unit=nin) 
 
-      open(unit=nin,status='old',file=ifname(jtime)) 
-      read (nin,invt,iostat=istat) 
+      open(unit=nin,status='old',file=ifname(jtime))
+      read (nin,invt,iostat=istat)
       if (istat>0) then
         backspace(nin)
         read(nin,fmt='(A)') line
         write(*,'(A)') 'Invalid line in namelist invt: '//trim(line)
         stop
       endif
-      close(unit=nin) 
+      close(unit=nin)
 
 !--   Input FF', P' arrays
-      open(unit=nin,status='old',file=ifname(jtime))
 #ifdef DEBUG_LEVEL1
       write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext
 #endif
-      read(nin,profile_ext,err=11777,iostat=istat)
+      open(unit=nin,status='old',file=ifname(jtime))
+      read(nin,profile_ext,iostat=istat)
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist profile_ext: '//trim(line)
+        stop
+      endif
+      close(unit=nin)
 #ifdef DEBUG_LEVEL1
       write (nttyo,*) 'DATA_INPUT geqdsk_ext=',geqdsk_ext
 #endif
@@ -774,13 +794,18 @@
           sigpre=sigpre_save
         endif
       endif
-11777 close(nin)
+11777 continue
 
 !--   Read Li beam data
       open(unit=nin,status='old',file=ifname(jtime))
-      read (nin,inlibim,err=11237,end=11233)
-11233 continue
-11237 close(unit=nin)
+      read (nin,inlibim,iostat=istat)
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist inlibim: '//trim(line)
+        stop
+      endif
+      close(unit=nin)
       else file_type
 !---------------------------------------------------------------------- 
 !--     HDF5 file mode                                               -- 
