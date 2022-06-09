@@ -161,7 +161,6 @@
               snap_ext = snapext_in
             endif
           endif
-          snapextin=snap_ext
           if (kwake.eq.0) then
             if (use_opt_input .eqv. .false.) then
               write (nttyo,6040)
@@ -205,6 +204,7 @@
 #if defined(USEMPI)
           if (nproc > 1) &
             call MPI_BCAST(snap_ext,82,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+            snapextin=snap_ext
 #endif 
       elseif (kdata.eq.5 .or. kdata.eq.6) then
 #if defined(USEMPI)

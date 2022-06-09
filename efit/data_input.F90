@@ -709,6 +709,7 @@
         read (neqdsk,11773)
         read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext)
         read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext)
+        prbdry=pprime_ext(nw_ext) 
         read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext)
         read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext)
         read (neqdsk,11776) ((psirz_temp(i,j),i=1,nw_ext),j=1,nh_ext)
@@ -1801,7 +1802,6 @@
         if (plasma_ext > 0.0) then 
           sign_ext = -1.0 
         endif 
-        prbdry=pprime_ext(nw_ext) 
         write_boundary: if (nbdry.le.0) then 
           nbabs_ext=nbdry_ext/mbdry1+1 
           jb_ext=0 
