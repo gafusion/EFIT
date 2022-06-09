@@ -101,7 +101,6 @@
       mdoskip=0
       iout=1                 ! default - write fitout.dat
       appendsnap='KG'
-      snapextin='none'
       patmp2(1)=-1.
       tmu0=twopi*tmu
       tmu02=tmu0*2.0

@@ -28,6 +28,7 @@
       include 'mpif.h'
 #endif
       character*82 snap_ext     
+      snapextin='none'
 
       ! ONLY root process allowed to interface with terminal
       if (rank == 0) then
