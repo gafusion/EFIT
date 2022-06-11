@@ -146,6 +146,12 @@
         call read_dirs_shot(ifname(1))     !this assumes machine is always the same
       case (4)
         call read_dirs_shot('efit_time.dat')
+      case (5)
+        if (snapextin.ne.'none') then ! could come from efit.input
+          call read_dirs_shot('efit_snap.dat_'//adjustl(snapextin))     !this assumes machine is always the same
+        else
+          call read_dirs_shot('efit_snap.dat')
+        endif
       case (7)
         call read_dirs_shot('efit_snap.dat_'//adjustl(snapextin))     !this assumes machine is always the same
       case default

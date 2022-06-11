@@ -153,13 +153,21 @@
           stop
         endif
       endif
-      open(unit=neqdsk,status='old',file='efit_snap.dat',iostat=ioerr)
+      if (snapextin.ne.'none') then ! could come from efit.input
+        snap_ext = adjustl(snapextin)
+        snap_file = 'efit_snap.dat_'//snap_ext
+        open(unit=neqdsk,status='old', &
+             file=snap_file,iostat=ioerr)
+      else
+        snap_file='efit_snap.dat'
+      endif
+      open(unit=neqdsk,status='old',file=snap_file,iostat=ioerr)
       if (ioerr.eq.0) then
-        snapfile='efit_snap.dat'
+        snapfile=snap_file
       else
         open(unit=neqdsk,status='old', &
-           file= input_dir(1:lindir)//'efit_snap.dat')
-        snapfile=input_dir(1:lindir)//'efit_snap.dat'
+           file= input_dir(1:lindir)//snapfile)
+        snapfile=input_dir(1:lindir)//snapfile
       endif
       fwtfc(1:nfcoil)=0.
       fwtec(1:nesum)=0.

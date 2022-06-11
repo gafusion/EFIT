@@ -193,6 +193,8 @@
               timeb = starttime_in
               dtime = deltatime_in
               ktime = steps_in
+              snap_ext = snapext_in
+              snapextin=snap_ext
             endif
           endif
 
