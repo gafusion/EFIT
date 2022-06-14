@@ -39,7 +39,7 @@
 !----------------------------------------------------------------------------
 !--   save flux from current iterations before update                      --
 !----------------------------------------------------------------------------
-      !$omp target teams loop bind(parallel) collapse(2)
+      !$omp target teams distribute parallel do collapse(2)
       do i=1,nw
         do j=1,nh
           kk=(i-1)*nh+j
@@ -88,7 +88,7 @@
         iinow=vcurfb(3)
         if (ntotal.lt.iinow) then
           if(ntotal.eq.1) then
-            !$omp target teams loop bind(parallel) collapse(2)
+            !$omp target teams distribute parallel do collapse(2)
             do i=1,nw
               do j=1,nh
                 kk=(i-1)*nh+j
@@ -99,7 +99,7 @@
         else
           icurfb=vcurfb(2)
           if(mod(ntotal-iinow,icurfb).eq.0) then
-            !$omp target teams loop bind(parallel) collapse(2)
+            !$omp target teams distribute parallel do collapse(2)
             do i=1,nw
               do j=1,nh
                 kk=(i-1)*nh+j
@@ -160,7 +160,7 @@
       allocate(work(SIZE(psi)))
       if (isolve.eq.0) then
 !       original buneman solver method
-        !$omp target teams loop collapse(2)
+        !$omp target teams distribute parallel do collapse(2)
         do i=2,nw-1
           do j=2,nh-1
             kk=(i-1)*nh+j
@@ -180,7 +180,7 @@
         if (kerror.gt.0) return
       endif
       deallocate(work)
-      !$omp target teams loop collapse(2)
+      !$omp target teams distribute parallel do collapse(2)
       do i=1,nw
         do j=1,nh
           kk=(i-1)*nh+j
@@ -314,7 +314,7 @@
 !----------------------------------------------------------------------------
 !--   add flux from external coils                                         --
 !----------------------------------------------------------------------------
-      !$omp target teams loop bind(parallel)
+      !$omp target teams distribute parallel do
       do kk=1,nwnh
         psipla(kk)=psi(kk)
         if(ivesel.gt.0) &
