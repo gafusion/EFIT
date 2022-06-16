@@ -27,16 +27,7 @@
       logical lopened
       character filenm*15,ishotime*12,news*72, &
                 eqdsk*20,comfile*15,prefix1*1,header*42,fit_type*3
-      real*8,dimension(:),allocatable :: coils,expmp2, &
-                denr,denv,tgamma,sgamma,rrrgam, &
-                zzzgam,aa1gam,aa2gam,aa3gam,aa4gam,aa5gam, &
-                aa6gam,aa7gam, tgammauncor
-      real*8,dimension(:),allocatable :: bmsels,sbmsels,fwtbmsels, &
-                rrmsels,zzmsels,l1msels,l2msels, &
-                l4msels,emsels,semsels,fwtemsels
-      real*8,dimension(:),allocatable :: tlibim,slibim,rrrlib
-      real*8,dimension(:),allocatable ::devxmpin,rnavxmpin, &
-                devpsiin,rnavpsiin,devfcin,rnavfcin,devein,rnavecin
+      real*8,dimension(:),allocatable :: fwtbmsels,fwtemsels
       character*82 snap_ext
       character(256) table_save
       character(len=1000) :: line
@@ -79,22 +70,7 @@
       logical exists
       integer*4, intent(inout) :: kerror
 
-      ALLOCATE(coils(nsilop),expmp2(magpri), &
-               denr(nco2r),denv(nco2v), &
-               tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark), &
-               zzzgam(nmtark),aa1gam(nmtark),aa2gam(nmtark), &
-               aa3gam(nmtark),aa4gam(nmtark),aa5gam(nmtark), &
-               aa6gam(nmtark),aa7gam(nmtark), &
-               tgammauncor(nmtark))
-      ALLOCATE(bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
-               rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels), &
-               l2msels(nmsels),l4msels(nmsels),emsels(nmsels), &
-               semsels(nmsels),fwtemsels(nmsels))
-      ALLOCATE(tlibim(libim),slibim(libim),rrrlib(libim))
-      ALLOCATE(devxmpin(magpri),rnavxmpin(magpri), &
-               devpsiin(nsilop),rnavpsiin(nsilop), &
-               devfcin(nfcoil),rnavfcin(nfcoil), &
-               devein(nesum),rnavecin(nesum))
+      ALLOCATE(fwtbmsels(nmsels),fwtemsels(nmsels))
       fwtbmsels=0.0
 
       kerror=0
