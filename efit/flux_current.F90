@@ -112,13 +112,13 @@
 !-----------------------------------------------------------------------
 !--   boundary terms                                                  --
 !-----------------------------------------------------------------------
-      !$omp target teams loop
+      !$omp target teams distribute reduction(+:tempsum1,tempsum2)
       do j=1,nh
         kk=(nw-1)*nh+j
         tempsum1=0.
         tempsum2=0.
 #ifdef USE_OPENMP_NV
-        !$omp loop bind(parallel) reduction(+:tempsum1,tempsum2) collapse(2)
+        !$omp parallel do reduction(+:tempsum1,tempsum2) collapse(2)
 #elif defined (USE_OPENMP_AMD)
         !$omp loop bind(teams) reduction(+:tempsum1,tempsum2) collapse(2)
 #endif
@@ -135,7 +135,7 @@
         psi(kk)=tempsum2
       enddo
 
-      !$omp target teams loop
+      !$omp target teams distribute reduction(+:tempsum1,tempsum2)
       do i=2,nw-1
         kk1=(i-1)*nh
         kknh=kk1+nh
@@ -143,7 +143,7 @@
         tempsum1=0.
         tempsum2=0.
 #ifdef USE_OPENMP_NV
-        !$omp loop bind(parallel) reduction(+:tempsum1,tempsum2) collapse(2)
+        !$omp parallel do reduction(+:tempsum1,tempsum2) collapse(2)
 #elif defined (USE_OPENMP_AMD)
         !$omp loop bind(thread) reduction(+:tempsum1,tempsum2) collapse(2)
 #endif
