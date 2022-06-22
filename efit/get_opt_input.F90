@@ -137,12 +137,26 @@
             stop
           endif
           call open_group(rootgid,"equilibrium",eqid,h5err)
-          call test_group(eqid,"time_slice",file_stat,h5err)
+          call test_group(eqid,"code",file_stat,h5err)
           if (.not. file_stat) then
-            call errctrl_msg('get_opt_input','time_slice group not found')
+            call errctrl_msg('data_input','code group not found')
             stop
           endif
-          call get_nmembers(eqid,"time_slice",ktime,h5err)
+          call open_group(eqid,"code",cid,h5err)
+          call test_group(cid,"parameters",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','parameters group not found')
+            stop
+          endif
+          call open_group(cid,"parameters",pid,h5err)
+          call test_group(pid,"time_slice",file_stat,h5err)
+          if (.not. file_stat) then
+            call errctrl_msg('data_input','time_slice group not found')
+            stop
+          endif
+          call get_nmembers(pid,"time_slice",ktime,h5err)
+          call close_group("parameters",pid,h5err)
+          call close_group("code",cid,h5err)
           call close_group("equilibrium",eqid,h5err)
           call close_h5file(fileid,rootgid,h5err)
 #else
