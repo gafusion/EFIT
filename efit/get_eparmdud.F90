@@ -7,6 +7,7 @@
 subroutine get_eparmdud_defaults()
   use eparm
   use var_cecoil, only: iecurr
+  device='DIII-D'
   nsilds=3
   nsilol=41
   nfcoil=18

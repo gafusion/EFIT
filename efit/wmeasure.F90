@@ -204,6 +204,7 @@
 !
       title = 'EFIT measurement file Mssssss.ttttt/Mssssss.nc'
       call NCAPTC(nceq,NC_GLOBAL,'title',NCCHAR,46,title,ierr)
+      call NCAPTC(nceq,NC_GLOBAL,'device',NCCHAR,10,device,ierr)
 ! 
 ! --- define unlimited time dimension and scalar and array dimensions
 !

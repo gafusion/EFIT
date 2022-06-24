@@ -1,4 +1,5 @@
  &MACHINEIN
+ DEVICE = "ITER      ",
  NSILDS =            1,
  NSILOL =          109,
  NFCOIL =           12,

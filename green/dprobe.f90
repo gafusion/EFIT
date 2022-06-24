@@ -53,7 +53,7 @@
      
       USE nio
       USE exparm, only : magpri67,magpri322,magprirdp,magudom,maglds,& 
-                 nnece,nnecein,neceo,mse315,mse45,mse15, &
+                 device,nnece,nnecein,neceo,mse315,mse45,mse15, &
                  mse1h,mse315_2,mse210,mpress,libim,nmsels, &
                  nnnte,ngam_vars,ngam_u,ngam_w,nlimit,nlimbd,nangle, &
                  ntangle,nfbcoil,mccoil,micoil,ndata,nwwcur, &
@@ -63,13 +63,15 @@
 
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
       
-      NAMELIST/machinein/nsilds,nsilol,nfcoil,nrogow,nacoil,mfcoil,necoil,nvesel, &
-          mpress,nesum,magpri67,magpri322,magprirdp,magudom,maglds,mse315,mse45, &
-          mse15,mse1h,mse315_2,mse210,libim,nmsels,nnece,nnecein,neceo,nnnte, &
-          ngam_vars,ngam_u,ngam_w,nlimit,nlimbd,nangle,ntangle,nfbcoil,mccoil, &
-          micoil,ndata,nwwcur,nffcur,nppcur,nercur,ntime,ndim,kxiter,mqwant, &
-          mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef,modep,modew,kubics, &
-          icycred_loopmax,nfourier
+      NAMELIST/machinein/device,nsilds,nsilol,nfcoil,nrogow, &
+          nacoil,mfcoil,necoil,nvesel,mpress,nesum, &
+          magpri67,magpri322,magprirdp,magudom,maglds, &
+          mse315,mse45,mse15,mse1h,mse315_2,mse210,libim, &
+          nmsels,nnece,nnecein,neceo,nnnte,ngam_vars,ngam_u,ngam_w, &
+          nlimit,nlimbd,nangle,ntangle,nfbcoil,mccoil,micoil,ndata, &
+          nwwcur,nffcur,nppcur,nercur,ntime,ndim,kxiter, &
+          mqwant,mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r, &
+          modef,modep,modew,kubics,icycred_loopmax,nfourier
            
 
       nfcoil = nfsum_efund
@@ -81,7 +83,8 @@
       nesum = nesum_efund
 
           
-      OPEN(unit=nout,status='unknown',file='dprobe.dat')
+      OPEN(unit=nout,status='unknown',file='dprobe.dat', &
+           delim='quote')
 
       WRITE (nout,machinein)
       CLOSE (nout)

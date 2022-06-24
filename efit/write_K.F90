@@ -34,14 +34,6 @@
       character(256) table_save
       character*82 snap_ext
       character(len=1000) :: line
-      namelist/machinein/nsilds,nsilol,nfcoil,nrogow,nacoil,mfcoil, &
-           necoil,nvesel,mpress,nesum,magpri67,magpri322,magprirdp, &
-           magudom,maglds,mse315,mse45,mse15,mse1h,mse315_2,mse210, &
-           libim,nmsels,nnece,nnecein,neceo,nnnte, &
-           ngam_vars,ngam_u,ngam_w,nlimit,nlimbd,nangle,ntangle, &
-           nfbcoil,mccoil,micoil,ndata,nwwcur,nffcur,nppcur,nercur, &
-           ntime,ndim,kxiter,mqwant,mbdry,mbdry1,nxtram,nxtlim, &
-           nco2v,nco2r,modef,modep,modew,kubics,icycred_loopmax,nfourier
       namelist/in1/ishot,itime,itimeu,qvfit,plasma,expmp2,coils,btor, &
            fwtsi,fwtcur,limitr,fwtmp2,kffcur,kppcur,fwtqa,ierchk, &
            fwtbp,serror,nextra,scrape,itrace,itek,xltype,rcentr,bitip, &
@@ -572,7 +564,6 @@
         open(unit=neqdsk,file=eqdsk,status='new', &
              delim='quote')
 !             delim='APOSTROPHE')
-        write (neqdsk,machinein)
         write (neqdsk,in1)
         write (neqdsk,inwant)
         if(isetfb.ne.0) write (neqdsk,ink)
@@ -679,14 +670,6 @@
                 aa6gam,aa7gam,tgammauncor
       real*8,dimension(:),allocatable :: tlibim,slibim,rrrlib
       character*82 snap_ext
-      namelist/machinein/nsilds,nsilol,nfcoil,nrogow,nacoil,mfcoil, &
-           necoil,nvesel,mpress,nesum,magpri67,magpri322,magprirdp, &
-           magudom,maglds,mse315,mse45,mse15,mse1h,mse315_2,mse210, &
-           libim,nmsels,nnece,nnecein,neceo,nnnte, &
-           ngam_vars,ngam_u,ngam_w,nlimit,nlimbd,nangle,ntangle, &
-           nfbcoil,mccoil,micoil,ndata,nwwcur,nffcur,nppcur,nercur, &
-           ntime,ndim,kxiter,mqwant,mbdry,mbdry1,nxtram,nxtlim, &
-           nco2v,nco2r,modef,modep,modew,kubics,icycred_loopmax,nfourier
       namelist/in1/ishot,itime,itimeu,qvfit,plasma,expmp2,coils,btor, &
            fwtsi,fwtcur,limitr,fwtmp2,kffcur,kppcur,fwtqa,ierchk, &
            fwtbp,serror,nextra,scrape,itrace,itek,xltype,rcentr,bitip, &
@@ -863,7 +846,6 @@
       open(unit=neqdsk,file=eqdsk,status='new', &
            delim='quote')
 !           delim='APOSTROPHE')
-      write (neqdsk,machinein)
       write (neqdsk,in1)
       write (neqdsk,inwant)
       if(isetfb.ne.0) write (neqdsk,ink)
