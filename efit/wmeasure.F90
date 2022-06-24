@@ -681,7 +681,6 @@
 !-----------------------------------------------------------------------
 !--   write values of variables
 !-----------------------------------------------------------------------
-      call NCVP1C(nceq,id_device,1,device,ierr)
       call NCVPT1(nceq,id_shot,1,ishot,ierr)
       endif ijump0
       m = 1
@@ -697,6 +696,8 @@
 ! --- itype = 1, called by main routine within time loop,
 ! --- writes variables that are time-dependent but do not have time dimension
 !
+      cnn(1) = 10
+      call NCVPTC (nceq, id_device, c11, cnn, device, 10, ierr)
       cnn(1) = nstark
       zwork(1:nstark) = real(fwtgam(1:nstark))
       call NCVPT(nceq,id_fwtgam,c11,cnn,zwork,ierr)
