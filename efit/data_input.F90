@@ -1479,8 +1479,6 @@
           call close_group("inlibim",nid,h5err)
         endif
 
-        !H5: not used efitin and auxquant?
-
         call close_group(trim(tindex),sid,h5err)
         call close_group("time_slice",tid,h5err)
         call close_group("parameters",pid,h5err)
@@ -1536,7 +1534,7 @@
           simag_ext=simag_ext/twopi
           call read_h5_ex(nid,"psi_boundary",psibry_ext,h5in,h5err)
           psibry_ext=psibry_ext/twopi
-          call read_h5_ex(nid,"ip",plasma_ext,h5in,h5err) ! H5: could be missing twopi...
+          call read_h5_ex(nid,"ip",plasma_ext,h5in,h5err) ! TODO: could be missing twopi...
           call close_group("global_quantities",nid,h5err)
 
           ! read in boundary points

@@ -204,12 +204,12 @@
 !
       title = 'EFIT measurement file Mssssss.ttttt/Mssssss.nc'
       call NCAPTC(nceq,NC_GLOBAL,'title',NCCHAR,46,title,ierr)
-      call NCAPTC(nceq,NC_GLOBAL,'device',NCCHAR,10,device,ierr)
 ! 
 ! --- define unlimited time dimension and scalar and array dimensions
 !
       idim_time = NCDDEF(nceq,'dim_time',NCUNLIM,ierr)
       idim_1 = NCDDEF(nceq,'dim_scalar',1,ierr)
+      idim_device = NCDDEF(nceq,'dim_device',10,ierr)
       idim_nstark = NCDDEF(nceq,'dim_nstark',nstark,ierr)
       idim_nsilop = NCDDEF(nceq,'dim_nsilop',nsilop,ierr)
       idim_magpri = NCDDEF(nceq,'dim_magpri',magpri,ierr)
@@ -230,6 +230,9 @@
 !-----------------------------------------------------------------------
 ! --- equilibrium specification
 !
+      id_device = NCVDEF(nceq,'device',NCCHAR,1,idim_device,ierr)
+      call NCAPTC(nceq,id_device,'long_name',NCCHAR,11, &
+                  'device name',ierr)
       id_shot = NCVDEF(nceq,'shot',NCLONG,1,idim_1,ierr)
       call NCAPTC(nceq,id_shot,'long_name',NCCHAR,11, &
                   'shot number',ierr)
@@ -678,6 +681,7 @@
 !-----------------------------------------------------------------------
 !--   write values of variables
 !-----------------------------------------------------------------------
+      call NCVP1C(nceq,id_device,1,device,ierr)
       call NCVPT1(nceq,id_shot,1,ishot,ierr)
       endif ijump0
       m = 1
