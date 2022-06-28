@@ -21,7 +21,7 @@ cori (intallation is pending ERCAP setup) (you will need to be added to the proj
 
     module swap PrgEnv-${PE_ENV,,} PrgEnv-{gnu,intel,cray,nvidia,aocc}
     export link_efit=/global/common/software/efitai/efit_support_files/{device}/
-    /global/common/software/efitai/{cori,perlmutter}/build_{gnu,intel,cray,nvidia,amd}/efit/efit {grid_size}
+    /global/common/software/efitai/{cori,perlmutter}/{gnu,intel,cray,nvidia,amd}{_ser}/efit/efit {grid_size}
 
 portal::
 
