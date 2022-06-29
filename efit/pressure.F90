@@ -173,7 +173,7 @@
       kdofit=1
       
 !--   construct rotational pressure from kinetic data has not been setup
-      if (kprfit-2.eq.2) return
+      if (kprfit.eq.4) return
       if (nmass*nomegat.le.0) then
 !------------------------------------------------------------------------
 !--     specify the rotational pressure profile directly               --

@@ -1,4 +1,5 @@
  &MACHINEIN
+ DEVICE = "NSTX      ",
  NSILDS =            1,
  NSILOL =           65,
  NFCOIL =           54,

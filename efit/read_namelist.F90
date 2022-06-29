@@ -74,7 +74,7 @@
         ngam_vars,ngam_u,ngam_w,nlimit,nlimbd,nangle,ntangle,nfbcoil,mccoil, &
         micoil,ndata,nwwcur,nffcur,nppcur,nercur,ntime,ndim,kxiter,mqwant, &
         mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef,modep,modew,kubics, &
-        icycred_loopmax,nfourier
+        icycred_loopmax,nfourier,device
 
       open(unit=nin,status='old',file=table_di2(1:ltbdi2)//'dprobe.dat')
       read (nin,machinein,iostat=istat)

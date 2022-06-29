@@ -35,6 +35,7 @@
         public
 
         ! Experiment dependant parameters
+        character(10) :: device !< machine name
         integer*4 :: nsilds !< nsilop number of flux loops at ?
         integer*4 :: nsilol !< nsilop number of flux loops at ?
         integer*4 :: nsilop !< nsilop number of flux loops
