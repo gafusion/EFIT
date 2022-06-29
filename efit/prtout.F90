@@ -207,7 +207,7 @@
       if (patmp2(1).le.0.0) then
         open(unit=80,status='old', &
              file=table_di2(1:ltbdi2)//'dprobe.dat')
-        read (80,in3)
+        read (80,in3,iostat=istat)
         if (istat>0) then
           backspace(nin)
           read(nin,fmt='(A)') line

@@ -1966,7 +1966,7 @@
                   yxtra(i,ixl),limfag)
         if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) exit
       enddo
-      if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) then
+      if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp.and.i.gt.1) then
         rinvs=xxtra(i-1,ixl)
         zinvs=yxtra(i-1,ixl)
         routvs=xxtra(i,ixl)

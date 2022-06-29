@@ -209,6 +209,7 @@
 !
       idim_time = NCDDEF(nceq,'dim_time',NCUNLIM,ierr)
       idim_1 = NCDDEF(nceq,'dim_scalar',1,ierr)
+      idim_device = NCDDEF(nceq,'dim_device',10,ierr)
       idim_nstark = NCDDEF(nceq,'dim_nstark',nstark,ierr)
       idim_nsilop = NCDDEF(nceq,'dim_nsilop',nsilop,ierr)
       idim_magpri = NCDDEF(nceq,'dim_magpri',magpri,ierr)
@@ -229,6 +230,9 @@
 !-----------------------------------------------------------------------
 ! --- equilibrium specification
 !
+      id_device = NCVDEF(nceq,'device',NCCHAR,1,idim_device,ierr)
+      call NCAPTC(nceq,id_device,'long_name',NCCHAR,11, &
+                  'device name',ierr)
       id_shot = NCVDEF(nceq,'shot',NCLONG,1,idim_1,ierr)
       call NCAPTC(nceq,id_shot,'long_name',NCCHAR,11, &
                   'shot number',ierr)
@@ -692,6 +696,8 @@
 ! --- itype = 1, called by main routine within time loop,
 ! --- writes variables that are time-dependent but do not have time dimension
 !
+      cnn(1) = 10
+      call NCVPTC (nceq, id_device, c11, cnn, device, 10, ierr)
       cnn(1) = nstark
       zwork(1:nstark) = real(fwtgam(1:nstark))
       call NCVPT(nceq,id_fwtgam,c11,cnn,zwork,ierr)
