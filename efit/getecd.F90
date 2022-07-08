@@ -646,13 +646,6 @@
       endif
       diamag(1:np)=1.0e-03*diamag(1:np)
       sigdia(1:np)=1.0e-03*abs(sigdia(1:np))
-
-      ! some kind of write statement is required here in order to keep
-      ! optimized (-O2 and greater) builds from hanging for mysterious
-      ! reasons... this seems like the least obtrusive way
-      open(unit=40,file='errfil.out',status='unknown',position='append')
-      write(40,*) ""
-      close(unit=40)
 !------------------------------------------------------------------------
 !--   get beam power                                                   --
 !------------------------------------------------------------------------
@@ -1004,7 +997,7 @@
         npn = max0(npn,10)
         !
         bitvl=0.0
-        irfac = 0
+        ircfac = 0
         if (name .ne. 'NONE      ') then  !JRF
           call getdat_e &
             (nshot,name,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfac, &
