@@ -117,11 +117,7 @@
         kk=(nw-1)*nh+j
         tempsum1=0.
         tempsum2=0.
-#ifdef USE_OPENMP_NV
         !$omp parallel do reduction(+:tempsum1,tempsum2) collapse(2)
-#elif defined (USE_OPENMP_AMD)
-        !$omp loop bind(teams) reduction(+:tempsum1,tempsum2) collapse(2)
-#endif
         do ii=1,nw
          do jj=1,nh
           kkkk=(ii-1)*nh+jj
@@ -142,11 +138,7 @@
         kk1=kk1+1
         tempsum1=0.
         tempsum2=0.
-#ifdef USE_OPENMP_NV
         !$omp parallel do reduction(+:tempsum1,tempsum2) collapse(2)
-#elif defined (USE_OPENMP_AMD)
-        !$omp loop bind(thread) reduction(+:tempsum1,tempsum2) collapse(2)
-#endif
         do ii=1,nw
          do jj=1,nh
           kkkk=(ii-1)*nh+jj
