@@ -135,6 +135,7 @@
           j=j-1
           jjj=j+1
         end if
+        j=min(max(j,1),nh)
         kstrt=(i-1)*nh+j
         kk=kstrt
         kold=kk
@@ -148,6 +149,7 @@
         end if
 
         xt(1)=rad(1)
+        jjj=min(max(jjj,1),nh)
         yt(1)=y(jjj)
         ncontr=1
         xcontr(ncontr)=xt(1)
