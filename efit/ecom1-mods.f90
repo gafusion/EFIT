@@ -308,7 +308,7 @@
 !jal 2/23/04 add iplcout=1 print plasma and pf currents to gfile
       module var_input1
       use set_kinds
-      logical write_Kfile ,fitfcsum
+      logical write_Kfile,fitfcsum
       integer*4 icondn,itek,kdata,itrace,ierchk,iconvr,ixray,itell, &
                 kprfit,licalc,ibound,ibatch,idite,ilaser,lookfw, &
                 kdot,icutfp,keqdsk,kdofit,kbetapr,kplotpr,kpressb, &
@@ -316,33 +316,32 @@
                 kwripre,negcur,kframe,kskipvs,icntour,iavdpl, &
                 jwake,limvs,kbound,kgraph,istore,iout,kdopre, &
                 iishot,kktime,iplcout,ksigma,kwritime,kwake 
-      integer*4 iteks, mxiters, zelipss, n1coils
-      integer*4 itekt, mxitert, zeliptt, n1coilt
+      integer*4 iteks,mxiters,n1coils
+      integer*4 itekt,mxitert,n1coilt
+      real*8 zelipss,zeliptt
       integer*4 kgrid
-      real*8 cutip, dtdot, xpsimin,fcurbd,pcurbd,prbdry,sgprmin, &
+      real*8 cutip,dtdot,xpsimin,fcurbd,pcurbd,prbdry,sgprmin, &
              prespb,tipbry,tepbry,dipbry,depbry,pbimpb,sigppb,sigpreb, &
              sigtipb,sigtepb,sigdipb,sigdepb,fwtpd,fwtfd,cstabte,cstabne, &
-             dp1dxf, sgtimin, alphafp,xpsialp, vsdamp, &
+             dp1dxf,sgtimin,alphafp,xpsialp,vsdamp,loplim, &
              rminvs,rmaxvs,zminvs,zmaxvs,relbps,zbound,yvs2,saimin, &
-             fztor,fzpol,tcurrp,fpolvs, rbound, dnmin, sigprebi,pressbi, &
+             fztor,fzpol,tcurrp,fpolvs,rbound,sigprebi,pressbi, &
              alphamu,saicon,rsepex,timeb,dtime
       real*8,dimension(:),allocatable :: rzeroj
       real*8,dimension(:),allocatable :: fwtpre
       real*8,dimension(:),allocatable :: vforcep,vforcet
       real*8,dimension(:),allocatable :: fwtfcsum
-      character*82  snap_file 
+      character*82 snap_file 
       data kgrid/1/,kwripre/0/,kwritime/0/
       data licalc/1/
       data kdoqn/0/
       data icntour/0/,cstabne/0.0/,cstabte/0.0/, &
            limvs/1/,ncstpp/1/,ncstfp/1/,kzeroj/0/
-      data kbound/0/
-      data kdofit/0/
-      data kdopre/0/
+      data kbound/0/,kdofit/0/,kdopre/0/
+      data loplim/0.0/
       data alphafp/0./,sigppb/1000./
       data kframe/0/,rminvs/0/,rmaxvs/100./,zminvs/-100./,zmaxvs/100./
       data kskipvs/0/,vsdamp/0/,relbps/0.004_dp/,zbound/0.0/,rbound/0.0/
-      data dnmin/1.0/
       data saimin/60.0/,saicon/60.0/
       end module var_input1
 

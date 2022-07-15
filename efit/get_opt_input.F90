@@ -6,7 +6,7 @@
 !!
 !!    kdata:
 !!      1: mimics option 2 but reads input from an hdf5
-!!               file that has the OMAS-equilibrium format
+!!           file that has the OMAS-equilibrium format
 !!      2: produces g-files (and others) from k-files
 !!      3-7: query databases for diagnostic inputs
 !!        3,7: produces g-files (and others)

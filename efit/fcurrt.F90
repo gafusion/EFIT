@@ -3,11 +3,12 @@
 !>
 !!    fcurrt computes the currents in the f coils.
 !!
+!!
 !!    @param jtime : time index
 !!
-!!    @param iter : inner equilibrium loop iteration index
+!!    @param iter : current profile (outer) loop iteration index
 !!
-!!    @param itertt : current profile loop iteration index?
+!!    @param itertt : total iteration index (current+equilibirum loops)
 !!
 !!    @param kerror : error flag
 !!

@@ -265,8 +265,8 @@
        module var_pcsys
          integer*4 use_alternate_pointnames
          character*80 alternate_pointname_file
-         logical*4 do_spline_fit
-         data do_spline_fit/.true./
+         logical*4 do_spline_fit,use_consistent_data
+         data do_spline_fit/.true./,use_consistent_data/.true./
          data use_alternate_pointnames/0/
          data alternate_pointname_file/'/link/efit/pcsnames.dat'/
        end module var_pcsys
@@ -540,10 +540,12 @@
         logical :: fixpp = .false.
       end module profile_ext_mod
 
-! NOTE : keep track of times for which BCOIL and ECOIL data exist (see getecd.f90)
+! NOTE : keep track of times for which BCOIL and ECOIL data exist (see get_constraints.f90)
       module vtime_mod
         integer*4 :: nvtime = -1
         real*8,dimension(:), allocatable :: vtime
+        integer*4, parameter :: ntims=8192 ! sufficient for ms data from 8s shot, but needs to be increased for longer shots or higher temporal resolution (npefit in getdat.F90 needs to match)
+        integer*4, parameter :: npmax=262144 ! sufficient for ms data from 262s shot... needs to match npmax in getdat.F90
       end module vtime_mod
 
       subroutine set_mod_arrays()

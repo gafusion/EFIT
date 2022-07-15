@@ -110,7 +110,7 @@
       nxtrap=npoint
       mfila = 10
       
-      call read_efitin
+      call read_optin
       ! Create character versions of nw, nh for labelling
       call inp_file_ch(nw,nh,ch1,ch2)
 

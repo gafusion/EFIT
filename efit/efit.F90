@@ -24,16 +24,17 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
-      parameter (krord=4,kzord=4)
       character inp1*4,inp2*4
-      integer*4 :: nargs, iargc, finfo, kerror, terr
+      integer*4 :: k,krord,kzord,nargs,iargc,finfo,kerror,terr,ioerr, &
+                   nwrk,mfila,ktime,mtear,ks
 
-      integer*4 :: iend1, iend2
+      integer*4 :: iend1,iend2
       character*80 :: cmdline
+      parameter (krord=4,kzord=4)
 
       kerror = 0
       kwake = 0
@@ -47,6 +48,13 @@
       call MPI_COMM_SIZE(MPI_COMM_WORLD,nproc,ierr)
 ! Arrays can only be allocated after MPI has been initialized because dimension is # of processes
       allocate(dist_data(nproc),dist_data_displs(nproc),fwtgam_mpi(nstark,nproc))
+#ifdef DEBUG_PLTS
+      if (nproc.gt.1) then
+        call errctrl_msg('efit', &
+               'Surface files debugging/plotting is serial only')
+        stop
+      endif
+#endif
 #else
       rank  = 0
       nproc = 0
@@ -132,7 +140,7 @@
       nxtrap=npoint
       mfila=10
       
-      call read_efitin
+      call read_optin
       call inp_file_ch(nw,nh,ch1,ch2)
 
       call get_opt_input(ktime)

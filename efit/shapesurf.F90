@@ -70,7 +70,12 @@
       write (6,*) 'Enter SHAPE kerror = ', kerror
 #endif
       is_vacuum: if (ivacum.le.0) then
-      if (iges.le.1) then
+      if (iges.gt.1) then
+        silop_change=maxval(abs(silopt(iges,:)-silopt(iges-1,:)))
+      else
+        silop_change=0.0
+      endif
+      if (silop_change.ge.loplim) then
         xguess=(rgrid(1)+rgrid(nw))/2.
         yguess=(zgrid(1)+zgrid(nh))/2.
         xlims(1)=rgrid(2)+0.2_dp*(rgrid(2)-rgrid(1))
@@ -288,7 +293,7 @@
       seplim(iges)=1000.
       do j=1,limitr-1
         call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
-                xlim(j),ylim(j),xlim(j+1),ylim(j+1),disnow)
+                    xlim(j),ylim(j),xlim(j+1),ylim(j+1),disnow)
         if (xlim(j).lt.1.02_dp .and. xlim(j+1).lt.1.02_dp) then
           dleft = min(dleft,disnow)
         endif
@@ -356,7 +361,7 @@
         endif
         do j=jtwagap,jtwagap+njtwagap
           call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
-                xlim(j),ylim(j),xlim(j+1),ylim(j+1),disnow)
+                      xlim(j),ylim(j),xlim(j+1),ylim(j+1),disnow)
           twagap(iges) = min(twagap(iges),disnow)
         enddo
       endif
@@ -404,10 +409,11 @@
       else
          nerr=0
       endif
-      call bound(psi,nw,nh,nwnh,psiots,xmins,xmaxs,ymins, &
-      ymaxs,zeros,rgrid,zgrid,xguess,yguess,jges,limtrs,xlims,ylims, &
-      xouts,youts,nfouns,xlmins,npoint,rymins,rymaxs,dpsis, &
-      zxmins,zxmaxs,nerr,ishot,itime,limfag,radbou,kbound,tolbndpsi)
+      call bound(psi,nw,nh,nwnh,psiots,xmins,xmaxs,ymins,ymaxs,zeros, &
+                 rgrid,zgrid,xguess,yguess,jges,limtrs,xlims,ylims, &
+                 xouts,youts,nfouns,xlmins,npoint,rymins,rymaxs,dpsis, &
+                 zxmins,zxmaxs,nerr,ishot,itime,limfag,radbou,kbound, &
+                 tolbndpsi)
       if (nerr.gt.0) then
         kerror = 1
         return
@@ -429,7 +435,7 @@
         go to 1085
       endif
       call findax(nw,nh,rgrid,zgrid,rmaxis,zmaxis,simag, &
-                  psiots,rseps(1,iges),zseps(1,iges),m20, &
+                  psiots,rseps(:,iges),zseps(:,iges),m20, &
                   xouts,youts,nfouns,psi,xmins,xmaxs,ymins,ymaxs, &
                   zxmins,zxmaxs,rymins,rymaxs,dpsis,bpoo,bpooz, &
                   limtrs,xlims,ylims,limfag,0,0,kerror)
@@ -440,7 +446,7 @@
       seplim(iges)=1000.
       do j=1,nfouns-1
         call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
-                xouts(j),youts(j),xouts(j+1),youts(j+1),disnow)
+                    xouts(j),youts(j),xouts(j+1),youts(j+1),disnow)
         seplim(iges)=-min(abs(seplim(iges)),disnow)
       enddo
 !----------------------------------------------------------------------
@@ -539,7 +545,7 @@
                                                 zzmax(i))**2
       bmer(2)=rzzmax(1)**2+zzmax(1)**2-rzzmax(i)**2-(zzmax(1)- &
                                                 zzmax(i))**2
-      call decomp(n22,n22,amer,x11 ,imer,wmer)
+      call decomp(n22,n22,amer,x11,imer,wmer)
       call solve(n22,n22,amer,bmer,imer)
 !-----------------------------------------------------------------------
 !--   need check for RMER 10/91 llao                                  --
@@ -970,8 +976,8 @@
         if (siwant.lt.0.0) cycle
         siwant=simag-siwant*(simag-psibry)
         call surfac(siwant,psi,nw,nh,rgrid,zgrid,xxtra(1,1),yxtra(1,1), &
-                    nfind,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nzz &
-                    ,rmaxis,zmaxis,negcur,kerror)
+                    nfind,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nzz, &
+                    rmaxis,zmaxis,negcur,kerror)
         if (kerror.gt.0) return
         if (nfind.le.40.and.icntour.eq.0) then
 #ifdef DEBUG_LEVEL2
@@ -1034,8 +1040,8 @@
               (qpsi(jj)-qpsi(jj-1))*qmmm
             psiwan=simag-siwant*(simag-psibry)
             call surfac(psiwan,psi,nw,nh,rgrid,zgrid,xxtra(1,1),yxtra(1,1), &
-              nfind,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nzz, &
-              rmaxis,zmaxis,negcur,kerror)
+                        nfind,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nzz, &
+                        rmaxis,zmaxis,negcur,kerror)
             if (kerror.gt.0) return
             if (nfind.le.40.and.icntour.eq.0) then
 #ifdef DEBUG_LEVEL2
@@ -1043,11 +1049,11 @@
                            kerror,i,nfind,qppp,qmmm,psiwan
 #endif
               call cntour(rmaxis,zmaxis,psiwan,rqmin,rqmax,ycmin,ycmax, &
-                yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
-                d33 ,d33 ,xmin,xmax,ymin,ymax,nzz,iautoc, &
-                xxtra(1,1),yxtra(1,1),nfind,rgrid,nw,zgrid,nh, &
-                c,n22,nh2,nttyo,npoint, &
-                negcur,bkx,lkx,bky,lky,kerror)
+                          yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
+                          d33,d33,xmin,xmax,ymin,ymax,nzz,iautoc, &
+                          xxtra(1,1),yxtra(1,1),nfind,rgrid,nw,zgrid,nh, &
+                          c,n22,nh2,nttyo,npoint, &
+                          negcur,bkx,lkx,bky,lky,kerror)
 #ifdef DEBUG_LEVEL2
               write (6,*) ' SHAPE/CNTOUR kerror,i,nfind = ',kerror,i,nfind
 #endif
@@ -1097,30 +1103,30 @@
       else
        siwant=simag+psiwant*(psibry-simag)
        call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc, &
-                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur,kerror)
+                   npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                   rmaxis,zmaxis,negcur,kerror)
        if (kerror.gt.0) return
        do k=1,nfounc
         cfpol(k)=1./bfpol(k)**2
        enddo
        call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid,nh, &
-                  r2sdry(i),nzz ,sdlobp,sdlbp)
+                   r2sdry(i),nzz ,sdlobp,sdlbp)
        do k=1,nfounc
         cfpol(k)=1./bfpol(k)
        enddo
        call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid,nh, &
-                  r1sdry(i),nzz ,sdlobp,sdlbp)
+                   r1sdry(i),nzz ,sdlobp,sdlbp)
        rotation_1: if (kvtor.gt.0) then
          do k=1,nfounc
            cfpol(k)= bfpol(k)**2
          enddo
          call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                  nh,r2wdry,nzz ,sdlobp,sdlbp)
+                     nh,r2wdry,nzz ,sdlobp,sdlbp)
          do k=1,nfounc
            cfpol(k)= ((bfpol(k)/rvtor)**2-1.)**2
          enddo
          call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                  nh,r4wdry,nzz ,sdlobp,sdlbp)
+                     nh,r4wdry,nzz ,sdlobp,sdlbp)
          if (kvtor.eq.3) then
            prew0=pwcurr(psiwant,kwwcur)
            pres0=prcurr(psiwant,kppcur)
@@ -1134,13 +1140,13 @@
              cfpol(k)= cfpol(k)*exp(pwop0*cfpol(k))
            enddo
            call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                  nh,rp2wdry,nzz ,sdlobp,sdlbp)
+                       nh,rp2wdry,nzz ,sdlobp,sdlbp)
            do k=1,nfounc
              cfpol(k)= ((bfpol(k)/rvtor)**2-1.)
              cfpol(k)= exp(pwop0*cfpol(k))
            enddo
            call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                  nh,rpwdry,nzz ,sdlobp,sdlbp)
+                       nh,rpwdry,nzz ,sdlobp,sdlbp)
          endif
        endif rotation_1
        r2surs = r2sdry(i)*sdlobp
@@ -1190,8 +1196,8 @@
        siwant=siavej
        siwant=simag+siwant*(psibry-simag)
        call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc, &
-                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur,kerror)
+                   npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                   rmaxis,zmaxis,negcur,kerror)
        if (kerror.gt.0) return
        call fluxav(bfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid,nh, &
                    rxxrry,nzz ,sdlobp,sdlbp)
@@ -1429,11 +1435,11 @@
       else
          nerr=0
       endif
-      call bound(psi,nw,nh,nwnh,psiout,xmin,xmax,ymin,ymax, &
-          zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
-          xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
-          rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound,tolbndpsi)
+      call bound(psi,nw,nh,nwnh,psiout,xmin,xmax,ymin,ymax,zeros, &
+                 rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
+                 xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
+                 rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
+                 limfag,radum,kbound,tolbndpsi)
       if (nerr.gt.0) then
         kerror = 1
         return
@@ -1550,86 +1556,85 @@
 !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ring calculation here!!!
       if ((lring.ne.0).and.(zvsout(iges).ne.0.)) then
-       iring=1
-       rxp=rseps(1,iges)/100.
-       zxp=zseps(1,iges)/100.
-       zrmin=floorz
-       byringr(iring)=rxp  ! make first point the xpoint
-       byringz(iring)=zxp
-       do i=1,npxtra(ixl)
-        zrmin=min(zrmin,yxtra(i,ixl))
-       enddo
-       do i=1,npxtra(ixl)
-        byring=((xxtra(i,ixl).gt.rxp).and. &
-         (yxtra(i,ixl).lt.zxp).and. &
-         (yxtra(i,ixl).ge.zrmin))
-        if (byring) then ! byring >>> points are close to the ring
-         iring=iring+1
-         byringr(iring)=xxtra(i,ixl)       ! save points in byring arrays
-         byringz(iring)=yxtra(i,ixl)
-        endif
-       enddo
-       if (iring.ge.3) then
-        call order(byringr,byringz,iring) ! put point in increasing order in z
-        call zpline(iring,byringz,byringr,bfpol,cfpol,dfpol)  ! spline r(z)
-        zringmin=zrmin
-        zringmax=max(ringz(1)+.005,zxp)
-        dzring=(zringmax-zringmin)/nh2
-        do i=1,nh2
-         zval=zringmin+(i-1)*dzring
-         yxtra(i,ixl)=zval
-         rval=seval(iring,zval,byringz,byringr,bfpol,cfpol,dfpol)
-         xxtra(i,ixl)=rval
+        iring=1
+        rxp=rseps(1,iges)/100.
+        zxp=zseps(1,iges)/100.
+        zrmin=floorz
+        byringr(iring)=rxp  ! make first point the xpoint
+        byringz(iring)=zxp
+        do i=1,npxtra(ixl)
+          zrmin=min(zrmin,yxtra(i,ixl))
         enddo
-        do i=1,nh2
-         byringr(i)=xxtra(i,ixl)  !overwrite byring arrays with splined values
-         byringz(i)=yxtra(i,ixl)
-        enddo
-        xrmin=1e20
-        xrmax=0
-        rbar=0
-        zbar=0
-        do i=1,6
-         xrmax=max(xrmax,ringr(i))
-         xrmin=min(xrmin,ringr(i))
-         rbar=rbar+ringr(i)/6.
-         zbar=zbar+ringz(i)/6.
-        enddo
-        dismin=1e20
-        dsmin=1e20
-        do i=1,6
-         dsmin=min(dsmin,sqrt((rbar-ringr(i))**2+(zbar-ringz(i))**2))
-        enddo
-        call dslant(byringr,byringz,nh2,rxp,xrmax,floorz,zxp, &
-          ringr(4),ringz(4),ringr(5),ringz(5),gap1) ! vertical ring face
-        call dslant(byringr,byringz,nh2,rxp,xrmax,floorz,zxp, &
-          ringr(5),ringz(5),ringr(6),ringz(6),gap2) ! slanted ring face
-        ringap=gap2
-        if (gap1.lt.gap2) ringap=gap1 ! closest approach, separatrix to ring
-        do i=1,nh2
-         dismin=min(dismin, &
-          sqrt((rbar-byringr(i))**2+(zbar-byringz(i))**2))
-        enddo
-        if (ringap.eq.gap2) then
-         if (dismin.lt.dsmin) gap2=-gap2 ! separatrix intersects ring
-        endif
-        if (ringap.eq.gap1) then ! check for intersection more carefully
-         do i=1,nh2
-          if(dismin.eq.sqrt((rbar-byringr(i))**2+(zbar-byringz(i))**2)) &
-          iring=i
-         enddo
-         do i=1,6
-          if ((ringz(i)-byringz(iring).ne.0.).and.(ringap.eq.gap1)) then
-           if (atan2(ringr(i)-byringr(iring),ringr(i)-byringz(iring)).lt. &
-               0.) gap1=-gap1   ! separatrix intersects ring
+        do i=1,npxtra(ixl)
+          byring=((xxtra(i,ixl).gt.rxp).and. &
+                  (yxtra(i,ixl).lt.zxp).and. &
+                  (yxtra(i,ixl).ge.zrmin))
+          if (byring) then ! byring >>> points are close to the ring
+            iring=iring+1
+            byringr(iring)=xxtra(i,ixl)       ! save points in byring arrays
+            byringz(iring)=yxtra(i,ixl)
           endif
-         enddo
+        enddo
+        if (iring.ge.3) then
+          call order(byringr,byringz,iring) ! put point in increasing order in z
+          call zpline(iring,byringz,byringr,bfpol,cfpol,dfpol)  ! spline r(z)
+          zringmin=zrmin
+          zringmax=max(ringz(1)+.005,zxp)
+          dzring=(zringmax-zringmin)/nh2
+          do i=1,nh2
+            zval=zringmin+(i-1)*dzring
+            yxtra(i,ixl)=zval
+            rval=seval(iring,zval,byringz,byringr,bfpol,cfpol,dfpol)
+            xxtra(i,ixl)=rval
+          enddo
+          do i=1,nh2
+            byringr(i)=xxtra(i,ixl)  !overwrite byring arrays with splined values
+            byringz(i)=yxtra(i,ixl)
+          enddo
+          xrmin=1e20
+          xrmax=0
+          rbar=0
+          zbar=0
+          do i=1,6
+            xrmax=max(xrmax,ringr(i))
+            xrmin=min(xrmin,ringr(i))
+            rbar=rbar+ringr(i)/6.
+            zbar=zbar+ringz(i)/6.
+          enddo
+          dismin=1e20
+          dsmin=1e20
+          do i=1,6
+            dsmin=min(dsmin,sqrt((rbar-ringr(i))**2+(zbar-ringz(i))**2))
+          enddo
+          call dslant(byringr,byringz,nh2,rxp,xrmax,floorz,zxp, &
+                      ringr(4),ringz(4),ringr(5),ringz(5),gap1) ! vertical ring face
+          call dslant(byringr,byringz,nh2,rxp,xrmax,floorz,zxp, &
+                      ringr(5),ringz(5),ringr(6),ringz(6),gap2) ! slanted ring face
+          ringap=gap2
+          if(gap1.lt.gap2) ringap=gap1 ! closest approach, separatrix to ring
+          do i=1,nh2
+            dismin=min(dismin, &
+                       sqrt((rbar-byringr(i))**2+(zbar-byringz(i))**2))
+          enddo
+          if (ringap.eq.gap2) then
+            if (dismin.lt.dsmin) gap2=-gap2 ! separatrix intersects ring
+          endif
+          if (ringap.eq.gap1) then ! check for intersection more carefully
+            do i=1,nh2
+              if(dismin.eq.sqrt((rbar-byringr(i))**2+(zbar-byringz(i))**2)) &
+                iring=i
+            enddo
+            do i=1,6
+              if ((ringz(i)-byringz(iring).ne.0.).and.(ringap.eq.gap1)) then
+                if (atan2(ringr(i)-byringr(iring),ringr(i)-byringz(iring)).lt. &
+                    0.) gap1=-gap1   ! separatrix intersects ring
+              endif
+            enddo
+          endif
+          if(abs(gap1).gt.1.e-6_dp.and.abs(gap1).lt.1.e6_dp) &
+            oring(iges)=gap2*gap1/abs(gap1) ! closest approach to slanted face
+          iring=0 !start cleaning up byrung arrays for plots in subr expand
         endif
-        if (abs(gap1).gt.1.e-6_dp.and.abs(gap1).lt.1.e6_dp) then
-         oring(iges)=gap2*gap1/abs(gap1) ! closest approach to slanted face
-        endif
-        iring=0 !start cleaning up byrung arrays for plots in subr expand
-       endif
       endif
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ring calculation end!!!!
       ixyz=-2
@@ -1644,11 +1649,11 @@
       else
         nerr=0
       endif
-      call bound(psi,nw,nh,nwnh,psiout,xmin,xmax,ymin,ymax, &
-            zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
-            xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
-            rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-            limfag,radum,kbound,tolbndpsi)
+      call bound(psi,nw,nh,nwnh,psiout,xmin,xmax,ymin,ymax,zeros, &
+                 rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
+                 xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
+                 rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
+                 limfag,radum,kbound,tolbndpsi)
       if (nerr.gt.0) then
         kerror = 1
         return
@@ -1798,11 +1803,11 @@
       else
         nerr=0
       endif
-      call bound(psi,nw,nh,nwnh,psiout,xmin,xmax,ymin,ymax, &
-            zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
-            xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
-            rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-            limfag,radum,kbound,tolbndpsi)
+      call bound(psi,nw,nh,nwnh,psiout,xmin,xmax,ymin,ymax,zeros, &
+                 rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
+                 xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
+                 rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
+                 limfag,radum,kbound,tolbndpsi)
       if (nerr.gt.0) then
         kerror = 1
         return
@@ -1950,11 +1955,11 @@
       else
         nerr=0
       endif
-      call bound(psi,nw,nh,nwnh,psiout,xmin,xmax,ymin,ymax, &
-            zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
-            xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
-            rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-            limfag,radum,kbound,tolbndpsi)
+      call bound(psi,nw,nh,nwnh,psiout,xmin,xmax,ymin,ymax,zeros, &
+                 rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
+                 xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
+                 rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
+                 limfag,radum,kbound,tolbndpsi)
       if (nerr.gt.0) then
         kerror = 1
         return
@@ -2161,11 +2166,11 @@
           nerr=0
         endif
         ixl=1
-        call bound(psi,nw,nh,nwnh,psiout,xmin,xmax,ymin,ymax, &
-              zeros,rgrid,zgrid,rexpmx,zexpmx,ixyz,limtrs,xlims,ylims, &
-              xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
-              rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-              limfag,radum,kbound,tolbndpsi)
+        call bound(psi,nw,nh,nwnh,psiout,xmin,xmax,ymin,ymax,zeros, &
+                   rgrid,zgrid,rexpmx,zexpmx,ixyz,limtrs,xlims,ylims, &
+                   xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
+                   rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
+                   limfag,radum,kbound,tolbndpsi)
         if (nerr.gt.0) then
           kerror = 1
           return
@@ -2242,11 +2247,11 @@
         else
          nerr=0
         endif
-        call bound(psi,nw,nh,nwnh,psiout,xmin,xmax,ymin,ymax, &
-          zeros,rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
-          xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
-          rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-          limfag,radum,kbound,tolbndpsi)
+        call bound(psi,nw,nh,nwnh,psiout,xmin,xmax,ymin,ymax,zeros, &
+                   rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
+                   xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
+                   rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
+                   limfag,radum,kbound,tolbndpsi)
         if (nerr.gt.0) then
          kerror = 1
          return

@@ -27,7 +27,7 @@
 !********************************************************************** 
         subroutine getdia(nshot,tim,npts,tavg,ierr,phidia,sigphi)
 
-        use var_gggttt, only: ntims
+        use vtime_mod, only: ntims
         implicit integer*4 (i-n), real*8 (a-h,o-z)
         dimension diamag(ntims,3),diamagc(ntims,3), &
                   sig(ntims,3),tim(ntims)
@@ -73,7 +73,7 @@
         use set_kinds
         use exvars
         use var_exdata, only: ishot
-        use var_gggttt, only: ntims
+        use vtime_mod, only: ntims
         implicit integer*4 (i-n), real*8 (a-h,o-z)
         PARAMETER (NPOINT=42)
         REAL*8 RAR,TTEMP

@@ -13,7 +13,7 @@
 !!       @param nw : row dimension of psi
 !!       @param nh : column dimension of psi  
 !!       @param nwh : nw x nh
-!!       @parampsivl : psi value on the outermost contour
+!!       @param psivl : psi value on the outermost contour
 !!       @param xmin : minimum r value on contour
 !!       @param xmax : maximum r value
 !!       @param ymin : minimum z value
@@ -22,7 +22,7 @@
 !!       @param x : r grid
 !!       @param y : z grid
 !!       @param xctr : r guess of contour center
-!!       @param yctr : z guess of contour center*
+!!       @param yctr : z guess of contour center
 !!       @param ix : flag
 !!       @param limitr : number of limiter points
 !!       @param xlim : r coordinates of limiter points
@@ -40,7 +40,7 @@
 !!       @param rymax : r at ymax
 !!       @param zxmin : z at xmin
 !!       @param zxmax : z at xmax
-!!       @param tolbndpsi " (in)..tolerance on psi
+!!       @param tolbndpsi : tolerance on psi
 !*********************************************************************
       subroutine bound(psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
            zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
@@ -82,7 +82,7 @@
 !------------------------------------------------------------------------
 !--   BBrown's version of BOUND                                        --
 !------------------------------------------------------------------------
-      if (ix.gt.0 .and. kbound.ne.0) then
+      if (ix.ge.0 .and. kbound.ne.0) then
         !call old_new    (psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
         !     zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
         !     ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
@@ -95,7 +95,7 @@
           do i=1,nwh
             psi(i)=-psi(i)
           end do
-          psivl=-psivl
+          !psivl=-psivl ! not yet set
         end if
         return
       end if
@@ -131,7 +131,7 @@
           jjj=j+1
         end if
 
-        if ((ix.gt.0).and.(rad(1).gt.rmid)) then
+        if ((ix.ge.0).and.(rad(1).gt.rmid)) then
           j=j-1
           jjj=j+1
         end if
@@ -159,7 +159,7 @@
         psivl=(psi(kk+nh+1)*a3+psi(kk+1)*a4)/area
         if (yt(1).eq.y(j)) psivl=psi(kk)+(psi(kk+nh)-psi(kk))*(xt(1)-x(i))/dx
 
-        do while (.true.) ! contr
+        contr: do while (.true.)
           f1=psi(kk)
           f2=psi(kk+nh)
           f3=psi(kk+nh+1)
@@ -203,7 +203,7 @@
 !--       check for limiter in cell                                  --
 !----------------------------------------------------------------------
           zsum=zero(kk)+zero(kk+1)+zero(kk+nh)+zero(kk+nh+1)
-          if (zsum.eq.0.0) exit ! contr
+          if (zsum.eq.0.0) exit contr
 
           if (abs(zsum-4.0).ge.1.e-03_dp) then
 !-------------------------------------------------------------------------
@@ -282,7 +282,7 @@
             if (psilx-psivl.ge.tolbndpsi) then
               call zlim(zerol,n111,n111,limitr,xlim,ylim,xt,yt,limfag)
               if (zerol(1).le.0.01_dp) then
-                exit ! contr
+                exit contr
               end if
             end if
           end if
@@ -351,7 +351,7 @@
           if (kk.eq.kstrt) exit
           dis2p=sqrt((xcontr(1)-xt(1))**2+(ycontr(1)-yt(1))**2)
           if ((dis2p.lt.0.1_dp*dx).and.(ncontr.gt.5)) exit
-        end do ! contr
+        end do contr
 
 !----------------------------------------------------------------------
 !--     psi on boundary smaller than psi on limiter, decrease rad and--
@@ -1385,21 +1385,21 @@
 !! 
 !!    @param nx :
 !!    @param nz :
-!!    @param x : 1-d array of coordinate values
-!!    @param y : 1-d array of coordinate values
+!!    @param x : 1-d array of coordinate values for psipsi
+!!    @param y : 1-d array of coordinate values for psipsi
 !!    @param xax :
 !!    @param yax :
 !!    @param psimx :
-!!    @param psiout :
-!!    @param xseps :
-!!    @param yseps :
+!!    @param psiout : ??
+!!    @param xseps : coordinates of separtrices (if requested/found)
+!!    @param yseps : coordinates of separtrices (if requested/found)
 !!    @param kaxis : kaxis = 10, bicubic spline only 
 !!                  20, find axis and separatrix if any 
 !!                 <  0, seperatrix only 
-!!    @param xxout :
-!!    @param yyout :
-!!    @param kfound :
-!!    @param psipsi : psi function to spline, 1-d array (nx by nz)
+!!    @param xxout : coordinates of raised mag flux region outline (psipsi=0)
+!!    @param yyout : coordinates of raised mag flux region outline (psipsi=0)
+!!    @param kfound : number of points defining the raised mag flux region outline (psipsi=0)
+!!    @param psipsi : psi function, 1-d array (nx by nz)
 !!    @param rmin :
 !!    @param rmax :
 !!    @param zmin :
@@ -1429,14 +1429,12 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
-      real(dp), intent(inout) :: xseps(2),yseps(2) ! this is an address of a location inside a 2-d array
+      real*8, intent(out) :: xseps(2),yseps(2)
       dimension x(nx),y(nz),pds(6),xxout(kfound),yyout(kfound),psipsi(nx*nz)
       dimension bpoo(kfound),bpooz(kfound),pdss(6),xlimv(limtrv),ylimv(limtrv)
       dimension pdsold(6),zeross(1),xs(1),ys(1)
       data psitol/1.0e-04_dp/
       character(len=80) :: strtmp
-      logical :: dodebugplts = .false. ! write surface files for debugging/plotting. Serial only, not parallel
-
       kerror=0
       orelax=1.0 ! Newton's Method relaxation constant (0.0-1.0)
       niter=20   ! Number of iterations
@@ -1514,21 +1512,22 @@
       ys(1)=yax
       ps=psimx
 
-      if (dodebugplts) then ! for debugging
-        write(strtmp,'(a,i0.2,a,i0.2,a)') 'debug-surf',jtime,'-', &
-                                          ifit,'.txt'
-        open(unit=99,file=trim(strtmp),status='replace')
-        do iyplt = 1,nz
-          do ixplt = 1,nx
-            call seva2d(bkx,lkx,bky,lky,c,x(ixplt),y(iyplt),pds,ier,n666)
-            write(99,'(3(1x,1pe12.5))') x(ixplt),y(iyplt),pds(1)
-          end do
+#ifdef DEBUG_PLTS 
+      ! for debugging
+      write(strtmp,'(a,i0.2,a,i0.2,a)') 'debug-surf',jtime,'-', &
+                                        ifit,'.txt'
+      open(unit=99,file=trim(strtmp),status='replace')
+      do iyplt = 1,nz
+        do ixplt = 1,nx
+          call seva2d(bkx,lkx,bky,lky,c,x(ixplt),y(iyplt),pds,ier,n666)
+          write(99,'(3(1x,1pe12.5))') x(ixplt),y(iyplt),pds(1)
         end do
-        close(unit=99)
-        write(strtmp,'(a,i0.2,a,i0.2,a)') 'debug-conv',jtime,'-', &
-                                          ifit,'.txt'
-        open(unit=99,file=trim(strtmp),status='replace')
-      end if
+      end do
+      close(unit=99)
+      write(strtmp,'(a,i0.2,a,i0.2,a)') 'debug-conv',jtime,'-', &
+                                        ifit,'.txt'
+      open(unit=99,file=trim(strtmp),status='replace')
+#endif
 
       if (ifindopt==2) then
         xaxold = xax
@@ -1542,7 +1541,9 @@
       do j=1,niter
         ! pds(1)=f, pds(2)=fx, pds(3)=fy, pds(4)=fxy, pds(5)=fxx, pds(6)=fyy
         call seva2d(bkx,lkx,bky,lky,c,xax,yax,pds,ier,n666)
-        if(dodebugplts) write(99,'(3(1x,1pe12.5))') xax,yax,pds(1) ! for debugging
+#ifdef DEBUG_PLTS 
+        write(99,'(3(1x,1pe12.5))') xax,yax,pds(1) ! for debugging
+#endif
 
         search_method: if (ifindopt==2) then
           ! Gradient Ascent Method - better for sharp peaks
@@ -1620,7 +1621,9 @@
       if(emaxis.gt.0.0) emaxis=sqrt(emaxis)
       if(emaxis.le.0.0) emaxis=1.3_dp
  1000 continue
-      if(dodebugplts) close(unit=99) ! for debugging
+#ifdef DEBUG_PLTS 
+      close(unit=99) ! for debugging
+#endif
       delrmax1=0.40_dp
       delrmax2=0.40_dp
       sifsep=-1.e10_dp
@@ -1632,23 +1635,22 @@
       if(abs(dpsipsi).le.0.5_dp*psitol) return
 !----------------------------------------------------------------------
 !--   find the separatrix                                            --
-!--   relaxd criteria for searching, 02/23/90                        --
+!--   relaxed criteria for searching, 02/23/90                        --
 !----------------------------------------------------------------------
       bpols=bpoo(1)
       ns=1
-      xs(1)=xxout(1)
-      ys(1)=yyout(1)
       do n=2,kfound
         if(bpoo(n).ge.bpols) cycle
         bpols=bpoo(n)
-        xs(1)=xxout(n)
-        ys(1)=yyout(n)
         ns=n
       enddo
+      xs(1)=xxout(ns)
+      ys(1)=yyout(ns)
 
       errtmp = 0.0
       do j=1,niter
-        if (xs(1).le.x(2) .or. xs(1).ge.x(nx-1) .or. ys(1).le.y(2) .or. ys(1).ge.y(nz-1)) then
+        if (xs(1).le.x(2) .or. xs(1).ge.x(nx-1) .or. &
+            ys(1).le.y(2) .or. ys(1).ge.y(nz-1)) then
           kerror = 1
           call errctrl_msg('findax','1st separatrix point is off grid')
           if(iand(iout,1).ne.0) write (nout,5020) xs,ys

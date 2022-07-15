@@ -1,7 +1,7 @@
 #include "config.f"
 !**********************************************************************
 !>
-!!    Subroutine for writing K file in K file mode Qilong Ren
+!!    Subroutine for writing K file as the exclusive output (from SNAP)
 !!    
 !!    
 !!    @param ktime : number of time slices requested
@@ -30,7 +30,7 @@
       real*8,dimension(:),allocatable :: bmsels,sbmsels,fwtbmsels, &
                 rrmsels,zzmsels,l1msels,l2msels, &
                 l4msels,emsels,semsels,fwtemsels
-      real*8,dimension(:),allocatable :: tlibim,slibim,rrrlib
+      real*8 :: dnmin
       character(256) table_save
       character*82 snap_ext
       character(len=1000) :: line
@@ -51,7 +51,7 @@
            ktear,kersil,iout,ixray,table_dir,input_dir,store_dir, &
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve, &
            iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum,efitversion, &
-           kwripre,ifindopt,tolbndpsi
+           kwripre,ifindopt,tolbndpsi,loplim
       namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
            znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
            oldcomp,currc199,curriu30,curriu90, &
@@ -94,16 +94,18 @@
            ktear,keecur,ecurbd,keefnc,eetens,eeknt,keeknt, &
            keebdry,kee2bdry,eebdry,ee2bdry,kersil,iout,ixray, &
            use_alternate_pointnames, alternate_pointname_file, &
-           do_spline_fit,table_dir,input_dir,store_dir,kedgep, &
-           pedge,pe_psin,pe_width,kedgef,f2edge,fe_psin,fe_width, &
+           do_spline_fit,use_consistent_data, &
+           table_dir,input_dir,store_dir, &
+           kedgep,pedge,pe_psin,pe_width,kedgef,f2edge,fe_psin,fe_width, &
            psiecn,dpsiecn,relaxdz,fitzts,isolve,stabdz, &
            iplcout,errdelz,imagsigma,errmag,ksigma,saimin,errmagb, &
            write_Kfile,fitfcsum,fwtfcsum,appendsnap, &
            mse_quiet,mse_spave_on,kwaitmse,dtmsefull, &
            mse_strict,t_max_beam_off,ifitdelz,scaledz, &
            mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210, &
-           ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels,idebug,jdebug, &
-           synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi
+           ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels, &
+           idebug,jdebug,synmsels,avemsels,kwritime, &
+           v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi,loplim
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
       data mcontr/35/,lfile/36/,ifpsi/0/
@@ -121,7 +123,6 @@
                rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels), &
                l2msels(nmsels),l4msels(nmsels),emsels(nmsels), &
                semsels(nmsels),fwtemsels(nmsels))
-      ALLOCATE(tlibim(libim),slibim(libim),rrrlib(libim))
       fwtbmsels = 0.0
 
       kerror = 0
@@ -331,12 +332,12 @@
 !----------------------------------------------------------------------
 #if defined(USEMPI)
       if (nproc == 1) then
-        call getpts(ishot,times,delt,ktime,istop)
+        call get_constraints(ishot,times,delt,ktime,istop)
       else
-        call getpts_mpi(ishot,times,delt,ktime,istop)
+        call get_constraints_mpi(ishot,times,delt,ktime,istop)
       endif
 #else
-      call getpts(ishot,times,delt,ktime,istop)
+      call get_constraints(ishot,times,delt,ktime,istop)
 #endif
       if (istop.gt.0) then
         write (6,20000)
@@ -644,7 +645,7 @@
 
 !**********************************************************************
 !>
-!!    Subroutine for writing K file in SNAP mode 2014/04/16
+!!    Subroutine for writing K file during execution (with equilibrium)
 !!    
 !!
 !!    @param jtime : time index
@@ -668,7 +669,6 @@
                 denr,denv, tgamma,sgamma,rrrgam, &
                 zzzgam,aa1gam,aa2gam, aa3gam,aa4gam,aa5gam, &
                 aa6gam,aa7gam,tgammauncor
-      real*8,dimension(:),allocatable :: tlibim,slibim,rrrlib
       character*82 snap_ext
       namelist/in1/ishot,itime,itimeu,qvfit,plasma,expmp2,coils,btor, &
            fwtsi,fwtcur,limitr,fwtmp2,kffcur,kppcur,fwtqa,ierchk, &
@@ -687,7 +687,7 @@
            ktear,kersil,iout,ixray,table_dir,input_dir,store_dir, &
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve, &
            iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum,efitversion, &
-           kwripre,ifindopt,tolbndpsi
+           kwripre,ifindopt,tolbndpsi,loplim
       namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
            znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
            oldcomp,currc199,curriu30,curriu90, &
@@ -721,7 +721,6 @@
                zzzgam(nmtark),aa1gam(nmtark),aa2gam(nmtark), &
                aa3gam(nmtark),aa4gam(nmtark),aa5gam(nmtark), &
                aa6gam(nmtark),aa7gam(nmtark),tgammauncor(nmtark))
-      ALLOCATE(tlibim(libim),slibim(libim),rrrlib(libim))
 
       kerror = 0
       ! need to set table_dir length here (because unset)

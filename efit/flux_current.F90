@@ -4,16 +4,15 @@
 !!    pflux computes the poloidal fluxes on the r-z grid.
 !!
 !!
-!!    @param niter inner equilibrium loop iteration index
+!!    @param niter : current profile (outer) loop iteration index
 !!
-!!    @param nnin current profile loop iteration index?
+!!    @param nnin : equilibrium (inner) loop iteration index
 !!
-!!    @param ntotal current profile loop iteration index (how is this 
-!!                  different than nnin?)
+!!    @param ntotal : total iteration index (current+equilibirum loops)
 !!
-!!    @param jtime  time index
+!!    @param jtime : time index
 !!
-!!    @param kerror error flag
+!!    @param kerror : error flag
 !!
 !**********************************************************************
       subroutine pflux(niter,nnin,ntotal,jtime,kerror)
@@ -504,11 +503,11 @@
 !!    the r-z grid
 !!
 !!
-!!    @param ix :
+!!    @param ix : equilibrium (inner) loop iteration index
 !!
-!!    @param ixt :
+!!    @param ixt : total iteration index (current+equilibirum loops)
 !!
-!!    @param ixout :
+!!    @param ixout : current profile (outer) loop iteration index
 !!
 !!    @param jtime : time index
 !!
@@ -619,7 +618,7 @@
       write (6,*) 'Entering findax after m20 set'
 #endif
       call findax(nw,nh,rgrid,zgrid,rmaxis,zmaxis,simag, &
-                  psibry,rseps(1,jtime),zseps(1,jtime),m20, &
+                  psibry,rseps(:,jtime),zseps(:,jtime),m20, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
                   zxmin,zxmax,rymin,rymax,dpsi,bpol,bpolz, &
                   limitr,xlim,ylim,limfag,ixt,jtime,kerror)
@@ -1057,7 +1056,7 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      save isicinit,zelips
+      save isicinit
       character(14) :: sfile
       character(len=1000) :: line
       logical :: file_stat
@@ -1104,8 +1103,8 @@
         pcurrt(1:nwnh)=pcurrt(1:nwnh)*cratio*zero(1:nwnh)
 !
       case (2)
-        if(jtime.eq.1) zelips=zelip
-        if (zelip.gt.1.e5_dp .or. zelips.gt.1.e5_dp) then
+        zelip=zelipss
+        if (zelip.gt.1.e5_dp) then
           zelip=1.447310_dp*(expmpi(jtime,37)-expmpi(jtime,43)) &
                +0.692055_dp*(expmpi(jtime,57)-expmpi(jtime,53)) &
                +0.728045_dp*(silopt(jtime,27)-silopt(jtime,37)) &

@@ -40,7 +40,7 @@
       real*8 :: c_ext,dr_ext,dz_ext,rc_ext,zc_ext,a_ext
       real*8 :: eup_ext,elow_ext,dup_ext,dlow_ext,setlim_ext
       real*8 :: r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max
-      real*8 :: r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot
+      real*8 :: r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot,dnmin
       real*8 :: expmp2_save(magpri),coils_save(nsilop),brsp_save(nrsmat)
       real*8 :: rbdry_save(mbdry),zbdry_save(mbdry),fwtsi_save(nsilop)
       real*8 :: pressr_save(mpress),rpress_save(mpress),sigpre_save(mpress)
@@ -92,7 +92,7 @@
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout, &
            imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
            nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
-           idebug,jdebug,ifindopt,tolbndpsi
+           idebug,jdebug,ifindopt,tolbndpsi,loplim
       namelist/inwant/psiwant,vzeroj,fwtxxj,fbetap,fbetan,fli,fq95,fqsiw, &
            jbeta,jli,alpax,gamax,jwantm,fwtxxq,fwtxxb,fwtxli,znose, &
            fwtbdry,nqwant,siwantq,n_write,kccoils,ccoils,rexpan, &
@@ -295,71 +295,18 @@
 ! 
       snap: if ((kdata.ne.1).and.(kdata.ne.2)) then
 !---------------------------------------------------------------------- 
-!--   normalize fitting weights, SNAP mode                           -- 
-!---------------------------------------------------------------------- 
-      if (jtime.le.1) then
-        do i=1,nsilop 
-          if (fwtsi(i).ne.0.0) then 
-            fwtsi(i)=swtsi(i) 
-            if(lookfw.gt.0) fwtsi(i)=rwtsi(i) 
-          endif 
-          if(ierpsi(i).ne.0) fwtsi(i)=0.0 
-        enddo
-        do i=1,nfcoil 
-          if(fwtfc(i).ne.0.0) fwtfc(i)=swtfc(i) 
-          if(ierfc(i).ne.0) fwtfc(i)=0.0 
-        enddo
-        if (iecurr.eq.2) then 
-          do i=1,nesum 
-            if(fwtec(i).ne.0.0) fwtec(i)=swtec(i) 
-            if(ierec(i).ne.0) fwtec(i)=0.0 
-          enddo 
-        endif 
-        do i=1,magpri 
-          if (fwtmp2(i).ne.0.0) then 
-            fwtmp2(i)=swtmp2(i) 
-            if(lookfw.gt.0) fwtmp2(i)=rwtmp2(i) 
-          endif 
-          if(iermpi(i).ne.0) fwtmp2(i)=0.0 
-        enddo
-        fwtgam(1:nstark)=swtgam(1:nstark) 
-        do i=1,nstark 
-          if(iergam(i).ne.0) fwtgam(i)=0.0 
-        enddo
-        fwtece0(1:nnece)=swtece(1:nnece) 
-        do i=1,nnece 
-          if(ierece(i).ne.0) fwtece0(i)=0.0 
-        enddo
-        fwtecebz0=swtecebz 
-        if(ierecebz.ne.0) fwtecebz0=0.0 
-        if(fwtcur.ne.0.0) fwtcur=swtcur 
-        if(fwtqa.ne.0.0) fwtqa=1. 
-        if(fwtbp.ne.0.0) fwtbp=1. 
-        if(fwtdlc.ne.0.0) fwtdlc=swtdlc 
-        if(ierpla.ne.0) fwtcur=0.0 
-        if(ierrdi.ne.0) fwtdlc=0.0 
-        !--  Save fitting weights                                           -- 
-        swtdlc=fwtdlc 
-        swtcur=fwtcur 
-        swtfc(1:nfcoil)=fwtfc(1:nfcoil) 
-        swtec(1:nesum)=fwtec(1:nesum) 
-        swtmp2(1:magpri)=fwtmp2(1:magpri) 
-        swtsi(1:nsilop)=fwtsi(1:nsilop) 
-        swtgam(1:nstark)=fwtgam(1:nstark) 
-      else
+!--   SNAP Mode
+!--   Restore fitting weights
 !--------------------------------------------------------------------- 
-!--     Restore fitting weights for time slices > 1                 -- 
-!--------------------------------------------------------------------- 
-        fwtdlc=swtdlc 
-        fwtcur=swtcur 
-        if(fwtqa.ne.0.0) fwtqa=1. 
-        if(fwtbp.ne.0.0) fwtbp=1. 
-        fwtfc(1:nfcoil)=swtfc(1:nfcoil) 
-        fwtec(1:nesum)=swtec(1:nesum) 
-        fwtmp2(1:magpri)=swtmp2(1:magpri) 
-        fwtsi(1:nsilop)=swtsi(1:nsilop) 
-        fwtgam(1:nstark)=swtgam(1:nstark) 
-      endif
+      fwtdlc=swtdlc
+      fwtcur=swtcur
+      if(fwtqa.ne.0.0) fwtqa=1.
+      if(fwtbp.ne.0.0) fwtbp=1.
+      fwtfc(1:nfcoil)=swtfc(1:nfcoil)
+      fwtec(1:nesum)=swtec(1:nesum)
+      fwtmp2(1:magpri)=swtmp2(1:magpri)
+      fwtsi(1:nsilop)=swtsi(1:nsilop)
+      fwtgam(1:nstark)=swtgam(1:nstark)
 !----------------------------------------------------------------------- 
 !--   Set edge pedestal tanh paramters                                -- 
 !----------------------------------------------------------------------- 
@@ -370,7 +317,8 @@
       endif 
       else snap
 !---------------------------------------------------------------------- 
-!--   file mode - initialize inputs                                  -- 
+!--   File Mode
+!--   initialize inputs
 !---------------------------------------------------------------------- 
       bitfc=0.0
       psibit(1:nsilop)=0.0 
@@ -995,7 +943,6 @@
           call read_h5_ex(nid,"currn1",currn1,h5in,h5err)
           call read_h5_ex(nid,"ifitvs",ifitvs,h5in,h5err)
           call read_h5_ex(nid,"bitfc",bitfc,h5in,h5err)
-          call read_h5_ex(nid,"idfila",idfila,h5in,h5err)
           call read_h5_ex(nid,"relax",relax,h5in,h5err)
           call read_h5_ex(nid,"saimin",saimin,h5in,h5err)
           call read_h5_ex(nid,"icutfp",icutfp,h5in,h5err)
@@ -1008,7 +955,6 @@
           call read_h5_ex(nid,"sgtemin",sgtemin,h5in,h5err)
           call read_h5_ex(nid,"sgprmin",sgprmin,h5in,h5err)
           call read_h5_ex(nid,"elomin",elomin,h5in,h5err)
-          call read_h5_ex(nid,"dnmin",dnmin,h5in,h5err)
           call read_h5_ex(nid,"sgnethi",sgnethi,h5in,h5err)
           call read_h5_ex(nid,"fcurbd",fcurbd,h5in,h5err)
           call read_h5_ex(nid,"pcurbd",pcurbd,h5in,h5err)
@@ -1132,6 +1078,7 @@
           call read_h5_ex(nid,"jdebug",jdebug,h5in,h5err)
           call read_h5_ex(nid,"ifindopt",ifindopt,h5in,h5err)
           call read_h5_ex(nid,"tolbndpsi",tolbndpsi,h5in,h5err)
+          call read_h5_ex(nid,"loplim",loplim,h5in,h5err)
           call close_group("in1",nid,h5err)
         endif
    
@@ -1492,7 +1439,6 @@
             stop
           endif
           call open_group(eqid,"time_slice",tid,h5err)
-          write(tindex,"(I0)") jtime+rank-1
           call test_group(tid,trim(tindex),file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('data_input', &
@@ -2111,17 +2057,19 @@
 !--------------------------------------------------------------------- 
 !--   save fitting weights for FILE mode                            -- 
 !--------------------------------------------------------------------- 
-      swtdlc=fwtdlc
-      swtcur=fwtcur
-      swtfc(1:nfcoil)=fwtfc(1:nfcoil)
-      swtec(1:nesum)=fwtec(1:nesum)
-      swtmp2(1:magpri)=fwtmp2(1:magpri)
-      swtsi(1:nsilop)=fwtsi(1:nsilop)
-      swtgam(1:nmtark)=fwtgam(1:nmtark)
-      swtbmsels(1:nmsels)=fwtbmsels(1:nmsels)
-      swtemsels(1:nmsels)=fwtemsels(1:nmsels)
-      swtece(1:nnece)=fwtece0(1:nnece)
-      swtecebz=fwtecebz0
+      if ((kdata.eq.1).or.(kdata.eq.2)) then
+        swtdlc=fwtdlc
+        swtcur=fwtcur
+        swtfc(1:nfcoil)=fwtfc(1:nfcoil)
+        swtec(1:nesum)=fwtec(1:nesum)
+        swtmp2(1:magpri)=fwtmp2(1:magpri)
+        swtsi(1:nsilop)=fwtsi(1:nsilop)
+        swtgam(1:nmtark)=fwtgam(1:nmtark)
+        swtbmsels(1:nmsels)=fwtbmsels(1:nmsels)
+        swtemsels(1:nmsels)=fwtemsels(1:nmsels)
+        swtece(1:nnece)=fwtece0(1:nnece)
+        swtecebz=fwtecebz0
+      endif
       write(*,*)'adjust fit parameters based on basis function selected'
       call flush(6)
       if(fbetan.gt.0.) brsp(nfcoil+jbeta)=alpax(jbeta)*darea
@@ -2476,6 +2424,9 @@
       xlmaxt=xlmax 
 !
       call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
+
+      ! need to match snap mode saved variables
+      zelipss=zelip
 
       endif snap
 !----------------------------------------------------------------------- 

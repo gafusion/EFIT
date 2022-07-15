@@ -28,6 +28,7 @@
       character filenm*15,ishotime*12,news*72, &
                 eqdsk*20,comfile*15,prefix1*1,header*42,fit_type*3
       real*8,dimension(:),allocatable :: fwtbmsels,fwtemsels
+      real*8 :: dnmin
       character*82 snap_ext
       character(256) table_save
       character(len=1000) :: line
@@ -51,16 +52,18 @@
            ktear,keecur,ecurbd,keefnc,eetens,eeknt,keeknt, &
            keebdry,kee2bdry,eebdry,ee2bdry,kersil,iout,ixray, &
            use_alternate_pointnames, alternate_pointname_file, &
-           do_spline_fit,table_dir,input_dir,store_dir,kedgep, &
-           pedge,pe_psin,pe_width,kedgef,f2edge,fe_psin,fe_width, &
+           do_spline_fit,use_consistent_data, &
+           table_dir,input_dir,store_dir, &
+           kedgep,pedge,pe_psin,pe_width,kedgef,f2edge,fe_psin,fe_width, &
            psiecn,dpsiecn,relaxdz,fitzts,isolve,stabdz, &
            iplcout,errdelz,imagsigma,errmag,ksigma,saimin,errmagb, &
            write_Kfile,fitfcsum,fwtfcsum,appendsnap, &
            mse_quiet,mse_spave_on,kwaitmse,dtmsefull, &
            mse_strict,t_max_beam_off,ifitdelz,scaledz, &
            mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210, &
-           ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels,idebug,jdebug, &
-           synmsels,avemsels,kwritime,v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi
+           ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels, &
+           idebug,jdebug,synmsels,avemsels,kwritime, &
+           v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi,loplim
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
       data mcontr/35/,lfile/36/,ifpsi/0/
@@ -462,12 +465,12 @@
 
 #if defined(USEMPI)
       if (nproc == 1) then
-        call getpts(ishot,times,delt,ktime,istop)
+        call get_constraints(ishot,times,delt,ktime,istop)
       else
-        call getpts_mpi(ishot,times,delt,ktime,istop)
+        call get_constraints_mpi(ishot,times,delt,ktime,istop)
       endif
 #else
-      call getpts(ishot,times,delt,ktime,istop)
+      call get_constraints(ishot,times,delt,ktime,istop)
 #endif
       if (istop.gt.0) then
         kerror = 1
@@ -522,13 +525,13 @@
                      ptssym,ztserr)
 #else
         kerror = 1
-        call errctrl_msg('getpts','Cannot fit pedestal without MDS+')
+        call errctrl_msg('getsets','Cannot fit pedestal without MDS+')
         return
 #endif
       endif
-!----------------------------------------------------------------------
-!--   save fitting weights for SNAP modes                            --
-!----------------------------------------------------------------------
+!---------------------------------------------------------------------
+!--   Save fitting weights
+!---------------------------------------------------------------------
       swtdlc=fwtdlc
       swtcur=fwtcur
       swtfc(1:nfcoil)=fwtfc(1:nfcoil)
@@ -545,6 +548,59 @@
         enddo
       endif
       swtsi(1:nsilop)=fwtsi(1:nsilop)
+!----------------------------------------------------------------------
+!--   Normalize fitting weights
+!----------------------------------------------------------------------
+      do i=1,nsilop
+        if (fwtsi(i).ne.0.0) then
+          fwtsi(i)=swtsi(i)
+          if(lookfw.gt.0) fwtsi(i)=rwtsi(i)
+        endif
+        if(ierpsi(i).ne.0) fwtsi(i)=0.0
+      enddo
+      do i=1,nfcoil
+        if(fwtfc(i).ne.0.0) fwtfc(i)=swtfc(i)
+        if(ierfc(i).ne.0) fwtfc(i)=0.0
+      enddo
+      if (iecurr.eq.2) then
+        do i=1,nesum
+          if(fwtec(i).ne.0.0) fwtec(i)=swtec(i)
+          if(ierec(i).ne.0) fwtec(i)=0.0
+        enddo
+      endif
+      do i=1,magpri
+        if (fwtmp2(i).ne.0.0) then
+          fwtmp2(i)=swtmp2(i)
+          if(lookfw.gt.0) fwtmp2(i)=rwtmp2(i)
+        endif
+        if(iermpi(i).ne.0) fwtmp2(i)=0.0
+      enddo
+      fwtgam(1:nstark)=swtgam(1:nstark)
+      do i=1,nstark
+        if(iergam(i).ne.0) fwtgam(i)=0.0
+      enddo
+      fwtece0(1:nnece)=swtece(1:nnece)
+      do i=1,nnece
+        if(ierece(i).ne.0) fwtece0(i)=0.0
+      enddo
+      fwtecebz0=swtecebz
+      if(ierecebz.ne.0) fwtecebz0=0.0
+      if(fwtcur.ne.0.0) fwtcur=swtcur
+      if(fwtqa.ne.0.0) fwtqa=1.
+      if(fwtbp.ne.0.0) fwtbp=1.
+      if(fwtdlc.ne.0.0) fwtdlc=swtdlc
+      if(ierpla.ne.0) fwtcur=0.0
+      if(ierrdi.ne.0) fwtdlc=0.0
+!----------------------------------------------------------------------
+!--   Save fitting weights again
+!----------------------------------------------------------------------
+      swtdlc=fwtdlc
+      swtcur=fwtcur
+      swtfc(1:nfcoil)=fwtfc(1:nfcoil)
+      swtec(1:nesum)=fwtec(1:nesum)
+      swtmp2(1:magpri)=fwtmp2(1:magpri)
+      swtsi(1:nsilop)=fwtsi(1:nsilop)
+      swtgam(1:nstark)=fwtgam(1:nstark)
 !
       call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
       endif snap

@@ -7,7 +7,6 @@
 subroutine get_eparmdud_defaults()
   use eparm
   use var_cecoil, only: iecurr
-  device='DIII-D'
   nsilds=3
   nsilol=41
   nfcoil=18
@@ -122,60 +121,94 @@ subroutine read_dirs_shot(filename)
   use var_vessel, only: ivesel
   use exvars, only: table_dir,input_dir,store_dir,efitversion
   implicit integer*4 (i-n), real*8 (a-h,o-z)
-  real*8, dimension(2000):: expmp2,coils,fwtsi,fwtmp2,psibit,bitmpi,denr,denv,fwtfc, &
-                            brsp,bitfc,ecurrt,xalpa,xgama,rzeroj,fwtec,bitec, &
+  real*8, dimension(2000) :: expmp2,coils,fwtsi,fwtmp2,psibit,bitmpi,denr,denv,fwtfc, &
+                            acoilc,brsp,bitfc,ecurrt,xalpa,xgama,rzeroj,fwtec,bitec, &
                             ppknt,ffknt,wwknt,rbdry,zbdry,ppbdry,kppbdry,pp2bdry,kpp2bdry, &
                             ffbdry,kffbdry,ff2bdry,kff2bdry,wwbdry,kwwbdry,ww2bdry,kww2bdry,&
-                            fwtfcsum,fczero,fcsum,fwtbdry,xlim,ylim,rpress,pressr,sigpre,&
-                            fwtpre,sibeam,pbeam,dnbeam,dmass,vcurfb,vcurrt
-  real*8, dimension(256,256)::calpa,cgama
-  integer*4  :: istat
+                            fwtfcsum,fczero,fcsum,fwtbdry,xlim,ylim,rpress,zpress,pressr,sigpre,&
+                            fwtpre,tethom,rteth,zteth,sgteth,tionex,rion,zion,dnethom,rneth,zneth, &
+                            sibeam,pbeam,dnbeam,dmass,vcurfb,vcurrt,brsptu,sigti,sgneth,scalepr, &
+                            sigrbd,sigzbd,rsol,zsol,fwtsol
+  integer*4, dimension(2000) :: irfila,jzfila
+  real*8, dimension(256,256) :: calpa,cgama
+  real*8 :: loplim
+  integer*4 :: istat
   character(len=1000) :: line, fitzts
   character (*) :: filename
+  character appendsnap*2,jdebug*4
   logical :: fitsiref, fitfcsum
- 
-    NAMELIST/in1/ishot,itime,plasma,itek,itrace,nxiter,fwtcur,kffcur, &
-      coils,fwtsi,expmp2,fwtmp2,kppcur,mxiter,ierchk,fwtqa,qemp,error, &
-      limitr,xlim,ylim,serror,nbdry,rbdry,zbdry,psibry,nslref,ibunmn, &
-      btor,psibit,bitmpi,bitip,icurrt,icinit,brsp,iweigh,qenp,fwtbp, &
-      relip,zelip,aelip,eelip,qvfit,fwtdlc,betap0,emp,enp,iconvr,icprof, &
-      nextra,ixstrt,scrape,errmin,rbound,npnef,nptef,fwacoil,itimeu, &
-      rcentr,rzero,gammap,cfcoil,fczero,fcsum,islve,icntour,iprobe, &
-      salpha,srm,sbeta,ifref,isumip,n1coil,ifcurr,iecurr,ecurrt,iecoil, &
-      co2cor,vcurrt,dflux,sigdlc,iplim,kinput,limfag,sigprebi,fwtxx, &
-      kprfit,pressr,rpress,zpress,sigpre,npress,tethom,rteth,keqdsk, &
-      zteth,sgteth,npteth,tionex,rion,zion,sigti,nption,dnethom,zeffvs, &
-      rneth,zneth,sgneth,npneth,pbeam,sibeam,nbeam,rzeroj,xalpa,cgama, &
-      ivesel,iexcal,iconsi,fwtfc,xltype,kcalpa,kcgama,calpa,iacoil, &
-      limid,irfila,jzfila,vloop,iqplot,siref,denr,denv,xgama,sgnemin, &
-      nptionf,currn1,ifitvs,bitfc,idfila,relax,saimin,icutfp,acoilc, &
-      sigtii,cutip,iavem,pnbeam,xltype_180,sgtemin,sgprmin,elomin,dnmin, &
-      sgnethi,fcurbd,pcurbd,prbdry,sgtethi,ndokin,zlowimp,kskipvs,limvs, &
-      vcurfb,kpressb,pressbi,prespb,sigppb,kzeroj,rminvs,rmaxvs,errbry, &
-      fwtpre,ibtcomp,klabel,zmaxvs,dnbeam,dmass,nmass,condin,iaveus, &
-      sgtimin,kwripre,kbound,alphafp,kframe,zbound,vsdamp,zminvs,saicon, &
-      kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens,fwtbdry, &
-      kwwfnc,kwwknt,wwknt,wwtens,fwtec,fitsiref,bitec,scalepr,scalesir, &
-      ppbdry,kppbdry,pp2bdry,kpp2bdry,scalea,sigrbd,sigzbd,nbskip, &
-      ffbdry,kffbdry,ff2bdry,kff2bdry,errsil,vbit, &
-      wwbdry,kwwbdry,ww2bdry,kww2bdry,f2edge,fe_width,fe_psin,kedgef, &
-      ktear,kersil,iout,ixray,pedge,kedgep,pe_width,pe_psin, &
-      table_dir,input_dir,store_dir,kautoknt,akchiwt,akerrwt, &
-      kakloop,aktol,kakiter,akgamwt,akprewt, &
-      kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout, &
-      imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
-      idebug,nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp,jdebug, &
-      ifindopt,tolbndpsi
+  namelist/in1/ishot,itime,plasma,itek,itrace,nxiter,fwtcur,kffcur, &
+       coils,fwtsi,expmp2,fwtmp2,kppcur,mxiter,ierchk,fwtqa,qemp,error, &
+       limitr,xlim,ylim,serror,nbdry,rbdry,zbdry,psibry,nslref,ibunmn, &
+       btor,psibit,bitmpi,bitip,icurrt,icinit,brsp,iweigh,qenp,fwtbp, &
+       relip,zelip,aelip,eelip,qvfit,fwtdlc,betap0,emp,enp,iconvr,icprof, &
+       nextra,ixstrt,scrape,errmin,rbound,npnef,nptef,fwacoil,itimeu, &
+       rcentr,rzero,gammap,cfcoil,fczero,fcsum,islve,icntour,iprobe, &
+       salpha,srm,sbeta,ifref,isumip,n1coil,ifcurr,iecurr,ecurrt,iecoil, &
+       co2cor,vsgnemin,sigtii,sgtemin,sgnethi,sgtethi,dnmin, &
+       vcurrt,dflux,sigdlc,iplim,kinput,limfag,sigprebi,fwtxx, &
+       kprfit,pressr,rpress,zpress,sigpre,npress,tethom,rteth,keqdsk, &
+       zteth,sgteth,npteth,tionex,rion,zion,sigti,nption,dnethom,zeffvs, &
+       rneth,zneth,sgneth,npneth,pbeam,sibeam,nbeam,rzeroj,xalpa,cgama, &
+       ivesel,iexcal,iconsi,fwtfc,xltype,kcalpa,kcgama,calpa,iacoil, &
+       limid,irfila,jzfila,vloop,iqplot,siref,denr,denv,xgama,&
+       nptionf,currn1,ifitvs,bitfc,relax,saimin,icutfp,acoilc, &
+       cutip,iavem,pnbeam,xltype_180,sgprmin,elomin,ktear &
+       fcurbd,pcurbd,prbdry,ndokin,zlowimp,kskipvs,limvs, &
+       vcurfb,kpressb,pressbi,prespb,sigppb,kzeroj,rminvs,rmaxvs,errbry, &
+       fwtpre,ibtcomp,klabel,zmaxvs,dnbeam,dmass,nmass,condin,iaveus, &
+       sgtimin,kwripre,kbound,alphafp,kframe,zbound,vsdamp,zminvs,saicon, &
+       kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens,fwtbdry, &
+       kwwfnc,kwwknt,wwknt,wwtens,fwtec,fitsiref,bitec,scalepr,scalesir, &
+       ppbdry,kppbdry,pp2bdry,kpp2bdry,scalea,sigrbd,sigzbd,nbskip, &
+       ffbdry,kffbdry,ff2bdry,kff2bdry,errsil,vbit,kersil,iout,ixray, &
+       wwbdry,kwwbdry,ww2bdry,kww2bdry,f2edge,fe_width,fe_psin,kedgef, &
+       pedge,kedgep,pe_width,pe_psin, &
+       kautoknt,akchiwt,akerrwt,kakloop,aktol,kakiter,akgamwt,akprewt, &
+       kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout, &
+       imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
+       nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
+       idebug,jdebug,ifindopt,tolbndpsi,loplim &
+       table_dir,input_dir,store_dir
 
   nin=343
   open(unit=nin,status='old',file=filename)
   read (nin,in1,iostat=istat)
+
   if (istat>0) then
+    read(nin,fmt='(A)') line
+    write(*,'(A)') &
+      'Invalid current line in namelist: '//trim(line)
+    backspace(nin)
     backspace(nin)
     read(nin,fmt='(A)') line
     write(*,'(A)') &
-      'Invalid line in namelist in1: '//trim(line)
-    stop
+      'Invalid line in namelist: '//trim(line)
+    backspace(nin)
+    backspace(nin)
+    read(nin,fmt='(A)') line
+    write(*,'(A)') &
+      'Previous line in namelist: '//trim(line)
+    backspace(nin)
+    backspace(nin)
+    read(nin,fmt='(A)') line
+    write(*,'(A)') &
+      'Previous line in namelist: '//trim(line)
+    backspace(nin)
+    backspace(nin)
+    read(nin,fmt='(A)') line
+    write(*,'(A)') &
+      'Previous line in namelist: '//trim(line)
+    backspace(nin)
+    backspace(nin)
+    read(nin,fmt='(A)') line
+    write(*,'(A)') &
+      'Previous line in namelist: '//trim(line)
+    backspace(nin)
+    backspace(nin)
+    read(nin,fmt='(A)') line
+    write(*,'(A)') &
+      'Previous line in namelist: '//trim(line)
   endif
   close(nin)
 end subroutine read_dirs_shot
@@ -202,7 +235,6 @@ subroutine read_omas_in1(filename)
   integer*4  :: istat
   integer*4 :: dims
   character (*) :: filename
-  logical :: fitsiref,fitfcsum
   logical :: file_stat
  
 #if defined(USE_HDF5)
@@ -308,7 +340,6 @@ subroutine read_omas_in1(filename)
     call read_h5_ex(nid,"ifcurr",ifcurr,h5in,h5err)
     call read_h5_ex(nid,"iecurr",iecurr,h5in,h5err)
     call read_h5_ex(nid,"iecoil",iecoil,h5in,h5err)
-    call read_h5_ex(nid,"co2cor",co2cor,h5in,h5err)
     call read_h5_ex(nid,"dflux",dflux,h5in,h5err)
     call read_h5_ex(nid,"sigdlc",sigdlc,h5in,h5err)
     call read_h5_ex(nid,"iplim",iplim,h5in,h5err)
@@ -319,22 +350,10 @@ subroutine read_omas_in1(filename)
     call read_h5_ex(nid,"kprfit",kprfit,h5in,h5err)
     call read_h5_ex(nid,"zpress",zpress,h5in,h5err)
     call read_h5_ex(nid,"npress",npress,h5in,h5err)
-    call read_h5_ex(nid,"tethom",tethom,h5in,h5err)
-    call read_h5_ex(nid,"rteth",rteth,h5in,h5err)
     call read_h5_ex(nid,"keqdsk",keqdsk,h5in,h5err)
-    call read_h5_ex(nid,"zteth",zteth,h5in,h5err)
-    call read_h5_ex(nid,"sgteth",sgteth,h5in,h5err)
     call read_h5_ex(nid,"npteth",npteth,h5in,h5err)
-    call read_h5_ex(nid,"tionex",tionex,h5in,h5err)
-    call read_h5_ex(nid,"rion",rion,h5in,h5err)
-    call read_h5_ex(nid,"zion",zion,h5in,h5err)
-    call read_h5_ex(nid,"sigti",sigti,h5in,h5err)
     call read_h5_ex(nid,"nption",nption,h5in,h5err)
-    call read_h5_ex(nid,"dnethom",dnethom,h5in,h5err)
     call read_h5_ex(nid,"zeffvs",zeffvs,h5in,h5err)
-    call read_h5_ex(nid,"rneth",rneth,h5in,h5err)
-    call read_h5_ex(nid,"zneth",zneth,h5in,h5err)
-    call read_h5_ex(nid,"sgneth",sgneth,h5in,h5err)
     call read_h5_ex(nid,"npneth",npneth,h5in,h5err)
     call read_h5_ex(nid,"nbeam",nbeam,h5in,h5err)
     call read_h5_ex(nid,"ivesel",ivesel,h5in,h5err)
@@ -345,8 +364,6 @@ subroutine read_omas_in1(filename)
     call read_h5_ex(nid,"kcgama",kcgama,h5in,h5err)
     call read_h5_ex(nid,"iacoil",iacoil,h5in,h5err)
     call read_h5_ex(nid,"limid",limid,h5in,h5err)
-    call read_h5_ex(nid,"irfila",irfila,h5in,h5err)
-    call read_h5_ex(nid,"jzfila",jzfila,h5in,h5err)
     call read_h5_ex(nid,"vloop",vloop,h5in,h5err)
     call read_h5_ex(nid,"iqplot",iqplot,h5in,h5err)
     call read_h5_ex(nid,"siref",siref,h5in,h5err)
@@ -358,21 +375,15 @@ subroutine read_omas_in1(filename)
     call read_h5_ex(nid,"relax",relax,h5in,h5err)
     call read_h5_ex(nid,"saimin",saimin,h5in,h5err)
     call read_h5_ex(nid,"icutfp",icutfp,h5in,h5err)
-    call read_h5_ex(nid,"acoilc",acoilc,h5in,h5err)
-    call read_h5_ex(nid,"sigtii",sigtii,h5in,h5err)
     call read_h5_ex(nid,"cutip",cutip,h5in,h5err)
     call read_h5_ex(nid,"iavem",iavem,h5in,h5err)
     call read_h5_ex(nid,"pnbeam",pnbeam,h5in,h5err)
     call read_h5_ex(nid,"xltype_180",xltype_180,h5in,h5err)
-    call read_h5_ex(nid,"sgtemin",sgtemin,h5in,h5err)
     call read_h5_ex(nid,"sgprmin",sgprmin,h5in,h5err)
     call read_h5_ex(nid,"elomin",elomin,h5in,h5err)
-    call read_h5_ex(nid,"dnmin",dnmin,h5in,h5err)
-    call read_h5_ex(nid,"sgnethi",sgnethi,h5in,h5err)
     call read_h5_ex(nid,"fcurbd",fcurbd,h5in,h5err)
     call read_h5_ex(nid,"pcurbd",pcurbd,h5in,h5err)
     call read_h5_ex(nid,"prbdry",prbdry,h5in,h5err)
-    call read_h5_ex(nid,"sgtethi",sgtethi,h5in,h5err)
     call read_h5_ex(nid,"ndokin",ndokin,h5in,h5err)
     call read_h5_ex(nid,"zlowimp",zlowimp,h5in,h5err)
     call read_h5_ex(nid,"kskipvs",kskipvs,h5in,h5err)
@@ -409,12 +420,8 @@ subroutine read_omas_in1(filename)
     call read_h5_ex(nid,"kwwfnc",kwwfnc,h5in,h5err)
     call read_h5_ex(nid,"kwwknt",kwwknt,h5in,h5err)
     call read_h5_ex(nid,"wwtens",wwtens,h5in,h5err)
-    call read_h5_ex(nid,"fitsiref",fitsiref,h5in,h5err)
-    call read_h5_ex(nid,"scalepr",scalepr,h5in,h5err)
     call read_h5_ex(nid,"scalesir",scalesir,h5in,h5err)
     call read_h5_ex(nid,"scalea",scalea,h5in,h5err)
-    call read_h5_ex(nid,"sigrbd",sigrbd,h5in,h5err)
-    call read_h5_ex(nid,"sigzbd",sigzbd,h5in,h5err)
     call read_h5_ex(nid,"nbskip",nbskip,h5in,h5err)
     call read_h5_ex(nid,"errsil",errsil,h5in,h5err)
     call read_h5_ex(nid,"vbit",vbit,h5in,h5err)
@@ -422,7 +429,6 @@ subroutine read_omas_in1(filename)
     call read_h5_ex(nid,"fe_width",fe_width,h5in,h5err)
     call read_h5_ex(nid,"fe_psin",fe_psin,h5in,h5err)
     call read_h5_ex(nid,"kedgef",kedgef,h5in,h5err)
-    call read_h5_ex(nid,"ktear",ktear,h5in,h5err)
     call read_h5_ex(nid,"kersil",kersil,h5in,h5err)
     call read_h5_ex(nid,"iout",iout,h5in,h5err)
     call read_h5_ex(nid,"ixray",ixray,h5in,h5err)
@@ -452,19 +458,11 @@ subroutine read_omas_in1(filename)
     call read_h5_ex(nid,"errmag",errmag,h5in,h5err)
     call read_h5_ex(nid,"ksigma",ksigma,h5in,h5err)
     call read_h5_ex(nid,"errmagb",errmagb,h5in,h5err)
-    call read_h5_ex(nid,"brsptu",brsptu,h5in,h5err)
-    call read_h5_ex(nid,"fitfcsum",fitfcsum,h5in,h5err)
-    call read_h5_ex(nid,"appendsnap",appendsnap,h5in,h5err)
-    call read_h5_ex(nid,"idebug",idebug,h5in,h5err)
     call read_h5_ex(nid,"nbdrymx",nbdrymx,h5in,h5err)
     call read_h5_ex(nid,"nsol",nsol,h5in,h5err)
-    call read_h5_ex(nid,"rsol",rsol,h5in,h5err)
-    call read_h5_ex(nid,"zsol",zsol,h5in,h5err)
-    call read_h5_ex(nid,"fwtsol",fwtsol,h5in,h5err)
     call read_h5_ex(nid,"efitversion",efitversion,h5in,h5err)
     call read_h5_ex(nid,"kbetapr",kbetapr,h5in,h5err)
     call read_h5_ex(nid,"nbdryp",nbdryp,h5in,h5err)
-    call read_h5_ex(nid,"jdebug",jdebug,h5in,h5err)
     call read_h5_ex(nid,"ifindopt",ifindopt,h5in,h5err)
     call read_h5_ex(nid,"tolbndpsi",tolbndpsi,h5in,h5err)
     call close_group("in1",nid,h5err)

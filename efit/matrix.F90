@@ -6,15 +6,15 @@
 !!    that npcurn=nffcur+nppcur, nrsmat=nfcoil+npcurn+
 !!    number of constraints.
 !!
-!!    @param jtime time index
+!!    @param jtime : time index
 !!
-!!    @param iter inner equilibrium loop iteration index
+!!    @param iter : current profile (outer) loop iteration index
 !!
-!!    @param ichisq chisq flag
+!!    @param ichisq : chisq flag
 !!
-!!    @param nniter current profile loop iteration index?
+!!    @param nniter : total iteration index (current+equilibirum loops)
 !!
-!!    @param kerror error flag
+!!    @param kerror : error flag
 !!
 !**********************************************************************
       subroutine matrix(jtime,iter,ichisq,nniter,kerror)
@@ -63,9 +63,9 @@
         fwtbdr=1.0/fwtbdr
         do i=1,nbdry
           if (sigrbd(i).lt.1.e10_dp.and.sigzbd(i).lt.1.e10_dp) then
-          call seva2d(bkx,lkx,bky,lky,c,rbdry(i),zbdry(i),pds,ier,n666)
-          fwtbdr=sqrt((sigrbd(i)*pds(2))**2+(sigzbd(i)*pds(3))**2)
-          fwtbdr=1.0/fwtbdr
+            call seva2d(bkx,lkx,bky,lky,c,rbdry(i),zbdry(i),pds,ier,n666)
+            fwtbdr=sqrt((sigrbd(i)*pds(2))**2+(sigzbd(i)*pds(3))**2)
+            fwtbdr=1.0/fwtbdr
           endif
           fwtbry(i)=fwtbdr*fwtbdry(i)
         enddo
@@ -163,8 +163,8 @@
         if (kprfit.ge.3.and.npresw.gt.0) then
           do m=1,npresw
             if (fwtprw(m).gt.0.0) then
-            nj=nj+1
-            arsp(nj,nk)=0.0
+              nj=nj+1
+              arsp(nj,nk)=0.0
             endif
           enddo
         endif
@@ -233,8 +233,8 @@
 !--     Summation of F-coils currents
 !------------------------------------------------------------------------
         if (fitfcsum) then
-         nj = nj + 1
-         arsp(nj,nk) = fwtfcsum(nk)
+          nj = nj + 1
+          arsp(nj,nk) = fwtfcsum(nk)
         endif
       enddo
 !-----------------------------------------------------------------------
@@ -252,32 +252,32 @@
         if (rzeroj(i).lt.0.0) rxxx(i)=rseps(1,jtime)/100.
         rxxxf(i)=rxxx(i)
         if (rzeroj(i).eq.0.0) then
-             rxxx(i)=1./r1sdry(i)
-             rxxxf(i)=r1sdry(i)/r2sdry(i)
+          rxxx(i)=1./r1sdry(i)
+          rxxxf(i)=r1sdry(i)/r2sdry(i)
         endif
         if (rxxx(i).le.0.0) then
-            rxxx(i)=rcentr
-            rxxxf(i)=rxxx(i)
+          rxxx(i)=rcentr
+          rxxxf(i)=rxxx(i)
         endif
         brspmin=max(ten24,abs(brsp(nfcoil+1)))
         fwtxxzj=fwtxxj*1000./brspmin
         rotation: if (kvtor.gt.0) then
           call setpwp(ysiwant,xpspwp)
           if (nniter.gt.0) then
-          if (kvtor.eq.2.or.kvtor.eq.3) then
-            prew0=pwcurr(ysiwant,kwwcur)
-            pres0=prcurr(ysiwant,kppcur)
-            if (abs(pres0).gt.1.e-10_dp) then
-               pwop0=prew0/pres0
-            else
-               pwop0=0.0
+            if (kvtor.eq.2.or.kvtor.eq.3) then
+              prew0=pwcurr(ysiwant,kwwcur)
+              pres0=prcurr(ysiwant,kppcur)
+              if (abs(pres0).gt.1.e-10_dp) then
+                pwop0=prew0/pres0
+              else
+                pwop0=0.0
+              endif
             endif
           endif
-          endif
           if (rzeroj(i).gt.0.0) then
-              rxx2(i)=(rzeroj(i)/rvtor)**2-1.
-              rxxw(i)=rxx2(i)*rzeroj(i)
-              if (nniter.gt.0) then
+            rxx2(i)=(rzeroj(i)/rvtor)**2-1.
+            rxxw(i)=rxx2(i)*rzeroj(i)
+            if (nniter.gt.0) then
               if (kvtor.eq.2) then
                 rxxw(i)=rxxw(i)*(1.+pwop0*rxx2(i))
                 rxxx(i)=rxxx(i)*(1.-0.5_dp*(pwop0*rxx2(i))**2)
@@ -288,13 +288,13 @@
                 rxxw(i)=rxxw(i)*ptop0
                 rxxx(i)=rxxx(i)*ptop0*(1.-pwp0r2)
               endif
-              endif
+            endif
           endif
           if (rzeroj(i).lt.0.0) then
-              rxxw(i)=rseps(1,jtime)/100.
-              rxx2(i)=(rxxw(i)/rvtor)**2-1.
-              rxxw(i)=rxx2(i)*rxxw(i)
-              if (nniter.gt.0) then
+            rxxw(i)=rseps(1,jtime)/100.
+            rxx2(i)=(rxxw(i)/rvtor)**2-1.
+            rxxw(i)=rxx2(i)*rxxw(i)
+            if (nniter.gt.0) then
               if (kvtor.eq.2) then
                 rxxw(i)=rxxw(i)*(1.+pwop0*rxx2(i))
                 rxxx(i)=rxxx(i)*(1.-0.5_dp*(pwop0*rxx2(i))**2)
@@ -305,12 +305,12 @@
                 rxxw(i)=rxxw(i)*ptop0
                 rxxx(i)=rxxx(i)*ptop0*(1.-pwp0r2)
               endif
-              endif
+            endif
           endif
           if (rzeroj(i).eq.0.0) then
-              rxx2(i)=  r2wdry/rvtor**2-1.
-              rxxw(i)=  rxx2(i)/r1sdry(i)
-              if (nniter.gt.0) then
+            rxx2(i)=r2wdry/rvtor**2-1.
+            rxxw(i)=rxx2(i)/r1sdry(i)
+            if (nniter.gt.0) then
               if (kvtor.eq.2) then
                 rxxw(i)=rxxw(i)+pwop0*r4wdry/r1sdry(i)
                 rxxx(i)=rxxx(i)-0.5_dp*pwop0**2*r4wdry/r1sdry(i)
@@ -319,7 +319,7 @@
                 rxxx(i)=(rpwdry-pwop0*rp2wdry)/r1sdry(i)
                 rxxw(i)=rp2wdry/r1sdry(i)
               endif
-              endif
+            endif
           endif
         endif rotation
        enddo
@@ -434,13 +434,13 @@
             nj=nj+1
             ysiwant=sizeroj(i)
             if (n.le.kppcur) then
-                call setpp(ysiwant,xpspp)
-                xjj=xpspp(n)
-                arsp(nj,nk)=rxxx(i)*fwtxxzj*xjj
+              call setpp(ysiwant,xpspp)
+              xjj=xpspp(n)
+              arsp(nj,nk)=rxxx(i)*fwtxxzj*xjj
             elseif (n.le.kpcurn) then
-                call setfp(ysiwant,xpsfp)
-                xjj=xpsfp(n-kppcur)
-                arsp(nj,nk)=fwtxxzj/rxxxf(i)*xjj
+              call setfp(ysiwant,xpsfp)
+              xjj=xpsfp(n-kppcur)
+              arsp(nj,nk)=fwtxxzj/rxxxf(i)*xjj
             elseif (kvtor.gt.0) then
               xjj=xpspwp(n-kpcurn)
               arsp(nj,nk)=rxxw(i)*fwtxxzj*xjj
@@ -508,8 +508,8 @@
         if (iecurr.eq.2) then
           do m=1,nesum
             if (fwtec(m).gt.0.0) then
-               nj=nj+1
-               arsp(nj,nk)=0.
+              nj=nj+1
+              arsp(nj,nk)=0.
             endif
           enddo
         endif
@@ -643,8 +643,8 @@
         if (kprfit.ge.3.and.npresw.gt.0) then
           do m=1,npresw
             if (fwtprw(m).gt.0.0) then
-            nj=nj+1
-            arsp(nj,nk)=0.0
+              nj=nj+1
+              arsp(nj,nk)=0.0
             endif
           enddo
         endif
@@ -797,16 +797,16 @@
       if (kprfit.ge.3.and.npresw.gt.0) then
         do m=1,npresw
           if (fwtprw(m).gt.0.0) then
-          nj=nj+1
-          arsp(nj,nk)=0.0
+            nj=nj+1
+            arsp(nj,nk)=0.0
           endif
         enddo
       endif
       if (kzeroj.gt.0) then
-       do i=1,kzeroj
-        nj=nj+1
-        arsp(nj,nk)=0.0
-       enddo
+        do i=1,kzeroj
+          nj=nj+1
+          arsp(nj,nk)=0.0
+        enddo
       endif
       if (kcalpa.gt.0) then
         do j=1,kcalpa
@@ -838,12 +838,12 @@
 !--   E coil currents                                                        --
 !------------------------------------------------------------------------------
       if (iecurr.eq.2) then
-       do m=1,nesum
-        if (fwtec(m).gt.0.0) then
-        nj=nj+1
-        arsp(nj,nk)=0.
-        endif
-       enddo
+        do m=1,nesum
+          if (fwtec(m).gt.0.0) then
+            nj=nj+1
+            arsp(nj,nk)=0.
+          endif
+        enddo
       endif
 !------------------------------------------------------------------------------
 !--   Reference flux                                                         --
@@ -950,8 +950,8 @@
         if (kprfit.ge.3.and.npresw.gt.0) then
           do m=1,npresw
             if (fwtprw(m).gt.0.0) then
-            nj=nj+1
-            arsp(nj,nk)=rprwdz(m)/sigprw(m)*fwtprw(m)*scadelz
+              nj=nj+1
+              arsp(nj,nk)=rprwdz(m)/sigprw(m)*fwtprw(m)*scadelz
             endif
           enddo
         endif
@@ -1143,7 +1143,7 @@
 !-----------------------------------------------------------------------------
         if (fitfcsum) then
           nj = nj + 1
-         arsp(nj,nk) = 0.0
+          arsp(nj,nk) = 0.0
         endif
       enddo
       endif have_acoil
@@ -1364,8 +1364,8 @@
         endif
         do m=1,nfcoil
           if(fwtfc(m).le.0.0) cycle
-            nj=nj+1
-            arsp(nj,nk)=0.
+          nj=nj+1
+          arsp(nj,nk)=0.
         enddo
 !--------------------------------------------------------------------------
 !--     pressure                                                         --
@@ -1390,8 +1390,8 @@
         if (kprfit.ge.3.and.npresw.gt.0) then
           do m=1,npresw
             if (fwtprw(m).gt.0.0) then
-            nj=nj+1
-            arsp(nj,nk)=0.0
+              nj=nj+1
+              arsp(nj,nk)=0.0
             endif
           enddo
         endif
@@ -1608,8 +1608,8 @@
 !--     Summation of Fcoils current
 !-----------------------------------------------------------------------------
         if (fitfcsum) then
-           nj = nj + 1
-           arsp(nj,nk) = 0.0
+          nj = nj + 1
+          arsp(nj,nk) = 0.0
         endif
       enddo
       endif er_fit
@@ -1768,8 +1768,8 @@
 !--     Summation of Fcoils current
 !-----------------------------------------------------------------------------
         if (fitfcsum) then
-           nj = nj + 1
-           arsp(nj,nk) = 0.0
+          nj = nj + 1
+          arsp(nj,nk) = 0.0
         endif
       endif pedge_htan
 !-----------------------------------------------------------------------
@@ -1934,11 +1934,11 @@
 !-----------------------------------------------------------------------
       if (fitdelz.and.nniter.ge.ndelzon) then
         if (stabdz.gt.0.0) then
-        nj=nj+1
-        do i=1,need
-          arsp(nj,i )=0.0
-        enddo
-        arsp(nj,nsavdz)=stabdz
+          nj=nj+1
+          do i=1,need
+            arsp(nj,i )=0.0
+          enddo
+          arsp(nj,nsavdz)=stabdz
         endif
       endif
 !-----------------------------------------------------------------------
