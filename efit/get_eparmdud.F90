@@ -168,7 +168,7 @@ subroutine read_dirs_shot(filename)
        kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout, &
        imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
        nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
-       idebug,jdebug,ifindopt,tolbndpsi,loplim &
+       idebug,jdebug,ifindopt,tolbndpsi,loplim, &
        table_dir,input_dir,store_dir
 
   nin=343
