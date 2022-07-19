@@ -338,7 +338,7 @@
 !!
 !**********************************************************************
         SUBROUTINE LOWPASS(XIN,XOUT,NAVG,NPTS)
-        USE VAR_GGGTTT, ONLY: NTIMS
+        USE VTIME_MOD, ONLY: NTIMS
         implicit integer*4 (i-n), real*8 (a-h,o-z)
         REAL*8 XIN(1),XOUT(1),XTMP(NTIMS)
 
@@ -361,7 +361,7 @@
 !!
 !**********************************************************************
         SUBROUTINE INTERP(XIN,YIN,NIN,XOUT,YOUT,NOUT)
-        USE VAR_GGGTTT, ONLY: NTIMS
+        USE VTIME_MOD, ONLY: NTIMS
         implicit integer*4 (i-n), real*8 (a-h,o-z)
         REAL*8 XIN(NTIMS),YIN(NTIMS),XOUT(NTIMS),YOUT(NTIMS)
         INTEGER NIN,NOUT
