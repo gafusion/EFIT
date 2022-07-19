@@ -153,7 +153,7 @@ subroutine read_dirs_shot(filename)
        ivesel,iexcal,iconsi,fwtfc,xltype,kcalpa,kcgama,calpa,iacoil, &
        limid,irfila,jzfila,vloop,iqplot,siref,denr,denv,xgama,&
        nptionf,currn1,ifitvs,bitfc,relax,saimin,icutfp,acoilc, &
-       cutip,iavem,pnbeam,xltype_180,sgprmin,elomin,ktear &
+       cutip,iavem,pnbeam,xltype_180,sgprmin,elomin,ktear, &
        fcurbd,pcurbd,prbdry,ndokin,zlowimp,kskipvs,limvs, &
        vcurfb,kpressb,pressbi,prespb,sigppb,kzeroj,rminvs,rmaxvs,errbry, &
        fwtpre,ibtcomp,klabel,zmaxvs,dnbeam,dmass,nmass,condin,iaveus, &
