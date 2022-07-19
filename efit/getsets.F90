@@ -63,7 +63,7 @@
            mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210, &
            ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels, &
            idebug,jdebug,synmsels,avemsels,kwritime, &
-           v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi,loplim
+           v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi,siloplim
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
       data mcontr/35/,lfile/36/,ifpsi/0/

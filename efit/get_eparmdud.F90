@@ -131,7 +131,7 @@ subroutine read_dirs_shot(filename)
                             sigrbd,sigzbd,rsol,zsol,fwtsol
   integer*4, dimension(2000) :: irfila,jzfila
   real*8, dimension(256,256) :: calpa,cgama
-  real*8 :: loplim
+  real*8 :: siloplim
   integer*4 :: istat
   character(len=1000) :: line, fitzts
   character (*) :: filename
@@ -168,7 +168,7 @@ subroutine read_dirs_shot(filename)
        kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout, &
        imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
        nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
-       idebug,jdebug,ifindopt,tolbndpsi,loplim, &
+       idebug,jdebug,ifindopt,tolbndpsi,siloplim, &
        table_dir,input_dir,store_dir
 
   nin=343

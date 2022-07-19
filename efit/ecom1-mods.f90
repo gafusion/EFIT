@@ -323,7 +323,7 @@
       real*8 cutip,dtdot,xpsimin,fcurbd,pcurbd,prbdry,sgprmin, &
              prespb,tipbry,tepbry,dipbry,depbry,pbimpb,sigppb,sigpreb, &
              sigtipb,sigtepb,sigdipb,sigdepb,fwtpd,fwtfd,cstabte,cstabne, &
-             dp1dxf,sgtimin,alphafp,xpsialp,vsdamp,loplim, &
+             dp1dxf,sgtimin,alphafp,xpsialp,vsdamp,siloplim, &
              rminvs,rmaxvs,zminvs,zmaxvs,relbps,zbound,yvs2,saimin, &
              fztor,fzpol,tcurrp,fpolvs,rbound,sigprebi,pressbi, &
              alphamu,saicon,rsepex,timeb,dtime
@@ -338,7 +338,7 @@
       data icntour/0/,cstabne/0.0/,cstabte/0.0/, &
            limvs/1/,ncstpp/1/,ncstfp/1/,kzeroj/0/
       data kbound/0/,kdofit/0/,kdopre/0/
-      data loplim/0.0/
+      data siloplim/0.0/
       data alphafp/0./,sigppb/1000./
       data kframe/0/,rminvs/0/,rmaxvs/100./,zminvs/-100./,zmaxvs/100./
       data kskipvs/0/,vsdamp/0/,relbps/0.004_dp/,zbound/0.0/,rbound/0.0/

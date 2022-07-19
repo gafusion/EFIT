@@ -219,7 +219,7 @@ LIMITR,,"| Number of limiter points (number of valid points in XLIM and YLIM arr
 | except for shots <=76756, where number of limiter points is this number+13
 | - ,<0 read from a standard file (Default = -33).
 | - 1000+number number of points for symmetrized solution (input only top half of limiter points)."
-LOPLIM,0, Controls whether the boundary from the previous timeslice (on the same processor) is used as an initial guess for finding the boundary at the current time.  The previous solution is only used when the maximum absolute flux loop difference between the current and previous iteration is less than this value.
+SILOPLIM,0, Controls whether the boundary from the previous timeslice (on the same processor) is used as an initial guess for finding the boundary at the current time.  The previous solution is only used when the maximum absolute flux loop difference between the current and previous iteration is less than this value.
 MXITER,25,"| Maximum number of outer fitting iterations
 | - Set to 1 for equilibrium solutions. Set negative for iteration history output to 
 | terminal during EFIT execution."

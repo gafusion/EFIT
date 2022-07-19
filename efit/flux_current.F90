@@ -1075,8 +1075,11 @@
 !--            slice subsequently
 !-----------------------------------------------------------------------
       if(jtime.eq.1) isicinit=icinit
-      if (isicinit.lt.0) then
-        if(jtime.gt.1) return
+      if (isicinit.lt.0 .and. isicinit.ne.-3) then
+        if (jtime.gt.1) then
+          icinit=isicinit
+          return
+        endif
         if (isicinit.eq.-12) then
           icinit=2
         elseif (isicinit.eq.-4) then
@@ -1245,7 +1248,6 @@
         call errctrl_msg('inicur','icinit value not recognized')
         stop
       end select
-      if(jtime.eq.1) icinit=isicinit
       return
       end subroutine inicur
 

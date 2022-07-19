@@ -73,9 +73,9 @@
       if (iges.gt.1) then
         silop_change=maxval(abs(silopt(iges,:)-silopt(iges-1,:)))
       else
-        silop_change=0.0
+        silop_change=HUGE(siloplim)
       endif
-      if (silop_change.ge.loplim) then
+      if (silop_change.ge.siloplim) then
         xguess=(rgrid(1)+rgrid(nw))/2.
         yguess=(zgrid(1)+zgrid(nh))/2.
         xlims(1)=rgrid(2)+0.2_dp*(rgrid(2)-rgrid(1))

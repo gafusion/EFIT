@@ -92,7 +92,7 @@
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout, &
            imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
            nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
-           idebug,jdebug,ifindopt,tolbndpsi,loplim
+           idebug,jdebug,ifindopt,tolbndpsi,siloplim
       namelist/inwant/psiwant,vzeroj,fwtxxj,fbetap,fbetan,fli,fq95,fqsiw, &
            jbeta,jli,alpax,gamax,jwantm,fwtxxq,fwtxxb,fwtxli,znose, &
            fwtbdry,nqwant,siwantq,n_write,kccoils,ccoils,rexpan, &
@@ -1078,7 +1078,7 @@
           call read_h5_ex(nid,"jdebug",jdebug,h5in,h5err)
           call read_h5_ex(nid,"ifindopt",ifindopt,h5in,h5err)
           call read_h5_ex(nid,"tolbndpsi",tolbndpsi,h5in,h5err)
-          call read_h5_ex(nid,"loplim",loplim,h5in,h5err)
+          call read_h5_ex(nid,"siloplim",siloplim,h5in,h5err)
           call close_group("in1",nid,h5err)
         endif
    
