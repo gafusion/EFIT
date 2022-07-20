@@ -79,8 +79,8 @@
           end if
         end if
 
-        do in=1,nxiter
-          ixnn=in
+        do ii=1,nxiter
+          ixnn=ii
           nitera=nitera+1
 
 #ifdef DEBUG_LEVEL2
@@ -98,7 +98,7 @@
 #endif
              call vescur(jtime)
           endif
-          if ((i.le.1).or.(in.gt.1)) then
+          if ((i.le.1).or.(ii.gt.1)) then
 #ifdef DEBUG_LEVEL2
              write(6,*) 'Entering fcurrt'
 #endif
@@ -143,12 +143,12 @@
 #endif
           call residu(nitera,jtime)
           if ((nitera.lt.kcallece).and.(kfitece.gt.0.0)) exit
-          if ((in.eq.1).and.(idone.gt.0).and.(tsaisq(jtime).le.saimin)) then
+          if ((ii.eq.1).and.(idone.gt.0).and.(tsaisq(jtime).le.saimin)) then
             go to 2020
           end if
           if (idone.gt.0) exit
           if (i.eq.mxiter+1) exit
-        end do ! in
+        end do ! ii
       end do ! i
       if ((nbdry.le.0).and.(ivacum.le.0)) then
         call errctrl_msg('fit','not converged, reached max iterations',2)

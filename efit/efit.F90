@@ -249,7 +249,7 @@
 #endif
         call errctrl_setstate(rank,time(ks))
         if ((kerror.gt.0).or.(iconvr.lt.0)) then
-          kerrot(ks)=kerror
+          if(k.lt.ktime) kerrot(ks)=kerror
           cycle
         endif
         if (kautoknt .eq. 1) then
@@ -270,7 +270,7 @@
 #endif
           call fit(ks,kerror)
           if (kerror.gt.0) then
-            kerrot(ks)=kerror
+            if(k.lt.ktime) kerrot(ks)=kerror
             cycle
           endif
         endif
@@ -282,12 +282,12 @@
 #endif
         call shapesurf(ks,ktime,kerror)
         if (kerror.gt.0) then
-          kerrot(ks)=kerror
+          if(k.lt.ktime) kerrot(ks)=kerror
           cycle
         endif
 !DEPRECATED        if (mtear.ne.0) call tearing(ks,mtear,kerror)
 !DEPRECATED        if (kerror.gt.0) then
-!DEPRECATED          kerrot(ks)=kerror
+!DEPRECATED          if(k.lt.ktime) kerrot(ks)=kerror
 !DEPRECATED          cycle
 !DEPRECATED        endif
 #ifdef DEBUG_LEVEL1

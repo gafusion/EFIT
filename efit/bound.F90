@@ -180,7 +180,7 @@
             if (dist(5).le.etolc) then
               do l=1,4
                 kj=l
-                if(dist(l).eq.dist(5)) exit contr
+                if(dist(l).eq.dist(5)) exit
               end do
 !----------------------------------------------------------------------
 !--           kj points to appropriate corner                        --

@@ -229,8 +229,7 @@
 !var_updown
       module var_updown
         real*8 dpsip,dpsip_last
-        logical vfeed,symmetrize,backaverage
-        data vfeed/.false./
+        logical symmetrize,backaverage
       end module var_updown
 !var_test
       module var_test
