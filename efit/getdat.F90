@@ -70,15 +70,14 @@
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       parameter (npmax=262144)
-      parameter (npefit=8192) ! needs to match ntims from var_gggttt module
 
       character*4 char4
       real*4 t_r4, data_r4, tmin_r4, tmax_r4, scale_r4, rarr4, real32
 
       DIMENSION DATA_R4(*)
       DIMENSION T_R4(*)
-      DIMENSION DATA(npefit)
-      DIMENSION T(npefit)
+      DIMENSION DATA(npmax)
+      DIMENSION T(npmax)
       DIMENSION FPDATA(npmax)
       DIMENSION TT(npmax)
 
@@ -118,7 +117,6 @@
       efit = .false.
       rcfact = 1.0
       iwait = jwait
-      np = min(np,npefit) ! this could be problematic for some codes...
 
       tmin = real(tmin_r4,dp)
       tmax = real(tmax_r4,dp)

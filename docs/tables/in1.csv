@@ -20,7 +20,7 @@ CUTIP, 80000, Maximum amount of plasma current in Amp to be considered as vacuum
 DMASS,, """Density Mass"". Mass density in kg/m3. See NMASS."
 DNBEAM, , "Beam particle density, for kinetic fit - from ONETWO code."
 DNETHOM,, """Density ne Thompson"". Density from Thompson scattering, from some other code."
-DNMIN, 1.0, 
+DNMIN, , Unused variable...
 EELIP,1.2,"""Elongation Ellipse"". Elongation of ellipse for current initialization. "
 ELOMIN,0.9,"""Elongation Minimum"". Minimum plasma elongation at which EFIT tries to separate betap and li."
 EMP,1.0,GAQ current density profile parameter. Ignored unless ICURRT=4?
@@ -93,15 +93,7 @@ ICURRT,,"| ""(Integer flag) Current"". Which current profile parametrization to 
 | - 3 = not implemented.
 | - 4 = GAQ type current profile.
 | - 5 = same as 2 but include toroidal rotation."
-IDFILA,,"| - + = filament set for MFIT.
-| - 2 = outside limited circular
-| - 3 = good for most purpose
-| - 4 = small inside limited circular
-| - 6 = for plasmas in bottom half of vessel
-| - 8 = for plasmas in top half of vessel like 71665.01800
-| - 9 = for plasmas in top half vessel
-| - 11 = for VDE disruption in bottom half of vessel (A)
-| - 12 = for cylindrical annulus ADP electrode startup (B)"
+IDFILA,,Filament set for MFIT (not used in EFIT).
 IECOIL,,"| - ""(Integer flag) E-coil"". E-coil plotting
 | - 1 = plot E coils with color coding for different connections.
 | - 0 = do not plot E coils (Default)"
@@ -227,6 +219,7 @@ LIMITR,,"| Number of limiter points (number of valid points in XLIM and YLIM arr
 | except for shots <=76756, where number of limiter points is this number+13
 | - ,<0 read from a standard file (Default = -33).
 | - 1000+number number of points for symmetrized solution (input only top half of limiter points)."
+SILOPLIM,0, Controls whether the boundary from the previous timeslice (on the same processor) is used as an initial guess for finding the boundary at the current time.  The previous solution is only used when the maximum absolute flux loop difference between the current and previous iteration is less than this value.
 MXITER,25,"| Maximum number of outer fitting iterations
 | - Set to 1 for equilibrium solutions. Set negative for iteration history output to 
 | terminal during EFIT execution."

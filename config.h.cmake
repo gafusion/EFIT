@@ -23,6 +23,7 @@
 #cmakedefine DEBUG_LEVEL2
 #cmakedefine DEBUG_LEVEL3
 #cmakedefine DEBUG_MSELS
+#cmakedefine DEBUG_PLTS
 #cmakedefine PROJECT_REV ${PROJECT_REV}
 #cmakedefine PROJECT_URL ${PROJECT_URL}
 #cmakedefine __cray

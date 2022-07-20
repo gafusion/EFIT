@@ -229,8 +229,7 @@
 !var_updown
       module var_updown
         real*8 dpsip,dpsip_last
-        logical vfeed,symmetrize,backaverage
-        data vfeed/.false./
+        logical symmetrize,backaverage
       end module var_updown
 !var_test
       module var_test
@@ -540,10 +539,12 @@
         logical :: fixpp = .false.
       end module profile_ext_mod
 
-! NOTE : keep track of times for which BCOIL and ECOIL data exist (see getecd.f90)
+! NOTE : keep track of times for which BCOIL and ECOIL data exist (see get_constraints.f90)
       module vtime_mod
         integer*4 :: nvtime = -1
         real*8,dimension(:), allocatable :: vtime
+        integer*4, parameter :: ntims=8192 ! sufficient for ms data from 8s shot, but needs to be increased for longer shots or higher temporal resolution (npefit in getdat.F90 needs to match)
+        integer*4, parameter :: npmax=262144 ! sufficient for ms data from 262s shot... needs to match npmax in getdat.F90
       end module vtime_mod
 
       subroutine set_mod_arrays()

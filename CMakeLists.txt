@@ -51,6 +51,8 @@ endif()
 set(JDEBUG "NONE" CACHE STRING "Further debug output from section")
 if(JDEBUG MATCHES "MSEL")
   set(DEBUG_MSELS TRUE)
+elseif(JDEBUG MATCHES "PLTS")
+  set(DEBUG_PLTS TRUE) # write surface files for debugging/plotting. Serial only, not parallel
 endif()
 #---------------------------------------------------------------------
 # Set default values for performance issues if necessary

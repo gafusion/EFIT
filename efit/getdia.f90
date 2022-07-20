@@ -27,7 +27,7 @@
 !********************************************************************** 
         subroutine getdia(nshot,tim,npts,tavg,ierr,phidia,sigphi)
 
-        use var_gggttt, only: ntims
+        use vtime_mod, only: ntims
         implicit integer*4 (i-n), real*8 (a-h,o-z)
         dimension diamag(ntims,3),diamagc(ntims,3), &
                   sig(ntims,3),tim(ntims)
@@ -73,7 +73,7 @@
         use set_kinds
         use exvars
         use var_exdata, only: ishot
-        use var_gggttt, only: ntims
+        use vtime_mod, only: ntims
         implicit integer*4 (i-n), real*8 (a-h,o-z)
         PARAMETER (NPOINT=42)
         REAL*8 RAR,TTEMP
@@ -338,7 +338,7 @@
 !!
 !**********************************************************************
         SUBROUTINE LOWPASS(XIN,XOUT,NAVG,NPTS)
-        USE VAR_GGGTTT, ONLY: NTIMS
+        USE VTIME_MOD, ONLY: NTIMS
         implicit integer*4 (i-n), real*8 (a-h,o-z)
         REAL*8 XIN(1),XOUT(1),XTMP(NTIMS)
 
@@ -361,7 +361,7 @@
 !!
 !**********************************************************************
         SUBROUTINE INTERP(XIN,YIN,NIN,XOUT,YOUT,NOUT)
-        USE VAR_GGGTTT, ONLY: NTIMS
+        USE VTIME_MOD, ONLY: NTIMS
         implicit integer*4 (i-n), real*8 (a-h,o-z)
         REAL*8 XIN(NTIMS),YIN(NTIMS),XOUT(NTIMS),YOUT(NTIMS)
         INTEGER NIN,NOUT
