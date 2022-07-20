@@ -41,6 +41,7 @@
 !!       @param zxmin : z at xmin
 !!       @param zxmax : z at xmax
 !!       @param tolbndpsi : tolerance on psi
+!!
 !*********************************************************************
       subroutine bound(psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
            zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
@@ -55,8 +56,6 @@
       data etolc,etol,nloop/1.e-06_dp,1.e-04_dp,60/
       data nttyo/6/,psitol/1.0e-04_dp/,mecopy/0/,n111/1/
       save dx,dy,area,rmid,mecopy
-
-      save n111
 
       !! Debug tool: Write out the surface being contoured to
       !! verify it looks reasonable, sometimes it's not.
@@ -116,13 +115,12 @@
         rmid=1.02_dp*(x(1)+x(nw))/2.0
         mecopy=1
       end if
-
 !----------------------------------------------------------------------
 !--   find starting value of psi                                     --
 !----------------------------------------------------------------------
       psiloop: do loop = 1,nloop
         i=1+(rad(1)-x(1))/dx
-        if(rad(1)-x(i).lt.0.0)i=i-1
+        if(rad(1)-x(i).lt.0.0) i=i-1
         j=1+(yctr(1)-y(1))/(dy-0.000001_dp)
         jjj=j
 
@@ -285,7 +283,7 @@
             end if
           end if
           call extrap(f1,f2,f3,f4,x1,y1,x2,y2,xt(1),yt(1),xt1,yt1,xt2,yt2, &
-            psivl,area,dx,dy)
+                      psivl,area,dx,dy)
 !----------------------------------------------------------------------
 !--       decide which intersection (xt1,yt1) or (xt2,yt2) is required
 !----------------------------------------------------------------------
@@ -845,7 +843,6 @@
       dimension cspln(kubicx,lubicx,kubicy,lubicy)
       real*8 piov2,piov4,fpiov4,spiov4,tpiov4,tpiov2
       data n111/1/,n333/3/
-      save n111,n333
       integer*4, intent(inout) :: kerror
 
       kerror = 0
@@ -1436,7 +1433,6 @@
       kerror=0
       orelax=1.0 ! Newton's Method relaxation constant (0.0-1.0)
       niter=20   ! Number of iterations
-      n111=1
       xseps(1)=-999.
       yseps(1)=-999.
       xseps(2)=-999.
@@ -1793,7 +1789,7 @@
 !--   make sure 2nd seperatrix inside vessel                          --
 !-----------------------------------------------------------------------
       call zlim(zeross,n111,n111,limtrv,xlimv,ylimv,xs,ys,limfagv)
-      ! TODO: Previously this check was allowed to return without error and no message.
+      ! Previously this check was allowed to return without error and no message.
       ! It occurs a lot, so no error and supress message for now.
       if (zeross(1).le.0.1_dp) then
         !kerror = 1
@@ -1806,9 +1802,9 @@
         call errctrl_msg('findax','2nd seperatrix too far away',2)
         return
       endif
-      ! TODO: If 2nd separatrix errors out (returns) above, the following variables
+      ! If 2nd separatrix errors out (returns) above, the following variables
       ! (xseps=-999, rssep=-89, sissep=-1.0e-10, delrmax2=0.4) have default values that
-      ! are used elsewhere. Check that they do not cause problems.
+      ! are used elsewhere.
       xseps(2)=xs(1)*100.
       yseps(2)=ys(1)*100.
       rssep=xs(1)
@@ -2196,9 +2192,9 @@
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension xout(npoint),yout(npoint),psi(nw*nh),rgrid(nw),zgrid(nh)
+      data n111/1/
 
       kerror = 0
-      n111=1
       if (negcur.eq.0) then
         curneg=1.
       else
