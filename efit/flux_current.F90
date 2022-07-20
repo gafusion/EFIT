@@ -1055,8 +1055,10 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      save isicinit
+      implicit none
+      integer*4, intent(in) :: jtime
+      integer*4 :: i,j,kk,ioerr,mw,mh
+      real*8 :: delcur,sumi,erho
       character(14) :: sfile
       character(len=1000) :: line
       logical :: file_stat
@@ -1264,7 +1266,8 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      integer*4, intent(in) :: jtime
 !
       if(ivesel.eq.5) return
 !

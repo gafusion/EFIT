@@ -720,7 +720,7 @@
                         ktime_err)
       use vtime_mod
       use var_inaver
-      use var_pcsys, only: do_spline_fit,use_consistent_data
+      use var_pcsys, only: do_spline_fit
       implicit none
       real*8 sevals
       integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave,ircfact
@@ -750,13 +750,8 @@
       do kkk=1,8
         tmin = times-(mave+10)*dtmin*kkk
         tmax = times+(np-1)*delt+(mave+10)*dtmin*kkk
-        if (use_consistent_data) then
-          npn = (tmax-tmin)/dtmin + np*1.5
-          npn = min0(npn,ntims)
-        else
-          npn = (tmax-tmin)/dtmin + 1.5
-          npn = min0(npn,4000)
-        endif
+        npn = (tmax-tmin)/dtmin + np*1.5
+        npn = min0(npn,ntims)
         npn = max0(npn,10)
         !
         bitvl = 0.0
@@ -850,13 +845,8 @@
         tmin = times-(mave+100)*dtmin*kkk
         tmax = times+(np-1)*delt+(mave+100)*dtmin*kkk
         npn = (tmax-tmin)/dtmin + 1.5
-        if (use_consistent_data) then
-          npn = (tmax-tmin)/dtmin + np*1.5
-          npn = min0(npn,ntims)
-        else
-          npn = (tmax-tmin)/dtmin + 1.5
-          npn = min0(npn,4000)
-        endif
+        npn = (tmax-tmin)/dtmin + np*1.5
+        npn = min0(npn,ntims)
         npn = max0(npn,10)
         bitvl=0.0
         if (name .ne. 'NONE      ') then
@@ -986,7 +976,7 @@
                         np,times,delt,mm,xxd,nn,bitvld,kave,time, &
                         rcx,rcgx,vbitx,zinhnox,t0x)
       use vtime_mod, only: ntims,npmax
-      use var_pcsys, only: do_spline_fit,use_consistent_data
+      use var_pcsys, only: do_spline_fit
       implicit none
       real*8 sevals
       integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave
@@ -1010,13 +1000,8 @@
         tmin = times-(mave+10)*dtmin*kkk
         tmax = times+(np-1)*delt+(mave+10)*dtmin*kkk
         npn = (tmax-tmin)/dtmin + 1.5
-        if (use_consistent_data) then
-          npn = (tmax-tmin)/dtmin + np*1.5
-          npn = min0(npn,ntims)
-        else
-          npn = (tmax-tmin)/dtmin + 1.5
-          npn = min0(npn,4000)
-        endif
+        npn = (tmax-tmin)/dtmin + np*1.5
+        npn = min0(npn,ntims)
         npn = max0(npn,10)
         !
         bitvl=0.0

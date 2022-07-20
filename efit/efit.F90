@@ -249,12 +249,8 @@
 #endif
         call errctrl_setstate(rank,time(ks))
         if ((kerror.gt.0).or.(iconvr.lt.0)) then
-          if (k.lt.ktime) then
-            kerrot(ks)=kerror
-            cycle
-          else
-            exit
-          endif
+          kerrot(ks)=kerror
+          cycle
         endif
         if (kautoknt .eq. 1) then
           call autoknot(ks,iconvr,ktime,mtear,kerror)
@@ -274,12 +270,8 @@
 #endif
           call fit(ks,kerror)
           if (kerror.gt.0) then
-            if (k.lt.ktime) then
-              kerrot(ks)=kerror
-              cycle
-            else
-              exit
-            endif
+            kerrot(ks)=kerror
+            cycle
           endif
         endif
 !----------------------------------------------------------------------
@@ -290,21 +282,13 @@
 #endif
         call shapesurf(ks,ktime,kerror)
         if (kerror.gt.0) then
-          if (k.lt.ktime) then
-            kerrot(ks)=kerror
-            cycle
-          else
-            exit
-          endif
+          kerrot(ks)=kerror
+          cycle
         endif
 !DEPRECATED        if (mtear.ne.0) call tearing(ks,mtear,kerror)
 !DEPRECATED        if (kerror.gt.0) then
-!DEPRECATED          if (k.lt.ktime) then
-!DEPRECATED            kerrot(ks)=kerror
-!DEPRECATED            cycle
-!DEPRECATED          else
-!DEPRECATED            exit
-!DEPRECATED          endif
+!DEPRECATED          kerrot(ks)=kerror
+!DEPRECATED          cycle
 !DEPRECATED        endif
 #ifdef DEBUG_LEVEL1
         write (6,*) 'Main/PRTOUT ks/kerror = ', ks, kerror

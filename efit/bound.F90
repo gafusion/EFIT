@@ -108,7 +108,7 @@
 !---------------------------------------------------------------------
 !--   field line tracing ix < 0                                     --
 !---------------------------------------------------------------------
-      if (ix.lt.0) rad(1)=xctr
+      if(ix.lt.0) rad(1)=xctr
       if (mecopy.le.0) then
         dx=x(2)-x(1)
         dy=y(2)-y(1)
@@ -120,7 +120,7 @@
 !----------------------------------------------------------------------
 !--   find starting value of psi                                     --
 !----------------------------------------------------------------------
-      do loop = 1,nloop
+      psiloop: do loop = 1,nloop
         i=1+(rad(1)-x(1))/dx
         if(rad(1)-x(i).lt.0.0)i=i-1
         j=1+(yctr(1)-y(1))/(dy-0.000001_dp)
@@ -157,7 +157,7 @@
         a3=(xt(1)-x(i))*dy
         a4=area-a3
         psivl=(psi(kk+nh+1)*a3+psi(kk+1)*a4)/area
-        if (yt(1).eq.y(j)) psivl=psi(kk)+(psi(kk+nh)-psi(kk))*(xt(1)-x(i))/dx
+        if(yt(1).eq.y(j)) psivl=psi(kk)+(psi(kk+nh)-psi(kk))*(xt(1)-x(i))/dx
 
         contr: do while (.true.)
           f1=psi(kk)
@@ -180,7 +180,7 @@
             if (dist(5).le.etolc) then
               do l=1,4
                 kj=l
-                if (dist(l).eq.dist(5)) exit
+                if(dist(l).eq.dist(5)) exit contr
               end do
 !----------------------------------------------------------------------
 !--           kj points to appropriate corner                        --
@@ -203,7 +203,7 @@
 !--       check for limiter in cell                                  --
 !----------------------------------------------------------------------
           zsum=zero(kk)+zero(kk+1)+zero(kk+nh)+zero(kk+nh+1)
-          if (zsum.eq.0.0) exit contr
+          if(zsum.eq.0.0) exit contr
 
           if (abs(zsum-4.0).ge.1.e-03_dp) then
 !-------------------------------------------------------------------------
@@ -235,7 +235,7 @@
               if ((kij1.ne.kk).or.(kij2.ne.kk)) then
                 ifail=0
                 call cellb(xc1,yc1,xc2,yc2,x1,y1,x2,y2,ifail)
-                if (ifail.eq.1) cycle ! line segment does not intersect cell
+                if(ifail.eq.1) cycle ! line segment does not intersect cell
               end if
               ! psilm is largest psi value along line segment betw pts
               call maxpsi(xc1,yc1,xc2,yc2,x1,y1,x2,y2,f1,f2,f3,f4,area,psilm,xtry1,ytry1,nerr)
@@ -281,9 +281,7 @@
             dpsi=min(dpsi,abs(psivl-psilx))
             if (psilx-psivl.ge.tolbndpsi) then
               call zlim(zerol,n111,n111,limitr,xlim,ylim,xt,yt,limfag)
-              if (zerol(1).le.0.01_dp) then
-                exit contr
-              end if
+              if(zerol(1).le.0.01_dp) exit contr
             end if
           end if
           call extrap(f1,f2,f3,f4,x1,y1,x2,y2,xt(1),yt(1),xt1,yt1,xt2,yt2, &
@@ -327,16 +325,16 @@
 !----------------------------------------------------------------------
 !--       find next cell                                             --
 !----------------------------------------------------------------------
-          if (xt(1).eq.x2) i=i+1
-          if (xt(1).eq.x1) i=i-1
-          if (yt(1).eq.y2) j=j+1
-          if (yt(1).eq.y1) j=j-1
+          if(xt(1).eq.x2) i=i+1
+          if(xt(1).eq.x1) i=i-1
+          if(yt(1).eq.y2) j=j+1
+          if(yt(1).eq.y1) j=j-1
 
           if (ix.ge.0.or.ix.lt.-2) then
-            if (yt(1).lt.ymin) rymin=xt(1)
-            if (yt(1).gt.ymax) rymax=xt(1)
-            if (xt(1).lt.xmin) zxmin=yt(1)
-            if (xt(1).gt.xmax) zxmax=yt(1)
+            if(yt(1).lt.ymin) rymin=xt(1)
+            if(yt(1).gt.ymax) rymax=xt(1)
+            if(xt(1).lt.xmin) zxmin=yt(1)
+            if(xt(1).gt.xmax) zxmax=yt(1)
             xmin=min(xmin,xt(1))
             xmax=max(xmax,xt(1))
             ymin=min(yt(1),ymin)
@@ -348,9 +346,9 @@
 !         find new cell index                                        --
 !----------------------------------------------------------------------
           kk=(i-1)*nh+j
-          if (kk.eq.kstrt) exit
+          if(kk.eq.kstrt) exit contr
           dis2p=sqrt((xcontr(1)-xt(1))**2+(ycontr(1)-yt(1))**2)
-          if ((dis2p.lt.0.1_dp*dx).and.(ncontr.gt.5)) exit
+          if((dis2p.lt.0.1_dp*dx).and.(ncontr.gt.5)) exit contr
         end do contr
 
 !----------------------------------------------------------------------
@@ -375,10 +373,10 @@
             return
           end if
           !
-          if (loop.ge.nloop) exit ! loop
+          if(loop.ge.nloop) exit psiloop
           rout=rad(1)
           rad(1)=(rin+rout)*0.5_dp
-          cycle ! loop
+          cycle psiloop
         end if
 
 !----------------------------------------------------------------------
@@ -386,7 +384,7 @@
 !----------------------------------------------------------------------
         err=abs((psivl-psib0)/psivl)
         if (ix.lt.0) then
-          if (ix.lt.-2) dpsi=1.e-06_dp
+          if(ix.lt.-2) dpsi=1.e-06_dp
           if (ncontr.lt.3) then
             nerr=3
             call errctrl_msg('bound', &
@@ -401,8 +399,8 @@
           return
         end if
 
-        if (err.le.etol) exit ! loop
-        if (loop.ge.nloop) exit ! loop
+        if(err.le.etol) exit psiloop
+        if(loop.ge.nloop) exit psiloop
 !----------------------------------------------------------------------
 !--     new rad,psi and try again                                    --
 !----------------------------------------------------------------------
@@ -414,7 +412,7 @@
           rin=rad(1)
         end if
         rad(1)=(rin+rout)*0.5_dp
-      end do ! loop
+      end do psiloop
 
       radold=rad(1)
       psib0=psivl

@@ -94,8 +94,7 @@
            ktear,keecur,ecurbd,keefnc,eetens,eeknt,keeknt, &
            keebdry,kee2bdry,eebdry,ee2bdry,kersil,iout,ixray, &
            use_alternate_pointnames, alternate_pointname_file, &
-           do_spline_fit,use_consistent_data, &
-           table_dir,input_dir,store_dir, &
+           do_spline_fit,table_dir,input_dir,store_dir, &
            kedgep,pedge,pe_psin,pe_width,kedgef,f2edge,fe_psin,fe_width, &
            psiecn,dpsiecn,relaxdz,fitzts,isolve,stabdz, &
            iplcout,errdelz,imagsigma,errmag,ksigma,saimin,errmagb, &

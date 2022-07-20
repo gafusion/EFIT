@@ -265,8 +265,8 @@
        module var_pcsys
          integer*4 use_alternate_pointnames
          character*80 alternate_pointname_file
-         logical*4 do_spline_fit,use_consistent_data
-         data do_spline_fit/.true./,use_consistent_data/.true./
+         logical*4 do_spline_fit
+         data do_spline_fit/.true./
          data use_alternate_pointnames/0/
          data alternate_pointname_file/'/link/efit/pcsnames.dat'/
        end module var_pcsys
