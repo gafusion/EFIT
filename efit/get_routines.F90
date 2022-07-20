@@ -2013,14 +2013,14 @@
 !!    @param nnn :
 !!
 !**********************************************************************
-      function erpote(ypsi,nnn)
-      use commonblocks,only: c,wk,copy,bkx,bky
+      real*8 function erpote(ypsi,nnn)
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-      dimension xpsii(nercur)
-      data init/0/
+      implicit none
+      real*8 erppote
+      integer*4, intent(in) :: nnn
+      real*8, intent(in) :: ypsi
+      real*8 xpsii(nercur)
 !
       if (abs(ypsi).gt.1.0) then
         erpote=0.0
@@ -2054,14 +2054,16 @@
 !!    @param zeee :
 !!
 !**********************************************************************
-      function eradial(ypsi,nnn,reee,zeee)
-      use commonblocks,only: c,wk,copy,bkx,bky
+      real*8 function eradial(ypsi,nnn,reee,zeee)
+      use commonblocks,only: c,bkx,bky
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-      dimension pds(6)
-      data init/0/
+      implicit none
+      real*8 erpote,esradial,erppote,seval
+      integer*4, intent(in) :: nnn
+      real*8, intent(in) :: ypsi,reee,zeee
+      integer*4 ier
+      real*8 pds(6),fnow,bbnow
 !
       if (abs(ypsi).ge.1.0) then
         eradial=0.0

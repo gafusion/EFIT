@@ -208,14 +208,13 @@
 !------------------------------------------------------------------------
 !--   form rotational pressure from mass density and rotaional frequency
 !------------------------------------------------------------------------
-      !if (init.eq.0) then
+      if (init.eq.0) then
 !------------------------------------------------------------------------
 !--     set up interpolation                                           --
 !------------------------------------------------------------------------
-
-      call zpline(nmass,sibeam,dmass,bwork,cwork,dwork)
-      !  init=1
-      !endif
+        call zpline(nmass,sibeam,dmass,bwork,cwork,dwork)
+        init=1
+      endif
       do i=1,nomegat
         xn=-romegat(i)
         if (romegat(i).gt.0.0) then

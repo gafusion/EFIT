@@ -65,8 +65,8 @@
       end module var_bscomss
 
       module var_autokknot
-      real*8 :: kautoknt,akchiwt,akerrwt,kakloop,aktol, &
-                kakiter,akgamwt,akprewt
+      integer*4 :: kautoknt,kakloop,kakiter
+      real*8 :: akchiwt,akerrwt,aktol,akgamwt,akprewt
       end module var_autokknot
 
       module var_autok
@@ -108,14 +108,6 @@
       module var_jwork4
       real*8,dimension(:),allocatable :: workb_jw4
       end module var_jwork4
-
-      module var_gggttt
-      integer*4, parameter :: ntims=8192
-      integer*4 navxx(ntims)
-      real*8 w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims), &
-             ew(ntims),stdevxx(ntims)
-      end module var_gggttt
-
 
       module var_cww
       integer*4 lwx,lwy

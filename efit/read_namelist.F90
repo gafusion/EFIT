@@ -3,7 +3,7 @@
 !!    This subroutine read efit.input file
 !!
 !**********************************************************************
-      subroutine read_efitin()
+      subroutine read_optin()
       use commonblocks
       use set_kinds
       include 'eparm.inc'
@@ -53,7 +53,7 @@
       endif
       return
 
-      end subroutine read_efitin
+      end subroutine read_optin
 
 !**********************************************************************
 !>

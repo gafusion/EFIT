@@ -1,8 +1,8 @@
 #include "config.f"
 !**********************************************************************
 !>
-!!    getpts gets the magnetic data for use with EFIT
-!!    and MFIT.
+!!    get_constraints sets the pointnames and calls subroutines to
+!!      query PTDATA or MDS+ to obtain the measurement constraints.
 !!
 !!
 !!    @param nshot : shot number
@@ -16,7 +16,7 @@
 !!    @param iierr : error flag
 !!
 !**********************************************************************
-      subroutine getpts(nshot,times,delt,np,iierr)
+      subroutine get_constraints(nshot,times,delt,np,iierr)
       use vtime_mod
       include 'eparm.inc'
       include 'modules1.inc'
@@ -50,7 +50,7 @@
       nsingl(1) = 'IP        '
       nsingl(2) ='VLOOP     '
       nsingl(3) ='BCOIL     '
-      nsingl(4) ='DIAMAG3   '   !diamagnetic flux ... 
+      nsingl(4) ='DIAMAG3   '   !diamagnetic flux 
       nsingl(5) ='RL01      '     !full rogowski 
       nsingl(6)='PINJ      '     !beam injection power
       n1name='N1COIL    '
@@ -87,10 +87,8 @@
       ecname(5)='E89DN     '
       ecname(6)='E89UP     '
       data irdata/0/,baddat/0/
-! NOTE this is only changed so serial/parallel k-files are identical
-! no changes were made to getpts() only to getpts_mpi() - MK
 !----------------------------------------------------------------------
-!--   read in pointnames ...                                         --
+!--   read in pointnames
 !----------------------------------------------------------------------
       open(unit=60,file=table_di2(1:ltbdi2)//'dprobe.dat', &
            status='old')
@@ -137,17 +135,17 @@
       i0 = 0
       r1 = 1.
 !----------------------------------------------------------------------
-!--   psi-loops ...                                                  --
+!--   psi-loops
 !----------------------------------------------------------------------
       do i=1,nsilop
         silopt(1:np,i)=0.
         ierpsi(i)=0
         call avdata(nshot,lpname(i),i1,ierpsi(i),silopt(1:np,i), &
                     np,times,delt,i0,r1,i1,psibit(i),iavem,time(1:np), &
-                    ircfact, do_spline_fit,psi_rc(i),psircg(i), &
+                    ircfact,psi_rc(i),psircg(i), &
                     vrespsi(i),psi_k(i), &
                     t0psi(i),devpsi(1:np,i),navpsi(1:np,i),time_err)
-        if (ierpsi(i).eq.3) then
+        if (ierpsi(i).eq.3) then ! TODO: this doesn't appear to be possible
           iierr=1
           return
         endif
@@ -171,7 +169,7 @@
       ierpla=0
       call avdata(nshot,nsingl(i),i1,ierpla,pasmat(1:np), &
                   np,times,delt,i0,r1,i1,bitip,iavem,time(1:np),ircfact, &
-                  do_spline_fit,p_rc,prcg,vresp,p_k,t0p,devp(1:np), &
+                  p_rc,prcg,vresp,p_k,t0p,devp(1:np), &
                   navp(1:np),time_err)
 
       rnavp=REAL(navp)
@@ -184,7 +182,7 @@
       ierlop=0
       call avdata(nshot,nsingl(2),i1,ierlop,vloopt(1:np), &
                   np,times,delt,i0,r1,i1,bitvl,iavev,time(1:np),ircfact, &
-                  do_spline_fit,vl_rc,vlrcg,vresvl,vl_k,t0vl,devvl(1:np), &
+                  vl_rc,vlrcg,vresvl,vl_k,t0vl,devvl(1:np), &
                   navvl(1:np),time_err)
 !
       if (use_alternate_pointnames .eq. 2) then    !JRF
@@ -201,7 +199,7 @@
         ierlop=0
         call avdata(nshot,ndenv(i),i1,ierlop,denvt(1:np,i), &
                     np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact, &
-                    do_spline_fit,denv_rc(i),denvrcg(i),vresdenv(i), &
+                    denv_rc(i),denvrcg(i),vresdenv(i), &
                     denv_k(i),t0denv(i),devdenv(1:np,i),navdenv(1:np,i), &
                     time_err)
         if(ierlop.eq.0) denvt(1:np,i)=denvt(1:np,i)*50.0
@@ -210,7 +208,7 @@
         ierlop=0
         call avdata(nshot,ndenr(i),i1,ierlop,denrt(1:np,i), &
                     np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact, &
-                    do_spline_fit,denr_rc(i),denrrcg(i),vresdenr(i), &
+                    denr_rc(i),denrrcg(i),vresdenr(i), &
                     denr_k(i),t0denr(i),devdenr(1:np,i),navdenr(1:np,i), &
                     time_err)
         if(ierlop.eq.0) denrt(1:np,i)=denrt(1:np,i)*50.0
@@ -223,14 +221,12 @@
       do i=1,3
         ierlop=0
         call amdata(nshot,ndenv(i),i1,ierlop,denvt(1:np,i), &
-                    np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact, &
-                    do_spline_fit)
+                    np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact)
         if(ierlop.eq.0) denvt(1:np,i)=denvt(1:np,i)*50.0
       enddo
       ierlop=0
       call amdata(nshot,ndenr(1),i1,ierlop,denrt(1:np,1), &
-                  np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact, &
-                  do_spline_fit)
+                  np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact)
       if(ierlop.eq.0) denrt(1:np,1)=denrt(1:np,1)*50.0
 #else
       write(nttyo,*) "WARNING: density not set because MDS+ is missing"
@@ -238,13 +234,13 @@
       ierlop=0
       call avdata(nshot,ndenr(2),i1,ierlop,denrt(1:np,2), &
                   np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact, &
-                  do_spline_fit,denr_rc(2),denrrcg(2),vresdenr(2), &
+                  denr_rc(2),denrrcg(2),vresdenr(2), &
                   denr_k(2),t0denr(2),devdenr(1:np,2),navdenr(1:np,2), &
                   time_err)
       if(ierlop.eq.0) denrt(1:np,2)=denrt(1:np,2)*50.0
       endif s124411
 !----------------------------------------------------------------------
-!--   67-degree magnetic probes ...                                  --
+!--   67-degree magnetic probes
 !----------------------------------------------------------------------
       do i=1,magpri
         expmpi(1:np,i)=0.
@@ -252,7 +248,7 @@
         sclmp=1.0
         call avdata(nshot,mpnam2(i),i1,iermpi(i),expmpi(1:np,i), &
                     np,times,delt,i0,sclmp,i1,bitmpi(i),iavem,time(1:np), &
-                    ircfact,do_spline_fit,xmp_rc(i),xmprcg(i),vresxmp(i), &
+                    ircfact,xmp_rc(i),xmprcg(i),vresxmp(i), &
                     xmp_k(i),t0xmp(i),devxmp(1:np,i),navxmp(1:np,i),time_err)
       enddo
       rnavxmp=navxmp
@@ -263,7 +259,7 @@
       open(unit=60,file=input_dir(1:lindir)//'btcomp.dat', &
            status='old',iostat=ioerr)
       if (ioerr.ne.0) then
-        call errctrl_msg('getpts', &
+        call errctrl_msg('get_consrtaints', &
                          input_dir(1:lindir)//'btcomp.dat not found')
         stop
       endif
@@ -277,7 +273,7 @@
           ierbtc=0
           call avdata(nshot,btcname,i1,ierbtc,bti322(1:np), &
                       np,times,delt,i0,r1,i1,bitbt,iavem,time(1:np), &
-                      ircfact,do_spline_fit,bt_rc,btrcg,vresbt,bt_k, &
+                      ircfact,bt_rc,btrcg,vresbt,bt_k, &
                       t0bt,devbt(1:np),navbt(1:np),time_err)
           if (ierbtc.ne.0) then
             bti322(1:np)=0.0
@@ -348,7 +344,7 @@
       enddo
 
       if (nccomp.gt.mccoil) then
-        call errctrl_msg('getpts', &
+        call errctrl_msg('get_constraints', &
                          'insufficient C-coil length (mccoil) for data')
         stop
       endif
@@ -365,7 +361,7 @@
           iern1=0
           call avdata(nshot,n1name,i1,iern1,curtn1(1:np), &
                       np,times,delt,i0,r1,i1,bitn1,iavem,time(1:np), &
-                      ircfact,do_spline_fit,xn1_rc,xn1rcg,vresxn1,xn1_k, &
+                      ircfact,xn1_rc,xn1rcg,vresxn1,xn1_k, &
                       t0xn1,devxn1(1:np),navxn1(1:np),time_err)
           if(iern1.ne.0) curtn1(1:np)=0.0
         endif
@@ -377,7 +373,7 @@
             iercc=0
             call avdata(nshot,ncname(k),i1,iercc,curccoi(1:np,k), &
                         np,times,delt,i0,r1,i1,bitipc,iavem,time(1:np), &
-                        ircfact,do_spline_fit,cc_rc(k),ccrcg(k),vrescc(k), &
+                        ircfact,cc_rc(k),ccrcg(k),vrescc(k), &
                         cc_k(k),t0cc(k),devcc(1:np,k),navcc(1:np,k), &
                         time_err)
             if(iercc.ne.0) curccoi(1:np,k)=0.0
@@ -475,7 +471,7 @@
       enddo
 
       if (nicomp.gt.micoil) then
-        call errctrl_msg('getpts', &
+        call errctrl_msg('get_constraints', &
                          'insufficient I-coil length (micoil) for data')
         stop
       endif
@@ -494,7 +490,7 @@
             ieric(k)=0
             call avdata(nshot,niname(k),i1,ieric(k),curicoi(1:np,k), &
                         np,times,delt,i0,r1,i1,bitipc,iavem,time(1:np), &
-                        ircfact,do_spline_fit,xic_rc(k),xicrcg(k), &
+                        ircfact,xic_rc(k),xicrcg(k), &
                         vresxic(k),xic_k(k),t0xic(k),devxic(1:np,k), &
                         navxic(1:np,k),time_err)
             if(ieric(k).ne.0.and.ieric(k).ne.-1) curicoi(1:np,k)=0.0
@@ -556,7 +552,7 @@
 !----------------------------------------------------------------------
       call avdata(nshot,nsingl(3),i1,ierbto,bcentr(1:np), &
                   np,times,delt,i0,r1,i1,bitbto,iavem,time(1:np),ircfact, &
-                  do_spline_fit,bc_rc,bcrcg,vresbc,bc_k,t0bc,devbc(1:np), &
+                  bc_rc,bcrcg,vresbc,bc_k,t0bc,devbc(1:np), &
                   navbc(1:np),time_err)
       if (time_err .eq. 1) then
         if (nvtime .eq. -1) then
@@ -585,7 +581,7 @@
         sclmp=1.0
         call avdata(nshot,fcname(i),i1,ierfc(i),fccurt(1:np,i), &
                     np,times,delt,i0,sclmp,i1,bitfc(i),iavem,time(1:np), &
-                    ircfact,do_spline_fit,fc_rc(i),fcrcg(i),vresfc(i), &
+                    ircfact,fc_rc(i),fcrcg(i),vresfc(i), &
                     fc_k(i),t0fc(i),devfc(1:np,i),navfc(1:np,i),time_err)
         fccurt(1:np,i)=fccurt(1:np,i)*turnfc(i)
         devfc(1:np,i) =devfc(1:np,i) *turnfc(i)
@@ -600,7 +596,7 @@
         if (nshot.le.85700.and.i.gt.2) cycle
         call avdata(nshot,ecname(i),i1,ierec(i),eccurt(1:np,i), &
                     np,times,delt,i0,r1,i1,bitec(i),iavem,time(1:np), &
-                    ircfact,do_spline_fit,e_rc(i),ercg(i),vrese(i), &
+                    ircfact,e_rc(i),ercg(i),vrese(i), &
                     e_k(i),t0e(i),deve(1:np,i),navec(1:np,i),time_err)
         if (time_err .eq. 1) then
           if (nvtime .eq. -1) then
@@ -633,15 +629,16 @@
         call avdiam(nshot,nsingl(4),i1,ierrdi,diamag(1:np), &
                     np,delt,i0,r1,i1,bitdia,iavem,time(1:np), &
                     sigdia,ierdia)
-        if (ierdia(2).gt.0.and.ierdia(3).gt.0) &
+        if (ierdia(2).gt.0.and.ierdia(3).gt.0) then
           call avdata(nshot,nsingl(4),i1,ierrdi,diamag(1:np), &
                       np,times,delt,i0,r1,i1,bitdia,iavem,time(1:np), &
-                      ircfact,do_spline_fit,diam_rc,diamrcg,vresdiam, &
+                      ircfact,diam_rc,diamrcg,vresdiam, &
                       diam_k,t0diam,devdiam(1:np),navdiam(1:np),time_err)
+        endif
       elseif (kcaldia.eq.1) then
         call avdata(nshot,nsingl(4),i1,ierrdi,diamag(1:np), &
                     np,times,delt,i0,r1,i1,bitdia,iavem,time(1:np), &
-                    ircfact,do_spline_fit,diam_rc,diamrcg,vresdiam, &
+                    ircfact,diam_rc,diamrcg,vresdiam, &
                     diam_k,t0diam,devdiam(1:np),navdiam(1:np),time_err)
       endif
       diamag(1:np)=1.0e-03*diamag(1:np)
@@ -652,7 +649,7 @@
       if (nshot.ge.53427) then
         call apdata(nshot,nsingl(6),i1,ierbim,pbinj(1:np), &
                     np,times,delt,i0,r1,i1,bitbim,iavem,time(1:np), &
-                    do_spline_fit,beam_rc,beamrcg,vresbeam,beam_k, &
+                    beam_rc,beamrcg,vresbeam,beam_k, &
                     t0beam)
         if (ierbim.ne.0) then
           pbinj(1:np)=0.0
@@ -662,11 +659,11 @@
       endif
 !
       return
-      end subroutine getpts
+      end subroutine get_constraints
 
 !**********************************************************************
 !>
-!!    avdata gets the data and optionally performs the
+!!    avdata gets data from PTDATA and optionally performs the
 !!    average.
 !!
 !!
@@ -684,7 +681,7 @@
 !!
 !!    @param times : first time requested (in seconds)
 !!
-!!    @param deltd :
+!!    @param delt : length between time slices (in seconds)
 !!
 !!    @param mm :
 !!
@@ -694,13 +691,11 @@
 !!
 !!    @param bitvld :
 !!
-!!    @param kave :
+!!    @param kave : time window for averaging data (in miliseconds)
 !!
 !!    @param time : array of times requested
 !!
 !!    @param ircfact :
-!!
-!!    @param do_spline_fit :
 !!
 !!    @param rcx :
 !!
@@ -720,52 +715,56 @@
 !!
 !**********************************************************************
       subroutine avdata(nshot,name,mmm,ierror,y, &
-                        np,times,deltd,mm,xxd,nn,bitvld,kave,time,ircfact, &
-                        do_spline_fit,rcx,rcgx,vbitx,zinhnox,t0x,stdevx,navx, &
+                        np,times,delt,mm,xxd,nn,bitvld,kave,time,ircfact, &
+                        rcx,rcgx,vbitx,zinhnox,t0x,stdevx,navx, &
                         ktime_err)
       use vtime_mod
-      use var_gggttt
       use var_inaver
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      character*10 name
-      integer*4, intent(out) :: ktime_err
-      real*8 y(np),time(np),deltd,xxd,bitvld,times, &
-             rcx,rcgx,vbitx,zinhnox,t0x, &
-             stdevx(np)
-      integer*4 navx(np)
-      data dtmin/0.001001/,xm5/0.00001/
-      save dtmin,xm5
-      logical*4 do_spline_fit
+      use var_pcsys, only: do_spline_fit
+      implicit none
+      real*8 sevals
+      integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave,ircfact
+      real*8, intent(in) :: time(np),delt,xxd,times
+      character*10, intent(in) ::  name
+      integer*4, intent(out) :: ierror,navx(np),ktime_err
+      real*8, intent(out) :: y(np),bitvld,rcx,rcgx,vbitx,zinhnox, &
+                             t0x,stdevx(np)
+      integer*4 mave,kkk,npn,nnp,i,j,j_save
+      real*8 xm5,xx,dtmin,tmin,tmax,bitvl,rcxx,rcgxx,vbitxx,zinhnoxx, &
+             t0xx,dtave,delta_min,delta
+      integer*4 navxx(ntims)
+      real*8 w(npmax),xw(npmax),bw(ntims),cw(ntims),dw(ntims), &
+             stdevxx(ntims)
+      data xm5/0.00001/
 !
-      delt=deltd
-      xx=xxd
-      ierror=1
+      xx = xxd
+      ierror = 1
       leave_units: if (iaveus.le.0) then
 !----------------------------------------------------------------------
 !--   milli-second averaging                                         --
 !----------------------------------------------------------------------
-      dtmin=0.001001
-      dtmin= min (dtmin,delt)
-      dtmin= max (dtmin,xm5)
+      dtmin = 0.001001
+      dtmin = min (dtmin,delt)
+      dtmin = max (dtmin,xm5)
       mave = iabs(kave)
       do kkk=1,8
         tmin = times-(mave+10)*dtmin*kkk
         tmax = times+(np-1)*delt+(mave+10)*dtmin*kkk
-        npn = (tmax-tmin)/dtmin + 1.5
-        npn = min0(npn,4000)
+        npn = (tmax-tmin)/dtmin + np*1.5
+        npn = min0(npn,ntims)
         npn = max0(npn,10)
         !
-        bitvl=0.0
+        bitvl = 0.0
         if (name .ne. 'NONE      ') then !JRF
           call getdat_e &
             (nshot,name,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfact, &
             rcxx,rcgxx,vbitxx,zinhnoxx,t0xx)
-          bitvld=bitvl
-          rcx=rcxx
-          rcgx=rcgxx
-          vbitx=vbitxx
-          zinhnox=zinhnoxx
-          t0x=t0xx
+          bitvld = bitvl
+          rcx = rcxx
+          rcgx = rcgxx
+          vbitx = vbitxx
+          zinhnox = zinhnoxx
+          t0x = t0xx
           if((ierror .eq. -6).or.(ierror .eq. -7)) ierror = 0
         else
           ierror = 1
@@ -788,7 +787,7 @@
       if ((ktime_err .eq. 0) .and. (time(np) .gt. xw(npn))) then
         nvtime = 1
         nnp = 0
-        do i = 1, np
+        do i=1,np
           if (time(i) .le. xw(npn)) then
             nnp = i
           else
@@ -801,35 +800,37 @@
       endif
       if(nnp .eq. 0) ktime_err = 1
       if (ktime_err .eq. 1) then
-        ierror=1
+        ierror = 1
         return
       endif
       if (mave .ne. 0) then
         dtave = mave*dtmin*2.
-        call smoothit2(xw,w,npn,dtave,stdevxx,navxx)
+        call smoothit2(xw(1:npn),w(1:npn),npn,dtave,stdevxx(1:npn), &
+                       navxx(1:npn))
       endif
 !
       if (do_spline_fit) then       !JRF
-         call zplines(npn,xw,w,bw,cw,dw)
-         do i=1,nnp
-           y(i)=sevals(npn,time(i),xw,w,bw,cw,dw)
-         enddo
+        call zplines(npn,xw(1:npn),w(1:npn),bw(1:npn),cw(1:npn),dw(1:npn))
+        do i=1,nnp
+          y(i)=sevals(npn,time(i),xw(1:npn),w(1:npn),bw(1:npn), &
+                      cw(1:npn),dw(1:npn))
+        enddo
       else
-         do i=1,nnp
-            delta_min = 1.0e30
-            do j = 1,npn
-               delta = abs(xw(j) - time(i))
-               if(delta .lt. delta_min) then
-                  j_save = j
-                  delta_min = delta
-               endif
-            enddo
-            y(i) = w(j_save)
-            stdevx(i)=stdevxx(j_save)
-            navx(i)=navxx(j_save)
-!            write(6,999) xw(j_save),name
-!999         format(1x,'match at ',f15.8,'for ',a)
-         enddo
+        do i=1,nnp
+          delta_min = 1.0e30
+          do j=1,npn
+            delta = abs(xw(j) - time(i))
+            if(delta .lt. delta_min) then
+              j_save = j
+              delta_min = delta
+            endif
+          enddo
+          y(i) = w(j_save)
+          stdevx(i) = stdevxx(j_save)
+          navx(i) = navxx(j_save)
+!          write(6,999) xw(j_save),name
+!999       format(1x,'match at ',f15.8,'for ',a)
+        enddo
       endif
 !
       return
@@ -838,28 +839,29 @@
 !--------------------------------------------------------------------------
 !--   averaging in micro-seconds                                         --
 !--------------------------------------------------------------------------
-      dtmin=0.000001
+      dtmin = 0.000001
       mave = iabs(iaveus)
       do kkk=1,8
         tmin = times-(mave+100)*dtmin*kkk
         tmax = times+(np-1)*delt+(mave+100)*dtmin*kkk
         npn = (tmax-tmin)/dtmin + 1.5
-        npn = min0(npn,4000)
+        npn = (tmax-tmin)/dtmin + np*1.5
+        npn = min0(npn,ntims)
         npn = max0(npn,10)
         bitvl=0.0
         if (name .ne. 'NONE      ') then
-           call getdat_e &
-           (nshot,name,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfact, &
-           rcxx,rcgxx,vbitxx,zinhnoxx,t0xx)
-           bitvld=bitvl
-           rcx=rcxx
-           rcgx=rcgxx
-           vbitx=vbitxx
-           zinhnox=zinhnoxx
-           t0x=t0xx
-           if((ierror .eq. -6).or.(ierror .eq. -7)) ierror = 0
+          call getdat_e &
+          (nshot,name,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfact, &
+          rcxx,rcgxx,vbitxx,zinhnoxx,t0xx)
+          bitvld = bitvl
+          rcx = rcxx
+          rcgx = rcgxx
+          vbitx = vbitxx
+          zinhnox = zinhnoxx
+          t0x = t0xx
+          if((ierror .eq. -6).or.(ierror .eq. -7)) ierror = 0
         else
-           ierror = 1
+          ierror = 1
         endif
         if(ierror .gt. 0) return
         if(npn.ge.2) go to 1100
@@ -876,48 +878,50 @@
       nvtime = -1
       if(time(1) .lt. xw(1)) ktime_err = 1
       if ((ktime_err .eq. 0) .and. (time(np) .gt. xw(npn))) then
-         nvtime = 1
-         nnp = 0
-         do i = 1, np
-            if (time(i) .le. xw(npn)) then
-               nnp = i
-            else
-               vtime(nvtime) = time(i)*1000.0
-               nvtime = nvtime+1
-               ktime_err = 1
-            endif
-         enddo
-         if(nnp .eq. 0) nvtime = -1
+        nvtime = 1
+        nnp = 0
+        do i=1,np
+          if (time(i) .le. xw(npn)) then
+            nnp = i
+          else
+            vtime(nvtime) = time(i)*1000.0
+            nvtime = nvtime+1
+            ktime_err = 1
+          endif
+        enddo
+        if(nnp .eq. 0) nvtime = -1
       endif
       if(nnp .eq. 0) ktime_err = 1
       if (ktime_err .eq. 1) then
-         ierror=1
-         return
+        ierror = 1
+        return
       endif
       if (mave .ne. 0) then
-         dtave = mave*dtmin*2.
-         call smoothit2(xw,w,npn,dtave,stdevxx,navxx)
+        dtave = mave*dtmin*2.
+        call smoothit2(xw(1:npn),w(1:npn),npn,dtave,stdevxx(1:npn), &
+                       navxx(1:npn))
       endif
 !
       if (do_spline_fit) then !JRF
-         call zplines(npn,xw,w,bw,cw,dw)
-         do i=1,nnp
-            y(i)=sevals(npn,time(i),xw,w,bw,cw,dw)
-         enddo
+        call zplines(npn,xw(1:npn),w(1:npn),bw(1:npn),cw(1:npn),dw(1:npn))
+        do i=1,nnp
+          y(i)=sevals(npn,time(i),xw(1:npn),w(1:npn),bw(1:npn), &
+                      cw(1:npn),dw(1:npn))
+        enddo
       else
-         do i=1,nnp
-            delta_min = 1.0e30
-            do j = 1,npn
-               delta = abs(xw(j) - time(i))
-               if (delta .lt. delta_min) then
-                  j_save = j
-                  delta_min = delta
-               endif
-            enddo
-            y(i) = w(j_save)
-            stdevx(i) = stdevxx(j_save)
-!            write(6,999) xw(j_save),name
-         enddo
+        do i=1,nnp
+          delta_min = 1.0e30
+          do j=1,npn
+            delta = abs(xw(j) - time(i))
+            if (delta .lt. delta_min) then
+              j_save = j
+              delta_min = delta
+            endif
+          enddo
+          y(i) = w(j_save)
+          stdevx(i) = stdevxx(j_save)
+!          write(6,999) xw(j_save),name
+        enddo
       endif
 !
       return
@@ -943,7 +947,7 @@
 !!
 !!    @param times : first time requested (in seconds)
 !!
-!!    @param deltd :
+!!    @param delt : length between time slices (in seconds)
 !!
 !!    @param mm :
 !!
@@ -953,11 +957,9 @@
 !!
 !!    @param bitvld :
 !!
-!!    @param kave :
+!!    @param kave : time window for averaging data (in miliseconds)
 !!
 !!    @param time : array of times requested
-!!
-!!    @param do_spline_fit :
 !!
 !!    @param rcx :
 !!
@@ -971,18 +973,23 @@
 !!
 !**********************************************************************
       subroutine apdata(nshot,name,mmm,ierror,y, &
-                        np,times,deltd,mm,xxd,nn,bitvld,kave,time, &
-                        do_spline_fit,rcx,rcgx,vbitx,zinhnox,t0x)
-      use var_gggttt
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*8 y(np),time(np),deltd,xxd,bitvld,times, &
-             rcx,rcgx,vbitx,zinhnox,t0x
-      character*10 name
-      data dtmin/0.001001/,xm5/0.00001/
-      save dtmin,xm5
-      logical*4 do_spline_fit
+                        np,times,delt,mm,xxd,nn,bitvld,kave,time, &
+                        rcx,rcgx,vbitx,zinhnox,t0x)
+      use vtime_mod, only: ntims,npmax
+      use var_pcsys, only: do_spline_fit
+      implicit none
+      real*8 sevals
+      integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave
+      real*8, intent(in) :: time(np),delt,xxd,times
+      character*10, intent(in) ::  name
+      integer*4, intent(out) :: ierror
+      real*8, intent(out) :: y(np),bitvld,rcx,rcgx,vbitx,zinhnox,t0x
+      integer*4 mave,kkk,npn,ircfac,ktime_err,nnp,i,j,j_save
+      real*8 xm5,xx,dtmin,tmin,tmax,bitvl,rcxx,rcgxx,vbitxx,zinhnoxx, &
+             t0xx,dtave,delta_min,delta
+      real*8 w(npmax),xw(npmax),bw(ntims),cw(ntims),dw(ntims)
+      data xm5/0.00001/
 !
-      delt=deltd
       xx=xxd
       ierror=1
       dtmin=0.001001
@@ -993,7 +1000,8 @@
         tmin = times-(mave+10)*dtmin*kkk
         tmax = times+(np-1)*delt+(mave+10)*dtmin*kkk
         npn = (tmax-tmin)/dtmin + 1.5
-        npn = min0(npn,4000)
+        npn = (tmax-tmin)/dtmin + np*1.5
+        npn = min0(npn,ntims)
         npn = max0(npn,10)
         !
         bitvl=0.0
@@ -1039,13 +1047,14 @@
       endif
       if (mave .ne. 0) then
         dtave = mave*dtmin*2.
-        call smoothit(xw,w,npn,dtave)
+        call smoothit(xw(1:npn),w(1:npn),npn,dtave)
       endif
-      !
-      if (do_spline_fit) then       !JRF
-        call zplines(npn,xw,w,bw,cw,dw)
+!
+      if (do_spline_fit) then !JRF
+        call zplines(npn,xw(1:npn),w(1:npn),bw(1:npn),cw(1:npn),dw(1:npn))
         do i=1,nnp
-          y(i)=sevals(npn,time(i),xw,w,bw,cw,dw)
+          y(i)=sevals(npn,time(i),xw(1:npn),w(1:npn),bw(1:npn), &
+                      cw(1:npn),dw(1:npn))
         enddo
       else
         do i=1,nnp
@@ -1073,7 +1082,7 @@
 !**********************************************************************
 !>
 !!    amdata gets the data and optionally performs the
-!!    average from MDS
+!!    average from MDS+
 !!
 !!    WARNING: this subroutine uses both REAL*4 (used by MDS+) and
 !!             REAL*8 variables conversions must be handled carefully
@@ -1093,7 +1102,7 @@
 !!
 !!    @param times : first time requested (in seconds)
 !!
-!!    @param deltd : (unused)
+!!    @param delt : (unused)
 !!
 !!    @param mm :
 !!
@@ -1103,30 +1112,28 @@
 !!
 !!    @param bitvld : (unused)
 !!
-!!    @param kave :
+!!    @param kave : time window for averaging data (in miliseconds)
 !!
 !!    @param time : array of times requested
 !!
 !!    @param ircfact :
 !!
-!!    @param do_spline_fit :
-!!
 !**********************************************************************
       subroutine amdata(nshot,name,mmm,ierror,y, &
-                        np,times,deltd,mm,xxd,nn,bitvld,kave,time, &
-                        ircfact,do_spline_fit)
+                        np,times,delt,mm,xxd,nn,bitvld,kave,time, &
+                        ircfact)
       use set_kinds
+      use var_pcsys, only: do_spline_fit
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       include 'mdslib.inc'
       character*10 name, MyTree
-      real*8 y(np),time(np),deltd,xxd,bitvld,times
-      real*4, allocatable :: yw4(:),xw4(:)
-      real*8, allocatable :: yw(:),xw(:),bw(:),cw(:),dw(:),ew(:)
+      real*8 y(np),time(np),delt,xxd,bitvld,times
+      real*4, dimension(:), allocatable :: yw4,xw4
+      real*8, dimension(:), allocatable :: yw,xw,bw,cw,dw,ew
       real*8 dtmin,dtave,delta_min,delta
       integer*4 :: stat,nshot,lenname,errallot,npn,mmm,ierror, &
                    np,mm,nn,kave,ircfact,ktime_err,nnp,mylen, &
                    i,j,j_save,dsc,f_dsc,t_dsc,ldum
-      logical*4 do_spline_fit
       data dtmin/0.001001/
       save dtmin
 !
@@ -1265,13 +1272,16 @@
 !*********************************************************************
       subroutine gettanh(ishot,fitzts,ktime,time,ztssym,ztswid, &
                           ptssym,ztserr)
-      use var_gggttt
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*8 time(ktime),ztssym(ktime),ztswid(ktime),ptssym(ktime)
-      character*2 fitzts,ztsfit
-      logical ztserr(ktime)
-      logical errzts(ntims) ! TODO: can this be sized to ktime?
-      integer*4 iishot,kktime
+      implicit none
+      integer*4, intent(in) :: ishot,ktime
+      real*8, intent(in) ::  time(ktime)
+      character*2, intent(in) :: fitzts
+      real*8, intent(out) ::  ztssym(ktime),ztswid(ktime),ptssym(ktime)
+      logical, intent(out) :: ztserr(ktime)
+      integer*4 :: iishot,kktime
+      character*2 ztsfit
+      logical errzts(ktime)
+      real*8 xw(ktime),bw(ktime),cw(ktime),dw(ktime)
 !-----------------------------------------------------------------------
 !--   Get edge pedestal tanh paramters                                --
 !-----------------------------------------------------------------------
@@ -1279,12 +1289,12 @@
         ztsfit='TE'
         iishot=ishot
         kktime=ktime
-        xw(1:ktime)=time(1:ktime)
+        xw=time
         call Get_Mtanh_Ts(iishot,ztsfit,kktime,xw,bw,cw,dw,errzts)
-        ztssym(1:ktime)=bw(1:ktime)
-        ztswid(1:ktime)=cw(1:ktime)
-        ptssym(1:ktime)=dw(1:ktime)
-        ztserr(1:ktime)=errzts(1:ktime)
+        ztssym=bw
+        ztswid=cw
+        ptssym=dw
+        ztserr=errzts
       endif
 !
       return
@@ -1312,7 +1322,7 @@
 !!
 !!    @param np : number of time slices
 !!
-!!    @param deltd :
+!!    @param delt : length between time slices (in seconds)
 !!
 !!    @param mm :
 !!
@@ -1322,7 +1332,7 @@
 !!
 !!    @param bitvl :
 !!
-!!    @param kave :
+!!    @param kave : time window for averaging data (in miliseconds)
 !!
 !!    @param time : array of times requested
 !!
@@ -1332,23 +1342,28 @@
 !!
 !**********************************************************************
       subroutine avdiam(nshot,name,mmm,ierror,y,np, &
-                        deltd,mm,xxd,nn,bitvl,kave,time,sigmay, &
+                        delt,mm,xxd,nn,bitvl,kave,time,sigmay, &
                         ierdia)
-      use var_gggttt
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension ierdia(3)
-      real*8 y(np),time(np),sigmay(np),deltd,xxd,bitvl,xlen(1)
-      character*10 name
-      data dtmin/0.001001/,xm5/0.00001/
-      save dtmin,xm5
+      use vtime_mod, only: ntims
+      implicit none
+      real*8 sevals
+      integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave,ierdia(3) ! mm, mmm, and nn are unused
+      real*8, intent(in) :: time(np),delt,xxd
+      character*10, intent(in) ::  name
+      integer*4, intent(out) :: ierror
+      real*8, intent(out) :: y(np),sigmay(np),bitvl
+      integer*4 mave,npn,i
+      real*8  xm5,dtmin,tavg,dtave
+      real*8 xlen(1),w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims), &
+             ew(ntims)
+      data xm5/0.00001/
 !
-      delt=deltd
       ierror=0
       dtmin=0.001001
       dtmin=min(dtmin,delt)
       dtmin=max(dtmin,xm5)
       mave=iabs(kave)
-      npn=ntims ! TODO: can this be set to np instead?
+      npn=ntims
       tavg=1.0
       call getdia(nshot,xw,npn,tavg,ierdia,w,ew)
       if (ierdia(2).gt.0.and.ierdia(3).gt.0) then
@@ -1360,130 +1375,52 @@
 !------------------------------------------------------------------
       xlen=maxloc(xw)
       npn=xlen(1)
-      if (mave.ne.0) then
-        dtave=mave*dtmin*2.
-        call smoothit(xw,w,npn,dtave)
+      if (mave .ne. 0) then
+        dtave = mave*dtmin*2.
+        call smoothit(xw(1:npn),w(1:npn),npn,dtave)
       endif
 !
-      call zplines(npn,xw,w,bw,cw,dw)
+      call zplines(npn,xw(1:npn),w(1:npn),bw(1:npn),cw(1:npn),dw(1:npn))
       do i=1,np
-        y(i)=sevals(npn,time(i),xw,w,bw,cw,dw)
+        y(i)=sevals(npn,time(i),xw(1:npn),w(1:npn),bw(1:npn), &
+                    cw(1:npn),dw(1:npn))
       enddo
-      call zplines(npn,xw,ew,bw,cw,dw)
+      call zplines(npn,xw(1:npn),ew(1:npn),bw(1:npn),cw(1:npn),dw(1:npn))
       do i=1,np
-        sigmay(i)=sevals(npn,time(i),xw,ew,bw,cw,dw)
+        sigmay(i)=sevals(npn,time(i),xw(1:npn),ew(1:npn),bw(1:npn), &
+                    cw(1:npn),dw(1:npn))
       enddo
       return
       end subroutine avdiam
 
 !**********************************************************************
 !>
-!!    zmooth smooths out the data.
+!!    This subroutine averages data over a sliding window of width
+!!      timint in time twice.
 !!
 !!
-!!    @param y :
+!!    @param times : array of times that data has been sampled
 !!
-!!    @param npts :
+!!    @param datarr : array of data to be averaged
 !!
-!!    @param nave :
+!!    @param nts : number of elements in data array to apply average
 !!
-!**********************************************************************
-      subroutine zmooth(y,npts,nave)
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*8 yave(npts)
-      dimension y(npts)
-!
-      if(nave.eq.0) return
-      if(nave.gt.npts) return
-      if (nave.ge.0) then
-!---------------------------------------------------------------------
-!--     uniform averaging                                           --
-!---------------------------------------------------------------------
-        imax=npts-nave
-        ym=y(1)
-        do m=1,npts
-          jb=m-nave
-          if (m.le.nave) jb=m
-          je=m+nave
-          if (m.gt.imax) je=m
-          nt=0
-          ynew=0.0
-          do j=jb,je
-            nt=nt+1
-            ynew=ynew+y(j)
-          enddo
-          yave(m)=ynew/nt
-        enddo
-        y(1:npts)=yave(1:npts)
-        return
-      endif
-!----------------------------------------------------------------------
-!--   non-uniform weighted average                                   --
-!----------------------------------------------------------------------
-      nnave=iabs(nave)
-      if(npts.lt.2*nnave+1) return
-      do m=1,nnave
-        yave(m)=0.0
-        sum=0.0
-        do i=1,nnave+1
-          sumx=nnave-i+2
-          sum=sum+sumx
-          yave(m)=yave(m)+y(i+m-1)*sumx
-        enddo
-        yave(m)=yave(m)/sum
-      enddo
-      do m=nnave+1,npts-nnave
-        sum=0.0
-        yave(m)=0.0
-        do i=1,nnave+1
-          sumx=nnave-i+2
-          sum=sum+sumx
-          yave(m)=yave(m)+y(i+m-1)*sumx
-        enddo
-        do i=1,nnave
-          sumx=nnave-i+1
-          sum=sum+sumx
-          yave(m)=yave(m)+y(m-i)*sumx
-        enddo
-        yave(m)=yave(m)/sum
-      enddo
-      do m=npts-nnave+1,npts
-        sum=0.0
-        yave(m)=0.0
-        do i=1,nnave+1
-          sumx=nnave-i+2
-          sum=sum+sumx
-          yave(m)=yave(m)+y(m-i+1)*sumx
-        enddo
-        yave(m)=yave(m)/sum
-      enddo
-      y(1:npts)=yave(1:npts)
-      return
-      end subroutine zmooth
-
-!**********************************************************************
-!>
-!!    This subroutine smooths it??
-!!
-!!
-!!    @param times :
-!!
-!!    @param data :
-!!
-!!    @param nts :
-!!
-!!    @param timint :
+!!    @param timint : width of the time window to average data over
 !!
 !**********************************************************************
-      subroutine smoothit(times,data,nts,timint)
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension work(nts)
-      dimension times(nts),data(nts)
+      subroutine smoothit(times,datarr,nts,timint)
+      implicit none
+      integer*4, intent(in) :: nts
+      real*8, intent(in) :: times(nts),timint
+      real*8, intent(inout) :: datarr(nts)
+      integer*4 kount,mlow,mhigh,i
+      real*8 dtt,val,dt,tlow,thigh
+      real*8 work(nts)
       !
       if(timint .le. 0.) return
       dtt = timint*.5005
       do kount=1,2
-        val = data(1)
+        val = datarr(1)
         mlow = 1
         mhigh = 1
         do i=1,nts
@@ -1491,18 +1428,19 @@
           dt = min(dt, (times(nts)-times(i))*1.001)
           tlow = times(i) - dt
           thigh = times(i) + dt
-10        if(times(mlow) .ge. tlow) go to 20
-          val = val - data(mlow)
-          mlow = mlow + 1
-          go to 10
-20        if(mhigh .ge. nts) go to 30
-          if(times(mhigh+1) .gt. thigh) go to 30
-          mhigh = mhigh + 1
-          val = val + data(mhigh)
-          go to 20
-30        work(i)=val/(mhigh-mlow+1)
+          do while (times(mlow).lt.tlow .or. (mhigh.lt.nts &
+                    .and. times(mhigh+1).le.thigh))
+            if (times(mlow) .lt. tlow) then
+              val = val - datarr(mlow)
+              mlow = mlow + 1
+            elseif (mhigh .lt. nts .and. times(mhigh+1) .le. thigh) then
+              mhigh = mhigh + 1
+              val = val + datarr(mhigh)
+            endif
+          enddo
+          work(i)=val/(mhigh-mlow+1)
         enddo
-        data(1:nts)=work(1:nts)
+        datarr(1:nts)=work(1:nts)
       enddo
       !
       return
@@ -1510,28 +1448,40 @@
 
 !**********************************************************************
 !>
-!!    This subroutine smooths it and computes standard deviation
+!!    This subroutine averages data over a sliding window of width
+!!      timint in time twice and computes standard deviation of the 
+!!      first average applied.
 !!
 !!
-!!    @param times :
+!!    @param times : array of times that data has been sampled
 !!
-!!    @param data :
+!!    @param datarr : array of data to be averaged
 !!
-!!    @param nts :
+!!    @param nts : number of elements in data array to apply average
 !!
-!!    @param timint :
+!!    @param timint : width of the time window to average data over
+!!
+!!    @param stdev : standard deviation over the average window
+!!
+!!    @param nave : number of points in the average window
 !!
 !**********************************************************************
-      subroutine smoothit2(times,data,nts,timint,stdev,nave)
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension work(nts)
-      dimension times(nts),data(nts),stdev(nts),nave(nts)
+      subroutine smoothit2(times,datarr,nts,timint,stdev,nave)
+      implicit none
+      integer*4, intent(in) :: nts
+      real*8, intent(in) :: times(nts),timint
+      integer*4, intent(out) :: nave(nts)
+      real*8, intent(out) :: stdev(nts)
+      real*8, intent(inout) :: datarr(nts)
+      integer*4 kount,mlow,mhigh,i
+      real*8 dtt,val,val2,dt,tlow,thigh
+      real*8 work(nts)
       !
       if(timint .le. 0.) return
       dtt = timint*.5005
       do kount=1,2
-        val = data(1)
-        val2 = data(1)**2
+        val = datarr(1)
+        val2 = datarr(1)**2
         mlow = 1
         mhigh = 1
         do i=1,nts
@@ -1539,25 +1489,26 @@
           dt = min(dt, (times(nts)-times(i))*1.001)
           tlow = times(i) - dt
           thigh = times(i) + dt
-10        if(times(mlow) .ge. tlow) go to 20
-          val = val - data(mlow)
-          val2 = val2 - data(mlow)**2
-          mlow = mlow + 1
-          go to 10
-20        if(mhigh .ge. nts) go to 30
-          if(times(mhigh+1) .gt. thigh) go to 30
-          mhigh = mhigh + 1
-          val = val + data(mhigh)
-          val2 = val2 + data(mhigh)**2
-          go to 20
-30        work(i)=val/(mhigh-mlow+1)
+          do while (times(mlow).lt.tlow .or. (mhigh.lt.nts &
+                    .and. times(mhigh+1).le.thigh))
+            if (times(mlow) .lt. tlow) then
+              val = val - datarr(mlow)
+              val2 = val2 - datarr(mlow)**2
+              mlow = mlow + 1
+            elseif (mhigh .lt. nts .and. times(mhigh+1) .le. thigh) then
+              mhigh = mhigh + 1
+              val = val + datarr(mhigh)
+              val2 = val2 + datarr(mhigh)**2
+            endif
+          enddo
+          work(i)=val/(mhigh-mlow+1)
           if(kount .eq. 1) then   !-- calculate std dev based on raw data
             stdev(i) = val2/(mhigh-mlow+1)-(val/(mhigh-mlow+1))**2
             stdev(i) = sqrt(abs(stdev(i)))
             nave(i) = mhigh-mlow+1
           endif
         enddo
-        data(1:nts)=work(1:nts)
+        datarr(1:nts)=work(1:nts)
       enddo
       !
       return
@@ -1587,7 +1538,7 @@
 !!
 !**********************************************************************
       subroutine zplines(n, x, y, b, c, d)
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
       integer*4 n
       real*8 x(n), y(n), b(n), c(n), d(n)
       integer*4 nm1, ib, i
@@ -1695,6 +1646,7 @@
 !!
 !**********************************************************************
       real*8 function sevals(n, u, x, y, b, c, d)
+      implicit none
       integer*4 n
       real*8  u, x(n), y(n), b(n), c(n), d(n)
       integer*4 i, j, k
@@ -1726,7 +1678,7 @@
 
 !**********************************************************************
 !>
-!!    wrapper around getpts subroutine to handle MPI communication
+!!    wrapper around get_constraints subroutine to handle MPI comms
 !!
 !!
 !!    @param nshot : shot number
@@ -1740,11 +1692,11 @@
 !!    @param istop : error flag
 !!
 !**********************************************************************
-        subroutine getpts_mpi(nshot,times,delt,ktime,istop)
+        subroutine get_constraints_mpi(nshot,times,delt,ktime,istop)
         use set_kinds
         include 'eparm.inc'
         include 'modules1.inc'
-        implicit integer*4 (i-n), real*8 (a-h,o-z)
+        implicit none
         include 'mpif.h'
 
         ! Dimension ZWORK 1-D array
@@ -1764,7 +1716,7 @@
         !   DENRT  1:nco2r
         !   ECCURT 1:nesum
         integer*4 :: i,j,ktime_all,offset,stoff,endoff,nsize,nsize2
-        integer*4,dimension(:),allocatable :: tmp1,tmp2
+        integer*4, dimension(:), allocatable :: tmp1,tmp2
         double precision :: timeb_list(nproc), &
                 zwork(4+nsilop+magpri+nfcoil+nesum+magpri+nsilop+nfcoil), &
                 zwork2(18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum,ntime)
@@ -1787,13 +1739,11 @@
 
         ! Process with rank == 0 gets data from PTDATA/MDS+ database by calling GETPTS
         timing: if (rank == 0) then
-          ! TODO: it's not obvious why this info is always output for mpi
-          ! runs, but not serial, so I am making it a debug option (for now)
 #ifdef DEBUG_LEVEL1
           call system_clock(count_max=clockmax,count_rate=clockrate)
           call system_clock(count=clock0)
 #endif
-          call getpts(nshot,times,delt,ktime,istop)
+          call get_constraints(nshot,times,delt,ktime,istop)
 #ifdef DEBUG_LEVEL1
           call system_clock(count=clock1)
           ticks = clock1-clock0
@@ -2037,6 +1987,6 @@
         endif timing_rank0
 #endif
 
-      end subroutine getpts_mpi
+      end subroutine get_constraints_mpi
 
 #endif

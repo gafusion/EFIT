@@ -4,16 +4,15 @@
 !!    pflux computes the poloidal fluxes on the r-z grid.
 !!
 !!
-!!    @param niter inner equilibrium loop iteration index
+!!    @param niter : current profile (outer) loop iteration index
 !!
-!!    @param nnin current profile loop iteration index?
+!!    @param nnin : equilibrium (inner) loop iteration index
 !!
-!!    @param ntotal current profile loop iteration index (how is this 
-!!                  different than nnin?)
+!!    @param ntotal : total iteration index (current+equilibirum loops)
 !!
-!!    @param jtime  time index
+!!    @param jtime : time index
 !!
-!!    @param kerror error flag
+!!    @param kerror : error flag
 !!
 !**********************************************************************
       subroutine pflux(niter,nnin,ntotal,jtime,kerror)
@@ -25,16 +24,15 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
-      real(dp), dimension(:), allocatable ::   work
       integer*4 initresult
       dimension pds(6)
-      real*8,dimension(:),allocatable :: psikkk,gfbsum
-      data initfb/0/,init/0/
+      real*8,dimension(:),allocatable :: work,psikkk,gfbsum
+      logical vfeed
 
       kerror = 0
       ALLOCATE(psikkk(nwnh),gfbsum(nwnh))
 
-      vfeed=(isetfb.ne.0).and.(init.ne.0).and.(niter.gt.2.or.nnin.gt.2)
+      vfeed=(isetfb.ne.0).and.(niter.gt.2.or.nnin.gt.2)
       if(ivesel.gt.10) return
 !----------------------------------------------------------------------------
 !--   save flux from current iterations before update                      --
@@ -49,24 +47,21 @@
 !--   Buneman's method of obtaining psi at the inner grid points            --
 !--   only plasma contribution                                              --
 !-----------------------------------------------------------------------------
-      if(init.le.0) then
-!-----  These must be brought into the integrals 
-        rgrid1=rgrid(1)
-        delrgrid=rgrid(2)-rgrid(1)
-        delz=zgrid(2)-zgrid(1)
-        drdz2=(delrgrid/delz)**2
+!---  These must be brought into the integrals 
+      rgrid1=rgrid(1)
+      delrgrid=rgrid(2)-rgrid(1)
+      delz=zgrid(2)-zgrid(1)
+      drdz2=(delrgrid/delz)**2
 !---------------------------------------------------------------------
-!--     optional vertical feedback control                          --
+!--   optional vertical feedback control                          --
 !---------------------------------------------------------------------
-        if (isetfb.ne.0) then
-          if(nw.gt.30) ioffr=ioffr*((nw+1)/33)
-          if(nh.gt.30) ioffz=ioffz*((nh+1)/33)
-          imd=(nw*nh)/2+1+nh*ioffr+ishiftz
-          kct1=imd-ioffz
-          kct2=imd+ioffz
-          deltaz=zgrid(ioffz+nh/2+1)-zgrid(-ioffz+nh/2+1)
-        endif
-        init=1
+      if (isetfb.ne.0) then
+        if(nw.gt.30) ioffr=ioffr*((nw+1)/33)
+        if(nh.gt.30) ioffz=ioffz*((nh+1)/33)
+        imd=(nw*nh)/2+1+nh*ioffr+ishiftz
+        kct1=imd-ioffz
+        kct2=imd+ioffz
+        deltaz=zgrid(ioffz+nh/2+1)-zgrid(-ioffz+nh/2+1)
       endif
 !----------------------------------------------------------------------------
 !--   obtain fluxes by inverting del*                                      --
@@ -180,38 +175,35 @@
 !-----------------------------------------------------------------------
 !--     sum Green's functions for m=1 eigen mode                      --
 !-----------------------------------------------------------------------
-        if (initfb.eq.0) then
-          idelr=nw/8
-          idelz=nh/12
-          jtop=(nh+1)/2+nh/4-1
-          do i=1,nw
-           do j=1,nh
-            kk=(i-1)*nh+j
-            gfbsum(kk)=0.0
-            do ii=1+idelr,nw-idelr
-             do jj=jtop-idelz,jtop+idelz
-              mj=abs(j-jj)+1
-              mk=(nw-1)*nh+mj
-              gfbsum(kk)=gfbsum(kk)+gridpc(mj,ii)
-             enddo
-            enddo
+        idelr=nw/8
+        idelz=nh/12
+        jtop=(nh+1)/2+nh/4-1
+        do i=1,nw
+         do j=1,nh
+          kk=(i-1)*nh+j
+          gfbsum(kk)=0.0
+          do ii=1+idelr,nw-idelr
+           do jj=jtop-idelz,jtop+idelz
+            mj=abs(j-jj)+1
+            mk=(nw-1)*nh+mj
+            gfbsum(kk)=gfbsum(kk)+gridpc(mj,ii)
            enddo
           enddo
-          jlow=(nh+1)/2-nh/4+1
-          do i=1,nw
-           do j=1,nh
-            kk=(i-1)*nh+j
-            do ii=1+idelr,nw-idelr
-             do jj=jlow-idelz,jlow+idelz
-              mj=abs(j-jj)+1
-              mk=(nw-1)*nh+mj
-              gfbsum(kk)=gfbsum(kk)-gridpc(mj,ii)
-             enddo
-            enddo
+         enddo
+        enddo
+        jlow=(nh+1)/2-nh/4+1
+        do i=1,nw
+         do j=1,nh
+          kk=(i-1)*nh+j
+          do ii=1+idelr,nw-idelr
+           do jj=jlow-idelz,jlow+idelz
+            mj=abs(j-jj)+1
+            mk=(nw-1)*nh+mj
+            gfbsum(kk)=gfbsum(kk)-gridpc(mj,ii)
            enddo
           enddo
-          initfb=-1
-        endif
+         enddo
+        enddo
 !---------------------------------------------------------------------
 !--     get damping currents                                        --
 !---------------------------------------------------------------------
@@ -228,10 +220,7 @@
             tvfbrt(ntotal)=tvfbrt(ntotal)-(psikkk(kk)-psiold(kk))
           enddo
         enddo
-        if (initfb.eq.-1) then
-          vcurfi=vcurfb(1)*cpasma(jtime)/abs(tvfbrt(ntotal))
-          initfb=1
-        endif
+        vcurfi=vcurfb(1)*cpasma(jtime)/abs(tvfbrt(ntotal))
         tvfbrt(ntotal)=tvfbrt(ntotal)*vcurfi
         psi(1:nwnh)=psi(1:nwnh)+gfbsum(1:nwnh)*tvfbrt(ntotal)
       endif
@@ -271,11 +260,6 @@
         endif
         brfb(2)=-brfb(1)
         brfbc(ntotal)=brfb(1)
-        ! TODO: unreachable code?
-!        if (.not.vfeed) then
-!          brfb(1)=0.
-!          brfb(2)=0.
-!        endif
       endif
 !----------------------------------------------------------------------------
 !--   add flux from external coils                                         --
@@ -504,11 +488,11 @@
 !!    the r-z grid
 !!
 !!
-!!    @param ix :
+!!    @param ix : equilibrium (inner) loop iteration index
 !!
-!!    @param ixt :
+!!    @param ixt : total iteration index (current+equilibirum loops)
 !!
-!!    @param ixout :
+!!    @param ixout : current profile (outer) loop iteration index
 !!
 !!    @param jtime : time index
 !!
@@ -619,7 +603,7 @@
       write (6,*) 'Entering findax after m20 set'
 #endif
       call findax(nw,nh,rgrid,zgrid,rmaxis,zmaxis,simag, &
-                  psibry,rseps(1,jtime),zseps(1,jtime),m20, &
+                  psibry,rseps(:,jtime),zseps(:,jtime),m20, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
                   zxmin,zxmax,rymin,rymax,dpsi,bpol,bpolz, &
                   limitr,xlim,ylim,limfag,ixt,jtime,kerror)
@@ -1056,13 +1040,16 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      save isicinit,zelips
+      implicit none
+      integer*4, intent(in) :: jtime
+      integer*4 :: isicinit,i,j,kk,ioerr,mw,mh
+      real*8 :: delcur,sumi,erho
       character(14) :: sfile
       character(len=1000) :: line
       logical :: file_stat
       integer*8 :: ndout(1)
       real*8 :: alpa(nw)
+      save isicinit
 !
       pcurrt=0.0
       if(ivacum.gt.0) return
@@ -1076,8 +1063,11 @@
 !--            slice subsequently
 !-----------------------------------------------------------------------
       if(jtime.eq.1) isicinit=icinit
-      if (isicinit.lt.0) then
-        if(jtime.gt.1) return
+      if (isicinit.lt.0 .and. isicinit.ne.-3) then
+        if (jtime.gt.1) then
+          icinit=isicinit
+          return
+        endif
         if (isicinit.eq.-12) then
           icinit=2
         elseif (isicinit.eq.-4) then
@@ -1104,8 +1094,8 @@
         pcurrt(1:nwnh)=pcurrt(1:nwnh)*cratio*zero(1:nwnh)
 !
       case (2)
-        if(jtime.eq.1) zelips=zelip
-        if (zelip.gt.1.e5_dp .or. zelips.gt.1.e5_dp) then
+        zelip=zelipss
+        if (zelip.gt.1.e5_dp) then
           zelip=1.447310_dp*(expmpi(jtime,37)-expmpi(jtime,43)) &
                +0.692055_dp*(expmpi(jtime,57)-expmpi(jtime,53)) &
                +0.728045_dp*(silopt(jtime,27)-silopt(jtime,37)) &
@@ -1246,7 +1236,6 @@
         call errctrl_msg('inicur','icinit value not recognized')
         stop
       end select
-      if(jtime.eq.1) icinit=isicinit
       return
       end subroutine inicur
 
@@ -1263,7 +1252,8 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      integer*4, intent(in) :: jtime
 !
       if(ivesel.eq.5) return
 !

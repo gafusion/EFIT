@@ -2,11 +2,18 @@
 !!
 !>    currnt computes the current density on the r-z mesh.
 !!
-!!    @param iter : inner equilibrium loop iteration index
+!!
+!!
+!!    @param iter : current profile (outer) loop iteration index
+!!
 !!    @param jtime : time index
-!!    @param ixn :
-!!    @param nitett : current profile loop iteration index?
+!!
+!!    @param ixn : equilibrium (inner) loop iteration index
+!!
+!!    @param nitett : total iteration index (current+equilibirum loops)
+!!
 !!    @param kerror : error flag
+!!
 !*********************************************************************
       subroutine currnt(iter,jtime,ixn,nitett,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
