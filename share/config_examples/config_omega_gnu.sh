@@ -10,7 +10,7 @@
     export FC=/fusion/usc/c8/opt/env/gcc-8.3.1/bin/mpifort
 
     cmake \
-    -DMPICMD:STRING='srun --mpi=pmi2' \
+    -DMPICMD:STRING='srun --mpi=pmi2 -n ' \
     -DBLAS_LIBRARIES:PATH='/fusion/usc/c8/opt/env/gcc-8.3.1/lib/libopenblas.a' \
     -DLAPACK_LIBRARIES:PATH='/fusion/usc/c8/opt/env/gcc-8.3.1/lib/libopenblas.a' \
     -DENABLE_OpenMP:BOOL=ON \

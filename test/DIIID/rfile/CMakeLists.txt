@@ -14,9 +14,9 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/gin
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
 
 # This test can only be run serially
-# Must be run on execute node at NERSC to use MPI
+# Must still be run on execute node at NERSC to use MPI
 if (${ENABLE_PARALLEL})
-    set(NPROC "-n 1")
+  set(NPROC "1")
 endif()
 
 configure_file(${EFIT_TEST_CONFIGFILE}
@@ -39,6 +39,4 @@ if (${ENABLE_HDF5})
                  ${CMAKE_CURRENT_BINARY_DIR}/check_efit_results.sh @ONLY)
   add_test(NAME DIIID-rfile-hdf5 COMMAND run_efit_hdf5.sh)
   add_test(NAME DIIID-rfile-hdf5-results COMMAND check_efit_results.sh)
-  set(EFIT_MODE 2)
 endif()
-set(RFILE_TEST False)

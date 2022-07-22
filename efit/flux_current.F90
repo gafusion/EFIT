@@ -18,7 +18,7 @@
       subroutine pflux(niter,nnin,ntotal,jtime,kerror)
       use set_kinds 
       use var_buneman, only: rgrid1,delrgrid,delz,drdz2
-      use commonblocks, only: c,wk,copy,bkx,bky,psiold,psipold
+      use commonblocks, only: c,bkx,bky,psiold,psipold
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -134,7 +134,7 @@
             psi(kk)=tmu2*pcurrt(kk)*rgrid(i)
           enddo   
         enddo   
-        call buneto(psi,INT(nw,i4),INT(nh,i4),work)
+        call buneto(psi,nw,nh,work)
       else 
 !       new faster single cyclic reduction method
         do i=2,nw-1
@@ -268,10 +268,11 @@
         psipla(kk)=psi(kk)
         if(ivesel.gt.0) &
           psi(kk)=psi(kk)+sum(gridvs(kk,1:nvesel)*vcurrt(1:nvesel))
-        if (iecurr.eq.1) &
+        if (iecurr.eq.1) then
           psi(kk)=psi(kk)+sum(gridec(kk,1:nesum)*ecurrt(1:nesum))
-        if (iecurr.eq.2) &
+        elseif (iecurr.eq.2) then
           psi(kk)=psi(kk)+sum(gridec(kk,1:nesum)*cecurr(1:nesum))
+        endif
         if (vfeed) psi(kk)=psi(kk)+grdfdb(kk,1)*brfb(2)
         psi(kk)=psi(kk)+sum(gridfc(kk,1:nfcoil)*brsp(1:nfcoil))
         if (iacoil.gt.0) &
@@ -290,10 +291,11 @@
         psi(kk)=psi(kk)+sum(gridfc(kk,1:nfcoil)*brsp(1:nfcoil))
         if(ivesel.gt.0) &
           psi(kk)=psi(kk)+sum(gridvs(kk,1:nvesel)*vcurrt(1:nvesel))
-        if (iecurr.eq.1) &
+        if (iecurr.eq.1) then
           psi(kk)=psi(kk)+sum(gridec(kk,1:nesum)*ecurrt(1:nesum))
-        if (iecurr.eq.2) &
+        elseif (iecurr.eq.2) then
           psi(kk)=psi(kk)+sum(gridec(kk,1:nesum)*cecurr(1:nesum))
+        endif
         if (iacoil.gt.0) &
           psi(kk)=psi(kk)+sum(gridac(kk,1:nacoil)*caccurt(jtime,1:nacoil))
         psipla(kk)=psi(kk)
@@ -500,7 +502,7 @@
 !!
 !**********************************************************************
       subroutine steps(ix,ixt,ixout,jtime,kerror)
-      use commonblocks,only: c,wk,copy,bkx,bky,zeros,xouts,youts, &
+      use commonblocks,only: c,bkx,bky,zeros,xouts,youts, &
            rsplt,zsplt,csplt
       include 'eparm.inc'
       include 'modules2.inc'
@@ -1042,25 +1044,23 @@
       include 'modules1.inc'
       implicit none
       integer*4, intent(in) :: jtime
-      integer*4 :: isicinit,i,j,kk,ioerr,mw,mh
+      integer*4 :: i,j,kk,ioerr,mw,mh
       real*8 :: delcur,sumi,erho
       character(14) :: sfile
       character(len=1000) :: line
       logical :: file_stat
       integer*8 :: ndout(1)
       real*8 :: alpa(nw)
-      save isicinit
 !
       pcurrt=0.0
       if(ivacum.gt.0) return
 !-----------------------------------------------------------------------
 !--   icinit=1 uniform and elliptical flux surfaces
 !--          2 parabolic and elliptical
-!--         -2 use ESAVE.DAT at first slice and previous slice later
-!--         -3 use previous solution (geqdsk_ext or hdf5) for every time
-!--         -4 use previous solution for first slice only
-!--        -12 parabolic and elliptical first slice and previous
-!--            slice subsequently
+!--         -2 use ESAVE.DAT at first time and then previous solution
+!--         -3 use existing solution (geqdsk_ext or hdf5) for every time
+!--         -4 use existing solution for first time and then previous
+!--        -12 parabolic and elliptical for first time and then previous
 !-----------------------------------------------------------------------
       if(jtime.eq.1) isicinit=icinit
       if (isicinit.lt.0 .and. isicinit.ne.-3) then

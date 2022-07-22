@@ -16,7 +16,7 @@
 !!
 !*********************************************************************
       subroutine currnt(iter,jtime,ixn,nitett,kerror)
-      use commonblocks,only: c,wk,copy,bkx,bky
+      use commonblocks,only: c,wk,bkx,bky
       use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'
@@ -533,15 +533,12 @@
         do i=nfcoil+1,nfnpcr
           brsp(i)=cratio*brsp(i)
         enddo
-        if (npsi_ext > 0) then
+        if(npsi_ext > 0) &
           prbdry=prbdry*cratio*cratio
-        endif
-        if (kedgep.gt.0) then
-           pedge=pedge*cratio
-        endif
-        if (kedgef.gt.0) then
-           f2edge=f2edge*cratio
-        endif
+        if(kedgep.gt.0) &
+          pedge=pedge*cratio
+        if(kedgef.gt.0) &
+          f2edge=f2edge*cratio
        else
         cratio=1.0
         cratiop_ext = 1.0
@@ -551,9 +548,8 @@
         do i=nbase+kppcur+1,nfnpcr
           brsp(i)=cratiof*brsp(i)
         enddo
-        if (kedgef.gt.0) then
-           f2edge=f2edge*cratiof
-        endif
+        if(kedgef.gt.0) &
+          f2edge=f2edge*cratiof
        endif
 !----------------------------------------------------------------------------
 !--    rigid vertical shift correction ?                                   --

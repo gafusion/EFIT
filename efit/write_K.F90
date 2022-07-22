@@ -51,7 +51,7 @@
            ktear,kersil,iout,ixray,table_dir,input_dir,store_dir, &
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve, &
            iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum,efitversion, &
-           kwripre,ifindopt,tolbndpsi,siloplim
+           kwripre,ifindopt,tolbndpsi,siloplim,use_previous
       namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
            znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
            oldcomp,currc199,curriu30,curriu90, &
@@ -104,7 +104,8 @@
            mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210, &
            ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels, &
            idebug,jdebug,synmsels,avemsels,kwritime, &
-           v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi,siloplim
+           v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi, &
+           siloplim,use_previous
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
       data mcontr/35/,lfile/36/,ifpsi/0/
@@ -686,7 +687,7 @@
            ktear,kersil,iout,ixray,table_dir,input_dir,store_dir, &
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve, &
            iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum,efitversion, &
-           kwripre,ifindopt,tolbndpsi,siloplim
+           kwripre,ifindopt,tolbndpsi,siloplim,use_previous
       namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
            znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
            oldcomp,currc199,curriu30,curriu90, &

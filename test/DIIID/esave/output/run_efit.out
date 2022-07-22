@@ -3,9 +3,9 @@
 
 Git repository url git@gitlab.com:efit-ai/efit.git
 
-Git branch restart
+Git branch main
 
-Git hash 4255f4b with local modifications
+Git hash 4255f4b
 
 Simulation started on  4/28/2022 at 17:39:15
 
@@ -18,13 +18,9 @@ Code compiled with GNU 9.2.0
 
  type input file names:
  #
- table_di2 = </home/bechtelt/efitall/efit_restart/build_ser/test/DIIID/green/>
+ table_di2 = <test/DIIID/green/>
 
 ******************** EFIT-AI 65 x 65 grid ********************
- before save fitting weights
- adjust fit parameters based on basis function selected
- itek > 100, write out PLTOUT.OUT individually 
- read in limiter data
 
  r=  0 t=  2400 it=  1 chi2=4.12E+01 zm=-3.47E-02 err=1.529E+00 dz=-3.470E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
  r=  0 t=  2400 it=  2 chi2=2.23E+01 zm=-3.41E-02 err=1.941E-03 dz= 5.960E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.28E+01
@@ -44,9 +40,10 @@ Code compiled with GNU 9.2.0
  betat(%) =      0.287 betap    =      0.076 li       =      1.195
  vol(cm3) =  1.764E+07 rout(cm) =    172.799 zout(cm) =      6.926
  elong    =      1.797 utriang  =      0.751 ltriang  =      0.303
- a(cm)    =     56.383 lin(cm)  =     14.686 lout(cm) =      5.887
+ a(cm)    =     56.383 lin(cm)  =     14.685 lout(cm) =      5.887
  ltop(cm) =     15.203 q*       =      3.879 rc(cm)   =    170.132
  zc(cm)   =     -2.639 bt0(t)   =      1.638 qout     =      6.440
 
-  fit errors, shot  186610  2400. msec. no eqdsks will be written
+  fit errors, shot  186610  2400. msec. all eqdsks are still written
      Error #21, Bp not consistent , error =  0.109E+00
+INFO in efit at r=  0, t=  2400: Done processing

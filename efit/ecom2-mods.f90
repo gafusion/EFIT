@@ -93,11 +93,13 @@
       end module var_cwork3
 
       module var_gwork1
+      integer*4 mfila
       integer*4,dimension(:),allocatable :: irfila,jzfila
       real*8,dimension(:),allocatable :: rmx,zmx,wsilpc,wmp2pc, &
                                          wfcpc,wecpc,wvspc
       real*8,dimension(:,:),allocatable :: rsilpf, rmp2pf
-      real*8 :: wpcpc
+      real*8 wpcpc
+      data mfila/10/
       end module var_gwork1
 
       module var_cwork4
