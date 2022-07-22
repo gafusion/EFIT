@@ -3,7 +3,7 @@
 
 Git repository url git@gitlab.com:efit-ai/efit.git
 
-Git branch restart
+Git branch main
 
 Git hash 4255f4b 
 
@@ -21,25 +21,9 @@ Code compiled with GNU 9.2.0
  #
  #
  #
- table_di2 = </home/bechtelt/efitall/efit_restart/build/test/DIIID/green/>
+ table_di2 = <test/DIIID/green/>
 
 ******************** EFIT-AI 65 x 65 grid ********************
- before save fitting weights
- adjust fit parameters based on basis function selected
- itek > 100, write out PLTOUT.OUT individually 
- read in limiter data
- before save fitting weights
- adjust fit parameters based on basis function selected
- itek > 100, write out PLTOUT.OUT individually 
- read in limiter data
- before save fitting weights
- adjust fit parameters based on basis function selected
- itek > 100, write out PLTOUT.OUT individually 
- read in limiter data
- before save fitting weights
- adjust fit parameters based on basis function selected
- itek > 100, write out PLTOUT.OUT individually 
- read in limiter data
 
  r=  3 t=  2700 it=  1 chi2=8.79E+01 zm=-3.30E-02 err=1.718E+00 dz=-3.299E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
  r=  3 t=  2700 it=  2 chi2=2.02E+01 zm=-3.25E-02 err=2.180E-03 dz= 5.262E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 3.66E+00
@@ -81,18 +65,18 @@ INFO in efit at r=  3, t=  2700: Done processing
  betat(%) =      0.287 betap    =      0.076 li       =      1.195
  vol(cm3) =  1.764E+07 rout(cm) =    172.799 zout(cm) =      6.926
  elong    =      1.797 utriang  =      0.751 ltriang  =      0.303
- a(cm)    =     56.383 lin(cm)  =     14.686 lout(cm) =      5.887
+ a(cm)    =     56.383 lin(cm)  =     14.685 lout(cm) =      5.887
  ltop(cm) =     15.203 q*       =      3.879 rc(cm)   =    170.132
  zc(cm)   =     -2.639 bt0(t)   =      1.638 qout     =      6.440
 
-  fit errors, shot  186610  2500. msec. no eqdsks will be written
+  fit errors, shot  186610  2500. msec. all eqdsks are still written
      Error #21, Bp not consistent , error =  0.127E+00
 INFO in efit at r=  1, t=  2500: Done processing
 
-  fit errors, shot  186610  2400. msec. no eqdsks will be written
+  fit errors, shot  186610  2400. msec. all eqdsks are still written
      Error #21, Bp not consistent , error =  0.109E+00
 
-  fit errors, shot  186610  2600. msec. no eqdsks will be written
+  fit errors, shot  186610  2600. msec. all eqdsks are still written
      Error #21, Bp not consistent , error =  0.105E+00
 INFO in efit at r=  0, t=  2400: Done processing
 INFO in efit at r=  2, t=  2600: Done processing

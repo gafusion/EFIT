@@ -12,7 +12,7 @@
 !!
 !**********************************************************************
       subroutine green(ifag,jtime,niter)
-      use commonblocks,only: c,wk,copy,bkx,bky
+      use commonblocks,only: c,bkx,bky
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'

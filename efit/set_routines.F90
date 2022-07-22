@@ -11,7 +11,7 @@
 !!
 !********************************************************************* 
       subroutine setece(jtime,kerror)
-      use commonblocks,only: c,wk,copy,bkx,bky
+      use commonblocks,only: c,wk,bkx,bky
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'

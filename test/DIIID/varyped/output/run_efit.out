@@ -8,14 +8,9 @@
 
  type input file names:
  #
- table_di2 = <../green/>
+ table_di2 = <test/DIIID/green/>
 
       ******************** EFITD 65 x  65  output ********************
- before save fitting weights
- adjust fit parameters based on basis function selected 
- itek > 100, write out PLTOUT.OUT individually 
- option to symmetrize added 8/14/91 eal  
- read in limiter data
 
        data used:   
   0 flux loops
@@ -31,3 +26,4 @@
  a(cm)    =     56.470 lin(cm)  =     14.759 lout(cm) =      5.637
  ltop(cm) =     16.495 q*       =      3.867 rc(cm)   =    170.546
  zc(cm)   =     -2.393 bt0(t)   =      1.631 qout     =      6.599
+INFO in efit at r=  0, t=     0: Done processing

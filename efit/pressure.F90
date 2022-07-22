@@ -151,18 +151,19 @@
 !!
 !!    @param jtime : time index
 !!
-!!    @param niter : 
+!!    @param niter : iteration number
 !!
 !**********************************************************************
       subroutine presurw(jtime,niter)
-      use commonblocks,only: c,wk,copy,bkx,bky
+      use commonblocks,only: c,bkx,bky
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-
-      dimension pds(6)
+      implicit none
+      real*8 seval,pwpcur
+      integer*4, intent(in) :: jtime,niter
+      integer*4 init,i,ier,m
+      real*8 pds(6),xn,xbaseb,rnow,znow,dmnow
       real*8,dimension(:),allocatable ::ybase,ybaseb
       real*8,dimension(:),allocatable :: bwork,cwork,dwork
       data init/0/
@@ -267,16 +268,19 @@
 !!
 !**********************************************************************
       subroutine presur(jtime,niter,kerror)
-      use commonblocks,only: c,wk,copy,bkx,bky
+      use commonblocks,only: c,bkx,bky
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-      dimension pds(6),xnsi(nppcur),xnsp(nppcur)
+      implicit none
+      real*8 ppcurr
+      integer*4, intent(in) :: jtime,niter
+      integer*4, intent(out) :: kerror
+      integer*4 i,ier,m
+      real*8 xn,siedge,sgggmin
+      real*8 pds(6),xnsi(nppcur),xnsp(nppcur)
       character*50 edatname
       namelist/edat/npress,rpress,zpress,pressr,sigpre
-      integer, intent(inout) :: kerror
 
       kerror = 0
       kdofit=1
@@ -399,8 +403,8 @@
         call getfnmu(itimeu,'k',ishot,itime,edatname)
         edatname='edat_'//edatname(2:7)// &
                        '_'//edatname(9:13)//'.pressure'
-        open(unit=nin,status='old',file=edatname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=nin,status='delete')
+        open(unit=nin,status='old',file=edatname,iostat=ier)
+        if (ier.eq.0) close(unit=nin,status='delete')
         open(unit=nin,status='new',file=edatname,delim='quote')
         write (nin,edat)
         close(unit=nin)
