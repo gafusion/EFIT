@@ -62,7 +62,8 @@
            mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210, &
            ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels, &
            idebug,jdebug,synmsels,avemsels,kwritime, &
-           v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi,siloplim
+           v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi, &
+           siloplim,use_previous
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
       data mcontr/35/,lfile/36/,ifpsi/0/
@@ -161,7 +162,6 @@
       backaverage=.false.
       bitip=0.0
       betap0=0.50_dp
-      brsp(1)=-1.e+20_dp
       cfcoil=-1.
       cutip=80000.
       ecurrt(1:nesum)=0.0

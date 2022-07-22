@@ -20,8 +20,8 @@ set(EFUND_TEST_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/run_green.sh.in)
 set(EFUND_RESULTS_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/check_green_results.sh.in)
 
 # This is a shell script used to drive running efit
-set(MPICMD "mpirun" CACHE STRING "Command to invoke ")
-set(NPROC "-n 4" CACHE STRING "Processors to use ")
+set(MPICMD "mpirun -n " CACHE STRING "Command to invoke ")
+set(NPROC "4" CACHE STRING "Processors to use ")
 if (NOT ${ENABLE_PARALLEL})
   set(MPICMD "")
   set(NPROC "") 

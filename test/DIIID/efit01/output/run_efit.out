@@ -1,27 +1,16 @@
 
-          EFIT-AI
-
-Git repository url git@gitlab.com:efit-ai/efit.git
-
-Git branch main
-
-Git hash aa95d83 with local modifications
-
-Simulation started on  4/12/2022 at 15:37:21
-
-Code compiled with PGI 18.7.0
+          EFITD Version  03/16/2022
 
 
- type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
+ type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+
+ number of time slices?
 
  type input file names:
- table_di2 = <../green/>
+ #
 
-      ********************EFITAI 65 x  65  output ********************
- before save fitting weights
- adjust fit parameters based on basis function selected
- itek > 100, write out PLTOUT.OUT individually 
- read in limiter data
+      ******************** EFITD 65 x  65  output ********************
+ table_dir = </fusion/projects/codes/efit/support_files/2006/181292/>
 
  r=  0 t=  2400 it=  1 chi2=4.13E+01 zm=-2.21E-02 err=1.805E+00 dz=-2.212E-02 delz= 0.000E+00 dj=0.000E+00
  r=  0 t=  2400 it=  2 chi2=2.51E+01 zm=-2.30E-02 err=1.033E-01 dz=-8.622E-04 delz= 0.000E+00 dj=0.000E+00
@@ -33,6 +22,7 @@ Code compiled with PGI 18.7.0
  r=  0 t=  2400 it=  8 chi2=2.11E+01 zm=-3.20E-02 err=1.300E-02 dz=-7.079E-04 delz= 8.906E-02 dj=1.879E-03
  r=  0 t=  2400 it=  9 chi2=2.10E+01 zm=-3.21E-02 err=1.967E-04 dz=-8.874E-05 delz= 6.034E-02 dj=1.302E-03
  r=  0 t=  2400 it= 10 chi2=2.10E+01 zm=-3.21E-02 err=6.111E-05 dz=-3.186E-05 delz= 5.957E-02 dj=1.281E-03
+ Enter SHAPE kerror =             1            0
 
        data used:   
  39 flux loops
@@ -45,6 +35,7 @@ Code compiled with PGI 18.7.0
  betat(%) =      0.416 betap    =      0.110 li       =      1.130
  vol(cm3) =  1.780E+07 rout(cm) =    172.912 zout(cm) =      5.468
  elong    =      1.791 utriang  =      0.746 ltriang  =      0.352
- a(cm)    =     56.361 lin(cm)  =     14.821 lout(cm) =      5.797
+ a(cm)    =     56.361 lin(cm)  =     14.819 lout(cm) =      5.797
  ltop(cm) =     16.924 q*       =      3.874 rc(cm)   =    170.276
  zc(cm)   =     -2.694 bt0(t)   =      1.638 qout     =      7.495
+INFO in efitd at r=  0, t=  2400: Done processing

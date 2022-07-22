@@ -5,11 +5,11 @@ Git repository url git@gitlab.com:efit-ai/efit.git
 
 Git branch main
 
-Git hash 6905282
+Git hash edf6065
 
-Git date 2022-07-15 14:58:13 -0700
+Git date 2022-07-20 15:18:46 -0700
 
-Simulation started on  7/18/2022 at 16:14:10
+Simulation started on  7/21/2022 at 17:59:33
 
 Code compiled with PGI 18.7.0
 
@@ -17,7 +17,7 @@ Code compiled with PGI 18.7.0
  type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
 
  type shot #, start time(ms), time step(ms), steps(<1001):
- table_di2 = <../green/>
+ table_di2 = <test/DIIID/green/>
  Calling $Name: V3_09 $ of the mse shared library
 
 ******************** EFIT-AI 65 x 65 grid ********************
@@ -45,6 +45,7 @@ Code compiled with PGI 18.7.0
  betat(%) =      0.256 betap    =      0.067 li       =      1.188
  vol(cm3) =  1.774E+07 rout(cm) =    172.800 zout(cm) =      5.958
  elong    =      1.788 utriang  =      0.745 ltriang  =      0.349
- a(cm)    =     56.490 lin(cm)  =     14.580 lout(cm) =      5.780
+ a(cm)    =     56.490 lin(cm)  =     14.579 lout(cm) =      5.780
  ltop(cm) =     16.387 q*       =      3.877 rc(cm)   =    170.293
  zc(cm)   =     -2.655 bt0(t)   =      1.638 qout     =      7.137
+INFO in efit at r=  0, t=  2400: Done processing

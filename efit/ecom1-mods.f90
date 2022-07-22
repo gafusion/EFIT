@@ -4,11 +4,10 @@
 
       module var_ccurrn
       use eparm,only:nwnh
-      real*8,dimension(:),allocatable :: pcurrt,pcurrw,pcurrtpp
-      integer*4 icurrt,icinit,islpfc,icprof
-      data islpfc/0/
-
       real*8 fconst,betap0
+      real*8,dimension(:),allocatable :: pcurrt,pcurrw,pcurrtpp
+      integer*4 icurrt,icinit,isicinit,islpfc,icprof
+      data icinit/2/,islpfc/0/
       end module var_ccurrn
 
       module var_czero
@@ -265,7 +264,8 @@
       module var_check
       use eparm,only:ntime
       integer*4,dimension(:,:),allocatable ::erflag
-      integer*4 kflag(30),lflag,ktimeo
+      integer*4 nflag,lflag
+      data nflag/21/
       end module var_check
 
       module var_consum
@@ -308,7 +308,7 @@
 !jal 2/23/04 add iplcout=1 print plasma and pf currents to gfile
       module var_input1
       use set_kinds
-      logical write_Kfile,fitfcsum
+      logical write_Kfile,fitfcsum,use_previous
       integer*4 icondn,itek,kdata,itrace,ierchk,iconvr,ixray,itell, &
                 kprfit,licalc,ibound,ibatch,idite,ilaser,lookfw, &
                 kdot,icutfp,keqdsk,kdofit,kbetapr,kplotpr,kpressb, &
@@ -331,7 +331,8 @@
       real*8,dimension(:),allocatable :: fwtpre
       real*8,dimension(:),allocatable :: vforcep,vforcet
       real*8,dimension(:),allocatable :: fwtfcsum
-      character*82 snap_file 
+      character*82 snap_file
+      data use_previous/.false./
       data kgrid/1/,kwripre/0/,kwritime/0/
       data licalc/1/
       data kdoqn/0/

@@ -1418,7 +1418,7 @@
         kaxis,xxout,yyout,kfound,psipsi,rmin,rmax, &
         zmin,zmax,zrmin,zrmax,rzmin,rzmax,dpsipsi, &
         bpoo,bpooz,limtrv,xlimv,ylimv,limfagv,ifit,jtime,kerror)
-      use commonblocks,only: c,wk,copy,bkx,bky
+      use commonblocks,only: c,wk,bkx,bky
       use set_kinds
       include 'eparm.inc'
       include 'modules1.inc'
