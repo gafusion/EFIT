@@ -1,0 +1,36 @@
+Variable, Definition
+A1-6GAM(ntime, nstark),	viewing geometry coefficients of MSE channels
+CCBRSP(ntime, nfcoil),	calculated F-coil currents in Amp
+CDFLUX(ntime),	calculated diamagnetic flux
+CECURR(ntime, nesum),	calculated E-coil currents in Amp
+CMGAM(ntime, nstark),	calculated polarimetry signals
+CMPR2(ntime, magpri),	calculated magnetic probes
+CPASMA(ntime),	calculated plasma current in Amp
+CPRESS(ntime, mpress),	calculated pressure vs. normalized flux (kinetic fits only)
+CSILOP(ntime, nsilop), calculated flux loops
+DAREA(ntime),	plasma coefficients normalization
+DIAMAG(ntime),	measured diamagnetic flux
+ECCURT(ntime, nesum),	measured E-coil currents in Amp
+EXPMPI(ntime, magpri), measured magnetic probes
+FCCURT(ntime, nfcoil),	measured F-coil currents in Amp
+FWTEC(ntime, nesum)	fwtec(nesum)	fitec	weight for E-coil currents
+FWTFC(ntime, nfcoil), weight for F-coil currents
+FWTGAM(ntime, nstark), fitting weight for MSE channels
+FWTMP2(ntime, magpri), 	weight for magnetic probes
+FWTSI(ntime, nsilop), 	weight for flux loops
+MSEBKP(ntime), 	background substraction switch
+PLASMA(ntime), 	measured plasma current in Amp
+PRESSR(ntime, mpress), 	measured pressure vs. normalized flux (kinetic fits only)
+RPRESS(ntime, mpress)| "<0:input pressure profile vs. flux;
+|>0:R coordinates of input pressure profile in m"
+RRGAM(ntime, nstark), radius (R position) of MSE channels
+SHOT,	shot number
+SIGDIA(ntime),	uncertainty of diamagnetic flux
+SIGGAM(ntime, nstark),	uncertainty of tangam
+SIGPRE(ntime, mpress),	uncertainty for pressure
+SILOPT(ntime, nsilop),	measured flux loops
+TANGAM(ntime, nstark),	tangent of measured MSE pitch angle
+TIME(ntime),	time slice in msec
+XRSP(ntime, npcurn), plasma coefficients
+ZPRESS(ntime, mpress), Z coordinates of input pressure profile in m
+ZZGAM(ntime, nstark),	Z position of MSE channels
