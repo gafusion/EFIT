@@ -12,7 +12,7 @@ set(EFITLIB_SOURCES
   buneman.f90 getfnm.f90 ecom1-mods.f90 zpline.f90 
   ecom2-mods.f90 curve2d_mod.f90 inp_file_ch.f90 data_input.F90
   matrix.F90 shapesurf.F90 getsets.F90 prtout.F90 currnt.f90
-  fcurrt.F90 bound.F90 chke.f90 spline.f90 weq.f90
+  fcurrt.F90 bound.F90 chkerr.f90 spline.f90 weq.f90
   pltdat.F90 getne.F90 wmeasure.F90 wtime.f90
   ppbasisfunc.f90 ffbasisfunc.f90 wwbasisfunc.f90 
   expdata.f90 autoknot.F90 efit_utils.F90
@@ -34,9 +34,6 @@ if(${HAVE_SNAP})
     )
   endif()
 endif()
-
-# TODO:  This has some strange code that I need to sort out. 
-# tearing.f90
 
 add_library(efitlib ${EFITLIB_SOURCES})
 add_dependencies(efitlib config_f)

@@ -30,7 +30,7 @@
 #endif
       character inp1*4,inp2*4
       integer*4 :: k,krord,kzord,nargs,iargc,finfo,kerror,terr,ioerr, &
-                   nwrk,mfila,ktime,mtear,ks
+                   nwrk,ktime,mtear,ks
 
       integer*4 :: iend1,iend2
       character*80 :: cmdline
@@ -57,7 +57,7 @@
 #endif
 #else
       rank  = 0
-      nproc = 0
+      nproc = 1
 #endif
 
       ! Set global constants for each rank
@@ -138,7 +138,6 @@
       lr0=nw-krord+1
       lz0=nh-kzord+1
       nxtrap=npoint
-      mfila=10
       
       call read_optin
       call inp_file_ch(nw,nh,ch1,ch2)
@@ -285,27 +284,25 @@
           if(k.lt.ktime) kerrot(ks)=kerror
           cycle
         endif
-!DEPRECATED        if (mtear.ne.0) call tearing(ks,mtear,kerror)
-!DEPRECATED        if (kerror.gt.0) then
-!DEPRECATED          if(k.lt.ktime) kerrot(ks)=kerror
-!DEPRECATED          cycle
-!DEPRECATED        endif
 #ifdef DEBUG_LEVEL1
-        write (6,*) 'Main/PRTOUT ks/kerror = ', ks, kerror
+        write (6,*) 'Main/prtout ks/kerror = ', ks, kerror
 #endif
         call prtout(ks)
         if((kwaitmse.ne.0).and.(kmtark.gt.0)) call fixstark(-ks,kerror)
 !----------------------------------------------------------------------
-!--     write A and G EQDSKs                                         --
+!--     write A, G, and M EQDSKs
 !----------------------------------------------------------------------
+        if (iconvr.ge.0) then
 #ifdef DEBUG_LEVEL1
-        write (6,*) 'Main/WQEDSK ks/kerror = ', ks, kerror
+          write (6,*) 'Main/shipit ks/kerror = ', ks, kerror
+#endif
+          call shipit(ktime,ks)
+          if (ierchk.gt.1 .and. lflag.gt.0) cycle
+        endif
+#ifdef DEBUG_LEVEL1
+        write (6,*) 'Main/weqdsk ks/kerror = ', ks, kerror
 #endif
         call weqdsk(ks)
-        if (iconvr.ge.0) then
-           call shipit(ktime,ks,ks)
-!DEPRECATED           call wtear(mtear,ks)
-        endif
 #ifdef USE_NETCDF
 #ifdef DEBUG_LEVEL2
         write (6,*) 'Main/wmeasure ks/kerror = ', ks, kerror
@@ -317,6 +314,9 @@
 !----------------------------------------------------------------------
 #if defined(USE_SNAP)
         if (kdata.eq.3 .or. kdata.eq.7) then
+#ifdef DEBUG_LEVEL2
+          write (6,*) 'Main/write_K2 ks/kerror = ', ks, kerror
+#endif
           if(write_Kfile) call write_K2(ks,kerror)
         endif
 #endif
@@ -332,12 +332,12 @@
 #endif
       call wtime(ktime)
 
+      call errctrl_msg('efit','Done processing',3)
 #if defined(USEMPI)
       ! Finalize MPI
       if(allocated(dist_data)) deallocate(dist_data)
       if(allocated(dist_data_displs)) deallocate(dist_data_displs)
       if(allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
-      call errctrl_msg('efit','Done processing',3)
       call mpi_finalize(ierr)
 #endif
       stop

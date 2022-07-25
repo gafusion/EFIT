@@ -8,58 +8,87 @@
 !**                                                                  **
 !**********************************************************************
       subroutine data_input(jtime,kconvr,ktime,mtear,kerror)
-      use commonblocks,only: c,wk,copy,bkx,bky,wgridpc,rfcpc
+      use commonblocks,only: c,wk,bkx,bky,wgridpc,rfcpc
       use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      parameter(mfila=10)
-      parameter (m_ext=101)
-       
-      character(len=1000) :: line
-      integer*8 :: n1d(1),n2d(2)
- 
-      real*8,allocatable :: gridpf(:,:),gwork(:,:),rgrids(:),zgrids(:)
-      real*8,dimension(:),allocatable :: coils,expmp2,acoilc, &
-         tgamma,sgamma,rrrgam,zzzgam, &
-         aa1gam,aa2gam,aa3gam,aa4gam, &
-         aa5gam,aa6gam,aa7gam,tgammauncor
-      real*8,dimension(:),allocatable :: bmsels,sbmsels,fwtbmsels, &
-         rrmsels,zzmsels,l1msels,l2msels, &
-         l4msels,emsels,semsels,fwtemsels
-      integer*4,dimension(:),allocatable :: iemsels
-      real*8,dimension(:),allocatable :: tlibim,slibim,rrrlib, &
-         zzzlib,aa1lib,aa8lib,fwtlib
-      real*8,dimension(:),allocatable :: pds,denr,denv
-      integer*4,dimension(:),allocatable :: ilower
-      real*8,dimension(:),allocatable :: devxmpin,rnavxmpin, &
-         devpsiin,rnavpsiin,devfcin,rnavfcin, &
-         devein,rnavecin,brsptu
-      real*8,dimension(:,:),allocatable :: psirz_temp
-      real*8 :: c_ext,dr_ext,dz_ext,rc_ext,zc_ext,a_ext
-      real*8 :: eup_ext,elow_ext,dup_ext,dlow_ext,setlim_ext
-      real*8 :: r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max
-      real*8 :: r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot,dnmin
-      real*8 :: expmp2_save(magpri),coils_save(nsilop),brsp_save(nrsmat)
-      real*8 :: rbdry_save(mbdry),zbdry_save(mbdry),fwtsi_save(nsilop)
-      real*8 :: pressr_save(mpress),rpress_save(mpress),sigpre_save(mpress)
+      implicit none
+
+      integer*4, intent(in) :: jtime,ktime
+      integer*4, intent(out) :: kconvr,mtear,kerror
+      integer*4 i,j,k,ii,jj,kk,kkkk,m,n
+      integer*4 m_ext,nsq,idoac,mcontr,idtime,itimeb
+      !integer*4 idodo,idovs
+      integer*4 istat,lshot,im1,loc,nbdry0,nbdry1,nbdry2,nbdry3,nbryup, &
+                iup,nbranch,nqpsi,idn,limupper,lwant,mmemsels,idofb, &
+                mw,mh,mmf,mx,ix,mj,mk,npc,npack,nskip,kkl,kku,ier,jupper
+      integer*4 nrmin_e,nrmax_e,nzmin_e,nzmax_e
+      integer*4 nbabs_ext,jb_ext
+      integer*4 ishot_save,itime_save,nbdry_save,iconvr_save, &
+                mxiter_save,nxiter_save,ibunmn_save,npress_save
+      integer*4 iemsels(nmsels)
+      integer*4 ilower(mbdry)
+      integer*8 n1d(1),n2d(2)
+      !real*4 spatial_avg_ham(nmtark,ngam_vars,ngam_u,ngam_w)
+      real*8 ersil8,currn1,zetafc,co2cor,fq95,ten2m3
+      real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref,sgnemin, &
+             idfila,sigtii,pnbeam,sgtemin,sgnethi,sgtethi,ktear, &
+             currc79,currc139,currc199,curc79in,curc139in,curc199in, &
+             curriu30,curriu90,curriu150,curril30,curril90,curril150, &
+             bti322in,bremsigi,near,adn,val,rnow,znow,bfract, &
+             temax,demax,timeus,timems,xlmint,xlmaxt,xxxdum, &
+             signc79,signc139,tdata,tdata1,tdata2,coilmx,reflux, &
+             zdif,erho,xnpc,ssrm,dth,xrm2,xrvt,th,siwant,rdif,rsum, &
+             drgrids,dzgrids,psical,rselsum
+      real*8 sicont,devpsii,s1edge,scalep,scalemin,delx2,dely2,rbar,aup
+      real*8 rbmin_e,rbmax_e,zbmin_e,zbmax_e
+      real*8 plasma_ext,c_ext,dr_ext,dz_ext,rc_ext,zc_ext,a_ext
+      real*8 eup_ext,elow_ext,dup_ext,dlow_ext,setlim_ext
+      real*8 plasma_save,btor_save,rcentr_save,fwtcur_save,error_save
+      real*8 r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max
+      real*8 r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot,dnmin
+      real*8 gridpf(nwnh,mfila),gwork(nbwork,nwnh),rgrids(nw),zgrids(nh)
+      real*8 coils(nsilop),expmp2(magpri),acoilc(nacoil), &
+             tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark),zzzgam(nmtark), &
+             aa1gam(nmtark),aa2gam(nmtark),aa3gam(nmtark),aa4gam(nmtark), &
+             aa5gam(nmtark),aa6gam(nmtark),aa7gam(nmtark), &
+             tgammauncor(nmtark)
+      real*8 bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
+             rrmsels(nmsels),zzmsels(nmsels), &
+             l1msels(nmsels),l2msels(nmsels),l4msels(nmsels), &
+             emsels(nmsels),semsels(nmsels),fwtemsels(nmsels)
+      real*8 tlibim(libim),slibim(libim),rrrlib(libim),zzzlib(libim), &
+             aa1lib(libim),aa8lib(libim),fwtlib(libim)
+      real*8 pds(6),denr(nco2r),denv(nco2v)
+      real*8 devxmpin(magpri),rnavxmpin(magpri), &
+             devpsiin(nsilop),rnavpsiin(nsilop), &
+             devfcin(nfcoil),rnavfcin(nfcoil), &
+             devein(nesum),rnavecin(nesum) 
+      real*8 brsptu(nfcoil),brsp_save(nrsmat)
+      real*8, dimension(:), allocatable :: expmp2_save,coils_save, &
+                                             rbdry_save,zbdry_save, &
+                                             fwtsi_save,pressr_save, &
+                                             rpress_save,sigpre_save
+      real*8, dimension(:,:), allocatable :: psirz_temp
+      character(1000) line
       character*10 case_ext(6)
       character*50 edatname
       character(256) table_save
       character*10 namedum,tindex,probeind
-      character*2 :: reflect_ext
-      logical :: shape_ext
-      logical :: file_stat
-      !real*4 spatial_avg_ham(nmtark,ngam_vars,ngam_u,ngam_w)
+      character*2 reflect_ext
+      logical shape_ext
+      logical file_stat
+      parameter (m_ext=101)
       data nsq/1/
-      data ersil8/1.0e-03_dp/,currn1/0.0/
-      data idodo/0/,idovs/0/,zetafc/2.5e-08_dp/
+      data ersil8/1.0e-03_dp/,currn1/0.0/,zetafc/2.5e-08_dp/
+      !data idodo/0/,idovs/0/
       data co2cor/1.0/,idoac/0/,fq95/0.0/
       data mcontr/35/
       data ten2m3/1.0e-03_dp/
       data idtime/0/,itimeb/0/
-      save idodo,idovs,idoac
+      save idoac
+      !save idodo,idovs
 
       namelist/in1/ishot,itime,plasma,itek,itrace,nxiter,fwtcur,kffcur, &
            coils,fwtsi,expmp2,fwtmp2,kppcur,mxiter,ierchk,fwtqa,qemp,error, &
@@ -92,7 +121,7 @@
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout, &
            imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
            nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
-           idebug,jdebug,ifindopt,tolbndpsi,siloplim
+           idebug,jdebug,ifindopt,tolbndpsi,siloplim,use_previous
       namelist/inwant/psiwant,vzeroj,fwtxxj,fbetap,fbetan,fli,fq95,fqsiw, &
            jbeta,jli,alpax,gamax,jwantm,fwtxxq,fwtxxb,fwtxli,znose, &
            fwtbdry,nqwant,siwantq,n_write,kccoils,ccoils,rexpan, &
@@ -148,29 +177,6 @@
            nbdry,fwtsi,fwtcur,mxiter,nxiter,limitr,xlim,ylim,error, &
            iconvr,ibunmn,pressr,rpress,nqpsi,npress,sigpre
 ! 
-! 
-      ALLOCATE(gridpf(nwnh,mfila),gwork(nbwork,nwnh), & 
-               rgrids(nw),zgrids(nh)) 
-      ALLOCATE(coils(nsilop),expmp2(magpri),acoilc(nacoil), & 
-               tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark),zzzgam(nmtark), &
-               aa1gam(nmtark),aa2gam(nmtark),aa3gam(nmtark),aa4gam(nmtark), &
-               aa5gam(nmtark),aa6gam(nmtark),aa7gam(nmtark), &
-               tgammauncor(nmtark))
-      ALLOCATE(bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
-               rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels), &
-               l2msels(nmsels),l4msels(nmsels),emsels(nmsels), &
-               semsels(nmsels),fwtemsels(nmsels))
-      ALLOCATE(iemsels(nmsels)) 
-      ALLOCATE(tlibim(libim),slibim(libim),rrrlib(libim), & 
-               zzzlib(libim),aa1lib(libim),aa8lib(libim),fwtlib(libim)) 
-      ALLOCATE(pds(6),denr(nco2r),denv(nco2v)) 
-      ALLOCATE(ilower(mbdry)) 
-      ALLOCATE(devxmpin(magpri),rnavxmpin(magpri), & 
-               devpsiin(nsilop),rnavpsiin(nsilop), & 
-               devfcin(nfcoil),rnavfcin(nfcoil), & 
-               devein(nesum),rnavecin(nesum),brsptu(nfcoil)) 
- 
-      brsp=0.0
       sbmsels=0.0
       tlibim=0.0
       slibim=0.0
@@ -211,7 +217,11 @@
       dmass=0.0
       sgtimin=0.0
       scalepr=0.0
+      brsp_save=brsp
+      brsp=0.0
+      brsp(1)=-1.e-20_dp
       brsptu=0.0
+      brsptu(1)=-1.e-20_dp
       fwtfcsum=0.0
       rsol=0.0
       zsol=0.0
@@ -284,20 +294,19 @@
       curc79in=0.0
       curc139in=0.0
       curc199in=0.0
-! 
-      kerror=0 
+!
+      kerror=0
       idone=0
       fpol(:)=0.0
       pres(:) = 0.0
       ffprim(:) = 0.0
-      pprime(:)= 0.0 
+      pprime(:)= 0.0
       sicont=tmu*drslop/aaslop
-! 
-      snap: if ((kdata.ne.1).and.(kdata.ne.2)) then
 !---------------------------------------------------------------------- 
 !--   SNAP Mode
 !--   Restore fitting weights
 !--------------------------------------------------------------------- 
+      snap: if ((kdata.ne.1).and.(kdata.ne.2)) then
       fwtdlc=swtdlc
       fwtcur=swtcur
       if(fwtqa.ne.0.0) fwtqa=1.
@@ -315,54 +324,53 @@
         rbdry(1)=1.94_dp 
         zbdry(1)=ztssym(jtime)+0.5_dp*ztswid(jtime) 
       endif 
-      else snap
 !---------------------------------------------------------------------- 
 !--   File Mode
 !--   initialize inputs
 !---------------------------------------------------------------------- 
+      else snap
       bitfc=0.0
-      psibit(1:nsilop)=0.0 
-      bitmpi(1:magpri)=0.0 
-      alpax(jbeta)=1.e4_dp 
-      backaverage=.false. 
-      bitip=0.0 
-      betap0=0.50_dp 
-      brsp(1)=-1.e+20_dp 
-      cfcoil=-1. 
-      cutip=80000. 
-      denv(1:nco2v)=0. 
-      denr(1:nco2r)=0. 
-      rsisec(1:nesum)=-1. 
-      emf=1.00 
-      emp=1.00 
-      enf=1.00 
-      enp=1.00 
-      error=1.0e-03_dp 
-      fbetap=0.0 
-      fbetat=0.0 
-      fcsum(1:nfcoil)=1.0 
-      fczero(1:nfcoil)=1.0 
-      fwtfc(1:nfcoil)=0. 
-      rsisfc(1:nfcoil)=-1. 
-      fwtec(1:nesum)=0.0 
-      fwtpre(1:mpress)=1. 
-      fcurbd=1.0 
-      fli=0.0 
-      fwtbp=0.0 
-      fwtdlc=0.0 
-      fwtgam(1:nstark)=0.0 
-      fwtbmsels(1:nmsels)=0.0 
-      fwtemsels(1:nmsels)=0.0 
-      fwtece0(1:nnece)=0.0 
-      fwtecebz0=0.0 
-      fwtbdry(1:mbdry)=1.0 
-      sigrbd(1:mbdry)=1.e10_dp 
-      sigzbd(1:mbdry)=1.e10_dp 
-      fwtsol(1:mbdry)=1.0 
-      akchiwt=1.0 
-      akprewt=0.0 
-      akgamwt=0.0 
-      akerrwt=0.0 
+      psibit(1:nsilop)=0.0
+      bitmpi(1:magpri)=0.0
+      alpax(jbeta)=1.e4_dp
+      backaverage=.false.
+      bitip=0.0
+      betap0=0.50_dp
+      cfcoil=-1.
+      cutip=80000.
+      denv(1:nco2v)=0.
+      denr(1:nco2r)=0.
+      rsisec(1:nesum)=-1.
+      emf=1.00
+      emp=1.00
+      enf=1.00
+      enp=1.00
+      error=1.0e-03_dp
+      fbetap=0.0
+      fbetat=0.0
+      fcsum(1:nfcoil)=1.0
+      fczero(1:nfcoil)=1.0
+      fwtfc(1:nfcoil)=0.
+      rsisfc(1:nfcoil)=-1.
+      fwtec(1:nesum)=0.0
+      fwtpre(1:mpress)=1.
+      fcurbd=1.0
+      fli=0.0
+      fwtbp=0.0
+      fwtdlc=0.0
+      fwtgam(1:nstark)=0.0
+      fwtbmsels(1:nmsels)=0.0
+      fwtemsels(1:nmsels)=0.0
+      fwtece0(1:nnece)=0.0
+      fwtecebz0=0.0
+      fwtbdry(1:mbdry)=1.0
+      sigrbd(1:mbdry)=1.e10_dp
+      sigzbd(1:mbdry)=1.e10_dp
+      fwtsol(1:mbdry)=1.0
+      akchiwt=1.0
+      akprewt=0.0
+      akgamwt=0.0
+      akerrwt=0.0
       aktol=0.1_dp
       fwtqa=0.0
       gammap=1.0e+10_dp 
@@ -672,7 +680,7 @@
 11774   format (2i5)
 11775   format (6a8,3i4)
 11776   format (5e16.9)
-        if ((icinit.eq.-3).or.(icinit.eq.-4)) then
+        if ((icinit.eq.-3).or.(icinit.eq.-4 .and. jtime.eq.1)) then
           if ((nw.ne.nw_ext) .or. (nh.ne.nh_ext)) then
             call errctrl_msg('data_input', &
                              'restart file must have same dimensions')
@@ -688,6 +696,10 @@
 !--       Avoid overwriting other variables that will impact restart
 !--       Warning: this will have problems if the machine is changed,
 !--                but there isn't a way to check for that
+          allocate(expmp2_save(magpri),coils_save(nsilop), &
+                   rbdry_save(mbdry),zbdry_save(mbdry), &
+                   fwtsi_save(nsilop),pressr_save(mpress), &
+                   rpress_save(mpress),sigpre_save(mpress))
           ishot_save=ishot
           itime_save=itime
           plasma_save=plasma
@@ -741,6 +753,8 @@
           rpress=rpress_save
           npress=npress_save
           sigpre=sigpre_save
+          deallocate(expmp2_save,coils_save,rbdry_save,zbdry_save, &
+                     fwtsi_save,pressr_save,rpress_save,sigpre_save)
         endif
       endif
 11777 continue
@@ -791,7 +805,7 @@
           stop
         endif
         call open_group(pid,"time_slice",tid,h5err)
-        write(tindex,"(I0)") jtime+rank-1
+        write(tindex,"(I0)") jtime-1+rank*ktime
         call test_group(tid,trim(tindex),file_stat,h5err)
         if (.not. file_stat) then
           call errctrl_msg('data_input', &
@@ -1079,6 +1093,7 @@
           call read_h5_ex(nid,"ifindopt",ifindopt,h5in,h5err)
           call read_h5_ex(nid,"tolbndpsi",tolbndpsi,h5in,h5err)
           call read_h5_ex(nid,"siloplim",siloplim,h5in,h5err)
+          call read_h5_ex(nid,"use_previous",use_previous,h5in,h5err)
           call close_group("in1",nid,h5err)
         endif
    
@@ -1626,7 +1641,7 @@
 !----------------------------------------------------------------------- 
 !--   post-process inputs                                             --
 !-----------------------------------------------------------------------
-!--warn that idebug and jdebug inputs are depreciated
+!--   warn that idebug and jdebug inputs are depreciated
       if (idebug.ne.0) write(*,*) &
       "idebug input variable is depreciated, set cmake variable instead"
       if (jdebug.ne."NONE") write(*,*) &
@@ -2052,26 +2067,26 @@
         s1edge=(1.0-fe_psin)/fe_width
         tfedge=tanh(s1edge)
       endif
+#ifdef DEBUG_LEVEL1
       write(*,*)  'before save fitting weights'
-      call flush(6)
+#endif
 !--------------------------------------------------------------------- 
-!--   save fitting weights for FILE mode                            -- 
+!--   save fitting weights
 !--------------------------------------------------------------------- 
-      if ((kdata.eq.1).or.(kdata.eq.2)) then
-        swtdlc=fwtdlc
-        swtcur=fwtcur
-        swtfc(1:nfcoil)=fwtfc(1:nfcoil)
-        swtec(1:nesum)=fwtec(1:nesum)
-        swtmp2(1:magpri)=fwtmp2(1:magpri)
-        swtsi(1:nsilop)=fwtsi(1:nsilop)
-        swtgam(1:nmtark)=fwtgam(1:nmtark)
-        swtbmsels(1:nmsels)=fwtbmsels(1:nmsels)
-        swtemsels(1:nmsels)=fwtemsels(1:nmsels)
-        swtece(1:nnece)=fwtece0(1:nnece)
-        swtecebz=fwtecebz0
-      endif
+      swtdlc=fwtdlc
+      swtcur=fwtcur
+      swtfc(1:nfcoil)=fwtfc(1:nfcoil)
+      swtec(1:nesum)=fwtec(1:nesum)
+      swtmp2(1:magpri)=fwtmp2(1:magpri)
+      swtsi(1:nsilop)=fwtsi(1:nsilop)
+      swtgam(1:nmtark)=fwtgam(1:nmtark)
+      swtbmsels(1:nmsels)=fwtbmsels(1:nmsels)
+      swtemsels(1:nmsels)=fwtemsels(1:nmsels)
+      swtece(1:nnece)=fwtece0(1:nnece)
+      swtecebz=fwtecebz0
+#ifdef DEBUG_LEVEL1
       write(*,*)'adjust fit parameters based on basis function selected'
-      call flush(6)
+#endif
       if(fbetan.gt.0.) brsp(nfcoil+jbeta)=alpax(jbeta)*darea
       if(fli.gt.0.) brsp(nfcoil+kppcur+jli)=gamax(jli)*darea
       if(kedgep.gt.0) pedge=pedge*darea
@@ -2086,8 +2101,9 @@
       endif
       if(psiwant.le.0.0) psiwant=1.e-5_dp
 
+#ifdef DEBUG_LEVEL1
       write(*,*) 'itek > 100, write out PLTOUT.OUT individually '
-      call flush(6)
+#endif
 !-------------------------------------------------------------------------- 
 !--   itek > 100, write out PLTOUT.OUT individually                      --
 !--
@@ -2154,8 +2170,9 @@
 !--   option to symmetrize added 8/14/91 eal                 -- 
 !-------------------------------------------------------------- 
       sym: if (symmetrize) then
-        write(*,*) 'option to symmetrize added 8/14/91 eal  ' 
-        call flush(6)
+#ifdef DEBUG_LEVEL1
+        write(*,*) 'option to symmetrize added 8/14/91 eal  '
+#endif 
         isetfb=0  ! be sure vertical feedback is off 
         zelip=0 ! must be symmetric about midplane 
         fixed_bdry_1: if (nbdry.gt.1) then  ! remove duplicate point 
@@ -2169,13 +2186,13 @@
             if (zbdry(i).gt.0.) then
               aup=atan2(zbdry(i),rbdry(i)-rbar) 
               iup=i 
-              close=1e30 
+              near=1e30 
               do j=1,nbdry 
                 if (zbdry(j).lt.0.) then
                   adn=atan2(zbdry(j),rbdry(j)-rbar) 
                   val=abs(aup+adn) 
-                  if (val.lt.close) then
-                    close=val 
+                  if (val.lt.near) then
+                    near=val 
                     idn=j 
                   endif 
                 endif 
@@ -2239,8 +2256,9 @@
         endif 
         if(nbeam.gt.0) dnbeam(1:nbeam)=dnbeam(1:nbeam)*1.e-19_dp
 
-        write(*,*) 'reorder TS data points ' 
-        call flush(6)
+#ifdef DEBUG_LEVEL1
+        write(*,*) 'reorder TS data points '
+#endif
 !--------------------------------------------------------------------- 
 !--     reorder TS data points                                      -- 
 !--------------------------------------------------------------------- 
@@ -2296,8 +2314,9 @@
         endif
       endif kinetic
 
+#ifdef DEBUG_LEVEL1
       write(*,*) 'read in limiter data'
-      call flush(6)
+#endif
 !----------------------------------------------------------------------- 
 !---- read in limiter data                                            -- 
 !----------------------------------------------------------------------- 
@@ -2432,6 +2451,11 @@
 !----------------------------------------------------------------------- 
 !--   set up parameters for all modes                                 --
 !----------------------------------------------------------------------- 
+      ! restore previous solution
+      if(jtime.gt.1 .and. & 
+         (use_previous .or. (isicinit.lt.0 .and. isicinit.ne.-3))) &
+        brsp = brsp_save
+
       if (kfffnc.eq.8) then 
         rkec=pi/(2.0*dpsiecn) 
       endif 
@@ -3319,8 +3343,6 @@
 ! 
       endif fixed_bdry_2
       endif solution_mode
-! 
-      DEALLOCATE(rgrids,zgrids,gridpf,gwork) 
 ! 
       return 
  5000 format (2e12.6) 

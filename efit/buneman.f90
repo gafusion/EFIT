@@ -4,55 +4,56 @@
 !!     Buneman's solver.
 !!
 !!    @param psi :
-!!    @param nwb :
-!!    @param nhb :
+!!    @param nwb : width of psi and sai
+!!    @param nhb : height of psi and sai
 !!    @param sia :
+!!
 !!********************************************************************* 
-      subroutine buneto(psi,nwb,nhb,sia) 
-      use set_kinds 
+      subroutine buneto(psi,nwb,nhb,sia)
+      use set_kinds
       use var_buneman
-      use eparm, only: nw, nh
- 
-      implicit integer*4 (i-n), real*8 (a-h, o-z) 
-      real(dp), dimension(nwb*nhb), intent(inout) :: psi, sia
-      integer(i4), intent(in) :: nwb, nhb
-      mno = max(nw,nh)+1 
-      m = nw-1
-      n = nh-1
-      s = drdz2 
-      shift = rgrid1 
-      dr = delrgrid 
-      dz = delz 
-!---------------------------------------------------------------------- 
-!     copy psi into sia rowwise                                      -- 
-!---------------------------------------------------------------------- 
-      do i = 1,nwb 
-        ii = (i-1)*nhb + 1 
-        do j = 1, nhb 
-          sia(i+j*nwb-nwb) = psi(ii-1+j) 
+      implicit none
+      integer*4, intent(in) :: nwb, nhb
+      real*8, dimension(nwb*nhb), intent(inout) :: psi, sia
+      integer*4 i,ii,j,ia,ju,nwhbb
+
+      mno = max(nwb,nhb)+1
+      m = nwb-1
+      n = nhb-1
+      s = drdz2
+      shift = rgrid1
+      dr = delrgrid
+      dz = delz
+!----------------------------------------------------------------------
+!     copy psi into sia rowwise                                      --
+!----------------------------------------------------------------------
+      do i = 1,nwb
+        ii = (i-1)*nhb + 1
+        do j = 1, nhb
+          sia(i+j*nwb-nwb) = psi(ii-1+j)
         enddo
       enddo
-      ia = nwb+nwb 
-      ju = n*nwb 
-!----------------------------- 
-!     set up for rzpois 
-!----------------------------- 
-      do i = ia,ju,nwb 
-        sia(i-m+1) = sia(i-m+1)+(.5_dp+.25_dp/(1.0+shift/dr))*sia(i-m)/s 
-        sia(i-1) = sia(i-1)+(.5_dp-.25_dp/(m-1+shift/dr))*sia(i)/s 
+      ia = nwb+nwb
+      ju = n*nwb
+!-----------------------------
+!     set up for rzpois
+!-----------------------------
+      do i = ia,ju,nwb
+        sia(i-m+1) = sia(i-m+1)+(.5_dp+.25_dp/(1.0+shift/dr))*sia(i-m)/s
+        sia(i-1) = sia(i-1)+(.5_dp-.25_dp/(m-1+shift/dr))*sia(i)/s
       enddo
-      nwhbb = nwb*nhb 
-      call rzpois(nwhbb,sia) 
-!------------------------------------------------------------------------------ 
-!     copy sia back into psi columnwise                                      -- 
-!------------------------------------------------------------------------------ 
-      do i = 2,n 
-        ii = (i-1)*nwb + 1 
-        do j = 2,m 
-          psi(i+j*nhb-nhb) = sia(ii-1+j) 
+      nwhbb = nwb*nhb
+      call rzpois(nwhbb,sia)
+!------------------------------------------------------------------------------
+!     copy sia back into psi columnwise                                      --
+!------------------------------------------------------------------------------
+      do i = 2,n
+        ii = (i-1)*nwb + 1
+        do j = 2,m
+          psi(i+j*nhb-nhb) = sia(ii-1+j)
         enddo
       enddo
-      return 
+      return
       end subroutine buneto
  
 !********************************************************************** 

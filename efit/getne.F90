@@ -10,7 +10,7 @@
 !!
 !**********************************************************************
       subroutine getne(jtime,kerror)
-      use commonblocks,only: cjrf,c,wk,copy,bkx,bky
+      use commonblocks,only: c,bkx,bky
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'

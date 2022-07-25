@@ -344,8 +344,9 @@
 !!
 !**********************************************************************
  real*8 function seval(n, u, x, y, b, c, d)
-   integer*4 n
-   real*8  u, x(n), y(n), b(n), c(n), d(n)
+   implicit none
+   integer*4, intent(in) :: n
+   real*8, intent(in) :: u, x(n), y(n), b(n), c(n), d(n)
    integer*4 i, j, k
    real*8 dx
    data i/1/
@@ -394,8 +395,9 @@
 !!
 !**********************************************************************
  real*8 function speval(n, u, x, y, b, c, d)
-   integer*4 n
-   real*8  u, x(n), y(n), b(n), c(n), d(n)
+   implicit none
+   integer*4, intent(in) :: n
+   real*8, intent(in) :: u, x(n), y(n), b(n), c(n), d(n)
    integer*4 i, j, k
    real*8 dx
    data i/1/

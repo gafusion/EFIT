@@ -22,7 +22,7 @@
 !**********************************************************************
       subroutine fluxav(f,x,y,n,si,rx,msx,ry,msy,fave,ns,sdlobp,sdlbp)
       use set_kinds
-      use commonblocks,only: c,wk,copy,bkx,bky
+      use commonblocks,only: c,wk,bkx,bky
       include 'eparm.inc'
       use var_cwork3, only:lkx,lky
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -397,3 +397,74 @@
       return
  8000 format (/,1x,'Problem in fitting Fp')
       end subroutine fitfp
+
+!**********************************************************************
+!!
+!>    lenco2 calculates the co2 path lengths.
+!!
+!!    @param xplt :
+!!    @param yplt :
+!!    @param nplt :
+!!    @param jges :
+!!
+!*********************************************************************
+      subroutine lenco2(xplt,yplt,nplt,jges)
+      use set_kinds
+      include 'eparm.inc'
+      include 'modules1.inc'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      dimension xplt(npoint),yplt(npoint)
+      dimension zuper(nco2v),zlower(nco2v),rco2(nco2r),rco2in(nco2r)
+!
+      do i=1,nco2r
+        rco2(i)=100.
+        rco2in(i)=0.
+      enddo
+      do i=1,nco2v
+        zuper(i)=100.
+        zlower(i)=0.
+      enddo
+      zuperts(jges)=100.
+      zlowerts=0.
+      do i=1,nplt-1
+        do k=1,nco2r
+          yr1=chordr(k)-yplt(i)
+          yr2=chordr(k)-yplt(i+1)
+          if (yr1*yr2.gt.0.0) cycle
+          rpath=xplt(i)+yr1*(xplt(i+1)-xplt(i))/(yplt(i+1)-yplt(i))
+          if (rpath.ge.rcentr) rco2(k)=rpath
+          if (rpath.le.rcentr) rco2in(k)=rpath
+        enddo
+          yr1=zlibim-yplt(i)
+          yr2=zlibim-yplt(i+1)
+          if (yr1*yr2.le.0.0) then
+            rpath=xplt(i)+yr1*(xplt(i+1)-xplt(i))/(yplt(i+1)-yplt(i))
+            if (rpath.ge.rcentr) rlibim(jges)=rpath*100.0
+          endif
+        do k=1,nco2v
+          yr1=chordv(k)-xplt(i)
+          yr2=chordv(k)-xplt(i+1)
+          if (yr1*yr2.gt.0.0) cycle
+          zpath=yplt(i)+yr1*(yplt(i+1)-yplt(i))/(xplt(i+1)-xplt(i))
+          if (zpath.ge.zcentr) zuper(k)=zpath
+          if (zpath.le.zcentr) zlower(k)=zpath
+        enddo
+        yr1=rmajts-xplt(i)
+        yr2=rmajts-xplt(i+1)
+        if (yr1*yr2.le.0.0) then
+          zpath=yplt(i)+yr1*(yplt(i+1)-yplt(i))/(xplt(i+1)-xplt(i))
+          if (zpath.ge.zcentr) zuperts(jges)=zpath*100.
+          if (zpath.le.zcentr) zlowerts=zpath*100.
+        endif
+      enddo
+      do k=1,nco2v
+        rco2v(k,jges)=100.0*(zuper(k)-zlower(k))
+        dco2v(jges,k)=denvt(jges,k)/rco2v(k,jges)
+      enddo
+      do k=1,nco2r
+        rco2r(k,jges)=100.0*(rco2(k)-rco2in(k))
+        dco2r(jges,k)=denrt(jges,k)/rco2r(k,jges)
+      enddo
+!
+      return
+      end subroutine lenco2

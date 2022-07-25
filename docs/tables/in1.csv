@@ -66,12 +66,12 @@ IBUNMN,0, "| ""(Integer flag) Buneman"". 0 = Green's method.
 | -3 = improved Buneman's (default)."
 ICALBET,1, "| - >0 compute beta with various normalizations and output to FITOUT.DAT. (Default=1)
 | -<=0 don't"
-ICINIT,,"| ""(Integer flag) Current Initialization"". Plasma current profile initialization parameter.
-| - 1 = elliptical and uniform flux surface (EELIP,AELIP,RELIP,ZELIP).
-| - 2 = elliptical and parabolic for all timeslices (default) .
-| - -2 = use information from ESAVE.DAT (from a previous EFIT run) first timeslice and previous timeslice subsequently.
-| - -3 = use previous solution from geqdsk_ext or hdf5 file for all timeslices.
-| - -4 = use previous solution from geqdsk_ext or hdf5 file for first timeslice and previous timeslice subsequently.
+ICINIT,2,"| ""(Integer flag) Current Initialization"". Plasma current profile initialization parameter.
+| - 1 = elliptical and uniform flux surface for all timeslices (EELIP,AELIP,RELIP,ZELIP).
+| - 2 = elliptical and parabolic for all timeslices (default).
+| - -2 = use information from ESAVE.DAT (from an existing EFIT run) for first timeslice and previous timeslice subsequently.
+| - -3 = use existing solution from geqdsk_ext or hdf5 file for all timeslices.
+| - -4 = use existing solution from geqdsk_ext or hdf5 file for first timeslice and previous timeslice subsequently.
 | - -12= elliptical and parabolic first timeslice and previous timeslice subsequently."
 ICNTOUR,,"""(Integer flag) Contour"".
 | - + = bypass CNTOUR routine."
@@ -101,9 +101,11 @@ IECURR,,"| - ""(Integer flag) E-coil current"".
 | - 1 = include E coil currents in calculations (default).
 | - 2 = fit E-coil currents
 | (How is this related to FWTEC??)"
-IERCHK,,"| ""(Integer flag) Error Check"".
-| - >0 check for MHD fitting errors (Default=1)
-| - <0 don't check for MHD fitting errors"
+IERCHK,1,"| ""(Integer flag) Error Check"".
+| - 0 = don't check for MHD fitting errors"
+| - 1 = check for MHD fitting errors but continue regardless of the result (Default)
+| - 2 = only output parameters file (a-file) if the error checks fail
+| - 3 = don't output any result files (g, a, m, etc.) if error checks fail
 IEXCAL,0, 1 = plot magnetic signals. 
 IFITVS,,"| ""(Integer flag) Fit Vessel"". The DIII-D vessel can be modeled as 24 individual
 | current carrying elements, i.e. additional unknown sources of current (in both fitting

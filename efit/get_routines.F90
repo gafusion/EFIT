@@ -47,7 +47,7 @@
 !!    @param kerror : error flag
 !**********************************************************************
       subroutine geteceb(jtime,kerror)
-      use commonblocks,only: c,wk,copy,bkx,bky
+      use commonblocks,only: c,wk,bkx,bky
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -688,7 +688,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine getecer(jtime,kerror)
-      use commonblocks,only: c,wk,copy,bkx,bky
+      use commonblocks,only: c,wk,bkx,bky
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -1213,7 +1213,7 @@
 !!
 !**********************************************************************
       subroutine gettir(jtime,kerror)
-      use commonblocks,only: c,wk,copy,bkx,bky
+      use commonblocks,only: c,wk,bkx,bky
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -1859,7 +1859,7 @@
 !!
 !**********************************************************************
       subroutine gettion(kerror)
-      use commonblocks,only: c,wk,copy,bkx,bky
+      use commonblocks,only: c,bkx,bky
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
