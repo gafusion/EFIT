@@ -108,7 +108,6 @@
       lr0=nw-krord+1
       lz0=nh-kzord+1
       nxtrap=npoint
-      mfila = 10
       
       call read_optin
       ! Create character versions of nw, nh for labelling
@@ -222,7 +221,7 @@
         if (idebug /= 0) write (6,*) 'Main/WQEDSK ks/kerror = ', ks, kerror
         call weqdsk(ks)
         if (iconvr.ge.0) then
-           call shipit(ktime,ks,ks)
+           call shipit(ktime,ks)
 !DEPRECATED           call wtear(mtear,ks)
         endif
         if (idebug /= 0) write (6,*) 'Main/wmeasure ks/kerror = ', ks, kerror

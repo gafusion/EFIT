@@ -24,7 +24,6 @@
 
       character*10 nsingl(10),n1name,btcname, &
                    nc79name,nc139name,ncname(mccoil),niname(micoil)  !EJS(2014)
-!                        ---  or ---  ncname(mccoil),niname(micoil)  !EJS(2014)
 
       integer*4 time_err,ioerr
       character*150 textline     !EJS(2014)
@@ -51,8 +50,8 @@
       nsingl(2) ='VLOOP     '
       nsingl(3) ='BCOIL     '
       nsingl(4) ='DIAMAG3   '   !diamagnetic flux 
-      nsingl(5) ='RL01      '     !full rogowski 
-      nsingl(6)='PINJ      '     !beam injection power
+      nsingl(5) ='RL01      '   !full rogowski 
+      nsingl(6)='PINJ      '    !beam injection power
       n1name='N1COIL    '
       nc79name='C79       '
       nc139name='C139      '
@@ -1715,6 +1714,10 @@
         !   DENVT  1:nco2v
         !   DENRT  1:nco2r
         !   ECCURT 1:nesum
+        integer*4, intent(in) :: nshot
+        real*8, intent(in) :: times,delt
+        integer*4, intent(inout) :: ktime
+        integer*4, intent(out) :: istop
         integer*4 :: i,j,ktime_all,offset,stoff,endoff,nsize,nsize2
         integer*4, dimension(:), allocatable :: tmp1,tmp2
         double precision :: timeb_list(nproc), &

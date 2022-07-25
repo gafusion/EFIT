@@ -4,7 +4,7 @@ Git repository url git@gitlab.com:efit-ai/efit.git
 
 Git branch main
 
-Git hash aa95d83 with local modifications
+Git hash aa95d83
 
 Simulation started on  4/12/2022 at 15:37:12
 
@@ -14,13 +14,9 @@ Code compiled with PGI 18.7.0
  type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
 
  type input file names:
- table_di2 = <../green/>
+ table_di2 = <test/DIIID/green/>
 
       ********************EFITAI 65 x  65  output ********************
- before save fitting weights
- adjust fit parameters based on basis function selected
- itek > 100, write out PLTOUT.OUT individually 
- read in limiter data
 
  r=  0 t=  2300 it=  1 chi2=4.31E+01 zm=-2.02E-02 err=1.738E+00 dz=-2.021E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
  r=  0 t=  2300 it=  2 chi2=6.80E+01 zm=-2.06E-02 err=3.496E-02 dz=-3.670E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.90E+02
@@ -61,9 +57,10 @@ WARNING in fit at r=  0, t=  2300: not converged, reached max iterations
  betat(%) =      0.362 betap    =      0.103 li       =      1.177
  vol(cm3) =  1.757E+07 rout(cm) =    172.758 zout(cm) =      4.317
  elong    =      1.785 utriang  =      0.736 ltriang  =      0.350
- a(cm)    =     56.227 lin(cm)  =     14.801 lout(cm) =      6.072
+ a(cm)    =     56.227 lin(cm)  =     14.799 lout(cm) =      6.072
  ltop(cm) =     18.657 q*       =      4.000 rc(cm)   =    170.370
  zc(cm)   =     -3.485 bt0(t)   =      1.631 qout     =      6.931
 
-  fit errors, shot  186610  2300. msec. no eqdsks will be written
+  fit errors, shot  186610  2300. msec. all eqdsks are still written
      Error #1, Chisq >    80.
+INFO in efit at r=  0, t=  2300: Done processing

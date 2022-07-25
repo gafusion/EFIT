@@ -76,7 +76,7 @@ ALLOCATE(rbrpc(nstark,npcurn),rbzpc(nstark,npcurn),rgampc(nstark,npcurn),rbrfc(n
    saisil(nsilop),saimpi(magpri),saipre(mpress),saifc(nfcoil), &
    dfluxc(ntime),cdflux(ntime),edflux(ntime),rspdlc(nffcur), &
    rco2r(nco2r,ntime),rco2v(nco2v,ntime),chordv(nco2v),chordr(nco2r), &
-   dco2r(ntime,nco2r),dco2v(ntime,nco2v),erflag(ntime,30), &
+   dco2r(ntime,nco2r),dco2v(ntime,nco2v),erflag(ntime,nflag), &
    cerror(kxiter),csibry(kxiter),csimag(kxiter),cvolp(kxiter),crmaxi(kxiter), &
    czmaxi(kxiter),cemaxi(kxiter),cqmaxi(kxiter),cchisq(kxiter), &
    brfbc(kxiter),tvfbrt(kxiter),cdelz(kxiter), &

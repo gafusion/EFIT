@@ -18,8 +18,8 @@ interactive session on a compute node before executing the tests.  By default,
 parallel tests are executed with slrum, but if your system uses a different
 program (e.g. mpirun, mpiexec) you need to configure the build with::
 
-    -DMPCMD:STRING=mpirun
-    -DNPROC:STRING='-n 2'
+    -DMPCMD:STRING='mpirun -n ' 
+    -DNPROC:STRING=2
 
 to tell the test harness how to run the test.
 

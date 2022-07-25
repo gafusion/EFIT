@@ -1,9 +1,9 @@
 #include "config.f"
 !**********************************************************************
 !>
-!!    prtout performs printing.
+!!    prtout prints stats to the terminal
 !!
-!!    @param it :
+!!    @param it : time index
 !!
 !**********************************************************************
       subroutine prtout(it)
