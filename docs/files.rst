@@ -1,10 +1,60 @@
 EFIT files
 ==========
 
+gEQDSK
+-----------------------------------------
+Contains mainly arrays of calculated values such as flux on grid, ff', p', q profile.
+Output from file mode or snap(_ext) mode (1,2,3,7) runs when KEQDSK<2 (from efitin or in1 namelists).  The detailed format for G EQDSK can be found in the Fortran source code
+weq.f90. Briefly, a right-handed cylindrical coordinate system (R, f, Z) is used. The G EQDSK provides
+information on the pressure, poloidal current function, q profile on a uniform flux
+grid from the magnetic axis to the plasma boundary and the poloidal flux
+function on the rectangular computation grid. Information on the plasma
+boundary and the surrounding limiter contour in also provided :: 
+
+	 character*10 case(6)
+	 dimension psirz(nw,nh),fpol(1),pres(1),ffprim(1),
+	 . pprime(1),qpsi(1),rbbbs(1),zbbbs(1),
+	 . rlim(1),zlim(1)
+	c
+	 read (neqdsk,2000) (case(i),i=1,6),idum,nw,nh
+	 read (neqdsk,2020) rdim,zdim,rcentr,rleft,zmid
+	 read (neqdsk,2020) rmaxis,zmaxis,simag,sibry,bcentr
+	 read (neqdsk,2020) current,simag,xdum,rmaxis,xdum
+	 read (neqdsk,2020) zmaxis,xdum,sibry,xdum,xdum
+	 read (neqdsk,2020) (fpol(i),i=1,nw)
+	 read (neqdsk,2020) (pres(i),i=1,nw)
+	 read (neqdsk,2020) (ffprim(i),i=1,nw)
+	 read (neqdsk,2020) (pprime(i),i=1,nw)
+	 read (neqdsk,2020) ((psirz(i,j),i=1,nw),j=1,nh)
+	 read (neqdsk,2020) (qpsi(i),i=1,nw)
+	 read (neqdsk,2022) nbbbs,limitr
+	 read (neqdsk,2020) (rbbbs(i),zbbbs(i),i=1,nbbbs)
+	 read (neqdsk,2020) (rlim(i),zlim(i),i=1,limitr)
+	 read (neqdsk,2024) kvtor,rvtor,nmass
+	 if (kvtor.gt.0) then
+	 read (neqdsk,2020) (pressw(i),i=1,nw)
+	 read (neqdsk,2020) (pwprim(i),i=1,nw)
+	 endif
+	 if (nmass.gt.0) then
+	 read (neqdsk,2020) (dmion(i),i=1,nw)
+	 endif
+	 read (neqdsk,2020) (rhovn(i),i=1,nw)
+	c
+	 2000 format (6a8,3i4)
+	 2020 format (5e16.9)
+	 2022 format (2i5)
+	 2024 format (i5,e16.9,i5)
+
+.. csv-table:: gEQDSK variables
+   :file: tables/geqdsk.csv
+   :widths: 20,80
+   :header-rows: 1
+
+
 aeqdsk 
 ---------------------------------------
 
-Contains global parameters, mainly scalar values. aeqdsk is of the following fortran format :: 
+Contains shape, convergence, and other global parameters, mainly scalar values.  It is output from file mode or snap(_ext) mode (1,2,3,7) when ICONVR>=0 (from efitin or in1 namelist).  aeqdsk has the following fortran format :: 
 
 	parameter (magpri67=29,magpri322=31,magprirdp=8)
 	parameter (magpri=magpri67+magpri322+magprirdp)
@@ -94,69 +144,15 @@ Contains global parameters, mainly scalar values. aeqdsk is of the following for
 	1041 format (1x,4i5)
 	1060 format (1h*,f7.2,10x,i5,11x,i5,1x,a3,1x,i3,1x,i3,1x,a3,1x,2i5)
 
-
-
 .. csv-table:: aEQDSK variables
    :file: tables/aeqdsk.csv
    :widths: 20,80
    :header-rows: 1
 
 
-
-
-gEQDSK
------------------------------------------
-Contains mainly arrays of calculated values such as flux on grid, ff', p', q profile.
-Output from file mode or snap(_ext) mode (2,3,7) runs.The detailed format for G EQDSK can be found in the Fortran source code
-weq.f90. Briefly, a right-handed cylindrical coordinate system (R, f, Z) is used. The G EQDSK provides
-information on the pressure, poloidal current function, q profile on a uniform flux
-grid from the magnetic axis to the plasma boundary and the poloidal flux
-function on the rectangular computation grid. Information on the plasma
-boundary and the surrounding limiter contour in also provided :: 
-
-	 character*10 case(6)
-	 dimension psirz(nw,nh),fpol(1),pres(1),ffprim(1),
-	 . pprime(1),qpsi(1),rbbbs(1),zbbbs(1),
-	 . rlim(1),zlim(1)
-	c
-	 read (neqdsk,2000) (case(i),i=1,6),idum,nw,nh
-	 read (neqdsk,2020) rdim,zdim,rcentr,rleft,zmid
-	 read (neqdsk,2020) rmaxis,zmaxis,simag,sibry,bcentr
-	 read (neqdsk,2020) current,simag,xdum,rmaxis,xdum
-	 read (neqdsk,2020) zmaxis,xdum,sibry,xdum,xdum
-	 read (neqdsk,2020) (fpol(i),i=1,nw)
-	 read (neqdsk,2020) (pres(i),i=1,nw)
-	 read (neqdsk,2020) (ffprim(i),i=1,nw)
-	 read (neqdsk,2020) (pprime(i),i=1,nw)
-	 read (neqdsk,2020) ((psirz(i,j),i=1,nw),j=1,nh)
-	 read (neqdsk,2020) (qpsi(i),i=1,nw)
-	 read (neqdsk,2022) nbbbs,limitr
-	 read (neqdsk,2020) (rbbbs(i),zbbbs(i),i=1,nbbbs)
-	 read (neqdsk,2020) (rlim(i),zlim(i),i=1,limitr)
-	 read (neqdsk,2024) kvtor,rvtor,nmass
-	 if (kvtor.gt.0) then
-	 read (neqdsk,2020) (pressw(i),i=1,nw)
-	 read (neqdsk,2020) (pwprim(i),i=1,nw)
-	 endif
-	 if (nmass.gt.0) then
-	 read (neqdsk,2020) (dmion(i),i=1,nw)
-	 endif
-	 read (neqdsk,2020) (rhovn(i),i=1,nw)
-	c
-	 2000 format (6a8,3i4)
-	 2020 format (5e16.9)
-	 2022 format (2i5)
-	 2024 format (i5,e16.9,i5)
-
-.. csv-table:: gEQDSK variables
-   :file: tables/geqdsk.csv
-   :widths: 20,80
-   :header-rows: 1
-
-
 mEQDSK
 ------
-Output from input mode run with free boundary solution. Contains simulated magnetic diagnostic data which can be used as input to fitting solution.
+Output from file mode or snap(_ext) mode (1,2,3,7) runs when specified by IOUT (see efitin or in1 namelist).  Contains all diagnostic data, uncertainties, and synthetic measurements which can be used as input to fitting solutions and the quality of the fits (chi squared).  Also contains several global quality of fit parameters, plasma coefficients and coil currents used for correcting magnetic measurements.
 
    .. csv-table:: mEQDSK variables
    :file: tables/meqdsk.csv

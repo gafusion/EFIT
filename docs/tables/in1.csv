@@ -178,7 +178,7 @@ KEQDSK,,"| Format of A and G EQDSK files
 | - 0 = binary EQDSKs
 | - 1 = ascii EQDSKs (default)
 | - 2 = ascii A EQDSK only, no G
-| - -1 = binary A EQDSK only, on G"
+| - -1 = binary A EQDSK only, no G"
 KERSIL,3, "| ""Reference Flux Loop Uncertainty Switch"". This parameter controls how the uncertainty is set for the reference flux loop (NSLREF).
 | - 1 = use the maximum coil current to set the reference uncertainty
 | - 2 = use a hard-coded uncertainty of 0.001 for the reference (matches probe 8 on D-III)
