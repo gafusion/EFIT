@@ -29,7 +29,7 @@ configure_file(${EFIT_RESULTS_CONFIGFILE}
 add_test(NAME NSTX-kineticEFIT COMMAND run_efit.sh)
 add_test(NAME NSTX-kineticEFIT-results COMMAND check_efit_results.sh)
 
-if (FALSE)
+if (${ENABLE_HDF5})
   set(EFIT_MODE 1)
   if (${ENABLE_PARALLEL})
     set(EFIT_IN ${RUNID}_mpi.h5)
