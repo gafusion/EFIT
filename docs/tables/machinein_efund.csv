@@ -1,6 +1,6 @@
 Variable, Default, Description
 nfcoil, 18, Number of poloidal field coils
-nfsum, 18, Number of 
+nfsum, 18, Number of lumped poloidal field coils 
 nsilop, 44, Number of poloidal flux loops
 magpr2, 76, Number of magnetic probes
 nrogow, 1, "If greater than 1, call rogowc routine (which does what?)"
