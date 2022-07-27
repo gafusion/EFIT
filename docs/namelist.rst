@@ -183,6 +183,7 @@ communicated to efit through the dprobe.dat file.
    :file: tables/machinein_efund.csv
    :widths: 15,15, 70
 
+
 EFITIN
 ------
 
@@ -196,9 +197,9 @@ EFITIN is the main namelist specified by a snap file.
 EFITINK
 -------
 
-(TODO: need to add/describe namelist)
+EFITINK is for vertical stabilization, the same as INK, but specified in the snap file. It can be included in the input file in file mod
 
-IN3
+IN3 (EFUND)
 ---
 
 IN3 is used to read machine parameters from a dprobe.dat file.
