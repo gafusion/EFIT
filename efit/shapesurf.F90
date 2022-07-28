@@ -951,8 +951,8 @@
       double=(idoqn.eq.2).and.(qpsi(1).gt.1.)
       do i=1,iend
         qwant=i
+        if (qwant.lt.qpsi(1)+0.001_dp) cycle
         if (idoqn.eq.1.and.i.ge.2) then
-         if (qwant.lt.qpsi(1)+0.001_dp) cycle
          siwant=seval(nw,qwant,qpsi,xsisii,bfpol,cfpol,dfpol)
         else
          do jjj=jstart,nw
@@ -962,7 +962,7 @@
           if (qppp*qmmm.le.0.0) then
             siwant=xsisii(jj-1)+ (xsisii(jj)-xsisii(jj-1))/ &
                    (qpsi(jj)-qpsi(jj-1))*qmmm
-            if(jstart.eq.2)onedone=.true.
+            if(jstart.le.3)onedone=.true.
             jstart=jj+1
             go to 1105
           endif
