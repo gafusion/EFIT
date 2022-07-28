@@ -962,7 +962,7 @@
           if (qppp*qmmm.le.0.0) then
             siwant=xsisii(jj-1)+ (xsisii(jj)-xsisii(jj-1))/ &
                    (qpsi(jj)-qpsi(jj-1))*qmmm
-            if(jstart.le.3)onedone=.true.
+            if(jstart.eq.2)onedone=.true.
             jstart=jj+1
             go to 1105
           endif
