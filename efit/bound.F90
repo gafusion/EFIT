@@ -2184,13 +2184,16 @@
 !!    @param zmaxis : Z value of magnetic axis
 !!    @param negcur : negative current flag
 !!    @param kerror : error flag
+!!    @param err_type : type of error to be sent to errctrl_msg
 !*********************************************************************
       subroutine surfac(siwant,psi,nw,nh,rgrid,zgrid,xout,yout, &
                         nfound,npoint,drgrid,dzgrid,xmin, &
-                        xmax,ymin,ymax,ipack,rmaxis,zmaxis,negcur,kerror)
+                        xmax,ymin,ymax,ipack,rmaxis,zmaxis,negcur, &
+                        kerror,err_type)
       use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
+      integer*4 :: err_type
       dimension xout(npoint),yout(npoint),psi(nw*nh),rgrid(nw),zgrid(nh)
       data n111/1/
 
@@ -2262,7 +2265,7 @@
       if (ipack.gt.0) call packps(xout,yout,nfound,rmaxis,zmaxis,n111)
       if (nfound.lt.3) then
         kerror = 1
-        call errctrl_msg('surfac','Less than 3 contour points found',2)
+        call errctrl_msg('surfac','Less than 3 contour points found',err_type)
         return
       end if
       return
