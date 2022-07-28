@@ -1042,7 +1042,6 @@
             call surfac(psiwan,psi,nw,nh,rgrid,zgrid,xxtra(1,1),yxtra(1,1), &
                         nfind,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nzz, &
                         rmaxis,zmaxis,negcur,kerror)
-            if (kerror.gt.0) return
             if (nfind.le.40.and.icntour.eq.0) then
 #ifdef DEBUG_LEVEL2
               write (6,*) ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
