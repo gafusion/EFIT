@@ -951,8 +951,8 @@
       double=(idoqn.eq.2).and.(qpsi(1).gt.1.)
       do i=1,iend
         qwant=i
-        if (qwant.lt.qpsi(1)+0.001_dp) cycle
         if (idoqn.eq.1.and.i.ge.2) then
+         if (qwant.lt.qpsi(1)+0.001_dp) cycle
          siwant=seval(nw,qwant,qpsi,xsisii,bfpol,cfpol,dfpol)
         else
          do jjj=jstart,nw
@@ -978,7 +978,7 @@
         call surfac(siwant,psi,nw,nh,rgrid,zgrid,xxtra(1,1),yxtra(1,1), &
                     nfind,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nzz, &
                     rmaxis,zmaxis,negcur,kerror)
-        if (kerror.gt.0) return
+        
         if (nfind.le.40.and.icntour.eq.0) then
 #ifdef DEBUG_LEVEL2
          write (6,*) ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
