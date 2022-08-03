@@ -248,8 +248,7 @@
         rzzmax(ii)=-99.0
         call surfac(siwant,psi,nw,nh,rgrid,zgrid,bpol,bpolz,nfind, &
                     npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur,kerror)
-        if (kerror.gt.0) return
+                    rmaxis,zmaxis,negcur,kerror,2)
         if (nfind.le.40.and.icntour.eq.0) then
 #ifdef DEBUG_LEVEL2
           write (6,*) ' SHAPE/BETALI kerror,i,nfind = ',kerror,i,nfind
@@ -622,8 +621,7 @@
         siii=1.0_dp-1.0_dp/(nw-1)*(i-1)
         call surfac(siwant,psi,nw,nh,rgrid,zgrid,xxs,yys,nfind, &
                     npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                    rmaxis,zmaxis,negcur,kerror)
-        if (kerror.gt.0) return
+                    rmaxis,zmaxis,negcur,kerror,2)
         if (nfind.le.40.and.icntour.eq.0) then
         call cntour(rmaxis,zmaxis,siwant,xcmin,xcmax,ycmin,ycmax, &
                     yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &

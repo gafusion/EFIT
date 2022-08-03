@@ -400,7 +400,7 @@
       endif
       call surfac(psibry,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt, &
         npoint,drgrid,dzgrid,rgrid(1),rgrid(nw),zgrid(1), &
-        zgrid(nh),n00,rmaxis,zmaxis,negcur,kerror)
+        zgrid(nh),n00,rmaxis,zmaxis,negcur,kerror,1)
       if (kerror.gt.0) return
       yminmm=zmin-0.001_dp
       ymaxmm=zmax+0.001_dp
