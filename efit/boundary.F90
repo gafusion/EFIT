@@ -2163,34 +2163,37 @@
 !>    surfac generates a contour of constant psi of value
 !!    siwant. 
 !!
-!!    @param siwant :
-!!    @param psi : 
-!!    @param nw :
-!!    @param nh :
-!!    @param rgrid :
-!!    @param zgrid :
-!!    @param xout :
-!!    @param yout :
-!!    @param nfound :
-!!    @param npoint :
-!!    @param drgrid :
-!!    @param dzgrid :
-!!    @param xmin :
-!!    @param xmax :
-!!    @param ymin :
-!!    @param ymax :
-!!    @param ipack :
-!!    @param rmaxis :
-!!    @param zmaxis :
-!!    @param negcur :
+!!    @param siwant : value of psi to contour
+!!    @param psi : 2d grid of psi
+!!    @param nw : row dimension of psi 
+!!    @param nh : column dimension of psi
+!!    @param rgrid : R values on grid points
+!!    @param zgrid : Z values on grid points
+!!    @param xout : output R contour values
+!!    @param yout : output Z contour values
+!!    @param nfound : number of contour points
+!!    @param npoint : maximum number of contour points
+!!    @param drgrid : R grid spacing
+!!    @param dzgrid : Z grid spacing 
+!!    @param xmin : minimum R to contour
+!!    @param xmax : maximum R to contour
+!!    @param ymin : minimum Z to contour
+!!    @param ymax : minimum Z to contour
+!!    @param ipack : if >0, put contour in sequential order
+!!    @param rmaxis : R value of magnetic axis
+!!    @param zmaxis : Z value of magnetic axis
+!!    @param negcur : negative current flag
 !!    @param kerror : error flag
+!!    @param err_type : type of error to be sent to errctrl_msg
 !*********************************************************************
       subroutine surfac(siwant,psi,nw,nh,rgrid,zgrid,xout,yout, &
                         nfound,npoint,drgrid,dzgrid,xmin, &
-                        xmax,ymin,ymax,ipack,rmaxis,zmaxis,negcur,kerror)
+                        xmax,ymin,ymax,ipack,rmaxis,zmaxis,negcur, &
+                        kerror,err_type)
       use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
+      integer*4 :: err_type
       dimension xout(npoint),yout(npoint),psi(nw*nh),rgrid(nw),zgrid(nh)
       parameter (n111=1)
 
@@ -2262,7 +2265,7 @@
       if (ipack.gt.0) call packps(xout,yout,nfound,rmaxis,zmaxis,n111)
       if (nfound.lt.3) then
         kerror = 1
-        call errctrl_msg('surfac','Less than 3 contour points found')
+        call errctrl_msg('surfac','Less than 3 contour points found',err_type)
         return
       end if
       return

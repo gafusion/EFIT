@@ -1,6 +1,33 @@
 EFIT subroutines
 ================================
 
+The logic flow chart::
+
+	EFIT: Main driver
+		GETSETS: Initialize run, input snap file, Green's tables.
+		LOOP: Loop over timeslices KTIME.
+			DATA: Read input file or fetch data, set up fitting weight.
+			INICUR: Initialize plasma current distribution.
+			FIT: Equilibrium and fitting iterations.
+				LOOP: Loop over MXITER, current profile.
+					GREEN: Update respond matrix.
+					PRESUR: Update pressure profile data.
+					MATRIX: Update current and pressure profile.
+					LOOP: Loop over equilibrium iteration NXITER.
+						CURRNT: Compute plasma current.
+						FCURRT: Get external shaping coil currents.
+						STEPS: Find magnetic axis and trace boundary.
+						FINDAX: Set up bicubic spline.
+						BOUND: Get boundary.
+						FINDAX: Get magnetic axis.
+						RESIDU: Check equilibrium convergence.
+			SHAPE: Compute plasma parameters, graphics after done.
+			PLTOUT: Generate graphics.
+			PRTOUT: Print out.
+			WEQDSK: Write G EQDSK.
+			SHIPIT: Write A EQDSK.
+
+
 modules-efit.F90
 ----------------
 

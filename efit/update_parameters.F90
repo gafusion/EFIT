@@ -382,7 +382,7 @@
             siwant=simag+sizeroj(i)*(psibry-simag)
             call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc, &
                         npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                        rmaxis,zmaxis,negcur,kerror)
+                        rmaxis,zmaxis,negcur,kerror,1)
             if(kerror.gt.0) return
             csplt(1:nfounc)=1./rsplt(1:nfounc)**2
             call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
@@ -404,7 +404,7 @@
           siwant=simag+siwantq(i)*(psibry-simag)
           call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc, &
                       npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                      rmaxis,zmaxis,negcur,kerror)
+                      rmaxis,zmaxis,negcur,kerror,1)
           if(kerror.gt.0) return
           csplt(1:nfounc)=1./rsplt(1:nfounc)**2
           call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &

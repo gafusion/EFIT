@@ -1017,11 +1017,11 @@
         kacerr=0
         call surfac(siwant,psi,nw,nh,rgrid,zgrid,xxtra(1,1),yxtra(1,1), &
                     nfind,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nzz, &
-                    rmaxis,zmaxis,negcur,kacerr)
+                    rmaxis,zmaxis,negcur,kacerr,2)
         if (nfind.le.40.and.icntour.eq.0) then
 #ifdef DEBUG_LEVEL2
-          write (6,*) ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
-                       kerror,i,nfind,qppp,qmmm,siwant
+          write (6,*) ' SHAPE/SURFAC kacerr,i,nfind,qp,qm,si = ', &
+                       kacerr,i,nfind,qppp,qmmm,siwant
 #endif
           call cntour(rmaxis,zmaxis,siwant,rqmin,rqmax,ycmin,ycmax, &
                       yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
@@ -1081,11 +1081,11 @@
             kacerr=0
             call surfac(psiwan,psi,nw,nh,rgrid,zgrid,xxtra(1,1),yxtra(1,1), &
                         nfind,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nzz, &
-                        rmaxis,zmaxis,negcur,kacerr)
+                        rmaxis,zmaxis,negcur,kacerr,2)
             if (nfind.le.40.and.icntour.eq.0) then
 #ifdef DEBUG_LEVEL2
               write (6,*) ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
-                           kerror,i,nfind,qppp,qmmm,psiwan
+                           kacerr,i,nfind,qppp,qmmm,psiwan
 #endif
               call cntour(rmaxis,zmaxis,psiwan,rqmin,rqmax,ycmin,ycmax, &
                           yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
@@ -1145,7 +1145,7 @@
        siwant=simag+psiwant*(psibry-simag)
        call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc, &
                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                   rmaxis,zmaxis,negcur,kerror)
+                   rmaxis,zmaxis,negcur,kerror,1)
        if(kerror.gt.0) return
        do k=1,nfounc
         cfpol(k)=1./bfpol(k)**2
@@ -1238,7 +1238,7 @@
        siwant=simag+siwant*(psibry-simag)
        call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc, &
                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                   rmaxis,zmaxis,negcur,kerror)
+                   rmaxis,zmaxis,negcur,kerror,1)
        if(kerror.gt.0) return
        call fluxav(bfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid,nh, &
                    rxxrry,nzz ,sdlobp,sdlbp)
