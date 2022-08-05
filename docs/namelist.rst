@@ -1,6 +1,29 @@
 EFIT input namelist
 ================================
 
+SETUP
+-----
+
+SETUP is the optional namelist that can be read from the efit.input 
+that can be used to set table and experiment directories and variable
+size limits.
+
+.. csv-table:: SETUP
+   :file: tables/setup.csv
+   :widths: 15,15,70
+   :header-rows: 1
+
+OPTIN
+-----
+
+OPTIN is the optional namelist that can be read from the efit.input 
+instead of using the interactive command line inputs.
+
+.. csv-table:: OPTIN
+   :file: tables/optin.csv
+   :widths: 15,15,70
+   :header-rows: 1
+
 IN1 General
 ---------------------------------------
 
@@ -166,11 +189,9 @@ EDAT
 
 (TODO: need to add/describe namelist)
 
-OPTIN
------
+PROFILE_EXT
+-----------
 
-OPTIN is the optional namelist that can be read from the efit.input 
-instead of using the interactive command line inputs.
 (TODO: need to add/describe namelist)
 
 MACHINEIN (EFUND)
@@ -201,7 +222,7 @@ EFITINK
 IN3
 ---
 
-IN3 is used to read machine parameters from a dprobe.dat file.
+IN3 is used to read experiment parameters from a dprobe.dat file.
 
 .. csv-table:: IN3
    :file: tables/in3.csv

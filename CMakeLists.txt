@@ -38,22 +38,22 @@ set(INPUT_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of input files")
 set(STORE_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Location of sources")
 
 set(IDEBUG "0" CACHE STRING "Debug output level (3 max)")
-if(IDEBUG GREATER 0)
+if (IDEBUG GREATER 0)
   set(DEBUG_LEVEL1 TRUE)
-endif()
-if(IDEBUG GREATER 1)
+endif ()
+if (IDEBUG GREATER 1)
   set(DEBUG_LEVEL2 TRUE)
-endif()
-if(IDEBUG GREATER 2)
+endif ()
+if (IDEBUG GREATER 2)
   set(DEBUG_LEVEL3 TRUE)
-endif()
+endif ()
 
 set(JDEBUG "NONE" CACHE STRING "Further debug output from section")
-if(JDEBUG MATCHES "MSEL")
+if (JDEBUG MATCHES "MSEL")
   set(DEBUG_MSELS TRUE)
-elseif(JDEBUG MATCHES "PLTS")
+elseif (JDEBUG MATCHES "PLTS")
   set(DEBUG_PLTS TRUE) # write surface files for debugging/plotting. Serial only, not parallel
-endif()
+endif ()
 #---------------------------------------------------------------------
 # Set default values for performance issues if necessary
 #---------------------------------------------------------------------
@@ -103,10 +103,10 @@ if (${ENABLE_PARALLEL})
   set (sharedir share-par)
   set (USEMPI TRUE)                 # ifdef
   message(STATUS "Building with MPI")
-else()
+else ()
   set (sharedir share-ser)
   message(STATUS "Building without MPI")
-endif()
+endif ()
 
 install(FILES ${CMAKE_BINARY_DIR}/config.f 
               ${CMAKE_BINARY_DIR}/config.h DESTINATION ${sharedir}
@@ -118,14 +118,14 @@ install(FILES ${CMAKE_BINARY_DIR}/config.f
 #---------------------------------------------------------------------
 # OpenMP creates link errors
 #---------------------------------------------------------------------
-if(ENABLE_OpenMP)
+if (ENABLE_OpenMP)
     find_package(OpenMP)
     if (OPENMP_FOUND)
         set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
         set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${OpenMP_Fortran_FLAGS}")
         set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-    endif()
-endif()
+    endif ()
+endif ()
 #---------------------------------------------------------------------
 # Set default fortran format to free and preprocess all files
 #---------------------------------------------------------------------
@@ -156,7 +156,7 @@ elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "GNU")
   option(__gfortran "using gfortran FC Compiler" on)
   if (${CMAKE_Fortran_COMPILER_VERSION} LESS 7)
     message(FATAL_ERROR "gfortran version 7 or greater is required")
-  endif()
+  endif ()
   set(CMAKE_Fortran_FLAGS "-fno-second-underscore -fdefault-real-8 -fdefault-double-8 -fdec-math ${CMAKE_Fortran_FLAGS}")
   #set(CMAKE_Fortran_FLAGS "-Wimplicit-interface -Wimplicit-procedure ${CMAKE_Fortran_FLAGS}")
   # Don't allow automatic reallocation (F2003 standard) as it may be inefficient
@@ -254,26 +254,26 @@ set(CMAKE_Fortran_BUILD_TYPE_FLAGS "${CMAKE_Fortran_FLAGS_${CMAKE_BUILD_TYPE_UC}
 message(STATUS "CMAKE_Fortran_BUILD_TYPE_FLAGS= ${CMAKE_Fortran_BUILD_TYPE_FLAGS}")
 
 #---------------------------------------------------------------------
-# Need to configure set_exvars after all other flags are set.
+# Need to configure set_extvars after all other flags are set.
 #---------------------------------------------------------------------
-set(GEN_CONF_FILE ${PROJECT_BINARY_DIR}/efit/set_exvars_conf.F90)
-set(GEN_SRC_FILE ${PROJECT_BINARY_DIR}/efit/set_exvars.F90)
-configure_file(${PROJECT_SOURCE_DIR}/efit/set_exvars_conf.F90.in
+set(GEN_CONF_FILE ${PROJECT_BINARY_DIR}/efit/set_extvars_conf.F90)
+set(GEN_SRC_FILE ${PROJECT_BINARY_DIR}/efit/set_extvars.F90)
+configure_file(${PROJECT_SOURCE_DIR}/efit/set_extvars_conf.F90.in
                ${GEN_CONF_FILE})
 
 # Only update the src file if needed.  This reduces compilation
-if(EXISTS ${GEN_SRC_FILE})
+if (EXISTS ${GEN_SRC_FILE})
     message("File exists:  testing diff")
     execute_process( COMMAND ${CMAKE_COMMAND} -E compare_files 
                      ${GEN_CONF_FILE} ${GEN_SRC_FILE}
                      RESULT_VARIABLE compare_result)
-    if( compare_result EQUAL 1)
+    if (compare_result EQUAL 1)
         file(RENAME ${GEN_CONF_FILE} ${GEN_SRC_FILE})
-    endif()
-else()
+    endif ()
+else ()
     message("File does not exist")
     file(RENAME ${GEN_CONF_FILE} ${GEN_SRC_FILE})
-endif()
+endif ()
 
 #---------------------------------------------------------------------
 # Always use rpath to greatest extent.
@@ -302,7 +302,7 @@ add_subdirectory(io)
 #---------------------------------------------------------------------
 if (HAVE_MDSPLUS)
 add_subdirectory(cerlib)
-endif()
+endif ()
 add_subdirectory(green)
 add_subdirectory(efit)
 
@@ -317,7 +317,7 @@ add_subdirectory(test)
 #---------------------------------------------------------------------
 if (ENABLE_DOCS)
 add_subdirectory(docs)
-endif()
+endif ()
 
 #---------------------------------------------------------------------
 #

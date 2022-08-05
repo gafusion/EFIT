@@ -1,6 +1,53 @@
 EFIT modules
 ================================
 
+modules-efit.F90
+----------------
+
+.. doxygennamespace:: set_kinds
+.. doxygennamespace:: extvars
+.. doxygennamespace:: eparm
+.. doxygennamespace:: global_constants
+.. doxygennamespace:: error_control
+.. doxygennamespace:: var_filech
+.. doxygennamespace:: var_outp1
+.. doxygennamespace:: var_iopen
+.. doxygennamespace:: var_zcntrl
+.. doxygennamespace:: var_updown
+.. doxygennamespace:: var_test
+.. doxygennamespace:: var_fitsiref
+.. doxygennamespace:: var_cnnn
+.. doxygennamespace:: var_pcsys
+.. doxygennamespace:: var_pfedge
+.. doxygennamespace:: var_sxpoint
+.. doxygennamespace:: var_consta
+.. doxygennamespace:: var_rcfact
+.. doxygennamespace:: var_curpro
+.. doxygennamespace:: var_pfterm
+.. doxygennamespace:: var_nio
+.. doxygennamespace:: var_cfit
+.. doxygennamespace:: var_cgrid
+.. doxygennamespace:: var_extra
+.. doxygennamespace:: var_conveg
+.. doxygennamespace:: var_limmm
+.. doxygennamespace:: var_inaver
+.. doxygennamespace:: var_vessel
+.. doxygennamespace:: var_cyclic_red
+.. doxygennamespace:: var_scalem
+.. doxygennamespace:: var_solove
+.. doxygennamespace:: var_bunemn
+.. doxygennamespace:: var_contor
+.. doxygennamespace:: var_mfield
+.. doxygennamespace:: var_hist
+.. doxygennamespace:: var_hist2
+.. doxygennamespace:: var_cshape
+.. doxygennamespace:: var_divdis
+.. doxygennamespace:: var_cpsi
+.. doxygennamespace:: var_cvalue
+.. doxygennamespace:: var_gtable
+.. doxygennamespace:: profile_ext_mod
+.. doxygennamespace:: vtime_mod
+
 ecom1-mods.f90
 --------------
 
@@ -11,7 +58,6 @@ ecom1-mods.f90
 .. doxygennamespace:: var_cqfit
 .. doxygennamespace:: var_rmatri
 .. doxygennamespace:: var_chimag
-.. doxygennamespace:: var_exdat2
 .. doxygennamespace:: var_exdata
 .. doxygennamespace:: var_texdat
 .. doxygennamespace:: var_savfit
@@ -86,6 +132,7 @@ ecom1-mods.f90
 .. doxygennamespace:: var_ecoildat
 .. doxygennamespace:: var_beamdat
 .. doxygennamespace:: commonblocks
+.. doxygennamespace:: efit_bdata
 
 ecom2-mods.f90
 --------------
@@ -97,7 +144,6 @@ ecom2-mods.f90
 .. doxygennamespace:: var_atable
 .. doxygennamespace:: var_fourier
 .. doxygennamespace:: var_bscom
-.. doxygennamespace:: var_bscomss
 .. doxygennamespace:: var_autokknot
 .. doxygennamespace:: var_autok
 .. doxygennamespace:: var_fixstark
@@ -106,59 +152,3 @@ ecom2-mods.f90
 .. doxygennamespace:: var_gwork1
 .. doxygennamespace:: var_cwork4
 .. doxygennamespace:: var_jwork4
-
-
-modules-efit.F90
-----------------
-
-.. doxygennamespace:: set_kinds
-.. doxygennamespace:: exvars
-.. doxygennamespace:: eparm
-.. doxygennamespace:: global_constants
-.. doxygennamespace:: error_control
-.. doxygennamespace:: var_filech
-.. doxygennamespace:: var_outp1
-.. doxygennamespace:: var_iopen
-.. doxygennamespace:: var_zcntrl
-.. doxygennamespace:: var_updown
-.. doxygennamespace:: var_test
-.. doxygennamespace:: var_graphic
-.. doxygennamespace:: var_errslop
-.. doxygennamespace:: var_fitsiref
-.. doxygennamespace:: var_cnnn
-.. doxygennamespace:: var_pcsys
-.. doxygennamespace:: var_pfedge
-.. doxygennamespace:: var_sxpoint
-.. doxygennamespace:: var_consta
-.. doxygennamespace:: var_rcfact
-.. doxygennamespace:: var_curpro
-.. doxygennamespace:: var_pfterm
-.. doxygennamespace:: var_nio
-.. doxygennamespace:: var_cfit
-.. doxygennamespace:: var_cgrid
-.. doxygennamespace:: var_extra
-.. doxygennamespace:: var_conveg
-.. doxygennamespace:: var_limmm
-.. doxygennamespace:: var_inaver
-.. doxygennamespace:: var_vessel
-.. doxygennamespace:: var_cyclic_red
-.. doxygennamespace:: var_scalem
-.. doxygennamespace:: var_solove
-.. doxygennamespace:: var_bunemn
-.. doxygennamespace:: var_contor
-.. doxygennamespace:: var_mfield
-.. doxygennamespace:: var_hist
-.. doxygennamespace:: var_hist2
-.. doxygennamespace:: var_cshape
-.. doxygennamespace:: var_divdis
-.. doxygennamespace:: var_cpsi
-.. doxygennamespace:: var_cvalue
-.. doxygennamespace:: var_gtable
-.. doxygennamespace:: profile_ext_mod
-.. doxygennamespace:: vtime_mod
-
-
-subs_d_pt.F90
--------------
-
-.. doxygennamespace:: fortran_sleep

@@ -36,17 +36,20 @@ ICINIT,See namelist IN1.
 ICPROF,See namelist IN1.
 ICUTFP,See namelist IN1.
 IDITE,plot DITE diagram? default = 0
+IDTIME, (unused variable)
 IECURR,See namelist IN1.
+IERCHK,See namelist IN1.
 IEXCAL,See namelist IN1.
 IFCURR,See namelist IN1 (equilibrium).
 IFITVS,See namelist IN1.
-INPUT_DIR,"area where following input files are to be found, n1coil.d3d, ccoil.d3d, btcomp.d3d, dcoef.dat, fitweight.dat, sxr94.dat, efithelp.txt, limiter files and snap files. default = /link/efit/ (UNIX), sys$d3efit (VAX)"
+INPUT_DIR,"area where following input files are to be found, n1coil.d3d, ccoil.d3d, btcomp.d3d, dcoef.dat, fitweight.dat, sxr94.dat, limiter files and snap files. default - variable isn't used"
 IOUT,See namelist IN1.
 IPLIM,See namelist IN1.
 IPROBE,See namelist IN1.
 IRCFACT,default = 0
 ISHOT,See namelist IN1.
 ITEK,See namelist IN1.
+ITIMEB,(unused variable)
 ITIMEU,See namelist IN1.
 ITRACE,See namelist IN1.
 IVESEL,See namelist IN1.
@@ -93,8 +96,8 @@ SCRAPE,See namelist IN1.
 SERROR,See namelist IN1.
 SIGRBD,See namelist IN1.
 SIGZBD,See namelist IN1.
-STORE_DIR,"destination for output EQDSK files if ISTORE = 1, default = /link/store/"
-TABLE_DIR,"area where Green's function tables and the configuration file dprobe.dat (and pcsnames.dat if used) are to be found. default = /link/efit/ (UNIX), lao$efund (VAX)"
+STORE_DIR,"destination for output EQDSK files if ISTORE = 1, default - variable isn't used"
+TABLE_DIR,"area where Green's function tables and the configuration file dprobe.dat (and pcsnames.dat if used) are to be found. default - variable isn't used"
 TIMEB,Start time(?) in ms. (Does this override interactive input?)
 USE_ALTERNATE_POINTNAMES,"If non-zero, PCS data specified in file ALTERNATE_POINTNAME_FILE are used. Default=0. Click here for detail."
 USE_CONSISTENT_DATA,"When true, the data used to form constraints will be the same regardless of how many timeslices are being loaded.  (One caveat is if the variable size limit is hit, not all data will be fetched - see ntims/npefit in the code.)  Setting this to false will restore the legacy data fetching.  Default = .true."
@@ -108,9 +111,9 @@ ZELIP,See namelist IN1.
 ZNOSE,default = -1.276
 SIZEROJ,See namelist IN1.
 FWTEC,See namelist IN1.
-FITDELZ,Set FITDELZ=.T. to turn on vertical shifting of flux surfaces during fitting. default = .false.
+FITDELZ,Set FITDELZ=.T. to turn on vertical shifting of flux surfaces during fitting at iteration 3. default = .false.
 FITSIREF,See namelist IN1.
-NDELZON,What iteration to turn on vertical shifting of flux surfaces (see FITDELZ). default = 3
+NDELZON, The input value for this parameter is not used.
 SCALEDZ,Scale factor for column in response matrix corresponding to difference in z position from 0? default = 10-3
 STABDZ,default = -10-4
 NBDRY,See namelist IN1 (equilibrium).

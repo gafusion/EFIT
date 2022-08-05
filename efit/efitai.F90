@@ -48,15 +48,7 @@
 !------------------------------------------------------------------------------
 !--   Set external variables and print build info
 !------------------------------------------------------------------------------ 
-      call set_exvars
-      ! If environment variable exists, then override values from set_exvars
-      call getenv("link_efit",link_efitx)
-      call getenv("link_store",link_storex)
-      if (link_efitx(1:1).ne.' ') then
-        table_dir=trim(link_efitx)//'green/'
-        input_dir=trim(link_efitx)
-      endif
-      if (link_storex(1:1).ne.' ')  store_dir=trim(link_storex)
+      call set_extvars
 !----------------------------------------------------------------------
 !-- Read in grid size from command line and set global variables     --
 !-- ONLY root process reads command-line arguments                   --
@@ -119,9 +111,9 @@
       ntime = ktime
 
       ! Black voodoo magic of setting poorly defined variables
-      call get_eparmdud_defaults()
-      call read_eparmdud(ifname(1))!this assume machine is always the same
-      call get_eparmdud_dependents()
+      call set_eparm_defaults()
+      call read_machinein(ifname(1))!this assume machine is always the same
+      call set_eparm_dependents()
 
 !----------------------------------------------------------------------
 !-- Global Allocations                                               --
@@ -137,10 +129,10 @@
 !----------------------------------------------------------------------
       allocate(dist_data(nproc),dist_data_displs(nproc),fwtgam_mpi(nstark,nproc))
       !call set_table_dir
-      !call efit_read_tables
+      !call read_tables
       !TODO: SEK: ZZ: Stopping here for now
       print *, 'Entering getsets'
-  20  call getsets(ktime,mtear,kerror)
+  20  call getsets(ktime,kerror)
       print * ,'exiting getsets'
 
 #if defined(USEMPI)
@@ -181,14 +173,14 @@
         call prtoutheader()
         if(idebug>=2) write(6,*) ' Entering data_input subroutine'
 
-        call data_input(ks,iconvr,ktime,mtear,kerror)
+        call data_input(ks,iconvr,ktime,kerror)
 
         if(idebug>=2) write(6,*) ' Entering errctrl_setstate'
         call errctrl_setstate(rank,time(ks))
         if (kerror.gt.0) go to 500
         if (iconvr.lt.0) go to 500
         if (kautoknt .eq. 1) then
-           call autoknot(ks,iconvr,ktime,mtear,kerror)
+           call autoknot(ks,iconvr,ktime,kerror)
         else
 !----------------------------------------------------------------------
 !--  initialize current profile                                      --

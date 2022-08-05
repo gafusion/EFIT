@@ -36,6 +36,7 @@
       character(10) :: uday, clocktime
       character(5)  :: zone
       integer*4, dimension(8) :: values
+      real*8, dimension(2) :: rwstrip1,zwstrip1,rwstrip2,zwstrip2 
       character(50) dataname,plotname
       character iname,let
       character(2) let2
@@ -69,14 +70,52 @@
                 cntece(3+nece)
 !      equivalence (copy(1,1),copy1(1))
       data ratray/2.,1.,1.,2.,2.,1.,1.,1.,2.,1./
-      data istrpl/0/,lfile/36/,iseplim/1/
-      data n00/0/,n11/1/
-      data one/1./
-      save n00,n11
+      data istrpl/0/,iseplim/1/
+      parameter(lfile=36,n00=0,n11=1,one=1.)
 
+      ifcoil=1
       kerror = 0
+      kgrid=1
+      kthkcrv=0
       pleng = 0
       tlen = 0
+      ! DIII-D default data (will break if nangle or ntangle change)
+      xangle = (/120.,124.,128.,132.,136.,140.,144.,148., &
+                 152.,156.,160.,164.,168.,172.,176.,180.,180., &
+                 184.,188.,192.,196.,200.,204.,208.,212.,216., &
+                 220.,224.,228.,232.,236.,240., &
+                 294.5,290.5,286.5,282.5,278.5,274.5,270.5,266.5, &
+                 262.5,258.5,254.5,250.5,246.5,242.5,238.5,234.5, &
+                 234.5,230.5,226.5,222.5,218.5,214.5,210.5,206.5, &
+                 202.5,198.5,194.5,190.5,186.5,182.5,178.5,174.5, &
+                 0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0./)
+      zxray = (/-10.7,-10.7,-10.7,-10.7,-10.7,-10.7, &
+                -10.7,-10.7,-10.7,-10.7,-10.7,-10.7,-10.7,-10.7, &
+                -10.7,-10.7,-14.7,-14.7,-14.7,-14.7,-14.7,-14.7, &
+                -14.7,-14.7,-14.7,-14.7,-14.7,-14.7,-14.7,-14.7, &
+                -14.7,-14.7, &
+                130.1,130.1,130.1,130.1,130.1,130.1,130.1,130.1, &
+                130.1,130.1,130.1,130.1,130.1,130.1,130.1,130.1, &
+                132.6,132.6,132.6,132.6,132.6,132.6,132.6,132.6, &
+                132.6,132.6,132.6,132.6,132.6,132.6,132.6,132.6, &
+                0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0./)
+      rxray = (/248.9,248.9,248.9,248.9,248.9,248.9,248.9, &
+                248.9,248.9,248.9,248.9,248.9,248.9,248.9,248.9,248.9, &
+                248.9,248.9,248.9,248.9,248.9,248.9,248.9,248.9, &
+                248.9,248.9,248.9,248.9,248.9,248.9,248.9,248.9, &
+                197.6,197.6,197.6,197.6,197.6,197.6,197.6,197.6, &
+                197.6,197.6,197.6,197.6,197.6,197.6,197.6,197.6, &
+                194.5,194.5,194.5,194.5,194.5,194.5,194.5,194.5, &
+                194.5,194.5,194.5,194.5,194.5,194.5,194.5,194.5, &
+                0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0./)
+      rwstrip1(1)=1.33
+      zwstrip1(1)=-1.363
+      rwstrip1(2)=1.38
+      zwstrip1(2)=-1.363
+      rwstrip2(1)=1.4075
+      zwstrip2(1)=-1.250
+      rwstrip2(2)=1.4575
+      zwstrip2(2)=-1.250
 !
       if (ndimc.ne.ndim) then
         call errctrl_msg('pltout', &
@@ -253,7 +292,7 @@
            write (6,*) 'itimeu = ',itimeu
         endif
         let2 = 'pl'
-        call getfnmu2(itimeu,let2,ishot,itime,plotname)
+        call setfnmpl(itimeu,let2,ishot,itime,plotname)
         if (istore .eq. 1)  &
              plotname = store_dir(1:lstdir)//plotname
       endif
@@ -279,7 +318,7 @@
 !--------------------------------------------------------------------
           let2 = 'pl'
           plotname = ' '
-          call getfnmu2(itimeu,let2,ishot,itime,plotname)
+          call setfnmpl(itimeu,let2,ishot,itime,plotname)
           if (istore .eq. 1)  &
                plotname = store_dir(1:lstdir)//plotname
           iunit = 35
@@ -305,7 +344,7 @@
 !--   lprx = 25  prefix is /link/efit/qshot.time                   --
 !--------------------------------------------------------------------
       let = 'q'
-      call setfnme(let,ishot,itime,istore,dataname)
+      call setfnmq(let,ishot,itime,istore,dataname)
       lprx = 13
       if (istore .eq. 1) lprx = lstdir+lprx
 !
@@ -1702,7 +1741,6 @@
       if (icurrt.eq.2.or.icurrt.eq.5) then
         if (rseps(1,jtime).gt.0.0) then
           rsepcm=rseps(1,jtime)/100.
-          x111=1.0
           cjsep=rsepcm*ppcurr(x111,kppcur) &
                   +fpcurr(x111,kffcur)/rsepcm
           cjsep=cjsep/darea
@@ -5127,7 +5165,6 @@
       xtitle = 'PRESSURE$'
       ytitle = 'CHI**2$'
       ncurve = nn
-      kgrid=1
       iexit = 1
 !-----------------------------------------------------------------------
 !     Write Plot Parameters
@@ -5490,7 +5527,6 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      x111=1.0
       dp1dxf=ppcurr(x111,kppcur)/darea*(psibry-simag)
       write (text,9835) dp1dxf
       msg = msg + 1
@@ -5876,7 +5912,6 @@
          chsmax=max(chsmax,saiprw(i))
          si(i)=i
       enddo
-      x111=1.0
       chsmax=max(x111,chsmax)
       call zpline(nw,worke,workb,bworkb,cworkb,dworkb)
 !
@@ -8299,11 +8334,10 @@
       return
       elseif (kdata.eq.4) then ECE_or_time_snap
 !----------------------------------------------------------------------
-!--   plot time history for kdata=4                                   --
+!--   plot time history for kdata=4
 !----------------------------------------------------------------------
-      dataname=' '
-      let = 'q'
-      call getfnm2(let,ishot,itime,dataname)
+      let = 'qt'
+      call setfnmt(let,ishot,itime,dataname)
       dataname=dataname(3:7)//'_efitipmhd.dat '
       call curvec(dataname,jerror,time,cpasma,ktime,0_i4)
       call zpline(ktime,time,sibdry,bscra,cscra,dscra)
@@ -10648,8 +10682,3 @@
 
       return
       end subroutine init2d
-
-      subroutine closepl
-      close(unit=35)
-      return
-      end subroutine closepl

@@ -23,7 +23,7 @@
       xdum=0.0
       ydum=0.0
       itime00=time(1)
-      call getfnm2('ot',ishot,itime00,ofname)
+      call setfnmt('ot',ishot,itime00,ofname)
 !
       ofname=ofname(1:14)//'_chi2mag'
       open(unit=74,status='old',file=ofname,iostat=ioerr)
@@ -79,7 +79,7 @@
         do j=1,nmsels
           if (sinmls(j).gt.0.0) then
             ichan00=j
-            call getfnm2('ot',ishot,ichan00,chname)
+            call setfnmt('ot',ishot,ichan00,chname)
             ofname=ofname(1:14)//'_echan'//chname(13:14)
             open(unit=74,status='old',file=ofname,iostat=ioerr)
             if(ioerr.eq.0) close(unit=74,status='delete')
@@ -106,7 +106,7 @@
         do j=1,nmsels
           if (sinmls(j).gt.0.0) then
             ichan00=j
-            call getfnm2('ot',ishot,ichan00,chname)
+            call setfnmt('ot',ishot,ichan00,chname)
             ofname=ofname(1:14)//'_cchan'//chname(13:14)
             open(unit=74,status='old',file=ofname,iostat=ioerr)
             if(ioerr.eq.0) close(unit=74,status='delete')

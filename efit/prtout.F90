@@ -15,22 +15,18 @@
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
-      dimension xrsp(npcurn)
-      dimension patmpz(magpri),xmpz(magpri),ympz(magpri),ampz(magpri)
       character*30 sfname
-      character(len=1000) :: line
+      character(1000) :: line
       integer*4, dimension(:), allocatable :: ishotall
       real*8, dimension(:), allocatable :: ch2all,timeall
+      dimension xrsp(npcurn)
+      dimension patmpz(magpri),xmpz(magpri),ympz(magpri),ampz(magpri)
 
       NAMELIST/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi, &
                    as,as2,lpname,rsisvs,turnfc,patmp2,vsname, &
                    racoil,zacoil,wacoil,hacoil, &
                    rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2, &
                    re,ze,ecid,ecturn,vsid,rvs,zvs,we,he,fcturn
-
-      ! initialize variables
-      cbetat=0.0
-      cbetap=0.0
 
       ! avoid write garbage when oleft or oright not update (e.g. 1.e10)
       tleft=oleft(it)
@@ -493,7 +489,12 @@
         write (nout,11300) chidlc
       if (iconvr.eq.3) then
         write (nout,11320) emf,emp,enf,enp,betap0,rzero
-        write (nout,11330) cbetap,cli,cqqxis,cbetat,ci0 ! cbetap, cbetat never set
+        cbetap=0.0
+        cli=0.0
+        cqqxis=0.0
+        cbetat=0.0
+        ci0=0.0
+        write (nout,11330) cbetap,cli,cqqxis,cbetat,ci0 ! all unset...
       endif
       if (nbdry.gt.0) then
         write (nout,11324) erbmax,erbave
@@ -511,7 +512,7 @@
                   crmaxi(i),czmaxi(i),cemaxi(i),cqmaxi(i),cchisq(i)
       enddo
       if ((kwripre.gt.0).and.(kwripre.le.9)) then
-          call getfnmd('n',ishot,itime,sfname)
+          call setfnmd('n',ishot,itime,sfname)
           sfname=sfname(1:13)//'_error'
           open(unit=74,status='old',file=sfname,iostat=ioerr)
           if (ioerr.eq.0) close(unit=74,status='delete')

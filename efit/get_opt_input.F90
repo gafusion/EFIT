@@ -6,7 +6,7 @@
 !!
 !!    kdata:
 !!      1: mimics option 2 but reads input from an hdf5
-!!           file that has the OMAS-equilibrium format
+!!           file that has the OMAS format
 !!      2: produces g-files (and others) from k-files
 !!      3-7: query databases for diagnostic inputs
 !!        3,7: produces g-files (and others)
@@ -22,7 +22,9 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      integer*4, intent(out) :: ktime
+      integer*4 i,j
       logical file_stat
 #if defined(USEMPI)
       include 'mpif.h'
@@ -60,7 +62,7 @@
         kwake=1
         kdata=3
         jwake=kwake
-        mdoskip=1
+        !mdoskip=1 !unused variable
       endif
 !----------------------------------------------------------------------
 !--   Check that input option is valid                               --
@@ -100,7 +102,8 @@
 !----------------------------------------------------------------------
       if(kdata.eq.1) ALLOCATE(ifname(1))
       rank0: if (rank == 0) then
-        kdata_opt: if (kdata.eq.2) then 
+        select case (kdata)
+        case (2) 
           if (use_opt_input .eqv. .false.) then
             write (nttyo,6200)
             read (ntty,*) ktime
@@ -113,15 +116,15 @@
           else
             ktime = steps_in
             ALLOCATE(ifname(ktime))
-            ifname(1:ktime) = inpfile_in(1:ktime)
+            ifname(1:ktime) = inpfile(1:ktime)
           endif
 
-        elseif (kdata.eq.1) then kdata_opt
+        case (1)
           if (use_opt_input .eqv. .false.) then
             write (nttyo,6220)
             read (ntty,6240) ifname(1)
           else
-            ifname(1) = inpfile_in(1)
+            ifname(1) = inpfile(1)
           endif
 #if defined(USE_HDF5)
           inquire(file=trim(ifname(1)),exist=file_stat)
@@ -165,7 +168,7 @@
           stop
 #endif
 
-        elseif (kdata.eq.3 .or. kdata.eq.7) then kdata_opt
+        case (3,7)
           ! Snap-Extension mode
           if (kdata.eq.7) then
             if (use_opt_input .eqv. .false.) then
@@ -191,7 +194,7 @@
             endif
           endif
 
-        elseif (kdata.eq.5 .or. kdata.eq.6) then kdata_opt
+        case (5,6)
           if (use_opt_input .eqv. .false.) then
             write (nttyo,6610)
             read (ntty,6620) cmdfile_in
@@ -212,17 +215,17 @@
             endif
           endif
 
-        endif kdata_opt
+        end select
       endif rank0
 
-
-      if (kdata.eq.3 .or. kdata.eq.7) then
+      select case (kdata)
+      case (3,7) 
 #if defined(USEMPI)
           if (nproc > 1) &
             call MPI_BCAST(snap_ext,82,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
             snapextin=snap_ext
 #endif 
-      elseif (kdata.eq.5 .or. kdata.eq.6) then
+      case (5,6) 
 #if defined(USEMPI)
         if (nproc > 1) then
           call MPI_BCAST(cmdfile_in,15,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
@@ -236,7 +239,7 @@
         endif
 #endif
         return
-      endif
+      end select
      
 #if defined(USEMPI)
       if (nproc > 1) then
@@ -319,8 +322,7 @@
 ! TODO: pefit has not been setup
 ! 6000 format (/,1x,'type mode (1=omas, 2=file, 3=snap, 4=time', &
 !               ', 5=input, 6=com file, 7=snap_ext, 8=pefit):')
- 6040 format (/,1x,'type shot #, start time(ms), time step(ms), steps', &
-              '(<1001):')
+ 6040 format (/,1x,'type shot #, start time(ms), time step(ms), steps:')
  6200 format (/,1x,'number of time slices?')
  6220 format (/,1x,'type input file names:')
  6230 format (1x,'#')

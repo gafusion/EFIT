@@ -47,9 +47,14 @@
       mco2r=nco2r
       ! zero unused variables before write (for consistency)
       if (keecur.le.0) then
+        eeknt=0.0
         keefnc=0
         keeknt=0
-        eeknt=0.0
+        slantl=0.0
+        slantu=0.0
+        vsurfa=0.0
+        wpdot=0.0
+        wbdot=0.0
       endif
 !----------------------------------------------------------------------
 !--   set fit type                                                   --
@@ -89,15 +94,15 @@
       endif
 !
       let = 'a'
-      call getfnmu(itimeu,let,ishot,ijtime,eqdsk)
+      call setfnmeq(itimeu,let,ishot,ijtime,eqdsk)
 !----------------------------------------------------------------------
-!--   If (ISTORE = 1) Then                                         --
-!--   Central directory to collect EFIT results is store_dir       --
+!--   If (ISTORE = 1) Then                                           --
+!--   Central directory to collect EFIT results is store_dir         --
 !----------------------------------------------------------------------
       if (istore .eq. 1) then
         eqdsk = store_dir(1:lstdir)//eqdsk
       endif
-      call db_header(ishot,ijtime,header)
+      header = ' '
       open(unit=neqdsk,file=eqdsk,status='old', &
            form=wform,iostat=ioerr)
       if(ioerr.eq.0) close(unit=neqdsk,status='delete')
@@ -194,90 +199,90 @@
       if(fwtqa.gt.0.0.and.qvfit.gt.0.0) qmflag='FIX'
       if(fwtqa.le.0.0) qmflag='CLC'
 !
-      write (neqdsk) real(time(jj)),jflag,lflag,limloc(jj), &
+      write (neqdsk) real(time(jj),r4),jflag,lflag,limloc(jj), &
                           mco2v,mco2r,qmflag,nlold,nlnew
-      write (neqdsk) real(tsaisq(jj)),real(rcencm), &
-                     real(bcentr(jj)),real(pasmat(jj))
-      write (neqdsk) real(cpasma(jj)),real(rout(jj)), &
-                     real(zout(jj)),real(aout(jj))
-      write (neqdsk) real(eout(jj)),real(doutu(jj)), &
-                     real(doutl(jj)),real(vout(jj))
-      write (neqdsk) real(rcurrt(jj)),real(zcurrt(jj)), &
-                     real(qsta(jj)),real(betat(jj))
-      write (neqdsk) real(betap(jj)),real(ali(jj)), &
-                     real(oleft(jj)),real(oright(jj))
-      write (neqdsk) real(otop(jj)),real(obott(jj)), &
-                     real(qpsib(jj)),real(vertn(jj))
-      write (neqdsk) (real(rco2v(k,jj)),k=1,mco2v)
-      write (neqdsk) (real(dco2v(jj,k)),k=1,mco2v)
-      write (neqdsk) (real(rco2r(k,jj)),k=1,mco2r)
-      write (neqdsk) (real(dco2r(jj,k)),k=1,mco2r)
-      write (neqdsk) real(shearb(jj)),real(bpolav(jj)), &
-                     real(s1(jj)),real(s2(jj))
-      write (neqdsk) real(s3(jj)),real(qout(jj)), &
-                     real(olefs(jj)),real(orighs(jj))
-      write (neqdsk) real(otops(jj)),real(sibdry(jj)), &
-                     real(areao(jj)),real(wplasm(jj))
-      write (neqdsk) real(terror(jj)),real(elongm(jj)), &
-                     real(qqmagx(jj)),real(cdflux(jj))
-      write (neqdsk) real(alpha(jj)),real(rttt(jj)), &
-                     real(psiref(jj)),real(xndnt(jj))
-      write (neqdsk) real(rseps(1,jj)),real(zseps(1,jj)), &
-                     real(rseps(2,jj)),real(zseps(2,jj))
-      write (neqdsk) real(sepexp(jj)),real(obots(jj)), &
-                     real(btaxp(jj)),real(btaxv(jj))
-      write (neqdsk) real(aaq1(jj)),real(aaq2(jj)), &
-                     real(aaq3(jj)),real(seplim(jj))
-      write (neqdsk) real(rmagx(jj)),real(zmagx(jj)), &
-                     real(simagx(jj)),real(taumhd(jj))
+      write (neqdsk) real(tsaisq(jj),r4),real(rcencm,r4), &
+                     real(bcentr(jj),r4),real(pasmat(jj),r4)
+      write (neqdsk) real(cpasma(jj),r4),real(rout(jj),r4), &
+                     real(zout(jj),r4),real(aout(jj),r4)
+      write (neqdsk) real(eout(jj),r4),real(doutu(jj),r4), &
+                     real(doutl(jj),r4),real(vout(jj),r4)
+      write (neqdsk) real(rcurrt(jj),r4),real(zcurrt(jj),r4), &
+                     real(qsta(jj),r4),real(betat(jj),r4)
+      write (neqdsk) real(betap(jj),r4),real(ali(jj),r4), &
+                     real(oleft(jj),r4),real(oright(jj),r4)
+      write (neqdsk) real(otop(jj),r4),real(obott(jj),r4), &
+                     real(qpsib(jj),r4),real(vertn(jj),r4)
+      write (neqdsk) (real(rco2v(k,jj),r4),k=1,mco2v)
+      write (neqdsk) (real(dco2v(jj,k),r4),k=1,mco2v)
+      write (neqdsk) (real(rco2r(k,jj),r4),k=1,mco2r)
+      write (neqdsk) (real(dco2r(jj,k),r4),k=1,mco2r)
+      write (neqdsk) real(shearb(jj),r4),real(bpolav(jj),r4), &
+                     real(s1(jj),r4),real(s2(jj),r4)
+      write (neqdsk) real(s3(jj),r4),real(qout(jj),r4), &
+                     real(olefs(jj),r4),real(orighs(jj),r4)
+      write (neqdsk) real(otops(jj),r4),real(sibdry(jj),r4), &
+                     real(areao(jj),r4),real(wplasm(jj),r4)
+      write (neqdsk) real(terror(jj),r4),real(elongm(jj),r4), &
+                     real(qqmagx(jj),r4),real(cdflux(jj),r4)
+      write (neqdsk) real(alpha(jj),r4),real(rttt(jj),r4), &
+                     real(psiref(jj),r4),real(xndnt(jj),r4)
+      write (neqdsk) real(rseps(1,jj),r4),real(zseps(1,jj),r4), &
+                     real(rseps(2,jj),r4),real(zseps(2,jj),r4)
+      write (neqdsk) real(sepexp(jj),r4),real(obots(jj),r4), &
+                     real(btaxp(jj),r4),real(btaxv(jj),r4)
+      write (neqdsk) real(aaq1(jj),r4),real(aaq2(jj),r4), &
+                     real(aaq3(jj),r4),real(seplim(jj),r4)
+      write (neqdsk) real(rmagx(jj),r4),real(zmagx(jj),r4), &
+                     real(simagx(jj),r4),real(taumhd(jj),r4)
       fluxx=diamag(jj)*1.0e-03_dp
-      write (neqdsk) real(betapd(jj)),real(betatd(jj)), &
-                     real(wplasmd(jj)),real(fluxx)
-      write (neqdsk) real(vloopt(jj)),real(taudia(jj)), &
-                     real(qmerci(jj)),real(tavem)
+      write (neqdsk) real(betapd(jj),r4),real(betatd(jj),r4), &
+                     real(wplasmd(jj),r4),real(fluxx,r4)
+      write (neqdsk) real(vloopt(jj),r4),real(taudia(jj),r4), &
+                     real(qmerci(jj),r4),real(tavem,r4)
 !
       if (ishot.lt.91000) then
         write (neqdsk) nsilop,magpri67+magpri322,nfcoil,nesum
-        write (neqdsk) (real(csilop(k,jj)),k=1,nsilop), &
-                       (real(cmpr2(k,jj)),k=1,magpri67+magpri322)
+        write (neqdsk) (real(csilop(k,jj),r4),k=1,nsilop), &
+                       (real(cmpr2(k,jj),r4),k=1,magpri67+magpri322)
       else
         write (neqdsk) nsilop,magpri,nfcoil,nesum
-        write (neqdsk) (real(csilop(k,jj)),k=1,nsilop), &
-                       (real(cmpr2(k,jj)),k=1,magpri)
+        write (neqdsk) (real(csilop(k,jj),r4),k=1,nsilop), &
+                       (real(cmpr2(k,jj),r4),k=1,magpri)
       endif
-      write (neqdsk) (real(ccbrsp(k,jj)),k=1,nfcoil)
-      write (neqdsk) (real(eccurt(jj,k)),k=1,nesum)
+      write (neqdsk) (real(ccbrsp(k,jj),r4),k=1,nfcoil)
+      write (neqdsk) (real(eccurt(jj,k),r4),k=1,nesum)
 !
-      write (neqdsk) real(pbinj(jj)),real(rvsin(jj)), &
-                     real(zvsin(jj)),real(rvsout(jj))
-      write (neqdsk) real(zvsout(jj)),real(vsurfa(jj)), &
-                     real(wpdot(jj)),real(wbdot(jj))
-      write (neqdsk) real(slantu(jj)),real(slantl(jj)), &
-                     real(zuperts(jj)),real(chipre)
-      write (neqdsk) real(cjor95(jj)),real(pp95(jj)), &
-                     real(ssep(jj)),real(yyy2(jj))
-      write (neqdsk) real(xnnc(jj)),real(cprof), &
-                     real(oring(jj)),real(cjor0(jj))
-      write (neqdsk) real(fexpan),real(qqmin), &
-                     real(chigamt),real(ssi01)
-      write (neqdsk) real(fexpvs),real(sepnose), &
-                     real(ssi95(jj)),real(rqqmin)
-      write (neqdsk) real(cjor99(jj)),real(cj1ave(jj)), &
-                     real(rmidin(jj)),real(rmidout(jj))
-      write (neqdsk) real(psurfa(jj)),real(peak(jj)), &
-                     real(dminux(jj)),real(dminlx(jj))
-      write (neqdsk) real(dolubaf(jj)),real(dolubafm(jj)), &
-                     real(diludom(jj)),real(diludomm(jj))
-      write (neqdsk) real(ratsol(jj)),real(rvsiu(jj)), &
-                     real(zvsiu(jj)),real(rvsid(jj))
-      write (neqdsk) real(zvsid(jj)),real(rvsou(jj)), &
-                     real(zvsou(jj)),real(rvsod(jj))
-      write (neqdsk) real(zvsod(jj)),real(condno), &
-                     real(psin32(jj)),real(psin21(jj))
-      write (neqdsk) real(rq32in(jj)),real(rq21top(jj)), &
-                     real(chilibt),real(ali3(jj))
-      write (neqdsk) real(xbetapr),real(tflux(jj)), &
-                     real(tchimls),real(twagap(jj))
+      write (neqdsk) real(pbinj(jj),r4),real(rvsin(jj),r4), &
+                     real(zvsin(jj),r4),real(rvsout(jj),r4)
+      write (neqdsk) real(zvsout(jj),r4),real(vsurfa(jj),r4), &
+                     real(wpdot(jj),r4),real(wbdot(jj),r4)
+      write (neqdsk) real(slantu(jj),r4),real(slantl(jj),r4), &
+                     real(zuperts(jj),r4),real(chipre,r4)
+      write (neqdsk) real(cjor95(jj),r4),real(pp95(jj),r4), &
+                     real(ssep(jj),r4),real(yyy2(jj),r4)
+      write (neqdsk) real(xnnc(jj),r4),real(cprof,r4), &
+                     real(oring(jj),r4),real(cjor0(jj),r4)
+      write (neqdsk) real(fexpan,r4),real(qqmin,r4), &
+                     real(chigamt,r4),real(ssi01,r4)
+      write (neqdsk) real(fexpvs,r4),real(sepnose,r4), &
+                     real(ssi95(jj),r4),real(rqqmin,r4)
+      write (neqdsk) real(cjor99(jj),r4),real(cj1ave(jj),r4), &
+                     real(rmidin(jj),r4),real(rmidout(jj),r4)
+      write (neqdsk) real(psurfa(jj),r4),real(peak(jj),r4), &
+                     real(dminux(jj),r4),real(dminlx(jj),r4)
+      write (neqdsk) real(dolubaf(jj),r4),real(dolubafm(jj),r4), &
+                     real(diludom(jj),r4),real(diludomm(jj),r4)
+      write (neqdsk) real(ratsol(jj),r4),real(rvsiu(jj),r4), &
+                     real(zvsiu(jj),r4),real(rvsid(jj),r4)
+      write (neqdsk) real(zvsid(jj),r4),real(rvsou(jj),r4), &
+                     real(zvsou(jj),r4),real(rvsod(jj),r4)
+      write (neqdsk) real(zvsod(jj),r4),real(condno,r4), &
+                     real(psin32(jj),r4),real(psin21(jj),r4)
+      write (neqdsk) real(rq32in(jj),r4),real(rq21top(jj),r4), &
+                     real(chilibt,r4),real(ali3(jj),r4)
+      write (neqdsk) real(xbetapr,r4),real(tflux(jj),r4), &
+                     real(tchimls,r4),real(twagap(jj),r4)
 !
       write (neqdsk) header,fit_type
       endif a_eqdsk_format
@@ -319,7 +324,7 @@
         limitr=limitr-1
         qvfit=qenp
         let = 'm'
-        call getfnmu(itimeu,let,ishot,iitime,eqdsk)
+        call setfnmeq(itimeu,let,ishot,iitime,eqdsk)
         open(unit=neqdsk,file=eqdsk,status='old',iostat=ioerr)
         if(ioerr.eq.0) close(unit=neqdsk,status='delete')
         open(unit=neqdsk,file=eqdsk,status='new',delim='quote')
@@ -500,7 +505,7 @@
       write (vers(5),1080) ijtime
       vers(6)=' '
       let = 'g'
-      call getfnmu(itimeu,let,ishot,ijtime,eqdsk)
+      call setfnmeq(itimeu,let,ishot,ijtime,eqdsk)
 !----------------------------------------------------------------------
 !--   If (ISTORE = 1) Then                                           --
 !--   Central directory to collect EFIT results is store_dir         --
@@ -685,55 +690,55 @@
         write (neqdsk,vtout)
       endif
       write (neqdsk,chiout)
-      call db_header(ishot,itime,header)
+      header = ' '
       write (neqdsk,1042) header,fit_type
 !-----------------------------------------------------------------------
 !--   binary format                                                   --
 !-----------------------------------------------------------------------
       else eqdsk_format
       write (neqdsk) (vers(i),i=1,6),0,nw,nh
-      write (neqdsk) real(xdim),real(zdim),real(rzero), &
-                     real(rgrid(1)),real(zmid)
-      write (neqdsk) real(rmaxis),real(zmaxis),real(ssimag), &
-                     real(ssibry),real(bcentr(jtime))
-      write (neqdsk) real(cpasma(jtime)),real(ssimag),real(xdum), &
-                     real(rmaxis),real(xdum)
-      write (neqdsk) real(zmaxis),real(xdum),real(ssibry), &
-                     real(xdum),real(xdum)
-      write (neqdsk) (real(fpol(i)),i=1,nw)
-      write (neqdsk) (real(pres(i)),i=1,nw)
+      write (neqdsk) real(xdim,r4),real(zdim,r4),real(rzero,r4), &
+                     real(rgrid(1),r4),real(zmid,r4)
+      write (neqdsk) real(rmaxis,r4),real(zmaxis,r4),real(ssimag,r4), &
+                     real(ssibry,r4),real(bcentr(jtime),r4)
+      write (neqdsk) real(cpasma(jtime),r4),real(ssimag,r4),real(xdum,r4), &
+                     real(rmaxis,r4),real(xdum,r4)
+      write (neqdsk) real(zmaxis,r4),real(xdum,r4),real(ssibry,r4), &
+                     real(xdum,r4),real(xdum,r4)
+      write (neqdsk) (real(fpol(i),r4),i=1,nw)
+      write (neqdsk) (real(pres(i),r4),i=1,nw)
       if (pasmat(jtime).gt.0.0) then
         workk=-ffprim
       else
         workk=ffprim
       endif
-      write (neqdsk) (real(workk(i)),i=1,nw)
+      write (neqdsk) (real(workk(i),r4),i=1,nw)
       if (pasmat(jtime).gt.0.0) then
         workk=-pprime
       else
         workk=pprime
       endif
-      write (neqdsk) (real(workk(i)),i=1,nw)
-      write (neqdsk) ((real(psirz(i,j)),i=1,nw),j=1,nh)
-      write (neqdsk) (real(qpsi(i)),i=1,nw)
+      write (neqdsk) (real(workk(i),r4),i=1,nw)
+      write (neqdsk) ((real(psirz(i,j),r4),i=1,nw),j=1,nh)
+      write (neqdsk) (real(qpsi(i),r4),i=1,nw)
       write (neqdsk) nbbbs,limitr
-      write (neqdsk) (real(rbbbs(i)),real(zbbbs(i)),i=1,nbbbs)
-      write (neqdsk) (real(xlim(i)),real(ylim(i)),i=1,limitr)
+      write (neqdsk) (real(rbbbs(i),r4),real(zbbbs(i),r4),i=1,nbbbs)
+      write (neqdsk) (real(xlim(i),r4),real(ylim(i),r4),i=1,limitr)
 !----------------------------------------------------------------------
 !--   write out rotation information                                 --
 !----------------------------------------------------------------------
-      write (neqdsk) kvtor,real(rvtor),nmass
+      write (neqdsk) kvtor,real(rvtor,r4),nmass
       if (nmass.gt.0) then
-        write (neqdsk) (real(pressw(i)),i=1,nw)
-        write (neqdsk) (real(pwprim(i)),i=1,nw)
+        write (neqdsk) (real(pressw(i),r4),i=1,nw)
+        write (neqdsk) (real(pwprim(i),r4),i=1,nw)
       endif
 !----------------------------------------------------------------------
 !--   write out ion mass density profile if available                --
 !----------------------------------------------------------------------
       if (nmass.gt.0) then
-        write (neqdsk) (real(dmion(i)),i=1,nw)
+        write (neqdsk) (real(dmion(i),r4),i=1,nw)
       endif
-      write (neqdsk) (real(rhovn(i)),i=1,nw)
+      write (neqdsk) (real(rhovn(i),r4),i=1,nw)
       write (neqdsk) keecur
       if (keecur.gt.0) then
         if (pasmat(jtime).gt.0.0) then
@@ -741,7 +746,7 @@
         else
           workk=epoten
         endif
-        write (neqdsk) (real(workk(i)),i=1,nw)
+        write (neqdsk) (real(workk(i),r4),i=1,nw)
       endif
 !jal 4/23/2004
       if (iplcout.gt.0) then
@@ -750,14 +755,14 @@
         else
           write (neqdsk) nw,nh,ishot,itime
         endif
-        write (neqdsk) real(rgrid(1)),real(rgrid(nw)), &
-                       real(zgrid(1)),real(zgrid(nh))
-        write (neqdsk) (real(brsp(i)),i=1,nfcoil)
-        write (neqdsk) (real(ecurrt(i)),i=1,nesum)
-        write (neqdsk) (real(pcurrt(i)),i=1,nwnh)
+        write (neqdsk) real(rgrid(1),r4),real(rgrid(nw),r4), &
+                       real(zgrid(1),r4),real(zgrid(nh),r4)
+        write (neqdsk) (real(brsp(i),r4),i=1,nfcoil)
+        write (neqdsk) (real(ecurrt(i),r4),i=1,nesum)
+        write (neqdsk) (real(pcurrt(i),r4),i=1,nwnh)
       endif
 !
-      call db_header(ishot,itime,header)
+      header = ' '
       write (neqdsk) header,fit_type
       endif eqdsk_format
 !
@@ -778,7 +783,7 @@
         itime=itime+1
         limitr=limitr-1
         let = 'x'
-        call getfnmu(itimeu,let,ishot,itime,eqdsk)
+        call setfnmeq(itimeu,let,ishot,itime,eqdsk)
         open(unit=neqdsk,file=eqdsk,status='old',iostat=ioerr)
         if (ioerr.eq.0) close(unit=neqdsk,status='delete')
         open(unit=neqdsk,file=eqdsk,status='new',delim='quote')

@@ -19,8 +19,6 @@
      use var_zcntrl
      use var_updown
      use var_test
-     use var_graphic
-     use var_errslop
      use var_fitsiref
      use var_cnnn
      use var_pcsys
@@ -51,7 +49,6 @@
       use var_cqfit
       use var_rmatri
       use var_chimag
-      use var_exdat2
       use var_exdata
       use var_texdat
       use var_savfit
@@ -68,9 +65,8 @@
       use var_consum
       use var_cxray
       use var_mercie
-      use var_input1
+      use var_input
       use var_inputc
-      use var_input4
       use var_switch
       use var_siloop
       use var_slname
@@ -126,7 +122,6 @@
       use var_ecoildat
       use var_beamdat
       use var_bscom
-      use var_bscomss
       use var_autokknot
       use var_autok
       use var_fixstark

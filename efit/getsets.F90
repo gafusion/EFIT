@@ -1,37 +1,35 @@
 #include "config.f"
 !**********************************************************************
 !>
-!!    getsets performs inputing and initialization.
+!!    getsets performs setup and initialization, primarily for running
+!!      in snap mode
 !!
 !!                                                                  
 !!    @param ktime : number of time slices requested
 !!
-!!    @param mtear :
-!!
 !!    @param kerror : error flag
 !!
 !**********************************************************************
-      subroutine getsets(ktime,mtear,kerror)
-      use set_kinds
-      use Fortran_Sleep
+      subroutine getsets(ktime,kerror)
       use, intrinsic :: iso_c_binding, only: c_int
+      use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
+      integer*4, intent(inout) :: ktime
+      integer*4, intent(out) :: kerror
       integer (c_int) :: retwait
-
-      logical lopened
-      character filenm*15,ishotime*12,news*72, &
+      integer*4 i,jtime,idtime,ioerr,itimeb,mdoskip,mtime
+      real*8 xltype,xltype_180,ktear,dnmin
+      logical lopened,exists
+      character filenm*15,ishotime*12,news*72,snap_ext*82, &
                 eqdsk*20,comfile*15,prefix1*1,header*42,fit_type*3
+      character(1000) :: line
       real*8,dimension(:),allocatable :: fwtbmsels,fwtemsels
-      real*8 :: dnmin
-      character*82 snap_ext
-      character(256) table_save
-      character(len=1000) :: line
       namelist/efitin/ishot,istore,timeb,dtime,mtime,scrape,nextra, &
            iexcal,itrace,xltype,ivesel,fwtsi,fwtmp2,fwtcur,iprobe, &
            itek,limid,qvfit,fwtbp,kffcur,kppcur,fwtqa,mxiter,  &
@@ -63,15 +61,19 @@
            ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels, &
            idebug,jdebug,synmsels,avemsels,kwritime, &
            v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi, &
-           siloplim,use_previous
+           siloplim,use_previous,ierchk
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
-      data mcontr/35/,lfile/36/,ifpsi/0/
-      data currn1/0.0/,currc79/0.0/,currc139/0.0/,currc199/0.0/, &
-                       curriu30/0.0/,curriu90/0.0/,curriu150/0.0/, &
-                       curril30/0.0/,curril90/0.0/,curril150/0.0/
-      logical exists
-      integer*4, intent(inout) :: kerror
+
+      interface
+        !  should be unsigned int ... not available in Fortran
+        !  OK until highest bit gets set.
+        function FortSleep (seconds)  bind ( C, name="sleep" )
+          import
+          integer (c_int) :: FortSleep
+          integer (c_int), intent (in), VALUE :: seconds
+        end function FortSleep
+      end interface
 
       ALLOCATE(fwtbmsels(nmsels),fwtemsels(nmsels))
       fwtbmsels=0.0
@@ -81,45 +83,24 @@
       iout=1                 ! default - write fitout.dat
       appendsnap='KG'
       patmp2(1)=-1.
-      tmu0=twopi*tmu
-      tmu02=tmu0*2.0
       errorm=1.
       ibatch=0 ! never used in code (just gets output)
       ilaser=0
       kffcurs=0
       kppcurs=0
+      kwritime=0
       mtime=ktime
-      table_save=table_dir
-!----------------------------------------------------------------------
-!--   news and help information                                      --
-!----------------------------------------------------------------------
-      ! ONLY root process displays EFIT news and help information
-      mpi_rank: if (rank == 0) then
-        open(unit=80,status='old', &
-             file=input_dir(1:lindir)//'efithelp.txt',err=83220)
-        do i=1,100
-          read (80,83210,end=83220,err=83220) news
-          write (nttyo,83210) news
-        enddo
-        close(unit=80)
-      endif mpi_rank
-83210 format (a)
-!
-83220 continue
-#if defined(USE_SNAP)
-!----------------------------------------------------------------------
-!--   K-file from snap mode                                          --
-!----------------------------------------------------------------------
-      if (kdata.eq.5.or.kdata.eq.6) then
-        call write_K(ktime,kerror)
-        !if (kerror.gt.0) return ! don't return here because we're stopping anyway
-        call errctrl_msg('getsets','Done writing k-files',3)
-#if defined(USEMPI)
-        call mpi_finalize(ierr)
-#endif
-        stop
-      endif
-#endif
+
+      ! initialize time dependent variables before loop
+      rvsin=0.0
+      zvsin=0.0
+      rvsout=0.0
+      zvsout=0.0
+      tangam_uncor=0.0
+      taumhd=0.0
+      taudia=0.0
+      tsaisq=0.0
+
       if (kwake.eq.1.and.mdoskip.eq.0.and.(iand(iout,1).ne.0)) close(unit=nout)
 
 ! ONLY root process can check for existence of fitout.dat file
@@ -152,148 +133,20 @@
 !----------------------------------------------------------------------
 !--  look up magnetic data directly                                  --
 !----------------------------------------------------------------------
-      psibit(1:nsilop)=0.0
-      fwtsi(1:nsilop)=0.0
-      bitmpi(1:magpri)=0.0
-      fwtmp2(1:magpri)=0.0
-      fwtgam(1:nstark)=0.0
-      fwtece0(1:nnece)=0.0
-      fwtecebz0=0.0
-      backaverage=.false.
-      bitip=0.0
-      betap0=0.50_dp
-      cfcoil=-1.
-      cutip=80000.
-      ecurrt(1:nesum)=0.0
-      rsisec(1:nesum)=-1.
-      emf=1.00
-      emp=1.00
-      enf=1.00
-      enp=1.00
-      error=1.0e-03_dp
-      fbetap=0.0
-      fbetat=0.0
-      fcurbd=1.
-      fcsum(1:nfcoil)=1.0
-      fczero(1:nfcoil)=1.0
-      fwtfc(1:nfcoil)=0.
-      rsisfc(1:nfcoil)=-1.
-      fwtec(1:nesum)=0.0
-      fwtbdry(1:mbdry)=1.0
-      fwtsol(1:mbdry)=1.0
-      sigrbd(1:mbdry)=1.e10_dp
-      sigzbd(1:mbdry)=1.e10_dp
-      fli=0.0
-      fwtbp=0.0
-      fwtdlc=0.0
-      fwtqa=0.0
-      gammap=1.0e+10_dp
-      iaved=5
-      iavem=5
-      iavev=10
-      ibound=0
-      ibunmn=3
-      icinit=2
-      icondn=-1
-      iconsi=-1
-      iconvr=2
-      icprof=0
-      icurrt=2
-      icutfp=0
-      idite=0
-      iecoil=0
-      ierchk=1
-      iecurr=1
-      iexcal=0
-!jal 04/23/2004
-      iplcout=0
-      ifcurr=0
-      ifitvs=0
-      ifref=-1
-      itimeu=0
-      iplim=0
-      iprobe=0
-      iqplot=1
-      isetfb=0
-      idplace=0
-      islve=0
-      isumip=0
-      itek=0
-      itrace=1
-      ivacum=0
-      ivesel=0
-      n1coil=0
-      ibtcomp=1
-      iweigh=0
-      ixray=0
-      ixstrt=1
-      keqdsk=1
-      kinput=0
-      kffcur=1
-      kppcur=3
-      kprfit=0
-      limfag=2
-      limitr=-33
-      lookfw=1
-      mxiter=25
-      nbdry=0
-      ncstfp=1
-      ncstpp=1
-      nextra=1
-      nxiter=1
-      pcurbd=1.
-      psibry=0.0
-      qemp=0.0
-      qenp=0.95_dp
-      qvfit=0.95_dp
-      scrape=0.030_dp
-      serror=0.03_dp
-      sidif=-1.0e+10_dp
-      symmetrize=.false.
+      ktear=0
       xltype=0.0
       xltype_180=0.
-      gammap=1./gammap
-      gammaf=gammap
-      rmaxis=rzero
-      mtear=0
-      ktear=0
-      snapfile='none'
-      nsnapf=66
-! -- Qilong Ren
-      write_Kfile=.false.
-      fitfcsum=.false.
-      ifindopt=2
-      tolbndpsi=1.0e-12_dp
-!----------------------------------------------------------------------
-!--   Initialize istore = 0                                          --
-!--   Central directory to collect EFIT results is the default       --
-!--   directory. Otherwise in store_dir (default to /link/store/)    --
-!----------------------------------------------------------------------
-      istore = 0
+!
+      call set_defaults
 !
       select case (kdata)
-      case (3)
-        open(unit=neqdsk,status='old', &
-             file='efit_snap.dat',iostat=ioerr)
-        if (ioerr.eq.0) then
-          snapfile='efit_snap.dat'
+      case (3,7)
+        if (snapextin.eq.'none') then
+          snap_file = 'efit_snap.dat'
         else
-          open(unit=neqdsk,status='old',       &
-               file= input_dir(1:lindir)//'efit_snap.dat')
-          snapfile=input_dir(1:lindir)//'efit_snap.dat'
+          snap_ext = adjustl(snapextin)
+          snap_file = 'efit_snap.dat_'//snap_ext
         endif
-      case (4)
-        open(unit=neqdsk,status='old', &
-             file='efit_time.dat',iostat=ioerr)
-        if(ioerr.ne.0) &
-          open(unit=neqdsk,status='old', &
-               file= input_dir(1:lindir)//'efit_time.dat')
-      case (7)
-!----------------------------------------------------------------------
-!--     Snap-Extension mode                                          --
-!----------------------------------------------------------------------
-        snap_ext = adjustl(snapextin)
-        snap_file = 'efit_snap.dat_'//snap_ext
         open(unit=neqdsk,status='old', &
              file=snap_file,iostat=ioerr)
         if (ioerr.eq.0) then
@@ -303,12 +156,18 @@
                file= input_dir(1:lindir)//snap_file,iostat=ioerr)
           if (ioerr.eq.0) then
             snapfile=input_dir(1:lindir)//snap_file
-          else
+          elseif (snapextin.ne.'none') then
             snap_file = snap_ext
             open(unit=neqdsk,status='old',file= snap_file)
             snapfile=snap_file
           endif
         endif
+      case (4)
+        open(unit=neqdsk,status='old', &
+             file='efit_time.dat',iostat=ioerr)
+        if(ioerr.ne.0) &
+          open(unit=neqdsk,status='old', &
+               file= input_dir(1:lindir)//'efit_time.dat')
       end select
 
       read (neqdsk,efitin,iostat=istat)
@@ -326,11 +185,13 @@
         stop
       endif
       close(unit=neqdsk)
-!--warn that idebug and jdebug inputs are depreciated
+!--   warn that idebug, jdebug, and ktear inputs are depreciated
       if(idebug.ne.0) write(*,*) &
       "idebug input variable is depreciated, set cmake variable instead"
       if(jdebug.ne."NONE") write(*,*) &
       "jdebug input variable is depreciated, set cmake variable instead"
+      if(ktear.ne.0) write(*,*) &
+      "tearing calculations don't exist, ktear is depreciated"
 !----------------------------------------------------------------------
 !--   writes out the efitin namelist. Flag iout = 32.                --
 !----------------------------------------------------------------------
@@ -349,7 +210,6 @@
       n1coils=n1coil
 !
       ktime=mtime ! don't know why this would be wanted...
-      mtear=ktear
       if((iconvr.ne.3).and.(qvfit.gt.0.0)) qenp=qvfit 
       if (itek.lt.0) then
         ixray=1
@@ -400,20 +260,10 @@
         endif
         ireadold=iread
       endif
-
 !
 ! -- Qilong Ren
       iishot = ishot
       kktime = ktime
-!----------------------------------------------------------------------- 
-!--   reset table dir if necessary                                    --
-!-----------------------------------------------------------------------
-      if (table_dir.ne.table_save) then
-        call set_table_dir
-        call read_eparmdud
-        call get_eparmdud_dependents
-        call efit_read_tables
-      endif
 !-------------------------------------------------------------------------------
 !--   Set bit noise for ishot > 152000                                        --
 !-------------------------------------------------------------------------------
@@ -605,9 +455,8 @@
       endif snap
 #endif
 !----------------------------------------------------------------------
-!--   read in the plasma response function                           --
+!--   Set grid parameters
 !----------------------------------------------------------------------
-!
       drgrid=rgrid(2)-rgrid(1)
       dzgrid=zgrid(2)-zgrid(1)
       darea=drgrid*dzgrid

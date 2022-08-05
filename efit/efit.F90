@@ -24,14 +24,14 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
+
       implicit none
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
       character inp1*4,inp2*4
       integer*4 :: k,krord,kzord,nargs,iargc,finfo,kerror,terr,ioerr, &
-                   nwrk,ktime,mtear,ks
-
+                   nwrk,ktime,ks
       integer*4 :: iend1,iend2
       character*80 :: cmdline
       parameter (krord=4,kzord=4)
@@ -61,19 +61,15 @@
 #endif
 
       ! Set global constants for each rank
-      call set_constants()
+      pi = 4.0_dp*atan(1.0_dp) ! calculate pi to machine precision
+      twopi = 2.0*pi
+      radeg = pi/180.0
+      tmu0=twopi*tmu
+      tmu02=tmu0*2.0
 !------------------------------------------------------------------------------
 !--   Set external variables and print build info
 !------------------------------------------------------------------------------ 
-      call set_exvars
-      ! If environment variable exists, then override values from set_exvars
-      call getenv("link_efit",link_efitx)
-      call getenv("link_store",link_storex)
-      if (link_efitx(1:1).ne.' ') then
-        table_dir=trim(link_efitx)//'green/'
-        input_dir=trim(link_efitx)
-      endif
-      if (link_storex(1:1).ne.' ')  store_dir=trim(link_storex)
+      call set_extvars
 !----------------------------------------------------------------------
 !--   Read in grid size from command line and set global variables   --
 !--   ONLY root process reads command-line arguments                 --
@@ -140,46 +136,65 @@
       nxtrap=npoint
       
       call read_optin
-      call inp_file_ch(nw,nh,ch1,ch2)
+      call table_name_ch(nw,nh,ch1,ch2)
 
       call get_opt_input(ktime)
-      call get_eparmdud_defaults()
+      call set_eparm_defaults()
       ntime = ktime
 
       select case (kdata)
       case (1)
-        call read_omas_in1(ifname(1))     !this assumes machine is always the same
+        call read_dirs_shot_omas(ifname(1))
       case (2)
-        call read_dirs_shot(ifname(1))     !this assumes machine is always the same
+        call read_dirs_shot(ifname(1))
       case (4)
         call read_dirs_shot('efit_time.dat')
-      case (5)
-        if (snapextin.ne.'none') then ! could come from efit.input
-          call read_dirs_shot('efit_snap.dat_'//adjustl(snapextin))     !this assumes machine is always the same
-        else
-          call read_dirs_shot('efit_snap.dat')
-        endif
-      case (7)
-        call read_dirs_shot('efit_snap.dat_'//adjustl(snapextin))     !this assumes machine is always the same
       case default
-        call read_dirs_shot('efit_snap.dat')
+        if (snapextin.eq.'none') then
+          snap_file = 'efit_snap.dat'
+        else
+          snap_file = 'efit_snap.dat_'//adjustl(snapextin)
+        endif
       end select
 
       call set_table_dir
-      call read_eparmdud
-      call get_eparmdud_dependents
+      call read_machinein
+      call set_eparm_dependents
 !----------------------------------------------------------------------
 !--   Global Allocations                                             --
 !----------------------------------------------------------------------
-      include 'global_allocs.f90'
-      call set_mod_arrays
-      call set_ecom_mod1_arrays
-      call set_ecom_mod2_arrays
+      include 'global_allocs.f90' ! this prevents changing the experiment during a run
+!----------------------------------------------------------------------
+!--   Read in Green Function Tables
+!----------------------------------------------------------------------
+      call read_tables
+!----------------------------------------------------------------------
+!--   K-file from snap mode                                          --
+!----------------------------------------------------------------------
+#if defined(USE_SNAP)
+      if (kdata.eq.5.or.kdata.eq.6) then
+#ifdef DEBUG_LEVEL2
+        write(6,*) ' Entering write_K subroutine'
+#endif
+        call write_K(ktime,kerror)
+        if (kerror.gt.0) then
+          call errctrl_msg('efit','Error in write k-files',3)
+        else
+          call errctrl_msg('efit','Done writing k-files',3)
+        endif
+#if defined(USEMPI)
+        call mpi_finalize(ierr)
+#endif
+        return
+      endif
+#endif
 !----------------------------------------------------------------------
 !--   get data                                                       --
 !----------------------------------------------------------------------
-      call efit_read_tables
-  20  call getsets(ktime,mtear,kerror)
+#ifdef DEBUG_LEVEL2
+      write(6,*) ' Entering getsets subroutine'
+#endif
+  20  call getsets(ktime,kerror)
 #if defined(USEMPI)
       if (nproc > 1) &
         call MPI_ALLREDUCE(kerror,MPI_IN_PLACE,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
@@ -208,40 +223,16 @@
         ks=k ! ks=1,2,3... in serial, but ks=1,1,1,... in parallel
 !----------------------------------------------------------------------
 !--     set up data                                                  --
-!----------------------------------------------------------------------
-        
+!----------------------------------------------------------------------        
 #ifdef DEBUG_LEVEL2
         write(6,*) ' Entering prtoutheader subroutine'
 #endif
         call prtoutheader()
+
 #ifdef DEBUG_LEVEL2
         write(6,*) ' Entering data_input subroutine'
 #endif
-
-        call data_input(ks,iconvr,ktime,mtear,kerror)
-
-! Check that the grid sizes are compatible with Buneman's algorithm
-! (this is not relevant to pefit - not yet available)
-        if (ibunmn.ne.0) then
-          if (nh .ne. 0) then
-            select case (nh)
-            case (3,5,9,17,33,65,129,257,513,1025,2049)
-              ! all good
-            case default
-              call errctrl_msg('efit', &
-                   'Chosen grid dimensions cannot be run')
-              stop
-            end select
-          endif
-          select case (nw)
-          case (3,5,9,17,33,65,129,257,513,1025,2049)
-            ! all good
-          case default
-            call errctrl_msg('efit', &
-                 'Chosen grid dimensions cannot be run')
-            stop
-          end select
-        endif
+        call data_input(ks,iconvr,ktime,kerror)
 
 #ifdef DEBUG_LEVEL2
         write(6,*) 'Entering errctrl_setstate'
@@ -252,7 +243,10 @@
           cycle
         endif
         if (kautoknt .eq. 1) then
-          call autoknot(ks,iconvr,ktime,mtear,kerror)
+#ifdef DEBUG_LEVEL2
+          write(6,*) ' Entering autoknot subroutine'
+#endif
+          call autoknot(ks,iconvr,ktime,kerror)
         else
 !----------------------------------------------------------------------
 !--       initialize current profile                                 --
@@ -284,7 +278,7 @@
           if(k.lt.ktime) kerrot(ks)=kerror
           cycle
         endif
-#ifdef DEBUG_LEVEL1
+#ifdef DEBUG_LEVEL2
         write (6,*) 'Main/prtout ks/kerror = ', ks, kerror
 #endif
         call prtout(ks)
@@ -293,13 +287,13 @@
 !--     write A, G, and M EQDSKs
 !----------------------------------------------------------------------
         if (iconvr.ge.0) then
-#ifdef DEBUG_LEVEL1
+#ifdef DEBUG_LEVEL2
           write (6,*) 'Main/shipit ks/kerror = ', ks, kerror
 #endif
           call shipit(ktime,ks)
           if (ierchk.gt.1 .and. lflag.gt.0) cycle
         endif
-#ifdef DEBUG_LEVEL1
+#ifdef DEBUG_LEVEL2
         write (6,*) 'Main/weqdsk ks/kerror = ', ks, kerror
 #endif
         call weqdsk(ks)

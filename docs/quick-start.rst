@@ -56,7 +56,7 @@ The efund executable generates the Green's function tables as we discuss next.
 Forming Green's function tables
 --------------------------------
 
-An ``mhdin.dat`` file describing the machine geometry must be in the
+An ``mhdin.dat`` file describing the experiment geometry must be in the
 same location that you run ``efund`` from.
 
 Once this requirement is satisfied, the tables can be formed by calling
@@ -67,23 +67,24 @@ Once this requirement is satisfied, the tables can be formed by calling
 The tables are contained in files.  Example filenames of these files are 
 ``btcomp.dat, ccoil.ddd, ccomp.dat, n1coil.ddd, icomp.dat``.  
 This also creates a ``dprobe.dat`` file containing all the limiter and other
-necessary information about the machine.
+necessary information about the experiment.
 
 Running EFIT
 ------------
 
 In order for EFIT to run it must know where the Green function tables and
-machine data files can be found.  Default locations can be specified at compile
+experiment data files can be found.  Default locations can be specified at compile
 time by passing the flags ``-DINPUT_DIR=``, ``-DTABLE_DIR=``, and ``-DSTORE_DIR`` to
 cmake.  Otherwise the default is set as the build directory.  This is superceded
 at runtime by environment variables or input files.  
 
 The precedence is decided by checking in that order::
-     1.  input files 
-     2.  environment variables
-     3.  build defaults
+     1.  efit.setup file
+     2.  input files (efit_snap.dat, k-files, ect.)
+     3.  environment variables
+     4.  build defaults
 
-The environment variables are specified by ``link_efit`` and ``link_store``::
+The environment variables and efit.setup inptus are specified by ``link_efit`` and ``link_store``::
 
      TABLE_DIR=${link_efit}/green 
      INPUT_DIR=${link_efit}
@@ -94,7 +95,7 @@ Input files can specify the ``TABLE_DIR``, ``INPUT_DIR``, and ``STORE_DIR``
 variables in ``IN1``, ``INWANT``, and ``EFITIN`` namelists (kfiles, rfiles, xfiles,
 and snap files).
 
-Once the tables and machine data are properly located, EFIT can be run
+Once the tables and experimnt data are properly located, EFIT can be run
 by calling ``efit`` with the mesh size that matches the tables and an 
 efit.input file or interactively.
 Example::

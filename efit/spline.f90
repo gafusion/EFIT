@@ -40,15 +40,15 @@
       include 'eparm.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !
-      INTEGER*4 ier, lx, ly
-      REAL*8 cs(kubicx,lubicx,kubicy,lubicy),xl,yl,fs(6), &
+      INTEGER*4 ier,lx,ly
+      REAL*8, intent(in) :: xl,yl
+      REAL*8 cs(kubicx,lubicx,kubicy,lubicy),fs(6), &
              bkx(lubicx+1),bky(lubicy+1)
 !
 !     Local Variable Specifications:
 !
       dimension work0(4),work1(4),work2(4)
       data n00/0/,n11/1/,n22/2/
-      save n00,n11,n22
 !
 !     Check for consistent variable size inputs
 !
@@ -568,7 +568,7 @@
 !  t  and of  biatx  precisely without the introduction of otherwise
 !  superfluous additional arguments.
       data j/1/
-      save j,deltal,deltar  ! (valid in fortran 77)
+      save deltal,deltar  ! (valid in fortran 77)
 !
       if (index .ne. 2) then
          j = 1
@@ -826,11 +826,10 @@
 !**********************************************************************      
       subroutine interv ( xt, lxt, x, left, mflag )
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      INTEGER*4 left,lxt,mflag,   ihi,ilo,istep,middle
-      REAL*8 x
+      INTEGER*4 left,lxt,mflag,ihi,ilo,istep,middle
+      REAL*8, intent(in) :: x
       dimension xt(lxt)
       data ilo /1/
-!     save ilo  (a valid fortran statement in the new 1977 standard)
       ihi = ilo + 1
       if (ihi .ge. lxt) then
          if (x .ge. xt(lxt)) then

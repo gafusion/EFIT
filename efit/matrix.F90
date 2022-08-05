@@ -24,6 +24,13 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
+      integer*4, intent(in) :: jtime,iter,nniter
+      integer*4, intent(out) :: ichisq,kerror
+      integer*4, dimension(mfnpcr)     :: ipvttmp
+      real*8, dimension(2)             :: arspdet2(1:2)
+      real*8, dimension(mfnpcr)        :: worktmp
+      real*8, dimension(nrsmat,mfnpcr) :: arsptmp
+      character(128) tmpstr
       dimension arsp(nrsmat,mfnpcr),wrsp(mfnpcr)
       dimension brsold(nrsmat),work(nrsma2),vcurrto(nvesel)
       dimension xpsfp(nffcur),xpspp(nppcur),xpspwp(nwwcur)
@@ -31,19 +38,13 @@
       dimension b(nrsmat),z(4*(npcurn-2)+6+npcurn*npcurn)
       dimension pds(6)
       dimension rxxx(ndata),rxxxf(ndata),rxx2(ndata),rxxw(ndata)
-      integer*4, dimension(mfnpcr)       :: ipvttmp
-      real*8, dimension(2)             :: arspdet2(1:2)
-      real*8, dimension(mfnpcr)        :: worktmp
-      real*8, dimension(nrsmat,mfnpcr) :: arsptmp
-      integer*4, intent(inout) :: jtime,iter,ichisq,nniter,kerror
-      character(len=128) tmpstr
-
+      parameter(minite=8)
+      parameter(ten24=1.e4_dp,z04=1.0e-04_dp)
 !---------------------------------------------------------------------
 !--   relax saimin=50 from 30               04/27/90                --
 !--                60 from 50               03/31/93                --
 !---------------------------------------------------------------------
-      data iupdat/0/,minite/8/,ten24/1.e4_dp/,z04/1.0e-04_dp/
-      save z04
+      data iupdat/0/
       kerror = 0
       csilopv = 0.0
       cmpr2v = 0.0
@@ -2301,7 +2302,6 @@
           return
         endif
       endif
-
 !----------------------------------------------------------------------
 !--   rescale results if A is preconditioned                         --
 !----------------------------------------------------------------------

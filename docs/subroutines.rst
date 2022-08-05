@@ -1,45 +1,58 @@
 EFIT subroutines
 ================================
 
-msels_hist.f90
---------------
-
-.. doxygenfunction:: msels_hist
-
-efit_tables.F90
----------------
-
-.. doxygenfunction:: efit_read_tables
-.. doxygenfunction:: set_table_dir
-
-ppbasisfunc.f90
----------------
-
-.. doxygenfunction:: ppcnst
-.. doxygenfunction:: ppstore
-
-spline.f90
-----------
-
-.. doxygenfunction:: seva2d
-.. doxygenfunction:: sets2d
-.. doxygenfunction:: sdecm
-.. doxygenfunction:: spl2bc
-.. doxygenfunction:: spl2pp
-.. doxygenfunction:: eknot
-.. doxygenfunction:: spli2d
-.. doxygenfunction:: bsplvb
-.. doxygenfunction:: banslv
-.. doxygenfunction:: banfac
-.. doxygenfunction:: interv
-.. doxygenfunction:: linv1f
-
-set_routines.F90
+modules-efit.F90
 ----------------
 
-.. doxygenfunction:: setece
-.. doxygenfunction:: seter
-.. doxygenfunction:: seterp
+.. doxygenfunction:: fch5init
+.. doxygenfunction:: fch5resetvars
+.. doxygenfunction:: errctrl_setstate
+.. doxygenfunction:: errctrl_msg
+
+set_extvars.F90
+---------------
+
+.. doxygenfunction:: set_extvars
+
+read_namelist.F90
+-----------------
+
+.. doxygenfunction:: read_optin
+.. doxygenfunction:: read_eparm
+.. doxygenfunction:: read_dirs_shot
+.. doxygenfunction:: read_dirs_shot_omas
+
+get_opt_input.F90
+-----------------
+
+.. doxygenfunction:: get_opt_input
+
+set_eparm.f90
+-------------
+
+.. doxygenfunction:: set_eparm_defaults
+.. doxygenfunction:: set_eparm_dependents
+
+tables.F90
+----------
+
+.. doxygenfunction:: table_name_ch
+.. doxygenfunction:: set_table_dir
+.. doxygenfunction:: read_tables
+
+getsets.F90
+-----------
+
+.. doxygenfunction:: getsets
+
+set_defaults.f90
+----------------
+
+.. doxygenfunction:: set_defaults
+
+set_basis.F90
+-------------
+
 .. doxygenfunction:: set_basis_params
 .. doxygenfunction:: setff
 .. doxygenfunction:: setfp
@@ -50,57 +63,176 @@ set_routines.F90
 .. doxygenfunction:: setpw
 .. doxygenfunction:: setpwp
 .. doxygenfunction:: setpwpp
-.. doxygenfunction:: setstark
+.. doxygenfunction:: seter
+.. doxygenfunction:: seterp
 
+ppbasisfunc.f90
+---------------
 
-get_opt_input.F90
------------------
+.. doxygenfunction:: ppcnst
+.. doxygenfunction:: ppstore
 
-.. doxygenfunction:: get_opt_input
+ffbasisfunc.f90
+---------------
 
-inp_file_ch.f90
-------------
-
-.. doxygenfunction:: inp_file_ch
-
+.. doxygenfunction:: ffcnst
+.. doxygenfunction:: ffstore
 
 wwbasisfunc.f90
 ---------------
 
 .. doxygenfunction:: wwcnst
 .. doxygenfunction:: wwstore
+
+eebasisfunc.f90
+---------------
+
 .. doxygenfunction:: eecnst
 .. doxygenfunction:: eestore
 
-wmeasure.F90
-------------
-
-.. doxygenfunction:: wmeasure
-
-fcurrt.f90
+spline.f90
 ----------
 
-.. doxygenfunction:: fcurrt
+.. doxygenfunction:: seva2d
+.. doxygenfunction:: sets2d
+.. doxygenfunction:: spl2bc
+.. doxygenfunction:: spl2pp
+.. doxygenfunction:: eknot
+.. doxygenfunction:: spli2d
+.. doxygenfunction:: bsplvb
+.. doxygenfunction:: banslv
+.. doxygenfunction:: banfac
+.. doxygenfunction:: interv
+.. doxygenfunction:: linv1f
 
-
-weight.F90
+zpline.f90
 ----------
 
-.. doxygenfunction:: weight
+.. doxygenfunction:: zpline
+.. doxygenfunction:: spleen
+.. doxygenfunction:: splaan
 
-getfnm.f90
--------------
+get_exp_data.f90
+----------------
 
-.. doxygenfunction:: getfnmd
-.. doxygenfunction:: getfnm2
-.. doxygenfunction:: getfnmu
-.. doxygenfunction:: getfnmu2
-.. doxygenfunction:: setfnme
+.. doxygenfunction:: getlim
+.. doxygenfunction:: getsxr
 
-ecom1-mods.f90
+constraints.F90
+---------------
+
+.. doxygenfunction:: get_constraints
+.. doxygenfunction:: avdata
+.. doxygenfunction:: amdata
+.. doxygenfunction:: apdata
+.. doxygenfunction:: gettanh
+.. doxygenfunction:: avdiam
+.. doxygenfunction:: zmooth
+.. doxygenfunction:: smoothit
+.. doxygenfunction:: smoothit2
+.. doxygenfunction:: zplines
+.. doxygenfunction:: magsigma
+.. doxygenfunction:: get_constraints_mpi
+
+getdat.F90
+----------
+
+.. doxygenfunction:: getdat
+
+diamagnetic.f90
+---------------
+
+.. doxygenfunction:: getdia
+.. doxygenfunction:: dlcomp
+.. doxygenfunction:: lowpass
+.. doxygenfunction:: interp
+
+stark.F90
+---------
+
+.. doxygenfunction:: getstark
+.. doxygenfunction:: getstark_mpi
+.. doxygenfunction:: setstark
+.. doxygenfunction:: fixstark
+
+msels.f90
+---------
+
+.. doxygenfunction:: getmsels
+.. doxygenfunction:: msels_data
+.. doxygenfunction:: msels_hist
+
+data_input.f90
 --------------
 
-.. doxygenfunction:: set_ecom_mod1_arrays
+.. doxygenfunction:: data_input
+
+set_filenames.f90
+-----------------
+
+.. doxygenfunction:: setfnmeq
+.. doxygenfunction:: setfnmd
+.. doxygenfunction:: setfnmt
+.. doxygenfunction:: setfnmpl
+.. doxygenfunction:: setfnmq
+
+auto_knot.F90
+------------
+
+.. doxygenfunction:: autoknot
+.. doxygenfunction:: restore_autoknotvals
+.. doxygenfunction:: store_autoknotvals
+
+inicur.F90
+----------
+
+.. doxygenfunction:: inicur
+
+fit.F90
+-------
+
+.. doxygenfunction:: fit
+.. doxygenfunction:: residu
+
+ece.F90
+-------
+
+.. doxygenfunction:: setece
+.. doxygenfunction:: geteceb
+.. doxygenfunction:: getecer
+.. doxygenfunction:: gettir
+
+green.F90
+---------
+
+.. doxygenfunction:: green
+
+matrix.f90
+----------
+
+.. doxygenfunction:: matrix
+
+current.f90
+-----------
+
+.. doxygenfunction:: currnt
+
+external_current.f90
+--------------------
+
+.. doxygenfunction:: fcurrt
+.. doxygenfunction:: vescur
+
+pflux.90
+--------
+
+.. doxygenfunction:: pflux
+
+buneman.f90
+-----------
+
+.. doxygenfunction:: buneto
+.. doxygenfunction:: rzpois
 
 cyclic.F90
 ----------
@@ -114,13 +246,15 @@ cyclic.F90
 .. doxygenfunction:: ef_vadd_shrt
 .. doxygenfunction:: ef_vmul_const_shrt
 
-green.F90
----------
+update_parameters.90
+--------------------
 
-.. doxygenfunction:: green
+.. doxygenfunction:: update_params
+.. doxygenfunction:: weight
+.. doxygenfunction:: chisqr
 
-bound.f90
----------
+boundary.f90
+------------
 
 .. doxygenfunction:: bound
 .. doxygenfunction:: cellb
@@ -140,61 +274,45 @@ bound.f90
 pressure.F90
 ------------
 
-.. doxygenfunction:: presurw
 .. doxygenfunction:: presur
+.. doxygenfunction:: presurw
 
-subs_d_pt.F90
--------------
+get_kinetic_data.f90
+--------------------
 
-.. doxygenfunction:: db_header
-.. doxygenfunction:: getzeff
-.. doxygenfunction:: donepl
-
-
-buneman.f90
------------
-
-.. doxygenfunction:: buneto
-.. doxygenfunction:: rzpois
-
-
-expdata.f90
------------
-
-.. doxygenfunction:: getlim
-.. doxygenfunction:: getsxr
-
-ecom2-mods.f90
---------------
-
-.. doxygenfunction:: set_ecom_mod2_arrays
-
-get_routines.F90
-----------------
-
+.. doxygenfunction:: getne
 .. doxygenfunction:: getbeam
-.. doxygenfunction:: geteceb
-.. doxygenfunction:: getecer
-.. doxygenfunction:: gettir
-.. doxygenfunction:: fixstark
-.. doxygenfunction:: getmsels
-.. doxygenfunction:: getsigma
-.. doxygenfunction:: getstark
 .. doxygenfunction:: gette
 .. doxygenfunction:: gettion
 
+shapesurf.f90
+-------------
 
-fit.F90
--------
-
-.. doxygenfunction:: fit
-.. doxygenfunction:: chisqr
+.. doxygenfunction:: shapesurf
+.. doxygenfunction:: dslant
 
 beta_li.F90
 -----------
 
 .. doxygenfunction:: betali
 .. doxygenfunction:: betsli
+
+utils.F90
+---------
+
+.. doxygenfunction:: fluxav
+.. doxygenfunction:: splitc
+.. doxygenfunction:: tsorder
+.. doxygenfunction:: fitpp
+.. doxygenfunction:: fitfp
+.. doxygenfunction:: lenco2
+
+mat_solve.f90
+--------------
+
+.. doxygenfunction:: decomp
+.. doxygenfunction:: solve
+.. doxygenfunction:: sdecm
 
 weq.f90
 -------
@@ -203,156 +321,24 @@ weq.f90
 .. doxygenfunction:: weqdsk
 .. doxygenfunction:: timdot
 
-get_eparmdud.f90
-----------------
+wmeasure.F90
+------------
 
-.. doxygenfunction:: get_eparmdud_defaults
-.. doxygenfunction:: get_eparmdud_dependents
-.. doxygenfunction:: read_dirs_shot
+.. doxygenfunction:: wmeasure
 
-
-read_namelist.F90
------------------
-
-.. doxygenfunction:: read_efitin
-.. doxygenfunction:: read_eparmdud
-
-zpline.f90
+write_K.F90
 -----------
 
-.. doxygenfunction:: zpline
-.. doxygenfunction:: spleen
-.. doxygenfunction:: splaan
+.. doxygenfunction:: write_K
+.. doxygenfunction:: write_K2
 
-getdat.F90
-----------
+wtime.F90
+---------
 
-.. doxygenfunction:: getdat
-
-
-getdia.f90
-----------
-
-.. doxygenfunction:: getdia
-.. doxygenfunction:: dlcomp
-.. doxygenfunction:: lowpass
-.. doxygenfunction:: interp
+.. doxygenfunction:: wtime
 
 prtout.F90
 ----------
 
 .. doxygenfunction:: prtout
 .. doxygenfunction:: prtoutheader
-
-lsolved.f90
------------
-
-.. doxygenfunction:: decomp
-.. doxygenfunction:: solve
-
-matrix.f90
-----------
-
-.. doxygenfunction:: matrix
-
-
-getsets.F90
------------
-
-.. doxygenfunction:: getsets_defaults
-.. doxygenfunction:: getsets
-
-flux_current.F90
-----------------
-
-.. doxygenfunction:: pflux
-.. doxygenfunction:: residu
-.. doxygenfunction:: steps
-.. doxygenfunction:: inicur
-.. doxygenfunction:: vescur
-
-efit_utils.F90
---------------
-
-.. doxygenfunction:: fluxav
-.. doxygenfunction:: splitc
-.. doxygenfunction:: tsorder
-
-
-writeout.F90
-------------
-
-.. doxygenfunction:: write_k
-.. doxygenfunction:: write_k2
-.. doxygenfunction:: wtime
-
-
-modules-efit.F90
-----------------
-
-.. doxygenfunction:: set_constants
-.. doxygenfunction:: errctrl_setstate
-.. doxygenfunction:: errctrl_msg
-
-ffbasisfunc.f90
----------------
-
-.. doxygenfunction:: ffcnst
-.. doxygenfunction:: ffstore
-
-get_opt_input_args.F90
-----------------------
-
-.. doxygenfunction:: process_arguments
-.. doxygenfunction:: write_usage
-
-getne.F90
----------
-
-.. doxygenfunction:: getne
-
-getecd.F90
-----------
-
-.. doxygenfunction:: getpts
-.. doxygenfunction:: avdata
-.. doxygenfunction:: amdata
-.. doxygenfunction:: apdata
-.. doxygenfunction:: gettanh
-.. doxygenfunction:: avdiam
-.. doxygenfunction:: zmooth
-.. doxygenfunction:: smoothit
-.. doxygenfunction:: smoothit2
-.. doxygenfunction:: zplines
-.. doxygenfunction:: magsigma
-.. doxygenfunction:: getpts_mpi
-.. doxygenfunction:: getstark_mpi
-
-msels_data.f90
---------------
-
-.. doxygenfunction:: msels_data
-
-autoknot.F90
-------------
-
-.. doxygenfunction:: autoknot
-.. doxygenfunction:: restore_autoknotvals
-.. doxygenfunction:: store_autoknotvals
-
-data_input.f90
---------------
-
-.. doxygenfunction:: data_input
-
-currnt.f90
-----------
-
-.. doxygenfunction:: currnt
-
-shapesurf.f90
--------------
-
-.. doxygenfunction:: shapesurf
-.. doxygenfunction:: dslant
-

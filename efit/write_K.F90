@@ -14,13 +14,19 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
 
       integer*4, intent(inout) :: ktime
-      integer*4, intent(inout) :: kerror
+      integer*4, intent(out) :: kerror
+      integer*4 i,jtime,idtime,ioerr,itimeb,mtime,irshot,istat,istop, &
+                mmemsels,mmstark
+      real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref,ktear, &
+             pnbeam,timeus,timems,currn1,currc79,currc139,currc199, &
+             curriu30,curriu90,curriu150,curril30,curril90,curril150
+      real*8 delt,times
       character ishotime*12,news*72, &
                 eqdsk*20,prefix1*1,header*42,fit_type*3
       real*8,dimension(:),allocatable :: coils,expmp2, &
@@ -31,9 +37,9 @@
                 rrmsels,zzmsels,l1msels,l2msels, &
                 l4msels,emsels,semsels,fwtemsels
       real*8 :: dnmin
-      character(256) table_save
       character*82 snap_ext
-      character(len=1000) :: line
+      character(1000) :: line
+      character(256) table_save
       namelist/in1/ishot,itime,itimeu,qvfit,plasma,expmp2,coils,btor, &
            fwtsi,fwtcur,limitr,fwtmp2,kffcur,kppcur,fwtqa,ierchk, &
            fwtbp,serror,nextra,scrape,itrace,itek,xltype,rcentr,bitip, &
@@ -105,10 +111,9 @@
            ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels, &
            idebug,jdebug,synmsels,avemsels,kwritime, &
            v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi, &
-           siloplim,use_previous
+           siloplim,use_previous,ierchk
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
-      data mcontr/35/,lfile/36/,ifpsi/0/
       data currn1/0.0/,currc79/0.0/,currc139/0.0/,currc199/0.0/, &
                        curriu30/0.0/,curriu90/0.0/,curriu150/0.0/, &
                        curril30/0.0/,curril90/0.0/,curril150/0.0/
@@ -123,10 +128,8 @@
                rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels), &
                l2msels(nmsels),l4msels(nmsels),emsels(nmsels), &
                semsels(nmsels),fwtemsels(nmsels))
-      fwtbmsels = 0.0
 
-      kerror = 0
-      table_save=table_dir
+      kerror=0
 !---------------------------------------------------------------------
 !--   generate input files and command file for running EFIT-AI     --
 !---------------------------------------------------------------------
@@ -146,13 +149,11 @@
           stop
         endif
       endif
-      if (snapextin.ne.'none') then ! could come from efit.input
+      if (snapextin.eq.'none') then ! could come from efit.input
+        snap_file = 'efit_snap.dat'
+      else
         snap_ext = adjustl(snapextin)
         snap_file = 'efit_snap.dat_'//snap_ext
-        open(unit=neqdsk,status='old', &
-             file=snap_file,iostat=ioerr)
-      else
-        snap_file='efit_snap.dat'
       endif
       open(unit=neqdsk,status='old',file=snap_file,iostat=ioerr)
       if (ioerr.eq.0) then
@@ -162,52 +163,15 @@
            file= input_dir(1:lindir)//snapfile)
         snapfile=input_dir(1:lindir)//snapfile
       endif
-      fwtfc(1:nfcoil)=0.
-      fwtec(1:nesum)=0.
-      fwtbdry(1:mbdry)=1.0
-      fwtsol(1:mbdry)=1.0
-      sigrbd(1:mbdry)=1.e10_dp
-      sigzbd(1:mbdry)=1.e10_dp
-      fwtmp2(1:magpri)=0.
-      bitmpi(1:magpri)=0.0
-      fwtgam(1:nstark)=0.0
-      fwtsi(1:nsilop)=0.
-      psibit(1:nsilop)=0.0
-      error=1.e-03_dp
-      fcurbd=1.
-      fwtcur=1.
-      fwtbp=1.
-      fwtqa=0.
-      iaved=5
-      iavem=5
-      iavev=10
-      icprof=0
-      icutfp=0
-      iecurr=1
-      ierchk=1
-      ifcurr=0
-      ifitvs=0
-      itek=0
-      iout=1                 ! default - write fitout.dat
-      itrace=1
-!jal 04/23/2004
-      iplcout=0
-      keqdsk=1
-      kffcur=3
-      kppcur=3
-      limid=33
-      lookfw=1
-      mxiter=25
-      nextra=1
-      pcurbd=1.
-      scrape=0.030_dp
-      qvfit=0.95_dp
-      serror=0.03_dp
+!
+      fwtbmsels=0.0
+      ktear=0
+      mtime=ktime
+      table_save=table_dir
       xltype=0.
       xltype_180=0.0
-      ifindopt = 2
-      tolbndpsi = 1.0e-12_dp
-      ktear=0
+!
+      call set_defaults
 !
       read (neqdsk,efitin,iostat=istat)
       if (istat>0) then
@@ -224,23 +188,28 @@
         stop
       endif
       if(ioerr.ne.0) close(unit=neqdsk)
+      if (link_efit(1:1).ne.'') then
+        ! use directories specified in efit.setup if available
+        table_dir=trim(link_efit)//'green/'
+        input_dir=trim(link_efit)
+      elseif (table_dir.ne.table_save .and. link_efit.eq.'') then
+        ! error if table_dir changes (global_allocs already set)
+        call errctrl_msg('write_K', &
+          'changing experiment during run is not supported (table_dir)')
+        kerror=1
+        return
+      endif
+      if (link_store(1:1).ne.'')  store_dir=trim(link_store)
+!--   warn that idebug, jdebug, and ktear inputs are depreciated
+      if (idebug.ne.0) write(*,*) &
+      "idebug input variable is depreciated, set cmake variable instead"
+      if (jdebug.ne."NONE") write(*,*) &
+      "jdebug input variable is depreciated, set cmake variable instead"
+      if(ktear.ne.0) write(*,*) &
+      "tearing calculations don't exist, ktear is depreciated"
 #ifdef DEBUG_LEVEL2
       write (6,*) 'WRITE_K fwtbmsels= ',(fwtbmsels(i),i=1,nmsels)
 #endif
-!----------------------------------------------------------------------- 
-!--   reset table dir if necessary                                    --
-!-----------------------------------------------------------------------
-      ! always need to set table_dir length here (because unset)
-      ltbdir=0
-      do i=1,len(table_dir)
-        if (table_dir(i:i).ne.' ') ltbdir=ltbdir+1
-      enddo
-      if (table_dir.ne.table_save) then
-        call set_table_dir
-        call read_eparmdud
-        call get_eparmdud_dependents
-        call efit_read_tables  ! these don't get used in this mode
-      endif
 !---------------------------------------------------------------------
 !--   specific choice of current profile                           --
 !--       ICPROF=1  no edge current density allowed                 --
@@ -476,7 +445,7 @@
         do i=1,nfcoil
           if (ierfc(i).ne.0) fwtfc(i)=0.0
         enddo
-        ecurrt(1:nesum)=eccurt(jtime,1:nesum)
+        ecurrt=eccurt(jtime,:)
         fwtec(1:nesum)=swtec(1:nesum)
         do i=1,nesum
           if (ierec(i).ne.0) fwtec(i)=0.0
@@ -551,7 +520,7 @@
           rbdry(1)=1.94_dp
           zbdry(1)=ztssym(jtime)+0.5_dp*ztswid(jtime)
         endif
-        call getfnmu(itimeu,'k',ishot,itime,eqdsk)
+        call setfnmeq(itimeu,'k',ishot,itime,eqdsk)
         open(unit=neqdsk,status='old',file=eqdsk,iostat=ioerr)
         if(ioerr.eq.0) close(unit=neqdsk,status='delete')
 !-----------------------------------------------------------------------
@@ -589,7 +558,7 @@
           fit_type = 'MAG'
         endif
 !
-        call db_header(ishot,itime,header)
+        header = ' '
         write (neqdsk,4042) header,fit_type
 !---------------------------------------------------------------------
 !--     Append SNAP file                                            --
@@ -658,17 +627,32 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
 
+      integer*4, intent(in) :: jtime
+      integer*4, intent(out) :: kerror
+      integer*4 i,ioerr,limitrss,mmstark,nbdryss
+      real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref,ktear, &
+             pnbeam,timeus,timems,currn1,currc79,currc139,currc199, &
+             curriu30,curriu90,curriu150,curril30,curril90,curril150
+      real*8 kffcurt,kppcurt
       character eqdsk*20,header*42,fit_type*3
-      integer*4 limitrss
-      real*8,dimension(:),allocatable :: coils,expmp2, &
-                denr,denv, tgamma,sgamma,rrrgam, &
-                zzzgam,aa1gam,aa2gam, aa3gam,aa4gam,aa5gam, &
-                aa6gam,aa7gam,tgammauncor
+      integer*4, dimension(npcurn) :: kffbdryss,kff2bdryss, &
+                                      kppbdryss,kpp2bdryss, &
+                                      kwwbdryss,kww2bdryss
+      real*8, dimension(npcurn) :: ffbdryss,ff2bdryss, &
+                                   ppbdryss,pp2bdryss, &
+                                   wwbdryss,ww2bdryss
+      real*8, dimension(mbdry) :: rbdryss,zbdryss
+      real*8 :: brspss(nrsmat),coils(nsilop),expmp2(magpri), &
+                denr(nco2r),denv(nco2v)
+      real*8, dimension(nmtark) :: tgamma,sgamma,rrrgam,zzzgam, &
+                                   aa1gam,aa2gam,aa3gam,aa4gam,aa5gam, &
+                                   aa6gam,aa7gam,tgammauncor
+
       character*82 snap_ext
       namelist/in1/ishot,itime,itimeu,qvfit,plasma,expmp2,coils,btor, &
            fwtsi,fwtcur,limitr,fwtmp2,kffcur,kppcur,fwtqa,ierchk, &
@@ -686,8 +670,8 @@
            wwbdry,kwwbdry,ww2bdry,kww2bdry, &
            ktear,kersil,iout,ixray,table_dir,input_dir,store_dir, &
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve, &
-           iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum,efitversion, &
-           kwripre,ifindopt,tolbndpsi,siloplim,use_previous
+           iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum, &
+           kwripre,ifindopt,tolbndpsi,siloplim,efitversion,use_previous
       namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
            znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
            oldcomp,currc199,curriu30,curriu90, &
@@ -707,27 +691,11 @@
            nfit,kcmin,fwtnow,mtxece
       namelist/iner/keecur,ecurbd,keefnc,eetens,keebdry,kee2bdry, &
            eebdry,ee2bdry,eeknt,keeknt,keehord
-      data mcontr/35/,lfile/36/,ifpsi/0/
-      data currn1/0.0/,currc79/0.0/,currc139/0.0/,currc199/0.0/ &
-                      ,curriu30/0.0/,curriu90/0.0/,curriu150/0.0/ &
-                      ,curril30/0.0/,curril90/0.0/,curril150/0.0/
-      integer*4, intent(in) :: jtime
-      integer*4, intent(inout) :: kerror
-
-
-      ALLOCATE(coils(nsilop),expmp2(magpri), &
-               denr(nco2r),denv(nco2v), &
-               tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark), &
-               zzzgam(nmtark),aa1gam(nmtark),aa2gam(nmtark), &
-               aa3gam(nmtark),aa4gam(nmtark),aa5gam(nmtark), &
-               aa6gam(nmtark),aa7gam(nmtark),tgammauncor(nmtark))
+      data currn1/0.0/,currc79/0.0/,currc139/0.0/,currc199/0.0/, &
+                       curriu30/0.0/,curriu90/0.0/,curriu150/0.0/, &
+                       curril30/0.0/,curril90/0.0/,curril150/0.0/
 
       kerror = 0
-      ! need to set table_dir length here (because unset)
-      ltbdir=0
-      do i=1,len(table_dir)
-        if (table_dir(i:i).ne.' ') ltbdir=ltbdir+1
-      enddo
 !
       itime=time(jtime)
       timems=itime
@@ -742,7 +710,7 @@
       brsp=0.0
       brsp(1:nfcoil)=fccurt(jtime,1:nfcoil)
       fwtfc(1:nfcoil)=swtfc(1:nfcoil)
-      ecurrt(1:nesum)=eccurt(jtime,1:nesum)
+      ecurrt=eccurt(jtime,:)
       fwtec(1:nesum)=swtec(1:nesum)
       denr(1:nco2r)=denrt(jtime,1:nco2r)
       denv(1:nco2v)=denvt(jtime,1:nco2v)
@@ -768,9 +736,9 @@
       fwtcur=swtcur
       btor=bcentr(jtime)
       plasma=pasmat(jtime)
+      nbdryss=nbdry
       rbdryss=rbdry
       zbdryss=zbdry
-      nbdryss=nbdry
       rbdry=0.0
       zbdry=0.0
       if (fitzts.eq.'te'.and.ztserr(jtime)) then
@@ -790,6 +758,7 @@
       kff2bdryss=kff2bdry
       kwwbdryss=kwwbdry
       kww2bdryss=kww2bdry
+      limitrss=limitr
 !
       ppbdry=0.0
       pp2bdry=0.0
@@ -803,7 +772,6 @@
       kff2bdry=0.0
       kwwbdry=0.0
       kww2bdry=0.0
-      limitrss=limitr
       limitr=-limid
       vloop=vloopt(jtime)
       dflux=1.0e+03_dp*diamag(jtime)
@@ -839,7 +807,7 @@
 !-----------------------------------------------------------------------
 !--   Write K file                                                    --
 !-----------------------------------------------------------------------
-      call getfnmu(itimeu,'k',ishot,itime,eqdsk)
+      call setfnmeq(itimeu,'k',ishot,itime,eqdsk)
       open(unit=neqdsk,status='old',file=eqdsk,iostat=ioerr)
       if(ioerr.eq.0) close(unit=neqdsk,status='delete')
       open(unit=neqdsk,file=eqdsk,status='new', &
@@ -865,7 +833,7 @@
         fit_type = 'MAG'
       endif
 !
-      call db_header(ishot,itime,header)
+      header = ' '
       write (neqdsk,4042) header,fit_type
 !----------------------------------------------------------------------
 !--   Restore variables                                              --
@@ -896,33 +864,21 @@
 !---------------------------------------------------------------------
 !--   Append SNAP file                                              --
 !---------------------------------------------------------------------
-      snap: if (kdata.eq.7) then
+      open(unit=nsnapf,status='old', &
+           file=snap_file,iostat=ioerr)
+      if (ioerr.eq.0) then
+        snapfile=snap_file
+      else
         open(unit=nsnapf,status='old', &
-             file=snap_file,iostat=ioerr)
+             file=input_dir(1:lindir)//snap_file,iostat=ioerr)
         if (ioerr.eq.0) then
-          snapfile=snap_file
-        else
+          snapfile=input_dir(1:lindir)//snap_file
+        elseif (snapextin.ne.'none') then
           open(unit=nsnapf,status='old', &
-               file=input_dir(1:lindir)//snap_file,iostat=ioerr)
-          if (ioerr.eq.0) then
-            snapfile=input_dir(1:lindir)//snap_file
-          else
-            open(unit=nsnapf,status='old', &
-                 file=snapextin)
-            snapfile=snapextin
-          endif
+               file=snapextin)
+          snapfile=snapextin
         endif
-      else snap
-        open(unit=nsnapf,status='old', &
-             file='efit_snap.dat',iostat=ioerr)
-        if (ioerr.eq.0) then
-          snapfile='efit_snap.dat'
-        else
-          open(unit=nsnapf,status='old', &
-               file= input_dir(1:lindir)//'efit_snap.dat')
-          snapfile=input_dir(1:lindir)//'efit_snap.dat'
-        endif
-      endif snap
+      endif
       if (appendsnap.eq.'K'.or.appendsnap.eq.'KG') then
         do i=1,1000000
           read (nsnapf,9991,iostat=ioerr) tmpdata

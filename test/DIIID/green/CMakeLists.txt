@@ -15,10 +15,10 @@ if (${TEST_EFUND})
 
   add_test(NAME DIIID-green COMMAND run_green.sh)
   add_test(NAME DIIID-green-results COMMAND check_green_results.sh)
-else()
-  if(NOT ${GRID_SIZE} EQUAL 65)
+else ()
+  if (NOT ${GRID_SIZE} EQUAL 65)
     message(FATAL_ERROR "Green Function Tables of this size must be made")
-  endif()
+  endif ()
 
   file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/output/dprobe.dat
        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
@@ -36,4 +36,4 @@ else()
        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
   file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/output/rv6565.ddd
        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
-endif()
+endif ()

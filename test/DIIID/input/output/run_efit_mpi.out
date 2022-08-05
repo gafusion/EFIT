@@ -1,0 +1,83 @@
+
+          EFITD Version  03/16/2022
+
+
+ type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+
+ number of time slices?
+
+ type input file names:
+ #
+ #
+ #
+ #
+
+      ******************** EFITD 65 x  65  output ********************
+ table_dir = </fusion/projects/codes/efit/support_files/2006/181292/>
+
+ r=  1 t=  2500 it=  1 chi2=4.47E+01 zm=-2.26E-02 err=1.861E+00 dz=-2.258E-02 delz= 0.000E+00 dj=0.000E+00
+
+ r=  3 t=  2700 it=  1 chi2=7.75E+01 zm=-2.28E-02 err=1.948E+00 dz=-2.279E-02 delz= 0.000E+00 dj=0.000E+00
+ r=  1 t=  2500 it=  2 chi2=2.59E+01 zm=-2.39E-02 err=1.021E-01 dz=-1.346E-03 delz= 0.000E+00 dj=0.000E+00
+
+ r=  2 t=  2600 it=  1 chi2=4.17E+01 zm=-2.28E-02 err=1.921E+00 dz=-2.276E-02 delz= 0.000E+00 dj=0.000E+00
+
+ r=  0 t=  2400 it=  1 chi2=4.13E+01 zm=-2.21E-02 err=1.805E+00 dz=-2.212E-02 delz= 0.000E+00 dj=0.000E+00
+ r=  3 t=  2700 it=  2 chi2=2.27E+01 zm=-2.36E-02 err=1.085E-01 dz=-7.966E-04 delz= 0.000E+00 dj=0.000E+00
+ r=  1 t=  2500 it=  3 chi2=2.57E+01 zm=-2.46E-02 err=2.841E-02 dz=-6.775E-04 delz= 0.000E+00 dj=0.000E+00
+ r=  3 t=  2700 it=  3 chi2=2.29E+01 zm=-2.39E-02 err=3.556E-02 dz=-2.717E-04 delz= 0.000E+00 dj=0.000E+00
+ r=  2 t=  2600 it=  2 chi2=2.59E+01 zm=-2.38E-02 err=1.017E-01 dz=-1.005E-03 delz= 0.000E+00 dj=0.000E+00
+ r=  0 t=  2400 it=  2 chi2=2.51E+01 zm=-2.30E-02 err=1.033E-01 dz=-8.622E-04 delz= 0.000E+00 dj=0.000E+00
+ r=  1 t=  2500 it=  4 chi2=4.11E+01 zm=-2.89E-02 err=1.360E-01 dz=-4.251E-03 delz= 7.522E-01 dj=1.789E-02
+ r=  3 t=  2700 it=  4 chi2=3.38E+01 zm=-2.79E-02 err=1.063E-01 dz=-4.064E-03 delz= 6.536E-01 dj=1.503E-02
+ r=  1 t=  2500 it=  5 chi2=2.10E+01 zm=-3.06E-02 err=8.083E-02 dz=-1.794E-03 delz= 0.000E+00 dj=1.789E-02
+ r=  2 t=  2600 it=  3 chi2=2.61E+01 zm=-2.41E-02 err=3.125E-02 dz=-3.613E-04 delz= 0.000E+00 dj=0.000E+00
+ r=  3 t=  2700 it=  5 chi2=1.99E+01 zm=-2.90E-02 err=6.822E-02 dz=-1.102E-03 delz= 0.000E+00 dj=1.503E-02
+ r=  0 t=  2400 it=  3 chi2=2.48E+01 zm=-2.36E-02 err=4.515E-02 dz=-5.902E-04 delz= 0.000E+00 dj=0.000E+00
+ r=  1 t=  2500 it=  6 chi2=2.12E+01 zm=-3.09E-02 err=3.686E-03 dz=-2.118E-04 delz= 0.000E+00 dj=1.789E-02
+ r=  3 t=  2700 it=  6 chi2=2.01E+01 zm=-2.88E-02 err=3.849E-03 dz= 1.764E-04 delz= 0.000E+00 dj=1.503E-02
+ r=  1 t=  2500 it=  7 chi2=2.32E+01 zm=-3.35E-02 err=4.025E-02 dz=-2.603E-03 delz= 3.410E-01 dj=7.352E-03
+ r=  2 t=  2600 it=  4 chi2=3.90E+01 zm=-2.85E-02 err=1.184E-01 dz=-4.384E-03 delz= 7.075E-01 dj=1.678E-02
+ r=  0 t=  2400 it=  4 chi2=3.57E+01 zm=-2.73E-02 err=1.216E-01 dz=-3.767E-03 delz= 6.156E-01 dj=1.498E-02
+ r=  3 t=  2700 it=  7 chi2=2.21E+01 zm=-3.11E-02 err=3.949E-02 dz=-2.278E-03 delz= 3.280E-01 dj=7.003E-03
+ r=  1 t=  2500 it=  8 chi2=2.08E+01 zm=-3.42E-02 err=1.086E-02 dz=-7.306E-04 delz= 9.447E-02 dj=1.951E-03
+ r=  3 t=  2700 it=  8 chi2=1.99E+01 zm=-3.18E-02 err=1.475E-02 dz=-6.830E-04 delz= 1.102E-01 dj=2.251E-03
+ r=  2 t=  2600 it=  5 chi2=2.16E+01 zm=-3.01E-02 err=6.457E-02 dz=-1.557E-03 delz= 0.000E+00 dj=1.678E-02
+ r=  0 t=  2400 it=  5 chi2=2.12E+01 zm=-2.88E-02 err=6.600E-02 dz=-1.483E-03 delz= 0.000E+00 dj=1.498E-02
+ r=  1 t=  2500 it=  9 chi2=2.07E+01 zm=-3.43E-02 err=6.875E-04 dz=-1.127E-04 delz= 6.410E-02 dj=1.354E-03
+ r=  3 t=  2700 it=  9 chi2=1.98E+01 zm=-3.18E-02 err=5.912E-04 dz=-3.404E-05 delz= 8.148E-02 dj=1.704E-03
+ r=  1 t=  2500 it= 10 chi2=2.07E+01 zm=-3.43E-02 err=6.082E-05 dz=-3.597E-05 delz= 6.233E-02 dj=1.313E-03
+ Enter SHAPE kerror =             1            0
+ r=  2 t=  2600 it=  6 chi2=2.18E+01 zm=-3.02E-02 err=2.944E-03 dz=-1.450E-04 delz= 0.000E+00 dj=1.678E-02
+ r=  0 t=  2400 it=  6 chi2=2.14E+01 zm=-2.89E-02 err=3.334E-03 dz=-6.913E-05 delz= 0.000E+00 dj=1.498E-02
+ r=  3 t=  2700 it= 10 chi2=1.98E+01 zm=-3.19E-02 err=6.708E-05 dz=-2.480E-05 delz= 8.350E-02 dj=1.738E-03
+ Enter SHAPE kerror =             1            0
+ r=  2 t=  2600 it=  7 chi2=2.34E+01 zm=-3.26E-02 err=3.472E-02 dz=-2.420E-03 delz= 3.086E-01 dj=6.702E-03
+ r=  0 t=  2400 it=  7 chi2=2.33E+01 zm=-3.13E-02 err=4.040E-02 dz=-2.391E-03 delz= 3.151E-01 dj=6.948E-03
+ r=  2 t=  2600 it=  8 chi2=2.14E+01 zm=-3.33E-02 err=8.478E-03 dz=-6.749E-04 delz= 9.026E-02 dj=1.886E-03
+ r=  0 t=  2400 it=  8 chi2=2.11E+01 zm=-3.20E-02 err=1.300E-02 dz=-7.079E-04 delz= 8.906E-02 dj=1.879E-03
+INFO in efitd at r=  1, t=  2500: Done processing
+ r=  2 t=  2600 it=  9 chi2=2.14E+01 zm=-3.34E-02 err=9.756E-04 dz=-1.033E-04 delz= 5.992E-02 dj=1.275E-03
+ r=  0 t=  2400 it=  9 chi2=2.10E+01 zm=-3.21E-02 err=1.967E-04 dz=-8.874E-05 delz= 6.034E-02 dj=1.302E-03
+INFO in efitd at r=  3, t=  2700: Done processing
+ r=  2 t=  2600 it= 10 chi2=2.13E+01 zm=-3.34E-02 err=6.032E-05 dz=-3.022E-05 delz= 5.801E-02 dj=1.231E-03
+ Enter SHAPE kerror =             1            0
+ r=  0 t=  2400 it= 10 chi2=2.10E+01 zm=-3.21E-02 err=6.111E-05 dz=-3.186E-05 delz= 5.957E-02 dj=1.281E-03
+ Enter SHAPE kerror =             1            0
+
+       data used:   
+ 39 flux loops
+ 69 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     186610 time(ms) =       2400 chi**2   =  2.090E+01
+ betat(%) =      0.416 betap    =      0.110 li       =      1.130
+ vol(cm3) =  1.780E+07 rout(cm) =    172.912 zout(cm) =      5.468
+ elong    =      1.791 utriang  =      0.746 ltriang  =      0.352
+ a(cm)    =     56.361 lin(cm)  =     14.819 lout(cm) =      5.797
+ ltop(cm) =     16.924 q*       =      3.874 rc(cm)   =    170.276
+ zc(cm)   =     -2.694 bt0(t)   =      1.638 qout     =      7.495
+INFO in efitd at r=  2, t=  2600: Done processing
+INFO in efitd at r=  0, t=  2400: Done processing
