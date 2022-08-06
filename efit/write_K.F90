@@ -11,6 +11,7 @@
 !**********************************************************************
       subroutine write_K(ktime,kerror)
       use set_kinds
+      use opt_input, only: cmdfile_in,shotfile_in
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -37,7 +38,7 @@
                 rrmsels,zzmsels,l1msels,l2msels, &
                 l4msels,emsels,semsels,fwtemsels
       real*8 :: dnmin
-      character*82 snap_ext
+      character*86 snap_ext
       character(1000) :: line
       character(256) table_save
       namelist/in1/ishot,itime,itimeu,qvfit,plasma,expmp2,coils,btor, &
@@ -160,7 +161,7 @@
         snapfile=snap_file
       else
         open(unit=neqdsk,status='old', &
-           file= input_dir(1:lindir)//snapfile)
+           file=input_dir(1:lindir)//snapfile)
         snapfile=input_dir(1:lindir)//snapfile
       endif
 !

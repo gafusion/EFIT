@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !>
 !!    This subroutine read efit.input file
@@ -6,6 +7,7 @@
       subroutine read_optin()
       use commonblocks
       use set_kinds
+      use opt_input
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -17,7 +19,7 @@
       logical input_flag
       integer*4 maxinpfile,mode,shot,steps,istat
       real*8 starttime,deltatime
-      character cmdfile*15,shotfile*15,snapext*82
+      character cmdfile*15,shotfile*15,snapext*86
 
       namelist/setup/link_efit,link_store,maxinpfile,ntims
       namelist/optin/mode,cmdfile,shotfile,shot,starttime,deltatime, &

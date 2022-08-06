@@ -253,7 +253,7 @@
          real*8 deltatime_in
          integer*4 steps_in
          logical use_opt_input
-         character snapext_in*82
+         character snapext_in*86
          character(80),dimension(:),allocatable :: inpfile
       end module opt_input
 

@@ -1504,7 +1504,7 @@
         kerror=1
         return
       endif
-      if (link_store(1:1).ne.'')  store_dir=trim(link_store)
+      if(link_store(1:1).ne.'') store_dir=trim(link_store)
 !--   warn that idebug, jdebug, and ktear inputs are depreciated
       if (idebug.ne.0) write(*,*) &
       "idebug input variable is depreciated, set cmake variable instead"

@@ -19,6 +19,7 @@
 !**********************************************************************
       subroutine get_opt_input(ktime)
       use set_kinds
+      use opt_input
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -29,7 +30,8 @@
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
-      character*82 snap_ext     
+      character*86 snap_ext     
+      snap_ext='none'
       snapextin='none'
 
       ! ONLY root process allowed to interface with terminal
@@ -210,8 +212,7 @@
               timeb = starttime_in
               dtime = deltatime_in
               ktime = steps_in
-              snap_ext = snapext_in
-              snapextin=snap_ext
+              snapextin = snapext_in
             endif
           endif
 
@@ -221,23 +222,20 @@
       select case (kdata)
       case (3,7) 
 #if defined(USEMPI)
-          if (nproc > 1) &
-            call MPI_BCAST(snap_ext,82,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
-            snapextin=snap_ext
-#endif 
-      case (5,6) 
-#if defined(USEMPI)
         if (nproc > 1) then
-          call MPI_BCAST(cmdfile_in,15,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
-          call MPI_BCAST(shotfile_in,15,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
-          if (shotfile_in.eq.'0' .or. shotfile_in.eq.'') then
-            call MPI_BCAST(ishot,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-            call MPI_BCAST(ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-            call MPI_BCAST(timeb,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-            call MPI_BCAST(dtime,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-          endif
+          call MPI_BCAST(ishot,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+          call MPI_BCAST(timeb,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+          call MPI_BCAST(dtime,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+          call MPI_BCAST(snap_ext,82,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
         endif
-#endif
+#endif 
+        snapextin = snap_ext
+      case (5,6)
+        ! only single process is used in this mode
+#if defined(USEMPI)
+        if(nproc > 1) &
+            write(nttyo,*) 'Warning: only 1 processor is active'
+#endif 
         return
       end select
      
@@ -255,10 +253,7 @@
         endif
 
         ! Broadcast inputs 
-        call MPI_BCAST(ishot,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
         call MPI_BCAST(ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-        call MPI_BCAST(timeb,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        call MPI_BCAST(dtime,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
         ! if (nproc > ktime) stop ! optional?...
 
         if (kdata.eq. 1 .or. kdata.eq.2) then

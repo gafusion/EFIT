@@ -10,6 +10,6 @@
  starttime=@FIRST_TIME@
  deltatime=@STEP_SIZE@
  steps=@EFIT_COUNT@
- snapext=@SNAP_EXT@
+ snapext="@SNAP_EXT@"
  inpfile=@EFIT_IN@
  /

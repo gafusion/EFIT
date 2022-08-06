@@ -111,7 +111,8 @@
 #endif
         integer*4 nsnapf
         character*2 appendsnap
-        character*100 snapfile, tmpdata, snapextin
+        character*86 snapextin
+        character*100 snapfile,tmpdata
         integer*4, parameter :: nin=11,nout=10,ntty=5,nrsppc=25,neqdsk=38,nffile=40, &
                                 nsave=49,nttyo=6
 #if defined(USE_HDF5)
@@ -462,5 +463,5 @@
         integer*4 :: nvtime
         real*8,dimension(:), allocatable :: vtime
         integer*4 :: ntims
-        integer*4, parameter :: npmax=262144 ! sufficient for ms data from 262s shot... needs to match npmax in getdat.F90
+        integer*4, parameter :: npmax=262144 ! sufficient for ms data from 262s shot... needs to be larger than ntims and match npmax in getdat.F90
       end module vtime_mod

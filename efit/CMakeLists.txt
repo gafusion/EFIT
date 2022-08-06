@@ -24,7 +24,7 @@ set(EFITLIB_SOURCES
 if(${HAVE_SNAP})
   set(EFITLIB_SOURCES
     ${EFITLIB_SOURCES}
-    getdat.F90 constraints.F90 diamatnetic.f90
+    getdat.F90 constraints.F90 diamagnetic.f90
     write_K.F90
   )
 endif()

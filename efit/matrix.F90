@@ -51,11 +51,11 @@
       arsp = 0.0
       crsp = 0.0
       z = 0.0
-      if (iconvr.eq.3) return
+      if(iconvr.eq.3) return
 !----------------------------------------------------------------------
 !--   Variable fitdelz                                               --
 !----------------------------------------------------------------------
-      if (fitdelz) scadelz=scaledz
+      if(fitdelz) scadelz=scaledz
 !----------------------------------------------------------------------
 !--   set up fitting weight for boundary constraints                 --
 !----------------------------------------------------------------------
@@ -104,7 +104,7 @@
           arsp(nj,nk)=0.0
         enddo
         do m=1,nmsels
-          if (fwtemselt(jtime,m).le.0.0) cycle
+          if(fwtemselt(jtime,m).le.0.0) cycle
           nj=nj+1
           arsp(nj,nk)=0.0
         enddo

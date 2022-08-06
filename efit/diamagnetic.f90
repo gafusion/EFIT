@@ -73,16 +73,16 @@
         use set_kinds
         use extvars, only: input_dir,lindir
         use var_exdata, only: ishot
-        use vtime_mod, only: ntims
+        use vtime_mod, only: ntims,npmax
         implicit integer*4 (i-n), real*8 (a-h,o-z)
         PARAMETER (NPOINT=42)
         REAL*8 RAR,TTEMP
         REAL*4 RAR4,REAL32
         INTEGER*4 IDAT,IAR,ASCII,INT16,INT32
         DIMENSION DIAMAG(NTIMS,3),DIAMAGC(NTIMS,3),SIG(NTIMS,3)
-        DIMENSION TIM(NTIMS),TTEMP(NTIMS)
-        DIMENSION IDAT(NTIMS),YDAT(NTIMS),YTEMP(NTIMS),BT(NTIMS)
-        DIMENSION IAR(128),RAR(8400),RAR4(8400),IERR(3),IADJ(3)
+        DIMENSION TIM(NTIMS),TTEMP(NPMAX)
+        DIMENSION IDAT(NPMAX),YDAT(NTIMS),YTEMP(NPMAX),BT(NTIMS)
+        DIMENSION IAR(128),RAR(20+NPMAX),RAR4(20+NPMAX),IERR(3),IADJ(3)
         DIMENSION FIX(3),BTCOMP(3),EBCOUP(3)
         DIMENSION ASCII(11),INT16(11),INT32(11),REAL32(11)
 
@@ -111,7 +111,8 @@
         filin=input_dir(1:lindir)//filin
 
         ITYP=11
-        IAR(1)=NPTS
+        IAR(1)=NPMAX
+        ! TODO: these lines appear to be specific to DIII-D...
         RAR(1)=-0.050000
         RAR(2)=0.0020005
         NAVG=int((TAVG+.5)/1000./RAR(2))
@@ -239,11 +240,12 @@
           IPOINT=POINT(I)
           IREPLACE=0
           ier=0
-          IF (IPOINT.EQ.'ECOILB    ' .or. IPOINT.EQ.'VLOOPBS   ') THEN
-            IAR(1)=8180
-          ELSE
-            IAR(1)=8160
-          ENDIF
+          !IF (IPOINT.EQ.'ECOILB    ' .or. IPOINT.EQ.'VLOOPBS   ') THEN
+          !  IAR(1)=8180
+          !ELSE
+          !  IAR(1)=8160
+          !ENDIF
+          IAR(1)=NPMAX
           IERSAV=0
           IF (IPOINT.EQ.'VLOOPBS   ' .AND. NSHOT.EQ.52400) THEN
             IPOINT='VLOOPB    '

@@ -1,4 +1,4 @@
-#setup_dir,include "config.f"
+#include "config.f"
 !**********************************************************************
 !>
 !!    get_constraints sets the pointnames and calls subroutines to
@@ -743,8 +743,8 @@
 !--   milli-second averaging                                         --
 !----------------------------------------------------------------------
       dtmin = 0.001001
-      dtmin = min (dtmin,delt)
-      dtmin = max (dtmin,xm5)
+      dtmin = min(dtmin,delt)
+      dtmin = max(dtmin,xm5)
       mave = iabs(kave)
       do kkk=1,8
         tmin = times-(mave+10)*dtmin*kkk
@@ -989,11 +989,11 @@
       real*8 w(npmax),xw(npmax),bw(ntims),cw(ntims),dw(ntims)
       data xm5/0.00001/
 !
-      xx=xxd
-      ierror=1
-      dtmin=0.001001
-      dtmin= min (dtmin,delt)
-      dtmin= max (dtmin,xm5)
+      xx = xxd
+      ierror = 1
+      dtmin = 0.001001
+      dtmin= min(dtmin,delt)
+      dtmin= max(dtmin,xm5)
       mave = iabs(kave)
       do kkk=1,8
         tmin = times-(mave+10)*dtmin*kkk
@@ -1003,7 +1003,7 @@
         npn = min0(npn,ntims)
         npn = max0(npn,10)
         !
-        bitvl=0.0
+        bitvl = 0.0
         ircfac = 0
         if (name .ne. 'NONE      ') then  !JRF
           call getdat_e &
@@ -1347,12 +1347,12 @@
       real*8 sevals
       integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave,ierdia(3) ! mm, mmm, and nn are unused
       real*8, intent(in) :: time(np),delt,xxd
-      character*10, intent(in) ::  name
+      character*10, intent(in) :: name
       integer*4, intent(out) :: ierror
       real*8, intent(out) :: y(np),sigmay(np),bitvl
       integer*4 mave,npn,i
-      real*8  xm5,dtmin,tavg,dtave
-      real*8 xlen(1),w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims), &
+      real*8 xm5,dtmin,tavg,dtave
+      real*8 w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims), &
              ew(ntims)
       data xm5/0.00001/
 !
@@ -1362,7 +1362,7 @@
       dtmin=max(dtmin,xm5)
       mave=iabs(kave)
       npn=ntims
-      tavg=1.0
+      tavg=1.0 ! TODO: is this specific to DIII-D?
       call getdia(nshot,xw,npn,tavg,ierdia,w,ew)
       if (ierdia(2).gt.0.and.ierdia(3).gt.0) then
         ierror=1
@@ -1371,10 +1371,8 @@
 !------------------------------------------------------------------
 !--   average data over mave ms                                  --
 !------------------------------------------------------------------
-      xlen=maxloc(xw)
-      npn=xlen(1)
       if (mave .ne. 0) then
-        dtave = mave*dtmin*2.
+        dtave=mave*dtmin*2.
         call smoothit(xw(1:npn),w(1:npn),npn,dtave)
       endif
 !

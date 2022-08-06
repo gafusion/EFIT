@@ -325,6 +325,7 @@
         rzero=1.6955_dp
         saiec=0.0
         scalea=.false.
+        scalesir=1.0e-3_dp
         sidif=-1.0e+10_dp
         sigppb=1000.
         sigpre=0.0
@@ -382,7 +383,6 @@
         sbetaw=0.0
         scalepr(1)=-1.
         scalepw(1)=-1.
-        scalesir=1.0e-3_dp
         sgprmin=0.0
         srm=-3.5_dp
         vcurfb(1)=0.0

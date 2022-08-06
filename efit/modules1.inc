@@ -135,6 +135,4 @@
 
       use profile_ext_mod
 
-      use opt_input
-
       use mpi_info

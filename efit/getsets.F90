@@ -22,13 +22,15 @@
 #endif
       integer*4, intent(inout) :: ktime
       integer*4, intent(out) :: kerror
-      integer (c_int) :: retwait
-      integer*4 i,jtime,idtime,ioerr,itimeb,mdoskip,mtime
-      real*8 xltype,xltype_180,ktear,dnmin
+      integer(c_int) retwait
+      integer*4 i,jtime,idtime,ioerr,istat,itimeb,iread,ireadold,irshot, &
+                istop,mdoskip,mmstark,mmemsels,mtime
+      real*8 xltype,xltype_180,ktear,dnmin,delt,times
       logical lopened,exists
-      character filenm*15,ishotime*12,news*72,snap_ext*82, &
+      character filenm*15,ishotime*12,news*72,snap_ext*86, &
                 eqdsk*20,comfile*15,prefix1*1,header*42,fit_type*3
-      character(1000) :: line
+      character(1000) line
+      character(256) table_save
       real*8,dimension(:),allocatable :: fwtbmsels,fwtemsels
       namelist/efitin/ishot,istore,timeb,dtime,mtime,scrape,nextra, &
            iexcal,itrace,xltype,ivesel,fwtsi,fwtmp2,fwtcur,iprobe, &
@@ -90,6 +92,7 @@
       kppcurs=0
       kwritime=0
       mtime=ktime
+      table_save=table_dir
 
       ! initialize time dependent variables before loop
       rvsin=0.0
@@ -153,12 +156,12 @@
           snapfile=snap_file
         else
           open(unit=neqdsk,status='old', &
-               file= input_dir(1:lindir)//snap_file,iostat=ioerr)
+               file=input_dir(1:lindir)//snap_file,iostat=ioerr)
           if (ioerr.eq.0) then
             snapfile=input_dir(1:lindir)//snap_file
           elseif (snapextin.ne.'none') then
             snap_file = snap_ext
-            open(unit=neqdsk,status='old',file= snap_file)
+            open(unit=neqdsk,status='old',file=snap_file)
             snapfile=snap_file
           endif
         endif
@@ -167,7 +170,7 @@
              file='efit_time.dat',iostat=ioerr)
         if(ioerr.ne.0) &
           open(unit=neqdsk,status='old', &
-               file= input_dir(1:lindir)//'efit_time.dat')
+               file=input_dir(1:lindir)//'efit_time.dat')
       end select
 
       read (neqdsk,efitin,iostat=istat)
@@ -185,6 +188,18 @@
         stop
       endif
       close(unit=neqdsk)
+      if (link_efit(1:1).ne.'') then
+        ! use directories specified in efit.setup if available
+        table_dir=trim(link_efit)//'green/'
+        input_dir=trim(link_efit)
+      elseif (table_dir.ne.table_save .and. link_efit.eq.'') then
+        ! error if table_dir changes (global_allocs already set)
+        call errctrl_msg('getsets', &
+          'changing experiment during run is not supported (table_dir)')
+        kerror=1
+        return
+      endif
+      if(link_store(1:1).ne.'') store_dir=trim(link_store)
 !--   warn that idebug, jdebug, and ktear inputs are depreciated
       if(idebug.ne.0) write(*,*) &
       "idebug input variable is depreciated, set cmake variable instead"

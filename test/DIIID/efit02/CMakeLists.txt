@@ -23,12 +23,16 @@ string(REPLACE ";" "\n" EFIT_IN "${EFIT_IN}")
 
 configure_file(${EFIT_SETUP_CONFIGFILE}
                ${CMAKE_CURRENT_BINARY_DIR}/efit.input @ONLY)
+set(SAVE_MACHINE_LINK_DIR ${CURRENT_MACHINE_LINK_DIR})
+set(SAVE_MACHINE_BUILT_DIR ${CURRENT_MACHINE_BUILT_DIR})
 set(CURRENT_MACHINE_LINK_DIR /garbage/)
 set(CURRENT_MACHINE_BUILT_DIR /garbage/)
 configure_file(${EFIT_TEST_CONFIGFILE}
                ${CMAKE_CURRENT_BINARY_DIR}/run_efit.sh @ONLY)
 configure_file(${EFIT_RESULTS_CONFIGFILE}
                ${CMAKE_CURRENT_BINARY_DIR}/check_efit_results.sh @ONLY)
+set(CURRENT_MACHINE_LINK_DIR ${SAVE_MACHINE_LINK_DIR})
+set(CURRENT_MACHINE_BUILT_DIR ${SAVE_MACHINE_BUILT_DIR})
 
 add_test(NAME DIIID-efit02 COMMAND run_efit.sh)
 add_test(NAME DIIID-efit02-results COMMAND check_efit_results.sh)
