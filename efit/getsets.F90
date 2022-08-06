@@ -24,8 +24,8 @@
       integer*4, intent(out) :: kerror
       integer(c_int) retwait
       integer*4 i,jtime,idtime,ioerr,istat,itimeb,iread,ireadold,irshot, &
-                istop,mdoskip,mmstark,mmemsels,mtime
-      real*8 xltype,xltype_180,ktear,dnmin,delt,times
+                istop,mdoskip,mmstark,mmemsels,mtime,ktear
+      real*8 xltype,xltype_180,dnmin,delt,times
       logical lopened,exists
       character filenm*15,ishotime*12,news*72,snap_ext*86, &
                 eqdsk*20,comfile*15,prefix1*1,header*42,fit_type*3

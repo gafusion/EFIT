@@ -1,13 +1,12 @@
 !**********************************************************************
 !>
-!!    wtime writes out time history of plasma
-!!    parameters in o-file format
+!!    writes out time history of plasma parameters in o-file format
 !!    
 !!
 !!    @param kwtime : number of time elements 
 !!
 !********************************************************************** 
-      subroutine wtime(kwtime)
+      subroutine write_ot(kwtime)
       use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'
@@ -131,4 +130,4 @@
       return
 92924 format (4(1pe12.5,1x))
 93024 format (a28)
-      end subroutine wtime
+      end subroutine write_ot

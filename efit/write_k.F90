@@ -9,7 +9,7 @@
 !!    @param kerror : Error flag
 !!
 !**********************************************************************
-      subroutine write_K(ktime,kerror)
+      subroutine write_k(ktime,kerror)
       use set_kinds
       use opt_input, only: cmdfile_in,shotfile_in
       include 'eparm.inc'
@@ -23,8 +23,8 @@
       integer*4, intent(inout) :: ktime
       integer*4, intent(out) :: kerror
       integer*4 i,jtime,idtime,ioerr,itimeb,mtime,irshot,istat,istop, &
-                mmemsels,mmstark
-      real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref,ktear, &
+                mmemsels,mmstark,ktear
+      real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref, &
              pnbeam,timeus,timems,currn1,currc79,currc139,currc199, &
              curriu30,curriu90,curriu150,curril30,curril90,curril150
       real*8 delt,times
@@ -611,7 +611,7 @@
  4970 format (2x,a,1x,a,1x,a,1x,a)
  6700 format (a1,a12)
 20000 format (/,1x,'shot data not on disk')
-      end subroutine write_K
+      end subroutine write_k
 
 !**********************************************************************
 !>
@@ -623,7 +623,7 @@
 !!    @param kerror : error flag
 !!
 !**********************************************************************
-      subroutine write_K2(jtime,kerror)
+      subroutine write_k2(jtime,kerror)
       use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'
@@ -903,4 +903,4 @@
 !
       close(unit=neqdsk)
  4042 format (1x,a42,1x,a3)
-      end subroutine write_K2
+      end subroutine write_k2

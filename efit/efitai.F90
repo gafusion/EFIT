@@ -169,8 +169,8 @@
 !--  set up data                                                     --
 !----------------------------------------------------------------------
         
-        if(idebug>=2) write(6,*) ' Entering prtoutheader subroutine'
-        call prtoutheader()
+        if(idebug>=2) write(6,*) ' Entering print_header subroutine'
+        call print_header()
         if(idebug>=2) write(6,*) ' Entering data_input subroutine'
 
         call data_input(ks,iconvr,ktime,kerror)
@@ -204,20 +204,20 @@
         if (kerror.gt.0) go to 500
 !DEPRECATED        if (mtear.ne.0) call tearing(ks,mtear,kerror)
         if (kerror.gt.0) go to 500
-        if (idebug /= 0) write (6,*) 'Main/PRTOUT ks/kerror = ', ks, kerror
-        call prtout(ks)
+        if (idebug /= 0) write (6,*) 'Main/PRINT_STATS ks/kerror = ', ks, kerror
+        call print_stats(ks)
         if ((kwaitmse.ne.0).and.(kmtark.gt.0)) call fixstark(-ks,kerror)
 !----------------------------------------------------------------------
 !--  write A and G EQDSKs                                            --
 !----------------------------------------------------------------------
-        if (idebug /= 0) write (6,*) 'Main/WQEDSK ks/kerror = ', ks, kerror
-        call weqdsk(ks)
+        if (idebug /= 0) write (6,*) 'Main/write_g ks/kerror = ', ks, kerror
+        call write_g(ks)
         if (iconvr.ge.0) then
-           call shipit(ktime,ks)
+           call write_a(ktime,ks)
 !DEPRECATED           call wtear(mtear,ks)
         endif
-        if (idebug /= 0) write (6,*) 'Main/wmeasure ks/kerror = ', ks, kerror
-        call wmeasure(ktime,ks,ks,1)
+        if (idebug /= 0) write (6,*) 'Main/write_m ks/kerror = ', ks, kerror
+        call write_m(ktime,ks,ks,1)
 !----------------------------------------------------------------------
 ! -- write Kfile if needed                                           --
 !----------------------------------------------------------------------
@@ -226,8 +226,8 @@
         go to 100
       endif
       if (kwake.ne.0) go to 20
-      call wmeasure(ktime,1,ktime,2)
-      call wtime(ktime)
+      call write_m(ktime,1,ktime,2)
+      call write_ot(ktime)
 
 #if defined(USEMPI)
       ! Finalize MPI

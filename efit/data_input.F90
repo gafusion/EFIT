@@ -18,7 +18,7 @@
       integer*4, intent(in) :: jtime,ktime
       integer*4, intent(out) :: kconvr,kerror
       integer*4 i,j,k,ii,jj,kk,kkkk,m,n
-      integer*4 idoac,mcontr
+      integer*4 idoac,mcontr,ktear
       !integer*4 idodo,idovs
       integer*4 istat,lshot,im1,loc,nbdry0,nbdry1,nbdry2,nbdry3,nbryup, &
                 iup,nbranch,nqpsi,idn,limupper,lwant,mmemsels,idofb, &
@@ -34,7 +34,7 @@
       !real*4 spatial_avg_ham(nmtark,ngam_vars,ngam_u,ngam_w)
       real*8 currn1,co2cor,fq95
       real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref,sgnemin, &
-             idfila,sigtii,pnbeam,sgtemin,sgnethi,sgtethi,ktear, &
+             idfila,sigtii,pnbeam,sgtemin,sgnethi,sgtethi, &
              currc79,currc139,currc199,curc79in,curc139in,curc199in, &
              curriu30,curriu90,curriu150,curril30,curril90,curril150, &
              bti322in,bremsigi,near,adn,val,rnow,znow,bfract, &

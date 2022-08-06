@@ -1,6 +1,6 @@
 !**********************************************************************
 !>
-!!    Subroutine wmeasure writes measurements (MSE, magnetic)
+!!    Subroutine  writes measurements (MSE, magnetic)
 !!    and some of their corresponding calculated values in
 !!    a netCDF file of name m0sssss.nc/m0sssss.0tttt.
 !!    
@@ -25,7 +25,7 @@
 !!                    write all slices at one time    
 !!
 !**********************************************************************
-      subroutine wmeasure(ktime,ifirsttime,ilast,itype)
+      subroutine write_m(ktime,ifirsttime,ilast,itype)
       use set_kinds
       include 'eparm.inc'
       include 'modules1.inc'
@@ -963,4 +963,4 @@
       endif itype_iout
 !
       return
-      end subroutine wmeasure
+      end subroutine write_m

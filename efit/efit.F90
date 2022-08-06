@@ -174,9 +174,9 @@
 #if defined(USE_SNAP)
       if (kdata.eq.5.or.kdata.eq.6) then
 #ifdef DEBUG_LEVEL2
-        write(6,*) ' Entering write_K subroutine'
+        write(6,*) ' Entering write_k subroutine'
 #endif
-        call write_K(ktime,kerror)
+        call write_k(ktime,kerror)
         if (kerror.gt.0) then
           call errctrl_msg('efit','Error in write k-files',3)
         else
@@ -225,9 +225,9 @@
 !--     set up data                                                  --
 !----------------------------------------------------------------------        
 #ifdef DEBUG_LEVEL2
-        write(6,*) ' Entering prtoutheader subroutine'
+        write(6,*) ' Entering print_header subroutine'
 #endif
-        call prtoutheader()
+        call print_header()
 
 #ifdef DEBUG_LEVEL2
         write(6,*) ' Entering data_input subroutine'
@@ -279,29 +279,29 @@
           cycle
         endif
 #ifdef DEBUG_LEVEL2
-        write (6,*) 'Main/prtout ks/kerror = ', ks, kerror
+        write (6,*) 'Main/print_stats ks/kerror = ', ks, kerror
 #endif
-        call prtout(ks)
+        call print_stats(ks)
         if((kwaitmse.ne.0).and.(kmtark.gt.0)) call fixstark(-ks,kerror)
 !----------------------------------------------------------------------
 !--     write A, G, and M EQDSKs
 !----------------------------------------------------------------------
         if (iconvr.ge.0) then
 #ifdef DEBUG_LEVEL2
-          write (6,*) 'Main/shipit ks/kerror = ', ks, kerror
+          write (6,*) 'Main/write_a ks/kerror = ', ks, kerror
 #endif
-          call shipit(ktime,ks)
+          call write_a(ktime,ks)
           if (ierchk.gt.1 .and. lflag.gt.0) cycle
         endif
 #ifdef DEBUG_LEVEL2
-        write (6,*) 'Main/weqdsk ks/kerror = ', ks, kerror
+        write (6,*) 'Main/write_g ks/kerror = ', ks, kerror
 #endif
-        call weqdsk(ks)
+        call write_g(ks)
 #ifdef USE_NETCDF
 #ifdef DEBUG_LEVEL2
-        write (6,*) 'Main/wmeasure ks/kerror = ', ks, kerror
+        write (6,*) 'Main/write_m ks/kerror = ', ks, kerror
 #endif
-        call wmeasure(ktime,ks,ks,1)
+        call write_m(ktime,ks,ks,1)
 #endif
 !----------------------------------------------------------------------
 ! --    write Kfile if needed                                        --
@@ -309,9 +309,9 @@
 #if defined(USE_SNAP)
         if (kdata.eq.3 .or. kdata.eq.7) then
 #ifdef DEBUG_LEVEL2
-          write (6,*) 'Main/write_K2 ks/kerror = ', ks, kerror
+          write (6,*) 'Main/write_k2 ks/kerror = ', ks, kerror
 #endif
-          if(write_Kfile) call write_K2(ks,kerror)
+          if(write_Kfile) call write_k2(ks,kerror)
         endif
 #endif
         if(k.lt.ktime) kerrot(ks)=kerror
@@ -319,12 +319,12 @@
 
       if(kwake.ne.0) go to 20
 #ifdef USE_NETCDF
-      call wmeasure(ktime,1,ktime,2)
+      call write_m(ktime,1,ktime,2)
 #else
       if (.not.((iand(iout,2).eq.0).and.(iand(iout,4).eq.0))) &
         write(nttyo,*) 'netcdf needs to be linked to write m-files'
 #endif
-      call wtime(ktime)
+      call write_ot(ktime)
 
       call errctrl_msg('efit','Done processing',3)
 #if defined(USEMPI)

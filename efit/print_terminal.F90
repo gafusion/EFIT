@@ -1,12 +1,12 @@
 #include "config.f"
 !**********************************************************************
 !>
-!!    prtout prints stats to the terminal
+!!    prints stats to the terminal
 !!
 !!    @param it : time index
 !!
 !**********************************************************************
-      subroutine prtout(it)
+      subroutine print_stats(it)
       use commonblocks,only: worka2
       include 'eparm.inc'
       include 'modules2.inc'
@@ -670,14 +670,14 @@
 13000 format (//,16x,'    toroidal rotation         ')
 13020 format ('  betatw =  ',1pe12.5,' betapw   = ',1pe12.5, &
               '  W(J)   =  ',1pe12.5)
-      end subroutine prtout
+      end subroutine print_stats
 
 !**********************************************************************
 !>
 !!    Prints header  
 !!
 !**********************************************************************
-      subroutine prtoutheader()
+      subroutine print_header()
       include 'eparm.inc'
       include 'modules1.inc'
 
@@ -693,4 +693,4 @@
 
 10000 format(/,6x,20('*'),'EFITAI',a3,' x ',a3,'  output ',20('*'))
 10001 format(/,20('*'),' EFIT-AI ',i0,' x ',i0,' grid ',20('*'))
-      end subroutine prtoutheader
+      end subroutine print_header

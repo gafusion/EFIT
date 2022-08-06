@@ -6,7 +6,7 @@ The logic flow chart::
 	EFIT: Main driver
 		GETSETS: Initialize run, input snap file, Green's tables.
 		LOOP: Loop over timeslices KTIME.
-			DATA: Read input file or fetch data, set up fitting weight.
+			INPUT_DATA: Read input file or fetch data, set up fitting weight.
 			INICUR: Initialize plasma current distribution.
 			FIT: Equilibrium and fitting iterations.
 				LOOP: Loop over MXITER, current profile.
@@ -16,16 +16,18 @@ The logic flow chart::
 					LOOP: Loop over equilibrium iteration NXITER.
 						CURRNT: Compute plasma current.
 						FCURRT: Get external shaping coil currents.
-						STEPS: Find magnetic axis and trace boundary.
+						UPDATE_PARAMS: Find magnetic axis and trace boundary.
 						FINDAX: Set up bicubic spline.
 						BOUND: Get boundary.
 						FINDAX: Get magnetic axis.
 						RESIDU: Check equilibrium convergence.
-			SHAPE: Compute plasma parameters, graphics after done.
+			SHAPESURF: Compute plasma parameters, graphics after done.
 			PLTOUT: Generate graphics.
-			PRTOUT: Print out.
-			WEQDSK: Write G EQDSK.
-			SHIPIT: Write A EQDSK.
+			PRINT_STATS: Print a summary of the solution to the terminal.
+			WRITE_A: Write A EQDSK.
+			        CHKERR: Perform equilibrium quality checks.
+			WRITE_G: Write G EQDSK.
+			WRITE_M: Write M EQDSK.
 
 
 modules-efit.F90
@@ -341,31 +343,35 @@ mat_solve.f90
 .. doxygenfunction:: solve
 .. doxygenfunction:: sdecm
 
-weq.f90
+write_a.f90
 -------
 
-.. doxygenfunction:: shipit
-.. doxygenfunction:: weqdsk
-.. doxygenfunction:: timdot
+.. doxygenfunction:: write_a
+.. doxygenfunction:: chkerr
 
-wmeasure.F90
-------------
+write_g.f90
+-------
 
-.. doxygenfunction:: wmeasure
+.. doxygenfunction:: write_g
 
-write_K.F90
+write_k.F90
 -----------
 
-.. doxygenfunction:: write_K
-.. doxygenfunction:: write_K2
+.. doxygenfunction:: write_k
+.. doxygenfunction:: write_k2
 
-wtime.F90
+write_m.F90
+------------
+
+.. doxygenfunction:: write_m
+
+write_ot.F90
 ---------
 
-.. doxygenfunction:: wtime
+.. doxygenfunction:: write_ot
 
-prtout.F90
+print_terminal.F90
 ----------
 
-.. doxygenfunction:: prtout
-.. doxygenfunction:: prtoutheader
+.. doxygenfunction:: print_stats
+.. doxygenfunction:: print_header
