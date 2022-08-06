@@ -79,7 +79,7 @@ cmake.  Otherwise the default is set as the build directory.  This is superceded
 at runtime by environment variables or input files.  
 
 The precedence is decided by checking in that order::
-     1.  efit.setup file
+     1.  efit.input file (setup namelist)
      2.  input files (efit_snap.dat, k-files, ect.)
      3.  environment variables
      4.  build defaults
