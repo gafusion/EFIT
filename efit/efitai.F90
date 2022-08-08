@@ -35,7 +35,6 @@
       integer*4 :: iend1, iend2
 
       kerror = 0
-      kwake = 0
 !------------------------------------------------------------------------------
 !     Initialize MPI environment
 !------------------------------------------------------------------------------
@@ -225,7 +224,6 @@
         kerrot(ks)=kerror
         go to 100
       endif
-      if (kwake.ne.0) go to 20
       call write_m(ktime,1,ktime,2)
       call write_ot(ktime)
 

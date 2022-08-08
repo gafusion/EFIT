@@ -13,7 +13,6 @@
 !!        5: produces k-files from a snap file
 !!        4,6: variations of snap files??
 !!      8: indended for CUDA parallel execution which has not been setup
-!!      16: kwake mode, some modification to opt 3
 !!      -#: behaves the same as #, but sets ilaser=1
 !!
 !**********************************************************************
@@ -56,16 +55,6 @@
       endif
 
       if (kdata.eq.4) return
-!---------------------------------------------------------------------
-!--   KDATA=16, wake-up mode driven by file WAKEMFIT.DAT consisting --
-!--   of shot # and time, -shot # for quit                          --
-!---------------------------------------------------------------------
-      if (kdata.eq.16) then
-        kwake=1
-        kdata=3
-        jwake=kwake
-        !mdoskip=1 !unused variable
-      endif
 !----------------------------------------------------------------------
 !--   Check that input option is valid                               --
 !----------------------------------------------------------------------
@@ -180,20 +169,18 @@
               snap_ext = snapext_in
             endif
           endif
-          if (kwake.eq.0) then
-            if (use_opt_input .eqv. .false.) then
-              write (nttyo,6040)
-              read (ntty,*) ishot,timeb,dtime,ktime
-              shot_in = ishot
-              starttime_in = timeb
-              deltatime_in = dtime
-              steps_in= ktime 
-            else
-              ishot = shot_in
-              timeb = starttime_in
-              dtime = deltatime_in
-              ktime = steps_in
-            endif
+          if (use_opt_input .eqv. .false.) then
+            write (nttyo,6040)
+            read (ntty,*) ishot,timeb,dtime,ktime
+            shot_in = ishot
+            starttime_in = timeb
+            deltatime_in = dtime
+            steps_in= ktime 
+          else
+            ishot = shot_in
+            timeb = starttime_in
+            dtime = deltatime_in
+            ktime = steps_in
           endif
 
         case (5,6)

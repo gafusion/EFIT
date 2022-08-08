@@ -272,8 +272,8 @@
                 kdot,icutfp,keqdsk,kdofit,kbetapr,kplotpr,kpressb, &
                 kfcurb,kpcurb,kzeroj,ncstne,ncstte, &
                 kwripre,negcur,kframe,kskipvs,icntour,iavdpl, &
-                jwake,limvs,kbound,kgraph,istore,iout,kdopre, &
-                iishot,kktime,iplcout,ksigma,kwritime,kwake 
+                limvs,kbound,kgraph,istore,iout,kdopre, &
+                iishot,kktime,iplcout,ksigma,kwritime 
       integer*4 iteks,mxiters,n1coils
       integer*4 itekt,mxitert,n1coilt
       real*8 zelipss,zeliptt

@@ -22,7 +22,6 @@
 #endif
       integer*4, intent(inout) :: ktime
       integer*4, intent(out) :: kerror
-      integer(c_int) retwait
       integer*4 i,jtime,idtime,ioerr,istat,itimeb,iread,ireadold,irshot, &
                 istop,mdoskip,mmstark,mmemsels,mtime,ktear
       real*8 xltype,xltype_180,dnmin,delt,times
@@ -67,16 +66,6 @@
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
 
-      interface
-        !  should be unsigned int ... not available in Fortran
-        !  OK until highest bit gets set.
-        function FortSleep (seconds)  bind ( C, name="sleep" )
-          import
-          integer (c_int) :: FortSleep
-          integer (c_int), intent (in), VALUE :: seconds
-        end function FortSleep
-      end interface
-
       ALLOCATE(fwtbmsels(nmsels),fwtemsels(nmsels))
       fwtbmsels=0.0
 
@@ -104,8 +93,6 @@
       taudia=0.0
       tsaisq=0.0
 
-      if (kwake.eq.1.and.mdoskip.eq.0.and.(iand(iout,1).ne.0)) close(unit=nout)
-
 ! ONLY root process can check for existence of fitout.dat file
       mpi_rank0: if (rank == 0) then
         ! Delete fitout.dat if already exists
@@ -132,7 +119,6 @@
 
 #if defined(USE_SNAP)
       snap: if ((kdata.ne.1).and.(kdata.ne.2)) then
-      not_kwake: if ((kwake.ne.1).or.(mdoskip.ne.0)) then
 !----------------------------------------------------------------------
 !--  look up magnetic data directly                                  --
 !----------------------------------------------------------------------
@@ -245,36 +231,6 @@
         if(fitdelz) itell=4
       endif
       call set_basis_params
-      endif not_kwake
-!---------------------------------------------------------------------
-!--   wakeup mode (KDATA=16)                                        --
-!---------------------------------------------------------------------
-10999 continue
-      if (kwake.eq.1) then
-28000   inquire(file='wakeefit.dat',opened=lopened)
-        if(lopened) close(unit=neqdsk)
-        open(unit=neqdsk, file='wakeefit.dat', status='old', err=28002)
-        go to 28005
-28002   continue
-        retwait=FortSleep(10)
-        go to 28000
-28005   iread=0
-28010   read (neqdsk,*,end=28020,err=28000) ishot,timeb,dtime,ktime
-        iread=iread+1
-        if(iread.ge.ireadold+1) go to 28020
-        go to 28010
-28020   close(unit=neqdsk)
-        if (iread.le.ireadold) then
-          retwait=FortSleep(10)
-          go to 28000
-        endif
-        if (ishot.lt.0) then
-          kerror = 1
-          call errctrl_msg('getsets','shot not found')
-          return
-        endif
-        ireadold=iread
-      endif
 !
 ! -- Qilong Ren
       iishot = ishot

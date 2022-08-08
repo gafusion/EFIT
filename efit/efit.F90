@@ -37,7 +37,6 @@
       parameter (krord=4,kzord=4)
 
       kerror = 0
-      kwake = 0
 !------------------------------------------------------------------------------
 !--   MPI if we have it
 !------------------------------------------------------------------------------ 
@@ -317,7 +316,6 @@
         if(k.lt.ktime) kerrot(ks)=kerror
       enddo
 
-      if(kwake.ne.0) go to 20
 #ifdef USE_NETCDF
       call write_m(ktime,1,ktime,2)
 #else

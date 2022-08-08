@@ -164,8 +164,6 @@
         endif
       endif
 !
-      ! TODO: jwake appears to never be set...
-!      if (istrpl.le.0.and.jwake.ne.0) then
       istrpl0: if (istrpl.le.0) then
       almin=xlmin
       almax=xlmax
