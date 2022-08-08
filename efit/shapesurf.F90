@@ -2670,7 +2670,7 @@
             dttt=0.0
           endif
           if(igmax.eq.1) dttt=5.
-          ! DEPRECIATED (no longer implemented)
+          ! DEPRECATED (no longer implemented)
           !call getzeff(ishot,igmax,time(1),dttt,temp,tave,zeff,ier)
         endif
       endif

@@ -9,7 +9,7 @@
 !!
 !!    @param ishot : shot number
 !!
-!!    @param itime : time in miliseconds
+!!    @param itime : time in milliseconds
 !!
 !!    @param fname : file name 
 !!
@@ -48,7 +48,7 @@
 !!
 !!    @param ishot : is shot number   
 !!
-!!    @param itime : is time in miliseconds 
+!!    @param itime : is time in milliseconds 
 !!
 !!    @param fname : is file name 
 !!
@@ -82,7 +82,7 @@
 !!
 !!    @param ishot : is shot number   
 !!
-!!    @param itime : is time in miliseconds 
+!!    @param itime : is time in milliseconds 
 !!
 !!    @param fname : is file name 
 !!
@@ -119,7 +119,7 @@
 !!
 !!    @param ishot : shot number
 !!
-!!    @param itime : time in miliseconds
+!!    @param itime : time in milliseconds
 !!
 !!    @param fname : file name 
 !!
@@ -159,7 +159,7 @@
 !!
 !!    @param ishot : shot number
 !!
-!!    @param itime : time in miliseconds
+!!    @param itime : time in milliseconds
 !!
 !!    @param istore : directory flag\n
 !!                    =0  Default directory

@@ -60,7 +60,7 @@
       endif
       if (imagsigma.gt.0) then
         call errctrl_msg('set_basis_params', &
-                         'nonlinear mag sigma calculation depreciated')
+                         'nonlinear mag sigma calculation deprecated')
       endif
 !---------------------------------------------------------------------
 !--   adjust fit parameters based on basis function selected        --

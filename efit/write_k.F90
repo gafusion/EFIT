@@ -201,13 +201,13 @@
         return
       endif
       if (link_store(1:1).ne.'')  store_dir=trim(link_store)
-!--   warn that idebug, jdebug, and ktear inputs are depreciated
+!--   warn that idebug, jdebug, and ktear inputs are deprecated
       if (idebug.ne.0) write(*,*) &
-      "idebug input variable is depreciated, set cmake variable instead"
+      "idebug input variable is deprecated, set cmake variable instead"
       if (jdebug.ne."NONE") write(*,*) &
-      "jdebug input variable is depreciated, set cmake variable instead"
+      "jdebug input variable is deprecated, set cmake variable instead"
       if(ktear.ne.0) write(*,*) &
-      "tearing calculations don't exist, ktear is depreciated"
+      "tearing calculations don't exist, ktear is deprecated"
 #ifdef DEBUG_LEVEL2
       write (6,*) 'WRITE_K fwtbmsels= ',(fwtbmsels(i),i=1,nmsels)
 #endif

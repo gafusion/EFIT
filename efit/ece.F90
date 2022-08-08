@@ -15,14 +15,24 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-      dimension rrrecep(nnece),rrrecem(nnece),iwp(nnece),iwm(nnece)
-      dimension zece(nnece),pds(6),rsplt(2500),zsplt(2500),csplt(2500)
+      implicit none
+      integer*4, intent(in) :: jtime
+      integer*4, intent(out) :: kerror
+      integer*4 i,idesto,ier,ii,iio,iname,ioerr,isplit,itot,iw,iwo, &
+                j,jh,jj,k,kk,kkm,kgeteceb,km,kp,ksetece,l,m,n,nj,nk,nnnece
+      real*8 a,bz,bzct,ddm,ddo,ddp,ddsiddro,dho,dist,distt,drzg,fitot, &
+             gbzt,psical,rrreceo,r,rdif,rh,rsum,rselsum,rw,r1, &
+             tdata,tdata1,tdata2,z,zdif,zzx,z1
+      integer*4 iwp(nnece),iwm(nnece)
+      real*8 rrrecep(nnece),rrrecem(nnece)
+      real*8 zece(nnece),pds(6),rsplt(2500),zsplt(2500),csplt(2500)
       real*8,dimension(:),allocatable :: dsidr,ddsiddr
       character*40 filenmme
-      data nset/20/,cdum/1.0/,ksetece/0/,kgeteceb/0/
-      integer*4, intent(inout) :: kerror
+      logical isopen
+      data ksetece/0/,kgeteceb/0/
+      integer*4, parameter :: nset=20
+      real*8, parameter :: cdum=1.0
+
       kerror = 0
 !
 #ifdef DEBUG_LEVEL3
@@ -36,7 +46,7 @@
       kece=0
       kecebz=0
 !
-      if (ksetece.eq.0) then
+      ksetece0: if (ksetece.eq.0) then
 !------------------------------------------------------------------
 !--   zeceo from k-file, jo--zeceo on zgrid
 !------------------------------------------------------------------
@@ -56,9 +66,7 @@
 !-------------------------------------------------------------------
 !--   kfixro=1, receo  from k-file
 !------------------------------------------------------------------- 
-      if (kfixro.eq.1) then
-        receo=rteo
-      endif
+      if(kfixro.eq.1) receo=rteo
       if ((kfixro.ne.1).and.(kfitece.ne.1)) then
 !------------------------------------------------------------------
 !--     kfixrece=1, R+(recep) R-(recem) from k-file
@@ -78,16 +86,16 @@
         if (kfitece.le.2) then
           if (kfixrece.eq.0) then
             call getecer(jtime,kerror)
-            if (kerror.gt.0) return
+            if(kerror.gt.0) return
           endif
           if ((kfixro.eq.-1).or.(kfixrece.eq.-1)) then
             call geteceb(jtime,kerror)
-            if (kerror.gt.0) return
+            if(kerror.gt.0) return
           endif
         endif
         if (kfitece.eq.3) then
           call gettir(jtime,kerror)
-          if (kerror.gt.0) return
+          if(kerror.gt.0) return
         endif
       endif
 !----------------------------------------------------------------
@@ -125,7 +133,7 @@
         enddo  
       endif
 !-------------------------------------------------------------------
-!--   try read responce function from recefile
+!--   try to read response function from recefile
 !--------------------------------------------------------------------
       do iname=1,nset
         if (iname.le.9) then
@@ -133,45 +141,47 @@
         else
           write(filenmme,6540) iname
         endif
+        isopen=.false.
         open(unit=nffile, status='old',form='unformatted', &
              file=filenmme,iostat=ioerr)
         if (ioerr.ne.0) then
           open(unit=nffile, status='old',form='unformatted', &
                file=table_dir(1:ltbdir)//filenmme,iostat=ioerr)
-          if (ioerr.ne.0) exit
+          if(ioerr.ne.0) exit
         endif
-        read (nffile,iostat=ioerr) nnnece
-        if (ioerr.ne.0) exit
-        if (nnnece.ne.nece) then
+        read(nffile,iostat=ioerr) nnnece
+        if(ioerr.ne.0) exit
+        if(nnnece.ne.nece) then
           close(unit=nffile)
-          exit
+          cycle
         endif
-        read (nffile,iostat=ioerr) rrrecem
-        if (ioerr.ne.0) exit
-        read (nffile,iostat=ioerr) rrrecep
-        if (ioerr.ne.0) exit
-        read (nffile,iostat=ioerr) rrreceo
-        if (ioerr.ne.0) exit
+        read(nffile,iostat=ioerr) rrrecem
+        if(ioerr.ne.0) exit
+        read(nffile,iostat=ioerr) rrrecep
+        if(ioerr.ne.0) exit
+        read(nffile,iostat=ioerr) rrreceo
+        if(ioerr.ne.0) exit
         do ii=1,nece
-          if (abs(rrrecem(ii)-recem(ii)).gt.1.e-4_dp) exit
-          if (abs(rrrecep(ii)-recep(ii)).gt.1.e-4_dp) exit
+          if(abs(rrrecem(ii)-recem(ii)).gt.1.e-4_dp) cycle
+          if(abs(rrrecep(ii)-recep(ii)).gt.1.e-4_dp) cycle
         enddo
-        if (abs(rrreceo-receo).gt.1.e-4_dp) exit
-        read (nffile,iostat=ioerr) recebzfc
-        if (ioerr.ne.0) exit
-        read (nffile,iostat=ioerr) gecebzpc
-        if (ioerr.ne.0) exit
-        read (nffile,iostat=ioerr) recebzec
-        if (ioerr.ne.0) exit
-        read (nffile,iostat=ioerr) recefc
-        if (ioerr.ne.0) exit
-        read (nffile,iostat=ioerr) gecepc
-        if (ioerr.ne.0) exit
-        read (nffile,iostat=ioerr) receec
-        if (ioerr.ne.0) exit
+        if(abs(rrreceo-receo).gt.1.e-4_dp) cycle
+        read(nffile,iostat=ioerr) recebzfc
+        if(ioerr.ne.0) exit
+        read(nffile,iostat=ioerr) gecebzpc
+        if(ioerr.ne.0) exit
+        read(nffile,iostat=ioerr) recebzec
+        if(ioerr.ne.0) exit
+        read(nffile,iostat=ioerr) recefc
+        if(ioerr.ne.0) exit
+        read(nffile,iostat=ioerr) gecepc
+        if(ioerr.ne.0) exit
+        read(nffile,iostat=ioerr) receec
+        if(ioerr.ne.0) exit
         close(unit=nffile)
         return
       enddo
+      if(isopen) close(unit=nffile)
 !-------------------------------------------------------------------       
 !--   compute the response function about Te peak point constraint    
 !--    response due to F coils --- recebzfc(ncoil)
@@ -353,27 +363,27 @@
 !----------------------------------------------------------------------
       open(unit=nffile,status='old',form='unformatted',iostat=ioerr, &
            file='recexx.dat')
-      if (ioerr.eq.0) close(unit=nffile,status='delete')
+      if(ioerr.eq.0) close(unit=nffile,status='delete')
       open(unit=nffile,status='new',form='unformatted', &
            file='recexx.dat')
       nnnece=nece
-      write (nffile) nnnece 
+      write(nffile) nnnece 
       do ii=1,nece
         rrrecem(ii)=recem(ii)
         rrrecep(ii)=recep(ii)
       enddo
       rrreceo=receo
-      write (nffile) rrrecem
-      write (nffile) rrrecep
-      write (nffile) rrreceo
-      write (nffile) recebzfc
-      write (nffile) gecebzpc
-      write (nffile) recebzec
-      write (nffile) recefc
-      write (nffile) gecepc 
-      write (nffile) receec
+      write(nffile) rrrecem
+      write(nffile) rrrecep
+      write(nffile) rrreceo
+      write(nffile) recebzfc
+      write(nffile) gecebzpc
+      write(nffile) recebzec
+      write(nffile) recefc
+      write(nffile) gecepc 
+      write(nffile) receec
       close(unit=nffile)
-      endif ! (ksetece.eq.0)
+      endif ksetece0
 !-----------------------------------------------------------------------
 !--   do every time from here
 !-----------------------------------------------------------------------
@@ -489,48 +499,53 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      parameter (nn=30)
-      parameter (kbre=5)
-      dimension pds(6),nnout(kbre),bmink(kbre),bmaxk(kbre) 
+      implicit none
+      integer*4, intent(in) :: jtime
+      integer*4, intent(out) :: kerror
+      real*8 fpcurr,seval
+      integer*4, parameter :: nnn1=1,nn=30,kbre=5
+      integer*4 i,idesto,ier,ii,iieerr,iio,imk,iout1,ioutk,ioutk1,ipk,iw, &
+                j,k,kk,kgeteceb,kmin,kmax,m,mnow,n,nj,nk,nlowf
+      real*8 baa,bbx,bbxm,bbxp,bbx1,bbx2,beceo,binmax,binmin,bitm,bitp, &
+             bobit,b00,dbbf,dbdro,delsi,dest,desto,dsidrm,dsidrp,dtero, &
+             fnow,fwtcm,ppteppbo,ptpr1,ptpr2,rh,rw,siii,sumf,t,teeceo,toler
+      real*8 pds(6),nnout(kbre),bmink(kbre),bmaxk(kbre)
+      real*8 arspfit(nnecein,nn),brspfit(nnecein), &
+             s(nn),tte(nnecein),x(nn),an(nnecein), &
+             tebit(nnecein)
+      real*8 telowf(nnnte),blowf(nnnte),bb(nnnte),cc(nnnte),dd(nnnte), &
+             teece(nnece),pteprm(nnece),pteprp(nnece), &
+             idestp(nnece),idestm(nnece),becem(nnece),becep(nnece), &
+             dbdrp(nnece),dbdrm(nnece)
       real*8,allocatable :: rrgrid(:,:),bfield(:),rrout(:,:), &
           bout(:,:),babs(:,:),bbb(:),ccc(:),ddd(:),btttt(:), &
           dsidr(:),ddsiddr(:),bx(:),ry(:),bbk(:),dbdr(:)
-      dimension arspfit(nnecein,nn),brspfit(nnecein) &
-           ,s(nn),tte(nnecein),x(nn),an(nnecein) &
-           ,tebit(nnecein)
-      dimension telowf(nnnte) &
-         ,blowf(nnnte),bb(nnnte),cc(nnnte),dd(nnnte) &
-         ,teece(nnece),pteprm(nnece),pteprp(nnece) &
-         ,idestp(nnece),idestm(nnece),becem(nnece),becep(nnece) &
-         ,dbdrp(nnece),dbdrm(nnece)
-      integer*4, intent(inout) :: kerror
 
       kerror = 0
 !-------------------------------------------------------------------
       allocate(rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
-         bout(kbre,nw),babs(kbre,nw),bbb(nw),ccc(nw), &
-         ddd(nw),btttt(nw),dsidr(nw),ddsiddr(nw),bx(nw), &
-         ry(nw),bbk(nw),dbdr(nw))
+               bout(kbre,nw),babs(kbre,nw),bbb(nw),ccc(nw), &
+               ddd(nw),btttt(nw),dsidr(nw),ddsiddr(nw),bx(nw), &
+               ry(nw),bbk(nw),dbdr(nw))
 !
-      telowf=0 &
-         ;blowf=0;bb=0;cc=0;dd=0 &
-         ;teece=0;pteprm=0;pteprp=0 &
-         ;idestp=0;idestm=0;becem=0;becep=0 &
-         ;dbdrp=0;dbdrm=0
+      telowf=0
+      blowf=0;bb=0;cc=0;dd=0
+      teece=0;pteprm=0;pteprp=0
+      idestp=0;idestm=0;becem=0;becep=0
+      dbdrp=0;dbdrm=0
 
 !-------------------------------------------------------------------
       do k=1,nnece
-         fwtece0(k)=swtece(k)
+        fwtece0(k)=swtece(k)
       enddo
       fwtecebz0=swtecebz
       do k=1,kbre
-       do i=1,nw
-         babs(k,i)=0.0
-         bout(k,i)=0.0
-         rrout(k,i)=0.0
-         rrgrid(k,i)=0.0
-       enddo
+        do i=1,nw
+          babs(k,i)=0.0
+          bout(k,i)=0.0
+          rrout(k,i)=0.0
+          rrgrid(k,i)=0.0
+        enddo
       enddo
 !-------------------------------------------------------------------
 !--   input kgeteceb=0 from input file
@@ -582,19 +597,18 @@
         fwtnow=0.001_dp
         fwtcm =1.0
         do j=1,nfit
-        mnow=mnow+1
-        do k=1,nfit
-          if (j.ne.k) then
-            arspfit(necein+j,k)=0.0
-          else
-            arspfit(necein+j,k)=fwtcm/fwtnow
-          endif
-        enddo
-        brspfit(necein+j)=0.0
+          mnow=mnow+1
+          do k=1,nfit
+            if (j.ne.k) then
+              arspfit(necein+j,k)=0.0
+            else
+              arspfit(necein+j,k)=fwtcm/fwtnow
+            endif
+          enddo
+          brspfit(necein+j)=0.0
         enddo
       endif
 !
-      nnn1=1
       iieerr=0
       call sdecm(arspfit,nnecein,mnow,nfit,brspfit,nnecein,nnn1,s,wk,iieerr)
       if (iieerr.eq.129) then
@@ -603,15 +617,15 @@
         return
       endif
       toler=1.0e-06_dp*s(1)
-      do I = 1,nfit
-        T = 0.0
-        if (S(I).gt.toler) T = Brspfit(I)/S(I)
-        Brspfit(I) = T
+      do i = 1,nfit
+        t = 0.0
+        if(s(i).gt.toler) t = brspfit(i)/s(i)
+        brspfit(i) = t
       enddo
-      do I = 1, Nfit
-        X(I) = 0.0
-        do J = 1,nfit
-          X(I) = X(I) + Arspfit(I,J)*Brspfit(J)
+      do i = 1, nfit
+        x(i) = 0.0
+        do j = 1,nfit
+          x(i) = x(i) + arspfit(i,j)*brspfit(j)
         enddo
       enddo
       do k=1,nfit
@@ -651,8 +665,8 @@
         iio=1
         do i=2,nnnte
           if (teeceb(i).gt.teeceo) then
-             iio=i
-             teeceo=teeceb(i)
+            iio=i
+            teeceo=teeceb(i)
           endif
         enddo
         beceo=bbf(iio)
@@ -683,8 +697,8 @@
         ptpr1=0.
         ptpr2=0.
         do nk=2,nfit
-           ptpr1=ptpr1+x(nk)*bbx1**(nk-2)
-           ptpr2=ptpr2+x(nk)*bbx2**(nk-2)
+          ptpr1=ptpr1+x(nk)*bbx1**(nk-2)
+          ptpr2=ptpr2+x(nk)*bbx2**(nk-2)
         enddo
         ptpr1=ptpr1/baa
         ptpr2=ptpr2/baa
@@ -703,8 +717,8 @@
       ii=0
       do k=1,necein
         if ((beceo-becein(k)).lt.0.) then
-            ii=ii+1
-            becep(ii)=becein(k)
+          ii=ii+1
+          becep(ii)=becein(k)
         endif
       enddo
       nece=ii
@@ -766,7 +780,7 @@
         ffprim(nw)=ffprim(1)*gammaf
       end select
       do i=2,nw-1
-      siii=sigrid(i)
+        siii=sigrid(i)
         select case (icurrt)
         case (1)
           ffprim(i)=ffprim(1)
@@ -787,7 +801,7 @@
       delsi=-(psibry-simag)/(nw-1)
       do i=1,nw-1
         sumf=sumf+0.5_dp*delsi*(ffprim(nw-i+1)+ffprim(nw-i))
-        if(sumf .ge. 0.0) then
+        if (sumf .ge. 0.0) then
           fpol(nw-i)=sqrt(2.*sumf)*fpol(nw)/abs(fpol(nw))
         else
           fpol(nw-i)=fpol(nw)
@@ -846,30 +860,30 @@
       kmin=0
       kmax=0
       do k=2,nw-1
-         if ((bfield(k).lt.bfield(k+1)).and. &
-             (bfield(k).lt.bfield(k-1))) then
-            kmin=kmin+1
-            bmink(kmin)=bfield(k)
-         endif
-         if ((bfield(k).gt.bfield(k+1)).and. &
-             (bfield(k).gt.bfield(k-1))) then
-            kmax=kmax+1
-            bmaxk(kmax)=bfield(k)
-         endif
+        if ((bfield(k).lt.bfield(k+1)).and. &
+            (bfield(k).lt.bfield(k-1))) then
+          kmin=kmin+1
+          bmink(kmin)=bfield(k)
+        endif
+        if ((bfield(k).gt.bfield(k+1)).and. &
+            (bfield(k).gt.bfield(k-1))) then
+          kmax=kmax+1
+          bmaxk(kmax)=bfield(k)
+        endif
       enddo
       if (kmin.eq.(kmax+1)) then
-         kmax=kmax+1
-         bmaxk(kmax)=bfield(nw)
+        kmax=kmax+1
+        bmaxk(kmax)=bfield(nw)
       endif
       if (kmin.eq.(kmax-1)) then
-         kmin=kmin+1
-         bmink(1)=bfield(1)
-         do k=2,kmin
-            bbk(k)=bmink(k-1)
-         enddo
-         do k=2,kmin
-            bmink(k)=bbk(k)
-         enddo
+        kmin=kmin+1
+        bmink(1)=bfield(1)
+        do k=2,kmin
+          bbk(k)=bmink(k-1)
+        enddo
+        do k=2,kmin
+          bmink(k)=bbk(k)
+        enddo
       endif
 !
       k_max: if (kmax.ne.0) then
@@ -956,16 +970,13 @@
         enddo
         call zpline(n,bx,ry,bbb,ccc,ddd)
 !
-        if (beceo.ge.bmaxk(1)) then
+        if(beceo.ge.bmaxk(1)) &
           receo=seval(n,beceo,bx,ry,bbb,ccc,ddd)
-        endif
         do m=1,nece
-          if (becep(m).ge.bmaxk(1)) then
+          if(becep(m).ge.bmaxk(1)) &
             recem(m)=seval(n,becep(m),bx,ry,bbb,ccc,ddd)
-          endif
-          if (becem(m).ge.bmaxk(1)) then
+          if(becem(m).ge.bmaxk(1)) &
             recep(m)=seval(n,becem(m),bx,ry,bbb,ccc,ddd)
-          endif
         enddo
       endif
 !
@@ -977,16 +988,13 @@
             ry(i)=rrgrid(k,i)
           enddo
           call zpline(n,bx,ry,bbb,ccc,ddd)
-          if ((beceo.ge.bmaxk(k)).and.(beceo.le.bmink(k-1))) then
+          if((beceo.ge.bmaxk(k)).and.(beceo.le.bmink(k-1))) &
             receo=seval(n,beceo,bx,ry,bbb,ccc,ddd)
-          endif
           do m=1,nece
-            if ((becep(m).ge.bmaxk(k)).and.(becep(m).le.bmink(k-1))) then
+            if((becep(m).ge.bmaxk(k)).and.(becep(m).le.bmink(k-1))) &
               recem(m)=seval(n,becep(m),bx,ry,bbb,ccc,ddd)
-            endif
-            if ((becem(m).ge.bmaxk(k)).and.(becem(m).le.bmink(k-1))) then
+            if((becem(m).ge.bmaxk(k)).and.(becem(m).le.bmink(k-1))) &
               recep(m)=seval(n,becem(m),bx,ry,bbb,ccc,ddd)
-            endif
           enddo
         endif
       enddo
@@ -998,16 +1006,13 @@
           ry(i)=rrgrid(kmax+1,i)
         enddo
         call zpline(n,bx,ry,bbb,ccc,ddd)
-        if (beceo.le.bmink(kmax)) then
+        if(beceo.le.bmink(kmax)) &
            receo=seval(n,beceo,bx,ry,bbb,ccc,ddd)
-        endif
         do m=1,nece
-          if (becep(m).le.bmink(kmax)) then
+          if(becep(m).le.bmink(kmax)) &
             recem(m)=seval(n,becep(m),bx,ry,bbb,ccc,ddd)
-          endif
-          if (becem(m).le.bmink(kmax)) then
+          if(becem(m).le.bmink(kmax)) &
             recep(m)=seval(n,becem(m),bx,ry,bbb,ccc,ddd)
-          endif
         enddo
       endif
 !
@@ -1044,9 +1049,8 @@
 !--   get dB/dr at receo (dbdro) and recep,recem (dbdrp,dbdrm)
 !------------------------------------------------------------------
       call zpline(nw,rgrid,dbdr,bbb,ccc,ddd)
-      if (fwtecebz0.gt.1.e-6_dp) then
+      if(fwtecebz0.gt.1.e-6_dp) &
         dbdro=seval(nw,receo,rgrid,dbdr,bbb,ccc,ddd)
-      endif
       do k=1,nece
         if (fwtece0(k).gt.1.e-6_dp) then
           dbdrp(k)=seval(nw,recep(k),rgrid,dbdr,bbb,ccc,ddd)
@@ -1071,8 +1075,8 @@
           pteprp(k)=0.
           pteprm(k)=0.
           do nk=2,nfit
-             pteprp(k)=pteprp(k)+x(nk)*bbx**(nk-2)
-             pteprm(k)=pteprm(k)+x(nk)*bbx**(nk-2)
+            pteprp(k)=pteprp(k)+x(nk)*bbx**(nk-2)
+            pteprm(k)=pteprm(k)+x(nk)*bbx**(nk-2)
           enddo
           pteprp(k)=pteprp(k)/baa
           pteprm(k)=pteprm(k)/baa
@@ -1130,27 +1134,32 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      parameter (nn=30)
-      parameter (kbre=5)
-      dimension pds(6),nnout(kbre),bmink(kbre),bmaxk(kbre)
+      implicit none
+      integer*4, intent(in) :: jtime
+      integer*4, intent(out) :: kerror
+      real*8 fpcurr,seval
+      integer*4, parameter :: nnn1=1,nn=30,kbre=5
+      integer*4 i,idesto,ier,ii,iieerr,iio,imk,ipk,iout1,ioutk,ioutk1,iw, &
+                j,k,kk,kmin,kmax,kout,m,mnow,n,nj,nk,nlowf
+      real*8 bitm,bitp,delsi,dest,desto,drrr,dsidrm,dsidrp,dtero, &
+             fnow,fwtcm,ppteppro,ptpr1,ptpr2, &
+             raa,rh,rmax,rmin,rw,rx,rx1,rx2,r00,siii,sumf,t,teeceo,toler
+      real*8 pds(6),nnout(kbre),bmink(kbre),bmaxk(kbre)
+      real*8 arspfit(nnecein,nn),brspfit(nnecein), &
+             s(nn),tte(nnecein),x(nn),an(nnecein), &
+             tebit(nnecein)
+      real*8 telowf(nnnte),rlowf(nnnte),bb(nnnte),cc(nnnte),dd(nnnte), &
+             teece(nnece),pteprm(nnece),pteprp(nnece), &
+             idestp(nnece),idestm(nnece)
       real*8,allocatable :: rrgrid(:,:),bfield(:),rrout(:,:), &
           bout(:,:),babs(:,:),bbb(:),ccc(:),ddd(:),btttt(:), &
           dsidr(:),ddsiddr(:),bx(:),ry(:),bbk(:)
-      dimension arspfit(nnecein,nn),brspfit(nnecein) &
-           ,s(nn),tte(nnecein),x(nn),an(nnecein) &
-           ,tebit(nnecein)
-      dimension telowf(nnnte) &
-         ,rlowf(nnnte),bb(nnnte),cc(nnnte),dd(nnnte) &
-         ,teece(nnece),pteprm(nnece),pteprp(nnece) &
-         ,idestp(nnece),idestm(nnece)
-      integer*4, intent(inout) :: kerror
 !
       kerror = 0
       allocate(rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
-         bout(kbre,nw),babs(kbre,nw),bbb(nw),ccc(nw), &
-         ddd(nw),btttt(nw),dsidr(nw),ddsiddr(nw),bx(nw), &
-         ry(nw),bbk(nw))
+               bout(kbre,nw),babs(kbre,nw),bbb(nw),ccc(nw), &
+               ddd(nw),btttt(nw),dsidr(nw),ddsiddr(nw),bx(nw), &
+               ry(nw),bbk(nw))
 !
       do k=1,nnece
         fwtece0(k)=swtece(k) 
@@ -1183,7 +1192,7 @@
         ffprim(1)=fpcurr(x000,kffcur)/darea*twopi*tmu
       case (4)
         call currnt(n222,jtime,n222,n222,kerror)
-        if (kerror.gt.0) return
+        if(kerror.gt.0) return
         ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
         ffprim(nw)=ffprim(1)*gammaf
       end select
@@ -1203,7 +1212,7 @@
       delsi=-(psibry-simag)/(nw-1)
       do i=1,nw-1
         sumf=sumf+0.5_dp*delsi*(ffprim(nw-i+1)+ffprim(nw-i))
-        if(sumf .ge. 0.0) then
+        if (sumf .ge. 0.0) then
           fpol(nw-i)=sqrt(2.*sumf)*fpol(nw)/abs(fpol(nw))
         else
           fpol(nw-i)=fpol(nw)
@@ -1272,14 +1281,12 @@
 #ifdef DEBUG_LEVEL3
       write (6,*) 'GETECER, kmin/kmax = ', kmin, kmax
 #endif
-      if (kmax.ne.0) then
+      kmax0: if (kmax.ne.0) then
 !--------------------------------------------------------------------
 !--   get babsk array (kmax+1) is strictly increasing order
 !-------------------------------------------------------------------- 
       do k=1,kmax
-        if (bmaxk(k).lt.bmink(k)) then
-          stop
-        endif
+        if(bmaxk(k).lt.bmink(k)) stop
       enddo
 !
       iout1=0
@@ -1384,7 +1391,7 @@
       mecein=kout
 !
 !
-      else ! kmax.eq.0
+      else kmax0
       do i=1,nw
         bx(i)=bfield(nw-i+1)
         ry(i)=rgrid(nw-i+1)
@@ -1397,7 +1404,7 @@
       enddo
       mecein=necein
 !
-      endif ! kmax.eq.0
+      endif kmax0
 !--------------------------------------------------------------------
 !--   fitting data from teeceinr,tebit and recein (nnecein)        --
 !--     rx=(R-r00)/raa                                             --
@@ -1442,7 +1449,6 @@
         enddo
       endif
 !
-      nnn1=1
       iieerr=0
       call sdecm(arspfit,nnecein,mnow,nfit,brspfit,nnecein,nnn1,s,wk,iieerr)
       if (iieerr.eq.129) then
@@ -1451,15 +1457,15 @@
         return
       end if
       toler=1.0e-06_dp*s(1)
-      do I = 1,nfit
-        T = 0.0
-        if (S(I).gt.toler) T = Brspfit(I)/S(I)
-        Brspfit(I) = T
+      do i=1,nfit
+        t = 0.0
+        if(s(i).gt.toler) t = brspfit(i)/s(i)
+        brspfit(I) = t
       enddo
-      do I = 1, Nfit
-        X(I) = 0.0
-        do J = 1,nfit
-          X(I) = X(I) + Arspfit(I,J)*Brspfit(J)
+      do i=1,nfit
+        x(i) = 0.0
+        do j=1,nfit
+          x(i) = x(i) + arspfit(i,j)*brspfit(j)
         enddo
       enddo
       do k=1,nfit
@@ -1536,8 +1542,8 @@
         ii=0
         do k=mecein,1,-1
           if ((receo-recein(k)).gt.0.) then
-              ii=ii+1
-              recem(ii)=recein(k)
+            ii=ii+1
+            recem(ii)=recein(k)
           endif
         enddo
         nece=ii
@@ -1566,7 +1572,7 @@
         call zpline(nlowf,telowf,rlowf,bb,cc,dd)
         do k=1,nece
           recep(k)=seval(nlowf,teece(k),telowf,rlowf,bb,cc,dd)
-          if ((recep(k).gt.receo).and.(recep(k).lt.recein(mecein))) &
+          if((recep(k).gt.receo).and.(recep(k).lt.recein(mecein))) &
             cycle
           fwtece0(k)=0.0
         enddo
@@ -1655,21 +1661,26 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      parameter (nn=30)
-      parameter (kbre=5)
-      dimension pds(6),nnout(kbre),bmink(kbre),bmaxk(kbre)
+      implicit none
+      integer*4, intent(in) :: jtime
+      integer*4, intent(out) :: kerror
+      real*8 seval
+      integer*4, parameter :: nnn1=1,nn=30,kbre=5
+      integer*4 i,idesto,ier,ii,iieerr,iio,imk,ipk,iout1,ioutk,ioutk1,iw, &
+                j,k,kk,kmin,kmax,kout,m,mmmte,mnow,n,nj,nk,nlowf
+      real*8 bitm,bitp,delsi,dest,desto,drrr,dsidrm,dsidrp,dtero, &
+             fnow,fwtcm,ppteppro,ptpr1,ptpr2, &
+             raa,rh,rmax,rmin,rw,rx,rx1,rx2,r00,siii,sumf,t,teeceo,toler
+      real*8 pds(6),nnout(kbre),bmink(kbre),bmaxk(kbre)
+      real*8 arspfit(nnecein,nn),brspfit(nnecein), &
+             s(nn),tte(nnecein),x(nn),an(nnecein), &
+             tebit(nnecein)
+      real*8 telowf(nnnte),rlowf(nnnte),bb(nnnte),cc(nnnte),dd(nnnte), &
+             teece(nnece),pteprm(nnece),pteprp(nnece), &
+             idestp(nnece),idestm(nnece)
       real*8,allocatable :: rrgrid(:,:),bfield(:),rrout(:,:), &
           bout(:,:),babs(:,:),bbb(:),ccc(:),ddd(:),btttt(:), &
           dsidr(:),ddsiddr(:),bx(:),ry(:),bbk(:)
-      dimension arspfit(nnecein,nn),brspfit(nnecein) &
-           ,s(nn),tte(nnecein),x(nn),an(nnecein) &
-           ,tebit(nnecein)
-      dimension telowf(nnnte) &
-         ,rlowf(nnnte),bb(nnnte),cc(nnnte),dd(nnnte) &
-         ,teece(nnece),pteprm(nnece),pteprp(nnece) &
-         ,idestp(nnece),idestm(nnece)
-      integer*4, intent(inout) :: kerror
 !
 #ifdef DEBUG_LEVEL3
       write (6,*) 'Enter GETTIR, kfitece/kfixrece = ',&
@@ -1677,9 +1688,9 @@
 #endif
       kerror = 0
       allocate(rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
-         bout(kbre,nw),babs(kbre,nw),bbb(nw),ccc(nw), &
-         ddd(nw),btttt(nw),dsidr(nw),ddsiddr(nw),bx(nw), &
-         ry(nw),bbk(nw))
+               bout(kbre,nw),babs(kbre,nw),bbb(nw),ccc(nw), &
+               ddd(nw),btttt(nw),dsidr(nw),ddsiddr(nw),bx(nw), &
+               ry(nw),bbk(nw))
 !
       do k=1,nnece
         fwtece0(k)=swtece(k) 
@@ -1753,7 +1764,6 @@
       write (6,*) 'GETTIR teeceinr = ',(teeceinr(i),i=1,mecein)
       write (6,*) 'GETTIR tebit = ',(tebit(i),i=1,mecein)
 #endif
-      nnn1=1
       iieerr=0
       mnow=mecein
       call sdecm(arspfit,nnecein,mnow,nfit,brspfit,nnecein,nnn1,s,wk,iieerr)

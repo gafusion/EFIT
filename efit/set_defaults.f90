@@ -53,7 +53,7 @@
       icinit=2
       icprof=0
       icutfp=0
-      idebug=0 ! depreciated
+      idebug=0 ! deprecated
       iecurr=1
       ierchk=1
       ifcurr=0
@@ -67,7 +67,7 @@
       itrace=1
 !jal 04/23/2004
       iplcout=0
-      jdebug='NONE' ! depreciated
+      jdebug='NONE' ! deprecated
       kbound=0
       kcallece=2
       kcalpa=0

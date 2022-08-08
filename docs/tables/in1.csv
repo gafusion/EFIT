@@ -27,8 +27,8 @@ EMP,1.0,GAQ current density profile parameter. Ignored unless ICURRT=4?
 ENP,1.0,GAQ current density profile parameter. Ignored unless ICURRT=4?
 EMW,,GAQ current density profile parameter for rotation. Ignored unless ICURRT=4?
 ENW,,GAQ current density profile parameter for rotation. Ignored unless ICURRT=4?
-ERRMAG,,See IMAGSIGMA (depreciated)
-ERRMAGB,,See IMAGSIGMA (depreciated)
+ERRMAG,,See IMAGSIGMA (deprecated)
+ERRMAGB,,See IMAGSIGMA (deprecated)
 ERROR,1e-3,"| Specifies when EFIT should stop iterating to solution. If chi-squared decreases
 | monotonically, then iterations stop when the relative error (maximum flux 
 | difference between successive iterations) < ERROR.  See also ERRMIN."
@@ -113,7 +113,7 @@ IFITVS,,"| ""(Integer flag) Fit Vessel"". The DIII-D vessel can be modeled as 24
 | parameters to be solved for.
 | - 1 = Include vessel segment currents in solution.
 | - 0 = ignore vessel segment currents (default)."
-IMAGSIGMA,0, 1 = computed nonlinear magnetic uncertainties (depreciated).
+IMAGSIGMA,0, 1 = computed nonlinear magnetic uncertainties (deprecated).
 INPUT_DIR,"See namelist EFITIN"
 IOUT,,"| Output file option. This is a bitwise switch except that 6 overwrites 2 and 4.
 | - Multiple output options may be achieved by adding up the values of each option.
@@ -203,9 +203,9 @@ KPRFIT,, "| Turn on kinetic fitting
 | - 2 = kinetic fitting inputing raw temperature, density, and beam profiles in real space.
 | - 3 = include rotation.
 | - Must set KPRFIT=3, ICURRT=5, if no pressure data NPRESS=0. (What does this mean?)"
-KSIGMA,, See IMAGSIGMA (depreciated)
+KSIGMA,, See IMAGSIGMA (deprecated)
 KSKIPVS, 0,1 = search for external separatrix for attached current model.
-KTEAR,,(depreciated)
+KTEAR,,(deprecated)
 KWRIPRE,,"| Make output files
 | - 1 = write out pressure and q profile as function of sqrt(Vn) in files Q(shot).(time)_ (q0 files).
 | - 2 = S(shot).(time)- --- in normalized flux space.
@@ -332,8 +332,8 @@ SIZEROJ,-1.0,"| Vector of locations at which Jt is constrained when KZEROJ>0. Wh
 | PSIWANT can be used instead of SIZEROJ(1) by setting SIZEROJ(1)<0. See KZEROJ, 
 | RZEROJ, VZEROJ, PSIWANT. Default"
 SRM,-3.5,Parameter for Solovev equilibrium. - = inside limited.
-STORE_DIR,"see namelise EFITIN"
-TABLE_DIR,"see namelise EFITIN"
+STORE_DIR,"see namelist EFITIN"
+TABLE_DIR,"see namelist EFITIN"
 TETHOM,,"""Te Thompson"". Electron temperature from Thompson."
 TGAMMA,,"""Tangent Gamma"". Tangent of the measured MSE polarization angle, TGAMMA = (A1*Bz + A5*Er) / (A2*BT+...)."
 TIONEX,,"if nptionf > 100, tionex = tethombfract"

@@ -80,11 +80,11 @@ at runtime by environment variables or input files.
 
 The precedence is decided by checking in that order::
      1.  efit.input file (setup namelist)
-     2.  input files (efit_snap.dat, k-files, ect.)
+     2.  input files (efit_snap.dat, k-files, etc.)
      3.  environment variables
      4.  build defaults
 
-The environment variables and efit.setup inptus are specified by ``link_efit`` and ``link_store``::
+The environment variables and setup namelist in efit.input are specified by ``link_efit`` and ``link_store``::
 
      TABLE_DIR=${link_efit}/green 
      INPUT_DIR=${link_efit}

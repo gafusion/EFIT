@@ -690,7 +690,7 @@
 !!
 !!    @param bitvld :
 !!
-!!    @param kave : time window for averaging data (in miliseconds)
+!!    @param kave : time window for averaging data (in milliseconds)
 !!
 !!    @param time : array of times requested
 !!
@@ -956,7 +956,7 @@
 !!
 !!    @param bitvld :
 !!
-!!    @param kave : time window for averaging data (in miliseconds)
+!!    @param kave : time window for averaging data (in milliseconds)
 !!
 !!    @param time : array of times requested
 !!
@@ -1111,7 +1111,7 @@
 !!
 !!    @param bitvld : (unused)
 !!
-!!    @param kave : time window for averaging data (in miliseconds)
+!!    @param kave : time window for averaging data (in milliseconds)
 !!
 !!    @param time : array of times requested
 !!
@@ -1330,7 +1330,7 @@
 !!
 !!    @param bitvl :
 !!
-!!    @param kave : time window for averaging data (in miliseconds)
+!!    @param kave : time window for averaging data (in milliseconds)
 !!
 !!    @param time : array of times requested
 !!
