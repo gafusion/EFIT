@@ -11,7 +11,7 @@
 !!      3-7: query databases for diagnostic inputs
 !!        3,7: produces g-files (and others)
 !!        5: produces k-files from a snap file
-!!        4,6: varitions of snap files??
+!!        4,6: variations of snap files??
 !!      8: indended for CUDA parallel execution which has not been setup
 !!      16: kwake mode, some modification to opt 3
 !!      -#: behaves the same as #, but sets ilaser=1
