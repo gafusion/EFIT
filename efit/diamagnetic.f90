@@ -240,11 +240,6 @@
           IPOINT=POINT(I)
           IREPLACE=0
           ier=0
-          !IF (IPOINT.EQ.'ECOILB    ' .or. IPOINT.EQ.'VLOOPBS   ') THEN
-          !  IAR(1)=8180
-          !ELSE
-          !  IAR(1)=8160
-          !ENDIF
           IAR(1)=NPMAX
           IERSAV=0
           IF (IPOINT.EQ.'VLOOPBS   ' .AND. NSHOT.EQ.52400) THEN
@@ -283,24 +278,13 @@
 
             call interp(ttemp,ytemp,N,tim,ydat,npts)
 
-          ELSEIF (IPOINT.EQ.'ECOILB    ' .OR. &
-                  (ABS(RAR(1)-TTEMP(1)).GT.RAR(3) .OR. &
-                   ABS(TTEMP(NPTS)-TIM(NPTS)).GT.1.0E-6)) then
+          ELSEIF (ABS(RAR(1)-TTEMP(1)).GT.RAR(3) .OR. &
+                   ABS(TTEMP(NPTS)-TIM(NPTS)).GT.1.0E-6) then
             npts2=iar(2)
             ytemp(1:npts2)=(rar(6)-idat(1:npts2))*rar(5)*rar(4)
             call interp(ttemp,ytemp,iar(2),tim,ydat,npts)
           ELSE
             ydat(1:npts)=(rar(6)-idat(1:npts))*rar(5)*rar(4)
-          ENDIF
-
-          IF (ipoint.eq.'ECOILB    ') then
-            do n=1,npts
-              ! TODO: bt is undefined here...
-!              prod=((ydat(n)/6.6e4)**2)*bt(n)/2.13
-              prod=((ydat(n)/6.6e4)**2)/2.13
-              DIAMAGC(N,1:3)=DIAMAGC(N,1:3)-EBCOUP(1:3)*PROD
-              sig(n,1:3)=sig(n,1:3)+(ebcoup(1:3)*prod)**2
-            enddo
           ENDIF
 
           DO J=1,3
