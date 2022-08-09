@@ -46,7 +46,8 @@
       call MPI_COMM_RANK(MPI_COMM_WORLD,rank,ierr)
       call MPI_COMM_SIZE(MPI_COMM_WORLD,nproc,ierr)
 ! Arrays can only be allocated after MPI has been initialized because dimension is # of processes
-      allocate(dist_data(nproc),dist_data_displs(nproc),fwtgam_mpi(nstark,nproc))
+      allocate(dist_data(nproc),dist_data_displs(nproc), &
+               fwtgam_mpi(nstark,nproc))
 #ifdef DEBUG_PLTS
       if (nproc.gt.1) then
         call errctrl_msg('efit', &
@@ -184,7 +185,7 @@
 #if defined(USEMPI)
         call mpi_finalize(ierr)
 #endif
-        return
+        stop
       endif
 #endif
 !----------------------------------------------------------------------
@@ -196,7 +197,8 @@
   20  call getsets(ktime,kerror)
 #if defined(USEMPI)
       if (nproc > 1) &
-        call MPI_ALLREDUCE(kerror,MPI_IN_PLACE,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
+        call MPI_ALLREDUCE(kerror,MPI_IN_PLACE,1,MPI_INTEGER,MPI_MAX, &
+                           MPI_COMM_WORLD,ierr)
       if (kerror.gt.0) then
         call errctrl_msg('efit','Aborting due to fatal error in getsets')
         call mpi_abort(MPI_COMM_WORLD,ierr) ! kill all processes, something is wrong with the setup.
