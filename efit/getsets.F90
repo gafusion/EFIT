@@ -11,7 +11,6 @@
 !!
 !**********************************************************************
       subroutine getsets(ktime,kerror)
-      use, intrinsic :: iso_c_binding, only: c_int
       use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'

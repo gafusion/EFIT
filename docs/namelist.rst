@@ -58,17 +58,16 @@ The amount of current in each filament ("at" each grid point) is represented
 by 
 
 .. math::
+    JT(R,\\psi)=R[P'(\\psi)+\\mu _{0}FF'(\\psi)/(4\\pi^{2}R^{2})]
 
-    JT(R,\psi )=R [P'(\psi )+\mu _{0}FF'(\psi )/(4\pi ^{2}R^{2})]
-
-where :math:`\psi`  is the value of normalized flux at each grid point, 
-and :math:`P'(\psi)` and :math:`FF'(\psi)` are represented by 
+where :math:`\\psi`  is the value of normalized flux at each grid point, 
+and :math:`P'(\\psi)` and :math:`FF'(\\psi)` are represented by 
 linear combinations of a small number of basis functions.
 
-The variables below are used to specify the representation of the functions P' and FF' and 
-any desired constraints on those representations. All variables are input via the IN1 or 
-EFITIN namelists. Variables which have no defaults (and thus require inputs??) are printed 
-in bold.
+The variables below are used to specify the representation of the functions :math:`P'` and
+:math:`FF'` and any desired constraints on those representations. All variables are input
+via the IN1 or EFITIN namelists. Variables which have no defaults (and thus require inputs??)
+are printed in bold.
 
 .. csv-table:: IN1 basis functions
    :file: tables/in1_basis.csv
@@ -106,7 +105,7 @@ bold.
 
 .. csv-table:: INWANT
    :file: tables/inwant.csv
-   :widths: 15,15, 70
+   :widths: 15,15,70
    :header-rows: 1
    
 INS
@@ -117,7 +116,7 @@ and thus require inputs are printed in bold.
 
 .. csv-table:: INS
    :file: tables/ins.csv
-   :widths: 15,15, 70
+   :widths: 15,15,70
    :header-rows: 1
 
 INVT 
@@ -130,7 +129,7 @@ IN1. If no pressure data, set NPRESS=0.
 
 .. csv-table:: INVT
    :file: tables/invt.csv
-   :widths: 15,15, 70
+   :widths: 15,15,70
    :header-rows: 1
 
 INK 
@@ -141,7 +140,7 @@ INK is specified in input K or boundary file for vertical stablization.
 
 .. csv-table:: INK
    :file: tables/ink.csv
-   :widths: 15,15, 70
+   :widths: 15,15,70
    :header-rows: 1
 
 INMS
@@ -202,8 +201,7 @@ communicated to efit through the dprobe.dat file.
 
 .. csv-table:: MACHINEIN
    :file: tables/machinein_efund.csv
-   :widths: 15,15, 70
-
+   :widths: 15,15,70
 
 EFITIN
 ------
@@ -227,7 +225,7 @@ IN3 is used to read experiment parameters from a dprobe.dat file.
 
 .. csv-table:: IN3
    :file: tables/in3.csv
-   :widths: 15,15, 70
+   :widths: 15,15,70
    :header-rows: 1
 
 IN4

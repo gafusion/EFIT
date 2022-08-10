@@ -15,17 +15,17 @@
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
-      character(1000) :: line
-      logical input_flag
       integer*4 maxinpfile,mode,shot,steps,istat
       real*8 starttime,deltatime
+      logical input_flag
       character cmdfile*15,shotfile*15,snapext*86
+      character(1000) :: line
 
       namelist/setup/link_efit,link_store,maxinpfile,ntims
       namelist/optin/mode,cmdfile,shotfile,shot,starttime,deltatime, &
                      steps,snapext,inpfile
 
-      ! Initialize variables      
+      ! Initialize variables
       input_flag = .false.
       link_efit = ''
       link_store = ''
