@@ -102,11 +102,11 @@ IECURR,,"| - ""(Integer flag) E-coil current"".
 | - 2 = fit E-coil currents
 | (How is this related to FWTEC??)"
 IERCHK,1,"| ""(Integer flag) Error Check"".
-| - 0 = don't check for MHD fitting errors"
+| - 0 = don't check for MHD fitting errors
 | - 1 = check for MHD fitting errors but continue regardless of the result (Default)
 | - 2 = only output parameters file (a-file) if the error checks fail
 | - 3 = don't output any result files (g, a, m, etc.) if error checks fail
-IEXCAL,0, 1 = plot magnetic signals. 
+IEXCAL,0, 1 = plot magnetic signals."
 IFITVS,,"| ""(Integer flag) Fit Vessel"". The DIII-D vessel can be modeled as 24 individual
 | current carrying elements, i.e. additional unknown sources of current (in both fitting
 | or equilibrium modes?). Currents in these elements are treated as free 
