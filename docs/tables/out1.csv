@@ -11,7 +11,7 @@ FWTCUR,See namelist IN1 (fitting).
 FWTSI,See namelist IN1 (fitting).
 IBUNMN,See namelist IN1.
 ICONVR,See namelist IN1.
-ICURRT,See namelist IN1 (fitting).
+ICURRT,See namelist IN1.
 ISHOT,See namelist IN1.
 ITIME,See namelist IN1.
 LIMITR,See namelist IN1.

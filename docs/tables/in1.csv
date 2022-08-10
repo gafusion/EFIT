@@ -88,7 +88,7 @@ ICONVR,,"| Specify solution mode
 ICUTFP,0,"| - 0 = enforce vacuum outside of LCFS (Default).
 | - 2 = to allow force-free current to flow in scrape-off layer (width set by ALPHAFP)."
 ICURRT,,"| ""(Integer flag) Current"". Which current profile parametrization to use
-| - 1 = not implemented.
+| - 1 = analytic (used with Solovev eq).
 | - 2 = linear polynomials for P' and FF' or spline(default).
 | - 3 = not implemented.
 | - 4 = GAQ type current profile.
