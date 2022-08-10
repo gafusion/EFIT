@@ -190,12 +190,22 @@
         ! get p' and ff' coefficients
         ! note: this could be read in from g-files directly, but needs
         !       to be fit from omas files, so we treat both consistently
-        if (icurrt.eq.2) then  !polynomial fitting
-          call fitpp(pprime_ext,nw_ext,alpa,kppcur)
-          brsp(1+nfcoil:nfcoil+kppcur)=alpa(1:kppcur)*darea
-          call fitfp(ffprim_ext,nw_ext,alpa,kffcur)
-          brsp(1+nfcoil+kppcur:nfcoil+kppcur+kffcur)= &
-            alpa(1:kffcur)*darea/twopi/tmu
+        if (icurrt.eq.2) then  
+          if (kppfnc.eq.6) then ! spline fitting
+            call errctrl_msg('inicur','kppfnc not set up')
+            stop
+          else !polynomial fitting
+            call fitpp(pprime_ext,nw_ext,alpa,kppcur)
+            brsp(1+nfcoil:nfcoil+kppcur)=alpa(1:kppcur)*darea
+          endif
+          if (kfffnc.eq.6) then ! spline fitting
+            call errctrl_msg('inicur','kfffnc not set up')
+            stop
+          else !polynomial fitting
+            call fitfp(ffprim_ext,nw_ext,alpa,kffcur)
+            brsp(1+nfcoil+kppcur:nfcoil+kppcur+kffcur)= &
+              alpa(1:kffcur)*darea/twopi/tmu
+          endif
         else
           call errctrl_msg('inicur','icurrt/=2 not set up')
           stop
