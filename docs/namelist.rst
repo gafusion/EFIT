@@ -57,6 +57,17 @@ For example, `efit 129` uses a `129 x 129` grid.
 The amount of current in each filament ("at" each grid point) is represented 
 by 
 
+.. math::
+    JT(R,\psi)=R[P'(\psi)+\mu _{0}FF'(\psi)/(4\pi^{2}R^{2})]
+
+where :math:`\psi`  is the value of normalized flux at each grid point, 
+and :math:`P'(\psi)` and :math:`FF'(\psi)` are represented by 
+linear combinations of a small number of basis functions.
+
+The variables below are used to specify the representation of the functions :math:`P'` and
+:math:`FF'` and any desired constraints on those representations. All variables are input
+via the IN1 or EFITIN namelists. Variables which have no defaults (and thus require inputs??)
+are printed in bold.
 
 .. csv-table:: IN1 basis functions
    :file: tables/in1_basis.csv
