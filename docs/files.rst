@@ -155,9 +155,9 @@ mEQDSK
 Output from file mode or snap(_ext) mode (1,2,3,7) runs when specified by IOUT (see efitin or in1 namelist).  Contains all diagnostic data, uncertainties, and synthetic measurements which can be used as input to fitting solutions and the quality of the fits (chi squared).  Also contains several global quality of fit parameters, plasma coefficients and coil currents used for correcting magnetic measurements.
 
    .. csv-table:: mEQDSK variables
-   :file: tables/meqdsk.csv
-   :widths: 20,80
-   :header-rows: 1
+      :file: tables/meqdsk.csv
+      :widths: 20,80
+      :header-rows: 1
 
 
 
