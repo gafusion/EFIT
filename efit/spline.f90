@@ -422,7 +422,7 @@
 !!    this is an extended version of  bsplpp  for use with tensor products
 !!    
 !!    onverts the b-representation  t, bcoef(.,j), n, k  of some spline into
-!!    its pp-representation  break, coef(j,.,.), l, k ; j=1, ..., m  .
+!!    its pp-representation  breakpts, coef(j,.,.), l, k ; j=1, ..., m  .
 !!    
 !!    i n p u t
 !!    t     knot sequence, of length  n+k
@@ -436,10 +436,10 @@
 !!    the spline and its  k-1  derivatives   for each of the m sets
 !!    
 !!    o u t p u t
-!!    break breakpoint sequence, of length  l+1, contains (in increasing
+!!    breakpts breakpoint sequence, of length  l+1, contains (in increasing
 !!    order) the distinct points in the sequence  t(k), ..., t(n+1)
 !!    coef(mm,.,.)  array of size (k,n), with  coef(mm,i,j) = (i-1)st der-
-!!    ivative of  mm-th  spline at break(j) from the right, mm=1,.,m
+!!    ivative of  mm-th  spline at breakpts(j) from the right, mm=1,.,m
 !!    l     number of polynomial pieces which make up the spline in the
 !!    interval  (t(k), t(n+1))
 !!    
@@ -452,23 +452,23 @@
 !!    ues of all b-splines of the appropriate order at that point.
 !!
 !**********************************************************************
-      subroutine bspp2d ( t, bcoef, n, k, m, scrtch, break, coef, l )
+      subroutine bspp2d ( t, bcoef, n, k, m, scrtch, breakpts, coef, l )
       implicit integer*4 (i-n), real*8 (a-h, o-z)
         parameter (kmax=4)
       INTEGER*4 k,l,m,n,i,j,jp1,kmj,left
-      dimension bcoef(n,m),break(*),coef(m,k,*),scrtch(k,k,m),t(*), &
+      dimension bcoef(n,m),breakpts(*),coef(m,k,*),scrtch(k,k,m),t(*), &
            biatx(kmax)
       REAL*8 diff,fkmj,sm
 !
       n11=1
       n22=2
       l = 0
-      break(1) = t(k)
+      breakpts(1) = t(k)
       do left=k,n
 !        find the next nontrivial knot interval.
          if(t(left+1) .eq. t(left)) cycle
          l = l + 1
-         break(l+1) = t(left+1)
+         breakpts(l+1) = t(left+1)
          if (k .le. 1) then
             coef(1:m,1,l) = bcoef(left,1:m)
             cycle

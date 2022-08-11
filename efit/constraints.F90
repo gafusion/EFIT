@@ -625,7 +625,7 @@
 !--   uncompensated diamagnetic flux if compensated not available    --
 !----------------------------------------------------------------------
       if (kcaldia.eq.0) then
-        call avdiam(nshot,nsingl(4),i1,ierrdi,diamag(1:np), &
+        call avdiam(nshot,i1,ierrdi,diamag(1:np), &
                     np,delt,i0,r1,i1,bitdia,iavem,time(1:np), &
                     sigdia,ierdia)
         if (ierdia(2).gt.0.and.ierdia(3).gt.0) then
@@ -668,7 +668,7 @@
 !!
 !!    @param nshot : shot number
 !!
-!!    @param name : the point name (10 ASCII characters)
+!!    @param ptname : the point ptname (10 ASCII characters)
 !!
 !!    @param mmm :
 !!
@@ -713,7 +713,7 @@
 !!    @param ktime_err : error flag for time not found in database
 !!
 !**********************************************************************
-      subroutine avdata(nshot,name,mmm,ierror,y, &
+      subroutine avdata(nshot,ptname,mmm,ierror,y, &
                         np,times,delt,mm,xxd,nn,bitvld,kave,time,ircfact, &
                         rcx,rcgx,vbitx,zinhnox,t0x,stdevx,navx, &
                         ktime_err)
@@ -724,7 +724,7 @@
       real*8 sevals
       integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave,ircfact
       real*8, intent(in) :: time(np),delt,xxd,times
-      character*10, intent(in) ::  name
+      character*10, intent(in) ::  ptname
       integer*4, intent(out) :: ierror,navx(np),ktime_err
       real*8, intent(out) :: y(np),bitvld,rcx,rcgx,vbitx,zinhnox, &
                              t0x,stdevx(np)
@@ -754,9 +754,9 @@
         npn = max0(npn,10)
         !
         bitvl = 0.0
-        if (name .ne. 'NONE      ') then !JRF
+        if (ptname .ne. 'NONE      ') then !JRF
           call getdat_e &
-            (nshot,name,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfact, &
+            (nshot,ptname,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfact, &
             rcxx,rcgxx,vbitxx,zinhnoxx,t0xx)
           bitvld = bitvl
           rcx = rcxx
@@ -827,7 +827,7 @@
           y(i) = w(j_save)
           stdevx(i) = stdevxx(j_save)
           navx(i) = navxx(j_save)
-!          write(6,999) xw(j_save),name
+!          write(6,999) xw(j_save),ptname
 !999       format(1x,'match at ',f15.8,'for ',a)
         enddo
       endif
@@ -848,9 +848,9 @@
         npn = min0(npn,ntims)
         npn = max0(npn,10)
         bitvl=0.0
-        if (name .ne. 'NONE      ') then
+        if (ptname .ne. 'NONE      ') then
           call getdat_e &
-          (nshot,name,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfact, &
+          (nshot,ptname,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfact, &
           rcxx,rcgxx,vbitxx,zinhnoxx,t0xx)
           bitvld = bitvl
           rcx = rcxx
@@ -919,7 +919,7 @@
           enddo
           y(i) = w(j_save)
           stdevx(i) = stdevxx(j_save)
-!          write(6,999) xw(j_save),name
+!          write(6,999) xw(j_save),ptname
         enddo
       endif
 !
@@ -934,7 +934,7 @@
 !!
 !!    @param nshot :
 !!
-!!    @param name : the point name (10 ASCII characters)
+!!    @param ptname : the point name (10 ASCII characters)
 !!
 !!    @param mmm :
 !!
@@ -971,7 +971,7 @@
 !!    @param t0x :
 !!
 !**********************************************************************
-      subroutine apdata(nshot,name,mmm,ierror,y, &
+      subroutine apdata(nshot,ptname,mmm,ierror,y, &
                         np,times,delt,mm,xxd,nn,bitvld,kave,time, &
                         rcx,rcgx,vbitx,zinhnox,t0x)
       use vtime_mod, only: ntims,npmax
@@ -980,7 +980,7 @@
       real*8 sevals
       integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave
       real*8, intent(in) :: time(np),delt,xxd,times
-      character*10, intent(in) ::  name
+      character*10, intent(in) ::  ptname
       integer*4, intent(out) :: ierror
       real*8, intent(out) :: y(np),bitvld,rcx,rcgx,vbitx,zinhnox,t0x
       integer*4 mave,kkk,npn,ircfac,ktime_err,nnp,i,j,j_save
@@ -1005,9 +1005,9 @@
         !
         bitvl = 0.0
         ircfac = 0
-        if (name .ne. 'NONE      ') then  !JRF
+        if (ptname .ne. 'NONE      ') then  !JRF
           call getdat_e &
-            (nshot,name,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfac, &
+            (nshot,ptname,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfac, &
             rcxx,rcgxx,vbitxx,zinhnoxx,t0xx)
           bitvld=bitvl
           rcx=rcxx
@@ -1066,7 +1066,7 @@
             endif
           enddo
           y(i) = w(j_save)
-        !            write(6,999) xw(j_save),name
+        !            write(6,999) xw(j_save),ptname
         !999         format(1x,'match at ',f15.8,'for ',a)
         enddo
       endif
@@ -1089,7 +1089,7 @@
 !!
 !!    @param nshot : shot number
 !!
-!!    @param name : the point name (10 ASCII characters)
+!!    @param ptname : the point name (10 ASCII characters)
 !!
 !!    @param mmm :
 !!
@@ -1118,14 +1118,14 @@
 !!    @param ircfact :
 !!
 !**********************************************************************
-      subroutine amdata(nshot,name,mmm,ierror,y, &
+      subroutine amdata(nshot,ptname,mmm,ierror,y, &
                         np,times,delt,mm,xxd,nn,bitvld,kave,time, &
                         ircfact)
       use set_kinds
       use var_pcsys, only: do_spline_fit
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       include 'mdslib.inc'
-      character*10 name, MyTree
+      character*10 ptname, MyTree
       real*8 y(np),time(np),delt,xxd,bitvld,times
       real*4, dimension(:), allocatable :: yw4,xw4
       real*8, dimension(:), allocatable :: yw,xw,bw,cw,dw,ew
@@ -1136,13 +1136,13 @@
       data dtmin/0.001001/
 !
       ierror=0
-      if(name .eq. 'NONE      ') return !JRF
+      if(ptname .eq. 'NONE      ') return !JRF
 !----------------------------------------------------------------------
 !--   Get data from MDS+                                             --
 !----------------------------------------------------------------------
       lenname = 0
-      do i=1,len(name)
-        if(name(i:i).ne.' ') lenname=lenname+1
+      do i=1,len(ptname)
+        if(ptname(i:i).ne.' ') lenname=lenname+1
       enddo
       stat = MdsConnect('atlas'//char(0))
       if (stat.eq.-1) then
@@ -1158,7 +1158,7 @@
       endif
 !
       dsc = descr(IDTYPE_LONG, mylen, 0)  ! MDSPlus return a descriptor number
-      stat = MdsValue('SIZE('//name(1:lenname)//')'//char(0), &
+      stat = MdsValue('SIZE('//ptname(1:lenname)//')'//char(0), &
                       dsc, 0, ldum)
       if (mod(stat,2) .eq. 0) then
         ierror = 1
@@ -1183,12 +1183,12 @@
 !
       f_dsc = descr(IDTYPE_FLOAT, yw4, mylen, 0) ! MDSPlus return a descriptor number
       t_dsc = descr(IDTYPE_FLOAT, xw4, mylen, 0) ! MDSPlus return a descriptor number
-      stat=MdsValue(name(1:lenname)//char(0), f_dsc, 0, ldum)
+      stat=MdsValue(ptname(1:lenname)//char(0), f_dsc, 0, ldum)
       if (mod(stat,2) .eq. 0) then
         ierror = 1
         return
       endif
-      stat=MdsValue('DIM_OF('//name(1:lenname)//',0)'//char(0), &
+      stat=MdsValue('DIM_OF('//ptname(1:lenname)//',0)'//char(0), &
                     t_dsc, 0, ldum)
       yw(1:npn)=real(yw4(1:npn),dp)
       xw(1:npn)=real(xw4(1:npn),dp)/1000.
@@ -1237,7 +1237,7 @@
             endif
           enddo
           y(i) = yw(j_save)
-        !            write(6,999) xw(j_save),name
+        !            write(6,999) xw(j_save),ptname
         !999         format(1x,'match at ',f15.8,'for ',a)
         enddo
       endif
@@ -1310,8 +1310,6 @@
 !!
 !!    @param nshot : shot number
 !!
-!!    @param name : the point name (10 ASCII characters)
-!!
 !!    @param mmm :
 !!
 !!    @param ierror : error flag
@@ -1339,7 +1337,7 @@
 !!    @param ierdia :
 !!
 !**********************************************************************
-      subroutine avdiam(nshot,name,mmm,ierror,y,np, &
+      subroutine avdiam(nshot,mmm,ierror,y,np, &
                         delt,mm,xxd,nn,bitvl,kave,time,sigmay, &
                         ierdia)
       use vtime_mod, only: ntims
@@ -1347,7 +1345,6 @@
       real*8 sevals
       integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave,ierdia(3) ! mm, mmm, and nn are unused
       real*8, intent(in) :: time(np),delt,xxd
-      character*10, intent(in) :: name
       integer*4, intent(out) :: ierror
       real*8, intent(out) :: y(np),sigmay(np),bitvl
       integer*4 mave,npn,i
