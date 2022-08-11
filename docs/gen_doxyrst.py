@@ -9,7 +9,8 @@ def gen_rst(directory):
     files = os.listdir(directory)
     files.sort()
 
-    with open("gen_subroutines.rst", "w") as fh:
+    rstfile=os.path.join(directory,'../docs/gen_subroutines.rst')
+    with open(rstfile, "w") as fh:
         for file in files:
             print(file)
             if "f90" in file or "F90" in file and "swp" not in file:
@@ -17,7 +18,7 @@ def gen_rst(directory):
                 divstring = ""
                 for i in range(len(file)):
                     divstring += "-"
-                fh.write(divstring + "\n")
+                fh.write(divstring + "\n\n")
                 with open(os.path.join(directory, file), "r") as f:
                     filelines = f.readlines()
                     for line in filelines:
@@ -25,9 +26,9 @@ def gen_rst(directory):
                         if linestrip[0:10].lower() == "subroutine":
                             fh.write(
                                 ".. doxygenfunction::"+
-                                line.strip().split()[1].split("(")[0].lower(),
+                                line.strip().split()[1].split("(")[0].lower()+"\n",
                             )
-                fh.write("")
+                fh.write("\n")
 
 
 def main():

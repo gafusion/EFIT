@@ -7,4 +7,4 @@ build*
 .*.swp
 .tags
 tags
-docs/subroutines.rst
+docs/gen_subroutines.rst

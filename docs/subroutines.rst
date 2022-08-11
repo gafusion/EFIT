@@ -30,4 +30,4 @@ The logic flow chart::
 			WRITE_M: Write M EQDSK.
 
 
-.. include:: ${CMAKE_CURRENT_BINARY_DIR}/gen_subroutines.rst
+.. include:: gen_subroutines.rst
