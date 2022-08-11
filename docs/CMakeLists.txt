@@ -28,6 +28,20 @@ include(SciSphinxFunctions.cmake)
 set(MATHJAXJS "MathJax/MathJax.js?config=TeX-AMS-MML_SVG-full.js")
 
 
+# --------------------------
+#  Need Doxygen to fold into 
+# --------------------------
+find_program(DOXYGEN_EXECUTABLE
+  doxygen
+)
+if (DOXYGEN_EXECUTABLE)
+    set(DOXYGEN_FOUND 1 CACHE BOOL "Found DOXYGEN binary")
+    message(STATUS "DOXYGEN_EXECUTABLE found.")
+    message(STATUS "DOXYGEN_EXECUTABLE  = ${DOXYGEN_EXECUTABLE}")
+else ()
+    message(STATUS "DOXYGEN_EXECUTABLE NOT found.")
+endif ()
+
 #---------------------
 # Create documentation 
 #---------------------
@@ -37,8 +51,10 @@ set(EFITDOC_DEPS ${EFITDOC_DEPS} ../INSTALL.rst ../LICENSE.rst)
 set(EFITDOC_DEPS ${EFITDOC_DEPS} ../docker/docker.rst)
 
 # Copy stuff over from docs because sphinxbuild doesn't allow full paths
+configure_file(${SRCDIR}/subroutines.rst.in ${SRCDIR}/subroutines.rst)  # 1 copy
 configure_file(${SRCDIR}/conf.py.in ${BLDDIR}/conf.py)  # 1 copy
 configure_file(${SRCDIR}/build_index.html.in ${BLDDIR}/build_index.html)  # 1 copy
+configure_file(${SRCDIR}/Doxyfile.in ${BLDDIR}/Doxyfile)  # 1 copy
 
 # Pull together all ReST files for reference manual
 file(GLOB_RECURSE EFITDOC_DEPS RELATIVE ${SRCDIR} *.rst */*.rst */*/*.rst */*/*/*.rst)

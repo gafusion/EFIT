@@ -197,6 +197,9 @@ macro(SciSphinxTarget)
       endif ()
       add_custom_command(
         OUTPUT ${${build}_OUTPUT}
+        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/gen_doxyrst.py
+        ARGS ${CMAKE_SOURCE_DIR}/efit
+        COMMAND ${DOXYGEN_EXECUTABLE}
         COMMAND ${Sphinx_EXECUTABLE}
         ARGS ${all_opts} ${FD_SOURCE_DIR} ${${build}_DIR}
         ${TOUCH_CMD_ARGS}
