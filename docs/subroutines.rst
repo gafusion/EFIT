@@ -1,7 +1,8 @@
 EFIT subroutines
 ================================
 
-The logic flow chart::
+The logic flow chart
+.. code-block:: none
 
 	EFIT: Main driver
 		GETSETS: Initialize run, input snap file, Green's tables.
