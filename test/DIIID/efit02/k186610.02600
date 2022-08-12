@@ -4844,7 +4844,6 @@
  PSIECN =    0.000000000000000     ,
  DPSIECN =    0.000000000000000     ,
  FITZTS = 'no',
- ISOLVE =            0,
  IPLCOUT =            0,
  IMAGSIGMA =            0,
  ERRMAG =   1.0000000000000000E-003,

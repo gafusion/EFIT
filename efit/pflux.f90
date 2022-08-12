@@ -43,9 +43,8 @@
       psiold=psi
       psipold=psipla
 !
-      buneman_green: if ((ibunmn.eq.1).or.(ibunmn.eq.3).or. &
-         ((ibunmn.eq.2).and.(errorm.gt.errcut)).or. &
-         ((ibunmn.eq.4).and.(errorm.gt.errcut))) then
+      buneman_green: if ((ibunmn.eq.1).or. &
+                        ((ibunmn.eq.2).and.(errorm.gt.errcut))) then
 !-----------------------------------------------------------------------------
 !--   Buneman's method of obtaining psi at the inner grid points            --
 !--   only plasma contribution                                              --
@@ -284,7 +283,7 @@
 
       else buneman_green
 !-----------------------------------------------------------------------------
-!--   ibunmn=0, and 2,4 when errorm less than errcut                        --
+!--   ibunmn=0 and 2 when errorm less than errcut                        --
 !--   Green's integral method of obtaining flux, can be computationally     --
 !--   intensive                                                             --
 !-----------------------------------------------------------------------------

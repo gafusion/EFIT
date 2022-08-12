@@ -60,10 +60,11 @@ IBTCOMP,1,"| ""(Integer flag) BT Compensation"". Toroidal field pickup compensat
 |  contributions to poloidal magnetic field probe measurements due to pickup from toroidal field coil
 | <=0 no compensation
 | > 0 apply compensation"
-IBUNMN,0, "| ""(Integer flag) Buneman"". 0 = Green's method.
-| -1 = Buneman's method.
-| -2 = Buneman's method until error less than 1e-3 then Green's method.
-| -3 = improved Buneman's (default)."
+IBUNMN,1, "| ""(Integer flag) Buneman"". 0 = Green's method.
+| -1 = Buneman's method or single cyclic reduction (see ISOLVE).
+| -2 = Buneman/single cyclic reduction until error is less than 1e-3 then Green's method.
+| -3 = same as 1.
+| -4 = same as 2."
 ICALBET,1, "| - >0 compute beta with various normalizations and output to FITOUT.DAT. (Default=1)
 | -<=0 don't"
 ICINIT,2,"| ""(Integer flag) Current Initialization"". Plasma current profile initialization parameter.
@@ -130,10 +131,10 @@ IPROBE,0,+ = plot magnetic probes and flux loops and number them every IPROBE po
 IQPLOT,1,+ = plot q values on flux surfaces 
 IRFILA,,Default calculation = ??
 ISLVE,0,"""(Integer flag) Solovev"". 1 = Solovev equilibrium."
-ISOLVE,,"| Integer flag to choose between core solvers.
-| -  0 = Buneman method (default) 
-| - 1 = Single Cyclic Reduction Solver. Buneman method requires 2n grid points in both 
-| directions and uses double cyclic reduction, Single cyclic reduction can have any number
+ISOLVE,1,"| Integer flag to choose between core solvers.
+| - 0 = Buneman method. Double cyclic reduction, requires 2n+1 grid points in both directions.
+| (Most commonly used by legacy efit versions.)
+| - 1 = Single cyclic reduction solver. Requires 2n+1 grid points in Z, but can have any number
 | of grid points in R, and is faster than Buneman (used in real time efit)."
 ISTORE,,"| ""(Integer flag) Store"". For UNIX workstations only.
 | - 1 = write EFIT results ( A EQDSK files, the G EQDSK files, the Q data files, 

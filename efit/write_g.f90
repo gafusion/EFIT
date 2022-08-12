@@ -411,7 +411,7 @@
       fixed_bdry: if (nbdry.gt.2) then
         ierold=ierchk
         ierchk=0
-        ibunmn=3
+        ibunmn=1
         fwtcur=1.
         mxiter=1
         nxiter=99

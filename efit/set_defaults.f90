@@ -236,7 +236,7 @@
         gammap=1.0e+10_dp
         ibound=0 ! hardcoded variable, not part of any namelist...
         ibtcomp=1
-        ibunmn=3
+        ibunmn=1
         icalbet=1
         icinit=2
         icntour=0
@@ -248,6 +248,7 @@
         iecoil=0
         iexcal=0
         ifref=-1
+        isolve=1
         iplim=0
         iplots=1
         iprobe=0
@@ -366,7 +367,6 @@
         fwtpre=1.
         gamax(2)=-1.e6_dp 
         iout=1                 ! default - write fitout.dat
-        isolve=0
         kautoknt=0
         kakloop=1
         kakiter=25

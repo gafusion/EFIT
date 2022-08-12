@@ -2291,6 +2291,10 @@
          (use_previous .or. (isicinit.lt.0 .and. isicinit.ne.-3))) &
         brsp = brsp_save
 
+      ! legacy options...
+      if(ibunmn.eq.3) ibunmn=1
+      if(ibunmn.eq.4) ibunmn=2
+
       if(kfffnc.eq.8) rkec=pi/(2.0*dpsiecn) 
       chigam=0.0 
       tchimls=0.0 
@@ -2311,10 +2315,10 @@
         iconvr=3 
       endif
 
-! Check that the grid sizes are compatible with Buneman's algorithm
-! (this is not relevant to pefit - not yet available)
+! Check that the grid sizes are compatible with cyclic reduction
+! (single or double)
       if (ibunmn.ne.0) then
-        if (nh .ne. 0) then
+        if (nh.ne.0) then
           select case (nh)
           case (3,5,9,17,33,65,129,257,513,1025,2049)
             ! all good
@@ -2324,14 +2328,16 @@
             stop
           end select
         endif
-        select case (nw)
-        case (3,5,9,17,33,65,129,257,513,1025,2049)
-          ! all good
-        case default
-          call errctrl_msg('data_input', &
-               'Chosen grid dimensions cannot be run')
-          stop
-        end select
+        if (nh.eq.0 .or. isolve.eq.0) then
+          select case (nw)
+          case (3,5,9,17,33,65,129,257,513,1025,2049)
+            ! all good
+          case default
+            call errctrl_msg('data_input', &
+                 'Chosen grid dimensions cannot be run')
+            stop
+          end select
+        endif
       endif
 !--------------------------------------------------------------------- 
 !--   correction to 322 degree probes due to N1 coil                -- 
