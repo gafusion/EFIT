@@ -12,24 +12,78 @@ def gen_rst(directory):
     rstfile=os.path.join(directory,'../docs/gen_subroutines.rst')
     with open(rstfile, "w") as fh:
         for file in files:
+            if "modules-efit" in file:
+                # contains subroutines inside of modules which currently breaks
+                # doxygen (could possibly be fixed, but they aren't essential anyway)
+                continue
             print(file)
             if "f90" in file or "F90" in file and "swp" not in file:
-                fh.write(file)
-                divstring = ""
-                for i in range(len(file)):
-                    divstring += "-"
-                fh.write(divstring + "\n\n")
+                first=0
                 with open(os.path.join(directory, file), "r") as f:
                     filelines = f.readlines()
                     for line in filelines:
                         linestrip = line.strip()
                         if linestrip[0:10].lower() == "subroutine":
+                            if first==0:
+                                fh.write(file)
+                                divstring  = ""
+                                for i in range(len(file)):
+                                    divstring += "-"
+                                fh.write(divstring + "\n\n")
+                                first+=1
                             fh.write(
                                 ".. doxygenfunction::"+
                                 line.strip().split()[1].split("(")[0].lower()+"\n",
                             )
                 fh.write("\n")
 
+    rstfile=os.path.join(directory,'../docs/gen_functions.rst')
+    with open(rstfile, "w") as fh:
+        for file in files:
+            #print(file)
+            if "f90" in file or "F90" in file and "swp" not in file:
+                first=0
+                with open(os.path.join(directory, file), "r") as f:
+                    filelines = f.readlines()
+                    for line in filelines:
+                        linestrip = line.strip()
+                        if linestrip[0:8].lower()=='function':
+                            if first==0:
+                                fh.write(file)
+                                divstring  = ""
+                                for i in range(len(file)):
+                                    divstring += "-"
+                                fh.write(divstring + "\n\n")
+                                first+=1
+                            fh.write(
+                                ".. doxygenfunction::"+
+                                line.strip().split()[1].split("(")[0].lower()+"\n",
+                            )
+                fh.write("\n")
+
+    rstfile=os.path.join(directory,'../docs/gen_modules.rst')
+    with open(rstfile, "w") as fh:
+        for file in files:
+            #print(file)
+            if "f90" in file or "F90" in file and "swp" not in file:
+                first=0
+                with open(os.path.join(directory, file), "r") as f:
+                    filelines = f.readlines()
+                    for line in filelines:
+                        linestrip = line.strip()
+                        if linestrip[0:6].lower()=='module':
+                            if first==0:
+                                fh.write(file)
+                                divstring  = ""
+                                for i in range(len(file)):
+                                    divstring += "-"
+                                fh.write(divstring + "\n\n")
+                                first+=1
+                            fh.write(
+                                ".. doxygenfunction::"+
+                                line.strip().split()[1].split("(")[0].lower()+"\n",
+                            )
+                fh.write("\n")
 
 def main():
     """

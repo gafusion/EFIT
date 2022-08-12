@@ -1,3 +1,5 @@
+.. highlight:: default
+
 Database
 ========
 

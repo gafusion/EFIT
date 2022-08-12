@@ -1,4 +1,5 @@
 .. _quickstart:
+.. highlight:: bash
 
 Quick-start
 ===========
@@ -78,11 +79,11 @@ time by passing the flags ``-DINPUT_DIR=``, ``-DTABLE_DIR=``, and ``-DSTORE_DIR`
 cmake.  Otherwise the default is set as the build directory.  This is superceded
 at runtime by environment variables or input files.  
 
-The precedence is decided by checking in that order::
-     1.  efit.input file (setup namelist)
-     2.  input files (efit_snap.dat, k-files, etc.)
-     3.  environment variables
-     4.  build defaults
+The precedence is decided by checking in that order:
+     #.  efit.input file (setup namelist)
+     #.  input files (efit_snap.dat, k-files, etc.)
+     #.  environment variables
+     #.  build defaults
 
 The environment variables and setup namelist in efit.input are specified by ``link_efit`` and ``link_store``::
 

@@ -1,3 +1,5 @@
+.. highlight:: fortran
+
 EFIT files
 ==========
 
@@ -62,22 +64,22 @@ Contains shape, convergence, and other global parameters, mainly scalar values. 
 	parameter (ntime=400)
 	character limloc*4,qmflag*3
 	data nlold/35/,nlnew/39/
-	dimension time(ntime),jflag(ntime)
-	. ,eout(ntime),rout(ntime),zout(ntime),doutu(ntime)
-	. ,doutl(ntime),aout(ntime),vout(ntime),betat(ntime),otop(ntime)
-	. ,betap(ntime),ali(ntime),oleft(ntime),oright(ntime),qsta(ntime)
-	. ,rcurrt(ntime),zcurrt(ntime),qout(ntime),olefs(ntime)
-	. ,orighs(ntime),otops(ntime),sibdry(ntime),areao(ntime)
-	. ,wplasm(ntime),elongm(ntime),qqmagx(ntime),terror(ntime)
-	. ,rmagx(ntime),zmagx(ntime),obott(ntime),obots(ntime)
-	. ,alpha(ntime),rttt(ntime),dbpli(ntime),delbp(ntime),oring(ntime)
-	. ,rseps(2,ntime),zseps(2,ntime),sepexp(ntime),shearb(ntime)
-	. ,xtch(ntime),ytch(ntime),qpsib(ntime),vertn(ntime),aaq1(ntime)
-	. ,aaq2(ntime),aaq3(ntime),btaxp(ntime),btaxv(ntime)
-	. ,simagx(ntime),jerror(ntime),seplim(ntime)
-	. ,wbpol(ntime),taumhd(ntime),betapd(ntime),betatd(ntime)
-	. ,alid(ntime),wplasmd(ntime),taudia(ntime),wbpold(ntime)
-	. ,qmerci(ntime),slantu(ntime),slantl(ntime),zeff(ntime),
+	dimension time(ntime),jflag(ntime),
+	. eout(ntime),rout(ntime),zout(ntime),doutu(ntime),
+	. doutl(ntime),aout(ntime),vout(ntime),betat(ntime),otop(ntime),
+	. betap(ntime),ali(ntime),oleft(ntime),oright(ntime),qsta(ntime),
+	. rcurrt(ntime),zcurrt(ntime),qout(ntime),olefs(ntime),
+	. orighs(ntime),otops(ntime),sibdry(ntime),areao(ntime),
+	. wplasm(ntime),elongm(ntime),qqmagx(ntime),terror(ntime),
+	. rmagx(ntime),zmagx(ntime),obott(ntime),obots(ntime),
+	. alpha(ntime),rttt(ntime),dbpli(ntime),delbp(ntime),oring(ntime),
+	. rseps(2,ntime),zseps(2,ntime),sepexp(ntime),shearb(ntime),
+	. xtch(ntime),ytch(ntime),qpsib(ntime),vertn(ntime),aaq1(ntime),
+	. aaq2(ntime),aaq3(ntime),btaxp(ntime),btaxv(ntime),
+	. simagx(ntime),jerror(ntime),seplim(ntime),
+	. wbpol(ntime),taumhd(ntime),betapd(ntime),betatd(ntime),
+	. alid(ntime),wplasmd(ntime),taudia(ntime),wbpold(ntime),
+	. qmerci(ntime),slantu(ntime),slantl(ntime),zeff(ntime),
 	. zeffr(ntime),tave(ntime),rvsin(ntime),zvsin(ntime),
 	. rvsout(ntime),zvsout(ntime),wpdot(ntime),wbdot(ntime),
 	. vsurfa(ntime),cjor95(ntime),pp95(ntime),ssep(ntime),
@@ -154,10 +156,10 @@ mEQDSK
 ------
 Output from file mode or snap(_ext) mode (1,2,3,7) runs when specified by IOUT (see efitin or in1 namelist).  Contains all diagnostic data, uncertainties, and synthetic measurements which can be used as input to fitting solutions and the quality of the fits (chi squared).  Also contains several global quality of fit parameters, plasma coefficients and coil currents used for correcting magnetic measurements.
 
-   .. csv-table:: mEQDSK variables
-      :file: tables/meqdsk.csv
-      :widths: 20,80
-      :header-rows: 1
+.. csv-table:: mEQDSK variables
+   :file: tables/meqdsk.csv
+   :widths: 20,80
+   :header-rows: 1
 
 
 

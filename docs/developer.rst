@@ -1,5 +1,3 @@
-
-
 GitLab
 =======
 
@@ -18,7 +16,6 @@ For submitting the merge request, the developer should:
     ensure that the pipeline passes
   + The actual merge should always be done by someone other than the developer
     who submitted the MR
-
 
 
 Slack and Mailing Lists
