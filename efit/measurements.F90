@@ -185,7 +185,7 @@
                   navvl(1:np),time_err)
 !
       if (use_alternate_pointnames .eq. 2) then    !JRF
-        if( (ierpla .eq. 0) .and. (ierlop .eq. 0)) &
+        if((ierpla .eq. 0) .and. (ierlop .eq. 0)) &
           pasmat(1:np) = pasmat(1:np) - vloopt(1:np) * 0.646/50.0 * 0.5e6
       endif
 !---------------------------------------------------------------------

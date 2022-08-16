@@ -27,7 +27,7 @@
       dimension pds(6)
       integer*4 iii
       real*8 :: zmaxis_last
-      integer*4, parameter :: nqiter=10
+      integer*4, parameter :: nnn=1,nqiter=10
       real*8, parameter :: psitol=1.0e-04_dp,cdum=1.0
       data isplit/8/,zmaxis_last/0.0/
       save xguess,yguess,xltrac,radbou
@@ -374,7 +374,6 @@
 !-----------------------------------------------------------------------
       r1sdry(1)=r1bdry
       r2sdry(1)=r2bdry
-      nnn=1
       if (abs(sizeroj(1)-1.0).gt.1.e-05_dp.or.kzeroj.ne.1) then
         if (kzeroj.gt.0) then
           do i=1,kzeroj
@@ -681,7 +680,12 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+
+      integer*4, intent(in) :: jtime
+      integer*4 i,m
+      real*8 cm,cmbr,cmbz,ce1rbz,ce2rbz,ce3rbr,saisq
+      integer*4, parameter :: nnn=0,nsq=2
 !
 #ifdef DEBUG_LEVEL2
       write (6,*) 'CHISQR, jtime= ',jtime
@@ -689,40 +693,15 @@
 !
       if (ivesel.gt.10) return
 !
-      nsq=2
       saisq=0.0
       chi2rm(jtime)=0.0
       do m=1,nsilop
-        cm=0.0
-        do n=1,nfcoil
-          cm=cm+rsilfc(m,n)*brsp(n)
-        enddo
-        do n=1,nwnh
-          cm=cm+gsilpc(m,n)*pcurrt(n)
-        enddo
-        if (ivesel.gt.0) then
-          do n=1,nvesel
-            cm=cm+rsilvs(m,n)*vcurrt(n)
-          enddo
-        endif
-        if (iecurr.eq.1) then
-          do n=1,nesum
-            cm=cm+rsilec(m,n)*ecurrt(n)
-          enddo
-        endif
-        if (iacoil.gt.0) then
-          do n=1,nacoil
-            cm=cm+rsilac(m,n)*caccurt(jtime,n)
-          enddo
-        endif
-        if (iecurr.eq.2) then
-          do n=1,nesum
-            cm=cm+rsilec(m,n)*cecurr(n)
-          enddo
-        endif
-        if (fitsiref) then
-          cm=cm-csiref
-        endif
+        cm=sum(rsilfc(m,:)*brsp(1:nfcoil))+sum(gsilpc(m,:)*pcurrt)
+        if(ivesel.gt.0) cm=cm+sum(rsilvs(m,:)*vcurrt)
+        if(iecurr.eq.1) cm=cm+sum(rsilec(m,:)*ecurrt)
+        if(iacoil.gt.0) cm=cm+sum(rsilac(m,:)*caccurt(jtime,:))
+        if(iecurr.eq.2) cm=cm+sum(rsilec(m,:)*cecurr)
+        if(fitsiref)    cm=cm-csiref
         if (swtsi(m).ne.0.0) then
           saisil(m)=(fwtsi(m)/swtsi(m))**nsq*(silopt(jtime,m)-cm)**2
         else
@@ -734,33 +713,11 @@
       enddo
 !
       do m=1,magpri
-        cm=0.0
-        do n=1,nfcoil
-          cm=cm+rmp2fc(m,n)*brsp(n)
-        enddo
-        do n=1,nwnh
-          cm=cm+gmp2pc(m,n)*pcurrt(n)
-        enddo
-        if (ivesel.gt.0) then
-          do n=1,nvesel
-            cm=cm+rmp2vs(m,n)*vcurrt(n)
-          enddo
-        endif
-        if (iecurr.eq.1) then
-          do n=1,nesum
-            cm=cm+rmp2ec(m,n)*ecurrt(n)
-          enddo
-        endif
-        if (iacoil.le.0) then
-          do n=1,nacoil
-            cm=cm+rmp2ac(m,n)*caccurt(jtime,n)
-          enddo
-        endif
-        if (iecurr.eq.2) then
-          do n=1,nesum
-            cm=cm+rmp2ec(m,n)*cecurr(n)
-          enddo
-        endif
+          cm=sum(rmp2fc(m,:)*brsp(1:nfcoil))+sum(gmp2pc(m,:)*pcurrt)
+        if(ivesel.gt.0) cm=cm+sum(rmp2vs(m,:)*vcurrt)
+        if(iecurr.eq.1) cm=cm+sum(rmp2ec(m,:)*ecurrt)
+        if(iacoil.gt.0) cm=cm+sum(rmp2ac(m,:)*caccurt(jtime,:))
+        if(iecurr.eq.2) cm=cm+sum(rmp2ec(m,:)*cecurr)
         if (swtmp2(m).ne.0.0) then
           saimpi(m)=(fwtmp2(m)/swtmp2(m))**nsq*(expmpi(jtime,m)-cm)**2
         else
@@ -775,33 +732,12 @@
 !-------------------------------------------------------------------
       tchiece=0.0
       do m=1,nece
-        cm=0.0
-        do n=1,nfcoil
-          cm=cm+recefc(m,n)*brsp(n)
-        enddo
-        do n=1,kwcurn
-          cm=cm+recepc(m,n)*brsp(nfcoil+n)
-        enddo
-        if (ivesel.gt.0) then
-          do n=1,nvesel
-            cm=cm+recevs(m,n)*vcurrt(n)
-          enddo
-        endif
-        if (iecurr.eq.1) then
-          do n=1,nesum
-            cm=cm+receec(m,n)*ecurrt(n)
-          enddo
-        endif
-        if (iacoil.gt.0) then
-          do n=1,nacoil
-            cm=cm+receac(m,n)*caccurt(jtime,n)
-          enddo
-        endif
-        if (iecurr.eq.2) then
-          do n=1,nesum
-            cm=cm+receec(m,n)*cecurr(n)
-          enddo
-        endif
+        cm=sum(recefc(m,:)*brsp(1:nfcoil)) &
+          +sum(recepc(m,1:kwcurn)*brsp(nfcoil+1:nfcoil+kwcurn))
+        if(ivesel.gt.0) cm=cm+sum(recevs(m,:)*vcurrt)
+        if(iecurr.eq.1) cm=cm+sum(receec(m,:)*ecurrt)
+        if(iacoil.gt.0) cm=cm+sum(receac(m,:)*caccurt(jtime,:))
+        if(iecurr.eq.2) cm=cm+sum(receec(m,:)*cecurr)
         if (swtece(m).ne.0.0) then
           chiece(m)=fwtece(m)**nsq*(brspece(jtime,m)-cm)**2
           chiece(m)=chiece(m)/swtece(m)**nsq
@@ -814,33 +750,12 @@
 !-------------------------------------------------------------------
 !--   calculate ECE chisqr (chiecebz for Bz(receo)=0)
 !-------------------------------------------------------------------
-      cm=0.0
-      do n=1,nfcoil
-        cm=cm+recebzfc(n)*brsp(n)
-      enddo
-      do n=1,kwcurn
-        cm=cm+recebzpc(n)*brsp(nfcoil+n)
-      enddo
-      if (ivesel.gt.0) then
-        do n=1,nvesel
-          cm=cm+recevs(m,n)*vcurrt(n)
-        enddo
-      endif
-      if (iecurr.eq.1) then
-        do n=1,nesum
-          cm=cm+recebzec(n)*ecurrt(n)
-        enddo
-      endif
-      if (iacoil.gt.0) then
-        do n=1,nacoil
-          cm=cm+receac(m,n)*caccurt(jtime,n)
-        enddo
-      endif
-      if (iecurr.eq.2) then
-        do n=1,nesum
-          cm=cm+recebzec(n)*cecurr(n)
-        enddo
-      endif
+      cm=sum(recebzfc*brsp(1:nfcoil)) &
+        +sum(recebzpc(1:kwcurn)*brsp(nfcoil+1:nfcoil+kwcurn))
+      if(ivesel.gt.0) cm=cm+sum(recevs(m,:)*vcurrt) ! TODO: should this be recebzvs?
+      if(iecurr.eq.1) cm=cm+sum(recebzec*ecurrt)
+      if(iacoil.gt.0) cm=cm+sum(receac(m,:)*caccurt(jtime,:)) ! TODO: should this be recebzac?
+      if(iecurr.eq.2) cm=cm+sum(recebzec*cecurr)
       if (swtecebz.ne.0.0) then
         chiecebz=fwtecebz**nsq*(brspecebz(jtime)-cm)**2
         chiecebz=chiecebz/swtecebz**nsq
@@ -849,16 +764,9 @@
       endif
       cmecebz(jtime)=cm
 !
-      cm=0.0
-      do n=1,nwnh
-        cm=cm+pcurrt(n)
-      enddo
+      cm=sum(pcurrt)
       cpasma(jtime)=cm
-      if (ifitvs.gt.0.or.ivesel.gt.0) then
-        do i=1,nvesel
-          cm=cm+vcurrt(i)
-        enddo
-      endif
+      if(ifitvs.gt.0.or.ivesel.gt.0) cm=cm+sum(vcurrt)
       if (swtcur.ne.0.0) then
         saiip=(fwtcur/swtcur)**nsq*(pasmat(jtime)-cm)**2
       else
@@ -899,49 +807,40 @@
         chi2rm(jtime)=max(chi2rm(jtime),saisref)
       endif
 !
-      do n=1,nfcoil
-        ccbrsp(n,jtime)=brsp(n)
-      enddo
+      ccbrsp(:,jtime)=brsp(1:nfcoil)
 !
       tsaisq(jtime)=saisq
       if (iand(iout,1).ne.0) then
-        write (nout,7400) time(jtime),tsaisq(jtime),cpasma(jtime)
-        write (nout,7420)
-        write (nout,7450) (saisil(m),m=1,nsilop)
-        write (nout,7430)
-        write (nout,7450) (saimpi(m),m=1,magpri)
-        write (nout,7460) saiip
-        write (nout,7480) tsaifc
-        write (nout,7450) (saifc(m),m=1,nfcoil)
-        write (nout,7482) saisref
-        write (nout,7485)
-        write (nout,7450) (saiec(m),m=1,nesum)
-        if (kprfit.gt.0) write (nout,7470) chipre
-        if (kprfit.gt.0) write (nout,7450) (saipre(m),m=1,npress)
-        if (kecebz.gt.0) write (nout,7486) chiecebz
-        if (kece.gt.0) write (nout,7487) tchiece
-        if (kece.gt.0) then
+        write(nout,7400) time(jtime),tsaisq(jtime),cpasma(jtime)
+        write(nout,7420)
+        write(nout,7450) (saisil(m),m=1,nsilop)
+        write(nout,7430)
+        write(nout,7450) (saimpi(m),m=1,magpri)
+        write(nout,7460) saiip
+        write(nout,7480) tsaifc
+        write(nout,7450) (saifc(m),m=1,nfcoil)
+        write(nout,7482) saisref
+        write(nout,7485)
+        write(nout,7450) (saiec(m),m=1,nesum)
+        if(kprfit.gt.0) write(nout,7470) chipre
+        if(kprfit.gt.0) write(nout,7450) (saipre(m),m=1,npress)
+        if(kecebz.gt.0) write(nout,7486) chiecebz
+        if(kece.gt.0) write(nout,7487) tchiece
+        if(kece.gt.0) then
           write(nout,7488)
-          write (nout,7450) (chiece(m),m=1,nece)
+          write(nout,7450) (chiece(m),m=1,nece)
         endif
       endif
 !-------------------------------------------------------------------------
 !--   compute signals at MSE locations if requested                     --
 !-------------------------------------------------------------------------
       if (kdomse.gt.0) then
-        nnn=0
         call green(nnn,jtime,n222)
         do m=1,nstark
-          cmbr=0.0
-          cmbz=0.0
-          do n=1,nfcoil
-            cmbr=cmbr+rbrfc(m,n)*brsp(n)
-            cmbz=cmbz+rbzfc(m,n)*brsp(n)
-          enddo
-          do n=1,kwcurn
-            cmbr=cmbr+rbrpc(m,n)*brsp(nfcoil+n)
-            cmbz=cmbz+rbzpc(m,n)*brsp(nfcoil+n)
-          enddo
+          cmbr=sum(rbrfc(m,:)*brsp(1:nfcoil)) &
+              +sum(rbrpc(m,1:kwcurn)*brsp(nfcoil+1:nfcoil+kwcurn))
+          cmbz=sum(rbzfc(m,:)*brsp(1:nfcoil)) &
+              +sum(rbzpc(m,1:kwcurn)*brsp(nfcoil+1:nfcoil+kwcurn))
           if (kedgep.gt.0) then
             cmbr=cmbr+rbrpe(m)*pedge
             cmbz=cmbz+rbzpe(m)*pedge
@@ -951,43 +850,30 @@
             cmbz=cmbz+rbzfe(m)*f2edge
           endif
           if (ivesel.gt.0) then
-            do n=1,nvesel
-              cmbr=cmbr+rbrvs(m,n)*vcurrt(n)
-              cmbz=cmbz+rbzvs(m,n)*vcurrt(n)
-            enddo
+            cmbr=cmbr+sum(rbrvs(m,:)*vcurrt)
+            cmbz=cmbz+sum(rbzvs(m,:)*vcurrt)
           endif
           if (iecurr.eq.1) then
-            do n=1,nesum
-              cmbr=cmbr+rbrec(m,n)*ecurrt(n)
-              cmbz=cmbz+rbzec(m,n)*ecurrt(n)
-            enddo
+            cmbr=cmbr+sum(rbrec(m,:)*ecurrt)
+            cmbz=cmbz+sum(rbzec(m,:)*ecurrt)
           endif
           if (iecurr.eq.2) then
-            do n=1,nesum
-              cmbr=cmbr+rbrec(m,n)*cecurr(n)
-              cmbz=cmbz+rbzec(m,n)*cecurr(n)
-            enddo
+            cmbr=cmbr+sum(rbrec(m,:)*cecurr)
+            cmbz=cmbz+sum(rbzec(m,:)*cecurr)
           endif
           if (iacoil.gt.0) then
-            do n=1,nacoil
-              cmbr=cmbr+rbrac(m,n)*caccurt(jtime,n)
-              cmbz=cmbz+rbzac(m,n)*caccurt(jtime,n)
-            enddo
+            cmbr=cmbr+sum(rbrac(m,:)*caccurt(jtime,:))
+            cmbz=cmbz+sum(rbzac(m,:)*caccurt(jtime,:))
           endif
-          cm=a2gam(jtime,m)*btgam(m)+a3gam(jtime,m)*cmbr+a4gam(jtime,m) &
-             *cmbz
+          cm=a2gam(jtime,m)*btgam(m)+a3gam(jtime,m)*cmbr &
+                                    +a4gam(jtime,m)*cmbz
           bzmsec(m)=cmbz
           if (keecur.le.0) then
             cm=a1gam(jtime,m)*cmbz/cm
           else
-            ce1rbz=0.0
-            ce2rbz=0.0
-            ce3rbr=0.0
-            do n=1,keecur
-              ce1rbz=ce1rbz+e1rbz(m,n)*cerer(n)
-              ce2rbz=ce2rbz+e2rbz(m,n)*cerer(n)
-              ce3rbr=ce3rbr+e3rbr(m,n)*cerer(n)
-            enddo
+            ce1rbz=sum(e1rbz(m,1:keecur)*cerer(1:keecur))
+            ce2rbz=sum(e2rbz(m,1:keecur)*cerer(1:keecur))
+            ce3rbr=sum(e3rbr(m,1:keecur)*cerer(1:keecur))
             cm=cm-ce2rbz-ce3rbr
             cm=(a1gam(jtime,m)*cmbz-ce1rbz)/cm
           endif
@@ -1000,10 +886,7 @@
       if (kdomsels.gt.0) then
         call green(nnn,jtime,n222)
         do m=1,nmsels
-          cmbr=0.0
-          do n=1,kpcurn
-            cmbr=cmbr+rmlspc(m,n)*brsp(nfcoil+n)
-          enddo
+          cmbr=sum(rmlspc(m,1:kpcurn)*brsp(nfcoil+1:nfcoil+kpcurn))
           cmbr=cmbr-rhsmls(jtime,m)
           cmmls(jtime,m)=sqrt(cmbr)
           cmmls2(jtime,m)=l1mselt(jtime,m)*btmls(m)**2+l2mselt(jtime,m)* &
@@ -1011,10 +894,10 @@
             (l1mselt(jtime,m)+l3mselt(jtime,m))*bzmls(m)**2
           cmmls2(jtime,m)=sqrt(cmmls2(jtime,m))
         enddo
-        write (nout,7585)
-        write (nout,7450) (cmmls(jtime,m),m=1,nmsels)
-        write (nout,7588)
-        write (nout,7450) (cmmls2(jtime,m),m=1,nmsels)
+        write(nout,7585)
+        write(nout,7450) (cmmls(jtime,m),m=1,nmsels)
+        write(nout,7588)
+        write(nout,7450) (cmmls2(jtime,m),m=1,nmsels)
       endif
 !
       if (mmbmsels.gt.0.or.kdomsels.gt.0) then
@@ -1025,8 +908,8 @@
             cmmlsv(jtime,m)=cmmlsv(jtime,m)*sqrt(l1mselt(jtime,m))
           endif
         enddo 
-        write (nout,7590)
-        write (nout,7450) (cmmlsv(jtime,m),m=1,nmsels)
+        write(nout,7590)
+        write(nout,7450) (cmmlsv(jtime,m),m=1,nmsels)
       endif
 !
       return

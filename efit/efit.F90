@@ -223,8 +223,6 @@
 !----------------------------------------------------------------------
       do k=1,ktime
         ks=k ! ks=1,2,3... in serial, but ks=1,1,1,... in parallel
-        ! avoid solving vacuum times if unwanted (snap option)
-        if(kdata.gt.2 .and. require_plasma .and. abs(pasmat(ks)).lt.1.e-4) cycle
 !----------------------------------------------------------------------
 !--     set up data                                                  --
 !----------------------------------------------------------------------        
@@ -271,6 +269,8 @@
             cycle
           endif
         endif
+        ! prevent post process for cases without plasma solution
+        if(require_plasma .and. abs(sum(pcurrt)).lt.1.e-3_dp) cycle
 !----------------------------------------------------------------------
 !--     post processing for graphic and text outputs                 --
 !----------------------------------------------------------------------
@@ -295,7 +295,7 @@
           write (6,*) 'Main/write_a ks/kerror = ', ks, kerror
 #endif
           call write_a(ktime,ks)
-          if (ierchk.gt.1 .and. lflag.gt.0) cycle
+          if(ierchk.gt.1 .and. lflag.gt.0) cycle
         endif
 #ifdef DEBUG_LEVEL2
         write (6,*) 'Main/write_g ks/kerror = ', ks, kerror

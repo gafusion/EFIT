@@ -183,7 +183,7 @@
       real*8, dimension(256,256) :: calpa,cgama
       character(1000) :: line, fitzts
       character appendsnap*2,jdebug*4
-      logical :: fitsiref,fitfcsum,use_previous
+      logical :: fitsiref,fitfcsum,use_previous,require_plasma
       namelist/in1/ishot,itime,plasma,itek,itrace,nxiter,fwtcur,kffcur, &
         coils,fwtsi,expmp2,fwtmp2,kppcur,mxiter,ierchk,fwtqa,qemp,error, &
         limitr,xlim,ylim,serror,nbdry,rbdry,zbdry,psibry,nslref,ibunmn, &
@@ -216,6 +216,7 @@
         imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
         nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
         idebug,jdebug,ifindopt,tolbndpsi,siloplim,use_previous, &
+        require_plasma, &
         table_dir,input_dir,store_dir
       parameter(nin=343)
 

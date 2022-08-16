@@ -34,8 +34,8 @@
       kerror = 0
 
       initc=initc+1
-      if (ivacum.gt.0) return
-      if ((nitett.le.1).and.(icinit.eq.1)) return
+      if(ivacum.gt.0) return
+      if((nitett.le.1).and.(icinit.eq.1)) return
       GAQ: if (((icinit.gt.0).and.(iconvr.ne.3).and.(iter.le.1)).or.(icurrt.eq.4).or. &
         (((icurrt.eq.2).or.(icurrt.eq.5)).and.(nitett.le.1).and.(icinit.gt.0))) then
 !-----------------------------------------------------------------------
@@ -55,9 +55,9 @@
          pcurrt(kk)=0.0
          if((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) cycle
          rdiml=rgrid(i)/rzero
-         pp0       = (1.-xpsi(kk)**enp)**emp*(1.-gammap)+gammap
-         pcurrt(kk)= rbetap/rdiml*((1.-xpsi(kk)**enf)**emf &
-                     *(1.-gammaf)+gammaf)
+         pp0=(1.-xpsi(kk)**enp)**emp*(1.-gammap)+gammap
+         pcurrt(kk)=rbetap/rdiml*((1.-xpsi(kk)**enf)**emf &
+                    *(1.-gammaf)+gammaf)
 !-----------------------------------------------------------------
 !--      toroidal rotation                                      --
 !-----------------------------------------------------------------

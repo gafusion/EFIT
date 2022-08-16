@@ -58,7 +58,7 @@
            ktear,kersil,iout,ixray,table_dir,input_dir,store_dir, &
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve, &
            iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum,efitversion, &
-           kwripre,ifindopt,tolbndpsi,siloplim,use_previous
+           kwripre,ifindopt,tolbndpsi,siloplim,use_previous,require_plasma
       namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
            znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
            oldcomp,currc199,curriu30,curriu90, &
@@ -417,8 +417,6 @@
       endif
 !
       do jtime=1,ktime
-        ! avoid writing vacuum times if unwanted
-        if(require_plasma .and. abs(pasmat(jtime)).lt.1.e-4) cycle
         itime=time(jtime)
         timems=itime
         timeus=(time(jtime)-timems)*1000.
