@@ -1,8 +1,8 @@
 #include "config.f"
 !**********************************************************************
 !>
-!!    get_constraints sets the pointnames and calls subroutines to
-!!      query PTDATA or MDS+ to obtain the measurement constraints.
+!!    get_measurements sets the pointnames and calls subroutines to
+!!      query PTDATA or MDS+ to obtain the experiment measurement.
 !!
 !!
 !!    @param nshot : shot number
@@ -16,7 +16,7 @@
 !!    @param iierr : error flag
 !!
 !**********************************************************************
-      subroutine get_constraints(nshot,times,delt,np,iierr)
+      subroutine get_measurements(nshot,times,delt,np,iierr)
       use vtime_mod
       include 'eparm.inc'
       include 'modules1.inc'
@@ -172,8 +172,8 @@
                   navp(1:np),time_err)
 
       rnavp=REAL(navp)
-      if( (use_alternate_pointnames .eq. 1) .and. &      !JRF 
-          (i .eq. 1) ) pasmat(1:np)=pasmat(1:np)*0.5e6
+      if((use_alternate_pointnames .eq. 1) .and. &      !JRF 
+         (i .eq. 1)) pasmat(1:np)=pasmat(1:np)*0.5e6
 !----------------------------------------------------------------------
 !--  loop voltage                                                    --
 !----------------------------------------------------------------------
@@ -343,7 +343,7 @@
       enddo
 
       if (nccomp.gt.mccoil) then
-        call errctrl_msg('get_constraints', &
+        call errctrl_msg('get_measurements', &
                          'insufficient C-coil length (mccoil) for data')
         stop
       endif
@@ -470,7 +470,7 @@
       enddo
 
       if (nicomp.gt.micoil) then
-        call errctrl_msg('get_constraints', &
+        call errctrl_msg('get_measurements', &
                          'insufficient I-coil length (micoil) for data')
         stop
       endif
@@ -658,7 +658,7 @@
       endif
 !
       return
-      end subroutine get_constraints
+      end subroutine get_measurements
 
 !**********************************************************************
 !>
@@ -1671,7 +1671,7 @@
 
 !**********************************************************************
 !>
-!!    wrapper around get_constraints subroutine to handle MPI comms
+!!    wrapper around get_measurements subroutine to handle MPI comms
 !!
 !!
 !!    @param nshot : shot number
@@ -1685,7 +1685,7 @@
 !!    @param istop : error flag
 !!
 !**********************************************************************
-        subroutine get_constraints_mpi(nshot,times,delt,ktime,istop)
+        subroutine get_measurements_mpi(nshot,times,delt,ktime,istop)
         use set_kinds
         include 'eparm.inc'
         include 'modules1.inc'
@@ -1740,7 +1740,7 @@
           call system_clock(count_max=clockmax,count_rate=clockrate)
           call system_clock(count=clock0)
 #endif
-          call get_constraints(nshot,times,delt,ktime,istop)
+          call get_measurements(nshot,times,delt,ktime,istop)
 #ifdef DEBUG_LEVEL1
           call system_clock(count=clock1)
           ticks = clock1-clock0
@@ -1984,6 +1984,6 @@
         endif timing_rank0
 #endif
 
-      end subroutine get_constraints_mpi
+      end subroutine get_measurements_mpi
 
 #endif

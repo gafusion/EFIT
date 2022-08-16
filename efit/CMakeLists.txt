@@ -11,7 +11,7 @@ set(EFITLIB_SOURCES
   tables.F90 read_namelist.F90 set_defaults.f90
   buneman.f90 set_filenames.f90 ecom1-mods.f90 zpline.f90 
   ecom2-mods.f90 curve2d_mod.f90 data_input.F90 inicur.f90
-  matrix.F90 shapesurf.F90 getsets.F90 current.f90
+  response_matrix.F90 shapesurf.F90 setup_data_fetch.F90 current.f90
   external_current.F90 boundary.F90 spline.f90 pltdat.F90
   write_a.f90 write_g.f90 write_m.F90 write_ot.f90 print_terminal.F90
   ppbasisfunc.f90 ffbasisfunc.f90 wwbasisfunc.f90 eebasisfunc.f90
@@ -25,7 +25,7 @@ set(EFITLIB_SOURCES
 if(${HAVE_SNAP})
   set(EFITLIB_SOURCES
     ${EFITLIB_SOURCES}
-    getdat.F90 constraints.F90 diamagnetic.f90
+    getdat.F90 measurements.F90 diamagnetic.f90
     write_k.F90
   )
 endif()

@@ -130,16 +130,17 @@
       !call set_table_dir
       !call read_tables
       !TODO: SEK: ZZ: Stopping here for now
-      print *, 'Entering getsets'
-  20  call getsets(ktime,kerror)
-      print * ,'exiting getsets'
+      print *, 'Entering setup_data_fetch'
+  20  call setup_data_fetch(ktime,kerror)
+      print * ,'exiting setup_data_fetch'
 
 #if defined(USEMPI)
       if (nproc > 1) then
         call MPI_ALLREDUCE(kerror,MPI_IN_PLACE,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
       endif
       if (kerror.gt.0) then
-        call errctrl_msg('efitd','Aborting due to fatal error in getsets')
+        call errctrl_msg('efitd', &
+          'Aborting due to fatal error in setup_data_fetch')
         call mpi_abort(MPI_COMM_WORLD,ierr) ! kill all processes, something is wrong with the setup.
       endif
 #else

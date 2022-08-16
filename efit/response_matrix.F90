@@ -1,10 +1,11 @@
 #include "config.f"
 !**********************************************************************
 !>
-!!    matrix calculates the appropriate response matrix and
-!!    invert it to get the plasma current strengths.  note
-!!    that npcurn=nffcur+nppcur, nrsmat=nfcoil+npcurn+
-!!    number of constraints.
+!!    response_matrix calculates the appropriate response matrix and
+!!    invert it to get the plasma current strengths.\n
+!!
+!!    note that npcurn=nffcur+nppcur, 
+!!    nrsmat=nfcoil+npcurn+number of constraints.
 !!
 !!    @param jtime : time index
 !!
@@ -17,7 +18,7 @@
 !!    @param kerror : error flag
 !!
 !**********************************************************************
-      subroutine matrix(jtime,iter,ichisq,nniter,kerror)
+      subroutine response_matrix(jtime,iter,ichisq,nniter,kerror)
       use commonblocks,only: c,wk,bkx,bky
       include 'eparm.inc'
       include 'modules2.inc'
@@ -2259,7 +2260,7 @@
         call sdecm(arsp,nrsmat,nj,need,brsp,nrsmat,nnn,wrsp,work,ier)
         if (ier.eq.129) then
           kerror=1
-          call errctrl_msg('matrix', &
+          call errctrl_msg('response_matrix', &
                  'problem in decomposition, sdecm failed to converge')
           return
         end if
@@ -2269,7 +2270,7 @@
         !-----------------------------------------------------------------------
         if ( wrsp(need).eq.0 ) then
           kerror = 1
-          call errctrl_msg('matrix', &
+          call errctrl_msg('response_matrix', &
                  'problem in decomposition, wrsp(need).eq.0')
           return
         end if
@@ -2294,11 +2295,12 @@
           kerror=1
           write(tmpstr,'(a,i4,a,i4,a)') 'A(',info,',',info, &
                                         ')=0 in dgglse, divide by zero.'
-          call errctrl_msg('matrix',tmpstr)
+          call errctrl_msg('response_matrix',tmpstr)
           return
         else if (info.lt.0) then
           kerror=1
-          call errctrl_msg('matrix','calling argument in dgglse was bad')
+          call errctrl_msg('response_matrix', &
+                           'calling argument in dgglse was bad')
           return
         endif
       endif
@@ -2694,4 +2696,4 @@
  7445 format (10x,'fitting parameters:   ',i5)
  7450 format (8(1x,e12.5,1x))
  7460 format (10x,'chi ip:',/,15x,e12.5)
-      end subroutine matrix
+      end subroutine response_matrix

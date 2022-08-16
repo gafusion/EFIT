@@ -458,7 +458,7 @@
         logical :: fixpp
       end module profile_ext_mod
 
-! NOTE : keep track of times for which BCOIL and ECOIL data exist (see get_constraints.f90)
+! NOTE : keep track of times for which BCOIL and ECOIL data exist (see measurents.F90)
       module vtime_mod
         integer*4 :: nvtime
         real*8,dimension(:), allocatable :: vtime

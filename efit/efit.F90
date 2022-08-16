@@ -189,18 +189,19 @@
       endif
 #endif
 !----------------------------------------------------------------------
-!--   get data                                                       --
+!--   get measurement data
 !----------------------------------------------------------------------
 #ifdef DEBUG_LEVEL2
-      write(6,*) ' Entering getsets subroutine'
+      write(6,*) ' Entering setup_data_fetch subroutine'
 #endif
-  20  call getsets(ktime,kerror)
+  20  call setup_data_fetch(ktime,kerror)
 #if defined(USEMPI)
       if (nproc > 1) &
         call MPI_ALLREDUCE(kerror,MPI_IN_PLACE,1,MPI_INTEGER,MPI_MAX, &
                            MPI_COMM_WORLD,ierr)
       if (kerror.gt.0) then
-        call errctrl_msg('efit','Aborting due to fatal error in getsets')
+        call errctrl_msg('efit', &
+          'Aborting due to fatal error in setup_data_fetch')
         call mpi_abort(MPI_COMM_WORLD,ierr) ! kill all processes, something is wrong with the setup.
       endif
 #else
@@ -222,6 +223,8 @@
 !----------------------------------------------------------------------
       do k=1,ktime
         ks=k ! ks=1,2,3... in serial, but ks=1,1,1,... in parallel
+        ! avoid solving vacuum times if unwanted (snap option)
+        if(kdata.gt.2 .and. require_plasma .and. abs(pasmat(ks)).lt.1.e-4) cycle
 !----------------------------------------------------------------------
 !--     set up data                                                  --
 !----------------------------------------------------------------------        

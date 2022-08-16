@@ -266,7 +266,7 @@
 
       module var_input
       use set_kinds
-      logical write_Kfile,fitfcsum,use_previous
+      logical write_Kfile,fitfcsum,use_previous,require_plasma
       integer*4 icondn,itek,kdata,itrace,ierchk,iconvr,ixray,itell, &
                 kprfit,ibound,ibatch,idite,ilaser,lookfw, &
                 kdot,icutfp,keqdsk,kdofit,kbetapr,kplotpr,kpressb, &

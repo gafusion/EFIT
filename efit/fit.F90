@@ -64,9 +64,9 @@
           endif
           if (kprfit.ge.3) call presurw(jtime,nitera)
 #ifdef DEBUG_LEVEL2
-          write (6,*) 'Call FIT/MATRIX',ix
+          write (6,*) 'Call FIT/RESPONSE_MATRIX',ix
 #endif
-          call matrix(jtime,ix,ichisq,nitera,kerror)
+          call response_matrix(jtime,ix,ichisq,nitera,kerror)
            
           if (kerror /= 0) then
             jerror(jtime) = 1

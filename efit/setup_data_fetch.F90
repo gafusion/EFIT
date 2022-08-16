@@ -1,8 +1,8 @@
 #include "config.f"
 !**********************************************************************
 !>
-!!    getsets performs setup and initialization, primarily for running
-!!      in snap mode
+!!    setup_data_fetch performs setup and initialization, primarily
+!!      for fetching data in snap mode
 !!
 !!                                                                  
 !!    @param ktime : number of time slices requested
@@ -10,7 +10,7 @@
 !!    @param kerror : error flag
 !!
 !**********************************************************************
-      subroutine getsets(ktime,kerror)
+      subroutine setup_data_fetch(ktime,kerror)
       use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'
@@ -61,7 +61,7 @@
            ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels, &
            idebug,jdebug,synmsels,avemsels,kwritime, &
            v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi, &
-           siloplim,use_previous,ierchk
+           siloplim,use_previous,ierchk,require_plasma
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
 
@@ -79,6 +79,7 @@
       kffcurs=0
       kppcurs=0
       kwritime=0
+      require_plasma=.false.
       mtime=ktime
       table_save=table_dir
 
@@ -179,7 +180,7 @@
         input_dir=trim(link_efit)
       elseif (table_dir.ne.table_save .and. link_efit.eq.'') then
         ! error if table_dir changes (global_allocs already set)
-        call errctrl_msg('getsets', &
+        call errctrl_msg('setup_data_fetch', &
           'changing experiment during run is not supported (table_dir)')
         kerror=1
         return
@@ -284,16 +285,16 @@
 
 #if defined(USEMPI)
       if (nproc == 1) then
-        call get_constraints(ishot,times,delt,ktime,istop)
+        call get_measurements(ishot,times,delt,ktime,istop)
       else
-        call get_constraints_mpi(ishot,times,delt,ktime,istop)
+        call get_measurements_mpi(ishot,times,delt,ktime,istop)
       endif
 #else
-      call get_constraints(ishot,times,delt,ktime,istop)
+      call get_measurements(ishot,times,delt,ktime,istop)
 #endif
       if (istop.gt.0) then
         kerror = 1
-        call errctrl_msg('getsets','shot data not found')
+        call errctrl_msg('setup_data_fetch','shot data not found')
         return
       endif
 
@@ -315,7 +316,7 @@
 #endif
 #else
         kerror = 1
-        call errctrl_msg('getsets','MSE library not available')
+        call errctrl_msg('setup_data_fetch','MSE library not available')
         return
 #endif
       endif
@@ -344,7 +345,8 @@
                      ptssym,ztserr)
 #else
         kerror = 1
-        call errctrl_msg('getsets','Cannot fit pedestal without MDS+')
+        call errctrl_msg('setup_data_fetch', &
+                         'Cannot fit pedestal without MDS+')
         return
 #endif
       endif
@@ -433,4 +435,4 @@
       tmu2=-pi*tmu*dzgrid/drgrid
 !
       return
-      end subroutine getsets
+      end subroutine setup_data_fetch

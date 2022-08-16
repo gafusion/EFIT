@@ -604,10 +604,10 @@
           b = psi(kk+nh)
           c = psi(kk-1)
           d = psi(kk+1)
-          if (i.eq.1) a = 0.
-          if (i.eq.nw) b = 0.
-          if (j.eq.1) c = 0.
-          if (j.eq.nh) d = 0.
+          if(i.eq.1) a = 0.
+          if(i.eq.nw) b = 0.
+          if(j.eq.1) c = 0.
+          if(j.eq.nh) d = 0.
           psil = psibry
           in = 0
           p1 = 0.
@@ -664,9 +664,9 @@
             www(kk) = 0.
           end select
           www(kk) = www(kk)*zero(kk)
-!          www(1:nwnh) = www(1:nwnh)*zero(1:nwnh)
         enddo
       enddo
+!      www = www*zero
       return
       end subroutine weight
 

@@ -112,7 +112,7 @@
            ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels, &
            idebug,jdebug,synmsels,avemsels,kwritime, &
            v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi, &
-           siloplim,use_previous,ierchk
+           siloplim,use_previous,ierchk,require_plasma
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
       data currn1/0.0/,currc79/0.0/,currc139/0.0/,currc199/0.0/, &
@@ -302,12 +302,12 @@
 !----------------------------------------------------------------------
 #if defined(USEMPI)
       if (nproc == 1) then
-        call get_constraints(ishot,times,delt,ktime,istop)
+        call get_measurements(ishot,times,delt,ktime,istop)
       else
-        call get_constraints_mpi(ishot,times,delt,ktime,istop)
+        call get_measurements_mpi(ishot,times,delt,ktime,istop)
       endif
 #else
-      call get_constraints(ishot,times,delt,ktime,istop)
+      call get_measurements(ishot,times,delt,ktime,istop)
 #endif
       if (istop.gt.0) then
         write (6,20000)
@@ -417,6 +417,8 @@
       endif
 !
       do jtime=1,ktime
+        ! avoid writing vacuum times if unwanted
+        if(require_plasma .and. abs(pasmat(jtime)).lt.1.e-4) cycle
         itime=time(jtime)
         timems=itime
         timeus=(time(jtime)-timems)*1000.
