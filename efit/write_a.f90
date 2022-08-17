@@ -82,9 +82,8 @@
 !-----------------------------------------------------------------------
       lflag=0
       if(ierchk.gt.0) call chkerr(jj)
-      if (lflag.eq.3) then
-        return
-      elseif (lflag.gt.0) then
+      if (lflag.gt.0) then
+        if(ierchk.eq.3) return
         jflag=0
       endif
       if (keqdsk.ge.1) then
