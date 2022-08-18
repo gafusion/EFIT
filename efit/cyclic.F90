@@ -1,8 +1,6 @@
 !> The following set of routines are specific to the fast cyclic solver
 !! originated by Holger St. John, optimised to realtime format by John Ferron
-!! and then modified for use as an option here by Dylan Brennan.  These
-!! routines continue up to the mark END_CYCLIC_ROUTINES
-
+!! and then modified for use as an option here by Dylan Brennan.
 !********************************************************************** 
 !!
 !> ef_init_cycred_data
@@ -29,10 +27,10 @@
 !     Power of 2 that specifies the grid height.
       i=1
       nhpwr = -1
-      do j=0,14
+      do j=1,11
         i = i*2
         if (i.eq.(nh - 1)) then
-          nhpwr = j+1
+          nhpwr = j
           exit
         endif
       enddo
@@ -560,5 +558,3 @@
       enddo
       return
       end subroutine ef_vmul_const_shrt
-
-!  END_CYCLIC_ROUTINES This ends the fast cyclic reduction routines

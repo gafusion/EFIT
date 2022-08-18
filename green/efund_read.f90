@@ -21,7 +21,7 @@
       USE cvesel
       USE fshift
 
-      integer*4:: istat
+      integer*4:: istat,icycred_loopmax
       character(len=1000) :: line
 
       NAMELIST/machinein/nfcoil,nsilop,magpr2,nrogow,necoil,nesum, &
@@ -98,7 +98,6 @@
       modep=4
       modew=4
       kubics=4
-      icycred_loopmax=1290
       nfourier=5
       
       magpri67=-1

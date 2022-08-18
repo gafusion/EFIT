@@ -56,7 +56,6 @@
  MODEP =            4,
  MODEW =            4,
  KUBICS =            4,
- ICYCRED_LOOPMAX =         1290,
  NFOURIER =            5
  /
  &IN3

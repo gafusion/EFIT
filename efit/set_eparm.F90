@@ -68,8 +68,22 @@
       modep=4
       modew=4
       kubics=4
-      icycred_loopmax=1290
       nfourier=5
+
+      ! set a loop size for cyclic reduction that is compatible with any
+      ! grid size (this is not the exact number of loops, but a slight
+      ! overestimate - some exact numbers are: 33[123], 65[307],
+      ! 129[741], 257[1731])
+      i=1
+      nhpwr=1
+      do j=1,11
+        i=i*2
+        if (i.eq.(nh-1)) then
+          nhpwr=j
+          exit
+        endif
+      enddo
+      icycred_loopmax=nh*(nhpwr-1)
 
       iecurr=1
 

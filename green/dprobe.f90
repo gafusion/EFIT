@@ -59,7 +59,7 @@
                  ntangle,nfbcoil,mccoil,micoil,ndata,nwwcur, &
                  nffcur,nppcur,nercur,ntime,ndim,kxiter,mqwant, & 
                  mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef, &
-                 modep,modew,kubics,icycred_loopmax,nfourier,nsilds,nsilol
+                 modep,modew,kubics,nfourier,nsilds,nsilol
 
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
       
@@ -71,7 +71,7 @@
           nlimit,nlimbd,nangle,ntangle,nfbcoil,mccoil,micoil,ndata, &
           nwwcur,nffcur,nppcur,nercur,ntime,ndim,kxiter, &
           mqwant,mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r, &
-          modef,modep,modew,kubics,icycred_loopmax,nfourier
+          modef,modep,modew,kubics,nfourier
            
 
       nfcoil = nfsum_efund
