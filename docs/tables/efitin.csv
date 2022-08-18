@@ -96,6 +96,8 @@ PSIWANT,,See namelist IN1.
 QVFIT,,See namelist IN1.
 RBDRY,,See namelist IN1.
 RELAX,,See namelist IN1.
+REQUIRE_MSE,.false.,"When true, times without MSE data will not be solved or written to k-files."
+REQUIRE_PLASMA,.false.,"See namelist IN1"
 REXPAN, 0.01,
 RZEROJ,,See namelist IN1.
 SAICON,,See namelist IN1.

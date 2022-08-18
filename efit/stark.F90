@@ -30,12 +30,12 @@
 
       atime(1:ktime) = real(time(1:ktime),r4)
       if (dtmsefull .gt. 0.0) then
-        avem = real(dtmsefull,r4) / 1000.0
+        avem = real(dtmsefull,r4)/1000.0
       else
-        avem = 2.0*iavem / 1000.0
+        avem = 2.0*iavem/1000.0
       endif
-      max_beamOff = real(t_max_beam_off,r4) / 1000.0
-      call  set_mse_beam_logic(mse_strict,max_beamOff,ok_210lt,ok_30rt)
+      max_beamOff = real(t_max_beam_off,r4)/1000.0
+      call set_mse_beam_logic(mse_strict,max_beamOff,ok_210lt,ok_30rt)
       tanham = 0.0
       tanham_uncor = 0.0
       sigham = 0.0
@@ -80,18 +80,12 @@
           a5gam(i,n) = real(a5ham(n),dp)
           a6gam(i,n) = real(a6ham(n),dp)
           a7gam(i,n) = real(a7ham(n),dp)
-          a8gam(i,n)=0.0
+          a8gam(i,n) = 0.0
           if (abs(tangam(i,n)).le.1.e-10_dp.and. &
-            abs(siggam(i,n)).le.1.e-10_dp) then
-            fwtgam(n)=0.0
-            siggam(i,n)=0.0
-          elseif (abs(tangam(i,n)).le.1.e-10_dp.and. &
             abs(siggam(i,n)).le.100.0) then
-            fwtgam(n)=0.0
-            siggam(i,n)=0.0
+            siggam(i,n) = 0.0
           elseif (iergam(n).gt.0) then
-            fwtgam(n)=0.0
-            siggam(i,n)=0.0
+            siggam(i,n) = 0.0
           endif
         enddo
       enddo
@@ -177,7 +171,7 @@
           call system_clock(count=clock1)
           ticks = clock1-clock0
           secs = real(ticks,dp)/real(clockrate,dp)
-          write (*,"(' GETSTARK call ',f6.2,' sec')") secs
+          write(*,"(' GETSTARK call ',f6.2,' sec')") secs
           call system_clock(count_max=clockmax,count_rate=clockrate)
           call system_clock(count=clock0)
 #endif
@@ -248,7 +242,7 @@
         endif
 
         ! KWAITMSE
-        ! NOTE : Necessary to send KWAITMSE to ALL processes since controls main loop defined in EFITD
+        ! NOTE : Necessary to send KWAITMSE to ALL processes since controls main loop defined in EFIT
         ! SIZE = SIZEOF(INTEGER) * (NPROC - 1)
 #ifdef DEBUG_LEVEL1
         total_bytes = total_bytes + 4*(nproc-1)
@@ -262,8 +256,6 @@
 #ifdef DEBUG_LEVEL1
         total_bytes = total_bytes + 8*nmtark*(nproc-1)
 #endif
-        call MPI_BCAST(fwtgam,nmtark,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        !fwtgam(:) = fwtgam_mpi(:,rank+1)
 
         !!call MPI_BCAST(msefitfun,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
         !!call MPI_BCAST(msebkp,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
@@ -278,19 +270,6 @@
         call MPI_BCAST(spatial_avg_gam,nstark*ngam_vars*ngam_u*ngam_w, &
                        MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
 
-        !! SWTGAM
-        !tmp1(:) = dist_data(:)
-        !tmp2(:) = 0
-        !! SIZE = SIZEOF(DOUBLE) * SUM(DIST_DATA(2:)) * NSIZE bytes
-        !!total_bytes = total_bytes + 8*sum(dist_data(2:))*nsize
-        !if (rank == 0) then
-        !  ! NOTE : DIST_DATA and DIST_DATA_DISPLS should be saved between calls since part of MPI_INFO module
-        !  call MPI_SCATTERV(swtgam,tmp1,tmp2,MPI_DOUBLE_PRECISION,MPI_IN_PLACE,tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        !else
-        !  call MPI_SCATTERV(swtgam,tmp1,tmp2,MPI_DOUBLE_PRECISION,swtgam,tmp1(rank+1),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        !endif
-        !!call MPI_BCAST(swtgam,sum(dist_data),MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-
         deallocate(tmp1,tmp2)
         
         call MPI_BARRIER(MPI_COMM_WORLD,ierr)
@@ -300,7 +279,7 @@
           call system_clock(count=clock1)
           ticks = clock1-clock0
           secs = real(ticks,dp)/real(clockrate,dp)
-          write (*,"(' GETSTARK transfer ',i10,' bytes in ',f6.2,'sec')") &
+          write(*,"(' GETSTARK transfer ',i10,' bytes in ',f6.2,'sec')") &
                 total_bytes,secs
         endif timing_rank0
 #endif
@@ -342,33 +321,33 @@
                status='old',form='unformatted', &
                file=table_dir(1:ltbdir)//filenmme,iostat=ioerr)
         if(ioerr.ne.0) exit
-        read (nffile,iostat=ioerr) kkstark
+        read(nffile,iostat=ioerr) kkstark
         if(ioerr.ne.0) exit
         if (kkstark.ne.nstark) then
           close(unit=nffile)
           cycle
         endif
-        read (nffile,iostat=ioerr)  rrgamin
+        read(nffile,iostat=ioerr)  rrgamin
         if(ioerr.ne.0) exit
-        read (nffile,iostat=ioerr)  zzgamin
+        read(nffile,iostat=ioerr)  zzgamin
         if(ioerr.ne.0) exit
         do ii=1,nstark
-          if (abs(rrgamin(ii)-rrgam(jtime,ii)).gt.1.e-4_dp) exit
-          if (abs(zzgamin(ii)-zzgam(jtime,ii)).gt.1.e-4_dp) exit
+          if(abs(rrgamin(ii)-rrgam(jtime,ii)).gt.1.e-4_dp) exit
+          if(abs(zzgamin(ii)-zzgam(jtime,ii)).gt.1.e-4_dp) exit
         enddo
-        if (abs(rrgamin(ii)-rrgam(jtime,ii)).gt.1.e-4_dp) cycle
-        if (abs(zzgamin(ii)-zzgam(jtime,ii)).gt.1.e-4_dp) cycle
-        read (nffile,iostat=ioerr) rbrfc
+        if(abs(rrgamin(ii)-rrgam(jtime,ii)).gt.1.e-4_dp) cycle
+        if(abs(zzgamin(ii)-zzgam(jtime,ii)).gt.1.e-4_dp) cycle
+        read(nffile,iostat=ioerr) rbrfc
         if(ioerr.ne.0) exit
-        read (nffile,iostat=ioerr) rbzfc
+        read(nffile,iostat=ioerr) rbzfc
         if(ioerr.ne.0) exit
-        read (nffile,iostat=ioerr) gbrpc
+        read(nffile,iostat=ioerr) gbrpc
         if(ioerr.ne.0) exit
-        read (nffile,iostat=ioerr) gbzpc
+        read(nffile,iostat=ioerr) gbzpc
         if(ioerr.ne.0) exit
-        read (nffile,iostat=ioerr) rbrec
+        read(nffile,iostat=ioerr) rbrec
         if(ioerr.ne.0) exit
-        read (nffile,iostat=ioerr) rbzec
+        read(nffile,iostat=ioerr) rbzec
         if(ioerr.ne.0) exit
         close(unit=nffile)
         return
@@ -410,7 +389,7 @@
       do mmm=1,nstark
         gbrpc(mmm,kk)=0.0
         gbzpc(mmm,kk)=0.0
-        if (rrgam(jtime,mmm).le.1.e-8_dp) cycle
+        if(rrgam(jtime,mmm).le.1.e-8_dp) cycle
         r=rrgam(jtime,mmm)
         do ii=1,nw
           a=rgrid(ii)
@@ -453,7 +432,7 @@
       do m=1,nstark
         rbrec(m,1:nesum)=0.0
         rbzec(m,1:nesum)=0.0
-        if (rrgam(jtime,m).le.1.e-8_dp) cycle
+        if(rrgam(jtime,m).le.1.e-8_dp) cycle
         r1=rrgam(jtime,m)
         do k=1,necoil
           brct=0.0
@@ -483,17 +462,17 @@
         open(unit=nffile,status='new',form='unformatted', &
              file='rstarkxx.dat')
         kkstark=nstark
-        write (nffile) kkstark
+        write(nffile) kkstark
         rrgamin(1:nstark)=rrgam(jtime,1:nstark)
         zzgamin(1:nstark)=zzgam(jtime,1:nstark)
-        write (nffile) rrgamin
-        write (nffile) zzgamin
-        write (nffile) rbrfc
-        write (nffile) rbzfc
-        write (nffile) gbrpc
-        write (nffile) gbzpc
-        write (nffile) rbrec
-        write (nffile) rbzec
+        write(nffile) rrgamin
+        write(nffile) zzgamin
+        write(nffile) rbrfc
+        write(nffile) rbzfc
+        write(nffile) gbrpc
+        write(nffile) gbzpc
+        write(nffile) rbrec
+        write(nffile) rbzec
         close(unit=nffile)
       endif
       return
@@ -553,7 +532,7 @@
         return
       endif
 
-      ip_sign = - cpasma(ltime) / abs(cpasma(ltime))
+      ip_sign = -cpasma(ltime)/abs(cpasma(ltime))
 
       call sets2d(psi,ct,rgrid,nw,bkrt,lkrt,zgrid,nh,bkzt,lkzt,wkt,ier)
   
@@ -565,7 +544,7 @@
         ssibry=psibry
       endif
 
-      if (jtime .gt. 0.0) then
+      nonzerotime: if (jtime .gt. 0.0) then
 !---------------------------------------------------------------------
 !--   set up P' and FF', then integration                           --
 !--   ffprim = (RBt) * d/dpsi(RBt)                                  --
@@ -619,7 +598,7 @@
           pprime(ii)=pprime(1)*pprime(ii)
         end select
       enddo
-      endif ! jtime .gt. 0.0
+      endif nonzerotime
 
       fpol(nw)=fbrdy*tmu
       sumf=fpol(nw)**2/2.
@@ -644,14 +623,14 @@
           rl = rrgam(ltime,ichan)
           zl = zzgam(ltime,ichan)
           call seva2d(bkrt,lkrt,bkzt,lkzt,ct,rl,zl,pds,ier,n333)
-          brl = -pds(3) / rl
-          bzl = pds(2) / rl
-          psi_norm = (ssimag -pds(1)/ip_sign)/(ssimag-ssibry)
+          brl = -pds(3)/rl
+          bzl = pds(2)/rl
+          psi_norm = (ssimag-pds(1)/ip_sign)/(ssimag-ssibry)
           btl = seval(nw,abs(psi_norm),sigrid,fpol,bwork, &
-            cwork,dwork) / rl
-          tglocal = (bzl * a1gam(ltime,ichan)) /  &
-            (btl * a2gam(ltime,ichan) + brl * a3gam(ltime,ichan) &
-            + bzl * a4gam(ltime,ichan))
+                      cwork,dwork)/rl
+          tglocal = (bzl*a1gam(ltime,ichan))/  &
+            (btl*a2gam(ltime,ichan)+brl*a3gam(ltime,ichan) &
+            +bzl*a4gam(ltime,ichan))
 
 
           do i=1,ngam_u
@@ -659,28 +638,26 @@
               rl = spatial_avg_gam(ichan,1,i,j)
               zl = spatial_avg_gam(ichan,2,i,j)
               call seva2d(bkrt,lkrt,bkzt,lkzt,ct,rl,zl,pds,ier,n333)
-              brl = -pds(3) / rl
-              bzl = pds(2) / rl
+              brl = -pds(3)/rl
+              bzl = pds(2)/rl
               psi_norm = (ssimag -pds(1)/ip_sign)/(ssimag-ssibry)
               btl = seval(nw,abs(psi_norm),sigrid,fpol,bwork, &
-                cwork,dwork) / rl
+                          cwork,dwork)/rl
               tl = 0.0
-              tl = tl + spatial_avg_gam(ichan,4,i,j) * btl
-              tl = tl + spatial_avg_gam(ichan,5,i,j) * brl
-              tl = tl + spatial_avg_gam(ichan,6,i,j) * bzl
-              tl = spatial_avg_gam(ichan,3,i,j) * bzl / tl
-              ttl = ttl + tl
+              tl = tl+spatial_avg_gam(ichan,4,i,j)*btl
+              tl = tl+spatial_avg_gam(ichan,5,i,j)*brl
+              tl = tl+spatial_avg_gam(ichan,6,i,j)*bzl
+              tl = spatial_avg_gam(ichan,3,i,j)*bzl/tl
+              ttl = ttl+tl
               !if(jtime .lt. 0) write(7,'(I2,6F13.8)') ichan,rl,zl,btl,brl,bzl,tl
             enddo
           enddo
-          !spatial_fix(ichan,ltime) =
-          ! atan(cmgam(ichan,ltime)) - atan(ttl)
-          spatial_fix(ichan,ltime) =  &
-            atan(tglocal) - atan(ttl)
+          !spatial_fix(ichan,ltime) = atan(cmgam(ichan,ltime))-atan(ttl)
+          spatial_fix(ichan,ltime) = atan(tglocal)-atan(ttl)
 
           if (jtime.gt.0.and.mse_spave_on(ichan) .eq. 1) then
             tangam(ltime,ichan) = tan(save_gam(ltime,ichan) &
-              - spatial_fix(ichan,ltime))
+              -spatial_fix(ichan,ltime))
           endif
         endif
       enddo

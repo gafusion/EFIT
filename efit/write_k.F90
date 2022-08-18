@@ -30,13 +30,13 @@
       real*8 delt,times
       character ishotime*12,news*72, &
                 eqdsk*20,prefix1*1,header*42,fit_type*3
-      real*8,dimension(:),allocatable :: coils,expmp2, &
-                denr,denv, tgamma,sgamma,rrrgam, &
-                zzzgam,aa1gam,aa2gam, aa3gam,aa4gam,aa5gam, &
-                aa6gam,aa7gam,tgammauncor
-      real*8,dimension(:),allocatable :: bmsels,sbmsels,fwtbmsels, &
-                rrmsels,zzmsels,l1msels,l2msels, &
-                l4msels,emsels,semsels,fwtemsels
+      real*8 coils(nsilop),expmp2(magpri),denr(nco2r),denv(nco2v)
+      real*8,dimension(nmtark) :: tgamma,sgamma,rrrgam,zzzgam, &
+                                  aa1gam,aa2gam,aa3gam,aa4gam, &
+                                  aa5gam,aa6gam,aa7gam,tgammauncor
+      real*8,dimension(nmsels) :: bmsels,sbmsels,fwtbmsels, &
+                                  rrmsels,zzmsels,l1msels,l2msels, &
+                                  l4msels,emsels,semsels,fwtemsels
       real*8 :: dnmin
       character*86 snap_ext
       character(1000) :: line
@@ -57,8 +57,9 @@
            wwbdry,kwwbdry,ww2bdry,kww2bdry, &
            ktear,kersil,iout,ixray,table_dir,input_dir,store_dir, &
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve, &
-           iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum,efitversion, &
-           kwripre,ifindopt,tolbndpsi,siloplim,use_previous,require_plasma
+           iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum, &
+           efitversion,kwripre,ifindopt,tolbndpsi,siloplim,use_previous, &
+           require_plasma,require_mse
       namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
            znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
            oldcomp,currc199,curriu30,curriu90, &
@@ -105,30 +106,19 @@
            kedgep,pedge,pe_psin,pe_width,kedgef,f2edge,fe_psin,fe_width, &
            psiecn,dpsiecn,relaxdz,fitzts,isolve,stabdz, &
            iplcout,errdelz,imagsigma,errmag,ksigma,saimin,errmagb, &
-           write_Kfile,fitfcsum,fwtfcsum,appendsnap, &
+           write_kfile,fitfcsum,fwtfcsum,appendsnap, &
            mse_quiet,mse_spave_on,kwaitmse,dtmsefull, &
            mse_strict,t_max_beam_off,ifitdelz,scaledz, &
            mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210, &
            ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels, &
            idebug,jdebug,synmsels,avemsels,kwritime, &
            v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi, &
-           siloplim,use_previous,ierchk,require_plasma
+           siloplim,use_previous,ierchk,require_plasma,require_mse
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
       data currn1/0.0/,currc79/0.0/,currc139/0.0/,currc199/0.0/, &
                        curriu30/0.0/,curriu90/0.0/,curriu150/0.0/, &
                        curril30/0.0/,curril90/0.0/,curril150/0.0/
-
-      ALLOCATE(coils(nsilop),expmp2(magpri), &
-               denr(nco2r),denv(nco2v), &
-               tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark), &
-               zzzgam(nmtark),aa1gam(nmtark),aa2gam(nmtark), &
-               aa3gam(nmtark),aa4gam(nmtark),aa5gam(nmtark), &
-               aa6gam(nmtark),aa7gam(nmtark),tgammauncor(nmtark))
-      ALLOCATE(bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
-               rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels), &
-               l2msels(nmsels),l4msels(nmsels),emsels(nmsels), &
-               semsels(nmsels),fwtemsels(nmsels))
 
       kerror=0
 !---------------------------------------------------------------------
@@ -261,22 +251,10 @@
       endif
 !
       limitr=-limid
-      swtfc(1:nfcoil)=fwtfc(1:nfcoil)
-      swtec(1:nesum)=fwtec(1:nesum)
-      swtmp2(1:magpri)=fwtmp2(1:magpri)
-      swtsi(1:nsilop)=fwtsi(1:nsilop)
-      swtcur=fwtcur
-      swtgam(1:nstark)=fwtgam(1:nstark)
-      swtbmsels(1:nmsels)=fwtbmsels(1:nmsels)
-      swtemsels(1:nmsels)=fwtemsels(1:nmsels)
  3046 continue
-#ifdef DEBUG_LEVEL2
-      write (6,*) 'WRITE_K fwtbmsels= ',(fwtbmsels(i),i=1,nmsels)
-      write (6,*) 'WRITE_K swtbmsels= ',(swtbmsels(i),i=1,nmsels)
-#endif
 !
       if (shotfile_in.ne.'0' .and. shotfile_in.ne.'') then
-        read (nout,4970,iostat=ioerr) ishotime
+        read(nout,4970,iostat=ioerr) ishotime
         if (ioerr.eq.0) then
           read (ishotime,fmt='(i6,1x,i5)',err=3046) ishot,itime
           times=itime/1000.
@@ -322,7 +300,7 @@
 !
       mmstark=0
       do i=1,nstark
-        if (swtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
+        if (fwtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
       enddo
       if (mmstark.gt.0) then
 #if defined(USE_MSE)
@@ -344,16 +322,19 @@
 !
       mmbmsels=0
       mmemsels=0
+      swtbmsels=fwtbmsels
+      swtemsels=fwtemsels
+#ifdef DEBUG_LEVEL2
+      write (6,*) 'WRITE_K swtbmsels= ',(swtbmsels(i),i=1,nmsels)
+#endif
       do i=1,nmsels
-        if (swtbmsels(i).gt.1.e-06_dp) mmbmsels=mmbmsels+1
-        if (swtemsels(i).gt.1.e-06_dp) mmemsels=mmemsels+1
+        if(fwtbmsels(i).gt.1.e-06_dp) mmbmsels=mmbmsels+1
+        if(fwtemsels(i).gt.1.e-06_dp) mmemsels=mmemsels+1
       enddo
 #ifdef DEBUG_LEVEL2
       write (6,*) 'WRITE_K mmbmsels= ', mmbmsels
 #endif
-      if (mmbmsels.gt.0) then
-        call getmsels(ktime)
-      endif
+      if(mmbmsels.gt.0) call getmsels(ktime)
 !----------------------------------------------------------------------
 !--   get xltype, xltype_180 without reading limiters                --
 !----------------------------------------------------------------------
@@ -366,25 +347,25 @@
         rwtsi(1:nsilop)=0.0
         open(unit=neqdsk,status='old', &
              file=input_dir(1:lindir)//'fitweight.dat')
- 3050   read (neqdsk,*,iostat=ioerr) irshot
+ 3050   read(neqdsk,*,iostat=ioerr) irshot
         if ((ioerr.eq.0).and.(irshot.le.ishot)) then
           if (irshot.lt.124985) then
-            read (neqdsk,*) (rwtsi(i),i=1,nsilol)
+            read(neqdsk,*) (rwtsi(i),i=1,nsilol)
           else
-            read (neqdsk,*) (rwtsi(i),i=1,nsilop)
+            read(neqdsk,*) (rwtsi(i),i=1,nsilop)
           endif
           if (irshot.lt.59350) then
-            read (neqdsk,*) (rwtmp2(i),i=1,magpri67)
+            read(neqdsk,*) (rwtmp2(i),i=1,magpri67)
           elseif (irshot.lt.91000) then
-            read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322)
+            read(neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322)
           elseif (irshot.lt.100771) then
-            read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322 &
+            read(neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322 &
                                                    +magprirdp)
           elseif (irshot.lt.124985) then
-            read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322 &
+            read(neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322 &
                                          +magprirdp+magudom)
           else
-            read (neqdsk,*) (rwtmp2(i),i=1,magpri)
+            read(neqdsk,*) (rwtmp2(i),i=1,magpri)
           endif
           go to 3050
         endif
@@ -392,20 +373,36 @@
       endif
 !
       time(1:ktime)=time(1:ktime)*1000.
-      if (lookfw.gt.0) then
-        do i=1,magpri
-           if (fwtmp2(i).gt.0.0) fwtmp2(i)=rwtmp2(i)
-        enddo
-        do i=1,nsilop
-           if (fwtsi(i).gt.0.0) fwtsi(i)=rwtsi(i)
+      do i=1,nsilop
+        if (ierpsi(i).ne.0) then
+          fwtsi(i)=0.0
+        elseif (lookfw.gt.0.and.fwtsi(i).gt.0.0) then
+          fwtsi(i)=rwtsi(i)
+        endif
+      enddo
+      do i=1,magpri
+        if (iermpi(i).ne.0) then
+          fwtmp2(i)=0.0
+        elseif (lookfw.gt.0 .and. fwtmp2(i).gt.0.0) then
+          fwtmp2(i)=rwtmp2(i)
+        endif
+      enddo
+      do i=1,nfcoil
+        if(ierfc(i).ne.0) fwtfc(i)=0.0
+      enddo
+      do i=1,nesum
+        if(ierec(i).ne.0) fwtec(i)=0.0
+      enddo
+      if (mmstark.gt.0) then
+        do i=1,nmtark
+          if(iergam(i).ne.0) fwtgam(i)=0.0
         enddo
       endif
-      swtmp2(1:magpri)=fwtmp2(1:magpri)
-      swtsi(1:nsilop)=fwtsi(1:nsilop)
+      if(ierpla.ne.0) fwtcur=0.0
 !-----------------------------------------------------------------------
 !--   Get edge pedestal tanh paramters                                --
 !-----------------------------------------------------------------------
-      if(fitzts.eq.'te') then
+      if (fitzts.eq.'te') then
 #if defined(USE_MDS)
         call gettanh(ishot,fitzts,ktime,time,ztssym,ztswid, &
                      ptssym,ztserr)
@@ -417,6 +414,12 @@
       endif
 !
       do jtime=1,ktime
+        ! don't write times without mse
+        if (require_mse .and. abs(sum(siggam)).lt.nstark*1.e-10_dp) then
+          call errctrl_msg('write_k', &
+            'No MSE data found, not writing k-file')
+          cycle
+        endif
         itime=time(jtime)
         timems=itime
         timeus=(time(jtime)-timems)*1000.
@@ -429,61 +432,39 @@
           itimeu=0
           time(jtime)=itime
         endif
-        coils(1:nsilop)=silopt(jtime,1:nsilop)
-        fwtsi(1:nsilop)=swtsi(1:nsilop)
-        do i=1,nsilop
-          if (lookfw.gt.0.and.fwtsi(i).gt.0.0) fwtsi(i)=rwtsi(i)
-          if (ierpsi(i).ne.0) fwtsi(i)=0.0
-        enddo
-        expmp2(1:magpri)=expmpi(jtime,1:magpri)
-        fwtmp2(1:magpri)=swtmp2(1:magpri)
-        do i=1,magpri
-          if (lookfw.gt.0.and.fwtmp2(i).gt.0.0) fwtmp2(i)=rwtmp2(i)
-          if (iermpi(i).ne.0) fwtmp2(i)=0.0
-        enddo
-        brsp(1:nfcoil)=fccurt(jtime,1:nfcoil)
-        fwtfc(1:nfcoil)=swtfc(1:nfcoil)
-        do i=1,nfcoil
-          if (ierfc(i).ne.0) fwtfc(i)=0.0
-        enddo
+        coils=silopt(jtime,:)
+        expmp2=expmpi(jtime,:)
+        brsp(1:nfcoil)=fccurt(jtime,:)
         ecurrt=eccurt(jtime,:)
-        fwtec(1:nesum)=swtec(1:nesum)
-        do i=1,nesum
-          if (ierec(i).ne.0) fwtec(i)=0.0
-        enddo
-        denr(1:nco2r)=denrt(jtime,1:nco2r)
-        denv(1:nco2v)=denvt(jtime,1:nco2v)
+        denr=denrt(jtime,:)
+        denv=denvt(jtime,:)
         if (mmstark.gt.0) then
-          tgamma(1:nmtark)=tangam(jtime,1:nmtark)
-          tgammauncor(1:nmtark)=tangam_uncor(jtime,1:nmtark)
-          sgamma(1:nmtark)=siggam(jtime,1:nmtark)
-          rrrgam(1:nmtark)=rrgam(jtime,1:nmtark)
-          zzzgam(1:nmtark)=zzgam(jtime,1:nmtark)
-          aa1gam(1:nmtark)=a1gam(jtime,1:nmtark)
-          aa2gam(1:nmtark)=a2gam(jtime,1:nmtark)
-          aa3gam(1:nmtark)=a3gam(jtime,1:nmtark)
-          aa4gam(1:nmtark)=a4gam(jtime,1:nmtark)
-          aa5gam(1:nmtark)=a5gam(jtime,1:nmtark)
-          aa6gam(1:nmtark)=a6gam(jtime,1:nmtark)
-          aa7gam(1:nmtark)=a7gam(jtime,1:nmtark)
-          fwtgam(1:nmtark)=swtgam(1:nmtark)
-          do i=1,nmtark
-            if (iergam(i).ne.0) fwtgam(i)=0.0
-          enddo
+          tgamma=tangam(jtime,1:nmtark)
+          tgammauncor=tangam_uncor(jtime,1:nmtark)
+          sgamma=siggam(jtime,1:nmtark)
+          rrrgam=rrgam(jtime,1:nmtark)
+          zzzgam=zzgam(jtime,1:nmtark)
+          aa1gam=a1gam(jtime,1:nmtark)
+          aa2gam=a2gam(jtime,1:nmtark)
+          aa3gam=a3gam(jtime,1:nmtark)
+          aa4gam=a4gam(jtime,1:nmtark)
+          aa5gam=a5gam(jtime,1:nmtark)
+          aa6gam=a6gam(jtime,1:nmtark)
+          aa7gam=a7gam(jtime,1:nmtark)
         endif
 !
         if (mmbmsels.gt.0) then
-          bmsels(1:nmsels)=bmselt(jtime,1:nmsels)
-          sbmsels(1:nmsels)=sbmselt(jtime,1:nmsels)
-          fwtbmsels(1:nmsels)=swtbmsels(1:nmsels)
-          rrmsels(1:nmsels)=rrmselt(jtime,1:nmsels)
-          zzmsels(1:nmsels)=zzmselt(jtime,1:nmsels)
-          l1msels(1:nmsels)=l1mselt(jtime,1:nmsels)
-          l2msels(1:nmsels)=l2mselt(jtime,1:nmsels)
-          l4msels(1:nmsels)=l4mselt(jtime,1:nmsels)
-          emsels(1:nmsels)=emselt(jtime,1:nmsels)
-          semsels(1:nmsels)=semselt(jtime,1:nmsels)
-          fwtemsels(1:nmsels)=swtemsels(1:nmsels)
+          bmsels=bmselt(jtime,:)
+          sbmsels=sbmselt(jtime,:)
+          fwtbmsels=swtbmsels
+          rrmsels=rrmselt(jtime,:)
+          zzmsels=zzmselt(jtime,:)
+          l1msels=l1mselt(jtime,:)
+          l2msels=l2mselt(jtime,:)
+          l4msels=l4mselt(jtime,:)
+          emsels=emselt(jtime,:)
+          semsels=semselt(jtime,:)
+          fwtemsels=swtemsels
           do i=1,nmsels
             if (iermselt(jtime,i).ne.0) then
               fwtbmsels(i)= 0.0
@@ -492,8 +473,6 @@
           enddo
         endif
 !
-        fwtcur=swtcur
-        if(ierpla.ne.0) fwtcur=0.0
         btor=bcentr(jtime)
         plasma=pasmat(jtime)
         siref=psiref(jtime)
@@ -703,36 +682,35 @@
       timeus=(time(jtime)-timems)*1000.
       itimeu=timeus
       siref=psiref(jtime)
-      coils(1:nsilop)=silopt(jtime,1:nsilop) !-siref
-      fwtsi(1:nsilop)=swtsi(1:nsilop)
-      expmp2(1:magpri)=expmpi(jtime,1:magpri)
-      fwtmp2(1:magpri)=swtmp2(1:magpri)
+      coils=silopt(jtime,:) !-siref
+      fwtsi=swtsi
+      expmp2=expmpi(jtime,:)
+      fwtmp2=swtmp2
       brspss=brsp
       brsp=0.0
-      brsp(1:nfcoil)=fccurt(jtime,1:nfcoil)
-      fwtfc(1:nfcoil)=swtfc(1:nfcoil)
+      brsp(1:nfcoil)=fccurt(jtime,:)
+      fwtfc=swtfc
       ecurrt=eccurt(jtime,:)
-      fwtec(1:nesum)=swtec(1:nesum)
-      denr(1:nco2r)=denrt(jtime,1:nco2r)
-      denv(1:nco2v)=denvt(jtime,1:nco2v)
+      fwtec=swtec
+      denr=denrt(jtime,:)
+      denv=denvt(jtime,:)
       mmstark=0
       do i=1,nstark
-        if (swtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
+        if (fwtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
       enddo
       if (mmstark.gt.0) then
-        tgamma(1:nmtark)=tangam(jtime,1:nmtark)
-        tgammauncor(1:nmtark)=tangam_uncor(jtime,1:nmtark)
-        sgamma(1:nmtark)=siggam(jtime,1:nmtark)
-        rrrgam(1:nmtark)=rrgam(jtime,1:nmtark)
-        zzzgam(1:nmtark)=zzgam(jtime,1:nmtark)
-        aa1gam(1:nmtark)=a1gam(jtime,1:nmtark)
-        aa2gam(1:nmtark)=a2gam(jtime,1:nmtark)
-        aa3gam(1:nmtark)=a3gam(jtime,1:nmtark)
-        aa4gam(1:nmtark)=a4gam(jtime,1:nmtark)
-        aa5gam(1:nmtark)=a5gam(jtime,1:nmtark)
-        aa6gam(1:nmtark)=a6gam(jtime,1:nmtark)
-        aa7gam(1:nmtark)=a7gam(jtime,1:nmtark)
-        fwtgam(1:nmtark)=swtgam(1:nmtark)
+        tgamma=tangam(jtime,1:nmtark)
+        tgammauncor=tangam_uncor(jtime,1:nmtark)
+        sgamma=siggam(jtime,1:nmtark)
+        rrrgam=rrgam(jtime,1:nmtark)
+        zzzgam=zzgam(jtime,1:nmtark)
+        aa1gam=a1gam(jtime,1:nmtark)
+        aa2gam=a2gam(jtime,1:nmtark)
+        aa3gam=a3gam(jtime,1:nmtark)
+        aa4gam=a4gam(jtime,1:nmtark)
+        aa5gam=a5gam(jtime,1:nmtark)
+        aa6gam=a6gam(jtime,1:nmtark)
+        aa7gam=a7gam(jtime,1:nmtark)
       endif
       fwtcur=swtcur
       btor=bcentr(jtime)

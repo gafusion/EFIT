@@ -371,9 +371,11 @@
       implicit none
       integer*4, intent(in) :: mtime
       integer*4 m,k
-      real*8 ercmin,chisqerr
       integer*4 kflag(nflag)
-      data ercmin/0.01_dp/,chisqerr/80.0_dp/
+      ! TODO: all limits were choosen for DIII-D but likely need to
+      !       change for other experiments and should be moved to
+      !       dprobe.dat
+      real*8, parameter :: ercmin=0.01_dp,chisqerr=80.0_dp
 !
       m=mtime
       erflag(m,:)=0

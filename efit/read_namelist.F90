@@ -54,7 +54,7 @@
       open(unit=nin,status='old',file='efit.input')
 
       ! Read setup and initialize input variables
-      read(nin,setup,iostat=istat)
+      read (nin,setup,iostat=istat)
       if (istat>0) then
         backspace(nin)
         read(nin,fmt='(A)') line
@@ -66,7 +66,7 @@
       allocate(inpfile(maxinpfile))
 
       ! Read inputs
-      read(nin,optin,iostat=istat)
+      read (nin,optin,iostat=istat)
       if (istat>0) then
         backspace(nin)
         read(nin,fmt='(A)') line
@@ -226,32 +226,12 @@
       if (istat>0) then
         read(nin,fmt='(A)') line
         write(*,'(A)') &
-          'Invalid current line in namelist: '//trim(line)
+          'Invalid at current line in namelist: '//trim(line)
         backspace(nin)
         backspace(nin)
         read(nin,fmt='(A)') line
         write(*,'(A)') &
           'Invalid line in namelist: '//trim(line)
-        backspace(nin)
-        backspace(nin)
-        read(nin,fmt='(A)') line
-        write(*,'(A)') &
-          'Previous line in namelist: '//trim(line)
-        backspace(nin)
-        backspace(nin)
-        read(nin,fmt='(A)') line
-        write(*,'(A)') &
-          'Previous line in namelist: '//trim(line)
-        backspace(nin)
-        backspace(nin)
-        read(nin,fmt='(A)') line
-        write(*,'(A)') &
-          'Previous line in namelist: '//trim(line)
-        backspace(nin)
-        backspace(nin)
-        read(nin,fmt='(A)') line
-        write(*,'(A)') &
-          'Previous line in namelist: '//trim(line)
         backspace(nin)
         backspace(nin)
         read(nin,fmt='(A)') line

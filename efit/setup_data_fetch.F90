@@ -54,14 +54,14 @@
            kedgep,pedge,pe_psin,pe_width,kedgef,f2edge,fe_psin,fe_width, &
            psiecn,dpsiecn,relaxdz,fitzts,isolve,stabdz, &
            iplcout,errdelz,imagsigma,errmag,ksigma,saimin,errmagb, &
-           write_Kfile,fitfcsum,fwtfcsum,appendsnap, &
+           write_kfile,fitfcsum,fwtfcsum,appendsnap, &
            mse_quiet,mse_spave_on,kwaitmse,dtmsefull, &
            mse_strict,t_max_beam_off,ifitdelz,scaledz, &
            mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210, &
            ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels, &
            idebug,jdebug,synmsels,avemsels,kwritime, &
            v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi, &
-           siloplim,use_previous,ierchk,require_plasma
+           siloplim,use_previous,ierchk,require_plasma,require_mse
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
 
@@ -79,7 +79,6 @@
       kffcurs=0
       kppcurs=0
       kwritime=0
-      require_plasma=.false.
       mtime=ktime
       table_save=table_dir
 
@@ -250,25 +249,25 @@
         rwtsi(1:nsilop)=0.0
         open(unit=neqdsk,status='old', &
              file=input_dir(1:lindir)//'fitweight.dat')
-  105   read (neqdsk,*,iostat=ioerr) irshot
+  105   read(neqdsk,*,iostat=ioerr) irshot
         if ((ioerr.eq.0).and.(irshot.le.ishot)) then
           if (irshot.lt.124985) then
-            read (neqdsk,*) (rwtsi(i),i=1,nsilol)
+            read(neqdsk,*) (rwtsi(i),i=1,nsilol)
           else
-            read (neqdsk,*) (rwtsi(i),i=1,nsilop)
+            read(neqdsk,*) (rwtsi(i),i=1,nsilop)
           endif
           if (irshot.lt.59350) then
-            read (neqdsk,*) (rwtmp2(i),i=1,magpri67)
+            read(neqdsk,*) (rwtmp2(i),i=1,magpri67)
           elseif (irshot.lt.91000) then
-            read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322)
+            read(neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322)
           elseif (irshot.lt.100771) then
-            read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322 &
+            read(neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322 &
                                                    +magprirdp)
           elseif (irshot.lt.124985) then
-            read (neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322 &
+            read(neqdsk,*) (rwtmp2(i),i=1,magpri67+magpri322 &
                                          +magprirdp+magudom)
           else
-            read (neqdsk,*) (rwtmp2(i),i=1,magpri)
+            read(neqdsk,*) (rwtmp2(i),i=1,magpri)
           endif
           go to 105
         endif
@@ -299,9 +298,8 @@
       endif
 
       mmstark=0
-      swtgam(1:nstark)=fwtgam(1:nstark)
       do i=1,nstark
-        if (fwtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
+        if(fwtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
       enddo
       if (mmstark.gt.0) then
 #if defined(USE_MSE)
@@ -322,24 +320,23 @@
       endif
 !
       do jtime=1,ktime
-        swtbmselt(jtime,1:nmsels)=fwtbmsels(1:nmsels)
-        swtemselt(jtime,1:nmsels)=fwtemsels(1:nmsels)
+        swtbmselt(jtime,:)=fwtbmsels(:)
+        swtemselt(jtime,:)=fwtemsels(:)
       enddo
       mmbmsels=0
       mmemsels=0
-      swtbmsels(1:nmsels)=fwtbmsels(1:nmsels)
+      swtbmsels=fwtbmsels
       do i=1,nmsels
-        if (fwtbmsels(i).gt.1.e-06_dp) mmbmsels=mmbmsels+1
-        if (fwtemsels(i).gt.1.e-06_dp) mmemsels=mmemsels+1
+        if(fwtbmsels(i).gt.1.e-06_dp) mmbmsels=mmbmsels+1
+        if(fwtemsels(i).gt.1.e-06_dp) mmemsels=mmemsels+1
       enddo
-      if(mmbmsels.gt.0) &
-        call getmsels(ktime)
+      if(mmbmsels.gt.0) call getmsels(ktime)
 !
       time(1:ktime)=time(1:ktime)*1000.
 !-----------------------------------------------------------------------
 !--   Get edge pedestal tanh paramters                                --
 !-----------------------------------------------------------------------
-      if(fitzts.eq.'te') then
+      if (fitzts.eq.'te') then
 #if defined(USE_MDS)
         call gettanh(ishot,fitzts,ktime,time,ztssym,ztswid, &
                      ptssym,ztserr)
@@ -350,78 +347,54 @@
         return
 #endif
       endif
-!---------------------------------------------------------------------
-!--   Save fitting weights
-!---------------------------------------------------------------------
-      swtdlc=fwtdlc
-      swtcur=fwtcur
-      swtfc(1:nfcoil)=fwtfc(1:nfcoil)
-      swtec(1:nesum)=fwtec(1:nesum)
-      if (lookfw.gt.0) then
-        do i=1,magpri
-           if(fwtmp2(i).gt.0.0) fwtmp2(i)=rwtmp2(i)
-        enddo
-      endif
-      swtmp2(1:magpri)=fwtmp2(1:magpri)
-      if (lookfw.gt.0) then
-        do i=1,nsilop
-           if(fwtsi(i).gt.0.0) fwtsi(i)=rwtsi(i)
-        enddo
-      endif
-      swtsi(1:nsilop)=fwtsi(1:nsilop)
 !----------------------------------------------------------------------
-!--   Normalize fitting weights
+!--   Zero or replace bad fitting weights
 !----------------------------------------------------------------------
       do i=1,nsilop
-        if (fwtsi(i).ne.0.0) then
-          fwtsi(i)=swtsi(i)
-          if(lookfw.gt.0) fwtsi(i)=rwtsi(i)
+        if (ierpsi(i).ne.0) then
+          fwtsi(i)=0.0
+        elseif (lookfw.gt.0 .and. fwtsi(i).ne.0.0) then
+          fwtsi(i)=rwtsi(i)
         endif
-        if(ierpsi(i).ne.0) fwtsi(i)=0.0
       enddo
       do i=1,nfcoil
-        if(fwtfc(i).ne.0.0) fwtfc(i)=swtfc(i)
         if(ierfc(i).ne.0) fwtfc(i)=0.0
       enddo
       if (iecurr.eq.2) then
         do i=1,nesum
-          if(fwtec(i).ne.0.0) fwtec(i)=swtec(i)
           if(ierec(i).ne.0) fwtec(i)=0.0
         enddo
       endif
       do i=1,magpri
-        if (fwtmp2(i).ne.0.0) then
-          fwtmp2(i)=swtmp2(i)
-          if(lookfw.gt.0) fwtmp2(i)=rwtmp2(i)
+        if (iermpi(i).ne.0) then
+          fwtmp2(i)=0.0
+        elseif (lookfw.gt.0 .and. fwtmp2(i).ne.0.0) then
+          fwtmp2(i)=rwtmp2(i)
         endif
-        if(iermpi(i).ne.0) fwtmp2(i)=0.0
       enddo
-      fwtgam(1:nstark)=swtgam(1:nstark)
       do i=1,nstark
         if(iergam(i).ne.0) fwtgam(i)=0.0
       enddo
-      fwtece0(1:nnece)=swtece(1:nnece)
+      fwtece0=swtece
       do i=1,nnece
         if(ierece(i).ne.0) fwtece0(i)=0.0
       enddo
       fwtecebz0=swtecebz
       if(ierecebz.ne.0) fwtecebz0=0.0
-      if(fwtcur.ne.0.0) fwtcur=swtcur
       if(fwtqa.ne.0.0) fwtqa=1.
       if(fwtbp.ne.0.0) fwtbp=1.
-      if(fwtdlc.ne.0.0) fwtdlc=swtdlc
       if(ierpla.ne.0) fwtcur=0.0
       if(ierrdi.ne.0) fwtdlc=0.0
 !----------------------------------------------------------------------
-!--   Save fitting weights again
+!--   Save fitting weights
 !----------------------------------------------------------------------
       swtdlc=fwtdlc
       swtcur=fwtcur
-      swtfc(1:nfcoil)=fwtfc(1:nfcoil)
-      swtec(1:nesum)=fwtec(1:nesum)
-      swtmp2(1:magpri)=fwtmp2(1:magpri)
-      swtsi(1:nsilop)=fwtsi(1:nsilop)
-      swtgam(1:nstark)=fwtgam(1:nstark)
+      swtfc=fwtfc
+      swtec=fwtec
+      swtmp2=fwtmp2
+      swtsi=fwtsi
+      swtgam=fwtgam
 !
       call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
       endif snap

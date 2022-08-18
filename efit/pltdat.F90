@@ -2518,7 +2518,7 @@
           plot_mse: if (kwripre.gt.0) then
             dataname=dataname(1:lprx)//'_rzmse'
             open(unit=62,file=dataname,status='old',iostat=ioerr)
-            if (ioerr.eq.0) close(unit=62,status='delete')
+            if(ioerr.eq.0) close(unit=62,status='delete')
             open(unit=62,file=dataname,status='new')
             do ip=1,nstark
               write(62,*)rrgam(jtime,ip),zzgam(jtime,ip)
@@ -2532,7 +2532,7 @@
             do ip=1,nmtark
               if (kstark.gt.0) then
                 sigmabz = 0.0
-                if (fwtgam(ip).gt.0.0) sigmabz=bzmse(ip)* &
+                if(fwtgam(ip).gt.0.0) sigmabz=bzmse(ip)* &
                        siggam(jtime,ip)/tangam(jtime,ip)
                 write(62,*) rrgam(jtime,ip),bzmse(ip), &
                             zerono,abs(sigmabz)
@@ -2545,19 +2545,19 @@
             close(62)
             dataname=dataname(1:lprx)//'_bzlim'
             open(unit=62,file=dataname,status='old',iostat=ioerr)
-            if (ioerr.eq.0) close(unit=62,status='delete')
+            if(ioerr.eq.0) close(unit=62,status='delete')
             open(unit=62,file=dataname,status='new')
             do ip=nmtark+1,nstark
               if (nstark.gt.nmtark) then
                 if (kstark.gt.0) then
                   sigmabz = 0.0
-                  if (fwtgam(ip).gt.0.0) sigmabz=bzmse(ip)* &
+                  if(fwtgam(ip).gt.0.0) sigmabz=bzmse(ip)* &
                          siggam(jtime,ip)/tangam(jtime,ip)
                   write(62,*) rrgam(jtime,ip),bzmse(ip), &
                               zerono,abs(sigmabz)
                 else
                   write(62,*) rrgam(jtime,ip),bzmsec(ip), &
-                              zerono, zerono
+                              zerono,zerono
                 endif
                 rrgaml(ip-nmtark)=rrgam(jtime,ip)
               endif

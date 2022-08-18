@@ -46,8 +46,7 @@
       call MPI_COMM_RANK(MPI_COMM_WORLD,rank,ierr)
       call MPI_COMM_SIZE(MPI_COMM_WORLD,nproc,ierr)
 ! Arrays can only be allocated after MPI has been initialized because dimension is # of processes
-      allocate(dist_data(nproc),dist_data_displs(nproc), &
-               fwtgam_mpi(nstark,nproc))
+      allocate(dist_data(nproc),dist_data_displs(nproc))
 #ifdef DEBUG_PLTS
       if (nproc.gt.1) then
         call errctrl_msg('efit', &
@@ -235,15 +234,22 @@
         write(6,*) ' Entering data_input subroutine'
 #endif
         call data_input(ks,iconvr,ktime,kerror)
+        if ((kerror.gt.0).or.(iconvr.lt.0)) then
+          if(k.lt.ktime) kerrot(ks)=kerror
+          cycle
+        endif
+        ! don't solve times without mse
+        if (require_mse .and. kstark.eq.0) then
+          call errctrl_msg('efit', &
+            'No MSE data found, not solving for equilibrium')
+          cycle
+        endif
 
 #ifdef DEBUG_LEVEL2
         write(6,*) 'Entering errctrl_setstate'
 #endif
         call errctrl_setstate(rank,time(ks))
-        if ((kerror.gt.0).or.(iconvr.lt.0)) then
-          if(k.lt.ktime) kerrot(ks)=kerror
-          cycle
-        endif
+
         if (kautoknt .eq. 1) then
 #ifdef DEBUG_LEVEL2
           write(6,*) ' Entering autoknot subroutine'
@@ -269,8 +275,12 @@
             cycle
           endif
         endif
-        ! prevent post process for cases without plasma solution
-        if(require_plasma .and. abs(sum(pcurrt)).lt.1.e-3_dp) cycle
+        ! prevent post process for times without plasma solution
+        if (require_plasma .and. abs(sum(pcurrt)).lt.1.e-3_dp) then
+          call errctrl_msg('efit', &
+            'Solution does contain any plasma, no outputs are generated')
+          cycle
+        endif
 !----------------------------------------------------------------------
 !--     post processing for graphic and text outputs                 --
 !----------------------------------------------------------------------
@@ -308,14 +318,14 @@
         call write_m(ktime,ks,ks,1)
 #endif
 !----------------------------------------------------------------------
-! --    write Kfile if needed                                        --
+! --    write k-file if needed                                        --
 !----------------------------------------------------------------------
 #if defined(USE_SNAP)
         if (kdata.eq.3 .or. kdata.eq.7) then
 #ifdef DEBUG_LEVEL2
           write (6,*) 'Main/write_k2 ks/kerror = ', ks, kerror
 #endif
-          if(write_Kfile) call write_k2(ks,kerror)
+          if(write_kfile) call write_k2(ks,kerror)
         endif
 #endif
         if(k.lt.ktime) kerrot(ks)=kerror
@@ -334,7 +344,6 @@
       ! Finalize MPI
       if(allocated(dist_data)) deallocate(dist_data)
       if(allocated(dist_data_displs)) deallocate(dist_data_displs)
-      if(allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
       call mpi_finalize(ierr)
 #endif
       stop

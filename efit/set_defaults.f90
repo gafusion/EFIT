@@ -90,6 +90,7 @@
       msebkp=0
       msefitfun=1
       mse_certree=0
+      mse_spave_on=0
       mse_strict=0
       mse_usecer=0
       mse_use_cer210=0
@@ -119,6 +120,8 @@
       rcentr=1.6955_dp
       relax=1.00
       relaxdz=1.0
+      require_mse=.false.
+      require_plasma=.false.
       rexpan=0.010_dp
       rzeroj=0.0 
       saicon=60.0
@@ -420,7 +423,7 @@
         snapfile='none'
         nsnapf=66
 ! -- Qilong Ren
-        write_Kfile=.false.
+        write_kfile=.false.
         fitfcsum=.false.
 !----------------------------------------------------------------------
 !--     istore=0 : Leave EFIT results in the run directory. Otherwise

@@ -911,9 +911,9 @@
 !!    This routine is an interface from the IMSL call used on the VAX to the
 !!    LINPACK call used on the Multiflow.  This routine performs the inversion
 !!    of an N x N matrix.  This is not a general purpose routine and is specific to
-!!    the EFITD code and should only be used for that code.  This routine has local
-!!    arrays that are sized to correspond to the largest size of an EFITD call.  If
-!!    the parameters which define dimensions for EFITD arrays should change, then
+!!    the EFIT code and should only be used for that code.  This routine has local
+!!    arrays that are sized to correspond to the largest size of an EFIT call.  If
+!!    the parameters which define dimensions for EFIT arrays should change, then
 !!    the sizes of these arrays may need to change as well.
 !!    
 !!    Correspondence of the variables between the IMSL LINV1F routine and the

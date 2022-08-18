@@ -261,12 +261,12 @@
          integer*4 :: rank, nproc, ierr
          integer*4,dimension(:),allocatable :: dist_data
          integer*4,dimension(:),allocatable :: dist_data_displs
-         double precision,dimension(:,:),allocatable :: fwtgam_mpi
       end module mpi_info
 
       module var_input
       use set_kinds
-      logical write_Kfile,fitfcsum,use_previous,require_plasma
+      logical write_kfile,fitfcsum,use_previous, &
+              require_plasma,require_mse
       integer*4 icondn,itek,kdata,itrace,ierchk,iconvr,ixray,itell, &
                 kprfit,ibound,ibatch,idite,ilaser,lookfw, &
                 kdot,icutfp,keqdsk,kdofit,kbetapr,kplotpr,kpressb, &

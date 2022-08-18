@@ -282,6 +282,8 @@ RELAX,-1.,"Equilibrium relaxation parameter (0<=RELAX<=1). Affects speed of conv
 | -0.5 = same as backaveraging (BACKAVERAGE = .true.)
 | -1.0 = no relaxation"
 RELIP,1.68,"""Radius Ellipse"". R of ellipse center in meters for current initialization."
+REQUIRE_MSE,.false.,"see namelist EFITIN"
+REQUIRE_PLASMA,.false.,"When true, no files will be written for solutions without plasma current."
 RION,,"if nptionf > 100, rion = rteth"
 RMAXVS,100.0,
 RMINVS, 0,
@@ -333,7 +335,7 @@ SIZEROJ,-1.0,"| Vector of locations at which Jt is constrained when KZEROJ>0. Wh
 | PSIWANT can be used instead of SIZEROJ(1) by setting SIZEROJ(1)<0. See KZEROJ, 
 | RZEROJ, VZEROJ, PSIWANT. Default"
 SRM,-3.5,Parameter for Solovev equilibrium. - = inside limited.
-STORE_DIR,"see namelist EFITIN"
+STORE_DIR,"see namelist efitin"
 TABLE_DIR,"see namelist EFITIN"
 TETHOM,,"""Te Thompson"". Electron temperature from Thompson."
 TGAMMA,,"""Tangent Gamma"". Tangent of the measured MSE polarization angle, TGAMMA = (A1*Bz + A5*Er) / (A2*BT+...)."

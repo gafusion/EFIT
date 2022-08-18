@@ -70,10 +70,10 @@
       endif
       if (nw == 0 .or. nh == 0) then
         if (rank == 0) then
-          call errctrl_msg('efit', &
+          call errctrl_msg('efitai', &
                            'Must specify grid dimensions as arguments')
         endif
-        deallocate(dist_data,dist_data_displs,fwtgam_mpi)
+        deallocate(dist_data,dist_data_displs)
         call mpi_finalize(ierr)
         STOP
       endif
@@ -126,7 +126,7 @@
 !----------------------------------------------------------------------
 !-- get data                                                         --
 !----------------------------------------------------------------------
-      allocate(dist_data(nproc),dist_data_displs(nproc),fwtgam_mpi(nstark,nproc))
+      allocate(dist_data(nproc),dist_data_displs(nproc))
       !call set_table_dir
       !call read_tables
       !TODO: SEK: ZZ: Stopping here for now
@@ -139,7 +139,7 @@
         call MPI_ALLREDUCE(kerror,MPI_IN_PLACE,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
       endif
       if (kerror.gt.0) then
-        call errctrl_msg('efitd', &
+        call errctrl_msg('efitai', &
           'Aborting due to fatal error in setup_data_fetch')
         call mpi_abort(MPI_COMM_WORLD,ierr) ! kill all processes, something is wrong with the setup.
       endif
@@ -232,8 +232,7 @@
       ! Finalize MPI
       if (allocated(dist_data)) deallocate(dist_data)
       if (allocated(dist_data_displs)) deallocate(dist_data_displs)
-      if (allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
-      call errctrl_msg('efitd','Done processing',3)
+      call errctrl_msg('efitai','Done processing',3)
       call mpi_finalize(ierr)
 #endif
       stop

@@ -316,11 +316,11 @@
       fwtcur=swtcur
       if(fwtqa.ne.0.0) fwtqa=1.
       if(fwtbp.ne.0.0) fwtbp=1.
-      fwtfc(1:nfcoil)=swtfc(1:nfcoil)
-      fwtec(1:nesum)=swtec(1:nesum)
-      fwtmp2(1:magpri)=swtmp2(1:magpri)
-      fwtsi(1:nsilop)=swtsi(1:nsilop)
-      fwtgam(1:nstark)=swtgam(1:nstark)
+      fwtfc=swtfc
+      fwtec=swtec
+      fwtmp2=swtmp2
+      fwtsi=swtsi
+      fwtgam=swtgam
 !----------------------------------------------------------------------- 
 !--   Set edge pedestal tanh paramters                                -- 
 !----------------------------------------------------------------------- 
@@ -1910,14 +1910,14 @@
 !--------------------------------------------------------------------- 
       swtdlc=fwtdlc
       swtcur=fwtcur
-      swtfc(1:nfcoil)=fwtfc(1:nfcoil)
-      swtec(1:nesum)=fwtec(1:nesum)
-      swtmp2(1:magpri)=fwtmp2(1:magpri)
-      swtsi(1:nsilop)=fwtsi(1:nsilop)
+      swtfc=fwtfc
+      swtec=fwtec
+      swtmp2=fwtmp2
+      swtsi=fwtsi
       swtgam(1:nmtark)=fwtgam(1:nmtark)
-      swtbmsels(1:nmsels)=fwtbmsels(1:nmsels)
-      swtemsels(1:nmsels)=fwtemsels(1:nmsels)
-      swtece(1:nnece)=fwtece0(1:nnece)
+      swtbmsels=fwtbmsels
+      swtemsels=fwtemsels
+      swtece=fwtece0
       swtecebz=fwtecebz0
 #ifdef DEBUG_LEVEL1
       write(*,*)'adjust fit parameters based on basis function selected'
@@ -2585,14 +2585,14 @@
       nqaxis=0 
       if(fwtqa.gt.1.0e-03_dp) nqaxis=1 
       nparam=nfnwcr 
-      if (kprfit.gt.0) nparam=nparam+1 
-      if (fitdelz) nparam=nparam+1 
-      if (fitsiref) nparam=nparam+1 
-      if (kedgep.gt.0) nparam=nparam+1 
-      if (kedgef.gt.0) nparam=nparam+1 
-      if (fwtqa.gt.0.0) fwtqa=fwtqa/errorq 
-      if (fwtbp.gt.0.0) fwtbp=fwtbp/errorq 
-      if (fbetap.gt.0.0) betap0=fbetap 
+      if(kprfit.gt.0) nparam=nparam+1 
+      if(fitdelz) nparam=nparam+1 
+      if(fitsiref) nparam=nparam+1 
+      if(kedgep.gt.0) nparam=nparam+1 
+      if(kedgef.gt.0) nparam=nparam+1 
+      if(fwtqa.gt.0.0) fwtqa=fwtqa/errorq 
+      if(fwtbp.gt.0.0) fwtbp=fwtbp/errorq 
+      if(fbetap.gt.0.0) betap0=fbetap 
 ! 
       ipsi(jtime)=0 
       do i=1,nsilop 
@@ -2615,7 +2615,7 @@
       do i=1,nmtark 
         if(fwtgam(i).gt.0.0) kmtark=kmtark+1 
       enddo
-      do i=nmtark+1, nstark 
+      do i=nmtark+1,nstark 
         if(fwtgam(i).gt.0.0) klibim=klibim+1 
       enddo 
       kstark=kmtark+klibim 
@@ -3012,7 +3012,7 @@
           call surfac(siwant,psi,nw,nh,rgrids,zgrids,xout,yout,nfound, & 
                       npoint,drgrids,dzgrids,xmin,xmax,ymin,ymax,npack, & 
                       rnow,znow,negcur,kerror,1) 
-          if (kerror.gt.0) return 
+          if(kerror.gt.0) return 
           xmin=xout(1) 
           xmax=xmin 
           do i=2,nfound 
