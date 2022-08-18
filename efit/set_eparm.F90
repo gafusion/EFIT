@@ -9,6 +9,7 @@
       use var_cecoil, only: iecurr
       use var_gwork1, only: mfila
       implicit none
+      integer*4 i,j,nhpwr
 
       nsilds=3
       nsilol=41
