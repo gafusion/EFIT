@@ -343,7 +343,7 @@
       call setpp(xpzero,xpsii)
       rmvtor=qconst*rmaxis
       rmvjj=rmaxis
-      if (kvtor.gt.0) rmggvt=(rmaxis/rvtor)**2-1.
+      if(kvtor.gt.0) rmggvt=(rmaxis/rvtor)**2-1.
       if (niter.gt.1) then
         if (kvtor.eq.2) then
           prew0=pwcurr(xpzero,kwwcur)
@@ -373,9 +373,9 @@
           rmvjj=rmvjj*ptop0*(1.-pwp0r2)
         endif
       endif
-      rqajtor = rmvtor
+      rqajtor=rmvtor
       do jj=1,kppcur
-        factor= xpsii(jj)
+        factor=xpsii(jj)
         rqajx(jj)=rmvtor*factor
         rjjjx(jj)=rmvjj*factor
       enddo
@@ -387,9 +387,9 @@
 !
       call setfp(xpzero,xpsii)
       rmvtor=qconst/rmaxis
-      rqaftor = rmvtor
+      rqaftor=rmvtor
       do jj=1,kffcur
-        factor= xpsii(jj)
+        factor=xpsii(jj)
         rqafx(jj)=rmvtor*factor
         rjjfx(jj)=factor/rmaxis
       enddo
@@ -412,7 +412,7 @@
         endif
         rmvtor=qconst*rmvnow
         do jj=1,kwwcur
-          factor= xpsii(jj)
+          factor=xpsii(jj)
           rqawx(jj)=rmvtor*factor
           rjjwx(jj)=rmvnow*factor
         enddo

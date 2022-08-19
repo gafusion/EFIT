@@ -32,7 +32,7 @@
       character inp1*4,inp2*4
       integer*4 :: k,krord,kzord,nargs,iargc,finfo,kerror,terr,ioerr, &
                    nwrk,ktime,ks
-      integer*4 :: iend1,iend2
+      integer*4 :: i,iend1,iend2
       character*80 :: cmdline
       parameter (krord=4,kzord=4)
 
@@ -263,6 +263,17 @@
           write(6,*) 'Entering inicur subroutine'
 #endif
           call inicur(ks)
+          ! don't solve times without plasma solution
+          if (require_plasma) then
+            do i=1,nwnh
+              if((xpsi(i).ge.0.0).and.(xpsi(i).le.1.0)) exit
+            enddo
+            if (i.ge.nwnh) then
+              call errctrl_msg('efit', &
+                'Insufficient current to create plasma, not solving')
+              cycle
+            endif
+          endif
 !----------------------------------------------------------------------
 !--       get equilibrium                                            --
 !----------------------------------------------------------------------
@@ -274,12 +285,6 @@
             if(k.lt.ktime) kerrot(ks)=kerror
             cycle
           endif
-        endif
-        ! prevent post process for times without plasma solution
-        if (require_plasma .and. abs(sum(pcurrt)).lt.1.e-3_dp) then
-          call errctrl_msg('efit', &
-            'Solution does contain any plasma, no outputs are generated')
-          cycle
         endif
 !----------------------------------------------------------------------
 !--     post processing for graphic and text outputs                 --
