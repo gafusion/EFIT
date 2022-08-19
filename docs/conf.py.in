@@ -57,10 +57,10 @@ extensions = [
     'sphinxcontrib.bibtex',
 ]
 
-breathe_projects = { "EFIT": "xml/" }
+breathe_projects = {"EFIT": "${CMAKE_BINARY_DIR}/docs/xml/"}
 breathe_default_project = "EFIT"
 
-bibtex_bibfiles = ['efit.bib']
+bibtex_bibfiles = ['${CMAKE_SOURCE_DIR}/docs/efit.bib']
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -89,6 +89,7 @@ html_context = {
 
 git_describe_version = subprocess.check_output(['git', 'describe', '--always']).strip().decode('utf-8')
 #html_logo = os.path.join('images', 'logos',  'efit.svg')
-#html_favicon = os.path.join('images', 'logos', 'efit_favicon.png')
+html_favicon = os.path.join('${CMAKE_SOURCE_DIR}','docs','_static', 'efitai_logo.png')
 html_last_updated_fmt = r'%Y-%m-%dT%H:%M:%S%z (' + git_describe_version + ')'
 
+html_permalinks_icon = '#'

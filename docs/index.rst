@@ -42,13 +42,15 @@ part of the larger `EFIT-AI project <https://fusion.gat.com/conference/e/EFIT-AI
    database
 
 .. Indices and tables
+
 Search
 ==================
 
-.. TODO: Options commented out currently do not work
-.. * :ref:`genindex`
-.. * :ref:`modindex`
+* :ref:`genindex`
+* :ref:`modindex`
 * :ref:`search`
+
+.. TODO: Options commented out currently do not work
 
 Bibliography
 ------------

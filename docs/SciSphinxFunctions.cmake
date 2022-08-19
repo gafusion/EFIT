@@ -200,6 +200,7 @@ macro(SciSphinxTarget)
         COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/gen_doxyrst.py
         ARGS ${CMAKE_SOURCE_DIR}/efit
         COMMAND ${DOXYGEN_EXECUTABLE}
+        #COMMAND ln -sf ${CMAKE_CURRENT_BINARY_DIR}/xml ${CMAKE_CURRENT_SOURCE_DIR}
         COMMAND ${Sphinx_EXECUTABLE}
         ARGS ${all_opts} ${FD_SOURCE_DIR} ${${build}_DIR}
         ${TOUCH_CMD_ARGS}
