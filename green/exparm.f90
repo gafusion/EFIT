@@ -30,3 +30,15 @@
                  mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef,&
                  modep,modew,kubics,nfourier,nsilds,nsilol
       end module exparm
+!errlims
+      module errlims
+        ! Experiment dependant checks on the solution error
+        real*8 error_lim,chisq_lim,ali_upper,ali_lower,betap_lim,plasma_diff, &
+               aout_upper,aout_lower,eout_upper,eout_lower, &
+               rout_upper,rout_lower,zout_upper,zout_lower, &
+               rcurrt_upper,rcurrt_lower,zcurrt_upper,zcurrt_lower, &
+               qsta_upper,qsta_lower,betat_lim, &
+               oleft_lim,oright_lim,otop_lim, &
+               olefs_check,qout_upper,qout_lower, &
+               dbpli_lim,delbp_lim
+      end module errlims

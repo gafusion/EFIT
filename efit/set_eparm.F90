@@ -8,6 +8,7 @@
       use eparm
       use var_cecoil, only: iecurr
       use var_gwork1, only: mfila
+      use errlims
       implicit none
       integer*4 i,j,nhpwr
 
@@ -89,6 +90,37 @@
       iecurr=1
 
       mfila=10
+
+      ! checks for solution validity (see chkerr.f90) 
+      error_lim=0.01
+      chisq_lim=80.0
+      ali_upper=2.5
+      ali_lower=0.05
+      betap_lim=6.0
+      plasma_diff=0.08
+      aout_upper=75.0
+      aout_lower=30.
+      eout_upper=4.0
+      eout_lower=0.8
+      rout_upper=240.
+      rout_lower=90.0
+      zout_upper=100.
+      zout_lower=-100.
+      rcurrt_upper=240.
+      rcurrt_lower=90.0
+      zcurrt_upper=100.
+      zcurrt_lower=-100.
+      qsta_upper=200.
+      qsta_lower=1.
+      betat_lim=25.
+      oleft_lim=-0.2
+      oright_lim=-0.2
+      otop_lim=-0.2
+      olefs_check=-90.0
+      qout_lower=1.
+      qout_upper=200.
+      dbpli_lim=0.05
+      delbp_lim=0.08
       end subroutine set_eparm_defaults
 
 !**********************************************************************
