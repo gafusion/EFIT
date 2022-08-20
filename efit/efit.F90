@@ -265,13 +265,21 @@
           call set_init(ks)
           ! don't solve times without plasma solution
           if (require_plasma) then
-            do i=1,nwnh
-              if((xpsi(i).ge.0.0).and.(xpsi(i).le.1.0)) exit
-            enddo
-            if (i.ge.nwnh) then
-              call errctrl_msg('efit', &
-                'Insufficient current to create plasma, not solving')
-              cycle
+            if (icinit.eq.1) then
+              if (abs(sum(pcurrt)).lt.1.e-3_dp) then
+                call errctrl_msg('efit', &
+                  'Insufficient current to create plasma, not solving')
+                cycle
+              endif
+            else
+              do i=1,nwnh
+                if((xpsi(i).ge.0.0).and.(xpsi(i).le.1.0)) exit
+              enddo
+              if (i.ge.nwnh) then
+                call errctrl_msg('efit', &
+                  'Insufficient current to create plasma, not solving')
+                cycle
+              endif
             endif
           endif
 !----------------------------------------------------------------------
