@@ -130,7 +130,7 @@
       if(lconvr_a.lt.0) return
       mxiter_a = saveiter
       call restore_autoknotvals
-      call inicur(ks_a)
+      call set_init(ks_a)
       call fit(ks_a,kerror_a)
       if (kerror_a /= 0) then
         kerror = 1
@@ -200,7 +200,7 @@
       if(lconvr_a.lt.0) return
       call restore_autoknotvals
       ppknt(kadknt) = xknot
-      call inicur(ks_a)
+      call set_init(ks_a)
       call fit(ks_a,kerror_a)
       if(kerror_a .gt. 0) return
       ppakfunc = akchiwt * tsaisq(ks_a) + akerrwt * errorm &
@@ -227,7 +227,7 @@
       if(lconvr_a.lt.0) return
       call restore_autoknotvals
       ffknt(kadknt) = xknot
-      call inicur(ks_a)
+      call set_init(ks_a)
       call fit(ks_a,kerror_a)
       if(kerror_a .gt. 0) return
       ffakfunc = akchiwt * tsaisq(ks_a) + akerrwt * errorm &
@@ -254,7 +254,7 @@
       if(lconvr_a.lt.0) return
       call restore_autoknotvals
       wwknt(kadknt) = xknot
-      call inicur(ks_a)
+      call set_init(ks_a)
       call fit(ks_a,kerror_a)
       if(kerror_a .gt. 0) return
       wwakfunc = akchiwt * tsaisq(ks_a) + akerrwt * errorm &
@@ -281,7 +281,7 @@
       if(lconvr_a.lt.0) return
       call restore_autoknotvals
       eeknt(kadknt) = xknot
-      call inicur(ks_a)
+      call set_init(ks_a)
       call fit(ks_a,kerror_a)
       if(kerror_a .gt. 0) return
       eeakfunc = akchiwt * tsaisq(ks_a) + akerrwt * errorm &

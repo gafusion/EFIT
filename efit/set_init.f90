@@ -1,12 +1,14 @@
 !**********************************************************************
 !>
-!!    inicur initializes the current density distribution
+!!    set_init sets the initial condition for the plasma (either
+!!      the normalized poloidal flux or plasma current) and other
+!!      required variables to restart from an existing solution
 !!
 !!
 !!    @param jtime : time index
 !!
 !**********************************************************************
-      subroutine inicur(jtime)
+      subroutine set_init(jtime)
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -120,7 +122,7 @@
         if (ioerr.eq.0) then 
           read (nsave) mw,mh
           if ((mw.ne.nw.or.mh.ne.nh)) then
-            call errctrl_msg('inicur','esave dimensions do not match')
+            call errctrl_msg('set_init','esave dimensions do not match')
             stop
           endif
           read (nsave) xpsi
@@ -132,7 +134,7 @@
 !
       case (-3)
         if ((nw_ext.ne.nw.or.nh_ext.ne.nh)) then
-          call errctrl_msg('inicur', &
+          call errctrl_msg('set_init', &
                            'previous case had different dimensions')
           stop
         endif
@@ -157,7 +159,7 @@
             if((zgrid(j).lt.ymin).or.(zgrid(j).gt.ymax)) cycle
             xpsi(kk)=(simag-psirz_ext(kk))/sidif
           else
-            call errctrl_msg('inicur','icutfp/=0 not set up')
+            call errctrl_msg('set_init','icutfp/=0 not set up')
             stop
           endif
          enddo
@@ -173,7 +175,7 @@
             endif
           enddo
         else
-          call errctrl_msg('inicur','iweight>0 not set up')
+          call errctrl_msg('set_init','iweight>0 not set up')
           stop
         endif
 
@@ -199,12 +201,12 @@
           brsp(1+nfcoil+kppcur:nfcoil+kppcur+kffcur)= &
             alpa(1:kffcur)*darea/twopi/tmu
         else
-          call errctrl_msg('inicur','icurrt/=2 not set up')
+          call errctrl_msg('set_init','icurrt/=2 not set up')
           stop
         endif
       case default
-        call errctrl_msg('inicur','icinit value not recognized')
+        call errctrl_msg('set_init','icinit value not recognized')
         stop
       end select
       return
-      end subroutine inicur
+      end subroutine set_init

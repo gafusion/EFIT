@@ -260,9 +260,9 @@
 !--       initialize current profile                                 --
 !----------------------------------------------------------------------
 #ifdef DEBUG_LEVEL2
-          write(6,*) 'Entering inicur subroutine'
+          write(6,*) 'Entering set_init subroutine'
 #endif
-          call inicur(ks)
+          call set_init(ks)
           ! don't solve times without plasma solution
           if (require_plasma) then
             do i=1,nwnh
@@ -285,6 +285,13 @@
             if(k.lt.ktime) kerrot(ks)=kerror
             cycle
           endif
+        endif
+        ! prevent post process for times without plasma solution
+        ! this will catch some cases that the first check misses
+        if (require_plasma .and. abs(sum(pcurrt)).lt.1.e-3_dp) then
+          call errctrl_msg('efit', &
+            'Solution does contain any plasma, no outputs are generated')
+          cycle
         endif
 !----------------------------------------------------------------------
 !--     post processing for graphic and text outputs                 --

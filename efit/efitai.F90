@@ -186,8 +186,8 @@
 !--  initialize current profile                                      --
 !----------------------------------------------------------------------
 
-           if(idebug>=2) write(6,*) 'Entering inicur subroutine'
-           call inicur(ks)
+           if(idebug>=2) write(6,*) 'Entering set_init subroutine'
+           call set_init(ks)
 !----------------------------------------------------------------------
 !--  get equilibrium                                                 --
 !----------------------------------------------------------------------
