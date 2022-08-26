@@ -1,6 +1,0 @@
-# Build command:
-#   $ docker build -t efit/clang -f Dockerfile.clang  .
-FROM debian:stable-slim
-
-RUN echo test image; date
-ENV HOME=/root
