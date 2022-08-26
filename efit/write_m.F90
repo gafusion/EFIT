@@ -231,8 +231,10 @@
 ! --- equilibrium specification
 !
       id_device = NCVDEF(nceq,'device',NCCHAR,1,idim_device,ierr)
-      call NCAPTC(nceq,id_device,'long_name',NCCHAR,11, &
-                  'device name',ierr)
+      ! more consistent with EFIT, but will break OMFIT omas conversion...
+      !id_device = NCVDEF(nceq,'experiment',NCCHAR,1,idim_device,ierr) !
+      call NCAPTC(nceq,id_device,'long_name',NCCHAR,15, &
+                  'experiment name',ierr)
       id_shot = NCVDEF(nceq,'shot',NCLONG,1,idim_1,ierr)
       call NCAPTC(nceq,id_shot,'long_name',NCCHAR,11, &
                   'shot number',ierr)
@@ -697,7 +699,7 @@
 ! --- writes variables that are time-dependent but do not have time dimension
 !
       cnn(1) = 10
-      call NCVPTC (nceq, id_device, c11, cnn, device, 10, ierr)
+      call NCVPTC(nceq,id_device,c11,cnn,device,10,ierr)
       cnn(1) = nstark
       zwork(1:nstark) = real(fwtgam(1:nstark),r4)
       call NCVPT(nceq,id_fwtgam,c11,cnn,zwork,ierr)

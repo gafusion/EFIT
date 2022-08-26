@@ -12,6 +12,7 @@
       implicit none
       integer*4 i,j,nhpwr
 
+      device="DIII-D"
       nsilds=3
       nsilol=41
       nfcoil=18
