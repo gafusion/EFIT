@@ -39,13 +39,9 @@
       dimension b(nrsmat),z(4*(npcurn-2)+6+npcurn*npcurn)
       dimension pds(6)
       dimension rxxx(ndata),rxxxf(ndata),rxx2(ndata),rxxw(ndata)
-      parameter(minite=8)
+      parameter(minite=8) ! TODO: should this be fixed?
       parameter(ten24=1.e4_dp,z04=1.0e-04_dp)
-!---------------------------------------------------------------------
-!--   relax saimin=50 from 30               04/27/90                --
-!--                60 from 50               03/31/93                --
-!---------------------------------------------------------------------
-      data iupdat/0/
+
       kerror = 0
       csilopv = 0.0
       cmpr2v = 0.0
@@ -77,8 +73,8 @@
 !----------------------------------------------------------------------
       ichisq=0
       nsq=2
-      brsold(1:nrsmat)=brsp(1:nrsmat)
-      if(ifitvs.gt.0) vcurrto(1:nvesel)=vcurrt(1:nvesel)
+      brsold=brsp
+      if(ifitvs.gt.0) vcurrto=vcurrt
 !----------------------------------------------------------------------
 !--   singular decomposition, first F-coil currents, set up arsp     --
 !----------------------------------------------------------------------
@@ -549,7 +545,7 @@
           if(fwtsi(m).le.0.0) cycle
           nj=nj+1
           if (nfourier.gt.1) then
-            arsp(nj,nk)=fwtsi(m)*sum(rsilvs(m,1:nvesel)*vecta(mk,1:nvesel))
+            arsp(nj,nk)=fwtsi(m)*sum(rsilvs(m,:)*vecta(mk,:))
           else
             arsp(nj,nk)=fwtsi(m)*rsilvs(m,mk)
           endif
@@ -558,7 +554,7 @@
           if(fwtmp2(m).le.0.0) cycle
           nj=nj+1
           if (nfourier.gt.1) then
-            arsp(nj,nk)=fwtmp2(m)*sum(rmp2vs(m,1:nvesel)*vecta(mk,1:nvesel))
+            arsp(nj,nk)=fwtmp2(m)*sum(rmp2vs(m,:)*vecta(mk,:))
           else
             arsp(nj,nk)=fwtmp2(m)*rmp2vs(m,mk)
           endif
@@ -567,7 +563,7 @@
           if(fwtgam(m).le.0.0) cycle
           nj=nj+1
           if (nfourier.gt.1) then
-            arsp(nj,nk)=fwtgam(m)*sum(rgamvs(m,1:nvesel)*vecta(mk,1:nvesel))
+            arsp(nj,nk)=fwtgam(m)*sum(rgamvs(m,1:nvesel)*vecta(mk,:))
           else
             arsp(nj,nk)=fwtgam(m)*rgamvs(m,mk)
           endif
@@ -586,7 +582,7 @@
           if(fwtece(m).le.0.0) cycle  ! add by qian for ece
           nj=nj+1
           if (nfourier.gt.1) then
-            arsp(nj,nk)=fwtece(m)*sum(recevs(m,1:nvesel)*vecta(mk,1:nvesel))
+            arsp(nj,nk)=fwtece(m)*sum(recevs(m,:)*vecta(mk,:))
           else
             arsp(nj,nk)=fwtece(m)*recevs(m,mk)
           endif
@@ -598,7 +594,7 @@
         if (fwtcur.gt.0.0) then
           nj=nj+1
           if (nfourier.gt.1) then
-            arsp(nj,nk)=fwtcur*sum(vecta(mk,1:nvesel))
+            arsp(nj,nk)=fwtcur*sum(vecta(mk,:))
           else
             arsp(nj,nk)=fwtcur
           endif
@@ -712,7 +708,7 @@
 !        if (isumvesel.gt.0) then
 !            nj=nj+1
 !            if (nfourier.gt.0) then
-!              arsp(nj,nk)=fwtcur*sum(vecta(mk,1:nvesel))/100.
+!              arsp(nj,nk)=fwtcur*sum(vecta(mk,:))/100.
 !            else
 !              arsp(nj,nk)=1.0
 !            endif
@@ -2180,7 +2176,7 @@
           if (fwtbdry(j).gt.0.0) then
             nj=nj+1
             if (iecurr.eq.1) then
-              brsp(nj)=sum(rbdrec(j,1:nesum)*ecurrt(1:nesum))
+              brsp(nj)=sum(rbdrec(j,:)*ecurrt)
             else
               brsp(nj)=0.0
             endif
@@ -2317,7 +2313,7 @@
           enddo
           nload=nload+(nfourier*2+1)
         else
-          vcurrt(1:nvesel)=brsp((1+nfnwcr):(nvesel+nfnwcr))
+          vcurrt=brsp((1+nfnwcr):(nvesel+nfnwcr))
           nload=nload+nvesel
         endif
       endif
@@ -2333,16 +2329,16 @@
         cdelz(nniter)=0.0
       endif
       if (iacoil.eq.0) then
-        caccurt(jtime,1:nacoil)=0.0
+        caccurt(jtime,:)=0.0
       else
-        caccurt(jtime,1:nacoil)=brsp((1+nload):(nacoil+nload))
+        caccurt(jtime,:)=brsp((1+nload):(nacoil+nload))
         nload=nload+nacoil
       endif
 !------------------------------------------------------------------------------
 !--   E coil currents                                                        --
 !------------------------------------------------------------------------------
       if (iecurr.eq.2) then
-        cecurr(1:nesum)=brsp((1+nload):(nesum+nload))
+        cecurr=brsp((1+nload):(nesum+nload))
         nload=nload+nesum
       endif
 !------------------------------------------------------------------------------
@@ -2380,10 +2376,10 @@
       saiold=saisq
       do m=1,nsilop
         cm=sum(rsilfc(m,1:nfcoil)*brsp(1:nfcoil))
-        if(ivesel.gt.0) cm=cm+sum(rsilvs(m,1:nvesel)*vcurrt(1:nvesel))
-        if(iecurr.eq.1) cm=cm+sum(rsilec(m,1:nesum)*ecurrt(1:nesum))
-        if(iacoil.gt.0) cm=cm+sum(rsilac(m,1:nacoil)*caccurt(jtime,1:nacoil))
-        if(iecurr.eq.2) cm=cm+sum(rsilec(m,1:nesum)*cecurr(1:nesum))
+        if(ivesel.gt.0) cm=cm+sum(rsilvs(m,:)*vcurrt)
+        if(iecurr.eq.1) cm=cm+sum(rsilec(m,:)*ecurrt)
+        if(iacoil.gt.0) cm=cm+sum(rsilac(m,:)*caccurt(jtime,:))
+        if(iecurr.eq.2) cm=cm+sum(rsilec(m,:)*cecurr)
         cmv=cm
         cm=cm+sum(rsilpc(m,1:kwcurn)*brsp((1+nfcoil):(kwcurn+nfcoil)))
         if(fitsiref) cm=cm-csiref
@@ -2402,10 +2398,10 @@
 !
       do m=1,magpri
         cm=sum(rmp2fc(m,1:nfcoil)*brsp(1:nfcoil))
-        if(ivesel.gt.0) cm=cm+sum(rmp2vs(m,1:nvesel)*vcurrt(1:nvesel))
-        if(iecurr.eq.1) cm=cm+sum(rmp2ec(m,1:nesum)*ecurrt(1:nesum))
-        if(iacoil.gt.0) cm=cm+sum(rmp2ac(m,1:nacoil)*caccurt(jtime,1:nacoil))
-        if(iecurr.eq.2) cm=cm+sum(rmp2ec(m,1:nesum)*cecurr(1:nesum))
+        if(ivesel.gt.0) cm=cm+sum(rmp2vs(m,:)*vcurrt)
+        if(iecurr.eq.1) cm=cm+sum(rmp2ec(m,:)*ecurrt)
+        if(iacoil.gt.0) cm=cm+sum(rmp2ac(m,:)*caccurt(jtime,:))
+        if(iecurr.eq.2) cm=cm+sum(rmp2ec(m,:)*cecurr)
         cmv=cm
         cm=cm+sum(rmp2pc(m,1:kwcurn)*brsp((1+nfcoil):(kwcurn+nfcoil)))
         if(kedgep.gt.0) cm=cm+rmp2pe(m)*pedge
@@ -2432,20 +2428,20 @@
         cmbz=sum(rbzfc(m,1:nfcoil)*brsp(1:nfcoil)) &
             +sum(rbzpc(m,1:kwcurn)*brsp((1+nfcoil):(kwcurn+nfcoil)))
         if (ivesel.gt.0) then
-          cmbr=cmbr+sum(rbrvs(m,1:nvesel)*vcurrt(1:nvesel))
-          cmbz=cmbz+sum(rbzvs(m,1:nvesel)*vcurrt(1:nvesel))
+          cmbr=cmbr+sum(rbrvs(m,:)*vcurrt)
+          cmbz=cmbz+sum(rbzvs(m,:)*vcurrt)
         endif
         if (iecurr.eq.1) then
-          cmbr=cmbr+sum(rbrec(m,1:nesum)*ecurrt(1:nesum))
-          cmbz=cmbz+sum(rbzec(m,1:nesum)*ecurrt(1:nesum))
+          cmbr=cmbr+sum(rbrec(m,:)*ecurrt)
+          cmbz=cmbz+sum(rbzec(m,:)*ecurrt)
         endif
         if (iacoil.gt.0) then
-          cmbr=cmbr+sum(rbrac(m,1:nacoil)*caccurt(jtime,1:nacoil))
-          cmbz=cmbz+sum(rbzac(m,1:nacoil)*caccurt(jtime,1:nacoil))
+          cmbr=cmbr+sum(rbrac(m,:)*caccurt(jtime,:))
+          cmbz=cmbz+sum(rbzac(m,:)*caccurt(jtime,:))
         endif
         if (iecurr.eq.2) then
-          cmbr=cmbr+sum(rbrec(m,1:nesum)*cecurr(1:nesum))
-          cmbz=cmbz+sum(rbzec(m,1:nesum)*cecurr(1:nesum))
+          cmbr=cmbr+sum(rbrec(m,:)*cecurr)
+          cmbz=cmbz+sum(rbzec(m,:)*cecurr)
         endif
         if (kedgep.gt.0) then
           cmbr=cmbr+rbrpe(m)*pedge
@@ -2528,10 +2524,10 @@
       do m=1,nece
         cm=sum(recefc(m,1:nfcoil)*brsp(1:nfcoil)) &
           +sum(recepc(m,1:kwcurn)*brsp((1+nfcoil):(kwcurn+nfcoil)))
-        if(ivesel.gt.0) cm=cm+sum(recevs(m,1:nvesel)*vcurrt(1:nvesel))
-        if(iecurr.eq.1) cm=cm+sum(receec(m,1:nesum)*ecurrt(1:nesum))
-        if(iacoil.gt.0) cm=cm+sum(receac(m,1:nacoil)*caccurt(jtime,1:nacoil))
-        if(iecurr.eq.2) cm=cm+sum(receec(m,1:nesum)*cecurr(1:nesum))
+        if(ivesel.gt.0) cm=cm+sum(recevs(m,:)*vcurrt)
+        if(iecurr.eq.1) cm=cm+sum(receec(m,:)*ecurrt)
+        if(iacoil.gt.0) cm=cm+sum(receac(m,:)*caccurt(jtime,:))
+        if(iecurr.eq.2) cm=cm+sum(receec(m,:)*cecurr)
         if (swtece(m).ne.0.0) then
           chiece(m)=fwtece(m)**nsq*(brspece(jtime,m)-cm)**2
           chiece(m)=chiece(m)/swtece(m)**nsq
@@ -2544,10 +2540,10 @@
 !
       cm=sum(recebzfc(1:nfcoil)*brsp(1:nfcoil)) &
         +sum(recebzpc(1:kwcurn)*brsp((1+nfcoil):(kwcurn+nfcoil)))
-      if(ivesel.gt.0) cm=cm+sum(recevs(m,1:nvesel)*vcurrt(1:nvesel))
-      if(iecurr.eq.1) cm=cm+sum(recebzec(1:nesum)*ecurrt(1:nesum))
-      if(iacoil.gt.0) cm=cm+sum(receac(m,1:nacoil)*caccurt(jtime,1:nacoil))
-      if(iecurr.eq.2) cm=cm+sum(recebzec(1:nesum)*cecurr(1:nesum))
+      if(ivesel.gt.0) cm=cm+sum(recevs(m,:)*vcurrt) !TODO: should this be recebzvs?
+      if(iecurr.eq.1) cm=cm+sum(recebzec*ecurrt)
+      if(iacoil.gt.0) cm=cm+sum(receac(m,:)*caccurt(jtime,:)) !TODO: should this be recebzac?
+      if(iecurr.eq.2) cm=cm+sum(recebzec*cecurr)
       if (swtecebz.ne.0.0) then
         chiecebz=fwtecebz**nsq*(brspecebz(jtime)-cm)**2
         chiecebz=chiecebz/swtecebz**nsq
@@ -2565,7 +2561,7 @@
       else
         cjeccd=0.0
       endif
-      if(ifitvs.gt.0) cm=cm+sum(vcurrt(1:nvesel))
+      if(ifitvs.gt.0) cm=cm+sum(vcurrt)
       if (swtcur.ne.0.0) then
         saiip=(fwtcur/swtcur)**nsq*(pasmat(jtime)-cm)**2
       else
@@ -2641,34 +2637,29 @@
           prwcal(m)=cm
         enddo
       endif rotational_pressure
-!
-      if ((nniter.ge.minite).or.((eouter.le.elomin).and.(fwtdlc.le.0.0))) then
-       if ((nniter.ge.kcallece).or.(kfitece.le.0.0)) then
-        if ((errorm.le.errmin).or.((eouter.le.elomin).and.(fwtdlc.le.0.0))) then
-         if (saisq.le.saicon) then
-          if (iconvr.eq.2) then
-           if (abs(saisq-saiold).le.0.10_dp) then
-            ! converged
+!--------------------------------------------------------------------------
+!--   check iconvr=2 criteria to determine if fit should be stopped
+!--------------------------------------------------------------------------
+      if (iconvr.eq.2) then
+       if ((nniter.ge.minite).or.((eouter.le.elomin).and.(fwtdlc.le.0.0))) then
+        if ((nniter.ge.kcallece).or.(kfitece.le.0.0)) then
+         if ((errorm.le.errmin).or.((eouter.le.elomin).and.(fwtdlc.le.0.0))) then
+          if (saisq.le.saicon) then
+           if (abs(saisq-saiold).le.0.10_dp .or. saisq.ge.saiold) then
+            ! criteria satisfied, restore previous solution and stop fit 
             ichisq=1
-            brsp(1:nrsmat)=brsold(1:nrsmat)
-            if(ifitvs.gt.0) vcurrt(1:nvesel)=vcurrto(1:nvesel)
+            brsp=brsold
+            if(ifitvs.gt.0) vcurrt=vcurrto
             saisq=saiold
-           else
-            if (saisq.ge.saiold) then
-             ! converged
-             ichisq=1
-             brsp(1:nrsmat)=brsold(1:nrsmat)
-             if(ifitvs.gt.0) vcurrt(1:nvesel)=vcurrto(1:nvesel)
-             saisq=saiold
-            endif
            endif
           endif
          endif
         endif
        endif
       endif
-
-      ! not converged
+!--------------------------------------------------------------------------
+!--   write status to fitout.dat
+!--------------------------------------------------------------------------
       if (iand(iout,1).ne.0) then
         write (nout,7400) time(jtime),chipre,cpasma(jtime), &
           nniter,condno,saisq,chigamt
@@ -2678,10 +2669,6 @@
         write (nout,7450) (brsp(i),i=1,need)
         write (nout,7450) (wrsp(i),i=1,need)
       endif
-      if(iupdat.gt.0) return
-      if(saisq.gt.saimin) return
-      tcrrnt=cpasma(jtime)
-      iupdat=1
 
       return
 

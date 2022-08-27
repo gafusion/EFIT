@@ -13,8 +13,16 @@
       implicit none
       integer*4, intent(in) :: mtime
       integer*4 m,k
+      real*8 error_lim,chisq_lim
       integer*4 kflag(nflag)
 !
+      if (iconvr.eq.2) then
+        error_lim=errmin
+        chisq_lim=saicon
+      else
+        error_lim=error
+        chisq_lim=saimin
+      endif
       m=mtime
       erflag(m,:)=0
       if(tsaisq(m).ge.chisq_lim) erflag(m,1)=1
@@ -76,36 +84,39 @@
         if (erflag(m,k).gt.0) lflag=kflag(k)
         if (kflag(k).eq.1) write(nttyo,1010) chisq_lim
         if (kflag(k).eq.1) write(40,1010) chisq_lim
-        if (kflag(k).eq.2) write(nttyo,1020)
-        if (kflag(k).eq.2) write(40,1020)
-        if (kflag(k).eq.3) write(nttyo,1025)
-        if (kflag(k).eq.3) write(40,1025)
-        if (kflag(k).eq.4) write(nttyo,1030)
-        if (kflag(k).eq.4) write(40,1030)
-        if (kflag(k).eq.5) write(nttyo,1040)
-        if (kflag(k).eq.5) write(40,1040)
-        if (kflag(k).eq.6) write(nttyo,1050)
-        if (kflag(k).eq.6) write(40,1050)
-        if (kflag(k).eq.7) write(nttyo,1060)
-        if (kflag(k).eq.7) write(40,1060)
-        if (kflag(k).eq.8) write(nttyo,1070)
-        if (kflag(k).eq.8) write(40,1070)
-        if (kflag(k).eq.9) write(nttyo,1080)
-        if (kflag(k).eq.9) write(40,1080)
-        if (kflag(k).eq.10) write(nttyo,1090)
-        if (kflag(k).eq.10) write(40,1090)
-        if (kflag(k).eq.13) write(nttyo,1100)
-        if (kflag(k).eq.13) write(40,1100)
-        if (kflag(k).eq.14) write(nttyo,1110)
-        if (kflag(k).eq.14) write(40,1110)
-        if (kflag(k).eq.15) write(nttyo,1120)
-        if (kflag(k).eq.15) write(40,1120)
-        if (kflag(k).eq.16) write(nttyo,1130)
-        if (kflag(k).eq.16) write(40,1130)
-        if (kflag(k).eq.18) write(nttyo,1150)
-        if (kflag(k).eq.18) write(40,1150)
-        if (kflag(k).eq.19) write(nttyo,1170) errmin
-        if (kflag(k).eq.19) write(40,1170) errmin
+        if (kflag(k).eq.2) write(nttyo,1020) ali_upper,ali_lower
+        if (kflag(k).eq.2) write(40,1020) ali_upper,ali_lower
+        if (kflag(k).eq.3) write(nttyo,1025) betap_lim
+        if (kflag(k).eq.3) write(40,1025) betap_lim
+        if (kflag(k).eq.4) write(nttyo,1030) plasma_diff
+        if (kflag(k).eq.4) write(40,1030) plasma_diff
+        if (kflag(k).eq.5) write(nttyo,1040) aout_upper,aout_lower
+        if (kflag(k).eq.5) write(40,1040) aout_upper,aout_lower
+        if (kflag(k).eq.6) write(nttyo,1050) eout_upper,eout_lower
+        if (kflag(k).eq.6) write(40,1050) eout_upper,eout_lower
+        if (kflag(k).eq.7) write(nttyo,1060) rout_upper,rout_lower
+        if (kflag(k).eq.7) write(40,1060) rout_upper,rout_lower
+        if (kflag(k).eq.8) write(nttyo,1070) rcurrt_upper,rcurrt_lower
+        if (kflag(k).eq.8) write(40,1070) rcurrt_upper,rcurrt_lower
+        if (kflag(k).eq.9) write(nttyo,1080) zout_upper,zout_lower
+        if (kflag(k).eq.9) write(40,1080) zout_upper,zout_lower
+        if (kflag(k).eq.10) write(nttyo,1090) zcurrt_upper,zcurrt_lower
+        if (kflag(k).eq.10) write(40,1090) zcurrt_upper,zcurrt_lower
+        if (kflag(k).eq.13) write(nttyo,1100) qsta_upper,qsta_lower
+        if (kflag(k).eq.13) write(40,1100) qsta_upper,qsta_lower
+        if (kflag(k).eq.14) write(nttyo,1110) betat_lim
+        if (kflag(k).eq.14) write(40,1110) betat_lim
+        if (kflag(k).eq.15) write(nttyo,1120) oleft_lim,oright_lim,otop_lim
+        if (kflag(k).eq.15) write(40,1120) oleft_lim,oright_lim,otop_lim
+        if (olefs(m).lt.olefs_check) then
+          if (kflag(k).eq.18) write(nttyo,1150) qout_lower
+          if (kflag(k).eq.18) write(40,1150) qout_lower
+        else
+          if (kflag(k).eq.18) write(nttyo,1160) qout_upper,qout_lower
+          if (kflag(k).eq.18) write(40,1160) qout_upper,qout_lower
+        endif
+        if (kflag(k).eq.19) write(nttyo,1170) error_lim
+        if (kflag(k).eq.19) write(40,1170) error_lim
         if (kflag(k).eq.20) write(nttyo,1180) dbpli(m)
         if (kflag(k).eq.20) write(40,1180) dbpli(m)
         if (kflag(k).eq.21) write(nttyo,1190) delbp(m)
@@ -121,20 +132,20 @@
  1000 format(2x,/,'  fit errors, shot ',i7,2x,f5.0, &
              ' msec. all eqdsks are still written')
  1010 format(5x,'Error #1, Chisq > ',f6.0)
- 1020 format(5x,'Error #2, Li > 2.5 or < 0.05')
- 1025 format(5x,'Error #3, Betap > 6.0 or < 0.')
- 1030 format(5x,'Error #4, (MHD Ip-Exp Ip)/MHD Ip > 8%')
- 1040 format(5x,'Error #5, a large, small ')
- 1050 format(5x,'Error #6, b/a < 0.8 or > 2.5')
- 1060 format(5x,'Error #7 Rout large, small    ')
- 1070 format(5x,'Error #8, Rcurrt > large, small  ')
- 1080 format(5x,'Error #9, Zout > large, small ')
- 1090 format(5x,'Error #10, Zcurrt > large, small ')
- 1100 format(5x,'Error #13, Q* > 200. or < 1.')
- 1110 format(5x,'Error #14, Betat > 25. or < 0.')
- 1120 format(5x,'Error #15, Oleft<-.2 or Oright<-.2 or Otop<-.2')
- 1130 format(5x,'Error #16, CO2 chord lengths large, small  ')
- 1150 format(5x,'Error #18, Qout > 200. or < 1.')
+ 1020 format(5x,'Error #2, Li > ',f6.0,' or < ',f6.0)
+ 1025 format(5x,'Error #3, Betap > ',f6.0,' or < 0')
+ 1030 format(5x,'Error #4, (MHD Ip-Exp Ip)/MHD Ip > ',f6.0)
+ 1040 format(5x,'Error #5, a > ',f6.0,' or < ',f6.0)
+ 1050 format(5x,'Error #6, b/a > ',f6.0,' or < ',f6.0)
+ 1060 format(5x,'Error #7, Rout > ',f6.0,' or < ',f6.0)
+ 1070 format(5x,'Error #8, Rcurrt > ',f6.0,' or < ',f6.0)
+ 1080 format(5x,'Error #9, Zout > ',f6.0,' or < ',f6.0)
+ 1090 format(5x,'Error #10, Zcurrt > ',f6.0,' or < ',f6.0)
+ 1100 format(5x,'Error #13, Q* > ',f6.0,' or < ',f6.0)
+ 1110 format(5x,'Error #14, Betat > ',f6.0,' or < 0')
+ 1120 format(5x,'Error #15, Oleft<',f6.0,' or Oright<',f6.0' or Otop<',f6.0)
+ 1150 format(5x,'Error #18, Qout < ',f6.0)
+ 1160 format(5x,'Error #18, Qout > ',f6.0,' or < ',f6.0)
  1170 format(5x,'Error #19, error > ',e10.3)
  1180 format(5x,'Error #20, Bp+li/2 not consistent , error = ',e10.3)
  1190 format(5x,'Error #21, Bp not consistent , error = ',e10.3)

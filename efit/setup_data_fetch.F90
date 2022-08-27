@@ -73,7 +73,6 @@
       iout=1                 ! default - write fitout.dat
       appendsnap='KG'
       patmp2(1)=-1.
-      errorm=1.
       ibatch=0 ! never used in code (just gets output)
       ilaser=0
       kffcurs=0

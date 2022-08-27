@@ -29,9 +29,12 @@ EMW,,GAQ current density profile parameter for rotation. Ignored unless ICURRT=4
 ENW,,GAQ current density profile parameter for rotation. Ignored unless ICURRT=4?
 ERRMAG,,See IMAGSIGMA (deprecated)
 ERRMAGB,,See IMAGSIGMA (deprecated)
-ERROR,1e-3,"| Specifies when EFIT should stop iterating to solution. If chi-squared decreases
-| monotonically, then iterations stop when the relative error (maximum flux 
-| difference between successive iterations) < ERROR.  See also ERRMIN."
+ERRMIN,1e-2,"| Minimum convergence error before exit for ICONVR=2 option.
+| If chi-squared on any iteration is larger than on previous iteration, then if relative 
+| error < ERRMIN and chi-squared < SAICON, iterations stop. "
+ERROR,1e-2,"| Specifies when EFIT should stop iterating to solution. If chi-squared decreases
+| monotonically, then iterations stop when the relative error (max flux difference 
+| between successive iterations) < ERROR.  See also ICONVR and ERRMIN alternatives."
 ERRORQ, 1e-3, """Error in q"". Standard deviation for q fitting."
 FCURBD,, "| ""F Current Boundary"".
 | 1 = force FF'=0 at boundary.
@@ -81,9 +84,9 @@ ICONSI,,"| How to make contour plots of fields
 | - 1 = Default, horizontal and vertical scans for both fluxes and field plot.
 | - 2, 4 = use 'SCALE' in DISSPLA call for fluxes plot.
 | - 3, 4 = use 'SCALE' in DISSPLA call for field plot."
-ICONVR,,"| Specify solution mode
-| - 1 = fitting mode for mxiter, nxiter iterations until the specified error is satisfied.
-| - 2 = fitting mode until chisq reverse, must satisfy minimum error errmin and minimum number of iterations, as well as a minimum chisq (default).
+ICONVR,2,"| Specify solution mode
+| - 1 = fitting mode for mxiter, nxiter iterations until the solution achieves error below ERROR and chi squared below SAIMIN.
+| - 2 = fitting mode until chisq reverse, must satisfy minimum error ERRMIN, minimum 8 iterations (or below min elongation ELOMIN), and minimum chisq SAICON (default).
 | - 3 = equilibrium mode.
 | - = Green's table calculations for -ICONVR filaments and write file RPFXX.DAT for use with MFIT."
 ICUTFP,0,"| - 0 = enforce vacuum outside of LCFS (Default).
@@ -299,8 +302,12 @@ RZEROJ,, "| Vector of radii at which to apply constraints. For each element in v
 | RZEROJ<0 Set Jt=0 at the separatrix.
 | Constraints are applied only if KZEROJ>0. Default RZEROJ(1)=0.0. If KZEROJ=1, may 
 | specify SIZEROJ(1) with PSIWANT. If KZEROJ=1 and SIZEROJ(1)<0, then SIZEROJ(1) is set equal to PSIWANT."
-SAICON,60.0,minimum chi2 to stop iterations for ICURRT=2 in fitting mode. Default=60.0
-SAIMIN, 60.0,
+SAICON,80.0," Minimum chi squared before exit for ICONVR=2 option.
+| If chi-squared on any iteration is larger than on previous iteration, then if relative 
+| error < ERRMIN and chi-squared < SAICON, iterations stop. "
+SAIMIN,80.0,"| Specifies when EFIT should stop iterating to solution. If the relative error < ERROR,
+| then iterations stop when the total chi squared (without diamagnetic or
+| pressure fit contributions) < SAIMIN.  See also ICONVR and SAICON alternatives."
 SALPHA, 1.0/40.0,parameter for Solovev equilibrium.
 SBETA,1.0/8.0,parameter for Solovev equilibrium. 
 SBETAW,0.0,parameter for rotational Solovev equilibrium.

@@ -93,8 +93,6 @@
       mfila=10
 
       ! checks for solution validity (see chkerr.f90) 
-      error_lim=0.01
-      chisq_lim=80.0
       ali_upper=2.5
       ali_lower=0.05
       betap_lim=6.0

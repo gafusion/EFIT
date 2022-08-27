@@ -33,7 +33,7 @@
 !errlims
       module errlims
         ! Experiment dependant checks on the solution error
-        real*8 error_lim,chisq_lim,ali_upper,ali_lower,betap_lim,plasma_diff, &
+        real*8 ali_upper,ali_lower,betap_lim,plasma_diff, &
                aout_upper,aout_lower,eout_upper,eout_lower, &
                rout_upper,rout_lower,zout_upper,zout_lower, &
                rcurrt_upper,rcurrt_lower,zcurrt_upper,zcurrt_lower, &

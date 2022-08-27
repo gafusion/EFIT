@@ -73,7 +73,7 @@
             return
           endif
           if ((iconvr.eq.2).and.(ichisq.gt.0)) then
-            call errctrl_msg('fit','not converged properly',2)
+            call errctrl_msg('fit','iconvr=2 satisfied, exiting',2)
             go to 2020
           end if
         end if
@@ -142,17 +142,15 @@
           write(6,*) 'Entering residu'
 #endif
           call residu(nitera,jtime)
-          if ((nitera.lt.kcallece).and.(kfitece.gt.0.0)) exit
-          if ((ii.eq.1).and.(idone.gt.0).and.(tsaisq(jtime).le.saimin)) then
+          if((nitera.lt.kcallece).and.(kfitece.gt.0.0)) exit
+          if((ii.eq.1).and.(idone.gt.0).and.(tsaisq(jtime).le.saimin)) &
             go to 2020
-          end if
-          if (idone.gt.0) exit
-          if (i.eq.mxiter+1) exit
+          if(idone.gt.0) exit
+          if(i.eq.mxiter+1) exit
         end do ! ii
       end do ! i
-      if ((nbdry.le.0).and.(ivacum.le.0)) then
+      if((nbdry.le.0).and.(ivacum.le.0).and.(iconvr.ne.4)) &
         call errctrl_msg('fit','not converged, reached max iterations',2)
-      endif
 2020  continue
 !---------------------------------------------------------------------
 !--    update pressure if needed                                    --

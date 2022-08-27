@@ -177,6 +177,7 @@
 
       ! set defaults for all modes within loop
       kerror=0
+      errorm=1.
       brsp_save=brsp
       brsp=0.0
       brsp(1)=-1.e-20_dp

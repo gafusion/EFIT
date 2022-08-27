@@ -37,7 +37,7 @@
                          mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef, &
                          modep,modew,kubics,icycred_loopmax,nfourier, &
                          nsilol,nsilds, &
-                         error_lim,chisq_lim,ali_upper,ali_lower, &
+                         ali_upper,ali_lower, &
                          betap_lim,plasma_diff, &
                          aout_upper,aout_lower,eout_upper,eout_lower, &
                          rout_upper,rout_lower,zout_upper,zout_lower, &
@@ -117,8 +117,6 @@
       maglds=-1
       
       ! checks for solution validity
-      error_lim=0.01
-      chisq_lim=80.0
       ali_upper=2.5
       ali_lower=0.05
       betap_lim=6.0

@@ -113,7 +113,7 @@
         micoil,ndata,nwwcur,nffcur,nppcur,nercur,ntime,ndim,kxiter,mqwant, &
         mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef,modep,modew,kubics, &
         icycred_loopmax,nfourier,device, &
-        error_lim,chisq_lim,ali_upper,ali_lower,betap_lim,plasma_diff, &
+        ali_upper,ali_lower,betap_lim,plasma_diff, &
         aout_upper,aout_lower,eout_upper,eout_lower, &
         rout_upper,rout_lower,zout_upper,zout_lower, &
         rcurrt_upper,rcurrt_lower,zcurrt_upper,zcurrt_lower, &

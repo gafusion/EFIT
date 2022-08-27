@@ -11,7 +11,7 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
-!---------------------------------------------------------------------- 
+!--------------------------------------------------------------------- 
 !--   All Modes (efitin and in1 namelists)
 !--------------------------------------------------------------------- 
       alphafp=0.
@@ -23,8 +23,8 @@
       ecurbd=0.0
       elomin=0.90_dp
       errdelz=0.06_dp
-      errmin=0.010_dp
-      error=1.e-03_dp
+      errmin=1.e-02_dp
+      error=1.e-02_dp
       fcurbd=1.
       fe_psin=0.98_dp
       fe_width=0.02_dp
@@ -124,8 +124,8 @@
       require_plasma=.false.
       rexpan=0.010_dp
       rzeroj=0.0 
-      saicon=60.0
-      saimin=60.0
+      saicon=80.0
+      saimin=80.0
       scaledz=1.e-03_dp
       scrape=0.030_dp
       serror=0.03_dp
