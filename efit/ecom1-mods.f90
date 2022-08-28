@@ -198,7 +198,7 @@
       end module var_cece
 
       module var_calchi
-      real*8 chipre,chitot,saiip
+      real*8 chipre,chifin,chitot,saiip
       real*8,dimension(:),allocatable :: saisil
       real*8,dimension(:),allocatable :: saimpi
       real*8,dimension(:),allocatable :: saipre

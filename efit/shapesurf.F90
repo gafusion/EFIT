@@ -209,7 +209,7 @@
           ffprec(1)=0.0
         endif
       case (4)
-        call currnt(n222,iges,n222,n222,kerror)
+        call currnt(n222,iges,n222,kerror)
         if (kerror.gt.0) return
         pprime(1)=cratio/darea/rzero
         ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
@@ -559,6 +559,7 @@
 !
  1085 continue
       call chisqr(iges)
+      chifin=tsaisq(iges)
       nnn=1
       call betali(iges,rgrid,zgrid,nnn,kerror)
       if(kerror.gt.0) return
@@ -2504,7 +2505,7 @@
       if (fwtdlc.gt.0.0) then
         chidlc=((diamag(iges)-cdflux(iges))/sigdia(iges))**2
       endif
-      chitot=chipre+tsaisq(iges)+chidlc
+      chitot=chipre+chifin+chidlc
       if (idiart.gt.0) then
         bp2flx=bpolav(iges)**2
         dmui=1.0e+06_dp*diamag(iges)*4.*pi*bcentr(iges)*rcentr &

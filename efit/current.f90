@@ -7,33 +7,43 @@
 !!
 !!    @param jtime : time index
 !!
-!!    @param ixn : equilibrium (inner) loop iteration index
-!!
 !!    @param nitett : total iteration index (current+equilibirum loops)
 !!
 !!    @param kerror : error flag
 !!
 !*********************************************************************
-      subroutine currnt(iter,jtime,ixn,nitett,kerror)
+      subroutine currnt(iter,jtime,nitett,kerror)
       use commonblocks,only: c,wk,bkx,bky
       use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension pds(6)
-      dimension alipc(npcur2,nwcurn),xpspp(nppcur),xpsfp(nffcur)
-      dimension wlipc(nwcurn),work(nwcur2),xrsp(npcur2),xpspwp(nwwcur)
-      dimension crsp(4*(npcurn-2)+6+npcurn*npcurn,nrsmat)
-      dimension b(nrsmat),z(4*(npcurn-2)+6+npcurn*npcurn)
-      real*8 :: tcurrt, tcurrtpp, tcurrtffp
+      implicit none
+      real*8 fpcurr,ppcurr,prcurr,pwcurr,prcur4,pwcur4,pwpcur
+
+      integer*4, intent(in) :: iter,jtime,nitett
+      integer*4, intent(out) :: kerror
+      integer*4 i,j,kk,n,nj,ier,info,initc,kknow,n1set,ncrsp,nnow, &
+                nownow,npcur2
+      real*8 aqax,brspmin,calpao,cdeljnow,cdelznow,cgamao,cj0,cm,cwant0, &
+             cwant1,ddpsi,fwtcux,fwtqqq,fwtxxi,fwtxxn,fwtxxx,pp0,ppw, &
+             pres0,prew0,ptop0,pwop0,pwp0r2,rdiml,rdimw,rxx2,rxxw,rxxx, &
+             rxxxf,siedge,sinow,t,tcurrt,tcurrtpp,tcurrtffp,toler,tz, &
+             upsi,xjj,ypsi,ysiwant
       character(len=128) tmpstr
+      real*8 pds(6)
+      real*8 alipc(npcurn*2,nwcurn),xpspp(nppcur),xpsfp(nffcur)
+      real*8 wlipc(nwcurn),work(nwcurn*2),xrsp(npcurn*2),xpspwp(nwwcur)
+      real*8 crsp(4*(npcurn-2)+6+npcurn*npcurn,nrsmat)
+      real*8 b(nrsmat),z(4*(npcurn-2)+6+npcurn*npcurn)
+      integer*4, parameter :: nzzzz=0,nnn=1
+      real*8, parameter :: ten24=1.e4_dp
       data initc/0/
-      data ten24/1.e4_dp/
 
       kerror = 0
-
+      npcur2=npcurn*2
       initc=initc+1
+
       if(ivacum.gt.0) return
       if((nitett.le.1).and.(icinit.eq.1)) return
       GAQ: if (((icinit.gt.0).and.(iconvr.ne.3).and.(iter.le.1)).or.(icurrt.eq.4).or. &
@@ -158,7 +168,6 @@
 !----------------------------------------------------------------------
 !--    polynomial current profile                                    --
 !----------------------------------------------------------------------
-       nnn=1
        call green(nnn,jtime,nitett)
        init_current: if ((nitett.gt.1).or.(icinit.ge.0)) then
        eq_mode: if (iconvr.eq.3) then
@@ -358,7 +367,6 @@
              enddo
            endif
 !
-           nnn=1
            kknow=kcalpa+kcgama
            if (fwtcur.gt.0.0) kknow=kknow+1
            if (fwtqa.gt.0.0) kknow=kknow+1
@@ -368,7 +376,6 @@
            if (kedgef.gt.0) nownow=nownow+1
            ncrsp = 0
            if (kknow.lt.nownow) then
-             nzzzz = 0
              call ppcnst(ncrsp,crsp,z,nzzzz)
              call ffcnst(ncrsp,crsp,z,nzzzz)
            endif
@@ -396,13 +403,13 @@
              end do
            else
              do j=1,nj
-                 b(j) = xrsp(j)
+               b(j) = xrsp(j)
              enddo
              info=0
              call dgglse(int(nj,8),int(nownow,8),int(ncrsp,8),alipc, &
                          int(npcur2,8),crsp, &
                          int(4*(npcurn-2)+6+npcurn*npcurn,8), &
-                         b,z,xrsp,work,int(nrsma2,8),int(info,8),condno)
+                         b,z,xrsp,work,int(nwcurn*2,8),int(info,8),condno)
              if (info.gt.0) then ! special hack to info in dgglse
                kerror = 1
                write(tmpstr,'(a,i4,a,i4,a)') &
@@ -464,7 +471,7 @@
                *brsp(nbase+1)
          cwant1=0.0
          do i=2,kpcurn
-           if (i.eq.kppcur+1) cycle
+           if(i.eq.kppcur+1) cycle
            cwant1=cwant1+fgowpc(i)*brsp(nfcoil+i)
          enddo
          if (abs(cwant1).le.1.0e-10_dp) then
@@ -475,7 +482,7 @@
 
          cwant1=cwant0/cwant1
          do i=2,kpcurn
-           if (i.eq.kppcur+1) cycle
+           if(i.eq.kppcur+1) cycle
            brsp(nfcoil+i)=cwant1*brsp(nfcoil+i)
          enddo
 !
@@ -518,16 +525,15 @@
        endif
        if (.not.fixpp) then
         cratio=cpasma(jtime)/tcurrt
-        if (abs(cpasma(jtime)).le.1.e-3_dp) cratio=1.0
+        if(abs(cpasma(jtime)).le.1.e-3_dp) cratio=1.0
         cratio_ext = cratio * cratio_ext
         cratiop_ext = cratio_ext
         cratiof_ext = cratio_ext
         do kk=1,nwnh
           pcurrt(kk)=pcurrt(kk)*cratio
           pcurrtpp(kk)=pcurrtpp(kk)*cratio
-          if ((xpsi(kk).ge.0.0).and.(xpsi(kk).le.1.0)) then
-             tcurrp=tcurrp+pcurrt(kk)
-          endif
+          if((xpsi(kk).ge.0.0).and.(xpsi(kk).le.1.0)) &
+            tcurrp=tcurrp+pcurrt(kk)
         enddo
         do i=nfcoil+1,nfnpcr
           brsp(i)=cratio*brsp(i)
@@ -581,7 +587,6 @@
 !---------------------------------------------------------------------
 !--    toroidal rotation, node points, bases :  ICURRT=5            --
 !---------------------------------------------------------------------
-       nnn=1
        call green(nnn,jtime,nitett)
        init_curr: if (((nitett.gt.1).or.(icinit.ge.0)).and.(iconvr.eq.3)) then
 !----------------------------------------------------------------------
@@ -815,7 +820,6 @@
        endif
 !
        if (nj.gt.0) then
-         nnn=1
          call sdecm(alipc,npcur2,nj,kwcurn,xrsp,npcur2,nnn,wlipc,work,ier)
          if (ier.eq.129) then
            kerror = 1
@@ -827,7 +831,7 @@
          toler=1.0e-06_dp*wlipc(1)
          do i=1,kwcurn
            t=0.0
-           if (wlipc(i).gt.toler) t=xrsp(i)/wlipc(i)
+           if(wlipc(i).gt.toler) t=xrsp(i)/wlipc(i)
            work(i)=t
          enddo
          do i=1,kwcurn
@@ -996,11 +1000,17 @@
 !!    @param nnn :
 !!
 !**********************************************************************
-      function fpcurr(upsi,nnn)
+      real*8 function fpcurr(upsi,nnn)
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xpsii(nffcur)
+      implicit none
+      real*8 fpecrr,ffcurr,seval
+
+      integer*4, intent(in) :: nnn
+      real*8, intent(in) :: upsi
+      integer*4 i,iiij,iijj,nn
+      real*8 f0back,f0edge,fb22,ff22,siedge,xsidif,ypsi
+      real*8 xpsii(nffcur)
 
       if (icutfp.gt.0) then
         ypsi=upsi*xpsimin
@@ -1070,16 +1080,16 @@
       enddo
       fb22=fbrdy**2
       ff22=fb22+xsidif*ffcurr/constf2
-      if (ff22.lt.0.0) ff22=fb22
+      if(ff22.lt.0.0) ff22=fb22
       ffcurr=sqrt(ff22)*fbrdy/abs(fbrdy)
 !----------------------------------------------------------------------
 !--   edge hyperbolic tangent component                              --
 !----------------------------------------------------------------------
-      if (kedgef.eq.0) return
+      if(kedgef.eq.0) return
       siedge=(ypsi-fe_psin)/fe_width
       f0edge=f2edge/constf2
       ff22=ff22+f0edge*(tfedge-tanh(siedge))
-      if (ffcurr.lt.0.0) ffcurr=fb22
+      if(ffcurr.lt.0.0) ffcurr=fb22
       ffcurr=sqrt(ff22)*fbrdy/abs(fbrdy)
       return
       end function fpcurr

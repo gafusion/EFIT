@@ -75,8 +75,8 @@
         integer*4 :: ntime !< number of time slices
         integer*4 :: ndata
         integer*4 :: nwwcur
-        integer*4 :: nffcur,nppcur, npcurn, necur, necur2, &
-                     mfnpcr,nercur,npcur2,nrsmat, nwcurn,nwcur2
+        integer*4 :: nffcur,nppcur,npcurn,necur, &
+                     mfnpcr,nercur,nrsmat,nwcurn
         integer*4 :: msbdr2
         integer*4 :: ndim_crv
         integer*4 :: ndim,kxiter,mqwant
@@ -89,7 +89,6 @@
         integer*4 :: mbdry, mbdry1
         integer*4 :: nbwork
         integer*4 :: msbdry
-        integer*4 :: nrsma2
         integer*4 :: nxtram
         integer*4 :: nxtlim,nco2v,nco2r
         integer*4 :: modef, modep, modew, kubics

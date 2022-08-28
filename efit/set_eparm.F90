@@ -145,14 +145,10 @@
       msbdr2=2*msbdry
 
       npcurn=nffcur+nppcur
-      necur2=nercur*2
       mfnpcr=nfcoil+npcurn+nvesel+nwwcur+nesum+nfcoil+nercur 
-      npcur2=npcurn*2
       nrsmat=nsilop+magpri+nrogow+nffcur+1+npcurn+nwwcur+mpress+nfcoil+nstark+nnece+neceo
-      nrsma2=2*nrsmat
 
       nwcurn=nwwcur+npcurn
-      nwcur2=nwcurn*2
 
       ncurrt=nvesel+nesum+nfcoil
 

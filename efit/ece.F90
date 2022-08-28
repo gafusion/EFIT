@@ -774,7 +774,7 @@
         ffprim(nw)=fpcurr(x111,kffcur)/darea*twopi*tmu
         ffprim(1)=fpcurr(x000,kffcur)/darea*twopi*tmu
       case (4)
-        call currnt(n222,jtime,n222,n222,kerror)
+        call currnt(n222,jtime,n222,kerror)
         if (kerror.gt.0) return
         ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
         ffprim(nw)=ffprim(1)*gammaf
@@ -1191,7 +1191,7 @@
         ffprim(nw)=fpcurr(x111,kffcur)/darea*twopi*tmu
         ffprim(1)=fpcurr(x000,kffcur)/darea*twopi*tmu
       case (4)
-        call currnt(n222,jtime,n222,n222,kerror)
+        call currnt(n222,jtime,n222,kerror)
         if(kerror.gt.0) return
         ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
         ffprim(nw)=ffprim(1)*gammaf

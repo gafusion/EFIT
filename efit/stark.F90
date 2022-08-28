@@ -494,11 +494,16 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      real*8 ppcurr,fpcurr,fpecrr,seval
 
-      dimension pds(6)
+      integer*4, intent(in) :: jtime
+      integer*4, intent(out) :: kerror
+      integer*4 i,ichan,ii,j,ier,ip_sign,lkrt,lkzt,ltime
+      real*8 brl,btl,bzl,delsi,psi_norm,rl,siii,ssibry, &
+             ssimag,sumf,tglocal,tl,ttl,zl
+      real*8 pds(6)
       real*8,dimension(:),allocatable :: bwork,cwork,dwork
-      integer*4, intent(inout) :: kerror
 
       kerror = 0
 !
@@ -568,7 +573,7 @@
           ffprec(1)=0.0
         endif
       case (4)
-        call currnt(n222,iges,n222,n222,kerror)
+        call currnt(n222,jtime,n222,kerror)
         if (kerror.gt.0) return
         pprime(1)=cratio/darea/rzero
         ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
@@ -602,9 +607,7 @@
 
       fpol(nw)=fbrdy*tmu
       sumf=fpol(nw)**2/2.
-      ! TODO: psimag is undefined... was ssimag intended?
-!      delsi=-(psibry+psimag)/(nw-1)
-      delsi=-(psibry+ssimag)/(nw-1)
+      delsi=-(psibry+simag)/(nw-1)
       do i=1,nw-1
         sumf=sumf+0.5_dp*delsi*(ffprim(nw-i+1)+ffprim(nw-i))
         if (sumf .ge. 0.0) then
@@ -640,7 +643,7 @@
               call seva2d(bkrt,lkrt,bkzt,lkzt,ct,rl,zl,pds,ier,n333)
               brl = -pds(3)/rl
               bzl = pds(2)/rl
-              psi_norm = (ssimag -pds(1)/ip_sign)/(ssimag-ssibry)
+              psi_norm = (ssimag-pds(1)/ip_sign)/(ssimag-ssibry)
               btl = seval(nw,abs(psi_norm),sigrid,fpol,bwork, &
                           cwork,dwork)/rl
               tl = 0.0

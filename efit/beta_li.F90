@@ -605,7 +605,7 @@
         pprime(nw)=ppcurr(x111,kppcur)/darea
         pprime(1)=ppcurr(x000,kppcur)/darea
       case (4)
-        call currnt(n222,jtime,n222,n222,kerror)
+        call currnt(n222,jtime,n222,kerror)
         if (kerror.gt.0) return
         pprime(1)=cratio/darea/rzero
         pprime(nw)=pprime(1)*gammap

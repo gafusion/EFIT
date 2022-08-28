@@ -23,24 +23,31 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      real*8 pwcurr,prcurr
 
       integer*4, intent(in) :: jtime,iter,nniter
       integer*4, intent(out) :: ichisq,kerror
-      integer*4, dimension(mfnpcr)     :: ipvttmp
-      real*8, dimension(2)             :: arspdet2(1:2)
-      real*8, dimension(mfnpcr)        :: worktmp
-      real*8, dimension(nrsmat,mfnpcr) :: arsptmp
+      integer*4 i,j,kk,m,mk,mp1,n,ne,nj,nk,nkk,nmw,ier,info,mcentral, &
+                ncrsp,need,needs,nfedge,nfffff,nkb,nload,npedge,nsavdz,nsq
+      real*8 brspmin,cdelznow,cm,cmbr,cmbz,cmv,drgam,erbot,erup,ework, &
+             fwtbdr,fwtbpp,fwtxxa,fwtxxf,fwtxxo,fwtxxzj,pres0,prew0, &
+             ptop0,pwop0,pwp0r2,saiold,saisq,scadelz,siedge,t,toler,xjj, &
+             ysiwant
       character(128) tmpstr
-      dimension arsp(nrsmat,mfnpcr),wrsp(mfnpcr)
-      dimension brsold(nrsmat),work(nrsma2),vcurrto(nvesel)
-      dimension xpsfp(nffcur),xpspp(nppcur),xpspwp(nwwcur)
-      dimension crsp(4*(npcurn-2)+6+npcurn*npcurn,nrsmat)
-      dimension b(nrsmat),z(4*(npcurn-2)+6+npcurn*npcurn)
-      dimension pds(6)
-      dimension rxxx(ndata),rxxxf(ndata),rxx2(ndata),rxxw(ndata)
-      parameter(minite=8) ! TODO: should this be fixed?
-      parameter(ten24=1.e4_dp,z04=1.0e-04_dp)
+      integer*4, dimension(mfnpcr)     :: ipvttmp
+      real*8, dimension(2)             :: arspdet2
+      real*8, dimension(mfnpcr)        :: wrsp,worktmp
+      real*8, dimension(nrsmat,mfnpcr) :: arsp,arsptmp
+      real*8, dimension(nrsmat)        :: b,brsold
+      real*8, dimension(kzeroj)        :: rxxx,rxxxf,rxx2,rxxw
+      real*8 work(nrsmat*2),vcurrto(nvesel)
+      real*8 xpsfp(nffcur),xpspp(nppcur),xpspwp(nwwcur)
+      real*8 crsp(4*(npcurn-2)+6+npcurn*npcurn,nrsmat)
+      real*8 z(4*(npcurn-2)+6+npcurn*npcurn)
+      real*8 pds(6)
+      integer*4, parameter :: nnn=1,minite=8 ! TODO: should this be fixed?
+      real*8, parameter :: ten24=1.e4_dp,z04=1.0e-04_dp
 
       kerror = 0
       csilopv = 0.0
@@ -73,6 +80,7 @@
 !----------------------------------------------------------------------
       ichisq=0
       nsq=2
+      saiold=tsaisq(jtime)
       brsold=brsp
       if(ifitvs.gt.0) vcurrto=vcurrt
 !----------------------------------------------------------------------
@@ -231,8 +239,8 @@
 !--     Summation of F-coils currents
 !------------------------------------------------------------------------
         if (fitfcsum) then
-          nj = nj + 1
-          arsp(nj,nk) = fwtfcsum(nk)
+          nj=nj+1
+          arsp(nj,nk)=fwtfcsum(nk)
         endif
       enddo
 !-----------------------------------------------------------------------
@@ -563,7 +571,7 @@
           if(fwtgam(m).le.0.0) cycle
           nj=nj+1
           if (nfourier.gt.1) then
-            arsp(nj,nk)=fwtgam(m)*sum(rgamvs(m,1:nvesel)*vecta(mk,:))
+            arsp(nj,nk)=fwtgam(m)*sum(rgamvs(m,:)*vecta(mk,:))
           else
             arsp(nj,nk)=fwtgam(m)*rgamvs(m,mk)
           endif
@@ -2230,7 +2238,6 @@
         enddo
       endif
 !
-      nnn=1
       ncrsp=0
       nfffff=nfcoil
       call ppcnst(ncrsp,crsp,z,nfffff)
@@ -2282,11 +2289,11 @@
         end do
 
       else
-        b(1:nrsmat)=brsp(1:nrsmat)
+        b=brsp
         info=0
         call dgglse(int(nj,8),int(need,8),int(ncrsp,8),arsp,int(nrsmat,8), &
                     crsp,int(4*(npcurn-2)+6+npcurn*npcurn,8),b,z,brsp,work,&
-                    int(nrsma2,8),int(info,8),condno)
+                    int(nrsmat*2,8),int(info,8),condno)
         if (info.gt.0) then ! special hack to info in dgglse
           kerror=1
           write(tmpstr,'(a,i4,a,i4,a)') 'A(',info,',',info, &
@@ -2373,7 +2380,6 @@
 !--   calculate the fitting figure of merit saisq                    --
 !----------------------------------------------------------------------
       saisq=0.0
-      saiold=saisq
       do m=1,nsilop
         cm=sum(rsilfc(m,1:nfcoil)*brsp(1:nfcoil))
         if(ivesel.gt.0) cm=cm+sum(rsilvs(m,:)*vcurrt)
@@ -2599,7 +2605,6 @@
         endif
         saisq=saisq+saisref
       endif
-      tsaisq(jtime)=saisq
 !--------------------------------------------------------------------------
 !--   pressure                                                           --
 !--------------------------------------------------------------------------
@@ -2657,6 +2662,7 @@
         endif
        endif
       endif
+      tsaisq(jtime)=saisq
 !--------------------------------------------------------------------------
 !--   write status to fitout.dat
 !--------------------------------------------------------------------------

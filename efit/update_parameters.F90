@@ -480,7 +480,7 @@
         if(errorm.lt.0.1_dp.and.icurrt.eq.4) nqend=nqiter
         do i=1,nqend
           if (i.gt.1) then
-            call currnt(n22,jtime,n22,n22,kerror)
+            call currnt(n22,jtime,n22,kerror)
             if(kerror.gt.0) return
           endif
 

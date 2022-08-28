@@ -85,7 +85,7 @@
 #ifdef DEBUG_LEVEL2
           write(6,*) 'Entering currnt'
 #endif
-          call currnt(ix,jtime,ixnn,nitera,kerror)
+          call currnt(ix,jtime,nitera,kerror)
           if (kerror /= 0) then
             jerror(jtime) = 1
             return

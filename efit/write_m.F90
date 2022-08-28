@@ -617,6 +617,10 @@
       call NCAPTC(nceq,id_cerror,'long_name',NCCHAR,19, &
                   'error vs. iteration',ierr)
 !
+      id_chifin = NCVDEF(nceq,'chifin',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_chifin,'long_name',NCCHAR,41, &
+                  'chisq upon exit',ierr)
+!
       id_chitot = NCVDEF(nceq,'chitot',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_chitot,'long_name',NCCHAR,41, &
                   'more inclusive chisq (not typically used)',ierr)
@@ -797,6 +801,7 @@
 ! --- following variables do NOT have time dimension.
 !
       call NCVPT(nceq,id_mseport,1,nstark,mseport,ierr)
+      call NCVPT(nceq,id_chifin,1,1,real(chifin,r4),ierr)
       call NCVPT(nceq,id_chitot,1,1,real(chitot,r4),ierr)
 !
       endif itype1
