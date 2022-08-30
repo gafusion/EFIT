@@ -1,0 +1,23 @@
+# Build command:
+#   $ docker build -t registry.gitlab.com/efit-ai/efit/gpflow -f Dockerfile.gpflow  .
+
+FROM condaforge/mambaforge:4.9.2-5 as conda
+RUN $PWD/bin/conda -V && \
+    $PWD/bin/conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1.0
+
+FROM registry.gitlab.com/efit-ai/efit/pybase:latest
+
+RUN python3 -m pip install --no-cache-dir -U pip
+
+RUN python3 -m pip install --no-cache-dir cython
+RUN python3 -m pip install --no-cache-dir tensorflow
+RUN python3 -m pip install --no-cache-dir tensorflow_probability
+RUN python3 -m pip install --no-cache-dir gpflow
+RUN python3 -m pip install --no-cache-dir gptools
+# For syndata
+RUN python3 -m pip install --no-cache-dir rich
+
+# Should be in pybase image layer, but doesn't seem like it is there.
+#RUN python3 -m pip install --no-cache-dir pytest
+
+ENV HOME=/root

@@ -1,0 +1,10 @@
+# Build command:
+#   $ docker build -t registry.gitlab.com/efit-ai/efit/pytorch -f Dockerfile.pytorch .
+FROM continuumio/anaconda3:latest as conda
+RUN conda -V && \
+    conda install pytorch torchvision torchaudio -c pytorch
+
+FROM registry.gitlab.com/efit-ai/efit/pybase:latest
+RUN python3 -m pip install --no-cache-dir torch
+
+ENV HOME=/root
