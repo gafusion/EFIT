@@ -91,7 +91,7 @@ command:
 
 .. code:: bash
 
-    gitlab-runner docker exec <job_name>
+    gitlab-runner exec docker <job_name>
 
 where <job_name> is the name of the individual job in the pipeline.
 "gitlab-runner" should be installed in "/usr/local/bin/gitlab-runner".
