@@ -239,9 +239,17 @@
           cycle
         endif
         ! don't solve times without mse
-        if (require_mse .and. kstark.eq.0) then
+        if (ivalid.gt.1 .and. kstark.eq.0) then
           call errctrl_msg('efit', &
             'No MSE data found, not solving for equilibrium')
+          cycle
+        endif
+        ! don't write times without cer
+        if (ivalid.gt.2 .and. &
+            maxval(abs(tangam(ks,1:nmtark) &
+                      -tangam_uncor(ks,1:nmtark))).gt.1.e-10_dp) then
+          call errctrl_msg('efit', &
+            'No CER correction used, not solving for equilibrium')
           cycle
         endif
 
@@ -264,7 +272,7 @@
 #endif
           call set_init(ks)
           ! don't solve times without plasma solution
-          if (require_plasma) then
+          if (ivalid.gt.0) then
             if (icinit.eq.1) then
               if (abs(sum(pcurrt)).lt.1.e-3_dp) then
                 call errctrl_msg('efit', &
@@ -296,7 +304,7 @@
         endif
         ! prevent post process for times without plasma solution
         ! this will catch some cases that the first check misses
-        if (require_plasma .and. abs(sum(pcurrt)).lt.1.e-3_dp) then
+        if (ivalid.gt.0 .and. abs(sum(pcurrt)).lt.1.e-3_dp) then
           call errctrl_msg('efit', &
             'Solution does contain any plasma, no outputs are generated')
           cycle

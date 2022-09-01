@@ -56,7 +56,8 @@ ITEK,,See namelist IN1.
 ITIMEB,,(unused variable)
 ITIMEU,,See namelist IN1.
 ITRACE,,See namelist IN1.
-IVESEL,,See namelist IN1.
+IVALID,0,See namelist IN1.
+IVESEL,0,See namelist IN1.
 IXRAY,,See namelist IN1.
 KBOUND,,See namelist IN1.
 KCALPA,,See namelist IN1 (basis).
@@ -96,8 +97,6 @@ PSIWANT,,See namelist IN1.
 QVFIT,,See namelist IN1.
 RBDRY,,See namelist IN1.
 RELAX,,See namelist IN1.
-REQUIRE_MSE,.false.,"When true, times without MSE data will not be solved or written to k-files."
-REQUIRE_PLASMA,.false.,"See namelist IN1"
 REXPAN, 0.01,
 RZEROJ,,See namelist IN1.
 SAICON,,See namelist IN1.

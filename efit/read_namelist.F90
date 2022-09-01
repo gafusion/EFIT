@@ -157,7 +157,7 @@
                 iconsi,kcalpa,kcgama,iacoil,limid,iqplot,nptionf,ifitvs, &
                 icutfp,iavem,ktear,ndokin,kskipvs,limvs,kpressb,kzeroj, &
                 ibtcomp,klabel,nmass,iaveus,kwripre,kbound,kframe, &
-                kppfnc,kppknt,kfffnc,kffknt,kwwfnc,kwwknt,nbskip, &
+                kppfnc,kppknt,kfffnc,kffknt,kwwfnc,kwwknt,nbskip,ivalid, &
                 kersil,iout,ixray,kedgef,kedgep,kautoknt,kakloop,kakiter, &
                 kpphord,kffhord,keehord,isolve,iplcout,imagsigma,ksigma, &
                 nbdrymx,nsol,kbetapr,nbdryp,idebug,ifindopt,npnef,nptef
@@ -192,7 +192,7 @@
       real*8, dimension(256,256) :: calpa,cgama
       character(1000) :: line, fitzts
       character appendsnap*2,jdebug*4
-      logical :: fitsiref,fitfcsum,use_previous,require_plasma
+      logical :: fitsiref,fitfcsum,use_previous
       namelist/in1/ishot,itime,plasma,itek,itrace,nxiter,fwtcur,kffcur, &
         coils,fwtsi,expmp2,fwtmp2,kppcur,mxiter,ierchk,fwtqa,qemp,error, &
         limitr,xlim,ylim,serror,nbdry,rbdry,zbdry,psibry,nslref,ibunmn, &
@@ -224,8 +224,7 @@
         kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout, &
         imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
         nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
-        idebug,jdebug,ifindopt,tolbndpsi,siloplim,use_previous, &
-        require_plasma, &
+        idebug,jdebug,ifindopt,tolbndpsi,siloplim,use_previous,ivalid, &
         table_dir,input_dir,store_dir
       parameter(nin=343)
 

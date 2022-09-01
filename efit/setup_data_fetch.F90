@@ -61,7 +61,7 @@
            ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels, &
            idebug,jdebug,synmsels,avemsels,kwritime, &
            v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi, &
-           siloplim,use_previous,ierchk,require_plasma,require_mse
+           siloplim,use_previous,ierchk,ivalid
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
 

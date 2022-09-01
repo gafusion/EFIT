@@ -59,7 +59,7 @@
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve, &
            iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum, &
            efitversion,kwripre,ifindopt,tolbndpsi,siloplim,use_previous, &
-           require_plasma,require_mse
+           ivalid
       namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
            znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
            oldcomp,currc199,curriu30,curriu90, &
@@ -113,7 +113,7 @@
            ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels, &
            idebug,jdebug,synmsels,avemsels,kwritime, &
            v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi, &
-           siloplim,use_previous,ierchk,require_plasma,require_mse
+           siloplim,use_previous,ierchk,ivalid
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
       data currn1/0.0/,currc79/0.0/,currc139/0.0/,currc199/0.0/, &
@@ -415,9 +415,17 @@
 !
       do jtime=1,ktime
         ! don't write times without mse
-        if (require_mse .and. abs(sum(siggam)).lt.nstark*1.e-10_dp) then
+        if (ivalid.gt.1 .and. abs(sum(siggam)).lt.nstark*1.e-10_dp) then
           call errctrl_msg('write_k', &
             'No MSE data found, not writing k-file')
+          cycle
+        endif
+        ! don't write times without cer
+        if (ivalid.gt.2 .and. &
+            maxval(abs(tangam(jtime,1:nmtark) &
+                      -tangam_uncor(jtime,1:nmtark))).gt.1.e-10_dp) then
+          call errctrl_msg('write_k', &
+            'No CER correction used, not writing k-file')
           cycle
         endif
         itime=time(jtime)
