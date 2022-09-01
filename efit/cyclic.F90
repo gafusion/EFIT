@@ -15,13 +15,11 @@
       use var_buneman, only: delrgrid, delz
       implicit none
       integer*4 ef_init_cycred_data
-      real*8 u0, cosdii, sindi, denom, dr, dumy, dumy1
+      real*8 cosdii, sindi, denom, dr, dumy, dumy1
       real*8 dzsq, dz, dzdrsq, dzdr
-      integer*4 i,j,k,l, nred, m1,jpow, jpowm1, jstep, jend, jstart, index
+      integer*4 i, j, k, l, nred, m1,jpow, jpowm1, jstep, jend, jstart, ind
 
       ef_init_cycred_data = 0
-
-      u0 = 4.0 * pi * 1.0e-7_dp
 
 ! ----------------------------------------------------------------------
 !     Power of 2 that specifies the grid height.
@@ -71,7 +69,7 @@
 ! ----------------------------------------------------------------------
 !     Constants used during the forward reduction procedure.
 
-      index = 0
+      ind = 0
 !     nred steps are required
       nred = nhpwr - 1    
       jpow = 1   
@@ -93,8 +91,8 @@
           do l=1,jpowm1
             m1 = -1.0 * m1
  
-            index = index + 1
-            if (index.gt.icycred_loopmax) then
+            ind = ind + 1
+            if (ind.gt.icycred_loopmax) then
               ef_init_cycred_data=1
               call errctrl_msg('ef_init_cycred_data', &
                    'constant data index in forward reduction is > max')
@@ -103,11 +101,11 @@
 
               cosdii = -2.0 * cos( (2.0 * l - 1.0) * pi/jpow)
               sindi = sin( (2.0 * l - 1.0) * pi/jpow)
-              alphab(index) = m1 * sindi/jpowm1
-              diag1(index) = diag + cosdii
+              alphab(ind) = m1 * sindi/jpowm1
+              diag1(ind) = diag + cosdii
           enddo 
 
-          if (index.gt.icycred_loopmax) exit
+          if (ind.gt.icycred_loopmax) exit
               
         enddo
       enddo
@@ -132,8 +130,8 @@
           do l=1,jpow
             m1 = -1.0 * m1
 
-            index = index + 1
-            if (index.gt.icycred_loopmax) then
+            ind = ind + 1
+            if (ind.gt.icycred_loopmax) then
               ef_init_cycred_data=1
               call errctrl_msg('ef_init_cycred_data', &
                    'constant data index in back solution is > max')
@@ -142,11 +140,11 @@
 
             cosdii = -2.0 * cos( (2.0 * l - 1.0) * pi/(2**k)) 
             sindi = sin( (2.0 * l - 1.0) * pi/(2**k))
-            alphab(index) = m1 * sindi/jpow
-            diag1(index) = diag + cosdii
+            alphab(ind) = m1 * sindi/jpow
+            diag1(ind) = diag + cosdii
           enddo 
 
-          if(index.gt.icycred_loopmax) exit
+          if(ind.gt.icycred_loopmax) exit
              
         enddo 
       enddo 
@@ -157,7 +155,7 @@
 !     matrices that are solved.
 
 !     At this point "index" holds the number of reduction loops that are used.
-      do i=1,index
+      do i=1,ind
         beti(i,1) = 1.0/diag1(i)
 !       not actually used
         abeti(i,1) = 0.0 
@@ -172,7 +170,6 @@
             diagl(j) * beti(i,j)
         enddo
       enddo  
-
       end function ef_init_cycred_data
 
 
@@ -181,6 +178,8 @@
 !>    cyclic_reduction
 !!    The core routine to compute the flux on the grid using Holger StJohn's
 !!    single cyclic reduction algorithm.
+!!    
+!!    @param f :
 !!
 !**********************************************************************
       subroutine cyclic_reduction(f)
@@ -188,16 +187,16 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension f(*)
+      implicit none
+      real*8, intent(inout) :: f(nwnh)
+      integer*4 nv,ind,nred,jpow,i,k,jpowm1,jstart,jend,jstep,j,jd,jdp,jdm,l
 
-      constant=0.5_dp
 ! ----------------------------------------------------------------------
 !     Forward reduction.
 
       nv = nw - 2
 
-      index = 0 
+      ind = 0 
 !     nred steps are required.
       nred = nhpwr - 1
       jpow = 1   
@@ -227,17 +226,17 @@
 !         Next row down
           jdm = jd - jpowm1*nw 
 
-          call ef_vadd_shrt(f(jdm+1),f(jdp+1),phi,nv)
+          phi(1:nv)=f(jdm+1:jdm+nv)+f(jdp+1:jdp+nv)
           
           do l=1,jpowm1
-            index = index + 1
-            call ef_tridiag2(f(jd+1),nv,index)
+            ind = ind + 1
+            call ef_tridiag2(f(jd+1),nv,ind)
           enddo
 
 !         use the declared var constant, instead of 0.5 directly because
 !         of change in alignment for different compilations
 
-          call ef_vmul_const_shrt(f(jd+1),constant,f(jd+1),nv)
+          f(jd+1:jd+nv)=f(jd+1:jd+nv)*0.5_dp
 
         enddo
       enddo
@@ -266,21 +265,18 @@
 !         Next row down 
           jdm = jd - jpow*nw  
  
-          call ef_vadd_shrt(f(jdm+2),f(jdp+2),phi,nv)
+          phi(1:nv)=f(jdm+2:jdm+1+nv)+f(jdp+2:jdp+1+nv)
           do l=1,jpow
-            index = index + 1
+            ind = ind + 1
 
             if (l.eq.1) then
-              call ef_tridiag1(f(jd+2),nv,index)
+              call ef_tridiag1(f(jd+2),nv,ind)
             else
-              call ef_tridiag2(f(jd+2),nv,index)
+              call ef_tridiag2(f(jd+2),nv,ind)
             endif
           enddo
         enddo
       enddo
-
-! All done.
-
       return
       end subroutine cyclic_reduction
 
@@ -290,15 +286,21 @@
 !>  pflux_cycred use e the single cyclic reduction method of Holger StJohn
 !! and John Ferron 
 !! to get the flux on the grid resulting from the plasma current.
+!!    
+!!    @param psigrid :
+!!    @param kerror :
 !!
 !**********************************************************************
-      subroutine pflux_cycred(psigrid,sia,kerror)
+      subroutine pflux_cycred(psigrid,kerror)
 
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension psigrid(*),sia(*)
-      integer*4 initresult, ef_init_cycred_data
+      implicit none
+      real*8, intent(inout) :: psigrid(nwnh)
+      integer*4, intent(out) :: kerror
+      integer*4 ef_init_cycred_data
+      integer*4 initresult,i,ii,j,is,nn
+      real*8 sia(nwnh)
 
       kerror = 0
 
@@ -306,8 +308,8 @@
 !     Call the initialization and check the result
       initresult=ef_init_cycred_data()
       if (initresult.eq.1) then
-          kerror = 1
-          return
+        kerror = 1
+        return
       endif
 
 ! ----------------------------------------------------------------------
@@ -325,20 +327,10 @@
 !     columns to the rhs. These terms are known boundary terms and
 !     hence do not form part of the tridiagonal matrix.
 
-      ius = nw
-      ivs = nw
-      iys = nw
+      is = nw
       nn = nh-2
-      call vsma_(sia(nw+1), ius, &
-          rhs_a_dumy, &
-          sia(nw+2), ivs, &
-          sia(nw+2), iys, &
-          nn)
-      call vsma_(sia(2*nw), ius, &
-          rhs_b_dumy, &
-          sia(2*nw-1), ivs, &
-          sia(2*nw-1), iys, &
-          nn)
+      call vsma(sia, nw+1, nw+2, is, rhs_a_dumy, nn)
+      call vsma(sia, 2*nw, 2*nw-1, is, rhs_b_dumy, nn)
 ! ----------------------------------------------------------------------
 !     Do the cyclic reduction to get psigrid.
 
@@ -353,64 +345,41 @@
           psigrid(i+(j-1)*nh) = sia(ii+j)
         enddo
       enddo
-
-! All done.
-
       return
       end subroutine pflux_cycred
-
-! ======================================================================
-! ======================================================================
-!  +++++++++++++++++++++++
-!  SUBROUTINE: vsma_
-!  +++++++++++++++++++++++
-      subroutine vsma_(a, ia, b, c, ic, d, id, n)
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-
-      dimension a(n),c(n),d(n)
-
-      if (n.le.0) then
-        return
-      endif
-
-      iai = 1
-      ici = 1
-      idi = 1
-
-      do i=1,n 
-        d(idi) = a(iai)*b + c(ici)
-        iai = iai + ia
-        ici = ici + ic
-        idi = idi + id
-      enddo
-      return
-      end subroutine vsma_
 
 
 !**********************************************************************
 !>
-!!    this subroutine multiplies two vectors together
+!!    Add the finite difference expressions for the boundary terms
 !!    
-!!
-!!    @param vin1 :
-!!
-!!    @param vin2 :
-!!
-!!    @param out :
-!!
-!!    @param nelements :
+!!    @param mat : matrix
+!!    @param iu : starting index
+!!    @param iv : starting index
+!!    @param is : step size
+!!    @param b : right hand side constant
+!!    @param n : number of steps
 !!
 !**********************************************************************
-      subroutine ef_vvmul(vin1,vin2,out,nelements)
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
+      subroutine vsma(mat, iu, iv, is, b, n)
 
-      dimension vin1(nelements),vin2(nelements),out(nelements)
+      use eparm, only: nwnh
+      implicit none
+      integer*4, intent(in) :: iu,iv,is,n
+      real*8, intent(inout) :: mat(nwnh)
+      real*8, intent(in) :: b
+      integer*4 ii,i
 
-      do i=1,nelements
-        out(i) = vin1(i) * vin2(i)
+      if(n.le.0) return
+
+      ii = 0
+      do i=1,n 
+        mat(iv+ii) = mat(iu+ii)*b + mat(iv+ii)
+        ii = ii + is
       enddo
       return
-      end subroutine ef_vvmul
+      end subroutine vsma
+
 
 !**********************************************************************
 !!
@@ -428,29 +397,32 @@
 !!         vector.
 !!    @param f : the vector in which the result is being accumulated.
 !!    @param v : temporary storage area for the result vector
-!!    @param  n : number of elements in the vector. 
+!!    @param n : number of elements in the vector. 
 !!
 !**********************************************************************
-      subroutine ef_tridiag2(f,n,index)
+      subroutine ef_tridiag2(f,n,ind)
 
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension f(n)
+      implicit none
+      integer*4, intent(in) :: n,ind
+      real*8, intent(inout) :: f(nwnh)
+      integer*4 j
+      real*8 usave
 
-      v(1)=(wk2(1)+alphab(index)*phi(1))* &
-           beti(index,1)
+      v(1)=(wk2(1)+alphab(ind)*phi(1))* &
+           beti(ind,1)
       do j=2,n
-        v(j)=wk2(j)*beti(index,j)+  &
-          alphab(index)*phi(j)*beti(index,j)-  &
-          v(j-1) * abeti(index,j)
+        v(j)=wk2(j)*beti(ind,j)+  &
+          alphab(ind)*phi(j)*beti(ind,j)-  &
+          v(j-1) * abeti(ind,j)
       enddo
 
       usave = v(n)
       f(n) = usave + f(n)
 
       do j=n-1,1,-1
-        usave = v(j)-wk1(index,j+1)*usave
+        usave = v(j)-wk1(ind,j+1)*usave
         f(j) = usave + f(j)
       enddo
       return
@@ -483,20 +455,23 @@
 !!  @param n : number of elements in the vector. 
 !!
 !!********************************************************************
-      subroutine ef_tridiag1(f,n,index)
+      subroutine ef_tridiag1(f,n,ind)
 
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension f(n)
+      implicit none
+      integer*4, intent(in) :: n,ind
+      real*8, intent(inout) :: f(nwnh)
+      integer*4 j
+      real*8 usave
  
-      v(1)=(f(1)+alphab(index)*phi(1))* &
-                    beti(index,1)
+      v(1)=(f(1)+alphab(ind)*phi(1))* &
+                    beti(ind,1)
  
       do j=2,n
-       v(j) = f(j)*beti(index,j)+  &
-         alphab(index)*phi(j)*beti(index,j)-  &
-         v(j-1)*abeti(index,j)
+       v(j) = f(j)*beti(ind,j)+  &
+         alphab(ind)*phi(j)*beti(ind,j)-  &
+         v(j-1)*abeti(ind,j)
       enddo
  
       wk2(n) = f(n)
@@ -504,57 +479,8 @@
  
       do j=n-1,1,-1
         wk2(j) = f(j)
-        v(j)=v(j)-wk1(index,j+1)*v(j+1)
+        v(j)=v(j)-wk1(ind,j+1)*v(j+1)
         f(j) = v(j)
       enddo
       return
       end subroutine ef_tridiag1
-
-
-!*********************************************************************
-!!
-!>  ef_vadd_shrt adds two vectors.  Handles vectors one 
-!!  element at a time.  Good for
-!!  short, unaligned vectors but not optimized at all for long vectors.
-!! 
-!!  @param vector_out : vector1 + vector2
-!! 
-!!  @param mvector1 : input vector
-!!  @param vector2 : input vector
-!!  @param vector_out : output vector
-!!  @param nelements : number of elements in the vectors.
-!!
-!***********************************************************************
-      subroutine ef_vadd_shrt(vector1,vector2,vector_out, &
-                              nelements)
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension vector1(nelements),vector2(nelements),vector_out(nelements)
-
-      do i=1,nelements
-        vector_out(i) = vector1(i) + vector2(i)
-      enddo
-      return
-      end subroutine ef_vadd_shrt
-
-      
-!**************************************************************************
-!>    ef_vmul_const_shrt Multiply a vector by a constant.
-!!    Handles vectors one element at a time.  Good for short, unaligned vectors
-!!    but not optimized at all for long vectors.\n
-!! 
-!!    vector_out = vector1 * constant
-!! 
-!!    @param vector1 : input vector
-!!    @param constant : constant value
-!!    @param vector_out : output vector
-!!    @param nelements : number of elements in the vectors. Must be at least 2.
-!**************************************************************************
-      subroutine ef_vmul_const_shrt(vector1,constant,vector_out,nelements)
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension vector1(nelements),vector_out(nelements)
-
-      do i=1,nelements
-        vector_out(i) = vector1(i) * constant
-      enddo
-      return
-      end subroutine ef_vmul_const_shrt

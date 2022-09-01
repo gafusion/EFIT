@@ -276,13 +276,13 @@
               YTEMP(N)=YTEMP(N)-EXP(-1.*TTEMP(N)/TAU)/TAU*SUM
             ENDDO
 
-            call interp(ttemp,ytemp,N,tim,ydat,npts)
+            call interp(ttemp(1:N),ytemp(1:N),N,tim,ydat)
 
           ELSEIF (ABS(RAR(1)-TTEMP(1)).GT.RAR(3) .OR. &
                    ABS(TTEMP(NPTS)-TIM(NPTS)).GT.1.0E-6) then
             npts2=iar(2)
             ytemp(1:npts2)=(rar(6)-idat(1:npts2))*rar(5)*rar(4)
-            call interp(ttemp,ytemp,iar(2),tim,ydat,npts)
+            call interp(ttemp(1:iar(2)),ytemp(1:iar(2)),iar(2),tim,ydat)
           ELSE
             ydat(1:npts)=(rar(6)-idat(1:npts))*rar(5)*rar(4)
           ENDIF
@@ -346,33 +346,35 @@
 !!    
 !!
 !**********************************************************************
-        SUBROUTINE INTERP(XIN,YIN,NIN,XOUT,YOUT,NOUT)
-        USE VTIME_MOD, ONLY: NTIMS
-        implicit integer*4 (i-n), real*8 (a-h,o-z)
-        REAL*8 XIN(NTIMS),YIN(NTIMS),XOUT(NTIMS),YOUT(NTIMS)
-        INTEGER NIN,NOUT
+        subroutine interp(xin,yin,nin,xout,yout)
+        use vtime_mod, only: ntims
+        implicit none
+        integer, intent(in) :: nin
+        real*8, intent(in) :: xin(nin),yin(nin),xout(ntims)
+        real*8, intent(out) :: yout(ntims)
+        integer i,j,jlast
 
-        IF(NIN.LT.1) RETURN
+        if(nin.lt.1) return
 
-        DO I=1,NOUT
-          IF(XOUT(I).GE.XIN(1)) go to 20
-          YOUT(I)=YIN(1)
-        ENDDO
-        RETURN
+        do i=1,ntims
+          if(xout(i).ge.xin(1)) go to 20
+          yout(i)=yin(1)
+        enddo
+        return
 
-   20   JLAST=1
-   25   DO J=JLAST,NIN-1
-          IF((XOUT(I).GE.XIN(J)).AND.(XOUT(I).LT.XIN(J+1))) go to 200
-        ENDDO
+   20   jlast=1
+   25   do j=jlast,nin-1
+          if((xout(i).ge.xin(j)).and.(xout(i).lt.xin(j+1))) go to 200
+        enddo
 
         go to 300
-  200   YOUT(I)=YIN(J)+(YIN(J)-YIN(J+1))*(XOUT(I)-XIN(J))/(XIN(J)- &
-                                                           XIN(J+1))
-        I=I+1
-        IF(I.GT.NOUT) RETURN
-        JLAST=J
+  200   yout(i)=yin(j)+(yin(j)-yin(j+1))*(xout(i)-xin(j))/(xin(j)- &
+                                                           xin(j+1))
+        i=i+1
+        if(i.gt.ntims) return
+        jlast=j
         go to 25
-  300   CONTINUE
-        YOUT(I:NOUT)=YIN(NIN)
-        RETURN
-        END SUBROUTINE INTERP
+  300   continue
+        yout(i:ntims)=yin(nin)
+        return
+        end subroutine interp

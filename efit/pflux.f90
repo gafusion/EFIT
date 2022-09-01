@@ -31,7 +31,6 @@
              zdwn_now,zup_now
       real*8 pds(6)
       real*8,dimension(nwnh) :: psikkk,gfbsum
-      real*8,dimension(:),allocatable :: work
       logical vfeed
 
       kerror = 0
@@ -127,7 +126,6 @@
 !--   get flux at inner points by inverting del*, only plasma flux
 !--   first set up plasma currents, single cyclic method gets factor of 2
 !-------------------------------------------------------------------------
-      allocate(work(SIZE(psi)))
       if (isolve.eq.0) then
 !       original buneman solver method
         do i=2,nw-1
@@ -136,7 +134,7 @@
             psi(kk)=tmu2*pcurrt(kk)*rgrid(i)
           enddo   
         enddo   
-        call buneto(psi,nw,nh,work)
+        call buneto(psi,nw,nh)
       else 
 !       new faster single cyclic reduction method
         do i=2,nw-1
@@ -145,11 +143,10 @@
             psi(kk)=tmu2*pcurrt(kk)*rgrid(i)*2.0
           enddo
         enddo
-        call pflux_cycred(psi,work,kerror)
+        call pflux_cycred(psi,kerror)
         if (kerror.gt.0) return
       endif
-      deallocate(work)
-      psi(1:nwnh)=-psi(1:nwnh)
+      psi=-psi
 !----------------------------------------------------------------------------
 !--   optional symmetrized solution                                        --
 !----------------------------------------------------------------------------

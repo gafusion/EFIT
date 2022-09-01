@@ -1421,16 +1421,18 @@
           dt = min(dt, (times(nts)-times(i))*1.001)
           tlow = times(i) - dt
           thigh = times(i) + dt
-          do while (times(mlow).lt.tlow .or. (mhigh.lt.nts &
-                    .and. times(mhigh+1).le.thigh))
-            if (times(mlow) .lt. tlow) then
-              val = val - datarr(mlow)
-              mlow = mlow + 1
-            elseif (mhigh .lt. nts .and. times(mhigh+1) .le. thigh) then
-              mhigh = mhigh + 1
-              val = val + datarr(mhigh)
-            endif
-          enddo
+          if (mhigh.lt.nts) then
+            do while (times(mlow).lt.tlow .or. times(mhigh+1).le.thigh)
+              if (times(mlow) .lt. tlow) then
+                val = val - datarr(mlow)
+                mlow = mlow + 1
+              elseif (mhigh .lt. nts .and. times(mhigh+1) .le. thigh) then
+                mhigh = mhigh + 1
+                val = val + datarr(mhigh)
+                if(mhigh.eq.nts) exit
+              endif
+            enddo
+          endif
           work(i)=val/(mhigh-mlow+1)
         enddo
         datarr(1:nts)=work(1:nts)
@@ -1482,18 +1484,20 @@
           dt = min(dt, (times(nts)-times(i))*1.001)
           tlow = times(i) - dt
           thigh = times(i) + dt
-          do while (times(mlow).lt.tlow .or. (mhigh.lt.nts &
-                    .and. times(mhigh+1).le.thigh))
-            if (times(mlow) .lt. tlow) then
-              val = val - datarr(mlow)
-              val2 = val2 - datarr(mlow)**2
-              mlow = mlow + 1
-            elseif (mhigh .lt. nts .and. times(mhigh+1) .le. thigh) then
-              mhigh = mhigh + 1
-              val = val + datarr(mhigh)
-              val2 = val2 + datarr(mhigh)**2
-            endif
-          enddo
+          if (mhigh.lt.nts) then
+            do while (times(mlow).lt.tlow .or. times(mhigh+1).le.thigh)
+              if (times(mlow) .lt. tlow) then
+                val = val - datarr(mlow)
+                val2 = val2 - datarr(mlow)**2
+                mlow = mlow + 1
+              elseif (mhigh .lt. nts .and. times(mhigh+1) .le. thigh) then
+                mhigh = mhigh + 1
+                val = val + datarr(mhigh)
+                val2 = val2 + datarr(mhigh)**2
+                if(mhigh.eq.nts) exit
+              endif
+            enddo
+          endif
           work(i)=val/(mhigh-mlow+1)
           if(kount .eq. 1) then   !-- calculate std dev based on raw data
             stdev(i) = val2/(mhigh-mlow+1)-(val/(mhigh-mlow+1))**2
