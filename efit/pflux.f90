@@ -284,6 +284,7 @@
 !--   Green's integral method of obtaining flux, can be computationally     --
 !--   intensive                                                             --
 !-----------------------------------------------------------------------------
+      psi(:)=0.0
       do i=1,nw
        do j=1,nh
         kk=(i-1)*nh+j
