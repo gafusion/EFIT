@@ -367,7 +367,7 @@
       subroutine vsma_(a, ia, b, c, ic, d, id, n)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 
-      dimension a(1),c(1),d(1) ! used as pointer inside array
+      dimension a(n),c(n),d(n)
 
       if (n.le.0) then
         return
@@ -404,7 +404,7 @@
       subroutine ef_vvmul(vin1,vin2,out,nelements)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 
-      dimension vin1(1),vin2(1),out(1) ! Could be used as pointer inside array
+      dimension vin1(nelements),vin2(nelements),out(nelements)
 
       do i=1,nelements
         out(i) = vin1(i) * vin2(i)
@@ -528,7 +528,7 @@
       subroutine ef_vadd_shrt(vector1,vector2,vector_out, &
                               nelements)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension vector1(1),vector2(1),vector_out(1)
+      dimension vector1(nelements),vector2(nelements),vector_out(nelements)
 
       do i=1,nelements
         vector_out(i) = vector1(i) + vector2(i)
@@ -551,7 +551,7 @@
 !**************************************************************************
       subroutine ef_vmul_const_shrt(vector1,constant,vector_out,nelements)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension vector1(1),vector_out(1)
+      dimension vector1(nelements),vector_out(nelements)
 
       do i=1,nelements
         vector_out(i) = vector1(i) * constant
