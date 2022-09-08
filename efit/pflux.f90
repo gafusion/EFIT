@@ -266,16 +266,16 @@
       do kk=1,nwnh
         psipla(kk)=psi(kk)
         if(ivesel.gt.0) &
-          psi(kk)=psi(kk)+sum(gridvs(kk,1:nvesel)*vcurrt(1:nvesel))
+          psi(kk)=psi(kk)+sum(gridvs(kk,:)*vcurrt)
         if (iecurr.eq.1) then
-          psi(kk)=psi(kk)+sum(gridec(kk,1:nesum)*ecurrt(1:nesum))
+          psi(kk)=psi(kk)+sum(gridec(kk,:)*ecurrt)
         elseif (iecurr.eq.2) then
-          psi(kk)=psi(kk)+sum(gridec(kk,1:nesum)*cecurr(1:nesum))
+          psi(kk)=psi(kk)+sum(gridec(kk,:)*cecurr)
         endif
         if (vfeed) psi(kk)=psi(kk)+grdfdb(kk,1)*brfb(2)
-        psi(kk)=psi(kk)+sum(gridfc(kk,1:nfcoil)*brsp(1:nfcoil))
+        psi(kk)=psi(kk)+sum(gridfc(kk,:)*brsp(1:nfcoil))
         if (iacoil.gt.0) &
-          psi(kk)=psi(kk)+sum(gridac(kk,1:nacoil)*caccurt(jtime,1:nacoil))
+          psi(kk)=psi(kk)+sum(gridac(kk,:)*caccurt(jtime,:))
       enddo
 
       else buneman_green
@@ -284,20 +284,20 @@
 !--   Green's integral method of obtaining flux, can be computationally     --
 !--   intensive                                                             --
 !-----------------------------------------------------------------------------
-      psi(:)=0.0
+      psi=0.0
       do i=1,nw
        do j=1,nh
         kk=(i-1)*nh+j
-        psi(kk)=psi(kk)+sum(gridfc(kk,1:nfcoil)*brsp(1:nfcoil))
+        psi(kk)=psi(kk)+sum(gridfc(kk,:)*brsp(1:nfcoil))
         if(ivesel.gt.0) &
-          psi(kk)=psi(kk)+sum(gridvs(kk,1:nvesel)*vcurrt(1:nvesel))
+          psi(kk)=psi(kk)+sum(gridvs(kk,:)*vcurrt)
         if (iecurr.eq.1) then
-          psi(kk)=psi(kk)+sum(gridec(kk,1:nesum)*ecurrt(1:nesum))
+          psi(kk)=psi(kk)+sum(gridec(kk,:)*ecurrt)
         elseif (iecurr.eq.2) then
-          psi(kk)=psi(kk)+sum(gridec(kk,1:nesum)*cecurr(1:nesum))
+          psi(kk)=psi(kk)+sum(gridec(kk,:)*cecurr)
         endif
         if (iacoil.gt.0) &
-          psi(kk)=psi(kk)+sum(gridac(kk,1:nacoil)*caccurt(jtime,1:nacoil))
+          psi(kk)=psi(kk)+sum(gridac(kk,:)*caccurt(jtime,:))
         psipla(kk)=psi(kk)
         if (ivacum.le.0) then
           do ii=1,nw

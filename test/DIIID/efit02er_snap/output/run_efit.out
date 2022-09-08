@@ -24,7 +24,7 @@ Code compiled with PGI 18.7.0
 
  r=  0 t=  2400 it=  1 chi2=4.13E+01 zm=-2.21E-02 err=1.805E+00 dz=-2.212E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
  r=  0 t=  2400 it=  2 chi2=2.75E+01 zm=-2.24E-02 err=7.101E-02 dz=-2.285E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 9.94E+00
- r=  0 t=  2400 it=  3 chi2=2.85E+01 zm=-2.23E-02 err=4.650E-02 dz= 2.752E-06 delz= 0.000E+00 dj=0.000E+00 chigam= 9.76E+00
+ r=  0 t=  2400 it=  3 chi2=2.85E+01 zm=-2.23E-02 err=4.650E-02 dz= 2.754E-06 delz= 0.000E+00 dj=0.000E+00 chigam= 9.76E+00
  r=  0 t=  2400 it=  4 chi2=4.32E+01 zm=-2.76E-02 err=2.528E-02 dz=-5.235E-03 delz= 1.036E+00 dj=2.398E-02 chigam= 1.07E+01
  r=  0 t=  2400 it=  5 chi2=2.76E+01 zm=-3.04E-02 err=1.376E-02 dz=-2.816E-03 delz= 5.916E-01 dj=1.372E-02 chigam= 1.01E+01
  r=  0 t=  2400 it=  6 chi2=2.33E+01 zm=-3.18E-02 err=7.651E-03 dz=-1.428E-03 delz= 3.329E-01 dj=7.787E-03 chigam= 9.86E+00

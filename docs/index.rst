@@ -46,11 +46,11 @@ part of the larger `EFIT-AI project <https://fusion.gat.com/conference/e/EFIT-AI
 Search
 ==================
 
-* :ref:`genindex`
-* :ref:`modindex`
+.. TODO: Options commented out still do not render properly on the website!
+.. * :ref:`genindex`
+.. * :ref:`modindex`
 * :ref:`search`
 
-.. TODO: Options commented out currently do not work
 
 Bibliography
 ------------

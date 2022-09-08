@@ -49,7 +49,7 @@
            nbdry,rbdry,zbdry,sigrbd,sigzbd,nbskip,msebkp, &
            ktear,keecur,ecurbd,keefnc,eetens,eeknt,keeknt, &
            keebdry,kee2bdry,eebdry,ee2bdry,kersil,iout,ixray, &
-           use_alternate_pointnames, alternate_pointname_file, &
+           use_alternate_pointnames,alternate_pointname_file, &
            do_spline_fit,table_dir,input_dir,store_dir, &
            kedgep,pedge,pe_psin,pe_width,kedgef,f2edge,fe_psin,fe_width, &
            psiecn,dpsiecn,relaxdz,fitzts,isolve,stabdz, &
@@ -61,7 +61,7 @@
            ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels, &
            idebug,jdebug,synmsels,avemsels,kwritime, &
            v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi, &
-           siloplim,use_previous,ierchk,ivalid
+           siloplim,use_previous,ierchk,ivalid,ibunmn
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
 

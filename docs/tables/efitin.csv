@@ -36,6 +36,7 @@ IAVEUS,,See namelist IN1.
 IAVEV,,See namelist IN1.
 IBATCH,,UNUSED (input and output only).
 IBTCOMP,,See namelist IN1.
+IBUNMN,,See namelist IN1.
 ICINIT,,See namelist IN1.
 ICPROF,,See namelist IN1.
 ICUTFP,,See namelist IN1.
