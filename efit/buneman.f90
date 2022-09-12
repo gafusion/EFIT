@@ -9,13 +9,14 @@
 !!    @param sia :
 !!
 !!********************************************************************* 
-      subroutine buneto(psi,nwb,nhb,sia)
+      subroutine buneto(psi,nwb,nhb)
       use set_kinds
       use var_buneman
       implicit none
       integer*4, intent(in) :: nwb, nhb
-      real*8, dimension(nwb*nhb), intent(inout) :: psi, sia
+      real*8, dimension(nwb*nhb), intent(inout) :: psi
       integer*4 i,ii,j,ia,ju,nwhbb
+      real*8, dimension(nwb*nhb) :: sia
 
       mno = max(nwb,nhb)+1
       m = nwb-1

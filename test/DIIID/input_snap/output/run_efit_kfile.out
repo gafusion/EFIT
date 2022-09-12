@@ -1,0 +1,12 @@
+
+          EFITD Version  03/16/2022
+
+
+ type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+
+ command file name ( 0=none) ?
+
+ good shot list file name ( 0=tty) ?
+
+ type shot #, start time(ms), time step(ms), steps(<1001):
+INFO in getsets at r= -1, t=    -1: Done writing k-files

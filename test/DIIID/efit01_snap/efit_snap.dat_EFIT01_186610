@@ -27,7 +27,7 @@
  ifitdelz = 3
  ERROR = 0.0001
  ERRMIN = 0.0001
- MXITER = 25
+ MXITER = -25
  FCURBD = 0.0
  PCURBD = 0.0
  KCALPA = 1

@@ -1,7 +1,7 @@
 # In order to build and run this version of EFIT on the system you must
 #   execute the following module commands:
 #
-#    module load mdsplus
+#    module load env/gcc8.3.1 mdsplus
 #
 # If you don't want MPI (slower in serial) simply remove the FC=...
 #   and -DENABLE_PARALLEL... lines
@@ -21,6 +21,7 @@
     -DD3_LIB:PATH='/fusion/projects/codes/efit/dev/d3lib_gcc8.3.1/libd3share.a' \
     -DENABLE_MDSPLUS:BOOL=ON \
     -DMDSPLUS_DIR:PATH='/fusion/usc/c8/opt/mdsplus/alpha/7.130.1' \
+    -DMSE_LIB:PATH='/fusion/projects/codes/mse/lib/V3_10-gcc8.5.0/libmse.a' \
     -DENABLE_PARALLEL:BOOL=ON \
     -DCMAKE_BUILD_TYPE:STRING=RELEASE \
     ..

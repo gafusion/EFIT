@@ -40,15 +40,15 @@
       include 'eparm.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !
-      INTEGER*4 ier, lx, ly
-      REAL*8 cs(kubicx,lubicx,kubicy,lubicy),xl,yl,fs(6), &
+      INTEGER*4 ier,lx,ly
+      REAL*8, intent(in) :: xl,yl
+      REAL*8 cs(kubicx,lubicx,kubicy,lubicy),fs(6), &
              bkx(lubicx+1),bky(lubicy+1)
 !
 !     Local Variable Specifications:
 !
       dimension work0(4),work1(4),work2(4)
       data n00/0/,n11/1/,n22/2/
-      save n00,n11,n22
 !
 !     Check for consistent variable size inputs
 !
@@ -422,7 +422,7 @@
 !!    this is an extended version of  bsplpp  for use with tensor products
 !!    
 !!    onverts the b-representation  t, bcoef(.,j), n, k  of some spline into
-!!    its pp-representation  break, coef(j,.,.), l, k ; j=1, ..., m  .
+!!    its pp-representation  breakpts, coef(j,.,.), l, k ; j=1, ..., m  .
 !!    
 !!    i n p u t
 !!    t     knot sequence, of length  n+k
@@ -436,10 +436,10 @@
 !!    the spline and its  k-1  derivatives   for each of the m sets
 !!    
 !!    o u t p u t
-!!    break breakpoint sequence, of length  l+1, contains (in increasing
+!!    breakpts breakpoint sequence, of length  l+1, contains (in increasing
 !!    order) the distinct points in the sequence  t(k), ..., t(n+1)
 !!    coef(mm,.,.)  array of size (k,n), with  coef(mm,i,j) = (i-1)st der-
-!!    ivative of  mm-th  spline at break(j) from the right, mm=1,.,m
+!!    ivative of  mm-th  spline at breakpts(j) from the right, mm=1,.,m
 !!    l     number of polynomial pieces which make up the spline in the
 !!    interval  (t(k), t(n+1))
 !!    
@@ -452,23 +452,23 @@
 !!    ues of all b-splines of the appropriate order at that point.
 !!
 !**********************************************************************
-      subroutine bspp2d ( t, bcoef, n, k, m, scrtch, break, coef, l )
+      subroutine bspp2d ( t, bcoef, n, k, m, scrtch, breakpts, coef, l )
       implicit integer*4 (i-n), real*8 (a-h, o-z)
         parameter (kmax=4)
       INTEGER*4 k,l,m,n,i,j,jp1,kmj,left
-      dimension bcoef(n,m),break(*),coef(m,k,*),scrtch(k,k,m),t(*), &
+      dimension bcoef(n,m),breakpts(*),coef(m,k,*),scrtch(k,k,m),t(*), &
            biatx(kmax)
       REAL*8 diff,fkmj,sm
 !
       n11=1
       n22=2
       l = 0
-      break(1) = t(k)
+      breakpts(1) = t(k)
       do left=k,n
 !        find the next nontrivial knot interval.
          if(t(left+1) .eq. t(left)) cycle
          l = l + 1
-         break(l+1) = t(left+1)
+         breakpts(l+1) = t(left+1)
          if (k .le. 1) then
             coef(1:m,1,l) = bcoef(left,1:m)
             cycle
@@ -568,7 +568,7 @@
 !  t  and of  biatx  precisely without the introduction of otherwise
 !  superfluous additional arguments.
       data j/1/
-      save j,deltal,deltar  ! (valid in fortran 77)
+      save deltal,deltar  ! (valid in fortran 77)
 !
       if (index .ne. 2) then
          j = 1
@@ -826,11 +826,10 @@
 !**********************************************************************      
       subroutine interv ( xt, lxt, x, left, mflag )
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      INTEGER*4 left,lxt,mflag,   ihi,ilo,istep,middle
-      REAL*8 x
+      INTEGER*4 left,lxt,mflag,ihi,ilo,istep,middle
+      REAL*8, intent(in) :: x
       dimension xt(lxt)
       data ilo /1/
-!     save ilo  (a valid fortran statement in the new 1977 standard)
       ihi = ilo + 1
       if (ihi .ge. lxt) then
          if (x .ge. xt(lxt)) then
@@ -912,9 +911,9 @@
 !!    This routine is an interface from the IMSL call used on the VAX to the
 !!    LINPACK call used on the Multiflow.  This routine performs the inversion
 !!    of an N x N matrix.  This is not a general purpose routine and is specific to
-!!    the EFITD code and should only be used for that code.  This routine has local
-!!    arrays that are sized to correspond to the largest size of an EFITD call.  If
-!!    the parameters which define dimensions for EFITD arrays should change, then
+!!    the EFIT code and should only be used for that code.  This routine has local
+!!    arrays that are sized to correspond to the largest size of an EFIT call.  If
+!!    the parameters which define dimensions for EFIT arrays should change, then
 !!    the sizes of these arrays may need to change as well.
 !!    
 !!    Correspondence of the variables between the IMSL LINV1F routine and the
