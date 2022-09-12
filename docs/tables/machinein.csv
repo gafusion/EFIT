@@ -58,5 +58,5 @@ modef,  4, Unused?
 modep, 4, Unused?
 modew, 4,  Unused?
 kubics, 4, Unused?
-icycred_loopmax,1290, Maximum number of iterations in cyclic reduction routine
+icycred_loopmax,, unused legacy variable (only in mhdin.dat for compatibility)
 nfourier, 5,  Number Fourier components of vessel current

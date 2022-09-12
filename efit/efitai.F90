@@ -35,7 +35,6 @@
       integer*4 :: iend1, iend2
 
       kerror = 0
-      kwake = 0
 !------------------------------------------------------------------------------
 !     Initialize MPI environment
 !------------------------------------------------------------------------------
@@ -48,15 +47,7 @@
 !------------------------------------------------------------------------------
 !--   Set external variables and print build info
 !------------------------------------------------------------------------------ 
-      call set_exvars
-      ! If environment variable exists, then override values from set_exvars
-      call getenv("link_efit",link_efitx)
-      call getenv("link_store",link_storex)
-      if (link_efitx(1:1).ne.' ') then
-        table_dir=trim(link_efitx)//'green/'
-        input_dir=trim(link_efitx)
-      endif
-      if (link_storex(1:1).ne.' ')  store_dir=trim(link_storex)
+      call set_extvars
 !----------------------------------------------------------------------
 !-- Read in grid size from command line and set global variables     --
 !-- ONLY root process reads command-line arguments                   --
@@ -79,10 +70,10 @@
       endif
       if (nw == 0 .or. nh == 0) then
         if (rank == 0) then
-          call errctrl_msg('efit', &
+          call errctrl_msg('efitai', &
                            'Must specify grid dimensions as arguments')
         endif
-        deallocate(dist_data,dist_data_displs,fwtgam_mpi)
+        deallocate(dist_data,dist_data_displs)
         call mpi_finalize(ierr)
         STOP
       endif
@@ -119,9 +110,9 @@
       ntime = ktime
 
       ! Black voodoo magic of setting poorly defined variables
-      call get_eparmdud_defaults()
-      call read_eparmdud(ifname(1))!this assume machine is always the same
-      call get_eparmdud_dependents()
+      call set_eparm_defaults()
+      call read_machinein(ifname(1))!this assume machine is always the same
+      call set_eparm_dependents()
 
 !----------------------------------------------------------------------
 !-- Global Allocations                                               --
@@ -135,20 +126,21 @@
 !----------------------------------------------------------------------
 !-- get data                                                         --
 !----------------------------------------------------------------------
-      allocate(dist_data(nproc),dist_data_displs(nproc),fwtgam_mpi(nstark,nproc))
+      allocate(dist_data(nproc),dist_data_displs(nproc))
       !call set_table_dir
-      !call efit_read_tables
+      !call read_tables
       !TODO: SEK: ZZ: Stopping here for now
-      print *, 'Entering getsets'
-  20  call getsets(ktime,mtear,kerror)
-      print * ,'exiting getsets'
+      print *, 'Entering setup_data_fetch'
+  20  call setup_data_fetch(ktime,kerror)
+      print * ,'exiting setup_data_fetch'
 
 #if defined(USEMPI)
       if (nproc > 1) then
         call MPI_ALLREDUCE(kerror,MPI_IN_PLACE,1,MPI_INTEGER,MPI_MAX,MPI_COMM_WORLD,ierr)
       endif
       if (kerror.gt.0) then
-        call errctrl_msg('efitd','Aborting due to fatal error in getsets')
+        call errctrl_msg('efitai', &
+          'Aborting due to fatal error in setup_data_fetch')
         call mpi_abort(MPI_COMM_WORLD,ierr) ! kill all processes, something is wrong with the setup.
       endif
 #else
@@ -177,25 +169,25 @@
 !--  set up data                                                     --
 !----------------------------------------------------------------------
         
-        if(idebug>=2) write(6,*) ' Entering prtoutheader subroutine'
-        call prtoutheader()
+        if(idebug>=2) write(6,*) ' Entering print_header subroutine'
+        call print_header()
         if(idebug>=2) write(6,*) ' Entering data_input subroutine'
 
-        call data_input(ks,iconvr,ktime,mtear,kerror)
+        call data_input(ks,iconvr,ktime,kerror)
 
         if(idebug>=2) write(6,*) ' Entering errctrl_setstate'
         call errctrl_setstate(rank,time(ks))
         if (kerror.gt.0) go to 500
         if (iconvr.lt.0) go to 500
         if (kautoknt .eq. 1) then
-           call autoknot(ks,iconvr,ktime,mtear,kerror)
+           call autoknot(ks,iconvr,ktime,kerror)
         else
 !----------------------------------------------------------------------
 !--  initialize current profile                                      --
 !----------------------------------------------------------------------
 
-           if(idebug>=2) write(6,*) 'Entering inicur subroutine'
-           call inicur(ks)
+           if(idebug>=2) write(6,*) 'Entering set_init subroutine'
+           call set_init(ks)
 !----------------------------------------------------------------------
 !--  get equilibrium                                                 --
 !----------------------------------------------------------------------
@@ -212,20 +204,20 @@
         if (kerror.gt.0) go to 500
 !DEPRECATED        if (mtear.ne.0) call tearing(ks,mtear,kerror)
         if (kerror.gt.0) go to 500
-        if (idebug /= 0) write (6,*) 'Main/PRTOUT ks/kerror = ', ks, kerror
-        call prtout(ks)
+        if (idebug /= 0) write (6,*) 'Main/PRINT_STATS ks/kerror = ', ks, kerror
+        call print_stats(ks)
         if ((kwaitmse.ne.0).and.(kmtark.gt.0)) call fixstark(-ks,kerror)
 !----------------------------------------------------------------------
 !--  write A and G EQDSKs                                            --
 !----------------------------------------------------------------------
-        if (idebug /= 0) write (6,*) 'Main/WQEDSK ks/kerror = ', ks, kerror
-        call weqdsk(ks)
+        if (idebug /= 0) write (6,*) 'Main/write_g ks/kerror = ', ks, kerror
+        call write_g(ks)
         if (iconvr.ge.0) then
-           call shipit(ktime,ks)
+           call write_a(ktime,ks)
 !DEPRECATED           call wtear(mtear,ks)
         endif
-        if (idebug /= 0) write (6,*) 'Main/wmeasure ks/kerror = ', ks, kerror
-        call wmeasure(ktime,ks,ks,1)
+        if (idebug /= 0) write (6,*) 'Main/write_m ks/kerror = ', ks, kerror
+        call write_m(ktime,ks,ks,1)
 !----------------------------------------------------------------------
 ! -- write Kfile if needed                                           --
 !----------------------------------------------------------------------
@@ -233,16 +225,14 @@
         kerrot(ks)=kerror
         go to 100
       endif
-      if (kwake.ne.0) go to 20
-      call wmeasure(ktime,1,ktime,2)
-      call wtime(ktime)
+      call write_m(ktime,1,ktime,2)
+      call write_ot(ktime)
 
 #if defined(USEMPI)
       ! Finalize MPI
       if (allocated(dist_data)) deallocate(dist_data)
       if (allocated(dist_data_displs)) deallocate(dist_data_displs)
-      if (allocated(fwtgam_mpi)) deallocate(fwtgam_mpi)
-      call errctrl_msg('efitd','Done processing',3)
+      call errctrl_msg('efitai','Done processing',3)
       call mpi_finalize(ierr)
 #endif
       stop

@@ -17,12 +17,8 @@ if ! test -e ${link_efit}/lim.dat; then
 fi
 
 # Remove any previous outputs
-if [ @HAVE_NETCDF@ = True ]; then
-  outputs=( k a g m )
-else
-  outputs=( k a g )
-fi
 mv run_efit.out run_efit_kfile.out
+outputs=( @EFIT_OUTPUTS@ )
 for prefix in ${outputs[*]}; do
   for label in @EFIT_LABEL@; do
     rm -f ${prefix}${label}
@@ -35,7 +31,7 @@ done
 @EFIT_MODE@
 
 
-@RUNID@,@TIME@,@STEP@,@EFIT_TIME@
+@RUNID@,@FIRST_TIME@,@STEP_SIZE@,@EFIT_COUNT@
 
 __c__MATCHING_EOF__c__
 

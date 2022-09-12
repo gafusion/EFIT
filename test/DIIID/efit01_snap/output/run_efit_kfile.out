@@ -9,4 +9,4 @@
  good shot list file name ( 0=tty) ?
 
  type shot #, start time(ms), time step(ms), steps(<1001):
-INFO in getsets at r= -1, t=    -1: Done writing k-files
+INFO in efit at r= -1, t=    -1: Done writing k-files

@@ -1,4 +1,8 @@
 Variable, Default, Description
+CSTABNE,0.0,
+CSTABTE,0.0,
 IBOUND,0,"| 0 = trace from inside wall. (default)
 | - -1 = trace from outside wall."
+ISLPFC,0,
+LICALC,1,
 M_WRITE,1,

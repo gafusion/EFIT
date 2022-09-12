@@ -27,6 +27,7 @@
              cwork,dwork,x,y,dpleng
       dimension xsier(nercur)
       integer*4, intent(inout) :: kerror
+      integer*4, parameter :: licalc=1 ! hardcoded option
       data inorm/3/,ibtcal/2/
 
       ALLOCATE(worksi(nw),workrm(nw),bwork(nw), &
@@ -36,8 +37,8 @@
 
       sumbp2=0.0
       select case (licalc)
-      case (1)
-      call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
+      case (1) ! standard
+        call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
         do i=1,nw
           do j=1,nh
             kk=(i-1)*nh+j
@@ -47,7 +48,7 @@
           enddo
         enddo
         sumbp2=sumbp2*twopi*darea
-      case (2)
+      case (2) ! rarely used
         do kk=1,nwnh
           sumbp2=sumbp2+(psi(kk)-psibry)*pcurrt(kk)*www(kk)
         enddo
@@ -494,7 +495,9 @@
       endif
       betat2=sumpr2*2.0*twopi*tmu/bcentr(jtime)**2
       betat2=100.*betat2*(rout(jtime)/100./rcentr)**2
-!
+!-----------------------------------------------------------------------
+!--   compute the safety factor profile
+!-----------------------------------------------------------------------
       qpsi(1:(nw-1))=abs(fpol(1:(nw-1)))/twopi*r2surf(1:(nw-1))
       qpsi(nw)=qout(jtime)
       qpsi(1)=qmaxis
@@ -602,7 +605,7 @@
         pprime(nw)=ppcurr(x111,kppcur)/darea
         pprime(1)=ppcurr(x000,kppcur)/darea
       case (4)
-        call currnt(n222,jtime,n222,n222,kerror)
+        call currnt(n222,jtime,n222,kerror)
         if (kerror.gt.0) return
         pprime(1)=cratio/darea/rzero
         pprime(nw)=pprime(1)*gammap

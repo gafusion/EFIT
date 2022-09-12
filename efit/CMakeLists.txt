@@ -7,32 +7,27 @@ include_directories(
 
 # This calls out to routines needed in d3lib
 set(EFITLIB_SOURCES
-  modules-efit.F90 get_eparmdud.F90 psical.f90 mat_solve.f90 
-  subs_d_pt.F90 efit_tables.F90 read_namelist.F90
-  buneman.f90 getfnm.f90 ecom1-mods.f90 zpline.f90 
-  ecom2-mods.f90 curve2d_mod.f90 inp_file_ch.f90 data_input.F90
-  matrix.F90 shapesurf.F90 getsets.F90 prtout.F90 currnt.f90
-  fcurrt.F90 bound.F90 chkerr.f90 spline.f90 weq.f90
-  pltdat.F90 getne.F90 wmeasure.F90 wtime.f90
-  ppbasisfunc.f90 ffbasisfunc.f90 wwbasisfunc.f90 
-  expdata.f90 autoknot.F90 efit_utils.F90
-  cyclic.F90 set_routines.F90 pressure.F90 get_routines.F90
-  green.F90 fit.F90 beta_li.F90 flux_current.F90 weight.F90
-  ${CMAKE_CURRENT_BINARY_DIR}/set_exvars.F90
+  modules-efit.F90 set_eparm.F90 psical.f90 mat_solve.f90 
+  tables.F90 read_namelist.F90 set_defaults.f90
+  buneman.f90 set_filenames.f90 ecom1-mods.f90 zpline.f90 
+  ecom2-mods.f90 curve2d_mod.f90 data_input.F90 set_init.f90
+  response_matrix.F90 shapesurf.F90 setup_data_fetch.F90 current.f90
+  external_current.F90 boundary.F90 spline.f90 pltdat.F90
+  write_a.f90 write_g.f90 write_m.F90 write_ot.f90 print_terminal.F90
+  ppbasisfunc.f90 ffbasisfunc.f90 wwbasisfunc.f90 eebasisfunc.f90
+  get_exp_data.f90 get_kinetic_data.f90 auto_knot.F90
+  ece.F90 msels.F90 stark.F90 chkerr.f90
+  cyclic.F90 set_basis.f90 pressure.F90 utils.F90
+  green.F90 fit.F90 beta_li.F90 pflux.f90 update_parameters.F90
+  ${CMAKE_CURRENT_BINARY_DIR}/set_extvars.F90
 )
-#set_exvars.F90 is generated -- see top level CMakeLists.txt
+#set_extvars.F90 is generated -- see top level CMakeLists.txt
 if(${HAVE_SNAP})
   set(EFITLIB_SOURCES
     ${EFITLIB_SOURCES}
-    getdat.F90 get_constraints.F90 getdia.f90 msels.F90
-    write_K.F90
+    getdat.F90 measurements.F90 diamagnetic.f90
+    write_k.F90
   )
-  if(${HAVE_MSE})
-    set(EFITLIB_SOURCES
-      ${EFITLIB_SOURCES}
-      getstark.F90
-    )
-  endif()
 endif()
 
 add_library(efitlib ${EFITLIB_SOURCES})

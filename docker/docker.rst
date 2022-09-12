@@ -64,6 +64,7 @@ Building and registering docker containers with gitlab
 
 Creating your own docker image::
 
+    docker-compose  TODO
 
 Basic steps for registering at gitlab::
 

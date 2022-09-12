@@ -1,5 +1,3 @@
-
-
 GitLab
 =======
 
@@ -18,7 +16,6 @@ For submitting the merge request, the developer should:
     ensure that the pipeline passes
   + The actual merge should always be done by someone other than the developer
     who submitted the MR
-
 
 
 Slack and Mailing Lists
@@ -53,7 +50,7 @@ Adding tests
 
 New tests will have many commonalities with the ones that already exist,
 so a good starting point would be to copy an existing test directory and
-replace the inputs and outputs.  All tests for a given machine should use
+replace the inputs and outputs.  All tests for a given experiment should use
 the same Green tables that are in the test and if possible have the same
 shot number.  Tests should include all of the following components when
 applicable:
@@ -75,9 +72,9 @@ file).
 Once the correct input and output files are added, the following files
 need to be edited to include the test:
 
-  + ``$EFIT_ROOT/test/CMakeLists.txt`` (if a new machine is being added)
-  + ``$EFIT_ROOT/test/<machine>/CMakeLists.txt`` add the subdirectory for
+  + ``$EFIT_ROOT/test/CMakeLists.txt`` (if a new experiment is being added)
+  + ``$EFIT_ROOT/test/<experiment>/CMakeLists.txt`` add the subdirectory for
     the new test
-  + ``$EFIT_ROOT/test/<machine>/<new_test>/CMakeLists.txt`` can mostly be
+  + ``$EFIT_ROOT/test/<experiment>/<new_test>/CMakeLists.txt`` can mostly be
     kept the same as other tests aside from changing the test name (shot
     number and time slice numbers should match the new test as well)

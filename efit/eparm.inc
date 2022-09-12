@@ -1,2 +1,2 @@
       use eparm
-      use exvars
+      use extvars

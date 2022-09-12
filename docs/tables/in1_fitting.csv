@@ -25,9 +25,6 @@ ECURRT, zeros, "| ""E Current"". Vector of length 6 containing E coil section cu
 | This data is typically obtained from data and written into the K-file. For data obtained 
 | during shots prior to July of 1995 (when there were 2 E-coil sections rather than 6),
 | EFIT will fill in internally setting ECURRT(3)=ECURRT(5)=ECURRT(1), and ECURRT(4)=ECURRT(6)=ECURRT(2). "
-ERRMIN, 0.01., "| ""Error Min"". Minimum convergence error before exit for ICONVR=2 option.
-| If chi-squared on any iteration is larger than on previous iteration, then if relative 
-| error (maximum flux difference between successive iterations) < ERRMIN and chi-squared < (how much?), iterations stop. "
 EXPMP2, , Magnetic probe signals in T. Obtained from data and written into K-file.
 FITSIREF, False, "| ""Fit Psi Reference"". Fit value of reference flux
 | - True = fit
