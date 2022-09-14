@@ -7,7 +7,7 @@
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
 !**********************************************************************
-      subroutine data_input(jtime,kconvr,ktime,mtear,kerror)
+      subroutine data_input(jtime,kconvr,ktime,kerror)
       use commonblocks,only: c,wk,bkx,bky,wgridpc,rfcpc
       use set_kinds
       include 'eparm.inc'
@@ -16,14 +16,15 @@
       implicit none
 
       integer*4, intent(in) :: jtime,ktime
-      integer*4, intent(out) :: kconvr,mtear,kerror
+      integer*4, intent(out) :: kconvr,kerror
       integer*4 i,j,k,ii,jj,kk,kkkk,m,n
-      integer*4 m_ext,nsq,idoac,mcontr,idtime,itimeb
+      integer*4 idoac,mcontr,ktear
       !integer*4 idodo,idovs
       integer*4 istat,lshot,im1,loc,nbdry0,nbdry1,nbdry2,nbdry3,nbryup, &
                 iup,nbranch,nqpsi,idn,limupper,lwant,mmemsels,idofb, &
                 mw,mh,mmf,mx,ix,mj,mk,npc,npack,nskip,kkl,kku,ier,jupper
       integer*4 nrmin_e,nrmax_e,nzmin_e,nzmax_e
+      integer*4 n_write !unused
       integer*4 nbabs_ext,jb_ext
       integer*4 ishot_save,itime_save,nbdry_save,iconvr_save, &
                 mxiter_save,nxiter_save,ibunmn_save,npress_save
@@ -31,9 +32,9 @@
       integer*4 ilower(mbdry)
       integer*8 n1d(1),n2d(2)
       !real*4 spatial_avg_ham(nmtark,ngam_vars,ngam_u,ngam_w)
-      real*8 ersil8,currn1,zetafc,co2cor,fq95,ten2m3
+      real*8 currn1,co2cor,fq95
       real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref,sgnemin, &
-             idfila,sigtii,pnbeam,sgtemin,sgnethi,sgtethi,ktear, &
+             idfila,sigtii,pnbeam,sgtemin,sgnethi,sgtethi, &
              currc79,currc139,currc199,curc79in,curc139in,curc199in, &
              curriu30,curriu90,curriu150,curril30,curril90,curril150, &
              bti322in,bremsigi,near,adn,val,rnow,znow,bfract, &
@@ -79,16 +80,12 @@
       character*2 reflect_ext
       logical shape_ext
       logical file_stat
-      parameter (m_ext=101)
-      data nsq/1/
-      data ersil8/1.0e-03_dp/,currn1/0.0/,zetafc/2.5e-08_dp/
+      logical writepc ! unused variable
+      integer*4, parameter :: m_ext=101,nsq=1
+      real*8, parameter :: aaslop=0.6_dp,drslop=0.003_dp
+      real*8, parameter :: ersil8=1.0e-03_dp,ten2m3=1.0e-03_dp,zetafc=2.5e-08_dp,errorq=1.0e-03_dp
       !data idodo/0/,idovs/0/
-      data co2cor/1.0/,idoac/0/,fq95/0.0/
-      data mcontr/35/
-      data ten2m3/1.0e-03_dp/
-      data idtime/0/,itimeb/0/
-      save idoac
-      !save idodo,idovs
+      data idoac/0/,mcontr/35/
 
       namelist/in1/ishot,itime,plasma,itek,itrace,nxiter,fwtcur,kffcur, &
            coils,fwtsi,expmp2,fwtmp2,kppcur,mxiter,ierchk,fwtqa,qemp,error, &
@@ -121,7 +118,8 @@
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout, &
            imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
            nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
-           idebug,jdebug,ifindopt,tolbndpsi,siloplim,use_previous
+           idebug,jdebug,ifindopt,tolbndpsi,siloplim,use_previous, &
+           ivalid
       namelist/inwant/psiwant,vzeroj,fwtxxj,fbetap,fbetan,fli,fq95,fqsiw, &
            jbeta,jli,alpax,gamax,jwantm,fwtxxq,fwtxxb,fwtxli,znose, &
            fwtbdry,nqwant,siwantq,n_write,kccoils,ccoils,rexpan, &
@@ -150,7 +148,7 @@
       namelist/inece/necein,teecein0,feece0,errorece0,fwtece0,fwtecebz0, &
            ecefit,ecebzfit,kfitece,kinputece,kcallece,nharm, &
            kfixro,rteo,zteo,kfixrece,rtep,rtem,rpbit,rmbit,robit, &
-           nfit,kcmin,fwtnow,mtxece
+           nfit,kcmin,fwtnow,kdoece,mtxece,nconstr,eceiter,eceerror
       namelist/iner/keecur,ecurbd,keefnc,eetens,keebdry,kee2bdry, &
            eebdry,ee2bdry,eeknt,keeknt,keehord
       namelist/insxr/ksxr0,ksxr2,idosxr
@@ -176,7 +174,18 @@
            expmp2,coils,btor,rcentr,brsp,icurrt,rbdry,zbdry, &
            nbdry,fwtsi,fwtcur,mxiter,nxiter,limitr,xlim,ylim,error, &
            iconvr,ibunmn,pressr,rpress,nqpsi,npress,sigpre
-! 
+
+      ! set defaults for all modes within loop
+      kerror=0
+      errorm=1.
+      brsp_save=brsp
+      brsp=0.0
+      brsp(1)=-1.e-20_dp
+      brsptu=0.0
+      brsptu(1)=-1.e-20_dp
+      sicont=tmu*drslop/aaslop
+
+      ! initialize variables with zeros
       sbmsels=0.0
       tlibim=0.0
       slibim=0.0
@@ -212,16 +221,10 @@
       zlowimp=0.0
       pressbi=0.0
       prespb=0.0
-      sigppb=0.0
       dnbeam=0.0
       dmass=0.0
       sgtimin=0.0
       scalepr=0.0
-      brsp_save=brsp
-      brsp=0.0
-      brsp(1)=-1.e-20_dp
-      brsptu=0.0
-      brsptu(1)=-1.e-20_dp
       fwtfcsum=0.0
       rsol=0.0
       zsol=0.0
@@ -294,14 +297,17 @@
       curc79in=0.0
       curc139in=0.0
       curc199in=0.0
-!
-      kerror=0
       idone=0
-      fpol(:)=0.0
-      pres(:) = 0.0
-      ffprim(:) = 0.0
-      pprime(:)= 0.0
-      sicont=tmu*drslop/aaslop
+      fpol=0.0
+      pres=0.0
+      ffprim=0.0
+      pprime=0.0
+      saisref=0.0
+      cdelz=0.0
+      if (jtime.eq.0 .or. isicinit.ge.0 .or. isicinit.eq.-3) then
+        cdeljsum=0.0
+        psi=0.0
+      endif
 !---------------------------------------------------------------------- 
 !--   SNAP Mode
 !--   Restore fitting weights
@@ -311,11 +317,11 @@
       fwtcur=swtcur
       if(fwtqa.ne.0.0) fwtqa=1.
       if(fwtbp.ne.0.0) fwtbp=1.
-      fwtfc(1:nfcoil)=swtfc(1:nfcoil)
-      fwtec(1:nesum)=swtec(1:nesum)
-      fwtmp2(1:magpri)=swtmp2(1:magpri)
-      fwtsi(1:nsilop)=swtsi(1:nsilop)
-      fwtgam(1:nstark)=swtgam(1:nstark)
+      fwtfc=swtfc
+      fwtec=swtec
+      fwtmp2=swtmp2
+      fwtsi=swtsi
+      fwtgam=swtgam
 !----------------------------------------------------------------------- 
 !--   Set edge pedestal tanh paramters                                -- 
 !----------------------------------------------------------------------- 
@@ -329,188 +335,42 @@
 !--   initialize inputs
 !---------------------------------------------------------------------- 
       else snap
-      bitfc=0.0
-      psibit(1:nsilop)=0.0
-      bitmpi(1:magpri)=0.0
-      alpax(jbeta)=1.e4_dp
-      backaverage=.false.
-      bitip=0.0
-      betap0=0.50_dp
-      cfcoil=-1.
-      cutip=80000.
       denv(1:nco2v)=0.
       denr(1:nco2r)=0.
-      rsisec(1:nesum)=-1.
-      emf=1.00
-      emp=1.00
-      enf=1.00
-      enp=1.00
-      error=1.0e-03_dp
-      fbetap=0.0
-      fbetat=0.0
-      fcsum(1:nfcoil)=1.0
-      fczero(1:nfcoil)=1.0
-      fwtfc(1:nfcoil)=0.
-      rsisfc(1:nfcoil)=-1.
-      fwtec(1:nesum)=0.0
-      fwtpre(1:mpress)=1.
-      fcurbd=1.0
-      fli=0.0
-      fwtbp=0.0
-      fwtdlc=0.0
-      fwtgam(1:nstark)=0.0
-      fwtbmsels(1:nmsels)=0.0
-      fwtemsels(1:nmsels)=0.0
-      fwtece0(1:nnece)=0.0
-      fwtecebz0=0.0
-      fwtbdry(1:mbdry)=1.0
-      sigrbd(1:mbdry)=1.e10_dp
-      sigzbd(1:mbdry)=1.e10_dp
-      fwtsol(1:mbdry)=1.0
-      akchiwt=1.0
-      akprewt=0.0
-      akgamwt=0.0
-      akerrwt=0.0
-      aktol=0.1_dp
-      fwtqa=0.0
-      gammap=1.0e+10_dp 
-      gamax(jli)=-1.e6_dp 
-      iavem=5 
-      ibatch=0 ! never used in code (just gets output) 
-      ibound=0 ! hardcoded variable, not part of any namelist...
-      ibunmn=3 
-      icinit=2 
-      icondn=-1 
-      iconsi=-1 
-      iconvr=2 
-      icprof=0 
-      icurrt=2 
-      icutfp=0 
-      iecoil=0 
-      ierchk=1 
-      iecurr=1
-      iexcal=0 
-!jal 04/23/2004 
-      iplcout=0 
-      ifcurr=0 
-      ifitvs=0 
-      ifref=-1 
-      iplim=0 
-      iprobe=0 
-      iqplot=1 
-      isetfb=0 
-      idplace=0 
-      islve=0 
-      isumip=0 
-      itek=0 
-      iout=1                 ! default - write fitout.dat 
-      itrace=1 
-      ivacum=0 
-      ivesel=0 
-      n1coil=0 
-      ibtcomp=1 
-      iweigh=0 
-      ixray=0 
-      ixstrt=1 
-      kautoknt=0 
-      kakloop=1 
-      kakiter=25 
-      kbetapr=0 
-      keqdsk=1 
-      kffcur=1 
-      kinput=0 
-      kplotpr=1 
-      kfcurb=0 
-      kpcurb=0 
-      kppcur=3 
-      kpressb=0 
-      kprfit=0 
-      kzeroj=0 
-      limfag=2 
-      limitr=-33 
-      mxiter=25 
-      nbdry=0 
-      ncstte=1 
-      ncstne=1 
-      ncstfp=1 
-      ncstpp=1 
-      nextra=1 
-      nsq=1 
-      nxiter=1 
-      pcurbd=1.0 
+      co2cor=1.0
+      currn1=0.0
+      fwtbmsels=0.0
+      fwtemsels=0.0
+      ktear=0
       pnbeam=0.0 
-      prbdry=0. 
-      psibry=0.0 
-      qemp=0.0 
-      qenp=0.95_dp 
-      qvfit=0.95_dp 
-      rzeroj(1)=0.0 
-      salpha=1._dp/40._dp 
-      sbeta=1._dp/8._dp 
-      sbetaw=0.0 
-      scrape=0.030_dp 
-      serror=0.03_dp 
+      rrmsels(1)=-10. 
       sgnemin=0.0 
-      sgprmin=0.0 
       sgtemin=0.0 
-      sidif=-1.0e+10_dp 
-      srm=-3.5_dp 
-      symmetrize=.false. 
+      siref=0. 
       xltype=0.0 
       xltype_180=0.0 
-      rmaxis=rzero 
-      siref=0. 
-      vcurfb(1)=0.0 
-      vcurfb(2)= 500. 
-      vcurfb(3)= 500. 
       vloop=0. 
-      scalepr(1)=-1. 
-      scalepw(1)=-1. 
-      isolve=0 
-      ifindopt = 2 
-      tolbndpsi = 1.0e-12_dp 
-
-      xlim(1)=-1.0 
-      rbdry(1)=-1.0 
-      itimeu=0
-      nbdryp=-1 
-      ktear=0
-      rrmsels(1)=-10. 
-      ecefit = 0.0 
-      ecebzfit = 0.0 
-
-      geqdsk_ext = 'none'
-      nw_ext = 0
-      nh_ext = 0
-      psin_ext(1) = -1000.0 
-      sign_ext = 1.0 
-      cratio_ext = 1.0 
-      cratiop_ext = 1.0 
-      cratiof_ext = 1.0 
-      scalepp_ext=1.0 
-      scaleffp_ext=1.0 
-      dr_ext=0.0 
-      dz_ext=0.0 
-      shape_ext=.false. 
-      rc_ext=-10. 
-      zc_ext=-10. 
-      a_ext=-10. 
-      eup_ext=-10. 
-      elow_ext=-10. 
-      dup_ext=-10. 
-      dlow_ext=-10. 
-      setlim_ext=-10. 
-      reflect_ext='no' 
 
       fwtlib(1:libim)=0.0
       rrrlib(1:libim)=0.0
       zzzlib(1:libim)=0.0
-      cgama=0.0
-      calpa=0.0
-      sizeroj=0.0
-      bitec=0.0
+
+      a_ext=-10. 
+      dr_ext=0.0 
+      dz_ext=0.0 
+      dup_ext=-10. 
+      dlow_ext=-10. 
+      eup_ext=-10. 
+      elow_ext=-10. 
+      rc_ext=-10. 
+      zc_ext=-10. 
+      reflect_ext='no' 
+      setlim_ext=-10. 
+      shape_ext=.false. 
 
       table_save=table_dir
+
+      call set_defaults
 
       file_type: if (kdata.eq.2) then 
 !---------------------------------------------------------------------- 
@@ -522,7 +382,8 @@
         backspace(nin)
         read(nin,fmt='(A)') line
         write(*,'(A)') 'Invalid line in namelist in1: '//trim(line)
-        stop
+        kerror=1
+        return
       endif
       close(unit=nin)
 
@@ -551,10 +412,8 @@
       if (istat>0) then 
         backspace(nin) 
         read(nin,fmt='(A)') line 
-!        if (trim(line)/="/") then
-          write(*,'(A)') 'Invalid line in namelist in_msels: '//trim(line)
-          stop
-!        endif
+        write(*,'(A)') 'Invalid line in namelist in_msels: '//trim(line)
+        stop
       endif
       close(unit=nin)
 
@@ -694,8 +553,6 @@
           enddo
 !--       Read fcoil currents
 !--       Avoid overwriting other variables that will impact restart
-!--       Warning: this will have problems if the machine is changed,
-!--                but there isn't a way to check for that
           allocate(expmp2_save(magpri),coils_save(nsilop), &
                    rbdry_save(mbdry),zbdry_save(mbdry), &
                    fwtsi_save(nsilop),pressr_save(mpress), &
@@ -777,32 +634,37 @@
         inquire(file=trim(ifname(1)),exist=file_stat)
         if (.not. file_stat) then
           call errctrl_msg('data_input',trim(line)//' not found')
-          stop
+          kerror=1
+          return
         endif
         call fch5init
         call open_oldh5file(trim(ifname(1)),fileid,rootgid,h5in,h5err)
         call test_group(rootgid,"equilibrium",file_stat,h5err)
         if (.not. file_stat) then
           call errctrl_msg('data_input','equilibrium group not found')
-          stop
+          kerror=1
+          return
         endif
         call open_group(rootgid,"equilibrium",eqid,h5err)
         call test_group(eqid,"code",file_stat,h5err)
         if (.not. file_stat) then
           call errctrl_msg('data_input','code group not found')
-          stop
+          kerror=1
+          return
         endif
         call open_group(eqid,"code",cid,h5err)
         call test_group(cid,"parameters",file_stat,h5err)
         if (.not. file_stat) then
           call errctrl_msg('data_input','parameters group not found')
-          stop
+          kerror=1
+          return
         endif
         call open_group(cid,"parameters",pid,h5err)
         call test_group(pid,"time_slice",file_stat,h5err)
         if (.not. file_stat) then
           call errctrl_msg('data_input','time_slice group not found')
-          stop
+          kerror=1
+          return
         endif
         call open_group(pid,"time_slice",tid,h5err)
         write(tindex,"(I0)") jtime-1+rank*ktime
@@ -1045,7 +907,6 @@
           call read_h5_ex(nid,"fe_width",fe_width,h5in,h5err)
           call read_h5_ex(nid,"fe_psin",fe_psin,h5in,h5err)
           call read_h5_ex(nid,"kedgef",kedgef,h5in,h5err)
-          call read_h5_ex(nid,"ktear",ktear,h5in,h5err)
           call read_h5_ex(nid,"kersil",kersil,h5in,h5err)
           call read_h5_ex(nid,"iout",iout,h5in,h5err)
           call read_h5_ex(nid,"ixray",ixray,h5in,h5err)
@@ -1072,10 +933,6 @@
           call read_h5_ex(nid,"fitzts",fitzts,h5in,h5err)
           call read_h5_ex(nid,"isolve",isolve,h5in,h5err)
           call read_h5_ex(nid,"iplcout",iplcout,h5in,h5err)
-          call read_h5_ex(nid,"imagsigma",imagsigma,h5in,h5err)
-          call read_h5_ex(nid,"errmag",errmag,h5in,h5err)
-          call read_h5_ex(nid,"ksigma",ksigma,h5in,h5err)
-          call read_h5_ex(nid,"errmagb",errmagb,h5in,h5err)
           call read_h5_ex(nid,"brsptu",brsptu,h5in,h5err)
           call read_h5_ex(nid,"fitfcsum",fitfcsum,h5in,h5err)
           call read_h5_ex(nid,"fwtfcsum",fwtfcsum,h5in,h5err)
@@ -1208,7 +1065,7 @@
           call read_h5_ex(nid,"nfit",nfit,h5in,h5err)
           call read_h5_ex(nid,"kcmin",kcmin,h5in,h5err)
           call read_h5_ex(nid,"fwtnow",fwtnow,h5in,h5err)
-          call read_h5_ex(nid,"kdoece",kdoece,h5in,h5err)
+!          call read_h5_ex(nid,"kdoece",kdoece,h5in,h5err) ! unused
           call read_h5_ex(nid,"mtxece",mtxece,h5in,h5err)
           call read_h5_ex(nid,"nconstr",nconstr,h5in,h5err)
           call read_h5_ex(nid,"eceiter",eceiter,h5in,h5err)
@@ -1315,7 +1172,6 @@
           call read_h5_ex(nid,"fbetap",fbetap,h5in,h5err)
           call read_h5_ex(nid,"fbetan",fbetan,h5in,h5err)
           call read_h5_ex(nid,"fli",fli,h5in,h5err)
-          call read_h5_ex(nid,"fq95",fq95,h5in,h5err)
           call read_h5_ex(nid,"fqsiw",fqsiw,h5in,h5err)
           call read_h5_ex(nid,"jbeta",jbeta,h5in,h5err)
           call read_h5_ex(nid,"jli",jli,h5in,h5err)
@@ -1329,7 +1185,6 @@
           call read_h5_ex(nid,"fwtbdry",fwtbdry,h5in,h5err)
           call read_h5_ex(nid,"nqwant",nqwant,h5in,h5err)
           call read_h5_ex(nid,"siwantq",siwantq,h5in,h5err)
-          call read_h5_ex(nid,"n_write",n_write,h5in,h5err)
           call read_h5_ex(nid,"kccoils",kccoils,h5in,h5err)
           ! need to ensure array is square
           call read_h5_sq(nid,"ccoils",ccoils,h5in,h5err)
@@ -1343,7 +1198,6 @@
           call read_h5_ex(nid,"nccoil",nccoil,h5in,h5err)
           call read_h5_ex(nid,"sizeroj",sizeroj,h5in,h5err)
           call read_h5_ex(nid,"fitdelz",fitdelz,h5in,h5err)
-          call read_h5_ex(nid,"ndelzon",ndelzon,h5in,h5err)
           call read_h5_ex(nid,"relaxdz",relaxdz,h5in,h5err)
           call read_h5_ex(nid,"stabdz",stabdz,h5in,h5err)
           call read_h5_ex(nid,"writepc",writepc,h5in,h5err)
@@ -1372,6 +1226,7 @@
           call read_h5_ex(nid,"enw",enw,h5in,h5err)
           call read_h5_ex(nid,"emw",emw,h5in,h5err)
           call read_h5_ex(nid,"betapw0",betapw0,h5in,h5err)
+          call read_h5_ex(nid,"kdovt",kdovt,h5in,h5err)
           call read_h5_ex(nid,"kvtor",kvtor,h5in,h5err)
           call read_h5_ex(nid,"kwwcur",kwwcur,h5in,h5err)
           call read_h5_ex(nid,"rvtor",rvtor,h5in,h5err)
@@ -1384,16 +1239,15 @@
           call read_h5_ex(nid,"rpresw",rpresw,h5in,h5err)
           call read_h5_ex(nid,"zpresw",zpresw,h5in,h5err)
           call read_h5_ex(nid,"kplotp",kplotp,h5in,h5err)
-          call read_h5_ex(nid,"sbetaw",sbetaw,h5in,h5err)
           call read_h5_ex(nid,"nsplot",nsplot,h5in,h5err)
+          call read_h5_ex(nid,"sbetaw",sbetaw,h5in,h5err)
           call read_h5_ex(nid,"comega",comega,h5in,h5err)
           call read_h5_ex(nid,"kcomega",kcomega,h5in,h5err)
           call read_h5_ex(nid,"xomega",xomega,h5in,h5err)
-          call read_h5_ex(nid,"kdovt",kdovt,h5in,h5err)
           call read_h5_ex(nid,"romegat",romegat,h5in,h5err)
           call read_h5_ex(nid,"zomegat",zomegat,h5in,h5err)
           call read_h5_ex(nid,"sigome",sigome,h5in,h5err)
-          call read_h5_ex(nid,"scalepr",scalepr,h5in,h5err)
+          call read_h5_ex(nid,"scalepw",scalepw,h5in,h5err)
           call read_h5_ex(nid,"kwwfnc",kwwfnc,h5in,h5err)
           call read_h5_ex(nid,"kwwknt",kwwknt,h5in,h5err)
           call read_h5_ex(nid,"wwknt",wwknt,h5in,h5err)
@@ -1641,11 +1495,25 @@
 !----------------------------------------------------------------------- 
 !--   post-process inputs                                             --
 !-----------------------------------------------------------------------
-!--   warn that idebug and jdebug inputs are depreciated
+      if (link_efit(1:1).ne.'') then
+        ! use directories specified in efit.setup if available
+        table_dir=trim(link_efit)//'green/'
+        input_dir=trim(link_efit)
+      elseif (table_dir.ne.table_save .and. link_efit.eq.'') then
+        ! error if table_dir changes (global_allocs already set)
+        call errctrl_msg('data_input', &
+          'changing experiment during run is not supported (table_dir)')
+        kerror=1
+        return
+      endif
+      if(link_store(1:1).ne.'') store_dir=trim(link_store)
+!--   warn that idebug, jdebug, and ktear inputs are deprecated
       if (idebug.ne.0) write(*,*) &
-      "idebug input variable is depreciated, set cmake variable instead"
+      "idebug input variable is deprecated, set cmake variable instead"
       if (jdebug.ne."NONE") write(*,*) &
-      "jdebug input variable is depreciated, set cmake variable instead"
+      "jdebug input variable is deprecated, set cmake variable instead"
+      if(ktear.ne.0) write(*,*) &
+      "tearing calculations don't exist, ktear is deprecated"
 !--   roundoff differences can throw off zlim if limiter corners
 !--   are too close to grid points (maybe zlim needs fixing...)
       do i=1,limitr
@@ -1677,37 +1545,6 @@
         if(abs(fwtece0(i)).le.1.e-30_dp) fwtece0(i)=0.0
       enddo
       if(abs(fwtecebz0).le.1.e-30_dp) fwtecebz0=0.0
-!----------------------------------------------------------------------- 
-!--   set table dir and re-read Green's tables if necessary           --
-!-----------------------------------------------------------------------
-      if (table_dir.ne.table_save) then
-!        call set_table_dir ! has MPI so won't work here
-        ltbdir=0
-        lindir=0
-        lstdir=0
-        do i=1,len(table_dir)
-          if (table_dir(i:i).ne.' ') ltbdir=ltbdir+1
-          if (input_dir(i:i).ne.' ') lindir=lindir+1
-          if (store_dir(i:i).ne.' ') lstdir=lstdir+1
-        enddo
-        if (lshot.ge.112000) then
-          if (lshot.lt.156000) then
-            table_di2 = table_dir(1:ltbdir)//'112000/'
-          elseif  (ishot.lt.168191) then
-            table_di2 = table_dir(1:ltbdir)//'156014/'
-          elseif (ishot.lt.181292) then
-            table_di2 = table_dir(1:ltbdir)//'168191/'
-          elseif (ishot.ge.181292) then
-            table_di2 = table_dir(1:ltbdir)//'181292/'
-          endif
-        else
-          table_di2 = table_dir(1:ltbdir)//'0/'
-        endif
-        ltbdi2 = len(trim(table_di2))
-        call read_eparmdud
-        call get_eparmdud_dependents
-        call efit_read_tables
-      endif
 !
       if(nbdryp==-1) nbdryp=nbdry
 
@@ -1725,7 +1562,8 @@
           if (istat>0) then 
             im1=i-1 
             write (6,*) 'msels_all i=',i,' bmsels(i-1)= ',bmsels(im1) 
-            stop 
+            kerror=1
+            return
           endif
         endif 
       endif 
@@ -1748,7 +1586,6 @@
 !      rnavbc(jtime)=rnavbcin
 !      devp(jtime)=devpin
 !      rnavp(jtime)=rnavpin 
-!
 !----------------------------------------------------------------------
 !--   Setup FF', P' arrays
 !----------------------------------------------------------------------
@@ -2060,7 +1897,6 @@
         ylim(7)=ylim(1)
       endif
       call set_basis_params
-      mtear=ktear
       if (kedgep.gt.0) then
         s1edge=(1.0-pe_psin)/pe_width
         tpedge=tanh(s1edge)
@@ -2075,14 +1911,14 @@
 !--------------------------------------------------------------------- 
       swtdlc=fwtdlc
       swtcur=fwtcur
-      swtfc(1:nfcoil)=fwtfc(1:nfcoil)
-      swtec(1:nesum)=fwtec(1:nesum)
-      swtmp2(1:magpri)=fwtmp2(1:magpri)
-      swtsi(1:nsilop)=fwtsi(1:nsilop)
+      swtfc=fwtfc
+      swtec=fwtec
+      swtmp2=fwtmp2
+      swtsi=fwtsi
       swtgam(1:nmtark)=fwtgam(1:nmtark)
-      swtbmsels(1:nmsels)=fwtbmsels(1:nmsels)
-      swtemsels(1:nmsels)=fwtemsels(1:nmsels)
-      swtece(1:nnece)=fwtece0(1:nnece)
+      swtbmsels=fwtbmsels
+      swtemsels=fwtemsels
+      swtece=fwtece0
       swtecebz=fwtecebz0
 #ifdef DEBUG_LEVEL1
       write(*,*)'adjust fit parameters based on basis function selected'
@@ -2234,7 +2070,7 @@
       close(unit=nin) 
       kinetic: if (kprfit.eq.1) then 
         if (npress.lt.0) then 
-          call getfnmu(itimeu,'k',ishot,itime,edatname) 
+          call setfnmeq(itimeu,'k',ishot,itime,edatname) 
           edatname='edat_'//edatname(2:7)// & 
                        '_'//edatname(9:13)//'.pressure' 
           open(unit=nin,status='old',file=edatname)
@@ -2245,7 +2081,7 @@
         if (npteth.lt.0) then 
           nptef=-npteth 
           npnef=-npneth 
-          call getfnmu(itimeu,'k',ishot,itime,edatname) 
+          call setfnmeq(itimeu,'k',ishot,itime,edatname) 
           edatname='edat_'//edatname(2:7)// & 
                        '_'//edatname(9:13)//'.thomson' 
           open(unit=nin,status='old',file=edatname)
@@ -2288,7 +2124,7 @@
         if (nption.lt.0) then
           nptionf=-nption
           if (nptionf.lt.100) then
-            call getfnmu(itimeu,'k',ishot,itime,edatname)
+            call setfnmeq(itimeu,'k',ishot,itime,edatname)
             edatname='edat_'//edatname(2:7)//'_'//edatname(9:13)//'.cer'
             open(unit=nin,status='old',file=edatname)
             bfract=-1.
@@ -2313,13 +2149,14 @@
           endif
         endif
       endif kinetic
-
-#ifdef DEBUG_LEVEL1
-      write(*,*) 'read in limiter data'
-#endif
 !----------------------------------------------------------------------- 
 !---- read in limiter data                                            -- 
 !----------------------------------------------------------------------- 
+#ifdef DEBUG_LEVEL1
+      write(*,*) 'read in limiter data'
+#endif
+      ! this is only needed for jtime=1 unless profile_ext variables are
+      ! used... (can a check for this be added?)
       call getlim(1,xltype,xltype_180,shape_ext)
 ! 
       if (iconvr.lt.0) then
@@ -2394,19 +2231,19 @@
 !------------------------------------------------------------------------ 
 !--   New E-coil connections                   LLao, 95/07/11          --
 !------------------------------------------------------------------------ 
-      if (size(ecurrt).ge.3) then
+      if (nesum.ge.3) then
         if(ecurrt(3).le.-1.e10_dp) ecurrt(3)=ecurrt(1)
       endif
-      if (size(ecurrt).ge.5) then
+      if (nesum.ge.5) then
         if(ecurrt(5).le.-1.e10_dp) ecurrt(5)=ecurrt(1) 
       endif
-      if (size(ecurrt).ge.4) then
+      if (nesum.ge.4) then
         if(ecurrt(4).le.-1.e10_dp) ecurrt(4)=ecurrt(2) 
       endif
-      if (size(ecurrt).ge.6) then
+      if (nesum.ge.6) then
         if(ecurrt(6).le.-1.e10_dp) ecurrt(6)=ecurrt(2)
       endif
-      eccurt(jtime,1:nesum)=ecurrt(1:nesum)
+      eccurt(jtime,:)=ecurrt
       pasmat(jtime)=plasma
       curtn1(jtime)=currn1
       curc79(jtime)=currc79
@@ -2456,9 +2293,11 @@
          (use_previous .or. (isicinit.lt.0 .and. isicinit.ne.-3))) &
         brsp = brsp_save
 
-      if (kfffnc.eq.8) then 
-        rkec=pi/(2.0*dpsiecn) 
-      endif 
+      ! legacy options...
+      if(ibunmn.eq.3) ibunmn=1
+      if(ibunmn.eq.4) ibunmn=2
+
+      if(kfffnc.eq.8) rkec=pi/(2.0*dpsiecn) 
       chigam=0.0 
       tchimls=0.0 
 !
@@ -2476,6 +2315,31 @@
         ierchk=0 
         nxiter=1 
         iconvr=3 
+      endif
+
+! Check that the grid sizes are compatible with cyclic reduction
+! (single or double)
+      if (ibunmn.ne.0) then
+        if (nh.ne.0) then
+          select case (nh)
+          case (3,5,9,17,33,65,129,257,513,1025,2049)
+            ! all good
+          case default
+            call errctrl_msg('data_input', &
+                 'Chosen grid dimensions cannot be run')
+            stop
+          end select
+        endif
+        if (nh.eq.0 .or. isolve.eq.0) then
+          select case (nw)
+          case (3,5,9,17,33,65,129,257,513,1025,2049)
+            ! all good
+          case default
+            call errctrl_msg('data_input', &
+                 'Chosen grid dimensions cannot be run')
+            stop
+          end select
+        endif
       endif
 !--------------------------------------------------------------------- 
 !--   correction to 322 degree probes due to N1 coil                -- 
@@ -2510,9 +2374,7 @@
         close(unit=60) 
       endif 
 ! 
-      if (ifitvs.gt.0) then 
-        ivesel=5 
-      endif 
+      if(ifitvs.gt.0) ivesel=5 
       if (.not.fitsiref) then 
         if (iecurr.gt.0.or.nslref.lt.0) then 
           silopt(jtime,1:nsilop)=silopt(jtime,1:nsilop)+psiref(jtime) 
@@ -2670,8 +2532,8 @@
           fwtfc(m)=0.0
         endif
       enddo
-      ecurrt(1:nesum)=eccurt(jtime,1:nesum) 
-      cecurr(1:nesum)=ecurrt(1:nesum) 
+      ecurrt=eccurt(jtime,:) 
+      cecurr=ecurrt 
       if (iecurr.eq.2) then 
         do m=1,nesum 
           tdata1=serror*abs(ecurrt(m)) 
@@ -2698,11 +2560,9 @@
 !--   diamagetic flux                                                -- 
 !---------------------------------------------------------------------- 
       tdata=abs(sigdia(jtime)) 
-      if (tdata.gt.1.0e-10_dp) fwtdlc=fwtdlc/tdata**nsq 
+      if(tdata.gt.1.0e-10_dp) fwtdlc=fwtdlc/tdata**nsq 
 ! 
-      if (sidif.le.-1.0e+10_dp) then 
-        sidif=tmu*pasmat(jtime)*rcentr/2.0 
-      endif 
+      if(sidif.le.-1.0e+10_dp) sidif=tmu*pasmat(jtime)*rcentr/2.0 
       errcut=max(ten2m3,error*10.) 
       fbrdy=bcentr(jtime)*rcentr/tmu 
       constf2=darea*tmu/2.0/twopi 
@@ -2724,48 +2584,48 @@
         kwcurn=kpcurn 
       endif 
       nqaxis=0 
-      if (fwtqa.gt.1.0e-03_dp) nqaxis=1 
+      if(fwtqa.gt.1.0e-03_dp) nqaxis=1 
       nparam=nfnwcr 
-      if (kprfit.gt.0) nparam=nparam+1 
-      if (fitdelz) nparam=nparam+1 
-      if (fitsiref) nparam=nparam+1 
-      if (kedgep.gt.0) nparam=nparam+1 
-      if (kedgef.gt.0) nparam=nparam+1 
-      if (fwtqa.gt.0.0) fwtqa=fwtqa/errorq 
-      if (fwtbp.gt.0.0) fwtbp=fwtbp/errorq 
-      if (fbetap.gt.0.0) betap0=fbetap 
+      if(kprfit.gt.0) nparam=nparam+1 
+      if(fitdelz) nparam=nparam+1 
+      if(fitsiref) nparam=nparam+1 
+      if(kedgep.gt.0) nparam=nparam+1 
+      if(kedgef.gt.0) nparam=nparam+1 
+      if(fwtqa.gt.0.0) fwtqa=fwtqa/errorq 
+      if(fwtbp.gt.0.0) fwtbp=fwtbp/errorq 
+      if(fbetap.gt.0.0) betap0=fbetap 
 ! 
       ipsi(jtime)=0 
       do i=1,nsilop 
-        if (fwtsi(i).gt.0.0) ipsi(jtime)=ipsi(jtime)+1 
+        if(fwtsi(i).gt.0.0) ipsi(jtime)=ipsi(jtime)+1 
       enddo
       ifc(jtime)=0 
       do i=1,nfcoil 
-        if (fwtfc(i).gt.0.0) ifc(jtime)=ifc(jtime)+1 
+        if(fwtfc(i).gt.0.0) ifc(jtime)=ifc(jtime)+1 
       enddo
       iec(jtime)=0 
       do i=1,nesum 
-        if (fwtec(i).gt.0.0) iec(jtime)=iec(jtime)+1 
+        if(fwtec(i).gt.0.0) iec(jtime)=iec(jtime)+1 
       enddo 
       imag2(jtime)=0 
       do i=1,magpri 
-        if (fwtmp2(i).gt.0.0) imag2(jtime)=imag2(jtime)+1 
+        if(fwtmp2(i).gt.0.0) imag2(jtime)=imag2(jtime)+1 
       enddo
       kmtark=0 
       klibim=0 
       do i=1,nmtark 
-        if (fwtgam(i).gt.0.0) kmtark=kmtark+1 
+        if(fwtgam(i).gt.0.0) kmtark=kmtark+1 
       enddo
-      do i=nmtark+1, nstark 
-        if (fwtgam(i).gt.0.0) klibim=klibim+1 
+      do i=nmtark+1,nstark 
+        if(fwtgam(i).gt.0.0) klibim=klibim+1 
       enddo 
       kstark=kmtark+klibim 
 ! 
       mmbmsels=0 
       mmemsels=0 
       do i=1,nmsels 
-        if (fwtbmselt(jtime,i).gt.1.e-06_dp) mmbmsels=mmbmsels+1 
-        if (fwtemselt(jtime,i).gt.1.e-06_dp) mmemsels=mmemsels+1 
+        if(fwtbmselt(jtime,i).gt.1.e-06_dp) mmbmsels=mmbmsels+1 
+        if(fwtemselt(jtime,i).gt.1.e-06_dp) mmemsels=mmemsels+1 
       enddo 
 #ifdef DEBUG_MSELS
       write (6,*) 'DATA mmbmsels = ', mmbmsels 
@@ -2774,9 +2634,9 @@
 #endif 
 ! 
       iplasm(jtime)=0 
-      if (fwtcur.gt.0.0) iplasm(jtime)=1 
+      if(fwtcur.gt.0.0) iplasm(jtime)=1 
       idlopc(jtime)=0 
-      if (fwtdlc.gt.0.0) idlopc(jtime)=1 
+      if(fwtdlc.gt.0.0) idlopc(jtime)=1 
       cpasma(jtime)=pasmat(jtime) 
       if (iconvr.eq.3.and.ivesel.eq.1) then 
         do i=1,nvesel 
@@ -2827,8 +2687,8 @@
 !      endif 
 ! 
       do i=1,nfcoil 
-        if (rsisfc(i).le.-1.0) & 
-        rsisfc(i)=turnfc(i)**2*twopi*rf(i)/wf(i)/hf(i)*zetafc 
+        if(rsisfc(i).le.-1.0) & 
+          rsisfc(i)=turnfc(i)**2*twopi*rf(i)/wf(i)/hf(i)*zetafc 
       enddo
 !  525 continue 
 !----------------------------------------------------------------------- 
@@ -2873,9 +2733,7 @@
 !--------------------------------------------------------------------- 
 !--   polarimetry ?                                                 -- 
 !--------------------------------------------------------------------- 
-      if (kstark.gt.0.or.kdomse.gt.0) then 
-        call setstark(jtime) 
-      endif 
+      if(kstark.gt.0.or.kdomse.gt.0) call setstark(jtime) 
       if (kdomse.gt.0.and.keecur.gt.0) then 
         do i=1,keecur 
           if (keefnc.le.2) then 
@@ -2908,7 +2766,7 @@
 !-------------------------------------------------------------------- 
       do k=1,necein 
         kk=necein-k+1 
-        if (kfitece.eq.3) kk = k 
+        if(kfitece.eq.3) kk = k 
         feece(kk)=feece0(k) 
         teecein(kk)=teecein0(k) 
         errorece(kk)=errorece0(k) 
@@ -2937,13 +2795,13 @@
           rmx(k)=relip-aelip*cos(th) 
           zmx(k)=zelip+eelip*aelip*sin(th) 
           ix=1 
-          if (k.gt.(mx/2+1)) ix=2 
+          if(k.gt.(mx/2+1)) ix=2 
           i=(rmx(k)-rgrid(1))/drgrid+1 
           j=(zmx(k)-zgrid(1))/dzgrid+ix 
           zdif=zmx(k)-zgrid(j) 
           if (abs(zdif).gt.0.6_dp*dzgrid) then 
-            if (zdif.gt.0.0) j=j+1 
-            if (zdif.lt.0.0) j=j-1 
+            if(zdif.gt.0.0) j=j+1 
+            if(zdif.lt.0.0) j=j-1 
           endif 
         endif 
         irfila(k)=i 
@@ -2970,7 +2828,7 @@
       mh=nh 
       open(unit=nffile,status='old',form='unformatted', & 
            file='rpfxx.dat',iostat=istat)
-      if (istat.eq.0) close(unit=nffile,status='delete')
+      if(istat.eq.0) close(unit=nffile,status='delete')
       open(unit=nffile,status='new',form='unformatted', & 
            file='rpfxx.dat') 
       write (nffile) mx,rmx,zmx 
@@ -3022,7 +2880,7 @@
       do i=1,nw 
         do j=1,nh 
           kk=(i-1)*nh+j 
-          if (xpsi(kk).lt.0.0.or.xpsi(kk).gt.1.0) cycle
+          if(xpsi(kk).lt.0.0.or.xpsi(kk).gt.1.0) cycle
           npc=npc+1 
           do m=1,nsilop 
             wsilpc(m)=wsilpc(m)+gsilpc(m,kk) 
@@ -3045,7 +2903,7 @@
               mj=iabs(j-jj)+1 
               mk=(i-1)*nh+mj 
               wgridpc(kkkk)=wgridpc(kkkk)+gridpc(mk,ii) 
-              if (xpsi(kkkk).lt.0.0.or.xpsi(kkkk).gt.1.0) cycle
+              if(xpsi(kkkk).lt.0.0.or.xpsi(kkkk).gt.1.0) cycle
               wpcpc=wpcpc+gridpc(mk,ii) 
             enddo
           enddo
@@ -3074,7 +2932,7 @@
 ! 
       open(unit=nffile,status='old',form='unformatted', & 
            file='rpcxx.dat',iostat=istat)
-      if (istat.eq.0) close(unit=nffile,status='delete')
+      if(istat.eq.0) close(unit=nffile,status='delete')
       open(unit=nffile,status='new',form='unformatted', & 
            file='rpcxx.dat') 
       write (nffile) wsilpc 
@@ -3090,7 +2948,7 @@
       write (nttyo,6557) npc 
 ! 
       else solution_mode
-      if (ivesel.gt.0) call vescur(jtime) 
+      if(ivesel.gt.0) call vescur(jtime) 
       fixed_bdry_2: if (nbdry.gt.0) then
       Solovev: if (islve.gt.0) then
 !------------------------------------------------------------------------------ 
@@ -3111,8 +2969,8 @@
 !--       no rotation                                               -- 
 !--------------------------------------------------------------------- 
           scc1=sqrt(2./sbeta)/srm**2 
-          if (ssrm.lt.0.0) saaa=xlmint/srm/sqrt(1.-2.*scc1) 
-          if (ssrm.gt.0.0) saaa=xlmax/srm/sqrt(1.+2.*scc1) 
+          if(ssrm.lt.0.0) saaa=xlmint/srm/sqrt(1.-2.*scc1) 
+          if(ssrm.gt.0.0) saaa=xlmax/srm/sqrt(1.+2.*scc1) 
           srma=srm*saaa 
           dth=twopi/real(nbdry,dp) 
           do i=1,nbdry 
@@ -3154,16 +3012,16 @@
           znow=0.0 
           call surfac(siwant,psi,nw,nh,rgrids,zgrids,xout,yout,nfound, & 
                       npoint,drgrids,dzgrids,xmin,xmax,ymin,ymax,npack, & 
-                      rnow,znow,negcur,kerror) 
-          if (kerror.gt.0) return 
+                      rnow,znow,negcur,kerror,1) 
+          if(kerror.gt.0) return 
           xmin=xout(1) 
           xmax=xmin 
           do i=2,nfound 
-            if (xout(i).lt.xmin) xmin=xout(i) 
-            if (xout(i).gt.xmax) xmax=xout(i) 
+            if(xout(i).lt.xmin) xmin=xout(i) 
+            if(xout(i).gt.xmax) xmax=xout(i) 
           enddo 
-          if (ssrm.lt.0.0) saaa=xlmint/xmin 
-          if (ssrm.gt.0.0) saaa=xlmax/xmax 
+          if(ssrm.lt.0.0) saaa=xlmint/xmin 
+          if(ssrm.gt.0.0) saaa=xlmax/xmax 
           nskip=nfound/mbdry+1 
           j=0 
           do i=1,nfound,nskip 
@@ -3230,7 +3088,7 @@
       if (nbdry.gt.1) then ! nbdry changed above
         delx2=(rbdry(1)-rbdry(nbdry))**2 
         dely2=(zbdry(1)-zbdry(nbdry))**2 
-        if ((delx2+dely2).le.1.0e-08_dp) nbdry=nbdry-1 
+        if((delx2+dely2).le.1.0e-08_dp) nbdry=nbdry-1 
       endif 
       if (nbdry.ge.10) then
         xmin=rbdry(1) 
@@ -3248,8 +3106,8 @@
         aelip=(xmax-xmin)/2. 
         eelip=(ymax-ymin)/(xmax-xmin) 
       endif
-      if (cfcoil.lt.0.) cfcoil=100./pasmat(jtime)*abs(cfcoil) 
-      if (cupdown.lt.0.) cupdown=100./pasmat(jtime)*abs(cupdown) 
+      if(cfcoil.lt.0.) cfcoil=100./pasmat(jtime)*abs(cfcoil) 
+      if(cupdown.lt.0.) cupdown=100./pasmat(jtime)*abs(cupdown) 
 !----------------------------------------------------------------------- 
 !--   symmetrize  F coil responses if needed                          -- 
 !----------------------------------------------------------------------- 

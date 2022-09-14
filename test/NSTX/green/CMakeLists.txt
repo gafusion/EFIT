@@ -15,10 +15,10 @@ if (${TEST_EFUND})
 
   add_test(NAME NSTX-green COMMAND run_green.sh)
   add_test(NAME NSTX-green-results COMMAND check_green_results.sh)
-else()
+else ()
   if(NOT ${GRID_SIZE} EQUAL 65)
     message(FATAL_ERROR "Green Function Tables of this size must be made")
-  endif()
+  endif ()
 
   file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/output/brzgfc.dat
        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
@@ -32,4 +32,4 @@ else()
        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
   file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/output/rfcoil.ddd
        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
-endif()
+endif ()

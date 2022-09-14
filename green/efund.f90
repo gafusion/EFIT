@@ -198,28 +198,25 @@
 !**       w1,w2...........width                                      **
 !**       h1,h2...........height                                     **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      SUBROUTINE flux(r1,z1,w1,h1,t1,t12,r2,z2,w2,h2,t2,t22,fuxx)
-      USE exparm,only:mgaus1,mgaus2
-      IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
-      DIMENSION post1(mgaus1),wght1(mgaus1),post2(mgaus2) &
-           ,wght2(mgaus2)
-      DATA init/0/
+      subroutine flux(r1,z1,w1,h1,t1,t12,r2,z2,w2,h2,t2,t22,fuxx)
+      use exparm, only: mgaus1,mgaus2
+      implicit none
+      real*8, intent(in) :: r1,z1,w1,h1,t1,t12,r2,z2,w2,h2,t2,t22
+      real*8, intent(out) :: fuxx
+      integer*4 i,j,ner
+      real*8 x,zf,zs,hf2,hs2,xl1,xr1,xbm1,xtm1,xl2,xr2,xbm2,xtm2,rf,rs, &
+             hfa,hsa,solx
+      real*8 post1(mgaus1),wght1(mgaus1),post2(mgaus2),wght2(mgaus2)
+!      data init/0/
 !
-      init=0
-      IF (init.le.0) THEN
+!      init=0
+!      if (init.le.0) then
 !vas introduced to make it ok in hydra
-!org         ngaus1=mgaus1
-!org         ngaus2=mgaus2
-!org         call lgauss(post1,wght1,ngaus1,ner)
-!org         call lgauss(post2,wght2,ngaus2,ner)
-         CALL lgauss(post1,wght1,mgaus1,ner)
-         CALL lgauss(post2,wght2,mgaus2,ner)
-         init=1
-      ENDIF
+         call lgauss(post1,wght1,mgaus1,ner)
+         call lgauss(post2,wght2,mgaus2,ner)
+!         init=1
+!      endif
 !
       x = 0.
       fuxx = 0.
@@ -228,40 +225,38 @@
       hf2 = h1*.5
       hs2 = h2*.5
 !
-      IF (t12.ne.0) THEN
+      if (t12.ne.0) then
          xl1 = r1-0.5*w1-0.5*h1/abs(t12)
          xr1 = r1+0.5*w1+0.5*h1/abs(t12)
          xbm1 = xl1+w1
          xtm1 = xr1-w1
-         IF (t12 .lt. 0.) xbm1 = xr1 - w1
-         IF (t12 .lt. 0.) xtm1 = xl1 + w1
-      ENDIF
+         if(t12.lt.0.) xbm1 = xr1 - w1
+         if(t12.lt.0.) xtm1 = xl1 + w1
+      endif
 !
-      IF (t22.ne.0) THEN
+      if (t22.ne.0) then
          xl2 = r2-0.5*w2-0.5*h2/abs(t22)
          xr2 = r2+0.5*w2+0.5*h2/abs(t22)
          xbm2 = xl2+w2
          xtm2 = xr2-w2
-         IF (t22 .lt. 0.) xbm2 = xr2 - w2
-         IF (t22 .lt. 0.) xtm2 = xl2 + w2
-      ENDIF
+         if(t22.lt.0.) xbm2 = xr2 - w2
+         if(t22.lt.0.) xtm2 = xl2 + w2
+      endif
 !
-      DO i = 1,mgaus1
-!org      DO i = 1,ngaus1
+      do i = 1,mgaus1
          rf = r1+.5*w1*post1(i)
-         IF (t12.ne.0) rf = r1+(0.5*w1+0.5*h1/abs(t12))*post1(i)
-         DO j = 1,mgaus2
-!org         DO j = 1,ngaus2
+         if(t12.ne.0) rf = r1+(0.5*w1+0.5*h1/abs(t12))*post1(i)
+         do j = 1,mgaus2
             rs = r2+0.5*w2*post2(j)
-            IF (t22.ne.0) rs = r2+(0.5*w2+0.5*h2/abs(t22))*post2(j)
-            CALL soleno(r1,z1,w1,h1,t1,t12,r2,z2,w2,h2,t2,t22,xbm1,xbm2,&
-                  xtm1,xtm2,hfa,hsa,rf,rs,solx)
+            if(t22.ne.0) rs = r2+(0.5*w2+0.5*h2/abs(t22))*post2(j)
+            call soleno(r1,z1,w1,h1,t1,t12,r2,z2,w2,h2,t2,t22,xbm1,xbm2, &
+                        xtm1,xtm2,hfa,hsa,rf,rs,solx)
             fuxx = fuxx+wght1(i)*wght2(j)/hfa/hsa*solx
-         ENDDO 
-      ENDDO 
+         enddo 
+      enddo 
 !
-      RETURN
-      END SUBROUTINE flux
+      return
+      end subroutine flux
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
@@ -396,7 +391,7 @@
          taf2(j)=tan(af2(j)*pi/180.)
          DO i=1,necoil
             CALL flux(re(i),ze(i),we(i),he(i),aaa,bbb, &
-                rf(j),zf(j),wf(j),hf(j),taf(j),taf2(j),work)
+                      rf(j),zf(j),wf(j),hf(j),taf(j),taf2(j),work)
             work=work*0.5/pi
             kkm=ecid(i)
             kk=kkm+1
@@ -429,154 +424,139 @@
 !**          grid computes the green's functions at (r,z)            **
 !**          due to plasma currents and f coils.                     **
 !**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          09/06/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      SUBROUTINE efund_grid
-      USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
-      USE consta
-      USE pmodel
-      USE input
-      USE fcoil
-      USE nio
-!vas
+      subroutine efund_grid
+      use exparm, only: nfcoil,nsilop,magpr2,nrogow,necoil,nesum, &
+                        nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
+      use consta
+      use pmodel
+      use input
+      use fcoil
+      use nio
       use var_filech
-      IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
-      REAL*8,DIMENSION(:,:),ALLOCATABLE :: gridfc,gridpc,ggridfc
-      DIMENSION taf(nfcoil),taf2(nfcoil)
-      DATA isplit/17/,tole/1.0e-10/
+      implicit none
+      real*8 psical
+      integer*4 i,ih,ii,iw,j,k,kk,ndr,ndz,ni,nj
+      real*8 ab,cmut,dhc,drc,dwc,dzc,fridpc,rtmp,rsum,z1,z2,zdif
+      real*8, dimension(:,:), allocatable :: gridfc,gridpc,ggridfc
+      real*8 taf(nfcoil),taf2(nfcoil)
+      integer*4, parameter :: isplit=17
+      real*8, parameter :: aaa=0.0,tole=1.0e-10
 !
-      IF (.NOT. ALLOCATED(gridfc)) THEN
-        ALLOCATE(gridfc(nwnh,nfcoil))
-        gridfc(:,:) = 0.0
-      ENDIF
-      IF (.NOT. ALLOCATED(gridpc)) THEN
-        ALLOCATE(gridpc(nwnh,nw))
-        gridpc(:,:) = 0.0
-      ENDIF
-      IF (.NOT. ALLOCATED(ggridfc)) THEN
-        ALLOCATE(ggridfc(nwnh,nfsum))
-        ggridfc(:,:) = 0.0
-      ENDIF
+      if (.not. allocated(gridfc)) then
+        allocate(gridfc(nwnh,nfcoil))
+        gridfc = 0.0
+      endif
+      if (.not. allocated(gridpc)) then
+        allocate(gridpc(nwnh,nw))
+        gridpc = 0.0
+      endif
+      if (.not. allocated(ggridfc)) then
+        allocate(ggridfc(nwnh,nfsum))
+        ggridfc = 0.0
+      endif
 !
-      IF (igrid.le.0) RETURN
+      if (igrid.le.0) return
 !----------------------------------------------------------------------
 !--  compute the green's functions at (r,z) due to f coils           --
 !----------------------------------------------------------------------
       ndr = isplit
       ndz = isplit
-      DO in=1,nfcoil
-         taf(in) = tan(af(in)*pi/180.0)
-         taf2(in) = tan(af2(in)*pi/180.0)
-         DO ni=1,nw
-            DO nj=1,nh
+      do ii=1,nfcoil
+         taf(ii) = tan(af(ii)*pi/180.0)
+         taf2(ii) = tan(af2(ii)*pi/180.0)
+         do ni=1,nw
+            do nj=1,nh
                kk = (ni-1)*nh + nj
                rsum = 0.
-               dwc = wf(in)/ndr
-               dhc = hf(in)/ndz
-               IF (af2(in) .eq. 0.) then
-                  z1 = zf(in) - taf(in)*(wf(in)-dwc)/2. - .5*hf(in) + .5*dhc
-                  ab = rf(in) - .5*wf(in) + .5*dwc
-                  DO iw = 1, isplit
-                     drc = ab + (iw-1)*dwc + iw*tole
-                     z2 = z1 + (iw-1)*taf(in)*dwc
-                     DO ih = 1, isplit
-                        dzc = z2 + (ih-1)*dhc
+               dwc = wf(ii)/ndr
+               dhc = hf(ii)/ndz
+               if (af2(ii) .eq. 0.) then
+                  z1 = zf(ii)-taf(ii)*(wf(ii)-dwc)/2.-.5*hf(ii)+.5*dhc
+                  ab = rf(ii)-.5*wf(ii)+.5*dwc
+                  do iw = 1,isplit
+                     drc = ab+(iw-1)*dwc+iw*tole
+                     z2 = z1+(iw-1)*taf(ii)*dwc
+                     do ih = 1,isplit
+                        dzc = z2+(ih-1)*dhc
                         rtmp = psical(drc,rgrid(ni),zgrid(nj)-dzc)
-                        rsum = rsum + rtmp
-                     ENDDO 
-                  ENDDO
-               ELSE
-                  DO ih = 1, ndz
-                     dzc = zf(in) - .5*hf(in) + .5*dhc + dhc*(ih-1)
-                     DO iw = 1, ndr
-                        drc = rf(in) - .5*wf(in) - .5*hf(in)/taf2(in) &
-                              + .5*dwc + .5*dhc/taf2(in) &
-                              + dhc/taf2(in)*(ih-1) + dwc*(iw-1)
+                        rsum = rsum+rtmp
+                     enddo
+                  enddo
+               else
+                  do ih = 1,ndz
+                     dzc = zf(ii)-.5*hf(ii)+.5*dhc+dhc*(ih-1)
+                     do iw = 1,ndr
+                        drc = rf(ii)-.5*wf(ii)-.5*hf(ii)/taf2(ii) &
+                              +.5*dwc+.5*dhc/taf2(ii) &
+                              +dhc/taf2(ii)*(ih-1)+dwc*(iw-1)
                         rtmp = psical(drc,rgrid(ni),zgrid(nj)-dzc)
-                        rsum = rsum + rtmp
-                     ENDDO 
-                  ENDDO
-               ENDIF
+                        rsum = rsum+rtmp
+                     enddo
+                  enddo
+               endif
                cmut = rsum*2.e-07/(isplit*isplit)
-               gridfc(kk,in) = cmut
-            ENDDO
-         ENDDO
-      ENDDO
+               gridfc(kk,ii) = cmut
+            enddo
+         enddo
+      enddo
 !----------------------------------------------------------------------
 !--  compute the green's functions at (r,z) due to itself            --
 !----------------------------------------------------------------------
-      aaa=0.0
-      DO i=1,nw
-         DO j=1,nh
+      do i=1,nw
+         do j=1,nh
             kk=(i-1)*nh+j
-            DO ni=1,nw
-               IF ((j.gt.1).or.(i.ne.ni)) THEN
+            do ni=1,nw
+               if ((j.gt.1).or.(i.ne.ni)) then
                   zdif=(j-1)*dz
                   gridpc(kk,ni)=psical(rgrid(i),rgrid(ni),zdif)*tmu
-                  
-               ELSE
-                  CALL flux(rgrid(ni),aaa,dr,dz,aaa,aaa,rgrid(ni),aaa,&
+               else
+                  call flux(rgrid(ni),aaa,dr,dz,aaa,aaa,rgrid(ni),aaa, &
                             dr,dz,aaa,aaa,fridpc)
                   gridpc(kk,ni)=fridpc*0.5/pi
-               ENDIF
-            ENDDO 
-         ENDDO
-      ENDDO
+               endif
+            enddo 
+         enddo
+      enddo
 !----------------------------------------------------------------------
-!--  store green's FUNCTION table                                    --
+!--  store green's function table                                    --
 !----------------------------------------------------------------------
+      ggridfc=0.0
 !
-      DO i=1,nfsum
-         DO j=1,nwnh
-            ggridfc(j,i)=0.0
-         ENDDO
-      ENDDO
-!
-      DO i=1,nfcoil
+      do i=1,nfcoil
          k=abs(fcid(i))
-         DO j=1,nwnh
-            ggridfc(j,k)=ggridfc(j,k)+fcturn(i)*gridfc(j,i)
-         ENDDO
-      ENDDO
-!vas
+         ggridfc(:,k)=ggridfc(:,k)+fcturn(i)*gridfc(:,i)
+      enddo
+!
       print*,'file name : ','ec'//trim(ch1)//trim(ch2)//'.ddd' 
 !
-!vasorg      OPEN(unit=ncontr,status='unknown',file='econto.dat', &
-      OPEN(unit=ncontr,status='unknown',file='ec'//trim(ch1)// &
-                          trim(ch2)//'.ddd' , &
-           form='unformatted')
-      mw=nw
-      mh=nh
-      WRITE (ncontr) mw,mh
-      WRITE (ncontr) rgrid,zgrid
-      WRITE (ncontr) ggridfc
-      WRITE (ncontr) gridpc
-!vas ... just for testing
+!vasorg      open(unit=ncontr,status='unknown',file='econto.dat', &
+      open(unit=ncontr,status='unknown',file='ec'//trim(ch1)// &
+           trim(ch2)//'.ddd',form='unformatted')
+      write (ncontr) nw,nh
+      write (ncontr) rgrid,zgrid
+      write (ncontr) ggridfc
+      write (ncontr) gridpc
+!vas just for testing
 !      open(35,file='test-ec1.dat',status='new')
-!      WRITE (35,*) mw,mh
-!      WRITE (35,1009) rgrid,zgrid
+!      write (35,*) nw,nh
+!      write (35,1009) rgrid,zgrid
 !      close(35)
 !      open(35,file='test-ec2.dat',status='new')
-!      WRITE (35,1009) ggridfc
+!      write (35,1009) ggridfc
 !      close(35)
 !      open(35,file='test-ec3.dat',status='new')
-!      WRITE (35,1009) gridpc
+!      write (35,1009) gridpc
 !      close(35)
 !1009  format(3(1x,e14.8))
-!vas ...
-      CLOSE(unit=ncontr)
+      close(unit=ncontr)
 !
-      IF (ALLOCATED(gridfc)) DEALLOCATE(gridfc)
-      IF (ALLOCATED(ggridfc)) DEALLOCATE(ggridfc)
-      IF (ALLOCATED(gridpc)) DEALLOCATE(gridpc)
+      if (allocated(gridfc)) deallocate(gridfc)
+      if (allocated(ggridfc)) deallocate(ggridfc)
+      if (allocated(gridpc)) deallocate(gridpc)
 !
-      RETURN
-      END SUBROUTINE efund_grid
+      return
+      end subroutine efund_grid
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
@@ -1160,7 +1140,6 @@
          IF (islpfc.gt.0) THEN
             DO i=1,nfcoil
                DO j=1,nfcoil
-            
                   CALL flux(rf(i),zf(i),wf(i),hf(i),taf(i),taf2(i), &
                             rf(j),zf(j),wf(j),hf(j),taf(j),taf2(j), &
                             rfcfc(j,i))
@@ -1448,30 +1427,27 @@
 !**          (1) f.w. mcclain and b.b. brown, ga technologies        **
 !**              report ga-a14490 (1977).                            **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      FUNCTION psical(a1,r1,z1)
-      IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
-      REAL*8 x1,cay,ee,xmdelk,xmdele
+      real*8 function psical(a,r,z)
+      implicit none
+      real*8 br,bz,xmdelk,xmdele
+      real*8, intent(in) :: a,r,z
+      integer*4 isw
+      real*8 den,xk,x1,cay,ee
 !
       isw=1
       go to 10
-      ENTRY br(a1,r1,z1)
+      entry br(a,r,z)
       isw=2
       go to 10
-      ENTRY bz(a1,r1,z1)
+      entry bz(a,r,z)
       isw=3
 !
-   10 CONTINUE
-      a=a1
-      r=r1
-      z=z1
+   10 continue
       den=a*a+r*r+z*z+2.*a*r
       xk=4.*a*r/den
       x1=(a*a+r*r+z*z-2.*a*r)/den
-      IF (x1.lt.1.0e-10) x1=1.0e-10
+      if(x1.lt.1.0e-10) x1=1.0e-10
       cay=xmdelk(x1)
       ee=xmdele(x1)
       select case (isw)
@@ -1480,21 +1456,21 @@
 !--      psi computation                                             --
 !----------------------------------------------------------------------
          psical=sqrt(den)*((1.e+00-0.5e+00*xk)*cay-ee)
-         RETURN
+         return
       case (2)
 !----------------------------------------------------------------------
 !--      br  computation                                             --
 !----------------------------------------------------------------------
          br=z/(r*sqrt(den))*(-cay+(a*a+r*r+z*z)/((a-r)*(a-r)+z*z)*ee)
-         RETURN
+         return
       case (3)
 !----------------------------------------------------------------------
 !--      bz  computation                                             --
 !----------------------------------------------------------------------
          bz=(cay+(a*a-r*r-z*z)/((a-r)*(a-r)+z*z)*ee)/sqrt(den)
-         RETURN
-      END SELECT
-      END FUNCTION psical
+         return
+      end select
+      end function psical
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
@@ -1682,14 +1658,14 @@
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
       DIMENSION z(2,2)
       REAL*8 ksq,kpsq,msl,mut
-      DATA init/0/
+!      DATA init/0/
 !
       rpi=pi
       rpi2=rpi*0.5
       rh=rpi*2.0e-07
       ut=rh/3.0
       err=1.0e-05
-      init=1
+!      init=1
 !
       dr = rf-rs
       drsq = dr*dr
@@ -1790,9 +1766,7 @@
             pik = cay*zeta
             ek = .5*cay*(ksq+sinf)
             msl = rh*dzsq*(r1*ek-drsq*pik/r1)
-            IF (csq==1.) THEN
-               msl = rh*dzsq*(r1*ek-cay*fr/r1*.5)
-            ENDIF
+            IF (csq==1.) msl = rh*dzsq*(r1*ek-cay*fr/r1*.5)
 !
             mut = msl+ut*fr*r1*(cay-t*ek)
             sol = sol+sign*mut

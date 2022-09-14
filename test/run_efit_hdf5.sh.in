@@ -27,16 +27,12 @@ fi
 # Remove any previous outputs
 rm -r std_out
 
-# Move outputs from non-HDF5 test to subdirectory
+# Move outputs from previous test to subdirectory
 mkdir std_out
-if [ @HAVE_NETCDF@ = True ]; then
-  outputs=( a g m )
-else
-  outputs=( a g )
-fi
 if test -e run_efit.out; then
    mv run_efit.out std_out
 fi
+outputs=( @EFIT_OUTPUTS@ )
 for prefix in ${outputs[*]}; do
   for label in @EFIT_LABEL@; do
     mv ${prefix}${label} std_out

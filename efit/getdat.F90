@@ -61,7 +61,7 @@
 !!
 !!    @param SCALE : FACTOR TO SCALE RESULTS BY
 !!
-!!    @param jWAIT :
+!!    @param jWAIT : UNUSED VARIABLE
 !!
 !**********************************************************************
       SUBROUTINE GETDAT(NSHOT,NAME,ICAL,IER,T_R4,DATA_R4,NP, &
@@ -107,7 +107,6 @@
       DATA PHASE /'.PLA'/
       data tolclip /.01/ !-- maximum fraction of clipped signals
       data kmax/10/
-      data wait_time/30./
 
       LOGICAL INTCAL,efit
       character*10 cname, cname1, filnam
@@ -116,7 +115,6 @@
       INTCAL = .FALSE.
       efit = .false.
       rcfact = 1.0
-      iwait = jwait
 
       tmin = real(tmin_r4,dp)
       tmax = real(tmax_r4,dp)
@@ -137,7 +135,6 @@
 !      INTCAL = .TRUE.
 !      efit = .false.
 !      rcfact = 1.0
-!      iwait = jwait
 
 !      GO TO 11111
 
@@ -153,7 +150,6 @@
 
       INTCAL = .FALSE.
       efit = .true.
-      iwait = 0
 
       rcfact = 1.0
 
@@ -242,17 +238,11 @@
         RC    = 1.0
 
 666   continue
-      !
-      !  WAIT FOR THE DATA TO COME IN
-      !
-!      IF (iwait .eq. 1 .and. (ier .eq. 3 .or. ier .eq. 1) &
-!         .and. kount .lt. kmax) go to 1
 
       !-- AT THIS POINT ANY REMAINING POSITIVE ERROR VALUE IS FATAL.
       !-- NON-FATAL POSITIVE ERRORS HAVE BEEN HANDLED AS FOLLOWS:
       !  ier = 4  reset ier to 0
       !  ier = 2  non-fatal warning:  pointname has been revised
-      !  ier = 1 or 3 looped back to start if iwait=1
       !  ier = 35  re-called ptdata w/o time array for this dfi
 
       IF (IER .gt. 0 .AND. IER.NE.2) THEN

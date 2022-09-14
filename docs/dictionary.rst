@@ -1,5 +1,3 @@
-
-
 Definitions
 ===========
 
@@ -17,7 +15,6 @@ Coil sets
 pf coils
 I-coils
 tf coils
-
 
 Magnetic geometry
 -----------------

@@ -12,6 +12,7 @@ FBETAP,0.0,Fixed betap value for equilibrium calculation. ICONVR must equal 3. I
 FITDELZ,,See namelist EFITIN.
 FLI,0.0,Fixed li value for equilibrium calculation. ICONVR must equal 3. ICURRT must equal 2.
 FQSIW,,"Desired q value at surface PSIWANT, if near boundary FWTCUR (in namelist IN1) must be set to 0."
+FQ95,,(unused variable)
 FWTBDRY,,See namelist IN1.
 FWTXXJ,1.0,constraint weight for Js
 FWTXXQ, 1.0,
@@ -25,7 +26,7 @@ KCCOILS, 0,- = number of constraints for F coil currents specified through matri
 NCCOIL, ,See namelist EFITIN.
 NQWANT,0,What is this?
 NDELZON,,See namelist EFITIN.
-N_WRITE,,Default = 1
+N_WRITE,,(unused variable)
 PSIWANT,,See namelist IN1.
 REXPAN,,See namelist EFITIN.
 SCALEDZ,,See namelist EFITIN.
@@ -33,6 +34,6 @@ SIZEROJ,,See namelist EFITIN.
 SIWANTQ,,want q to be a particular value at some flux surface?
 STABDZ,,See namelist EFITIN.
 VZEROJ,,See namelist IN1.
-WRITEPC,.false.,
+WRITEPC,,unused variable
 XCOILS,,Constraint vector for F coil currents when KCCOILS>0.
 ZNOSE,,See namelist EFITIN.

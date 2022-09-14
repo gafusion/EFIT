@@ -36,6 +36,11 @@ templates_path = ['_templates']
 # Usually you set "language" from the command line for these cases.
 #language = 'fortran'
 
+# Sets the default language to use for highlighting in literal blocks when no
+# language is specifically set.  Highlighting can still be changed for each
+# source file independently as well.  The default is to use python.
+highlight_language = 'none'
+
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
@@ -52,10 +57,10 @@ extensions = [
     'sphinxcontrib.bibtex',
 ]
 
-breathe_projects = { "EFIT": "xml/" }
+breathe_projects = {"EFIT": "${CMAKE_BINARY_DIR}/docs/xml/"}
 breathe_default_project = "EFIT"
 
-bibtex_bibfiles = ['efit.bib']
+bibtex_bibfiles = ['${CMAKE_SOURCE_DIR}/docs/efit.bib']
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -84,6 +89,7 @@ html_context = {
 
 git_describe_version = subprocess.check_output(['git', 'describe', '--always']).strip().decode('utf-8')
 #html_logo = os.path.join('images', 'logos',  'efit.svg')
-#html_favicon = os.path.join('images', 'logos', 'efit_favicon.png')
+html_favicon = os.path.join('${CMAKE_SOURCE_DIR}','docs','_static', 'efitai_logo.png')
 html_last_updated_fmt = r'%Y-%m-%dT%H:%M:%S%z (' + git_describe_version + ')'
 
+html_permalinks_icon = '#'

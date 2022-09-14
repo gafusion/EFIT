@@ -1,6 +1,7 @@
 !**********************************************************************
 !**                                                                  **
-!**     getset performs inputing and initialization.                 **
+!**     efund_getsizes performs inputing and initialization from the **
+!**       mhdin.dat file, most default values set here are for DIII-D**
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          02/02/20..........first created                         **
@@ -9,6 +10,7 @@
       SUBROUTINE efund_getsizes
       
       USE exparm
+      USE errlims
       USE siloop
       USE cecoil
       USE fcoil
@@ -21,7 +23,7 @@
       USE cvesel
       USE fshift
 
-      integer*4:: istat
+      integer*4:: istat,icycred_loopmax
       character(len=1000) :: line
 
       NAMELIST/machinein/nfcoil,nsilop,magpr2,nrogow,necoil,nesum, &
@@ -34,7 +36,16 @@
                          nffcur,nppcur,nercur,ntime,ndim,kxiter,mqwant, & 
                          mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef, &
                          modep,modew,kubics,icycred_loopmax,nfourier, &
-                         nsilol,nsilds
+                         nsilol,nsilds, &
+                         ali_upper,ali_lower, &
+                         betap_lim,plasma_diff, &
+                         aout_upper,aout_lower,eout_upper,eout_lower, &
+                         rout_upper,rout_lower,zout_upper,zout_lower, &
+                         rcurrt_upper,rcurrt_lower,zcurrt_upper,zcurrt_lower, &
+                         qsta_upper,qsta_lower,betat_lim, &
+                         oleft_lim,oright_lim,otop_lim, &
+                         olefs_check,qout_upper,qout_lower, &
+                         dbpli_lim,delbp_lim
 
       device = 'DIII-D'
       nfcoil = 18
@@ -98,7 +109,6 @@
       modep=4
       modew=4
       kubics=4
-      icycred_loopmax=1290
       nfourier=5
       
       magpri67=-1
@@ -106,6 +116,35 @@
       magudom=-1
       maglds=-1
       
+      ! checks for solution validity
+      ali_upper=2.5
+      ali_lower=0.05
+      betap_lim=6.0
+      plasma_diff=0.08
+      aout_upper=75.0
+      aout_lower=30.
+      eout_upper=4.0
+      eout_lower=0.8
+      rout_upper=240.
+      rout_lower=90.0
+      zout_upper=100.
+      zout_lower=-100.
+      rcurrt_upper=240.
+      rcurrt_lower=90.0
+      zcurrt_upper=100.
+      zcurrt_lower=-100.
+      qsta_upper=200.
+      qsta_lower=1.
+      betat_lim=25.
+      oleft_lim=-0.2
+      oright_lim=-0.2
+      otop_lim=-0.2
+      olefs_check=-90.0
+      qout_lower=1.
+      qout_upper=200.
+      dbpli_lim=0.05
+      delbp_lim=0.08
+
       OPEN(unit=nin,status='old',file='mhdin.dat',iostat=istat)
 
       READ (nin,machinein)

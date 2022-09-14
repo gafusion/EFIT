@@ -17,30 +17,78 @@
       use commonblocks,only: c,wk,copy,bkx,bky,psiold,psipold, &
                 worka,zeros,byringr,byringz,xouts,youts,bpoo,bpooz, &
                 bpooc,bfpol,cfpol,dfpol,xxtra,yxtra,bpxtra,flxtra,fpxtra
-      use efit_bdata,only: xlims,ylims,limtrs,xlmins
-      use exp_bdata,only: ringr,ringz,ringap
+      use efit_bdata,only: xlims,ylims,xlmins
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
 
-      dimension pds(6),amer(2,2),bmer(2),wmer(2),imer(2),temp(ntime)
-      dimension rmid2(2),zerovs(1),ravs(1),zavs(1)
-      dimension sigams(nstark)
-      real*8,dimension(:),allocatable :: xsisii,bpres,cpres, &
+      integer*4, intent(in) :: iges,igmax
+      integer*4, intent(out) :: kerror
+      real*8 ppcurr,fpcurr,fpecrr,speval,pwcurr,prcurr,ffcurr,seval, &
+             esradial
+      integer*4 i,ii,i2,j,jj,jjj,k,kk,kkk,ks,m,n,kacerr,floorq, &
+                iautoc,ichisq,ichisq2,idoqn,iend,ier,inow,ip1,iring, &
+                iskip,ixl,ixtpls,ixyz,iznow,jb,jges,jstart,kim,kip, &
+                kjm,kjp,kz,m20,mcentral,n22,nbabs,nerr,nfind,nfounc, &
+                nfouns,njtwagap,nm1,nmax,nmaxfs,nmin,nminfs,nnn,nzz
+      real*8 floorz,abar,area,areart,aspect,bincp,bp2flx, &
+             bpnow,bpolsq,bpolzs,bpzsq,btnow,btttt2,btuse,btvac2, &
+             cj1now,cjorka,cons1,cons2,cons3,cons4,cons5,cons6,cons7, &
+             cons8,cons9,cons10,cons11,cons12,cons13,cons14,cons15, &
+             cons16,cons17,cons21,cons22,consa1,consa2,consa3,cosalp, &
+             crymax,crymin,curnow,d11,d22,d33,d2sidr2,d2sidz2,dbott, &
+             delarea,delerrb,delerrx,delfp,delli,dells,delr,delrnow,delsbu, &
+             delsi,delssi,deltaa,dilnow,dis2p,dismin,disnow,dleft,dli, &
+             dlll,dlpol,dltol,dmaxfs,dmaxfs0,dminfs,dminfs0,dminow,dmui, &
+             dolnow,douta,dpsis,dright,dsidr,dsiin,dsilim,dsimm,dsiout, &
+             dsmin,dtop,dttt,dx,dxtra,dyww,dzring,dzzz1,dzzz2,enrgy, &
+             exmui,f_0,fkdel,fmanow,fminow,fnow,fpnow,fsrmax,fszmax, &
+             fvsmax,fvsnow,fxmax,fxmin,fxrmax,fxrmin,fxzmax,fxzmin, &
+             gap1,gap2,olamda,partic,pasnow,pcnow,pin,pleng,pohm,ppnow, &
+             pres0,presped,press0,presss,prettt,prew0,preww0,prewww, &
+             psiin,psimm,psinow,psiots,psiout,psiwan,ptotal,pwop0,pwp0r2, &
+             qmmm,qppp,qpsic,qpwant,qwant,r2surs,radbou,radp,radum, &
+             ravssa,rbar,rcur,rcurrm,resist,rexpmx,rinvs,rkkk,rlinnose,&
+             rmer,rmm,rnow,rolnow,routvs,rqmax,rqmin,rrin,rrout,rsepnose, &
+             rsnow,rsnow0,rsymax,rsymin,rtemp,rval,rvsnow,rx,rxp,rxxrry, &
+             rymaxs,rymins,sbli,sbpli,sbrrs,sdlbp,sdlobp,sepnow,siavej, &
+             sigamnow,signr,signz,siii,silimm,silimp,silop_change,sinalp, &
+             siwant,siwwww,slope,ssimax,ssimfs,ssinow,ssitra,sssiie, &
+             sumbp2,sumbz2,sumf,sumfzp,tevolt,vbpli,volbt,volrt,x11, &
+             xdum,xguess,xlam,xlimxs,xlimxx,xmaxs,xmaxx,xminn,xmins, &
+             xmnow,xmui,xoutm,xoutp,xpsikk,xpsivs,xrmax,xrmin,xrpres, &
+             xsepsl,xsi01,xsi95,xsiww,xsiwww,xww,xxtraa,xxtras,xxxx, &
+             xycmax,xycmin,xym,xyma,xyp,xypa,ycmax,ycmin,ycut,ycutm,ydum, &
+             yguess,ylimys,ylimyy,ymaxs,ymins,ymnow,yoxm,yoxp,ypsz, &
+             yww,yxcmax,yxcmin,yxtraa,yxtras,zavssa,zbar,zcur,zerold, &
+             zeta,zexpmx,zhp,zilnow,zinvs,zkkk,znow,zoutvs,zqmax, &
+             zringmax,zringmin,zrmin,zsnow,zsnow0,ztemp,zval,zvsnow, &
+             zxmins,zxmaxs,zxp,zxx,zzm,zzp
+      integer*4 imer(2)
+      real*8 pds(6),amer(2,2),bmer(2),wmer(2),temp(ntime)
+      real*8 rmid2(2),zerovs(1),ravs(1),zavs(1)
+      real*8 sigams(nstark)
+      real*8 ringr(6),ringz(6),ringap
+      real*8, dimension(:), allocatable :: xsisii,bpres,cpres, &
                     dpres,sjtli,sjtlir,sjtliz,rjtli,bpresw, &
                     cpresw,dpresw,copyn,cjtli,x,y
-      character(30 )sfname,ofname
+      character(30) sfname,ofname
       Character(28) xxtitle,yytitle,zztitle
       character(20) zzztitle
       Character(8) jchisq
       character(1) jchisq2
       logical byring,double,onedone
-      integer*4 kerror
+      integer*4, parameter :: idiart=1,limtrs=5
+      real*8, parameter :: psitol=1.0e-04_dp,czero=0.0, &
+                           rubaf=1.372_dp,zubaf=1.310_dp,&
+                           rudom=1.0420_dp,zudom=1.1624_dp
       data floorz/-1.366_dp/
-      data psitol/1.0e-04_dp/,idiart/1/
-      data czero/0.0/
-      data double/.false./, onedone/.false./
+      data double/.false./,onedone/.false./
+!---D3D-----------------------D3D----------------------------D3D-----
+      data ringr/1.766,1.680,1.674,2*1.671,1.681/
+      data ringz/2*-1.255,-1.258,-1.264,-1.327,-1.335/
+!---D3D-----------------------D3D----------------------------D3D-----
 !
       ALLOCATE(xsisii(nw),bpres(nw),cpres(nw),dpres(nw), &
          sjtli(nw),sjtlir(nw),sjtliz(nw),rjtli(nw), &
@@ -161,7 +209,7 @@
           ffprec(1)=0.0
         endif
       case (4)
-        call currnt(n222,iges,n222,n222,kerror)
+        call currnt(n222,iges,n222,kerror)
         if (kerror.gt.0) return
         pprime(1)=cratio/darea/rzero
         ffprim(1)=rbetap*cratio*rzero*twopi*tmu/darea
@@ -201,7 +249,7 @@
       do i=1,nw-1
         pres(nw-i)=pres(nw-i+1)+0.5_dp*(pprime(nw-i+1)+pprime(nw-i))*delsi
         sumf=sumf+0.5_dp*delsi*(ffprim(nw-i+1)+ffprim(nw-i))
-        if(sumf .ge. 0.0) then
+        if (sumf .ge. 0.0) then
           fpol(nw-i)=sqrt(2.*sumf)*fpol(nw)/abs(fpol(nw))
         else
           fpol(nw-i)=fpol(nw)
@@ -269,8 +317,8 @@
         zzp=zmaxis-yout(i)
         if (zzp*zzm.le.0.0) then
           slope=(xout(i)-xout(i-1))/(yout(i)-yout(i-1))
-          if (xout(i).lt.rmaxis) rminzm=xout(i)+zzp*slope
-          if (xout(i).gt.rmaxis) rmaxzm=xout(i)+zzp*slope
+          if(xout(i).lt.rmaxis) rminzm=xout(i)+zzp*slope
+          if(xout(i).gt.rmaxis) rmaxzm=xout(i)+zzp*slope
         endif
         zzm=zzp
       enddo
@@ -294,18 +342,14 @@
       do j=1,limitr-1
         call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
                     xlim(j),ylim(j),xlim(j+1),ylim(j+1),disnow)
-        if (xlim(j).lt.1.02_dp .and. xlim(j+1).lt.1.02_dp) then
+        if(xlim(j).lt.1.02_dp .and. xlim(j+1).lt.1.02_dp) &
           dleft = min(dleft,disnow)
-        endif
-        if (ylim(j).gt.1.20_dp .and. ylim(j+1).gt.1.20_dp) then
+        if(ylim(j).gt.1.20_dp .and. ylim(j+1).gt.1.20_dp) &
           dtop = min(dtop,disnow)
-        endif
-        if (ylim(j).lt.-1.20_dp .and. ylim(j+1).lt.-1.20_dp) then
+        if(ylim(j).lt.-1.20_dp .and. ylim(j+1).lt.-1.20_dp) &
           dbott = min(dbott,disnow)
-        endif
-        if (xlim(j).gt.1.70_dp .and. xlim(j+1).gt.1.70_dp) then
+        if(xlim(j).gt.1.70_dp .and. xlim(j+1).gt.1.70_dp) &
           dright = min(dright,disnow)
-        endif
       enddo
       dismin=min(dleft,dright,dtop,dbott)
       oleft(iges)=dleft
@@ -315,10 +359,10 @@
       seplim(iges)=dismin
       ssep(iges)=40.
       if (abs(dismin).le.0.100_dp) then
-        if (dleft.eq.dismin) limloc(iges)='IN '
-        if (dright.eq.dismin) limloc(iges)='OUT'
-        if (dtop.eq.dismin) limloc(iges)='TOP'
-        if (dbott.eq.dismin) limloc(iges)='BOT'
+        if(dleft.eq.dismin) limloc(iges)='IN '
+        if(dright.eq.dismin) limloc(iges)='OUT'
+        if(dtop.eq.dismin) limloc(iges)='TOP'
+        if(dbott.eq.dismin) limloc(iges)='BOT'
       else
 !--------------------------------------------------------------------
 !--     diverted configuration                                     --
@@ -352,10 +396,10 @@
       if (ishot.ge.139282) then
         jtwagap = 59
         njtwagap = 0
-        if (ishot.ge.181292)then
+        if (ishot.ge.181292) then
           jtwagap = 47
           njtwagap = 1
-        elseif (ishot.ge.187873)then
+        elseif (ishot.ge.187873) then
           jtwagap = 48
           njtwagap = 1
         endif
@@ -370,20 +414,20 @@
       ylimys=0.0
       if (dismin.ge.0.500_dp) then
         xsepsl=100.
-        if (zseps(1,iges).lt.0.0) xsepsl=rseps(1,iges)/100.
-        if (zseps(2,iges).lt.0.0) xsepsl=rseps(2,iges)/100.
+        if(zseps(1,iges).lt.0.0) xsepsl=rseps(1,iges)/100.
+        if(zseps(2,iges).lt.0.0) xsepsl=rseps(2,iges)/100.
         call seva2d(bkx,lkx,bky,lky,c,xlim(1),ylim(1),pds,ier,n111)
         silimp=pds(1)-psibry
         do i=2,limitr
           call seva2d(bkx,lkx,bky,lky,c,xlim(i),ylim(i),pds,ier,n111)
           silimm=silimp
           silimp=pds(1)-psibry
-          if (silimp*silimm.gt.0.0) cycle
+          if(silimp*silimm.gt.0.0) cycle
           dsilim=silimp-silimm
           xlimxx=xlim(i-1)-(xlim(i)-xlim(i-1))/dsilim*silimm
           ylimyy=ylim(i-1)-(ylim(i)-ylim(i-1))/dsilim*silimm
-          if (ylimyy.ge.0.0) cycle
-          if (xlimxx.lt.xsepsl) cycle
+          if(ylimyy.ge.0.0) cycle
+          if(xlimxx.lt.xsepsl) cycle
           xlimxs=xlimxx
           ylimys=ylimyy
           exit
@@ -439,7 +483,7 @@
                   xouts,youts,nfouns,psi,xmins,xmaxs,ymins,ymaxs, &
                   zxmins,zxmaxs,rymins,rymaxs,dpsis,bpoo,bpooz, &
                   limtrs,xlims,ylims,limfag,0,0,kerror)
-      if (kerror.gt.0) return
+      if(kerror.gt.0) return
 !---------------------------------------------------------------------
 !--   gap calculation                                               --
 !---------------------------------------------------------------------
@@ -502,11 +546,11 @@
         endif
 !        endif
        endif
-       if (youts(j).gt.zhp) cycle
+       if(youts(j).gt.zhp) cycle
 !       dybb=(xouts(j)-xzbot)*(xouts(j+1)-xzbot)
-!       if (dybb.gt.0.0) cycle
-!       if (xouts(j).eq.xouts(j+1)) obots(iges)=(youts(j)-ybot)*100.0
-       if (xouts(j).eq.xouts(j+1)) cycle
+!       if(dybb.gt.0.0) cycle
+!       if(xouts(j).eq.xouts(j+1)) obots(iges)=(youts(j)-ybot)*100.0
+       if(xouts(j).eq.xouts(j+1)) cycle
        slope=(youts(j+1)-youts(j))/(xouts(j+1)-xouts(j))
        bincp=youts(j)-slope*xouts(j)
 !       yb=slope*xzbot+bincp
@@ -515,12 +559,13 @@
 !
  1085 continue
       call chisqr(iges)
+      chifin=tsaisq(iges)
       nnn=1
       call betali(iges,rgrid,zgrid,nnn,kerror)
-      if (kerror.gt.0) return
+      if(kerror.gt.0) return
       peak(iges)=pres(1)/(.667_dp*wplasm(iges)/(vout(iges)/1.e6_dp))
       do i=2,nw
-        if (rzzmax(i).gt.0.0) exit
+        if(rzzmax(i).gt.0.0) exit
       enddo
       amer(1,1)=2.*(rzzmax(1)-rzzmax(i))
       amer(1,2)=2.*(zzmax(1)-zzmax(i))
@@ -537,21 +582,21 @@
       rmer=sqrt((bmer(1)-rzzmax(1))**2+(bmer(2)-zzmax(1))**2)
       i=i+1
       if (rzzmax(i).gt.0.0.and.rzzmax(i).lt.rzzmax(i-1)) then
-      amer(1,1)=2.*(rzzmax(1)-rzzmax(i))
-      amer(1,2)=2.*(zzmax(1)-zzmax(i))
-      amer(2,1)=2.*(rzzmax(1)-rzzmax(i))
-      amer(2,2)=2.*(zzmax(1)-(zzmax(1)-zzmax(i)))
-      bmer(1)=rzzmax(1)**2+zzmax(1)**2-rzzmax(i)**2-(zzmax(1)- &
-                                                zzmax(i))**2
-      bmer(2)=rzzmax(1)**2+zzmax(1)**2-rzzmax(i)**2-(zzmax(1)- &
-                                                zzmax(i))**2
-      call decomp(n22,n22,amer,x11,imer,wmer)
-      call solve(n22,n22,amer,bmer,imer)
+        amer(1,1)=2.*(rzzmax(1)-rzzmax(i))
+        amer(1,2)=2.*(zzmax(1)-zzmax(i))
+        amer(2,1)=2.*(rzzmax(1)-rzzmax(i))
+        amer(2,2)=2.*(zzmax(1)-(zzmax(1)-zzmax(i)))
+        bmer(1)=rzzmax(1)**2+zzmax(1)**2-rzzmax(i)**2-(zzmax(1)- &
+                                                  zzmax(i))**2
+        bmer(2)=rzzmax(1)**2+zzmax(1)**2-rzzmax(i)**2-(zzmax(1)- &
+                                                  zzmax(i))**2
+        call decomp(n22,n22,amer,x11,imer,wmer)
+        call solve(n22,n22,amer,bmer,imer)
 !-----------------------------------------------------------------------
-!--   need check for RMER 10/91 llao                                  --
+!--     need check for RMER 10/91 llao                                  --
 !-----------------------------------------------------------------------
-      rmer=(sqrt((bmer(1)-rzzmax(1))**2+(bmer(2)-zzmax(1))**2) &
-            +rmer)/2.
+        rmer=(sqrt((bmer(1)-rzzmax(1))**2+(bmer(2)-zzmax(1))**2) &
+              +rmer)/2.
       endif
       qmerci(iges)=2./(1.+elongm(iges)**2)-2.*(elongm(iges)-1.) &
                  *betap(iges)/elongm(iges)**2/(1.+elongm(iges)) &
@@ -571,40 +616,40 @@
 !--   write out S(shot).(time)_X files in flux space                  --
 !-----------------------------------------------------------------------
       kwripre_s: if (kwripre.eq.2) then
-        call getfnmd('s',ishot,itime,sfname)
-        call getfnmd('o',ishot,itime,ofname)
+        call setfnmd('s',ishot,itime,sfname)
+        call setfnmd('o',ishot,itime,ofname)
         if (npress.gt.0) then
           sfname=sfname(1:13)//'_presd'
-          open(unit=74,status='old',file=sfname,iostat=ioerr)
-          if (ioerr.eq.0) close(unit=74,status='delete')
+          open(unit=74,status='old',file=sfname,iostat=ier)
+          if(ier.eq.0) close(unit=74,status='delete')
           open(unit=74,status='new',file=sfname)
           do i=1,npress
-           xrpres=-rpress(i)
-           write (74,*) xrpres,pressr(i),xdum,xdum
+            xrpres=-rpress(i)
+            write (74,*) xrpres,pressr(i),xdum,xdum
           enddo
           close(unit=74)
         endif
         if (nbeam.gt.0) then
           sfname=sfname(1:13)//'_pbeam'
-          open(unit=74,status='old',file=sfname,iostat=ioerr)
-          if (ioerr.eq.0) close(unit=74,status='delete')
+          open(unit=74,status='old',file=sfname,iostat=ier)
+          if(ier.eq.0) close(unit=74,status='delete')
           open(unit=74,status='new',file=sfname)
           do i=1,nbeam
-           write (74,*) sibeam(i),pbeam(i),xdum,xdum
+            write (74,*) sibeam(i),pbeam(i),xdum,xdum
           enddo
           close(unit=74)
         endif
         sfname=sfname(1:13)//'_qpsi'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,nw
           write (74,*) xsisii(i),qpsi(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_jor'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,nw
           cjorka=cjor(i)/1000.
@@ -612,8 +657,8 @@
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_jorec'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,nw
           cjorka=cjorec(i)/1000.
@@ -621,8 +666,8 @@
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_cjmse'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         if (ishot.le.97400) then
           mcentral=15
@@ -635,8 +680,8 @@
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_cjmsec'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         if (ishot.le.97400) then
           mcentral=15
@@ -649,8 +694,8 @@
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_bzmse'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,nstark
           cjorka=bzmse(i)
@@ -658,8 +703,8 @@
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_bzmsec'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,nstark
           cjorka=bzmsec(i)
@@ -667,46 +712,44 @@
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_chigam'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
-        do i=1,nstark
-          sigams(i)=sigam(i)
-        enddo
+        sigams(1:nstark)=sigam(1:nstark)
         do j=1,nstark
-        sigamnow=1.e9_dp
-        do i=1,nstark
-          if (sigams(i).lt.sigamnow.and.fwtgam(i).gt.0.0) then
-            if (rrgam(iges,i).gt.0.0) then
-              sigamnow=sigams(i)
-              cjorka=chigam(i)
-              inow=i
+          sigamnow=1.e9_dp
+          do i=1,nstark
+            if (sigams(i).lt.sigamnow.and.fwtgam(i).gt.0.0) then
+              if (rrgam(iges,i).gt.0.0) then
+                sigamnow=sigams(i)
+                cjorka=chigam(i)
+                inow=i
+              endif
             endif
-          endif
-        enddo
-        write (74,*)  sigamnow,cjorka,xdum,xdum
-        sigams(inow)=1.e10_dp
+          enddo
+          write (74,*)  sigamnow,cjorka,xdum,xdum
+          sigams(inow)=1.e10_dp
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_presf'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,nw
           write (74,*) xsisii(i),pres(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_prespf'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,nw
           write (74,*) xsisii(i),pprime(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_prespfn'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,nw
           ppnow=pprime(i)/pprime(1)
@@ -718,19 +761,18 @@
 !-----------------------------------------------------------------------
         if (mmbmsels.gt.0.or.kdomsels.gt.0) then
           sfname=sfname(1:13)//'_cmls'
-          open(unit=74,status='old',file=sfname,iostat=ioerr)
-          if (ioerr.eq.0) close(unit=74,status='delete')
+          open(unit=74,status='old',file=sfname,iostat=ier)
+          if(ier.eq.0) close(unit=74,status='delete')
           open(unit=74,status='new',file=sfname)
           do i=1,nmsels
-           if (sinmls(i).gt.0.0) then
+           if(sinmls(i).gt.0.0) &
              write (74,92924) sinmls(i),cmmls(iges,i),xdum,xdum
-           endif
           enddo
           close(unit=74)
 !
           ofname=ofname(1:13)//'_cmls'
-          open(unit=74,status='old',file=ofname,iostat=ioerr)
-          if (ioerr.eq.0) close(unit=74,status='delete')
+          open(unit=74,status='old',file=ofname,iostat=ier)
+          if(ier.eq.0) close(unit=74,status='delete')
           open(unit=74,status='new',file=ofname)
           xxtitle='Normalized Poloidal Flux'
           yytitle='Computed B MSE-LS (T)'
@@ -739,37 +781,34 @@
           write (74,93024) yytitle
           write (74,93024) zztitle
           do i=1,nmsels
-           if (sinmls(i).gt.0.0) then
-             write (74,92924) sinmls(i),cmmls(iges,i),xdum,xdum
-           endif
+            if(sinmls(i).gt.0.0) &
+              write (74,92924) sinmls(i),cmmls(iges,i),xdum,xdum
           enddo
           close(unit=74)
 !
           sfname=sfname(1:13)//'_cmls2'
-          open(unit=74,status='old',file=sfname,iostat=ioerr)
-          if (ioerr.eq.0) close(unit=74,status='delete')
+          open(unit=74,status='old',file=sfname,iostat=ier)
+          if(ier.eq.0) close(unit=74,status='delete')
           open(unit=74,status='new',file=sfname)
           do i=1,nmsels
-           if (sinmls(i).gt.0.0) then
+           if(sinmls(i).gt.0.0) &
              write (74,92924) sinmls(i),cmmls2(iges,i),xdum,xdum
-           endif
           enddo
           close(unit=74)
 !
           sfname=sfname(1:13)//'_cmlsv'
-          open(unit=74,status='old',file=sfname,iostat=ioerr)
-          if (ioerr.eq.0) close(unit=74,status='delete')
+          open(unit=74,status='old',file=sfname,iostat=ier)
+          if(ier.eq.0) close(unit=74,status='delete')
           open(unit=74,status='new',file=sfname)
           do i=1,nmsels
-           if (sinmls(i).gt.0.0) then
+           if(sinmls(i).gt.0.0) &
              write (74,92924) sinmls(i),cmmlsv(iges,i),xdum,xdum
-           endif
           enddo
           close(unit=74)
 !
           ofname=ofname(1:13)//'_cmlsv'
-          open(unit=74,status='old',file=ofname,iostat=ioerr)
-          if (ioerr.eq.0) close(unit=74,status='delete')
+          open(unit=74,status='old',file=ofname,iostat=ier)
+          if(ier.eq.0) close(unit=74,status='delete')
           open(unit=74,status='new',file=ofname)
           xxtitle='Normalized Poloidal Flux'
           yytitle='Computed Vacuum B MSE-LS (T)'
@@ -778,28 +817,27 @@
           write (74,93024) yytitle
           write (74,93024) zztitle
           do i=1,nmsels
-           if (sinmls(i).gt.0.0) then
+           if(sinmls(i).gt.0.0) &
              write (74,92924) sinmls(i),cmmlsv(iges,i),xdum,xdum
-           endif
           enddo
           close(unit=74)
 !
           sfname=sfname(1:13)//'_emls'
-          open(unit=74,status='old',file=sfname,iostat=ioerr)
-          if (ioerr.eq.0) close(unit=74,status='delete')
+          open(unit=74,status='old',file=sfname,iostat=ier)
+          if(ier.eq.0) close(unit=74,status='delete')
           open(unit=74,status='new',file=sfname)
           do i=1,nmsels
            if (sinmls(i).gt.0.0) then
              ydum=sbmselt(iges,i)
-             if (swtbmselt(iges,i).gt.1.e-06_dp) ydum=ydum/swtbmselt(iges,i)
+             if(swtbmselt(iges,i).gt.1.e-06_dp) ydum=ydum/swtbmselt(iges,i)
              write (74,92924) sinmls(i),bmselt(iges,i),xdum,ydum
            endif
           enddo
           close(unit=74)
 !
           ofname=ofname(1:13)//'_emls'
-          open(unit=74,status='old',file=ofname,iostat=ioerr)
-          if (ioerr.eq.0) close(unit=74,status='delete')
+          open(unit=74,status='old',file=ofname,iostat=ier)
+          if(ier.eq.0) close(unit=74,status='delete')
           open(unit=74,status='new',file=ofname)
           xxtitle='Normalized Poloidal Flux'
           yytitle='Measured B MSE-LS (T)'
@@ -810,7 +848,7 @@
           do i=1,nmsels
            if (sinmls(i).gt.0.0) then
              ydum=sbmselt(iges,i)
-             if (swtbmselt(iges,i).gt.1.e-06_dp) ydum=ydum/swtbmselt(iges,i)
+             if(swtbmselt(iges,i).gt.1.e-06_dp) ydum=ydum/swtbmselt(iges,i)
              write (74,92924) sinmls(i),bmselt(iges,i),xdum,ydum
            endif
           enddo
@@ -818,8 +856,8 @@
         endif
 !
         if (mmbmsels.gt.0) then
-          open(unit=74,status='old',file=ofname,iostat=ioerr)
-          if (ioerr.eq.0) close(unit=74,status='delete')
+          open(unit=74,status='old',file=ofname,iostat=ier)
+          if(ier.eq.0) close(unit=74,status='delete')
           open(unit=74,status='new',file=ofname)
           xxtitle='Normalized Poloidal Flux'
           yytitle='Chi Square'
@@ -837,9 +875,8 @@
           write (74,93024) yytitle
           write (74,93024) zztitle
           do i=1,nmsels
-           if (sinmls(i).gt.0.0) then
+           if(sinmls(i).gt.0.0) &
              write (74,92924) sinmls(i),chimls(i),xdum,xdum
-           endif
           enddo
           close(unit=74)
 !
@@ -851,8 +888,8 @@
 !-----------------------------------------------------------------------
         if (kstark.gt.0.or.kdomse.gt.0) then
           ofname=ofname(1:13)//'_cmse'
-          open(unit=74,status='old',file=ofname,iostat=ioerr)
-          if (ioerr.eq.0) close(unit=74,status='delete')
+          open(unit=74,status='old',file=ofname,iostat=ier)
+          if(ier.eq.0) close(unit=74,status='delete')
           open(unit=74,status='new',file=ofname)
           xxtitle='Normalized Poloidal Flux'
           yytitle='Computed MSE Pitch Angle'
@@ -861,15 +898,14 @@
           write (74,93024) yytitle
           write (74,93024) zztitle
           do i=1,nstark
-           if (swtgam(i).gt.1.e-6_dp) then
+           if(swtgam(i).gt.1.e-6_dp) &
              write (74,92924) sigam(i),cmgam(i,iges),xdum,xdum
-           endif
           enddo
           close(unit=74)
 !
           ofname=ofname(1:13)//'_emse'
-          open(unit=74,status='old',file=ofname,iostat=ioerr)
-          if (ioerr.eq.0) close(unit=74,status='delete')
+          open(unit=74,status='old',file=ofname,iostat=ier)
+          if(ier.eq.0) close(unit=74,status='delete')
           open(unit=74,status='new',file=ofname)
           xxtitle='Normalized Poloidal Flux'
           yytitle='Measured MSE Pitch Angle'
@@ -888,8 +924,8 @@
 !
         if (kstark.gt.0) then
           ofname=ofname(1:13)//'_chi2mse'
-          open(unit=74,status='old',file=ofname,iostat=ioerr)
-          if (ioerr.eq.0) close(unit=74,status='delete')
+          open(unit=74,status='old',file=ofname,iostat=ier)
+          if(ier.eq.0) close(unit=74,status='delete')
           open(unit=74,status='new',file=ofname)
           xxtitle='Normalized Poloidal Flux'
           yytitle='Chi Square'
@@ -905,18 +941,18 @@
           write (74,93024) yytitle
           write (74,93024) zztitle
           do i=1,nstark
-           if (fwtgam(i).gt.0.0) then
+           if(fwtgam(i).gt.0.0) &
              write (74,92924) sigam(i),chigam(i),xdum,xdum
-           endif
           enddo
           close(unit=74)
         endif
       endif kwripre_s
 !
+!     if two q=1 surfaces, both psi values will be encoded in psiq1
+!     one to left of decimal and one to the right
       psiq1=-1000.
-! if two q=1 surfaces, both psi values will be encoded in psiq1
-! one to left of decimal and one to the right
 !
+!     determine if the slope of qpsi is negative at any grid points (idoqn=2)
       idoqn=1
       call zpline(nw,xsisii,qpsi,bfpol,cfpol,dfpol)
       do i=1,nw
@@ -941,18 +977,22 @@
         pds(i)=100.
       enddo
       iend=3
-      if (idoqn.eq.1) then
-        call zpline(nw,qpsi,xsisii,bfpol,cfpol,dfpol)
-      endif
-      if (qpsi(nw).gt.1.0) iend=1
-      if (qpsi(nw).gt.2.0) iend=2
-      if (qpsi(nw).gt.3.0) iend=3
+      ! splining psi(q) is problematic if it is non-monotonic (has negative slope)
+      if(idoqn.eq.1) call zpline(nw,qpsi,xsisii,bfpol,cfpol,dfpol)
+      if(qpsi(nw).gt.1.0) iend=1
+      if(qpsi(nw).gt.2.0) iend=2
+      if(qpsi(nw).gt.3.0) iend=3
       jstart=2
       double=(idoqn.eq.2).and.(qpsi(1).gt.1.)
+!---------------------------------------------------------------------
+!--   Contour all surfaces with integer safety factors
+!---------------------------------------------------------------------
       do i=1,iend
+        ! determine the xsisii values of integer q surfaces (siwant)
+        ! if q is non-monotonic, then use linear local interpolation
         qwant=i
-        if (idoqn.eq.1.and.i.ge.2) then
-         if (qwant.lt.qpsi(1)+0.001_dp) cycle
+        if(idoqn.eq.1 .and. qwant.lt.qpsi(1)+0.001_dp) cycle
+        if (idoqn.eq.1 .and. i.ge.2) then
          siwant=seval(nw,qwant,qpsi,xsisii,bfpol,cfpol,dfpol)
         else
          do jjj=jstart,nw
@@ -960,9 +1000,9 @@
           qppp=qwant-qpsi(jj)
           qmmm=qwant-qpsi(jj-1)
           if (qppp*qmmm.le.0.0) then
-            siwant=xsisii(jj-1)+ (xsisii(jj)-xsisii(jj-1))/ &
+            siwant=xsisii(jj-1)+(xsisii(jj)-xsisii(jj-1))/ &
                    (qpsi(jj)-qpsi(jj-1))*qmmm
-            if(jstart.eq.2)onedone=.true.
+            if(jstart.eq.2) onedone=.true.
             jstart=jj+1
             go to 1105
           endif
@@ -973,45 +1013,45 @@
 #ifdef DEBUG_LEVEL2
         write (6,*) 'i, iend, sw, qw = ',i, iend,siwant, qwant
 #endif
-        if (siwant.lt.0.0) cycle
+        if(siwant.le.1.e-5_dp) cycle
         siwant=simag-siwant*(simag-psibry)
+        kacerr=0
         call surfac(siwant,psi,nw,nh,rgrid,zgrid,xxtra(1,1),yxtra(1,1), &
                     nfind,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nzz, &
-                    rmaxis,zmaxis,negcur,kerror)
-        if (kerror.gt.0) return
+                    rmaxis,zmaxis,negcur,kacerr,2)
         if (nfind.le.40.and.icntour.eq.0) then
 #ifdef DEBUG_LEVEL2
-         write (6,*) ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
-                      kerror,i,nfind,qppp,qmmm,siwant
+          write (6,*) ' SHAPE/SURFAC kacerr,i,nfind,qp,qm,si = ', &
+                       kacerr,i,nfind,qppp,qmmm,siwant
 #endif
-         call cntour(rmaxis,zmaxis,siwant,rqmin,rqmax,ycmin,ycmax, &
-                     yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
-                     d33 ,d33 ,xmin,xmax,ymin,ymax,nzz,iautoc, &
-                     xxtra(1,1),yxtra(1,1),nfind,rgrid,nw,zgrid,nh, &
-                     c,n22,nh2,nttyo,npoint, &
-                     negcur,bkx,lkx,bky,lky,kerror)
+          call cntour(rmaxis,zmaxis,siwant,rqmin,rqmax,ycmin,ycmax, &
+                      yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
+                      d33 ,d33 ,xmin,xmax,ymin,ymax,nzz,iautoc, &
+                      xxtra(1,1),yxtra(1,1),nfind,rgrid,nw,zgrid,nh, &
+                      c,n22,nh2,nttyo,npoint, &
+                      negcur,bkx,lkx,bky,lky,kerror)
 #ifdef DEBUG_LEVEL2
-         write (6,*) ' SHAPE/CNTOUR kerror,i,nfind = ',kerror,i,nfind
+          write (6,*) ' SHAPE/CNTOUR kerror,i,nfind = ',kerror,i,nfind
 #endif
-         if (kerror.gt.0) return
+          if(kerror.gt.0) return
 
         else
-         rqmax=xxtra(1,1)
-         rqmin=rqmax
-         do k=2,nfind
-          rqmax=max(xxtra(k,1),rqmax)
-          rqmin=min(xxtra(k,1),rqmin)
-         enddo
+          rqmax=xxtra(1,1)
+          rqmin=rqmax
+          do k=2,nfind
+            rqmax=max(xxtra(k,1),rqmax)
+            rqmin=min(xxtra(k,1),rqmin)
+          enddo
         endif
         pds(i)=50.*(rqmax-rqmin)
         if (i.eq.1) then
-         if(.not.double)psiq1=siwant
+          if(.not.double) psiq1=siwant
 !
 !     This code will not compile on the HP or SuperCard.  The logic
 !     needs to be fixed so that it will compile and then this code
 !     can be put back in.
 !
-         if(double.and.(.not.onedone))psiq1=psiq1+siwant  ! second value
+          if(double.and.(.not.onedone)) psiq1=psiq1+siwant  ! second value
         endif
       enddo
       aaq1(iges)=pds(1)
@@ -1029,8 +1069,8 @@
       psin21(iges)=-99.0
       rq21top(iges)=-99.0
       do i=1,iend
-        if (i.eq.1) qwant=1.5_dp
-        if (i.eq.2) qwant=2.0
+        if(i.eq.1) qwant=1.5_dp
+        if(i.eq.2) qwant=2.0 ! TODO: already found in the previous loop??
         do j=1,nw-1
           jj=nw-j+1
           qppp=qwant-qpsi(jj)
@@ -1039,14 +1079,14 @@
             siwant=xsisii(jj-1)+ (xsisii(jj)-xsisii(jj-1))/ &
               (qpsi(jj)-qpsi(jj-1))*qmmm
             psiwan=simag-siwant*(simag-psibry)
+            kacerr=0
             call surfac(psiwan,psi,nw,nh,rgrid,zgrid,xxtra(1,1),yxtra(1,1), &
                         nfind,npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nzz, &
-                        rmaxis,zmaxis,negcur,kerror)
-            if (kerror.gt.0) return
+                        rmaxis,zmaxis,negcur,kacerr,2)
             if (nfind.le.40.and.icntour.eq.0) then
 #ifdef DEBUG_LEVEL2
               write (6,*) ' SHAPE/SURFAC kerror,i,nfind,qp,qm,si = ', &
-                           kerror,i,nfind,qppp,qmmm,psiwan
+                           kacerr,i,nfind,qppp,qmmm,psiwan
 #endif
               call cntour(rmaxis,zmaxis,psiwan,rqmin,rqmax,ycmin,ycmax, &
                           yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
@@ -1057,7 +1097,7 @@
 #ifdef DEBUG_LEVEL2
               write (6,*) ' SHAPE/CNTOUR kerror,i,nfind = ',kerror,i,nfind
 #endif
-              if (kerror.gt.0) return
+              if(kerror.gt.0) return
             endif
             if (i.eq.1) then
               psin32(iges)=siwant
@@ -1082,8 +1122,10 @@
           endif
         enddo
       enddo
-!
-      call zpline(nw,xsisii,qpsi,bfpol,cfpol,dfpol)
+!---------------------------------------------------------------------
+!--   Get information from the psi=0.95 and 0.01 surfaces (no contour)
+!---------------------------------------------------------------------
+      if(idoqn.eq.1) call zpline(nw,xsisii,qpsi,bfpol,cfpol,dfpol)
       siwant=0.95_dp
       qpsib(iges)=seval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
       shearb(iges)=speval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
@@ -1104,29 +1146,29 @@
        siwant=simag+psiwant*(psibry-simag)
        call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc, &
                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                   rmaxis,zmaxis,negcur,kerror)
-       if (kerror.gt.0) return
+                   rmaxis,zmaxis,negcur,kerror,1)
+       if(kerror.gt.0) return
        do k=1,nfounc
         cfpol(k)=1./bfpol(k)**2
        enddo
        call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid,nh, &
-                   r2sdry(i),nzz ,sdlobp,sdlbp)
+                   r2sdry(i),nzz,sdlobp,sdlbp)
        do k=1,nfounc
         cfpol(k)=1./bfpol(k)
        enddo
        call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid,nh, &
-                   r1sdry(i),nzz ,sdlobp,sdlbp)
+                   r1sdry(i),nzz,sdlobp,sdlbp)
        rotation_1: if (kvtor.gt.0) then
          do k=1,nfounc
-           cfpol(k)= bfpol(k)**2
+           cfpol(k)=bfpol(k)**2
          enddo
          call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                     nh,r2wdry,nzz ,sdlobp,sdlbp)
+                     nh,r2wdry,nzz,sdlobp,sdlbp)
          do k=1,nfounc
-           cfpol(k)= ((bfpol(k)/rvtor)**2-1.)**2
+           cfpol(k)=((bfpol(k)/rvtor)**2-1.)**2
          enddo
          call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                     nh,r4wdry,nzz ,sdlobp,sdlbp)
+                     nh,r4wdry,nzz,sdlobp,sdlbp)
          if (kvtor.eq.3) then
            prew0=pwcurr(psiwant,kwwcur)
            pres0=prcurr(psiwant,kppcur)
@@ -1136,23 +1178,23 @@
              pwop0=0.0
            endif
            do k=1,nfounc
-             cfpol(k)= ((bfpol(k)/rvtor)**2-1.)
-             cfpol(k)= cfpol(k)*exp(pwop0*cfpol(k))
+             cfpol(k)=((bfpol(k)/rvtor)**2-1.)
+             cfpol(k)=cfpol(k)*exp(pwop0*cfpol(k))
            enddo
            call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                       nh,rp2wdry,nzz ,sdlobp,sdlbp)
+                       nh,rp2wdry,nzz,sdlobp,sdlbp)
            do k=1,nfounc
-             cfpol(k)= ((bfpol(k)/rvtor)**2-1.)
-             cfpol(k)= exp(pwop0*cfpol(k))
+             cfpol(k)=((bfpol(k)/rvtor)**2-1.)
+             cfpol(k)=exp(pwop0*cfpol(k))
            enddo
            call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
                        nh,rpwdry,nzz ,sdlobp,sdlbp)
          endif
        endif rotation_1
-       r2surs = r2sdry(i)*sdlobp
-       fpnow = ffcurr(psiwant,kffcur)
-       fpnow = fpnow*tmu
-       qsiwant(iges) = abs(fpnow)/twopi*r2surs
+       r2surs=r2sdry(i)*sdlobp
+       fpnow=ffcurr(psiwant,kffcur)
+       fpnow=fpnow*tmu
+       qsiwant(iges)=abs(fpnow)/twopi*r2surs
       endif
 !
       call zpline(nw,xsisii,cjor,bfpol,cfpol,dfpol)
@@ -1172,7 +1214,7 @@
         cjor99(iges)=cjor99(iges)*areao(iges)/cpasma(iges)/1.0e4_dp
       endif
       do i=1,nw
-          bpres(i)=sqrt(volp(i)/volp(nw))
+        bpres(i)=sqrt(volp(i)/volp(nw))
       enddo
       call zpline(nw,xsisii,bpres,bfpol,cfpol,dfpol)
       siwant=0.95_dp
@@ -1180,7 +1222,7 @@
       siwant=0.01_dp
       xsi01=seval(nw,siwant,xsisii,bpres,bfpol,cfpol,dfpol)
       xsiwww=psiwant
-      if (xsiwww.le.1.e-5_dp) xsiwww=1.e-5_dp
+      if(xsiwww.le.1.e-5_dp) xsiwww=1.e-5_dp
       xsiww=seval(nw,xsiwww,xsisii,bpres,bfpol,cfpol,dfpol)
       call zpline(nw,bpres,qpsi,bfpol,cfpol,dfpol)
       ssiwant(iges)=speval(nw,xsiww,bpres,qpsi,bfpol,cfpol,dfpol) &
@@ -1197,8 +1239,8 @@
        siwant=simag+siwant*(psibry-simag)
        call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc, &
                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                   rmaxis,zmaxis,negcur,kerror)
-       if (kerror.gt.0) return
+                   rmaxis,zmaxis,negcur,kerror,1)
+       if(kerror.gt.0) return
        call fluxav(bfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid,nh, &
                    rxxrry,nzz ,sdlobp,sdlbp)
       area=0.0
@@ -1365,24 +1407,24 @@
 !----------------------------------------------------------------------
       ycut=0.5_dp*ymax
       if (zfsep.gt.ycut) then
-       dminux(iges)=1.e10_dp
-       do i=1,limitr
-        if (ylim(i).gt.ycut) then
-         dminow=(rfsep-xlim(i))**2+(zfsep-ylim(i))**2
-         dminux(iges)=min(dminux(iges),dminow)
-        endif
-       enddo
-       dminux(iges)=100.0*sqrt(dminux(iges))
+        dminux(iges)=1.e10_dp
+        do i=1,limitr
+          if (ylim(i).gt.ycut) then
+            dminow=(rfsep-xlim(i))**2+(zfsep-ylim(i))**2
+            dminux(iges)=min(dminux(iges),dminow)
+          endif
+        enddo
+        dminux(iges)=100.0*sqrt(dminux(iges))
       else
-       dminlx(iges)=1.e10_dp
-       ycut=0.5_dp*ymin
-       do i=1,limitr
-        if (ylim(i).lt.ycut) then
-         dminow=(rfsep-xlim(i))**2+(zfsep-ylim(i))**2
-         dminlx(iges)=min(dminlx(iges),dminow)
-        endif
-       enddo
-       dminlx(iges)=100.0*sqrt(dminlx(iges))
+        dminlx(iges)=1.e10_dp
+        ycut=0.5_dp*ymin
+        do i=1,limitr
+          if (ylim(i).lt.ycut) then
+            dminow=(rfsep-xlim(i))**2+(zfsep-ylim(i))**2
+            dminlx(iges)=min(dminlx(iges),dminow)
+          endif
+        enddo
+        dminlx(iges)=100.0*sqrt(dminlx(iges))
       endif
 !---------------------------------------------------------------
 !--   Get distance from second X point to limiter             --
@@ -1453,105 +1495,105 @@
       endif
       rsepnose=-999.
       if (dis2p.ge.0.1_dp*drgrid) then
-      do i=1,npxtra(ixl)-1
-        if ((yxtra(i,ixl)-znose)*(yxtra(i+1,ixl)-znose).le.0.0) then
-          rsepnose=xxtra(i,ixl)+(xxtra(i+1,ixl)-xxtra(i,ixl))/ &
-            (yxtra(i+1,ixl)-yxtra(i,ixl))*(znose-yxtra(i,ixl))
-          exit
-        endif
-      enddo
-      zerovs(1)=1.0
-      do i=1,npxtra(ixl)
-        zerold=zerovs(1)
-        call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,xxtra(i,ixl), &
-                  yxtra(i,ixl),limfag)
-        if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) exit
-      enddo
-      if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) then
-        rinvs=xxtra(i-1,ixl)
-        zinvs=yxtra(i-1,ixl)
-        routvs=xxtra(i,ixl)
-        zoutvs=yxtra(i,ixl)
-        do i=1,20
-          ravs(1)=0.5_dp*(rinvs+routvs)
-          zavs(1)=0.5_dp*(zinvs+zoutvs)
-          call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
-          if (zerovs(1).gt.0.01_dp) then
-            rinvs=ravs(1)
-            zinvs=zavs(1)
-          else
-            routvs=ravs(1)
-            zoutvs=zavs(1)
+        do i=1,npxtra(ixl)-1
+          if ((yxtra(i,ixl)-znose)*(yxtra(i+1,ixl)-znose).le.0.0) then
+            rsepnose=xxtra(i,ixl)+(xxtra(i+1,ixl)-xxtra(i,ixl))/ &
+              (yxtra(i+1,ixl)-yxtra(i,ixl))*(znose-yxtra(i,ixl))
+            exit
           endif
         enddo
-        rvsout(iges)=ravs(1)*100.
-        zvsout(iges)=zavs(1)*100.
-      else
-        rvsout(iges)=0.
-        zvsout(iges)=0.
-      endif
+        zerovs(1)=1.0
+        do i=1,npxtra(ixl)
+          zerold=zerovs(1)
+          call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,xxtra(i,ixl), &
+                    yxtra(i,ixl),limfag)
+          if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) exit
+        enddo
+        if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) then
+          rinvs=xxtra(i-1,ixl)
+          zinvs=yxtra(i-1,ixl)
+          routvs=xxtra(i,ixl)
+          zoutvs=yxtra(i,ixl)
+          do i=1,20
+            ravs(1)=0.5_dp*(rinvs+routvs)
+            zavs(1)=0.5_dp*(zinvs+zoutvs)
+            call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,ravs,zavs,limfag)
+            if (zerovs(1).gt.0.01_dp) then
+              rinvs=ravs(1)
+              zinvs=zavs(1)
+            else
+              routvs=ravs(1)
+              zoutvs=zavs(1)
+            endif
+          enddo
+          rvsout(iges)=ravs(1)*100.
+          zvsout(iges)=zavs(1)*100.
+        else
+          rvsout(iges)=0.
+          zvsout(iges)=0.
+        endif
       endif ! dis2p.ge.0.1_dp*drgrid
       if ((zavs(1)*zfsep.le.0.0).and.(ixyz.eq.-2)) then
         ixyz=-1
         go to 73723
       endif
       if (dis2p.ge.0.1_dp*drgrid) then
-      call seva2d(bkx,lkx,bky,lky,c,ravs(1),zavs(1),pds,ier,n111)
-      ssinow=pds(1)
+        call seva2d(bkx,lkx,bky,lky,c,ravs(1),zavs(1),pds,ier,n111)
+        ssinow=pds(1)
 !------------------------------------------------------------------
-!--   get distance between inner leg and upper dome              --
+!--     get distance between inner leg and upper dome
 !------------------------------------------------------------------
-      ycut=ymax*0.5_dp
-      ycutm=ymin*0.5_dp
-      if (zavs(1).gt.ycut.and.ravs(1).lt.rymax) then
-        rvsiu(iges)=rvsout(iges)
-        zvsiu(iges)=zvsout(iges)
-        if (ishot.ge.100771) then
-          diludom(iges)=1.e6_dp
-          do i=1,npxtra(ixl)
-            if (yxtra(i,ixl).ge.ycut) then
-              dilnow=(rudom -xxtra(i,ixl))**2 + &
-                          (zudom -yxtra(i,ixl))**2
-              if (dilnow.lt.diludom(iges)) then
-                diludom(iges)=dilnow
-                zilnow=yxtra(i,ixl)
+        ycut=ymax*0.5_dp
+        ycutm=ymin*0.5_dp
+        if (zavs(1).gt.ycut.and.ravs(1).lt.rymax) then
+          rvsiu(iges)=rvsout(iges)
+          zvsiu(iges)=zvsout(iges)
+          if (ishot.ge.100771) then
+            diludom(iges)=1.e6_dp
+            do i=1,npxtra(ixl)
+              if (yxtra(i,ixl).ge.ycut) then
+                dilnow=(rudom - xxtra(i,ixl))**2 + &
+                            (zudom - yxtra(i,ixl))**2
+                if (dilnow.lt.diludom(iges)) then
+                  diludom(iges)=dilnow
+                  zilnow=yxtra(i,ixl)
+                endif
               endif
-            endif
-          enddo
-          diludom(iges)=100.0*sqrt(diludom(iges))
-          if (zilnow.lt.zudom) diludom(iges)=-diludom(iges)
-        endif
-      elseif (zavs(1).gt.ycut.and.ravs(1).gt.rymax) then
+            enddo
+            diludom(iges)=100.0*sqrt(diludom(iges))
+            if(zilnow.lt.zudom) diludom(iges)=-diludom(iges)
+          endif
+        elseif (zavs(1).gt.ycut.and.ravs(1).gt.rymax) then
 !------------------------------------------------------------------
-!--     get distance between outer leg and upper baffle          --
+!--       get distance between outer leg and upper baffle
 !------------------------------------------------------------------
-        rvsou(iges)=rvsout(iges)
-        zvsou(iges)=zvsout(iges)
-        if (ishot.ge.100771) then
-          dolubaf(iges)=1.e6_dp
-          do i=1,npxtra(ixl)
-            if (yxtra(i,ixl).ge.ycut) then
-              dolnow=(rubaf -xxtra(i,ixl))**2 + &
-                          (zubaf -yxtra(i,ixl))**2
-              if (dolnow.lt.dolubaf(iges)) then
-                dolubaf(iges)=dolnow
-                rolnow=xxtra(i,ixl)
+          rvsou(iges)=rvsout(iges)
+          zvsou(iges)=zvsout(iges)
+          if (ishot.ge.100771) then
+            dolubaf(iges)=1.e6_dp
+            do i=1,npxtra(ixl)
+              if (yxtra(i,ixl).ge.ycut) then
+                dolnow=(rubaf - xxtra(i,ixl))**2 + &
+                            (zubaf - yxtra(i,ixl))**2
+                if (dolnow.lt.dolubaf(iges)) then
+                  dolubaf(iges)=dolnow
+                  rolnow=xxtra(i,ixl)
+                endif
               endif
-            endif
-          enddo
-          dolubaf(iges)=100.0*sqrt(dolubaf(iges))
-          if (rolnow.gt.rubaf) dolubaf(iges)=-dolubaf(iges)
+            enddo
+            dolubaf(iges)=100.0*sqrt(dolubaf(iges))
+            if(rolnow.gt.rubaf) dolubaf(iges)=-dolubaf(iges)
+          endif
+        elseif (zavs(1).lt.ycutm.and.ravs(1).gt.rymin) then
+!------------------------------------------------------------------
+!--       get lower strike points
+!------------------------------------------------------------------
+          rvsod(iges)=rvsout(iges)
+          zvsod(iges)=zvsout(iges)
+        elseif (zavs(1).lt.ycutm.and.ravs(1).lt.rymin) then
+          rvsid(iges)=rvsout(iges)
+          zvsid(iges)=zvsout(iges)
         endif
-      elseif (zavs(1).lt.ycutm.and.ravs(1).gt.rymin) then
-!------------------------------------------------------------------
-!--     get lower strike points                                  --
-!------------------------------------------------------------------
-        rvsod(iges)=rvsout(iges)
-        zvsod(iges)=zvsout(iges)
-      elseif (zavs(1).lt.ycutm.and.ravs(1).lt.rymin) then
-        rvsid(iges)=rvsout(iges)
-        zvsid(iges)=zvsout(iges)
-      endif
       endif ! dis2p.ge.0.1_dp*drgrid
 !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ring calculation here!!!
@@ -1617,7 +1659,7 @@
                        sqrt((rbar-byringr(i))**2+(zbar-byringz(i))**2))
           enddo
           if (ringap.eq.gap2) then
-            if (dismin.lt.dsmin) gap2=-gap2 ! separatrix intersects ring
+            if(dismin.lt.dsmin) gap2=-gap2 ! separatrix intersects ring
           endif
           if (ringap.eq.gap1) then ! check for intersection more carefully
             do i=1,nh2
@@ -1626,7 +1668,7 @@
             enddo
             do i=1,6
               if ((ringz(i)-byringz(iring).ne.0.).and.(ringap.eq.gap1)) then
-                if (atan2(ringr(i)-byringr(iring),ringr(i)-byringz(iring)).lt. &
+                if(atan2(ringr(i)-byringr(iring),ringr(i)-byringz(iring)).lt. &
                     0.) gap1=-gap1   ! separatrix intersects ring
               endif
             enddo
@@ -1671,7 +1713,7 @@
           zerold=zerovs(1)
           call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,xxtra(i,ixl), &
                     yxtra(i,ixl),limfag)
-          if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) exit
+          if(zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) exit
         enddo
         if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) then
           rinvs=xxtra(i-1,ixl)
@@ -1716,8 +1758,8 @@
             diludom(iges)=1.e6_dp
             do i=1,npxtra(ixl)
               if (yxtra(i,ixl).ge.ycut) then
-                dilnow=(rudom -xxtra(i,ixl))**2 + &
-                          (zudom -yxtra(i,ixl))**2
+                dilnow=(rudom - xxtra(i,ixl))**2 + &
+                          (zudom - yxtra(i,ixl))**2
                 if (dilnow.lt.diludom(iges)) then
                   diludom(iges)=dilnow
                   zilnow=yxtra(i,ixl)
@@ -1725,7 +1767,7 @@
               endif
             enddo
             diludom(iges)=100.0*sqrt(diludom(iges))
-            if (zilnow.lt.zudom) diludom(iges)=-diludom(iges)
+            if(zilnow.lt.zudom) diludom(iges)=-diludom(iges)
           endif
         elseif (zavs(1).gt.ycut.and.ravs(1).gt.rymax) then
 !------------------------------------------------------------------
@@ -1737,8 +1779,8 @@
             dolubaf(iges)=1.e6_dp
             do i=1,npxtra(ixl)
               if (yxtra(i,ixl).ge.ycut) then
-                dolnow=(rubaf -xxtra(i,ixl))**2 + &
-                          (zubaf -yxtra(i,ixl))**2
+                dolnow=(rubaf - xxtra(i,ixl))**2 + &
+                          (zubaf - yxtra(i,ixl))**2
                 if (dolnow.lt.dolubaf(iges)) then
                   dolubaf(iges)=dolnow
                   rolnow=xxtra(i,ixl)
@@ -1746,7 +1788,7 @@
               endif
             enddo
             dolubaf(iges)=100.0*sqrt(dolubaf(iges))
-            if (rolnow.gt.rubaf ) dolubaf(iges)=-dolubaf(iges)
+            if(rolnow.gt.rubaf) dolubaf(iges)=-dolubaf(iges)
           endif
         elseif (zavs(1).lt.ycutm.and.ravs(1).gt.rymin) then
 !------------------------------------------------------------------
@@ -1773,24 +1815,24 @@
       psiin=psibry
       dsiin =psinow-psiin
       do k=nmin,nw
-       rrout=rgrid(k)
-       call seva2d(bkx,lkx,bky,lky,c,rrout,znow,pds,ier,n111)
-       psiout=pds(1)
-       dsiout=psinow-psiout
-       if (dsiin*dsiout.le.0.0) then
-         do n=1,20
-          rmm=0.5_dp*(rrin+rrout)
-          call seva2d(bkx,lkx,bky,lky,c,rmm ,znow,pds,ier,n111)
-          psimm=pds(1)
-          dsimm=psinow-psimm
-          if (dsimm*dsiin.le.0.0) then
-            rrout=rmm
-          else
-            rrin=rmm
-          endif
-         enddo
-         exit
-       endif
+        rrout=rgrid(k)
+        call seva2d(bkx,lkx,bky,lky,c,rrout,znow,pds,ier,n111)
+        psiout=pds(1)
+        dsiout=psinow-psiout
+        if (dsiin*dsiout.le.0.0) then
+          do n=1,20
+            rmm=0.5_dp*(rrin+rrout)
+            call seva2d(bkx,lkx,bky,lky,c,rmm ,znow,pds,ier,n111)
+            psimm=pds(1)
+            dsimm=psinow-psimm
+            if (dsimm*dsiin.le.0.0) then
+              rrout=rmm
+            else
+              rrin=rmm
+            endif
+          enddo
+          exit
+        endif
       enddo
       rmaxss=rrout
       zmaxss=znow
@@ -1817,7 +1859,7 @@
         zerold=zerovs(1)
         call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,xxtra(i,ixl), &
                   yxtra(i,ixl),limfag)
-        if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) exit
+        if(zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) exit
       enddo
       if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp.and.i>1) then
         rinvs=xxtra(i-1,ixl)
@@ -1855,8 +1897,8 @@
       ycutm=ymin*0.5_dp
       rsymax=rymax
       rsymin=rymin
-      if (zssep.lt.ymin) rsymin=rssep
-      if (zssep.gt.ymax) rsymax=rssep
+      if(zssep.lt.ymin) rsymin=rssep
+      if(zssep.gt.ymax) rsymax=rssep
       if (zavs(1)*zssep.lt.0.0) then
         ravssa=0.0
         zavssa=0.0
@@ -1870,8 +1912,8 @@
           diludom(iges)=1.e6_dp
           do i=1,npxtra(ixl)
             if (yxtra(i,ixl).ge.ycut) then
-              dilnow=(rudom -xxtra(i,ixl))**2 + &
-                          (zudom -yxtra(i,ixl))**2
+              dilnow=(rudom - xxtra(i,ixl))**2 + &
+                          (zudom - yxtra(i,ixl))**2
               if (dilnow.lt.diludom(iges)) then
                 diludom(iges)=dilnow
                 zilnow=yxtra(i,ixl)
@@ -1879,7 +1921,7 @@
             endif
           enddo
           diludom(iges)=100.0*sqrt(diludom(iges))
-          if (zilnow.lt.zudom) diludom(iges)=-diludom(iges)
+          if(zilnow.lt.zudom) diludom(iges)=-diludom(iges)
         elseif (zavs(1).gt.ycut.and.ravs(1).gt.rsymax) then
 !------------------------------------------------------------------
 !--       get distance between outer leg and upper baffle        --
@@ -1890,8 +1932,8 @@
           dolubaf(iges)=1.e6_dp
           do i=1,npxtra(ixl)
             if (yxtra(i,ixl).ge.ycut) then
-              dolnow=(rubaf -xxtra(i,ixl))**2 + &
-                          (zubaf -yxtra(i,ixl))**2
+              dolnow=(rubaf - xxtra(i,ixl))**2 + &
+                          (zubaf - yxtra(i,ixl))**2
               if (dolnow.lt.dolubaf(iges)) then
                 dolubaf(iges)=dolnow
                 rolnow=xxtra(i,ixl)
@@ -1899,7 +1941,7 @@
             endif
           enddo
           dolubaf(iges)=100.0*sqrt(dolubaf(iges))
-          if (rolnow.gt.rubaf) dolubaf(iges)=-dolubaf(iges)
+          if(rolnow.gt.rubaf) dolubaf(iges)=-dolubaf(iges)
         elseif (zavs(1).lt.ycutm.and.ravs(1).gt.rsymin) then
 !------------------------------------------------------------------
 !--       get lower strike points                                --
@@ -1925,11 +1967,11 @@
       psiout=psibry
       dsiout=psinow-psiout
       do i=1,nmax
-       k= nmax-i +1
+       k=nmax-i+1
        rrin=rgrid(k)
        call seva2d(bkx,lkx,bky,lky,c,rrin,znow,pds,ier,n111)
-       psiin =pds(1)
-       dsiin =psinow-psiin
+       psiin=pds(1)
+       dsiin=psinow-psiin
        if (dsiin*dsiout.le.0.0) then
          do n=1,20
           rmm=0.5_dp*(rrin+rrout)
@@ -1969,7 +2011,7 @@
         zerold=zerovs(1)
         call zlim(zerovs,nnn,nnn,limitr,xlim,ylim,xxtra(i,ixl), &
                   yxtra(i,ixl),limfag)
-        if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) exit
+        if(zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp) exit
       enddo
       if (zerold.gt.0.01_dp.and.zerovs(1).lt.0.01_dp.and.i.gt.1) then
         rinvs=xxtra(i-1,ixl)
@@ -2016,8 +2058,8 @@
             diludom(iges)=1.e6_dp
             do i=1,npxtra(ixl)
               if (yxtra(i,ixl).ge.ycut) then
-                dilnow=(rudom -xxtra(i,ixl))**2 + &
-                          (zudom -yxtra(i,ixl))**2
+                dilnow=(rudom - xxtra(i,ixl))**2 + &
+                          (zudom - yxtra(i,ixl))**2
                 if (dilnow.lt.diludom(iges)) then
                   diludom(iges)=dilnow
                   zilnow=yxtra(i,ixl)
@@ -2025,7 +2067,7 @@
               endif
             enddo
             diludom(iges)=100.0*sqrt(diludom(iges))
-            if (zilnow.lt.zudom) diludom(iges)=-diludom(iges)
+            if(zilnow.lt.zudom) diludom(iges)=-diludom(iges)
           endif
         elseif (zavs(1).gt.ycut.and.ravs(1).gt.rsymax) then
 !------------------------------------------------------------------
@@ -2037,8 +2079,8 @@
             dolubaf(iges)=1.e6_dp
             do i=1,npxtra(ixl)
               if (yxtra(i,ixl).ge.ycut) then
-                dolnow=(rubaf -xxtra(i,ixl))**2 + &
-                          (zubaf -yxtra(i,ixl))**2
+                dolnow=(rubaf - xxtra(i,ixl))**2 + &
+                          (zubaf - yxtra(i,ixl))**2
                 if (dolnow.lt.dolubaf(iges)) then
                   dolubaf(iges)=dolnow
                   rolnow=xxtra(i,ixl)
@@ -2046,7 +2088,7 @@
               endif
             enddo
             dolubaf(iges)=100.0*sqrt(dolubaf(iges))
-            if (rolnow.gt.rubaf) dolubaf(iges)=-dolubaf(iges)
+            if(rolnow.gt.rubaf) dolubaf(iges)=-dolubaf(iges)
           endif
         elseif (zavs(1).lt.ycutm.and.ravs(1).gt.rsymin) then
 !------------------------------------------------------------------
@@ -2085,25 +2127,25 @@
         psiout=psibry
         dsiout=psinow-psiout
         do i=1,nmax
-         k= nmax-i +1
-         rrin=rgrid(k)
-         call seva2d(bkx,lkx,bky,lky,c,rrin,znow,pds,ier,n111)
-         psiin =pds(1)
-         dsiin =psinow-psiin
-         if (dsiin*dsiout.le.0.0) then
-           do n=1,20
-            rmm=0.5_dp*(rrin+rrout)
-            call seva2d(bkx,lkx,bky,lky,c,rmm ,znow,pds,ier,n111)
-            psimm=pds(1)
-            dsimm=psinow-psimm
-            if (dsimm*dsiin.le.0.0) then
-              rrout=rmm
-            else
-              rrin=rmm
-            endif
-           enddo
-           exit
-         endif
+          k= nmax-i +1
+          rrin=rgrid(k)
+          call seva2d(bkx,lkx,bky,lky,c,rrin,znow,pds,ier,n111)
+          psiin =pds(1)
+          dsiin =psinow-psiin
+          if (dsiin*dsiout.le.0.0) then
+            do n=1,20
+              rmm=0.5_dp*(rrin+rrout)
+              call seva2d(bkx,lkx,bky,lky,c,rmm ,znow,pds,ier,n111)
+              psimm=pds(1)
+              dsimm=psinow-psimm
+              if (dsimm*dsiin.le.0.0) then
+                rrout=rmm
+              else
+                rrin=rmm
+              endif
+            enddo
+            exit
+          endif
         enddo
         diludomm(iges)=100.0*(xmin-rrin)
       endif
@@ -2119,24 +2161,24 @@
         psiin=psibry
         dsiin =psinow-psiin
         do k=nmin,nw
-         rrout=rgrid(k)
-         call seva2d(bkx,lkx,bky,lky,c,rrout,znow,pds,ier,n111)
-         psiout=pds(1)
-         dsiout=psinow-psiout
-         if (dsiin*dsiout.le.0.0) then
-           do n=1,20
-            rmm=0.5_dp*(rrin+rrout)
-            call seva2d(bkx,lkx,bky,lky,c,rmm ,znow,pds,ier,n111)
-            psimm=pds(1)
-            dsimm=psinow-psimm
-            if (dsimm*dsiin.le.0.0) then
-              rrout=rmm
-            else
-              rrin=rmm
-            endif
-           enddo
-           exit
-         endif
+          rrout=rgrid(k)
+          call seva2d(bkx,lkx,bky,lky,c,rrout,znow,pds,ier,n111)
+          psiout=pds(1)
+          dsiout=psinow-psiout
+          if (dsiin*dsiout.le.0.0) then
+            do n=1,20
+              rmm=0.5_dp*(rrin+rrout)
+              call seva2d(bkx,lkx,bky,lky,c,rmm ,znow,pds,ier,n111)
+              psimm=pds(1)
+              dsimm=psinow-psimm
+              if (dsimm*dsiin.le.0.0) then
+                rrout=rmm
+              else
+                rrin=rmm
+              endif
+            enddo
+            exit
+          endif
         enddo
         dolubafm(iges)=100.*(rrout-xmax)
       endif
@@ -2184,7 +2226,7 @@
             rlinnose=xxtra(i,ixl)+(xxtra(i+1,ixl)-xxtra(i,ixl))/ &
              (yxtra(i+1,ixl)-yxtra(i,ixl))*(znose-yxtra(i,ixl))
             sepnose=(rlinnose-rsepnose)*100.
-            if (rsepnose.le.0.0) sepnose=-999.
+            if(rsepnose.le.0.0) sepnose=-999.
             exit
           endif
         enddo
@@ -2204,7 +2246,7 @@
         if (fxmin.gt.1.e-30_dp) then
           fexpan=fxmax/fxmin
           fexpvs=fvsmax/fxmin
-          if (fszmax.ge.0.0) fexpvs=-999.
+          if(fszmax.ge.0.0) fexpvs=-999.
         endif
       endif
 !---------------------------------------------------------------------------
@@ -2241,7 +2283,7 @@
          xxtras=xxtraa-dxtra*i
          yxtras=yxtraa
         endif
-        if (xxtras.le.rgrid(1).or.xxtras.ge.rgrid(nw)) cycle
+        if(xxtras.le.rgrid(1).or.xxtras.ge.rgrid(nw)) cycle
         if (pasmat(iges).lt.-1.e3_dp) then
          nerr=10000
         else
@@ -2264,7 +2306,7 @@
          enddo
          sepexp(iges)=sepexp(iges)*100.
         endif
-        if (nextra.gt.0) cycle
+        if(nextra.gt.0) cycle
         do n=1,npxtra(ixl)
          call seva2d(bkx,lkx,bky,lky,c,xxtra(n,ixl),yxtra(n,ixl), &
                      pds,ier,n333)
@@ -2328,7 +2370,7 @@
         npress=ii
       endif
 !
-      if (kvtor.gt.0) &
+      if(kvtor.gt.0) &
         call zpline(nw,xsisii,pressw,bpresw,cpresw,dpresw)
       delerr=0.0
       delerb=0.0
@@ -2362,8 +2404,7 @@
            endif
            if (kvtor.eq.2) then
              presss=press0*(1.+0.5_dp*pwp0r2**2)+preww0*rgrvt(i)
-           endif
-           if (kvtor.eq.3) then
+           elseif (kvtor.eq.3) then
              presss=press0*exp(pwp0r2)
            endif
            prettt=prewww+presss
@@ -2394,8 +2435,8 @@
 !--------------------------------------------------------------------------
 !--     evaluate -del*psi/R/mu0                                          --
 !--------------------------------------------------------------------------
-        if (i.eq.1.or.i.eq.nw) cycle
-        if (j.eq.1.or.j.eq.nh) cycle
+        if(i.eq.1.or.i.eq.nw) cycle
+        if(j.eq.1.or.j.eq.nh) cycle
         kip=i*nh+j
         kim=(i-2)*nh+j
         kjp=(i-1)*nh+j+1
@@ -2411,7 +2452,7 @@
 !--------------------------------------------------------------------------
 !--     total psi for inside plasma only                                 --
 !--------------------------------------------------------------------------
-        if (xpsi(kk).gt.0.999_dp) cycle
+        if(xpsi(kk).gt.0.999_dp) cycle
         d2sidr2=(psiold(kip)-2.*psiold(kk)+psiold(kim))/drgrid**2
         d2sidz2=(psiold(kjp)-2.*psiold(kk)+psiold(kjm))/dzgrid**2
         dsidr=(psiold(kip)-psiold(kim))/2./drgrid
@@ -2464,7 +2505,7 @@
       if (fwtdlc.gt.0.0) then
         chidlc=((diamag(iges)-cdflux(iges))/sigdia(iges))**2
       endif
-      chitot=chipre+tsaisq(iges)+chidlc
+      chitot=chipre+chifin+chidlc
       if (idiart.gt.0) then
         bp2flx=bpolav(iges)**2
         dmui=1.0e+06_dp*diamag(iges)*4.*pi*bcentr(iges)*rcentr &
@@ -2532,18 +2573,18 @@
         if (zbbbs(i).eq.0.0) then
           rmid2(i2)= rbbbs(i)
           i2=i2+1
-        else if (zbbbs(i)*zbbbs(i+1).lt.0.0) then
+        elseif (zbbbs(i)*zbbbs(i+1).lt.0.0) then
           rmid2(i2)=(rbbbs(i)+rbbbs(i+1))/2.0
           i2=i2+1
         endif
-        if (i2.gt.2) exit
+        if(i2.gt.2) exit
       enddo
       rmidin(iges) = min(rmid2(1),rmid2(2))
       rmidout(iges)= max(rmid2(1),rmid2(2))
 !
       if (kprfit.gt.0) then
         do i=1,npress
-          if (rpress(i).le.0.0) cycle
+          if(rpress(i).le.0.0) cycle
           call seva2d(bkx,lkx,bky,lky,c,rpress(i),zpress(i),pds,ier,n111)
           rpress(i)=-(simag-pds(1))/sidif
         enddo
@@ -2563,44 +2604,44 @@
            sjtlir(i)=-pds(6)/rnow/twopi/tmu/1000.
            sjtli(i)=sjtlir(i)+sjtliz(i)
            xpsikk=(pds(1)-simag)/(psibry-simag)
-           if (xpsikk.lt.0.0) xpsikk=0.0
+           if(xpsikk.lt.0.0) xpsikk=0.0
            cjtli(i)=rnow*ppcurr(xpsikk,kppcur) &
                       +fpcurr(xpsikk,kffcur)/rnow
            cjtli(i)=cjtli(i)/darea/1000.
         enddo
-        call getfnmd('q',ishot,itime,sfname)
+        call setfnmd('q',ishot,itime,sfname)
         sfname=sfname(1:13)//'_jtorli'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         xdum=0.0
         do i=1,nw
           write (74,*) rjtli(i),cjtli(i),xdum,xdum
         enddo
         close(unit=74)
-        call getfnmd('q',ishot,itime,sfname)
+        call setfnmd('q',ishot,itime,sfname)
         sfname=sfname(1:13)//'_jtsli'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         xdum=0.0
         do i=1,nw
           write (74,*) rjtli(i),sjtli(i),xdum,xdum
         enddo
         close(unit=74)
-        call getfnmd('q',ishot,itime,sfname)
+        call setfnmd('q',ishot,itime,sfname)
         sfname=sfname(1:13)//'_jtslir'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,nw
           write (74,*) rjtli(i),sjtlir(i),xdum,xdum
         enddo
         close(unit=74)
-        call getfnmd('q',ishot,itime,sfname)
+        call setfnmd('q',ishot,itime,sfname)
         sfname=sfname(1:13)//'_jtsliz'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,nw
           write (74,*) rjtli(i),sjtliz(i),xdum,xdum
@@ -2611,7 +2652,7 @@
 !
       if (dco2v(iges,2).gt.1.e+10_dp) then
         partic=dco2v(iges,2)*vout(iges)
-        if (partic.gt.1.0e+10_dp) tave(iges)=wplasm(iges)/partic/3. &
+        if(partic.gt.1.0e+10_dp) tave(iges)=wplasm(iges)/partic/3. &
                                                          /1.602e-16_dp
         resist=vloopt(iges)/cpasma(iges)
         zeta=resist*areao(iges)/twopi/rout(iges)
@@ -2629,8 +2670,9 @@
           else
             dttt=0.0
           endif
-          if (igmax.eq.1) dttt=5.
-          call getzeff(ishot,igmax,time(1),dttt,temp,tave,zeff,ier)
+          if(igmax.eq.1) dttt=5.
+          ! DEPRECATED (no longer implemented)
+          !call getzeff(ishot,igmax,time(1),dttt,temp,tave,zeff,ier)
         endif
       endif
 !------------------------------------------------------------------
@@ -2709,19 +2751,16 @@
       write (6,*) 'Call SHAPE/PLTOUT kerror = ', kerror
       write (6,*) 'ifitvs, icutfp, fpolvs(ka) = ', ifitvs,icutfp,fpolvs/1000.
 #endif
-      if (ifitvs.gt.0.or.icutfp.eq.2) then
+      if(ifitvs.gt.0.or.icutfp.eq.2) &
         write (6,*) 'ifitvs, icutfp, fpolvs(ka) = ', ifitvs,icutfp,fpolvs/1000.
-      endif
       if (itek.gt.0) then
-        if (idplace.ne.0) then
-          continue ! do nothing...
-        else
+        if (idplace.eq.0) then
 #ifdef DEBUG_LEVEL1
           write (6,*) 'Before SHAPE/PLTOUT'
 #endif
           call pltout(xout,yout,nfound,iges,nnn, &
                       xmin,xmax,ymin,ymax,igmax,kerror)
-          if (kerror.gt.0) return
+          if(kerror.gt.0) return
 #ifdef DEBUG_LEVEL1
           write (6,*) 'After SHAPE/PLTOUT'
 #endif
@@ -2732,19 +2771,14 @@
 #endif
       if ((itrace.gt.1) .and. (abs(dpsi).le.psitol)) then
         if (itek.gt.0) then
-           if (idplace.ne.0) then
-             continue ! do nothing...
-           else
+           if (idplace.eq.0) then
              call pltout(xouts,youts,nfouns,jges,n22, &
                          xmins,xmaxs,ymins,ymaxs,igmax,kerror)
-             if (kerror.gt.0) return
+             if(kerror.gt.0) return
            endif
         endif
       endif
-      if ((itek.eq.2).and.(iges.eq.igmax)) call donepl
-      if ((itek.eq.4).and.(iges.eq.igmax)) call donepl
-      if ((itek.ge.5).and.(iges.eq.igmax)) call closepl
-      if ((ilaser.gt.0).and.(iges.eq.igmax)) call donepl
+      if((itek.ge.5).and.(iges.eq.igmax)) close(unit=35)
 !-----------------------------------------------------------------------
 !--   vertical stability parameter,  reference Nuc Fusion  18(1978)1331
 !--   move out of pltout so that vertn, xnnc are indepent of itek value
@@ -2794,10 +2828,7 @@
         call pltout(xout,yout,nzz,iges,nnn,zxx,zxx,zxx,zxx,igmax,kerror)
         if (kerror.gt.0) return
       endif
-      if ((itek.eq.2).and.(iges.eq.igmax)) call donepl
-      if ((itek.eq.4).and.(iges.eq.igmax)) call donepl
-      if ((itek.ge.5).and.(iges.eq.igmax)) call closepl
-      if ((ilaser.gt.0).and.(iges.eq.igmax)) call donepl
+      if ((itek.ge.5).and.(iges.eq.igmax)) close(unit=35)
       ! initialize output variables that weren't set
       zout=0.0
       eout=0.0
@@ -2912,18 +2943,18 @@
 !--   write out r(shot).(time)_X files in rho space                   --
 !-----------------------------------------------------------------------
       kwripre_r: if (kwripre.eq.3) then
-        call getfnmd('r',ishot,itime,sfname)
+        call setfnmd('r',ishot,itime,sfname)
         sfname=sfname(1:13)//'_qpsi'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,nw
           write (74,*) rhovn(i),qpsi(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_jor'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,nw
           cjorka=cjor(i)/1000.
@@ -2931,8 +2962,8 @@
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_jorec'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,nw
           cjorka=cjorec(i)/1000.
@@ -2940,8 +2971,8 @@
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_cjmse'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         if (ishot.le.97400) then
           mcentral=15
@@ -2954,8 +2985,8 @@
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_cjmsec'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,mcentral+1
           cjorka=cjmsec(i)/1000.
@@ -2963,32 +2994,32 @@
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_bzmse'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,nstark
           write (74,*) rhogam(i),bzmse(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_bzmsec'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,nstark
           write (74,*) rhogam(i),bzmsec(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_presf'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,nw
-            write (74,*) rhovn(i),pres(i),xdum,xdum
+          write (74,*) rhovn(i),pres(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_presd'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,npress
           xmnow=-rpress(i)
@@ -2997,8 +3028,8 @@
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_pbeam'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if (ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ier)
+        if(ier.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=1,nbeam
           xmnow=sibeam(i)
@@ -3008,23 +3039,21 @@
         close(unit=74)
         if (keecur.gt.0) then
           sfname=sfname(1:13)//'_wexb'
-          open(unit=74,status='old',file=sfname,iostat=ioerr)
-          if (ioerr.eq.0) close(unit=74,status='delete')
+          open(unit=74,status='old',file=sfname,iostat=ier)
+          if(ier.eq.0) close(unit=74,status='delete')
           open(unit=74,status='new',file=sfname)
           do i=1,nw
-            if (rpmid(i).ge.rmaxis) then
+            if(rpmid(i).ge.rmaxis) &
               write (74,*) rhopmid(i),eshear(i),xdum,xdum
-            endif
           enddo
           close(unit=74)
           sfname=sfname(1:13)//'_errho'
-          open(unit=74,status='old',file=sfname,iostat=ioerr)
-          if (ioerr.eq.0) close(unit=74,status='delete')
+          open(unit=74,status='old',file=sfname,iostat=ier)
+          if(ier.eq.0) close(unit=74,status='delete')
           open(unit=74,status='new',file=sfname)
           do i=1,nw
-            if (rpmid(i).ge.rmaxis) then
+            if(rpmid(i).ge.rmaxis) &
               write (74,*) rhopmid(i),ermid(i),xdum,xdum
-            endif
           enddo
           close(unit=74)
         endif

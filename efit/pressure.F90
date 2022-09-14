@@ -1,261 +1,5 @@
 !**********************************************************************
 !>
-!!    prcur4 computes the plasma pressure by integration.
-!!    
-!!
-!!    @param n1set :
-!!
-!!    @param ypsi :
-!!
-!!    @param nnn :
-!!
-!**********************************************************************
-      function prcur4(n1set,ypsi,nnn)
-      use commonblocks,only: sifpre,bwpre,cwpre,dwpre,sfpre,sprep
-      include 'eparm.inc'
-      include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-      if (abs(ypsi).gt.1.0) then
-       prcur4=0.0
-       return
-      endif
-!
-      if (n1set.gt.0) then
-       do i=2,nw-1
-        siii=real(i-1,dp)/(nw-1)
-        sifpre(i)=siii
-       enddo
-       sifpre(1)=0.0
-       sifpre(nw)=1.0
-       do i=1,nw
-        sprep(i)=ppcur4(sifpre(i),kppcur)/darea
-       enddo
-!
-       sfpre(nw)=prbdry
-       delsi=sidif/(nw-1)
-       do i=1,nw-1
-        sfpre(nw-i)=sfpre(nw-i+1)+0.5_dp*(sprep(nw-i+1)+sprep(nw-i))*delsi
-       enddo
-!
-       mw=nw
-       call zpline(mw,sifpre,sfpre,bwpre,cwpre,dwpre)
-      endif
-      prcur4=seval(mw,ypsi,sifpre,sfpre,bwpre,cwpre,dwpre)
-      return
-      end function prcur4
-
-
-!**********************************************************************
-!>
-!!    ppcur4 computes the radial derivative of the
-!!    pressure based on icurrt.
-!!    
-!!
-!!    @param ypsi :
-!!
-!!    @param nnn :
-!!
-!**********************************************************************
-      function ppcur4(ypsi,nnn)
-      include 'eparm.inc'
-      include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-      if (abs(ypsi).gt.1.0) then
-        ppcur4=0.0
-        return
-      endif
-      select case (icurrt)
-      case (1)
-        ppcur4=cratio*sbeta/srma
-      case (4)
-        ppcur4=((1.-ypsi**enp)**emp*(1.-gammap)+gammap)*cratio &
-                /rzero
-      case default
-        ppcur4=ppcurr(ypsi,nnn)
-      end select
-      return
-      end function ppcur4
-
-
-!**********************************************************************
-!>
-!!    ppcurr computes the radial derivative of the
-!!    pressure.
-!!    
-!!
-!!    @param ypsi :
-!!
-!!    @param nnn :
-!!
-!**********************************************************************
-      function ppcurr(ypsi,nnn)
-      include 'eparm.inc'
-      include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xpsii(nppcur)
-!
-      if (abs(ypsi).gt.1.0) then
-        ppcurr=0.0
-        return
-      endif
-      if (npsi_ext > 0) then
-        ppcurr = seval(npsi_ext,ypsi,psin_ext,pprime_ext,bpp_ext,cpp_ext,dpp_ext)
-        ppcurr = ppcurr * cratiop_ext
-        return
-      endif
-      ppcurr=0.0
-      call setpp(ypsi,xpsii)
-      do iiij=nfcoil+1,nnn+nfcoil
-        iijj=iiij-nfcoil
-        ppcurr=ppcurr+brsp(iiij)*xpsii(iijj)
-      enddo
-!----------------------------------------------------------------------
-!--   edge hyperbolic tangent component                              --
-!----------------------------------------------------------------------
-      if (kedgep.eq.0) return
-      siedge=(ypsi-pe_psin)/pe_width
-      p0back=pedge/pe_width/sidif
-      ppcurr=ppcurr+p0back/cosh(siedge)**2
-      return
-!
-      entry prcurr(ypsi,nnn)
-      if (abs(ypsi).gt.1.0) then
-        prcurr=0.0
-        return
-      endif
-      brspp=0.0
-      prcurr=0.0
-      call setpr(ypsi,xpsii)
-      do i=nfcoil+1,nfcoil+nnn
-        nn=i-nfcoil
-        prcurr=prcurr+brsp(i)*xpsii(nn)
-      enddo
-      prcurr=-sidif*prcurr/darea+prbdry
-!----------------------------------------------------------------------
-!--   edge hyperbolic tangent component                              --
-!----------------------------------------------------------------------
-      if (kedgep.eq.0) return
-      siedge=(ypsi-pe_psin)/pe_width
-      prcurr=prcurr+pedge/darea*(tpedge-tanh(siedge))
-      return
-      end function ppcurr
-
-
-!**********************************************************************
-!>
-!!    presurw computes the relevant parameters for rotational
-!!    pressure profile fitting.
-!!    
-!!
-!!    @param jtime : time index
-!!
-!!    @param niter : iteration number
-!!
-!**********************************************************************
-      subroutine presurw(jtime,niter)
-      use commonblocks,only: c,bkx,bky
-      include 'eparm.inc'
-      include 'modules2.inc'
-      include 'modules1.inc'
-      implicit none
-      real*8 seval,pwpcur
-      integer*4, intent(in) :: jtime,niter
-      integer*4 init,i,ier,m
-      real*8 pds(6),xn,xbaseb,rnow,znow,dmnow
-      real*8,dimension(:),allocatable ::ybase,ybaseb
-      real*8,dimension(:),allocatable :: bwork,cwork,dwork
-      data init/0/
-      save init
-
-      allocate(ybase(nwwcur),ybaseb(nwwcur),bwork(nmass),cwork(nmass),dwork(nmass))
-!
-      kdofit=1
-      
-!--   construct rotational pressure from kinetic data has not been setup
-      if (kprfit.eq.4) return
-      if (nmass*nomegat.le.0) then
-!------------------------------------------------------------------------
-!--     specify the rotational pressure profile directly               --
-!------------------------------------------------------------------------
-        do i=1,npresw
-          xn=-rpresw(i)
-          if (rpresw(i).gt.0.0) then
-            call seva2d(bkx,lkx,bky,lky,c,rpresw(i),zpresw(i),pds,ier,n333)
-            xn=(simag-pds(1))/sidif
-          endif
-          rpresws(i)=xn
-          call setpw(xn,ybase)
-          call setpwp(xn,ybaseb)
-          xbaseb=ybaseb(kwwcur)*xn**2
-          do m=1,kwwcur
-            rprwpc(i,m)=-sidif*ybase(m)/darea
-          enddo
-!----------------------------------------------------------------------
-!--       response for DELTAZ                                        --
-!----------------------------------------------------------------------
-          if (fitdelz.and.niter.ge.ndelzon) then
-            if (rpresw(i).le.0.0) then
-              rprwdz(i)=0.0
-            else
-              rprwdz(i)=pds(3)*pwpcur(xn,kwwcur)/darea
-            endif
-          endif
-        enddo
-        return
-      endif
-
-!------------------------------------------------------------------------
-!--   form rotational pressure from mass density and rotaional frequency
-!------------------------------------------------------------------------
-      if (init.eq.0) then
-!------------------------------------------------------------------------
-!--     set up interpolation                                           --
-!------------------------------------------------------------------------
-        call zpline(nmass,sibeam,dmass,bwork,cwork,dwork)
-        init=1
-      endif
-      do i=1,nomegat
-        xn=-romegat(i)
-        if (romegat(i).gt.0.0) then
-          rnow=romegat(i)
-          znow=zomegat(i)
-          call seva2d(bkx,lkx,bky,lky,c,rnow,znow,pds,ier,n333)
-          xn=(simag-pds(1))/sidif
-        endif
-        rpresw(i)=-xn
-        rpresws(i)=xn
-        dmnow=seval(nmass,xn,sibeam,dmass,bwork,cwork,dwork)
-        
-        presw(i)=dmnow*omegat(i)*rvtor**2
-        sigprw(i)=abs(presw(i))*sigome(i)
-        presw(i)=0.5_dp*presw(i)*omegat(i)
-        call setpw(xn,ybase)
-        call setpwp(xn,ybaseb)
-        xbaseb=ybaseb(kwwcur)*xn**2
-        do m=1,kwwcur
-          rprwpc(i,m)=-sidif*ybase(m)/darea
-        enddo
-!----------------------------------------------------------------------
-!--     response for DELTAZ                                          --
-!----------------------------------------------------------------------
-        if (fitdelz.and.niter.ge.ndelzon) then
-          if (romegat(i).le.0.0) then
-            rprwdz(i)=0.0
-          else
-            rprwdz(i)=pds(3)*pwpcur(xn,kwwcur)/darea
-          endif
-        endif
-      enddo
-      npresw=nomegat
-!
-      return
-
-      end subroutine presurw
-
-!**********************************************************************
-!>
 !!    presur computes the relevant parameters for pressure
 !!    profile fitting.
 !!    
@@ -400,7 +144,7 @@
         rpress(npress)=-1.0
       endif
       if (ndokin.ge.100) then
-        call getfnmu(itimeu,'k',ishot,itime,edatname)
+        call setfnmeq(itimeu,'k',ishot,itime,edatname)
         edatname='edat_'//edatname(2:7)// &
                        '_'//edatname(9:13)//'.pressure'
         open(unit=nin,status='old',file=edatname,iostat=ier)
@@ -412,6 +156,286 @@
       return
       end subroutine presur
 
+!**********************************************************************
+!>
+!!    ppcurr computes the radial derivative of the
+!!    pressure.
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param nnn :
+!!
+!**********************************************************************
+      function ppcurr(ypsi,nnn)
+      include 'eparm.inc'
+      include 'modules1.inc'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      dimension xpsii(nppcur)
+!
+      if (abs(ypsi).gt.1.0) then
+        ppcurr=0.0
+        return
+      endif
+      if (npsi_ext > 0) then
+        ppcurr = seval(npsi_ext,ypsi,psin_ext,pprime_ext,bpp_ext,cpp_ext,dpp_ext)
+        ppcurr = ppcurr * cratiop_ext
+        return
+      endif
+      ppcurr=0.0
+      call setpp(ypsi,xpsii)
+      do iiij=nfcoil+1,nnn+nfcoil
+        iijj=iiij-nfcoil
+        ppcurr=ppcurr+brsp(iiij)*xpsii(iijj)
+      enddo
+!----------------------------------------------------------------------
+!--   edge hyperbolic tangent component                              --
+!----------------------------------------------------------------------
+      if (kedgep.eq.0) return
+      siedge=(ypsi-pe_psin)/pe_width
+      p0back=pedge/pe_width/sidif
+      ppcurr=ppcurr+p0back/cosh(siedge)**2
+      return
+!
+      entry prcurr(ypsi,nnn)
+      if (abs(ypsi).gt.1.0) then
+        prcurr=0.0
+        return
+      endif
+      brspp=0.0
+      prcurr=0.0
+      call setpr(ypsi,xpsii)
+      do i=nfcoil+1,nfcoil+nnn
+        nn=i-nfcoil
+        prcurr=prcurr+brsp(i)*xpsii(nn)
+      enddo
+      prcurr=-sidif*prcurr/darea+prbdry
+!----------------------------------------------------------------------
+!--   edge hyperbolic tangent component                              --
+!----------------------------------------------------------------------
+      if (kedgep.eq.0) return
+      siedge=(ypsi-pe_psin)/pe_width
+      prcurr=prcurr+pedge/darea*(tpedge-tanh(siedge))
+      return
+      end function ppcurr
+
+!**********************************************************************
+!>
+!!    prcur4 computes the plasma pressure by integration.
+!!    
+!!
+!!    @param n1set :
+!!
+!!    @param ypsi :
+!!
+!!    @param nnn :
+!!
+!**********************************************************************
+      function prcur4(n1set,ypsi,nnn)
+      use commonblocks,only: sifpre,bwpre,cwpre,dwpre,sfpre,sprep
+      include 'eparm.inc'
+      include 'modules1.inc'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+
+      if (abs(ypsi).gt.1.0) then
+       prcur4=0.0
+       return
+      endif
+!
+      if (n1set.gt.0) then
+       do i=2,nw-1
+        siii=real(i-1,dp)/(nw-1)
+        sifpre(i)=siii
+       enddo
+       sifpre(1)=0.0
+       sifpre(nw)=1.0
+       do i=1,nw
+        sprep(i)=ppcur4(sifpre(i),kppcur)/darea
+       enddo
+!
+       sfpre(nw)=prbdry
+       delsi=sidif/(nw-1)
+       do i=1,nw-1
+        sfpre(nw-i)=sfpre(nw-i+1)+0.5_dp*(sprep(nw-i+1)+sprep(nw-i))*delsi
+       enddo
+!
+       mw=nw
+       call zpline(mw,sifpre,sfpre,bwpre,cwpre,dwpre)
+      endif
+      prcur4=seval(mw,ypsi,sifpre,sfpre,bwpre,cwpre,dwpre)
+      return
+      end function prcur4
+
+!**********************************************************************
+!>
+!!    ppcur4 computes the radial derivative of the
+!!    pressure based on icurrt.
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param nnn :
+!!
+!**********************************************************************
+      function ppcur4(ypsi,nnn)
+      include 'eparm.inc'
+      include 'modules1.inc'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+
+      if (abs(ypsi).gt.1.0) then
+        ppcur4=0.0
+        return
+      endif
+      select case (icurrt)
+      case (1)
+        ppcur4=cratio*sbeta/srma
+      case (4)
+        ppcur4=((1.-ypsi**enp)**emp*(1.-gammap)+gammap)*cratio &
+                /rzero
+      case default
+        ppcur4=ppcurr(ypsi,nnn)
+      end select
+      return
+      end function ppcur4
+
+!**********************************************************************
+!>
+!!    presurw computes the relevant parameters for rotational
+!!    pressure profile fitting.
+!!    
+!!
+!!    @param jtime : time index
+!!
+!!    @param niter : iteration number
+!!
+!**********************************************************************
+      subroutine presurw(jtime,niter)
+      use commonblocks,only: c,bkx,bky
+      include 'eparm.inc'
+      include 'modules2.inc'
+      include 'modules1.inc'
+      implicit none
+      real*8 seval,pwpcur
+      integer*4, intent(in) :: jtime,niter
+      integer*4 init,i,ier,m
+      real*8 pds(6),xn,xbaseb,rnow,znow,dmnow
+      real*8,dimension(:),allocatable ::ybase,ybaseb
+      real*8,dimension(:),allocatable :: bwork,cwork,dwork
+      data init/0/
+
+      allocate(ybase(nwwcur),ybaseb(nwwcur),bwork(nmass),cwork(nmass),dwork(nmass))
+!
+      kdofit=1
+      
+!--   construct rotational pressure from kinetic data has not been setup
+      if (kprfit.eq.4) return
+      if (nmass*nomegat.le.0) then
+!------------------------------------------------------------------------
+!--     specify the rotational pressure profile directly               --
+!------------------------------------------------------------------------
+        do i=1,npresw
+          xn=-rpresw(i)
+          if (rpresw(i).gt.0.0) then
+            call seva2d(bkx,lkx,bky,lky,c,rpresw(i),zpresw(i),pds,ier,n333)
+            xn=(simag-pds(1))/sidif
+          endif
+          rpresws(i)=xn
+          call setpw(xn,ybase)
+          call setpwp(xn,ybaseb)
+          xbaseb=ybaseb(kwwcur)*xn**2
+          do m=1,kwwcur
+            rprwpc(i,m)=-sidif*ybase(m)/darea
+          enddo
+!----------------------------------------------------------------------
+!--       response for DELTAZ                                        --
+!----------------------------------------------------------------------
+          if (fitdelz.and.niter.ge.ndelzon) then
+            if (rpresw(i).le.0.0) then
+              rprwdz(i)=0.0
+            else
+              rprwdz(i)=pds(3)*pwpcur(xn,kwwcur)/darea
+            endif
+          endif
+        enddo
+        return
+      endif
+!------------------------------------------------------------------------
+!--   form rotational pressure from mass density and rotaional frequency
+!------------------------------------------------------------------------
+      if (init.eq.0) then
+!------------------------------------------------------------------------
+!--     set up interpolation                                           --
+!------------------------------------------------------------------------
+        call zpline(nmass,sibeam,dmass,bwork,cwork,dwork)
+        init=1
+      endif
+      do i=1,nomegat
+        xn=-romegat(i)
+        if (romegat(i).gt.0.0) then
+          rnow=romegat(i)
+          znow=zomegat(i)
+          call seva2d(bkx,lkx,bky,lky,c,rnow,znow,pds,ier,n333)
+          xn=(simag-pds(1))/sidif
+        endif
+        rpresw(i)=-xn
+        rpresws(i)=xn
+        dmnow=seval(nmass,xn,sibeam,dmass,bwork,cwork,dwork)
+        
+        presw(i)=dmnow*omegat(i)*rvtor**2
+        sigprw(i)=abs(presw(i))*sigome(i)
+        presw(i)=0.5_dp*presw(i)*omegat(i)
+        call setpw(xn,ybase)
+        call setpwp(xn,ybaseb)
+        xbaseb=ybaseb(kwwcur)*xn**2
+        do m=1,kwwcur
+          rprwpc(i,m)=-sidif*ybase(m)/darea
+        enddo
+!----------------------------------------------------------------------
+!--     response for DELTAZ                                          --
+!----------------------------------------------------------------------
+        if (fitdelz.and.niter.ge.ndelzon) then
+          if (romegat(i).le.0.0) then
+            rprwdz(i)=0.0
+          else
+            rprwdz(i)=pds(3)*pwpcur(xn,kwwcur)/darea
+          endif
+        endif
+      enddo
+      npresw=nomegat
+!
+      return
+
+      end subroutine presurw
+
+!**********************************************************************
+!>
+!!    pwpcur computes the radial derivative of the
+!!    rotational pressure
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param nnn :
+!!
+!**********************************************************************
+      function pwpcur(ypsi,nnn)
+      include 'eparm.inc'
+      include 'modules1.inc'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      dimension xpsii(nwwcur)
+
+      if (abs(ypsi).gt.1.0) then
+        pwpcur=0.0
+        return
+      endif
+      pwpcur=0.0
+      call setpwp(ypsi,xpsii)
+      do iiij=nfnpcr+1,nnn+nfnpcr
+        iijj=iiij-nfnpcr
+        pwpcur=pwpcur+brsp(iiij)*xpsii(iijj)
+      enddo
+      return
+      end function pwpcur
 
 !**********************************************************************
 !>
@@ -460,7 +484,6 @@
       return
       end function pwcur4
 
-
 !**********************************************************************
 !>
 !!    pwpcu4 computes the radial derivative of the
@@ -493,38 +516,6 @@
 
       return
       end function pwpcu4
-
-
-!**********************************************************************
-!>
-!!    pwpcur computes the radial derivative of the
-!!    rotational pressure
-!!    
-!!
-!!    @param ypsi :
-!!
-!!    @param nnn :
-!!
-!**********************************************************************
-      function pwpcur(ypsi,nnn)
-      include 'eparm.inc'
-      include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xpsii(nwwcur)
-
-      if (abs(ypsi).gt.1.0) then
-        pwpcur=0.0
-        return
-      endif
-      pwpcur=0.0
-      call setpwp(ypsi,xpsii)
-      do iiij=nfnpcr+1,nnn+nfnpcr
-        iijj=iiij-nfnpcr
-        pwpcur=pwpcur+brsp(iiij)*xpsii(iijj)
-      enddo
-      return
-      end function pwpcur
-
 
 !**********************************************************************
 !>

@@ -1,0 +1,160 @@
+Variable, Description
+AAQ1, minor radius of q=1 surface in cm, 100 if not found
+AAQ2, minor radius of q=2 surface in cm, 100 if not found
+AAQ3, minor radius of q=3 surface in cm, 100 if not found
+ALI, li with normalization average poloidal magnetic defined
+through Ampere’s law
+ALPHA, Shafranov boundary line integral parameter
+AOUT, plasma minor radius in cm
+AREAO, cross sectional area in cm 2
+BCENTR, vacuum toroidal magnetic field in Tesla at RCENCM
+BETAP, poloidal β with normalization average poloidal magnetic BPOLAV
+defined through Ampere’s law
+BETAPD, diamagnetic poloidal β
+BETAT, toroidal β in %
+BETATD, diamagnetic toroidal β in %
+BPOLAV, average poloidal magnetic field in Tesla defined through
+Ampere’s law
+BTAXP, toroidal magnetic field at magnetic axis in Tesla
+BTAXV, vacuum toroidal magnetic field at magnetic axis in Tesla
+CCBRSP, computed external coil currents in Ampere
+CDFLUX, computed diamagnetic flux in Volt-sec
+CHILIBT, total χ2 Li beam
+CHIGAMT, total χ2 MSE
+CHIPRE, total χ2 pressure
+CHIPRE, total χ2 pressure
+CJ1AVE, normalized average current density in plasma outer 5%
+normalized poloidal flux region
+CJOR0, normalized axial flux surface average current density
+CJOR95, normalized flux surface average current density at 95% of
+normalized poloidal flux
+CJOR99, normalized flux surface average current density at 99% of
+normalized poloidal flux
+CONDNO, Condition number
+CPASMA, fitted plasma toroidal current in Ampere-turn
+CPROF, current profile parametrization parameter
+CSILOP, computed flux loop signals in Weber
+DCO2R, line average electron density in cm 3 from radial CO 2 chord
+DCO2V, line average electron density in cm 3 from vertical CO 2 chord
+DILUDOM, distance between separatrix inner leg to upper dome in cm
+DILUDOMM, distance between separatrix surface and upper dome at Rmin in cm
+DOLUBAF, distance between separatrix outer leg to upper baffle in cm
+Lao 9/10/04
+DOLUBAFM, distance between separatrix surface and upper baffle at Rmax in cm
+DMINLX, minimum distance between lower X point to limiter surface in cm
+DMINUX, minimum distance between upper X point to limiter surface in cm
+DOUTL, upper triangularity
+DOUTU, upper triangularity
+ECCURT, measured E-coil current in Ampere
+ELONGM, elongation at magnetic axis
+EOUT, Plasma boundary elongation
+FEXPAN, flux expansion at x point
+FEXPVS, flux expansion at outer lower vessel hit spot
+FLUXX, measured diamagnetic flux in Volt_sec
+JFLAG, error flag, 0 for error
+LFLAG, error flag, > 0 for error
+LIMLOC, plasma configuration. IN, OUT, TOP, and BOT for limiter
+configurations limited at inside, outside, top, and bottom. SNT,
+SNB, and DN for single null top, single null bottom, and double
+null configurations. MAR for marginally diverted configurations.
+MCO2V, number of vertical CO 2 density chords
+MCO2R, number of radial CO 2 density chords
+JFLAG, error flag, 0 for error
+NLOLD, number of previous version WRITE statements
+NLNEW, number of WRITE statements
+OBOTT, plasma bottom gap in cm
+OBOTS, bottom gap of external second separatrix in cm
+OLEFT, plasma inner gap in cm
+OLEFS, inner gap of external second separatrix in cm
+ORIGHT, plasma outer gap in cm
+ORIGHS, outer gap of external second separatrix in cm
+ORING, not used
+OTOP, plasma top gap in cm
+OTOPS, top gap of external second separatrix in cm
+PASMAT, measured plasma toroidal current in Ampere
+PBINJ, neutral beam injection power in Watts
+PEAK, ratio of central pressure to average pressure
+PP95, normalized P’(ψ) at 95% normalized poloidal flux
+PSIN21, normalized ψ at q = 2 surface
+PSIN32, normalized ψ at q = 3/2 surface
+PSURFA, plasma boundary surface area in m 2
+PSIREF, reference poloidal flux in VS/rad
+QMERCI, Mercier stability criterion on axial q(0), q(0) > QMERCI for stability
+QMFLAG, axial q(0) flag, FIX if constrained and CLC for float
+QOUT, q at plasma boundary
+QPSIB, q at 95% of poloidal flux
+QQMAGX, axial safety factor q(0)
+QQMIN, minimum safety factor q min
+QSTA,equivalent safety factor q *
+Lao 9/10/04
+RATSOL, ratio of the 1 cm external field line distances to separatrix surface
+at Rmin and Rmax
+RCENCM, major radius in cm for vacuum field BCENTR
+RCO2R, path length in cm of radial CO 2 density chord
+RCO2V, path length in cm of vertical CO 2 density chord
+RCURRT, major radius in cm of current centroid
+RMIDIN, inner major radius in m at Z=0.0
+RMIDOUT, outer major radius in m at Z=0.0
+RMAGX, major radius in cm at magnetic axis
+RQ32IN, Minimum major radius in cm of q=3/2 surface
+RQ21TOP, Major radius in cm at maximum Z of q=2 surface
+RQQMIN, normalized radius of q min , square root of normalized volume
+ROUT, major radius of geometric center in cm
+RSEPS, major radius of x point in cm
+RTTT, Shafranov boundary line integral parameter
+RVSID, major radius of lower vessel inner strike point in cm
+RVSIN, major radius of vessel inner hit spot in cm
+RVSIU, major radius of upper vessel inner strike point in cm
+RVSOD, major radius of lower vessel outer strike point in cm
+RVSOU, major radius of upper vessel outer strike point in cm
+RVSOUT, major radius of vessel outer hit spot in cm
+S1, S2, S3, Shafranov boundary line integrals
+SEPEXP, separatrix radial expansion in cm
+SEPLIM, > 0 for minimum gap in cm in divertor configurations, < 0
+absolute value for minimum distance to external separatrix in
+limiter configurations
+SEPNOS, radial distance in cm between x point and external field line at
+ZNOSE
+SHEARB, magnetic shear at 95% enclosed normalized poloidal flux
+SIBDRY, plasma boundary poloidal flux in Weber/rad
+SIMAGX, boundary poloidal flux in Weber/rad at magnetic axis
+SLANTL, gap to lower outboard limiter in cm
+SLANTU, gap to upper outboard limiter in cm
+SSEP, outboard radial distance to external second separatrix in cm for
+single null configurations, > 0 for SNT, < 0 for SNB, defaulted to
+be 40 cm
+SSI01,magnetic shear at 1% of normalized poloidal flux
+SSI95,magnetic shear at 95% of normalized poloidal flux
+TAUMHD, energy confinement time in ms
+TAUDIA, diamagnetic energy confinement time in ms
+TAVEM, average time in ms for magnetic and MSE data
+TERROR, equilibrium convergence error
+TIME, time in ms
+TSAISQ, total χ2 from magnetic probes, flux loops, Rogowskiand external
+coils
+VERTN, vacuum field index at current centroid
+VLOOPT, measured loop voltage in volt
+Lao 9/10/04
+VSURFA, plasma surface loop voltage in volt, E EQDSK only
+VOUT, plasma volume in m 3
+WBDOT, time derivative of poloidal magnetic energy in Watt, E EQDSK
+only
+WBDOT, time derivative of poloidal magnetic energy in Watt, E EQDSK
+only
+WPDOT, time derivative of plasma stored energy in Watt, E EQDSK
+only
+WPLASMD, diamagnetic plasma stored energy in Joule
+XNDNT, plasma boundary indentation
+XNNC, vertical stability parameter, vacuum field index normalized to
+critical index value
+YYY2, Shafranov Y2 current moment
+ZCURRT, Z in cm at current centroid
+ZMAGX, Z in cm at magnetic axis
+ZOUT, Z of geometric center in cm
+ZSEPS, Z of x point in cm
+ZVSID, Z of lower vessel inner strike point in cm
+ZVSIN, Z of vessel inner hit spot in cm
+ZVSIU, Z of upper vessel inner strike point in cm
+ZVSOD, Z of lower vessel outer strike point in cm
+ZVSOU, Z of upper vessel outer strike point in cm
+ZVSOUT, Z of vessel outer hit spot in cm

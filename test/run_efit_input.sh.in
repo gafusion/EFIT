@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Ubuntu tries to use threads even without implementation in program
+export OMP_NUM_THREADS=1
+
+# Sanity checks
+if ! test -e efit.input; then
+  echo "not running test because efit.input was not found"
+  exit 1
+fi
+if ! test -e @CURRENT_MACHINE_LINK_DIR@/green/dprobe.dat; then
+  echo "not running test because Greens tables were not found"
+  exit 1
+fi
+if ! test -e @CURRENT_MACHINE_LINK_DIR@/lim.dat; then
+  echo "not running test because limiter was not found"
+  exit 1
+fi
+
+# Remove any previous outputs
+rm -f run_efit.out
+outputs=( @EFIT_OUTPUTS@ )
+for prefix in ${outputs[*]}; do
+  for label in @EFIT_LABEL@; do
+    rm -f ${prefix}${label}
+  done
+done
+
+# Now run efit
+@MPICMD@ @NPROC@ @EFIT_EXEC@ @GRID_SIZE@ > run_efit.out
+
+# Pass the results of the efit command up so that CTest knows what happened
+exit $result

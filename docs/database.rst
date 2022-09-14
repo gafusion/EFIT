@@ -1,3 +1,5 @@
+.. highlight:: default
+
 Database
 ========
 
@@ -127,7 +129,8 @@ both vacuum and test shots, and only keeps non-vacuum and non-test shots.
      for the function find_goodShots() to sift through the discharges correctly.  
     
 The code snippet to prune out the:: 
-    # determine the `good' shots
+
+    # determine the "good" shots
     num_good_shots, goodID = findGoodShots(discharge_files)
 
 The main routine is as follows::

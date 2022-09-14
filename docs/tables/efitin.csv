@@ -1,119 +1,125 @@
 ﻿Variable, Default, Description
-ALPHAFP,See namelist IN1.
-ALTERNATE_POINTNAME_FILE,"The pointname file name of PCS data.
+ALPHAFP,,See namelist IN1.
+ALTERNATE_POINTNAME_FILE,,"The pointname file name of PCS data.
 | Default=pcsnames.dat.
 | If USE_ALTERNATE_POINTNAMES <> 0, this file is read."
-CALPA,See namelist IN1.
-CGAMA,See namelist IN1.
-CONDIN,See namelist IN1.
-CUTIP,See namelist IN1.
-DNMIN,See namelist IN1.
-DO_SPLINE_FIT,When true, spline fitting is used to obtain constraints at the times that equilibria are requested.  When false, the constraints are set to the nearest time that a measurement was made.  Default is .true.
-DTIME,Delta time between slices to analyze(?) in ms. (Does this override interactive input?)
-DTMSEFULL,See namelist INS.
-ELOMIN,See namelist IN1.
-ERRMIN,See namelist IN1.
-ERROR,See namelist IN1.
-FCURBD,See namelist IN1.
-FITZTS,See namelist IN1.
-FWACOIL,See namelist IN1.
-FWTBP,See namelist IN1.
-FWTCUR,See namelist IN1.
-FWTDLC,See namelist IN1.
-FWTFC,See namelist IN1.
-FWTGAM,See namelist IN1.
-FWTMP2,See namelist IN1.
-FWTQA,See namelist IN1.
-FWTSI,See namelist IN1.
-IACOIL,See namelist IN1.
-IAVED,See namelist IN1.
-IAVEM,See namelist IN1.
-IAVEUS,See namelist IN1.
-IAVEV,See namelist IN1.
-IBATCH,UNUSED (input and output only).
-IBTCOMP,See namelist IN1.
-ICINIT,See namelist IN1.
-ICPROF,See namelist IN1.
-ICUTFP,See namelist IN1.
-IDITE,plot DITE diagram? default = 0
-IECURR,See namelist IN1.
-IEXCAL,See namelist IN1.
-IFCURR,See namelist IN1 (equilibrium).
-IFITVS,See namelist IN1.
-INPUT_DIR,"area where following input files are to be found, n1coil.d3d, ccoil.d3d, btcomp.d3d, dcoef.dat, fitweight.dat, sxr94.dat, efithelp.txt, limiter files and snap files. default = /link/efit/ (UNIX), sys$d3efit (VAX)"
-IOUT,See namelist IN1.
-IPLIM,See namelist IN1.
-IPROBE,See namelist IN1.
-IRCFACT,default = 0
-ISHOT,See namelist IN1.
-ITEK,See namelist IN1.
-ITIMEU,See namelist IN1.
-ITRACE,See namelist IN1.
-IVESEL,See namelist IN1.
-IXRAY,See namelist IN1.
-KBOUND,See namelist IN1.
-KCALPA,See namelist IN1 (basis).
-KCALDIA,See namelist IN1.
-KCGAMA,See namelist IN1 (basis).
-KEQDSK,See namelist IN1.
-KFFCUR,See namelist IN1 (basis).
-KFRAME,See namelist IN1.
-KPPCUR,See namelist IN1 (basis).
-KSKIPVS,See namelist IN1.
-KTEAR,See namelist IN1.
-KWAITMSE,See namelist INS.
-KWRIPRE,See namelist IN1.
-KZEROJ,See namelist IN1.
-LIMID,See namelist IN1.
-LOOKFW,See namelist IN1.
-LOPLIM,See namelist IN1.
-MSE_QUIET,See namelist INS.
-MSE_SPAVE_ON,See namelist INS.
-MSEBKP,See namelist INS.
-MSEFITFUN,See namelist INS.
-MTIME,Number of time steps? (Does this override interactive input?)
-MXITER,See namelist IN1.
-N1COIL,See namelist IN1.
-NBSKIP,See namelist IN1.
-NCCOIL,switch to turn on magnetic compensation for contributions due to C coil currents.
-,1 = compensation on (default)
-,0 = compensation off
-NEXTRA,See namelist IN1.
-NICOIL,switch to turn on magnetic compensation for contributions due to I coil currents.
-,1 = compensation on (default)
-,0 = compensation off
-PCURBD,See namelist IN1.
-PSIWANT,See namelist IN1.
-QVFIT,See namelist IN1.
-RELAX,See namelist IN1.
-REXPAN,default = 0.01
-RZEROJ,See namelist IN1.
-SAICON,See namelist IN1.
-SCRAPE,See namelist IN1.
-SERROR,See namelist IN1.
-SIGRBD,See namelist IN1.
-SIGZBD,See namelist IN1.
-STORE_DIR,"destination for output EQDSK files if ISTORE = 1, default = /link/store/"
-TABLE_DIR,"area where Green's function tables and the configuration file dprobe.dat (and pcsnames.dat if used) are to be found. default = /link/efit/ (UNIX), lao$efund (VAX)"
-TIMEB,Start time(?) in ms. (Does this override interactive input?)
-USE_ALTERNATE_POINTNAMES,"If non-zero, PCS data specified in file ALTERNATE_POINTNAME_FILE are used. Default=0. Click here for detail."
-USE_CONSISTENT_DATA,"When true, the data used to form constraints will be the same regardless of how many timeslices are being loaded.  (One caveat is if the variable size limit is hit, not all data will be fetched - see ntims/npefit in the code.)  Setting this to false will restore the legacy data fetching.  Default = .true."
-VSDAMP,See namelist IN1.
-VZEROJ,See namelist IN1.
-XALPA,See namelist IN1.
-XGAMA,See namelist IN1.
-XLTYPE,See namelist IN1.
-XLTYPE_180,See namelist IN1.
-ZELIP,See namelist IN1.
-ZNOSE,default = -1.276
-SIZEROJ,See namelist IN1.
-FWTEC,See namelist IN1.
-FITDELZ,Set FITDELZ=.T. to turn on vertical shifting of flux surfaces during fitting. default = .false.
-FITSIREF,See namelist IN1.
-NDELZON,What iteration to turn on vertical shifting of flux surfaces (see FITDELZ). default = 3
-SCALEDZ,Scale factor for column in response matrix corresponding to difference in z position from 0? default = 10-3
-STABDZ,default = -10-4
-NBDRY,See namelist IN1 (equilibrium).
-RBDRY,See namelist IN1.
-ZBDRY,See namelist IN1.
-WRITE_KFILE,"For the snap modes (3 & 7), write the k file, as if EFIT were run in mode 5 to get those k files, then mode 2 to get the equilibria."
+CALPA,,See namelist IN1.
+CGAMA,,See namelist IN1.
+CONDIN,,See namelist IN1.
+CUTIP,,See namelist IN1.
+DNMIN,,See namelist IN1.
+DO_SPLINE_FIT,.true.,"|When true, spline fitting is used to obtain constraints at the times that equilibria are requested.
+|When false, the constraints are set to the nearest time that a measurement was made.  "
+DTIME,, "Delta time between slices to analyze(?) in ms. (Does this override interactive input?)"
+DTMSEFULL,,See namelist INS.
+ELOMIN,,See namelist IN1.
+ERRMIN,,See namelist IN1.
+ERROR,,See namelist IN1.
+FCURBD,,See namelist IN1.
+FITDELZ, .false., Set FITDELZ=.T. to turn on vertical shifting of flux surfaces during fitting. 
+FITSIREF,,See namelist IN1.
+FITZTS,,See namelist IN1.
+FWACOIL,,See namelist IN1.
+FWTBP,,See namelist IN1.
+FWTCUR,,See namelist IN1.
+FWTDLC,,See namelist IN1.
+FWTEC,,See namelist IN1.
+FWTFC,,See namelist IN1.
+FWTGAM,,See namelist IN1.
+FWTMP2,,See namelist IN1.
+FWTQA,,See namelist IN1.
+FWTSI,,See namelist IN1.
+IACOIL,,See namelist IN1.
+IAVED,,See namelist IN1.
+IAVEM,,See namelist IN1.
+IAVEUS,,See namelist IN1.
+IAVEV,,See namelist IN1.
+IBATCH,,UNUSED (input and output only).
+IBTCOMP,,See namelist IN1.
+IBUNMN,,See namelist IN1.
+ICINIT,,See namelist IN1.
+ICPROF,,See namelist IN1.
+ICUTFP,,See namelist IN1.
+IDITE,0,plot DITE diagram? 
+IDTIME,, (unused variable)
+IECURR,,See namelist IN1.
+IERCHK,,See namelist IN1.
+IEXCAL,,See namelist IN1.
+IFCURR,,See namelist IN1 (equilibrium).
+IFITVS,,See namelist IN1.
+INPUT_DIR,,"area where following input files are to be found, n1coil.d3d, ccoil.d3d, btcomp.d3d, dcoef.dat, fitweight.dat, sxr94.dat, efithelp.txt, limiter files and snap files. default = /link/efit/ (UNIX), sys$d3efit (VAX)"
+IOUT,,See namelist IN1.
+IPLIM,,See namelist IN1.
+IPROBE,,See namelist IN1.
+IRCFACT, 0,
+ISHOT,,See namelist IN1.
+ITEK,,See namelist IN1.
+ITIMEB,,(unused variable)
+ITIMEU,,See namelist IN1.
+ITRACE,,See namelist IN1.
+IVALID,0,See namelist IN1.
+IVESEL,0,See namelist IN1.
+IXRAY,,See namelist IN1.
+KBOUND,,See namelist IN1.
+KCALPA,,See namelist IN1 (basis).
+KCALDIA,,See namelist IN1.
+KCGAMA,,See namelist IN1 (basis).
+KEQDSK,,See namelist IN1.
+KFFCUR,,See namelist IN1 (basis).
+KFRAME,,See namelist IN1.
+KPPCUR,,See namelist IN1 (basis).
+KSKIPVS,,See namelist IN1.
+KTEAR,,See namelist IN1.
+KWAITMSE,,See namelist INS.
+KWRIPRE,,See namelist IN1.
+KZEROJ,,See namelist IN1.
+LIMID,,See namelist IN1.
+LOOKFW,,See namelist IN1.
+LOPLIM,,See namelist IN1.
+MSE_QUIET,,See namelist INS.
+MSE_SPAVE_ON,,See namelist INS.
+MSEBKP,,See namelist INS.
+MSEFITFUN,,See namelist INS.
+MTIME,,Number of time steps? (Does this override interactive input?)
+MXITER,,See namelist IN1.
+N1COIL,,See namelist IN1.
+NBDRY,,See namelist IN1 (equilibrium).
+NBSKIP,,See namelist IN1.
+NCCOIL, "|switch to turn on magnetic compensation for contributions due to C coil currents.
+|,1 = compensation on (default)
+|,0 = compensation off"
+NDELZON,,The input value for this parameter is not used.
+NEXTRA,, See namelist IN1.
+NICOIL, , "|switch to turn on magnetic compensation for contributions due to I coil currents.
+|,1 = compensation on (default)
+|,0 = compensation off"
+PCURBD,,See namelist IN1.
+PSIWANT,,See namelist IN1.
+QVFIT,,See namelist IN1.
+RBDRY,,See namelist IN1.
+RELAX,,See namelist IN1.
+REXPAN, 0.01,
+RZEROJ,,See namelist IN1.
+SAICON,,See namelist IN1.
+SCALEDZ,1e-3, Scale factor for column in response matrix corresponding to difference in z position from 0? 
+SCRAPE,,See namelist IN1.
+SERROR,,See namelist IN1.
+SIGRBD,,See namelist IN1.
+SIGZBD,,See namelist IN1.
+SIZEROJ,,See namelist IN1.
+STABDZ,-1e-4,
+STORE_DIR,,"destination for output EQDSK files if ISTORE = 1, default = /link/store/"
+TABLE_DIR,,"area where Green's function tables and the configuration file dprobe.dat (and pcsnames.dat if used) are to be found. default = /link/efit/ (UNIX), lao$efund (VAX)"
+TIMEB,, Start time(?) in ms. (Does this override interactive input?)
+USE_ALTERNATE_POINTNAMES,0,"If non-zero, PCS data specified in file ALTERNATE_POINTNAME_FILE are used."
+USE_CONSISTENT_DATA,,"When true, the data used to form constraints will be the same regardless of how many timeslices are being loaded.  (One caveat is if the variable size limit is hit, not all data will be fetched - see ntims/npefit in the code.)  Setting this to false will restore the legacy data fetching.  Default = .true."
+VSDAMP,,See namelist IN1.
+VZEROJ,,See namelist IN1.
+WRITE_KFILE,,"For the snap modes (3 & 7), write the k file, as if EFIT were run in mode 5 to get those k files, then mode 2 to get the equilibria."
+XALPA,,See namelist IN1.
+XGAMA,,See namelist IN1.
+XLTYPE,,See namelist IN1.
+XLTYPE_180,,See namelist IN1.
+ZBDRY,,See namelist IN1.
+ZELIP,,See namelist IN1.
+ZNOSE, -1.276,

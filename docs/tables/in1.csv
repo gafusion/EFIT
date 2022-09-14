@@ -27,11 +27,14 @@ EMP,1.0,GAQ current density profile parameter. Ignored unless ICURRT=4?
 ENP,1.0,GAQ current density profile parameter. Ignored unless ICURRT=4?
 EMW,,GAQ current density profile parameter for rotation. Ignored unless ICURRT=4?
 ENW,,GAQ current density profile parameter for rotation. Ignored unless ICURRT=4?
-ERRMAG,,See IMAGSIGMA (depreciated)
-ERRMAGB,,See IMAGSIGMA (depreciated)
-ERROR,1e-3,"| Specifies when EFIT should stop iterating to solution. If chi-squared decreases
-| monotonically, then iterations stop when the relative error (maximum flux 
-| difference between successive iterations) < ERROR.  See also ERRMIN."
+ERRMAG,,See IMAGSIGMA (deprecated)
+ERRMAGB,,See IMAGSIGMA (deprecated)
+ERRMIN,1e-2,"| Minimum convergence error before exit for ICONVR=2 option.
+| If chi-squared on any iteration is larger than on previous iteration, then if relative 
+| error < ERRMIN and chi-squared < SAICON, iterations stop. "
+ERROR,1e-2,"| Specifies when EFIT should stop iterating to solution. If chi-squared decreases
+| monotonically, then iterations stop when the relative error (max flux difference 
+| between successive iterations) < ERROR.  See also ICONVR and ERRMIN alternatives."
 ERRORQ, 1e-3, """Error in q"". Standard deviation for q fitting."
 FCURBD,, "| ""F Current Boundary"".
 | 1 = force FF'=0 at boundary.
@@ -60,10 +63,11 @@ IBTCOMP,1,"| ""(Integer flag) BT Compensation"". Toroidal field pickup compensat
 |  contributions to poloidal magnetic field probe measurements due to pickup from toroidal field coil
 | <=0 no compensation
 | > 0 apply compensation"
-IBUNMN,0, "| ""(Integer flag) Buneman"". 0 = Green's method.
-| -1 = Buneman's method.
-| -2 = Buneman's method until error less than 1e-3 then Green's method.
-| -3 = improved Buneman's (default)."
+IBUNMN,1, "| ""(Integer flag) Buneman"". 0 = Green's method.
+| -1 = Buneman's method or single cyclic reduction (see ISOLVE).
+| -2 = Buneman/single cyclic reduction until error is less than 1e-3 then Green's method.
+| -3 = same as 1.
+| -4 = same as 2."
 ICALBET,1, "| - >0 compute beta with various normalizations and output to FITOUT.DAT. (Default=1)
 | -<=0 don't"
 ICINIT,2,"| ""(Integer flag) Current Initialization"". Plasma current profile initialization parameter.
@@ -80,15 +84,15 @@ ICONSI,,"| How to make contour plots of fields
 | - 1 = Default, horizontal and vertical scans for both fluxes and field plot.
 | - 2, 4 = use 'SCALE' in DISSPLA call for fluxes plot.
 | - 3, 4 = use 'SCALE' in DISSPLA call for field plot."
-ICONVR,,"| Specify solution mode
-| - 1 = fitting mode for mxiter, nxiter iterations until the specified error is satisfied.
-| - 2 = fitting mode until chisq reverse, must satisfy minimum error errmin and minimum number of iterations, as well as a minimum chisq (default).
+ICONVR,2,"| Specify solution mode
+| - 1 = fitting mode for mxiter, nxiter iterations until the solution achieves error below ERROR and chi squared below SAIMIN.
+| - 2 = fitting mode until chisq reverse, must satisfy minimum error ERRMIN, minimum 8 iterations (or below min elongation ELOMIN), and minimum chisq SAICON (default).
 | - 3 = equilibrium mode.
 | - = Green's table calculations for -ICONVR filaments and write file RPFXX.DAT for use with MFIT."
 ICUTFP,0,"| - 0 = enforce vacuum outside of LCFS (Default).
 | - 2 = to allow force-free current to flow in scrape-off layer (width set by ALPHAFP)."
 ICURRT,,"| ""(Integer flag) Current"". Which current profile parametrization to use
-| - 1 = not implemented.
+| - 1 = analytic (used with Solovev eq).
 | - 2 = linear polynomials for P' and FF' or spline(default).
 | - 3 = not implemented.
 | - 4 = GAQ type current profile.
@@ -102,18 +106,19 @@ IECURR,,"| - ""(Integer flag) E-coil current"".
 | - 2 = fit E-coil currents
 | (How is this related to FWTEC??)"
 IERCHK,1,"| ""(Integer flag) Error Check"".
-| - 0 = don't check for MHD fitting errors"
+| - 0 = don't check for MHD fitting errors
 | - 1 = check for MHD fitting errors but continue regardless of the result (Default)
 | - 2 = only output parameters file (a-file) if the error checks fail
 | - 3 = don't output any result files (g, a, m, etc.) if error checks fail
-IEXCAL,0, 1 = plot magnetic signals. 
+IEXCAL,0, 1 = plot magnetic signals."
 IFITVS,,"| ""(Integer flag) Fit Vessel"". The DIII-D vessel can be modeled as 24 individual
 | current carrying elements, i.e. additional unknown sources of current (in both fitting
 | or equilibrium modes?). Currents in these elements are treated as free 
 | parameters to be solved for.
 | - 1 = Include vessel segment currents in solution.
 | - 0 = ignore vessel segment currents (default)."
-IMAGSIGMA,0, 1 = computed nonlinear magnetic uncertainties (depreciated).
+IMAGSIGMA,0, 1 = computed nonlinear magnetic uncertainties (deprecated).
+INPUT_DIR,"See namelist EFITIN"
 IOUT,,"| Output file option. This is a bitwise switch except that 6 overwrites 2 and 4.
 | - Multiple output options may be achieved by adding up the values of each option.
 | - 0 = do NOT write FITOUT.DAT, measurement file, rstarkxx.dat, esave.dat
@@ -129,10 +134,10 @@ IPROBE,0,+ = plot magnetic probes and flux loops and number them every IPROBE po
 IQPLOT,1,+ = plot q values on flux surfaces 
 IRFILA,,Default calculation = ??
 ISLVE,0,"""(Integer flag) Solovev"". 1 = Solovev equilibrium."
-ISOLVE,,"| Integer flag to choose between core solvers.
-| -  0 = Buneman method (default) 
-| - 1 = Single Cyclic Reduction Solver. Buneman method requires 2n grid points in both 
-| directions and uses double cyclic reduction, Single cyclic reduction can have any number
+ISOLVE,1,"| Integer flag to choose between core solvers.
+| - 0 = Buneman method. Double cyclic reduction, requires 2n+1 grid points in both directions.
+| (Most commonly used by legacy efit versions.)
+| - 1 = Single cyclic reduction solver. Requires 2n+1 grid points in Z, but can have any number
 | of grid points in R, and is faster than Buneman (used in real time efit)."
 ISTORE,,"| ""(Integer flag) Store"". For UNIX workstations only.
 | - 1 = write EFIT results ( A EQDSK files, the G EQDSK files, the Q data files, 
@@ -151,7 +156,12 @@ ITIME,,"""Integer Time"". Time in milliseconds of slice to analyze."
 ITIMEU,0,"""Integer Time usec"". Time in microseconds of slice to analyze. (which value supersedes?)"
 ITRACE,-1,"| - 1 = compute external separatrix distance. (default)
 | - 2 = compute and plot."
-IVESEL,,"| ""(Integer flag) Vessel"". Estimates of (24) vessel currents can be included as diagnostics to be fitted(?).
+IVALID,0,"| ""(Integer flag) Valid Solution"". Enables qualifiers for whether a solution should be produced.  The qualifiers are additive, so for example when 3 is selected all of the level 2 and 1 qualifiers are also applied.
+| - 0 no qulifiers, standard behavior (default)
+| - 1 files will only be written if solutions have plasma current.
+| - 2 times without MSE data will not be solved or written to k-files.
+| - 3 only times with CER corrected MSE data will be solved or written to files."
+IVESEL,0,"| ""(Integer flag) Vessel"". Estimates of (24) vessel currents can be included as diagnostics to be fitted(?).
 | - 0 don't include vessel current (default)
 | - >0 include vessel current (What happens for IVESEL different from 1 or 2?).
 | - 1 specify vessel currents through VCURRT.
@@ -180,7 +190,7 @@ KEQDSK,,"| Format of A and G EQDSK files
 | - 0 = binary EQDSKs
 | - 1 = ascii EQDSKs (default)
 | - 2 = ascii A EQDSK only, no G
-| - -1 = binary A EQDSK only, on G"
+| - -1 = binary A EQDSK only, no G"
 KERSIL,3, "| ""Reference Flux Loop Uncertainty Switch"". This parameter controls how the uncertainty is set for the reference flux loop (NSLREF).
 | - 1 = use the maximum coil current to set the reference uncertainty
 | - 2 = use a hard-coded uncertainty of 0.001 for the reference (matches probe 8 on D-III)
@@ -202,8 +212,9 @@ KPRFIT,, "| Turn on kinetic fitting
 | - 2 = kinetic fitting inputing raw temperature, density, and beam profiles in real space.
 | - 3 = include rotation.
 | - Must set KPRFIT=3, ICURRT=5, if no pressure data NPRESS=0. (What does this mean?)"
-KSIGMA,, See IMAGSIGMA (depreciated)
+KSIGMA,, See IMAGSIGMA (deprecated)
 KSKIPVS, 0,1 = search for external separatrix for attached current model.
+KTEAR,,(deprecated)
 KWRIPRE,,"| Make output files
 | - 1 = write out pressure and q profile as function of sqrt(Vn) in files Q(shot).(time)_ (q0 files).
 | - 2 = S(shot).(time)- --- in normalized flux space.
@@ -294,8 +305,12 @@ RZEROJ,, "| Vector of radii at which to apply constraints. For each element in v
 | RZEROJ<0 Set Jt=0 at the separatrix.
 | Constraints are applied only if KZEROJ>0. Default RZEROJ(1)=0.0. If KZEROJ=1, may 
 | specify SIZEROJ(1) with PSIWANT. If KZEROJ=1 and SIZEROJ(1)<0, then SIZEROJ(1) is set equal to PSIWANT."
-SAICON,60.0,minimum chi2 to stop iterations for ICURRT=2 in fitting mode. Default=60.0
-SAIMIN, 60.0,
+SAICON,80.0," Minimum chi squared before exit for ICONVR=2 option.
+| If chi-squared on any iteration is larger than on previous iteration, then if relative 
+| error < ERRMIN and chi-squared < SAICON, iterations stop. "
+SAIMIN,80.0,"| Specifies when EFIT should stop iterating to solution. If the relative error < ERROR,
+| then iterations stop when the total chi squared (without diamagnetic or
+| pressure fit contributions) < SAIMIN.  See also ICONVR and SAICON alternatives."
 SALPHA, 1.0/40.0,parameter for Solovev equilibrium.
 SBETA,1.0/8.0,parameter for Solovev equilibrium. 
 SBETAW,0.0,parameter for rotational Solovev equilibrium.
@@ -330,6 +345,8 @@ SIZEROJ,-1.0,"| Vector of locations at which Jt is constrained when KZEROJ>0. Wh
 | PSIWANT can be used instead of SIZEROJ(1) by setting SIZEROJ(1)<0. See KZEROJ, 
 | RZEROJ, VZEROJ, PSIWANT. Default"
 SRM,-3.5,Parameter for Solovev equilibrium. - = inside limited.
+STORE_DIR,"see namelist efitin"
+TABLE_DIR,"see namelist EFITIN"
 TETHOM,,"""Te Thompson"". Electron temperature from Thompson."
 TGAMMA,,"""Tangent Gamma"". Tangent of the measured MSE polarization angle, TGAMMA = (A1*Bz + A5*Er) / (A2*BT+...)."
 TIONEX,,"if nptionf > 100, tionex = tethombfract"
