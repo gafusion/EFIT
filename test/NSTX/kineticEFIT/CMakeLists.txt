@@ -10,6 +10,7 @@ if (${ENABLE_PARALLEL})
   set(EFIT_TIME 4)
 else()
   set(TIMES 00441)
+  set(EFIT_TIME 1)
 endif()
 
 foreach(t ${TIMES})
