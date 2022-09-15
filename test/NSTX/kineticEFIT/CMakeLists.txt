@@ -7,10 +7,10 @@
 set(RUNID 204202)
 if (${ENABLE_PARALLEL})
   set(TIMES 00441 00521 00601 00681)
-  set(EFIT_TIME 4)
+  set(EFIT_COUNT 4)
 else()
   set(TIMES 00441)
-  set(EFIT_TIME 1)
+  set(EFIT_COUNT 1)
 endif()
 
 foreach(t ${TIMES})
