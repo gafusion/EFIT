@@ -1,6 +1,8 @@
 EFIT input namelist
 ================================
 
+.. _namelist:
+
 SETUP
 -----
 
