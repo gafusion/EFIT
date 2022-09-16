@@ -1,4 +1,3 @@
-.. _install:
 .. highlight:: bash
 
 Installation
@@ -164,7 +163,7 @@ most similar or ``iris_gnu.sh`` first) to match what is available.  If you run
 into problems, contact a developer.
 
 To ensure your build was successful, it is recommended that you run the included
-tests.  See :ref:`quickstart` for more info.
+tests.  See `quickstart <quickstart>`_ for more info.
 
 Once you have successfully built on a different system/compiler, please add your
 working script to the collection in ``$EFIT_ROOT/share/config_examples`` to aid

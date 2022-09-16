@@ -10,7 +10,11 @@ def gen_rst(directory):
     files.sort()
 
     rstfile = os.path.join(directory, "../docs/gen_subroutines.rst")
+    with open(os.path.join(directory, "../docs/subroutines.rst"), "r") as tfh:
+        header = tfh.read()
+
     with open(rstfile, "w") as fh:
+        fh.write(header)
         for file in files:
             if "modules-efit" in file:
                 # contains subroutines inside of modules which currently breaks
@@ -39,7 +43,11 @@ def gen_rst(directory):
                 fh.write("\n")
 
     rstfile = os.path.join(directory, "../docs/gen_functions.rst")
+    with open(os.path.join(directory, "../docs/functions.rst"), "r") as tfh:
+        header = tfh.read()
+
     with open(rstfile, "w") as fh:
+        fh.write(header)
         for file in files:
             # print(file)
             if "f90" in file or "F90" in file and "swp" not in file:
@@ -64,7 +72,11 @@ def gen_rst(directory):
                 fh.write("\n")
 
     rstfile = os.path.join(directory, "../docs/gen_modules.rst")
+    with open(os.path.join(directory, "../docs/modules.rst"), "r") as tfh:
+        header = tfh.read()
+
     with open(rstfile, "w") as fh:
+        fh.write(header)
         for file in files:
             # print(file)
             if "f90" in file or "F90" in file and "swp" not in file:

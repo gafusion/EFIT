@@ -27,8 +27,9 @@ Developer documentation
    
    developer
    docker
-   subroutines
-   modules
+   gen_modules
+   gen_subroutines
+   gen_functions
    
 EFIT-AI documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,7 +50,7 @@ Search
 .. TODO: Options commented out still do not render properly on the website!
 .. * :ref:`genindex`
 .. * :ref:`modindex`
-* :ref:`search`
+.. * :ref:`search`
 
 
 Bibliography

@@ -29,5 +29,3 @@ The logic flow chart::
 			WRITE_G: Write G EQDSK.
 			WRITE_M: Write M EQDSK.
 
-
-.. include:: gen_subroutines.rst
