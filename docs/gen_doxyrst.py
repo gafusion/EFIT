@@ -16,7 +16,7 @@ def gen_rst(directory):
     with open(rstfile, "w") as fh:
         fh.write(header)
         for file in files:
-            if "modules-efit" in file:
+            if "modules-efit" in file or 'chkerr' in file:
                 # contains subroutines inside of modules which currently breaks
                 # doxygen (could possibly be fixed, but they aren't essential anyway)
                 continue
@@ -36,7 +36,7 @@ def gen_rst(directory):
                                 fh.write(divstring + "\n\n")
                                 first += 1
                             fh.write(
-                                ".. doxygenfunction::"
+                                ".. doxygenfunction:: "
                                 + line.strip().split()[1].split("(")[0].lower()
                                 + "\n",
                             )
@@ -65,7 +65,7 @@ def gen_rst(directory):
                                 fh.write(divstring + "\n\n")
                                 first += 1
                             fh.write(
-                                ".. doxygenfunction::"
+                                ".. doxygenfunction:: "
                                 + line.strip().split()[1].split("(")[0].lower()
                                 + "\n",
                             )
@@ -75,6 +75,7 @@ def gen_rst(directory):
     with open(os.path.join(directory, "../docs/modules.rst"), "r") as tfh:
         header = tfh.read()
 
+    toublesome_modules = ['var_nio','error_control']
     with open(rstfile, "w") as fh:
         fh.write(header)
         for file in files:
@@ -94,7 +95,7 @@ def gen_rst(directory):
                                 fh.write(divstring + "\n\n")
                                 first += 1
                             fh.write(
-                                ".. doxygenfunction::"
+                                ".. doxygennamespace:: "
                                 + line.strip().split()[1].split("(")[0].lower()
                                 + "\n",
                             )

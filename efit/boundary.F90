@@ -831,9 +831,9 @@
 !---if no change occured iautoc=0.                                           --
 !------------------------------------------------------------------------------
       subroutine cntour(xaxd,yaxd,psivl,xemin,xemax,yemin,yemax, &
-      yxmin,yxmax,xymin,xymax,dang,arcl,bperr,dx,dy,xmin,xmax,ymin,ymax, &
-      iauto,iautoc,xc,yc,ipts,x,nw,y,nh,cspln,n2cspln,nh2,itty,iptsm, &
-      negcur,bkx,lkx,bky,lky,kerror)
+      yxmin,yxmax,xymin,xymax,dang,arcl,bperr,dx,dy,xmin,xmax, &
+      ymin,ymax,iauto,iautoc,xc,yc,ipts,x,nw,y,nh,cspln,n2cspln,&
+      nh2,itty,iptsm,negcur,bkx,lkx,bky,lky,kerror)
       use global_constants
       use set_kinds
       use error_control

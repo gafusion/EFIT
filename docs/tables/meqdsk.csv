@@ -1,97 +1,97 @@
 Variable, Definition
-ACCURT(ntime, nacoil),	measured A-coil currents in Amp
-A1-8GAM(ntime, nstark),	viewing geometry coefficients of MSE channels
-CACCURT(ntime, nacoil),	calculated A-coil currents in Amp
-CCBRSP(ntime, nfcoil),	calculated F-coil currents in Amp
-CCHISQ(ntime, nitera), total chi squared vs. iteration number
-CDFLUX(ntime),	calculated diamagnetic flux
-CECURR(ntime, nesum),	calculated E-coil currents in Amp
-CERROR(ntime, nitera), poloidal flux residual vs. iteration number
-CHIDLC(ntime),	chisq for diamagnetic flux
-CHIGAM(ntime, nstark),	chisq vs. polarimetries
-CHITOT(ntime), more inclusive chi squared that isn't typically used (includes diamagnetic and kinetic constraints)
-CMGAM(ntime, nstark),	calculated polarimetry signals
-CMPR2(ntime, magpri),	calculated magnetic probes
-CPASMA(ntime),	calculated plasma current in Amp
-CPRESS(ntime, npress),	calculated pressure vs. normalized flux (kinetic fits only)
-CPRESW(ntime, npress),	calculated rotational pressure vs. normalized flux (kinetic fits only)
-CSILOP(ntime, nsilop), calculated flux loops
-CSIREF(ntime), 	calculated reference flux loop
-CURC79(ntime),	C coil 79 current
-CURC139(ntime),	C coil 139 current
-CURC199(ntime),	C coil 199 current
-CURIL30(ntime),	I coil 30 lower current
-CURIL90(ntime),	I coil 90 lower current
-CURIL150(ntime),	I coil 150 lower current
-CURIU30(ntime),	I coil 30 upper current
-CURIU90(ntime),	I coil 90 upper current
-CURIU150(ntime),	I coil 150 upper current
-CZMAXI(ntime, nitera), Zm in cm vs. iteration number
-DAREA(ntime),	plasma coefficients normalization
+"ACCURT(ntime, nacoil)",	measured A-coil currents in Amp
+"A1-8GAM(ntime, nstark)",	viewing geometry coefficients of MSE channels
+"CACCURT(ntime, nacoil)",	calculated A-coil currents in Amp
+"CCBRSP(ntime, nfcoil)",	calculated F-coil currents in Amp
+"CCHISQ(ntime, nitera)", total chi squared vs. iteration number
+"CDFLUX(ntime)",	calculated diamagnetic flux
+"CECURR(ntime, nesum)",	calculated E-coil currents in Amp
+"CERROR(ntime, nitera)", poloidal flux residual vs. iteration number
+"CHIDLC(ntime)",	chisq for diamagnetic flux
+"CHIGAM(ntime, nstark)",	chisq vs. polarimetries
+"CHITOT(ntime)", more inclusive chi squared that isn't typically used (includes diamagnetic and kinetic constraints)
+"CMGAM(ntime, nstark)",	calculated polarimetry signals
+"CMPR2(ntime, magpri)",	calculated magnetic probes
+"CPASMA(ntime)",	calculated plasma current in Amp
+"CPRESS(ntime, npress)",	calculated pressure vs. normalized flux (kinetic fits only)
+"CPRESW(ntime, npress)",	calculated rotational pressure vs. normalized flux (kinetic fits only)
+"CSILOP(ntime, nsilop)", calculated flux loops
+"CSIREF(ntime)", 	calculated reference flux loop
+"CURC79(ntime)",	C coil 79 current
+"CURC139(ntime)",	C coil 139 current
+"CURC199(ntime)",	C coil 199 current
+"CURIL30(ntime)",	I coil 30 lower current
+"CURIL90(ntime)",	I coil 90 lower current
+"CURIL150(ntime)",	I coil 150 lower current
+"CURIU30(ntime)",	I coil 30 upper current
+"CURIU90(ntime)",	I coil 90 upper current
+"CURIU150(ntime)",	I coil 150 upper current
+"CZMAXI(ntime, nitera)", Zm in cm vs. iteration number
+"DAREA(ntime)",	plasma coefficients normalization
 DEVICE,	experiment name
-DIAMAG(ntime),	measured diamagnetic flux
-ECCURT(ntime, nesum),	measured E-coil currents in Amp
-EXPMPI(ntime, magpri), measured magnetic probes
-FCCURT(ntime, nfcoil),	measured F-coil currents in Amp
-FIXGAM(ntime, nstark),	radians correction of tangam for spatial averaging effects
-FWTCUR(ntime), 	weight for plasma current in Amp
-FWTDLC(ntime),	weight for diamagnetic flux
-FWTEC(ntime, nesum),	weight for E-coil currents
-FWTFC(ntime, nfcoil), weight for F-coil currents
-FWTGAM(ntime, nstark), fitting weight for MSE channels
-FWTMP2(ntime, magpri), 	weight for magnetic probes
-FWTREF(ntime), 	weight for reference flux loop
-FWTSI(ntime, nsilop), 	weight for flux loops
-FWTPRE(ntime, npress),	weight for pressure
-FWTPRW(ntime, npresw),	weight for rotational pressure
-MCAL3_BTSCALE(ntime, nstark),	btscale param for tangent slope function (msefitfun=3)
-MCAL4_BTSCALE(ntime, nstark),	btscale param for tangent slope function (msefitfun=4)
-MCAL3_DC_OFFSET(ntime, nstark),	dc_offset param for tangent slope function (msefitfun=3)
-MCAL4_DC_OFFSET(ntime, nstark),	dc_offset param for tangent slope function (msefitfun=4)
-MCAL_GAIN(ntime, nstark),	gain param for tangent offset function (msefitfun=1)
-MCAL3_GAIN(ntime, nstark),	gain param for tangent slope function (msefitfun=3)
-MCAL4_GAIN(ntime, nstark),	gain param for tangent slope function (msefitfun=4)
-MCAL_OFFSET(ntime, nstark),	offset param for tangent offset function (msefitfun=1)
-MCAL3_PHASE(ntime, nstark),	phase param for tangent slope function (msefitfun=3)
-MCAL4_PHASE(ntime, nstark),	phase param for tangent slope function (msefitfun=4)
-MCAL_SCALE(ntime, nstark),	scale param for tangent offset function (msefitfun=1)
-MCAL_SLOPE(ntime, nstark),	slope param for tangent offset function (msefitfun=1)
-MSEBKP(ntime), 	background substraction switch
-MSEFITFUN, 	MSE fit function
-PLASMA(ntime), 	measured plasma current in Amp
-PRESSR(ntime, npress), 	measured pressure vs. normalized flux (kinetic fits only)
-PRESW(ntime, npresw), 	measured rotational pressure vs. normalized flux (kinetic fits only)
-PSIREF(ntime), 	measured reference flux loop
-RPRESS(ntime, npress)| "<0:input pressure profile vs. flux;
-|>0:R coordinates of input pressure profile in m"
-RPRESW(ntime, npresw)| "<0:input rotational pressure profile vs. flux;
-|>0:R coordinates of input rotational pressure profile in m"
-RRGAM(ntime, nstark), radius (R position) of MSE channels
-SAIEC(ntime, nesum),	chisq for E-coil currents
-SAIFC(ntime, nfcoil),	chisq for F-coil currents
-SAIIP(ntime), 	chisq for plasma current
-SAIMPI(ntime, magpri), chisq magnetic probes
-SAIPRE(ntime, npress),	chisq of pressure
-SAIPRW(ntime, npresw),	chisq of rotational pressure
-SAISIL(ntime, nsilop),	chisq for flux loops
-SAISREF(ntime), 	chisq for reference flux loop
-SHOT,	shot number
-SIGCUR(ntime), 	uncertainty in plasma current
-SIGDIA(ntime),	uncertainty in diamagnetic flux
-SIGEC(ntime, nesun),	uncertainty in E-coil currents
-SIGFC(ntime, nfcoil),	uncertainty in F-coil currents
-SIGGAM(ntime, nstark),	uncertainty of tangam
-SIGMP2(ntime, magpri), uncertainty in magnetic probes
-SIGPRE(ntime, npress),	uncertainty for pressure
-SIGPRW(ntime, npresw),	uncertainty for rotational pressure
-SIGREF(ntime), 	uncertainty in reference flux loop
-SIGSI(ntime, nsilop),	uncertainty in flux loops
-SILOPT(ntime, nsilop),	measured flux loops
-TANGAM(ntime, nstark),	tangent of measured MSE pitch angle
-TANGAM_UNCOR(ntime, nstark),	tangent of measured MSE pitch angle w/o cer correction
-TIME(ntime),	time slice in msec
-VPORT(nstark),	view port locations of MSE system
-XRSP(ntime, npcurn), plasma coefficients
-ZPRESS(ntime, npress), Z coordinates of input pressure profile in m
-ZPRESW(ntime, npresw), Z coordinates of input rotational pressure profile in m
-ZZGAM(ntime, nstark),	Z position of MSE channels
+"DIAMAG(ntime)",	measured diamagnetic flux
+"ECCURT(ntime, nesum)",	measured E-coil currents in Amp
+"EXPMPI(ntime, magpri)", measured magnetic probes
+"FCCURT(ntime, nfcoil)",	measured F-coil currents in Amp
+"FIXGAM(ntime, nstark)",	radians correction of tangam for spatial averaging effects
+"FWTCUR(ntime)", 	weight for plasma current in Amp
+"FWTDLC(ntime)",	weight for diamagnetic flux
+"FWTEC(ntime, nesum)",	weight for E-coil currents
+"FWTFC(ntime, nfcoil)", weight for F-coil currents
+"FWTGAM(ntime, nstark)", fitting weight for MSE channels
+"FWTMP2(ntime, magpri)", 	weight for magnetic probes
+"FWTREF(ntime)", 	weight for reference flux loop
+"FWTSI(ntime, nsilop)", 	weight for flux loops
+"FWTPRE(ntime, npress)",	weight for pressure
+"FWTPRW(ntime, npresw)",	weight for rotational pressure
+"MCAL3_BTSCALE(ntime, nstark)",	btscale param for tangent slope function (msefitfun=3)
+"MCAL4_BTSCALE(ntime, nstark)",	btscale param for tangent slope function (msefitfun=4)
+"MCAL3_DC_OFFSET(ntime, nstark)",	dc_offset param for tangent slope function (msefitfun=3)
+"MCAL4_DC_OFFSET(ntime, nstark)",	dc_offset param for tangent slope function (msefitfun=4)
+"MCAL_GAIN(ntime, nstark)",	gain param for tangent offset function (msefitfun=1)
+"MCAL3_GAIN(ntime, nstark)",	gain param for tangent slope function (msefitfun=3)
+"MCAL4_GAIN(ntime, nstark)",	gain param for tangent slope function (msefitfun=4)
+"MCAL_OFFSET(ntime, nstark)",	offset param for tangent offset function (msefitfun=1)
+"MCAL3_PHASE(ntime, nstark)",	phase param for tangent slope function (msefitfun=3)
+"MCAL4_PHASE(ntime, nstark)",	phase param for tangent slope function (msefitfun=4)
+"MCAL_SCALE(ntime, nstark)",	scale param for tangent offset function (msefitfun=1)
+"MCAL_SLOPE(ntime, nstark)",	slope param for tangent offset function (msefitfun=1)
+"MSEBKP(ntime)", 	background substraction switch
+"MSEFITFUN", 	MSE fit function
+"PLASMA(ntime)", 	measured plasma current in Amp
+"PRESSR(ntime, npress)", 	measured pressure vs. normalized flux (kinetic fits only)
+"PRESW(ntime, npresw)", 	measured rotational pressure vs. normalized flux (kinetic fits only)
+"PSIREF(ntime)", 	measured reference flux loop
+"RPRESS(ntime, npress)", "| <0:input pressure profile vs. flux;
+| >0:R coordinates of input pressure profile in m"
+"RPRESW(ntime, npresw)", "| <0:input rotational pressure profile vs. flux;
+| >0:R coordinates of input rotational pressure profile in m"
+"RRGAM(ntime, nstark)", radius (R position) of MSE channels
+"SAIEC(ntime, nesum)",	chisq for E-coil currents
+"SAIFC(ntime, nfcoil)",	chisq for F-coil currents
+"SAIIP(ntime)", 	chisq for plasma current
+"SAIMPI(ntime, magpri)", chisq magnetic probes
+"SAIPRE(ntime, npress)",	chisq of pressure
+"SAIPRW(ntime, npresw)",	chisq of rotational pressure
+"SAISIL(ntime, nsilop)",	chisq for flux loops
+"SAISREF(ntime)", 	chisq for reference flux loop
+"SHOT",	shot number
+"SIGCUR(ntime)", 	uncertainty in plasma current
+"SIGDIA(ntime)",	uncertainty in diamagnetic flux
+"SIGEC(ntime, nesun)",	uncertainty in E-coil currents
+"SIGFC(ntime, nfcoil)",	uncertainty in F-coil currents
+"SIGGAM(ntime, nstark)",	uncertainty of tangam
+"SIGMP2(ntime, magpri)", uncertainty in magnetic probes
+"SIGPRE(ntime, npress)",	uncertainty for pressure
+"SIGPRW(ntime, npresw)",	uncertainty for rotational pressure
+"SIGREF(ntime)", 	uncertainty in reference flux loop
+"SIGSI(ntime, nsilop)",	uncertainty in flux loops
+"SILOPT(ntime, nsilop)",	measured flux loops
+"TANGAM(ntime, nstark)",	tangent of measured MSE pitch angle
+"TANGAM_UNCOR(ntime, nstark)",	tangent of measured MSE pitch angle w/o cer correction
+"TIME(ntime)",	time slice in msec
+"VPORT(nstark)",	view port locations of MSE system
+"XRSP(ntime, npcurn)", plasma coefficients
+"ZPRESS(ntime, npress)", Z coordinates of input pressure profile in m
+"ZPRESW(ntime, npresw)", Z coordinates of input rotational pressure profile in m
+"ZZGAM(ntime, nstark)",	Z position of MSE channels
