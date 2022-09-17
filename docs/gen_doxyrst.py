@@ -36,7 +36,7 @@ def gen_rst(directory):
                                 fh.write(divstring + "\n\n")
                                 first += 1
                             fh.write(
-                                ".. doxygenfunction::"
+                                ".. doxygenfunction:: "
                                 + line.strip().split()[1].split("(")[0].lower()
                                 + "\n",
                             )
