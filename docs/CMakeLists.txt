@@ -49,9 +49,9 @@ set(EFITDOC_DEPS ${EFITDOC_DEPS} ../INSTALL.rst ../LICENSE.rst)
 set(EFITDOC_DEPS ${EFITDOC_DEPS} ../docker/docker.rst)
 
 # Copy stuff over from docs because sphinxbuild doesn't allow full paths
+configure_file(${SRCDIR}/Doxyfile.in ${BLDDIR}/Doxyfile)  # 1 copy
 configure_file(${SRCDIR}/conf.py.in ${BLDDIR}/conf.py)  # 1 copy
 configure_file(${SRCDIR}/build_index.html.in ${BLDDIR}/build_index.html)  # 1 copy
-configure_file(${SRCDIR}/Doxyfile.in ${BLDDIR}/Doxyfile)  # 1 copy
 
 # Pull together all ReST files for reference manual
 file(GLOB_RECURSE EFITDOC_DEPS RELATIVE ${SRCDIR} *.rst */*.rst */*/*.rst */*/*/*.rst)
