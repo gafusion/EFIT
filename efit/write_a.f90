@@ -81,9 +81,9 @@
 !--   check error, on return lflag > 0 for error and the type of error
 !-----------------------------------------------------------------------
       lflag=0
-      if(ierchk.gt.0) call chkerr(jj)
+      if(abs(ierchk).gt.0) call chkerr(jj)
       if (lflag.gt.0) then
-        if(ierchk.eq.3) return
+        if(abs(ierchk).eq.3) return
         jflag=0
       endif
       if (keqdsk.ge.1) then
@@ -138,8 +138,8 @@
       write (neqdsk,1040) otops(jj),sibdry(jj),areao(jj),wplasm(jj)
       write (neqdsk,1040) terror(jj),elongm(jj),qqmagx(jj),cdflux(jj)
       write (neqdsk,1040) alpha(jj),rttt(jj),psiref(jj),xndnt(jj)
-      write (neqdsk,1040) rseps(1,jj),zseps(1,jj),rseps(2,jj) &
-                          ,zseps(2,jj)
+      write (neqdsk,1040) rseps(1,jj),zseps(1,jj),rseps(2,jj), &
+                          zseps(2,jj)
       write (neqdsk,1040) sepexp(jj),obots(jj),btaxp(jj),btaxv(jj)
       write (neqdsk,1040) aaq1(jj),aaq2(jj),aaq3(jj),seplim(jj)
       write (neqdsk,1040) rmagx(jj),zmagx(jj),simagx(jj),taumhd(jj)

@@ -110,6 +110,7 @@ IERCHK,1,"| ""(Integer flag) Error Check"".
 | - 1 = check for MHD fitting errors but continue regardless of the result (Default)
 | - 2 = only output parameters file (a-file) if the error checks fail
 | - 3 = don't output any result files (g, a, m, etc.) if error checks fail
+| - - = don't call shapesurf to compute plasma quantities or output anything besides the a-file if fit hasn't converged (intended for use in an optimization loop)
 IEXCAL,0, 1 = plot magnetic signals."
 IFITVS,,"| ""(Integer flag) Fit Vessel"". The DIII-D vessel can be modeled as 24 individual
 | current carrying elements, i.e. additional unknown sources of current (in both fitting
@@ -233,7 +234,7 @@ LIMITR,,"| Number of limiter points (number of valid points in XLIM and YLIM arr
 | - ,<0 read from a standard file (Default = -33).
 | - 1000+number number of points for symmetrized solution (input only top half of limiter points)."
 SILOPLIM,0, Controls whether the boundary from the previous timeslice (on the same processor) is used as an initial guess for finding the boundary at the current time.  The previous solution is only used when the maximum absolute flux loop difference between the current and previous iteration is less than this value.
-MXITER,25,"| Maximum number of outer fitting iterations
+MXITER,25,"| Maximum number of outer fitting iterations (limited to KXITER, see SETUP namelist)
 | - Set to 1 for equilibrium solutions. Set negative for iteration history output to 
 | terminal during EFIT execution."
 N1COIL,0,"Compensation for magnetic probe pickup from N1 coil

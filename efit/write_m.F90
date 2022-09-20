@@ -44,7 +44,7 @@
              zcmpr2(magpri,ntime),zccbrsp(nfcoil,ntime),zstark(ntime,nstark), &
              zsilopt(ntime,nsilop),zexpmpi(ntime,magpri), &
              zfccurt(ntime,nfcoil),zeccurt(ntime,nesum), &
-             zaccurt(ntime,nacoil) 
+             zaccurt(ntime,nacoil),ziter(nitera)
       character*85 presstext
       character*109 preswtext
 !-----------------------------------------------------------------------
@@ -786,12 +786,12 @@
       call NCVPT(nceq,id_saiprw,c11,cnn,zwork,ierr)
 !
       cnn(1) = nitera
-      zwork(1:nitera) = real(czmaxi(1:nitera),r4)
-      call NCVPT(nceq,id_czmaxi,c11,cnn,zwork,ierr)
-      zwork(1:nitera) = real(cchisq(1:nitera),r4)
-      call NCVPT(nceq,id_cchisq,c11,cnn,zwork,ierr)
-      zwork(1:nitera) = real(cerror(1:nitera),r4)
-      call NCVPT(nceq,id_cerror,c11,cnn,zwork,ierr)
+      ziter = real(czmaxi(1:nitera),r4)
+      call NCVPT(nceq,id_czmaxi,c11,cnn,ziter,ierr)
+      ziter = real(cchisq(1:nitera),r4)
+      call NCVPT(nceq,id_cchisq,c11,cnn,ziter,ierr)
+      ziter = real(cerror(1:nitera),r4)
+      call NCVPT(nceq,id_cerror,c11,cnn,ziter,ierr)
 !
       cnn(1) = kwcurn
       zwork(1:kwcurn)=real(brsp(nfcoil+1:nfcoil+kwcurn)/darea,r4)

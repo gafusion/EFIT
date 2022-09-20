@@ -78,6 +78,7 @@ LOOKFW,,See namelist IN1.
 LOPLIM,,See namelist IN1.
 MSE_QUIET,,See namelist INS.
 MSE_SPAVE_ON,,See namelist INS.
+MSE_USECER,,See namelist INS.
 MSEBKP,,See namelist INS.
 MSEFITFUN,,See namelist INS.
 MTIME,,Number of time steps? (Does this override interactive input?)

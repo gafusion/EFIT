@@ -335,8 +335,8 @@
 !--   initialize inputs
 !---------------------------------------------------------------------- 
       else snap
-      denv(1:nco2v)=0.
-      denr(1:nco2r)=0.
+      denr=0.
+      denv=0.
       co2cor=1.0
       currn1=0.0
       fwtbmsels=0.0
@@ -351,9 +351,9 @@
       xltype_180=0.0 
       vloop=0. 
 
-      fwtlib(1:libim)=0.0
-      rrrlib(1:libim)=0.0
-      zzzlib(1:libim)=0.0
+      fwtlib=0.0
+      rrrlib=0.0
+      zzzlib=0.0
 
       a_ext=-10. 
       dr_ext=0.0 
@@ -385,9 +385,8 @@
         kerror=1
         return
       endif
-      close(unit=nin)
 
-      open(unit=nin,status='old',file=ifname(jtime))
+      rewind(nin)
       read (nin,ink,iostat=istat)
       if (istat>0) then
         backspace(nin)
@@ -395,9 +394,8 @@
         write(*,'(A)') 'Invalid line in namelist ink: '//trim(line)
         stop
       endif
-      close(unit=nin)
 
-      open(unit=nin,status='old',file=ifname(jtime))
+      rewind(nin)
       read (nin,ins,iostat=istat)
       if (istat>0) then
         backspace(nin)
@@ -405,9 +403,8 @@
         write(*,'(A)') 'Invalid line in namelist ink: '//trim(line)
         stop
       endif
-      close(unit=nin)
 
-      open(unit=nin,status='old',file=ifname(jtime))
+      rewind(nin)
       read (nin,in_msels,iostat=istat) 
       if (istat>0) then 
         backspace(nin) 
@@ -415,9 +412,8 @@
         write(*,'(A)') 'Invalid line in namelist in_msels: '//trim(line)
         stop
       endif
-      close(unit=nin)
 
-      open(unit=nin,status='old',file=ifname(jtime)) 
+      rewind(nin)
       read (nin,ina,iostat=istat)
       if (istat>0) then
         backspace(nin)
@@ -425,9 +421,8 @@
         write(*,'(A)') 'Invalid line in namelist ina: '//trim(line)
         stop
       endif
-      close(unit=nin) 
 
-      open(unit=nin,status='old',file=ifname(jtime)) 
+      rewind(nin)
       read (nin,inece,iostat=istat) 
       if (istat>0) then
         backspace(nin)
@@ -435,9 +430,8 @@
         write(*,'(A)') 'Invalid line in namelist inece: '//trim(line)
         stop
       endif
-      close(unit=nin) 
 
-      open(unit=nin,status='old',file=ifname(jtime)) 
+      rewind(nin)
       read (nin,edgep,iostat=istat) 
       if (istat>0) then
         backspace(nin)
@@ -445,9 +439,8 @@
         write(*,'(A)') 'Invalid line in namelist edgep: '//trim(line)
         stop
       endif
-      close(unit=nin) 
 
-      open(unit=nin,status='old',file=ifname(jtime)) 
+      rewind(nin)
       read (nin,iner,iostat=istat) 
       if (istat>0) then
         backspace(nin)
@@ -455,9 +448,8 @@
         write(*,'(A)') 'Invalid line in namelist iner: '//trim(line)
         stop
       endif
-      close(unit=nin) 
 
-      open(unit=nin,status='old',file=ifname(jtime)) 
+      rewind(nin)
       read (nin,insxr,iostat=istat) 
       if (istat>0) then
         backspace(nin)
@@ -465,9 +457,8 @@
         write(*,'(A)') 'Invalid line in namelist insxr: '//trim(line)
         stop
       endif
-      close(unit=nin) 
 
-      open(unit=nin,status='old',file=ifname(jtime))
+      rewind(nin)
       read (nin,inms,iostat=istat) 
       if (istat>0) then
         backspace(nin)
@@ -475,9 +466,8 @@
         write(*,'(A)') 'Invalid line in namelist inms: '//trim(line)
         stop
       endif
-      close(unit=nin) 
 
-      open(unit=nin,status='old',file=ifname(jtime)) 
+      rewind(nin)
       read (nin,inwant,iostat=istat) 
       if (istat>0) then
         backspace(nin)
@@ -485,9 +475,8 @@
         write(*,'(A)') 'Invalid line in namelist inwant: '//trim(line)
         stop
       endif
-      close(unit=nin) 
 
-      open(unit=nin,status='old',file=ifname(jtime))
+      rewind(nin)
       read (nin,invt,iostat=istat)
       if (istat>0) then
         backspace(nin)

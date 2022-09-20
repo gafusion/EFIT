@@ -3,4 +3,5 @@
  link_store=""
  maxinpfile=10
  ntims=1000
+ kxiter=30
  /

@@ -220,6 +220,10 @@
 !
       x = 0.
       fuxx = 0.
+      xbm1 = 0.
+      xtm1 = 0.
+      xbm2 = 0.
+      xtm2 = 0.
       zf = z1
       zs = z2
       hf2 = h1*.5
