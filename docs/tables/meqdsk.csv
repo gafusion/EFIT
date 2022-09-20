@@ -62,10 +62,10 @@ DEVICE,	experiment name
 "PRESSR(ntime, npress)", 	measured pressure vs. normalized flux (kinetic fits only)
 "PRESW(ntime, npresw)", 	measured rotational pressure vs. normalized flux (kinetic fits only)
 "PSIREF(ntime)", 	measured reference flux loop
-"RPRESS(ntime, npress)", | "<0:input pressure profile vs. flux;
-|>0:R coordinates of input pressure profile in m"
-"RPRESW(ntime, npresw)", | "<0:input rotational pressure profile vs. flux;
-|>0:R coordinates of input rotational pressure profile in m"
+"RPRESS(ntime, npress)", "| <0:input pressure profile vs. flux;
+| >0:R coordinates of input pressure profile in m"
+"RPRESW(ntime, npresw)", "| <0:input rotational pressure profile vs. flux;
+| >0:R coordinates of input rotational pressure profile in m"
 "RRGAM(ntime, nstark)", radius (R position) of MSE channels
 "SAIEC(ntime, nesum)",	chisq for E-coil currents
 "SAIFC(ntime, nfcoil)",	chisq for F-coil currents
