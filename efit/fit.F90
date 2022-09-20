@@ -26,6 +26,7 @@
       ndelzon=999
       iwantk=0
       cjeccd=0.0
+      lflag=0
       iend=mxiter+1
       if (iconvr.eq.3) iend=1
       do i=1,iend
@@ -149,9 +150,12 @@
           if(i.eq.mxiter+1) exit
         end do ! ii
       end do ! i
-      if((nbdry.le.0).and.(ivacum.le.0).and.(iconvr.ne.4)) &
+      if ((nbdry.le.0).and.(ivacum.le.0).and.(iconvr.ne.4)) then
         call errctrl_msg('fit','not converged, reached max iterations',2)
+        lflag=1
+      endif
 2020  continue
+      terror(jtime)=errorm
 !---------------------------------------------------------------------
 !--    update pressure if needed                                    --
 !---------------------------------------------------------------------

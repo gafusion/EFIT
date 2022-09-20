@@ -309,6 +309,11 @@
             'Solution does contain any plasma, no outputs are generated')
           cycle
         endif
+        ! for use in optimization loops
+        if (ierchk.lt.0 .and. lflag.gt.0) then
+          call write_a(ktime,ks)
+          cycle
+        endif
 !----------------------------------------------------------------------
 !--     post processing for graphic and text outputs                 --
 !----------------------------------------------------------------------
@@ -333,7 +338,7 @@
           write (6,*) 'Main/write_a ks/kerror = ', ks, kerror
 #endif
           call write_a(ktime,ks)
-          if(ierchk.gt.1 .and. lflag.gt.0) cycle
+          if(abs(ierchk).gt.1 .and. lflag.gt.0) cycle
         endif
 #ifdef DEBUG_LEVEL2
         write (6,*) 'Main/write_g ks/kerror = ', ks, kerror

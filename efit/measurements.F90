@@ -105,7 +105,6 @@
 !     file.
 !
       if (use_alternate_pointnames .ne. 0) then
-!
         open(unit=60,file=alternate_pointname_file,status='old')
         read(60,in4,iostat=istat)
         if (istat>0) then

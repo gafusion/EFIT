@@ -520,6 +520,7 @@
       real*8,allocatable :: rrgrid(:,:),bfield(:),rrout(:,:), &
           bout(:,:),babs(:,:),bbb(:),ccc(:),ddd(:),btttt(:), &
           dsidr(:),ddsiddr(:),bx(:),ry(:),bbk(:),dbdr(:)
+      data kgeteceb/0/
 
       kerror = 0
 !-------------------------------------------------------------------

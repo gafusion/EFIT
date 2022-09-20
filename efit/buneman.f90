@@ -113,9 +113,13 @@
         n222 = n/2
         c(n222) = 0.
         lo = n/2
-        first = .true.
-        do while ((2*l/n)*(2*lo-3) >= 0 .or. first)
-          if ((2*l/n)*(2*lo-3) == 0 .and. .not. first) then
+        l = lo/2
+        c(l) = sqrt(2.+c(lo))
+        lo = l
+        c(n-l) = -c(l)
+        l = l+2*lo
+        do while ((2*l/n)*(2*lo-3) >= 0)
+          if ((2*l/n)*(2*lo-3) == 0) then
             c(l) = (c(l+lo)+c(l-lo))/c(lo)
           else
             l = lo/2
@@ -124,7 +128,6 @@
           endif
           c(n-l) = -c(l)
           l = l+2*lo
-          first = .false.
         enddo
         do l = 2,n
           c(l-1) = 1./(2.+s*(2.-c(l-1)))

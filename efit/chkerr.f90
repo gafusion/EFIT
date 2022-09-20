@@ -53,7 +53,7 @@
         betat(m)=0.0
         ali(m)=0.0
         wplasm(m)=0.0
-        terror(m)=0.0
+        !terror(m)=0.0
         erflag(m,3)=0
         erflag(m,2)=0
         erflag(m,14)=0
@@ -68,10 +68,10 @@
 !----------------------------------------------------------------------
       open(unit=40,file='errfil.out',status='unknown',position='append')
       select case (ierchk)
-      case (3)
+      case (-3,3)
         write(nttyo,980) ishot,time(mtime)
         write(40,980) ishot,time(mtime)
-      case (2)
+      case (-2,2)
         write(nttyo,990) ishot,time(mtime)
         write(40,990) ishot,time(mtime)
       case default

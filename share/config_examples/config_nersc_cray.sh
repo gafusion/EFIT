@@ -43,7 +43,7 @@ case $NERSC_HOST in
 # Determine architecture from programming environment
     comp=crayclang
     math_ver=9.0
-    io_ver=10.0
+    io_ver=14.0
     arch=x86_64
     crayroot=/opt/cray/pe
 

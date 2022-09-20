@@ -7,7 +7,7 @@
 !!
 !!    @param iges : time index
 !!
-!!    @param igmax :
+!!    @param igmax : number of time slices
 !!
 !!    @param kerror : error flag
 !!
@@ -329,7 +329,6 @@
       zmagx(iges)=zmaxis*100.0
       elongm(iges)=emaxis
       qqmagx(iges)=qmaxis
-      terror(iges)=errorm
       tflux(iges)=rhovn(nw)
 !---------------------------------------------------------------------
 !--   gap calculation                                               --
