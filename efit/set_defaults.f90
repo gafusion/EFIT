@@ -292,6 +292,7 @@
         kww2bdry=0.0
         kwwcur=2
         limfag=2
+        limloc='N/A'
         limitr=-33
         limvs=1
         m_write=1 ! TODO: output file type option should not be hard coded...

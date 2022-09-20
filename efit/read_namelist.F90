@@ -21,7 +21,7 @@
       character cmdfile*15,shotfile*15,snapext*86
       character(1000) :: line
 
-      namelist/setup/link_efit,link_store,maxinpfile,ntims
+      namelist/setup/link_efit,link_store,maxinpfile,ntims,kxiter
       namelist/optin/mode,cmdfile,shotfile,shot,starttime,deltatime, &
                      steps,snapext,inpfile
 
@@ -40,6 +40,8 @@
       cmdfile = '0'
       shotfile = '0'
       snapext = 'none'
+      kxiter = -1
+      kxiter_save = -1
 
       ! Determine if input file exists
       if(rank == 0) inquire(file='efit.input',exist=input_flag)
@@ -64,8 +66,10 @@
       if(rank == 0) write(*,*) & 
         'Using setup (if present) from efit.input file'
       allocate(inpfile(maxinpfile))
+      if(kxiter.ne.-1) kxiter_save=kxiter
 
       ! Read inputs
+      rewind(nin)
       read (nin,optin,iostat=istat)
       if (istat>0) then
         backspace(nin)
@@ -132,6 +136,8 @@
         stop
       endif
       close(unit=nin)
+      
+      if(kxiter_save.ne.-1) kxiter=kxiter_save
 
       return
       end subroutine read_machinein
@@ -229,22 +235,13 @@
       parameter(nin=343)
 
       open(unit=nin,status='old',file=filename)
-      read (nin,in1,iostat=istat)
+      read(nin,in1,iostat=istat)
 
       if (istat>0) then
-        read(nin,fmt='(A)') line
-        write(*,'(A)') &
-          'Invalid at current line in namelist: '//trim(line)
-        backspace(nin)
         backspace(nin)
         read(nin,fmt='(A)') line
-        write(*,'(A)') &
-          'Invalid line in namelist: '//trim(line)
-        backspace(nin)
-        backspace(nin)
-        read(nin,fmt='(A)') line
-        write(*,'(A)') &
-          'Previous line in namelist: '//trim(line)
+        write(*,'(A)') 'Invalid line in namelist in1: '//trim(line)
+        stop
       endif
       close(nin)
       end subroutine read_dirs_shot
