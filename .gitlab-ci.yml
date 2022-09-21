@@ -29,15 +29,18 @@ variables:
   interruptible: true
   only:
     refs:
-#     Set with CI/CD Shedules - New Schedule
+      # Can schedule tests from gitlab interface (CICD -> Schedules)
       - schedules
+      # I'm not sure what this does
       - api
-#     Set with CI/CD Pipelines - Run Pipeline
+      # Can schedule tests from gitlab interface (CICD -> Pipelines -> Run pipeline)
       - web
+      # Automatically start things for every MR
       - merge_requests
   dependencies: []
   except:
     variables:
+      # I'm not sure what this does
       - $EFIT_CI_SCHEDULED =~ /yes/
 
 pause-for-approval:
@@ -61,7 +64,6 @@ pause-for-approval:
   after_script:
     - date
 
-
 clang-docker:
   extends: .test
   stage: stage0
@@ -71,18 +73,13 @@ clang-docker:
     - mkdir build && cd build # Build out of place
     - ../docker/config_docker_clang.sh | tee config.log
     - make -j4 | tee make.log
-    - make docs | tee docs.log
-    - mv docs/html ../public
-  environment:
-    name: review/$CI_COMMIT_REF_NAME
-    url: https://$CI_PROJECT_NAMESPACE.gitlab.io/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public/html/index.html
   artifacts:
     name: "$CI_JOB_NAME"
     when: always
     paths:
     - build/*.log
     - build/CMakeCache.txt
-    - public
+    - build/Testing/Temporary/LastTest.log
     expire_in: 4 days
 
 linux-clang:
@@ -95,6 +92,12 @@ linux-clang:
     - ../share/config_examples/config_ci_hip.sh | tee config.log
     - make -j4  | tee make.log
     - make test | tee test.log
+    - make docs | tee docs.log
+    - mv docs/html ../public
+  # Include documentation as part of the review
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: https://$CI_PROJECT_NAMESPACE.gitlab.io/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public/html/index.html
   variables:
     PATH: /scratch/soft/bin:/scratch/soft/mpich/bin:/opt/rh/devtoolset-7/root/usr/bin:/usr/bin:/bin
   artifacts:
@@ -104,8 +107,8 @@ linux-clang:
     - build/*.log
     - build/CMakeCache.txt
     - build/Testing/Temporary/LastTest.log
+    - public
     expire_in: 4 days
-
 
 #
 # Deploy documentation using GitLab pages
@@ -117,9 +120,6 @@ pages:  # this job name has special meaning to GitLab
   interruptible: true
   variables:
     PATH: /scratch/soft/bin:/scratch/soft/mpich/bin:/opt/rh/devtoolset-7/root/usr/bin:/usr/bin:/bin
-  environment:
-    name: review/$CI_COMMIT_REF_NAME
-    url: https://$CI_PROJECT_NAMESPACE.gitlab.io/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public/index.html
   script:
     - source /scratch/soft/sphinx_load.sh
     - mkdir build-docs && cd build-docs # Build out of place
@@ -132,5 +132,3 @@ pages:  # this job name has special meaning to GitLab
   except:
     variables:
       - $EFIT_CI_SCHEDULED =~ /yes/
-
-
