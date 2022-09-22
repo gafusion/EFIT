@@ -16,11 +16,12 @@ def gen_rst(directory):
     with open(rstfile, "w") as fh:
         fh.write(header)
         for file in files:
+            if file.endswith(".swp"): continue # Ignore vim temporary files
             if "modules-efit" in file or 'chkerr' in file:
                 # contains subroutines inside of modules which currently breaks
                 # doxygen (could possibly be fixed, but they aren't essential anyway)
                 continue
-            #print(file)
+            print(file)
             if "f90" in file or "F90" in file and "swp" not in file:
                 first = 0
                 with open(os.path.join(directory, file), "r") as f:

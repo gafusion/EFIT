@@ -99,6 +99,10 @@
 !!
 !!    Inputs:
 !!
+!!    @param nx : Size of first direction
+!!
+!!    @param ny : Size of second direction
+!!
 !!    @param s : nx by ny array containing the function values at (x,y).
 !!                This is a 1-d array, k=k=(i-1)*ny+j.
 !! 
@@ -793,6 +797,8 @@
 !!    @param lxt : number of terms in the sequence  xt .
 !!    @param x : the point whose location with respect to the sequence  xt  is
 !!    to be determined.
+!!    @param left :  
+!!    @param mflag :  
 !!    
 !!    o u t p u t
 !!    left, mflag.....both integers, whose value is

@@ -2,7 +2,7 @@
 !! 
 !>   chkerr checks for mhd fitting errors.
 !!
-!!   @param : mtime is time index
+!!   @param mtime : time index
 !!
 !*********************************************************************
       subroutine chkerr(mtime)
