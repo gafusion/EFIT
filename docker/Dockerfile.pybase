@@ -1,0 +1,26 @@
+# Build command:
+#   $ docker build -t registry.gitlab.com/efit-ai/efit/pybase -f Dockerfile.pybase  .
+FROM debian:stable-slim
+
+RUN apt-get update && apt-get install -y \
+        python3 \
+        python3-pip \
+        unzip \
+        vim \
+        && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN python3 -m pip install --no-cache-dir -U pip
+RUN python3 -m pip install --no-cache-dir h5py
+RUN python3 -m pip install --no-cache-dir pandas
+RUN python3 -m pip install --no-cache-dir numpy
+RUN python3 -m pip install --no-cache-dir pytest
+RUN python3 -m pip install --no-cache-dir cython
+RUN python3 -m pip install --no-cache-dir pyyaml
+RUN python3 -m pip install --no-cache-dir matplotlib
+RUN python3 -m pip install --no-cache-dir lxml
+RUN python3 -m pip install --no-cache-dir mypy
+RUN python3 -m pip install --no-cache-dir flake8
+
+ENV HOME=/root

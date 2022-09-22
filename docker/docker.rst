@@ -2,7 +2,7 @@ Docker Tools
 ===============
 
 Using pre-built Docker containers registered at gitlab
--------------------------------------------------------------
+------------------------------------------------------
 
 We have pre-built docker containers.  They are used for both the CI pipeline
 ("shared" runners which run in the cloud) and for ease in development.  For
@@ -59,14 +59,51 @@ After exiting the container, do not forget to cleanup after yourself:
     exit
     docker-compose down # stop and remove the container
 
+Running a container locally
+---------------------------
+
+It is wholly possible to run pipeline job locally on your computer
+using gitlab's runner instead of in the cloud or using one of the
+efit shared runners. Gitlab provides a runner specificaly for this
+purpose, called "gitlab-runner". Installation instructions for
+gitlab-runner can be found here (different platforms are indicated
+on the left side of the web page):
+
+https://docs.gitlab.com/runner/install/osx.html
+
+Alternatively, one can install the docker image and run the container,
+on the local system volume mount, which is simpler and fast. See
+
+https://docs.gitlab.com/runner/install/docker.html
+
+for more details. From the above page, 
+
+.. code:: bash
+
+    docker run -d --name gitlab-runner --restart always \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v /srv/gitlab-runner/config:/etc/gitlab-runner \
+    gitlab/gitlab-runner:latest
+
+On MacOS, replace "srv" above with "/Users/Shared". Once the container is
+running in docker, you can run a pipeline job locally with the following
+command:
+
+.. code:: bash
+
+    gitlab-runner exec docker <job_name>
+
+where <job_name> is the name of the individual job in the pipeline.
+"gitlab-runner" should be installed in "/usr/local/bin/gitlab-runner".
+
 Building and registering docker containers with gitlab
--------------------------------------------------------------
+------------------------------------------------------
 
-Creating your own docker image::
-
+Basic steps for registering at gitlab:
+=======
     docker-compose  TODO
 
-Basic steps for registering at gitlab::
+.. code:: bash
 
     docker login registry.gitlab.com   # Only need to do once.  Use gitlab creds
     DNAME=aocc
@@ -81,7 +118,8 @@ Alternative to docker compose
 -----------------------------
 
 
-To start a container from the EFIT pre-built Docker image on GitLab, run:
+To start a container from the EFIT pre-built Docker image on GitLab
+(eg. clang below), run:
 
 .. code:: bash
 
@@ -97,4 +135,37 @@ With that image available, you can start a container with an interactive shell:
 
 
 Note that this doesn't have the directories mounted which is why we use
-docker-compose
+docker-compose.
+
+
+Creating your own docker image
+------------------------------
+
+To create your own image and push it to the efit-ai project, edit a file
+called "Dockerfile.<image_name>" where "<image_name>" is the name of the
+image that you want to create, eg. "clang". You can use one of the existing
+docker image files located in "efit-ai/efit/docker" as a template. These
+files will soon be moved to "efit-ai/docker".
+
+.. code:: bash
+
+     docker build -f Dockerfile.<image_name> -t registry.gitlab.com/efit-ai/efit/<image_name> .
+     docker images
+     docker login registry.gitlab.com 
+     docker push registry.gitlab.com/efit-ai/efit/<image_name>
+
+It is important when building the image to tag it ("-t") as is done above. This
+will obviate the need to tag the image when pushing to the registry. Once built,
+the image should be mounted in docker. One must login to the registry prior to
+pushing the image.
+
+Note that if at the end of the push, you see the error:
+"unauthorized: authentication required" then the push was unsuccessful. This seems
+to be caused by a timeout after logging in to the registry. Since images can be
+very large, this can happen if you have a slower upload connection (10 MBps is
+often not enough).
+
+You can check the container registry at the URL at the top of this document. If you
+see your new image there with no tags, then the push was not successful. If there is
+one tag, then you are good to go.
+
