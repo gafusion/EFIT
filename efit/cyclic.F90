@@ -390,14 +390,17 @@
 !!  This routine also does a bunch of preparation to compute the rhs vector
 !!  and accumulate the result.
 !! 
-!!    @param con : array of structures giving precalculated values
-!!    @param wk1 : vector of precalculated values. 
-!!    @param wk2,phi : vectors that when combined yield the right hand side vector
-!!    @param alphab : a constant that would be used in computing the right hand side
-!!         vector.
 !!    @param f : the vector in which the result is being accumulated.
-!!    @param v : temporary storage area for the result vector
 !!    @param n : number of elements in the vector. 
+!!    @param ind : index
+!!
+!!    Other useful variables:
+!!     con : array of structures giving precalculated values
+!!     wk1 : vector of precalculated values. 
+!!     wk2,phi : vectors that when combined yield the right hand side vector
+!!     alphab : a constant that would be used in computing the right hand side
+!!             vector.
+!!     v : temporary storage area for the result vector
 !!
 !**********************************************************************
       subroutine ef_tridiag2(f,n,ind)

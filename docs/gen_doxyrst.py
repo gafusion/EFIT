@@ -16,6 +16,7 @@ def gen_rst(directory):
     with open(rstfile, "w") as fh:
         fh.write(header)
         for file in files:
+            if file.endswith(".swp"): continue # Ignore vim temporary files
             if "modules-efit" in file or 'chkerr' in file:
                 # contains subroutines inside of modules which currently breaks
                 # doxygen (could possibly be fixed, but they aren't essential anyway)

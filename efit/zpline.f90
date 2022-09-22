@@ -18,6 +18,8 @@
 !!
 !!    @param n : the number of data points or knots (n.ge.2)
 !!
+!!    @param u : function to be splined
+!!
 !!    @param x : the abscissas of the knots in strictly increasing order
 !!
 !!    @param y : the ordinates of the knots
@@ -123,6 +125,8 @@
 !!    
 !!
 !!    @param n : the number of data points or knots (n.ge.2)
+!!
+!!    @param u : function to be splined
 !!
 !!    @param x : the abscissas of the knots in strictly increasing order
 !!
