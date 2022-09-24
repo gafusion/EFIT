@@ -16,7 +16,7 @@ CO2COR, 1.,"""CO2 Correction"". Correction factor to apply to Thompson to make c
 CONDIN, 1e-6, 
 CSTABNE, 0.0, Stabilization value for ne fitting. (NOT VARIABLE!)
 CSTABTE, 0.0,Stabilization value for Te fitting. (NOT VARIABLE!)
-CUTIP, 80000, Maximum amount of plasma current in Amp to be considered as vacuum. Run vacuum solution if plasma current not larger than this value?
+CUTIP, 80000, Threshold for plasma current (in Amps) below which the vacuum fields are the only solution provided.
 DMASS,, """Density Mass"". Mass density in kg/m3. See NMASS."
 DNBEAM, , "Beam particle density, for kinetic fit - from ONETWO code."
 DNETHOM,, """Density ne Thompson"". Density from Thompson scattering, from some other code."
