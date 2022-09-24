@@ -117,7 +117,7 @@
 #ifdef DEBUG_LEVEL1
       write (6,*) 'Enter SHAPE kerror = ', kerror
 #endif
-      is_vacuum: if (ivacum.le.0) then
+      is_vacuum: if (ivacum.eq.0) then
       if (iges.gt.1) then
         silop_change=maxval(abs(silopt(iges,:)-silopt(iges-1,:)))
       else

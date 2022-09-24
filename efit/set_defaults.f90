@@ -240,11 +240,8 @@
         ibtcomp=1
         ibunmn=1
         icalbet=1
-        icinit=2
         icntour=0
         icondn=-1
-        iconsi=-1
-        iconvr=2
         icurrt=2
         idplace=0
         iecoil=0
@@ -260,7 +257,6 @@
         isumip=0
         itimeu=0
         iunit=35
-        ivacum=0
         ivesel=0
         iweigh=0
         ixray=0
@@ -303,7 +299,6 @@
         nqwant=0
         nsol=0
         nsplot=4 
-        nxiter=1
         n1coil=0
         ppbdry=0.0
         pp2bdry=0.0

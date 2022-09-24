@@ -26,7 +26,7 @@
       character*50 edatname
       namelist/edat/npress,rpress,zpress,pressr,sigpre
 
-      kerror = 0
+      kerror=0
       kdofit=1
       input_pressure: if (kprfit.ne.2) then
 !---------------------------------------------------------------------

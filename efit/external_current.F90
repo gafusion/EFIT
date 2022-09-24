@@ -77,7 +77,7 @@
 
         do i=1,nfcoil
           brsp(i)=0.0
-          if(ivacum.le.0) &
+          if(ivacum.eq.0) &
             brsp(i)=brsp(i)+sum(rfcpc(i,1:nwnh)*pcurrt(1:nwnh))
           if(iecurr.gt.0) &
             brsp(i)=brsp(i)+sum(rfcec(i,1:nesum)*ecurrt(1:nesum))
@@ -136,7 +136,7 @@
 !-----------------------------------------------------------------------
 !--      magnetic probes used only for vacuum error field analysis    --
 !-----------------------------------------------------------------------
-         if (ivacum.gt.0) then
+         if (ivacum.eq.1) then
            do m=1,magpri
              if(fwtmp2(m).le.0.0) cycle
              nj=nj+1
@@ -241,7 +241,7 @@
 !-----------------------------------------------------------------------
 !--        magnetic probes used only for vacuum error analysis        --
 !-----------------------------------------------------------------------
-           if (ivacum.gt.0) then
+           if (ivacum.eq.1) then
              do m=1,magpri
                if(fwtmp2(m).le.0.0) cycle
                nj=nj+1
@@ -390,7 +390,7 @@
 !-----------------------------------------------------------------------
 !--   magnetic probes used only for vacuum error field analysis       --
 !-----------------------------------------------------------------------
-      vacuum: if (ivacum.gt.0) then
+      vacuum: if (ivacum.eq.1) then
         do m=1,magpri
           if(fwtmp2(m).le.0.0) cycle
           nj=nj+1

@@ -297,7 +297,6 @@
       curc79in=0.0
       curc139in=0.0
       curc199in=0.0
-      idone=0
       fpol=0.0
       pres=0.0
       ffprim=0.0
@@ -308,6 +307,9 @@
         cdeljsum=0.0
         psi=0.0
       endif
+      iconsi=-1
+      iconvr=2
+      nxiter=1
 !---------------------------------------------------------------------- 
 !--   SNAP Mode
 !--   Restore fitting weights
@@ -1909,6 +1911,9 @@
       swtemsels=fwtemsels
       swtece=fwtece0
       swtecebz=fwtecebz0
+      iexcals=iexcal
+      ibunmns=ibunmn
+      ierchks=ierchk
 #ifdef DEBUG_LEVEL1
       write(*,*)'adjust fit parameters based on basis function selected'
 #endif
@@ -2283,6 +2288,7 @@
         brsp = brsp_save
 
       ! legacy options...
+      ibunmn=ibunmns
       if(ibunmn.eq.3) ibunmn=1
       if(ibunmn.eq.4) ibunmn=2
 
@@ -2295,6 +2301,9 @@
       else 
         negcur=0 
       endif 
+      iexcal=iexcals
+      ivacum=0
+      ierchk=ierchks
       if (abs(pasmat(jtime)).le.cutip.and.iconvr.ge.0) then
         if(iconsi.eq.-1) iconsi=55 
         if(ivesel.gt.10) iconsi=0 
@@ -2371,7 +2380,7 @@
         endif 
       endif 
       kconvr=iconvr
-      www(1:nwnh)=zero(1:nwnh) 
+      www=zero 
 !---------------------------------------------------------------------- 
 !--   signal at psi loop # NSLREF is used as reference               -- 
 !---------------------------------------------------------------------- 

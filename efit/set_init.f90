@@ -23,7 +23,7 @@
       real*8 :: alpa(nw)
 !
       pcurrt=0.0
-      if(ivacum.gt.0) return
+      if(ivacum.eq.1) return
 !-----------------------------------------------------------------------
 !--   icinit=1 uniform and elliptical flux surfaces
 !--          2 parabolic and elliptical

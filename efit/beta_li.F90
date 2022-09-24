@@ -566,7 +566,7 @@
 !
       ALLOCATE(x(nw),y(nh),dpleng(npoint),xxs(npoint),yys(npoint))
 !
-      if (ivacum.gt.0) return
+      if (ivacum.eq.1) return
       sumbp2=0.0
       call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
       do i=1,nw

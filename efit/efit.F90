@@ -238,6 +238,12 @@
           if(k.lt.ktime) kerrot(ks)=kerror
           cycle
         endif
+        ! don't solve times without plasma
+        if (ivalid.gt.0 .and. ivacum.eq.1) then
+          call errctrl_msg('efit', &
+            'Solution does contain any plasma, no outputs are generated')
+          cycle
+        endif
         ! don't solve times without mse
         if (ivalid.gt.1 .and. kstark.eq.0) then
           call errctrl_msg('efit', &
@@ -301,13 +307,6 @@
             if(k.lt.ktime) kerrot(ks)=kerror
             cycle
           endif
-        endif
-        ! prevent post process for times without plasma solution
-        ! this will catch some cases that the first check misses
-        if (ivalid.gt.0 .and. abs(sum(pcurrt)).lt.1.e-3_dp) then
-          call errctrl_msg('efit', &
-            'Solution does contain any plasma, no outputs are generated')
-          cycle
         endif
         ! for use in optimization loops
         if (ierchk.lt.0 .and. lflag.gt.0) then

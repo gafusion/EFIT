@@ -61,8 +61,8 @@
 !        !write(nttyo,*) ishot,int(time(it)),tsaisq(it) ! handy for debugging
 !      end if
 !#endif
-!      if ((ivacum.le.0).and.(itek.le.0)) then
-      if (ivacum.le.0) then
+!      if ((ivacum.eq.0).and.(itek.le.0)) then
+      if (ivacum.eq.0) then
         mpi_rank: if (rank == 0) then
           !write (nttyo,10000) trim(ch1),trim(ch2)
           jtime=time(it)
@@ -143,7 +143,7 @@
         write (nout,10020) sumif,sumift,sumifs
         write (nout,11010)
         write (nout,11020) (rsisfc(i),i=1,nfcoil)
-        if (ivacum.le.0.and.(icurrt.eq.2.or.icurrt.eq.5)) then
+        if (ivacum.eq.0.and.(icurrt.eq.2.or.icurrt.eq.5)) then
           xnorm=brsp(nfcoil+1)
           write (nout,11040) xnorm
           xrsp=0.0
