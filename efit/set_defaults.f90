@@ -67,7 +67,6 @@
       ishiftz=0
       itek=0
       itrace=1
-      ivalid=0
       jdebug='NONE' ! deprecated
       kbound=0
       kcallece=2
@@ -121,6 +120,7 @@
       rcentr=1.6955_dp
       relax=1.00
       relaxdz=1.0
+      req_valid=.false.
       rexpan=0.010_dp
       rzeroj=0.0 
       saicon=80.0

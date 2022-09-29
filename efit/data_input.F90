@@ -119,7 +119,7 @@
            imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
            nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
            idebug,jdebug,ifindopt,tolbndpsi,siloplim,use_previous, &
-           ivalid
+           req_valid
       namelist/inwant/psiwant,vzeroj,fwtxxj,fbetap,fbetan,fli,fq95,fqsiw, &
            jbeta,jli,alpax,gamax,jwantm,fwtxxq,fwtxxb,fwtxli,znose, &
            fwtbdry,nqwant,siwantq,n_write,kccoils,ccoils,rexpan, &
@@ -1560,18 +1560,18 @@
       endif 
 91008 format(9e12.5,i2) 
 
-      bti322(jtime)=bti322in 
-      curc79(jtime)=curc79in 
-      curc139(jtime)=curc139in 
-      curc199(jtime)=curc199in 
-      devxmp(jtime,:)=devxmpin(:) 
-      rnavxmp(jtime,:)=rnavxmpin(:) 
-      devpsi(jtime,:)=devpsiin(:) 
-      rnavpsi(jtime,:)=rnavpsiin(:) 
-      devfc(jtime,:)=devfcin(:) 
-      rnavfc(jtime,:)=rnavfcin(:) 
-      deve(jtime,:)=devein(:) 
-      rnavec(jtime,:)=rnavecin(:) 
+      bti322(jtime)=bti322in
+      curc79(jtime)=curc79in
+      curc139(jtime)=curc139in
+      curc199(jtime)=curc199in
+      devxmp(jtime,:)=devxmpin
+      rnavxmp(jtime,:)=rnavxmpin
+      devpsi(jtime,:)=devpsiin
+      rnavpsi(jtime,:)=rnavpsiin
+      devfc(jtime,:)=devfcin
+      rnavfc(jtime,:)=rnavfcin
+      deve(jtime,:)=devein
+      rnavec(jtime,:)=rnavecin
 ! TODO: devbcin, rnavbcin, devpin, and rnavpin are never defined or set...
 !      devbc(jtime)=devbcin
 !      rnavbc(jtime)=rnavbcin
@@ -2174,8 +2174,8 @@
       diamag(jtime)=1.0e-03_dp*dflux
       sigdia(jtime)=1.0e-03_dp*abs(sigdlc)
       pbinj(jtime)=pnbeam
-      silopt(jtime,1:nsilop)=coils(1:nsilop)
-      fccurt(jtime,1:nfcoil)=brsp(1:nfcoil)
+      silopt(jtime,:)=coils
+      fccurt(jtime,:)=brsp(1:nfcoil)
       tangam(jtime,1:nmtark)=tgamma(1:nmtark) 
       tangam_uncor(jtime,1:nmtark)=tgammauncor(1:nmtark) 
       siggam(jtime,1:nmtark)=sgamma(1:nmtark) 
@@ -2204,24 +2204,24 @@
       fwtgam(nmtark+1:nstark)=fwtlib(1:nstark-nmtark)
       swtgam(nmtark+1:nstark)=fwtlib(1:nstark-nmtark)
 ! 
-      bmselt(jtime,1:nmsels)=bmsels(1:nmsels)
-      sbmselt(jtime,1:nmsels)=sbmsels(1:nmsels)
-      fwtbmselt(jtime,1:nmsels)=fwtbmsels(1:nmsels)
-      rrmselt(jtime,1:nmsels)=rrmsels(1:nmsels)
-      zzmselt(jtime,1:nmsels)=zzmsels(1:nmsels)
-      l1mselt(jtime,1:nmsels)=l1msels(1:nmsels)
-      l2mselt(jtime,1:nmsels)=l2msels(1:nmsels)
-      l3mselt(jtime,1:nmsels)=1.-l1msels(1:nmsels)
-      l4mselt(jtime,1:nmsels)=l4msels(1:nmsels)
-      emselt(jtime,1:nmsels)=emsels(1:nmsels)
-      semselt(jtime,1:nmsels)=semsels(1:nmsels)
-      fwtemselt(jtime,1:nmsels)=fwtemsels(1:nmsels)
+      bmselt(jtime,:)=bmsels
+      sbmselt(jtime,:)=sbmsels
+      fwtbmselt(jtime,:)=fwtbmsels
+      rrmselt(jtime,:)=rrmsels
+      zzmselt(jtime,:)=zzmsels
+      l1mselt(jtime,:)=l1msels
+      l2mselt(jtime,:)=l2msels
+      l3mselt(jtime,:)=1.-l1msels
+      l4mselt(jtime,:)=l4msels
+      emselt(jtime,:)=emsels
+      semselt(jtime,:)=semsels
+      fwtemselt(jtime,:)=fwtemsels
 !---------------------------------------------------------------------- 
 !     give the constraint value for matrix routine 
 !---------------------------------------------------------------------- 
-      brspece(jtime,1:nnece)=ecefit(1:nnece)
+      brspece(jtime,:)=ecefit
       brspecebz(jtime)=ecebzfit
-      expmpi(jtime,1:magpri)=expmp2(1:magpri)
+      expmpi(jtime,:)=expmp2
 !------------------------------------------------------------------------ 
 !--   New E-coil connections                   LLao, 95/07/11          --
 !------------------------------------------------------------------------ 
@@ -2256,10 +2256,10 @@
       timems=itime 
       time(jtime)=timems+timeus/1000. 
       bcentr(jtime)=btor 
-      denvt(jtime,1:nco2v)=denv(1:nco2v) 
-      denrt(jtime,1:nco2r)=denr(1:nco2r)
-      accurt(jtime,1:nacoil)=acoilc(1:nacoil)
-      caccurt(jtime,1:nacoil)=acoilc(1:nacoil)
+      denvt(jtime,:)=denv 
+      denrt(jtime,:)=denr
+      accurt(jtime,:)=acoilc
+      caccurt(jtime,:)=acoilc
       vloopt(jtime)=vloop 
       psiref(jtime)=siref 
 ! 

@@ -274,24 +274,24 @@
       limitr=limitr+1
       MSE: if (kdomse.gt.0.or.kstark.gt.0) then
         if (kdomse.gt.0) then
-          tgamma(1:nstark)=cmgam(1:nstark,jtime)
-          tgammauncor(1:nstark)=tgamma(1:nstark)
-          sgamma(1:nstark)=tgamma(1:nstark)*0.05_dp
+          tgamma=cmgam(:,jtime)
+          tgammauncor=tgamma
+          sgamma=tgamma*0.05_dp
         else
-          tgamma(1:nstark)=tangam(jtime,1:nstark)
-          tgammauncor(1:nstark)=tangam_uncor(jtime,1:nstark)
-          sgamma(1:nstark)=siggam(jtime,1:nstark)
+          tgamma=tangam(jtime,:)
+          tgammauncor=tangam_uncor(jtime,:)
+          sgamma=siggam(jtime,:)
         endif
-        rrrgam(1:nstark)=rrgam(jtime,1:nstark)
-        zzzgam(1:nstark)=zzgam(jtime,1:nstark)
-        aa1gam(1:nstark)=a1gam(jtime,1:nstark)
-        aa2gam(1:nstark)=a2gam(jtime,1:nstark)
-        aa3gam(1:nstark)=a3gam(jtime,1:nstark)
-        aa4gam(1:nstark)=a4gam(jtime,1:nstark)
-        aa5gam(1:nstark)=a5gam(jtime,1:nstark)
-        aa6gam(1:nstark)=a6gam(jtime,1:nstark)
-        aa7gam(1:nstark)=a7gam(jtime,1:nstark)
-        aa8gam(1:nstark)=a8gam(jtime,1:nstark)
+        rrrgam=rrgam(jtime,:)
+        zzzgam=zzgam(jtime,:)
+        aa1gam=a1gam(jtime,:)
+        aa2gam=a2gam(jtime,:)
+        aa3gam=a3gam(jtime,:)
+        aa4gam=a4gam(jtime,:)
+        aa5gam=a5gam(jtime,:)
+        aa6gam=a6gam(jtime,:)
+        aa7gam=a7gam(jtime,:)
+        aa8gam=a8gam(jtime,:)
         write (neqdsk,mseout)
         kkstark=nstark
         saisq=tsaisq(jtime)
@@ -302,19 +302,19 @@
 !-----------------------------------------------------------------------
       if (mmbmsels.gt.0.or.kdomsels.gt.0) then         
         if (kdomsels.gt.0) then
-          bmsels(1:nmsels)=cmmls(jtime,1:nmsels)
-          sbmsels(1:nmsels)=0.05_dp*bmsels(1:nmsels)
+          bmsels=cmmls(jtime,:)
+          sbmsels=0.05_dp*bmsels
         else
-          bmsels(1:nmsels)=bmselt(jtime,1:nmsels)
-          sbmsels(1:nmsels)=sbmselt(jtime,1:nmsels)
+          bmsels=bmselt(jtime,:)
+          sbmsels=sbmselt(jtime,:)
         endif
-        rrmsels(1:nmsels)=rrmselt(jtime,1:nmsels)
-        zzmsels(1:nmsels)=zzmselt(jtime,1:nmsels)
-        l1msels(1:nmsels)=l1mselt(jtime,1:nmsels)
-        l2msels(1:nmsels)=l2mselt(jtime,1:nmsels)
-        l4msels(1:nmsels)=l4mselt(jtime,1:nmsels)
-        emsels(1:nmsels)=emselt(jtime,1:nmsels)
-        semsels(1:nmsels)=semselt(jtime,1:nmsels)
+        rrmsels=rrmselt(jtime,:)
+        zzmsels=zzmselt(jtime,:)
+        l1msels=l1mselt(jtime,:)
+        l2msels=l2mselt(jtime,:)
+        l4msels=l4mselt(jtime,:)
+        emsels=emselt(jtime,:)
+        semsels=semselt(jtime,:)
         write (neqdsk,in_msels)
       endif
 !
