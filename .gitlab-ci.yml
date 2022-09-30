@@ -61,11 +61,10 @@ pause-for-approval:
   after_script:
     - date
 
-
 clang-docker:
   extends: .test
   stage: stage0
-  image: registry.gitlab.com/efit-ai/efit/clang
+  image: registry.gitlab.com/efit-ai/efitall/clang
   # Note that currently I'm not actually running make test
   script:
     - mkdir build && cd build # Build out of place
