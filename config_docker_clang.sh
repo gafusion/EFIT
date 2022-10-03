@@ -1,9 +1,9 @@
 #!/bin/sh
 
 dockerdir=`dirname $0`
-sourcedir=`dirname $dockerdir`
+sourcedir=`dirname $dockerdir`/efit
 
-#rm -rf CMake*
+rm -rf CMake*
 
     cmake \
         -DCMAKE_INSTALL_PREFIX:PATH=/software \
