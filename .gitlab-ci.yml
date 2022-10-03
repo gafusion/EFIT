@@ -67,7 +67,9 @@ clang-docker:
   image: registry.gitlab.com/efit-ai/efitall/clang
   # Note that currently I'm not actually running make test
   script:
-    - mkdir build && cd build # Build out of place
+    - mkdir build # Build out of place
+    - cp CMakeLists.txt build
+    - cd build
     - ../config_docker_clang.sh | tee config.log
     - make -j4 | tee make.log
     - make docs | tee docs.log
