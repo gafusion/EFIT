@@ -3,7 +3,7 @@
 dockerdir=`dirname $0`
 sourcedir=`dirname $dockerdir`
 
-rm -rf CMake*
+#rm -rf CMake*
 
     cmake \
         -DCMAKE_INSTALL_PREFIX:PATH=/software \
