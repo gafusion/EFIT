@@ -4,8 +4,9 @@ dockerdir=`dirname $0`
 sourcedir=`dirname $dockerdir`
 
 echo "XXX dockerdir $dockerdir"
+echo "XXX dolzero $0"
 echo "XXX sourcedir $sourcedir"
-echo `ls $sourcedir`
+echo `cat config.log`
 
 rm -rf CMake*
 
