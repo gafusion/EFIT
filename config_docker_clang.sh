@@ -2,6 +2,7 @@
 
 dockerdir=`dirname $0`
 sourcedir=`dirname $dockerdir`
+sourcedir="$dockerdir"/efit
 
 echo "XXX dockerdir $dockerdir"
 echo "XXX dolzero $0"
