@@ -19,7 +19,7 @@ stages:
 variables:
   GIT_STRATEGY: fetch
   GIT_CLEAN_FLAGS: -ffdxq
-  TIMEOUT: 450
+  TIMEOUT: 450 seconds
 
 
 # The most basic template that most tests will expand upon
