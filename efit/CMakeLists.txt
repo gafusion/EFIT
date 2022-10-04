@@ -1,6 +1,6 @@
 
 cmake_minimum_required(VERSION 3.18)
-PROJECT(efit Fortran)
+#PROJECT(efit Fortran)
 PROJECT(efitlib Fortran)
 
 include_directories(
