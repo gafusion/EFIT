@@ -5,6 +5,7 @@ sourcedir=`dirname $dockerdir`
 
 echo "XXX dockerdir $dockerdir"
 echo "XXX sourcedir $sourcedir"
+echo `ls $sourcedir`
 
 rm -rf CMake*
 
