@@ -81,7 +81,7 @@ set(EFITLIB_SOURCES
 )
 
 add_library(efitlib ${EFITLIB_SOURCES_QUALIFIED})
-add_dependencies(efitlib config_f)
+#add_dependencies(efitlib config_f)
 target_link_libraries(efitlib green)
 
 # Diagnostic libs
