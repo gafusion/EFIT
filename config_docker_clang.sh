@@ -1,7 +1,10 @@
 #!/bin/sh
 
 dockerdir=`dirname $0`
-sourcedir=`dirname $dockerdir`/efit
+sourcedir=`dirname $dockerdir`
+
+echo "XXX dockerdir $dockerdir"
+echo "XXX sourcedir $sourcedir"
 
 rm -rf CMake*
 

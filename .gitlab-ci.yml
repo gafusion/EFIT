@@ -39,6 +39,7 @@ variables:
   except:
     variables:
       - $EFIT_CI_SCHEDULED =~ /yes/
+      - CI_DEBUG_TRACE: "true"
 
 pause-for-approval:
   extends: .test-basic
