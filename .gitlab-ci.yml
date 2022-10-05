@@ -19,7 +19,7 @@ stages:
 variables:
   GIT_STRATEGY: fetch
   GIT_CLEAN_FLAGS: -ffdxq
-  TIMEOUT: 450 seconds
+  TIMEOUT: 450
 
 
 # The most basic template that most tests will expand upon
@@ -39,7 +39,6 @@ variables:
   except:
     variables:
       - $EFIT_CI_SCHEDULED =~ /yes/
-      - CI_DEBUG_TRACE: "true"
 
 pause-for-approval:
   extends: .test-basic
@@ -62,14 +61,15 @@ pause-for-approval:
   after_script:
     - date
 
+
 clang-docker:
   extends: .test
   stage: stage0
-  image: registry.gitlab.com/efit-ai/efitall/clang
+  image: registry.gitlab.com/efit-ai/efit/clang
   # Note that currently I'm not actually running make test
   script:
     - mkdir build && cd build # Build out of place
-    - ../config_docker_clang.sh | tee config.log
+    - ../docker/config_docker_clang.sh | tee config.log
     - make -j4 | tee make.log
     - make docs | tee docs.log
     - mv docs/html ../public

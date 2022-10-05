@@ -1,0 +1,44 @@
+FROM ubuntu:20.04
+SHELL ["/bin/bash", "-c"]
+
+ENV DEBIAN_FRONTEND "noninteractive"
+
+RUN apt-get update -y \
+    && apt-get install -y valgrind git libblas-dev liblapack-dev wget \
+                          zlib1g-dev python3-pip bc flake8 graphviz \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download from here (have to agree to EULA):
+# https://developer.amd.com/amd-aocc/#download
+COPY aocc-compiler-3.1.0_1_amd64.deb /software/
+
+RUN cd software \
+    && apt-get update -y \
+    && apt-get install -y ./aocc-compiler-3.1.0_1_amd64.deb \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV CC "/opt/AMD/aocc-compiler-3.1.0/bin/clang"
+ENV FC "/opt/AMD/aocc-compiler-3.1.0/bin/flang"
+ENV CXX "/opt/AMD/aocc-compiler-3.1.0/bin/clang++"
+
+# Building from scratch instead of deb packages to make sure we have newer versions
+RUN cd /software \
+    && wget https://github.com/Kitware/CMake/releases/download/v3.19.2/cmake-3.19.2-Linux-x86_64.tar.gz \
+    && tar xvf cmake-3.19.2-Linux-x86_64.tar.gz \
+    && rm cmake-3.19.2-Linux-x86_64.tar.gz
+
+ENV PATH "/software/cmake-3.19.2-Linux-x86_64/bin:$PATH"
+
+RUN cd /software \
+    && source /opt/AMD/aocc-compiler-3.1.0/setenv_AOCC.sh \
+    && wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.0/src/CMake-hdf5-1.12.0.tar.gz \
+    && tar xvf CMake-hdf5-1.12.0.tar.gz \
+    && mkdir build-hdf5 \
+    && cd build-hdf5 \
+    && cmake -DHDF5_BUILD_FORTRAN:BOOL=ON -DCMAKE_INSTALL_PREFIX:PATH=/software/hdf5 \
+             /software/CMake-hdf5-1.12.0/hdf5-1.12.0/ \
+    && make -j4 install \
+    && cd /software \
+    && rm -rf build-hdf5 CMake-hdf5-*
+
+ENV PATH "/software/hdf5/bin:$PATH"
