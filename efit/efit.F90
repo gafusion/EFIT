@@ -238,19 +238,27 @@
           if(k.lt.ktime) kerrot(ks)=kerror
           cycle
         endif
-        ! don't solve times without mse
-        if (ivalid.gt.1 .and. kstark.eq.0) then
-          call errctrl_msg('efit', &
-            'No MSE data found, not solving for equilibrium')
-          cycle
-        endif
-        ! don't write times without cer
-        if (ivalid.gt.2 .and. &
-            maxval(abs(tangam(ks,1:nmtark) &
-                      -tangam_uncor(ks,1:nmtark))).gt.1.e-10_dp) then
-          call errctrl_msg('efit', &
-            'No CER correction used, not solving for equilibrium')
-          cycle
+        if (req_valid) then
+          ! don't solve times without plasma
+          if (ivacum.eq.1) then
+            call errctrl_msg('efit', &
+            'Solution does contain any plasma, no outputs are generated')
+            cycle
+          endif
+          ! don't solve times without mse
+          if (sum(abs(fwtgam)).gt.nstark*1.e-6_dp .and. kstark.eq.0) then
+            call errctrl_msg('efit', &
+              'No MSE data found, not solving for equilibrium')
+            cycle
+          endif
+          ! don't write times without cer
+          if (mse_usecer.ne.0 .and. &
+              maxval(abs(tangam(ks,1:nmtark) &
+                        -tangam_uncor(ks,1:nmtark))).gt.1.e-10_dp) then
+            call errctrl_msg('efit', &
+              'No CER correction used, not solving for equilibrium')
+            cycle
+          endif
         endif
 
 #ifdef DEBUG_LEVEL2
@@ -272,7 +280,7 @@
 #endif
           call set_init(ks)
           ! don't solve times without plasma solution
-          if (ivalid.gt.0) then
+          if (req_valid) then
             if (icinit.eq.1) then
               if (abs(sum(pcurrt)).lt.1.e-3_dp) then
                 call errctrl_msg('efit', &
@@ -301,13 +309,6 @@
             if(k.lt.ktime) kerrot(ks)=kerror
             cycle
           endif
-        endif
-        ! prevent post process for times without plasma solution
-        ! this will catch some cases that the first check misses
-        if (ivalid.gt.0 .and. abs(sum(pcurrt)).lt.1.e-3_dp) then
-          call errctrl_msg('efit', &
-            'Solution does contain any plasma, no outputs are generated')
-          cycle
         endif
         ! for use in optimization loops
         if (ierchk.lt.0 .and. lflag.gt.0) then

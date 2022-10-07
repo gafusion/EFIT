@@ -815,7 +815,7 @@
       call zpline(nw,sigrid,fpol,bbb,ccc,ddd)
       do iw=1,nw
         kk=(iw-1)*nh+jo
-        if (xpsi(kk).gt.1.0.or.ivacum.gt.0) then
+        if (xpsi(kk).gt.1.0.or.ivacum.eq.1) then
           fnow=fbrdy*tmu
 !EALW            write(*,*)'iw, fnow'
 !EALW            write(*,*)iw,fnow
@@ -1222,7 +1222,7 @@
       call zpline(nw,sigrid,fpol,bbb,ccc,ddd)
       do iw=1,nw
         kk=(iw-1)*nh+jo
-        if (xpsi(kk).gt.1.0.or.ivacum.gt.0) then
+        if (xpsi(kk).gt.1.0.or.ivacum.eq.1) then
           fnow=fbrdy*tmu
         else
           fnow=seval(nw,xpsi(kk),sigrid,fpol,bbb,ccc,ddd)

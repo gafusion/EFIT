@@ -818,7 +818,7 @@
           delta_min = 1.0e30
           do j=1,npn
             delta = abs(xw(j) - time(i))
-            if(delta .lt. delta_min) then
+            if (delta .lt. delta_min) then
               j_save = j
               delta_min = delta
             endif

@@ -11,11 +11,13 @@
       subroutine fit(jtime,kerror)
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      data nzero/0/
+      implicit none
+      integer*4, intent(in) :: jtime
+      integer*4, intent(out) :: kerror
+      integer*4 i,ii,ix,idone,iend,ichisq,iwantk,nleft
 !-----------------------------------------------------------------------
-!--   inner equilibrium do loop and outer current profile parameters   --
-!--   do loop                                                          --
+!--   inner equilibrium do loop and outer current profile parameters
+!--   do loop
 !-----------------------------------------------------------------------
 #ifdef DEBUG_LEVEL1
       write (6,*) 'Enter FIT'
@@ -29,7 +31,7 @@
       lflag=0
       iend=mxiter+1
       if (iconvr.eq.3) iend=1
-      do i=1,iend
+      current_profile: do i=1,iend
         ix=i
         if (i.gt.1) then
           iwantk=iwantk+1
@@ -54,7 +56,7 @@
               endif
             endif
           endif
-          call green(nzero,jtime,nitera)
+          call green(0,jtime,nitera)
           if (kprfit.gt.0.and.iwantk.eq.ndokin) then
             call presur(jtime,nitera,kerror)
             if (kerror /= 0) then
@@ -79,7 +81,7 @@
           end if
         end if
 
-        do ii=1,nxiter
+        equilibrium: do ii=1,nxiter
           ixnn=ii
           nitera=nitera+1
 
@@ -142,15 +144,15 @@
 #ifdef DEBUG_LEVEL2
           write(6,*) 'Entering residu'
 #endif
-          call residu(nitera,jtime)
+          call residu(nitera,jtime,idone)
           if((nitera.lt.kcallece).and.(kfitece.gt.0.0)) exit
           if((ii.eq.1).and.(idone.gt.0).and.(tsaisq(jtime).le.saimin)) &
             go to 2020
           if(idone.gt.0) exit
           if(i.eq.mxiter+1) exit
-        end do ! ii
-      end do ! i
-      if ((nbdry.le.0).and.(ivacum.le.0).and.(iconvr.ne.4)) then
+        end do equilibrium
+      end do current_profile
+      if ((nbdry.le.0).and.(ivacum.eq.0).and.(iconvr.ne.4)) then
         call errctrl_msg('fit','not converged, reached max iterations',2)
         lflag=1
       endif
@@ -181,17 +183,21 @@
 !!
 !!    @param jtime : time index
 !!
+!!    @param idone : flag for whether convergence criteria is met
+!!
 !**********************************************************************
-      subroutine residu(nx,jtime)
+      subroutine residu(nx,jtime,idone)
       use commonblocks,only: psiold,psipold
       include 'eparm.inc'
       include 'modules1.inc'
       implicit none
       integer*4, intent(in) :: nx,jtime
+      integer*4, intent(out) :: idone
       integer*4 i,j,kk
       real*8 errold,errave,change
 
-      if(ivacum.gt.0) return
+      idone=0
+      if(ivacum.eq.1) return
       errold=errorm
       errave=0.0
       errorm=0.0
@@ -212,7 +218,6 @@
 
       aveerr(nx)=errave/abs(sidif)/nwnh
       cerror(nx)=errorm
-      idone=0
       if(errorm.le.error) idone=1
       !----------------------------------------------------------------------
       !--  Turn on vertical stabilization if error small                   --
