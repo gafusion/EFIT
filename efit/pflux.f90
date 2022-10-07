@@ -299,7 +299,7 @@
         if (iacoil.gt.0) &
           psi(kk)=psi(kk)+sum(gridac(kk,:)*caccurt(jtime,:))
         psipla(kk)=psi(kk)
-        if (ivacum.le.0) then
+        if (ivacum.eq.0) then
           do ii=1,nw
             do jj=1,nh
               kkkk=(ii-1)*nh+jj

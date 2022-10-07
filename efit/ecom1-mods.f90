@@ -265,15 +265,15 @@
 
       module var_input
       use set_kinds
-      logical write_kfile,fitfcsum,use_previous
+      logical write_kfile,fitfcsum,use_previous,req_valid
       integer*4 icondn,itek,kdata,itrace,ierchk,iconvr,ixray,itell, &
                 kprfit,ibound,ibatch,idite,ilaser,lookfw, &
                 kdot,icutfp,keqdsk,kdofit,kbetapr,kplotpr,kpressb, &
                 kfcurb,kpcurb,kzeroj,ncstne,ncstte, &
                 kwripre,negcur,kframe,kskipvs,icntour,iavdpl, &
                 limvs,kbound,kgraph,istore,iout,kdopre, &
-                iishot,kktime,iplcout,ksigma,kwritime,ivalid
-      integer*4 iteks,mxiters,n1coils
+                iishot,kktime,iplcout,ksigma,kwritime
+      integer*4 iteks,mxiters,n1coils,ierchks
       integer*4 itekt,mxitert,n1coilt
       real*8 zelipss,zeliptt
       real*8 cutip,dtdot,xpsimin,fcurbd,pcurbd,prbdry,sgprmin, &

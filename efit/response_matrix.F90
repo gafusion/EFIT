@@ -2272,7 +2272,7 @@
         !--  unfold fitting parameters                                        --
         !-----------------------------------------------------------------------
         if ( wrsp(need).eq.0 ) then
-          kerror = 1
+          kerror=1
           call errctrl_msg('response_matrix', &
                  'problem in decomposition, wrsp(need).eq.0')
           return

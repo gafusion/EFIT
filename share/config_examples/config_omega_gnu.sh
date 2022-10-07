@@ -18,7 +18,7 @@
     -DNetCDF_DIR:PATH='/fusion/usc/c8/opt/env/gcc-8.3.1' \
     -DENABLE_HDF5:BOOL=ON \
     -DHDF5_ROOT:PATH='/fusion/usc/c8/opt/env/gcc-8.3.1'\
-    -DD3_LIB:PATH='/fusion/projects/codes/efit/dev/d3lib_gcc8.3.1/libd3share.a' \
+    -DD3_LIB:PATH='/fusion/usc/c8/src/d3lib/lib/libd3.a' \
     -DENABLE_MDSPLUS:BOOL=ON \
     -DMDSPLUS_DIR:PATH='/fusion/usc/c8/opt/mdsplus/alpha/7.130.1' \
     -DMSE_LIB:PATH='/fusion/projects/codes/mse/lib/V3_10-gcc8.5.0/libmse.a' \

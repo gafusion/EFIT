@@ -61,7 +61,7 @@
            ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels, &
            idebug,jdebug,synmsels,avemsels,kwritime, &
            v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi, &
-           siloplim,use_previous,ierchk,ivalid,ibunmn
+           siloplim,use_previous,ierchk,req_valid,ibunmn
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
 
@@ -208,9 +208,12 @@
       kffcurs=kffcur
       kppcurs=kppcur
       n1coils=n1coil
+      iexcals=iexcal
+      ibunmns=ibunmn
+      ierchks=ierchk
 !
       ktime=mtime ! don't know why this would be wanted...
-      if((iconvr.ne.3).and.(qvfit.gt.0.0)) qenp=qvfit 
+      if(qvfit.gt.0.0) qenp=qvfit ! iconvr=2 since not in efitin
       if (itek.lt.0) then
         ixray=1
         itek=iabs(itek)
