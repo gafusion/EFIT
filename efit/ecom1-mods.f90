@@ -181,7 +181,7 @@
       real*8,dimension(:,:),allocatable  :: recefc
       real*8,dimension(:,:),allocatable :: gecepc,geceppc,gecempc
       real*8,dimension(:,:),allocatable  :: receec
-      integer*4,dimension(:),allocatable :: ierece
+      integer*4,dimension(:),allocatable :: ierece,iwp,iwm
       real*8,dimension(:,:),allocatable :: recepc
       real*8,dimension(:,:),allocatable :: brspece
       real*8,dimension(:),allocatable :: recebzpc

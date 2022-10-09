@@ -626,11 +626,10 @@
 
       integer*4, intent(in) :: jtime
       integer*4, intent(out) :: kerror
-      integer*4 i,ioerr,limitrss,mmstark,nbdryss
+      integer*4 i,ioerr,limitrss,mmstark,nbdryss,kffcurt,kppcurt
       real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref,ktear, &
              pnbeam,timeus,timems,currn1,currc79,currc139,currc199, &
              curriu30,curriu90,curriu150,curril30,curril90,curril150
-      real*8 kffcurt,kppcurt
       character eqdsk*20,header*42,fit_type*3
       integer*4, dimension(npcurn) :: kffbdryss,kff2bdryss, &
                                       kppbdryss,kpp2bdryss, &
@@ -757,12 +756,12 @@
       ff2bdry=0.0
       wwbdry=0.0
       ww2bdry=0.0
-      kppbdry=0.0
-      kpp2bdry=0.0
-      kffbdry=0.0
-      kff2bdry=0.0
-      kwwbdry=0.0
-      kww2bdry=0.0
+      kppbdry=0
+      kpp2bdry=0
+      kffbdry=0
+      kff2bdry=0
+      kwwbdry=0
+      kww2bdry=0
       limitr=-limid
       vloop=vloopt(jtime)
       dflux=1.0e+03_dp*diamag(jtime)

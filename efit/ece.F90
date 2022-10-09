@@ -23,7 +23,6 @@
       real*8 a,bz,bzct,ddm,ddo,ddp,ddsiddro,dho,dist,distt,drzg,fitot, &
              gbzt,psical,rrreceo,r,rdif,rh,rsum,rselsum,rw,r1, &
              tdata,tdata1,tdata2,z,zdif,zzx,z1
-      integer*4 iwp(nnece),iwm(nnece)
       real*8 rrrecep(nnece),rrrecem(nnece)
       real*8 zece(nnece),pds(6),rsplt(2500),zsplt(2500),csplt(2500)
       real*8,dimension(:),allocatable :: dsidr,ddsiddr
@@ -110,9 +109,7 @@
         endif
       enddo
       if (kfitece.ne.1) then
-        do k=1,nece
-          zece(k)=zeceo
-        enddo
+        zece(1:nece)=zeceo
         do k=1,nece
           ddp=abs(rgrid(1)-recep(k))
           ddm=abs(rgrid(1)-recem(k))
