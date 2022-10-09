@@ -39,12 +39,9 @@ Developer documentation
    
    developer
    docker
+   gen_modules
    gen_subroutines
    gen_functions
-   
-.. TODO: seems like this will not be possible with the Docker compiler
-..   gen_modules
-
 
 .. Indices and tables
 
@@ -52,7 +49,7 @@ Search
 ==================
 
 * :ref:`search`
-.. TODO: Options commented out still do not render properly on the website!
+.. TODO: The following pages still do not render properly online
 .. * :ref:`genindex`
 .. * :ref:`modindex`
 
