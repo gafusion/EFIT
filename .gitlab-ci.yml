@@ -19,7 +19,7 @@ stages:
 variables:
   GIT_STRATEGY: fetch
   GIT_CLEAN_FLAGS: -ffdxq
-  TIMEOUT: 450
+  TIMEOUT: 450 seconds
 
 
 # The most basic template that most tests will expand upon
@@ -65,11 +65,11 @@ pause-for-approval:
 clang-docker:
   extends: .test
   stage: stage0
-  image: registry.gitlab.com/efit-ai/efit/clang
+  image: registry.gitlab.com/efit-ai/efitall/clang
   # Note that currently I'm not actually running make test
   script:
     - mkdir build && cd build # Build out of place
-    - ../docker/config_docker_clang.sh | tee config.log
+    - ../efit/config_cmake_clang.sh | tee config.log
     - make -j4 | tee make.log
     - make docs | tee docs.log
     - mv docs/html ../public

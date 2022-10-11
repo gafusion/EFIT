@@ -16,7 +16,7 @@ CO2COR, 1.,"""CO2 Correction"". Correction factor to apply to Thompson to make c
 CONDIN, 1e-6, 
 CSTABNE, 0.0, Stabilization value for ne fitting. (NOT VARIABLE!)
 CSTABTE, 0.0,Stabilization value for Te fitting. (NOT VARIABLE!)
-CUTIP, 80000, Maximum amount of plasma current in Amp to be considered as vacuum. Run vacuum solution if plasma current not larger than this value?
+CUTIP, 80000, Threshold for plasma current (in Amps) below which the vacuum fields are the only solution provided.
 DMASS,, """Density Mass"". Mass density in kg/m3. See NMASS."
 DNBEAM, , "Beam particle density, for kinetic fit - from ONETWO code."
 DNETHOM,, """Density ne Thompson"". Density from Thompson scattering, from some other code."
@@ -157,11 +157,6 @@ ITIME,,"""Integer Time"". Time in milliseconds of slice to analyze."
 ITIMEU,0,"""Integer Time usec"". Time in microseconds of slice to analyze. (which value supersedes?)"
 ITRACE,-1,"| - 1 = compute external separatrix distance. (default)
 | - 2 = compute and plot."
-IVALID,0,"| ""(Integer flag) Valid Solution"". Enables qualifiers for whether a solution should be produced.  The qualifiers are additive, so for example when 3 is selected all of the level 2 and 1 qualifiers are also applied.
-| - 0 no qulifiers, standard behavior (default)
-| - 1 files will only be written if solutions have plasma current.
-| - 2 times without MSE data will not be solved or written to k-files.
-| - 3 only times with CER corrected MSE data will be solved or written to files."
 IVESEL,0,"| ""(Integer flag) Vessel"". Estimates of (24) vessel currents can be included as diagnostics to be fitted(?).
 | - 0 don't include vessel current (default)
 | - >0 include vessel current (What happens for IVESEL different from 1 or 2?).
@@ -291,6 +286,7 @@ RELAX,-1.,"Equilibrium relaxation parameter (0<=RELAX<=1). Affects speed of conv
 | -0.5 = same as backaveraging (BACKAVERAGE = .true.)
 | -1.0 = no relaxation"
 RELIP,1.68,"""Radius Ellipse"". R of ellipse center in meters for current initialization."
+REQ_VALID,F,"| ""(Logical flag) Valid Solution"". Enables qualifiers for whether a solution should be produced.  The most general qualifier is that files will only be written if solutions have plasma current.  For cases that use MSE, any times where the data was not available will not be solved or written to k-files.  Finally, if CER corrections are requested, only times where the corrections have been applied will be solved or written to files."
 RION,,"if nptionf > 100, rion = rteth"
 RMAXVS,100.0,
 RMINVS, 0,

@@ -39,7 +39,7 @@
       rout=0.0
       aout=0.0
 !
-      if(ivacum.gt.0) return
+      if(ivacum.eq.1) return
       if (ixt.le.1) then
         xguess=(rgrid(1)+rgrid(nw))/2.
         yguess=(zgrid(1)+zgrid(nh))/2.
@@ -575,7 +575,7 @@
 !----------------------------------------------------------------------
 !--   find a rectangle to search based on output from subroutine bound
 !----------------------------------------------------------------------
-      www(1:nwnh)=0.0
+      www=0.0
       do i=1,nw-1
         ileft=i
         if((x(i).le.xmin).and.(x(i+1).gt.xmin)) exit

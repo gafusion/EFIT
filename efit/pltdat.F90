@@ -355,8 +355,8 @@
       enddo
       abar=100.*pleng/2./pi
 !
-      not_time_snap: if ((kdata.ne.4).and.(ivacum.le.0)) then
-      is_vacuum_1: if (ivacum.le.0) then
+      not_time_snap: if ((kdata.ne.4).and.(ivacum.eq.0)) then
+      is_vacuum_1: if (ivacum.eq.0) then
       ibrdr = 1
 !-----------------------------------------------------------------------
 !     Initialize plot parameters
@@ -2170,7 +2170,7 @@
          workg(i)=pds(2)/xnow
          workk(i)=xnow
       enddo
-      is_vacuum_2: if (ivacum.le.0) then
+      is_vacuum_2: if (ivacum.eq.0) then
       if (kwripre.gt.0) then
          delz=(zuperts(jtime)-zlowerts)/(mpress-1)
          do i=1,mpress
@@ -2754,7 +2754,7 @@
       endif pl_files_3
       endif iexp
 !
-      is_vacuum_3: if (ivacum.le.0) then
+      is_vacuum_3: if (ivacum.eq.0) then
       curmin=workf(1)
       curmax=workf(1)
       do i=1,nw
@@ -3216,7 +3216,7 @@
            ytitle = 'CHI2$'
            iexit = 1
 !-----------------------------------------------------------------------
-!         Write Plot Para((kfitece.le.0).and.(kdata.ne.4).and.(ivacum.le.0))meters
+!         Write Plot Para((kfitece.le.0).and.(kdata.ne.4).and.(ivacum.eq.0))meters
 !-----------------------------------------------------------------------
           call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
           iorel, xorl, yorl, hight, bngle, bshft, &
@@ -3257,7 +3257,7 @@
          workb(i)=brsp(i)/1000.
          worka(i)=i
          workd(i)=-workc(i)
-         if (fwtfc(1).ne.0.0.or.ivacum.gt.0.or.imag2(jtime).gt.0) then
+         if (fwtfc(1).ne.0.0.or.ivacum.eq.1.or.imag2(jtime).gt.0) then
             workc(i)=fccurt(jtime,i)/1000.
             workd(i)=workc(i)
          endif
@@ -3502,7 +3502,7 @@
 !-----------------------------------------------------------------------
 !--   vertical stability parameter, reference Nuc Fusion 18(1978)1331 --
 !-----------------------------------------------------------------------
-      if (ivacum.le.0) then
+      if (ivacum.eq.0) then
          rx=rmagx(jtime)/100.
          pleng=0.0
          f_0=log(8*rout(jtime)/abar)-2+betap(jtime)+ali(jtime)/2+.5_dp
@@ -3901,7 +3901,7 @@
       ytitle = 'CHI**2$'
       ipag = 1
       iexit = 1
-      if (ivacum.gt.0) iexit=2
+      if (ivacum.eq.1) iexit=2
       sclpc(1) = 0.5_dp
       ncnct(1) = 1
 
@@ -4224,7 +4224,7 @@
 !-------------------------------------------------------------------------
 !--   plot P', FF', and Zm                                              --
 !-------------------------------------------------------------------------
-      is_vacuum_4: if (ivacum.le.0) then
+      is_vacuum_4: if (ivacum.eq.0) then
       curmin=1.0e+10_dp
       curmax=-1.0e+10_dp
       do i=1,nitera
@@ -4941,7 +4941,7 @@
       endif pl_files_15
       endif B_signals
 !
-      is_vacuum_5: if (ivacum.le.0) then
+      is_vacuum_5: if (ivacum.eq.0) then
       plot_extra: if (kwripre.gt.0) then
          dataname=dataname(1:lprx)//'_presf'
          open(unit=62,file=dataname,status='old',iostat=ioerr)
@@ -7441,7 +7441,7 @@
             dumnow=sqrt(pds(2)**2+pds(3)**2)
             bfield(iw,ih)=(dumnow)/rgrid(iw)*1.e4_dp
             if (ih.eq.nh/2+1) worka(iw)=bfield(iw,ih)
-            if (xpsi(kk).le.1.0.and.ivacum.le.0) &
+            if (xpsi(kk).le.1.0.and.ivacum.eq.0) &
                fnow=seval(nw,xpsi(kk),voln,fpol,bvoln,cvoln,dvoln)
             btttt=fnow/rgrid(iw)*10000.
             if (iconsi.ge.5) then
@@ -7825,7 +7825,7 @@
       call ffstore
       call wwstore
       call eestore
-      is_vacuum_6: if (ivacum.le.0) then
+      is_vacuum_6: if (ivacum.eq.0) then
       call init2d
       xmm=1.5_dp
       curmin=1.0e+10_dp

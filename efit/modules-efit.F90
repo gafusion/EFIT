@@ -267,7 +267,7 @@
         use set_kinds
         public
         real*8 :: tmu2,errcut
-        integer*4 :: ibunmn,kinput,kcaldia
+        integer*4 :: ibunmn,kinput,kcaldia,ibunmns
       end module var_consta
 !var_rcfact
       module var_rcfact
@@ -289,7 +289,7 @@
 !var_cfit
       module var_cfit
         use set_kinds
-        integer*4 mxiter,idone,nitera,nxiter,ixnn,isolve  
+        integer*4 mxiter,nitera,nxiter,ixnn,isolve 
         real*8 error,errorm,errmin,delerr,delerb
       end module var_cfit 
 !var_cgrid
@@ -300,7 +300,7 @@
       module var_extra
         real*8 scrape,tolbndpsi
         integer*4 nextra,ixstrt,iprobe,iecoil,iexcal,iconsi,iqplot, &
-                  klabel,ifindopt
+                  klabel,ifindopt,iexcals
       end module var_extra
 !var_conveg
       module var_conveg

@@ -44,7 +44,7 @@
       npcur2=npcurn*2
       initc=initc+1
 
-      if(ivacum.gt.0) return
+      if(ivacum.eq.1) return
       if((nitett.le.1).and.(icinit.eq.1)) return
       GAQ: if (((icinit.gt.0).and.(iconvr.ne.3).and.(iter.le.1)).or.(icurrt.eq.4).or. &
         (((icurrt.eq.2).or.(icurrt.eq.5)).and.(nitett.le.1).and.(icinit.gt.0))) then
@@ -383,7 +383,7 @@
              call sdecm(alipc,npcur2,nj,nownow,xrsp,npcur2,nnn,wlipc, &
                         work,ier)
              if (ier.eq.129) then
-               kerror = 1
+               kerror=1
                call errctrl_msg('currnt', &
                                 'sdecm failed to converge (location 1)')
                return
@@ -411,13 +411,13 @@
                          int(4*(npcurn-2)+6+npcurn*npcurn,8), &
                          b,z,xrsp,work,int(nwcurn*2,8),int(info,8),condno)
              if (info.gt.0) then ! special hack to info in dgglse
-               kerror = 1
+               kerror=1
                write(tmpstr,'(a,i4,a,i4,a)') &
                  'A(',info,',',info,')=0 in dgglse, divide by zero.'
                call errctrl_msg('currnt',tmpstr)
                return
              else if (info.lt.0) then
-               kerror = 1
+               kerror=1
                call errctrl_msg('currnt', &
                                 'calling argument in dgglse was bad')
                return
@@ -822,7 +822,7 @@
        if (nj.gt.0) then
          call sdecm(alipc,npcur2,nj,kwcurn,xrsp,npcur2,nnn,wlipc,work,ier)
          if (ier.eq.129) then
-           kerror = 1
+           kerror=1
            call errctrl_msg('currnt', &
                             'sdecm failed to converge (location 2)')
            return
