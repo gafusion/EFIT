@@ -5,7 +5,7 @@
 !!
 !!    kdata:
 !!      1: mimics option 2 but reads input from an hdf5
-!!           file that has the OMAS format
+!!           file that has the IMAS format
 !!      2: produces g-files (and others) from k-files
 !!      3-7: query databases for diagnostic inputs
 !!        3,7: produces g-files (and others)
@@ -287,10 +287,10 @@
 
 #if defined(USE_HDF5)
 #if defined(USE_SNAP)
- 6000 format (/,1x,'type mode (1=omas, 2=file, 3=snap, 4=time', &
+ 6000 format (/,1x,'type mode (1=imas, 2=file, 3=snap, 4=time', &
                ', 5=input, 6=com file, 7=snap_ext):')
 #else
- 6000 format (/,1x,'type mode (1=omas, 2=file):')
+ 6000 format (/,1x,'type mode (1=imas, 2=file):')
 #endif
 #else
 #if defined(USE_SNAP)
@@ -301,7 +301,7 @@
 #endif
 #endif
 ! TODO: pefit has not been setup
-! 6000 format (/,1x,'type mode (1=omas, 2=file, 3=snap, 4=time', &
+! 6000 format (/,1x,'type mode (1=imas, 2=file, 3=snap, 4=time', &
 !               ', 5=input, 6=com file, 7=snap_ext, 8=pefit):')
  6040 format (/,1x,'type shot #, start time(ms), time step(ms), steps:')
  6200 format (/,1x,'number of time slices?')

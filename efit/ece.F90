@@ -446,8 +446,8 @@
           tdata1=eceerror*abs(brspece(jtime,m))
           tdata2=abs(ecebit(m))
           tdata=max(tdata1,tdata2)
-          if (tdata.gt.1.0e-10_dp) fwtece(m)=fwtece0(m)/tdata
-          if (tdata.le.1.0e-10_dp) fwtece(m)=0.0
+          if(tdata.gt.1.0e-10_dp) fwtece(m)=fwtece0(m)/tdata
+          if(tdata.le.1.0e-10_dp) fwtece(m)=0.0
         enddo
         do i=1,nece
           if (fwtece(i).gt.0.0) kece=kece+1
@@ -456,9 +456,9 @@
       tdata1=serror*abs(brspecebz(jtime))
       tdata2=abs(ecebzbit)
       tdata=max(tdata1,tdata2)
-      if (tdata.gt.1.0e-10_dp) fwtecebz=fwtecebz0/tdata
-      if (tdata.le.1.0e-10_dp) fwtecebz=0.0
-      if (fwtecebz.gt.0.0) kecebz=kecebz+1
+      if(tdata.gt.1.0e-10_dp) fwtecebz=fwtecebz0/tdata
+      if(tdata.le.1.0e-10_dp) fwtecebz=0.0
+      if(fwtecebz.gt.0.0) kecebz=kecebz+1
       receoi(nitera)=receo
       do k=1,nece
          if (fwtece(k).gt.1.e-10_dp) then
@@ -551,9 +551,9 @@
       getECE: if (kgeteceb.le.0) then
       kgeteceb=kgeteceb+1
 !---------------------------------------------------------------------
-!--   Calculation of |B| array from fe array ( harmonic nharm)      --
-!--     becein(necein),   fe(GHz),|B|(T)                            --
-!--     !!! becein  from Low field to high field !!!                --
+!--   Calculation of |B| array from fe array (harmonic nharm)       --
+!--     becein(necein), fe(GHz), |B|(T)                             --
+!--     !!! becein from low field to high field !!!                 --
 !---------------------------------------------------------------------
       do k=1,necein
         becein(k)=0.001_dp*6.0*9.1095_dp*pi/4.8032_dp*feece0(k)/nharm
@@ -1172,8 +1172,8 @@
         enddo
       enddo
 !---------------------------------------------------------------------
-!--   Calculation of |B| array from fe array ( harmonic nharm)      --
-!--     becein(necein),   fe(GHz),|B|(T) becein form H.f to L.f     --
+!--   Calculation of |B| array from fe array (harmonic nharm)       --
+!--     becein(necein), fe(GHz), |B|(T), becein from H.f to L.f     --
 !---------------------------------------------------------------------
       do k=1,necein
         becein(k)=0.001_dp*6.0*9.1095_dp*pi/4.8032_dp*feece(k)/nharm
@@ -1703,7 +1703,7 @@
         enddo
       enddo
 !---------------------------------------------------------------------
-!--   Copy Ti  array                                                --
+!--   Copy Ti array                                                 --
 !---------------------------------------------------------------------
       do k=1,necein
         becein(k)=feece(k)

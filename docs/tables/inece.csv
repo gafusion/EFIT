@@ -1,0 +1,32 @@
+﻿Variable, Default, Description
+ECEERROR,0.03,"Factor multiplying BRSPECE when computing weights FWTECEBZ."
+ECEBZFIT,0.0,"Initial value for BRSPECEBZ"
+ECEFIT,0.0,"Initial value for BRSPECE"
+ECEITER,'pair',"Determines whether the responses are computed
+| - = 'flux' no response
+| - = 'pair' compute the response"
+ERRORECE0,0.0,"Uncertainty in ece data?"
+FEECE0,0.0,"Frequency (in GHz) of ece."
+FWTECE0,,
+FWTECEBZ0,,
+FWTNOW,,
+KCALLECE,,
+KCMIN,,
+KDOECE,,
+KFITECE,,
+KFIXRECE,,
+KFIXRO,,
+KINPUTECE,,
+MTXECE,,
+NCONSTR,,
+NECEIN,,
+NFIT,,
+NHARM,,
+TEECEIN0,,
+RMBIT,,
+ROBIT,,
+RPBIT,,
+RTEM,,
+RTEO,,
+RTEP,,
+ZTEO,,
