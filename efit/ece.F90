@@ -66,7 +66,7 @@
 !--   kfixro=1, receo  from k-file
 !------------------------------------------------------------------- 
       if(kfixro.eq.1) receo=rteo
-      if ((kfixro.ne.1).and.(kfitece.ne.1)) then
+      if ((kfixro.ne.1).or.(kfitece.ne.1)) then
 !------------------------------------------------------------------
 !--     kfixrece=1, R+(recep) R-(recem) from k-file
 !------------------------------------------------------------------
