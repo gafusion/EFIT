@@ -3072,11 +3072,11 @@
 !!    and (x2,y2).
 !!    
 !!
-!!    @param x :
+!!    @param x : array of R positions along curve
 !!
-!!    @param y :
+!!    @param y : array of Z positions along curve
 !!
-!!    @param np :
+!!    @param np : number of points along curve
 !!
 !!    @param xmin :
 !!
@@ -3086,15 +3086,15 @@
 !!
 !!    @param ymax :
 !!
-!!    @param x1 :
+!!    @param x1 : endpoint R of first segment 
 !!
-!!    @param y1 :
+!!    @param y1 : endpoint Z of first segment
 !!
-!!    @param x2 :
+!!    @param x2 : endpoint R of second segment
 !!
-!!    @param y2 :
+!!    @param y2 : endpoint Z of second segment
 !!
-!!    @param dismin :
+!!    @param dismin : minimum distance
 !!
 !**********************************************************************
       subroutine dslant(x,y,np,xmin,xmax,ymin,ymax,x1,y1,x2,y2,dismin)

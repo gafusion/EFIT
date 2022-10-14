@@ -61,7 +61,7 @@ ALLOCATE(rsilpe(nsilop),rmp2pe(magpri),rprepe(mpress),gbdrpe(mbdry), &
    brspecebz(ntime),cmecebz(ntime),cmece(nnece,ntime),recevs(nnece,nvesel), &
    recebzvs(nvesel),recedz(nnece),gecedz(nnece),rtep(nnece),rtem(nnece),rpbit(nnece),rmbit(nnece), &
    receac(nnece,nacoil),recebzac(nacoil),teecer(nnnte),rrr(nnnte),bbf(nnnte),teeceb(nnnte), &
-   receoi(kxiter),recemi(kxiter,nnece),recepi(kxiter,nnece))
+   receoi(kxiter),recemi(kxiter,nnece),recepi(kxiter,nnece),iwp(nnece),iwm(nnece))
    
 ALLOCATE(rbrpc(nstark,npcurn),rbzpc(nstark,npcurn),rgampc(nstark,npcurn),rbrfc(nstark,nfcoil), &
    rbzfc(nstark,nfcoil),rbrec(nstark,nesum),rbzec(nstark,nesum),rgamec(nstark,nesum), &

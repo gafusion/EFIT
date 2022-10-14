@@ -298,7 +298,7 @@
        enddo
 !-----------------------------------------------------------------------
 !--    compute and store coil reference currents, not need for        --
-!--    non-fixed boundary when IFREF=-1                               --
+!--    non-fixed boundary when IFREF=1                                --
 !-----------------------------------------------------------------------
        if (ifref.gt.0.and.iconvr.eq.3) then
          do i=1,nj

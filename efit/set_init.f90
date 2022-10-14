@@ -191,7 +191,7 @@
 
         ! get p' and ff' coefficients
         ! note: this could be read in from g-files directly, but needs
-        !       to be fit from omas files, so we treat both consistently
+        !       to be fit from imas files, so we treat both consistently
         if (icurrt.eq.2) then
           ! apparently fitting polynomials works equally well with
           ! splines...? (kppfnc=6 nad kfffnc=6) - matches esave

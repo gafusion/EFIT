@@ -9,8 +9,10 @@ IFCURR, ,"| ""(Integer flag) Fcoil Currents"". Only used in free boundary equili
 | - 1 = fixed F coil currents.
 | - 0 = variable F-coil currents (Default)
 | Set = 0 in fitting and fixed boundary equilibrium solutions."
-CFCOIL, -1.0,"| F coil stabilization constant for fixed boundary option. - = fixed during iterations.
-| Smoothly varying currents or fit boundary closely; more negative implies smoother. (What do positive values mean?)"
+CFCOIL, -1.0,"| F coil stabilization constant for fixed boundary option.
+| - >0 = use input value
+| - <0 = normalize by plasma current (cfcoil=100/Ip*|cfcoil|)
+| Magnitude balances whether currents vary smoothly (large value) or fit boundary closely (small values)."
 ERRBRY, 1e-4,"""Error Boundary"". Fixed boundary convergence criterion."
 FCSUM, ,"| ""F-coil Sum"". Identifies which F-coils are included in fitted constraint that
 | the sum of certain F coil currents is equal to zero. Length 18 vector with each entry having 2 possible values
@@ -19,8 +21,9 @@ FCSUM, ,"| ""F-coil Sum"". Identifies which F-coils are included in fitted const
 | Ignored unless IFREF = 2."
 FCZERO, ,"""Fcoil Zero"". Fitting weights for zero F coil currents in fixed boundary option. Set to 10000 for zero. Default = all 1.0's"
 FWTBDRY, ones(nbdry),"""Fit Weight Boundary"". Fitting weight for boundary points, use with NBDRY."
-IFREF,, "| For use with fixed boundary equilibrium.
+IFREF,1, "| For use with fixed boundary equilibrium.
+| - 0 = don't adjust boundary flux.
 | - 1 = determine boundary flux by setting the sum of inner F-coil currents to zero.
-| - 2 = sum of F-coil currents zero set by array FCSUM.
+| - 2 = force sum of F-coil currents set by array FCSUM to be zero.
 | - 3 = minimize F-coil currents.
 | - 4 = set boundary flux to PSIBRY."
