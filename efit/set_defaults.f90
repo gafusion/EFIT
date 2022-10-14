@@ -34,7 +34,6 @@
       fmlscut=1.e-6_dp
       fwacoil=0.
       fwtbdry=1.0
-      fwtcur=0.0
       fwtec=0.
       fwtfc=0.
       fwtgam=0.0
@@ -227,6 +226,7 @@
         fixpp=.false.
         fli=0.0
         fwtbp=0.0
+        fwtcur=0.0
         fwtdlc=0.0
         fwtece0=0.0
         fwtecebz0=0.0
@@ -246,7 +246,7 @@
         idplace=0
         iecoil=0
         iexcal=0
-        ifref=-1
+        ifref=1
         isolve=1
         iplim=0
         iplots=1
@@ -270,16 +270,16 @@
         kdomse=0
         kdopre=0
         kdovt=0
-        keebdry=0.0
-        kee2bdry=0.0
-        kffbdry=0.0
-        kff2bdry=0.0
+        keebdry=0
+        kee2bdry=0
+        kffbdry=0
+        kff2bdry=0
         kffcur=1
         kinput=0
         kplotp=1
         kppcur=3
-        kppbdry=0.0
-        kpp2bdry=0.0
+        kppbdry=0
+        kpp2bdry=0
         kprfit=0
         ksxr0=0
         ksxr2=0

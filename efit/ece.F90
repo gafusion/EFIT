@@ -23,7 +23,6 @@
       real*8 a,bz,bzct,ddm,ddo,ddp,ddsiddro,dho,dist,distt,drzg,fitot, &
              gbzt,psical,rrreceo,r,rdif,rh,rsum,rselsum,rw,r1, &
              tdata,tdata1,tdata2,z,zdif,zzx,z1
-      integer*4 iwp(nnece),iwm(nnece)
       real*8 rrrecep(nnece),rrrecem(nnece)
       real*8 zece(nnece),pds(6),rsplt(2500),zsplt(2500),csplt(2500)
       real*8,dimension(:),allocatable :: dsidr,ddsiddr
@@ -67,7 +66,7 @@
 !--   kfixro=1, receo  from k-file
 !------------------------------------------------------------------- 
       if(kfixro.eq.1) receo=rteo
-      if ((kfixro.ne.1).and.(kfitece.ne.1)) then
+      if ((kfixro.ne.1).or.(kfitece.ne.1)) then
 !------------------------------------------------------------------
 !--     kfixrece=1, R+(recep) R-(recem) from k-file
 !------------------------------------------------------------------
@@ -110,9 +109,7 @@
         endif
       enddo
       if (kfitece.ne.1) then
-        do k=1,nece
-          zece(k)=zeceo
-        enddo
+        zece(1:nece)=zeceo
         do k=1,nece
           ddp=abs(rgrid(1)-recep(k))
           ddm=abs(rgrid(1)-recem(k))
@@ -449,8 +446,8 @@
           tdata1=eceerror*abs(brspece(jtime,m))
           tdata2=abs(ecebit(m))
           tdata=max(tdata1,tdata2)
-          if (tdata.gt.1.0e-10_dp) fwtece(m)=fwtece0(m)/tdata
-          if (tdata.le.1.0e-10_dp) fwtece(m)=0.0
+          if(tdata.gt.1.0e-10_dp) fwtece(m)=fwtece0(m)/tdata
+          if(tdata.le.1.0e-10_dp) fwtece(m)=0.0
         enddo
         do i=1,nece
           if (fwtece(i).gt.0.0) kece=kece+1
@@ -459,9 +456,9 @@
       tdata1=serror*abs(brspecebz(jtime))
       tdata2=abs(ecebzbit)
       tdata=max(tdata1,tdata2)
-      if (tdata.gt.1.0e-10_dp) fwtecebz=fwtecebz0/tdata
-      if (tdata.le.1.0e-10_dp) fwtecebz=0.0
-      if (fwtecebz.gt.0.0) kecebz=kecebz+1
+      if(tdata.gt.1.0e-10_dp) fwtecebz=fwtecebz0/tdata
+      if(tdata.le.1.0e-10_dp) fwtecebz=0.0
+      if(fwtecebz.gt.0.0) kecebz=kecebz+1
       receoi(nitera)=receo
       do k=1,nece
          if (fwtece(k).gt.1.e-10_dp) then
@@ -554,9 +551,9 @@
       getECE: if (kgeteceb.le.0) then
       kgeteceb=kgeteceb+1
 !---------------------------------------------------------------------
-!--   Calculation of |B| array from fe array ( harmonic nharm)      --
-!--     becein(necein),   fe(GHz),|B|(T)                            --
-!--     !!! becein  from Low field to high field !!!                --
+!--   Calculation of |B| array from fe array (harmonic nharm)       --
+!--     becein(necein), fe(GHz), |B|(T)                             --
+!--     !!! becein from low field to high field !!!                 --
 !---------------------------------------------------------------------
       do k=1,necein
         becein(k)=0.001_dp*6.0*9.1095_dp*pi/4.8032_dp*feece0(k)/nharm
@@ -1175,8 +1172,8 @@
         enddo
       enddo
 !---------------------------------------------------------------------
-!--   Calculation of |B| array from fe array ( harmonic nharm)      --
-!--     becein(necein),   fe(GHz),|B|(T) becein form H.f to L.f     --
+!--   Calculation of |B| array from fe array (harmonic nharm)       --
+!--     becein(necein), fe(GHz), |B|(T), becein from H.f to L.f     --
 !---------------------------------------------------------------------
       do k=1,necein
         becein(k)=0.001_dp*6.0*9.1095_dp*pi/4.8032_dp*feece(k)/nharm
@@ -1706,7 +1703,7 @@
         enddo
       enddo
 !---------------------------------------------------------------------
-!--   Copy Ti  array                                                --
+!--   Copy Ti array                                                 --
 !---------------------------------------------------------------------
       do k=1,necein
         becein(k)=feece(k)

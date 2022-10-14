@@ -181,7 +181,7 @@
       real*8,dimension(:,:),allocatable  :: recefc
       real*8,dimension(:,:),allocatable :: gecepc,geceppc,gecempc
       real*8,dimension(:,:),allocatable  :: receec
-      integer*4,dimension(:),allocatable :: ierece
+      integer*4,dimension(:),allocatable :: ierece,iwp,iwm
       real*8,dimension(:,:),allocatable :: recepc
       real*8,dimension(:,:),allocatable :: brspece
       real*8,dimension(:),allocatable :: recebzpc
@@ -355,7 +355,7 @@
       end module var_morsum
 
       module var_bdsend
-      integer*4 nbbbs,nbskip,nbdrymx, nbdryp
+      integer*4 nbbbs,nbskip,nbdrymx,nbdryp
       real*8,dimension(:),allocatable :: rbbbs,zbbbs
       end module var_bdsend
 

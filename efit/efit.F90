@@ -143,7 +143,7 @@
 
       select case (kdata)
       case (1)
-        call read_dirs_shot_omas(ifname(1))
+        call read_dirs_shot_imas(ifname(1))
       case (2)
         call read_dirs_shot(ifname(1))
       case (4)

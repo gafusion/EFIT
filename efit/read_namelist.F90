@@ -249,12 +249,12 @@
 !**********************************************************************
 !>
 !!    this subroutine grabs necessary information from file to properly
-!!    set up directory paths from an OMAS equilibrium hdf5 file
+!!    set up directory paths from an IMAS equilibrium hdf5 file
 !!
 !!    timeslice 0 is used, but could be made variable
 !!
 !**********************************************************************
-      subroutine read_dirs_shot_omas(filename)
+      subroutine read_dirs_shot_imas(filename)
       use var_exdata, only: ishot
       use var_cecoil, only: iecurr
       use var_vessel, only: ivesel
@@ -270,38 +270,38 @@
 #if defined(USE_HDF5)
       inquire(file=trim(filename),exist=file_stat)
       if (.not. file_stat) then
-        call errctrl_msg('read_omas_in1',trim(filename)//' not found')
+        call errctrl_msg('read_imas_in1',trim(filename)//' not found')
         stop
       endif
       call fch5init
       call open_oldh5file(trim(filename),fileid,rootgid,h5in,h5err)
       call test_group(rootgid,"equilibrium",file_stat,h5err)
       if (.not. file_stat) then
-        call errctrl_msg('read_omas_in1','equilibrium group not found')
+        call errctrl_msg('read_imas_in1','equilibrium group not found')
         stop
       endif
       call open_group(rootgid,"equilibrium",eqid,h5err)
       call test_group(eqid,"code",file_stat,h5err)
       if (.not. file_stat) then
-        call errctrl_msg('read_omas_in1','code group not found')
+        call errctrl_msg('read_imas_in1','code group not found')
         stop
       endif
       call open_group(eqid,"code",cid,h5err)
       call test_group(cid,"parameters",file_stat,h5err)
       if (.not. file_stat) then
-        call errctrl_msg('read_omas_in1','parameters group not found')
+        call errctrl_msg('read_imas_in1','parameters group not found')
         stop
       endif
       call open_group(cid,"parameters",pid,h5err)
       call test_group(pid,"time_slice",file_stat,h5err)
       if (.not. file_stat) then
-        call errctrl_msg('read_omas_in1','time_slice group not found')
+        call errctrl_msg('read_imas_in1','time_slice group not found')
         stop
       endif
       call open_group(pid,"time_slice",tid,h5err)
       call test_group(tid,"0",file_stat,h5err)
       if (.not. file_stat) then
-        call errctrl_msg('read_omas_in1','100 group not found')
+        call errctrl_msg('read_imas_in1','100 group not found')
         stop
       endif
       call open_group(tid,"0",sid,h5err)
@@ -325,7 +325,7 @@
 
 #else
       ! this code should not be reachable
-      call errctrl_msg('read_omas_in1','HDF5 needs to be linked')
+      call errctrl_msg('read_imas_in1','HDF5 needs to be linked')
       stop
 #endif
-      end subroutine read_dirs_shot_omas
+      end subroutine read_dirs_shot_imas

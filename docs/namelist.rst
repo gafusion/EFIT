@@ -137,7 +137,6 @@ INK
 
 INK is specified in input K or boundary file for vertical stablization.
 
-
 .. csv-table:: INK
    :file: tables/ink.csv
    :widths: 15,15,70
@@ -166,7 +165,15 @@ INLIBIM
 INECE
 -----
 
-(TODO: need to add/describe namelist)
+(TODO: needs to be finished)
+
+INECE is specified in input K file for using ece temperature constraints.
+
+.. csv-table:: INECE
+   :file: tables/inece.csv
+   :widths: 15,15,70
+   :header-rows: 1
+
 
 INER
 ----

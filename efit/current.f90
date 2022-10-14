@@ -168,13 +168,14 @@
 !----------------------------------------------------------------------
 !--    polynomial current profile                                    --
 !----------------------------------------------------------------------
-       call green(nnn,jtime,nitett)
        init_current: if ((nitett.gt.1).or.(icinit.ge.0)) then
        eq_mode: if (iconvr.eq.3) then
          constrain_profs: if (kcgama.gt.0.or.kcalpa.gt.0) then
 !----------------------------------------------------------------------
 !--      Adjust current profile to keep q(0), I, J(1), and others fixed
 !----------------------------------------------------------------------
+           if(fwtqa.gt.0.0 .or. fwtcur.gt.0.0 .or. nqwant.gt.0) &
+             call green(nnn,jtime,nitett)
            nj=0
            if (fwtqa.gt.0.0) then
              nj=nj+1
@@ -197,7 +198,7 @@
            endif
 !
            if (fwtcur.gt.0.0) then
-           fwtcux=fwtcur
+             fwtcux=fwtcur
              nj=nj+1
              do j=1,kpcurn
                alipc(nj,j)=fwtcux*fgowpc(j)
@@ -216,7 +217,7 @@
 !-----------------------------------------------------------------------
 !--        constraints on q at psiwant by successive iterations       --
 !-----------------------------------------------------------------------
-           if (nqwant.gt.0)   then
+           if (nqwant.gt.0) then
              do i=1,nqwant
                nj=nj+1
                if (initc.ge.jwantm) then
@@ -561,7 +562,9 @@
 !----------------------------------------------------------------------------
        if (ifitdelz.eq.3) then
         if (fitdelz.and.nitett.ge.ndelzon) then
-         call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
+         !TODO: this is not normally needed here, should only be added
+         !when necessary (need to figure out when that is...)
+         !call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
          cdelznow=cdelz(nitett-1)/100.
          cdeljsum=0.0
          do i=1,nw
@@ -587,11 +590,12 @@
 !---------------------------------------------------------------------
 !--    toroidal rotation, node points, bases :  ICURRT=5            --
 !---------------------------------------------------------------------
-       call green(nnn,jtime,nitett)
        init_curr: if (((nitett.gt.1).or.(icinit.ge.0)).and.(iconvr.eq.3)) then
 !----------------------------------------------------------------------
 !--    Adjust current profile to keep q(0), I, J(1), and others fixed--
 !----------------------------------------------------------------------
+       if(fwtqa.gt.0.0 .or. fwtcur.gt.0.0 .or. nqwant.gt.0) &
+         call green(nnn,jtime,nitett)
        nj=0
        if (fwtqa.gt.0.0) then
          nj=nj+1
@@ -610,7 +614,7 @@
        endif
 !
        if (fwtcur.gt.0.0) then
-       fwtcux=fwtcur
+         fwtcux=fwtcur
          nj=nj+1
          do j=1,kpcurn
            alipc(nj,j)=fwtcux*fgowpc(j)
@@ -625,7 +629,7 @@
 !-----------------------------------------------------------------------
 !--    constraints on q at psiwant by successive iterations           --
 !-----------------------------------------------------------------------
-       if (nqwant.gt.0)   then
+       if (nqwant.gt.0) then
          do i=1,nqwant
            nj=nj+1
            if (initc.ge.jwantm) then
