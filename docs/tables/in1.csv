@@ -131,6 +131,7 @@ IOUT,,"| Output file option. This is a bitwise switch except that 6 overwrites 2
 | - 16 = write current profile to ESAVE.DAT
 | - 32 = write namelist EFITIN to file efit_snap.dat_out in input(5) mode"
 IPLIM,0,-1 = plot landscaped version of limiter for DIII-D for shot greater than 76756.
+IPLCOUT,0,When this parameter is >0 the reconstructed F-coil, E-coil and 2D plasma current will be output in g-files.
 IPROBE,0,+ = plot magnetic probes and flux loops and number them every IPROBE points. 
 IQPLOT,1,+ = plot q values on flux surfaces 
 IRFILA,,Default calculation = ??

@@ -61,7 +61,7 @@
           enddo
         enddo
         cratio=pasmat(jtime)/sumi
-        pcurrt(1:nwnh)=pcurrt(1:nwnh)*cratio*zero(1:nwnh)
+        pcurrt=pcurrt*cratio*zero
 !
       case (2)
         zelip=zelipss
