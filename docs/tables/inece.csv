@@ -2,7 +2,7 @@
 ECEERROR,0.03,"Factor multiplying BRSPECE when computing weights FWTECEBZ."
 ECEBZFIT,0.0,"Initial value for BRSPECEBZ"
 ECEFIT,0.0,"Initial value for BRSPECE"
-ECEITER,'pair',"Determines whether the responses are computed
+ECEITER,'pair',"| Determines whether the responses are computed
 | - = 'flux' no response
 | - = 'pair' compute the response"
 ERRORECE0,0.0,"Uncertainty in ece data?"

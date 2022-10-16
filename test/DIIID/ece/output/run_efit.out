@@ -1,0 +1,43 @@
+
+          EFITD Version  03/16/2022
+
+
+ type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+
+ number of time slices?
+
+ type input file names:
+ #
+
+      ******************** EFITD 65 x  65  output ********************
+ table_dir = </fusion/projects/codes/efit/support_files/2006/181292/>
+
+ r=  0 t=  2400 it=  1 chi2=2.50E+02 zm= 6.43E-02 err=2.038E+00 dz= 6.431E-02 chigam= 0.00E+00
+ r=  0 t=  2400 it=  2 chi2=5.78E+01 zm= 6.36E-02 err=7.521E-02 dz=-7.318E-04 chigam= 4.02E+00
+ r=  0 t=  2400 it=  3 chi2=6.11E+01 zm= 6.32E-02 err=4.050E-02 dz=-3.356E-04 chigam= 4.60E+00
+ r=  0 t=  2400 it=  4 chi2=5.65E+01 zm= 6.26E-02 err=2.104E-02 dz=-6.796E-04 chigam= 4.94E+00
+ r=  0 t=  2400 it=  5 chi2=5.57E+01 zm= 6.22E-02 err=1.126E-02 dz=-3.669E-04 chigam= 5.26E+00
+ r=  0 t=  2400 it=  6 chi2=5.60E+01 zm= 6.20E-02 err=6.004E-03 dz=-2.039E-04 chigam= 5.37E+00
+ r=  0 t=  2400 it=  7 chi2=5.39E+01 zm= 6.17E-02 err=3.633E-03 dz=-3.066E-04 chigam= 5.59E+00
+ r=  0 t=  2400 it=  8 chi2=5.47E+01 zm= 6.15E-02 err=2.323E-03 dz=-2.079E-04 chigam= 5.72E+00
+ r=  0 t=  2400 it=  9 chi2=5.28E+01 zm= 6.11E-02 err=3.249E-03 dz=-3.385E-04 chigam= 5.58E+00
+ r=  0 t=  2400 it= 10 chi2=5.30E+01 zm= 6.09E-02 err=1.684E-03 dz=-2.857E-04 chigam= 5.89E+00
+ r=  0 t=  2400 it= 11 chi2=5.13E+01 zm= 6.05E-02 err=1.460E-03 dz=-3.171E-04 chigam= 5.96E+00
+ r=  0 t=  2400 it= 12 chi2=5.14E+01 zm= 6.03E-02 err=8.518E-04 dz=-2.641E-04 chigam= 5.90E+00
+ Enter SHAPE kerror =             1            0
+
+       data used:   
+ 41 flux loops
+ 48 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     186610 time(ms) =       2400 chi**2   =  5.144E+01
+ betat(%) =      1.157 betap    =      0.546 li       =      1.106
+ vol(cm3) =  1.583E+07 rout(cm) =    161.969 zout(cm) =     14.703
+ elong    =      1.740 utriang  =      0.609 ltriang  =      0.254
+ a(cm)    =     56.076 lin(cm)  =      4.154 lout(cm) =     15.481
+ ltop(cm) =     10.461 q*       =      5.445 rc(cm)   =    163.165
+ zc(cm)   =      6.769 bt0(t)   =     -2.005 qout     =      8.375
+INFO in efitd at r=  0, t=  2400: Done processing
