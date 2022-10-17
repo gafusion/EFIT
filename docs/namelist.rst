@@ -165,8 +165,6 @@ INLIBIM
 INECE
 -----
 
-(TODO: needs to be finished)
-
 INECE is specified in input K file for using ece temperature constraints.
 
 .. csv-table:: INECE

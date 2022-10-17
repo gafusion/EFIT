@@ -38,6 +38,7 @@
       fwtfc=0.
       fwtgam=0.0
       fwtmp2=0.
+      fwtnow=0.001_dp ! input value is never used (hard coded)
       fwtqa=0.
       fwtsi=0.
       fwtsol=1.0
@@ -71,6 +72,7 @@
       kcallece=2
       kcalpa=0
       kcgama=0
+      kcmin=0
       kdomsels=0
       kedgef=0
       kedgep=0
@@ -78,7 +80,11 @@
       keefnc=0
       kersil=3
       keqdsk=1
+      kfitece=0
+      kfixrece=0
+      kfixro=0
       kframe=0
+      kinputece=0 ! never used in code
       klabel=0
       kskipvs=0
       kwaitmse=0
@@ -99,7 +105,10 @@
       nbdrymx=110
       nbskip=2
       nccoil=1
+      necein=0
       nextra=1
+      nfit=0
+      nharm=0
       nicoil=1
       nslref=1
       n1coil=0
@@ -121,6 +130,13 @@
       relaxdz=1.0
       req_valid=.false.
       rexpan=0.010_dp
+      rmbit=0.0
+      robit=0.0
+      rpbit=0.0
+      rtep=0.0
+      rteo=0.0
+      zteo=0.0
+      rtem=0.0
       rzeroj=0.0 
       saicon=80.0
       saimin=80.0
@@ -133,6 +149,7 @@
       sizeroj=0.0
       stabdz=-1.e-4_dp
       synmsels='SYN'
+      teecein0=0.0
       tolbndpsi=1.0e-12_dp
       t_max_beam_off=0.0
       use_previous=.false.

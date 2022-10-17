@@ -6,27 +6,46 @@ ECEITER,'pair',"| Determines whether the responses are computed
 | - = 'flux' no response
 | - = 'pair' compute the response"
 ERRORECE0,0.0,"Uncertainty in ece data?"
-FEECE0,0.0,"Frequency (in GHz) of ece."
-FWTECE0,,
-FWTECEBZ0,,
-FWTNOW,,
-KCALLECE,,
-KCMIN,,
-KDOECE,,
-KFITECE,,
-KFIXRECE,,
-KFIXRO,,
-KINPUTECE,,
-MTXECE,,
-NCONSTR,,
-NECEIN,,
-NFIT,,
-NHARM,,
-TEECEIN0,,
-RMBIT,,
-ROBIT,,
-RPBIT,,
-RTEM,,
-RTEO,,
-RTEP,,
-ZTEO,,
+FEECE0,0.0,"Frequency (in GHz) of ECE."
+FWTECE0,zeros, "| ""Fitting Weight for ECE channels"". Length of vector is experiment dependent (40 for DIII-D), each entry of which is a fitting weight for ECE channels.
+| - 0 do not include measured data in fit (default = all 0's)
+| - >0 include measured data in fit with weights defined by FWTECE0 entry"
+FWTECEBZ0,0, "| Fitting Weight for ECE Bz
+| - 0 do not include measured data in fit (default = all 0's)
+| - >0 include measured data in fit with weight defined by FWTECEBZ0 entry"
+FWTNOW,0.001, "Input value is not used, this parameter is currently hardcoded."
+KCALLECE,2, "Minimum equilibrium iteration number (NXITER) that must be reached before ECE constraints are set when KFITECE>0."
+KCMIN,0, "| Turns on additional ECE constraints
+| - 0 do not include additional constraints
+| - >0 additional constraints are used and set to 1/FWTNOW=1000"
+KDOECE,0, "Input value is meaningless, this parameter is never used in the code."
+KFITECE,0,"| Controls whether ECE constraints are used.
+| - 0 ECE constraints are not included
+| - 1 use ECE constraints (also see KFIXRECE and KFIXRO) but don't compute the response function about R+, R-
+| - 2 compute the response function about R+ R- constraint from ECE data (also see KFIXRECE and KFIXRO)     
+| - 3 compute the response function about R+ R- constraint from ion temperature"
+KFIXRECE,0,"| Controls how the R+ and R- constraints are determined
+| - -1 from ECE measurement data fitting T(B)
+| - 0 from ECE measurement data fitting T(R)
+| - 1 from k-file input in real space input without any maping"
+KFIXRO,0,"| Controls how the R0 constraint is determined
+| - -1 from ECE measurement data fitting T(B)
+| - 0 from ECE measurement data fitting T(R)
+| - 1 from k-file input in real space input without any maping"
+KINPUTECE,, "Input value is meaningless, this parameter is never used in the code."
+MTXECE,0,"| Controls how often ECE constraints are recomputed
+| - =0 don't update constraints or response, but recompute error every iteration
+| - =1 update constraints, response and error every NCONSTR iterations
+| - >1 update error per MTXECE*NCONSTR iterations but constraints and response per MTXECE^2*NCONSTR iterations"
+NCONSTR,1,"Multiplicative factor for controlling how often ECE constraints are recomputed (see MTXECE)"
+NECEIN,0,"Number of points to use for ECE constraints."
+NFIT,0,"Number of points used in fits of ECE data used to form constraints."
+NHARM,1,"Harmonic of the ECE frequency used to compute |B|"
+RMBIT,0,"Differential radius of R- constraint (use controlled by KFIXRECE)."
+ROBIT,0,"Differential radius of R0 constraint (use controlled by KFIXRO)."
+RPBIT,0,"Differential radius of R+ constraint (use controlled by KFIXRECE)."
+RTEM,0,"R- constraint (use controlled by KFIXRECE)."
+RTEO,0,"RO constraint (use controlled by KFIXRO)."
+RTEP,0,"R+ constraint (use controlled by KFIXRECE)."
+TEECEIN0,zeros,"Vector of electron temperatures from ECE measurements.  Length of vector is experiment dependent (40 for DIII-D).  See KFIXRECE and KFIXRO for determining use."
+ZTEO,0,"Height (Z) of ECE measurments."

@@ -266,17 +266,8 @@
       l4msels=0.0
       emsels=0.0
       semsels=0.0
-      teecein0=0.0
       feece0=0.0
       errorece0=0.0
-      rteo=0.0
-      zteo=0.0
-      rtep=0.0
-      rtem=0.0
-      rpbit=0.0
-      rmbit=0.0
-      robit=0.0
-      fwtnow=0.0
       omegat=0.0
       enw=0.0
       emw=0.0
@@ -1055,7 +1046,7 @@
           call read_h5_ex(nid,"robit",robit,h5in,h5err)
           call read_h5_ex(nid,"nfit",nfit,h5in,h5err)
           call read_h5_ex(nid,"kcmin",kcmin,h5in,h5err)
-          call read_h5_ex(nid,"fwtnow",fwtnow,h5in,h5err)
+!          call read_h5_ex(nid,"fwtnow",fwtnow,h5in,h5err) ! unused
 !          call read_h5_ex(nid,"kdoece",kdoece,h5in,h5err) ! unused
           call read_h5_ex(nid,"mtxece",mtxece,h5in,h5err)
           call read_h5_ex(nid,"nconstr",nconstr,h5in,h5err)
@@ -2752,15 +2743,6 @@
       do i=2,nw-1 
         sigrid(i)=1./real(nw-1,dp)*(i-1) 
       enddo
-!-------------------------------------------------------------------- 
-!--   kinputece=1, get Te, fe, error array from ECE data routine 
-!--     hecedata.for with get_hece.for,fftabl.11,fts.pst( copy from 
-!--     /u/austin/efit/hecefit/     (MAX AUSTIN)) 
-!--     necein,teecein0(necein),feece0(necein),errorece0(necein) 
-!--     fe(GHz), Te(Kev) 
-!--   ( when kinputece>1,data from K-file ) 
-!--    (data order: from low field to high field) 
-!--   change data order :( from high field to low field) 
 !-------------------------------------------------------------------- 
       do k=1,necein 
         kk=necein-k+1 

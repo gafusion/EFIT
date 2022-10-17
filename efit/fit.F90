@@ -36,9 +36,9 @@
         if (i.gt.1) then
           iwantk=iwantk+1
 !------------------------------------------------------------------
-!--       nitera.ge.kcallece, then call setece                   --
-!--       mtxece=1 call setece every iteration                   --
-!--       mtxece>1 call setece per mtece time iteration          --
+!--       nitera.ge.kcallece, then call setece
+!--       mtxece<=1 call setece every nconstr iterations
+!--       mtxece>1 call setece every mtxece*nconstr time iterations
 !------------------------------------------------------------------
           if ((nitera.ge.kcallece).and.(kfitece.gt.0)) then
             nleft=abs(mxiter)-nitera

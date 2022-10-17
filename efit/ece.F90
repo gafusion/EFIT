@@ -80,19 +80,25 @@
           enddo
         endif
 !-----------------------------------------------------------------
-!--     kfixro=0 or kfixrece=0, receo or R+ R- from getecer
+!--     kfitece=1 or 2, receo or R+ R- from ECE data
+!--     kfitece=3, receo or R+ R- from gettir
 !-----------------------------------------------------------------
         if (kfitece.le.2) then
-          if (kfixrece.eq.0) then
+!-----------------------------------------------------------------
+!--       kfixro=0 or kfixrece=0, receo or R+ R- from getecer
+!-----------------------------------------------------------------
+          if ((kfixro.eq.0).or.(kfixrece.eq.0)) then
             call getecer(jtime,kerror)
             if(kerror.gt.0) return
           endif
+!-----------------------------------------------------------------
+!--       kfixro=-1 or kfixrece=-1, receo or R+ R- from geteceb
+!-----------------------------------------------------------------
           if ((kfixro.eq.-1).or.(kfixrece.eq.-1)) then
             call geteceb(jtime,kerror)
             if(kerror.gt.0) return
           endif
-        endif
-        if (kfitece.eq.3) then
+        elseif (kfitece.eq.3) then
           call gettir(jtime,kerror)
           if(kerror.gt.0) return
         endif
@@ -500,15 +506,15 @@
       integer*4, intent(in) :: jtime
       integer*4, intent(out) :: kerror
       real*8 fpcurr,seval
-      integer*4, parameter :: nnn1=1,nn=30,kbre=5
+      integer*4, parameter :: nnn1=1,kbre=5
       integer*4 i,idesto,ier,ii,iieerr,iio,imk,iout1,ioutk,ioutk1,ipk,iw, &
                 j,k,kk,kgeteceb,kmin,kmax,m,mnow,n,nj,nk,nlowf
       real*8 baa,bbx,bbxm,bbxp,bbx1,bbx2,beceo,binmax,binmin,bitm,bitp, &
              bobit,b00,dbbf,dbdro,delsi,dest,desto,dsidrm,dsidrp,dtero, &
              fnow,fwtcm,ppteppbo,ptpr1,ptpr2,rh,rw,siii,sumf,t,teeceo,toler
       real*8 pds(6),nnout(kbre),bmink(kbre),bmaxk(kbre)
-      real*8 arspfit(nnecein,nn),brspfit(nnecein), &
-             s(nn),tte(nnecein),x(nn),an(nnecein), &
+      real*8 arspfit(nnecein,nfit),brspfit(nnecein), &
+             s(nfit),tte(nnecein),x(nfit),an(nnecein), &
              tebit(nnecein)
       real*8 telowf(nnnte),blowf(nnnte),bb(nnnte),cc(nnnte),dd(nnnte), &
              teece(nnece),pteprm(nnece),pteprp(nnece), &
@@ -555,9 +561,8 @@
 !--     becein(necein), fe(GHz), |B|(T)                             --
 !--     !!! becein from low field to high field !!!                 --
 !---------------------------------------------------------------------
-      do k=1,necein
-        becein(k)=0.001_dp*6.0*9.1095_dp*pi/4.8032_dp*feece0(k)/nharm
-      enddo
+      becein(1:necein)=0.001_dp*6.0*9.1095_dp*pi/4.8032_dp &
+                      *feece0(1:necein)/nharm
 !EALW      write(*,*)'becein'
 !EALW      write(*,*)becein
 !--------------------------------------------------------------------
@@ -565,16 +570,13 @@
 !--     bbx=(B-b00)/baa                                            --
 !--     Te=x(1)+x(2)*bbx+x(3)*bbx**2+...+x(nfit)*bbx**(nfit-1)     --
 !--------------------------------------------------------------------
-!heng          mm--nnecein   m---necein  nn--parameter, n--nfit input
       binmin=becein(1)
       binmax=becein(necein)
       baa=0.5_dp*(binmax-binmin)
       b00=0.5_dp*(binmax+binmin)
-      do i=1,necein
-        an(i)=(becein(i)-b00)/baa
-        tebit(i)=max(errorece0(i),1.e-4_dp)
-      enddo
+      an(1:necein)=(becein(1:necein)-b00)/baa
       do nj=1,necein
+        tebit(nj)=max(errorece0(nj),1.e-4_dp)
         do nk=1,nfit
           if (nk.eq.1) then
             arspfit(nj,nk)=1./tebit(nj)
@@ -586,14 +588,12 @@
 !---------------------------------------------------------------------
 !--   teecein0,errorece0  from low field to high field
 !---------------------------------------------------------------------
-      do nj=1,necein
-        brspfit(nj)=teecein0(nj)/tebit(nj)
-      enddo
+      brspfit(1:necein)=teecein0(1:necein)/tebit(1:necein)
 !
       mnow=necein
       if (kcmin.gt.0) then
-        fwtnow=0.001_dp
-        fwtcm =1.0
+        fwtnow=0.001_dp ! input option, why hardcoded here?
+        fwtcm=1.0
         do j=1,nfit
           mnow=mnow+1
           do k=1,nfit
@@ -610,25 +610,20 @@
       iieerr=0
       call sdecm(arspfit,nnecein,mnow,nfit,brspfit,nnecein,nnn1,s,wk,iieerr)
       if (iieerr.eq.129) then
-        kerror = 1
+        kerror=1
         call errctrl_msg('geteceb','sdecm failed to converge')
         return
       endif
       toler=1.0e-06_dp*s(1)
-      do i = 1,nfit
-        t = 0.0
-        if(s(i).gt.toler) t = brspfit(i)/s(i)
-        brspfit(i) = t
+      do i=1,nfit
+        t=0.0
+        if(s(i).gt.toler) t=brspfit(i)/s(i)
+        brspfit(i)=t
       enddo
-      do i = 1, nfit
-        x(i) = 0.0
-        do j = 1,nfit
-          x(i) = x(i) + arspfit(i,j)*brspfit(j)
-        enddo
+      do i=1,nfit
+        x(i)=sum(arspfit(i,1:nfit)*brspfit(1:nfit))
       enddo
-      do k=1,nfit
-        xfit(k)=x(k)
-      enddo
+      xfit(1:nfit)=x(1:nfit)
 !EALW      write(*,*)'x'
 !EALW      write(*,*)x
       chisqfit=0.0
@@ -749,7 +744,6 @@
 !--------------------------------------------------------------------
 !--   idestm(nece)- the point becein(idestm) close to B-(nece)
 !--------------------------------------------------------------------
-!
       do k=1,nece
         dest=abs(becem(k)-becein(1))
         idestm(k)=1
@@ -1118,7 +1112,7 @@
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          getecer obtains the receo, R+ R-                        **
-!**          from ECE measurement data                               **
+!**          from ECE measurement data T(R)                          **
 !**          if kfixro  kfixrece = 0 called in setece                **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
@@ -1136,15 +1130,15 @@
       integer*4, intent(in) :: jtime
       integer*4, intent(out) :: kerror
       real*8 fpcurr,seval
-      integer*4, parameter :: nnn1=1,nn=30,kbre=5
+      integer*4, parameter :: nnn1=1,kbre=5
       integer*4 i,idesto,ier,ii,iieerr,iio,imk,ipk,iout1,ioutk,ioutk1,iw, &
                 j,k,kk,kmin,kmax,kout,m,mnow,n,nj,nk,nlowf
       real*8 bitm,bitp,delsi,dest,desto,drrr,dsidrm,dsidrp,dtero, &
              fnow,fwtcm,ppteppro,ptpr1,ptpr2, &
              raa,rh,rmax,rmin,rw,rx,rx1,rx2,r00,siii,sumf,t,teeceo,toler
       real*8 pds(6),nnout(kbre),bmink(kbre),bmaxk(kbre)
-      real*8 arspfit(nnecein,nn),brspfit(nnecein), &
-             s(nn),tte(nnecein),x(nn),an(nnecein), &
+      real*8 arspfit(nnecein,nfit),brspfit(nnecein), &
+             s(nfit),tte(nnecein),x(nfit),an(nnecein), &
              tebit(nnecein)
       real*8 telowf(nnnte),rlowf(nnnte),bb(nnnte),cc(nnnte),dd(nnnte), &
              teece(nnece),pteprm(nnece),pteprp(nnece), &
@@ -1175,9 +1169,8 @@
 !--   Calculation of |B| array from fe array (harmonic nharm)       --
 !--     becein(necein), fe(GHz), |B|(T), becein from H.f to L.f     --
 !---------------------------------------------------------------------
-      do k=1,necein
-        becein(k)=0.001_dp*6.0*9.1095_dp*pi/4.8032_dp*feece(k)/nharm
-      enddo
+      becein(1:necein)=0.001_dp*6.0*9.1095_dp*pi/4.8032_dp &
+                      *feece(1:necein)/nharm
 !---------------------------------------------------------------------
 !--   Calculation of |B| on rgrid (z=zeceo)   bfield(nw)            --
 !---------------------------------------------------------------------
@@ -1397,9 +1390,9 @@
       call zpline(nw,bx,ry,bbb,ccc,ddd)
       do m=1,necein
         recein(m)=seval(nw,becein(m),bx,ry,bbb,ccc,ddd)
-        teeceinr(m)=teecein(m)
-        tebit(m)=errorece(m)
       enddo
+      teeceinr(1:necein)=teecein(1:necein)
+      tebit(1:necein)=errorece(1:necein)
       mecein=necein
 !
       endif kmax0
@@ -1408,7 +1401,6 @@
 !--     rx=(R-r00)/raa                                             --
 !--     Te=x(1)+x(2)*rx+x(3)*rx**2+...+x(nfit)*rx**(nfit-1)        --
 !--------------------------------------------------------------------
-!heng          mm--nnecein   m---mecein  nn--parameter, n--nfit input
       rmin=recein(1)
       rmax=recein(mecein)
       raa=0.5_dp*(rmax-rmin)
@@ -1426,14 +1418,12 @@
           endif
         enddo
       enddo
-      do nj=1,mecein
-        brspfit(nj)=teeceinr(nj)/tebit(nj)
-      enddo
+      brspfit(1:mecein)=teeceinr(1:mecein)/tebit(1:mecein)
 !
       mnow=mecein
       if (kcmin.gt.0) then
-        fwtnow=0.001_dp
-        fwtcm =1.0
+        fwtnow=0.001_dp ! input option, why hardcoded here?
+        fwtcm=1.0
         do j=1,nfit
           mnow=mnow+1
           do k=1,nfit
@@ -1456,19 +1446,14 @@
       end if
       toler=1.0e-06_dp*s(1)
       do i=1,nfit
-        t = 0.0
-        if(s(i).gt.toler) t = brspfit(i)/s(i)
-        brspfit(I) = t
+        t=0.0
+        if(s(i).gt.toler) t=brspfit(i)/s(i)
+        brspfit(I)=t
       enddo
       do i=1,nfit
-        x(i) = 0.0
-        do j=1,nfit
-          x(i) = x(i) + arspfit(i,j)*brspfit(j)
-        enddo
+        x(i)=sum(arspfit(i,1:nfit)*brspfit(1:nfit))
       enddo
-      do k=1,nfit
-        xfit(k)=x(k)
-      enddo
+      xfit(1:nfit)=x(1:nfit)
       chisqfit=0.0
       do k=1,mecein
         tte(k)=0.
@@ -1642,7 +1627,7 @@
 !>
 !!    gettir obtains the receo, R+ R-
 !!    from Ti data
-!!    kfixro = 0, kfixrece = 3, called from setece
+!!    kfitece = 3, called from setece
 !!    CALLING ARGUMENTS:
 !!    
 !!    RECORD OF MODIFICATION:
@@ -1663,15 +1648,15 @@
       integer*4, intent(in) :: jtime
       integer*4, intent(out) :: kerror
       real*8 seval
-      integer*4, parameter :: nnn1=1,nn=30,kbre=5
+      integer*4, parameter :: nnn1=1,kbre=5
       integer*4 i,idesto,ier,ii,iieerr,iio,imk,ipk,iout1,ioutk,ioutk1,iw, &
                 j,k,kk,kmin,kmax,kout,m,mmmte,mnow,n,nj,nk,nlowf
       real*8 bitm,bitp,delsi,dest,desto,drrr,dsidrm,dsidrp,dtero, &
              fnow,fwtcm,ppteppro,ptpr1,ptpr2, &
              raa,rh,rmax,rmin,rw,rx,rx1,rx2,r00,siii,sumf,t,teeceo,toler
       real*8 pds(6),nnout(kbre),bmink(kbre),bmaxk(kbre)
-      real*8 arspfit(nnecein,nn),brspfit(nnecein), &
-             s(nn),tte(nnecein),x(nn),an(nnecein), &
+      real*8 arspfit(nnecein,nfit),brspfit(nnecein), &
+             s(nfit),tte(nnecein),x(nfit),an(nnecein), &
              tebit(nnecein)
       real*8 telowf(nnnte),rlowf(nnnte),bb(nnnte),cc(nnnte),dd(nnnte), &
              teece(nnece),pteprm(nnece),pteprp(nnece), &
@@ -1705,12 +1690,10 @@
 !---------------------------------------------------------------------
 !--   Copy Ti array                                                 --
 !---------------------------------------------------------------------
-      do k=1,necein
-        becein(k)=feece(k)
-        recein(k)=becein(k)
-        teeceinr(k)=teecein(k)
-        tebit(k)=errorece(k)
-      enddo
+      becein(1:necein)=feece(1:necein)
+      recein(1:necein)=becein(1:necein)
+      teeceinr(1:necein)=teecein(1:necein)
+      tebit(1:necein)=errorece(1:necein)
 !---------------------------------------------------------------------
 !--   Calculation of |B| on rgrid (z=zeceo)   bfield(nw)            --
 !---------------------------------------------------------------------
@@ -1732,7 +1715,6 @@
 !--   fitting data from teeceinr,tebit and recein (nnecein)        --
 !--     rx=(R-r00)/raa                                             --
 !--     Te=x(1)+x(2)*rx+x(3)*rx**2+...+x(nfit)*rx**(nfit-1)        --
-!--     mm--nnecein   m---mecein  nn--parameter, n--nfit input     --
 !--------------------------------------------------------------------
       mecein=necein
       rmin=recein(1)
@@ -1771,21 +1753,16 @@
         return
       end if
       toler=1.0e-06_dp*s(1)
-      do I = 1,nfit
-        T = 0.0
-        if (S(I).gt.toler) T = Brspfit(I)/S(I)
-        Brspfit(I) = T
+      do i=1,nfit
+        t=0.0
+        if (s(i).gt.toler) t=brspfit(i)/s(i)
+        brspfit(i)=t
       enddo
-      do I = 1, Nfit
-        X(I) = 0.0
-        do J = 1,nfit
-          X(I) = X(I) + Arspfit(I,J)*Brspfit(J)
-        enddo
+      do i=1,nfit
+        x(i)=sum(arspfit(i,1:nfit)*brspfit(1:nfit))
       enddo
 !
-      do k=1,nfit
-        xfit(k)=x(k)
-      enddo
+      xfit(1:nfit)=x(1:nfit)
       chisqfit=0.0
       do k=1,mecein
         tte(k)=0.
