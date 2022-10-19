@@ -2730,6 +2730,7 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension xpsii(nffcur)
+      !$omp declare target 
 
       if (icutfp.gt.0) then
         ypsi=upsi*xpsimin
@@ -2741,15 +2742,15 @@
         return
       endif
       if (npsi_ext > 0) then
-        fpcurr = seval(npsi_ext,ypsi,psin_ext,ffprim_ext,bfp_ext,cfp_ext,dfp_ext)
+        !fpcurr = seval(npsi_ext,ypsi,psin_ext,ffprim_ext,bfp_ext,cfp_ext,dfp_ext)
         fpcurr = fpcurr * cratiof_ext
         return
       endif
       fpcurr=0.0
-      call setfp(ypsi,xpsii)
+      !call setfp(ypsi,xpsii)
       do iiij=nbase+1,nbase+nnn
         iijj=iiij-nbase
-        fpcurr=fpcurr+brsp(iiij)*xpsii(iijj)
+        fpcurr=fpcurr+brsp(iiij)*bsffel(kfffnc,iijj,ypsi)
       enddo
 !----------------------------------------------------------------------
 !--   edge hyperbolic tangent component                              --
@@ -2760,8 +2761,15 @@
       f0back=f0edge/fe_width/sidif
       fpcurr=fpcurr+f0back/cosh(siedge)**2
       return
+      end function fpcurr
 !
-      entry fpecrr(upsi,nnn)
+      function fpecrr(upsi,nnn)
+      include 'eparm.inc'
+      include 'modules1.inc'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      dimension xpsii(nffcur)
+
+      !entry fpecrr(upsi,nnn)
       if (icutfp.gt.0) then
         ypsi=upsi*xpsimin
       else
@@ -2778,8 +2786,15 @@
         fpecrr=fpecrr+brsp(iiij)*xpsii(iijj)
       enddo
       return
+      end function fpecrr
 !
-      entry ffcurr(upsi,nnn)
+      function ffcurr(upsi,nnn)
+      include 'eparm.inc'
+      include 'modules1.inc'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      dimension xpsii(nffcur)
+
+      !entry ffcurr(upsi,nnn)
       if (icutfp.gt.0) then
         ypsi=upsi*xpsimin
         xsidif=-sidif/xpsimin
@@ -2811,4 +2826,4 @@
       if (ffcurr.lt.0.0) ffcurr=fb22
       ffcurr=sqrt(ff22)*fbrdy/abs(fbrdy)
       return
-      end function fpcurr
+      end function ffcurr

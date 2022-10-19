@@ -95,21 +95,22 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension xpsii(nppcur)
+      !$omp declare target  
 !
       if (abs(ypsi).gt.1.0) then
         ppcurr=0.0
         return
       endif
       if (npsi_ext > 0) then
-        ppcurr = seval(npsi_ext,ypsi,psin_ext,pprime_ext,bpp_ext,cpp_ext,dpp_ext)
+        !ppcurr = seval(npsi_ext,ypsi,psin_ext,pprime_ext,bpp_ext,cpp_ext,dpp_ext)
         ppcurr = ppcurr * cratiop_ext
         return
       endif
       ppcurr=0.0
-      call setpp(ypsi,xpsii)
+      !call setpp(ypsi,xpsii)
       do iiij=nfcoil+1,nnn+nfcoil
         iijj=iiij-nfcoil
-        ppcurr=ppcurr+brsp(iiij)*xpsii(iijj)
+        ppcurr=ppcurr+brsp(iiij)*bsppel(kppfnc,iijj,ypsi)
       enddo
 !----------------------------------------------------------------------
 !--   edge hyperbolic tangent component                              --
@@ -119,8 +120,14 @@
       p0back=pedge/pe_width/sidif
       ppcurr=ppcurr+p0back/cosh(siedge)**2
       return
-!
-      entry prcurr(ypsi,nnn)
+      end function ppcurr
+
+      function prcurr(ypsi,nnn)
+      include 'eparm.inc'
+      include 'modules1.inc'
+      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      dimension xpsii(nppcur)
+      !entry prcurr(ypsi,nnn)
       if (abs(ypsi).gt.1.0) then
         prcurr=0.0
         return
@@ -140,7 +147,7 @@
       siedge=(ypsi-pe_psin)/pe_width
       prcurr=prcurr+pedge/darea*(tpedge-tanh(siedge))
       return
-      end function ppcurr
+      end function prcurr
 
 
 !**********************************************************************

@@ -39,6 +39,7 @@
       real*8,dimension(:),allocatable :: rqajx,rjjjx
       real*8,dimension(:),allocatable :: rqafx,rjjfx
       real*8,dimension(:),allocatable :: rqawx,rjjwx
+      !$omp declare target(fbrdy)
       end module var_cqfit
 
       module var_rmatri
@@ -46,6 +47,7 @@
       real*8,dimension(:),allocatable :: tsaisq
       real*8 cond,tsaifc
       integer*4 nparam,nfnpcr,nfnwcr,nbase
+      !$omp declare target(brsp,brspss,nbase)
       end module var_rmatri
   
       module var_chimag
@@ -354,7 +356,8 @@
       real*8,dimension(:),allocatable :: fwtpre
       real*8,dimension(:),allocatable :: vforcep,vforcet
       real*8,dimension(:),allocatable :: fwtfcsum
-      character*82  snap_file 
+      character*82  snap_file
+      !$omp declare target(prbdry,pcurbd,icutfp,xpsimin,fcurbd)
       end module var_input1
 
       module var_inputc
@@ -665,6 +668,7 @@
       real*8 psiecn,dpsiecn,rkec,cjeccd
       data psiecn/0.0/,dpsiecn/0.0/
       real*8,dimension(:),allocatable :: cjorec,ffprec
+      !$omp declare target(psiecn,dpsiecn,rkec)
       end module var_pflocal
 
       module var_ctanhts

@@ -53,6 +53,7 @@
       real*8,dimension(:),allocatable ::ppbdry,pp2bdry, &
                    kppbdry,kpp2bdry, ffbdry,ff2bdry, &
                    wwbdry,ww2bdry,kww2bdry, wwknt,ffknt,ppknt
+      !$omp declare target(kppfnc,kppknt,pptens,ppknt,kpphord,kfffnc,kffknt,fftens,ffknt,kffhord)
       end module var_bscom
 
       module var_bscomss

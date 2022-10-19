@@ -153,7 +153,8 @@
 !--    polynomial current profile                                    --
 !----------------------------------------------------------------------
        nnn=1
-       call green(nnn,jtime,nitett)
+       !Commenting out this call improved performance 10-04-22
+       !call green(nnn,jtime,nitett)
        init_current: if ((nitett.gt.1).or.(icinit.ge.0)) then
        eq_mode: if (iconvr.eq.3) then
          constrain_profs: if (kcgama.gt.0.or.kcalpa.gt.0) then
@@ -478,6 +479,12 @@
        tcurrt=0.0
        tcurrp=0.0
        tcurrtpp=0.0
+
+       !$omp target update to (brsp,brspss,nbase)
+       !$omp target update to (nfcoil,nppcur,nffcur)
+       !$omp target update to (kppcur,kffcur,pcurbd)
+
+       !$omp target teams distribute parallel do reduction(+:tcurrt,tcurrtpp) collapse(2)
        do i=1,nw
          do j=1,nh
            kk=(i-1)*nh+j
@@ -505,6 +512,7 @@
            tcurrtpp=tcurrtpp+pcurrtpp(kk)
          enddo
        enddo
+
        tcurrtffp=tcurrt-tcurrtpp
        if ((nitett.le.1).and.(icinit.lt.0)) then
          cratio=1.0
@@ -516,6 +524,7 @@
         cratio_ext = cratio * cratio_ext
         cratiop_ext = cratio_ext
         cratiof_ext = cratio_ext
+        !$omp target teams distribute parallel do reduction(+:tcurrp)
         do kk=1,nwnh
           pcurrt(kk)=pcurrt(kk)*cratio
           pcurrtpp(kk)=pcurrtpp(kk)*cratio
@@ -523,6 +532,7 @@
              tcurrp=tcurrp+pcurrt(kk)
           endif
         enddo
+        !$omp target teams distribute parallel do
         do i=nfcoil+1,nfnpcr
           brsp(i)=cratio*brsp(i)
         enddo
@@ -553,9 +563,11 @@
 !----------------------------------------------------------------------------
        if (ifitdelz.eq.3) then
         if (fitdelz.and.nitett.ge.ndelzon) then
-         call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
+         !Commenting out this call improved performance 10-04-22
+         !call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
          cdelznow=cdelz(nitett-1)/100.
          cdeljsum=0.0
+         !$omp target teams distribute parallel do reduction(+:cdeljsum) collapse (2)
          do i=1,nw
           do j=1,nh
            kk=(i-1)*nh+j

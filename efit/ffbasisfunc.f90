@@ -13,6 +13,7 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
+      !$omp declare target 
       
       bsffel = 0.0
       if ( ifunc .eq. 0)then

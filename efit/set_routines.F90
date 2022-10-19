@@ -677,6 +677,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       real*8, intent(inout) :: ypsi
       real*8, intent(inout) :: xpsii(kffcur)
+      !$omp declare target 
 
       do i=1,kffcur
         xpsii(i) = bsffel(kfffnc,i,ypsi)
@@ -723,6 +724,7 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       real*8, intent(inout) :: ypsi
       real*8, intent(inout) :: xpsii(kppcur)
+      !$omp declare target 
 
       do i=1,kppcur
         xpsii(i) = bsppel(kppfnc,i,ypsi)

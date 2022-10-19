@@ -96,6 +96,9 @@
         integer*4 :: modef, modep, modew, kubics
         integer*4 :: icycred_loopmax
         integer*4 :: nfourier !< nfourier number Fourier components of vessel current
+        !$omp declare target(nfcoil,nppcur,nffcur)
+        !$omp declare target(nw,nh,icycred_loopmax)
+        !$omp declare target(lubicx,lubicy,kubicx,kubicy)
 
       end module eparm
 ! global_constants
@@ -104,6 +107,7 @@
         use set_kinds
         public
         real*8 :: pi=0,twopi=0,tmu=0,radeg=0
+        !$omp declare target(pi)
       contains
         subroutine set_constants()
           pi = 4.0_dp*atan(1.0_dp) ! calculate pi to machine precision
@@ -277,6 +281,7 @@
           tpedge,tfedge,rdlcfe,rqape,rqafe,betped,betnped
         data kedgep/0/,pe_width/0.02_dp/,pe_psin/0.98_dp/,pedge/0.0/, &
              kedgef/0/,fe_width/0.02_dp/,fe_psin/0.98_dp/,f2edge/0.0/
+      !$omp declare target(kedgep,kedgef,pe_psin,fe_psin,pe_width,fe_width,pedge,tpedge,f2edge,constf2,tfedge)
       end module var_pfedge
 !var_sxpoint
        module var_sxpoint
@@ -312,6 +317,7 @@
                kffcurs,kppcurs
         data cstabz/0.0e-13/
         data icalbet/1/
+      !$omp declare target(kppcur,kffcur)
       end module var_pfterm
 !var_cfit
       module var_cfit
@@ -324,6 +330,7 @@
       module var_cgrid
         real*8 darea,drgrid,dzgrid,qmaxis,cratio,dfsqe,cratiof
         data dfsqe/0.0/
+      !$omp declare target(darea)
       end module var_cgrid
 !var_extra
       module var_extra
@@ -379,6 +386,7 @@
 !vas       alphab(icycred_loopmax),diag1(icycred_loopmax), &
 !vas       rhsdumy1(nwnh),phi(nw),v(nw),wk2(nw),diagl(nw),diagu(nw), &
 !vas       tempgrid(ncurrt),tempgrid2(ncurrt),diag,rhs_a_dumy,rhs_b_dumy, &
+      !$omp declare target(beti,abeti,wk1,alphab,diag1,phi,v,wk2,diagl,diagu,rhsdumy1,tempgrid,tempgrid2,diag,rhs_a_dumy,rhs_b_dumy,nhpwr)
       end module var_cyclic_red
 !var_scalem
       module var_scalem
@@ -400,6 +408,7 @@
         integer*4 :: mno,m,n
         real*8    :: drdz2,rgrid1,delrgrid,delz
         real*8    :: s,shift,dr,dz
+        !$omp declare target(delrgrid,delz)
       end module var_buneman
 
 !------ put all the remining common blocks into modules here
@@ -488,6 +497,7 @@
         real*8 psibry,simag,sidif,eouter,zplasm,zpwant,vertfb,difpsi &
                ,cupdown
         data vertfb/0./,cupdown/-100000./ 
+      !$omp declare target(sidif)
       end module var_cpsi
 !var_cvalue
       module var_cvalue
@@ -517,6 +527,7 @@
         real*8,dimension(:,:),allocatable,save :: gmp2pc
         real*8,dimension(:,:),allocatable,save :: rfcfc
         integer*4 iallocate_stat
+        !$omp declare target(rgrid)
       end module var_gtable
 ! jm.s
 ! NOTE : array sizes are grid size-dependent so they should be dynamically allocated, but
@@ -538,6 +549,7 @@
                   cratiof_ext,psirz_ext
         character*80 :: geqdsk_ext
         logical :: fixpp = .false.
+        !$omp declare target(npsi_ext,cratiop_ext,psin_ext,pprime_ext,bpp_ext,cpp_ext,dpp_ext,cratiof_ext)
       end module profile_ext_mod
 
 ! NOTE : keep track of times for which BCOIL and ECOIL data exist (see getecd.f90)
