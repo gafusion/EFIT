@@ -18,7 +18,7 @@
       implicit none
       integer*4, intent(in) :: jtime
       integer*4, intent(out) :: kerror
-      integer*4 i,idesto,ier,ii,iio,iname,ioerr,isplit,itot,iw,iwo, &
+      integer*4 i,idesto,ier,ii,iio,iname,ioerr,isplit,itot,iw, &
                 j,jh,jj,k,kk,kkm,kgeteceb,km,kp,ksetece,l,m,n,nj,nk,nnnece
       real*8 a,bz,bzct,ddm,ddo,ddp,ddsiddro,dho,dist,distt,drzg,fitot, &
              gbzt,psical,rrreceo,r,rdif,rh,rsum,rselsum,rw,r1, &
@@ -83,7 +83,7 @@
 !--     kfitece=1 or 2, receo or R+ R- from ECE data
 !--     kfitece=3, receo or R+ R- from gettir
 !-----------------------------------------------------------------
-        if (kfitece.le.2) then
+        if (kfitece.le.2 .and. nfit.gt.0) then
 !-----------------------------------------------------------------
 !--       kfixro=0 or kfixrece=0, receo or R+ R- from getecer
 !-----------------------------------------------------------------
@@ -520,37 +520,25 @@
              teece(nnece),pteprm(nnece),pteprp(nnece), &
              idestp(nnece),idestm(nnece),becem(nnece),becep(nnece), &
              dbdrp(nnece),dbdrm(nnece)
-      real*8,allocatable :: rrgrid(:,:),bfield(:),rrout(:,:), &
-          bout(:,:),babs(:,:),bbb(:),ccc(:),ddd(:),btttt(:), &
-          dsidr(:),ddsiddr(:),bx(:),ry(:),bbk(:),dbdr(:)
+      real*8 rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
+             bout(kbre,nw),babs(kbre,nw),bbb(nw),ccc(nw), &
+             ddd(nw),btttt(nw),dsidr(nw),ddsiddr(nw),bx(nw), &
+             ry(nw),bbk(nw),dbdr(nw)
       data kgeteceb/0/
 
       kerror = 0
 !-------------------------------------------------------------------
-      allocate(rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
-               bout(kbre,nw),babs(kbre,nw),bbb(nw),ccc(nw), &
-               ddd(nw),btttt(nw),dsidr(nw),ddsiddr(nw),bx(nw), &
-               ry(nw),bbk(nw),dbdr(nw))
-!
       telowf=0
       blowf=0;bb=0;cc=0;dd=0
       teece=0;pteprm=0;pteprp=0
       idestp=0;idestm=0;becem=0;becep=0
       dbdrp=0;dbdrm=0
-
-!-------------------------------------------------------------------
-      do k=1,nnece
-        fwtece0(k)=swtece(k)
-      enddo
+      fwtece0=swtece
       fwtecebz0=swtecebz
-      do k=1,kbre
-        do i=1,nw
-          babs(k,i)=0.0
-          bout(k,i)=0.0
-          rrout(k,i)=0.0
-          rrgrid(k,i)=0.0
-        enddo
-      enddo
+      babs=0.0
+      bout=0.0
+      rrout=0.0
+      rrgrid=0.0
 !-------------------------------------------------------------------
 !--   input kgeteceb=0 from input file
 !-------------------------------------------------------------------
@@ -1102,9 +1090,6 @@
 !EALW       write(*,*)rpbit
       endif getECE
 !
-      deallocate(rrgrid,bfield,rrout,bout,babs,bbb,ccc,ddd,btttt, &
-                 dsidr,ddsiddr,bx,ry,bbk,dbdr)
-!
       return
       end subroutine geteceb
 
@@ -1143,28 +1128,19 @@
       real*8 telowf(nnnte),rlowf(nnnte),bb(nnnte),cc(nnnte),dd(nnnte), &
              teece(nnece),pteprm(nnece),pteprp(nnece), &
              idestp(nnece),idestm(nnece)
-      real*8,allocatable :: rrgrid(:,:),bfield(:),rrout(:,:), &
-          bout(:,:),babs(:,:),bbb(:),ccc(:),ddd(:),btttt(:), &
-          dsidr(:),ddsiddr(:),bx(:),ry(:),bbk(:)
+      real*8 rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
+             bout(kbre,nw),babs(kbre,nw),bbb(nw),ccc(nw), &
+             ddd(nw),btttt(nw),dsidr(nw),ddsiddr(nw),bx(nw), &
+             ry(nw),bbk(nw)
 !
       kerror = 0
-      allocate(rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
-               bout(kbre,nw),babs(kbre,nw),bbb(nw),ccc(nw), &
-               ddd(nw),btttt(nw),dsidr(nw),ddsiddr(nw),bx(nw), &
-               ry(nw),bbk(nw))
 !
-      do k=1,nnece
-        fwtece0(k)=swtece(k) 
-      enddo
+      fwtece0=swtece 
       fwtecebz0=swtecebz
-      do k=1,kbre
-        do i=1,nw
-          babs(k,i)=0.0
-          bout(k,i)=0.0
-          rrout(k,i)=0.0
-          rrgrid(k,i)=0.0
-        enddo
-      enddo
+      babs=0.0
+      bout=0.0
+      rrout=0.0
+      rrgrid=0.0
 !---------------------------------------------------------------------
 !--   Calculation of |B| array from fe array (harmonic nharm)       --
 !--     becein(necein), fe(GHz), |B|(T), becein from H.f to L.f     --
@@ -1448,7 +1424,7 @@
       do i=1,nfit
         t=0.0
         if(s(i).gt.toler) t=brspfit(i)/s(i)
-        brspfit(I)=t
+        brspfit(i)=t
       enddo
       do i=1,nfit
         x(i)=sum(arspfit(i,1:nfit)*brspfit(1:nfit))
@@ -1617,9 +1593,6 @@
         enddo
       endif ECE
 !
-      deallocate(rrgrid,bfield,rrout,bout,babs,bbb,ccc,ddd,btttt, &
-                 dsidr,ddsiddr,bx,ry,bbk)
-!
       return
       end subroutine getecer
 
@@ -1661,32 +1634,23 @@
       real*8 telowf(nnnte),rlowf(nnnte),bb(nnnte),cc(nnnte),dd(nnnte), &
              teece(nnece),pteprm(nnece),pteprp(nnece), &
              idestp(nnece),idestm(nnece)
-      real*8,allocatable :: rrgrid(:,:),bfield(:),rrout(:,:), &
-          bout(:,:),babs(:,:),bbb(:),ccc(:),ddd(:),btttt(:), &
-          dsidr(:),ddsiddr(:),bx(:),ry(:),bbk(:)
+      real*8 rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
+             bout(kbre,nw),babs(kbre,nw),bbb(nw),ccc(nw), &
+             ddd(nw),btttt(nw),dsidr(nw),ddsiddr(nw),bx(nw), &
+             ry(nw),bbk(nw)
 !
 #ifdef DEBUG_LEVEL3
       write (6,*) 'Enter GETTIR, kfitece/kfixrece = ',&
          kfitece, kfixrece
 #endif
       kerror = 0
-      allocate(rrgrid(kbre,nw),bfield(nw),rrout(kbre,nw), &
-               bout(kbre,nw),babs(kbre,nw),bbb(nw),ccc(nw), &
-               ddd(nw),btttt(nw),dsidr(nw),ddsiddr(nw),bx(nw), &
-               ry(nw),bbk(nw))
 !
-      do k=1,nnece
-        fwtece0(k)=swtece(k) 
-      enddo
+      fwtece0=swtece 
       fwtecebz0=swtecebz
-      do k=1,kbre
-        do i=1,nw
-          babs(k,i)=0.0
-          bout(k,i)=0.0
-          rrout(k,i)=0.0
-          rrgrid(k,i)=0.0
-        enddo
-      enddo
+      babs=0.0
+      bout=0.0
+      rrout=0.0
+      rrgrid=0.0
 !---------------------------------------------------------------------
 !--   Copy Ti array                                                 --
 !---------------------------------------------------------------------
@@ -1953,9 +1917,6 @@
       write (6,*) 'GETTIR, ecebit = ',(ecebit(i),i=1,nece)
 #endif
 
-!
-      deallocate(rrgrid,bfield,rrout,bout,babs,bbb,ccc,ddd,btttt, &
-                 dsidr,ddsiddr,bx,ry,bbk)
 !
       return
       end subroutine gettir

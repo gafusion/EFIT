@@ -104,6 +104,7 @@
             table_di2 = table_di2(1:ltbdi2)//trim(filenames(i))//'/'
         enddo
         ltbdi2 = len(trim(table_di2))
+        write(*,*)
         write(*,*) 'table_di2 = <',table_di2(1:ltbdi2),'>'
       endif
 

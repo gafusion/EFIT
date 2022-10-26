@@ -691,6 +691,6 @@
         write (nout,10000) trim(ch1),trim(ch2)
       end if
 
-10000 format(/,6x,20('*'),'EFITAI',a3,' x ',a3,'  output ',20('*'))
-10001 format(/,20('*'),' EFIT-AI ',i0,' x ',i0,' grid ',20('*'))
+10000 format(/,6x,20('*'),'EFIT  ',a3,' x ',a3,'  output ',20('*'))
+10001 format(1x,20('*'),' EFIT ',i0,' x ',i0,' grid ',20('*'))
       end subroutine print_header

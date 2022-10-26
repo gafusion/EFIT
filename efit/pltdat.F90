@@ -3216,7 +3216,7 @@
            ytitle = 'CHI2$'
            iexit = 1
 !-----------------------------------------------------------------------
-!         Write Plot Para((kfitece.le.0).and.(kdata.ne.4).and.(ivacum.eq.0))meters
+!         Write Plot Parameters
 !-----------------------------------------------------------------------
           call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
           iorel, xorl, yorl, hight, bngle, bshft, &

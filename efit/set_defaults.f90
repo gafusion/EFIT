@@ -108,7 +108,7 @@
       necein=0
       nextra=1
       nfit=0
-      nharm=0
+      nharm=1
       nicoil=1
       nslref=1
       n1coil=0
