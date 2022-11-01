@@ -28,7 +28,7 @@ for file in mhdout.dat dprobe.dat rfcoil.ddd brzgfc.dat; do
   fi
 done
 
-for prefix in ec ep re; do
+for prefix in ec ep; do
   if test -e ${prefix}${sufix}; then
     mv ${prefix}${sufix} green
     cp ${OUTPUT_STORE_DIR}/${prefix}${sufix} .
@@ -39,7 +39,7 @@ for prefix in ec ep re; do
 done
 
 if [ @IS_DIIID@ = True ]; then
-  for prefix in fc ra rv; do
+  for prefix in fc ra rv re; do
     if test -e ${prefix}${sufix}; then
       mv ${prefix}${sufix} green
       cp ${OUTPUT_STORE_DIR}/${prefix}${sufix} .

@@ -2414,8 +2414,8 @@
         do i=1,(2*nfourier+1) 
           do j=1,nvesel 
             if(i.eq.1) vecta(i,j)=1.0 
-            if(i.gt.1.and.i.le.(nfourier+1)) vecta(i,j)=costa(i,j) 
-            if(i.gt.(nfourier+1)) vecta(i,j)=sinta(i,j) 
+            if(i.gt.1.and.i.le.(nfourier+1)) vecta(i,j)=costa(i-1,j) 
+            if(i.gt.(nfourier+1)) vecta(i,j)=sinta(i-nfourier-1,j) 
           enddo 
         enddo 
       endif
