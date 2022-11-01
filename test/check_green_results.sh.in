@@ -38,7 +38,17 @@ for prefix in ec ep; do
   fi
 done
 
-if [ @IS_DIIID@ = True ]; then
+if [ @IS_NSTX@ = True ]; then
+  for prefix in re; do
+    if test -e ${prefix}${sufix}; then
+      mv ${prefix}${sufix} green
+      cp ${OUTPUT_STORE_DIR}/${prefix}${sufix} .
+    else
+      echo "File does not exist: ${prefix}${sufix}"
+      exit 1
+    fi
+  done
+elif [ @IS_DIIID@ = True ]; then
   for prefix in fc ra rv re; do
     if test -e ${prefix}${sufix}; then
       mv ${prefix}${sufix} green

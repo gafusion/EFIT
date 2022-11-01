@@ -30,6 +30,9 @@ add_test(NAME DIIID-vsloop COMMAND run_efit.sh)
 add_test(NAME DIIID-vsloop-results COMMAND check_efit_results.sh)
 
 if (${ENABLE_HDF5})
+  # TODO: changing the machine file directory here is a work around
+  # because of issues with the tables that needs to be resolved
+  set(CURRENT_MACHINE_BUILT_DIR ${CURRENT_MACHINE_LINK_DIR})
   set(EFIT_MODE 1)
   if (${ENABLE_PARALLEL})
     set(EFIT_IN ${RUNID}_mpi.h5)
