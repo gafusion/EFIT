@@ -52,14 +52,11 @@
       ibtcomp=1
       icinit=2
       icprof=0
-      icutfp=0
       idebug=0 ! deprecated
-      iecurr=1
       ierchk=1
       ifcurr=0
       ifindopt=2
       ifitdelz=1
-      ifitvs=0
       ioffr=-7
       ioffz=7
 !jal 04/23/2004
@@ -274,7 +271,6 @@
         isumip=0
         itimeu=0
         iunit=35
-        ivesel=0
         iweigh=0
         ixray=0
         ixstrt=1

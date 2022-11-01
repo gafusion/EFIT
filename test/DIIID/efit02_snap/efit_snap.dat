@@ -57,4 +57,5 @@
  t_max_beam_off = 0.0
  mse_usecer = 0
  write_kfile = .true.
+ ifitvs=1 
  /

@@ -23,7 +23,7 @@
       USE cvesel
       USE fshift
 
-      integer*4:: istat,icycred_loopmax
+      integer*4:: istat,icycred_loopmax,kubics
       character(len=1000) :: line
 
       NAMELIST/machinein/nfcoil,nsilop,magpr2,nrogow,necoil,nesum, &
@@ -108,7 +108,6 @@
       modef=4
       modep=4
       modew=4
-      kubics=4
       nfourier=5
       
       magpri67=-1
@@ -245,8 +244,6 @@
       avs2(:) = 0.0
       rsisvs(:) = 0.0
 
-      vsid(:) = 0.0
-
       ALLOCATE(nshiftrz(nfcoil))
       nshiftrz(:) = 0.
 
@@ -312,6 +309,10 @@
       iecoil=0
       ivesel=0
       nsmp2=1
+      rleft=0.
+      rright=0.
+      ztop=0.
+      zboto=0.
       rsi(1)=-1
       rf(1)=-1.
       re(1)=-1.
@@ -349,11 +350,11 @@
         READ (nin,10000) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
                           i=1,nsilop)
       ENDIF
-      IF ((iecoil.gt.0).or.(ivesel.gt.0)) THEN
+      IF ((iecoil.eq.1).or.(ivesel.eq.1)) THEN
         IF (re(1).lt.0.0) THEN
           READ (nin,10020) (re(i),ze(i),we(i),he(i),ecid(i),i=1,necoil)
         ENDIF
-        IF (ivesel.gt.0.and.rvs(1).lt.0.0) THEN
+        IF (ivesel.eq.1.and.rvs(1).lt.0.0) THEN
           IF (wvs(1).lt.0.0) THEN
             READ (nin,10000) (rvs(i),zvs(i),wvs(i),hvs(i),avs(i),avs2(i), &
                               i=1,nvesel)

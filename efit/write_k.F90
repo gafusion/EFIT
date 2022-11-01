@@ -270,7 +270,7 @@
         ioerr=0
       endif
       no_err: if (ioerr.eq.0) then
-      if (ifitvs.gt.0) then
+      if (ifitvs.eq.1 .or. ivesel.eq.3) then
         istop=-1
       else
         istop=0

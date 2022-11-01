@@ -279,7 +279,7 @@
 !
       times=timeb/1000.
       delt=dtime/1000.
-      if (ifitvs.gt.0) then
+      if (ifitvs.eq.1) then
         istop=-1
       else
         istop=0

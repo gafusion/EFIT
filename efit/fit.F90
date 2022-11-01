@@ -11,6 +11,7 @@
       subroutine fit(jtime,kerror)
       include 'eparm.inc'
       include 'modules1.inc'
+      use var_cvesel, only: vcurrt
       implicit none
       integer*4, intent(in) :: jtime
       integer*4, intent(out) :: kerror
@@ -94,17 +95,12 @@
             return
           endif
            
-          if (ivesel.ge.2) then
-#ifdef DEBUG_LEVEL2
-             write(6,*) 'Entering vescur'
-#endif
-             call vescur(jtime)
-          endif
+          if(ivesel.eq.2) vcurrt=vloopt(jtime)/rsisvs
           if ((i.le.1).or.(ii.gt.1)) then
 #ifdef DEBUG_LEVEL2
-             write(6,*) 'Entering fcurrt'
+            write(6,*) 'Entering external_current'
 #endif
-             call fcurrt(jtime,ix,nitera,kerror)
+            call external_current(jtime,ix,nitera,kerror)
           endif 
           if (kerror /= 0) then
             jerror(jtime) = 1

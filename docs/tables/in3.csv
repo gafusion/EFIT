@@ -1,24 +1,59 @@
 Variable, Default, Description
-AMP2,0.*nfcoil, angle of magnetic probe in degree. The measured poloidal magnetic field is
-given as BR cos(AMP2) + BZ sin(AMP2).
-IACOIL, 0, "|1=advanced divertor coil calculations
-|0=none"
-IECOIL, 0., "|1=include Ohmic coil calculations
-|0=none"
-IFCOIL, 0 , "|1=include shaping coil calculations
-|0=none"
-IVESEL, 0, "|1=include vessel calculations
-|0=none"
-RLEFT, ,  inner major radius of rectangular grid in m.
-RRIGHT, ,  outer major radius of rectangular grid in m.
-RSI, ,  major radius of flux loop in m.
-SMP2, ,  length of magnetic probe in m.
-XMP2, ,  major radius of magnetic probes in m.
-YMP2, , Z coordinate of magnetic probes in m.
-ZBOTTO, , bottom vertical Z coordinate of rectangular grid in m.
-ZSI, , Z coordinates of flux loop in m.
-ZTOP, , top vertical Z coordinate of rectangular grid in m.
-PATMP2,,"| Path length of closed loop magnetic probes in the poloidal plan."
-RSIVS,,"| Resistivity of vessel component."
-VSNAME,,"| Name of vessel component."
-TURNFC,,"| Turns per coil (DIII-D)."
+AF,zeros, (array) Angles of f coils in degrees
+AF2,zeros, (array) Angles of f coils in degrees
+AMP2,zeros, (array) Angles of magnetic probes in degrees. The measured poloidal magnetic field is given as BR cos(AMP2) + BZ sin(AMP2).
+AVS,zeros, (array) Angles of vessel segments in degrees
+AVS2,zeros, (array) Angles of vessel segments in degrees
+ECID,, (array) Indices where e coil Green functions will be stored in table
+ECTURN,zeros, (array) Number of turns in the e coils
+FCID,, (array) Indices where f coil Green functions will be stored in table
+FCTURN,zeros, (array) Number of turns in the f coils
+HACOIL,zeros, (array) Height of a coils
+HE,zeros, (array) Height of e coils
+HF,zeros, (array) Height of f coils
+HVS,zeros, (array) Height of vessel segments
+IACOIL,0, "(integer flag) Controls whether Green functions for the advanced divertor coils (a coils) are computed (ra file)
+| 1=compute Green functions for advanced divertor coils
+| 0=none"
+IECOIL,0, "(integer flag) Controls whether the Green functions for Ohmic coils (e coils) are computed (re file)
+| 1=compute Green functions for Ohmic coils
+| 0=none"
+IFCOIL,0, "(integer flag) Controls whether the response functions due to shaping coils (f coils) are computed (also see ISLPFC)
+| 1=compute response functions due to shaping coil (rfcoil and brzgfc files)
+| 0=none"
+IGRID,0,"| (integer flag) Controls whether Green functions due to plasma currents, f coils, and plasma response function are computed (ec and ep files)
+| 1=compute Green functions and plasma response
+| 0=none"
+ISLPFC,0,"(integer flag) Controls whether the response function of flux loops do to f coils is computed (requires IFCOIL=1)
+| 1=compute response function (fc file)
+| 0=none"
+IVESEL,0," (integer flag) Controls whether Green functions for vessel conductors are computed (note: this has a different meaning than the variable that shares it's name in the IN1 namelist)
+| 1=compute vessel Green functions (rv file)
+| 0=none"
+NSMP2,1, Number of segments to divide every magnetic probe into
+PATMP2,zeros,"| (array) Path lengths of closed loop magnetic probes in the poloidal plan."
+RACOIL,zeros, (array) Major radius of a coils
+RE,zeros, (array) Major radius of e coils
+RF,zeros, (array) Major radius of f coils
+RVS,zeros, (array) Major radius of vessel segments
+RLEFT,0., Inner major radius of rectangular grid in m
+RRIGHT,0., Outer major radius of rectangular grid in m
+RSI,zeros, (array) Major radius of flux loops in m
+RSISVS,zeros, (array) Resistivity of vessel segments
+SMP2,zeros, (array) Lengths of magnetic probes in m
+TURNFC,zeros, (array) Turns per F-coil
+VCID,, (array) Indices where vessel current Green functions will be stored in table
+VSNAME,, (array) Name of vessel components
+WACOIL,zeros, (array) Width of a coils
+WE,zeros, (array) Width of e coils
+WF,zeros, (array) Width of f coils
+WVS,zeros, (array) Width of vessel segments
+XMP2,zeros, (array) major radius of magnetic probes in m
+YMP2,zeros, (array) Z coordinates of magnetic probes in m
+ZACOIL,zeros, (array) Z coordinates of a coils
+ZE,zeros, (array) Z coordinates of e coils
+ZF,zeros, (array) Z coordinates of f coils
+ZVS,zeros, (array) Z coordinates of vessel segments
+ZBOTTO,0., Bottom vertical Z coordinate of rectangular grid in m
+ZSI,zeros, (array) Z coordinates of flux loops in m
+ZTOP,0., Top vertical Z coordinate of rectangular grid in m

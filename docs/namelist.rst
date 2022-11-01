@@ -224,7 +224,7 @@ EFITINK
 EFITINK is for vertical stabilization, the same as INK, but specified in the snap file. It can be included in the input file in file mode.
 
 IN3 (EFUND)
----
+-----------
 
 IN3 is used to read experiment parameters from a dprobe.dat file.
 

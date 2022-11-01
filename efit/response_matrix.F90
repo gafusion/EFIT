@@ -82,7 +82,7 @@
       nsq=2
       saiold=tsaisq(jtime)
       brsold=brsp
-      if(ifitvs.gt.0) vcurrto=vcurrt
+      if(ivesel.eq.3) vcurrto=vcurrt
 !----------------------------------------------------------------------
 !--   singular decomposition, first F-coil currents, set up arsp     --
 !----------------------------------------------------------------------
@@ -540,7 +540,7 @@
 !----------------------------------------------------------------------
 !--   fit vessel currents                                            --
 !----------------------------------------------------------------------
-      fit_vessel: if (ifitvs.gt.0) then
+      fit_vessel: if (ivesel.eq.3) then
       if (nfourier.gt.1) then
         need=need+nfourier*2+1
       else
@@ -1973,7 +1973,7 @@
           enddo
           brsp(nj)=brsp(nj)-fwtsi(m)*ework
         endif
-        if (ivesel.le.0.or.ifitvs.gt.0) cycle
+        if(ivesel.eq.0 .or. ivesel.eq.3) cycle
         ework=0.0
         do ne=1,nvesel
           ework=ework+rsilvs(m,ne)*vcurrt(ne)
@@ -1991,7 +1991,7 @@
           enddo
           brsp(nj)=brsp(nj)-fwtmp2(m)*ework
         endif
-        if(ivesel.le.0.or.ifitvs.gt.0) cycle
+        if(ivesel.eq.0 .or. ivesel.eq.3) cycle
         ework=0.0
         do ne=1,nvesel
           ework=ework+rmp2vs(m,ne)*vcurrt(ne)
@@ -2009,7 +2009,7 @@
           enddo
           brsp(nj)=brsp(nj)-fwtgam(m)*ework
         endif
-        if(ivesel.le.0.or.ifitvs.gt.0) cycle
+        if(ivesel.eq.0 .or. ivesel.eq.3) cycle
         ework=0.0
         do ne=1,nvesel
           ework=ework+rgamvs(m,ne)*vcurrt(ne)
@@ -2040,7 +2040,7 @@
           enddo
           brsp(nj)=brsp(nj)-fwtece(m)*ework
         endif
-        if(ivesel.le.0.or.ifitvs.gt.0) cycle
+        if(ivesel.eq.0 .or. ivesel.eq.3) cycle
         ework=0.0
         do ne=1,nvesel
           ework=ework+recevs(m,ne)*vcurrt(ne)
@@ -2057,7 +2057,7 @@
           enddo
           brsp(nj)=brsp(nj)-fwtecebz*ework
         endif
-        if (ivesel.gt.0.and.ifitvs.le.0) then
+        if (ivesel.eq.1 .or. ivesel.eq.2) then
           ework=0.0
           do ne=1,nvesel
             ework=ework+recebzvs(ne)*vcurrt(ne)
@@ -2312,7 +2312,7 @@
 !----------------------------------------------------------------------
       if(scalea) brsp(1:need)=brsp(1:need)*colscale(1:need)
       nload=nfnwcr
-      if (ifitvs.gt.0) then
+      if (ivesel.eq.3) then
         if (nfourier.gt.1) then
           do j=1,nvesel
             vcurrt(j)=sum(brsp((1+nfnwcr):(nfourier*2+1+nfnwcr)) &
@@ -2567,7 +2567,7 @@
       else
         cjeccd=0.0
       endif
-      if(ifitvs.gt.0) cm=cm+sum(vcurrt)
+      if(ivesel.eq.3) cm=cm+sum(vcurrt)
       if (swtcur.ne.0.0) then
         saiip=(fwtcur/swtcur)**nsq*(pasmat(jtime)-cm)**2
       else
@@ -2654,7 +2654,7 @@
             ! criteria satisfied, restore previous solution and stop fit 
             ichisq=1
             brsp=brsold
-            if(ifitvs.gt.0) vcurrt=vcurrto
+            if(ivesel.eq.3) vcurrt=vcurrto
             saisq=saiold
            endif
           endif

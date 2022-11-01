@@ -112,14 +112,11 @@ IERCHK,1,"| ""(Integer flag) Error Check"".
 | - 3 = don't output any result files (g, a, m, etc.) if error checks fail
 | - - = don't call shapesurf to compute plasma quantities or output anything besides the a-file if fit hasn't converged (intended for use in an optimization loop)
 IEXCAL,0, 1 = plot magnetic signals."
-IFITVS,,"| ""(Integer flag) Fit Vessel"". The DIII-D vessel can be modeled as 24 individual
-| current carrying elements, i.e. additional unknown sources of current (in both fitting
-| or equilibrium modes?). Currents in these elements are treated as free 
-| parameters to be solved for.
-| - 1 = Include vessel segment currents in solution.
-| - 0 = ignore vessel segment currents (default)."
+IFITVS,0,"| ""(Integer flag) Fit Vessel Current"". This parameter is an alternative to IVESEL and takes priority over any IVESEL value that is set.
+| - 1 = identical to setting IVESEL=3.
+| - 0 = deactivate this parameter (default)."
 IMAGSIGMA,0, 1 = computed nonlinear magnetic uncertainties (deprecated).
-INPUT_DIR,"See namelist EFITIN"
+INPUT_DIR,,"See namelist EFITIN"
 IOUT,,"| Output file option. This is a bitwise switch except that 6 overwrites 2 and 4.
 | - Multiple output options may be achieved by adding up the values of each option.
 | - 0 = do NOT write FITOUT.DAT, measurement file, rstarkxx.dat, esave.dat
@@ -158,11 +155,11 @@ ITIME,,"""Integer Time"". Time in milliseconds of slice to analyze."
 ITIMEU,0,"""Integer Time usec"". Time in microseconds of slice to analyze. (which value supersedes?)"
 ITRACE,-1,"| - 1 = compute external separatrix distance. (default)
 | - 2 = compute and plot."
-IVESEL,0,"| ""(Integer flag) Vessel"". Estimates of (24) vessel currents can be included as diagnostics to be fitted(?).
-| - 0 don't include vessel current (default)
-| - >0 include vessel current (What happens for IVESEL different from 1 or 2?).
-| - 1 specify vessel currents through VCURRT.
-| - 2 computed from measured loop voltage."
+IVESEL,0,"| ""(Integer flag) Constrain Vessel Currents"". The vessel can be modeled as individual current carrying elements (specified in the IN3 namelist input to EFUND) that are treated as additional unknown sources of current. (Note: this option is superceded when IFITVS=1)
+| - 0 don't constrain vessel current (default).
+| - 1 specify constraints through VCURRT.
+| - 2 constraints are set based on the measured loop voltage (I=V/R).
+| - 3 vessel currents are treated as free parameters that are fitted to all diagnostic and coil measurements specified."
 IWEIGH, 0,
 IXRAY,, "| - 0 = do not plot soft X-ray (default)
 | - 1 = plot Poroidal SXR arrays (implied by negative ITEK)
@@ -343,13 +340,13 @@ SIZEROJ,-1.0,"| Vector of locations at which Jt is constrained when KZEROJ>0. Wh
 | PSIWANT can be used instead of SIZEROJ(1) by setting SIZEROJ(1)<0. See KZEROJ, 
 | RZEROJ, VZEROJ, PSIWANT. Default"
 SRM,-3.5,Parameter for Solovev equilibrium. - = inside limited.
-STORE_DIR,"see namelist efitin"
-TABLE_DIR,"see namelist EFITIN"
+STORE_DIR,,"see namelist EFITIN"
+TABLE_DIR,,"see namelist EFITIN"
 TETHOM,,"""Te Thompson"". Electron temperature from Thompson."
 TGAMMA,,"""Tangent Gamma"". Tangent of the measured MSE polarization angle, TGAMMA = (A1*Bz + A5*Er) / (A2*BT+...)."
 TIONEX,,"if nptionf > 100, tionex = tethombfract"
 VCURFB,"(0.0,500.0,500.0)",
-VCURRT,,"""Vessel Current"". Vessel currents in Amps, 24 segments for DIII-D. IVESEL=1 turns this on."
+VCURRT,,"""Vessel Current"". Vessel currents in Amps, vector length matches the number vessel segments (24 for DIII-D). Only used when IVESEL=1 and IFITVS=0."
 VLOOP, 0.0,Measured loop voltage. Obtained from data and written into the K-file. 
 VSDAMP,0,Relaxation parameter for scrape-off layer current. (Always set to 0.25.)
 VZEROJ,,"| Desired value [or vector of values] of normalized J (with respect to I/Area) at flux

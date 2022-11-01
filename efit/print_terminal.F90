@@ -177,20 +177,10 @@
         write (nout,11020) (rsisec(i),i=1,nesum)
 
         if (ivesel.gt.0) then
-          sumif=0.0
-          do i=1,nvesel
-            sumif=sumif+vcurrt(i)
-          end do
+          sumif=sum(vcurrt)
           nves2=nvesel/2
-          sumift=0.0
-          do i=1,nves2
-            sumift=sumift+vcurrt(i)
-          end do
-          sumifb=0.0
-          do i=nves2+1,nvesel
-            sumifb=sumifb+vcurrt(i)
-          end do
-          if (ivesel.eq.11) sumif=sumvs0
+          sumift=sum(vcurrt(1:nves2))
+          sumifb=sum(vcurrt(nves2+1:nvesel))
           write (nout,11060) sumif,sumift,sumifb
           write (nout,11020) (vcurrt(i),i=1,nvesel)
           write (nout,11022) fzpol

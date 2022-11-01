@@ -106,7 +106,7 @@
       use errlims
       include 'eparm.inc'
       implicit none
-      integer*4 :: istat
+      integer*4 :: istat,kubics
       character(1000) :: line
 
       ! it would probably be more clear to call this namelist experimentin or eparmin
@@ -149,9 +149,10 @@
 !!
 !**********************************************************************
       subroutine read_dirs_shot(filename)
-      use var_exdata, only: ishot
+      use var_exdata, only: ishot,ifitvs
       use var_cecoil, only: iecurr
       use var_vessel, only: ivesel
+      use var_input, only: icutfp
       use extvars, only: table_dir,input_dir,store_dir,efitversion
       implicit none
       character (*), intent(in) :: filename
@@ -160,8 +161,8 @@
                 iconvr,icprof,nextra,ixstrt,itimeu,islve,icntour,iprobe, &
                 ifref,isumip,n1coil,ifcurr,iecoil,iplim,kinput,limfag, &
                 kprfit,npress,keqdsk,npteth,nption,npneth,nbeam,iexcal, &
-                iconsi,kcalpa,kcgama,iacoil,limid,iqplot,nptionf,ifitvs, &
-                icutfp,iavem,ktear,ndokin,kskipvs,limvs,kpressb,kzeroj, &
+                iconsi,kcalpa,kcgama,iacoil,limid,iqplot,nptionf, &
+                iavem,ktear,ndokin,kskipvs,limvs,kpressb,kzeroj, &
                 ibtcomp,klabel,nmass,iaveus,kwripre,kbound,kframe, &
                 kppfnc,kppknt,kfffnc,kffknt,kwwfnc,kwwknt,nbskip, &
                 kersil,iout,ixray,kedgef,kedgep,kautoknt,kakloop,kakiter, &
@@ -255,9 +256,10 @@
 !!
 !**********************************************************************
       subroutine read_dirs_shot_imas(filename)
-      use var_exdata, only: ishot
+      use var_exdata, only: ishot,ifitvs
       use var_cecoil, only: iecurr
       use var_vessel, only: ivesel
+      use var_input, only: icutfp
       use var_nio
       use error_control
       use extvars, only: table_dir,input_dir,store_dir,efitversion
@@ -311,6 +313,8 @@
         call read_h5_ex(nid,"ishot",ishot,h5in,h5err)
         call read_h5_ex(nid,"iecurr",iecurr,h5in,h5err)
         call read_h5_ex(nid,"ivesel",ivesel,h5in,h5err)
+        call read_h5_ex(nid,"ifitvs",ifitvs,h5in,h5err)
+        call read_h5_ex(nid,"icutfp",icutfp,h5in,h5err)
         call read_h5_ex(nid,"table_dir",table_dir,h5in,h5err)
         call read_h5_ex(nid,"input_dir",input_dir,h5in,h5err)
         call read_h5_ex(nid,"efitversion",efitversion,h5in,h5err)

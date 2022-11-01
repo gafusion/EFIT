@@ -194,7 +194,7 @@
         !       to be fit from imas files, so we treat both consistently
         if (icurrt.eq.2) then
           ! apparently fitting polynomials works equally well with
-          ! splines...? (kppfnc=6 nad kfffnc=6) - matches esave
+          ! splines...? (kppfnc=6 and kfffnc=6) - matches esave
           call fitpp(pprime_ext,nw_ext,alpa,kppcur)
           brsp(1+nfcoil:nfcoil+kppcur)=alpa(1:kppcur)*darea
           call fitfp(ffprim_ext,nw_ext,alpa,kffcur)
