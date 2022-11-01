@@ -42,7 +42,7 @@ FWTCUR, 0, "| ""Fit Weight Current"". Fitting weight for plasma current (fitting
 FWTDLC, 0, "| Fitting weight for diamagnetic flux
 | - 0 = do not include measured data in fit (default)
 | - 1 = include measured data in fit"
-FWTEC, zeros, "| ""Fit Weight E-coils"". Length of vector is experiment dependent (6 for DIII-D), each entry of which is a fitting weight for E-coil currents. Ignored unless IECURR=2?
+FWTEC, zeros, "| ""Fit Weight E-coils"". Length of vector is experiment dependent (6 for DIII-D), each entry of which is a fitting weight for E-coil currents. Ignored unless IECURR=2.
 | - 0 = do not include measured data in fit (default= all 0.0's)
 | - 1 = include measured data in fit"
 FWTFC, zeros, "| ""Fit Weight F-coils"". Length of vector is experiment dependent (18 for DIII-D), each entry of which is a fitting weight for F-coil currents.

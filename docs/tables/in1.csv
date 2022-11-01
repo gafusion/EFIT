@@ -99,12 +99,12 @@ ICURRT,,"| ""(Integer flag) Current"". Which current profile parametrization to 
 | - 5 = same as 2 but include toroidal rotation."
 IDFILA,,Filament set for MFIT (not used in EFIT).
 IECOIL,,"| - ""(Integer flag) E-coil"". E-coil plotting
-| - 1 = plot E coils with color coding for different connections.
-| - 0 = do not plot E coils (Default)"
-IECURR,,"| - ""(Integer flag) E-coil current"".
-| - 1 = include E coil currents in calculations (default).
-| - 2 = fit E-coil currents
-| (How is this related to FWTEC??)"
+| - 0 = do not plot E coils (Default)
+| - 1 = plot E coils with color coding for different connections"
+IECURR,1,"| - ""(Integer flag) Ohmic coil (E-coil) current""
+| - 0 = ignore E coil currents
+| - 1 = include E coil currents in calculations, with no uncertainty (default)
+| - 2 = fit E-coil currents, these are fit to the experimental coil values when FWTEC>0, otherwise they are fit based on other measurements"
 IERCHK,1,"| ""(Integer flag) Error Check"".
 | - 0 = don't check for MHD fitting errors
 | - 1 = check for MHD fitting errors but continue regardless of the result (Default)

@@ -364,28 +364,30 @@
       endif ohmic
       endif ECE
 !----------------------------------------------------------------------
-      open(unit=nffile,status='old',form='unformatted',iostat=ioerr, &
-           file='recexx.dat')
-      if(ioerr.eq.0) close(unit=nffile,status='delete')
-      open(unit=nffile,status='new',form='unformatted', &
-           file='recexx.dat')
-      nnnece=nece
-      write(nffile) nnnece 
-      do ii=1,nece
-        rrrecem(ii)=recem(ii)
-        rrrecep(ii)=recep(ii)
-      enddo
-      rrreceo=receo
-      write(nffile) rrrecem
-      write(nffile) rrrecep
-      write(nffile) rrreceo
-      write(nffile) recebzfc
-      write(nffile) gecebzpc
-      write(nffile) recebzec
-      write(nffile) recefc
-      write(nffile) gecepc 
-      write(nffile) receec
-      close(unit=nffile)
+      if (rank.eq.0) then
+        open(unit=nffile,status='old',form='unformatted',iostat=ioerr, &
+             file='recexx.dat')
+        if(ioerr.eq.0) close(unit=nffile,status='delete')
+        open(unit=nffile,status='new',form='unformatted', &
+             file='recexx.dat')
+        nnnece=nece
+        write(nffile) nnnece 
+        do ii=1,nece
+          rrrecem(ii)=recem(ii)
+          rrrecep(ii)=recep(ii)
+        enddo
+        rrreceo=receo
+        write(nffile) rrrecem
+        write(nffile) rrrecep
+        write(nffile) rrreceo
+        write(nffile) recebzfc
+        write(nffile) gecebzpc
+        write(nffile) recebzec
+        write(nffile) recefc
+        write(nffile) gecepc 
+        write(nffile) receec
+        close(unit=nffile)
+      endif
       endif ksetece0
 !-----------------------------------------------------------------------
 !--   do every time from here
