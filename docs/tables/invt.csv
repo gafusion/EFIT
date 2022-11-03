@@ -12,11 +12,11 @@ KCOMEGA,0.0,"| Number of constraints for POmega' when ICURRT=5, specified throug
 KDOVT, 0.0,"not used"
 KPLOTP,,See namelist IN1.
 KVTOR,0,"| toroidal rotation switch, must set ICURRT=5.
-| - 0 = no rotation (default).
-| - 1 = turn on toroidal rotation in approximate first order form.
-| - 2 = include second order terms.
-| - 3 = exact two-fluid form. Polynomial basis. (exponential form???)
-| - 11= toroidal rotation in exact two-fluid form. Exponential form."
+| 0 = no rotation (default).
+| 1 = turn on toroidal rotation in approximate first order form.
+| 2 = include second order terms.
+| 3 = exact two-fluid form. Polynomial basis. (exponential form???)
+| 11= toroidal rotation in exact two-fluid form. Exponential form."
 KWWCUR, 2, "Number of rotational pressure terms, for polynomial representation KWWFNC=0 only."
 KWWFNC,,See namelist IN1.
 KWWKNT,,See namelist IN1.
@@ -27,15 +27,15 @@ OMEGAT,,Vector of length NOMEGAT specifying rotational frequencies in rad/sec. N
 PRESW,,Rotational pressure constraint.  Default calculation: presw(i)=dmnowomegat(i)rvtor2
 PRESWB,,default = 0.0
 ROMEGAT,,"| Vector of length NOMEGAT specifying location of rotational frequency data points
-| - >0 Radius of rotational frequency data points in meters.
-| = <0 Location of rotational frequency data points in normalized flux coordinate."
+| >0 Radius of rotational frequency data points in meters.
+| <0 Location of rotational frequency data points in normalized flux coordinate."
 RPRESW,,"| - = input rotational pressure profile as function of dimensionless fluxes.
 | + = R coordinates of the input rotational pressure profile data in meters."
 RVTOR,, See namelist IN1.
 SBETAW,, See namelist IN1.
 SCALEPW,scalepw(1)=-1.0, array of scaling factor for rotational pressure or rotational frequency.
 SIGOME, , Vector of length NOMEGAT specifying uncertainty in rotational frequency specified by OMEGAT.
-SIGPRW,,"| ""Sigma Rotational Pressure"". Standard deviation of input rotational pressure data. Default calculation: sigprw(i)=abs(presw(i))sigome(i)."
+SIGPRW,,"| Standard deviation of input rotational pressure data. Default calculation: sigprw(i)=abs(presw(i))sigome(i)."
 WCURBD, ,See namelist IN1.
 WWKNT,,See namelist IN1.
 WWTENS,,See namelist IN1.

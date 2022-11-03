@@ -1,50 +1,50 @@
 ﻿Variable, Default, Description
-KFFFNC, ,"| ""Choice of basis function for FF'.
-| - 0 = polynomial representation FF'(psi)=gamma0+gamma1 psi+...+gamman psi^n.
-| - 1 = ??
-| - 2 = ??
-| - 3 = ??
-| - 4 = ??
-| - 5 = ??
-| - 6 = spline respresentation.
-| - 8 = Polynomial + local representation (based on PSIECN and DPSIECN)."
-KPPFNC, ,"| ""Choice of basis function for P'.
-| - 0 = polynomial representation P'(psi)=alpha0+alpha1 psi+...+alphan psi^n.
-| - 1 = ??
-| - 2 = ??
-| - 3 = ??
-| - 4 = ??
-| - 5 = ??
-| - 6 = spline respresentation."
-KWWFNC, , "| ""Choice of basis function for POmega'.
-| - 0 = polynomial representation.
-| - 1 = ??
-| - 2 = ??
-| - 3 = ??
-| - 4 = ??
-| - 5 = ??
-| - 6 = spline representation."
-ICPROF, 0,"| ""Specific choice of current profile
-| - 0 = current profile is not specified by this variable (default)
-| - 1 = no edge current density allowed
-| - 2 = free edge current density
-| - 3 = weak edge current density constraint
-| - This sets some or all of the variables KFFCUR, KPPCUR, FCURBD, PCURBD, FWTBP, FWTQA, QVFIT, KCALPA, CALPA, XALPA, KCGAMA, CGAMA, and XGAMA to predefined values.
-| - NOTE that if these variables are seperately specified in the namelist input, the values set by the ICPROF variable will override them."
+KFFFNC, ,"| Choice of basis function for FF'.
+| 0 = polynomial representation FF'(psi)=gamma0+gamma1 psi+...+gamman psi^n.
+| 1 = ??
+| 2 = ??
+| 3 = ??
+| 4 = ??
+| 5 = ??
+| 6 = spline respresentation.
+| 8 = Polynomial + local representation (based on PSIECN and DPSIECN)."
+KPPFNC, ,"| Choice of basis function for P'.
+| 0 = polynomial representation P'(psi)=alpha0+alpha1 psi+...+alphan psi^n.
+| 1 = ??
+| 2 = ??
+| 3 = ??
+| 4 = ??
+| 5 = ??
+| 6 = spline respresentation."
+KWWFNC, , "| Choice of basis function for POmega'.
+| 0 = polynomial representation.
+| 1 = ??
+| 2 = ??
+| 3 = ??
+| 4 = ??
+| 5 = ??
+| 6 = spline representation."
+ICPROF, 0,"| Specific choice of current profile
+| 0 = current profile is not specified by this variable (default)
+| 1 = no edge current density allowed
+| 2 = free edge current density
+| 3 = weak edge current density constraint
+| This sets some or all of the variables KFFCUR, KPPCUR, FCURBD, PCURBD, FWTBP, FWTQA, QVFIT, KCALPA, CALPA, XALPA, KCGAMA, CGAMA, and XGAMA to predefined values.
+| NOTE that if these variables are seperately specified in the namelist input, the values set by the ICPROF variable will override them."
 KPPCUR, 3, "Number of coefficients in polynomial representation of P'. Ignored when using spline representation."
 KFFCUR, 1, "Number of coefficients in polynomial representation of FF'. Ignored when using spline representation."
-KCALPA, 0, "| = ""number of constraints on coefficients alpha for P' (only relevant when ICURRT=2) 
+KCALPA, 0, "| = number of constraints on coefficients alpha for P' (only relevant when ICURRT=2) 
 | specified through matrix CALPA and vector XALPA. For both equilibrium and fitting."
-CALPA, "(0.1,0.1,0.1)", "| ""Constraint matrix for P' when ICURRT=2 and KCALPA>0.
+CALPA, "(0.1,0.1,0.1)", "| Constraint matrix for P' when ICURRT=2 and KCALPA>0.
 | KPPFNC=0
 | Defines constraint equations of the form CALPA(1,i) alpha(1) + CALPA(2,i) alpha(2) +...+ CALPA(n,i) alpha(n) = XALPA(i) for i=1 to KCALPA, where n = KPPCUR. 
 | Can scale coefficients up or down relative to nominal weights of 1 to get stronger or weaker constraint, respectively.
 | KPPFNC=6
 | Defines constraint equations of the form CALPA(1,i) ppknot(1)+CALPA(2,i) ppknot(1)'+CALPA(3,i) ppknot(2) +...+ CALPA(2n,i) ppknot(n)'=XALPA(i) for i=1 to KCALPA, where n = KPPKNT."
 XALPA, , Constraint vector for P' when ICURRT=2 and KCALPA>0. See CALPA.
-KCGAMA, 0, "|  = ""number of constraints on coefficients gamma for FF' (only relevant when ICURRT=2),
+KCGAMA, 0, "|  = number of constraints on coefficients gamma for FF' (only relevant when ICURRT=2),
 | specified through matrix CGAMA and vector XGAMA. For both equilibrium and fitting."
-CGAMA, , "| ""Constraint matrix for FF' when ICURRT=2 and KCGAMA>0. If KFFFNC = 0, defines constraint
+CGAMA, , "| Constraint matrix for FF' when ICURRT=2 and KCGAMA>0. If KFFFNC = 0, defines constraint
 | equations of the form CGAMA(1,i) gamma(1) + CGAMA(2,i) gamma(2) +...+ CGAMA(n,i)
 | gamma(n) = XGAMA(i) for i=1 to KCGAMA, where n = KFFCUR. If KFFFNC = 6, see description under CALPA."
 XGAMA, , Constraint vector for FF' when ICURRT=2 and KCGAMA>0. See CGAMA.
