@@ -6126,5 +6126,5 @@
  mse_strict = 0                                                                                     
  t_max_beam_off = 0.0                                                                               
  mse_usecer = 0                                                                                     
- write_kfile = .true.                                                                               
+ write_kfile = .true.
  /                                                                                                  

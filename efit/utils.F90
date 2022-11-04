@@ -431,31 +431,31 @@
         do k=1,nco2r
           yr1=chordr(k)-yplt(i)
           yr2=chordr(k)-yplt(i+1)
-          if (yr1*yr2.gt.0.0) cycle
+          if(yr1*yr2.gt.0.0) cycle
           rpath=xplt(i)+yr1*(xplt(i+1)-xplt(i))/(yplt(i+1)-yplt(i))
-          if (rpath.ge.rcentr) rco2(k)=rpath
-          if (rpath.le.rcentr) rco2in(k)=rpath
+          if(rpath.ge.rcentr) rco2(k)=rpath
+          if(rpath.le.rcentr) rco2in(k)=rpath
         enddo
-          yr1=zlibim-yplt(i)
-          yr2=zlibim-yplt(i+1)
-          if (yr1*yr2.le.0.0) then
-            rpath=xplt(i)+yr1*(xplt(i+1)-xplt(i))/(yplt(i+1)-yplt(i))
-            if (rpath.ge.rcentr) rlibim(jges)=rpath*100.0
-          endif
+        yr1=zlibim-yplt(i)
+        yr2=zlibim-yplt(i+1)
+        if (yr1*yr2.le.0.0) then
+          rpath=xplt(i)+yr1*(xplt(i+1)-xplt(i))/(yplt(i+1)-yplt(i))
+          if(rpath.ge.rcentr) rlibim(jges)=rpath*100.0
+        endif
         do k=1,nco2v
           yr1=chordv(k)-xplt(i)
           yr2=chordv(k)-xplt(i+1)
-          if (yr1*yr2.gt.0.0) cycle
+          if(yr1*yr2.gt.0.0) cycle
           zpath=yplt(i)+yr1*(yplt(i+1)-yplt(i))/(xplt(i+1)-xplt(i))
-          if (zpath.ge.zcentr) zuper(k)=zpath
-          if (zpath.le.zcentr) zlower(k)=zpath
+          if(zpath.ge.zcentr) zuper(k)=zpath
+          if(zpath.le.zcentr) zlower(k)=zpath
         enddo
         yr1=rmajts-xplt(i)
         yr2=rmajts-xplt(i+1)
         if (yr1*yr2.le.0.0) then
           zpath=yplt(i)+yr1*(yplt(i+1)-yplt(i))/(xplt(i+1)-xplt(i))
-          if (zpath.ge.zcentr) zuperts(jges)=zpath*100.
-          if (zpath.le.zcentr) zlowerts=zpath*100.
+          if(zpath.ge.zcentr) zuperts(jges)=zpath*100.
+          if(zpath.le.zcentr) zlowerts=zpath*100.
         endif
       enddo
       do k=1,nco2v

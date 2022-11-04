@@ -28,7 +28,7 @@ for file in mhdout.dat dprobe.dat rfcoil.ddd brzgfc.dat; do
   fi
 done
 
-for prefix in ec ep re; do
+for prefix in ec ep; do
   if test -e ${prefix}${sufix}; then
     mv ${prefix}${sufix} green
     cp ${OUTPUT_STORE_DIR}/${prefix}${sufix} .
@@ -38,8 +38,18 @@ for prefix in ec ep re; do
   fi
 done
 
-if [ @IS_DIIID@ = True ]; then
-  for prefix in fc ra rv; do
+if [ @IS_NSTX@ = True ]; then
+  for prefix in re; do
+    if test -e ${prefix}${sufix}; then
+      mv ${prefix}${sufix} green
+      cp ${OUTPUT_STORE_DIR}/${prefix}${sufix} .
+    else
+      echo "File does not exist: ${prefix}${sufix}"
+      exit 1
+    fi
+  done
+elif [ @IS_DIIID@ = True ]; then
+  for prefix in fc ra rv re; do
     if test -e ${prefix}${sufix}; then
       mv ${prefix}${sufix} green
       cp ${OUTPUT_STORE_DIR}/${prefix}${sufix} .

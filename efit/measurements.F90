@@ -193,7 +193,7 @@
       denvt = 0.0
       denrt = 0.0
       s124411: if (nshot.lt.124411) then
-      do i=1,3
+      do i=1,nco2v
         ierlop=0
         call avdata(nshot,ndenv(i),i1,ierlop,denvt(1:np,i), &
                     np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact, &
@@ -202,7 +202,7 @@
                     time_err)
         if(ierlop.eq.0) denvt(1:np,i)=denvt(1:np,i)*50.0
       enddo
-      do i=1,2
+      do i=1,nco2r
         ierlop=0
         call avdata(nshot,ndenr(i),i1,ierlop,denrt(1:np,i), &
                     np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact, &

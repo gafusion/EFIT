@@ -54,26 +54,26 @@
 !     ONLY root process allowed to interface with terminal
 !-----------------------------------------------------------------------
       IF (rank == 0) then
-        WRITE (nttyo,5500)
-        WRITE(nttyo,'(2a,/)') 'Git repository url ',TRIM(giturl)
-        WRITE(nttyo,'(2a,/)') 'Git branch ',TRIM(gitbranch)
-        WRITE(nttyo,'(4a,/)') 'Git hash ',TRIM(githash),' ',TRIM(lmods)
-        WRITE(nttyo,'(2a,/)') 'Git date ',TRIM(gitdate)
+        WRITE(nttyo,5500)
+        WRITE(nttyo,'(1x,2a)') 'Git repository url ',TRIM(giturl)
+        WRITE(nttyo,'(1x,2a)') 'Git branch ',TRIM(gitbranch)
+        WRITE(nttyo,'(1x,4a)') 'Git hash ',TRIM(githash),' ',TRIM(lmods)
+        WRITE(nttyo,'(1x,2a)') 'Git date ',TRIM(gitdate)
 !-----------------------------------------------------------------------
 !       simulation date and time
 !-----------------------------------------------------------------------
         CALL DATE_AND_TIME(VALUES=tval)
-        WRITE(nttyo,'(a,i2,a,i2,a,i4,a,i2,a,i2,a,i2,/)')                &
+        WRITE(nttyo,'(1x,a,i2,a,i2,a,i4,a,i2,a,i2,a,i2)')                &
           'Simulation started on ',tval(2),'/',tval(3),'/',tval(1),     &
           ' at ',tval(5),':',tval(6),':',tval(7)
 !-----------------------------------------------------------------------
 !       compiler and flags
 !-----------------------------------------------------------------------
-        WRITE(nttyo,'(4a,/)') 'Code compiled with ',TRIM(fc_id),         &
+        WRITE(nttyo,'(1x,4a)') 'Code compiled with ',TRIM(fc_id),         &
                               ' ',TRIM(fcver)
-!        WRITE(nttyo,'(2a,/)') ' and flags ',TRIM(fcflags)
+!        WRITE(nttyo,'(1x,2a)') ' and flags ',TRIM(fcflags)
       ENDIF
- 5500 format (/,10x,'EFIT-AI'/)
+ 5500 format (/,10x,'EFIT-AI Version'/)
 !-----------------------------------------------------------------------
 !     terminate
 !-----------------------------------------------------------------------

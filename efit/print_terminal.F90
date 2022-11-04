@@ -177,20 +177,10 @@
         write (nout,11020) (rsisec(i),i=1,nesum)
 
         if (ivesel.gt.0) then
-          sumif=0.0
-          do i=1,nvesel
-            sumif=sumif+vcurrt(i)
-          end do
+          sumif=sum(vcurrt)
           nves2=nvesel/2
-          sumift=0.0
-          do i=1,nves2
-            sumift=sumift+vcurrt(i)
-          end do
-          sumifb=0.0
-          do i=nves2+1,nvesel
-            sumifb=sumifb+vcurrt(i)
-          end do
-          if (ivesel.eq.11) sumif=sumvs0
+          sumift=sum(vcurrt(1:nves2))
+          sumifb=sum(vcurrt(nves2+1:nvesel))
           write (nout,11060) sumif,sumift,sumifb
           write (nout,11020) (vcurrt(i),i=1,nvesel)
           write (nout,11022) fzpol
@@ -691,6 +681,6 @@
         write (nout,10000) trim(ch1),trim(ch2)
       end if
 
-10000 format(/,6x,20('*'),'EFITAI',a3,' x ',a3,'  output ',20('*'))
-10001 format(/,20('*'),' EFIT-AI ',i0,' x ',i0,' grid ',20('*'))
+10000 format(/,6x,20('*'),'EFIT  ',a3,' x ',a3,'  output ',20('*'))
+10001 format(1x,20('*'),' EFIT ',i0,' x ',i0,' grid ',20('*'))
       end subroutine print_header

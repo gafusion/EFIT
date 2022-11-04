@@ -246,7 +246,7 @@
             cycle
           endif
           ! don't solve times without mse
-          if (sum(abs(fwtgam)).gt.nstark*1.e-6_dp .and. kstark.eq.0) then
+          if (sum(abs(swtgam)).gt.nstark*1.e-6_dp .and. kstark.eq.0) then
             call errctrl_msg('efit', &
               'No MSE data found, not solving for equilibrium')
             cycle
@@ -254,7 +254,7 @@
           ! don't write times without cer
           if (mse_usecer.ne.0 .and. &
               maxval(abs(tangam(ks,1:nmtark) &
-                        -tangam_uncor(ks,1:nmtark))).gt.1.e-10_dp) then
+                        -tangam_uncor(ks,1:nmtark))).le.1.e-10_dp) then
             call errctrl_msg('efit', &
               'No CER correction used, not solving for equilibrium')
             cycle

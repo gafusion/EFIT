@@ -165,7 +165,7 @@
       use set_kinds
       integer*4 ierecebz,necein,jo,kfixro,nece,kece,kecebz,mecein, &
                 kfitece,kinputece,kcallece,nharm,kdoece, &
-                mtxece,kfixrece,nfit,kcmin,nconstr
+                mtxece,kfixrece,nfit,kcmin,nconstr,iwo
       character*4 eceiter
       real*8 receo,fwtecebz,fwtecebz0,rteo,zteo,robit,swtecebz,chiecebz, &
              ecebzfit,ecebzbit,fwtnow,zeceo,chisqfit,xfit(10),tchiece, &

@@ -59,7 +59,7 @@
                  ntangle,nfbcoil,mccoil,micoil,ndata,nwwcur, &
                  nffcur,nppcur,nercur,ntime,ndim,kxiter,mqwant, & 
                  mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef, &
-                 modep,modew,kubics,nfourier,nsilds,nsilol
+                 modep,modew,nfourier,nsilds,nsilol
       USE errlims
 
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
@@ -83,6 +83,7 @@
         dbpli_lim,delbp_lim
            
 
+      kubics = 4 ! Unused
       nfcoil = nfsum_efund
       nrogow = nrogow_efund
       nacoil = nacoil_efund

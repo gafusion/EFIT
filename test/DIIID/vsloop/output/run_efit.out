@@ -1,0 +1,41 @@
+
+          EFITD Version  04/21/2022
+
+
+ type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+
+ number of time slices?
+
+ type input file names:
+ #
+
+      ******************** EFITD 65 x  65  output ********************
+ table_dir = </fusion/projects/codes/efit/support_files/2006/181292/>
+
+ r=  0 t=  2400 it=  1 chi2=4.13E+01 zm=-2.21E-02 err=1.814E+00 dz=-2.208E-02 delz= 0.000E+00 dj=0.000E+00
+ r=  0 t=  2400 it=  2 chi2=2.48E+01 zm=-2.30E-02 err=1.043E-01 dz=-9.444E-04 delz= 0.000E+00 dj=0.000E+00
+ r=  0 t=  2400 it=  3 chi2=2.48E+01 zm=-2.35E-02 err=3.606E-02 dz=-5.116E-04 delz= 0.000E+00 dj=0.000E+00
+ r=  0 t=  2400 it=  4 chi2=3.63E+01 zm=-2.75E-02 err=1.180E-01 dz=-3.965E-03 delz= 6.435E-01 dj=1.544E-02
+ r=  0 t=  2400 it=  5 chi2=2.13E+01 zm=-2.89E-02 err=6.728E-02 dz=-1.403E-03 delz= 0.000E+00 dj=1.544E-02
+ r=  0 t=  2400 it=  6 chi2=2.15E+01 zm=-2.89E-02 err=3.482E-03 dz= 1.330E-05 delz= 0.000E+00 dj=1.544E-02
+ r=  0 t=  2400 it=  7 chi2=2.34E+01 zm=-3.13E-02 err=3.849E-02 dz=-2.367E-03 delz= 3.176E-01 dj=6.990E-03
+ r=  0 t=  2400 it=  8 chi2=2.12E+01 zm=-3.20E-02 err=1.027E-02 dz=-7.517E-04 delz= 1.017E-01 dj=2.143E-03
+ r=  0 t=  2400 it=  9 chi2=2.11E+01 zm=-3.21E-02 err=8.210E-04 dz=-9.949E-05 delz= 6.850E-02 dj=1.472E-03
+ r=  0 t=  2400 it= 10 chi2=2.11E+01 zm=-3.21E-02 err=6.536E-05 dz=-3.084E-05 delz= 6.706E-02 dj=1.438E-03
+ Enter SHAPE kerror =             1            0
+
+       data used:   
+ 39 flux loops
+ 69 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     186610 time(ms) =       2400 chi**2   =  2.097E+01
+ betat(%) =      0.442 betap    =      0.116 li       =      1.130
+ vol(cm3) =  1.777E+07 rout(cm) =    172.862 zout(cm) =      5.492
+ elong    =      1.791 utriang  =      0.747 ltriang  =      0.352
+ a(cm)    =     56.318 lin(cm)  =     14.812 lout(cm) =      5.890
+ ltop(cm) =     16.931 q*       =      3.872 rc(cm)   =    170.275
+ zc(cm)   =     -2.686 bt0(t)   =      1.638 qout     =      7.436
+INFO in efitd at r=  0, t=  2400: Done processing

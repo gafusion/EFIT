@@ -1,7 +1,7 @@
 #include "config.f"
 !**********************************************************************
 !>
-!!    fcurrt computes the currents in the f coils.
+!!    computes the currents in the f coils and vesel segments.
 !!
 !!
 !!    @param jtime : time index
@@ -13,26 +13,33 @@
 !!    @param kerror : error flag
 !!
 !**********************************************************************
-      subroutine fcurrt(jtime,iter,itertt,kerror)
+      subroutine external_current(jtime,iter,itertt,kerror)
       use commonblocks,only: rfcpc
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
 
-      integer*4, intent(inout) :: kerror
-      dimension afma(nfcoil,nfcoil),ifmatr(nfcoil),wfmatr(nfcoil), &
-                wbry(msbdry),work(msbdr2),ut(msbdry,msbdry)
-      dimension abry(msbdry,nfcoil+nvesel),bbry(msbdry), &
+      integer*4, intent(in) :: jtime,iter,itertt
+      integer*4, intent(out) :: kerror
+      integer*4 i,ii,j,k,m,nj,nk,nkk,nuuu,idoit,iskip,ier,ioerr,neqn
+      integer*4 ifmatr(nfcoil)
+      real*8 erbsave,fwtbdr,fwtsols,ssiref,sumif,sumifr,t,toler,wsibry, &
+             xsibry,xsisol
+      real*8 afma(nfcoil,nfcoil),wfmatr(nfcoil), &
+             wbry(msbdry),work(msbdr2),ut(msbdry,msbdry)
+      real*8 abry(msbdry,nfcoil+nvesel),bbry(msbdry), &
                 ainbry(nfcoil+nvesel,msbdry)
-      dimension fcref(nfcoil)
-      dimension pbry(msbdry),psbry(msbdry)
+      real*8 fcref(nfcoil)
+      real*8 pbry(msbdry),psbry(msbdry)
       integer*4, parameter :: islpfc=0 ! hardcoded option
+      real*8, parameter :: z04=1.0e-04_dp
       data iskip/0/,idoit/0/
 
       kerror = 0
       if(ifcurr.gt.0) return
       if(itertt.le.1.and.icinit.lt.0) return
+      abry=0.0
       if(islpfc.eq.1) then
 !-----------------------------------------------------------------------
 !--     flux loop on F coils, no longer used...
@@ -56,8 +63,7 @@
             close(unit=nffile)
           else
             afma(1:nfcoil,1:nfcoil)=rfcfc(1:nfcoil,1:nfcoil)
-            m111=-1.0
-            call decomp(nfcoil,nfcoil,afma,m111,ifmatr,wfmatr)
+            call decomp(nfcoil,nfcoil,afma,-1.0,ifmatr,wfmatr)
 !vas
 !vas      print*,'file name : ','fm'//trim(ch1)// &
 !vas                         trim(ch2)//'.ddd'
@@ -78,11 +84,11 @@
         do i=1,nfcoil
           brsp(i)=0.0
           if(ivacum.eq.0) &
-            brsp(i)=brsp(i)+sum(rfcpc(i,1:nwnh)*pcurrt(1:nwnh))
+            brsp(i)=brsp(i)+sum(rfcpc(i,:)*pcurrt)
           if(iecurr.gt.0) &
-            brsp(i)=brsp(i)+sum(rfcec(i,1:nesum)*ecurrt(1:nesum))
-          if(ivesel.gt.0.and.ifitvs.le.0) &
-            brsp(i)=brsp(i)+sum(rfcvs(i,1:nvesel)*vcurrt(1:nvesel))
+            brsp(i)=brsp(i)+sum(rfcec(i,:)*ecurrt)
+          if(ivesel.eq.1 .or. ivesel.eq.2) &
+            brsp(i)=brsp(i)+sum(rfcvs(i,:)*vcurrt)
           brsp(i)=csilop(i,jtime)-brsp(i)
           if(fitsiref) brsp(i)=brsp(i)+psiref(jtime)
         enddo
@@ -105,7 +111,6 @@
 !-----------------------------------------------------------------------
 !--      set up boundary fitting weights                              --
 !-----------------------------------------------------------------------
-         z04=1.0e-04_dp
          fwtbdr=abs(errbry)*max(abs(sidif),z04)
          fwtbdr=1.0/fwtbdr
          fwtbry(1:nbdry)=fwtbdr*fwtbdry(1:nbdry)
@@ -189,8 +194,7 @@
 !-----------------------------------------------------------------------
 !--        set up SOL fitting weights and response matrix             --
 !-----------------------------------------------------------------------
-           z04s=1.0e-04_dp
-           fwtsols=abs(errbry)*max(abs(sidif),z04s)
+           fwtsols=abs(errbry)*max(abs(sidif),z04)
            fwtsols=1.0/fwtsols
            do i=1,nsol
              fwtsolw(i)=fwtsols*fwtsol(i)
@@ -207,7 +211,7 @@
 !--    optional vessel current model                                  --
 !-----------------------------------------------------------------------
        neqn=nfcoil
-       fit_vessel: if (ifitvs.gt.0) then
+       fit_vessel: if (ivesel.eq.3) then
 !
          if (nfourier.gt.1) then
            nuuu=nfourier*2+1
@@ -221,7 +225,7 @@
              do m=1,nbdry
                if (nfourier.gt.1) then
                  abry(m,nk)=fwtbry(m)* &
-                   sum(rbdrvs(m,1:nvesel)*vecta(nkk,1:nvesel))
+                   sum(rbdrvs(m,:)*vecta(nkk,:))
                else
                  abry(m,nk)=fwtbry(m)*rbdrvs(m,nkk)
                endif
@@ -233,7 +237,7 @@
              nj=nj+1
              if (nfourier.gt.1) then
                abry(nj,nk)=fwtsi(m)* &
-                 sum(rsilvs(m,1:nvesel)*vecta(nkk,1:nvesel))
+                 sum(rsilvs(m,:)*vecta(nkk,:))
              else
                abry(nj,nk)=fwtsi(m)*rsilvs(m,nkk)
              endif
@@ -247,7 +251,7 @@
                nj=nj+1
                if (nfourier.gt.1) then
                  abry(nj,nk)=fwtmp2(m)* &
-                   sum(rmp2vs(m,1:nvesel)*vecta(nkk,1:nvesel))
+                   sum(rmp2vs(m,:)*vecta(nkk,:))
                else
                  abry(nj,nk)=fwtmp2(m)*rmp2vs(m,nkk)
                endif
@@ -281,7 +285,7 @@
        call sdecm(abry,msbdry,nj,neqn,ut,msbdry,nj,wbry,work,ier)
        if (ier.eq.129) then
          kerror = 1
-         call errctrl_msg('fcurrt','sdecm failed to converge')
+         call errctrl_msg('external_current','sdecm failed to converge')
          return
        endif
        cond=ier
@@ -297,7 +301,7 @@
          enddo
        enddo
 !-----------------------------------------------------------------------
-!--    compute and store coil reference currents, not need for        --
+!--    compute and store coil reference currents, not needed for      --
 !--    non-fixed boundary when IFREF=1                                --
 !-----------------------------------------------------------------------
        if (ifref.gt.0.and.iconvr.eq.3) then
@@ -323,13 +327,13 @@
 !-----------------------------------------------------------------------
         do m=1,nbdry
           bbry(m)=0.0
-          if(ivesel.gt.0.and.ifitvs.le.0) &
-            bbry(m)=bbry(m)+sum(rbdrvs(m,1:nvesel)*vcurrt(1:nvesel))
+          if(ivesel.eq.1 .or. ivesel.eq.2) &
+            bbry(m)=bbry(m)+sum(rbdrvs(m,:)*vcurrt)
           if(iecurr.gt.0) &
-            bbry(m)=bbry(m)+sum(rbdrec(m,1:nesum)*ecurrt(1:nesum))
+            bbry(m)=bbry(m)+sum(rbdrec(m,:)*ecurrt)
           if(iacoil.gt.0) &
-            bbry(m)=bbry(m)+sum(rbdrac(m,1:nacoil)*caccurt(jtime,1:nacoil))
-          bbry(m)=bbry(m)+sum(rbdrpc(m,1:nwnh)*pcurrt(1:nwnh))
+            bbry(m)=bbry(m)+sum(rbdrac(m,:)*caccurt(jtime,:))
+          bbry(m)=bbry(m)+sum(rbdrpc(m,:)*pcurrt)
           pbry(m)=bbry(m)
           bbry(m)=fwtbry(m)*(wsibry-bbry(m))
         enddo
@@ -368,19 +372,19 @@
       do m=1,nsilop
         if (fwtsi(m).le.0.0) cycle
         nj=nj+1
-        bbry(nj)=sum(gsilpc(m,1:nwnh)*pcurrt(1:nwnh))
+        bbry(nj)=sum(gsilpc(m,1:nwnh)*pcurrt)
         if(iecurr.gt.0) &
-          bbry(nj)=bbry(nj)+sum(rsilec(m,1:nesum)*ecurrt(1:nesum))
+          bbry(nj)=bbry(nj)+sum(rsilec(m,:)*ecurrt)
 !-----------------------------------------------------------------------
 !--     specify vessel currents ?                                     --
 !-----------------------------------------------------------------------
-        if(ivesel.gt.0.and.ifitvs.le.0) &
-          bbry(nj)=bbry(nj)+sum(rsilvs(m,1:nvesel)*vcurrt(1:nvesel))
+        if(ivesel.eq.1 .or. ivesel.eq.2) &
+          bbry(nj)=bbry(nj)+sum(rsilvs(m,:)*vcurrt)
 !-----------------------------------------------------------------------
 !--     use advance divertor coil ?                                   --
 !-----------------------------------------------------------------------
         if(iacoil.gt.0) &
-          bbry(nj)=bbry(nj)+sum(rsilac(m,1:nacoil)*caccurt(jtime,1:nacoil))
+          bbry(nj)=bbry(nj)+sum(rsilac(m,:)*caccurt(jtime,:))
         if (fitsiref) then
           bbry(nj)=fwtsi(m)*(silopt(jtime,m)+psiref(jtime)-bbry(nj))
         else
@@ -395,16 +399,16 @@
           if(fwtmp2(m).le.0.0) cycle
           nj=nj+1
           bbry(nj)=0.0
-          bbry(nj)=bbry(nj)+sum(gmp2pc(m,1:nwnh)*pcurrt(1:nwnh))
+          bbry(nj)=bbry(nj)+sum(gmp2pc(m,1:nwnh)*pcurrt)
           if(iecurr.gt.0) &
-            bbry(nj)=bbry(nj)+sum(rmp2ec(m,1:nesum)*ecurrt(1:nesum))
+            bbry(nj)=bbry(nj)+sum(rmp2ec(m,:)*ecurrt)
 !-----------------------------------------------------------------------
 !--       specify vessel currents ?                                   --
 !-----------------------------------------------------------------------
-          if(ivesel.gt.0.and.ifitvs.le.0) &
-            bbry(nj)=bbry(nj)+sum(rmp2vs(m,1:nvesel)*vcurrt(1:nvesel))
+          if(ivesel.eq.1 .or. ivesel.eq.2) &
+            bbry(nj)=bbry(nj)+sum(rmp2vs(m,:)*vcurrt)
           if(iacoil.gt.0) &
-            bbry(nj)=bbry(nj)+sum(rmp2ac(m,1:nacoil)*caccurt(jtime,1:nacoil))
+            bbry(nj)=bbry(nj)+sum(rmp2ac(m,:)*caccurt(jtime,:))
           bbry(nj)=fwtmp2(m)*(expmpi(jtime,m)-bbry(nj))
         enddo
       endif vacuum
@@ -453,11 +457,11 @@
         do m=1,nsol
           nj=nj+1
           bbry(nj)=0.0
-          if(ivesel.gt.0.and.ifitvs.lt.0) &
-            bbry(nj)=bbry(nj)+sum(rsolvs(m,1:nvesel)*vcurrt(1:nvesel))
+          if(ivesel.eq.1 .or. ivesel.eq.2) &
+            bbry(nj)=bbry(nj)+sum(rsolvs(m,:)*vcurrt)
           if(iecurr.gt.0) &
-            bbry(nj)=bbry(nj)+sum(rsolec(m,1:nesum)*ecurrt(1:nesum))
-          bbry(nj)=bbry(nj)+sum(rsolpc(m,1:nwnh)*pcurrt(1:nwnh))
+            bbry(nj)=bbry(nj)+sum(rsolec(m,:)*ecurrt)
+          bbry(nj)=bbry(nj)+sum(rsolpc(m,:)*pcurrt)
           psbry(m)=bbry(nj)
           bbry(nj)=fwtsolw(m)*(wsisol-bbry(nj))
         enddo
@@ -468,16 +472,15 @@
       do i=1,nfcoil
         brsp(i)=sum(ainbry(i,1:nj)*bbry(1:nj))
       enddo
-      if (ifitvs.gt.0) then
+      if (ivesel.eq.3) then
         do ii=1,nvesel
           i=ii+nfcoil
           vcurrt(ii)=sum(ainbry(i,1:nj)*bbry(1:nj))
         enddo
 !
-        if(nfourier.gt.1) then
+        if (nfourier.gt.1) then
           do j=1,nvesel
-            temp=sum(vcurrt(1:(nfourier*2+1))*vecta(1:(nfourier*2+1),j))
-            vcurrt(j)=temp
+            vcurrt(j)=sum(vcurrt(1:(nfourier*2+1))*vecta(1:(nfourier*2+1),j))
           enddo
         endif
       endif
@@ -511,9 +514,9 @@
 !--     update boundary flux for IFREF=1-3                            --
 !-----------------------------------------------------------------------
         if (ifref.le.3) then
-          ssiref = sumif/sumifr
+          ssiref=sumif/sumifr
           silopt(jtime,1:nfcoil)=silopt(jtime,1:nfcoil)-ssiref
-          brsp(1:nfcoil) = brsp(1:nfcoil) - ssiref*fcref(1:nfcoil)
+          brsp(1:nfcoil)=brsp(1:nfcoil)-ssiref*fcref(1:nfcoil)
           wsibry=wsibry-ssiref
           wsisol=wsisol-ssiref
         endif
@@ -571,28 +574,4 @@
       endif
 !
       return
-      end subroutine fcurrt
-
-!**********************************************************************
-!>
-!!    vescur computes the currents induced in the vessel
-!!    segments due to E coils and F coils
-!!
-!!
-!!    @param jtime : time index
-!!
-!**********************************************************************
-      subroutine vescur(jtime)
-      include 'eparm.inc'
-      include 'modules2.inc'
-      include 'modules1.inc'
-      implicit none
-      integer*4, intent(in) :: jtime
-!
-      if(ivesel.eq.5) return
-!
-      if(ivesel.eq.1) return
-!
-      vcurrt(1:nvesel)=vloopt(jtime)/rsisvs(1:nvesel)
-      return
-      end subroutine vescur
+      end subroutine external_current

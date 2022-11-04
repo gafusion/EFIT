@@ -91,7 +91,7 @@
         integer*4 :: msbdry
         integer*4 :: nxtram
         integer*4 :: nxtlim,nco2v,nco2r
-        integer*4 :: modef, modep, modew, kubics
+        integer*4 :: modef,modep,modew
         integer*4 :: icycred_loopmax
         integer*4 :: nfourier !< nfourier number Fourier components of vessel current
       end module eparm
@@ -320,7 +320,7 @@
         real*8,dimension(:),allocatable :: volecs,volecc,rsisec
         real*8,dimension(:),allocatable :: volfcs,volfcc 
         real*8,dimension(:),allocatable :: rvs,zvs,hvs,wvs,avs,avs2,rsisvs 
-        real*8 powvs,pvscur,pscurn,ppscur,efreq,sumvs0
+        real*8 powvs,pvscur,pscurn,ppscur,efreq
         integer*4 ivesel
       end module var_vessel
 !var_cyclic_red
