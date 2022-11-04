@@ -357,11 +357,12 @@
         zminvs=-100.
 
         ! DIII-D parameters
-        if (size(chordv).gt.0) chordv(1)=1.486_dp
-        if (size(chordv).gt.1) chordv(2)=1.945_dp
-        if (size(chordv).gt.2) chordv(3)=-2.098_dp
-        if (size(chordr).gt.0) chordr(1)=0._dp
-        if (size(chordr).gt.1) chordr(2)=0.1524_dp
+        ! TODO: these should not be hardcoded... 
+        if(size(chordv).gt.0) chordv(1)=1.486_dp
+        if(size(chordv).gt.1) chordv(2)=1.945_dp
+        if(size(chordv).gt.2) chordv(3)=2.098_dp
+        if(size(chordr).gt.0) chordr(1)=0._dp
+        if(size(chordr).gt.1) chordr(2)=0.1524_dp
         idosxr=1
       endif
 !---------------------------------------------------------------------- 
