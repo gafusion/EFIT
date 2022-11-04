@@ -195,7 +195,8 @@
                                  rion,zion,dnethom,rneth,zneth, &
                                  sibeam,pbeam,dnbeam,dmass,vcurfb,vcurrt, &
                                  brsptu,sigti,sgneth,scalepr, &
-                                 sigrbd,sigzbd,rsol,zsol,fwtsol
+                                 sigrbd,sigzbd,rsol,zsol,fwtsol, &
+                                 chordv,chordr
       real*8, dimension(256,256) :: calpa,cgama
       character(1000) :: line, fitzts
       character appendsnap*2,jdebug*4
@@ -226,7 +227,7 @@
         ppbdry,kppbdry,pp2bdry,kpp2bdry,scalea,sigrbd,sigzbd,nbskip, &
         ffbdry,kffbdry,ff2bdry,kff2bdry,errsil,vbit,kersil,iout,ixray, &
         wwbdry,kwwbdry,ww2bdry,kww2bdry,f2edge,fe_width,fe_psin,kedgef, &
-        pedge,kedgep,pe_width,pe_psin, &
+        pedge,kedgep,pe_width,pe_psin,chordv,chordr, &
         kautoknt,akchiwt,akerrwt,kakloop,aktol,kakiter,akgamwt,akprewt, &
         kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout, &
         imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
