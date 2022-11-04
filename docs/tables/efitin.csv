@@ -50,6 +50,7 @@ IFITVS,,See namelist IN1.
 INPUT_DIR,,"area where following input files are to be found, n1coil.d3d, ccoil.d3d, btcomp.d3d, dcoef.dat, fitweight.dat, sxr94.dat, efithelp.txt, limiter files and snap files. default = /link/efit/ (UNIX), sys$d3efit (VAX)"
 IOUT,,See namelist IN1.
 IPLIM,,See namelist IN1.
+IPLCOUT,,See namelist IN1.
 IPROBE,,See namelist IN1.
 IRCFACT, 0,
 ISHOT,,See namelist IN1.

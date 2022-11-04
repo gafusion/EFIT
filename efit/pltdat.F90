@@ -286,7 +286,7 @@
       if (kgraph.eq.0) then
         plotname='pltout.out'
       else
-        if (ifitvs.gt.0.or.icutfp.eq.2) then
+        if (ifitvs.eq.1.or.icutfp.eq.2) then
            write (6,*) 'itimeu = ',itimeu
         endif
         let2 = 'pl'
@@ -3216,7 +3216,7 @@
            ytitle = 'CHI2$'
            iexit = 1
 !-----------------------------------------------------------------------
-!         Write Plot Para((kfitece.le.0).and.(kdata.ne.4).and.(ivacum.eq.0))meters
+!         Write Plot Parameters
 !-----------------------------------------------------------------------
           call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
           iorel, xorl, yorl, hight, bngle, bshft, &
@@ -7174,7 +7174,7 @@
       zinc = siinc
       nline = 1
       draw = 'DRAW'
-      if (ivesel.le.0) then
+      if (ivesel.eq.0) then
          nn = nn + 1
          thcrv(nn) = .02
          nxy(nn) = limitr
@@ -7484,7 +7484,7 @@
       sclpc(nn) = 1.75_dp
       xx(1,nn) = rmaxis
       yy(1,nn) = zmaxis
-      if (ivesel.le.0) then
+      if (ivesel.eq.0) then
          nn = nn + 1
          thcrv(nn) = 0.02_dp
          nxy(nn) = limitr
@@ -7682,7 +7682,7 @@
          nxy(nn) = 1
          xx(1,nn) = rmaxis
          yy(1,nn) = zmaxis
-         if (ivesel.le.0) then
+         if (ivesel.eq.0) then
             nn = nn + 1
             thcrv(nn) = 0.02_dp
             nxy(nn) = limitr

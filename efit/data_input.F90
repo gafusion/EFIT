@@ -119,7 +119,7 @@
            imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
            nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
            idebug,jdebug,ifindopt,tolbndpsi,siloplim,use_previous, &
-           req_valid
+           req_valid,chordv,chordr
       namelist/inwant/psiwant,vzeroj,fwtxxj,fbetap,fbetan,fli,fq95,fqsiw, &
            jbeta,jli,alpax,gamax,jwantm,fwtxxq,fwtxxb,fwtxli,znose, &
            fwtbdry,nqwant,siwantq,n_write,kccoils,ccoils,rexpan, &
@@ -266,17 +266,8 @@
       l4msels=0.0
       emsels=0.0
       semsels=0.0
-      teecein0=0.0
       feece0=0.0
       errorece0=0.0
-      rteo=0.0
-      zteo=0.0
-      rtep=0.0
-      rtem=0.0
-      rpbit=0.0
-      rmbit=0.0
-      robit=0.0
-      fwtnow=0.0
       omegat=0.0
       enw=0.0
       emw=0.0
@@ -1055,7 +1046,7 @@
           call read_h5_ex(nid,"robit",robit,h5in,h5err)
           call read_h5_ex(nid,"nfit",nfit,h5in,h5err)
           call read_h5_ex(nid,"kcmin",kcmin,h5in,h5err)
-          call read_h5_ex(nid,"fwtnow",fwtnow,h5in,h5err)
+!          call read_h5_ex(nid,"fwtnow",fwtnow,h5in,h5err) ! unused
 !          call read_h5_ex(nid,"kdoece",kdoece,h5in,h5err) ! unused
           call read_h5_ex(nid,"mtxece",mtxece,h5in,h5err)
           call read_h5_ex(nid,"nconstr",nconstr,h5in,h5err)
@@ -2306,7 +2297,6 @@
       ierchk=ierchks
       if (abs(pasmat(jtime)).le.cutip.and.iconvr.ge.0) then
         if(iconsi.eq.-1) iconsi=55 
-        if(ivesel.gt.10) iconsi=0 
         iexcal=1 
         ivacum=1 
         ibunmn=0 
@@ -2372,7 +2362,7 @@
         close(unit=60) 
       endif 
 ! 
-      if(ifitvs.gt.0) ivesel=5 
+      if(ifitvs.eq.1) ivesel=3 
       if (.not.fitsiref) then 
         if (iecurr.gt.0.or.nslref.lt.0) then 
           silopt(jtime,1:nsilop)=silopt(jtime,1:nsilop)+psiref(jtime) 
@@ -2406,7 +2396,7 @@
 !----------------------------------------------------------------------- 
 !--   Fourier expansion of vessel sgments                             -- 
 !----------------------------------------------------------------------- 
-      if (ifitvs.gt.0. .and. nfourier.gt.1) then
+      if (ivesel.eq.3 .and. nfourier.gt.1) then
         do i=1,nvesel 
           if (rvs(i).ge.1.75_dp.and.zvs(i).ge.0.) & 
             thetav(i)=dasin(zvs(i)/sqrt ((rvs(i)-1.75_dp)**2+(zvs(i))**2)) 
@@ -2423,9 +2413,9 @@
         enddo 
         do i=1,(2*nfourier+1) 
           do j=1,nvesel 
-            if (i.eq.1) vecta(i,j)=1.0 
-            if (i.gt.1.and.i.le.(nfourier+1)) vecta(i,j)=costa(i,j) 
-            if (i.gt.(nfourier+1)) vecta(i,j)=sinta(i,j) 
+            if(i.eq.1) vecta(i,j)=1.0 
+            if(i.gt.1.and.i.le.(nfourier+1)) vecta(i,j)=costa(i-1,j) 
+            if(i.gt.(nfourier+1)) vecta(i,j)=sinta(i-nfourier-1,j) 
           enddo 
         enddo 
       endif
@@ -2669,7 +2659,7 @@
 !      idodo=1 
 ! 520  continue 
 ! 
-!      if ((ivesel.le.0).or.(idovs.gt.0)) go to 525 
+!      if ((ivesel.eq.0).or.(idovs.gt.0)) go to 525 
 !      open(unit=nrsppc,status='old',form='unformatted', & 
 !           file=table_dir(1:ltbdir)//'rv'//trim(ch1)//trim(ch2)//'.ddd') 
 !      read (nrsppc) rsilvs 
@@ -2677,7 +2667,7 @@
 !      read (nrsppc) gridvs 
 !      close(unit=nrsppc) 
 !      idovs=1 
-!      if (ivesel.le.10) go to  525 
+!      go to  525 
 !      open(unit=nffile,status='old',form='unformatted', & 
 !           file=table_dir(1:ltbdir)//'fc'//trim(ch1)//trim(ch2)//'.ddd') 
 !      read (nffile) rfcfc 
@@ -2752,15 +2742,6 @@
       do i=2,nw-1 
         sigrid(i)=1./real(nw-1,dp)*(i-1) 
       enddo
-!-------------------------------------------------------------------- 
-!--   kinputece=1, get Te, fe, error array from ECE data routine 
-!--     hecedata.for with get_hece.for,fftabl.11,fts.pst( copy from 
-!--     /u/austin/efit/hecefit/     (MAX AUSTIN)) 
-!--     necein,teecein0(necein),feece0(necein),errorece0(necein) 
-!--     fe(GHz), Te(Kev) 
-!--   ( when kinputece>1,data from K-file ) 
-!--    (data order: from low field to high field) 
-!--   change data order :( from high field to low field) 
 !-------------------------------------------------------------------- 
       do k=1,necein 
         kk=necein-k+1 
@@ -2946,7 +2927,7 @@
       write (nttyo,6557) npc 
 ! 
       else solution_mode
-      if(ivesel.gt.0) call vescur(jtime) 
+      if(ivesel.eq.2) vcurrt=vloopt(jtime)/rsisvs
       fixed_bdry_2: if (nbdry.gt.0) then
       Solovev: if (islve.gt.0) then
 !------------------------------------------------------------------------------ 

@@ -445,7 +445,7 @@
 !
       return
  1020 format ('x',i5,'.',i3)
- 1040 format ('EFIT-AI ')
+ 1040 format ('  EFIT  ')
  1042 format (1x,a42,1x,a3)
  1050 format ('   ',a5)
  1060 format (a5,'   ')

@@ -73,30 +73,28 @@
                   limitr,xlim,ylim,limfag,ixt,jtime,kerror)
 
       if(kerror.gt.0) return
+#ifdef DEBUG_LEVEL2
       if (nsol.gt.0) then
-
-        ier=0 ! set only for consistent output? (not useful...)   
-        write (6,*) 'STEPS R,Z,Si,Err = ', rsol(1),zsol(1),wsisol,ier
+        ier=0 ! set only for consistent output? (not useful...) 
+        write (6,*) 'UPDATE R,Z,Si,Err = ', rsol(1),zsol(1),wsisol,ier
         call seva2d(bkx,lkx,bky,lky,c,rbdry(1),zbdry(1),pds,ier,n111)
-        write (6,*) 'STEPS R,Z,Si,Err = ', rbdry(1),zbdry(1),pds(1),ier
+        write (6,*) 'UPDATE R,Z,Si,Err = ', rbdry(1),zbdry(1),pds(1),ier
         call seva2d(bkx,lkx,bky,lky,c,rbdry(nbdry),zbdry(nbdry),pds,ier &
                    ,n111)
-        write (6,*) 'STEPS R,Z,Si,Err = ', rbdry(nbdry),zbdry(nbdry) &
+        write (6,*) 'UPDATE R,Z,Si,Err = ', rbdry(nbdry),zbdry(nbdry) &
                     ,pds(1),ier
 
         write(6,*) 'rsplt(kk),zsplt(kk)',rbdry(nbdry),zbdry(nbdry)
         write(6,*) 'lkx, lky',lkx,lky
         write(6,*) 'pds,ier,n111', pds,ier,n111
-
-#ifdef DEBUG_LEVEL2
         call seva2d(bkx,lkx,bky,lky,c,xout(1),yout(1),pds,ier,n111)
-        write (6,*) 'STEPS simag,psibry,n1,si = ',simag,psibry,n111,pds(1)
-        write (6,*) 'STEPS Z,R = ', zgrid(33),(rgrid(i),i=45,45)
-        write (6,*) 'STEPS si = ',(psi((i-1)*65+33),i=45,45)
+        write (6,*) 'UPDATE simag,psibry,n1,si = ',simag,psibry,n111,pds(1)
+        write (6,*) 'UPDATE Z,R = ', zgrid(33),(rgrid(i),i=45,45)
+        write (6,*) 'UPDATE si = ',(psi((i-1)*65+33),i=45,45)
         call seva2d(bkx,lkx,bky,lky,c,rgrid(45),zgrid(33),pds,ier,n111)
-        write (6,*) 'STEPS R,Z,si = ', rgrid(45),zgrid(33),pds(1)
-#endif
+        write (6,*) 'UPDATE R,Z,si = ', rgrid(45),zgrid(33),pds(1)
       endif
+#endif
 !-----------------------------------------------------------------------
 !--   Trace boundary, first check for counter beam injection          --
 !-----------------------------------------------------------------------
@@ -299,24 +297,23 @@
                      pds,ier,n111)
         wsisol=pds(1)
 #ifdef DEBUG_LEVEL2
-        write (6,*) 'STEPS R,Z,Si,Err = ', rsol(1),zsol(1),wsisol,ier 
+        write (6,*) 'UPDATE R,Z,Si,Err = ', rsol(1),zsol(1),wsisol,ier 
         call seva2d(bkx,lkx,bky,lky,c,rbdry(1),zbdry(1),pds,ier,n111)
-        write (6,*) 'STEPS R,Z,Si,Err = ', rbdry(1),zbdry(1),pds(1),ier
+        write (6,*) 'UPDATE R,Z,Si,Err = ', rbdry(1),zbdry(1),pds(1),ier
         call seva2d(bkx,lkx,bky,lky,c,rbdry(nbdry),zbdry(nbdry),pds,ier &
              ,n111)
-        write (6,*) 'STEPS R,Z,Si,Err = ', rbdry(nbdry),zbdry(nbdry) &
+        write (6,*) 'UPDATE R,Z,Si,Err = ', rbdry(nbdry),zbdry(nbdry) &
             ,pds(1),ier
 #endif
       endif
-
 #ifdef DEBUG_LEVEL2
       call seva2d(bkx,lkx,bky,lky,c,xout(1),yout(1),pds,ier,n111)
-      write (6,*) 'STEPS simag,psibry,n1,si = ',simag,psibry,n111,pds(1)
-      write (6,*) 'STEPS Z,R = ', zgrid(33),(rgrid(i),i=45,45)
-      write (6,*) 'STEPS si = ',(psi((i-1)*nw+33),i=45,45)
+      write (6,*) 'UPDATE simag,psibry,n1,si = ',simag,psibry,n111,pds(1)
+      write (6,*) 'UPDATE Z,R = ', zgrid(33),(rgrid(i),i=45,45)
+      write (6,*) 'UPDATE si = ',(psi((i-1)*nw+33),i=45,45)
       call seva2d(bkx,lkx,bky,lky,c,rgrid(45),zgrid(33),pds,ier,n111)
-      write (6,*) 'STEPS R,Z,si = ', rgrid(45),zgrid(33),pds(1)
-      write (6,*) 'STEPS lkx,lky = ',lkx,lky
+      write (6,*) 'UPDATE R,Z,si = ', rgrid(45),zgrid(33),pds(1)
+      write (6,*) 'UPDATE lkx,lky = ',lkx,lky
 #endif
 !-----------------------------------------------------------------------
 !--   get weighting function                                          --
@@ -343,7 +340,7 @@
       if (mmbmsels.gt.0.or.kdomsels.gt.0) then
         do k=1,nmsels
 #ifdef DEBUG_LEVEL2
-          write (6,*) 'STEPS MSE-LS k,rrmselt= ', k,rrmselt(jtime,k)
+          write (6,*) 'UPDATE MSE-LS k,rrmselt= ', k,rrmselt(jtime,k)
 #endif
           if (rrmselt(jtime,k).le.0.0) cycle
           call seva2d(bkx,lkx,bky,lky,c,rrmselt(jtime,k) &
@@ -356,7 +353,7 @@
           brmls(k)=-pds(3)/rrmselt(jtime,k)
           bzmls(k)=pds(2)/rrmselt(jtime,k)
 #ifdef DEBUG_LEVEL2
-          write (6,*) 'STEPS MSE-LS k,rrmselt,br,bz,bt= ',  &
+          write (6,*) 'UPDATE MSE-LS k,rrmselt,br,bz,bt= ',  &
                       k,rrmselt(jtime,k),brmls(k),bzmls(k),btmls(k)
 #endif
         enddo
@@ -691,16 +688,17 @@
       write (6,*) 'CHISQR, jtime= ',jtime
 #endif
 !
-      if (ivesel.gt.10) return
-!
       saisq=0.0
       chi2rm(jtime)=0.0
       do m=1,nsilop
         cm=sum(rsilfc(m,:)*brsp(1:nfcoil))+sum(gsilpc(m,:)*pcurrt)
         if(ivesel.gt.0) cm=cm+sum(rsilvs(m,:)*vcurrt)
-        if(iecurr.eq.1) cm=cm+sum(rsilec(m,:)*ecurrt)
+        if (iecurr.eq.1) then
+          cm=cm+sum(rsilec(m,:)*ecurrt)
+        elseif (iecurr.eq.2) then
+          cm=cm+sum(rsilec(m,:)*cecurr)
+        endif
         if(iacoil.gt.0) cm=cm+sum(rsilac(m,:)*caccurt(jtime,:))
-        if(iecurr.eq.2) cm=cm+sum(rsilec(m,:)*cecurr)
         if(fitsiref)    cm=cm-csiref
         if (swtsi(m).ne.0.0) then
           saisil(m)=(fwtsi(m)/swtsi(m))**nsq*(silopt(jtime,m)-cm)**2
@@ -715,9 +713,12 @@
       do m=1,magpri
           cm=sum(rmp2fc(m,:)*brsp(1:nfcoil))+sum(gmp2pc(m,:)*pcurrt)
         if(ivesel.gt.0) cm=cm+sum(rmp2vs(m,:)*vcurrt)
-        if(iecurr.eq.1) cm=cm+sum(rmp2ec(m,:)*ecurrt)
+        if (iecurr.eq.1) then
+          cm=cm+sum(rmp2ec(m,:)*ecurrt)
+        elseif (iecurr.eq.2) then
+          cm=cm+sum(rmp2ec(m,:)*cecurr)
+        endif
         if(iacoil.gt.0) cm=cm+sum(rmp2ac(m,:)*caccurt(jtime,:))
-        if(iecurr.eq.2) cm=cm+sum(rmp2ec(m,:)*cecurr)
         if (swtmp2(m).ne.0.0) then
           saimpi(m)=(fwtmp2(m)/swtmp2(m))**nsq*(expmpi(jtime,m)-cm)**2
         else
@@ -735,9 +736,12 @@
         cm=sum(recefc(m,:)*brsp(1:nfcoil)) &
           +sum(recepc(m,1:kwcurn)*brsp(nfcoil+1:nfcoil+kwcurn))
         if(ivesel.gt.0) cm=cm+sum(recevs(m,:)*vcurrt)
-        if(iecurr.eq.1) cm=cm+sum(receec(m,:)*ecurrt)
+        if (iecurr.eq.1) then
+          cm=cm+sum(receec(m,:)*ecurrt)
+        elseif (iecurr.eq.2) then
+          cm=cm+sum(receec(m,:)*cecurr)
+        endif
         if(iacoil.gt.0) cm=cm+sum(receac(m,:)*caccurt(jtime,:))
-        if(iecurr.eq.2) cm=cm+sum(receec(m,:)*cecurr)
         if (swtece(m).ne.0.0) then
           chiece(m)=fwtece(m)**nsq*(brspece(jtime,m)-cm)**2
           chiece(m)=chiece(m)/swtece(m)**nsq
@@ -753,9 +757,12 @@
       cm=sum(recebzfc*brsp(1:nfcoil)) &
         +sum(recebzpc(1:kwcurn)*brsp(nfcoil+1:nfcoil+kwcurn))
       if(ivesel.gt.0) cm=cm+sum(recevs(m,:)*vcurrt) ! TODO: should this be recebzvs?
-      if(iecurr.eq.1) cm=cm+sum(recebzec*ecurrt)
+      if (iecurr.eq.1) then
+        cm=cm+sum(recebzec*ecurrt)
+      elseif (iecurr.eq.2) then
+        cm=cm+sum(recebzec*cecurr)
+      endif
       if(iacoil.gt.0) cm=cm+sum(receac(m,:)*caccurt(jtime,:)) ! TODO: should this be recebzac?
-      if(iecurr.eq.2) cm=cm+sum(recebzec*cecurr)
       if (swtecebz.ne.0.0) then
         chiecebz=fwtecebz**nsq*(brspecebz(jtime)-cm)**2
         chiecebz=chiecebz/swtecebz**nsq
@@ -766,7 +773,7 @@
 !
       cm=sum(pcurrt)
       cpasma(jtime)=cm
-      if(ifitvs.gt.0.or.ivesel.gt.0) cm=cm+sum(vcurrt)
+      if(ivesel.gt.0) cm=cm+sum(vcurrt)
       if (swtcur.ne.0.0) then
         saiip=(fwtcur/swtcur)**nsq*(pasmat(jtime)-cm)**2
       else
@@ -856,8 +863,7 @@
           if (iecurr.eq.1) then
             cmbr=cmbr+sum(rbrec(m,:)*ecurrt)
             cmbz=cmbz+sum(rbzec(m,:)*ecurrt)
-          endif
-          if (iecurr.eq.2) then
+          elseif (iecurr.eq.2) then
             cmbr=cmbr+sum(rbrec(m,:)*cecurr)
             cmbz=cmbz+sum(rbzec(m,:)*cecurr)
           endif

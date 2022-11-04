@@ -2,20 +2,20 @@
 BITEC, , "Bit E-coils. E-coil current physical unit equivalent to 1 digitizer count. (E-coil bit noises?) 
 | Array of 6 elements. 
 | Obtained from data and written into K-file. Ignored unless IECURR=2?"
-BITFC, , "| ""Bit F-coils"". F-coil current physical unit equivalent to 1 digitizer count.
+BITFC, , "| Bit F-coils. F-coil current physical unit equivalent to 1 digitizer count.
 | Array of 18 elements(?). Obtained from data and written into K-file. ""Bit Ip""."
 BITIP, 0.0, Plasma current physical unit equivalent to 1 digitizer count. Obtained from data and written into K-file.
-BITMPI, , "| "" Bit Magnetic Probes Internal"". Magnetic probes physical unit equivalent to 1 digitizer count. 
+BITMPI, , "|  Bit Magnetic Probes Internal. Magnetic probes physical unit equivalent to 1 digitizer count. 
 | Array of ? elements. Obtained from data and written into K-file. Default = all zeros"
 BRSP, brsp(1)=-1e20, "| Current arrays; first 18 (NFCOIL) elements are F-coil currents in Amp-turns(?). 
 | BRSP not equal 0 for fixed F-coil currents. BRSP(NFCOIL+1) to BRSP(NFCOIL+KPPCUR) coefficients for P'.
 | BRSP(NFCOIL+KPPCUR+1) to BRSP(NFCOIL+KPPCUR+KFFCUR) coefficients for F2."
 COILS, , Flux loop signals in v-sec/rad. Obtained from data and written into K-file.
-CURRN1, 0.0, """Current N1"". N1 coil current. Obtained from data and written into K-file."
-DENR, zeros, """Density Radial"". Radial line density. Obtained from data and written into K-file."
-DENV, zeros, """Density Vertical"". Vertical line density. Length 3 vector. Obtained from data and written into K-file."
-DFLUX, , """Diamagnetic Flux"". Measured diamagnetic fluxes in mv-s. Obtained from data and written into K-file."
-ECURRT, zeros, "| ""E Current"". Vector of length 6 containing E coil section currents in Amps. The 6 sections are
+CURRN1, 0.0, "N1 coil current. Obtained from data and written into K-file."
+DENR, zeros, "Radial line density. Obtained from data and written into K-file."
+DENV, zeros, "Vertical line density. Length of vector is experiment dependent (3 for DIII-D). Obtained from data and written into K-file."
+DFLUX, , "Measured diamagnetic fluxes in mv-s. Obtained from data and written into K-file."
+ECURRT, zeros, "| Vector of length 6 containing E coil section currents in Amps. The 6 sections are
 | Central solenoid A, turns 1-48, pointname ECOILA
 | Central solenoid B, turns 1-48, pointname ECOILB
 | turns 49-52A + 60-61A, pointname E567UP
@@ -26,44 +26,44 @@ ECURRT, zeros, "| ""E Current"". Vector of length 6 containing E coil section cu
 | during shots prior to July of 1995 (when there were 2 E-coil sections rather than 6),
 | EFIT will fill in internally setting ECURRT(3)=ECURRT(5)=ECURRT(1), and ECURRT(4)=ECURRT(6)=ECURRT(2). "
 EXPMP2, , Magnetic probe signals in T. Obtained from data and written into K-file.
-FITSIREF, False, "| ""Fit Psi Reference"". Fit value of reference flux
-| - True = fit
-| - False = use measured reference flux (psf1a for DIII-D)"
-FWACOIL, 0, "| ""Fit Weight Acoil"". (ADP ring)
-| -  0 = do not include measured data in fit
-| -  = include measured data in fit"
+FITSIREF, False, "| Fit value of reference flux
+| True = fit
+| False = use measured reference flux (psf1a for DIII-D)"
+FWACOIL, 0, "| Fit Weight Acoil. (ADP ring)
+| 0 = do not include measured data in fit
+| >0 include measured data in fit"
 FWTBP, 0,"| Fitting weight to make FF' and p' proportional
-| - 1 = similar P' and FF' profiles
-| - 0 = no such constraint
+| 1 = similar P' and FF' profiles
+| 0 = no such constraint
 | Do not set FWTBP=1 if KPPCUR is not equal to KFFCUR."
-FWTCUR, , "| ""Fit Weight Current"". Fitting weight for plasma current (fitting weight for plasma current, RL01 if use vessel)
-| - 0 = do not include measured data in fit (default)
-| - >0 = include measured data in fit. The larger the number, the heavier the weight is put on the current data."
-FWTDLC, , "| Fitting weight for diamagnetic flux
-| - 0 = do not include measured data in fit (default)
-| - 1 = include measured data in fit"
-FWTEC, , "| ""Fit Weight E-coils"". Length 6 vector, each entry of which is a fitting weight for E-coil currents. Ignored unless IECURR=2?
-| - 0 = do not include measured data in fit (default= all 0.0's)
-| - 1 = include measured data in fit"
-FWTFC, , "| ""Fit Weight F-coils"". Length 18 vector, each entry of which is a fitting weight for F-coil currents.
-| - 0 do not include measured data in fit (default = all 0's)
-| - >0 include measured data in fit with weights defined by FWTFC entry"
-FWTGAM, zeros, "| ""Fit Weight Gamma"". Length 16 vector, each entry of which is a fitting weight for polarimetry (MSE), 0 or 1.
-| - 0 = do not include measured data in fit (default)
-| - 1 = include measured data in fit"
-FWTMP2, , "| ""Fit Weight Magnetic Probes 2"" Length 60 vector, each entry of which is a fitting weight for inner magnetic probes, 0 or 1.
-| - 0 = do not include measured data in fit (default)
-| - 1 = include measured data in fit"
-FWTSI, , "| ""Fit Weight Psi"". Length 41 vector, each entry of which is a fitting weight for flux loops, 0 or 1.
-| - 0 = do not include measured data in fit (default)
-| - 1 = include measured data in fit"
-LOOKFW, , "| ""Look in Fitweight"". Replace nonzero weights specified in user input FWTMP2 and
+FWTCUR, 0, "| Fitting weight for plasma current (fitting weight for plasma current, RL01 if use vessel)
+| 0 = do not include measured data in fit (default)
+| >0 = include measured data in fit. The larger the number, the heavier the weight is put on the current data."
+FWTDLC, 0, "| Fitting weight for diamagnetic flux
+| 0 = do not include measured data in fit (default)
+| 1 = include measured data in fit"
+FWTEC, zeros, "| Length of vector is experiment dependent (6 for DIII-D), each entry of which is a fitting weight for E-coil currents. Ignored unless IECURR=2.
+| 0 = do not include measured data in fit (default= all 0.0's)
+| 1 = include measured data in fit"
+FWTFC, zeros, "| Length of vector is experiment dependent (18 for DIII-D), each entry of which is a fitting weight for F-coil currents.
+| 0 do not include measured data in fit (default = all 0's)
+| >0 include measured data in fit with weights defined by FWTFC entry"
+FWTGAM, zeros, "| Length of vector is experiment dependent (16 for DIII-D), each entry of which is a fitting weight for polarimetry (MSE), 0 or 1.
+| 0 = do not include measured data in fit (default)
+| 1 = include measured data in fit"
+FWTMP2, zeros, "| Length of vector is experiment dependent (currently 76 for DIII-D), each entry of which is a fitting weight for inner magnetic probes, 0 or 1.
+| 0 = do not include measured data in fit (default)
+| 1 = include measured data in fit"
+FWTSI, zeros, "| Length of vector is experiment dependent (41 for DIII-D), each entry of which is a fitting weight for flux loops, 0 or 1.
+| 0 = do not include measured data in fit (default)
+| 1 = include measured data in fit"
+LOOKFW, , "| Replace nonzero weights specified in user input FWTMP2 and
 | FWTSI with weights from the file FITWEIGHT.DAT. This file contains 0 weights for probes and 
 | flux loops known to be broken at the time of the shot ISHOT and 1 for all others. Zero weights in user input are not modified.
-| ,>0 replace nonzero entries in FWTMP2 and FWTSI with corresponding entries from FITWEIGHT.DAT (default). <=0 Do not replace."
+| >0 replace nonzero entries in FWTMP2 and FWTSI with corresponding entries from FITWEIGHT.DAT (default). <=0 Do not replace."
 ISHOT,-1, shot number to analyze."
 PSIBIT, zeros, "| flux loops, physical units corresponding to 1 digitizer count. Obtained from data and written into K-file."
 SIGDLC, , Standard deviation of diamagnetic flux measured data in mv-s.
-ZELIP, 0.0, "| "" Z Ellipse"". Z of ellipse center in m for current initialization. 
+ZELIP, 0.0, "| Z of ellipse center in m for current initialization. 
 | If ZELIP > 105 then ZELIP is estimated from probe signals in same manner as Zp(?) and
 | EELIP is set to 1.5. Fitting mode only."

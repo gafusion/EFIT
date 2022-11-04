@@ -35,7 +35,6 @@
 
       kerror = 0
       vfeed=(isetfb.ne.0).and.(niter.gt.2.or.nnin.gt.2)
-      if(ivesel.gt.10) return
 !----------------------------------------------------------------------------
 !--   save flux from current iterations before update                      --
 !----------------------------------------------------------------------------

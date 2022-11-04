@@ -6,8 +6,11 @@
 !**********************************************************************
       subroutine set_eparm_defaults()
       use eparm
-      use var_cecoil, only: iecurr
       use var_gwork1, only: mfila
+      use var_exdata, only: ifitvs
+      use var_cecoil, only: iecurr
+      use var_vessel, only: ivesel
+      use var_input, only: icutfp
       use errlims
       implicit none
       integer*4 i,j,nhpwr
@@ -70,7 +73,6 @@
       modef=4
       modep=4
       modew=4
-      kubics=4
       nfourier=5
 
       ! set a loop size for cyclic reduction that is compatible with any
@@ -88,9 +90,14 @@
       enddo
       icycred_loopmax=nh*(nhpwr-1)
 
-      iecurr=1
-
       mfila=10
+
+      ! these parameters are part of eparm, but get used when reading
+      ! tables, etc. so they need to be initialized here
+      icutfp=0
+      iecurr=1
+      ifitvs=0
+      ivesel=0
 
       ! checks for solution validity (see chkerr.f90) 
       ali_upper=2.5

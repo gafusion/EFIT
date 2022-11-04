@@ -82,7 +82,7 @@
       nsq=2
       saiold=tsaisq(jtime)
       brsold=brsp
-      if(ifitvs.gt.0) vcurrto=vcurrt
+      if(ivesel.eq.3) vcurrto=vcurrt
 !----------------------------------------------------------------------
 !--   singular decomposition, first F-coil currents, set up arsp     --
 !----------------------------------------------------------------------
@@ -540,7 +540,7 @@
 !----------------------------------------------------------------------
 !--   fit vessel currents                                            --
 !----------------------------------------------------------------------
-      fit_vessel: if (ifitvs.gt.0) then
+      fit_vessel: if (ivesel.eq.3) then
       if (nfourier.gt.1) then
         need=need+nfourier*2+1
       else
@@ -1973,7 +1973,7 @@
           enddo
           brsp(nj)=brsp(nj)-fwtsi(m)*ework
         endif
-        if (ivesel.le.0.or.ifitvs.gt.0) cycle
+        if(ivesel.eq.0 .or. ivesel.eq.3) cycle
         ework=0.0
         do ne=1,nvesel
           ework=ework+rsilvs(m,ne)*vcurrt(ne)
@@ -1991,7 +1991,7 @@
           enddo
           brsp(nj)=brsp(nj)-fwtmp2(m)*ework
         endif
-        if(ivesel.le.0.or.ifitvs.gt.0) cycle
+        if(ivesel.eq.0 .or. ivesel.eq.3) cycle
         ework=0.0
         do ne=1,nvesel
           ework=ework+rmp2vs(m,ne)*vcurrt(ne)
@@ -2009,7 +2009,7 @@
           enddo
           brsp(nj)=brsp(nj)-fwtgam(m)*ework
         endif
-        if(ivesel.le.0.or.ifitvs.gt.0) cycle
+        if(ivesel.eq.0 .or. ivesel.eq.3) cycle
         ework=0.0
         do ne=1,nvesel
           ework=ework+rgamvs(m,ne)*vcurrt(ne)
@@ -2040,7 +2040,7 @@
           enddo
           brsp(nj)=brsp(nj)-fwtece(m)*ework
         endif
-        if(ivesel.le.0.or.ifitvs.gt.0) cycle
+        if(ivesel.eq.0 .or. ivesel.eq.3) cycle
         ework=0.0
         do ne=1,nvesel
           ework=ework+recevs(m,ne)*vcurrt(ne)
@@ -2057,7 +2057,7 @@
           enddo
           brsp(nj)=brsp(nj)-fwtecebz*ework
         endif
-        if (ivesel.gt.0.and.ifitvs.le.0) then
+        if (ivesel.eq.1 .or. ivesel.eq.2) then
           ework=0.0
           do ne=1,nvesel
             ework=ework+recebzvs(ne)*vcurrt(ne)
@@ -2312,7 +2312,7 @@
 !----------------------------------------------------------------------
       if(scalea) brsp(1:need)=brsp(1:need)*colscale(1:need)
       nload=nfnwcr
-      if (ifitvs.gt.0) then
+      if (ivesel.eq.3) then
         if (nfourier.gt.1) then
           do j=1,nvesel
             vcurrt(j)=sum(brsp((1+nfnwcr):(nfourier*2+1+nfnwcr)) &
@@ -2383,9 +2383,12 @@
       do m=1,nsilop
         cm=sum(rsilfc(m,1:nfcoil)*brsp(1:nfcoil))
         if(ivesel.gt.0) cm=cm+sum(rsilvs(m,:)*vcurrt)
-        if(iecurr.eq.1) cm=cm+sum(rsilec(m,:)*ecurrt)
+        if (iecurr.eq.1) then
+          cm=cm+sum(rsilec(m,:)*ecurrt)
+        elseif (iecurr.eq.2) then
+          cm=cm+sum(rsilec(m,:)*cecurr)
+        endif
         if(iacoil.gt.0) cm=cm+sum(rsilac(m,:)*caccurt(jtime,:))
-        if(iecurr.eq.2) cm=cm+sum(rsilec(m,:)*cecurr)
         cmv=cm
         cm=cm+sum(rsilpc(m,1:kwcurn)*brsp((1+nfcoil):(kwcurn+nfcoil)))
         if(fitsiref) cm=cm-csiref
@@ -2405,9 +2408,12 @@
       do m=1,magpri
         cm=sum(rmp2fc(m,1:nfcoil)*brsp(1:nfcoil))
         if(ivesel.gt.0) cm=cm+sum(rmp2vs(m,:)*vcurrt)
-        if(iecurr.eq.1) cm=cm+sum(rmp2ec(m,:)*ecurrt)
+        if (iecurr.eq.1) then
+          cm=cm+sum(rmp2ec(m,:)*ecurrt)
+        elseif (iecurr.eq.2) then
+          cm=cm+sum(rmp2ec(m,:)*cecurr)
+        endif
         if(iacoil.gt.0) cm=cm+sum(rmp2ac(m,:)*caccurt(jtime,:))
-        if(iecurr.eq.2) cm=cm+sum(rmp2ec(m,:)*cecurr)
         cmv=cm
         cm=cm+sum(rmp2pc(m,1:kwcurn)*brsp((1+nfcoil):(kwcurn+nfcoil)))
         if(kedgep.gt.0) cm=cm+rmp2pe(m)*pedge
@@ -2440,14 +2446,13 @@
         if (iecurr.eq.1) then
           cmbr=cmbr+sum(rbrec(m,:)*ecurrt)
           cmbz=cmbz+sum(rbzec(m,:)*ecurrt)
+        elseif (iecurr.eq.2) then
+          cmbr=cmbr+sum(rbrec(m,:)*cecurr)
+          cmbz=cmbz+sum(rbzec(m,:)*cecurr)
         endif
         if (iacoil.gt.0) then
           cmbr=cmbr+sum(rbrac(m,:)*caccurt(jtime,:))
           cmbz=cmbz+sum(rbzac(m,:)*caccurt(jtime,:))
-        endif
-        if (iecurr.eq.2) then
-          cmbr=cmbr+sum(rbrec(m,:)*cecurr)
-          cmbz=cmbz+sum(rbzec(m,:)*cecurr)
         endif
         if (kedgep.gt.0) then
           cmbr=cmbr+rbrpe(m)*pedge
@@ -2531,9 +2536,12 @@
         cm=sum(recefc(m,1:nfcoil)*brsp(1:nfcoil)) &
           +sum(recepc(m,1:kwcurn)*brsp((1+nfcoil):(kwcurn+nfcoil)))
         if(ivesel.gt.0) cm=cm+sum(recevs(m,:)*vcurrt)
-        if(iecurr.eq.1) cm=cm+sum(receec(m,:)*ecurrt)
+        if (iecurr.eq.1) then 
+          cm=cm+sum(receec(m,:)*ecurrt)
+        elseif (iecurr.eq.2) then
+          cm=cm+sum(receec(m,:)*cecurr)
+        endif
         if(iacoil.gt.0) cm=cm+sum(receac(m,:)*caccurt(jtime,:))
-        if(iecurr.eq.2) cm=cm+sum(receec(m,:)*cecurr)
         if (swtece(m).ne.0.0) then
           chiece(m)=fwtece(m)**nsq*(brspece(jtime,m)-cm)**2
           chiece(m)=chiece(m)/swtece(m)**nsq
@@ -2547,9 +2555,12 @@
       cm=sum(recebzfc(1:nfcoil)*brsp(1:nfcoil)) &
         +sum(recebzpc(1:kwcurn)*brsp((1+nfcoil):(kwcurn+nfcoil)))
       if(ivesel.gt.0) cm=cm+sum(recevs(m,:)*vcurrt) !TODO: should this be recebzvs?
-      if(iecurr.eq.1) cm=cm+sum(recebzec*ecurrt)
+      if (iecurr.eq.1) then
+        cm=cm+sum(recebzec*ecurrt)
+      elseif (iecurr.eq.2) then
+        cm=cm+sum(recebzec*cecurr)
+      endif
       if(iacoil.gt.0) cm=cm+sum(receac(m,:)*caccurt(jtime,:)) !TODO: should this be recebzac?
-      if(iecurr.eq.2) cm=cm+sum(recebzec*cecurr)
       if (swtecebz.ne.0.0) then
         chiecebz=fwtecebz**nsq*(brspecebz(jtime)-cm)**2
         chiecebz=chiecebz/swtecebz**nsq
@@ -2567,7 +2578,7 @@
       else
         cjeccd=0.0
       endif
-      if(ifitvs.gt.0) cm=cm+sum(vcurrt)
+      if(ivesel.eq.3) cm=cm+sum(vcurrt)
       if (swtcur.ne.0.0) then
         saiip=(fwtcur/swtcur)**nsq*(pasmat(jtime)-cm)**2
       else
@@ -2654,7 +2665,7 @@
             ! criteria satisfied, restore previous solution and stop fit 
             ichisq=1
             brsp=brsold
-            if(ifitvs.gt.0) vcurrt=vcurrto
+            if(ivesel.eq.3) vcurrt=vcurrto
             saisq=saiold
            endif
           endif

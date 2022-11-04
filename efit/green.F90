@@ -404,7 +404,7 @@
                           +(a4gam(jtime,m)*tangam(jtime,m) &
                           - a1gam(jtime,m))*rbzec(m,jj)
             enddo
-            if (ifitvs.gt.0) then
+            if (ivesel.eq.3) then
               do jj=1,nvesel
                 rgamvs(m,jj)=(a3gam(jtime,m)*tangam(jtime,m) &
                             - a8gam(jtime,m))*rbrvs(m,jj) &

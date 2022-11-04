@@ -2677,7 +2677,7 @@
 !------------------------------------------------------------------
 !--   compute vessel forces                                      --
 !------------------------------------------------------------------
-      vessel_force: if (ifitvs.gt.0.or.icutfp.eq.2) then
+      vessel_force: if (ivesel.eq.3.or.icutfp.eq.2) then
         call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
         fztor=0.0
         fzpol=0.0
@@ -2730,13 +2730,12 @@
       endif vessel_force
       if (icutfp.eq.2) then
         xxxx=1./xpsimin
-        fpolvs=ffcurr(xxxx  ,kffcur)-ffcurr(x111,kffcur)
+        fpolvs=ffcurr(xxxx,kffcur)-ffcurr(x111,kffcur)
       endif
 !
 ! --- prepare for vertical stability parameters
 ! --- calculation is done after pltout calls
 !
-
       pleng=0.0
       do i=1,nfound-1
         ip1=i+1
@@ -2744,14 +2743,11 @@
         pleng=pleng+dli
       enddo
       abar=100.*pleng/2./pi
-
 !
 #ifdef DEBUG_LEVEL1
       write (6,*) 'Call SHAPE/PLTOUT kerror = ', kerror
-      write (6,*) 'ifitvs, icutfp, fpolvs(ka) = ', ifitvs,icutfp,fpolvs/1000.
+      write (6,*) 'ivesel, icutfp, fpolvs(ka) = ', ivesel,icutfp,fpolvs/1000.
 #endif
-      if(ifitvs.gt.0.or.icutfp.eq.2) &
-        write (6,*) 'ifitvs, icutfp, fpolvs(ka) = ', ifitvs,icutfp,fpolvs/1000.
       if (itek.gt.0) then
         if (idplace.eq.0) then
 #ifdef DEBUG_LEVEL1

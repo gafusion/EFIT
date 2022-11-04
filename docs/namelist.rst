@@ -28,7 +28,6 @@ IN1 General
 ---------------------------------------
 
 IN1 is the main namelist specified in input K, R or X file.
-Variables which have no Defaults and thus require inputs are printed in bold. 
 See input namelists for other options.
 
 .. csv-table:: IN1 general
@@ -66,8 +65,7 @@ linear combinations of a small number of basis functions.
 
 The variables below are used to specify the representation of the functions :math:`P'` and
 :math:`FF'` and any desired constraints on those representations. All variables are input
-via the IN1 or EFITIN namelists. Variables which have no defaults (and thus require inputs??)
-are printed in bold.
+via the IN1 or EFITIN namelists.
 
 .. csv-table:: IN1 basis functions
    :file: tables/in1_basis.csv
@@ -89,8 +87,6 @@ with input mode 5. Values for these variables are typically never entered by the
 IN1 - Equilibrium
 --------------------------------------------------------
 
-Variables which have no defaults (and therefore default to zero) are printed in bold.
-
 .. csv-table:: IN1 equilibirum
    :file: tables/in1_equilibrium.csv
    :widths: 15,15,70
@@ -100,8 +96,6 @@ INWANT
 ------------------------------------------
 
 INWANT is specified in input file (K or boundary inputs) for advanced options.
-Variables which have no defaults (and therefore default to zero) are printed in
-bold.
 
 .. csv-table:: INWANT
    :file: tables/inwant.csv
@@ -111,8 +105,7 @@ bold.
 INS
 ---
 
-INS is specified in input K file for MSE data. Variables which have no defaults
-and thus require inputs are printed in bold.
+INS is specified in input K file for MSE data.
 
 .. csv-table:: INS
    :file: tables/ins.csv
@@ -123,8 +116,7 @@ INVT
 ----
 
 INVT is specified in input file (K or boundary inputs) for toroidal rotation.
-Variables which have no defaults (and therefore default to zero) are printed in
-bold.  To turn on toroidal rotation, must set KPRFIT=3 and ICURRT=5 in namelist
+To turn on toroidal rotation, must set KPRFIT=3 and ICURRT=5 in namelist
 IN1. If no pressure data, set NPRESS=0.
 
 .. csv-table:: INVT
@@ -165,8 +157,6 @@ INLIBIM
 INECE
 -----
 
-(TODO: needs to be finished)
-
 INECE is specified in input K file for using ece temperature constraints.
 
 .. csv-table:: INECE
@@ -183,6 +173,7 @@ INER
 INSXR
 -----
 
+INSXR contains plotting options for the Soft X-Ray diagnostic.
 (TODO: need to add/describe namelist)
 
 EDGEP
@@ -226,7 +217,7 @@ EFITINK
 EFITINK is for vertical stabilization, the same as INK, but specified in the snap file. It can be included in the input file in file mode.
 
 IN3 (EFUND)
----
+-----------
 
 IN3 is used to read experiment parameters from a dprobe.dat file.
 

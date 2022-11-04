@@ -104,6 +104,7 @@
             table_di2 = table_di2(1:ltbdi2)//trim(filenames(i))//'/'
         enddo
         ltbdi2 = len(trim(table_di2))
+        write(*,*)
         write(*,*) 'table_di2 = <',table_di2(1:ltbdi2),'>'
       endif
 
@@ -128,7 +129,7 @@
       include 'modules1.inc'
 
       implicit none
-      integer*4  :: i,istat,mcontr,mw,mh
+      integer*4  :: i,j,istat,mcontr,mw,mh
       real*8 ecturn,vsid ! unused
       character(1000) :: line
       parameter(mcontr=35)
@@ -143,12 +144,12 @@
       gridec = 0.0
       rmp2ec = 0.0
       rmp2vs = 0.0
+      rsilvs = 0.0
       rsilec = 0.0
       fcid = 1.
-      if (mfcoil.eq.18) then 
+      if(mfcoil.eq.18) &
         fcid = (/1. ,2. ,3. ,4. ,5. ,6. ,7. ,8. ,9. , &
                  10.,11.,12.,13.,14.,15.,16.,17.,18./)
-      endif
       fcturn = 1.0
       rsi(1) = -1.
       re(1) = -1.
@@ -229,13 +230,31 @@
 !----------------------------------------------------------------------
 !--   read in the vessel response function                           --
 !----------------------------------------------------------------------
-      if (ivesel.gt.0) then
+      if (ifitvs.eq.1 .or. ivesel.gt.0) then
         open(unit=mcontr,status='old',form='unformatted', &
            file=table_di2(1:ltbdi2)//'rv'//trim(ch1)//trim(ch2)//'.ddd')
         read (mcontr) rsilvs
         read (mcontr) rmp2vs
         read (mcontr) gridvs
         close(unit=mcontr)
+        ! try to protect against FP errors in read (answers can be sensitve...)
+        if (ifitvs.eq.1 .or. ivesel.eq.3) then
+          do i=1,nsilop
+            do j=1,nvesel
+              if(abs(rsilvs(i,j)).lt.1.e-5_dp) rsilvs(i,j)=0.0
+            enddo
+          enddo
+          do i=1,magpri
+            do j=1,nvesel
+              if(abs(rmp2vs(i,j)).lt.1.e-5_dp) rmp2vs(i,j)=0.0
+            enddo
+          enddo
+          do i=1,nwnh
+            do j=1,nvesel
+              if(abs(gridvs(i,j)).lt.1.e-5_dp) gridvs(i,j)=0.0
+            enddo
+          enddo
+        endif
       endif
 
       open(unit=mcontr,status='old',file=table_di2(1:ltbdi2)//'dprobe.dat')
@@ -259,7 +278,7 @@
         read (mcontr,10220) (re(i),ze(i),we(i),he(i),ecid(i), &
                              i=1,necoil)
      
-      if(rvs(1).lt.0 .and. (ifitvs.gt.0.or.icutfp.eq.2)) then
+      if(rvs(1).lt.0 .and. (ifitvs.eq.1.or.ivesel.eq.3.or.icutfp.eq.2)) then
         read (mcontr,10200) (rvs(i),zvs(i),wvs(i),hvs(i), &
                              avs(i),avs2(i),i=1,nvesel)
       endif
