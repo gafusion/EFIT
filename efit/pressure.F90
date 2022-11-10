@@ -116,24 +116,24 @@
 !----------------------------------------------------------------
       pressb=1.602e+03_dp*(dibdry*tibdry+debdry*tebdry)+pbeamb
       prespb=1.602e+03_dp*(dipbry*tibdry+dibdry*tipbry &
-                       +depbry*tebdry+debdry*tepbry) +pbimpb
+                          +depbry*tebdry+debdry*tepbry)+pbimpb
       sigpreb=(dibdry**2*stibdry**2+sdibdry**2*tibdry**2 &
               +debdry**2*stebdry**2+sdebdry**2*tebdry**2)
       sigpreb=1.602e+03_dp*sqrt(sigpreb)
-      sigppb = dibdry**2*sigtipb**2+sdibdry**2*tipbry**2 &
-              +dipbry**2*stibdry**2+sigdipb**2*tibdry**2 &
-              +debdry**2*sigtepb**2+sdebdry**2*tepbry**2 &
-              +depbry**2*stebdry**2+sigdepb**2*tebdry**2
-      sigppb =1.602e+03_dp*sqrt(sigppb)
+      sigppb=dibdry**2*sigtipb**2+sdibdry**2*tipbry**2 &
+            +dipbry**2*stibdry**2+sigdipb**2*tibdry**2 &
+            +debdry**2*sigtepb**2+sdebdry**2*tepbry**2 &
+            +depbry**2*stebdry**2+sigdepb**2*tebdry**2
+      sigppb=1.602e+03_dp*sqrt(sigppb)
       do i=1,npress
         pressr(i)=1.602e+03_dp*(dnitho(i)*tithom(i)+dnethom(i)*tethom(i)) &
                   +pbimth(i)
-        sigpre(i)=(snitho(i)**2*tithom(i)**2+dnitho(i)**2*stitho(i)**2 &
-                +sgneth(i)**2*tethom(i)**2+dnethom(i)**2*sgteth(i)**2)
+        sigpre(i)=(snitho(i)**2*tithom(i)**2+dnitho (i)**2*stitho(i)**2 &
+                  +sgneth(i)**2*tethom(i)**2+dnethom(i)**2*sgteth(i)**2)
         sigpre(i)=1.602e+03_dp*sqrt(sigpre(i))
       enddo
       sgggmin=sgprmin
-      if (sgprmin.lt.0.0) sgggmin=abs(sgprmin)*pressr(1)
+      if(sgprmin.lt.0.0) sgggmin=abs(sgprmin)*pressr(1)
       do i=1,npress
         sigpre(i)=max(sigpre(i),sgggmin)
       enddo

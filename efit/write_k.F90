@@ -415,10 +415,11 @@
       endif
 !
       do jtime=1,ktime
+        call errctrl_setstate(rank,time(jtime))
         if (req_valid) then
           ! don't write times without mse
-          if (sum(abs(fwtgam)).gt.nstark*1.e-6_dp .and. &
-              sum(abs(siggam)).lt.nstark*1.e-10_dp) then
+          if (sum(abs(fwtgam(1:nmtark))).gt.nmtark*1.e-6_dp .and. &
+              sum(abs(siggam(jtime,1:nmtark))).lt.nmtark*1.e-10_dp) then
             call errctrl_msg('write_k', &
               'No MSE data found, not writing k-file')
             cycle
@@ -426,7 +427,7 @@
           ! don't write times without cer
           if (mse_usecer.ne.0 .and. &
               maxval(abs(tangam(jtime,1:nmtark) &
-                        -tangam_uncor(jtime,1:nmtark))).gt.1.e-10_dp) then
+                        -tangam_uncor(jtime,1:nmtark))).le.1.e-10_dp) then
             call errctrl_msg('write_k', &
               'No CER correction used, not writing k-file')
             cycle
@@ -626,8 +627,8 @@
 
       integer*4, intent(in) :: jtime
       integer*4, intent(out) :: kerror
-      integer*4 i,ioerr,limitrss,mmstark,nbdryss,kffcurt,kppcurt
-      real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref,ktear, &
+      integer*4 i,ioerr,limitrss,mmstark,nbdryss,kffcurt,kppcurt,ktear
+      real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref, &
              pnbeam,timeus,timems,currn1,currc79,currc139,currc199, &
              curriu30,curriu90,curriu150,curril30,curril90,curril150
       character eqdsk*20,header*42,fit_type*3
@@ -705,6 +706,7 @@
       fwtec=swtec
       denr=denrt(jtime,:)
       denv=denvt(jtime,:)
+      fwtgam=swtgam
       mmstark=0
       do i=1,nstark
         if (fwtgam(i).gt.1.e-06_dp) mmstark=mmstark+1

@@ -104,8 +104,7 @@
             table_di2 = table_di2(1:ltbdi2)//trim(filenames(i))//'/'
         enddo
         ltbdi2 = len(trim(table_di2))
-        write(*,*)
-        write(*,*) 'table_di2 = <',table_di2(1:ltbdi2),'>'
+        write(nttyo,10000) table_di2(1:ltbdi2)
       endif
 
 #if defined(USEMPI)
@@ -114,6 +113,8 @@
         call MPI_BCAST(table_di2,ltbdi2,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
       endif
 #endif
+
+10000 format(/,' table_di2 = <',a,'>')
 
    end subroutine set_table_dir
 

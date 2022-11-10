@@ -385,7 +385,7 @@
                     'dc_offset param for tangent slope function',ierr)
       endif
 !
-! --- Magnetic measurements
+! --- magnetic measurements
 !
       dim2(1) = idim_nsilop
       id_silopt = NCVDEF(nceq,'silopt',NCFLOAT,2,dim2,ierr)
@@ -429,6 +429,48 @@
       call NCAPTC(nceq,id_saimpi,'long_name',NCCHAR,25, &
                   'chisq for magnetic probes',ierr)
 !
+      id_psiref = NCVDEF(nceq,'psiref',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_psiref,'long_name',NCCHAR,28, &
+                  'measured reference flux loop',ierr)
+!
+      id_sigref = NCVDEF(nceq,'sigref',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_sigref,'long_name',NCCHAR,34, &
+                  'uncertainty in reference flux loop',ierr)
+!
+      id_fwtref = NCVDEF(nceq,'fwtref',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_fwtref,'long_name',NCCHAR,30, &
+                  'weight for reference flux loop',ierr)
+!
+      id_csiref = NCVDEF(nceq,'csiref',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_csiref,'long_name',NCCHAR,30, &
+                  'calculated reference flux loop',ierr)
+!
+      id_saisref = NCVDEF(nceq,'saisref',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_saisref,'long_name',NCCHAR,29, &
+                  'chisq for reference flux loop',ierr)
+!
+      id_diamag = NCVDEF(nceq,'diamag',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_diamag,'long_name',NCCHAR,25, &
+                  'measured diamagnetic flux',ierr)
+!
+      id_sigdia = NCVDEF(nceq,'sigdia',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_sigdia,'long_name',NCCHAR,31, &
+                  'uncertainty of diamagnetic flux',ierr)
+!
+      id_fwtdlc = NCVDEF(nceq,'fwtdlc',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_fwtdlc,'long_name',NCCHAR,27, &
+                  'weight for diamagnetic flux',ierr)
+!
+      id_cdflux = NCVDEF(nceq,'cdflux',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_cdflux,'long_name',NCCHAR,27, &
+                  'calculated diamagnetic flux',ierr)
+!
+      id_chidlc = NCVDEF(nceq,'chidlc',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_chidlc,'long_name',NCCHAR,26, &
+                  'chisq for diamagnetic flux',ierr)
+!
+! --- coil currents
+!
       dim2(1) = idim_nfcoil
       id_fccurt = NCVDEF(nceq,'fccurt',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_fccurt,'long_name',NCCHAR,30, &
@@ -471,45 +513,50 @@
       call NCAPTC(nceq,id_saiec,'long_name',NCCHAR,25, &
                   'chisq for E-coil currents',ierr)
 !
-      id_psiref = NCVDEF(nceq,'psiref',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_psiref,'long_name',NCCHAR,28, &
-                  'measured reference flux loop',ierr)
+      id_curc79 = NCVDEF(nceq,'curc79',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curc79,'long_name',NCCHAR,17, &
+                  'C coil 79 current',ierr)
 !
-      id_sigref = NCVDEF(nceq,'sigref',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_sigref,'long_name',NCCHAR,34, &
-                  'uncertainty in reference flux loop',ierr)
+      id_curc139 = NCVDEF(nceq,'curc139',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curc139,'long_name',NCCHAR,18, &
+                  'C coil 139 current',ierr)
 !
-      id_fwtref = NCVDEF(nceq,'fwtref',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_fwtref,'long_name',NCCHAR,30, &
-                  'weight for reference flux loop',ierr)
+      id_curc199 = NCVDEF(nceq,'curc199',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curc199,'long_name',NCCHAR,18, &
+                  'C coil 199 current',ierr)
 !
-      id_csiref = NCVDEF(nceq,'csiref',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_csiref,'long_name',NCCHAR,30, &
-                  'calculated reference flux loop',ierr)
+      id_curiu30 = NCVDEF(nceq,'curiu30',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curiu30,'long_name',NCCHAR,23, &
+                  'I coil 30 upper current',ierr)
 !
-      id_saisref = NCVDEF(nceq,'saisref',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_saisref,'long_name',NCCHAR,29, &
-                  'chisq for reference flux loop',ierr)
+      id_curil30 = NCVDEF(nceq,'curil30',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curil30,'long_name',NCCHAR,23, &
+                  'I coil 30 lower current',ierr)
 !
-      id_diamag = NCVDEF(nceq,'diamag',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_diamag,'long_name',NCCHAR,25, &
-                  'measured diamagnetic flux',ierr)
+      id_curiu90 = NCVDEF(nceq,'curiu90',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curiu90,'long_name',NCCHAR,23, &
+                  'I coil 90 upper current',ierr)
 !
-      id_sigdia = NCVDEF(nceq,'sigdia',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_sigdia,'long_name',NCCHAR,31, &
-                  'uncertainty of diamagnetic flux',ierr)
+      id_curil90 = NCVDEF(nceq,'curil90',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curil90,'long_name',NCCHAR,23, &
+                  'I coil 90 lower current',ierr)
 !
-      id_fwtdlc = NCVDEF(nceq,'fwtdlc',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_fwtdlc,'long_name',NCCHAR,27, &
-                  'weight for diamagnetic flux',ierr)
+      id_curiu150 = NCVDEF(nceq,'curiu150',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curiu150,'long_name',NCCHAR,24, &
+                  'I coil 150 upper current',ierr)
 !
-      id_cdflux = NCVDEF(nceq,'cdflux',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_cdflux,'long_name',NCCHAR,27, &
-                  'calculated diamagnetic flux',ierr)
+      id_curil150 = NCVDEF(nceq,'curil150',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_curil150,'long_name',NCCHAR,24, &
+                  'I coil 150 lower current',ierr)
 !
-      id_chidlc = NCVDEF(nceq,'chidlc',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_chidlc,'long_name',NCCHAR,26, &
-                  'chisq for diamagnetic flux',ierr)
+      dim2(1) = idim_nacoil
+      id_accurt = NCVDEF(nceq,'accurt',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_accurt,'long_name',NCCHAR,24, &
+                  'measured A coil currents',ierr)
+!
+      id_caccurt = NCVDEF(nceq,'caccurt',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_caccurt,'long_name',NCCHAR,26, &
+                  'calculated A coil currents',ierr)
 !
 ! --- plasma current
 !
@@ -635,53 +682,6 @@
       id_xrsp = NCVDEF(nceq,'xrsp',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_xrsp,'long_name',NCCHAR,19, &
                   'plasma coefficients',ierr)
-!
-! --- coil currents
-!
-      id_curc79 = NCVDEF(nceq,'curc79',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_curc79,'long_name',NCCHAR,17, &
-                  'C coil 79 current',ierr)
-!
-      id_curc139 = NCVDEF(nceq,'curc139',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_curc139,'long_name',NCCHAR,18, &
-                  'C coil 139 current',ierr)
-!
-      id_curc199 = NCVDEF(nceq,'curc199',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_curc199,'long_name',NCCHAR,18, &
-                  'C coil 199 current',ierr)
-!
-      id_curiu30 = NCVDEF(nceq,'curiu30',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_curiu30,'long_name',NCCHAR,23, &
-                  'I coil 30 upper current',ierr)
-!
-      id_curil30 = NCVDEF(nceq,'curil30',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_curil30,'long_name',NCCHAR,23, &
-                  'I coil 30 lower current',ierr)
-!
-      id_curiu90 = NCVDEF(nceq,'curiu90',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_curiu90,'long_name',NCCHAR,23, &
-                  'I coil 90 upper current',ierr)
-!
-      id_curil90 = NCVDEF(nceq,'curil90',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_curil90,'long_name',NCCHAR,23, &
-                  'I coil 90 lower current',ierr)
-!
-      id_curiu150 = NCVDEF(nceq,'curiu150',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_curiu150,'long_name',NCCHAR,24, &
-                  'I coil 150 upper current',ierr)
-!
-      id_curil150 = NCVDEF(nceq,'curil150',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_curil150,'long_name',NCCHAR,24, &
-                  'I coil 150 lower current',ierr)
-!
-      dim2(1) = idim_nacoil
-      id_accurt = NCVDEF(nceq,'accurt',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_accurt,'long_name',NCCHAR,24, &
-                  'measured A coil currents',ierr)
-!
-      id_caccurt = NCVDEF(nceq,'caccurt',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_caccurt,'long_name',NCCHAR,26, &
-                  'calculated A coil currents',ierr)
 !
       call NCENDF(nceq,ierr)             ! leave define mode
 !-----------------------------------------------------------------------
