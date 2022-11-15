@@ -1,10 +1,10 @@
 .. highlight:: fortran
 
-EFIT files
-==========
+Output files
+============
 
 gEQDSK
------------------------------------------
+------
 Contains mainly arrays of calculated values such as flux on grid, ff', p', q profile.
 Output from file mode or snap(_ext) mode (1,2,3,7) runs when KEQDSK<2 (from efitin or in1 namelists).  The detailed format for G EQDSK can be found in the Fortran source code
 weq.f90. Briefly, a right-handed cylindrical coordinate system (R, f, Z) is used. The G EQDSK provides
@@ -53,8 +53,8 @@ boundary and the surrounding limiter contour in also provided ::
    :header-rows: 1
 
 
-aeqdsk 
----------------------------------------
+aeqdsk
+------
 
 Contains shape, convergence, and other global parameters, mainly scalar values.  It is output from file mode or snap(_ext) mode (1,2,3,7) when ICONVR>=0 (from efitin or in1 namelist).  aeqdsk has the following fortran format :: 
 
