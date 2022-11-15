@@ -54,8 +54,7 @@ FWTQA, 0, "| Flag to add axial q constraint, q on axis = QVFIT, to other constra
 | 1 = include constraint
 | 0 = don't include constraint"
 FWTXX,0.2, 
-GAMMAF, , GAQ current profile parameter.
-GAMMAP, , GAQ current profile parameter. Default = 1e10
+GAMMAP,1e10, GAQ current profile parameter. (Used for both P and F profiles)
 IACOIL, 0, 1 = turn on advance divertor coil. 
 IAVED,, "Time in milliseconds for averaging CO2 density data, 10. (actually get +/- this value)"
 IAVEM,5, "Time in milliseconds for averaging magnetic data. (actually get +/- this value)"
@@ -190,8 +189,6 @@ KCALDIA,0,"| (Integer flag) Determines if compensation is applied to diamagnetic
 | 1 = use uncompensated diamagnetic flux directly from PTDATA calls
 | 2 = skip diamagnetic data fetching entirely."
 KDOFIT,,(depreciated)
-KDOMSE,0, "| 1 = write out computed signals (gamma? tan(gamma)?) at MSE observation points in 
-| NAMELIST format to the end of G EQDSK. Must have KEQDSK 1."
 KEQDSK,,"| Format of A and G EQDSK files
 | 0 = binary EQDSKs
 | 1 = ascii EQDSKs (default)
@@ -303,7 +300,6 @@ RMAXVS,100.0,
 RMINVS, 0,
 RPRESS,,"| - = input pressure profile as function of dimensionless fluxes.
 | + = R coordinates of the input pressure profile data in meters."
-RRRGAM,,Major radius in meters of MSE observation point.
 RTETH,,"Major radius of Thompson scattering measurement locations?"
 RVTOR,1.7,R in meters where rotational pressure profile is specified. What variable gives values?
 RZERO,1.6955,"GAQ current density profile parameter, 1.43 m for D-III, 1.67 m for D-IIID."
@@ -327,7 +323,6 @@ SCALEPR,scalepr(1)=-1,
 SCALESIR, 1e-3, 
 SCRAPE,0.03,Distance in meters between field lines plotted in scrape-off region(?). See NEXTRA.
 SERROR,0.03,"Fraction of measured data values to use to define uncertainty of measurements."
-SGAMMA,,"Standard deviation for polarimetry measurement TGAMMA."
 SGNEMIN,0.0,"Sigma ne Minimum.
 | - = minimum ne uncertainty in %. Kinetic fits only. If values in array SGNETH are 
 | < SGNEMIN, then replaced by SGNEMIN?"
@@ -355,7 +350,6 @@ SRM,-3.5,Parameter for Solovev equilibrium. - = inside limited.
 STORE_DIR,,"see namelist EFITIN"
 TABLE_DIR,,"see namelist EFITIN"
 TETHOM,,"Electron temperature from Thompson."
-TGAMMA,,"Tangent of the measured MSE polarization angle, TGAMMA = (A1*Bz + A5*Er) / (A2*BT+...)."
 TIONEX,,"if nptionf > 100, tionex = tethombfract"
 USE_PREVIOUS,False,"Allows the BRSP variable from the previous timestep to be used as the initial value (indepented of the value of ISICINIT).  This allows for matching to older versions of the code, but is otherwise not recommended."
 VCURFB,"(0.0,500.0,500.0)",
@@ -384,4 +378,3 @@ ZMAXVS , 100.0,
 ZMINVS, -100.0, 
 ZPRESS, ,"Z coordinates of input pressure profile in meters. Ignored when RPRESS<0 (See RPRESS.)"
 ZTETH, ,"Z locations of Thompson?"
-ZZZGAM, ,Z in meters of MSE observation points.
