@@ -10,4 +10,4 @@
 
  type shot #, start time(ms), time step(ms), steps(<1001):
  Calling $Name: V3_07 $ of the mse shared library
-INFO in efit at r= -1, t=    -1: Done writing k-files
+INFO in efit at r=  0, t=  2400: Done writing k-files

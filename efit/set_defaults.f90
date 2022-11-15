@@ -61,10 +61,12 @@
       ioffz=7
 !jal 04/23/2004
       iplcout=0
+      irfila=0.0
       ishiftz=0
       itek=0
       itrace=1
       jdebug='NONE' ! deprecated
+      jzfila=0.0
       kbound=0
       kcallece=2
       kcalpa=0
@@ -386,8 +388,8 @@
         kplotpr=1
         kpcurb=0
         kpressb=0
-        ncstte=1
         ncstne=1
+        ncstte=1
         prbdry=0.
         salpha=1._dp/40._dp
         sbeta=1._dp/8._dp

@@ -1,6 +1,11 @@
 ﻿Variable, Default, Description
 ACOILC,, ADP ring?
 AELIP, 0.60, "Minor radius in meters of ellipse for current initialization."
+AKCHIWT,1.0,Weight of the total coil and probe chi squared when optimizing knot locations.  Only active when KAUTOKNT=1.
+AKERRWT,0.0,Weight of the GS error when optimizing knot locations.  Only active when KAUTOKNT=1.
+AKGAMWT,0.0,Weight of the MSE chi squared when optimizing knot locations.  Only active when KAUTOKNT=1.
+AKPREWT,0.0,Weight of the pressure chi squared when optimizing knot locations.  Only active when KAUTOKNT=1.
+AKTOL,0.1,Knot optimization stops when the locations change by less than this distance.  Only active when KAUTOKNT=1.
 ALPHAFP, 0.0,"| Describes the width of the scrapeoff layer in which the halo currents flow. (When ICUTFP=2)
 | 0<= ALPHAFP <=1
 | 1 = zero thickness,
@@ -36,7 +41,7 @@ ERROR,1e-2,"| Specifies when EFIT should stop iterating to solution. If chi-squa
 | monotonically, then iterations stop when the relative error (max flux difference 
 | between successive iterations) < ERROR.  See also ICONVR and ERRMIN alternatives."
 ERRORQ, 1e-3, "Standard deviation for q fitting."
-FCURBD,, "| F Current Boundary.
+FCURBD,, "| FF' Boundary Constraint.
 | 1 = force FF'=0 at boundary.
 | 0 = let FF' have a finite value at boundary
 | The method by which FF'=0 is forced is to add another parameter to the parametrization
@@ -132,7 +137,7 @@ IPLIM,0,-1 = plot landscaped version of limiter for DIII-D for shot greater than
 IPLCOUT,0,"When this parameter is >0 the reconstructed F-coil, E-coil and 2D plasma current will be output in g-files."
 IPROBE,0,+ = plot magnetic probes and flux loops and number them every IPROBE points. 
 IQPLOT,1,+ = plot q values on flux surfaces 
-IRFILA,,Default calculation = ??
+IRFILA,zeros,Radial grid indicies to compute filament Green table at.  Only used when ICONVR<0 and AELIP<=0.
 ISLVE,0,"(Integer flag) Solovev mode. 1 = Solovev equilibrium."
 ISOLVE,1,"| Integer flag to choose between core solvers.
 | 0 = Buneman method. Double cyclic reduction, requires 2n+1 grid points in both directions.
@@ -169,16 +174,22 @@ IXRAY,, "| 0 = do not plot soft X-ray (default)
 IXSTRT,,"| 1 = trace field line from outside (default)
 | -1 = trace from inside
 | 2 = trace from both inside and outside"
-JZFILA,,Default calculation = ??
+JZFILA,zeros,Z grid indicies to compute filament Green table at.  Only used when ICONVR<0 and AELIP<=0.
+KAKITER,25,Maximum number of outer fitting iterations during knot optimization (same use as MXITER before final solution).  Only active when KAUTOKNT=1.
+KAKLOOP,1,Number of times to loop over every knot position when performing optimization.  Only active when KAUTOKNT=1.
+KAUTOKNT,0,"| - (Integer flag) Activates the knot location optimization.
+| 0 = use input knot locations (default).
+| 1 = optimize knot locations to reduce GS error and chi squared."
 KBETAPR,,"| - (Integer flag) Specify value of pressure at boundary for integration to calculate beta.
 | 0 = take pressure at boundary to be 0 (default).
 | 1 = get pressure at boundary from kinetic data."
 KBOUND,0,"| 0 = run bound algorithm? (Default)
 | otherwise, don't?"
-KCALDIA,,"| Do software compensation for pickup from something?
-| 0 = use compensated diamagnetic loop data. (default)
-| 1 = use uncompensated diamagnetic loop data directly from PTDATA calls
-| 2 = turn off (don't use data at all??)"
+KCALDIA,0,"| (Integer flag) Determines if compensation is applied to diamagnetic loop data.
+| 0 = use compensated diamagnetic flux. (default)
+| 1 = use uncompensated diamagnetic flux directly from PTDATA calls
+| 2 = skip diamagnetic data fetching entirely."
+KDOFIT,,(depreciated)
 KDOMSE,0, "| 1 = write out computed signals (gamma? tan(gamma)?) at MSE observation points in 
 | NAMELIST format to the end of G EQDSK. Must have KEQDSK 1."
 KEQDSK,,"| Format of A and G EQDSK files
@@ -199,14 +210,15 @@ KINPUT,, "| Write out M(SHOT).(TIME+1) file during execution in equilibrium mode
 KLABEL,,Something to do with plotting.
 KPLOTP,1,"1 = overlay pressure and flux surfaces, match at outboard side.
 | 2 = match at inboard side."
-KPRESSB,0,"| 1 = put a pressure point at boundary.
-| 0 = don't put pressure point at boundary."
-KPRFIT,, "| Turn on kinetic fitting
-| 0 = no kinetic fit?? (default).
-| 1 = fit input pressure profile (total including both thermal and beam in flux space.)
-| 2 = kinetic fitting inputing raw temperature, density, and beam profiles in real space.
-| 3 = include rotation.
-| Must set KPRFIT=3, ICURRT=5, if no pressure data NPRESS=0. (What does this mean?)"
+KPRESSB,0,"| Include additional pressure constraints
+| 0 = no additional constraints
+| 1 = put a pressure point at the boundary with the value of PRESSBI (only used when KPRFIT=2)
+| 2 = set a constraint on P' at the axis with the value of PRESPB (setting this forces PCURBD=0)"
+KPRFIT,0, "| Turn on kinetic fitting
+| 0 = no kinetic data used in fit (default).
+| 1 = fit input pressure profile - requires NPRESS>0 (total including both thermal and beam in flux space.)
+| 2 = kinetic fitting input from temperature, density, and beam profiles in real space.
+| 3 = include rotation - must set ICURRT=5 (set NPRESS=0 to include rotation with no thermal pressure constraint)"
 KSIGMA,, See IMAGSIGMA (deprecated)
 KSKIPVS, 0,1 = search for external separatrix for attached current model.
 KTEAR,,(deprecated)
@@ -248,7 +260,7 @@ NICOIL,,"| Magnetic compensation from I coils
 | 1 = compensation on (default).
 | 0 = no compensation."
 NMASS,,"Number of valid data points in DMASS."
-NPNEF,," = number of electron density profile constraints."
+NPNEF,,"Number of electron density profile constraints."
 NPNETH,, "= number of terms in polynomial(?) fit of ne for kinetic option. Requires 
 | appropriate EDAT file (from ENERGY code). (Get ne as a function of normalized flux?)"
 NPTEF,,"if kprfit=2 and npteth<0, then nptef=-npteth"
@@ -258,20 +270,20 @@ NPTION,,"= number of terms in Ti fitting for kinetic option, required appropriat
 NPTIONF,,"if nption<0, nptionf = -nption"
 NPRESS,,"| Number of valid points in PRESSR
 | += number of input pressure data points.
-| -= read in (NPRESS?) from EDAT file.
+| -= compute PRESSR from the initial P' and constrain at every |NPRESS| grid points.
 | 0= for rotational pressure only."
 NQITER,10,convergent parameter for axial safety factor. 
 NSLREF,1,"Index in set of flux loops of reference flux. Used to be 8 for D-III, but now is 1 (default) for DIII-D."
 NXITER,1,Number of inner equilibrium iterations. Set to 1 for fitting. See also MXITER.
 PBEAM,,"""Pressure Beam"". Beam pressure in n/m2 vs. normalized flux for kinetic fitting (typically calculated in ONETWO)."
-PCURBD,,"| P Current Boundary.
+PCURBD,,"| P' Boundary Constraint.
 | 1 = force P'=0 at boundary (default).
 | 0 = allow finite P' at boundary. The method for forcing P'=0 is the same as for FCURBD."
 PLASMA,, plasma current in Amps. 0 for vacuum field calculation.
 PNBEAM,0.0,
 PRBDRY,0.0,
-PRESPB,,"has a Default calculation, result = ??"
-PRESSBI,,pressure at boundary. See KPRESSB.
+PRESPB,0.0,P' constraint at the axis.  See KPRESSB
+PRESSBI,0.0,pressure constraint at the boundary. See KPRESSB.
 PRESSR,,"Input array of pressure in n/m2 vs. normalized flux for fitting. See NPRESS."
 PSIWANT,1.0,"Normalized flux value of surface where J constraint is desired. See KZEROJ, RZEROJ, VZEROJ."
 QEMP,0.0,GAQ something.
@@ -328,9 +340,8 @@ SGTEMIN,0.0,"| Sigma Te Minimum.
 SGTETH,,standard deviation of Thompson temperature measurement?
 SGTETHI,,
 SGTIMIN,,
-SIBEAM,,"| Normalized flux values for beam pressure. This is values of 
-| independent variables corresponding to function values given in PBEAM?"
-SIGPPB,,"has a Default calculation, result = ??"
+SIBEAM,,Normalized flux values for beam pressure. Positions correspond to where the PBEAM constraints are applied
+SIGPPB,1000.,"Uncertainty of boundary pressure constraint."
 SIGPRE,,"| Standard deviation of input pressure data in n/m2. (This referse to
 | pressure profile PRESSR - typically from ONETWO.) Use with KPRFIT=1."
 SIGPREBI,,"Standard deviation value for PRESSBI."
@@ -346,6 +357,7 @@ TABLE_DIR,,"see namelist EFITIN"
 TETHOM,,"Electron temperature from Thompson."
 TGAMMA,,"Tangent of the measured MSE polarization angle, TGAMMA = (A1*Bz + A5*Er) / (A2*BT+...)."
 TIONEX,,"if nptionf > 100, tionex = tethombfract"
+USE_PREVIOUS,False,"Allows the BRSP variable from the previous timestep to be used as the initial value (indepented of the value of ISICINIT).  This allows for matching to older versions of the code, but is otherwise not recommended."
 VCURFB,"(0.0,500.0,500.0)",
 VCURRT,,"Vessel currents in Amps, vector length matches the number vessel segments (24 for DIII-D). Only used when IVESEL=1 and IFITVS=0."
 VLOOP, 0.0,Measured loop voltage. Obtained from data and written into the K-file. 

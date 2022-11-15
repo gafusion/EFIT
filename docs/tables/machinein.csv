@@ -9,8 +9,8 @@ magpri67, 29,  Number of magnetic detectors at toroidal angle "1"
 magpri322, 31,  Number of magnetic detectors at toroidal angle "2"
 magprirdp, 8, Number of magnetic detectors for radiative divertor
 magudom, 5, Number of magnetic detectors for (outer midplane??)
-mbdry, 300, Maximum boundary length
-mbdry1, 110, Maximum external boundary length??
+mbdry, 300, Maximum number of points used to define the boundary
+mbdry1, 110, Number of boundary points to output when nbdry<=0
 mccoil, 6, Number of error field c-coils
 mfcoil, 18,  Number of p.f. f-coils (should be same as nfcoil in efund)
 micoil, 12, Number of RMP i-coils

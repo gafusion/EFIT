@@ -2273,6 +2273,9 @@
 !----------------------------------------------------------------------- 
 !--   set up parameters for all modes                                 --
 !----------------------------------------------------------------------- 
+      ! setup error calls
+      call errctrl_setstate(rank,time(jtime))
+
       ! restore previous solution
       if(jtime.gt.1 .and. & 
          (use_previous .or. (isicinit.lt.0 .and. isicinit.ne.-3))) &

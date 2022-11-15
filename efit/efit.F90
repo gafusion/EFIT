@@ -261,11 +261,6 @@
           endif
         endif
 
-#ifdef DEBUG_LEVEL2
-        write(6,*) 'Entering errctrl_setstate'
-#endif
-        call errctrl_setstate(rank,time(ks))
-
         if (kautoknt .eq. 1) then
 #ifdef DEBUG_LEVEL2
           write(6,*) ' Entering autoknot subroutine'

@@ -23,7 +23,8 @@
       namelist/out1/ishot,itime,betap0,rzero,qenp,enp,emp,plasma, &
            expmp2,coils,btor,rcentr,brsp,icurrt,rbdry,zbdry, &
            nbdry,fwtsi,fwtcur,mxiter,nxiter,limitr,xlim,ylim,error, &
-           iconvr,ibunmn,pressr,rpress,nqpsi,npress,sigpre
+           iconvr,ibunmn,pressr,rpress,nqpsi,npress,sigpre,qpsi, &
+           pressr,pressw
       namelist/mseout/rrrgam,zzzgam,aa1gam,aa2gam,aa3gam,aa4gam, &
                       tgamma,sgamma,aa5gam,aa6gam,aa7gam,aa8gam, &
                       msebkp,fwtgam,tgammauncor
@@ -43,7 +44,7 @@
                    keefnc,keeknt,eeknt,eetens, &
                    eebdry,ee2bdry,keebdry,kee2bdry
       namelist/inwant/psiwant,vzeroj
-      namelist/chiout/saisil,saimpi,saiip
+      namelist/chiout/saisil,saimpi,saiip,saipre
       namelist/eccd/kkstark,chigamt,chigam,bzmse,psiecn,dpsiecn, &
               saisq,cjeccd
       character eqdsk*72,header*42,wform*20,let,fit_type*3

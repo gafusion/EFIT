@@ -2,9 +2,8 @@
 ALPAX, 104,"| Initial value of coefficient alpha (specified by JBETA) of parametrization of P' to be 
 | modified to satisfy beta constraint. (Note that this coefficient is unable to change sign
 | during iteration in order to satisfy the constraint.)"
-CCOILS,,"| Matrix which defines constraint for F coil currents I1, I2, ..., I18 of the form
-| CCOILS(1,i) I1 + CCOILS(2,i) I2 + ... + CCOILS(18,i) I18 = XCOILS(i)for i=1,KCCOILS.
-| Constraint applies in fixed boundary solutions only??"
+CCOILS,zeros,"| Matrix which defines constraint for F coil currents I1, I2, ..., I18 of the form
+| CCOILS(1,i) I1 + CCOILS(2,i) I2 + ... + CCOILS(18,i) I18 = XCOILS(i)for i=1,KCCOILS."
 CURRC139, 0.0,Current in 139 degree C coil in Amps.
 CURRC79,0.0,Current in 79 degree C coil in Amps. 
 FBETAN,,desired value for normalized toroidal beta
@@ -22,7 +21,7 @@ GAMAX,GAMAX(JLI)=-106,"initial guess for the li constraint, array element should
 JBETA,1,Which coefficient alpha in P' parametrization to vary to get desired betaN = FBETAN value. Assumes polynomial parametrization.
 JLI,2,Which coefficient gamma in FF' parametrization to vary to get desired li= FLI value. Assumes polynomial parametrization.
 JWANTM,3,Iteration number when constraints (which ones? all from all namelists?) start.
-KCCOILS, 0,- = number of constraints for F coil currents specified through matrix CCOILS and vector XCOILS.
+KCCOILS,0,Number of constraints for F coil currents specified through matrix CCOILS and vector XCOILS.
 NCCOIL, ,See namelist EFITIN.
 NQWANT,0,What is this?
 NDELZON,,See namelist EFITIN.
