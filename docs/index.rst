@@ -38,10 +38,19 @@ Developer documentation
    :maxdepth: 2
    
    developer
-   docker
    gen_modules
    gen_subroutines
    gen_functions
+   
+EFIT-AI documentation
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+EFIT is part of the `EFIT-AI project <https://fusion.gat.com/conference/e/EFIT-AI>`__.
+
+Related documentation from this project:
+
+  + `EFIT-AI database <https://efit-ai.gitlab.io/efitai_database>`__.
+  + `unbaffeld <https://efit-ai.gitlab.io/unbaffeld>`__.
 
 .. Indices and tables
 
@@ -49,6 +58,7 @@ Search
 ==================
 
 * :ref:`search`
+
 .. TODO: The following pages still do not render properly online
 .. * :ref:`genindex`
 .. * :ref:`modindex`
