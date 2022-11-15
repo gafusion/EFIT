@@ -675,8 +675,8 @@
         if(rank == 0) write(nttyo,10001) nw,nh
       endif
 
-      if(iand(iout,1).ne.0) & ! if iout is odd
-        write(nout,10000) trim(ch1),trim(ch2)
+      ! if iout is odd
+      if(iand(iout,1).ne.0) write(nout,10000) trim(ch1),trim(ch2)
 
 10000 format(/,6x,20('*'),'EFIT  ',a3,' x ',a3,'  output ',20('*'))
 10001 format(1x,20('*'),' EFIT ',i0,' x ',i0,' grid ',20('*'))
