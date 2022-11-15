@@ -192,7 +192,7 @@
           end select
 
           write(nttyo, '(a,a,a,a,i3,a,i6,a,a)') trim(labelstr),' in ', &
-            subrstr,' at r=',currrank,', t=',int(currtime),': ',msgstr
+            subrstr,' at r=',currrank,', t=',int(currtime+1.e-8_dp),': ',msgstr
 
 !         TODO: can cause race condition with MPI
 !          open(unit=40,file='errfil.out',status='unknown', &

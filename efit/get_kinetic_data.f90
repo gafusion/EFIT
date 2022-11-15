@@ -35,12 +35,12 @@
       if (cstabne.gt.0.0) then
         nj=npress
         do jj=ncstne,npnef
-         nj=nj+1
-         do nk=1,npnef
-          arsp_cw2(nj,nk)=0.0
-          if (jj.eq.nk) arsp_cw2(nj,nk)=cstabne
-         enddo
-         bdata_cw2(nj)=0.0
+          nj=nj+1
+          do nk=1,npnef
+            arsp_cw2(nj,nk)=0.0
+            if(jj.eq.nk) arsp_cw2(nj,nk)=cstabne
+          enddo
+          bdata_cw2(nj)=0.0
         enddo
         nnedat=nnedat+npnef-ncstne+1
       endif
@@ -51,11 +51,11 @@
         do j=1,npnef
           ematrix_cw2(i,j)=0.0
           do k=1,npress
-           ematrix_cw2(i,j)=ematrix_cw2(i,j)+arsp_cw2(k,i)*arsp_cw2(k,j)
+            ematrix_cw2(i,j)=ematrix_cw2(i,j)+arsp_cw2(k,i)*arsp_cw2(k,j)
           enddo
         enddo
       enddo
-!
+
       nnn=1
       call sdecm(arsp_cw2,ndata,nnedat,npnef,bdata_cw2,nnedat,nnn,wrsp_cw2,work_cw2,ier)
       if (ier.eq.129) then
@@ -63,6 +63,7 @@
         call errctrl_msg('getne','sdecm failed to converge')
         return
       end if
+
       cond=ier
       toler=1.0e-06*wrsp_cw2(1)
       do i=1,npnef
@@ -241,7 +242,7 @@
           nj=nj+1
           do nk=1,nptef
             arsp_cw2(nj,nk)=0.0
-            if (jj.eq.nk) arsp_cw2(nj,nk)=cstabte
+            if(jj.eq.nk) arsp_cw2(nj,nk)=cstabte
           enddo
           bdata_cw2(nj)=0.0
         enddo

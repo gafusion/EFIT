@@ -15,6 +15,7 @@ and nersc cori supercomputer
 
 iris (loads DIII-D Green functions by default, to use others set the environment variable link_efit=/fusion/projects/codes/efit/efitai/efit_support_files/{machine}/ after loading the module)::
 
+    module purge
     module load efitai/{pgi pgi_ser gnu gnu_ser intel intel_ser}
     efit {grid_size}
 
