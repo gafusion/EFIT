@@ -18,6 +18,16 @@
 !!     @param sdlbp : int(dl Bp)
 !!
 !!     @param sdlobp: int(dl/Bp)
+!!
+!!     @param rx: 
+!!
+!!     @param ry: 
+!!
+!!     @param msx: 
+!!
+!!     @param msy: 
+!!
+!!     @param ns: 
 !!  
 !**********************************************************************
       subroutine fluxav(f,x,y,n,si,rx,msx,ry,msy,fave,ns,sdlobp,sdlbp)

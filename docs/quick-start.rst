@@ -42,7 +42,7 @@ simple example of running EFIT can be seen by::
     more ./run_efit.sh  # See how we execute in detail
 
 where ``${EFIT_BUILDDIR}`` refers to the location of the EFIT build directory as
-discussed in the :ref:`install` section.
+discussed in the `install <install>`_ section.
 
 Executable location
 -------------------
@@ -106,7 +106,7 @@ Example::
     1
     kfile
 
-For more information on the input variables see namelists.rst.  
+For more information on the input variables see `namelists <namelists>`_.  
 
 A description of the different input and output types can be found at
 `EFIT IO Files <https://fusion.gat.com/theory/Efitiofiles>`__ (requires GA login).

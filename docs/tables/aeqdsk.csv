@@ -1,7 +1,7 @@
 Variable, Description
-AAQ1, minor radius of q=1 surface in cm, 100 if not found
-AAQ2, minor radius of q=2 surface in cm, 100 if not found
-AAQ3, minor radius of q=3 surface in cm, 100 if not found
+AAQ1, "minor radius of q=1 surface in cm, 100 if not found"
+AAQ2, "minor radius of q=2 surface in cm, 100 if not found"
+AAQ3, "minor radius of q=3 surface in cm, 100 if not found"
 ALI, li with normalization average poloidal magnetic defined
 through Ampere’s law
 ALPHA, Shafranov boundary line integral parameter
@@ -19,10 +19,10 @@ BTAXP, toroidal magnetic field at magnetic axis in Tesla
 BTAXV, vacuum toroidal magnetic field at magnetic axis in Tesla
 CCBRSP, computed external coil currents in Ampere
 CDFLUX, computed diamagnetic flux in Volt-sec
-CHILIBT, total χ2 Li beam
-CHIGAMT, total χ2 MSE
-CHIPRE, total χ2 pressure
-CHIPRE, total χ2 pressure
+CHILIBT, total chi^2 Li beam
+CHIGAMT, total chi^2 MSE
+CHIPRE, total chi^2 pressure
+CHIPRE, total chi^2 pressure
 CJ1AVE, normalized average current density in plasma outer 5%
 normalized poloidal flux region
 CJOR0, normalized axial flux surface average current density
@@ -51,15 +51,15 @@ EOUT, Plasma boundary elongation
 FEXPAN, flux expansion at x point
 FEXPVS, flux expansion at outer lower vessel hit spot
 FLUXX, measured diamagnetic flux in Volt_sec
-JFLAG, error flag, 0 for error
-LFLAG, error flag, > 0 for error
-LIMLOC, plasma configuration. IN, OUT, TOP, and BOT for limiter
+JFLAG, "error flag, 0 for error"
+LFLAG, "error flag, > 0 for error"
+LIMLOC, "plasma configuration. IN, OUT, TOP, and BOT for limiter
 configurations limited at inside, outside, top, and bottom. SNT,
 SNB, and DN for single null top, single null bottom, and double
-null configurations. MAR for marginally diverted configurations.
+null configurations. MAR for marginally diverted configurations."
 MCO2V, number of vertical CO 2 density chords
 MCO2R, number of radial CO 2 density chords
-JFLAG, error flag, 0 for error
+JFLAG, "error flag, 0 for error"
 NLOLD, number of previous version WRITE statements
 NLNEW, number of WRITE statements
 OBOTT, plasma bottom gap in cm
@@ -79,8 +79,8 @@ PSIN21, normalized ψ at q = 2 surface
 PSIN32, normalized ψ at q = 3/2 surface
 PSURFA, plasma boundary surface area in m 2
 PSIREF, reference poloidal flux in VS/rad
-QMERCI, Mercier stability criterion on axial q(0), q(0) > QMERCI for stability
-QMFLAG, axial q(0) flag, FIX if constrained and CLC for float
+QMERCI, "Mercier stability criterion on axial q(0), q(0) > QMERCI for stability"
+QMFLAG, "axial q(0) flag, FIX if constrained and CLC for float"
 QOUT, q at plasma boundary
 QPSIB, q at 95% of poloidal flux
 QQMAGX, axial safety factor q(0)
@@ -98,7 +98,7 @@ RMIDOUT, outer major radius in m at Z=0.0
 RMAGX, major radius in cm at magnetic axis
 RQ32IN, Minimum major radius in cm of q=3/2 surface
 RQ21TOP, Major radius in cm at maximum Z of q=2 surface
-RQQMIN, normalized radius of q min , square root of normalized volume
+RQQMIN, "normalized radius of q min , square root of normalized volume"
 ROUT, major radius of geometric center in cm
 RSEPS, major radius of x point in cm
 RTTT, Shafranov boundary line integral parameter
@@ -108,45 +108,44 @@ RVSIU, major radius of upper vessel inner strike point in cm
 RVSOD, major radius of lower vessel outer strike point in cm
 RVSOU, major radius of upper vessel outer strike point in cm
 RVSOUT, major radius of vessel outer hit spot in cm
-S1, S2, S3, Shafranov boundary line integrals
+"S1, S2, S3", "Shafranov boundary line integrals"
 SEPEXP, separatrix radial expansion in cm
-SEPLIM, > 0 for minimum gap in cm in divertor configurations, < 0
+SEPLIM, "> 0 for minimum gap in cm in divertor configurations, < 0
 absolute value for minimum distance to external separatrix in
-limiter configurations
-SEPNOS, radial distance in cm between x point and external field line at
-ZNOSE
+limiter configurations"
+SEPNOS, radial distance in cm between x point and external field line at ZNOSE
 SHEARB, magnetic shear at 95% enclosed normalized poloidal flux
 SIBDRY, plasma boundary poloidal flux in Weber/rad
 SIMAGX, boundary poloidal flux in Weber/rad at magnetic axis
 SLANTL, gap to lower outboard limiter in cm
 SLANTU, gap to upper outboard limiter in cm
-SSEP, outboard radial distance to external second separatrix in cm for
+SSEP, "outboard radial distance to external second separatrix in cm for
 single null configurations, > 0 for SNT, < 0 for SNB, defaulted to
-be 40 cm
-SSI01,magnetic shear at 1% of normalized poloidal flux
-SSI95,magnetic shear at 95% of normalized poloidal flux
+be 40 cm"
+SSI01, magnetic shear at 1% of normalized poloidal flux
+SSI95, magnetic shear at 95% of normalized poloidal flux
 TAUMHD, energy confinement time in ms
 TAUDIA, diamagnetic energy confinement time in ms
 TAVEM, average time in ms for magnetic and MSE data
 TERROR, equilibrium convergence error
 TIME, time in ms
-TSAISQ, total χ2 from magnetic probes, flux loops, Rogowskiand external
+TSAISQ, "total chi^2 from magnetic probes, flux loops, Rogowskiand external"
 coils
 VERTN, vacuum field index at current centroid
 VLOOPT, measured loop voltage in volt
 Lao 9/10/04
-VSURFA, plasma surface loop voltage in volt, E EQDSK only
+VSURFA, "plasma surface loop voltage in volt, E EQDSK only"
 VOUT, plasma volume in m 3
-WBDOT, time derivative of poloidal magnetic energy in Watt, E EQDSK
-only
-WBDOT, time derivative of poloidal magnetic energy in Watt, E EQDSK
-only
-WPDOT, time derivative of plasma stored energy in Watt, E EQDSK
-only
+WBDOT, "time derivative of poloidal magnetic energy in Watt, E EQDSK
+only"
+WBDOT, "time derivative of poloidal magnetic energy in Watt, E EQDSK
+only"
+WPDOT, "time derivative of plasma stored energy in Watt, E EQDSK
+only"
 WPLASMD, diamagnetic plasma stored energy in Joule
 XNDNT, plasma boundary indentation
-XNNC, vertical stability parameter, vacuum field index normalized to
-critical index value
+XNNC, "vertical stability parameter, vacuum field index normalized to
+critical index value"
 YYY2, Shafranov Y2 current moment
 ZCURRT, Z in cm at current centroid
 ZMAGX, Z in cm at magnetic axis

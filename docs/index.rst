@@ -8,6 +8,18 @@ The version of the code described here is experiment independent, portable, and 
 Key references are: :cite:`lao85,lao05,lao22`.
 
 
+EFIT-AI documentation
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+EFIT is part of the larger `EFIT-AI project <https://fusion.gat.com/conference/e/EFIT-AI>`__.
+
+Documentation on other project can be found at:
+
+  + `EFIT-AI database <https://efit-ai.gitlab.io/efitai_database>`__.
+  + `UNBAFFELD <https://efit-ai.gitlab.io/unbaffeld>`__.
+  + `EFIT-MORNN <https://efit-ai.gitlab.io/efit_mornn>`__.
+
+
 User documentation
 ~~~~~~~~~~~~~~~~~~
 .. toctree::
@@ -26,30 +38,30 @@ Developer documentation
    :maxdepth: 2
    
    developer
-   docker
-   subroutines
-   modules
+   gen_modules
+   gen_subroutines
+   gen_functions
    
 EFIT-AI documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Here are topics that are not formally related to EFIT itself, but rather are
-part of the larger `EFIT-AI project <https://fusion.gat.com/conference/e/EFIT-AI>`__.
+EFIT is part of the `EFIT-AI project <https://fusion.gat.com/conference/e/EFIT-AI>`__.
 
-.. toctree::
-   :maxdepth: 2
-   
-   database
+Related documentation from this project:
+
+  + `EFIT-AI database <https://efit-ai.gitlab.io/efitai_database>`__.
+  + `unbaffeld <https://efit-ai.gitlab.io/unbaffeld>`__.
 
 .. Indices and tables
 
 Search
 ==================
 
-.. TODO: Options commented out still do not render properly on the website!
+* :ref:`search`
+
+.. TODO: The following pages still do not render properly online
 .. * :ref:`genindex`
 .. * :ref:`modindex`
-* :ref:`search`
 
 
 Bibliography

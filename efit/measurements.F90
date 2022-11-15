@@ -712,8 +712,8 @@
 !!    @param ktime_err : error flag for time not found in database
 !!
 !**********************************************************************
-      subroutine avdata(nshot,ptname,mmm,ierror,y, &
-                        np,times,delt,mm,xxd,nn,bitvld,kave,time,ircfact, &
+      subroutine avdata(nshot,ptname,mmm,ierror,y,np, &
+                        times,delt,mm,xxd,nn,bitvld,kave,time,ircfact, &
                         rcx,rcgx,vbitx,zinhnox,t0x,stdevx,navx, &
                         ktime_err)
       use vtime_mod
@@ -725,8 +725,8 @@
       real*8, intent(in) :: time(np),delt,xxd,times
       character*10, intent(in) ::  ptname
       integer*4, intent(out) :: ierror,navx(np),ktime_err
-      real*8, intent(out) :: y(np),bitvld,rcx,rcgx,vbitx,zinhnox, &
-                             t0x,stdevx(np)
+      real*8, intent(out) :: y(np),bitvld,rcx,rcgx,vbitx,zinhnox
+      real*8, intent(out) :: t0x,stdevx(np)
       integer*4 mave,kkk,npn,nnp,i,j,j_save
       real*8 xm5,xx,dtmin,tmin,tmax,bitvl,rcxx,rcgxx,vbitxx,zinhnoxx, &
              t0xx,dtave,delta_min,delta

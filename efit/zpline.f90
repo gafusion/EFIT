@@ -1,4 +1,4 @@
-!**********************************************************************
+!----------------------------------------------------------------------
 !>
 !!    the coefficients b(i), c(i), and d(i), i=1,2,...,n are computed
 !!    for a cubic interpolating spline
@@ -28,7 +28,7 @@
 !!
 !!    @param d : rrays of spline coefficients as defined above.
 !!
-!**********************************************************************
+!----------------------------------------------------------------------
  subroutine zpline (n, x, y, b, c, d)
   integer*4 n
   real*8 x(n), y(n), b(n), c(n), d(n)
@@ -332,6 +332,8 @@
 !!
 !!    @param n : the number of data points or knots (n.ge.2)
 !!
+!!    @param u : function to be splined
+!!
 !!    @param x : the abscissas of the knots in strictly increasing order
 !!
 !!    @param y : the ordinates of the knots
@@ -382,6 +384,8 @@
 !!    
 !!
 !!    @param n : the number of data points or knots (n.ge.2)
+!!
+!!    @param u : the function to be splined
 !!
 !!    @param x : the abscissas of the knots in strictly increasing order
 !!

@@ -50,9 +50,12 @@
       use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension psi(nwh),zero(nwh),x(nw),y(nh),xcontr(npoint),ycontr(npoint)
-      dimension dist(5),xlim(limitr),ylim(limitr)
-      dimension zerol(1),xt(1),yt(1),rad(1),yctr(1)
+      double precision, dimension(nwh) :: psi, zero
+      double precision, dimension(nwh) :: x,y
+      double precision, dimension(npoint) :: xcontr,ycontr
+      double precision, dimension(5) :: dist(5)
+      double precision, dimension(limitr) :: xlim,ylim
+      double precision, dimension(1) :: zerol(1),xt(1),yt(1),rad(1),yctr(1)
       parameter (n111=1,nloop=60,etolc=1.e-06_dp,etol=1.e-04_dp)
       data mecopy/0/
       save dx,dy,area,rmid
@@ -448,6 +451,7 @@
 !!    @param y1 : 
 !!    @param x2 : 
 !!    @param y2 : 
+!!    @param ifail : 
 !!                                                                 
 !*********************************************************************
       subroutine cellb(xc1,yc1,xc2,yc2,x1,y1,x2,y2,ifail)
@@ -644,11 +648,13 @@
 !!
 !!    @param  i : 
 !!
-!!    @param  il : 
+!!    @param  il :  
+!! 
 !*********************************************************************
       subroutine chkcrn(psi,nwh,psivl,kold,knew,icrnr,kk,nh,i,i1)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension psi(nwh)
+      integer :: nwh
+      double precision, dimension(nwh) :: psi
       knew=0
       i1=0
 !----------------------------------------------------------------------
@@ -831,16 +837,18 @@
 !---if no change occured iautoc=0.                                           --
 !------------------------------------------------------------------------------
       subroutine cntour(xaxd,yaxd,psivl,xemin,xemax,yemin,yemax, &
-      yxmin,yxmax,xymin,xymax,dang,arcl,bperr,dx,dy,xmin,xmax,ymin,ymax, &
-      iauto,iautoc,xc,yc,ipts,x,nw,y,nh,cspln,n2cspln,nh2,itty,iptsm, &
-      negcur,bkx,lkx,bky,lky,kerror)
+      yxmin,yxmax,xymin,xymax,dang,arcl,bperr,dx,dy,xmin,xmax, &
+      ymin,ymax,iauto,iautoc,xc,yc,ipts,x,nw,y,nh,cspln,n2cspln,&
+      nh2,itty,iptsm,negcur,bkx,lkx,bky,lky,kerror)
       use global_constants
       use set_kinds
       use error_control
       use eparm, only: kubicx,lubicx,kubicy,lubicy
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       integer*4, intent(inout) :: kerror
-      dimension pds(6),xc(*),yc(*),bkx(lubicx+1),bky(lubicy+1)
+      real*8 :: xc(*),yc(*)
+      real*8, dimension(6) :: pds(6)
+      real*8, dimension(lubicx+1) :: bkx(lubicx+1),bky(lubicy+1)
       dimension cspln(kubicx,lubicx,kubicy,lubicy)
       real*8 piov2,piov4,fpiov4,spiov4,tpiov4,tpiov2
       parameter (n111=1,n333=3)
@@ -2095,6 +2103,7 @@
 !!                                          
 !>    QFIT is a quadratic fitter from three points
 !!
+!!    @param k  : flag for method type
 !!    @param x1 : x value of point 1
 !!    @param x2 : x value of point 2
 !!    @param x3 : x value of point 3
