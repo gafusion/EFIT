@@ -38,9 +38,9 @@ Developer documentation
    :maxdepth: 2
    
    developer
-   gen_modules
    gen_subroutines
    gen_functions
+   gen_modules
    
 EFIT-AI documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~

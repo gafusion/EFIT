@@ -1,5 +1,5 @@
-EFIT input namelist
-================================
+Input Namelists
+===============
 
 .. _namelist:
 
@@ -27,7 +27,7 @@ instead of using the interactive command line inputs.
    :header-rows: 1
 
 IN1 General
----------------------------------------
+-----------
 
 IN1 is the main namelist specified in input K, R or X file.
 See input namelists for other options.
@@ -38,7 +38,7 @@ See input namelists for other options.
    :header-rows: 1
 
 IN1 - BASIS
------------------------------------------
+-----------
 
 Plasma toroidal current is modeled by a number of filamentary toroidal current
 elements whose `(R,Z)` locations are defined by a set of points on a
@@ -75,7 +75,7 @@ via the IN1 or EFITIN namelists.
    :header-rows: 1
 
 IN1 - Fitting
-----------------------------------------------------
+-------------
 
 Many variables used in fitting mode represent data which is extracted from the shot data
 base and written into a K-file containing the IN1 and INWANT namelists by running EFIT 
@@ -87,7 +87,7 @@ with input mode 5. Values for these variables are typically never entered by the
    :header-rows: 1
 
 IN1 - Equilibrium
---------------------------------------------------------
+-----------------
 
 .. csv-table:: IN1 equilibirum
    :file: tables/in1_equilibrium.csv
@@ -95,7 +95,7 @@ IN1 - Equilibrium
    :header-rows: 1
 
 INWANT
-------------------------------------------
+------
 
 INWANT is specified in input file (K or boundary inputs) for advanced options.
 

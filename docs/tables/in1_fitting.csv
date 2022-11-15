@@ -48,9 +48,6 @@ FWTEC, zeros, "| Length of vector is experiment dependent (6 for DIII-D), each e
 FWTFC, zeros, "| Length of vector is experiment dependent (18 for DIII-D), each entry of which is a fitting weight for F-coil currents.
 | 0 do not include measured data in fit (default = all 0's)
 | >0 include measured data in fit with weights defined by FWTFC entry"
-FWTGAM, zeros, "| Length of vector is experiment dependent (16 for DIII-D), each entry of which is a fitting weight for polarimetry (MSE), 0 or 1.
-| 0 = do not include measured data in fit (default)
-| 1 = include measured data in fit"
 FWTMP2, zeros, "| Length of vector is experiment dependent (currently 76 for DIII-D), each entry of which is a fitting weight for inner magnetic probes, 0 or 1.
 | 0 = do not include measured data in fit (default)
 | 1 = include measured data in fit"
