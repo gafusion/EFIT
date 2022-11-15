@@ -78,3 +78,72 @@ need to be edited to include the test:
   + ``$EFIT_ROOT/test/<experiment>/<new_test>/CMakeLists.txt`` can mostly be
     kept the same as other tests aside from changing the test name (shot
     number and time slice numbers should match the new test as well)
+
+
+Fortran Guideines
+=================
+
+EFIT is a legacy fortran code originally written in the 1980's and before many
+modern development tools and practices were in place.  Given this legacy,
+modernizing EFIT while maintaining it's production status will take time.  As
+developer's work on the code, the following rough guidelines are suggested (MR's
+will not be rejected out-of-hand for violating these rules):
+
+
+Use labels on blocks if possible
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Fortran allows one to label `if` and `do` blocks to make them easier to read.
+An example of an older style idiom is::
+
+    if (a .eq. b .and. c .ne. d) then   
+           <...>
+    endif ! a .eq. b .and c . ne. d
+
+The newer style idiom would be::
+
+    in_bounds: if (a .eq. b .and. c .ne. d) then   
+           <...>
+    endif in_bounds
+
+Here is an example for a do loop::
+
+    i_loop:  do i = 1, nw
+       j_loop: do j = 1, nh
+          <...>
+       enddo j_loop
+    enddo i_loop
+
+Using physics descriptions for loops and if blocks is ideal, but not always
+possible or necessary.
+
+
+Capitalization
+~~~~~~~~~~~~~~
+
+Some fortran codes capitalize intrinsic keywords, but EFIT does not.  So we use
+`do` instead of `DO`, `subroutine` instead of `SUBROUTINE`, etc.
+
+
+Variable typing
+~~~~~~~~~~~~~~~~~
+
+EFIT historically used fortran's implicit typing where reals and integers are
+defined by the first character of the variable name; e.g., `error` would be a
+real/double and `index` would be an integer.  We avoid this.  The 
+rules of thumb is:
+
+   + *Explicit typing are better than implicit typing*
+
+
+Variable scoping
+~~~~~~~~~~~~~~~~~
+
+EFIT historically used common blocks which are no converted to global module
+declarations.  Good programming practice is to use avoid this practice, and use
+subroutine/function arguments to the extent possible.  The rules of thumb are:
+
+   + *Explicit interfaces are better than implicit interfaces*
+   + *Local declarations are better than global declarations*
+
+
