@@ -1,3 +1,7 @@
+Development
+===========
+
+
 GitLab
 =======
 
@@ -10,7 +14,7 @@ and more.
 For submitting the merge request, the developer should:
   
   + Set a reviewer to someone other than themself
-  + Set the labels to the workflow stage
+  + Set the labels to describe the workflow stage
   + Before setting the workflow as ReadyToMerge, the developer should launch a
     pipeline (note that the play button has to be hit from the MR page) and
     ensure that the pipeline passes
@@ -45,6 +49,93 @@ conventions are:
   + Merges to main must be done by another developer to ensure code review
 
 
+Fortran Guideines
+==================
+
+EFIT is a legacy fortran code originally written in the 1980's and before many
+modern development tools and practices were in place.  Given this legacy,
+modernizing EFIT while maintaining it's production status will take time.  As
+developer's work on the code, the following rough guidelines are suggested (MR's
+will not be rejected out-of-hand for violating these rules):
+
+
+Indent and use labels on blocks
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`if`, `do`, `select case`, line continuations, and other blocks of code are
+easier to distinguish when they are properly indented.  The rules of thumb,
+for indentation are:
+
+   + *Do not indent with tabs (they are inconsistent between editors)*
+   + *Maintain consistent spacing within the subroutine or function scope*
+   + *Two spaces are the preferred indentation size*
+   + *Less indenetation is acceptable for long or deeply nested blocks*
+   + *Allignment of brackets, variables, and operators on adjacent lines is encouraged*
+
+Fortran allows one to label `if` and `do` blocks to make them easier to read.
+An example of an older style idiom is::
+
+    if (a .eq. b .and. c .ne. d) then
+           <...>
+    endif ! a .eq. b .and c . ne. d
+
+The newer style idiom would be::
+
+    in_bounds: if (a .eq. b .and. c .ne. d) then   
+           <...>
+    endif in_bounds
+
+Here is an example for a do loop::
+
+    i_loop:  do i = 1, nw
+       j_loop: do j = 1, nh
+          <...>
+       enddo j_loop
+    enddo i_loop
+
+Using physics descriptions for loops and if blocks is ideal, but not always
+possible or necessary.  Compilers require each block label to be a unique
+identifier (e.g. they should be treated like variable names and not reused
+in the scope of a subroutine or function).
+
+To ensure readability, labels are:
+
+   + *Required for any blocks that are not indented*
+   + *Recommended for long blocks (>100 lines)*
+   + *Comments are not a suitable replacement for labels*
+
+Additional use of labels is left to the developers' preference.
+
+
+Capitalization
+~~~~~~~~~~~~~~~
+
+Some fortran codes capitalize intrinsic keywords, but EFIT does not.  So we use
+`do` instead of `DO`, `subroutine` instead of `SUBROUTINE`, etc.
+
+
+Variable typing
+~~~~~~~~~~~~~~~~
+
+EFIT historically used fortran's implicit typing where reals and integers are
+defined by the first character of the variable name; e.g., `error` would be a
+real/double and `index` would be an integer.  We avoid this.  The 
+rules of thumb is:
+
+   + *Explicit typing is better than implicit typing*
+
+
+Variable scoping
+~~~~~~~~~~~~~~~~~
+
+EFIT historically used common blocks which have now been converted to global
+module declarations.  Good programming practice avoids global defintions, and uses
+subroutine/function arguments to the extent possible.  The rules of thumb are:
+
+   + *Explicit interfaces are better than implicit interfaces*
+   + *Local declarations are better than global declarations*
+
+
 Adding tests
 =============
 
@@ -56,7 +147,8 @@ shot number.  Tests should include all of the following components when
 applicable:
 
   + Input files (k, r, etc.) for 4 different time slices
-  + Output files (g, m, a, etc.) for each time slice
+  + Output files (g, m, a, etc.) for each time slice (from a trusted
+    reference version when possible)
   + OMAS files containing the inputs and outputs of both a single time
     slice and all 4 time slices
 
@@ -78,3 +170,5 @@ need to be edited to include the test:
   + ``$EFIT_ROOT/test/<experiment>/<new_test>/CMakeLists.txt`` can mostly be
     kept the same as other tests aside from changing the test name (shot
     number and time slice numbers should match the new test as well)
+
+
