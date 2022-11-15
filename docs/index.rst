@@ -58,9 +58,9 @@ Search
 ==================
 
 * :ref:`search`
+* :ref:`genindex`
 
 .. TODO: The following pages still do not render properly online
-.. * :ref:`genindex`
 .. * :ref:`modindex`
 
 
