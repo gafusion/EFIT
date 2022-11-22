@@ -220,18 +220,23 @@
         endif
         write (neqdsk,2020) (workk(i),i=1,nw)
       endif
-!
-!jal 4/23/2004
+! note: unlike the rest of the file, these optional extras have
+!       never been described completely with variables available here
+!       (since being added initially in 2004)
       if (iplcout.gt.0) then
-        if (ishot.le.99999) then
-        write (neqdsk,3000) nw,nh,ishot,itime
-        else
-          write (neqdsk,3003) nw,nh,ishot,itime
+        if (iplcout.eq.1) then
+          if (ishot.le.99999) then
+            write (neqdsk,3000) nw,nh,ishot,itime
+          else
+            write (neqdsk,3003) nw,nh,ishot,itime
+          endif
+          write (neqdsk,2020) rgrid(1),rgrid(nw),zgrid(1),zgrid(nh)
+          write (neqdsk,2020) (brsp(i),i=1,nfcoil)  ! also in m-files
+          write (neqdsk,2020) (ecurrt(i),i=1,nesum) ! also in m-files
+          write (neqdsk,2020) (pcurrt(i),i=1,nwnh)
+        elseif (iplcout.eq.2) then
+          write (neqdsk,2020) (pcurrt(i),i=1,nwnh)
         endif
-        write (neqdsk,2020) rgrid(1),rgrid(nw),zgrid(1),zgrid(nh)
-        write (neqdsk,2020) (brsp(i),i=1,nfcoil)
-        write (neqdsk,2020) (ecurrt(i),i=1,nesum)
-        write (neqdsk,2020) (pcurrt(i),i=1,nwnh)
       endif
 !---------------------------------------------------------------------
 !--   Append SNAP file                                              --
@@ -389,18 +394,24 @@
         endif
         write (neqdsk) (real(workk(i),r4),i=1,nw)
       endif
-!jal 4/23/2004
+! note: unlike the rest of the file, these optional extras have
+!       never been described completely with variables available here
+!       (since being added initially in 2004)
       if (iplcout.gt.0) then
-        if (ishot.le.99999) then
-          write (neqdsk) nw,nh,ishot,itime
-        else
-          write (neqdsk) nw,nh,ishot,itime
+        if (iplcout.eq.1) then
+          if (ishot.le.99999) then
+            write (neqdsk) nw,nh,ishot,itime
+          else
+            write (neqdsk) nw,nh,ishot,itime
+          endif
+          write (neqdsk) real(rgrid(1),r4),real(rgrid(nw),r4), &
+                         real(zgrid(1),r4),real(zgrid(nh),r4)
+          write (neqdsk) (real(brsp(i),r4),i=1,nfcoil)  ! also in m-files
+          write (neqdsk) (real(ecurrt(i),r4),i=1,nesum) ! also in m-files
+          write (neqdsk) (real(pcurrt(i),r4),i=1,nwnh)
+        elseif (iplcout.eq.2) then
+          write (neqdsk) (real(pcurrt(i),r4),i=1,nwnh)
         endif
-        write (neqdsk) real(rgrid(1),r4),real(rgrid(nw),r4), &
-                       real(zgrid(1),r4),real(zgrid(nh),r4)
-        write (neqdsk) (real(brsp(i),r4),i=1,nfcoil)
-        write (neqdsk) (real(ecurrt(i),r4),i=1,nesum)
-        write (neqdsk) (real(pcurrt(i),r4),i=1,nwnh)
       endif
 !
       header = ' '
