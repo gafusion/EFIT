@@ -2,19 +2,16 @@ Variable, Description
 AAQ1, "minor radius of q=1 surface in cm, 100 if not found"
 AAQ2, "minor radius of q=2 surface in cm, 100 if not found"
 AAQ3, "minor radius of q=3 surface in cm, 100 if not found"
-ALI, li with normalization average poloidal magnetic defined
-through Ampere’s law
+ALI, li with normalization average poloidal magnetic defined through Ampere’s law
 ALPHA, Shafranov boundary line integral parameter
 AOUT, plasma minor radius in cm
 AREAO, cross sectional area in cm 2
 BCENTR, vacuum toroidal magnetic field in Tesla at RCENCM
-BETAP, poloidal β with normalization average poloidal magnetic BPOLAV
-defined through Ampere’s law
+BETAP, poloidal β with normalization average poloidal magnetic BPOLAV defined through Ampere’s law
 BETAPD, diamagnetic poloidal β
 BETAT, toroidal β in %
 BETATD, diamagnetic toroidal β in %
-BPOLAV, average poloidal magnetic field in Tesla defined through
-Ampere’s law
+BPOLAV, average poloidal magnetic field in Tesla defined through Ampere’s law
 BTAXP, toroidal magnetic field at magnetic axis in Tesla
 BTAXV, vacuum toroidal magnetic field at magnetic axis in Tesla
 CCBRSP, computed external coil currents in Ampere
@@ -23,13 +20,10 @@ CHILIBT, total chi^2 Li beam
 CHIGAMT, total chi^2 MSE
 CHIPRE, total chi^2 pressure
 CHIPRE, total chi^2 pressure
-CJ1AVE, normalized average current density in plasma outer 5%
-normalized poloidal flux region
+CJ1AVE, normalized average current density in plasma outer 5% normalized poloidal flux region
 CJOR0, normalized axial flux surface average current density
-CJOR95, normalized flux surface average current density at 95% of
-normalized poloidal flux
-CJOR99, normalized flux surface average current density at 99% of
-normalized poloidal flux
+CJOR95, normalized flux surface average current density at 95% of normalized poloidal flux
+CJOR99, normalized flux surface average current density at 99% of normalized poloidal flux
 CONDNO, Condition number
 CPASMA, fitted plasma toroidal current in Ampere-turn
 CPROF, current profile parametrization parameter
@@ -39,7 +33,6 @@ DCO2V, line average electron density in cm 3 from vertical CO 2 chord
 DILUDOM, distance between separatrix inner leg to upper dome in cm
 DILUDOMM, distance between separatrix surface and upper dome at Rmin in cm
 DOLUBAF, distance between separatrix outer leg to upper baffle in cm
-Lao 9/10/04
 DOLUBAFM, distance between separatrix surface and upper baffle at Rmax in cm
 DMINLX, minimum distance between lower X point to limiter surface in cm
 DMINUX, minimum distance between upper X point to limiter surface in cm
@@ -53,9 +46,7 @@ FEXPVS, flux expansion at outer lower vessel hit spot
 FLUXX, measured diamagnetic flux in Volt_sec
 JFLAG, "error flag, 0 for error"
 LFLAG, "error flag, > 0 for error"
-LIMLOC, "plasma configuration. IN, OUT, TOP, and BOT for limiter
-configurations limited at inside, outside, top, and bottom. SNT,
-SNB, and DN for single null top, single null bottom, and double
+LIMLOC, "plasma configuration. IN, OUT, TOP, and BOT for limiter configurations limited at inside, outside, top, and bottom. SNT, SNB, and DN for single null top, single null bottom, and double
 null configurations. MAR for marginally diverted configurations."
 MCO2V, number of vertical CO 2 density chords
 MCO2R, number of radial CO 2 density chords
@@ -86,9 +77,7 @@ QPSIB, q at 95% of poloidal flux
 QQMAGX, axial safety factor q(0)
 QQMIN, minimum safety factor q min
 QSTA,equivalent safety factor q *
-Lao 9/10/04
-RATSOL, ratio of the 1 cm external field line distances to separatrix surface
-at Rmin and Rmax
+RATSOL, ratio of the 1 cm external field line distances to separatrix surface at Rmin and Rmax
 RCENCM, major radius in cm for vacuum field BCENTR
 RCO2R, path length in cm of radial CO 2 density chord
 RCO2V, path length in cm of vertical CO 2 density chord
@@ -108,20 +97,15 @@ RVSIU, major radius of upper vessel inner strike point in cm
 RVSOD, major radius of lower vessel outer strike point in cm
 RVSOU, major radius of upper vessel outer strike point in cm
 RVSOUT, major radius of vessel outer hit spot in cm
-"S1, S2, S3", "Shafranov boundary line integrals"
 SEPEXP, separatrix radial expansion in cm
-SEPLIM, "> 0 for minimum gap in cm in divertor configurations, < 0
-absolute value for minimum distance to external separatrix in
-limiter configurations"
+SEPLIM, "> 0 for minimum gap in cm in divertor configurations, < 0 absolute value for minimum distance to external separatrix in limiter configurations"
 SEPNOS, radial distance in cm between x point and external field line at ZNOSE
 SHEARB, magnetic shear at 95% enclosed normalized poloidal flux
 SIBDRY, plasma boundary poloidal flux in Weber/rad
 SIMAGX, boundary poloidal flux in Weber/rad at magnetic axis
 SLANTL, gap to lower outboard limiter in cm
 SLANTU, gap to upper outboard limiter in cm
-SSEP, "outboard radial distance to external second separatrix in cm for
-single null configurations, > 0 for SNT, < 0 for SNB, defaulted to
-be 40 cm"
+SSEP, "outboard radial distance to external second separatrix in cm for single null configurations, > 0 for SNT, < 0 for SNB, defaulted to be 40 cm"
 SSI01, magnetic shear at 1% of normalized poloidal flux
 SSI95, magnetic shear at 95% of normalized poloidal flux
 TAUMHD, energy confinement time in ms
@@ -129,23 +113,16 @@ TAUDIA, diamagnetic energy confinement time in ms
 TAVEM, average time in ms for magnetic and MSE data
 TERROR, equilibrium convergence error
 TIME, time in ms
-TSAISQ, "total chi^2 from magnetic probes, flux loops, Rogowskiand external"
-coils
+TSAISQ, "total chi^2 from magnetic probes, flux loops, Rogowskiand external coils"
 VERTN, vacuum field index at current centroid
 VLOOPT, measured loop voltage in volt
-Lao 9/10/04
-VSURFA, "plasma surface loop voltage in volt, E EQDSK only"
+VSURFA, not computed (always zero)
 VOUT, plasma volume in m 3
-WBDOT, "time derivative of poloidal magnetic energy in Watt, E EQDSK
-only"
-WBDOT, "time derivative of poloidal magnetic energy in Watt, E EQDSK
-only"
-WPDOT, "time derivative of plasma stored energy in Watt, E EQDSK
-only"
+WBDOT, not computed (always zero)
+WPDOT, not computed (always zero)
 WPLASMD, diamagnetic plasma stored energy in Joule
 XNDNT, plasma boundary indentation
-XNNC, "vertical stability parameter, vacuum field index normalized to
-critical index value"
+XNNC, "vertical stability parameter, vacuum field index normalized to critical index value"
 YYY2, Shafranov Y2 current moment
 ZCURRT, Z in cm at current centroid
 ZMAGX, Z in cm at magnetic axis

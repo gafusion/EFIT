@@ -1,34 +1,40 @@
 Variable, Description
-CASE, Identification character string
-NW, Number of horizontal R grid points
+BCENTR, Vacuum toroidal magnetic field in Tesla at RCENTR
+BRSP, F-coil currents in Amperes
+CURRENT, Total plasma current in Ampere
+DMION, Mass density on uniform poloidal flux grid
+ECURRT, E-coil currents in Amperes
+FFPRIM, FF’(y) in (mT)^2/ (Weber /rad) on uniform flux grid
+FPOL, Poloidal current function in m-T. F = RBT on flux grid
+ISHOT, Shot number
+ITIME, Time in milliseconds
+KVTOR, Toroidal rotation switch
+LIMITR, Number of limiter points
+NBBBS, Number of boundary points
 NH, Number of vertical Z grid points
+NMASS, Mass density switch
+NW, Number of horizontal R grid points
+PCURRT, Plasma current density in A/m^2
+PPRIME, P’(y) in (nt /m^2) / (Weber /rad) on uniform flux grid
+PRES, Plasma pressure in nt / m2 on uniform flux grid
+PRESSW, Rotational pressure PW in n/m2
+PSIZR, Poloidal flux in Weber / rad on the rectangular grid points
+PWPRIM, PW’(y) in (n/m2 )/(web/rad)
+QPSI, q values on uniform flux grid from axis to boundary
+RBBBS, R of boundary points in meter
+RCENTR, R in meter of vacuum toroidal magnetic field BCENTR
 RDIM, Horizontal dimension in meter of computational box
-ZDIM, Vertical dimension in meter of computational box
+RHOVN, Normalized toroidal flux on uniform poloidal flux grid
+RGRID, R coordinate vector
 RLEFT, Minimum R in meter of rectangular computational box
-ZMID, Z of center of computational box in meter
+RLIM, R of surrounding limiter contour in meter
 RMAXIS, R of magnetic axis in meter
-ZMAXIS, Z of magnetic axis in meter
+RVTOR, Toroidal rotation characteristic major radius in m
 SIMAG, poloidal flux at magnetic axis in Weber /rad
 SIBRY, poloidal flux at the plasma boundary in Weber /rad
-RCENTR, R in meter of vacuum toroidal magnetic field BCENTR
-BCENTR, Vacuum toroidal magnetic field in Tesla at RCENTR
-CURRENT, Plasma current in Ampere
-FPOL, Poloidal current function in m-T. F = RBT on flux grid
-PRES, Plasma pressure in nt / m2 on uniform flux grid
-FFPRIM, FF’(y) in (mT)^2/ (Weber /rad) on uniform flux grid
-PPRIME, P’(y) in (nt /m^2) / (Weber /rad) on uniform flux grid
-PSIZR, Poloidal flux in Weber / rad on the rectangular grid points
-QPSI, q values on uniform flux grid from axis to boundary
-NBBBS, Number of boundary points
-LIMITR, Number of limiter points
-RBBBS, R of boundary points in meter
 ZBBBS, Z of boundary points in meter
-RLIM, R of surrounding limiter contour in meter
+ZDIM, Vertical dimension in meter of computational box
+ZGRID, Z coordinate vector
 ZLIM, Z of surrounding limiter contour in meter
-KVTOR, Toroidal rotation switch
-RVTOR, Toroidal rotation characteristic major radius in m
-NMASS, Mass density switch
-PRESSW, Rotational pressure PW in n/m2
-PWPRIM, PW’(y) in (n/m2 )/(web/rad)
-DMION, Mass density on uniform poloidal flux grid
-RHOVN, Normalized toroidal flux on uniform poloidal flux grid
+ZMAXIS, Z of magnetic axis in meter
+ZMID, Z of center of computational box in meter
