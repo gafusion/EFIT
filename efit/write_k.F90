@@ -301,7 +301,7 @@
 !
       mmstark=0
       do i=1,nstark
-        if (fwtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
+        if(fwtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
       enddo
       if (mmstark.gt.0) then
 #if defined(USE_MSE)
