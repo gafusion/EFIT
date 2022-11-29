@@ -423,7 +423,7 @@
       real*8,dimension(:),allocatable ::eeknt,eebdry,ee2bdry,cerer
       real*8,dimension(:),allocatable :: ermse
       real*8,dimension(:,:),allocatable :: e1rbz,e2rbz,e3rbr
-      real*8,dimension(:),allocatable :: ermid, eshear,epoten,rhovn, &
+      real*8,dimension(:),allocatable :: ermid,eshear,epoten,rhovn, &
                                          rpmid,xmid,sigrid,sipmid, &
                                          brhovn,crhovn,drhovn,rhopmid
       end module var_cerfit

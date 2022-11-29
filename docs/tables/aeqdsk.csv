@@ -14,7 +14,7 @@ BETATD, diamagnetic toroidal β in %
 BPOLAV, average poloidal magnetic field in Tesla defined through Ampere’s law
 BTAXP, toroidal magnetic field at magnetic axis in Tesla
 BTAXV, vacuum toroidal magnetic field at magnetic axis in Tesla
-CCBRSP, computed external coil currents in Ampere
+CCBRSP, computed F-coil currents in Amperes
 CDFLUX, computed diamagnetic flux in Volt-sec
 CHILIBT, total chi^2 Li beam
 CHIGAMT, total chi^2 MSE
