@@ -69,8 +69,8 @@ with the same structure using single precision reals and integers):
                read (neqdsk,3003) nw,nh,ishot,itime
              endif
              read (neqdsk,2020) rgrid(1),rgrid(nw),zgrid(1),zgrid(nh)
-             read (neqdsk,2020) (brsp(i),i=1,nfcoil)  ! also in m-files
-             read (neqdsk,2020) (ecurrt(i),i=1,nesum) ! also in m-files
+             read (neqdsk,2020) (brsp(i),i=1,nfcoil)  ! also in m and a-files
+             read (neqdsk,2020) (ecurrt(i),i=1,nesum) ! also in m and a-files
              read (neqdsk,2020) (pcurrt(i),i=1,nw*nh)
            elseif (iplcout.eq.2) then
              read (neqdsk,2020) (pcurrt(i),i=1,nw*nh)

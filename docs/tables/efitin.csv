@@ -99,7 +99,7 @@ PSIWANT,,See namelist IN1.
 QVFIT,,See namelist IN1.
 RBDRY,,See namelist IN1.
 RELAX,,See namelist IN1.
-REQ_VALID,0,See namelist IN1.
+REQ_VALID,,See namelist IN1.
 REXPAN, 0.01,
 RZEROJ,,See namelist IN1.
 SAICON,,See namelist IN1.

@@ -150,9 +150,23 @@
       if (ioerr.eq.0) then
         snapfile=snap_file
       else
+        ! the snap file wasn't found in the CWD, look in the 
+        ! support files instead
         open(unit=neqdsk,status='old', &
-           file=input_dir(1:lindir)//snapfile)
-        snapfile=input_dir(1:lindir)//snapfile
+             file=input_dir(1:lindir)//'snapfiles'//snap_file,iostat=ioerr)
+        if (ioerr.eq.0) then
+          snapfile=input_dir(1:lindir)//'snapfiles'//snap_file
+        elseif (snapextin.ne.'none') then
+          ! the snap file still wasn't found, check for any snapfile
+          ! in the CWD without an extension
+          snap_file = snap_ext
+          open(unit=neqdsk,status='old',file=snap_file,iostat=ioerr)
+          if (ioerr.ne.0) then
+            call errctrl_msg('write_k','could not find snap file')
+            stop
+          endif
+          snapfile=snap_file
+        endif
       endif
 !
       fwtbmsels=0.0

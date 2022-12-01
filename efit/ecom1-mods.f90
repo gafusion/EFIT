@@ -265,14 +265,15 @@
 
       module var_input
       use set_kinds
-      logical write_kfile,fitfcsum,use_previous,req_valid
-      integer*4 icondn,itek,kdata,itrace,ierchk,iconvr,ixray,itell, &
-                kprfit,ibound,ibatch,idite,ilaser,lookfw, &
+      logical write_kfile,fitfcsum,use_previous, &
+              req_valid,req_valid_prior
+      integer*4 icondn,itek,kdata,itrace,ierchk,ierchk_prior,iconvr, &
+                ixray,itell,kprfit,ibound,ibatch,idite,ilaser,lookfw, &
                 kdot,icutfp,keqdsk,kdofit,kbetapr,kplotpr,kpressb, &
                 kfcurb,kpcurb,kzeroj,ncstne,ncstte, &
                 kwripre,negcur,kframe,kskipvs,icntour,iavdpl, &
                 limvs,kbound,kgraph,istore,iout,kdopre, &
-                iishot,kktime,iplcout,ksigma,kwritime
+                iishot,kktime,iplcout,iplcout_prior,ksigma,kwritime
       integer*4 iteks,mxiters,n1coils,ierchks
       integer*4 itekt,mxitert,n1coilt
       real*8 zelipss,zeliptt
@@ -423,7 +424,7 @@
       real*8,dimension(:),allocatable ::eeknt,eebdry,ee2bdry,cerer
       real*8,dimension(:),allocatable :: ermse
       real*8,dimension(:,:),allocatable :: e1rbz,e2rbz,e3rbr
-      real*8,dimension(:),allocatable :: ermid, eshear,epoten,rhovn, &
+      real*8,dimension(:),allocatable :: ermid,eshear,epoten,rhovn, &
                                          rpmid,xmid,sigrid,sipmid, &
                                          brhovn,crhovn,drhovn,rhopmid
       end module var_cerfit

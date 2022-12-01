@@ -369,7 +369,11 @@
 !---------------------------------------------------------------------- 
 !--   Read ascii input files                                         -- 
 !---------------------------------------------------------------------- 
-      open(unit=nin,status='old',file=ifname(jtime))
+      open(unit=nin,status='old',file=ifname(jtime),iostat=istat)
+      if (istat.ne.0) then
+        call errctrl_msg('data_input',trim(ifname(jtime))//' not found')
+        stop
+      endif
       read (nin,in1,iostat=istat)
       if (istat>0) then
         backspace(nin)
@@ -1489,6 +1493,17 @@
         return
       endif
       if(link_store(1:1).ne.'') store_dir=trim(link_store)
+      ! replace parameters with in0 namelist versions
+      if (ierchk_prior .ne. 99) then
+        ! these parameters must be set together because logicals cannot
+        ! be overloaded...
+        ierchk = ierchk_prior
+        req_valid = req_valid_prior
+      endif
+      if (iplcout_prior .ne. -1) then
+        iplcout = iplcout_prior
+      endif
+      
 !--   warn that idebug, jdebug, and ktear inputs are deprecated
       if (idebug.ne.0) write(*,*) &
       "idebug input variable is deprecated, set cmake variable instead"

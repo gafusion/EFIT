@@ -18,11 +18,24 @@ size limits.
 OPTIN
 -----
 
-OPTIN is the optional namelist that can be read from the efit.input 
+OPTIN is the optional namelist that can be read from efit.input 
 instead of using the interactive command line inputs.
 
 .. csv-table:: OPTIN
    :file: tables/optin.csv
+   :widths: 15,15,70
+   :header-rows: 1
+
+IN0
+---
+
+IN0 is an optional namelist that can be read from efit.input 
+and supercedes the values set in the IN1 namelist.  It only
+includes scalar control parameters.  These values are ignored
+when running in snap mode (no reason to use this).
+
+.. csv-table:: IN0
+   :file: tables/in0.csv
    :widths: 15,15,70
    :header-rows: 1
 
