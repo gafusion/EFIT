@@ -160,8 +160,13 @@
           ! the snap file still wasn't found, check for any snapfile
           ! in the CWD without an extension
           snap_file = snap_ext
-          open(unit=neqdsk,status='old',file=snap_file)
+          open(unit=neqdsk,status='old',file=snap_file,iostat=ioerr)
+          if (ioerr.ne.0) then
+            call errctrl_msg('write_k','could not find snap file')
+            stop
+          endif
           snapfile=snap_file
+        endif
       endif
 !
       fwtbmsels=0.0
