@@ -115,8 +115,8 @@ IERCHK,1,"| (Integer flag) Error Check.
 | 1 = check for MHD fitting errors but continue regardless of the result (Default)
 | 2 = only output parameters file (a-file) if the error checks fail
 | 3 = don't output any result files (g, a, m, etc.) if error checks fail
-| - = don't call shapesurf to compute plasma quantities or output anything besides the a-file if fit hasn't converged (intended for use in an optimization loop)
-IEXCAL,0, 1 = plot magnetic signals."
+| - = don't call shapesurf to compute plasma quantities or output anything besides the a-file if fit hasn't converged (intended for use in an optimization loop)"
+IEXCAL,0, 1 = plot magnetic signals.
 IFITVS,0,"| (Integer flag) Fit Vessel Current. This parameter is an alternative to IVESEL and takes priority over any IVESEL value that is set.
 | 1 = identical to setting IVESEL=3.
 | 0 = deactivate this parameter (default)."
@@ -164,10 +164,10 @@ ITIMEU,0,"Microseconds for timeslice to analyze. (added to ITIME)"
 ITRACE,-1,"| 1 = compute external separatrix distance. (default)
 | 2 = compute and plot."
 IVESEL,0,"| (Integer flag) Constrain Vessel Currents. The vessel can be modeled as individual current carrying elements (specified in the IN3 namelist input to EFUND) that are treated as additional unknown sources of current. (Note: this option is superceded when IFITVS=1)
-| 0 don't constrain vessel current (default).
-| 1 specify constraints through VCURRT.
-| 2 constraints are set based on the measured loop voltage (I=V/R).
-| 3 vessel currents are treated as free parameters that are fitted to all diagnostic and coil measurements specified."
+| 0 = don't constrain vessel current (default).
+| 1 = specify constraints through VCURRT.
+| 2 = constraints are set based on the measured loop voltage (I=V/R).
+| 3 = vessel currents are treated as free parameters that are fitted to all diagnostic and coil measurements specified."
 IWEIGH, 0,
 IXRAY,, "| 0 = do not plot soft X-ray (default)
 | 1 = plot Poroidal SXR arrays (implied by negative ITEK)

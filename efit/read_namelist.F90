@@ -24,6 +24,7 @@
       namelist/setup/link_efit,link_store,maxinpfile,ntims,kxiter
       namelist/optin/mode,cmdfile,shotfile,shot,starttime,deltatime, &
                      steps,snapext,inpfile
+      namelist/in0/ierchk,iplcout,req_valid
 
       ! Initialize variables
       input_flag = .false.
@@ -42,6 +43,12 @@
       snapext = 'none'
       kxiter = -1
       kxiter_save = -1
+      ierchk = 99
+      ierchk_prior = 99
+      iplcout = -1
+      iplcout_prior = -1
+      req_valid = .false.
+      req_valid_prior = .false.
 
       ! Determine if input file exists
       if(rank == 0) inquire(file='efit.input',exist=input_flag)
@@ -77,21 +84,39 @@
         write(*,'(A)') 'Invalid line in namelist optin: '//trim(line)
         stop
       endif
+      rewind(nin)
+      read (nin,in0,iostat=istat)
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist in0: '//trim(line)
+        stop
+      endif
       close(nin)
 
       ! check that variables are set (namelist may not exist or be used)
-      if(mode.eq.99) return
+      if (mode.ne.99) then
+        if(rank == 0) write(*,*) 'Using inputs from efit.input file'
+        use_opt_input = .true.
+        mode_in = mode
+        cmdfile_in = cmdfile
+        shotfile_in = shotfile
+        shot_in = shot
+        starttime_in = starttime
+        deltatime_in = deltatime
+        steps_in = steps
+        snapext_in = snapext
+      endif
+      if (ierchk .ne. 99) then
+        ! these parameters must be set together because logicals cannot
+        ! be overloaded...
+        ierchk_prior = ierchk
+        req_valid_prior = req_valid
+      endif
+      if (iplcout .ne. -1) then
+        iplcout_prior = iplcout
+      endif
 
-      if(rank == 0) write(*,*) 'Using inputs from efit.input file'
-      use_opt_input = .true.
-      mode_in = mode
-      cmdfile_in = cmdfile
-      shotfile_in = shotfile
-      shot_in = shot
-      starttime_in = starttime
-      deltatime_in = deltatime
-      steps_in = steps
-      snapext_in = snapext
       return
 
       end subroutine read_optin
@@ -236,7 +261,11 @@
         table_dir,input_dir,store_dir
       parameter(nin=343)
 
-      open(unit=nin,status='old',file=filename)
+      open(unit=nin,status='old',file=filename,iostat=istat)
+      if (istat.ne.0) then
+        write(*,'(A)') 'Could not find file: '//trim(filename)
+        stop
+      endif
       read(nin,in1,iostat=istat)
 
       if (istat>0) then
