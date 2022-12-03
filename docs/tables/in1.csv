@@ -158,7 +158,7 @@ ITEK,,"| plotting option. For MSE electric field corrections KEECUR > 0 must set
 | >10 = same as 5 except only ITEK-10 number of plots over whole time interval of analysis.
 | >100= the plot data file for each timeslice wil have a specific name pl(shot).(time).
 | 105=plot data file pl(shot).(time) for every time step.
-| 110+n= pl(shot).(time0 for every n time steps."
+| 110+n= pl(shot).(time) for every n time steps."
 ITIME,,"Time in milliseconds of slice to analyze."
 ITIMEU,0,"Microseconds for timeslice to analyze. (added to ITIME)"
 ITRACE,-1,"| 1 = compute external separatrix distance. (default)

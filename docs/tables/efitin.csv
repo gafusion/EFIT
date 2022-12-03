@@ -8,8 +8,8 @@ CGAMA,,See namelist IN1.
 CONDIN,,See namelist IN1.
 CUTIP,,See namelist IN1.
 DNMIN,,See namelist IN1.
-DO_SPLINE_FIT,.true.,"|When true, spline fitting is used to obtain constraints at the times that equilibria are requested.
-|When false, the constraints are set to the nearest time that a measurement was made.  "
+DO_SPLINE_FIT,.true.,"| When true, spline fitting is used to obtain constraints at the times that equilibria are requested.
+| When false, the constraints are set to the nearest time that a measurement was made.  "
 DTIME,, "Delta time between slices to analyze(?) in ms. (Does this override interactive input?)"
 DTMSEFULL,,See namelist INS.
 ELOMIN,,See namelist IN1.
@@ -113,6 +113,7 @@ STABDZ,-1e-4,
 STORE_DIR,,"destination for output EQDSK files if ISTORE = 1, default = /link/store/"
 TABLE_DIR,,"area where Green's function tables and the configuration file dprobe.dat (and pcsnames.dat if used) are to be found. default = /link/efit/ (UNIX), lao$efund (VAX)"
 TIMEB,, Start time(?) in ms. (Does this override interactive input?)
+T_MAX_BEAM_OFF,0.0,"Maximum MSE beam offset time, in milliseconds."
 USE_ALTERNATE_POINTNAMES,0,"If non-zero, PCS data specified in file ALTERNATE_POINTNAME_FILE are used."
 USE_CONSISTENT_DATA,,"When true, the data used to form constraints will be the same regardless of how many timeslices are being loaded.  (One caveat is if the variable size limit is hit, not all data will be fetched - see ntims/npefit in the code.)  Setting this to false will restore the legacy data fetching.  Default = .true."
 VSDAMP,,See namelist IN1.
