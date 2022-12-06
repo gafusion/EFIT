@@ -16,7 +16,8 @@
       integer*4, intent(in) :: jtime
       integer*4 ijtime,i,j,jb,kk,ierold,ioerr,kkstark,nbsave,nbabs,ndel, &
                 nqpsi
-      real*8 btor,enps,plasma,saisq,ssibry,ssimag,xdim,xdum,xn,zdim,zmid
+      real*8 btor,enps,plasma,saisq,ssibry,ssimag,xdiff,xdim,xdum,xn, &
+             zdiff,zdim,zmid
       real*8 psirz(nw,nh),pcurrz(nw,nh),workk(nw),dmion(nw), &
              bworm(nmass),cworm(nmass),dworm(nmass),coils(nsilop), &
              expmp2(magpri),prexp(nrogow),tgamma(nstark),sgamma(nstark), &
@@ -132,10 +133,12 @@
       if (iplcout.eq.2) then
         pcurrz=0.0
         if (ivacum.eq.0) then
+          xdiff=(rgrid(nw)-rgrid(1))/nw
+          zdiff=(zgrid(nh)-zgrid(1))/nh
           do i=1,nw
             do j=1,nh
               kk=(i-1)*nh+j
-                  pcurrz(i,j)=pcurrt(kk)
+                  pcurrz(i,j)=pcurrt(kk)/xdiff/zdiff
             enddo
           enddo
         endif
