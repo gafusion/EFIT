@@ -8,18 +8,26 @@
 !**********************************************************************
       subroutine write_g(jtime)
       use set_kinds
-      use commonblocks,only: psirz
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*8,dimension(:),allocatable :: coils,expmp2, prexp, &
-                tgamma,sgamma,rrrgam, &
-                zzzgam,aa1gam,aa2gam, aa3gam,aa4gam,aa5gam, &
-                aa6gam,aa7gam,aa8gam,tgammauncor
-      real*8,dimension(:),allocatable :: bmsels,sbmsels,fwtbmsels, &
-                rrmsels,zzmsels,l1msels,l2msels, &
-                l4msels,emsels,semsels,fwtemsels
+      implicit none
+      real*8 seval
+      integer*4, intent(in) :: jtime
+      integer*4 ijtime,i,j,jb,kk,ierold,ioerr,kkstark,nbsave,nbabs,ndel, &
+                nqpsi
+      real*8 btor,enps,plasma,saisq,ssibry,ssimag,xdim,xdum,xn,zdim,zmid
+      real*8 psirz(nw,nh),pcurrz(nw,nh),workk(nw),dmion(nw), &
+             bworm(nmass),cworm(nmass),dworm(nmass),coils(nsilop), &
+             expmp2(magpri),prexp(nrogow),tgamma(nstark),sgamma(nstark), &
+             rrrgam(nstark),zzzgam(nstark),aa1gam(nstark),aa2gam(nstark), &
+             aa3gam(nstark),aa4gam(nstark),aa5gam(nstark),aa6gam(nstark), &
+             aa7gam(nstark),aa8gam(nstark),tgammauncor(nstark), &
+             bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
+             rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels), &
+             l2msels(nmsels),l4msels(nmsels),emsels(nmsels),semsels(nmsels)
+      character eqdsk*72,header*42,wform*20,let,fit_type*3
+      character*10 vers(6)
       namelist/out1/ishot,itime,betap0,rzero,qenp,enp,emp,plasma, &
            expmp2,coils,btor,rcentr,brsp,icurrt,rbdry,zbdry, &
            nbdry,fwtsi,fwtcur,mxiter,nxiter,limitr,xlim,ylim,error, &
@@ -47,23 +55,9 @@
       namelist/chiout/saisil,saimpi,saiip,saipre
       namelist/eccd/kkstark,chigamt,chigam,bzmse,psiecn,dpsiecn, &
               saisq,cjeccd
-      character eqdsk*72,header*42,wform*20,let,fit_type*3
-      character*10 vers(6)
-      real*8,dimension(:),allocatable :: workk,dmion,bworm,cworm,dworm
 !
-      allocate(workk(nw),dmion(nw),bworm(nmass),cworm(nmass), &
-               dworm(nmass),coils(nsilop),expmp2(magpri),prexp(nrogow))
-
-      allocate(tgamma(nstark),sgamma(nstark),rrrgam(nstark), &
-               zzzgam(nstark),aa1gam(nstark),aa2gam(nstark), &
-               aa3gam(nstark),aa4gam(nstark),aa5gam(nstark), &
-               aa6gam(nstark),aa7gam(nstark),aa8gam(nstark), &
-               tgammauncor(nstark))
-      allocate(bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
-         rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels),l2msels(nmsels), &
-         l4msels(nmsels),emsels(nmsels),semsels(nmsels))
-!
-      xdum = 0
+      xdum=0.0
+      psirz=0.0
       if (keqdsk.eq.-1.or.keqdsk.eq.2) return
       if (kdot.gt.0.and.jtime.ne.kdot+1) return
       ijtime=time(jtime)
@@ -83,20 +77,20 @@
 !--   set fit type                                                   --
 !----------------------------------------------------------------------
       if ((kprfit.gt.0).and.(kstark.gt.0)) then
-        fit_type = 'KIM'
+        fit_type='KIM'
       elseif (kprfit.gt.0) then
-        fit_type = 'KIN'
+        fit_type='KIN'
       elseif (kstark.gt.0) then
-        fit_type = 'MSE'
+        fit_type='MSE'
       else
-        fit_type = 'MAG'
+        fit_type='MAG'
       endif
 !
       plasma=cpasma(jtime)
       btor=bcentr(jtime)
-      coils(1:nsilop)=csilop(1:nsilop,jtime)
-      expmp2(1:magpri)=cmpr2(1:magpri,jtime)
-      prexp(1:nrogow)=crogow(1:nrogow,jtime)
+      coils=csilop(:,jtime)
+      expmp2=cmpr2(:,jtime)
+      prexp=crogow(:,jtime)
       nbsave=nbdry
       nbabs=nbbbs/min(mbdry,nbdrymx)+1
       jb=0
@@ -135,15 +129,26 @@
           endif
         enddo
       enddo
-      write (vers(1),1040)
-      write (vers(2),1050) efitdate(1:5)
-      write (vers(3),1060) efitdate(6:10)
-      if (ishot.le.99999) then
-        write (vers(4),1070) ishot
-      else
-        write (vers(4),1073) ishot
+      if (iplcout.eq.2) then
+        pcurrz=0.0
+        if (ivacum.eq.0) then
+          do i=1,nw
+            do j=1,nh
+              kk=(i-1)*nh+j
+                  pcurrz(i,j)=pcurrt(kk)
+            enddo
+          enddo
+        endif
       endif
-      write (vers(5),1080) ijtime
+      write(vers(1),1040)
+      write(vers(2),1050) efitdate(1:5)
+      write(vers(3),1060) efitdate(6:10)
+      if (ishot.le.99999) then
+        write(vers(4),1070) ishot
+      else
+        write(vers(4),1073) ishot
+      endif
+      write(vers(5),1080) ijtime
       vers(6)=' '
       let = 'g'
       call setfnmeq(itimeu,let,ishot,ijtime,eqdsk)
@@ -167,58 +172,58 @@
         ssibry=psibry
       endif
       eqdsk_format: if (keqdsk.eq.1) then
-      write (neqdsk,2000) (vers(i),i=1,6),0,nw,nh
-      write (neqdsk,2020) xdim,zdim,rzero,rgrid(1),zmid
-      write (neqdsk,2020) rmaxis,zmaxis,ssimag,ssibry,bcentr(jtime)
-      write (neqdsk,2020) cpasma(jtime),ssimag,xdum,rmaxis,xdum
-      write (neqdsk,2020) zmaxis,xdum,ssibry,xdum,xdum
-      write (neqdsk,2020) (fpol(i),i=1,nw)
-      write (neqdsk,2020) (pres(i),i=1,nw)
+      write(neqdsk,2000) (vers(i),i=1,6),0,nw,nh
+      write(neqdsk,2020) xdim,zdim,rzero,rgrid(1),zmid
+      write(neqdsk,2020) rmaxis,zmaxis,ssimag,ssibry,bcentr(jtime)
+      write(neqdsk,2020) cpasma(jtime),ssimag,xdum,rmaxis,xdum
+      write(neqdsk,2020) zmaxis,xdum,ssibry,xdum,xdum
+      write(neqdsk,2020) (fpol(i),i=1,nw)
+      write(neqdsk,2020) (pres(i),i=1,nw)
       if (pasmat(jtime).gt.0.0) then
         workk=-ffprim
       else
         workk=ffprim
       endif
-      write (neqdsk,2020) (workk(i),i=1,nw)
+      write(neqdsk,2020) (workk(i),i=1,nw)
       if (pasmat(jtime).gt.0.0) then
         workk=-pprime
       else
         workk=pprime
       endif
-      write (neqdsk,2020) (workk(i),i=1,nw)
-      write (neqdsk,2020) ((psirz(i,j),i=1,nw),j=1,nh)
-      write (neqdsk,2020) (qpsi(i),i=1,nw)
-      write (neqdsk,2022) nbbbs,limitr
-      write (neqdsk,2020) (rbbbs(i),zbbbs(i),i=1,nbbbs)
-      write (neqdsk,2020) (xlim(i),ylim(i),i=1,limitr)
+      write(neqdsk,2020) (workk(i),i=1,nw)
+      write(neqdsk,2020) ((psirz(i,j),i=1,nw),j=1,nh)
+      write(neqdsk,2020) (qpsi(i),i=1,nw)
+      write(neqdsk,2022) nbbbs,limitr
+      write(neqdsk,2020) (rbbbs(i),zbbbs(i),i=1,nbbbs)
+      write(neqdsk,2020) (xlim(i),ylim(i),i=1,limitr)
 !----------------------------------------------------------------------
 !--   write out rotation information                                 --
 !----------------------------------------------------------------------
-      write (neqdsk,2024) kvtor,rvtor,nmass
+      write(neqdsk,2024) kvtor,rvtor,nmass
       if (kvtor.gt.0) then
-        write (neqdsk,2020) (pressw(i),i=1,nw)
+        write(neqdsk,2020) (pressw(i),i=1,nw)
         if (pasmat(jtime).gt.0.0) then
           workk=-pwprim
         else
           workk=pwprim
         endif
-        write (neqdsk,2020) (workk(i),i=1,nw)
+        write(neqdsk,2020) (workk(i),i=1,nw)
       endif
 !----------------------------------------------------------------------
 !--   write out ion mass density profile if available                --
 !----------------------------------------------------------------------
       if (nmass.gt.0) then
-        write (neqdsk,2020) (dmion(i),i=1,nw)
+        write(neqdsk,2020) (dmion(i),i=1,nw)
       endif
-      write (neqdsk,2020) (rhovn(i),i=1,nw)
-      write (neqdsk,2026) keecur
+      write(neqdsk,2020) (rhovn(i),i=1,nw)
+      write(neqdsk,2026) keecur
       if (keecur.gt.0) then
         if (pasmat(jtime).gt.0.0) then
           workk=-epoten
         else
           workk=epoten
         endif
-        write (neqdsk,2020) (workk(i),i=1,nw)
+        write(neqdsk,2020) (workk(i),i=1,nw)
       endif
 ! note: unlike the rest of the file, these optional extras have
 !       never been described completely with variables available here
@@ -226,16 +231,16 @@
       if (iplcout.gt.0) then
         if (iplcout.eq.1) then
           if (ishot.le.99999) then
-            write (neqdsk,3000) nw,nh,ishot,itime
+            write(neqdsk,3000) nw,nh,ishot,itime
           else
-            write (neqdsk,3003) nw,nh,ishot,itime
+            write(neqdsk,3003) nw,nh,ishot,itime
           endif
-          write (neqdsk,2020) rgrid(1),rgrid(nw),zgrid(1),zgrid(nh)
-          write (neqdsk,2020) (brsp(i),i=1,nfcoil)  ! also in m and a-files
-          write (neqdsk,2020) (ecurrt(i),i=1,nesum) ! also in m and a-files
-          write (neqdsk,2020) (pcurrt(i),i=1,nwnh)
+          write(neqdsk,2020) rgrid(1),rgrid(nw),zgrid(1),zgrid(nh)
+          write(neqdsk,2020) (brsp(i),i=1,nfcoil)  ! also in m and a-files
+          write(neqdsk,2020) (ecurrt(i),i=1,nesum) ! also in m and a-files
+          write(neqdsk,2020) (pcurrt(i),i=1,nwnh)
         elseif (iplcout.eq.2) then
-          write (neqdsk,2020) (pcurrt(i),i=1,nwnh)
+          write(neqdsk,2020) ((pcurrz(i,j),i=1,nw),j=1,nh)
         endif
       endif
 !---------------------------------------------------------------------
@@ -254,11 +259,11 @@
           endif
           if (ioerr.eq.0) then
             do i=1,1000000
-              write (neqdsk,9991) tmpdata
+              write(neqdsk,9991) tmpdata
               read (nsnapf,9991,iostat=ioerr) tmpdata
               if (ioerr.ne.0) exit
               if (INDEX(tmpdata,'/')/=0) then
-                write (neqdsk,9991) tmpdata
+                write(neqdsk,9991) tmpdata
                 exit
               endif
             enddo
@@ -270,13 +275,13 @@
 !
       nqpsi=nw
       limitr=limitr-1
-      write (neqdsk,out1)
+      write(neqdsk,out1)
 
       call ppstore
       call ffstore
       call wwstore
       call eestore
-      write (neqdsk,basis)
+      write(neqdsk,basis)
       limitr=limitr+1
       MSE: if (kdomse.gt.0.or.kstark.gt.0) then
         if (kdomse.gt.0) then
@@ -298,10 +303,10 @@
         aa6gam=a6gam(jtime,:)
         aa7gam=a7gam(jtime,:)
         aa8gam=a8gam(jtime,:)
-        write (neqdsk,mseout)
+        write(neqdsk,mseout)
         kkstark=nstark
         saisq=tsaisq(jtime)
-        write (neqdsk,eccd)
+        write(neqdsk,eccd)
       endif MSE
 !-----------------------------------------------------------------------
 !--   Write out MSE-LS namelist                                       --
@@ -321,7 +326,7 @@
         l4msels=l4mselt(jtime,:)
         emsels=emselt(jtime,:)
         semsels=semselt(jtime,:)
-        write (neqdsk,in_msels)
+        write(neqdsk,in_msels)
       endif
 !
       if (kdovt.gt.0) then
@@ -333,66 +338,66 @@
           sigprw(npresw)=0.1_dp*presw(npresw)
           rpresw(npresw)=-real(i-1,dp)/(nw-1)
         enddo
-        write (neqdsk,vtout)
+        write(neqdsk,vtout)
       endif
-      write (neqdsk,chiout)
+      write(neqdsk,chiout)
       header = ' '
-      write (neqdsk,1042) header,fit_type
+      write(neqdsk,1042) header,fit_type
 !-----------------------------------------------------------------------
 !--   binary format                                                   --
 !-----------------------------------------------------------------------
       else eqdsk_format
-      write (neqdsk) (vers(i),i=1,6),0,nw,nh
-      write (neqdsk) real(xdim,r4),real(zdim,r4),real(rzero,r4), &
+      write(neqdsk) (vers(i),i=1,6),0,nw,nh
+      write(neqdsk) real(xdim,r4),real(zdim,r4),real(rzero,r4), &
                      real(rgrid(1),r4),real(zmid,r4)
-      write (neqdsk) real(rmaxis,r4),real(zmaxis,r4),real(ssimag,r4), &
+      write(neqdsk) real(rmaxis,r4),real(zmaxis,r4),real(ssimag,r4), &
                      real(ssibry,r4),real(bcentr(jtime),r4)
-      write (neqdsk) real(cpasma(jtime),r4),real(ssimag,r4),real(xdum,r4), &
+      write(neqdsk) real(cpasma(jtime),r4),real(ssimag,r4),real(xdum,r4), &
                      real(rmaxis,r4),real(xdum,r4)
-      write (neqdsk) real(zmaxis,r4),real(xdum,r4),real(ssibry,r4), &
+      write(neqdsk) real(zmaxis,r4),real(xdum,r4),real(ssibry,r4), &
                      real(xdum,r4),real(xdum,r4)
-      write (neqdsk) (real(fpol(i),r4),i=1,nw)
-      write (neqdsk) (real(pres(i),r4),i=1,nw)
+      write(neqdsk) (real(fpol(i),r4),i=1,nw)
+      write(neqdsk) (real(pres(i),r4),i=1,nw)
       if (pasmat(jtime).gt.0.0) then
         workk=-ffprim
       else
         workk=ffprim
       endif
-      write (neqdsk) (real(workk(i),r4),i=1,nw)
+      write(neqdsk) (real(workk(i),r4),i=1,nw)
       if (pasmat(jtime).gt.0.0) then
         workk=-pprime
       else
         workk=pprime
       endif
-      write (neqdsk) (real(workk(i),r4),i=1,nw)
-      write (neqdsk) ((real(psirz(i,j),r4),i=1,nw),j=1,nh)
-      write (neqdsk) (real(qpsi(i),r4),i=1,nw)
-      write (neqdsk) nbbbs,limitr
-      write (neqdsk) (real(rbbbs(i),r4),real(zbbbs(i),r4),i=1,nbbbs)
-      write (neqdsk) (real(xlim(i),r4),real(ylim(i),r4),i=1,limitr)
+      write(neqdsk) (real(workk(i),r4),i=1,nw)
+      write(neqdsk) ((real(psirz(i,j),r4),i=1,nw),j=1,nh)
+      write(neqdsk) (real(qpsi(i),r4),i=1,nw)
+      write(neqdsk) nbbbs,limitr
+      write(neqdsk) (real(rbbbs(i),r4),real(zbbbs(i),r4),i=1,nbbbs)
+      write(neqdsk) (real(xlim(i),r4),real(ylim(i),r4),i=1,limitr)
 !----------------------------------------------------------------------
 !--   write out rotation information                                 --
 !----------------------------------------------------------------------
-      write (neqdsk) kvtor,real(rvtor,r4),nmass
+      write(neqdsk) kvtor,real(rvtor,r4),nmass
       if (nmass.gt.0) then
-        write (neqdsk) (real(pressw(i),r4),i=1,nw)
-        write (neqdsk) (real(pwprim(i),r4),i=1,nw)
+        write(neqdsk) (real(pressw(i),r4),i=1,nw)
+        write(neqdsk) (real(pwprim(i),r4),i=1,nw)
       endif
 !----------------------------------------------------------------------
 !--   write out ion mass density profile if available                --
 !----------------------------------------------------------------------
       if (nmass.gt.0) then
-        write (neqdsk) (real(dmion(i),r4),i=1,nw)
+        write(neqdsk) (real(dmion(i),r4),i=1,nw)
       endif
-      write (neqdsk) (real(rhovn(i),r4),i=1,nw)
-      write (neqdsk) keecur
+      write(neqdsk) (real(rhovn(i),r4),i=1,nw)
+      write(neqdsk) keecur
       if (keecur.gt.0) then
         if (pasmat(jtime).gt.0.0) then
           workk=-epoten
         else
           workk=epoten
         endif
-        write (neqdsk) (real(workk(i),r4),i=1,nw)
+        write(neqdsk) (real(workk(i),r4),i=1,nw)
       endif
 ! note: unlike the rest of the file, these optional extras have
 !       never been described completely with variables available here
@@ -400,22 +405,22 @@
       if (iplcout.gt.0) then
         if (iplcout.eq.1) then
           if (ishot.le.99999) then
-            write (neqdsk) nw,nh,ishot,itime
+            write(neqdsk) nw,nh,ishot,itime
           else
-            write (neqdsk) nw,nh,ishot,itime
+            write(neqdsk) nw,nh,ishot,itime
           endif
-          write (neqdsk) real(rgrid(1),r4),real(rgrid(nw),r4), &
+          write(neqdsk) real(rgrid(1),r4),real(rgrid(nw),r4), &
                          real(zgrid(1),r4),real(zgrid(nh),r4)
-          write (neqdsk) (real(brsp(i),r4),i=1,nfcoil)  ! also in m and a-files
-          write (neqdsk) (real(ecurrt(i),r4),i=1,nesum) ! also in m and a-files
-          write (neqdsk) (real(pcurrt(i),r4),i=1,nwnh)
+          write(neqdsk) (real(brsp(i),r4),i=1,nfcoil)  ! also in m and a-files
+          write(neqdsk) (real(ecurrt(i),r4),i=1,nesum) ! also in m and a-files
+          write(neqdsk) (real(pcurrt(i),r4),i=1,nwnh)
         elseif (iplcout.eq.2) then
-          write (neqdsk) (real(pcurrt(i),r4),i=1,nwnh)
+          write(neqdsk) ((real(pcurrz(i,j),r4),i=1,nw),j=1,nh)
         endif
       endif
 !
       header = ' '
-      write (neqdsk) header,fit_type
+      write(neqdsk) header,fit_type
       endif eqdsk_format
 !
       close(unit=neqdsk)
@@ -439,21 +444,19 @@
         open(unit=neqdsk,file=eqdsk,status='old',iostat=ioerr)
         if (ioerr.eq.0) close(unit=neqdsk,status='delete')
         open(unit=neqdsk,file=eqdsk,status='new',delim='quote')
-        write (neqdsk,in1)
+        write(neqdsk,in1)
         call ppstore
         call ffstore
         call wwstore
         call eestore
-        write (neqdsk,basis)
-        write (neqdsk,inwant)
+        write(neqdsk,basis)
+        write(neqdsk,inwant)
         close(unit=neqdsk)
         enp=enps
         limitr=limitr+1
         itime=itime-1
         ierchk=ierold
       endif fixed_bdry
-!
-      deallocate(workk,dmion,bworm,cworm,dworm)
 !
       return
  1020 format ('x',i5,'.',i3)

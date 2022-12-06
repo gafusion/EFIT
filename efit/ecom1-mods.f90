@@ -672,7 +672,7 @@
       module commonblocks
       real*8,allocatable :: c(:,:,:,:),wk(:),copy(:,:),bkx(:),bky(:), &
         cw(:,:,:,:),wkw(:),copyw(:,:),bwx(:),bwy(:), &
-        sifprw(:),bwprw(:),cwprw(:),dwprw(:),psirz(:,:), &
+        sifprw(:),bwprw(:),cwprw(:),dwprw(:), &
         sfprw(:),sprwp(:),wgridpc(:),rfcpc(:,:),ct(:,:,:,:), &
         wkt(:),bkrt(:),bkzt(:),psiold(:),psipold(:), &
         work(:),sifpre(:),bwpre(:),cwpre(:),dwpre(:),sfpre(:), &

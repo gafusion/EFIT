@@ -236,7 +236,7 @@ ALLOCATE(c(kubicx,lubicx,kubicy,lubicy),wk(nwrk), &
    cw(kubicx,lubicx,kubicy,lubicy),wkw(nwrk), &
    copyw(nw,nh),bwx(lubicx+1),bwy(lubicy+1), &
    sifprw(nw),bwprw(nw),cwprw(nw),dwprw(nw), &
-   psirz(nw,nh),sfprw(nw),sprwp(nw), &
+   sfprw(nw),sprwp(nw), &
    wgridpc(nwnh),rfcpc(nfcoil,nwnh), &
    ct(kubicx,lubicx,kubicy,lubicy), &
    wkt(nwrk),bkrt(lubicx+1),bkzt(lubicy+1), &
