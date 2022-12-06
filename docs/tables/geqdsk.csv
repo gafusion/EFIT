@@ -17,7 +17,7 @@ NMASS, Mass density switch
 NW, Number of horizontal R grid points
 PCURRT, "| Plasma current density 
 | - for IPLCOUT=1 this is rotated relative to PSIRZ and in units of A/point
-| - for IPLCOUT=2 this matches the orientation of PSIRZ and is in A/m^2:
+| - for IPLCOUT=2 this matches the orientation of PSIRZ and is in A/m^2"
 PPRIME, P’(y) in (nt /m^2) / (Weber /rad) on uniform flux grid
 PRES, Plasma pressure in nt / m2 on uniform flux grid
 PRESSW, Rotational pressure PW in n/m2
