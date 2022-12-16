@@ -12,9 +12,8 @@
       include 'modules1.inc'
       implicit none
       integer*4, intent(in) :: mtime
-      integer*4 m,k
+      integer*4 m
       real*8 error_lim,chisq_lim
-      integer*4 kflag(nflag)
 !
       if (iconvr.eq.2) then
         error_lim=errmin
@@ -59,19 +58,18 @@
         erflag(m,14)=0
         erflag(m,19)=0
       endif
-      kflag=0
       lflag=0
 !
-      if (sum(erflag(m,:)).eq.0) return
+      if(sum(erflag(m,:)).eq.0) return
 !----------------------------------------------------------------------
 !--   write out errors to the terminal and error file
 !----------------------------------------------------------------------
       open(unit=40,file='errfil.out',status='unknown',position='append')
       select case (ierchk)
-      case (-3,3)
+      case (2,3)
         write(nttyo,980) ishot,time(mtime)
         write(40,980) ishot,time(mtime)
-      case (-2,2)
+      case (-1,-2,-3)
         write(nttyo,990) ishot,time(mtime)
         write(40,990) ishot,time(mtime)
       case default
@@ -79,49 +77,96 @@
         write(40,1000) ishot,time(mtime)
       end select
 !
-      do k=1,nflag
-        if (erflag(m,k).gt.0) kflag(k)=erflag(m,k)
-        if (erflag(m,k).gt.0) lflag=kflag(k)
-        if (kflag(k).eq.1) write(nttyo,1010) chisq_lim
-        if (kflag(k).eq.1) write(40,1010) chisq_lim
-        if (kflag(k).eq.2) write(nttyo,1020) ali_upper,ali_lower
-        if (kflag(k).eq.2) write(40,1020) ali_upper,ali_lower
-        if (kflag(k).eq.3) write(nttyo,1025) betap_lim
-        if (kflag(k).eq.3) write(40,1025) betap_lim
-        if (kflag(k).eq.4) write(nttyo,1030) plasma_diff
-        if (kflag(k).eq.4) write(40,1030) plasma_diff
-        if (kflag(k).eq.5) write(nttyo,1040) aout_upper,aout_lower
-        if (kflag(k).eq.5) write(40,1040) aout_upper,aout_lower
-        if (kflag(k).eq.6) write(nttyo,1050) eout_upper,eout_lower
-        if (kflag(k).eq.6) write(40,1050) eout_upper,eout_lower
-        if (kflag(k).eq.7) write(nttyo,1060) rout_upper,rout_lower
-        if (kflag(k).eq.7) write(40,1060) rout_upper,rout_lower
-        if (kflag(k).eq.8) write(nttyo,1070) rcurrt_upper,rcurrt_lower
-        if (kflag(k).eq.8) write(40,1070) rcurrt_upper,rcurrt_lower
-        if (kflag(k).eq.9) write(nttyo,1080) zout_upper,zout_lower
-        if (kflag(k).eq.9) write(40,1080) zout_upper,zout_lower
-        if (kflag(k).eq.10) write(nttyo,1090) zcurrt_upper,zcurrt_lower
-        if (kflag(k).eq.10) write(40,1090) zcurrt_upper,zcurrt_lower
-        if (kflag(k).eq.13) write(nttyo,1100) qsta_upper,qsta_lower
-        if (kflag(k).eq.13) write(40,1100) qsta_upper,qsta_lower
-        if (kflag(k).eq.14) write(nttyo,1110) betat_lim
-        if (kflag(k).eq.14) write(40,1110) betat_lim
-        if (kflag(k).eq.15) write(nttyo,1120) oleft_lim,oright_lim,otop_lim
-        if (kflag(k).eq.15) write(40,1120) oleft_lim,oright_lim,otop_lim
+      if (erflag(m,1).eq.1) then
+        write(nttyo,1010) chisq_lim
+        write(40,1010) chisq_lim
+        if (abs(ierchk).ne.2) lflag=erflag(m,1)
+      endif
+      if (erflag(m,2).eq.2) then
+        write(nttyo,1020) ali_upper,ali_lower
+        write(40,1020) ali_upper,ali_lower
+        lflag=erflag(m,2)
+      endif
+      if (erflag(m,3).eq.3) then
+        write(nttyo,1025) betap_lim
+        write(40,1025) betap_lim
+        lflag=erflag(m,3)
+      endif
+      if (erflag(m,4).eq.4) then
+        write(nttyo,1030) plasma_diff
+        write(40,1030) plasma_diff
+        lflag=erflag(m,4)
+      endif
+      if (erflag(m,5).eq.5) then
+        write(nttyo,1040) aout_upper,aout_lower
+        write(40,1040) aout_upper,aout_lower
+        lflag=erflag(m,5)
+      endif
+      if (erflag(m,6).eq.6) then
+        write(nttyo,1050) eout_upper,eout_lower
+        write(40,1050) eout_upper,eout_lower
+        lflag=erflag(m,6)
+      endif
+      if (erflag(m,7).eq.7) then
+        write(nttyo,1060) rout_upper,rout_lower
+        write(40,1060) rout_upper,rout_lower
+        lflag=erflag(m,7)
+      endif
+      if (erflag(m,8).eq.8) then
+        write(nttyo,1070) rcurrt_upper,rcurrt_lower
+        write(40,1070) rcurrt_upper,rcurrt_lower
+        lflag=erflag(m,8)
+      endif
+      if (erflag(m,9).eq.9) then
+        write(nttyo,1080) zout_upper,zout_lower
+        write(40,1080) zout_upper,zout_lower
+        lflag=erflag(m,9)
+      endif
+      if (erflag(m,10).eq.10) then
+        write(nttyo,1090) zcurrt_upper,zcurrt_lower
+        write(40,1090) zcurrt_upper,zcurrt_lower
+        lflag=erflag(m,10)
+      endif
+      if (erflag(m,13).eq.13) then
+        write(nttyo,1100) qsta_upper,qsta_lower
+        write(40,1100) qsta_upper,qsta_lower
+        lflag=erflag(m,13)
+      endif
+      if (erflag(m,14).eq.14) then
+        write(nttyo,1110) betat_lim
+        write(40,1110) betat_lim
+        lflag=erflag(m,14)
+      endif
+      if (erflag(m,15).eq.15) then
+        write(nttyo,1120) oleft_lim,oright_lim,otop_lim
+        write(40,1120) oleft_lim,oright_lim,otop_lim
+        lflag=erflag(m,15)
+      endif
+      if (erflag(m,18).eq.18) then 
         if (olefs(m).lt.olefs_check) then
-          if (kflag(k).eq.18) write(nttyo,1150) qout_lower
-          if (kflag(k).eq.18) write(40,1150) qout_lower
+          write(nttyo,1150) qout_lower
+          write(40,1150) qout_lower
         else
-          if (kflag(k).eq.18) write(nttyo,1160) qout_upper,qout_lower
-          if (kflag(k).eq.18) write(40,1160) qout_upper,qout_lower
+          write(nttyo,1160) qout_upper,qout_lower
+          write(40,1160) qout_upper,qout_lower
         endif
-        if (kflag(k).eq.19) write(nttyo,1170) error_lim
-        if (kflag(k).eq.19) write(40,1170) error_lim
-        if (kflag(k).eq.20) write(nttyo,1180) dbpli(m)
-        if (kflag(k).eq.20) write(40,1180) dbpli(m)
-        if (kflag(k).eq.21) write(nttyo,1190) delbp(m)
-        if (kflag(k).eq.21) write(40,1190) delbp(m)
-      enddo
+        lflag=erflag(m,18)
+      endif
+      if (erflag(m,19).eq.19) then 
+        write(nttyo,1170) error_lim
+        write(40,1170) error_lim
+        if (abs(ierchk).ne.2) lflag=erflag(m,19)
+      endif
+      if (erflag(m,20).eq.20) then
+        write(nttyo,1180) dbpli(m)
+        write(40,1180) dbpli(m)
+        lflag=erflag(m,20)
+      endif
+      if (erflag(m,21).eq.21) then
+        write(nttyo,1190) delbp(m)
+        write(40,1190) delbp(m)
+        lflag=erflag(m,21)
+      endif
       close(unit=40)
 !
       return

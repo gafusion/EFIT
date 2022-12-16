@@ -24,7 +24,7 @@
       namelist/setup/link_efit,link_store,maxinpfile,ntims,kxiter
       namelist/optin/mode,cmdfile,shotfile,shot,starttime,deltatime, &
                      steps,snapext,inpfile
-      namelist/in0/ierchk,iplcout,req_valid
+      namelist/in0/ierchk,iout,iplcout,req_valid
 
       ! Initialize variables
       input_flag = .false.
@@ -45,6 +45,8 @@
       kxiter_save = -1
       ierchk = 99
       ierchk_prior = 99
+      iout = -1
+      iout_prior = -1
       iplcout = -1
       iplcout_prior = -1
       req_valid = .false.
@@ -115,6 +117,9 @@
       endif
       if (iplcout .ne. -1) then
         iplcout_prior = iplcout
+      endif
+      if (iout .ne. -1) then
+        iout_prior = iout
       endif
 
       return

@@ -113,8 +113,8 @@ IECURR,1,"| (Integer flag) Ohmic coil (E-coil) current
 IERCHK,1,"| (Integer flag) Error Check.
 | 0 = don't check for MHD fitting errors
 | 1 = check for MHD fitting errors but continue regardless of the result (Default)
-| 2 = only output parameters file (a-file) if the error checks fail
-| 3 = don't output any result files (g, a, m, etc.) if error checks fail
+| 2 = don't output any result files (g, a, m, etc.) if checks fail, excluding the error and chi squared check
+| 3 = don't output any result files (g, a, m, etc.) if any error checks fail
 | - = don't call shapesurf to compute plasma quantities or output anything besides the a-file if fit hasn't converged (intended for use in an optimization loop)"
 IEXCAL,0, 1 = plot magnetic signals.
 IFITVS,0,"| (Integer flag) Fit Vessel Current. This parameter is an alternative to IVESEL and takes priority over any IVESEL value that is set.
