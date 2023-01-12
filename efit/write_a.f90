@@ -81,9 +81,9 @@
 !--   check error, on return lflag > 0 for error and the type of error
 !-----------------------------------------------------------------------
       lflag=0
-      if(abs(ierchk).gt.0) call chkerr(jj)
+      if(ierchk.gt.0) call chkerr(jj)
       if (lflag.gt.0) then
-        if(abs(ierchk).eq.3) return
+        if(abs(ierchk).gt.1) return
         jflag=0
       endif
       if (keqdsk.ge.1) then

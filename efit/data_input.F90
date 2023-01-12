@@ -1500,6 +1500,9 @@
         ierchk = ierchk_prior
         req_valid = req_valid_prior
       endif
+      if (iout_prior .ne. -1) then
+        iout = iout_prior
+      endif
       if (iplcout_prior .ne. -1) then
         iplcout = iplcout_prior
       endif

@@ -1,0 +1,5 @@
+﻿Variable, Default, Description
+IERCHK,,See namelist IN1.
+IOUT,,See namelist IN1.
+IPLCOUT,,See namelist IN1.
+REQ_VALID,,See namelist IN1.  NOTE: this parameter will only be used from this namelist if IERCHK is also set.

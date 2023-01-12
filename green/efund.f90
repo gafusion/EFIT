@@ -40,7 +40,7 @@
 !**          15/07/83..........first created                         **
 !**                                                                  **
 !**********************************************************************
-      subroutine e1coef(coef,  nl, ne)
+      subroutine e1coef(coef,nl,ne)
       use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
                       nfsum,nvsum,nvesel,nacoil
       use cecoil
@@ -85,7 +85,7 @@
 !**          26/04/83..........first created                         **
 !**                                                                  **
 !**********************************************************************
-      subroutine e2coef(coef, mp, ne)
+      subroutine e2coef(coef,mp,ne)
       use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
                       nfsum,nvsum,nvesel,nacoil
       use cecoil
@@ -152,7 +152,7 @@
 !**          15/07/83..........first created                         **
 !**                                                                  **
 !**********************************************************************
-      subroutine egrid(coef, rgrid, nr, zgrid, nz, ne)
+      subroutine egrid(coef,rgrid,nr,zgrid,nz,ne)
       use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
                       nfsum,nvsum,nvesel,nacoil
       use cecoil
@@ -2222,7 +2222,7 @@
       function xmdelk(xm1)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension a(5),b(5)
-      real*8  a,b,xm1,xmdelk
+      real*8 a,b,xm1,xmdelk
       data a(1),a(2),a(3),a(4),a(5)/1.38629436112,.09666344259,&
         .03590092383,.03742563713,.01451196212/
       data b(1),b(2),b(3),b(4),b(5)/.5,.12498593597,.06880248576,&

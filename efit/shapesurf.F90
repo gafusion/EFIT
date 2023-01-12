@@ -115,7 +115,7 @@
       xdum=0.0
       ydum=0.0
 #ifdef DEBUG_LEVEL1
-      write (6,*) 'Enter SHAPE kerror = ', kerror
+      write (6,*) 'Enter SHAPE iges, ivacum = ', iges, ivacum
 #endif
       is_vacuum: if (ivacum.eq.0) then
       if (iges.gt.1) then

@@ -272,7 +272,7 @@
                 kdot,icutfp,keqdsk,kdofit,kbetapr,kplotpr,kpressb, &
                 kfcurb,kpcurb,kzeroj,ncstne,ncstte, &
                 kwripre,negcur,kframe,kskipvs,icntour,iavdpl, &
-                limvs,kbound,kgraph,istore,iout,kdopre, &
+                limvs,kbound,kgraph,istore,iout,iout_prior,kdopre, &
                 iishot,kktime,iplcout,iplcout_prior,ksigma,kwritime
       integer*4 iteks,mxiters,n1coils,ierchks
       integer*4 itekt,mxitert,n1coilt
@@ -672,7 +672,7 @@
       module commonblocks
       real*8,allocatable :: c(:,:,:,:),wk(:),copy(:,:),bkx(:),bky(:), &
         cw(:,:,:,:),wkw(:),copyw(:,:),bwx(:),bwy(:), &
-        sifprw(:),bwprw(:),cwprw(:),dwprw(:),psirz(:,:), &
+        sifprw(:),bwprw(:),cwprw(:),dwprw(:), &
         sfprw(:),sprwp(:),wgridpc(:),rfcpc(:,:),ct(:,:,:,:), &
         wkt(:),bkrt(:),bkzt(:),psiold(:),psipold(:), &
         work(:),sifpre(:),bwpre(:),cwpre(:),dwpre(:),sfpre(:), &
