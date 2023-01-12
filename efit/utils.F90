@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !*
 !>          FLUXAV does the flux surface average
@@ -415,28 +416,33 @@
 !!    @param xplt :
 !!    @param yplt :
 !!    @param nplt :
-!!    @param jges :
+!!    @param jges : time index
 !!
 !*********************************************************************
       subroutine lenco2(xplt,yplt,nplt,jges)
       use set_kinds
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xplt(npoint),yplt(npoint)
-      dimension zuper(nco2v),zlower(nco2v),rco2(nco2r),rco2in(nco2r)
+      implicit none
+      integer*4, intent(in) :: jges,nplt
+      real*8, intent(in) :: xplt(npoint),yplt(npoint)
+      integer*4 i,k
+      real*8 rpath,yr1,yr2,zoutjme,zpath
+      real*8 zuper(nco2v),zlower(nco2v),rco2(nco2r),rco2in(nco2r), &
+                izout(nco2v)
       real*8, parameter :: zcentr=0.,zlibim=-0.127_dp
 !
-      do i=1,nco2r
-        rco2(i)=100.
-        rco2in(i)=0.
-      enddo
-      do i=1,nco2v
-        zuper(i)=100.
-        zlower(i)=0.
-      enddo
+      rco2=100.
+      rco2in=0.
+      zuper=100.
+      zlower=0.
+      izout=0.
       zuperts(jges)=100.
       zlowerts=0.
+      zoutjme=zout(jges)*0.01
+#ifdef DEBUG_LEVEL1
+      write(6,*) ' ZOUT = ',zoutjme
+#endif
       do i=1,nplt-1
         do k=1,nco2r
           yr1=chordr(k)-yplt(i)
@@ -457,8 +463,19 @@
           yr2=chordv(k)-xplt(i+1)
           if(yr1*yr2.gt.0.0) cycle
           zpath=yplt(i)+yr1*(yplt(i+1)-yplt(i))/(xplt(i+1)-xplt(i))
-          if(zpath.ge.zcentr) zuper(k)=zpath
-          if(zpath.le.zcentr) zlower(k)=zpath
+!          if(zpath.ge.zcentr) zuper(k)=zpath
+!          if(zpath.le.zcentr) zlower(k)=zpath
+!          if(zpath.ge.zoutjme) zuper(k)=zpath
+!          if(zpath.le.zoutjme) zlower(k)=zpath
+          izout(k)=izout(k)+1
+          if(izout(k).eq.1) zuper(k)=zpath
+          if (izout(k).eq.2) then
+            zlower(k)=zpath
+            if (zuper(k).lt.zpath) then
+              zlower(k)=zuper(k)
+              zuper(k)=zpath
+            endif
+          endif
         enddo
         yr1=rmajts-xplt(i)
         yr2=rmajts-xplt(i+1)
@@ -468,14 +485,17 @@
           if(zpath.le.zcentr) zlowerts=zpath*100.
         endif
       enddo
+      rco2v(:,jges)=100.0*(zuper-zlower)
+      dco2v(jges,:)=denvt(jges,:)/rco2v(:,jges)
+#ifdef DEBUG_LEVEL1
       do k=1,nco2v
-        rco2v(k,jges)=100.0*(zuper(k)-zlower(k))
-        dco2v(jges,k)=denvt(jges,k)/rco2v(k,jges)
+        write(6,*) ' V, RCO2V, DCO2V, ZU, ZL = ',k, rco2v(k,jges), &
+                   dco2v(jges,k), zuper(k), zlower(k)
       enddo
-      do k=1,nco2r
-        rco2r(k,jges)=100.0*(rco2(k)-rco2in(k))
-        dco2r(jges,k)=denrt(jges,k)/rco2r(k,jges)
-      enddo
+#endif
+
+      rco2r(:,jges)=100.0*(rco2-rco2in)
+      dco2r(jges,:)=denrt(jges,:)/rco2r(:,jges)
 !
       return
       end subroutine lenco2
