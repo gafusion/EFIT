@@ -133,8 +133,8 @@
       if (iplcout.eq.2) then
         pcurrz=0.0
         if (ivacum.eq.0) then
-          xdiff=(rgrid(nw)-rgrid(1))/nw
-          zdiff=(zgrid(nh)-zgrid(1))/nh
+          xdiff=xdim/(nw-1)
+          zdiff=zdim/(nh-1)
           do i=1,nw
             do j=1,nh
               kk=(i-1)*nh+j
