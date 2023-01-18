@@ -118,7 +118,7 @@ USE_ALTERNATE_POINTNAMES,0,"If non-zero, PCS data specified in file ALTERNATE_PO
 USE_CONSISTENT_DATA,,"When true, the data used to form constraints will be the same regardless of how many timeslices are being loaded.  (One caveat is if the variable size limit is hit, not all data will be fetched - see ntims/npefit in the code.)  Setting this to false will restore the legacy data fetching.  Default = .true."
 VSDAMP,,See namelist IN1.
 VZEROJ,,See namelist IN1.
-WRITE_KFILE,,"For the snap modes (3 & 7), write the k file, as if EFIT were run in mode 5 to get those k files, then mode 2 to get the equilibria."
+WRITE_KFILE,F,"For the snap modes (3 & 7), write the k file, as if EFIT were run in mode 5 to get those k files, then mode 2 to get the equilibria."
 XALPA,,See namelist IN1.
 XGAMA,,See namelist IN1.
 XLTYPE,,See namelist IN1.
