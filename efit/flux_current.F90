@@ -178,6 +178,7 @@
         call buneto(psi,INT(nw,i4),INT(nh,i4),work)
       else 
 !       new faster single cyclic reduction method
+        !$omp target teams distribute parallel do collapse(2)
         do i=2,nw-1
           do j=2,nh-1
             kk=(i-1)*nh+j
@@ -343,8 +344,11 @@
 !--   Green's integral method of obtaining flux, can be computationally     --
 !--   intensive                                                             --
 !-----------------------------------------------------------------------------
+      psi(:) = 0.0
+      !$omp target teams distribute parallel do simd collapse(2) 
       do i=1,nw
        do j=1,nh
+        tempsum1 = 0.
         kk=(i-1)*nh+j
         psi(kk)=psi(kk)+sum(gridfc(kk,1:nfcoil)*brsp(1:nfcoil))
         if(ivesel.gt.0) &
@@ -357,14 +361,16 @@
           psi(kk)=psi(kk)+sum(gridac(kk,1:nacoil)*caccurt(jtime,1:nacoil))
         psipla(kk)=psi(kk)
         if (ivacum.le.0) then
+          !$omp simd reduction(+:tempsum1)
           do ii=1,nw
             do jj=1,nh
               kkkk=(ii-1)*nh+jj
               mj=abs(j-jj)+1
               mk=(i-1)*nh+mj
-              psi(kk)=psi(kk)+gridpc(mk,ii)*pcurrt(kkkk)
+              tempsum1=tempsum1+gridpc(mk,ii)*pcurrt(kkkk)
             enddo
           enddo
+          psi(kk)=psi(kk)+tempsum1
           psipla(kk)=psi(kk)-psipla(kk)
         endif 
        enddo
