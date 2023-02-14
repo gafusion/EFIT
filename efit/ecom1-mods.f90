@@ -47,7 +47,7 @@
       real*8,dimension(:),allocatable :: tsaisq
       real*8 cond,tsaifc
       integer*4 nparam,nfnpcr,nfnwcr,nbase
-      !$omp declare target(brsp,brspss,nbase)
+      !$omp declare target(brsp,brspss,nbase,nfnpcr)
       end module var_rmatri
   
       module var_chimag
@@ -656,6 +656,7 @@
       real*8,dimension(:),allocatable :: rgrvt,pwprim,pressw,prwcal, &
                               saiprw,rgsvt
       real*8,dimension(:),allocatable :: presst
+      !$omp declare target(kwwcur,wcurbd,preswb)
       end module var_vtor
 
       module var_fitec

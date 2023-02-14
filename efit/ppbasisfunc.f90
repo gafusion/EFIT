@@ -298,6 +298,7 @@ function bsppin(ifunc,iparm,ypsi)
   include 'modules2.inc'
   include 'modules1.inc'
   implicit integer*4 (i-n), real*8 (a-h,o-z)
+  !$omp declare target 
       
   bsppin = 0.0
   ypsi2 = 1.0

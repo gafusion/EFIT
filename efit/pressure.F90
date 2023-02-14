@@ -127,6 +127,7 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension xpsii(nppcur)
+      !$omp declare target  
       !entry prcurr(ypsi,nnn)
       if (abs(ypsi).gt.1.0) then
         prcurr=0.0
@@ -134,10 +135,10 @@
       endif
       brspp=0.0
       prcurr=0.0
-      call setpr(ypsi,xpsii)
+      !call setpr(ypsi,xpsii)
       do i=nfcoil+1,nfcoil+nnn
         nn=i-nfcoil
-        prcurr=prcurr+brsp(i)*xpsii(nn)
+        prcurr=prcurr+brsp(i)*bsppin(kppfnc,nn,ypsi)
       enddo
       prcurr=-sidif*prcurr/darea+prbdry
 !----------------------------------------------------------------------
@@ -545,15 +546,16 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension xpsii(nwwcur)
+      !$omp declare target  
       if (abs(ypsi).gt.1.0) then
         pwcurr=0.0
         return
       endif
       pwcurr=0.0
-      call setpw(ypsi,xpsii)
+      !call setpw(ypsi,xpsii)
       do i=nfnpcr+1,nfnpcr+nnn
         nn=i-nfnpcr
-        pwcurr=pwcurr+brsp(i)*xpsii(nn)
+        pwcurr=pwcurr+brsp(i)*bswwin(kwwfnc,nn,ypsi)
       enddo
       pwcurr=-sidif*pwcurr/darea+preswb
       return

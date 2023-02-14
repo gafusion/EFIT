@@ -85,13 +85,16 @@
         fgowfe=0.0
       endif
 !
+      !$omp target update to (kpcurn,nw,nh)
+
+      !$omp target teams loop 
       do i=1,nw
         do j=1,nh
           kk=(i-1)*nh+j
           if ((xpsi(kk).ge.0.0).and.(xpsi(kk).le.1.0)) then
-            call setpp(xpsi(kk),xpsii)
+            !call setpp(xpsi(kk),xpsii)
             do jj=1,kppcur
-              factor=xpsii(jj)*rgrid(i)*www(kk)
+              factor=bsppel(kppfnc,jj,xpsi(kk))*rgrid(i)*www(kk)
 !------------------------------------------------------------------------
 !--           correction for rotation, p0' terms                       --
 !------------------------------------------------------------------------
@@ -124,9 +127,11 @@
               endif
               if (ifag.ne.1) then
                 do m=1,nsilop
+                  !$omp atomic
                   rsilpc(m,jj)=rsilpc(m,jj) + gsilpc(m,kk)*factor
                 enddo
                 do m=1,magpri
+                  !$omp atomic
                   rmp2pc(m,jj)=rmp2pc(m,jj) + gmp2pc(m,kk)*factor
                 enddo
                 if (kstark.gt.0.or.kdomse.gt.0) then
@@ -152,6 +157,7 @@
                   enddo
                 endif
               endif
+              !$omp atomic
               fgowpc(jj)=fgowpc(jj) + factor
             enddo
 !-------------------------------------------------------------------------
@@ -194,16 +200,18 @@
             wwwww=zero(kk)
           endif
           if ((upsi.ge.0.0).and.(upsi.le.1.0)) then
-            call setfp(upsi,xpsii)
+            !call setfp(upsi,xpsii)
             if(fwtdlc.gt.0.0) call setff(upsi,xpsis)
             do jj=kppcur+1,kpcurn
               jjk=jj-kppcur
-              factor=xpsii(jjk)/rgrid(i)*wwwww
+              factor=bsffel(kfffnc,jjk,upsi)/rgrid(i)*wwwww
               if (ifag.ne.1) then
                 do m=1,nsilop
+                  !$omp atomic
                   rsilpc(m,jj)=rsilpc(m,jj)+gsilpc(m,kk)*factor
                 enddo
                 do m=1,magpri
+                  !$omp atomic
                   rmp2pc(m,jj)=rmp2pc(m,jj)+gmp2pc(m,kk)*factor
                 enddo
                 if (kstark.gt.0.or.kdomse.gt.0) then
@@ -229,6 +237,7 @@
                   enddo
                 endif
               endif
+              !$omp atomic
               fgowpc(jj)=fgowpc(jj)+factor
               if (ifag.eq.1) cycle
               if (fwtdlc.gt.0.0) then

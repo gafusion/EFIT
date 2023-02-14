@@ -96,7 +96,7 @@
         integer*4 :: modef, modep, modew, kubics
         integer*4 :: icycred_loopmax
         integer*4 :: nfourier !< nfourier number Fourier components of vessel current
-        !$omp declare target(nfcoil,nppcur,nffcur)
+        !$omp declare target(nfcoil,nppcur,nffcur,nwwcur,nwcurn)
         !$omp declare target(nw,nh,icycred_loopmax)
         !$omp declare target(lubicx,lubicy,kubicx,kubicy)
 
@@ -317,7 +317,7 @@
                kffcurs,kppcurs
         data cstabz/0.0e-13/
         data icalbet/1/
-      !$omp declare target(kppcur,kffcur)
+      !$omp declare target(kppcur,kffcur,kpcurn)
       end module var_pfterm
 !var_cfit
       module var_cfit
