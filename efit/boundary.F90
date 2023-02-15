@@ -1397,8 +1397,8 @@
 !!    @param xseps : coordinates of separtrices (if requested/found)
 !!    @param yseps : coordinates of separtrices (if requested/found)
 !!    @param kaxis : kaxis = 10, bicubic spline only 
-!!                  20, find axis and separatrix if any 
-!!                 <  0, seperatrix only 
+!!                           20, find axis and separatrix if any 
+!!                           <0, seperatrix only 
 !!    @param xxout : coordinates of raised mag flux region outline (psipsi=0)
 !!    @param yyout : coordinates of raised mag flux region outline (psipsi=0)
 !!    @param kfound : number of points defining the raised mag flux region outline (psipsi=0)
@@ -1411,7 +1411,10 @@
 !!    @param zrmax :
 !!    @param rzmin :
 !!    @param rzmax :
-!!    @param dpsipsi :
+!!    @param dpsipsi : difference of psi values on contour
+!!                       and on limiter.  dpsipsi is used to
+!!                       distinguish between a limited and a
+!!                       diverted plasma 
 !!    @param bpoo :
 !!    @param bpooz :
 !!    @param limtrv :

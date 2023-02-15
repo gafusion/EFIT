@@ -120,6 +120,7 @@ VSURFA, not computed (always zero)
 VOUT, plasma volume in m 3
 WBDOT, not computed (always zero)
 WPDOT, not computed (always zero)
+WPLASM, plasma stored energy in Joule
 WPLASMD, diamagnetic plasma stored energy in Joule
 XNDNT, plasma boundary indentation
 XNNC, "vertical stability parameter, vacuum field index normalized to critical index value"

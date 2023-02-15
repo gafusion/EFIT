@@ -491,24 +491,33 @@
         select case (ifref)
         case(1)
 !-----------------------------------------------------------------------
-!--       sum of inner F-coils 1-5 A and B zero IFREF=1               --
+!--       sum of inner F-coils 1-5 A and B zero
 !-----------------------------------------------------------------------
-          sumif = sum(brsp(1:5) + brsp(10:14))
-          sumifr = sum(fcref(1:5) + fcref(10:14))
-          sumif = sumif + brsp(8) + brsp(17)
-          sumifr = sumifr + fcref(8) + fcref(17)
-!-----------------------------------------------------------------------
-!--       sum of F coils selected through FCSUM vanish IFREF=2        --
-!-----------------------------------------------------------------------
+          sumif=sum(brsp(1:5)+brsp(10:14))
+          sumifr=sum(fcref(1:5)+fcref(10:14))
+          sumif=sumif+brsp(8)+brsp(17)
+          sumifr=sumifr+fcref(8)+fcref(17)
         case(2)
-          sumif = sum(fcsum(1:nfcoil)*brsp(1:nfcoil)/turnfc(1:nfcoil))
-          sumifr = sum(fcref(1:nfcoil)*fcsum(1:nfcoil)/turnfc(1:nfcoil))
+!-----------------------------------------------------------------------
+!--       sum of F coils selected through FCSUM vanish
+!-----------------------------------------------------------------------
+          sumif=sum(fcsum(1:nfcoil)*brsp(1:nfcoil)/turnfc(1:nfcoil))
+          sumifr=sum(fcref(1:nfcoil)*fcsum(1:nfcoil)/turnfc(1:nfcoil))
         case(3)
 !----------------------------------------------------------------------
-!--     choose boundary flux by minimize coil currents IFREF=3       --
+!--       choose boundary flux by minimizing coil currents
 !----------------------------------------------------------------------
-          sumif = sum(fcref(1:nfcoil)*brsp(1:nfcoil)*fczero(1:nfcoil))
-          sumifr = sum(fcref(1:nfcoil)**2*fczero(1:nfcoil))
+          sumif=sum(fcref(1:nfcoil)*brsp(1:nfcoil)*fczero(1:nfcoil))
+          sumifr=sum(fcref(1:nfcoil)**2*fczero(1:nfcoil))
+        case(4)
+!----------------------------------------------------------------------
+!--       fixed boundary flux specified through PSIBRY
+!----------------------------------------------------------------------
+          ssiref=psibry0-psibry
+          brsp(1:nfcoil)=brsp(1:nfcoil)+ssiref*fcref(1:nfcoil)
+          silopt(jtime,1:nfcoil)=silopt(jtime,1:nfcoil)+ssiref
+          wsibry=wsibry+ssiref
+          wsisol=wsisol+ssiref
         end select
 !-----------------------------------------------------------------------
 !--     update boundary flux for IFREF=1-3                            --
@@ -520,19 +529,8 @@
           wsibry=wsibry-ssiref
           wsisol=wsisol-ssiref
         endif
-!------------------------------------------------------------------------
-!--     fixed boundary flux specified through PSIBRY, IFREF=4          --
-!------------------------------------------------------------------------
-        if (ifref.eq.4) then
-          ssiref=psibry0-psibry
-          brsp(1:nfcoil)=brsp(1:nfcoil)+ssiref*fcref(1:nfcoil)
-          silopt(jtime,1:nfcoil)=silopt(jtime,1:nfcoil)+ssiref
-          wsibry=wsibry+ssiref
-          wsisol=wsisol+ssiref
-        endif
-
 #ifdef DEBUG_LEVEL2
-        write (106,*) '      PSIBRY0,PSIBRY,WSIBRY= ',&
+        write(106,*) '      PSIBRY0,PSIBRY,WSIBRY= ',&
                       psibry0,psibry,wsibry
 #endif
       endif bdry_flux
@@ -540,21 +538,21 @@
 !--   estimated errors for fixed boundary calculations                --
 !-----------------------------------------------------------------------
       if (nbdry.gt.0.and.iconvr.eq.3) then
-      erbmax=0.0
-      erbave=0.0
-      do i=1,nbdry
-        xsibry=pbry(i)+sum(rbdrfc(i,1:nfcoil)*brsp(1:nfcoil))
-        erbloc(i)=abs((wsibry-xsibry)/sidif)
-        erbmax=max(erbloc(i),erbmax)
-        erbave=erbave+erbloc(i)
-      enddo
-      erbave=erbave/nbdry
+        erbmax=0.0
+        erbave=0.0
+        do i=1,nbdry
+          xsibry=pbry(i)+sum(rbdrfc(i,1:nfcoil)*brsp(1:nfcoil))
+          erbloc(i)=abs((wsibry-xsibry)/sidif)
+          erbmax=max(erbloc(i),erbmax)
+          erbave=erbave+erbloc(i)
+        enddo
+        erbave=erbave/nbdry
 #ifdef DEBUG_LEVEL1
-      write (6,*) 'FCURRT erbmax,erbave,si = ',erbmax,erbave,wsibry
+        write(6,*) 'FCURRT erbmax,erbave,si = ',erbmax,erbave,wsibry
 #endif
 #ifdef DEBUG_LEVEL2
-      write (106,*) 'XSIBRY,PBRY(1),BRSP= ', &
-                    xsibry,pbry(1),(brsp(m),m=1,nfcoil)
+        write(106,*) 'XSIBRY,PBRY(1),BRSP= ', &
+                     xsibry,pbry(1),(brsp(m),m=1,nfcoil)
 #endif
       endif
 !
