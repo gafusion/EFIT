@@ -4,52 +4,58 @@
 !!    green sets up the appropriate response functions for use
 !!    with the routine matrix.
 !!
-!!    @param ifag :
+!!    @param iflag :
 !!
 !!    @param jtime : time index
 !!
 !!    @param niter : iteration number
 !!
 !**********************************************************************
-      subroutine green(ifag,jtime,niter)
-      use commonblocks,only: c,wk,copy,bkx,bky
+      subroutine green(iflag,jtime,niter)
+      use commonblocks,only: c,bkx,bky
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xpsii(nwcurn),xpsis(nwcurn),xpsisb(nwcurn)
-      dimension xsier(nercur)
-      dimension pds(6),xnsi(nppcur)
+      implicit none
+      real*8 pwcurr,prcurr,erpote
+      real*8 bsppel,bsffel
+      integer*4, intent(in) :: iflag,jtime,niter
+      integer*4 i,j,jj,jjk,k,kk,m,ier
+      real*8 factor,ecorrect,epotp,kffp1,pres0,prew0,ptop0,pwop0,pwp0r2, &
+             qconst,rmggvt,rmsnow,rmvjj,rmvnow,rmvtor,siedge,upsi,upsi1, &
+             wwwww,xmsinow,xn,xpsdb,xpsdd,xpsnow,xpzero,ypsi,zmsnow
+      real*8 xpsii(nwcurn),xpsis(nwcurn),xpsisb(nwcurn),xsier(nercur), &
+             pds(6),xnsi(nppcur)
 !      
       kffp1=kffcur+1
       do jj=1,kwcurn
-        if (ifag.ne.1) then
-          rsilpc(1:nsilop,jj)=0.0
-          rmp2pc(1:magpri,jj)=0.0
+        if (iflag.ne.1) then
+          rsilpc(:,jj)=0.0
+          rmp2pc(:,jj)=0.0
           if (kstark.gt.0.or.kdomse.gt.0) then
-            rbrpc(1:nstark,jj)=0.0
-            rbzpc(1:nstark,jj)=0.0
+            rbrpc(:,jj)=0.0
+            rbzpc(:,jj)=0.0
           endif
           if(mmbmsels.gt.0.or.kdomsels.gt.0) rmlspc(1:nmsels,jj)=0.0
-          if(kece.gt.0) recepc(1:nnece,jj)=0.0
+          if(kece.gt.0) recepc(:,jj)=0.0
           if(kecebz.gt.0) recebzpc(jj)=0.0
           if(nbdry.gt.0) gbdrpc(1:nbdry,jj)=0.0
         endif
         fgowpc(jj)=0.0
       enddo
       if (fitdelz.and.niter.ge.ndelzon) then
-        gsildz(1:nsilop)=0.0
-        gmp2dz(1:magpri)=0.0
+        gsildz=0.0
+        gmp2dz=0.0
         fgowdz=0.0
         if (kstark.gt.0) then
-          gbrdz(1:nstark)=0.0
-          gbzdz(1:nstark)=0.0
+          gbrdz=0.0
+          gbzdz=0.0
         endif
-        if(kece.gt.0) gecedz(1:nnece)=0.0
+        if(kece.gt.0) gecedz=0.0
         if(kecebz.gt.0) gecebzdz=0.0
         if(nbdry.gt.0) gbdrdz(1:nbdry)=0.0
       endif
-      if(ifag.ne.1) rspdlc(1:kffcur)=0.0
+      if(iflag.ne.1) rspdlc(1:kffcur)=0.0
 !
       if (fwtdlc.gt.0.0) then
         upsi1=1.0
@@ -59,12 +65,12 @@
 !--   Hyperbolic tangent term                                    --
 !------------------------------------------------------------------
       if (kedgep.gt.0) then
-        if (ifag.ne.1) then
-          rsilpe(1:nsilop)=0.0
-          rmp2pe(1:magpri)=0.0
+        if (iflag.ne.1) then
+          rsilpe=0.0
+          rmp2pe=0.0
           if (kstark.gt.0.or.kdomse.gt.0) then
-            rbrpe(1:nstark)=0.0
-            rbzpe(1:nstark)=0.0
+            rbrpe=0.0
+            rbzpe=0.0
           endif
           if(nbdry.gt.0) gbdrpe(1:nbdry)=0.0
         endif
@@ -72,12 +78,12 @@
       endif
 !
       if (kedgef.gt.0) then
-        if (ifag.ne.1) then
-          rsilfe(1:nsilop)=0.0
-          rmp2fe(1:magpri)=0.0
+        if (iflag.ne.1) then
+          rsilfe=0.0
+          rmp2fe=0.0
           if (kstark.gt.0.or.kdomse.gt.0) then
-            rbrfe(1:nstark)=0.0
-            rbzfe(1:nstark)=0.0
+            rbrfe=0.0
+            rbzfe=0.0
           endif
           if(nbdry.gt.0) gbdrfe(1:nbdry)=0.0
           rdlcfe=0.0
@@ -95,6 +101,7 @@
             !call setpp(xpsi(kk),xpsii)
             do jj=1,kppcur
               factor=bsppel(kppfnc,jj,xpsi(kk))*rgrid(i)*www(kk)
+              !factor=xpsii(jj)*rgrid(i)*www(kk)
 !------------------------------------------------------------------------
 !--           correction for rotation, p0' terms                       --
 !------------------------------------------------------------------------
@@ -125,7 +132,7 @@
                   factor=factor*ptop0*(1.-pwp0r2)
                 endif
               endif
-              if (ifag.ne.1) then
+              if (iflag.ne.1) then
                 do m=1,nsilop
                   !$omp atomic
                   rsilpc(m,jj)=rsilpc(m,jj) + gsilpc(m,kk)*factor
@@ -135,30 +142,24 @@
                   rmp2pc(m,jj)=rmp2pc(m,jj) + gmp2pc(m,kk)*factor
                 enddo
                 if (kstark.gt.0.or.kdomse.gt.0) then
-                  do m=1,nstark
-                    rbrpc(m,jj)=rbrpc(m,jj) + gbrpc(m,kk)*factor
-                    rbzpc(m,jj)=rbzpc(m,jj) + gbzpc(m,kk)*factor
-                  enddo
+                  rbrpc(:,jj)=rbrpc(:,jj)+gbrpc(:,kk)*factor
+                  rbzpc(:,jj)=rbzpc(:,jj)+gbzpc(:,kk)*factor
                 endif
-                if (kece.gt.0) then
-                  do m=1,nnece
-                    recepc(m,jj)=recepc(m,jj) + gecepc(m,kk)*factor
-                  enddo
-                endif
-                if (kecebz.gt.0) then
-                  recebzpc(jj)=recebzpc(jj) + gecebzpc(kk)*factor
-                endif
+                if(kece.gt.0) &
+                  recepc(:,jj)=recepc(:,jj)+gecepc(:,kk)*factor
+                if(kecebz.gt.0) &
+                  recebzpc(jj)=recebzpc(jj)+gecebzpc(kk)*factor
 !---------------------------------------------------------------------------
 !--             Boundary constraints                                      --
 !---------------------------------------------------------------------------
                 if (nbdry.gt.0) then
                   do m=1,nbdry
-                    gbdrpc(m,jj)=gbdrpc(m,jj) + rbdrpc(m,kk)*factor
+                    gbdrpc(m,jj)=gbdrpc(m,jj)+rbdrpc(m,kk)*factor
                   enddo
                 endif
               endif
               !$omp atomic
-              fgowpc(jj)=fgowpc(jj) + factor
+              fgowpc(jj)=fgowpc(jj)+factor
             enddo
 !-------------------------------------------------------------------------
 !--         Hyperbolic tangent term for P'                              --
@@ -167,26 +168,20 @@
               siedge=(xpsi(kk)-pe_psin)/pe_width
               xpsnow=1./pe_width/sidif/cosh(siedge)**2
               factor=xpsnow*rgrid(i)*www(kk)
-              if (ifag.ne.1) then
-                do m=1,nsilop
-                  rsilpe(m)=rsilpe(m) + gsilpc(m,kk)*factor
-                enddo
-                do m=1,magpri
-                  rmp2pe(m)=rmp2pe(m) + gmp2pc(m,kk)*factor
-                enddo
+              if (iflag.ne.1) then
+                rsilpe=rsilpe+gsilpc(:,kk)*factor
+                rmp2pe=rmp2pe+gmp2pc(:,kk)*factor
                 if (kstark.gt.0.or.kdomse.gt.0) then
-                  do m=1,nstark
-                    rbrpe(m)=rbrpe(m) + gbrpc(m,kk)*factor
-                    rbzpe(m)=rbzpe(m) + gbzpc(m,kk)*factor
-                  enddo
+                  rbrpe=rbrpe+gbrpc(:,kk)*factor
+                  rbzpe=rbzpe+gbzpc(:,kk)*factor
                 endif
                 if (nbdry.gt.0) then
                   do m=1,nbdry
-                    gbdrpe(m)=gbdrpe(m) + rbdrpc(m,kk)*factor
+                    gbdrpe(m)=gbdrpe(m)+rbdrpc(m,kk)*factor
                   enddo
                 endif
               endif
-              fgowpe=fgowpe + factor
+              fgowpe=fgowpe+factor
             endif
           endif
 !-------------------------------------------------------------------------
@@ -205,7 +200,8 @@
             do jj=kppcur+1,kpcurn
               jjk=jj-kppcur
               factor=bsffel(kfffnc,jjk,upsi)/rgrid(i)*wwwww
-              if (ifag.ne.1) then
+              !factor=xpsii(jjk)/rgrid(i)*wwwww
+              if (iflag.ne.1) then
                 do m=1,nsilop
                   !$omp atomic
                   rsilpc(m,jj)=rsilpc(m,jj)+gsilpc(m,kk)*factor
@@ -215,31 +211,25 @@
                   rmp2pc(m,jj)=rmp2pc(m,jj)+gmp2pc(m,kk)*factor
                 enddo
                 if (kstark.gt.0.or.kdomse.gt.0) then
-                  do m=1,nstark
-                    rbrpc(m,jj)=rbrpc(m,jj)+gbrpc(m,kk)*factor
-                    rbzpc(m,jj)=rbzpc(m,jj)+gbzpc(m,kk)*factor
-                  enddo
+                  rbrpc(:,jj)=rbrpc(:,jj)+gbrpc(:,kk)*factor
+                  rbzpc(:,jj)=rbzpc(:,jj)+gbzpc(:,kk)*factor
                 endif
-                if (kece.gt.0) then
-                  do m=1,nece
-                    recepc(m,jj)=recepc(m,jj)+gecepc(m,kk)*factor
-                  enddo
-                endif
-                if (kecebz.gt.0) then
+                if(kece.gt.0) &
+                  recepc(:,jj)=recepc(:,jj)+gecepc(:,kk)*factor
+                if(kecebz.gt.0) &
                   recebzpc(jj)=recebzpc(jj)+gecebzpc(kk)*factor
-                endif
 !---------------------------------------------------------------------------
 !--             Boundary constraints                                      --
 !---------------------------------------------------------------------------
                 if (nbdry.gt.0) then
                   do m=1,nbdry
-                    gbdrpc(m,jj)=gbdrpc(m,jj) + rbdrpc(m,kk)*factor
+                    gbdrpc(m,jj)=gbdrpc(m,jj)+rbdrpc(m,kk)*factor
                   enddo
                 endif
               endif
               !$omp atomic
               fgowpc(jj)=fgowpc(jj)+factor
-              if (ifag.eq.1) cycle
+              if (iflag.eq.1) cycle
               if (fwtdlc.gt.0.0) then
                 xpsdd=xpsis(jjk)
                 xpsdb=xpsisb(jjk)
@@ -255,22 +245,16 @@
               xpsnow=1./fe_width/sidif/cosh(siedge)**2
               if (icutfp.gt.0) xpsnow=xpsnow*xpsimin
               factor=xpsnow/rgrid(i)*wwwww
-              if (ifag.ne.1) then
-                do m=1,nsilop
-                  rsilfe(m)=rsilfe(m) + gsilpc(m,kk)*factor
-                enddo
-                do m=1,magpri
-                  rmp2fe(m)=rmp2fe(m) + gmp2pc(m,kk)*factor
-                enddo
+              if (iflag.ne.1) then
+                rsilfe=rsilfe+gsilpc(:,kk)*factor
+                rmp2fe=rmp2fe+gmp2pc(:,kk)*factor
                 if (kstark.gt.0.or.kdomse.gt.0) then
-                  do m=1,nstark
-                    rbrfe(m)=rbrfe(m) + gbrpc(m,kk)*factor
-                    rbzfe(m)=rbzfe(m) + gbzpc(m,kk)*factor
-                  enddo
+                  rbrfe=rbrfe+gbrpc(:,kk)*factor
+                  rbzfe=rbzfe+gbzpc(:,kk)*factor
                 endif
                 if (nbdry.gt.0) then
                   do m=1,nbdry
-                    gbdrfe(m)=gbdrfe(m) + rbdrpc(m,kk)*factor
+                    gbdrfe(m)=gbdrfe(m)+rbdrpc(m,kk)*factor
                   enddo
                 endif
                 if (fwtdlc.gt.0.0) then
@@ -280,7 +264,7 @@
                         /rgrid(i)*www(kk)+rdlcfe
                 endif
               endif
-              fgowfe=fgowfe + factor
+              fgowfe=fgowfe+factor
             endif
           endif
 !----------------------------------------------------------------------
@@ -290,8 +274,8 @@
             then
             call setpwp(xpsi(kk),xpsii)
             do jj=kpcurn+1,kwcurn
-              jjii=jj-kpcurn
-              factor=xpsii(jjii)*rgsvt(i)*www(kk)
+              jjk=jj-kpcurn
+              factor=xpsii(jjk)*rgsvt(i)*www(kk)
               if (niter.gt.1) then
                 if (kvtor.eq.2) then
                   factor=factor*(1.+pwp0r2)
@@ -299,37 +283,27 @@
                   factor=factor*ptop0
                 endif
               endif
-              if (ifag.ne.1) then
-                do m=1,nsilop
-                  rsilpc(m,jj)=rsilpc(m,jj) + gsilpc(m,kk)*factor
-                enddo
-                do m=1,magpri
-                  rmp2pc(m,jj)=rmp2pc(m,jj) + gmp2pc(m,kk)*factor
-                enddo
+              if (iflag.ne.1) then
+                rsilpc(:,jj)=rsilpc(:,jj)+gsilpc(:,kk)*factor
+                rmp2pc(:,jj)=rmp2pc(:,jj)+gmp2pc(:,kk)*factor
                 if (kstark.gt.0.or.kdomse.gt.0) then
-                  do m=1,nstark
-                    rbrpc(m,jj)=rbrpc(m,jj) + gbrpc(m,kk)*factor
-                    rbzpc(m,jj)=rbzpc(m,jj) + gbzpc(m,kk)*factor
-                  enddo
+                  rbrpc(:,jj)=rbrpc(:,jj)+gbrpc(:,kk)*factor
+                  rbzpc(:,jj)=rbzpc(:,jj)+gbzpc(:,kk)*factor
                 endif
-                if (kece.gt.0) then
-                  do m=1,nece
-                    recepc(m,jj)=recepc(m,jj) + gecepc(m,kk)*factor
-                  enddo
-                endif
-                if (kecebz.gt.0) then
-                  recebzpc(jj)=recebzpc(jj) + gecebzpc(kk)*factor
-                endif
+                if(kece.gt.0) &
+                  recepc(:,jj)=recepc(:,jj)+gecepc(:,kk)*factor
+                if(kecebz.gt.0) &
+                  recebzpc(jj)=recebzpc(jj)+gecebzpc(kk)*factor
 !---------------------------------------------------------------------------
 !--             Boundary constraints                                      --
 !---------------------------------------------------------------------------
                 if (nbdry.gt.0) then
                   do m=1,nbdry
-                    gbdrpc(m,jj)=gbdrpc(m,jj) + rbdrpc(m,kk)*factor
+                    gbdrpc(m,jj)=gbdrpc(m,jj)+rbdrpc(m,kk)*factor
                   enddo
                 endif
               endif
-              fgowpc(jj)=fgowpc(jj) + factor
+              fgowpc(jj)=fgowpc(jj)+factor
             enddo
           endif rotation
         enddo
@@ -352,7 +326,7 @@
       call setpp(xpzero,xpsii)
       rmvtor=qconst*rmaxis
       rmvjj=rmaxis
-      if (kvtor.gt.0) rmggvt=(rmaxis/rvtor)**2-1.
+      if(kvtor.gt.0) rmggvt=(rmaxis/rvtor)**2-1.
       if (niter.gt.1) then
         if (kvtor.eq.2) then
           prew0=pwcurr(xpzero,kwwcur)
@@ -382,9 +356,9 @@
           rmvjj=rmvjj*ptop0*(1.-pwp0r2)
         endif
       endif
-      rqajtor = rmvtor
+      rqajtor=rmvtor
       do jj=1,kppcur
-        factor= xpsii(jj)
+        factor=xpsii(jj)
         rqajx(jj)=rmvtor*factor
         rjjjx(jj)=rmvjj*factor
       enddo
@@ -396,9 +370,9 @@
 !
       call setfp(xpzero,xpsii)
       rmvtor=qconst/rmaxis
-      rqaftor = rmvtor
+      rqaftor=rmvtor
       do jj=1,kffcur
-        factor= xpsii(jj)
+        factor=xpsii(jj)
         rqafx(jj)=rmvtor*factor
         rjjfx(jj)=factor/rmaxis
       enddo
@@ -421,7 +395,7 @@
         endif
         rmvtor=qconst*rmvnow
         do jj=1,kwwcur
-          factor= xpsii(jj)
+          factor=xpsii(jj)
           rqawx(jj)=rmvtor*factor
           rjjwx(jj)=rmvnow*factor
         enddo
@@ -450,7 +424,7 @@
                           +(a4gam(jtime,m)*tangam(jtime,m) &
                           - a1gam(jtime,m))*rbzec(m,jj)
             enddo
-            if (ifitvs.gt.0) then
+            if (ivesel.eq.3) then
               do jj=1,nvesel
                 rgamvs(m,jj)=(a3gam(jtime,m)*tangam(jtime,m) &
                             - a8gam(jtime,m))*rbrvs(m,jj) &
@@ -509,8 +483,8 @@
                           xnsi(1),xnsi(2),xnsi(3),tmu02,sidif,darea
 #endif
               do jj=kppcur+1,kpcurn
-                mjj=jj-kppcur
-                rmlspc(m,jj)=-l1mselt(jtime,m)*sidif/darea*xnsi(mjj)*tmu02
+                jjk=jj-kppcur
+                rmlspc(m,jj)=-l1mselt(jtime,m)*sidif/darea*xnsi(jjk)*tmu02
                 rmlspc(m,jj)=rmlspc(m,jj)/rrmselt(jtime,m)**2
               enddo
             endif
@@ -523,9 +497,9 @@
               epotp=erpote(ypsi,keecur)
               ecorrect=ecorrect-l4mselt(jtime,m)*rrmselt(jtime,m)*epotp
             endif
-            rhsmls(jtime,m)=rhsmls(jtime,m)- l2mselt(jtime,m)*ecorrect* &
+            rhsmls(jtime,m)=rhsmls(jtime,m)-l2mselt(jtime,m)*ecorrect* &
               brmls(m)*btmls(m)
-            rhsmls(jtime,m)=rhsmls(jtime,m)- l3mselt(jtime,m)*ecorrect**2* &
+            rhsmls(jtime,m)=rhsmls(jtime,m)-l3mselt(jtime,m)*ecorrect**2* &
               brmls(m)**2
             rhsmls(jtime,m)=rhsmls(jtime,m)-(l3mselt(jtime,m)*ecorrect**2+ &
               l1mselt(jtime,m))*bzmls(m)**2
@@ -565,7 +539,7 @@
                 call setpp(xpsi(kk),xpsii)
                 do jj=1,kppcur
                   factor=xpsii(jj)*rgrid(i)*www(kk)
-                  fgowsw(jj,k)=fgowsw(jj,k) + factor
+                  fgowsw(jj,k)=fgowsw(jj,k)+factor
                 enddo
               endif
               if (icutfp.eq.0) then
@@ -578,15 +552,15 @@
               if ((upsi.lt.0.0).or.(upsi.gt.psiwant)) cycle
               call setfp(upsi,xpsii)
               do jj=kppcur+1,kpcurn
-                jji=jj-kppcur
-                factor=xpsii(jji)/rgrid(i)*wwwww
+                jjk=jj-kppcur
+                factor=xpsii(jjk)/rgrid(i)*wwwww
                 fgowsw(jj,k)=fgowsw(jj,k)+factor
               enddo
             enddo
           enddo
         enddo
       endif
-      if (ifag.eq.1) return
+      if (iflag.eq.1) return
 !--------------------------------------------------------------------------
 !--   deltaz in fitting                                                  --
 !--------------------------------------------------------------------------
@@ -602,35 +576,25 @@
                 factor=xpsii(jj)*rgrid(i)*www(kk)*pds(3)*brsp(nfcoil+jj)
                 factor=-factor/sidif
                 rdjdz(kk)=rdjdz(kk)+factor
-                do m=1,nsilop
-                  gsildz(m)=gsildz(m) + gsilpc(m,kk)*factor
-                enddo
-                do m=1,magpri
-                  gmp2dz(m)=gmp2dz(m) + gmp2pc(m,kk)*factor
-                enddo
+                gsildz=gsildz+gsilpc(:,kk)*factor
+                gmp2dz=gmp2dz+gmp2pc(:,kk)*factor
                 if (kstark.gt.0) then
-                  do m=1,nstark
-                    gbrdz(m)=gbrdz(m) + gbrpc(m,kk)*factor
-                    gbzdz(m)=gbzdz(m) + gbzpc(m,kk)*factor
-                  enddo
+                  gbrdz=gbrdz+gbrpc(:,kk)*factor
+                  gbzdz=gbzdz+gbzpc(:,kk)*factor
                 endif
-                if (kece.gt.0) then
-                  do m=1,nece
-                    recedz(m)=recedz(m) + gecepc(m,kk)*factor
-                  enddo
-                endif
-                if (kecebz.gt.0) then
-                  recebzdz=recebzdz + gecebzpc(kk)*factor
-                endif
+                if(kece.gt.0) &
+                  recedz=recedz+gecepc(:,kk)*factor
+                if(kecebz.gt.0) &
+                  recebzdz=recebzdz+gecebzpc(kk)*factor
 !---------------------------------------------------------------------------
 !--             Boundary constraints                                      --
 !---------------------------------------------------------------------------
                 if (nbdry.gt.0) then
                   do m=1,nbdry
-                    gbdrdz(m)=gbdrdz(m) + rbdrpc(m,kk)*factor
+                    gbdrdz(m)=gbdrdz(m)+rbdrpc(m,kk)*factor
                   enddo
                 endif
-                fgowdz=fgowdz + factor
+                fgowdz=fgowdz+factor
               enddo
             endif
 !-------------------------------------------------------------------------
@@ -650,35 +614,25 @@
                 factor=xpsii(jjk)/rgrid(i)*wwwww*pds(3)*brsp(nfcoil+jj)
                 factor=-factor/sidif
                 rdjdz(kk)=rdjdz(kk)+factor
-                do m=1,nsilop
-                  gsildz(m)=gsildz(m) + gsilpc(m,kk)*factor
-                enddo
-                do m=1,magpri
-                  gmp2dz(m)=gmp2dz(m) + gmp2pc(m,kk)*factor
-                enddo
+                gsildz=gsildz+gsilpc(:,kk)*factor
+                gmp2dz=gmp2dz+gmp2pc(:,kk)*factor
                 if (kstark.gt.0) then
-                  do m=1,nstark
-                    gbrdz(m)=gbrdz(m) + gbrpc(m,kk)*factor
-                    gbzdz(m)=gbzdz(m) + gbzpc(m,kk)*factor
-                  enddo
+                  gbrdz=gbrdz+gbrpc(:,kk)*factor
+                  gbzdz=gbzdz+gbzpc(:,kk)*factor
                 endif
-                if (kece.gt.0) then
-                  do m=1,nece
-                    recedz(m)=recedz(m) + gecepc(m,kk)*factor
-                  enddo
-                endif
-                if (kecebz.gt.0) then
-                  recebzdz=recebzdz + gecebzpc(kk)*factor
-                endif
+                if(kece.gt.0) &
+                  recedz=recedz+gecepc(:,kk)*factor
+                if(kecebz.gt.0) &
+                  recebzdz=recebzdz+gecebzpc(kk)*factor
 !---------------------------------------------------------------------------
 !--             Boundary constraints                                      --
 !---------------------------------------------------------------------------
                 if (nbdry.gt.0) then
                   do m=1,nbdry
-                    gbdrdz(m)=gbdrdz(m) + rbdrpc(m,kk)*factor
+                    gbdrdz(m)=gbdrdz(m)+rbdrpc(m,kk)*factor
                   enddo
                 endif
-                fgowdz=fgowdz + factor
+                fgowdz=fgowdz+factor
               enddo
             endif
 !----------------------------------------------------------------------
@@ -688,39 +642,29 @@
               then
               call setpwpp(xpsi(kk),xpsii)
               do jj=kpcurn+1,kwcurn
-                jjii=jj-kpcurn
-                factor=xpsii(jjii)*rgsvt(i)*www(kk)*pds(3)*brsp(nfcoil+jj)
+                jjk=jj-kpcurn
+                factor=xpsii(jjk)*rgsvt(i)*www(kk)*pds(3)*brsp(nfcoil+jj)
                 factor=-factor/sidif
                 rdjdz(kk)=rdjdz(kk)+factor
-                do m=1,nsilop
-                  gsildz(m)=gsildz(m) + gsilpc(m,kk)*factor
-                enddo
-                do m=1,magpri
-                  gmp2dz(m)=gmp2dz(m) + gmp2pc(m,kk)*factor
-                enddo
+                gsildz=gsildz+gsilpc(:,kk)*factor
+                gmp2dz=gmp2dz+gmp2pc(:,kk)*factor
                 if (kstark.gt.0) then
-                  do m=1,nstark
-                    gbrdz(m)=gbrdz(m) + gbrpc(m,kk)*factor
-                    gbzdz(m)=gbzdz(m) + gbzpc(m,kk)*factor
-                  enddo
+                  gbrdz=gbrdz+gbrpc(:,kk)*factor
+                  gbzdz=gbzdz+gbzpc(:,kk)*factor
                 endif
-                if (kece.gt.0) then
-                  do m=1,nece
-                    recedz(m)=recedz(m) + gecepc(m,kk)*factor
-                  enddo
-                endif
-                if (kecebz.gt.0) then
-                  recebzdz=recebzdz + gecebzpc(kk)*factor
-                endif
+                if(kece.gt.0) &
+                  recedz=recedz+gecepc(:,kk)*factor
+                if(kecebz.gt.0) &
+                  recebzdz=recebzdz+gecebzpc(kk)*factor
 !---------------------------------------------------------------------------
 !--             Boundary constraints                                      --
 !---------------------------------------------------------------------------
                 if (nbdry.gt.0) then
                   do m=1,nbdry
-                    gbdrdz(m)=gbdrdz(m) + rbdrpc(m,kk)*factor
+                    gbdrdz(m)=gbdrdz(m)+rbdrpc(m,kk)*factor
                   enddo
                 endif
-                fgowdz=fgowdz + factor
+                fgowdz=fgowdz+factor
               enddo
             endif tor_rot
           enddo

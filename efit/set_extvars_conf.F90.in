@@ -1,0 +1,81 @@
+!**********************************************************************
+!>
+!!    set_extvars stores external variables including git defintions, 
+!!      cmake setup, and environment options.  Build information is
+!!      then output to the terminal.
+!!
+!!    @param tval : temporary variable for formatting output
+!*********************************************************************
+      SUBROUTINE set_extvars
+      USE extvars
+      USE mpi_info
+      USE var_nio
+      IMPLICIT NONE
+      INTEGER, DIMENSION(8) :: tval
+      CHARACTER(8) :: versiondate
+      CHARACTER(256) :: link_efitx,link_storex
+      INTEGER :: ioerr
+
+      giturl="${GIT_URL}"
+      gitbranch="${GIT_BRANCH}"
+      githash="${GIT_COMMIT_HASH}"
+      efitvers=githash(1:7)
+      gitdate="${GIT_COMMIT_DATE}"
+      gitdatealt="${GIT_COMMIT_DATE_ALT}"
+      efitdate=gitdate(6:7)//'/'//gitdate(9:10)//'/'//gitdate(1:4)
+      efitdatealt=gitdatealt(6:7)//'-'//gitdatealt(9:11)//'-'//gitdatealt(15:16)
+      versiondate=gitdate(1:4)//gitdate(6:7)//gitdate(9:10)
+      read(versiondate,*,iostat=ioerr) efitversion
+      if (ioerr.ne.0) efitversion = 99999999
+      lmods="${GIT_MODIFICATIONS}"
+      fc="${CMAKE_Fortran_COMPILER}"
+      fc_id="${CMAKE_Fortran_COMPILER_ID}"
+      fcver="${CMAKE_Fortran_COMPILER_VERSION}"
+!      fcflags="${not_CMAKE_Fortran_FLAGS}"
+!      fcflags=TRIM(fcflags)//" ${not_CMAKE_Fortran_BUILD_TYPE_FLAGS}"
+
+      table_dir="${TABLE_DIR}/"
+      input_dir="${INPUT_DIR}/"
+      store_dir="${STORE_DIR}/"
+      ! If environment variable exists, then override values from build
+      call getenv("link_efit",link_efitx)
+      call getenv("link_store",link_storex)
+      if (link_efitx(1:1).ne.' ') then
+        table_dir=trim(link_efitx)//'green/'
+        input_dir=trim(link_efitx)
+      endif
+      if (link_storex(1:1).ne.' ')  store_dir=trim(link_storex)
+
+      !arch_type="${HOSTTYPE}"
+      !hostname="${UQHOSTNAME}"
+
+!-----------------------------------------------------------------------
+!     write version # 
+!     ONLY root process allowed to interface with terminal
+!-----------------------------------------------------------------------
+      IF (rank == 0) then
+        WRITE(nttyo,5500)
+        WRITE(nttyo,'(1x,2a)') 'Git repository url ',TRIM(giturl)
+        WRITE(nttyo,'(1x,2a)') 'Git branch ',TRIM(gitbranch)
+        WRITE(nttyo,'(1x,4a)') 'Git hash ',TRIM(githash),' ',TRIM(lmods)
+        WRITE(nttyo,'(1x,2a)') 'Git date ',TRIM(gitdate)
+!-----------------------------------------------------------------------
+!       simulation date and time
+!-----------------------------------------------------------------------
+        CALL DATE_AND_TIME(VALUES=tval)
+        WRITE(nttyo,'(1x,a,i2,a,i2,a,i4,a,i2,a,i2,a,i2)')                &
+          'Simulation started on ',tval(2),'/',tval(3),'/',tval(1),     &
+          ' at ',tval(5),':',tval(6),':',tval(7)
+!-----------------------------------------------------------------------
+!       compiler and flags
+!-----------------------------------------------------------------------
+        WRITE(nttyo,'(1x,4a)') 'Code compiled with ',TRIM(fc_id),         &
+                              ' ',TRIM(fcver)
+!        WRITE(nttyo,'(1x,2a)') ' and flags ',TRIM(fcflags)
+      ENDIF
+ 5500 format (/,10x,'EFIT-AI Version'/)
+!-----------------------------------------------------------------------
+!     terminate
+!-----------------------------------------------------------------------
+      RETURN
+      END SUBROUTINE set_extvars

@@ -1,27 +1,36 @@
 ﻿Variable, Default, Description
+KFFFNC, ,"| Choice of basis function for FF'.
+| 0 = polynomial representation FF'(psi)=gamma0+gamma1 psi+...+gamman psi^n.
+| 1 = ??
+| 2 = ??
+| 3 = ??
+| 4 = ??
+| 5 = ??
+| 6 = spline respresentation.
+| 8 = Polynomial + local representation (based on PSIECN and DPSIECN)."
 KPPFNC, ,"| Choice of basis function for P'.
-| - 0 = polynomial representation P'(psi)=alpha0+alpha1 psi+...+alphan psi^n.
-| - 1 = ??
-| - 2 = ??
-| - 3 = ??
-| - 4 = ??
-| - 5 = ??
-| - 6 = spline respresentation."
+| 0 = polynomial representation P'(psi)=alpha0+alpha1 psi+...+alphan psi^n.
+| 1 = ??
+| 2 = ??
+| 3 = ??
+| 4 = ??
+| 5 = ??
+| 6 = spline respresentation."
 KWWFNC, , "| Choice of basis function for POmega'.
-| - 0 = polynomial representation.
-| - 1 = ??
-| - 2 = ??
-| - 3 = ??
-| - 4 = ??
-| - 5 = ??
-| - 6 = spline representation."
+| 0 = polynomial representation.
+| 1 = ??
+| 2 = ??
+| 3 = ??
+| 4 = ??
+| 5 = ??
+| 6 = spline representation."
 ICPROF, 0,"| Specific choice of current profile
-| - 0 = current profile is not specified by this variable (default)
-| - 1 = no edge current density allowed
-| - 2 = free edge current density
-| - 3 = weak edge current density constraint
-| - This sets some or all of the variables KFFCUR, KPPCUR, FCURBD, PCURBD, FWTBP, FWTQA, QVFIT, KCALPA, CALPA, XALPA, KCGAMA, CGAMA, and XGAMA to predefined values.
-| - NOTE that if these variables are seperately specified in the namelist input, the values set by the ICPROF variable will override them."
+| 0 = current profile is not specified by this variable (default)
+| 1 = no edge current density allowed
+| 2 = free edge current density
+| 3 = weak edge current density constraint
+| This sets some or all of the variables KFFCUR, KPPCUR, FCURBD, PCURBD, FWTBP, FWTQA, QVFIT, KCALPA, CALPA, XALPA, KCGAMA, CGAMA, and XGAMA to predefined values.
+| NOTE that if these variables are seperately specified in the namelist input, the values set by the ICPROF variable will override them."
 KPPCUR, 3, "Number of coefficients in polynomial representation of P'. Ignored when using spline representation."
 KFFCUR, 1, "Number of coefficients in polynomial representation of FF'. Ignored when using spline representation."
 KCALPA, 0, "| = number of constraints on coefficients alpha for P' (only relevant when ICURRT=2) 
@@ -60,5 +69,13 @@ KWWBDRY, , Constraint switch for POmega'. Vector of length KWWKNT. Ignored unles
 WWBDRY, , POmega' at each knot location where KWWBDRY=1. Vector of length KWWKNT. Ignored unless KWWFNC=6.
 KWW2BDRY, , Constraint switch for (POmega')'. Vector of length KWWKNT. Ignored unless KWWFNC=6.
 WW2BDRY, , (POmega')' at each knot location where KWW2BDRY=1. Vector of length KWWKNT. Ignored unless KWWFNC=6.
-
-
+KEDGEP,0, "Switch to turn on a tanh edge contribution to pressure. The form is tanh[(psi − PE_PSIN)/PE_WIDTH]"
+PE_PSIN,0.98, "Center point of tanh contribution. Ignored unless KEDGEP>0."
+PE_WIDTH,0.02, "Width of tanh contribution. Ignored unless KEDGEP>0."
+PEDGE,0.0, "Ignored unless KEDGEP>0."
+KEDGEF,0, "Switch to turn on a tanh edge contribution to FF'. The form is tanh[(psi - FE_PSIN)/FE_WIDTH]"
+FE_PSIN,0.98, :Center point of tanh contribution. Ignored unless KEDGEF>0."
+FE_WIDTH,0.02, "Width of tanh contribution. Ignored unless KEDGEF>0."
+F2EDGE,0.0, "? Ignored unless KEDGEF>0."
+PSIECN,0, "Center point of local cos^2 contribution to FF'."
+DPSIECN,0, "Half width of local cos^2 contribution to FF'."

@@ -1,9 +1,11 @@
 *.mod
 *.o
 *.a
-*efitdmpipgf90
 .ptp*
 build*
 .*.swp
 .tags
 tags
+docs/gen_subroutines.rst
+docs/gen_functions.rst
+docs/gen_modules.rst

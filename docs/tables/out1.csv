@@ -1,0 +1,33 @@
+﻿Variable, Default, Description
+BETAP0,See namelist IN1.
+BRSP,See namelist IN1 (fitting).
+BTOR,See namelist IN1.
+COILS,See namelist IN1 (fitting).
+ENP,See namelist IN1.
+EMP,See namelist IN1.
+ERROR,See namelist IN1.
+EXPMP2,See namelist IN1 (fitting).
+FWTCUR,See namelist IN1 (fitting).
+FWTSI,See namelist IN1 (fitting).
+IBUNMN,See namelist IN1.
+ICONVR,See namelist IN1.
+ICURRT,See namelist IN1.
+ISHOT,See namelist IN1.
+ITIME,See namelist IN1.
+LIMITR,See namelist IN1.
+MXITER,See namelist IN1.
+NBDRY,See namelist IN1 (equilibrium).
+NPRESS,See namelist IN1.
+NQPSI,number of radial points (=nw).
+NXITER,See namelist IN1.
+PLASMA,See namelist IN1.
+PRESSR,See namelist IN1.
+QENP,See namelist IN1.
+RBDRY,See namelist IN1.
+RCENTR,See namelist IN1.
+RPRESS,See namelist IN1.
+RZERO,See namelist IN1.
+SIGPRE,See namelist IN1.
+XLIM,See namelist IN1.
+YLIM,See namelist IN1.
+ZBDRY,See namelist IN1.

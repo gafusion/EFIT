@@ -1,4 +1,15 @@
 Variable, Default, Description
+CSTABNE,0.0,Diagonal value to set for the Ne matrix for constraints >=NCSTNE.
+CSTABTE,0.0,Diagonal value to set for the Te matrix for constraints >=NCSTTE.
 IBOUND,0,"| 0 = trace from inside wall. (default)
-| - -1 = trace from outside wall."
-M_WRITE,1,
+| -1 = trace from outside wall."
+ISLPFC,0,When this value is set to 1 a set of flux loops on the F coils can be used.
+LICALC,1,"| Controls how the total B_pol^2 is computed when calculating the internal inductance
+| 1 = using derivatives of the poloidal flux. (default)
+| 2 = multiplying relative poloidal flux by the plasma current."
+M_WRITE,1,"| Controls whether plotting files are formatted.
+| 0 = unformatted.
+| 1 = standard format. (default)"
+MFILA,10,Number of filament locations included in the Green table.  Only used when ICONVR<0.
+NCSTNE,1,Use a diagonal Ne matrix for constraints NCSTNE:NPNEF.  Only used when CSTABNE>0.0.
+NCSTTE,1,Use a diagonal Ne matrix for constraints NCSTTE:NPNEF.  Only used when CSTABTE>0.0.

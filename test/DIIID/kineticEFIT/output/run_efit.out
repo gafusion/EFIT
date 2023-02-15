@@ -1,11 +1,10 @@
-
           EFIT-AI
 
 Git repository url git@gitlab.com:efit-ai/efit.git
 
-Git branch snap_mode
+Git branch main
 
-Git hash aa95d83 with local modifications
+Git hash aa95d83
 
 Simulation started on  4/12/2022 at 15:37:12
 
@@ -15,13 +14,9 @@ Code compiled with PGI 18.7.0
  type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
 
  type input file names:
- table_di2 = </home/bechtelt/efitall/efit/build_pgi_ser/test/DIIID/green/>
+ table_di2 = <test/DIIID/green/>
 
       ********************EFITAI 65 x  65  output ********************
- before save fitting weights
- adjust fit parameters based on basis function selected
- itek > 100, write out PLTOUT.OUT individually 
- read in limiter data
 
  r=  0 t=  2300 it=  1 chi2=4.31E+01 zm=-2.02E-02 err=1.738E+00 dz=-2.021E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
  r=  0 t=  2300 it=  2 chi2=6.80E+01 zm=-2.06E-02 err=3.496E-02 dz=-3.670E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.90E+02
@@ -35,8 +30,8 @@ Code compiled with PGI 18.7.0
  r=  0 t=  2300 it= 10 chi2=1.35E+02 zm=-3.84E-02 err=3.050E-03 dz=-3.204E-04 delz= 4.991E-02 dj=2.278E-03 chigam= 1.89E+02
  r=  0 t=  2300 it= 11 chi2=1.39E+02 zm=-3.86E-02 err=2.297E-03 dz=-1.650E-04 delz= 1.246E-02 dj=5.692E-04 chigam= 1.90E+02
  r=  0 t=  2300 it= 12 chi2=1.41E+02 zm=-3.87E-02 err=1.778E-03 dz=-1.292E-04 delz= 4.713E-03 dj=2.153E-04 chigam= 1.91E+02
- r=  0 t=  2300 it= 13 chi2=1.43E+02 zm=-3.88E-02 err=1.462E-03 dz=-1.250E-04 delz=-6.245E-04 dj=2.843E-05 chigam= 1.91E+02
- r=  0 t=  2300 it= 14 chi2=1.45E+02 zm=-3.90E-02 err=1.233E-03 dz=-1.543E-04 delz= 4.498E-03 dj=2.046E-04 chigam= 1.92E+02
+ r=  0 t=  2300 it= 13 chi2=1.43E+02 zm=-3.88E-02 err=1.462E-03 dz=-1.250E-04 delz=-6.244E-04 dj=2.842E-05 chigam= 1.91E+02
+ r=  0 t=  2300 it= 14 chi2=1.45E+02 zm=-3.90E-02 err=1.233E-03 dz=-1.543E-04 delz= 4.499E-03 dj=2.046E-04 chigam= 1.92E+02
  r=  0 t=  2300 it= 15 chi2=1.47E+02 zm=-3.91E-02 err=1.023E-03 dz=-1.568E-04 delz= 3.664E-03 dj=1.665E-04 chigam= 1.92E+02
  r=  0 t=  2300 it= 16 chi2=1.48E+02 zm=-3.92E-02 err=7.634E-04 dz=-8.606E-05 delz=-1.362E-02 dj=6.190E-04 chigam= 1.93E+02
  r=  0 t=  2300 it= 17 chi2=1.49E+02 zm=-3.93E-02 err=5.894E-04 dz=-4.691E-05 delz=-2.269E-02 dj=1.031E-03 chigam= 1.93E+02
@@ -62,9 +57,10 @@ WARNING in fit at r=  0, t=  2300: not converged, reached max iterations
  betat(%) =      0.362 betap    =      0.103 li       =      1.177
  vol(cm3) =  1.757E+07 rout(cm) =    172.758 zout(cm) =      4.317
  elong    =      1.785 utriang  =      0.736 ltriang  =      0.350
- a(cm)    =     56.227 lin(cm)  =     14.801 lout(cm) =      6.072
+ a(cm)    =     56.227 lin(cm)  =     14.799 lout(cm) =      6.072
  ltop(cm) =     18.657 q*       =      4.000 rc(cm)   =    170.370
  zc(cm)   =     -3.485 bt0(t)   =      1.631 qout     =      6.931
 
-  fit errors, shot  186610  2300. msec. no eqdsks will be written
+  fit errors, shot  186610  2300. msec. all eqdsks are still written
      Error #1, Chisq >    80.
+INFO in efit at r=  0, t=  2300: Done processing

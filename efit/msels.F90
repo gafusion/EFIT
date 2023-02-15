@@ -1,4 +1,5 @@
 #include "config.f"
+#if defined(USE_SNAP)
 !**********************************************************************
 !>
 !!    getmsels obtains MSE-LS data
@@ -190,7 +191,6 @@
       return
       end subroutine msels_data
 
-
 !**********************************************************************
 !>
 !!    msels_hist returns synthetic or experimental MSE-LS
@@ -249,7 +249,7 @@
       ! Local variables
       logical file_exists
       character(len=100) filename
-      integer*4 iostat,file_shot,ntimes,issyn,l_ntimes
+      integer*4 ioerr,file_shot,ntimes,issyn,l_ntimes
       real*4 l_time(ntimes),l_bbmls(ntimes), &
              l_rrmls(ntimes),l_zzmls(ntimes),l_L1mls(ntimes), &
              l_L2mls(ntimes),l_L4mls(ntimes),l_epotpmls(ntimes), &
@@ -281,9 +281,9 @@
       endif
 
       ! Read the data
-      open(unit=1,file=filename,iostat=iostat)
+      open(unit=1,file=filename,iostat=ioerr)
 #ifdef DEBUG_LEVEL1
-      write(*,101) 'iostat: ',iostat
+      write(*,101) 'iostat: ',ioerr
 #endif
       ! Read the shot number in the file
       read(1,*) file_shot
@@ -384,3 +384,90 @@
       return
 
       end subroutine msels_hist
+#endif
+
+!**********************************************************************
+!>
+!!    erpote computes the stream function for the
+!!    radial electric field.
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param nnn :
+!!
+!**********************************************************************
+      real*8 function erpote(ypsi,nnn)
+      include 'eparm.inc'
+      include 'modules1.inc'
+      implicit none
+      real*8 erppote
+      integer*4, intent(in) :: nnn
+      real*8, intent(in) :: ypsi
+      real*8 xpsii(nercur)
+!
+      if (abs(ypsi).gt.1.0) then
+        erpote=0.0
+        return
+      endif
+      call seter(ypsi,xpsii)
+      erpote=sum(cerer(1:nnn)*xpsii(1:nnn))
+      return
+!
+      entry erppote(ypsi,nnn)
+      if (abs(ypsi).gt.1.0) then
+        erppote=0.0
+        return
+      endif
+      call seterp(ypsi,xpsii)
+      erppote=-sum(cerer(1:nnn)*xpsii(1:nnn))/sidif
+      return
+      end function erpote
+
+!**********************************************************************
+!>
+!!    eradial computes the radial electric field.
+!!    
+!!
+!!    @param ypsi :
+!!
+!!    @param nnn :
+!!
+!!    @param reee :
+!!
+!!    @param zeee :
+!!
+!**********************************************************************
+      real*8 function eradial(ypsi,nnn,reee,zeee)
+      use commonblocks,only: c,bkx,bky
+      include 'eparm.inc'
+      include 'modules1.inc'
+      implicit none
+      real*8 erpote,esradial,erppote,seval
+      integer*4, intent(in) :: nnn
+      real*8, intent(in) :: ypsi,reee,zeee
+      integer*4 ier
+      real*8 pds(6),fnow,bbnow
+!
+      if (abs(ypsi).ge.1.0) then
+        eradial=0.0
+        return
+      endif
+      call seva2d(bkx,lkx,bky,lky,c,reee,zeee,pds,ier,n333)
+      eradial=erpote(ypsi,nnn)
+      eradial=-pds(2)*eradial
+      return
+!
+      entry esradial(ypsi,nnn,reee,zeee)
+      if (abs(ypsi).ge.1.0) then
+        esradial=0.0
+        return
+      endif
+      call seva2d(bkx,lkx,bky,lky,c,reee,zeee,pds,ier,n333)
+      esradial=erppote(ypsi,nnn)
+      esradial=-(reee*pds(2))**2*esradial
+      fnow=seval(nw,ypsi,sigrid,fpol,bbfpol,ccfpol,ddfpol)
+      bbnow=sqrt(fnow**2+pds(2)**2+pds(3)**2)/reee
+      esradial=esradial/bbnow
+      return
+      end function eradial

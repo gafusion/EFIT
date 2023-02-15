@@ -1,0 +1,13 @@
+ &SETUP
+ link_efit="@CURRENT_MACHINE_LINK_DIR@"
+ link_store=""
+ /
+ &OPTIN
+ mode=@EFIT_MODE@
+ shot=@RUNID@
+ starttime=@FIRST_TIME@
+ deltatime=@STEP_SIZE@
+ steps=@EFIT_COUNT@
+ snapext="@SNAP_EXT@"
+ inpfile=@EFIT_IN@
+ /

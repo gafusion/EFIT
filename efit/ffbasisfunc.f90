@@ -20,14 +20,14 @@
          if(iparm.eq.1)then
             bsffel = 1.0 - ypsi**kffcur*fcurbd
          else
-            bsffel = ypsi**(iparm - 1) - ypsi**kffcur*fcurbd                
+            bsffel = ypsi**(iparm - 1) - ypsi**kffcur*fcurbd
          endif
       elseif (ifunc .eq. 1)then
          tpsi = ypsi - 1.0
          if(iparm.eq.1)then
             bsffel = 1.0 - tpsi**kffcur*fcurbd
          else
-            bsffel = tpsi**(iparm - 1) - tpsi**kffcur*fcurbd                
+            bsffel = tpsi**(iparm - 1) - tpsi**kffcur*fcurbd
          endif
 !----------------------------------------------------------------------
 !-- new local cos2 representation                                    --

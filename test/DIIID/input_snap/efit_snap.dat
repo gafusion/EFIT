@@ -1,0 +1,82 @@
+ EFIT_SNAP.DAT_JTA_F  (rename to EFIT_SNAP.DAT for EFITD)
+ &efitin
+ mxiter = -25
+ scrape = 0.04
+ nextra = 2
+ itek = 0
+ icprof = 3
+ qvfit = 0.0
+ fwtbp = 0.0
+ kffcur = 3
+ kppcur = 2
+ fwtqa = 0.0
+ zelip = 10000000.0
+ iavem = 5
+ iavev = 10
+ n1coil = 2
+ nccoil = 1
+ nicoil = 1
+ IOUT = 20
+ fwtsi = 44*1.0
+ fwtmp2 = 76*1.0
+ fwtcur = 1.0
+ fitdelz = .true.
+ fwtfc = 18*1.0
+ fitsiref = .true.
+ kersil = 3
+ ifitdelz = 3
+ ERROR = 0.0001
+ ERRMIN = 0.0001
+ MXITER = -25
+ FCURBD = 0.0
+ PCURBD = 0.0
+ KCALPA = 1
+ KCGAMA = 1
+ CALPA = 3*0.1
+ XALPA(1) = 0.0
+ CGAMA = 3*0.1
+ XGAMA(1) = 0.0
+ RELAX = 1.0
+ mse_strict = 0
+ t_max_beam_off = 0.0
+ mse_usecer = 0
+ keqdsk = 1
+ write_kfile = .true.
+ TABLE_DIR = "/junk/",
+ INPUT_DIR = "/junk/",
+ STORE_DIR = "/junk/",
+ /
+  NAMELIST input parameters               03/07/91
+  calfa  : P' constraint matrix
+  cgama  : FF' constraint matrix
+  errmin : minimum convergence error before exit
+  error  : relative equilibrium convergence error
+  fcurbd : 1. for zero FF' at edge, 0 for finite FF'
+  fwtbp  : 1 for similar P' and FF' profiles, 0 otherwise
+  fwtcur : fitting weight for plasma current, RL01 if use
+           vessel
+  fwtgam : MSE
+  fwtmp2 : fitting weight for magnetic probes
+  fwtqa  : axial q constraint, 1 to include, 0 for none
+  fwtsi  : fitting weight for flux loops
+  iavem  : +- averaging time in ms for magnetic data
+  iavev  : +- averaging time in ms for loop voltage
+  icprof : current profile option
+           1 : no edge current
+           2 : finite edge current
+           3 : weak edge current
+  ifitvs : 1 to include vessel model
+  itek   : plottig option, 0 for none, 4 for DISPOP file 55MFIT.POP
+  keqdsk : 0 binary EQDSKs, 1 for ascii
+  kffcur : number of fitting parameters in FF'
+  kppcur : number of fitting parameters in P'
+  mxiter : maximum number of iterations, - for iteration history
+  n1coil : N1COIL compensation, 2 to turn on compensation
+  nextra : number of external field lines to plot
+  pcurbd : 1. for zero P' at edge, 0 for finite P'
+  qvfit  : constrainted axial q value
+  scrape : total radial width in m to plot external field lines
+  xalpa  : P' constraints vector
+  xgama  : FF' constraint vector
+  zelip  : initial guess for bounbary surface vertical position in m,
+           > 1.e7 for guess based on magnetic probe signals

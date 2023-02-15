@@ -5,7 +5,7 @@
 ######################################################################
 
 set(CERLIB_SOURCES
- mds_rg.f90 mds_mtanh.f90 mds_mtanh_rdts.f90 mds_write_rg.f90  
+ mds_rg.f90 mds_mtanh.f90 mds_mtanh_rdts.f90 mdslib.f90
 )
 
 add_library(cerlib ${CERLIB_SOURCES})

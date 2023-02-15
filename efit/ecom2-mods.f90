@@ -46,32 +46,25 @@
       end module var_fourier
 
       module var_bscom
-      integer*4 :: kpphord,kffhord,kwwhord,kwwfnc,kwwknt, &
-                   kfffnc,kffknt,kppfnc,kppknt
+      integer*4 :: kfffnc,kffhord,kffknt,kppfnc,kpphord,kppknt, &
+                   kwwfnc,kwwhord,kwwknt
       real*8 :: pptens,fftens,wwtens
-      integer*4,dimension(:),allocatable :: kffbdry,kff2bdry,kwwbdry
-      real*8,dimension(:),allocatable ::ppbdry,pp2bdry, &
-                   kppbdry,kpp2bdry, ffbdry,ff2bdry, &
-                   wwbdry,ww2bdry,kww2bdry, wwknt,ffknt,ppknt
+      integer*4,dimension(:),allocatable :: kffbdry,kff2bdry, &
+                                            kppbdry,kpp2bdry, &
+                                            kwwbdry,kww2bdry
+      real*8,dimension(:),allocatable :: ffbdry,ff2bdry,ffknt, &
+                                         ppbdry,pp2bdry,ppknt, &
+                                         wwbdry,ww2bdry,wwknt
       !$omp declare target(kppfnc,kppknt,pptens,ppknt,kpphord,kfffnc,kffknt,fftens,ffknt,kffhord,kwwfnc,kwwknt,wwtens,wwknt,kwwhord)
       end module var_bscom
 
-      module var_bscomss
-      integer*4,dimension(:),allocatable ::kppbdryss,kpp2bdryss, &
-                   kffbdryss,kff2bdryss, &
-                   kwwbdryss,kww2bdryss 
-      real*8,dimension(:),allocatable ::ppbdryss,pp2bdryss, &
-                   ffbdryss,ff2bdryss, &
-                   wwbdryss,ww2bdryss
-      end module var_bscomss
-
       module var_autokknot
-      real*8 :: kautoknt,akchiwt,akerrwt,kakloop,aktol, &
-                kakiter,akgamwt,akprewt
+      integer*4 :: kautoknt,kakloop,kakiter
+      real*8 :: akchiwt,akerrwt,aktol,akgamwt,akprewt
       end module var_autokknot
 
       module var_autok
-      integer*4 :: ks_a,lconvr_a,ktime_a,mtear_a,kerror_a,kadknt, &
+      integer*4 :: ks_a,lconvr_a,ktime_a,kerror_a,kadknt, &
                    kappknt,kaffknt,kawwknt, kaeeknt,mxiter_a
       real*8,dimension(:),allocatable :: aeeknt,awwknt,affknt,appknt
       end module var_autok
@@ -94,11 +87,12 @@
       end module var_cwork3
 
       module var_gwork1
+      integer*4 mfila
       integer*4,dimension(:),allocatable :: irfila,jzfila
       real*8,dimension(:),allocatable :: rmx,zmx,wsilpc,wmp2pc, &
                                          wfcpc,wecpc,wvspc
       real*8,dimension(:,:),allocatable :: rsilpf, rmp2pf
-      real*8 :: wpcpc
+      real*8 wpcpc
       end module var_gwork1
 
       module var_cwork4
@@ -110,53 +104,6 @@
       real*8,dimension(:),allocatable :: workb_jw4
       end module var_jwork4
 
-      module var_gggttt
-      integer*4, parameter :: ntims=8192
-      integer*4 navxx(ntims)
-      real*8 w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims), &
-             ew(ntims),stdevxx(ntims)
-      end module var_gggttt
-
-
       module var_cww
       integer*4 lwx,lwy
       end module var_cww
-
-      subroutine set_ecom_mod2_arrays()
-      use set_kinds
-      use var_cecoil, only: ecurrt
-      use var_bscom, only: ppknt,ffknt,wwknt,pptens,fftens,wwtens, &
-                           ppbdry,pp2bdry,kppbdry,kpp2bdry, &
-                           ffbdry,ff2bdry,wwbdry,ww2bdry,kww2bdry
-      use var_cvesel, only: rmp2vs, vcurrt
-      use var_atable, only: rmp2ac
-      implicit none
-
-      if (size(ecurrt).gt.0) ecurrt(1)=0.0
-      if (size(ecurrt).gt.1) ecurrt(2)=0.0
-      if (size(ecurrt).gt.2) ecurrt(3)=-1.e10_dp
-      if (size(ecurrt).gt.3) ecurrt(4)=-1.e10_dp
-      if (size(ecurrt).gt.4) ecurrt(5)=-1.e10_dp
-      if (size(ecurrt).gt.5) ecurrt(6)=-1.e10_dp
-
-      ! initialze varialbes
-      ppknt=0.0
-      ffknt=0.0
-      wwknt=0.0
-      pptens=0.0
-      fftens=0.0
-      wwtens=0.0
-      ppbdry=0.0
-      pp2bdry=0.0
-      kppbdry=0.0
-      kpp2bdry=0.0
-      ffbdry=0.0
-      ff2bdry=0.0
-      wwbdry=0.0
-      ww2bdry=0.0
-      kww2bdry=0.0
-      rmp2vs=0.0
-      vcurrt=0.0
-      rmp2ac=0.0
-
-      end subroutine set_ecom_mod2_arrays

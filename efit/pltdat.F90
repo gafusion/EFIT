@@ -36,6 +36,7 @@
       character(10) :: uday, clocktime
       character(5)  :: zone
       integer*4, dimension(8) :: values
+      real*8, dimension(2) :: rwstrip1,zwstrip1,rwstrip2,zwstrip2 
       character(50) dataname,plotname
       character iname,let
       character(2) let2
@@ -69,14 +70,52 @@
                 cntece(3+nece)
 !      equivalence (copy(1,1),copy1(1))
       data ratray/2.,1.,1.,2.,2.,1.,1.,1.,2.,1./
-      data istrpl/0/,lfile/36/,iseplim/1/
-      data n00/0/,n11/1/
-      data one/1./
-      save n00,n11
+      data istrpl/0/,iseplim/1/
+      parameter(lfile=36,n00=0,n11=1,one=1.)
 
+      ifcoil=1
       kerror = 0
+      kgrid=1
+      kthkcrv=0
       pleng = 0
       tlen = 0
+      ! DIII-D default data (will break if nangle or ntangle change)
+      xangle = (/120.,124.,128.,132.,136.,140.,144.,148., &
+                 152.,156.,160.,164.,168.,172.,176.,180.,180., &
+                 184.,188.,192.,196.,200.,204.,208.,212.,216., &
+                 220.,224.,228.,232.,236.,240., &
+                 294.5,290.5,286.5,282.5,278.5,274.5,270.5,266.5, &
+                 262.5,258.5,254.5,250.5,246.5,242.5,238.5,234.5, &
+                 234.5,230.5,226.5,222.5,218.5,214.5,210.5,206.5, &
+                 202.5,198.5,194.5,190.5,186.5,182.5,178.5,174.5, &
+                 0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0./)
+      zxray = (/-10.7,-10.7,-10.7,-10.7,-10.7,-10.7, &
+                -10.7,-10.7,-10.7,-10.7,-10.7,-10.7,-10.7,-10.7, &
+                -10.7,-10.7,-14.7,-14.7,-14.7,-14.7,-14.7,-14.7, &
+                -14.7,-14.7,-14.7,-14.7,-14.7,-14.7,-14.7,-14.7, &
+                -14.7,-14.7, &
+                130.1,130.1,130.1,130.1,130.1,130.1,130.1,130.1, &
+                130.1,130.1,130.1,130.1,130.1,130.1,130.1,130.1, &
+                132.6,132.6,132.6,132.6,132.6,132.6,132.6,132.6, &
+                132.6,132.6,132.6,132.6,132.6,132.6,132.6,132.6, &
+                0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0./)
+      rxray = (/248.9,248.9,248.9,248.9,248.9,248.9,248.9, &
+                248.9,248.9,248.9,248.9,248.9,248.9,248.9,248.9,248.9, &
+                248.9,248.9,248.9,248.9,248.9,248.9,248.9,248.9, &
+                248.9,248.9,248.9,248.9,248.9,248.9,248.9,248.9, &
+                197.6,197.6,197.6,197.6,197.6,197.6,197.6,197.6, &
+                197.6,197.6,197.6,197.6,197.6,197.6,197.6,197.6, &
+                194.5,194.5,194.5,194.5,194.5,194.5,194.5,194.5, &
+                194.5,194.5,194.5,194.5,194.5,194.5,194.5,194.5, &
+                0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0./)
+      rwstrip1(1)=1.33
+      zwstrip1(1)=-1.363
+      rwstrip1(2)=1.38
+      zwstrip1(2)=-1.363
+      rwstrip2(1)=1.4075
+      zwstrip2(1)=-1.250
+      rwstrip2(2)=1.4575
+      zwstrip2(2)=-1.250
 !
       if (ndimc.ne.ndim) then
         call errctrl_msg('pltout', &
@@ -125,8 +164,6 @@
         endif
       endif
 !
-      ! TODO: jwake appears to never be set...
-!      if (istrpl.le.0.and.jwake.ne.0) then
       istrpl0: if (istrpl.le.0) then
       almin=xlmin
       almax=xlmax
@@ -165,7 +202,8 @@
         backspace(80)
         read(80,fmt='(A)') lline
         write(*,'(A)') &
-         'Invalid line in namelist: '//trim(lline)
+          'Invalid line in namelist in3: '//trim(lline)
+        stop
       endif
       if (rf(1).lt.0) &
         read (80,10000) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
@@ -248,11 +286,11 @@
       if (kgraph.eq.0) then
         plotname='pltout.out'
       else
-        if (ifitvs.gt.0.or.icutfp.eq.2) then
+        if (ifitvs.eq.1.or.icutfp.eq.2) then
            write (6,*) 'itimeu = ',itimeu
         endif
         let2 = 'pl'
-        call getfnmu2(itimeu,let2,ishot,itime,plotname)
+        call setfnmpl(itimeu,let2,ishot,itime,plotname)
         if (istore .eq. 1)  &
              plotname = store_dir(1:lstdir)//plotname
       endif
@@ -278,7 +316,7 @@
 !--------------------------------------------------------------------
           let2 = 'pl'
           plotname = ' '
-          call getfnmu2(itimeu,let2,ishot,itime,plotname)
+          call setfnmpl(itimeu,let2,ishot,itime,plotname)
           if (istore .eq. 1)  &
                plotname = store_dir(1:lstdir)//plotname
           iunit = 35
@@ -304,7 +342,7 @@
 !--   lprx = 25  prefix is /link/efit/qshot.time                   --
 !--------------------------------------------------------------------
       let = 'q'
-      call setfnme(let,ishot,itime,istore,dataname)
+      call setfnmq(let,ishot,itime,istore,dataname)
       lprx = 13
       if (istore .eq. 1) lprx = lstdir+lprx
 !
@@ -317,8 +355,8 @@
       enddo
       abar=100.*pleng/2./pi
 !
-      not_time_snap: if ((kdata.ne.4).and.(ivacum.le.0)) then
-      is_vacuum_1: if (ivacum.le.0) then
+      not_time_snap: if ((kdata.ne.4).and.(ivacum.eq.0)) then
+      is_vacuum_1: if (ivacum.eq.0) then
       ibrdr = 1
 !-----------------------------------------------------------------------
 !     Initialize plot parameters
@@ -399,7 +437,7 @@
       endif
       call surfac(psibry,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt, &
         npoint,drgrid,dzgrid,rgrid(1),rgrid(nw),zgrid(1), &
-        zgrid(nh),n00,rmaxis,zmaxis,negcur,kerror)
+        zgrid(nh),n00,rmaxis,zmaxis,negcur,kerror,1)
       if (kerror.gt.0) return
       yminmm=zmin-0.001_dp
       ymaxmm=zmax+0.001_dp
@@ -1701,7 +1739,6 @@
       if (icurrt.eq.2.or.icurrt.eq.5) then
         if (rseps(1,jtime).gt.0.0) then
           rsepcm=rseps(1,jtime)/100.
-          x111=1.0
           cjsep=rsepcm*ppcurr(x111,kppcur) &
                   +fpcurr(x111,kffcur)/rsepcm
           cjsep=cjsep/darea
@@ -2133,7 +2170,7 @@
          workg(i)=pds(2)/xnow
          workk(i)=xnow
       enddo
-      is_vacuum_2: if (ivacum.le.0) then
+      is_vacuum_2: if (ivacum.eq.0) then
       if (kwripre.gt.0) then
          delz=(zuperts(jtime)-zlowerts)/(mpress-1)
          do i=1,mpress
@@ -2481,7 +2518,7 @@
           plot_mse: if (kwripre.gt.0) then
             dataname=dataname(1:lprx)//'_rzmse'
             open(unit=62,file=dataname,status='old',iostat=ioerr)
-            if (ioerr.eq.0) close(unit=62,status='delete')
+            if(ioerr.eq.0) close(unit=62,status='delete')
             open(unit=62,file=dataname,status='new')
             do ip=1,nstark
               write(62,*)rrgam(jtime,ip),zzgam(jtime,ip)
@@ -2495,7 +2532,7 @@
             do ip=1,nmtark
               if (kstark.gt.0) then
                 sigmabz = 0.0
-                if (fwtgam(ip).gt.0.0) sigmabz=bzmse(ip)* &
+                if(fwtgam(ip).gt.0.0) sigmabz=bzmse(ip)* &
                        siggam(jtime,ip)/tangam(jtime,ip)
                 write(62,*) rrgam(jtime,ip),bzmse(ip), &
                             zerono,abs(sigmabz)
@@ -2508,19 +2545,19 @@
             close(62)
             dataname=dataname(1:lprx)//'_bzlim'
             open(unit=62,file=dataname,status='old',iostat=ioerr)
-            if (ioerr.eq.0) close(unit=62,status='delete')
+            if(ioerr.eq.0) close(unit=62,status='delete')
             open(unit=62,file=dataname,status='new')
             do ip=nmtark+1,nstark
               if (nstark.gt.nmtark) then
                 if (kstark.gt.0) then
                   sigmabz = 0.0
-                  if (fwtgam(ip).gt.0.0) sigmabz=bzmse(ip)* &
+                  if(fwtgam(ip).gt.0.0) sigmabz=bzmse(ip)* &
                          siggam(jtime,ip)/tangam(jtime,ip)
                   write(62,*) rrgam(jtime,ip),bzmse(ip), &
                               zerono,abs(sigmabz)
                 else
                   write(62,*) rrgam(jtime,ip),bzmsec(ip), &
-                              zerono, zerono
+                              zerono,zerono
                 endif
                 rrgaml(ip-nmtark)=rrgam(jtime,ip)
               endif
@@ -2717,7 +2754,7 @@
       endif pl_files_3
       endif iexp
 !
-      is_vacuum_3: if (ivacum.le.0) then
+      is_vacuum_3: if (ivacum.eq.0) then
       curmin=workf(1)
       curmax=workf(1)
       do i=1,nw
@@ -3179,7 +3216,7 @@
            ytitle = 'CHI2$'
            iexit = 1
 !-----------------------------------------------------------------------
-!         Write Plot Para((kfitece.le.0).and.(kdata.ne.4).and.(ivacuum.le.0))meters
+!         Write Plot Parameters
 !-----------------------------------------------------------------------
           call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy,  &
           iorel, xorl, yorl, hight, bngle, bshft, &
@@ -3220,7 +3257,7 @@
          workb(i)=brsp(i)/1000.
          worka(i)=i
          workd(i)=-workc(i)
-         if (fwtfc(1).ne.0.0.or.ivacum.gt.0.or.imag2(jtime).gt.0) then
+         if (fwtfc(1).ne.0.0.or.ivacum.eq.1.or.imag2(jtime).gt.0) then
             workc(i)=fccurt(jtime,i)/1000.
             workd(i)=workc(i)
          endif
@@ -3465,7 +3502,7 @@
 !-----------------------------------------------------------------------
 !--   vertical stability parameter, reference Nuc Fusion 18(1978)1331 --
 !-----------------------------------------------------------------------
-      if (ivacum.le.0) then
+      if (ivacum.eq.0) then
          rx=rmagx(jtime)/100.
          pleng=0.0
          f_0=log(8*rout(jtime)/abar)-2+betap(jtime)+ali(jtime)/2+.5_dp
@@ -3864,7 +3901,7 @@
       ytitle = 'CHI**2$'
       ipag = 1
       iexit = 1
-      if (ivacum.gt.0) iexit=2
+      if (ivacum.eq.1) iexit=2
       sclpc(1) = 0.5_dp
       ncnct(1) = 1
 
@@ -4187,7 +4224,7 @@
 !-------------------------------------------------------------------------
 !--   plot P', FF', and Zm                                              --
 !-------------------------------------------------------------------------
-      is_vacuum_4: if (ivacum.le.0) then
+      is_vacuum_4: if (ivacum.eq.0) then
       curmin=1.0e+10_dp
       curmax=-1.0e+10_dp
       do i=1,nitera
@@ -4904,7 +4941,7 @@
       endif pl_files_15
       endif B_signals
 !
-      is_vacuum_5: if (ivacum.le.0) then
+      is_vacuum_5: if (ivacum.eq.0) then
       plot_extra: if (kwripre.gt.0) then
          dataname=dataname(1:lprx)//'_presf'
          open(unit=62,file=dataname,status='old',iostat=ioerr)
@@ -5126,7 +5163,6 @@
       xtitle = 'PRESSURE$'
       ytitle = 'CHI**2$'
       ncurve = nn
-      kgrid=1
       iexit = 1
 !-----------------------------------------------------------------------
 !     Write Plot Parameters
@@ -5489,7 +5525,6 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      x111=1.0
       dp1dxf=ppcurr(x111,kppcur)/darea*(psibry-simag)
       write (text,9835) dp1dxf
       msg = msg + 1
@@ -5875,7 +5910,6 @@
          chsmax=max(chsmax,saiprw(i))
          si(i)=i
       enddo
-      x111=1.0
       chsmax=max(x111,chsmax)
       call zpline(nw,worke,workb,bworkb,cworkb,dworkb)
 !
@@ -7140,7 +7174,7 @@
       zinc = siinc
       nline = 1
       draw = 'DRAW'
-      if (ivesel.le.0) then
+      if (ivesel.eq.0) then
          nn = nn + 1
          thcrv(nn) = .02
          nxy(nn) = limitr
@@ -7407,7 +7441,7 @@
             dumnow=sqrt(pds(2)**2+pds(3)**2)
             bfield(iw,ih)=(dumnow)/rgrid(iw)*1.e4_dp
             if (ih.eq.nh/2+1) worka(iw)=bfield(iw,ih)
-            if (xpsi(kk).le.1.0.and.ivacum.le.0) &
+            if (xpsi(kk).le.1.0.and.ivacum.eq.0) &
                fnow=seval(nw,xpsi(kk),voln,fpol,bvoln,cvoln,dvoln)
             btttt=fnow/rgrid(iw)*10000.
             if (iconsi.ge.5) then
@@ -7450,7 +7484,7 @@
       sclpc(nn) = 1.75_dp
       xx(1,nn) = rmaxis
       yy(1,nn) = zmaxis
-      if (ivesel.le.0) then
+      if (ivesel.eq.0) then
          nn = nn + 1
          thcrv(nn) = 0.02_dp
          nxy(nn) = limitr
@@ -7648,7 +7682,7 @@
          nxy(nn) = 1
          xx(1,nn) = rmaxis
          yy(1,nn) = zmaxis
-         if (ivesel.le.0) then
+         if (ivesel.eq.0) then
             nn = nn + 1
             thcrv(nn) = 0.02_dp
             nxy(nn) = limitr
@@ -7791,7 +7825,7 @@
       call ffstore
       call wwstore
       call eestore
-      is_vacuum_6: if (ivacum.le.0) then
+      is_vacuum_6: if (ivacum.eq.0) then
       call init2d
       xmm=1.5_dp
       curmin=1.0e+10_dp
@@ -8298,11 +8332,10 @@
       return
       elseif (kdata.eq.4) then ECE_or_time_snap
 !----------------------------------------------------------------------
-!--   plot time history for kdata=4                                   --
+!--   plot time history for kdata=4
 !----------------------------------------------------------------------
-      dataname=' '
-      let = 'q'
-      call getfnm2(let,ishot,itime,dataname)
+      let = 'qt'
+      call setfnmt(let,ishot,itime,dataname)
       dataname=dataname(3:7)//'_efitipmhd.dat '
       call curvec(dataname,jerror,time,cpasma,ktime,0_i4)
       call zpline(ktime,time,sibdry,bscra,cscra,dscra)
@@ -9236,7 +9269,7 @@
 !
       return
  8948 format (a25)
- 8950 format (1x,1('h'),'EFITAI',a3,' x',a3,' ',a10,1('h'))
+ 8950 format (1x,1('h'),'EFIT-AI ',a4,' x ',a4,' ',a7,1('h'))
  8960 format (' date ran = ',a10)
  9000 format (' shot #   = ',i10)
  9002 format (' shot #   = ',i10,' date ran = ',a10)
@@ -10647,8 +10680,3 @@
 
       return
       end subroutine init2d
-
-      subroutine closepl
-      close(unit=35)
-      return
-      end subroutine closepl

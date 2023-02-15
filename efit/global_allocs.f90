@@ -8,20 +8,20 @@ ALLOCATE(volp(nw),pprime(nw),pres(nw),ffprim(nw), &
    ddfpol(nw),rzzmax(nw),zzmax(nw),ermid(nw),eshear(nw), &
    epoten(nw),rhovn(nw),rpmid(nw),xmid(nw),sigrid(nw), &
    sipmid(nw),brhovn(nw),crhovn(nw),drhovn(nw),rhopmid(nw), &
-   rgrvt(nw),pwprim(nw),pressw(nw),prwcal(nw),saiprw(nw), &
+   rgrvt(nw),pwprim(nw),pressw(nw),prwcal(nw), &
    rgsvt(nw),cjorec(nw),ffprec(nw),pcurrt(nwnh), &
    pcurrw(nwnh),zero(nwnh),www(nwnh),gecebzpc(nwnh), &
    gecepc(nnece,nwnh),geceppc(nnece,nwnh),gecempc(nnece,nwnh), &
    rbdrpc(mbdry,nwnh),rdjdz(nwnh),grdfdb(nwnh,nfbcoil), &
    rsolpc(mbdry,nwnh), &
    presst(nwnh),rbbbs(npoint),zbbbs(npoint),bpol(npoint), &
-   plengt(npoint),bpolz(npoint), pcurrtpp(nwnh))
+   plengt(npoint),bpolz(npoint),pcurrtpp(nwnh))
      
 ALLOCATE(racoil(nacoil),zacoil(nacoil), wacoil(nacoil), hacoil(nacoil), &
    r1sdry(ndata),r2sdry(ndata),vzeroj(ndata),sizeroj(ndata), &
    rqajx(nppcur),rjjjx(nppcur),rqafx(nffcur),rjjfx(nffcur), &
    rqawx(nwwcur),rjjwx(nwwcur), &
-   brsp(nrsmat),brspss(nrsmat),tsaisq(ntime), &
+   brsp(nrsmat),tsaisq(ntime), &
    chi2rm(ntime),bcentr(ntime),fwtsi(nsilop),rwtsi(nsilop), &
    fwtmp2(magpri),rwtmp2(magpri),fwacoil(nacoil),fwtfc(nfcoil), &
    cbrspv(npcurn),silopt(ntime,nsilop),expmpi(ntime,magpri), &
@@ -37,7 +37,7 @@ ALLOCATE(racoil(nacoil),zacoil(nacoil), wacoil(nacoil), hacoil(nacoil), &
    a2gam(ntime,nstark),a3gam(ntime,nstark),a4gam(ntime,nstark),tangam_uncor(ntime,nstark), &
    fwtgam(nstark),chigam(nstark),swtgam(nstark),iergam(nstark),mseport(nstark),mse_spave_on(nstark))
    
-ALLOCATE(rsilpe(nsilop),rmp2pe(magpri), rprepe(mpress), gbdrpe(mbdry), &
+ALLOCATE(rsilpe(nsilop),rmp2pe(magpri),rprepe(mpress),gbdrpe(mbdry), &
    rgampe(nstark),rbrpe(nstark),rbzpe(nstark),rmlspe(nmsels),relspe(nmsels), &
    bmselt(ntime,nmsels),sbmselt(ntime,nmsels),fwtbmselt(ntime,nmsels), &
    rrmselt(ntime,nmsels),zzmselt(ntime,nmsels),l1mselt(ntime,nmsels),l2mselt(ntime,nmsels), &
@@ -61,7 +61,7 @@ ALLOCATE(rsilpe(nsilop),rmp2pe(magpri), rprepe(mpress), gbdrpe(mbdry), &
    brspecebz(ntime),cmecebz(ntime),cmece(nnece,ntime),recevs(nnece,nvesel), &
    recebzvs(nvesel),recedz(nnece),gecedz(nnece),rtep(nnece),rtem(nnece),rpbit(nnece),rmbit(nnece), &
    receac(nnece,nacoil),recebzac(nacoil),teecer(nnnte),rrr(nnnte),bbf(nnnte),teeceb(nnnte), &
-   receoi(kxiter),recemi(kxiter,nnece),recepi(kxiter,nnece))
+   receoi(kxiter),recemi(kxiter,nnece),recepi(kxiter,nnece),iwp(nnece),iwm(nnece))
    
 ALLOCATE(rbrpc(nstark,npcurn),rbzpc(nstark,npcurn),rgampc(nstark,npcurn),rbrfc(nstark,nfcoil), &
    rbzfc(nstark,nfcoil),rbrec(nstark,nesum),rbzec(nstark,nesum),rgamec(nstark,nesum), &
@@ -73,10 +73,10 @@ ALLOCATE(rbrpc(nstark,npcurn),rbzpc(nstark,npcurn),rgampc(nstark,npcurn),rbrfc(n
    rmse_gain(nstark),rmse_slope(nstark),rmse_scale(nstark),rmse_offset(nstark),sigam(nstark), &
    bzmse(nstark),bzmsec(nstark),cjmse(nstark),cjmsec(nstark),rhogam(nstark), &
    spatial_avg_gam(nstark,ngam_vars,ngam_u,ngam_w), &
-   saisil(nsilop),saimpi(magpri),saipr(nrogow),saipre(mpress),saifc(nfcoil), &
+   saisil(nsilop),saimpi(magpri),saipre(mpress),saifc(nfcoil), &
    dfluxc(ntime),cdflux(ntime),edflux(ntime),rspdlc(nffcur), &
    rco2r(nco2r,ntime),rco2v(nco2v,ntime),chordv(nco2v),chordr(nco2r), &
-   dco2r(ntime,nco2r),dco2v(ntime,nco2v),erflag(ntime,30), &
+   dco2r(ntime,nco2r),dco2v(ntime,nco2v),erflag(ntime,nflag), &
    cerror(kxiter),csibry(kxiter),csimag(kxiter),cvolp(kxiter),crmaxi(kxiter), &
    czmaxi(kxiter),cemaxi(kxiter),cqmaxi(kxiter),cchisq(kxiter), &
    brfbc(kxiter),tvfbrt(kxiter),cdelz(kxiter), &
@@ -96,7 +96,7 @@ ALLOCATE(rbrpc(nstark,npcurn),rbzpc(nstark,npcurn),rgampc(nstark,npcurn),rbrfc(n
    aveerr(kxiter),iermax(kxiter),jermax(kxiter))
    
 ALLOCATE(rbdry(mbdry),zbdry(mbdry),fwtbdry(mbdry),fwtbry(mbdry),sigrbd(mbdry), &
-   sigzbd(mbdry),rbdry0(mbdry),zbdry0(mbdry),rbdryss(mbdry),zbdryss(mbdry), &
+   sigzbd(mbdry),rbdry0(mbdry),zbdry0(mbdry), &
    rsol(mbdry),zsol(mbdry),fwtsol(mbdry),fwtsolw(mbdry), &
    rbdrfc(mbdry,nfcoil),rsolfc(mbdry,nfcoil),rbdrac(mbdry,nacoil), &
    gbdrpc(mbdry,npcurn),gmp2dz(magpri),gsildz(nsilop),gbrdz(nstark), &
@@ -121,23 +121,18 @@ ALLOCATE(rbdry(mbdry),zbdry(mbdry),fwtbdry(mbdry),fwtbry(mbdry),sigrbd(mbdry), &
    xlimbd(nlimbd),ylimbd(nlimbd),fb_plasma(ntime),signn1(magpri), curtn1(ntime), &
    curc139(ntime),curc79(ntime),curc199(ntime),curiu30(ntime), &
    curiu90(ntime),curiu150(ntime),curil30(ntime),curil90(ntime),curil150(ntime), &
-   curc259(ntime),curc319(ntime),curc19(ntime), & 
-   curiu210(ntime),curiu270(ntime),curiu330(ntime), &
-   curil210(ntime),curil270(ntime),curil330(ntime), &
    curccoi(ntime,mccoil),curicoi(ntime,micoil))
    
-ALLOCATE(xnodef(modef),xnodep(modep),xnodew(modew), kbasef(modef), &
+ALLOCATE(xnodef(modef),xnodep(modep),xnodew(modew),kbasef(modef), &
    kbasep(modep),kbasew(modew),omegat(mpress),rpresw(mpress),zpresw(mpress), &
    presw(mpress),sigprw(mpress),rpresws(mpress),fwtprw(mpress),romegat(mpress), &
    zomegat(mpress),sigome(mpress),rpreswv(mpress),scalepw(mpress), &
-   rprwpc(mpress,nwwcur),betapw(ntime),betatw(ntime),wplasw(ntime), &
+   saiprw(npress),premew(mpress),saiprw2(mpress),rprwpc(mpress,nwwcur), &
+   betapw(ntime),betatw(ntime),wplasw(ntime), &
    fwtec(nesum),cecurr(nesum),saiec(nesum), &
    ztssym(ntime),ztswid(ntime),ptssym(ntime),ztserr(ntime), &
    psin32(ntime),psin21(ntime),rq32in(ntime),rq21top(ntime), &
-   sigmaf0(nfcoil),sigmae0(nesum),sigmafl0(nsilop),sigmamp0(magpri), &
-   sigmaf(ntime,nfcoil),sigmab(ntime),sigmaip(ntime),sigmae(ntime,nesum), &
-   sigmafl(ntime,nsilop),gradsfl(ntime,nsilop), &
-   sigmamp(ntime,magpri),gradsmp(ntime,magpri),bpermp(ntime,magpri), &
+   sigfc(nfcoil),sigec(nesum),sigsi(nsilop),sigmp2(magpri), &
    psircg(nsilop),psi_k(nsilop),psi_rc(nsilop),vrespsi(nsilop),t0psi(nsilop), &
    devpsi(ntime,nsilop),rnavpsi(ntime,nsilop),navpsi(ntime,nsilop), &
    devp(ntime),navp(ntime),rnavp(ntime),ccrcg(mccoil),cc_k(mccoil), &
@@ -178,12 +173,6 @@ ALLOCATE(ppbdry(npcurn),pp2bdry(npcurn), &
    wwbdry(npcurn),ww2bdry(npcurn), &
    kwwbdry(npcurn),kww2bdry(npcurn), &
    wwknt(npcurn),ffknt(npcurn),ppknt(npcurn), &
-   ppbdryss(npcurn),pp2bdryss(npcurn), &
-   kppbdryss(npcurn),kpp2bdryss(npcurn), &
-   ffbdryss(npcurn),ff2bdryss(npcurn), &
-   kffbdryss(npcurn),kff2bdryss(npcurn), &
-   wwbdryss(npcurn),ww2bdryss(npcurn), &
-   kwwbdryss(npcurn),kww2bdryss(npcurn), &  
    appknt(npcurn),affknt(npcurn),awwknt(npcurn),aeeknt(npcurn), &
    save_gam(ntime,nstark),save_tangam(ntime,nstark), &
    arsp_cw2(ndata,nppcur),wrsp_cw2(nppcur),work_cw2(ndata), &
@@ -239,9 +228,7 @@ ALLOCATE(csilop(nsilop,ntime),csilopv(nsilop,ntime),crogow(nrogow,ntime), &
    ratsol(ntime),rvsiu(ntime),zvsiu(ntime),rvsou(ntime), &
    zvsou(ntime),rvsid(ntime),zvsid(ntime),rvsod(ntime),zvsod(ntime), &
    vtime(ntime), &
-   s1(ntime),s2(ntime),s3(ntime),bpolav(ntime),rfcfc(nfcoil,nfcoil), &
-   rbdry_ext(mbdry),zbdry_ext(mbdry),xlim_ext(nlimit),ylim_ext(nlimit))
-
+   s1(ntime),s2(ntime),s3(ntime),bpolav(ntime),rfcfc(nfcoil,nfcoil))
 !
 !-------from commonblocks module------
 ALLOCATE(c(kubicx,lubicx,kubicy,lubicy),wk(nwrk), &
@@ -249,11 +236,11 @@ ALLOCATE(c(kubicx,lubicx,kubicy,lubicy),wk(nwrk), &
    cw(kubicx,lubicx,kubicy,lubicy),wkw(nwrk), &
    copyw(nw,nh),bwx(lubicx+1),bwy(lubicy+1), &
    sifprw(nw),bwprw(nw),cwprw(nw),dwprw(nw), &
-   psirz(nw,nh),sfprw(nw),sprwp(nw), &
+   sfprw(nw),sprwp(nw), &
    wgridpc(nwnh),rfcpc(nfcoil,nwnh), &
    ct(kubicx,lubicx,kubicy,lubicy), &
    wkt(nwrk),bkrt(lubicx+1),bkzt(lubicy+1), &
-   psiold(nwnh),psipold(nwnh),psipp(nwnh), &
+   psiold(nwnh),psipold(nwnh), &
    work(nwnh),sifpre(nw),bwpre(nw),cwpre(nw), &
    dwpre(nw),sfpre(nw),sprep(nw),worka(nwf),worka2(nw), &
    zeros(nwnh),byringr(nh2),byringz(nh2), &

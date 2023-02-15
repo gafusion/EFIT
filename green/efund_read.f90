@@ -1,6 +1,7 @@
 !**********************************************************************
 !**                                                                  **
-!**     getset performs inputing and initialization.                 **
+!**     efund_getsizes performs inputing and initialization from the **
+!**       mhdin.dat file, most default values set here are for DIII-D**
 !**                                                                  **
 !**     RECORD OF MODIFICATION:                                      **
 !**          02/02/20..........first created                         **
@@ -9,6 +10,7 @@
       SUBROUTINE efund_getsizes
       
       USE exparm
+      USE errlims
       USE siloop
       USE cecoil
       USE fcoil
@@ -21,12 +23,35 @@
       USE cvesel
       USE fshift
 
+      integer*4:: istat,icycred_loopmax,kubics
+      character(len=1000) :: line
+
       NAMELIST/machinein/nfcoil,nsilop,magpr2,nrogow,necoil,nesum, &
-                         nfsum,nvsum,nvesel,nacoil,mgaus1,mgaus2,device
+                         nfsum,nvsum,nvesel,nacoil,mgaus1,mgaus2,device, &
+                         magpri322,magpri67,magprirdp,magudom,maglds, &
+                         nnece,nnecein,neceo,mse315,mse45,mse15, &
+                         mse1h,mse315_2,mse210,mpress,libim,nmsels, &
+                         nnnte,ngam_vars,ngam_u,ngam_w,nlimit,nlimbd,nangle, &
+                         ntangle,nfbcoil,mccoil,micoil,ndata,nwwcur, &
+                         nffcur,nppcur,nercur,ntime,ndim,kxiter,mqwant, & 
+                         mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef, &
+                         modep,modew,kubics,icycred_loopmax,nfourier, &
+                         nsilol,nsilds, &
+                         ali_upper,ali_lower, &
+                         betap_lim,plasma_diff, &
+                         aout_upper,aout_lower,eout_upper,eout_lower, &
+                         rout_upper,rout_lower,zout_upper,zout_lower, &
+                         rcurrt_upper,rcurrt_lower,zcurrt_upper,zcurrt_lower, &
+                         qsta_upper,qsta_lower,betat_lim, &
+                         oleft_lim,oright_lim,otop_lim, &
+                         olefs_check,qout_upper,qout_lower, &
+                         dbpli_lim,delbp_lim
 
       device = 'DIII-D'
       nfcoil = 18
       nsilop = 44
+      nsilol = -43
+      nsilds = -1 ! default all psi loops to one side except 1
       magpr2 = 76
       nrogow = 1
       necoil = 122
@@ -38,11 +63,135 @@
       mgaus1 = 8
       mgaus2 = 10
 
-      OPEN(unit=nin,status='old',file='mhdin.dat' )
+      nnece=40
+      nnecein=80
+      neceo=1
+      mse315=40
+      mse45=0
+      mse15=0
+      mse1h=0
+      mse315_2=0
+      mse210=0
+      mpress=201
+      libim=32
+      nmsels=16
+      nnnte=801
+      ngam_vars=9
+      ngam_u=5
+      ngam_w=3
+      nlimit=160
+      nlimbd=6
+      nangle=64
+      ntangle=12
+      nfbcoil=12
+      mccoil=6
+      micoil=12     
+      ndata=61
+      nwwcur=32
+      nffcur=32
+      nppcur=32
+      nercur=32
+      npcurn=nffcur+nppcur
+      nwcurn=nwwcur+npcurn
+      nwcur2=nwcurn*2
+      ntime=1001
+      ndim=3200
+      kxiter=515
+!      mqwant=30 ! DIIID default
+      mqwant=66 ! number used in NSTX
+      mbdry=300
+      mbdry1=110
+      nxtram=10
+      nxtlim=9
+      nco2v=3
+      nco2r=2
+      modef=4
+      modep=4
+      modew=4
+      nfourier=5
+      
+      magpri67=-1
+      magprirdp=-1
+      magudom=-1
+      maglds=-1
+      
+      ! checks for solution validity
+      ali_upper=2.5
+      ali_lower=0.05
+      betap_lim=6.0
+      plasma_diff=0.08
+      aout_upper=75.0
+      aout_lower=30.
+      eout_upper=4.0
+      eout_lower=0.8
+      rout_upper=240.
+      rout_lower=90.0
+      zout_upper=100.
+      zout_lower=-100.
+      rcurrt_upper=240.
+      rcurrt_lower=90.0
+      zcurrt_upper=100.
+      zcurrt_lower=-100.
+      qsta_upper=200.
+      qsta_lower=1.
+      betat_lim=25.
+      oleft_lim=-0.2
+      oright_lim=-0.2
+      otop_lim=-0.2
+      olefs_check=-90.0
+      qout_lower=1.
+      qout_upper=200.
+      dbpli_lim=0.05
+      delbp_lim=0.08
+
+      OPEN(unit=nin,status='old',file='mhdin.dat',iostat=istat)
 
       READ (nin,machinein)
 
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist machinein: '//trim(line)
+        stop
+      endif
+
       CLOSE(nin)
+
+      ! Handle if user probe array sizes aren't specified
+      IF (trim(device)=='DIII-D') THEN
+        mse315=11
+        mse45=15
+        mse15=10
+        mse1h=4
+        mse315_2=5
+        mse210=24
+      ENDIF
+
+      IF (magpri67<0 .or. magprirdp<0 .or. magudom<0 .or. magudom<0) then 
+        IF (trim(device)=='DIII-D') THEN
+          magpri67=29
+          magpri322=31
+          magprirdp=8
+          magudom=5
+          maglds=3
+        ELSE
+          magpri67 = abs(magpri67)
+          magprirdp = abs(magprirdp)
+          magudom = abs(magudom)
+          maglds = abs(maglds)
+          magpri322 = magpr2 - magpri67 - magprirdp - magudom - maglds
+        ENDIF
+      ENDIF
+
+      IF (nsilol<0 .or. nsilds<0) then 
+        IF (trim(device)=='DIII-D') THEN
+          nsilds = 3
+          nsilol = 41
+        ELSE
+          nsilol = nsilop -1
+          nsilds = 1
+        ENDIF
+      ENDIF
 
       ALLOCATE(rsi(nsilop),zsi(nsilop),wsi(nsilop),hsi(nsilop),&
                as(nsilop),as2(nsilop))
@@ -94,8 +243,6 @@
       avs(:) = 0.0
       avs2(:) = 0.0
       rsisvs(:) = 0.0
-
-      vsid(:) = 0.0
 
       ALLOCATE(nshiftrz(nfcoil))
       nshiftrz(:) = 0.
@@ -162,6 +309,10 @@
       iecoil=0
       ivesel=0
       nsmp2=1
+      rleft=0.
+      rright=0.
+      ztop=0.
+      zboto=0.
       rsi(1)=-1
       rf(1)=-1.
       re(1)=-1.
@@ -192,27 +343,27 @@
 !--   READ f coil and psi loop dimensions                            --
 !----------------------------------------------------------------------
       IF (rf(1).lt.0.0) THEN
-         READ (nin,10000) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
-                        i=1,nfcoil)
+        READ (nin,10000) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
+                          i=1,nfcoil)
       ENDIF
       IF (rsi(1).lt.0.0) THEN
-         READ (nin,10000) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
-                    i=1,nsilop)
+        READ (nin,10000) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
+                          i=1,nsilop)
       ENDIF
-      IF ((iecoil.gt.0).or.(ivesel.gt.0)) THEN
-         IF (re(1).lt.0.0) THEN
-            READ (nin,10020) (re(i),ze(i),we(i),he(i),ecid(i),i=1,necoil)
-         ENDIF
-         IF (ivesel.gt.0.and.rvs(1).lt.0.0) THEN
-            IF (wvs(1).lt.0.0) THEN
-               READ (nin,10000) (rvs(i),zvs(i),wvs(i),hvs(i),avs(i),avs2(i), &
-                    i=1,nvesel)
-            ELSE
-               DO i=1,nvesel
-                  READ (nin,*) rvs(i),zvs(i)
-               ENDDO
-            ENDIF
-         ENDIF
+      IF ((iecoil.eq.1).or.(ivesel.eq.1)) THEN
+        IF (re(1).lt.0.0) THEN
+          READ (nin,10020) (re(i),ze(i),we(i),he(i),ecid(i),i=1,necoil)
+        ENDIF
+        IF (ivesel.eq.1.and.rvs(1).lt.0.0) THEN
+          IF (wvs(1).lt.0.0) THEN
+            READ (nin,10000) (rvs(i),zvs(i),wvs(i),hvs(i),avs(i),avs2(i), &
+                              i=1,nvesel)
+          ELSE
+            DO i=1,nvesel
+              READ (nin,*) rvs(i),zvs(i)
+            ENDDO
+          ENDIF
+        ENDIF
       ENDIF
 !----------------------------------------------------------------------
 !--   compute r and z arrays                                         --
@@ -220,22 +371,18 @@
       dr=(rright-rleft)/dble(nw-1)
       dz=(ztop-zbotto)/dble(nh-1)
       DO i=1,nw
-         rgrid(i)=rleft+dr*(i-1)
+        rgrid(i)=rleft+dr*(i-1)
       ENDDO 
       DO i=1,nh
-         zgrid(i)=zbotto+dz*(i-1)
+        zgrid(i)=zbotto+dz*(i-1)
       ENDDO 
 
       WRITE (nout,in3)
       CLOSE(nin)
       CLOSE(nout)
-      
-      IF (trim(device)=='DIII-D') THEN
-         CALL dprobe_machinein_d3d
-      ELSE
-         CALL dprobe_machinein(nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                               nfsum,nvsum,nvesel,nacoil)
-      ENDIF
+
+      CALL dprobe_machinein(nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
+                            nfsum,nvsum,nvesel,nacoil)
       
       CALL dprobe(mpnam2,lpname,patmp2)
       

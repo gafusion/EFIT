@@ -2,9 +2,8 @@
 ALPAX, 104,"| Initial value of coefficient alpha (specified by JBETA) of parametrization of P' to be 
 | modified to satisfy beta constraint. (Note that this coefficient is unable to change sign
 | during iteration in order to satisfy the constraint.)"
-CCOILS,,"| Matrix which defines constraint for F coil currents I1, I2, ..., I18 of the form
-| CCOILS(1,i) I1 + CCOILS(2,i) I2 + ... + CCOILS(18,i) I18 = XCOILS(i)for i=1,KCCOILS.
-| Constraint applies in fixed boundary solutions only??"
+CCOILS,zeros,"| Matrix which defines constraint for F coil currents I1, I2, ..., I18 of the form
+| CCOILS(1,i) I1 + CCOILS(2,i) I2 + ... + CCOILS(18,i) I18 = XCOILS(i)for i=1,KCCOILS."
 CURRC139, 0.0,Current in 139 degree C coil in Amps.
 CURRC79,0.0,Current in 79 degree C coil in Amps. 
 FBETAN,,desired value for normalized toroidal beta
@@ -12,6 +11,7 @@ FBETAP,0.0,Fixed betap value for equilibrium calculation. ICONVR must equal 3. I
 FITDELZ,,See namelist EFITIN.
 FLI,0.0,Fixed li value for equilibrium calculation. ICONVR must equal 3. ICURRT must equal 2.
 FQSIW,,"Desired q value at surface PSIWANT, if near boundary FWTCUR (in namelist IN1) must be set to 0."
+FQ95,,(unused variable)
 FWTBDRY,,See namelist IN1.
 FWTXXJ,1.0,constraint weight for Js
 FWTXXQ, 1.0,
@@ -21,18 +21,21 @@ GAMAX,GAMAX(JLI)=-106,"initial guess for the li constraint, array element should
 JBETA,1,Which coefficient alpha in P' parametrization to vary to get desired betaN = FBETAN value. Assumes polynomial parametrization.
 JLI,2,Which coefficient gamma in FF' parametrization to vary to get desired li= FLI value. Assumes polynomial parametrization.
 JWANTM,3,Iteration number when constraints (which ones? all from all namelists?) start.
-KCCOILS, 0,- = number of constraints for F coil currents specified through matrix CCOILS and vector XCOILS.
+KCCOILS,0,Number of constraints for F coil currents specified through matrix CCOILS and vector XCOILS.
 NCCOIL, ,See namelist EFITIN.
 NQWANT,0,What is this?
 NDELZON,,See namelist EFITIN.
-N_WRITE,,Default = 1
-PSIWANT,,See namelist IN1.
+N_WRITE,,(unused variable)
+PSIWANT,1.0,"Normalized flux value of surface where J constraint is desired. See KZEROJ, RZEROJ, VZEROJ."
 REXPAN,,See namelist EFITIN.
 SCALEDZ,,See namelist EFITIN.
-SIZEROJ,,See namelist EFITIN.
+SIZEROJ,-1.0,"| Vector of locations at which Jt is constrained when KZEROJ>0. When KZEROJ=1,
+| PSIWANT can be used instead of SIZEROJ(1) by setting SIZEROJ(1)<0. See KZEROJ, 
+| RZEROJ, VZEROJ, PSIWANT (default)."
 SIWANTQ,,want q to be a particular value at some flux surface?
 STABDZ,,See namelist EFITIN.
-VZEROJ,,See namelist IN1.
-WRITEPC,.false.,
+VZEROJ,,"| Desired value [or vector of values] of normalized J (with respect to I/Area) at flux
+| surface PSIWANT [or surfaces SIZEROJ]. Must have KZEROJ = 1 [>1] and RZEROJ=0.0."
+WRITEPC,,unused variable
 XCOILS,,Constraint vector for F coil currents when KCCOILS>0.
 ZNOSE,,See namelist EFITIN.

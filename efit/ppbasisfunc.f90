@@ -10,8 +10,7 @@
 !!    @param ypsi : independent variable value
 !!
 !**********************************************************************
-
-Function bsppel(ifunc,iparm,ypsi)
+  function bsppel(ifunc,iparm,ypsi)
       
   include 'eparm.inc'
   include 'modules2.inc'
@@ -128,7 +127,8 @@ Function bsppel(ifunc,iparm,ypsi)
   if ( ifunc .ne. kppfnc)  &
     write(6,*)'ifunc .ne. kppfnc ',ifunc,kppfnc
   return
-end function bsppel
+  end function bsppel
+
 !**********************************************************************
 !     
 !     Function bspppel(ifunc,iparm,ypsi)
@@ -141,7 +141,7 @@ end function bsppel
 !     ypsi  - independent variable value
 !     
 !**********************************************************************
-function bspppel(ifunc,iparm,ypsi)
+  function bspppel(ifunc,iparm,ypsi)
 
   include 'eparm.inc'
   include 'modules2.inc'
@@ -279,7 +279,8 @@ function bspppel(ifunc,iparm,ypsi)
     endif
   endif
   return
-end function bspppel
+  end function bspppel
+
 !**********************************************************************
 !     
 !     Function bsppin(ifunc,iparm,ypsi)
@@ -292,7 +293,7 @@ end function bspppel
 !     ypsi  - independent variable value
 !     
 !**********************************************************************
-function bsppin(ifunc,iparm,ypsi)
+  function bsppin(ifunc,iparm,ypsi)
       
   include 'eparm.inc'
   include 'modules2.inc'
@@ -513,8 +514,7 @@ function bsppin(ifunc,iparm,ypsi)
   if ( ifunc .ne. kppfnc)  &
     write(6,*)'ifunc .ne. kppfnc ',ifunc,kppfnc
   return
-end function bsppin
-
+  end function bsppin
 
 !**********************************************************************
 !>
@@ -532,7 +532,7 @@ end function bsppin
 !!    @param nffcoi : array index for seeting up crsp
 !!
 !**********************************************************************
-subroutine ppcnst(ncrsp,crsp,z,nffcoi)
+  subroutine ppcnst(ncrsp,crsp,z,nffcoi)
   include 'eparm.inc'
   include 'modules2.inc'
   include 'modules1.inc'
@@ -859,7 +859,7 @@ subroutine ppcnst(ncrsp,crsp,z,nffcoi)
   endif
 
   return
-end subroutine ppcnst
+  end subroutine ppcnst
 
 !**********************************************************************
 !!     
@@ -868,7 +868,7 @@ end subroutine ppcnst
 !!     Store the solution coefs into ppbdry and pp2bdry
 !!     
 !**********************************************************************
-subroutine ppstore()
+  subroutine ppstore()
   include 'eparm.inc'
   include 'modules2.inc'
   include 'modules1.inc'
@@ -890,4 +890,4 @@ subroutine ppstore()
     enddo
   endif
   return
-end subroutine ppstore
+  end subroutine ppstore

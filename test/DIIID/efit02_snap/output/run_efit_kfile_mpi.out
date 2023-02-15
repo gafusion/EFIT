@@ -14,7 +14,4 @@
  Calling $Name: V3_07 $ of the mse shared library
  GETSTARK call   1.35 sec
  GETSTARK transfer      21540 bytes in   0.00 sec
-INFO in getsets at r= -1, t=    -1: Done writing k-files
-INFO in getsets at r= -1, t=    -1: Done writing k-files
-INFO in getsets at r= -1, t=    -1: Done writing k-files
-INFO in getsets at r= -1, t=    -1: Done writing k-files
+INFO in efit at r=  0, t=  2700: Done writing k-files

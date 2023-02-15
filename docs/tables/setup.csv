@@ -1,0 +1,6 @@
+Variable, Default, Description
+link_efit, , "Area where input files, Green's function tables, and the configuration files are to be found, default - variable isn't used"
+link_store, , "Destination for output EQDSK files if ISTORE = 1, default - variable isn't used"
+maxinpfile, 1001, Maximum number of input files that can be specified in the OPTIN namelist
+ntims, 8192, "Maximum number of data points in time that can be fetched from databases in snap modes (for DIIID normally data from every millisecond across the length of run is fetched, so this parameter only would be increased for shots longer than 8s, otherwise fewer points will be fetched and constraints won't be as accurate)"
+kxiter, 515, "Maximum number of iterations that can be specified (limit on mxiter, see IN1 namelist)"

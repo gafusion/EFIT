@@ -1,0 +1,18 @@
+Variable, Description
+cmdfile, , "Name of a shell script to be written that contains the commands to execute separate efit runs for each input file created (requires the runefit.csh script), only used when writing inputs (modes 5 and 6), default - variable isn't used"
+deltatime, -1, "Time step size between equilibria being reconstructed, in milliseconds"
+inpfile, , "List of the input file names (k-files, r-files, etc) to use in modes 1 or 2"
+mode, ,"| (Integer flag) Selects which mode to run efit in, default - no variables from this namelist are used if this isn't set
+| 1: mimics option 2 but reads input from an hdf5 file that has OMAS format
+| 2: produces g-files (and others) from k-files
+| 3-7: query databases for diagnostic inputs
+|   3,7: produces g-files (and others)
+|   4: variation on option 3 that uses efit_time.dat for input??
+|   5: produces k-files from a snap file
+|   6: variation on option 5??
+| -#: behaves the same as #, but sets ilaser=1"
+shot, -1, Shot number to analyze
+shotfile, , "Name of file containing a list of shot numbers (cannot be changed during a run) and times to be run, only used when writing inputs (modes 5 and 6), default - variable isn't used"
+starttime, -1, "Time for first equilibrium reconstruction, in milliseconds"
+snapext, , "Name of the file extenstion to append to efit_snap.dat (after another underscore).  EFIT first looks for this file in the directory it is executed from, but if the file is not found it checks in the snapfiles folder under the support files.  If it still isn't found, then EFIT checks for any snap file without an extension in the current directory before it gives up.  Default - variable isn't used"
+steps, -1, Number of equilibrium timeslices to reconstruct in this run

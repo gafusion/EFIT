@@ -1,0 +1,31 @@
+Subroutines
+===========
+
+The logic flow chart::
+
+	EFIT: Main driver
+		GETSETS: Initialize run, input snap file, Green's tables.
+		LOOP: Loop over timeslices KTIME.
+			INPUT_DATA: Read input file or fetch data, set up fitting weight.
+			INICUR: Initialize plasma current distribution.
+			FIT: Equilibrium and fitting iterations.
+				LOOP: Loop over MXITER, current profile.
+					GREEN: Update respond matrix.
+					PRESUR: Update pressure profile data.
+					MATRIX: Update current and pressure profile.
+					LOOP: Loop over equilibrium iteration NXITER.
+						CURRNT: Compute plasma current.
+						FCURRT: Get external shaping coil currents.
+						UPDATE_PARAMS: Find magnetic axis and trace boundary.
+						FINDAX: Set up bicubic spline.
+						BOUND: Get boundary.
+						FINDAX: Get magnetic axis.
+						RESIDU: Check equilibrium convergence.
+			SHAPESURF: Compute plasma parameters, graphics after done.
+			PLTOUT: Generate graphics.
+			PRINT_STATS: Print a summary of the solution to the terminal.
+			WRITE_A: Write A EQDSK.
+			        CHKERR: Perform equilibrium quality checks.
+			WRITE_G: Write G EQDSK.
+			WRITE_M: Write M EQDSK.
+

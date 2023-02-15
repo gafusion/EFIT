@@ -1,7 +1,7 @@
 # In order to build and run this version of EFIT on the system you must
 #   execute the following module commands: (not required to build)
 #
-#    module load env/gcc8.3.1-pgf20.11
+#    module load env/pgf20.11 mdsplus
 #
 # If you don't want MPI (slower in serial) simply remove the FC=...
 #   and -DENABLE_PARALLEL... lines
@@ -15,7 +15,7 @@
     export CC=/fusion/usc/opt/nvidia/hpc_sdk/Linux_x86_64/20.11/compilers/bin/pgcc
 
     cmake \
-    -DMPICMD:STRING='srun --mpi=pmi2' \
+    -DMPICMD:STRING='srun --mpi=pmi2 -n ' \
     -DBLAS_LIBRARIES:PATH='/fusion/usc/c8/opt/env/nvf20.11/lib/libopenblas.a' \
     -DLAPACK_LIBRARIES:PATH='/fusion/usc/c8/opt/env/nvf20.11/lib/libopenblas.a' \
     -DENABLE_NETCDF:BOOL=ON \

@@ -38,17 +38,17 @@
 !!                    (TOO MANY SAMPLES FOR BUFFER SIZE)\n
 !!                    STATUS UNKNOWN DUE TO NECESSITY OF CALLING PTDATA BY TIME\n
 !!
-!!    @param T :  THE ARRAY IN WHICH THE TIMES OF THE DATA SAMPLES WILL BE RETURNED
+!!    @param T_R4 :  THE ARRAY IN WHICH THE TIMES OF THE DATA SAMPLES WILL BE RETURNED
 !!
-!!    @param DATA : IS THE ARRAY IN WHICH THE DATA WILL BE RETURNED
+!!    @param DATA_R4 : IS THE ARRAY IN WHICH THE DATA WILL BE RETURNED
 !!
 !!    @param NP : THE MAXIMUM NUMBER OF DATA POINTS YOU WANT BACK
 !!                ACTUAL NUMBER IS RETURNED
 !!
-!!    @param &TMIN : DEFINE THE TIME INTERVAL ON WHICH YOU WANT
+!!    @param &TMIN_R4 : DEFINE THE TIME INTERVAL ON WHICH YOU WANT
 !!                   DATA.  ACTUAL VALUES ARE RETURNED.
 !!
-!!    @param TMAX : DEFINE THE TIME INTERVAL ON WHICH YOU WANT
+!!    @param TMAX_R4 : DEFINE THE TIME INTERVAL ON WHICH YOU WANT
 !!                  DATA.  ACTUAL VALUES ARE RETURNED.
 !!
 !!    @param MOP : WHICH IS THE OP CODE.\n
@@ -59,9 +59,9 @@
 !!           MOP=3 MULTIPLY CURRENT CONTENTS OF DATA BY POINTNAME\n
 !!           MOP=4 DIVIDE CURRENT CONTENTS OF DATA BY POINTNAME\n
 !!
-!!    @param SCALE : FACTOR TO SCALE RESULTS BY
+!!    @param SCALE_R4 : FACTOR TO SCALE RESULTS BY
 !!
-!!    @param jWAIT :
+!!    @param jWAIT : UNUSED VARIABLE
 !!
 !**********************************************************************
       SUBROUTINE GETDAT(NSHOT,NAME,ICAL,IER,T_R4,DATA_R4,NP, &
@@ -70,15 +70,14 @@
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       parameter (npmax=262144)
-      parameter (npefit=8192) ! needs to match ntims from var_gggttt module
 
       character*4 char4
       real*4 t_r4, data_r4, tmin_r4, tmax_r4, scale_r4, rarr4, real32
 
       DIMENSION DATA_R4(*)
       DIMENSION T_R4(*)
-      DIMENSION DATA(npefit)
-      DIMENSION T(npefit)
+      DIMENSION DATA(npmax)
+      DIMENSION T(npmax)
       DIMENSION FPDATA(npmax)
       DIMENSION TT(npmax)
 
@@ -108,7 +107,6 @@
       DATA PHASE /'.PLA'/
       data tolclip /.01/ !-- maximum fraction of clipped signals
       data kmax/10/
-      data wait_time/30./
 
       LOGICAL INTCAL,efit
       character*10 cname, cname1, filnam
@@ -117,8 +115,6 @@
       INTCAL = .FALSE.
       efit = .false.
       rcfact = 1.0
-      iwait = jwait
-      np = min(np,npefit) ! this could be problematic for some codes...
 
       tmin = real(tmin_r4,dp)
       tmax = real(tmax_r4,dp)
@@ -139,7 +135,6 @@
 !      INTCAL = .TRUE.
 !      efit = .false.
 !      rcfact = 1.0
-!      iwait = jwait
 
 !      GO TO 11111
 
@@ -155,7 +150,6 @@
 
       INTCAL = .FALSE.
       efit = .true.
-      iwait = 0
 
       rcfact = 1.0
 
@@ -244,17 +238,11 @@
         RC    = 1.0
 
 666   continue
-      !
-      !  WAIT FOR THE DATA TO COME IN
-      !
-!      IF (iwait .eq. 1 .and. (ier .eq. 3 .or. ier .eq. 1) &
-!         .and. kount .lt. kmax) go to 1
 
       !-- AT THIS POINT ANY REMAINING POSITIVE ERROR VALUE IS FATAL.
       !-- NON-FATAL POSITIVE ERRORS HAVE BEEN HANDLED AS FOLLOWS:
       !  ier = 4  reset ier to 0
       !  ier = 2  non-fatal warning:  pointname has been revised
-      !  ier = 1 or 3 looped back to start if iwait=1
       !  ier = 35  re-called ptdata w/o time array for this dfi
 
       IF (IER .gt. 0 .AND. IER.NE.2) THEN

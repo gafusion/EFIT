@@ -11,29 +11,9 @@
  #
  #
  #
- table_di2 = <../green/>
+ table_di2 = <test/DIIID/green/>
 
       ******************** EFITD 65 x  65  output ********************
- before save fitting weights
- adjust fit parameters based on basis function selected 
- itek > 100, write out PLTOUT.OUT individually 
- option to symmetrize added 8/14/91 eal  
- read in limiter data
- before save fitting weights
- adjust fit parameters based on basis function selected 
- itek > 100, write out PLTOUT.OUT individually 
- option to symmetrize added 8/14/91 eal  
- read in limiter data
- before save fitting weights
- adjust fit parameters based on basis function selected 
- itek > 100, write out PLTOUT.OUT individually 
- option to symmetrize added 8/14/91 eal  
- read in limiter data
- before save fitting weights
- adjust fit parameters based on basis function selected 
- itek > 100, write out PLTOUT.OUT individually 
- option to symmetrize added 8/14/91 eal  
- read in limiter data
 
        data used:   
   0 flux loops

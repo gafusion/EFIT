@@ -1,0 +1,7 @@
+ &SETUP
+ link_efit="@CURRENT_MACHINE_LINK_DIR@"
+ link_store=""
+ maxinpfile=10
+ ntims=1000
+ kxiter=30
+ /
