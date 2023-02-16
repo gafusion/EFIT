@@ -919,10 +919,8 @@
          do i = 1,kwwknt
             if(kwwbdry(i) .ne. 1) &
                 wwbdry(i) = brsp(nfcoil+kppcur+kffcur+2*i - 1)/darea
-            endif
             if(kww2bdry(i) .ne. 1) &
                ww2bdry(i) = brsp(nfcoil+kppcur+kffcur+2*i)/darea
-            endif
          enddo
       endif
       return
