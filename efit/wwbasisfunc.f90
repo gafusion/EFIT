@@ -52,10 +52,10 @@
           if(mod(iparm,4) .eq. 3) bswwel = cos(w*wwtens*ypsi)
           if(mod(iparm,4) .eq. 0) bswwel = sin(w*wwtens*ypsi)
         endif
-      elseif (ifunc .eq. 4)then
+      elseif (ifunc .eq. 4) then
         nk = (iparm - 1) / 4 + 1
         if(nk .ge. kwwknt) nk = kwwknt - 1
-        if((nk .lt. (kwwknt - 1) .and. ypsi .lt. wwknt(nk+1) &
+        if ((nk .lt. (kwwknt - 1) .and. ypsi .lt. wwknt(nk+1) &
           .and.  ypsi .ge. wwknt(nk)) &
           .or. (nk .eq. (kwwknt - 1) .and. ypsi .le. wwknt(nk+1) &
           .and.  ypsi .ge. wwknt(nk))) then
@@ -343,14 +343,14 @@
          else
             ypsi2 = 1.0
          endif
-         if(mod(iparm,4) .eq. 1)b1 = ypsi1
-         if(mod(iparm,4) .eq. 2)b1 = (ypsi1**2) / 2.0
+         if(mod(iparm,4) .eq. 1) b1 = ypsi1
+         if(mod(iparm,4) .eq. 2) b1 = (ypsi1**2) / 2.0
          if(mod(iparm,4) .eq. 3) &
               b1 = sin(w*wwtens*ypsi1)/w*wwtens
          if(mod(iparm,4) .eq. 0) &
               b1 = -cos(w*wwtens*ypsi1)/w*wwtens
-         if(mod(iparm,4) .eq. 1)b2 = ypsi2
-         if(mod(iparm,4) .eq. 2)b2 = (ypsi2**2) / 2.0
+         if(mod(iparm,4) .eq. 1) b2 = ypsi2
+         if(mod(iparm,4) .eq. 2) b2 = (ypsi2**2) / 2.0
          if(mod(iparm,4) .eq. 3) &
               b2 = sin(w*wwtens*ypsi2)/w*wwtens
          if(mod(iparm,4) .eq. 0) &
@@ -379,14 +379,14 @@
          else
             ypsi2 = 1.0
          endif
-         if(mod(iparm,4) .eq. 1)b1 = ypsi1
-         if(mod(iparm,4) .eq. 2)b1 = (ypsi1**2) / 2.0
+         if(mod(iparm,4) .eq. 1) b1 = ypsi1
+         if(mod(iparm,4) .eq. 2) b1 = (ypsi1**2) / 2.0
          if(mod(iparm,4) .eq. 3) &
               b1 = sin(wwtens*ypsi1)/wwtens
          if(mod(iparm,4) .eq. 0) &
               b1 = -cos(wwtens*ypsi1)/wwtens
-         if(mod(iparm,4) .eq. 1)b2 = ypsi2
-         if(mod(iparm,4) .eq. 2)b2 = (ypsi2**2) / 2.0
+         if(mod(iparm,4) .eq. 1) b2 = ypsi2
+         if(mod(iparm,4) .eq. 2) b2 = (ypsi2**2) / 2.0
          if(mod(iparm,4) .eq. 3) &
               b2 = sin(wwtens*ypsi2)/wwtens
          if(mod(iparm,4) .eq. 0) &
@@ -907,19 +907,20 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      integer*4 i
 
-      if(kwwfnc .ge. 0 .and. kwwfnc .le. 2)then
+      if (kwwfnc .ge. 0 .and. kwwfnc .le. 2) then
          do i = 1,kwwcur
             wwbdry(i) = brsp(nfcoil+kppcur+kffcur+i)/darea
             ww2bdry(i) = 0.0
          enddo
-      else if (kwwfnc .eq. 6)then
+      else if (kwwfnc .eq. 6) then
          do i = 1,kwwknt
-            if ( kwwbdry(i) .ne. 1) then
-               wwbdry(i) = brsp(nfcoil+kppcur+kffcur+2*i - 1)/darea
+            if(kwwbdry(i) .ne. 1) &
+                wwbdry(i) = brsp(nfcoil+kppcur+kffcur+2*i - 1)/darea
             endif
-            if ( kww2bdry(i) .ne. 1) then
+            if(kww2bdry(i) .ne. 1) &
                ww2bdry(i) = brsp(nfcoil+kppcur+kffcur+2*i)/darea
             endif
          enddo
