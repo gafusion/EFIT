@@ -26,9 +26,11 @@ ECURRT, zeros, "| Vector of length 6 containing E coil section currents in Amps.
 | during shots prior to July of 1995 (when there were 2 E-coil sections rather than 6),
 | EFIT will fill in internally setting ECURRT(3)=ECURRT(5)=ECURRT(1), and ECURRT(4)=ECURRT(6)=ECURRT(2). "
 EXPMP2, , Magnetic probe signals in T. Obtained from data and written into K-file.
+FITDELZ, .false., Set FITDELZ=.T. to turn on vertical shifting of flux surfaces during fitting. 
 FITSIREF, False, "| Fit value of reference flux
 | True = fit
 | False = use measured reference flux (psf1a for DIII-D)"
+FITZTS, "'no'", "If FITZTS=='te', fit the Thomson scattering electron temperature measurement with a tanh fit to constrain the plasma edge location. "
 FWACOIL, 0, "| Fit Weight Acoil. (ADP ring)
 | 0 = do not include measured data in fit
 | >0 include measured data in fit"
@@ -51,16 +53,66 @@ FWTFC, zeros, "| Length of vector is experiment dependent (18 for DIII-D), each 
 FWTMP2, zeros, "| Length of vector is experiment dependent (currently 76 for DIII-D), each entry of which is a fitting weight for inner magnetic probes, 0 or 1.
 | 0 = do not include measured data in fit (default)
 | 1 = include measured data in fit"
+FWTPRE, all 1.0's, 
+FWTQA, 0, "| Flag to add axial q constraint, q on axis = QVFIT, to other constraints on current profile
+| 1 = include constraint
+| 0 = don't include constraint"
 FWTSI, zeros, "| Length of vector is experiment dependent (41 for DIII-D), each entry of which is a fitting weight for flux loops, 0 or 1.
 | 0 = do not include measured data in fit (default)
 | 1 = include measured data in fit"
+FWTXX,0.2, 
+IECURR,1,"| (Integer flag) Ohmic coil (E-coil) current
+| 0 = ignore E coil currents
+| 1 = include E coil currents in calculations, with no uncertainty (default)
+| 2 = fit E-coil currents, these are fit to the experimental coil values when FWTEC>0, otherwise they are fit based on other measurements"
+IFITDELZ,1,"| (Integer flag) This parameter controls where in the EFIT iteration the vertical flux surface shift is fit. (Only activated when FITDELZ=.T.)
+| 1 = after the poloidal flux solve (default).
+| 2 = after the response matrix solve.
+| 3 = after the current solve."
+IFITVS,0,"| (Integer flag) Fit Vessel Current. This parameter is an alternative to IVESEL and takes priority over any IVESEL value that is set.
+| 1 = identical to setting IVESEL=3.
+| 0 = deactivate this parameter (default)."
+IVESEL,0,"| (Integer flag) Constrain Vessel Currents. The vessel can be modeled as individual current carrying elements (specified in the IN3 namelist input to EFUND) that are treated as additional unknown sources of current. (Note: this option is superceded when IFITVS=1)
+| 0 = don't constrain vessel current (default).
+| 1 = specify constraints through VCURRT.
+| 2 = constraints are set based on the measured loop voltage (I=V/R).
+| 3 = vessel currents are treated as free parameters that are fitted to all diagnostic and coil measurements specified."
+KDOFIT,,(depreciated)
+KPRESSB,0,"| Include additional pressure constraints
+| 0 = no additional constraints
+| 1 = put a pressure point at the boundary with the value of PRESSBI (only used when KPRFIT=2)
+| 2 = set a constraint on P' at the axis with the value of PRESPB (setting this forces PCURBD=0)"
+KPRFIT,0, "| Turn on kinetic fitting
+| 0 = no kinetic data used in fit (default).
+| 1 = fit input pressure profile - requires NPRESS>0 (total including both thermal and beam in flux space.)
+| 2 = kinetic fitting input from temperature, density, and beam profiles in real space.
+| 3 = include rotation - must set ICURRT=5 (set NPRESS=0 to include rotation with no thermal pressure constraint)"
 LOOKFW, , "| Replace nonzero weights specified in user input FWTMP2 and
 | FWTSI with weights from the file FITWEIGHT.DAT. This file contains 0 weights for probes and 
 | flux loops known to be broken at the time of the shot ISHOT and 1 for all others. Zero weights in user input are not modified.
 | >0 replace nonzero entries in FWTMP2 and FWTSI with corresponding entries from FITWEIGHT.DAT (default). <=0 Do not replace."
-ISHOT,-1, shot number to analyze."
+NDOKIN,1,"Number of equilibrium iterations before updating the kinetic pressure profile, for kinetic fitting. Applies if KPRFIT=2."
 PSIBIT, zeros, "| flux loops, physical units corresponding to 1 digitizer count. Obtained from data and written into K-file."
+QVFIT,0.95,"Axial q value for fitting. See FWTQA."
+SGNEMIN,0.0,"Sigma ne Minimum.
+| - = minimum ne uncertainty in %. Kinetic fits only. If values in array SGNETH are 
+| < SGNEMIN, then replaced by SGNEMIN?"
+SGNETH,,"Standard deviation of Thompson ne measurement?"
+SGNETHI,,
+SGPRMIN,0,"| Sigma Pressure Minimum.
+| - = minimum P uncertainty in %. Kinetic fits only. If values in array SIGPRE are < -SGPRMINPRESSR(1), then replaced by SGPRMIN."
+SGTEMIN,0.0,"| Sigma Te Minimum.
+| - = minimum Te uncertainty in %. Kinetic fits only. If values in array SGTETH are < SGTEMIN, then replaced by SGTEMIN?"
+SGTETH,,standard deviation of Thompson temperature measurement?
+SGTETHI,,
+SGTIMIN,,
 SIGDLC, , Standard deviation of diamagnetic flux measured data in mv-s.
+SIGPPB,1000.,"Uncertainty of boundary pressure constraint."
+SIGPRE,,"Standard deviation of input pressure data in n/m2. (This referse to pressure profile PRESSR - typically from ONETWO.) Use with KPRFIT=1."
+SIGPREBI,,"Standard deviation value for PRESSBI."
+SIGTI,,"Standard deviation in Ti. If nptionf > 100, sigti = sigteth. if rion(2)<0.0, then sigti = sgtimintionex"
+SIGTII,,
+VCURRT,,"Vessel currents in Amps, vector length matches the number vessel segments (24 for DIII-D). Only used when IVESEL=1 and IFITVS=0."
 ZELIP, 0.0, "| Z of ellipse center in m for current initialization. 
 | If ZELIP > 105 then ZELIP is estimated from probe signals in same manner as Zp(?) and
 | EELIP is set to 1.5. Fitting mode only."
