@@ -8,7 +8,7 @@ CURRC139, 0.0,Current in 139 degree C coil in Amps.
 CURRC79,0.0,Current in 79 degree C coil in Amps. 
 FBETAN,,desired value for normalized toroidal beta
 FBETAP,0.0,Fixed betap value for equilibrium calculation. ICONVR must equal 3. ICURRT must equal 2.
-FITDELZ,,See namelist EFITIN.
+FITDELZ,,See namelist IN1.
 FLI,0.0,Fixed li value for equilibrium calculation. ICONVR must equal 3. ICURRT must equal 2.
 FQSIW,,"Desired q value at surface PSIWANT, if near boundary FWTCUR (in namelist IN1) must be set to 0."
 FQ95,,(unused variable)

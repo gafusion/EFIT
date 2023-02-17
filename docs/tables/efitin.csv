@@ -16,7 +16,7 @@ ELOMIN,,See namelist IN1.
 ERRMIN,,See namelist IN1.
 ERROR,,See namelist IN1.
 FCURBD,,See namelist IN1.
-FITDELZ, .false., Set FITDELZ=.T. to turn on vertical shifting of flux surfaces during fitting. 
+FITDELZ,,See namelist IN1.
 FITSIREF,,See namelist IN1.
 FITZTS,,See namelist IN1.
 FWACOIL,,See namelist IN1.

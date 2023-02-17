@@ -23,14 +23,14 @@ with the same structure using single precision reals and integers):
          real*8 brsp(nfcoil),ecurrt(nesum)
          real*8,dimension(:),allocatable :: fpol,pres,ffprim,pprime, &
                 qpsi,rbbbs,zbbbs,rlim,zlim,pressw,pwprim,dmion,rhovn, &
-                epoten,rgrid,zgrid,brsp,ecurrt,pcurrt
+                epoten,rgrid,zgrid,brsp,ecurrt,pcurrt,pcurrz
          real*8,dimension(:,:),allocatable :: psirz
 
          read (neqdsk,2000) (case(i),i=1,6),idum,nw,nh
          allocate(psirz(nw,nh),fpol(nw),pres(nw),ffprim(nw), &
            pprime(nw),qpsi(nw),pressw(nw),pwprim(nw), &
                 dmion(nw),rhovn(nw),epoten(nw),rgrid(nw),zgrid(nw), &
-                pcurrt(nw*nh))
+                pcurrt(nw*nh),pcurrz(nw,nh)
          read (neqdsk,2020) rdim,zdim,rcentr,rleft,zmid
          read (neqdsk,2020) rmaxis,zmaxis,simag,sibry,bcentr
          read (neqdsk,2020) current,simag,xdum,rmaxis,xdum
@@ -73,7 +73,7 @@ with the same structure using single precision reals and integers):
              read (neqdsk,2020) (ecurrt(i),i=1,nesum) ! also in m and a-files
              read (neqdsk,2020) (pcurrt(i),i=1,nw*nh)
            elseif (iplcout.eq.2) then
-             read (neqdsk,2020) (pcurrt(i),i=1,nw*nh)
+             read (neqdsk,2020) ((pcurrz(i),i=1,nw),j=1,nh)
            endif
          endif
 
