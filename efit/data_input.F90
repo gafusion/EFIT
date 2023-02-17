@@ -3084,7 +3084,7 @@
 !----------------------------------------------------------------------- 
 !--   set up parameters for fixed boundary calculations               -- 
 !----------------------------------------------------------------------- 
-      if (ifref.eq.-1) ifref=1 
+      if(ifref.eq.-1) ifref=1 
       if (nbdry.gt.1) then ! nbdry changed above
         delx2=(rbdry(1)-rbdry(nbdry))**2 
         dely2=(zbdry(1)-zbdry(nbdry))**2 

@@ -37,12 +37,6 @@ FCURBD,, "| FF' Boundary Constraint.
 | 1 = force FF'=0 at boundary.
 | 0 = let FF' have a finite value at boundary
 | The method by which FF'=0 is forced is to add another parameter to the parametrization whose coefficient is the negative sum of all other coefficients. (This makes sense for poly parametrization - what about other parametrizations?)"
-FITZTS, "'no'", "If FITZTS=='te', fit the Thomson scattering electron temperature measurement with a tanh fit to constrain the plasma edge location. "
-FWTPRE, all 1.0's, 
-FWTQA, 0, "| Flag to add axial q constraint, q on axis = QVFIT, to other constraints on current profile
-| 1 = include constraint
-| 0 = don't include constraint"
-FWTXX,0.2, 
 GAMMAP,1e10, GAQ current profile parameter. (Used for both P and F profiles)
 IACOIL, 0, 1 = turn on advance divertor coil. 
 IAVED,, "Time in milliseconds for averaging CO2 density data, 10. (actually get +/- this value)"
@@ -94,10 +88,6 @@ IDFILA,,Filament set for MFIT (not used in EFIT).
 IECOIL,,"| (Integer flag) E-coil plotting
 | 0 = do not plot E coils (Default)
 | 1 = plot E coils with color coding for different connections"
-IECURR,1,"| (Integer flag) Ohmic coil (E-coil) current
-| 0 = ignore E coil currents
-| 1 = include E coil currents in calculations, with no uncertainty (default)
-| 2 = fit E-coil currents, these are fit to the experimental coil values when FWTEC>0, otherwise they are fit based on other measurements"
 IERCHK,1,"| (Integer flag) Error Check.
 | 0 = don't check for MHD fitting errors
 | 1 = check for MHD fitting errors but continue regardless of the result (Default)
@@ -105,9 +95,6 @@ IERCHK,1,"| (Integer flag) Error Check.
 | 3 = don't output any result files (g, a, m, etc.) if any error checks fail
 | - = don't call shapesurf to compute plasma quantities or output anything besides the a-file if fit hasn't converged (intended for use in an optimization loop)"
 IEXCAL,0, 1 = plot magnetic signals.
-IFITVS,0,"| (Integer flag) Fit Vessel Current. This parameter is an alternative to IVESEL and takes priority over any IVESEL value that is set.
-| 1 = identical to setting IVESEL=3.
-| 0 = deactivate this parameter (default)."
 IMAGSIGMA,0, 1 = computed nonlinear magnetic uncertainties (deprecated).
 INPUT_DIR,,"See namelist EFITIN"
 IOUT,1,"| Output file option. This is a bitwise switch except that 6 overwrites 2 and 4.
@@ -128,6 +115,7 @@ IPLCOUT,0,"| (Integer flag) Include additional variables in g-file (note: this v
 IPROBE,0,+ = plot magnetic probes and flux loops and number them every IPROBE points. 
 IQPLOT,1,+ = plot q values on flux surfaces 
 IRFILA,zeros,Radial grid indicies to compute filament Green table at.  Only used when ICONVR<0 and AELIP<=0.
+ISHOT,-1, shot number to analyze.
 ISLVE,0,"(Integer flag) Solovev mode. 1 = Solovev equilibrium."
 ISOLVE,1,"| Integer flag to choose between core solvers.
 | 0 = Buneman method. Double cyclic reduction, requires 2n+1 grid points in both directions. (Most commonly used by legacy efit versions.)
@@ -148,11 +136,6 @@ ITIME,,"Time in milliseconds of slice to analyze."
 ITIMEU,0,"Microseconds for timeslice to analyze. (added to ITIME)"
 ITRACE,-1,"| 1 = compute external separatrix distance. (default)
 | 2 = compute and plot."
-IVESEL,0,"| (Integer flag) Constrain Vessel Currents. The vessel can be modeled as individual current carrying elements (specified in the IN3 namelist input to EFUND) that are treated as additional unknown sources of current. (Note: this option is superceded when IFITVS=1)
-| 0 = don't constrain vessel current (default).
-| 1 = specify constraints through VCURRT.
-| 2 = constraints are set based on the measured loop voltage (I=V/R).
-| 3 = vessel currents are treated as free parameters that are fitted to all diagnostic and coil measurements specified."
 IWEIGH, 0,
 IXRAY,, "| 0 = do not plot soft X-ray (default)
 | 1 = plot Poroidal SXR arrays (implied by negative ITEK)
@@ -176,7 +159,6 @@ KCALDIA,0,"| (Integer flag) Determines if compensation is applied to diamagnetic
 | 0 = use compensated diamagnetic flux. (default)
 | 1 = use uncompensated diamagnetic flux directly from PTDATA calls
 | 2 = skip diamagnetic data fetching entirely."
-KDOFIT,,(depreciated)
 KEQDSK,,"| Format of A and G EQDSK files
 | 0 = binary EQDSKs
 | 1 = ascii EQDSKs (default)
@@ -193,15 +175,6 @@ KINPUT,, "| Write out M(SHOT).(TIME+1) file during execution in equilibrium mode
 KLABEL,,Something to do with plotting.
 KPLOTP,1,"1 = overlay pressure and flux surfaces, match at outboard side.
 | 2 = match at inboard side."
-KPRESSB,0,"| Include additional pressure constraints
-| 0 = no additional constraints
-| 1 = put a pressure point at the boundary with the value of PRESSBI (only used when KPRFIT=2)
-| 2 = set a constraint on P' at the axis with the value of PRESPB (setting this forces PCURBD=0)"
-KPRFIT,0, "| Turn on kinetic fitting
-| 0 = no kinetic data used in fit (default).
-| 1 = fit input pressure profile - requires NPRESS>0 (total including both thermal and beam in flux space.)
-| 2 = kinetic fitting input from temperature, density, and beam profiles in real space.
-| 3 = include rotation - must set ICURRT=5 (set NPRESS=0 to include rotation with no thermal pressure constraint)"
 KSIGMA,, See IMAGSIGMA (deprecated)
 KSKIPVS, 0,1 = search for external separatrix for attached current model.
 KTEAR,,(deprecated)
@@ -214,11 +187,13 @@ KWRIPRE,,"| Make output files
 KZEROJ,0,"| Constrain FF' and P' by applying constraints specified by variable RZEROJ.
 | >0 = number of constraints to apply.
 | 0 = don't apply constraints (default)"
-LIMFAG,2,Specify which method to use to determine which grid points are inside vessel.
+LIMFAG,2,"| Specify which method to use to determine which grid points are inside vessel.
+| 1 = assume convex geometry
+| 2 = general (no geometry assumption"
 LIMVS,1,1 = use limiter contour rather than vessel for attached current model.
 LIMID,33,"Suffix used to identify which of several standard files containing limiter information to use."
-LIMITR,,"| Number of limiter points (number of valid points in XLIM and YLIM arrays) except for shots <=76756, where number of limiter points is this number+13
-| <0 read from a standard file (Default = -33).
+LIMITR,-33,"| Number of limiter points (number of valid points in XLIM and YLIM arrays) except for shots <=76756, where number of limiter points is this number+13
+| <0 read from a standard file (Default).
 | 1000+number number of points for symmetrized solution (input only top half of limiter points)."
 SILOPLIM,0, Controls whether the boundary from the previous timeslice (on the same processor) is used as an initial guess for finding the boundary at the current time.  The previous solution is only used when the maximum absolute flux loop difference between the current and previous iteration is less than this value.
 MXITER,25,"| Maximum number of outer fitting iterations (limited to KXITER, see SETUP namelist) Set to 1 for equilibrium solutions. Set negative for iteration history output to terminal during EFIT execution."
@@ -232,7 +207,6 @@ NBSKIP,2,
 NCCOIL,,"| Magnetic compensation from C coils
 | 1 = compensation on (default).
 | 0 = no compensation."
-NDOKIN,1,"Number of equilibrium iterations before updating the kinetic pressure profile, for kinetic fitting. Applies if KPRFIT=2."
 NEXTRA,,"| ""Number Extra"". Number of flux surfaces to plot outside plasma boundary
 | += number of external field lines to plot.
 | -= plot field line and magnetic quantities along field lines(?)."
@@ -266,7 +240,6 @@ PRESSBI,0.0,pressure constraint at the boundary. See KPRESSB.
 PRESSR,,"Input array of pressure in n/m2 vs. normalized flux for fitting. See NPRESS."
 QEMP,0.0,GAQ something.
 QENP,0.95,On axis q value for GAQ current profile ICURRT=4
-QVFIT,0.95,"Axial q value for fitting. See FWTQA."
 RBDRY,0.0,Major radius coordinates of boundary.
 RBOUND,0.0,"Initial guess for radius in meters for tracing boundary. See also ZBOUND."
 RCENTR, 1.6955,"Major radius of vacuum toroidal field in meters. See also BTOR."
@@ -299,24 +272,7 @@ SCALEPR,scalepr(1)=-1,
 SCALESIR, 1e-3, 
 SCRAPE,0.03,Distance in meters between field lines plotted in scrape-off region(?). See NEXTRA.
 SERROR,0.03,"Fraction of measured data values to use to define uncertainty of measurements."
-SGNEMIN,0.0,"Sigma ne Minimum.
-| - = minimum ne uncertainty in %. Kinetic fits only. If values in array SGNETH are 
-| < SGNEMIN, then replaced by SGNEMIN?"
-SGNETH,,"Standard deviation of Thompson ne measurement?"
-SGNETHI,,
-SGPRMIN,0,"| Sigma Pressure Minimum.
-| - = minimum P uncertainty in %. Kinetic fits only. If values in array SIGPRE are < -SGPRMINPRESSR(1), then replaced by SGPRMIN."
-SGTEMIN,0.0,"| Sigma Te Minimum.
-| - = minimum Te uncertainty in %. Kinetic fits only. If values in array SGTETH are < SGTEMIN, then replaced by SGTEMIN?"
-SGTETH,,standard deviation of Thompson temperature measurement?
-SGTETHI,,
-SGTIMIN,,
 SIBEAM,,Normalized flux values for beam pressure. Positions correspond to where the PBEAM constraints are applied
-SIGPPB,1000.,"Uncertainty of boundary pressure constraint."
-SIGPRE,,"Standard deviation of input pressure data in n/m2. (This referse to pressure profile PRESSR - typically from ONETWO.) Use with KPRFIT=1."
-SIGPREBI,,"Standard deviation value for PRESSBI."
-SIGTI,,"Standard deviation in Ti. If nptionf > 100, sigti = sigteth. if rion(2)<0.0, then sigti = sgtimintionex"
-SIGTII,,
 SIREF,0.0,"Poloidal flux at reference flux loop NSLREF in volt-sec/rad . Obtained from data and written into K-file. "
 SRM,-3.5,Parameter for Solovev equilibrium. - = inside limited.
 STORE_DIR,,"see namelist EFITIN"
@@ -325,7 +281,6 @@ TETHOM,,"Electron temperature from Thompson."
 TIONEX,,"if nptionf > 100, tionex = tethombfract"
 USE_PREVIOUS,False,"Allows the BRSP variable from the previous timestep to be used as the initial value (indepented of the value of ISICINIT).  This allows for matching to older versions of the code, but is otherwise not recommended."
 VCURFB,"(0.0,500.0,500.0)",
-VCURRT,,"Vessel currents in Amps, vector length matches the number vessel segments (24 for DIII-D). Only used when IVESEL=1 and IFITVS=0."
 VLOOP, 0.0,Measured loop voltage. Obtained from data and written into the K-file. 
 VSDAMP,0,Relaxation parameter for scrape-off layer current. (Always set to 0.25.)
 WCURBD,,"| Omega Current Boundary.
