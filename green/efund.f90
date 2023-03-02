@@ -41,8 +41,6 @@
 !**                                                                  **
 !**********************************************************************
       subroutine e1coef(coef,nl,ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil
       use cecoil
       use coilsp
       use consta
@@ -86,8 +84,6 @@
 !**                                                                  **
 !**********************************************************************
       subroutine e2coef(coef,mp,ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil
       use cecoil
       use coilsp
       use consta
@@ -153,8 +149,6 @@
 !**                                                                  **
 !**********************************************************************
       subroutine egrid(coef,rgrid,nr,zgrid,nz,ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil
       use cecoil
       use coilsp
       use consta
@@ -190,7 +184,7 @@
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          flux computes the mutual inductance/2/pi between        **
-!**          two circulars of rectangular cross section.             **
+!**          two conductors with rectangular cross sections.         **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**       r1,r2...........radius of first and second coil            **
@@ -229,7 +223,7 @@
       hf2 = h1*.5
       hs2 = h2*.5
 !
-      if (t12.ne.0) then
+      if (t1.eq.0) then
          xl1 = r1-0.5*w1-0.5*h1/abs(t12)
          xr1 = r1+0.5*w1+0.5*h1/abs(t12)
          xbm1 = xl1+w1
@@ -238,7 +232,7 @@
          if(t12.lt.0.) xtm1 = xl1 + w1
       endif
 !
-      if (t22.ne.0) then
+      if (t2.eq.0) then
          xl2 = r2-0.5*w2-0.5*h2/abs(t22)
          xr2 = r2+0.5*w2+0.5*h2/abs(t22)
          xbm2 = xl2+w2
@@ -274,15 +268,14 @@
 !**                                                                  **
 !**********************************************************************
       subroutine gacoil(rsilac,rmp2ac,gridac,rgrid,mw, zgrid,mh)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
+      use exparm, only: nsilop,magpr2,nacoil,nw,nh,nwnh
       use consta
       use cacoil
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension rsilac(nsilop,nacoil),rmp2ac(magpr2,nacoil)
-      real*8,dimension(mw) ::  rgrid
-      real*8,dimension(mh) ::  zgrid
-      real*8,dimension(nwnh,nacoil) :: gridac
+      real*8, dimension(mw) :: rgrid
+      real*8, dimension(mh) :: zgrid
+      real*8, dimension(nwnh,nacoil) :: gridac
       do j=1,nsilop
          jj=j
          do i=1,nacoil
@@ -328,8 +321,8 @@
 !**********************************************************************
       subroutine gecoil(rsilec,rmp2ec,gridec,rgrid,mw,zgrid,mh, &
                         rfcec,recec,rsisec)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
+      use exparm, only: nfcoil,nsilop,magpr2,necoil,nesum,&
+                      nw,nh,nwnh
       use consta
       use fcoil
       use cecoil
@@ -350,8 +343,7 @@
          do i=1,necoil
             ii=i
             call e1coef(work,jj,ii)
-            kkm=ecid(i)
-            rsilec(j,kkm)=rsilec(j,kkm)+work*ecturn(i)
+            rsilec(j,ecid(i))=rsilec(j,ecid(i))+work*ecturn(i)
          enddo 
       enddo
 !
@@ -363,8 +355,7 @@
          do i=1,necoil
             ii=i
             call e2coef(work,jj,ii)
-            kkm=ecid(i)
-            rmp2ec(j,kkm)=rmp2ec(j,kkm)+work*ecturn(i)
+            rmp2ec(j,ecid(i))=rmp2ec(j,ecid(i))+work*ecturn(i)
          enddo 
       enddo
 !
@@ -379,8 +370,7 @@
             do n=1,necoil
                nn=n
                call egrid(work,rgrid,nr,zgrid,nz,nn)
-               kkkm=ecid(n)
-               gridec(kk,kkkm)=gridec(kk,kkkm)+work*ecturn(n)
+               gridec(kk,ecid(n))=gridec(kk,ecid(n))+work*ecturn(n)
             enddo 
          enddo
       enddo
@@ -397,9 +387,7 @@
             call flux(re(i),ze(i),we(i),he(i),aaa,bbb, &
                       rf(j),zf(j),wf(j),hf(j),taf(j),taf2(j),work)
             work=work*0.5/pi
-            kkm=ecid(i)
-            kk=kkm+1
-            rfcec(j,kkm)=rfcec(j,kkm)+work*(kk-ecid(i))
+            rfcec(j,ecid(i))=rfcec(j,ecid(i))+work
          enddo 
       enddo
 !
@@ -410,15 +398,13 @@
          enddo 
       enddo 
       do j=1,necoil
-         jjm=ecid(j)
          do i=1,necoil
             call flux(re(i),ze(i),we(i),he(i),aaa,bbb, &
                       re(j),ze(j),we(j),he(j),aaa,bbb,work)
             work=work*0.5/pi
-            kkm=ecid(i)
-            recec(jjm,kkm)=recec(jjm,kkm)+work
+            recec(ecid(j),ecid(i))=recec(ecid(j),ecid(i))+work
          enddo 
-         rsisec(jjm)=rsisec(jjm)+2.*pi*re(j)/we(j)/he(j)*zetaec
+         rsisec(ecid(j))=rsisec(ecid(j))+2.*pi*re(j)/we(j)/he(j)*zetaec
       enddo
       return
       end subroutine gecoil
@@ -430,8 +416,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine efund_grid
-      use exparm, only: nfcoil,nsilop,magpr2,nrogow,necoil,nesum, &
-                        nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
+      use exparm, only: nfcoil,nfsum,nw,nh,nwnh
       use consta
       use pmodel
       use input
@@ -475,7 +460,7 @@
                rsum = 0.
                dwc = wf(ii)/ndr
                dhc = hf(ii)/ndz
-               if (af2(ii) .eq. 0.) then
+               if (af(ii) .ne. 0.) then
                   z1 = zf(ii)-taf(ii)*(wf(ii)-dwc)/2.-.5*hf(ii)+.5*dhc
                   ab = rf(ii)-.5*wf(ii)+.5*dwc
                   do iw = 1,isplit
@@ -528,8 +513,7 @@
       ggridfc=0.0
 !
       do i=1,nfcoil
-         k=abs(fcid(i))
-         ggridfc(:,k)=ggridfc(:,k)+fcturn(i)*gridfc(:,i)
+         ggridfc(:,fcid(i))=ggridfc(:,fcid(i))+fcturn(i)*gridfc(:,i)
       enddo
 !
       print*,'file name : ','ec'//trim(ch1)//trim(ch2)//'.ddd' 
@@ -578,38 +562,34 @@
 !**          26/04/83..........first created                         **
 !**                                                                  **
 !**********************************************************************
-      subroutine gsilop(rr, nr, zz, nz, rspfun, ns, rsi, zsi, wsi &
-           , hsi, as, as2, ndim)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
-                      nw,nh,nwnh
+      subroutine gsilop(rr,nr,zz,nz,rspfun,ns,rsi,zsi,wsi, &
+                        hsi,as,as2,ndim)
+      use exparm, only: nsilop,nwnh
       use consta
       implicit integer*4 (i-n), real*8 (a-h, o-z)
             real*8,dimension(nr) :: rr
             real*8,dimension(nz) :: zz
             real*8,dimension(ns) :: rsi,zsi,wsi,hsi,as,as2
             real*8,dimension(ndim,nwnh) :: rspfun
-!     dimension rsi(1),zsi(1),wsi(1),hsi(1),as(1),as2(1)
-!     dimension rr(1),zz(1),rspfun(ndim,1)
-      dimension taf(nfcoil),taf2(nfcoil)
+      dimension tas(nsilop),tas2(nsilop)
       data isplit/17/,tole/1.0e-10/
 
       ndr = isplit
       ndz = isplit
-      in=ns
-        taf(in) = tan(as(in)*pi/180.0)
-        taf2(in) = tan(as2(in)*pi/180.0)
+        tas(ns) = tan(as(ns)*pi/180.0)
+        tas2(ns) = tan(as2(ns)*pi/180.0)
         do nc=1,nr
           do nd=1,nz
             nk=(nc-1)*nz+nd
             rsum = 0.
-            dwc = wsi(in)/ndr
-            dhc = hsi(in)/ndz
-            if (as2(in) .eq. 0.) then
-              z1 = zsi(in) - taf(in)*(wsi(in)-dwc)/2. - .5*hsi(in) + .5*dhc
-              ab = rsi(in) - .5*wsi(in) + .5*dwc
+            dwc = wsi(ns)/ndr
+            dhc = hsi(ns)/ndz
+            if (as(ns) .ne. 0.) then
+              z1 = zsi(ns) - tas(ns)*(wsi(ns)-dwc)/2. - .5*hsi(ns) + .5*dhc
+              ab = rsi(ns) - .5*wsi(ns) + .5*dwc
               do iw = 1, isplit
                 drc = ab + (iw-1)*dwc + iw*tole
-                z2 = z1 + (iw-1)*taf(in)*dwc
+                z2 = z1 + (iw-1)*tas(ns)*dwc
                 do ih = 1, isplit
                   dzc = z2 + (ih-1)*dhc
                   rtmp = psical(drc,rr(nc),zz(nd)-dzc)
@@ -618,18 +598,18 @@
               enddo
             else
               do ih = 1, ndz
-                dzc = zsi(in) - .5*hsi(in) + .5*dhc + dhc*(ih-1)
+                dzc = zsi(ns) - .5*hsi(ns) + .5*dhc + dhc*(ih-1)
                 do iw = 1, ndr
-                  drc = rsi(in) - .5*wsi(in) - .5*hsi(in)/taf2(in)&
-                         + .5*dwc + .5*dhc/taf2(in)&
-                         + dhc/taf2(in)*(ih-1) + dwc*(iw-1)
+                  drc = rsi(ns) - .5*wsi(ns) - .5*hsi(ns)/tas2(ns)&
+                         + .5*dwc + .5*dhc/tas2(ns)&
+                         + dhc/tas2(ns)*(ih-1) + dwc*(iw-1)
                   rtmp = psical(drc,rr(nc),zz(nd)-dzc)
                   rsum = rsum + rtmp
                 enddo
               enddo
             endif
             cmut = rsum*2.e-07/(isplit*isplit)
-            rspfun(in,nk)=cmut
+            rspfun(ns,nk)=cmut
           enddo
         enddo
 
@@ -649,20 +629,20 @@
 !**********************************************************************
       subroutine gvesel(rsilvs,rmp2vs,gridvs,rgrid,mw, &
                         zgrid,mh,rfcvs,rvsfc,rvsec)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
+      use exparm, only: nfcoil,nsilop,magpr2,necoil,nesum,&
+                        nvesel,nw,nh
       use consta
       use fcoil
       use cecoil
       use cvesel
-      use input,only:iecoil
+      use input, only: iecoil
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension rsilvs(nsilop,nvesel),rmp2vs(magpr2,nvesel), &
                 rgrid(1),zgrid(1),rvsec(nvesel,nesum), &
                 rfcvs(nfcoil,nvesel),rvsfc(nvesel,nfcoil)
       dimension gridvs(mw*mh,nvesel)
       dimension taf(nfcoil),taf2(nfcoil)
-      dimension tas(nvesel),tas2(nvesel)
+      dimension tav(nvesel),tav2(nvesel)
       do j=1,nsilop
          jj=j
          do i=1,nvesel
@@ -698,9 +678,9 @@
          taf(j)=tan(af(j)*pi/180.)
          taf2(j)=tan(af2(j)*pi/180.)
          do i=1,nvesel
-            tas(i)=tan(avs(i)*pi/180.)
-            tas2(i)=tan(avs2(i)*pi/180.)
-            call flux(rvs(i),zvs(i),wvs(i),hvs(i),tas(i),tas2(i), &
+            tav(i)=tan(avs(i)*pi/180.)
+            tav2(i)=tan(avs2(i)*pi/180.)
+            call flux(rvs(i),zvs(i),wvs(i),hvs(i),tav(i),tav2(i), &
                       rf(j),zf(j),wf(j),hf(j),taf(j),taf2(j),work)
             work=work*0.5/pi
             rfcvs(j,i)=work
@@ -710,28 +690,26 @@
       aaa=0.0
       rvsec(:,:)=0.0
       do j=1,nvesel
-         tas(j)=tan(avs(j)*pi/180.)
-         tas2(j)=tan(avs2(j)*pi/180.)
+         tav(j)=tan(avs(j)*pi/180.)
+         tav2(j)=tan(avs2(j)*pi/180.)
          if (iecoil.eq.1) then
             do i=1,necoil
                call flux(re(i),ze(i),we(i),he(i),aaa,aaa, &
-                         rvs(j),zvs(j),wvs(j),hvs(j),tas(j),tas2(j),work)
+                         rvs(j),zvs(j),wvs(j),hvs(j),tav(j),tav2(j),work)
                work=work*0.5/pi
-               kkm=ecid(i)
-               kk=kkm+1
-               rvsec(j,kkm)=rvsec(j,kkm)+work*(kk-ecid(i))
+               rvsec(j,ecid(i))=rvsec(j,ecid(i))+work
             enddo
          endif
       enddo 
 !
       do j=1,nvesel
-         tas(j)=tan(avs(j)*pi/180.)
-         tas2(j)=tan(avs2(j)*pi/180.)
+         tav(j)=tan(avs(j)*pi/180.)
+         tav2(j)=tan(avs2(j)*pi/180.)
          do i=1,nfcoil
             taf(i)=tan(af(i)*pi/180.)
             taf2(i)=tan(af2(i)*pi/180.)
             call flux(rf(i),zf(i),wf(i),hf(i),taf(i),taf2(i), &
-                      rvs(j),zvs(j),wvs(j),hvs(j),tas(j),tas2(j),work)
+                      rvs(j),zvs(j),wvs(j),hvs(j),tav(j),tav2(j),work)
             work=work*0.5/pi
             rvsfc(j,i)=work
          enddo 
@@ -844,8 +822,8 @@
 !**          15/07/83..........first created                         **
 !**                                                                  **
 !**********************************************************************
-      subroutine m1coef(rr, zz, nr, nz, coef,  nl, nf)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil
+      subroutine m1coef(rr,zz,nr,nz,coef,nl,nf)
+      use exparm, only: nsilop
       use fcoil
       use coilsp
       use consta
@@ -902,9 +880,8 @@
 !**          26/04/83..........first created                         **
 !**                                                                  **
 !**********************************************************************
-      subroutine m2coef(rr, nr, zz, nz, coef,  mp, nc)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
-                      nw,nh,nwnh
+      subroutine m2coef(rr,nr,zz,nz,coef,mp,nc)
+      use exparm, only: nfcoil,magpr2,nw,nh
       use fcoil
       use coilsp
       use mprobe
@@ -1054,8 +1031,8 @@
 !**                                                                  **
 !**********************************************************************
       subroutine efund_matrix
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
+      use exparm, only: nfcoil,nsilop,magpr2,nrogow,nesum,&
+                        nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
       use consta
       use nio
       use cvesel
@@ -1079,7 +1056,7 @@
       dimension rsilvs(nsilop,nvesel),rmp2vs(magpr2,nvesel), &
                 rfcvs(nfcoil,nvesel), &
                 rvsec(nvesel,nesum),rvsfc(nvesel,nfcoil), &
-                rvsvs(nvesel,nvesel),tas(nvesel),tas2(nvesel)
+                rvsvs(nvesel,nvesel),tav(nvesel),tav2(nvesel)
       dimension gsilvs(nsilop,nvsum),gmp2vs(magpr2,nvsum)
       dimension taf(nfcoil),taf2(nfcoil)
       dimension rsilac(nsilop,nacoil),rmp2ac(magpr2,nacoil)
@@ -1148,8 +1125,8 @@
 
                enddo
                ii=i
-               call gsilop(rgrid,nw,zgrid,nh,rfcpc,ii,rf,zf,wf,hf,af,af2 &
-                          ,nfcoil)
+               call gsilop(rgrid,nw,zgrid,nh,rfcpc,ii,rf,zf,wf,hf,af,af2, &
+                           nfcoil)
             enddo
 
             print*,'file name : ','fc'//trim(ch1)//trim(ch2)//'.ddd' 
@@ -1232,12 +1209,11 @@
          enddo
 !
          do i=1,nfcoil
-            k=abs(fcid(i))
             do j=1,nsilop
-               gsilfc(j,k)=gsilfc(j,k)+fcturn(i)*rsilfc(j,i)
+               gsilfc(j,fcid(i))=gsilfc(j,fcid(i))+fcturn(i)*rsilfc(j,i)
             enddo
             do j=1,magpr2
-               gmp2fc(j,k)=gmp2fc(j,k)+fcturn(i)*rmp2fc(j,i)
+               gmp2fc(j,fcid(i))=gmp2fc(j,fcid(i))+fcturn(i)*rmp2fc(j,i)
             enddo
          enddo
 !
@@ -1256,10 +1232,9 @@
             enddo
          enddo
          do i=1,nfcoil
-            k=abs(fcid(i))
             do j=1,nwnh
-               brgrfc(j,k)=brgrfc(j,k)+fcturn(i)*brgridfc(j,i)
-               bzgrfc(j,k)=bzgrfc(j,k)+fcturn(i)*bzgridfc(j,i)
+               brgrfc(j,fcid(i))=brgrfc(j,fcid(i))+fcturn(i)*brgridfc(j,i)
+               bzgrfc(j,fcid(i))=bzgrfc(j,fcid(i))+fcturn(i)*bzgridfc(j,i)
             enddo
          enddo
 !
@@ -1331,40 +1306,30 @@
          call gvesel(rsilvs,rmp2vs,gridvs,rgrid,nw, &
                      zgrid,nh,rfcvs,rvsfc,rvsec)
          do i=1,nvesel
-           tas(i)=tan(avs(i)*pi/180.)
-           tas2(i)=tan(avs2(i)*pi/180.)
+           tav(i)=tan(avs(i)*pi/180.)
+           tav2(i)=tan(avs2(i)*pi/180.)
          enddo 
          do i=1,nvesel
             do j=1,nvesel
-               call flux(rvs(i),zvs(i),wvs(i),hvs(i),tas(i),tas2(i), &
-                         rvs(j),zvs(j),wvs(j),hvs(j),tas(j),tas2(j), &
+               call flux(rvs(i),zvs(i),wvs(i),hvs(i),tav(i),tav2(i), &
+                         rvs(j),zvs(j),wvs(j),hvs(j),tav(j),tav2(j), &
                          rvsvs(j,i))
                rvsvs(j,i)=rvsvs(j,i)*0.5/pi
             enddo 
          enddo 
 !
-         do i=1,nvsum
-            do j=1,nsilop
-               gsilvs(j,i)=0.0
-            enddo
-            do j=1,magpr2
-               gmp2vs(j,i)=0.0
-            enddo
-            do j=1,nwnh
-               ggridvs(j,i)=0.0
-            enddo
-         enddo
-!
+         gsilvs=0.0
+         gmp2vs=0.0
+         ggridvs=0.0
          do i=1,nvesel
-            k=abs(vsid(i))
             do j=1,nsilop
-               gsilvs(j,k)=gsilvs(j,k)+rsilvs(j,i)
+               gsilvs(j,vsid(i))=gsilvs(j,vsid(i))+rsilvs(j,i)
             enddo
             do j=1,magpr2
-               gmp2vs(j,k)=gmp2vs(j,k)+rmp2vs(j,i)
+               gmp2vs(j,vsid(i))=gmp2vs(j,vsid(i))+rmp2vs(j,i)
             enddo
             do j=1,nwnh
-               ggridvs(j,k)=ggridvs(j,k)+gridvs(j,i)
+               ggridvs(j,vsid(i))=ggridvs(j,vsid(i))+gridvs(j,i)
             enddo
          enddo
 !
@@ -1481,8 +1446,8 @@
 !**          26/04/83..........first created                         **
 !**                                                                  **
 !**********************************************************************
-      subroutine rogowc(rr, nrr, zz, nz, coef, nr, nc)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil
+      subroutine rogowc(rr,nrr,zz,nz,coef,nr,nc)
+      use exparm, only: nfcoil,nrogow
       use rogowl
       use coilsp
       use consta
@@ -1583,7 +1548,6 @@
 !**                                                                  **
 !**********************************************************************
       subroutine rogrid(ngrid,mm,m,dels)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil
       use rogowl
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension sl(6)
@@ -1654,7 +1618,7 @@
 !**********************************************************************
       subroutine soleno(ra,z1,w1,h1,t1,t12,r2,z2,w2,h2,t2,t22,xbm1,xbm2, &
                         xtm1,xtm2,hfa,hsa,rf,rs,sol)
-      use consta,only:pi
+      use consta, only: pi
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension z(2,2)
       real*8 ksq,kpsq,msl,mut
@@ -1676,7 +1640,7 @@
       csq = fr/trsq
       cpsq = 1.-csq
 !
-      if (t12.eq.0.) then
+      if (t1.ne.0.) then
          r = rf-ra+0.5*w1
          zc1 = z1-0.5*h1-0.5*w1*t1
          zb1 = zc1+t1*r
@@ -1696,7 +1660,7 @@
          endif
       endif
 !
-      if (t22.eq.0.) then
+      if (t2.ne.0.) then
          r = rs-r2+0.5*w2
          zc2 = z2-0.5*h2-0.5*w2*t2
          zb2 = zc2+t2*r
@@ -1791,12 +1755,12 @@
       real*8,dimension(is*is) :: rs,zs
 !
       frd=pi/180.
+      wdelt=wc/is
+      hdelt=hc/is
 !----------------------------------------------------------------------
 !--   rectangle                                                      --
 !----------------------------------------------------------------------
       if(ac+ac2.eq.0.) then
-          wdelt=wc/is
-          hdelt=hc/is
           rstrt=rc-wc/2.+wdelt/2.
           zstrt=zc-hc/2.+hdelt/2.
           zz=zstrt
@@ -1811,18 +1775,15 @@
              enddo 
              zz=zz+hdelt
           enddo
-          return
 !----------------------------------------------------------------------
 !--   ac .ne. 0                                                      --
 !----------------------------------------------------------------------
       elseif(ac.ne.0.) then
           side=tan(frd*ac)*wc
-          hdelt=hc/is
-          wdelt=wc/is
-          zdelt=tan(frd*ac)*wdelt
+          zdelt=side/is
           rstrt=rc-wc/2.+wdelt/2.
-          tsid=hc+side
-          zstrt =zc-tsid/2.+tsid/2.*1./is
+          htot=hc+side
+          zstrt=zc-htot/2.+htot/is/2.
           rr=rstrt
           ic=0
           do ii=1,is
@@ -1835,24 +1796,15 @@
              enddo 
              rr=rr+wdelt
           enddo
-          return
 !----------------------------------------------------------------------
 !--   ac2 .ne. 0                                                     --
 !----------------------------------------------------------------------
       elseif(ac2.ne.0.) then
           side=hc/tan(frd*ac2)
-          hdelt=hc/is
-          wdelt=wc/is
+          rdelt=side/is
           zstrt=zc-hc/2.+hdelt/2.
-          rdelt=hdelt/tan(frd*ac2)
-          rstrt=rc-side/2.-wc/2.+rdelt/2.+wdelt/2.
-          side=hc/tan(frd*ac2)
-          wtot=side+wc
-          whaf=(side+wc)/2.
-          rcorn=rc-whaf
-          rcornr=rc+whaf
-          rcorn2=rcorn+wtot/is
-          rstrt=(rcorn+rcorn2)/2.
+          wtot=wc+side
+          rstrt=rc-wtot/2.+wtot/is/2.
           zz=zstrt
           ic=0
           do ii=1,is
@@ -1881,9 +1833,7 @@
 !**          15/07/83..........first created                         **
 !**                                                                  **
 !**********************************************************************
-      subroutine v1coef(coef,  nl, ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
-                      nesum,nfsum,nvsum,nvesel,nacoil
+      subroutine v1coef(coef,nl,ne)
       use coilsp
       use consta
       use nio
@@ -1924,9 +1874,7 @@
 !**          26/04/83..........first created                         **
 !**                                                                  **
 !**********************************************************************
-      subroutine v2coef(coef, mp, ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
-                      nesum,nfsum,nvsum,nvesel,nacoil
+      subroutine v2coef(coef,mp,ne)
       use coilsp
       use mprobe
       use consta
@@ -1991,9 +1939,7 @@
 !**                                                                  **
 !**                                                                  **
 !**********************************************************************
-      subroutine vgrid(coef, rgrid, nr, zgrid, nz, ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
-                      nesum,nfsum,nvsum,nvesel,nacoil
+      subroutine vgrid(coef,rgrid,nr,zgrid,nz,ne)
       use coilsp
       use siloop
       use consta
@@ -2036,9 +1982,7 @@
 !**          16/08/90..........first created                         **
 !**                                                                  **
 !**********************************************************************
-      subroutine a1coef(coef,  nl, ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
-                      nesum,nfsum,nvsum,nvesel,nacoil
+      subroutine a1coef(coef,nl,ne)
       use coilsp
       use consta
       use cacoil
@@ -2081,9 +2025,7 @@
 !**          16/08/90..........first created                         **
 !**                                                                  **
 !**********************************************************************
-      subroutine a2coef(coef, mp, ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
-                      nesum,nfsum,nvsum,nvesel,nacoil
+      subroutine a2coef(coef,mp,ne)
       use coilsp
       use mprobe
       use consta
@@ -2148,9 +2090,7 @@
 !**          16/08/90..........first created                         **
 !**                                                                  **
 !**********************************************************************
-      subroutine agrid(coef, rgrid, nr, zgrid, nz, ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
-                      nesum,nfsum,nvsum,nvesel,nacoil
+      subroutine agrid(coef,rgrid,nr,zgrid,nz,ne)
       use coilsp
       use consta
       use cacoil

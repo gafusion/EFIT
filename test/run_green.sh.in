@@ -16,7 +16,7 @@ for prefix in ec ep fc ra re rv; do
     rm -f ${prefix}@GRID_SIZE@@GRID_SIZE@.ddd
 done
 
-@EFUND_EXEC@ @GRID_SIZE@ > run_green.out
+@EFUND_EXEC@ > run_green.out
 
 # Pass the results of the efit command up so that CTest knows what happened
 exit $?

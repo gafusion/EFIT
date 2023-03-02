@@ -9,7 +9,7 @@
  NSMP2 = 25
  IECOIL = 0
  IVESEL = 0
- vsid = 1
+ VSID = 1
  IACOIL = 0
  NW = 65
  NH = 65

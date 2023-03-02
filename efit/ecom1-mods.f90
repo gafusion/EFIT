@@ -320,12 +320,14 @@
 
       module var_ecoil 
       use eparm,only:necoil
-      real*8,dimension(:),allocatable :: re,ze,we,he,ecid
+      real*8,dimension(:),allocatable :: re,ze,we,he
+      integer*4,dimension(:),allocatable :: ecid
       end module var_ecoil 
 
       module var_fcoil
       real*8,dimension(:),allocatable :: rf,zf,wf,hf,af,af2, &
-                                         rsisfc,turnfc,fcid,fcturn
+                                         rsisfc,turnfc,fcturn
+      integer*4,dimension(:),allocatable :: fcid
       end module var_fcoil 
 
       module var_mprobe

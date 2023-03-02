@@ -1,16 +1,9 @@
       module fcoil
-!module for fcoil
-!Revisions:
-!$Log: fcoil.f90,v $
-!Revision 1.1  2007/06/01 05:16:17  renq
-!*** empty log message ***
-!
-!
-      use exparm,only:nfcoil
+      use exparm, only: nfcoil
       implicit none
       public
 
-      real*8, dimension (:), allocatable :: rf,zf,wf,hf,af,af2,turnfc,&
-                                fcid,fcturn
+      real*8, dimension(:), allocatable :: rf,zf,wf,hf,af,af2,turnfc,fcturn
+      integer*4, dimension(:), allocatable :: fcid
 
       end module fcoil

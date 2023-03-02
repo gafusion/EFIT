@@ -195,65 +195,67 @@
 
       ALLOCATE(rsi(nsilop),zsi(nsilop),wsi(nsilop),hsi(nsilop),&
                as(nsilop),as2(nsilop))
-      rsi(:) = 0.0
-      zsi(:) = 0.0
-      wsi(:) = 0.0
-      hsi(:) = 0.0
-      as(:) = 0.0
-      as2(:) = 0.0
+      rsi = 0.0
+      zsi = 0.0
+      wsi = 0.0
+      hsi = 0.0
+      as = 0.0
+      as2 = 0.0
 
       ALLOCATE(re(necoil),ze(necoil),he(necoil),we(necoil), &
                ecid(necoil),ecturn(necoil))
-      re(:) = 0.0
-      ze(:) = 0.0
-      he(:) = 0.0
-      we(:) = 0.0
-      ecid(:) = 0.0
-      ecturn(:) = 0.0
+      re = 0.0
+      ze = 0.0
+      he = 0.0
+      we = 0.0
+      ecid = 0
+      ecturn = 0.0
 
       ALLOCATE(rf(nfcoil),zf(nfcoil),wf(nfcoil),hf(nfcoil), &
-               af(nfcoil),af2(nfcoil),turnfc(nfcoil), fcid(nfcoil), & 
+               af(nfcoil),af2(nfcoil),turnfc(nfcoil),fcid(nfcoil), & 
                fcturn(nfcoil))
-      rf(:) = 0.0
-      zf(:) = 0.0
-      wf(:) = 0.0
-      hf(:) = 0.0
-      af(:) = 0.0
-      af2(:) = 0.0
-      turnfc(:) = 0.0
-      fcturn(:) = 0.0
+      rf = 0.0
+      zf = 0.0
+      wf = 0.0
+      hf = 0.0
+      af = 0.0
+      af2 = 0.0
+      turnfc = 0.0
+      fcturn = 0.0
+      fcid = 0
 
       ALLOCATE(racoil(nacoil),zacoil(nacoil),wacoil(nacoil),hacoil(nacoil))
-      racoil(:) = 0.0
-      zacoil(:) = 0.0
-      wacoil(:) = 0.0
-      hacoil(:) = 0.0
+      racoil = 0.0
+      zacoil = 0.0
+      wacoil = 0.0
+      hacoil = 0.0
 
       ALLOCATE(xmp2(magpr2),ymp2(magpr2),amp2(magpr2),smp2(magpr2))
-      xmp2(:) = 0.0
-      ymp2(:) = 0.0
-      amp2(:) = 0.0
-      smp2(:) = 0.0
+      xmp2 = 0.0
+      ymp2 = 0.0
+      amp2 = 0.0
+      smp2 = 0.0
+
       ALLOCATE(rvs(nvesel),zvs(nvesel),wvs(nvesel),hvs(nvesel),&
                avs(nvesel),avs2(nvesel),rsisvs(nvesel),vsid(nvesel))
-      rvs(:) = 0.0
-      zvs(:) = 0.0
-      wvs(:) = 0.0
-      hvs(:) = 0.0
-      avs(:) = 0.0
-      avs2(:) = 0.0
-      rsisvs(:) = 0.0
+      rvs = 0.0
+      zvs = 0.0
+      wvs = 0.0
+      hvs = 0.0
+      avs = 0.0
+      avs2 = 0.0
+      rsisvs = 0.0
 
       ALLOCATE(nshiftrz(nfcoil))
-      nshiftrz(:) = 0.
+      nshiftrz = 0.
 
       ALLOCATE(rshift(nfcoil),zshift(nfcoil),pshift(nfcoil))
-      rshift(:) = 0.0
-      zshift(:) = 0.0
-      pshift(:) = 0.0
+      rshift = 0.0
+      zshift = 0.0
+      pshift = 0.0
 
       ALLOCATE(pmprobe(magpr2))
-      pmprobe(:) = 0.
+      pmprobe = 0.
       END SUBROUTINE efund_getsizes
 
 !**********************************************************************
@@ -281,23 +283,24 @@
       USE fshift
       use var_filech
       IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
-      REAL*8, dimension (:), allocatable :: patmp2
-      CHARACTER*10,dimension (:), allocatable:: mpnam2,lpname,vsname
+      character*10 mpnam2(magpr2),lpname(nsilop),vsname(nvesel)
+      real*8 patmp2(magpr2)
 
-      NAMELIST/in3/igrid,rleft,rright,zbotto,ztop,ifcoil, &
-                   islpfc,iecoil,mpnam2,xmp2,ymp2,amp2,smp2,isize, &
-                   rsi,zsi,wsi,hsi,as,as2,lpname,nsmp2,ivesel,rsisvs, &
-                   vsname,turnfc,patmp2, &
+      NAMELIST/in3/igrid,nw,nh,rleft,rright,zbotto,ztop,ifcoil, &
+                   islpfc,iecoil,xmp2,ymp2,amp2,smp2,isize, &
+                   rsi,zsi,wsi,hsi,as,as2,nsmp2,ivesel,rsisvs, &
+                   turnfc,patmp2, &
                    iacoil,racoil,zacoil,wacoil,hacoil, &
                    rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2,fcturn, &
                    re,ze,ecid,ecturn,vsid,rvs,zvs,we,he, &
                    nshiftrz,rshift,zshift,pshift,pmprobe, &
-                   nw,nh
+                   vsname,lpname,mpnam2
 !
       OPEN(unit=nin,status='old',file='mhdin.dat')
       OPEN(unit=nout,status='unknown',file='mhdout.dat')
 !
-      ALLOCATE(patmp2(magpr2),mpnam2(magpr2),lpname(nsilop),vsname(nvesel))
+      mpnam2=''
+      lpname=''
       vsname=''
       nw = 65
       nh = 65

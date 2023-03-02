@@ -197,8 +197,6 @@ LIMITR,-33,"| Number of limiter points (number of valid points in XLIM and YLIM 
 | 1000+number number of points for symmetrized solution (input only top half of limiter points)."
 SILOPLIM,0, Controls whether the boundary from the previous timeslice (on the same processor) is used as an initial guess for finding the boundary at the current time.  The previous solution is only used when the maximum absolute flux loop difference between the current and previous iteration is less than this value.
 MXITER,25,"| Maximum number of outer fitting iterations (limited to KXITER, see SETUP namelist) Set to 1 for equilibrium solutions. Set negative for iteration history output to terminal during EFIT execution."
-| Set to 1 for equilibrium solutions.
-| Set negative for iteration history output to terminal during EFIT execution."
 N1COIL,0,"Compensation for magnetic probe pickup from N1 coil
 | 2 = compensation for n1 coil.
 | 0 = no compensation (default)."

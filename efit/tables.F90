@@ -131,7 +131,8 @@
 
       implicit none
       integer*4  :: i,j,istat,mcontr,mw,mh
-      real*8 ecturn,vsid ! unused
+      integer*4 vsid ! unused
+      real*8 ecturn ! unused
       character(1000) :: line
       parameter(mcontr=35)
  
@@ -147,10 +148,10 @@
       rmp2vs = 0.0
       rsilvs = 0.0
       rsilec = 0.0
-      fcid = 1.
+      fcid = 1
       if(mfcoil.eq.18) &
-        fcid = (/1. ,2. ,3. ,4. ,5. ,6. ,7. ,8. ,9. , &
-                 10.,11.,12.,13.,14.,15.,16.,17.,18./)
+        fcid = (/1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 , &
+                 10, 11, 12, 13, 14, 15, 16, 17, 18/)
       fcturn = 1.0
       rsi(1) = -1.
       re(1) = -1.
