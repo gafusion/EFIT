@@ -250,41 +250,36 @@
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
 !**********************************************************************
-      subroutine gacoil(rsilac,rmp2ac,gridac,rgrid,mw, zgrid,mh)
+      subroutine gacoil(rsilac,rmp2ac,gridac,rgrid,mw,zgrid,mh)
       use exparm, only: nsilop,magpr2,nacoil,nw,nh,nwnh
-      use consta
       use cacoil
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension rsilac(nsilop,nacoil),rmp2ac(magpr2,nacoil)
-      real*8, dimension(mw) :: rgrid
-      real*8, dimension(mh) :: zgrid
-      real*8, dimension(nwnh,nacoil) :: gridac
+      implicit none
+      integer*4, intent(in) :: mw,mh
+      real*8, intent(in) :: rgrid(mw),zgrid(mh)
+      real*8, intent(out) :: rsilac(nsilop,nacoil),rmp2ac(magpr2,nacoil), &
+                             gridac(nwnh,nacoil)
+      integer*4 i,j,kk,n
+      real*8 work
+!
       do j=1,nsilop
-         jj=j
          do i=1,nacoil
-            ii=i
-            call a1coef(work,jj,ii)
+            call a1coef(work,j,i)
             rsilac(j,i)=work
          enddo 
       enddo 
 !
       do  j=1,magpr2
-         jj=j
          do  i=1,nacoil
-            ii=i
-            call a2coef(work,jj,ii)
+            call a2coef(work,j,i)
             rmp2ac(j,i)=work
          enddo 
       enddo 
 !
       do i=1,nw
-         nr=i
          do j=1,nh
-            nz=j
             kk=(i-1)*nh+j
             do n=1,nacoil
-               nn=n
-               call agrid(work,rgrid,nr,zgrid,nz,nn)
+               call agrid(work,rgrid,i,zgrid,j,n)
                gridac(kk,n)=work
             enddo 
          enddo
@@ -303,53 +298,42 @@
                         rfcec,recec,rsisec)
       use exparm, only: nfcoil,nsilop,magpr2,necoil,nesum,&
                       nw,nh,nwnh
-      use consta
+      use consta, only: pi
       use fcoil
       use cecoil
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension rsilec(nsilop,nesum),rmp2ec(magpr2,nesum), &
-                rfcec(nfcoil,nesum),recec(nesum,nesum), &
-                rsisec(nesum)
-            real*8,dimension(mw) :: rgrid
-            real*8,dimension(mh) :: zgrid
-            real*8,dimension(nwnh,nesum) :: gridec
-      dimension taf(nfcoil),taf2(nfcoil)
-            real*8 :: zetaec = 3.5e-08
+      implicit none
+      integer*4, intent(in) :: mw,mh
+      real*8, intent(in) :: rgrid(mw),zgrid(mh)
+      real*8, intent(out) :: rsilec(nsilop,nesum),rmp2ec(magpr2,nesum), &
+                             rfcec(nfcoil,nesum),recec(nesum,nesum), &
+                             rsisec(nesum),gridec(nwnh,nesum)
+      integer*4 i,j,kk,n
+      real*8 aaa,bbb,work
+      real*8 taf(nfcoil),taf2(nfcoil)
+      real*8, parameter :: zetaec = 3.5e-08
+!
+      rsilec=0.0
       do j=1,nsilop
-         do i=1,nesum
-            rsilec(j,i)=0.0
-         enddo 
-         jj=j
          do i=1,necoil
-            ii=i
-            call e1coef(work,jj,ii)
+            call e1coef(work,j,i)
             rsilec(j,ecid(i))=rsilec(j,ecid(i))+work*ecturn(i)
          enddo 
       enddo
 !
+      rmp2ec=0.0
       do j=1,magpr2
-         do i=1,nesum
-            rmp2ec(j,i)=0.0
-         enddo 
-         jj=j
          do i=1,necoil
-            ii=i
-            call e2coef(work,jj,ii)
+            call e2coef(work,j,i)
             rmp2ec(j,ecid(i))=rmp2ec(j,ecid(i))+work*ecturn(i)
          enddo 
       enddo
 !
+      gridec=0.0
       do i=1,nw
-         nr=i
          do j=1,nh
-            nz=j
             kk=(i-1)*nh+j
-            do m=1,nesum
-               gridec(kk,m)=0.0
-            enddo 
             do n=1,necoil
-               nn=n
-               call egrid(work,rgrid,nr,zgrid,nz,nn)
+               call egrid(work,rgrid,i,zgrid,j,n)
                gridec(kk,ecid(n))=gridec(kk,ecid(n))+work*ecturn(n)
             enddo 
          enddo
@@ -357,10 +341,8 @@
 !
       aaa=0.0
       bbb=0.0
+      rfcec=0.0
       do j=1,nfcoil
-         do i=1,nesum
-            rfcec(j,i)=0.0
-         enddo 
          taf(j)=tan(af(j)*pi/180.)
          taf2(j)=tan(af2(j)*pi/180.)
          do i=1,necoil
@@ -371,12 +353,8 @@
          enddo 
       enddo
 !
-      do j=1,nesum
-         rsisec(j)=0.0
-         do i=1,nesum
-            recec(j,i)=0.0
-         enddo 
-      enddo 
+      rsisec=0.0
+      recec=0.0
       do j=1,necoil
          do i=1,necoil
             call flux(re(i),ze(i),we(i),he(i),aaa,bbb, &
@@ -562,7 +540,7 @@
              z,z1,z2
       integer*4, parameter :: isplit=17
       real*8, parameter :: tole=1.0e-10
-
+!
       tas(ns) = tan(as(ns)*pi/180.0)
       tas2(ns) = tan(as2(ns)*pi/180.0)
       do nc=1,nr
@@ -610,7 +588,6 @@
           rspfun(ns,nk)=cmut
         enddo
       enddo
-
       return
       end subroutine gsilop
 !**********************************************************************
@@ -631,39 +608,35 @@
       use cecoil
       use cvesel
       use input, only: iecoil
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension rsilvs(nsilop,nvesel),rmp2vs(magpr2,nvesel), &
-                rgrid(1),zgrid(1),rvsec(nvesel,nesum), &
-                rfcvs(nfcoil,nvesel),rvsfc(nvesel,nfcoil)
-      dimension gridvs(mw*mh,nvesel)
-      dimension taf(nfcoil),taf2(nfcoil)
-      dimension tav(nvesel),tav2(nvesel)
+      implicit none
+      integer*4, intent(in) :: mw,mh
+      real*8, intent(in) :: rgrid(mw),zgrid(mh)
+      real*8, intent(out) :: rsilvs(nsilop,nvesel),rmp2vs(magpr2,nvesel), &
+                             rfcvs(nfcoil,nvesel),rvsec(nvesel,nesum), &
+                             rvsfc(nvesel,nfcoil),gridvs(mw*mh,nvesel)
+      integer*4 i,j,kk,n
+      real*8 aaa,work
+      real*8 taf(nfcoil),taf2(nfcoil),tav(nvesel),tav2(nvesel)
+!
       do j=1,nsilop
-         jj=j
          do i=1,nvesel
-            ii=i
-            call v1coef(work,jj,ii)
+            call v1coef(work,j,i)
             rsilvs(j,i)=work
          enddo 
       enddo 
 !
       do j=1,magpr2
-         jj=j
          do i=1,nvesel
-            ii=i
-            call v2coef(work,jj,ii)
+            call v2coef(work,j,i)
             rmp2vs(j,i)=work
          enddo 
       enddo 
 !
       do i=1,nw
-         nr=i
          do j=1,nh
-            nz=j
             kk=(i-1)*nh+j
             do n=1,nvesel
-               nn=n
-               call vgrid(work,rgrid,nr,zgrid,nz,nn)
+               call vgrid(work,rgrid,i,zgrid,j,n)
                gridvs(kk,n)=work
             enddo 
          enddo 
@@ -725,8 +698,12 @@
 !**                                                                  **
 !**********************************************************************
       subroutine lgauss(x,w,n,nn)
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      real*8,dimension(n) ::  x,w
+      implicit none
+      integer*4, intent(in) :: n
+      integer*4, intent(out) :: nn
+      real*8, dimension(n), intent(out) ::  x,w
+      integer*4 i,ic,k
+      real*8 a,dp,g,p,r,s,su,t,test,u,v
 !
       nn = 0
       if (n-1.lt.0) then 
@@ -773,32 +750,32 @@
          do k = 2,n
             a = k
             p = ((2.0*a-1.0)*s*g-(a-1.0)*t)/a
-             dp = ((2.0*a-1.0)*(s+g*u)-(a-1.0)*v)/a
+           dp = ((2.0*a-1.0)*(s+g*u)-(a-1.0)*v)/a
             v = u
             u = dp
             t = s
             s = p
          enddo 
          if (abs((test-g)/(test+g)).ge.0.0000005) then
-            sum = 0.
+            su = 0.
             if (i.ne.1) then
 !----------------------------------------------------------------------
 !--            the following computes the reduced                    --
 !--            legendre polynomial and its derivative.               --
 !----------------------------------------------------------------------
                do k = 2,i
-                  sum = sum+1./(g-x(k-1))
+                  su = su+1./(g-x(k-1))
                enddo
             endif
             test = g
-            g = g-p/(dp-p*sum)
+            g = g-p/(dp-p*su)
             go to 40
          endif
          x(ic) = -g
          x(i) = g
          w(i) = 2./(r*t*dp)
          w(ic) = w(i)
-         g = g-r*t/((r+2.)*g*dp+r*v-2.*r*t*sum)
+         g = g-r*t/((r+2.)*g*dp+r*v-2.*r*t*su)
       enddo
       return
       end subroutine lgauss
@@ -1420,16 +1397,16 @@
       use coilsp
       use consta, only: pi,tmu
       use fcoil
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-!      dimension rogpth(nrogow)
-      real*8,dimension(nr) :: rr
-      real*8,dimension(nz) :: zz
-      dimension coef(nr,nc)
+      implicit none
+      real*8 br,bz
+      integer*4, intent(in) :: nrr,nz,nr,nc
+      real*8, intent(in) :: rr(nr),zz(nz)
+      real*8, intent(out) :: coef(nr,nc)
+      integer*4 i,iii,ikk,imm,inn,k,l,m,mm
+      real*8 a,brc,brg,bzc,bzg,cost,sint,dels,fact,hl,part,r1,rl,z1,zl
+      integer*4, parameter :: isplit=17,itot=isplit*isplit,ngrid=25
+      real*8, parameter :: fitot=itot
 !
-      ngrid=25
-      isplit=17
-      itot=isplit*isplit
-      fitot=itot
       dels = 0.
       mm=1
 !
@@ -1446,8 +1423,7 @@
                coef(m,k)=0.0
             enddo 
          endif
-         k=m
-         call rogrid(ngrid,mm,k,dels)
+         call rogrid(ngrid,mm,m,dels)
          mm=mm+narc(m)+1
          do i=1,ngrid
             iii=i
@@ -1474,7 +1450,7 @@
                      bzc=bz(a,r1,z1)*tmu/fitot
                      part=brc*cost+bzc*sint
                      call simpf(iii,fact)
-                     ! todo: rogpth is never defined in efit...
+                     ! todo: rogpth is never defined in efund...
                      coef(m,k)=coef(m,k)+fact*part*dels !/rogpth(m)
                   enddo 
                enddo
@@ -1489,7 +1465,7 @@
                      bzg=bz(a,r1,z1)*tmu
                      part=brg*cost+bzg*sint
                      call simpf(iii,fact)
-                     ! todo: rogpth is never defined in efit...
+                     ! todo: rogpth is never defined in efund...
                      coef(m,ikk)=coef(m,ikk)+fact*part*dels !/rogpth(m)
                   enddo 
                enddo 
@@ -1514,8 +1490,11 @@
 !**********************************************************************
       subroutine rogrid(ngrid,mm,m,dels)
       use rogowl
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension sl(6)
+      implicit none
+      integer*4, intent(in) :: ngrid,mm,m
+      real*8, intent(out) :: dels
+      integer*4 i,i1,i2,j,mm1,n1
+      real*8 dd,dr,ds,dz,s,sl(6)
 !
       s = 0.
       mm1 = mm+narc(m)-1
