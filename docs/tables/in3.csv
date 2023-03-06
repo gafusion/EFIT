@@ -1,14 +1,14 @@
 Variable, Default, Description
-AF,zeros, "(array) Angles of f coils in degrees measured from the outward directed horizontal.  This assumes the left and right sides of the coil are vertical; only the top and bottom are slanted.  It is only used when AF2=0.  If this variable is not part of the namelist, it will be read from the 5th column of the first NFCOIL lines after the namelist."
-AF2,zeros, "(array) Angles of f coils in degrees measured from the outward directed horizontal.  This assumes the top and bottom of the coil are horizontal; only the left and right sides are slanted.  If this variable is not part of the namelist, it will be read from the 6th column of the first NFCOIL lines after the namelist."
+AF,zeros, "(array) Angles of f coils in degrees measured from the outward directed horizontal.  This assumes the left and right sides of the coil are vertical; only the top and bottom are slanted.  If this variable is not part of the namelist, it will be read from the 5th column of the first NFCOIL lines after the namelist."
+AF2,zeros, "(array) Angles of f coils in degrees measured from the outward directed horizontal.  This assumes the top and bottom of the coil are horizontal; only the left and right sides are slanted.  It is only used when AF=0.  If this variable is not part of the namelist, it will be read from the 6th column of the first NFCOIL lines after the namelist."
 AMP2,zeros, "(array) Angles of magnetic probes in degrees. The measured poloidal magnetic field is given as BR cos(AMP2) + BZ sin(AMP2)."
-ASI,zeros, "(array) Angle of flux loop coils in degrees measured from the outward directed horizontal.  This assumes the left and right sides of the coil are vertical; only the top and bottom are slanted.  It is only used when ASI2=0.  If this variable is not part of the namelist, it will be read from the 5th column of the NSILOP lines after the f coils (if they are not in the namelist)."
-ASI2,zeros, "(array) Angle of flux loop coils in degrees measured from the outward directed horizontal.  This assumes the top and bottom of the coil are horizontal; only the left and right sides are slanted.  If this variable is not part of the namelist, it will be read from the 6th column of the NSILOP lines after the f coils (if they are not in the namelist)."
-AVS,zeros, "(array) Angles of vessel segments in degrees measured from the outward directed horizontal.  This assumes the left and right sides of the coil are vertical; only the top and bottom are slanted.  It is only used when AVS2=0.  If this variable is not part of the namelist, it will be read from the 5th column of the first NVESEL lines after the e coils (if they are not in the namelist)."
-AVS2,zeros, "(array) Angles of vessel segments in degrees measured from the outward directed horizontal.  This assumes the top and bottom of the coil are horizontal; only the left and right sides are slanted.  If this variable is not part of the namelist, it will be read from the 6th column of the first NVESEL lines after the e coils (if they are not in the namelist)."
-ECID,, "(array) Indices where e coil Green functions will be stored in table, it will be read from the 5th column of the first NECOIL lines after the flux loops (if they are not in the namelist)."
+AS,zeros, "(array) Angle of flux loop coils in degrees measured from the outward directed horizontal.  This assumes the left and right sides of the coil are vertical; only the top and bottom are slanted.  If this variable is not part of the namelist, it will be read from the 5th column of the NSILOP lines after the f coils (if they are not in the namelist)."
+AS2,zeros, "(array) Angle of flux loop coils in degrees measured from the outward directed horizontal.  This assumes the top and bottom of the coil are horizontal; only the left and right sides are slanted.  It is only used when ASI=0.  If this variable is not part of the namelist, it will be read from the 6th column of the NSILOP lines after the f coils (if they are not in the namelist)."
+AVS,zeros, "(array) Angles of vessel segments in degrees measured from the outward directed horizontal.  This assumes the left and right sides of the coil are vertical; only the top and bottom are slanted.  If this variable is not part of the namelist, it will be read from the 5th column of the first NVESEL lines after the e coils (if they are not in the namelist)."
+AVS2,zeros, "(array) Angles of vessel segments in degrees measured from the outward directed horizontal.  This assumes the top and bottom of the coil are horizontal; only the left and right sides are slanted.  It is only used when AVS=0.  If this variable is not part of the namelist, it will be read from the 6th column of the first NVESEL lines after the e coils (if they are not in the namelist)."
+ECID,, "(integer array) Indices where e coil Green functions will be stored in table, it will be read from the 5th column of the first NECOIL lines after the flux loops (if they are not in the namelist)."
 ECTURN,zeros, (array) Number of turns in the e coils
-FCID,, (array) Indices where f coil Green functions will be stored in table
+FCID,, (integer array) Indices where f coil Green functions will be stored in table
 FCTURN,zeros, (array) Number of turns in the f coils
 HACOIL,zeros, (array) Height of a coils
 HE,zeros, "(array) Height of e coils, it will be read from the 4th column of the first NECOIL lines after the flux loops (if they are not in the namelist)."
@@ -45,7 +45,7 @@ RSI,zeros, "(array) Major radius of flux loops in m, if this variable is not par
 RSISVS,zeros, (array) Resistivity of vessel segments
 SMP2,zeros, (array) Lengths of magnetic probes in m
 TURNFC,zeros, (array) Turns per F-coil
-VCID,, (array) Indices where vessel current Green functions will be stored in table
+VSID,, (integer array) Indices where vessel current Green functions will be stored in table
 VSNAME,, (array) Name of vessel components
 WACOIL,zeros, (array) Width of a coils
 WE,zeros, "(array) Width of e coils, it will be read from the 3rd column of the first NECOIL lines after the flux loops (if they are not in the namelist)."

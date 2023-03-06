@@ -5,18 +5,13 @@
 !**          functions used by efit for reconstruction of the        **
 !**          magnetic surfaces and current density profile.          **
 !**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
 !**     REFERENCES:                                                  **
 !**          (1) d.w. swain and g.h. neilson, nucl. fusion           **
 !**              22 (1982) 1015.                                     **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**          28/01/85..........modified for D3D                      **
-!**                                                                  **
 !**********************************************************************
       program efund
+      implicit none
 
       write(*,*) 'Reading namelist'
       call efund_getsizes
@@ -36,36 +31,30 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          15/07/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
       subroutine e1coef(coef,nl,ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil
       use cecoil
       use coilsp
-      use consta
-      use nio
+      use consta, only: pi,tmu
       use siloop
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
+      implicit none
+      real*8 psical
+      integer*4, intent(in) :: nl,ne
+      real*8, intent(out) :: coef
+      integer*4 l
+      real*8 a,aaa,bbb,psic,psict,r1,z1
+      integer*4, parameter :: isplit=17,itot=isplit*isplit
+      real*8, parameter :: radeg=pi/180.,fitot=itot
 !
-      radeg=pi/180.
-      isplit=17
-      itot=isplit*isplit
-      fitot=itot
-!
-      m=nl
-      k=ne
       psict=0
       aaa=0.0
       bbb=0.0
       call splitc(isplit,rsplt,zsplt, &
-                  re(k),ze(k),we(k),he(k),aaa,bbb)
+                  re(ne),ze(ne),we(ne),he(ne),aaa,bbb)
       do l=1,itot
          a=rsplt(l)
-         r1=rsi(m)
-         z1=zsi(m)-zsplt(l)
+         r1=rsi(nl)
+         z1=zsi(nl)-zsplt(l)
          psic=psical(a,r1,z1)*tmu
          psict=psict+psic/fitot
       enddo 
@@ -81,50 +70,46 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
       subroutine e2coef(coef,mp,ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil
       use cecoil
       use coilsp
-      use consta
+      use consta, only: pi,tmu
       use mprobe
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
+      implicit none
+      real*8 br,bz
+      integer*4, intent(in) :: mp,ne
+      real*8, intent(out) :: coef
+      integer*4 l,mmm
+      real*8 a,aaa,bbb,brc,brct,bzc,bzct,cosm,cosms,sinm,sinms, &
+             delsx,delsy,r1,z1,xmp20,ymp20
+      integer*4, parameter :: isplit=17,itot=isplit*isplit
+      real*8, parameter :: fitot=itot,radeg=pi/180.
 !
-      radeg=pi/180.
-      isplit=17
-      itot=isplit*isplit
-      fitot=itot
-!
-      m=mp
-      if (smp2(m).gt.0.0) then
-         sinm=sin(radeg*amp2(m))
-         cosm=cos(radeg*amp2(m))
-         delsx=smp2(m)/nsmp2*cosm
-         delsy=smp2(m)/nsmp2*sinm
+      if (smp2(mp).gt.0.0) then
+         sinm=sin(radeg*amp2(mp))
+         cosm=cos(radeg*amp2(mp))
+         delsx=smp2(mp)/nsmp2*cosm
+         delsy=smp2(mp)/nsmp2*sinm
       else
 !------------------------------------------------------------------------------
 !--  perpendicular probes    96/02/04                                        --
 !------------------------------------------------------------------------------
-         sinm=sin(radeg*amp2(m))
-         cosm=cos(radeg*amp2(m))
-         sinms=sin(radeg*(amp2(m)+90.))
-         cosms=cos(radeg*(amp2(m)+90.))
-         delsx=abs(smp2(m))/nsmp2*cosms
-         delsy=abs(smp2(m))/nsmp2*sinms
+         sinm=sin(radeg*amp2(mp))
+         cosm=cos(radeg*amp2(mp))
+         sinms=sin(radeg*(amp2(mp)+90.))
+         cosms=cos(radeg*(amp2(mp)+90.))
+         delsx=abs(smp2(mp))/nsmp2*cosms
+         delsy=abs(smp2(mp))/nsmp2*sinms
       endif
-      xmp20=xmp2(m)-(nsmp2-1)/2.*delsx
-      ymp20=ymp2(m)-(nsmp2-1)/2.*delsy
-      k=ne
+      xmp20=xmp2(mp)-(nsmp2-1)/2.*delsx
+      ymp20=ymp2(mp)-(nsmp2-1)/2.*delsy
       brct=0
       bzct=0
       aaa=0.0
       bbb=0.0
       call splitc(isplit,rsplt,zsplt, &
-                  re(k),ze(k),we(k),he(k),aaa,bbb)
+                  re(ne),ze(ne),we(ne),he(ne),aaa,bbb)
       do l=1,itot
          a=rsplt(l)
          do mmm=1,nsmp2
@@ -148,34 +133,27 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          15/07/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
       subroutine egrid(coef,rgrid,nr,zgrid,nz,ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil
       use cecoil
       use coilsp
-      use consta
-      use nio
+      use consta, only: pi,tmu
       use mprobe
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      real*8,dimension(nr) :: rgrid
-      real*8,dimension(nz) :: zgrid
+      implicit none
+      real*8 psical
+      integer*4, intent(in) :: nr,nz,ne
+      real*8, intent(in) :: rgrid(nr),zgrid(nz)
+      real*8, intent(out) :: coef
+      integer*4 l
+      real*8 a,aaa,bbb,psic,psict,r1,z1
+      integer*4, parameter :: isplit=17,itot=isplit*isplit
+      real*8, parameter :: fitot=itot,radeg=pi/180.
 !
-!
-      radeg=pi/180.
-      isplit=17
-      itot=isplit*isplit
-      fitot=itot
-!
-      k=ne
       psict=0
       aaa=0.0
       bbb=0.0
       call splitc(isplit,rsplt,zsplt, &
-                  re(k),ze(k),we(k),he(k),aaa,bbb)
+                  re(ne),ze(ne),we(ne),he(ne),aaa,bbb)
       do l=1,itot
          a=rsplt(l)
          r1=rgrid(nr)
@@ -190,7 +168,7 @@
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          flux computes the mutual inductance/2/pi between        **
-!**          two circulars of rectangular cross section.             **
+!**          two conductors with rectangular cross sections.         **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**       r1,r2...........radius of first and second coil            **
@@ -229,7 +207,7 @@
       hf2 = h1*.5
       hs2 = h2*.5
 !
-      if (t12.ne.0) then
+      if (t1.eq.0 .and. t12.ne.0) then
          xl1 = r1-0.5*w1-0.5*h1/abs(t12)
          xr1 = r1+0.5*w1+0.5*h1/abs(t12)
          xbm1 = xl1+w1
@@ -238,7 +216,7 @@
          if(t12.lt.0.) xtm1 = xl1 + w1
       endif
 !
-      if (t22.ne.0) then
+      if (t2.eq.0 .and. t22.ne.0) then
          xl2 = r2-0.5*w2-0.5*h2/abs(t22)
          xr2 = r2+0.5*w2+0.5*h2/abs(t22)
          xbm2 = xl2+w2
@@ -249,10 +227,12 @@
 !
       do i = 1,mgaus1
          rf = r1+.5*w1*post1(i)
-         if(t12.ne.0) rf = r1+(0.5*w1+0.5*h1/abs(t12))*post1(i)
+         if(t1.eq.0 .and. t12.ne.0) &
+            rf = r1+(0.5*w1+0.5*h1/abs(t12))*post1(i)
          do j = 1,mgaus2
             rs = r2+0.5*w2*post2(j)
-            if(t22.ne.0) rs = r2+(0.5*w2+0.5*h2/abs(t22))*post2(j)
+            if(t2.eq.0 .and. t22.ne.0) &
+               rs = r2+(0.5*w2+0.5*h2/abs(t22))*post2(j)
             call soleno(r1,z1,w1,h1,t1,t12,r2,z2,w2,h2,t2,t22,xbm1,xbm2, &
                         xtm1,xtm2,hfa,hsa,rf,rs,solx)
             fuxx = fuxx+wght1(i)*wght2(j)/hfa/hsa*solx
@@ -269,46 +249,37 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          16/08/90..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      subroutine gacoil(rsilac,rmp2ac,gridac,rgrid,mw, zgrid,mh)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
-      use consta
+      subroutine gacoil(rsilac,rmp2ac,gridac,rgrid,mw,zgrid,mh)
+      use exparm, only: nsilop,magpr2,nacoil,nw,nh,nwnh
       use cacoil
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension rsilac(nsilop,nacoil),rmp2ac(magpr2,nacoil)
-      real*8,dimension(mw) ::  rgrid
-      real*8,dimension(mh) ::  zgrid
-      real*8,dimension(nwnh,nacoil) :: gridac
+      implicit none
+      integer*4, intent(in) :: mw,mh
+      real*8, intent(in) :: rgrid(mw),zgrid(mh)
+      real*8, intent(out) :: rsilac(nsilop,nacoil),rmp2ac(magpr2,nacoil), &
+                             gridac(nwnh,nacoil)
+      integer*4 i,j,kk,n
+      real*8 work
+!
       do j=1,nsilop
-         jj=j
          do i=1,nacoil
-            ii=i
-            call a1coef(work,jj,ii)
+            call a1coef(work,j,i)
             rsilac(j,i)=work
          enddo 
       enddo 
 !
       do  j=1,magpr2
-         jj=j
          do  i=1,nacoil
-            ii=i
-            call a2coef(work,jj,ii)
+            call a2coef(work,j,i)
             rmp2ac(j,i)=work
          enddo 
       enddo 
 !
       do i=1,nw
-         nr=i
          do j=1,nh
-            nz=j
             kk=(i-1)*nh+j
             do n=1,nacoil
-               nn=n
-               call agrid(work,rgrid,nr,zgrid,nz,nn)
+               call agrid(work,rgrid,i,zgrid,j,n)
                gridac(kk,n)=work
             enddo 
          enddo
@@ -322,103 +293,76 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          30/01/85..........first created                         **
-!**                                                                  **
 !**********************************************************************
       subroutine gecoil(rsilec,rmp2ec,gridec,rgrid,mw,zgrid,mh, &
                         rfcec,recec,rsisec)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
-      use consta
+      use exparm, only: nfcoil,nsilop,magpr2,necoil,nesum,&
+                      nw,nh,nwnh
+      use consta, only: pi
       use fcoil
       use cecoil
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension rsilec(nsilop,nesum),rmp2ec(magpr2,nesum), &
-                rfcec(nfcoil,nesum),recec(nesum,nesum), &
-                rsisec(nesum)
-            real*8,dimension(mw) :: rgrid
-            real*8,dimension(mh) :: zgrid
-            real*8,dimension(nwnh,nesum) :: gridec
-      dimension taf(nfcoil),taf2(nfcoil)
-            real*8 :: zetaec = 3.5e-08
+      implicit none
+      integer*4, intent(in) :: mw,mh
+      real*8, intent(in) :: rgrid(mw),zgrid(mh)
+      real*8, intent(out) :: rsilec(nsilop,nesum),rmp2ec(magpr2,nesum), &
+                             rfcec(nfcoil,nesum),recec(nesum,nesum), &
+                             rsisec(nesum),gridec(nwnh,nesum)
+      integer*4 i,j,kk,n
+      real*8 aaa,bbb,work
+      real*8 taf(nfcoil),taf2(nfcoil)
+      real*8, parameter :: zetaec = 3.5e-08
+!
+      rsilec=0.0
       do j=1,nsilop
-         do i=1,nesum
-            rsilec(j,i)=0.0
-         enddo 
-         jj=j
          do i=1,necoil
-            ii=i
-            call e1coef(work,jj,ii)
-            kkm=ecid(i)
-            rsilec(j,kkm)=rsilec(j,kkm)+work*ecturn(i)
+            call e1coef(work,j,i)
+            rsilec(j,ecid(i))=rsilec(j,ecid(i))+work*ecturn(i)
          enddo 
       enddo
 !
+      rmp2ec=0.0
       do j=1,magpr2
-         do i=1,nesum
-            rmp2ec(j,i)=0.0
-         enddo 
-         jj=j
          do i=1,necoil
-            ii=i
-            call e2coef(work,jj,ii)
-            kkm=ecid(i)
-            rmp2ec(j,kkm)=rmp2ec(j,kkm)+work*ecturn(i)
+            call e2coef(work,j,i)
+            rmp2ec(j,ecid(i))=rmp2ec(j,ecid(i))+work*ecturn(i)
          enddo 
       enddo
 !
+      gridec=0.0
       do i=1,nw
-         nr=i
          do j=1,nh
-            nz=j
             kk=(i-1)*nh+j
-            do m=1,nesum
-               gridec(kk,m)=0.0
-            enddo 
             do n=1,necoil
-               nn=n
-               call egrid(work,rgrid,nr,zgrid,nz,nn)
-               kkkm=ecid(n)
-               gridec(kk,kkkm)=gridec(kk,kkkm)+work*ecturn(n)
+               call egrid(work,rgrid,i,zgrid,j,n)
+               gridec(kk,ecid(n))=gridec(kk,ecid(n))+work*ecturn(n)
             enddo 
          enddo
       enddo
 !
       aaa=0.0
       bbb=0.0
+      rfcec=0.0
       do j=1,nfcoil
-         do i=1,nesum
-            rfcec(j,i)=0.0
-         enddo 
          taf(j)=tan(af(j)*pi/180.)
          taf2(j)=tan(af2(j)*pi/180.)
          do i=1,necoil
             call flux(re(i),ze(i),we(i),he(i),aaa,bbb, &
                       rf(j),zf(j),wf(j),hf(j),taf(j),taf2(j),work)
             work=work*0.5/pi
-            kkm=ecid(i)
-            kk=kkm+1
-            rfcec(j,kkm)=rfcec(j,kkm)+work*(kk-ecid(i))
+            rfcec(j,ecid(i))=rfcec(j,ecid(i))+work
          enddo 
       enddo
 !
-      do j=1,nesum
-         rsisec(j)=0.0
-         do i=1,nesum
-            recec(j,i)=0.0
-         enddo 
-      enddo 
+      rsisec=0.0
+      recec=0.0
       do j=1,necoil
-         jjm=ecid(j)
          do i=1,necoil
             call flux(re(i),ze(i),we(i),he(i),aaa,bbb, &
                       re(j),ze(j),we(j),he(j),aaa,bbb,work)
             work=work*0.5/pi
-            kkm=ecid(i)
-            recec(jjm,kkm)=recec(jjm,kkm)+work
+            recec(ecid(j),ecid(i))=recec(ecid(j),ecid(i))+work
          enddo 
-         rsisec(jjm)=rsisec(jjm)+2.*pi*re(j)/we(j)/he(j)*zetaec
+         rsisec(ecid(j))=rsisec(ecid(j))+2.*pi*re(j)/we(j)/he(j)*zetaec
       enddo
       return
       end subroutine gecoil
@@ -430,8 +374,7 @@
 !**                                                                  **
 !**********************************************************************
       subroutine efund_grid
-      use exparm, only: nfcoil,nsilop,magpr2,nrogow,necoil,nesum, &
-                        nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
+      use exparm, only: nfcoil,nfsum,nw,nh,nwnh
       use consta
       use pmodel
       use input
@@ -440,8 +383,8 @@
       use var_filech
       implicit none
       real*8 psical
-      integer*4 i,ih,ii,iw,j,k,kk,ndr,ndz,ni,nj
-      real*8 ab,cmut,dhc,drc,dwc,dzc,fridpc,rtmp,rsum,z1,z2,zdif
+      integer*4 i,ih,ii,iw,j,k,kk,ni,nj
+      real*8 ab,cmut,dhc,drc,dwc,dzc,fridpc,rtmp,rsum,z,z1,z2,zdif
       real*8, dimension(:,:), allocatable :: gridfc,gridpc,ggridfc
       real*8 taf(nfcoil),taf2(nfcoil)
       integer*4, parameter :: isplit=17
@@ -464,8 +407,6 @@
 !----------------------------------------------------------------------
 !--  compute the green's functions at (r,z) due to f coils           --
 !----------------------------------------------------------------------
-      ndr = isplit
-      ndz = isplit
       do ii=1,nfcoil
          taf(ii) = tan(af(ii)*pi/180.0)
          taf2(ii) = tan(af2(ii)*pi/180.0)
@@ -473,9 +414,20 @@
             do nj=1,nh
                kk = (ni-1)*nh + nj
                rsum = 0.
-               dwc = wf(ii)/ndr
-               dhc = hf(ii)/ndz
-               if (af2(ii) .eq. 0.) then
+               dwc = wf(ii)/isplit
+               dhc = hf(ii)/isplit
+               if (af(ii) .eq. 0. .and. af2(ii) .eq. 0.) then
+                  z = zf(ii)-.5*hf(ii)+.5*dhc
+                  ab = rf(ii)-.5*wf(ii)+.5*dwc
+                  do iw = 1,isplit
+                     drc = ab+(iw-1)*dwc+iw*tole
+                     do ih = 1,isplit
+                        dzc = z+(ih-1)*dhc
+                        rtmp = psical(drc,rgrid(ni),zgrid(nj)-dzc)
+                        rsum = rsum+rtmp
+                     enddo
+                  enddo
+               elseif (af(ii) .ne. 0.) then
                   z1 = zf(ii)-taf(ii)*(wf(ii)-dwc)/2.-.5*hf(ii)+.5*dhc
                   ab = rf(ii)-.5*wf(ii)+.5*dwc
                   do iw = 1,isplit
@@ -488,9 +440,9 @@
                      enddo
                   enddo
                else
-                  do ih = 1,ndz
+                  do ih = 1,isplit
                      dzc = zf(ii)-.5*hf(ii)+.5*dhc+dhc*(ih-1)
-                     do iw = 1,ndr
+                     do iw = 1,isplit
                         drc = rf(ii)-.5*wf(ii)-.5*hf(ii)/taf2(ii) &
                               +.5*dwc+.5*dhc/taf2(ii) &
                               +dhc/taf2(ii)*(ih-1)+dwc*(iw-1)
@@ -526,10 +478,8 @@
 !--  store green's function table                                    --
 !----------------------------------------------------------------------
       ggridfc=0.0
-!
       do i=1,nfcoil
-         k=abs(fcid(i))
-         ggridfc(:,k)=ggridfc(:,k)+fcturn(i)*gridfc(:,i)
+         ggridfc(:,fcid(i))=ggridfc(:,fcid(i))+fcturn(i)*gridfc(:,i)
       enddo
 !
       print*,'file name : ','ec'//trim(ch1)//trim(ch2)//'.ddd' 
@@ -574,65 +524,70 @@
 !**       rspfun..........computed green's functions values          **
 !**       nz..............DIMENSION of z                             **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      subroutine gsilop(rr, nr, zz, nz, rspfun, ns, rsi, zsi, wsi &
-           , hsi, as, as2, ndim)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
-                      nw,nh,nwnh
+      subroutine gsilop(rr,nr,zz,nz,rspfun,ns,rsi,zsi,wsi, &
+                        hsi,as,as2,ndim)
+      use exparm, only: nsilop,nwnh
       use consta
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-            real*8,dimension(nr) :: rr
-            real*8,dimension(nz) :: zz
-            real*8,dimension(ns) :: rsi,zsi,wsi,hsi,as,as2
-            real*8,dimension(ndim,nwnh) :: rspfun
-!     dimension rsi(1),zsi(1),wsi(1),hsi(1),as(1),as2(1)
-!     dimension rr(1),zz(1),rspfun(ndim,1)
-      dimension taf(nfcoil),taf2(nfcoil)
-      data isplit/17/,tole/1.0e-10/
-
-      ndr = isplit
-      ndz = isplit
-      in=ns
-        taf(in) = tan(as(in)*pi/180.0)
-        taf2(in) = tan(as2(in)*pi/180.0)
-        do nc=1,nr
-          do nd=1,nz
-            nk=(nc-1)*nz+nd
-            rsum = 0.
-            dwc = wsi(in)/ndr
-            dhc = hsi(in)/ndz
-            if (as2(in) .eq. 0.) then
-              z1 = zsi(in) - taf(in)*(wsi(in)-dwc)/2. - .5*hsi(in) + .5*dhc
-              ab = rsi(in) - .5*wsi(in) + .5*dwc
-              do iw = 1, isplit
-                drc = ab + (iw-1)*dwc + iw*tole
-                z2 = z1 + (iw-1)*taf(in)*dwc
-                do ih = 1, isplit
-                  dzc = z2 + (ih-1)*dhc
-                  rtmp = psical(drc,rr(nc),zz(nd)-dzc)
-                  rsum = rsum + rtmp
-                enddo
+      implicit none
+      real*8 psical
+      integer*4, intent(in) :: nr,nz,ns,ndim
+      real*8, dimension(ns), intent(in) :: rsi,zsi,wsi,hsi,as,as2
+      real*8, intent(in) :: rr(nr),zz(nz)
+      real*8, intent(out) :: rspfun(ndim,nwnh)
+      integer*4 ih,iw,nc,nd,nk
+      real*8 ab,cmut,dhc,drc,dwc,dzc,rsum,rtmp,tas(nsilop),tas2(nsilop), &
+             z,z1,z2
+      integer*4, parameter :: isplit=17
+      real*8, parameter :: tole=1.0e-10
+!
+      tas(ns) = tan(as(ns)*pi/180.0)
+      tas2(ns) = tan(as2(ns)*pi/180.0)
+      do nc=1,nr
+        do nd=1,nz
+          nk=(nc-1)*nz+nd
+          rsum = 0.
+          dwc = wsi(ns)/isplit
+          dhc = hsi(ns)/isplit
+          if (as(ns) .eq. 0. .and. as2(ns) .eq. 0.) then
+            z = zsi(ns) - .5*hsi(ns) + .5*dhc
+            ab = rsi(ns) - .5*wsi(ns) + .5*dwc
+            do iw = 1, isplit
+              drc = ab + (iw-1)*dwc + iw*tole
+              do ih = 1, isplit
+                dzc = z + (ih-1)*dhc
+                rtmp = psical(drc,rr(nc),zz(nd)-dzc)
+                rsum = rsum + rtmp
               enddo
-            else
-              do ih = 1, ndz
-                dzc = zsi(in) - .5*hsi(in) + .5*dhc + dhc*(ih-1)
-                do iw = 1, ndr
-                  drc = rsi(in) - .5*wsi(in) - .5*hsi(in)/taf2(in)&
-                         + .5*dwc + .5*dhc/taf2(in)&
-                         + dhc/taf2(in)*(ih-1) + dwc*(iw-1)
-                  rtmp = psical(drc,rr(nc),zz(nd)-dzc)
-                  rsum = rsum + rtmp
-                enddo
+            enddo
+          elseif (as(ns) .ne. 0.) then
+            z1 = zsi(ns) - tas(ns)*(wsi(ns)-dwc)/2. - .5*hsi(ns) + .5*dhc
+            ab = rsi(ns) - .5*wsi(ns) + .5*dwc
+            do iw = 1, isplit
+              drc = ab + (iw-1)*dwc + iw*tole
+              z2 = z1 + (iw-1)*tas(ns)*dwc
+              do ih = 1, isplit
+                dzc = z2 + (ih-1)*dhc
+                rtmp = psical(drc,rr(nc),zz(nd)-dzc)
+                rsum = rsum + rtmp
               enddo
-            endif
-            cmut = rsum*2.e-07/(isplit*isplit)
-            rspfun(in,nk)=cmut
-          enddo
+            enddo
+          else
+            do ih = 1,isplit
+              dzc = zsi(ns) - .5*hsi(ns) + .5*dhc + dhc*(ih-1)
+              do iw = 1,isplit
+                drc = rsi(ns) - .5*wsi(ns) - .5*hsi(ns)/tas2(ns)&
+                       + .5*dwc + .5*dhc/tas2(ns)&
+                       + dhc/tas2(ns)*(ih-1) + dwc*(iw-1)
+                rtmp = psical(drc,rr(nc),zz(nd)-dzc)
+                rsum = rsum + rtmp
+              enddo
+            enddo
+          endif
+          cmut = rsum*2.e-07/(isplit*isplit)
+          rspfun(ns,nk)=cmut
         enddo
-
+      enddo
       return
       end subroutine gsilop
 !**********************************************************************
@@ -643,52 +598,45 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/11/85..........first created                         **
-!**                                                                  **
 !**********************************************************************
       subroutine gvesel(rsilvs,rmp2vs,gridvs,rgrid,mw, &
                         zgrid,mh,rfcvs,rvsfc,rvsec)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
+      use exparm, only: nfcoil,nsilop,magpr2,necoil,nesum,&
+                        nvesel,nw,nh
       use consta
       use fcoil
       use cecoil
       use cvesel
-      use input,only:iecoil
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension rsilvs(nsilop,nvesel),rmp2vs(magpr2,nvesel), &
-                rgrid(1),zgrid(1),rvsec(nvesel,nesum), &
-                rfcvs(nfcoil,nvesel),rvsfc(nvesel,nfcoil)
-      dimension gridvs(mw*mh,nvesel)
-      dimension taf(nfcoil),taf2(nfcoil)
-      dimension tas(nvesel),tas2(nvesel)
+      use input, only: iecoil
+      implicit none
+      integer*4, intent(in) :: mw,mh
+      real*8, intent(in) :: rgrid(mw),zgrid(mh)
+      real*8, intent(out) :: rsilvs(nsilop,nvesel),rmp2vs(magpr2,nvesel), &
+                             rfcvs(nfcoil,nvesel),rvsec(nvesel,nesum), &
+                             rvsfc(nvesel,nfcoil),gridvs(mw*mh,nvesel)
+      integer*4 i,j,kk,n
+      real*8 aaa,work
+      real*8 taf(nfcoil),taf2(nfcoil),tav(nvesel),tav2(nvesel)
+!
       do j=1,nsilop
-         jj=j
          do i=1,nvesel
-            ii=i
-            call v1coef(work,jj,ii)
+            call v1coef(work,j,i)
             rsilvs(j,i)=work
          enddo 
       enddo 
 !
       do j=1,magpr2
-         jj=j
          do i=1,nvesel
-            ii=i
-            call v2coef(work,jj,ii)
+            call v2coef(work,j,i)
             rmp2vs(j,i)=work
          enddo 
       enddo 
 !
       do i=1,nw
-         nr=i
          do j=1,nh
-            nz=j
             kk=(i-1)*nh+j
             do n=1,nvesel
-               nn=n
-               call vgrid(work,rgrid,nr,zgrid,nz,nn)
+               call vgrid(work,rgrid,i,zgrid,j,n)
                gridvs(kk,n)=work
             enddo 
          enddo 
@@ -698,9 +646,9 @@
          taf(j)=tan(af(j)*pi/180.)
          taf2(j)=tan(af2(j)*pi/180.)
          do i=1,nvesel
-            tas(i)=tan(avs(i)*pi/180.)
-            tas2(i)=tan(avs2(i)*pi/180.)
-            call flux(rvs(i),zvs(i),wvs(i),hvs(i),tas(i),tas2(i), &
+            tav(i)=tan(avs(i)*pi/180.)
+            tav2(i)=tan(avs2(i)*pi/180.)
+            call flux(rvs(i),zvs(i),wvs(i),hvs(i),tav(i),tav2(i), &
                       rf(j),zf(j),wf(j),hf(j),taf(j),taf2(j),work)
             work=work*0.5/pi
             rfcvs(j,i)=work
@@ -710,28 +658,26 @@
       aaa=0.0
       rvsec(:,:)=0.0
       do j=1,nvesel
-         tas(j)=tan(avs(j)*pi/180.)
-         tas2(j)=tan(avs2(j)*pi/180.)
+         tav(j)=tan(avs(j)*pi/180.)
+         tav2(j)=tan(avs2(j)*pi/180.)
          if (iecoil.eq.1) then
             do i=1,necoil
                call flux(re(i),ze(i),we(i),he(i),aaa,aaa, &
-                         rvs(j),zvs(j),wvs(j),hvs(j),tas(j),tas2(j),work)
+                         rvs(j),zvs(j),wvs(j),hvs(j),tav(j),tav2(j),work)
                work=work*0.5/pi
-               kkm=ecid(i)
-               kk=kkm+1
-               rvsec(j,kkm)=rvsec(j,kkm)+work*(kk-ecid(i))
+               rvsec(j,ecid(i))=rvsec(j,ecid(i))+work
             enddo
          endif
       enddo 
 !
       do j=1,nvesel
-         tas(j)=tan(avs(j)*pi/180.)
-         tas2(j)=tan(avs2(j)*pi/180.)
+         tav(j)=tan(avs(j)*pi/180.)
+         tav2(j)=tan(avs2(j)*pi/180.)
          do i=1,nfcoil
             taf(i)=tan(af(i)*pi/180.)
             taf2(i)=tan(af2(i)*pi/180.)
             call flux(rf(i),zf(i),wf(i),hf(i),taf(i),taf2(i), &
-                      rvs(j),zvs(j),wvs(j),hvs(j),tas(j),tas2(j),work)
+                      rvs(j),zvs(j),wvs(j),hvs(j),tav(j),tav2(j),work)
             work=work*0.5/pi
             rvsfc(j,i)=work
          enddo 
@@ -750,13 +696,14 @@
 !**       n...............order of legendre polynomial               **
 !**       nn..............error flag                                 **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
       subroutine lgauss(x,w,n,nn)
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      real*8,dimension(n) ::  x,w
+      implicit none
+      integer*4, intent(in) :: n
+      integer*4, intent(out) :: nn
+      real*8, dimension(n), intent(out) ::  x,w
+      integer*4 i,ic,k
+      real*8 a,dp,g,p,r,s,su,t,test,u,v
 !
       nn = 0
       if (n-1.lt.0) then 
@@ -803,32 +750,32 @@
          do k = 2,n
             a = k
             p = ((2.0*a-1.0)*s*g-(a-1.0)*t)/a
-             dp = ((2.0*a-1.0)*(s+g*u)-(a-1.0)*v)/a
+           dp = ((2.0*a-1.0)*(s+g*u)-(a-1.0)*v)/a
             v = u
             u = dp
             t = s
             s = p
          enddo 
          if (abs((test-g)/(test+g)).ge.0.0000005) then
-            sum = 0.
+            su = 0.
             if (i.ne.1) then
 !----------------------------------------------------------------------
 !--            the following computes the reduced                    --
 !--            legendre polynomial and its derivative.               --
 !----------------------------------------------------------------------
                do k = 2,i
-                  sum = sum+1./(g-x(k-1))
+                  su = su+1./(g-x(k-1))
                enddo
             endif
             test = g
-            g = g-p/(dp-p*sum)
+            g = g-p/(dp-p*su)
             go to 40
          endif
          x(ic) = -g
          x(i) = g
          w(i) = 2./(r*t*dp)
          w(ic) = w(i)
-         g = g-r*t/((r+2.)*g*dp+r*v-2.*r*t*sum)
+         g = g-r*t/((r+2.)*g*dp+r*v-2.*r*t*su)
       enddo
       return
       end subroutine lgauss
@@ -840,52 +787,46 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          15/07/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      subroutine m1coef(rr, zz, nr, nz, coef,  nl, nf)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil
+      subroutine m1coef(rr,zz,nr,nz,coef,nl,nf)
+      use exparm, only: nsilop
       use fcoil
       use coilsp
-      use consta
-      use nio
+      use consta, only: pi,tmu
       use siloop
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      real*8,dimension(nr) :: rr
-      real*8,dimension(nz) :: zz
-      real*8,dimension(nsilop,nr*nz) :: coef
+      implicit none
+      real*8 psical
+      integer*4, intent(in) :: nr,nz,nl,nf
+      real*8, intent(in) :: rr(nr),zz(nz)
+      real*8, intent(out) :: coef(nsilop,nr*nz)
+      integer*4 ii,jj,l,kk
+      real*8 a,cmp2,psic,psict,r,r1,z,z1
+      integer*4, parameter :: isplit=17,itot=isplit*isplit
+      real*8, parameter :: radeg=pi/180.,fitot=itot
 !
-      radeg=pi/180.
-      isplit=17
-      itot=isplit*isplit
-      fitot=itot
-!
-      m=nl
       if (nf.le.0) then
          do ii=1,nr
             do jj=1,nz
                kk=(ii-1)*nz+jj
                a=rr(ii)
-               r=rsi(m)
-               z=zsi(m)-zz(jj)
+               r=rsi(nl)
+               z=zsi(nl)-zz(jj)
                cmp2=psical(a,r,z)*tmu
-               coef(m,kk)=cmp2
+               coef(nl,kk)=cmp2
             enddo 
          enddo 
       else
-         k=nf
          psict=0
          call splitc(isplit,rsplt,zsplt, &
-                     rf(k),zf(k),wf(k),hf(k),af(k),af2(k))
+                     rf(nf),zf(nf),wf(nf),hf(nf),af(nf),af2(nf))
          do l=1,itot
             a=rsplt(l)
-            r1=rsi(m)
-            z1=zsi(m)-zsplt(l)
+            r1=rsi(nl)
+            z1=zsi(nl)-zsplt(l)
             psic=psical(a,r1,z1)*tmu
             psict=psict+psic/fitot
          enddo 
-         coef(m,k)=psict
+         coef(nl,nf)=psict
       endif
 !
       return
@@ -898,29 +839,27 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      subroutine m2coef(rr, nr, zz, nz, coef,  mp, nc)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
-                      nw,nh,nwnh
+      subroutine m2coef(rr,nr,zz,nz,coef,mp,nc)
+      use exparm, only: nfcoil,magpr2,nw,nh
       use fcoil
       use coilsp
       use mprobe
       use pmodel
-      use consta
+      use consta, only: pi,tmu
       use fshift
       use bfgrid
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-            real*8,dimension(nr) :: rr
-            real*8,dimension(nz) :: zz
-      dimension coef(mp,nc)
-
-      radeg=pi/180.
-      isplit=17
-      itot=isplit*isplit
-      fitot=itot
+      implicit none
+      real*8 br,bz
+      integer*4, intent(in) :: nr,nz,mp,nc
+      real*8, intent(in) :: rr(nr),zz(nz)
+      real*8, intent(out) :: coef(mp,nc)
+      integer*4 ii,jj,l,k,kk,m,mmm
+      real*8 a,brc,brct,brtmp,bzc,bzct,bztmp,cfactor,cmp2, &
+             cosm,cosms,cospp,sinm,sinms,sinpp, &
+             delsx,delsy,pfnow,pmnow,r,r1,rcos,rsin,z,z1,xmp20,ymp20
+      integer*4, parameter :: isplit=17,itot=isplit*isplit
+      real*8, parameter :: fitot=itot,radeg=pi/180.
 !
       do m=1,magpr2
          if (smp2(m).gt.0.0) then
@@ -1047,16 +986,11 @@
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          matrix calculates the appropriate response functions.   **
 !**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
       subroutine efund_matrix
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
-      use consta
+      use exparm, only: nfcoil,nsilop,magpr2,nrogow,nesum,&
+                        nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh
+      use consta, only: pi
       use nio
       use cvesel
       use input
@@ -1068,66 +1002,68 @@
       use bfgrid
 !vas
       use var_filech
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension rfcfc(nfcoil,nfcoil)
-      dimension rsilfc(nsilop,nfcoil),rmp2fc(magpr2,nfcoil), &
-                rgowfc(nrogow,nfcoil)
-      dimension gsilfc(nsilop,nfsum),gmp2fc(magpr2,nfsum)
-      dimension rsilec(nsilop,nesum),rmp2ec(magpr2,nesum), &
-                rfcec(nfcoil,nesum), &
-                recec(nesum,nesum),rsisec(nesum)
-      dimension rsilvs(nsilop,nvesel),rmp2vs(magpr2,nvesel), &
-                rfcvs(nfcoil,nvesel), &
-                rvsec(nvesel,nesum),rvsfc(nvesel,nfcoil), &
-                rvsvs(nvesel,nvesel),tas(nvesel),tas2(nvesel)
-      dimension gsilvs(nsilop,nvsum),gmp2vs(magpr2,nvsum)
-      dimension taf(nfcoil),taf2(nfcoil)
-      dimension rsilac(nsilop,nacoil),rmp2ac(magpr2,nacoil)
-      dimension xdum(1),ydum(1)
-      real*8,dimension(:,:),allocatable :: rfcpc,brgrfc,bzgrfc, &
-                                         rsilpc,rmp2pc,rgowpc, &
-                                         gridec,gridvs,ggridvs, &
-                                         gridac
+      implicit none
+      integer*4 i,ii,j,jj,magprr,mrogow,msilop
+      real*8 taz,taz2 
+      real*8 rfcfc(nfcoil,nfcoil)
+      real*8 rsilfc(nsilop,nfcoil),rmp2fc(magpr2,nfcoil), &
+             rgowfc(nrogow,nfcoil)
+      real*8 gsilfc(nsilop,nfsum),gmp2fc(magpr2,nfsum)
+      real*8 rsilec(nsilop,nesum),rmp2ec(magpr2,nesum), &
+             rfcec(nfcoil,nesum), &
+             recec(nesum,nesum),rsisec(nesum)
+      real*8 rsilvs(nsilop,nvesel),rmp2vs(magpr2,nvesel), &
+             rfcvs(nfcoil,nvesel), &
+             rvsec(nvesel,nesum),rvsfc(nvesel,nfcoil), &
+             rvsvs(nvesel,nvesel),tav(nvesel),tav2(nvesel)
+      real*8 gsilvs(nsilop,nvsum),gmp2vs(magpr2,nvsum)
+      real*8 taf(nfcoil),taf2(nfcoil)
+      real*8 rsilac(nsilop,nacoil),rmp2ac(magpr2,nacoil)
+      real*8 xdum(1),ydum(1)
+      real*8, dimension(:,:), allocatable :: rfcpc,brgrfc,bzgrfc, &
+                                             rsilpc,rmp2pc,rgowpc, &
+                                             gridec,gridvs,ggridvs, &
+                                             gridac
 !
       if (.not. allocated(rfcpc)) then
         allocate(rfcpc(nfcoil,nwnh))
-        rfcpc(:,:) = 0.0
+        rfcpc = 0.0
       endif
       if (.not. allocated(brgrfc)) then
         allocate(brgrfc(nwnh,nfsum))
-        brgrfc(:,:) = 0.0
+        brgrfc = 0.0
       endif
       if (.not. allocated(bzgrfc)) then
         allocate(bzgrfc(nwnh,nfsum))
-        bzgrfc(:,:) = 0.0
+        bzgrfc = 0.0
       endif
       if (.not. allocated(rsilpc)) then
         allocate(rsilpc(nsilop,nwnh))
-        rsilpc(:,:) = 0.0
+        rsilpc = 0.0
       endif
       if (.not. allocated(rmp2pc)) then
         allocate(rmp2pc(magpr2,nwnh))
-        rmp2pc(:,:) = 0.0
+        rmp2pc = 0.0
       endif
       if (.not. allocated(rgowpc)) then
         allocate(rgowpc(nrogow,nwnh))
-        rgowpc(:,:) = 0.0
+        rgowpc = 0.0
       endif
       if (.not. allocated(gridec)) then
         allocate(gridec(nwnh,nesum))
-        gridec(:,:) = 0.0
+        gridec = 0.0
       endif
       if (.not. allocated(gridvs)) then
         allocate(gridvs(nwnh,nvesel))
-        gridvs(:,:) = 0.0
+        gridvs = 0.0
       endif
       if (.not. allocated(ggridvs)) then
         allocate(ggridvs(nwnh,nvsum))
-        ggridvs(:,:) = 0.0
+        ggridvs = 0.0
       endif
       if (.not. allocated(gridac)) then
         allocate(gridac(nwnh,nacoil))
-        gridac(:,:) = 0.0
+        gridac = 0.0
       endif
 !
       if (ifcoil.eq.1) then
@@ -1148,8 +1084,8 @@
 
                enddo
                ii=i
-               call gsilop(rgrid,nw,zgrid,nh,rfcpc,ii,rf,zf,wf,hf,af,af2 &
-                          ,nfcoil)
+               call gsilop(rgrid,nw,zgrid,nh,rfcpc,ii,rf,zf,wf,hf,af,af2, &
+                           nfcoil)
             enddo
 
             print*,'file name : ','fc'//trim(ch1)//trim(ch2)//'.ddd' 
@@ -1222,22 +1158,14 @@
 !----------------------------------------------------------------------
 !--      write f coil response functions                             --
 !----------------------------------------------------------------------
-         do i=1,nfsum
-            do j=1,nsilop
-               gsilfc(j,i)=0.0
-            enddo
-            do j=1,magpr2
-               gmp2fc(j,i)=0.0
-            enddo
-         enddo
-!
+         gsilfc=0.0
+         gmp2fc=0.0
          do i=1,nfcoil
-            k=abs(fcid(i))
             do j=1,nsilop
-               gsilfc(j,k)=gsilfc(j,k)+fcturn(i)*rsilfc(j,i)
+               gsilfc(j,fcid(i))=gsilfc(j,fcid(i))+fcturn(i)*rsilfc(j,i)
             enddo
             do j=1,magpr2
-               gmp2fc(j,k)=gmp2fc(j,k)+fcturn(i)*rmp2fc(j,i)
+               gmp2fc(j,fcid(i))=gmp2fc(j,fcid(i))+fcturn(i)*rmp2fc(j,i)
             enddo
          enddo
 !
@@ -1249,17 +1177,12 @@
          write (nrspfc) gmp2fc
          close(unit=nrspfc)
 !
-         do i=1,nfsum
-            do j=1,nwnh
-               brgrfc(j,i)=0.0
-               bzgrfc(j,i)=0.0
-            enddo
-         enddo
+         brgrfc=0.0
+         bzgrfc=0.0
          do i=1,nfcoil
-            k=abs(fcid(i))
             do j=1,nwnh
-               brgrfc(j,k)=brgrfc(j,k)+fcturn(i)*brgridfc(j,i)
-               bzgrfc(j,k)=bzgrfc(j,k)+fcturn(i)*bzgridfc(j,i)
+               brgrfc(j,fcid(i))=brgrfc(j,fcid(i))+fcturn(i)*brgridfc(j,i)
+               bzgrfc(j,fcid(i))=bzgrfc(j,fcid(i))+fcturn(i)*bzgridfc(j,i)
             enddo
          enddo
 !
@@ -1331,40 +1254,30 @@
          call gvesel(rsilvs,rmp2vs,gridvs,rgrid,nw, &
                      zgrid,nh,rfcvs,rvsfc,rvsec)
          do i=1,nvesel
-           tas(i)=tan(avs(i)*pi/180.)
-           tas2(i)=tan(avs2(i)*pi/180.)
+           tav(i)=tan(avs(i)*pi/180.)
+           tav2(i)=tan(avs2(i)*pi/180.)
          enddo 
          do i=1,nvesel
             do j=1,nvesel
-               call flux(rvs(i),zvs(i),wvs(i),hvs(i),tas(i),tas2(i), &
-                         rvs(j),zvs(j),wvs(j),hvs(j),tas(j),tas2(j), &
+               call flux(rvs(i),zvs(i),wvs(i),hvs(i),tav(i),tav2(i), &
+                         rvs(j),zvs(j),wvs(j),hvs(j),tav(j),tav2(j), &
                          rvsvs(j,i))
                rvsvs(j,i)=rvsvs(j,i)*0.5/pi
             enddo 
          enddo 
 !
-         do i=1,nvsum
-            do j=1,nsilop
-               gsilvs(j,i)=0.0
-            enddo
-            do j=1,magpr2
-               gmp2vs(j,i)=0.0
-            enddo
-            do j=1,nwnh
-               ggridvs(j,i)=0.0
-            enddo
-         enddo
-!
+         gsilvs=0.0
+         gmp2vs=0.0
+         ggridvs=0.0
          do i=1,nvesel
-            k=abs(vsid(i))
             do j=1,nsilop
-               gsilvs(j,k)=gsilvs(j,k)+rsilvs(j,i)
+               gsilvs(j,vsid(i))=gsilvs(j,vsid(i))+rsilvs(j,i)
             enddo
             do j=1,magpr2
-               gmp2vs(j,k)=gmp2vs(j,k)+rmp2vs(j,i)
+               gmp2vs(j,vsid(i))=gmp2vs(j,vsid(i))+rmp2vs(j,i)
             enddo
             do j=1,nwnh
-               ggridvs(j,k)=ggridvs(j,k)+gridvs(j,i)
+               ggridvs(j,vsid(i))=ggridvs(j,vsid(i))+gridvs(j,i)
             enddo
          enddo
 !
@@ -1414,14 +1327,14 @@
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **
 !**          psical computes mutual inductance/2/pi between two      **
-!**          circular filaments of radii a1 and r1 and               **
-!**          separation of z1, for mks units multiply returned       **
+!**          circular filaments of radii a and r and                 **
+!**          separation of z, for mks units multiply returned        **
 !**          value by 2.0e-07.                                       **
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
-!**       a1..............first filament radius                      **
-!**       r1..............second filament radius                     **
-!**       z1..............vertical separation                        **
+!**       a..............first filament radius                       **
+!**       r..............second filament radius                      **
+!**       z..............vertical separation                         **
 !**                                                                  **
 !**     REFERENCES:                                                  **
 !**          (1) f.w. mcclain and b.b. brown, ga technologies        **
@@ -1477,26 +1390,23 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      subroutine rogowc(rr, nrr, zz, nz, coef, nr, nc)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil
+      subroutine rogowc(rr,nrr,zz,nz,coef,nr,nc)
+      use exparm, only: nfcoil,nrogow
       use rogowl
       use coilsp
-      use consta
+      use consta, only: pi,tmu
       use fcoil
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-!      dimension rogpth(nrogow)
-      real*8,dimension(nr) :: rr
-      real*8,dimension(nz) :: zz
-      dimension coef(nr,nc)
+      implicit none
+      real*8 br,bz
+      integer*4, intent(in) :: nrr,nz,nr,nc
+      real*8, intent(in) :: rr(nr),zz(nz)
+      real*8, intent(out) :: coef(nr,nc)
+      integer*4 i,iii,ikk,imm,inn,k,l,m,mm
+      real*8 a,brc,brg,bzc,bzg,cost,sint,dels,fact,hl,part,r1,rl,z1,zl
+      integer*4, parameter :: isplit=17,itot=isplit*isplit,ngrid=25
+      real*8, parameter :: fitot=itot
 !
-      ngrid=25
-      isplit=17
-      itot=isplit*isplit
-      fitot=itot
       dels = 0.
       mm=1
 !
@@ -1513,8 +1423,7 @@
                coef(m,k)=0.0
             enddo 
          endif
-         k=m
-         call rogrid(ngrid,mm,k,dels)
+         call rogrid(ngrid,mm,m,dels)
          mm=mm+narc(m)+1
          do i=1,ngrid
             iii=i
@@ -1541,7 +1450,7 @@
                      bzc=bz(a,r1,z1)*tmu/fitot
                      part=brc*cost+bzc*sint
                      call simpf(iii,fact)
-                     ! todo: rogpth is never defined in efit...
+                     ! todo: rogpth is never defined in efund...
                      coef(m,k)=coef(m,k)+fact*part*dels !/rogpth(m)
                   enddo 
                enddo
@@ -1556,7 +1465,7 @@
                      bzg=bz(a,r1,z1)*tmu
                      part=brg*cost+bzg*sint
                      call simpf(iii,fact)
-                     ! todo: rogpth is never defined in efit...
+                     ! todo: rogpth is never defined in efund...
                      coef(m,ikk)=coef(m,ikk)+fact*part*dels !/rogpth(m)
                   enddo 
                enddo 
@@ -1578,15 +1487,14 @@
 !**       m...............                                           **
 !**       dels............                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
       subroutine rogrid(ngrid,mm,m,dels)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil
       use rogowl
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension sl(6)
+      implicit none
+      integer*4, intent(in) :: ngrid,mm,m
+      real*8, intent(out) :: dels
+      integer*4 i,i1,i2,j,mm1,n1
+      real*8 dd,dr,ds,dz,s,sl(6)
 !
       s = 0.
       mm1 = mm+narc(m)-1
@@ -1626,12 +1534,12 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
       subroutine simpf(i,f)
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
+      implicit none
+      integer*4, intent(in) :: i
+      real*8, intent(out) :: f
+!
       if (i.eq.1 .or. i.eq.25) then
          f = 1./3.
       elseif ((i/2)*2.eq.i) then
@@ -1648,23 +1556,21 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
       subroutine soleno(ra,z1,w1,h1,t1,t12,r2,z2,w2,h2,t2,t22,xbm1,xbm2, &
                         xtm1,xtm2,hfa,hsa,rf,rs,sol)
-      use consta,only:pi
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension z(2,2)
-      real*8 ksq,kpsq,msl,mut
+      use consta, only: pi
+      implicit none
+      real*8, intent(in) :: ra,z1,w1,h1,t1,t12,r2,z2,w2,h2,t2,t22, &
+                            xbm1,xbm2,xtm1,xtm2,rf,rs
+      real*8, intent(out) :: hfa,hsa,sol
+      integer*4 i,j
+      real*8 alpha,alphat,ambsq,beta,cay,csq,cpsq,delta,dr,drsq,dz,dzsq,ek, &
+             epsi,epsit,fr,ksq,kpsq,msl,mut,pik,r,r1,r1sq,r2sq,sa,sig,sinf, &
+             t,tr,trsq,z(2,2),zb1,zc1,zt1,zb2,zc2,zt2,zeta
+      real*8, parameter :: rpi2=pi*0.5,rh=pi*2.0e-07,ut=rh/3.0,er=1.0e-05
 !      data init/0/
 !
-      rpi=pi
-      rpi2=rpi*0.5
-      rh=rpi*2.0e-07
-      ut=rh/3.0
-      err=1.0e-05
 !      init=1
 !
       dr = rf-rs
@@ -1676,7 +1582,7 @@
       csq = fr/trsq
       cpsq = 1.-csq
 !
-      if (t12.eq.0.) then
+      if (t1.ne.0.) then
          r = rf-ra+0.5*w1
          zc1 = z1-0.5*h1-0.5*w1*t1
          zb1 = zc1+t1*r
@@ -1696,7 +1602,7 @@
          endif
       endif
 !
-      if (t22.eq.0.) then
+      if (t2.ne.0.) then
          r = rs-r2+0.5*w2
          zc2 = z2-0.5*h2-0.5*w2*t2
          zb2 = zc2+t2*r
@@ -1725,8 +1631,8 @@
 !
       do i = 1,2
          do j = 1,2
-            sign = -.25
-            if (i .ne. j) sign = .25
+            sig = -.25
+            if(i .ne. j) sig = .25
             dz = z(1,i)-z(2,j)
             dzsq = dz*dz
             r2sq = dzsq+drsq
@@ -1739,17 +1645,16 @@
 !--------------------------------------------------------------------------
 !--         to avoid numerical truncation                                --
 !--------------------------------------------------------------------------
-            if (kpsq .lt. 1.0e-30) kpsq = 1.0e-30
+            if(kpsq .lt. 1.0e-30) kpsq = 1.0e-30
             beta = sqrt(kpsq)
-            if (beta .lt. 1.0e-30) beta = 1.0e-10
-            if (cpsq .lt. 1.0e-30) cpsq = 1.0e-10
+            if(beta .lt. 1.0e-30) beta = 1.0e-10
+            if(cpsq .lt. 1.0e-30) cpsq = 1.0e-10
             delta = cpsq/beta
             epsi = csq/cpsq
             zeta = 0.
             sinf = 0.
             sa = .25
 !
-  100       continue
             sa = 2.*sa
             ambsq = (alpha-beta)*(alpha-beta)
             sinf = sinf+sa*ambsq
@@ -1760,16 +1665,26 @@
             epsi = (delta*epsi+zeta)/(1.+delta)
             delta = beta/4./alpha*(2.+delta+1./delta)
             zeta = .5*(epsit+zeta)
-            if (abs(delta-1.) .gt. err) go to 100
-            if (ambsq .gt. 1.e-14) go to 100
+            do while (abs(delta-1.) .gt. er .or. ambsq .gt. 1.e-14)
+               sa = 2.*sa
+               ambsq = (alpha-beta)*(alpha-beta)
+               sinf = sinf+sa*ambsq
+               alphat = alpha
+               epsit = epsi
+               alpha = .5*(alpha+beta)
+               beta = sqrt(alphat*beta)
+               epsi = (delta*epsi+zeta)/(1.+delta)
+               delta = beta/4./alpha*(2.+delta+1./delta)
+               zeta = .5*(epsit+zeta)
+            enddo
             cay = rpi2/alpha
             pik = cay*zeta
             ek = .5*cay*(ksq+sinf)
             msl = rh*dzsq*(r1*ek-drsq*pik/r1)
-            if (csq==1.) msl = rh*dzsq*(r1*ek-cay*fr/r1*.5)
+            if(csq==1.) msl = rh*dzsq*(r1*ek-cay*fr/r1*.5)
 !
             mut = msl+ut*fr*r1*(cay-t*ek)
-            sol = sol+sign*mut
+            sol = sol+sig*mut
          enddo
       enddo
 !
@@ -1781,22 +1696,23 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
       subroutine splitc(is,rs,zs,rc,zc,wc,hc,ac,ac2)
-      use consta
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      real*8,dimension(is*is) :: rs,zs
+      use consta, only: pi
+      implicit none
+      integer*4, intent(in) :: is
+      real*8, intent(in) :: rc,zc,wc,hc,ac,ac2
+      real*8, dimension(is*is), intent(out) :: rs,zs
+      integer*4 ic,ii,jj
+      real*8 hdelt,wdelt,rdelt,zdelt,htot,wtot,side,rr,rstrt,zstrt,zz
+      real*8, parameter :: frd=pi/180.
 !
-      frd=pi/180.
+      wdelt=wc/is
+      hdelt=hc/is
 !----------------------------------------------------------------------
 !--   rectangle                                                      --
 !----------------------------------------------------------------------
       if(ac+ac2.eq.0.) then
-          wdelt=wc/is
-          hdelt=hc/is
           rstrt=rc-wc/2.+wdelt/2.
           zstrt=zc-hc/2.+hdelt/2.
           zz=zstrt
@@ -1811,18 +1727,15 @@
              enddo 
              zz=zz+hdelt
           enddo
-          return
 !----------------------------------------------------------------------
 !--   ac .ne. 0                                                      --
 !----------------------------------------------------------------------
       elseif(ac.ne.0.) then
           side=tan(frd*ac)*wc
-          hdelt=hc/is
-          wdelt=wc/is
-          zdelt=tan(frd*ac)*wdelt
+          zdelt=side/is
           rstrt=rc-wc/2.+wdelt/2.
-          tsid=hc+side
-          zstrt =zc-tsid/2.+tsid/2.*1./is
+          htot=hc+side
+          zstrt=zc-htot/2.+htot/is/2.
           rr=rstrt
           ic=0
           do ii=1,is
@@ -1835,24 +1748,15 @@
              enddo 
              rr=rr+wdelt
           enddo
-          return
 !----------------------------------------------------------------------
 !--   ac2 .ne. 0                                                     --
 !----------------------------------------------------------------------
       elseif(ac2.ne.0.) then
           side=hc/tan(frd*ac2)
-          hdelt=hc/is
-          wdelt=wc/is
+          rdelt=side/is
           zstrt=zc-hc/2.+hdelt/2.
-          rdelt=hdelt/tan(frd*ac2)
-          rstrt=rc-side/2.-wc/2.+rdelt/2.+wdelt/2.
-          side=hc/tan(frd*ac2)
-          wtot=side+wc
-          whaf=(side+wc)/2.
-          rcorn=rc-whaf
-          rcornr=rc+whaf
-          rcorn2=rcorn+wtot/is
-          rstrt=(rcorn+rcorn2)/2.
+          wtot=wc+side
+          rstrt=rc-wtot/2.+wtot/is/2.
           zz=zstrt
           ic=0
           do ii=1,is
@@ -1877,34 +1781,28 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          15/07/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      subroutine v1coef(coef,  nl, ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
-                      nesum,nfsum,nvsum,nvesel,nacoil
+      subroutine v1coef(coef,nl,ne)
       use coilsp
-      use consta
-      use nio
+      use consta, only: pi,tmu
       use siloop
       use cvesel
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
+      implicit none
+      real*8 psical
+      integer*4, intent(in) :: nl,ne
+      real*8, intent(out) :: coef
+      integer*4 l
+      real*8 a,psic,psict,r1,z1
+      integer*4, parameter :: isplit=17,itot=isplit*isplit
+      real*8, parameter :: radeg=pi/180.,fitot=itot
 !
-      radeg=pi/180.
-      isplit=17
-      itot=isplit*isplit
-      fitot=itot
-!
-      m=nl
-      k=ne
       psict=0
       call splitc(isplit,rsplt,zsplt, &
-                  rvs(k),zvs(k),wvs(k),hvs(k),avs(k),avs2(k))
+                  rvs(ne),zvs(ne),wvs(ne),hvs(ne),avs(ne),avs2(ne))
       do l=1,itot
          a=rsplt(l)
-         r1=rsi(m)
-         z1=zsi(m)-zsplt(l)
+         r1=rsi(nl)
+         z1=zsi(nl)-zsplt(l)
          psic=psical(a,r1,z1)*tmu
          psict=psict+psic/fitot
       enddo 
@@ -1920,48 +1818,44 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      subroutine v2coef(coef, mp, ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
-                      nesum,nfsum,nvsum,nvesel,nacoil
+      subroutine v2coef(coef,mp,ne)
       use coilsp
       use mprobe
-      use consta
+      use consta, only: pi,tmu
       use cvesel
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
+      implicit none
+      real*8 br,bz
+      integer*4, intent(in) :: mp,ne
+      real*8, intent(out) :: coef
+      integer*4 l,mmm
+      real*8 a,brc,brct,bzc,bzct,cosm,cosms,sinm,sinms,delsx,delsy,r1,z1, &
+             xmp20,ymp20
+      integer*4, parameter :: isplit=17,itot=isplit*isplit
+      real*8, parameter :: fitot=itot,radeg=pi/180.
 !
-      radeg=pi/180.
-      isplit=17
-      itot=isplit*isplit
-      fitot=itot
-!
-      m=mp
-      if (smp2(m).gt.0.0) then
-         sinm=sin(radeg*amp2(m))
-         cosm=cos(radeg*amp2(m))
-         delsx=smp2(m)/nsmp2*cosm
-         delsy=smp2(m)/nsmp2*sinm
+      if (smp2(mp).gt.0.0) then
+         sinm=sin(radeg*amp2(mp))
+         cosm=cos(radeg*amp2(mp))
+         delsx=smp2(mp)/nsmp2*cosm
+         delsy=smp2(mp)/nsmp2*sinm
       else
 !------------------------------------------------------------------------------
 !--      perpendicular probes                                                --
 !------------------------------------------------------------------------------
-         sinm=sin(radeg*amp2(m))
-         cosm=cos(radeg*amp2(m))
-         sinms=sin(radeg*(amp2(m)+90.))
-         cosms=cos(radeg*(amp2(m)+90.))
-         delsx=abs(smp2(m))/nsmp2*cosms
-         delsy=abs(smp2(m))/nsmp2*sinms
+         sinm=sin(radeg*amp2(mp))
+         cosm=cos(radeg*amp2(mp))
+         sinms=sin(radeg*(amp2(mp)+90.))
+         cosms=cos(radeg*(amp2(mp)+90.))
+         delsx=abs(smp2(mp))/nsmp2*cosms
+         delsy=abs(smp2(mp))/nsmp2*sinms
       endif
-      xmp20=xmp2(m)-(nsmp2-1)/2.*delsx
-      ymp20=ymp2(m)-(nsmp2-1)/2.*delsy
-      k=ne
+      xmp20=xmp2(mp)-(nsmp2-1)/2.*delsx
+      ymp20=ymp2(mp)-(nsmp2-1)/2.*delsy
       brct=0
       bzct=0
       call splitc(isplit,rsplt,zsplt, &
-                  rvs(k),zvs(k),wvs(k),hvs(k),avs(k),avs2(k))
+                  rvs(ne),zvs(ne),wvs(ne),hvs(ne),avs(ne),avs2(ne))
       do l=1,itot
          a=rsplt(l)
          do mmm=1,nsmp2
@@ -1985,34 +1879,25 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/11/85..........first created                         **
-!**                                                                  **
-!**                                                                  **
-!**                                                                  **
 !**********************************************************************
-      subroutine vgrid(coef, rgrid, nr, zgrid, nz, ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
-                      nesum,nfsum,nvsum,nvesel,nacoil
+      subroutine vgrid(coef,rgrid,nr,zgrid,nz,ne)
       use coilsp
       use siloop
-      use consta
-      use nio
+      use consta, only: pi,tmu
       use cvesel
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      real*8,dimension(nr) :: rgrid
-      real*8,dimension(nz) :: zgrid
-      data init/0/
+      implicit none
+      real*8 psical
+      integer*4, intent(in) :: nr,nz,ne
+      real*8, intent(in) :: rgrid(nr),zgrid(nz)
+      real*8, intent(out) :: coef
+      integer*4 l
+      real*8 a,psic,psict,r1,z1
+      integer*4, parameter :: isplit=17,itot=isplit*isplit
+      real*8, parameter :: fitot=itot,radeg=pi/180.
 !
-      radeg=pi/180.
-      isplit=17
-      itot=isplit*isplit
-      fitot=itot
-!
-      k=ne
       psict=0
       call splitc(isplit,rsplt,zsplt, &
-                  rvs(k),zvs(k),wvs(k),hvs(k),avs(k),avs2(k))
+                  rvs(ne),zvs(ne),wvs(ne),hvs(ne),avs(ne),avs2(ne))
       do l=1,itot
          a=rsplt(l)
          r1=rgrid(nr)
@@ -2032,36 +1917,30 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          16/08/90..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      subroutine a1coef(coef,  nl, ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
-                      nesum,nfsum,nvsum,nvesel,nacoil
+      subroutine a1coef(coef,nl,ne)
       use coilsp
-      use consta
+      use consta, only: pi,tmu
       use cacoil
-      use nio
       use siloop
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
+      implicit none
+      real*8 psical
+      integer*4, intent(in) :: nl,ne
+      real*8, intent(out) :: coef
+      integer*4 l
+      real*8 a,aaa,bbb,psic,psict,r1,z1
+      integer*4, parameter :: isplit=17,itot=isplit*isplit
+      real*8, parameter :: fitot=itot,radeg=pi/180.
 !
-      radeg=pi/180.
-      isplit=17
-      itot=isplit*isplit
-      fitot=itot
-!
-      m=nl
-      k=ne
       psict=0
       aaa=0.0
       bbb=0.0
       call splitc(isplit,rsplt,zsplt, &
-                  racoil(k),zacoil(k),wacoil(k),hacoil(k),aaa,bbb)
+                  racoil(ne),zacoil(ne),wacoil(ne),hacoil(ne),aaa,bbb)
       do l=1,itot
          a=rsplt(l)
-         r1=rsi(m)
-         z1=zsi(m)-zsplt(l)
+         r1=rsi(nl)
+         z1=zsi(nl)-zsplt(l)
          psic=psical(a,r1,z1)*tmu
          psict=psict+psic/fitot
       enddo 
@@ -2077,50 +1956,46 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          16/08/90..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      subroutine a2coef(coef, mp, ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
-                      nesum,nfsum,nvsum,nvesel,nacoil
+      subroutine a2coef(coef,mp,ne)
       use coilsp
       use mprobe
-      use consta
+      use consta, only: pi,tmu
       use cacoil
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
+      implicit none
+      real*8 br,bz
+      integer*4, intent(in) :: mp,ne
+      real*8, intent(out) :: coef
+      integer*4 l,mmm
+      real*8 a,aaa,bbb,brc,brct,bzc,bzct,cosm,cosms,sinm,sinms, &
+             delsx,delsy,r1,z1,xmp20,ymp20
+      integer*4, parameter :: isplit=17,itot=isplit*isplit
+      real*8, parameter :: fitot=itot,radeg=pi/180.
 !
-      radeg=pi/180.
-      isplit=17
-      itot=isplit*isplit
-      fitot=itot
-!
-      m=mp
-      if (smp2(m).gt.0.0) then
-         sinm=sin(radeg*amp2(m))
-         cosm=cos(radeg*amp2(m))
-         delsx=smp2(m)/nsmp2*cosm
-         delsy=smp2(m)/nsmp2*sinm
+      if (smp2(mp).gt.0.0) then
+         sinm=sin(radeg*amp2(mp))
+         cosm=cos(radeg*amp2(mp))
+         delsx=smp2(mp)/nsmp2*cosm
+         delsy=smp2(mp)/nsmp2*sinm
       else
 !------------------------------------------------------------------------------
 !--      perpendicular probes                                                --
 !------------------------------------------------------------------------------
-         sinm=sin(radeg*amp2(m))
-         cosm=cos(radeg*amp2(m))
-         sinms=sin(radeg*(amp2(m)+90.))
-         cosms=cos(radeg*(amp2(m)+90.))
-         delsx=abs(smp2(m))/nsmp2*cosms
-         delsy=abs(smp2(m))/nsmp2*sinms
+         sinm=sin(radeg*amp2(mp))
+         cosm=cos(radeg*amp2(mp))
+         sinms=sin(radeg*(amp2(mp)+90.))
+         cosms=cos(radeg*(amp2(mp)+90.))
+         delsx=abs(smp2(mp))/nsmp2*cosms
+         delsy=abs(smp2(mp))/nsmp2*sinms
       endif
-      xmp20=xmp2(m)-(nsmp2-1)/2.*delsx
-      ymp20=ymp2(m)-(nsmp2-1)/2.*delsy
-      k=ne
+      xmp20=xmp2(mp)-(nsmp2-1)/2.*delsx
+      ymp20=ymp2(mp)-(nsmp2-1)/2.*delsy
       brct=0
       bzct=0
       aaa=0.0
       bbb=0.0
       call splitc(isplit,rsplt,zsplt, &
-                  racoil(k),zacoil(k),wacoil(k),hacoil(k),aaa,bbb)
+                  racoil(ne),zacoil(ne),wacoil(ne),hacoil(ne),aaa,bbb)
       do l=1,itot
          a=rsplt(l)
          do mmm=1,nsmp2
@@ -2144,33 +2019,26 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          16/08/90..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      subroutine agrid(coef, rgrid, nr, zgrid, nz, ne)
-      use exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,&
-                      nesum,nfsum,nvsum,nvesel,nacoil
+      subroutine agrid(coef,rgrid,nr,zgrid,nz,ne)
       use coilsp
-      use consta
+      use consta, only: pi,tmu
       use cacoil
-      use nio
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      real*8,dimension(nr) :: rgrid
-      real*8,dimension(nz) :: zgrid
-      data init/0/
+      implicit none
+      real*8 psical
+      integer*4, intent(in) :: nr,nz,ne
+      real*8, intent(in) :: rgrid(nr),zgrid(nz)
+      real*8, intent(out) :: coef
+      integer*4 l
+      real*8 a,aaa,bbb,psic,psict,r1,z1
+      integer*4, parameter :: isplit=17,itot=isplit*isplit
+      real*8, parameter :: fitot=itot,radeg=pi/180.
 !
-      radeg=pi/180.
-      isplit=17
-      itot=isplit*isplit
-      fitot=itot
-!
-      k=ne
       psict=0
       aaa=0.0
       bbb=0.0
       call splitc(isplit,rsplt,zsplt, &
-                  racoil(k),zacoil(k),wacoil(k),hacoil(k),aaa,bbb)
+                  racoil(ne),zacoil(ne),wacoil(ne),hacoil(ne),aaa,bbb)
       do l=1,itot
          a=rsplt(l)
          r1=rgrid(nr)
@@ -2190,21 +2058,16 @@
 !**     CALLING ARGUMENTS:                                           **
 !**       xm1.............argument of elliptic integral e            **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      function xmdele(xm1)
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension a(4),b(4)
-      real*8 a,b,xm1,xmdele
-      data a(1),a(2),a(3),a(4)/.44325141463,.06260601220,&
-        .04757383546,.01736506451/
-      data b(1),b(2),b(3),b(4)/.24998368310,.09200180037,&
-        .04069697526,.00526449639/
+      real*8 function xmdele(xm1)
+      implicit none
+      real*8, intent(in) :: xm1
+      real*8, parameter :: a1=.44325141463,a2=.06260601220,a3=.04757383546, &
+        a4=.01736506451,b1=.24998368310,b2=.09200180037,b3=.04069697526, &
+        b4=.00526449639
 !
-      xmdele=1.0+xm1*(a(1)+xm1*(a(2)+xm1*(a(3)+xm1*a(4))))&
-       +xm1*(b(1)+xm1*(b(2)+xm1*(b(3)+xm1*b(4))))*log(1.0/xm1)
+      xmdele=1.0+xm1*(a1+xm1*(a2+xm1*(a3+xm1*a4))) &
+                +xm1*(b1+xm1*(b2+xm1*(b3+xm1*b4)))*log(1.0/xm1)
       return
       end function xmdele
 !**********************************************************************
@@ -2215,39 +2078,15 @@
 !**     CALLING ARGUMENTS:                                           **
 !**       xm1.............argument of elliptic integral k            **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      function xmdelk(xm1)
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
-      dimension a(5),b(5)
-      real*8 a,b,xm1,xmdelk
-      data a(1),a(2),a(3),a(4),a(5)/1.38629436112,.09666344259,&
-        .03590092383,.03742563713,.01451196212/
-      data b(1),b(2),b(3),b(4),b(5)/.5,.12498593597,.06880248576,&
-        .03328355346,.00441787012/
+      real*8 function xmdelk(xm1)
+      implicit none
+      real*8, intent(in) :: xm1
+      real*8, parameter :: a1=1.38629436112,a2=.09666344259,a3=.03590092383, &
+        a4=.03742563713,a5=.01451196212,b1=.5,b2=.12498593597,b3=.06880248576,&
+        b4=.03328355346,b5=.00441787012
 !
-      xmdelk=a(1)+xm1*(a(2)+xm1*(a(3)+xm1*(a(4)+xm1*a(5))))&
-       +(b(1)+xm1*(b(2)+xm1*(b(3)+xm1*(b(4)+xm1*b(5)))))&
-       *log(1.0/xm1)
+      xmdelk=a1+xm1*(a2+xm1*(a3+xm1*(a4+xm1*a5))) &
+                   +(b1+xm1*(b2+xm1*(b3+xm1*(b4+xm1*b5))))*log(1.0/xm1)
       return
       end function xmdelk
-!**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          for SCCS control revision information.                  **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          11/07/95..........first created                         **
-!**                                                                  **
-!**********************************************************************
-      subroutine efundu_rev(i)
-      character*100 opt
-      character*10 s
-      if( i .eq. 0)  &
-      s='@(#)efund.for,v 2.3 1996/10/17 15:53:28 lao exp\000'
-      return
-      end subroutine efundu_rev

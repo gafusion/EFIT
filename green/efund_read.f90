@@ -3,30 +3,28 @@
 !**     efund_getsizes performs inputing and initialization from the **
 !**       mhdin.dat file, most default values set here are for DIII-D**
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          02/02/20..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      SUBROUTINE efund_getsizes
+      subroutine efund_getsizes
       
-      USE exparm
-      USE errlims
-      USE siloop
-      USE cecoil
-      USE fcoil
-      USE pmodel
-      USE consta
-      USE input
-      USE cacoil
-      USE nio
-      USE mprobe
-      USE cvesel
-      USE fshift
+      use exparm
+      use errlims
+      use siloop
+      use cecoil
+      use fcoil
+      use pmodel
+      use consta
+      use input
+      use cacoil
+      use nio
+      use mprobe
+      use cvesel
+      use fshift
 
-      integer*4:: istat,icycred_loopmax,kubics
+      implicit none
+      integer*4:: istat,icycred_loopmax,kubics,npcurn,nwcur2,nwcurn
       character(len=1000) :: line
 
-      NAMELIST/machinein/nfcoil,nsilop,magpr2,nrogow,necoil,nesum, &
+      namelist/machinein/nfcoil,nsilop,magpr2,nrogow,necoil,nesum, &
                          nfsum,nvsum,nvesel,nacoil,mgaus1,mgaus2,device, &
                          magpri322,magpri67,magprirdp,magudom,maglds, &
                          nnece,nnecein,neceo,mse315,mse45,mse15, &
@@ -144,9 +142,9 @@
       dbpli_lim=0.05
       delbp_lim=0.08
 
-      OPEN(unit=nin,status='old',file='mhdin.dat',iostat=istat)
+      open(unit=nin,status='old',file='mhdin.dat',iostat=istat)
 
-      READ (nin,machinein)
+      read (nin,machinein)
 
       if (istat>0) then
         backspace(nin)
@@ -155,149 +153,150 @@
         stop
       endif
 
-      CLOSE(nin)
+      close(nin)
 
       ! Handle if user probe array sizes aren't specified
-      IF (trim(device)=='DIII-D') THEN
+      if (trim(device)=='diii-d') then
         mse315=11
         mse45=15
         mse15=10
         mse1h=4
         mse315_2=5
         mse210=24
-      ENDIF
+      endif
 
-      IF (magpri67<0 .or. magprirdp<0 .or. magudom<0 .or. magudom<0) then 
-        IF (trim(device)=='DIII-D') THEN
+      if (magpri67<0 .or. magprirdp<0 .or. magudom<0 .or. magudom<0) then 
+        if (trim(device)=='diii-d') then
           magpri67=29
           magpri322=31
           magprirdp=8
           magudom=5
           maglds=3
-        ELSE
+        else
           magpri67 = abs(magpri67)
           magprirdp = abs(magprirdp)
           magudom = abs(magudom)
           maglds = abs(maglds)
           magpri322 = magpr2 - magpri67 - magprirdp - magudom - maglds
-        ENDIF
-      ENDIF
+        endif
+      endif
 
-      IF (nsilol<0 .or. nsilds<0) then 
-        IF (trim(device)=='DIII-D') THEN
+      if (nsilol<0 .or. nsilds<0) then 
+        if (trim(device)=='diii-d') then
           nsilds = 3
           nsilol = 41
-        ELSE
+        else
           nsilol = nsilop -1
           nsilds = 1
-        ENDIF
-      ENDIF
+        endif
+      endif
 
-      ALLOCATE(rsi(nsilop),zsi(nsilop),wsi(nsilop),hsi(nsilop),&
+      allocate(rsi(nsilop),zsi(nsilop),wsi(nsilop),hsi(nsilop),&
                as(nsilop),as2(nsilop))
-      rsi(:) = 0.0
-      zsi(:) = 0.0
-      wsi(:) = 0.0
-      hsi(:) = 0.0
-      as(:) = 0.0
-      as2(:) = 0.0
+      rsi = 0.0
+      zsi = 0.0
+      wsi = 0.0
+      hsi = 0.0
+      as = 0.0
+      as2 = 0.0
 
-      ALLOCATE(re(necoil),ze(necoil),he(necoil),we(necoil), &
+      allocate(re(necoil),ze(necoil),he(necoil),we(necoil), &
                ecid(necoil),ecturn(necoil))
-      re(:) = 0.0
-      ze(:) = 0.0
-      he(:) = 0.0
-      we(:) = 0.0
-      ecid(:) = 0.0
-      ecturn(:) = 0.0
+      re = 0.0
+      ze = 0.0
+      he = 0.0
+      we = 0.0
+      ecid = 0
+      ecturn = 0.0
 
-      ALLOCATE(rf(nfcoil),zf(nfcoil),wf(nfcoil),hf(nfcoil), &
-               af(nfcoil),af2(nfcoil),turnfc(nfcoil), fcid(nfcoil), & 
+      allocate(rf(nfcoil),zf(nfcoil),wf(nfcoil),hf(nfcoil), &
+               af(nfcoil),af2(nfcoil),turnfc(nfcoil),fcid(nfcoil), & 
                fcturn(nfcoil))
-      rf(:) = 0.0
-      zf(:) = 0.0
-      wf(:) = 0.0
-      hf(:) = 0.0
-      af(:) = 0.0
-      af2(:) = 0.0
-      turnfc(:) = 0.0
-      fcturn(:) = 0.0
+      rf = 0.0
+      zf = 0.0
+      wf = 0.0
+      hf = 0.0
+      af = 0.0
+      af2 = 0.0
+      turnfc = 0.0
+      fcturn = 0.0
+      fcid = 0
 
-      ALLOCATE(racoil(nacoil),zacoil(nacoil),wacoil(nacoil),hacoil(nacoil))
-      racoil(:) = 0.0
-      zacoil(:) = 0.0
-      wacoil(:) = 0.0
-      hacoil(:) = 0.0
+      allocate(racoil(nacoil),zacoil(nacoil),wacoil(nacoil),hacoil(nacoil))
+      racoil = 0.0
+      zacoil = 0.0
+      wacoil = 0.0
+      hacoil = 0.0
 
-      ALLOCATE(xmp2(magpr2),ymp2(magpr2),amp2(magpr2),smp2(magpr2))
-      xmp2(:) = 0.0
-      ymp2(:) = 0.0
-      amp2(:) = 0.0
-      smp2(:) = 0.0
-      ALLOCATE(rvs(nvesel),zvs(nvesel),wvs(nvesel),hvs(nvesel),&
+      allocate(xmp2(magpr2),ymp2(magpr2),amp2(magpr2),smp2(magpr2))
+      xmp2 = 0.0
+      ymp2 = 0.0
+      amp2 = 0.0
+      smp2 = 0.0
+
+      allocate(rvs(nvesel),zvs(nvesel),wvs(nvesel),hvs(nvesel),&
                avs(nvesel),avs2(nvesel),rsisvs(nvesel),vsid(nvesel))
-      rvs(:) = 0.0
-      zvs(:) = 0.0
-      wvs(:) = 0.0
-      hvs(:) = 0.0
-      avs(:) = 0.0
-      avs2(:) = 0.0
-      rsisvs(:) = 0.0
+      rvs = 0.0
+      zvs = 0.0
+      wvs = 0.0
+      hvs = 0.0
+      avs = 0.0
+      avs2 = 0.0
+      rsisvs = 0.0
 
-      ALLOCATE(nshiftrz(nfcoil))
-      nshiftrz(:) = 0.
+      allocate(nshiftrz(nfcoil))
+      nshiftrz = 0.
 
-      ALLOCATE(rshift(nfcoil),zshift(nfcoil),pshift(nfcoil))
-      rshift(:) = 0.0
-      zshift(:) = 0.0
-      pshift(:) = 0.0
+      allocate(rshift(nfcoil),zshift(nfcoil),pshift(nfcoil))
+      rshift = 0.0
+      zshift = 0.0
+      pshift = 0.0
 
-      ALLOCATE(pmprobe(magpr2))
-      pmprobe(:) = 0.
-      END SUBROUTINE efund_getsizes
+      allocate(pmprobe(magpr2))
+      pmprobe = 0.
+      end subroutine efund_getsizes
 
 !**********************************************************************
 !**                                                                  **
 !**     getset performs inputing and initialization.                 **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          26/04/83..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      SUBROUTINE efund_getset
+      subroutine efund_getset
 
-      USE exparm,only:nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                      nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh,device
-      USE siloop
-      USE cecoil
-      USE fcoil
-      USE pmodel
-      USE consta
-      USE input
-      USE cacoil
-      USE nio
-      USE mprobe
-      USE cvesel
-      USE fshift
+      use exparm, only: nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
+                        nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh,device
+      use siloop
+      use cecoil
+      use fcoil
+      use pmodel
+      use consta
+      use input
+      use cacoil
+      use nio
+      use mprobe
+      use cvesel
+      use fshift
       use var_filech
-      IMPLICIT INTEGER*4 (i-n), REAL*8 (a-h, o-z)
-      REAL*8, dimension (:), allocatable :: patmp2
-      CHARACTER*10,dimension (:), allocatable:: mpnam2,lpname,vsname
+      implicit none
+      integer*4 i
+      real*8 patmp2(magpr2)
+      character*10 mpnam2(magpr2),lpname(nsilop),vsname(nvesel)
 
-      NAMELIST/in3/igrid,rleft,rright,zbotto,ztop,ifcoil, &
-                   islpfc,iecoil,mpnam2,xmp2,ymp2,amp2,smp2,isize, &
-                   rsi,zsi,wsi,hsi,as,as2,lpname,nsmp2,ivesel,rsisvs, &
-                   vsname,turnfc,patmp2, &
+      namelist/in3/igrid,nw,nh,rleft,rright,zbotto,ztop,ifcoil, &
+                   islpfc,iecoil,xmp2,ymp2,amp2,smp2,isize, &
+                   rsi,zsi,wsi,hsi,as,as2,nsmp2,ivesel,rsisvs, &
+                   turnfc,patmp2, &
                    iacoil,racoil,zacoil,wacoil,hacoil, &
                    rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2,fcturn, &
                    re,ze,ecid,ecturn,vsid,rvs,zvs,we,he, &
                    nshiftrz,rshift,zshift,pshift,pmprobe, &
-                   nw,nh
+                   vsname,lpname,mpnam2
 !
-      OPEN(unit=nin,status='old',file='mhdin.dat')
-      OPEN(unit=nout,status='unknown',file='mhdout.dat')
+      open(unit=nin,status='old',file='mhdin.dat')
+      open(unit=nout,status='unknown',file='mhdout.dat')
 !
-      ALLOCATE(patmp2(magpr2),mpnam2(magpr2),lpname(nsilop),vsname(nvesel))
+      mpnam2=''
+      lpname=''
       vsname=''
       nw = 65
       nh = 65
@@ -312,7 +311,7 @@
       rleft=0.
       rright=0.
       ztop=0.
-      zboto=0.
+      zbotto=0.
       rsi(1)=-1
       rf(1)=-1.
       re(1)=-1.
@@ -325,69 +324,69 @@
 !--         1         finite size correction for flux loops         --
 !--   islpfc=1     flux loops at F coils                            --
 !---------------------------------------------------------------------
-      READ (nin,in3)
+      read (nin,in3)
 !
-      IF (.NOT. ALLOCATED(rgrid)) THEN
-        ALLOCATE(rgrid(nw))
+      if (.not. allocated(rgrid)) then
+        allocate(rgrid(nw))
         rgrid(:) = 0.0
-      ENDIF
-      IF (.NOT. ALLOCATED(zgrid)) THEN
-        ALLOCATE(zgrid(nh))
+      endif
+      if (.not. allocated(zgrid)) then
+        allocate(zgrid(nh))
         zgrid(:) = 0.0
-      ENDIF
+      endif
 !
       nwnh = nw * nh
 !make the file names for green-table
-      CALL inp_file_ch(nw,nh,ch1,ch2)
+      call inp_file_ch(nw,nh,ch1,ch2)
 !----------------------------------------------------------------------
-!--   READ f coil and psi loop dimensions                            --
+!--   read f coil and psi loop dimensions                            --
 !----------------------------------------------------------------------
-      IF (rf(1).lt.0.0) THEN
-        READ (nin,10000) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
+      if (rf(1).lt.0.0) then
+        read (nin,10000) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
                           i=1,nfcoil)
-      ENDIF
-      IF (rsi(1).lt.0.0) THEN
-        READ (nin,10000) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
+      endif
+      if (rsi(1).lt.0.0) then
+        read (nin,10000) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
                           i=1,nsilop)
-      ENDIF
-      IF ((iecoil.eq.1).or.(ivesel.eq.1)) THEN
-        IF (re(1).lt.0.0) THEN
-          READ (nin,10020) (re(i),ze(i),we(i),he(i),ecid(i),i=1,necoil)
-        ENDIF
-        IF (ivesel.eq.1.and.rvs(1).lt.0.0) THEN
-          IF (wvs(1).lt.0.0) THEN
-            READ (nin,10000) (rvs(i),zvs(i),wvs(i),hvs(i),avs(i),avs2(i), &
+      endif
+      if ((iecoil.eq.1).or.(ivesel.eq.1)) then
+        if (re(1).lt.0.0) then
+          read (nin,10020) (re(i),ze(i),we(i),he(i),ecid(i),i=1,necoil)
+        endif
+        if (ivesel.eq.1.and.rvs(1).lt.0.0) then
+          if (wvs(1).lt.0.0) then
+            read (nin,10000) (rvs(i),zvs(i),wvs(i),hvs(i),avs(i),avs2(i), &
                               i=1,nvesel)
-          ELSE
-            DO i=1,nvesel
-              READ (nin,*) rvs(i),zvs(i)
-            ENDDO
-          ENDIF
-        ENDIF
-      ENDIF
+          else
+            do i=1,nvesel
+              read (nin,*) rvs(i),zvs(i)
+            enddo
+          endif
+        endif
+      endif
 !----------------------------------------------------------------------
 !--   compute r and z arrays                                         --
 !----------------------------------------------------------------------
       dr=(rright-rleft)/dble(nw-1)
       dz=(ztop-zbotto)/dble(nh-1)
-      DO i=1,nw
+      do i=1,nw
         rgrid(i)=rleft+dr*(i-1)
-      ENDDO 
-      DO i=1,nh
+      enddo 
+      do i=1,nh
         zgrid(i)=zbotto+dz*(i-1)
-      ENDDO 
+      enddo 
 
-      WRITE (nout,in3)
-      CLOSE(nin)
-      CLOSE(nout)
+      write (nout,in3)
+      close(nin)
+      close(nout)
 
-      CALL dprobe_machinein(nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
+      call dprobe_machinein(nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
                             nfsum,nvsum,nvesel,nacoil)
       
-      CALL dprobe(mpnam2,lpname,patmp2)
+      call dprobe(mpnam2,lpname,patmp2)
       
-      RETURN
-10000 FORMAT (6e12.6)
-10010 FORMAT (4e12.6)
-10020 FORMAT (5e10.4)
-      END SUBROUTINE efund_getset
+      return
+10000 format (6e12.6)
+10010 format (4e12.6)
+10020 format (5e10.4)
+      end subroutine efund_getset
