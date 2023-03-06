@@ -7,20 +7,29 @@
 !!
 !**********************************************************************
       subroutine print_stats(it)
-      use commonblocks,only: worka2
+      use commonblocks, only: worka2
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
+      integer*4, intent(in) :: it
+      integer*4 i,im1,ip1,k,m,mb,mbb,ioerr,nves2
+      real*8 cbetap,cbetat,cipmp3,dampz1,dampz2, &
+             dang270,dang90,danm270,danm90,danp270,danp90, &
+             dsi,nzz,saisq,sinow,sm1,sm2,ssiref, &
+             sumif,sumifb,sumifs,sumift,tleft,tright, &
+             xdum,xnorm,xtest,ytest,xxm,yym,xxp,yyp
+      integer*4 vsid ! unused
+      real*8 ecturn ! unused
       character*30 sfname
       character(1000) :: line
+      real*8 xrsp(npcurn)
+      real*8 patmpz(magpri),xmpz(magpri),ympz(magpri),ampz(magpri)
       integer*4, dimension(:), allocatable :: ishotall
       real*8, dimension(:), allocatable :: ch2all,timeall
-      dimension xrsp(npcurn)
-      dimension patmpz(magpri),xmpz(magpri),ympz(magpri),ampz(magpri)
 
       NAMELIST/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi, &
                    as,as2,lpname,rsisvs,turnfc,patmp2,vsname, &
@@ -30,9 +39,9 @@
 
       ! avoid write garbage when oleft or oright not update (e.g. 1.e10)
       tleft=oleft(it)
-      if (tleft.gt.1.e9_dp) tleft=0.0
+      if(tleft.gt.1.e9_dp) tleft=0.0
       tright=oright(it)
-      if (tright.gt.1.e9_dp) tright=0.0
+      if(tright.gt.1.e9_dp) tright=0.0
 !
 !#if defined(USEMPI)
 !      ! TODO: Currently this ONLY works if nproc == total number of time slices.
@@ -49,9 +58,9 @@
 !        if (rank==0) then
 !          write(nttyo,'(/,a)') '  Summary of all runs'
 !          write(nttyo,'(a)') '   Shot    Time   chi^2'
-!          do ir = 1,nproc
-!            write(nttyo,'(i8,1x,i6,1x,f10.7)') ishotall(ir),int(timeall(ir)),ch2all(ir)
-!            !write(nttyo,*) ishotall(ir),int(timeall(ir)),ch2all(ir)
+!          do i = 1,nproc
+!            write(nttyo,'(i8,1x,i6,1x,f10.7)') ishotall(i),int(timeall(i)),ch2all(i)
+!            !write(nttyo,*) ishotall(i),int(timeall(i)),ch2all(i)
 !          end do
 !          if (allocated(ishotall)) deallocate(ishotall)
 !          if (allocated(ch2all)) deallocate(ch2all)
@@ -65,17 +74,16 @@
       if (ivacum.eq.0) then
         mpi_rank: if (rank == 0) then
           !write (nttyo,10000) trim(ch1),trim(ch2)
-          jtime=time(it)
           saisq=tsaisq(it)
           ! avoid roundoff
-          if (abs(saisq).lt.1.e-20_dp) saisq=0_dp
+          if(abs(saisq).lt.1.e-20_dp) saisq=0_dp
           write (nttyo,9300)
           write (nttyo,9320) ipsi(it)
           write (nttyo,9340) imag2(it)
           write (nttyo,9380) iplasm(it)
           write (nttyo,9385) idlopc(it)
           write (nttyo,10480)
-          write (nttyo,10500) ishot,jtime,saisq
+          write (nttyo,10500) ishot,int(time(it)),saisq
           write (nttyo,10520) betat(it),betap(it),ali(it)
           write (nttyo,10540) vout(it),rout(it),zout(it)
           write (nttyo,10560) eout(it),doutu(it),doutl(it)
@@ -93,7 +101,6 @@
         endif mpi_rank0
       else
         !write (nout,10000) trim(ch1),trim(ch2)
-        jtime=time(it)
         saisq=tsaisq(it)
         write (nout,9300)
         write (nout,9320) ipsi(it)
@@ -101,7 +108,7 @@
         write (nout,9380) iplasm(it)
         write (nout,9385) idlopc(it)
         write (nout,10480)
-        write (nout,10500) ishot,jtime,saisq
+        write (nout,10500) ishot,int(time(it)),saisq
         write (nout,10520) betat(it),betap(it),ali(it)
         write (nout,10540) vout(it),rout(it),zout(it)
         write (nout,10560) eout(it),doutu(it),doutl(it)
@@ -193,8 +200,8 @@
       if (patmp2(1).le.0.0) then
         open(unit=80,status='old', &
              file=table_di2(1:ltbdi2)//'dprobe.dat')
-        read (80,in3,iostat=istat)
-        if (istat>0) then
+        read (80,in3,iostat=ioerr)
+        if (ioerr>0) then
           backspace(nin)
           read(nin,fmt='(A)') line
           write(*,'(A)') 'Invalid line in namelist in3: '//trim(line)
