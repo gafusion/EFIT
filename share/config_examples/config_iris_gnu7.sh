@@ -6,7 +6,7 @@
 # If you don't want MPI (slower in serial) simply remove the FC=...
 #   and -DENABLE_PARALLEL... lines
 #
-# mselibs have not been build for GNU yet
+# mselibs have not been build for GNU 7 yet
 
     module load cmake/3.8.2
     export CC=/fusion/projects/codes/gcc71-toolchain/bin/gcc

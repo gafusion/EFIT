@@ -271,7 +271,7 @@
       subroutine sdecm(a, ia, m, n, b, ib, nb, s, wk, ier)
       use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      parameter (nn = 100, mm = 300)
+      parameter (nn = 100, mm = 3000)
       parameter (mm3 = 3*mm)
       dimension a(ia,n), s(n), wk(n), b(ib,nb) 
       dimension bb(mm), u(mm,mm), v(nn,nn)
