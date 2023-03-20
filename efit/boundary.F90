@@ -211,8 +211,8 @@
 !--         from one to three corners of cell are inside limiter.  get max
 !--         psi on line segment of limiter in cell and compare this max
 !--         with current value of psilim (or psisep)
-!--         note: do loop index assumes point 'limitr+1' is the same as
-!--         point 'limitr'
+!--         note: do loop index assumes point 'limitr' is the same as
+!--         point 'limitr-1'
 !-------------------------------------------------------------------------
             psilx=-1.e10_dp
             do k=1,limitr-1
@@ -443,38 +443,46 @@
 !!    one of the points is an interior point in which
 !!    case it is not disturbed.                                    
 !!                                                                  
-!!    @param xc1 : 
-!!    @param yc1 : 
-!!    @param xc2 : 
-!!    @param yc2 : 
-!!    @param x1 : 
-!!    @param y1 : 
-!!    @param x2 : 
-!!    @param y2 : 
-!!    @param ifail : 
+!!    @param xc1 : R of point on limiter 
+!!    @param yc1 : Z of point on limiter
+!!    @param xc2 : R of adjacent point on limiter
+!!    @param yc2 : Z of adjacent point on limiter
+!!    @param x1 : R of left side of cell
+!!    @param y1 : Z of bottom of cell
+!!    @param x2 : R of right side of cell
+!!    @param y2 : Z of top of cell
+!!    @param ifail : 0 if limiter points do not intersect cell
+!!                   1 if limiter points do not intersect cell
 !!                                                                 
 !*********************************************************************
       subroutine cellb(xc1,yc1,xc2,yc2,x1,y1,x2,y2,ifail)
-      implicit integer*4 (i-n), real*8 (a-h, o-z)
+      implicit none
+      integer*4, intent(out) :: ifail
+      real*8, intent(in) :: x1,x2,y1,y2
+      real*8, intent(inout) :: xc1,xc2,yc1,yc2
+      real*8 alpha,beta,dx,dy,x1b,x2b,xs1,xs2,y1b,y2b,ys1,ys2
 
-      if ((xc1.lt.x1).and.(xc2.lt.x1)) ifail=1
-      if ((xc1.gt.x2).and.(xc2.gt.x2)) ifail=1
-      if ((yc1.lt.y1).and.(yc2.lt.y1)) ifail=1
-      if ((yc1.gt.y2).and.(yc2.gt.y2)) ifail=1
-      if (ifail.eq.1) return
+      ifail=0
+      if((xc1.lt.x1).and.(xc2.lt.x1)) ifail=1 ! left of cell
+      if((xc1.gt.x2).and.(xc2.gt.x2)) ifail=1 ! right of cell
+      if((yc1.lt.y1).and.(yc2.lt.y1)) ifail=1 ! below cell
+      if((yc1.gt.y2).and.(yc2.gt.y2)) ifail=1 ! above cell
+      if(ifail.eq.1) return
       dx=xc1-xc2
       dy=yc1-yc2
-      if ((dx.eq.0.0).and.(dy.eq.0.0)) ifail=1
-      if (ifail.eq.1) return
+      if((dx.eq.0.0).and.(dy.eq.0.0)) ifail=1 ! duplicate limiter point
+      if(ifail.eq.1) return
       if (dx.ne.0.0) then
       if (dy.eq.0.0) then
 !----------------------------------------------------------------------
-!--     check if intersection exists for horizontal line             --
+!--     check if intersection exists for horizontal line            --
 !----------------------------------------------------------------------
-        if ((yc1.lt.y1).or.(yc1.gt.y2)) then
-          ifail=1
-          return
-        end if
+        ! this is a duplicate check that should never be
+        ! encountered...
+        !if ((yc1.lt.y1).or.(yc1.gt.y2)) then
+        !  ifail=1
+        !  return
+        !end if
 !----------------------------------------------------------------------
 !--     is there an interior point ?                                 --
 !----------------------------------------------------------------------
@@ -482,14 +490,14 @@
 !----------------------------------------------------------------------
 !--       point (xc1,yc1) is interior point                          --
 !----------------------------------------------------------------------
-          if (xc1.lt.xc2) xc2=x2
-          if (xc1.gt.xc2) xc2=x1
+          if(xc1.lt.xc2) xc2=x2
+          if(xc1.gt.xc2) xc2=x1
         else if ((x1.le.xc2).and.(xc2.le.x2)) then
 !----------------------------------------------------------------------
 !--       point (xc2,yc2) is interior point                          --
 !----------------------------------------------------------------------
-          if (xc2.gt.xc1) xc1=x1
-          if (xc2.lt.xc1) xc1=x2
+          if(xc2.gt.xc1) xc1=x1
+          if(xc2.lt.xc1) xc1=x2
         else
 !----------------------------------------------------------------------
 !--       no interior points                                         --
@@ -498,51 +506,61 @@
           xc2=x2
         end if
         return
-      end if
+      end if ! dy.eq.0.0
 !----------------------------------------------------------------------
 !--   line is inclined. get equation y=alpha*x+beta.                 --
 !----------------------------------------------------------------------
       alpha=dy/dx
       beta=yc1-alpha*xc1
-      y1b=alpha*x1+beta
+      y1b=alpha*x1+beta ! Z of line at left side of cell
       if (y1b.lt.y1) then
-        x1b=(y1-beta)/alpha
+        x1b=(y1-beta)/alpha ! R of line at bottom of cell
         if ((x1b.lt.x1).or.(x1b.gt.x2)) then
+          ! line goes below cell
           ifail=1
           return
         end if
+        ! line intersects bottom of cell
         xs1=x1b
         ys1=y1
       else if (y1b.gt.y2) then
-        x1b=(y2-beta)/alpha
+        x1b=(y2-beta)/alpha ! R of line at top of cell
         if ((x1b.lt.x1).or.(x1b.gt.x2)) then
+          ! line goes above cell
           ifail=1
           return
         end if
+        ! line intersects top of cell
         xs1=x1b
         ys1=y2
       else
+        ! line intersects left side of cell
         xs1=x1
         ys1=y1b
       end if
-      y2b=alpha*x2+beta
+      y2b=alpha*x2+beta ! Z of line at right side of cell
       if (y2b.lt.y1) then
-        x2b=(y1-beta)/alpha
+        x2b=(y1-beta)/alpha ! R of line at bottom of cell
         if ((x2b.gt.x2).or.(x2b.lt.x1)) then
+          ! line goes below cell
           ifail=1
           return
         end if
+        ! line intersects bottom of cell
         xs2=x2b
         ys2=y1
       else if (y2b.gt.y2) then
-        x2b=(y2-beta)/alpha
+        x2b=(y2-beta)/alpha ! R of line at top of cell
         if ((x2b.gt.x2).or.(x2b.lt.x1)) then
+          ! line goes above cell
           ifail=1
           return
         end if
+        ! line intersects top of cell
         xs2=x2b
         ys2=y2
       else
+        ! line intersects right side of cell
         xs2=x2
         ys2=y2b
       end if
@@ -558,13 +576,13 @@
           if (yc2.gt.yc1) then
             xc2=xs2
             yc2=ys2
-            if (ys1.gt.ys2) yc2=ys1
-            if (ys1.gt.ys2) xc2=xs1
+            if(ys1.gt.ys2) yc2=ys1
+            if(ys1.gt.ys2) xc2=xs1
           else
             xc2=xs1
             yc2=ys1
-            if (ys1.gt.ys2) yc2=ys2
-            if (ys1.gt.ys2) xc2=xs2
+            if(ys1.gt.ys2) yc2=ys2
+            if(ys1.gt.ys2) xc2=xs2
           end if
           return
         end if
@@ -576,13 +594,13 @@
           if (yc1.gt.yc2) then
             xc1=xs2
             yc1=ys2
-            if (ys1.gt.ys2) yc1=ys1
-            if (ys1.gt.ys2) xc1=xs1
+            if(ys1.gt.ys2) yc1=ys1
+            if(ys1.gt.ys2) xc1=xs1
           else
             xc1=xs1
             yc1=ys1
-            if (ys1.gt.ys2) yc1=ys2
-            if (ys1.gt.ys2) xc1=xs1
+            if(ys1.gt.ys2) yc1=ys2
+            if(ys1.gt.ys2) xc1=xs1
           end if
           return
         end if
@@ -596,10 +614,12 @@
 !----------------------------------------------------------------------
 !--   check if intersection exists for vertical line                 --
 !----------------------------------------------------------------------
-      if ((xc1.lt.x1).or.(xc1.gt.x2)) then
-        ifail=1
-        return
-      end if
+      ! this is a duplicate check that should never be
+      ! encountered...
+      !if ((xc1.lt.x1).or.(xc1.gt.x2)) then
+      !  ifail=1
+      !  return
+      !end if
 !----------------------------------------------------------------------
 !--   is there an interior point ?                                   --
 !----------------------------------------------------------------------
@@ -607,14 +627,14 @@
 !----------------------------------------------------------------------
 !--     point (xc1,yc1) is interior point                            --
 !----------------------------------------------------------------------
-        if (yc2.gt.yc1) yc2=y2
-        if (yc2.lt.yc1) yc2=y1
+        if(yc2.gt.yc1) yc2=y2
+        if(yc2.lt.yc1) yc2=y1
       else if ((y1.le.yc2).and.(yc2.le.y2)) then
 !----------------------------------------------------------------------
 !--     point  (xc2,yc2) is interior point                           --
 !----------------------------------------------------------------------
-        if (yc2.gt.yc1) yc1=y1
-        if (yc2.lt.yc1) yc1=y2
+        if(yc2.gt.yc1) yc1=y1
+        if(yc2.lt.yc1) yc1=y2
       else
 !----------------------------------------------------------------------
 !--     no interior points                                           --
@@ -1071,43 +1091,24 @@
 !>
 !!    extrap extrapolates across a (x,y) cell.
 !!    
-!!
 !!    @param f1 :
-!!
 !!    @param f2 :
-!!
 !!    @param f3 :
-!!
 !!    @param f4 :
-!!
 !!    @param x1 :
-!!
 !!    @param y1 :
-!!
 !!    @param x2 :
-!!
 !!    @param y2 :
-!!
 !!    @param xt :
-!!
 !!    @param yt :
-!!
 !!    @param xt1 :
-!!
 !!    @param yt1 :
-!!
 !!    @param xt2 :
-!!
 !!    @param yt2 :
-!!
 !!    @param psivl :
-!!
 !!    @param area :
-!!
 !!    @param dx :
-!!
 !!    @param dy :
-!!
 !**********************************************************************
       subroutine extrap(f1,f2,f3,f4,x1,y1,x2,y2,xt,yt,xt1,yt1, &
                         xt2,yt2,psivl,area,dx,dy)
@@ -1893,23 +1894,24 @@
 !!    segment y=alpha*x+beta joining the two points
 !!    (xl1,yl1) and (xl2,yl2).
 !!
-!!    @param xl1 :
-!!    @param yl1 :
-!!    @param xl2 :
-!!    @param yl2 :
-!!    @param x1 :
-!!    @param y1 :
-!!    @param x2 :
-!!    @param y2 :
+!!    @param xl1 : R of first point in cell 
+!!    @param yl1 : Z of first point in cell
+!!    @param xl2 : R of second point in cell
+!!    @param yl2 : Z of second point in cell
+!!    @param x1 : R of left side of cell
+!!    @param y1 : Z of bottom of cell
+!!    @param x2 : R of right side of cell
+!!    @param y2 : Z of top of cell
 !!    @param f1 :
 !!    @param f2 :
 !!    @param f3 :
 !!    @param f4 :
 !!    @param area :
-!!    @param psimax :
+!!    @param psimax : largest value of psi on line segment
 !!    @param xtry :
 !!    @param ytry :
-!!    @param nerr :
+!!    @param nerr : 0 if the max psi is successfully computed
+!!                  3 if the line segment is not within the cell
 !!********************************************************************
       subroutine maxpsi(xl1,yl1,xl2,yl2,x1,y1,x2,y2,f1,f2,f3,f4, &
                         area,psimax,xtry,ytry,nerr)
@@ -1917,6 +1919,7 @@
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 !
+      nerr=0
       dx=xl2-xl1
       if (dx.ne.0.0) then
         dy=yl2-yl1

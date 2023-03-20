@@ -27,7 +27,7 @@
  vzeroj = 0.1
  psiwant = 0.99
  fwtgam = 11*1.0 29*0.0 4*1.0 25*0.0
- msebkp = 2
+ msebkp = 7
  mse_quiet = 0
  mse_spave_on = 69*0
  kwaitmse = 5

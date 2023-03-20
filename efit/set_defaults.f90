@@ -79,15 +79,18 @@
       keefnc=0
       kersil=3
       keqdsk=1
+      kfffnc=0
       kfitece=0
       kfixrece=0
       kfixro=0
       kframe=0
       kinputece=0 ! never used in code
       klabel=0
+      kppfnc=0
       kskipvs=0
       kwaitmse=0
       kwripre=0
+      kwwfnc=0
       kzeroj=0
       limid=33
       lring=0
@@ -102,6 +105,7 @@
       mtxece=0
       mxiter=-25
       nbdrymx=110
+      nbeam=0
       nbskip=2
       nccoil=1
       necein=0
@@ -109,6 +113,7 @@
       nfit=0
       nharm=1
       nicoil=1
+      nmass=0
       nslref=1
       n1coil=0
       ok_30rt=0

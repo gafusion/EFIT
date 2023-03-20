@@ -66,6 +66,7 @@
       case (2)
         zelip=zelipss
         if (zelip.gt.1.e5_dp) then
+          ! DIII-D specific values
           zelip=1.447310_dp*(expmpi(jtime,37)-expmpi(jtime,43)) &
                +0.692055_dp*(expmpi(jtime,57)-expmpi(jtime,53)) &
                +0.728045_dp*(silopt(jtime,27)-silopt(jtime,37)) &
@@ -73,33 +74,33 @@
           zelip=zelip*1.e6_dp/pasmat(jtime)
           zbound=zelip
           eelip=1.5_dp
-        endif
 !----------------------------------------------------------------
-!--     set zelip=0.0 if bad signals              96/06/24   --
+!--       set zelip=0.0 if bad signals              96/06/24   --
 !----------------------------------------------------------------
-        if (size(fwtmp2).ge.37) then
-          if(abs(fwtmp2(37)).le.1.0e-30_dp) zelip=0.0
-        endif
-        if (size(fwtmp2).ge.43) then
-          if(abs(fwtmp2(43)).le.1.0e-30_dp) zelip=0.0
-        endif
-        if (size(fwtmp2).ge.57) then
-          if(abs(fwtmp2(57)).le.1.0e-30_dp) zelip=0.0
-        endif
-        if (size(fwtmp2).ge.53) then
-          if(abs(fwtmp2(53)).le.1.0e-30_dp) zelip=0.0
-        endif
-        if (size(fwtsi).ge.27) then
-          if(abs(fwtsi(27)).le.1.0e-30_dp)  zelip=0.0
-        endif
-        if (size(fwtsi).ge.37) then
-          if(abs(fwtsi(37)).le.1.0e-30_dp)  zelip=0.0
-        endif
-        if (size(fwtsi).ge.2) then
-          if(abs(fwtsi(2)).le.1.0e-30_dp)   zelip=0.0
-        endif
-        if (size(fwtsi).ge.11) then
-          if(abs(fwtsi(11)).le.1.0e-30_dp)  zelip=0.0
+          if (size(fwtmp2).ge.37) then
+            if(abs(fwtmp2(37)).le.1.0e-30_dp) zelip=0.0
+          endif
+          if (size(fwtmp2).ge.43) then
+            if(abs(fwtmp2(43)).le.1.0e-30_dp) zelip=0.0
+          endif
+          if (size(fwtmp2).ge.57) then
+            if(abs(fwtmp2(57)).le.1.0e-30_dp) zelip=0.0
+          endif
+          if (size(fwtmp2).ge.53) then
+            if(abs(fwtmp2(53)).le.1.0e-30_dp) zelip=0.0
+          endif
+          if (size(fwtsi).ge.27) then
+            if(abs(fwtsi(27)).le.1.0e-30_dp)  zelip=0.0
+          endif
+          if (size(fwtsi).ge.37) then
+            if(abs(fwtsi(37)).le.1.0e-30_dp)  zelip=0.0
+          endif
+          if (size(fwtsi).ge.2) then
+            if(abs(fwtsi(2)).le.1.0e-30_dp)   zelip=0.0
+          endif
+          if (size(fwtsi).ge.11) then
+            if(abs(fwtsi(11)).le.1.0e-30_dp)  zelip=0.0
+          endif
         endif
 !
         do i=1,nw
