@@ -287,5 +287,5 @@
       close(unit=mcontr)
 
 10200 format (6e12.6)
-10220 format (5e10.4)
+10220 format (4e10.4,i5)
    end subroutine read_tables

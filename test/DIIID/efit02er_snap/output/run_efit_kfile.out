@@ -1,13 +1,21 @@
 
-          EFITD Version  03/16/2022
+          EFIT-AI Version
 
+ Git repository url https://gitlab.com/efit-ai/efit
+ Git branch main
+ Git hash ecdc3d5 with local modifications
+ Git date 2023-03-06 17:48:45 +0000
+ Simulation started on  3/20/2023 at  9:28:45
+ Code compiled with GNU 8.5.0
 
- type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+ type mode (1=imas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
 
- command file name ( 0=none) ?
+ command file name (0=none)?
 
- good shot list file name ( 0=tty) ?
+ good shot list file name (0=tty)?
 
- type shot #, start time(ms), time step(ms), steps(<1001):
- Calling $Name: V3_07 $ of the mse shared library
+ type shot #, start time(ms), time step(ms), steps:
+
+ table_di2 = </home/bechtelt/efitall/efit/build_gnu_ser/test/DIIID/green/>
+ Calling $Name: V4_05 $ of the mse 
 INFO in efit at r=  0, t=  2400: Done writing k-files

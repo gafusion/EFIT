@@ -18,8 +18,7 @@ CONDIN, 1e-6,
 CSTABNE, 0.0, Stabilization value for ne fitting. (NOT VARIABLE!)
 CSTABTE, 0.0,Stabilization value for Te fitting. (NOT VARIABLE!)
 CUTIP, 80000, Threshold for plasma current (in Amps) below which the vacuum fields are the only solution provided.
-DMASS,, "Mass density in kg/m3. See NMASS."
-DNBEAM, , "Beam particle density, for kinetic fit - from ONETWO code."
+DMASS, zeros, "(array) Mass density in kg/m3. See NMASS.  Only used for rotation calculations."
 DNETHOM,, "Electron density from Thompson scattering, from some other code."
 DNMIN, , Unused variable...
 EELIP,1.2,"Elongation of ellipse for current initialization. "
@@ -40,15 +39,15 @@ FCURBD,, "| FF' Boundary Constraint.
 GAMMAP,1e10, GAQ current profile parameter. (Used for both P and F profiles)
 IACOIL, 0, 1 = turn on advance divertor coil. 
 IAVED,, "Time in milliseconds for averaging CO2 density data, 10. (actually get +/- this value)"
-IAVEM,5, "Time in milliseconds for averaging magnetic data. (actually get +/- this value)"
-IAVEUS, ,"| Changes units on averaging times (IAVED, IAVEM, IAVEV) to microseconds
+IAVEM,5, "Time in milliseconds for averaging magnetic data. (actually get +/- this value) (only used in snap mode, not relevant to k-files)"
+IAVEUS, ,"| Changes units on averaging times (IAVED, IAVEM, IAVEV) to microseconds (only used in snap mode, not relevant to k-files)
 | >0 change units to microseconds
 | <=0 leave units in milliseconds"
-IAVEV, 10, "Time in milliseconds for averaging loop voltage."
+IAVEV, 10, "Time in milliseconds for averaging loop voltage. (only used in snap mode, not relevant to k-files)"
 IBATCH, 0, UNUSED (input and output only)
-IBTCOMP,1,"| (Integer flag) Toroidal field pickup compensation. Subtract contributions to poloidal magnetic field probe measurements due to pickup from toroidal field coil
-| <=0 no compensation
-| > 0 apply compensation"
+IBTCOMP,1,"| (Integer flag) Toroidal field pickup compensation. Subtract contributions to poloidal magnetic field probe measurements due to pickup from toroidal field coil (only used in snap mode, not relevant to k-files)
+| 0 = no compensation
+| 1 = apply compensation"
 IBUNMN,1, "| (Integer flag) Buneman solver method.
 | 0 = Green's method.
 | 1 = Buneman's method or single cyclic reduction (see ISOLVE).
@@ -78,14 +77,14 @@ ICONVR,2,"| Specify solution mode
 | - = Green's table calculations for -ICONVR filaments and write file RPFXX.DAT for use with MFIT."
 ICUTFP,0,"| 0 = enforce vacuum outside of LCFS (Default).
 | 2 = to allow force-free current to flow in scrape-off layer (width set by ALPHAFP)."
-ICURRT,,"| (Integer flag) Sets which current profile parametrization to use
+ICURRT,2,"| (Integer flag) Sets which current profile parametrization to use
 | 1 = analytic (used with Solovev eq).
 | 2 = linear polynomials for P' and FF' or spline(default).
 | 3 = not implemented.
 | 4 = GAQ type current profile.
 | 5 = same as 2 but include toroidal rotation."
 IDFILA,,Filament set for MFIT (not used in EFIT).
-IECOIL,,"| (Integer flag) E-coil plotting
+IECOIL,0,"| (Integer flag) E-coil plotting
 | 0 = do not plot E coils (Default)
 | 1 = plot E coils with color coding for different connections"
 IERCHK,1,"| (Integer flag) Error Check.
@@ -124,7 +123,7 @@ ISTORE,,"| (Integer flag) Store option for UNIX workstations only.
 | 1 = write EFIT results ( A EQDSK files, the G EQDSK files, the Q data files, and the P graphic files) to the central directory /link/store.
 | 0 = write all files to user's working directory. (default)"
 ISUMIP, 0,
-ITEK,,"| plotting option. For MSE electric field corrections KEECUR > 0 must set to 5 or greater.
+ITEK,0,"| plotting option. For MSE electric field corrections KEECUR > 0 must set to 5 or greater.
 | 0 = none (default).
 | - = include x-ray arrays plot. (implies IXRAY=1)
 | 5 = produce plot data file PLTOUT.OUT, to be processed using EFITPLOT on Vaxs or tek, plotps in UNIX workstations.
@@ -134,7 +133,7 @@ ITEK,,"| plotting option. For MSE electric field corrections KEECUR > 0 must set
 | 110+n= pl(shot).(time) for every n time steps."
 ITIME,,"Time in milliseconds of slice to analyze."
 ITIMEU,0,"Microseconds for timeslice to analyze. (added to ITIME)"
-ITRACE,-1,"| 1 = compute external separatrix distance. (default)
+ITRACE,1,"| 1 = compute external separatrix distance. (default)
 | 2 = compute and plot."
 IWEIGH, 0,
 IXRAY,, "| 0 = do not plot soft X-ray (default)
@@ -159,7 +158,7 @@ KCALDIA,0,"| (Integer flag) Determines if compensation is applied to diamagnetic
 | 0 = use compensated diamagnetic flux. (default)
 | 1 = use uncompensated diamagnetic flux directly from PTDATA calls
 | 2 = skip diamagnetic data fetching entirely."
-KEQDSK,,"| Format of A and G EQDSK files
+KEQDSK,1,"| Format of A and G EQDSK files
 | 0 = binary EQDSKs
 | 1 = ascii EQDSKs (default)
 | 2 = ascii A EQDSK only, no G
@@ -184,9 +183,6 @@ KWRIPRE,,"| Make output files
 | 3 = R(shot).(time)_ --- in rho space.
 | 0 = Don't write either file (default).
 | (How are values of independent variables chosen?)"
-KZEROJ,0,"| Constrain FF' and P' by applying constraints specified by variable RZEROJ.
-| >0 = number of constraints to apply.
-| 0 = don't apply constraints (default)"
 LIMFAG,2,"| Specify which method to use to determine which grid points are inside vessel.
 | 1 = assume convex geometry
 | 2 = general (no geometry assumption"
@@ -200,18 +196,17 @@ MXITER,25,"| Maximum number of outer fitting iterations (limited to KXITER, see 
 N1COIL,0,"Compensation for magnetic probe pickup from N1 coil
 | 2 = compensation for n1 coil.
 | 0 = no compensation (default)."
-NBEAM,,"""Number Beam"". Number of data points for beam data in kinetic mode (in vector DNBEAM)."
 NBSKIP,2,
 NCCOIL,,"| Magnetic compensation from C coils
 | 1 = compensation on (default).
 | 0 = no compensation."
-NEXTRA,,"| ""Number Extra"". Number of flux surfaces to plot outside plasma boundary
+NEXTRA,1,"| Number of flux surfaces to plot outside plasma boundary
 | += number of external field lines to plot.
 | -= plot field line and magnetic quantities along field lines(?)."
 NICOIL,,"| Magnetic compensation from I coils
 | 1 = compensation on (default).
 | 0 = no compensation."
-NMASS,,"Number of valid data points in DMASS."
+NMASS, 0, "Number of valid data points in DMASS."
 NPNEF,,"Number of electron density profile constraints."
 NPNETH,,"Number of terms in polynomial(?) fit of ne for kinetic option. Requires appropriate EDAT file (from ENERGY code). (Get ne as a function of normalized flux?)"
 NPTEF,,"if kprfit=2 and npteth<0, then nptef=-npteth"
@@ -219,10 +214,6 @@ NPTETH,,"Number of terms in Te fitting for kinetic option, required appropriated
 NPTION,,"| Number of terms in Ti fitting for kinetic option, required appropriated EDAT file.
 |- ,>100 = equal to Te."
 NPTIONF,,"if nption<0, nptionf = -nption"
-NPRESS,,"| Number of valid points in PRESSR
-| += number of input pressure data points.
-| -= compute PRESSR from the initial P' and constrain at every |NPRESS| grid points.
-| 0= for rotational pressure only."
 NQITER,10,convergent parameter for axial safety factor. 
 NSLREF,1,"Index in set of flux loops of reference flux. Used to be 8 for D-III, but now is 1 (default) for DIII-D."
 NXITER,1,Number of inner equilibrium iterations. Set to 1 for fitting. See also MXITER.
@@ -231,35 +222,26 @@ PCURBD,,"| P' Boundary Constraint.
 | 1 = force P'=0 at boundary (default).
 | 0 = allow finite P' at boundary. The method for forcing P'=0 is the same as for FCURBD."
 PLASMA,, plasma current in Amps. 0 for vacuum field calculation.
-PNBEAM,0.0,
-PRBDRY,0.0,
-PRESPB,0.0,P' constraint at the axis.  See KPRESSB
-PRESSBI,0.0,pressure constraint at the boundary. See KPRESSB.
-PRESSR,,"Input array of pressure in n/m2 vs. normalized flux for fitting. See NPRESS."
-QEMP,0.0,GAQ something.
-QENP,0.95,On axis q value for GAQ current profile ICURRT=4
-RBDRY,0.0,Major radius coordinates of boundary.
-RBOUND,0.0,"Initial guess for radius in meters for tracing boundary. See also ZBOUND."
-RCENTR, 1.6955,"Major radius of vacuum toroidal field in meters. See also BTOR."
-RELAX,1.,"Equilibrium relaxation parameter (0<=RELAX<=1). Affects speed of convergence; sometimes helps nonconverging solutions to converge
+PRBDRY, 0.0,
+PRESPB, 0.0, P' constraint at the axis.  See KPRESSB
+PRESSBI, 0.0, pressure constraint at the boundary. See KPRESSB.
+QEMP, 0.0, GAQ something.
+QENP, 0.95, On axis q value for GAQ current profile ICURRT=4
+RBDRY, 0.0, Major radius coordinates of boundary.
+RBOUND, 0.0, "Initial guess for radius in meters for tracing boundary. See also ZBOUND."
+RCENTR, 1.6955, "Major radius of vacuum toroidal field in meters. See also BTOR."
+RELAX, 1., "Equilibrium relaxation parameter (0<=RELAX<=1). Affects speed of convergence; sometimes helps nonconverging solutions to converge
 | 0.5 = same as backaveraging (BACKAVERAGE = .true.)
 | 1.0 = no relaxation"
-RELIP,1.68,"Major radius of ellipse center in meters for current initialization."
-REQ_VALID,F,"| (Logical flag) Enables qualifiers for whether a solution should be produced.  The most general qualifier is that files will only be written if solutions have plasma current.  For cases that use MSE, any times where the data was not available will not be solved or written to k-files.  Finally, if CER corrections are requested, only times where the corrections have been applied will be solved or written to files."
-RION,,"if nptionf > 100, rion = rteth"
-RMAXVS,100.0,
+RELIP, 1.68, "Major radius of ellipse center in meters for current initialization."
+REQ_VALID, F, "| (Logical flag) Enables qualifiers for whether a solution should be produced.  The most general qualifier is that files will only be written if solutions have plasma current.  For cases that use MSE, any times where the data was not available will not be solved or written to k-files.  Finally, if CER corrections are requested, only times where the corrections have been applied will be solved or written to files."
+RION,, "if nptionf > 100, rion = rteth"
+RMAXVS, 100.0,
 RMINVS, 0,
-RPRESS,,"| - = input pressure profile as function of dimensionless fluxes.
-| + = R coordinates of the input pressure profile data in meters."
-RTETH,,"Major radius of Thompson scattering measurement locations?"
-RVTOR,1.7,R in meters where rotational pressure profile is specified. What variable gives values?
-RZERO,1.6955,"GAQ current density profile parameter, 1.43 m for D-III, 1.67 m for D-IIID."
-RZEROJ,, "| Vector of radii at which to apply constraints. For each element in vector and corresponding elements in SIZEROJ, VZEROJ, if:
-| RZEROJ>0 Set Jt=0 at coordinate (RZEROJ,SIZEROJ).
-| RZEROJ=0 Set flux surface average current equal to VZEROJ at surface specified by normalized flux SIZEROJ.
-| RZEROJ<0 Set Jt=0 at the separatrix.
-| Constraints are applied only if KZEROJ>0. Default RZEROJ(1)=0.0. If KZEROJ=1, may specify SIZEROJ(1) with PSIWANT. If KZEROJ=1 and SIZEROJ(1)<0, then SIZEROJ(1) is set equal to PSIWANT."
-SAICON,80.0,"| Minimum chi squared before exit for ICONVR=2 option.
+RTETH,, "Major radius of Thompson scattering measurement locations?"
+RVTOR, 1.7, R in meters where rotational pressure profile is specified. What variable gives values?
+RZERO, 1.6955, "GAQ current density profile parameter, 1.43 m for D-III, 1.67 m for D-IIID."
+SAICON, 80.0, "| Minimum chi squared before exit for ICONVR=2 option.
 | If chi-squared on any iteration is larger than on previous iteration, then if relative error < ERRMIN and chi-squared < SAICON, iterations stop. "
 SAIMIN,80.0,"Specifies when EFIT should stop iterating to solution. If the relative error < ERROR, then iterations stop when the total chi squared (without diamagnetic or pressure fit contributions) < SAIMIN.  See also ICONVR and SAICON alternatives."
 SALPHA, 1.0/40.0,parameter for Solovev equilibrium.
@@ -285,7 +267,7 @@ WCURBD,,"| Omega Current Boundary.
 | 0 = zero boundary gradient (default)
 | 1 = finite rotational pressure gradient POmega' at the boundary"
 XLIM, xlim(1)=-1.0, "Major radius of limiter contour in meters. See also YLIM."
-XLTYPE,, "| Inward distance of 0 degree outside limiter in cm.
+XLTYPE, 0.0, "| Inward distance of 0 degree outside limiter in cm.
 | - = read from PTDATA if available, otherwise 0.0.
 | + = specified.="
 XLTYPE_180, 0.0,"| Inward distance of 180 degree outside limiter in cm.

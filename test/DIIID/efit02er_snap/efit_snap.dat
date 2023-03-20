@@ -36,7 +36,7 @@
  relax = 0.5
  iout = 20
  fwtgam = 11*1.0 29*0.0 3*1.0 26*0.0
- msebkp = 2
+ msebkp = 7
  mse_quiet = 0
  msefitfun = 3
  mse_usecer = 1

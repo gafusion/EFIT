@@ -253,7 +253,7 @@
 !--------------------------------------------------------------------
 !--   New BT compensations for magnetic probes and flux loops      --
 !--------------------------------------------------------------------
-      have_btc: if (ibtcomp.gt.0) then
+      have_btc: if (ibtcomp.eq.1) then
       open(unit=60,file=input_dir(1:lindir)//'btcomp.dat', &
            status='old',iostat=ioerr)
       if (ioerr.ne.0) then
