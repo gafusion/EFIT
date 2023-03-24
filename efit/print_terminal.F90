@@ -251,19 +251,19 @@
            if (danm90.lt.1.0.or.danm270.lt.1.0) then
             yym=(ympz(i)+ympz(im1))/2.
            else
-            sm1=tand(ampz(im1))
+            sm1=tan(ampz(im1))*180./pi
             yym=sm1*(xxm-xmpz(im1))+ympz(im1)
            endif
            if (danp90.lt.1.0.or.danp270.lt.1.0) then
             yyp=(ympz(i)+ympz(ip1))/2.
            else
-            sm2=tand(ampz(ip1))
+            sm2=tan(ampz(ip1))*180./pi
             yym=sm2*(xxm-xmpz(ip1))+ympz(ip1)
            endif
           else
            if (danm90.lt.1.0.or.danm270.lt.1.0) then
             xxm=xmpz(im1)
-            sm2=tand(ampz(i))
+            sm2=tan(ampz(i))*180./pi
             yym=sm2*(xxm-xmpz(i))+ympz(i)
            else
             dampz1=abs(ampz(im1)-ampz(i))
@@ -272,15 +272,15 @@
              xxm=(xmpz(i)+xmpz(im1))/2.
              yym=(ympz(i)+ympz(im1))/2.
             else
-             sm1=tand(ampz(im1))
-             sm2=tand(ampz(i))
+             sm1=tan(ampz(im1))*180./pi
+             sm2=tan(ampz(i))*180./pi
              xxm=(sm1*xmpz(im1)-sm2*xmpz(i)-ympz(im1)+ympz(i))/(sm1-sm2)
              yym=sm1*(xxm-xmpz(im1))+ympz(im1)
             endif
            endif
            if (danp90.lt.1.0.or.danp270.lt.1.0) then
             xxp=xmpz(ip1)
-            sm1=tand(ampz(i))
+            sm1=tan(ampz(i))*180./pi
             yyp=sm1*(xxp-xmpz(i))+ympz(i)
            else
             dampz1=abs(ampz(ip1)-ampz(i))
@@ -289,8 +289,8 @@
              xxp=(xmpz(i)+xmpz(ip1))/2.
              yyp=(ympz(i)+ympz(ip1))/2.
             else
-             sm1=tand(ampz(i))
-             sm2=tand(ampz(ip1))
+             sm1=tan(ampz(i))*180./pi
+             sm2=tan(ampz(ip1))*180./pi
              xxp=(sm1*xmpz(i)-sm2*xmpz(ip1)-ympz(i)+ympz(ip1))/(sm1-sm2)
              yyp=sm1*(xxp-xmpz(i))+ympz(i)
             endif
@@ -357,19 +357,19 @@
            if (danm90.lt.1.0.or.danm270.lt.1.0) then
             yym=(ympz(i)+ympz(im1))/2.
            else
-            sm1=tand(ampz(im1))
+            sm1=tan(ampz(im1))*180./pi
             yym=sm1*(xxm-xmpz(im1))+ympz(im1)
            endif
            if (danp90.lt.1.0.or.danp270.lt.1.0) then
             yyp=(ympz(i)+ympz(ip1))/2.
            else
-            sm2=tand(ampz(ip1))
+            sm2=tan(ampz(ip1))*180./pi
             yym=sm2*(xxm-xmpz(ip1))+ympz(ip1)
            endif
           else
            if (danm90.lt.1.0.or.danm270.lt.1.0) then
             xxm=xmpz(im1)
-            sm2=tand(ampz(i))
+            sm2=tan(ampz(i))*180./pi
             yym=sm2*(xxm-xmpz(i))+ympz(i)
            else
             dampz1=abs(ampz(im1)-ampz(i))
@@ -378,15 +378,15 @@
              xxm=(xmpz(i)+xmpz(im1))/2.
              yym=(ympz(i)+ympz(im1))/2.
             else
-             sm1=tand(ampz(im1))
-             sm2=tand(ampz(i))
+             sm1=tan(ampz(im1))*180./pi
+             sm2=tan(ampz(i))*180./pi
              xxm=(sm1*xmpz(im1)-sm2*xmpz(i)-ympz(im1)+ympz(i))/(sm1-sm2)
              yym=sm1*(xxm-xmpz(im1))+ympz(im1)
             endif
            endif
            if (danp90.lt.1.0.or.danp270.lt.1.0) then
             xxp=xmpz(ip1)
-            sm1=tand(ampz(i))
+            sm1=tan(ampz(i))*180./pi
             yyp=sm1*(xxp-xmpz(i))+ympz(i)
            else
             dampz1=abs(ampz(ip1)-ampz(i))
@@ -395,8 +395,8 @@
              xxp=(xmpz(i)+xmpz(ip1))/2.
              yyp=(ympz(i)+ympz(ip1))/2.
             else
-             sm1=tand(ampz(i))
-             sm2=tand(ampz(ip1))
+             sm1=tan(ampz(i))*180./pi
+             sm2=tan(ampz(ip1))*180./pi
              xxp=(sm1*xmpz(i)-sm2*xmpz(ip1)-ympz(i)+ympz(ip1))/(sm1-sm2)
              yyp=sm1*(xxp-xmpz(i))+ympz(i)
             endif

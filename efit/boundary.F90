@@ -2026,11 +2026,17 @@
 !!    @param kadd :                                                   
 !*********************************************************************
       subroutine packps(xp,yp,np,rm,zm,kadd)
+      use global_constants,only: pi
       use commonblocks,only: cjrf,wxin,wyin,wxout,wyout
       include 'eparm.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xp(npoint),yp(npoint)
-      data iflag/2/
+      implicit none
+      integer*4, intent(inout) :: np
+      integer*4, intent(in) :: kadd
+      real*8, dimension(npoint), intent(inout) :: xp,yp
+      real*8, intent(in) :: rm,zm
+      integer*4 i,is,k,kin,kk,kout,mm,nptr
+      real*8 rcut,rymax,rymin,slope,ws,xs,ys,ymax,ymin
+      integer*4, parameter :: iflag=2
 !
       if (iflag.ne.2) then
         ymin=yp(1)
@@ -2038,8 +2044,8 @@
         rymin=xp(1)
         rymax=xp(1)
         do i=2,np
-          if (yp(i).lt.ymin) rymin=xp(i)
-          if (yp(i).gt.ymax) rymax=xp(i)
+          if(yp(i).lt.ymin) rymin=xp(i)
+          if(yp(i).gt.ymax) rymax=xp(i)
           ymin=min(ymin,yp(i))
           ymax=max(ymax,yp(i))
         end do
@@ -2070,7 +2076,7 @@
           xp(kk)=wxout(mm)
           yp(kk)=wyout(mm)
         end do
-        if (kadd.eq.0) return
+        if(kadd.eq.0) return
         np=kk+1
         xp(np)=xp(1)
         yp(np)=yp(1)
@@ -2078,27 +2084,29 @@
       end if
 !
       do i=1,np
-        wxin(i)=atan2d(yp(i)-zm,rm-xp(i))
-        if (wxin(i).lt.0.0) wxin(i)=wxin(i)+360.0
+        wxin(i)=atan2((yp(i)-zm)/180.0*pi,(rm-xp(i))/180.0*pi)
+        if(wxin(i).lt.0.0) wxin(i)=wxin(i)+360.0
       end do
       nptr=np
- 2800 is=0
-      nptr=nptr-1
-      do k=1,nptr
-        if (wxin(k+1).ge.wxin(k)) cycle
-        is=1
-        xs=xp(k+1)
-        ys=yp(k+1)
-        ws=wxin(k+1)
-        xp(k+1)=xp(k)
-        yp(k+1)=yp(k)
-        wxin(k+1)=wxin(k)
-        xp(k)=xs
-        yp(k)=ys
-        wxin(k)=ws
+      is=1
+      do while (is.eq.1)
+        is=0
+        nptr=nptr-1
+        do k=1,nptr
+          if(wxin(k+1).ge.wxin(k)) cycle
+          is=1
+          xs=xp(k+1)
+          ys=yp(k+1)
+          ws=wxin(k+1)
+          xp(k+1)=xp(k)
+          yp(k+1)=yp(k)
+          wxin(k+1)=wxin(k)
+          xp(k)=xs
+          yp(k)=ys
+          wxin(k)=ws
+        end do
       end do
-      if (is.eq.1) go to 2800
-      if (kadd.eq.0) return
+      if(kadd.eq.0) return
       np=np+1
       xp(np)=xp(1)
       yp(np)=yp(1)

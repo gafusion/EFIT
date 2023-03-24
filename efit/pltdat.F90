@@ -4147,8 +4147,8 @@
          chsmin=1.0e30_dp
          chsmax=-1.0e30_dp
          do i=1,nstark
-            anglem(i)=atand(tangam(jtime,i))
-            anglec(i)=atand(cmgam(i,jtime))
+            anglem(i)=atan(tangam(jtime,i)/180.*pi)
+            anglec(i)=atan(cmgam(i,jtime)/180.*pi)
             chsmin=min(anglem(i),chsmin)
             chsmax=max(anglem(i),chsmax)
             chsmin=min(anglec(i),chsmin)
@@ -9534,11 +9534,11 @@
          y= zc(i)
          dx=wc(i)/2.
          dy=hc(i)/2.
-         sn1=sind(ac(i))
-         cos1=cosd(ac(i))
+         sn1=sin(ac(i))*180./pi
+         cos1=cos(ac(i))*180./pi
          tac=sn1/cos1
-         sn2=sind(ac2(i))
-         cos2=cosd(ac2(i))
+         sn2=sin(ac2(i))*180./pi
+         cos2=cos(ac2(i))*180./pi
          tac2=sn2/cos2
          if(ac2(i).ne.0) then
             nn = nn + 1

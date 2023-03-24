@@ -2694,11 +2694,11 @@
             endif
           endif
           if (avs(i).ne.0.) then
-            cosalp=abs(cosd(avs(i)))*signz
+            cosalp=abs(cos(avs(i))*180./pi)*signz
             dells=sqrt(hvs(i)**2+wvs(i)**2)
           endif
           if (avs2(i).ne.0.) then
-            cosalp=abs(cosd(avs2(i)))*signz
+            cosalp=abs(cos(avs2(i))*180./pi)*signz
             dells=sqrt(hvs(i)**2+wvs(i)**2)
           endif
           sinalp=signr*sqrt(1.-cosalp**2)
