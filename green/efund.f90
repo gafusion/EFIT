@@ -998,6 +998,7 @@
       use pmodel
       use siloop
       use fcoil
+      use cecoil
       use fshift
       use bfgrid
 !vas
@@ -1016,7 +1017,8 @@
              rfcvs(nfcoil,nvesel), &
              rvsec(nvesel,nesum),rvsfc(nvesel,nfcoil), &
              rvsvs(nvesel,nvesel),tav(nvesel),tav2(nvesel)
-      real*8 gsilvs(nsilop,nvsum),gmp2vs(magpr2,nvsum)
+      real*8 gsilvs(nsilop,nvsum),gmp2vs(magpr2,nvsum), &
+             gvsfc(nvsum,nfsum),gvsec(nvsum,nesum),gvsvs(nvsum,nvsum)
       real*8 taf(nfcoil),taf2(nfcoil)
       real*8 rsilac(nsilop,nacoil),rmp2ac(magpr2,nacoil)
       real*8 xdum(1),ydum(1)
@@ -1065,7 +1067,7 @@
         allocate(gridac(nwnh,nacoil))
         gridac = 0.0
       endif
-!
+    
       if (ifcoil.eq.1) then
 !----------------------------------------------------------------------
 !--      calculate the response function of psi loops due to f coils --
@@ -1279,6 +1281,18 @@
             do j=1,nwnh
                ggridvs(j,vsid(i))=ggridvs(j,vsid(i))+gridvs(j,i)
             enddo
+            do j=1,nfcoil
+               gvsfc(vsid(i),fcid(j))=gvsec(fcid(j),vsid(i))+rvsfc(j,i)
+            enddo
+
+            do j=1,necoil
+               gvsec(vsid(i),ecid(j))=gvsec(ecid(j),vsid(i))+rvsec(j,i)
+            enddo
+
+            do j=1,nvesel
+               gvsvs(vsid(j),vsid(i))=gvsvs(vsid(j),vsid(i))+rvsvs(j,i)
+            enddo
+
          enddo
 !
 !vas
@@ -1290,6 +1304,9 @@
          write (nrsppc) gsilvs
          write (nrsppc) gmp2vs
          write (nrsppc) ggridvs
+         write (nrsppc) gvsfc
+         write (nrsppc) gvsec
+         write (nrsppc) gvsvs
          close(unit=nrsppc)
       endif
 !---------------------------------------------------------------------
