@@ -612,7 +612,7 @@
       integer*4, intent(in) :: mw,mh
       real*8, intent(in) :: rgrid(mw),zgrid(mh)
       real*8, intent(out) :: rsilvs(nsilop,nvesel),rmp2vs(magpr2,nvesel), &
-                             rfcvs(nfcoil,nvesel),rvsec(nvesel,nesum), &
+                             rfcvs(nfcoil,nvesel),rvsec(nvesel,necoil), &
                              rvsfc(nvesel,nfcoil),gridvs(mw*mh,nvesel)
       integer*4 i,j,kk,n
       real*8 aaa,work
@@ -656,7 +656,6 @@
       enddo 
 !
       aaa=0.0
-      rvsec(:,:)=0.0
       do j=1,nvesel
          tav(j)=tan(avs(j)*pi/180.)
          tav2(j)=tan(avs2(j)*pi/180.)
@@ -665,7 +664,7 @@
                call flux(re(i),ze(i),we(i),he(i),aaa,aaa, &
                          rvs(j),zvs(j),wvs(j),hvs(j),tav(j),tav2(j),work)
                work=work*0.5/pi
-               rvsec(j,ecid(i))=rvsec(j,ecid(i))+work
+               rvsec(j,i)=work
             enddo
          endif
       enddo 
@@ -1015,10 +1014,10 @@
              recec(nesum,nesum),rsisec(nesum)
       real*8 rsilvs(nsilop,nvesel),rmp2vs(magpr2,nvesel), &
              rfcvs(nfcoil,nvesel), &
-             rvsec(nvesel,nesum),rvsfc(nvesel,nfcoil), &
+             rvsec(nvesel,necoil),rvsfc(nvesel,nfcoil), &
              rvsvs(nvesel,nvesel),tav(nvesel),tav2(nvesel)
       real*8 gsilvs(nsilop,nvsum),gmp2vs(magpr2,nvsum), &
-             gvsfc(nvsum,nfsum),gvsec(nvsum,nesum),gvsvs(nvsum,nvsum)
+             gfcvs(nfsum,nvsum),gecvs(nesum,nvsum),gvsvs(nvsum,nvsum)
       real*8 taf(nfcoil),taf2(nfcoil)
       real*8 rsilac(nsilop,nacoil),rmp2ac(magpr2,nacoil)
       real*8 xdum(1),ydum(1)
@@ -1271,6 +1270,9 @@
          gsilvs=0.0
          gmp2vs=0.0
          ggridvs=0.0
+         gfcvs=0.0
+         gecvs = 0.0
+         gvsvs = 0.0
          do i=1,nvesel
             do j=1,nsilop
                gsilvs(j,vsid(i))=gsilvs(j,vsid(i))+rsilvs(j,i)
@@ -1282,15 +1284,15 @@
                ggridvs(j,vsid(i))=ggridvs(j,vsid(i))+gridvs(j,i)
             enddo
             do j=1,nfcoil
-               gvsfc(vsid(i),fcid(j))=gvsec(fcid(j),vsid(i))+rvsfc(j,i)
+               gfcvs(fcid(j),vsid(i))=gfcvs(fcid(j),vsid(i))+rvsfc(i,j)
             enddo
 
             do j=1,necoil
-               gvsec(vsid(i),ecid(j))=gvsec(ecid(j),vsid(i))+rvsec(j,i)
+               gecvs(ecid(j),vsid(i))=gecvs(ecid(j),vsid(i))+rvsec(i,j)
             enddo
 
             do j=1,nvesel
-               gvsvs(vsid(j),vsid(i))=gvsvs(vsid(j),vsid(i))+rvsvs(j,i)
+               gvsvs(vsid(j),vsid(i))=gvsvs(vsid(j),vsid(i))+rvsvs(i,j)
             enddo
 
          enddo
@@ -1304,8 +1306,8 @@
          write (nrsppc) gsilvs
          write (nrsppc) gmp2vs
          write (nrsppc) ggridvs
-         write (nrsppc) gvsfc
-         write (nrsppc) gvsec
+         write (nrsppc) gfcvs
+         write (nrsppc) gecvs
          write (nrsppc) gvsvs
          close(unit=nrsppc)
       endif
