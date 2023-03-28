@@ -3,7 +3,7 @@
 
  Git repository url https://gitlab.com/efit-ai/efit
  Git branch main
- Git hash ecdc3d5 with local modifications
+ Git hash ecdc3d5
  Git date 2023-03-06 17:48:45 +0000
  Simulation started on  3/20/2023 at  9:29:11
  Code compiled with GNU 8.5.0
@@ -12,7 +12,7 @@
 
  type shot #, start time(ms), time step(ms), steps:
 
- table_di2 = </home/bechtelt/efitall/efit/build_gnu_ser/test/DIIID/green/>
+ table_di2 = <../green/>
  Calling $Name: V4_05 $ of the mse 
  ******************** EFIT 65 x 65 grid ********************
 

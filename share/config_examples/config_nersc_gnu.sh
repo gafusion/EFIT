@@ -1,5 +1,6 @@
 #!/bin/sh
-
+# Note: before building on any NERSC machine, you must load the cray-hdf5 module:
+#    module load cray-hdf5
 # Note: if ENABLE_PARALLEL is on then you will have to submit a job to run the tests, e.g.
 #    salloc --nodes 1 --qos interactive --time 00:05:00 --constraint haswell
 # Note: you must have ENABLE_HDF5 set to use the system NetCDF libraries
@@ -18,7 +19,7 @@ case $NERSC_HOST in
 # Determine architecture from programming environment
     comp=gnu
     math_ver=8.1
-    io_ver=8.2 # unclear why these are different
+    io_ver=8.2
     arch=haswell
     if modulecmd bash list 2>&1 | grep craype-mic-knl 1>/dev/null 2>&1; then
       arch=mic_knl
@@ -31,8 +32,8 @@ case $NERSC_HOST in
 #    MKL_ROOT_DIR=/opt/intel/compilers_and_libraries_2020/linux/mkl
 
 # System IO libs
-#    # System hdf5 ser library broken on head nodes 8/19
-    SYSTEM_HDF5_SER_DIR=${crayroot}/hdf5/default/${comp}/${io_ver}
+#    # HDF5 location is set by modules so locations are not required
+#    SYSTEM_HDF5_SER_DIR=${crayroot}/hdf5/default/${comp}/${io_ver}
 #    SYSTEM_HDF5_PAR_DIR=${crayroot}/hdf5-parallel/default/${comp}/${io_ver}
     SYSTEM_NETCDF_SER_DIR=${crayroot}/netcdf/default/${comp}/${io_ver}
 #    SYSTEM_NETCDF_PAR_DIR=${crayroot}/netcdf-hdf5parallel/default/${comp}/${io_ver}
@@ -42,8 +43,7 @@ case $NERSC_HOST in
     
 # Determine architecture from programming environment
     comp=gnu
-    math_ver=9.1
-    io_ver=9.1 # unclear why these are different
+    io_ver=9.1
     arch=x86_64
     crayroot=/opt/cray/pe
 
@@ -52,15 +52,13 @@ case $NERSC_HOST in
     SYSTEM_LAPACK_SER_LIB=$SYSTEM_BLAS_SER_LIB
 
 # System IO libs
-#    # System hdf5 ser library broken on head nodes 8/19
-    SYSTEM_HDF5_SER_DIR=${crayroot}/hdf5/default/${comp}/${io_ver}
+#    # HDF5 location is set by modules so locations are not required
+#    SYSTEM_HDF5_SER_DIR=${crayroot}/hdf5/default/${comp}/${io_ver}
 #    SYSTEM_HDF5_PAR_DIR=${crayroot}/hdf5-parallel/default/${comp}/${io_ver}
     SYSTEM_NETCDF_SER_DIR=${crayroot}/netcdf/default/${comp}/${io_ver}
 #    SYSTEM_NETCDF_PAR_DIR=${crayroot}/netcdf-hdf5parallel/default/${comp}/${io_ver}
     ;;
 esac
-
-export PATH=$SYSTEM_HDF5_SER_DIR:${PATH}
 
 cmake \
   -DMPICMD:STRING='srun -n ' \

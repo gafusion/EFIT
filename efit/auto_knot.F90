@@ -1,17 +1,17 @@
 !*******************************************************************
-!>     SUBPROGRAM DESCRIPTION:                                     
+!>     SUBPROGRAM DESCRIPTION:
 !!          autoknot minimizes chi-squared as a function of knot
-!!          location                                               
-!!                                                                  
-!!                                                                  
+!!          location
+!!
+!!
 !!     @param ks:
-!!                                                                  
+!!
 !!     @param lconvr:
-!!                                                                  
+!!
 !!     @param ktime: 
-!!                                                                  
-!!     @param kerror: error flag                                                                
-!!                                                                  
+!!
+!!     @param kerror: error flag
+!!
 !*******************************************************************
       subroutine autoknot(ks,lconvr,ktime,kerror)
       include 'eparm.inc'
