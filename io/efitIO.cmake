@@ -41,18 +41,10 @@ if(${ENABLE_HDF5})
   set(HDF5_USE_STATIC_LIBRARIES TRUE)
   find_package(HDF5 COMPONENTS Fortran HL)
   if(${HDF5_FOUND})
-    # For some reason find_package(HDF5 COMPONENTS Fortran HL) does not
-    # add the HL libraries (required by newer NetCDF versions) to
-    # HDF5_LIBRARIES so  we check for this by hand instead
-    if(HDF5_HL_LIBRARIES)
-      message(STATUS "Found HDF5 HL")
-    else()
-      message(FATAL_ERROR "Could Not Find HDF5 HL Libraries")
-    endif()
     getAdditionalHdf5Libs()
     set(USE_HDF5 1 CACHE BOOL "Whether HDF5 is linked")  # Used in directives
-    set(io_libs ${HDF5_HL_LIBRARIES} ${HDF5_LIBRARIES} ${io_libs})
     include_directories(${HDF5_INCLUDE_DIRS})
+    set(io_libs ${HDF5_LIBRARIES} ${io_libs})
     if(UNIX)
       # Required for hdf5 version 1.8.11 and greater
       set(io_libs ${io_libs} ${CMAKE_DL_LIBS}) 

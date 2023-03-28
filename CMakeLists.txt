@@ -154,10 +154,7 @@ if (${CMAKE_Fortran_COMPILER_ID} MATCHES "Cray")
   set(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "GNU")
   option(__gfortran "using gfortran FC Compiler" on)
-  if (${CMAKE_Fortran_COMPILER_VERSION} LESS 7)
-    message(FATAL_ERROR "gfortran version 7 or greater is required")
-  endif ()
-  set(CMAKE_Fortran_FLAGS "-fno-second-underscore -fdefault-real-8 -fdefault-double-8 -fdec-math ${CMAKE_Fortran_FLAGS}")
+  set(CMAKE_Fortran_FLAGS "-fno-second-underscore -fdefault-real-8 -fdefault-double-8 ${CMAKE_Fortran_FLAGS}")
   #set(CMAKE_Fortran_FLAGS "-Wimplicit-interface -Wimplicit-procedure ${CMAKE_Fortran_FLAGS}")
   # Don't allow automatic reallocation (F2003 standard) as it may be inefficient
   # inside loops, flag only needed for gfortran versions > 4.6  
@@ -180,11 +177,9 @@ elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "GNU")
   endif ()
   set(CMAKE_Fortran_FLAGS_DEFAULT "-O0") # for reference
   set(CMAKE_C_FLAGS_DEFAULT "-O0") # for reference
-  #  set(CMAKE_Fortran_FLAGS_RELEASE "-O2") # this and stronger optimizations cause the code to fail (why?)
-  set(CMAKE_Fortran_FLAGS_RELEASE "-O1 -falign-functions -falign-jumps -falign-labels -falign-loops -fcaller-saves -fcode-hoisting -fcrossjumping -fcse-follow-jumps -fcse-skip-blocks -fdelete-null-pointer-checks -fdevirtualize -fdevirtualize-speculatively -fexpensive-optimizations -fgcse -fgcse-lm -fhoist-adjacent-loads -finline-small-functions -findirect-inlining -fipa-bit-cp -fipa-cp -fipa-icf -fipa-ra -fipa-sra -fipa-vrp -fisolate-erroneous-paths-dereference -flra-remat -foptimize-sibling-calls -foptimize-strlen -fpartial-inlining -fpeephole2 -freorder-blocks-algorithm=stc -freorder-blocks-and-partition -freorder-functions -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -fsched-interblock -fsched-spec -fstore-merging -fstrict-aliasing -fthread-jumps -ftree-builtin-call-dce -ftree-pre -ftree-switch-conversion -ftree-tail-merge -ftree-vrp -fgcse-after-reload -finline-functions -fipa-cp-clone -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-paths -ftree-loop-distribute-patterns -ftree-loop-distribution -ftree-loop-vectorize -ftree-partial-pre -ftree-slp-vectorize -funswitch-loops -fvect-cost-model -ffast-math -fno-protect-parens") # all -Ofast optimizations in documentation except -fstack-arrays (breaks code)
+  set(CMAKE_Fortran_FLAGS_RELEASE "-Ofast")
   set(CMAKE_C_FLAGS_RELEASE "-Ofast -DNDEBUG")
-  #  set(CMAKE_Fortran_FLAGS_MINSIZEREL "-Os") # doesn't work because -O2 base
-  set(CMAKE_Fortran_FLAGS_MINSIZEREL "-O1 -fcaller-saves -fcode-hoisting -fcrossjumping -fcse-follow-jumps -fcse-skip-blocks -fdelete-null-pointer-checks -fdevirtualize -fdevirtualize-speculatively -fexpensive-optimizations -fgcse -fgcse-lm -fhoist-adjacent-loads -finline-small-functions -findirect-inlining -fipa-bit-cp -fipa-cp -fipa-icf -fipa-ra -fipa-sra -fipa-vrp -fisolate-erroneous-paths-dereference -flra-remat -foptimize-sibling-calls -foptimize-strlen -fpartial-inlining -fpeephole2 -freorder-blocks-and-partition -freorder-functions -frerun-cse-after-loop -fschedule-insns -fschedule-insns2 -fsched-interblock -fsched-spec -fstore-merging -fstrict-aliasing -fthread-jumps -ftree-builtin-call-dce -ftree-pre -ftree-switch-conversion -ftree-tail-merge -ftree-vrp -finline-functions") # all -Os optimizations in documentation
+  set(CMAKE_Fortran_FLAGS_MINSIZEREL "-Os")
   set(CMAKE_C_FLAGS_MINSIZEREL "-Os -DNDEBUG")
   set(CMAKE_Fortran_FLAGS_DEBUG "-Og -g -fbounds-check -finit-real=nan -fbacktrace")
   set(CMAKE_C_FLAGS_DEBUG "-Og -g -fbounds-check")

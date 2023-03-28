@@ -42,7 +42,7 @@ CALPA, zeros, "| Constraint matrix for P' when ICURRT=2 and KCALPA>0.
 | KPPFNC=6
 | Defines constraint equations of the form CALPA(1,i) ppknot(1)+CALPA(2,i) ppknot(1)'+CALPA(3,i) ppknot(2) +...+ CALPA(2n,i) ppknot(n)'=XALPA(i) for i=1 to KCALPA, where n = KPPKNT."
 XALPA, , Constraint vector for P' when ICURRT=2 and KCALPA>0. See CALPA.
-KCGAMA, 0, "|  = number of constraints on coefficients gamma for FF' (only relevant when ICURRT=2),
+KCGAMA, 0, "| = number of constraints on coefficients gamma for FF' (only relevant when ICURRT=2),
 | specified through matrix CGAMA and vector XGAMA. For both equilibrium and fitting."
 CGAMA, zeros, "| Constraint matrix for FF' when ICURRT=2 and KCGAMA>0. If KFFFNC = 0, defines constraint
 | equations of the form CGAMA(1,i) gamma(1) + CGAMA(2,i) gamma(2) +...+ CGAMA(n,i)
