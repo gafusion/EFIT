@@ -9519,6 +9519,7 @@
       nn, xx, yy, nxy, nmg, note, num, xpos, ypos, ht, &
       nshd, sx, sy, nsxy, sangle, sgap, ngaps)
       use set_kinds
+      use global_constants, only: pi
       use eparm, only: ndim
       use curve2d_mod, only: ncrv, mdim
       implicit integer*4 (i-n), real*8 (a-h, o-z)
