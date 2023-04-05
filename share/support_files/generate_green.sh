@@ -8,21 +8,23 @@ if [ "$my_device"x == "x" ] || [ "$res"x == "x" ]; then
   res="all"
 fi 
 
+# Move necessary directories to savedir
+devices=("DIII-D" "NSTX" "ITER")
 echo $res
 if  [ "$save_dir"x != "x" ]; then
   mkdir -p  $savedir
-  for device in "DIII-D" "NSTX" "ITER"
+  for device in ${devices[@]}
   do
-    cp -r $device $savedir/$devices
+    cp -r $device $savedir/$device
   done
 fi 
 
-
-for device in "DIII-D" "NSTX" "ITER"
+# Loop over devices/resolutions, and run efund
+for device in ${devices[@]}
   do
 
   if [ "$my_device" == "$device" ] || [ "$my_device" == "all" ]; then 
-    for dir in $device/green/*/     # list directories in the form "/tmp/dirname/"
+    for dir in $device/green/*/     # list directories 
     do
       dir=${dir%*/}      # remove the trailing "/"
       echo $dir
