@@ -131,8 +131,8 @@
       rcurrt_min=90.0
       zcurrt_max=100.
       zcurrt_min=-100.
-      qsta_max=200.
-      qsta_min=1.
+      qstar_max=200.
+      qstar_min=1.
       gapin_min=-0.2
       gapout_min=-0.2
       gaptop_min=-0.2

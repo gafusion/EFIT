@@ -102,7 +102,8 @@
       ! checks for solution validity (see chkerr.f90) 
       li_max=2.5
       li_min=0.05
-      betap_lim=6.0
+      betap_max=6.0
+      betat_max=25.
       plasma_diff=0.08
       aminor_max=75.0
       aminor_min=30.
@@ -118,15 +119,14 @@
       zcurrt_min=-100.
       qstar_max=200.
       qstar_min=1.
-      betat_lim=25.
-      gapin_lim=-0.2
-      gapout_lim=-0.2
-      gaptop_lim=-0.2
+      gapin_min=-0.2
+      gapout_min=-0.2
+      gaptop_min=-0.2
       sepin_check=-90.0
       qout_max=200.
       qout_min=1.
-      dbpli_lim=0.05
-      delbp_lim=0.08
+      dbpli_diff=0.05
+      delbp_diff=0.08
       end subroutine set_eparm_defaults
 
 !**********************************************************************
