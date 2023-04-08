@@ -35,15 +35,15 @@
                          mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef, &
                          modep,modew,kubics,icycred_loopmax,nfourier, &
                          nsilol,nsilds, &
-                         ali_max,ali_min, &
-                         betap_lim,plasma_diff, &
-                         aout_max,aout_min,eout_max,eout_min, &
+                         li_max,li_min, &
+                         betap_max,plasma_diff, &
+                         aminor_max,aminor_min,elong_max,elong_min, &
                          rout_max,rout_min,zout_max,zout_min, &
                          rcurrt_max,rcurrt_min,zcurrt_max,zcurrt_min, &
-                         qsta_max,qsta_min,betat_lim, &
-                         oleft_lim,oright_lim,otop_lim, &
-                         olefs_check,qout_max,qout_min, &
-                         dbpli_lim,delbp_lim
+                         qstar_max,qstar_min,betat_max, &
+                         gapin_min,gapout_min,gaptop_min, &
+                         sepin_check,qout_max,qout_min, &
+                         dbpli_diff,delbp_diff
 
       device = 'DIII-D'
       nfcoil = 18
@@ -114,14 +114,15 @@
       maglds=-1
       
       ! checks for solution validity
-      ali_max=2.5
-      ali_min=0.05
-      betap_lim=6.0
+      li_max=2.5
+      li_min=0.05
+      betap_max=6.0
+      betat_max=25.
       plasma_diff=0.08
-      aout_max=75.0
-      aout_min=30.
-      eout_max=4.0
-      eout_min=0.8
+      aminor_max=75.0
+      aminor_min=30.
+      elong_max=4.0
+      elong_min=0.8
       rout_max=240.
       rout_min=90.0
       zout_max=100.
@@ -132,15 +133,14 @@
       zcurrt_min=-100.
       qsta_max=200.
       qsta_min=1.
-      betat_lim=25.
-      oleft_lim=-0.2
-      oright_lim=-0.2
-      otop_lim=-0.2
-      olefs_check=-90.0
+      gapin_min=-0.2
+      gapout_min=-0.2
+      gaptop_min=-0.2
+      sepin_check=-90.0
       qout_max=200.
       qout_min=1.
-      dbpli_lim=0.05
-      delbp_lim=0.08
+      dbpli_diff=0.05
+      delbp_diff=0.08
 
       open(unit=nin,status='old',file='mhdin.dat',iostat=istat)
 

@@ -1,7 +1,7 @@
 #include "config.f"
 !**********************************************************************
 !>
-!!    response_matrix calculates the appropriate response matrix and
+!!    calculate the appropriate response matrix and
 !!    invert it to get the plasma current strengths.\n
 !!
 !!    note that npcurn=nffcur+nppcur, 
@@ -80,7 +80,7 @@
 !----------------------------------------------------------------------
       ichisq=0
       nsq=2
-      saiold=tsaisq(jtime)
+      saiold=chisq(jtime)
       brsold=brsp
       if(ivesel.eq.3) vcurrto=vcurrt
 !----------------------------------------------------------------------
@@ -2067,7 +2067,7 @@
       endif
       if (fwtcur.gt.0.0) then
         nj=nj+1
-        brsp(nj)=fwtcur*pasmat(jtime)
+        brsp(nj)=fwtcur*ipmeas(jtime)
       endif
       if (fwtqa.gt.0.0) then
         nj=nj+1
@@ -2088,7 +2088,7 @@
             arsp(nj,nfcoil+kpcurn+i)=fwtqa*rqawx(i)
           enddo
         endif
-        brsp(nj)=fwtqa/qvfit*pasmat(jtime)/abs(pasmat(jtime))
+        brsp(nj)=fwtqa/qvfit*ipmeas(jtime)/abs(ipmeas(jtime))
       endif
       if (fwtbp.gt.0.0) then
         fwtbpp=fwtbp/abs(brsold(nfcoil+1)*brsold(nbase+2))
@@ -2149,7 +2149,7 @@
       if (kzeroj.gt.0) then
         do i=1,kzeroj
           nj=nj+1
-          brsp(nj)=fwtxxzj*vzeroj(i)*darea*pasmat(jtime)/carea
+          brsp(nj)=fwtxxzj*vzeroj(i)*darea*ipmeas(jtime)/carea
         enddo
       endif
 !--------------------------------------------------------------------
@@ -2572,7 +2572,7 @@
       cm=sum(brsp((1+nfcoil):nfnwcr)*fgowpc(1:(nfnwcr-nfcoil)))
       if(kedgep.gt.0) cm=cm+fgowpe*pedge
       if(kedgef.gt.0) cm=cm+fgowfe*f2edge
-      cpasma(jtime)=cm
+      ipmhd(jtime)=cm
       if (kfffnc.eq.8) then
         cjeccd=brsp(nfnwcr)*fgowpc(nfnwcr-nfcoil)/1000.
       else
@@ -2580,7 +2580,7 @@
       endif
       if(ivesel.eq.3) cm=cm+sum(vcurrt)
       if (swtcur.ne.0.0) then
-        saiip=(fwtcur/swtcur)**nsq*(pasmat(jtime)-cm)**2
+        saiip=(fwtcur/swtcur)**nsq*(ipmeas(jtime)-cm)**2
       else
         saiip=0.0
       endif
@@ -2673,12 +2673,12 @@
         endif
        endif
       endif
-      tsaisq(jtime)=saisq
+      chisq(jtime)=saisq
 !--------------------------------------------------------------------------
 !--   write status to fitout.dat
 !--------------------------------------------------------------------------
       if (iand(iout,1).ne.0) then
-        write (nout,7400) time(jtime),chipre,cpasma(jtime), &
+        write (nout,7400) time(jtime),chipre,ipmhd(jtime), &
           nniter,condno,saisq,chigamt
         ! TODO: chimlst and chielst are never defined in efit...
 !        write (nout,97400) time(jtime),chimlst,chielst

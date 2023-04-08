@@ -213,7 +213,7 @@ MACHINEIN is the namelist specified for efund in the mhdin.dat file and
 communicated to efit through the dprobe.dat file.
 
 .. csv-table:: MACHINEIN
-   :file: tables/machinein_efund.csv
+   :file: tables/machinein.csv
    :widths: 15,15,70
 
 EFITIN

@@ -89,7 +89,7 @@
       tangam_uncor=0.0
       taumhd=0.0
       taudia=0.0
-      tsaisq=0.0
+      chisq=0.0
 
 ! ONLY root process can check for existence of fitout.dat file
       mpi_rank0: if (rank == 0) then
@@ -148,7 +148,7 @@
           elseif (snapextin.ne.'none') then
             ! the snap file still wasn't found, check for any snapfile
             ! in the CWD without an extension
-            snap_file = snap_ext
+            snap_file = 'efit_snap.dat'
             open(unit=neqdsk,status='old',file=snap_file,iostat=ioerr)
             if (ioerr.ne.0) then
               call errctrl_msg('setup_data_fetch', &

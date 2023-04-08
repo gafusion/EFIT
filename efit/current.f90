@@ -2,13 +2,9 @@
 !!
 !>    currnt computes the current density on the r-z mesh.
 !!
-!!
 !!    @param iter : current profile (outer) loop iteration index
-!!
 !!    @param jtime : time index
-!!
 !!    @param nitett : total iteration index (current+equilibirum loops)
-!!
 !!    @param kerror : error flag
 !!
 !*********************************************************************
@@ -54,8 +50,8 @@
        if (kvtor.eq.11) then
          n1set=1
          ypsi=0.5_dp
-         pres0=prcur4(n1set,ypsi,kppcur)
-         prew0=pwcur4(n1set,ypsi,kwwcur)
+         pres0=prcur4(n1set,ypsi)
+         prew0=pwcur4(n1set,ypsi)
          n1set=0
        endif
        tcurrt=0.0
@@ -79,8 +75,8 @@
            pcurrt(kk)=pcurrt(kk)+(pp0+ppw)*rdiml
          elseif (kvtor.eq.11) then
            ypsi=xpsi(kk)
-           pres0=prcur4(n1set,ypsi,kppcur)
-           prew0=pwcur4(n1set,ypsi,kwwcur)
+           pres0=prcur4(n1set,ypsi)
+           prew0=pwcur4(n1set,ypsi)
            if (abs(pres0).gt.1.e-10_dp) then
              pwop0=prew0/pres0
              ptop0=exp(pwop0*rgrvt(i))
@@ -103,7 +99,7 @@
          call errctrl_msg('currnt','abs(tcurrt) <= 1.0e-10')
          return
        endif
-       cratio=cpasma(jtime)/tcurrt
+       cratio=ipmhd(jtime)/tcurrt
        do kk=1,nwnh
          pcurrt(kk)=pcurrt(kk)*cratio
        enddo
@@ -154,7 +150,7 @@
            tcurrt=tcurrt+pcurrt(kk)
          enddo
        enddo
-       cratio=cpasma(jtime)/tcurrt
+       cratio=ipmhd(jtime)/tcurrt
        do kk=1,nwnh
          pcurrt(kk)=pcurrt(kk)*cratio
          pcurrw(kk)=pcurrw(kk)*cratio
@@ -194,7 +190,7 @@
                nnow=nnow+1
                alipc(nj,nnow)=fwtqa*rqafe
              endif
-             xrsp(nj)=fwtqa/qvfit*pasmat(jtime)/abs(pasmat(jtime))
+             xrsp(nj)=fwtqa/qvfit*ipmeas(jtime)/abs(ipmeas(jtime))
            endif
 !
            if (fwtcur.gt.0.0) then
@@ -212,7 +208,7 @@
                nnow=nnow+1
                alipc(nj,nnow)=fwtcux*fgowfe
              endif
-             xrsp(nj)=fwtcux*pasmat(jtime)
+             xrsp(nj)=fwtcux*ipmeas(jtime)
            endif
 !-----------------------------------------------------------------------
 !--        constraints on q at psiwant by successive iterations       --
@@ -275,7 +271,7 @@
                siedge=(sizeroj(i)-fe_psin)/fe_width
                alipc(nj,nnow)=fwtxxx/rxxxf/cosh(siedge)**2/fe_width/sidif
              endif
-             xrsp(nj)=fwtxxx*vzeroj(i)*darea*pasmat(jtime)/carea
+             xrsp(nj)=fwtxxx*vzeroj(i)*darea*ipmeas(jtime)/carea
             enddo
            endif
 !-----------------------------------------------------------------------
@@ -310,9 +306,9 @@
              alipc(nj,kppcur+jli)=fwtxxi
              if (initc.ge.jwantm) then
               if (cgamao.lt.0.0) then
-               xrsp(nj)=fwtxxi*ali(jtime)/fli*cgamao
+               xrsp(nj)=fwtxxi*li(jtime)/fli*cgamao
               else
-               xrsp(nj)=fwtxxi/ali(jtime)*fli*cgamao
+               xrsp(nj)=fwtxxi/li(jtime)*fli*cgamao
               endif
              else
               xrsp(nj)=fwtxxi*cgamao
@@ -450,8 +446,8 @@
              if (kedgef.gt.0) then
                cm=cm+f2edge*fgowfe
              endif
-             cpasma(jtime)=cm
-             pasmat(jtime)=cm
+             ipmhd(jtime)=cm
+             ipmeas(jtime)=cm
            endif
          endif constrain_profs
        endif eq_mode
@@ -468,7 +464,7 @@
          do i=1,kffcur
            brsp(nbase+i)=aqax*brsp(nbase+i)
          enddo
-         cwant0=cpasma(jtime)-fgowpc(1)*brsp(nfcoil+1)-fgowpc(kppcur+1) &
+         cwant0=ipmhd(jtime)-fgowpc(1)*brsp(nfcoil+1)-fgowpc(kppcur+1) &
                *brsp(nbase+1)
          cwant1=0.0
          do i=2,kpcurn
@@ -525,8 +521,8 @@
          return
        endif
        if (.not.fixpp) then
-        cratio=cpasma(jtime)/tcurrt
-        if(abs(cpasma(jtime)).le.1.e-3_dp) cratio=1.0
+        cratio=ipmhd(jtime)/tcurrt
+        if(abs(ipmhd(jtime)).le.1.e-3_dp) cratio=1.0
         cratio_ext = cratio * cratio_ext
         cratiop_ext = cratio_ext
         cratiof_ext = cratio_ext
@@ -548,7 +544,7 @@
        else
         cratio=1.0
         cratiop_ext = 1.0
-        cratiof = (cpasma(jtime)-tcurrtpp)/tcurrtffp
+        cratiof = (ipmhd(jtime)-tcurrtpp)/tcurrtffp
         cratiof_ext = cratiof * cratiof_ext
         pcurrt(1:nwnh)=pcurrtpp(1:nwnh)+(pcurrt(1:nwnh)-pcurrtpp(1:nwnh))*cratiof
         do i=nbase+kppcur+1,nfnpcr
@@ -610,7 +606,7 @@
              alipc(nj,kpcurn+j)=rqawx(j)*fwtqa
            enddo
          endif
-         xrsp(nj)=fwtqa/qvfit*pasmat(jtime)/abs(pasmat(jtime))
+         xrsp(nj)=fwtqa/qvfit*ipmeas(jtime)/abs(ipmeas(jtime))
        endif
 !
        if (fwtcur.gt.0.0) then
@@ -624,7 +620,7 @@
              alipc(nj,j)=fwtcux*fgowpc(j)
            enddo
          endif
-         xrsp(nj)=fwtcux*pasmat(jtime)
+         xrsp(nj)=fwtcux*ipmeas(jtime)
        endif
 !-----------------------------------------------------------------------
 !--    constraints on q at psiwant by successive iterations           --
@@ -741,7 +737,7 @@
              alipc(nj,j)=rxxw*fwtxxx*xjj
            endif
          enddo
-         xrsp(nj)=fwtxxx*vzeroj(i)*darea*pasmat(jtime)/carea
+         xrsp(nj)=fwtxxx*vzeroj(i)*darea*ipmeas(jtime)/carea
         enddo
        endif
 !-----------------------------------------------------------------------
@@ -776,9 +772,9 @@
          alipc(nj,kppcur+jli)=fwtxxi
          if (initc.ge.jwantm) then
           if (cgamao.lt.0.0) then
-           xrsp(nj)=fwtxxi*ali(jtime)/fli*cgamao
+           xrsp(nj)=fwtxxi*li(jtime)/fli*cgamao
           else
-           xrsp(nj)=fwtxxi/ali(jtime)*fli*cgamao
+           xrsp(nj)=fwtxxi/li(jtime)*fli*cgamao
           endif
          else
            xrsp(nj)=fwtxxi*cgamao
@@ -852,8 +848,8 @@
            do n=nfcoil+1,nfnwcr
             cm=cm+brsp(n)*fgowpc(n-nfcoil)
            enddo
-           cpasma(jtime)=cm
-           pasmat(jtime)=cm
+           ipmhd(jtime)=cm
+           ipmeas(jtime)=cm
          endif
 !
        endif
@@ -976,7 +972,7 @@
 !-------------------------------------------------------------------
 !--    adjust to match total current                              --
 !-------------------------------------------------------------------
-       cratio=cpasma(jtime)/tcurrt
+       cratio=ipmhd(jtime)/tcurrt
        do kk=1,nwnh
          pcurrt(kk)=pcurrt(kk)*cratio
          pcurrw(kk)=pcurrw(kk)*cratio
@@ -997,11 +993,9 @@
 !!    fpcurr computes the radial derivative
 !!    of the poloidal current ff. ffcurr computes
 !!    the poloidal current F=twopi RBt/mu0
-!!    
 !!
-!!    @param upsi :
-!!
-!!    @param nnn :
+!!    @param upsi : flux location to produce result
+!!    @param nnn : number of coefficients used in representation
 !!
 !**********************************************************************
       real*8 function fpcurr(upsi,nnn)

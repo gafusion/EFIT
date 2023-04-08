@@ -58,7 +58,7 @@
         if(ioerr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
-          write (74,*) time(i),tsaisq(i),xdum,xdum
+          write (74,*) time(i),chisq(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_error'
@@ -82,7 +82,7 @@
         if(ioerr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
-          write (74,*) time(i),ali(i),xdum,xdum
+          write (74,*) time(i),li(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_betat'
@@ -98,7 +98,7 @@
         if(ioerr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
-          write (74,*) time(i),qpsib(i),xdum,xdum
+          write (74,*) time(i),q95(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_q0'
@@ -106,7 +106,7 @@
         if(ioerr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
-          write (74,*) time(i),qqmagx(i),xdum,xdum
+          write (74,*) time(i),qm(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_q0'
@@ -114,7 +114,7 @@
         if(ioerr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
-          write (74,*) time(i),qqmagx(i),xdum,xdum
+          write (74,*) time(i),qm(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_eout'
@@ -122,7 +122,7 @@
         if(ioerr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
-          write (74,*) time(i),eout(i),xdum,xdum
+          write (74,*) time(i),elong(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_vout'
@@ -130,7 +130,7 @@
         if(ioerr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
-          vm3=vout(i)/1.e6_dp
+          vm3=volume(i)/1.e6_dp
           write (74,*) time(i),vm3,xdum,xdum
         enddo
         close(unit=74)
@@ -139,7 +139,7 @@
         if(ioerr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
-          pasman=cpasma(i)/1.e4_dp/aout(i)/abs(bcentr(i))
+          pasman=ipmhd(i)/1.e4_dp/aminor(i)/abs(bcentr(i))
           pasman=pasman*rout(i)/100./rcentr
           betatnx=betat(i)/pasman
           write (74,*) time(i),betatnx,xdum,xdum
@@ -572,8 +572,8 @@
       call NCAPTC(nceq,id_fwtcur,'long_name',NCCHAR,25, &
                   'weight for plasma current',ierr)
 !
-      id_cpasma = NCVDEF(nceq,'cpasma',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_cpasma,'long_name',NCCHAR,31, &
+      id_ipmhd = NCVDEF(nceq,'cpasma',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_ipmhd,'long_name',NCCHAR,31, &
                   'calculated plasma current (Amp)',ierr)
 !
       id_saiip = NCVDEF(nceq,'saiip',NCFLOAT,1,idim_time,ierr)
@@ -665,7 +665,7 @@
                   'error vs. iteration',ierr)
 !
       id_chifin = NCVDEF(nceq,'chifin',NCFLOAT,1,idim_time,ierr)
-      call NCAPTC(nceq,id_chifin,'long_name',NCCHAR,41, &
+      call NCAPTC(nceq,id_chifin,'long_name',NCCHAR,15, &
                   'chisq upon exit',ierr)
 !
       id_chitot = NCVDEF(nceq,'chitot',NCFLOAT,1,idim_time,ierr)
@@ -840,10 +840,10 @@
       zwork(1:ntime) = real(sigdia(1:ntime),r4)
       call NCVPT(nceq,id_sigdia,m,n,zwork(ifirsttime),ierr)
 !
-      zwork(1:ntime) = real(pasmat(1:ntime),r4)
+      zwork(1:ntime) = real(ipmeas(1:ntime),r4)
       call NCVPT(nceq,id_plasma,m,n,zwork(ifirsttime),ierr)
-      zwork(1:ntime) = real(cpasma(1:ntime),r4)
-      call NCVPT(nceq,id_cpasma,m,n,zwork(ifirsttime),ierr)
+      zwork(1:ntime) = real(ipmhd(1:ntime),r4)
+      call NCVPT(nceq,id_ipmhd,m,n,zwork(ifirsttime),ierr)
 !
       zwork(1:ntime) = real(curc79(1:ntime),r4)
       call NCVPT(nceq,id_curc79,m,n,zwork(ifirsttime),ierr)

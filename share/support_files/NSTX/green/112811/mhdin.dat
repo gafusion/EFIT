@@ -382,14 +382,15 @@
  nppcur=18
  nercur=18
  mse315=18
- ali_max=1.5
- ali_min=0.05
- betap_lim=6.0
+ li_max=1.5
+ li_min=0.05
+ betap_max=6.0
+ betat_max=25.
  plasma_diff=0.08
- aout_max=75.0
- aout_min=25.
- eout_max=4.0
- eout_min=0.8
+ aminor_max=75.0
+ aminor_min=25.
+ elong_max=4.0
+ elong_min=0.8
  rout_max=160.
  rout_min=30.0
  zout_max=165.
@@ -398,17 +399,16 @@
  rcurrt_min=30.0
  zcurrt_max=165.
  zcurrt_min=-165.
- qsta_max=200.
- qsta_min=1.
- betat_lim=25.
- oleft_lim=-0.2
- oright_lim=-0.2
- otop_lim=-0.2
- olefs_check=-90.0
+ qstar_max=200.
+ qstar_min=1.
+ gapin_min=-0.2
+ gapout_min=-0.2
+ gaptop_min=-0.2
+ sepin_check=-90.0
  qout_min=1.
  qout_max=200.
- dbpli_lim=0.05
- delbp_lim=0.08
+ dbpli_diff=0.05
+ delbp_diff=0.08
  /
 Vessel Segment Descriptions:
 Inconel CS casing upper segment 1

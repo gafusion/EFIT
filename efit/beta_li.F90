@@ -111,30 +111,30 @@
         qout(jtime)=qout(jtime)+dlbpi/axout**2
       enddo
       bp2flx=sbp/sbpi
-      if (inorm.eq.2) bp2flx=2.*rcentr/vout(jtime)*(pi*tmu &
-                                *cpasma(jtime))**2*1.0E+06_dp
-      if (inorm.eq.3) bp2flx=(tmu*2.0*pi*cpasma(jtime) &
+      if (inorm.eq.2) bp2flx=2.*rcentr/volume(jtime)*(pi*tmu &
+                                *ipmhd(jtime))**2*1.0E+06_dp
+      if (inorm.eq.3) bp2flx=(tmu*2.0*pi*ipmhd(jtime) &
                              /plengt(nfound))**2
-      if (inorm.eq.4) bp2flx=2.*(tmu*cpasma(jtime)/aout(jtime))**2 &
-                             /(eout(jtime)**2+1.)*1.0e+04_dp
+      if (inorm.eq.4) bp2flx=2.*(tmu*ipmhd(jtime)/aminor(jtime))**2 &
+                             /(elong(jtime)**2+1.)*1.0e+04_dp
       bpolav(jtime)=sqrt(bp2flx)
-      rcurrt(jtime)=sqrt(sumr2/twopi/tmu/abs(cpasma(jtime)))*100.
-      zcurrt(jtime)=sumz/twopi/tmu/abs(cpasma(jtime))*100.
-      const=twopi/vout(jtime)*1.0e+06_dp/bp2flx
+      rcurrt(jtime)=sqrt(sumr2/twopi/tmu/abs(ipmhd(jtime)))*100.
+      zcurrt(jtime)=sumz/twopi/tmu/abs(ipmhd(jtime))*100.
+      const=twopi/volume(jtime)*1.0e+06_dp/bp2flx
       s1(jtime)=const*s1(jtime)
       s2(jtime)=const*rcentr*s2(jtime)
       s3(jtime)=const*s3(jtime)
-      sumbzz=abs(sumbzz)/tmu/abs(cpasma(jtime))/twopi
+      sumbzz=abs(sumbzz)/tmu/abs(ipmhd(jtime))/twopi
       rcurrm=rcentr
-      ali(jtime)=sumbp2/vout(jtime)/bp2flx*1.0e+06_dp
-      ali3(jtime)=(tmu*2.0*pi*cpasma(jtime))**2*rout(jtime)/200.0
-      ali3(jtime)=sumbp2/ali3(jtime)
+      li(jtime)=sumbp2/volume(jtime)/bp2flx*1.0e+06_dp
+      li3(jtime)=(tmu*2.0*pi*ipmhd(jtime))**2*rout(jtime)/200.0
+      li3(jtime)=sumbp2/li3(jtime)
       betap(jtime)=s1(jtime)/4.+s2(jtime)/4.*(1.+rcurrm/rcentr) &
-                   -ali(jtime)/2.
+                   -li(jtime)/2.
       betat(jtime)=betap(jtime)*bp2flx/bcentr(jtime)**2*100.
       betat(jtime)=betat(jtime)*(rout(jtime)/100./rcentr)**2
       qout(jtime)=qout(jtime)*abs(bcentr(jtime))*rcentr/twopi
-      wplasm(jtime)=1.5_dp*betap(jtime)*bp2flx/2./tmu/2./pi*vout(jtime) &
+      wmhd(jtime)=1.5_dp*betap(jtime)*bp2flx/2./tmu/2./pi*volume(jtime) &
                     /1.0e+06_dp
 !---------------------------------------------------------------------
 !--   calculations of current moment y2                             --
@@ -158,15 +158,15 @@
                              /(yout(ip1)-yout(i))
         endif
       enddo
-      yyy2(jtime)=sumy2/(tmu*2.0*pi*cpasma(jtime))/4. &
-                  *(rcurrt(jtime)/aout(jtime))**2
+      yyy2(jtime)=sumy2/(tmu*2.0*pi*ipmhd(jtime))/4. &
+                  *(rcurrt(jtime)/aminor(jtime))**2
 !
       dsi=(psibry-simag)/(nw-1)
       mx=(rmaxis-rgrid(1))/drgrid+1
       my=(zmaxis-zgrid(1))/dzgrid+1
       mkk=(mx-1)*nh+my+1
       sicut=psi(mkk)
-      volp(nw)=vout(jtime)/1.0e+06_dp
+      volp(nw)=volume(jtime)/1.0e+06_dp
       volp(1)=0.0
       if (abs(zmaxis).le.0.001_dp) then
         rmajz0(1)=rmaxis
@@ -187,8 +187,8 @@
         sumprw=0.0
         n1set=1
         ypsi=0.5_dp
-        prew0=pwcur4(n1set,ypsi,kwwcur)
-        pres0=prcur4(n1set,ypsi,kppcur)
+        prew0=pwcur4(n1set,ypsi)
+        pres0=prcur4(n1set,ypsi)
         n1set=0
         do i=1,nw
           pwprim(i)=sprwp(i)
@@ -198,8 +198,8 @@
         do j=1,nh
            kk=(i-1)*nh+j
            ypsi=xpsi(kk)
-           pres0=prcur4(n1set,ypsi,kppcur)-prbdry
-           prew0=pwcur4(n1set,ypsi,kwwcur)-preswb
+           pres0=prcur4(n1set,ypsi)-prbdry
+           prew0=pwcur4(n1set,ypsi)-preswb
            if (kvtor.eq.1) then
              presst(kk)=pres0+prew0*rgrvt(i)
            elseif (kvtor.eq.2) then
@@ -402,8 +402,8 @@
           elseif (kvtor.eq.11) then
             ypsm=0.0
             n1set=1
-            pres0=prcur4(n1set,ypsm,kppcur)
-            prew0=pwcur4(n1set,ypsm,kwwcur)
+            pres0=prcur4(n1set,ypsm)
+            prew0=pwcur4(n1set,ypsm)
             rgmvt=(rmaxis/rvtor)**2-1.
             pwop0=prew0/pres0
             ptop0=exp(pwop0*rgmvt)
@@ -430,17 +430,17 @@
       betap(jtime)=sumpre*2.0*twopi*tmu/bp2flx
       betat(jtime)=sumpre*2.0*twopi*tmu/bcentr(jtime)**2
       betat(jtime)=100.*betat(jtime)*(rout(jtime)/100./rcentr)**2
-      wplasm(jtime)=1.5_dp*betap(jtime)*bp2flx/2./tmu/2./pi*vout(jtime) &
+      wmhd(jtime)=1.5_dp*betap(jtime)*bp2flx/2./tmu/2./pi*volume(jtime) &
                     /1.0e+06_dp
-      pasman=cpasma(jtime)/1.e4_dp/aout(jtime)/abs(bcentr(jtime))
+      pasman=ipmhd(jtime)/1.e4_dp/aminor(jtime)/abs(bcentr(jtime))
       pasman=pasman*rout(jtime)/100./rcentr
       betatn=betat(jtime)/pasman
       dmui=1.0e+06_dp*diamag(jtime)*4.*pi*bcentr(jtime)*rcentr &
-           /bp2flx/vout(jtime)
+           /bp2flx/volume(jtime)
       betapd(jtime)=s1(jtime)/2.+s2(jtime)/2.*(1.-rcurrm/rcentr)-dmui
       betatd(jtime)=betapd(jtime)*bp2flx/bcentr(jtime)**2*100.
       betatd(jtime)=betatd(jtime)*(rout(jtime)/100./rcentr)**2
-      wplasmd(jtime)=1.5_dp*betapd(jtime)*bp2flx/2./tmu/2./pi*vout(jtime) &
+      wdia(jtime)=1.5_dp*betapd(jtime)*bp2flx/2./tmu/2./pi*volume(jtime) &
                      /1.0e+06_dp
 !-----------------------------------------------------------------------
 !--   rotational terms                                                --
@@ -450,11 +450,11 @@
         sumprw=sumprw/volp(nw)
         betap(jtime)=sumprt/sumpre*betap(jtime)
         betat(jtime)=sumprt/sumpre*betat(jtime)
-        wplasm(jtime)=sumprt/sumpre*wplasm(jtime)
+        wmhd(jtime)=sumprt/sumpre*wmhd(jtime)
         betapw(jtime)=sumprw/sumprt*betap(jtime)
         betatw(jtime)=sumprw/sumprt*betat(jtime)
         wplasw(jtime)=betapw(jtime)*bp2flx/2./tmu/2./pi &
-                      *vout(jtime)/1.0e+06_dp
+                      *volume(jtime)/1.0e+06_dp
       endif
 !----------------------------------------------------------------------
 !--   get normalized radial coordinate square root of toroidal flux  --
@@ -501,15 +501,15 @@
       qpsi(1:(nw-1))=abs(fpol(1:(nw-1)))/twopi*r2surf(1:(nw-1))
       qpsi(nw)=qout(jtime)
       qpsi(1)=qmaxis
-      qqmin=qpsi(1)
+      qmin=qpsi(1)
       iiqmin=1
       do i=2,nw
-        if (qpsi(i).lt.qqmin) then
-          qqmin=qpsi(i)
+        if (qpsi(i).lt.qmin) then
+          qmin=qpsi(i)
           iiqmin=i
         endif
       enddo
-      rqqmin=sqrt(volp(iiqmin)/volp(nw))
+      rhoqmin=sqrt(volp(iiqmin)/volp(nw))
 !
       btaxp(jtime)=fpol(1)/rmaxis
       btaxv(jtime)=fpol(nw)/rmaxis
@@ -587,15 +587,15 @@
         dpleng(i)=dli
       enddo
 !
-      bp2flx=(tmu*2.0*pi*cpasma(jtime) &
+      bp2flx=(tmu*2.0*pi*ipmhd(jtime) &
               /plengt(nfound))**2
-      const=twopi/vout(jtime)*1.0e+06_dp/bp2flx
-      ali(jtime)=sumbp2/vout(jtime)/bp2flx*1.0e+06_dp
-      ali3(jtime)=(tmu*2.0*pi*cpasma(jtime))**2*rout(jtime)/200.0
-      ali3(jtime)=sumbp2/ali3(jtime)
+      const=twopi/volume(jtime)*1.0e+06_dp/bp2flx
+      li(jtime)=sumbp2/volume(jtime)/bp2flx*1.0e+06_dp
+      li3(jtime)=(tmu*2.0*pi*ipmhd(jtime))**2*rout(jtime)/200.0
+      li3(jtime)=sumbp2/li3(jtime)
 !
       dsi=(psibry-simag)/(nw-1)
-      volp(nw)=vout(jtime)/1.0e+06_dp
+      volp(nw)=volume(jtime)/1.0e+06_dp
       volp(1)=0.0
       select case (icurrt)
       case (1)
@@ -674,7 +674,7 @@
       betap(jtime)=sumpre*2.0*twopi*tmu/bp2flx
       betat(jtime)=sumpre*2.0*twopi*tmu/bcentr(jtime)**2
       betat(jtime)=100.*betat(jtime)*(rout(jtime)/100./rcentr)**2
-      pasman=cpasma(jtime)/1.e4_dp/aout(jtime)/abs(bcentr(jtime))
+      pasman=ipmhd(jtime)/1.e4_dp/aminor(jtime)/abs(bcentr(jtime))
       pasman=pasman*rout(jtime)/100./rcentr
       betatn=betat(jtime)/pasman
 !

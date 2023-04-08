@@ -501,7 +501,7 @@
         endif
 !
         btor=bcentr(jtime)
-        plasma=pasmat(jtime)
+        plasma=ipmeas(jtime)
         siref=psiref(jtime)
         vloop=vloopt(jtime)
         dflux=1.0e+03_dp*diamag(jtime)
@@ -741,7 +741,7 @@
       endif
       fwtcur=swtcur
       btor=bcentr(jtime)
-      plasma=pasmat(jtime)
+      plasma=ipmeas(jtime)
       nbdryss=nbdry
       rbdryss=rbdry
       zbdryss=zbdry

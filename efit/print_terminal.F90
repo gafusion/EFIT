@@ -20,7 +20,7 @@
       real*8 cbetap,cbetat,cipmp3,dampz1,dampz2, &
              dang270,dang90,danm270,danm90,danp270,danp90, &
              dsi,nzz,saisq,sinow,sm1,sm2,ssiref, &
-             sumif,sumifb,sumifs,sumift,tleft,tright, &
+             sumif,sumifb,sumifs,sumift,tin,tout, &
              xdum,xnorm,xtest,ytest,xxm,yym,xxp,yyp
       integer*4 vsid ! unused
       real*8 ecturn ! unused
@@ -37,11 +37,11 @@
                    rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2, &
                    re,ze,ecid,ecturn,vsid,rvs,zvs,we,he,fcturn
 
-      ! avoid write garbage when oleft or oright not update (e.g. 1.e10)
-      tleft=oleft(it)
-      if(tleft.gt.1.e9_dp) tleft=0.0
-      tright=oright(it)
-      if(tright.gt.1.e9_dp) tright=0.0
+      ! avoid write garbage when gapin or gapout not update (e.g. 1.e10)
+      tin=gapin(it)
+      if(tin.gt.1.e9_dp) tin=0.0
+      tout=gapout(it)
+      if(tout.gt.1.e9_dp) tout=0.0
 !
 !#if defined(USEMPI)
 !      ! TODO: Currently this ONLY works if nproc == total number of time slices.
@@ -54,7 +54,7 @@
 !        end if
 !        call mpi_gather(ishot, 1, MPI_INTEGER, ishotall, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierr)
 !        call mpi_gather(time(it), 1, MPI_DOUBLE_PRECISION, timeall, 1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
-!        call mpi_gather(tsaisq(it), 1, MPI_DOUBLE_PRECISION, ch2all, 1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
+!        call mpi_gather(chisq(it), 1, MPI_DOUBLE_PRECISION, ch2all, 1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
 !        if (rank==0) then
 !          write(nttyo,'(/,a)') '  Summary of all runs'
 !          write(nttyo,'(a)') '   Shot    Time   chi^2'
@@ -67,14 +67,14 @@
 !          if (allocated(timeall)) deallocate(timeall)
 !        end if
 !      else
-!        !write(nttyo,*) ishot,int(time(it)),tsaisq(it) ! handy for debugging
+!        !write(nttyo,*) ishot,int(time(it)),chisq(it) ! handy for debugging
 !      end if
 !#endif
 !      if ((ivacum.eq.0).and.(itek.le.0)) then
       if (ivacum.eq.0) then
         mpi_rank: if (rank == 0) then
           !write (nttyo,10000) trim(ch1),trim(ch2)
-          saisq=tsaisq(it)
+          saisq=chisq(it)
           ! avoid roundoff
           if(abs(saisq).lt.1.e-20_dp) saisq=0_dp
           write (nttyo,9300)
@@ -84,11 +84,11 @@
           write (nttyo,9385) idlopc(it)
           write (nttyo,10480)
           write (nttyo,10500) ishot,int(time(it)),saisq
-          write (nttyo,10520) betat(it),betap(it),ali(it)
-          write (nttyo,10540) vout(it),rout(it),zout(it)
-          write (nttyo,10560) eout(it),doutu(it),doutl(it)
-          write (nttyo,10580) aout(it),tleft,tright
-          write (nttyo,10600) otop(it),qsta(it),rcurrt(it)
+          write (nttyo,10520) betat(it),betap(it),li(it)
+          write (nttyo,10540) volume(it),rout(it),zout(it)
+          write (nttyo,10560) elong(it),utri(it),ltri(it)
+          write (nttyo,10580) aminor(it),tin,tout
+          write (nttyo,10600) gaptop(it),qstar(it),rcurrt(it)
           write (nttyo,10610) zcurrt(it),bcentr(it),qout(it)
         endif mpi_rank
       endif
@@ -101,7 +101,7 @@
         endif mpi_rank0
       else
         !write (nout,10000) trim(ch1),trim(ch2)
-        saisq=tsaisq(it)
+        saisq=chisq(it)
         write (nout,9300)
         write (nout,9320) ipsi(it)
         write (nout,9340) imag2(it)
@@ -109,13 +109,13 @@
         write (nout,9385) idlopc(it)
         write (nout,10480)
         write (nout,10500) ishot,int(time(it)),saisq
-        write (nout,10520) betat(it),betap(it),ali(it)
-        write (nout,10540) vout(it),rout(it),zout(it)
-        write (nout,10560) eout(it),doutu(it),doutl(it)
-        write (nout,10580) aout(it),tleft,tright
-        write (nout,10600) otop(it),qsta(it),rcurrt(it)
+        write (nout,10520) betat(it),betap(it),li(it)
+        write (nout,10540) volume(it),rout(it),zout(it)
+        write (nout,10560) elong(it),utri(it),ltri(it)
+        write (nout,10580) aminor(it),tin,tout
+        write (nout,10600) gaptop(it),qstar(it),rcurrt(it)
         write (nout,10610) zcurrt(it),bcentr(it),qout(it)
-        write (nout,10620) olefs(it),orighs(it),otops(it)
+        write (nout,10620) sepin(it),sepout(it),septop(it)
         write (nout,10623) betat2
 
         if (icalbet.gt.0) &
@@ -458,7 +458,7 @@
           write (nout,11140)
           write (nout,11020) (cmgam(i,it),i=1,nstark)
         endif
-        write (nout,11160) cpasma(it)
+        write (nout,11160) ipmhd(it)
         write (nout,11180) cdflux(it),sbpp,delbp(it),sbppa
         if (kecebz.gt.0) write(nout,11185) cmecebz(it)
         if (kece.gt.0)  then
@@ -474,7 +474,7 @@
           write (nout,11240)
           write (nout,11020) (tangam(it,i),i=1,nstark)
         endif
-        write (nout,11260) pasmat(it)
+        write (nout,11260) ipmeas(it)
         write (nout,11280) diamag(it)
         write (nout,11270) vloopt(it)
         write (nout,11292)

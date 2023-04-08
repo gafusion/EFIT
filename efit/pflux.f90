@@ -218,7 +218,7 @@
             tvfbrt(ntotal)=tvfbrt(ntotal)-(psikkk(kk)-psiold(kk))
           enddo
         enddo
-        vcurfi=vcurfb(1)*cpasma(jtime)/abs(tvfbrt(ntotal))
+        vcurfi=vcurfb(1)*ipmhd(jtime)/abs(tvfbrt(ntotal))
         tvfbrt(ntotal)=tvfbrt(ntotal)*vcurfi
         psi(1:nwnh)=psi(1:nwnh)+gfbsum(1:nwnh)*tvfbrt(ntotal)
       endif

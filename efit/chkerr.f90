@@ -13,45 +13,45 @@
       implicit none
       integer*4, intent(in) :: mtime
       integer*4 m
-      real*8 error_lim,chisq_lim
+      real*8 error_max,chisq_max
 !
       if (iconvr.eq.2) then
-        error_lim=errmin
-        chisq_lim=saicon
+        error_max=errmin
+        chisq_max=saicon
       else
-        error_lim=error
-        chisq_lim=saimin
+        error_max=error
+        chisq_max=saimin
       endif
       m=mtime
       erflag(m,:)=0
-      if(tsaisq(m).ge.chisq_lim) erflag(m,1)=1
-      if(ali(m).ge.ali_max .or. ali(m).le.ali_min) erflag(m,2)=2
-      if(betap(m).ge.betap_lim .or. betap(m).le.0.) erflag(m,3)=3
-      if(abs((cpasma(m)-pasmat(m))/cpasma(m)).ge.plasma_diff) erflag(m,4)=4
-      if(aout(m).ge.aout_max .or. aout(m).le.aout_min) erflag(m,5)=5
-      if(eout(m).ge.eout_max .or. eout(m).le.eout_min) erflag(m,6)=6
+      if(chisq(m).ge.chisq_max) erflag(m,1)=1
+      if(li(m).ge.li_max .or. li(m).le.li_min) erflag(m,2)=2
+      if(betap(m).ge.betap_max .or. betap(m).le.0.) erflag(m,3)=3
+      if(abs((ipmhd(m)-ipmeas(m))/ipmhd(m)).ge.plasma_diff) erflag(m,4)=4
+      if(aminor(m).ge.aminor_max .or. aminor(m).le.aminor_min) erflag(m,5)=5
+      if(elong(m).ge.elong_max .or. elong(m).le.elong_min) erflag(m,6)=6
       if(rout(m).gt.rout_max .or. rout(m).lt.rout_min) erflag(m,7)=7
       if(zout(m).gt.zout_max .or. zout(m).lt.zout_min) erflag(m,9)=9
       if(rcurrt(m).gt.rcurrt_max .or. rcurrt(m).lt.rcurrt_min) erflag(m,8)=8
       if(zcurrt(m).gt.zcurrt_max .or. zcurrt(m).lt.zcurrt_min) erflag(m,10)=10
-      if(qsta(m).gt.qsta_max .or. qsta(m).lt.qsta_min) erflag(m,13)=13
-      if(betat(m).gt.betat_lim .or. betat(m).lt.0.) erflag(m,14)=14
-      if(oleft(m).lt.oleft_lim .or. oright(m).lt.oright_lim  &
-                               .or. otop(m).lt.otop_lim) &
+      if(qstar(m).gt.qstar_max .or. qstar(m).lt.qstar_min) erflag(m,13)=13
+      if(betat(m).gt.betat_max .or. betat(m).lt.0.) erflag(m,14)=14
+      if(gapin(m).lt.gapin_min .or. gapout(m).lt.gapout_min  &
+                               .or. gaptop(m).lt.gaptop_min) &
         erflag(m,15)=15
-      if (olefs(m).lt.olefs_check) then
+      if (sepin(m).lt.sepin_check) then
         if(qout(m).lt.qout_min) erflag(m,18)=18
       else
         if(qout(m).gt.qout_max .or. qout(m).lt.qout_min) erflag(m,18)=18
       endif
-      if(terror(m).ge.error_lim) erflag(m,19)=19
-      if(dbpli(m).ge.dbpli_lim) erflag(m,20)=20
-      if(delbp(m).ge.delbp_lim) erflag(m,21)=21
-      if ((eout(m).le.elomin).and.(fwtdlc.le.0.0)) then
+      if(terror(m).ge.error_max) erflag(m,19)=19
+      if(dbpli(m).ge.dbpli_diff) erflag(m,20)=20
+      if(delbp(m).ge.delbp_diff) erflag(m,21)=21
+      if ((elong(m).le.elomin).and.(fwtdlc.le.0.0)) then
         betap(m)=0.0
         betat(m)=0.0
-        ali(m)=0.0
-        wplasm(m)=0.0
+        li(m)=0.0
+        wmhd(m)=0.0
         !terror(m)=0.0
         erflag(m,3)=0
         erflag(m,2)=0
@@ -78,18 +78,18 @@
       end select
 !
       if (erflag(m,1).eq.1) then
-        write(nttyo,1010) chisq_lim
-        write(40,1010) chisq_lim
+        write(nttyo,1010) chisq_max
+        write(40,1010) chisq_max
         if (abs(ierchk).ne.2) lflag=erflag(m,1)
       endif
       if (erflag(m,2).eq.2) then
-        write(nttyo,1020) ali_max,ali_min
-        write(40,1020) ali_max,ali_min
+        write(nttyo,1020) li_max,li_min
+        write(40,1020) li_max,li_min
         lflag=erflag(m,2)
       endif
       if (erflag(m,3).eq.3) then
-        write(nttyo,1025) betap_lim
-        write(40,1025) betap_lim
+        write(nttyo,1025) betap_max
+        write(40,1025) betap_max
         lflag=erflag(m,3)
       endif
       if (erflag(m,4).eq.4) then
@@ -98,13 +98,13 @@
         lflag=erflag(m,4)
       endif
       if (erflag(m,5).eq.5) then
-        write(nttyo,1040) aout_max,aout_min
-        write(40,1040) aout_max,aout_min
+        write(nttyo,1040) aminor_max,aminor_min
+        write(40,1040) aminor_max,aminor_min
         lflag=erflag(m,5)
       endif
       if (erflag(m,6).eq.6) then
-        write(nttyo,1050) eout_max,eout_min
-        write(40,1050) eout_max,eout_min
+        write(nttyo,1050) elong_max,elong_min
+        write(40,1050) elong_max,elong_min
         lflag=erflag(m,6)
       endif
       if (erflag(m,7).eq.7) then
@@ -128,22 +128,22 @@
         lflag=erflag(m,10)
       endif
       if (erflag(m,13).eq.13) then
-        write(nttyo,1100) qsta_max,qsta_min
-        write(40,1100) qsta_max,qsta_min
+        write(nttyo,1100) qstar_max,qstar_min
+        write(40,1100) qstar_max,qstar_min
         lflag=erflag(m,13)
       endif
       if (erflag(m,14).eq.14) then
-        write(nttyo,1110) betat_lim
-        write(40,1110) betat_lim
+        write(nttyo,1110) betat_max
+        write(40,1110) betat_max
         lflag=erflag(m,14)
       endif
       if (erflag(m,15).eq.15) then
-        write(nttyo,1120) oleft_lim,oright_lim,otop_lim
-        write(40,1120) oleft_lim,oright_lim,otop_lim
+        write(nttyo,1120) gapin_min,gapout_min,gaptop_min
+        write(40,1120) gapin_min,gapout_min,gaptop_min
         lflag=erflag(m,15)
       endif
       if (erflag(m,18).eq.18) then 
-        if (olefs(m).lt.olefs_check) then
+        if (sepin(m).lt.sepin_check) then
           write(nttyo,1150) qout_min
           write(40,1150) qout_min
         else
@@ -153,8 +153,8 @@
         lflag=erflag(m,18)
       endif
       if (erflag(m,19).eq.19) then 
-        write(nttyo,1170) error_lim
-        write(40,1170) error_lim
+        write(nttyo,1170) error_max
+        write(40,1170) error_max
         if (abs(ierchk).ne.2) lflag=erflag(m,19)
       endif
       if (erflag(m,20).eq.20) then

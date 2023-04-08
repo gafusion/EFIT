@@ -70,7 +70,7 @@
                 cntece(3+nece)
 !      equivalence (copy(1,1),copy1(1))
       data ratray/2.,1.,1.,2.,2.,1.,1.,1.,2.,1./
-      data istrpl/0/,iseplim/1/
+      data istrpl/0/,idsep/1/
       parameter(lfile=36,n00=0,n11=1,one=1.)
 
       ifcoil=1
@@ -135,13 +135,13 @@
 #endif      
       if (kdot.gt.0.and.jtime.ne.kdot+1) return
       if (kdata.eq.4) then
-         dismin=min(oleft(jtime),oright(jtime),otop(jtime),obott(jtime))
-         if (dismin.eq.oleft(jtime)) gapdis=olefs(jtime)
-         if (dismin.eq.oright(jtime)) gapdis=orighs(jtime)
-         if (dismin.eq.obott(jtime)) gapdis=obots(jtime)
-         if (dismin.eq.otop(jtime)) gapdis=otops(jtime)
+         dismin=min(gapin(jtime),gapout(jtime),gaptop(jtime),gapbot(jtime))
+         if (dismin.eq.gapin(jtime)) gapdis=sepin(jtime)
+         if (dismin.eq.gapout(jtime)) gapdis=sepout(jtime)
+         if (dismin.eq.gapbot(jtime)) gapdis=sepbot(jtime)
+         if (dismin.eq.gaptop(jtime)) gapdis=septop(jtime)
          if (dismin.le.0.1_dp) dismin=gapdis
-         if (iseplim.eq.0) seplim(jtime)=dismin
+         if (idsep.eq.0) dsep(jtime)=dismin
          if (jtime.lt.ktime) return
       endif
       if (jerror(jtime).gt.0) return
@@ -427,7 +427,7 @@
         close(unit=62)
       endif
       single_pass: if (ipass.le.1) then
-      dismin=min(oleft(jtime),oright(jtime),otop(jtime),obott(jtime))
+      dismin=min(gapin(jtime),gapout(jtime),gaptop(jtime),gapbot(jtime))
       dis_min: if (dismin.gt.0.1_dp) then
       if (kwripre.gt.0) then
         dataname=dataname(1:lprx)//'_sep'
@@ -1526,8 +1526,8 @@
         enddo
       endif
 !
-      pasmac=cpasma(jtime)/1000.
-      pasmap=pasmat(jtime)/1000.
+      pasmac=ipmhd(jtime)/1000.
+      pasmap=ipmeas(jtime)/1000.
 !
       klabel_1: if (klabel.ge.0) then
       xabs=-3.0
@@ -1583,7 +1583,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write(text,9040) tsaisq(jtime)
+      write(text,9040) chisq(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -1610,7 +1610,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write(text,9100) aout(jtime)
+      write(text,9100) aminor(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -1619,7 +1619,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write(text,9120) eout(jtime)
+      write(text,9120) elong(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -1628,7 +1628,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write(text,9140) doutu(jtime),doutl(jtime)
+      write(text,9140) utri(jtime),ltri(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -1637,7 +1637,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write(text,9155) xndnt(jtime)
+      write(text,9155) indent(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -1647,8 +1647,8 @@
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
 
-      vm3=vout(jtime)/1.e6_dp
-      am2=areao(jtime)/1.e4_dp
+      vm3=volume(jtime)/1.e6_dp
+      am2=area(jtime)/1.e4_dp
       write(text,9160) vm3,am2
       msg = msg + 1
       note(msg) = 1
@@ -1658,7 +1658,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write(text,9165) wplasm(jtime)
+      write(text,9165) wmhd(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -1694,7 +1694,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write(text,9220) ali(jtime),ali3(jtime)
+      write(text,9220) li(jtime),li3(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -1735,7 +1735,7 @@
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
 !
-      edgej=cpasma(jtime)/areao(jtime)*1.e4_dp
+      edgej=ipmhd(jtime)/area(jtime)*1.e4_dp
       if (icurrt.eq.2.or.icurrt.eq.5) then
         if (rseps(1,jtime).gt.0.0) then
           rsepcm=rseps(1,jtime)/100.
@@ -1764,7 +1764,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write(text,9268) qout(jtime),qpsib(jtime)
+      write(text,9268) qout(jtime),q95(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -1774,14 +1774,14 @@
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
 
-      dismin=min(oleft(jtime),oright(jtime),otop(jtime),obott(jtime))
-      if (dismin.eq.oleft(jtime)) gapdis=olefs(jtime)
-      if (dismin.eq.oright(jtime)) gapdis=orighs(jtime)
-      if (dismin.eq.obott(jtime)) gapdis=obots(jtime)
-      if (dismin.eq.otop(jtime)) gapdis=otops(jtime)
+      dismin=min(gapin(jtime),gapout(jtime),gaptop(jtime),gapbot(jtime))
+      if (dismin.eq.gapin(jtime)) gapdis=sepin(jtime)
+      if (dismin.eq.gapout(jtime)) gapdis=sepout(jtime)
+      if (dismin.eq.gapbot(jtime)) gapdis=sepbot(jtime)
+      if (dismin.eq.gaptop(jtime)) gapdis=septop(jtime)
       if (dismin.le.0.1_dp) dismin=gapdis
-      if (iseplim.eq.0) seplim(jtime)=dismin
-      write(text,9272) seplim(jtime)
+      if (idsep.eq.0) dsep(jtime)=dismin
+      write(text,9272) dsep(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -1790,7 +1790,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write(text,9280) rmagx(jtime),rcurrt(jtime)
+      write(text,9280) rm(jtime),rcurrt(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -1799,7 +1799,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write(text,9290) zmagx(jtime),zcurrt(jtime)
+      write(text,9290) zm(jtime),zcurrt(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -1826,7 +1826,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write(text,9546) wplasmd(jtime)
+      write(text,9546) wdia(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -2187,8 +2187,8 @@
       if (kvtor.gt.0) then
         n1set=1
         ypsi=0.5_dp
-        pres0=prcur4(n1set,ypsi,kppcur)
-        prew0=pwcur4(n1set,ypsi,kwwcur)
+        pres0=prcur4(n1set,ypsi)
+        prew0=pwcur4(n1set,ypsi)
         n1set=0
         if (icurrt.eq.1) then
           do i=1,nw
@@ -2237,8 +2237,8 @@
                        pds,ier,n111)
            pmid(i)=pds(1)
            ypsi=xpsikk
-           pres0=prcur4(n1set,ypsi,kppcur)
-           prew0=pwcur4(n1set,ypsi,kwwcur)
+           pres0=prcur4(n1set,ypsi)
+           prew0=pwcur4(n1set,ypsi)
            pmidw(i)=prew0
            if (kvtor.eq.11) then
              rdiml=workc(i)/rzero
@@ -3391,7 +3391,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write (text,9420) oleft(jtime),oright(jtime)
+      write (text,9420) gapin(jtime),gapout(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -3400,7 +3400,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write (text,9460) otop(jtime),obott(jtime)
+      write (text,9460) gaptop(jtime),gapbot(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -3472,7 +3472,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write (text,9480) elongm(jtime),qqmagx(jtime)
+      write (text,9480) elongm(jtime),qm(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -3503,9 +3503,9 @@
 !--   vertical stability parameter, reference Nuc Fusion 18(1978)1331 --
 !-----------------------------------------------------------------------
       if (ivacum.eq.0) then
-         rx=rmagx(jtime)/100.
+         rx=rm(jtime)/100.
          pleng=0.0
-         f_0=log(8*rout(jtime)/abar)-2+betap(jtime)+ali(jtime)/2+.5_dp
+         f_0=log(8*rout(jtime)/abar)-2+betap(jtime)+li(jtime)/2+.5_dp
          delr=rout(jtime)/100.-1.67_dp
 !-----------------------------------------------------------------------
 !--      metal wall                                                   --
@@ -3611,13 +3611,13 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      if (qpsib(jtime).gt.0.1_dp) then
-         sq295=ssi95(jtime)/qpsib(jtime)**2
+      if (q95(jtime).gt.0.1_dp) then
+         sq295=ssi95(jtime)/q95(jtime)**2
       else
          sq295=0.0
       endif
       pbinjmw=pbinj(jtime)/1.e+06_dp
-      pasmma=abs(pasmat(jtime))/1.e+06_dp
+      pasmma=abs(ipmeas(jtime))/1.e+06_dp
       routm=rout(jtime)/100.
       tauenn=tauthn(jtime)
 !     if (pbinjmw.gt.1.e-03_dp.and.abs(pasmma).gt.1.e-03_dp) then
@@ -3626,8 +3626,8 @@
 !     else
 !     tauenn=0.0
 !     endif
-      if (wplasm(jtime).gt.1000.) then
-         wfn_bim=wfbeam(jtime)/wplasm(jtime)
+      if (wmhd(jtime).gt.1000.) then
+         wfn_bim=wfbeam(jtime)/wmhd(jtime)
       else
          wfn_bim=0.0
       endif
@@ -4470,7 +4470,7 @@
       yabs = yabs - dyabs
       ht(msg) = 0.13_dp*0.7_dp
 !
-      pr=pres(1)/(.667_dp*wplasm(jtime)/(vout(jtime)/1.e6_dp))
+      pr=pres(1)/(.667_dp*wmhd(jtime)/(volume(jtime)/1.e6_dp))
       write (text,18981) pr
       msg = msg + 1
       note(msg) = 1
@@ -5351,8 +5351,8 @@
                delvol=(voln(i+1)**2-voln(i)**2)
                bimbf=bimbf+(pbimf(i)+pbimf(i+1))*delvol
             enddo
-            bimbf=bimbf*0.5_dp*vout(jtime)/1.e6_dp*1.5_dp
-            bimbf=bimbf*betat(jtime)/wplasm(jtime)
+            bimbf=bimbf*0.5_dp*volume(jtime)/1.e6_dp*1.5_dp
+            bimbf=bimbf*betat(jtime)/wmhd(jtime)
 !-----------------------------------------------------------------------
 !--         now beam data                                             --
 !-----------------------------------------------------------------------
@@ -5398,8 +5398,8 @@
                delvol=(voln(i+1)**2-voln(i)**2)
                bimbe=bimbe+(workc(i)+workc(i+1))*delvol
             enddo
-            bimbe=bimbe*0.5_dp*vout(jtime)/1.e6_dp*1.5_dp
-            bimbe=bimbe*betat(jtime)/wplasm(jtime)
+            bimbe=bimbe*0.5_dp*volume(jtime)/1.e6_dp*1.5_dp
+            bimbe=bimbe*betat(jtime)/wmhd(jtime)
          endif beams
       endif kin
       endif plot_pres
@@ -5581,7 +5581,7 @@
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
 !
-      pr=pres(1)/(.667_dp*wplasm(jtime)/(vout(jtime)/1.e6_dp))
+      pr=pres(1)/(.667_dp*wmhd(jtime)/(volume(jtime)/1.e6_dp))
       write (text,18981) pr
       msg = msg + 1
       note(msg) = 1
@@ -7907,7 +7907,7 @@
       ht(msg) = 0.10_dp
       msg = msg + 1
 !
-      pr=pres(1)/(.667_dp*wplasm(jtime)/(vout(jtime)/1.e6_dp))
+      pr=pres(1)/(.667_dp*wmhd(jtime)/(volume(jtime)/1.e6_dp))
       write (text,18981) pr
       note(msg) = 1
       lmes(msg) = text
@@ -8337,7 +8337,7 @@
       let = 'qt'
       call setfnmt(let,ishot,itime,dataname)
       dataname=dataname(3:7)//'_efitipmhd.dat '
-      call curvec(dataname,jerror,time,cpasma,ktime,0_i4)
+      call curvec(dataname,jerror,time,ipmhd,ktime,0_i4)
       call zpline(ktime,time,sibdry,bscra,cscra,dscra)
       do i=1,ktime
          if (jerror(i).le.0) cycle
@@ -8347,9 +8347,9 @@
       dataname=dataname(3:7)//'_efitvsurf.dat '
       call curvec(dataname,jerror,time,scrat,ktime,0_i4)
       dataname=dataname(3:7)//'_efitkappa.dat '
-      call curvec(dataname,jerror,time,eout,ktime,0_i4)
+      call curvec(dataname,jerror,time,elong,ktime,0_i4)
       dataname=dataname(3:7)//'_efitaminor.dat'
-      call curvec(dataname,jerror,time,aout,ktime,0_i4)
+      call curvec(dataname,jerror,time,aminor,ktime,0_i4)
       dataname=dataname(3:7)//'_efitzsurf.dat '
       call curvec(dataname,jerror,time,zout,ktime,0_i4)
       dataname=dataname(3:7)//'_efitrsurf.dat '
@@ -8357,7 +8357,7 @@
       dataname=dataname(3:7)//'_efitbetap.dat '
       call curvec(dataname,jerror,time,betap,ktime,0_i4)
       dataname=dataname(3:7)//'_efitli.dat    '
-      call curvec(dataname,jerror,time,ali,ktime,0_i4)
+      call curvec(dataname,jerror,time,li,ktime,0_i4)
       dataname=dataname(3:7)//'_efitq95.dat   '
       call curvec(dataname,jerror,time,qpsi,ktime,0_i4)
       dataname=dataname(3:7)//'_efitbetat.dat '
@@ -8365,7 +8365,7 @@
       dataname=dataname(3:7)//'_efitdensv2.dat'
       call curvec(dataname,jerror,time,dco2v(1,2),ktime,0_i4)
       dataname=dataname(3:7)//'_efitwmhd.dat  '
-      call curvec(dataname,jerror,time,wplasm,ktime,0_i4)
+      call curvec(dataname,jerror,time,wmhd,ktime,0_i4)
 !-----------------------------------------------------------------------
 !     Initialize plot parameters
 !-----------------------------------------------------------------------
@@ -8428,7 +8428,7 @@
       yabs = yabs - dyabs
       ht(msg) = 0.13_dp*0.7_dp
 !
-      pr=pres(1)/(.667_dp*wplasm(jtime)/(vout(jtime)/1.e6_dp))
+      pr=pres(1)/(.667_dp*wmhd(jtime)/(volume(jtime)/1.e6_dp))
       write (text,18981) pr
       msg = msg + 1
       note(msg) = 1
@@ -8778,7 +8778,7 @@
 !--   psip-psim plot                                                         --
 !------------------------------------------------------------------------------
       nplece(1)=nece
-      ddpsi=abs(simagx(jtime)-sibdry(jtime))
+      ddpsi=abs(psim(jtime)-sibdry(jtime))
       curmin=-10.
       curmax=10.
       do i=1,nece

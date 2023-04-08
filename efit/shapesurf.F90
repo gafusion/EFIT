@@ -32,7 +32,7 @@
                 iskip,ixl,ixtpls,ixyz,iznow,jb,jges,jstart,kim,kip, &
                 kjm,kjp,kz,m20,mcentral,n22,nbabs,nerr,nfind,nfounc, &
                 nfouns,njtwagap,nm1,nmax,nmaxfs,nmin,nminfs,nnn,nzz
-      real*8 floorz,abar,area,areart,aspect,bincp,bp2flx, &
+      real*8 floorz,abar,aream,areart,aspect,bincp,bp2flx, &
              bpnow,bpolsq,bpolzs,bpzsq,btnow,btttt2,btuse,btvac2, &
              cj1now,cjorka,cons1,cons2,cons3,cons4,cons5,cons6,cons7, &
              cons8,cons9,cons10,cons11,cons12,cons13,cons14,cons15, &
@@ -41,7 +41,7 @@
              delarea,delerrb,delerrx,delfp,delli,dells,delr,delrnow,delsbu, &
              delsi,delssi,deltaa,dilnow,dis2p,dismin,disnow,dleft,dli, &
              dlll,dlpol,dltol,dmaxfs,dmaxfs0,dminfs,dminfs0,dminow,dmui, &
-             dolnow,douta,dpsis,dright,dsidr,dsiin,dsilim,dsimm,dsiout, &
+             dolnow,atri,dpsis,dright,dsidr,dsiin,dsilim,dsimm,dsiout, &
              dsmin,dtop,dttt,dx,dxtra,dyww,dzring,dzzz1,dzzz2,enrgy, &
              exmui,f_0,fkdel,fmanow,fminow,fnow,fpnow,fsrmax,fszmax, &
              fvsmax,fvsnow,fxmax,fxmin,fxrmax,fxrmin,fxzmax,fxzmin, &
@@ -145,11 +145,11 @@
       jges=iges
       itime=time(iges)
       sibdry(iges)=psibry
-      simagx(iges)=simag
+      psim(iges)=simag
       rout(iges)=(xmin+xmax)/2.0
       zout(iges)=(ymin+ymax)/2.0
-      eout(iges)=(ymax-ymin)/(xmax-xmin)
-      aout(iges)=100.*(xmax-xmin)/2.0
+      elong(iges)=(ymax-ymin)/(xmax-xmin)
+      aminor(iges)=100.*(xmax-xmin)/2.0
       rexpmx=xmax+rexpan
       zexpmx=zxmax
       zzmax(nw)=ymax
@@ -175,7 +175,7 @@
           xmaxx=xout(i)
         endif
       enddo
-      xndnt(iges)=(xminn-xmin+xmax-xmaxx)/2./aout(iges)*100.
+      indent(iges)=(xminn-xmin+xmax-xmaxx)/2./aminor(iges)*100.
       rout(iges)=100.*rout(iges)
       zout(iges)=100.*zout(iges)
 !-----------------------------------------------------------------------
@@ -184,8 +184,8 @@
 !-----------------------------------------------------------------------
       crymin=100.*rymin
       crymax=100.*rymax
-      doutu(iges)=(rout(iges)-crymax)/aout(iges)
-      doutl(iges)=(rout(iges)-crymin)/aout(iges)
+      utri(iges)=(rout(iges)-crymax)/aminor(iges)
+      ltri(iges)=(rout(iges)-crymin)/aminor(iges)
 !---------------------------------------------------------------------
 !--   set up P' and FF', then integration                           --
 !--   ffprim = (RBt) * d/dpsi(RBt)                                  --
@@ -257,7 +257,7 @@
       enddo
       call zpline(nw,sigrid,fpol,bbfpol,ccfpol,ddfpol)
 !
-      vout(iges)=0.0
+      volume(iges)=0.0
       rhovn(nw)=0.0
       xym=xout(1)*yout(1)
       yoxm=yout(1)/xout(1)
@@ -281,7 +281,7 @@
       bpolzs=bpolzs+fnow*0.5_dp
       yoxm=bpolzs/xout(1)*dyww
 !
-      area=0.0
+      aream=0.0
       xyma=yout(1)
       zzm=zmaxis-yout(1)
       do i=2,nfound
@@ -308,8 +308,8 @@
 !
         xypa=yout(i)
         dx=xout(i)-xout(i-1)
-        vout(iges)=vout(iges)+(xyp+xym)/2.0*dx
-        area=area+(xyma+xypa)/2.0*dx
+        volume(iges)=volume(iges)+(xyp+xym)/2.0*dx
+        aream=aream+(xyma+xypa)/2.0*dx
         rhovn(nw)=rhovn(nw)+(yoxp+yoxm)/2.0*dx
         xym=xyp
         xyma=xypa
@@ -322,13 +322,13 @@
         endif
         zzm=zzp
       enddo
-      vout(iges)=abs(vout(iges))*1.0e+06_dp*twopi
-      area=abs(area)
-      areao(iges)=area*1.0e+04_dp
-      rmagx(iges)=rmaxis*100.0
-      zmagx(iges)=zmaxis*100.0
+      volume(iges)=abs(volume(iges))*1.0e+06_dp*twopi
+      aream=abs(aream)
+      area(iges)=aream*1.0e+04_dp
+      rm(iges)=rmaxis*100.0
+      zm(iges)=zmaxis*100.0
       elongm(iges)=emaxis
-      qqmagx(iges)=qmaxis
+      qm(iges)=qmaxis
       tflux(iges)=rhovn(nw)
 !---------------------------------------------------------------------
 !--   gap calculation                                               --
@@ -337,7 +337,6 @@
       dright=1.0e+10_dp
       dtop=1.0e+10_dp
       dbott=1.0e+10_dp
-      seplim(iges)=1000.
       do j=1,limitr-1
         call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
                     xlim(j),ylim(j),xlim(j+1),ylim(j+1),disnow)
@@ -351,12 +350,12 @@
           dright = min(dright,disnow)
       enddo
       dismin=min(dleft,dright,dtop,dbott)
-      oleft(iges)=dleft
-      oright(iges)=dright
-      otop(iges)=dtop
-      obott(iges)=dbott
-      seplim(iges)=dismin
-      ssep(iges)=40.
+      gapin(iges)=dleft
+      gapout(iges)=dright
+      gaptop(iges)=dtop
+      gapbot(iges)=dbott
+      dsep(iges)=dismin
+      drsep(iges)=40.
       if (abs(dismin).le.0.100_dp) then
         if(dleft.eq.dismin) limloc(iges)='IN '
         if(dright.eq.dismin) limloc(iges)='OUT'
@@ -369,21 +368,21 @@
         deltaa=0.0025_dp
         if (delrmax1.lt.deltaa.and.delrmax2.lt.deltaa) then
            limloc(iges)='DN '
-           ssep(iges)=max(delrmax1,delrmax2)*100.
+           drsep(iges)=max(delrmax1,delrmax2)*100.
            if (zseps(1,iges).lt.zout(iges)) then
-             ssep(iges)=-ssep(iges)
+             drsep(iges)=-drsep(iges)
            endif
         else
            if (delrmax1.lt.deltaa) then
             if (zseps(1,iges).gt.zout(iges)) then
              limloc(iges)='SNT'
-             ssep(iges)=abs(delrmax2)*100.
+             drsep(iges)=abs(delrmax2)*100.
             else
              limloc(iges)='SNB'
-             ssep(iges)=-abs(delrmax2)*100.
+             drsep(iges)=-abs(delrmax2)*100.
             endif
            else
-             ssep(iges)=delrmax1*100.
+             drsep(iges)=delrmax1*100.
              limloc(iges)='MAR'
            endif
         endif
@@ -440,14 +439,14 @@
 !--          1.e10   well diverted                                   --
 !----------------------------------------------------------------------
       m20=-20
-      olefs(iges)=-50.0
-      orighs(iges)=-50.0
-      otops(iges)=-50.0
-      obots(iges)=-50.0
+      sepin(iges)=-50.0
+      sepout(iges)=-50.0
+      septop(iges)=-50.0
+      sepbot(iges)=-50.0
       if (itrace.le.0) go to 1085
       if(abs(dpsi).gt.psitol.or.dismin.gt.0.1_dp) go to 1085
       radbou=1.10_dp*xmin
-      if (pasmat(iges).lt.-1.e3_dp) then
+      if (ipmeas(iges).lt.-1.e3_dp) then
          nerr=10000
       else
          nerr=0
@@ -462,19 +461,19 @@
         return
       end if
       !if (nerr.gt.0) then
-      !  olefs(iges)=-89.0
-      !  orighs(iges)=-89.0
-      !  otops(iges)=-89.0
-      !  obots(iges)=-89.0
-      !  seplim(iges)=-89.0
+      !  sepin(iges)=-89.0
+      !  sepout(iges)=-89.0
+      !  septop(iges)=-89.0
+      !  sepbot(iges)=-89.0
+      !  dsep(iges)=-89.0
       !  go to 1085
       !endif
       if (abs(dpsis).le.psitol) then
-        olefs(iges)=-45.0
-        orighs(iges)=-45.0
-        otops(iges)=-45.0
-        obots(iges)=-45.0
-        seplim(iges)=-45.0
+        sepin(iges)=-45.0
+        sepout(iges)=-45.0
+        septop(iges)=-45.0
+        sepbot(iges)=-45.0
+        dsep(iges)=-45.0
         go to 1085
       endif
       call findax(nw,nh,rgrid,zgrid,rmaxis,zmaxis,simag, &
@@ -486,33 +485,33 @@
 !---------------------------------------------------------------------
 !--   gap calculation                                               --
 !---------------------------------------------------------------------
-      seplim(iges)=1000.
+      dsep(iges)=1000.
       do j=1,nfouns-1
         call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
                     xouts(j),youts(j),xouts(j+1),youts(j+1),disnow)
-        seplim(iges)=-min(abs(seplim(iges)),disnow)
+        dsep(iges)=-min(abs(dsep(iges)),disnow)
       enddo
 !----------------------------------------------------------------------
 !--   start distance calculation                                     --
 !----------------------------------------------------------------------
       ! TODO: xleft, zleft, xright, zright, xztop, ytop, xzbot, and ybot
       !       are never defined in efit... this affects the computation
-      !       of olefs, orighs, otops, and obots
+      !       of sepin, sepout, septop, and sepbot
       zhp=zout(iges)*0.01_dp
       radp=rout(iges)*0.01_dp
       do j=1,nfouns-1
        if (xouts(j).le.radp) then
 !        dxll=(youts(j)-zleft)*(youts(j+1)-zleft)
 !        if (dxll.le.0.0) then
-!        if (youts(j).eq.zleft) olefs(iges)=(xouts(j)-xleft)*100.0
-!        if (youts(j+1).eq.zleft) olefs(iges)=(xouts(j+1)-xleft)*100.0
-!        if (xouts(j).eq.xouts(j+1)) olefs(iges)=(xouts(j)-xleft)*100.0
+!        if (youts(j).eq.zleft) sepin(iges)=(xouts(j)-xleft)*100.0
+!        if (youts(j+1).eq.zleft) sepin(iges)=(xouts(j+1)-xleft)*100.0
+!        if (xouts(j).eq.xouts(j+1)) sepin(iges)=(xouts(j)-xleft)*100.0
         if (xouts(j).ne.xouts(j+1)) then
          slope=(youts(j+1)-youts(j))/(xouts(j+1)-xouts(j))
          if (slope.ne.0.0) then
           bincp=youts(j)-slope*xouts(j)
 !          xl=(zleft-bincp)/slope
-!          olefs(iges)=(xl-xleft)*100.0
+!          sepin(iges)=(xl-xleft)*100.0
          endif
         endif
 !        endif
@@ -520,15 +519,15 @@
        if (xouts(j).ge.radp) then
 !        dxrr=(youts(j+1)-zright)*(youts(j)-zright)
 !        if (dxrr.le.0.0) then
-!        if (youts(j).eq.zright) orighs(iges)=(xright-xouts(j))*100.0
-!        if (youts(j+1).eq.zright) orighs(iges)=(xright-xouts(j+1))*100.0
-!        if (xouts(j).eq.xouts(j+1)) orighs(iges)=(xright-xouts(j))*100.0
+!        if (youts(j).eq.zright) sepout(iges)=(xright-xouts(j))*100.0
+!        if (youts(j+1).eq.zright) sepout(iges)=(xright-xouts(j+1))*100.0
+!        if (xouts(j).eq.xouts(j+1)) sepout(iges)=(xright-xouts(j))*100.0
         if (xouts(j).ne.xouts(j+1)) then
          slope=(youts(j+1)-youts(j))/(xouts(j+1)-xouts(j))
          if (slope.ne.0.0) then
           bincp=youts(j)-slope*xouts(j)
 !          xr=(zright-bincp)/slope
-!          orighs(iges)=(xright-xr)*100.0
+!          sepout(iges)=(xright-xr)*100.0
          endif
         endif
 !        endif
@@ -536,33 +535,33 @@
        if (youts(j).ge.zhp) then
 !        dytt=(xouts(j)-xztop)*(xouts(j+1)-xztop)
 !        if (dytt.le.0.0) then
-!        if (xouts(j).eq.xouts(j+1)) otops(iges)=(ytop-youts(j))*100.0
+!        if (xouts(j).eq.xouts(j+1)) septop(iges)=(ytop-youts(j))*100.0
         if (xouts(j).ne.xouts(j+1)) then
          slope=(youts(j+1)-youts(j))/(xouts(j+1)-xouts(j))
          bincp=youts(j)-slope*xouts(j)
 !         yt=slope*xztop+bincp
-!         otops(iges)=(ytop-yt)*100.0
+!         septop(iges)=(ytop-yt)*100.0
         endif
 !        endif
        endif
        if(youts(j).gt.zhp) cycle
 !       dybb=(xouts(j)-xzbot)*(xouts(j+1)-xzbot)
 !       if(dybb.gt.0.0) cycle
-!       if(xouts(j).eq.xouts(j+1)) obots(iges)=(youts(j)-ybot)*100.0
+!       if(xouts(j).eq.xouts(j+1)) sepbot(iges)=(youts(j)-ybot)*100.0
        if(xouts(j).eq.xouts(j+1)) cycle
        slope=(youts(j+1)-youts(j))/(xouts(j+1)-xouts(j))
        bincp=youts(j)-slope*xouts(j)
 !       yb=slope*xzbot+bincp
-!       obots(iges)=(yb-ybot)*100.0
+!       sepbot(iges)=(yb-ybot)*100.0
       enddo
 !
  1085 continue
       call chisqr(iges)
-      chifin=tsaisq(iges)
+      chifin=chisq(iges)
       nnn=1
       call betali(iges,rgrid,zgrid,nnn,kerror)
       if(kerror.gt.0) return
-      peak(iges)=pres(1)/(.667_dp*wplasm(iges)/(vout(iges)/1.e6_dp))
+      peak(iges)=pres(1)/(.667_dp*wmhd(iges)/(volume(iges)/1.e6_dp))
       do i=2,nw
         if(rzzmax(i).gt.0.0) exit
       enddo
@@ -1126,9 +1125,9 @@
 !---------------------------------------------------------------------
       if(idoqn.eq.1) call zpline(nw,xsisii,qpsi,bfpol,cfpol,dfpol)
       siwant=0.95_dp
-      qpsib(iges)=seval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
+      q95(iges)=seval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
       shearb(iges)=speval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
-      shearb(iges)=shearb(iges)/qpsib(iges)
+      shearb(iges)=shearb(iges)/q95(iges)
       siwant=0.01_dp
       qpsic=seval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
       shearc=speval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
@@ -1204,13 +1203,13 @@
 !--   normalize all J's to I/area                         96/04/11    --
 !-----------------------------------------------------------------------
       cjorsw(iges)=seval(nw,psiwant,xsisii,cjor,bfpol,cfpol,dfpol)
-      if (abs(cpasma(iges)).gt.1.e-1_dp) then
-        cjor0(iges)=cjor(1)*areao(iges)/cpasma(iges)/1.0e4_dp
-        cjor95(iges)=cjor95(iges)*areao(iges)/cpasma(iges)/1.0e4_dp
-        cjorsw(iges)=cjorsw(iges)*areao(iges)/cpasma(iges)/1.0e4_dp
+      if (abs(ipmhd(iges)).gt.1.e-1_dp) then
+        cjor0(iges)=cjor(1)*area(iges)/ipmhd(iges)/1.0e4_dp
+        cjor95(iges)=cjor95(iges)*area(iges)/ipmhd(iges)/1.0e4_dp
+        cjorsw(iges)=cjorsw(iges)*area(iges)/ipmhd(iges)/1.0e4_dp
         siwant=0.995
         cjor99(iges)=seval(nw,siwant,xsisii,cjor,bfpol,cfpol,dfpol)
-        cjor99(iges)=cjor99(iges)*areao(iges)/cpasma(iges)/1.0e4_dp
+        cjor99(iges)=cjor99(iges)*area(iges)/ipmhd(iges)/1.0e4_dp
       endif
       do i=1,nw
         bpres(i)=sqrt(volp(i)/volp(nw))
@@ -1227,7 +1226,7 @@
       ssiwant(iges)=speval(nw,xsiww,bpres,qpsi,bfpol,cfpol,dfpol) &
                     /qsiwant(iges)
       ssi95(iges)=speval(nw,xsi95,bpres,qpsi,bfpol,cfpol,dfpol) &
-                    /qpsib(iges)
+                    /q95(iges)
       ssi01=speval(nw,xsi01,bpres,qpsi,bfpol,cfpol,dfpol) &
                     /qpsic
 !-------------------------------------------------------------------
@@ -1242,22 +1241,22 @@
        if(kerror.gt.0) return
        call fluxav(bfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid,nh, &
                    rxxrry,nzz ,sdlobp,sdlbp)
-      area=0.0
+      aream=0.0
       xyma=dfpol(1)
       do i=2,nfounc
         xypa=dfpol(i)
         dx=bfpol(i)-bfpol(i-1)
-        area=area+(xyma+xypa)/2.0*dx
+        aream=aream+(xyma+xypa)/2.0*dx
         xyma=xypa
       enddo
-      area=abs(area)*1.e4_dp
-      delarea=areao(iges)-area
+      aream=abs(aream)*1.e4_dp
+      delarea=area(iges)-aream
       pasnow=sdlbp/tmu/twopi
-      cj1now=(cpasma(iges)-pasnow)/delarea
-      cj1ave(iges)=cj1now/cpasma(iges)*areao(iges)
+      cj1now=(ipmhd(iges)-pasnow)/delarea
+      cj1ave(iges)=cj1now/ipmhd(iges)*area(iges)
       cj1now=cj1now*10.
 !     if (iand(iout,1).ne.0) then
-!     write (nout,*) cpasma(iges),pasnow,areao(iges),area,cj1ave(iges) &
+!     write (nout,*) ipmhd(iges),pasnow,area(iges),aream,cj1ave(iges) &
 !                     ,cj1now,xsi95
 !     endif
 !
@@ -1277,24 +1276,24 @@
         zseps(1,iges)=zseps(2,iges)
         zseps(2,iges)=rtemp
       endif
-      aspect=rout(iges)/aout(iges)
-      qsta(iges)=rcentr*abs(bcentr(iges))/tmu/abs(cpasma(iges))* &
-                 (eout(iges)**2+1.)/2./aspect**2
-      olamda=betap(iges)+ali(iges)/2.
+      aspect=rout(iges)/aminor(iges)
+      qstar(iges)=rcentr*abs(bcentr(iges))/tmu/abs(ipmhd(iges))* &
+                 (elong(iges)**2+1.)/2./aspect**2
+      olamda=betap(iges)+li(iges)/2.
       olamda=1.+0.5_dp*olamda**2
-      douta=(doutu(iges)+doutl(iges))/2.
+      atri=(utri(iges)+ltri(iges))/2.
 
-      fkdel=1.24_dp-0.54_dp*eout(iges)+0.3_dp*(eout(iges)**2+douta**2) &
-           +0.13_dp*douta
-      qsta(iges)=qsta(iges)*fkdel*(1.+olamda/aspect**2)
+      fkdel=1.24_dp-0.54_dp*elong(iges)+0.3_dp*(elong(iges)**2+atri**2) &
+           +0.13_dp*atri
+      qstar(iges)=qstar(iges)*fkdel*(1.+olamda/aspect**2)
       sepexp(iges)=-100.
       if (kdata.ne.4) then
-        pohm=vloopt(iges)*cpasma(iges)
+        pohm=vloopt(iges)*ipmhd(iges)
         pohm=max(czero,pohm)
         pin=pohm+pbinj(iges)
         if (pin.gt.1.e-06_dp) then
-          taumhd(iges)=wplasm(iges)/pin*1000.
-          taudia(iges)=wplasmd(iges)/pin*1000.
+          taumhd(iges)=wmhd(iges)/pin*1000.
+          taudia(iges)=wdia(iges)/pin*1000.
         endif
       endif
 !
@@ -1303,14 +1302,14 @@
 !--   compute fast and thermal stored energy                         --
 !--   using Heibrink and Duong's approximate formula   L.Lao 10/91   --
 !----------------------------------------------------------------------
-      wtherm(iges)=wplasm(iges)
+      wtherm(iges)=wmhd(iges)
       wfbeam(iges)=0.0
       taujd3(iges)=0.0
       tauthn(iges)=0.0
       if ((dco2v(iges,2).ge.1.e+10_dp) .and. (pbinj(iges).gt.100.) &
-          .and. (abs(cpasma(iges)).gt.10000.) .and. (wplasm(iges).gt.1000.)) then
+          .and. (abs(ipmhd(iges)).gt.10000.) .and. (wmhd(iges).gt.1000.)) then
         cons1=dco2v(iges,2)*1.e-13_dp                      !normalized density
-        cons2=wplasm(iges)/cons1/vout(iges)/3.36_dp/1.e-6_dp  !electron temperature (ev)
+        cons2=wmhd(iges)/cons1/volume(iges)/3.36_dp/1.e-6_dp  !electron temperature (ev)
         cons3=75000.                                    !w_beam (ev)
         cons4=22.*cons2                                  !w_crit (ev)
         cons5=log(1.+(75000./cons4)**1.5_dp)
@@ -1324,8 +1323,8 @@
         cons13=1.+cons12*(0.5_dp*cons10-1.732_dp*(pi/6+cons11))
         cons14=cons6*3/cons5                            !spitzer tau_se (sec)
         cons15=2.75e-1_dp*pbinj(iges)*cons14*cons13          !stored beam energy (j)
-        cons16=wplasm(iges)-cons15                         !thermal energy (j)
-        cons17=cons16/wplasm(iges)
+        cons16=wmhd(iges)-cons15                         !thermal energy (j)
+        cons17=cons16/wmhd(iges)
         wtherm(iges)=cons16
         wfbeam(iges)=cons15
 !-----------------------------------------------------------------------
@@ -1336,7 +1335,7 @@
         ptotal = pin/1.e6_dp                              !toal power in mw
         if (ptotal.gt.0.01_dp) then
           consa1=ptotal**0.49_dp
-          consa2=(abs(cpasma(iges))/1.e6_dp)**1.08_dp
+          consa2=(abs(ipmhd(iges))/1.e6_dp)**1.08_dp
           consa3=(rout(iges)/100.)**1.45_dp
           taujd3(iges)=110.*consa2*consa3/consa1
         else
@@ -1471,7 +1470,7 @@
       call seva2d(bkx,lkx,bky,lky,c,rkkk,zkkk,pds,ier,n111)
       ssitra=pds(1)
       ixl=1
-      if (pasmat(iges).lt.-1.e3_dp) then
+      if (ipmeas(iges).lt.-1.e3_dp) then
          nerr=10000
       else
          nerr=0
@@ -1685,7 +1684,7 @@
 16199 xxtras=rminfs-dminfs
       yxtras=zminfs
       ixl=1
-      if (pasmat(iges).lt.-1.e3_dp) then
+      if (ipmeas(iges).lt.-1.e3_dp) then
         nerr=10000
       else
         nerr=0
@@ -1839,7 +1838,7 @@
 66501 xxtras=rmaxss+0.0001_dp
       yxtras=zmaxss
       ixl=1
-      if (pasmat(iges).lt.-1.e3_dp) then
+      if (ipmeas(iges).lt.-1.e3_dp) then
         nerr=10000
       else
         nerr=0
@@ -1991,7 +1990,7 @@
 66199 xxtras=rminss-0.0001_dp
       yxtras=zminss
       ixl=1
-      if (pasmat(iges).lt.-1.e3_dp) then
+      if (ipmeas(iges).lt.-1.e3_dp) then
         nerr=10000
       else
         nerr=0
@@ -2201,7 +2200,7 @@
           fxrmax=rseps(2,iges)/100.
           fxzmax=zseps(2,iges)/100.
         endif
-        if (pasmat(iges).lt.-1.e3_dp) then
+        if (ipmeas(iges).lt.-1.e3_dp) then
           nerr=10000
         else
           nerr=0
@@ -2283,7 +2282,7 @@
          yxtras=yxtraa
         endif
         if(xxtras.le.rgrid(1).or.xxtras.ge.rgrid(nw)) cycle
-        if (pasmat(iges).lt.-1.e3_dp) then
+        if (ipmeas(iges).lt.-1.e3_dp) then
          nerr=10000
         else
          nerr=0
@@ -2461,7 +2460,7 @@
         delerr=max(delerrx,delerr)
        enddo
       enddo
-      curnow=abs(cpasma(iges))/areao(iges)*1.e4_dp
+      curnow=abs(ipmhd(iges))/area(iges)*1.e4_dp
       delerr=delerr/curnow
       delerb=delerb/curnow
       alpha(iges)=2*sumbz2/sumbp2
@@ -2497,7 +2496,7 @@
       cdflux(iges)=-cdflux(iges)*darea*tmu
       edflux(iges)=-edflux(iges)*darea*tmu**2
       sbpli=(s1(iges)+s2(iges)*(1.+rttt(iges)*0.01_dp/rcentr))/4.0
-      vbpli=betap(iges)+ali(iges)/2.
+      vbpli=betap(iges)+li(iges)/2.
       if (kvtor.gt.0) vbpli=vbpli+betapw(iges)
       dbpli(iges)=abs((sbpli-vbpli)/sbpli)
       chidlc=0.0
@@ -2508,34 +2507,34 @@
       if (idiart.gt.0) then
         bp2flx=bpolav(iges)**2
         dmui=1.0e+06_dp*diamag(iges)*4.*pi*bcentr(iges)*rcentr &
-              /bp2flx/vout(iges)
+              /bp2flx/volume(iges)
         rcurrm=rttt(iges)*0.01_dp
         betapd(iges)=s1(iges)/2.+s2(iges)/2.*(1.-rcurrm/rcentr)-dmui
         betatd(iges)=betapd(iges)*bp2flx/bcentr(iges)**2*100.
         betatd(iges)=betatd(iges)*(rout(iges)/100./rcentr)**2
-        wplasmd(iges)=1.5_dp*betapd(iges)*bp2flx/2./tmu/2./pi*vout(iges) &
+        wdia(iges)=1.5_dp*betapd(iges)*bp2flx/2./tmu/2./pi*volume(iges) &
                       /1.0e+06_dp
         if (kdata.ne.4) then
-          pohm=vloopt(iges)*cpasma(iges)
+          pohm=vloopt(iges)*ipmhd(iges)
           pohm=max(czero,pohm)
           pin=pohm+pbinj(iges)
           if (pin.gt.1.e-06_dp) then
-            taudia(iges)=wplasmd(iges)/pin*1000.
+            taudia(iges)=wdia(iges)/pin*1000.
           endif
         endif
       endif
 !
-      xmui=2.*twopi*bcentr(iges)*rcentr*cdflux(iges)/vout(iges) &
+      xmui=2.*twopi*bcentr(iges)*rcentr*cdflux(iges)/volume(iges) &
            *1.0e+06_dp/bpolav(iges)**2
-      exmui=twopi*edflux(iges)/vout(iges) &
+      exmui=twopi*edflux(iges)/volume(iges) &
             *1.0e+06_dp/bpolav(iges)**2
       sbppa=(s1(iges)+s2(iges)*(1.-rttt(iges)*0.01_dp/rcentr))/2.-xmui
       sbpp=(s1(iges)+s2(iges)*(1.-rttt(iges)*0.01_dp/rcentr))/2.-exmui
       delbp(iges)=abs((sbpp-betap(iges))/sbpp)
-      if (eout(iges).gt.1.2_dp) then
+      if (elong(iges).gt.1.2_dp) then
         sbli=(s1(iges)/2.+s2(iges)/2.*(1.-rttt(iges)*0.01_dp/rcentr)- &
               s3(iges))/(alpha(iges)-1.)
-        delli=abs((sbli-ali(iges))/ali(iges))
+        delli=abs((sbli-li(iges))/li(iges))
         delbp(iges)=max(delbp(iges),delli)
       endif
 !
@@ -2650,11 +2649,11 @@
       endif kwripre_li
 !
       if (dco2v(iges,2).gt.1.e+10_dp) then
-        partic=dco2v(iges,2)*vout(iges)
-        if(partic.gt.1.0e+10_dp) tave(iges)=wplasm(iges)/partic/3. &
+        partic=dco2v(iges,2)*volume(iges)
+        if(partic.gt.1.0e+10_dp) tave(iges)=wmhd(iges)/partic/3. &
                                                          /1.602e-16_dp
-        resist=vloopt(iges)/cpasma(iges)
-        zeta=resist*areao(iges)/twopi/rout(iges)
+        resist=vloopt(iges)/ipmhd(iges)
+        zeta=resist*area(iges)/twopi/rout(iges)
         xlam=20.
         if (tave(iges).gt.0.001_dp) then
           tevolt=sqrt((tave(iges)*1000.)**3)
@@ -2808,8 +2807,8 @@
       zcur=zcurrt(jges)/100
       call seva2d(bkx,lkx,bky,lky,c,rcur,zcur,pds,ier,n555)
       vertn(jges)=1.-pds(5)/pds(2)*rcur
-      rx=rmagx(jges)/100.
-      f_0=log(8*rout(jges)/abar)-2+betap(jges)+ali(jges)/2+.5_dp
+      rx=rm(jges)/100.
+      f_0=log(8*rout(jges)/abar)-2+betap(jges)+li(jges)/2+.5_dp
       delr=rout(jges)/100.-1.67_dp
 !-----------------------------------------------------------------------
 !--   metal wall                                                    --
@@ -2826,19 +2825,19 @@
       if ((itek.ge.5).and.(iges.eq.igmax)) close(unit=35)
       ! initialize output variables that weren't set
       zout=0.0
-      eout=0.0
-      doutu=0.0
-      doutl=0.0
-      qsta=0.0
-      oleft=0.0
-      oright=0.0
-      otop=0.0
-      obott=0.0
-      olefs=0.0
-      orighs=0.0
-      otops=0.0
-      obots=0.0
-      qpsib=0.0
+      elong=0.0
+      utri=0.0
+      ltri=0.0
+      qstar=0.0
+      gapin=0.0
+      gapout=0.0
+      gaptop=0.0
+      gapbot=0.0
+      sepin=0.0
+      sepout=0.0
+      septop=0.0
+      sepbot=0.0
+      q95=0.0
       shearb=0.0
       vertn=0.0
       rco2v=0.0
@@ -2846,35 +2845,35 @@
       rco2r=0.0
       dco2r=0.0
       sibdry=0.0
-      areao=0.0
+      area=0.0
       terror=0.0
       elongm=0.0
       qmerci=0.0
-      qqmagx=0.0
+      qm=0.0
       cdflux=0.0
       alpha=0.0
       rttt=0.0
-      xndnt=0.0
+      indent=0.0
       rseps=0.0
       zseps=0.0
       sepexp=0.0
-      seplim=0.0
+      dsep=0.0
       aaq1=0.0
       aaq2=0.0
       aaq3=0.0
-      rmagx=0.0
-      zmagx=0.0
-      simagx=0.0
+      rm=0.0
+      zm=0.0
+      psim=0.0
       rcurrt=0.0
       zcurrt=0.0
-      ali=0.0
-      ali3=0.0
+      li=0.0
+      li3=0.0
       betap=0.0
       betat=0.0
-      wplasm=0.0
+      wmhd=0.0
       betapd=0.0
       betatd=0.0
-      wplasmd=0.0
+      wdia=0.0
       bpolav=0.0
       s1=0.0
       s2=0.0
@@ -2888,12 +2887,12 @@
       cjor99=0.0
       cj1ave=0.0
       pp95=0.0
-      ssep=0.0
+      drsep=0.0
       yyy2=0.0
       xnnc=0.0
       fexpan=0.0
-      qqmin=0.0
-      rqqmin=0.0
+      qmin=0.0
+      rhoqmin=0.0
       ssi01=0.0
       ssi95=0.0
       fexpvs=0.0

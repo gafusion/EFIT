@@ -73,14 +73,14 @@
           nwwcur,nffcur,nppcur,nercur,ntime,ndim,kxiter, &
           mqwant,mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r, &
           modef,modep,modew,kubics,nfourier, &
-          ali_max,ali_min,betap_lim,plasma_diff, &
-          aout_max,aout_min,eout_max,eout_min, &
+          li_max,li_min,betap_max,plasma_diff, &
+          aminor_max,aminor_min,elong_max,elong_min, &
           rout_max,rout_min,zout_max,zout_min, &
           rcurrt_max,rcurrt_min,zcurrt_max,zcurrt_min, &
-          qsta_max,qsta_min,betat_lim, &
-          oleft_lim,oright_lim,otop_lim, &
-          olefs_check,qout_max,qout_min, &
-          dbpli_lim,delbp_lim
+          qstar_max,qstar_min,betat_max, &
+          gapin_min,gapout_min,gaptop_min, &
+          sepin_check,qout_max,qout_min, &
+          dbpli_diff,delbp_diff
            
 
       kubics = 4 ! Unused

@@ -100,14 +100,14 @@
       ivesel=0
 
       ! checks for solution validity (see chkerr.f90) 
-      ali_max=2.5
-      ali_min=0.05
+      li_max=2.5
+      li_min=0.05
       betap_lim=6.0
       plasma_diff=0.08
-      aout_max=75.0
-      aout_min=30.
-      eout_max=4.0
-      eout_min=0.8
+      aminor_max=75.0
+      aminor_min=30.
+      elong_max=4.0
+      elong_min=0.8
       rout_max=240.
       rout_min=90.0
       zout_max=100.
@@ -116,13 +116,13 @@
       rcurrt_min=90.0
       zcurrt_max=100.
       zcurrt_min=-100.
-      qsta_max=200.
-      qsta_min=1.
+      qstar_max=200.
+      qstar_min=1.
       betat_lim=25.
-      oleft_lim=-0.2
-      oright_lim=-0.2
-      otop_lim=-0.2
-      olefs_check=-90.0
+      gapin_lim=-0.2
+      gapout_lim=-0.2
+      gaptop_lim=-0.2
+      sepin_check=-90.0
       qout_max=200.
       qout_min=1.
       dbpli_lim=0.05

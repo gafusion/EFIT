@@ -4,15 +4,10 @@
 !!    computes the dimensionless poloidal fluxes for the r-z grid and
 !!      updates additional parameters used in the constraints
 !!
-!!
 !!    @param ix : equilibrium (inner) loop iteration index
-!!
 !!    @param ixt : total iteration index (current+equilibirum loops)
-!!
 !!    @param ixout : current profile (outer) loop iteration index
-!!
 !!    @param jtime : time index
-!!
 !!    @param kerror : error flag
 !!
 !**********************************************************************
@@ -22,22 +17,29 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-
-      dimension pds(6)
-      integer*4 iii
-      real*8 :: zmaxis_last
-      integer*4, parameter :: nnn=1,nqiter=10
+      implicit none
+      real*8 ffcurr,fpcurr,ppcurr,prcur4,pwcur4
+      integer*4, intent(in) :: ix,ixt,ixout,jtime
+      integer*4, intent(out) :: kerror
+      integer*4 i,iii,j,k,kk,nn,ier,itot,nfounc,nnerr,nqend,nzz
+      real*8 aouter,avebp,bpmin,bpnow,dels,delx,dely,det,dx,epssep, &
+             fpnow,pp0,ppw,pres0,prew0,ptop0,pwop0, &
+             r1qdry,r2qdry,r2surq,r2surs,rdiml,relsi,rgmvt, &
+             sdlbp,sdlobp,sibpmin,sisinow,siwant,xerr, &
+             xpsimins,xs,xvsmax,xvsmin,xww,xym,xyma,xyp,xypa,yerr,ys,yww
+      real*8 pds(6)
+      integer*4, parameter :: nnn=1,nqiter=10,isplit=8
       real*8, parameter :: psitol=1.0e-04_dp,cdum=1.0
-      data isplit/8/,zmaxis_last/0.0/
-      save xguess,yguess,xltrac,radbou
+      real*8 radbou,xguess,xltrac,yguess,zmaxis_last
+      save radbou,xltrac,xguess,yguess
+      data zmaxis_last/0.0/
 !
       ! initialize variables
       zmaxis=0.0
       simag=0.0
-      vout=0.0
+      volume=0.0
       rout=0.0
-      aout=0.0
+      aminor=0.0
 !
       if(ivacum.eq.1) return
       if (ixt.le.1) then
@@ -52,14 +54,12 @@
 !----------------------------------------------------------------------
 !--   first set up bi-cubic spline interpolation in findax           --
 !----------------------------------------------------------------------
-      m10=10
-
 #ifdef DEBUG_LEVEL2
       write (6,*) 'Entering findax'
 #endif
       !print *, 'nw,nh,rgrid,zgrid',nw,nh,rgrid,zgrid
       !print *, 'rmaxis,zmaxis,simag', rmaxis,zmaxis,simag
-      !print *, 'psibry,rseps(1,jtime),zseps(1,jtime),m10', psibry,rseps(1,jtime),zseps(1,jtime),m10
+      !print *, 'psibry,rseps(1,jtime),zseps(1,jtime)', psibry,rseps(1,jtime),zseps(1,jtime)
       !print *, 'xout,yout,nfound,psi', xout,yout,nfound,psi
       !print *, 'xmin,xmax,ymin,ymax',xmin,xmax,ymin,ymax
       !print *,  'zxmin,zxmax,rymin,rymax' , zxmin,zxmax,rymin,rymax
@@ -67,7 +67,7 @@
       !print *, 'limitr,xlim,ylim,limfag', limitr,xlim,ylim,limfag
       !print *, 'ixt,jtime,kerror', ixt,jtime,kerror
       call findax(nw,nh,rgrid,zgrid,rmaxis,zmaxis,simag, &
-                  psibry,rseps(:,jtime),zseps(:,jtime),m10, &
+                  psibry,rseps(:,jtime),zseps(:,jtime),10, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
                   zxmin,zxmax,rymin,rymax,dpsi,bpol,bpolz, &
                   limitr,xlim,ylim,limfag,ixt,jtime,kerror)
@@ -98,7 +98,7 @@
 !-----------------------------------------------------------------------
 !--   Trace boundary, first check for counter beam injection          --
 !-----------------------------------------------------------------------
-      if (pasmat(jtime).lt.-1.e3_dp) then
+      if (ipmeas(jtime).lt.-1.e3_dp) then
         nnerr=10000
       else
         nnerr=0
@@ -115,12 +115,11 @@
 !----------------------------------------------------------------------
 !--   find magnetic axis and poloidal flux at axis simag             --
 !----------------------------------------------------------------------
-      m20=20
 #ifdef DEBUG_LEVEL2
-      write (6,*) 'Entering findax after m20 set'
+      write (6,*) 'Entering findax at simag'
 #endif
       call findax(nw,nh,rgrid,zgrid,rmaxis,zmaxis,simag, &
-                  psibry,rseps(:,jtime),zseps(:,jtime),m20, &
+                  psibry,rseps(:,jtime),zseps(:,jtime),20, &
                   xout,yout,nfound,psi,xmin,xmax,ymin,ymax, &
                   zxmin,zxmax,rymin,rymax,dpsi,bpol,bpolz, &
                   limitr,xlim,ylim,limfag,ixt,jtime,kerror)
@@ -178,7 +177,7 @@
         rsepex=-999.
         yvs2=1000.
         skipvs: if (kskipvs.ne.0) then
-        avebp=cpasma(jtime)*tmu/aouter
+        avebp=ipmhd(jtime)*tmu/aouter
         bpmin=avebp
         ! TODO: sibpmin has not yet been defined...
 !        sibpold=sibpmin
@@ -434,15 +433,15 @@
         if((ix.gt.1).or.(ixout.le.1)) call chisqr(jtime)
       endif
       cvolp(ixt)=abs(cvolp(ixt))*1.0e+06_dp
-      vout(jtime)=cvolp(ixt)
+      volume(jtime)=cvolp(ixt)
       rout(jtime)=(xmax+xmin)/2.*100.
-      aout(jtime)=100.*(xmax-xmin)/2.0
+      aminor(jtime)=100.*(xmax-xmin)/2.0
       csimag(ixt)=simag
       csibry(ixt)=psibry
       crmaxi(ixt)=rmaxis*100.
       czmaxi(ixt)=zmaxis*100.
       cemaxi(ixt)=emaxis
-      cchisq(ixt)=tsaisq(jtime)
+      cchisq(ixt)=chisq(jtime)
       csumip(ixt)=sumip
       tratio(ixt)=cratio
 !---------------------------------------------------------------------
@@ -460,7 +459,7 @@
         zmaxis_last=zmaxis
       endif
       if (isetfb.ne.0) then
-        fb_plasma(jtime)=abs(brfb(1)*nfbcoil/cpasma(jtime))
+        fb_plasma(jtime)=abs(brfb(1)*nfbcoil/ipmhd(jtime))
         delzmm = zmaxis - zmaxis_last
         zmaxis_last=zmaxis
       elseif (eelip.gt.2.25_dp .and. itell.eq.0) then
@@ -473,11 +472,10 @@
       if (((icinit.gt.0).and.(iconvr.ne.3).and.(ixout.le.1)).or.(icurrt.eq.4).or. &
           (((icurrt.eq.2).or.(icurrt.eq.5)).and.(ixt.le.1).and.(icinit.gt.0))) then
         nqend=1
-        n22=2
         if(errorm.lt.0.1_dp.and.icurrt.eq.4) nqend=nqiter
         do i=1,nqend
           if (i.gt.1) then
-            call currnt(n22,jtime,n22,kerror)
+            call currnt(2,jtime,2,kerror)
             if(kerror.gt.0) return
           endif
 
@@ -490,10 +488,8 @@
             rgmvt=(rmaxis/rvtor)**2-1.
             cjmaxi=cjmaxi+cratio/darea*rdiml*rbetaw*rgmvt
           elseif (kvtor.eq.11) then
-            ypsm=0.0
-            n1set=1
-            pres0=prcur4(n1set,ypsm,kppcur)
-            prew0=pwcur4(n1set,ypsm,kwwcur)
+            pres0=prcur4(1,0.0)
+            prew0=pwcur4(1,0.0)
             rgmvt=(rmaxis/rvtor)**2-1.
             pwop0=prew0/pres0
             ptop0=exp(pwop0*rgmvt)
@@ -545,19 +541,19 @@
 
 !**********************************************************************
 !>
-!!    weight computes the weighting function w.
+!!    weight computes the weighting function www
 !!    
-!!
 !!    @param x : R axis of the grid (nw points)
-!!
 !!    @param y : Z axis of the grid (nh points)
 !!
 !**********************************************************************
       subroutine weight(x,y)
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension x(nw),y(nh)
+      implicit none
+      real*8, intent(in) :: x(nw),y(nh)
+      integer*4 i,ileft,ins,iright,j,jbot,jtop,kk
+      real*8 a,a1,a2,a3,a4,b,c,d,p1,p2,p3,p4,psil,xxw,yyw
 !
       if (iweigh.le.0) then
         do kk=1,nwnh
@@ -582,19 +578,19 @@
         if((x(i).lt.xmax).and.(x(i+1).ge.xmax)) exit
       enddo
       do j=1,nh-1
-        jbotm=j
+        jbot=j
         if((y(j).le.ymin).and.(y(j+1).gt.ymin)) exit
       enddo
-      do j=jbotm,nh-1
+      do j=jbot,nh-1
         jtop=j
         if((y(j).lt.ymax).and.(y(j+1).ge.ymax)) exit
       enddo
       jtop=min(jtop,nh)
-      jbotm=max(jbotm,1)
+      jbot=max(jbot,1)
       ileft=max(ileft,1)
       iright=min(iright,nw)
       do i = ileft,iright
-        do j = jbotm,jtop
+        do j = jbot,jtop
           kk = j+nh*(i-1)
           a = psi(kk-nh)
           b = psi(kk+nh)
@@ -605,7 +601,7 @@
           if(j.eq.1) c = 0.
           if(j.eq.nh) d = 0.
           psil = psibry
-          in = 0
+          ins = 0
           p1 = 0.
           p2 = 0.
           p3 = 0.
@@ -617,29 +613,29 @@
           if (a.ge.psil) then
             p1 = a-psil
           else
-            in = in+1
+            ins = ins+1
             a1 = a-psil
           endif
           if (b.ge.psil) then
             p2 = b-psil
           else
-            in = in+1
+            ins = ins+1
             a2 = b-psil
           endif
           if (c .ge. psil) then
             p3 = c-psil
           else
-            in = in+1
+            ins = ins+1
             a3 = c-psil
           endif
           if (d.ge.psil) then
             p4 = d-psil
           else
-            in = in+1
+            ins = ins+1
             a4 = d-psil
           endif
-          in = in+1
-          select case (in)
+          ins = ins+1
+          select case (ins)
           case (1)
             www(kk) = 1.
           case (2)
@@ -668,10 +664,11 @@
 
 !**********************************************************************
 !>
-!!    chisqr computes the figure of merit for fitting
-!!    chisq.
+!!    update the computed measurment values and calculate the chisq
+!!    figure of merit for fitting
 !!
 !!    @param jtime : time index
+!!
 !**********************************************************************
       subroutine chisqr(jtime)
       include 'eparm.inc'
@@ -772,10 +769,10 @@
       cmecebz(jtime)=cm
 !
       cm=sum(pcurrt)
-      cpasma(jtime)=cm
+      ipmhd(jtime)=cm
       if(ivesel.gt.0) cm=cm+sum(vcurrt)
       if (swtcur.ne.0.0) then
-        saiip=(fwtcur/swtcur)**nsq*(pasmat(jtime)-cm)**2
+        saiip=(fwtcur/swtcur)**nsq*(ipmeas(jtime)-cm)**2
       else
         saiip=0.0
       endif
@@ -816,9 +813,9 @@
 !
       ccbrsp(:,jtime)=brsp(1:nfcoil)
 !
-      tsaisq(jtime)=saisq
+      chisq(jtime)=saisq
       if (iand(iout,1).ne.0) then
-        write(nout,7400) time(jtime),tsaisq(jtime),cpasma(jtime)
+        write(nout,7400) time(jtime),chisq(jtime),ipmhd(jtime)
         write(nout,7420)
         write(nout,7450) (saisil(m),m=1,nsilop)
         write(nout,7430)

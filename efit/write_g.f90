@@ -87,7 +87,7 @@
         fit_type='MAG'
       endif
 !
-      plasma=cpasma(jtime)
+      plasma=ipmhd(jtime)
       btor=bcentr(jtime)
       coils=csilop(:,jtime)
       expmp2=cmpr2(:,jtime)
@@ -120,7 +120,7 @@
         do j=1,nh
           kk=(i-1)*nh+j
           if (ivacum.eq.0) then
-            if (pasmat(jtime).gt.0.0) then
+            if (ipmeas(jtime).gt.0.0) then
               psirz(i,j)=-psi(kk)
             else
               psirz(i,j)=psi(kk)
@@ -167,7 +167,7 @@
       if (ioerr.eq.0) close(unit=neqdsk,status='delete')
       open(unit=neqdsk,file=eqdsk,status='new', &
            form=wform,delim='quote')
-      if (pasmat(jtime).gt.0.0) then
+      if (ipmeas(jtime).gt.0.0) then
         ssimag=-simag
         ssibry=-psibry
       else
@@ -178,17 +178,17 @@
       write(neqdsk,2000) (vers(i),i=1,6),0,nw,nh
       write(neqdsk,2020) xdim,zdim,rzero,rgrid(1),zmid
       write(neqdsk,2020) rmaxis,zmaxis,ssimag,ssibry,bcentr(jtime)
-      write(neqdsk,2020) cpasma(jtime),ssimag,xdum,rmaxis,xdum
+      write(neqdsk,2020) ipmhd(jtime),ssimag,xdum,rmaxis,xdum
       write(neqdsk,2020) zmaxis,xdum,ssibry,xdum,xdum
       write(neqdsk,2020) (fpol(i),i=1,nw)
       write(neqdsk,2020) (pres(i),i=1,nw)
-      if (pasmat(jtime).gt.0.0) then
+      if (ipmeas(jtime).gt.0.0) then
         workk=-ffprim
       else
         workk=ffprim
       endif
       write(neqdsk,2020) (workk(i),i=1,nw)
-      if (pasmat(jtime).gt.0.0) then
+      if (ipmeas(jtime).gt.0.0) then
         workk=-pprime
       else
         workk=pprime
@@ -205,7 +205,7 @@
       write(neqdsk,2024) kvtor,rvtor,nmass
       if (kvtor.gt.0) then
         write(neqdsk,2020) (pressw(i),i=1,nw)
-        if (pasmat(jtime).gt.0.0) then
+        if (ipmeas(jtime).gt.0.0) then
           workk=-pwprim
         else
           workk=pwprim
@@ -221,7 +221,7 @@
       write(neqdsk,2020) (rhovn(i),i=1,nw)
       write(neqdsk,2026) keecur
       if (keecur.gt.0) then
-        if (pasmat(jtime).gt.0.0) then
+        if (ipmeas(jtime).gt.0.0) then
           workk=-epoten
         else
           workk=epoten
@@ -308,7 +308,7 @@
         aa8gam=a8gam(jtime,:)
         write(neqdsk,mseout)
         kkstark=nstark
-        saisq=tsaisq(jtime)
+        saisq=chisq(jtime)
         write(neqdsk,eccd)
       endif MSE
 !-----------------------------------------------------------------------
@@ -355,19 +355,19 @@
                      real(rgrid(1),r4),real(zmid,r4)
       write(neqdsk) real(rmaxis,r4),real(zmaxis,r4),real(ssimag,r4), &
                      real(ssibry,r4),real(bcentr(jtime),r4)
-      write(neqdsk) real(cpasma(jtime),r4),real(ssimag,r4),real(xdum,r4), &
+      write(neqdsk) real(ipmhd(jtime),r4),real(ssimag,r4),real(xdum,r4), &
                      real(rmaxis,r4),real(xdum,r4)
       write(neqdsk) real(zmaxis,r4),real(xdum,r4),real(ssibry,r4), &
                      real(xdum,r4),real(xdum,r4)
       write(neqdsk) (real(fpol(i),r4),i=1,nw)
       write(neqdsk) (real(pres(i),r4),i=1,nw)
-      if (pasmat(jtime).gt.0.0) then
+      if (ipmeas(jtime).gt.0.0) then
         workk=-ffprim
       else
         workk=ffprim
       endif
       write(neqdsk) (real(workk(i),r4),i=1,nw)
-      if (pasmat(jtime).gt.0.0) then
+      if (ipmeas(jtime).gt.0.0) then
         workk=-pprime
       else
         workk=pprime
@@ -395,7 +395,7 @@
       write(neqdsk) (real(rhovn(i),r4),i=1,nw)
       write(neqdsk) keecur
       if (keecur.gt.0) then
-        if (pasmat(jtime).gt.0.0) then
+        if (ipmeas(jtime).gt.0.0) then
           workk=-epoten
         else
           workk=epoten

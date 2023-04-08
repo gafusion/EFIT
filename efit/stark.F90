@@ -537,11 +537,11 @@
         return
       endif
 
-      ip_sign = -cpasma(ltime)/abs(cpasma(ltime))
+      ip_sign = -ipmhd(ltime)/abs(ipmhd(ltime))
 
       call sets2d(psi,ct,rgrid,nw,bkrt,lkrt,zgrid,nh,bkzt,lkzt,wkt,ier)
   
-      if (pasmat(ltime).gt.0.0) then
+      if (ipmeas(ltime).gt.0.0) then
         ssimag=-simag
         ssibry=-psibry
       else

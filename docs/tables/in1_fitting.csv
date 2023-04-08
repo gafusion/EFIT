@@ -12,7 +12,7 @@ DENR, zeros, "(array) Radial line density. Length is experiment dependent (3 for
 DENV, zeros, "(array) Vertical line density. Length is experiment dependent (3 for DIII-D). Obtained from data and written into K-file."
 DFLUX, , "Measured diamagnetic fluxes in mv-s. Obtained from data and written into K-file."
 DNBEAM, zeros, "(array) Beam particle density, for kinetic fit - from ONETWO code."
-ECURRT, zeros, " (array) E coil section currents in Amps. Length is experiment dependent (6 for DIII-D). Obtained from measurements and written into the K-file."
+ECURRT, zeros, "(array) E coil section currents in Amps. Length is experiment dependent (6 for DIII-D). Obtained from measurements and written into the K-file."
 EXPMP2, zeros, "(array) Magnetic probe signals in T. Length is experiment dependent (76 for DIII-D). Obtained from data and written into K-file."
 FITDELZ, False, Set FITDELZ=True to turn on vertical shifting of flux surfaces during fitting. 
 FITSIREF, False, "| Fit value of reference flux

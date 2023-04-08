@@ -2247,7 +2247,7 @@
         if(ecurrt(6).le.-1.e10_dp) ecurrt(6)=ecurrt(2)
       endif
       eccurt(jtime,:)=ecurrt
-      pasmat(jtime)=plasma
+      ipmeas(jtime)=plasma
       curtn1(jtime)=currn1
       curc79(jtime)=currc79
       curc139(jtime)=currc139
@@ -2308,7 +2308,7 @@
       chigam=0.0 
       tchimls=0.0 
 !
-      if (pasmat(jtime).le.-1.e3_dp) then 
+      if (ipmeas(jtime).le.-1.e3_dp) then 
         negcur=1 
       else 
         negcur=0 
@@ -2316,7 +2316,7 @@
       iexcal=iexcals
       ivacum=0
       ierchk=ierchks
-      if (abs(pasmat(jtime)).le.cutip.and.iconvr.ge.0) then
+      if (abs(ipmeas(jtime)).le.cutip.and.iconvr.ge.0) then
         if(iconsi.eq.-1) iconsi=55 
         iexcal=1 
         ivacum=1 
@@ -2448,7 +2448,7 @@
       reflux=silopt(jtime,iabs(nslref)) 
       do m=1,nsilop 
         tdata1=errsil*abs(silopt(jtime,m)-reflux) 
-        tdata2=sicont*rsi(m)*abs(pasmat(jtime)) 
+        tdata2=sicont*rsi(m)*abs(ipmeas(jtime)) 
         tdata=max(tdata1,tdata2) 
         tdata2=abs(psibit(m))*vbit 
         tdata=max(tdata,tdata2) 
@@ -2471,7 +2471,7 @@
 !---------------------------------------------------------------------- 
         m=iabs(nslref)
         tdata1=errsil*abs(silopt(jtime,m))
-        tdata2=sicont*rsi(m)*abs(pasmat(jtime))
+        tdata2=sicont*rsi(m)*abs(ipmeas(jtime))
         tdata=max(tdata1,tdata2)
         tdata2=abs(psibit(m))*vbit
         tdata=max(tdata,tdata2)
@@ -2556,7 +2556,7 @@
           endif
         enddo 
       endif 
-      tdata1=serror*abs(pasmat(jtime)) 
+      tdata1=serror*abs(ipmeas(jtime)) 
       tdata2=abs(bitip)*vbit 
       tdata=max(tdata1,tdata2) 
       sigcur=tdata
@@ -2571,7 +2571,7 @@
       tdata=abs(sigdia(jtime)) 
       if(tdata.gt.1.0e-10_dp) fwtdlc=fwtdlc/tdata**nsq 
 ! 
-      if(sidif.le.-1.0e+10_dp) sidif=tmu*pasmat(jtime)*rcentr/2.0 
+      if(sidif.le.-1.0e+10_dp) sidif=tmu*ipmeas(jtime)*rcentr/2.0 
       errcut=max(ten2m3,error*10.) 
       fbrdy=bcentr(jtime)*rcentr/tmu 
       constf2=darea*tmu/2.0/twopi 
@@ -2646,10 +2646,10 @@
       if(fwtcur.gt.0.0) iplasm(jtime)=1 
       idlopc(jtime)=0 
       if(fwtdlc.gt.0.0) idlopc(jtime)=1 
-      cpasma(jtime)=pasmat(jtime) 
+      ipmhd(jtime)=ipmeas(jtime) 
       if (iconvr.eq.3.and.ivesel.eq.1) then 
         do i=1,nvesel 
-          cpasma(jtime)=cpasma(jtime)-vcurrt(i) 
+          ipmhd(jtime)=ipmhd(jtime)-vcurrt(i) 
         enddo
       endif 
       do n=1,nsilop 
@@ -3106,8 +3106,8 @@
         aelip=(xmax-xmin)/2. 
         eelip=(ymax-ymin)/(xmax-xmin) 
       endif
-      if(cfcoil.lt.0.) cfcoil=100./pasmat(jtime)*abs(cfcoil) 
-      if(cupdown.lt.0.) cupdown=100./pasmat(jtime)*abs(cupdown) 
+      if(cfcoil.lt.0.) cfcoil=100./ipmeas(jtime)*abs(cfcoil) 
+      if(cupdown.lt.0.) cupdown=100./ipmeas(jtime)*abs(cupdown) 
 !----------------------------------------------------------------------- 
 !--   symmetrize  F coil responses if needed                          -- 
 !----------------------------------------------------------------------- 

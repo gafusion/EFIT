@@ -2,7 +2,7 @@
 !**********************************************************************
 !>
 !!    green sets up the appropriate response functions for use
-!!    with the routine matrix.
+!!    with the routine response_matrix.
 !!
 !!    @param iflag :
 !!

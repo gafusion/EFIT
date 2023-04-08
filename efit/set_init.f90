@@ -60,7 +60,7 @@
             sumi=sumi+pcurrt(kk)
           enddo
         enddo
-        cratio=pasmat(jtime)/sumi
+        cratio=ipmeas(jtime)/sumi
         pcurrt=pcurrt*cratio*zero
 !
       case (2)
@@ -71,7 +71,7 @@
                +0.692055_dp*(expmpi(jtime,57)-expmpi(jtime,53)) &
                +0.728045_dp*(silopt(jtime,27)-silopt(jtime,37)) &
                +2.047150_dp*(silopt(jtime,2) -silopt(jtime,11))
-          zelip=zelip*1.e6_dp/pasmat(jtime)
+          zelip=zelip*1.e6_dp/ipmeas(jtime)
           zbound=zelip
           eelip=1.5_dp
 !----------------------------------------------------------------
@@ -185,7 +185,7 @@
 
         ! fix signs
         ! note: plasma_ext does not appear to be useful for this...
-        if (pasmat(jtime).gt.0.0) then
+        if (ipmeas(jtime).gt.0.0) then
           pprime_ext=-pprime_ext
           ffprim_ext=-ffprim_ext
         endif

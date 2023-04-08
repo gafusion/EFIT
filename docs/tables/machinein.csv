@@ -1,4 +1,5 @@
 Variable, Default, Description
+device, DIII-D, device
 kubics,, (depricated)
 kxiter, 515, Maximum number of EFIT iterations (overwritten by SETUP namelist)
 icycred_loopmax,, (depricated)
@@ -14,6 +15,8 @@ mbdry1, 110, Number of boundary points to output when nbdry<=0
 mccoil, 6, Number of error field c-coils
 mfcoil, 18,  Number of p.f. f-coils (should be same as nfcoil in efund)
 micoil, 12, Number of RMP i-coils
+mgaus1, 8, Horizontal resolution of mutual inductance calculation?
+mgaus2, 10, Vertical resolution of mutual inductance calculation?
 modef,  4,
 modep, 4,
 modew, 4,
@@ -25,8 +28,8 @@ mse210, 24, Number of mse channels at toroidal angle 210 degrees
 mse315, 11, number of mse channels at toroidal angle 315 degrees
 mse315_2, 5, Mumber of mse channels at toroidal angle 315 degrees number 2?
 mse1h, 4, Number of mse channels at 1h?
-nacoil, 1,   Number of advance divertor coils
-nangle, 64, "nangle dimension of poloidal sxr, first part of xangle,zxray,rxray"
+nacoil, 1, Number of advanced divertor coils (shaping)
+nangle, 64, "Dimension of poloidal sxr, first part of xangle,zxray,rxray"
 nco2r, 2, Number of radial C02 interferometers
 nco2v, 3, Number of vertical C02 interferometers
 ndata, 61, 
@@ -36,9 +39,10 @@ necoil, 122, Number of Ohmic heating coils
 nercur, 32, 
 nesum, 6,  Number of Ohmic heating coil groups 
 nfbcoil, 12, (depricated)
-nfcoil, 18, Number of p.f. coil groups (should be consistent with nfsum in efund)
+nfcoil, 18, Number of p.f. coils
 nffcur, 32,
 nfourier, 5,  Number Fourier components used in vessel current representation
+nfsum, 18, Number of p.f. coil groups
 ngam_u, 5, dimension of mse spatial averaging data for MSE
 ngam_vars, 9, dimension of mse spatial averaging data for MSE
 ngam_w, 3, dimension of mse spatial averaging data for MSE
@@ -49,12 +53,42 @@ nnece, 40, Total number of ECE channels?
 nnecein, 80, Total number of (inner?) ECE channels
 nnnte, 801, 
 nppcur, 32, 
-nrogow, 1, 
+nrogow, 1, "If greater than 1, call rogowc routine (which does what?)"
 nsilds, 3,  Number of flux loops at ?
 nsilol, 41, Number of flux loops at ?
+nsilop, 44, Total number of poloidal flux loops
 ntangle, 12, "dimension of toroidal xray, last part of xangle,zxray,rxray"
 ntime, 1001, number of time slices
 nvesel, 24, Number of vessel segements
+nvsum, 24, Number of summed vessel components
 nwwcur, 32, 
 nxtlim, 9,
 nxtram, 10,
+
+aminor_max, 75., Maximum plamsa minor radius (cm) allowed if ierchk is active
+aminor_min, 30., Minimum plamsa minor radius (cm) allowed if ierchk is active
+betap_max, 6., Maximum poloidal plasma beta (%) allowed if ierchk is active (minimum is always 0)
+betat_max, 25., Maximum toroidal plasma beta (%) allowed if ierchk is active (minimum is always 0) 
+dbpli_diff, 0.05, Maximum relative difference allowed between different calculations of betap+li/2
+delbp_diff, 0.08, Maximum relative difference allowed between different calculations of betap
+elong_max, 4.0, Maximum plama elongation allowed if ierchk is active
+elong_min, 0.8, Minimum plama elongation allowed if ierchk is active
+gapin_min, -0.2, Minimum inboard gap allowed if ierchk is active
+gapout_min, -0.2, Minimum outboard gap allowed if ierchk is active
+gaptop_min, -0.2, Minimum top gap allowed if ierchk is active
+li_max, 2.5, Maximum plasma internal inductance allowed if ierchk is active
+li_min, 0.05, Minimum plasma internal inductance allowed if ierchk is active
+plasma_diff, 0.08, Maximum relative difference allowed between IMEAS and IMHD
+qout_max, 200., Maximum safety factor allowed at psi_n=1 if ierchk is active
+qout_min, 1., Minimum safety factor allowed at psi_n=1 if ierchk is active
+qstar_max, 200., Maximum kink safety factor allowed if ierchk is active
+qstar_min, 1., Minimum kink safety factor allowed if ierchk is active
+rcurrt_max, 240., Maximum current major radius (cm) allowed if ierchk is active
+rcurrt_min, 90., Minimum current major radius (cm) allowed if ierchk is active
+rout_max, 240., Maximum plasma major radius (cm) allowed if ierchk is active
+rout_min, 90., Minimum plasma major radius (cm) allowed plasma if ierchk is active
+sepin_check, -90., The qout_min check is skipped when the inboard separation is less than this
+zcurrt_max, 100., Maximum current Z position (cm) allowed if ierchk is active
+zcurrt_min, -100., Minimum current Z position (cm) allowed if ierchk is active
+zout_max, 100., Maximum plasma Z position (cm) allowed if ierchk is active
+zout_min, -100., Minimum plasma Z position (cm) allowed if ierchk is active
