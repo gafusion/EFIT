@@ -39,11 +39,11 @@
       character*30 sfname
       integer*4 dim2(2),c11(2),cnn(2),imap(2),stride(2)
 ! --- temporay variables to convert double to single
-      real*4 zwork(ntime+nsilop+nstark+nfcoil+nesum+magpri+npress), &
+      real*4 zwork(ntime+nsilop+nstark+nfsum+nesum+magpri+npress), &
              zcmgam(nstark,ntime),zcsilop(nsilop,ntime), &
-             zcmpr2(magpri,ntime),zccbrsp(nfcoil,ntime),zstark(ntime,nstark), &
+             zcmpr2(magpri,ntime),zccbrsp(nfsum,ntime),zstark(ntime,nstark), &
              zsilopt(ntime,nsilop),zexpmpi(ntime,magpri), &
-             zfccurt(ntime,nfcoil),zeccurt(ntime,nesum), &
+             zfccurt(ntime,nfsum),zeccurt(ntime,nesum), &
              zaccurt(ntime,nacoil),ziter(nitera)
       character*85 presstext
       character*109 preswtext
@@ -213,7 +213,7 @@
       idim_nstark = NCDDEF(nceq,'dim_nstark',nstark,ierr)
       idim_nsilop = NCDDEF(nceq,'dim_nsilop',nsilop,ierr)
       idim_magpri = NCDDEF(nceq,'dim_magpri',magpri,ierr)
-      idim_nfcoil = NCDDEF(nceq,'dim_nfcoil',nfcoil,ierr)
+      idim_nfsum = NCDDEF(nceq,'dim_nfcoil',nfsum,ierr)
       idim_nesum  = NCDDEF(nceq,'dim_nesum' ,nesum ,ierr)
       npress1 = npress
       if(npress.eq.0) npress1 = 1
@@ -232,9 +232,9 @@
 !
       id_device = NCVDEF(nceq,'device',NCCHAR,1,idim_device,ierr)
       ! more consistent with EFIT, but will break OMFIT omas conversion...
-      !id_device = NCVDEF(nceq,'experiment',NCCHAR,1,idim_device,ierr) !
+      !id_device = NCVDEF(nceq,'machine',NCCHAR,1,idim_device,ierr) !
       call NCAPTC(nceq,id_device,'long_name',NCCHAR,15, &
-                  'experiment name',ierr)
+                  'machine name',ierr)
       id_shot = NCVDEF(nceq,'shot',NCLONG,1,idim_1,ierr)
       call NCAPTC(nceq,id_shot,'long_name',NCCHAR,11, &
                   'shot number',ierr)
@@ -471,7 +471,7 @@
 !
 ! --- coil currents
 !
-      dim2(1) = idim_nfcoil
+      dim2(1) = idim_nfsum
       id_fccurt = NCVDEF(nceq,'fccurt',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_fccurt,'long_name',NCCHAR,30, &
                   'measured F-coil currents (Amp)',ierr)
@@ -705,41 +705,41 @@
       cnn(1) = 10
       call NCVPTC(nceq,id_device,c11,cnn,device,10,ierr)
       cnn(1) = nstark
-      zwork(1:nstark) = real(fwtgam(1:nstark),r4)
+      zwork(1:nstark) = real(fwtgam,r4)
       call NCVPT(nceq,id_fwtgam,c11,cnn,zwork,ierr)
-      zwork(1:nstark) = real(chigam(1:nstark),r4)
+      zwork(1:nstark) = real(chigam,r4)
       call NCVPT(nceq,id_chigam,c11,cnn,zwork,ierr)
       call NCVPT(nceq,id_msebkp,m,n,real(msebkp,r4),ierr)
 !
       cnn(1) = nsilop
-      zwork(1:nsilop) = real(sigsi(1:nsilop),r4)
+      zwork(1:nsilop) = real(sigsi,r4)
       call NCVPT(nceq,id_sigsi,c11,cnn,zwork,ierr)
-      zwork(1:nsilop) = real(fwtsi(1:nsilop),r4)
+      zwork(1:nsilop) = real(fwtsi,r4)
       call NCVPT(nceq,id_fwtsi,c11,cnn,zwork,ierr)
-      zwork(1:nsilop) = real(saisil(1:nsilop),r4)
+      zwork(1:nsilop) = real(saisil,r4)
       call NCVPT(nceq,id_saisil,c11,cnn,zwork,ierr)
       cnn(1) = magpri
-      zwork(1:magpri) = real(sigmp2(1:magpri),r4)
+      zwork(1:magpri) = real(sigmp2,r4)
       call NCVPT(nceq,id_sigmp2,c11,cnn,zwork,ierr)
-      zwork(1:magpri) = real(fwtmp2(1:magpri),r4)
+      zwork(1:magpri) = real(fwtmp2,r4)
       call NCVPT(nceq,id_fwtmp2,c11,cnn,zwork,ierr)
-      zwork(1:magpri) = real(saimpi(1:magpri),r4)
+      zwork(1:magpri) = real(saimpi,r4)
       call NCVPT(nceq,id_saimpi,c11,cnn,zwork,ierr)
-      cnn(1) = nfcoil
-      zwork(1:nfcoil) = real(sigfc(1:nfcoil),r4)
+      cnn(1) = nfsum
+      zwork(1:nfsum) = real(sigfc,r4)
       call NCVPT(nceq,id_sigfc,c11,cnn,zwork,ierr)
-      zwork(1:nfcoil) = real(fwtfc(1:nfcoil),r4)
+      zwork(1:nfsum) = real(fwtfc,r4)
       call NCVPT(nceq,id_fwtfc,c11,cnn,zwork,ierr)
-      zwork(1:nfcoil) = real(saifc(1:nfcoil),r4)
+      zwork(1:nfsum) = real(saifc,r4)
       call NCVPT(nceq,id_saifc,c11,cnn,zwork,ierr)
       cnn(1) = nesum
-      zwork(1:nesum) = real(sigec(1:nesum),r4)
+      zwork(1:nesum) = real(sigec,r4)
       call NCVPT(nceq,id_sigec,c11,cnn,zwork,ierr)
-      zwork(1:nesum) = real(fwtec(1:nesum),r4)
+      zwork(1:nesum) = real(fwtec,r4)
       call NCVPT(nceq,id_fwtec,c11,cnn,zwork,ierr)
-      zwork(1:nesum) = real(cecurr(1:nesum),r4)
+      zwork(1:nesum) = real(cecurr,r4)
       call NCVPT(nceq,id_cecurr,c11,cnn,zwork,ierr)
-      zwork(1:nesum) = real(saiec(1:nesum),r4)
+      zwork(1:nesum) = real(saiec,r4)
       call NCVPT(nceq,id_saiec,c11,cnn,zwork,ierr)
       call NCVPT(nceq,id_sigref,m,n,real(sigref,r4),ierr)
       call NCVPT(nceq,id_fwtref,m,n,real(fwtref,r4),ierr)
@@ -794,7 +794,7 @@
       call NCVPT(nceq,id_cerror,c11,cnn,ziter,ierr)
 !
       cnn(1) = kwcurn
-      zwork(1:kwcurn)=real(brsp(nfcoil+1:nfcoil+kwcurn)/darea,r4)
+      zwork(1:kwcurn)=real(brsp(nfsum+1:nfsum+kwcurn)/darea,r4)
       call NCVPT(nceq,id_xrsp,c11,cnn,zwork,ierr)
       call NCVPT(nceq,id_darea,m,n,real(darea,r4),ierr)
 !
@@ -815,53 +815,53 @@
 ! --- if called by main routine out of time loop (itype = 2) and in 
 ! --- accumulative mode, writes variables in block.
 !
-      zwork(1:ntime) = real(time(1:ntime),r4)
+      zwork(1:ntime) = real(time,r4)
       call NCVPT(nceq,id_time,m,n,zwork(ifirsttime),ierr)
 !
       cnn(1) = nstark
-      zcmgam(1:nstark,1:ntime) = real(cmgam(1:nstark,1:ntime),r4)
+      zcmgam = real(cmgam,r4)
       call NCVPT(nceq,id_cmgam,c11,cnn,zcmgam(1,ifirsttime),ierr)
 !
       cnn(1) = nsilop
-      zcsilop(1:nsilop,1:ntime) = real(csilop(1:nsilop,1:ntime),r4)
+      zcsilop = real(csilop,r4)
       call NCVPT(nceq,id_csilop,c11,cnn,zcsilop(1,ifirsttime),ierr)
       cnn(1) = magpri
-      zcmpr2(1:magpri,1:ntime) = real(cmpr2(1:magpri,1:ntime),r4)
+      zcmpr2 = real(cmpr2,r4)
       call NCVPT(nceq,id_cmpr2,c11,cnn,zcmpr2(1,ifirsttime),ierr)
-      cnn(1) = nfcoil
-      zccbrsp(1:nfcoil,1:ntime) = real(ccbrsp(1:nfcoil,1:ntime),r4)
+      cnn(1) = nfsum
+      zccbrsp = real(ccbrsp,r4)
       call NCVPT(nceq,id_ccbrsp,c11,cnn,zccbrsp(1,ifirsttime),ierr)
-      zwork(1:ntime) = real(psiref(1:ntime),r4)
+      zwork(1:ntime) = real(psiref,r4)
       call NCVPT(nceq,id_psiref,m,n,zwork(ifirsttime),ierr)
-      zwork(1:ntime) = real(diamag(1:ntime),r4)
+      zwork(1:ntime) = real(diamag,r4)
       call NCVPT(nceq,id_diamag,m,n,zwork(ifirsttime),ierr)
-      zwork(1:ntime) = real(cdflux(1:ntime),r4)
+      zwork(1:ntime) = real(cdflux,r4)
       call NCVPT(nceq,id_cdflux,m,n,zwork(ifirsttime),ierr)
-      zwork(1:ntime) = real(sigdia(1:ntime),r4)
+      zwork(1:ntime) = real(sigdia,r4)
       call NCVPT(nceq,id_sigdia,m,n,zwork(ifirsttime),ierr)
 !
-      zwork(1:ntime) = real(ipmeas(1:ntime),r4)
+      zwork(1:ntime) = real(ipmeas,r4)
       call NCVPT(nceq,id_plasma,m,n,zwork(ifirsttime),ierr)
-      zwork(1:ntime) = real(ipmhd(1:ntime),r4)
+      zwork(1:ntime) = real(ipmhd,r4)
       call NCVPT(nceq,id_ipmhd,m,n,zwork(ifirsttime),ierr)
 !
-      zwork(1:ntime) = real(curc79(1:ntime),r4)
+      zwork(1:ntime) = real(curc79,r4)
       call NCVPT(nceq,id_curc79,m,n,zwork(ifirsttime),ierr)
-      zwork(1:ntime) = real(curc139(1:ntime),r4)
+      zwork(1:ntime) = real(curc139,r4)
       call NCVPT(nceq,id_curc139,m,n,zwork(ifirsttime),ierr)
-      zwork(1:ntime) = real(curc199(1:ntime),r4)
+      zwork(1:ntime) = real(curc199,r4)
       call NCVPT(nceq,id_curc199,m,n,zwork(ifirsttime),ierr)
-      zwork(1:ntime) = real(curiu30(1:ntime),r4)
+      zwork(1:ntime) = real(curiu30,r4)
       call NCVPT(nceq,id_curiu30,m,n,zwork(ifirsttime),ierr)
-      zwork(1:ntime) = real(curil30(1:ntime),r4)
+      zwork(1:ntime) = real(curil30,r4)
       call NCVPT(nceq,id_curil30,m,n,zwork(ifirsttime),ierr)
-      zwork(1:ntime) = real(curiu90(1:ntime),r4)
+      zwork(1:ntime) = real(curiu90,r4)
       call NCVPT(nceq,id_curiu90,m,n,zwork(ifirsttime),ierr)
-      zwork(1:ntime) = real(curil90(1:ntime),r4)
+      zwork(1:ntime) = real(curil90,r4)
       call NCVPT(nceq,id_curil90,m,n,zwork(ifirsttime),ierr)
-      zwork(1:ntime) = real(curiu150(1:ntime),r4)
+      zwork(1:ntime) = real(curiu150,r4)
       call NCVPT(nceq,id_curiu150,m,n,zwork(ifirsttime),ierr)
-      zwork(1:ntime) = real(curil150(1:ntime),r4)
+      zwork(1:ntime) = real(curil150,r4)
       call NCVPT(nceq,id_curil150,m,n,zwork(ifirsttime),ierr)
 !
 ! --- following data and their corresponding ncdf variables have 
@@ -876,93 +876,93 @@
       imap(1) = imap(2)*ntime
 !
       cnn(1) = nstark
-      zstark(1:ntime,1:nstark) = real(tangam(1:ntime,1:nstark),r4)
+      zstark = real(tangam,r4)
       call NCVPTG(nceq,id_tangam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark(1:ntime,1:nstark) = real(tangam_uncor(1:ntime,1:nstark),r4)
+      zstark = real(tangam_uncor,r4)
       call NCVPTG(nceq,id_tangam_uncor,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
       do j=1, nstark
-        zstark(1:ntime,j) = real(spatial_fix(j,1:ntime),r4)
+        zstark(:,j) = real(spatial_fix(j,:),r4)
       enddo
       call NCVPTG(nceq,id_fgam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark(1:ntime,1:nstark) = real(siggam(1:ntime,1:nstark),r4)
+      zstark = real(siggam,r4)
       call NCVPTG(nceq,id_siggam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark(1:ntime,1:nstark) = real(rrgam(1:ntime,1:nstark),r4)
+      zstark = real(rrgam,r4)
       call NCVPTG(nceq,id_rrgam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark(1:ntime,1:nstark) = real(zzgam(1:ntime,1:nstark),r4)
+      zstark = real(zzgam,r4)
       call NCVPTG(nceq,id_zzgam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark(1:ntime,1:nstark) = real(a1gam(1:ntime,1:nstark),r4)
+      zstark = real(a1gam,r4)
       call NCVPTG(nceq,id_a1gam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark(1:ntime,1:nstark) = real(a2gam(1:ntime,1:nstark),r4)
+      zstark = real(a2gam,r4)
       call NCVPTG(nceq,id_a2gam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark(1:ntime,1:nstark) = real(a3gam(1:ntime,1:nstark),r4)
+      zstark = real(a3gam,r4)
       call NCVPTG(nceq,id_a3gam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark(1:ntime,1:nstark) = real(a4gam(1:ntime,1:nstark),r4)
+      zstark = real(a4gam,r4)
       call NCVPTG(nceq,id_a4gam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark(1:ntime,1:nstark) = real(a5gam(1:ntime,1:nstark),r4)
+      zstark = real(a5gam,r4)
       call NCVPTG(nceq,id_a5gam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark(1:ntime,1:nstark) = real(a6gam(1:ntime,1:nstark),r4)
+      zstark = real(a6gam,r4)
       call NCVPTG(nceq,id_a6gam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark(1:ntime,1:nstark) = real(a7gam(1:ntime,1:nstark),r4)
+      zstark = real(a7gam,r4)
       call NCVPTG(nceq,id_a7gam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark(1:ntime,1:nstark) = real(a8gam(1:ntime,1:nstark),r4)
+      zstark = real(a8gam,r4)
       call NCVPTG(nceq,id_a8gam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
       do i=1, ntime
-        zstark(i,1:nstark) = real(rmse_gain(1:nstark),r4)
+        zstark(i,:) = real(rmse_gain,r4)
       enddo
       call NCVPTG(nceq,id_gaingam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
       do i=1, ntime
-        zstark(i,1:nstark) = real(rmse_slope(1:nstark),r4)
+        zstark(i,:) = real(rmse_slope,r4)
       enddo
       call NCVPTG(nceq,id_slopegam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
       do i=1, ntime
-        zstark(i,1:nstark) = real(rmse_scale(1:nstark),r4)
+        zstark(i,:) = real(rmse_scale,r4)
       enddo
       call NCVPTG(nceq,id_scalegam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
       do i=1, ntime
-        zstark(i,1:nstark) = real(rmse_offset(1:nstark),r4)
+        zstark(i,:) = real(rmse_offset,r4)
       enddo
       call NCVPTG(nceq,id_offsetgam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
 !
       cnn(1) = nsilop
-      zsilopt(1:ntime,1:nsilop) = real(silopt(1:ntime,1:nsilop),r4)
+      zsilopt = real(silopt,r4)
       call NCVPTG(nceq,id_silopt,c11,cnn,stride,imap, &
                   zsilopt(ifirsttime,1),ierr)
       cnn(1) = magpri
-      zexpmpi(1:ntime,1:magpri) = real(expmpi(1:ntime,1:magpri),r4)
+      zexpmpi = real(expmpi,r4)
       call NCVPTG(nceq,id_expmpi,c11,cnn,stride,imap, &
                   zexpmpi(ifirsttime,1),ierr)
-      cnn(1) = nfcoil
-      zfccurt(1:ntime,1:nfcoil) = real(fccurt(1:ntime,1:nfcoil),r4)
+      cnn(1) = nfsum
+      zfccurt = real(fccurt,r4)
       call NCVPTG(nceq,id_fccurt,c11,cnn,stride,imap, &
                   zfccurt(ifirsttime,1),ierr)
       cnn(1) = nesum
-      zeccurt(1:ntime,1:nesum) = real(eccurt(1:ntime,1:nesum),r4)
+      zeccurt = real(eccurt,r4)
       call NCVPTG(nceq,id_eccurt,c11,cnn,stride,imap, &
                   zeccurt(ifirsttime,1),ierr)
 !
       cnn(1) = nacoil
-      zaccurt(1:ntime,1:nacoil) = real(accurt(1:ntime,1:nacoil),r4)
+      zaccurt = real(accurt,r4)
       call NCVPTG(nceq,id_accurt,c11,cnn,stride,imap, &
                   zaccurt(ifirsttime,1),ierr)
-      zaccurt(1:ntime,1:nacoil) = real(caccurt(1:ntime,1:nacoil),r4)
+      zaccurt = real(caccurt,r4)
       call NCVPTG(nceq,id_caccurt,c11,cnn,stride,imap, &
                   zaccurt(ifirsttime,1),ierr)
 !

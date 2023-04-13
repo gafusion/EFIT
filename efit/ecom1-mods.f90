@@ -332,7 +332,6 @@
 
       module var_mprobe
       real*8,dimension(:),allocatable :: xmp2,ymp2,amp2,smp2,patmp2
-      integer*4 nsmp2
       end module var_mprobe
 
       module var_limite

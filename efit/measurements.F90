@@ -2,7 +2,7 @@
 !**********************************************************************
 !>
 !!    get_measurements sets the pointnames and calls subroutines to
-!!      query PTDATA or MDS+ to obtain the experiment measurement.
+!!      query PTDATA or MDS+ to obtain the machine measurements
 !!
 !!
 !!    @param nshot : shot number
@@ -33,18 +33,12 @@
       real*8 dumbtc
       real*8,dimension(:),allocatable :: dumccc,dumcic
       logical read_btcshot
-
-      NAMELIST/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi, &
-                   as,as2,lpname,rsisvs,turnfc,patmp2,vsname, &
-                   racoil,zacoil,wacoil,hacoil, &
-                   rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2, &
-                   re,ze,ecid,ecturn,vsid,rvs,zvs,we,he,fcturn
 !
       namelist/in4/mpnam2,lpname,vsname,nsingl,n1name, & !JRF 
                    nc79name,nc139name,btcname,ndenv,ndenr, &
                    fcname,ecname
 !
-      ALLOCATE(ndenv(nco2v),ndenr(nco2r),fcname(nfcoil),ecname(nesum))
+      ALLOCATE(ndenv(nco2v),ndenr(nco2r),fcname(nfsum),ecname(nesum))
 
       nsingl(1) = 'IP        '
       nsingl(2) ='VLOOP     '
@@ -86,19 +80,6 @@
       ecname(5)='E89DN     '
       ecname(6)='E89UP     '
       data irdata/0/,baddat/0/
-!----------------------------------------------------------------------
-!--   read in pointnames
-!----------------------------------------------------------------------
-      open(unit=60,file=table_di2(1:ltbdi2)//'dprobe.dat', &
-           status='old')
-      read(60,in3,iostat=istat)
-      if (istat>0) then
-        backspace(nin)
-        read(nin,fmt='(A)') line
-        write(*,'(A)') 'Invalid line in namelist in3: '//trim(line)
-        stop
-      endif
-      close(unit=60)
 !
 ! !JRF The if statement here tests a flag from the snap file that
 !     indicates whether the pointnames should be read from an alternate
@@ -574,7 +555,7 @@
 !--   coordinate system                01/09/86                      --
 !----------------------------------------------------------------------
       bcentr(1:np)=bcentr(1:np)*tmu/rcentr*144.
-      do i=1,nfcoil
+      do i=1,nfsum
         fccurt(1:np,i)=0.
         sclmp=1.0
         call avdata(nshot,fcname(i),i1,ierfc(i),fccurt(1:np,i), &
@@ -1540,16 +1521,16 @@
         ! Dimension ZWORK 1-D array
         !   PSIBIT 1:nsilop
         !   BITMPI 1:magpri
-        !   BITFC  1:nfcoil
+        !   BITFC  1:nfsum
         !   BITEC  1:nesum
         !   IERMPI to fix FWTMP2 1:magpri
         !   IERPSI to fix FWTSI 1:nsilop
-        !   IERFC to fix FWTFC 1:nfcoil
+        !   IERFC to fix FWTFC 1:nfsum
         
         ! Number columns ZWORK2 2-D array
         !   EXPMPI 1:magpri
         !   SILOPT 1:nsilop
-        !   FCCURT 1:nfcoil
+        !   FCCURT 1:nfsum
         !   DENVT  1:nco2v
         !   DENRT  1:nco2r
         !   ECCURT 1:nesum
@@ -1560,8 +1541,8 @@
         integer*4 :: i,j,ktime_all,offset,stoff,endoff,nsize,nsize2
         integer*4, dimension(:), allocatable :: tmp1,tmp2
         double precision :: timeb_list(nproc), &
-                zwork(4+nsilop+magpri+nfcoil+nesum+magpri+nsilop+nfcoil), &
-                zwork2(18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum,ntime)
+                zwork(4+nsilop+magpri+nfsum+nesum+magpri+nsilop+nfsum), &
+                zwork2(18+magpri+nsilop+nfsum+nco2v+nco2r+nesum,ntime)
                 
 
 #ifdef DEBUG_LEVEL1
@@ -1572,8 +1553,8 @@
 #endif
 
         zwork2 = 0.0
-        nsize=4+nsilop+magpri+nfcoil+nesum+magpri+nsilop+nfcoil
-        nsize2=18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum
+        nsize=4+nsilop+magpri+nfsum+nesum+magpri+nsilop+nfsum
+        nsize2=18+magpri+nsilop+nfsum+nco2v+nco2r+nesum
         allocate(tmp1(nproc),tmp2(nproc))
 
         ! NOTE : ktime contains the total number of time slices at this point
@@ -1648,8 +1629,8 @@
           endoff = endoff + magpri
           zwork(stoff:endoff) = bitmpi(1:magpri)  ! REAL8 (magpri)
           stoff = endoff + 1
-          endoff = endoff + nfcoil
-          zwork(stoff:endoff) = bitfc(1:nfcoil)   ! REAL8 (nfcoil)
+          endoff = endoff + nfsum
+          zwork(stoff:endoff) = bitfc(1:nfsum)   ! REAL8 (nfsum)
           stoff = endoff + 1
           endoff = endoff + nesum
           zwork(stoff:endoff) = bitec(1:nesum)  ! REAL8 (nesum)
@@ -1660,8 +1641,8 @@
           endoff = endoff + nsilop
           zwork(stoff:endoff) = ierpsi(1:nsilop) ! REAL8 (nsilop)
           stoff = endoff + 1
-          endoff = endoff + nfcoil
-          zwork(stoff:endoff) = ierfc(1:nfcoil) ! REAL8 (nfcoil)
+          endoff = endoff + nfsum
+          zwork(stoff:endoff) = ierfc(1:nfsum) ! REAL8 (nfsum)
 ! NOTE: all of the fwtmp2 are =1 at this point, for all ranks
 ! in order for the logic to be equivelant later, it is the error
 ! codes, iermpi that must be passed to other ranks
@@ -1686,8 +1667,8 @@
           endoff = endoff + magpri
           bitmpi(1:magpri) = zwork(stoff:endoff)
           stoff = endoff + 1
-          endoff = endoff + nfcoil
-          bitfc(1:nfcoil) = zwork(stoff:endoff)
+          endoff = endoff + nfsum
+          bitfc(1:nfsum) = zwork(stoff:endoff)
           stoff = endoff + 1
           endoff = endoff + nesum
           bitec(1:nesum) = zwork(stoff:endoff)
@@ -1698,8 +1679,8 @@
           endoff = endoff + nsilop
           ierpsi(1:nsilop) = zwork(stoff:endoff)
           stoff = endoff + 1
-          endoff = endoff + nfcoil
-          ierfc(1:nfcoil) = zwork(stoff:endoff)
+          endoff = endoff + nfsum
+          ierfc(1:nfsum) = zwork(stoff:endoff)
         endif
         
         ! ZWORK2
@@ -1734,10 +1715,10 @@
             zwork2(j+offset,1:ktime_all) = silopt(1:ktime_all,j)  ! REAL8 (ntime,nsilop)
           enddo
           offset = offset+nsilop
-          do j=1,nfcoil
-            zwork2(j+offset,1:ktime_all) = fccurt(1:ktime_all,j)  ! REAL8 (ntime,nfcoil)
+          do j=1,nfsum
+            zwork2(j+offset,1:ktime_all) = fccurt(1:ktime_all,j)  ! REAL8 (ntime,nfsum)
           enddo
-          offset = offset+nfcoil
+          offset = offset+nfsum
           do j=1,nco2v
             zwork2(j+offset,1:ktime_all) = denvt(1:ktime_all,j)   ! REAL8 (ntime,nco2v)
           enddo
@@ -1798,10 +1779,10 @@
             silopt(1:ktime,j) = zwork2(j+offset,1:ktime)
           enddo
           offset = offset+nsilop
-          do j=1,nfcoil
+          do j=1,nfsum
             fccurt(1:ktime,j) = zwork2(j+offset,1:ktime)
           enddo
-          offset = offset+nfcoil
+          offset = offset+nfsum
           do j=1,nco2v
             denvt(1:ktime,j) = zwork2(j+offset,1:ktime)
           enddo

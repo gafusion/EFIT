@@ -392,7 +392,7 @@
                           +(a4gam(jtime,m)*tangam(jtime,m) &
                           - a1gam(jtime,m))*rbzpc(m,jj)
             enddo
-            do jj=1,nfcoil
+            do jj=1,nfsum
               rgamfc(m,jj)=(a3gam(jtime,m)*tangam(jtime,m) &
                           - a8gam(jtime,m))*rbrfc(m,jj) &
                           +(a4gam(jtime,m)*tangam(jtime,m) &
@@ -553,7 +553,7 @@
               call setppp(xpsi(kk),xpsii)
               call seva2d(bkx,lkx,bky,lky,c,rgrid(i),zgrid(j),pds,ier,n333)
               do jj=1,kppcur
-                factor=xpsii(jj)*rgrid(i)*www(kk)*pds(3)*brsp(nfcoil+jj)
+                factor=xpsii(jj)*rgrid(i)*www(kk)*pds(3)*brsp(nfsum+jj)
                 factor=-factor/sidif
                 rdjdz(kk)=rdjdz(kk)+factor
                 gsildz=gsildz+gsilpc(:,kk)*factor
@@ -591,7 +591,7 @@
               call setfpp(upsi,xpsii)
               do jj=kppcur+1,kpcurn
                 jjk=jj-kppcur
-                factor=xpsii(jjk)/rgrid(i)*wwwww*pds(3)*brsp(nfcoil+jj)
+                factor=xpsii(jjk)/rgrid(i)*wwwww*pds(3)*brsp(nfsum+jj)
                 factor=-factor/sidif
                 rdjdz(kk)=rdjdz(kk)+factor
                 gsildz=gsildz+gsilpc(:,kk)*factor
@@ -623,7 +623,7 @@
               call setpwpp(xpsi(kk),xpsii)
               do jj=kpcurn+1,kwcurn
                 jjk=jj-kpcurn
-                factor=xpsii(jjk)*rgsvt(i)*www(kk)*pds(3)*brsp(nfcoil+jj)
+                factor=xpsii(jjk)*rgsvt(i)*www(kk)*pds(3)*brsp(nfsum+jj)
                 factor=-factor/sidif
                 rdjdz(kk)=rdjdz(kk)+factor
                 gsildz=gsildz+gsilpc(:,kk)*factor

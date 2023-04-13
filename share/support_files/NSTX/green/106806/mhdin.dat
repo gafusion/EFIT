@@ -113,7 +113,7 @@
 !                position tweaks from Jon Menard. PF5 coil position tweak
 !                made since PF5 coil was recentered during the last opening.
 !------------------------------------------------------------------------
- &IN3
+ &IN5
  IGRID = 1
  RLEFT = 0.01
  RRIGHT = 2.15
@@ -125,6 +125,10 @@
  IACOIL = 0
  IVESEL = 0
  NSMP2 = 1
+ mgaus1 = 8
+ mgaus2 = 10
+ /
+ &IN3
  RF = 0.180340007 2*0.799170017 2*1.49445999 1.80649996 1.79460001 
  4*2.01180005 1.80649996 1.79460001 2*1.49445999 2*0.799170017 0.180340007 
  0.304800004 2*0.169100001 0.209399998 0.250800014 0.269499987 0.412800014 
@@ -274,29 +278,27 @@
  'vs09u' 'vs10u' 'vs11l' 'vs12l' 'vs13l' 'vs14l' 'vs15l' 'cs16l' 'cs17l' 
  'cs18l' 'cs19l' 'cs20l'
  VSID = 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
- NW = 65
- NH = 65
  TURNFC = 41*1.0
  /
  &machinein
  nfcoil = 81
  nfsum = 41
  nsilop = 66
- magpr2 = 28
+ magpri = 28
  necoil = 240
  nesum = 1
  nvesel = 20
  nvsum = 20
  nrogow = 1
  nacoil = 1
- mgaus1 = 8
- mgaus2 = 10
  mqwant = 66
  nwwcur=18
  nffcur=18
  nppcur=18
  nercur=18
- mse315=18
+ nmselp=18
+ /
+ &incheck
  li_max=1.5
  li_min=0.05
  betap_max=6.0

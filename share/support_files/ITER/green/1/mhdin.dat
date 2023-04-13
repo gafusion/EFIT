@@ -3,16 +3,14 @@
  nfcoil = 14
  nfsum = 14
  nsilop = 261
- magpr2 = 795
+ magpri = 795
  necoil = 0
  nesum = 0
  nvesel = 309
  nvsum = 309
  nacoil = 1
- mgaus1 = 8
- mgaus2 = 12
  /
- &IN3
+ &IN5
  IGRID = 1
  RLEFT = 3.6
  RRIGHT = 8.9
@@ -24,8 +22,10 @@
  IECOIL = 0
  IVESEL = 1
  IACOIL = 1
- NW = 129
- NH = 129
+ mgaus1 = 8
+ mgaus2 = 12
+ /
+ &IN3
  RF = 6*1.687 3.9431 8.2851 11.9919 11.963 8.3908 4.334 5.8066590721356866 
  7.5505580644830905
  ZF = 5.464 3.278 1.092 -1.072 -3.258 -5.444 7.5741 6.5398 3.2752 -2.2336 

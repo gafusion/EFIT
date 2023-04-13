@@ -1,19 +1,19 @@
 ﻿Variable, Default, Description
-BITEC, zeros, "(array) E-coil current physical unit equivalent to 1 digitizer count. (E-coil bit noises) Obtained from measurements and written into K-file. Length is experiment dependent (6 for DIII-D). Ignored unless IECURR=2"
-BITFC, zeros, "(array) F-coil current physical unit equivalent to 1 digitizer count. (F-coil bit noises) Obtained from measurements and written into K-file. Length is experiment dependent (18 for DIII-D)."
+BITEC, zeros, "(array) E-coil current physical unit equivalent to 1 digitizer count. (E-coil bit noises) Obtained from measurements and written into K-file. Length is machine dependent (6 for DIII-D). Ignored unless IECURR=2"
+BITFC, zeros, "(array) F-coil current physical unit equivalent to 1 digitizer count. (F-coil bit noises) Obtained from measurements and written into K-file. Length is machine dependent (18 for DIII-D)."
 BITIP, 0.0, Plasma current physical unit equivalent to 1 digitizer count. (Ip bit noise) Obtained from measurements and written into K-file.
-BITMPI, zeros, "(array) Magnetic probes physical unit equivalent to 1 digitizer count. (Probe bit noises)Obtained from measurements and written into K-file. Length is experiment dependent (76 for DIII-D)."
+BITMPI, zeros, "(array) Magnetic probes physical unit equivalent to 1 digitizer count. (Probe bit noises)Obtained from measurements and written into K-file. Length is machine dependent (76 for DIII-D)."
 BRSP, brsp(1)=-1e20, "| Current arrays; first 18 (NFCOIL) elements are F-coil currents in Amp-turns(?). 
 | BRSP not equal 0 for fixed F-coil currents. BRSP(NFCOIL+1) to BRSP(NFCOIL+KPPCUR) coefficients for P'.
 | BRSP(NFCOIL+KPPCUR+1) to BRSP(NFCOIL+KPPCUR+KFFCUR) coefficients for F2."
 COILS, , Flux loop signals in v-sec/rad. Obtained from data and written into K-file.
 CURRN1, 0.0, "N1 coil current. Obtained from data and written into K-file."
-DENR, zeros, "(array) Radial line density. Length is experiment dependent (3 for DIII-D). Obtained from data and written into K-file."
-DENV, zeros, "(array) Vertical line density. Length is experiment dependent (3 for DIII-D). Obtained from data and written into K-file."
+DENR, zeros, "(array) Radial line density. Length is machine dependent (3 for DIII-D). Obtained from data and written into K-file."
+DENV, zeros, "(array) Vertical line density. Length is machine dependent (3 for DIII-D). Obtained from data and written into K-file."
 DFLUX, , "Measured diamagnetic fluxes in mv-s. Obtained from data and written into K-file."
 DNBEAM, zeros, "(array) Beam particle density, for kinetic fit - from ONETWO code."
-ECURRT, zeros, "(array) E coil section currents in Amps. Length is experiment dependent (6 for DIII-D). Obtained from measurements and written into the K-file."
-EXPMP2, zeros, "(array) Magnetic probe signals in T. Length is experiment dependent (76 for DIII-D). Obtained from data and written into K-file."
+ECURRT, zeros, "(array) E coil section currents in Amps. Length is machine dependent (6 for DIII-D). Obtained from measurements and written into the K-file."
+EXPMP2, zeros, "(array) Magnetic probe signals in T. Length is machine dependent (76 for DIII-D). Obtained from data and written into K-file."
 FITDELZ, False, Set FITDELZ=True to turn on vertical shifting of flux surfaces during fitting. 
 FITSIREF, False, "| Fit value of reference flux
 | True = fit
@@ -32,13 +32,13 @@ FWTCUR, 0, "| Fitting weight for plasma current (fitting weight for plasma curre
 FWTDLC, 0, "| Fitting weight for diamagnetic flux
 | 0 = do not include measured data in fit (default)
 | 1 = include measured data in fit"
-FWTEC, zeros, "| Length of vector is experiment dependent (6 for DIII-D), each entry of which is a fitting weight for E-coil currents. Ignored unless IECURR=2.
+FWTEC, zeros, "| Length of vector is machine dependent (6 for DIII-D), each entry of which is a fitting weight for E-coil currents. Ignored unless IECURR=2.
 | 0 = do not include measured data in fit (default= all 0.0's)
 | 1 = include measured data in fit"
-FWTFC, zeros, "| Length of vector is experiment dependent (18 for DIII-D), each entry of which is a fitting weight for F-coil currents.
+FWTFC, zeros, "| Length of vector is machine dependent (18 for DIII-D), each entry of which is a fitting weight for F-coil currents.
 | 0 do not include measured data in fit (default = all 0's)
 | >0 include measured data in fit with weights defined by FWTFC entry"
-FWTMP2, zeros, "| Length of vector is experiment dependent (currently 76 for DIII-D), each entry of which is a fitting weight for inner magnetic probes, 0 or 1.
+FWTMP2, zeros, "| Length of vector is machine dependent (currently 76 for DIII-D), each entry of which is a fitting weight for inner magnetic probes, 0 or 1.
 | 0 = do not include measured data in fit (default)
 | 1 = include measured data in fit"
 FWTPRE, ones, "(array) Fitting weight for pressure constraints.  Size determined by NPRESS. 
@@ -47,7 +47,7 @@ FWTPRE, ones, "(array) Fitting weight for pressure constraints.  Size determined
 FWTQA, 0, "| Flag to add axial q constraint, q on axis = QVFIT, to other constraints on current profile
 | 1 = include constraint
 | 0 = don't include constraint"
-FWTSI, zeros, "| Length of vector is experiment dependent (41 for DIII-D), each entry of which is a fitting weight for flux loops, 0 or 1.
+FWTSI, zeros, "| Length of vector is machine dependent (41 for DIII-D), each entry of which is a fitting weight for flux loops, 0 or 1.
 | 0 = do not include measured data in fit (default)
 | 1 = include measured data in fit"
 FWTXX,0.2, 
@@ -92,7 +92,7 @@ NPRESS,,"| Number of valid points in PRESSR
 | 0= for rotational pressure only."
 PNBEAM, 0.0, Neutral beam power.
 PRESSR,,"Input array of pressure in n/m2 vs. normalized flux for fitting. See NPRESS."
-PSIBIT, zeros, "Flux loops, physical units corresponding to 1 digitizer count. (Flux loop bit noises) Obtained from measurements and written into K-file. Length is experiment dependent (44 for DIII-D)."
+PSIBIT, zeros, "Flux loops, physical units corresponding to 1 digitizer count. (Flux loop bit noises) Obtained from measurements and written into K-file. Length is machine dependent (44 for DIII-D)."
 QVFIT,0.95,"Axial q value for fitting. See FWTQA."
 RPRESS,,"| - = input pressure profile as function of dimensionless fluxes.
 | + = R coordinates of the input pressure profile data in meters."

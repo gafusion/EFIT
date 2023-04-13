@@ -382,13 +382,13 @@
           if (kvtor.gt.0) then
             cjmaxi=0.0
             do j=1,kppcur
-              cjmaxi=rjjjx(j)*brsp(nfcoil+j)+cjmaxi
+              cjmaxi=rjjjx(j)*brsp(nfsum+j)+cjmaxi
             enddo
             do j=1,kffcur
-              cjmaxi=rjjfx(j)*brsp(nfcoil+kppcur+j)+cjmaxi
+              cjmaxi=rjjfx(j)*brsp(nfsum+kppcur+j)+cjmaxi
             enddo
             do j=1,kwwcur
-              cjmaxi=rjjwx(j)*brsp(nfcoil+kpcurn+j)+cjmaxi
+              cjmaxi=rjjwx(j)*brsp(nfsum+kpcurn+j)+cjmaxi
             enddo
             cjmaxi=cjmaxi/darea
           endif

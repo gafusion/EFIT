@@ -7,11 +7,6 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          12/04/84..........first created                         **
-!**          24/07/85..........revised                               **
-!**          93/04   ..........revised to dump plot data             **
-!**                                                                  **
 !**********************************************************************
       subroutine pltout(xplt,yplt,nplt,jtime,ipass, &
                         rmin,rmax,zmin,zmax,ktime,kerror)
@@ -28,11 +23,6 @@
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       dimension rrgams(nstark),rrgaml(nstark)
-      NAMELIST/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi, &
-                   as,as2,lpname,rsisvs,turnfc,patmp2,vsname, &
-                   racoil,zacoil,wacoil,hacoil, &
-                   rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2, &
-                   re,ze,ecid,ecturn,vsid,rvs,zvs,we,he,fcturn
       character(10) :: uday, clocktime
       character(5)  :: zone
       integer*4, dimension(8) :: values
@@ -194,30 +184,6 @@
             blmax=max(blmax,zxray(i))
          enddo
       endif
-      open(unit=80,status='old', &
-           file=table_di2(1:ltbdi2)//'dprobe.dat')
-      rsi(1)=-1.
-      read (80,in3,iostat=istat)
-      if (istat>0) then
-        backspace(80)
-        read(80,fmt='(A)') lline
-        write(*,'(A)') &
-          'Invalid line in namelist in3: '//trim(lline)
-        stop
-      endif
-      if (rf(1).lt.0) &
-        read (80,10000) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
-                         i=1,mfcoil)
-      if (rsi(1).lt.0.) &
-        read (80,10000) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
-                         i=1,nsilop)
-      if (((iecoil.gt.0).or.(ivesel.gt.0)).and.(re(1).lt.0.)) &
-        read (80,10020) (re(i),ze(i),we(i),he(i),ecid(i), &
-                         i=1,necoil)
-      if ((ivesel.gt.0).and.(rvs(1).lt.0)) &
-        read (80,10000) (rvs(i),zvs(i),wvs(i),hvs(i), &
-                         avs(i),avs2(i),i=1,nvesel)
-      close(unit=80)
       if (iprobe.ne.0) then
          do i=1,nsilop
             almin=min(almin,rsi(i))
@@ -246,7 +212,7 @@
             blmax=max(blmax,ymp2(i))
          enddo
       endif
-      do i=1,mfcoil
+      do i=1,nfcoil
          almin=min(almin,rf(i))
          almax=max(almax,rf(i))
          blmin=min(blmin,zf(i))
@@ -1505,7 +1471,7 @@
 !
       endif SXR
       if (ifcoil.gt.0) then
-        call pltcol(mfcoil,rf,zf,wf,hf,af,af2,n11, &
+        call pltcol(nfcoil,rf,zf,wf,hf,af,af2,n11, &
           nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
           nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
       endif
@@ -2529,7 +2495,7 @@
             if (ioerr.eq.0) close(unit=62,status='delete')
             open(unit=62,file=dataname,status='new')
             zerono = 0.0
-            do ip=1,nmtark
+            do ip=1,nmselp
               if (kstark.gt.0) then
                 sigmabz = 0.0
                 if(fwtgam(ip).gt.0.0) sigmabz=bzmse(ip)* &
@@ -2547,8 +2513,8 @@
             open(unit=62,file=dataname,status='old',iostat=ioerr)
             if(ioerr.eq.0) close(unit=62,status='delete')
             open(unit=62,file=dataname,status='new')
-            do ip=nmtark+1,nstark
-              if (nstark.gt.nmtark) then
+            do ip=nmselp+1,nstark
+              if (nstark.gt.nmselp) then
                 if (kstark.gt.0) then
                   sigmabz = 0.0
                   if(fwtgam(ip).gt.0.0) sigmabz=bzmse(ip)* &
@@ -2559,7 +2525,7 @@
                   write(62,*) rrgam(jtime,ip),bzmsec(ip), &
                               zerono,zerono
                 endif
-                rrgaml(ip-nmtark)=rrgam(jtime,ip)
+                rrgaml(ip-nmselp)=rrgam(jtime,ip)
               endif
             enddo
             close(62)
@@ -2567,11 +2533,11 @@
             open(unit=62,file=dataname,status='old',iostat=ioerr)
             if (ioerr.eq.0) close(unit=62,status='delete')
             open(unit=62,file=dataname,status='new')
-            do jp=1,nmtark
+            do jp=1,nmselp
               rrgamn=rrgams(1)
               bzgamn=bzmsec(1)
               igamn=1
-              do ip=1,nmtark
+              do ip=1,nmselp
                 if (rrgams(ip).lt.rrgamn) then
                   rrgamn=rrgams(ip)
                   bzgamn=bzmsec(ip)
@@ -2586,14 +2552,14 @@
             open(unit=62,file=dataname,status='old',iostat=ioerr)
             if (ioerr.eq.0) close(unit=62,status='delete')
             open(unit=62,file=dataname,status='new')
-            do jp=nmtark+1,nstark
+            do jp=nmselp+1,nstark
               rrgamn=rrgaml(1)
-              bzgamn=bzmsec(1+nmtark)
+              bzgamn=bzmsec(1+nmselp)
               igamn=1
-              do ip=1,nstark-nmtark
+              do ip=1,libim
                 if (rrgaml(ip).lt.rrgamn) then
                   rrgamn=rrgaml(ip)
-                  bzgamn=bzmsec(ip+nmtark)
+                  bzgamn=bzmsec(ip+nmselp)
                   igamn=ip
                 endif
               enddo
@@ -2819,7 +2785,7 @@
          do j=1,nh
             kk=(i-1)*nh+j
             copyj(i,j)=0.0
-            do m=1,nfcoil
+            do m=1,nfsum
                copyj(i,j)=copyj(i,j)+gridfc(kk,m)*brsp(m)
             enddo
             if (ivesel.gt.0) then
@@ -3253,7 +3219,7 @@
       workc(17)=348.
       workc(9)=495.
       workc(18)=495.
-      do i=1,nfcoil
+      do i=1,nfsum
          workb(i)=brsp(i)/1000.
          worka(i)=i
          workd(i)=-workc(i)
@@ -3264,7 +3230,7 @@
       enddo
       curmin=workb(1)
       curmax=workb(1)
-      do i=1,nfcoil
+      do i=1,nfsum
          curmin=min(curmin,workb(i),workc(i),workd(i))
          curmax=max(curmax,workb(i),workc(i),workd(i))
       enddo
@@ -3283,34 +3249,34 @@
 !     Computed F-coil currents, solid line, open circles, cyan
 !-----------------------------------------------------------------------
       nn = nn + 1
-      nxy(nn) = nfcoil
+      nxy(nn) = nfsum
       ncnct(nn) = 1
       markme(nn) = 16
       sclpc(nn) = 0.7_dp
       clearx(nn)='CYAN'
-      do i = 1, nfcoil
+      do i = 1, nfsum
          xx(i,nn) = worka(i)
          yy(i,nn) = workb(i)
       enddo
       F_coils: if (ifcurr.le.0) then
       if (imag2(jtime).eq.0) then
          nn = nn + 1
-         nxy(nn) = nfcoil
+         nxy(nn) = nfsum
          ncnct(nn) = 1
          markme(nn) = 15
          sclpc(nn) = 0.7_dp
          ndotme(nn) = 1
-         do i = 1, nfcoil
+         do i = 1, nfsum
             xx(i,nn) = worka(i)
             yy(i,nn) = workc(i)
          enddo
          nn = nn + 1
-         nxy(nn) = nfcoil
+         nxy(nn) = nfsum
          ncnct(nn) = 1
          markme(nn) = 15
          sclpc(nn) = 0.7_dp
          ndotme(nn) = 1
-         do i = 1, nfcoil
+         do i = 1, nfsum
             xx(i,nn) = worka(i)
             yy(i,nn) = workd(i)
          enddo
@@ -3319,13 +3285,13 @@
 !        Measured F-coil currents, dot curve, solid pink symbols
 !------------------------------------------------------------------------
          nn = nn + 1
-         nxy(nn) = nfcoil
+         nxy(nn) = nfsum
          ncnct(nn) = 1
          markme(nn) = 15
          sclpc(nn) = 0.7_dp
          clearx(nn)='PINK'
          ndotme(nn) = 1
-         do i = 1, nfcoil
+         do i = 1, nfsum
             xx(i,nn) = worka(i)
             yy(i,nn) = workc(i)
          enddo
@@ -3787,11 +3753,11 @@
 !-----------------------------------------------------------------------
 !     Write Plot Parameters
 !-----------------------------------------------------------------------
-      xfcoil=nfcoil-1
+      xfcoil=nfsum-1
       call curve2d(ncurve, ipag, ibrdr, grce, xphy, yphy, &
       iorel, xorl, yorl, hight, bngle, bshft, &
       ptitle, nplen, xtitle, nxlen, ytitle, nylen, xmm, xmm, &
-      worka(1), xfcoil, worka(nfcoil), curmin, dcurn, curmax, &
+      worka(1), xfcoil, worka(nfsum), curmin, dcurn, curmax, &
       iaxis, ixtck, iytck, ixnon, iynon, intax, intay, &
       isaxs, sorg, stp, smax, slen, sname, nslen, xps, yps, &
       igridx, igridy, idash, idot, ichdsh, ichdot, &
@@ -4421,10 +4387,10 @@
       xabs= -0.7_dp
       yabs= -0.8_dp
       if ((icurrt.eq.2.or.icurrt.eq.5) &
-               .and.abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
-         do i=nfcoil+1,nfcoil+kppcur
-            xxnorm=brsp(i)/brsp(nfcoil+1)
-            if (i.eq.nfcoil+1) then
+               .and.abs(brsp(nfsum+1)).gt.1.e-10_dp) then
+         do i=nfsum+1,nfsum+kppcur
+            xxnorm=brsp(i)/brsp(nfsum+1)
+            if (i.eq.nfsum+1) then
                write (text,18950) xxnorm
                msg = msg + 1
                note(msg) = 1
@@ -4446,7 +4412,7 @@
                ht(msg) = 0.13_dp*0.7_dp
             endif
          enddo
-         xxnorm=brsp(nfcoil+1)/darea
+         xxnorm=brsp(nfsum+1)/darea
          write (text,18980) xxnorm
       else
          xxnorm=0.0
@@ -4493,9 +4459,9 @@
          ht(msg) = 0.13_dp*0.7_dp
       endif
       rot_form: if (kvtor.ge.1.and.kvtor.le.3) then
-      rot_exists: if (icurrt.eq.5.and. abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
+      rot_exists: if (icurrt.eq.5.and. abs(brsp(nfsum+1)).gt.1.e-10_dp) then
          do i=nfnpcr+1,nfnpcr+kwwcur,2
-            xxnorm=brsp(i)/brsp(nfcoil+1)
+            xxnorm=brsp(i)/brsp(nfsum+1)
             if (i+1.gt.nfnpcr+kwwcur) then
                if (i.eq.nfnpcr+1) then
                   write (text,18971) xxnorm
@@ -4503,7 +4469,7 @@
                   write (text,18973) xxnorm
                endif
             else
-               xynorm=brsp(i+1)/brsp(nfcoil+1)
+               xynorm=brsp(i+1)/brsp(nfsum+1)
                if (i.eq.nfnpcr+1) then
                   write (text,28971) xxnorm,xynorm
                else
@@ -4525,9 +4491,9 @@
       xabs= 1.2_dp
       yabs= -0.8_dp
       if ((icurrt.eq.2.or.icurrt.eq.5).and. &
-                   abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
-         do i=nfcoil+1+kppcur,nfcoil+kppcur+kffcur
-            xxnorm=brsp(i)/brsp(nfcoil+1)
+                   abs(brsp(nfsum+1)).gt.1.e-10_dp) then
+         do i=nfsum+1+kppcur,nfsum+kppcur+kffcur
+            xxnorm=brsp(i)/brsp(nfsum+1)
             write (text,18970) xxnorm
             msg = msg + 1
             note(msg) = 1
@@ -5701,7 +5667,7 @@
             xx(ii,nn) = xlim(ii)
             yy(ii,nn) = ylim(ii)
       enddo
-      call pltcol(mfcoil,rf,zf,wf,hf,af,af2,n11, &
+      call pltcol(nfcoil,rf,zf,wf,hf,af,af2,n11, &
          nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
          nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
       xphy = 7.625_dp
@@ -7190,7 +7156,7 @@
 
       endif
       if (ifcoil.gt.0) then
-         call pltcol(mfcoil,rf,zf,wf,hf,af,af2,n11, &
+         call pltcol(nfcoil,rf,zf,wf,hf,af,af2,n11, &
             nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
             nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
       endif
@@ -7498,7 +7464,7 @@
               nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
       endif
       if (ifcoil.gt.0) &
-         call pltcol(mfcoil,rf,zf,wf,hf,af,af2,n11, &
+         call pltcol(nfcoil,rf,zf,wf,hf,af,af2,n11, &
             nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
             nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
       if (iecoil.gt.0) then
@@ -7696,7 +7662,7 @@
             nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
          endif
          if (ifcoil.gt.0) &
-            call pltcol(mfcoil,rf,zf,wf,hf,af,af2,n11, &
+            call pltcol(nfcoil,rf,zf,wf,hf,af,af2,n11, &
             nn, xx, yy, nxy, msg, note, inum, xpos, ypos, ht, &
             nshd, sxx, syy, nsxy, sangle, sgap, ngaps)
          if (iecoil.gt.0) then
@@ -8452,9 +8418,9 @@
       endif
       poly_rotation: if (kvtor.ge.1.and.kvtor.le.3) then
          if (icurrt.eq.5.and. &
-                      abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
+                      abs(brsp(nfsum+1)).gt.1.e-10_dp) then
             do i=nfnpcr+1,nfnpcr+kwwcur,2
-               xxnorm=brsp(i)/brsp(nfcoil+1)
+               xxnorm=brsp(i)/brsp(nfsum+1)
                if (i+1.gt.nfnpcr+kwwcur) then
                   if (i.eq.nfnpcr+1) then
                      write (text,18971) xxnorm
@@ -8462,7 +8428,7 @@
                      write (text,18973) xxnorm
                   endif
                else
-                  xynorm=brsp(i+1)/brsp(nfcoil+1)
+                  xynorm=brsp(i+1)/brsp(nfsum+1)
                   if (i.eq.nfnpcr+1) then
                      write (text,28971) xxnorm,xynorm
                   else
@@ -8484,9 +8450,9 @@
       xabs= 1.2_dp
       yabs= -0.8_dp
       if ((icurrt.eq.2.or.icurrt.eq.5).and. &
-                   abs(brsp(nfcoil+1)).gt.1.e-10_dp) then
-         do i=nfcoil+1+kppcur,nfcoil+kppcur+kffcur
-            xxnorm=brsp(i)/brsp(nfcoil+1)
+                   abs(brsp(nfsum+1)).gt.1.e-10_dp) then
+         do i=nfsum+1+kppcur,nfsum+kppcur+kffcur
+            xxnorm=brsp(i)/brsp(nfsum+1)
             write (text,18970) xxnorm
             msg = msg + 1
             note(msg) = 1

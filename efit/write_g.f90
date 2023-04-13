@@ -239,7 +239,7 @@
             write(neqdsk,3003) nw,nh,ishot,itime
           endif
           write(neqdsk,2020) rgrid(1),rgrid(nw),zgrid(1),zgrid(nh)
-          write(neqdsk,2020) (brsp(i),i=1,nfcoil)  ! also in m and a-files
+          write(neqdsk,2020) (brsp(i),i=1,nfsum)  ! also in m and a-files
           write(neqdsk,2020) (ecurrt(i),i=1,nesum) ! also in m and a-files
           write(neqdsk,2020) (pcurrt(i),i=1,nwnh)
         elseif (iplcout.eq.2) then
@@ -414,7 +414,7 @@
           endif
           write(neqdsk) real(rgrid(1),r4),real(rgrid(nw),r4), &
                          real(zgrid(1),r4),real(zgrid(nh),r4)
-          write(neqdsk) (real(brsp(i),r4),i=1,nfcoil)  ! also in m and a-files
+          write(neqdsk) (real(brsp(i),r4),i=1,nfsum)  ! also in m and a-files
           write(neqdsk) (real(ecurrt(i),r4),i=1,nesum) ! also in m and a-files
           write(neqdsk) (real(pcurrt(i),r4),i=1,nwnh)
         elseif (iplcout.eq.2) then
@@ -438,8 +438,8 @@
         error=1.0e-04_dp ! TODO: why is this set at a fixed value?
         enps=enp
         enp=0.5_dp
-        fwtsi(1:nfcoil)=1.
-        fwtsi((nfcoil+1):nsilop)=0.0
+        fwtsi(1:nfsum)=1.
+        fwtsi((nfsum+1):nsilop)=0.0
         itime=itime+1
         limitr=limitr-1
         let = 'x'

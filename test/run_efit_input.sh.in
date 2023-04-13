@@ -8,7 +8,7 @@ if ! test -e efit.input; then
   echo "not running test because efit.input was not found"
   exit 1
 fi
-if ! test -e @CURRENT_MACHINE_LINK_DIR@/green/dprobe.dat; then
+if ! test -e @CURRENT_MACHINE_LINK_DIR@/green/mhdin.dat; then
   echo "not running test because Greens tables were not found"
   exit 1
 fi

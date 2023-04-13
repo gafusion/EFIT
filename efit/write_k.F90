@@ -31,7 +31,7 @@
       character ishotime*12,news*72, &
                 eqdsk*20,prefix1*1,header*42,fit_type*3
       real*8 coils(nsilop),expmp2(magpri),denr(nco2r),denv(nco2v)
-      real*8,dimension(nmtark) :: tgamma,sgamma,rrrgam,zzzgam, &
+      real*8,dimension(nmselp) :: tgamma,sgamma,rrrgam,zzzgam, &
                                   aa1gam,aa2gam,aa3gam,aa4gam, &
                                   aa5gam,aa6gam,aa7gam,tgammauncor
       real*8,dimension(nmsels) :: bmsels,sbmsels,fwtbmsels, &
@@ -41,6 +41,10 @@
       character*86 snap_ext
       character(1000) :: line
       character(256) table_save
+      ! DIIID specific parameters for reading fitweight.dat file
+      integer*4, parameter :: nsilds=3,nsilol=41, &
+                              magpri67=29,magpri322=31,magprirdp=8, &
+                              magudom=5,maglds=3
       namelist/in1/ishot,itime,itimeu,qvfit,plasma,expmp2,coils,btor, &
            fwtsi,fwtcur,limitr,fwtmp2,kffcur,kppcur,fwtqa,ierchk, &
            fwtbp,serror,nextra,scrape,itrace,itek,xltype,rcentr,bitip, &
@@ -201,7 +205,7 @@
       elseif (table_dir.ne.table_save .and. link_efit.eq.'') then
         ! error if table_dir changes (global_allocs already set)
         call errctrl_msg('write_K', &
-          'changing experiment during run is not supported (table_dir)')
+          'changing machine during run is not supported (table_dir)')
         kerror=1
         return
       endif
@@ -364,6 +368,8 @@
              file=input_dir(1:lindir)//'fitweight.dat')
  3050   read(neqdsk,*,iostat=ioerr) irshot
         if ((ioerr.eq.0).and.(irshot.le.ishot)) then
+          ! Note: These DIIID specific probe choices
+          ! could be removed if Green function tables are regenerated...
           if (irshot.lt.124985) then
             read(neqdsk,*) (rwtsi(i),i=1,nsilol)
           else
@@ -402,14 +408,14 @@
           fwtmp2(i)=rwtmp2(i)
         endif
       enddo
-      do i=1,nfcoil
+      do i=1,nfsum
         if(ierfc(i).ne.0) fwtfc(i)=0.0
       enddo
       do i=1,nesum
         if(ierec(i).ne.0) fwtec(i)=0.0
       enddo
       if (mmstark.gt.0) then
-        do i=1,nmtark
+        do i=1,nmselp
           if(iergam(i).ne.0) fwtgam(i)=0.0
         enddo
       endif
@@ -432,16 +438,16 @@
         call errctrl_setstate(rank,time(jtime))
         if (req_valid) then
           ! don't write times without mse
-          if (sum(abs(fwtgam(1:nmtark))).gt.nmtark*1.e-6_dp .and. &
-              sum(abs(siggam(jtime,1:nmtark))).lt.nmtark*1.e-10_dp) then
+          if (sum(abs(fwtgam(1:nmselp))).gt.nmselp*1.e-6_dp .and. &
+              sum(abs(siggam(jtime,1:nmselp))).lt.nmselp*1.e-10_dp) then
             call errctrl_msg('write_k', &
               'No MSE data found, not writing k-file')
             cycle
           endif
           ! don't write times without cer
           if (mse_usecer.ne.0 .and. &
-              maxval(abs(tangam(jtime,1:nmtark) &
-                        -tangam_uncor(jtime,1:nmtark))).le.1.e-10_dp) then
+              maxval(abs(tangam(jtime,1:nmselp) &
+                        -tangam_uncor(jtime,1:nmselp))).le.1.e-10_dp) then
             call errctrl_msg('write_k', &
               'No CER correction used, not writing k-file')
             cycle
@@ -461,23 +467,23 @@
         endif
         coils=silopt(jtime,:)
         expmp2=expmpi(jtime,:)
-        brsp(1:nfcoil)=fccurt(jtime,:)
+        brsp(1:nfsum)=fccurt(jtime,:)
         ecurrt=eccurt(jtime,:)
         denr=denrt(jtime,:)
         denv=denvt(jtime,:)
         if (mmstark.gt.0) then
-          tgamma=tangam(jtime,1:nmtark)
-          tgammauncor=tangam_uncor(jtime,1:nmtark)
-          sgamma=siggam(jtime,1:nmtark)
-          rrrgam=rrgam(jtime,1:nmtark)
-          zzzgam=zzgam(jtime,1:nmtark)
-          aa1gam=a1gam(jtime,1:nmtark)
-          aa2gam=a2gam(jtime,1:nmtark)
-          aa3gam=a3gam(jtime,1:nmtark)
-          aa4gam=a4gam(jtime,1:nmtark)
-          aa5gam=a5gam(jtime,1:nmtark)
-          aa6gam=a6gam(jtime,1:nmtark)
-          aa7gam=a7gam(jtime,1:nmtark)
+          tgamma=tangam(jtime,1:nmselp)
+          tgammauncor=tangam_uncor(jtime,1:nmselp)
+          sgamma=siggam(jtime,1:nmselp)
+          rrrgam=rrgam(jtime,1:nmselp)
+          zzzgam=zzgam(jtime,1:nmselp)
+          aa1gam=a1gam(jtime,1:nmselp)
+          aa2gam=a2gam(jtime,1:nmselp)
+          aa3gam=a3gam(jtime,1:nmselp)
+          aa4gam=a4gam(jtime,1:nmselp)
+          aa5gam=a5gam(jtime,1:nmselp)
+          aa6gam=a6gam(jtime,1:nmselp)
+          aa7gam=a7gam(jtime,1:nmselp)
         endif
 !
         if (mmbmsels.gt.0) then
@@ -655,7 +661,7 @@
       real*8, dimension(mbdry) :: rbdryss,zbdryss
       real*8 :: brspss(nrsmat),coils(nsilop),expmp2(magpri), &
                 denr(nco2r),denv(nco2v)
-      real*8, dimension(nmtark) :: tgamma,sgamma,rrrgam,zzzgam, &
+      real*8, dimension(nmselp) :: tgamma,sgamma,rrrgam,zzzgam, &
                                    aa1gam,aa2gam,aa3gam,aa4gam,aa5gam, &
                                    aa6gam,aa7gam,tgammauncor
 
@@ -714,7 +720,7 @@
       fwtmp2=swtmp2
       brspss=brsp
       brsp=0.0
-      brsp(1:nfcoil)=fccurt(jtime,:)
+      brsp(1:nfsum)=fccurt(jtime,:)
       fwtfc=swtfc
       ecurrt=eccurt(jtime,:)
       fwtec=swtec
@@ -726,18 +732,18 @@
         if (fwtgam(i).gt.1.e-06_dp) mmstark=mmstark+1
       enddo
       if (mmstark.gt.0) then
-        tgamma=tangam(jtime,1:nmtark)
-        tgammauncor=tangam_uncor(jtime,1:nmtark)
-        sgamma=siggam(jtime,1:nmtark)
-        rrrgam=rrgam(jtime,1:nmtark)
-        zzzgam=zzgam(jtime,1:nmtark)
-        aa1gam=a1gam(jtime,1:nmtark)
-        aa2gam=a2gam(jtime,1:nmtark)
-        aa3gam=a3gam(jtime,1:nmtark)
-        aa4gam=a4gam(jtime,1:nmtark)
-        aa5gam=a5gam(jtime,1:nmtark)
-        aa6gam=a6gam(jtime,1:nmtark)
-        aa7gam=a7gam(jtime,1:nmtark)
+        tgamma=tangam(jtime,1:nmselp)
+        tgammauncor=tangam_uncor(jtime,1:nmselp)
+        sgamma=siggam(jtime,1:nmselp)
+        rrrgam=rrgam(jtime,1:nmselp)
+        zzzgam=zzgam(jtime,1:nmselp)
+        aa1gam=a1gam(jtime,1:nmselp)
+        aa2gam=a2gam(jtime,1:nmselp)
+        aa3gam=a3gam(jtime,1:nmselp)
+        aa4gam=a4gam(jtime,1:nmselp)
+        aa5gam=a5gam(jtime,1:nmselp)
+        aa6gam=a6gam(jtime,1:nmselp)
+        aa7gam=a7gam(jtime,1:nmselp)
       endif
       fwtcur=swtcur
       btor=bcentr(jtime)

@@ -109,7 +109,7 @@ IOUT,1,"| Output file option. This is a bitwise switch except that 6 overwrites 
 IPLIM, 0, -1 = plot landscaped version of limiter for DIII-D for shot greater than 76756.
 IPLCOUT, 0,"| (Integer flag) Include additional variables in g-file (note: this variable is not written to the g-file so the snap or k-file must be read first to know if they are included)
 | 0 = standard variables (default)
-| 1 = add reconstructed F-coil, E-coil and 2D plasma current (note: F-coil and E-coil sizes are not written to the g-file so they need to be read from dprobe.dat first  - they can be more easily extraced from  m-files)
+| 1 = add reconstructed F-coil, E-coil and 2D plasma current (note: F-coil and E-coil sizes are not written to the g-file so they need to be read from mhdin.dat first  - they can be more easily extraced from  m-files)
 | 2 =  add 2D plasma current"
 IPROBE, 0, plot magnetic probes and flux loops and number them every IPROBE points. 
 IQPLOT, 1, plot q values on flux surfaces 

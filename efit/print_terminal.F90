@@ -22,20 +22,21 @@
              dsi,nzz,saisq,sinow,sm1,sm2,ssiref, &
              sumif,sumifb,sumifs,sumift,tin,tout, &
              xdum,xnorm,xtest,ytest,xxm,yym,xxp,yyp
-      integer*4 vsid ! unused
-      real*8 ecturn ! unused
       character*30 sfname
       character(1000) :: line
       real*8 xrsp(npcurn)
       real*8 patmpz(magpri),xmpz(magpri),ympz(magpri),ampz(magpri)
       integer*4, dimension(:), allocatable :: ishotall
       real*8, dimension(:), allocatable :: ch2all,timeall
+      ! DIIID specific parameters for writing mhdin.new file
+      integer*4, parameter :: magpri67=29,magpri322=31
 
-      NAMELIST/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi, &
-                   as,as2,lpname,rsisvs,turnfc,patmp2,vsname, &
+      namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,patmp2, &
+                   rsi,zsi,wsi,hsi,as,as2,rsisvs,lpname, &
+                   rvs,zvs,wvs,hvs,avs,avs2,vsname, &
                    racoil,zacoil,wacoil,hacoil, &
-                   rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2, &
-                   re,ze,ecid,ecturn,vsid,rvs,zvs,we,he,fcturn
+                   rf,zf,wf,hf,af,af2,fcid,fcturn,turnfc, &
+                   re,ze,we,he,ecid!,ecturn,vsid ! not used or saved in efit
 
       ! avoid write garbage when gapin or gapout not update (e.g. 1.e10)
       tin=gapin(it)
@@ -131,9 +132,9 @@
         endif
 
         write (nout,11030)
-        write (nout,11020) (brsp(i)/turnfc(i),i=1,nfcoil)
+        write (nout,11020) (brsp(i)/turnfc(i),i=1,nfsum)
         write (nout,11000)
-        write (nout,11020) (brsp(i),i=1,nfcoil)
+        write (nout,11020) (brsp(i),i=1,nfsum)
         sumif=0.0
         do i=1,5
           sumif=sumif+brsp(i)+brsp(i+9)
@@ -141,29 +142,29 @@
         sumif=sumif+brsp(8)+brsp(17)
         sumift=0.0
         sumifs=0.0
-        do i=1,nfcoil
+        do i=1,nfsum
           sumift=sumift+brsp(i)
           sumifs=sumifs+brsp(i)**2
         end do
-        sumifs=sqrt(sumifs/(nfcoil-1))
+        sumifs=sqrt(sumifs/(nfsum-1))
 
         write (nout,10020) sumif,sumift,sumifs
         write (nout,11010)
-        write (nout,11020) (rsisfc(i),i=1,nfcoil)
+        write (nout,11020) (rsisfc(i),i=1,nfsum)
         if (ivacum.eq.0.and.(icurrt.eq.2.or.icurrt.eq.5)) then
-          xnorm=brsp(nfcoil+1)
+          xnorm=brsp(nfsum+1)
           write (nout,11040) xnorm
           xrsp=0.0
           if (xnorm.ne.0.0) then
             do i=1,kwcurn
-              xrsp(i)=brsp(nfcoil+i)/xnorm
+              xrsp(i)=brsp(nfsum+i)/xnorm
             end do
           endif
           write (nout,11020) (xrsp(i),i=1,kwcurn)
           xnorm=darea
           write (nout,11043) xnorm
           do i=1,kwcurn
-            xrsp(i)=brsp(nfcoil+i)/xnorm
+            xrsp(i)=brsp(nfsum+i)/xnorm
           end do
           write (nout,11020) (xrsp(i),i=1,kwcurn)
           if (keecur.gt.0) then
@@ -197,19 +198,12 @@
         endif
       endif
 
-      if (patmp2(1).le.0.0) then
-        open(unit=80,status='old', &
-             file=table_di2(1:ltbdi2)//'dprobe.dat')
-        read (80,in3,iostat=ioerr)
-        if (ioerr>0) then
-          backspace(nin)
-          read(nin,fmt='(A)') line
-          write(*,'(A)') 'Invalid line in namelist in3: '//trim(line)
-          stop
-        endif
-        close(unit=80)
-        if (xmp2(1).le.0.0) write(*,*) "bad code detected"
-      endif
+!-----------------------------------------------------------------
+!--   Create a new machine file
+!--   Warning: this is only intended for DIIID
+!-----------------------------------------------------------------
+      if (patmp2(1).le.0.0 .and. xmp2(1).le.0.0) &
+        write(*,*) "bad code detected"
       if (xmp2(1).gt.0.0) then
        if (patmp2(1).le.0.0) then
         xmin=xmp2(1)
@@ -412,9 +406,9 @@
         enddo
 !
         if (rank == 0) then
-          open(unit=80,status='old',file='dprobe.new',iostat=ioerr)
+          open(unit=80,status='old',file='mhdin.new',iostat=ioerr)
           if (ioerr.eq.0) close(unit=80,status='delete')
-          open(unit=80,status='new',file='dprobe.new',delim='quote')
+          open(unit=80,status='new',file='mhdin.new',delim='quote')
           write (80,in3)
           close(unit=80)
         endif
@@ -478,7 +472,7 @@
         write (nout,11280) diamag(it)
         write (nout,11270) vloopt(it)
         write (nout,11292)
-        write (nout,11020) (fccurt(it,i),i=1,nfcoil)
+        write (nout,11020) (fccurt(it,i),i=1,nfsum)
         write (nout,11294)
         write (nout,11020) (eccurt(it,i),i=1,nesum)
 !

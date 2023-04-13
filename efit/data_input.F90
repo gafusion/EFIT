@@ -31,7 +31,7 @@
       integer*4 iemsels(nmsels)
       integer*4 ilower(mbdry)
       integer*8 n1d(1),n2d(2)
-      !real*4 spatial_avg_ham(nmtark,ngam_vars,ngam_u,ngam_w)
+      !real*4 spatial_avg_ham(nmselp,ngam_vars,ngam_u,ngam_w)
       real*8 currn1,co2cor,fq95
       real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref,sgnemin, &
              idfila,sigtii,pnbeam,sgtemin,sgnethi,sgtethi, &
@@ -49,12 +49,12 @@
       real*8 plasma_save,btor_save,rcentr_save,fwtcur_save,error_save
       real*8 r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max
       real*8 r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot,dnmin
-      real*8 gridpf(nwnh,mfila),gwork(nbwork,nwnh),rgrids(nw),zgrids(nh)
+      real*8 gridpf(nwnh,mfila),gwork(nsilop,nwnh),rgrids(nw),zgrids(nh)
       real*8 coils(nsilop),expmp2(magpri),acoilc(nacoil), &
-             tgamma(nmtark),sgamma(nmtark),rrrgam(nmtark),zzzgam(nmtark), &
-             aa1gam(nmtark),aa2gam(nmtark),aa3gam(nmtark),aa4gam(nmtark), &
-             aa5gam(nmtark),aa6gam(nmtark),aa7gam(nmtark), &
-             tgammauncor(nmtark)
+             tgamma(nmselp),sgamma(nmselp),rrrgam(nmselp),zzzgam(nmselp), &
+             aa1gam(nmselp),aa2gam(nmselp),aa3gam(nmselp),aa4gam(nmselp), &
+             aa5gam(nmselp),aa6gam(nmselp),aa7gam(nmselp), &
+             tgammauncor(nmselp)
       real*8 bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
              rrmsels(nmsels),zzmsels(nmsels), &
              l1msels(nmsels),l2msels(nmsels),l4msels(nmsels), &
@@ -64,9 +64,9 @@
       real*8 pds(6),denr(nco2r),denv(nco2v)
       real*8 devxmpin(magpri),rnavxmpin(magpri), &
              devpsiin(nsilop),rnavpsiin(nsilop), &
-             devfcin(nfcoil),rnavfcin(nfcoil), &
+             devfcin(nfsum),rnavfcin(nfsum), &
              devein(nesum),rnavecin(nesum) 
-      real*8 brsptu(nfcoil),brsp_save(nrsmat)
+      real*8 brsptu(nfsum),brsp_save(nrsmat)
       real*8, dimension(:), allocatable :: expmp2_save,coils_save, &
                                              rbdry_save,zbdry_save, &
                                              fwtsi_save,pressr_save, &
@@ -572,8 +572,8 @@
             write(*,'(A)') 'Invalid line in namelist out1: '//trim(line)
             stop
           endif
-          allocate(fcoil_ext(nfcoil))
-          fcoil_ext=brsp(1:nfcoil)
+          allocate(fcoil_ext(nfsum))
+          fcoil_ext=brsp(1:nfsum)
           ishot=ishot_save
           itime=itime_save
           plasma=plasma_save
@@ -1375,7 +1375,7 @@
 
           ! read in fcoil currents (skip ecoils)
           if ((icinit.eq.-3).or.(icinit.eq.-4)) then
-            allocate(fcoil_ext(nfcoil))
+            allocate(fcoil_ext(nfsum))
             call test_group(sid,"constraints",file_stat,h5err)
             if (.not. file_stat) then
               call errctrl_msg('data_input', &
@@ -1390,7 +1390,7 @@
               stop
             endif
             call open_group(cid,"pf_current",nid,h5err)
-            do i=nesum,nesum+nfcoil-1
+            do i=nesum,nesum+nfsum-1
               write(probeind,"(I0)") i
               call test_group(nid,trim(probeind),file_stat,h5err)
               if (.not. file_stat) then
@@ -1488,7 +1488,7 @@
       elseif (table_dir.ne.table_save .and. link_efit.eq.'') then
         ! error if table_dir changes (global_allocs already set)
         call errctrl_msg('data_input', &
-          'changing experiment during run is not supported (table_dir)')
+          'changing machine during run is not supported (table_dir)')
         kerror=1
         return
       endif
@@ -1522,7 +1522,7 @@
 !--   protect against underflow in fitting weights 
       if(abs(fwtdlc).le.1.e-30_dp) fwtdlc=0.0
       if(abs(fwtcur).le.1.e-30_dp) fwtcur=0.0
-      do i=1,nfcoil
+      do i=1,nfsum
         if(abs(fwtfc(i)).le.1.e-30_dp) fwtfc(i)=0.0
       enddo
       do i=1,nesum
@@ -1534,7 +1534,7 @@
       do i=1,nsilop
         if(abs(fwtsi(i)).le.1.e-30_dp) fwtsi(i)=0.0
       enddo
-      do i=1,nmtark
+      do i=1,nmselp
         if(abs(fwtgam(i)).le.1.e-30_dp) fwtgam(i)=0.0
       enddo
       do i=1,nmsels
@@ -1915,7 +1915,7 @@
       swtec=fwtec
       swtmp2=fwtmp2
       swtsi=fwtsi
-      swtgam(1:nmtark)=fwtgam(1:nmtark)
+      swtgam(1:nmselp)=fwtgam(1:nmselp)
       swtbmsels=fwtbmsels
       swtemsels=fwtemsels
       swtece=fwtece0
@@ -1926,8 +1926,8 @@
 #ifdef DEBUG_LEVEL1
       write(*,*)'adjust fit parameters based on basis function selected'
 #endif
-      if(fbetan.gt.0.) brsp(nfcoil+jbeta)=alpax(jbeta)*darea
-      if(fli.gt.0.) brsp(nfcoil+kppcur+jli)=gamax(jli)*darea
+      if(fbetan.gt.0.) brsp(nfsum+jbeta)=alpax(jbeta)*darea
+      if(fli.gt.0.) brsp(nfsum+kppcur+jli)=gamax(jli)*darea
       if(kedgep.gt.0) pedge=pedge*darea
       if(kedgef.gt.0) f2edge=f2edge*darea
       if (npress.lt.0) then
@@ -2184,34 +2184,34 @@
       sigdia(jtime)=1.0e-03_dp*abs(sigdlc)
       pbinj(jtime)=pnbeam
       silopt(jtime,:)=coils
-      fccurt(jtime,:)=brsp(1:nfcoil)
-      tangam(jtime,1:nmtark)=tgamma(1:nmtark) 
-      tangam_uncor(jtime,1:nmtark)=tgammauncor(1:nmtark) 
-      siggam(jtime,1:nmtark)=sgamma(1:nmtark) 
-      rrgam(jtime,1:nmtark)=rrrgam(1:nmtark) 
-      zzgam(jtime,1:nmtark)=zzzgam(1:nmtark) 
-      a1gam(jtime,1:nmtark)=aa1gam(1:nmtark) 
-      a2gam(jtime,1:nmtark)=aa2gam(1:nmtark) 
-      a3gam(jtime,1:nmtark)=aa3gam(1:nmtark) 
-      a4gam(jtime,1:nmtark)=aa4gam(1:nmtark) 
-      a5gam(jtime,1:nmtark)=aa5gam(1:nmtark) 
-      a6gam(jtime,1:nmtark)=aa6gam(1:nmtark) 
-      a7gam(jtime,1:nmtark)=aa7gam(1:nmtark) 
-      a8gam(jtime,1:nmtark)=0.0 
-      tangam(jtime,nmtark+1:nstark)=tlibim(1:nstark-nmtark)
-      siggam(jtime,nmtark+1:nstark)=slibim(1:nstark-nmtark)
-      rrgam(jtime,nmtark+1:nstark)=rrrlib(1:nstark-nmtark)
-      zzgam(jtime,nmtark+1:nstark)=zzzlib(1:nstark-nmtark)
-      a1gam(jtime,nmtark+1:nstark)=aa1lib(1:nstark-nmtark)
-      a2gam(jtime,nmtark+1:nstark)=0.0
-      a3gam(jtime,nmtark+1:nstark)=0.0
-      a4gam(jtime,nmtark+1:nstark)=0.0
-      a5gam(jtime,nmtark+1:nstark)=0.0
-      a6gam(jtime,nmtark+1:nstark)=0.0
-      a7gam(jtime,nmtark+1:nstark)=0.0
-      a8gam(jtime,nmtark+1:nstark)=aa8lib(1:nstark-nmtark)
-      fwtgam(nmtark+1:nstark)=fwtlib(1:nstark-nmtark)
-      swtgam(nmtark+1:nstark)=fwtlib(1:nstark-nmtark)
+      fccurt(jtime,:)=brsp(1:nfsum)
+      tangam(jtime,1:nmselp)=tgamma 
+      tangam_uncor(jtime,1:nmselp)=tgammauncor 
+      siggam(jtime,1:nmselp)=sgamma 
+      rrgam(jtime,1:nmselp)=rrrgam 
+      zzgam(jtime,1:nmselp)=zzzgam 
+      a1gam(jtime,1:nmselp)=aa1gam 
+      a2gam(jtime,1:nmselp)=aa2gam 
+      a3gam(jtime,1:nmselp)=aa3gam 
+      a4gam(jtime,1:nmselp)=aa4gam 
+      a5gam(jtime,1:nmselp)=aa5gam 
+      a6gam(jtime,1:nmselp)=aa6gam 
+      a7gam(jtime,1:nmselp)=aa7gam 
+      a8gam(jtime,1:nmselp)=0.0 
+      tangam(jtime,nmselp+1:nstark)=tlibim
+      siggam(jtime,nmselp+1:nstark)=slibim
+      rrgam(jtime,nmselp+1:nstark)=rrrlib
+      zzgam(jtime,nmselp+1:nstark)=zzzlib
+      a1gam(jtime,nmselp+1:nstark)=aa1lib
+      a2gam(jtime,nmselp+1:nstark)=0.0
+      a3gam(jtime,nmselp+1:nstark)=0.0
+      a4gam(jtime,nmselp+1:nstark)=0.0
+      a5gam(jtime,nmselp+1:nstark)=0.0
+      a6gam(jtime,nmselp+1:nstark)=0.0
+      a7gam(jtime,nmselp+1:nstark)=0.0
+      a8gam(jtime,nmselp+1:nstark)=aa8lib
+      fwtgam(nmselp+1:nstark)=fwtlib
+      swtgam(nmselp+1:nstark)=fwtlib
 ! 
       bmselt(jtime,:)=bmsels
       sbmselt(jtime,:)=sbmsels
@@ -2351,14 +2351,14 @@
         endif
       endif
 !--------------------------------------------------------------------- 
-!--   correction to 322 degree probes due to N1 coil                -- 
+!--   DIIID correction to 322 degree probes due to N1 coil
 !--------------------------------------------------------------------- 
       if (oldccomp) then 
         if (n1coil.eq.2.and.ishot.le.108281) then 
           open(unit=60,file=input_dir(1:lindir)//'n1coil.ddd', & 
                status='old')
           j=jtime
-          do i=30,magpri67+magpri322 
+          do i=30,60 
             read(60,*) namedum,xxxdum,signn1(i) 
             expmpi(j,i)=expmpi(j,i)-signn1(i)*curtn1(j) 
           enddo
@@ -2366,13 +2366,13 @@
         endif 
       endif 
 !--------------------------------------------------------------------- 
-!--   correction to 322 and 67 degree probes due to C coil          -- 
+!--   DIIID correction to 322 and 67 degree probes due to C coil
 !--------------------------------------------------------------------- 
       if (nccoil.eq.1.and.oldccomp) then 
         open(unit=60,file=input_dir(1:lindir)//'ccoil.ddd', & 
              status='old') 
         j=jtime
-        do i=30,magpri67+magpri322 
+        do i=30,60
           read(60,*) namedum,signc139 
           expmpi(j,i)=expmpi(j,i)-signc139*curc139(j) 
         enddo 
@@ -2442,9 +2442,9 @@
       endif
 ! 
 !     if(brsptu(1).le.-1.e-20_dp) & 
-!       brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil) 
+!       brsp(1:nfsum)=brsptu(1:nfsum)*turnfc(1:nfsum) 
       if((brsptu(1).gt.-1.e-20_dp).and.(icinit.ne.-3).and.(icinit.ne.-4)) &
-        brsp(1:nfcoil)=brsptu(1:nfcoil)*turnfc(1:nfcoil) 
+        brsp(1:nfsum)=brsptu(1:nfsum)*turnfc(1:nfsum) 
       reflux=silopt(jtime,iabs(nslref)) 
       do m=1,nsilop 
         tdata1=errsil*abs(silopt(jtime,m)-reflux) 
@@ -2530,7 +2530,7 @@
       write (6,*) 'DATA fwtbmselt = ', (fwtbmselt(jtime,i),i=1,nmsels)
 #endif
 ! 
-      do m=1,nfcoil 
+      do m=1,nfsum 
         tdata1=serror*abs(fccurt(jtime,m)) 
         tdata2=abs(bitfc(m))*vbit 
         tdata=max(tdata1,tdata2) 
@@ -2583,8 +2583,8 @@
       emf=emp 
       enf=enp 
       kpcurn=kppcur+kffcur 
-      nfnpcr=nfcoil+kpcurn 
-      nbase=nfcoil+kppcur 
+      nfnpcr=nfsum+kpcurn 
+      nbase=nfsum+kppcur 
       nfnwcr=nfnpcr 
       if (kvtor.gt.0) then 
         nfnwcr=nfnwcr+kwwcur 
@@ -2609,7 +2609,7 @@
         if(fwtsi(i).gt.0.0) ipsi(jtime)=ipsi(jtime)+1 
       enddo
       ifc(jtime)=0 
-      do i=1,nfcoil 
+      do i=1,nfsum 
         if(fwtfc(i).gt.0.0) ifc(jtime)=ifc(jtime)+1 
       enddo
       iec(jtime)=0 
@@ -2622,10 +2622,10 @@
       enddo
       kmtark=0 
       klibim=0 
-      do i=1,nmtark 
+      do i=1,nmselp 
         if(fwtgam(i).gt.0.0) kmtark=kmtark+1 
       enddo
-      do i=nmtark+1,nstark 
+      do i=nmselp+1,nstark 
         if(fwtgam(i).gt.0.0) klibim=klibim+1 
       enddo 
       kstark=kmtark+klibim 
@@ -2809,12 +2809,8 @@
         rmx(k)=rgrid(i) 
         zmx(k)=zgrid(j) 
         kk=(i-1)*nh+j 
-        do m=1,nsilop 
-          rsilpf(m,k)=gsilpc(m,kk) 
-        enddo
-        do m=1,magpri 
-          rmp2pf(m,k)=gmp2pc(m,kk) 
-        enddo
+        rsilpf(:,k)=gsilpc(:,kk) 
+        rmp2pf(:,k)=gmp2pc(:,kk) 
         do ii=1,nw 
           do jj=1,nh 
             kkkk=(ii-1)*nh+jj 
@@ -2850,24 +2846,12 @@
           enddo
         enddo
       endif 
-      do m=1,nsilop 
-        wsilpc(m)=0.0 
-      enddo
-      do m=1,magpri 
-        wmp2pc(m)=0.0 
-      enddo
-      do m=1,nfcoil 
-        wfcpc(m)=0.0 
-      enddo
-      do m=1,nesum 
-        wecpc(m)=0.0 
-      enddo
-      do m=1,nvesel 
-        wvspc(m)=0.0 
-      enddo
-      do m=1,nwnh 
-        wgridpc(m)=0.0 
-      enddo
+      wsilpc=0.0 
+      wmp2pc=0.0 
+      wfcpc=0.0 
+      wecpc=0.0 
+      wvspc=0.0 
+      wgridpc=0.0 
       wpcpc=0.0 
       npc=0 
 ! 
@@ -2882,21 +2866,11 @@
           kk=(i-1)*nh+j 
           if(xpsi(kk).lt.0.0.or.xpsi(kk).gt.1.0) cycle
           npc=npc+1 
-          do m=1,nsilop 
-            wsilpc(m)=wsilpc(m)+gsilpc(m,kk) 
-          enddo
-          do m=1,magpri 
-            wmp2pc(m)=wmp2pc(m)+gmp2pc(m,kk) 
-          enddo
-          do m=1,nfcoil 
-            wfcpc(m)=wfcpc(m)+rfcpc(m,kk) 
-          enddo
-          do m=1,nesum 
-            wecpc(m)=wecpc(m)+gridec(kk,m) 
-          enddo
-          do m=1,nvesel 
-            wvspc(m)=wvspc(m)+gridvs(kk,m) 
-          enddo
+          wsilpc=wsilpc+gsilpc(:,kk) 
+          wmp2pc=wmp2pc+gmp2pc(:,kk) 
+          wfcpc=wfcpc+rfcpc(:,kk) 
+          wecpc=wecpc+gridec(kk,:) 
+          wvspc=wvspc+gridvs(kk,:) 
           do ii=1,nw 
             do jj=1,nh 
               kkkk=(ii-1)*nh+jj 
@@ -2910,24 +2884,12 @@
         enddo
       enddo
       xnpc=real(npc,dp) 
-      do m=1,nsilop 
-        wsilpc(m)=wsilpc(m)/xnpc 
-      enddo
-      do m=1,magpri 
-        wmp2pc(m)=wmp2pc(m)/xnpc 
-      enddo
-      do m=1,nfcoil 
-        wfcpc(m)=wfcpc(m)/xnpc 
-      enddo
-      do m=1,nesum 
-        wecpc(m)=wecpc(m)/xnpc 
-      enddo
-      do m=1,nvesel 
-        wvspc(m)=wvspc(m)/xnpc 
-      enddo
-      do m=1,nwnh 
-        wgridpc(m)=wgridpc(m)/xnpc 
-      enddo
+      wsilpc=wsilpc/xnpc 
+      wmp2pc=wmp2pc/xnpc 
+      wfcpc=wfcpc/xnpc 
+      wecpc=wecpc/xnpc 
+      wvspc=wvspc/xnpc 
+      wgridpc=wgridpc/xnpc 
       wpcpc=wpcpc/xnpc**2 
 ! 
       open(unit=nffile,status='old',form='unformatted', & 
@@ -3116,8 +3078,8 @@
           do j=1,nh 
             kkl=(i-1)*nh+j 
             kku=i*nh-j+1 
-            do m=nfcoil/2+1,nfcoil 
-              gridfc(kkl,m)=gridfc(kku,m-nfcoil/2) 
+            do m=nfsum/2+1,nfsum 
+              gridfc(kkl,m)=gridfc(kku,m-nfsum/2) 
             enddo 
           enddo 
         enddo 
@@ -3125,7 +3087,7 @@
 !----------------------------------------------------------------------- 
 !--   interpolate to get boundary response functions, first F coils   -- 
 !----------------------------------------------------------------------- 
-      do n=1,nfcoil
+      do n=1,nfsum
         call sets2d(gridfc(1,n),c,rgrid,nw,bkx,lkx,zgrid,nh,bky, & 
                     lky,wk,ier) 
         do i=1,nbdry 
@@ -3145,8 +3107,8 @@
       if ((symmetrize).and.(nbdry.gt.1)) then ! nbdry changed above
         do i=1,nbryup 
           if (ilower(i).ne.-1) then 
-            do j=nfcoil/2 +1, nfcoil 
-              jupper=j-nfcoil/2 
+            do j=nfsum/2 +1, nfsum 
+              jupper=j-nfsum/2 
               rbdrfc(i,j)=rbdrfc(ilower(i),jupper) 
               rbdrfc(ilower(i),j)=rbdrfc(i,jupper) 
             enddo 

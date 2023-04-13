@@ -115,14 +115,14 @@
        if (icurrt.ne.2.and.icurrt.ne.5) return
        if (fwtbp.le.0.0) return
        do i=1,kppcur
-         brsp(nfcoil+i)=0.0
+         brsp(nfsum+i)=0.0
        enddo
        do i=1,kffcur
          brsp(nbase+i)=0.0
        enddo
-       brsp(nfcoil+1)=cratio/rzero
+       brsp(nfsum+1)=cratio/rzero
        brsp(nbase+1)=cratio*rbetap*rzero
-       brsp(nfcoil+2)=-brsp(nfcoil+1)
+       brsp(nfsum+2)=-brsp(nfsum+1)
        brsp(nbase+2)=-brsp(nbase+1)
        return
       endif GAQ
@@ -228,7 +228,7 @@
 !-----------------------------------------------------------------------
 !--        J at PSIWANT constraint                                    --
 !-----------------------------------------------------------------------
-           brspmin=max(ten24,abs(brsp(nfcoil+1)))
+           brspmin=max(ten24,abs(brsp(nfsum+1)))
            fwtxxx=fwtxxj*1000./brspmin
            if (kzeroj.gt.0) then
             do i=1,kzeroj
@@ -278,13 +278,13 @@
 !--        constraint on betan by successive iterations               --
 !-----------------------------------------------------------------------
            if (fbetan.gt.0.0) then
-            brspmin=max(ten24,abs(brsp(nfcoil+jbeta)))
+            brspmin=max(ten24,abs(brsp(nfsum+jbeta)))
              fwtxxn=fwtxxb*1000./brspmin
              nj=nj+1
              do j=1,kpcurn
                alipc(nj,j)=0.0
              enddo
-             calpao=brsp(nfcoil+jbeta)
+             calpao=brsp(nfsum+jbeta)
              alipc(nj,jbeta)=fwtxxn
              if (initc.ge.jwantm) then
                xrsp(nj)=fwtxxn/abs(betatn)*fbetan*calpao
@@ -296,7 +296,7 @@
 !--        constraint on li successive iterations                     --
 !-----------------------------------------------------------------------
            if (fli.gt.0.0) then
-             brspmin=max(ten24,abs(brsp(nfcoil+jli)))
+             brspmin=max(ten24,abs(brsp(nfsum+jli)))
              fwtxxi=fwtxli*1000./brspmin
              nj=nj+1
              do j=1,kpcurn
@@ -393,9 +393,9 @@
                work(i)=t
              end do
              do i=1,nownow
-               brsp(nfcoil+i)=0.0
+               brsp(nfsum+i)=0.0
                do j=1,nownow
-                 brsp(nfcoil+i)=brsp(nfcoil+i)+alipc(i,j)*work(j)
+                 brsp(nfsum+i)=brsp(nfsum+i)+alipc(i,j)*work(j)
                end do
              end do
            else
@@ -420,25 +420,25 @@
                return
              endif
              do i=1,nownow
-               brsp(nfcoil+i)=xrsp(i)
+               brsp(nfsum+i)=xrsp(i)
              enddo
            endif
            nownow=kpcurn
            if (kedgep.gt.0) then
              nownow=nownow+1
-             pedge=brsp(nfcoil+nownow)
+             pedge=brsp(nfsum+nownow)
            endif
            if (kedgef.gt.0) then
              nownow=nownow+1
-             f2edge=brsp(nfcoil+nownow)
+             f2edge=brsp(nfsum+nownow)
            endif
 !-----------------------------------------------------------------------
 !--        update total plasma current if needed to                   --
 !-----------------------------------------------------------------------
            if (abs(fwtcur).le.1.e-30_dp .and. nqwant.gt.0) then
              cm=0.0
-             do n=nfcoil+1,nfnpcr
-               cm=cm+brsp(n)*fgowpc(n-nfcoil)
+             do n=nfsum+1,nfnpcr
+               cm=cm+brsp(n)*fgowpc(n-nfsum)
              enddo
              if (kedgep.gt.0) then
                cm=cm+pedge*fgowpe
@@ -459,17 +459,17 @@
                         +rqaftor*fpcurr(tz,kffcur))
          aqax = abs(aqax)
          do i=1,kppcur
-           brsp(nfcoil+i)=aqax*brsp(nfcoil+i)
+           brsp(nfsum+i)=aqax*brsp(nfsum+i)
          enddo
          do i=1,kffcur
            brsp(nbase+i)=aqax*brsp(nbase+i)
          enddo
-         cwant0=ipmhd(jtime)-fgowpc(1)*brsp(nfcoil+1)-fgowpc(kppcur+1) &
+         cwant0=ipmhd(jtime)-fgowpc(1)*brsp(nfsum+1)-fgowpc(kppcur+1) &
                *brsp(nbase+1)
          cwant1=0.0
          do i=2,kpcurn
            if(i.eq.kppcur+1) cycle
-           cwant1=cwant1+fgowpc(i)*brsp(nfcoil+i)
+           cwant1=cwant1+fgowpc(i)*brsp(nfsum+i)
          enddo
          if (abs(cwant1).le.1.0e-10_dp) then
            kerror=1
@@ -480,7 +480,7 @@
          cwant1=cwant0/cwant1
          do i=2,kpcurn
            if(i.eq.kppcur+1) cycle
-           brsp(nfcoil+i)=cwant1*brsp(nfcoil+i)
+           brsp(nfsum+i)=cwant1*brsp(nfsum+i)
          enddo
 !
        endif
@@ -532,7 +532,7 @@
           if((xpsi(kk).ge.0.0).and.(xpsi(kk).le.1.0)) &
             tcurrp=tcurrp+pcurrt(kk)
         enddo
-        do i=nfcoil+1,nfnpcr
+        do i=nfsum+1,nfnpcr
           brsp(i)=cratio*brsp(i)
         enddo
         if(npsi_ext > 0) &
@@ -645,7 +645,7 @@
 !-----------------------------------------------------------------------
 !--    J at PSIWANT constraint                                        --
 !-----------------------------------------------------------------------
-       brspmin=max(ten24,abs(brsp(nfcoil+1)))
+       brspmin=max(ten24,abs(brsp(nfsum+1)))
        fwtxxx=fwtxxj*1000./brspmin
        if (kzeroj.gt.0) then
         do i=1,kzeroj
@@ -744,13 +744,13 @@
 !--    constraint on betan by successive iterations                   --
 !-----------------------------------------------------------------------
        if (fbetan.gt.0.0) then
-         brspmin=max(ten24,abs(brsp(nfcoil+jbeta)))
+         brspmin=max(ten24,abs(brsp(nfsum+jbeta)))
          fwtxxn=fwtxxb*1000./brspmin
          nj=nj+1
          do j=1,kpcurn
            alipc(nj,j)=0.0
          enddo
-         calpao=brsp(nfcoil+jbeta)
+         calpao=brsp(nfsum+jbeta)
          alipc(nj,jbeta)=fwtxxn
          if (initc.ge.jwantm) then
            xrsp(nj)=fwtxxn/abs(betatn)*fbetan*calpao
@@ -762,7 +762,7 @@
 !--    constraint on li successive iterations                         --
 !-----------------------------------------------------------------------
        if (fli.gt.0.0) then
-         brspmin=max(ten24,abs(brsp(nfcoil+jli)))
+         brspmin=max(ten24,abs(brsp(nfsum+jli)))
          fwtxxi=fwtxli*1000./brspmin
          nj=nj+1
          do j=1,kpcurn
@@ -835,9 +835,9 @@
            work(i)=t
          enddo
          do i=1,kwcurn
-           brsp(nfcoil+i)=0.0
+           brsp(nfsum+i)=0.0
            do j=1,kwcurn
-             brsp(nfcoil+i)=brsp(nfcoil+i)+alipc(i,j)*work(j)
+             brsp(nfsum+i)=brsp(nfsum+i)+alipc(i,j)*work(j)
            enddo
          enddo
 !-----------------------------------------------------------------------
@@ -845,8 +845,8 @@
 !-----------------------------------------------------------------------
          if (abs(fwtcur).le.1.e-30_dp.and.nqwant.gt.0) then
            cm=0.0
-           do n=nfcoil+1,nfnwcr
-            cm=cm+brsp(n)*fgowpc(n-nfcoil)
+           do n=nfsum+1,nfnwcr
+            cm=cm+brsp(n)*fgowpc(n-nfsum)
            enddo
            ipmhd(jtime)=cm
            ipmeas(jtime)=cm
@@ -980,7 +980,7 @@
             tcurrp=tcurrp+pcurrt(kk)
          endif
        enddo
-       do i=nfcoil+1,nfcoil+kwcurn
+       do i=nfsum+1,nfsum+kwcurn
          brsp(i)=cratio*brsp(i)
        enddo
 !

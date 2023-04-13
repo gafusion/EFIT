@@ -196,7 +196,7 @@
       itot=isplit*isplit
       fitot=itot 
       recebzfc = 0.0
-      do k=1,mfcoil
+      do k=1,nfcoil
         bzct=0 
         call splitc(isplit,rsplt,zsplt,csplt, &
                     rf(k),zf(k),wf(k),hf(k),af(k),af2(k),cdum)
@@ -274,10 +274,10 @@
       endif
 !-------------------------------------------------------------------------
 !--   compute the response function about R+ R- constraint     
-!--   F coils response -----recefc(nece,nfcoil)
+!--   F coils response -----recefc(nece,nfsum)
 !-------------------------------------------------------------------------
       ECE: if (kfitece.ne.1) then
-      do n=1,nfcoil
+      do n=1,nfsum
         call sets2d(gridfc(1,n),c,rgrid,nw,bkx,lkx,zgrid,nh,bky, &
                        lky,wk,ier)
         do i=1,nece

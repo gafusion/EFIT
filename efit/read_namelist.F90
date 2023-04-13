@@ -128,26 +128,25 @@
 
 !**********************************************************************
 !>
-!!    This subroutine reads experiment dependent parameters
+!!    This subroutine reads machine dependent parameters
 !!
 !**********************************************************************
       subroutine read_machinein()
-      use var_nio, only : nin
+      use var_nio, only: nin
+      use var_input, only: ierchk
       use errlims
       include 'eparm.inc'
       implicit none
-      integer*4 :: istat,kubics
+      integer*4 :: istat,kubics,nvsum
       character(1000) :: line
 
-      ! it would probably be more clear to call this namelist experimentin or eparmin
-      namelist/machinein/nsilds,nsilol,nfcoil,nrogow,nacoil,mfcoil,necoil,nvesel, &
-        mpress,nesum,magpri67,magpri322,magprirdp,magudom,maglds,mse315,mse45, &
-        mse15,mse1h,mse315_2,mse210,libim,nmsels,nnece,nnecein,neceo,nnnte, &
+      namelist/machinein/nsilop,nrogow,nacoil,nfcoil,necoil,nfsum,nesum, &
+        magpri,nvesel,mpress,nmselp,libim,nmsels,nnece,nnecein,neceo,nnnte, &
         ngam_vars,ngam_u,ngam_w,nlimit,nlimbd,nangle,ntangle,nfbcoil,mccoil, &
         micoil,ndata,nwwcur,nffcur,nppcur,nercur,ntime,ndim,kxiter,mqwant, &
         mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef,modep,modew,kubics, &
-        icycred_loopmax,nfourier,device, &
-        li_max,li_min,betap_max,plasma_diff, &
+        icycred_loopmax,nfourier,device,nvsum
+      namelist/incheck/li_max,li_min,betap_max,plasma_diff, &
         aminor_max,aminor_min,elong_max,elong_min, &
         rout_max,rout_min,zout_max,zout_min, &
         rcurrt_max,rcurrt_min,zcurrt_max,zcurrt_min, &
@@ -156,14 +155,24 @@
         sepin_check,qout_max,qout_min, &
         dbpli_diff,delbp_diff
 
-      ! it would probably be more clear to call this experiment.dat or eparm.dat
-      open(unit=nin,status='old',file=table_di2(1:ltbdi2)//'dprobe.dat')
+      open(unit=nin,status='old', &
+           file=table_di2(1:ltbdi2)//'mhdin.dat')
       read (nin,machinein,iostat=istat)
       if (istat>0) then
         backspace(nin)
         read(nin,fmt='(A)') line
         write(*,'(A)') 'Invalid line in namelist machinein: '//trim(line)
         stop
+      endif
+      if (abs(ierchk)>0) then
+        rewind(nin)
+        read (nin,incheck,iostat=istat)
+        if (istat>0) then
+          backspace(nin)
+          read(nin,fmt='(A)') line
+          write(*,'(A)') 'Invalid line in namelist machinein: '//trim(line)
+          stop
+        endif
       endif
       close(unit=nin)
       
@@ -182,12 +191,12 @@
       use var_exdata, only: ishot,ifitvs
       use var_cecoil, only: iecurr
       use var_vessel, only: ivesel
-      use var_input, only: icutfp
+      use var_input, only: icutfp,ierchk
       use extvars, only: table_dir,input_dir,store_dir,efitversion
       implicit none
       character (*), intent(in) :: filename
       integer*4 nin,istat,itime,itek,itrace,nxiter,kffcur,kppcur,mxiter, &
-                ierchk,limitr,nbdry,nslref,ibunmn,icurrt,icinit,iweigh, &
+                limitr,nbdry,nslref,ibunmn,icurrt,icinit,iweigh, &
                 iconvr,icprof,nextra,ixstrt,itimeu,islve,icntour,iprobe, &
                 ifref,isumip,n1coil,ifcurr,iecoil,iplim,kinput,limfag, &
                 kprfit,npress,keqdsk,npteth,nption,npneth,nbeam,iexcal, &
@@ -294,7 +303,7 @@
       use var_exdata, only: ishot,ifitvs
       use var_cecoil, only: iecurr
       use var_vessel, only: ivesel
-      use var_input, only: icutfp
+      use var_input, only: icutfp,ierchk
       use var_nio
       use error_control
       use extvars, only: table_dir,input_dir,store_dir,efitversion
@@ -353,6 +362,7 @@
         call read_h5_ex(nid,"table_dir",table_dir,h5in,h5err)
         call read_h5_ex(nid,"input_dir",input_dir,h5in,h5err)
         call read_h5_ex(nid,"efitversion",efitversion,h5in,h5err)
+        call read_h5_ex(nid,"ierchk",ierchk,h5in,h5err)
         call close_group("in1",nid,h5err)
       endif
       call close_group("0",sid,h5err)

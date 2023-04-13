@@ -8,7 +8,6 @@
 !!    WARNING: this subroutine uses both REAL*4 (used by mselib) and
 !!             REAL*8 variables conversions must be handled carefully
 !!
-!!
 !!    @param ktime : number of time slices
 !!
 !**********************************************************************
@@ -17,15 +16,15 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      real*4 avem,tanham(ktime,nmtark),sigham(ktime,nmtark), &
-         rrham(nmtark),zzham(nmtark), &
-         sarkar,sarkaz,a1ham(nmtark), &
-         a2ham(nmtark),a3ham(nmtark),a4ham(nmtark), &
-         a5ham(nmtark),a6ham(nmtark),a7ham(nmtark),atime(ktime), &
-         spatial_avg_ham(nmtark,ngam_vars,ngam_u,ngam_w), &
-         hgain(nmtark),hslope(nmtark),hscale(nmtark), &
-         hoffset(nmtark),max_beamOff, &
-         tanham_uncor(ktime,nmtark)
+      real*4 avem,tanham(ktime,nmselp),sigham(ktime,nmselp), &
+         rrham(nmselp),zzham(nmselp), &
+         sarkar,sarkaz,a1ham(nmselp), &
+         a2ham(nmselp),a3ham(nmselp),a4ham(nmselp), &
+         a5ham(nmselp),a6ham(nmselp),a7ham(nmselp),atime(ktime), &
+         spatial_avg_ham(nmselp,ngam_vars,ngam_u,ngam_w), &
+         hgain(nmselp),hslope(nmselp),hscale(nmselp), &
+         hoffset(nmselp),max_beamOff, &
+         tanham_uncor(ktime,nmselp)
       real*4 fv30lt,fv30rt,fv210lt,fv210rt
 
       atime(1:ktime) = real(time(1:ktime),r4)
@@ -52,7 +51,7 @@
       call get_mse_spatial_data(spatial_avg_ham)
       call get_mse_calibration(msefitfun,hgain,hslope,hscale,hoffset)
       kfixstark = 0
-      do n=1,nmtark
+      do n=1,nmselp
         rmse_gain(n) = real(hgain(n),dp)
         rmse_slope(n) = real(hslope(n),dp)
         rmse_scale(n) = real(hscale(n),dp)
@@ -112,7 +111,6 @@
 !!    wrapper around getstark subroutine to handle MPI communication\n
 !!    NOTE : NO error condition returned
 !!
-!!
 !!    @param ktime : number of time slices
 !!
 !**********************************************************************
@@ -142,8 +140,9 @@
         ! KWAITMSE
         ! FWTGAM (nstark)
         integer*4 :: i,j,ktime_all,offset,nsize
-        integer*4,dimension(:),allocatable :: tmp1,tmp2
-        double precision :: zwork(nmtark*12,ntime)
+        integer*4, dimension(:), allocatable :: tmp1,tmp2
+        double precision :: zwork(nmselp*12,ntime)
+        integer*4, parameter :: nsize=12*nmselp
 
 #ifdef DEBUG_LEVEL1
         ! timing variables
@@ -152,7 +151,6 @@
         integer*4 :: total_bytes
 #endif
         
-        nsize = 12*nmtark
         zwork(:,:) = 0.0
         allocate(tmp1(nproc),tmp2(nproc))
 
@@ -181,25 +179,25 @@
         if (rank == 0) then
           ! Pack ZWORK data array
           ! NOTE : Transposing data arrays (packing as consecutive chunks into each column of ZWORK array)
-          do j=1,nmtark
+          do j=1,nmselp
             zwork(j,1:ktime_all)           = tangam(1:ktime_all,j)
-            zwork(j+nmtark,1:ktime_all)    = siggam(1:ktime_all,j)
-            zwork(j+nmtark*2,1:ktime_all)  = rrgam(1:ktime_all,j)
-            zwork(j+nmtark*3,1:ktime_all)  = zzgam(1:ktime_all,j)
-            zwork(j+nmtark*4,1:ktime_all)  = a1gam(1:ktime_all,j)
-            zwork(j+nmtark*5,1:ktime_all)  = a2gam(1:ktime_all,j)
-            zwork(j+nmtark*6,1:ktime_all)  = a3gam(1:ktime_all,j)
-            zwork(j+nmtark*7,1:ktime_all)  = a4gam(1:ktime_all,j)
-            zwork(j+nmtark*8,1:ktime_all)  = a5gam(1:ktime_all,j)
-            zwork(j+nmtark*9,1:ktime_all)  = a6gam(1:ktime_all,j)
+            zwork(j+nmselp,1:ktime_all)    = siggam(1:ktime_all,j)
+            zwork(j+nmselp*2,1:ktime_all)  = rrgam(1:ktime_all,j)
+            zwork(j+nmselp*3,1:ktime_all)  = zzgam(1:ktime_all,j)
+            zwork(j+nmselp*4,1:ktime_all)  = a1gam(1:ktime_all,j)
+            zwork(j+nmselp*5,1:ktime_all)  = a2gam(1:ktime_all,j)
+            zwork(j+nmselp*6,1:ktime_all)  = a3gam(1:ktime_all,j)
+            zwork(j+nmselp*7,1:ktime_all)  = a4gam(1:ktime_all,j)
+            zwork(j+nmselp*8,1:ktime_all)  = a5gam(1:ktime_all,j)
+            zwork(j+nmselp*9,1:ktime_all)  = a6gam(1:ktime_all,j)
             ! WARNING : A7GAM explicitly set to zero by original
             ! GETSTARK_MPI code
-            zwork(j+nmtark*10,1:ktime_all) = a7gam(1:ktime_all,j)
-            !zwork(j+nmtark*10,1:ktime_all) = 0.0
+            zwork(j+nmselp*10,1:ktime_all) = a7gam(1:ktime_all,j)
+            !zwork(j+nmselp*10,1:ktime_all) = 0.0
             ! NOTE : Do NOT actually need to pack this data since
             !        array explicitly set to zero and we could just set A8GAM
             !        to zero
-            zwork(j+nmtark*11,1:ktime_all) = 0.0
+            zwork(j+nmselp*11,1:ktime_all) = 0.0
           enddo
         endif
         ! Distribute chunks of ZWORK array to processes
@@ -225,19 +223,19 @@
         ! Determine local KTIME value before proceeding
         ktime = dist_data(rank+1)
         if (rank > 0) then
-          do j=1,nmtark
+          do j=1,nmselp
             tangam(1:ktime,j) = zwork(j,1:ktime)
-            siggam(1:ktime,j) = zwork(j+nmtark,1:ktime)
-            rrgam(1:ktime,j)  = zwork(j+nmtark*2,1:ktime)
-            zzgam(1:ktime,j)  = zwork(j+nmtark*3,1:ktime)
-            a1gam(1:ktime,j)  = zwork(j+nmtark*4,1:ktime)
-            a2gam(1:ktime,j)  = zwork(j+nmtark*5,1:ktime)
-            a3gam(1:ktime,j)  = zwork(j+nmtark*6,1:ktime)
-            a4gam(1:ktime,j)  = zwork(j+nmtark*7,1:ktime)
-            a5gam(1:ktime,j)  = zwork(j+nmtark*8,1:ktime)
-            a6gam(1:ktime,j)  = zwork(j+nmtark*9,1:ktime)
-            a7gam(1:ktime,j)  = zwork(j+nmtark*10,1:ktime)
-            a8gam(1:ktime,j)  = zwork(j+nmtark*11,1:ktime)
+            siggam(1:ktime,j) = zwork(j+nmselp,1:ktime)
+            rrgam(1:ktime,j)  = zwork(j+nmselp*2,1:ktime)
+            zzgam(1:ktime,j)  = zwork(j+nmselp*3,1:ktime)
+            a1gam(1:ktime,j)  = zwork(j+nmselp*4,1:ktime)
+            a2gam(1:ktime,j)  = zwork(j+nmselp*5,1:ktime)
+            a3gam(1:ktime,j)  = zwork(j+nmselp*6,1:ktime)
+            a4gam(1:ktime,j)  = zwork(j+nmselp*7,1:ktime)
+            a5gam(1:ktime,j)  = zwork(j+nmselp*8,1:ktime)
+            a6gam(1:ktime,j)  = zwork(j+nmselp*9,1:ktime)
+            a7gam(1:ktime,j)  = zwork(j+nmselp*10,1:ktime)
+            a8gam(1:ktime,j)  = zwork(j+nmselp*11,1:ktime)
           enddo
         endif
 
@@ -254,17 +252,17 @@
         ! WARNING : Uncertain if FWTGAM should be broadcast or if doing so could possible cause issues
         ! SIZE = SIZEOF(DOUBLE) * NMTARK * (NPROC - 1)
 #ifdef DEBUG_LEVEL1
-        total_bytes = total_bytes + 8*nmtark*(nproc-1)
+        total_bytes = total_bytes + 8*nmselp*(nproc-1)
 #endif
 
         !!call MPI_BCAST(msefitfun,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
         !!call MPI_BCAST(msebkp,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
         call MPI_BCAST(iergam,nstark,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-        call MPI_BCAST(rmse_gain,nmtark,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        call MPI_BCAST(rmse_slope,nmtark,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        call MPI_BCAST(rmse_scale,nmtark,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        call MPI_BCAST(rmse_offset,nmtark,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-        call MPI_BCAST(mse_spave_on,nmtark,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+        call MPI_BCAST(rmse_gain,nmselp,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+        call MPI_BCAST(rmse_slope,nmselp,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+        call MPI_BCAST(rmse_scale,nmselp,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+        call MPI_BCAST(rmse_offset,nmselp,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+        call MPI_BCAST(mse_spave_on,nmselp,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
 
         ! SPATIAL_AVG_GAM
         call MPI_BCAST(spatial_avg_gam,nstark*ngam_vars*ngam_u*ngam_w, &
@@ -292,7 +290,6 @@
 !>
 !!    setstark obtains the response matrix
 !!    for polarimetry measurement
-!!    
 !!
 !!    @param jtime : time index
 !!
@@ -360,7 +357,7 @@
       fitot=itot
       rbrfc=0.0
       rbzfc=0.0
-      do k=1,mfcoil
+      do k=1,nfcoil
         call splitc(isplit,rsplt,zsplt,csplt, &
                     rf(k),zf(k),wf(k),hf(k),af(k),af2(k),cdum)
         do mmm=1,nstark
@@ -482,7 +479,6 @@
 !>
 !!    fixstark adjusts the internal pitch angles
 !!    based on spatial averaging data
-!!    
 !!
 !!    @param jtime :
 !!
@@ -619,7 +615,7 @@
 
       call zpline(nw,sigrid,fpol,bwork,cwork,dwork)
 
-      do ichan=1,nmtark
+      do ichan=1,nmselp
         if (mse_spave_on(ichan) .ne. 0) then
 
           ttl = 0.0

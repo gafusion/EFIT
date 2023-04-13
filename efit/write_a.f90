@@ -148,15 +148,15 @@
       write (neqdsk,1040) vloopt(jj),taudia(jj),qmerci(jj),tavem
 !
       if (ishot.lt.91000) then
-        write (neqdsk,1041) nsilop,magpri67+magpri322,nfcoil,nesum
+        write (neqdsk,1041) nsilop,magpri67+magpri322,nfsum,nesum
         write (neqdsk,1040) (csilop(k,jj),k=1,nsilop), &
                             (cmpr2(k,jj),k=1,magpri67+magpri322)
       else
-        write (neqdsk,1041) nsilop,magpri,nfcoil,nesum
+        write (neqdsk,1041) nsilop,magpri,nfsum,nesum
         write (neqdsk,1040) (csilop(k,jj),k=1,nsilop), &
                             (cmpr2(k,jj),k=1,magpri)
       endif
-      write (neqdsk,1040) (ccbrsp(k,jj),k=1,nfcoil)
+      write (neqdsk,1040) (ccbrsp(k,jj),k=1,nfsum)
       write (neqdsk,1040) (eccurt(jj,k),k=1,nesum)
 !
       write (neqdsk,1040) pbinj(jj),rvsin(jj),zvsin(jj),rvsout(jj)
@@ -241,15 +241,15 @@
                      real(qmerci(jj),r4),real(tavem,r4)
 !
       if (ishot.lt.91000) then
-        write (neqdsk) nsilop,magpri67+magpri322,nfcoil,nesum
+        write (neqdsk) nsilop,magpri67+magpri322,nfsum,nesum
         write (neqdsk) (real(csilop(k,jj),r4),k=1,nsilop), &
                        (real(cmpr2(k,jj),r4),k=1,magpri67+magpri322)
       else
-        write (neqdsk) nsilop,magpri,nfcoil,nesum
+        write (neqdsk) nsilop,magpri,nfsum,nesum
         write (neqdsk) (real(csilop(k,jj),r4),k=1,nsilop), &
                        (real(cmpr2(k,jj),r4),k=1,magpri)
       endif
-      write (neqdsk) (real(ccbrsp(k,jj),r4),k=1,nfcoil)
+      write (neqdsk) (real(ccbrsp(k,jj),r4),k=1,nfsum)
       write (neqdsk) (real(eccurt(jj,k),r4),k=1,nesum)
 !
       write (neqdsk) real(pbinj(jj),r4),real(rvsin(jj),r4), &

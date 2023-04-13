@@ -1,17 +1,9 @@
  &MACHINEIN
- magpri67=29
- magpri322=31
- magprirdp=8
- magudom=5
- maglds=3
- mse315=11
- mse45=15
- mse15=10
- mse1h=4
- mse315_2=5
- mse210=24
- nsilds=3
- nsilol=41
+ magpri=76
+ nmselp=69
+ nsilop=44
+ /
+ &INCHECK
  li_max=2.5
  li_min=0.05
  betap_max=6.0
@@ -119,19 +111,6 @@
  0.2300735 0.2691039 0.2465 0.275952 0.1962927 0.2346333 0.2421203 0.2582166 
  0.245521 0.2451018 0.2224015 0.2393365 0.2123904 0.2517095 0.3233501 0.3336 
  0.25495 0.18435 0.25695 0.3343 0.3246499 0.2469479 0.2170768
- IGRID = 1
- RLEFT = 0.84
- RRIGHT = 2.54
- ZBOTTO = -1.6
- ZTOP = 1.6
- IFCOIL = 1
- ISLPFC = 1
- NSMP2 = 25
- IECOIL = 1
- IVESEL = 1
- NW = 65
- NH = 65
- IACOIL = 1
  RACOIL = 1.736
  ZACOIL = -1.32
  WACOIL = 0.096
@@ -193,4 +172,17 @@
  4*3 7*6 2*3 2 2*1 2*2 2*1 2*2 2*1 2*2 2*1 2*2 2*1 
  2*2 2*1 2*2 2*1 2*2 2*1 2*2 2*1 2*2 2*1 2*2 2*1 
  2*2 2*1 2 4*4 7*5 2*4
+ /
+ &IN5
+ IGRID = 1
+ RLEFT = 0.84
+ RRIGHT = 2.54
+ ZBOTTO = -1.6
+ ZTOP = 1.6
+ IFCOIL = 1
+ ISLPFC = 1
+ NSMP2 = 25
+ IECOIL = 1
+ IVESEL = 1
+ IACOIL = 1
  /

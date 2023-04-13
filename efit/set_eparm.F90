@@ -16,29 +16,19 @@
       integer*4 i,j,nhpwr
 
       device="DIII-D"
-      nsilds=3
-      nsilol=41
-      nfcoil=18
-      nrogow=1
-      nacoil=1
-      mfcoil=18
-      necoil=122
-      nvesel=24
+      magpri=76
       mpress=201
+      nacoil=1
+      necoil=122
       nesum=6
-      magpri67=29
-      magpri322=31
-      magprirdp=8
-      magudom=5
-      maglds=3
-      mse315=11
-      mse45=15
-      mse15=10
-      mse1h=4
-      mse315_2=5
-      mse210=24
-      libim=32
+      nfcoil=18
+      nfsum=18
       nmsels=16
+      nmselp=69
+      libim=32
+      nrogow=1
+      nvesel=24
+      nsilop=44
       nnece=40
       nnecein=80
       neceo=1
@@ -131,32 +121,26 @@
 
 !**********************************************************************
 !>
-!!    this subroutine calculates experiment variables that depend on
-!!    other experiment variables
+!!    this subroutine calculates machine variables that depend on
+!!    other machine variables
 !!
 !**********************************************************************
       subroutine set_eparm_dependents()
       use eparm
       implicit none
 
-      nmtark=mse315+mse45+mse15+mse1h+mse315_2+mse210
-      nstark=nmtark+libim
+      nstark=nmselp+libim
 
-      magpol=magpri67+magpri322+magprirdp+magudom
-      magpri=magpol+maglds
-
-      nsilop=nsilds+nsilol
-
-      nbwork=nsilop
-      msbdry=mbdry+nsilop+nfcoil+1
+      msbdry=mbdry+nsilop+nfsum+1
       msbdr2=2*msbdry
 
       npcurn=nffcur+nppcur
-      mfnpcr=nfcoil+npcurn+nvesel+nwwcur+nesum+nfcoil+nercur 
-      nrsmat=nsilop+magpri+nrogow+nffcur+1+npcurn+nwwcur+mpress+nfcoil+nstark+nnece+neceo
+      mfnpcr=nfsum+npcurn+nvesel+nwwcur+nesum+nfsum+nercur 
+      nrsmat=nsilop+magpri+nrogow+nffcur+1+npcurn+nwwcur+mpress+nfsum &
+                   +nstark+nnece+neceo
 
       nwcurn=nwwcur+npcurn
 
-      ncurrt=nvesel+nesum+nfcoil
+      ncurrt=nvesel+nesum+nfsum
 
       end subroutine set_eparm_dependents

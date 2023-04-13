@@ -1,0 +1,36 @@
+Variable, Default, Description
+IACOIL, 0, "| (integer flag) Controls whether Green functions for the advanced divertor coils (a coils) are computed (ra file)
+| 0=none
+| 1=compute Green functions for advanced divertor coils"
+IECOIL, 0, "| (integer flag) Controls whether the Green functions for Ohmic coils (e coils) are computed (re file)
+| 0=none
+| 1=compute Green functions for Ohmic coils"
+IFCOIL, 0, "| (integer flag) Controls whether the response functions due to shaping coils (f coils) are computed (also see ISLPFC)
+| 0=none
+| 1=compute response functions due to shaping coil (rfcoil and brzgfc files)"
+IGRID, 0, "| (integer flag) Controls whether Green functions due to plasma currents, f coils, and plasma response function are computed (ec and ep files)
+| 0=none
+| 1=compute Green functions and plasma response"
+ISLPFC, 0, "| (integer flag) Controls whether a finite size correction is used for flux loops
+| 0=no correction
+| >0 correct flux loops with indices up to (and inlcuding) this number"
+ISLPFC, 0, "| (integer flag) Controls whether the response function of flux loops do to f coils is computed (requires IFCOIL=1)
+| 0=none
+| 1=compute response function (fc file)"
+IVESEL, 0, "| (integer flag) Controls whether Green functions for vessel conductors are computed (note: this has a different meaning than the variable that shares it's name in the IN1 namelist)
+| 0=none
+| 1=compute vessel Green functions (rv file)"
+MGAUS1,8, Order of Legendre polynomial used to represent post1 in the mutual inductance calculation
+MGAUS2,10, Order of Legendre polynomial used to represent post2 in the mutual inductance calculation
+NSMP2,1, Number of segments to divide every magnetic probe into.
+NSHIFTRZ, zeros, "| (integer array) Controls whether the corresponding f-coil is shifted during magnetic probe calculations. (requires IFCOIL=1)
+| 0=no shift
+| 1=add RSHIFT,ZSHIFT,PSHIFT and PMPROBE"
+PMPROBE, zeros, (array) Phi shifts to apply to magnetic probes during f-coil calculations. (requries IFCOIL=1)
+PSHIFT, zeros, (array) Phi shifts to apply to f-coils during magnetic probe calculations. (requires IFCOIL=1)
+RSHIFT, zeros, (array) Radial shifts to apply to f-coils during magnetic probe calculations. (requires IFCOIL=1)
+RLEFT, 0., Inner major radius of rectangular grid in m
+RRIGHT, 0., Outer major radius of rectangular grid in m
+ZBOTTO, 0., Bottom vertical Z coordinate of rectangular grid in m
+ZSHIFT, zeros, (array) Z shifts to apply to f-coils during magnetic probe calculations. (requires IFCOIL=1)
+ZTOP, 0., Top vertical Z coordinate of rectangular grid in m

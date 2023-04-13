@@ -7,7 +7,7 @@ export link_store=""
 export OMP_NUM_THREADS=1
 
 # Sanity checks
-if ! test -e ${link_efit}/green/dprobe.dat; then
+if ! test -e ${link_efit}/green/mhdin.dat; then
   echo "not running test because Greens tables were not found"
   exit 1
 fi

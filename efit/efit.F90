@@ -29,10 +29,10 @@
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
-      character inp1*4,inp2*4
-      integer*4 :: k,krord,kzord,nargs,iargc,finfo,kerror,terr,ioerr, &
+      integer*4 k,krord,kzord,finfo,kerror,terr,ioerr, &
                    nwrk,ktime,ks
-      integer*4 :: i,iend1,iend2
+      integer*4 i,iend1,iend2
+      character inp1*4,inp2*4
       character*80 :: cmdline
       parameter (krord=4,kzord=4)
 
@@ -76,7 +76,6 @@
       nw = 0
       nh = 0
       if (rank == 0) then
-        nargs = iargc()
 ! WARNING: is this true?? if so LF95 -> USEMPI ...
 ! Using mpirun command so will have different number of arguments than serial case
 #if defined(LF95)
@@ -162,7 +161,7 @@
 !----------------------------------------------------------------------
 !--   Global Allocations                                             --
 !----------------------------------------------------------------------
-      include 'global_allocs.f90' ! this prevents changing the experiment during a run
+      include 'global_allocs.f90' ! this prevents changing the machine during a run
 !----------------------------------------------------------------------
 !--   Read in Green Function Tables
 !----------------------------------------------------------------------
@@ -253,8 +252,8 @@
           endif
           ! don't write times without cer
           if (mse_usecer.ne.0 .and. &
-              maxval(abs(tangam(ks,1:nmtark) &
-                        -tangam_uncor(ks,1:nmtark))).le.1.e-10_dp) then
+              maxval(abs(tangam(ks,1:nmselp) &
+                        -tangam_uncor(ks,1:nmselp))).le.1.e-10_dp) then
             call errctrl_msg('efit', &
               'No CER correction used, not solving for equilibrium')
             cycle

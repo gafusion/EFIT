@@ -18,7 +18,8 @@ for file in btcomp.dat ccoil.ddd ccomp.dat dcoef.dat fitweight.dat icomp.dat lim
 done
 
 # Check to see if files exist, if so move it to subdirectory and replace with stored result
-for file in mhdout.dat dprobe.dat rfcoil.ddd brzgfc.dat; do
+cp mhdin.dat green
+for file in  mhdout.dat rfcoil.ddd brzgfc.dat; do
   if test -e ${file}; then
     mv ${file} green
     cp ${OUTPUT_STORE_DIR}/${file} .

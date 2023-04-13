@@ -33,36 +33,22 @@
       module eparm
         public
         ! Experiment dependant parameters
-        character(10) :: device !< experiment name
-        integer*4 :: nsilds !< nsilop number of flux loops at ?
-        integer*4 :: nsilol !< nsilop number of flux loops at ?
-        integer*4 :: nsilop !< nsilop number of flux loops
-        integer*4 :: nfcoil !< number of p.f. coil groups (should be consistent with nfsum in efund)
-        integer*4 :: nrogow
+        character(10) :: device !< machine name
+        integer*4 :: nsilop !< number of flux loops
+        integer*4 :: nfsum  !< number of p.f. f-coil groups
+        integer*4 :: nrogow !< number of rogowski coils
         integer*4 :: nacoil !< number of advance divertor coils
-        integer*4 :: mfcoil !< number of p.f. f-coils (should be consistent with nfcoil in efund)
+        integer*4 :: nfcoil !< number of p.f. f-coils
         integer*4 :: necoil !< number of p.f e-coils
-        integer*4 :: mpress !< mpress number of pressure data points
+        integer*4 :: mpress !< number of pressure data points
         integer*4 :: nvesel !< number of vessel segements
-        integer*4 :: nesum !< number of p.f. coil groups
-        integer*4 :: magpri67 !< number of magnetic detectors at toroidal angle "1"
-        integer*4 :: magpri322!< number of magnetic detectors at toroidal angle "2"
-        integer*4 :: magprirdp !< number of magnetic detectors for radiative divertor,magudom
-        integer*4 :: magudom !< number of magnetic detectors for (outer midplane??)
-        integer*4 :: maglds
-        integer*4 :: magpol
-        integer*4 :: magpri !< total number of magnetic detectors
-        integer*4 :: mse315 !< number of mse channels at toroidal angle 315 degrees
-        integer*4 :: mse45  !< number of mse channels at toroidal angle 45 degrees
-        integer*4 :: mse15  !< number of mse channels at toroidal angle 15 degrees
-        integer*4 :: mse1h   !< number of mse channels at toroidal angle
-        integer*4 :: mse315_2 !< number of mse channels at toroidal angle 315 degrees number 2?
-        integer*4 :: mse210 !< number of mse channels at toroidal angle 210 degrees
-        integer*4 :: libim
-        integer*4 :: nmtark
-        integer*4 :: nstark !< total number of mse channels
-        integer*4 :: nmsels
-        integer*4 :: nnece !< total number of ece channels
+        integer*4 :: nesum  !< number of p.f. e-coil groups
+        integer*4 :: magpri !< number of magnetic detectors
+        integer*4 :: libim  !< number of lithium ion beam measurements
+        integer*4 :: nmselp !< number of mse-lp channels
+        integer*4 :: nstark !< number of li beam and mse-lp measurements
+        integer*4 :: nmsels !< number of mse-ls channels
+        integer*4 :: nnece  !< number of ece channels
         integer*4 :: nnecein,neceo,nnnte
         integer*4 :: ngam_vars,ngam_u,ngam_w !< dimensions of mse spatial averaging data
         integer*4 :: nlimit !< maximum number of limiter points
@@ -87,7 +73,6 @@
         integer*4 :: kubicx,kubicy
         integer*4 :: ncurrt
         integer*4 :: mbdry, mbdry1
-        integer*4 :: nbwork
         integer*4 :: msbdry
         integer*4 :: nxtram
         integer*4 :: nxtlim,nco2v,nco2r

@@ -23,14 +23,14 @@
       integer*4, intent(in) :: jtime,iter,itertt
       integer*4, intent(out) :: kerror
       integer*4 i,ii,j,k,m,nj,nk,nkk,nuuu,idoit,iskip,ier,ioerr,neqn
-      integer*4 ifmatr(nfcoil)
+      integer*4 ifmatr(nfsum)
       real*8 erbsave,fwtbdr,fwtsols,ssiref,sumif,sumifr,t,toler,wsibry, &
              xsibry,xsisol
-      real*8 afma(nfcoil,nfcoil),wfmatr(nfcoil), &
+      real*8 afma(nfsum,nfsum),wfmatr(nfsum), &
              wbry(msbdry),work(msbdr2),ut(msbdry,msbdry)
-      real*8 abry(msbdry,nfcoil+nvesel),bbry(msbdry), &
-                ainbry(nfcoil+nvesel,msbdry)
-      real*8 fcref(nfcoil)
+      real*8 abry(msbdry,nfsum+nvesel),bbry(msbdry), &
+                ainbry(nfsum+nvesel,msbdry)
+      real*8 fcref(nfsum)
       real*8 pbry(msbdry),psbry(msbdry)
       integer*4, parameter :: islpfc=0 ! hardcoded option
       real*8, parameter :: z04=1.0e-04_dp
@@ -62,8 +62,8 @@
             read (nffile) ifmatr
             close(unit=nffile)
           else
-            afma(1:nfcoil,1:nfcoil)=rfcfc(1:nfcoil,1:nfcoil)
-            call decomp(nfcoil,nfcoil,afma,-1.0,ifmatr,wfmatr)
+            afma(1:nfsum,1:nfsum)=rfcfc(1:nfsum,1:nfsum)
+            call decomp(nfsum,nfsum,afma,-1.0,ifmatr,wfmatr)
 !vas
 !vas      print*,'file name : ','fm'//trim(ch1)// &
 !vas                         trim(ch2)//'.ddd'
@@ -81,7 +81,7 @@
           endif
         endif
 
-        do i=1,nfcoil
+        do i=1,nfsum
           brsp(i)=0.0
           if(ivacum.eq.0) &
             brsp(i)=brsp(i)+sum(rfcpc(i,:)*pcurrt)
@@ -92,7 +92,7 @@
           brsp(i)=csilop(i,jtime)-brsp(i)
           if(fitsiref) brsp(i)=brsp(i)+psiref(jtime)
         enddo
-        call solve(nfcoil,nfcoil,afma,brsp,ifmatr)
+        call solve(nfsum,nfsum,afma,brsp,ifmatr)
         return
       endif
 !-----------------------------------------------------------------------
@@ -124,7 +124,7 @@
 !--    set up response matrix, first fixed boundary, then flux loops  --
 !--    and F coil currents                                            --
 !-----------------------------------------------------------------------
-       do nk=1,nfcoil
+       do nk=1,nfsum
          nj=0
          if (nbdry.gt.0.and.iconvr.eq.3) then
            abry(1:nbdry,nk)=fwtbry(1:nbdry)*rbdrfc(1:nbdry,nk)
@@ -151,7 +151,7 @@
 !-----------------------------------------------------------------------
 !--      F coil currents option                                       --
 !-----------------------------------------------------------------------
-         do m=1,nfcoil
+         do m=1,nfsum
            if(fwtfc(m).le.0.0) cycle
            nj=nj+1
            abry(nj,nk)=0.
@@ -161,7 +161,7 @@
 !--      minimize coil current oscillations for fixed boundary option --
 !-----------------------------------------------------------------------
          if (nbdry.gt.0.and.iconvr.eq.3) then
-           do m=1,nfcoil
+           do m=1,nfsum
              nj=nj+1
              abry(nj,nk)=0.0
              if(nk.eq.m) abry(nj,nk)=cfcoil*fczero(m)
@@ -170,11 +170,11 @@
 !--        constraint F coil currents to be symmetric if requested    --
 !-----------------------------------------------------------------------
            if ((symmetrize).and.(cupdown.ne.0.0)) then
-             do m=1,nfcoil/2
+             do m=1,nfsum/2
                nj=nj+1
                abry(nj,nk)=0.0
                if(nk.eq.m) abry(nj,nk)=cupdown
-               if(nk.eq.(m+nfcoil/2)) abry(nj,nk)=-cupdown
+               if(nk.eq.(m+nfsum/2)) abry(nj,nk)=-cupdown
              enddo
            endif
          endif
@@ -210,7 +210,7 @@
 !-----------------------------------------------------------------------
 !--    optional vessel current model                                  --
 !-----------------------------------------------------------------------
-       neqn=nfcoil
+       neqn=nfsum
        fit_vessel: if (ivesel.eq.3) then
 !
          if (nfourier.gt.1) then
@@ -219,7 +219,7 @@
            nuuu=nvesel
          endif
          do nkk=1,nuuu
-           nk=nkk+nfcoil
+           nk=nkk+nfsum
            nj=0
            if (nbdry.gt.0.and.iconvr.eq.3) then
              do m=1,nbdry
@@ -257,13 +257,13 @@
                endif
              enddo
            endif
-           do m=1,nfcoil
+           do m=1,nfsum
              if(fwtfc(m).le.0.0) cycle
              nj=nj+1
              abry(nj,nk)=0.
            enddo
            if (nbdry.gt.0.and.iconvr.eq.3) then
-             do m=1,nfcoil
+             do m=1,nfsum
                nj=nj+1
                abry(nj,nk)=0.0
              enddo
@@ -312,7 +312,7 @@
              bbry(i)=0.0
            endif
          enddo
-         do i=1,nfcoil
+         do i=1,nfsum
            fcref(i)=sum(ainbry(i,1:nj)*bbry(1:nj))
          enddo
        endif
@@ -415,7 +415,7 @@
 !-----------------------------------------------------------------------
 !--   F-coil currents specification                                   --
 !-----------------------------------------------------------------------
-      do m=1,nfcoil
+      do m=1,nfsum
         if(fwtfc(m).le.0.0) cycle
         nj=nj+1
         bbry(nj)=fccurt(jtime,m)*fwtfc(m)
@@ -424,7 +424,7 @@
 !--   F coil current minimization                                     --
 !-----------------------------------------------------------------------
       if (nbdry.gt.0.and.iconvr.eq.3) then
-        do m=1,nfcoil
+        do m=1,nfsum
           nj=nj+1
           bbry(nj)=0.0
         enddo
@@ -432,7 +432,7 @@
 !--     symmetrize F coil currents ?                                  --
 !-----------------------------------------------------------------------
         if ((symmetrize).and.(cupdown.ne.0.0)) then
-          do m=1,nfcoil/2
+          do m=1,nfsum/2
             nj=nj+1
             bbry(nj)=0.0
           enddo
@@ -469,12 +469,12 @@
 !-----------------------------------------------------------------------
 !--   now get F coil currents from precomputed inverse matrix         --
 !-----------------------------------------------------------------------
-      do i=1,nfcoil
+      do i=1,nfsum
         brsp(i)=sum(ainbry(i,1:nj)*bbry(1:nj))
       enddo
       if (ivesel.eq.3) then
         do ii=1,nvesel
-          i=ii+nfcoil
+          i=ii+nfsum
           vcurrt(ii)=sum(ainbry(i,1:nj)*bbry(1:nj))
         enddo
 !
@@ -501,21 +501,21 @@
 !-----------------------------------------------------------------------
 !--       sum of F coils selected through FCSUM vanish
 !-----------------------------------------------------------------------
-          sumif=sum(fcsum(1:nfcoil)*brsp(1:nfcoil)/turnfc(1:nfcoil))
-          sumifr=sum(fcref(1:nfcoil)*fcsum(1:nfcoil)/turnfc(1:nfcoil))
+          sumif=sum(fcsum(1:nfsum)*brsp(1:nfsum)/turnfc(1:nfsum))
+          sumifr=sum(fcref(1:nfsum)*fcsum(1:nfsum)/turnfc(1:nfsum))
         case(3)
 !----------------------------------------------------------------------
 !--       choose boundary flux by minimizing coil currents
 !----------------------------------------------------------------------
-          sumif=sum(fcref(1:nfcoil)*brsp(1:nfcoil)*fczero(1:nfcoil))
-          sumifr=sum(fcref(1:nfcoil)**2*fczero(1:nfcoil))
+          sumif=sum(fcref(1:nfsum)*brsp(1:nfsum)*fczero(1:nfsum))
+          sumifr=sum(fcref(1:nfsum)**2*fczero(1:nfsum))
         case(4)
 !----------------------------------------------------------------------
 !--       fixed boundary flux specified through PSIBRY
 !----------------------------------------------------------------------
           ssiref=psibry0-psibry
-          brsp(1:nfcoil)=brsp(1:nfcoil)+ssiref*fcref(1:nfcoil)
-          silopt(jtime,1:nfcoil)=silopt(jtime,1:nfcoil)+ssiref
+          brsp(1:nfsum)=brsp(1:nfsum)+ssiref*fcref(1:nfsum)
+          silopt(jtime,1:nfsum)=silopt(jtime,1:nfsum)+ssiref
           wsibry=wsibry+ssiref
           wsisol=wsisol+ssiref
         end select
@@ -524,8 +524,8 @@
 !-----------------------------------------------------------------------
         if (ifref.le.3) then
           ssiref=sumif/sumifr
-          silopt(jtime,1:nfcoil)=silopt(jtime,1:nfcoil)-ssiref
-          brsp(1:nfcoil)=brsp(1:nfcoil)-ssiref*fcref(1:nfcoil)
+          silopt(jtime,1:nfsum)=silopt(jtime,1:nfsum)-ssiref
+          brsp(1:nfsum)=brsp(1:nfsum)-ssiref*fcref(1:nfsum)
           wsibry=wsibry-ssiref
           wsisol=wsisol-ssiref
         endif
@@ -541,7 +541,7 @@
         erbmax=0.0
         erbave=0.0
         do i=1,nbdry
-          xsibry=pbry(i)+sum(rbdrfc(i,1:nfcoil)*brsp(1:nfcoil))
+          xsibry=pbry(i)+sum(rbdrfc(i,1:nfsum)*brsp(1:nfsum))
           erbloc(i)=abs((wsibry-xsibry)/sidif)
           erbmax=max(erbloc(i),erbmax)
           erbave=erbave+erbloc(i)
@@ -552,7 +552,7 @@
 #endif
 #ifdef DEBUG_LEVEL2
         write(106,*) 'XSIBRY,PBRY(1),BRSP= ', &
-                     xsibry,pbry(1),(brsp(m),m=1,nfcoil)
+                     xsibry,pbry(1),(brsp(m),m=1,nfsum)
 #endif
       endif
 !
@@ -560,7 +560,7 @@
         erbsmax=0.0
         erbsave=0.0
         do i=1,nsol
-          xsisol=psbry(i)+sum(rsolfc(i,1:nfcoil)*brsp(1:nfcoil))
+          xsisol=psbry(i)+sum(rsolfc(i,1:nfsum)*brsp(1:nfsum))
           erbsloc(i)=abs((wsisol-xsisol)/sidif)
           erbsmax=max(erbsloc(i),erbsmax)
           erbsave=erbsave+erbsloc(i)

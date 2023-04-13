@@ -184,8 +184,8 @@
       endif
       ppcurr=0.0
       call setpp(ypsi,xpsii)
-      do iiij=nfcoil+1,nnn+nfcoil
-        iijj=iiij-nfcoil
+      do iiij=nfsum+1,nnn+nfsum
+        iijj=iiij-nfsum
         ppcurr=ppcurr+brsp(iiij)*xpsii(iijj)
       enddo
 !----------------------------------------------------------------------
@@ -204,8 +204,8 @@
       endif
       prcurr=0.0
       call setpr(ypsi,xpsii)
-      do i=nfcoil+1,nfcoil+nnn
-        nn=i-nfcoil
+      do i=nfsum+1,nfsum+nnn
+        nn=i-nfsum
         prcurr=prcurr+brsp(i)*xpsii(nn)
       enddo
       prcurr=-sidif*prcurr/darea+prbdry

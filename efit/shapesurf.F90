@@ -2591,8 +2591,8 @@
 !--   Current at Z=Z_Libeam                                    --
 !----------------------------------------------------------------
       kwripre_li: if (kwripre.gt.0) then
-       if (nstark.gt.nmtark) then
-        znow=zzgam(iges,nmtark+1)
+       if (nstark.gt.nmselp) then
+        znow=zzgam(iges,nmselp+1)
         delrnow=(xmax-rmaxis)/(nw-1)
         do i=1,nw
            rnow=rmaxis+(i-1)*delrnow
@@ -2781,7 +2781,7 @@
         do j=1,nh
           kk=(i-1)*nh+j
           copy(i,j)=0.0
-          do m=1,nfcoil
+          do m=1,nfsum
             copy(i,j)=copy(i,j)+gridfc(kk,m)*brsp(m)
           enddo
           if (ivesel.gt.0) then

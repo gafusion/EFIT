@@ -28,7 +28,7 @@ Variable, Definition
 "CURIU150(ntime)",	I coil 150 upper current
 "CZMAXI(ntime, nitera)", Zm in cm vs. iteration number
 "DAREA(ntime)",	plasma coefficients normalization
-DEVICE,	experiment name
+DEVICE,	machine name
 "DIAMAG(ntime)",	measured diamagnetic flux
 "ECCURT(ntime, nesum)",	measured E-coil currents in Amp
 "EXPMPI(ntime, magpri)", measured magnetic probes

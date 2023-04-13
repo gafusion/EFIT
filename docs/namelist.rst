@@ -7,7 +7,7 @@ SETUP
 -----
 
 SETUP is the optional namelist that can be read from the efit.input 
-that can be used to set table and experiment directories and variable
+that can be used to set table and machine directories and variable
 size limits.
 
 .. csv-table:: SETUP
@@ -209,11 +209,21 @@ PROFILE_EXT
 MACHINEIN (EFUND)
 -----------------
 
-MACHINEIN is the namelist specified for efund in the mhdin.dat file and 
-communicated to efit through the dprobe.dat file.
+MACHINEIN is the namelist specifying machine specific variable sizes for efund and efit
+in the mhdin.dat file.
 
 .. csv-table:: MACHINEIN
    :file: tables/machinein.csv
+   :widths: 15,15,70
+
+INCHECK
+-------
+
+INCHECK is the namelist specifying machine specific limits for efit to use when
+IERCHK is set (in the IN0, IN1, or EFITIN namelist).
+
+.. csv-table:: INCHECK
+   :file: tables/incheck.csv
    :widths: 15,15,70
 
 EFITIN
@@ -234,7 +244,7 @@ EFITINK is for vertical stabilization, the same as INK, but specified in the sna
 IN3 (EFUND)
 -----------
 
-IN3 is used to read experiment parameters from a dprobe.dat file.
+IN3 is used to read diagnostic parameters from an mhdin.dat file.
 
 .. csv-table:: IN3
    :file: tables/in3.csv
@@ -247,6 +257,16 @@ IN4
 IN4 is used to read an alternate set of pointnames
 from a file.
 (TODO: need to add/describe namelist)
+
+IN5 (EFUND)
+-----------
+
+IN5 is used to read efund specific parameters from an mhdin.dat file.
+
+.. csv-table:: IN5
+   :file: tables/in5.csv
+   :widths: 15,15,70
+   :header-rows: 1
 
 OUT1
 ----

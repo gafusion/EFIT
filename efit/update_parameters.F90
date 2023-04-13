@@ -521,8 +521,8 @@
           cjmaxi=(rmaxis*ppcurr(x000,kppcur) &
                 +fpcurr(x000,kffcur)/rmaxis)*cratio/darea
         else
-          cjmaxi=(sum(rjjjx(1:kppcur)*brsp(nfcoil+1:nfcoil+kppcur)) &
-                 +sum(rjjfx(1:kffcur)*brsp(nfcoil+kppcur+1:nfcoil+kppcur+kffcur)) &
+          cjmaxi=(sum(rjjjx(1:kppcur)*brsp(nfsum+1:nfsum+kppcur)) &
+                 +sum(rjjfx(1:kffcur)*brsp(nfsum+kppcur+1:nfsum+kppcur+kffcur)) &
                  +sum(rjjwx(1:kwwcur)*brsp(nfnpcr+1:nfnpcr+kwwcur))) &
                  /darea
         endif
@@ -688,7 +688,7 @@
       saisq=0.0
       chi2rm(jtime)=0.0
       do m=1,nsilop
-        cm=sum(rsilfc(m,:)*brsp(1:nfcoil))+sum(gsilpc(m,:)*pcurrt)
+        cm=sum(rsilfc(m,:)*brsp(1:nfsum))+sum(gsilpc(m,:)*pcurrt)
         if(ivesel.gt.0) cm=cm+sum(rsilvs(m,:)*vcurrt)
         if (iecurr.eq.1) then
           cm=cm+sum(rsilec(m,:)*ecurrt)
@@ -708,7 +708,7 @@
       enddo
 !
       do m=1,magpri
-          cm=sum(rmp2fc(m,:)*brsp(1:nfcoil))+sum(gmp2pc(m,:)*pcurrt)
+          cm=sum(rmp2fc(m,:)*brsp(1:nfsum))+sum(gmp2pc(m,:)*pcurrt)
         if(ivesel.gt.0) cm=cm+sum(rmp2vs(m,:)*vcurrt)
         if (iecurr.eq.1) then
           cm=cm+sum(rmp2ec(m,:)*ecurrt)
@@ -730,8 +730,8 @@
 !-------------------------------------------------------------------
       tchiece=0.0
       do m=1,nece
-        cm=sum(recefc(m,:)*brsp(1:nfcoil)) &
-          +sum(recepc(m,1:kwcurn)*brsp(nfcoil+1:nfcoil+kwcurn))
+        cm=sum(recefc(m,:)*brsp(1:nfsum)) &
+          +sum(recepc(m,1:kwcurn)*brsp(nfsum+1:nfsum+kwcurn))
         if(ivesel.gt.0) cm=cm+sum(recevs(m,:)*vcurrt)
         if (iecurr.eq.1) then
           cm=cm+sum(receec(m,:)*ecurrt)
@@ -751,8 +751,8 @@
 !-------------------------------------------------------------------
 !--   calculate ECE chisqr (chiecebz for Bz(receo)=0)
 !-------------------------------------------------------------------
-      cm=sum(recebzfc*brsp(1:nfcoil)) &
-        +sum(recebzpc(1:kwcurn)*brsp(nfcoil+1:nfcoil+kwcurn))
+      cm=sum(recebzfc*brsp(1:nfsum)) &
+        +sum(recebzpc(1:kwcurn)*brsp(nfsum+1:nfsum+kwcurn))
       if(ivesel.gt.0) cm=cm+sum(recevs(m,:)*vcurrt) ! TODO: should this be recebzvs?
       if (iecurr.eq.1) then
         cm=cm+sum(recebzec*ecurrt)
@@ -780,7 +780,7 @@
       chi2rm(jtime)=max(chi2rm(jtime),saiip)
 !
       tsaifc=0.0
-      do i=1,nfcoil
+      do i=1,nfsum
         saifc(i)=0.0
         if (fwtfc(i).gt.0.0) then
           saifc(i)=fwtfc(i)**nsq*(brsp(i)-fccurt(jtime,i))**2
@@ -811,7 +811,7 @@
         chi2rm(jtime)=max(chi2rm(jtime),saisref)
       endif
 !
-      ccbrsp(:,jtime)=brsp(1:nfcoil)
+      ccbrsp(:,jtime)=brsp(1:nfsum)
 !
       chisq(jtime)=saisq
       if (iand(iout,1).ne.0) then
@@ -822,7 +822,7 @@
         write(nout,7450) (saimpi(m),m=1,magpri)
         write(nout,7460) saiip
         write(nout,7480) tsaifc
-        write(nout,7450) (saifc(m),m=1,nfcoil)
+        write(nout,7450) (saifc(m),m=1,nfsum)
         write(nout,7482) saisref
         write(nout,7485)
         write(nout,7450) (saiec(m),m=1,nesum)
@@ -841,10 +841,10 @@
       if (kdomse.gt.0) then
         call green(nnn,jtime,n222)
         do m=1,nstark
-          cmbr=sum(rbrfc(m,:)*brsp(1:nfcoil)) &
-              +sum(rbrpc(m,1:kwcurn)*brsp(nfcoil+1:nfcoil+kwcurn))
-          cmbz=sum(rbzfc(m,:)*brsp(1:nfcoil)) &
-              +sum(rbzpc(m,1:kwcurn)*brsp(nfcoil+1:nfcoil+kwcurn))
+          cmbr=sum(rbrfc(m,:)*brsp(1:nfsum)) &
+              +sum(rbrpc(m,1:kwcurn)*brsp(nfsum+1:nfsum+kwcurn))
+          cmbz=sum(rbzfc(m,:)*brsp(1:nfsum)) &
+              +sum(rbzpc(m,1:kwcurn)*brsp(nfsum+1:nfsum+kwcurn))
           if (kedgep.gt.0) then
             cmbr=cmbr+rbrpe(m)*pedge
             cmbz=cmbz+rbzpe(m)*pedge
@@ -889,7 +889,7 @@
       if (kdomsels.gt.0) then
         call green(nnn,jtime,n222)
         do m=1,nmsels
-          cmbr=sum(rmlspc(m,1:kpcurn)*brsp(nfcoil+1:nfcoil+kpcurn))
+          cmbr=sum(rmlspc(m,1:kpcurn)*brsp(nfsum+1:nfsum+kpcurn))
           cmbr=cmbr-rhsmls(jtime,m)
           cmmls(jtime,m)=sqrt(cmbr)
           cmmls2(jtime,m)=l1mselt(jtime,m)*btmls(m)**2+l2mselt(jtime,m)* &

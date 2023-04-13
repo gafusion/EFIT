@@ -945,15 +945,15 @@
 
       if (kfffnc .ge. 0 .and. kfffnc .le. 2) then
          do i = 1,kffcur
-            ffbdry(i) = brsp(nfcoil+kppcur+i)*twopi*tmu/darea
+            ffbdry(i) = brsp(nfsum+kppcur+i)*twopi*tmu/darea
             ff2bdry(i) = 0.0
          enddo
       elseif (kfffnc .eq. 6) then
          do i = 1,kffknt
             if(kffbdry(i) .ne. 1) &
-               ffbdry(i) = brsp(nfcoil+kppcur+2*i - 1)*twopi*tmu/darea
+               ffbdry(i) = brsp(nfsum+kppcur+2*i - 1)*twopi*tmu/darea
             if(kff2bdry(i) .ne. 1) &
-              ff2bdry(i) = brsp(nfcoil+kppcur+2*i)*twopi*tmu/darea
+              ff2bdry(i) = brsp(nfsum+kppcur+2*i)*twopi*tmu/darea
          enddo
       endif
       return
