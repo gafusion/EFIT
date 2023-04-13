@@ -202,6 +202,7 @@
 !--   Create a new machine file
 !--   Warning: this is only intended for DIIID
 !-----------------------------------------------------------------
+      newmhdin: if (device == "DIII-D") then
       if (patmp2(1).le.0.0 .and. xmp2(1).le.0.0) &
         write(*,*) "bad code detected"
       if (xmp2(1).gt.0.0) then
@@ -420,6 +421,7 @@
        enddo
        cipmp3=cipmp3/tmu/twopi
       endif
+      endif newmhdin
 !
       if (.not.fitsiref) then
        ssiref=csilop(iabs(nslref),it)
