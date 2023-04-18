@@ -1,78 +1,55 @@
 !**********************************************************************
-!**                                                                  **
-!**     efund_getsizes performs inputing and initialization from the **
-!**       mhdin.dat file, most default values set here are for DIII-D**
-!**                                                                  **
+!**
+!**     efund_getsizes performs inputing and initialization from the
+!**       mhdin.dat file
+!**
+!**       most default values set here are for DIII-D
+!**
 !**********************************************************************
       subroutine efund_getsizes
       
-      use exparm
-      use errlims
+      use machine
+      use grid
       use siloop
-      use cecoil
+      use ecoil
       use fcoil
-      use pmodel
-      use consta
-      use input
-      use cacoil
+      use acoil
       use nio
       use mprobe
-      use cvesel
-      use fshift
+      use vessel
 
       implicit none
       integer*4:: istat,icycred_loopmax,kubics,npcurn,nwcur2,nwcurn
       character(len=1000) :: line
 
-      namelist/machinein/nfcoil,nsilop,magpr2,nrogow,necoil,nesum, &
-                         nfsum,nvsum,nvesel,nacoil,mgaus1,mgaus2,device, &
-                         magpri322,magpri67,magprirdp,magudom,maglds, &
-                         nnece,nnecein,neceo,mse315,mse45,mse15, &
-                         mse1h,mse315_2,mse210,mpress,libim,nmsels, &
+      namelist/machinein/nfcoil,nsilop,magpri,nrogow,necoil,nesum, &
+                         nfsum,nvsum,nvesel,nacoil,device, &
+                         nnece,nnecein,neceo,mpress,nmsels,nmselp,libim, &
                          nnnte,ngam_vars,ngam_u,ngam_w,nlimit,nlimbd,nangle, &
                          ntangle,nfbcoil,mccoil,micoil,ndata,nwwcur, &
                          nffcur,nppcur,nercur,ntime,ndim,kxiter,mqwant, & 
                          mbdry,mbdry1,nxtram,nxtlim,nco2v,nco2r,modef, &
-                         modep,modew,kubics,icycred_loopmax,nfourier, &
-                         nsilol,nsilds, &
-                         ali_max,ali_min, &
-                         betap_lim,plasma_diff, &
-                         aout_max,aout_min,eout_max,eout_min, &
-                         rout_max,rout_min,zout_max,zout_min, &
-                         rcurrt_max,rcurrt_min,zcurrt_max,zcurrt_min, &
-                         qsta_max,qsta_min,betat_lim, &
-                         oleft_lim,oright_lim,otop_lim, &
-                         olefs_check,qout_max,qout_min, &
-                         dbpli_lim,delbp_lim
+                         modep,modew,kubics,icycred_loopmax,nfourier
 
       device = 'DIII-D'
-      nfcoil = 18
-      nsilop = 44
-      nsilol = -43
-      nsilds = -1 ! default all psi loops to one side except 1
-      magpr2 = 76
-      nrogow = 1
+      magpri = 76
+      nacoil = 1
       necoil = 122
       nesum = 6
+      nfcoil = 18
       nfsum = 18
-      nvsum = 24
+      nrogow = 1
+      nsilop = 44
       nvesel = 24
-      nacoil = 1
-      mgaus1 = 8
-      mgaus2 = 10
+      nvsum = 24
 
       nnece=40
       nnecein=80
       neceo=1
-      mse315=40
-      mse45=0
-      mse15=0
-      mse1h=0
-      mse315_2=0
-      mse210=0
-      mpress=201
-      libim=32
       nmsels=16
+      nmselp=69
+      libim=32
+      mpress=201
       nnnte=801
       ngam_vars=9
       ngam_u=5
@@ -108,88 +85,17 @@
       modew=4
       nfourier=5
       
-      magpri67=-1
-      magprirdp=-1
-      magudom=-1
-      maglds=-1
-      
-      ! checks for solution validity
-      ali_max=2.5
-      ali_min=0.05
-      betap_lim=6.0
-      plasma_diff=0.08
-      aout_max=75.0
-      aout_min=30.
-      eout_max=4.0
-      eout_min=0.8
-      rout_max=240.
-      rout_min=90.0
-      zout_max=100.
-      zout_min=-100.
-      rcurrt_max=240.
-      rcurrt_min=90.0
-      zcurrt_max=100.
-      zcurrt_min=-100.
-      qsta_max=200.
-      qsta_min=1.
-      betat_lim=25.
-      oleft_lim=-0.2
-      oright_lim=-0.2
-      otop_lim=-0.2
-      olefs_check=-90.0
-      qout_max=200.
-      qout_min=1.
-      dbpli_lim=0.05
-      delbp_lim=0.08
-
       open(unit=nin,status='old',file='mhdin.dat',iostat=istat)
 
-      read (nin,machinein)
-
+      read (nin,machinein,iostat=istat)
       if (istat>0) then
         backspace(nin)
         read(nin,fmt='(A)') line
         write(*,'(A)') 'Invalid line in namelist machinein: '//trim(line)
-        stop
+        return
       endif
 
       close(nin)
-
-      ! Handle if user probe array sizes aren't specified
-      if (trim(device)=='diii-d') then
-        mse315=11
-        mse45=15
-        mse15=10
-        mse1h=4
-        mse315_2=5
-        mse210=24
-      endif
-
-      if (magpri67<0 .or. magprirdp<0 .or. magudom<0 .or. magudom<0) then 
-        if (trim(device)=='diii-d') then
-          magpri67=29
-          magpri322=31
-          magprirdp=8
-          magudom=5
-          maglds=3
-        else
-          magpri67 = abs(magpri67)
-          magprirdp = abs(magprirdp)
-          magudom = abs(magudom)
-          maglds = abs(maglds)
-          magpri322 = magpr2 - magpri67 - magprirdp - magudom - maglds
-        endif
-      endif
-
-      if (nsilol<0 .or. nsilds<0) then 
-        if (trim(device)=='diii-d') then
-          nsilds = 3
-          nsilol = 41
-        else
-          nsilol = nsilop -1
-          nsilds = 1
-        endif
-      endif
 
       allocate(rsi(nsilop),zsi(nsilop),wsi(nsilop),hsi(nsilop),&
                as(nsilop),as2(nsilop))
@@ -228,7 +134,7 @@
       wacoil = 0.0
       hacoil = 0.0
 
-      allocate(xmp2(magpr2),ymp2(magpr2),amp2(magpr2),smp2(magpr2))
+      allocate(xmp2(magpri),ymp2(magpri),amp2(magpri),smp2(magpri))
       xmp2 = 0.0
       ymp2 = 0.0
       amp2 = 0.0
@@ -245,15 +151,19 @@
       rsisvs = 0.0
 
       allocate(nshiftrz(nfcoil))
-      nshiftrz = 0.
+      nshiftrz = 0
 
       allocate(rshift(nfcoil),zshift(nfcoil),pshift(nfcoil))
       rshift = 0.0
       zshift = 0.0
       pshift = 0.0
 
-      allocate(pmprobe(magpr2))
+      allocate(pmprobe(magpri))
       pmprobe = 0.
+
+      open(unit=nout,status='unknown',file='mhdout.dat',delim='quote')
+      write (nout,machinein)
+      close(nout)
       end subroutine efund_getsizes
 
 !**********************************************************************
@@ -263,50 +173,45 @@
 !**********************************************************************
       subroutine efund_getset
 
-      use exparm, only: nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                        nfsum,nvsum,nvesel,nacoil,nw,nh,nwnh,device
+      use grid
       use siloop
-      use cecoil
+      use ecoil
       use fcoil
-      use pmodel
-      use consta
-      use input
-      use cacoil
+      use acoil
       use nio
       use mprobe
-      use cvesel
-      use fshift
-      use var_filech
+      use vessel
+      use utils, only: mgaus1,mgaus2
       implicit none
-      integer*4 i
-      real*8 patmp2(magpr2)
-      character*10 mpnam2(magpr2),lpname(nsilop),vsname(nvesel)
+      integer*4 i,istat
+      real*8 patmp2(magpri)
+      character*10 mpnam2(magpri),lpname(nsilop),vsname(nvesel)
+      character(1000) line
 
-      namelist/in3/igrid,nw,nh,rleft,rright,zbotto,ztop,ifcoil, &
-                   islpfc,iecoil,xmp2,ymp2,amp2,smp2,isize, &
-                   rsi,zsi,wsi,hsi,as,as2,nsmp2,ivesel,rsisvs, &
-                   turnfc,patmp2, &
-                   iacoil,racoil,zacoil,wacoil,hacoil, &
-                   rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2,fcturn, &
-                   re,ze,ecid,ecturn,vsid,rvs,zvs,we,he, &
-                   nshiftrz,rshift,zshift,pshift,pmprobe, &
-                   vsname,lpname,mpnam2
+      namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,patmp2, &
+                   rsi,zsi,wsi,hsi,as,as2,rsisvs,lpname, &
+                   rvs,zvs,wvs,hvs,avs,avs2,vsid,vsname, &
+                   racoil,zacoil,wacoil,hacoil, &
+                   rf,zf,wf,hf,af,af2,fcid,fcturn,turnfc, &
+                   re,ze,we,he,ecid,ecturn
+      namelist/in5/rleft,rright,zbotto,ztop,mgaus1,mgaus2, &
+                   nshiftrz,rshift,zshift,pshift,pmprobe,nsmp2, &
+                   igrid,ifcoil,islpfc,iecoil,ivesel,iacoil,isize
 !
       open(unit=nin,status='old',file='mhdin.dat')
-      open(unit=nout,status='unknown',file='mhdout.dat')
 !
       mpnam2=''
       lpname=''
       vsname=''
-      nw = 65
-      nh = 65
 !
       ifcoil=0
       igrid=0
-      isize=0
       islpfc=0
       iecoil=0
       ivesel=0
+      isize=0
+      mgaus1=8
+      mgaus2=10
       nsmp2=1
       rleft=0.
       rright=0.
@@ -317,14 +222,27 @@
       re(1)=-1.
       rvs(1)=-1.
       wvs(1)=-1.
-      nshiftrz(1:nfcoil)=0
       patmp2=0.
 !---------------------------------------------------------------------
 !--   isize=0      no finite size correction for flux loops         --
 !--         1         finite size correction for flux loops         --
 !--   islpfc=1     flux loops at F coils                            --
 !---------------------------------------------------------------------
-      read (nin,in3)
+      read (nin,in3,iostat=istat)
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist in3: '//trim(line)
+        return
+      endif
+      rewind(nin)
+      read (nin,in5,iostat=istat)
+      if (istat>0) then
+        backspace(nin)
+        read(nin,fmt='(A)') line
+        write(*,'(A)') 'Invalid line in namelist in5: '//trim(line)
+        return
+      endif
 !
       if (.not. allocated(rgrid)) then
         allocate(rgrid(nw))
@@ -334,10 +252,6 @@
         allocate(zgrid(nh))
         zgrid(:) = 0.0
       endif
-!
-      nwnh = nw * nh
-!make the file names for green-table
-      call inp_file_ch(nw,nh,ch1,ch2)
 !----------------------------------------------------------------------
 !--   read f coil and psi loop dimensions                            --
 !----------------------------------------------------------------------
@@ -376,15 +290,12 @@
         zgrid(i)=zbotto+dz*(i-1)
       enddo 
 
-      write (nout,in3)
       close(nin)
+      open(unit=nout,status='unknown',file='mhdout.dat', &
+           position='append',delim='quote')
+      write (nout,in3)
+      write (nout,in5)
       close(nout)
-
-      call dprobe_machinein(nfcoil,nsilop,magpr2,nrogow,necoil,nesum,&
-                            nfsum,nvsum,nvesel,nacoil)
-      
-      call dprobe(mpnam2,lpname,patmp2)
-      
       return
 10000 format (6e12.6)
 10010 format (4e12.6)

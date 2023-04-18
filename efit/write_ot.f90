@@ -36,7 +36,7 @@
       write (74,93024) zztitle
       do i=1,kwtime
         if(kerrot(i).eq.0) &
-          write (74,92924) time(i),tsaisq(i),xdum,xdum
+          write (74,92924) time(i),chisq(i),xdum,xdum
       enddo
       close(unit=74)
 !

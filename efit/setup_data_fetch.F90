@@ -30,6 +30,10 @@
       character(1000) line
       character(256) table_save
       real*8,dimension(:),allocatable :: fwtbmsels,fwtemsels
+      ! DIIID specific parameters for reading fitweight.dat file
+      integer*4, parameter :: nsilds=3,nsilol=41, &
+                              magpri67=29,magpri322=31,magprirdp=8, &
+                              magudom=5,maglds=3
       namelist/efitin/ishot,istore,timeb,dtime,mtime,scrape,nextra, &
            iexcal,itrace,xltype,ivesel,fwtsi,fwtmp2,fwtcur,iprobe, &
            itek,limid,qvfit,fwtbp,kffcur,kppcur,fwtqa,mxiter,  &
@@ -89,7 +93,7 @@
       tangam_uncor=0.0
       taumhd=0.0
       taudia=0.0
-      tsaisq=0.0
+      chisq=0.0
 
 ! ONLY root process can check for existence of fitout.dat file
       mpi_rank0: if (rank == 0) then
@@ -148,7 +152,7 @@
           elseif (snapextin.ne.'none') then
             ! the snap file still wasn't found, check for any snapfile
             ! in the CWD without an extension
-            snap_file = snap_ext
+            snap_file = 'efit_snap.dat'
             open(unit=neqdsk,status='old',file=snap_file,iostat=ioerr)
             if (ioerr.ne.0) then
               call errctrl_msg('setup_data_fetch', &
@@ -189,7 +193,7 @@
       elseif (table_dir.ne.table_save .and. link_efit.eq.'') then
         ! error if table_dir changes (global_allocs already set)
         call errctrl_msg('setup_data_fetch', &
-          'changing experiment during run is not supported (table_dir)')
+          'changing machine during run is not supported (table_dir)')
         kerror=1
         return
       endif
@@ -263,6 +267,8 @@
              file=input_dir(1:lindir)//'fitweight.dat')
   105   read(neqdsk,*,iostat=ioerr) irshot
         if ((ioerr.eq.0).and.(irshot.le.ishot)) then
+          ! Note: These DIIID specific probe choices
+          ! could be removed if Green function tables are regenerated...
           if (irshot.lt.124985) then
             read(neqdsk,*) (rwtsi(i),i=1,nsilol)
           else
@@ -369,7 +375,7 @@
           fwtsi(i)=rwtsi(i)
         endif
       enddo
-      do i=1,nfcoil
+      do i=1,nfsum
         if(ierfc(i).ne.0) fwtfc(i)=0.0
       enddo
       if (iecurr.eq.2) then

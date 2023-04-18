@@ -20,28 +20,29 @@
       real*8 cbetap,cbetat,cipmp3,dampz1,dampz2, &
              dang270,dang90,danm270,danm90,danp270,danp90, &
              dsi,nzz,saisq,sinow,sm1,sm2,ssiref, &
-             sumif,sumifb,sumifs,sumift,tleft,tright, &
+             sumif,sumifb,sumifs,sumift,tin,tout, &
              xdum,xnorm,xtest,ytest,xxm,yym,xxp,yyp
-      integer*4 vsid ! unused
-      real*8 ecturn ! unused
       character*30 sfname
       character(1000) :: line
       real*8 xrsp(npcurn)
       real*8 patmpz(magpri),xmpz(magpri),ympz(magpri),ampz(magpri)
       integer*4, dimension(:), allocatable :: ishotall
       real*8, dimension(:), allocatable :: ch2all,timeall
+      ! DIIID specific parameters for writing mhdin.new file
+      integer*4, parameter :: magpri67=29,magpri322=31
 
-      NAMELIST/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi, &
-                   as,as2,lpname,rsisvs,turnfc,patmp2,vsname, &
+      namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,patmp2, &
+                   rsi,zsi,wsi,hsi,as,as2,rsisvs,lpname, &
+                   rvs,zvs,wvs,hvs,avs,avs2,vsname, &
                    racoil,zacoil,wacoil,hacoil, &
-                   rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2, &
-                   re,ze,ecid,ecturn,vsid,rvs,zvs,we,he,fcturn
+                   rf,zf,wf,hf,af,af2,fcid,fcturn,turnfc, &
+                   re,ze,we,he,ecid!,ecturn,vsid ! not used or saved in efit
 
-      ! avoid write garbage when oleft or oright not update (e.g. 1.e10)
-      tleft=oleft(it)
-      if(tleft.gt.1.e9_dp) tleft=0.0
-      tright=oright(it)
-      if(tright.gt.1.e9_dp) tright=0.0
+      ! avoid write garbage when gapin or gapout not update (e.g. 1.e10)
+      tin=gapin(it)
+      if(tin.gt.1.e9_dp) tin=0.0
+      tout=gapout(it)
+      if(tout.gt.1.e9_dp) tout=0.0
 !
 !#if defined(USEMPI)
 !      ! TODO: Currently this ONLY works if nproc == total number of time slices.
@@ -54,7 +55,7 @@
 !        end if
 !        call mpi_gather(ishot, 1, MPI_INTEGER, ishotall, 1, MPI_INTEGER, 0, MPI_COMM_WORLD, ierr)
 !        call mpi_gather(time(it), 1, MPI_DOUBLE_PRECISION, timeall, 1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
-!        call mpi_gather(tsaisq(it), 1, MPI_DOUBLE_PRECISION, ch2all, 1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
+!        call mpi_gather(chisq(it), 1, MPI_DOUBLE_PRECISION, ch2all, 1, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, ierr)
 !        if (rank==0) then
 !          write(nttyo,'(/,a)') '  Summary of all runs'
 !          write(nttyo,'(a)') '   Shot    Time   chi^2'
@@ -67,14 +68,14 @@
 !          if (allocated(timeall)) deallocate(timeall)
 !        end if
 !      else
-!        !write(nttyo,*) ishot,int(time(it)),tsaisq(it) ! handy for debugging
+!        !write(nttyo,*) ishot,int(time(it)),chisq(it) ! handy for debugging
 !      end if
 !#endif
 !      if ((ivacum.eq.0).and.(itek.le.0)) then
       if (ivacum.eq.0) then
         mpi_rank: if (rank == 0) then
           !write (nttyo,10000) trim(ch1),trim(ch2)
-          saisq=tsaisq(it)
+          saisq=chisq(it)
           ! avoid roundoff
           if(abs(saisq).lt.1.e-20_dp) saisq=0_dp
           write (nttyo,9300)
@@ -84,11 +85,11 @@
           write (nttyo,9385) idlopc(it)
           write (nttyo,10480)
           write (nttyo,10500) ishot,int(time(it)),saisq
-          write (nttyo,10520) betat(it),betap(it),ali(it)
-          write (nttyo,10540) vout(it),rout(it),zout(it)
-          write (nttyo,10560) eout(it),doutu(it),doutl(it)
-          write (nttyo,10580) aout(it),tleft,tright
-          write (nttyo,10600) otop(it),qsta(it),rcurrt(it)
+          write (nttyo,10520) betat(it),betap(it),li(it)
+          write (nttyo,10540) volume(it),rout(it),zout(it)
+          write (nttyo,10560) elong(it),utri(it),ltri(it)
+          write (nttyo,10580) aminor(it),tin,tout
+          write (nttyo,10600) gaptop(it),qstar(it),rcurrt(it)
           write (nttyo,10610) zcurrt(it),bcentr(it),qout(it)
         endif mpi_rank
       endif
@@ -101,7 +102,7 @@
         endif mpi_rank0
       else
         !write (nout,10000) trim(ch1),trim(ch2)
-        saisq=tsaisq(it)
+        saisq=chisq(it)
         write (nout,9300)
         write (nout,9320) ipsi(it)
         write (nout,9340) imag2(it)
@@ -109,13 +110,13 @@
         write (nout,9385) idlopc(it)
         write (nout,10480)
         write (nout,10500) ishot,int(time(it)),saisq
-        write (nout,10520) betat(it),betap(it),ali(it)
-        write (nout,10540) vout(it),rout(it),zout(it)
-        write (nout,10560) eout(it),doutu(it),doutl(it)
-        write (nout,10580) aout(it),tleft,tright
-        write (nout,10600) otop(it),qsta(it),rcurrt(it)
+        write (nout,10520) betat(it),betap(it),li(it)
+        write (nout,10540) volume(it),rout(it),zout(it)
+        write (nout,10560) elong(it),utri(it),ltri(it)
+        write (nout,10580) aminor(it),tin,tout
+        write (nout,10600) gaptop(it),qstar(it),rcurrt(it)
         write (nout,10610) zcurrt(it),bcentr(it),qout(it)
-        write (nout,10620) olefs(it),orighs(it),otops(it)
+        write (nout,10620) sepin(it),sepout(it),septop(it)
         write (nout,10623) betat2
 
         if (icalbet.gt.0) &
@@ -131,9 +132,9 @@
         endif
 
         write (nout,11030)
-        write (nout,11020) (brsp(i)/turnfc(i),i=1,nfcoil)
+        write (nout,11020) (brsp(i)/turnfc(i),i=1,nfsum)
         write (nout,11000)
-        write (nout,11020) (brsp(i),i=1,nfcoil)
+        write (nout,11020) (brsp(i),i=1,nfsum)
         sumif=0.0
         do i=1,5
           sumif=sumif+brsp(i)+brsp(i+9)
@@ -141,29 +142,29 @@
         sumif=sumif+brsp(8)+brsp(17)
         sumift=0.0
         sumifs=0.0
-        do i=1,nfcoil
+        do i=1,nfsum
           sumift=sumift+brsp(i)
           sumifs=sumifs+brsp(i)**2
         end do
-        sumifs=sqrt(sumifs/(nfcoil-1))
+        sumifs=sqrt(sumifs/(nfsum-1))
 
         write (nout,10020) sumif,sumift,sumifs
         write (nout,11010)
-        write (nout,11020) (rsisfc(i),i=1,nfcoil)
+        write (nout,11020) (rsisfc(i),i=1,nfsum)
         if (ivacum.eq.0.and.(icurrt.eq.2.or.icurrt.eq.5)) then
-          xnorm=brsp(nfcoil+1)
+          xnorm=brsp(nfsum+1)
           write (nout,11040) xnorm
           xrsp=0.0
           if (xnorm.ne.0.0) then
             do i=1,kwcurn
-              xrsp(i)=brsp(nfcoil+i)/xnorm
+              xrsp(i)=brsp(nfsum+i)/xnorm
             end do
           endif
           write (nout,11020) (xrsp(i),i=1,kwcurn)
           xnorm=darea
           write (nout,11043) xnorm
           do i=1,kwcurn
-            xrsp(i)=brsp(nfcoil+i)/xnorm
+            xrsp(i)=brsp(nfsum+i)/xnorm
           end do
           write (nout,11020) (xrsp(i),i=1,kwcurn)
           if (keecur.gt.0) then
@@ -197,19 +198,13 @@
         endif
       endif
 
-      if (patmp2(1).le.0.0) then
-        open(unit=80,status='old', &
-             file=table_di2(1:ltbdi2)//'dprobe.dat')
-        read (80,in3,iostat=ioerr)
-        if (ioerr>0) then
-          backspace(nin)
-          read(nin,fmt='(A)') line
-          write(*,'(A)') 'Invalid line in namelist in3: '//trim(line)
-          stop
-        endif
-        close(unit=80)
-        if (xmp2(1).le.0.0) write(*,*) "bad code detected"
-      endif
+!-----------------------------------------------------------------
+!--   Create a new machine file
+!--   Warning: this is only intended for DIIID
+!-----------------------------------------------------------------
+      newmhdin: if (device == "DIII-D") then
+      if (patmp2(1).le.0.0 .and. xmp2(1).le.0.0) &
+        write(*,*) "bad code detected"
       if (xmp2(1).gt.0.0) then
        if (patmp2(1).le.0.0) then
         xmin=xmp2(1)
@@ -412,9 +407,9 @@
         enddo
 !
         if (rank == 0) then
-          open(unit=80,status='old',file='dprobe.new',iostat=ioerr)
+          open(unit=80,status='old',file='mhdin.new',iostat=ioerr)
           if (ioerr.eq.0) close(unit=80,status='delete')
-          open(unit=80,status='new',file='dprobe.new',delim='quote')
+          open(unit=80,status='new',file='mhdin.new',delim='quote')
           write (80,in3)
           close(unit=80)
         endif
@@ -426,6 +421,7 @@
        enddo
        cipmp3=cipmp3/tmu/twopi
       endif
+      endif newmhdin
 !
       if (.not.fitsiref) then
        ssiref=csilop(iabs(nslref),it)
@@ -458,7 +454,7 @@
           write (nout,11140)
           write (nout,11020) (cmgam(i,it),i=1,nstark)
         endif
-        write (nout,11160) cpasma(it)
+        write (nout,11160) ipmhd(it)
         write (nout,11180) cdflux(it),sbpp,delbp(it),sbppa
         if (kecebz.gt.0) write(nout,11185) cmecebz(it)
         if (kece.gt.0)  then
@@ -474,11 +470,11 @@
           write (nout,11240)
           write (nout,11020) (tangam(it,i),i=1,nstark)
         endif
-        write (nout,11260) pasmat(it)
+        write (nout,11260) ipmeas(it)
         write (nout,11280) diamag(it)
         write (nout,11270) vloopt(it)
         write (nout,11292)
-        write (nout,11020) (fccurt(it,i),i=1,nfcoil)
+        write (nout,11020) (fccurt(it,i),i=1,nfsum)
         write (nout,11294)
         write (nout,11020) (eccurt(it,i),i=1,nesum)
 !

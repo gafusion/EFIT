@@ -111,7 +111,7 @@ SIGZBD,,See namelist IN1.
 SIZEROJ,,See namelist IN1.
 STABDZ,-1e-4,
 STORE_DIR,,"destination for output EQDSK files if ISTORE = 1, default = /link/store/"
-TABLE_DIR,,"area where Green's function tables and the configuration file dprobe.dat (and pcsnames.dat if used) are to be found. default = /link/efit/ (UNIX), lao$efund (VAX)"
+TABLE_DIR,,"area where Green's function tables and the configuration file mhdin.dat (and pcsnames.dat if used) are to be found. default = /link/efit/ (UNIX), lao$efund (VAX)"
 TIMEB,, Start time(?) in ms. (Does this override interactive input?)
 T_MAX_BEAM_OFF,0.0,"Maximum MSE beam offset time, in milliseconds."
 USE_ALTERNATE_POINTNAMES,0,"If non-zero, PCS data specified in file ALTERNATE_POINTNAME_FILE are used."

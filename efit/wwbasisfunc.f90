@@ -901,7 +901,6 @@
 !>
 !!    Store the solution coefs into wwbdry and ww2bdry
 !!    
-!!
 !**********************************************************************     
       subroutine wwstore()
       include 'eparm.inc'
@@ -912,15 +911,15 @@
 
       if (kwwfnc .ge. 0 .and. kwwfnc .le. 2) then
          do i = 1,kwwcur
-            wwbdry(i) = brsp(nfcoil+kppcur+kffcur+i)/darea
+            wwbdry(i) = brsp(nfsum+kppcur+kffcur+i)/darea
             ww2bdry(i) = 0.0
          enddo
       else if (kwwfnc .eq. 6) then
          do i = 1,kwwknt
             if(kwwbdry(i) .ne. 1) &
-                wwbdry(i) = brsp(nfcoil+kppcur+kffcur+2*i - 1)/darea
+                wwbdry(i) = brsp(nfsum+kppcur+kffcur+2*i-1)/darea
             if(kww2bdry(i) .ne. 1) &
-               ww2bdry(i) = brsp(nfcoil+kppcur+kffcur+2*i)/darea
+               ww2bdry(i) = brsp(nfsum+kppcur+kffcur+2*i)/darea
          enddo
       endif
       return

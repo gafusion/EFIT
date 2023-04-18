@@ -2,7 +2,7 @@
 !**********************************************************************
 !>
 !!    get_measurements sets the pointnames and calls subroutines to
-!!      query PTDATA or MDS+ to obtain the experiment measurement.
+!!      query PTDATA or MDS+ to obtain the machine measurements
 !!
 !!
 !!    @param nshot : shot number
@@ -33,18 +33,12 @@
       real*8 dumbtc
       real*8,dimension(:),allocatable :: dumccc,dumcic
       logical read_btcshot
-
-      NAMELIST/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi, &
-                   as,as2,lpname,rsisvs,turnfc,patmp2,vsname, &
-                   racoil,zacoil,wacoil,hacoil, &
-                   rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2, &
-                   re,ze,ecid,ecturn,vsid,rvs,zvs,we,he,fcturn
 !
       namelist/in4/mpnam2,lpname,vsname,nsingl,n1name, & !JRF 
                    nc79name,nc139name,btcname,ndenv,ndenr, &
                    fcname,ecname
 !
-      ALLOCATE(ndenv(nco2v),ndenr(nco2r),fcname(nfcoil),ecname(nesum))
+      ALLOCATE(ndenv(nco2v),ndenr(nco2r),fcname(nfsum),ecname(nesum))
 
       nsingl(1) = 'IP        '
       nsingl(2) ='VLOOP     '
@@ -86,19 +80,6 @@
       ecname(5)='E89DN     '
       ecname(6)='E89UP     '
       data irdata/0/,baddat/0/
-!----------------------------------------------------------------------
-!--   read in pointnames
-!----------------------------------------------------------------------
-      open(unit=60,file=table_di2(1:ltbdi2)//'dprobe.dat', &
-           status='old')
-      read(60,in3,iostat=istat)
-      if (istat>0) then
-        backspace(nin)
-        read(nin,fmt='(A)') line
-        write(*,'(A)') 'Invalid line in namelist in3: '//trim(line)
-        stop
-      endif
-      close(unit=60)
 !
 ! !JRF The if statement here tests a flag from the snap file that
 !     indicates whether the pointnames should be read from an alternate
@@ -163,16 +144,16 @@
         i=5
       endif
       if(use_alternate_pointnames .eq. 2) i = 5          !***JRF
-      pasmat(1:np)=0.
+      ipmeas(1:np)=0.
       ierpla=0
-      call avdata(nshot,nsingl(i),i1,ierpla,pasmat(1:np), &
+      call avdata(nshot,nsingl(i),i1,ierpla,ipmeas(1:np), &
                   np,times,delt,i0,r1,i1,bitip,iavem,time(1:np),ircfact, &
                   p_rc,prcg,vresp,p_k,t0p,devp(1:np), &
                   navp(1:np),time_err)
 
       rnavp=REAL(navp)
       if((use_alternate_pointnames .eq. 1) .and. &      !JRF 
-         (i .eq. 1)) pasmat(1:np)=pasmat(1:np)*0.5e6
+         (i .eq. 1)) ipmeas(1:np)=ipmeas(1:np)*0.5e6
 !----------------------------------------------------------------------
 !--  loop voltage                                                    --
 !----------------------------------------------------------------------
@@ -185,7 +166,7 @@
 !
       if (use_alternate_pointnames .eq. 2) then    !JRF
         if((ierpla .eq. 0) .and. (ierlop .eq. 0)) &
-          pasmat(1:np) = pasmat(1:np) - vloopt(1:np) * 0.646/50.0 * 0.5e6
+          ipmeas(1:np) = ipmeas(1:np) - vloopt(1:np) * 0.646/50.0 * 0.5e6
       endif
 !---------------------------------------------------------------------
 !--   Get density array from PTDATA or MDS+                         --
@@ -574,7 +555,7 @@
 !--   coordinate system                01/09/86                      --
 !----------------------------------------------------------------------
       bcentr(1:np)=bcentr(1:np)*tmu/rcentr*144.
-      do i=1,nfcoil
+      do i=1,nfsum
         fccurt(1:np,i)=0.
         sclmp=1.0
         call avdata(nshot,fcname(i),i1,ierfc(i),fccurt(1:np,i), &
@@ -720,7 +701,7 @@
       use var_inaver
       use var_pcsys, only: do_spline_fit
       implicit none
-      real*8 sevals
+      real*8 seval
       integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave,ircfact
       real*8, intent(in) :: time(np),delt,xxd,times
       character*10, intent(in) ::  ptname
@@ -808,9 +789,9 @@
       endif
 !
       if (do_spline_fit) then       !JRF
-        call zplines(npn,xw(1:npn),w(1:npn),bw(1:npn),cw(1:npn),dw(1:npn))
+        call zpline(npn,xw(1:npn),w(1:npn),bw(1:npn),cw(1:npn),dw(1:npn))
         do i=1,nnp
-          y(i)=sevals(npn,time(i),xw(1:npn),w(1:npn),bw(1:npn), &
+          y(i)=seval(npn,time(i),xw(1:npn),w(1:npn),bw(1:npn), &
                       cw(1:npn),dw(1:npn))
         enddo
       else
@@ -901,9 +882,9 @@
       endif
 !
       if (do_spline_fit) then !JRF
-        call zplines(npn,xw(1:npn),w(1:npn),bw(1:npn),cw(1:npn),dw(1:npn))
+        call zpline(npn,xw(1:npn),w(1:npn),bw(1:npn),cw(1:npn),dw(1:npn))
         do i=1,nnp
-          y(i)=sevals(npn,time(i),xw(1:npn),w(1:npn),bw(1:npn), &
+          y(i)=seval(npn,time(i),xw(1:npn),w(1:npn),bw(1:npn), &
                       cw(1:npn),dw(1:npn))
         enddo
       else
@@ -976,7 +957,7 @@
       use vtime_mod, only: ntims,npmax
       use var_pcsys, only: do_spline_fit
       implicit none
-      real*8 sevals
+      real*8 seval
       integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave
       real*8, intent(in) :: time(np),delt,xxd,times
       character*10, intent(in) ::  ptname
@@ -1049,9 +1030,9 @@
       endif
 !
       if (do_spline_fit) then !JRF
-        call zplines(npn,xw(1:npn),w(1:npn),bw(1:npn),cw(1:npn),dw(1:npn))
+        call zpline(npn,xw(1:npn),w(1:npn),bw(1:npn),cw(1:npn),dw(1:npn))
         do i=1,nnp
-          y(i)=sevals(npn,time(i),xw(1:npn),w(1:npn),bw(1:npn), &
+          y(i)=seval(npn,time(i),xw(1:npn),w(1:npn),bw(1:npn), &
                       cw(1:npn),dw(1:npn))
         enddo
       else
@@ -1221,9 +1202,9 @@
       endif
       !
       if (do_spline_fit) then       !JRF
-        call zplines(npn,xw,yw,bw,cw,dw)
+        call zpline(npn,xw,yw,bw,cw,dw)
         do i=1,nnp
-          y(i)=sevals(npn,time(i),xw,yw,bw,cw,dw)
+          y(i)=seval(npn,time(i),xw,yw,bw,cw,dw)
         enddo
       else
         do i=1,nnp
@@ -1341,7 +1322,7 @@
                         ierdia)
       use vtime_mod, only: ntims
       implicit none
-      real*8 sevals
+      real*8 seval
       integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave,ierdia(3) ! mm, mmm, and nn are unused
       real*8, intent(in) :: time(np),delt,xxd
       integer*4, intent(out) :: ierror
@@ -1372,14 +1353,14 @@
         call smoothit(xw(1:npn),w(1:npn),npn,dtave)
       endif
 !
-      call zplines(npn,xw(1:npn),w(1:npn),bw(1:npn),cw(1:npn),dw(1:npn))
+      call zpline(npn,xw(1:npn),w(1:npn),bw(1:npn),cw(1:npn),dw(1:npn))
       do i=1,np
-        y(i)=sevals(npn,time(i),xw(1:npn),w(1:npn),bw(1:npn), &
+        y(i)=seval(npn,time(i),xw(1:npn),w(1:npn),bw(1:npn), &
                     cw(1:npn),dw(1:npn))
       enddo
-      call zplines(npn,xw(1:npn),ew(1:npn),bw(1:npn),cw(1:npn),dw(1:npn))
+      call zpline(npn,xw(1:npn),ew(1:npn),bw(1:npn),cw(1:npn),dw(1:npn))
       do i=1,np
-        sigmay(i)=sevals(npn,time(i),xw(1:npn),ew(1:npn),bw(1:npn), &
+        sigmay(i)=seval(npn,time(i),xw(1:npn),ew(1:npn),bw(1:npn), &
                     cw(1:npn),dw(1:npn))
       enddo
       return
@@ -1510,164 +1491,6 @@
       return
       end subroutine smoothit2
 
-!**********************************************************************
-!>
-!!    the coefficients b(i), c(i), and d(i), i=1,2,...,n are computed
-!!    for a cubic interpolating spline
-!!    
-!!    s(x) = y(i) + b(i)(x-x(i)) + c(i)(x-x(i))2 + d(i)(x-x(i))3
-!!    
-!!    for  x(i) .le. x .le. x(i+1)
-!!
-!!
-!!    @param n : the number of data points or knots (n.ge.2)
-!!
-!!    @param x : the abscissas of the knots in strictly increasing order
-!!
-!!    @param y : the ordinates of the knots
-!!
-!!    @param b : s'(y)
-!!
-!!    @param c : s''(y)/2
-!!
-!!    @param d : s'''(y)/6 (derivative from the right)
-!!
-!**********************************************************************
-      subroutine zplines(n, x, y, b, c, d)
-      implicit none
-      integer*4 n
-      real*8 x(n), y(n), b(n), c(n), d(n)
-      integer*4 nm1, ib, i
-      real*8 t
-!
-      nm1 = n-1
-      if( n .lt. 2 ) return
-      cubic: if ( n .ge. 3 ) then
-!
-!     set up tridiagonal system
-!
-!     b = diagonal, d = offdiagonal, c = right hand side.
-!
-      d(1) = x(2) - x(1)
-      c(2) = (y(2) - y(1))/d(1)
-      do i = 2, nm1
-        d(i) = x(i+1) - x(i)
-        b(i) = 2.*(d(i-1) + d(i))
-        c(i+1) = (y(i+1) - y(i))/d(i)
-        c(i) = c(i+1) - c(i)
-      enddo
-!
-!     end conditions.  third derivatives at  x(1)  and  x(n)
-!     obtained from divided differences
-!
-      b(1) = -d(1)
-      b(n) = -d(n-1)
-      c(1) = 0.
-      c(n) = 0.
-      if ( n .ne. 3 ) then
-        c(1) = c(3)/(x(4)-x(2)) - c(2)/(x(3)-x(1))
-        c(n) = c(n-1)/(x(n)-x(n-2)) - c(n-2)/(x(n-1)-x(n-3))
-        c(1) = c(1)*d(1)**2/(x(4)-x(1))
-        c(n) = -c(n)*d(n-1)**2/(x(n)-x(n-3))
-      endif
-!
-!     forward elimination
-!
-      do i = 2, n
-        t = d(i-1)/b(i-1)
-        b(i) = b(i) - t*d(i-1)
-        c(i) = c(i) - t*c(i-1)
-      enddo
-!
-!     back substitution
-!
-      c(n) = c(n)/b(n)
-      do ib = 1, nm1
-        i = n-ib
-        c(i) = (c(i) - d(i)*c(i+1))/b(i)
-      enddo
-!
-!     c(i) is now the sigma(i) of the text
-!
-!     compute polynomial coefficients
-!
-      b(n) = (y(n) - y(nm1))/d(nm1) + d(nm1)*(c(nm1) + 2.*c(n))
-      do i = 1, nm1
-        b(i) = (y(i+1) - y(i))/d(i) - d(i)*(c(i+1) + 2.*c(i))
-        d(i) = (c(i+1) - c(i))/d(i)
-        c(i) = 3.*c(i)
-      enddo
-      c(n) = 3.*c(n)
-      d(n) = d(n-1)
-      return
-!
-      endif cubic
-      b(1) = (y(2)-y(1))/(x(2)-x(1))
-      c(1) = 0.
-      d(1) = 0.
-      b(2) = b(1)
-      c(2) = 0.
-      d(2) = 0.
-      return
-      end subroutine zplines
-
-!**********************************************************************
-!>
-!!    this function evaluates the cubic spline function\n
-!!    
-!!    seval = y(i) + b(i)(u-x(i)) + c(i)(u-x(i))2 + d(i)(u-x(i))3\n
-!!    
-!!    where  x(i) .lt. u .lt. x(i+1), using horner's rule\n
-!!    
-!!    if  u .lt. x(1) then  i = 1  is used.\n
-!!    if  u .ge. x(n) then  i = n  is used.\n
-!!
-!!    if  u  is not in the same interval as the previous call, then a
-!!      binary search is performed to determine the proper interval.
-!!
-!!
-!!    @param n : the number of data points
-!!
-!!    @param u : the abscissa at which the spline is to be evaluated
-!!
-!!    @param x : the arrays of data abscissas
-!!
-!!    @param y : the arrays of data ordinates
-!!
-!!    @param b : array of spline coefficients
-!!
-!!    @param c : array of spline coefficients
-!!
-!!    @param d : array of spline coefficients
-!!
-!**********************************************************************
-      real*8 function sevals(n, u, x, y, b, c, d)
-      implicit none
-      integer*4 n
-      real*8  u, x(n), y(n), b(n), c(n), d(n)
-      integer*4 i, j, k
-      real*8 dx
-      data i/1/
-      if ( i .ge. n ) i = 1
-!
-!  binary search
-!
-      if (( u .lt. x(i) ) .or. ( u .gt. x(i+1) )) then
-        i = 1
-        j = n+1
-   20   k = (i+j)/2
-        if ( u .lt. x(k) ) j = k
-        if ( u .ge. x(k) ) i = k
-        if ( j .gt. i+1 ) go to 20
-      endif
-!
-!  evaluate spline
-!
-      dx = u - x(i)
-      sevals= y(i) + dx*(b(i) + dx*(c(i) + dx*d(i)))
-      return
-      end function sevals
-
 ! =========================================================
 
 #if defined(USEMPI)
@@ -1698,16 +1521,16 @@
         ! Dimension ZWORK 1-D array
         !   PSIBIT 1:nsilop
         !   BITMPI 1:magpri
-        !   BITFC  1:nfcoil
+        !   BITFC  1:nfsum
         !   BITEC  1:nesum
         !   IERMPI to fix FWTMP2 1:magpri
         !   IERPSI to fix FWTSI 1:nsilop
-        !   IERFC to fix FWTFC 1:nfcoil
+        !   IERFC to fix FWTFC 1:nfsum
         
         ! Number columns ZWORK2 2-D array
         !   EXPMPI 1:magpri
         !   SILOPT 1:nsilop
-        !   FCCURT 1:nfcoil
+        !   FCCURT 1:nfsum
         !   DENVT  1:nco2v
         !   DENRT  1:nco2r
         !   ECCURT 1:nesum
@@ -1718,8 +1541,8 @@
         integer*4 :: i,j,ktime_all,offset,stoff,endoff,nsize,nsize2
         integer*4, dimension(:), allocatable :: tmp1,tmp2
         double precision :: timeb_list(nproc), &
-                zwork(4+nsilop+magpri+nfcoil+nesum+magpri+nsilop+nfcoil), &
-                zwork2(18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum,ntime)
+                zwork(4+nsilop+magpri+nfsum+nesum+magpri+nsilop+nfsum), &
+                zwork2(18+magpri+nsilop+nfsum+nco2v+nco2r+nesum,ntime)
                 
 
 #ifdef DEBUG_LEVEL1
@@ -1730,8 +1553,8 @@
 #endif
 
         zwork2 = 0.0
-        nsize=4+nsilop+magpri+nfcoil+nesum+magpri+nsilop+nfcoil
-        nsize2=18+magpri+nsilop+nfcoil+nco2v+nco2r+nesum
+        nsize=4+nsilop+magpri+nfsum+nesum+magpri+nsilop+nfsum
+        nsize2=18+magpri+nsilop+nfsum+nco2v+nco2r+nesum
         allocate(tmp1(nproc),tmp2(nproc))
 
         ! NOTE : ktime contains the total number of time slices at this point
@@ -1806,8 +1629,8 @@
           endoff = endoff + magpri
           zwork(stoff:endoff) = bitmpi(1:magpri)  ! REAL8 (magpri)
           stoff = endoff + 1
-          endoff = endoff + nfcoil
-          zwork(stoff:endoff) = bitfc(1:nfcoil)   ! REAL8 (nfcoil)
+          endoff = endoff + nfsum
+          zwork(stoff:endoff) = bitfc(1:nfsum)   ! REAL8 (nfsum)
           stoff = endoff + 1
           endoff = endoff + nesum
           zwork(stoff:endoff) = bitec(1:nesum)  ! REAL8 (nesum)
@@ -1818,8 +1641,8 @@
           endoff = endoff + nsilop
           zwork(stoff:endoff) = ierpsi(1:nsilop) ! REAL8 (nsilop)
           stoff = endoff + 1
-          endoff = endoff + nfcoil
-          zwork(stoff:endoff) = ierfc(1:nfcoil) ! REAL8 (nfcoil)
+          endoff = endoff + nfsum
+          zwork(stoff:endoff) = ierfc(1:nfsum) ! REAL8 (nfsum)
 ! NOTE: all of the fwtmp2 are =1 at this point, for all ranks
 ! in order for the logic to be equivelant later, it is the error
 ! codes, iermpi that must be passed to other ranks
@@ -1844,8 +1667,8 @@
           endoff = endoff + magpri
           bitmpi(1:magpri) = zwork(stoff:endoff)
           stoff = endoff + 1
-          endoff = endoff + nfcoil
-          bitfc(1:nfcoil) = zwork(stoff:endoff)
+          endoff = endoff + nfsum
+          bitfc(1:nfsum) = zwork(stoff:endoff)
           stoff = endoff + 1
           endoff = endoff + nesum
           bitec(1:nesum) = zwork(stoff:endoff)
@@ -1856,8 +1679,8 @@
           endoff = endoff + nsilop
           ierpsi(1:nsilop) = zwork(stoff:endoff)
           stoff = endoff + 1
-          endoff = endoff + nfcoil
-          ierfc(1:nfcoil) = zwork(stoff:endoff)
+          endoff = endoff + nfsum
+          ierfc(1:nfsum) = zwork(stoff:endoff)
         endif
         
         ! ZWORK2
@@ -1865,7 +1688,7 @@
           ! Pack ZWORK2 array data
           zwork2(1,1:ktime_all)  = time(1:ktime_all)     ! REAL8 (ntime)
           zwork2(2,1:ktime_all)  = bcentr(1:ktime_all)   ! REAL8 (ntime)
-          zwork2(3,1:ktime_all)  = pasmat(1:ktime_all)   ! REAL8 (ntime)
+          zwork2(3,1:ktime_all)  = ipmeas(1:ktime_all)   ! REAL8 (ntime)
           zwork2(4,1:ktime_all)  = vloopt(1:ktime_all)   ! REAL8 (ntime)
           zwork2(5,1:ktime_all)  = psiref(1:ktime_all)   ! REAL8 (ntime)
           zwork2(6,1:ktime_all)  = diamag(1:ktime_all)   ! REAL8 (ntime)
@@ -1892,10 +1715,10 @@
             zwork2(j+offset,1:ktime_all) = silopt(1:ktime_all,j)  ! REAL8 (ntime,nsilop)
           enddo
           offset = offset+nsilop
-          do j=1,nfcoil
-            zwork2(j+offset,1:ktime_all) = fccurt(1:ktime_all,j)  ! REAL8 (ntime,nfcoil)
+          do j=1,nfsum
+            zwork2(j+offset,1:ktime_all) = fccurt(1:ktime_all,j)  ! REAL8 (ntime,nfsum)
           enddo
-          offset = offset+nfcoil
+          offset = offset+nfsum
           do j=1,nco2v
             zwork2(j+offset,1:ktime_all) = denvt(1:ktime_all,j)   ! REAL8 (ntime,nco2v)
           enddo
@@ -1929,7 +1752,7 @@
         if (rank > 0) then
           time(1:ktime)    = zwork2(1,1:ktime)
           bcentr(1:ktime)  = zwork2(2,1:ktime)
-          pasmat(1:ktime)  = zwork2(3,1:ktime)
+          ipmeas(1:ktime)  = zwork2(3,1:ktime)
           vloopt(1:ktime)  = zwork2(4,1:ktime)
           psiref(1:ktime)  = zwork2(5,1:ktime)
           diamag(1:ktime)  = zwork2(6,1:ktime)
@@ -1956,10 +1779,10 @@
             silopt(1:ktime,j) = zwork2(j+offset,1:ktime)
           enddo
           offset = offset+nsilop
-          do j=1,nfcoil
+          do j=1,nfsum
             fccurt(1:ktime,j) = zwork2(j+offset,1:ktime)
           enddo
-          offset = offset+nfcoil
+          offset = offset+nfsum
           do j=1,nco2v
             denvt(1:ktime,j) = zwork2(j+offset,1:ktime)
           enddo

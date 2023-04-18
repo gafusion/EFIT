@@ -19,19 +19,15 @@
  nfcoil = 154
  nfsum = 12
  nsilop = 32
- magpr2 = 52
+ magpri = 52
  necoil = 0
  nesum = 1
  nvsum = 0
  nvesel = 0
  nrogow = 1
  nacoil = 1
- mgaus1 = 8
- mgaus2 = 10
  /
- &IN3
- NH = 129
- NW = 129
+ &IN5
  IGRID = 1
  RLEFT = 0.01
  RRIGHT = 1.15
@@ -43,6 +39,10 @@
  IACOIL = 0
  IVESEL = 0
  NSMP2 = 1
+ mgaus1 = 8
+ mgaus2 = 10
+ /
+ &IN3
 ! EF1 specification
 ! EF2 specification
 ! EF3 specification

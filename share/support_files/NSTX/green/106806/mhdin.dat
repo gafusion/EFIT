@@ -113,7 +113,7 @@
 !                position tweaks from Jon Menard. PF5 coil position tweak
 !                made since PF5 coil was recentered during the last opening.
 !------------------------------------------------------------------------
- &IN3
+ &IN5
  IGRID = 1
  RLEFT = 0.01
  RRIGHT = 2.15
@@ -125,6 +125,10 @@
  IACOIL = 0
  IVESEL = 0
  NSMP2 = 1
+ mgaus1 = 8
+ mgaus2 = 10
+ /
+ &IN3
  RF = 0.180340007 2*0.799170017 2*1.49445999 1.80649996 1.79460001 
  4*2.01180005 1.80649996 1.79460001 2*1.49445999 2*0.799170017 0.180340007 
  0.304800004 2*0.169100001 0.209399998 0.250800014 0.269499987 0.412800014 
@@ -274,37 +278,36 @@
  'vs09u' 'vs10u' 'vs11l' 'vs12l' 'vs13l' 'vs14l' 'vs15l' 'cs16l' 'cs17l' 
  'cs18l' 'cs19l' 'cs20l'
  VSID = 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
- NW = 65
- NH = 65
  TURNFC = 41*1.0
  /
  &machinein
  nfcoil = 81
  nfsum = 41
  nsilop = 66
- magpr2 = 28
+ magpri = 28
  necoil = 240
  nesum = 1
  nvesel = 20
  nvsum = 20
  nrogow = 1
  nacoil = 1
- mgaus1 = 8
- mgaus2 = 10
  mqwant = 66
  nwwcur=18
  nffcur=18
  nppcur=18
  nercur=18
- mse315=18
- ali_max=1.5
- ali_min=0.05
- betap_lim=6.0
+ nmselp=18
+ /
+ &incheck
+ li_max=1.5
+ li_min=0.05
+ betap_max=6.0
+ betat_max=25.
  plasma_diff=0.08
- aout_max=75.0
- aout_min=25.
- eout_max=4.0
- eout_min=0.8
+ aminor_max=75.0
+ aminor_min=25.
+ elong_max=4.0
+ elong_min=0.8
  rout_max=160.
  rout_min=30.0
  zout_max=165.
@@ -313,15 +316,14 @@
  rcurrt_min=30.0
  zcurrt_max=165.
  zcurrt_min=-165.
- qsta_max=200.
- qsta_min=1.
- betat_lim=25.
- oleft_lim=-0.2
- oright_lim=-0.2
- otop_lim=-0.2
- olefs_check=-90.0
+ qstar_max=200.
+ qstar_min=1.
+ gapin_min=-0.2
+ gapout_min=-0.2
+ gaptop_min=-0.2
+ sepin_check=-90.0
  qout_min=1.
  qout_max=200.
- dbpli_lim=0.05
- delbp_lim=0.08
+ dbpli_diff=0.05
+ delbp_diff=0.08
  /

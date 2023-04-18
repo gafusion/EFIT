@@ -7,7 +7,7 @@ ECEITER,'pair',"| Determines whether the responses are computed
 | = 'pair' compute the response"
 ERRORECE0,0.0,"Uncertainty in ece data?"
 FEECE0,0.0,"Frequency (in GHz) of ECE."
-FWTECE0,zeros, "| ""Fitting Weight for ECE channels"". Length of vector is experiment dependent (40 for DIII-D), each entry of which is a fitting weight for ECE channels.
+FWTECE0,zeros, "| ""Fitting Weight for ECE channels"". Length of vector is machine dependent (40 for DIII-D), each entry of which is a fitting weight for ECE channels.
 | 0 do not include measured data in fit (default = all 0's)
 | >0 include measured data in fit with weights defined by FWTECE0 entry"
 FWTECEBZ0,0, "| Fitting Weight for ECE Bz
@@ -47,5 +47,5 @@ RPBIT,0,"Differential radius of R+ constraint (use controlled by KFIXRECE)."
 RTEM,0,"R- constraint (use controlled by KFIXRECE)."
 RTEO,0,"RO constraint (use controlled by KFIXRO)."
 RTEP,0,"R+ constraint (use controlled by KFIXRECE)."
-TEECEIN0,zeros,"Vector of electron temperatures from ECE measurements.  Length of vector is experiment dependent (40 for DIII-D).  See KFIXRECE and KFIXRO for determining use."
+TEECEIN0,zeros,"Vector of electron temperatures from ECE measurements.  Length of vector is machine dependent (40 for DIII-D).  See KFIXRECE and KFIXRO for determining use."
 ZTEO,0,"Height (Z) of ECE measurments."

@@ -33,36 +33,22 @@
       module eparm
         public
         ! Experiment dependant parameters
-        character(10) :: device !< experiment name
-        integer*4 :: nsilds !< nsilop number of flux loops at ?
-        integer*4 :: nsilol !< nsilop number of flux loops at ?
-        integer*4 :: nsilop !< nsilop number of flux loops
-        integer*4 :: nfcoil !< number of p.f. coil groups (should be consistent with nfsum in efund)
-        integer*4 :: nrogow
+        character(10) :: device !< machine name
+        integer*4 :: nsilop !< number of flux loops
+        integer*4 :: nfsum  !< number of p.f. f-coil groups
+        integer*4 :: nrogow !< number of rogowski coils
         integer*4 :: nacoil !< number of advance divertor coils
-        integer*4 :: mfcoil !< number of p.f. f-coils (should be consistent with nfcoil in efund)
+        integer*4 :: nfcoil !< number of p.f. f-coils
         integer*4 :: necoil !< number of p.f e-coils
-        integer*4 :: mpress !< mpress number of pressure data points
+        integer*4 :: mpress !< number of pressure data points
         integer*4 :: nvesel !< number of vessel segements
-        integer*4 :: nesum !< number of p.f. coil groups
-        integer*4 :: magpri67 !< number of magnetic detectors at toroidal angle "1"
-        integer*4 :: magpri322!< number of magnetic detectors at toroidal angle "2"
-        integer*4 :: magprirdp !< number of magnetic detectors for radiative divertor,magudom
-        integer*4 :: magudom !< number of magnetic detectors for (outer midplane??)
-        integer*4 :: maglds
-        integer*4 :: magpol
-        integer*4 :: magpri !< total number of magnetic detectors
-        integer*4 :: mse315 !< number of mse channels at toroidal angle 315 degrees
-        integer*4 :: mse45  !< number of mse channels at toroidal angle 45 degrees
-        integer*4 :: mse15  !< number of mse channels at toroidal angle 15 degrees
-        integer*4 :: mse1h   !< number of mse channels at toroidal angle
-        integer*4 :: mse315_2 !< number of mse channels at toroidal angle 315 degrees number 2?
-        integer*4 :: mse210 !< number of mse channels at toroidal angle 210 degrees
-        integer*4 :: libim
-        integer*4 :: nmtark
-        integer*4 :: nstark !< total number of mse channels
-        integer*4 :: nmsels
-        integer*4 :: nnece !< total number of ece channels
+        integer*4 :: nesum  !< number of p.f. e-coil groups
+        integer*4 :: magpri !< number of magnetic detectors
+        integer*4 :: libim  !< number of lithium ion beam measurements
+        integer*4 :: nmselp !< number of mse-lp channels
+        integer*4 :: nstark !< number of li beam and mse-lp measurements
+        integer*4 :: nmsels !< number of mse-ls channels
+        integer*4 :: nnece  !< number of ece channels
         integer*4 :: nnecein,neceo,nnnte
         integer*4 :: ngam_vars,ngam_u,ngam_w !< dimensions of mse spatial averaging data
         integer*4 :: nlimit !< maximum number of limiter points
@@ -87,7 +73,6 @@
         integer*4 :: kubicx,kubicy
         integer*4 :: ncurrt
         integer*4 :: mbdry, mbdry1
-        integer*4 :: nbwork
         integer*4 :: msbdry
         integer*4 :: nxtram
         integer*4 :: nxtlim,nco2v,nco2r
@@ -98,14 +83,14 @@
 !errlims
       module errlims
         ! Experiment dependant checks on the solution error
-        real*8 ali_max,ali_min,betap_lim,plasma_diff, &
-               aout_max,aout_min,eout_max,eout_min, &
+        real*8 li_max,li_min,betap_max,plasma_diff, &
+               aminor_max,aminor_min,elong_max,elong_min, &
                rout_max,rout_min,zout_max,zout_min, &
                rcurrt_max,rcurrt_min,zcurrt_max,zcurrt_min, &
-               qsta_max,qsta_min,betat_lim, &
-               oleft_lim,oright_lim,otop_lim, &
-               olefs_check,qout_max,qout_min, &
-               dbpli_lim,delbp_lim
+               qstar_max,qstar_min,betat_max, &
+               gapin_min,gapout_min,gaptop_min, &
+               sepin_check,qout_max,qout_min, &
+               dbpli_diff,delbp_diff
       end module errlims
 ! global_constants
       ! Calculate and store global constants like pi, e, gravity, etc.
@@ -367,26 +352,26 @@
 !var_hist
       module var_hist
         integer*4,dimension(:), allocatable :: jerror
-        real*8,dimension(:), allocatable :: eout,rout,zout,doutu, &
-          doutl,aout,vout,betat,otop, &
-          betap,ali,oleft,oright,qsta, &
-          rcurrt,zcurrt,qout,olefs, &
-          orighs,otops,sibdry,areao, &
-          wplasm,elongm,qqmagx,terror, &
-          rmagx,zmagx,obott,obots, &
+        real*8,dimension(:), allocatable :: elong,rout,zout,utri, &
+          ltri,aminor,volume,betat,gaptop, &
+          betap,li,gapin,gapout,qstar, &
+          rcurrt,zcurrt,qout,sepin, &
+          sepout,septop,sibdry,area, &
+          wmhd,elongm,qm,terror, &
+          rm,zm,gapbot,sepbot, &
           alpha,rttt,dbpli,delbp,oring, &
           sepexp,shearb, &
-          xtch,ytch,qpsib,vertn,aaq1, &
+          xtch,ytch,q95,vertn,aaq1, &
           aaq2,aaq3,btaxp,btaxv, &
-          simagx,seplim,peak, &
+          psim,dsep,peak, &
           wbpol,taumhd,betapd,betatd, &
-          alid,wplasmd,taudia,wbpold, &
+          wdia,taudia,wbpold, &
           qmerci,slantu,slantl,zeff, &
           zeffr,tave,rvsin,zvsin, &
           rvsout,zvsout,wpdot,wbdot, &
-          vsurfa,cjor95,pp95,ssep, &
+          vsurfa,cjor95,pp95,drsep, &
           yyy2,xnnc,wtherm,wfbeam,taujd3,tauthn, &
-          ali3,tflux,twagap
+          li3,tflux,twagap
         real*8,dimension(:,:), allocatable :: rseps,zseps
         real*8 pasman,betatn,psiq1,betat2
         integer*4 jtwagap
@@ -397,8 +382,8 @@
         real*8,dimension(:), allocatable :: qsiwant,cjorsw,cjor0, &
           ssiwant,ssi95,cjor99,cj1ave, &
           rmidin,rmidout,psurfa
-        real*8 psiwant,rexpan,fexpan,qqmin,fexpvs,shearc, &
-          sepnose,ssi01,znose,rqqmin
+        real*8 psiwant,rexpan,fexpan,qmin,fexpvs,shearc, &
+          sepnose,ssi01,znose,rhoqmin
       end module var_hist2
 !var_cshape
       module var_cshape
@@ -430,7 +415,7 @@
         real*8,dimension(:,:), allocatable :: csilop,csilopv 
         real*8,dimension(:,:), allocatable :: crogow
         real*8,dimension(:,:), allocatable :: cmpr2,cmpr2v 
-        real*8,dimension(:), allocatable :: cpasma,xndnt 
+        real*8,dimension(:), allocatable :: ipmhd,indent 
         real*8,dimension(:,:), allocatable :: ccbrsp
         real*8,dimension(:,:), allocatable :: caccurt
         real*8 cli,cqqxis,ci0,cipmp2 

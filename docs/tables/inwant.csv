@@ -30,7 +30,7 @@ SCALEDZ,,See namelist EFITIN.
 SIZEROJ, [-1.0 0.0 0.0 ...], "(array) Locations at which Jt is constrained when KZEROJ>0. When KZEROJ=1, PSIWANT can be used instead of SIZEROJ(1) by setting SIZEROJ(1)<0. See KZEROJ, RZEROJ, VZEROJ, PSIWANT (default)."
 SIWANTQ,,want q to be a particular value at some flux surface?
 STABDZ,,See namelist EFITIN.
-VZEROJ,,"(array) Desired values of <Jt/R>/<1/R>/Ip at flux surface PSIWANT [or surfaces SIZEROJ]. Must have KZEROJ = 1 [>1] and RZEROJ=0.0."
+VZEROJ,,"(array) Desired values of <Jt/R>/<1/R>/Ip*Area at flux surface PSIWANT [or surfaces SIZEROJ] (where Area is the cross sectional area inside of the separatrix - e.g. it is the same constant for every surface). Must have KZEROJ = 1 [>1] and RZEROJ=0.0."
 WRITEPC,,unused variable
 XCOILS,,Constraint vector for F coil currents when KCCOILS>0.
 ZNOSE,,See namelist EFITIN.

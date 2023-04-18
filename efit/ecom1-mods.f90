@@ -35,7 +35,7 @@
 
       module var_rmatri
       real*8,dimension(:),allocatable :: brsp
-      real*8,dimension(:),allocatable :: tsaisq
+      real*8,dimension(:),allocatable :: chisq
       real*8 cond,tsaifc
       integer*4 nparam,nfnpcr,nfnwcr,nbase
       end module var_rmatri
@@ -67,7 +67,7 @@
       real*8,dimension(:,:),allocatable :: denvt
       real*8,dimension(:,:),allocatable :: denrt
       integer*4,dimension(:,:),allocatable :: iccurt
-      real*8,dimension(:),allocatable :: pasmat,time,pbinj 
+      real*8,dimension(:),allocatable :: ipmeas,time,pbinj 
       integer*4,dimension(:),allocatable :: ierpsi
       integer*4,dimension(:),allocatable :: ierpr
       integer*4,dimension(:),allocatable :: iermpi
@@ -332,7 +332,6 @@
 
       module var_mprobe
       real*8,dimension(:),allocatable :: xmp2,ymp2,amp2,smp2,patmp2
-      integer*4 nsmp2
       end module var_mprobe
 
       module var_limite

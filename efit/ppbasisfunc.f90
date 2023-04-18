@@ -860,9 +860,7 @@
   end subroutine ppcnst
 
 !**********************************************************************
-!!     
-!>     subroutine ppstore()
-!!     
+!>
 !!     Store the solution coefs into ppbdry and pp2bdry
 !!     
 !**********************************************************************
@@ -875,13 +873,13 @@
 
   if (kppfnc .ge. 0 .and. kppfnc .le. 2) then
     do i = 1,kppcur
-      ppbdry(i) = brsp(nfcoil+i)/darea
+      ppbdry(i) = brsp(nfsum+i)/darea
       pp2bdry(i) = 0.0
     enddo
   elseif (kppfnc .eq. 6) then
     do i = 1,kppknt
-      if(kppbdry(i) .ne. 1)   ppbdry(i) = brsp(nfcoil+2*i-1)/darea
-      if(kpp2bdry(i) .ne. 1) pp2bdry(i) = brsp(nfcoil+2*i)/darea
+      if(kppbdry(i) .ne. 1)   ppbdry(i) = brsp(nfsum+2*i-1)/darea
+      if(kpp2bdry(i) .ne. 1) pp2bdry(i) = brsp(nfsum+2*i)/darea
     enddo
   endif
   return

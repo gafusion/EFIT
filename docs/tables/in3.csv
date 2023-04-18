@@ -15,32 +15,11 @@ HE,zeros, "(array) Height of e coils, it will be read from the 4th column of the
 HF,zeros, "(array) Height of f coils, if this variable is not part of the namelist, it will be read from the 4th column of the first NFCOIL lines after the namelist."
 HSI,zeros, "(array) Height of flux loop coils, if this variable is not part of the namelist, it will be read from the 4th column of the NSILOP lines after the f coils (if they are not in the namelist)."
 HVS,zeros, "(array) Height of vessel segments, it will be read from the 4th column of the first NVESEL lines after the e coils (if they are not in the namelist)."
-IACOIL,0, "| (integer flag) Controls whether Green functions for the advanced divertor coils (a coils) are computed (ra file)
-| 0=none
-| 1=compute Green functions for advanced divertor coils"
-IECOIL,0, "| (integer flag) Controls whether the Green functions for Ohmic coils (e coils) are computed (re file)
-| 0=none
-| 1=compute Green functions for Ohmic coils"
-IFCOIL,0, "| (integer flag) Controls whether the response functions due to shaping coils (f coils) are computed (also see ISLPFC)
-| 0=none
-| 1=compute response functions due to shaping coil (rfcoil and brzgfc files)"
-IGRID,0,"| (integer flag) Controls whether Green functions due to plasma currents, f coils, and plasma response function are computed (ec and ep files)
-| 0=none
-| 1=compute Green functions and plasma response"
-ISLPFC,0,"| (integer flag) Controls whether the response function of flux loops do to f coils is computed (requires IFCOIL=1)
-| 0=none
-| 1=compute response function (fc file)"
-IVESEL,0,"| (integer flag) Controls whether Green functions for vessel conductors are computed (note: this has a different meaning than the variable that shares it's name in the IN1 namelist)
-| 0=none
-| 1=compute vessel Green functions (rv file)"
-NSMP2,1, Number of segments to divide every magnetic probe into
 PATMP2,zeros, (array) Path lengths of closed loop magnetic probes in the poloidal plan.
 RACOIL,zeros, (array) Major radius of a coils
 RE,zeros, "(array) Major radius of e coils, it will be read from the 1st column of the first NECOIL lines after the flux loops (if they are not in the namelist)."
 RF,zeros, "(array) Major radius of f coils, if this variable is not part of the namelist, it will be read from the 1st column of the first NFCOIL lines after the namelist."
 RVS,zeros, "(array) Major radius of vessel segments, it will be read from the 1st column of the first NVESEL lines after the e coils (if they are not in the namelist)."
-RLEFT,0., Inner major radius of rectangular grid in m
-RRIGHT,0., Outer major radius of rectangular grid in m
 RSI,zeros, "(array) Major radius of flux loops in m, if this variable is not part of the namelist, it will be read from the 1st column of the NSILOP lines after the f coils (if they are not in the namelist)."
 RSISVS,zeros, (array) Resistivity of vessel segments
 SMP2,zeros, (array) Lengths of magnetic probes in m
@@ -58,6 +37,4 @@ ZACOIL,zeros, (array) Z coordinates of a coils
 ZE,zeros, "(array) Z coordinates of e coils, it will be read from the 2nd column of the first NECOIL lines after the flux loops (if they are not in the namelist)."
 ZF,zeros, "(array) Z coordinates of f coils, if this variable is not part of the namelist, it will be read from the 2nd column of the first NFCOIL lines after the namelist."
 ZVS,zeros, "(array) Z coordinates of vessel segments, it will be read from the 2nd column of the first NVESEL lines after the e coils (if they are not in the namelist)."
-ZBOTTO,0., Bottom vertical Z coordinate of rectangular grid in m
 ZSI,zeros, "(array) Z coordinates of flux loops in m, if this variable is not part of the namelist, it will be read from the 2nd column of the NSILOP lines after the f coils (if they are not in the namelist)."
-ZTOP,0., Top vertical Z coordinate of rectangular grid in m

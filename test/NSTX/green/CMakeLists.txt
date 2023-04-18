@@ -20,9 +20,9 @@ else ()
     message(FATAL_ERROR "Green Function Tables of this size must be made")
   endif ()
 
-  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/output/brzgfc.dat
+  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/mhdin.dat
        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
-  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/output/dprobe.dat
+  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/output/brzgfc.dat
        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
   file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/output/ec6565.ddd
        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
