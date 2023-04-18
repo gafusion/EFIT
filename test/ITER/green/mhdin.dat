@@ -3,17 +3,15 @@
  nfcoil = 12
  nfsum = 12
  nsilop = 110
- magpr2 = 29
+ magpri = 29
  necoil = 1
  nesum = 1
  nvesel = 24
  nvsum = 24
  nrogow = 1
  nacoil = 1
- mgaus1 = 8
- mgaus2 = 10
  /
- &IN3
+ &IN5
  IGRID = 1
  RLEFT = 3.6
  RRIGHT = 8.9
@@ -24,9 +22,11 @@
  NSMP2 = 25
  IECOIL = 0
  IVESEL = 0
- NW = 513
- NH = 513
  IACOIL = 0
+ mgaus1 = 8
+ mgaus2 = 10
+ /
+ &IN3
  RACOIL = 1.736
  ZACOIL = -1.32
  WACOIL = 0.096

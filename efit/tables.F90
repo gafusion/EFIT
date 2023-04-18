@@ -31,7 +31,7 @@
 
 !**********************************************************************
 !*
-!> set the directory for Green's function tables and experiment params
+!> set the directory for Green's function tables and machine params
 !*
 !**********************************************************************
    subroutine set_table_dir()
@@ -120,7 +120,7 @@
 
 !*********************************************************************
 !! 
-!> reads Green's function tables and dprobe.dat data
+!> reads Green's function tables and mhdin.dat data
 !!
 !*********************************************************************
    subroutine read_tables()
@@ -131,16 +131,17 @@
 
       implicit none
       integer*4  :: i,j,istat,mcontr,mw,mh
-      integer*4 vsid ! unused
-      real*8 ecturn ! unused
+      integer*4 vsid(nvesel) ! unused
+      real*8 ecturn(necoil) ! unused
       character(1000) :: line
       parameter(mcontr=35)
  
-      NAMELIST/in3/mpnam2,xmp2,ymp2,amp2,smp2,rsi,zsi,wsi,hsi, &
-                   as,as2,lpname,rsisvs,turnfc,patmp2,vsname, &
+      namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,patmp2, &
+                   rsi,zsi,wsi,hsi,as,as2,rsisvs,lpname, &
+                   rvs,zvs,wvs,hvs,avs,avs2,vsid,vsname, &
                    racoil,zacoil,wacoil,hacoil, &
-                   rf,zf,fcid,wf,hf,wvs,hvs,avs,avs2,af,af2, &
-                   re,ze,ecid,ecturn,vsid,rvs,zvs,we,he,fcturn
+                   rf,zf,wf,hf,af,af2,fcid,fcturn,turnfc, &
+                   re,ze,we,he,ecid,ecturn
         
       ! initialize variables
       gridec = 0.0
@@ -149,7 +150,8 @@
       rsilvs = 0.0
       rsilec = 0.0
       fcid = 1
-      if(mfcoil.eq.18) &
+      ! for DIIID
+      if(nfcoil.eq.18 .and. nfsum.eq.18) &
         fcid = (/1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 , &
                  10, 11, 12, 13, 14, 15, 16, 17, 18/)
       fcturn = 1.0
@@ -175,7 +177,7 @@
       read (mcontr) rgrid,zgrid
 
       if (.not.allocated(gridfc)) then
-        allocate(gridfc(mw*mh,nfcoil),stat=iallocate_stat)
+        allocate(gridfc(mw*mh,nfsum),stat=iallocate_stat)
         if(iallocate_stat/=0) stop "*** Not enough space for gridfc ***"
       endif
       read (mcontr) gridfc
@@ -192,13 +194,13 @@
       open(unit=mcontr,form='unformatted', &
            status='old',file=table_di2(1:ltbdi2)//'rfcoil.ddd')
       if (.not.allocated(rsilfc)) then
-        allocate(rsilfc(nsilop,nfcoil),stat=iallocate_stat)
+        allocate(rsilfc(nsilop,nfsum),stat=iallocate_stat)
         if(iallocate_stat/=0) stop "*** Not enough space for rsilfc ***"
       endif
 
       read (mcontr) rsilfc
       if (.not.allocated(rmp2fc)) then
-        allocate(rmp2fc(magpri,nfcoil),stat=iallocate_stat)
+        allocate(rmp2fc(magpri,nfsum),stat=iallocate_stat)
         if(iallocate_stat/=0) stop "*** Not enough space for rmp2fc ***"
       endif
       read (mcontr) rmp2fc
@@ -259,7 +261,7 @@
         endif
       endif
 
-      open(unit=mcontr,status='old',file=table_di2(1:ltbdi2)//'dprobe.dat')
+      open(unit=mcontr,status='old',file=table_di2(1:ltbdi2)//'mhdin.dat')
 
       read (mcontr,in3, iostat=istat)
       if (istat>0) then
@@ -272,7 +274,7 @@
  
       if(rf(1).lt.0)&
         read (mcontr,10200) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
-                             i=1,mfcoil)
+                             i=1,nfcoil)
       if(rsi(1).lt.0.) &
         read (mcontr,10200) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
                              i=1,nsilop)

@@ -3,11 +3,8 @@
 !!    presur computes the relevant parameters for pressure
 !!    profile fitting.
 !!    
-!!
 !!    @param jtime : time index
-!!
 !!    @param niter : iteration number
-!!
 !!    @param kerror : error flag
 !!
 !**********************************************************************
@@ -160,18 +157,21 @@
 !>
 !!    ppcurr computes the radial derivative of the
 !!    pressure.
-!!    
 !!
-!!    @param ypsi :
-!!
-!!    @param nnn :
+!!    @param ypsi : flux location to produce result
+!!    @param nnn : number of coefficients used in representation
 !!
 !**********************************************************************
-      function ppcurr(ypsi,nnn)
+      real*8 function ppcurr(ypsi,nnn)
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xpsii(nppcur)
+      implicit none
+      real*8 prcurr,seval
+      integer*4, intent(in) :: nnn
+      real*8, intent(in) :: ypsi
+      integer*4 i,iijj,iiij,nn
+      real*8 p0back,siedge
+      real*8 xpsii(nffcur)
 !
       if (abs(ypsi).gt.1.0) then
         ppcurr=0.0
@@ -184,8 +184,8 @@
       endif
       ppcurr=0.0
       call setpp(ypsi,xpsii)
-      do iiij=nfcoil+1,nnn+nfcoil
-        iijj=iiij-nfcoil
+      do iiij=nfsum+1,nnn+nfsum
+        iijj=iiij-nfsum
         ppcurr=ppcurr+brsp(iiij)*xpsii(iijj)
       enddo
 !----------------------------------------------------------------------
@@ -202,11 +202,10 @@
         prcurr=0.0
         return
       endif
-      brspp=0.0
       prcurr=0.0
       call setpr(ypsi,xpsii)
-      do i=nfcoil+1,nfcoil+nnn
-        nn=i-nfcoil
+      do i=nfsum+1,nfsum+nnn
+        nn=i-nfsum
         prcurr=prcurr+brsp(i)*xpsii(nn)
       enddo
       prcurr=-sidif*prcurr/darea+prbdry
@@ -222,45 +221,46 @@
 !**********************************************************************
 !>
 !!    prcur4 computes the plasma pressure by integration.
-!!    
 !!
 !!    @param n1set :
-!!
-!!    @param ypsi :
-!!
-!!    @param nnn :
+!!    @param ypsi : flux location to produce result
 !!
 !**********************************************************************
-      function prcur4(n1set,ypsi,nnn)
+      real*8 function prcur4(n1set,ypsi)
       use commonblocks,only: sifpre,bwpre,cwpre,dwpre,sfpre,sprep
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      real*8 ppcur4,seval
+      integer*4, intent(in) :: n1set
+      real*8, intent(in) :: ypsi
+      integer*4 i,mw
+      real*8 delsi,siii
 
       if (abs(ypsi).gt.1.0) then
-       prcur4=0.0
-       return
+        prcur4=0.0
+        return
       endif
 !
+      mw=nw
       if (n1set.gt.0) then
-       do i=2,nw-1
-        siii=real(i-1,dp)/(nw-1)
-        sifpre(i)=siii
-       enddo
-       sifpre(1)=0.0
-       sifpre(nw)=1.0
-       do i=1,nw
-        sprep(i)=ppcur4(sifpre(i),kppcur)/darea
-       enddo
+        do i=2,nw-1
+         siii=real(i-1,dp)/(nw-1)
+         sifpre(i)=siii
+        enddo
+        sifpre(1)=0.0
+        sifpre(nw)=1.0
+        do i=1,nw
+          sprep(i)=ppcur4(sifpre(i),kppcur)/darea
+        enddo
 !
-       sfpre(nw)=prbdry
-       delsi=sidif/(nw-1)
-       do i=1,nw-1
-        sfpre(nw-i)=sfpre(nw-i+1)+0.5_dp*(sprep(nw-i+1)+sprep(nw-i))*delsi
-       enddo
+        sfpre(nw)=prbdry
+        delsi=sidif/(nw-1)
+        do i=1,nw-1
+          sfpre(nw-i)=sfpre(nw-i+1)+0.5_dp*(sprep(nw-i+1)+sprep(nw-i))*delsi
+        enddo
 !
-       mw=nw
-       call zpline(mw,sifpre,sfpre,bwpre,cwpre,dwpre)
+        call zpline(mw,sifpre,sfpre,bwpre,cwpre,dwpre)
       endif
       prcur4=seval(mw,ypsi,sifpre,sfpre,bwpre,cwpre,dwpre)
       return
@@ -271,16 +271,17 @@
 !!    ppcur4 computes the radial derivative of the
 !!    pressure based on icurrt.
 !!    
-!!
-!!    @param ypsi :
-!!
-!!    @param nnn :
+!!    @param ypsi : flux location to produce result
+!!    @param nnn : number of coefficients used in representation
 !!
 !**********************************************************************
-      function ppcur4(ypsi,nnn)
+      real*8 function ppcur4(ypsi,nnn)
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      real*8 ppcurr,seval
+      integer*4, intent(in) :: nnn
+      real*8, intent(in) :: ypsi
 
       if (abs(ypsi).gt.1.0) then
         ppcur4=0.0
@@ -290,8 +291,7 @@
       case (1)
         ppcur4=cratio*sbeta/srma
       case (4)
-        ppcur4=((1.-ypsi**enp)**emp*(1.-gammap)+gammap)*cratio &
-                /rzero
+        ppcur4=((1.-ypsi**enp)**emp*(1.-gammap)+gammap)*cratio/rzero
       case default
         ppcur4=ppcurr(ypsi,nnn)
       end select
@@ -303,9 +303,7 @@
 !!    presurw computes the relevant parameters for rotational
 !!    pressure profile fitting.
 !!    
-!!
 !!    @param jtime : time index
-!!
 !!    @param niter : iteration number
 !!
 !**********************************************************************
@@ -404,25 +402,25 @@
       npresw=nomegat
 !
       return
-
       end subroutine presurw
 
 !**********************************************************************
 !>
 !!    pwpcur computes the radial derivative of the
 !!    rotational pressure
-!!    
 !!
-!!    @param ypsi :
-!!
-!!    @param nnn :
+!!    @param ypsi : flux location to produce result
+!!    @param nnn : number of coefficients used in representation
 !!
 !**********************************************************************
-      function pwpcur(ypsi,nnn)
+      real*8 function pwpcur(ypsi,nnn)
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xpsii(nwwcur)
+      implicit none
+      integer*4, intent(in) :: nnn
+      real*8, intent(in) :: ypsi
+      integer*4 iiij,iijj
+      real*8 xpsii(nwwcur)
 
       if (abs(ypsi).gt.1.0) then
         pwpcur=0.0
@@ -441,44 +439,45 @@
 !>
 !!    pwcur4 computes the rotational pressure by integration.
 !!    
-!!
 !!    @param n1set :
-!!
-!!    @param ypsi :
-!!
-!!    @param nnn :
+!!    @param ypsi : flux location to produce result
 !!
 !**********************************************************************
-      function pwcur4(n1set,ypsi,nnn)
-      use commonblocks,only: sifprw,bwprw,cwprw,dwprw,sfprw,sprwp
+      real*8 function pwcur4(n1set,ypsi)
+      use commonblocks, only: sifprw,bwprw,cwprw,dwprw,sfprw,sprwp
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      real*8 pwpcu4,seval
+      integer*4, intent(in) :: n1set
+      real*8, intent(in) :: ypsi
+      integer*4 i,mw
+      real*8 delsi,siii
 
       if (abs(ypsi).gt.1.0) then
-       pwcur4=0.0
-       return
+        pwcur4=0.0
+        return
       endif
 !
+      mw=nw
       if (n1set.gt.0) then
-       do i=2,nw-1
-        siii=real(i-1,dp)/(nw-1)
-        sifprw(i)=siii
-       enddo
-       sifprw(1)=0.0
-       sifprw(nw)=1.0
-       do i=1,nw
-        sprwp(i)=pwpcu4(sifprw(i),kwwcur)/darea
-       enddo
+        do i=2,nw-1
+          siii=real(i-1,dp)/(nw-1)
+          sifprw(i)=siii
+        enddo
+        sifprw(1)=0.0
+        sifprw(nw)=1.0
+        do i=1,nw
+          sprwp(i)=pwpcu4(sifprw(i),kwwcur)/darea
+        enddo
 !
-       sfprw(nw)=preswb
-       delsi=sidif/(nw-1)
-       do i=1,nw-1
-        sfprw(nw-i)=sfprw(nw-i+1)+0.5_dp*(sprwp(nw-i+1)+sprwp(nw-i))*delsi
-       enddo
+        sfprw(nw)=preswb
+        delsi=sidif/(nw-1)
+        do i=1,nw-1
+          sfprw(nw-i)=sfprw(nw-i+1)+0.5_dp*(sprwp(nw-i+1)+sprwp(nw-i))*delsi
+        enddo
 !
-       mw=nw
-       call zpline(mw,sifprw,sfprw,bwprw,cwprw,dwprw)
+        call zpline(mw,sifprw,sfprw,bwprw,cwprw,dwprw)
       endif
       pwcur4=seval(mw,ypsi,sifprw,sfprw,bwprw,cwprw,dwprw)
       return
@@ -488,17 +487,18 @@
 !>
 !!    pwpcu4 computes the radial derivative of the
 !!    rotational pressure based on icurrt.
-!!    
 !!
-!!    @param ypsi :
-!!
-!!    @param nnn :
+!!    @param ypsi : flux location to produce result
+!!    @param nnn : number of coefficients used in representation
 !!
 !**********************************************************************
-      function pwpcu4(ypsi,nnn)
+      real*8 function pwpcu4(ypsi,nnn)
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      real*8 pwpcur
+      integer*4, intent(in) :: nnn
+      real*8, intent(in) :: ypsi
 
       if (abs(ypsi).gt.1.0) then
         pwpcu4=0.0
@@ -507,7 +507,7 @@
 
       if (icurrt.eq.4) then
         pwpcu4=((1.-ypsi**enw)**emw*(1.-gammaw)+gammaw)*rbetaw &
-         *cratio/rzero
+          *cratio/rzero
       elseif (icurrt.eq.1) then
         pwpcu4=sbetaw*cratio/srma
       else
@@ -521,17 +521,19 @@
 !>
 !!    pwcurr computes the ???
 !!    
-!!
-!!    @param ypsi :
-!!
-!!    @param nnn :
+!!    @param ypsi : flux location to produce result
+!!    @param nnn : number of coefficients used in representation
 !!
 !**********************************************************************
-      function pwcurr(ypsi,nnn)
+      real*8 function pwcurr(ypsi,nnn)
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
-      dimension xpsii(nwwcur)
+      implicit none
+      integer*4, intent(in) :: nnn
+      real*8, intent(in) :: ypsi
+      integer*4 i,nn
+      real*8 xpsii(nwwcur)
+
       if (abs(ypsi).gt.1.0) then
         pwcurr=0.0
         return

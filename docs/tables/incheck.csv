@@ -1,0 +1,28 @@
+Variable, Default, Description
+aminor_max, 75., Maximum plamsa minor radius (cm) allowed if ierchk is active
+aminor_min, 30., Minimum plamsa minor radius (cm) allowed if ierchk is active
+betap_max, 6., Maximum poloidal plasma beta (%) allowed if ierchk is active (minimum is always 0)
+betat_max, 25., Maximum toroidal plasma beta (%) allowed if ierchk is active (minimum is always 0) 
+dbpli_diff, 0.05, Maximum relative difference allowed between different calculations of betap+li/2
+delbp_diff, 0.08, Maximum relative difference allowed between different calculations of betap
+elong_max, 4.0, Maximum plama elongation allowed if ierchk is active
+elong_min, 0.8, Minimum plama elongation allowed if ierchk is active
+gapin_min, -0.2, Minimum inboard gap allowed if ierchk is active
+gapout_min, -0.2, Minimum outboard gap allowed if ierchk is active
+gaptop_min, -0.2, Minimum top gap allowed if ierchk is active
+li_max, 2.5, Maximum plasma internal inductance allowed if ierchk is active
+li_min, 0.05, Minimum plasma internal inductance allowed if ierchk is active
+plasma_diff, 0.08, Maximum relative difference allowed between IMEAS and IMHD
+qout_max, 200., Maximum safety factor allowed at psi_n=1 if ierchk is active
+qout_min, 1., Minimum safety factor allowed at psi_n=1 if ierchk is active
+qstar_max, 200., Maximum kink safety factor allowed if ierchk is active
+qstar_min, 1., Minimum kink safety factor allowed if ierchk is active
+rcurrt_max, 240., Maximum current major radius (cm) allowed if ierchk is active
+rcurrt_min, 90., Minimum current major radius (cm) allowed if ierchk is active
+rout_max, 240., Maximum plasma major radius (cm) allowed if ierchk is active
+rout_min, 90., Minimum plasma major radius (cm) allowed plasma if ierchk is active
+sepin_check, -90., The qout_min check is skipped when the inboard separation is less than this
+zcurrt_max, 100., Maximum current Z position (cm) allowed if ierchk is active
+zcurrt_min, -100., Minimum current Z position (cm) allowed if ierchk is active
+zout_max, 100., Maximum plasma Z position (cm) allowed if ierchk is active
+zout_min, -100., Minimum plasma Z position (cm) allowed if ierchk is active

@@ -57,7 +57,7 @@ The efund executable generates the Green's function tables as we discuss next.
 Forming Green's function tables
 --------------------------------
 
-An ``mhdin.dat`` file describing the experiment geometry must be in the
+An ``mhdin.dat`` file describing the machine geometry must be in the
 same location that you run ``efund`` from.
 
 Once this requirement is satisfied, the tables can be formed by calling
@@ -67,14 +67,12 @@ Once this requirement is satisfied, the tables can be formed by calling
 
 The tables are contained in files.  Example filenames of these files are 
 ``btcomp.dat, ccoil.ddd, ccomp.dat, n1coil.ddd, icomp.dat``.  
-This also creates a ``dprobe.dat`` file containing all the limiter and other
-necessary information about the experiment.
 
 Running EFIT
 ------------
 
 In order for EFIT to run it must know where the Green function tables and
-experiment data files can be found.  Default locations can be specified at compile
+machine data files can be found.  Default locations can be specified at compile
 time by passing the flags ``-DINPUT_DIR=``, ``-DTABLE_DIR=``, and ``-DSTORE_DIR`` to
 cmake.  Otherwise the default is set as the build directory.  This is superceded
 at runtime by environment variables or input files.  

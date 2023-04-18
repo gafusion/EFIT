@@ -123,49 +123,49 @@
 !
       write (neqdsk,1060) time(jj),jflag,lflag,limloc(jj), &
                           mco2v,mco2r,qmflag,nlold,nlnew
-      write (neqdsk,1040) tsaisq(jj),rcencm,bcentr(jj),pasmat(jj)
-      write (neqdsk,1040) cpasma(jj),rout(jj),zout(jj),aout(jj)
-      write (neqdsk,1040) eout(jj),doutu(jj),doutl(jj),vout(jj)
-      write (neqdsk,1040) rcurrt(jj),zcurrt(jj),qsta(jj),betat(jj)
-      write (neqdsk,1040) betap(jj),ali(jj),oleft(jj),oright(jj)
-      write (neqdsk,1040) otop(jj),obott(jj),qpsib(jj),vertn(jj)
+      write (neqdsk,1040) chisq(jj),rcencm,bcentr(jj),ipmeas(jj)
+      write (neqdsk,1040) ipmhd(jj),rout(jj),zout(jj),aminor(jj)
+      write (neqdsk,1040) elong(jj),utri(jj),ltri(jj),volume(jj)
+      write (neqdsk,1040) rcurrt(jj),zcurrt(jj),qstar(jj),betat(jj)
+      write (neqdsk,1040) betap(jj),li(jj),gapin(jj),gapout(jj)
+      write (neqdsk,1040) gaptop(jj),gapbot(jj),q95(jj),vertn(jj)
       write (neqdsk,1040) (rco2v(k,jj),k=1,mco2v)
       write (neqdsk,1040) (dco2v(jj,k),k=1,mco2v)
       write (neqdsk,1040) (rco2r(k,jj),k=1,mco2r)
       write (neqdsk,1040) (dco2r(jj,k),k=1,mco2r)
       write (neqdsk,1040) shearb(jj),bpolav(jj),s1(jj),s2(jj)
-      write (neqdsk,1040) s3(jj),qout(jj),olefs(jj),orighs(jj)
-      write (neqdsk,1040) otops(jj),sibdry(jj),areao(jj),wplasm(jj)
-      write (neqdsk,1040) terror(jj),elongm(jj),qqmagx(jj),cdflux(jj)
-      write (neqdsk,1040) alpha(jj),rttt(jj),psiref(jj),xndnt(jj)
+      write (neqdsk,1040) s3(jj),qout(jj),sepin(jj),sepout(jj)
+      write (neqdsk,1040) septop(jj),sibdry(jj),area(jj),wmhd(jj)
+      write (neqdsk,1040) terror(jj),elongm(jj),qm(jj),cdflux(jj)
+      write (neqdsk,1040) alpha(jj),rttt(jj),psiref(jj),indent(jj)
       write (neqdsk,1040) rseps(1,jj),zseps(1,jj),rseps(2,jj), &
                           zseps(2,jj)
-      write (neqdsk,1040) sepexp(jj),obots(jj),btaxp(jj),btaxv(jj)
-      write (neqdsk,1040) aaq1(jj),aaq2(jj),aaq3(jj),seplim(jj)
-      write (neqdsk,1040) rmagx(jj),zmagx(jj),simagx(jj),taumhd(jj)
+      write (neqdsk,1040) sepexp(jj),sepbot(jj),btaxp(jj),btaxv(jj)
+      write (neqdsk,1040) aaq1(jj),aaq2(jj),aaq3(jj),dsep(jj)
+      write (neqdsk,1040) rm(jj),zm(jj),psim(jj),taumhd(jj)
       fluxx=diamag(jj)*1.0e-03_dp
-      write (neqdsk,1040) betapd(jj),betatd(jj),wplasmd(jj),fluxx
+      write (neqdsk,1040) betapd(jj),betatd(jj),wdia(jj),fluxx
       write (neqdsk,1040) vloopt(jj),taudia(jj),qmerci(jj),tavem
 !
       if (ishot.lt.91000) then
-        write (neqdsk,1041) nsilop,magpri67+magpri322,nfcoil,nesum
+        write (neqdsk,1041) nsilop,magpri67+magpri322,nfsum,nesum
         write (neqdsk,1040) (csilop(k,jj),k=1,nsilop), &
                             (cmpr2(k,jj),k=1,magpri67+magpri322)
       else
-        write (neqdsk,1041) nsilop,magpri,nfcoil,nesum
+        write (neqdsk,1041) nsilop,magpri,nfsum,nesum
         write (neqdsk,1040) (csilop(k,jj),k=1,nsilop), &
                             (cmpr2(k,jj),k=1,magpri)
       endif
-      write (neqdsk,1040) (ccbrsp(k,jj),k=1,nfcoil)
+      write (neqdsk,1040) (ccbrsp(k,jj),k=1,nfsum)
       write (neqdsk,1040) (eccurt(jj,k),k=1,nesum)
 !
       write (neqdsk,1040) pbinj(jj),rvsin(jj),zvsin(jj),rvsout(jj)
       write (neqdsk,1040) zvsout(jj),vsurfa(jj),wpdot(jj),wbdot(jj)
       write (neqdsk,1040) slantu(jj),slantl(jj),zuperts(jj),chipre
-      write (neqdsk,1040) cjor95(jj),pp95(jj),ssep(jj),yyy2(jj)
+      write (neqdsk,1040) cjor95(jj),pp95(jj),drsep(jj),yyy2(jj)
       write (neqdsk,1040) xnnc(jj),cprof,oring(jj),cjor0(jj)
-      write (neqdsk,1040) fexpan,qqmin,chigamt,ssi01
-      write (neqdsk,1040) fexpvs,sepnose,ssi95(jj),rqqmin
+      write (neqdsk,1040) fexpan,qmin,chigamt,ssi01
+      write (neqdsk,1040) fexpvs,sepnose,ssi95(jj),rhoqmin
       write (neqdsk,1040) cjor99(jj),cj1ave(jj),rmidin(jj),rmidout(jj)
       write (neqdsk,1040) psurfa(jj),peak(jj),dminux(jj),dminlx(jj)
       write (neqdsk,1040) dolubaf(jj),dolubafm(jj),diludom(jj), &
@@ -173,7 +173,7 @@
       write (neqdsk,1040) ratsol(jj),rvsiu(jj),zvsiu(jj),rvsid(jj)
       write (neqdsk,1040) zvsid(jj),rvsou(jj),zvsou(jj),rvsod(jj)
       write (neqdsk,1040) zvsod(jj),condno,psin32(jj),psin21(jj)
-      write (neqdsk,1040) rq32in(jj),rq21top(jj),chilibt,ali3(jj)
+      write (neqdsk,1040) rq32in(jj),rq21top(jj),chilibt,li3(jj)
       write (neqdsk,1040) xbetapr,tflux(jj),tchimls,twagap(jj)
 !-----------------------------------------------------------------------
 !--   one xxx replaced with ring gap 8/15/91                        --
@@ -200,18 +200,18 @@
 !
       write (neqdsk) real(time(jj),r4),jflag,lflag,limloc(jj), &
                           mco2v,mco2r,qmflag,nlold,nlnew
-      write (neqdsk) real(tsaisq(jj),r4),real(rcencm,r4), &
-                     real(bcentr(jj),r4),real(pasmat(jj),r4)
-      write (neqdsk) real(cpasma(jj),r4),real(rout(jj),r4), &
-                     real(zout(jj),r4),real(aout(jj),r4)
-      write (neqdsk) real(eout(jj),r4),real(doutu(jj),r4), &
-                     real(doutl(jj),r4),real(vout(jj),r4)
+      write (neqdsk) real(chisq(jj),r4),real(rcencm,r4), &
+                     real(bcentr(jj),r4),real(ipmeas(jj),r4)
+      write (neqdsk) real(ipmhd(jj),r4),real(rout(jj),r4), &
+                     real(zout(jj),r4),real(aminor(jj),r4)
+      write (neqdsk) real(elong(jj),r4),real(utri(jj),r4), &
+                     real(ltri(jj),r4),real(volume(jj),r4)
       write (neqdsk) real(rcurrt(jj),r4),real(zcurrt(jj),r4), &
-                     real(qsta(jj),r4),real(betat(jj),r4)
-      write (neqdsk) real(betap(jj),r4),real(ali(jj),r4), &
-                     real(oleft(jj),r4),real(oright(jj),r4)
-      write (neqdsk) real(otop(jj),r4),real(obott(jj),r4), &
-                     real(qpsib(jj),r4),real(vertn(jj),r4)
+                     real(qstar(jj),r4),real(betat(jj),r4)
+      write (neqdsk) real(betap(jj),r4),real(li(jj),r4), &
+                     real(gapin(jj),r4),real(gapout(jj),r4)
+      write (neqdsk) real(gaptop(jj),r4),real(gapbot(jj),r4), &
+                     real(q95(jj),r4),real(vertn(jj),r4)
       write (neqdsk) (real(rco2v(k,jj),r4),k=1,mco2v)
       write (neqdsk) (real(dco2v(jj,k),r4),k=1,mco2v)
       write (neqdsk) (real(rco2r(k,jj),r4),k=1,mco2r)
@@ -219,37 +219,37 @@
       write (neqdsk) real(shearb(jj),r4),real(bpolav(jj),r4), &
                      real(s1(jj),r4),real(s2(jj),r4)
       write (neqdsk) real(s3(jj),r4),real(qout(jj),r4), &
-                     real(olefs(jj),r4),real(orighs(jj),r4)
-      write (neqdsk) real(otops(jj),r4),real(sibdry(jj),r4), &
-                     real(areao(jj),r4),real(wplasm(jj),r4)
+                     real(sepin(jj),r4),real(sepout(jj),r4)
+      write (neqdsk) real(septop(jj),r4),real(sibdry(jj),r4), &
+                     real(area(jj),r4),real(wmhd(jj),r4)
       write (neqdsk) real(terror(jj),r4),real(elongm(jj),r4), &
-                     real(qqmagx(jj),r4),real(cdflux(jj),r4)
+                     real(qm(jj),r4),real(cdflux(jj),r4)
       write (neqdsk) real(alpha(jj),r4),real(rttt(jj),r4), &
-                     real(psiref(jj),r4),real(xndnt(jj),r4)
+                     real(psiref(jj),r4),real(indent(jj),r4)
       write (neqdsk) real(rseps(1,jj),r4),real(zseps(1,jj),r4), &
                      real(rseps(2,jj),r4),real(zseps(2,jj),r4)
-      write (neqdsk) real(sepexp(jj),r4),real(obots(jj),r4), &
+      write (neqdsk) real(sepexp(jj),r4),real(sepbot(jj),r4), &
                      real(btaxp(jj),r4),real(btaxv(jj),r4)
       write (neqdsk) real(aaq1(jj),r4),real(aaq2(jj),r4), &
-                     real(aaq3(jj),r4),real(seplim(jj),r4)
-      write (neqdsk) real(rmagx(jj),r4),real(zmagx(jj),r4), &
-                     real(simagx(jj),r4),real(taumhd(jj),r4)
+                     real(aaq3(jj),r4),real(dsep(jj),r4)
+      write (neqdsk) real(rm(jj),r4),real(zm(jj),r4), &
+                     real(psim(jj),r4),real(taumhd(jj),r4)
       fluxx=diamag(jj)*1.0e-03_dp
       write (neqdsk) real(betapd(jj),r4),real(betatd(jj),r4), &
-                     real(wplasmd(jj),r4),real(fluxx,r4)
+                     real(wdia(jj),r4),real(fluxx,r4)
       write (neqdsk) real(vloopt(jj),r4),real(taudia(jj),r4), &
                      real(qmerci(jj),r4),real(tavem,r4)
 !
       if (ishot.lt.91000) then
-        write (neqdsk) nsilop,magpri67+magpri322,nfcoil,nesum
+        write (neqdsk) nsilop,magpri67+magpri322,nfsum,nesum
         write (neqdsk) (real(csilop(k,jj),r4),k=1,nsilop), &
                        (real(cmpr2(k,jj),r4),k=1,magpri67+magpri322)
       else
-        write (neqdsk) nsilop,magpri,nfcoil,nesum
+        write (neqdsk) nsilop,magpri,nfsum,nesum
         write (neqdsk) (real(csilop(k,jj),r4),k=1,nsilop), &
                        (real(cmpr2(k,jj),r4),k=1,magpri)
       endif
-      write (neqdsk) (real(ccbrsp(k,jj),r4),k=1,nfcoil)
+      write (neqdsk) (real(ccbrsp(k,jj),r4),k=1,nfsum)
       write (neqdsk) (real(eccurt(jj,k),r4),k=1,nesum)
 !
       write (neqdsk) real(pbinj(jj),r4),real(rvsin(jj),r4), &
@@ -259,13 +259,13 @@
       write (neqdsk) real(slantu(jj),r4),real(slantl(jj),r4), &
                      real(zuperts(jj),r4),real(chipre,r4)
       write (neqdsk) real(cjor95(jj),r4),real(pp95(jj),r4), &
-                     real(ssep(jj),r4),real(yyy2(jj),r4)
+                     real(drsep(jj),r4),real(yyy2(jj),r4)
       write (neqdsk) real(xnnc(jj),r4),real(cprof,r4), &
                      real(oring(jj),r4),real(cjor0(jj),r4)
-      write (neqdsk) real(fexpan,r4),real(qqmin,r4), &
+      write (neqdsk) real(fexpan,r4),real(qmin,r4), &
                      real(chigamt,r4),real(ssi01,r4)
       write (neqdsk) real(fexpvs,r4),real(sepnose,r4), &
-                     real(ssi95(jj),r4),real(rqqmin,r4)
+                     real(ssi95(jj),r4),real(rhoqmin,r4)
       write (neqdsk) real(cjor99(jj),r4),real(cj1ave(jj),r4), &
                      real(rmidin(jj),r4),real(rmidout(jj),r4)
       write (neqdsk) real(psurfa(jj),r4),real(peak(jj),r4), &
@@ -279,7 +279,7 @@
       write (neqdsk) real(zvsod(jj),r4),real(condno,r4), &
                      real(psin32(jj),r4),real(psin21(jj),r4)
       write (neqdsk) real(rq32in(jj),r4),real(rq21top(jj),r4), &
-                     real(chilibt,r4),real(ali3(jj),r4)
+                     real(chilibt,r4),real(li3(jj),r4)
       write (neqdsk) real(xbetapr,r4),real(tflux(jj),r4), &
                      real(tchimls,r4),real(twagap(jj),r4)
 !
@@ -310,7 +310,7 @@
       endif
 !
       if (kinput.gt.0) then
-        plasma=cpasma(jtime)
+        plasma=ipmhd(jtime)
         btor=bcentr(jtime)
         coils(1:nsilop)=csilop(1:nsilop,jtime)
         expmp2(1:magpri)=cmpr2(1:magpri,jtime)

@@ -60,7 +60,7 @@
             sumi=sumi+pcurrt(kk)
           enddo
         enddo
-        cratio=pasmat(jtime)/sumi
+        cratio=ipmeas(jtime)/sumi
         pcurrt=pcurrt*cratio*zero
 !
       case (2)
@@ -71,7 +71,7 @@
                +0.692055_dp*(expmpi(jtime,57)-expmpi(jtime,53)) &
                +0.728045_dp*(silopt(jtime,27)-silopt(jtime,37)) &
                +2.047150_dp*(silopt(jtime,2) -silopt(jtime,11))
-          zelip=zelip*1.e6_dp/pasmat(jtime)
+          zelip=zelip*1.e6_dp/ipmeas(jtime)
           zbound=zelip
           eelip=1.5_dp
 !----------------------------------------------------------------
@@ -181,11 +181,11 @@
         endif
 
         ! need to use computed fcoil currents
-        brsp(1:nfcoil)=fcoil_ext
+        brsp(1:nfsum)=fcoil_ext
 
         ! fix signs
         ! note: plasma_ext does not appear to be useful for this...
-        if (pasmat(jtime).gt.0.0) then
+        if (ipmeas(jtime).gt.0.0) then
           pprime_ext=-pprime_ext
           ffprim_ext=-ffprim_ext
         endif
@@ -197,9 +197,9 @@
           ! apparently fitting polynomials works equally well with
           ! splines...? (kppfnc=6 and kfffnc=6) - matches esave
           call fitpp(pprime_ext,nw_ext,alpa,kppcur)
-          brsp(1+nfcoil:nfcoil+kppcur)=alpa(1:kppcur)*darea
+          brsp(1+nfsum:nfsum+kppcur)=alpa(1:kppcur)*darea
           call fitfp(ffprim_ext,nw_ext,alpa,kffcur)
-          brsp(1+nfcoil+kppcur:nfcoil+kppcur+kffcur)= &
+          brsp(1+nfsum+kppcur:nfsum+kppcur+kffcur)= &
             alpa(1:kffcur)*darea/twopi/tmu
         else
           call errctrl_msg('set_init','icurrt/=2 not set up')

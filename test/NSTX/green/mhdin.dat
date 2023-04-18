@@ -177,17 +177,6 @@
 !
 !------------------------------------------------------------------------
  &IN3
- IGRID = 1
- RLEFT = 0.01
- RRIGHT = 2.15
- ZBOTTO = -2.2
- ZTOP = 2.2
- ISLPFC = 0
- IFCOIL = 1
- IECOIL = 1
- IACOIL = 0
- IVESEL = 0
- NSMP2 = 1
  RF = 0.324600011 0.400299996 0.550400019 2*0.799170017 2*1.49445999 
  1.80649996 1.79460001 4*2.01180005 1.80649996 1.79460001 2*1.49445999 
  2*0.799170017 0.550400019 0.400299996 0.324600011 4*0.292600006 0.33950001 
@@ -424,35 +413,46 @@
  ECTURN = 30*3.733333 30*3.666667 30*3.65 30*3.616667 30*3.733333 30*3.666667 
  30*3.65 30*3.616667
  ECID = 240*1
- RSISVS = 40*0.0
+ RSISVS = 39*0.0
  VSNAME = 'vs1u' 'vs2u' 'vs3u' 'vs4u' 'vs5u' 'vs6u' 'vs7u' 'vs8u' 'vs9u' 
  'vs10u' 'vs11u' 'vs12u' 'vs13u' 'vs14u' 'vs15u' 'vs15l' 'vs14l' 'vs13l' 
  'vs12l' 'vs11l' 'vs10l' 'vs9l' 'vs8l' 'vs7l' 'vs6l' 'vs5l' 'vs4l' 'vs3l' 
  'vs2l' 'vs1l'
  VSID = 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 22 23 24 25 26 27 
  28 29 30 31 32 33 34 35 36 37 38 39 40
- NW = 65
- NH = 65
  TURNFC = 54*1.0
+ /
+ &IN5
+ IGRID = 1
+ RLEFT = 0.01
+ RRIGHT = 2.15
+ ZBOTTO = -2.2
+ ZTOP = 2.2
+ ISLPFC = 0
+ IFCOIL = 1
+ IECOIL = 1
+ IACOIL = 0
+ IVESEL = 0
+ NSMP2 = 1
+ mgaus1 = 8
+ mgaus2 = 10
  /
  &machinein
  device = 'NSTX'
  nfcoil = 178
  nfsum = 54
  nsilop = 66
- magpr2 = 108
+ magpri = 108
  necoil = 240
  nesum = 1
- nvesel = 40
+ nvesel = 39
  nvsum = 39
  nrogow = 1
  nacoil = 1
- mgaus1 = 8
- mgaus2 = 10
  mqwant = 66
  nwwcur=18
  nffcur=18
  nppcur=18
  nercur=18
- mse315=18
+ nmselp=18
  /

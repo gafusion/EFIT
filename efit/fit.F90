@@ -142,7 +142,7 @@
 #endif
           call residu(nitera,jtime,idone)
           if((nitera.lt.kcallece).and.(kfitece.gt.0.0)) exit
-          if((ii.eq.1).and.(idone.gt.0).and.(tsaisq(jtime).le.saimin)) &
+          if((ii.eq.1).and.(idone.gt.0).and.(chisq(jtime).le.saimin)) &
             go to 2020
           if(idone.gt.0) exit
           if(i.eq.mxiter+1) exit
@@ -232,18 +232,18 @@
           if(nx.eq.1) write (nttyo,'(x)')
           if (nsol.eq.0) then
             if (mmbmsels.eq.0) then
-              write (nttyo,10019) rank,itime,nx,tsaisq(jtime),zmaxis, &
+              write (nttyo,10019) rank,itime,nx,chisq(jtime),zmaxis, &
                 errorm,delzmm,sum(chigam)
             else
-              write (nttyo,90019) rank,itime,nx,tsaisq(jtime),zmaxis, &
+              write (nttyo,90019) rank,itime,nx,chisq(jtime),zmaxis, &
                 errorm,delzmm,sum(chigam),tchimls
             endif
           else
-            write (nttyo,10020) rank,itime,nx,tsaisq(jtime),zmaxis, &
+            write (nttyo,10020) rank,itime,nx,chisq(jtime),zmaxis, &
               errorm,delzmm,sum(chigam),erbmax,erbsmax
           endif
         elseif (itell.eq.2) then
-          write (nttyo,10021) rank,itime,nx,ali(jtime),abs(betatn), &
+          write (nttyo,10021) rank,itime,nx,li(jtime),abs(betatn), &
             errorm,qsiw(1)
         elseif (itell.eq.3) then
           write (nttyo,10023) rank,itime,nx,difpsi,zmaxis,errorm,delzmm
@@ -252,18 +252,18 @@
             !write (nttyo,10017) itime, rank
             write (nttyo,'(x)')
             if (kstark.gt.0) then
-              write (nttyo,80019) rank,itime,nx,tsaisq(jtime),zmaxis, &
+              write (nttyo,80019) rank,itime,nx,chisq(jtime),zmaxis, &
                 errorm,delzmm,cdelz(1),cdeljsum,sum(chigam)
             else
-              write (nttyo,10025) rank,itime,nx,tsaisq(jtime),zmaxis, &
+              write (nttyo,10025) rank,itime,nx,chisq(jtime),zmaxis, &
                 errorm,delzmm,cdelz(1),cdeljsum
             endif
           else
             if (kstark.gt.0) then
-              write (nttyo,80019) rank,itime,nx,tsaisq(jtime),zmaxis, &
+              write (nttyo,80019) rank,itime,nx,chisq(jtime),zmaxis, &
                 errorm,delzmm,cdelz(nx-1),cdeljsum,sum(chigam)
             else
-              write (nttyo,10025)  rank,itime,nx,tsaisq(jtime),zmaxis, &
+              write (nttyo,10025)  rank,itime,nx,chisq(jtime),zmaxis, &
                 errorm,delzmm,cdelz(nx-1),cdeljsum
             endif
           endif
@@ -271,13 +271,13 @@
       endif
       call flush(6)
       if (isetfb.ne.0) then
-        write (4,10009) rank,itime,nx,tsaisq(jtime),zmaxis,errorm, &
+        write (4,10009) rank,itime,nx,chisq(jtime),zmaxis,errorm, &
           delzmm,brfb(1)
         if (isetfb.lt.0) &
-          write (6,10009) rank,itime,nx,tsaisq(jtime),zmaxis,errorm, &
+          write (6,10009) rank,itime,nx,chisq(jtime),zmaxis,errorm, &
             delzmm,brfb(1)
       elseif (eelip.gt.2.25_dp .and. itell.eq.0) then
-        write (6,10009) rank,itime,nx,tsaisq(jtime),zmaxis,errorm, &
+        write (6,10009) rank,itime,nx,chisq(jtime),zmaxis,errorm, &
           delzmm,brfb(1)
       endif
       call flush(6)

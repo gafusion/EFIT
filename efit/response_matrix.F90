@@ -1,11 +1,11 @@
 #include "config.f"
 !**********************************************************************
 !>
-!!    response_matrix calculates the appropriate response matrix and
+!!    calculate the appropriate response matrix and
 !!    invert it to get the plasma current strengths.\n
 !!
 !!    note that npcurn=nffcur+nppcur, 
-!!    nrsmat=nfcoil+npcurn+number of constraints.
+!!    nrsmat=nfsum+npcurn+number of constraints.
 !!
 !!    @param jtime : time index
 !!
@@ -80,13 +80,13 @@
 !----------------------------------------------------------------------
       ichisq=0
       nsq=2
-      saiold=tsaisq(jtime)
+      saiold=chisq(jtime)
       brsold=brsp
       if(ivesel.eq.3) vcurrto=vcurrt
 !----------------------------------------------------------------------
 !--   singular decomposition, first F-coil currents, set up arsp     --
 !----------------------------------------------------------------------
-      do nk=1,nfcoil
+      do nk=1,nfsum
         nj=0
         do m=1,nsilop
           if(fwtsi(m).le.0.0) cycle
@@ -140,7 +140,7 @@
           nj=nj+1
           arsp(nj,nk)=0.0
         endif
-        do m=1,nfcoil
+        do m=1,nfsum
           if(fwtfc(m).le.0.0) cycle
           nj=nj+1
           arsp(nj,nk)=0.
@@ -265,7 +265,7 @@
           rxxx(i)=rcentr
           rxxxf(i)=rxxx(i)
         endif
-        brspmin=max(ten24,abs(brsp(nfcoil+1)))
+        brspmin=max(ten24,abs(brsp(nfsum+1)))
         fwtxxzj=fwtxxj*1000./brspmin
         rotation: if (kvtor.gt.0) then
           call setpwp(ysiwant,xpspwp)
@@ -333,8 +333,8 @@
 !----------------------------------------------------------------------
 !--   start loop for plasma fitting parameters: P', FF', Pw'         --
 !----------------------------------------------------------------------
-      do nk=nfcoil+1,nfnwcr
-        n=nk-nfcoil
+      do nk=nfsum+1,nfnwcr
+        n=nk-nfsum
         nj=0
         do m=1,nsilop
           if(fwtsi(m).le.0.0) cycle
@@ -394,7 +394,7 @@
           nj=nj+1
           arsp(nj,nk)=0.0
         endif
-        do m=1,nfcoil
+        do m=1,nfsum
           if(fwtfc(m).le.0.0) cycle
           nj=nj+1
           arsp(nj,nk)=0.
@@ -457,7 +457,7 @@
 !--     p' and ff' constraints                                          --
 !-------------------------------------------------------------------------
         if (kcalpa.gt.0) then
-          brspmin=max(ten24,abs(brsp(nfcoil+1)))
+          brspmin=max(ten24,abs(brsp(nfsum+1)))
           fwtxxa=fwtxx*1000./brspmin
           do j=1,kcalpa
             nj=nj+1
@@ -469,7 +469,7 @@
           enddo
         endif
         if (kcgama.gt.0) then
-          brspmin=max(ten24,abs(brsp(nfcoil+1)))
+          brspmin=max(ten24,abs(brsp(nfsum+1)))
           fwtxxf=fwtxx*1000./brspmin
           do j=1,kcgama
             nj=nj+1
@@ -486,7 +486,7 @@
 !--     rotational constraints                                      --
 !---------------------------------------------------------------------
         if (kcomega.gt.0) then
-          brspmin=max(ten24,abs(brsp(nfcoil+1)))
+          brspmin=max(ten24,abs(brsp(nfsum+1)))
           fwtxxo=fwtxx*1000./brspmin
           do j=1,kcomega
             nj=nj+1
@@ -621,7 +621,7 @@
           nj=nj+1
           arsp(nj,nk)=0.0
         endif
-        do m=1,nfcoil
+        do m=1,nfsum
           if(fwtfc(m).le.0.0) cycle
           nj=nj+1
           arsp(nj,nk)=0.
@@ -783,7 +783,7 @@
         nj=nj+1
         arsp(nj,nk)=0.0
       endif
-      do m=1,nfcoil
+      do m=1,nfsum
         if(fwtfc(m).le.0.0) cycle
         nj=nj+1
         arsp(nj,nk)=0.
@@ -928,7 +928,7 @@
           nj=nj+1
           arsp(nj,nk)=0.0
         endif
-        do m=1,nfcoil
+        do m=1,nfsum
           if(fwtfc(m).le.0.0) cycle
           nj=nj+1
           arsp(nj,nk)=0.
@@ -1067,7 +1067,7 @@
           nj=nj+1
           arsp(nj,nk)=0.0
         endif
-        do m=1,nfcoil
+        do m=1,nfsum
           if(fwtfc(m).le.0.0) cycle
           nj=nj+1
           arsp(nj,nk)=0.
@@ -1214,7 +1214,7 @@
           nj=nj+1
           arsp(nj,nk)=0.0
         endif
-        do m=1,nfcoil
+        do m=1,nfsum
           if(fwtfc(m).le.0.0) cycle
           nj=nj+1
           arsp(nj,nk)=0.
@@ -1368,7 +1368,7 @@
           nj=nj+1
           arsp(nj,nk)=0.0
         endif
-        do m=1,nfcoil
+        do m=1,nfsum
           if(fwtfc(m).le.0.0) cycle
           nj=nj+1
           arsp(nj,nk)=0.
@@ -1531,7 +1531,7 @@
           nj=nj+1
           arsp(nj,nk)=0.0
         endif
-        do m=1,nfcoil
+        do m=1,nfsum
           if(fwtfc(m).le.0.0) cycle
           nj=nj+1
           arsp(nj,nk)=0.
@@ -1670,7 +1670,7 @@
           nj=nj+1
           arsp(nj,nk)=0.0
         endif
-        do m=1,nfcoil
+        do m=1,nfsum
           if(fwtfc(m).le.0.0) cycle
           nj=nj+1
           arsp(nj,nk)=0.
@@ -1829,7 +1829,7 @@
           nj=nj+1
           arsp(nj,nk)=0.0
         endif
-        do m=1,nfcoil
+        do m=1,nfsum
           if(fwtfc(m).le.0.0) cycle
           nj=nj+1
           arsp(nj,nk)=0.
@@ -1953,7 +1953,7 @@
       if (kccoils.gt.0) then
          do m=1,kccoils
            nj=nj+1
-           do i=1,nfcoil
+           do i=1,nfsum
              arsp(nj,i)=ccoils(i,m)
            enddo
          enddo
@@ -2067,12 +2067,12 @@
       endif
       if (fwtcur.gt.0.0) then
         nj=nj+1
-        brsp(nj)=fwtcur*pasmat(jtime)
+        brsp(nj)=fwtcur*ipmeas(jtime)
       endif
       if (fwtqa.gt.0.0) then
         nj=nj+1
         do i=1,kppcur
-          arsp(nj,nfcoil+i)=fwtqa*rqajx(i)
+          arsp(nj,nfsum+i)=fwtqa*rqajx(i)
         enddo
         do i=1,kffcur
           arsp(nj,nbase+i)=fwtqa*rqafx(i)
@@ -2085,21 +2085,21 @@
         endif
         if (kvtor.gt.0) then
           do i=1,kwwcur
-            arsp(nj,nfcoil+kpcurn+i)=fwtqa*rqawx(i)
+            arsp(nj,nfsum+kpcurn+i)=fwtqa*rqawx(i)
           enddo
         endif
-        brsp(nj)=fwtqa/qvfit*pasmat(jtime)/abs(pasmat(jtime))
+        brsp(nj)=fwtqa/qvfit*ipmeas(jtime)/abs(ipmeas(jtime))
       endif
       if (fwtbp.gt.0.0) then
-        fwtbpp=fwtbp/abs(brsold(nfcoil+1)*brsold(nbase+2))
+        fwtbpp=fwtbp/abs(brsold(nfsum+1)*brsold(nbase+2))
         do i=2,kffcur
           nj=nj+1
-          arsp(nj,nfcoil+1)=fwtbpp*brsold(nbase+i)
-          arsp(nj,nfcoil+i)=-fwtbpp*brsold(nbase+1)
-          arsp(nj,nbase+1)=-fwtbpp*brsold(nfcoil+i)
-          arsp(nj,nbase+i)=fwtbpp*brsold(nfcoil+1)
-          brsp(nj)=fwtbpp*(brsold(nfcoil+1)*brsold(nbase+i)- &
-                           brsold(nfcoil+i)*brsold(nbase+1))
+          arsp(nj,nfsum+1)=fwtbpp*brsold(nbase+i)
+          arsp(nj,nfsum+i)=-fwtbpp*brsold(nbase+1)
+          arsp(nj,nbase+1)=-fwtbpp*brsold(nfsum+i)
+          arsp(nj,nbase+i)=fwtbpp*brsold(nfsum+1)
+          brsp(nj)=fwtbpp*(brsold(nfsum+1)*brsold(nbase+i)- &
+                           brsold(nfsum+i)*brsold(nbase+1))
         enddo
       endif
       if (fwtdlc.gt.0.0) then
@@ -2110,7 +2110,7 @@
         endif
         brsp(nj)=-fwtdlc*diamag(jtime)
       endif
-      do i=1,nfcoil
+      do i=1,nfsum
         if(fwtfc(i).le.0.0) cycle
         nj=nj+1
         brsp(nj)=fccurt(jtime,i)*fwtfc(i)
@@ -2149,7 +2149,7 @@
       if (kzeroj.gt.0) then
         do i=1,kzeroj
           nj=nj+1
-          brsp(nj)=fwtxxzj*vzeroj(i)*darea*pasmat(jtime)/carea
+          brsp(nj)=fwtxxzj*vzeroj(i)*darea*ipmeas(jtime)/carea
         enddo
       endif
 !--------------------------------------------------------------------
@@ -2239,7 +2239,7 @@
       endif
 !
       ncrsp=0
-      nfffff=nfcoil
+      nfffff=nfsum
       call ppcnst(ncrsp,crsp,z,nfffff)
       call ffcnst(ncrsp,crsp,z,nfffff)
       call wwcnst(ncrsp,crsp,z,nfffff)
@@ -2381,7 +2381,7 @@
 !----------------------------------------------------------------------
       saisq=0.0
       do m=1,nsilop
-        cm=sum(rsilfc(m,1:nfcoil)*brsp(1:nfcoil))
+        cm=sum(rsilfc(m,1:nfsum)*brsp(1:nfsum))
         if(ivesel.gt.0) cm=cm+sum(rsilvs(m,:)*vcurrt)
         if (iecurr.eq.1) then
           cm=cm+sum(rsilec(m,:)*ecurrt)
@@ -2390,7 +2390,7 @@
         endif
         if(iacoil.gt.0) cm=cm+sum(rsilac(m,:)*caccurt(jtime,:))
         cmv=cm
-        cm=cm+sum(rsilpc(m,1:kwcurn)*brsp((1+nfcoil):(kwcurn+nfcoil)))
+        cm=cm+sum(rsilpc(m,1:kwcurn)*brsp((1+nfsum):(kwcurn+nfsum)))
         if(fitsiref) cm=cm-csiref
         if(kedgep.gt.0) cm=cm+rsilpe(m)*pedge
         if(kedgef.gt.0) cm=cm+rsilfe(m)*f2edge
@@ -2406,7 +2406,7 @@
       enddo
 !
       do m=1,magpri
-        cm=sum(rmp2fc(m,1:nfcoil)*brsp(1:nfcoil))
+        cm=sum(rmp2fc(m,1:nfsum)*brsp(1:nfsum))
         if(ivesel.gt.0) cm=cm+sum(rmp2vs(m,:)*vcurrt)
         if (iecurr.eq.1) then
           cm=cm+sum(rmp2ec(m,:)*ecurrt)
@@ -2415,7 +2415,7 @@
         endif
         if(iacoil.gt.0) cm=cm+sum(rmp2ac(m,:)*caccurt(jtime,:))
         cmv=cm
-        cm=cm+sum(rmp2pc(m,1:kwcurn)*brsp((1+nfcoil):(kwcurn+nfcoil)))
+        cm=cm+sum(rmp2pc(m,1:kwcurn)*brsp((1+nfsum):(kwcurn+nfsum)))
         if(kedgep.gt.0) cm=cm+rmp2pe(m)*pedge
         if(kedgef.gt.0) cm=cm+rmp2fe(m)*f2edge
         if (swtmp2(m).ne.0.0) then
@@ -2435,10 +2435,10 @@
         chigam(m)=0.0
         cmgam(m,jtime)=0.0
         if(rrgam(jtime,m).le.0.0) cycle
-        cmbr=sum(rbrfc(m,1:nfcoil)*brsp(1:nfcoil)) &
-            +sum(rbrpc(m,1:kwcurn)*brsp((1+nfcoil):(kwcurn+nfcoil)))
-        cmbz=sum(rbzfc(m,1:nfcoil)*brsp(1:nfcoil)) &
-            +sum(rbzpc(m,1:kwcurn)*brsp((1+nfcoil):(kwcurn+nfcoil)))
+        cmbr=sum(rbrfc(m,1:nfsum)*brsp(1:nfsum)) &
+            +sum(rbrpc(m,1:kwcurn)*brsp((1+nfsum):(kwcurn+nfsum)))
+        cmbz=sum(rbzfc(m,1:nfsum)*brsp(1:nfsum)) &
+            +sum(rbzpc(m,1:kwcurn)*brsp((1+nfsum):(kwcurn+nfsum)))
         if (ivesel.gt.0) then
           cmbr=cmbr+sum(rbrvs(m,:)*vcurrt)
           cmbz=cmbz+sum(rbzvs(m,:)*vcurrt)
@@ -2487,9 +2487,9 @@
         endif
         cmgam(m,jtime)=cm
       enddo
-      chigamt=chigamt+sum(chigam(1:nmtark))
+      chigamt=chigamt+sum(chigam(1:nmselp))
       chi2gamt(jtime)=chigamt
-      chilibt=sum(chigam((nmtark+1):nstark))
+      chilibt=sum(chigam((nmselp+1):nstark))
       if (ishot.le.97400) then
         mcentral=15
       else
@@ -2505,7 +2505,7 @@
 !
       tchimls=0.0
       do m=1,nmsels
-        cm=sqrt(sum(rmlspc(m,1:kwcurn)*brsp((1+nfcoil):(kwcurn+nfcoil))) &
+        cm=sqrt(sum(rmlspc(m,1:kwcurn)*brsp((1+nfsum):(kwcurn+nfsum))) &
                 -rhsmls(jtime,m))
         if (swtbmsels(m).ne.0.0) then
           chimls(m)=fwtbmselt(jtime,m)**nsq*(bmselt(jtime,m)-cm)**2
@@ -2533,8 +2533,8 @@
 !
       tchiece=0.0
       do m=1,nece
-        cm=sum(recefc(m,1:nfcoil)*brsp(1:nfcoil)) &
-          +sum(recepc(m,1:kwcurn)*brsp((1+nfcoil):(kwcurn+nfcoil)))
+        cm=sum(recefc(m,1:nfsum)*brsp(1:nfsum)) &
+          +sum(recepc(m,1:kwcurn)*brsp((1+nfsum):(kwcurn+nfsum)))
         if(ivesel.gt.0) cm=cm+sum(recevs(m,:)*vcurrt)
         if (iecurr.eq.1) then 
           cm=cm+sum(receec(m,:)*ecurrt)
@@ -2552,8 +2552,8 @@
         tchiece=tchiece+chiece(m)
       enddo
 !
-      cm=sum(recebzfc(1:nfcoil)*brsp(1:nfcoil)) &
-        +sum(recebzpc(1:kwcurn)*brsp((1+nfcoil):(kwcurn+nfcoil)))
+      cm=sum(recebzfc(1:nfsum)*brsp(1:nfsum)) &
+        +sum(recebzpc(1:kwcurn)*brsp((1+nfsum):(kwcurn+nfsum)))
       if(ivesel.gt.0) cm=cm+sum(recevs(m,:)*vcurrt) !TODO: should this be recebzvs?
       if (iecurr.eq.1) then
         cm=cm+sum(recebzec*ecurrt)
@@ -2569,25 +2569,25 @@
       endif
       cmecebz(jtime)=cm
 !
-      cm=sum(brsp((1+nfcoil):nfnwcr)*fgowpc(1:(nfnwcr-nfcoil)))
+      cm=sum(brsp((1+nfsum):nfnwcr)*fgowpc(1:(nfnwcr-nfsum)))
       if(kedgep.gt.0) cm=cm+fgowpe*pedge
       if(kedgef.gt.0) cm=cm+fgowfe*f2edge
-      cpasma(jtime)=cm
+      ipmhd(jtime)=cm
       if (kfffnc.eq.8) then
-        cjeccd=brsp(nfnwcr)*fgowpc(nfnwcr-nfcoil)/1000.
+        cjeccd=brsp(nfnwcr)*fgowpc(nfnwcr-nfsum)/1000.
       else
         cjeccd=0.0
       endif
       if(ivesel.eq.3) cm=cm+sum(vcurrt)
       if (swtcur.ne.0.0) then
-        saiip=(fwtcur/swtcur)**nsq*(pasmat(jtime)-cm)**2
+        saiip=(fwtcur/swtcur)**nsq*(ipmeas(jtime)-cm)**2
       else
         saiip=0.0
       endif
       saisq=saisq+saiip
 !
       tsaifc=0.0
-      do i=1,nfcoil
+      do i=1,nfsum
         saifc(i)=0.0
         if (fwtfc(i).gt.0.0) then
           saifc(i)=fwtfc(i)**nsq*(brsp(i)-fccurt(jtime,i))**2
@@ -2622,7 +2622,7 @@
       chipre=0.0
       if (kprfit.gt.0.and.kdofit.ne.0.and.npress.gt.0) then
         do m=1,npress
-          cm=sum(rprepc(m,1:kppcur)*brsp((1+nfcoil):(kppcur+nfcoil)))
+          cm=sum(rprepc(m,1:kppcur)*brsp((1+nfsum):(kppcur+nfsum)))
           if(kedgep.gt.0) cm=cm+rprepe(m)*pedge
           cm=cm+prbdry
           if (fwtpre(m).gt.0.0) then
@@ -2673,12 +2673,12 @@
         endif
        endif
       endif
-      tsaisq(jtime)=saisq
+      chisq(jtime)=saisq
 !--------------------------------------------------------------------------
 !--   write status to fitout.dat
 !--------------------------------------------------------------------------
       if (iand(iout,1).ne.0) then
-        write (nout,7400) time(jtime),chipre,cpasma(jtime), &
+        write (nout,7400) time(jtime),chipre,ipmhd(jtime), &
           nniter,condno,saisq,chigamt
         ! TODO: chimlst and chielst are never defined in efit...
 !        write (nout,97400) time(jtime),chimlst,chielst

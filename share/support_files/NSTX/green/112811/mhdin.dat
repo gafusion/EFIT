@@ -161,7 +161,7 @@
 !                          Other device specifications remain the same.
 !
 !------------------------------------------------------------------------
- &IN3
+ &IN5
  IGRID = 1
  RLEFT = 0.01
  RRIGHT = 2.15
@@ -173,6 +173,10 @@
  IACOIL = 0
  IVESEL = 0
  NSMP2 = 1
+ mgaus1 = 8
+ mgaus2 = 10
+ /
+ &IN3
  RF = 0.183899999 2*0.799170017 2*1.49445999 1.80649996 1.79460001 
  4*2.01180005 1.80649996 1.79460001 2*1.49445999 2*0.799170017 0.183899999 
  0.304210007 4*0.699999988 0.430599988 0.631799996 2*0.169100001 0.209399998 
@@ -347,13 +351,11 @@
  ECTURN = 30*4.0875 30*4.033333 30*3.995833 30*3.933333 30*4.0875 30*4.033333 
  30*3.995833 30*3.933333
  ECID = 240*1
- RSISVS = 25*0.0
+ RSISVS = 24*0.0
  VSNAME = 'cs01u' 'cs02u' 'cs03u' 'cs04u' 'dv05u' 'dv06u' 'dv07u' 'dv08u' 
  'vs09u' 'vs10u' 'vs11u' 'vs12u' 'vs13u' 'vs14l' 'vs15l' 'vs16l' 'vs17l' 
  'vs18l' 'dv19l' 'dv20l' 'dv21l' 'cs22l' 'cs23l' 'cs24l' 'cs25l'
  VSID = 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 22 23 24 25
- NW = 65
- NH = 65
  TURNFC = 52*1.0
  RVS=0.1691 0.1691 0.2094 0.2508 0.4128 0.6083 0.8384 1.308 1.6396 1.7049 1.7049 1.6396 1.308 0.8384 0.6083 0.4128 0.2508 0.2094 0.1691 0.1691
  ZVS=0.267 0.8008 1.1222 1.4283 1.6669 1.7774 1.6461 1.431 1.1686 0.528 -0.528 -1.1686 -1.431 -1.6461 -1.7774 -1.6669 -1.4283 -1.1222 -0.8008 -0.267
@@ -367,29 +369,30 @@
  nfcoil = 93
  nfsum = 52
  nsilop = 66
- magpr2 = 70
+ magpri = 70
  necoil = 240
  nesum = 1
- nvesel = 25
+ nvesel = 24
  nvsum = 24
  nrogow = 1
  nacoil = 1
- mgaus1 = 8
- mgaus2 = 10
  mqwant = 66
  nwwcur=18
  nffcur=18
  nppcur=18
  nercur=18
- mse315=18
- ali_max=1.5
- ali_min=0.05
- betap_lim=6.0
+ nmselp=18
+ /
+ &incheck
+ li_max=1.5
+ li_min=0.05
+ betap_max=6.0
+ betat_max=25.
  plasma_diff=0.08
- aout_max=75.0
- aout_min=25.
- eout_max=4.0
- eout_min=0.8
+ aminor_max=75.0
+ aminor_min=25.
+ elong_max=4.0
+ elong_min=0.8
  rout_max=160.
  rout_min=30.0
  zout_max=165.
@@ -398,17 +401,16 @@
  rcurrt_min=30.0
  zcurrt_max=165.
  zcurrt_min=-165.
- qsta_max=200.
- qsta_min=1.
- betat_lim=25.
- oleft_lim=-0.2
- oright_lim=-0.2
- otop_lim=-0.2
- olefs_check=-90.0
+ qstar_max=200.
+ qstar_min=1.
+ gapin_min=-0.2
+ gapout_min=-0.2
+ gaptop_min=-0.2
+ sepin_check=-90.0
  qout_min=1.
  qout_max=200.
- dbpli_lim=0.05
- delbp_lim=0.08
+ dbpli_diff=0.05
+ delbp_diff=0.08
  /
 Vessel Segment Descriptions:
 Inconel CS casing upper segment 1

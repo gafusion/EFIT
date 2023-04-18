@@ -218,7 +218,7 @@
             tvfbrt(ntotal)=tvfbrt(ntotal)-(psikkk(kk)-psiold(kk))
           enddo
         enddo
-        vcurfi=vcurfb(1)*cpasma(jtime)/abs(tvfbrt(ntotal))
+        vcurfi=vcurfb(1)*ipmhd(jtime)/abs(tvfbrt(ntotal))
         tvfbrt(ntotal)=tvfbrt(ntotal)*vcurfi
         psi(1:nwnh)=psi(1:nwnh)+gfbsum(1:nwnh)*tvfbrt(ntotal)
       endif
@@ -272,7 +272,7 @@
           psi(kk)=psi(kk)+sum(gridec(kk,:)*cecurr)
         endif
         if (vfeed) psi(kk)=psi(kk)+grdfdb(kk,1)*brfb(2)
-        psi(kk)=psi(kk)+sum(gridfc(kk,:)*brsp(1:nfcoil))
+        psi(kk)=psi(kk)+sum(gridfc(kk,:)*brsp(1:nfsum))
         if (iacoil.gt.0) &
           psi(kk)=psi(kk)+sum(gridac(kk,:)*caccurt(jtime,:))
       enddo
@@ -287,7 +287,7 @@
       do i=1,nw
        do j=1,nh
         kk=(i-1)*nh+j
-        psi(kk)=psi(kk)+sum(gridfc(kk,:)*brsp(1:nfcoil))
+        psi(kk)=psi(kk)+sum(gridfc(kk,:)*brsp(1:nfsum))
         if(ivesel.gt.0) &
           psi(kk)=psi(kk)+sum(gridvs(kk,:)*vcurrt)
         if (iecurr.eq.1) then

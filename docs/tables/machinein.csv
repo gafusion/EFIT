@@ -1,60 +1,51 @@
 Variable, Default, Description
+device, DIII-D, machine
 kubics,, (depricated)
 kxiter, 515, Maximum number of EFIT iterations (overwritten by SETUP namelist)
 icycred_loopmax,, (depricated)
-libim, 32, Total number of lithium beam channels
-maglds, 3, Number of magnetic probes at ?
-magpr2, 76, Total number of magnetic probes
-magpri67, 29,  Number of magnetic detectors at toroidal angle "1" 
-magpri322, 31,  Number of magnetic detectors at toroidal angle "2"
-magprirdp, 8, Number of magnetic detectors for radiative divertor
-magudom, 5, Number of magnetic detectors for (outer midplane??)
+libim, 32, Number of lithium beam channels
+magpri, 76, Number of magnetic probes
 mbdry, 300, Maximum number of points used to define the boundary
 mbdry1, 110, Number of boundary points to output when nbdry<=0
 mccoil, 6, Number of error field c-coils
-mfcoil, 18,  Number of p.f. f-coils (should be same as nfcoil in efund)
 micoil, 12, Number of RMP i-coils
 modef,  4,
 modep, 4,
 modew, 4,
-mpress, 201,  Number of pressure data points
-mqwant, 30, maxium number of wanted q-profile specifications
-mse15, 10, Number of mse channels at toroidal angle 15 degrees
-mse45, 15, Number of mse channels at toroidal angle 45 degrees
-mse210, 24, Number of mse channels at toroidal angle 210 degrees
-mse315, 11, number of mse channels at toroidal angle 315 degrees
-mse315_2, 5, Mumber of mse channels at toroidal angle 315 degrees number 2?
-mse1h, 4, Number of mse channels at 1h?
-nacoil, 1,   Number of advance divertor coils
-nangle, 64, "nangle dimension of poloidal sxr, first part of xangle,zxray,rxray"
+mpress, 201, Number of pressure data points
+mqwant, 30, Maxium number of wanted q-profile specifications
+nacoil, 1, Number of advanced divertor (shaping) coils
+nangle, 64, "Dimension of poloidal sxr, first part of xangle,zxray,rxray"
 nco2r, 2, Number of radial C02 interferometers
 nco2v, 3, Number of vertical C02 interferometers
 ndata, 61, 
 ndim, 3200,
 neceo, 1,
-necoil, 122, Number of Ohmic heating coils
+necoil, 122, Number of (Ohmic) e-coils (part of p.f. coil set)
 nercur, 32, 
-nesum, 6,  Number of Ohmic heating coil groups 
+nesum, 6, Number of (Ohmic) e-coil groups 
 nfbcoil, 12, (depricated)
-nfcoil, 18, Number of p.f. coil groups (should be consistent with nfsum in efund)
+nfcoil, 18, Number of f-coils (part of p.f. coil set)
 nffcur, 32,
-nfourier, 5,  Number Fourier components used in vessel current representation
-ngam_u, 5, dimension of mse spatial averaging data for MSE
-ngam_vars, 9, dimension of mse spatial averaging data for MSE
-ngam_w, 3, dimension of mse spatial averaging data for MSE
-nlimit, 160, maximum number of limiter points
-nlimbd, 6, maximum number of 'outer' limiter points
-nmsels, 16, 
+nfourier, 5, Number Fourier components used in vessel current representation
+nfsum, 18, Number of f-coil groups
+ngam_u, 5, Dimension of mse spatial averaging data for MSE
+ngam_vars, 9, Dimension of mse spatial averaging data for MSE
+ngam_w, 3, Dimension of mse spatial averaging data for MSE
+nlimit, 160, Maximum number of limiter points
+nlimbd, 6, Maximum number of 'outer' limiter points
+nmselp, 10, Number of MSE line polarizations channels
+nmsels, 16, Number of MSE line splitting channels
 nnece, 40, Total number of ECE channels?
 nnecein, 80, Total number of (inner?) ECE channels
 nnnte, 801, 
 nppcur, 32, 
-nrogow, 1, 
-nsilds, 3,  Number of flux loops at ?
-nsilol, 41, Number of flux loops at ?
-ntangle, 12, "dimension of toroidal xray, last part of xangle,zxray,rxray"
-ntime, 1001, number of time slices
+nrogow, 1, Number of Rogowski coils
+nsilop, 44, Number of poloidal flux loops
+ntangle, 12, "Dimension of toroidal xray, last part of xangle,zxray,rxray"
+ntime,, (unused/overwritten)
 nvesel, 24, Number of vessel segements
+nvsum, 24, Number of summed vessel components
 nwwcur, 32, 
 nxtlim, 9,
 nxtram, 10,
