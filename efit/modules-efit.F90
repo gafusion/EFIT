@@ -66,7 +66,7 @@
         integer*4 :: msbdr2
         integer*4 :: ndim_crv
         integer*4 :: ndim,kxiter,kxiter_save,mqwant
-        integer*4 :: nw,nh
+        integer*4 :: nw,nh,nw_sub,nh_sub
         integer*4 :: nwnh,nh2,nwork,nwwf, &
                      nwf,lubicx,lubicy,kujunk,boundary_count, &
                      lr0,lz0,npoint,nxtrap

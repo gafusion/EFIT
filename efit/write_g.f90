@@ -15,7 +15,7 @@
       real*8 seval
       integer*4, intent(in) :: jtime
       integer*4 ijtime,i,j,jb,kk,ierold,ioerr,kkstark,nbsave,nbabs,ndel, &
-                nqpsi
+                nqpsi,nsw,nsh
       real*8 btor,enps,plasma,saisq,ssibry,ssimag,xdiff,xdim,xdum,xn, &
              zdiff,zdim,zmid
       real*8 psirz(nw,nh),pcurrz(nw,nh),workk(nw),dmion(nw), &
@@ -112,7 +112,9 @@
           dmion(i)=seval(nmass,xn,sibeam,dmass,bworm,cworm,dworm)
         enddo
       endif
-!
+!----------------------------------------------------------------------
+!--   set grid dimensions, flux sign, and grid subsampling step-size
+!----------------------------------------------------------------------
       xdim=rgrid(nw)-rgrid(1)
       zdim=zgrid(nh)-zgrid(1)
       zmid=(zgrid(1)+zgrid(nh))/2.0
@@ -130,6 +132,12 @@
           endif
         enddo
       enddo
+      nsw=(nw-1)/(nw_sub-1)
+      nsh=(nh-1)/(nh_sub-1)
+!----------------------------------------------------------------------------
+!--   convert the pointwise current density to spatial density and match the
+!--   orientation of psi (if requested)
+!----------------------------------------------------------------------------
       if (iplcout.eq.2) then
         pcurrz=0.0
         if (ivacum.eq.0) then
@@ -143,6 +151,9 @@
           enddo
         endif
       endif
+!----------------------------------------------------------------------
+!--   setup the file header and name
+!----------------------------------------------------------------------
       write(vers(1),1040)
       write(vers(2),1050) efitdate(1:5)
       write(vers(3),1060) efitdate(6:10)
@@ -175,27 +186,27 @@
         ssibry=psibry
       endif
       eqdsk_format: if (keqdsk.eq.1) then
-      write(neqdsk,2000) (vers(i),i=1,6),0,nw,nh
+      write(neqdsk,2000) (vers(i),i=1,6),0,abs(nw_sub),abs(nh_sub)
       write(neqdsk,2020) xdim,zdim,rzero,rgrid(1),zmid
       write(neqdsk,2020) rmaxis,zmaxis,ssimag,ssibry,bcentr(jtime)
       write(neqdsk,2020) ipmhd(jtime),ssimag,xdum,rmaxis,xdum
       write(neqdsk,2020) zmaxis,xdum,ssibry,xdum,xdum
-      write(neqdsk,2020) (fpol(i),i=1,nw)
-      write(neqdsk,2020) (pres(i),i=1,nw)
+      write(neqdsk,2020) (fpol(i),i=1,nw,nsw)
+      write(neqdsk,2020) (pres(i),i=1,nw,nsw)
       if (ipmeas(jtime).gt.0.0) then
         workk=-ffprim
       else
         workk=ffprim
       endif
-      write(neqdsk,2020) (workk(i),i=1,nw)
+      write(neqdsk,2020) (workk(i),i=1,nw,nsw)
       if (ipmeas(jtime).gt.0.0) then
         workk=-pprime
       else
         workk=pprime
       endif
-      write(neqdsk,2020) (workk(i),i=1,nw)
-      write(neqdsk,2020) ((psirz(i,j),i=1,nw),j=1,nh)
-      write(neqdsk,2020) (qpsi(i),i=1,nw)
+      write(neqdsk,2020) (workk(i),i=1,nw,nsw)
+      write(neqdsk,2020) ((psirz(i,j),i=1,nw,nsw),j=1,nh,nsh)
+      write(neqdsk,2020) (qpsi(i),i=1,nw,nsw)
       write(neqdsk,2022) nbbbs,limitr
       write(neqdsk,2020) (rbbbs(i),zbbbs(i),i=1,nbbbs)
       write(neqdsk,2020) (xlim(i),ylim(i),i=1,limitr)
@@ -204,21 +215,21 @@
 !----------------------------------------------------------------------
       write(neqdsk,2024) kvtor,rvtor,nmass
       if (kvtor.gt.0) then
-        write(neqdsk,2020) (pressw(i),i=1,nw)
+        write(neqdsk,2020) (pressw(i),i=1,nw,nsw)
         if (ipmeas(jtime).gt.0.0) then
           workk=-pwprim
         else
           workk=pwprim
         endif
-        write(neqdsk,2020) (workk(i),i=1,nw)
+        write(neqdsk,2020) (workk(i),i=1,nw,nsw)
       endif
 !----------------------------------------------------------------------
 !--   write out ion mass density profile if available                --
 !----------------------------------------------------------------------
       if (nmass.gt.0) then
-        write(neqdsk,2020) (dmion(i),i=1,nw)
+        write(neqdsk,2020) (dmion(i),i=1,nw,nsw)
       endif
-      write(neqdsk,2020) (rhovn(i),i=1,nw)
+      write(neqdsk,2020) (rhovn(i),i=1,nw,nsw)
       write(neqdsk,2026) keecur
       if (keecur.gt.0) then
         if (ipmeas(jtime).gt.0.0) then
@@ -226,13 +237,14 @@
         else
           workk=epoten
         endif
-        write(neqdsk,2020) (workk(i),i=1,nw)
+        write(neqdsk,2020) (workk(i),i=1,nw,nsw)
       endif
 ! note: unlike the rest of the file, these optional extras have
 !       never been described completely with variables available here
 !       (since being added initially in 2004)
       if (iplcout.gt.0) then
         if (iplcout.eq.1) then
+          ! grid sub-sampling not setup here
           if (ishot.le.99999) then
             write(neqdsk,3000) nw,nh,ishot,itime
           else
@@ -243,7 +255,7 @@
           write(neqdsk,2020) (ecurrt(i),i=1,nesum) ! also in m and a-files
           write(neqdsk,2020) (pcurrt(i),i=1,nwnh)
         elseif (iplcout.eq.2) then
-          write(neqdsk,2020) ((pcurrz(i,j),i=1,nw),j=1,nh)
+          write(neqdsk,2020) ((pcurrz(i,j),i=1,nw,nsw),j=1,nh,nsh)
         endif
       endif
 !---------------------------------------------------------------------
@@ -276,6 +288,7 @@
         endif
       endif
 !
+      ! grid subsampling not setup here
       nqpsi=nw
       limitr=limitr-1
       write(neqdsk,out1)
@@ -333,6 +346,7 @@
       endif
 !
       if (kdovt.gt.0) then
+        ! grid subsampling not setup here
         npresw=0
         ndel=nw/26
         do i=1,nw,ndel
@@ -350,7 +364,7 @@
 !--   binary format                                                   --
 !-----------------------------------------------------------------------
       else eqdsk_format
-      write(neqdsk) (vers(i),i=1,6),0,nw,nh
+      write(neqdsk) (vers(i),i=1,6),0,abs(nw_sub),abs(nh_sub)
       write(neqdsk) real(xdim,r4),real(zdim,r4),real(rzero,r4), &
                      real(rgrid(1),r4),real(zmid,r4)
       write(neqdsk) real(rmaxis,r4),real(zmaxis,r4),real(ssimag,r4), &
@@ -359,22 +373,22 @@
                      real(rmaxis,r4),real(xdum,r4)
       write(neqdsk) real(zmaxis,r4),real(xdum,r4),real(ssibry,r4), &
                      real(xdum,r4),real(xdum,r4)
-      write(neqdsk) (real(fpol(i),r4),i=1,nw)
-      write(neqdsk) (real(pres(i),r4),i=1,nw)
+      write(neqdsk) (real(fpol(i),r4),i=1,nw,nsw)
+      write(neqdsk) (real(pres(i),r4),i=1,nw,nsw)
       if (ipmeas(jtime).gt.0.0) then
         workk=-ffprim
       else
         workk=ffprim
       endif
-      write(neqdsk) (real(workk(i),r4),i=1,nw)
+      write(neqdsk) (real(workk(i),r4),i=1,nw,nsw)
       if (ipmeas(jtime).gt.0.0) then
         workk=-pprime
       else
         workk=pprime
       endif
-      write(neqdsk) (real(workk(i),r4),i=1,nw)
-      write(neqdsk) ((real(psirz(i,j),r4),i=1,nw),j=1,nh)
-      write(neqdsk) (real(qpsi(i),r4),i=1,nw)
+      write(neqdsk) (real(workk(i),r4),i=1,nw,nsw)
+      write(neqdsk) ((real(psirz(i,j),r4),i=1,nw,nsw),j=1,nh,nsh)
+      write(neqdsk) (real(qpsi(i),r4),i=1,nw,nsw)
       write(neqdsk) nbbbs,limitr
       write(neqdsk) (real(rbbbs(i),r4),real(zbbbs(i),r4),i=1,nbbbs)
       write(neqdsk) (real(xlim(i),r4),real(ylim(i),r4),i=1,limitr)
@@ -383,16 +397,16 @@
 !----------------------------------------------------------------------
       write(neqdsk) kvtor,real(rvtor,r4),nmass
       if (nmass.gt.0) then
-        write(neqdsk) (real(pressw(i),r4),i=1,nw)
-        write(neqdsk) (real(pwprim(i),r4),i=1,nw)
+        write(neqdsk) (real(pressw(i),r4),i=1,nw,nsw)
+        write(neqdsk) (real(pwprim(i),r4),i=1,nw,nsw)
       endif
 !----------------------------------------------------------------------
 !--   write out ion mass density profile if available                --
 !----------------------------------------------------------------------
       if (nmass.gt.0) then
-        write(neqdsk) (real(dmion(i),r4),i=1,nw)
+        write(neqdsk) (real(dmion(i),r4),i=1,nw,nsw)
       endif
-      write(neqdsk) (real(rhovn(i),r4),i=1,nw)
+      write(neqdsk) (real(rhovn(i),r4),i=1,nw,nsw)
       write(neqdsk) keecur
       if (keecur.gt.0) then
         if (ipmeas(jtime).gt.0.0) then
@@ -400,13 +414,14 @@
         else
           workk=epoten
         endif
-        write(neqdsk) (real(workk(i),r4),i=1,nw)
+        write(neqdsk) (real(workk(i),r4),i=1,nw,nsw)
       endif
 ! note: unlike the rest of the file, these optional extras have
 !       never been described completely with variables available here
 !       (since being added initially in 2004)
       if (iplcout.gt.0) then
         if (iplcout.eq.1) then
+          ! grid subsampling not setup here
           if (ishot.le.99999) then
             write(neqdsk) nw,nh,ishot,itime
           else
@@ -418,7 +433,7 @@
           write(neqdsk) (real(ecurrt(i),r4),i=1,nesum) ! also in m and a-files
           write(neqdsk) (real(pcurrt(i),r4),i=1,nwnh)
         elseif (iplcout.eq.2) then
-          write(neqdsk) ((real(pcurrz(i,j),r4),i=1,nw),j=1,nh)
+          write(neqdsk) ((real(pcurrz(i,j),r4),i=1,nw,nsw),j=1,nh,nsh)
         endif
       endif
 !

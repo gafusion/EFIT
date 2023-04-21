@@ -23,7 +23,7 @@
       integer*4 istat,lshot,im1,loc,nbdry0,nbdry1,nbdry2,nbdry3,nbryup, &
                 iup,nbranch,nqpsi,idn,limupper,lwant,mmemsels,idofb, &
                 mw,mh,mmf,mx,ix,mj,mk,npc,npack,nskip,kkl,kku,ier,jupper
-      integer*4 nrmin_e,nrmax_e,nzmin_e,nzmax_e
+      integer*4 nrmin_e,nrmax_e,nzmin_e,nzmax_e,nsw,nsh
       integer*4 n_write !unused
       integer*4 nbabs_ext,jb_ext
       integer*4 ishot_save,itime_save,nbdry_save,iconvr_save, &
@@ -119,7 +119,7 @@
            imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
            nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
            idebug,jdebug,ifindopt,tolbndpsi,siloplim,use_previous, &
-           req_valid,chordv,chordr
+           req_valid,chordv,chordr,nw_sub,nh_sub
       namelist/inwant/psiwant,vzeroj,fwtxxj,fbetap,fbetan,fli,fq95,fqsiw, &
            jbeta,jli,alpax,gamax,jwantm,fwtxxq,fwtxxb,fwtxli,znose, &
            fwtbdry,nqwant,siwantq,n_write,kccoils,ccoils,rexpan, &
@@ -937,6 +937,8 @@
           call read_h5_ex(nid,"tolbndpsi",tolbndpsi,h5in,h5err)
           call read_h5_ex(nid,"siloplim",siloplim,h5in,h5err)
           call read_h5_ex(nid,"use_previous",use_previous,h5in,h5err)
+          call read_h5_ex(nid,"nw_sub",nw_sub,h5in,h5err)
+          call read_h5_ex(nid,"nh_sub",nh_sub,h5in,h5err)
           call close_group("in1",nid,h5err)
         endif
    
@@ -2303,6 +2305,32 @@
       ibunmn=ibunmns
       if(ibunmn.eq.3) ibunmn=1
       if(ibunmn.eq.4) ibunmn=2
+
+      ! check grid subsampling
+      if (abs(nw_sub).gt.nw) then
+        write(*,*)  &
+          "Higher resolution output request than run, ignoring nw_sub"
+        nw_sub=nw
+      elseif (nw_sub.le.0) then
+        write(*,*)  &
+          "Negative resolution output not possible, ignoring nw_sub"
+        nw_sub=nw
+      else
+        nsw=(nw-1)/(nw_sub-1)
+        nw_sub=(nw-1)/nsw+1
+      endif
+      if (abs(nh_sub).gt.nh) then
+        write(*,*)  &
+          "Higher resolution output request than run, ignoring nh_sub"
+        nh_sub=nh
+      elseif (nh_sub.le.0) then
+        write(*,*)  &
+          "Negative resolution output not possible, ignoring nh_sub"
+        nh_sub=nh
+      else
+        nsh=(nh-1)/(nh_sub-1)
+        nh_sub=(nh-1)/nsh+1
+      endif
 
       if(kfffnc.eq.8) rkec=pi/(2.0*dpsiecn) 
       chigam=0.0 
