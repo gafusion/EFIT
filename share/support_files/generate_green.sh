@@ -32,12 +32,10 @@ for device in ${devices[@]}
         if [ "$res" == "all" ] ; then
           for NW in 65 129 257 513
           do
-            sed -i 's|NW = .*|NW = '$NW'|g' mhdin.dat
-            $exe
+            $exe $NW
           done
         else 
-          sed -i 's|NW = .*|NW = '$NW'|g' mhdin.dat
-          $exe
+          $exe $NW
         fi
       cd ../../..
     done
