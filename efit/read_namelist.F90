@@ -206,7 +206,8 @@
                 kppfnc,kppknt,kfffnc,kffknt,kwwfnc,kwwknt,nbskip, &
                 kersil,iout,ixray,kedgef,kedgep,kautoknt,kakloop,kakiter, &
                 kpphord,kffhord,keehord,isolve,iplcout,imagsigma,ksigma, &
-                nbdrymx,nsol,kbetapr,nbdryp,idebug,ifindopt,npnef,nptef
+                nbdrymx,nsol,kbetapr,nbdryp,idebug,ifindopt,npnef,nptef, &
+                nw_sub,nh_sub
       real*8 plasma,btor,fwtcur,fwtqa,qemp,error,serror,psibry, &
              bitip,qenp,fwtbp,relip,zelip,aelip,eelip,qvfit,fwtdlc, &
              betap0,emp,enp,scrape,errmin,rbound,fwacoil,rcentr,rzero, &
@@ -266,7 +267,7 @@
         ppbdry,kppbdry,pp2bdry,kpp2bdry,scalea,sigrbd,sigzbd,nbskip, &
         ffbdry,kffbdry,ff2bdry,kff2bdry,errsil,vbit,kersil,iout,ixray, &
         wwbdry,kwwbdry,ww2bdry,kww2bdry,f2edge,fe_width,fe_psin,kedgef, &
-        pedge,kedgep,pe_width,pe_psin,chordv,chordr, &
+        pedge,kedgep,pe_width,pe_psin,chordv,chordr,nw_sub,nh_sub, &
         kautoknt,akchiwt,akerrwt,kakloop,aktol,kakiter,akgamwt,akprewt, &
         kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout, &
         imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
