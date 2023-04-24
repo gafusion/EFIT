@@ -63,7 +63,7 @@
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve, &
            iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum, &
            efitversion,kwripre,ifindopt,tolbndpsi,siloplim,use_previous, &
-           req_valid
+           req_valid,nw_sub,nh_sub
       namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
            znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
            oldcomp,currc199,curriu30,curriu90, &
@@ -117,7 +117,7 @@
            ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels, &
            idebug,jdebug,synmsels,avemsels,kwritime, &
            v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi, &
-           siloplim,use_previous,ierchk,req_valid,ibunmn
+           siloplim,use_previous,ierchk,req_valid,ibunmn,nw_sub,nh_sub
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
       data currn1/0.0/,currc79/0.0/,currc139/0.0/,currc199/0.0/, &
@@ -674,7 +674,7 @@
            pnbeam,error,errmin,mxiter,xltype_180,icutfp,keqdsk,ibtcomp, &
            fcurbd,pcurbd,kbound,alphafp,kskipvs,vsdamp,kframe,zelip, &
            fwtdlc,sigdlc,elomin,kcalpa,kcgama,calpa,cgama,xalpa,xgama, &
-           kzeroj,rzeroj,iaveus,relax,fwtec,bitec,fitsiref, &
+           kzeroj,rzeroj,iaveus,relax,fwtec,bitec,fitsiref,nw_sub,nh_sub, &
            kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens, &
            kwwfnc,kwwknt,wwknt,wwtens,nbdry,rbdry,zbdry,vbit, nbdrymx, &
            ppbdry,kppbdry,pp2bdry,kpp2bdry, &

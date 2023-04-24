@@ -1,4 +1,6 @@
 ﻿Variable, Default, Description
+NH_SUB, NH, "Sub-sampled grid size (height) to output.  Cannot be larger than the simulation grid, zero, or negative.  Will be converted to the nearest integer divisor.  This does not impact esave.dat files, but will affect restarts from other existing solutions."
+NW_SUB, NW, "Sub-sampled grid size (width) to output.  Cannot be larger than the simulation grid, zero, or negative.  Will be converted to the nearest integer divisor.  This does not impact esave.dat files, but will affect restarts from other existing solutions."
 KFFFNC, 0, "| Choice of basis function for FF'.
 | 0 = polynomial representation FF'(psi)=gamma0+gamma1 psi+...+gamman psi^n.
 | 1 = ??
