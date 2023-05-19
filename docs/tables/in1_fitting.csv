@@ -3,7 +3,7 @@ BITEC, zeros, "(array) E-coil current physical unit equivalent to 1 digitizer co
 BITFC, zeros, "(array) F-coil current physical unit equivalent to 1 digitizer count. (F-coil bit noises) Obtained from measurements and written into K-file. Length is machine dependent (18 for DIII-D)."
 BITIP, 0.0, Plasma current physical unit equivalent to 1 digitizer count. (Ip bit noise) Obtained from measurements and written into K-file.
 BITMPI, zeros, "(array) Magnetic probes physical unit equivalent to 1 digitizer count. (Probe bit noises)Obtained from measurements and written into K-file. Length is machine dependent (76 for DIII-D)."
-BRSP, brsp(1)=-1e20, "| Current arrays; first 18 (NFCOIL) elements are F-coil currents in Amp-turns(?). 
+BRSP, brsp(1)=-1e20, "| Current arrays; first 18 (NFCOIL) elements are F-coil currents in Amp-turns. 
 | BRSP not equal 0 for fixed F-coil currents. BRSP(NFCOIL+1) to BRSP(NFCOIL+KPPCUR) coefficients for P'.
 | BRSP(NFCOIL+KPPCUR+1) to BRSP(NFCOIL+KPPCUR+KFFCUR) coefficients for F2."
 COILS, , Flux loop signals in v-sec/rad. Obtained from data and written into K-file.

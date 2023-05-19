@@ -1,7 +1,7 @@
 Variable, Description
 BCENTR, Vacuum toroidal magnetic field in Tesla at RCENTR
-BRSP, F-coil currents in Amperes
-CURRENT, Total plasma current in Ampere
+BRSP, F-coil currents in Ampere-turns
+CURRENT, Total plasma current in Amperes
 DMION, Mass density on uniform poloidal flux grid
 ECURRT, E-coil currents in Amperes
 EPOTEN, Electric potential in Volts

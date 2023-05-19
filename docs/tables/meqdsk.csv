@@ -2,7 +2,7 @@ Variable, Definition
 "ACCURT(ntime, nacoil)",	measured A-coil currents in Amp
 "A1-8GAM(ntime, nstark)",	viewing geometry coefficients of MSE channels
 "CACCURT(ntime, nacoil)",	calculated A-coil currents in Amp
-"CCBRSP(ntime, nfcoil)",	calculated F-coil currents in Amp
+"CCBRSP(ntime, nfcoil)",	calculated F-coil currents in Amp-turns
 "CCHISQ(ntime, nitera)", total chi squared vs. iteration number
 "CDFLUX(ntime)",	calculated diamagnetic flux
 "CECURR(ntime, nesum)",	calculated E-coil currents in Amp
@@ -32,7 +32,7 @@ DEVICE,	machine name
 "DIAMAG(ntime)",	measured diamagnetic flux
 "ECCURT(ntime, nesum)",	measured E-coil currents in Amp
 "EXPMPI(ntime, magpri)", measured magnetic probes
-"FCCURT(ntime, nfcoil)",	measured F-coil currents in Amp
+"FCCURT(ntime, nfcoil)",	measured F-coil currents in Amp-turns
 "FIXGAM(ntime, nstark)",	radians correction of tangam for spatial averaging effects
 "FWTCUR(ntime)", 	weight for plasma current in Amp
 "FWTDLC(ntime)",	weight for diamagnetic flux
