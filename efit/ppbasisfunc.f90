@@ -534,21 +534,24 @@
   include 'eparm.inc'
   include 'modules2.inc'
   include 'modules1.inc'
-  implicit integer*4 (i-n), real*8 (a-h,o-z)
+  implicit none
+  real*8 bsppel
+  integer*4, intent(in) :: nffcoi
+  integer*4, intent(inout) :: ncrsp
+  real*8, intent(out) :: crsp(4*(npcurn-2)+6+npcurn*npcurn,nrsmat), &
+                         z(3*(npcurn-2)+6+npcurn*npcurn)
+  integer*4 i,j,iorder
+  real*8 h,w,pptens2
 
-  dimension crsp(4*(npcurn-2)+6 +npcurn*npcurn ,nrsmat), &
-    z(3*(npcurn-2)+6+npcurn*npcurn)
-
-  if (kppfnc .eq. 3) then
+  select case (kppfnc)
+  case (3)
     if (kppknt .gt. 2) then
       !
       !     first set of constraints is that splines must be equal at the knots
       !
       do i = 2,kppknt-1
         ncrsp = ncrsp + 1
-        do j = 1,nrsmat
-          crsp(ncrsp,j) = 0.0
-        enddo
+        crsp(ncrsp,:) = 0.0
         z(ncrsp) = 0.0
         h = ppknt(i) - ppknt(i-1)
         crsp(ncrsp,nffcoi + 4*(i-2) + 1) = 1.0
@@ -572,9 +575,7 @@
       !
       do i = 2,kppknt-1
         ncrsp = ncrsp + 1
-        do j = 1,nrsmat
-          crsp(ncrsp,j) = 0.0
-        enddo
+        crsp(ncrsp,:) = 0.0
         z(ncrsp) = 0.0
         h = ppknt(i) - ppknt(i-1)
         crsp(ncrsp,nffcoi + 4*(i-2) + 1) = 0.0
@@ -598,9 +599,7 @@
       !
       do i = 2,kppknt-1
         ncrsp = ncrsp + 1
-        do j = 1,nrsmat
-          crsp(ncrsp,j) = 0.0
-        enddo
+        crsp(ncrsp,:) = 0.0
         z(ncrsp) = 0.0
         h = ppknt(i) - ppknt(i-1)
         crsp(ncrsp,nffcoi + 4*(i-2) + 1) = 0.0
@@ -618,30 +617,15 @@
         crsp(ncrsp,nffcoi + 4*(i-2) + 8) = &
           h*h*pptens*pptens*sin(h * pptens * ppknt(i))
       enddo
-            
     endif
-    if (pcurbd .ne. 0.0) then
-      ncrsp = ncrsp + 1
-      do j = 1,nrsmat
-        crsp(ncrsp,j) = 0.0
-      enddo
-      z(ncrsp) = 0.0
-      tpsi = 1.0
-      do j = 1,kppcur
-        crsp(ncrsp,nffcoi+j) = bsppel(kppfnc,j,tpsi)
-      enddo
-    endif
-  endif
-  if (kppfnc .eq. 4) then
+  case (4)
     if (kppknt .le. 2) then
       !
       !     first set of constraints is that splines must be equal at the knots
       !
       do i = 2,kppknt-1
         ncrsp = ncrsp + 1
-        do j = 1,nrsmat
-          crsp(ncrsp,j) = 0.0
-        enddo
+        crsp(ncrsp,:) = 0.0
         z(ncrsp) = 0.0
         crsp(ncrsp,nffcoi + 4*(i-2) + 1) = 1.0
         crsp(ncrsp,nffcoi + 4*(i-2) + 2) = ppknt(i)
@@ -663,9 +647,7 @@
       !
       do i = 2,kppknt-1
         ncrsp = ncrsp + 1
-        do j = 1,nrsmat
-          crsp(ncrsp,j) = 0.0
-        enddo
+        crsp(ncrsp,:) = 0.0
         z(ncrsp) = 0.0
         crsp(ncrsp,nffcoi + 4*(i-2) + 1) = 0.0
         crsp(ncrsp,nffcoi + 4*(i-2) + 2) = 1.0
@@ -687,9 +669,7 @@
       !
       do i = 2,kppknt-1
         ncrsp = ncrsp + 1
-        do j = 1,nrsmat
-          crsp(ncrsp,j) = 0.0
-        enddo
+        crsp(ncrsp,:) = 0.0
         z(ncrsp) = 0.0
         crsp(ncrsp,nffcoi + 4*(i-2) + 1) = 0.0
         crsp(ncrsp,nffcoi + 4*(i-2) + 2) = 0.0
@@ -705,21 +685,8 @@
         crsp(ncrsp,nffcoi + 4*(i-2) + 8) = &
           pptens*pptens*sin(pptens * ppknt(i))
       enddo
-            
     endif
-    if (pcurbd .ne. 0.0) then
-      ncrsp = ncrsp + 1
-      do j = 1,nrsmat
-        crsp(ncrsp,j) = 0.0
-      enddo
-      z(ncrsp) = 0.0
-      tpsi = 1.0
-      do j = 1,kppcur
-        crsp(ncrsp,nffcoi+j) = bsppel(kppfnc,j,tpsi)
-      enddo
-    endif
-  endif
-  if (kppfnc .eq. 5) then
+  case (5)
     iorder = kppcur / (kppknt - 1)
     if (kppknt .le. 2) then
       !
@@ -727,9 +694,7 @@
       !
       do i = 2,kppknt-1
         ncrsp = ncrsp + 1
-        do j = 1,nrsmat
-          crsp(ncrsp,j) = 0.0
-        enddo
+        crsp(ncrsp,:) = 0.0
         z(ncrsp) = 0.0
         do j= 1,iorder
           crsp(ncrsp,nffcoi + iorder*(i-2) + j) = 1.0
@@ -742,9 +707,7 @@
       !
       do i = 2,kppknt-1
         ncrsp = ncrsp + 1
-        do j = 1,nrsmat
-          crsp(ncrsp,j) = 0.0
-        enddo
+        crsp(ncrsp,:) = 0.0
         z(ncrsp) = 0.0
         do j= 2,iorder
           crsp(ncrsp,nffcoi + iorder*(i-2) + j) = (j-1)
@@ -757,30 +720,15 @@
       !
       do i = 2,kppknt-1
         ncrsp = ncrsp + 1
-        do j = 1,nrsmat
-          crsp(ncrsp,j) = 0.0
-        enddo
+        crsp(ncrsp,:) = 0.0
         z(ncrsp) = 0.0
         do j= 3,iorder
           crsp(ncrsp,nffcoi + iorder*(i-2) + j) = (j-1)*(j-2)
         enddo
         crsp(ncrsp,nffcoi + iorder*(i-1) + 3) = -2.0
       enddo
-            
     endif
-    if (pcurbd .ne. 0.0) then
-      ncrsp = ncrsp + 1
-      do j = 1,nrsmat
-        crsp(ncrsp,j) = 0.0
-      enddo
-      z(ncrsp) = 0.0
-      tpsi = 1.0
-      do j = 1,kppcur
-        crsp(ncrsp,nffcoi+j) = bsppel(kppfnc,j,tpsi)
-      enddo
-    endif
-  endif
-  if (kppfnc .eq. 6) then
+  case (6)
     !
     !     first set of constraints is that splines have equal first
     !     derivative at the knots
@@ -789,9 +737,7 @@
       pptens2 = abs(pptens)*(kppknt-1)/(ppknt(kppknt)-ppknt(1))
       do i = 2,kppknt-1
         ncrsp = ncrsp + 1
-        do j = 1,nrsmat
-          crsp(ncrsp,j) = 0.0
-        enddo
+        crsp(ncrsp,:) = 0.0
         z(ncrsp) = 0.0
         w = ppknt(i+1) - ppknt(i)
         crsp(ncrsp,nffcoi + 2*(i-1) + 1) = -1.0/w
@@ -817,44 +763,29 @@
     do i = 1,kppknt
       if (kppbdry(i) .eq. 1) then
         ncrsp = ncrsp + 1
-        do j = 1,nrsmat
-          crsp(ncrsp,j) = 0.0
-        enddo
+        crsp(ncrsp,:) = 0.0
         z(ncrsp) = ppbdry(i)*darea
         crsp(ncrsp,nffcoi+2*i - 1) = 1.0
       endif
       if (kpp2bdry(i) .eq. 1) then
         ncrsp = ncrsp + 1
-        do j = 1,nrsmat
-          crsp(ncrsp,j) = 0.0
-        enddo
+        crsp(ncrsp,:) = 0.0
         z(ncrsp) = pp2bdry(i)*darea
         crsp(ncrsp,nffcoi+2*i) = 1.0
       endif
     enddo
-    if (pcurbd .ne. 0.0) then
+  end select
+  select case (kppfnc)
+  case (3,4,5,6,7)
+    if (pcurbd .eq. 1.0) then
       ncrsp = ncrsp + 1
-      do j = 1,nrsmat
-        crsp(ncrsp,j) = 0.0
-      enddo
+      crsp(ncrsp,:) = 0.0
       z(ncrsp) = 0.0
-      tpsi = 1.0
       do j = 1,kppcur
-        crsp(ncrsp,nffcoi+j) = bsppel(kppfnc,j,tpsi)
+        crsp(ncrsp,nffcoi+j) = bsppel(kppfnc,j,1.0)
       enddo
     endif
-  endif
-  if (kppfnc .eq. 7 .and. pcurbd .eq. 1.0) then
-    ncrsp = ncrsp + 1
-    do j = 1,nrsmat
-      crsp(ncrsp,j) = 0.0
-    enddo
-    z(ncrsp) = 0.0
-    tpsi = 1.0
-    do j = 1,kppcur
-      crsp(ncrsp,nffcoi+j) = bsppel(kppfnc,j,tpsi)
-    enddo
-  endif
+  end select
 
   return
   end subroutine ppcnst

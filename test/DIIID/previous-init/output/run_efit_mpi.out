@@ -1,16 +1,11 @@
 
-          EFIT-AI
+          EFIT-AI Version
 
 Git repository url git@gitlab.com:efit-ai/efit.git
-
 Git branch consistency
-
-Git hash edf6065 with local modifications
-
+Git hash edf6065
 Git date 2022-07-20 15:18:46 -0700
-
 Simulation started on  7/21/2022 at 21: 0:59
-
 Code compiled with PGI 18.7.0
 
 
@@ -19,16 +14,8 @@ Code compiled with PGI 18.7.0
  number of time slices?
 
  type input file names:
- #
- #
- #
- #
- #
- #
- #
- #
- table_di2 = </home/bechtelt/efitall/efit/build_pgi/test/DIIID/green/>
 
+ table_di2 = <../green/>
 ******************** EFIT-AI 65 x 65 grid ********************
 
  r=  2 t=  2800 it=  1 chi2=1.23E+02 zm=-2.43E-02 err=2.007E+00 dz=-2.426E-02 delz= 0.000E+00 dj=0.000E+00

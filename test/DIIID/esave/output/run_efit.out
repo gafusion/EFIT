@@ -1,33 +1,27 @@
 
-          EFIT-AI
+          EFIT-AI Version
 
-Git repository url git@gitlab.com:efit-ai/efit.git
+ Git repository url git@gitlab.com:efit-ai/efit.git
+ Git branch main
+ Git hash 92b0940
+ Git date 2023-04-24 20:13:52 +0000
+ Simulation started on  5/18/2023 at 13:32:33
+ Code compiled with GNU 9.2.0
 
-Git branch main
-
-Git hash 4255f4b
-
-Simulation started on  4/28/2022 at 17:39:15
-
-Code compiled with GNU 9.2.0
-
-
- type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
-
- number of time slices?
+ type mode (1=imas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
 
  type input file names:
- #
- table_di2 = <test/DIIID/green/>
 
-******************** EFIT-AI 65 x 65 grid ********************
+ table_di2 = <../green/>
+ ******************** EFIT 65 x 65 grid ********************
 
- r=  0 t=  2400 it=  1 chi2=4.12E+01 zm=-3.47E-02 err=1.529E+00 dz=-3.470E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
- r=  0 t=  2400 it=  2 chi2=2.23E+01 zm=-3.41E-02 err=1.941E-03 dz= 5.960E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.28E+01
- r=  0 t=  2400 it=  3 chi2=2.24E+01 zm=-3.36E-02 err=1.502E-03 dz= 5.480E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.28E+01
- r=  0 t=  2400 it=  4 chi2=2.41E+01 zm=-3.53E-02 err=3.216E-03 dz=-1.701E-03 delz= 5.424E-01 dj=1.273E-02 chigam= 1.29E+01
- r=  0 t=  2400 it=  5 chi2=2.28E+01 zm=-3.60E-02 err=1.376E-03 dz=-7.511E-04 delz= 3.478E-01 dj=8.619E-03 chigam= 1.28E+01
- r=  0 t=  2400 it=  6 chi2=2.24E+01 zm=-3.63E-02 err=5.805E-04 dz=-2.809E-04 delz= 2.411E-01 dj=5.902E-03 chigam= 1.28E+01
+ r=  0 t=  2400 it=  1 chi2=4.12E+01 zm=-3.47E-02 err=3.058E+00 dz=-3.470E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+ r=  0 t=  2400 it=  2 chi2=2.23E+01 zm=-3.41E-02 err=3.882E-03 dz= 5.960E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.28E+01
+ r=  0 t=  2400 it=  3 chi2=2.24E+01 zm=-3.36E-02 err=3.003E-03 dz= 5.480E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.28E+01
+ r=  0 t=  2400 it=  4 chi2=2.41E+01 zm=-3.53E-02 err=6.432E-03 dz=-1.701E-03 delz= 5.424E-01 dj=1.273E-02 chigam= 1.29E+01
+ r=  0 t=  2400 it=  5 chi2=2.28E+01 zm=-3.60E-02 err=2.752E-03 dz=-7.511E-04 delz= 3.478E-01 dj=8.619E-03 chigam= 1.28E+01
+ r=  0 t=  2400 it=  6 chi2=2.24E+01 zm=-3.63E-02 err=1.161E-03 dz=-2.809E-04 delz= 2.411E-01 dj=5.902E-03 chigam= 1.28E+01
+ r=  0 t=  2400 it=  7 chi2=2.23E+01 zm=-3.64E-02 err=6.023E-04 dz=-1.190E-04 delz= 2.058E-01 dj=5.038E-03 chigam= 1.28E+01
 
        data used:   
  39 flux loops
@@ -37,13 +31,13 @@ Code compiled with GNU 9.2.0
 
 
  shot #   =     186610 time(ms) =       2400 chi**2   =  2.201E+01
- betat(%) =      0.287 betap    =      0.076 li       =      1.195
- vol(cm3) =  1.764E+07 rout(cm) =    172.799 zout(cm) =      6.926
- elong    =      1.797 utriang  =      0.751 ltriang  =      0.303
- a(cm)    =     56.383 lin(cm)  =     14.685 lout(cm) =      5.887
- ltop(cm) =     15.203 q*       =      3.879 rc(cm)   =    170.132
- zc(cm)   =     -2.639 bt0(t)   =      1.638 qout     =      6.440
+ betat(%) =      0.285 betap    =      0.075 li       =      1.195
+ vol(cm3) =  1.764E+07 rout(cm) =    172.800 zout(cm) =      6.930
+ elong    =      1.798 utriang  =      0.751 ltriang  =      0.303
+ a(cm)    =     56.382 lin(cm)  =     14.687 lout(cm) =      5.888
+ ltop(cm) =     15.189 q*       =      3.879 rc(cm)   =    170.131
+ zc(cm)   =     -2.647 bt0(t)   =      1.638 qout     =      6.432
 
   fit errors, shot  186610  2400. msec. all eqdsks are still written
-     Error #21, Bp not consistent , error =  0.109E+00
+     Error #21, Bp not consistent , error =  0.113E+00
 INFO in efit at r=  0, t=  2400: Done processing

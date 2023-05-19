@@ -1,31 +1,41 @@
 ﻿Variable, Default, Description
-NH_SUB, NH, "Sub-sampled grid size (height) to output.  Cannot be larger than the simulation grid, zero, or negative.  Will be converted to the nearest integer divisor.  This does not impact esave.dat files, but will affect restarts from other existing solutions."
-NW_SUB, NW, "Sub-sampled grid size (width) to output.  Cannot be larger than the simulation grid, zero, or negative.  Will be converted to the nearest integer divisor.  This does not impact esave.dat files, but will affect restarts from other existing solutions."
 KFFFNC, 0, "| Choice of basis function for FF'.
-| 0 = polynomial representation FF'(psi)=gamma0+gamma1 psi+...+gamman psi^n.
-| 1 = ??
-| 2 = ??
-| 3 = ??
-| 4 = ??
-| 5 = ??
-| 6 = spline respresentation.
+| 0 = standardpolynomial representation FF'(psi)=gamma0+gamma1 psi+...+gamman psi^n.
+| 1 = polynomial representation...
+| 2 = polynomial representation...
+| 3 = spline respresentation with second constraint... 
+| 4 = spline respresentation with second constraint...
+| 5 = spline respresentation with second constraint...
+| 6 = standard spline respresentation (no second constraint)
+| 7 = unconstrained splines
 | 8 = Polynomial + local representation (based on PSIECN and DPSIECN)."
 KPPFNC, 0, "| Choice of basis function for P'.
-| 0 = polynomial representation P'(psi)=alpha0+alpha1 psi+...+alphan psi^n.
-| 1 = ??
-| 2 = ??
-| 3 = ??
-| 4 = ??
-| 5 = ??
-| 6 = spline respresentation."
+| 0 = standard polynomial representation P'(psi)=alpha0+alpha1 psi+...+alphan psi^n.
+| 1 = polynomial representation...
+| 2 = polynomial representation...
+| 3 = spline respresentation with second constraint... 
+| 4 = spline respresentation with second constraint...
+| 5 = spline respresentation with second constraint...
+| 6 = standard spline respresentation (no second constraint)
+| 7 = unconstrained splines"
 KWWFNC, 0, "| Choice of basis function for POmega'.
-| 0 = polynomial representation.
-| 1 = ??
-| 2 = ??
-| 3 = ??
-| 4 = ??
-| 5 = ??
-| 6 = spline representation."
+| 0 = standard polynomial representation.
+| 1 = polynomial representation...
+| 2 = polynomial representation...
+| 3 = spline respresentation with second constraint... 
+| 4 = spline respresentation with second constraint...
+| 5 = spline respresentation with second constraint...
+| 6 = standard spline respresentation (no second constraint)
+| 7 = unconstrained splines"
+KEEFNC, 0, "| Choice of basis function for Er.
+| 0 = standard polynomial representation.
+| 1 = polynomial representation...
+| 2 = polynomial representation...
+| 3 = spline respresentation with second constraint... 
+| 4 = spline respresentation with second constraint...
+| 5 = spline respresentation with second constraint...
+| 6 = standard spline respresentation (no second constraint)
+| 7 = unconstrained splines"
 ICPROF, 0,"| Specific choice of current profile
 | 0 = current profile is not specified by this variable (default)
 | 1 = no edge current density allowed
@@ -33,8 +43,30 @@ ICPROF, 0,"| Specific choice of current profile
 | 3 = weak edge current density constraint
 | This sets some or all of the variables KFFCUR, KPPCUR, FCURBD, PCURBD, FWTBP, FWTQA, QVFIT, KCALPA, CALPA, XALPA, KCGAMA, CGAMA, and XGAMA to predefined values.
 | NOTE that if these variables are seperately specified in the namelist input, the values set by the ICPROF variable will override them."
-KPPCUR, 3, "Number of coefficients in polynomial representation of P'. Ignored when using spline representation."
-KFFCUR, 1, "Number of coefficients in polynomial representation of FF'. Ignored when using spline representation."
+KPPCUR, 3, "Number of coefficients in polynomial representation of P'.  The poynomial order is KPPCUR+PCURBD.  Ignored when using spline representation."
+KFFCUR, 1, "Number of coefficients in polynomial representation of FF'.  The poynomial order is KFFCUR+FCURBD.  Ignored when using spline representation."
+KWWCUR, 1, "Number of coefficients in polynomial representation of POmega'.  The poynomial order is KWWCUR+WCURBD.  Ignored when using spline representation."
+KEECUR, 1, "Number of coefficients in polynomial representation of Er.  The poynomial order is KEECUR+ECURBD.  Ignored when using spline representation."
+PCURBD,1.0,"| P' Boundary Constraint.
+| 1.0 = force P'=0 at boundary (default).
+| 0.0 = allow finite P' at boundary.
+| For polynomial representations, P'=0 is forced analytically by adding a higher order term to the parametrization whose coefficient is the negative sum of all other coefficients. (How is this done for splines?)
+| Note: even though this input is a floating point number (to support legacy inputs) it should be treated as an integer flag."
+FCURBD,1.0, "| FF' Boundary Constraint.
+| 1.0 = force FF'=0 at boundary (default).
+| 0.0 = let FF' have a finite value at boundary
+| The method for forcing FF'=0 is the same as for P'=0 (see PCURBD).
+| Note: even though this input is a floating point number (to support legacy inputs) it should be treated as an integer flag."
+WCURBD,1.0, "| POmega' Boundary Constraint.
+| 1.0 = force POmega'=0 at boundary (default).
+| 0.0 = let POmega' have a finite value at boundary
+| The method for forcing POmega'=0 is the same as for P'=0 (see PCURBD).
+| Note: even though this input is a floating point number (to support legacy inputs) it should be treated as an integer flag."
+ECURBD,1.0, "| Er Boundary Constraint.
+| 1.0 = force Er=0 at boundary (default).
+| 0.0 = let Er have a finite value at boundary
+| The method for forcing Er=0 is the same as for P'=0 (see PCURBD).
+| Note: even though this input is a floating point number (to support legacy inputs) it should be treated as an integer flag."
 KCALPA, 0, "| = number of constraints on coefficients alpha for P' (only relevant when ICURRT=2) 
 | specified through matrix CALPA and vector XALPA. For both equilibrium and fitting."
 CALPA, zeros, "| Constraint matrix for P' when ICURRT=2 and KCALPA>0.
@@ -43,13 +75,13 @@ CALPA, zeros, "| Constraint matrix for P' when ICURRT=2 and KCALPA>0.
 | Can scale coefficients up or down relative to nominal weights of 1 to get stronger or weaker constraint, respectively.
 | KPPFNC=6
 | Defines constraint equations of the form CALPA(1,i) ppknot(1)+CALPA(2,i) ppknot(1)'+CALPA(3,i) ppknot(2) +...+ CALPA(2n,i) ppknot(n)'=XALPA(i) for i=1 to KCALPA, where n = KPPKNT."
-XALPA, , Constraint vector for P' when ICURRT=2 and KCALPA>0. See CALPA.
+XALPA, zeros, Constraint vector for P' when ICURRT=2 and KCALPA>0. See CALPA.
 KCGAMA, 0, "| = number of constraints on coefficients gamma for FF' (only relevant when ICURRT=2),
 | specified through matrix CGAMA and vector XGAMA. For both equilibrium and fitting."
 CGAMA, zeros, "| Constraint matrix for FF' when ICURRT=2 and KCGAMA>0. If KFFFNC = 0, defines constraint
 | equations of the form CGAMA(1,i) gamma(1) + CGAMA(2,i) gamma(2) +...+ CGAMA(n,i)
 | gamma(n) = XGAMA(i) for i=1 to KCGAMA, where n = KFFCUR. If KFFFNC = 6, see description under CALPA."
-XGAMA, , Constraint vector for FF' when ICURRT=2 and KCGAMA>0. See CGAMA.
+XGAMA, zeros, Constraint vector for FF' when ICURRT=2 and KCGAMA>0. See CGAMA.
 KFFKNT, , Number of knots for FF' in spline representation. Ignored unless KFFFNC=6.
 FFKNT, , "FF' knot locations in normalized psi, must be between 0 and 1. Vector of length KFFKNT. Ignored unless KFFFNC=6."
 FFTENS, , "FF' spline tension, small (e.g., 0.1) = approximately(?) cubic, large (e.g., 10.0) = approximately(?) piecewise linear. Ignored unless KFFFNC=6."
@@ -71,6 +103,13 @@ KWWBDRY, , Constraint switch for POmega'. Vector of length KWWKNT. Ignored unles
 WWBDRY, , POmega' at each knot location where KWWBDRY=1. Vector of length KWWKNT. Ignored unless KWWFNC=6.
 KWW2BDRY, , Constraint switch for (POmega')'. Vector of length KWWKNT. Ignored unless KWWFNC=6.
 WW2BDRY, , (POmega')' at each knot location where KWW2BDRY=1. Vector of length KWWKNT. Ignored unless KWWFNC=6.
+KEEKNT, , Number of knots for Er in spline representation. Ignored unless KEEFNC=6.
+EEKNT, , "array of Er knot locations in normalized psi for spline basis function, must be between 0 and 1. Vector of length KEEKNT. Ignored unless KEEFNC=6."
+EETENS , ,"Er spline tension, small (e.g., 0.1) = approximately(?) cubic, large (e.g., 10.0) = approximately(?) piecewise linear. Ignored unless KEEFNC=6."
+KEEBDRY, , Constraint switch for Er. Vector of length KEEKNT. Ignored unless KEEFNC=6.
+EEBDRY, , Er at each knot location where KEEBDRY=1. Vector of length KEEKNT. Ignored unless KEEFNC=6.
+KEE2BDRY, , Constraint switch for (Er)'. Vector of length KEEKNT. Ignored unless KEEFNC=6.
+EE2BDRY, , (Er)' at each knot location where KEE2BDRY=1. Vector of length KEEKNT. Ignored unless KEEFNC=6.
 KEDGEP,0, "Switch to turn on a tanh edge contribution to pressure. The form is tanh[(psi − PE_PSIN)/PE_WIDTH]"
 PE_PSIN,0.98, "Center point of tanh contribution. Ignored unless KEDGEP>0."
 PE_WIDTH,0.02, "Width of tanh contribution. Ignored unless KEDGEP>0."

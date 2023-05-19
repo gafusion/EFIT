@@ -210,7 +210,11 @@
       idim_time = NCDDEF(nceq,'dim_time',NCUNLIM,ierr)
       idim_1 = NCDDEF(nceq,'dim_scalar',1,ierr)
       idim_device = NCDDEF(nceq,'dim_device',10,ierr)
-      idim_nstark = NCDDEF(nceq,'dim_nstark',nstark,ierr)
+      if (klibim.gt.0) then
+        idim_nstark = NCDDEF(nceq,'dim_nstark',nstark,ierr)
+      else
+        idim_nstark = NCDDEF(nceq,'dim_nstark',nmselp,ierr)
+      endif
       idim_nsilop = NCDDEF(nceq,'dim_nsilop',nsilop,ierr)
       idim_magpri = NCDDEF(nceq,'dim_magpri',magpri,ierr)
       idim_nfsum = NCDDEF(nceq,'dim_nfcoil',nfsum,ierr)

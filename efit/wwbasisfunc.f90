@@ -539,19 +539,24 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      real*8 bswwel
+      integer*4, intent(in) :: nffcoi
+      integer*4, intent(inout) :: ncrsp
+      real*8, intent(out) :: crsp(4*(npcurn-2)+6+npcurn*npcurn,nrsmat), &
+                             z(4*(npcurn-2)+6+npcurn*npcurn)
+      integer*4 i,j,iorder
+      real*8 h,w,wwtens2
 
-      dimension crsp(4*(npcurn-2)+6 +npcurn*npcurn ,nrsmat), &
-           z(4*(npcurn-2)+6+npcurn*npcurn)
-
-      if (kwwfnc .eq. 3) then
+      select case (kwwfnc)
+      case (3)
         if (kwwknt .gt. 2) then
           !
           !     first set of constraints is that splines must be equal at the knots
           !
           do i = 2,kwwknt-1
             ncrsp = ncrsp + 1
-            crsp(ncrsp,1:nrsmat) = 0.0
+            crsp(ncrsp,:) = 0.0
             z(ncrsp) = 0.0
             h = wwknt(i) - wwknt(i-1)
             crsp(ncrsp,nffcoi + kppcur + kffcur &
@@ -583,7 +588,7 @@
           !
           do i = 2,kwwknt-1
             ncrsp = ncrsp + 1
-            crsp(ncrsp,1:nrsmat) = 0.0
+            crsp(ncrsp,:) = 0.0
             z(ncrsp) = 0.0
             h = wwknt(i) - wwknt(i-1)
             crsp(ncrsp,nffcoi + kppcur + kffcur &
@@ -614,7 +619,7 @@
           !
           do i = 2,kwwknt-1
             ncrsp = ncrsp + 1
-            crsp(ncrsp,1:nrsmat) = 0.0
+            crsp(ncrsp,:) = 0.0
             z(ncrsp) = 0.0
             h = wwknt(i) - wwknt(i-1)
             crsp(ncrsp,nffcoi + kppcur + kffcur &
@@ -640,28 +645,15 @@
               + 4*(i-2) + 8) =  &
               h*h*wwtens*wwtens*sin(h * wwtens * wwknt(i))
           enddo
-            
         endif
-        if (wcurbd .ne. 0.0) then
-          ncrsp = ncrsp + 1
-          crsp(ncrsp,1:nrsmat) = 0.0
-          z(ncrsp) = 0.0
-          tpsi = 1.0
-          do j = 1,kwwcur
-            crsp(ncrsp,nffcoi+kppcur+kffcur+j) &
-              = bswwel(kwwfnc,j,tpsi)
-          enddo
-        endif
-      endif
-
-      if (kwwfnc .eq. 4) then
+      case (4)
         if (kwwknt .le. 2) then
           !
           !     first set of constraints is that splines must be equal at the knots
           !
           do i = 2,kwwknt-1
             ncrsp = ncrsp + 1
-            crsp(ncrsp,1:nrsmat) = 0.0
+            crsp(ncrsp,:) = 0.0
             z(ncrsp) = 0.0
             crsp(ncrsp,nffcoi + kppcur + kffcur &
               + 4*(i-2) + 1) = 1.0
@@ -691,7 +683,7 @@
           !
           do i = 2,kwwknt-1
             ncrsp = ncrsp + 1
-            crsp(ncrsp,1:nrsmat) = 0.0
+            crsp(ncrsp,:) = 0.0
             z(ncrsp) = 0.0
             crsp(ncrsp,nffcoi + kppcur + kffcur &
               + 4*(i-2) + 1) = 0.0
@@ -721,7 +713,7 @@
           !
           do i = 2,kwwknt-1
             ncrsp = ncrsp + 1
-            crsp(ncrsp,1:nrsmat) = 0.0
+            crsp(ncrsp,:) = 0.0
             z(ncrsp) = 0.0
             crsp(ncrsp,nffcoi + kppcur + kffcur &
               + 4*(i-2) + 1) = 0.0
@@ -745,20 +737,8 @@
               + 4*(i-2) + 8) =  &
               wwtens*wwtens*sin(wwtens * wwknt(i))
           enddo
-            
         endif
-        if (wcurbd .ne. 0.0) then
-          ncrsp = ncrsp + 1
-          crsp(ncrsp,1:nrsmat) = 0.0
-          z(ncrsp) = 0.0
-          tpsi = 1.0
-          do j = 1,kwwcur
-            crsp(ncrsp,nffcoi+kppcur+kffcur+j) &
-              = bswwel(kwwfnc,j,tpsi)
-          enddo
-        endif
-      endif
-      if (kwwfnc .eq. 5) then
+      case (5)
         iorder = kwwcur / (kwwknt - 1)
         if (kwwknt .le. 2) then
           !
@@ -766,7 +746,7 @@
           !
           do i = 2,kwwknt-1
             ncrsp = ncrsp + 1
-            crsp(ncrsp,1:nrsmat) = 0.0
+            crsp(ncrsp,:) = 0.0
             z(ncrsp) = 0.0
             do j= 1,iorder
               crsp(ncrsp,nffcoi + kppcur + kffcur &
@@ -781,7 +761,7 @@
           !
           do i = 2,kwwknt-1
             ncrsp = ncrsp + 1
-            crsp(ncrsp,1:nrsmat) = 0.0
+            crsp(ncrsp,:) = 0.0
             z(ncrsp) = 0.0
             do j= 2,iorder
               crsp(ncrsp,nffcoi + kppcur + kffcur &
@@ -796,7 +776,7 @@
           !
           do i = 2,kwwknt-1
             ncrsp = ncrsp + 1
-            crsp(ncrsp,1:nrsmat) = 0.0
+            crsp(ncrsp,:) = 0.0
             z(ncrsp) = 0.0
             do j= 3,iorder
               crsp(ncrsp,nffcoi + kppcur + kffcur &
@@ -805,20 +785,8 @@
             crsp(ncrsp,nffcoi + kppcur + kffcur &
               + iorder*(i-1) + 3)  = -2.0
           enddo
-
         endif
-        if (wcurbd .ne. 0.0) then
-          ncrsp = ncrsp + 1
-          crsp(ncrsp,1:nrsmat) = 0.0
-          z(ncrsp) = 0.0
-          tpsi = 1.0
-          do j = 1,kwwcur
-            crsp(ncrsp,nffcoi+kppcur+kffcur+j) &
-              = bswwel(kwwfnc,j,tpsi)
-          enddo
-        endif
-      endif
-      if (kwwfnc .eq. 6) then
+      case (6)
 !     
 !     first set of constraints is that splines have equal first 
 !     derivative at the knots
@@ -827,7 +795,7 @@
             wwtens2 = abs(wwtens)*(kwwknt-1)/(wwknt(kwwknt)-wwknt(1))
             do i = 2,kwwknt-1
                ncrsp = ncrsp + 1
-               crsp(ncrsp,1:nrsmat) = 0.0
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                w = wwknt(i+1) - wwknt(i)
                crsp(ncrsp,nffcoi + kppcur + kffcur &
@@ -863,37 +831,29 @@
          do i = 1,kwwknt
             if (kwwbdry(i) .eq. 1) then
                ncrsp = ncrsp + 1
-               crsp(ncrsp,1:nrsmat) = 0.0
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = wwbdry(i)*darea
                crsp(ncrsp,nffcoi + kppcur + kffcur+2*i - 1) = 1.0
             endif
             if (kww2bdry(i) .eq. 1) then
                ncrsp = ncrsp + 1
-               crsp(ncrsp,1:nrsmat) = 0.0
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = ww2bdry(i)*darea
                crsp(ncrsp,nffcoi + kppcur + kffcur+2*i) = 1.0
             endif
          enddo
-         if (wcurbd .ne. 0.0) then
+      end select
+      select case (kwwfnc)
+      case (3,4,5,6,7)
+         if (wcurbd .eq. 1.0) then
             ncrsp = ncrsp + 1
-            crsp(ncrsp,1:nrsmat) = 0.0
+            crsp(ncrsp,:) = 0.0
             z(ncrsp) = 0.0
-            tpsi = 1.0
             do j = 1,kwwcur
-               crsp(ncrsp,nffcoi+kppcur+kffcur+j) &
-                    = bswwel(kwwfnc,j,tpsi)
+               crsp(ncrsp,nffcoi+kppcur+kffcur+j) = bswwel(kwwfnc,j,1.0)
             enddo
          endif
-         
-      endif
-      if (kwwfnc .eq. 7 .and. wcurbd .eq. 1.0) then
-         ncrsp = ncrsp + 1
-         crsp(ncrsp,1:nrsmat) = 0.0
-         z(ncrsp) = 0.0
-         do j = 1,kwwcur
-            crsp(ncrsp,nffcoi+kppcur+kffcur+j) = bswwel(kwwfnc,j,1.0)
-         enddo
-      endif
+      end select
       return
       end subroutine wwcnst
 

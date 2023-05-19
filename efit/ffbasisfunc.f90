@@ -595,20 +595,24 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      real*8 bsffel
+      integer*4, intent(in) :: nffcoi
+      integer*4, intent(inout) :: ncrsp
+      real*8, intent(out) :: crsp(4*(npcurn-2)+6+npcurn*npcurn,nrsmat), &
+                             z(3*(npcurn-2)+6+npcurn*npcurn)
+      integer*4 i,j,iorder
+      real*8 h,w,fftens2
 
-      dimension crsp(4*(npcurn-2)+6 +npcurn*npcurn ,nrsmat), &
-           z(3*(npcurn-2)+6+npcurn*npcurn)
-      if (kfffnc .eq. 3) then
+      select case (kfffnc)
+      case (3)
          if (kffknt .gt. 2) then
 !     
 !     first set of constraints is that splines must be equal at the knots
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                h = ffknt(i) - ffknt(i-1)
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 1) = 1.0
@@ -632,9 +636,7 @@
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                h = ffknt(i) - ffknt(i-1)
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 1) = 0.0
@@ -658,9 +660,7 @@
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                h = ffknt(i) - ffknt(i-1)
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 1) = 0.0
@@ -680,28 +680,14 @@
             enddo
             
          endif
-         if (fcurbd .ne. 0.0) then
-            ncrsp = ncrsp + 1
-            do j = 1,nrsmat
-               crsp(ncrsp,j) = 0.0
-            enddo
-            z(ncrsp) = 0.0
-            tpsi = 1.0
-            do j = 1,kffcur
-               crsp(ncrsp,nffcoi+kppcur+j) = bsffel(kfffnc,j,tpsi)
-            enddo
-         endif
-      endif
-      if (kfffnc .eq. 4) then
+      case (4)
          if (kffknt .le. 2) then
 !     
 !     first set of constraints is that splines must be equal at the knots
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 1) = 1.0
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 2) = ffknt(i)
@@ -723,9 +709,7 @@
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 1) = 0.0
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 2) = 1.0
@@ -747,9 +731,7 @@
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 1) = 0.0
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 2) = 0.0
@@ -767,19 +749,7 @@
             enddo
             
          endif
-         if (fcurbd .ne. 0.0) then
-            ncrsp = ncrsp + 1
-            do j = 1,nrsmat
-               crsp(ncrsp,j) = 0.0
-            enddo
-            z(ncrsp) = 0.0
-            tpsi = 1.0
-            do j = 1,kffcur
-               crsp(ncrsp,nffcoi+kppcur+j) = bsffel(kfffnc,j,tpsi)
-            enddo
-         endif
-      endif
-      if (kfffnc .eq. 5) then
+      case (5)
          iorder = kffcur / (kffknt - 1)
          if (kffknt .le. 2) then
 !     
@@ -787,9 +757,7 @@
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                do j= 1,iorder
                   crsp(ncrsp,nffcoi + kppcur + iorder*(i-2) + j)  = 1.0
@@ -802,9 +770,7 @@
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                do j= 2,iorder
                   crsp(ncrsp,nffcoi + kppcur + &
@@ -819,9 +785,7 @@
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                do j= 3,iorder
                   crsp(ncrsp,nffcoi + kppcur + &
@@ -832,19 +796,7 @@
             enddo
             
          endif
-         if (fcurbd .ne. 0.0) then
-            ncrsp = ncrsp + 1
-            do j = 1,nrsmat
-               crsp(ncrsp,j) = 0.0
-            enddo
-            z(ncrsp) = 0.0
-            tpsi = 1.0
-            do j = 1,kffcur
-               crsp(ncrsp,nffcoi+kppcur+j) = bsffel(kfffnc,j,tpsi)
-            enddo
-         endif
-      endif
-      if (kfffnc .eq. 6) then
+      case (6)
         !
         !     first set of constraints is that splines have equal first
         !     derivative at the knots
@@ -854,9 +806,7 @@
             (ffknt(kffknt)-ffknt(1))
           do i = 2,kffknt-1
             ncrsp = ncrsp + 1
-            do j = 1,nrsmat
-              crsp(ncrsp,j) = 0.0
-            enddo
+            crsp(ncrsp,:) = 0.0
             z(ncrsp) = 0.0
             w = ffknt(i+1) - ffknt(i)
             crsp(ncrsp,nffcoi + kppcur + &
@@ -890,44 +840,29 @@
         do i = 1,kffknt
           if (kffbdry(i) .eq. 1) then
             ncrsp = ncrsp + 1
-            do j = 1,nrsmat
-              crsp(ncrsp,j) = 0.0
-            enddo
+            crsp(ncrsp,:) = 0.0
             z(ncrsp) = ffbdry(i)*darea/twopi/tmu
             crsp(ncrsp,nffcoi + kppcur+2*i - 1) = 1.0
           endif
           if (kff2bdry(i) .eq. 1) then
             ncrsp = ncrsp + 1
-            do j = 1,nrsmat
-              crsp(ncrsp,j) = 0.0
-            enddo
+            crsp(ncrsp,:) = 0.0
             z(ncrsp) = ff2bdry(i)*darea/twopi/tmu
             crsp(ncrsp,nffcoi + kppcur+2*i) = 1.0
           endif
         enddo
-        if (fcurbd .ne. 0.0) then
+      end select
+      select case (kfffnc)
+      case (3,4,5,6,7)
+        if (fcurbd .eq. 1.0) then
           ncrsp = ncrsp + 1
-          do j = 1,nrsmat
-            crsp(ncrsp,j) = 0.0
-          enddo
+          crsp(ncrsp,:) = 0.0
           z(ncrsp) = 0.0
-          tpsi = 1.0
           do j = 1,kffcur
-            crsp(ncrsp,nffcoi+kppcur+j) = bsffel(kfffnc,j,tpsi)
+            crsp(ncrsp,nffcoi+kppcur+j) = bsffel(kfffnc,j,1.0)
           enddo
         endif
-      endif
-      if (kfffnc .eq. 7 .and. fcurbd .eq. 1.0) then
-        ncrsp = ncrsp + 1
-        do j = 1,nrsmat
-          crsp(ncrsp,j) = 0.0
-        enddo
-        tpsi = 1.0
-        z(ncrsp) = 0.0
-        do j = 1,kffcur
-          crsp(ncrsp,nffcoi+kppcur+j) = bsffel(kfffnc,j,tpsi)
-        enddo
-      endif
+      end select
       return
       end subroutine ffcnst
       
