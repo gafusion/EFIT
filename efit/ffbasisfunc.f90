@@ -15,8 +15,8 @@
       implicit none
       integer*4, intent(in) :: ifunc, iparm
       real*8, intent(in) :: ypsi
-      integer*4 iorder,nk
-      real*8 fftens2,w
+      integer*4 iorder,kffcm1,nk
+      real*8 fftens2,tpsi,w
       
       bsffel = 0.0
       select case (ifunc)
@@ -169,7 +169,7 @@
       integer*4, intent(in) :: ifunc, iparm
       real*8, intent(in) :: ypsi
       integer*4 iorder,nk
-      real*8 fftens2,w
+      real*8 jparm,kffcm1,fftens2,tpsi,w
 
       bsffpel = 0.0
       select case (ifunc)
@@ -202,10 +202,10 @@
          elseif (iparm.eq.kffcur) then
             tpsi = ypsi - psiecn
             if (abs(tpsi).gt.dpsiecn) then
-              bsffel = 0.0
+              bsffpel = 0.0
             else
-              bsffel = 2.0*(rkec*tpsi)
-              bsffel = -rkec*sin(bsffel)
+              bsffpel = 2.0*(rkec*tpsi)
+              bsffpel = -rkec*sin(bsffpel)
             endif
          elseif (iparm.gt.2) then
             bsffpel = (iparm - 1)*ypsi**(iparm - 2) - &

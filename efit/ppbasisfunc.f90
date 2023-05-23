@@ -19,7 +19,7 @@
   integer*4, intent(in) :: ifunc, iparm
   real*8, intent(in) :: ypsi
   integer*4 iorder,nk
-  real*8 pptens2,w
+  real*8 tpsi,pptens2,w
       
   bsppel = 0.0
   select case (ifunc)
@@ -154,7 +154,7 @@
   integer*4, intent(in) :: ifunc, iparm
   real*8, intent(in) :: ypsi
   integer*4 iorder,nk
-  real*8 pptens2,w
+  real*8 jparm,pptens2,tpsi,w
 
   bspppel = 0.0
   select case (ifunc)
