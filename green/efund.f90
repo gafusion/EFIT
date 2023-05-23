@@ -26,7 +26,7 @@
       call getarg(1,inp1)
       call getarg(2,inp2)
       read (inp1,'(i4)',iostat=ioerr) nw
-      if(ioerr.ne.0) read (inp2,'(i4)') nh
+      if(ioerr.eq.0) read (inp2,'(i4)') nh
       ! Ensure grid size is defined
       if (nw == 0) then
         write(*,*) 'Must specify grid dimensions as arguments'

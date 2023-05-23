@@ -11,34 +11,39 @@
 !!    @param ypsi : independent variable value
 !!
 !********************************************************************** 
-      function bserel(ifunc,iparm,ypsi)
+      real*8 function bserel(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      integer*4, intent(in) :: ifunc, iparm
+      real*8, intent(in) :: ypsi
+      integer*4 ioder,nk
+      real*8 eetens2,w
       
       bserel = 0.0
-      if (ifunc .eq. 0) then
+      select case (ifunc)
+      case (0)
         if (iparm.eq.1) then
           bserel=1.0 - ypsi**keecur*ecurbd
         else
           bserel = ypsi**(iparm - 1) - ypsi**keecur*ecurbd
         endif
-      elseif (ifunc .eq. 1) then
+      case (1)
         tpsi = ypsi - 1.0
         if (iparm.eq.1) then
           bserel=1.0 - tpsi**keecur*ecurbd
         else
           bserel = tpsi**(iparm - 1) - tpsi**keecur*ecurbd
         endif
-      elseif (ifunc .eq. 2) then
+      case (2)
         if (iparm.eq.1) then
           bserel=-(1.0 - ypsi**keecur*ecurbd)
         else
           bserel = -(ypsi**(iparm - 1) - ypsi**keecur*ecurbd)
         endif
-      elseif (ifunc .eq. 3) then
+      case (3)
         nk = (iparm - 1) / 4 + 1
         if(nk .ge. keeknt) nk = keeknt - 1
         if ((nk .lt. (keeknt - 1) .and. ypsi .lt. eeknt(nk+1) &
@@ -51,7 +56,7 @@
           if(mod(iparm,4) .eq. 3) bserel = cos(w*eetens*ypsi)
           if(mod(iparm,4) .eq. 0) bserel = sin(w*eetens*ypsi)
         endif
-      elseif (ifunc .eq. 4) then
+      case (4)
         nk = (iparm - 1) / 4 + 1
         if(nk .ge. keeknt) nk = keeknt - 1
         if ((nk .lt. (keeknt - 1) .and. ypsi .lt. eeknt(nk+1) &
@@ -63,7 +68,7 @@
           if(mod(iparm,4) .eq. 3) bserel = cos(eetens*ypsi)
           if(mod(iparm,4) .eq. 0) bserel = sin(eetens*ypsi)
         endif
-      elseif (ifunc .eq. 5) then
+      case (5)
         iorder = keecur / (keeknt - 1)
         nk = (iparm - 1) / iorder + 1
         if(nk .ge. keeknt) nk = keeknt - 1
@@ -83,7 +88,7 @@
             bserel = tpsi**(mod(iparm,iorder)-1)
           endif
         endif
-      elseif (ifunc .eq. 6) then
+      case (6)
         nk = ((iparm - 1) / 2) + 1
         eetens2 = abs(eetens)*(keeknt-1)/(eeknt(keeknt)-eeknt(1))
         if (nk .gt. 1 ) then
@@ -112,7 +117,7 @@
             endif
           endif
         endif
-      elseif (ifunc .eq. 7) then
+      case (7)
         if (iparm.eq.keecur) then
           bserel = ypsi**(keehord)
         elseif (iparm .eq. 1) then
@@ -120,8 +125,8 @@
         else
           bserel = ypsi**(iparm - 1)
         endif
+      end select
 
-      endif
       if (ifunc .ne. keefnc) &
         write(6,*)'ifunc .ne. keefnc ',ifunc,keefnc
       return
@@ -140,15 +145,20 @@
 !!    @param ypsi : independent variable value
 !!
 !**********************************************************************  
-      function bserpel(ifunc,iparm,ypsi)
+      real*8 function bserpel(ifunc,iparm,ypsi)
 
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      integer*4, intent(in) :: ifunc, iparm
+      real*8, intent(in) :: ypsi
+      integer*4 ioder,nk
+      real*8 eetens2,w
 
       bserpel = 0.0
-      if (ifunc .eq. 0) then
+      select case (ifunc) 
+      case (0)
         if (iparm.eq.1) then
           if (keecur.eq.1) then
             bserpel = -ecurbd
@@ -161,7 +171,7 @@
           bserpel = (iparm - 1)*ypsi**(iparm - 2) - &
             keecur*ypsi**(keecur-1)*ecurbd
         endif
-      elseif (ifunc .eq. 1) then
+      case (1)
         tpsi = ypsi - 1.0
         if (iparm.eq.1) then
           if (keecur.eq.1) then
@@ -175,7 +185,7 @@
           bserpel = (iparm - 1)*tpsi**(iparm - 2) - &
             keecur*tpsi**(keecur-1)*ecurbd
         endif
-      elseif (ifunc .eq. 2) then
+      case (2)
         if (iparm.eq.1) then
           if (keecur.eq.1) then
             bserpel = -ecurbd
@@ -189,7 +199,7 @@
             keecur*ypsi**(keecur-1)*ecurbd
         endif
         bserpel = - bserpel
-      elseif (ifunc .eq. 3) then
+      case (3)
         nk = (iparm - 1) / 4 + 1
         if(nk .ge. keeknt) nk = keeknt - 1
         if ((nk .lt. (keeknt - 1) .and. ypsi .lt. eeknt(nk+1) &
@@ -204,7 +214,7 @@
           if(mod(iparm,4) .eq. 0) bserpel = &
             w*eetens*cos(w*eetens*ypsi)
         endif
-      elseif (ifunc .eq. 4) then
+      case (4)
         nk = (iparm - 1) / 4 + 1
         if(nk .ge. keeknt) nk = keeknt - 1
         if ((nk .lt. (keeknt - 1) .and. ypsi .lt. eeknt(nk+1) &
@@ -216,7 +226,7 @@
           if(mod(iparm,4) .eq. 3) bserpel = -eetens*sin(eetens*ypsi)
           if(mod(iparm,4) .eq. 0) bserpel = eetens*cos(eetens*ypsi)
         endif
-      elseif (ifunc .eq. 5)then
+      case (5)
         iorder = keecur / (keeknt - 1)
         nk = (iparm - 1) / iorder + 1
         if(nk .ge. keeknt) nk = keeknt - 1
@@ -235,7 +245,7 @@
             bserpel = (jparm - 1)/w*tpsi**(jparm - 2)
           endif
         endif
-      elseif (ifunc .eq. 6) then
+      case (6)
         nk = ((iparm - 1) / 2) + 1
         eetens2 = abs(eetens)*(keeknt-1)/(eeknt(keeknt)-eeknt(1))
         if (nk .gt. 1) then
@@ -264,7 +274,7 @@
             endif
           endif
         endif
-      elseif (ifunc .eq. 7) then
+      case (7)
         if (iparm.eq.keecur) then
           bserpel = keehord*ypsi**(keehord-1)
         elseif (iparm.eq.1 ) then
@@ -274,7 +284,7 @@
         elseif (iparm.gt.2) then
           bserpel = (iparm - 1)*ypsi**(iparm - 2)
         endif
-      endif
+      end select
       return
       end function bserpel
 
@@ -291,33 +301,38 @@
 !!    @param ypsi : independent variable value
 !!
 !**********************************************************************        
-      function bserin(ifunc,iparm,ypsi)
+      real*8 function bserin(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      integer*4, intent(in) :: ifunc, iparm
+      real*8, intent(in) :: ypsi
+      integer*4 ioder,nk
+      real*8 b1,b2,eetens2,tpsi,tpsi2,w,ypsi1,ypsi2
       
       bserin = 0.0
       ypsi2 = 1.0
-      if (ifunc .eq. 0) then
+      select case (ifunc)
+      case (0)
         bserin = (ypsi**iparm)/iparm - &
           (ypsi**(keecur+1))/(keecur+1)*ecurbd
         bserin = bserin - ((ypsi2**iparm)/iparm - &
           (ypsi2**(keecur+1))/(keecur+1)*ecurbd)
-      elseif (ifunc .eq. 1) then
+      case (1)
         tpsi = ypsi - 1.0
         tpsi2 = ypsi2 - 1.0
         bserin = (tpsi**iparm)/iparm - &
           (tpsi**(keecur+1))/(keecur+1)*ecurbd
         bserin = bserin - ((tpsi2**iparm)/iparm - &
           (tpsi2**(keecur+1))/(keecur+1)*ecurbd)
-      elseif (ifunc .eq. 2) then
+      case (2)
         bserin = -((ypsi**iparm)/iparm - &
           (ypsi**(keecur+1))/(keecur+1)*ecurbd)
         bserin = bserin - (-((ypsi2**iparm)/iparm - &
           (ypsi2**(keecur+1))/(keecur+1)*ecurbd))
-      elseif (ifunc .eq. 3) then
+      case (3)
         nk = (iparm - 1) / 4 + 1
         if(nk .ge. keeknt) nk = keeknt - 1
         if (ypsi .ge. eeknt(nk+1)) then
@@ -352,9 +367,9 @@
         if(mod(iparm,4) .eq. 0) &
           b2 = -cos(w*eetens*ypsi2)/w*eetens
         bserin = b1 - b2
-      !     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
-      !     $                       ypsi2,' = ',bserin
-      elseif (ifunc .eq. 4) then
+        !     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+        !     $                       ypsi2,' = ',bserin
+      case (4)
         nk = (iparm - 1) / 4 + 1
         if(nk .ge. keeknt) nk = keeknt - 1
         if (ypsi .ge. eeknt(nk+1)) then
@@ -388,10 +403,9 @@
         if(mod(iparm,4) .eq. 0) &
           b2 = -cos(eetens*ypsi2)/eetens
         bserin = b1 - b2
-      !     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
-      !     $                       ypsi2,' = ',bserin
-         
-      elseif (ifunc .eq. 5) then
+        !     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+        !     $                       ypsi2,' = ',bserin
+      case (5)
         iorder = keecur / (keeknt - 1)
         nk = (iparm - 1) / iorder + 1
         if(nk .ge. keeknt) nk = keeknt - 1
@@ -428,10 +442,9 @@
           b2 = tpsi**mod(iparm,iorder) / mod(iparm,iorder)
         endif
         bserin = b1 - b2
-         
-      !     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
-      !     $                       ypsi2,' = ',bserin
-      elseif (ifunc .eq. 6) then
+        !     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+        !     $                       ypsi2,' = ',bserin
+      case (6)
         nk = ((iparm - 1) / 2) + 1
         eetens2 = abs(eetens)*(keeknt-1)/(eeknt(keeknt)-eeknt(1))
         bserin = 0
@@ -499,7 +512,7 @@
             bserin = bserin + b1 - b2
           endif
         endif
-      elseif (ifunc .eq. 7) then
+      case (7)
         if (iparm .eq. keecur) then
           bserin = (ypsi**(keehord+1))/(keehord+1)
           bserin = bserin - ((ypsi2**(keehord+1))/(keehord+1))
@@ -507,7 +520,8 @@
           bserin = (ypsi**iparm)/iparm
           bserin = bserin - ((ypsi2**iparm)/iparm)
         endif
-      endif
+      end select
+
       if (ifunc .ne. keefnc) &
         write(6,*) 'ifunc .ne. keefnc ',ifunc,keefnc
       return

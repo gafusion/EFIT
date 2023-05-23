@@ -10,34 +10,39 @@
 !!    @param ypsi : independent variable value
 !!
 !**********************************************************************
-  function bsppel(ifunc,iparm,ypsi)
+  real*8 function bsppel(ifunc,iparm,ypsi)
       
   include 'eparm.inc'
   include 'modules2.inc'
   include 'modules1.inc'
-  implicit integer*4 (i-n), real*8 (a-h,o-z)
+  implicit none
+  integer*4, intent(in) :: ifunc, iparm
+  real*8, intent(in) :: ypsi
+  integer*4 ioder,nk
+  real*8 pptens2,w
       
   bsppel = 0.0
-  if (ifunc .eq. 0) then
+  select case (ifunc)
+  case (0)
     if (iparm.eq.1) then
       bsppel = 1.0 - ypsi**kppcur*pcurbd
     else
       bsppel = ypsi**(iparm - 1) - ypsi**kppcur*pcurbd
     endif
-  elseif (ifunc .eq. 1) then
+  case (1)
     tpsi = ypsi - 1.0
     if (iparm.eq.1) then
       bsppel = 1.0 - tpsi**kppcur*pcurbd
     else
       bsppel = tpsi**(iparm - 1) - tpsi**kppcur*pcurbd
     endif
-  elseif (ifunc .eq. 2) then
+  case (2)
     if (iparm.eq.1) then
       bsppel = -(1.0 - ypsi**kppcur*pcurbd)
     else
       bsppel = -(ypsi**(iparm - 1) - ypsi**kppcur*pcurbd)
     endif
-  elseif (ifunc .eq. 3) then
+  case (3)
     nk = (iparm - 1) / 4 + 1
     if(nk .ge. kppknt) nk = kppknt - 1
     if ((nk .lt. (kppknt - 1) .and. ypsi .lt. ppknt(nk+1) &
@@ -50,7 +55,7 @@
       if(mod(iparm,4) .eq. 3) bsppel = cos(w*pptens*ypsi)
       if(mod(iparm,4) .eq. 0) bsppel = sin(w*pptens*ypsi)
     endif
-  elseif (ifunc .eq. 4) then
+  case (4)
     nk = (iparm - 1) / 4 + 1
     if(nk .ge. kppknt) nk = kppknt - 1
     if ((nk .lt. (kppknt - 1) .and. ypsi .lt. ppknt(nk+1) &
@@ -62,7 +67,7 @@
       if(mod(iparm,4) .eq. 3) bsppel = cos(pptens*ypsi)
       if(mod(iparm,4) .eq. 0) bsppel = sin(pptens*ypsi)
     endif
-  elseif (ifunc .eq. 5) then
+  case (5)
     iorder = kppcur / (kppknt - 1)
     nk = (iparm - 1) / iorder + 1
     if(nk .ge. kppknt)nk = kppknt - 1
@@ -82,7 +87,7 @@
         bsppel = tpsi**(mod(iparm,iorder)-1)
       endif
     endif
-  elseif (ifunc .eq. 6) then
+  case (6)
     nk = ((iparm - 1) / 2) + 1
     pptens2 = abs(pptens)*(kppknt-1)/(ppknt(kppknt)-ppknt(1))
     if (nk .gt. 1) then
@@ -96,7 +101,6 @@
         else
           bsppel = (ypsi-ppknt(nk-1))/w
         endif
-               
       endif
     endif
     if (nk .lt. kppknt) then
@@ -109,11 +113,10 @@
             / (pptens2*pptens2)
         else
           bsppel = (ppknt(nk+1) - ypsi)/w
-        endif
-               
+        endif 
       endif
     endif
-  elseif (ifunc .eq. 7) then
+  case (7)
     if (iparm.eq.kppcur) then
       bsppel = ypsi**(kpphord)
     elseif (iparm .eq. 1) then
@@ -121,34 +124,41 @@
     else
       bsppel = ypsi**(iparm - 1)
     endif
+  end select
 
-  endif
   if (ifunc .ne. kppfnc)  &
     write(6,*)'ifunc .ne. kppfnc ',ifunc,kppfnc
   return
   end function bsppel
 
 !**********************************************************************
-!     
-!     Function bspppel(ifunc,iparm,ypsi)
-!     
-!     This function returns the matrix element for the
-!     first derivative of selected basis function.
-!     
-!     ifunc - basis function number
-!     iparm - basis function parameter number
-!     ypsi  - independent variable value
-!     
+!>    
+!!    Function bspppel(ifunc,iparm,ypsi)
+!!    
+!!    This function returns the matrix element for the
+!!    first derivative of selected basis function.
+!!    
+!!    @param ifunc : basis function number
+!!
+!!    @param iparm : basis function parameter number
+!!
+!!    @param ypsi : independent variable value
+!!    
 !**********************************************************************
-  function bspppel(ifunc,iparm,ypsi)
+  real*8 function bspppel(ifunc,iparm,ypsi)
 
   include 'eparm.inc'
   include 'modules2.inc'
   include 'modules1.inc'
-  implicit integer*4 (i-n), real*8 (a-h,o-z)
+  implicit none
+  integer*4, intent(in) :: ifunc, iparm
+  real*8, intent(in) :: ypsi
+  integer*4 ioder,nk
+  real*8 pptens2,w
 
   bspppel = 0.0
-  if (ifunc .eq. 0) then
+  select case (ifunc)
+  case (0)
     if (iparm.eq.1) then
       if (kppcur.eq.1) then
         bspppel = -pcurbd
@@ -161,7 +171,7 @@
       bspppel = (iparm - 1)*ypsi**(iparm - 2) - &
         kppcur*ypsi**(kppcur-1)*pcurbd
     endif
-  elseif (ifunc .eq. 1) then
+  case (1)
     tpsi = ypsi - 1.0
     if (iparm.eq.1) then
       if (kppcur.eq.1) then
@@ -175,7 +185,7 @@
       bspppel = (iparm - 1)*tpsi**(iparm - 2) - &
         kppcur*tpsi**(kppcur-1)*pcurbd
     endif
-  elseif (ifunc .eq. 2)then
+  case (2)
     if (iparm.eq.1) then
       if (kppcur.eq.1) then
         bspppel = -pcurbd
@@ -189,7 +199,7 @@
         kppcur*ypsi**(kppcur-1)*pcurbd
     endif
     bspppel = - bspppel
-  elseif (ifunc .eq. 3) then
+  case (3)
     nk = (iparm - 1) / 4 + 1
     if(nk .ge. kppknt) nk = kppknt - 1
     if ((nk .lt. (kppknt - 1) .and. ypsi .lt. ppknt(nk+1) &
@@ -204,7 +214,7 @@
       if(mod(iparm,4) .eq. 0) bspppel =  &
         w*pptens*cos(w*pptens*ypsi)
     endif
-  elseif (ifunc .eq. 4) then
+  case (4)
     nk = (iparm - 1) / 4 + 1
     if(nk .ge. kppknt) nk = kppknt - 1
     if ((nk .lt. (kppknt - 1) .and. ypsi .lt. ppknt(nk+1) &
@@ -216,7 +226,7 @@
       if(mod(iparm,4) .eq. 3) bspppel = -pptens*sin(pptens*ypsi)
       if(mod(iparm,4) .eq. 0) bspppel = pptens*cos(pptens*ypsi)
     endif
-  elseif (ifunc .eq. 5) then
+  case (5)
     iorder = kppcur / (kppknt - 1)
     nk = (iparm - 1) / iorder + 1
     if(nk .ge. kppknt) nk = kppknt - 1
@@ -235,7 +245,7 @@
         bspppel = (jparm - 1)/w*tpsi**(jparm - 2)
       endif
     endif
-  elseif (ifunc .eq. 6) then
+  case (6)
     nk = ((iparm - 1) / 2) + 1
     pptens2 = abs(pptens)*(kppknt-1)/(ppknt(kppknt)-ppknt(1))
     if (nk .gt. 1) then
@@ -249,7 +259,6 @@
         else
           bspppel = 1.0/w
         endif
-               
       endif
     endif
     if (nk .lt. kppknt) then
@@ -263,10 +272,9 @@
         else
           bspppel = -1.0/w
         endif
-               
       endif
     endif
-  elseif (ifunc .eq. 7) then
+  case (7)
     if (iparm.eq.kppcur) then
       bspppel = kpphord*ypsi**(kpphord-1)
     elseif (iparm.eq.1) then
@@ -276,49 +284,56 @@
     elseif (iparm.gt.2) then
       bspppel = (iparm - 1)*ypsi**(iparm - 2)
     endif
-  endif
+  end select
   return
   end function bspppel
 
 !**********************************************************************
-!     
-!     Function bsppin(ifunc,iparm,ypsi)
-!     
-!     This function returns the matrix element for the
-!     selected basis function.
-!     
-!     ifunc - basis function number
-!     iparm - basis function parameter number
-!     ypsi  - independent variable value
-!     
+!>    
+!!    Function bsppin(ifunc,iparm,ypsi)
+!!    
+!!    This function returns the matrix element for the
+!!    selected basis function.
+!!    
+!!    @param ifunc : basis function number
+!!
+!!    @param iparm : basis function parameter number
+!!
+!!    @param ypsi : independent variable value
+!!    
 !**********************************************************************
-  function bsppin(ifunc,iparm,ypsi)
+  real*8 function bsppin(ifunc,iparm,ypsi)
       
   include 'eparm.inc'
   include 'modules2.inc'
   include 'modules1.inc'
-  implicit integer*4 (i-n), real*8 (a-h,o-z)
+  implicit none
+  integer*4, intent(in) :: ifunc, iparm
+  real*8, intent(in) :: ypsi
+  integer*4 ioder,nk
+  real*8 b1,b2,pptens2,tpsi,tpsi2,w,ypsi1,ypsi2
       
   bsppin = 0.0
   ypsi2 = 1.0
-  if (ifunc .eq. 0) then
+  select case (ifunc)
+  case (0)
     bsppin = (ypsi**iparm)/iparm - &
       (ypsi**(kppcur+1))/(kppcur+1)*pcurbd
     bsppin = bsppin - ((ypsi2**iparm)/iparm - &
       (ypsi2**(kppcur+1))/(kppcur+1)*pcurbd)
-  elseif (ifunc .eq. 1) then
+  case (1)
     tpsi = ypsi - 1.0
     tpsi2 = ypsi2 - 1.0
     bsppin = (tpsi**iparm)/iparm - &
       (tpsi**(kppcur+1))/(kppcur+1)*pcurbd
     bsppin = bsppin - ((tpsi2**iparm)/iparm - &
       (tpsi2**(kppcur+1))/(kppcur+1)*pcurbd)
-  elseif (ifunc .eq. 2) then
+  case (2)
     bsppin = -((ypsi**iparm)/iparm - &
       (ypsi**(kppcur+1))/(kppcur+1)*pcurbd)
     bsppin = bsppin - (-((ypsi2**iparm)/iparm - &
       (ypsi2**(kppcur+1))/(kppcur+1)*pcurbd))
-  elseif (ifunc .eq. 3) then
+  case (3)
     nk = (iparm - 1) / 4 + 1
     if(nk .ge. kppknt) nk = kppknt - 1
     if (ypsi .ge. ppknt(nk+1)) then
@@ -353,9 +368,9 @@
     if(mod(iparm,4) .eq. 0) &
       b2 = -cos(w*pptens*ypsi2)/w*pptens
     bsppin = b1 - b2
-  !     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
-  !     $                       ypsi2,' = ',bsppin
-  elseif (ifunc .eq. 4) then
+    !     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+    !     $                       ypsi2,' = ',bsppin
+  case (4)
     nk = (iparm - 1) / 4 + 1
     if(nk .ge. kppknt) nk = kppknt - 1
     if (ypsi .ge. ppknt(nk+1)) then
@@ -389,10 +404,9 @@
     if(mod(iparm,4) .eq. 0) &
       b2 = -cos(pptens*ypsi2)/pptens
     bsppin = b1 - b2
-  !     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
-  !     $                       ypsi2,' = ',bsppin
-         
-  elseif (ifunc .eq. 5) then
+    !     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+    !     $                       ypsi2,' = ',bsppin
+  case (5)
     iorder = kppcur / (kppknt - 1)
     nk = (iparm - 1) / iorder + 1
     if(nk .ge. kppknt) nk = kppknt - 1
@@ -428,11 +442,10 @@
     else
       b2 = tpsi**mod(iparm,iorder) / mod(iparm,iorder)
     endif
-    bsppin = b1 - b2
-         
-  !     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
-  !     $                       ypsi2,' = ',bsppin
-  elseif (ifunc .eq. 6)then
+    bsppin = b1 - b2     
+    !     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+    !     $                       ypsi2,' = ',bsppin
+  case (6)
     nk = ((iparm - 1) / 2) + 1
     pptens2 = abs(pptens)*(kppknt-1)/(ppknt(kppknt)-ppknt(1))
     bsppin = 0
@@ -500,7 +513,7 @@
         bsppin = bsppin + b1 - b2
       endif
     endif
-  elseif (ifunc .eq. 7) then
+  case (7)
     if (iparm .eq. kppcur) then
       bsppin = (ypsi**(kpphord+1))/(kpphord+1)
       bsppin = bsppin - ((ypsi2**(kpphord+1))/(kpphord+1))
@@ -508,7 +521,8 @@
       bsppin = (ypsi**iparm)/iparm
       bsppin = bsppin - ((ypsi2**iparm)/iparm)
     endif
-  endif
+  end select
+
   if (ifunc .ne. kppfnc)  &
     write(6,*)'ifunc .ne. kppfnc ',ifunc,kppfnc
   return

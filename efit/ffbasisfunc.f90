@@ -7,21 +7,26 @@
 !!    @param iparm : basis function parameter number
 !!    @param ypsi : independent variable value
 !**********************************************************************
-      function bsffel(ifunc,iparm,ypsi)
+      real*8 function bsffel(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      integer*4, intent(in) :: ifunc, iparm
+      real*8, intent(in) :: ypsi
+      integer*4 ioder,nk
+      real*8 fftens2,w
       
       bsffel = 0.0
-      if (ifunc .eq. 0) then
+      select case (ifunc)
+      case (0)
          if (iparm.eq.1) then
             bsffel = 1.0 - ypsi**kffcur*fcurbd
          else
             bsffel = ypsi**(iparm - 1) - ypsi**kffcur*fcurbd
          endif
-      elseif (ifunc .eq. 1) then
+      case (1)
          tpsi = ypsi - 1.0
          if (iparm.eq.1) then
             bsffel = 1.0 - tpsi**kffcur*fcurbd
@@ -31,7 +36,7 @@
 !----------------------------------------------------------------------
 !-- new local cos2 representation                                    --
 !----------------------------------------------------------------------
-      elseif (ifunc .eq. 8) then
+      case (8)
          kffcm1 = kffcur - 1
          if (iparm.eq.1) then
             bsffel = 1.0 - ypsi**kffcm1*fcurbd
@@ -46,13 +51,13 @@
          else
             bsffel = ypsi**(iparm - 1) - ypsi**kffcm1*fcurbd
          endif
-      elseif (ifunc .eq. 2) then
+      case (2)
          if (iparm.eq.1) then
             bsffel = -(1.0 - ypsi**kffcur*fcurbd)
          else
             bsffel = -(ypsi**(iparm - 1) - ypsi**kffcur*fcurbd)
          endif
-      elseif (ifunc .eq. 3) then
+      case (3)
          nk = (iparm - 1) / 4 + 1
          if(nk .ge. kffknt) nk = kffknt - 1
          if ((nk .lt. (kffknt - 1) .and. ypsi .lt. ffknt(nk+1) &
@@ -65,7 +70,7 @@
             if(mod(iparm,4) .eq. 3) bsffel = cos(w*fftens*ypsi)
             if(mod(iparm,4) .eq. 0) bsffel = sin(w*fftens*ypsi)
          endif
-      elseif (ifunc .eq. 4) then
+      case (4)
          nk = (iparm - 1) / 4 + 1
          if(nk .ge. kffknt) nk = kffknt - 1
          if ((nk .lt. (kffknt - 1) .and. ypsi .lt. ffknt(nk+1) &
@@ -77,7 +82,7 @@
             if(mod(iparm,4) .eq. 3) bsffel = cos(fftens*ypsi)
             if(mod(iparm,4) .eq. 0) bsffel = sin(fftens*ypsi)
          endif
-      elseif (ifunc .eq. 5) then
+      case (5)
          iorder = kffcur / (kffknt - 1)
          nk = (iparm - 1) / iorder + 1
          if(nk .ge. kffknt) nk = kffknt - 1
@@ -97,7 +102,7 @@
                bsffel = tpsi**(mod(iparm,iorder)-1)
             endif
          endif
-      elseif (ifunc .eq. 6) then
+      case (6)
          nk = ((iparm - 1) / 2) + 1
          fftens2 = abs(fftens)*(kffknt-1)/ &
               (ffknt(kffknt)-ffknt(1)) 
@@ -127,7 +132,7 @@
                endif
             endif
          endif
-      elseif (ifunc .eq. 7) then
+      case (7)
          if (iparm.eq.kffcur) then
             bsffel = ypsi**(kffhord)
          elseif (iparm .eq. 1) then
@@ -135,7 +140,8 @@
          else
             bsffel = ypsi**(iparm - 1) 
          endif
-      endif
+      end select
+
       if(ifunc .ne. kfffnc)  &
            write(6,*)'ifunc .ne. kfffnc ',ifunc,kfffnc
       return
@@ -154,15 +160,20 @@
 !!    @param ypsi : ndependent variable value
 !!
 !**********************************************************************
-      function bsffpel(ifunc,iparm,ypsi)
+      real*8 function bsffpel(ifunc,iparm,ypsi)
 
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      integer*4, intent(in) :: ifunc, iparm
+      real*8, intent(in) :: ypsi
+      integer*4 ioder,nk
+      real*8 fftens2,w
 
       bsffpel = 0.0
-      if (ifunc .eq. 0) then
+      select case (ifunc)
+      case (0)
          if (iparm.eq.1) then
             if (kffcur.eq.1) then
                bsffpel = -fcurbd
@@ -178,7 +189,7 @@
 !----------------------------------------------------------------------
 !-- new local cos2 representation                                    --
 !----------------------------------------------------------------------
-      elseif (ifunc .eq. 8) then
+      case (8)
          kffcm1 = kffcur - 1
          if (iparm.eq.1) then
             if (kffcm1.eq.1) then
@@ -200,7 +211,7 @@
             bsffpel = (iparm - 1)*ypsi**(iparm - 2) - &
                  kffcm1*ypsi**(kffcm1-1)*fcurbd
          endif
-      elseif (ifunc .eq. 1) then
+      case (1)
          tpsi = ypsi - 1.0
          if (iparm.eq.1) then
             if (kffcur.eq.1) then
@@ -214,7 +225,7 @@
             bsffpel = (iparm - 1)*tpsi**(iparm - 2) - &
                  kffcur*tpsi**(kffcur-1)*fcurbd
          endif
-      elseif (ifunc .eq. 2) then
+      case (2)
          if (iparm.eq.1) then
             if (kffcur.eq.1) then
                bsffpel = -fcurbd
@@ -228,7 +239,7 @@
                  kffcur*ypsi**(kffcur-1)*fcurbd
          endif
          bsffpel = - bsffpel
-      elseif (ifunc .eq. 3) then
+      case (3)
          nk = (iparm - 1) / 4 + 1
          if(nk .ge. kffknt) nk = kffknt - 1
          if ((nk .lt. (kffknt - 1) .and. ypsi .lt. ffknt(nk+1) &
@@ -243,7 +254,7 @@
             if(mod(iparm,4) .eq. 0) bsffpel =  &
                  w*fftens*cos(w*fftens*ypsi)
          endif
-      elseif (ifunc .eq. 4) then
+      case (4)
          nk = (iparm - 1) / 4 + 1
          if(nk .ge. kffknt) nk = kffknt - 1
          if ((nk .lt. (kffknt - 1) .and. ypsi .lt. ffknt(nk+1) &
@@ -255,7 +266,7 @@
             if(mod(iparm,4) .eq. 3) bsffpel = -fftens*sin(fftens*ypsi)
             if(mod(iparm,4) .eq. 0) bsffpel = fftens*cos(fftens*ypsi)
          endif
-      elseif (ifunc .eq. 5) then
+      case (5)
         iorder = kffcur / (kffknt - 1)
         nk = (iparm - 1) / iorder + 1
         if(nk .ge. kffknt) nk = kffknt - 1
@@ -274,7 +285,7 @@
             bsffpel = (jparm - 1)/w*tpsi**(jparm - 2)
           endif
         endif
-      elseif (ifunc .eq. 6) then
+      case (6)
         nk = ((iparm - 1) / 2) + 1
         fftens2 = abs(fftens)*(kffknt-1)/ &
           (ffknt(kffknt)-ffknt(1))
@@ -304,7 +315,7 @@
             endif
           endif
         endif
-      elseif (ifunc .eq. 7) then
+      case (7)
         if (iparm.eq.kffcur) then
           bsffpel = kffhord*ypsi**(kffhord-1)
         elseif (iparm.eq.1) then
@@ -314,7 +325,7 @@
         elseif (iparm.gt.2) then
           bsffpel = (iparm - 1)*ypsi**(iparm - 2)
         endif
-      endif
+      end select
       return
       end function bsffpel
 
@@ -331,24 +342,27 @@
 !!
 !!    @param z : value vector
 !!
-!!    @param nffcoi : array index for setting up crsp
-!!
 !********************************************************************** 
-      function bsffin(ifunc,iparm,ypsi)
+      real*8 function bsffin(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      integer*4, intent(in) :: ifunc, iparm
+      real*8, intent(in) :: ypsi
+      integer*4 ioder,nk
+      real*8 b1,b2,fftens2,tpsi,tpsi2,w,ypsi1,ypsi2
       
       bsffin = 0.0
       ypsi2 = 1.0
-      if (ifunc .eq. 0) then
+      select case (ifunc)
+      case (0)
          bsffin = (ypsi**iparm)/iparm - &
               (ypsi**(kffcur+1))/(kffcur+1)*fcurbd                
          bsffin = bsffin - ((ypsi2**iparm)/iparm - &
               (ypsi2**(kffcur+1))/(kffcur+1)*fcurbd)
-      elseif (ifunc .eq. 8) then
+      case (8)
          if (iparm.ne.kffcur) then
          bsffin = (ypsi**iparm)/iparm - &
               (ypsi**kffcur)/kffcur*fcurbd
@@ -367,19 +381,19 @@
             endif
             bsffin = bsffin - dpsiecn
          endif
-      elseif (ifunc .eq. 1) then
+      case (1)
          tpsi = ypsi - 1.0
          tpsi2 = ypsi2 - 1.0
          bsffin = (tpsi**iparm)/iparm - &
               (tpsi**(kffcur+1))/(kffcur+1)*fcurbd                
          bsffin = bsffin - ((tpsi2**iparm)/iparm - &
               (tpsi2**(kffcur+1))/(kffcur+1)*fcurbd)         
-      elseif (ifunc .eq. 2) then
+      case (2)
          bsffin = -((ypsi**iparm)/iparm - &
               (ypsi**(kffcur+1))/(kffcur+1)*fcurbd)
          bsffin = bsffin - (-((ypsi2**iparm)/iparm - &
               (ypsi2**(kffcur+1))/(kffcur+1)*fcurbd))
-      elseif (ifunc .eq. 3) then
+      case (3)
          nk = (iparm - 1) / 4 + 1
          if(nk .ge. kffknt) nk = kffknt - 1
          if (ypsi .ge. ffknt(nk+1)) then
@@ -414,9 +428,9 @@
          if(mod(iparm,4) .eq. 0) &
               b2 = -cos(w*fftens*ypsi2)/w*fftens
          bsffin = b1 - b2
-!     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
-!     $                       ypsi2,' = ',bsffin
-      elseif (ifunc .eq. 4) then
+         !  write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+         !  $                       ypsi2,' = ',bsffin
+      case (4)
          nk = (iparm - 1) / 4 + 1
          if(nk .ge. kffknt) nk = kffknt - 1
          if (ypsi .ge. ffknt(nk+1)) then
@@ -450,10 +464,9 @@
          if(mod(iparm,4) .eq. 0) &
               b2 = -cos(fftens*ypsi2)/fftens
          bsffin = b1 - b2
-!     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
-!     $                       ypsi2,' = ',bsffin
-         
-      elseif (ifunc .eq. 5) then
+         !     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+         !     $                       ypsi2,' = ',bsffin
+      case (5)
          iorder = kffcur / (kffknt - 1)
          nk = (iparm - 1) / iorder + 1
          if(nk .ge. kffknt) nk = kffknt - 1
@@ -490,10 +503,9 @@
             b2 = tpsi**mod(iparm,iorder) / mod(iparm,iorder)
          endif
          bsffin = b1 - b2
-         
-!     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
-!     $                       ypsi2,' = ',bsffin
-      elseif (ifunc .eq. 6) then
+         !     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+         !     $                       ypsi2,' = ',bsffin
+      case (6)
          nk = ((iparm - 1) / 2) + 1
          fftens2 = abs(fftens)*(kffknt-1)/ &
               (ffknt(kffknt)-ffknt(1))
@@ -562,7 +574,7 @@
                bsffin = bsffin + b1 - b2
             endif
          endif
-      elseif (ifunc .eq. 7) then
+      case (7)
         if (iparm .eq. kffcur) then
           bsffin = (ypsi**(kffhord+1))/(kffhord+1)
           bsffin = bsffin - ((ypsi2**(kffhord+1))/(kffhord+1))
@@ -570,7 +582,8 @@
           bsffin = (ypsi**iparm)/iparm
           bsffin = bsffin - ((ypsi2**iparm)/iparm)
         endif
-      endif
+      end select
+
       if(ifunc .ne. kfffnc) write(6,*)'ifunc .ne. kfffnc ',ifunc,kfffnc
       return
       end function bsffin
