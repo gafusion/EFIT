@@ -20,7 +20,7 @@
       implicit none
       integer*4, intent(in) :: ifunc, iparm
       real*8, intent(in) :: ypsi
-      integer*4 ioder,nk
+      integer*4 iorder,nk
       real*8 wwtens2,w
       
       bswwel = 0.0
@@ -154,7 +154,7 @@
       implicit none
       integer*4, intent(in) :: ifunc, iparm
       real*8, intent(in) :: ypsi
-      integer*4 ioder,nk
+      integer*4 iorder,nk
       real*8 wwtens2,w
 
       bswwpel = 0.0
@@ -310,7 +310,7 @@
       implicit none
       integer*4, intent(in) :: ifunc, iparm
       real*8, intent(in) :: ypsi
-      integer*4 ioder,nk
+      integer*4 iorder,nk
       real*8 b1,b2,wwtens2,tpsi,tpsi2,w,ypsi1,ypsi2
 
       bswwin = 0.0

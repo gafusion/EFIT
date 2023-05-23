@@ -18,7 +18,7 @@
   implicit none
   integer*4, intent(in) :: ifunc, iparm
   real*8, intent(in) :: ypsi
-  integer*4 ioder,nk
+  integer*4 iorder,nk
   real*8 pptens2,w
       
   bsppel = 0.0
@@ -153,7 +153,7 @@
   implicit none
   integer*4, intent(in) :: ifunc, iparm
   real*8, intent(in) :: ypsi
-  integer*4 ioder,nk
+  integer*4 iorder,nk
   real*8 pptens2,w
 
   bspppel = 0.0
@@ -310,7 +310,7 @@
   implicit none
   integer*4, intent(in) :: ifunc, iparm
   real*8, intent(in) :: ypsi
-  integer*4 ioder,nk
+  integer*4 iorder,nk
   real*8 b1,b2,pptens2,tpsi,tpsi2,w,ypsi1,ypsi2
       
   bsppin = 0.0
