@@ -83,7 +83,7 @@
       logical writepc ! unused variable
       integer*4, parameter :: m_ext=101,nsq=1
       real*8, parameter :: aaslop=0.6_dp,drslop=0.003_dp
-      real*8, parameter :: ersil8=1.0e-03_dp,ten2m3=1.0e-03_dp,zetafc=2.5e-08_dp,errorq=1.0e-03_dp
+      real*8, parameter :: ersil8=1.0e-03_dp,ten2m3=1.0e-03_dp,errorq=1.0e-03_dp
       !data idodo/0/,idovs/0/
       data idoac/0/,mcontr/35/
 
@@ -2723,10 +2723,6 @@
 !      close(unit=nffile) 
 !      endif 
 ! 
-      do i=1,nfcoil 
-        if(rsisfc(i).le.-1.0) & 
-          rsisfc(i)=turnfc(i)**2*twopi*rf(i)/wf(i)/hf(i)*zetafc 
-      enddo
 !  525 continue 
 !----------------------------------------------------------------------- 
 !--   read in the advance divertor coil response functions if needed  -- 

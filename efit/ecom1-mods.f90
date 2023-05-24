@@ -326,7 +326,7 @@
 
       module var_fcoil
       real*8,dimension(:),allocatable :: rf,zf,wf,hf,af,af2, &
-                                         rsisfc,turnfc,fcturn
+                                         turnfc,fcturn
       integer*4,dimension(:),allocatable :: fcid
       end module var_fcoil 
 

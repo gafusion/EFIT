@@ -25,10 +25,10 @@ necoil, 122, Number of (Ohmic) e-coils (part of p.f. coil set)
 nercur, 32, 
 nesum, 6, Number of (Ohmic) e-coil groups 
 nfbcoil, 12, (depricated)
-nfcoil, 18, Number of f-coils (part of p.f. coil set)
+nfcoil, 18, Number of (plasma shaping and control) f-coils (part of p.f. coil set)
 nffcur, 32,
 nfourier, 5, Number Fourier components used in vessel current representation
-nfsum, 18, Number of f-coil groups
+nfsum, 18, Number of (plasma shaping and control) f-coil groups
 ngam_u, 5, Dimension of mse spatial averaging data for MSE
 ngam_vars, 9, Dimension of mse spatial averaging data for MSE
 ngam_w, 3, Dimension of mse spatial averaging data for MSE
