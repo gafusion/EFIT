@@ -106,21 +106,6 @@
       use var_qsurfac
       use var_initerror
       use var_magerror
-      use var_psilopdat
-      use var_plasmacurrdat
-      use var_ccoilsdat
-      use var_icoilsdat
-      use var_n1coildat
-      use var_vloopdat
-      use var_diamdat
-      use var_denvdat
-      use var_denrdat
-      use var_magprobdat
-      use var_btcompdat
-      use var_btordat
-      use var_fcoildat
-      use var_ecoildat
-      use var_beamdat
       use var_bscom
       use var_autokknot
       use var_autok
