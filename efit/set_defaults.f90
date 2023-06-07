@@ -341,7 +341,6 @@
         rmp2ac=0.0
         rpress=0.0
         rsisec=-1.
-        rsisfc=-1.
         rvtor=1.70_dp
         rzero=1.6955_dp
         saiec=0.0

@@ -22,10 +22,11 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
+      integer*4 ef_init_cycred_data
       integer*4, intent(in) :: niter,nnin,ntotal,jtime
       integer*4, intent(out) :: kerror
       integer*4 i,j,ii,jj,kk,kkkk,kknh,k1,kk1,k2,mj,mk,mjnh,mknh,mj1,mk1, &
-                iinow,imd,idelr,idelz,jtop,jlow,ier,initresult,icurfb
+                iinow,imd,idelr,idelz,jtop,jlow,ier,icurfb
       real*8 tempsum1,tempsum2,val,cdelznow,deltaz,difnow,psibar, &
              psic1,psic2,psilu_psill,psiul_psiuu,rcurnow,sumc,vcurfi, &
              zdwn_now,zup_now
@@ -142,8 +143,13 @@
             psi(kk)=tmu2*pcurrt(kk)*rgrid(i)*2.0
           enddo
         enddo
+        if (ntotal.le.1) then
+!         call the initialization and check the result
+          kerror=ef_init_cycred_data()
+          if(kerror.eq.1) return
+        endif
         call pflux_cycred(psi,kerror)
-        if (kerror.gt.0) return
+        if(kerror.gt.0) return
       endif
       psi=-psi
 !----------------------------------------------------------------------------

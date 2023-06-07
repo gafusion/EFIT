@@ -7,21 +7,26 @@
 !!    @param iparm : basis function parameter number
 !!    @param ypsi : independent variable value
 !**********************************************************************
-      function bsffel(ifunc,iparm,ypsi)
+      real*8 function bsffel(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      integer*4, intent(in) :: ifunc, iparm
+      real*8, intent(in) :: ypsi
+      integer*4 iorder,kffcm1,nk
+      real*8 fftens2,tpsi,w
       
       bsffel = 0.0
-      if (ifunc .eq. 0) then
+      select case (ifunc)
+      case (0)
          if (iparm.eq.1) then
             bsffel = 1.0 - ypsi**kffcur*fcurbd
          else
             bsffel = ypsi**(iparm - 1) - ypsi**kffcur*fcurbd
          endif
-      elseif (ifunc .eq. 1) then
+      case (1)
          tpsi = ypsi - 1.0
          if (iparm.eq.1) then
             bsffel = 1.0 - tpsi**kffcur*fcurbd
@@ -31,7 +36,7 @@
 !----------------------------------------------------------------------
 !-- new local cos2 representation                                    --
 !----------------------------------------------------------------------
-      elseif (ifunc .eq. 8) then
+      case (8)
          kffcm1 = kffcur - 1
          if (iparm.eq.1) then
             bsffel = 1.0 - ypsi**kffcm1*fcurbd
@@ -46,13 +51,13 @@
          else
             bsffel = ypsi**(iparm - 1) - ypsi**kffcm1*fcurbd
          endif
-      elseif (ifunc .eq. 2) then
+      case (2)
          if (iparm.eq.1) then
             bsffel = -(1.0 - ypsi**kffcur*fcurbd)
          else
             bsffel = -(ypsi**(iparm - 1) - ypsi**kffcur*fcurbd)
          endif
-      elseif (ifunc .eq. 3) then
+      case (3)
          nk = (iparm - 1) / 4 + 1
          if(nk .ge. kffknt) nk = kffknt - 1
          if ((nk .lt. (kffknt - 1) .and. ypsi .lt. ffknt(nk+1) &
@@ -65,7 +70,7 @@
             if(mod(iparm,4) .eq. 3) bsffel = cos(w*fftens*ypsi)
             if(mod(iparm,4) .eq. 0) bsffel = sin(w*fftens*ypsi)
          endif
-      elseif (ifunc .eq. 4) then
+      case (4)
          nk = (iparm - 1) / 4 + 1
          if(nk .ge. kffknt) nk = kffknt - 1
          if ((nk .lt. (kffknt - 1) .and. ypsi .lt. ffknt(nk+1) &
@@ -77,7 +82,7 @@
             if(mod(iparm,4) .eq. 3) bsffel = cos(fftens*ypsi)
             if(mod(iparm,4) .eq. 0) bsffel = sin(fftens*ypsi)
          endif
-      elseif (ifunc .eq. 5) then
+      case (5)
          iorder = kffcur / (kffknt - 1)
          nk = (iparm - 1) / iorder + 1
          if(nk .ge. kffknt) nk = kffknt - 1
@@ -97,7 +102,7 @@
                bsffel = tpsi**(mod(iparm,iorder)-1)
             endif
          endif
-      elseif (ifunc .eq. 6) then
+      case (6)
          nk = ((iparm - 1) / 2) + 1
          fftens2 = abs(fftens)*(kffknt-1)/ &
               (ffknt(kffknt)-ffknt(1)) 
@@ -127,7 +132,7 @@
                endif
             endif
          endif
-      elseif (ifunc .eq. 7) then
+      case (7)
          if (iparm.eq.kffcur) then
             bsffel = ypsi**(kffhord)
          elseif (iparm .eq. 1) then
@@ -135,7 +140,8 @@
          else
             bsffel = ypsi**(iparm - 1) 
          endif
-      endif
+      end select
+
       if(ifunc .ne. kfffnc)  &
            write(6,*)'ifunc .ne. kfffnc ',ifunc,kfffnc
       return
@@ -154,15 +160,20 @@
 !!    @param ypsi : ndependent variable value
 !!
 !**********************************************************************
-      function bsffpel(ifunc,iparm,ypsi)
+      real*8 function bsffpel(ifunc,iparm,ypsi)
 
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      integer*4, intent(in) :: ifunc, iparm
+      real*8, intent(in) :: ypsi
+      integer*4 iorder,nk
+      real*8 jparm,kffcm1,fftens2,tpsi,w
 
       bsffpel = 0.0
-      if (ifunc .eq. 0) then
+      select case (ifunc)
+      case (0)
          if (iparm.eq.1) then
             if (kffcur.eq.1) then
                bsffpel = -fcurbd
@@ -178,7 +189,7 @@
 !----------------------------------------------------------------------
 !-- new local cos2 representation                                    --
 !----------------------------------------------------------------------
-      elseif (ifunc .eq. 8) then
+      case (8)
          kffcm1 = kffcur - 1
          if (iparm.eq.1) then
             if (kffcm1.eq.1) then
@@ -191,16 +202,16 @@
          elseif (iparm.eq.kffcur) then
             tpsi = ypsi - psiecn
             if (abs(tpsi).gt.dpsiecn) then
-              bsffel = 0.0
+              bsffpel = 0.0
             else
-              bsffel = 2.0*(rkec*tpsi)
-              bsffel = -rkec*sin(bsffel)
+              bsffpel = 2.0*(rkec*tpsi)
+              bsffpel = -rkec*sin(bsffpel)
             endif
          elseif (iparm.gt.2) then
             bsffpel = (iparm - 1)*ypsi**(iparm - 2) - &
                  kffcm1*ypsi**(kffcm1-1)*fcurbd
          endif
-      elseif (ifunc .eq. 1) then
+      case (1)
          tpsi = ypsi - 1.0
          if (iparm.eq.1) then
             if (kffcur.eq.1) then
@@ -214,7 +225,7 @@
             bsffpel = (iparm - 1)*tpsi**(iparm - 2) - &
                  kffcur*tpsi**(kffcur-1)*fcurbd
          endif
-      elseif (ifunc .eq. 2) then
+      case (2)
          if (iparm.eq.1) then
             if (kffcur.eq.1) then
                bsffpel = -fcurbd
@@ -228,7 +239,7 @@
                  kffcur*ypsi**(kffcur-1)*fcurbd
          endif
          bsffpel = - bsffpel
-      elseif (ifunc .eq. 3) then
+      case (3)
          nk = (iparm - 1) / 4 + 1
          if(nk .ge. kffknt) nk = kffknt - 1
          if ((nk .lt. (kffknt - 1) .and. ypsi .lt. ffknt(nk+1) &
@@ -243,7 +254,7 @@
             if(mod(iparm,4) .eq. 0) bsffpel =  &
                  w*fftens*cos(w*fftens*ypsi)
          endif
-      elseif (ifunc .eq. 4) then
+      case (4)
          nk = (iparm - 1) / 4 + 1
          if(nk .ge. kffknt) nk = kffknt - 1
          if ((nk .lt. (kffknt - 1) .and. ypsi .lt. ffknt(nk+1) &
@@ -255,7 +266,7 @@
             if(mod(iparm,4) .eq. 3) bsffpel = -fftens*sin(fftens*ypsi)
             if(mod(iparm,4) .eq. 0) bsffpel = fftens*cos(fftens*ypsi)
          endif
-      elseif (ifunc .eq. 5) then
+      case (5)
         iorder = kffcur / (kffknt - 1)
         nk = (iparm - 1) / iorder + 1
         if(nk .ge. kffknt) nk = kffknt - 1
@@ -274,7 +285,7 @@
             bsffpel = (jparm - 1)/w*tpsi**(jparm - 2)
           endif
         endif
-      elseif (ifunc .eq. 6) then
+      case (6)
         nk = ((iparm - 1) / 2) + 1
         fftens2 = abs(fftens)*(kffknt-1)/ &
           (ffknt(kffknt)-ffknt(1))
@@ -304,7 +315,7 @@
             endif
           endif
         endif
-      elseif (ifunc .eq. 7) then
+      case (7)
         if (iparm.eq.kffcur) then
           bsffpel = kffhord*ypsi**(kffhord-1)
         elseif (iparm.eq.1) then
@@ -314,7 +325,7 @@
         elseif (iparm.gt.2) then
           bsffpel = (iparm - 1)*ypsi**(iparm - 2)
         endif
-      endif
+      end select
       return
       end function bsffpel
 
@@ -331,24 +342,27 @@
 !!
 !!    @param z : value vector
 !!
-!!    @param nffcoi : array index for setting up crsp
-!!
 !********************************************************************** 
-      function bsffin(ifunc,iparm,ypsi)
+      real*8 function bsffin(ifunc,iparm,ypsi)
       
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      integer*4, intent(in) :: ifunc, iparm
+      real*8, intent(in) :: ypsi
+      integer*4 iorder,nk
+      real*8 b1,b2,fftens2,tpsi,tpsi2,w,ypsi1,ypsi2
       
       bsffin = 0.0
       ypsi2 = 1.0
-      if (ifunc .eq. 0) then
+      select case (ifunc)
+      case (0)
          bsffin = (ypsi**iparm)/iparm - &
               (ypsi**(kffcur+1))/(kffcur+1)*fcurbd                
          bsffin = bsffin - ((ypsi2**iparm)/iparm - &
               (ypsi2**(kffcur+1))/(kffcur+1)*fcurbd)
-      elseif (ifunc .eq. 8) then
+      case (8)
          if (iparm.ne.kffcur) then
          bsffin = (ypsi**iparm)/iparm - &
               (ypsi**kffcur)/kffcur*fcurbd
@@ -367,19 +381,19 @@
             endif
             bsffin = bsffin - dpsiecn
          endif
-      elseif (ifunc .eq. 1) then
+      case (1)
          tpsi = ypsi - 1.0
          tpsi2 = ypsi2 - 1.0
          bsffin = (tpsi**iparm)/iparm - &
               (tpsi**(kffcur+1))/(kffcur+1)*fcurbd                
          bsffin = bsffin - ((tpsi2**iparm)/iparm - &
               (tpsi2**(kffcur+1))/(kffcur+1)*fcurbd)         
-      elseif (ifunc .eq. 2) then
+      case (2)
          bsffin = -((ypsi**iparm)/iparm - &
               (ypsi**(kffcur+1))/(kffcur+1)*fcurbd)
          bsffin = bsffin - (-((ypsi2**iparm)/iparm - &
               (ypsi2**(kffcur+1))/(kffcur+1)*fcurbd))
-      elseif (ifunc .eq. 3) then
+      case (3)
          nk = (iparm - 1) / 4 + 1
          if(nk .ge. kffknt) nk = kffknt - 1
          if (ypsi .ge. ffknt(nk+1)) then
@@ -414,9 +428,9 @@
          if(mod(iparm,4) .eq. 0) &
               b2 = -cos(w*fftens*ypsi2)/w*fftens
          bsffin = b1 - b2
-!     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
-!     $                       ypsi2,' = ',bsffin
-      elseif (ifunc .eq. 4) then
+         !  write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+         !  $                       ypsi2,' = ',bsffin
+      case (4)
          nk = (iparm - 1) / 4 + 1
          if(nk .ge. kffknt) nk = kffknt - 1
          if (ypsi .ge. ffknt(nk+1)) then
@@ -450,10 +464,9 @@
          if(mod(iparm,4) .eq. 0) &
               b2 = -cos(fftens*ypsi2)/fftens
          bsffin = b1 - b2
-!     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
-!     $                       ypsi2,' = ',bsffin
-         
-      elseif (ifunc .eq. 5) then
+         !     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+         !     $                       ypsi2,' = ',bsffin
+      case (5)
          iorder = kffcur / (kffknt - 1)
          nk = (iparm - 1) / iorder + 1
          if(nk .ge. kffknt) nk = kffknt - 1
@@ -490,10 +503,9 @@
             b2 = tpsi**mod(iparm,iorder) / mod(iparm,iorder)
          endif
          bsffin = b1 - b2
-         
-!     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
-!     $                       ypsi2,' = ',bsffin
-      elseif (ifunc .eq. 6) then
+         !     write(6,*)'for ypsi=',ypsi,' integrate from ',ypsi1,' to ',
+         !     $                       ypsi2,' = ',bsffin
+      case (6)
          nk = ((iparm - 1) / 2) + 1
          fftens2 = abs(fftens)*(kffknt-1)/ &
               (ffknt(kffknt)-ffknt(1))
@@ -562,7 +574,7 @@
                bsffin = bsffin + b1 - b2
             endif
          endif
-      elseif (ifunc .eq. 7) then
+      case (7)
         if (iparm .eq. kffcur) then
           bsffin = (ypsi**(kffhord+1))/(kffhord+1)
           bsffin = bsffin - ((ypsi2**(kffhord+1))/(kffhord+1))
@@ -570,7 +582,8 @@
           bsffin = (ypsi**iparm)/iparm
           bsffin = bsffin - ((ypsi2**iparm)/iparm)
         endif
-      endif
+      end select
+
       if(ifunc .ne. kfffnc) write(6,*)'ifunc .ne. kfffnc ',ifunc,kfffnc
       return
       end function bsffin
@@ -595,20 +608,24 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      real*8 bsffel
+      integer*4, intent(in) :: nffcoi
+      integer*4, intent(inout) :: ncrsp
+      real*8, intent(out) :: crsp(4*(npcurn-2)+6+npcurn*npcurn,nrsmat), &
+                             z(3*(npcurn-2)+6+npcurn*npcurn)
+      integer*4 i,j,iorder
+      real*8 h,w,fftens2
 
-      dimension crsp(4*(npcurn-2)+6 +npcurn*npcurn ,nrsmat), &
-           z(3*(npcurn-2)+6+npcurn*npcurn)
-      if (kfffnc .eq. 3) then
+      select case (kfffnc)
+      case (3)
          if (kffknt .gt. 2) then
 !     
 !     first set of constraints is that splines must be equal at the knots
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                h = ffknt(i) - ffknt(i-1)
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 1) = 1.0
@@ -632,9 +649,7 @@
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                h = ffknt(i) - ffknt(i-1)
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 1) = 0.0
@@ -658,9 +673,7 @@
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                h = ffknt(i) - ffknt(i-1)
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 1) = 0.0
@@ -680,28 +693,14 @@
             enddo
             
          endif
-         if (fcurbd .ne. 0.0) then
-            ncrsp = ncrsp + 1
-            do j = 1,nrsmat
-               crsp(ncrsp,j) = 0.0
-            enddo
-            z(ncrsp) = 0.0
-            tpsi = 1.0
-            do j = 1,kffcur
-               crsp(ncrsp,nffcoi+kppcur+j) = bsffel(kfffnc,j,tpsi)
-            enddo
-         endif
-      endif
-      if (kfffnc .eq. 4) then
+      case (4)
          if (kffknt .le. 2) then
 !     
 !     first set of constraints is that splines must be equal at the knots
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 1) = 1.0
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 2) = ffknt(i)
@@ -723,9 +722,7 @@
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 1) = 0.0
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 2) = 1.0
@@ -747,9 +744,7 @@
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 1) = 0.0
                crsp(ncrsp,nffcoi + kppcur + 4*(i-2) + 2) = 0.0
@@ -767,19 +762,7 @@
             enddo
             
          endif
-         if (fcurbd .ne. 0.0) then
-            ncrsp = ncrsp + 1
-            do j = 1,nrsmat
-               crsp(ncrsp,j) = 0.0
-            enddo
-            z(ncrsp) = 0.0
-            tpsi = 1.0
-            do j = 1,kffcur
-               crsp(ncrsp,nffcoi+kppcur+j) = bsffel(kfffnc,j,tpsi)
-            enddo
-         endif
-      endif
-      if (kfffnc .eq. 5) then
+      case (5)
          iorder = kffcur / (kffknt - 1)
          if (kffknt .le. 2) then
 !     
@@ -787,9 +770,7 @@
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                do j= 1,iorder
                   crsp(ncrsp,nffcoi + kppcur + iorder*(i-2) + j)  = 1.0
@@ -802,9 +783,7 @@
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                do j= 2,iorder
                   crsp(ncrsp,nffcoi + kppcur + &
@@ -819,9 +798,7 @@
 !     
             do i = 2,kffknt-1
                ncrsp = ncrsp + 1
-               do j = 1,nrsmat
-                  crsp(ncrsp,j) = 0.0
-               enddo
+               crsp(ncrsp,:) = 0.0
                z(ncrsp) = 0.0
                do j= 3,iorder
                   crsp(ncrsp,nffcoi + kppcur + &
@@ -832,19 +809,7 @@
             enddo
             
          endif
-         if (fcurbd .ne. 0.0) then
-            ncrsp = ncrsp + 1
-            do j = 1,nrsmat
-               crsp(ncrsp,j) = 0.0
-            enddo
-            z(ncrsp) = 0.0
-            tpsi = 1.0
-            do j = 1,kffcur
-               crsp(ncrsp,nffcoi+kppcur+j) = bsffel(kfffnc,j,tpsi)
-            enddo
-         endif
-      endif
-      if (kfffnc .eq. 6) then
+      case (6)
         !
         !     first set of constraints is that splines have equal first
         !     derivative at the knots
@@ -854,9 +819,7 @@
             (ffknt(kffknt)-ffknt(1))
           do i = 2,kffknt-1
             ncrsp = ncrsp + 1
-            do j = 1,nrsmat
-              crsp(ncrsp,j) = 0.0
-            enddo
+            crsp(ncrsp,:) = 0.0
             z(ncrsp) = 0.0
             w = ffknt(i+1) - ffknt(i)
             crsp(ncrsp,nffcoi + kppcur + &
@@ -890,44 +853,29 @@
         do i = 1,kffknt
           if (kffbdry(i) .eq. 1) then
             ncrsp = ncrsp + 1
-            do j = 1,nrsmat
-              crsp(ncrsp,j) = 0.0
-            enddo
+            crsp(ncrsp,:) = 0.0
             z(ncrsp) = ffbdry(i)*darea/twopi/tmu
             crsp(ncrsp,nffcoi + kppcur+2*i - 1) = 1.0
           endif
           if (kff2bdry(i) .eq. 1) then
             ncrsp = ncrsp + 1
-            do j = 1,nrsmat
-              crsp(ncrsp,j) = 0.0
-            enddo
+            crsp(ncrsp,:) = 0.0
             z(ncrsp) = ff2bdry(i)*darea/twopi/tmu
             crsp(ncrsp,nffcoi + kppcur+2*i) = 1.0
           endif
         enddo
-        if (fcurbd .ne. 0.0) then
+      end select
+      select case (kfffnc)
+      case (3,4,5,6,7)
+        if (fcurbd .eq. 1.0) then
           ncrsp = ncrsp + 1
-          do j = 1,nrsmat
-            crsp(ncrsp,j) = 0.0
-          enddo
+          crsp(ncrsp,:) = 0.0
           z(ncrsp) = 0.0
-          tpsi = 1.0
           do j = 1,kffcur
-            crsp(ncrsp,nffcoi+kppcur+j) = bsffel(kfffnc,j,tpsi)
+            crsp(ncrsp,nffcoi+kppcur+j) = bsffel(kfffnc,j,1.0)
           enddo
         endif
-      endif
-      if (kfffnc .eq. 7 .and. fcurbd .eq. 1.0) then
-        ncrsp = ncrsp + 1
-        do j = 1,nrsmat
-          crsp(ncrsp,j) = 0.0
-        enddo
-        tpsi = 1.0
-        z(ncrsp) = 0.0
-        do j = 1,kffcur
-          crsp(ncrsp,nffcoi+kppcur+j) = bsffel(kfffnc,j,tpsi)
-        enddo
-      endif
+      end select
       return
       end subroutine ffcnst
       

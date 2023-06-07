@@ -1,12 +1,12 @@
 
           EFIT-AI Version
 
- Git repository url https://gitlab.com/efit-ai/efit
+ Git repository url git@gitlab.com:efit-ai/efit.git
  Git branch main
- Git hash ecdc3d5
- Git date 2023-03-06 17:48:45 +0000
- Simulation started on  3/20/2023 at  9:29:11
- Code compiled with GNU 8.5.0
+ Git hash 92b0940
+ Git date 2023-04-24 20:13:52 +0000
+ Simulation started on  5/18/2023 at 13:33:31
+ Code compiled with GNU 9.2.0
 
  type mode (1=imas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
 
@@ -16,17 +16,19 @@
  Calling $Name: V4_05 $ of the mse 
  ******************** EFIT 65 x 65 grid ********************
 
- r=  0 t=  2400 it=  1 chi2=4.13E+01 zm=-2.21E-02 err=1.805E+00 dz=-2.212E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
- r=  0 t=  2400 it=  2 chi2=2.69E+01 zm=-2.24E-02 err=6.879E-02 dz=-2.969E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 3.44E+00
- r=  0 t=  2400 it=  3 chi2=2.79E+01 zm=-2.25E-02 err=4.510E-02 dz=-5.292E-05 delz= 0.000E+00 dj=0.000E+00 chigam= 3.44E+00
- r=  0 t=  2400 it=  4 chi2=4.04E+01 zm=-2.74E-02 err=2.401E-02 dz=-4.938E-03 delz= 9.803E-01 dj=2.143E-02 chigam= 3.78E+00
- r=  0 t=  2400 it=  5 chi2=2.68E+01 zm=-3.01E-02 err=1.282E-02 dz=-2.642E-03 delz= 5.517E-01 dj=1.202E-02 chigam= 3.74E+00
- r=  0 t=  2400 it=  6 chi2=2.30E+01 zm=-3.14E-02 err=7.090E-03 dz=-1.329E-03 delz= 3.045E-01 dj=6.755E-03 chigam= 3.78E+00
- r=  0 t=  2400 it=  7 chi2=2.20E+01 zm=-3.21E-02 err=3.983E-03 dz=-7.096E-04 delz= 1.862E-01 dj=4.153E-03 chigam= 3.83E+00
- r=  0 t=  2400 it=  8 chi2=2.17E+01 zm=-3.25E-02 err=2.441E-03 dz=-3.851E-04 delz= 1.225E-01 dj=2.751E-03 chigam= 3.87E+00
- r=  0 t=  2400 it=  9 chi2=2.16E+01 zm=-3.27E-02 err=1.738E-03 dz=-2.228E-04 delz= 9.059E-02 dj=2.046E-03 chigam= 3.89E+00
- r=  0 t=  2400 it= 10 chi2=2.16E+01 zm=-3.28E-02 err=1.249E-03 dz=-1.351E-04 delz= 7.335E-02 dj=1.663E-03 chigam= 3.91E+00
- r=  0 t=  2400 it= 11 chi2=2.16E+01 zm=-3.29E-02 err=8.984E-04 dz=-8.577E-05 delz= 6.370E-02 dj=1.449E-03 chigam= 3.93E+00
+ r=  0 t=  2400 it=  1 chi2=4.13E+01 zm=-2.21E-02 err=3.610E+00 dz=-2.212E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+ r=  0 t=  2400 it=  2 chi2=2.69E+01 zm=-2.24E-02 err=1.376E-01 dz=-2.969E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 3.44E+00
+ r=  0 t=  2400 it=  3 chi2=2.79E+01 zm=-2.25E-02 err=9.021E-02 dz=-5.292E-05 delz= 0.000E+00 dj=0.000E+00 chigam= 3.44E+00
+ r=  0 t=  2400 it=  4 chi2=2.91E+01 zm=-2.24E-02 err=4.698E-02 dz= 8.024E-05 delz= 0.000E+00 dj=0.000E+00 chigam= 3.49E+00
+ r=  0 t=  2400 it=  5 chi2=4.28E+01 zm=-2.74E-02 err=2.744E-02 dz=-5.056E-03 delz= 1.025E+00 dj=2.268E-02 chigam= 3.87E+00
+ r=  0 t=  2400 it=  6 chi2=2.76E+01 zm=-3.01E-02 err=1.537E-02 dz=-2.699E-03 delz= 5.764E-01 dj=1.277E-02 chigam= 3.81E+00
+ r=  0 t=  2400 it=  7 chi2=2.34E+01 zm=-3.15E-02 err=9.522E-03 dz=-1.364E-03 delz= 3.202E-01 dj=7.142E-03 chigam= 3.83E+00
+ r=  0 t=  2400 it=  8 chi2=2.21E+01 zm=-3.22E-02 err=6.077E-03 dz=-6.992E-04 delz= 1.888E-01 dj=4.242E-03 chigam= 3.86E+00
+ r=  0 t=  2400 it=  9 chi2=2.18E+01 zm=-3.26E-02 err=4.089E-03 dz=-3.725E-04 delz= 1.234E-01 dj=2.785E-03 chigam= 3.89E+00
+ r=  0 t=  2400 it= 10 chi2=2.17E+01 zm=-3.28E-02 err=2.809E-03 dz=-2.064E-04 delz= 8.982E-02 dj=2.035E-03 chigam= 3.91E+00
+ r=  0 t=  2400 it= 11 chi2=2.17E+01 zm=-3.29E-02 err=1.930E-03 dz=-1.095E-04 delz= 6.918E-02 dj=1.579E-03 chigam= 3.93E+00
+ r=  0 t=  2400 it= 12 chi2=2.17E+01 zm=-3.30E-02 err=1.360E-03 dz=-6.639E-05 delz= 6.033E-02 dj=1.380E-03 chigam= 3.94E+00
+ r=  0 t=  2400 it= 13 chi2=2.17E+01 zm=-3.30E-02 err=9.640E-04 dz=-4.215E-05 delz= 5.539E-02 dj=1.269E-03 chigam= 3.94E+00
 
        data used:   
  39 flux loops
@@ -35,11 +37,11 @@
   0 diamagnetic loop
 
 
- shot #   =     186610 time(ms) =       2400 chi**2   =  2.153E+01
+ shot #   =     186610 time(ms) =       2400 chi**2   =  2.158E+01
  betat(%) =      0.259 betap    =      0.068 li       =      1.184
- vol(cm3) =  1.776E+07 rout(cm) =    172.772 zout(cm) =      5.859
- elong    =      1.787 utriang  =      0.743 ltriang  =      0.349
- a(cm)    =     56.514 lin(cm)  =     14.527 lout(cm) =      5.783
- ltop(cm) =     16.504 q*       =      3.874 rc(cm)   =    170.240
- zc(cm)   =     -2.667 bt0(t)   =      1.638 qout     =      7.226
+ vol(cm3) =  1.775E+07 rout(cm) =    172.776 zout(cm) =      5.873
+ elong    =      1.787 utriang  =      0.744 ltriang  =      0.349
+ a(cm)    =     56.522 lin(cm)  =     14.523 lout(cm) =      5.772
+ ltop(cm) =     16.490 q*       =      3.874 rc(cm)   =    170.241
+ zc(cm)   =     -2.667 bt0(t)   =      1.638 qout     =      7.212
 INFO in efit at r=  0, t=  2400: Done processing

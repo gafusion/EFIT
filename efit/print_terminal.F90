@@ -25,9 +25,11 @@
       character*30 sfname
       character(1000) :: line
       real*8 xrsp(npcurn)
-      real*8 patmpz(magpri),xmpz(magpri),ympz(magpri),ampz(magpri)
+      real*8 patmpz(magpri),xmpz(magpri),ympz(magpri),ampz(magpri), &
+             rsisfc(nfcoil)
       integer*4, dimension(:), allocatable :: ishotall
       real*8, dimension(:), allocatable :: ch2all,timeall
+      real*8, parameter :: zetafc=2.5e-08_dp
       ! DIIID specific parameters for writing mhdin.new file
       integer*4, parameter :: magpri67=29,magpri322=31
 
@@ -131,10 +133,11 @@
           write (nout,11004) infosc,rowcnd,colcnd,arspmax
         endif
 
-        write (nout,11030)
-        write (nout,11020) (brsp(i)/turnfc(i),i=1,nfsum)
         write (nout,11000)
+        write (nout,11020) (brsp(i)/turnfc(i),i=1,nfsum)
+        write (nout,11030)
         write (nout,11020) (brsp(i),i=1,nfsum)
+
         sumif=0.0
         do i=1,5
           sumif=sumif+brsp(i)+brsp(i+9)
@@ -147,10 +150,17 @@
           sumifs=sumifs+brsp(i)**2
         end do
         sumifs=sqrt(sumifs/(nfsum-1))
-
         write (nout,10020) sumif,sumift,sumifs
+
+        rsisfc=-1.
+        do i=1,nfcoil 
+          if(rsisfc(i).le.-1.0) & 
+            rsisfc(i)=(turnfc(fcid(i))*fcturn(i))**2 &
+                      *twopi*rf(i)/wf(i)/hf(i)*zetafc 
+        enddo
         write (nout,11010)
         write (nout,11020) (rsisfc(i),i=1,nfsum)
+
         if (ivacum.eq.0.and.(icurrt.eq.2.or.icurrt.eq.5)) then
           xnorm=brsp(nfsum+1)
           write (nout,11040) xnorm
@@ -598,7 +608,7 @@
 11020 format(4e15.6)
 11022 format(/,12x,' vessel vertical forces (p, newton) ',e15.6)
 11024 format(/,12x,' vessel vertical forces (t, newton) ',e15.6)
-11030 format(//,22x,'F-coils currents (Amp/turn)')
+11030 format(//,22x,'F-coils currents (Amp-turn)')
 11032 format(//,12x,'Electrostatic potential derivative PIEPRIM:')
 11034 format(//,12x,'Hyperbolic P:',e15.6)
 11036 format(//,12x,'Hyperbolic FF:',e15.6)

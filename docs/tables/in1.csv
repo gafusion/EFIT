@@ -32,10 +32,6 @@ ERRMAGB,,See IMAGSIGMA (deprecated)
 ERRMIN,1e-2,"Minimum convergence error before exit for ICONVR=2 option.  If chi-squared on any iteration is larger than on previous iteration, then if relative error < ERRMIN and chi-squared < SAICON, iterations stop."
 ERROR,1e-2,"Specifies when EFIT should stop iterating to solution. If chi-squared decreases monotonically, then iterations stop when the relative error (max flux difference between successive iterations) < ERROR.  See also ICONVR and ERRMIN alternatives."
 ERRORQ, 1e-3, "Standard deviation for q fitting."
-FCURBD,, "| FF' Boundary Constraint.
-| 1 = force FF'=0 at boundary.
-| 0 = let FF' have a finite value at boundary
-| The method by which FF'=0 is forced is to add another parameter to the parametrization whose coefficient is the negative sum of all other coefficients. (This makes sense for poly parametrization - what about other parametrizations?)"
 GAMMAP,1e10, GAQ current profile parameter. (Used for both P and F profiles)
 IACOIL, 0, 1 = turn on advance divertor coil. 
 IAVED,, "Time in milliseconds for averaging CO2 density data, 10. (actually get +/- this value)"
@@ -218,9 +214,6 @@ NQITER,10,convergent parameter for axial safety factor.
 NSLREF,1,"Index in set of flux loops of reference flux. Used to be 8 for D-III, but now is 1 (default) for DIII-D."
 NXITER,1,Number of inner equilibrium iterations. Set to 1 for fitting. See also MXITER.
 PBEAM,,"""Pressure Beam"". Beam pressure in n/m2 vs. normalized flux for kinetic fitting (typically calculated in ONETWO)."
-PCURBD,,"| P' Boundary Constraint.
-| 1 = force P'=0 at boundary (default).
-| 0 = allow finite P' at boundary. The method for forcing P'=0 is the same as for FCURBD."
 PLASMA,, plasma current in Amps. 0 for vacuum field calculation.
 PRBDRY, 0.0,
 PRESPB, 0.0, P' constraint at the axis.  See KPRESSB

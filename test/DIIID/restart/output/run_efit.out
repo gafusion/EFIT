@@ -1,37 +1,30 @@
 
-          EFIT-AI
+          EFIT-AI Version
 
-Git repository url git@gitlab.com:efit-ai/efit.git
+ Git repository url git@gitlab.com:efit-ai/efit.git
+ Git branch main
+ Git hash 92b0940 with
+ Git date 2023-04-24 20:13:52 +0000
+ Simulation started on  5/18/2023 at 13:32:37
+ Code compiled with GNU 9.2.0
 
-Git branch consistency
-
-Git hash edf6065 with local modifications
-
-Git date 2022-07-20 15:18:46 -0700
-
-Simulation started on  7/21/2022 at 20:25:27
-
-Code compiled with PGI 18.7.0
-
-
- type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
-
- number of time slices?
+ type mode (1=imas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
 
  type input file names:
- #
- table_di2 = </home/bechtelt/efitall/efit/build_pgi_ser/test/DIIID/green/>
 
-******************** EFIT-AI 65 x 65 grid ********************
+ table_di2 = <../green/>
+ ******************** EFIT 65 x 65 grid ********************
 
- r=  0 t=  2400 it=  1 chi2=3.89E+01 zm=-3.15E-02 err=1.549E+00 dz=-3.146E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
- r=  0 t=  2400 it=  2 chi2=2.24E+01 zm=-3.10E-02 err=2.314E-02 dz= 4.316E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.27E+01
- r=  0 t=  2400 it=  3 chi2=2.29E+01 zm=-3.06E-02 err=1.149E-02 dz= 4.126E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.29E+01
- r=  0 t=  2400 it=  4 chi2=2.76E+01 zm=-3.37E-02 err=8.768E-03 dz=-3.079E-03 delz= 8.640E-01 dj=2.015E-02 chigam= 1.33E+01
- r=  0 t=  2400 it=  5 chi2=2.34E+01 zm=-3.52E-02 err=4.218E-03 dz=-1.493E-03 delz= 5.009E-01 dj=1.246E-02 chigam= 1.29E+01
- r=  0 t=  2400 it=  6 chi2=2.26E+01 zm=-3.59E-02 err=2.476E-03 dz=-6.807E-04 delz= 3.215E-01 dj=7.869E-03 chigam= 1.28E+01
- r=  0 t=  2400 it=  7 chi2=2.24E+01 zm=-3.62E-02 err=1.553E-03 dz=-3.280E-04 delz= 2.487E-01 dj=6.089E-03 chigam= 1.28E+01
- r=  0 t=  2400 it=  8 chi2=2.23E+01 zm=-3.63E-02 err=9.353E-04 dz=-1.337E-04 delz= 2.062E-01 dj=5.044E-03 chigam= 1.28E+01
+ r=  0 t=  2400 it=  1 chi2=3.89E+01 zm=-3.15E-02 err=3.098E+00 dz=-3.146E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+ r=  0 t=  2400 it=  2 chi2=2.24E+01 zm=-3.10E-02 err=4.627E-02 dz= 4.316E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.27E+01
+ r=  0 t=  2400 it=  3 chi2=2.29E+01 zm=-3.06E-02 err=2.298E-02 dz= 4.126E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.29E+01
+ r=  0 t=  2400 it=  4 chi2=2.76E+01 zm=-3.37E-02 err=1.754E-02 dz=-3.079E-03 delz= 8.640E-01 dj=2.015E-02 chigam= 1.33E+01
+ r=  0 t=  2400 it=  5 chi2=2.34E+01 zm=-3.52E-02 err=8.436E-03 dz=-1.493E-03 delz= 5.009E-01 dj=1.246E-02 chigam= 1.29E+01
+ r=  0 t=  2400 it=  6 chi2=2.26E+01 zm=-3.59E-02 err=4.952E-03 dz=-6.807E-04 delz= 3.215E-01 dj=7.869E-03 chigam= 1.28E+01
+ r=  0 t=  2400 it=  7 chi2=2.24E+01 zm=-3.62E-02 err=3.107E-03 dz=-3.280E-04 delz= 2.487E-01 dj=6.089E-03 chigam= 1.28E+01
+ r=  0 t=  2400 it=  8 chi2=2.23E+01 zm=-3.63E-02 err=1.871E-03 dz=-1.337E-04 delz= 2.062E-01 dj=5.044E-03 chigam= 1.28E+01
+ r=  0 t=  2400 it=  9 chi2=2.22E+01 zm=-3.64E-02 err=1.256E-03 dz=-6.893E-05 delz= 1.931E-01 dj=4.722E-03 chigam= 1.28E+01
+ r=  0 t=  2400 it= 10 chi2=2.22E+01 zm=-3.64E-02 err=8.646E-04 dz=-3.764E-05 delz= 1.867E-01 dj=4.565E-03 chigam= 1.28E+01
 
        data used:   
  39 flux loops
@@ -40,14 +33,14 @@ Code compiled with PGI 18.7.0
   0 diamagnetic loop
 
 
- shot #   =     186610 time(ms) =       2400 chi**2   =  2.196E+01
- betat(%) =      0.283 betap    =      0.075 li       =      1.196
- vol(cm3) =  1.765E+07 rout(cm) =    172.801 zout(cm) =      6.899
+ shot #   =     186610 time(ms) =       2400 chi**2   =  2.198E+01
+ betat(%) =      0.283 betap    =      0.075 li       =      1.195
+ vol(cm3) =  1.764E+07 rout(cm) =    172.801 zout(cm) =      6.919
  elong    =      1.798 utriang  =      0.751 ltriang  =      0.303
- a(cm)    =     56.377 lin(cm)  =     14.693 lout(cm) =      5.891
- ltop(cm) =     15.223 q*       =      3.879 rc(cm)   =    170.136
- zc(cm)   =     -2.652 bt0(t)   =      1.638 qout     =      6.453
+ a(cm)    =     56.378 lin(cm)  =     14.692 lout(cm) =      5.890
+ ltop(cm) =     15.195 q*       =      3.880 rc(cm)   =    170.134
+ zc(cm)   =     -2.656 bt0(t)   =      1.638 qout     =      6.436
 
   fit errors, shot  186610  2400. msec. all eqdsks are still written
-     Error #21, Bp not consistent , error =  0.967E-01
+     Error #21, Bp not consistent , error =  0.109E+00
 INFO in efit at r=  0, t=  2400: Done processing

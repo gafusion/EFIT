@@ -298,19 +298,10 @@
       implicit none
       real*8, intent(inout) :: psigrid(nwnh)
       integer*4, intent(out) :: kerror
-      integer*4 ef_init_cycred_data
-      integer*4 initresult,i,ii,j,is,nn
+      integer*4 i,ii,j,is,nn
       real*8 sia(nwnh)
 
       kerror = 0
-
-! ----------------------------------------------------------------------
-!     Call the initialization and check the result
-      initresult=ef_init_cycred_data()
-      if (initresult.eq.1) then
-        kerror = 1
-        return
-      endif
 
 ! ----------------------------------------------------------------------
 !     transpose the matrix, solver needs transposition (same as buneto)
