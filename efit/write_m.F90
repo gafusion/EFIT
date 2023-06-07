@@ -210,7 +210,11 @@
       idim_time = NCDDEF(nceq,'dim_time',NCUNLIM,ierr)
       idim_1 = NCDDEF(nceq,'dim_scalar',1,ierr)
       idim_device = NCDDEF(nceq,'dim_device',10,ierr)
-      idim_nstark = NCDDEF(nceq,'dim_nstark',nstark,ierr)
+      if (klibim.gt.0) then
+        idim_nstark = NCDDEF(nceq,'dim_nstark',nstark,ierr)
+      else
+        idim_nstark = NCDDEF(nceq,'dim_nstark',nmselp,ierr)
+      endif
       idim_nsilop = NCDDEF(nceq,'dim_nsilop',nsilop,ierr)
       idim_magpri = NCDDEF(nceq,'dim_magpri',magpri,ierr)
       idim_nfsum = NCDDEF(nceq,'dim_nfcoil',nfsum,ierr)
@@ -473,8 +477,8 @@
 !
       dim2(1) = idim_nfsum
       id_fccurt = NCVDEF(nceq,'fccurt',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_fccurt,'long_name',NCCHAR,30, &
-                  'measured F-coil currents (Amp)',ierr)
+      call NCAPTC(nceq,id_fccurt,'long_name',NCCHAR,36, &
+                  'measured F-coil currents (Amp-turns)',ierr)
 !
       id_sigfc = NCVDEF(nceq,'sigfc',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_sigfc,'long_name',NCCHAR,30, &
@@ -485,8 +489,8 @@
                   'weight for F-coil currents',ierr)
 !
       id_ccbrsp = NCVDEF(nceq,'ccbrsp',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_ccbrsp,'long_name',NCCHAR,32, &
-                  'calculated F-coil currents (Amp)',ierr)
+      call NCAPTC(nceq,id_ccbrsp,'long_name',NCCHAR,38, &
+                  'calculated F-coil currents (Amp-turns)',ierr)
 !
       id_saifc = NCVDEF(nceq,'saifc',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_saifc,'long_name',NCCHAR,25, &

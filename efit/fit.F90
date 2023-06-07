@@ -210,7 +210,7 @@
         end do
       end do
 
-      errorm=errorm/abs(sidif)
+      errorm=errorm/abs(sidif)/relax
 
       aveerr(nx)=errave/abs(sidif)/nwnh
       cerror(nx)=errorm

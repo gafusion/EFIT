@@ -326,7 +326,7 @@
 
       module var_fcoil
       real*8,dimension(:),allocatable :: rf,zf,wf,hf,af,af2, &
-                                         rsisfc,turnfc,fcturn
+                                         turnfc,fcturn
       integer*4,dimension(:),allocatable :: fcid
       end module var_fcoil 
 
@@ -514,7 +514,6 @@
       use eparm,only:ntime,magpri
       integer*4 ibtcomp,ierbtc
       real*8,dimension(:),allocatable :: signbt
-      real*8,dimension(:),allocatable :: bti322
       end module var_btcomp
 
       module var_subic
@@ -579,96 +578,6 @@
       integer*4 imagsigma
       real*8 errmag,errmagb
       end module var_magerror
-
-      module var_psilopdat
-      real*8,dimension(:),allocatable :: psircg,psi_k,psi_rc,vrespsi,t0psi
-      real*8,dimension(:,:),allocatable :: devpsi,rnavpsi
-      integer*4,dimension(:,:),allocatable :: navpsi
-      end module var_psilopdat
-
-      module var_plasmacurrdat
-      real*8 prcg,p_k,p_rc,vresp,t0p
-      integer*4,dimension(:),allocatable :: navp
-      real*8,dimension(:),allocatable :: devp,rnavp
-      end module var_plasmacurrdat
-
-      module var_ccoilsdat
-      real*8,dimension(:),allocatable :: ccrcg,cc_k,cc_rc,vrescc,t0cc
-      real*8,dimension(:,:),allocatable :: devcc
-      integer*4,dimension(:,:),allocatable :: navcc
-      end module var_ccoilsdat
-
-      module var_icoilsdat
-      real*8,dimension(:),allocatable :: xicrcg,xic_k,xic_rc,vresxic,t0xic
-      real*8,dimension(:,:),allocatable :: devxic
-      integer*4,dimension(:,:),allocatable :: navxic
-      end module var_icoilsdat
-
-      module var_n1coildat
-      real*8 xn1rcg,xn1_k,xn1_rc,vresxn1,t0xn1
-      real*8,dimension(:),allocatable :: devxn1
-      integer*4,dimension(:),allocatable :: navxn1
-      end module var_n1coildat
-
-      module var_vloopdat
-      real*8 vlrcg,vl_k,vl_rc, vresvl,t0vl
-      real*8,dimension(:),allocatable :: devvl
-      integer*4,dimension(:),allocatable :: navvl
-      end module var_vloopdat
-
-      module var_diamdat
-      real*8 diamrcg,diam_k,diam_rc,vresdiam,t0diam
-      real*8,dimension(:),allocatable :: devdiam
-      integer*4,dimension(:),allocatable :: navdiam
-      end module var_diamdat
-
-      module var_denvdat
-      real*8,dimension(:),allocatable :: denvrcg,denv_k,denv_rc,vresdenv,t0denv
-      real*8,dimension(:,:),allocatable :: devdenv
-      integer*4,dimension(:,:),allocatable :: navdenv
-      end module var_denvdat
-
-      module var_denrdat
-      real*8,dimension(:),allocatable :: denrrcg,denr_k,denr_rc,vresdenr,t0denr
-      real*8,dimension(:,:),allocatable :: devdenr
-      integer*4,dimension(:,:),allocatable :: navdenr
-      end module var_denrdat
-
-      module var_magprobdat
-      real*8,dimension(:),allocatable :: xmprcg,xmp_k,xmp_rc,vresxmp,t0xmp
-      real*8,dimension(:,:),allocatable :: devxmp,rnavxmp
-      integer*4,dimension(:,:),allocatable :: navxmp
-      end module var_magprobdat
-
-      module var_btcompdat
-      real*8 btrcg,bt_k,bt_rc,vresbt,t0bt
-      real*8,dimension(:),allocatable :: devbt
-      integer*4,dimension(:),allocatable :: navbt
-      end module var_btcompdat
-
-      module var_btordat
-      real*8 bcrcg,bc_k,bc_rc,vresbc,t0bc
-      real*8,dimension(:),allocatable :: devbc, rnavbc
-      integer*4,dimension(:),allocatable :: navbc
-      end module var_btordat
-
-      module var_fcoildat
-      real*8,dimension(:),allocatable :: fcrcg,fc_k,fc_rc,vresfc,t0fc
-      real*8,dimension(:,:),allocatable :: devfc,rnavfc
-      integer*4,dimension(:,:),allocatable :: navfc
-      end module var_fcoildat
-
-      module var_ecoildat
-      real*8,dimension(:),allocatable :: ercg,e_k,e_rc,vrese,t0e
-      real*8,dimension(:,:),allocatable :: deve,rnavec
-      integer*4,dimension(:,:),allocatable :: navec
-      end module var_ecoildat
-
-      module var_beamdat
-      real*8 beamrcg,beam_k,beam_rc,vresbeam,t0beam
-      real*8,dimension(:),allocatable :: devbeam
-      integer*4,dimension(:),allocatable :: navbeam
-      end module var_beamdat
 !
       module commonblocks
       real*8,allocatable :: c(:,:,:,:),wk(:),copy(:,:),bkx(:),bky(:), &

@@ -2,7 +2,7 @@ Variable, Definition
 "ACCURT(ntime, nacoil)",	measured A-coil currents in Amp
 "A1-8GAM(ntime, nstark)",	viewing geometry coefficients of MSE channels
 "CACCURT(ntime, nacoil)",	calculated A-coil currents in Amp
-"CCBRSP(ntime, nfcoil)",	calculated F-coil currents in Amp
+"CCBRSP(ntime, nfsum)",	calculated F-coil currents in Amp-turns
 "CCHISQ(ntime, nitera)", total chi squared vs. iteration number
 "CDFLUX(ntime)",	calculated diamagnetic flux
 "CECURR(ntime, nesum)",	calculated E-coil currents in Amp
@@ -32,12 +32,12 @@ DEVICE,	machine name
 "DIAMAG(ntime)",	measured diamagnetic flux
 "ECCURT(ntime, nesum)",	measured E-coil currents in Amp
 "EXPMPI(ntime, magpri)", measured magnetic probes
-"FCCURT(ntime, nfcoil)",	measured F-coil currents in Amp
+"FCCURT(ntime, nfsum)",	measured F-coil currents in Amp-turns
 "FIXGAM(ntime, nstark)",	radians correction of tangam for spatial averaging effects
 "FWTCUR(ntime)", 	weight for plasma current in Amp
 "FWTDLC(ntime)",	weight for diamagnetic flux
 "FWTEC(ntime, nesum)",	weight for E-coil currents
-"FWTFC(ntime, nfcoil)", weight for F-coil currents
+"FWTFC(ntime, nfsum)", weight for F-coil currents
 "FWTGAM(ntime, nstark)", fitting weight for MSE channels
 "FWTMP2(ntime, magpri)", 	weight for magnetic probes
 "FWTREF(ntime)", 	weight for reference flux loop
@@ -68,7 +68,7 @@ DEVICE,	machine name
 | >0:R coordinates of input rotational pressure profile in m"
 "RRGAM(ntime, nstark)", radius (R position) of MSE channels
 "SAIEC(ntime, nesum)",	chisq for E-coil currents
-"SAIFC(ntime, nfcoil)",	chisq for F-coil currents
+"SAIFC(ntime, nfsum)",	chisq for F-coil currents
 "SAIIP(ntime)", 	chisq for plasma current
 "SAIMPI(ntime, magpri)", chisq magnetic probes
 "SAIPRE(ntime, npress)",	chisq of pressure
@@ -79,7 +79,7 @@ DEVICE,	machine name
 "SIGCUR(ntime)", 	uncertainty in plasma current
 "SIGDIA(ntime)",	uncertainty in diamagnetic flux
 "SIGEC(ntime, nesun)",	uncertainty in E-coil currents
-"SIGFC(ntime, nfcoil)",	uncertainty in F-coil currents
+"SIGFC(ntime, nfsum)",	uncertainty in F-coil currents
 "SIGGAM(ntime, nstark)",	uncertainty of tangam
 "SIGMP2(ntime, magpri)", uncertainty in magnetic probes
 "SIGPRE(ntime, npress)",	uncertainty for pressure

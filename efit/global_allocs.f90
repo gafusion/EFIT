@@ -86,7 +86,7 @@ ALLOCATE(rbrpc(nstark,npcurn),rbzpc(nstark,npcurn),rgampc(nstark,npcurn),rbrfc(n
    qsiw(mqwant),pasmsw(mqwant),fqsiw(mqwant),siwantq(mqwant),fgowsw(npcurn,mqwant), &
    rsi(nsilop),zsi(nsilop),wsi(nsilop),hsi(nsilop),as(nsilop),as2(nsilop), &
    rf(nfcoil),zf(nfcoil),wf(nfcoil),hf(nfcoil),af(nfcoil),af2(nfcoil), &
-   rsisfc(nfcoil),turnfc(nfcoil),fcid(nfcoil),fcturn(nfcoil), &
+   turnfc(nfsum),fcid(nfcoil),fcturn(nfcoil), &
    re(necoil),ze(necoil),we(necoil),he(necoil),ecid(necoil), &
    xmp2(magpri),ymp2(magpri),amp2(magpri),smp2(magpri),patmp2(magpri), &
    xlim(nlimit),ylim(nlimit),xlim_180(nlimit),ylim_180(nlimit), &
@@ -133,26 +133,7 @@ ALLOCATE(xnodef(modef),xnodep(modep),xnodew(modew),kbasef(modef), &
    ztssym(ntime),ztswid(ntime),ptssym(ntime),ztserr(ntime), &
    psin32(ntime),psin21(ntime),rq32in(ntime),rq21top(ntime), &
    sigfc(nfsum),sigec(nesum),sigsi(nsilop),sigmp2(magpri), &
-   psircg(nsilop),psi_k(nsilop),psi_rc(nsilop),vrespsi(nsilop),t0psi(nsilop), &
-   devpsi(ntime,nsilop),rnavpsi(ntime,nsilop),navpsi(ntime,nsilop), &
-   devp(ntime),navp(ntime),rnavp(ntime),ccrcg(mccoil),cc_k(mccoil), &
-   cc_rc(mccoil),vrescc(mccoil),t0cc(mccoil),devcc(ntime,mccoil), navcc(ntime,mccoil), &
-   xicrcg(micoil),xic_k(micoil),xic_rc(micoil),vresxic(micoil),t0xic(micoil), &
-   devxic(ntime,micoil),navxic(ntime,micoil), &
-   devxn1(ntime),navxn1(ntime),devvl(ntime),navvl(ntime), &
-   devdiam(ntime),navdiam(ntime), &
-   denvrcg(nco2v),denv_k(nco2v),denv_rc(nco2v),vresdenv(nco2v),t0denv(nco2v), &
-   devdenv(ntime,nco2v), navdenv(ntime,nco2v), &
-   denrrcg(nco2r),denr_k(nco2r),denr_rc(nco2r),vresdenr(nco2r), &
-   t0denr(nco2r),devdenr(ntime,nco2r),navdenr(ntime,nco2r), &
-   xmprcg(magpri),xmp_k(magpri),xmp_rc(magpri),vresxmp(magpri),t0xmp(magpri), &
-   devxmp(ntime,magpri),rnavxmp(ntime,magpri),navxmp(ntime,magpri), &
-   devbt(ntime),navbt(ntime),devbc(ntime),rnavbc(ntime),navbc(ntime), &
-   fcrcg(nfsum),fc_k(nfsum),fc_rc(nfsum),vresfc(nfsum),t0fc(nfsum), &
-   devfc(ntime,nfsum),rnavfc(ntime,nfsum),navfc(ntime,nfsum), &
-   ercg(nesum),e_k(nesum),e_rc(nesum),vrese(nesum),t0e(nesum), &
-   deve(ntime,nesum),rnavec(ntime,nesum),navec(ntime,nesum), &
-   devbeam(ntime),navbeam(ntime),signbt(magpri),bti322(ntime))
+   signbt(magpri))
    
 !-------from ecom2-mods.f90--------
 ALLOCATE(gridec(nwnh,nesum),gridvs(nwnh,nvesel),gbrpc(nstark,nwnh), &

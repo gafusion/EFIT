@@ -26,20 +26,19 @@
                    nc79name,nc139name,ncname(mccoil),niname(micoil)  !EJS(2014)
 
       integer*4 time_err,ioerr
-      character*150 textline     !EJS(2014)
-      character*10,dimension(:),allocatable :: ndenv,ndenr,fcname,ecname
-      character*10 namedum
-      character(len=1000) :: line
-      real*8 dumbtc
+      integer*4 ndump(np)
+      real*8 dumbtc,bti322(np)
       real*8,dimension(:),allocatable :: dumccc,dumcic
+      character*10 namedum
+      character*150 textline     !EJS(2014)
+      character*10 :: ndenv(nco2v),ndenr(nco2r),fcname(nfsum),ecname(nesum)
+      character(len=1000) :: line
       logical read_btcshot
 !
       namelist/in4/mpnam2,lpname,vsname,nsingl,n1name, & !JRF 
                    nc79name,nc139name,btcname,ndenv,ndenr, &
                    fcname,ecname
 !
-      ALLOCATE(ndenv(nco2v),ndenr(nco2r),fcname(nfsum),ecname(nesum))
-
       nsingl(1) = 'IP        '
       nsingl(2) ='VLOOP     '
       nsingl(3) ='BCOIL     '
@@ -121,9 +120,7 @@
         ierpsi(i)=0
         call avdata(nshot,lpname(i),i1,ierpsi(i),silopt(1:np,i), &
                     np,times,delt,i0,r1,i1,psibit(i),iavem,time(1:np), &
-                    ircfact,psi_rc(i),psircg(i), &
-                    vrespsi(i),psi_k(i), &
-                    t0psi(i),devpsi(1:np,i),navpsi(1:np,i),time_err)
+                    ircfact,time_err)
         if (ierpsi(i).eq.3) then ! TODO: this doesn't appear to be possible
           iierr=1
           return
@@ -134,7 +131,6 @@
         endif
       enddo
       ierpsi(iabs(nslref))=0
-      rnavpsi=navpsi
 !----------------------------------------------------------------------
 !--  plasma current                                                  --
 !----------------------------------------------------------------------
@@ -147,11 +143,9 @@
       ipmeas(1:np)=0.
       ierpla=0
       call avdata(nshot,nsingl(i),i1,ierpla,ipmeas(1:np), &
-                  np,times,delt,i0,r1,i1,bitip,iavem,time(1:np),ircfact, &
-                  p_rc,prcg,vresp,p_k,t0p,devp(1:np), &
-                  navp(1:np),time_err)
+                  np,times,delt,i0,r1,i1,bitip,iavem,time(1:np), &
+                  ircfact,time_err)
 
-      rnavp=REAL(navp)
       if((use_alternate_pointnames .eq. 1) .and. &      !JRF 
          (i .eq. 1)) ipmeas(1:np)=ipmeas(1:np)*0.5e6
 !----------------------------------------------------------------------
@@ -160,36 +154,34 @@
       vloopt(1:np)=0.
       ierlop=0
       call avdata(nshot,nsingl(2),i1,ierlop,vloopt(1:np), &
-                  np,times,delt,i0,r1,i1,bitvl,iavev,time(1:np),ircfact, &
-                  vl_rc,vlrcg,vresvl,vl_k,t0vl,devvl(1:np), &
-                  navvl(1:np),time_err)
+                  np,times,delt,i0,r1,i1,bitvl,iavev,time(1:np), &
+                  ircfact,time_err)
 !
       if (use_alternate_pointnames .eq. 2) then    !JRF
         if((ierpla .eq. 0) .and. (ierlop .eq. 0)) &
           ipmeas(1:np) = ipmeas(1:np) - vloopt(1:np) * 0.646/50.0 * 0.5e6
       endif
 !---------------------------------------------------------------------
-!--   Get density array from PTDATA or MDS+                         --
+!--   density
 !---------------------------------------------------------------------
       denvt = 0.0
       denrt = 0.0
       s124411: if (nshot.lt.124411) then
+!---------------------------------------------------------------------
+!--   Get density array from PTDATA
+!---------------------------------------------------------------------
       do i=1,nco2v
         ierlop=0
         call avdata(nshot,ndenv(i),i1,ierlop,denvt(1:np,i), &
-                    np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact, &
-                    denv_rc(i),denvrcg(i),vresdenv(i), &
-                    denv_k(i),t0denv(i),devdenv(1:np,i),navdenv(1:np,i), &
-                    time_err)
+                    np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np), &
+                    ircfact,time_err)
         if(ierlop.eq.0) denvt(1:np,i)=denvt(1:np,i)*50.0
       enddo
       do i=1,nco2r
         ierlop=0
         call avdata(nshot,ndenr(i),i1,ierlop,denrt(1:np,i), &
-                    np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact, &
-                    denr_rc(i),denrrcg(i),vresdenr(i), &
-                    denr_k(i),t0denr(i),devdenr(1:np,i),navdenr(1:np,i), &
-                    time_err)
+                    np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np), &
+                    ircfact,time_err)
         if(ierlop.eq.0) denrt(1:np,i)=denrt(1:np,i)*50.0
       enddo
       else s124411
@@ -212,10 +204,8 @@
 #endif
       ierlop=0
       call avdata(nshot,ndenr(2),i1,ierlop,denrt(1:np,2), &
-                  np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact, &
-                  denr_rc(2),denrrcg(2),vresdenr(2), &
-                  denr_k(2),t0denr(2),devdenr(1:np,2),navdenr(1:np,2), &
-                  time_err)
+                  np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np), &
+                  ircfact,time_err)
       if(ierlop.eq.0) denrt(1:np,2)=denrt(1:np,2)*50.0
       endif s124411
 !----------------------------------------------------------------------
@@ -224,13 +214,10 @@
       do i=1,magpri
         expmpi(1:np,i)=0.
         iermpi(i)=0
-        sclmp=1.0
         call avdata(nshot,mpnam2(i),i1,iermpi(i),expmpi(1:np,i), &
-                    np,times,delt,i0,sclmp,i1,bitmpi(i),iavem,time(1:np), &
-                    ircfact,xmp_rc(i),xmprcg(i),vresxmp(i), &
-                    xmp_k(i),t0xmp(i),devxmp(1:np,i),navxmp(1:np,i),time_err)
+                    np,times,delt,i0,1.0,i1,bitmpi(i),iavem,time(1:np), &
+                    ircfact,time_err)
       enddo
-      rnavxmp=navxmp
 !--------------------------------------------------------------------
 !--   New BT compensations for magnetic probes and flux loops      --
 !--------------------------------------------------------------------
@@ -248,14 +235,13 @@
         if(is_iostat_end(ioerr)) exit
         if(ioerr.ne.0) cycle
         if (nshot.ge.ibtcshot) then
-          bti322(1:np)=0.
+          bti322=0.
           ierbtc=0
-          call avdata(nshot,btcname,i1,ierbtc,bti322(1:np), &
+          call avdata(nshot,btcname,i1,ierbtc,bti322, &
                       np,times,delt,i0,r1,i1,bitbt,iavem,time(1:np), &
-                      ircfact,bt_rc,btrcg,vresbt,bt_k, &
-                      t0bt,devbt(1:np),navbt(1:np),time_err)
+                      ircfact,time_err)
           if (ierbtc.ne.0) then
-            bti322(1:np)=0.0
+            bti322=0.0
             exit
           endif
           do while (ioerr.eq.0)
@@ -266,13 +252,13 @@
             endif
             do i=1,magpri
               if (mpnam2(i).eq.namedum) then
-                expmpi(1:np,i)=expmpi(1:np,i)-dumbtc*bti322(1:np)
+                expmpi(1:np,i)=expmpi(1:np,i)-dumbtc*bti322
                 cycle
               endif
             enddo
             do i=1,nsilop
               if (lpname(i).eq.namedum) then
-                silopt(1:np,i)=silopt(1:np,i)-dumbtc*bti322(1:np)
+                silopt(1:np,i)=silopt(1:np,i)-dumbtc*bti322
                 cycle
               endif
             enddo
@@ -340,8 +326,7 @@
           iern1=0
           call avdata(nshot,n1name,i1,iern1,curtn1(1:np), &
                       np,times,delt,i0,r1,i1,bitn1,iavem,time(1:np), &
-                      ircfact,xn1_rc,xn1rcg,vresxn1,xn1_k, &
-                      t0xn1,devxn1(1:np),navxn1(1:np),time_err)
+                      ircfact,time_err)
           if(iern1.ne.0) curtn1(1:np)=0.0
         endif
 !----------------------------------------------------------------------
@@ -352,9 +337,7 @@
             iercc=0
             call avdata(nshot,ncname(k),i1,iercc,curccoi(1:np,k), &
                         np,times,delt,i0,r1,i1,bitipc,iavem,time(1:np), &
-                        ircfact,cc_rc(k),ccrcg(k),vrescc(k), &
-                        cc_k(k),t0cc(k),devcc(1:np,k),navcc(1:np,k), &
-                        time_err)
+                        ircfact,time_err)
             if(iercc.ne.0) curccoi(1:np,k)=0.0
           enddo
           if(oldcomp) curccoi(1:np,3)=0.0
@@ -469,9 +452,7 @@
             ieric(k)=0
             call avdata(nshot,niname(k),i1,ieric(k),curicoi(1:np,k), &
                         np,times,delt,i0,r1,i1,bitipc,iavem,time(1:np), &
-                        ircfact,xic_rc(k),xicrcg(k), &
-                        vresxic(k),xic_k(k),t0xic(k),devxic(1:np,k), &
-                        navxic(1:np,k),time_err)
+                        ircfact,time_err)
             if(ieric(k).ne.0.and.ieric(k).ne.-1) curicoi(1:np,k)=0.0
           enddo
         endif
@@ -530,9 +511,8 @@
 !--   get toroidal B field                                           --
 !----------------------------------------------------------------------
       call avdata(nshot,nsingl(3),i1,ierbto,bcentr(1:np), &
-                  np,times,delt,i0,r1,i1,bitbto,iavem,time(1:np),ircfact, &
-                  bc_rc,bcrcg,vresbc,bc_k,t0bc,devbc(1:np), &
-                  navbc(1:np),time_err)
+                  np,times,delt,i0,r1,i1,bitbto,iavem,time(1:np), &
+                  ircfact,time_err)
       if (time_err .eq. 1) then
         if (nvtime .eq. -1) then
           write(*,*) ''
@@ -548,7 +528,6 @@
         iierr = 1
         return
       endif
-      rnavbc=navbc
 !----------------------------------------------------------------------
 !--   correct sign of toroidal magnetic field to be consistent with  --
 !--   the actual sign consistent with a right-handed cylindrical     --
@@ -557,17 +536,12 @@
       bcentr(1:np)=bcentr(1:np)*tmu/rcentr*144.
       do i=1,nfsum
         fccurt(1:np,i)=0.
-        sclmp=1.0
         call avdata(nshot,fcname(i),i1,ierfc(i),fccurt(1:np,i), &
-                    np,times,delt,i0,sclmp,i1,bitfc(i),iavem,time(1:np), &
-                    ircfact,fc_rc(i),fcrcg(i),vresfc(i), &
-                    fc_k(i),t0fc(i),devfc(1:np,i),navfc(1:np,i),time_err)
+                    np,times,delt,i0,1.0,i1,bitfc(i),iavem,time(1:np), &
+                    ircfact,time_err)
         fccurt(1:np,i)=fccurt(1:np,i)*turnfc(i)
-        devfc(1:np,i) =devfc(1:np,i) *turnfc(i)
         bitfc(i)      =bitfc(i)      *turnfc(i)
-        fc_k(i)       =fc_k(i)       *turnfc(i)
       enddo
-      rnavfc=navfc
 !----------------------------------------------------------------
 !--   New E-coil connection after discharge 85700              --
 !----------------------------------------------------------------
@@ -575,8 +549,7 @@
         if (nshot.le.85700.and.i.gt.2) cycle
         call avdata(nshot,ecname(i),i1,ierec(i),eccurt(1:np,i), &
                     np,times,delt,i0,r1,i1,bitec(i),iavem,time(1:np), &
-                    ircfact,e_rc(i),ercg(i),vrese(i), &
-                    e_k(i),t0e(i),deve(1:np,i),navec(1:np,i),time_err)
+                    ircfact,time_err)
         if (time_err .eq. 1) then
           if (nvtime .eq. -1) then
             write(*,*) ''
@@ -600,7 +573,6 @@
         eccurt(1:np,4)=eccurt(1:np,2)
         eccurt(1:np,6)=eccurt(1:np,2)
       endif
-      rnavec=navec
 !----------------------------------------------------------------------
 !--   uncompensated diamagnetic flux if compensated not available    --
 !----------------------------------------------------------------------
@@ -611,14 +583,12 @@
         if (ierdia(2).gt.0.and.ierdia(3).gt.0) then
           call avdata(nshot,nsingl(4),i1,ierrdi,diamag(1:np), &
                       np,times,delt,i0,r1,i1,bitdia,iavem,time(1:np), &
-                      ircfact,diam_rc,diamrcg,vresdiam, &
-                      diam_k,t0diam,devdiam(1:np),navdiam(1:np),time_err)
+                      ircfact,time_err)
         endif
       elseif (kcaldia.eq.1) then
         call avdata(nshot,nsingl(4),i1,ierrdi,diamag(1:np), &
                     np,times,delt,i0,r1,i1,bitdia,iavem,time(1:np), &
-                    ircfact,diam_rc,diamrcg,vresdiam, &
-                    diam_k,t0diam,devdiam(1:np),navdiam(1:np),time_err)
+                    ircfact,time_err)
       endif
       diamag(1:np)=1.0e-03*diamag(1:np)
       sigdia(1:np)=1.0e-03*abs(sigdia(1:np))
@@ -627,9 +597,7 @@
 !------------------------------------------------------------------------
       if (nshot.ge.53427) then
         call apdata(nshot,nsingl(6),i1,ierbim,pbinj(1:np), &
-                    np,times,delt,i0,r1,i1,bitbim,iavem,time(1:np), &
-                    beam_rc,beamrcg,vresbeam,beam_k, &
-                    t0beam)
+                    np,times,delt,i0,r1,i1,bitbim,iavem,time(1:np))
         if (ierbim.ne.0) then
           pbinj(1:np)=0.0
         else
@@ -676,26 +644,11 @@
 !!
 !!    @param ircfact :
 !!
-!!    @param rcx :
-!!
-!!    @param rcgx :
-!!
-!!    @param vbitx :
-!!
-!!    @param zinhnox :
-!!
-!!    @param t0x :
-!!
-!!    @param stdevx :
-!!
-!!    @param navx :
-!!
 !!    @param ktime_err : error flag for time not found in database
 !!
 !**********************************************************************
       subroutine avdata(nshot,ptname,mmm,ierror,y,np, &
                         times,delt,mm,xxd,nn,bitvld,kave,time,ircfact, &
-                        rcx,rcgx,vbitx,zinhnox,t0x,stdevx,navx, &
                         ktime_err)
       use vtime_mod
       use var_inaver
@@ -705,15 +658,14 @@
       integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave,ircfact
       real*8, intent(in) :: time(np),delt,xxd,times
       character*10, intent(in) ::  ptname
-      integer*4, intent(out) :: ierror,navx(np),ktime_err
-      real*8, intent(out) :: y(np),bitvld,rcx,rcgx,vbitx,zinhnox
-      real*8, intent(out) :: t0x,stdevx(np)
+      integer*4, intent(out) :: ierror,ktime_err
+      real*8, intent(out) :: y(np),bitvld
       integer*4 mave,kkk,npn,nnp,i,j,j_save
-      real*8 xm5,xx,dtmin,tmin,tmax,bitvl,rcxx,rcgxx,vbitxx,zinhnoxx, &
-             t0xx,dtave,delta_min,delta
-      integer*4 navxx(ntims)
+      real*8 xm5,xx,dtmin,tmin,tmax,bitvl,rcx,rcgx,vbitx,zinhnox, &
+             t0x,dtave,delta_min,delta
+      integer*4 navx(ntims)
       real*8 w(npmax),xw(npmax),bw(ntims),cw(ntims),dw(ntims), &
-             stdevxx(ntims)
+             stdevx(ntims)
       data xm5/0.00001/
 !
       xx = xxd
@@ -737,13 +689,8 @@
         if (ptname .ne. 'NONE      ') then !JRF
           call getdat_e &
             (nshot,ptname,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfact, &
-            rcxx,rcgxx,vbitxx,zinhnoxx,t0xx)
+            rcx,rcgx,vbitx,zinhnox,t0x)
           bitvld = bitvl
-          rcx = rcxx
-          rcgx = rcgxx
-          vbitx = vbitxx
-          zinhnox = zinhnoxx
-          t0x = t0xx
           if((ierror .eq. -6).or.(ierror .eq. -7)) ierror = 0
         else
           ierror = 1
@@ -784,8 +731,7 @@
       endif
       if (mave .ne. 0) then
         dtave = mave*dtmin*2.
-        call smoothit2(xw(1:npn),w(1:npn),npn,dtave,stdevxx(1:npn), &
-                       navxx(1:npn))
+        call smoothit(xw(1:npn),w(1:npn),npn,dtave)
       endif
 !
       if (do_spline_fit) then       !JRF
@@ -805,8 +751,6 @@
             endif
           enddo
           y(i) = w(j_save)
-          stdevx(i) = stdevxx(j_save)
-          navx(i) = navxx(j_save)
 !          write(6,999) xw(j_save),ptname
 !999       format(1x,'match at ',f15.8,'for ',a)
         enddo
@@ -831,13 +775,8 @@
         if (ptname .ne. 'NONE      ') then
           call getdat_e &
           (nshot,ptname,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfact, &
-          rcxx,rcgxx,vbitxx,zinhnoxx,t0xx)
+          rcx,rcgx,vbitx,zinhnox,t0x)
           bitvld = bitvl
-          rcx = rcxx
-          rcgx = rcgxx
-          vbitx = vbitxx
-          zinhnox = zinhnoxx
-          t0x = t0xx
           if((ierror .eq. -6).or.(ierror .eq. -7)) ierror = 0
         else
           ierror = 1
@@ -877,8 +816,7 @@
       endif
       if (mave .ne. 0) then
         dtave = mave*dtmin*2.
-        call smoothit2(xw(1:npn),w(1:npn),npn,dtave,stdevxx(1:npn), &
-                       navxx(1:npn))
+        call smoothit(xw(1:npn),w(1:npn),npn,dtave)
       endif
 !
       if (do_spline_fit) then !JRF
@@ -898,7 +836,6 @@
             endif
           enddo
           y(i) = w(j_save)
-          stdevx(i) = stdevxx(j_save)
 !          write(6,999) xw(j_save),ptname
         enddo
       endif
@@ -940,20 +877,9 @@
 !!
 !!    @param time : array of times requested
 !!
-!!    @param rcx :
-!!
-!!    @param rcgx :
-!!
-!!    @param vbitx :
-!!
-!!    @param zinhnox :
-!!
-!!    @param t0x :
-!!
 !**********************************************************************
       subroutine apdata(nshot,ptname,mmm,ierror,y, &
-                        np,times,delt,mm,xxd,nn,bitvld,kave,time, &
-                        rcx,rcgx,vbitx,zinhnox,t0x)
+                        np,times,delt,mm,xxd,nn,bitvld,kave,time)
       use vtime_mod, only: ntims,npmax
       use var_pcsys, only: do_spline_fit
       implicit none
@@ -962,10 +888,10 @@
       real*8, intent(in) :: time(np),delt,xxd,times
       character*10, intent(in) ::  ptname
       integer*4, intent(out) :: ierror
-      real*8, intent(out) :: y(np),bitvld,rcx,rcgx,vbitx,zinhnox,t0x
+      real*8, intent(out) :: y(np),bitvld
       integer*4 mave,kkk,npn,ircfac,ktime_err,nnp,i,j,j_save
-      real*8 xm5,xx,dtmin,tmin,tmax,bitvl,rcxx,rcgxx,vbitxx,zinhnoxx, &
-             t0xx,dtave,delta_min,delta
+      real*8 xm5,xx,dtmin,tmin,tmax,bitvl,rcx,rcgx,vbitx,zinhnox, &
+             t0x,dtave,delta_min,delta
       real*8 w(npmax),xw(npmax),bw(ntims),cw(ntims),dw(ntims)
       data xm5/0.00001/
 !
@@ -988,13 +914,8 @@
         if (ptname .ne. 'NONE      ') then  !JRF
           call getdat_e &
             (nshot,ptname,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfac, &
-            rcxx,rcgxx,vbitxx,zinhnoxx,t0xx)
+            rcx,rcgx,vbitx,zinhnox,t0x)
           bitvld=bitvl
-          rcx=rcxx
-          rcgx=rcgxx
-          vbitx=vbitxx
-          zinhnox=zinhnoxx
-          t0x=t0xx
           if((ierror .eq. -6).or.(ierror .eq. -7)) ierror = 0
         else
           ierror = 1
@@ -1420,76 +1341,6 @@
       !
       return
       end subroutine smoothit
-
-!**********************************************************************
-!>
-!!    This subroutine averages data over a sliding window of width
-!!      timint in time twice and computes standard deviation of the 
-!!      first average applied.
-!!
-!!
-!!    @param times : array of times that data has been sampled
-!!
-!!    @param datarr : array of data to be averaged
-!!
-!!    @param nts : number of elements in data array to apply average
-!!
-!!    @param timint : width of the time window to average data over
-!!
-!!    @param stdev : standard deviation over the average window
-!!
-!!    @param nave : number of points in the average window
-!!
-!**********************************************************************
-      subroutine smoothit2(times,datarr,nts,timint,stdev,nave)
-      implicit none
-      integer*4, intent(in) :: nts
-      real*8, intent(in) :: times(nts),timint
-      integer*4, intent(out) :: nave(nts)
-      real*8, intent(out) :: stdev(nts)
-      real*8, intent(inout) :: datarr(nts)
-      integer*4 kount,mlow,mhigh,i
-      real*8 dtt,val,val2,dt,tlow,thigh
-      real*8 work(nts)
-      !
-      if(timint .le. 0.) return
-      dtt = timint*.5005
-      do kount=1,2
-        val = datarr(1)
-        val2 = datarr(1)**2
-        mlow = 1
-        mhigh = 1
-        do i=1,nts
-          dt = min(dtt, (times(i)-times(1))*1.001)
-          dt = min(dt, (times(nts)-times(i))*1.001)
-          tlow = times(i) - dt
-          thigh = times(i) + dt
-          if (mhigh.lt.nts) then
-            do while (times(mlow).lt.tlow .or. times(mhigh+1).le.thigh)
-              if (times(mlow) .lt. tlow) then
-                val = val - datarr(mlow)
-                val2 = val2 - datarr(mlow)**2
-                mlow = mlow + 1
-              elseif (mhigh .lt. nts .and. times(mhigh+1) .le. thigh) then
-                mhigh = mhigh + 1
-                val = val + datarr(mhigh)
-                val2 = val2 + datarr(mhigh)**2
-                if(mhigh.eq.nts) exit
-              endif
-            enddo
-          endif
-          work(i)=val/(mhigh-mlow+1)
-          if(kount .eq. 1) then   !-- calculate std dev based on raw data
-            stdev(i) = val2/(mhigh-mlow+1)-(val/(mhigh-mlow+1))**2
-            stdev(i) = sqrt(abs(stdev(i)))
-            nave(i) = mhigh-mlow+1
-          endif
-        enddo
-        datarr(1:nts)=work(1:nts)
-      enddo
-      !
-      return
-      end subroutine smoothit2
 
 ! =========================================================
 

@@ -3,9 +3,14 @@ BITEC, zeros, "(array) E-coil current physical unit equivalent to 1 digitizer co
 BITFC, zeros, "(array) F-coil current physical unit equivalent to 1 digitizer count. (F-coil bit noises) Obtained from measurements and written into K-file. Length is machine dependent (18 for DIII-D)."
 BITIP, 0.0, Plasma current physical unit equivalent to 1 digitizer count. (Ip bit noise) Obtained from measurements and written into K-file.
 BITMPI, zeros, "(array) Magnetic probes physical unit equivalent to 1 digitizer count. (Probe bit noises)Obtained from measurements and written into K-file. Length is machine dependent (76 for DIII-D)."
-BRSP, brsp(1)=-1e20, "| Current arrays; first 18 (NFCOIL) elements are F-coil currents in Amp-turns(?). 
-| BRSP not equal 0 for fixed F-coil currents. BRSP(NFCOIL+1) to BRSP(NFCOIL+KPPCUR) coefficients for P'.
-| BRSP(NFCOIL+KPPCUR+1) to BRSP(NFCOIL+KPPCUR+KFFCUR) coefficients for F2."
+BRSP, brsp(1)=-1e20, "| Current array.
+| First NFSUM (18 for DIII-D) elements are F-coil currents in Amp-turns. (NOTE: only includes TURNFC, not FCTURN)
+| For fixed F-coil currents BRSP > 0. 
+! BRSP(NFSUM+1) to BRSP(NFSUM+KPPCUR) are initial coefficients for P'.
+| BRSP(NFSUM+KPPCUR+1) to BRSP(NFSUM+KPPCUR+KFFCUR) are initial coefficients for FF'."
+BRSPTU, brsp(1)=-1e20, "| F-coil current input in Amps (not Amp-turns).
+| This NFSUM (18 for DIII-D) length array will be multiplied by TURNFC and put in BRSP.
+| The whole array will overwrite BRSP(1:NFSUM) if the first element is set."
 COILS, , Flux loop signals in v-sec/rad. Obtained from data and written into K-file.
 CURRN1, 0.0, "N1 coil current. Obtained from data and written into K-file."
 DENR, zeros, "(array) Radial line density. Length is machine dependent (3 for DIII-D). Obtained from data and written into K-file."

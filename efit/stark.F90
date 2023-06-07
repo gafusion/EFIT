@@ -142,7 +142,6 @@
         integer*4 :: i,j,ktime_all,offset,nsize
         integer*4, dimension(:), allocatable :: tmp1,tmp2
         double precision :: zwork(nmselp*12,ntime)
-        integer*4, parameter :: nsize=12*nmselp
 
 #ifdef DEBUG_LEVEL1
         ! timing variables
@@ -150,7 +149,8 @@
         double precision :: secs
         integer*4 :: total_bytes
 #endif
-        
+
+        nsize=12*nmselp
         zwork(:,:) = 0.0
         allocate(tmp1(nproc),tmp2(nproc))
 

@@ -116,7 +116,7 @@
       ecturn = 0.0
 
       allocate(rf(nfcoil),zf(nfcoil),wf(nfcoil),hf(nfcoil), &
-               af(nfcoil),af2(nfcoil),turnfc(nfcoil),fcid(nfcoil), & 
+               af(nfcoil),af2(nfcoil),turnfc(nfsum),fcid(nfcoil), & 
                fcturn(nfcoil))
       rf = 0.0
       zf = 0.0

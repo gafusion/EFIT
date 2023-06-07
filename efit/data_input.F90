@@ -35,14 +35,14 @@
       real*8 currn1,co2cor,fq95
       real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref,sgnemin, &
              idfila,sigtii,pnbeam,sgtemin,sgnethi,sgtethi, &
-             currc79,currc139,currc199,curc79in,curc139in,curc199in, &
+             currc79,currc139,currc199, &
              curriu30,curriu90,curriu150,curril30,curril90,curril150, &
-             bti322in,bremsigi,near,adn,val,rnow,znow,bfract, &
+             bremsigi,near,adn,val,rnow,znow,bfract, &
              temax,demax,timeus,timems,xlmint,xlmaxt,xxxdum, &
              signc79,signc139,tdata,tdata1,tdata2,coilmx,reflux, &
              zdif,erho,xnpc,ssrm,dth,xrm2,xrvt,th,siwant,rdif,rsum, &
              drgrids,dzgrids,psical,rselsum
-      real*8 sicont,devpsii,s1edge,scalep,scalemin,delx2,dely2,rbar,aup
+      real*8 sicont,s1edge,scalep,scalemin,delx2,dely2,rbar,aup
       real*8 rbmin_e,rbmax_e,zbmin_e,zbmax_e
       real*8 plasma_ext,c_ext,dr_ext,dz_ext,rc_ext,zc_ext,a_ext
       real*8 eup_ext,elow_ext,dup_ext,dlow_ext,setlim_ext
@@ -62,10 +62,6 @@
       real*8 tlibim(libim),slibim(libim),rrrlib(libim),zzzlib(libim), &
              aa1lib(libim),aa8lib(libim),fwtlib(libim)
       real*8 pds(6),denr(nco2r),denv(nco2v)
-      real*8 devxmpin(magpri),rnavxmpin(magpri), &
-             devpsiin(nsilop),rnavpsiin(nsilop), &
-             devfcin(nfsum),rnavfcin(nfsum), &
-             devein(nesum),rnavecin(nesum) 
       real*8 brsptu(nfsum),brsp_save(nrsmat)
       real*8, dimension(:), allocatable :: expmp2_save,coils_save, &
                                              rbdry_save,zbdry_save, &
@@ -83,7 +79,7 @@
       logical writepc ! unused variable
       integer*4, parameter :: m_ext=101,nsq=1
       real*8, parameter :: aaslop=0.6_dp,drslop=0.003_dp
-      real*8, parameter :: ersil8=1.0e-03_dp,ten2m3=1.0e-03_dp,zetafc=2.5e-08_dp,errorq=1.0e-03_dp
+      real*8, parameter :: ersil8=1.0e-03_dp,ten2m3=1.0e-03_dp,errorq=1.0e-03_dp
       !data idodo/0/,idovs/0/
       data idoac/0/,mcontr/35/
 
@@ -127,11 +123,6 @@
            fitdelz,ndelzon,relaxdz,stabdz,writepc,table_dir,errdelz, &
            oldccomp,nicoil,oldcomp,currc199,curriu30,curriu90, &
            curriu150,curril30,curril90,curril150,ifitdelz,scaledz
-      namelist/inms/xmprcg,xmp_k,vresxmp,t0xmp,psircg,psi_k,vrespsi, &
-           t0psi,fcrcg,fc_k,vresfc,t0fc,ercg,e_k,vrese,t0e,bcrcg, &
-           bc_k,vresbc,t0bc,prcg,p_k,vresp,t0p,bti322in,curc79in, &
-           curc139in,curc199in,devxmpin,rnavxmpin,devpsiin,rnavpsiin, &
-           devfcin,rnavfcin,devein,rnavecin
       namelist/ink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring,cupdown
       namelist/ins/tgamma,sgamma,fwtgam,rrrgam,zzzgam,aa1gam,aa2gam, &
@@ -284,10 +275,6 @@
       scalepw=0.0
       rbdry=0.0
       zbdry=0.0
-      bti322in=0.0
-      curc79in=0.0
-      curc139in=0.0
-      curc199in=0.0
       fpol=0.0
       pres=0.0
       ffprim=0.0
@@ -452,15 +439,6 @@
         backspace(nin)
         read(nin,fmt='(A)') line
         write(*,'(A)') 'Invalid line in namelist insxr: '//trim(line)
-        stop
-      endif
-
-      rewind(nin)
-      read (nin,inms,iostat=istat) 
-      if (istat>0) then
-        backspace(nin)
-        read(nin,fmt='(A)') line
-        write(*,'(A)') 'Invalid line in namelist inms: '//trim(line)
         stop
       endif
 
@@ -1109,48 +1087,6 @@
           call close_group("insxr",nid,h5err)
         endif
 
-        call test_group(sid,"inms",file_stat,h5err)
-        if (file_stat) then
-          call open_group(sid,"inms",nid,h5err)
-          call read_h5_ex(nid,"xmprcg",xmprcg,h5in,h5err)
-          call read_h5_ex(nid,"xmp_k",xmp_k,h5in,h5err)
-          call read_h5_ex(nid,"vresxmp",vresxmp,h5in,h5err)
-          call read_h5_ex(nid,"t0xmp",t0xmp,h5in,h5err)
-          call read_h5_ex(nid,"psircg",psircg,h5in,h5err)
-          call read_h5_ex(nid,"psi_k",psi_k,h5in,h5err)
-          call read_h5_ex(nid,"vrespsi",vrespsi,h5in,h5err)
-          call read_h5_ex(nid,"t0psi",t0psi,h5in,h5err)
-          call read_h5_ex(nid,"fcrcg",fcrcg,h5in,h5err)
-          call read_h5_ex(nid,"fc_k",fc_k,h5in,h5err)
-          call read_h5_ex(nid,"vresfc",vresfc,h5in,h5err)
-          call read_h5_ex(nid,"t0fc",t0fc,h5in,h5err)
-          call read_h5_ex(nid,"ercg",ercg,h5in,h5err)
-          call read_h5_ex(nid,"e_k",e_k,h5in,h5err)
-          call read_h5_ex(nid,"vrese",vrese,h5in,h5err)
-          call read_h5_ex(nid,"t0e",t0e,h5in,h5err)
-          call read_h5_ex(nid,"bcrcg",bcrcg,h5in,h5err)
-          call read_h5_ex(nid,"bc_k",bc_k,h5in,h5err)
-          call read_h5_ex(nid,"vresbc",vresbc,h5in,h5err)
-          call read_h5_ex(nid,"t0bc",t0bc,h5in,h5err)
-          call read_h5_ex(nid,"prcg",prcg,h5in,h5err)
-          call read_h5_ex(nid,"p_k",p_k,h5in,h5err)
-          call read_h5_ex(nid,"vresp",vresp,h5in,h5err)
-          call read_h5_ex(nid,"t0p",t0p,h5in,h5err)
-          call read_h5_ex(nid,"bti322in",bti322in,h5in,h5err)
-          call read_h5_ex(nid,"curc79in",curc79in,h5in,h5err)
-          call read_h5_ex(nid,"curc139in",curc139in,h5in,h5err)
-          call read_h5_ex(nid,"curc199in",curc199in,h5in,h5err)
-          call read_h5_ex(nid,"devxmpin",devxmpin,h5in,h5err)
-          call read_h5_ex(nid,"rnavxmpin",rnavxmpin,h5in,h5err)
-          call read_h5_ex(nid,"devpsii",devpsii,h5in,h5err)
-          call read_h5_ex(nid,"rnavpsiin",rnavpsiin,h5in,h5err)
-          call read_h5_ex(nid,"devfcin",devfcin,h5in,h5err)
-          call read_h5_ex(nid,"rnavfcin",rnavfcin,h5in,h5err)
-          call read_h5_ex(nid,"devein",devein,h5in,h5err)
-          call read_h5_ex(nid,"rnavecin",rnavecin,h5in,h5err)
-          call close_group("inms",nid,h5err)
-        endif
-   
         call test_group(sid,"inwant",file_stat,h5err)
         if (file_stat) then
           call open_group(sid,"inwant",nid,h5err)
@@ -1571,23 +1507,6 @@
       endif 
 91008 format(9e12.5,i2) 
 
-      bti322(jtime)=bti322in
-      curc79(jtime)=curc79in
-      curc139(jtime)=curc139in
-      curc199(jtime)=curc199in
-      devxmp(jtime,:)=devxmpin
-      rnavxmp(jtime,:)=rnavxmpin
-      devpsi(jtime,:)=devpsiin
-      rnavpsi(jtime,:)=rnavpsiin
-      devfc(jtime,:)=devfcin
-      rnavfc(jtime,:)=rnavfcin
-      deve(jtime,:)=devein
-      rnavec(jtime,:)=rnavecin
-! TODO: devbcin, rnavbcin, devpin, and rnavpin are never defined or set...
-!      devbc(jtime)=devbcin
-!      rnavbc(jtime)=rnavbcin
-!      devp(jtime)=devpin
-!      rnavp(jtime)=rnavpin 
 !----------------------------------------------------------------------
 !--   Setup FF', P' arrays
 !----------------------------------------------------------------------
@@ -2723,10 +2642,6 @@
 !      close(unit=nffile) 
 !      endif 
 ! 
-      do i=1,nfcoil 
-        if(rsisfc(i).le.-1.0) & 
-          rsisfc(i)=turnfc(i)**2*twopi*rf(i)/wf(i)/hf(i)*zetafc 
-      enddo
 !  525 continue 
 !----------------------------------------------------------------------- 
 !--   read in the advance divertor coil response functions if needed  -- 
