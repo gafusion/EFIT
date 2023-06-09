@@ -911,6 +911,7 @@
           call read_h5_ex(nid,"use_previous",use_previous,h5in,h5err)
           call read_h5_ex(nid,"nw_sub",nw_sub,h5in,h5err)
           call read_h5_ex(nid,"nh_sub",nh_sub,h5in,h5err)
+          call read_h5_ex(nid,"write_omas",write_omas,h5in,h5err)
           call close_group("in1",nid,h5err)
         endif
    
@@ -1408,6 +1409,9 @@
       endif
       if (iplcout_prior .ne. -1) then
         iplcout = iplcout_prior
+      endif
+      if (write_omas_prior .ne. -1) then
+        write_omas = write_omas_prior
       endif
       
       ! warn that idebug, jdebug, and ktear inputs are deprecated
