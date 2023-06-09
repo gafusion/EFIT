@@ -268,7 +268,8 @@
                 kfcurb,kpcurb,kzeroj,ncstne,ncstte,write_omas, &
                 kwripre,negcur,kframe,kskipvs,icntour,iavdpl, &
                 limvs,kbound,kgraph,istore,iout,iout_prior,kdopre, &
-                iishot,kktime,iplcout,iplcout_prior,ksigma,kwritime
+                iishot,kktime,iplcout,iplcout_prior,ksigma,kwritime, &
+                write_omas_prior
       integer*4 iteks,mxiters,n1coils,ierchks
       integer*4 itekt,mxitert,n1coilt
       real*8 zelipss,zeliptt

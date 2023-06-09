@@ -23,7 +23,7 @@
       namelist/setup/link_efit,link_store,maxinpfile,ntims,kxiter
       namelist/optin/mode,cmdfile,shotfile,shot,starttime,deltatime, &
                      steps,snapext,inpfile
-      namelist/in0/ierchk,iout,iplcout,req_valid
+      namelist/in0/ierchk,iout,iplcout,req_valid,write_omas
 
       ! Initialize variables
       input_flag = .false.
@@ -50,6 +50,8 @@
       iplcout_prior = -1
       req_valid = .false.
       req_valid_prior = .false.
+      write_omas = -1
+      write_omas_prior = -1
 
       ! Determine if input file exists
       if(rank == 0) inquire(file='efit.input',exist=input_flag)
@@ -119,6 +121,9 @@
       endif
       if (iout .ne. -1) then
         iout_prior = iout
+      endif
+      if (write_omas .ne. -1) then
+        write_omas_prior = write_omas
       endif
 
       return
