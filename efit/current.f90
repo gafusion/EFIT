@@ -41,11 +41,8 @@
 
       if(ivacum.eq.1) return
       if((nitett.le.1).and.(icinit.eq.1)) return
-      GAQ: if (((icinit.gt.0).and.(iconvr.ne.3).and.(iter.le.1)).or.(icurrt.eq.4).or. &
+      if (((icinit.gt.0).and.(iconvr.ne.3).and.(iter.le.1)).or.(icurrt.eq.4).or. &
         (((icurrt.eq.2).or.(icurrt.eq.5)).and.(nitett.le.1).and.(icinit.gt.0))) then
-!-----------------------------------------------------------------------
-!--    GAQ type current profile                                       --
-!-----------------------------------------------------------------------
        if (kvtor.eq.11) then
          n1set=1
          ypsi=0.5_dp
@@ -53,11 +50,10 @@
          prew0=pwcur4(n1set,ypsi)
          n1set=0
        endif
-       tcurrt=0.0
+       pcurrt=0.0
        do i=1,nw
         do j=1,nh
          kk=(i-1)*nh+j
-         pcurrt(kk)=0.0
          if((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) cycle
          rdiml=rgrid(i)/rzero
          pp0=(1.-xpsi(kk)**enp)**emp*(1.-gammap)+gammap
@@ -89,9 +85,9 @@
            pcurrt(kk)=pcurrt(kk)+(pp0+ppw)*rdiml*ptop0
          endif
          pcurrt(kk)=pcurrt(kk)*www(kk)
-         tcurrt=tcurrt+pcurrt(kk)
         enddo
        enddo
+       tcurrt=sum(pcurrt)
        if (abs(tcurrt).le.1.0e-10_dp) then
          ! there is likely a problem with the weights (www)
          kerror=1
@@ -110,9 +106,9 @@
          dfsqe=dfsqe+((1.-sinow**enf)**emf*(1.-gammaf)+gammaf)
        enddo
        dfsqe=dfsqe*2.*twopi/tmu*rzero*cratio*rbetap/darea*ddpsi
-       if (nitett.gt.1) return
-       if (icurrt.ne.2.and.icurrt.ne.5) return
-       if (fwtbp.le.0.0) return
+       if(nitett.gt.1) return
+       if(icurrt.ne.2.and.icurrt.ne.5) return
+       if(fwtbp.le.0.0) return
        do i=1,kppcur
          brsp(nfsum+i)=0.0
        enddo
@@ -124,19 +120,18 @@
        brsp(nfsum+2)=-brsp(nfsum+1)
        brsp(nbase+2)=-brsp(nbase+1)
        return
-      endif GAQ
+      endif
 !
       select case (icurrt)
       case default ! 1
 !------------------------------------------------------------------------------
 !--    uniform current for Solovev equilibrium                               --
 !------------------------------------------------------------------------------
-       tcurrt=0.0
+       pcurrt=0.0
+       pcurrw=0.0
        do i=1,nw
          do j=1,nh
            kk=(i-1)*nh+j
-           pcurrt(kk)=0.0
-           pcurrw(kk)=0.0
            if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) cycle
            rdiml=rgrid(i)/srma
            pcurrt(kk)=sbeta*rdiml+2.*salpha/rdiml
@@ -146,9 +141,9 @@
            endif
            pcurrt(kk)=pcurrt(kk)*www(kk)
            pcurrw(kk)=pcurrw(kk)*www(kk)
-           tcurrt=tcurrt+pcurrt(kk)
          enddo
        enddo
+       tcurrt=sum(pcurrt)
        cratio=ipmhd(jtime)/tcurrt
        do kk=1,nwnh
          pcurrt(kk)=pcurrt(kk)*cratio
@@ -301,7 +296,7 @@
              calpao=brsp(nfsum+jbeta)
              alipc(nj,jbeta)=fwtxxn
              if (initc.ge.jwantm) then
-               xrsp(nj)=fwtxxn/abs(betatn)*fbetan*calpao
+               xrsp(nj)=fwtxxn/abs(betan(jtime))*fbetan*calpao
              else
                xrsp(nj)=fwtxxn*calpao
              endif
@@ -499,14 +494,11 @@
 !
        endif
        endif init_current
-       tcurrt=0.0
-       tcurrp=0.0
-       tcurrtpp=0.0
+       pcurrt=0.0
+       pcurrtpp=0.0
        do i=1,nw
          do j=1,nh
            kk=(i-1)*nh+j
-           pcurrt(kk)=0.0
-           pcurrtpp(kk)=pcurrt(kk)
            if (icutfp.eq.0) then
              if ((xpsi(kk).lt.0.0).or.(xpsi(kk).gt.1.0)) cycle
              pcurrt(kk)=rgrid(i)*ppcurr(xpsi(kk),kppcur)
@@ -525,10 +517,10 @@
              pcurrt(kk)=pcurrt(kk)*zero(kk)
              pcurrtpp(kk)=pcurrtpp(kk)*zero(kk)
            endif
-           tcurrt=tcurrt+pcurrt(kk)
-           tcurrtpp=tcurrtpp+pcurrtpp(kk)
          enddo
        enddo
+       tcurrt=sum(pcurrt)
+       tcurrtpp=sum(pcurrtpp)
        tcurrtffp=tcurrt-tcurrtpp
        if ((nitett.le.1).and.(icinit.lt.0)) then
          cratio=1.0
@@ -594,7 +586,9 @@
       case (3)
        ! continue
 !
-      ! case (4) handled by preceeding if statement
+      ! case (4)
+      ! GAQ type current profile
+      ! handled by preceeding if statement
       case (5)
 !---------------------------------------------------------------------
 !--    toroidal rotation, node points, bases :  ICURRT=5            --
@@ -769,7 +763,7 @@
          calpao=brsp(nfsum+jbeta)
          alipc(nj,jbeta)=fwtxxn
          if (initc.ge.jwantm) then
-           xrsp(nj)=fwtxxn/abs(betatn)*fbetan*calpao
+           xrsp(nj)=fwtxxn/abs(betan(jtime))*fbetan*calpao
          else
            xrsp(nj)=fwtxxn*calpao
          endif
@@ -870,13 +864,11 @@
 !
        endif
        endif init_curr
-       tcurrt=0.0
-       tcurrp=0.0
+       pcurrt=0.0
+       pcurrw=0.0
        do i=1,nw
          do j=1,nh
            kk=(i-1)*nh+j
-           pcurrt(kk)=0.0
-           pcurrw(kk)=0.0
            SOL_curr: if (icutfp.eq.0) then
 !----------------------------------------------------------------------
 !--          no attached current                                     --
@@ -978,9 +970,9 @@
                pcurrt(kk)=pcurrt(kk)+fpcurr(xpsi(kk),kffcur)/rgrid(i)
              pcurrt(kk)=pcurrt(kk)*zero(kk)
            endif SOL_curr
-           tcurrt=tcurrt+pcurrt(kk)
          enddo
        enddo
+       tcurrt=sum(pcurrt)
        if ((nitett.le.1).and.(icinit.lt.0)) then
          cratio=1.0
          return
@@ -989,6 +981,7 @@
 !--    adjust to match total current                              --
 !-------------------------------------------------------------------
        cratio=ipmhd(jtime)/tcurrt
+       tcurrp=0.0
        do kk=1,nwnh
          pcurrt(kk)=pcurrt(kk)*cratio
          pcurrw(kk)=pcurrw(kk)*cratio

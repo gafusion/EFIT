@@ -57,7 +57,7 @@
            kedgep,pedge,pe_psin,pe_width,kedgef,f2edge,fe_psin,fe_width, &
            psiecn,dpsiecn,relaxdz,fitzts,isolve,stabdz, &
            iplcout,errdelz,imagsigma,errmag,ksigma,saimin,errmagb, &
-           write_kfile,fitfcsum,fwtfcsum,appendsnap, &
+           write_omas,write_kfile,fitfcsum,fwtfcsum,appendsnap, &
            mse_quiet,mse_spave_on,kwaitmse,dtmsefull, &
            mse_strict,t_max_beam_off,ifitdelz,scaledz, &
            mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210, &
@@ -197,13 +197,20 @@
         return
       endif
       if(link_store(1:1).ne.'') store_dir=trim(link_store)
-!--   warn that idebug, jdebug, and ktear inputs are deprecated
+      ! warn that idebug, jdebug, and ktear inputs are deprecated
       if(idebug.ne.0) write(*,*) &
-      "idebug input variable is deprecated, set cmake variable instead"
+       "idebug input variable is deprecated, set cmake variable instead"
       if(jdebug.ne."NONE") write(*,*) &
-      "jdebug input variable is deprecated, set cmake variable instead"
+       "jdebug input variable is deprecated, set cmake variable instead"
       if(ktear.ne.0) write(*,*) &
-      "tearing calculations don't exist, ktear is deprecated"
+       "tearing calculations no longer exist, ktear is deprecated"
+      ! disable unwanted file writes
+      if (write_omas.eq.2) then
+        iout=0
+        iplcout=0
+        itek=0
+        kwripre=0
+      endif
 !----------------------------------------------------------------------
 !--   writes out the efitin namelist. Flag iout = 32.                --
 !----------------------------------------------------------------------

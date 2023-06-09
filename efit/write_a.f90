@@ -83,6 +83,7 @@
       else
         wform='unformatted'
       endif
+      if(write_omas.eq.2) return
 !
       header = ' '
       call setfnm('a',ishot,ijtime,itimeu,'',eqdsk)

@@ -5,7 +5,7 @@
 !!
 !!    kdata:
 !!      1: mimics option 2 but reads input from an hdf5
-!!           file that has the IMAS format
+!!           file that has the OMAS format
 !!      2: produces g-files (and others) from k-files
 !!      3-7: query databases for diagnostic inputs
 !!        3,7: produces g-files (and others)
@@ -123,24 +123,21 @@
           endif
           call fch5init
           call open_oldh5file(trim(ifname(1)),fileid,rootgid,h5in,h5err)
-          call test_group(rootgid,"equilibrium",file_stat,h5err)
+          call enter_group(rootgid,"equilibrium",eqid,file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('get_opt_input','equilibrium group not found')
             stop
           endif
-          call open_group(rootgid,"equilibrium",eqid,h5err)
-          call test_group(eqid,"code",file_stat,h5err)
+          call enter_group(eqid,"code",cid,file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('get_opt_input','code group not found')
             stop
           endif
-          call open_group(eqid,"code",cid,h5err)
-          call test_group(cid,"parameters",file_stat,h5err)
+          call enter_group(cid,"parameters",pid,file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('get_opt_input','parameters group not found')
             stop
           endif
-          call open_group(cid,"parameters",pid,h5err)
           call test_group(pid,"time_slice",file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('get_opt_input','time_slice group not found')

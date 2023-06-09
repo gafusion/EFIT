@@ -15,7 +15,7 @@ ALPHAFP, 0.0, "| Describes the width of the scrapeoff layer in which the halo cu
 | It is assumed that no current flows outside this external separatrix."
 APPDF, ones, "(array) Fraction of the distance between neighboring P' knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
 AWWDF, ones, "(array) Fraction of the distance between neighboring rotational pressure knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
-BETAP0, 0.5, "GAQ current density profile parameter. (Get GAQ form by default when you run fixed boundary calculation?) Ignored unless ICURRT=4?"
+BETAP0, 0.5, "GAQ current density profile parameter. Used by default when running fixed boundary mode."
 BTOR, ,"Toroidal magnetic field in Tesla. For fixed boundary calculation, this is specified by user. For fitting mode, this is obtained from data using input mode 5 and put into the K-file."
 CO2COR, 1.,"CO2 Correction. Correction factor to apply to Thompson to make calibration match CO2 interferometer(?)."
 CONDIN, 1e-6, 
@@ -270,6 +270,11 @@ VSDAMP, 0, Relaxation parameter for scrape-off layer current. (Always set to 0.2
 WCURBD,,"| Omega Current Boundary.
 | 0 = zero boundary gradient (default)
 | 1 = finite rotational pressure gradient POmega' at the boundary"
+WRITE_KFILE, F, "see namelist EFITIN"
+WRITE_OMAS, 0, "| Option to write output to an HDF5 file with the IMAS schema as interpreted by OMAS.
+| 0 = don't write an omas file (default)
+| 1 = write data to omas and all other files requested
+| 2 = only write an omas file (deactivates all other output options)"
 XLIM, xlim(1)=-1.0, "Major radius of limiter contour in meters. See also YLIM."
 XLTYPE, 0.0, "| Inward distance of 0 degree outside limiter in cm.
 | - = read from PTDATA if available, otherwise 0.0.

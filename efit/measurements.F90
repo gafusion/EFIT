@@ -29,9 +29,10 @@
       real*8 bitbim,bitbt,bitbto,bitdia,bitipc,bitn1,bitvl
       real*8 dumbtc,bti322(np)
       real*8,dimension(:),allocatable :: dumccc,dumcic
-      character*10 namedum
       character*150 textline     !EJS(2014)
-      character*10 :: ndenv(nco2v),ndenr(nco2r),fcname(nfsum),ecname(nesum)
+      character*10 namedum,n1name,btcname,nc79name,nc139name
+      character*10 ndenv(nco2v),ndenr(nco2r),fcname(nfsum),ecname(nesum), &
+                   nsingl(10),ncname(mccoil),niname(micoil)  !EJS(2014)
       character(len=1000) :: line
       logical read_btcshot
       integer*4, parameter :: i0=0,i1=1
@@ -585,8 +586,7 @@
 !--   uncompensated diamagnetic flux if compensated not available    --
 !----------------------------------------------------------------------
       if (kcaldia.eq.0) then
-        call avdiam(nshot,i1,ierrdi,diamag(1:np), &
-                    np,delt,i0,r1,i1,bitdia,iavem,time(1:np), &
+        call avdiam(nshot,ierrdi,diamag(1:np),np,delt,iavem,time(1:np), &
                     sigdia,ierdia)
         if (ierdia(2).gt.0.and.ierdia(3).gt.0) then
           call avdata(nshot,nsingl(4),i1,ierrdi,diamag(1:np), &
@@ -623,7 +623,7 @@
 !!
 !!    @param nshot : shot number
 !!    @param ptname : the point ptname (10 ASCII characters)
-!!    @param mmm :
+!!    @param ical : calibration type requested in GETDAT (described there)
 !!    @param ierror : error flag
 !!    @param y : output data for each time
 !!    @param np : number of time slices
@@ -639,7 +639,7 @@
 !!    @param ktime_err : error flag for time not found in database
 !!
 !**********************************************************************
-      subroutine avdata(nshot,ptname,mmm,ierror,y,np, &
+      subroutine avdata(nshot,ptname,ical,ierror,y,np, &
                         times,delt,mm,xxd,nn,bitvld,kave,time,ircfact, &
                         ktime_err)
       use vtime_mod
@@ -647,7 +647,7 @@
       use var_pcsys, only: do_spline_fit
       implicit none
       real*8 seval
-      integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave,ircfact
+      integer*4, intent(in) :: nshot,ical,np,mm,nn,kave,ircfact
       real*8, intent(in) :: time(np),delt,xxd,times
       character*10, intent(in) ::  ptname
       integer*4, intent(out) :: ierror,ktime_err
@@ -680,7 +680,7 @@
         bitvl = 0.0
         if (ptname .ne. 'NONE      ') then !JRF
           call getdat_e &
-            (nshot,ptname,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfact, &
+            (nshot,ptname,ical,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfact, &
             rcx,rcgx,vbitx,zinhnox,t0x)
           bitvld = bitvl
           if((ierror .eq. -6).or.(ierror .eq. -7)) ierror = 0
@@ -766,7 +766,7 @@
         bitvl=0.0
         if (ptname .ne. 'NONE      ') then
           call getdat_e &
-          (nshot,ptname,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfact, &
+          (nshot,ptname,ical,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfact, &
           rcx,rcgx,vbitx,zinhnox,t0x)
           bitvld = bitvl
           if((ierror .eq. -6).or.(ierror .eq. -7)) ierror = 0
@@ -842,7 +842,7 @@
 !!
 !!    @param nshot :
 !!    @param ptname : the point name (10 ASCII characters)
-!!    @param mmm :
+!!    @param ical : calibration type requested in GETDAT (described there)
 !!    @param ierror : error flag
 !!    @param y : output data for each time
 !!    @param np : number of time slices
@@ -856,13 +856,13 @@
 !!    @param time : array of times requested
 !!
 !**********************************************************************
-      subroutine apdata(nshot,ptname,mmm,ierror,y, &
+      subroutine apdata(nshot,ptname,ical,ierror,y, &
                         np,times,delt,mm,xxd,nn,bitvld,kave,time)
       use vtime_mod, only: ntims,npmax
       use var_pcsys, only: do_spline_fit
       implicit none
       real*8 seval
-      integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave
+      integer*4, intent(in) :: nshot,ical,np,mm,nn,kave
       real*8, intent(in) :: time(np),delt,xxd,times
       character*10, intent(in) ::  ptname
       integer*4, intent(out) :: ierror
@@ -891,7 +891,7 @@
         ircfac = 0
         if (ptname .ne. 'NONE      ') then  !JRF
           call getdat_e &
-            (nshot,ptname,mmm,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfac, &
+            (nshot,ptname,ical,ierror,xw,w,npn,tmin,tmax,mm,xx,bitvl,ircfac, &
             rcx,rcgx,vbitx,zinhnox,t0x)
           bitvld=bitvl
           if((ierror .eq. -6).or.(ierror .eq. -7)) ierror = 0
@@ -967,24 +967,22 @@
 !!
 !!    @param nshot : shot number
 !!    @param ptname : the point name (10 ASCII characters)
-!!    @param mmm :
+!!    @param ical : (unused)
 !!    @param ierror : error flag
 !!    @param y : output data for each time
 !!    @param np : number of time slices
 !!    @param times : first time requested (in seconds)
 !!    @param delt : (unused)
-!!    @param mm :
+!!    @param mm : (unused)
 !!    @param xxd : (unused)
-!!    @param nn :
-!!    @param bitvld : (unused)
+!!    @param nn : (unused)
+!!    @param bitvld : (unset)
 !!    @param kave : time window for averaging data (in milliseconds)
 !!    @param time : array of times requested
-!!    @param ircfact :
 !!
 !**********************************************************************
-      subroutine amdata(nshot,ptname,mmm,ierror,y, &
-                        np,times,delt,mm,xxd,nn,bitvld,kave,time, &
-                        ircfact)
+      subroutine amdata(nshot,ptname,ical,ierror,y, &
+                        np,times,delt,mm,xxd,nn,bitvld,kave,time)
       use set_kinds
       use var_pcsys, only: do_spline_fit
       implicit none
@@ -999,8 +997,8 @@
       real*4, dimension(:), allocatable :: yw4,xw4
       real*8, dimension(:), allocatable :: yw,xw,bw,cw,dw,ew
       real*8 dtmin,dtave,delta_min,delta
-      integer*4 :: stat,lenname,errallot,npn,mave, &
-                   ircfact,ktime_err,nnp,mylen, &
+      integer*4 :: stat,nshot,lenname,errallot,npn,ical,ierror, &
+                   np,mm,nn,kave,ktime_err,nnp,mylen, &
                    i,j,j_save,dsc,f_dsc,t_dsc,ldum
       data dtmin/0.001001/
 !
@@ -1190,31 +1188,24 @@
 !!    and optionally performs the average.
 !!
 !!    @param nshot : shot number
-!!    @param mmm :
 !!    @param ierror : error flag
 !!    @param y : output data for each time
 !!    @param np : number of time slices
 !!    @param delt : length between time slices (in seconds)
-!!    @param mm :
-!!    @param xxd :
-!!    @param nn :
-!!    @param bitvl : (unused)
 !!    @param kave : time window for averaging data (in milliseconds)
 !!    @param time : array of times requested
 !!    @param sigmay :
 !!    @param ierdia :
 !!
 !**********************************************************************
-      subroutine avdiam(nshot,mmm,ierror,y,np, &
-                        delt,mm,xxd,nn,bitvl,kave,time,sigmay, &
-                        ierdia)
+      subroutine avdiam(nshot,ierror,y,np,delt,kave,time,sigmay,ierdia)
       use vtime_mod, only: ntims
       implicit none
       real*8 seval
-      integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave,ierdia(3) ! mm, mmm, and nn are unused
-      real*8, intent(in) :: time(np),delt,xxd
+      integer*4, intent(in) :: nshot,np,kave,ierdia(3)
+      real*8, intent(in) :: time(np),delt
       integer*4, intent(out) :: ierror
-      real*8, intent(out) :: y(np),sigmay(np),bitvl
+      real*8, intent(out) :: y(np),sigmay(np)
       integer*4 mave,npn,i
       real*8 xm5,dtmin,tavg,dtave
       real*8 w(ntims),xw(ntims),bw(ntims),cw(ntims),dw(ntims), &

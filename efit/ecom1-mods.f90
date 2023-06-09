@@ -265,7 +265,7 @@
       integer*4 icondn,itek,kdata,itrace,ierchk,ierchk_prior,iconvr, &
                 ixray,itell,kprfit,ibound,ibatch,idite,ilaser,lookfw, &
                 kdot,icutfp,keqdsk,kdofit,kbetapr,kplotpr,kpressb, &
-                kfcurb,kpcurb,kzeroj,ncstne,ncstte, &
+                kfcurb,kpcurb,kzeroj,ncstne,ncstte,write_omas, &
                 kwripre,negcur,kframe,kskipvs,icntour,iavdpl, &
                 limvs,kbound,kgraph,istore,iout,iout_prior,kdopre, &
                 iishot,kktime,iplcout,iplcout_prior,ksigma,kwritime

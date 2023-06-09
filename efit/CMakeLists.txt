@@ -29,6 +29,12 @@ if(${HAVE_SNAP})
     write_k.F90
   )
 endif()
+if(${HDF5_FOUND})
+  set(EFITLIB_SOURCES
+    ${EFITLIB_SOURCES}
+    write_omas.F90
+  )
+endif()
 
 add_library(efitlib ${EFITLIB_SOURCES})
 add_dependencies(efitlib config_f)

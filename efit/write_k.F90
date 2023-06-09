@@ -59,11 +59,11 @@
            ppbdry,kppbdry,pp2bdry,kpp2bdry, &
            ffbdry,kffbdry,ff2bdry,kff2bdry, &
            wwbdry,kwwbdry,ww2bdry,kww2bdry, &
-           ktear,kersil,iout,ixray,table_dir,input_dir,store_dir, &
+           kersil,iout,ixray,table_dir,input_dir,store_dir, &
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve, &
            iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum, &
            efitversion,kwripre,ifindopt,tolbndpsi,siloplim,use_previous, &
-           req_valid,nw_sub,nh_sub
+           req_valid,write_omas,nw_sub,nh_sub
       namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
            znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
            fwtjtr,sigjtr,oldcomp,currc199,curriu30,curriu90, &
@@ -115,9 +115,9 @@
            mse_strict,t_max_beam_off,ifitdelz,scaledz, &
            mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210, &
            ok_30rt,ok_210lt,vbit,nbdrymx,fwtbmsels,fwtemsels, &
-           idebug,jdebug,synmsels,avemsels,kwritime, &
+           idebug,jdebug,synmsels,avemsels,kwritime,nw_sub,nh_sub, &
            v30lt,v30rt,v210lt,v210rt,ifindopt,tolbndpsi, &
-           siloplim,use_previous,ierchk,req_valid,ibunmn,nw_sub,nh_sub
+           siloplim,use_previous,ierchk,req_valid,ibunmn,write_omas
       namelist/efitink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring
       data currn1/0.0/,currc79/0.0/,currc139/0.0/,currc199/0.0/, &
@@ -182,8 +182,8 @@
 !
       read (neqdsk,efitin,iostat=istat)
       if (istat>0) then
-        backspace(nin)
-        read(nin,fmt='(A)') line
+        backspace(neqdsk)
+        read(neqdsk,fmt='(A)') line
         write(*,'(A)') 'Invalid line in namelist efitin: '//trim(line)
         stop
       endif
@@ -208,13 +208,20 @@
         return
       endif
       if (link_store(1:1).ne.'')  store_dir=trim(link_store)
-!--   warn that idebug, jdebug, and ktear inputs are deprecated
+      ! warn that idebug, jdebug, and ktear inputs are deprecated
       if (idebug.ne.0) write(*,*) &
-      "idebug input variable is deprecated, set cmake variable instead"
+       "idebug input variable is deprecated, set cmake variable instead"
       if (jdebug.ne."NONE") write(*,*) &
-      "jdebug input variable is deprecated, set cmake variable instead"
+       "jdebug input variable is deprecated, set cmake variable instead"
       if(ktear.ne.0) write(*,*) &
-      "tearing calculations don't exist, ktear is deprecated"
+       "tearing calculations no longer exist, ktear is deprecated"
+      ! disable unwanted file writes
+      if (write_omas.eq.2) then
+        iout=0
+        iplcout=0
+        itek=0
+        kwripre=0
+      endif
 #ifdef DEBUG_LEVEL2
       write (6,*) 'WRITE_K fwtbmsels= ',(fwtbmsels(i),i=1,nmsels)
 #endif
@@ -533,6 +540,16 @@
           zbdry(1)=ztssym(jtime)+0.5_dp*ztswid(jtime)
         endif
 !-----------------------------------------------------------------------
+!--     Write OMAS file if requested and setup k-file name
+!-----------------------------------------------------------------------
+#if defined(USE_HDF5)
+        if(write_omas.gt.0) call write_omas_input(jtime,ktime)
+        if(write_omas.eq.2) cycle
+#endif
+        call setfnmeq(itimeu,'k',ishot,itime,eqdsk)
+        open(unit=neqdsk,status='old',file=eqdsk,iostat=ioerr)
+        if(ioerr.eq.0) close(unit=neqdsk,status='delete')
+!-----------------------------------------------------------------------
 !--     Set bit noise for ishot > 152000                              --
 !-----------------------------------------------------------------------
 !
@@ -643,7 +660,7 @@
 
       integer*4, intent(in) :: jtime
       integer*4, intent(out) :: kerror
-      integer*4 i,ioerr,limitrss,mmstark,nbdryss,kffcurt,kppcurt,ktear
+      integer*4 i,ioerr,limitrss,mmstark,nbdryss,kffcurt,kppcurt
       real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref, &
              pnbeam,timeus,timems,currn1,currc79,currc139,currc199, &
              curriu30,curriu90,curriu150,curril30,curril90,curril150
@@ -676,10 +693,11 @@
            ppbdry,kppbdry,pp2bdry,kpp2bdry, &
            ffbdry,kffbdry,ff2bdry,kff2bdry, &
            wwbdry,kwwbdry,ww2bdry,kww2bdry, &
-           ktear,kersil,iout,ixray,table_dir,input_dir,store_dir, &
+           kersil,iout,ixray,table_dir,input_dir,store_dir, &
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve, &
            iplcout,imagsigma,errmag,saimin,errmagb,fitfcsum,fwtfcsum, &
-           kwripre,ifindopt,tolbndpsi,siloplim,efitversion,use_previous
+           kwripre,ifindopt,tolbndpsi,siloplim,efitversion,use_previous, &
+           write_omas
       namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
            znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
            fwtjtr,sigjtr,oldcomp,currc199,curriu30,curriu90, &

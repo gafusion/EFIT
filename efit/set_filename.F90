@@ -7,6 +7,7 @@
 !!    @param ishot : shot number
 !!    @param itime : time in milliseconds
 !!    @param itimeu : time in microseconds 
+!!    @param suffix : filename suffix
 !!    @param fname : file name 
 !!
 !**********************************************************************
@@ -108,3 +109,55 @@
   900 format(i9.9)
       return
       end subroutine setfnm
+
+!**********************************************************************
+!>
+!!    This subroutine sets the omas output file name
+!!    
+!!    @param ishot : shot number
+!!
+!!    @param fname : file name 
+!!
+!**********************************************************************
+      subroutine setfnmomas(ishot,fname)
+      implicit none
+      integer*4, intent(in) :: ishot
+      character*(*), intent(inout) ::  fname
+      integer*4 i,length
+
+      ! Warn if a filename length risks overflow (store_dir is 256 chars)
+      fnlen=len(fname)
+      if(fnlen<275) &
+        write(nttyo,'(A)') &
+          'Warning: The filename length is short for: '//prefix
+
+      ! Initialize empty name
+      do i=1,fnlen
+        fname(i:i)=' '
+      enddo
+
+      ! Convert the shot number to filename
+      if (ishot<1e6) then
+        write(shot,1600) ishot
+      elseif (ishot<1e7) then
+        write(shot,1700) ishot
+      elseif (ishot<1e8) then
+        write(shot,1800) ishot
+      elseif (ishot<1e9) then
+        write(shot,1900) ishot
+      else
+        write(nttyo,*) &
+          'The shot number is too large for existing file formats: ',ishot
+        stop
+      endif
+
+      ! If istore = 1 then put file in store_dir directory
+      if (istore .eq. 1) then
+        fname = trim(store_dir)//trim(fname)
+      endif
+ 1600 format(i6.6,'.h5')
+ 1700 format(i7.7,'.h5')
+ 1800 format(i8.8,'.h5')
+ 1900 format(i9.9,'.h5')
+      return
+      end subroutine setfnmomas

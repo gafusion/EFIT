@@ -78,6 +78,7 @@
         integer*4 :: modef,modep,modew
         integer*4 :: icycred_loopmax
         integer*4 :: nfourier !< nfourier number Fourier components of vessel current
+        real*8 :: rlin,rlout,zlbot,zltop
       end module eparm
 !errlims
       module errlims
@@ -120,24 +121,13 @@
         subroutine fch5init
           logical, save :: h5init=.false.
           if (.not.h5init) then
-            call vshdf5_fcinit
-            call vshdf5_inith5vars(h5in, h5err)
+            call hdf5_fcinit
+            call hdf5_inith5vars(h5in, h5err)
             h5in%verbose=.false.
             h5in%debug=.false.
             h5init=.true.
           endif
         end subroutine fch5init
-!       subprogram 2. fch5resetvars.
-!       reset h5 information for writes and reads.
-        subroutine fch5resetvars
-          h5in%mesh =  " "
-          h5in%vsAxisLabels = " " 
-          h5in%units =  " "
-          h5in%vsCentering =  " "
-          h5in%vsMD =  " "
-          h5in%vsIndexOrder = " "
-          h5in%vsLabels = " "
-        end subroutine fch5resetvars
 #endif
       end module var_nio
 ! error_control
@@ -256,7 +246,8 @@
       end module var_rcfact
 !var_curpo
       module var_curpro
-        real*8 emf,emp,enf,enp,rbetap,rzero,pbetap,qenp,qemp,qenf
+        use set_kinds
+        real*8 emf,emp,enf,enp,rbetap,rzero,qenp,qemp,qenf
       end module var_curpro
 !var_pfterm
       module var_pfterm
@@ -361,9 +352,9 @@
           zeffr,tave,rvsin,zvsin, &
           rvsout,zvsout,cjor95,pp95,drsep, &
           yyy2,xnnc,wtherm,wfbeam,taujd3,tauthn, &
-          li3,tflux,twagap
+          li3,tflux,twagap,betan
         real*8,dimension(:,:), allocatable :: rseps,zseps
-        real*8 pasman,betatn,psiq1,betat2
+        real*8 pasman,psiq1,betat2
         integer*4 jtwagap
       end module var_hist
 !var_hist2
