@@ -11,7 +11,7 @@ ALPHAFP, 0.0,"| Describes the width of the scrapeoff layer in which the halo cur
 | 1 = zero thickness,
 | 0 = current layer extends either to the first separatrix surface surrounding the last closed flux surface or, if there is no external separatrix, it can flow anywhere inside the chamber.
 | It is assumed that no current flows outside this external separatrix."
-BETAP0, 0.5, "GAQ current density profile parameter. (Get GAQ form by default when you run fixed boundary calculation?) Ignored unless ICURRT=4?"
+BETAP0, 0.5, "GAQ current density profile parameter. Used by default when running fixed boundary mode."
 BTOR, ,"Toroidal magnetic field in Tesla. For fixed boundary calculation, this is specified by user. For fitting mode, this is obtained from data using input mode 5 and put into the K-file."
 CO2COR, 1.,"CO2 Correction. Correction factor to apply to Thompson to make calibration match CO2 interferometer(?)."
 CONDIN, 1e-6, 
@@ -188,7 +188,7 @@ LIMITR,-33,"| Number of limiter points (number of valid points in XLIM and YLIM 
 | <0 read from a standard file (Default).
 | 1000+number number of points for symmetrized solution (input only top half of limiter points)."
 SILOPLIM,0, Controls whether the boundary from the previous timeslice (on the same processor) is used as an initial guess for finding the boundary at the current time.  The previous solution is only used when the maximum absolute flux loop difference between the current and previous iteration is less than this value.
-MXITER,25,"| Maximum number of outer fitting iterations (limited to KXITER, see SETUP namelist) Set to 1 for equilibrium solutions. Set negative for iteration history output to terminal during EFIT execution."
+MXITER,25,"| Maximum number of outer fitting iterations (limited to KXITER, see SETUP namelist). Set negative to output iteration history to terminal during execution. Set to 1 for equilibrium solutions."
 N1COIL,0,"Compensation for magnetic probe pickup from N1 coil
 | 2 = compensation for n1 coil.
 | 0 = no compensation (default)."
@@ -212,7 +212,7 @@ NPTION,,"| Number of terms in Ti fitting for kinetic option, required appropriat
 NPTIONF,,"if nption<0, nptionf = -nption"
 NQITER,10,convergent parameter for axial safety factor. 
 NSLREF,1,"Index in set of flux loops of reference flux. Used to be 8 for D-III, but now is 1 (default) for DIII-D."
-NXITER,1,Number of inner equilibrium iterations. Set to 1 for fitting. See also MXITER.
+NXITER,1,"Number of inner equilibrium iterations (limited to KXITER, see SETUP namelist). Set negative to output iteration history to terminal during EFIT execution. Set to 1 for fitting."
 PBEAM,,"""Pressure Beam"". Beam pressure in n/m2 vs. normalized flux for kinetic fitting (typically calculated in ONETWO)."
 PLASMA,, plasma current in Amps. 0 for vacuum field calculation.
 PRBDRY, 0.0,
@@ -259,6 +259,11 @@ VSDAMP,0,Relaxation parameter for scrape-off layer current. (Always set to 0.25.
 WCURBD,,"| Omega Current Boundary.
 | 0 = zero boundary gradient (default)
 | 1 = finite rotational pressure gradient POmega' at the boundary"
+WRITE_KFILE, F, "see namelist EFITIN"
+WRITE_OMAS, 0, "| Option to write output to an HDF5 file with the IMAS schema as interpreted by OMAS.
+| 0 = don't write an omas file (default)
+| 1 = write data to omas and all other files requested
+| 2 = only write an omas file (deactivates all other output options)"
 XLIM, xlim(1)=-1.0, "Major radius of limiter contour in meters. See also YLIM."
 XLTYPE, 0.0, "| Inward distance of 0 degree outside limiter in cm.
 | - = read from PTDATA if available, otherwise 0.0.

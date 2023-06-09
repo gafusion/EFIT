@@ -19,6 +19,8 @@ PATMP2,zeros, (array) Path lengths of closed loop magnetic probes in the poloida
 RACOIL,zeros, (array) Major radius of A-coils
 RE,zeros, "(array) Major radius of E-coils, it will be read from the 1st column of the first NECOIL lines after the flux loops (if they are not in the namelist)."
 RF,zeros, "(array) Major radius of F-coils, if this variable is not part of the namelist, it will be read from the 1st column of the first NFCOIL lines after the namelist."
+RLIN, -1.0, "Major radius defining the inboard side of the limiter.  All limiter segments with R<RLIN are considered to be inboard for the gap calculations.  If less than 1, a scaled version of the DIII-D bounds is used to set RLIN, RLOUT, ZLBOT, and ZLTOP which depends on the limiter being used."
+RLOUT, 0.0, "Major radius defining the outboard side of the limiter.  All limiter segments with R>RLOUT are considered to be outboard for the gap calculations."
 RVS,zeros, "(array) Major radius of vessel segments, it will be read from the 1st column of the first NVESEL lines after the E-coils (if they are not in the namelist)."
 RSI,zeros, "(array) Major radius of flux loops in m, if this variable is not part of the namelist, it will be read from the 1st column of the NSILOP lines after the F-coils (if they are not in the namelist)."
 RSISVS,zeros, (array) Resistivity of vessel segments
@@ -36,5 +38,7 @@ YMP2,zeros, (array) Z coordinates of magnetic probes in m
 ZACOIL,zeros, (array) Z coordinates of a coils
 ZE,zeros, "(array) Z coordinates of e coils, it will be read from the 2nd column of the first NECOIL lines after the flux loops (if they are not in the namelist)."
 ZF,zeros, "(array) Z coordinates of f coils, if this variable is not part of the namelist, it will be read from the 2nd column of the first NFCOIL lines after the namelist."
+ZLBOT, 0.0, "Height defining the bottom of the limiter.  All limiter segments with Z<ZLBOT are considered to be the bottom for the gap calculations."
+ZLTOP, 0.0, "Height defining the top of the limiter.  All limiter segments with Z>ZLTOP are considered to be the top for the gap calculations."
 ZVS,zeros, "(array) Z coordinates of vessel segments, it will be read from the 2nd column of the first NVESEL lines after the e coils (if they are not in the namelist)."
 ZSI,zeros, "(array) Z coordinates of flux loops in m, if this variable is not part of the namelist, it will be read from the 2nd column of the NSILOP lines after the f coils (if they are not in the namelist)."

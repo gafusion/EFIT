@@ -1,7 +1,6 @@
 !**********************************************************************
 !>
 !!    This subroutine sets the file names for eqdsk files
-!!    
 !!
 !!    @param itimeu : time in microseconds 
 !!
@@ -111,7 +110,6 @@
 !**********************************************************************
 !>
 !!    This subroutine sets the file names for pl plotting files
-!!    
 !!
 !!    @param itimeu : time in microseconds 
 !!
@@ -154,7 +152,6 @@
 !>
 !!    This subroutine sets the file names for q plotting files
 !!    
-!!
 !!    @param let : letter designation of file 
 !!
 !!    @param ishot : shot number
@@ -190,3 +187,28 @@
       if (istore .eq. 1) fname = store_dir(1:lstdir)//fname
       return
       end subroutine setfnmq
+
+!**********************************************************************
+!>
+!!    This subroutine sets the omas output file name
+!!    
+!!    @param ishot : shot number
+!!
+!!    @param fname : file name 
+!!
+!**********************************************************************
+      subroutine setfnmomas(ishot,fname)
+      implicit none
+      integer*4, intent(in) :: ishot
+      character*(*), intent(inout) ::  fname
+      integer*4 i,length
+!
+      length=len(fname)
+      do i=1,length
+        fname(i:i)=' '
+      enddo
+      write(fname,1000) ishot
+ 1000 format(i6.6,'.h5')
+      return
+      end subroutine setfnmomas
+

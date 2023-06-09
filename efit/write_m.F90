@@ -139,10 +139,7 @@
         if(ioerr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
-          pasman=ipmhd(i)/1.e4_dp/aminor(i)/abs(bcentr(i))
-          pasman=pasman*rout(i)/100./rcentr
-          betatnx=betat(i)/pasman
-          write (74,*) time(i),betatnx,xdum,xdum
+          write (74,*) time(i),betan(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_zts'

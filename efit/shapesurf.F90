@@ -6,9 +6,7 @@
 !!    
 !!
 !!    @param iges : time index
-!!
 !!    @param igmax : number of time slices
-!!
 !!    @param kerror : error flag
 !!
 !**********************************************************************
@@ -41,7 +39,7 @@
              delarea,delerrb,delerrx,delfp,delli,dells,delr,delrnow,delsbu, &
              delsi,delssi,deltaa,dilnow,dis2p,dismin,disnow,dleft,dli, &
              dlll,dlpol,dltol,dmaxfs,dmaxfs0,dminfs,dminfs0,dminow,dmui, &
-             dolnow,atri,dpsis,dright,dsidr,dsiin,dsilim,dsimm,dsiout, &
+             dolnow,dpsis,dright,dsidr,dsiin,dsilim,dsimm,dsiout, &
              dsmin,dtop,dttt,dx,dxtra,dyww,dzring,dzzz1,dzzz2,enrgy, &
              exmui,f_0,fkdel,fmanow,fminow,fnow,fpnow,fsrmax,fszmax, &
              fvsmax,fvsnow,fxmax,fxmin,fxrmax,fxrmin,fxzmax,fxzmin, &
@@ -64,7 +62,7 @@
              yww,yxcmax,yxcmin,yxtraa,yxtras,zavssa,zbar,zcur,zerold, &
              zeta,zexpmx,zhp,zilnow,zinvs,zkkk,znow,zoutvs,zqmax, &
              zringmax,zringmin,zrmin,zsnow,zsnow0,ztemp,zval,zvsnow, &
-             zxmins,zxmaxs,zxp,zxx,zzm,zzp
+             zxmins,zxmaxs,zxp,zxx,zzm,zzp,rlimc,zlimc,zlimm
       integer*4 imer(2)
       real*8 pds(6),amer(2,2),bmer(2),wmer(2),temp(ntime)
       real*8 rmid2(2),zerovs(1),ravs(1),zavs(1)
@@ -331,8 +329,18 @@
       qm(iges)=qmaxis
       tflux(iges)=rhovn(nw)
 !---------------------------------------------------------------------
-!--   gap calculation                                               --
+!--   gap calculation
 !---------------------------------------------------------------------
+      if (rlin.lt.0.) then
+        ! generic vessel region definitions (based on scaling DIII-D)
+        rlimc=(maxval(xlim)+minval(xlim))/2
+        zlimc=(maxval(ylim)+minval(ylim))/2
+        zlimm=max(abs(minval(ylim)-zlimc),maxval(ylim)-zlimc)
+        rlin=0.75*rlimc
+        rlout=1.25*rlimc
+        zlbot=-0.9*zlimm+zlimc
+        zltop=0.9*zlimm+zlimc
+      endif
       dleft=1.0e+10_dp
       dright=1.0e+10_dp
       dtop=1.0e+10_dp
@@ -340,13 +348,13 @@
       do j=1,limitr-1
         call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
                     xlim(j),ylim(j),xlim(j+1),ylim(j+1),disnow)
-        if(xlim(j).lt.1.02_dp .and. xlim(j+1).lt.1.02_dp) &
+        if(xlim(j).lt.rlin .and. xlim(j+1).lt.rlin) &
           dleft = min(dleft,disnow)
-        if(ylim(j).gt.1.20_dp .and. ylim(j+1).gt.1.20_dp) &
+        if(ylim(j).gt.zltop .and. ylim(j+1).gt.zltop) &
           dtop = min(dtop,disnow)
-        if(ylim(j).lt.-1.20_dp .and. ylim(j+1).lt.-1.20_dp) &
+        if(ylim(j).lt.zlbot .and. ylim(j+1).lt.zlbot) &
           dbott = min(dbott,disnow)
-        if(xlim(j).gt.1.70_dp .and. xlim(j+1).gt.1.70_dp) &
+        if(xlim(j).gt.rlout .and. xlim(j+1).gt.rlout) &
           dright = min(dright,disnow)
       enddo
       dismin=min(dleft,dright,dtop,dbott)
@@ -1281,10 +1289,10 @@
                  (elong(iges)**2+1.)/2./aspect**2
       olamda=betap(iges)+li(iges)/2.
       olamda=1.+0.5_dp*olamda**2
-      atri=(utri(iges)+ltri(iges))/2.
+      atri(iges)=(utri(iges)+ltri(iges))/2.
 
-      fkdel=1.24_dp-0.54_dp*elong(iges)+0.3_dp*(elong(iges)**2+atri**2) &
-           +0.13_dp*atri
+      fkdel=1.24_dp-0.54_dp*elong(iges) &
+            +0.3_dp*(elong(iges)**2+atri(iges)**2)+0.13_dp*atri(iges)
       qstar(iges)=qstar(iges)*fkdel*(1.+olamda/aspect**2)
       sepexp(iges)=-100.
       if (kdata.ne.4) then
@@ -2486,7 +2494,7 @@
         presped=seval(nw,sssiie,xsisii,pres,bpres,cpres,dpres) &
                 -prbdry
         betped=presped/btuse*tmu*twopi*2.*100.
-        betnped=betped/betat(iges)*betatn
+        betnped=betped/betat(iges)*betan(iges)
       endif
 !--------------------------------------------------------------------
 !--   change sign convention of computed diamagnetic flux          --
@@ -2657,8 +2665,8 @@
         xlam=20.
         if (tave(iges).gt.0.001_dp) then
           tevolt=sqrt((tave(iges)*1000.)**3)
+          zeffr(iges)=zeta*tevolt/xlam/1.03e-02_dp*2.
         endif
-        zeffr(iges)=zeta*tevolt/xlam/1.03e-02_dp*2.
         if (iges.eq.igmax) then
           do m=1,igmax
             temp(m)=dco2v(m,2)
@@ -3068,27 +3076,16 @@
 !!    
 !!
 !!    @param x : array of R positions along curve
-!!
 !!    @param y : array of Z positions along curve
-!!
 !!    @param np : number of points along curve
-!!
 !!    @param xmin :
-!!
 !!    @param xmax :
-!!
 !!    @param ymin :
-!!
 !!    @param ymax :
-!!
 !!    @param x1 : endpoint R of first segment 
-!!
 !!    @param y1 : endpoint Z of first segment
-!!
 !!    @param x2 : endpoint R of second segment
-!!
 !!    @param y2 : endpoint Z of second segment
-!!
 !!    @param dismin : minimum distance
 !!
 !**********************************************************************

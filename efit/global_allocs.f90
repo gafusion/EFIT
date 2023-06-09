@@ -178,8 +178,8 @@ ALLOCATE(volecs(nesum),volecc(nesum),rsisec(nesum),volfcs(nfsum),volfcc(nfsum), 
    rvs(nvesel),zvs(nvesel),hvs(nvesel),wvs(nvesel),avs(nvesel),avs2(nvesel), &
    rsisvs(nvesel),alphab(icycred_loopmax),diag1(icycred_loopmax), &
    tempgrid(ncurrt),tempgrid2(ncurrt),rowscale(nrsmat),colscale(mfnpcr), &
-   elong(ntime),rout(ntime),zout(ntime),utri(ntime), &
-   ltri(ntime),aminor(ntime),volume(ntime),betat(ntime),gaptop(ntime), &
+   elong(ntime),rout(ntime),zout(ntime),utri(ntime),betan(ntime), &
+   atri(ntime),ltri(ntime),aminor(ntime),volume(ntime),betat(ntime),gaptop(ntime), &
    betap(ntime),li(ntime),gapin(ntime),gapout(ntime),qstar(ntime), &
    rcurrt(ntime),zcurrt(ntime),qout(ntime),sepin(ntime), &
    sepout(ntime),septop(ntime),sibdry(ntime),area(ntime), &

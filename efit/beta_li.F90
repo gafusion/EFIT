@@ -133,6 +133,9 @@
                    -li(jtime)/2.
       betat(jtime)=betap(jtime)*bp2flx/bcentr(jtime)**2*100.
       betat(jtime)=betat(jtime)*(rout(jtime)/100./rcentr)**2
+      pasman=ipmhd(jtime)/1.e4_dp/aminor(jtime)/abs(bcentr(jtime))
+      pasman=pasman*rout(jtime)/100./rcentr
+      betan(jtime)=betat(jtime)/pasman
       qout(jtime)=qout(jtime)*abs(bcentr(jtime))*rcentr/twopi
       wmhd(jtime)=1.5_dp*betap(jtime)*bp2flx/2./tmu/2./pi*volume(jtime) &
                     /1.0e+06_dp
@@ -419,7 +422,7 @@
         sumpre=sumpre+volp(ii)*pprime(ii)
       enddo
       sumpre=sumpre+volp(nw)*pprime(nw)/2.
-      if (ibtcal.le.1) return
+      if(ibtcal.le.1) return
       if (kbetapr.eq.0) then
         sumpre=-sumpre*dsi/volp(nw)
       else
@@ -432,9 +435,6 @@
       betat(jtime)=100.*betat(jtime)*(rout(jtime)/100./rcentr)**2
       wmhd(jtime)=1.5_dp*betap(jtime)*bp2flx/2./tmu/2./pi*volume(jtime) &
                     /1.0e+06_dp
-      pasman=ipmhd(jtime)/1.e4_dp/aminor(jtime)/abs(bcentr(jtime))
-      pasman=pasman*rout(jtime)/100./rcentr
-      betatn=betat(jtime)/pasman
       dmui=1.0e+06_dp*diamag(jtime)*4.*pi*bcentr(jtime)*rcentr &
            /bp2flx/volume(jtime)
       betapd(jtime)=s1(jtime)/2.+s2(jtime)/2.*(1.-rcurrm/rcentr)-dmui
@@ -456,6 +456,9 @@
         wplasw(jtime)=betapw(jtime)*bp2flx/2./tmu/2./pi &
                       *volume(jtime)/1.0e+06_dp
       endif
+      pasman=ipmhd(jtime)/1.e4_dp/aminor(jtime)/abs(bcentr(jtime))
+      pasman=pasman*rout(jtime)/100./rcentr
+      betan(jtime)=betat(jtime)/pasman
 !----------------------------------------------------------------------
 !--   get normalized radial coordinate square root of toroidal flux  --
 !--     at uniform poloidal flux grid sigrid                         --
@@ -676,7 +679,7 @@
       betat(jtime)=100.*betat(jtime)*(rout(jtime)/100./rcentr)**2
       pasman=ipmhd(jtime)/1.e4_dp/aminor(jtime)/abs(bcentr(jtime))
       pasman=pasman*rout(jtime)/100./rcentr
-      betatn=betat(jtime)/pasman
+      betan(jtime)=betat(jtime)/pasman
 !
       DEALLOCATE(x,y,dpleng,xxs,yys)
 !

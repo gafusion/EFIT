@@ -192,7 +192,7 @@
 
         ! get p' and ff' coefficients
         ! note: this could be read in from g-files directly, but needs
-        !       to be fit from imas files, so we treat both consistently
+        !       to be fit from omas files, so we treat both consistently
         if (icurrt.eq.2) then
           ! apparently fitting polynomials works equally well with
           ! splines...? (kppfnc=6 and kfffnc=6) - matches esave
@@ -205,6 +205,8 @@
           call errctrl_msg('set_init','icurrt/=2 not set up')
           stop
         endif
+        deallocate(psirz_ext,pprime_ext,ffprim_ext,qpsi_ext, &
+                   rbdry_ext,zbdry_ext,fcoil_ext,xlim_ext,ylim_ext)
       case default
         call errctrl_msg('set_init','icinit value not recognized')
         stop

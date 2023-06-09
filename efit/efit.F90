@@ -142,7 +142,7 @@
 
       select case (kdata)
       case (1)
-        call read_dirs_shot_imas(ifname(1))
+        call read_dirs_shot_omas(ifname(1))
       case (2)
         call read_dirs_shot(ifname(1))
       case (4)
@@ -338,7 +338,15 @@
 #ifdef DEBUG_LEVEL2
         write (6,*) 'Main/write_g ks/kerror = ', ks, kerror
 #endif
-        call write_g(ks)
+        if(write_omas.lt.2) call write_g(ks)
+        if (write_omas.gt.0) then
+#if defined(USE_HDF5)
+          call write_omas_output(ks,ktime)
+          call write_omas_input(ks,ktime)
+#else
+          write(nttyo,*) 'HDF5 needs to be linked to write OMAS files'
+#endif
+        endif
 #ifdef USE_NETCDF
 #ifdef DEBUG_LEVEL2
         write (6,*) 'Main/write_m ks/kerror = ', ks, kerror
@@ -346,14 +354,14 @@
         call write_m(ktime,ks,ks,1)
 #endif
 !----------------------------------------------------------------------
-! --    write k-file if needed                                        --
+! --    write k-file if needed                                       --
 !----------------------------------------------------------------------
 #if defined(USE_SNAP)
         if (kdata.eq.3 .or. kdata.eq.7) then
 #ifdef DEBUG_LEVEL2
           write (6,*) 'Main/write_k2 ks/kerror = ', ks, kerror
 #endif
-          if(write_kfile) call write_k2(ks,kerror)
+          if(write_kfile .and. write_omas.lt.2) call write_k2(ks,kerror)
         endif
 #endif
         if(k.lt.ktime) kerrot(ks)=kerror
@@ -363,7 +371,7 @@
       call write_m(ktime,1,ktime,2)
 #else
       if (.not.((iand(iout,2).eq.0).and.(iand(iout,4).eq.0))) &
-        write(nttyo,*) 'netcdf needs to be linked to write m-files'
+        write(nttyo,*) 'NetCDF needs to be linked to write m-files'
 #endif
       call write_ot(ktime)
 

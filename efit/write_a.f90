@@ -91,6 +91,7 @@
       else
         wform='unformatted'
       endif
+      if(write_omas.eq.2) return
 !
       let = 'a'
       call setfnmeq(itimeu,let,ishot,ijtime,eqdsk)
