@@ -60,6 +60,6 @@
  vol(cm3) =  8.532E+08 rout(cm) =    621.464 zout(cm) =     28.390
  elong    =      1.923 utriang  =      0.440 ltriang  =      0.613
  a(cm)    =    199.220 lin(cm)  =      0.000 lout(cm) =      6.766
- ltop(cm) =      9.546 q*       =      4.341 rc(cm)   =    612.406
+ ltop(cm) =     45.256 q*       =      4.341 rc(cm)   =    612.406
  zc(cm)   =     53.724 bt0(t)   =     -5.060 qout     =      6.031
 INFO in efit at r=  0, t=    60: Done processing

@@ -17,7 +17,7 @@
       implicit none
       real*8 seval,speval
       integer*4, intent(in) :: jtime,ktime
-      integer*4 i,j,kk,ier
+      integer*4 i,j,kk,ier,init
       real*8 ssibry,ssimag,xdiff,xdim,zdiff,zdim
       real*8 pds(6),gaps(4),rsps(4),zsps(4)
       real*8, dimension(nw) :: vprime,dvdrho,bwork,cwork,dwork
@@ -25,6 +25,7 @@
       logical group_exists
       character fname*15
       character*10 tindex,probeind,names(4)
+      data init/0/
 
       ! Setup flux scalars
       if (ipmeas(jtime).gt.0.0) then
@@ -101,13 +102,17 @@
       call open_h5file(trim(fname),fileid, &
                   "EFIT output file in OMAS format",rootgid,h5in,h5err)
 
-      ! setup file only with the first timeslice
-      if (jtime.eq.1 .and. rank.eq.0) then
+      ! setup file only with the first write (per processor)
+      ! Note: warnings that data already exists in file are hidden when
+      !       MPI is used since this will be expected for most processors
+      if (init.eq.0) then
+        init=1
         call make_group(rootgid,"dataset_description",fid, &
                         group_exists,h5err)
         if (group_exists) then
-          write(*,*) &
-            "dataset_description already exists in file, not writing"
+          if(nproc.gt.1) &
+            write(*,*) &
+              "dataset_description already exists in file, not writing"
         else
           call make_group(fid,"data_entry",sid,group_exists,h5err)
           call dump_h5(sid,"machine",device,h5in,h5err)
@@ -119,7 +124,8 @@
         ! write limiter
         call make_group(rootgid,"wall",eqid,group_exists,h5err)
         if (group_exists) then
-          write(*,*) "wall already exists in file, not writing"
+          if(nproc.gt.1) &
+            write(*,*) "wall already exists in file, not writing"
         else
           call make_group(eqid,"description_2d",cid,group_exists,h5err)
           call make_group(cid,"0",pid,group_exists,h5err)
@@ -148,8 +154,9 @@
           call make_group(rootgid,"coils_non_axisymmetric",fid, &
                           group_exists,h5err)
           if (group_exists) then
-            write(*,*) &
-              "coils_non_asym already exists in file, not writing"
+            if(nproc.gt.1) &
+              write(*,*) &
+                "coils_non_asym already exists in file, not writing"
           else
             call make_group(fid,"coil",sid,group_exists,h5err)
             call make_group(sid,"0",nid,group_exists,h5err)
@@ -178,8 +185,9 @@
         call open_group(rootgid,"equilibrium",eqid,h5err)
         call make_group(eqid,"ids_properties",fid,group_exists,h5err)
         if (group_exists) then
-          write(*,*) &
-            "ids_properties already exists in file, not writing"
+          if(nproc.gt.1) &
+            write(*,*) &
+              "ids_properties already exists in file, not writing"
         else
           call dump_h5(fid,"comment","EFIT",h5in,h5err)
           call close_group("ids_properties",fid,h5err)
@@ -187,7 +195,8 @@
         call make_group(eqid,"vacuum_toroidal_field",fid,group_exists, &
                         h5err)
         if (group_exists) then
-          write(*,*)"vacuum field already exists in file, expect issues"
+          if(nproc.gt.1) &
+            write(*,*)"vacuum field already exists in file, expect issues"
         else
           call dump_h5(fid,"r0",rcentr,h5in,h5err)
           call close_group("vacuum_toroidal_field",fid,h5err)

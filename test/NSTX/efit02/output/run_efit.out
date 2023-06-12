@@ -48,7 +48,7 @@
  betat(%) =      3.622 betap    =      0.516 li       =      1.069
  vol(cm3) =  9.023E+06 rout(cm) =     92.124 zout(cm) =     -4.355
  elong    =      1.707 utriang  =      0.362 ltriang  =      0.514
- a(cm)    =     57.700 lin(cm)  =      2.945 lout(cm) =      0.000
- ltop(cm) =     40.996 q*       =      7.191 rc(cm)   =     97.370
+ a(cm)    =     57.700 lin(cm)  =      2.945 lout(cm) =      6.318
+ ltop(cm) =     68.991 q*       =      7.191 rc(cm)   =     97.370
  zc(cm)   =     -0.882 bt0(t)   =     -0.630 qout     =     10.918
 INFO in efit at r=  0, t=   369: Done processing
