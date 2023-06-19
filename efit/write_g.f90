@@ -450,7 +450,7 @@
         fwtcur=1.
         mxiter=1
         nxiter=99
-        error=1.0e-04_dp ! TODO: why is this set at a fixed value?
+        !error=1.0e-04_dp
         enps=enp
         enp=0.5_dp
         fwtsi(1:nfsum)=1.

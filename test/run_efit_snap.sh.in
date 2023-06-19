@@ -16,14 +16,14 @@ if ! test -e ${link_efit}/lim.dat; then
   exit 1
 fi
 
-# Remove any previous outputs
-mv run_efit.out run_efit_kfile.out
-outputs=( @EFIT_OUTPUTS@ )
-for prefix in ${outputs[*]}; do
-  for label in @EFIT_LABEL@; do
-    rm -f ${prefix}${label}
-  done
+# Rename outputs from input generation step
+mv run_efit.out run_efit_input.out
+for label in @EFIT_LABEL@; do
+  mv k${label} k${label}_input
 done
+if [ @ENABLE_HDF5@ = ON ]; then
+  mv @RUNID@.h5 @RUNID@_input.h5
+fi
 
 # Now run efit
 @MPICMD@ @NPROC@ @EFIT_EXEC@ @GRID_SIZE@ << __c__MATCHING_EOF__c__ > run_efit.out

@@ -12,19 +12,19 @@
 !!    @param xltype_180 : Inward distance of 180 degree outside limiter in cm.
 !!            Initialization is passed in.
 !!
-!!    @param shape_ext : Flag for whether profile_ext data is used. 
+!!    @param use_ext : Flag for whether profile_ext data is used. 
 !!
 !**********************************************************************
-      subroutine getlim(limmode,xltype,xltype_180,shape_ext)
+      subroutine getlim(limmode,xltype,xltype_180,use_ext)
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       integer*4 limmode,ilimshot,ioerr
-      logical shape_ext
+      logical use_ext
       character*100 filin
       data lfile/36/
 !
-      read_lim: if ((.not.shape_ext .and. limitr.le.0).or.(limmode.eq.0)) then
+      read_lim: if ((.not.use_ext .and. limitr.le.0).or.(limmode.eq.0)) then
 !
       if (abs(xltype*xltype_180).le.0.0001_dp.and.ishot.gt.52072) then
         call limpos(ishot,poslim,pos180,ier)

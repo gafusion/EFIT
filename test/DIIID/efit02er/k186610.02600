@@ -1,4 +1,5 @@
  &IN1
+ write_omas = 1,
  ISHOT =       186610,
  ITIME =         2600,
  ITIMEU =            0,

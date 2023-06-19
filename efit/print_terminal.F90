@@ -24,6 +24,8 @@
              xdum,xnorm,xtest,ytest,xxm,yym,xxp,yyp
       character*30 sfname
       character(1000) :: line
+      integer*4 vsid(nvesel) ! unused
+      real*8 ecturn(necoil) ! unused
       real*8 xrsp(npcurn)
       real*8 patmpz(magpri),xmpz(magpri),ympz(magpri),ampz(magpri), &
              rsisfc(nfcoil)
@@ -38,7 +40,7 @@
                    rvs,zvs,wvs,hvs,avs,avs2,vsname, &
                    racoil,zacoil,wacoil,hacoil, &
                    rf,zf,wf,hf,af,af2,fcid,fcturn,turnfc, &
-                   re,ze,we,he,ecid!,ecturn,vsid ! not used or saved in efit
+                   re,ze,we,he,ecid,ecturn,vsid,rlin,rlout,zlbot,zltop
 
       ! avoid write garbage when gapin or gapout not update (e.g. 1.e10)
       tin=gapin(it)

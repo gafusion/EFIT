@@ -28,3 +28,11 @@ configure_file(${EFIT_RESULTS_CONFIGFILE}
 
 add_test(NAME DIIID-integral-method COMMAND run_efit.sh)
 add_test(NAME DIIID-integral-method-results COMMAND check_efit_results.sh)
+
+if (${ENABLE_HDF5})
+  set(EFIT_MODE 1)
+  configure_file(${EFIT_TEST_CONFIGFILE_HDF5}
+                 ${CMAKE_CURRENT_BINARY_DIR}/run_efit_hdf5.sh @ONLY)
+  add_test(NAME DIIID-efit01-hdf5 COMMAND run_efit_hdf5.sh)
+  add_test(NAME DIIID-efit01-hdf5-results COMMAND check_efit_results.sh)
+endif ()

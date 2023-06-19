@@ -55,7 +55,7 @@
            fwtdlc,sigdlc,elomin,kcalpa,kcgama,calpa,cgama,xalpa,xgama, &
            kzeroj,rzeroj,iaveus,relax,fwtec,bitec,fitsiref, &
            kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens, &
-           kwwfnc,kwwknt,wwknt,wwtens,nbdry,rbdry,zbdry,vbit, nbdrymx, &
+           kwwfnc,kwwknt,wwknt,wwtens,nbdry,rbdry,zbdry,vbit,nbdrymx, &
            ppbdry,kppbdry,pp2bdry,kpp2bdry, &
            ffbdry,kffbdry,ff2bdry,kff2bdry, &
            wwbdry,kwwbdry,ww2bdry,kww2bdry, &
@@ -440,8 +440,11 @@
         return
 #endif
       endif
-!
+!----------------------------------------------------------------------
+!--   start loop over KTIME time slices per rank
+!----------------------------------------------------------------------
       do jtime=1,ktime
+        ! jtime=1,2,3... in serial, but jtime=1,1,1,... in parallel
         call errctrl_setstate(rank,time(jtime))
         if (req_valid) then
           ! don't write times without mse
@@ -544,7 +547,13 @@
 !--     Write OMAS file if requested and setup k-file name
 !-----------------------------------------------------------------------
 #if defined(USE_HDF5)
-        if(write_omas.gt.0) call write_omas_input(jtime,ktime)
+        if (write_omas.gt.0) then
+          if (nproc.eq.1) then
+            call write_omas_input(jtime,ktime)
+          else
+            write(nttyo,*) 'HDF5 writes are only setup for serial runs'
+          endif
+        endif
         if(write_omas.eq.2) cycle
 #endif
         call setfnmeq(itimeu,'k',ishot,itime,eqdsk)
@@ -661,10 +670,12 @@
 
       integer*4, intent(in) :: jtime
       integer*4, intent(out) :: kerror
-      integer*4 i,ioerr,limitrss,mmstark,nbdryss,kffcurt,kppcurt
+      integer*4 i,ioerr,itekt,limitrss,mmstark,mxitert,nxitert,nbdryss, &
+                n1coilt,kffcurt,kppcurt
       real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref, &
              pnbeam,timeus,timems,currn1,currc79,currc139,currc199, &
-             curriu30,curriu90,curriu150,curril30,curril90,curril150
+             curriu30,curriu90,curriu150,curril30,curril90,curril150, &
+             zeliptt
       character eqdsk*20,header*42,fit_type*3
       integer*4, dimension(npcurn) :: kffbdryss,kff2bdryss, &
                                       kppbdryss,kpp2bdryss, &
@@ -772,6 +783,8 @@
         nbdry=1
         rbdry(1)=1.94_dp
         zbdry(1)=ztssym(jtime)+0.5_dp*ztswid(jtime)
+      else
+        nbdry=nbdrys
       endif
       ppbdryss=ppbdry
       pp2bdryss=pp2bdry
@@ -799,7 +812,7 @@
       kff2bdry=0
       kwwbdry=0
       kww2bdry=0
-      limitr=-limid
+      limitr=-limid ! assumes that run is from snap file
       vloop=vloopt(jtime)
       dflux=1.0e+03_dp*diamag(jtime)
       sigdlc=1.0e+03_dp*sigdia(jtime)

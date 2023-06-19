@@ -44,8 +44,6 @@
              drgrids,dzgrids,psical,rselsum
       real*8 sicont,s1edge,scalep,scalemin,delx2,dely2,rbar,aup
       real*8 rbmin_e,rbmax_e,zbmin_e,zbmax_e
-      real*8 plasma_ext,c_ext,dr_ext,dz_ext,rc_ext,zc_ext,a_ext
-      real*8 eup_ext,elow_ext,dup_ext,dlow_ext,setlim_ext
       real*8 plasma_save,btor_save,rcentr_save,fwtcur_save,error_save
       real*8 r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max
       real*8 r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot,dnmin
@@ -63,18 +61,16 @@
              aa1lib(libim),aa8lib(libim),fwtlib(libim)
       real*8 pds(6),denr(nco2r),denv(nco2v)
       real*8 brsptu(nfsum),brsp_save(nrsmat)
+      real*8 psirz_temp(nw,nh)
       real*8, dimension(:), allocatable :: expmp2_save,coils_save, &
                                              rbdry_save,zbdry_save, &
                                              fwtsi_save,pressr_save, &
                                              rpress_save,sigpre_save
-      real*8, dimension(:,:), allocatable :: psirz_temp
       character(1000) line
       character*10 case_ext(6)
       character*50 edatname
       character(256) table_save
       character*10 namedum,tindex,probeind
-      character*2 reflect_ext
-      logical shape_ext
       logical file_stat
       logical writepc ! unused variable
       integer*4, parameter :: m_ext=101,nsq=1
@@ -335,19 +331,6 @@
       rrrlib=0.0
       zzzlib=0.0
 
-      a_ext=-10. 
-      dr_ext=0.0 
-      dz_ext=0.0 
-      dup_ext=-10. 
-      dlow_ext=-10. 
-      eup_ext=-10. 
-      elow_ext=-10. 
-      rc_ext=-10. 
-      zc_ext=-10. 
-      reflect_ext='no' 
-      setlim_ext=-10. 
-      shape_ext=.false. 
-
       table_save=table_dir
 
       call set_defaults
@@ -480,8 +463,11 @@
       if (geqdsk_ext.ne.'none') then
         open(unit=neqdsk,status='old',file=geqdsk_ext)
         read (neqdsk,11775) (case_ext(i),i=1,6),nh_ext,nw_ext,nh_ext
-        allocate(psirz_temp(nw_ext,nh_ext),psirz_ext(nw_ext*nh_ext), &
-                 pprime_ext(nw_ext),ffprim_ext(nw_ext),qpsi_ext(nw_ext))
+        if ((nw.ne.nw_ext) .or. (nh.ne.nh_ext)) then
+          call errctrl_msg('data_input', &
+                           'geqdsk_ext file must have same dimensions')
+          stop
+        endif
         read (neqdsk,11773)
         read (neqdsk,11776) c_ext,c_ext,simag_ext,psibry_ext,c_ext
         read (neqdsk,11776) plasma_ext,c_ext,c_ext,c_ext,c_ext
@@ -504,11 +490,6 @@
 11775   format (6a8,3i4)
 11776   format (5e16.9)
         if ((icinit.eq.-3).or.(icinit.eq.-4 .and. jtime.eq.1)) then
-          if ((nw.ne.nw_ext) .or. (nh.ne.nh_ext)) then
-            call errctrl_msg('data_input', &
-                             'restart file must have same dimensions')
-            stop
-          endif
           do i=1,nw
             do j=1,nh
               kk=(i-1)*nh+j
@@ -909,8 +890,11 @@
           call read_h5_ex(nid,"tolbndpsi",tolbndpsi,h5in,h5err)
           call read_h5_ex(nid,"siloplim",siloplim,h5in,h5err)
           call read_h5_ex(nid,"use_previous",use_previous,h5in,h5err)
+          call read_h5_ex(nid,"chordr",req_valid,h5in,h5err)
+          call read_h5_ex(nid,"chordv",req_valid,h5in,h5err)
           call read_h5_ex(nid,"nw_sub",nw_sub,h5in,h5err)
           call read_h5_ex(nid,"nh_sub",nh_sub,h5in,h5err)
+          call read_h5_ex(nid,"req_valid",req_valid,h5in,h5err)
           call read_h5_ex(nid,"write_omas",write_omas,h5in,h5err)
           call close_group("in1",nid,h5err)
         endif
@@ -1233,8 +1217,11 @@
           call read_dims(nid,"psi",n2d,h5in,h5err)
           nw_ext=int(n2d(1))
           nh_ext=int(n2d(2))
-          allocate(psirz_ext(nw_ext*nh_ext),pprime_ext(nw_ext), &
-                   ffprim_ext(nw_ext),qpsi_ext(nw_ext))
+          if ((nw.ne.nw_ext) .or. (nh.ne.nh_ext)) then
+            call errctrl_msg('data_input', &
+                             'time_slice data must have same dimensions')
+            stop
+          endif
           call read_h5_sq(nid,"psi",psirz_ext,h5in,h5err)
           psirz_ext=psirz_ext/twopi
           call close_group("0",nid,h5err)
@@ -1255,10 +1242,17 @@
           call close_group("global_quantities",nid,h5err)
 
           ! read in boundary points
-          call enter_group(sid,"boundary",cid,file_stat,h5err)
+          ! try to read from boundary_separatrix first but fall back to
+          ! boundary if missing
+          edatname="boundary_separatrix"
+          call enter_group(sid,"boundary_separatrix",cid,file_stat,h5err)
           if (.not. file_stat) then
-            call errctrl_msg('data_input','boundary group not found')
-            stop
+            call enter_group(sid,"boundary",cid,file_stat,h5err)
+            edatname="boundary"
+            if (.not. file_stat) then
+              call errctrl_msg('data_input','boundary group not found')
+              stop
+            endif
           endif
           call enter_group(cid,"outline",nid,file_stat,h5err)
           if (.not. file_stat) then
@@ -1271,7 +1265,7 @@
           call read_h5_ex(nid,"r",rbdry_ext,h5in,h5err)
           call read_h5_ex(nid,"z",zbdry_ext,h5in,h5err)
           call close_group("outline",nid,h5err)
-          call close_group("boundary",cid,h5err)
+          call close_group(trim(edatname),cid,h5err)
 
           ! read in p', FF', and q
           call enter_group(sid,"profiles_1d",nid,file_stat,h5err)
@@ -1421,7 +1415,7 @@
        "jdebug input variable is deprecated, set cmake variable instead"
       if(ktear.ne.0) write(*,*) &
        "tearing calculations no longer exist, ktear is deprecated"
-      ! disable unwanted file writes
+      ! disable unwanted file writes (gets passed to namelist output, wanted?)
       if (write_omas.eq.2) then
         iout=0
         iplcout=0
@@ -1459,7 +1453,20 @@
         if(abs(fwtece0(i)).le.1.e-30_dp) fwtece0(i)=0.0
       enddo
       if(abs(fwtecebz0).le.1.e-30_dp) fwtecebz0=0.0
-!
+
+      ! save input values before any manipulation happens
+      nbdrys=nbdry
+      rbdrys=rbdry
+      zbdrys=zbdry
+      srpress=rpress
+      rcs=rc_ext
+      zcs=zc_ext
+      aexts=a_ext
+      eups=eup_ext
+      elows=elow_ext
+      dups=dup_ext
+      dlows=dlow_ext
+      psibrys=psibry
       if(nbdryp==-1) nbdryp=nbdry
 
 !--   Read msels_all.dat if needed
@@ -1793,19 +1800,12 @@
         xlim(7)=xlim(1)
         ylim(7)=ylim(1)
       endif
-      call set_basis_params
-      if (kedgep.gt.0) then
-        s1edge=(1.0-pe_psin)/pe_width
-        tpedge=tanh(s1edge)
-        s1edge=(1.0-fe_psin)/fe_width
-        tfedge=tanh(s1edge)
-      endif
+!--------------------------------------------------------------------- 
+!--   save fitting weights and numerical parameters
+!--------------------------------------------------------------------- 
 #ifdef DEBUG_LEVEL1
-      write(*,*)  'before save fitting weights'
+      write(*,*)  'before save fitting'
 #endif
-!--------------------------------------------------------------------- 
-!--   save fitting weights
-!--------------------------------------------------------------------- 
       swtdlc=fwtdlc
       swtcur=fwtcur
       swtfc=fwtfc
@@ -1817,9 +1817,23 @@
       swtemsels=fwtemsels
       swtece=fwtece0
       swtecebz=fwtecebz0
+      iteks=itek
+      mxiters=mxiter
+      nxiters=nxiter
+      zelipss=zelip
+      kffcurs=kffcur
+      kppcurs=kppcur
+      n1coils=n1coil
       iexcals=iexcal
       ibunmns=ibunmn
       ierchks=ierchk
+      call set_basis_params
+      if (kedgep.gt.0) then
+        s1edge=(1.0-pe_psin)/pe_width
+        tpedge=tanh(s1edge)
+        s1edge=(1.0-fe_psin)/fe_width
+        tfedge=tanh(s1edge)
+      endif
 #ifdef DEBUG_LEVEL1
       write(*,*)'adjust fit parameters based on basis function selected'
 #endif
@@ -1831,10 +1845,6 @@
         kdopre=-npress
         npress=0
       endif
-      if (itek.lt.0) then
-        ixray=1
-        itek=iabs(itek)
-      endif
       if(psiwant.le.0.0) psiwant=1.e-5_dp
 
 #ifdef DEBUG_LEVEL1
@@ -1845,6 +1855,10 @@
 !--
 !--   TODO: nin is closed, what are read statements supposed to do here? 
 !-------------------------------------------------------------------------- 
+      if (itek.lt.0) then
+        ixray=1
+        itek=iabs(itek)
+      endif
       kgraph=0 
       if (itek.gt.100) then 
         itek=itek-100 
@@ -2180,9 +2194,6 @@
       xlmaxt=xlmax 
 !
       call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
-
-      ! need to match snap mode saved variables
-      zelipss=zelip
 
       endif snap
 !----------------------------------------------------------------------- 

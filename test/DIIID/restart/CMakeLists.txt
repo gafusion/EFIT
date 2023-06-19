@@ -31,18 +31,17 @@ configure_file(${EFIT_RESULTS_CONFIGFILE}
 add_test(NAME DIIID-restart COMMAND run_efit.sh)
 add_test(NAME DIIID-restart-results COMMAND check_efit_results.sh)
 
-# Broken by expected f-coil unit fix (will be revived with test updated for OMAS write)
-#if (${ENABLE_HDF5})
-#  set(EFIT_MODE 1)
-#  if (${ENABLE_PARALLEL})
-#    set(EFIT_IN ${RUNID}_mpi.h5)
-#  else ()
-#    set(EFIT_IN ${RUNID}.h5)
-#  endif ()
-#  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${EFIT_IN}
-#       DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
-#  configure_file(${EFIT_TEST_CONFIGFILE_HDF5}
-#                 ${CMAKE_CURRENT_BINARY_DIR}/run_efit_hdf5.sh @ONLY)
-#  add_test(NAME DIIID-restart-hdf5 COMMAND run_efit_hdf5.sh)
-#  add_test(NAME DIIID-restart-hdf5-results COMMAND check_efit_results.sh)
-#endif ()
+if (${ENABLE_HDF5})
+  set(EFIT_MODE 1)
+  if (${ENABLE_PARALLEL})
+    set(EFIT_IN ${RUNID}_input_mpi.h5)
+  else ()
+    set(EFIT_IN ${RUNID}_input.h5)
+  endif ()
+  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${EFIT_IN}
+       DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
+  configure_file(${EFIT_TEST_CONFIGFILE_RERUN}
+                 ${CMAKE_CURRENT_BINARY_DIR}/rerun_efit_hdf5.sh @ONLY)
+  add_test(NAME DIIID-restart-hdf5 COMMAND rerun_efit_hdf5.sh)
+  add_test(NAME DIIID-restart-hdf5-results COMMAND check_efit_results.sh)
+endif ()

@@ -275,9 +275,9 @@
                 limvs,kbound,kgraph,istore,iout,iout_prior,kdopre, &
                 iishot,kktime,iplcout,iplcout_prior,ksigma,kwritime, &
                 write_omas_prior
-      integer*4 iteks,mxiters,n1coils,ierchks
-      integer*4 itekt,mxitert,n1coilt
-      real*8 zelipss,zeliptt
+      integer*4 iteks,mxiters,nxiters,n1coils,ierchks,nbdrys
+      real*8 rcs,zcs,aexts,eups,elows,dups,dlows,psibrys
+      real*8 zelipss
       real*8 cutip,dtdot,xpsimin,fcurbd,pcurbd,prbdry,sgprmin, &
              prespb,tipbry,tepbry,dipbry,depbry,pbimpb,sigppb,sigpreb, &
              sigtipb,sigtepb,sigdipb,sigdepb,fwtpd,fwtfd,cstabte,cstabne, &
@@ -285,10 +285,15 @@
              rminvs,rmaxvs,zminvs,zmaxvs,zbound,yvs2,saimin, &
              fztor,fzpol,tcurrp,fpolvs,rbound,sigprebi,pressbi, &
              alphamu,saicon,rsepex,timeb,dtime
+      real*8,dimension(:),allocatable :: rbdrys,zbdrys,srpress
       real*8,dimension(:),allocatable :: rzeroj
       real*8,dimension(:),allocatable :: fwtpre
       real*8,dimension(:),allocatable :: vforcep,vforcet
       real*8,dimension(:),allocatable :: fwtfcsum
+      real*8 plasma_ext,c_ext,dr_ext,dz_ext,rc_ext,zc_ext,a_ext
+      real*8 eup_ext,elow_ext,dup_ext,dlow_ext,setlim_ext
+      character*2 reflect_ext
+      logical shape_ext
       character*82 snap_file
       character(80),dimension(:),allocatable :: ifname
       end module var_input

@@ -4,6 +4,11 @@
 #
 ######################################################################
 
+# TEMPORARY
+if (${ENABLE_PARALLEL})
+  set(ENABLE_HDF5 False)
+endif ()
+
 #---------------------------------------------------------------------
 # Initialization
 #---------------------------------------------------------------------
@@ -33,6 +38,7 @@ set(EFIT_SETUP_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/efit.setup.in)
 set(EFIT_INPUT_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/efit.input.in)
 set(EFIT_TEST_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/run_efit.sh.in)
 set(EFIT_TEST_CONFIGFILE_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/run_efit_input.sh.in)
+set(EFIT_TEST_CONFIGFILE_RERUN ${CMAKE_CURRENT_SOURCE_DIR}/rerun_efit_hdf5.sh.in)
 set(EFIT_TEST_CONFIGFILE_HDF5 ${CMAKE_CURRENT_SOURCE_DIR}/run_efit_hdf5.sh.in)
 set(EFIT_TEST_CONFIGFILE_SNAP ${CMAKE_CURRENT_SOURCE_DIR}/run_efit_snap.sh.in)
 set(EFIT_RESULTS_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/check_efit_results.sh.in)

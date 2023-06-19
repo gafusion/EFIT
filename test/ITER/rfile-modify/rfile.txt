@@ -1,4 +1,5 @@
  &IN1
+ write_omas = 1
  ISHOT = 91101
  ITIME = 60
  PLASMA = 1.50000E+07
