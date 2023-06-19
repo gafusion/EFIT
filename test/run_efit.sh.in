@@ -18,12 +18,19 @@ export OMP_NUM_THREADS=1
 
 # Remove any previous outputs
 rm -f run_efit.out
-outputs=( @EFIT_OUTPUTS@ )
+if [ @HAVE_NETCDF@ = True ]; then
+  outputs=( a g m )
+else
+  outputs=( a g )
+fi
 for prefix in ${outputs[*]}; do
   for label in @EFIT_LABEL@; do
     rm -f ${prefix}${label}
   done
 done
+if [ @ENABLE_HDF5@ = ON ]; then
+  rm -f @RUNID@.h5
+fi
 
 # Now run efit
 @MPICMD@ @NPROC@ @EFIT_EXEC@ @GRID_SIZE@ << __c__MATCHING_EOF__c__ > run_efit.out

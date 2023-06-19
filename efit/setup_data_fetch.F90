@@ -204,7 +204,7 @@
        "jdebug input variable is deprecated, set cmake variable instead"
       if(ktear.ne.0) write(*,*) &
        "tearing calculations no longer exist, ktear is deprecated"
-      ! disable unwanted file writes
+      ! disable unwanted file writes (gets passed to namelist output, wanted?)
       if (write_omas.eq.2) then
         iout=0
         iplcout=0
@@ -223,6 +223,7 @@
 
       iteks=itek
       mxiters=mxiter
+      nxiters=nxiter
       zelipss=zelip
       kffcurs=kffcur
       kppcurs=kppcur
@@ -230,6 +231,14 @@
       iexcals=iexcal
       ibunmns=ibunmn
       ierchks=ierchk
+      nbdrys=nbdry
+      rcs=rc_ext
+      zcs=zc_ext
+      aexts=a_ext
+      eups=eup_ext
+      elows=elow_ext
+      dups=dup_ext
+      dlows=dlow_ext
 !
       ktime=mtime ! don't know why this would be wanted...
       if(qvfit.gt.0.0) qenp=qvfit ! iconvr=2 since not in efitin

@@ -3,6 +3,7 @@
  i      pres         w    nustar       den      temp       cur  ne_shift  te_shift  pe_shift
  2    1.00    1.00    1.00    1.00    1.00    0.90    0.00    0.00    0.00
  &IN1
+ write_omas = 1,
  ISHOT = 186610
  ITIME = 2
  FWTCUR = 0.0

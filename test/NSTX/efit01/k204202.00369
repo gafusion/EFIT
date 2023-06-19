@@ -129,6 +129,7 @@
  /
 ! Main EFIT namelist input
  &IN1
+ write_omas = 1,
  ISHOT = 204202
  ITIME = 369
  ITIMEU = 0

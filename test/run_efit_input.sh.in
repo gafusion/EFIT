@@ -18,13 +18,23 @@ if ! test -e @CURRENT_MACHINE_LINK_DIR@/lim.dat; then
 fi
 
 # Remove any previous outputs
-rm -f run_efit.out
-outputs=( @EFIT_OUTPUTS@ )
+rm -f run_efit.out run_efit_input.out
+if [ @HAVE_NETCDF@ = True ]; then
+  outputs=( a g m )
+else
+  outputs=( a g )
+fi
 for prefix in ${outputs[*]}; do
   for label in @EFIT_LABEL@; do
     rm -f ${prefix}${label}
   done
 done
+for label in @EFIT_LABEL@; do
+  rm -f k${label}_input
+done
+if [ @ENABLE_HDF5@ = ON ]; then
+  rm -f @RUNID@.h5 @RUNID@_input.h5
+fi
 
 # Now run efit
 @MPICMD@ @NPROC@ @EFIT_EXEC@ @GRID_SIZE@ > run_efit.out

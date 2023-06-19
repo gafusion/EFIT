@@ -202,23 +202,20 @@
       endif rank0
 
       select case (kdata)
-      case (3,7) 
+      case (3,5,6,7) 
 #if defined(USEMPI)
         if (nproc > 1) then
           call MPI_BCAST(ishot,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
           call MPI_BCAST(timeb,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
           call MPI_BCAST(dtime,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
           call MPI_BCAST(snap_ext,82,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+          if (kdata.eq.5 .or. kdata.eq.6) then
+            call MPI_BCAST(cmdfile_in,15,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+            call MPI_BCAST(shotfile_in,15,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+          endif
         endif
-#endif 
+#endif
         snapextin = snap_ext
-      case (5,6)
-        ! only single process is used in this mode
-#if defined(USEMPI)
-        if(nproc > 1) &
-            write(nttyo,*) 'Warning: only 1 processor is active'
-#endif 
-        return
       end select
      
 #if defined(USEMPI)

@@ -348,8 +348,12 @@
         if(write_omas.lt.2) call write_g(ks)
         if (write_omas.gt.0) then
 #if defined(USE_HDF5)
-          call write_omas_output(ks,ktime)
-          call write_omas_input(ks,ktime)
+          if (nproc.eq.1) then
+            call write_omas_output(ks,ktime)
+            call write_omas_input(ks,ktime)
+          else
+            write(nttyo,*) 'HDF5 writes are only setup for serial runs'
+          endif
 #else
           write(nttyo,*) 'HDF5 needs to be linked to write OMAS files'
 #endif

@@ -34,13 +34,6 @@ if (${ENABLE_HDF5})
   # because of issues with the tables that needs to be resolved
   set(CURRENT_MACHINE_BUILT_DIR ${CURRENT_MACHINE_LINK_DIR})
   set(EFIT_MODE 1)
-  if (${ENABLE_PARALLEL})
-    set(EFIT_IN ${RUNID}_mpi.h5)
-  else ()
-    set(EFIT_IN ${RUNID}.h5)
-  endif ()
-  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${EFIT_IN}
-       DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
   configure_file(${EFIT_TEST_CONFIGFILE_HDF5}
                  ${CMAKE_CURRENT_BINARY_DIR}/run_efit_hdf5.sh @ONLY)
   add_test(NAME DIIID-vsloop-hdf5 COMMAND run_efit_hdf5.sh)

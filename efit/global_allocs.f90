@@ -97,13 +97,13 @@ ALLOCATE(rbrpc(nstark,npcurn),rbzpc(nstark,npcurn),rgampc(nstark,npcurn),rbrfc(n
    aveerr(kxiter),iermax(kxiter),jermax(kxiter))
    
 ALLOCATE(rbdry(mbdry),zbdry(mbdry),fwtbdry(mbdry),fwtbry(mbdry),sigrbd(mbdry), &
-   sigzbd(mbdry),rbdry0(mbdry),zbdry0(mbdry), &
+   sigzbd(mbdry),rbdry0(mbdry),zbdry0(mbdry),rbdrys(mbdry),zbdrys(mbdry), &
    rsol(mbdry),zsol(mbdry),fwtsol(mbdry),fwtsolw(mbdry), &
    rbdrfc(mbdry,nfsum),rsolfc(mbdry,nfsum),rbdrac(mbdry,nacoil), &
    gbdrpc(mbdry,npcurn),gmp2dz(magpri),gsildz(nsilop),gbrdz(nstark), &
    gbzdz(nstark),rgamdz(nstark),rmlsdz(nmsels),relsdz(nmsels),rpredz(mpress), &
    rprwdz(mpress),gbdrdz(mbdry),erbloc(msbdry), erbsloc(msbdry), &
-   fcsum(nfsum),fczero(nfsum),ivbcuse(ndata), &
+   fcsum(nfsum),fczero(nfsum),ivbcuse(ndata),srpress(mpress), &
    pressr(mpress),rpress(mpress),zpress(mpress),tethom(mpress),rteth(mpress), &
    zteth(mpress),tionex(mpress),rion(mpress),zion(mpress),dnethom(mpress), &
    rneth(mpress),zneth(mpress),pbeam(mpress),sibeam(mpress),sgteth(mpress), &
@@ -136,6 +136,8 @@ ALLOCATE(xnodef(modef),xnodep(modep),xnodew(modew),kbasef(modef), &
    sigfcc(nfsum),sigecc(nesum),sigsil(nsilop),sigmpi(magpri), &
    signbt(magpri))
    
+allocate(psirz_ext(nw*nh),pprime_ext(nw),ffprim_ext(nw),qpsi_ext(nw))
+
 !-------from ecom2-mods.f90--------
 ALLOCATE(gridec(nwnh,nesum),gridvs(nwnh,nvesel),gbrpc(nstark,nwnh), &
    gbzpc(nstark,nwnh),gridac(nwnh,nacoil), &

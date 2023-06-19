@@ -28,17 +28,17 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/efit_snap.dat
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
 
 set(EFIT_MODE 5)
-if (${ENABLE_PARALLEL})
-  set(NPROC_SAVE ${NPROC})
-  set(NPROC 1)
-endif ()
+#if (${ENABLE_PARALLEL})
+#  set(NPROC_SAVE ${NPROC})
+#  set(NPROC 1)
+#endif ()
 configure_file(${EFIT_TEST_CONFIGFILE_SNAP}
                ${CMAKE_CURRENT_BINARY_DIR}/run_efit_kfile.sh @ONLY)
 configure_file(${EFIT_RESULTS_CONFIGFILE_SNAP}
                ${CMAKE_CURRENT_BINARY_DIR}/check_efit_kfile_results.sh @ONLY)
-if (${ENABLE_PARALLEL})
-  set(NPROC ${NPROC_SAVE})
-endif ()
+#if (${ENABLE_PARALLEL})
+#  set(NPROC ${NPROC_SAVE})
+#endif ()
 
 add_test(NAME DIIID-efit01-kfile COMMAND run_efit_kfile.sh)
 add_test(NAME DIIID-efit01-kfile-results COMMAND check_efit_kfile_results.sh)

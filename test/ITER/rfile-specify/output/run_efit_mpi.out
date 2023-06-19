@@ -2,15 +2,18 @@
           EFIT-AI Version
 
  Git repository url git@gitlab.com:efit-ai/efit.git
- Git branch main
- Git hash 92b0940
- Git date 2023-04-24 20:13:52 +0000
- Simulation started on  5/18/2023 at 13:45:14
+ Git branch omas_write
+ Git hash 6cf41be with local modifications
+ Git date 2023-06-12 11:49:00 -0700
+ Simulation started on  6/17/2023 at 11:17:29
  Code compiled with GNU 9.2.0
 
- type mode (1=imas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
+ type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
+
+ number of time slices?
 
  type input file names:
+ #
 
  table_di2 = <../green/>
  ******************** EFIT 65 x 65 grid ********************

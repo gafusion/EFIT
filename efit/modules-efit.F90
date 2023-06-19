@@ -23,6 +23,7 @@
         character(7) :: efitvers ! git hash
         character(10) :: efitdate,efitdatealt ! commit dates (legacy formats)
         integer*4 :: efitversion ! commit date (legacy form)
+        INTEGER, DIMENSION(8) :: tval ! run date
         character(512) :: giturl,gitbranch,githash,gitdate,gitdatealt,lmods
         character(512) :: fc,fc_id,fcver
         character(5096) :: fcflags

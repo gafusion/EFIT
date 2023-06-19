@@ -65,6 +65,7 @@
              aa1lib(libim),aa8lib(libim),fwtlib(libim)
       real*8 pds(6),denr(nco2r),denv(nco2v)
       real*8 brsptu(nfsum),brsp_save(nrsmat)
+      real*8 psirz_temp(nw,nh)
       real*8, dimension(:), allocatable :: expmp2_save,coils_save, &
                                            rbdry_save,zbdry_save, &
                                            fwtsi_save,pressr_save, &
@@ -76,8 +77,6 @@
       character*300 edatname
       character(256) table_save
       character*10 namedum,tindex,probeind
-      character*2 reflect_ext
-      logical shape_ext
       logical file_stat
       logical writepc ! unused variable
       integer*4, parameter :: m_ext=101,nsq=1
@@ -512,11 +511,6 @@
 11775   format (6a8,3i4)
 11776   format (5e16.9)
         if ((icinit.eq.-3).or.(icinit.eq.-4 .and. jtime.eq.1)) then
-          if ((nw.ne.nw_ext) .or. (nh.ne.nh_ext)) then
-            call errctrl_msg('data_input', &
-                             'restart file must have same dimensions')
-            stop
-          endif
           do i=1,nw
             do j=1,nh
               kk=(i-1)*nh+j
@@ -920,8 +914,11 @@
           call read_h5_ex(nid,"tolbndpsi",tolbndpsi,h5in,h5err)
           call read_h5_ex(nid,"siloplim",siloplim,h5in,h5err)
           call read_h5_ex(nid,"use_previous",use_previous,h5in,h5err)
+          call read_h5_ex(nid,"chordr",req_valid,h5in,h5err)
+          call read_h5_ex(nid,"chordv",req_valid,h5in,h5err)
           call read_h5_ex(nid,"nw_sub",nw_sub,h5in,h5err)
           call read_h5_ex(nid,"nh_sub",nh_sub,h5in,h5err)
+          call read_h5_ex(nid,"req_valid",req_valid,h5in,h5err)
           call read_h5_ex(nid,"write_omas",write_omas,h5in,h5err)
           call close_group("in1",nid,h5err)
         endif
@@ -1266,10 +1263,17 @@
           call close_group("global_quantities",nid,h5err)
 
           ! read in boundary points
-          call enter_group(sid,"boundary",cid,file_stat,h5err)
+          ! try to read from boundary_separatrix first but fall back to
+          ! boundary if missing
+          edatname="boundary_separatrix"
+          call enter_group(sid,"boundary_separatrix",cid,file_stat,h5err)
           if (.not. file_stat) then
-            call errctrl_msg('data_input','boundary group not found')
-            stop
+            call enter_group(sid,"boundary",cid,file_stat,h5err)
+            edatname="boundary"
+            if (.not. file_stat) then
+              call errctrl_msg('data_input','boundary group not found')
+              stop
+            endif
           endif
           call enter_group(cid,"outline",nid,file_stat,h5err)
           if (.not. file_stat) then
@@ -1282,7 +1286,7 @@
           call read_h5_ex(nid,"r",rbdry_ext,h5in,h5err)
           call read_h5_ex(nid,"z",zbdry_ext,h5in,h5err)
           call close_group("outline",nid,h5err)
-          call close_group("boundary",cid,h5err)
+          call close_group(trim(edatname),cid,h5err)
 
           ! read in p', FF', and q
           call enter_group(sid,"profiles_1d",nid,file_stat,h5err)
@@ -1443,7 +1447,7 @@
       "old boundary tracing method is deprecated"
       if(ktear.ne.0) write(*,*) &
        "tearing calculations no longer exist, ktear is deprecated"
-      ! disable unwanted file writes
+      ! disable unwanted file writes (gets passed to namelist output, wanted?)
       if (write_omas.eq.2) then
         iout=0
         iplcout=0
@@ -1867,19 +1871,12 @@
         xlim(7)=xlim(1)
         ylim(7)=ylim(1)
       endif
-      call set_basis_params
-      if (kedgep.gt.0) then
-        s1edge=(1.0-pe_psin)/pe_width
-        tpedge=tanh(s1edge)
-        s1edge=(1.0-fe_psin)/fe_width
-        tfedge=tanh(s1edge)
-      endif
+!--------------------------------------------------------------------- 
+!--   save fitting weights and numerical parameters
+!--------------------------------------------------------------------- 
 #ifdef DEBUG_LEVEL1
-      write(*,*)  'before save fitting weights'
+      write(*,*)  'before save fitting'
 #endif
-!--------------------------------------------------------------------- 
-!--   save fitting weights
-!--------------------------------------------------------------------- 
       swtdlc=fwtdlc
       swtcur=fwtcur
       swtfc=fwtfc
@@ -1891,9 +1888,23 @@
       swtemsels=fwtemsels
       swtece=fwtece0
       swtecebz=fwtecebz0
+      iteks=itek
+      mxiters=mxiter
+      nxiters=nxiter
+      zelipss=zelip
+      kffcurs=kffcur
+      kppcurs=kppcur
+      n1coils=n1coil
       iexcals=iexcal
       ibunmns=ibunmn
       ierchks=ierchk
+      call set_basis_params
+      if (kedgep.gt.0) then
+        s1edge=(1.0-pe_psin)/pe_width
+        tpedge=tanh(s1edge)
+        s1edge=(1.0-fe_psin)/fe_width
+        tfedge=tanh(s1edge)
+      endif
 #ifdef DEBUG_LEVEL1
       write(*,*)'adjust fit parameters based on basis function selected'
 #endif
@@ -1904,10 +1915,6 @@
       if (npress.lt.0) then
         kdopre=-npress
         npress=0
-      endif
-      if (itek.lt.0) then
-        ixray=1
-        itek=iabs(itek)
       endif
       if(psiwant.le.0.0) psiwant=1.e-5_dp
 
@@ -1921,6 +1928,10 @@
 !--         appended to the input files outside of the namelists, but we've
 !--         already closed those... does this still need to be supported?
 !-------------------------------------------------------------------------- 
+      if (itek.lt.0) then
+        ixray=1
+        itek=iabs(itek)
+      endif
       kgraph=0 
       if (itek.gt.100) then 
         itek=itek-100 
@@ -2251,9 +2262,6 @@
       xlmaxt=xlmax 
 !
       call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
-
-      ! need to match snap mode saved variables
-      zelipss=zelip
 
       endif snap
 !----------------------------------------------------------------------- 

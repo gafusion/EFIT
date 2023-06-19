@@ -198,8 +198,6 @@
           call errctrl_msg('set_init','icurrt/=2 not set up')
           stop
         endif
-        deallocate(psirz_ext,pprime_ext,ffprim_ext,qpsi_ext, &
-                   rbdry_ext,zbdry_ext,fcoil_ext,xlim_ext,ylim_ext)
       case default
         call errctrl_msg('set_init','icinit value not recognized')
         stop

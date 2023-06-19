@@ -17,15 +17,15 @@
       implicit none
       real*8 seval,speval
       integer*4, intent(in) :: jtime,ktime
-      integer*4 i,j,kk,ier,init
+      integer*4 i,j,kk,ier,init,tind
       real*8 ssibry,ssimag,xdiff,xdim,zdiff,zdim
       real*8 pds(6),gaps(4),rsps(4),zsps(4)
       real*8, dimension(nw) :: vprime,dvdrho,bwork,cwork,dwork
       real*8, dimension(nw,nh) :: psirz,pcurrz,brrz,bzrz,btrz
       logical group_exists
-      character fname*15
+      character fname*15,strout*50
       character*10 tindex,probeind,names(4)
-      data init/0/
+      data init/0/,tind/0/
 
       ! Setup flux scalars
       if (ipmeas(jtime).gt.0.0) then
@@ -75,8 +75,12 @@
           call seva2d(bkx,lkx,bky,lky,c,rgrid(i),zgrid(j),pds,ier,n333)
           brrz(j,i)=-pds(3)/rgrid(i)
           bzrz(j,i)=pds(2)/rgrid(i)
-          btrz(j,i)=seval(nw,psirz(j,i),sigrid,fpol,bbfpol, &
-                          ccfpol,ddfpol)/rgrid(i)
+          if (abs(pcurrz(j,i)).gt.0.0) then
+            btrz(j,i)=seval(nw,abs((psirz(j,i)-ssimag)/(ssibry-ssimag)), &
+                            sigrid,fpol,bbfpol,ccfpol,ddfpol)/rgrid(i)
+          else
+            btrz(j,i)=fpol(nw)/rgrid(i)
+          endif
         enddo
       enddo
 
@@ -138,8 +142,8 @@
           call make_group(tid,"unit",sid,group_exists,h5err)
           call make_group(sid,"0",fid,group_exists,h5err)
           call make_group(fid,"outline",nid,group_exists,h5err)
-          call dump_h5(nid,"r",xlim(1:limitr),h5in,h5err)
-          call dump_h5(nid,"z",ylim(1:limitr),h5in,h5err)
+          call dump_h5(nid,"r",xlim(1:limitr-1),h5in,h5err)
+          call dump_h5(nid,"z",ylim(1:limitr-1),h5in,h5err)
           call close_group("outline",nid,h5err)
           call close_group("0",fid,h5err)
           call close_group("unit",sid,h5err)
@@ -190,13 +194,35 @@
               "ids_properties already exists in file, not writing"
         else
           call dump_h5(fid,"comment","EFIT",h5in,h5err)
+          WRITE(strout,'(i2,a,i2,a,i4,a,i2,a,i2,a,i2)') tval(2),'/', &
+            tval(3),'/',tval(1),' ',tval(5),':',tval(6),':',tval(7)
+          call dump_h5(fid,"creation_date",TRIM(strout),h5in,h5err)
           call close_group("ids_properties",fid,h5err)
         endif
+        call open_group(eqid,"code",cid,h5err)
+        call make_group(cid,"library",fid,group_exists,h5err)
+        if (group_exists) then
+          if(nproc.gt.1) &
+            write(*,*) &
+              "library already exists in file, not writing"
+        else
+          call make_group(fid,"0",nid,group_exists,h5err)
+          WRITE(strout,'(3a)') TRIM(githash),' ',TRIM(lmods)
+          call dump_h5(nid,"commit",TRIM(strout),h5in,h5err)
+          call dump_h5(nid,"name","EFIT",h5in,h5err)
+          call dump_h5(nid,"repository",TRIM(giturl),h5in,h5err)
+          WRITE(strout,'(5a)') TRIM(gitbranch),' ',TRIM(fc_id), &
+                                  ' ',TRIM(fcver)
+          call dump_h5(nid,"version",TRIM(strout),h5in,h5err)
+          call close_group("library",fid,h5err)
+        endif
+        call close_group("code",cid,h5err)
+
         call make_group(eqid,"vacuum_toroidal_field",fid,group_exists, &
                         h5err)
         if (group_exists) then
           if(nproc.gt.1) &
-            write(*,*)"vacuum field already exists in file, expect issues"
+          write(*,*)"vacuum field already exists in file, expect issues"
         else
           call dump_h5(fid,"r0",rcentr,h5in,h5err)
           call close_group("vacuum_toroidal_field",fid,h5err)
@@ -207,7 +233,13 @@
       ! start of equilibrium write
       call open_group(rootgid,"equilibrium",eqid,h5err)
       call open_group(eqid,"time_slice",tid,h5err)
-      write(tindex,"(I0)") jtime-1+rank*ktime
+      if (nproc.eq.1) then
+        write(tindex,"(I0)") tind
+        tind=tind+1
+      else
+        ! cannot guaruntee that time indices will be consequtive
+        write(tindex,"(I0)") jtime-1+rank*ktime
+      endif
       call make_group(tid,trim(tindex),sid,group_exists,h5err)
       if (group_exists) then
         write(*,*) "equilibrium index ",trim(tindex), &
@@ -369,7 +401,7 @@
       call dump_h5(nid,"ip",ipmhd(jtime),h5in,h5err)
       call dump_h5(nid,"beta_pol",betap(jtime),h5in,h5err)
       call dump_h5(nid,"beta_tor",betat(jtime)/100,h5in,h5err)
-      call dump_h5(nid,"beta_normal",abs(betan(jtime))/100,h5in,h5err)
+      call dump_h5(nid,"beta_normal",abs(betan(jtime)),h5in,h5err)
       call dump_h5(nid,"li_3",li3(jtime),h5in,h5err)
       call dump_h5(nid,"volume",volume(jtime),h5in,h5err)
       call dump_h5(nid,"area",area(jtime)/1.0e+04_dp,h5in,h5err)
@@ -382,7 +414,7 @@
       call dump_h5(nid,"q_axis",qm(jtime),h5in,h5err)
       call dump_h5(nid,"q_95",q95(jtime),h5in,h5err)
       call make_group(nid,"q_min",cid,group_exists,h5err)
-      call dump_h5(cid,"rho_tor_norm",rhoqmin,h5in,h5err) ! TODO: need to compute tor instead of pol?
+      call dump_h5(cid,"rho_tor_norm",rhoqmin,h5in,h5err) ! TODO: need to compute using tor flux instead of vol?
       call dump_h5(cid,"value",qmin,h5in,h5err)
       call close_group("q_min",cid,h5err)
       call close_group("global_quantities",nid,h5err)
@@ -450,7 +482,7 @@
         call dump_h5(fid,"measured",accurt(jtime,i-nesum-nfsum),h5in,h5err)
         !call dump_h5(fid,"measured_error_upper",,h5in,h5err)
         !call dump_h5(fid,"weight",,h5in,h5err)
-        call dump_h5(fid,"reconstructed",caccurt(jtime,1-nesum-nfsum),h5in,h5err)
+        call dump_h5(fid,"reconstructed",caccurt(jtime,i-nesum-nfsum),h5in,h5err)
         !call dump_h5(fid,"chi_squared",,h5in,h5err)
         call close_group(trim(probeind),fid,h5err)
       enddo
@@ -514,7 +546,7 @@
           if (rpress(i).le.0) then
             call dump_h5(pid,"psi",abs(rpress(i)),h5in,h5err) ! dimensionless...
           else
-            call dump_h5(pid,"r",rpress(i),h5in,h5err)
+            call dump_h5(pid,"r",srpress(i),h5in,h5err)
             call dump_h5(pid,"z",zpress(i),h5in,h5err)
           endif
           call close_group("position",pid,h5err)
@@ -632,27 +664,23 @@
       implicit none
 
       integer*4, intent(in) :: jtime,ktime
-      integer*4 nbdryss
+      integer*4 nbdryss,n1coilt,tind
+      integer*4 izeros(npcurn)
       real*8 xltype,xltype_180,timeus,timems
-      real*8, dimension(mbdry) :: rbdryss,zbdryss
+      real*8 rzeros(npcurn)
       logical group_exists
       character fname*15
       character*10 tindex
+      data tind/0/
+
+      rzeros=0.0
+      izeros=0
 
       itime=time(jtime)
       timems=itime
       timeus=(time(jtime)-timems)*1000.
       itimeu=timeus
-      nbdryss=nbdry
-      rbdryss=rbdry
-      zbdryss=zbdry
-      rbdry=0.0
-      zbdry=0.0
-      if (fitzts.eq.'te'.and.ztserr(jtime)) then
-        nbdry=1
-        rbdry(1)=1.94_dp
-        zbdry(1)=ztssym(jtime)+0.5_dp*ztswid(jtime)
-      endif
+
       n1coilt=n1coil
       n1coil=n1coils
       if(device=="DIII-D" .and. ishot.gt.108281) n1coil = 0
@@ -676,7 +704,13 @@
       call open_group(eqid,"code",cid,h5err)
       call open_group(cid,"parameters",pid,h5err)
       call open_group(pid,"time_slice",tid,h5err)
-      write(tindex,"(I0)") jtime-1+rank*ktime
+      if (nproc.eq.1) then
+        write(tindex,"(I0)") tind
+        tind=tind+1
+      else
+        ! cannot guaruntee that time indices will be consequtive
+        write(tindex,"(I0)") jtime-1+rank*ktime
+      endif
       call make_group(tid,trim(tindex),sid,group_exists,h5err)
       if (group_exists) then
         write(*,*) "code parameters index ",trim(tindex), &
@@ -695,7 +729,7 @@
       call dump_h5(nid,"plasma",ipmeas(jtime),h5in,h5err)
       call dump_h5(nid,"itek",iteks,h5in,h5err)
       call dump_h5(nid,"itrace",itrace,h5in,h5err)
-      call dump_h5(nid,"nxiter",nxiter,h5in,h5err)
+      call dump_h5(nid,"nxiter",nxiters,h5in,h5err)
       call dump_h5(nid,"fwtcur",swtcur,h5in,h5err)
       call dump_h5(nid,"kffcur",kffcurs,h5in,h5err)
       call dump_h5(nid,"coils",silopt(jtime,:),h5in,h5err)
@@ -708,14 +742,14 @@
       call dump_h5(nid,"fwtqa",fwtqa,h5in,h5err)
       call dump_h5(nid,"qemp",qemp,h5in,h5err)
       call dump_h5(nid,"error",error,h5in,h5err)
-      call dump_h5(nid,"limitr",-limid,h5in,h5err)
+      call dump_h5(nid,"limitr",limitr-1,h5in,h5err)
       call dump_h5(nid,"xlim",xlim,h5in,h5err)
       call dump_h5(nid,"ylim",ylim,h5in,h5err)
       call dump_h5(nid,"serror",serror,h5in,h5err)
       call dump_h5(nid,"nbdry",nbdry,h5in,h5err)
-      call dump_h5(nid,"rbdry",rbdry,h5in,h5err)
-      call dump_h5(nid,"zbdry",zbdry,h5in,h5err)
-      call dump_h5(nid,"psibry",psibry,h5in,h5err)
+      call dump_h5(nid,"rbdry",rbdrys,h5in,h5err)
+      call dump_h5(nid,"zbdry",zbdrys,h5in,h5err)
+      call dump_h5(nid,"psibry",psibrys,h5in,h5err)
       call dump_h5(nid,"nslref",nslref,h5in,h5err)
       call dump_h5(nid,"ibunmn",ibunmn,h5in,h5err)
       call dump_h5(nid,"btor",bcentr(jtime),h5in,h5err)
@@ -733,7 +767,7 @@
       call dump_h5(nid,"aelip",aelip,h5in,h5err)
       call dump_h5(nid,"eelip",eelip,h5in,h5err)
       call dump_h5(nid,"qvfit",qvfit,h5in,h5err)
-      call dump_h5(nid,"fwtdlc",fwtdlc,h5in,h5err)
+      call dump_h5(nid,"fwtdlc",swtdlc,h5in,h5err)
       call dump_h5(nid,"betap0",betap0,h5in,h5err)
       call dump_h5(nid,"emp",emp,h5in,h5err)
       call dump_h5(nid,"enp",enp,h5in,h5err)
@@ -750,7 +784,7 @@
       call dump_h5(nid,"itimeu",itimeu,h5in,h5err)
       call dump_h5(nid,"rcentr",rcentr,h5in,h5err)
       call dump_h5(nid,"rzero",rzero,h5in,h5err)
-      call dump_h5(nid,"gammap",gammap,h5in,h5err)
+      call dump_h5(nid,"gammap",1./gammap,h5in,h5err)
       call dump_h5(nid,"cfcoil",cfcoil,h5in,h5err)
       call dump_h5(nid,"fczero",fczero,h5in,h5err)
       call dump_h5(nid,"fcsum",fcsum,h5in,h5err)
@@ -776,8 +810,8 @@
       call dump_h5(nid,"sigprebi",sigprebi,h5in,h5err)
       call dump_h5(nid,"fwtxx",fwtxx,h5in,h5err)
       call dump_h5(nid,"kprfit",kprfit,h5in,h5err)
-      call dump_h5(nid,"pressr",pressr,h5in,h5err)
-      call dump_h5(nid,"rpress",rpress,h5in,h5err)
+      call dump_h5(nid,"pressr",premea,h5in,h5err)
+      call dump_h5(nid,"rpress",srpress,h5in,h5err)
       call dump_h5(nid,"zpress",zpress,h5in,h5err)
       call dump_h5(nid,"sigpre",sigpre,h5in,h5err)
       call dump_h5(nid,"npress",npress,h5in,h5err)
@@ -887,24 +921,24 @@
       call dump_h5(nid,"bitec",bitec,h5in,h5err)
       call dump_h5(nid,"scalepr",scalepr,h5in,h5err)
       call dump_h5(nid,"scalesir",scalesir,h5in,h5err)
-      call dump_h5(nid,"ppbdry",ppbdry,h5in,h5err)
-      call dump_h5(nid,"kppbdry",kppbdry,h5in,h5err)
-      call dump_h5(nid,"pp2bdry",pp2bdry,h5in,h5err)
-      call dump_h5(nid,"kpp2bdry",kpp2bdry,h5in,h5err)
+      call dump_h5(nid,"ppbdry",rzeros,h5in,h5err)
+      call dump_h5(nid,"kppbdry",izeros,h5in,h5err)
+      call dump_h5(nid,"pp2bdry",rzeros,h5in,h5err)
+      call dump_h5(nid,"kpp2bdry",izeros,h5in,h5err)
       call dump_h5(nid,"scalea",scalea,h5in,h5err)
       call dump_h5(nid,"sigrbd",sigrbd,h5in,h5err)
       call dump_h5(nid,"sigzbd",sigzbd,h5in,h5err)
       call dump_h5(nid,"nbskip",nbskip,h5in,h5err)
-      call dump_h5(nid,"ffbdry",ffbdry,h5in,h5err)
-      call dump_h5(nid,"kffbdry",kffbdry,h5in,h5err)
-      call dump_h5(nid,"ff2bdry",ff2bdry,h5in,h5err)
-      call dump_h5(nid,"kff2bdry",kff2bdry,h5in,h5err)
+      call dump_h5(nid,"ffbdry",rzeros,h5in,h5err)
+      call dump_h5(nid,"kffbdry",izeros,h5in,h5err)
+      call dump_h5(nid,"ff2bdry",rzeros,h5in,h5err)
+      call dump_h5(nid,"kff2bdry",izeros,h5in,h5err)
       call dump_h5(nid,"errsil",errsil,h5in,h5err)
       call dump_h5(nid,"vbit",vbit,h5in,h5err)
-      call dump_h5(nid,"wwbdry",wwbdry,h5in,h5err)
-      call dump_h5(nid,"kwwbdry",kwwbdry,h5in,h5err)
-      call dump_h5(nid,"ww2bdry",ww2bdry,h5in,h5err)
-      call dump_h5(nid,"kww2bdry",kww2bdry,h5in,h5err)
+      call dump_h5(nid,"wwbdry",rzeros,h5in,h5err)
+      call dump_h5(nid,"kwwbdry",izeros,h5in,h5err)
+      call dump_h5(nid,"ww2bdry",rzeros,h5in,h5err)
+      call dump_h5(nid,"kww2bdry",izeros,h5in,h5err)
       call dump_h5(nid,"f2edge",f2edge,h5in,h5err)
       call dump_h5(nid,"fe_width",fe_width,h5in,h5err)
       call dump_h5(nid,"fe_psin",fe_psin,h5in,h5err)
@@ -952,6 +986,12 @@
       call dump_h5(nid,"tolbndpsi",tolbndpsi,h5in,h5err)
       call dump_h5(nid,"siloplim",siloplim,h5in,h5err)
       call dump_h5(nid,"use_previous",use_previous,h5in,h5err)
+      call dump_h5(nid,"chordr",req_valid,h5in,h5err)
+      call dump_h5(nid,"chordv",req_valid,h5in,h5err)
+      call dump_h5(nid,"nw_sub",nw_sub,h5in,h5err)
+      call dump_h5(nid,"nh_sub",nh_sub,h5in,h5err)
+      call dump_h5(nid,"req_valid",req_valid,h5in,h5err)
+      call dump_h5(nid,"write_omas",write_omas,h5in,h5err)
       call close_group("in1",nid,h5err)
    
       call make_group(sid,"ink",nid,group_exists,h5err)
@@ -1047,8 +1087,8 @@
 
       call make_group(sid,"edgep",nid,group_exists,h5err)
       call dump_h5(nid,"symmetrize",symmetrize,h5in,h5err)
-      call dump_h5(nid,"rpress",rpress,h5in,h5err)
-      call dump_h5(nid,"pressr",pressr,h5in,h5err)
+      call dump_h5(nid,"rpress",srpress,h5in,h5err)
+      call dump_h5(nid,"pressr",premea,h5in,h5err)
       call dump_h5(nid,"sigpre",sigpre,h5in,h5err)
       call dump_h5(nid,"npress",npress,h5in,h5err)
       call dump_h5(nid,"kprfit",kprfit,h5in,h5err)
@@ -1168,18 +1208,37 @@
       call dump_h5(nid,"wwtens",wwtens,h5in,h5err)
       call close_group("invt",nid,h5err)
 
+      call make_group(sid,"profile_ext",nid,group_exists,h5err)
+      call dump_h5(nid,"npsi_ext",npsi_ext,h5in,h5err)
+      call dump_h5(nid,"pprime_ext",pprime_ext,h5in,h5err)
+      call dump_h5(nid,"ffprim_ext",ffprim_ext,h5in,h5err)
+      call dump_h5(nid,"psin_ext",psin_ext,h5in,h5err)
+      call dump_h5(nid,"geqdsk_ext",geqdsk_ext,h5in,h5err)
+      call dump_h5(nid,"sign_ext",sign_ext,h5in,h5err)
+      call dump_h5(nid,"scalepp_ext",scalepp_ext,h5in,h5err)
+      call dump_h5(nid,"scaleffp_ext",scaleffp_ext,h5in,h5err)
+      call dump_h5(nid,"shape_ext",shape_ext,h5in,h5err)
+      call dump_h5(nid,"dr_ext",dr_ext,h5in,h5err)
+      call dump_h5(nid,"dz_ext",dz_ext,h5in,h5err)
+      call dump_h5(nid,"rc_ext",rcs,h5in,h5err)
+      call dump_h5(nid,"zc_ext",zcs,h5in,h5err)
+      call dump_h5(nid,"a_ext",aexts,h5in,h5err)
+      call dump_h5(nid,"eup_ext",eups,h5in,h5err)
+      call dump_h5(nid,"elow_ext",elows,h5in,h5err)
+      call dump_h5(nid,"dup_ext",dups,h5in,h5err)
+      call dump_h5(nid,"dlow_ext",dlows,h5in,h5err)
+      call dump_h5(nid,"setlim_ext",setlim_ext,h5in,h5err)
+      call dump_h5(nid,"reflect_ext",reflect_ext,h5in,h5err)
+      call dump_h5(nid,"fixpp",fixpp,h5in,h5err)
+      call close_group("profile_ext",nid,h5err)
+
       call close_group(trim(tindex),sid,h5err)
       call close_group("time_slice",tid,h5err)
       call close_group("parameters",pid,h5err)
       call close_group("code",cid,h5err)
       call close_group("equilibrium",eqid,h5err)
       call close_h5file(fileid,rootgid,h5err)
-!----------------------------------------------------------------------
-!--   Restore variables                                              --
-!----------------------------------------------------------------------
-      rbdry=rbdryss
-      zbdry=zbdryss
-      nbdry=nbdryss
+
       n1coil=n1coilt
 
       return

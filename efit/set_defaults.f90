@@ -180,6 +180,19 @@
       zbdry=0.0
       znose=-1.276_dp
 
+      a_ext=-10. 
+      dr_ext=0.0 
+      dz_ext=0.0 
+      dup_ext=-10. 
+      dlow_ext=-10. 
+      eup_ext=-10. 
+      elow_ext=-10. 
+      rc_ext=-10. 
+      zc_ext=-10. 
+      reflect_ext='no' 
+      setlim_ext=-10. 
+      shape_ext=.false. 
+
       if (nesum.gt.0) ecurrt(1)=0.0
       if (nesum.gt.1) ecurrt(2)=0.0
       if (nesum.gt.2) ecurrt(3)=-1.e10_dp

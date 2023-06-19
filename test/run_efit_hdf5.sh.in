@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Use tables that are built as an extra check that they work (if available)
-if [ @TEST_EFUND@ = True ]; then
+if [ @TEST_EFUND@ = ON ]; then
   export link_efit="@CURRENT_MACHINE_BUILT_DIR@"
 else
   export link_efit="@CURRENT_MACHINE_LINK_DIR@"
@@ -25,25 +25,30 @@ if ! test -e ${link_efit}/lim.dat; then
 fi
 
 # Remove any previous outputs
-rm -r std_out
+rm -r first_out @RUNID@_first.h5
 
 # Move outputs from previous test to subdirectory
-mkdir std_out
-if test -e run_efit.out; then
-   mv run_efit.out std_out
+mkdir first_out
+mv run_efit.out first_out
+if [ @HAVE_NETCDF@ = True ]; then
+  outputs=( a g m )
+else
+  outputs=( a g )
 fi
-outputs=( @EFIT_OUTPUTS@ )
 for prefix in ${outputs[*]}; do
   for label in @EFIT_LABEL@; do
-    mv ${prefix}${label} std_out
+    mv ${prefix}${label} first_out
   done
 done
+
+# Rename OMAS output from previous run to use as input
+mv @RUNID@.h5 @RUNID@_first.h5
 
 # Now run efit
 @MPICMD@ @NPROC@ @EFIT_EXEC@ @GRID_SIZE@ << __c__MATCHING_EOF__c__ > run_efit.out
 
 @EFIT_MODE@
-@EFIT_IN@
+@RUNID@_first.h5
 
 __c__MATCHING_EOF__c__
 

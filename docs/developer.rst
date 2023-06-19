@@ -149,17 +149,16 @@ applicable:
   + Input files (k, r, etc.) for 4 different time slices
   + Output files (g, m, a, etc.) for each time slice (from a trusted
     reference version when possible)
-  + OMAS files containing the inputs and outputs of both a single time
-    slice and all 4 time slices
 
-Note: OMAS files can be constructed with OMFIT using the `to_omas` script
-in the EFITtime module and the `ods.save("/path/to/file.hdf5")` method.
-The OMAS conversion does not know the expected dimensions and sizes for
-arrays, however, so it cannot properly interpret the matrix syntax (e.g.
-`CALPA(2,3) = ...`).  Therefore, all 2D arrays (`calpa`, `cgama`,
-`ccoils`, etc.) should be flattened into 1D arrays with the same total
-number of elements that EFIT is expecting (described in the `mhdin.dat`
-file).
+The input files should then be edited to set the following variables
+to achieve the expected outputs:
+
+  + ``IOUT = 20``
+  + ``write_omas = 1``
+
+Note: some tests, such as the fixed boundary cases, are setup to test
+different options as well, so if you see unexpected errors for missing
+files, check the input files for similar tests and set variables to match.
 
 Once the correct input and output files are added, the following files
 need to be edited to include the test:
@@ -170,5 +169,3 @@ need to be edited to include the test:
   + ``$EFIT_ROOT/test/<machine>/<new_test>/CMakeLists.txt`` can mostly be
     kept the same as other tests aside from changing the test name (shot
     number and time slice numbers should match the new test as well)
-
-

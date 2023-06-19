@@ -299,6 +299,7 @@
         fwtsi(1:nsilop)=1.
         iitime=time(jj)+1
         limitr=limitr-1
+        qvfold=qvfit
         qvfit=qenp
         call setfnm('m',ishot,iitime,itimeu,'',eqdsk)
         call open_new(neqdsk,eqdsk,'','quote')
@@ -317,6 +318,7 @@
         close(unit=neqdsk)
         limitr=limitr+1
         ierchk=ierold
+        qvfit=qvfold
       endif
       return
 !
