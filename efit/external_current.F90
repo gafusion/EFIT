@@ -62,7 +62,7 @@
             read (nffile) ifmatr
             close(unit=nffile)
           else
-            afma(1:nfsum,1:nfsum)=rfcfc(1:nfsum,1:nfsum)
+            afma=rfcfc
             call decomp(nfsum,nfsum,afma,-1.0,ifmatr,wfmatr)
 !vas
 !vas      print*,'file name : ','fm'//trim(ch1)// &
@@ -501,21 +501,21 @@
 !-----------------------------------------------------------------------
 !--       sum of F coils selected through FCSUM vanish
 !-----------------------------------------------------------------------
-          sumif=sum(fcsum(1:nfsum)*brsp(1:nfsum)/turnfc(1:nfsum))
-          sumifr=sum(fcref(1:nfsum)*fcsum(1:nfsum)/turnfc(1:nfsum))
+          sumif=sum(fcsum*brsp(1:nfsum)/turnfc)
+          sumifr=sum(fcref*fcsum/turnfc)
         case(3)
 !----------------------------------------------------------------------
 !--       choose boundary flux by minimizing coil currents
 !----------------------------------------------------------------------
-          sumif=sum(fcref(1:nfsum)*brsp(1:nfsum)*fczero(1:nfsum))
-          sumifr=sum(fcref(1:nfsum)**2*fczero(1:nfsum))
+          sumif=sum(fcref*brsp(1:nfsum)*fczero)
+          sumifr=sum(fcref**2*fczero)
         case(4)
 !----------------------------------------------------------------------
 !--       fixed boundary flux specified through PSIBRY
 !----------------------------------------------------------------------
           ssiref=psibry0-psibry
-          brsp(1:nfsum)=brsp(1:nfsum)+ssiref*fcref(1:nfsum)
-          silopt(jtime,1:nfsum)=silopt(jtime,1:nfsum)+ssiref
+          brsp(1:nfsum)=brsp(1:nfsum)+ssiref*fcref
+          silopt(jtime,:)=silopt(jtime,:)+ssiref
           wsibry=wsibry+ssiref
           wsisol=wsisol+ssiref
         end select
@@ -524,8 +524,8 @@
 !-----------------------------------------------------------------------
         if (ifref.le.3) then
           ssiref=sumif/sumifr
-          silopt(jtime,1:nfsum)=silopt(jtime,1:nfsum)-ssiref
-          brsp(1:nfsum)=brsp(1:nfsum)-ssiref*fcref(1:nfsum)
+          silopt(jtime,:)=silopt(jtime,:)-ssiref
+          brsp(1:nfsum)=brsp(1:nfsum)-ssiref*fcref
           wsibry=wsibry-ssiref
           wsisol=wsisol-ssiref
         endif
@@ -541,7 +541,7 @@
         erbmax=0.0
         erbave=0.0
         do i=1,nbdry
-          xsibry=pbry(i)+sum(rbdrfc(i,1:nfsum)*brsp(1:nfsum))
+          xsibry=pbry(i)+sum(rbdrfc(i,:)*brsp(1:nfsum))
           erbloc(i)=abs((wsibry-xsibry)/sidif)
           erbmax=max(erbloc(i),erbmax)
           erbave=erbave+erbloc(i)
@@ -560,7 +560,7 @@
         erbsmax=0.0
         erbsave=0.0
         do i=1,nsol
-          xsisol=psbry(i)+sum(rsolfc(i,1:nfsum)*brsp(1:nfsum))
+          xsisol=psbry(i)+sum(rsolfc(i,:)*brsp(1:nfsum))
           erbsloc(i)=abs((wsisol-xsisol)/sidif)
           erbsmax=max(erbsloc(i),erbsmax)
           erbsave=erbsave+erbsloc(i)
