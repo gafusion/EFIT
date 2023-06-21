@@ -36,7 +36,7 @@ ALLOCATE(racoil(nacoil),zacoil(nacoil), wacoil(nacoil), hacoil(nacoil), &
    tangam(ntime,nstark),siggam(ntime,nstark),a1gam(ntime,nstark), &
    a2gam(ntime,nstark),a3gam(ntime,nstark),a4gam(ntime,nstark),tangam_uncor(ntime,nstark), &
    fwtgam(nstark),chigam(nstark),swtgam(nstark),iergam(nstark),mseport(nstark),mse_spave_on(nstark))
-   
+!$omp target enter data map(alloc:brsp)   
 ALLOCATE(rsilpe(nsilop),rmp2pe(magpri),rprepe(mpress),gbdrpe(mbdry), &
    rgampe(nstark),rbrpe(nstark),rbzpe(nstark),rmlspe(nmsels),relspe(nmsels), &
    bmselt(ntime,nmsels),sbmselt(ntime,nmsels),fwtbmselt(ntime,nmsels), &

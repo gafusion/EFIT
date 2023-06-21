@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !>
 !!    pflux computes the poloidal fluxes on the r-z grid.

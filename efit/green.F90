@@ -93,7 +93,7 @@
 !
       !$omp target update to (kpcurn,nw,nh)
 
-      !$omp target teams distribute parallel do collapse(2) 
+      !!$omp target teams distribute parallel do collapse(2) 
       do i=1,nw
         do j=1,nh
           kk=(i-1)*nh+j

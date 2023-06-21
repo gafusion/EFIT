@@ -102,7 +102,7 @@
         endif
         if(nh == 0) nh = nw
       endif
-
+      !$omp target update to (nw,nh)
 #if defined(USEMPI)
 ! Distribute command-line information (meaning grid dimensions) to all processes if necessary
       if (nproc > 1) then

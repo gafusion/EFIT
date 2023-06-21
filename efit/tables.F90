@@ -165,6 +165,7 @@
 
       if (.not.allocated(rgrid)) then
         allocate(rgrid(mw),stat=iallocate_stat)
+        !$omp target enter data map(alloc:rgrid)
         if(iallocate_stat/=0) stop "*** Not enough space for rgrid ***"
       endif
       if (.not.allocated(zgrid)) then
