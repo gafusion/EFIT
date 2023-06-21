@@ -159,6 +159,8 @@
         a4=carea-a3
         psivl=(psi(kk+nh+1)*a3+psi(kk+1)*a4)/carea
         if(yt(1).eq.y(j)) psivl=psi(kk)+(psi(kk+nh)-psi(kk))*(xt(1)-x(i))/dx
+        zsum=1.e10_dp
+        zerol=1.e10_dp
 
         contr: do while (.true.)
           f1=psi(kk)
@@ -201,7 +203,7 @@
             end if
           end if
 !----------------------------------------------------------------------
-!--       check for limiter in cell                                  --
+!--       check for limiter in cell (fieldline hit the wall)
 !----------------------------------------------------------------------
           zsum=zero(kk)+zero(kk+1)+zero(kk+nh)+zero(kk+nh+1)
           if(zsum.eq.0.0) exit contr
@@ -279,6 +281,7 @@
               return
             end if
 
+            ! check if the current point is outside the limiter
             dpsi=min(dpsi,abs(psivl-psilx))
             if (psilx-psivl.ge.tolbndpsi) then
               call zlim(zerol,n111,n111,limitr,xlim,ylim,xt,yt,limfag)
@@ -380,6 +383,7 @@
           cycle psiloop
         end if
 
+        if(loop.ge.nloop) exit psiloop
 !----------------------------------------------------------------------
 !--     check for convergence of boundary                            --
 !----------------------------------------------------------------------
@@ -399,9 +403,18 @@
           end if
           return
         end if
-
-        if(err.le.etol) exit psiloop
-        if(loop.ge.nloop) exit psiloop
+        if (err.le.etol) then
+          ! if the fieldline hit the wall try moving inside separatrix
+          if (zsum.eq.0.0 .or. zerol(1).le.0.01_dp) then
+            if (rad(1).gt.xctr) then
+              rad(1)=rad(1)-1.5*etol*rad(1)
+            else
+              rad(1)=rad(1)+1.5*etol*rad(1)
+            endif
+          else
+            exit psiloop
+          endif
+        endif
 !----------------------------------------------------------------------
 !--     new rad,psi and try again                                    --
 !----------------------------------------------------------------------
