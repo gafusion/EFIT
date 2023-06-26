@@ -1,5 +1,7 @@
 #!/bin/bash
 
+enable_hdf5=@ENABLE_HDF5@
+
 export link_efit="@CURRENT_MACHINE_LINK_DIR@"
 export link_store=""
 
@@ -21,7 +23,7 @@ mv run_efit.out run_efit_input.out
 for label in @EFIT_LABEL@; do
   mv k${label} k${label}_input
 done
-if [ @ENABLE_HDF5@ = ON ]; then
+if [ ${enable_hdf5,,} = on ] || [ ${enable_hdf5,,} = true ]; then
   mv @RUNID@.h5 @RUNID@_input.h5
 fi
 

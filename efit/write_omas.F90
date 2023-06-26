@@ -36,24 +36,24 @@
         ssibry=psibry*twopi
       endif
 
-      ! Unroll 2D psi (needs transpose to match python) 
+      ! Unroll 2D psi 
       psirz=0.0
       do i=1,nw
         do j=1,nh
           kk=(i-1)*nh+j
           if (ivacum.eq.0) then
             if (ipmeas(jtime).gt.0.0) then
-              psirz(j,i)=-psi(kk)*twopi
+              psirz(i,j)=-psi(kk)*twopi
             else
-              psirz(j,i)=psi(kk)*twopi
+              psirz(i,j)=psi(kk)*twopi
             endif
           else
-            psirz(j,i)=-psi(kk)*twopi
+            psirz(i,j)=-psi(kk)*twopi
           endif
         enddo
       enddo
 
-      ! Unroll and un-normalize 2D jtor (needs transpose)
+      ! Unroll and un-normalize 2D jtor
       pcurrz=0.0
       if (ivacum.eq.0) then
         xdim=rgrid(nw)-rgrid(1)
@@ -63,7 +63,7 @@
         do i=1,nw
           do j=1,nh
             kk=(i-1)*nh+j
-                pcurrz(j,i)=pcurrt(kk)/xdiff/zdiff
+            pcurrz(i,j)=pcurrt(kk)/xdiff/zdiff
           enddo
         enddo
       endif
@@ -73,13 +73,13 @@
       do i=1,nw
         do j=1,nh
           call seva2d(bkx,lkx,bky,lky,c,rgrid(i),zgrid(j),pds,ier,n333)
-          brrz(j,i)=-pds(3)/rgrid(i)
-          bzrz(j,i)=pds(2)/rgrid(i)
-          if (abs(pcurrz(j,i)).gt.0.0) then
-            btrz(j,i)=seval(nw,abs((psirz(j,i)-ssimag)/(ssibry-ssimag)), &
+          brrz(i,j)=-pds(3)/rgrid(i)
+          bzrz(i,j)=pds(2)/rgrid(i)
+          if (abs(pcurrz(i,j)).gt.0.0) then
+            btrz(i,j)=seval(nw,abs((psirz(i,j)-ssimag)/(ssibry-ssimag)), &
                             sigrid,fpol,bbfpol,ccfpol,ddfpol)/rgrid(i)
           else
-            btrz(j,i)=fpol(nw)/rgrid(i)
+            btrz(i,j)=fpol(nw)/rgrid(i)
           endif
         enddo
       enddo

@@ -1,4 +1,6 @@
 #!/bin/bash
+is_diiid=@IS_DIIID@
+is_nstx=@is_nstx@
 OUTPUT_STORE_DIR=@CMAKE_CURRENT_SOURCE_DIR@/output
 BINDIR=@CMAKE_BINARY_DIR@
 sufix=@GRID_SIZE@@GRID_SIZE@.ddd
@@ -39,7 +41,7 @@ for prefix in ec ep; do
   fi
 done
 
-if [ @IS_NSTX@ = True ]; then
+if [ ${is_nstx,,} = on ] || [ ${is_nstx,,} = true ]; then
   for prefix in re; do
     if test -e ${prefix}${sufix}; then
       mv ${prefix}${sufix} green
@@ -49,7 +51,7 @@ if [ @IS_NSTX@ = True ]; then
       exit 1
     fi
   done
-elif [ @IS_DIIID@ = True ]; then
+elif [ ${is_diiid,,} = on ] || [ ${is_diiid,,} = true ]; then
   for prefix in fc ra rv re; do
     if test -e ${prefix}${sufix}; then
       mv ${prefix}${sufix} green

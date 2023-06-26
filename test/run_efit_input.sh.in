@@ -1,5 +1,8 @@
 #!/bin/bash
 
+have_netcdf=@HAVE_NETCDF@
+enable_hdf5=@ENABLE_HDF5@
+
 # Ubuntu tries to use threads even without implementation in program
 export OMP_NUM_THREADS=1
 
@@ -19,7 +22,7 @@ fi
 
 # Remove any previous outputs
 rm -f run_efit.out run_efit_input.out
-if [ @HAVE_NETCDF@ = True ]; then
+if [ ${have_netcdf,,} = on ] || [ ${have_netcdf,,} = true ]; then
   outputs=( a g m )
 else
   outputs=( a g )
@@ -32,7 +35,7 @@ done
 for label in @EFIT_LABEL@; do
   rm -f k${label}_input
 done
-if [ @ENABLE_HDF5@ = ON ]; then
+if [ ${enable_hdf5,,} = on ] || [ ${enable_hdf5,,} = true ]; then
   rm -f @RUNID@.h5 @RUNID@_input.h5
 fi
 

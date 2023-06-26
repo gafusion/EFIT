@@ -1,7 +1,10 @@
 #!/bin/bash
 
+test_efund=@TEST_EFUND@
+have_netcdf=@HAVE_NETCDF@
+
 # Use tables that are built as an extra check that they work (if available)
-if [ @TEST_EFUND@ = ON ]; then
+if [ ${test_efund,,} = on ] || [ ${test_efund,,} = true ]; then
   export link_efit="@CURRENT_MACHINE_BUILT_DIR@"
 else
   export link_efit="@CURRENT_MACHINE_LINK_DIR@"
@@ -30,7 +33,7 @@ rm -r first_out @RUNID@_first.h5
 # Move outputs from previous test to subdirectory
 mkdir first_out
 mv run_efit.out first_out
-if [ @HAVE_NETCDF@ = True ]; then
+if [ ${have_netcdf,,} = on ] || [ ${have_netcdf,,} = true ]; then
   outputs=( a g m )
 else
   outputs=( a g )

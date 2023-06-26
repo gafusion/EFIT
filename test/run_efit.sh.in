@@ -1,5 +1,8 @@
 #!/bin/bash
 
+have_netcdf=@HAVE_NETCDF@
+enable_hdf5=@ENABLE_HDF5@
+
 export link_efit="@CURRENT_MACHINE_LINK_DIR@"
 export link_store=""
 
@@ -18,7 +21,7 @@ export OMP_NUM_THREADS=1
 
 # Remove any previous outputs
 rm -f run_efit.out
-if [ @HAVE_NETCDF@ = True ]; then
+if [ ${have_netcdf,,} = on ] || [ ${have_netcdf,,} = true ]; then
   outputs=( a g m )
 else
   outputs=( a g )
@@ -28,7 +31,7 @@ for prefix in ${outputs[*]}; do
     rm -f ${prefix}${label}
   done
 done
-if [ @ENABLE_HDF5@ = ON ]; then
+if [ ${enable_hdf5,,} = on ] || [ ${enable_hdf5,,} = true ]; then
   rm -f @RUNID@.h5
 fi
 
