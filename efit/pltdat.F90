@@ -9445,7 +9445,7 @@
       call title('$',-100,'R(m)$',100,'Z(m)$',100,xmm,xmm)
       call graf(almin,'SCAL',almax,blmin,'SCAL',blmax)
       call frame
-      call grid(0,0)
+      !call grid(0,0) !TODO: undefined
       call thkcrv(0.02_dp)
       call curve(xlim,ylim,limitr,0)
       call dash

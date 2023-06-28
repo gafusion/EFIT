@@ -29,22 +29,47 @@
       use set_kinds
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
       include 'netcdf.inc'   ! from the netCDF package..
 !                            ..this must be symlinked to local directory
-      dimension xrsp(npcurn)
-      character let,title*80
-      character(len=4) last
-      character(len=80) eqdsk
-      character*30 sfname
+      integer*4, intent(in) :: ktime,ifirsttime,ilast,itype
+      integer*4 i,ijump,iitime,m,n,nmse,npress1,npresw1
+      integer*4 nceq,idim_time,idim_nstark,idim_nsilop,idim_magpri, &
+                idim_nfsum,idim_nesum,idim_npress,idim_npresw, &
+                idim_npcurn,idim_nitera,idim_nacoil,idim_1,idim_device, &
+                id_device,id_shot,id_fungam,id_tangam,id_tangam_uncor, & 
+                id_time,id_fgam,id_siggam,id_id_fwtgam,id_rrgam,id_zzgam, &
+                id_a1gam,id_a2gam,id_a3gam,id_a4gam,id_a5gam,id_a6gam, &
+                id_a7gam,id_a8gam,id_cmgam,id_chigam,id_msebkp, &
+                id_mseport,id_gaingam,id_fwtgam,id_slopegam,id_offsetgam, &
+                id_silopt,id_sigsi,id_fwtsi,id_csilop,id_id_saisil, &
+                id_expmpi,id_sigmp2,id_fwtmp2,id_cmpr2,id_saimpi, &
+                id_psiref,id_sigref,id_fwtref,id_csiref,id_saisref, &
+                id_diamag,id_sigdia,id_fwtdlc,id_cdflux,id_chidlc, &
+                id_fccurt,id_scalegam,id_saisil,id_sigfc,id_fwtfc, &
+                id_ccbrsp,id_saifc,id_eccurt,id_sigec,id_fwtec, &
+                id_cecurr,id_saiec,id_curc79,id_curc139,id_curc199, &
+                id_curiu30,id_curil30,id_curiu90,id_curil90, &
+                id_curiu150,id_curil150,id_accurt,id_caccurt,id_plasma, &
+                id_sigcur,id_fwtcur,id_ipmhd,id_saiip,id_pressr, &
+                id_rpress,id_zpress,id_sigpre,id_fwtpre,id_cpress, &
+                id_saipre,id_presw,id_rpresw,id_zpresw,id_sigprw, &
+                id_fwtprw,id_cpresw,id_saiprw,id_czmaxi,id_cchisq, &
+                id_cerror,id_chifin,id_chitot,id_darea,id_xrsp
+      real*8 xdum,vm3,betatnx
+      character let
       integer*4 dim2(2),c11(2),cnn(2),imap(2),stride(2)
+      character(len=4) last
+      character(len=80) eqdsk,title
+      character*30 sfname
 ! --- temporay variables to convert double to single
       real*4 zwork(ntime+nsilop+nstark+nfsum+nesum+magpri+npress), &
-             zcmgam(nstark,ntime),zcsilop(nsilop,ntime), &
-             zcmpr2(magpri,ntime),zccbrsp(nfsum,ntime),zstark(ntime,nstark), &
+             zcsilop(nsilop,ntime), &
+             zcmpr2(magpri,ntime),zccbrsp(nfsum,ntime), &
              zsilopt(ntime,nsilop),zexpmpi(ntime,magpri), &
              zfccurt(ntime,nfsum),zeccurt(ntime,nesum), &
              zaccurt(ntime,nacoil),ziter(nitera)
+      real*4,dimension(:,:),allocatable :: zcmgam,zstark
       character*85 presstext
       character*109 preswtext
 !-----------------------------------------------------------------------
@@ -54,80 +79,80 @@
         xdum=0.0
         call setfnmd('t',ishot,itime,sfname)
         sfname=sfname(1:13)//'_chi2'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if(ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ierr)
+        if(ierr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),chisq(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_error'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if(ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ierr)
+        if(ierr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),terror(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_j1ave'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if(ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ierr)
+        if(ierr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),cj1ave(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_li'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if(ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ierr)
+        if(ierr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),li(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_betat'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if(ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ierr)
+        if(ierr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),betat(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_q95'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if(ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ierr)
+        if(ierr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),q95(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_q0'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if(ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ierr)
+        if(ierr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),qm(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_q0'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if(ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ierr)
+        if(ierr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),qm(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_eout'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if(ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ierr)
+        if(ierr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),elong(i),xdum,xdum
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_vout'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if(ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ierr)
+        if(ierr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           vm3=volume(i)/1.e6_dp
@@ -135,8 +160,8 @@
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_betan'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if(ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ierr)
+        if(ierr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           pasman=ipmhd(i)/1.e4_dp/aminor(i)/abs(bcentr(i))
@@ -146,8 +171,8 @@
         enddo
         close(unit=74)
         sfname=sfname(1:13)//'_zts'
-        open(unit=74,status='old',file=sfname,iostat=ioerr)
-        if(ioerr.eq.0) close(unit=74,status='delete')
+        open(unit=74,status='old',file=sfname,iostat=ierr)
+        if(ierr.eq.0) close(unit=74,status='delete')
         open(unit=74,status='new',file=sfname)
         do i=ifirsttime,ilast
           write (74,*) time(i),zuperts(i),xdum,xdum
@@ -203,7 +228,7 @@
 ! --- nc file has been created successfully, now define variables, etc.
 !
       title = 'EFIT measurement file Mssssss.ttttt/Mssssss.nc'
-      call NCAPTC(nceq,NC_GLOBAL,'title',NCCHAR,46,title,ierr)
+      call NCAPTC(nceq,NCGLOBAL,'title',NCCHAR,46,title,ierr)
 ! 
 ! --- define unlimited time dimension and scalar and array dimensions
 !
@@ -211,10 +236,12 @@
       idim_1 = NCDDEF(nceq,'dim_scalar',1,ierr)
       idim_device = NCDDEF(nceq,'dim_device',10,ierr)
       if (klibim.gt.0) then
-        idim_nstark = NCDDEF(nceq,'dim_nstark',nstark,ierr)
+        nmse=nstark
       else
-        idim_nstark = NCDDEF(nceq,'dim_nstark',nmselp,ierr)
+        nmse=nmselp
       endif
+      idim_nstark = NCDDEF(nceq,'dim_nstark',nmse,ierr)
+      allocate(zcmgam(nmse,ntime),zstark(ntime,nmse))
       idim_nsilop = NCDDEF(nceq,'dim_nsilop',nsilop,ierr)
       idim_magpri = NCDDEF(nceq,'dim_magpri',magpri,ierr)
       idim_nfsum = NCDDEF(nceq,'dim_nfcoil',nfsum,ierr)
@@ -708,10 +735,10 @@
 !
       cnn(1) = 10
       call NCVPTC(nceq,id_device,c11,cnn,device,10,ierr)
-      cnn(1) = nstark
-      zwork(1:nstark) = real(fwtgam,r4)
+      cnn(1) = nmse
+      zwork(1:nmse) = real(fwtgam,r4)
       call NCVPT(nceq,id_fwtgam,c11,cnn,zwork,ierr)
-      zwork(1:nstark) = real(chigam,r4)
+      zwork(1:nmse) = real(chigam,r4)
       call NCVPT(nceq,id_chigam,c11,cnn,zwork,ierr)
       call NCVPT(nceq,id_msebkp,m,n,real(msebkp,r4),ierr)
 !
@@ -804,7 +831,7 @@
 !
 ! --- following variables do NOT have time dimension.
 !
-      call NCVPT(nceq,id_mseport,1,nstark,mseport,ierr)
+      call NCVPT(nceq,id_mseport,1,nmse,mseport,ierr)
       call NCVPT(nceq,id_chifin,1,1,real(chifin,r4),ierr)
       call NCVPT(nceq,id_chitot,1,1,real(chitot,r4),ierr)
 !
@@ -822,7 +849,7 @@
       zwork(1:ntime) = real(time,r4)
       call NCVPT(nceq,id_time,m,n,zwork(ifirsttime),ierr)
 !
-      cnn(1) = nstark
+      cnn(1) = nmse
       zcmgam = real(cmgam,r4)
       call NCVPT(nceq,id_cmgam,c11,cnn,zcmgam(1,ifirsttime),ierr)
 !
@@ -879,15 +906,15 @@
 !     imap(2) = imap(2)*2                 ! number of bytes in double
       imap(1) = imap(2)*ntime
 !
-      cnn(1) = nstark
+      cnn(1) = nmse
       zstark = real(tangam,r4)
       call NCVPTG(nceq,id_tangam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
       zstark = real(tangam_uncor,r4)
       call NCVPTG(nceq,id_tangam_uncor,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      do j=1, nstark
-        zstark(:,j) = real(spatial_fix(j,:),r4)
+      do i=1, nmse
+        zstark(:,i) = real(spatial_fix(i,:),r4)
       enddo
       call NCVPTG(nceq,id_fgam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)

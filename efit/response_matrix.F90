@@ -2244,9 +2244,9 @@
       call ffcnst(ncrsp,crsp,z,nfffff)
       call wwcnst(ncrsp,crsp,z,nfffff)
       if (keecur.gt.0.and.kdomse.eq.0) then
-      nfffff=needs-kppcur-kffcur
-      needer=needs
-      call eecnst(ncrsp,crsp,z,nfffff)
+        nfffff=needs-kppcur-kffcur
+        needer=needs
+        call eecnst(ncrsp,crsp,z,nfffff)
       endif
 !---------------------------------------------------------------------
 !--   preconditioning A matrix if need                              --
