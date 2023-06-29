@@ -5,7 +5,6 @@
 !!
 !**********************************************************************
       subroutine set_defaults()
-      use set_kinds
       use efit_bdata, only: iunit,m_write
       include 'eparm.inc'
       include 'modules2.inc'

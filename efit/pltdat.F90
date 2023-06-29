@@ -10,12 +10,12 @@
 !**********************************************************************
       subroutine pltout(xplt,yplt,nplt,jtime,ipass, &
                         rmin,rmax,zmin,zmax,ktime,kerror)
-      use set_kinds
-      use commonblocks,only: worka,c,wk,copy,bkx,bky,cw,wkw,copyw,bwx, &
-                             bwy,cj,wkj,copyj,bjx,bjy,cv,wkv,copyv,bvx, &
-                             bvy,byringr,byringz, &
-                             xxtra,yxtra,bpxtra,flxtra,fpxtra
-      use efit_bdata,only:iunit,m_write
+      use commonblocks, only: worka,c,wk,copy,bkx,bky,cw,wkw,copyw,bwx, &
+                              bwy,cj,wkj,copyj,bjx,bjy,cv,wkv,copyv,bvx, &
+                              bvy,byringr,byringz, &
+                              xxtra,yxtra,bpxtra,flxtra,fpxtra
+      use efit_bdata, only: iunit,m_write
+      use set_kinds, only: i4
       use curve2d_mod
       use var_cww
       include 'eparm.inc'
@@ -60,8 +60,10 @@
                 cntece(3+nece)
 !      equivalence (copy(1,1),copy1(1))
       data ratray/2.,1.,1.,2.,2.,1.,1.,1.,2.,1./
-      data istrpl/0/,idsep/1/
-      parameter(lfile=36,n00=0,n11=1,one=1.)
+      data istrpl/0/
+      integer*4, parameter :: lfile=36,n00=0,n11=1,idsep=1
+      integer*4, parameter :: magpri67=29,magpri322=31,magprirdp=8
+      real*8, parameter :: one=1.
 
       ifcoil=1
       kerror = 0
@@ -2243,7 +2245,7 @@
                elseif (kvtor.eq.2) then
                  if (abs(pres0).gt.1.e-10_dp) then
                     pwop0=prew0/pres0
-                    ptop0=exp(pwop0*rgrvv)
+                    ptop0=exp(pwop0) !*rgrvv) ! TODO: rgrvv undefined
                  else
                     ptop0=1.0
                     pwop0=0.0
@@ -2343,6 +2345,7 @@
            yy(ii,nn) = worka(ii)
          enddo
          plot_mid: if (kwripre.gt.0) then
+           xdum=0.
            dataname=dataname(1:lprx)//'_jmid'
            open(unit=62,file=dataname,status='old',iostat=ioerr)
            if (ioerr.eq.0) close(unit=62,status='delete')
@@ -3656,7 +3659,7 @@
          ht(msg) = 0.14_dp
       endif
       if (kstark.gt.0.or.mmbmsels.gt.0) then
-         kstnow=mse315/2
+         !kstnow=mse315/2   ! TODO: mse315 is undefined
          if (mmbmsels.eq.0) then
            write (text,9930) chigamt,chilibt
          else
@@ -3671,7 +3674,7 @@
          yabs = yabs - dyabs
          ht(msg) = 0.14_dp
          if (kstark.gt.0) then
-           write (text,9940) (qstark(i),i=1,kstnow)
+         !  write (text,9940) (qstark(i),i=1,kstnow)
          elseif (mmbmsels.gt.0) then
            write (text,99940) (qstark(i),i=1,nmsels/2)
          endif
@@ -3684,7 +3687,7 @@
          yabs = yabs - dyabs
          ht(msg) = 0.14_dp
          if (kstark.gt.0) then
-           write (text,9940) (qstark(i),i=kstnow+1,mse315)
+         !  write (text,9940) (qstark(i),i=kstnow+1,mse315)
          elseif (mmbmsels.gt.0) then
            write (text,99940) (qstark(i),i=nmsels/2+1,nmsels)
          endif
@@ -9410,7 +9413,6 @@
 !**                                                                  **
 !**********************************************************************
       subroutine expand(n1,n2,nexexx,xmm,jtime)
-      use set_kinds
       use commonblocks,only: worka,byringr,byringz,xxtra,yxtra, &
                              bpxtra,flxtra,fpxtra
       include 'eparm.inc'
@@ -9484,7 +9486,7 @@
       subroutine pltcol(ncoil,rc,zc,wc,hc,ac,ac2,inum, &
       nn, xx, yy, nxy, nmg, note, num, xpos, ypos, ht, &
       nshd, sx, sy, nsxy, sangle, sgap, ngaps)
-      use set_kinds
+      use set_kinds, only: dp
       use global_constants, only: pi
       use eparm, only: ndim
       use curve2d_mod, only: ncrv, mdim
@@ -9573,7 +9575,6 @@
 !**                                                                  **
 !**********************************************************************
       subroutine curvec(dataname,jerror,xp,yp,np,ns)
-      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension jerror(1),xp(1),yp(1)
       character*(*) dataname
@@ -10442,7 +10443,7 @@
 !**                                                                   **
 !***********************************************************************
       subroutine init2d
-      use set_kinds
+      use set_kinds, only: dp
       use curve2d_mod
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 

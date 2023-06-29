@@ -13,7 +13,6 @@
 !!
 !**********************************************************************
       subroutine shapesurf(iges,igmax,kerror)
-      use set_kinds
       use commonblocks,only: c,wk,copy,bkx,bky,psiold,psipold, &
                 worka,zeros,byringr,byringz,xouts,youts,bpoo,bpooz, &
                 bpooc,bfpol,cfpol,dfpol,xxtra,yxtra,bpxtra,flxtra,fpxtra
@@ -3093,7 +3092,7 @@
 !!
 !**********************************************************************
       subroutine dslant(x,y,np,xmin,xmax,ymin,ymax,x1,y1,x2,y2,dismin)
-      use set_kinds
+      use set_kinds, only: dp
       use eparm, only: npoint
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       data nn/30/

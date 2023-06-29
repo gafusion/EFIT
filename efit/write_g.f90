@@ -7,7 +7,7 @@
 !!
 !**********************************************************************
       subroutine write_g(jtime)
-      use set_kinds
+      use set_kinds, only: i4,r4
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'

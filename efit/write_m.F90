@@ -26,7 +26,7 @@
 !!
 !**********************************************************************
       subroutine write_m(ktime,ifirsttime,ilast,itype)
-      use set_kinds
+      use set_kinds, only: r4
       include 'eparm.inc'
       include 'modules1.inc'
       implicit none
@@ -736,9 +736,9 @@
       cnn(1) = 10
       call NCVPTC(nceq,id_device,c11,cnn,device,10,ierr)
       cnn(1) = nmse
-      zwork(1:nmse) = real(fwtgam,r4)
+      zwork(1:nmse) = real(fwtgam(1:nmse),r4)
       call NCVPT(nceq,id_fwtgam,c11,cnn,zwork,ierr)
-      zwork(1:nmse) = real(chigam,r4)
+      zwork(1:nmse) = real(chigam(1:nmse),r4)
       call NCVPT(nceq,id_chigam,c11,cnn,zwork,ierr)
       call NCVPT(nceq,id_msebkp,m,n,real(msebkp,r4),ierr)
 !
@@ -831,7 +831,7 @@
 !
 ! --- following variables do NOT have time dimension.
 !
-      call NCVPT(nceq,id_mseport,1,nmse,mseport,ierr)
+      call NCVPT(nceq,id_mseport,1,nmse,mseport(1:nmse),ierr)
       call NCVPT(nceq,id_chifin,1,1,real(chifin,r4),ierr)
       call NCVPT(nceq,id_chitot,1,1,real(chitot,r4),ierr)
 !
@@ -850,7 +850,7 @@
       call NCVPT(nceq,id_time,m,n,zwork(ifirsttime),ierr)
 !
       cnn(1) = nmse
-      zcmgam = real(cmgam,r4)
+      zcmgam = real(cmgam(1:nmse,:),r4)
       call NCVPT(nceq,id_cmgam,c11,cnn,zcmgam(1,ifirsttime),ierr)
 !
       cnn(1) = nsilop
@@ -907,67 +907,67 @@
       imap(1) = imap(2)*ntime
 !
       cnn(1) = nmse
-      zstark = real(tangam,r4)
+      zstark = real(tangam(:,1:nmse),r4)
       call NCVPTG(nceq,id_tangam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark = real(tangam_uncor,r4)
+      zstark = real(tangam_uncor(:,1:nmse),r4)
       call NCVPTG(nceq,id_tangam_uncor,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      do i=1, nmse
+      do i=1,nmse
         zstark(:,i) = real(spatial_fix(i,:),r4)
       enddo
       call NCVPTG(nceq,id_fgam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark = real(siggam,r4)
+      zstark = real(siggam(:,1:nmse),r4)
       call NCVPTG(nceq,id_siggam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark = real(rrgam,r4)
+      zstark = real(rrgam(:,1:nmse),r4)
       call NCVPTG(nceq,id_rrgam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark = real(zzgam,r4)
+      zstark = real(zzgam(:,1:nmse),r4)
       call NCVPTG(nceq,id_zzgam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark = real(a1gam,r4)
+      zstark = real(a1gam(:,1:nmse),r4)
       call NCVPTG(nceq,id_a1gam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark = real(a2gam,r4)
+      zstark = real(a2gam(:,1:nmse),r4)
       call NCVPTG(nceq,id_a2gam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark = real(a3gam,r4)
+      zstark = real(a3gam(:,1:nmse),r4)
       call NCVPTG(nceq,id_a3gam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark = real(a4gam,r4)
+      zstark = real(a4gam(:,1:nmse),r4)
       call NCVPTG(nceq,id_a4gam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark = real(a5gam,r4)
+      zstark = real(a5gam(:,1:nmse),r4)
       call NCVPTG(nceq,id_a5gam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark = real(a6gam,r4)
+      zstark = real(a6gam(:,1:nmse),r4)
       call NCVPTG(nceq,id_a6gam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark = real(a7gam,r4)
+      zstark = real(a7gam(:,1:nmse),r4)
       call NCVPTG(nceq,id_a7gam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      zstark = real(a8gam,r4)
+      zstark = real(a8gam(:,1:nmse),r4)
       call NCVPTG(nceq,id_a8gam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      do i=1, ntime
-        zstark(i,:) = real(rmse_gain,r4)
+      do i=1,ntime
+        zstark(i,:) = real(rmse_gain(1:nmse),r4)
       enddo
       call NCVPTG(nceq,id_gaingam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      do i=1, ntime
-        zstark(i,:) = real(rmse_slope,r4)
+      do i=1,ntime
+        zstark(i,:) = real(rmse_slope(1:nmse),r4)
       enddo
       call NCVPTG(nceq,id_slopegam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      do i=1, ntime
-        zstark(i,:) = real(rmse_scale,r4)
+      do i=1,ntime
+        zstark(i,:) = real(rmse_scale(1:nmse),r4)
       enddo
       call NCVPTG(nceq,id_scalegam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)
-      do i=1, ntime
-        zstark(i,:) = real(rmse_offset,r4)
+      do i=1,ntime
+        zstark(i,:) = real(rmse_offset(1:nmse),r4)
       enddo
       call NCVPTG(nceq,id_offsetgam,c11,cnn,stride,imap, &
                   zstark(ifirsttime,1),ierr)

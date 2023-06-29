@@ -10,7 +10,6 @@
 !*********************************************************************
       subroutine currnt(iter,jtime,nitett,kerror)
       use commonblocks,only: c,wk,bkx,bky
-      use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'

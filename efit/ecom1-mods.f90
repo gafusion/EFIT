@@ -3,7 +3,7 @@
       end module var_acoilrz
 
       module var_ccurrn
-      use eparm,only:nwnh
+      !use eparm,only:nwnh
       real*8 fconst,betap0
       real*8,dimension(:),allocatable :: pcurrt,pcurrw,pcurrtpp
       integer*4 icurrt,icinit,isicinit,icprof
@@ -24,7 +24,6 @@
       end module var_parame
 
       module var_cqfit
-      use set_kinds
       real*8 fwtqa,qvfit,fbrdy,fcentr,cjmaxi, &
              rqajtor,rqaftor,rqapetor,rqafetor
       integer*4 ivacum 
@@ -45,7 +44,6 @@
       end module var_chimag
 
       module var_exdata
-      use set_kinds
       integer*4 ishot,itime,ifitvs,iacoil,itimeu,kersil
       real*8 serror,fwtcur,elomin,fwtbp,fwtdlc,errsil,rcentr
       real*8,dimension(:),allocatable :: fwtsi,rwtsi
@@ -95,7 +93,6 @@
       end module var_savfit
 
       module var_cstark
-      use set_kinds
       real*8,dimension(:,:),allocatable :: tangam,siggam,a1gam,a2gam, &
                                            a3gam,a4gam,tangam_uncor
       real*8,dimension(:),allocatable  :: fwtgam,chigam,swtgam
@@ -123,7 +120,6 @@
       end module var_cstark
 
       module var_msels
-      use set_kinds
       real*8,dimension(:,:),allocatable :: bmselt,sbmselt,fwtbmselt, &
         rrmselt,zzmselt,l1mselt,l2mselt,l4mselt,emselt,semselt, &
         fwtemselt,swtbmselt,swtemselt,cmmls,cmels,rhsmls,rhsels, &
@@ -162,7 +158,6 @@
       end module var_rfedge
 
       module var_cece
-      use set_kinds
       integer*4 ierecebz,necein,jo,kfixro,nece,kece,kecebz,mecein, &
                 kfitece,kinputece,kcallece,nharm,kdoece, &
                 mtxece,kfixrece,nfit,kcmin,nconstr,iwo
@@ -212,7 +207,6 @@
       end module var_dlc
     
       module var_comco2
-      use set_kinds
       real*8,dimension(:,:),allocatable :: rco2r
       real*8,dimension(:,:),allocatable :: rco2v
       real*8,dimension(:),allocatable :: chordv
@@ -222,14 +216,13 @@
       end module var_comco2
 
       module var_check
-      use eparm,only:ntime
+      !use eparm,only:ntime
       integer*4,dimension(:,:),allocatable ::erflag
       integer*4 lflag
       integer*4, parameter :: nflag=21
       end module var_check
 
       module var_consum
-      use set_kinds
       real*8 condno,condin 
       real*8,dimension(:),allocatable :: cerror,csibry,csimag, &
         cvolp,crmaxi,czmaxi,cemaxi,cqmaxi,cchisq,brfbc,tvfbrt,cdelz
@@ -264,7 +257,6 @@
       end module mpi_info
 
       module var_input
-      use set_kinds
       logical write_kfile,fitfcsum,use_previous, &
               req_valid,req_valid_prior
       integer*4 icondn,itek,kdata,itrace,ierchk,ierchk_prior,iconvr, &
@@ -319,7 +311,7 @@
       end module var_slname
 
       module var_ecoil 
-      use eparm,only:necoil
+      !use eparm,only:necoil
       real*8,dimension(:),allocatable :: re,ze,we,he
       integer*4,dimension(:),allocatable :: ecid
       end module var_ecoil 
@@ -341,7 +333,7 @@
       end module var_limite
 
       module var_mimite
-      use eparm,only:nlimit
+      !use eparm,only:nlimit
       integer*4 mimitr,mimitr_180
       real*8,dimension(:),allocatable :: xmim,ymim,xmim_180,ymim_180
       end module var_mimite
@@ -362,7 +354,7 @@
       end module var_bdsend
 
       module var_fxbry
-      use set_kinds
+      use set_kinds, only: dp
       integer*4 nbdry,nsol
       real*8 wsisol
       logical fitts 
@@ -377,7 +369,6 @@
       end module var_fxbry
 
       module var_fwtdz
-      use set_kinds
       logical fitdelz
       integer*4 ndelzon,ifitdelz 
       real*8 errdelz,fgowdz,scaledz,stabdz,relaxdz,cdeljsum
@@ -391,7 +382,6 @@
       end module var_fwtdz
       
       module var_combry
-      use set_kinds
       real*8,dimension(:),allocatable ::erbloc, erbsloc
       real*8 erbmax,erbave,erbsmax
       end module var_combry
@@ -416,7 +406,6 @@
       end module var_prdata
 
       module var_cerfit
-      use set_kinds
       integer*4 keecur,keefnc,keeknt,needer,keehord
       integer*4,dimension(:),allocatable :: keebdry,kee2bdry
       real*8 ecurbd,eetens
@@ -431,7 +420,6 @@
       end module var_cerfit
 
       module var_ccgama
-      use set_kinds
       integer*4 kcalpa,kcgama,kcomega
       real*8 fwtxx,fwtxxj,fwtxxq,fwtxxb,fwtxli 
       real*8,dimension(:,:),allocatable ::  calpa
@@ -472,7 +460,7 @@
       end module var_delnfit
 
       module var_tsrz
-      use set_kinds
+      use set_kinds, only: dp
       real*8,dimension(:),allocatable :: zuperts,rlibim
       real*8 zlowerts
       real*8, parameter :: rmajts=1.94_dp
@@ -494,14 +482,14 @@
       end module var_fdbkcl
 
       module var_coiln1
-      use eparm,only:ntime,magpri
+      !use eparm,only:ntime,magpri
       integer*4 n1coil,iern1
       real*8,dimension(:),allocatable :: signn1
       real*8,dimension(:),allocatable :: curtn1
       end module var_coiln1
 
       module var_coilcc
-      use eparm,only:ntime,mccoil,micoil
+      !use eparm,only:ntime,mccoil,micoil
       integer*4 nccoil,iercc,nicoil
       logical oldccomp,oldcomp 
       real*8,dimension(:),allocatable :: curc139,curc79,curc199,curiu30, &
@@ -511,13 +499,13 @@
       end module var_coilcc
 
       module var_btcomp
-      use eparm,only:ntime,magpri
+      !use eparm,only:ntime,magpri
       integer*4 ibtcomp,ierbtc
       real*8,dimension(:),allocatable :: signbt
       end module var_btcomp
 
       module var_subic
-      use eparm,only:modef,modep,modew
+      !use eparm,only:modef,modep,modew
       integer*4 nodef,nodep,nodew
       real*8,dimension(:),allocatable :: xnodef
       real*8,dimension(:),allocatable :: xnodep
@@ -528,7 +516,6 @@
       end module var_subic
 
       module var_vtor
-      use set_kinds
       integer*4 nomegat,kvtor,kwwcur,kwcurn,kplotp,npresw, &
                 nsplot,kdovt
       real*8 betapw0,enw,emw,rvtor,wcurbd,gammaw,rbetaw, & 
@@ -574,7 +561,6 @@
       end module var_initerror
 
       module var_magerror
-      use set_kinds
       integer*4 imagsigma
       real*8 errmag,errmagb
       end module var_magerror
@@ -598,7 +584,6 @@
       end module commonblocks
 
       module efit_bdata
-      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       integer*4 iunit,m_write
       real*8 xlims(5),ylims(5),xlmins

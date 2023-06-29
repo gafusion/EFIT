@@ -9,7 +9,7 @@
 !**********************************************************************
       subroutine data_input(jtime,kconvr,ktime,kerror)
       use commonblocks,only: c,wk,bkx,bky,wgridpc,rfcpc
-      use set_kinds
+      use set_kinds, only: i4
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
