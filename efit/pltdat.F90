@@ -3701,7 +3701,7 @@
          ht(msg) = 0.14_dp
       endif
       if (fwtdlc.gt.0.0) then
-         write (text,9495) chidlc
+         write (text,9495) chidflux
          msg = msg + 1
          note(msg) = 1
          lmes(msg) = text

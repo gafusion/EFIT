@@ -2498,11 +2498,11 @@
       vbpli=betap(iges)+li(iges)/2.
       if (kvtor.gt.0) vbpli=vbpli+betapw(iges)
       dbpli(iges)=abs((sbpli-vbpli)/sbpli)
-      chidlc=0.0
+      chidflux=0.0
       if (fwtdlc.gt.0.0) then
-        chidlc=((diamag(iges)-cdflux(iges))/sigdia(iges))**2
+        chidflux=((diamag(iges)-cdflux(iges))/sigdia(iges))**2
       endif
-      chitot=chipre+chifin+chidlc
+      chitot=chipre+chifin+chidflux
       if (idiart.gt.0) then
         bp2flx=bpolav(iges)**2
         dmui=1.0e+06_dp*diamag(iges)*4.*pi*bcentr(iges)*rcentr &

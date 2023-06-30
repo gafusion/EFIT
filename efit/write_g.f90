@@ -53,7 +53,7 @@
                    keefnc,keeknt,eeknt,eetens, &
                    eebdry,ee2bdry,keebdry,kee2bdry
       namelist/inwant/psiwant,vzeroj
-      namelist/chiout/saisil,saimpi,saiip,saipre
+      namelist/chiout/saisil,saimpi,chipasma,saipre
       namelist/eccd/kkstark,chigamt,chigam,bzmse,psiecn,dpsiecn, &
               saisq,cjeccd
 !

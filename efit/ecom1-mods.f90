@@ -35,7 +35,7 @@
       module var_rmatri
       real*8,dimension(:),allocatable :: brsp
       real*8,dimension(:),allocatable :: chisq
-      real*8 cond,tsaifc
+      real*8 cond,tchifcc
       integer*4 nparam,nfnpcr,nfnwcr,nbase
       end module var_rmatri
   
@@ -193,11 +193,11 @@
       end module var_cece
 
       module var_calchi
-      real*8 chipre,chifin,chitot,saiip
+      real*8 chipre,chifin,chitot,chipasma
       real*8,dimension(:),allocatable :: saisil
       real*8,dimension(:),allocatable :: saimpi
       real*8,dimension(:),allocatable :: saipre
-      real*8,dimension(:),allocatable :: saifc
+      real*8,dimension(:),allocatable :: chifcc
       end module var_calchi
 
       module var_dlc
@@ -531,7 +531,7 @@
       end module var_vtor
 
       module var_fitec
-      real*8,dimension(:),allocatable :: fwtec,cecurr,saiec
+      real*8,dimension(:),allocatable :: fwtec,cecurr,chiecc
       end module var_fitec
 
       module var_pflocal
@@ -553,11 +553,11 @@
 !--   Magnetic measurement uncertainties
 !----------------------------------------------------------------------
       module var_initerror
-      real*8 sigcur,sigref
-      real*8,dimension(:),allocatable :: sigfc
-      real*8,dimension(:),allocatable :: sigec
-      real*8,dimension(:),allocatable :: sigsi
-      real*8,dimension(:),allocatable :: sigmp2
+      real*8 sigpasma,sigref
+      real*8,dimension(:),allocatable :: sigfcc
+      real*8,dimension(:),allocatable :: sigecc
+      real*8,dimension(:),allocatable :: sigsil
+      real*8,dimension(:),allocatable :: sigmpi
       end module var_initerror
 
       module var_magerror

@@ -2348,7 +2348,7 @@
         tdata1=serror*abs(silopt(jtime,m)) 
         tdata2=abs(psibit(m))*vbit 
         tdata=max(tdata1,tdata2) 
-        sigsi(m)=tdata 
+        sigsil(m)=tdata 
         if (tdata.gt.1.0e-10_dp) then
           fwtsi(m)=fwtsi(m)/tdata**nsq
         else
@@ -2357,7 +2357,7 @@
       enddo
       if (abs(psibit(iabs(nslref))).le.1.0e-10_dp) then
         coilmx=maxval(abs(silopt(jtime,1:nsilop))) 
-        sigsi(iabs(nslref))=coilmx*serror
+        sigsil(iabs(nslref))=coilmx*serror
         fwtsi(iabs(nslref))=1.0/coilmx**nsq/serror**nsq*fwtref
       endif 
       else kersil_23
@@ -2399,7 +2399,7 @@
         tdata=max(tdata1,tdata2) 
         tdata2=abs(psibit(m))*vbit 
         tdata=max(tdata,tdata2) 
-        sigsi(m)=tdata 
+        sigsil(m)=tdata 
         if (tdata.gt.1.0e-10_dp) then
           fwtsi(m)=fwtsi(m)/tdata**nsq
         else
@@ -2410,7 +2410,7 @@
 !---------------------------------------------------------------------- 
 !--     signal at psi loop #8 in D-III is set to zero and used as ref
 !---------------------------------------------------------------------- 
-        sigsi(iabs(nslref))=ersil8
+        sigsil(iabs(nslref))=ersil8
         fwtsi(iabs(nslref))=1.0/ersil8**nsq*fwtref
       else
 !---------------------------------------------------------------------- 
@@ -2422,7 +2422,7 @@
         tdata=max(tdata1,tdata2)
         tdata2=abs(psibit(m))*vbit
         tdata=max(tdata,tdata2)
-        sigsi(m)=tdata
+        sigsil(m)=tdata
         if (tdata.gt.1.0e-10_dp) then
           fwtsi(m)=fwtref/tdata**nsq
         else
@@ -2430,14 +2430,14 @@
         endif
       endif
       endif kersil_23
-      sigref=sigsi(iabs(nslref)) 
+      sigref=sigsil(iabs(nslref)) 
       fwtref=fwtsi(iabs(nslref)) 
 ! 
       do m=1,magpri 
         tdata1=serror*abs(expmpi(jtime,m)) 
         tdata2=abs(bitmpi(m))*vbit 
         tdata=max(tdata1,tdata2)
-        sigmp2(m)=tdata
+        sigmpi(m)=tdata
         if (tdata.gt.1.0e-10_dp) then
           fwtmp2(m)=fwtmp2(m)/tdata**nsq
         else
@@ -2481,7 +2481,7 @@
         tdata1=serror*abs(fccurt(jtime,m)) 
         tdata2=abs(bitfc(m))*vbit 
         tdata=max(tdata1,tdata2) 
-        sigfc(m)=tdata
+        sigfcc(m)=tdata
         if (tdata.gt.1.0e-10_dp) then
           fwtfc(m)=fwtfc(m)/tdata**nsq
         else
@@ -2495,7 +2495,7 @@
           tdata1=serror*abs(ecurrt(m)) 
           tdata2=abs(bitec(m))*vbit 
           tdata=max(tdata1,tdata2) 
-          sigec(m)=tdata 
+          sigecc(m)=tdata 
           if (tdata.gt.1.0e-10_dp) then
             fwtec(m)=fwtec(m)/tdata**nsq
           else
@@ -2506,7 +2506,7 @@
       tdata1=serror*abs(ipmeas(jtime)) 
       tdata2=abs(bitip)*vbit 
       tdata=max(tdata1,tdata2) 
-      sigcur=tdata
+      sigpasma=tdata
       if (tdata.gt.1.0e-10_dp) then 
         fwtcur=fwtcur/tdata**nsq
       else
