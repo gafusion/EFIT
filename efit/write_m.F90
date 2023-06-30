@@ -505,7 +505,7 @@
       call NCAPTC(nceq,id_fwtdlc,'long_name',NCCHAR,27, &
                   'weight for diamagnetic flux',ierr)
 ! duplicate variable with named defined in MDS+
-      id_fwtdia = NCVDEF(nceq,'fwtdia',NCFLOAT,2,dim2,ierr)
+      id_fwtdia = NCVDEF(nceq,'fwtdia',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_fwtdia,'long_name',NCCHAR,29, &
                   'this is a duplicate of fwtdlc',ierr)
 !
@@ -513,7 +513,7 @@
       call NCAPTC(nceq,id_cdflux,'long_name',NCCHAR,27, &
                   'calculated diamagnetic flux',ierr)
 ! duplicate variable with named defined in MDS+
-      id_chidflux = NCVDEF(nceq,'chidflux',NCFLOAT,2,dim2,ierr)
+      id_chidflux = NCVDEF(nceq,'chidflux',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_chidflux,'long_name',NCCHAR,29, &
                   'this is a duplicate of cdflux',ierr)
 !
