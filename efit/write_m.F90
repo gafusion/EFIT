@@ -56,8 +56,9 @@
                 id_saipre,id_presw,id_rpresw,id_zpresw,id_sigprw, &
                 id_fwtprw,id_cpresw,id_saiprw,id_czmaxi,id_cchisq, &
                 id_cerror,id_chifin,id_chitot,id_darea,id_xrsp, &
-                id_sigmpi,id_sigsil,id_sigecc,id_sigfcc,id_sizeroj, &
-                id_vzeroj,idim_kzeroj
+                id_sigmpi,id_sigsil,id_sigecc,id_sigfcc,id_sigpasma, &
+                id_fwtpasma,id_chipasma,id_fwtdia,id_chidflux, &
+                id_chiecc,id_chifcc,id_sizeroj,id_vzeroj,idim_kzeroj
       real*8 xdum,vm3,betatnx
       character let
       integer*4 dim2(2),c11(2),cnn(2),imap(2),stride(2)
@@ -503,10 +504,18 @@
       id_fwtdlc = NCVDEF(nceq,'fwtdlc',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_fwtdlc,'long_name',NCCHAR,27, &
                   'weight for diamagnetic flux',ierr)
+! duplicate variable with named defined in MDS+
+      id_fwtdia = NCVDEF(nceq,'fwtdia',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_fwtdia,'long_name',NCCHAR,29, &
+                  'this is a duplicate of fwtdlc',ierr)
 !
       id_cdflux = NCVDEF(nceq,'cdflux',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_cdflux,'long_name',NCCHAR,27, &
                   'calculated diamagnetic flux',ierr)
+! duplicate variable with named defined in MDS+
+      id_chidflux = NCVDEF(nceq,'chidflux',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_chidflux,'long_name',NCCHAR,29, &
+                  'this is a duplicate of cdflux',ierr)
 !
       id_chidlc = NCVDEF(nceq,'chidlc',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_chidlc,'long_name',NCCHAR,26, &
@@ -538,6 +547,10 @@
       id_saifc = NCVDEF(nceq,'saifc',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_saifc,'long_name',NCCHAR,25, &
                   'chisq for F-coil currents',ierr)
+! duplicate variable with named defined in MDS+
+      id_chifcc = NCVDEF(nceq,'chifcc',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_chifcc,'long_name',NCCHAR,28, &
+                  'this is a duplicate of saifc',ierr)
 !
       dim2(1) = idim_nesum
       id_eccurt = NCVDEF(nceq,'eccurt',NCFLOAT,2,dim2,ierr)
@@ -563,6 +576,10 @@
       id_saiec = NCVDEF(nceq,'saiec',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_saiec,'long_name',NCCHAR,25, &
                   'chisq for E-coil currents',ierr)
+! duplicate variable with named defined in MDS+
+      id_chiecc = NCVDEF(nceq,'chiecc',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_chiecc,'long_name',NCCHAR,28, &
+                  'this is a duplicate of saiec',ierr)
 !
       id_curc79 = NCVDEF(nceq,'curc79',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_curc79,'long_name',NCCHAR,17, &
@@ -618,10 +635,18 @@
       id_sigcur = NCVDEF(nceq,'sigcur',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_sigcur,'long_name',NCCHAR,29, &
                   'uncertainty in plasma current',ierr)
+! duplicate variable with named defined in MDS+
+      id_sigpasma = NCVDEF(nceq,'sigpasma',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_sigpasma,'long_name',NCCHAR,29, &
+                  'this is a duplicate of sigcur',ierr)
 !
       id_fwtcur = NCVDEF(nceq,'fwtcur',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_fwtcur,'long_name',NCCHAR,25, &
                   'weight for plasma current',ierr)
+! duplicate variable with named defined in MDS+
+      id_fwtpasma = NCVDEF(nceq,'fwtpasma',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_fwtpasma,'long_name',NCCHAR,29, &
+                  'this is a duplicate of fwtcur',ierr)
 !
       id_ipmhd = NCVDEF(nceq,'cpasma',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_ipmhd,'long_name',NCCHAR,31, &
@@ -630,6 +655,10 @@
       id_saiip = NCVDEF(nceq,'saiip',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_saiip,'long_name',NCCHAR,24, &
                   'chisq for plasma current',ierr)
+! duplicate variable with named defined in MDS+
+      id_chipasma = NCVDEF(nceq,'chipasma',NCFLOAT,1,idim_time,ierr)
+      call NCAPTC(nceq,id_chipasma,'long_name',NCCHAR,28, &
+                  'this is a duplicate of saiip',ierr)
 !
 ! --- pressure
 !
@@ -797,6 +826,7 @@
       call NCVPT(nceq,id_fwtfc,c11,cnn,zwork,ierr)
       zwork(1:nfsum) = real(saifc,r4)
       call NCVPT(nceq,id_saifc,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_chifcc,c11,cnn,zwork,ierr)
       cnn(1) = nesum
       zwork(1:nesum) = real(sigec,r4)
       call NCVPT(nceq,id_sigec,c11,cnn,zwork,ierr)
@@ -807,15 +837,20 @@
       call NCVPT(nceq,id_cecurr,c11,cnn,zwork,ierr)
       zwork(1:nesum) = real(saiec,r4)
       call NCVPT(nceq,id_saiec,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_chiecc,c11,cnn,zwork,ierr)
       call NCVPT(nceq,id_sigref,m,n,real(sigref,r4),ierr)
       call NCVPT(nceq,id_fwtref,m,n,real(fwtref,r4),ierr)
       call NCVPT(nceq,id_csiref,m,n,real(csiref,r4),ierr)
       call NCVPT(nceq,id_saisref,m,n,real(saisref,r4),ierr)
       call NCVPT(nceq,id_fwtdlc,m,n,real(fwtdlc,r4),ierr)
+      call NCVPT(nceq,id_fwtdia,m,n,real(fwtdlc,r4),ierr)
       call NCVPT(nceq,id_chidlc,m,n,real(chidlc,r4),ierr)
       call NCVPT(nceq,id_sigcur,m,n,real(sigcur,r4),ierr)
+      call NCVPT(nceq,id_sigpasma,m,n,real(sigcur,r4),ierr)
       call NCVPT(nceq,id_fwtcur,m,n,real(fwtcur,r4),ierr)
+      call NCVPT(nceq,id_fwtpasma,m,n,real(fwtcur,r4),ierr)
       call NCVPT(nceq,id_saiip,m,n,real(saiip,r4),ierr)
+      call NCVPT(nceq,id_chipasma,m,n,real(saiip,r4),ierr)
 !
 !     Note that pressr and presw have been changed to calculated pressure 
 !     from the measured ones. They are switched back in measurement file(s).
@@ -909,6 +944,7 @@
       call NCVPT(nceq,id_diamag,m,n,zwork(ifirsttime),ierr)
       zwork(1:ntime) = real(cdflux,r4)
       call NCVPT(nceq,id_cdflux,m,n,zwork(ifirsttime),ierr)
+      call NCVPT(nceq,id_chidflux,m,n,zwork(ifirsttime),ierr)
       zwork(1:ntime) = real(sigdia,r4)
       call NCVPT(nceq,id_sigdia,m,n,zwork(ifirsttime),ierr)
 !
