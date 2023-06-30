@@ -33,7 +33,7 @@
       include 'netcdf.inc'   ! from the netCDF package..
 !                            ..this must be symlinked to local directory
       integer*4, intent(in) :: ktime,ifirsttime,ilast,itype
-      integer*4 i,ijump,iitime,m,n,nmse,npress1,npresw1
+      integer*4 i,ijump,iitime,m,n,nmse,npress1,npresw1,kzeroj1
       integer*4 nceq,idim_time,idim_nstark,idim_nsilop,idim_magpri, &
                 idim_nfsum,idim_nesum,idim_npress,idim_npresw, &
                 idim_npcurn,idim_nitera,idim_nacoil,idim_1,idim_device, &
@@ -55,7 +55,9 @@
                 id_rpress,id_zpress,id_sigpre,id_fwtpre,id_cpress, &
                 id_saipre,id_presw,id_rpresw,id_zpresw,id_sigprw, &
                 id_fwtprw,id_cpresw,id_saiprw,id_czmaxi,id_cchisq, &
-                id_cerror,id_chifin,id_chitot,id_darea,id_xrsp
+                id_cerror,id_chifin,id_chitot,id_darea,id_xrsp, &
+                id_sigmpi,id_sigsil,id_sigecc,id_sigfcc,id_sizeroj, &
+                id_vzeroj,idim_kzeroj
       real*8 xdum,vm3,betatnx
       character let
       integer*4 dim2(2),c11(2),cnn(2),imap(2),stride(2)
@@ -255,6 +257,8 @@
       idim_npcurn = NCDDEF(nceq,'dim_npcurn',npcurn,ierr)
       idim_nitera = NCDDEF(nceq,'dim_nitera',nitera,ierr)
       idim_nacoil = NCDDEF(nceq,'dim_nacoil',nacoil,ierr)
+      if(kzeroj.eq.0) kzeroj1 = 1
+      idim_kzeroj = NCDDEF(nceq,'dim_kzeroj',kzeroj1,ierr)
       dim2(2) = idim_time
 !-----------------------------------------------------------------------
 !--   define variables
@@ -426,6 +430,10 @@
       id_sigsi = NCVDEF(nceq,'sigsi',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_sigsi,'long_name',NCCHAR,25, &
                   'uncertainty in flux loops',ierr)
+! duplicate variable with named defined in MDS+
+      id_sigsil = NCVDEF(nceq,'sigsil',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_sigsil,'long_name',NCCHAR,28, &
+                  'this is a duplicate of sigsi',ierr)
 !
       id_fwtsi = NCVDEF(nceq,'fwtsi',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_fwtsi,'long_name',NCCHAR,21, &
@@ -447,6 +455,10 @@
       id_sigmp2 = NCVDEF(nceq,'sigmp2',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_sigmp2,'long_name',NCCHAR,30, &
                   'uncertainty in magnetic probes',ierr)
+! duplicate variable with named defined in MDS+
+      id_sigmpi = NCVDEF(nceq,'sigmpi',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_sigmpi,'long_name',NCCHAR,29, &
+                  'this is a duplicate of sigmp2',ierr)
 !
       id_fwtmp2 = NCVDEF(nceq,'fwtmp2',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_fwtmp2,'long_name',NCCHAR,26, &
@@ -510,6 +522,10 @@
       id_sigfc = NCVDEF(nceq,'sigfc',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_sigfc,'long_name',NCCHAR,30, &
                   'uncertainty in F-coil currents',ierr)
+! duplicate variable with named defined in MDS+
+      id_sigfcc = NCVDEF(nceq,'sigfcc',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_sigfcc,'long_name',NCCHAR,28, &
+                  'this is a duplicate of sigfc',ierr)
 !
       id_fwtfc = NCVDEF(nceq,'fwtfc',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_fwtfc,'long_name',NCCHAR,26, &
@@ -531,6 +547,10 @@
       id_sigec = NCVDEF(nceq,'sigec',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_sigec,'long_name',NCCHAR,30, &
                   'uncertainty in E-coil currents',ierr)
+! duplicate variable with named defined in MDS+
+      id_sigecc = NCVDEF(nceq,'sigecc',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_sigecc,'long_name',NCCHAR,28, &
+                  'this is a duplicate of sigec',ierr)
 !
       id_fwtec = NCVDEF(nceq,'fwtec',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_fwtec,'long_name',NCCHAR,26, &
@@ -680,6 +700,17 @@
       call NCAPTC(nceq,id_saiprw,'long_name',NCCHAR,28, &
                   'chisq of rotational pressure',ierr)
 !
+! --- Jt/R
+!
+      dim2(1) = idim_kzeroj
+      id_vzeroj = NCVDEF(nceq,'vzeroj',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_vzeroj,'long_name',NCCHAR,53, &
+         'measured Jt/R vs. normalized flux (kinetic fits only)',ierr)
+!
+      id_sizeroj = NCVDEF(nceq,'sizeroj',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_sizeroj,'long_name',NCCHAR,49, &
+         'normalized flux locations corresponding to vzeroj',ierr)
+!
 ! --- quality of fit parameters
 !
       dim2(1) = idim_nitera
@@ -745,6 +776,7 @@
       cnn(1) = nsilop
       zwork(1:nsilop) = real(sigsi,r4)
       call NCVPT(nceq,id_sigsi,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_sigsil,c11,cnn,zwork,ierr)
       zwork(1:nsilop) = real(fwtsi,r4)
       call NCVPT(nceq,id_fwtsi,c11,cnn,zwork,ierr)
       zwork(1:nsilop) = real(saisil,r4)
@@ -752,6 +784,7 @@
       cnn(1) = magpri
       zwork(1:magpri) = real(sigmp2,r4)
       call NCVPT(nceq,id_sigmp2,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_sigmpi,c11,cnn,zwork,ierr)
       zwork(1:magpri) = real(fwtmp2,r4)
       call NCVPT(nceq,id_fwtmp2,c11,cnn,zwork,ierr)
       zwork(1:magpri) = real(saimpi,r4)
@@ -759,6 +792,7 @@
       cnn(1) = nfsum
       zwork(1:nfsum) = real(sigfc,r4)
       call NCVPT(nceq,id_sigfc,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_sigfcc,c11,cnn,zwork,ierr)
       zwork(1:nfsum) = real(fwtfc,r4)
       call NCVPT(nceq,id_fwtfc,c11,cnn,zwork,ierr)
       zwork(1:nfsum) = real(saifc,r4)
@@ -766,6 +800,7 @@
       cnn(1) = nesum
       zwork(1:nesum) = real(sigec,r4)
       call NCVPT(nceq,id_sigec,c11,cnn,zwork,ierr)
+      call NCVPT(nceq,id_sigecc,c11,cnn,zwork,ierr)
       zwork(1:nesum) = real(fwtec,r4)
       call NCVPT(nceq,id_fwtec,c11,cnn,zwork,ierr)
       zwork(1:nesum) = real(cecurr,r4)
@@ -815,6 +850,12 @@
       call NCVPT(nceq,id_sigprw,c11,cnn,zwork,ierr)
       zwork(1:npresw1) = real(saiprw2(1:npresw1),r4)
       call NCVPT(nceq,id_saiprw,c11,cnn,zwork,ierr)
+!
+      cnn(1) = kzeroj1
+      zwork(1:kzeroj1) = real(vzeroj(1:kzeroj1),r4)
+      call NCVPT(nceq,id_vzeroj,c11,cnn,zwork,ierr)
+      zwork(1:kzeroj1) = real(sizeroj(1:kzeroj1),r4)
+      call NCVPT(nceq,id_sizeroj,c11,cnn,zwork,ierr)
 !
       cnn(1) = nitera
       ziter = real(czmaxi(1:nitera),r4)
