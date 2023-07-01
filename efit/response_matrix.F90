@@ -2244,9 +2244,9 @@
       call ffcnst(ncrsp,crsp,z,nfffff)
       call wwcnst(ncrsp,crsp,z,nfffff)
       if (keecur.gt.0.and.kdomse.eq.0) then
-      nfffff=needs-kppcur-kffcur
-      needer=needs
-      call eecnst(ncrsp,crsp,z,nfffff)
+        nfffff=needs-kppcur-kffcur
+        needer=needs
+        call eecnst(ncrsp,crsp,z,nfffff)
       endif
 !---------------------------------------------------------------------
 !--   preconditioning A matrix if need                              --
@@ -2580,31 +2580,31 @@
       endif
       if(ivesel.eq.3) cm=cm+sum(vcurrt)
       if (swtcur.ne.0.0) then
-        saiip=(fwtcur/swtcur)**nsq*(ipmeas(jtime)-cm)**2
+        chipasma=(fwtcur/swtcur)**nsq*(ipmeas(jtime)-cm)**2
       else
-        saiip=0.0
+        chipasma=0.0
       endif
-      saisq=saisq+saiip
+      saisq=saisq+chipasma
 !
-      tsaifc=0.0
+      tchifcc=0.0
       do i=1,nfsum
-        saifc(i)=0.0
+        chifcc(i)=0.0
         if (fwtfc(i).gt.0.0) then
-          saifc(i)=fwtfc(i)**nsq*(brsp(i)-fccurt(jtime,i))**2
-          saifc(i)=saifc(i)/swtfc(i)**nsq
+          chifcc(i)=fwtfc(i)**nsq*(brsp(i)-fccurt(jtime,i))**2
+          chifcc(i)=chifcc(i)/swtfc(i)**nsq
         endif
-        saisq=saisq+saifc(i)
-        tsaifc=tsaifc+saifc(i)
+        saisq=saisq+chifcc(i)
+        tchifcc=tchifcc+chifcc(i)
       enddo
 !
       if (iecurr.eq.2) then
         do i=1,nesum
-          saiec(i)=0.0
+          chiecc(i)=0.0
           if (fwtec(i).gt.0.0) then
-            saiec(i)=fwtec(i)**nsq*(cecurr(i)-ecurrt(i))**2
-            saiec(i)=saiec(i)/swtec(i)**nsq
+            chiecc(i)=fwtec(i)**nsq*(cecurr(i)-ecurrt(i))**2
+            chiecc(i)=chiecc(i)/swtec(i)**nsq
           endif
-          saisq=saisq+saiec(i)
+          saisq=saisq+chiecc(i)
         enddo
       endif
 !

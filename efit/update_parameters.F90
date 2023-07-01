@@ -772,33 +772,33 @@
       ipmhd(jtime)=cm
       if(ivesel.gt.0) cm=cm+sum(vcurrt)
       if (swtcur.ne.0.0) then
-        saiip=(fwtcur/swtcur)**nsq*(ipmeas(jtime)-cm)**2
+        chipasma=(fwtcur/swtcur)**nsq*(ipmeas(jtime)-cm)**2
       else
-        saiip=0.0
+        chipasma=0.0
       endif
-      saisq=saisq+saiip
-      chi2rm(jtime)=max(chi2rm(jtime),saiip)
+      saisq=saisq+chipasma
+      chi2rm(jtime)=max(chi2rm(jtime),chipasma)
 !
-      tsaifc=0.0
+      tchifcc=0.0
       do i=1,nfsum
-        saifc(i)=0.0
+        chifcc(i)=0.0
         if (fwtfc(i).gt.0.0) then
-          saifc(i)=fwtfc(i)**nsq*(brsp(i)-fccurt(jtime,i))**2
-          saifc(i)=saifc(i)/swtfc(i)**nsq
+          chifcc(i)=fwtfc(i)**nsq*(brsp(i)-fccurt(jtime,i))**2
+          chifcc(i)=chifcc(i)/swtfc(i)**nsq
         endif
-        saisq=saisq+saifc(i)
-        tsaifc=tsaifc+saifc(i)
-        chi2rm(jtime)=max(chi2rm(jtime),saifc(i))
+        saisq=saisq+chifcc(i)
+        tchifcc=tchifcc+chifcc(i)
+        chi2rm(jtime)=max(chi2rm(jtime),chifcc(i))
       enddo
       if (iecurr.eq.2) then
         do i=1,nesum
-          saiec(i)=0.0
+          chiecc(i)=0.0
           if (fwtec(i).gt.0.0) then
-            saiec(i)=fwtec(i)**nsq*(cecurr(i)-ecurrt(i))**2
-            saiec(i)=saiec(i)/swtec(i)**nsq
+            chiecc(i)=fwtec(i)**nsq*(cecurr(i)-ecurrt(i))**2
+            chiecc(i)=chiecc(i)/swtec(i)**nsq
           endif
-          saisq=saisq+saiec(i)
-          chi2rm(jtime)=max(chi2rm(jtime),saiec(i))
+          saisq=saisq+chiecc(i)
+          chi2rm(jtime)=max(chi2rm(jtime),chiecc(i))
         enddo
       endif
       if (fitsiref) then
@@ -820,12 +820,12 @@
         write(nout,7450) (saisil(m),m=1,nsilop)
         write(nout,7430)
         write(nout,7450) (saimpi(m),m=1,magpri)
-        write(nout,7460) saiip
-        write(nout,7480) tsaifc
-        write(nout,7450) (saifc(m),m=1,nfsum)
+        write(nout,7460) chipasma
+        write(nout,7480) tchifcc
+        write(nout,7450) (chifcc(m),m=1,nfsum)
         write(nout,7482) saisref
         write(nout,7485)
-        write(nout,7450) (saiec(m),m=1,nesum)
+        write(nout,7450) (chiecc(m),m=1,nesum)
         if(kprfit.gt.0) write(nout,7470) chipre
         if(kprfit.gt.0) write(nout,7450) (saipre(m),m=1,npress)
         if(kecebz.gt.0) write(nout,7486) chiecebz

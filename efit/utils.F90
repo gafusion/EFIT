@@ -32,7 +32,7 @@
 !!  
 !**********************************************************************
       subroutine fluxav(f,x,y,n,si,rx,msx,ry,msy,fave,ns,sdlobp,sdlbp)
-      use set_kinds
+      use set_kinds, only: dp
       use commonblocks,only: c,wk,bkx,bky
       include 'eparm.inc'
       use var_cwork3, only:lkx,lky
@@ -97,7 +97,6 @@
 !**********************************************************************
       subroutine splitc(is,rs,zs,cs,rc,zc,wc,hc,ac,ac2,cc)
       use global_constants
-      use set_kinds
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension rs(is*is),zs(is*is),cs(is*is)
 
@@ -272,7 +271,7 @@
 !!
 !**********************************************************************
       subroutine fitpp(y,ny,alpa,nalpa)
-      use set_kinds
+      use set_kinds, only: dp
       use var_nio
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       parameter (malpa=30)
@@ -349,7 +348,7 @@
 !!
 !**********************************************************************
       subroutine fitfp(y,ny,alpa,nalpa)
-      use set_kinds
+      use set_kinds, only: dp
       use var_nio
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       parameter (malpa=30)
@@ -420,7 +419,6 @@
 !!
 !*********************************************************************
       subroutine lenco2(xplt,yplt,nplt,jges)
-      use set_kinds
       include 'eparm.inc'
       include 'modules1.inc'
       implicit none

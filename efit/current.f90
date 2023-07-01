@@ -10,7 +10,6 @@
 !*********************************************************************
       subroutine currnt(iter,jtime,nitett,kerror)
       use commonblocks,only: c,wk,bkx,bky
-      use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -162,7 +161,7 @@
 !
       case (2)
 !----------------------------------------------------------------------
-!--    polynomial current profile                                    --
+!--    polynomial or spline current profile                          --
 !----------------------------------------------------------------------
        init_current: if ((nitett.gt.1).or.(icinit.ge.0)) then
        eq_mode: if (iconvr.eq.3) then

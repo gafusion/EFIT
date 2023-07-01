@@ -5,7 +5,6 @@
 !!
 !**********************************************************************
       subroutine set_defaults()
-      use set_kinds
       use efit_bdata, only: iunit,m_write
       include 'eparm.inc'
       include 'modules2.inc'
@@ -343,7 +342,7 @@
         rsisec=-1.
         rvtor=1.70_dp
         rzero=1.6955_dp
-        saiec=0.0
+        chiecc=0.0
         scalea=.false.
         scalesir=1.0e-3_dp
         sidif=-1.0e+10_dp

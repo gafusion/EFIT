@@ -95,7 +95,7 @@
 ! global_constants
       ! Calculate and store global constants like pi, e, gravity, etc.
       module global_constants
-        use set_kinds
+        use set_kinds, only: dp
         public
         real*8 :: pi,twopi,radeg,tmu0,tmu02
         real*8, parameter :: tmu = 2.0e-07_dp
@@ -144,13 +144,14 @@
 ! error_control
       ! Error control and write out error messages consistently.
       module error_control
-        use set_kinds
+        use set_kinds, only: dp
         integer*4 :: currrank=-1 ! some invalid value
         real(dp) :: currtime=-1.0 ! some invalid value
         public :: errctrl_msg
 
       contains
         subroutine errctrl_setstate(currrank0,currtime0)
+          use set_kinds, only: dp
           integer*4, intent(in) :: currrank0
           real(dp), intent(in) :: currtime0
           currrank = currrank0
@@ -159,6 +160,7 @@
 
         subroutine errctrl_msg(subrstr,msgstr,mtype0)
           use var_nio, only: nttyo
+          use set_kinds, only: dp
           character(len=*), intent(in) :: subrstr,msgstr
           integer*4, optional :: mtype0
           integer*4 :: mtype
@@ -198,13 +200,11 @@
       end module var_outp1
 !var_iopen
       module var_iopen
-        use set_kinds
         integer*4 ifcurr 
         real*8 errbry,relax
       end module var_iopen
 !var_zcntrl
       module var_zcntrl
-        use set_kinds
         integer*4 isetfb,ishiftz,ioffz,ioffr,idplace,lring 
         real*8 gain,gainp,delzmm
       end module var_zcntrl
@@ -219,7 +219,6 @@
       end module var_test
 !var_fitsiref
        module var_fitsiref
-         use set_kinds
          real*8 csiref,saisref,fwtref,scalesir
          logical fitsiref
        end module var_fitsiref
@@ -236,7 +235,6 @@
        end module var_pcsys
 !var_pfedge
       module var_pfedge
-        use set_kinds
         integer*4 kedgep,kedgef 
         real*8 pedge,pe_psin,pe_width, &
           f2edge,fe_psin,fe_width,constf2, &
@@ -249,7 +247,6 @@
        end module var_sxpoint
 !var_consta
       module var_consta
-        use set_kinds
         public
         real*8 :: tmu2,errcut
         integer*4 :: ibunmn,kinput,kcaldia,ibunmns
@@ -260,19 +257,17 @@
       end module var_rcfact
 !var_curpo
       module var_curpro
-        use set_kinds
         real*8 emf,emp,enf,enp,rbetap,rzero,pbetap,qenp,qemp,qenf
       end module var_curpro
 !var_pfterm
       module var_pfterm
         integer*4 kffcur,kppcur,kpcurn,icalbet,kffcurs,kppcurs 
-        real*8 chidlc,gammaf,gammap,cstab0, &
+        real*8 chidflux,gammaf,gammap,cstab0, &
                vbtot2,vbtvac2,vbtor2,vbtvac,vbeta0, &
                vbtmag,btvvac2,btvtor2,btvtot2
       end module var_pfterm
 !var_cfit
       module var_cfit
-        use set_kinds
         integer*4 mxiter,nitera,nxiter,ixnn,isolve 
         real*8 error,errorm,errmin,delerr,delerb
       end module var_cfit 
@@ -288,7 +283,6 @@
       end module var_extra
 !var_conveg
       module var_conveg
-        use set_kinds
         real*8 omega,relip,zelip,aelip,eelip,omecur 
       end module var_conveg
 !var_limmm
@@ -320,7 +314,7 @@
       end module var_cyclic_red
 !var_scalem
       module var_scalem
-        use eparm,only:nrsmat,mfnpcr
+        !use eparm,only:nrsmat,mfnpcr
         integer*4 infosc
         real*8,dimension(:), allocatable :: rowscale
         real*8,dimension(:), allocatable :: colscale
@@ -345,7 +339,7 @@
       end module var_contor
 !var_mfield
       module var_mfield
-      use eparm,only:npoint
+      !use eparm,only:npoint
         real*8,dimension(:),allocatable :: bpol,plengt,bpolz
         real*8 siar,siaz
       end module var_mfield
@@ -378,7 +372,6 @@
       end module var_hist
 !var_hist2
       module var_hist2
-        use set_kinds
         real*8,dimension(:), allocatable :: qsiwant,cjorsw,cjor0, &
           ssiwant,ssi95,cjor99,cj1ave, &
           rmidin,rmidout,psurfa
@@ -387,7 +380,6 @@
       end module var_hist2
 !var_cshape
       module var_cshape
-        use set_kinds
         real*8,dimension(:),allocatable :: xout,yout
         real*8 dpsi,rymin,rymax, &
           zxmin,zxmax,xmin,xmax,ymin,ymax,rmaxis,zmaxis,emaxis, &
@@ -396,7 +388,6 @@
       end module var_cshape
 !var_divdis
       module var_divdis
-        use set_kinds
         real*8,dimension(:), allocatable :: dolubaf,dolubafm,diludom, &
                                             diludomm,dminux,dminlx, &
                                             ratsol,rvsiu,zvsiu,rvsou, &

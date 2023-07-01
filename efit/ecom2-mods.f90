@@ -1,5 +1,4 @@
       module var_cecoil
-      use set_kinds
       integer*4 iecurr
       real*8,dimension(:,:),allocatable :: rsilec
       real*8,dimension(:,:),allocatable :: rmp2ec
