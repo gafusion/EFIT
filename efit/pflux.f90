@@ -15,7 +15,6 @@
 !!
 !**********************************************************************
       subroutine pflux(niter,nnin,ntotal,jtime,kerror)
-      use set_kinds 
       use var_buneman, only: rgrid1,delrgrid,delz,drdz2
       use commonblocks, only: c,bkx,bky,psiold,psipold
       include 'eparm.inc'

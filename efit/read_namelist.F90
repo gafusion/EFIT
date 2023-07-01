@@ -6,7 +6,6 @@
 !**********************************************************************
       subroutine read_optin()
       use commonblocks
-      use set_kinds
       use opt_input
       include 'eparm.inc'
       include 'modules2.inc'

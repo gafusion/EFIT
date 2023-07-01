@@ -7,7 +7,7 @@ Variable, Definition
 "CDFLUX(ntime)",	calculated diamagnetic flux
 "CECURR(ntime, nesum)",	calculated E-coil currents in Amp
 "CERROR(ntime, nitera)", poloidal flux residual vs. iteration number
-"CHIDLC(ntime)",	chisq for diamagnetic flux
+"CHIDFLUX(ntime)",	chisq for diamagnetic flux
 "CHIGAM(ntime, nstark)",	chisq vs. polarimetries
 "CHITOT(ntime)", more inclusive chi squared that isn't typically used (includes diamagnetic and kinetic constraints)
 "CMGAM(ntime, nstark)",	calculated polarimetry signals
@@ -34,10 +34,10 @@ DEVICE,	machine name
 "EXPMPI(ntime, magpri)", measured magnetic probes
 "FCCURT(ntime, nfsum)",	measured F-coil currents in Amp-turns
 "FIXGAM(ntime, nstark)",	radians correction of tangam for spatial averaging effects
-"FWTCUR(ntime)", 	weight for plasma current in Amp
-"FWTDLC(ntime)",	weight for diamagnetic flux
+"FWTPASMA(ntime)", 	weight for plasma current in Amp
+"FWTDFLUX(ntime)",	weight for diamagnetic flux
 "FWTEC(ntime, nesum)",	weight for E-coil currents
-"FWTFC(ntime, nfsum)", weight for F-coil currents
+"FWTFC(ntime, nfsum)",  weight for F-coil currents
 "FWTGAM(ntime, nstark)", fitting weight for MSE channels
 "FWTMP2(ntime, magpri)", 	weight for magnetic probes
 "FWTREF(ntime)", 	weight for reference flux loop
@@ -67,25 +67,25 @@ DEVICE,	machine name
 "RPRESW(ntime, npresw)", "| <0:input rotational pressure profile vs. flux;
 | >0:R coordinates of input rotational pressure profile in m"
 "RRGAM(ntime, nstark)", radius (R position) of MSE channels
-"SAIEC(ntime, nesum)",	chisq for E-coil currents
-"SAIFC(ntime, nfsum)",	chisq for F-coil currents
-"SAIIP(ntime)", 	chisq for plasma current
+"CHIECC(ntime, nesum)",	chisq for E-coil currents
+"CHIFCC(ntime, nfsum)",	chisq for F-coil currents
+"CHIPASMA(ntime)", 	chisq for plasma current
 "SAIMPI(ntime, magpri)", chisq magnetic probes
 "SAIPRE(ntime, npress)",	chisq of pressure
 "SAIPRW(ntime, npresw)",	chisq of rotational pressure
 "SAISIL(ntime, nsilop)",	chisq for flux loops
 "SAISREF(ntime)", 	chisq for reference flux loop
 "SHOT",	shot number
-"SIGCUR(ntime)", 	uncertainty in plasma current
+"SIGPASMA(ntime)", 	uncertainty in plasma current
 "SIGDIA(ntime)",	uncertainty in diamagnetic flux
-"SIGEC(ntime, nesun)",	uncertainty in E-coil currents
-"SIGFC(ntime, nfsum)",	uncertainty in F-coil currents
+"SIGECC(ntime, nesun)",	uncertainty in E-coil currents
+"SIGFCC(ntime, nfsum)",	uncertainty in F-coil currents
 "SIGGAM(ntime, nstark)",	uncertainty of tangam
-"SIGMP2(ntime, magpri)", uncertainty in magnetic probes
+"SIGMPI(ntime, magpri)", uncertainty in magnetic probes
 "SIGPRE(ntime, npress)",	uncertainty for pressure
 "SIGPRW(ntime, npresw)",	uncertainty for rotational pressure
 "SIGREF(ntime)", 	uncertainty in reference flux loop
-"SIGSI(ntime, nsilop)",	uncertainty in flux loops
+"SIGSIL(ntime, nsilop)",	uncertainty in flux loops
 "SILOPT(ntime, nsilop)",	measured flux loops
 "TANGAM(ntime, nstark)",	tangent of measured MSE pitch angle
 "TANGAM_UNCOR(ntime, nstark)",	tangent of measured MSE pitch angle w/o cer correction

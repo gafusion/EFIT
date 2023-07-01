@@ -11,7 +11,6 @@
 !!
 !**********************************************************************
       subroutine setup_data_fetch(ktime,kerror)
-      use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'

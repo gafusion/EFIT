@@ -177,10 +177,6 @@
       RETURN
       END
 !
-      SUBROUTINE GRID
-      RETURN
-      END
-!
       SUBROUTINE THKCRV
       RETURN
       END
