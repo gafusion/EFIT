@@ -491,7 +491,7 @@
         write (nout,11020) (eccurt(it,i),i=1,nesum)
 !
       if (abs(sigdia(it)).gt.1.0e-08) &
-        write (nout,11300) chidlc
+        write (nout,11300) chidflux
       if (iconvr.eq.3) then
         write (nout,11320) emf,emp,enf,enp,betap0,rzero
         cbetap=0.0

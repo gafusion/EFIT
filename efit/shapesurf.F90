@@ -11,7 +11,6 @@
 !!
 !**********************************************************************
       subroutine shapesurf(iges,igmax,kerror)
-      use set_kinds
       use commonblocks,only: c,wk,copy,bkx,bky,psiold,psipold, &
                 worka,zeros,byringr,byringz,xouts,youts,bpoo,bpooz, &
                 bpooc,bfpol,cfpol,dfpol,xxtra,yxtra,bpxtra,flxtra,fpxtra
@@ -2507,11 +2506,11 @@
       vbpli=betap(iges)+li(iges)/2.
       if (kvtor.gt.0) vbpli=vbpli+betapw(iges)
       dbpli(iges)=abs((sbpli-vbpli)/sbpli)
-      chidlc=0.0
+      chidflux=0.0
       if (fwtdlc.gt.0.0) then
-        chidlc=((diamag(iges)-cdflux(iges))/sigdia(iges))**2
+        chidflux=((diamag(iges)-cdflux(iges))/sigdia(iges))**2
       endif
-      chitot=chipre+chifin+chidlc
+      chitot=chipre+chifin+chidflux
       if (idiart.gt.0) then
         bp2flx=bpolav(iges)**2
         dmui=1.0e+06_dp*diamag(iges)*4.*pi*bcentr(iges)*rcentr &
@@ -3090,7 +3089,7 @@
 !!
 !**********************************************************************
       subroutine dslant(x,y,np,xmin,xmax,ymin,ymax,x1,y1,x2,y2,dismin)
-      use set_kinds
+      use set_kinds, only: dp
       use eparm, only: npoint
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       data nn/30/

@@ -342,47 +342,80 @@
 !**********************************************************************
       real*8 function psical(a,r,z)
       implicit none
-      real*8 br,bz
       real*8, intent(in) :: a,r,z
-      integer*4 isw
       real*8 den,xk,x1,cay,ee
 !
-      isw=1
-      go to 10
-      entry br(a,r,z)
-      isw=2
-      go to 10
-      entry bz(a,r,z)
-      isw=3
-!
-   10 continue
       den=a*a+r*r+z*z+2.*a*r
       xk=4.*a*r/den
       x1=(a*a+r*r+z*z-2.*a*r)/den
       if(x1.lt.1.0e-10) x1=1.0e-10
       cay=xmdelk(x1)
       ee=xmdele(x1)
-      select case (isw)
-      case (1)
-!----------------------------------------------------------------------
-!--      psi computation                                             --
-!----------------------------------------------------------------------
-         psical=sqrt(den)*((1.e+00-0.5e+00*xk)*cay-ee)
-         return
-      case (2)
-!----------------------------------------------------------------------
-!--      br  computation                                             --
-!----------------------------------------------------------------------
-         br=z/(r*sqrt(den))*(-cay+(a*a+r*r+z*z)/((a-r)*(a-r)+z*z)*ee)
-         return
-      case (3)
-!----------------------------------------------------------------------
-!--      bz  computation                                             --
-!----------------------------------------------------------------------
-         bz=(cay+(a*a-r*r-z*z)/((a-r)*(a-r)+z*z)*ee)/sqrt(den)
-         return
-      end select
+      psical=sqrt(den)*((1.e+00-0.5e+00*xk)*cay-ee)
+      return
       end function psical
+!**********************************************************************
+!**                                                                  **
+!**     SUBPROGRAM DESCRIPTION:                                      **
+!**          br computes mutual inductance/2/pi radial field         **
+!**          between two circular filaments of radii a and r and     **
+!**          separation of z, for mks units multiply returned        **
+!**          value by 2.0e-07.                                       **
+!**                                                                  **
+!**     CALLING ARGUMENTS:                                           **
+!**       a..............first filament radius                       **
+!**       r..............second filament radius                      **
+!**       z..............vertical separation                         **
+!**                                                                  **
+!**     REFERENCES:                                                  **
+!**          (1) f.w. mcclain and b.b. brown, ga technologies        **
+!**              report ga-a14490 (1977).                            **
+!**                                                                  **
+!**********************************************************************
+      real*8 function br(a,r,z)
+      implicit none
+      real*8, intent(in) :: a,r,z
+      real*8 den,x1,cay,ee
+!
+      den=a*a+r*r+z*z+2.*a*r
+      x1=(a*a+r*r+z*z-2.*a*r)/den
+      if(x1.lt.1.0e-10) x1=1.0e-10
+      cay=xmdelk(x1)
+      ee=xmdele(x1)
+      br=z/(r*sqrt(den))*(-cay+(a*a+r*r+z*z)/((a-r)*(a-r)+z*z)*ee)
+      return
+      end function br
+!**********************************************************************
+!**                                                                  **
+!**     SUBPROGRAM DESCRIPTION:                                      **
+!**          bz computes mutual inductance/2/pi vertical field       **
+!**          between two circular filaments of radii a and r and     **
+!**          separation of z, for mks units multiply returned        **
+!**          value by 2.0e-07.                                       **
+!**                                                                  **
+!**     CALLING ARGUMENTS:                                           **
+!**       a..............first filament radius                       **
+!**       r..............second filament radius                      **
+!**       z..............vertical separation                         **
+!**                                                                  **
+!**     REFERENCES:                                                  **
+!**          (1) f.w. mcclain and b.b. brown, ga technologies        **
+!**              report ga-a14490 (1977).                            **
+!**                                                                  **
+!**********************************************************************
+      real*8 function bz(a,r,z)
+      implicit none
+      real*8, intent(in) :: a,r,z
+      real*8 den,x1,cay,ee
+!
+      den=a*a+r*r+z*z+2.*a*r
+      x1=(a*a+r*r+z*z-2.*a*r)/den
+      if(x1.lt.1.0e-10) x1=1.0e-10
+      cay=xmdelk(x1)
+      ee=xmdele(x1)
+      bz=(cay+(a*a-r*r-z*z)/((a-r)*(a-r)+z*z)*ee)/sqrt(den)
+      return
+      end function bz
 !**********************************************************************
 !**                                                                  **
 !**     SUBPROGRAM DESCRIPTION:                                      **

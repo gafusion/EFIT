@@ -16,7 +16,6 @@
 !!
 !**********************************************************************
       subroutine get_opt_input(ktime)
-      use set_kinds
       use opt_input
       include 'eparm.inc'
       include 'modules2.inc'

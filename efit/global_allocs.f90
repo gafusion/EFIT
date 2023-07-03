@@ -73,7 +73,7 @@ ALLOCATE(rbrpc(nstark,npcurn),rbzpc(nstark,npcurn),rgampc(nstark,npcurn),rbrfc(n
    rmse_gain(nstark),rmse_slope(nstark),rmse_scale(nstark),rmse_offset(nstark),sigam(nstark), &
    bzmse(nstark),bzmsec(nstark),cjmse(nstark),cjmsec(nstark),rhogam(nstark), &
    spatial_avg_gam(nstark,ngam_vars,ngam_u,ngam_w), &
-   saisil(nsilop),saimpi(magpri),saipre(mpress),saifc(nfsum), &
+   saisil(nsilop),saimpi(magpri),saipre(mpress),chifcc(nfsum), &
    dfluxc(ntime),cdflux(ntime),edflux(ntime),rspdlc(nffcur), &
    rco2r(nco2r,ntime),rco2v(nco2v,ntime),chordv(nco2v),chordr(nco2r), &
    dco2r(ntime,nco2r),dco2v(ntime,nco2v),erflag(ntime,nflag), &
@@ -129,10 +129,10 @@ ALLOCATE(xnodef(modef),xnodep(modep),xnodew(modew),kbasef(modef), &
    zomegat(mpress),sigome(mpress),rpreswv(mpress),scalepw(mpress), &
    saiprw(npress),premew(mpress),saiprw2(mpress),rprwpc(mpress,nwwcur), &
    betapw(ntime),betatw(ntime),wplasw(ntime), &
-   fwtec(nesum),cecurr(nesum),saiec(nesum), &
+   fwtec(nesum),cecurr(nesum),chiecc(nesum), &
    ztssym(ntime),ztswid(ntime),ptssym(ntime),ztserr(ntime), &
    psin32(ntime),psin21(ntime),rq32in(ntime),rq21top(ntime), &
-   sigfc(nfsum),sigec(nesum),sigsi(nsilop),sigmp2(magpri), &
+   sigfcc(nfsum),sigecc(nesum),sigsil(nsilop),sigmpi(magpri), &
    signbt(magpri))
    
 allocate(psirz_ext(nw*nh),pprime_ext(nw),ffprim_ext(nw),qpsi_ext(nw))

@@ -9,7 +9,7 @@
 !!
 !**********************************************************************
       subroutine write_a(ktime,jtime)
-      use set_kinds
+      use set_kinds, only: r4
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -31,7 +31,8 @@
       character(14) :: sfile
       character eqdsk*72,header*42,qmflag*3,fit_type*3
       character wform*20,let
-      data nlold/40/,nlnew/41/
+      integer*4, parameter :: nlold=40,nlnew=41
+      integer*4, parameter :: magpri67=29,magpri322=31
       save xdum
 
       allocate(coils(nsilop),expmp2(magpri))

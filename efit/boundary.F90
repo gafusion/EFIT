@@ -47,7 +47,6 @@
            zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
            ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
            ishot,itime,limfag,radold,kbound,tolbndpsi)
-      use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       double precision, dimension(nwh) :: psi, zero
@@ -159,6 +158,8 @@
         a4=carea-a3
         psivl=(psi(kk+nh+1)*a3+psi(kk+1)*a4)/carea
         if(yt(1).eq.y(j)) psivl=psi(kk)+(psi(kk+nh)-psi(kk))*(xt(1)-x(i))/dx
+        zsum=1.e10_dp
+        zerol=1.e10_dp
 
         contr: do while (.true.)
           f1=psi(kk)
@@ -201,7 +202,7 @@
             end if
           end if
 !----------------------------------------------------------------------
-!--       check for limiter in cell                                  --
+!--       check for limiter in cell (fieldline hit the wall)
 !----------------------------------------------------------------------
           zsum=zero(kk)+zero(kk+1)+zero(kk+nh)+zero(kk+nh+1)
           if(zsum.eq.0.0) exit contr
@@ -279,6 +280,7 @@
               return
             end if
 
+            ! check if the current point is outside the limiter
             dpsi=min(dpsi,abs(psivl-psilx))
             if (psilx-psivl.ge.tolbndpsi) then
               call zlim(zerol,n111,n111,limitr,xlim,ylim,xt,yt,limfag)
@@ -380,6 +382,7 @@
           cycle psiloop
         end if
 
+        if(loop.ge.nloop) exit psiloop
 !----------------------------------------------------------------------
 !--     check for convergence of boundary                            --
 !----------------------------------------------------------------------
@@ -399,9 +402,18 @@
           end if
           return
         end if
-
-        if(err.le.etol) exit psiloop
-        if(loop.ge.nloop) exit psiloop
+        if (err.le.etol) then
+          ! if the fieldline hit the wall try moving inside separatrix
+          if (zsum.eq.0.0 .or. zerol(1).le.0.01_dp) then
+            if (rad(1).gt.xctr) then
+              rad(1)=rad(1)-1.5*etol*rad(1)
+            else
+              rad(1)=rad(1)+1.5*etol*rad(1)
+            endif
+          else
+            exit psiloop
+          endif
+        endif
 !----------------------------------------------------------------------
 !--     new rad,psi and try again                                    --
 !----------------------------------------------------------------------
@@ -861,7 +873,6 @@
       ymin,ymax,iauto,iautoc,xc,yc,ipts,x,nw,y,nh,cspln,n2cspln,&
       nh2,itty,iptsm,negcur,bkx,lkx,bky,lky,kerror)
       use global_constants
-      use set_kinds
       use error_control
       use eparm, only: kubicx,lubicx,kubicy,lubicy
       implicit integer*4 (i-n), real*8 (a-h, o-z)
@@ -1430,7 +1441,6 @@
         zmin,zmax,zrmin,zrmax,rzmin,rzmax,dpsipsi, &
         bpoo,bpooz,limtrv,xlimv,ylimv,limfagv,ifit,jtime,kerror)
       use commonblocks,only: c,wk,bkx,bky
-      use set_kinds
       include 'eparm.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -1914,7 +1924,6 @@
 !!********************************************************************
       subroutine maxpsi(xl1,yl1,xl2,yl2,x1,y1,x2,y2,f1,f2,f3,f4, &
                         carea,psimax,xtry,ytry,nerr)
-      use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 !
@@ -2129,7 +2138,6 @@
 !!    @param ierr : error flag 
 !*********************************************************************
       subroutine qfit(k,x1,x2,x3,y1,y2,y3,x,y,yp,ierr)
-      use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       ierr=0
@@ -2212,7 +2220,6 @@
                         nfound,npoint,drgrid,dzgrid,xmin, &
                         xmax,ymin,ymax,ipack,rmaxis,zmaxis,negcur, &
                         kerror,err_type)
-      use set_kinds
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       integer*4 :: err_type
@@ -2311,7 +2318,7 @@
 !!                    2 general geometry
 !*********************************************************************
       subroutine zlim(zero,nw,nh,limitr,xlim,ylim,x,y,iflag)
-      use set_kinds
+      use set_kinds, only: dp
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       real*8 :: zero(nw*nh),x(nw),y(nh) 
       dimension xlim(limitr),ylim(limitr)
