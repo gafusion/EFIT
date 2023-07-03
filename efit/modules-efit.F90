@@ -247,7 +247,6 @@
       end module var_rcfact
 !var_curpo
       module var_curpro
-        use set_kinds
         real*8 emf,emp,enf,enp,rbetap,rzero,qenp,qemp,qenf
       end module var_curpro
 !var_pfterm

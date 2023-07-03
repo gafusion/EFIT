@@ -442,10 +442,10 @@
       call make_group(cid,"ip",nid,group_exists,h5err)
       call dump_h5(nid,"exact",0,h5in,h5err)
       call dump_h5(nid,"measured",ipmeas(jtime),h5in,h5err)
-      call dump_h5(nid,"measured_error_upper",sigcur,h5in,h5err)
+      call dump_h5(nid,"measured_error_upper",sigpasma,h5in,h5err)
       call dump_h5(nid,"weight",fwtcur,h5in,h5err)
       call dump_h5(nid,"reconstructed",ipmhd(jtime),h5in,h5err)
-      call dump_h5(nid,"chi_squared",saiip,h5in,h5err)
+      call dump_h5(nid,"chi_squared",chipasma,h5in,h5err)
       call close_group("ip",nid,h5err)
 
       ! write e, f and a coil currents
@@ -455,10 +455,10 @@
         call make_group(nid,trim(probeind),fid,group_exists,h5err)
         call dump_h5(fid,"exact",0,h5in,h5err)
         call dump_h5(fid,"measured",eccurt(jtime,i),h5in,h5err)
-        call dump_h5(fid,"measured_error_upper",sigec(i),h5in,h5err)
+        call dump_h5(fid,"measured_error_upper",sigecc(i),h5in,h5err)
         call dump_h5(fid,"weight",fwtec(i),h5in,h5err)
         call dump_h5(fid,"reconstructed",cecurr(i),h5in,h5err)
-        call dump_h5(fid,"chi_squared",saiec(i),h5in,h5err)
+        call dump_h5(fid,"chi_squared",chiecc(i),h5in,h5err)
         call close_group(trim(probeind),fid,h5err)
       enddo
       do i=nesum+1,nesum+nfsum
@@ -468,11 +468,11 @@
         call dump_h5(fid,"measured",fccurt(jtime,i-nesum)/turnfc(i-nesum), &
                      h5in,h5err) ! convert A-t to A
         call dump_h5(fid,"measured_error_upper", &
-                     sigfc(i-nesum)/turnfc(i-nesum),h5in,h5err) ! convert A-t to A
+                     sigfcc(i-nesum)/turnfc(i-nesum),h5in,h5err) ! convert A-t to A
         call dump_h5(fid,"weight",fwtfc(i-nesum),h5in,h5err) ! non-dimensional
         call dump_h5(fid,"reconstructed",brsp(i-nesum)/turnfc(i-nesum), &
                      h5in,h5err) ! convert A-t to A
-        call dump_h5(fid,"chi_squared",saifc(i-nesum),h5in,h5err) ! non-dimensional
+        call dump_h5(fid,"chi_squared",chifcc(i-nesum),h5in,h5err) ! non-dimensional
         call close_group(trim(probeind),fid,h5err)
       enddo
       do i=nesum+nfsum+1,nesum+nfsum+nacoil
@@ -495,7 +495,7 @@
         call make_group(nid,trim(probeind),fid,group_exists,h5err)
         call dump_h5(fid,"exact",0,h5in,h5err)
         call dump_h5(fid,"measured",expmpi(jtime,i),h5in,h5err)
-        call dump_h5(fid,"measured_error_upper",sigmp2(i),h5in,h5err)
+        call dump_h5(fid,"measured_error_upper",sigmpi(i),h5in,h5err)
         call dump_h5(fid,"weight",fwtmp2(i),h5in,h5err)
         call dump_h5(fid,"reconstructed",cmpr2(i,jtime),h5in,h5err)
         call dump_h5(fid,"chi_squared",saimpi(i),h5in,h5err)
@@ -510,7 +510,7 @@
         call make_group(nid,trim(probeind),fid,group_exists,h5err)
         call dump_h5(fid,"exact",0,h5in,h5err)
         call dump_h5(fid,"measured",silopt(jtime,i)*twopi,h5in,h5err)
-        call dump_h5(fid,"measured_error_upper",sigsi(i)*twopi,h5in,h5err)
+        call dump_h5(fid,"measured_error_upper",sigsil(i)*twopi,h5in,h5err)
         call dump_h5(fid,"weight",fwtsi(i),h5in,h5err)
         call dump_h5(fid,"reconstructed",csilop(i,jtime)*twopi,h5in,h5err)
         call dump_h5(fid,"chi_squared",saisil(i),h5in,h5err)
@@ -622,7 +622,7 @@
       call dump_h5(nid,"measured_error_upper",sigdia(jtime),h5in,h5err)
       call dump_h5(nid,"weight",fwtdlc,h5in,h5err)
       call dump_h5(nid,"reconstructed",cdflux(jtime),h5in,h5err)
-      call dump_h5(nid,"chi_squared",chidlc,h5in,h5err)
+      call dump_h5(nid,"chi_squared",chidflux,h5in,h5err)
       call close_group("diamagnetic_flux",nid,h5err)
 
       ! write total chi squared *These are not in the IMAS standard yet!
