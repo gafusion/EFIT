@@ -18,7 +18,7 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
-      real*8 ffcurr,fpcurr,ppcurr,prcur4,pwcur4
+      real*8 ffcurr,fpcurr,ppcurr,prcurr,pwcurr,prcur4,pwcur4
       integer*4, intent(in) :: ix,ixt,ixout,jtime
       integer*4, intent(out) :: kerror
       integer*4 i,iii,j,k,kk,nn,ier,itot,nfounc,nnerr,nqend,nzz
@@ -388,6 +388,31 @@
             r2surs = r2sdry(i)*sdlobp
             fpnow = ffcurr(psiwant,kffcur)
             fpnow = fpnow*tmu
+            if (kvtor.gt.0) then
+              csplt(1:nfounc)=rsplt(1:nfounc)**2
+              call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
+                          r2wdry(i),nzz,sdlobp,sdlbp)
+              csplt(1:nfounc)=((rsplt(1:nfounc)/rvtor)**2-1.)**2
+              call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid,nh, &
+                          r4wdry(i),nzz,sdlobp,sdlbp)
+              if (kvtor.eq.3) then
+                prew0=pwcurr(sizeroj(i),kwwcur)
+                pres0=prcurr(sizeroj(i),kppcur)
+                if (abs(pres0).gt.1.e-10_dp) then
+                  pwop0=prew0/pres0
+                else
+                  pwop0=0.0
+                endif
+                csplt(1:nfounc)=(rsplt(1:nfounc)/rvtor)**2-1.
+                csplt(1:nfounc)=csplt(1:nfounc)*exp(pwop0*csplt(1:nfounc))
+                call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid, &
+                            nh,rp2wdry(i),nzz,sdlobp,sdlbp)
+                csplt(1:nfounc)=(rsplt(1:nfounc)/rvtor)**2-1.
+                csplt(1:nfounc)=exp(pwop0*csplt(1:nfounc))
+                call fluxav(csplt,rsplt,zsplt,nfounc,psi,rgrid,nw,zgrid, &
+                            nh,rpwdry(i),nzz,sdlobp,sdlbp)
+              endif
+            endif
           enddo
         endif
       endif
@@ -478,7 +503,6 @@
             call currnt(2,jtime,2,kerror)
             if(kerror.gt.0) return
           endif
-
           fcentr=fbrdy**2+sidif*dfsqe
           if (fcentr.lt.0.0) fcentr=fbrdy**2
           fcentr=sqrt(fcentr)*fbrdy/abs(fbrdy)
@@ -676,9 +700,11 @@
       include 'modules1.inc'
       implicit none
 
+      real*8 fpcurr,ppcurr,prcurr,pwcurr,pwpcur
       integer*4, intent(in) :: jtime
       integer*4 i,m
-      real*8 cm,cmbr,cmbz,ce1rbz,ce2rbz,ce3rbr,saisq
+      real*8 cm,cmbr,cmbz,ce1rbz,ce2rbz,ce3rbr,saisq,rxxx,rxxf,rxxw, &
+             rdimw,pres0,prew0,pwop0,pwp0r2,ppw,pcw,pp0,ptop0
       integer*4, parameter :: nnn=0,nsq=2
 !
 #ifdef DEBUG_LEVEL2
@@ -687,6 +713,9 @@
 !
       saisq=0.0
       chi2rm(jtime)=0.0
+!--------------------------------------------------------------------------
+!--   compute flux loop chisqr
+!--------------------------------------------------------------------------
       do m=1,nsilop
         cm=sum(rsilfc(m,:)*brsp(1:nfsum))+sum(gsilpc(m,:)*pcurrt)
         if(ivesel.gt.0) cm=cm+sum(rsilvs(m,:)*vcurrt)
@@ -706,7 +735,21 @@
         csilop(m,jtime)=cm
         chi2rm(jtime)=max(chi2rm(jtime),saisil(m))
       enddo
-!
+!--------------------------------------------------------------------------
+!--   compute reference flux loop chisqr (if requested)
+!--------------------------------------------------------------------------
+      if (fitsiref) then
+        saisref=0.0
+        if (fwtref.gt.0.0) then
+          saisref=fwtref**nsq*(psiref(jtime)-csiref)**2
+          saisref=saisref/swtsi(nslref)**nsq
+        endif
+        saisq=saisq+saisref
+        chi2rm(jtime)=max(chi2rm(jtime),saisref)
+      endif
+!--------------------------------------------------------------------------
+!--   compute magnetic probe chisqr
+!--------------------------------------------------------------------------
       do m=1,magpri
           cm=sum(rmp2fc(m,:)*brsp(1:nfsum))+sum(gmp2pc(m,:)*pcurrt)
         if(ivesel.gt.0) cm=cm+sum(rmp2vs(m,:)*vcurrt)
@@ -767,7 +810,9 @@
         chiecebz=0.0
       endif
       cmecebz(jtime)=cm
-!
+!--------------------------------------------------------------------------
+!--   compute Ip signal
+!--------------------------------------------------------------------------
       cm=sum(pcurrt)
       ipmhd(jtime)=cm
       if(ivesel.gt.0) cm=cm+sum(vcurrt)
@@ -778,7 +823,9 @@
       endif
       saisq=saisq+chipasma
       chi2rm(jtime)=max(chi2rm(jtime),chipasma)
-!
+!--------------------------------------------------------------------------
+!--   compute F-coil signal
+!--------------------------------------------------------------------------
       tchifcc=0.0
       do i=1,nfsum
         chifcc(i)=0.0
@@ -790,6 +837,10 @@
         tchifcc=tchifcc+chifcc(i)
         chi2rm(jtime)=max(chi2rm(jtime),chifcc(i))
       enddo
+      ccbrsp(:,jtime)=brsp(1:nfsum)
+!--------------------------------------------------------------------------
+!--   compute E-coil chisqr (if requested)
+!--------------------------------------------------------------------------
       if (iecurr.eq.2) then
         do i=1,nesum
           chiecc(i)=0.0
@@ -801,17 +852,6 @@
           chi2rm(jtime)=max(chi2rm(jtime),chiecc(i))
         enddo
       endif
-      if (fitsiref) then
-        saisref=0.0
-        if (fwtref.gt.0.0) then
-          saisref=fwtref**nsq*(psiref(jtime)-csiref)**2
-          saisref=saisref/swtsi(nslref)**nsq
-        endif
-        saisq=saisq+saisref
-        chi2rm(jtime)=max(chi2rm(jtime),saisref)
-      endif
-!
-      ccbrsp(:,jtime)=brsp(1:nfsum)
 !
       chisq(jtime)=saisq
       if (iand(iout,1).ne.0) then
@@ -835,8 +875,98 @@
           write(nout,7450) (chiece(m),m=1,nece)
         endif
       endif
+!--------------------------------------------------------------------------
+!--   compute pressure chisqr (if requested)
+!--------------------------------------------------------------------------
+      chipre=0.0
+      if (kprfit.gt.0.and.kdofit.ne.0.and.npress.gt.0) then
+        do m=1,npress
+          cm=sum(rprepc(m,1:kppcur)*brsp((1+nfsum):(kppcur+nfsum)))
+          if(kedgep.gt.0) cm=cm+rprepe(m)*pedge
+          cm=cm+prbdry
+          if (fwtpre(m).gt.0.0) then
+            saipre(m)=((cm-pressr(m))/sigpre(m))**2
+          else
+            saipre(m)=0.0
+          endif
+          saipre2(m)=saipre(m)  ! preserve saipre - changed later by pltout
+          chipre=chipre+saipre(m)
+          precal(m)=cm
+        enddo
+      endif
+!--------------------------------------------------------------------------
+!--   compute rotational pressure chisqr (if requested)
+!--------------------------------------------------------------------------
+      chiprw=0.0
+      if (kprfit.ge.3.and.npresw.gt.0) then
+        do m=1,npresw
+          cm=sum(rprwpc(m,1:kwwcur)*brsp((1+nfnpcr):(kwwcur+nfnpcr)))
+          cm=cm+preswb
+          if (fwtprw(m).gt.0.0) then
+            saiprw(m)=((cm-presw(m))/sigprw(m))**2
+          else
+            saiprw(m)=0.0
+          endif
+          saiprw2(m)=saiprw(m)  ! preserve saiprw - changed later by pltout
+          chiprw=chiprw+saiprw(m)
+          prwcal(m)=cm
+        enddo
+      endif
+!--------------------------------------------------------------------------
+!--   compute <Jt/R>/<1/R> signal (if requested)
+!--------------------------------------------------------------------------
+      if (kzeroj.gt.0) then
+        do i=1,kzeroj
+          cjtr(i)=0.0
+          if (rzeroj(i).ne.0.0) cycle
+          rxxx=1./r1sdry(i)
+          rxxf=r1sdry(i)/r2sdry(i)
+          if (kvtor.gt.0) then
+            rxxw=(r2wdry(i)/rvtor**2-1.)/r1sdry(i)
+            rdimw=r2wdry(i)/rvtor
+            if (kvtor.eq.2.or.kvtor.eq.3) then
+              prew0=pwcurr(sizeroj(i),kwwcur)
+              pres0=prcurr(sizeroj(i),kppcur)
+              if (abs(pres0).gt.1.e-10_dp) then
+                pwop0=prew0/pres0
+                pwp0r2=pwop0*rxxw
+              else
+                pwop0=0.0
+                pwp0r2=0.0
+              endif
+              select case (kvtor)
+              case (2)
+                rxxw=rxxw+pwop0*r4wdry(i)/r1sdry(i)
+                rxxx=rxxx-0.5_dp*pwop0**2*r4wdry(i)/r1sdry(i)
+              case (3)
+                rxxx=(rpwdry(i)-pwop0*rp2wdry(i))/r1sdry(i)
+                rxxw=rp2wdry(i)/r1sdry(i)
+              end select
+            endif
+            ppw=pwpcur(sizeroj(i),kwwcur)
+            ppw=ppw*(rxxw**2-1.)
+            pcw=ppw*rxxw
+            select case (kvtor)
+            case (2)
+              pcw=pcw*(1.+pwp0r2)
+              pp0=pp0*(1.-0.5_dp*pwp0r2**2)
+            case (3)
+              if (abs(pres0).gt.1.e-10_dp) then
+                ptop0=exp(pwp0r2)
+              else
+                ptop0=1.0
+              endif
+              pcw=pcw*ptop0
+              pp0=pp0*ptop0*(1.-pwp0r2)
+            end select
+            cjtr(i)=cjtr(i)+pp0*rxxw+pcw
+          endif
+          cjtr(i)=(cjtr(i)+ppcurr(sizeroj(i),kppcur)*rxxx &
+                          +fpcurr(sizeroj(i),kffcur)/rxxf)/darea
+        enddo
+      endif
 !-------------------------------------------------------------------------
-!--   compute signals at MSE locations if requested                     --
+!--   compute signals at MSE locations (if requested)
 !-------------------------------------------------------------------------
       if (kdomse.gt.0) then
         call green(nnn,jtime,n222)
@@ -884,7 +1014,7 @@
         enddo
       endif
 !-------------------------------------------------------------------------
-!--   compute signals at MSE-LS locations if requested                  --
+!--   compute signals at MSE-LS locations (if requested)
 !-------------------------------------------------------------------------
       if (kdomsels.gt.0) then
         call green(nnn,jtime,n222)
@@ -914,7 +1044,6 @@
         write(nout,7590)
         write(nout,7450) (cmmlsv(jtime,m),m=1,nmsels)
       endif
-!
       return
  7400 format (/,2x,'time = ',e12.5,2x,'chisq = ',e12.5,2x,'current = ',e12.5)
  7420 format (10x,'chi psi loops:')

@@ -31,7 +31,7 @@
       integer*4 i,j,kk,m,mk,mp1,n,ne,nj,nk,nkk,nmw,ier,info,mcentral, &
                 ncrsp,need,needs,nfedge,nfffff,nkb,nload,npedge,nsavdz,nsq
       real*8 brspmin,cdelznow,cm,cmbr,cmbz,cmv,drgam,erbot,erup,ework, &
-             fwtbdr,fwtbpp,fwtxxa,fwtxxf,fwtxxo,fwtxxzj,pres0,prew0, &
+             fwtbdr,fwtbpp,fwtxxa,fwtxxf,fwtxxo,pres0,prew0, &
              ptop0,pwop0,pwp0r2,saiold,saisq,scadelz,siedge,t,toler,xjj, &
              ysiwant
       character(128) tmpstr
@@ -247,6 +247,8 @@
 !--  plasma current P', FF', and Pw', set up response matrix arsp     --
 !-----------------------------------------------------------------------
       if (kzeroj.gt.0) then
+       brspmin=max(ten24,abs(brsp(nfsum+1)))
+       fwtjtr(1:kzeroj)=fwtxxj*1000./brspmin
        do i=1,kzeroj
         ysiwant=sizeroj(i)
         call setfp(ysiwant,xpsfp)
@@ -265,8 +267,6 @@
           rxxx(i)=rcentr
           rxxxf(i)=rxxx(i)
         endif
-        brspmin=max(ten24,abs(brsp(nfsum+1)))
-        fwtxxzj=fwtxxj*1000./brspmin
         rotation: if (kvtor.gt.0) then
           call setpwp(ysiwant,xpspwp)
           if (nniter.gt.0) then
@@ -284,47 +284,45 @@
             rxx2(i)=(rzeroj(i)/rvtor)**2-1.
             rxxw(i)=rxx2(i)*rzeroj(i)
             if (nniter.gt.0) then
-              if (kvtor.eq.2) then
+              select case (kvtor)
+              case (2)
                 rxxw(i)=rxxw(i)*(1.+pwop0*rxx2(i))
                 rxxx(i)=rxxx(i)*(1.-0.5_dp*(pwop0*rxx2(i))**2)
-              endif
-              if (kvtor.eq.3) then
+              case (3)
                 pwp0r2=pwop0*rxx2(i)
                 ptop0=exp(pwp0r2)
                 rxxw(i)=rxxw(i)*ptop0
                 rxxx(i)=rxxx(i)*ptop0*(1.-pwp0r2)
-              endif
+              end select
             endif
-          endif
-          if (rzeroj(i).lt.0.0) then
+          elseif (rzeroj(i).lt.0.0) then
             rxxw(i)=rseps(1,jtime)/100.
             rxx2(i)=(rxxw(i)/rvtor)**2-1.
             rxxw(i)=rxx2(i)*rxxw(i)
             if (nniter.gt.0) then
-              if (kvtor.eq.2) then
+              select case (kvtor)
+              case (2)
                 rxxw(i)=rxxw(i)*(1.+pwop0*rxx2(i))
                 rxxx(i)=rxxx(i)*(1.-0.5_dp*(pwop0*rxx2(i))**2)
-              endif
-              if (kvtor.eq.3) then
+              case (3)
                 pwp0r2=pwop0*rxx2(i)
                 ptop0=exp(pwp0r2)
                 rxxw(i)=rxxw(i)*ptop0
                 rxxx(i)=rxxx(i)*ptop0*(1.-pwp0r2)
-              endif
+              end select
             endif
-          endif
-          if (rzeroj(i).eq.0.0) then
-            rxx2(i)=r2wdry/rvtor**2-1.
+          else !rzeroj(i).eq.0.0
+            rxx2(i)=r2wdry(i)/rvtor**2-1.
             rxxw(i)=rxx2(i)/r1sdry(i)
             if (nniter.gt.0) then
-              if (kvtor.eq.2) then
-                rxxw(i)=rxxw(i)+pwop0*r4wdry/r1sdry(i)
-                rxxx(i)=rxxx(i)-0.5_dp*pwop0**2*r4wdry/r1sdry(i)
-              endif
-              if (kvtor.eq.3) then
-                rxxx(i)=(rpwdry-pwop0*rp2wdry)/r1sdry(i)
-                rxxw(i)=rp2wdry/r1sdry(i)
-              endif
+              select case (kvtor)
+              case (2)
+                rxxw(i)=rxxw(i)+pwop0*r4wdry(i)/r1sdry(i)
+                rxxx(i)=rxxx(i)-0.5_dp*pwop0**2*r4wdry(i)/r1sdry(i)
+              case (3)
+                rxxx(i)=(rpwdry(i)-pwop0*rp2wdry(i))/r1sdry(i)
+                rxxw(i)=rp2wdry(i)/r1sdry(i)
+              end select
             endif
           endif
         endif rotation
@@ -442,14 +440,14 @@
             if (n.le.kppcur) then
               call setpp(ysiwant,xpspp)
               xjj=xpspp(n)
-              arsp(nj,nk)=rxxx(i)*fwtxxzj*xjj
+              arsp(nj,nk)=rxxx(i)*fwtjtr(i)*xjj
             elseif (n.le.kpcurn) then
               call setfp(ysiwant,xpsfp)
               xjj=xpsfp(n-kppcur)
-              arsp(nj,nk)=fwtxxzj/rxxxf(i)*xjj
+              arsp(nj,nk)=fwtjtr(i)/rxxxf(i)*xjj
             elseif (kvtor.gt.0) then
               xjj=xpspwp(n-kpcurn)
-              arsp(nj,nk)=rxxw(i)*fwtxxzj*xjj
+              arsp(nj,nk)=rxxw(i)*fwtjtr(i)*xjj
             endif
           enddo
         endif
@@ -1712,7 +1710,7 @@
           do i=1,kzeroj
             nj=nj+1
             siedge=(sizeroj(i)-pe_psin)/pe_width
-            arsp(nj,nk)=rxxx(i)*fwtxxzj/cosh(siedge)**2/pe_width/sidif
+            arsp(nj,nk)=rxxx(i)*fwtjtr(i)/cosh(siedge)**2/pe_width/sidif
           enddo
         endif
 !-------------------------------------------------------------------------
@@ -1869,7 +1867,7 @@
           do i=1,kzeroj
             nj=nj+1
             siedge=(sizeroj(i)-fe_psin)/fe_width
-            arsp(nj,nk)=fwtxxzj/rxxxf(i)/cosh(siedge)**2/fe_width/sidif
+            arsp(nj,nk)=fwtjtr(i)/rxxxf(i)/cosh(siedge)**2/fe_width/sidif
           enddo
         endif
 !-------------------------------------------------------------------------
@@ -2149,7 +2147,7 @@
       if (kzeroj.gt.0) then
         do i=1,kzeroj
           nj=nj+1
-          brsp(nj)=fwtxxzj*vzeroj(i)*darea*ipmeas(jtime)/carea
+          brsp(nj)=fwtjtr(i)*vzeroj(i)*darea*ipmeas(jtime)/carea
         enddo
       endif
 !--------------------------------------------------------------------
@@ -2639,7 +2637,7 @@
 !--   rotational pressure                                                --
 !--------------------------------------------------------------------------
       chiprw=0.0
-      rotational_pressure: if (kprfit.ge.3.and.npresw.gt.0) then
+      if (kprfit.ge.3.and.npresw.gt.0) then
         do m=1,npresw
           cm=sum(rprwpc(m,1:kwwcur)*brsp((1+nfnpcr):(kwwcur+nfnpcr)))
           cm=cm+preswb
@@ -2652,7 +2650,7 @@
           chiprw=chiprw+saiprw(m)
           prwcal(m)=cm
         enddo
-      endif rotational_pressure
+      endif
 !--------------------------------------------------------------------------
 !--   check iconvr=2 criteria to determine if fit should be stopped
 !--------------------------------------------------------------------------

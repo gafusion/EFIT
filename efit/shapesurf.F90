@@ -1160,12 +1160,12 @@
            cfpol(k)=bfpol(k)**2
          enddo
          call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                     nh,r2wdry,nzz,sdlobp,sdlbp)
+                     nh,r2wdry(i),nzz,sdlobp,sdlbp)
          do k=1,nfounc
            cfpol(k)=((bfpol(k)/rvtor)**2-1.)**2
          enddo
          call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                     nh,r4wdry,nzz,sdlobp,sdlbp)
+                     nh,r4wdry(i),nzz,sdlobp,sdlbp)
          if (kvtor.eq.3) then
            prew0=pwcurr(psiwant,kwwcur)
            pres0=prcurr(psiwant,kppcur)
@@ -1179,13 +1179,13 @@
              cfpol(k)=cfpol(k)*exp(pwop0*cfpol(k))
            enddo
            call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                       nh,rp2wdry,nzz,sdlobp,sdlbp)
+                       nh,rp2wdry(i),nzz,sdlobp,sdlbp)
            do k=1,nfounc
              cfpol(k)=((bfpol(k)/rvtor)**2-1.)
              cfpol(k)=exp(pwop0*cfpol(k))
            enddo
            call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                       nh,rpwdry,nzz ,sdlobp,sdlbp)
+                       nh,rpwdry(i),nzz,sdlobp,sdlbp)
          endif
        endif rotation_1
        r2surs=r2sdry(i)*sdlobp

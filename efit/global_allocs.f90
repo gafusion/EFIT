@@ -18,7 +18,8 @@ ALLOCATE(volp(nw),pprime(nw),pres(nw),ffprim(nw), &
    plengt(npoint),bpolz(npoint),pcurrtpp(nwnh))
      
 ALLOCATE(racoil(nacoil),zacoil(nacoil), wacoil(nacoil), hacoil(nacoil), &
-   r1sdry(ndata),r2sdry(ndata),vzeroj(ndata),sizeroj(ndata), &
+   r1sdry(ndata),r2sdry(ndata),r2wdry(ndata),r4wdry(ndata),rpwdry(ndata),rp2wdry(ndata), &
+   vzeroj(ndata),sizeroj(ndata),sigjtr(ndata),fwtjtr(ndata),cjtr(ndata),chijtr(ndata), &
    rqajx(nppcur),rjjjx(nppcur),rqafx(nffcur),rjjfx(nffcur), &
    rqawx(nwwcur),rjjwx(nwwcur), &
    brsp(nrsmat),chisq(ntime), &

@@ -11,7 +11,7 @@ FLI,0.0,Fixed li value for equilibrium calculation. ICONVR must equal 3. ICURRT 
 FQSIW,,"Desired q value at surface PSIWANT, if near boundary FWTCUR (in namelist IN1) must be set to 0."
 FQ95,,(unused variable)
 FWTBDRY,,See namelist IN1.
-FWTXXJ,1.0,constraint weight for Js
+FWTXXJ,1.0,constraint weight for all Js
 FWTXXQ, 1.0,
 FWTXXB,1.0,
 FWTXLI,1.0,
@@ -24,13 +24,13 @@ NCCOIL, ,See namelist EFITIN.
 NQWANT,0,What is this?
 NDELZON,,See namelist EFITIN.
 N_WRITE,,(unused variable)
-PSIWANT,1.0,"Normalized flux value of surface where J constraint is desired. See KZEROJ, RZEROJ, VZEROJ."
+PSIWANT,1.0,"Normalized flux value of surface where Jt constraint is desired. See KZEROJ, RZEROJ, VZEROJ."
 REXPAN,,See namelist EFITIN.
 SCALEDZ,,See namelist EFITIN.
 SIZEROJ, [-1.0 0.0 0.0 ...], "(array) Locations at which Jt is constrained when KZEROJ>0. When KZEROJ=1, PSIWANT can be used instead of SIZEROJ(1) by setting SIZEROJ(1)<0. See KZEROJ, RZEROJ, VZEROJ, PSIWANT (default)."
 SIWANTQ,,want q to be a particular value at some flux surface?
 STABDZ,,See namelist EFITIN.
-VZEROJ,,"(array) Desired values of <Jt/R>/<1/R>/Ip*Area at flux surface PSIWANT [or surfaces SIZEROJ] (where Area is the cross sectional area inside of the separatrix - e.g. it is the same constant for every surface). Must have KZEROJ = 1 [>1] and RZEROJ=0.0."
+VZEROJ,,"(array) Desired values of <jt/R>/<1/R>/Ip*Area at flux surface PSIWANT [or surfaces SIZEROJ] (where jt is the current density and Area is the cross sectional area inside of the separatrix - e.g. it is the same constant for every surface). Must have KZEROJ = 1 [>1] and RZEROJ=0.0.  Note: because the constraint is applied to Jt (current) quantitative value is grid dependent (could be compensated for by the weight)"
 WRITEPC,,unused variable
 XCOILS,,Constraint vector for F coil currents when KCCOILS>0.
 ZNOSE,,See namelist EFITIN.
