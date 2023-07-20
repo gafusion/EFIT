@@ -91,8 +91,8 @@
         fgowfe=0.0
       endif
 !
-      !$omp target update to (kpcurn,nw,nh)
 
+      !!$omp target update to (kpcurn,nw,nh)
       !!$omp target teams distribute parallel do collapse(2) 
       do i=1,nw
         do j=1,nh
@@ -134,11 +134,11 @@
               endif
               if (iflag.ne.1) then
                 do m=1,nsilop
-                  !$omp atomic
+                  !!$omp atomic
                   rsilpc(m,jj)=rsilpc(m,jj) + gsilpc(m,kk)*factor
                 enddo
                 do m=1,magpri
-                  !$omp atomic
+                  !!$omp atomic
                   rmp2pc(m,jj)=rmp2pc(m,jj) + gmp2pc(m,kk)*factor
                 enddo
                 if (kstark.gt.0.or.kdomse.gt.0) then
@@ -158,7 +158,7 @@
                   enddo
                 endif
               endif
-              !$omp atomic
+              !!$omp atomic
               fgowpc(jj)=fgowpc(jj)+factor
             enddo
 !-------------------------------------------------------------------------
@@ -203,11 +203,11 @@
               !factor=xpsii(jjk)/rgrid(i)*wwwww
               if (iflag.ne.1) then
                 do m=1,nsilop
-                  !$omp atomic
+                  !!$omp atomic
                   rsilpc(m,jj)=rsilpc(m,jj)+gsilpc(m,kk)*factor
                 enddo
                 do m=1,magpri
-                  !$omp atomic
+                  !!$omp atomic
                   rmp2pc(m,jj)=rmp2pc(m,jj)+gmp2pc(m,kk)*factor
                 enddo
                 if (kstark.gt.0.or.kdomse.gt.0) then
@@ -227,7 +227,7 @@
                   enddo
                 endif
               endif
-              !$omp atomic
+              !!$omp atomic
               fgowpc(jj)=fgowpc(jj)+factor
               if (iflag.eq.1) cycle
               if (fwtdlc.gt.0.0) then
@@ -576,8 +576,14 @@
                 factor=xpsii(jj)*rgrid(i)*www(kk)*pds(3)*brsp(nfcoil+jj)
                 factor=-factor/sidif
                 rdjdz(kk)=rdjdz(kk)+factor
-                gsildz=gsildz+gsilpc(:,kk)*factor
-                gmp2dz=gmp2dz+gmp2pc(:,kk)*factor
+                do m=1,nsilop
+                  gsildz(m)=gsildz(m) + gsilpc(m,kk)*factor
+                enddo
+                do m=1,magpri
+                  gmp2dz(m)=gmp2dz(m) + gmp2pc(m,kk)*factor
+                enddo                
+                !gsildz=gsildz+gsilpc(:,kk)*factor
+                !gmp2dz=gmp2dz+gmp2pc(:,kk)*factor
                 if (kstark.gt.0) then
                   gbrdz=gbrdz+gbrpc(:,kk)*factor
                   gbzdz=gbzdz+gbzpc(:,kk)*factor
@@ -614,8 +620,14 @@
                 factor=xpsii(jjk)/rgrid(i)*wwwww*pds(3)*brsp(nfcoil+jj)
                 factor=-factor/sidif
                 rdjdz(kk)=rdjdz(kk)+factor
-                gsildz=gsildz+gsilpc(:,kk)*factor
-                gmp2dz=gmp2dz+gmp2pc(:,kk)*factor
+                do m=1,nsilop
+                  gsildz(m)=gsildz(m) + gsilpc(m,kk)*factor
+                enddo
+                do m=1,magpri
+                  gmp2dz(m)=gmp2dz(m) + gmp2pc(m,kk)*factor
+                enddo                
+                !gsildz=gsildz+gsilpc(:,kk)*factor
+                !gmp2dz=gmp2dz+gmp2pc(:,kk)*factor
                 if (kstark.gt.0) then
                   gbrdz=gbrdz+gbrpc(:,kk)*factor
                   gbzdz=gbzdz+gbzpc(:,kk)*factor
