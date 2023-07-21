@@ -256,6 +256,16 @@
           write(neqdsk,2020) (pcurrt(i),i=1,nwnh)
         elseif (iplcout.eq.2) then
           write(neqdsk,2020) ((pcurrz(i,j),i=1,nw,nsw),j=1,nh,nsh)
+          write(neqdsk,2020) (cjor(i),i=1,nw,nsw)
+          write(neqdsk,2020) (r1surf(i),i=1,nw,nsw)
+          write(neqdsk,2020) (r2surf(i),i=1,nw,nsw)
+          write(neqdsk,2020) (volp(i),i=1,nw,nsw)
+          write(neqdsk,2020) (bpolss(i),i=1,nw,nsw)
+          !write(neqdsk,2020) (rpres(i),i=1,nw,nsw) - R midplane - useful?
+          ! outermost location on each flux surface - useful?
+          !write(neqdsk,2020) (rzzmax(i),i=1,nw,nsw)
+          !write(neqdsk,2020) (zzmax(i),i=1,nw,nsw)
+          !write(neqdsk,2020) (rmajz0(i),i=1,nw,nsw) ! current moment y2?
         endif
       endif
 !---------------------------------------------------------------------
@@ -434,6 +444,16 @@
           write(neqdsk) (real(pcurrt(i),r4),i=1,nwnh)
         elseif (iplcout.eq.2) then
           write(neqdsk) ((real(pcurrz(i,j),r4),i=1,nw,nsw),j=1,nh,nsh)
+          write(neqdsk,2020) (real(cjor(i),r4),i=1,nw,nsw)
+          write(neqdsk,2020) (real(r1surf(i),r4),i=1,nw,nsw)
+          write(neqdsk,2020) (real(r2surf(i),r4),i=1,nw,nsw)
+          write(neqdsk,2020) (real(volp(i),r4),i=1,nw,nsw)
+          write(neqdsk,2020) (real(bpolss(i),r4),i=1,nw,nsw)
+          !write(neqdsk,2020) (real(rpres(i),r4),i=1,nw,nsw) - R midplane - useful?
+          ! outermost location on each flux surface - useful?
+          !write(neqdsk,2020) (real(rzzmax(i),r4),i=1,nw,nsw)
+          !write(neqdsk,2020) (real(zzmax(i),r4),i=1,nw,nsw)
+          !write(neqdsk,2020) (real(rmajz0(i),r4),i=1,nw,nsw) ! current moment y2?
         endif
       endif
 !

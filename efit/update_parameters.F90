@@ -28,7 +28,7 @@
              sdlbp,sdlobp,sibpmin,sisinow,siwant,xerr, &
              xpsimins,xs,xvsmax,xvsmin,xww,xym,xyma,xyp,xypa,yerr,ys,yww
       real*8 pds(6)
-      integer*4, parameter :: nnn=1,nqiter=10,isplit=8
+      integer*4, parameter :: nqiter=10,isplit=8
       real*8, parameter :: psitol=1.0e-04_dp,cdum=1.0
       real*8 radbou,xguess,xltrac,yguess,zmaxis_last
       save radbou,xltrac,xguess,yguess
@@ -376,7 +376,7 @@
             if(sizeroj(i).ge.1.0) sizeroj(i)=0.99999_dp
             siwant=simag+sizeroj(i)*(psibry-simag)
             call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc, &
-                        npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                        npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,1, &
                         rmaxis,zmaxis,negcur,kerror,1)
             if(kerror.gt.0) return
             csplt(1:nfounc)=1./rsplt(1:nfounc)**2
@@ -423,7 +423,7 @@
         do i=1,nqwant
           siwant=simag+siwantq(i)*(psibry-simag)
           call surfac(siwant,psi,nw,nh,rgrid,zgrid,rsplt,zsplt,nfounc, &
-                      npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                      npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,1, &
                       rmaxis,zmaxis,negcur,kerror,1)
           if(kerror.gt.0) return
           csplt(1:nfounc)=1./rsplt(1:nfounc)**2
@@ -473,7 +473,7 @@
 !--   get beta and li for constraints                               --
 !---------------------------------------------------------------------
       if (fli.gt.0.0.or.fbetan.gt.0.0) then
-        call betsli(jtime,rgrid,zgrid,kerror)
+        call betali(jtime,rgrid,zgrid,kerror)
         if(kerror.gt.0) return
       endif
 !----------------------------------------------------------------------
@@ -705,7 +705,7 @@
       integer*4 i,m
       real*8 cm,cmbr,cmbz,ce1rbz,ce2rbz,ce3rbr,saisq,rxxx,rxxf,rxxw, &
              rdimw,pres0,prew0,pwop0,pwp0r2,ppw,pcw,pp0,ptop0
-      integer*4, parameter :: nnn=0,nsq=2
+      integer*4, parameter :: nsq=2
 !
 #ifdef DEBUG_LEVEL2
       write (6,*) 'CHISQR, jtime= ',jtime
@@ -913,7 +913,7 @@
         enddo
       endif
 !--------------------------------------------------------------------------
-!--   compute <Jt/R>/<1/R> signal (if requested)
+!--   compute <jt/R>/<1/R> signal (if requested)
 !--------------------------------------------------------------------------
       if (kzeroj.gt.0) then
         do i=1,kzeroj
@@ -969,7 +969,7 @@
 !--   compute signals at MSE locations (if requested)
 !-------------------------------------------------------------------------
       if (kdomse.gt.0) then
-        call green(nnn,jtime,n222)
+        call green(0,jtime,n222)
         do m=1,nstark
           cmbr=sum(rbrfc(m,:)*brsp(1:nfsum)) &
               +sum(rbrpc(m,1:kwcurn)*brsp(nfsum+1:nfsum+kwcurn))
@@ -1017,7 +1017,7 @@
 !--   compute signals at MSE-LS locations (if requested)
 !-------------------------------------------------------------------------
       if (kdomsels.gt.0) then
-        call green(nnn,jtime,n222)
+        call green(0,jtime,n222)
         do m=1,nmsels
           cmbr=sum(rmlspc(m,1:kpcurn)*brsp(nfsum+1:nfsum+kpcurn))
           cmbr=cmbr-rhsmls(jtime,m)

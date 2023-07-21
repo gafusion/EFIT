@@ -22,7 +22,7 @@
       !integer*4 idodo,idovs
       integer*4 istat,lshot,im1,loc,nbdry0,nbdry1,nbdry2,nbdry3,nbryup, &
                 iup,nbranch,nqpsi,idn,limupper,lwant,mmemsels,idofb, &
-                mw,mh,mmf,mx,ix,mj,mk,npc,npack,nskip,kkl,kku,ier,jupper
+                mw,mh,mmf,mx,ix,mj,mk,npc,nskip,kkl,kku,ier,jupper
       integer*4 nrmin_e,nrmax_e,nzmin_e,nzmax_e,nsw,nsh
       integer*4 n_write !unused
       integer*4 nbabs_ext,jb_ext
@@ -2912,11 +2912,10 @@
           xmax=rgrids(nw-2) 
           ymin=zgrids(3) 
           ymax=zgrids(nh-2) 
-          npack=1 
           rnow=0.5_dp*(rgrids(1)+rgrids(nw)) 
           znow=0.0 
           call surfac(siwant,psi,nw,nh,rgrids,zgrids,xout,yout,nfound, & 
-                      npoint,drgrids,dzgrids,xmin,xmax,ymin,ymax,npack, & 
+                      npoint,drgrids,dzgrids,xmin,xmax,ymin,ymax,1, & 
                       rnow,znow,negcur,kerror,1) 
           if(kerror.gt.0) return 
           xmin=xout(1) 

@@ -3,8 +3,8 @@
 !-------from ecom1-mods.f90---------
 ALLOCATE(volp(nw),pprime(nw),pres(nw),ffprim(nw), &
    fpol(nw),qpsi(nw),r2surf(nw),rpres(nw),curmid(nw), &
-   cjor(nw),bpolss(nw),rmajz0(nw),bprmaj(nw),btrmaj(nw), &
-   r1surf(nw),r2surg(nw),bbfpol(nw),ccfpol(nw), &
+   cjor(nw),bpolss(nw),rmajz0(nw), &
+   r1surf(nw),rr2bpsurf(nw),bbfpol(nw),ccfpol(nw), &
    ddfpol(nw),rzzmax(nw),zzmax(nw),ermid(nw),eshear(nw), &
    epoten(nw),rhovn(nw),rpmid(nw),xmid(nw),sigrid(nw), &
    sipmid(nw),brhovn(nw),crhovn(nw),drhovn(nw),rhopmid(nw), &

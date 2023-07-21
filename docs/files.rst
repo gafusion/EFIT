@@ -74,6 +74,11 @@ with the same structure using single precision reals and integers):
              read (neqdsk,2020) (pcurrt(i),i=1,nw*nh)
            elseif (iplcout.eq.2) then
              read (neqdsk,2020) ((pcurrz(i),i=1,nw),j=1,nh)
+             read (neqdsk,2020) (cjor(i),i=1,nw)
+             read (neqdsk,2020) (r1surf(i),i=1,nw)
+             read (neqdsk,2020) (r2surf(i),i=1,nw)
+             read (neqdsk,2020) (volp(i),i=1,nw)
+             read (neqdsk,2020) (bpolss(i),i=1,nw)
            endif
          endif
 

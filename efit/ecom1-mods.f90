@@ -16,9 +16,8 @@
 
       module var_parame
       real*8,dimension(:),allocatable :: volp,pprime,pres,ffprim,fpol, &
-                                         qpsi,r2surf,rpres,curmid,cjor, &
-                                         bpolss,rmajz0,bprmaj,btrmaj, &
-                                         r1surf,r2surg, &
+                                         qpsi,r1surf,r2surf,rpres,curmid, &
+                                         cjor,bpolss,rmajz0,rr2bpsurf, &
                                          bbfpol,ccfpol,ddfpol
       real*8 r1bdry,r2bdry,carea,jwantm 
       real*8,dimension(:),allocatable :: r1sdry,r2sdry,r2wdry,r4wdry, &
