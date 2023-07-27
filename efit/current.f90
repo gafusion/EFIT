@@ -230,7 +230,21 @@
            brspmin=max(ten24,abs(brsp(nfsum+1)))
            fwtxxx=fwtxxj*1000./brspmin
            if (kzeroj.gt.0) then
-            fwtjtr(1:kzeroj)=fwtxxx
+            if (maxval(fwtjtrin).gt.0.0) then
+              fwtjtr(1:kzeroj)=fwtjtrin(1:kzeroj)
+            else
+              fwtjtr(1:kzeroj)=fwtxxx
+            endif
+            if (maxval(abs(sigjtr)).gt.0.0) then
+              do i=1,kzeroj
+                cm=abs(sigjtr(i))*darea*ipmeas(jtime)/carea
+                if (abs(cm).gt.1.0e-10_dp) then
+                  fwtjtr(i)=fwtjtr(i)/cm
+                else
+                  fwtjtr(i)=0.0
+                endif
+              enddo
+            endif
             do i=1,kzeroj
              nj=nj+1
 !----------------------------------------------------------------------
@@ -648,7 +662,11 @@
        brspmin=max(ten24,abs(brsp(nfsum+1)))
        fwtxxx=fwtxxj*1000./brspmin
        if (kzeroj.gt.0) then
-        fwtjtr(1:kzeroj)=fwtxxx
+        if (maxval(fwtjtrin).gt.0.0) then
+          fwtjtr(1:kzeroj)=fwtjtrin(1:kzeroj)
+        else
+          fwtjtr(1:kzeroj)=fwtxxx
+        endif
         do i=1,kzeroj
          nj=nj+1
 !----------------------------------------------------------------------

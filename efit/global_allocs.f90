@@ -19,7 +19,7 @@ ALLOCATE(volp(nw),pprime(nw),pres(nw),ffprim(nw), &
      
 ALLOCATE(racoil(nacoil),zacoil(nacoil), wacoil(nacoil), hacoil(nacoil), &
    r1sdry(ndata),r2sdry(ndata),r2wdry(ndata),r4wdry(ndata),rpwdry(ndata),rp2wdry(ndata), &
-   vzeroj(ndata),sizeroj(ndata),sigjtr(ndata),fwtjtr(ndata),cjtr(ndata),chijtr(ndata), &
+   vzeroj(ndata),sizeroj(ndata),sigjtr(ndata),fwtjtr(ndata),fwtjtrin(ndata),cjtr(ndata),chijtr(ndata), &
    rqajx(nppcur),rjjjx(nppcur),rqafx(nffcur),rjjfx(nffcur), &
    rqawx(nwwcur),rjjwx(nwwcur), &
    brsp(nrsmat),chisq(ntime), &
@@ -83,7 +83,7 @@ ALLOCATE(rbrpc(nstark,npcurn),rbzpc(nstark,npcurn),rgampc(nstark,npcurn),rbrfc(n
    brfbc(kxiter),tvfbrt(kxiter),cdelz(kxiter), &
    rxray(nangle+ntangle),zxray(nangle+ntangle),xangle(nangle+ntangle), &
    rzeroj(ndata),fwtpre(mpress),vforcep(nvesel),vforcet(nvesel),fwtfcsum(nfsum), &
-   limloc(ntime),vsname(nvesel), mpnam2(magpri),lpname(nsilop), &
+   limloc(ntime),vsname(nvesel),mpnam2(magpri),lpname(nsilop), &
    qsiw(mqwant),pasmsw(mqwant),fqsiw(mqwant),siwantq(mqwant),fgowsw(npcurn,mqwant), &
    rsi(nsilop),zsi(nsilop),wsi(nsilop),hsi(nsilop),as(nsilop),as2(nsilop), &
    rf(nfcoil),zf(nfcoil),wf(nfcoil),hf(nfcoil),af(nfcoil),af2(nfcoil), &

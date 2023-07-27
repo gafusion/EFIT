@@ -66,7 +66,7 @@
            req_valid,nw_sub,nh_sub
       namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
            znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
-           oldcomp,currc199,curriu30,curriu90, &
+           fwtjtr,sigjtr,oldcomp,currc199,curriu30,curriu90, &
            curriu150,curril30,curril90,curril150,ifitdelz,scaledz
       namelist/ink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage
@@ -686,7 +686,7 @@
            kwripre,ifindopt,tolbndpsi,siloplim,efitversion,use_previous
       namelist/inwant/psiwant,vzeroj,nccoil,currc79,currc139,rexpan, &
            znose,sizeroj,fitdelz,relaxdz,errdelz,oldccomp,nicoil, &
-           oldcomp,currc199,curriu30,curriu90, &
+           fwtjtr,sigjtr,oldcomp,currc199,curriu30,curriu90, &
            curriu150,curril30,curril90,curril150,ifitdelz,scaledz
       namelist/ink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage

@@ -24,16 +24,16 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
-      real*8 pwcurr,prcurr
+      real*8 ppcurr,fpcurr,pwcurr,prcurr,pwpcur
 
       integer*4, intent(in) :: jtime,iter,nniter
       integer*4, intent(out) :: ichisq,kerror
       integer*4 i,j,kk,m,mk,mp1,n,ne,nj,nk,nkk,nmw,ier,info,mcentral, &
                 ncrsp,need,needs,nfedge,nfffff,nkb,nload,npedge,nsavdz,nsq
       real*8 brspmin,cdelznow,cm,cmbr,cmbz,cmv,drgam,erbot,erup,ework, &
-             fwtbdr,fwtbpp,fwtxxa,fwtxxf,fwtxxo,pres0,prew0, &
+             fwtbdr,fwtbpp,fwtxxa,fwtxxf,fwtxxo,pcw,pp0,ppw,pres0,prew0, &
              ptop0,pwop0,pwp0r2,saiold,saisq,scadelz,siedge,t,toler,xjj, &
-             ysiwant
+             ysiwant,rdimw
       character(128) tmpstr
       integer*4, dimension(mfnpcr)     :: ipvttmp
       real*8, dimension(2)             :: arspdet2
@@ -247,8 +247,22 @@
 !--  plasma current P', FF', and Pw', set up response matrix arsp     --
 !-----------------------------------------------------------------------
       if (kzeroj.gt.0) then
-       brspmin=max(ten24,abs(brsp(nfsum+1)))
-       fwtjtr(1:kzeroj)=fwtxxj*1000./brspmin
+       if (maxval(fwtjtrin).gt.0.0) then
+         fwtjtr(1:kzeroj)=fwtjtrin(1:kzeroj)
+       else
+         brspmin=max(ten24,abs(brsp(nfsum+1)))
+         fwtjtr(1:kzeroj)=fwtxxj*1000./brspmin
+       endif
+       if (maxval(abs(sigjtr)).gt.0.0) then
+         do i=1,kzeroj
+           cm=abs(sigjtr(i))*darea*ipmeas(jtime)/carea
+           if (abs(cm).gt.1.0e-10_dp) then
+             fwtjtr(i)=fwtjtr(i)/cm
+           else
+             fwtjtr(i)=0.0
+           endif
+         enddo
+       endif
        do i=1,kzeroj
         ysiwant=sizeroj(i)
         call setfp(ysiwant,xpsfp)
@@ -2378,6 +2392,8 @@
 !--   calculate the fitting figure of merit saisq                    --
 !----------------------------------------------------------------------
       saisq=0.0
+
+      ! flux loops
       do m=1,nsilop
         cm=sum(rsilfc(m,1:nfsum)*brsp(1:nfsum))
         if(ivesel.gt.0) cm=cm+sum(rsilvs(m,:)*vcurrt)
@@ -2402,7 +2418,8 @@
         csilop(m,jtime)=cm
         csilopv(m,jtime)=cmv
       enddo
-!
+
+      ! magnetic probes
       do m=1,magpri
         cm=sum(rmp2fc(m,1:nfsum)*brsp(1:nfsum))
         if(ivesel.gt.0) cm=cm+sum(rmp2vs(m,:)*vcurrt)
@@ -2426,7 +2443,8 @@
         cmpr2(m,jtime)=cm
         cmpr2v(m,jtime)=cmv
       enddo
-!
+
+      ! MSE-LP
       MSE: if (kstark.gt.0) then
       chigamt=0.0
       do m=1,nstark
@@ -2500,7 +2518,8 @@
         cjmsec(m)=-(bzmsec(mp1)-bzmsec(m))/drgam/twopi/tmu
       enddo
       endif MSE
-!
+
+      ! MSE-LS
       tchimls=0.0
       do m=1,nmsels
         cm=sqrt(sum(rmlspc(m,1:kwcurn)*brsp((1+nfsum):(kwcurn+nfsum))) &
@@ -2515,7 +2534,6 @@
         tchimls=tchimls+chimls(m)
       enddo
       chi2mls(jtime)=tchimls
-!
       tchiels=0.0
       do m=1,nmsels
         cm=sum(relser(m,1:keecur)*cecurr(1:keecur))
@@ -2528,7 +2546,8 @@
         cmels(jtime,m)=cm
         tchiels=tchiels+chiels(m)
       enddo
-!
+
+      ! ECE
       tchiece=0.0
       do m=1,nece
         cm=sum(recefc(m,1:nfsum)*brsp(1:nfsum)) &
@@ -2549,7 +2568,8 @@
         cmece(m,jtime)=cm
         tchiece=tchiece+chiece(m)
       enddo
-!
+
+      ! ECE-Bz
       cm=sum(recebzfc(1:nfsum)*brsp(1:nfsum)) &
         +sum(recebzpc(1:kwcurn)*brsp((1+nfsum):(kwcurn+nfsum)))
       if(ivesel.gt.0) cm=cm+sum(recevs(m,:)*vcurrt) !TODO: should this be recebzvs?
@@ -2566,7 +2586,8 @@
         chiecebz=0.0
       endif
       cmecebz(jtime)=cm
-!
+
+      ! Ip and other computed quantities
       cm=sum(brsp((1+nfsum):nfnwcr)*fgowpc(1:(nfnwcr-nfsum)))
       if(kedgep.gt.0) cm=cm+fgowpe*pedge
       if(kedgef.gt.0) cm=cm+fgowfe*f2edge
@@ -2583,7 +2604,8 @@
         chipasma=0.0
       endif
       saisq=saisq+chipasma
-!
+
+      ! F-coils
       tchifcc=0.0
       do i=1,nfsum
         chifcc(i)=0.0
@@ -2594,7 +2616,8 @@
         saisq=saisq+chifcc(i)
         tchifcc=tchifcc+chifcc(i)
       enddo
-!
+
+      ! E-coils
       if (iecurr.eq.2) then
         do i=1,nesum
           chiecc(i)=0.0
@@ -2605,7 +2628,8 @@
           saisq=saisq+chiecc(i)
         enddo
       endif
-!
+
+      ! reference flux loop
       if (fitsiref) then
         saisref=0.0
         if (fwtref.gt.0.0) then
@@ -2614,9 +2638,8 @@
         endif
         saisq=saisq+saisref
       endif
-!--------------------------------------------------------------------------
-!--   pressure                                                           --
-!--------------------------------------------------------------------------
+
+      ! pressure
       chipre=0.0
       if (kprfit.gt.0.and.kdofit.ne.0.and.npress.gt.0) then
         do m=1,npress
@@ -2633,9 +2656,8 @@
           precal(m)=cm
         enddo
       endif
-!--------------------------------------------------------------------------
-!--   rotational pressure                                                --
-!--------------------------------------------------------------------------
+
+      ! rotational pressure
       chiprw=0.0
       if (kprfit.ge.3.and.npresw.gt.0) then
         do m=1,npresw
@@ -2650,6 +2672,67 @@
           chiprw=chiprw+saiprw(m)
           prwcal(m)=cm
         enddo
+      endif
+
+      ! <jt/R>/<1/R>
+      chijtr=0.0
+      if (kzeroj.gt.0) then
+        do i=1,kzeroj
+          cjtr(i)=0.0
+          if (rzeroj(i).ne.0.0) cycle
+          rxxx(i)=1./r1sdry(i)
+          rxxxf(i)=r1sdry(i)/r2sdry(i)
+          if (kvtor.gt.0) then
+            rxxw(i)=(r2wdry(i)/rvtor**2-1.)/r1sdry(i)
+            rdimw=r2wdry(i)/rvtor
+            if (kvtor.eq.2.or.kvtor.eq.3) then
+              prew0=pwcurr(sizeroj(i),kwwcur)
+              pres0=prcurr(sizeroj(i),kppcur)
+              if (abs(pres0).gt.1.e-10_dp) then
+                pwop0=prew0/pres0
+                pwp0r2=pwop0*rxxw(i)
+              else
+                pwop0=0.0
+                pwp0r2=0.0
+              endif
+              select case (kvtor)
+              case (2)
+                rxxw(i)=rxxw(i)+pwop0*r4wdry(i)/r1sdry(i)
+                rxxx(i)=rxxx(i)-0.5_dp*pwop0**2*r4wdry(i)/r1sdry(i)
+              case (3)
+                rxxx(i)=(rpwdry(i)-pwop0*rp2wdry(i))/r1sdry(i)
+                rxxw(i)=rp2wdry(i)/r1sdry(i)
+              end select
+            endif
+            ppw=pwpcur(sizeroj(i),kwwcur)
+            ppw=ppw*(rxxw(i)**2-1.)
+            pcw=ppw*rxxw(i)
+            select case (kvtor)
+            case (2)
+              pcw=pcw*(1.+pwp0r2)
+              pp0=pp0*(1.-0.5_dp*pwp0r2**2)
+            case (3)
+              if (abs(pres0).gt.1.e-10_dp) then
+                ptop0=exp(pwp0r2)
+              else
+                ptop0=1.0
+              endif
+              pcw=pcw*ptop0
+              pp0=pp0*ptop0*(1.-pwp0r2)
+            end select
+            cjtr(i)=cjtr(i)+pp0*rxxw(i)+pcw
+          endif
+          cjtr(i)=(cjtr(i)+ppcurr(sizeroj(i),kppcur)*rxxx(i) &
+                          +fpcurr(sizeroj(i),kffcur)/rxxxf(i))/darea
+        enddo
+        if (maxval(abs(sigjtr)).gt.0.0) then
+          do i=1,kzeroj
+            cm=cjtr(i)/ipmeas(jtime)*carea
+            if (fwtjtr(i).gt.0.0) then
+              chijtr(i)=((cm-vzeroj(i))/sigjtr(i))**2
+            endif
+          enddo
+        endif
       endif
 !--------------------------------------------------------------------------
 !--   check iconvr=2 criteria to determine if fit should be stopped

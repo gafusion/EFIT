@@ -53,6 +53,7 @@ IPMHD, fitted plasma toroidal current in Ampere-turn
 JFLAG, "error flag, 0 for error"
 LFLAG, "error flag, > 0 for error"
 LI, li with normalization average poloidal magnetic defined through Ampere’s law
+LI3, alternate form of li
 LIMLOC, "plasma configuration. IN, OUT, TOP, and BOT for limiter configurations limited at inside, outside, top, and bottom. SNT, SNB, and DN for single null top, single null bottom, and double
 LTRI, upper triangularity
 null configurations. MAR for marginally diverted configurations."
@@ -75,7 +76,7 @@ QMFLAG, "axial q(0) flag, FIX if constrained and CLC for float"
 QOUT, q at plasma boundary
 QM, axial safety factor q(0)
 QMIN, minimum safety factor q min
-QSTA,equivalent safety factor q *
+QSTAR,equivalent safety factor q *
 Q95, q at 95% of poloidal flux
 RATSOL, ratio of the 1 cm external field line distances to separatrix surface at Rmin and Rmax
 RCENCM, major radius in cm for vacuum field BCENTR

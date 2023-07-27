@@ -852,29 +852,6 @@
           chi2rm(jtime)=max(chi2rm(jtime),chiecc(i))
         enddo
       endif
-!
-      chisq(jtime)=saisq
-      if (iand(iout,1).ne.0) then
-        write(nout,7400) time(jtime),chisq(jtime),ipmhd(jtime)
-        write(nout,7420)
-        write(nout,7450) (saisil(m),m=1,nsilop)
-        write(nout,7430)
-        write(nout,7450) (saimpi(m),m=1,magpri)
-        write(nout,7460) chipasma
-        write(nout,7480) tchifcc
-        write(nout,7450) (chifcc(m),m=1,nfsum)
-        write(nout,7482) saisref
-        write(nout,7485)
-        write(nout,7450) (chiecc(m),m=1,nesum)
-        if(kprfit.gt.0) write(nout,7470) chipre
-        if(kprfit.gt.0) write(nout,7450) (saipre(m),m=1,npress)
-        if(kecebz.gt.0) write(nout,7486) chiecebz
-        if(kece.gt.0) write(nout,7487) tchiece
-        if(kece.gt.0) then
-          write(nout,7488)
-          write(nout,7450) (chiece(m),m=1,nece)
-        endif
-      endif
 !--------------------------------------------------------------------------
 !--   compute pressure chisqr (if requested)
 !--------------------------------------------------------------------------
@@ -913,7 +890,7 @@
         enddo
       endif
 !--------------------------------------------------------------------------
-!--   compute <jt/R>/<1/R> signal (if requested)
+!--   compute <jt/R>/<1/R> chisqr (if requested)
 !--------------------------------------------------------------------------
       if (kzeroj.gt.0) then
         do i=1,kzeroj
@@ -964,6 +941,37 @@
           cjtr(i)=(cjtr(i)+ppcurr(sizeroj(i),kppcur)*rxxx &
                           +fpcurr(sizeroj(i),kffcur)/rxxf)/darea
         enddo
+        if (maxval(abs(sigjtr)).gt.0.0) then
+          do i=1,kzeroj
+            cm=cjtr(i)/ipmeas(jtime)*carea
+            if (fwtjtr(i).gt.0.0) then
+              chijtr(i)=((cm-vzeroj(i))/sigjtr(i))**2
+            endif
+          enddo
+        endif
+      endif
+!
+      chisq(jtime)=saisq
+      if (iand(iout,1).ne.0) then
+        write(nout,7400) time(jtime),chisq(jtime),ipmhd(jtime)
+        write(nout,7420)
+        write(nout,7450) (saisil(m),m=1,nsilop)
+        write(nout,7430)
+        write(nout,7450) (saimpi(m),m=1,magpri)
+        write(nout,7460) chipasma
+        write(nout,7480) tchifcc
+        write(nout,7450) (chifcc(m),m=1,nfsum)
+        write(nout,7482) saisref
+        write(nout,7485)
+        write(nout,7450) (chiecc(m),m=1,nesum)
+        if(kprfit.gt.0) write(nout,7470) chipre
+        if(kprfit.gt.0) write(nout,7450) (saipre(m),m=1,npress)
+        if(kecebz.gt.0) write(nout,7486) chiecebz
+        if(kece.gt.0) write(nout,7487) tchiece
+        if(kece.gt.0) then
+          write(nout,7488)
+          write(nout,7450) (chiece(m),m=1,nece)
+        endif
       endif
 !-------------------------------------------------------------------------
 !--   compute signals at MSE locations (if requested)

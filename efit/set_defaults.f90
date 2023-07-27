@@ -163,6 +163,7 @@
       vzeroj=0.0
       sigjtr=0.0
       fwtjtr=0.0
+      fwtjtrin=0.0
       cjtr=0.0
       chijtr=0.0
       v30lt=0.0

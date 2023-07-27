@@ -2501,7 +2501,7 @@
       if (fwtdlc.gt.0.0) then
         chidflux=((diamag(iges)-cdflux(iges))/sigdia(iges))**2
       endif
-      chitot=chipre+chifin+chidflux
+      chitot=chifin+chipre+chidflux+sum(chijtr)
       if (idiart.gt.0) then
         bp2flx=bpolav(iges)**2
         dmui=1.0e+06_dp*diamag(iges)*4.*pi*bcentr(iges)*rcentr &

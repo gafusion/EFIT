@@ -19,10 +19,11 @@
                                          qpsi,r1surf,r2surf,rpres,curmid, &
                                          cjor,bpolss,rmajz0,rr2bpsurf, &
                                          bbfpol,ccfpol,ddfpol
-      real*8 r1bdry,r2bdry,carea,jwantm 
+      real*8 r1bdry,r2bdry,carea,jwantm
       real*8,dimension(:),allocatable :: r1sdry,r2sdry,r2wdry,r4wdry, &
                                          rpwdry,rp2wdry,vzeroj,sizeroj, &
-                                         sigjtr,fwtjtr,cjtr,chijtr
+                                         sigjtr,fwtjtr,fwtjtrin,cjtr, &
+                                         chijtr
       end module var_parame
 
       module var_cqfit
