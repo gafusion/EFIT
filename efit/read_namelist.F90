@@ -219,7 +219,7 @@
              sgtimin,alphafp,zbound,vsdamp,zminvs,saicon,tolbndpsi, &
              pptens,fftens,wwtens,scalesir,scalea,errsil,vbit, &
              f2edge,fe_width,fe_psin,pedge,pe_width,pe_psin, &
-             akchiwt,akerrwt,aktol,akgamwt,akprewt,psiecn,dpsiecn
+             akchiwt,akerrwt,aktol,akgamwt,akprewt,akrange,psiecn,dpsiecn
       integer*4, dimension(2000) :: irfila,jzfila
       real*8, dimension(2000) :: expmp2,coils,fwtsi,fwtmp2,psibit,bitmpi, &
                                  denr,denv,fwtfc,acoilc,brsp,bitfc, &
@@ -257,7 +257,7 @@
         limid,irfila,jzfila,vloop,iqplot,siref,denr,denv,xgama,&
         nptionf,currn1,ifitvs,bitfc,relax,saimin,icutfp,acoilc, &
         cutip,iavem,pnbeam,xltype_180,sgprmin,elomin,ktear, &
-        fcurbd,pcurbd,prbdry,ndokin,zlowimp,kskipvs,limvs, &
+        fcurbd,pcurbd,prbdry,ndokin,zlowimp,kskipvs,limvs,akrange, &
         vcurfb,kpressb,pressbi,prespb,sigppb,kzeroj,rminvs,rmaxvs,errbry, &
         fwtpre,ibtcomp,klabel,zmaxvs,dnbeam,dmass,nmass,condin,iaveus, &
         sgtimin,kwripre,kbound,alphafp,kframe,zbound,vsdamp,zminvs,saicon, &

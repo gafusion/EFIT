@@ -4,7 +4,6 @@
 !!    
 !!
 !!    @param ktime : Number of time slices
-!!
 !!    @param jtime : Time index
 !!
 !**********************************************************************

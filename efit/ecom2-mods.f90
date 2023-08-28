@@ -58,12 +58,11 @@
 
       module var_autokknot
       integer*4 :: kautoknt,kakloop,kakiter
-      real*8 :: akchiwt,akerrwt,aktol,akgamwt,akprewt
+      real*8 :: akchiwt,akerrwt,aktol,akgamwt,akprewt,akrange
       end module var_autokknot
 
       module var_autok
-      integer*4 :: ks_a,lconvr_a,ktime_a,kerror_a,kadknt, &
-                   kappknt,kaffknt,kawwknt, kaeeknt,mxiter_a
+      integer*4 :: ks_a,lconvr_a,ktime_a,kerror_a,kadknt,mxiter_a
       real*8,dimension(:),allocatable :: aeeknt,awwknt,affknt,appknt
       end module var_autok
 

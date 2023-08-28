@@ -196,9 +196,9 @@
         if (icurrt.eq.2) then
           ! apparently fitting polynomials works equally well with
           ! splines...? (kppfnc=6 and kfffnc=6) - matches esave
-          call fitpp(pprime_ext,nw_ext,alpa,kppcur)
+          call fitpp(pprime_ext,npsi_ext,alpa,kppcur)
           brsp(1+nfsum:nfsum+kppcur)=alpa(1:kppcur)*darea
-          call fitfp(ffprim_ext,nw_ext,alpa,kffcur)
+          call fitfp(ffprim_ext,npsi_ext,alpa,kffcur)
           brsp(1+nfsum+kppcur:nfsum+kppcur+kffcur)= &
             alpa(1:kffcur)*darea/twopi/tmu
         else

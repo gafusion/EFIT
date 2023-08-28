@@ -54,6 +54,12 @@
       ndenv(3)='DENV3     '
       ndenr(1)='DENR0     '
       ndenr(2)='DENMW     '
+      ecname(1)='ECOILA    '
+      ecname(2)='ECOILB    '
+      ecname(3)='E567UP    '
+      ecname(4)='E567DN    ' 
+      ecname(5)='E89DN     '
+      ecname(6)='E89UP     '
       fcname(1)='F1A       '
       fcname(2)='F2A       '
       fcname(3)='F3A       '
@@ -72,12 +78,6 @@
       fcname(16)='F7B       '
       fcname(17)='F8B       '
       fcname(18)='F9B       '
-      ecname(1)='ECOILA    '
-      ecname(2)='ECOILB    '
-      ecname(3)='E567UP    '
-      ecname(4)='E567DN    ' 
-      ecname(5)='E89DN     '
-      ecname(6)='E89UP     '
       data irdata/0/,baddat/0/
 !
 ! !JRF The if statement here tests a flag from the snap file that

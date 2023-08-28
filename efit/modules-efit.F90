@@ -432,12 +432,12 @@
 ! NOTE : npsi_ext (actual dimension of _ext arrays) used in code logic
       module profile_ext_mod
         integer*4 :: npsi_ext,nw_ext,nh_ext,nbdry_ext,limitr_ext
-        real*8,dimension(2049) :: psin_ext
+        real*8,dimension(2049) :: psin_ext,pprime_ext,ffprim_ext
         real*8,dimension(2049) :: bpp_ext,cpp_ext,dpp_ext
         real*8,dimension(2049) :: bfp_ext,cfp_ext,dfp_ext
         real*8,dimension(:),allocatable :: rbdry_ext,zbdry_ext,xlim_ext, &
-                                           ylim_ext,psirz_ext,pprime_ext,&
-                                           ffprim_ext,qpsi_ext,fcoil_ext
+                                           ylim_ext,psirz_ext, &
+                                           qpsi_ext,fcoil_ext
         real*8 :: sign_ext,scalepp_ext,scaleffp_ext,cratio_ext, &
                   cratiop_ext,cratiof_ext,simag_ext,psibry_ext
         character*80 :: geqdsk_ext

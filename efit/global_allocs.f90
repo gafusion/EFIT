@@ -82,7 +82,7 @@ ALLOCATE(rbrpc(nstark,npcurn),rbzpc(nstark,npcurn),rgampc(nstark,npcurn),rbrfc(n
    brfbc(kxiter),tvfbrt(kxiter),cdelz(kxiter), &
    rxray(nangle+ntangle),zxray(nangle+ntangle),xangle(nangle+ntangle), &
    rzeroj(ndata),fwtpre(mpress),vforcep(nvesel),vforcet(nvesel),fwtfcsum(nfsum), &
-   limloc(ntime),vsname(nvesel), mpnam2(magpri),lpname(nsilop), &
+   limloc(ntime),vsname(nvesel),mpnam2(magpri),lpname(nsilop), &
    qsiw(mqwant),pasmsw(mqwant),fqsiw(mqwant),siwantq(mqwant),fgowsw(npcurn,mqwant), &
    rsi(nsilop),zsi(nsilop),wsi(nsilop),hsi(nsilop),as(nsilop),as2(nsilop), &
    rf(nfcoil),zf(nfcoil),wf(nfcoil),hf(nfcoil),af(nfcoil),af2(nfcoil), &
@@ -154,7 +154,7 @@ ALLOCATE(ppbdry(npcurn),pp2bdry(npcurn), &
    wwbdry(npcurn),ww2bdry(npcurn), &
    kwwbdry(npcurn),kww2bdry(npcurn), &
    wwknt(npcurn),ffknt(npcurn),ppknt(npcurn), &
-   appknt(npcurn),affknt(npcurn),awwknt(npcurn),aeeknt(npcurn), &
+   appknt(npcurn),affknt(npcurn),awwknt(npcurn),aeeknt(nercur), &
    save_gam(ntime,nstark),save_tangam(ntime,nstark), &
    arsp_cw2(ndata,nppcur),wrsp_cw2(nppcur),work_cw2(ndata), &
    bdata_cw2(ndata),ematrix_cw2(nppcur,nppcur),einv_cw2(nppcur,nppcur))
