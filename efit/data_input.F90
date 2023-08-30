@@ -488,7 +488,7 @@
         read (neqdsk,11776) c_ext,c_ext,simag_ext,psibry_ext,c_ext
         read (neqdsk,11776) plasma_ext,c_ext,c_ext,c_ext,c_ext
         read (neqdsk,11773)
-        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext)
+        read (neqdsk,11776) (ffprim_temp(i),i=1,nw_ext)
         read (neqdsk,11776) (pprime_temp(i),i=1,nw_ext)
         prbdry=pprime_temp(nw_ext) 
         read (neqdsk,11776) (ffprim_temp(i),i=1,nw_ext)
@@ -1186,7 +1186,7 @@
         if (file_stat) then
           call open_group(sid,"profile_ext",nid,h5err)
           call read_h5_ex(nid,"npsi_ext",npsi_ext,h5in,h5err)
-          call read_h5_ex(nid,"pprime_ext",pprime_temp,h5in,h5err)
+          call read_h5_ex(nid,"pprime_ext",pprime_ext,h5in,h5err)
           call read_h5_ex(nid,"ffprim_ext",ffprim_ext,h5in,h5err)
           call read_h5_ex(nid,"psin_ext",psin_ext,h5in,h5err)
           call read_h5_ex(nid,"geqdsk_ext",geqdsk_ext,h5in,h5err)
@@ -1309,8 +1309,8 @@
           call open_group(sid,"profiles_1d",nid,h5err)
           call read_h5_ex(nid,"dpressure_dpsi",pprime_temp,h5in,h5err)
           pprime_temp=pprime_temp*twopi
-          call read_h5_ex(nid,"f_df_dpsi",ffprim_ext,h5in,h5err)
-          ffprim_ext=ffprim_ext*twopi
+          call read_h5_ex(nid,"f_df_dpsi",ffprim_temp,h5in,h5err)
+          ffprim_temp=ffprim_temp*twopi
           call read_h5_ex(nid,"q",qpsi_ext,h5in,h5err)
           call close_group("profiles_1d",nid,h5err)
 
@@ -1513,6 +1513,12 @@
 !----------------------------------------------------------------------
 !--   Setup FF', P' arrays
 !----------------------------------------------------------------------
+      if (geqdsk_ext.ne.'none') then
+        if (psin_ext(1) < 0) then
+          pprime_ext(1:nw_ext)=pprime_temp
+          ffprim_ext(1:nw_ext)=ffprim_temp
+        endif
+      endif
       read_geqdsk: if (geqdsk_ext.ne.'none'.and.icinit.ne.-3 &
                                            .and.icinit.ne.-4) then
         if (psin_ext(1) < 0) then
@@ -1520,8 +1526,6 @@
           do i=1,npsi_ext
             psin_ext(i) = real(i-1,dp)/real(npsi_ext-1,dp)
           enddo
-          pprime_ext(1:npsi_ext)=pprime_temp
-          ffprim_ext(1:npsi_ext)=ffprim_temp
         endif
 #ifdef DEBUG_LEVEL1
         write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext,nw_ext 
