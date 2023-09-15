@@ -214,6 +214,9 @@ elseif ((${CMAKE_Fortran_COMPILER_ID} MATCHES "PGI") OR (${CMAKE_Fortran_COMPILE
   if (NOT ${ENABLE_NATIVE_ENDIAN})
     set(CMAKE_Fortran_FLAGS "-byteswapio ${CMAKE_Fortran_FLAGS}")
   endif ()
+  if (${ENABLE_OPENMP_NV})
+    set(CMAKE_Fortran_FLAGS "-mp=gpu ${CMAKE_Fortran_FLAGS}")
+  endif ()
   set(CMAKE_Fortran_FLAGS_DEFAULT "-O1") # from man page, contradicts online refs
   set(CMAKE_C_FLAGS_DEFAULT "-O1") # from man page, contradicts online refs
   set(CMAKE_Fortran_FLAGS_RELEASE "-O4 -fast")

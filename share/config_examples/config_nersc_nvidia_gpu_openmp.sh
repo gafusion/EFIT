@@ -44,6 +44,6 @@ cmake \
   -DENABLE_HDF5:BOOL=ON \
   -DENABLE_PARALLEL:BOOL=ON \
   -DCMAKE_BUILD_TYPE:STRING=Release \
-  -DCMAKE_Fortran_FLAGS:STRING='-mp=gpu -gpu=cc80,managed' \
+  -DCMAKE_Fortran_FLAGS:STRING='-gpu=cc80,managed' \
   -DENABLE_OPENMP_NV:BOOL=ON \
   ..
