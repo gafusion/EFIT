@@ -18,7 +18,7 @@ set(EFITLIB_SOURCES
   get_exp_data.f90 get_kinetic_data.f90 auto_knot.F90
   ece.F90 msels.F90 stark.F90 chkerr.f90
   cyclic.F90 set_basis.f90 pressure.F90 utils.F90
-  green.F90 fit.F90 beta_li.F90 pflux.f90 update_parameters.F90
+  green.F90 fit.F90 beta_li.F90 pflux.F90 update_parameters.F90
   ${CMAKE_CURRENT_BINARY_DIR}/set_extvars.F90
 )
 #set_extvars.F90 is generated -- see top level CMakeLists.txt

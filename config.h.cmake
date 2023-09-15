@@ -8,6 +8,9 @@
 #cmakedefine USE_SNAP
 #cmakedefine USE_MSE
 #cmakedefine USE_MDS
+#cmakedefine USE_OPENMP_NV
+#cmakedefine USE_OPENMP_AMD
+#cmakedefine USE_OPENMP_INTEL
 #cmakedefine MPI_THREAD_FUNNELED
 #cmakedefine OBJ_MEM_PROF
 #cmakedefine HAVE_OPENMP
