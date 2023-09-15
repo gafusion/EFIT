@@ -40,13 +40,10 @@
 !----------------------------------------------------------------------------
 !--   save flux from current iterations before update                      --
 !----------------------------------------------------------------------------
-      !$omp target teams distribute parallel do collapse(2)
-      do i=1,nw
-        do j=1,nh
-          kk=(i-1)*nh+j
-          psiold(kk)=psi(kk)
-          psipold(kk)=psipla(kk)
-        enddo
+      !$omp target teams distribute parallel do
+      do i=1,nwnh
+        psiold(i)=psi(i)
+        psipold(i)=psipla(i)
       enddo
 !
       buneman_green: if ((ibunmn.eq.1).or. &
@@ -172,13 +169,10 @@
         call pflux_cycred(psi,kerror)
         if(kerror.gt.0) return
       endif
-      !$omp target teams distribute parallel do collapse(2)
-      do i=1,nw
-        do j=1,nh
-          kk=(i-1)*nh+j
-          psi(kk)=-psi(kk)
-        enddo
-      enddo
+      !$omp target teams distribute parallel do
+      do i=1,nwnh
+        psi(i)=-psi(i)
+      enddo      
 !----------------------------------------------------------------------------
 !--   optional symmetrized solution                                        --
 !----------------------------------------------------------------------------
