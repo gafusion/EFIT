@@ -11,9 +11,17 @@
       use set_kinds, only: r4
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
+      integer*4, intent(in) :: ktime,jtime
 
+      integer*4 ierold,iitime,ijtime,ioerr,itsave,jflag,jj,k
+      real*8 btor,cprof,fluxx,plasma,rcencm,tavem,xbetapr
       real*8,dimension(:),allocatable :: coils,expmp2
+      character eqdsk*72,header*42,qmflag*3,fit_type*3
+      character wform*20,let,sfile*14
+      integer*4, parameter :: nlold=40,nlnew=41
+      integer*4, parameter :: magpri67=29,magpri322=31
+
       namelist/in1/ishot,itime,qvfit,plasma,expmp2,coils,btor,ierchk, &
            fwtsi,fwtcur,limitr,xlim,ylim,fwtmp2,brsp,kffcur,kppcur, &
            pcurbd,fcurbd,kzeroj,rzeroj,vbit
@@ -27,24 +35,12 @@
                    eebdry,ee2bdry,keebdry,kee2bdry
       namelist/inwant/psiwant,vzeroj
       namelist/invt/kwwcur,kvtor,rvtor,wcurbd
-      character(14) :: sfile
-      character eqdsk*72,header*42,qmflag*3,fit_type*3
-      character wform*20,let
-      integer*4, parameter :: nlold=40,nlnew=41
-      integer*4, parameter :: magpri67=29,magpri322=31
-      save xdum
 
       allocate(coils(nsilop),expmp2(magpri))
-      xdum = 0
       cprof=icprof
-      iyes=0
-      idup=0
       tavem=2*iavem
       jflag=1
       rcencm=rcentr*100.
-      ktime1=1
-      mco2v=nco2v
-      mco2r=nco2r
       ! zero unused variables before write (for consistency)
       if (keecur.le.0) then
         eeknt=0.0
@@ -52,9 +48,6 @@
         keeknt=0
         slantl=0.0
         slantu=0.0
-        vsurfa=0.0
-        wpdot=0.0
-        wbdot=0.0
       endif
 !----------------------------------------------------------------------
 !--   set fit type                                                   --
@@ -112,9 +105,9 @@
       a_eqdsk_format: if (keqdsk.ge.1) then
       write (neqdsk,1055) efitdatealt,efitdate
       if (ishot.le.99999) then
-        write (neqdsk,1050) ishot,ktime1
+        write (neqdsk,1050) ishot,1
       else
-        write (neqdsk,1053) ishot,ktime1
+        write (neqdsk,1053) ishot,1
       endif
       write (neqdsk,1040) (time(jj))
 !
@@ -122,17 +115,17 @@
       if(fwtqa.le.0.0) qmflag='CLC'
 !
       write (neqdsk,1060) time(jj),jflag,lflag,limloc(jj), &
-                          mco2v,mco2r,qmflag,nlold,nlnew
+                          nco2v,nco2r,qmflag,nlold,nlnew
       write (neqdsk,1040) chisq(jj),rcencm,bcentr(jj),ipmeas(jj)
       write (neqdsk,1040) ipmhd(jj),rout(jj),zout(jj),aminor(jj)
       write (neqdsk,1040) elong(jj),utri(jj),ltri(jj),volume(jj)
       write (neqdsk,1040) rcurrt(jj),zcurrt(jj),qstar(jj),betat(jj)
       write (neqdsk,1040) betap(jj),li(jj),gapin(jj),gapout(jj)
       write (neqdsk,1040) gaptop(jj),gapbot(jj),q95(jj),vertn(jj)
-      write (neqdsk,1040) (rco2v(k,jj),k=1,mco2v)
-      write (neqdsk,1040) (dco2v(jj,k),k=1,mco2v)
-      write (neqdsk,1040) (rco2r(k,jj),k=1,mco2r)
-      write (neqdsk,1040) (dco2r(jj,k),k=1,mco2r)
+      write (neqdsk,1040) (rco2v(k,jj),k=1,nco2v)
+      write (neqdsk,1040) (dco2v(jj,k),k=1,nco2v)
+      write (neqdsk,1040) (rco2r(k,jj),k=1,nco2r)
+      write (neqdsk,1040) (dco2r(jj,k),k=1,nco2r)
       write (neqdsk,1040) shearb(jj),bpolav(jj),s1(jj),s2(jj)
       write (neqdsk,1040) s3(jj),qout(jj),sepin(jj),sepout(jj)
       write (neqdsk,1040) septop(jj),sibdry(jj),area(jj),wmhd(jj)
@@ -160,7 +153,7 @@
       write (neqdsk,1040) (eccurt(jj,k),k=1,nesum)
 !
       write (neqdsk,1040) pbinj(jj),rvsin(jj),zvsin(jj),rvsout(jj)
-      write (neqdsk,1040) zvsout(jj),vsurfa(jj),wpdot(jj),wbdot(jj)
+      write (neqdsk,1040) zvsout(jj),0.0,0.0,0.0
       write (neqdsk,1040) slantu(jj),slantl(jj),zuperts(jj),chipre
       write (neqdsk,1040) cjor95(jj),pp95(jj),drsep(jj),yyy2(jj)
       write (neqdsk,1040) xnnc(jj),cprof,oring(jj),cjor0(jj)
@@ -189,9 +182,9 @@
       else a_eqdsk_format
       write (neqdsk) efitdatealt,efitdate
       if (ishot.le.99999) then
-        write (neqdsk) ishot,ktime1
+        write (neqdsk) ishot,1
       else
-        write (neqdsk) ishot,ktime1
+        write (neqdsk) ishot,1
       endif
       write (neqdsk) (time(jj))
 !
@@ -199,7 +192,7 @@
       if(fwtqa.le.0.0) qmflag='CLC'
 !
       write (neqdsk) real(time(jj),r4),jflag,lflag,limloc(jj), &
-                          mco2v,mco2r,qmflag,nlold,nlnew
+                          nco2v,nco2r,qmflag,nlold,nlnew
       write (neqdsk) real(chisq(jj),r4),real(rcencm,r4), &
                      real(bcentr(jj),r4),real(ipmeas(jj),r4)
       write (neqdsk) real(ipmhd(jj),r4),real(rout(jj),r4), &
@@ -212,10 +205,10 @@
                      real(gapin(jj),r4),real(gapout(jj),r4)
       write (neqdsk) real(gaptop(jj),r4),real(gapbot(jj),r4), &
                      real(q95(jj),r4),real(vertn(jj),r4)
-      write (neqdsk) (real(rco2v(k,jj),r4),k=1,mco2v)
-      write (neqdsk) (real(dco2v(jj,k),r4),k=1,mco2v)
-      write (neqdsk) (real(rco2r(k,jj),r4),k=1,mco2r)
-      write (neqdsk) (real(dco2r(jj,k),r4),k=1,mco2r)
+      write (neqdsk) (real(rco2v(k,jj),r4),k=1,nco2v)
+      write (neqdsk) (real(dco2v(jj,k),r4),k=1,nco2v)
+      write (neqdsk) (real(rco2r(k,jj),r4),k=1,nco2r)
+      write (neqdsk) (real(dco2r(jj,k),r4),k=1,nco2r)
       write (neqdsk) real(shearb(jj),r4),real(bpolav(jj),r4), &
                      real(s1(jj),r4),real(s2(jj),r4)
       write (neqdsk) real(s3(jj),r4),real(qout(jj),r4), &
@@ -254,8 +247,8 @@
 !
       write (neqdsk) real(pbinj(jj),r4),real(rvsin(jj),r4), &
                      real(zvsin(jj),r4),real(rvsout(jj),r4)
-      write (neqdsk) real(zvsout(jj),r4),real(vsurfa(jj),r4), &
-                     real(wpdot(jj),r4),real(wbdot(jj),r4)
+      write (neqdsk) real(zvsout(jj),r4),real(0.0,r4), &
+                     real(0.0,r4),real(0.0,r4)
       write (neqdsk) real(slantu(jj),r4),real(slantl(jj),r4), &
                      real(zuperts(jj),r4),real(chipre,r4)
       write (neqdsk) real(cjor95(jj),r4),real(pp95(jj),r4), &

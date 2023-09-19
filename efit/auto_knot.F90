@@ -22,7 +22,9 @@
       integer*4 i,j,kloop,saveiter
       real*8 lbnd,rbnd,prevknt
       if(aktol.le.0.0) &
-       aktol=0.1/max(kppknt,max(kffknt,max(kwwknt,keeknt)))*akrange
+       aktol=0.1/max(kppknt,max(kffknt,max(kwwknt,keeknt))) &
+                *min(minval(appdf),min(minval(affdf),min(minval(awwdf), &
+                                                         minval(aeedf))))
 
       kerror = 0
 !
@@ -45,8 +47,8 @@
         do j=1,kloop
           do i=2,kppknt-1
             kadknt = i
-            lbnd = appknt(i)-akrange*(appknt(i)-appknt(i-1))
-            rbnd = appknt(i)+akrange*(appknt(i+1)-appknt(i))
+            lbnd = appknt(i)-appdf(i)*(appknt(i)-appknt(i-1))
+            rbnd = appknt(i)+appdf(i)*(appknt(i+1)-appknt(i))
             prevknt = appknt(kadknt)
             appknt(kadknt) = fmin(lbnd,rbnd,ppakfunc,aktol)
             write(6,*) 'pp knot ',kadknt,' set to ',appknt(kadknt)
@@ -66,8 +68,8 @@
         do j=1,kloop
           do i=2,kffknt-1
             kadknt = i
-            lbnd = affknt(i)-akrange*(affknt(i)-affknt(i-1))
-            rbnd = affknt(i)+akrange*(affknt(i+1)-affknt(i))
+            lbnd = affknt(i)-affdf(i)*(affknt(i)-affknt(i-1))
+            rbnd = affknt(i)+affdf(i)*(affknt(i+1)-affknt(i))
             prevknt = affknt(kadknt)
             affknt(kadknt) = fmin(lbnd,rbnd,ffakfunc,aktol)
             write(6,*) 'ff knot ',kadknt,' set to ',affknt(kadknt)
@@ -87,8 +89,8 @@
         do j=1,kloop
           do i=2,kwwknt-1
             kadknt = i
-            lbnd = awwknt(i)-akrange*(awwknt(i)-awwknt(i-1))
-            rbnd = awwknt(i)+akrange*(awwknt(i+1)-awwknt(i))
+            lbnd = awwknt(i)-awwdf(i)*(awwknt(i)-awwknt(i-1))
+            rbnd = awwknt(i)+awwdf(i)*(awwknt(i+1)-awwknt(i))
             prevknt = awwknt(kadknt)
             awwknt(kadknt) = fmin(lbnd,rbnd,wwakfunc,aktol)
             write(6,*) 'ww knot ',kadknt,' set to ',awwknt(kadknt)
@@ -108,8 +110,8 @@
         do j=1,kloop
           do i=2,keeknt-1
             kadknt = i
-            lbnd = aeeknt(i)-akrange*(aeeknt(i)-aeeknt(i-1))
-            rbnd = aeeknt(i)+akrange*(aeeknt(i+1)-aeeknt(i))
+            lbnd = aeeknt(i)-aeedf(i)*(aeeknt(i)-aeeknt(i-1))
+            rbnd = aeeknt(i)+aeedf(i)*(aeeknt(i+1)-aeeknt(i))
             prevknt = aeeknt(kadknt)
             aeeknt(kadknt) = fmin(lbnd,rbnd,eeakfunc,aktol)
             write(6,*) 'ee knot ',kadknt,' set to ',aeeknt(kadknt)
@@ -170,7 +172,9 @@
       call store_autoknotvals
       mxiter_a = kakiter
       if(aktol.le.0.0) &
-       aktol=0.1/max(kppknt,max(kffknt,max(kwwknt,keeknt)))*akrange
+       aktol=0.1/max(kppknt,max(kffknt,max(kwwknt,keeknt))) &
+                *min(minval(appdf),min(minval(affdf),min(minval(awwdf), &
+                                                         minval(aeedf))))
 
       ! Run with input settings first
       if(lconvr.lt.0) return
@@ -188,8 +192,8 @@
         do j=1,kloop
           do i=2,kppknt-1
             kadknt = i
-            lbnd = appknt(i)-akrange*(appknt(i)-appknt(i-1))
-            rbnd = appknt(i)+akrange*(appknt(i+1)-appknt(i))
+            lbnd = appknt(i)-appdf(i)*(appknt(i)-appknt(i-1))
+            rbnd = appknt(i)+appdf(i)*(appknt(i+1)-appknt(i))
             appknt(i) = fmin(lbnd,rbnd,ppakfunc,aktol)
             write(6,*) 'pp knot ',i,' set to ',appknt(i)
             if ((kerror == 0) .and. (terror(ks).le.error)) then
@@ -207,8 +211,8 @@
         do j=1,kloop
           do i=2,kffknt-1
             kadknt = i
-            lbnd = affknt(i)-akrange*(affknt(i)-affknt(i-1))
-            rbnd = affknt(i)+akrange*(affknt(i+1)-affknt(i))
+            lbnd = affknt(i)-affdf(i)*(affknt(i)-affknt(i-1))
+            rbnd = affknt(i)+affdf(i)*(affknt(i+1)-affknt(i))
             affknt(i) = fmin(lbnd,rbnd,ffakfunc,aktol)
             write(6,*) 'ff knot ',i,' set to ',affknt(i)
             if ((kerror == 0) .and. (terror(ks).le.error)) then
@@ -226,8 +230,8 @@
         do j=1,kloop
           do i=2,kwwknt-1
             kadknt = i
-            lbnd = awwknt(i)-akrange*(awwknt(i)-awwknt(i-1))
-            rbnd = awwknt(i)+akrange*(awwknt(i+1)-awwknt(i))
+            lbnd = awwknt(i)-awwdf(i)*(awwknt(i)-awwknt(i-1))
+            rbnd = awwknt(i)+awwdf(i)*(awwknt(i+1)-awwknt(i))
             awwknt(i) = fmin(lbnd,rbnd,wwakfunc,aktol)
             write(6,*) 'ww knot ',i,' set to ',awwknt(i)
             if ((kerror == 0) .and. (terror(ks).le.error)) then
@@ -245,8 +249,8 @@
         do j=1,kloop
           do i=2,keeknt-1
             kadknt = i
-            lbnd = aeeknt(i)-akrange*(aeeknt(i)-aeeknt(i-1))
-            rbnd = aeeknt(i)+akrange*(aeeknt(i+1)-aeeknt(i))
+            lbnd = aeeknt(i)-aeedf(i)*(aeeknt(i)-aeeknt(i-1))
+            rbnd = aeeknt(i)+aeedf(i)*(aeeknt(i+1)-aeeknt(i))
             aeeknt(i) = fmin(lbnd,rbnd,eeakfunc,aktol)
             write(6,*) 'ee knot ',i,' set to ',aeeknt(i)
             if ((kerror == 0) .and. (terror(ks).le.error)) then

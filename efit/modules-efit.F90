@@ -268,7 +268,7 @@
       end module var_pfterm
 !var_cfit
       module var_cfit
-        integer*4 mxiter,nitera,nxiter,ixnn,isolve 
+        integer*4 mxiter,nitera,nxiter,isolve 
         real*8 error,errorm,errmin,delerr,delerb
       end module var_cfit 
 !var_cgrid
@@ -356,14 +356,11 @@
           alpha,rttt,dbpli,delbp,oring, &
           sepexp,shearb, &
           xtch,ytch,q95,vertn,aaq1, &
-          aaq2,aaq3,btaxp,btaxv, &
-          psim,dsep,peak, &
-          wbpol,taumhd,betapd,betatd, &
-          wdia,taudia,wbpold, &
+          aaq2,aaq3,btaxp,btaxv,psim,dsep,peak, &
+          taumhd,betapd,betatd,wdia,taudia, &
           qmerci,slantu,slantl,zeff, &
           zeffr,tave,rvsin,zvsin, &
-          rvsout,zvsout,wpdot,wbdot, &
-          vsurfa,cjor95,pp95,drsep, &
+          rvsout,zvsout,cjor95,pp95,drsep, &
           yyy2,xnnc,wtherm,wfbeam,taujd3,tauthn, &
           li3,tflux,twagap
         real*8,dimension(:,:), allocatable :: rseps,zseps

@@ -219,7 +219,7 @@
              sgtimin,alphafp,zbound,vsdamp,zminvs,saicon,tolbndpsi, &
              pptens,fftens,wwtens,scalesir,scalea,errsil,vbit, &
              f2edge,fe_width,fe_psin,pedge,pe_width,pe_psin, &
-             akchiwt,akerrwt,aktol,akgamwt,akprewt,akrange,psiecn,dpsiecn
+             akchiwt,akerrwt,aktol,akgamwt,akprewt,psiecn,dpsiecn
       integer*4, dimension(2000) :: irfila,jzfila
       real*8, dimension(2000) :: expmp2,coils,fwtsi,fwtmp2,psibit,bitmpi, &
                                  denr,denv,fwtfc,acoilc,brsp,bitfc, &
@@ -235,7 +235,7 @@
                                  sibeam,pbeam,dnbeam,dmass,vcurfb,vcurrt, &
                                  brsptu,sigti,sgneth,scalepr, &
                                  sigrbd,sigzbd,rsol,zsol,fwtsol, &
-                                 chordv,chordr
+                                 chordv,chordr,appdf,affdf,awwdf,aeedf
       real*8, dimension(256,256) :: calpa,cgama
       character(1000) :: line, fitzts
       character appendsnap*2,jdebug*4
@@ -257,7 +257,7 @@
         limid,irfila,jzfila,vloop,iqplot,siref,denr,denv,xgama,&
         nptionf,currn1,ifitvs,bitfc,relax,saimin,icutfp,acoilc, &
         cutip,iavem,pnbeam,xltype_180,sgprmin,elomin,ktear, &
-        fcurbd,pcurbd,prbdry,ndokin,zlowimp,kskipvs,limvs,akrange, &
+        fcurbd,pcurbd,prbdry,ndokin,zlowimp,kskipvs,limvs, &
         vcurfb,kpressb,pressbi,prespb,sigppb,kzeroj,rminvs,rmaxvs,errbry, &
         fwtpre,ibtcomp,klabel,zmaxvs,dnbeam,dmass,nmass,condin,iaveus, &
         sgtimin,kwripre,kbound,alphafp,kframe,zbound,vsdamp,zminvs,saicon, &
@@ -272,6 +272,7 @@
         imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
         nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
         idebug,jdebug,ifindopt,tolbndpsi,siloplim,use_previous,req_valid, &
+        appdf,affdf,awwdf,aeedf, &
         table_dir,input_dir,store_dir
       parameter(nin=343)
 

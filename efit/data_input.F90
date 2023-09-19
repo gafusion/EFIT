@@ -112,7 +112,7 @@
            wwbdry,kwwbdry,ww2bdry,kww2bdry,f2edge,fe_width,fe_psin,kedgef, &
            ktear,kersil,iout,ixray,pedge,kedgep,pe_width,pe_psin, &
            table_dir,input_dir,store_dir,kautoknt,akchiwt,akerrwt, &
-           kakloop,aktol,kakiter,akgamwt,akprewt,akrange, &
+           kakloop,aktol,kakiter,akgamwt,akprewt,appdf,affdf,awwdf,aeedf, &
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout, &
            imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
            nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
@@ -891,7 +891,10 @@
           call read_h5_ex(nid,"kakiter",kakiter,h5in,h5err)
           call read_h5_ex(nid,"akgamwt",akgamwt,h5in,h5err)
           call read_h5_ex(nid,"akprewt",akprewt,h5in,h5err)
-          call read_h5_ex(nid,"akrange",akrange,h5in,h5err)
+          call read_h5_ex(nid,"appdf",appdf,h5in,h5err)
+          call read_h5_ex(nid,"affdf",affdf,h5in,h5err)
+          call read_h5_ex(nid,"aeedf",aeedf,h5in,h5err)
+          call read_h5_ex(nid,"awwdf",awwdf,h5in,h5err)
           call read_h5_ex(nid,"kpphord",kpphord,h5in,h5err)
           call read_h5_ex(nid,"kffhord",kffhord,h5in,h5err)
           call read_h5_ex(nid,"keehord",keehord,h5in,h5err)
