@@ -556,8 +556,12 @@
                 factor=xpsii(jj)*rgrid(i)*www(kk)*pds(3)*brsp(nfsum+jj)
                 factor=-factor/sidif
                 rdjdz(kk)=rdjdz(kk)+factor
-                gsildz=gsildz+gsilpc(:,kk)*factor
-                gmp2dz=gmp2dz+gmp2pc(:,kk)*factor
+                do m=1,nsilop
+                  gsildz(m)=gsildz(m) + gsilpc(m,kk)*factor        
+                enddo
+                do m=1,magpri
+                  gmp2dz(m)=gmp2dz(m) + gmp2pc(m,kk)*factor
+                enddo                
                 if (kstark.gt.0) then
                   gbrdz=gbrdz+gbrpc(:,kk)*factor
                   gbzdz=gbzdz+gbzpc(:,kk)*factor
@@ -594,8 +598,12 @@
                 factor=xpsii(jjk)/rgrid(i)*wwwww*pds(3)*brsp(nfsum+jj)
                 factor=-factor/sidif
                 rdjdz(kk)=rdjdz(kk)+factor
-                gsildz=gsildz+gsilpc(:,kk)*factor
-                gmp2dz=gmp2dz+gmp2pc(:,kk)*factor
+                do m=1,nsilop
+                  gsildz(m)=gsildz(m) + gsilpc(m,kk)*factor
+                enddo
+                do m=1,magpri
+                  gmp2dz(m)=gmp2dz(m) + gmp2pc(m,kk)*factor
+                enddo                
                 if (kstark.gt.0) then
                   gbrdz=gbrdz+gbrpc(:,kk)*factor
                   gbzdz=gbzdz+gbzpc(:,kk)*factor
