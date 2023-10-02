@@ -1,22 +1,26 @@
 ﻿Variable, Default, Description
 ACOILC,, ADP ring?
 AELIP, 0.60, "Minor radius in meters of ellipse for current initialization."
-AKCHIWT,1.0,Weight of the total coil and probe chi squared when optimizing knot locations.  Only active when KAUTOKNT=1.
-AKERRWT,0.0,Weight of the GS error when optimizing knot locations.  Only active when KAUTOKNT=1.
-AKGAMWT,0.0,Weight of the MSE chi squared when optimizing knot locations.  Only active when KAUTOKNT=1.
-AKPREWT,0.0,Weight of the pressure chi squared when optimizing knot locations.  Only active when KAUTOKNT=1.
-AKTOL,0.1,Knot optimization stops when the locations change by less than this distance.  Only active when KAUTOKNT=1.
-ALPHAFP, 0.0,"| Describes the width of the scrapeoff layer in which the halo currents flow. (When ICUTFP=2)
+AEEDF, ones, "(array) Fraction of the distance between neighboring Er knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
+AFFDF, ones, "(array) Fraction of the distance between neighboring FF' knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
+AKCHIWT, 1.0, Weight of the total coil and probe chi squared when optimizing knot locations.  Only active when KAUTOKNT>0.
+AKERRWT, 0.0, Weight of the GS error when optimizing knot locations.  Only active when KAUTOKNT>0.
+AKGAMWT, 0.0, Weight of the MSE chi squared when optimizing knot locations.  Only active when KAUTOKNT>0.
+AKPREWT, 0.0, Weight of the pressure chi squared when optimizing knot locations.  Only active when KAUTOKNT>0.
+AKTOL, -1.0, "Knot optimization stops when the locations change by less than this distance (in psi_n).  If AKTOL<0 then 0.1/max(kppknt,kffknt,kwwknt,keeknt)*akrange is used.  Only active when KAUTOKNT>0."
+ALPHAFP, 0.0, "| Describes the width of the scrapeoff layer in which the halo currents flow. (When ICUTFP=2)
 | 0<= ALPHAFP <=1
 | 1 = zero thickness,
 | 0 = current layer extends either to the first separatrix surface surrounding the last closed flux surface or, if there is no external separatrix, it can flow anywhere inside the chamber.
 | It is assumed that no current flows outside this external separatrix."
+APPDF, ones, "(array) Fraction of the distance between neighboring P' knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
+AWWDF, ones, "(array) Fraction of the distance between neighboring rotational pressure knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
 BETAP0, 0.5, "GAQ current density profile parameter. (Get GAQ form by default when you run fixed boundary calculation?) Ignored unless ICURRT=4?"
 BTOR, ,"Toroidal magnetic field in Tesla. For fixed boundary calculation, this is specified by user. For fitting mode, this is obtained from data using input mode 5 and put into the K-file."
 CO2COR, 1.,"CO2 Correction. Correction factor to apply to Thompson to make calibration match CO2 interferometer(?)."
 CONDIN, 1e-6, 
 CSTABNE, 0.0, Stabilization value for ne fitting. (NOT VARIABLE!)
-CSTABTE, 0.0,Stabilization value for Te fitting. (NOT VARIABLE!)
+CSTABTE, 0.0, Stabilization value for Te fitting. (NOT VARIABLE!)
 CUTIP, 80000, Threshold for plasma current (in Amps) below which the vacuum fields are the only solution provided.
 DMASS, zeros, "(array) Mass density in kg/m3. See NMASS.  Only used for rotation calculations."
 DNETHOM,, "Electron density from Thompson scattering, from some other code."
@@ -140,11 +144,12 @@ IXSTRT,,"| 1 = trace field line from outside (default)
 | -1 = trace from inside
 | 2 = trace from both inside and outside"
 JZFILA,zeros,Z grid indicies to compute filament Green table at.  Only used when ICONVR<0 and AELIP<=0.
-KAKITER,25,Maximum number of outer fitting iterations during knot optimization (same use as MXITER before final solution).  Only active when KAUTOKNT=1.
-KAKLOOP,1,Number of times to loop over every knot position when performing optimization.  Only active when KAUTOKNT=1.
+KAKITER,25,Maximum number of outer fitting iterations during knot optimization (same use as MXITER before final solution).  Only active when KAUTOKNT>0.
+KAKLOOP,1,Number of times to loop over every knot position when performing optimization.  Only active when KAUTOKNT>0.
 KAUTOKNT,0,"| - (Integer flag) Activates the knot location optimization.
 | 0 = use input knot locations (default).
-| 1 = optimize knot locations to reduce GS error and chi squared."
+| 1 = optimize knot locations to find lowest possible GS error and chi squared
+| 2 = optimize knot locations until convergence is reached."
 KBETAPR,,"| - (Integer flag) Specify value of pressure at boundary for integration to calculate beta.
 | 0 = take pressure at boundary to be 0 (default).
 | 1 = get pressure at boundary from kinetic data."
@@ -192,28 +197,30 @@ MXITER,25,"| Maximum number of outer fitting iterations (limited to KXITER, see 
 N1COIL,0,"Compensation for magnetic probe pickup from N1 coil
 | 2 = compensation for n1 coil.
 | 0 = no compensation (default)."
-NBSKIP,2,
-NCCOIL,,"| Magnetic compensation from C coils
+NBSKIP, 2,
+NCCOIL,, "| Magnetic compensation from C coils
 | 1 = compensation on (default).
 | 0 = no compensation."
-NEXTRA,1,"| Number of flux surfaces to plot outside plasma boundary
+NEXTRA, 1, "| Number of flux surfaces to plot outside plasma boundary
 | += number of external field lines to plot.
 | -= plot field line and magnetic quantities along field lines(?)."
-NICOIL,,"| Magnetic compensation from I coils
+NH_SUB, NH, "Output grid height written to g-files.  This parameter does not impact the resolution used during the solve, but uses subsampling to reduce the size of output data without sacrificing accuracy.  NH_SUB must be a valid resolution that is less than NH (no interpolation used)."
+NICOIL,, "| Magnetic compensation from I coils
 | 1 = compensation on (default).
 | 0 = no compensation."
 NMASS, 0, "Number of valid data points in DMASS."
-NPNEF,,"Number of electron density profile constraints."
-NPNETH,,"Number of terms in polynomial(?) fit of ne for kinetic option. Requires appropriate EDAT file (from ENERGY code). (Get ne as a function of normalized flux?)"
-NPTEF,,"if kprfit=2 and npteth<0, then nptef=-npteth"
-NPTETH,,"Number of terms in Te fitting for kinetic option, required appropriated EDAT file."
-NPTION,,"| Number of terms in Ti fitting for kinetic option, required appropriated EDAT file.
+NPNEF,, "Number of electron density profile constraints."
+NPNETH,, "Number of terms in polynomial(?) fit of ne for kinetic option. Requires appropriate EDAT file (from ENERGY code). (Get ne as a function of normalized flux?)"
+NPTEF,, "if kprfit=2 and npteth<0, then nptef=-npteth"
+NPTETH,, "Number of terms in Te fitting for kinetic option, required appropriated EDAT file."
+NPTION,, "| Number of terms in Ti fitting for kinetic option, required appropriated EDAT file.
 |- ,>100 = equal to Te."
-NPTIONF,,"if nption<0, nptionf = -nption"
-NQITER,10,convergent parameter for axial safety factor. 
-NSLREF,1,"Index in set of flux loops of reference flux. Used to be 8 for D-III, but now is 1 (default) for DIII-D."
-NXITER,1,Number of inner equilibrium iterations. Set to 1 for fitting. See also MXITER.
-PBEAM,,"""Pressure Beam"". Beam pressure in n/m2 vs. normalized flux for kinetic fitting (typically calculated in ONETWO)."
+NPTIONF,, "if nption<0, nptionf = -nption"
+NQITER, 10, convergent parameter for axial safety factor. 
+NSLREF, 1, "Index in set of flux loops of reference flux. Used to be 8 for D-III, but now is 1 (default) for DIII-D."
+NW_SUB, NW, "Output grid height written to g-files.  This parameter does not impact the resolution used during the solve, but uses subsampling to reduce the size of output data without sacrificing accuracy.  NW_SUB must be a valid resolution that is less than NH (no interpolation used)."
+NXITER, 1, Number of inner equilibrium iterations. Set to 1 for fitting. See also MXITER.
+PBEAM,, """Pressure Beam"". Beam pressure in n/m2 vs. normalized flux for kinetic fitting (typically calculated in ONETWO)."
 PLASMA,, plasma current in Amps. 0 for vacuum field calculation.
 PRBDRY, 0.0,
 PRESPB, 0.0, P' constraint at the axis.  See KPRESSB

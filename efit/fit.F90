@@ -15,7 +15,7 @@
       implicit none
       integer*4, intent(in) :: jtime
       integer*4, intent(out) :: kerror
-      integer*4 i,ii,ix,idone,iend,ichisq,iwantk,nleft
+      integer*4 i,ii,idone,iend,ichisq,iwantk,nleft
 !-----------------------------------------------------------------------
 !--   inner equilibrium do loop and outer current profile parameters
 !--   do loop
@@ -33,7 +33,6 @@
       iend=mxiter+1
       if (iconvr.eq.3) iend=1
       current_profile: do i=1,iend
-        ix=i
         if (i.gt.1) then
           iwantk=iwantk+1
 !------------------------------------------------------------------
@@ -45,7 +44,7 @@
             nleft=abs(mxiter)-nitera
             if(nleft .ge. mtxece*nconstr) then
 #ifdef DEBUG_LEVEL2
-              write (6,*) 'Call FIT/SETECE',ix
+              write (6,*) 'Call FIT/SETECE',i
               write (6,*) &
                 '  nitera/kcallece/kfitece/nleft/mtxece/nconstr = ', &
                 nitera,kcallece,kfitece,nleft,mtxece,nconstr
@@ -68,9 +67,9 @@
           endif
           if (kprfit.ge.3) call presurw(jtime,nitera)
 #ifdef DEBUG_LEVEL2
-          write (6,*) 'Call FIT/RESPONSE_MATRIX',ix
+          write (6,*) 'Call FIT/RESPONSE_MATRIX',i
 #endif
-          call response_matrix(jtime,ix,ichisq,nitera,kerror)
+          call response_matrix(jtime,i,ichisq,nitera,kerror)
            
           if (kerror /= 0) then
             jerror(jtime) = 1
@@ -83,13 +82,12 @@
         end if
 
         equilibrium: do ii=1,nxiter
-          ixnn=ii
           nitera=nitera+1
 
 #ifdef DEBUG_LEVEL2
           write(6,*) 'Entering currnt'
 #endif
-          call currnt(ix,jtime,nitera,kerror)
+          call currnt(i,jtime,nitera,kerror)
           if (kerror /= 0) then
             jerror(jtime) = 1
             return
@@ -100,7 +98,7 @@
 #ifdef DEBUG_LEVEL2
             write(6,*) 'Entering external_current'
 #endif
-            call external_current(jtime,ix,nitera,kerror)
+            call external_current(jtime,i,nitera,kerror)
           endif 
           if (kerror /= 0) then
             jerror(jtime) = 1
@@ -109,7 +107,7 @@
 #ifdef DEBUG_LEVEL2
           write(6,*) 'Entering pflux'
 #endif
-          call pflux(ix,ixnn,nitera,jtime,kerror)
+          call pflux(i,ii,nitera,jtime,kerror)
           if (kerror.gt.0) then
             jerror(jtime) = 1
             return
@@ -118,7 +116,7 @@
 #ifdef DEBUG_LEVEL2
           write(6,*) 'Entering update_params'
 #endif
-          call update_params(ixnn,nitera,ix,jtime,kerror)
+          call update_params(ii,nitera,i,jtime,kerror)
           if (kerror.gt.0) then
             jerror(jtime) = 1
             return

@@ -107,8 +107,7 @@
       use var_initerror
       use var_magerror
       use var_bscom
-      use var_autokknot
-      use var_autok
+      use var_autoknot
       use var_fixstark
       use var_cwork2
       use vtime_mod
