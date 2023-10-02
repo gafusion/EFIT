@@ -1,11 +1,12 @@
 #include "config.f"
 !**********************************************************************
-!**                                                                  **
-!**     SUBPROGRAM DESCRIPTION:                                      **
-!**          data sets up the magnetic data and weighting arrays.    **
-!**                                                                  **
-!**     CALLING ARGUMENTS:                                           **
-!**                                                                  **
+!!    data_input sets up the magnetic data and weighting arrays.
+!!
+!!    @param jtime: time index
+!!    @param kconvr: convergence flag
+!!    @param ktime : number of time slices
+!!    @param kerror: error flag
+!!
 !**********************************************************************
       subroutine data_input(jtime,kconvr,ktime,kerror)
       use commonblocks,only: c,wk,bkx,bky,wgridpc,rfcpc
@@ -66,7 +67,8 @@
       real*8, dimension(:), allocatable :: expmp2_save,coils_save, &
                                              rbdry_save,zbdry_save, &
                                              fwtsi_save,pressr_save, &
-                                             rpress_save,sigpre_save
+                                             rpress_save,sigpre_save, &
+                                             pprime_temp,ffprim_temp
       real*8, dimension(:,:), allocatable :: psirz_temp
       character(1000) line
       character*10 case_ext(6)
@@ -110,7 +112,7 @@
            wwbdry,kwwbdry,ww2bdry,kww2bdry,f2edge,fe_width,fe_psin,kedgef, &
            ktear,kersil,iout,ixray,pedge,kedgep,pe_width,pe_psin, &
            table_dir,input_dir,store_dir,kautoknt,akchiwt,akerrwt, &
-           kakloop,aktol,kakiter,akgamwt,akprewt, &
+           kakloop,aktol,kakiter,akgamwt,akprewt,appdf,affdf,awwdf,aeedf, &
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout, &
            imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
            nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
@@ -481,16 +483,16 @@
         open(unit=neqdsk,status='old',file=geqdsk_ext)
         read (neqdsk,11775) (case_ext(i),i=1,6),nh_ext,nw_ext,nh_ext
         allocate(psirz_temp(nw_ext,nh_ext),psirz_ext(nw_ext*nh_ext), &
-                 pprime_ext(nw_ext),ffprim_ext(nw_ext),qpsi_ext(nw_ext))
+                 pprime_temp(nw_ext),ffprim_temp(nw_ext),qpsi_ext(nw_ext))
         read (neqdsk,11773)
         read (neqdsk,11776) c_ext,c_ext,simag_ext,psibry_ext,c_ext
         read (neqdsk,11776) plasma_ext,c_ext,c_ext,c_ext,c_ext
         read (neqdsk,11773)
-        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext)
-        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext)
-        prbdry=pprime_ext(nw_ext) 
-        read (neqdsk,11776) (ffprim_ext(i),i=1,nw_ext)
-        read (neqdsk,11776) (pprime_ext(i),i=1,nw_ext)
+        read (neqdsk,11776) (ffprim_temp(i),i=1,nw_ext)
+        read (neqdsk,11776) (pprime_temp(i),i=1,nw_ext)
+        prbdry=pprime_temp(nw_ext) 
+        read (neqdsk,11776) (ffprim_temp(i),i=1,nw_ext)
+        read (neqdsk,11776) (pprime_temp(i),i=1,nw_ext)
         read (neqdsk,11776) ((psirz_temp(i,j),i=1,nw_ext),j=1,nh_ext)
         psirz_ext=0.0
         read (neqdsk,11776,err=11777) (qpsi_ext(i),i=1,nw_ext)
@@ -889,6 +891,10 @@
           call read_h5_ex(nid,"kakiter",kakiter,h5in,h5err)
           call read_h5_ex(nid,"akgamwt",akgamwt,h5in,h5err)
           call read_h5_ex(nid,"akprewt",akprewt,h5in,h5err)
+          call read_h5_ex(nid,"appdf",appdf,h5in,h5err)
+          call read_h5_ex(nid,"affdf",affdf,h5in,h5err)
+          call read_h5_ex(nid,"aeedf",aeedf,h5in,h5err)
+          call read_h5_ex(nid,"awwdf",awwdf,h5in,h5err)
           call read_h5_ex(nid,"kpphord",kpphord,h5in,h5err)
           call read_h5_ex(nid,"kffhord",kffhord,h5in,h5err)
           call read_h5_ex(nid,"keehord",keehord,h5in,h5err)
@@ -1254,8 +1260,8 @@
           call read_dims(nid,"psi",n2d,h5in,h5err)
           nw_ext=int(n2d(1))
           nh_ext=int(n2d(2))
-          allocate(psirz_ext(nw_ext*nh_ext),pprime_ext(nw_ext), &
-                   ffprim_ext(nw_ext),qpsi_ext(nw_ext))
+          allocate(psirz_ext(nw_ext*nh_ext),pprime_temp(nw_ext), &
+                   ffprim_temp(nw_ext),qpsi_ext(nw_ext))
           call read_h5_sq(nid,"psi",psirz_ext,h5in,h5err)
           psirz_ext=psirz_ext/twopi
           call close_group("0",nid,h5err)
@@ -1304,10 +1310,10 @@
             stop
           endif
           call open_group(sid,"profiles_1d",nid,h5err)
-          call read_h5_ex(nid,"dpressure_dpsi",pprime_ext,h5in,h5err)
-          pprime_ext=pprime_ext*twopi
-          call read_h5_ex(nid,"f_df_dpsi",ffprim_ext,h5in,h5err)
-          ffprim_ext=ffprim_ext*twopi
+          call read_h5_ex(nid,"dpressure_dpsi",pprime_temp,h5in,h5err)
+          pprime_temp=pprime_temp*twopi
+          call read_h5_ex(nid,"f_df_dpsi",ffprim_temp,h5in,h5err)
+          ffprim_temp=ffprim_temp*twopi
           call read_h5_ex(nid,"q",qpsi_ext,h5in,h5err)
           call close_group("profiles_1d",nid,h5err)
 
@@ -1510,9 +1516,20 @@
 !----------------------------------------------------------------------
 !--   Setup FF', P' arrays
 !----------------------------------------------------------------------
+      if (geqdsk_ext.ne.'none') then
+        if (psin_ext(1) < 0) then
+          pprime_ext(1:nw_ext)=pprime_temp
+          ffprim_ext(1:nw_ext)=ffprim_temp
+        endif
+      endif
       read_geqdsk: if (geqdsk_ext.ne.'none'.and.icinit.ne.-3 &
                                            .and.icinit.ne.-4) then
-        npsi_ext=nw_ext 
+        if (psin_ext(1) < 0) then
+          npsi_ext=nw_ext 
+          do i=1,npsi_ext
+            psin_ext(i) = real(i-1,dp)/real(npsi_ext-1,dp)
+          enddo
+        endif
 #ifdef DEBUG_LEVEL1
         write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext,nw_ext 
 #endif
@@ -1587,11 +1604,6 @@
            ffprim_ext(1)
 #endif 
  
-        if (psin_ext(1) < 0) then
-          do i = 1, npsi_ext
-            psin_ext(i) = real(i-1,dp)/real(npsi_ext-1,dp)
-          enddo
-        endif
         call zpline(npsi_ext,psin_ext,pprime_ext,bpp_ext,cpp_ext,dpp_ext)
         call zpline(npsi_ext,psin_ext,ffprim_ext,bfp_ext,cfp_ext,dfp_ext)
       endif

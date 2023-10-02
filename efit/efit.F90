@@ -264,6 +264,11 @@
           write(6,*) ' Entering autoknot subroutine'
 #endif
           call autoknot(ks,iconvr,ktime,kerror)
+        elseif (kautoknt .eq. 2) then
+#ifdef DEBUG_LEVEL2
+          write(6,*) ' Entering knot_opt subroutine'
+#endif
+          call knot_opt(ks,iconvr,ktime,kerror)
         else
 !----------------------------------------------------------------------
 !--       initialize current profile                                 --

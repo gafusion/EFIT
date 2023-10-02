@@ -76,9 +76,11 @@
       kedgep=0
       keecur=0
       keefnc=0
+      keeknt=0
       kersil=3
       keqdsk=1
       kfffnc=0
+      kffknt=0
       kfitece=0
       kfixrece=0
       kfixro=0
@@ -86,10 +88,12 @@
       kinputece=0 ! never used in code
       klabel=0
       kppfnc=0
+      kppknt=0
       kskipvs=0
       kwaitmse=0
       kwripre=0
       kwwfnc=0
+      kwwknt=0
       kzeroj=0
       limid=33
       lring=0
@@ -379,7 +383,11 @@
         akgamwt=0.0
         akerrwt=0.0
         akprewt=0.0
-        aktol=0.1_dp
+        aktol=-1.0
+        appdf=1.0
+        affdf=1.0
+        awwdf=1.0
+        aeedf=1.0
         alpax(1)=1.e4_dp
         bitfc=0.0
         fwtpre=1.

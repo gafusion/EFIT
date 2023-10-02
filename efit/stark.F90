@@ -15,6 +15,7 @@
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
+      use set_kinds, only: r4
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       real*4 avem,tanham(ktime,nmselp),sigham(ktime,nmselp), &
          rrham(nmselp),zzham(nmselp), &
