@@ -3,10 +3,10 @@ ACOILC,, ADP ring?
 AELIP, 0.60, "Minor radius in meters of ellipse for current initialization."
 AEEDF, ones, "(array) Fraction of the distance between neighboring Er knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
 AFFDF, ones, "(array) Fraction of the distance between neighboring FF' knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
-AKCHIWT, 1.0, Weight of the total coil and probe chi squared when optimizing knot locations.  Only active when KAUTOKNT>0.
-AKERRWT, 0.0, Weight of the GS error when optimizing knot locations.  Only active when KAUTOKNT>0.
-AKGAMWT, 0.0, Weight of the MSE chi squared when optimizing knot locations.  Only active when KAUTOKNT>0.
-AKPREWT, 0.0, Weight of the pressure chi squared when optimizing knot locations.  Only active when KAUTOKNT>0.
+AKCHIWT, 1.0, Weight of the total coil and probe chi squared when optimizing knot locations.  Only active when KAUTOKNT=1.
+AKERRWT, 0.0, Weight of the GS error when optimizing knot locations.  Only active when KAUTOKNT=1.
+AKGAMWT, 0.0, Weight of the MSE chi squared when optimizing knot locations.  Only active when KAUTOKNT=1.
+AKPREWT, 0.0, Weight of the pressure chi squared when optimizing knot locations.  Only active when KAUTOKNT=1.
 AKTOL, -1.0, "Knot optimization stops when the locations change by less than this distance (in psi_n).  If AKTOL<0 then 0.1/max(kppknt,kffknt,kwwknt,keeknt)*akrange is used.  Only active when KAUTOKNT>0."
 ALPHAFP, 0.0, "| Describes the width of the scrapeoff layer in which the halo currents flow. (When ICUTFP=2)
 | 0<= ALPHAFP <=1
