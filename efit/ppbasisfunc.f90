@@ -555,7 +555,7 @@
   real*8, intent(out) :: crsp(4*(npcurn-2)+6+npcurn*npcurn,nrsmat), &
                          z(3*(npcurn-2)+6+npcurn*npcurn)
   integer*4 i,j,iorder
-  real*8 h,w,pptens2
+  real*8 h,wl,wr,pptens2
 
   select case (kppfnc)
   case (3)
@@ -753,25 +753,20 @@
         ncrsp = ncrsp + 1
         crsp(ncrsp,:) = 0.0
         z(ncrsp) = 0.0
-        w = ppknt(i+1) - ppknt(i)
-        crsp(ncrsp,nffcoi + 2*(i-1) + 1) = -1.0/w
-        crsp(ncrsp,nffcoi + 2*(i-1) + 2) = (-pptens2* &
-          cosh(pptens2*w)/sinh(pptens2*w) &
-          + 1.0/w)/(pptens2*pptens2)
-        crsp(ncrsp,nffcoi + 2*(i-1) + 3) = 1.0/w
-        crsp(ncrsp,nffcoi + 2*(i-1) + 4) = (pptens2/ &
-          sinh(pptens2*w) - 1.0/w)/(pptens2*pptens2)
-
-        w = ppknt(i) - ppknt(i-1)
-        crsp(ncrsp,nffcoi + 2*(i-1) - 1) = 1.0/w
+        wr = ppknt(i+1) - ppknt(i)
+        wl = ppknt(i) - ppknt(i-1)
+        crsp(ncrsp,nffcoi + 2*(i-1) - 1) = 1.0/wl
         crsp(ncrsp,nffcoi + 2*(i-1) + 0) = -(-pptens2/ &
-          sinh(pptens2*w) + 1.0/w)/(pptens2*pptens2)
-        crsp(ncrsp,nffcoi + 2*(i-1) + 1) = &
-          crsp(ncrsp,nffcoi + 2*(i-1) + 1) - 1.0/w
-        crsp(ncrsp,nffcoi + 2*(i-1) + 2) = &
-          crsp(ncrsp,nffcoi + 2*(i-1) + 2) - (pptens2* &
-          cosh(pptens2*w)/sinh(pptens2*w) &
-          - 1.0/w)/(pptens2*pptens2)
+          sinh(pptens2*wl) + 1.0/wl)/(pptens2*pptens2)
+        crsp(ncrsp,nffcoi + 2*(i-1) + 1) = -1.0/wr - 1.0/wl
+        crsp(ncrsp,nffcoi + 2*(i-1) + 2) = (-pptens2* &
+          cosh(pptens2*wr)/sinh(pptens2*wr) &
+          + 1.0/wr)/(pptens2*pptens2) - (pptens2* &
+          cosh(pptens2*wl)/sinh(pptens2*wl) &
+          - 1.0/wl)/(pptens2*pptens2)
+        crsp(ncrsp,nffcoi + 2*(i-1) + 3) = 1.0/wr
+        crsp(ncrsp,nffcoi + 2*(i-1) + 4) = (pptens2/ &
+          sinh(pptens2*wr) - 1.0/wr)/(pptens2*pptens2)
       enddo
     endif
     do i = 1,kppknt

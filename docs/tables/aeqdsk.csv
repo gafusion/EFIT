@@ -18,7 +18,6 @@ CDFLUX, computed diamagnetic flux in Volt-sec
 CHILIBT, total chi^2 Li beam
 CHIGAMT, total chi^2 MSE
 CHIPRE, total chi^2 pressure
-CHIPRE, total chi^2 pressure
 CHISQ, "total chi^2 from magnetic probes, flux loops, Rogowskiand external coils"
 CJ1AVE, normalized average current density in plasma outer 5% normalized poloidal flux region
 CJOR0, normalized axial flux surface average current density

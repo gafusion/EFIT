@@ -7,7 +7,7 @@
 !!
 !**********************************************************************
       subroutine write_g(jtime)
-      use set_kinds
+      use set_kinds, only: i4,r4
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -53,7 +53,7 @@
                    keefnc,keeknt,eeknt,eetens, &
                    eebdry,ee2bdry,keebdry,kee2bdry
       namelist/inwant/psiwant,vzeroj
-      namelist/chiout/saisil,saimpi,saiip,saipre
+      namelist/chiout/saisil,saimpi,chipasma,saipre
       namelist/eccd/kkstark,chigamt,chigam,bzmse,psiecn,dpsiecn, &
               saisq,cjeccd
 !
@@ -187,7 +187,7 @@
       endif
       eqdsk_format: if (keqdsk.eq.1) then
       write(neqdsk,2000) (vers(i),i=1,6),0,abs(nw_sub),abs(nh_sub)
-      write(neqdsk,2020) xdim,zdim,rzero,rgrid(1),zmid
+      write(neqdsk,2020) xdim,zdim,rcentr,rgrid(1),zmid
       write(neqdsk,2020) rmaxis,zmaxis,ssimag,ssibry,bcentr(jtime)
       write(neqdsk,2020) ipmhd(jtime),ssimag,xdum,rmaxis,xdum
       write(neqdsk,2020) zmaxis,xdum,ssibry,xdum,xdum
@@ -365,7 +365,7 @@
 !-----------------------------------------------------------------------
       else eqdsk_format
       write(neqdsk) (vers(i),i=1,6),0,abs(nw_sub),abs(nh_sub)
-      write(neqdsk) real(xdim,r4),real(zdim,r4),real(rzero,r4), &
+      write(neqdsk) real(xdim,r4),real(zdim,r4),real(rcentr,r4), &
                      real(rgrid(1),r4),real(zmid,r4)
       write(neqdsk) real(rmaxis,r4),real(zmaxis,r4),real(ssimag,r4), &
                      real(ssibry,r4),real(bcentr(jtime),r4)
@@ -477,7 +477,6 @@
       endif fixed_bdry
 !
       return
- 1020 format ('x',i5,'.',i3)
  1040 format ('  EFIT  ')
  1042 format (1x,a42,1x,a3)
  1050 format ('   ',a5)

@@ -1,3 +1,4 @@
+#include "config.f"
 !**********************************************************************
 !>
 !!    pflux computes the poloidal fluxes on the r-z grid.
@@ -15,12 +16,12 @@
 !!
 !**********************************************************************
       subroutine pflux(niter,nnin,ntotal,jtime,kerror)
-      use set_kinds 
       use var_buneman, only: rgrid1,delrgrid,delz,drdz2
       use commonblocks, only: c,bkx,bky,psiold,psipold
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
+      use omp_lib
       implicit none
       integer*4 ef_init_cycred_data
       integer*4, intent(in) :: niter,nnin,ntotal,jtime
@@ -39,8 +40,11 @@
 !----------------------------------------------------------------------------
 !--   save flux from current iterations before update                      --
 !----------------------------------------------------------------------------
-      psiold=psi
-      psipold=psipla
+      !$omp target teams distribute parallel do
+      do i=1,nwnh
+        psiold(i)=psi(i)
+        psipold(i)=psipla(i)
+      enddo
 !
       buneman_green: if ((ibunmn.eq.1).or. &
                         ((ibunmn.eq.2).and.(errorm.gt.errcut))) then
@@ -86,10 +90,16 @@
 !-----------------------------------------------------------------------
 !--   boundary terms                                                  --
 !-----------------------------------------------------------------------
+      !$omp target teams distribute reduction(+:tempsum1,tempsum2)
       do j=1,nh
         kk=(nw-1)*nh+j
         tempsum1=0.
         tempsum2=0.
+#ifdef USE_OPENMP_NV
+        !$omp parallel do reduction(+:tempsum1,tempsum2) collapse(2)
+#elif defined (USE_OPENMP_AMD)
+        !$omp loop bind(teams) reduction(+:tempsum1,tempsum2) collapse(2)
+#endif
         do ii=1,nw
          do jj=1,nh
           kkkk=(ii-1)*nh+jj
@@ -102,12 +112,18 @@
         psi(j) =tempsum1
         psi(kk)=tempsum2
       enddo
+      !$omp target teams distribute reduction(+:tempsum1,tempsum2)
       do i=2,nw-1
         kk1=(i-1)*nh
         kknh=kk1+nh
         kk1=kk1+1
         tempsum1=0.
         tempsum2=0.
+#ifdef USE_OPENMP_NV
+        !$omp parallel do reduction(+:tempsum1,tempsum2) collapse(2)
+#elif defined (USE_OPENMP_AMD)
+        !$omp loop bind(thread) reduction(+:tempsum1,tempsum2) collapse(2)
+#endif
         do ii=1,nw
          do jj=1,nh
           kkkk=(ii-1)*nh+jj
@@ -128,6 +144,7 @@
 !-------------------------------------------------------------------------
       if (isolve.eq.0) then
 !       original buneman solver method
+        !$omp target teams distribute parallel do collapse(2)
         do i=2,nw-1
           do j=2,nh-1
             kk=(i-1)*nh+j
@@ -137,6 +154,7 @@
         call buneto(psi,nw,nh)
       else 
 !       new faster single cyclic reduction method
+        !$omp target teams distribute parallel do collapse(2)
         do i=2,nw-1
           do j=2,nh-1
             kk=(i-1)*nh+j
@@ -151,7 +169,10 @@
         call pflux_cycred(psi,kerror)
         if(kerror.gt.0) return
       endif
-      psi=-psi
+      !$omp target teams distribute parallel do
+      do i=1,nwnh
+        psi(i)=-psi(i)
+      enddo      
 !----------------------------------------------------------------------------
 !--   optional symmetrized solution                                        --
 !----------------------------------------------------------------------------
@@ -268,6 +289,7 @@
 !----------------------------------------------------------------------------
 !--   add flux from external coils                                         --
 !----------------------------------------------------------------------------
+      !$omp target teams distribute parallel do
       do kk=1,nwnh
         psipla(kk)=psi(kk)
         if(ivesel.gt.0) &
@@ -290,6 +312,7 @@
 !--   intensive                                                             --
 !-----------------------------------------------------------------------------
       psi=0.0
+      !$omp target teams distribute parallel do simd collapse(2) 
       do i=1,nw
        do j=1,nh
         kk=(i-1)*nh+j
@@ -305,6 +328,7 @@
           psi(kk)=psi(kk)+sum(gridac(kk,:)*caccurt(jtime,:))
         psipla(kk)=psi(kk)
         if (ivacum.eq.0) then
+          !$omp simd reduction(+:tempsum1)
           do ii=1,nw
             do jj=1,nh
               kkkk=(ii-1)*nh+jj

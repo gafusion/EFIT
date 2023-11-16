@@ -67,6 +67,9 @@ set(ENABLE_NATIVE_ENDIAN FALSE CACHE BOOL "Whether to use native or big endian")
 set(ENABLE_TIME_LEVEL1 OFF CACHE BOOL "Whether to add timings at level 1")
 set(ENABLE_TIME_LEVEL2 OFF CACHE BOOL "Whether to add timings at level 2")
 set(TRAP_FP_EXCEPTIONS FALSE CACHE BOOL "Whether to enable trapping of floating point exceptions")
+set(ENABLE_OPENMP_NV FALSE CACHE BOOL "Whether to enable OpenMP gpu offloading for NVIDIA GPUs")
+set(ENABLE_OPENMP_AMD FALSE CACHE BOOL "Whether to enable OpenMP gpu offloading for AMD GPUs")
+set(ENABLE_OPENMP_INTEL FALSE CACHE BOOL "Whether to enable OpenMP gpu offloading for INTEL GPUs")
 
 #--------------------------------------------------------------------
 # Initialization
@@ -107,6 +110,14 @@ else ()
   set (sharedir share-ser)
   message(STATUS "Building without MPI")
 endif ()
+
+if (${ENABLE_OPENMP_NV})  
+  set (USE_OPENMP_NV TRUE)         # ifdef
+elseif (${ENABLE_OPENMP_AMD})  
+  set (USE_OPENMP_AMD TRUE)        # ifdef
+elseif (${ENABLE_OPENMP_INTEL})
+  set (USE_OPENMP_INTEL TRUE)      # ifdef
+endif()
 
 install(FILES ${CMAKE_BINARY_DIR}/config.f 
               ${CMAKE_BINARY_DIR}/config.h DESTINATION ${sharedir}
@@ -202,6 +213,9 @@ elseif ((${CMAKE_Fortran_COMPILER_ID} MATCHES "PGI") OR (${CMAKE_Fortran_COMPILE
   set(CMAKE_Fortran_FLAGS "-Mextend -r8 ${CMAKE_Fortran_FLAGS}")
   if (NOT ${ENABLE_NATIVE_ENDIAN})
     set(CMAKE_Fortran_FLAGS "-byteswapio ${CMAKE_Fortran_FLAGS}")
+  endif ()
+  if (${ENABLE_OPENMP_NV})
+    set(CMAKE_Fortran_FLAGS "-mp=gpu ${CMAKE_Fortran_FLAGS}")
   endif ()
   set(CMAKE_Fortran_FLAGS_DEFAULT "-O1") # from man page, contradicts online refs
   set(CMAKE_C_FLAGS_DEFAULT "-O1") # from man page, contradicts online refs

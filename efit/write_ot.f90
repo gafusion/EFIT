@@ -7,7 +7,6 @@
 !!
 !********************************************************************** 
       subroutine write_ot(kwtime)
-      use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'

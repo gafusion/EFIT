@@ -5,7 +5,6 @@
 !!
 !**********************************************************************
       subroutine set_basis_params()
-      use set_kinds
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'

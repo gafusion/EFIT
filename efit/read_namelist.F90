@@ -6,7 +6,6 @@
 !**********************************************************************
       subroutine read_optin()
       use commonblocks
-      use set_kinds
       use opt_input
       include 'eparm.inc'
       include 'modules2.inc'
@@ -236,7 +235,7 @@
                                  sibeam,pbeam,dnbeam,dmass,vcurfb,vcurrt, &
                                  brsptu,sigti,sgneth,scalepr, &
                                  sigrbd,sigzbd,rsol,zsol,fwtsol, &
-                                 chordv,chordr
+                                 chordv,chordr,appdf,affdf,awwdf,aeedf
       real*8, dimension(256,256) :: calpa,cgama
       character(1000) :: line, fitzts
       character appendsnap*2,jdebug*4
@@ -273,6 +272,7 @@
         imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
         nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
         idebug,jdebug,ifindopt,tolbndpsi,siloplim,use_previous,req_valid, &
+        appdf,affdf,awwdf,aeedf, &
         table_dir,input_dir,store_dir
       parameter(nin=343)
 

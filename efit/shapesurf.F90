@@ -13,7 +13,6 @@
 !!
 !**********************************************************************
       subroutine shapesurf(iges,igmax,kerror)
-      use set_kinds
       use commonblocks,only: c,wk,copy,bkx,bky,psiold,psipold, &
                 worka,zeros,byringr,byringz,xouts,youts,bpoo,bpooz, &
                 bpooc,bfpol,cfpol,dfpol,xxtra,yxtra,bpxtra,flxtra,fpxtra
@@ -1310,7 +1309,7 @@
           .and. (abs(ipmhd(iges)).gt.10000.) .and. (wmhd(iges).gt.1000.)) then
         cons1=dco2v(iges,2)*1.e-13_dp                      !normalized density
         cons2=wmhd(iges)/cons1/volume(iges)/3.36_dp/1.e-6_dp  !electron temperature (ev)
-        cons3=75000.                                    !w_beam (ev)
+        !cons3=75000.                                    !w_beam (ev) (unused)
         cons4=22.*cons2                                  !w_crit (ev)
         cons5=log(1.+(75000./cons4)**1.5_dp)
         cons6=8.37e-2_dp*(cons2/1000)**1.5_dp/cons1*cons5  !thermalization tau_s (s)
@@ -1330,7 +1329,7 @@
 !-----------------------------------------------------------------------
 !--     get thermal and jet-diiid confinement times                   --
 !-----------------------------------------------------------------------
-        cons21=pohm/1.e6_dp                              !ohmic power in mw
+        !cons21=pohm/1.e6_dp                              !ohmic power in mw (unused)
         cons22=taumhd(iges)*cons17
         ptotal = pin/1.e6_dp                              !toal power in mw
         if (ptotal.gt.0.01_dp) then
@@ -2499,11 +2498,11 @@
       vbpli=betap(iges)+li(iges)/2.
       if (kvtor.gt.0) vbpli=vbpli+betapw(iges)
       dbpli(iges)=abs((sbpli-vbpli)/sbpli)
-      chidlc=0.0
+      chidflux=0.0
       if (fwtdlc.gt.0.0) then
-        chidlc=((diamag(iges)-cdflux(iges))/sigdia(iges))**2
+        chidflux=((diamag(iges)-cdflux(iges))/sigdia(iges))**2
       endif
-      chitot=chipre+chifin+chidlc
+      chitot=chipre+chifin+chidflux
       if (idiart.gt.0) then
         bp2flx=bpolav(iges)**2
         dmui=1.0e+06_dp*diamag(iges)*4.*pi*bcentr(iges)*rcentr &
@@ -3093,7 +3092,7 @@
 !!
 !**********************************************************************
       subroutine dslant(x,y,np,xmin,xmax,ymin,ymax,x1,y1,x2,y2,dismin)
-      use set_kinds
+      use set_kinds, only: dp
       use eparm, only: npoint
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       data nn/30/

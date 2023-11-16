@@ -6,7 +6,6 @@
 !!
 !*********************************************************************
       subroutine chkerr(mtime)
-      use set_kinds
       use errlims
       include 'eparm.inc'
       include 'modules1.inc'

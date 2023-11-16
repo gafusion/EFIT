@@ -1,5 +1,4 @@
       module var_cecoil
-      use set_kinds
       integer*4 iecurr
       real*8,dimension(:,:),allocatable :: rsilec
       real*8,dimension(:,:),allocatable :: rmp2ec
@@ -57,16 +56,13 @@
                                          wwbdry,ww2bdry,wwknt
       end module var_bscom
 
-      module var_autokknot
+      module var_autoknot
       integer*4 :: kautoknt,kakloop,kakiter
+      integer*4 :: ks_a,lconvr_a,ktime_a,kerror_a,kadknt,mxiter_a
       real*8 :: akchiwt,akerrwt,aktol,akgamwt,akprewt
-      end module var_autokknot
-
-      module var_autok
-      integer*4 :: ks_a,lconvr_a,ktime_a,kerror_a,kadknt, &
-                   kappknt,kaffknt,kawwknt, kaeeknt,mxiter_a
       real*8,dimension(:),allocatable :: aeeknt,awwknt,affknt,appknt
-      end module var_autok
+      real*8,dimension(:),allocatable :: aeedf,awwdf,affdf,appdf
+      end module var_autoknot
 
       module var_fixstark
       integer*4 :: ifirst
