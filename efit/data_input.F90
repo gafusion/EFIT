@@ -1491,7 +1491,7 @@
       if(abs(fwtecebz0).le.1.e-30_dp) fwtecebz0=0.0
 !
 !--   enforce autoknot requirements
-      if (kautoknt .eq. 2) then
+      if (kautoknt .ge. 2) then
         akchiwt=0.0
         akerrwt=1.0
         akgamwt=0.0

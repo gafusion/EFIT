@@ -134,7 +134,7 @@
 !*******************************************************************
 !!
 !!    knot_opt varies knot positions to target reduce grad-shfranov
-!!      error untile convergence is achieved
+!!      error until convergence is achieved
 !!
 !!    @param ks: time index
 !!    @param lconvr: convergence flag

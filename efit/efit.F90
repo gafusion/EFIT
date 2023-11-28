@@ -269,6 +269,11 @@
           write(6,*) ' Entering knot_opt subroutine'
 #endif
           call knot_opt(ks,iconvr,ktime,kerror)
+        elseif (kautoknt .eq. 3) then
+#ifdef DEBUG_LEVEL2
+          write(6,*) ' Entering rand_knot subroutine'
+#endif
+          call rand_knot(ks,iconvr,ktime,kerror)
         else
 !----------------------------------------------------------------------
 !--       initialize current profile                                 --
