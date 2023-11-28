@@ -1,3 +1,4 @@
+#include "config.f"
 !*******************************************************************
 !!
 !!    autoknot minimizes chi-squared and grad-shfranov error
@@ -147,6 +148,9 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
+#if defined(USEMPI)
+      include 'mpif.h'
+#endif
 
       real*8 fmin_opt
       real*8, external :: ppakfunc,ffakfunc,wwakfunc,eeakfunc
@@ -157,6 +161,7 @@
       real*8 lbnd,rbnd
 
       kerror = 0
+      proc_conv = -1
 
       ! Store the values away so the functions can restore them 
       !  after re-reading the k file. 
@@ -184,9 +189,16 @@
       ! Minimize chi^2 and error for pp knot locations
       if (kppfnc .eq. 6) then
         kloop = kakloop
+#if defined(USEMPI)
+        kloop = kakloop + nproc
+#endif
         if(kppknt .le. 3) kloop = 1
         do j=1,kloop
+#if defined(USEMPI)
+          do i=2+rank,kppknt-1,nproc
+#else
           do i=2,kppknt-1
+#endif
             kadknt = i
             lbnd = appknt(i)-appdf(i)*(appknt(i)-appknt(i-1))
             rbnd = appknt(i)+appdf(i)*(appknt(i+1)-appknt(i))
@@ -194,9 +206,21 @@
             write(6,*) 'pp knot ',i,' set to ',appknt(i)
             if ((kerror == 0) .and. (terror(ks).le.error)) then
               write(6,*) 'New pp knot location converged'
+#ifndef USEMPI
               return
+#endif
             endif
           enddo
+#if defined(USEMPI)
+          if (proc_conv .gt. -1) then
+              do i=2,kppknt-1
+                call MPI_BCAST(appknt(i),1,MPI_DOUBLE_PRECISION,proc_conv,MPI_COMM_WORLD,ierr)
+                !write(6,*) 'rank ',rank,' i ',i,' appknt(i) ',appknt(i), ' kppknt ',kppknt
+              enddo
+              call restore_autoknotvals
+              return
+          endif
+#endif
         enddo
       endif
 
@@ -311,9 +335,15 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
+#if defined(USEMPI)
+      include 'mpif.h'
+#endif
       real*8, intent(in) :: xknot
       integer*4 kerror
 
+#if defined(USEMPI)
+      if(proc_conv .gt. -1) return
+#endif
       kerror = 0
       ppakfunc = 1000.0
       write(6,*)
@@ -329,6 +359,14 @@
       if(kerror_a .gt. 0) return
       ppakfunc = akchiwt * chisq(ks_a) + akerrwt * errorm &
                + akgamwt * chigamt + akprewt * chipre
+#if defined(USEMPI)
+      if(ppakfunc .lt. 1e-8) then
+        proc_conv = rank
+      endif
+      call MPI_ALLREDUCE(MPI_IN_PLACE,proc_conv,1,MPI_INTEGER, &
+                       & MPI_MAX,MPI_COMM_WORLD,ierr)
+
+#endif
       return
       end function ppakfunc
 
@@ -474,7 +512,8 @@
       w = v
       x = v
       e = 0.0d0
-      fx = f(x)
+      !fx = f(x)
+      fx = 1e-6
       fv = fx
       fw = fx
 !
