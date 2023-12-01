@@ -204,7 +204,12 @@ EDAT
 PROFILE_EXT
 -----------
 
-(TODO: need to add/describe namelist)
+PROFILE_EXT is the namelist specifying profiles and boundaries which may be fixed or used as constraints or initial conditions depending on the mode being run.
+
+.. csv-table:: PROFILE_EXT
+   :file: tables/profile_ext.csv
+   :widths: 15,15,70
+
 
 MACHINEIN (EFUND)
 -----------------

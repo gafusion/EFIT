@@ -522,9 +522,8 @@
        if (.not.fixpp) then
         cratio=ipmhd(jtime)/tcurrt
         if(abs(ipmhd(jtime)).le.1.e-3_dp) cratio=1.0
-        cratio_ext = cratio * cratio_ext
-        cratiop_ext = cratio_ext
-        cratiof_ext = cratio_ext
+        cratiop_ext = cratio * cratiop_ext
+        cratiof_ext = cratio * cratiof_ext
         do kk=1,nwnh
           pcurrt(kk)=pcurrt(kk)*cratio
           pcurrtpp(kk)=pcurrtpp(kk)*cratio

@@ -280,10 +280,8 @@
       endif
       call flush(6)
 #ifdef DEBUG_LEVEL1
-      write (nttyo,*) 'cratio,cratio_ext,cratiop_ext,cratiof_ext= ', &
-        cratio,cratio_ext,cratiop_ext,cratiof_ext
-      write (nttyo,*) 'scalepp_ext,scaleffp_ext= ', &
-        scalepp_ext,scaleffp_ext
+      write (nttyo,*) 'cratio,cratiop_ext,cratiof_ext= ', &
+        cratio,cratiop_ext,cratiof_ext
 #endif
       return
 10009 format (x,'r=',i3,1x,'t=',i6,1x,'iter',i3.3, &

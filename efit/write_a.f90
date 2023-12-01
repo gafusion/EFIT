@@ -17,8 +17,8 @@
       integer*4 ierold,iitime,ijtime,ioerr,itsave,jflag,jj,k
       real*8 btor,cprof,fluxx,plasma,rcencm,tavem,xbetapr
       real*8,dimension(:),allocatable :: coils,expmp2
-      character eqdsk*72,header*42,qmflag*3,fit_type*3
-      character wform*20,let,sfile*14
+      character eqdsk*300,header*42,qmflag*3,fit_type*3
+      character wform*20,sfile*14
       integer*4, parameter :: nlold=40,nlnew=41
       integer*4, parameter :: magpri67=29,magpri322=31
 
@@ -85,21 +85,9 @@
         wform='unformatted'
       endif
 !
-      let = 'a'
-      call setfnmeq(itimeu,let,ishot,ijtime,eqdsk)
-!----------------------------------------------------------------------
-!--   If (ISTORE = 1) Then                                           --
-!--   Central directory to collect EFIT results is store_dir         --
-!----------------------------------------------------------------------
-      if (istore .eq. 1) then
-        eqdsk = store_dir(1:lstdir)//eqdsk
-      endif
       header = ' '
-      open(unit=neqdsk,file=eqdsk,status='old', &
-           form=wform,iostat=ioerr)
-      if(ioerr.eq.0) close(unit=neqdsk,status='delete')
-      open(unit=neqdsk,file=eqdsk,status='new', &
-           form=wform,delim='quote')
+      call setfnm('a',ishot,ijtime,itimeu,'',eqdsk)
+      call open_new(neqdsk,eqdsk,wform,'quote')
 !
       xbetapr=kbetapr
       a_eqdsk_format: if (keqdsk.ge.1) then
@@ -290,10 +278,7 @@
         else
           sfile='esave.dat'
         endif
-        open(unit=nsave,status='old',form='unformatted',file=sfile, &
-             iostat=ioerr)
-        if(ioerr.eq.0) close(unit=nsave,status='delete')
-        open(unit=nsave,status='new',form='unformatted',file=sfile)
+        call open_new(nsave,sfile,'unformatted','')
         write (nsave) nw,nh
         write (nsave) xpsi
         write (nsave) brsp
@@ -315,11 +300,8 @@
         iitime=time(jj)+1
         limitr=limitr-1
         qvfit=qenp
-        let = 'm'
-        call setfnmeq(itimeu,let,ishot,iitime,eqdsk)
-        open(unit=neqdsk,file=eqdsk,status='old',iostat=ioerr)
-        if(ioerr.eq.0) close(unit=neqdsk,status='delete')
-        open(unit=neqdsk,file=eqdsk,status='new',delim='quote')
+        call setfnm('m',ishot,iitime,itimeu,'',eqdsk)
+        call open_new(neqdsk,eqdsk,'','quote')
         itsave=itime
         itime=iitime
         write (neqdsk,in1)

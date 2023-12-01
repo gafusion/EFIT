@@ -9,7 +9,7 @@ include_directories(
 set(EFITLIB_SOURCES
   modules-efit.F90 set_eparm.F90 psical.f90 mat_solve.f90 
   tables.F90 read_namelist.F90 set_defaults.f90
-  buneman.f90 set_filenames.f90 ecom1-mods.f90 zpline.f90 
+  buneman.f90 set_filename.F90 ecom1-mods.f90 zpline.f90 
   ecom2-mods.f90 curve2d_mod.f90 data_input.F90 set_init.f90
   response_matrix.F90 shapesurf.F90 setup_data_fetch.F90 current.f90
   external_current.F90 boundary.F90 spline.f90 pltdat.F90

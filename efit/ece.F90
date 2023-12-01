@@ -149,7 +149,7 @@
              file=filenmme,iostat=ioerr)
         if (ioerr.ne.0) then
           open(unit=nffile, status='old',form='unformatted', &
-               file=table_dir(1:ltbdir)//filenmme,iostat=ioerr)
+               file=trim(table_di2)//filenmme,iostat=ioerr)
           if(ioerr.ne.0) exit
         endif
         read(nffile,iostat=ioerr) nnnece

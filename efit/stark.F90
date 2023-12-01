@@ -317,7 +317,7 @@
         if(ioerr.ne.0) &
           open(unit=nffile, &
                status='old',form='unformatted', &
-               file=table_dir(1:ltbdir)//filenmme,iostat=ioerr)
+               file=trim(table_di2)//filenmme,iostat=ioerr)
         if(ioerr.ne.0) exit
         read(nffile,iostat=ioerr) kkstark
         if(ioerr.ne.0) exit

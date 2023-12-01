@@ -20,7 +20,7 @@
       integer*4 i,ier,m
       real*8 xn,siedge,sgggmin
       real*8 pds(6),xnsi(nppcur),xnsp(nppcur)
-      character*50 edatname
+      character*300 edatname
       namelist/edat/npress,rpress,zpress,pressr,sigpre
 
       kerror=0
@@ -141,12 +141,8 @@
         rpress(npress)=-1.0
       endif
       if (ndokin.ge.100) then
-        call setfnmeq(itimeu,'k',ishot,itime,edatname)
-        edatname='edat_'//edatname(2:7)// &
-                       '_'//edatname(9:13)//'.pressure'
-        open(unit=nin,status='old',file=edatname,iostat=ier)
-        if (ier.eq.0) close(unit=nin,status='delete')
-        open(unit=nin,status='new',file=edatname,delim='quote')
+        call setfnm('edat_',ishot,itime,itimeu,'.pressure',edatname)
+        call open_new(nin,edatname,'','quote')
         write (nin,edat)
         close(unit=nin)
       endif
