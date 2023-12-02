@@ -365,11 +365,7 @@
       endif ECE
 !----------------------------------------------------------------------
       if (rank.eq.0) then
-        open(unit=nffile,status='old',form='unformatted',iostat=ioerr, &
-             file='recexx.dat')
-        if(ioerr.eq.0) close(unit=nffile,status='delete')
-        open(unit=nffile,status='new',form='unformatted', &
-             file='recexx.dat')
+        call open_new(nffile,'recexx.dat','unformatted','')
         nnnece=nece
         write(nffile) nnnece 
         do ii=1,nece

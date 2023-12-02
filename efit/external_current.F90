@@ -67,14 +67,8 @@
 !vas
 !vas      print*,'file name : ','fm'//trim(ch1)// &
 !vas                         trim(ch2)//'.ddd'
-            open(unit=nffile,status='old',form='unformatted', &
-                 file='fm'//trim(ch1)//trim(ch2)//'.ddd',iostat=ioerr)
-            if(ioerr.eq.0) close(unit=nffile,status='delete')
-!vas
-!vas      print*,'file name : ','fm'//trim(ch1)// &
-!vas                          trim(ch2)//'.ddd'
-            open(unit=nffile,status='new',form='unformatted', &
-                 file='fm'//trim(ch1)//trim(ch2)//'.ddd')
+            call open_new(nffile,'fm'//trim(ch1)//trim(ch2)//'.ddd', &
+                          'unformatted','')
             write (nffile) afma
             write (nffile) ifmatr
             close(unit=nffile)
