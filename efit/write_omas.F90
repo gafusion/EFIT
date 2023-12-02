@@ -17,7 +17,7 @@
       implicit none
       real*8 seval,speval
       integer*4, intent(in) :: jtime,ktime
-      integer*4 i,j,kk,ier,init,tind
+      integer*4 i,j,kk,ier,init,tind,cocos
       real*8 ssibry,ssimag,xdiff,xdim,zdiff,zdim
       real*8 pds(6),gaps(4),rsps(4),zsps(4)
       real*8, dimension(nw) :: vprime,dvdrho,bwork,cwork,dwork
@@ -27,29 +27,20 @@
       character*10 tindex,probeind,names(4)
       data init/0/,tind/0/
 
+      ! Set COCOs conversion factor for psi
+      cocos=twopi
+      if(ipmeas(jtime).lt.0.0) cocos=-twopi
+
       ! Setup flux scalars
-      if (ipmeas(jtime).gt.0.0) then
-        ssimag=-simag*twopi
-        ssibry=-psibry*twopi
-      else
-        ssimag=simag*twopi
-        ssibry=psibry*twopi
-      endif
+      ssimag=simag*cocos
+      ssibry=psibry*cocos
 
       ! Unroll 2D psi 
       psirz=0.0
       do i=1,nw
         do j=1,nh
           kk=(i-1)*nh+j
-          if (ivacum.eq.0) then
-            if (ipmeas(jtime).gt.0.0) then
-              psirz(i,j)=-psi(kk)*twopi
-            else
-              psirz(i,j)=psi(kk)*twopi
-            endif
-          else
-            psirz(i,j)=-psi(kk)*twopi
-          endif
+          psirz(i,j)=psi(kk)*cocos
         enddo
       enddo
 
@@ -88,7 +79,7 @@
       call zpline(nw,sigrid,volp,bwork,cwork,dwork)
       do i=1,nw
         vprime(i)=speval(nw,sigrid(i),sigrid,volp, &
-                         bwork,cwork,dwork)/twopi
+                         bwork,cwork,dwork)/cocos
       enddo
       call zpline(nw,rhovn,volp,bwork,cwork,dwork)
       do i=1,nw
@@ -214,6 +205,7 @@
           WRITE(strout,'(5a)') TRIM(gitbranch),' ',TRIM(fc_id), &
                                   ' ',TRIM(fcver)
           call dump_h5(nid,"version",TRIM(strout),h5in,h5err)
+          call close_group("0",nid,h5err)
           call close_group("library",fid,h5err)
         endif
         call close_group("code",cid,h5err)
@@ -346,17 +338,12 @@
 
       ! write 1D variables
       call make_group(sid,"profiles_1d",nid,group_exists,h5err)
-      call dump_h5(nid,"psi",-(simag-sigrid*sidif)*twopi,h5in,h5err)
-      if (ipmeas(jtime).gt.0.0) then
-        call dump_h5(nid,"dpressure_dpsi",-pprime/twopi,h5in,h5err)
-        call dump_h5(nid,"f_df_dpsi",-ffprim/twopi,h5in,h5err)
-      else
-        call dump_h5(nid,"dpressure_dpsi",pprime/twopi,h5in,h5err)
-        call dump_h5(nid,"f_df_dpsi",ffprim/twopi,h5in,h5err)
-      endif
-      call dump_h5(nid,"q",qpsi,h5in,h5err)
-      call dump_h5(nid,"f",fpol,h5in,h5err)
+      call dump_h5(nid,"psi",(simag-sigrid*sidif)*cocos,h5in,h5err)
+      call dump_h5(nid,"dpressure_dpsi",pprime/cocos,h5in,h5err)
+      call dump_h5(nid,"f_df_dpsi",ffprim/cocos,h5in,h5err)
       call dump_h5(nid,"pressure",pres,h5in,h5err)
+      call dump_h5(nid,"f",fpol,h5in,h5err)
+      call dump_h5(nid,"q",qpsi,h5in,h5err)
       call dump_h5(nid,"rho_tor_norm",rhovn,h5in,h5err)
       call dump_h5(nid,"volume",volp,h5in,h5err)
       call dump_h5(nid,"dvolume_dpsi",vprime,h5in,h5err)
@@ -403,6 +390,8 @@
       call dump_h5(nid,"beta_tor",betat(jtime)/100,h5in,h5err)
       call dump_h5(nid,"beta_normal",abs(betan(jtime)),h5in,h5err)
       call dump_h5(nid,"li_3",li3(jtime),h5in,h5err)
+      call dump_h5(nid,"energy_mhd",wmhd(jtime),h5in,h5err)
+      !call dump_h5(nid,"kink_safety_factor",qstar(jtime),h5in,h5err) ! not in IMAS?
       call dump_h5(nid,"volume",volume(jtime),h5in,h5err)
       call dump_h5(nid,"area",area(jtime)/1.0e+04_dp,h5in,h5err)
       call dump_h5(nid,"surface",psurfa(jtime),h5in,h5err)
@@ -433,7 +422,7 @@
       call dump_h5(cid,"grad_shafranov_deviation_value",terror(jtime), &
                    h5in,h5err)
       call dump_h5(cid,"iterations_n",nitera,h5in,h5err)
-      call close_group("boundary",cid,h5err)
+      call close_group("convergence",cid,h5err)
 
       ! write constraints
       call make_group(sid,"constraints",cid,group_exists,h5err)
@@ -509,10 +498,10 @@
         write(probeind,"(I0)") i-1
         call make_group(nid,trim(probeind),fid,group_exists,h5err)
         call dump_h5(fid,"exact",0,h5in,h5err)
-        call dump_h5(fid,"measured",silopt(jtime,i)*twopi,h5in,h5err)
-        call dump_h5(fid,"measured_error_upper",sigsil(i)*twopi,h5in,h5err)
+        call dump_h5(fid,"measured",silopt(jtime,i)*cocos,h5in,h5err)
+        call dump_h5(fid,"measured_error_upper",sigsil(i)*cocos,h5in,h5err)
         call dump_h5(fid,"weight",fwtsi(i),h5in,h5err)
-        call dump_h5(fid,"reconstructed",csilop(i,jtime)*twopi,h5in,h5err)
+        call dump_h5(fid,"reconstructed",csilop(i,jtime)*cocos,h5in,h5err)
         call dump_h5(fid,"chi_squared",saisil(i),h5in,h5err)
         call close_group(trim(probeind),fid,h5err)
       enddo
@@ -852,6 +841,7 @@
       call dump_h5(nid,"jzfila",jzfila,h5in,h5err)
       call dump_h5(nid,"vloop",vloopt(jtime),h5in,h5err)
       call dump_h5(nid,"iqplot",iqplot,h5in,h5err)
+      ! COCOs usually isn't applied to code_parameters but should be... *cocos
       call dump_h5(nid,"siref",psiref(jtime),h5in,h5err)
       call dump_h5(nid,"denr",denrt(jtime,:),h5in,h5err)
       call dump_h5(nid,"denv",denvt(jtime,:),h5in,h5err)
