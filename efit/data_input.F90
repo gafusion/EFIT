@@ -1245,10 +1245,10 @@
           ! try to read from boundary_separatrix first but fall back to
           ! boundary if missing
           edatname="boundary_separatrix"
-          call enter_group(sid,"boundary_separatrix",cid,file_stat,h5err)
+          call enter_group(sid,trim(edatname),cid,file_stat,h5err)
           if (.not. file_stat) then
-            call enter_group(sid,"boundary",cid,file_stat,h5err)
             edatname="boundary"
+            call enter_group(sid,trim(edatname),cid,file_stat,h5err)
             if (.not. file_stat) then
               call errctrl_msg('data_input','boundary group not found')
               stop
