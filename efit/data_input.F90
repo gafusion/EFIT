@@ -23,7 +23,7 @@
       !integer*4 idodo,idovs
       integer*4 istat,lshot,im1,loc,nbdry0,nbdry1,nbdry2,nbdry3,nbryup, &
                 iup,nbranch,nqpsi,idn,limupper,lwant,mmemsels,idofb, &
-                mw,mh,mmf,mx,ix,mj,mk,npc,npack,nskip,kkl,kku,ier,jupper
+                mw,mh,mmf,mx,ix,mj,mk,npc,nskip,kkl,kku,ier,jupper
       integer*4 nrmin_e,nrmax_e,nzmin_e,nzmax_e,nsw,nsh
       integer*4 n_write !unused
       integer*4 nbabs_ext,jb_ext
@@ -125,7 +125,8 @@
            xcoils,kcloops,cloops,xloops,currc79,currc139,nccoil,sizeroj, &
            fitdelz,ndelzon,relaxdz,stabdz,writepc,table_dir,errdelz, &
            oldccomp,nicoil,oldcomp,currc199,curriu30,curriu90, &
-           curriu150,curril30,curril90,curril150,ifitdelz,scaledz
+           curriu150,curril30,curril90,curril150,ifitdelz,scaledz, &
+           fwtjtr,sigjtr
       namelist/ink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring,cupdown
       namelist/ins/tgamma,sgamma,fwtgam,rrrgam,zzzgam,aa1gam,aa2gam, &
@@ -1150,6 +1151,8 @@
           call read_h5_ex(nid,"curril150",curril150,h5in,h5err)
           call read_h5_ex(nid,"ifitdelz",ifitdelz,h5in,h5err)
           call read_h5_ex(nid,"scaledz",scaledz,h5in,h5err)
+          call read_h5_ex(nid,"fwtjtr",fwtjtr,h5in,h5err)
+          call read_h5_ex(nid,"sigjtr",sigjtr,h5in,h5err)
           call close_group("inwant",nid,h5err)
         endif
    
@@ -2309,6 +2312,8 @@
         nh_sub=(nh-1)/nsh+1
       endif
 
+      if(kzeroj.gt.0) fwtjtrin=fwtjtr
+
       if(kfffnc.eq.8) rkec=pi/(2.0*dpsiecn) 
       chigam=0.0 
       tchimls=0.0 
@@ -2960,11 +2965,10 @@
           xmax=rgrids(nw-2) 
           ymin=zgrids(3) 
           ymax=zgrids(nh-2) 
-          npack=1 
           rnow=0.5_dp*(rgrids(1)+rgrids(nw)) 
           znow=0.0 
           call surfac(siwant,psi,nw,nh,rgrids,zgrids,xout,yout,nfound, & 
-                      npoint,drgrids,dzgrids,xmin,xmax,ymin,ymax,npack, & 
+                      npoint,drgrids,dzgrids,xmin,xmax,ymin,ymax,1, & 
                       rnow,znow,negcur,kerror,1) 
           if(kerror.gt.0) return 
           xmin=xout(1) 

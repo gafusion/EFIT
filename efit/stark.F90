@@ -12,6 +12,7 @@
 !!
 !**********************************************************************
       subroutine getstark(ktime)
+      use set_kinds, only: r4
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'

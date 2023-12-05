@@ -230,6 +230,21 @@
            brspmin=max(ten24,abs(brsp(nfsum+1)))
            fwtxxx=fwtxxj*1000./brspmin
            if (kzeroj.gt.0) then
+            if (maxval(fwtjtrin).gt.0.0) then
+              fwtjtr(1:kzeroj)=fwtjtrin(1:kzeroj)
+            else
+              fwtjtr(1:kzeroj)=fwtxxx
+            endif
+            if (maxval(abs(sigjtr)).gt.0.0) then
+              do i=1,kzeroj
+                cm=abs(sigjtr(i))*darea*ipmeas(jtime)/carea
+                if (abs(cm).gt.1.0e-10_dp) then
+                  fwtjtr(i)=fwtjtr(i)/cm
+                else
+                  fwtjtr(i)=0.0
+                endif
+              enddo
+            endif
             do i=1,kzeroj
              nj=nj+1
 !----------------------------------------------------------------------
@@ -253,24 +268,24 @@
              do j=1,kpcurn
                if (j.le.kppcur) then
                  xjj=xpspp(j)
-                 alipc(nj,j)=rxxx*fwtxxx*xjj
+                 alipc(nj,j)=rxxx*fwtjtr(i)*xjj
                else
                  xjj=xpsfp(j-kppcur)
-                 alipc(nj,j)=fwtxxx/rxxxf*xjj
+                 alipc(nj,j)=fwtjtr(i)/rxxxf*xjj
                endif
              enddo
              nnow=kpcurn
              if (kedgep.gt.0) then
                nnow=nnow+1
                siedge=(sizeroj(i)-pe_psin)/pe_width
-               alipc(nj,nnow)=fwtxxx*rxxx/cosh(siedge)**2/pe_width/sidif
+               alipc(nj,nnow)=fwtjtr(i)*rxxx/cosh(siedge)**2/pe_width/sidif
              endif
              if (kedgef.gt.0) then
                nnow=nnow+1
                siedge=(sizeroj(i)-fe_psin)/fe_width
-               alipc(nj,nnow)=fwtxxx/rxxxf/cosh(siedge)**2/fe_width/sidif
+               alipc(nj,nnow)=fwtjtr(i)/rxxxf/cosh(siedge)**2/fe_width/sidif
              endif
-             xrsp(nj)=fwtxxx*vzeroj(i)*darea*ipmeas(jtime)/carea
+             xrsp(nj)=fwtjtr(i)*vzeroj(i)*darea*ipmeas(jtime)/carea
             enddo
            endif
 !-----------------------------------------------------------------------
@@ -646,6 +661,11 @@
        brspmin=max(ten24,abs(brsp(nfsum+1)))
        fwtxxx=fwtxxj*1000./brspmin
        if (kzeroj.gt.0) then
+        if (maxval(fwtjtrin).gt.0.0) then
+          fwtjtr(1:kzeroj)=fwtjtrin(1:kzeroj)
+        else
+          fwtjtr(1:kzeroj)=fwtxxx
+        endif
         do i=1,kzeroj
          nj=nj+1
 !----------------------------------------------------------------------
@@ -655,12 +675,12 @@
          if (rzeroj(i).lt.0.0) rxxx=rseps(1,jtime)/100.
          rxxxf=rxxx
          if (rzeroj(i).eq.0.0) then
-              rxxx=1./r1sdry(i)
-              rxxxf=r1sdry(i)/r2sdry(i)
+           rxxx=1./r1sdry(i)
+           rxxxf=r1sdry(i)/r2sdry(i)
          endif
          if (rxxx.le.0.0) then
-             rxxx=rcentr
-             rxxxf=rxxx
+           rxxx=rcentr
+           rxxxf=rxxx
          endif
 !
          ysiwant=sizeroj(i)
@@ -675,67 +695,65 @@
              prew0=pwcurr(ysiwant,kwwcur)
              pres0=prcurr(ysiwant,kppcur)
              if (abs(pres0).gt.1.e-10_dp) then
-                pwop0=prew0/pres0
+               pwop0=prew0/pres0
              else
-                pwop0=0.0
+               pwop0=0.0
              endif
            endif
            if (rzeroj(i).gt.0.0) then
-               rxx2=(rzeroj(i)/rvtor)**2-1.
-               rxxw=rxx2*rzeroj(i)
-               if (kvtor.eq.2) then
-                 rxxw=rxxw*(1.+pwop0*rxx2)
-                 rxxx=rxxx*(1.-0.5_dp*(pwop0*rxx2)**2)
-               endif
-               if (kvtor.eq.3) then
-                 pwp0r2=pwop0*rxx2
-                 ptop0=exp(pwp0r2)
-                 rxxw=rxxw*ptop0
-                 rxxx=rxxx*ptop0*(1.-pwp0r2)
-               endif
-           endif
-           if (rzeroj(i).lt.0.0) then
-               rxxw=rseps(1,jtime)/100.
-               rxx2=(rxxw/rvtor)**2-1.
-               rxxw=rxx2*rxxw
-               if (kvtor.eq.2) then
-                 rxxw=rxxw*(1.+pwop0*rxx2)
-                 rxxx=rxxx*(1.-0.5_dp*(pwop0*rxx2)**2)
-               endif
-               if (kvtor.eq.3) then
-                 pwp0r2=pwop0*rxx2
-                 ptop0=exp(pwp0r2)
-                 rxxw=rxxw*ptop0
-                 rxxx=rxxx*ptop0*(1.-pwp0r2)
-               endif
-           endif
-           if (rzeroj(i).eq.0.0) then
-               rxx2=  r2wdry/rvtor**2-1.
-               rxxw=  rxx2/r1sdry(i)
-               if (kvtor.eq.2) then
-                 rxxw=rxxw+pwop0*r4wdry/r1sdry(i)
-                 rxxx=rxxx-0.5_dp*pwop0**2*r4wdry/r1sdry(i)
-               endif
-               if (kvtor.eq.3) then
-                 rxxx=(rpwdry-pwop0*rp2wdry)/r1sdry(i)
-                 rxxw=rp2wdry/r1sdry(i)
-               endif
+             rxx2=(rzeroj(i)/rvtor)**2-1.
+             rxxw=rxx2*rzeroj(i)
+             select case (kvtor)
+             case (2)
+               rxxw=rxxw*(1.+pwop0*rxx2)
+               rxxx=rxxx*(1.-0.5_dp*(pwop0*rxx2)**2)
+             case (3)
+               pwp0r2=pwop0*rxx2
+               ptop0=exp(pwp0r2)
+               rxxw=rxxw*ptop0
+               rxxx=rxxx*ptop0*(1.-pwp0r2)
+             end select
+           elseif (rzeroj(i).lt.0.0) then
+             rxxw=rseps(1,jtime)/100.
+             rxx2=(rxxw/rvtor)**2-1.
+             rxxw=rxx2*rxxw
+             select case (kvtor)
+             case (2)
+               rxxw=rxxw*(1.+pwop0*rxx2)
+               rxxx=rxxx*(1.-0.5_dp*(pwop0*rxx2)**2)
+             case (3)
+               pwp0r2=pwop0*rxx2
+               ptop0=exp(pwp0r2)
+               rxxw=rxxw*ptop0
+               rxxx=rxxx*ptop0*(1.-pwp0r2)
+             end select
+           else !rzeroj(i).eq.0.0)
+             rxx2=r2wdry(i)/rvtor**2-1.
+             rxxw=rxx2/r1sdry(i)
+             select case (kvtor)
+             case (2)
+               rxxw=rxxw+pwop0*r4wdry(i)/r1sdry(i)
+               rxxx=rxxx-0.5_dp*pwop0**2*r4wdry(i)/r1sdry(i)
+             case (3)
+               rxxx=(rpwdry(i)-pwop0*rp2wdry(i))/r1sdry(i)
+               rxxw=rp2wdry(i)/r1sdry(i)
+             end select
            endif
          endif
 !
          do j=1,kwcurn
            if (j.le.kppcur) then
              xjj=xpspp(j)
-             alipc(nj,j)=rxxx*fwtxxx*xjj
+             alipc(nj,j)=rxxx*fwtjtr(i)*xjj
            elseif (j.le.kpcurn) then
              xjj=xpsfp(j-kppcur)
-             alipc(nj,j)=fwtxxx/rxxxf*xjj
+             alipc(nj,j)=fwtjtr(i)/rxxxf*xjj
            elseif (kvtor.gt.0) then
              xjj=xpspwp(j-kpcurn)
-             alipc(nj,j)=rxxw*fwtxxx*xjj
+             alipc(nj,j)=rxxw*fwtjtr(i)*xjj
            endif
          enddo
-         xrsp(nj)=fwtxxx*vzeroj(i)*darea*ipmeas(jtime)/carea
+         xrsp(nj)=fwtjtr(i)*vzeroj(i)*darea*ipmeas(jtime)/carea
         enddo
        endif
 !-----------------------------------------------------------------------

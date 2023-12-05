@@ -56,7 +56,8 @@
                 id_saipre,id_presw,id_rpresw,id_zpresw,id_sigprw, &
                 id_fwtprw,id_cpresw,id_saiprw,id_czmaxi,id_cchisq, &
                 id_cerror,id_chifin,id_chitot,id_darea,id_xrsp, &
-                id_sizeroj,id_vzeroj,idim_kzeroj
+                id_sizeroj,id_vzeroj,id_sigjtr,id_fwtjtr,id_cjtr, &
+                id_chijtr,idim_kzeroj
       real*8 xdum,vm3,betatnx
       integer*4 dim2(2),c11(2),cnn(2),imap(2),stride(2)
       character(len=4) last
@@ -664,16 +665,34 @@
       call NCAPTC(nceq,id_saiprw,'long_name',NCCHAR,28, &
                   'chisq of rotational pressure',ierr)
 !
-! --- Jt/R
+! --- <jt/R>/<1/R> (note, normalizations from input have been removed)
 !
       dim2(1) = idim_kzeroj
       id_vzeroj = NCVDEF(nceq,'vzeroj',NCFLOAT,2,dim2,ierr)
-      call NCAPTC(nceq,id_vzeroj,'long_name',NCCHAR,53, &
-         'measured Jt/R vs. normalized flux (kinetic fits only)',ierr)
+      call NCAPTC(nceq,id_vzeroj,'long_name',NCCHAR,61, &
+        'measured <jt/R>/<1/R> vs. normalized flux (kinetic fits only)', &
+        ierr)
 !
       id_sizeroj = NCVDEF(nceq,'sizeroj',NCFLOAT,2,dim2,ierr)
       call NCAPTC(nceq,id_sizeroj,'long_name',NCCHAR,49, &
          'normalized flux locations corresponding to vzeroj',ierr)
+!
+      id_sigjtr = NCVDEF(nceq,'sigjtr',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_sigjtr,'long_name',NCCHAR,28, &
+                  'uncertainty of <jt/R>/<1/R>',ierr)
+!
+      id_fwtjtr = NCVDEF(nceq,'fwtjtr',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_fwtjtr,'long_name',NCCHAR,23, &
+                  'weight for <jt/R>/<1/R>',ierr)
+!
+      id_cjtr = NCVDEF(nceq,'cjtr',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_cjtr,'long_name',NCCHAR,61, &
+        'computed <jt/R>/<1/R> vs. normalized flux (kinetic fits only)', &
+        ierr)
+!
+      id_chijtr = NCVDEF(nceq,'chijtr',NCFLOAT,2,dim2,ierr)
+      call NCAPTC(nceq,id_chijtr,'long_name',NCCHAR,21, &
+                  'chisq of <jt/R>/<1/R>',ierr)
 !
 ! --- quality of fit parameters
 !
@@ -813,10 +832,19 @@
       call NCVPT(nceq,id_saiprw,c11,cnn,zwork,ierr)
 !
       cnn(1) = kzeroj1
-      zwork(1:kzeroj1) = real(vzeroj(1:kzeroj1),r4)
+      zwork(1:kzeroj1) = real( &
+        vzeroj(1:kzeroj1)*ipmeas(ifirsttime)/carea,r4)
       call NCVPT(nceq,id_vzeroj,c11,cnn,zwork,ierr)
       zwork(1:kzeroj1) = real(sizeroj(1:kzeroj1),r4)
       call NCVPT(nceq,id_sizeroj,c11,cnn,zwork,ierr)
+      zwork(1:kzeroj1) = real(sigjtr(1:kzeroj1),r4)
+      call NCVPT(nceq,id_sigjtr,c11,cnn,zwork,ierr)
+      zwork(1:kzeroj1) = real(fwtjtr(1:kzeroj1),r4)
+      call NCVPT(nceq,id_fwtjtr,c11,cnn,zwork,ierr)
+      zwork(1:kzeroj1) = real(cjtr(1:kzeroj1),r4)
+      call NCVPT(nceq,id_cjtr,c11,cnn,zwork,ierr)
+      zwork(1:kzeroj1) = real(chijtr(1:kzeroj1),r4)
+      call NCVPT(nceq,id_chijtr,c11,cnn,zwork,ierr)
 !
       cnn(1) = nitera
       ziter = real(czmaxi(1:nitera),r4)

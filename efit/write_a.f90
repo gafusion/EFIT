@@ -33,7 +33,7 @@
                    wwbdry,ww2bdry,kwwbdry,kww2bdry, &
                    keefnc,keeknt,eeknt,eetens, &
                    eebdry,ee2bdry,keebdry,kee2bdry
-      namelist/inwant/psiwant,vzeroj
+      namelist/inwant/psiwant,vzeroj,sizeroj,fwtjtr,sigjtr
       namelist/invt/kwwcur,kvtor,rvtor,wcurbd
 
       allocate(coils(nsilop),expmp2(magpri))

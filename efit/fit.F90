@@ -132,7 +132,7 @@
                 jerror(jtime) = 1
                 return
               endif
-            end if
+            endif
           endif
 
 #ifdef DEBUG_LEVEL2
