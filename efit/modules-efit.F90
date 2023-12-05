@@ -20,7 +20,6 @@
 !       store_dir    central directory to collect EFIT results
         character(256) table_dir,input_dir,store_dir,table_di2, &
                        link_efit,link_store
-        integer*4 ltbdir,lindir,lstdir,ltbdi2
         character(7) :: efitvers ! git hash
         character(10) :: efitdate,efitdatealt ! commit dates (legacy formats)
         integer*4 :: efitversion ! commit date (legacy form)
@@ -435,8 +434,7 @@
         real*8,dimension(:),allocatable :: rbdry_ext,zbdry_ext,xlim_ext, &
                                            ylim_ext,psirz_ext, &
                                            qpsi_ext,fcoil_ext
-        real*8 :: sign_ext,scalepp_ext,scaleffp_ext,cratio_ext, &
-                  cratiop_ext,cratiof_ext,simag_ext,psibry_ext
+        real*8 :: cratiop_ext,cratiof_ext,simag_ext,psibry_ext
         character*80 :: geqdsk_ext
         logical :: fixpp
       end module profile_ext_mod

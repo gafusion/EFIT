@@ -198,8 +198,8 @@
 !--------------------------------------------------------------------- 
       if ((kdata.eq.5).and.(kdata.eq.6)) then
         appendsnap='KG'
-        fwtcur=1.
-        fwtbp=1.
+        fwtcur=1.  ! TODO: why is this wanted?
+        fwtbp=1.  ! TODO: why is this wanted?
         iout=1                 ! default - write fitout.dat
         kffcur=3
         kppcur=3
@@ -425,12 +425,8 @@
         nw_ext=0
         nh_ext=0
         psin_ext(1)=-1000.0 
-        sign_ext=1.0
-        cratio_ext=1.0
         cratiop_ext=1.0
         cratiof_ext=1.0
-        scalepp_ext=1.0
-        scaleffp_ext=1.0
 
         cgama=0.0
         calpa=0.0

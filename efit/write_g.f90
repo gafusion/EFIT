@@ -14,11 +14,11 @@
       implicit none
       real*8 seval
       integer*4, intent(in) :: jtime
-      integer*4 ijtime,i,j,jb,kk,ierold,ioerr,kkstark,nbsave,nbabs,ndel, &
-                nqpsi,nsw,nsh
-      real*8 btor,enps,plasma,saisq,ssibry,ssimag,xdiff,xdim,xdum,xn, &
+      integer*4 ijtime,i,j,jb,kk,ioerr,kkstark,nbsave,nbabs,ndel, &
+                nqpsi,nsw,nsh,sign_out
+      real*8 btor,plasma,saisq,ssibry,ssimag,xdiff,xdim,xdum,xn, &
              zdiff,zdim,zmid
-      real*8 psirz(nw,nh),pcurrz(nw,nh),workk(nw),dmion(nw), &
+      real*8 psirz(nw,nh),pcurrz(nw,nh),dmion(nw), &
              bworm(nmass),cworm(nmass),dworm(nmass),coils(nsilop), &
              expmp2(magpri),prexp(nrogow),tgamma(nstark),sgamma(nstark), &
              rrrgam(nstark),zzzgam(nstark),aa1gam(nstark),aa2gam(nstark), &
@@ -27,13 +27,13 @@
              bmsels(nmsels),sbmsels(nmsels),fwtbmsels(nmsels), &
              rrmsels(nmsels),zzmsels(nmsels),l1msels(nmsels), &
              l2msels(nmsels),l4msels(nmsels),emsels(nmsels),semsels(nmsels)
-      character eqdsk*72,header*42,wform*20,let,fit_type*3
+      character eqdsk*300,header*42,wform*20,fit_type*3
       character*10 vers(6)
       namelist/out1/ishot,itime,betap0,rzero,qenp,enp,emp,plasma, &
            expmp2,coils,btor,rcentr,brsp,icurrt,rbdry,zbdry, &
            nbdry,fwtsi,fwtcur,mxiter,nxiter,limitr,xlim,ylim,error, &
            iconvr,ibunmn,pressr,rpress,nqpsi,npress,sigpre,qpsi, &
-           pressr,pressw
+           pressw
       namelist/mseout/rrrgam,zzzgam,aa1gam,aa2gam,aa3gam,aa4gam, &
                       tgamma,sgamma,aa5gam,aa6gam,aa7gam,aa8gam, &
                       msebkp,fwtgam,tgammauncor
@@ -74,6 +74,9 @@
       else
         wform='unformatted'
       endif
+!
+      sign_out=1.0
+      if(ipmeas(jtime).gt.0.0 .or. ivacum.ne.0) sign_out=-1.0
 !----------------------------------------------------------------------
 !--   set fit type                                                   --
 !----------------------------------------------------------------------
@@ -121,15 +124,7 @@
       do i=1,nw
         do j=1,nh
           kk=(i-1)*nh+j
-          if (ivacum.eq.0) then
-            if (ipmeas(jtime).gt.0.0) then
-              psirz(i,j)=-psi(kk)
-            else
-              psirz(i,j)=psi(kk)
-            endif
-          else
-            psirz(i,j)=-psi(kk)
-          endif
+          psirz(i,j)=psi(kk)*sign_out
         enddo
       enddo
       nsw=(nw-1)/(nw_sub-1)
@@ -164,27 +159,10 @@
       endif
       write(vers(5),1080) ijtime
       vers(6)=' '
-      let = 'g'
-      call setfnmeq(itimeu,let,ishot,ijtime,eqdsk)
-!----------------------------------------------------------------------
-!--   If (ISTORE = 1) Then                                           --
-!--   Central directory to collect EFIT results is store_dir         --
-!----------------------------------------------------------------------
-      if (istore .eq. 1) then
-        eqdsk = store_dir(1:lstdir)//eqdsk
-      endif
-      open(unit=neqdsk,file=eqdsk,status='old', &
-           form=wform,iostat=ioerr)
-      if (ioerr.eq.0) close(unit=neqdsk,status='delete')
-      open(unit=neqdsk,file=eqdsk,status='new', &
-           form=wform,delim='quote')
-      if (ipmeas(jtime).gt.0.0) then
-        ssimag=-simag
-        ssibry=-psibry
-      else
-        ssimag=simag
-        ssibry=psibry
-      endif
+      call setfnm('g',ishot,ijtime,itimeu,'',eqdsk)
+      call open_new(neqdsk,eqdsk,wform,'quote')
+      ssimag=simag*sign_out
+      ssibry=psibry*sign_out
       eqdsk_format: if (keqdsk.eq.1) then
       write(neqdsk,2000) (vers(i),i=1,6),0,abs(nw_sub),abs(nh_sub)
       write(neqdsk,2020) xdim,zdim,rcentr,rgrid(1),zmid
@@ -193,18 +171,8 @@
       write(neqdsk,2020) zmaxis,xdum,ssibry,xdum,xdum
       write(neqdsk,2020) (fpol(i),i=1,nw,nsw)
       write(neqdsk,2020) (pres(i),i=1,nw,nsw)
-      if (ipmeas(jtime).gt.0.0) then
-        workk=-ffprim
-      else
-        workk=ffprim
-      endif
-      write(neqdsk,2020) (workk(i),i=1,nw,nsw)
-      if (ipmeas(jtime).gt.0.0) then
-        workk=-pprime
-      else
-        workk=pprime
-      endif
-      write(neqdsk,2020) (workk(i),i=1,nw,nsw)
+      write(neqdsk,2020) (ffprim(i)*sign_out,i=1,nw,nsw)
+      write(neqdsk,2020) (pprime(i)*sign_out,i=1,nw,nsw)
       write(neqdsk,2020) ((psirz(i,j),i=1,nw,nsw),j=1,nh,nsh)
       write(neqdsk,2020) (qpsi(i),i=1,nw,nsw)
       write(neqdsk,2022) nbbbs,limitr
@@ -216,29 +184,17 @@
       write(neqdsk,2024) kvtor,rvtor,nmass
       if (kvtor.gt.0) then
         write(neqdsk,2020) (pressw(i),i=1,nw,nsw)
-        if (ipmeas(jtime).gt.0.0) then
-          workk=-pwprim
-        else
-          workk=pwprim
-        endif
-        write(neqdsk,2020) (workk(i),i=1,nw,nsw)
+        write(neqdsk,2020) (pwprim(i)*sign_out,i=1,nw,nsw)
       endif
 !----------------------------------------------------------------------
 !--   write out ion mass density profile if available                --
 !----------------------------------------------------------------------
-      if (nmass.gt.0) then
+      if(nmass.gt.0) &
         write(neqdsk,2020) (dmion(i),i=1,nw,nsw)
-      endif
       write(neqdsk,2020) (rhovn(i),i=1,nw,nsw)
       write(neqdsk,2026) keecur
-      if (keecur.gt.0) then
-        if (ipmeas(jtime).gt.0.0) then
-          workk=-epoten
-        else
-          workk=epoten
-        endif
-        write(neqdsk,2020) (workk(i),i=1,nw,nsw)
-      endif
+      if(keecur.gt.0) &
+        write(neqdsk,2020) (epoten(i)*sign_out,i=1,nw,nsw)
 ! note: unlike the rest of the file, these optional extras have
 !       never been described completely with variables available here
 !       (since being added initially in 2004)
@@ -375,18 +331,8 @@
                      real(xdum,r4),real(xdum,r4)
       write(neqdsk) (real(fpol(i),r4),i=1,nw,nsw)
       write(neqdsk) (real(pres(i),r4),i=1,nw,nsw)
-      if (ipmeas(jtime).gt.0.0) then
-        workk=-ffprim
-      else
-        workk=ffprim
-      endif
-      write(neqdsk) (real(workk(i),r4),i=1,nw,nsw)
-      if (ipmeas(jtime).gt.0.0) then
-        workk=-pprime
-      else
-        workk=pprime
-      endif
-      write(neqdsk) (real(workk(i),r4),i=1,nw,nsw)
+      write(neqdsk) (real(ffprim(i)*sign_out,r4),i=1,nw,nsw)
+      write(neqdsk) (real(pprime(i)*sign_out,r4),i=1,nw,nsw)
       write(neqdsk) ((real(psirz(i,j),r4),i=1,nw,nsw),j=1,nh,nsh)
       write(neqdsk) (real(qpsi(i),r4),i=1,nw,nsw)
       write(neqdsk) nbbbs,limitr
@@ -396,26 +342,19 @@
 !--   write out rotation information                                 --
 !----------------------------------------------------------------------
       write(neqdsk) kvtor,real(rvtor,r4),nmass
-      if (nmass.gt.0) then
+      if (kvtor.gt.0) then
         write(neqdsk) (real(pressw(i),r4),i=1,nw,nsw)
         write(neqdsk) (real(pwprim(i),r4),i=1,nw,nsw)
       endif
 !----------------------------------------------------------------------
 !--   write out ion mass density profile if available                --
 !----------------------------------------------------------------------
-      if (nmass.gt.0) then
+      if(nmass.gt.0) &
         write(neqdsk) (real(dmion(i),r4),i=1,nw,nsw)
-      endif
       write(neqdsk) (real(rhovn(i),r4),i=1,nw,nsw)
       write(neqdsk) keecur
-      if (keecur.gt.0) then
-        if (ipmeas(jtime).gt.0.0) then
-          workk=-epoten
-        else
-          workk=epoten
-        endif
-        write(neqdsk) (real(workk(i),r4),i=1,nw,nsw)
-      endif
+      if(keecur.gt.0) &
+        write(neqdsk) (real(epoten(i)*sign_out,r4),i=1,nw,nsw)
 ! note: unlike the rest of the file, these optional extras have
 !       never been described completely with variables available here
 !       (since being added initially in 2004)
@@ -444,24 +383,17 @@
       close(unit=neqdsk)
       nbdry=nbsave
       fixed_bdry: if (nbdry.gt.2) then
-        ierold=ierchk
-        ierchk=0
         ibunmn=1
         fwtcur=1.
-        mxiter=1
-        nxiter=99
-        error=1.0e-04_dp ! TODO: why is this set at a fixed value?
-        enps=enp
-        enp=0.5_dp
-        fwtsi(1:nfsum)=1.
-        fwtsi((nfsum+1):nsilop)=0.0
+        fwtfc(1:nfsum)=1.
+        fwtsi(1:nsilop)=1.
+        fwtmp2(1:magpri)=1.
+        mxiter=nxiter
+        nxiter=1
         itime=itime+1
         limitr=limitr-1
-        let = 'x'
-        call setfnmeq(itimeu,let,ishot,itime,eqdsk)
-        open(unit=neqdsk,file=eqdsk,status='old',iostat=ioerr)
-        if (ioerr.eq.0) close(unit=neqdsk,status='delete')
-        open(unit=neqdsk,file=eqdsk,status='new',delim='quote')
+        call setfnm('x',ishot,itime,itimeu,'',eqdsk)
+        call open_new(neqdsk,eqdsk,'','quote')
         write(neqdsk,in1)
         call ppstore
         call ffstore
@@ -470,10 +402,8 @@
         write(neqdsk,basis)
         write(neqdsk,inwant)
         close(unit=neqdsk)
-        enp=enps
         limitr=limitr+1
         itime=itime-1
-        ierchk=ierold
       endif fixed_bdry
 !
       return

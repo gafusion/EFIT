@@ -22,7 +22,7 @@
              dsi,nzz,saisq,sinow,sm1,sm2,ssiref, &
              sumif,sumifb,sumifs,sumift,tin,tout, &
              xdum,xnorm,xtest,ytest,xxm,yym,xxp,yyp
-      character*30 sfname
+      character*300 sfname
       character(1000) :: line
       real*8 xrsp(npcurn)
       real*8 patmpz(magpri),xmpz(magpri),ympz(magpri),ampz(magpri), &
@@ -417,9 +417,7 @@
         enddo
 !
         if (rank == 0) then
-          open(unit=80,status='old',file='mhdin.new',iostat=ioerr)
-          if (ioerr.eq.0) close(unit=80,status='delete')
-          open(unit=80,status='new',file='mhdin.new',delim='quote')
+          call open_new(80,'mhdin.new','','quote')
           write (80,in3)
           close(unit=80)
         endif
@@ -515,11 +513,8 @@
                   crmaxi(i),czmaxi(i),cemaxi(i),cqmaxi(i),cchisq(i)
       enddo
       if ((kwripre.gt.0).and.(kwripre.le.9)) then
-          call setfnmd('n',ishot,itime,sfname)
-          sfname=sfname(1:13)//'_error'
-          open(unit=74,status='old',file=sfname,iostat=ioerr)
-          if (ioerr.eq.0) close(unit=74,status='delete')
-          open(unit=74,status='new',file=sfname)
+          call setfnm('n',ishot,itime,itimeu,'_error',sfname)
+          call open_new(74,sfname,'','')
           do i=1,nitera
            write (74,*) i,cerror(i),xdum,xdum
           enddo

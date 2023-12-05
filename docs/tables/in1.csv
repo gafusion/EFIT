@@ -60,8 +60,8 @@ ICINIT,2,"| (Integer flag) Current Initialization. Plasma current profile initia
 | 1 = elliptical and uniform flux surface for all timeslices (EELIP,AELIP,RELIP,ZELIP).
 | 2 = elliptical and parabolic for all timeslices (default).
 | -2 = use information from ESAVE.DAT (from an existing EFIT run) for first timeslice and previous timeslice subsequently.
-| -3 = use existing solution from geqdsk_ext or hdf5 file for all timeslices.
-| -4 = use existing solution from geqdsk_ext or hdf5 file for first timeslice and previous timeslice subsequently.
+| -3 = use existing solution from GEQDSK_EXT or hdf5 file for all timeslices (must have same dimensions).
+| -4 = use existing solution from GEQdSK_EXT or hdf5 file for first timeslice and previous timeslice subsequently.
 | -12= elliptical and parabolic first timeslice and previous timeslice subsequently."
 ICNTOUR,,"(Integer flag) Contour.
 | + = bypass CNTOUR routine."
@@ -72,8 +72,8 @@ ICONSI,,"| How to make contour plots of fields
 | 3, 4 = use 'SCALE' in DISSPLA call for field plot."
 ICONVR,2,"| Specify solution mode
 | 1 = fitting mode for mxiter, nxiter iterations until the solution achieves error below ERROR and chi squared below SAIMIN.
-| 2 = fitting mode until chisq reverse, must satisfy minimum error ERRMIN, minimum 8 iterations (or below min elongation ELOMIN), and minimum chisq SAICON (default).
-| 3 = equilibrium mode.
+| 2 = fitting mode until chisq reverses, must satisfy minimum error ERRMIN, minimum 8 iterations (or below min elongation ELOMIN), and minimum chisq SAICON (default).
+| 3 = equilibrium mode, P' and FF' are fixed and must be specified (see PROFILE_EXT). Only a limited number of parameters can be fit.
 | - = Green's table calculations for -ICONVR filaments and write file RPFXX.DAT for use with MFIT."
 ICUTFP,0,"| 0 = enforce vacuum outside of LCFS (Default).
 | 2 = to allow force-free current to flow in scrape-off layer (width set by ALPHAFP)."
@@ -169,7 +169,7 @@ KERSIL,3, "| ""Reference Flux Loop Uncertainty Switch"". This parameter controls
 | 2 = use a hard-coded uncertainty of 0.001 for the reference (matches probe 8 on D-III)
 | 3 = use the max of coil current, plasma current, and bit uncertainty for the reference (default)"
 KFRAME,0,Something to do with plotting?
-KINPUT,, "| Write out M(SHOT).(TIME+1) file during execution in equilibrium mode which can be used as input to execution in fitting mode. (Computed signals at probes are used as simulated input for fitting.)
+KINPUT, 0, "| Write out M(SHOT).(TIME+1) file during execution in equilibrium mode which can be used as input to execution in fitting mode. (Computed signals at probes are used as simulated input for fitting.)  WARNING: this file will be overwritten if IOUT=4.
 | >0 write out M(SHOT).(TIME+1) file.
 | <=0 Don't write file"
 KLABEL,,Something to do with plotting.
@@ -190,7 +190,7 @@ LIMFAG,2,"| Specify which method to use to determine which grid points are insid
 LIMVS,1,1 = use limiter contour rather than vessel for attached current model.
 LIMID,33,"Suffix used to identify which of several standard files containing limiter information to use."
 LIMITR,-33,"| Number of limiter points (number of valid points in XLIM and YLIM arrays) except for shots <=76756, where number of limiter points is this number+13
-| <0 read from a standard file (Default).
+| <0 read from a standard file or use a limiter from an existing solution if GEQDSK_EXT is set (Default).
 | 1000+number number of points for symmetrized solution (input only top half of limiter points)."
 SILOPLIM,0, Controls whether the boundary from the previous timeslice (on the same processor) is used as an initial guess for finding the boundary at the current time.  The previous solution is only used when the maximum absolute flux loop difference between the current and previous iteration is less than this value.
 MXITER,25,"| Maximum number of outer fitting iterations (limited to KXITER, see SETUP namelist) Set to 1 for equilibrium solutions. Set negative for iteration history output to terminal during EFIT execution."

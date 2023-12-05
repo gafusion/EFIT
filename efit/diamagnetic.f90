@@ -71,7 +71,7 @@
         SUBROUTINE DLCOMP(TIM,DIAMAG,DIAMAGC,SIG,NSHOT,NPTS,IDLC, &
                           IERR,TAVG)
         use set_kinds
-        use extvars, only: input_dir,lindir
+        use extvars, only: input_dir
         use var_exdata, only: ishot
         use vtime_mod, only: ntims,npmax
         implicit integer*4 (i-n), real*8 (a-h,o-z)
@@ -108,7 +108,7 @@
           EBCOUP(3)=0.0
         endif
 !
-        filin=input_dir(1:lindir)//filin
+        filin=trim(input_dir)//trim(filin)
 
         ITYP=11
         IAR(1)=NPMAX

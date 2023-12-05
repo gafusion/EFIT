@@ -155,7 +155,7 @@
         dbpli_diff,delbp_diff
 
       open(unit=nin,status='old', &
-           file=table_di2(1:ltbdi2)//'mhdin.dat')
+           file=trim(table_di2)//'mhdin.dat')
       read (nin,machinein,iostat=istat)
       if (istat>0) then
         backspace(nin)

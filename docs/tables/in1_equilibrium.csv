@@ -1,14 +1,4 @@
 ﻿Variable, Default, Description
-NBDRY, 0, "| This is the parameter which specifies that solution method
-| is to be fixed boundary or free boundary equilibrium mode. Must set ICONVR=3.
-| -n = write out boundary points in S(shot).t every other n points.
-| 0 = do free boundary equilibrium solution (Default).
-| n = fixed boundary calculation given n boundary points or boundary constraints.
-| In fixed boundary mode, if successful will write out a x(shot).(time+1) file for free boundary runs using computed flux loop signals."
-IFCURR, 0, "| (Integer flag) Fcoil Currents. Only used in free boundary equilibrium calculations.
-| 1 = fixed F coil currents.
-| 0 = variable F-coil currents (Default)
-| Set = 0 in fitting and fixed boundary equilibrium solutions."
 CFCOIL, -1.0, "| F coil stabilization constant for fixed boundary option.
 | >0 = use input value
 | <0 = normalize by plasma current (cfcoil=100/Ip*|cfcoil|)
@@ -20,11 +10,20 @@ FCSUM, 1.0, "| Identifies which F-coils are included in fitted constraint that
 | 1 = include current from this coil in the sum (default).
 | Ignored unless IFREF = 2."
 FCZERO, ones,"Fitting weights for zero F coil currents in fixed boundary option. Set to 10000 for zero. Default = all 1.0's"
-FWTBDRY, ones(nbdry),"""Fit Weight Boundary"". Fitting weight for boundary points, use with NBDRY."
+FWTBDRY, ones(nbdry),"""Fit Weight Boundary"". Fitting weight for boundary points.  Only used with NBDRY>1."
+IFCURR, 0, "| (Integer flag) Fcoil Currents. Only used in free boundary equilibrium calculations.
+| 1 = fixed F coil currents.
+| 0 = variable F-coil currents (Default)
+| Set = 0 in fitting and fixed boundary equilibrium solutions."
 IFREF,1, "| For use with fixed boundary equilibrium.
 | 0 = don't adjust boundary flux.
 | 1 = determine boundary flux by setting the sum of inner F-coil currents to zero.
 | 2 = force sum of F-coil currents set by array FCSUM to be zero.
 | 3 = minimize F-coil currents.
 | 4 = set boundary flux to PSIBRY."
+NBDRY, 0, "| This is the parameter controls how input RBDRY and ZBDRY arrays are used.
+| -n = same as 0, but if GEQDSK_EXT is set write out boundary points in S(shot).t every other n points.
+| 0 = don't use input RBDRY and ZBDRY, but boundary constraints may still be used if GEQDSK_EXT is set (Default).
+| n = use first n elements of RBDRY and ZBDRY as fixed boundary boundary points or constraints.
+| In fixed boundary constraints are used, if successful will write out a x(shot).(time+1) file for free boundary runs using computed flux loop signals."
 PSIBRY, 0.0, "Poloidal flux value for the boundary when solving in fixed boundary mode with IFREF=4."

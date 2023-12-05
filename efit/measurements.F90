@@ -222,11 +222,11 @@
 !--   New BT compensations for magnetic probes and flux loops      --
 !--------------------------------------------------------------------
       have_btc: if (ibtcomp.eq.1) then
-      open(unit=60,file=input_dir(1:lindir)//'btcomp.dat', &
+      open(unit=60,file=trim(input_dir)//'btcomp.dat', &
            status='old',iostat=ioerr)
       if (ioerr.ne.0) then
         call errctrl_msg('get_consrtaints', &
-                         input_dir(1:lindir)//'btcomp.dat not found')
+                         trim(input_dir)//'btcomp.dat not found')
         stop
       endif
       read_btcshot=.true.
@@ -272,7 +272,7 @@
 !---------------------------------------------------------------------
       curccoi(1:np,1:mccoil)=0.
       have_coils: if (n1coil.gt.0.or.nccoil.gt.0) then
-      open(unit=60,file=input_dir(1:lindir)//'ccomp.dat', &
+      open(unit=60,file=trim(input_dir)//'ccomp.dat', &
            status='old')
 !33000 read (60,*,err=34000,end=34000) ibtcshot,n1name,(ncname(i), &
 !                                      i=1,3)
@@ -405,7 +405,7 @@
 !---------------------------------------------------------------------
       curicoi(1:np,1:micoil)=0.
       have_ic: if (nicoil.gt.0) then
-      open(unit=60,file=input_dir(1:lindir)//'icomp.dat', &
+      open(unit=60,file=trim(input_dir)//'icomp.dat', &
            status='old')
 !35000 read (60,*,err=36000,end=36000) ibtcshot,(niname(i),i=1,6)
 !

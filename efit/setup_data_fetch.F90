@@ -145,9 +145,9 @@
           ! the snap file wasn't found in the CWD, look in the 
           ! support files instead
           open(unit=neqdsk,status='old', &
-               file=input_dir(1:lindir)//'snapfiles/'//snap_file,iostat=ioerr)
+               file=trim(input_dir)//'snapfiles/'//snap_file,iostat=ioerr)
           if (ioerr.eq.0) then
-            snapfile=input_dir(1:lindir)//'snapfiles/'//snap_file
+            snapfile=trim(input_dir)//'snapfiles/'//snap_file
           elseif (snapextin.ne.'none') then
             ! the snap file still wasn't found, check for any snapfile
             ! in the CWD without an extension
@@ -166,7 +166,7 @@
              file='efit_time.dat',iostat=ioerr)
         if(ioerr.ne.0) &
           open(unit=neqdsk,status='old', &
-               file=input_dir(1:lindir)//'efit_time.dat')
+               file=trim(input_dir)//'efit_time.dat')
       end select
 
       read (neqdsk,efitin,iostat=istat)
@@ -263,7 +263,7 @@
         rwtmp2(1:magpri)=0.0
         rwtsi(1:nsilop)=0.0
         open(unit=neqdsk,status='old', &
-             file=input_dir(1:lindir)//'fitweight.dat')
+             file=trim(input_dir)//'fitweight.dat')
   105   read(neqdsk,*,iostat=ioerr) irshot
         if ((ioerr.eq.0).and.(irshot.le.ishot)) then
           ! Note: These DIIID specific probe choices

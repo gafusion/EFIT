@@ -50,7 +50,8 @@
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       double precision, dimension(nwh) :: psi, zero
-      double precision, dimension(nwh) :: x,y
+      double precision, dimension(nw) :: x
+      double precision, dimension(nh) :: y
       double precision, dimension(npoint) :: xcontr,ycontr
       double precision, dimension(5) :: dist(5)
       double precision, dimension(limitr) :: xlim,ylim
@@ -1446,8 +1447,8 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 
       real*8, intent(out) :: xseps(2),yseps(2)
-      dimension x(nx),y(nz),pds(6),xxout(kfound),yyout(kfound),psipsi(nx*nz)
-      dimension bpoo(kfound),bpooz(kfound),pdss(6),xlimv(limtrv),ylimv(limtrv)
+      dimension x(nx),y(nz),pds(6),xxout(npoint),yyout(npoint),psipsi(nx*nz)
+      dimension bpoo(npoint),bpooz(npoint),pdss(6),xlimv(limtrv),ylimv(limtrv)
       dimension pdsold(6),zeross(1),xs(1),ys(1)
       character(len=80) :: strtmp
       parameter (psitol=1.0e-04_dp)
