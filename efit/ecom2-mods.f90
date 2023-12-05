@@ -57,7 +57,7 @@
       end module var_bscom
 
       module var_autoknot
-      integer*4 :: kautoknt,kakloop,kakiter
+      integer*4 :: kautoknt,kakloop,kakiter,proc_conv
       integer*4 :: ks_a,lconvr_a,ktime_a,kerror_a,kadknt,mxiter_a
       real*8 :: akchiwt,akerrwt,aktol,akgamwt,akprewt
       real*8,dimension(:),allocatable :: aeeknt,awwknt,affknt,appknt

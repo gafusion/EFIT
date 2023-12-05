@@ -313,6 +313,8 @@
           call write_a(ktime,ks)
           cycle
         endif
+        if ((kautoknt .eq. 2 .and. proc_conv .eq. rank) .or. &
+            &(kautoknt .ne. 2 .or. kautoknt .ne. 1)) then
 !----------------------------------------------------------------------
 !--     post processing for graphic and text outputs                 --
 !----------------------------------------------------------------------
@@ -361,6 +363,7 @@
         endif
 #endif
         if(k.lt.ktime) kerrot(ks)=kerror
+        endif
       enddo
 
 #ifdef USE_NETCDF
