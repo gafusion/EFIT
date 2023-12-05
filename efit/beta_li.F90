@@ -1,44 +1,51 @@
 #include "config.f"
 !**********************************************************************
 !>                                                                  
-!!     SUBPROGRAM DESCRIPTION:                                      
-!!          betali computes betas and li.                           
+!!     This subroutine computes betas, li, and other physics quantities
+!!       that are written to output files (called by shapesurf)
 !!
 !!     @param jtime : time index
 !!
-!!     @param rgrid :
+!!     @param rgrid : radius of grid points
 !!
-!!     @param zgrid : 
-!!
-!!     @param idovol :
+!!     @param zgrid : Z of grid points
 !!
 !!     @param kerror : error flag
 !**********************************************************************
-      subroutine betali(jtime,rgrid,zgrid,idovol,kerror)
+      subroutine betaliplus(jtime,rgrid,zgrid,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky,cw,wkw,copyw,bwx, &
                   bwy,sifprw,bwprw,cwprw,dwprw,sfprw,sprwp
       use var_cww
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
 
-      dimension pds(6),rgrid(*),zgrid(*)
-      real*8,dimension(:),allocatable :: worksi,workrm,bwork, &
-             cwork,dwork,x,y,dpleng
-      dimension xsier(nercur)
-      integer*4, intent(inout) :: kerror
-      integer*4, parameter :: licalc=1 ! hardcoded option
-      data inorm/3/,ibtcal/2/
-
-      ALLOCATE(worksi(nw),workrm(nw),bwork(nw), &
-         cwork(nw),dwork(nw),x(nw),y(nh),dpleng(npoint))
+      real*8 fpcurr,ppcurr,prcurr,pwcurr,pwpcur,prcur4,pwcur4,seval
+      integer*4, intent(in) :: jtime
+      real*8, intent(in) :: rgrid(nw),zgrid(nh)
+      integer*4, intent(out) :: kerror
+      integer*4 i,ii,ip1,iiqmin,izzmax,j,k,kk,km1,kz,mkk,mx,my,iautoc, &
+                ier,nfind
+      real*8 aasi,abpol,axout,ayout,bbsi,bp2flx,bpolsq,bpolzs,circum, &
+             const,dlbpi,dli,dmui,dsi,dx,dyww,eesi,enr,enz,erhor,erhoz, &
+             f222,ff222,fnow,fpnow, &
+             pp0,ppnow,ppw,pres0,prew0,prewx,ptop0,pwop0,pwp0r2, &
+             rcccc,rcurrm,rdiml,rdimw,rgmvt,rho,rlnr, &
+             sbp,sbpi,sdlbp,sdlbpol,sdnrho,sicut,siii,sisi,siwant, &
+             sixxx,ssdlbp,sumbp,sumbp2,sumbzz,sumpr2,sumpre,sumprt, &
+             sumprw,sumr2,sumvar,sumy2,sumz,xcmax,xcmin,xww,xycmax, &
+             xycmin,xym,xyp,ycmax,ycmin,yoxm,yoxp,ypsz,yww,yxcmax, &
+             yxcmin,zaaa,zbbb,zccc
+      real*8 pds(6),xsier(nercur),worksi(nw),workrm(nw),bwork(nw), &
+             cwork(nw),dwork(nw),x(nw),y(nh),dpleng(npoint)
+      integer*4, parameter :: licalc=1,idovol=1,inorm=3,ibtcal=2 ! hardcoded options
 
       kerror = 0
 
-      sumbp2=0.0
       select case (licalc)
       case (1) ! standard
         call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
+        sumbp2=0.0
         do i=1,nw
           do j=1,nh
             kk=(i-1)*nh+j
@@ -49,10 +56,7 @@
         enddo
         sumbp2=sumbp2*twopi*darea
       case (2) ! rarely used
-        do kk=1,nwnh
-          sumbp2=sumbp2+(psi(kk)-psibry)*pcurrt(kk)*www(kk)
-        enddo
-        sumbp2=sumbp2*twopi*tmu*twopi
+        sumbp2=sum((psi(1:nwnh)-psibry)*pcurrt(1:nwnh)*www(1:nwnh))*twopi**2*tmu
       end select
 !
       psurfa(jtime)=0.0
@@ -93,13 +97,14 @@
         abpol=(bpol(ip1)+bpol(i))/2.
         sumbp=dpleng(i)*abpol
         sumbzz=sumbzz+(bpolz(ip1)+bpolz(i))/2.*(yout(ip1)-yout(i))
-        if (kbetapr.eq.0) then
+        select case (kbetapr)
+        case (0)
           sumvar=dpleng(i)*abpol**2*axout
-        else
-          if (kbetapr.eq.1) pxxxxx=prbdry
-          if (kbetapr.eq.2) pxxxxx=pressb
-          sumvar=dpleng(i)*(abpol**2+4.0*pi*tmu*pxxxxx)*axout
-        endif
+        case (1)
+          sumvar=dpleng(i)*(abpol**2+4.0*pi*tmu*prbdry)*axout
+        case (2)
+          sumvar=dpleng(i)*(abpol**2+4.0*pi*tmu*pressb)*axout
+        end select
         s1(jtime)=s1(jtime)+sumvar*sdnrho*rho
         s2(jtime)=s2(jtime)+sumvar*enr
         s3(jtime)=s3(jtime)+sumvar*ayout*enz
@@ -110,13 +115,18 @@
         sbpi=sbpi+dlbpi
         qout(jtime)=qout(jtime)+dlbpi/axout**2
       enddo
-      bp2flx=sbp/sbpi
-      if (inorm.eq.2) bp2flx=2.*rcentr/volume(jtime)*(pi*tmu &
-                                *ipmhd(jtime))**2*1.0E+06_dp
-      if (inorm.eq.3) bp2flx=(tmu*2.0*pi*ipmhd(jtime) &
-                             /plengt(nfound))**2
-      if (inorm.eq.4) bp2flx=2.*(tmu*ipmhd(jtime)/aminor(jtime))**2 &
-                             /(elong(jtime)**2+1.)*1.0e+04_dp
+      select case (inorm)
+      case (2) 
+        bp2flx=2.*rcentr/volume(jtime)*(pi*tmu*ipmhd(jtime))**2 &
+                 *1.0E+06_dp
+      case (3)
+        bp2flx=(tmu*2.0*pi*ipmhd(jtime)/plengt(nfound))**2
+      case (4)
+        bp2flx=2.*(tmu*ipmhd(jtime)/aminor(jtime))**2 &
+                 /(elong(jtime)**2+1.)*1.0e+04_dp
+      case default
+        bp2flx=sbp/sbpi
+      end select
       bpolav(jtime)=sqrt(bp2flx)
       rcurrt(jtime)=sqrt(sumr2/twopi/tmu/abs(ipmhd(jtime)))*100.
       zcurrt(jtime)=sumz/twopi/tmu/abs(ipmhd(jtime))*100.
@@ -153,10 +163,9 @@
         f222=axout*(axout-4.*ayout)
         ff222=f222-2.*axout+1.
         sumy2=sumy2+sumbp*ff222
-        if (yout(i)*yout(ip1).le.0.0.and.xout(i).gt.rcentr) then
+        if(yout(i)*yout(ip1).le.0.0.and.xout(i).gt.rcentr) &
           rmajz0(nw)=xout(i)-yout(i)*(xout(ip1)-xout(i)) &
                              /(yout(ip1)-yout(i))
-        endif
       enddo
       yyy2(jtime)=sumy2/(tmu*2.0*pi*ipmhd(jtime))/4. &
                   *(rcurrt(jtime)/aminor(jtime))**2
@@ -174,9 +183,9 @@
         rmajz0(1)=0.0
       endif
       r1surf(1)=1./rmaxis
-      r2surg(1)=1./rmaxis**2
+      r2surf(1)=1./rmaxis**2
       r1surf(nw)=r1bdry
-      r2surg(nw)=r2bdry
+      r2surf(nw)=r2bdry
       bpolss(1)=0.0
       bpolss(nw)=bpolav(jtime)
 !----------------------------------------------------------------------
@@ -185,45 +194,40 @@
       rotation: if (kvtor.gt.0) then
         sumprt=0.0
         sumprw=0.0
-        n1set=1
-        ypsi=0.5_dp
-        prew0=pwcur4(n1set,ypsi)
-        pres0=prcur4(n1set,ypsi)
-        n1set=0
+        prew0=pwcur4(1,0.5_dp)
+        pres0=prcur4(1,0.5_dp)
+        pwprim=sprwp
+        pressw=sfprw
         do i=1,nw
-          pwprim(i)=sprwp(i)
-          pressw(i)=sfprw(i)
-        enddo
-        do i=1,nw
-        do j=1,nh
-           kk=(i-1)*nh+j
-           ypsi=xpsi(kk)
-           pres0=prcur4(n1set,ypsi)-prbdry
-           prew0=pwcur4(n1set,ypsi)-preswb
-           if (kvtor.eq.1) then
-             presst(kk)=pres0+prew0*rgrvt(i)
-           elseif (kvtor.eq.2) then
-             if (abs(pres0).gt.1.e-10_dp) then
-               pwop0=prew0/pres0
-               pwp0r2=pwop0*rgrvt(i)
-             else
-               pwop0=0.0
-               pwp0r2=0.0
-             endif
-             presst(kk)=pres0*(1.+0.5_dp*pwp0r2**2)+prew0*rgrvt(i)
-           elseif (kvtor.eq.11.or.kvtor.eq.3) then
-             if (abs(pres0).gt.1.e-10_dp) then
-               pwop0=prew0/pres0
-               ptop0=exp(pwop0*rgrvt(i))
-             else
-               ptop0=1.0
-             endif
-             presst(kk)=pres0*ptop0
-           endif
-           sumprt=sumprt+rgrid(i)*presst(kk)*www(kk)
-           prewx=prew0*(rgrid(i)/rvtor)**2
-           sumprw=sumprw+rgrid(i)*prewx*www(kk)
-        enddo
+          do j=1,nh
+            kk=(i-1)*nh+j
+            pres0=prcur4(0,xpsi(kk))-prbdry
+            prew0=pwcur4(0,xpsi(kk))-preswb
+            select case (kvtor)
+            case (1)
+              presst(kk)=pres0+prew0*rgrvt(i)
+            case (2)
+              if (abs(pres0).gt.1.e-10_dp) then
+                pwop0=prew0/pres0
+                pwp0r2=pwop0*rgrvt(i)
+              else
+                pwop0=0.0
+                pwp0r2=0.0
+              endif
+              presst(kk)=pres0*(1.+0.5_dp*pwp0r2**2)+prew0*rgrvt(i)
+            case (3,11)
+              if (abs(pres0).gt.1.e-10_dp) then
+                pwop0=prew0/pres0
+                ptop0=exp(pwop0*rgrvt(i))
+              else
+                ptop0=1.0
+              endif
+              presst(kk)=pres0*ptop0
+            end select
+            sumprt=sumprt+rgrid(i)*presst(kk)*www(kk)
+            prewx=prew0*(rgrid(i)/rvtor)**2
+            sumprw=sumprw+rgrid(i)*prewx*www(kk)
+          enddo
         enddo
         sumprt=sumprt*darea*twopi
         sumprw=sumprw*darea*twopi
@@ -234,12 +238,6 @@
       rzzmax(1)=rmaxis
       zzmax(1)=zmaxis
       rhovn(1)=0.0
-      nnn=1
-      d11=30.
-      d22=0.03_dp
-      d33=0.01_dp
-      nzz=0
-      zzz=0.0
       do i=2,nw-1
         ii=nw-i+1
         siii=(i-1)*dsi
@@ -248,26 +246,26 @@
         single_volume: if (idovol.le.1) then
         rzzmax(ii)=-99.0
         call surfac(siwant,psi,nw,nh,rgrid,zgrid,bpol,bpolz,nfind, &
-                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,1, &
                     rmaxis,zmaxis,negcur,kerror,2)
         if (nfind.le.40.and.icntour.eq.0) then
 #ifdef DEBUG_LEVEL2
           write (6,*) ' SHAPE/BETALI kerror,i,nfind = ',kerror,i,nfind
 #endif
           call cntour(rmaxis,zmaxis,siwant,xcmin,xcmax,ycmin,ycmax, &
-                      yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
-                      d33 ,d33 ,xmin,xmax,ymin,ymax,nzz,iautoc, &
+                      yxcmin,yxcmax,xycmin,xycmax,30.,drgrid,0.03_dp, &
+                      0.01_dp,0.01_dp,xmin,xmax,ymin,ymax,0,iautoc, &
                       bpol,bpolz,nfind,rgrid,nw,zgrid,nh, &
                       c,n222,nh2,nttyo,npoint, &
                       negcur,bkx,lkx,bky,lky,kerror)
 #ifdef DEBUG_LEVEL2
           write (6,*) ' BETALI/CNTOUR kerror,nfind = ',kerror,nfind
 #endif
-          if (kerror /= 0) return
+          if(kerror /= 0) return
         endif
         found: if (nfind.ge.10) then
-        r2surf(ii)=0.0
         r1surf(ii)=0.0
+        r2surf(ii)=0.0
         volp(ii)=0.0
         rhovn(ii)=0.0
         xym=bpol(1)*bpolz(1)
@@ -278,14 +276,14 @@
         dyww=bpolz(1)/(nh-1)
         bpolzs=0.5*fpol(ii)
         do kz=2,nh-1
-           yww=dyww*(kz-1)
+          yww=dyww*(kz-1)
           call seva2d(bkx,lkx,bky,lky,c,xww,yww,pds,ier,n111)
-           ypsz=(simag-pds(1))/sidif
-           fnow=seval(nw,ypsz,sigrid,fpol,bbfpol,ccfpol,ddfpol)
-           bpolzs=bpolzs+fnow
+          ypsz=(simag-pds(1))/sidif
+          fnow=seval(nw,ypsz,sigrid,fpol,bbfpol,ccfpol,ddfpol)
+          bpolzs=bpolzs+fnow
         enddo
         yww=0.0
-          call seva2d(bkx,lkx,bky,lky,c,xww,yww,pds,ier,n111)
+        call seva2d(bkx,lkx,bky,lky,c,xww,yww,pds,ier,n111)
         ypsz=(simag-pds(1))/sidif
         fnow=seval(nw,ypsz,sigrid,fpol,bbfpol,ccfpol,ddfpol)
         bpolzs=bpolzs+fnow*0.5
@@ -333,20 +331,20 @@
           sdlbp=dli/bpolsq
           sdlbpol=sdlbpol+dli*bpolsq
           circum=circum+dli
-          r2surf(ii)=r2surf(ii)+sdlbp/xww**2
           r1surf(ii)=r1surf(ii)+sdlbp/xww
+          r2surf(ii)=r2surf(ii)+sdlbp/xww**2
+          rr2bpsurf(ii)=r2surf(ii)
           ssdlbp=ssdlbp+sdlbp
           if (bpolz(k).gt.zzmax(ii)) then
             izzmax=k
             zzmax(ii)=bpolz(k)
           endif
-          if (bpolz(km1)*bpolz(k).le.0.0.and.bpol(km1).gt.rcentr) then
+          if(bpolz(km1)*bpolz(k).le.0.0.and.bpol(km1).gt.rcentr) &
             rmajz0(ii)=bpol(km1)-bpolz(km1)*(bpol(k)-bpol(km1)) &
                                            /(bpolz(k)-bpolz(km1))
-          endif
         enddo
         r1surf(ii)=r1surf(ii)/ssdlbp
-        r2surg(ii)=r2surf(ii)/ssdlbp
+        r2surf(ii)=r2surf(ii)/ssdlbp
         bpolss(ii)=sdlbpol/circum
         call qfit(n333,bpol(izzmax-1),bpol(izzmax),bpol(izzmax+1), &
                   bpolz(izzmax-1),bpolz(izzmax),bpolz(izzmax+1), &
@@ -354,7 +352,7 @@
         if (ierr.ne.0) then
           kerror = 1
           return
-        end if
+        endif
         rzzmax(ii)=-zbbb/2./zaaa
         zzmax(ii)=zaaa*rzzmax(ii)**2+zbbb*rzzmax(ii)+zccc
         volp(ii)=abs(volp(ii))*twopi
@@ -373,25 +371,15 @@
         case (1)
           rdiml=rmaxis/srma
           cjmaxi=cratio*(sbeta*rdiml+2.*salpha/rdiml)/darea
-          if (kvtor.gt.0) then
+          if(kvtor.gt.0) &
             cjmaxi=cjmaxi+cratio/darea*sbetaw*rdiml*(rdiml**2-1.)
-          endif
         case (2,5)
-          cjmaxi=(rmaxis*ppcurr(zzz,kppcur) &
-                  +fpcurr(zzz,kffcur)/rmaxis)*cratio/darea
-          if (kvtor.gt.0) then
-            cjmaxi=0.0
-            do j=1,kppcur
-              cjmaxi=rjjjx(j)*brsp(nfsum+j)+cjmaxi
-            enddo
-            do j=1,kffcur
-              cjmaxi=rjjfx(j)*brsp(nfsum+kppcur+j)+cjmaxi
-            enddo
-            do j=1,kwwcur
-              cjmaxi=rjjwx(j)*brsp(nfsum+kpcurn+j)+cjmaxi
-            enddo
-            cjmaxi=cjmaxi/darea
-          endif
+          cjmaxi=(rmaxis*ppcurr(0.0,kppcur) &
+                        +fpcurr(0.0,kffcur)/rmaxis)*cratio/darea
+          if(kvtor.gt.0) &
+            cjmaxi=sum(rjjjx(1:kppcur)*brsp(nfsum+1:nfsum+kppcur) &
+                      +rjjfx(1:kffcur)*brsp(nfsum+kppcur+1:nfsum+kppcur+kffcur) &
+                      +rjjwx(1:kwwcur)*brsp(nfsum+kpcurn+1:nfsum+kpcurn+kwwcur))/darea
         case (4)
           rdiml=rmaxis/rzero
           cjmaxi=cratio/darea*(rdiml+rbetap/rdiml)
@@ -400,10 +388,8 @@
             rgmvt=(rmaxis/rvtor)**2-1.
             cjmaxi=cjmaxi+cratio/darea*rdiml*rbetaw*rgmvt
           elseif (kvtor.eq.11) then
-            ypsm=0.0
-            n1set=1
-            pres0=prcur4(n1set,ypsm)
-            prew0=pwcur4(n1set,ypsm)
+            pres0=prcur4(1,0.0)
+            prew0=pwcur4(1,0.0)
             rgmvt=(rmaxis/rvtor)**2-1.
             pwop0=prew0/pres0
             ptop0=exp(pwop0*rgmvt)
@@ -412,21 +398,22 @@
             cjmaxi=cjmaxi+(pp0+ppw)*rdiml*ptop0
           endif
         end select
-        r2surf(ii)=(eesi**2+1.)/rmaxis**2/tmu/cjmaxi
+        rr2bpsurf(ii)=(eesi**2+1.)/rmaxis**2/tmu/cjmaxi
         r1surf(ii)=1./rmaxis
         endif found
         endif single_volume
         sumpre=sumpre+volp(ii)*pprime(ii)
       enddo
       sumpre=sumpre+volp(nw)*pprime(nw)/2.
-      if (ibtcal.le.1) return
-      if (kbetapr.eq.0) then
+      if(ibtcal.le.1) return
+      select case (kbetapr)
+      case (0)
         sumpre=-sumpre*dsi/volp(nw)
-      else
-        if (kbetapr.eq.1) pxxxxx=prbdry
-        if (kbetapr.eq.2) pxxxxx=pressb
-        sumpre=-sumpre*dsi/volp(nw)+pxxxxx
-      endif
+      case (1)
+        sumpre=-sumpre*dsi/volp(nw)+prbdry
+      case (2)
+        sumpre=-sumpre*dsi/volp(nw)+pressb
+      end select
       betap(jtime)=sumpre*2.0*twopi*tmu/bp2flx
       betat(jtime)=sumpre*2.0*twopi*tmu/bcentr(jtime)**2
       betat(jtime)=100.*betat(jtime)*(rout(jtime)/100./rcentr)**2
@@ -482,7 +469,7 @@
           epoten(i)=sum(cerer(1:keecur)*xsier(1:keecur))
         enddo
       endif
-      if (idovol.gt.1) return
+      if(idovol.gt.1) return
 !-----------------------------------------------------------------------
 !--   compute beta*, taking P(1)=0.0    10/25/90                      --
 !-----------------------------------------------------------------------
@@ -498,7 +485,7 @@
 !-----------------------------------------------------------------------
 !--   compute the safety factor profile
 !-----------------------------------------------------------------------
-      qpsi(1:(nw-1))=abs(fpol(1:(nw-1)))/twopi*r2surf(1:(nw-1))
+      qpsi(1:(nw-1))=abs(fpol(1:(nw-1)))/twopi*rr2bpsurf(1:(nw-1))
       qpsi(nw)=qout(jtime)
       qpsi(1)=qmaxis
       qmin=qpsi(1)
@@ -514,7 +501,9 @@
       btaxp(jtime)=fpol(1)/rmaxis
       btaxv(jtime)=fpol(nw)/rmaxis
       vbeta0=pres(1)/sumpre*betat(jtime)
-!
+!-----------------------------------------------------------------------
+!--   get R at evenly spaced psi along outboard midplane
+!-----------------------------------------------------------------------
       do i=1,nw
         workrm(i)=rmaxis+(xmax-rmaxis)/(nw-1)*(i-1)
         call seva2d(bkx,lkx,bky,lky,c,workrm(i),zmaxis,pds,ier,n111)
@@ -525,48 +514,53 @@
         sixxx=1.0_dp/(nw-1)*(i-1)
         rpres(i)=seval(nw,sixxx,worksi,workrm,bwork,cwork,dwork)
       enddo
-!
+!-----------------------------------------------------------------------
+!--   compute <jt/R>/<1/R> profile (ignoring rotation)
+!-----------------------------------------------------------------------
       do i=1,nw
         ppnow=pprime(i)
         fpnow=ffprim(i)/twopi/tmu
-        cjor(i)=(ppnow+fpnow*r2surg(i))/r1surf(i)
+        cjor(i)=(ppnow+fpnow*r2surf(i))/r1surf(i)
         fpnow=ffprec(i)/twopi/tmu
-        cjorec(i)=fpnow*r2surg(i)/r1surf(i)
+        cjorec(i)=fpnow*r2surf(i)/r1surf(i)
       enddo
-!
-      DEALLOCATE(worksi,workrm,bwork,cwork,dwork,x,y,dpleng)
 !
       return
  1980 format (1x,i6)
  2000 format (1x,6e12.5)
-      end subroutine betali
+      end subroutine betaliplus
 
 !**********************************************************************
-!!          This subroutine computes betas and li.
+!!     This subroutine computes only betas and li (part of the fitting
+!!       loop)
 !!                                                                  
 !!     @param jtime : time index
 !!
-!!     @param rgrid :
+!!     @param rgrid : radius of grid points
 !!
-!!     @param zgrid :
+!!     @param zgrid : Z of grid points
 !!
 !!     @param kerror : error flag
 !**********************************************************************
-      subroutine betsli(jtime,rgrid,zgrid,kerror)
+      subroutine betali(jtime,rgrid,zgrid,kerror)
       use commonblocks,only: c,wk,copy,bkx,bky
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
 
-      dimension pds(6),rgrid(*),zgrid(*)
-      real*8,dimension(:),allocatable :: x,y,dpleng,xxs,yys
-      data inorm/3/,ibtcal/2/
-      integer*4, intent(inout) :: kerror
+      real*8 ppcurr
+      integer*4, intent(in) :: jtime
+      real*8, intent(in) :: rgrid(nw),zgrid(nh)
+      integer*4, intent(out) :: kerror
+      integer*4 i,ii,ip1,j,k,kk,km1,iautoc,ier,nfind
+      real*8 aasi,bbsi,bp2flx,bpolsq,const,dli,dsi,dx,siii,sisi,siwant, &
+             sumbp2,sumpre,xcmax,xcmin,xycmax,xycmin,xym,xyp,ycmax,ycmin, &
+             yxcmax,yxcmin
+      real*8 pds(6),x(nw),y(nh),dpleng(npoint),xxs(npoint),yys(npoint)
+
       kerror = 0
 !
-      ALLOCATE(x(nw),y(nh),dpleng(npoint),xxs(npoint),yys(npoint))
-!
-      if (ivacum.eq.1) return
+      if(ivacum.eq.1) return
       sumbp2=0.0
       call sets2d(psi,c,rgrid,nw,bkx,lkx,zgrid,nh,bky,lky,wk,ier)
       do i=1,nw
@@ -606,33 +600,27 @@
         pprime(1)=ppcurr(x000,kppcur)/darea
       case (4)
         call currnt(n222,jtime,n222,kerror)
-        if (kerror.gt.0) return
+        if(kerror.gt.0) return
         pprime(1)=cratio/darea/rzero
         pprime(nw)=pprime(1)*gammap
       end select
       sumpre=0.0
-      nnn=1
-      d11=30.
-      d22=0.03_dp
-      d33=0.01_dp
-      nzz=0
-      zzz=0.0
       do i=2,nw-1
         ii=nw-i+1
         siii=(i-1)*dsi
         siwant=psibry-siii
         siii=1.0_dp-1.0_dp/(nw-1)*(i-1)
         call surfac(siwant,psi,nw,nh,rgrid,zgrid,xxs,yys,nfind, &
-                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                    npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,1, &
                     rmaxis,zmaxis,negcur,kerror,2)
         if (nfind.le.40.and.icntour.eq.0) then
-        call cntour(rmaxis,zmaxis,siwant,xcmin,xcmax,ycmin,ycmax, &
-                    yxcmin,yxcmax,xycmin,xycmax,d11,drgrid,d22, &
-                    d33 ,d33 ,xmin,xmax,ymin,ymax,nzz,iautoc, &
-                    xxs,yys,nfind,rgrid,nw,zgrid,nh, &
-                    c,n222,nh2,nttyo,npoint, &
-                    negcur,bkx,lkx,bky,lky,kerror)
-          if (kerror.gt.0) return
+          call cntour(rmaxis,zmaxis,siwant,xcmin,xcmax,ycmin,ycmax, &
+                      yxcmin,yxcmax,xycmin,xycmax,30.,drgrid,0.03_dp, &
+                      0.01_dp,0.01_dp,xmin,xmax,ymin,ymax,0,iautoc, &
+                      xxs,yys,nfind,rgrid,nw,zgrid,nh, &
+                      c,n222,nh2,nttyo,npoint, &
+                      negcur,bkx,lkx,bky,lky,kerror)
+          if(kerror.gt.0) return
         endif
         if (nfind.ge.10) then
           volp(ii)=0.0
@@ -650,8 +638,8 @@
           bbsi=sqrt(sisi/siaz)
           aasi=sqrt(sisi/siar)
           volp(ii)=twopi*rmaxis*pi*aasi*bbsi
-!
         endif
+!
         select case (icurrt)
         case (1)
           pprime(ii)=pprime(1)
@@ -664,13 +652,14 @@
         sumpre=sumpre+volp(ii)*pprime(ii)
       enddo
       sumpre=sumpre+volp(nw)*pprime(nw)/2.
-      if (kbetapr.eq.0) then
+      select case (kbetapr)
+      case (0)
         sumpre=-sumpre*dsi/volp(nw)
-      else
-        if (kbetapr.eq.1) pxxxxx=prbdry
-        if (kbetapr.eq.2) pxxxxx=pressb
-        sumpre=-sumpre*dsi/volp(nw)+pxxxxx
-      endif
+      case (1)
+        sumpre=-sumpre*dsi/volp(nw)+prbdry
+      case (2)
+        sumpre=-sumpre*dsi/volp(nw)+pressb
+      end select
       betap(jtime)=sumpre*2.0*twopi*tmu/bp2flx
       betat(jtime)=sumpre*2.0*twopi*tmu/bcentr(jtime)**2
       betat(jtime)=100.*betat(jtime)*(rout(jtime)/100./rcentr)**2
@@ -678,7 +667,5 @@
       pasman=pasman*rout(jtime)/100./rcentr
       betatn=betat(jtime)/pasman
 !
-      DEALLOCATE(x,y,dpleng,xxs,yys)
-!
       return
-      end subroutine betsli
+      end subroutine betali

@@ -57,7 +57,7 @@
       double precision, dimension(1) :: zerol(1),xt(1),yt(1),rad(1),yctr(1)
       parameter (n111=1,nloop=60,etolc=1.e-06_dp,etol=1.e-04_dp)
       data mecopy/0/
-      save dx,dy,carea,rmid
+      save dx,dy,darea,rmid
 
       !! Debug tool: Write out the surface being contoured to
       !! verify it looks reasonable, sometimes it's not.
@@ -113,7 +113,7 @@
       if (mecopy.le.0) then
         dx=x(2)-x(1)
         dy=y(2)-y(1)
-        carea=dx*dy
+        darea=dx*dy
         rmid=1.02_dp*(x(1)+x(nw))/2.0
         mecopy=1
       end if
@@ -155,8 +155,8 @@
         xcontr(ncontr)=xt(1)
         ycontr(ncontr)=yt(1)
         a3=(xt(1)-x(i))*dy
-        a4=carea-a3
-        psivl=(psi(kk+nh+1)*a3+psi(kk+1)*a4)/carea
+        a4=darea-a3
+        psivl=(psi(kk+nh+1)*a3+psi(kk+1)*a4)/darea
         if(yt(1).eq.y(j)) psivl=psi(kk)+(psi(kk+nh)-psi(kk))*(xt(1)-x(i))/dx
         zsum=1.e10_dp
         zerol=1.e10_dp
@@ -240,7 +240,7 @@
                 if(ifail.eq.1) cycle ! line segment does not intersect cell
               end if
               ! psilm is largest psi value along line segment betw pts
-              call maxpsi(xc1,yc1,xc2,yc2,x1,y1,x2,y2,f1,f2,f3,f4,carea,psilm,xtry1,ytry1,nerr)
+              call maxpsi(xc1,yc1,xc2,yc2,x1,y1,x2,y2,f1,f2,f3,f4,darea,psilm,xtry1,ytry1,nerr)
               if (nerr.gt.0) then
                 if (ncontr.lt.3) then
                   nerr=3
@@ -1885,16 +1885,16 @@
 !!    @param f4 :
 !!    @param x :
 !!    @param y :
-!!    @param carea : cell area
+!!    @param darea : cell area
 !!    @param psivl : value of psi at boundary
 !*********************************************************************
-      subroutine fqlin(x1,y1,x2,y2,f1,f2,f3,f4,x,y,carea,psivl)
+      subroutine fqlin(x1,y1,x2,y2,f1,f2,f3,f4,x,y,darea,psivl)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       a1=(x2-x)*(y2-y)
       a2=(x-x1)*(y2-y)
       a3=(x-x1)*(y-y1)
       a4=(x2-x)*(y-y1)
-      psivl=(a1*f1+a2*f2+a3*f3+a4*f4)/carea
+      psivl=(a1*f1+a2*f2+a3*f3+a4*f4)/darea
       return
       end subroutine fqlin
 
@@ -1915,7 +1915,7 @@
 !!    @param f2 :
 !!    @param f3 :
 !!    @param f4 :
-!!    @param carea : cell area
+!!    @param darea : cell area
 !!    @param psimax : largest value of psi on line segment
 !!    @param xtry :
 !!    @param ytry :
@@ -1923,7 +1923,7 @@
 !!                  3 if the line segment is not within the cell
 !!********************************************************************
       subroutine maxpsi(xl1,yl1,xl2,yl2,x1,y1,x2,y2,f1,f2,f3,f4, &
-                        carea,psimax,xtry,ytry,nerr)
+                        darea,psimax,xtry,ytry,nerr)
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
 !
@@ -1957,8 +1957,8 @@
           end if
         end if
       end if
-      call fqlin(x1,y1,x2,y2,f1,f2,f3,f4,xl1,yl1,carea,psip1)
-  110 call fqlin(x1,y1,x2,y2,f1,f2,f3,f4,xl2,yl2,carea,psip2)
+      call fqlin(x1,y1,x2,y2,f1,f2,f3,f4,xl1,yl1,darea,psip1)
+  110 call fqlin(x1,y1,x2,y2,f1,f2,f3,f4,xl2,yl2,darea,psip2)
       psimax=max(psip1,psip2)
       if (psimax.eq.psip1) then
         xtry=xl1

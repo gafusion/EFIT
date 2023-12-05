@@ -161,6 +161,11 @@
       vbit=10.
       vsdamp=0
       vzeroj=0.0
+      sigjtr=0.0
+      fwtjtr=0.0
+      fwtjtrin=0.0
+      cjtr=0.0
+      chijtr=0.0
       v30lt=0.0
       v30rt=0.0
       v210lt=0.0

@@ -20,12 +20,14 @@
       include 'modules1.inc'
       implicit none
 
+      real*8 psical
       integer*4, intent(in) :: jtime,iter,itertt
       integer*4, intent(out) :: kerror
-      integer*4 i,ii,j,k,m,nj,nk,nkk,nuuu,idoit,iskip,ier,ioerr,neqn
+      integer*4 i,ii,j,k,m,nj,nk,nkk,nuuu,idoit,iskip,ier,ioerr,mbdrmax, &
+                neqn
       integer*4 ifmatr(nfsum)
       real*8 erbsave,fwtbdr,fwtsols,ssiref,sumif,sumifr,t,toler,wsibry, &
-             xsibry,xsisol
+             xsibry,xsisol,bdrav,bdrmax,zdif
       real*8 afma(nfsum,nfsum),wfmatr(nfsum), &
              wbry(msbdry),work(msbdr2),ut(msbdry,msbdry)
       real*8 abry(msbdry,nfsum+nvesel),bbry(msbdry), &

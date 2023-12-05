@@ -103,7 +103,7 @@ RPRESS,,"| - = input pressure profile as function of dimensionless fluxes.
 | + = R coordinates of the input pressure profile data in meters."
 RZEROJ, zeros, "| (array) Radii at which to apply constraints. For each element in the array and corresponding elements in SIZEROJ, VZEROJ, if:
 | RZEROJ>0 Set Jt=0 at coordinate (RZEROJ,SIZEROJ).
-| RZEROJ=0 Set <Jt/R>/<1/R>/Ip equal to VZEROJ at surface specified by normalized flux SIZEROJ.
+| RZEROJ=0 Set <jt/R>/<1/R>/Ip*Area equal to VZEROJ at surface specified by normalized flux SIZEROJ.
 | RZEROJ<0 Set Jt=0 at the separatrix.
 | Constraints are applied only if KZEROJ>0. Default RZEROJ(1)=0.0. If KZEROJ=1, may specify SIZEROJ(1) with PSIWANT. If KZEROJ=1 and SIZEROJ(1)<0, then SIZEROJ(1) is set equal to PSIWANT."
 SGNEMIN,0.0,"Sigma ne Minimum.

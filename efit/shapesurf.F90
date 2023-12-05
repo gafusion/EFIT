@@ -557,8 +557,7 @@
  1085 continue
       call chisqr(iges)
       chifin=chisq(iges)
-      nnn=1
-      call betali(iges,rgrid,zgrid,nnn,kerror)
+      call betaliplus(iges,rgrid,zgrid,kerror)
       if(kerror.gt.0) return
       peak(iges)=pres(1)/(.667_dp*wmhd(iges)/(volume(iges)/1.e6_dp))
       do i=2,nw
@@ -1160,12 +1159,12 @@
            cfpol(k)=bfpol(k)**2
          enddo
          call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                     nh,r2wdry,nzz,sdlobp,sdlbp)
+                     nh,r2wdry(i),nzz,sdlobp,sdlbp)
          do k=1,nfounc
            cfpol(k)=((bfpol(k)/rvtor)**2-1.)**2
          enddo
          call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                     nh,r4wdry,nzz,sdlobp,sdlbp)
+                     nh,r4wdry(i),nzz,sdlobp,sdlbp)
          if (kvtor.eq.3) then
            prew0=pwcurr(psiwant,kwwcur)
            pres0=prcurr(psiwant,kppcur)
@@ -1179,13 +1178,13 @@
              cfpol(k)=cfpol(k)*exp(pwop0*cfpol(k))
            enddo
            call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                       nh,rp2wdry,nzz,sdlobp,sdlbp)
+                       nh,rp2wdry(i),nzz,sdlobp,sdlbp)
            do k=1,nfounc
              cfpol(k)=((bfpol(k)/rvtor)**2-1.)
              cfpol(k)=exp(pwop0*cfpol(k))
            enddo
            call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                       nh,rpwdry,nzz ,sdlobp,sdlbp)
+                       nh,rpwdry(i),nzz,sdlobp,sdlbp)
          endif
        endif rotation_1
        r2surs=r2sdry(i)*sdlobp
@@ -1229,17 +1228,17 @@
       ssi01=speval(nw,xsi01,bpres,qpsi,bfpol,cfpol,dfpol) &
                     /qpsic
 !-------------------------------------------------------------------
-!--    get average current density in outer at 95% flux           --
+!--   get average current density in outer at 95% flux           --
 !-------------------------------------------------------------------
-       siavej=0.95_dp
-       siwant=siavej
-       siwant=simag+siwant*(psibry-simag)
-       call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc, &
-                   npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                   rmaxis,zmaxis,negcur,kerror,1)
-       if(kerror.gt.0) return
-       call fluxav(bfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid,nh, &
-                   rxxrry,nzz ,sdlobp,sdlbp)
+      siavej=0.95_dp
+      siwant=siavej
+      siwant=simag+siwant*(psibry-simag)
+      call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc, &
+                  npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                  rmaxis,zmaxis,negcur,kerror,1)
+      if(kerror.gt.0) return
+      call fluxav(bfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid,nh, &
+                  rxxrry,nzz ,sdlobp,sdlbp)
       aream=0.0
       xyma=dfpol(1)
       do i=2,nfounc
@@ -2502,7 +2501,7 @@
       if (fwtdlc.gt.0.0) then
         chidflux=((diamag(iges)-cdflux(iges))/sigdia(iges))**2
       endif
-      chitot=chipre+chifin+chidflux
+      chitot=chifin+chipre+chidflux+sum(chijtr)
       if (idiart.gt.0) then
         bp2flx=bpolav(iges)**2
         dmui=1.0e+06_dp*diamag(iges)*4.*pi*bcentr(iges)*rcentr &
