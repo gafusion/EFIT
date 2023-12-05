@@ -317,7 +317,7 @@
         if(ioerr.ne.0) &
           open(unit=nffile, &
                status='old',form='unformatted', &
-               file=table_dir(1:ltbdir)//filenmme,iostat=ioerr)
+               file=trim(table_di2)//filenmme,iostat=ioerr)
         if(ioerr.ne.0) exit
         read(nffile,iostat=ioerr) kkstark
         if(ioerr.ne.0) exit
@@ -454,11 +454,7 @@
 ! --- write out rstarkxx.dat if flag IOUT contains 8.
 !
       if (iand(iout,8).ne.0) then
-        open(unit=nffile,status='old',form='unformatted',iostat=ioerr, &
-             file='rstarkxx.dat')
-        if(ioerr.eq.0) close(unit=nffile,status='delete')
-        open(unit=nffile,status='new',form='unformatted', &
-             file='rstarkxx.dat')
+        call open_new(nffile,'rstarkxx.dat','unformatted','')
         kkstark=nstark
         write(nffile) kkstark
         rrgamin(1:nstark)=rrgam(jtime,1:nstark)

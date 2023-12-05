@@ -48,7 +48,7 @@
           iskip=1
 
           open(unit=nffile,status='old',form='unformatted', &
-          file=table_di2(1:ltbdi2)//'fc'//trim(ch1)//trim(ch2)//'.ddd')
+          file=trim(table_di2)//'fc'//trim(ch1)//trim(ch2)//'.ddd')
           read (nffile) rfcfc
           read (nffile) rfcpc
           close(unit=nffile)
@@ -56,7 +56,7 @@
 !vas      print*,'file name : ','fm'//trim(ch1)// &
 !vas                         trim(ch2)//'.ddd'
           open(unit=nffile,status='old',form='unformatted', &
-          file=table_di2(1:ltbdi2)//'fm'//trim(ch1)//trim(ch2)//'.ddd')
+          file=trim(table_di2)//'fm'//trim(ch1)//trim(ch2)//'.ddd')
           read (nffile,iostat=ioerr) afma
           if (ioerr.eq.0) then
             read (nffile) ifmatr
@@ -67,14 +67,8 @@
 !vas
 !vas      print*,'file name : ','fm'//trim(ch1)// &
 !vas                         trim(ch2)//'.ddd'
-            open(unit=nffile,status='old',form='unformatted', &
-                 file='fm'//trim(ch1)//trim(ch2)//'.ddd',iostat=ioerr)
-            if(ioerr.eq.0) close(unit=nffile,status='delete')
-!vas
-!vas      print*,'file name : ','fm'//trim(ch1)// &
-!vas                          trim(ch2)//'.ddd'
-            open(unit=nffile,status='new',form='unformatted', &
-                 file='fm'//trim(ch1)//trim(ch2)//'.ddd')
+            call open_new(nffile,'fm'//trim(ch1)//trim(ch2)//'.ddd', &
+                          'unformatted','')
             write (nffile) afma
             write (nffile) ifmatr
             close(unit=nffile)
@@ -116,7 +110,7 @@
          fwtbry(1:nbdry)=fwtbdr*fwtbdry(1:nbdry)
        endif
 #ifdef DEBUG_LEVEL2
-      write (106,*) 'FCURRT NBDRY,PSIBRY,WSIRY = ', nbdry,psibry,wsibry
+      write (106,*) 'EXTCUR NBDRY,PSIBRY,WSIRY = ', nbdry,psibry,wsibry
       write (106,*) '       SIDIF,FWTBDR,ERRBRY= ', sidif,fwtbdr,errbry
       write (106,*) '       PSIBRY0= ', psibry0
 #endif
@@ -202,7 +196,7 @@
              abry(nj,nk)=fwtsolw(i)*rsolfc(i,nk)
            enddo
 #ifdef DEBUG_LEVEL2
-           write (6,*) 'FCURRT nsol,fwtsolw = ', &
+           write (6,*) 'EXTCUR nsol,fwtsolw = ', &
                        nsol,(fwtsolw(i),i=1,nsol)
 #endif
          endif
@@ -280,7 +274,7 @@
 !--    value decomposition                                            --
 !-----------------------------------------------------------------------
 #ifdef DEBUG_LEVEL2
-       write (106,*) 'FCURRT nj,neqn = ', nj,neqn
+       write (106,*) 'EXTCUR nj,neqn = ', nj,neqn
 #endif
        call sdecm(abry,msbdry,nj,neqn,ut,msbdry,nj,wbry,work,ier)
        if (ier.eq.129) then
@@ -452,7 +446,7 @@
 !-----------------------------------------------------------------------
       if (nsol.gt.0) then
 #ifdef DEBUG_LEVEL2
-        write (6,*) 'FCURRT wsisol = ', wsisol
+        write (6,*) 'EXTCUR wsisol = ', wsisol
 #endif
         do m=1,nsol
           nj=nj+1
@@ -548,7 +542,7 @@
         enddo
         erbave=erbave/nbdry
 #ifdef DEBUG_LEVEL1
-        write(6,*) 'FCURRT erbmax,erbave,si = ',erbmax,erbave,wsibry
+        write(6,*) 'EXTCUR erbmax,erbave,si = ',erbmax,erbave,wsibry
 #endif
 #ifdef DEBUG_LEVEL2
         write(106,*) 'XSIBRY,PBRY(1),BRSP= ', &
@@ -567,7 +561,7 @@
         enddo
         erbsave=erbsave/nsol
 #ifdef DEBUG_LEVEL1
-        write (6,*) 'FCURRT erbsmax,erbsave,si = ',erbsmax,erbsave,wsisol
+        write (6,*) 'EXTCUR erbsmax,erbsave,si = ',erbsmax,erbsave,wsisol
 #endif
       endif
 !

@@ -1,33 +1,63 @@
 #include "config.f"
 !**********************************************************************
 !*
-!>          FLUXAV does the flux surface average
+!>     open_new is a convenience routine that deletes an existing file
+!!       if found and opens a new one
 !!   
-!!
+!!     @param unit : I/O channel to use
+!!     @param file : filename
+!!     @param form : format specifier (used for both)
+!!     @param delim : delimiter used in new file
+!!  
+!**********************************************************************
+      subroutine open_new(unit,file,form,delim)
+      implicit none
+      integer*4, intent(in) :: unit
+      character*(*), intent(in) :: file,form,delim
+      integer*4 ierr,lform
+
+      lform=len(trim(form))
+      if (lform>0) then
+        open(unit=unit,file=file,status='old', &
+             form=form,iostat=ierr)
+      else
+        open(unit=unit,status='old',file=file,iostat=ierr)
+      endif
+      if(ierr.eq.0) close(unit=unit,status='delete')
+      if (lform>0) then
+        if (len(trim(delim))>0) then
+          open(unit=unit,file=file,status='new', &
+               form=form,delim='quote')
+        else
+          open(unit=unit,file=file,status='new', &
+               form=form)
+        endif
+      else
+        if (len(trim(delim))>0) then
+          open(unit=unit,status='new',delim='quote',file=file)
+        else
+          open(unit=unit,status='new',file=file)
+        endif
+      endif
+      return
+      end subroutine open_new
+
+!**********************************************************************
+!*
+!>     FLUXAV does the flux surface average
+!!   
 !!     @param f : function array 
-!!
 !!     @param si : flux array
-!!
 !!     @param n : length of contour array
-!!
 !!     @param x : R coordinates of contour
-!!
 !!     @param y : Z coordinates of contour     
-!!
 !!     @param fave  : int(dl f/Bp) / sdlobp
-!!
 !!     @param sdlbp : int(dl Bp)
-!!
 !!     @param sdlobp: int(dl/Bp)
-!!
 !!     @param rx: 
-!!
 !!     @param ry: 
-!!
 !!     @param msx: 
-!!
 !!     @param msy: 
-!!
 !!     @param ns: 
 !!  
 !**********************************************************************
@@ -66,32 +96,19 @@
       return
       end subroutine fluxav
 
-
 !**********************************************************************
 !>
-!!    this subroutine does ...
+!!    splitc does ...
 !!    
-!!
 !!    @param is :
-!!
 !!    @param rs :
-!!
 !!    @param zs :
-!!
-!!    @param cs :
-!!
 !!    @param rc :
-!!
 !!    @param zc :
-!!
 !!    @param wc :
-!!
 !!    @param hc :
-!!
 !!    @param ac :
-!!
 !!    @param ac2 :
-!!
 !!    @param cc :
 !!
 !**********************************************************************
@@ -177,7 +194,6 @@
       endif
       return
       end subroutine splitc
-
       
 !**********************************************************************
 !>
@@ -185,17 +201,11 @@
 !!    in ascending order and sets the ne and te data to
 !!    correspond to the new order.
 !!    
-!!
 !!    @param mbox :
-!!
 !!    @param zprof :
-!!
 !!    @param nemprof :
-!!
 !!    @param temprof :
-!!
 !!    @param nerprof :
-!!
 !!    @param terprof :
 !!
 !**********************************************************************
@@ -261,12 +271,9 @@
 !!
 !!    @param y : input array being fitted, supposing X is evenly
 !!               distributed between [0,1]
-!!
 !!    @param ny : number of points
-!!
 !!    @param alpa : return fitting coefficients in its first nalpa
 !!                  elements.  Y(x)=a0+a1*x+a2*x^2+...
-!!
 !!    @param nalpa : number of coefficients
 !!
 !**********************************************************************
@@ -338,12 +345,9 @@
 !!
 !!    @param y : input array being fitted, supposing X is evenly
 !!               distributed between [0,1]
-!!
 !!    @param ny : number of points
-!!
 !!    @param alpa : return fitting coefficients in its first nalpa
 !!                  elements.  Y(x)=a0+a1*x+a2*x^2+...
-!!
 !!    @param nalpa : number of coefficients
 !!
 !**********************************************************************

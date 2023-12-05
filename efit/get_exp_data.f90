@@ -18,6 +18,7 @@
       subroutine getlim(limmode,xltype,xltype_180,shape_ext)
       include 'eparm.inc'
       include 'modules1.inc'
+      use var_gtable, only: rgrid,zgrid
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       integer*4 limmode,ilimshot,ioerr
       logical shape_ext
@@ -43,7 +44,7 @@
 !
       limid=iabs(limitr)
 
-      filin=input_dir(1:lindir)//'lim.dat'
+      filin=trim(input_dir)//'lim.dat'
       open(unit=lfile,access='sequential',status='old',file=filin)
       ilimshot=999999
       do while (ishot.lt.ilimshot)
@@ -141,13 +142,27 @@
       endif
       endif get_pol
       endif read_lim
-      limitr=limitr+1
-      xlim(limitr)=xlim(1)
-      ylim(limitr)=ylim(1)
+!---------------------------------------------------------------------------
+!--   close limiter if it is an open curve
+!---------------------------------------------------------------------------
+      if (abs(xlim(1)-xlim(limitr)).gt.1.e-6 .and. &
+          abs(ylim(1)-ylim(limitr)).gt.1.e-6) then
+        limitr=limitr+1
+        xlim(limitr)=xlim(1)
+        ylim(limitr)=ylim(1)
+      endif
+!---------------------------------------------------------------------------
+!--   check that limiter does not extend outside of the grid
+!---------------------------------------------------------------------------
       xlmin=minval(xlim(1:limitr))
       xlmax=maxval(xlim(1:limitr))
       ylmin=minval(ylim(1:limitr))
       ylmax=maxval(ylim(1:limitr))
+      if (xlmin.lt.rgrid(1) .or. xlmax.gt.rgrid(nw) .or. & 
+          ylmin.lt.zgrid(1) .or. ylmax.gt.zgrid(nh)) then
+        call errctrl_msg('getlim','limiter does not fit on grid')
+        stop
+      endif
 !---------------------------------------------------------------------------
 !--   set up plotting limiter points if needed                            --
 !---------------------------------------------------------------------------
@@ -233,7 +248,7 @@
 !------------------------------------------------------------------------
       if ((ishot.ge.80744).and.(iand(ixray,1).ne.0)) then
         open(unit=80,status='old', &
-             file=input_dir(1:lindir)//'sxr94.dat',iostat=ioerr)
+             file=trim(input_dir)//'sxr94.dat',iostat=ioerr)
         if (ioerr.ne.0) then
           call errctrl_msg('getsxr','could not open SXR file')
           stop
@@ -254,7 +269,7 @@
       if((ishot.lt.91000).and.(iand(ixray,2).ne.0)) ixray = ixray-2
       if ((ishot.ge.91000).and.(iand(ixray,2).ne.0)) then
         open(unit=80,status='old', &
-             file=input_dir(1:lindir)//'sxrt97.dat')
+             file=trim(input_dir)//'sxrt97.dat')
         if (ioerr.ne.0) then
           call errctrl_msg('getsxr','could not open SXR file')
           stop

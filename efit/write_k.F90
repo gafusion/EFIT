@@ -29,7 +29,7 @@
              curriu30,curriu90,curriu150,curril30,curril90,curril150
       real*8 delt,times
       character ishotime*12,news*72, &
-                eqdsk*20,prefix1*1,header*42,fit_type*3
+                eqdsk*300,prefix1*1,header*42,fit_type*3
       real*8 coils(nsilop),expmp2(magpri),denr(nco2r),denv(nco2v)
       real*8,dimension(nmselp) :: tgamma,sgamma,rrrgam,zzzgam, &
                                   aa1gam,aa2gam,aa3gam,aa4gam, &
@@ -129,9 +129,7 @@
 !--   generate input files and command file for running EFIT-AI     --
 !---------------------------------------------------------------------
       if (cmdfile_in.ne.'0' .and. cmdfile_in.ne.'') then
-        open(unit=nffile,status='old',file=cmdfile_in,iostat=ioerr)
-        if (ioerr.ne.0) close(unit=nffile,status='delete')
-        open(unit=nffile,status='new',file=cmdfile_in)
+        call open_new(nffile,cmdfile_in,'','')
         write (nffile,4958)
       endif
       if (shotfile_in.ne.'0' .and. shotfile_in.ne.'') then
@@ -157,9 +155,9 @@
         ! the snap file wasn't found in the CWD, look in the 
         ! support files instead
         open(unit=neqdsk,status='old', &
-             file=input_dir(1:lindir)//'snapfiles/'//snap_file,iostat=ioerr)
+             file=trim(input_dir)//'snapfiles/'//snap_file,iostat=ioerr)
         if (ioerr.eq.0) then
-          snapfile=input_dir(1:lindir)//'snapfiles/'//snap_file
+          snapfile=trim(input_dir)//'snapfiles/'//snap_file
         elseif (snapextin.ne.'none') then
           ! the snap file still wasn't found, check for any snapfile
           ! in the CWD without an extension
@@ -365,7 +363,7 @@
         rwtmp2(1:magpri)=0.0
         rwtsi(1:nsilop)=0.0
         open(unit=neqdsk,status='old', &
-             file=input_dir(1:lindir)//'fitweight.dat')
+             file=trim(input_dir)//'fitweight.dat')
  3050   read(neqdsk,*,iostat=ioerr) irshot
         if ((ioerr.eq.0).and.(irshot.le.ishot)) then
           ! Note: These DIIID specific probe choices
@@ -533,9 +531,6 @@
           rbdry(1)=1.94_dp
           zbdry(1)=ztssym(jtime)+0.5_dp*ztswid(jtime)
         endif
-        call setfnmeq(itimeu,'k',ishot,itime,eqdsk)
-        open(unit=neqdsk,status='old',file=eqdsk,iostat=ioerr)
-        if(ioerr.eq.0) close(unit=neqdsk,status='delete')
 !-----------------------------------------------------------------------
 !--     Set bit noise for ishot > 152000                              --
 !-----------------------------------------------------------------------
@@ -544,9 +539,9 @@
 !The next line gets rid of valgrind complaints on the
 !following if statement checking ishot
         if(ishot.gt.152000) vbit = 80
-        open(unit=neqdsk,file=eqdsk,status='new', &
-             delim='quote')
-!             delim='APOSTROPHE')
+        call setfnm('k',ishot,itime,itimeu,'',eqdsk)
+        call open_new(neqdsk,eqdsk,'','quote')
+!        call open_new(neqdsk,eqdsk,'','APOSTROPHE')
         write (neqdsk,in1)
         write (neqdsk,inwant)
         if(isetfb.ne.0) write (neqdsk,ink)
@@ -651,7 +646,7 @@
       real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref, &
              pnbeam,timeus,timems,currn1,currc79,currc139,currc199, &
              curriu30,curriu90,curriu150,curril30,curril90,curril150
-      character eqdsk*20,header*42,fit_type*3
+      character eqdsk*300,header*42,fit_type*3
       integer*4, dimension(npcurn) :: kffbdryss,kff2bdryss, &
                                       kppbdryss,kpp2bdryss, &
                                       kwwbdryss,kww2bdryss
@@ -819,12 +814,9 @@
 !-----------------------------------------------------------------------
 !--   Write K file                                                    --
 !-----------------------------------------------------------------------
-      call setfnmeq(itimeu,'k',ishot,itime,eqdsk)
-      open(unit=neqdsk,status='old',file=eqdsk,iostat=ioerr)
-      if(ioerr.eq.0) close(unit=neqdsk,status='delete')
-      open(unit=neqdsk,file=eqdsk,status='new', &
-           delim='quote')
-!           delim='APOSTROPHE')
+      call setfnm('k',ishot,itime,itimeu,'',eqdsk)
+      call open_new(neqdsk,eqdsk,'','quote')
+!      call open_new(neqdsk,eqdsk,'','APOSTROPHE')
       write (neqdsk,in1)
       write (neqdsk,inwant)
       if(isetfb.ne.0) write (neqdsk,ink)
@@ -882,9 +874,9 @@
         snapfile=snap_file
       else
         open(unit=nsnapf,status='old', &
-             file=input_dir(1:lindir)//snap_file,iostat=ioerr)
+             file=trim(input_dir)//snap_file,iostat=ioerr)
         if (ioerr.eq.0) then
-          snapfile=input_dir(1:lindir)//snap_file
+          snapfile=trim(input_dir)//snap_file
         elseif (snapextin.ne.'none') then
           open(unit=nsnapf,status='old', &
                file=snapextin)

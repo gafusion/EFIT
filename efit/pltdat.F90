@@ -27,9 +27,8 @@
       character(5)  :: zone
       integer*4, dimension(8) :: values
       real*8, dimension(2) :: rwstrip1,zwstrip1,rwstrip2,zwstrip2 
-      character(50) dataname,plotname
-      character iname,let
-      character(2) let2
+      character iname
+      character(300) fname
       character(1000) :: lline
       dimension ae(necoil),ae2(necoil),si(nwf),rmpi(magpri)
       dimension anglem(nstark),anglec(nstark)
@@ -41,6 +40,7 @@
                 xiter(kxiter),czmcm(kxiter),workaw(nwf),ptherm(mpress), &
                 presv(nwf),bpresv(nwf),cpresv(nwf),dpresv(nwf)
       character(72) text
+      character(6) charshot
       dimension ratray(10),expsi(nsilop),expmp(magpri),pds(6)
       dimension scrat(ntime),bscra(ntime),cscra(ntime), &
                 dscra(ntime),bwork(ndata),cwork(ndata),dwork(ndata)
@@ -250,69 +250,38 @@
 !     Open file PLTOUT.OUT to output plot parameters
 !-----------------------------------------------------------------------
       if (itek.ge.5.and.idotek.eq.0) then
-      iunit = 59
-      if (kgraph.eq.0) then
-        plotname='pltout.out'
-      else
-        if (ifitvs.eq.1.or.icutfp.eq.2) then
-           write (6,*) 'itimeu = ',itimeu
+        iunit = 59
+        if (kgraph.eq.0) then
+          fname='pltout.out'
+        else
+          if (ifitvs.eq.1.or.icutfp.eq.2) then
+            write (6,*) 'itimeu = ',itimeu
+          endif
+          call setfnm('pl',ishot,itime,itimeu,'',fname)
         endif
-        let2 = 'pl'
-        call setfnmpl(itimeu,let2,ishot,itime,plotname)
-        if (istore .eq. 1)  &
-             plotname = store_dir(1:lstdir)//plotname
+        if (m_write .eq. 1) then
+          call open_new(iunit,fname,'','')
+        elseif (m_write .eq. 0) then
+          call open_new(iunit,fname,'unformatted','')
+        endif
       endif
-      if (m_write .eq. 1) then
-        open(unit=iunit,file = plotname, status = 'old',iostat=ioerr)
-        if (ioerr.eq.0) close(unit=iunit,status='delete')
-        open (unit=iunit, file = plotname, status = 'new')
-      elseif (m_write .eq. 0) then
-        open (unit=iunit, file = plotname, form = 'unformatted', &
-              status = 'old',iostat=ioerr)
-        if (ioerr.eq.0) close(unit=iunit,status='delete')
-        open (unit=iunit, file = plotname, form = 'unformatted', &
-              status = 'new')
-      endif
-      endif
-!
       endif istrpl0
+!--------------------------------------------------------------------
+!     ITEK > 100, specific pltout.out name
+!--------------------------------------------------------------------
       xmm=2.0
       if (itek.ge.5.and.idotek.eq.0) then
         if (kgraph.eq.1.and.istrpl.gt.0) then
-!--------------------------------------------------------------------
-!--       ITEK > 100, specific pltout.out name                     --
-!--------------------------------------------------------------------
-          let2 = 'pl'
-          plotname = ' '
-          call setfnmpl(itimeu,let2,ishot,itime,plotname)
-          if (istore .eq. 1)  &
-               plotname = store_dir(1:lstdir)//plotname
+          call setfnm('pl',ishot,itime,itimeu,'',fname)
           iunit = 35
           close(unit=iunit)
           if (m_write .eq. 1) then
-            open(unit=iunit,file = plotname, status = 'old',iostat=ioerr)
-            if (ioerr.eq.0) close(unit=iunit,status='delete')
-            open (unit=iunit, file = plotname, status = 'new')
+            call open_new(iunit,fname,'','')
           elseif (m_write .eq. 0) then
-            open (unit=iunit, file = plotname, form = 'unformatted', &
-                  status = 'old',iostat=ioerr)
-            if (ioerr.eq.0) close(unit=iunit,status='delete')
-            open (unit=iunit, file = plotname, form = 'unformatted', &
-                  status = 'new')
+            call open_new(iunit,fname,'unformatted','')
           endif
         endif
       endif
-!--------------------------------------------------------------------
-!--   Set q-files dataname                                         --
-!--   If ISTORE = 0 Then dataname is prefixed by qshot.time        --
-!--   ELSE dataname is prefixed by /link/efit/qshot.time           --
-!--   lprx = 13 prefix is qshot.time                               --
-!--   lprx = 25  prefix is /link/efit/qshot.time                   --
-!--------------------------------------------------------------------
-      let = 'q'
-      call setfnmq(let,ishot,itime,istore,dataname)
-      lprx = 13
-      if (istore .eq. 1) lprx = lstdir+lprx
 !
       ! TODO: nfound never defined... using nplt instead?
 !      do i=1,nfound-1
@@ -328,6 +297,9 @@
       ibrdr = 1
 !-----------------------------------------------------------------------
 !     Initialize plot parameters
+!     For t q-files fname:
+!       If ISTORE = 0 Then fname is prefixed by qshot.time
+!       ELSE fname is prefixed by /link/efit/qshot.time
 !-----------------------------------------------------------------------
       call init2d
       if (klabel.ge.0) then
@@ -385,10 +357,8 @@
       npltbdry=nplt
 
       if (kwripre.gt.0) then
-        dataname=dataname(1:lprx)//'_surfb'
-        open(unit=62,file=dataname,status='old',iostat=ioerr)
-        if (ioerr.eq.0) close(unit=62,status='delete')
-        open(unit=62,file=dataname,status='new')
+        call setfnm('q',ishot,itime,itimeu,'_surfb',fname)
+        call open_new(62,fname,'','')
         do i=1,nplt
           write (62,*) xplt(i),yplt(i)
         enddo
@@ -397,12 +367,6 @@
       single_pass: if (ipass.le.1) then
       dismin=min(gapin(jtime),gapout(jtime),gaptop(jtime),gapbot(jtime))
       dis_min: if (dismin.gt.0.1_dp) then
-      if (kwripre.gt.0) then
-        dataname=dataname(1:lprx)//'_sep'
-        open(unit=62,file=dataname,status='old',iostat=ioerr)
-        if (ioerr.eq.0) close(unit=62,status='delete')
-        open(unit=62,file=dataname,status='new')
-      endif
       call surfac(psibry,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt, &
         npoint,drgrid,dzgrid,rgrid(1),rgrid(nw),zgrid(1), &
         zgrid(nh),n00,rmaxis,zmaxis,negcur,kerror,1)
@@ -417,19 +381,23 @@
       ncnct(nn) = -1
       nxy(nn)   =  0
       ji = 0
+      if (kwripre.gt.0) then
+        call setfnm('q',ishot,itime,itimeu,'_seb',fname)
+        call open_new(62,fname,'','')
+      endif
       do i=1,nplt
-         if ((yplt(i).ge.yminmm).and.(yplt(i).le.ymaxmm)) cycle
-         nxy(nn) = 1 + nxy(nn)
-         xx(nxy(nn) , nn) = xplt(i)
-         yy(nxy(nn) , nn) = yplt(i)
-         ji=ji+1
-         flxtra(ji,2)=xplt(i)       ! for transfer to subroutine expand
-         fpxtra(ji,2)=yplt(i)
-         npltxpt=ji
-         if (kwripre.gt.0) then
-           call zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(i),yplt(i),limfag)
-           if (zeron.gt.0.001_dp) write (62,*) xplt(i),yplt(i)
-         endif
+        if ((yplt(i).ge.yminmm).and.(yplt(i).le.ymaxmm)) cycle
+        nxy(nn) = 1 + nxy(nn)
+        xx(nxy(nn) , nn) = xplt(i)
+        yy(nxy(nn) , nn) = yplt(i)
+        ji=ji+1
+        flxtra(ji,2)=xplt(i)       ! for transfer to subroutine expand
+        fpxtra(ji,2)=yplt(i)
+        npltxpt=ji
+        if (kwripre.gt.0) then
+          call zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(i),yplt(i),limfag)
+          if (zeron.gt.0.001_dp) write (62,*) xplt(i),yplt(i)
+        endif
       enddo
       if (kwripre.gt.0) close(unit=62)
       endif dis_min
@@ -451,10 +419,8 @@
         if (kwripre.gt.0) then
           if (i.lt.9) then
             write(iname,40023) i
-            dataname=dataname(1:lprx)//'_fl'//iname
-            open(unit=62,file=dataname,status='old',iostat=ioerr)
-            if (ioerr.eq.0) close(unit=62,status='delete')
-            open(unit=62,file=dataname,status='new')
+            call setfnm('q',ishot,itime,itimeu,'_fl'//iname,fname)
+            call open_new(62,fname,'','')
             do iii=1,npxtra(i)
               call zlim(zeron,n11,n11,limitr,xlim,ylim,xxtra(iii,i),yxtra(iii,i),limfag)
               if (zeron.gt.0.001_dp) write (62,*) xxtra(iii,i),yxtra(iii,i)
@@ -473,8 +439,8 @@
       ncnct(nn) = -1
       nxy(nn) = nbdry
       do ii = 1, nbdry
-         xx(ii,nn) = rbdry(ii)
-         yy(ii,nn) = zbdry(ii)
+        xx(ii,nn) = rbdry(ii)
+        yy(ii,nn) = zbdry(ii)
       enddo
       else bdry
       bdryp: if (nbdryp <= 0) then
@@ -485,16 +451,16 @@
       nxy(nn) = nbdrz
       ndotme(nn) = 1
       do ii = 1, nbdrz
-         xx(ii,nn) = rbdry(ii)
-         yy(ii,nn) = zbdry(ii)
+        xx(ii,nn) = rbdry(ii)
+        yy(ii,nn) = zbdry(ii)
       enddo
       else bdryp
       nn = nn + 1
       nxy(nn) = nbdryp + 1
       ndotme(nn) = 1
       do ii = 1, nbdryp
-         xx(ii,nn) = rbdry(ii)
-         yy(ii,nn) = zbdry(ii)
+        xx(ii,nn) = rbdry(ii)
+        yy(ii,nn) = zbdry(ii)
       enddo
       ii=nbdryp+1
       xx(ii,nn) = rbdry(1)
@@ -505,27 +471,27 @@
       ncnct(nn) = -1
       nxy(nn) = nbdry-nbdryp
       do ii = 1,nxy(nn) 
-         iijj=ii+nbdryp
-         xx(ii,nn) = rbdry(iijj)
-         yy(ii,nn) = zbdry(iijj)
+        iijj=ii+nbdryp
+        xx(ii,nn) = rbdry(iijj)
+        yy(ii,nn) = zbdry(iijj)
       enddo
       endif bdryp
       endif bdry
       endif fixed_bdry
       if (nsol > 0) then
-         nn = nn + 1
-         markme(nn) = 2
-         ncnct(nn) = -1
-         clearx(nn) = 'GREE'
-         nxy(nn) = nsol
-         do ii = 1,nsol
-            xx(ii,nn) = rsol(ii)
-            yy(ii,nn) = zsol(ii)
-         enddo
+        nn = nn + 1
+        markme(nn) = 2
+        ncnct(nn) = -1
+        clearx(nn) = 'GREE'
+        nxy(nn) = nsol
+        do ii = 1,nsol
+          xx(ii,nn) = rsol(ii)
+          yy(ii,nn) = zsol(ii)
+        enddo
       endif
       one_pass: if (ipass.le.1) then
       do i=1,nw-1
-         worke(i)=real(i-1,dp)/(nw-1)
+        worke(i)=real(i-1,dp)/(nw-1)
       enddo
       worke(nw)=1.
       call zpline(nw,worke,qpsi,bworkb,cworkb,dworkb)
@@ -534,120 +500,114 @@
       idqplot=iqplot
       if (iqplot.ge.10) idqplot=iqplot-10
       if ((iqplot.gt.1).and.(psiq1.gt.0.)) then
-         nsplot=nsplot0+1
-         if(psiq1.gt.10.0)then
-            psiq11=real(int(psiq1),dp)/1000.
-            psiq12=psiq1-int(psiq1)
-            nsplot=nsplot0+2
-         else
-            psiq11=psiq1
-         endif
+        nsplot=nsplot0+1
+        if(psiq1.gt.10.0)then
+          psiq11=real(int(psiq1),dp)/1000.
+          psiq12=psiq1-int(psiq1)
+          nsplot=nsplot0+2
+        else
+          psiq11=psiq1
+        endif
       endif
       do i=1,nsplot
-         nn = nn + 1
-         j=nsplot0-i+1
-         if (i.gt.nsplot0.and.iqplot.ge.10) then
-            siwant=psiq11
-            psiq11=psiq12
-         else
-            siwant=simag+j*delsi
-            if (kvtor.eq.0.or.kplotp.eq.0) ndshme(nn) = 1
-         endif
-         call surfac(siwant,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt, &
-           npoint,drgrid,dzgrid,rmin,rmax,zmin, &
-           zmax,n11,rmaxis,zmaxis,negcur,kerror)
-         if (kerror.gt.0) return
-         if (kthkcrv.gt.0) thcrv(nn) = 0.010_dp
-         clearx(nn) = 'BLUE'
-         nxy(nn) = nplt
-         do ii = 1,nplt
+        nn = nn + 1
+        j=nsplot0-i+1
+        if (i.gt.nsplot0.and.iqplot.ge.10) then
+          siwant=psiq11
+          psiq11=psiq12
+        else
+          siwant=simag+j*delsi
+          if (kvtor.eq.0.or.kplotp.eq.0) ndshme(nn) = 1
+        endif
+        call surfac(siwant,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt, &
+          npoint,drgrid,dzgrid,rmin,rmax,zmin, &
+          zmax,n11,rmaxis,zmaxis,negcur,kerror)
+        if (kerror.gt.0) return
+        if (kthkcrv.gt.0) thcrv(nn) = 0.010_dp
+        clearx(nn) = 'BLUE'
+        nxy(nn) = nplt
+        do ii = 1,nplt
+          xx(ii,nn) = xplt(ii)
+          yy(ii,nn) = yplt(ii)
+        enddo
+!----------------------------------------------------------------------
+!--     regular surfaces                                            --
+!----------------------------------------------------------------------
+        if (kwripre.gt.0) then
+          if (i.lt.nsplot.or.iqplot.lt.10) then
+            write(iname,40023) i
+            call setfnm('q',ishot,itime,itimeu,'_surf'//iname,fname)
+            call open_new(62,fname,'','')
+            do iii=1,nplt
+              write (62,*) xplt(iii),yplt(iii)
+            enddo
+            close(unit=62)
+          endif
+!
+          if (i.eq.nsplot.and.iqplot.ge.10) then
+            write(iname,40023) i-nsplot0
+            call setfnm('q',ishot,itime,itimeu,'_surfq1'//iname,fname)
+            call open_new(62,fname,'','')
+            do iii=1,nplt
+               write (62,*) xplt(iii),yplt(iii)
+            enddo
+            close(unit=62)
+          endif
+        endif
+!----------------------------------------------------------------------
+!--     plot pressure surface for rotational equilibrium if requested
+!----------------------------------------------------------------------
+        if (kvtor.gt.0.and.kplotp.ne.0) then
+          signp=1.
+          if (kplotp.lt.0) signp=-1.
+          nn = nn + 1
+          xplt(nplt+1)=xplt(1)
+          yplt(nplt+1)=yplt(1)
+          do ii=1,nplt
+            if (signp*xplt(ii).gt.signp*rmaxis) then
+              if(yplt(ii)*yplt(ii+1).le.0.0) exit
+            endif
+          enddo
+          call seva2d(bwx,lwx,bwy,lwy,cw,xplt(ii),yplt(ii), &
+                      pds,ier,n111)
+          spwant=pds(1)
+          call surfac(spwant,presst,nw,nh,rgrid,zgrid,xplt,yplt, &
+                      nplt,npoint,drgrid,dzgrid,rmin,rmax,zmin, &
+                      zmax,n111,rmaxis,zmaxis,negcur,kerror)
+          if (kerror.gt.0) return
+          clearx(nn) = 'YELL'
+          nxy(nn) = nplt
+          ndshme(nn) = 1
+          do ii = 1,nplt
             xx(ii,nn) = xplt(ii)
             yy(ii,nn) = yplt(ii)
-         enddo
-!----------------------------------------------------------------------
-!--      regular surfaces                                            --
-!----------------------------------------------------------------------
-         if (kwripre.gt.0) then
+          enddo
+          if (kwripre.gt.0) then
             if (i.lt.nsplot.or.iqplot.lt.10) then
-               write(iname,40023) i
-               dataname=dataname(1:lprx)//'_surf'//iname
-               open(unit=62,file=dataname,status='old',iostat=ioerr)
-               if (ioerr.eq.0) close(unit=62,status='delete')
-               open(unit=62,file=dataname,status='new')
-               do iii=1,nplt
-                  write (62,*) xplt(iii),yplt(iii)
-               enddo
-               close(unit=62)
-            endif
-!
-            if (i.eq.nsplot.and.iqplot.ge.10) then
-              write(iname,40023) i-nsplot0
-              dataname=dataname(1:lprx)//'_surfq1'//iname
-              open(unit=62,file=dataname,status='old',iostat=ioerr)
-              if (ioerr.eq.0) close(unit=62,status='delete')
-              open(unit=62,file=dataname,status='new')
+              write(iname,40023) i
+              call setfnm('q',ishot,itime,itimeu,'_surp'//iname,fname)
+              call open_new(62,fname,'','')
               do iii=1,nplt
-                  write (62,*) xplt(iii),yplt(iii)
+                write (62,*) xplt(iii),yplt(iii)
               enddo
               close(unit=62)
             endif
-         endif
-!----------------------------------------------------------------------
-!--      plot pressure surface for rotational equilibrium if requested
-!----------------------------------------------------------------------
-         if (kvtor.gt.0.and.kplotp.ne.0) then
-           signp=1.
-           if (kplotp.lt.0) signp=-1.
-           nn = nn + 1
-           xplt(nplt+1)=xplt(1)
-           yplt(nplt+1)=yplt(1)
-           do ii=1,nplt
-             if (signp*xplt(ii).gt.signp*rmaxis) then
-               if (yplt(ii)*yplt(ii+1).le.0.0) exit
-             endif
-           enddo
-           call seva2d(bwx,lwx,bwy,lwy,cw,xplt(ii),yplt(ii), &
-                    pds,ier,n111)
-           spwant=pds(1)
-           call surfac(spwant,presst,nw,nh,rgrid,zgrid,xplt,yplt, &
-                       nplt,npoint,drgrid,dzgrid,rmin,rmax,zmin, &
-                       zmax,n111,rmaxis,zmaxis,negcur,kerror)
-           if (kerror.gt.0) return
-           clearx(nn) = 'YELL'
-           nxy(nn) = nplt
-           ndshme(nn) = 1
-           do ii = 1,nplt
-              xx(ii,nn) = xplt(ii)
-              yy(ii,nn) = yplt(ii)
-           enddo
-           if (kwripre.gt.0) then
-             if (i.lt.nsplot.or.iqplot.lt.10) then
-               write(iname,40023) i
-               dataname=dataname(1:lprx)//'_surp'//iname
-               open(unit=62,file=dataname,status='old',iostat=ioerr)
-               if (ioerr.eq.0) close(unit=62,status='delete')
-               open(unit=62,file=dataname,status='new')
-               do iii=1,nplt
-                 write (62,*) xplt(iii),yplt(iii)
-               enddo
-               close(unit=62)
-             endif
-           endif
-         endif
+          endif
+        endif
 !
-         if (idqplot.gt.0) then
-            if (iqplot.lt.10.or.i.lt.nsplot0) then
-               sinow=j/real(nsplot0+1,dp)
-               qnow=seval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
-               msg = msg + 1
-               note(msg) = 4
-               anum(msg) = qnow
-               iplce(msg) = idqplot
-               xpos(msg) = xplt(nplt/6)
-               ypos(msg) = yplt(nplt/6)
-               ht(msg) = 0.10_dp
-            endif
-         endif
+        if (idqplot.gt.0) then
+          if (iqplot.lt.10.or.i.lt.nsplot0) then
+            sinow=j/real(nsplot0+1,dp)
+            qnow=seval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
+            msg = msg + 1
+            note(msg) = 4
+            anum(msg) = qnow
+            iplce(msg) = idqplot
+            xpos(msg) = xplt(nplt/6)
+            ypos(msg) = yplt(nplt/6)
+            ht(msg) = 0.10_dp
+          endif
+        endif
       enddo
 40023 format (i1)
 !-----------------------------------------------------------------------
@@ -884,18 +844,16 @@
       nn = nn + 1
       nxy(nn) = limitr
       do ii = 1, limitr
-         xx(ii,nn) = xlim(ii)
-         yy(ii,nn) = ylim(ii)
+        xx(ii,nn) = xlim(ii)
+        yy(ii,nn) = ylim(ii)
       enddo
       if (kwripre.gt.0) then
-         dataname=dataname(1:lprx)//'_lim'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         do i=1,limitr
-            write (62,*) xlim(i),ylim(i)
-         enddo
-         close(unit=62)
+        call setfnm('q',ishot,itime,itimeu,'_lim',fname)
+        call open_new(62,fname,'','')
+        do i=1,limitr
+          write (62,*) xlim(i),ylim(i)
+        enddo
+        close(unit=62)
       endif
 !--------------------------------------------------------------------
 !--   Plot W strips                                                --
@@ -905,8 +863,8 @@
       clearx(nn)='PINK'
       thcrv(nn) = 0.030_dp
       do ii = 1, 2
-         xx(ii,nn) = rwstrip1(ii)
-         yy(ii,nn) = zwstrip1(ii)
+        xx(ii,nn) = rwstrip1(ii)
+        yy(ii,nn) = zwstrip1(ii)
       enddo
 !
       nn = nn + 1
@@ -914,8 +872,8 @@
       clearx(nn)='PINK'
       thcrv(nn) = 0.030_dp
       do ii = 1, 2
-         xx(ii,nn) = rwstrip2(ii)
-         yy(ii,nn) = zwstrip2(ii)
+        xx(ii,nn) = rwstrip2(ii)
+        yy(ii,nn) = zwstrip2(ii)
       enddo
       else plot_limiter
 !-------------------------------------------------------------------
@@ -1413,62 +1371,60 @@
 !
       SXR: if (ixray.ne.0) then
       do i=ixraystart,ixrayend
-         xplt(1)=rxray(i)
-         yplt(1)=zxray(i)
-         theta=xangle(i)*radeg
-         mdot = 1
-         iddsxr=0
-         if (i.le.nangle/2) then
-            do ii=1,10
-               if (i.eq.ksxr0(ii)) then
-                  mdot = 0
-                  iddsxr=ii
-               endif
-            enddo
-         else
-            j=i-nangle/2
-            do ii=1,10
-               if (j.eq.ksxr2(ii)) then
-                  mdot = 0
-                  iddsxr=ii
-               endif
-            enddo
-         endif
-         do k=2,npoint
-            xplt(k)=k*0.08_dp*cos(theta)+rxray(i)
-            yplt(k)=k*0.08_dp*sin(theta)+zxray(i)
-            if ((xplt(k).lt.almin).or.(xplt(k).gt.almax)) exit
-            if ((yplt(k).lt.blmin).or.(yplt(k).gt.blmax)) exit
-         enddo
-         if (iddsxr.gt.0.or.idosxr.eq.1) then
-            nn = nn + 1
-            ndotme(nn) = mdot
-            nxy(nn) = k
-            do ii = 1, nxy(nn)
-               xx(ii,nn) = xplt(ii)
-               yy(ii,nn) = yplt(ii)
-            enddo
-         endif
-!----------------------------------------------------------------------
-!--      write out SXR files                                         --
-!----------------------------------------------------------------------
-         if (kwripre.gt.0.and.iddsxr.gt.0) then
-            write(iname,40023) iddsxr
-            if (i.le.nangle/2) then
-               dataname=dataname(1:lprx)//'_sxr0'//iname
-            else
-               dataname=dataname(1:lprx)//'_sxr2'//iname
+        xplt(1)=rxray(i)
+        yplt(1)=zxray(i)
+        theta=xangle(i)*radeg
+        mdot = 1
+        iddsxr=0
+        if (i.le.nangle/2) then
+          do ii=1,10
+            if (i.eq.ksxr0(ii)) then
+              mdot = 0
+              iddsxr=ii
             endif
-            open(unit=62,file=dataname,status='old',iostat=ioerr)
-            if (ioerr.eq.0) close(unit=62,status='delete')
-            open(unit=62,file=dataname,status='new')
-            do iii=1,k
-               call zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(iii), &
-               yplt(iii),limfag)
-               if (zeron.gt.0.001_dp) write (62,*) xplt(iii),yplt(iii)
-            enddo
-            close(unit=62)
-         endif
+          enddo
+        else
+          j=i-nangle/2
+          do ii=1,10
+            if (j.eq.ksxr2(ii)) then
+              mdot = 0
+              iddsxr=ii
+            endif
+          enddo
+        endif
+        do k=2,npoint
+          xplt(k)=k*0.08_dp*cos(theta)+rxray(i)
+          yplt(k)=k*0.08_dp*sin(theta)+zxray(i)
+          if((xplt(k).lt.almin).or.(xplt(k).gt.almax)) exit
+          if((yplt(k).lt.blmin).or.(yplt(k).gt.blmax)) exit
+        enddo
+        if (iddsxr.gt.0.or.idosxr.eq.1) then
+          nn = nn + 1
+          ndotme(nn) = mdot
+          nxy(nn) = k
+          do ii = 1, nxy(nn)
+            xx(ii,nn) = xplt(ii)
+            yy(ii,nn) = yplt(ii)
+          enddo
+        endif
+!----------------------------------------------------------------------
+!--     write out SXR files
+!----------------------------------------------------------------------
+        if (kwripre.gt.0.and.iddsxr.gt.0) then
+          write(iname,40023) iddsxr
+          if (i.le.nangle/2) then
+            call setfnm('q',ishot,itime,itimeu,'_sxr0'//iname,fname)
+          else
+            call setfnm('q',ishot,itime,itimeu,'_sxr2'//iname,fname)
+          endif
+          call open_new(62,fname,'','')
+          do iii=1,k
+            call zlim(zeron,n11,n11,limitr,xlim,ylim,xplt(iii), &
+            yplt(iii),limfag)
+            if(zeron.gt.0.001_dp) write (62,*) xplt(iii),yplt(iii)
+          enddo
+          close(unit=62)
+        endif
       enddo
 !
       endif SXR
@@ -2346,29 +2302,23 @@
          enddo
          plot_mid: if (kwripre.gt.0) then
            xdum=0.
-           dataname=dataname(1:lprx)//'_jmid'
-           open(unit=62,file=dataname,status='old',iostat=ioerr)
-           if (ioerr.eq.0) close(unit=62,status='delete')
-           open(unit=62,file=dataname,status='new')
+           call setfnm('q',ishot,itime,itimeu,'_jmid',fname)
+           call open_new(62,fname,'','')
            do i=1,nw
              write (62,*) workc(i),worka(i),xdum,xdum
            enddo
            close(unit=62)
            if (keecur.gt.0) then
-             dataname=dataname(1:lprx)//'_ermid'
-             open(unit=62,file=dataname,status='old',iostat=ioerr)
-             if (ioerr.eq.0) close(unit=62,status='delete')
-             open(unit=62,file=dataname,status='new')
+             call setfnm('q',ishot,itime,itimeu,'_ermid',fname)
+             call open_new(62,fname,'','')
              do i=1,nw
                write (62,*) rpmid(i),ermid(i),xdum,xdum
              enddo
              close(unit=62)
            endif
            if (kvtor.gt.0) then
-             dataname=dataname(1:lprx)//'_jwmid'
-             open(unit=62,file=dataname,status='old',iostat=ioerr)
-             if (ioerr.eq.0) close(unit=62,status='delete')
-             open(unit=62,file=dataname,status='new')
+             call setfnm('q',ishot,itime,itimeu,'_jwmid',fname)
+             call open_new(62,fname,'','')
              do i=1,nw
                write (62,*) workc(i),workaw(i),xdum,xdum
              enddo
@@ -2452,28 +2402,26 @@
          xx(2,nn)=rmaxis
          yy(2,nn)=curmax
          if (nqwant.gt.0) then
-            do i=1,nqwant
-               sinow=siwantq(i)
-               worka(i)=seval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
-            enddo
-            nn = nn + 1
-            nxy(nn) = nqwant
-            markme(nn) = 3
-            ncnct(nn) = 1
-            do ii = 1, nxy(nn)
-               xx(ii,nn) = qsiw(ii)
-               yy(ii,nn) = worka(ii)
-            enddo
+           do i=1,nqwant
+             sinow=siwantq(i)
+             worka(i)=seval(nw,sinow,worke,qpsi,bworkb,cworkb,dworkb)
+           enddo
+           nn = nn + 1
+           nxy(nn) = nqwant
+           markme(nn) = 3
+           ncnct(nn) = 1
+           do ii = 1, nxy(nn)
+             xx(ii,nn) = qsiw(ii)
+             yy(ii,nn) = worka(ii)
+           enddo
          endif
          if (kwripre.gt.0) then
-            dataname=dataname(1:lprx)//'_qmid'
-            open(unit=62,file=dataname,status='old',iostat=ioerr)
-            if (ioerr.eq.0) close(unit=62,status='delete')
-            open(unit=62,file=dataname,status='new')
-            do ip=1,nw
-               write(62,*)workc(ip),worka(ip)
-            enddo
-            close(62)
+           call setfnm('q',ishot,itime,itimeu,'_qmid',fname)
+           call open_new(62,fname,'','')
+           do ip=1,nw
+             write(62,*)workc(ip),worka(ip)
+           enddo
+           close(62)
          endif
          MSE: if (kstark.gt.0.or.kdomse.gt.0) then
           do i=1,nstark
@@ -2485,18 +2433,14 @@
             endif
           enddo
           plot_mse: if (kwripre.gt.0) then
-            dataname=dataname(1:lprx)//'_rzmse'
-            open(unit=62,file=dataname,status='old',iostat=ioerr)
-            if(ioerr.eq.0) close(unit=62,status='delete')
-            open(unit=62,file=dataname,status='new')
+            call setfnm('q',ishot,itime,itimeu,'_rzmse',fname)
+            call open_new(62,fname,'','')
             do ip=1,nstark
               write(62,*)rrgam(jtime,ip),zzgam(jtime,ip)
             enddo
             close(62)
-            dataname=dataname(1:lprx)//'_bzmse'
-            open(unit=62,file=dataname,status='old',iostat=ioerr)
-            if (ioerr.eq.0) close(unit=62,status='delete')
-            open(unit=62,file=dataname,status='new')
+            call setfnm('q',ishot,itime,itimeu,'_bzmse',fname)
+            call open_new(62,fname,'','')
             zerono = 0.0
             do ip=1,nmselp
               if (kstark.gt.0) then
@@ -2512,10 +2456,8 @@
               rrgams(ip)=rrgam(jtime,ip)
             enddo
             close(62)
-            dataname=dataname(1:lprx)//'_bzlim'
-            open(unit=62,file=dataname,status='old',iostat=ioerr)
-            if(ioerr.eq.0) close(unit=62,status='delete')
-            open(unit=62,file=dataname,status='new')
+            call setfnm('q',ishot,itime,itimeu,'_bzlim',fname)
+            call open_new(62,fname,'','')
             do ip=nmselp+1,nstark
               if (nstark.gt.nmselp) then
                 if (kstark.gt.0) then
@@ -2532,10 +2474,8 @@
               endif
             enddo
             close(62)
-            dataname=dataname(1:lprx)//'_bzmsec'
-            open(unit=62,file=dataname,status='old',iostat=ioerr)
-            if (ioerr.eq.0) close(unit=62,status='delete')
-            open(unit=62,file=dataname,status='new')
+            call setfnm('q',ishot,itime,itimeu,'_bzmsec',fname)
+            call open_new(62,fname,'','')
             do jp=1,nmselp
               rrgamn=rrgams(1)
               bzgamn=bzmsec(1)
@@ -2551,10 +2491,8 @@
               rrgams(igamn)=1.e10_dp
             enddo
             close(62)
-            dataname=dataname(1:lprx)//'_bzlimc'
-            open(unit=62,file=dataname,status='old',iostat=ioerr)
-            if (ioerr.eq.0) close(unit=62,status='delete')
-            open(unit=62,file=dataname,status='new')
+            call setfnm('q',ishot,itime,itimeu,'_bzlimc',fname)
+            call open_new(62,fname,'','')
             do jp=nmselp+1,nstark
               rrgamn=rrgaml(1)
               bzgamn=bzmsec(1+nmselp)
@@ -3033,24 +2971,22 @@
       iexit = 1
 !
       if (kwripre.gt.0) then
-         dataname=dataname(1:lprx)//'_pmid'
-         open(unit=62,file=dataname,status='old',err=17940)
-         close(unit=62,status='delete')
-17940    continue
-         open(unit=62,file=dataname,status='new')
-         do i=1,nw
-            write (62,*) rpmid(i),pmid(i)
-         enddo
-         close(unit=62)
-         dataname=dataname(1:lprx)//'_pwmid'
-         open(unit=62,file=dataname,status='old',err=17950)
-         close(unit=62,status='delete')
-17950    continue
-         open(unit=62,file=dataname,status='new')
-         do i=1,nw
-            write (62,*) rpmid(i),pmidw(i)
-         enddo
-         close(unit=62)
+        call setfnm('q',ishot,itime,itimeu,'_pmid',fname)
+        call open_new(62,fname,'','')
+17940   continue
+        open(unit=62,file=fname,status='new')
+        do i=1,nw
+          write (62,*) rpmid(i),pmid(i)
+        enddo
+        close(unit=62)
+        call setfnm('q',ishot,itime,itimeu,'_pwmid',fname)
+        call open_new(62,fname,'','')
+17950   continue
+        open(unit=62,file=fname,status='new')
+        do i=1,nw
+          write (62,*) rpmid(i),pmidw(i)
+        enddo
+        close(unit=62)
       endif
 !
       nn=1
@@ -4912,171 +4848,144 @@
 !
       is_vacuum_5: if (ivacum.eq.0) then
       plot_extra: if (kwripre.gt.0) then
-         dataname=dataname(1:lprx)//'_presf'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         nnww=nw
-         xdum=0.
-         delvn=1.0_dp/(nw-1)
-         do i=1,nw
-            workb(i)=sqrt(volp(i)/volp(nw))
-            voln(i)=(i-1)*delvn
-         enddo
-         call zpline(nw,workb,pres,bvoln,cvoln,dvoln)
-         voln(1)=0.0
-         voln(nw)=1.0
-         do i=1,nw
-            presnow=seval(nw,voln(i),workb,pres,bvoln,cvoln,dvoln)
-            write (62,*) voln(i),presnow,xdum,xdum
-            presv(i)=presnow
-         enddo
-         close(unit=62)
-         if (nomegat.gt.0.and.kprfit.eq.3) then
-           call zpline(nw,voln,workb,bvoln,cvoln,dvoln)
-           do i=1,nomegat
+        call setfnm('q',ishot,itime,itimeu,'_presf',fname)
+        call open_new(62,fname,'','')
+        nnww=nw
+        xdum=0.
+        delvn=1.0_dp/(nw-1)
+        do i=1,nw
+          workb(i)=sqrt(volp(i)/volp(nw))
+          voln(i)=(i-1)*delvn
+        enddo
+        call zpline(nw,workb,pres,bvoln,cvoln,dvoln)
+        voln(1)=0.0
+        voln(nw)=1.0
+        do i=1,nw
+          presnow=seval(nw,voln(i),workb,pres,bvoln,cvoln,dvoln)
+          write (62,*) voln(i),presnow,xdum,xdum
+          presv(i)=presnow
+        enddo
+        close(unit=62)
+        if (nomegat.gt.0.and.kprfit.eq.3) then
+          call zpline(nw,voln,workb,bvoln,cvoln,dvoln)
+          do i=1,nomegat
             yxn=rpresws(i)
             rpreswv(i)=seval(nw,yxn,voln,workb,bvoln,cvoln,dvoln)
-           enddo
-         endif
-         mmpress=mpress
-         dataname=dataname(1:lprx)//'_qthom'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         do i=1,mmpress
-            write (62,*) zqthom(i),qthom(i),xdum,xdum
-         enddo
-         close(unit=62)
-         dataname=dataname(1:lprx)//'_jscrap'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         do i=1,nw
-            write (62,*) rscrap(i),curscr(i),xdum,xdum
-         enddo
-         close(unit=62)
-         dataname=dataname(1:lprx)//'_qpsi'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         do i=1,nw
-            write (62,*) workb(i),qpsi(i),xdum,xdum
-         enddo
-         close(unit=62)
-         dataname=dataname(1:lprx)//'_jor'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         do i=1,nw
-            cjorka=cjor(i)/1000.
-            write (62,*) workb(i),cjorka,xdum,xdum
-         enddo
-         close(unit=62)
-         dataname=dataname(1:lprx)//'_jorec'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         do i=1,nw
-            cjorka=cjorec(i)/1000.
-            write (62,*) workb(i),cjorka,xdum,xdum
-         enddo
-         close(unit=62)
+          enddo
+        endif
+        mmpress=mpress
+        call setfnm('q',ishot,itime,itimeu,'_qthom',fname)
+        call open_new(62,fname,'','')
+        do i=1,mmpress
+          write (62,*) zqthom(i),qthom(i),xdum,xdum
+        enddo
+        close(unit=62)
+        call setfnm('q',ishot,itime,itimeu,'_jscrap',fname)
+        call open_new(62,fname,'','')
+        do i=1,nw
+          write (62,*) rscrap(i),curscr(i),xdum,xdum
+        enddo
+        close(unit=62)
+        call setfnm('q',ishot,itime,itimeu,'_qpsi',fname)
+        call open_new(62,fname,'','')
+        do i=1,nw
+          write (62,*) workb(i),qpsi(i),xdum,xdum
+        enddo
+        close(unit=62)
+        call setfnm('q',ishot,itime,itimeu,'_jor',fname)
+        call open_new(62,fname,'','')
+        do i=1,nw
+          cjorka=cjor(i)/1000.
+          write (62,*) workb(i),cjorka,xdum,xdum
+        enddo
+        close(unit=62)
+        call setfnm('q',ishot,itime,itimeu,'_jorec',fname)
+        call open_new(62,fname,'','')
+        do i=1,nw
+          cjorka=cjorec(i)/1000.
+          write (62,*) workb(i),cjorka,xdum,xdum
+        enddo
+        close(unit=62)
 !-----------------------------------------------------------------------
-!--      shear   dqdx/q                                               --
+!--     shear dqdx/q
 !-----------------------------------------------------------------------
-         dataname=dataname(1:lprx)//'_shear'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         call zpline(nw,workb,qpsi,bvoln,cvoln,dvoln)
-         do i=1,nw
-            qqqnow=seval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)
-            qshear=speval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)/ &
-                   qqqnow
-            write (62,*) voln(i),qshear,xdum,xdum
-         enddo
-         close(unit=62)
+        call setfnm('q',ishot,itime,itimeu,'_shear',fname)
+        call open_new(62,fname,'','')
+        call zpline(nw,workb,qpsi,bvoln,cvoln,dvoln)
+        do i=1,nw
+          qqqnow=seval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)
+          qshear=speval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)/ &
+                 qqqnow
+          write (62,*) voln(i),qshear,xdum,xdum
+        enddo
+        close(unit=62)
 !-----------------------------------------------------------------------
-!--      shear ballooning   x*dqdx/q                                  --
+!--     shear ballooning x*dqdx/q
 !-----------------------------------------------------------------------
-         dataname=dataname(1:lprx)//'_shearbal'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         call zpline(nw,workb,qpsi,bvoln,cvoln,dvoln)
-         do i=1,nw
-            qqqnow=seval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)
-            qshear=speval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)/ &
-                   qqqnow*voln(i)
-            write (62,*) voln(i),qshear,xdum,xdum
-         enddo
-         close(unit=62)
+        call setfnm('q',ishot,itime,itimeu,'_shearbal',fname)
+        call open_new(62,fname,'','')
+        call zpline(nw,workb,qpsi,bvoln,cvoln,dvoln)
+        do i=1,nw
+          qqqnow=seval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)
+          qshear=speval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)/ &
+                 qqqnow*voln(i)
+          write (62,*) voln(i),qshear,xdum,xdum
+        enddo
+        close(unit=62)
 !-----------------------------------------------------------------------
-!--      avearage poloidal magnetic field in T                        --
+!--     avearage poloidal magnetic field in T
 !-----------------------------------------------------------------------
-         dataname=dataname(1:lprx)//'_bpol'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         do i=1,nw
-            qshear=sqrt(volp(i)/volp(nw))
-            write (62,*) qshear,bpolss(i),xdum,xdum
-         enddo
-         close(unit=62)
+        call setfnm('q',ishot,itime,itimeu,'_bpol',fname)
+        call open_new(62,fname,'','')
+        do i=1,nw
+          qshear=sqrt(volp(i)/volp(nw))
+          write (62,*) qshear,bpolss(i),xdum,xdum
+        enddo
+        close(unit=62)
 !-----------------------------------------------------------------------
-!--      avearage poloidal magnetic field in T versus R at Z=0        --
+!--     avearage poloidal magnetic field in T versus R at Z=0
 !-----------------------------------------------------------------------
-         dataname=dataname(1:lprx)//'_bpolrmaj'
-         open(unit=62,file=dataname,status='old',err=31430)
-         close(unit=62,status='delete')
-31430    continue
-         open(unit=62,file=dataname,status='new')
-         do i=1,nw
-            write (62,*) rmajz0(i),bpolss(i),xdum,xdum
-         enddo
-         close(unit=62)
+        call setfnm('q',ishot,itime,itimeu,'_bpolrmaj',fname)
+        call open_new(62,fname,'','')
+        do i=1,nw
+          write (62,*) rmajz0(i),bpolss(i),xdum,xdum
+        enddo
+        close(unit=62)
 !-----------------------------------------------------------------------
-!--      R at Z=0                                                     --
+!--     R at Z=0
 !-----------------------------------------------------------------------
-         dataname=dataname(1:lprx)//'_rmajz0'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         do i=1,nw
-            qshear=sqrt(volp(i)/volp(nw))
-            write (62,*) qshear,rmajz0(i),xdum,xdum
-         enddo
-         close(unit=62)
+        call setfnm('q',ishot,itime,itimeu,'_rmajz0',fname)
+        call open_new(62,fname,'','')
+        do i=1,nw
+          qshear=sqrt(volp(i)/volp(nw))
+          write (62,*) qshear,rmajz0(i),xdum,xdum
+        enddo
+        close(unit=62)
 !-----------------------------------------------------------------------
-!--      shearbal/q2  11/01/92  Lao                                   --
+!--     shearbal/q2 11/01/92 Lao
 !-----------------------------------------------------------------------
-         dataname=dataname(1:lprx)//'_sq2'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         do i=1,nw
-            qqqnow=seval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)
-            qshear=speval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)/ &
-                   qqqnow*voln(i)
-            qshear=qshear/qqqnow**2
-            write (62,*) voln(i),qshear,xdum,xdum
-         enddo
-         close(unit=62)
+        call setfnm('q',ishot,itime,itimeu,'_sq2',fname)
+        call open_new(62,fname,'','')
+        do i=1,nw
+          qqqnow=seval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)
+          qshear=speval(nw,voln(i),workb,qpsi,bvoln,cvoln,dvoln)/ &
+                 qqqnow*voln(i)
+          qshear=qshear/qqqnow**2
+          write (62,*) voln(i),qshear,xdum,xdum
+        enddo
+        close(unit=62)
 !---------------------------------------------------------------------
-!--      angular speed                                              --
+!--     angular speed
 !---------------------------------------------------------------------
-         if (nomegat.gt.0.and.kprfit.eq.3) then
-            dataname=dataname(1:lprx)//'_omegafit'
-            open(unit=62,file=dataname,status='old',iostat=ioerr)
-            if (ioerr.eq.0) close(unit=62,status='delete')
-            open(unit=62,file=dataname,status='new')
-            do i=1,nomegat
-               yxn=rpreswv(i)
-               write (62,*) yxn,omegat(i)
-            enddo
-            close(unit=62)
-          endif
+        if (nomegat.gt.0.and.kprfit.eq.3) then
+          call setfnm('q',ishot,itime,itimeu,'_omegafit',fname)
+          call open_new(62,fname,'','')
+          do i=1,nomegat
+            yxn=rpreswv(i)
+            write (62,*) yxn,omegat(i)
+          enddo
+          close(unit=62)
+        endif
       endif plot_extra
 !-----------------------------------------------------------------------
 !--   plots for kinetic fitting option                                --
@@ -5211,165 +5120,152 @@
       nnww=nw
       xdum=0.0
       kin: if (kprfit.eq.2.or.kprfit.eq.3) then
-         dataname=dataname(1:lprx)//'_presd'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         do i=1,npress
-            write (62,*) saipre(i),pressr(i),xdum,sigpre(i)
-         enddo
-         close(unit=62)
+        call setfnm('q',ishot,itime,itimeu,'_presd',fname)
+        call open_new(62,fname,'','')
+        do i=1,npress
+          write (62,*) saipre(i),pressr(i),xdum,sigpre(i)
+        enddo
+        close(unit=62)
       elseif (kprfit.eq.1) then kin
 !-----------------------------------------------------------------------
-!--      pressure input in flux space                                 --
+!--     pressure input in flux space
 !-----------------------------------------------------------------------
-         do i=1,npress
-            rpressv(i)=seval(nw,-rpress(i),worke,workb,bworkb, &
+        do i=1,npress
+          rpressv(i)=seval(nw,-rpress(i),worke,workb,bworkb, &
+          cworkb,dworkb)
+        enddo
+        if (nbeam.gt.0) then
+          do i=1,nbeam
+            vnbeam(i)=seval(nw,sibeam(i),worke,workb,bworkb, &
             cworkb,dworkb)
-         enddo
-         if (nbeam.gt.0) then
-            do i=1,nbeam
-               vnbeam(i)=seval(nw,sibeam(i),worke,workb,bworkb, &
-               cworkb,dworkb)
-            enddo
-         endif
-         if (npteth.gt.0) then
-            do i=1,npteth
-               call seva2d(bkx,lkx,bky,lky,c,rteth(i),zteth(i), &
-                           pds,ier,n111)
-               workc(i)=(pds(1)-simag)/(psibry-simag)
-               workc(i)=seval(nw,workc(i),worke, &
-                              workb,bworkb,cworkb,dworkb)
-            enddo
-         endif
-         if (nption.gt.0) then
-            do i=npteth+1,npteth+nption
-               j=i-npteth
-               call seva2d(bkx,lkx,bky,lky,c,rion(j),zion(j), &
-                           pds,ier,n111)
-                workc(i)=(pds(1)-simag)/(psibry-simag)
-                workc(i)=seval(nw,workc(i),worke, &
-                              workb,bworkb,cworkb,dworkb)
-            enddo
-         endif
-         call zpline(npress,saipre,pressr,bworkb,cworkb,dworkb)
-         dataname=dataname(1:lprx)//'_presd'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         if (npteth+nption.gt.0) then
-            ydumin=.03*seval(npress,workc(npteth+1), &
-                             saipre,pressr,bworkb,cworkb,dworkb)
-            do i=1,npteth+nption
-               workd(i)=seval(npress,workc(i),saipre, &
-               pressr,bworkb,cworkb,dworkb)
-               ydum=.10_dp*workd(i)
-               ydum=max(ydum,ydumin)
-               write (62,*) workc(i),workd(i),xdum,ydum
-            enddo
-            close(unit=62)
-         endif
+          enddo
+        endif
+        if (npteth.gt.0) then
+          do i=1,npteth
+            call seva2d(bkx,lkx,bky,lky,c,rteth(i),zteth(i), &
+                        pds,ier,n111)
+            workc(i)=(pds(1)-simag)/(psibry-simag)
+            workc(i)=seval(nw,workc(i),worke, &
+                           workb,bworkb,cworkb,dworkb)
+          enddo
+        endif
+        if (nption.gt.0) then
+          do i=npteth+1,npteth+nption
+            j=i-npteth
+            call seva2d(bkx,lkx,bky,lky,c,rion(j),zion(j), &
+                        pds,ier,n111)
+             workc(i)=(pds(1)-simag)/(psibry-simag)
+             workc(i)=seval(nw,workc(i),worke, &
+                           workb,bworkb,cworkb,dworkb)
+          enddo
+        endif
+        call zpline(npress,saipre,pressr,bworkb,cworkb,dworkb)
+        call setfnm('q',ishot,itime,itimeu,'_presd',fname)
+        call open_new(62,fname,'','')
+        if (npteth+nption.gt.0) then
+          ydumin=.03*seval(npress,workc(npteth+1), &
+                           saipre,pressr,bworkb,cworkb,dworkb)
+          do i=1,npteth+nption
+            workd(i)=seval(npress,workc(i),saipre, &
+            pressr,bworkb,cworkb,dworkb)
+            ydum=.10_dp*workd(i)
+            ydum=max(ydum,ydumin)
+            write (62,*) workc(i),workd(i),xdum,ydum
+          enddo
+          close(unit=62)
+        endif
 !-----------------------------------------------------------------------
-!--      write out pressure data points in flux space for KPRFIT=1    --
+!--     write out pressure data points in flux space for KPRFIT=1
 !-----------------------------------------------------------------------
-         dataname=dataname(1:lprx)//'_presd'//'_psi'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         do i=1,npress
-            write (62,*) rpressv(i),pressr(i),xdum,sigpre(i)
-         enddo
-         close(unit=62)
+        call setfnm('q',ishot,itime,itimeu,'_presd_psi',fname)
+        call open_new(62,fname,'','')
+        do i=1,npress
+          write (62,*) rpressv(i),pressr(i),xdum,sigpre(i)
+        enddo
+        close(unit=62)
 !-----------------------------------------------------------------------
-!--      now dpdr                                                     --
+!--     now dpdr
 !-----------------------------------------------------------------------
-         dataname=dataname(1:lprx)//'_prespf'//'_psi'
-         call zpline(nw,voln,presv,bpresv,cpresv,dpresv)
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         do i=1,npress
-            prespv=- &
-            speval(nw,rpressv(i),voln,presv,bpresv,cpresv,dpresv)
-            write (62,*) rpressv(i),prespv,xdum,xdum
-         enddo
-         close(unit=62)
+        call setfnm('q',ishot,itime,itimeu,'_prespf_psi',fname)
+        call open_new(62,fname,'','')
+        call zpline(nw,voln,presv,bpresv,cpresv,dpresv)
+        do i=1,npress
+          prespv=-speval(nw,rpressv(i),voln,presv,bpresv,cpresv,dpresv)
+          write (62,*) rpressv(i),prespv,xdum,xdum
+        enddo
+        close(unit=62)
 !-----------------------------------------------------------------------
-!--      now dpdr thermal                                             --
+!--     now dpdr thermal
 !-----------------------------------------------------------------------
-         beams: if (nbeam.gt.0) then
-            dataname=dataname(1:lprx)//'_pbeamf'
-            open(unit=62,file=dataname,status='old',iostat=ioerr)
-            if (ioerr.eq.0) close(unit=62,status='delete')
-            open(unit=62,file=dataname,status='new')
-            do i=1,npress
-               ptherm(i)=pressr(i)-pbeam(i)
-            enddo
-            call zpline(npress,rpressv,ptherm,bpressv,cpressv,dpressv)
-            do i=1,nw
-              pbimf(i)=seval(npress,voln(i),rpressv, &
-                             ptherm,bpressv,cpressv,dpressv)
-              pbimf(i)=presv(i)-pbimf(i)
-              write (62,*) voln(i),pbimf(i),xdum,xdum
-            enddo
-            close(unit=62)
+        beams: if (nbeam.gt.0) then
+          call setfnm('q',ishot,itime,itimeu,'_pbeamf',fname)
+          call open_new(62,fname,'','')
+          do i=1,npress
+            ptherm(i)=pressr(i)-pbeam(i)
+          enddo
+          call zpline(npress,rpressv,ptherm,bpressv,cpressv,dpressv)
+          do i=1,nw
+            pbimf(i)=seval(npress,voln(i),rpressv, &
+                           ptherm,bpressv,cpressv,dpressv)
+            pbimf(i)=presv(i)-pbimf(i)
+            write (62,*) voln(i),pbimf(i),xdum,xdum
+          enddo
+          close(unit=62)
 !-----------------------------------------------------------------------
-!--         get fitted beam beta                                      --
+!--       get fitted beam beta
 !-----------------------------------------------------------------------
-            do i=1,nw-1
-               delvol=(voln(i+1)**2-voln(i)**2)
-               bimbf=bimbf+(pbimf(i)+pbimf(i+1))*delvol
-            enddo
-            bimbf=bimbf*0.5_dp*volume(jtime)/1.e6_dp*1.5_dp
-            bimbf=bimbf*betat(jtime)/wmhd(jtime)
+          do i=1,nw-1
+            delvol=(voln(i+1)**2-voln(i)**2)
+            bimbf=bimbf+(pbimf(i)+pbimf(i+1))*delvol
+          enddo
+          bimbf=bimbf*0.5_dp*volume(jtime)/1.e6_dp*1.5_dp
+          bimbf=bimbf*betat(jtime)/wmhd(jtime)
 !-----------------------------------------------------------------------
-!--         now beam data                                             --
+!--       now beam data
 !-----------------------------------------------------------------------
-            dataname=dataname(1:lprx)//'_pbeam'
-            open(unit=62,file=dataname,status='old',iostat=ioerr)
-            if (ioerr.eq.0) close(unit=62,status='delete')
-            open(unit=62,file=dataname,status='new')
-            call zpline(nbeam,sibeam,pbeam,bpressv,cpressv,dpressv)
-            call zpline(nw,workb,voln,bvoln,cvoln,dvoln)
-            do i=1,nw
-              sivol(i)=seval(nw,voln(i),workb, &
-                             voln,bvoln,cvoln,dvoln)
-              xn=sivol(i)
-              workc(i)=seval(nbeam,xn,sibeam,pbeam, &
-                            bpressv,cpressv,dpressv)
-            enddo
-            xdum=0.0
-            do i=1,nw
-               write (62,*) voln(i),workc(i),xdum,xdum
-            enddo
-            close(unit=62)
+          call setfnm('q',ishot,itime,itimeu,'_pbeam',fname)
+          call open_new(62,fname,'','')
+          call zpline(nbeam,sibeam,pbeam,bpressv,cpressv,dpressv)
+          call zpline(nw,workb,voln,bvoln,cvoln,dvoln)
+          do i=1,nw
+            sivol(i)=seval(nw,voln(i),workb, &
+                           voln,bvoln,cvoln,dvoln)
+            xn=sivol(i)
+            workc(i)=seval(nbeam,xn,sibeam,pbeam, &
+                          bpressv,cpressv,dpressv)
+          enddo
+          xdum=0.0
+          do i=1,nw
+            write (62,*) voln(i),workc(i),xdum,xdum
+          enddo
+          close(unit=62)
 !-----------------------------------------------------------------------
-!--         plot beam pressures                                       --
+!--       plot beam pressures
 !-----------------------------------------------------------------------
-            nn = nn + 1
-            ndotme(nn) = 1
-            nxy(nn) = nw
-            do ii = 1, nxy(nn)
-               xx(ii,nn) = voln(ii)
-               yy(ii,nn) = pbimf(ii)
-            enddo
-            nn = nn + 1
-            ndshme(nn) = 1
-            nxy(nn) = nw
-            do ii = 1, nxy(nn)
-               xx(ii,nn) = voln(ii)
-               yy(ii,nn) = workc(ii)
-            enddo
+          nn = nn + 1
+          ndotme(nn) = 1
+          nxy(nn) = nw
+          do ii = 1, nxy(nn)
+            xx(ii,nn) = voln(ii)
+            yy(ii,nn) = pbimf(ii)
+          enddo
+          nn = nn + 1
+          ndshme(nn) = 1
+          nxy(nn) = nw
+          do ii = 1, nxy(nn)
+            xx(ii,nn) = voln(ii)
+            yy(ii,nn) = workc(ii)
+          enddo
 !-----------------------------------------------------------------------
-!--         get input beam beta                                       --
+!--        get input beam beta
 !-----------------------------------------------------------------------
-            do i=1,nw-1
-               delvol=(voln(i+1)**2-voln(i)**2)
-               bimbe=bimbe+(workc(i)+workc(i+1))*delvol
-            enddo
-            bimbe=bimbe*0.5_dp*volume(jtime)/1.e6_dp*1.5_dp
-            bimbe=bimbe*betat(jtime)/wmhd(jtime)
-         endif beams
+          do i=1,nw-1
+            delvol=(voln(i+1)**2-voln(i)**2)
+            bimbe=bimbe+(workc(i)+workc(i+1))*delvol
+          enddo
+          bimbe=bimbe*0.5_dp*volume(jtime)/1.e6_dp*1.5_dp
+          bimbe=bimbe*betat(jtime)/wmhd(jtime)
+        endif beams
       endif kin
       endif plot_pres
       xabs=-4.5_dp
@@ -5987,18 +5883,14 @@
       if (kwripre.gt.0) then
         nnww=nw
         xdum=0.0
-        dataname=dataname(1:lprx)//'_preswd'
-        open(unit=62,file=dataname,status='old',iostat=ioerr)
-        if (ioerr.eq.0) close(unit=62,status='delete')
-        open(unit=62,file=dataname,status='new')
+        call setfnm('q',ishot,itime,itimeu,'_preswd',fname)
+        call open_new(62,fname,'','')
         do i=1,npresw
           write (62,*) saiprw(i),presw(i),xdum,sigprw(i)
         enddo
         close(unit=62)
-        dataname=dataname(1:lprx)//'_presw'
-        open(unit=62,file=dataname,status='old',iostat=ioerr)
-        if (ioerr.eq.0) close(unit=62,status='delete')
-        open(unit=62,file=dataname,status='new')
+        call setfnm('q',ishot,itime,itimeu,'_presw',fname)
+        call open_new(62,fname,'','')
         do i=1,nw
           write (62,*) workb(i),pressw(i),xdum,xdum
         enddo
@@ -6478,8 +6370,8 @@
       chsmin=0.0
       chsmax=0.0
       do i=1,npress
-         workc(i)=pbimth(i)/(pres(1)-pressbb)
-         chsmax=max(workc(i),chsmax)
+        workc(i)=pbimth(i)/(pres(1)-pressbb)
+        chsmax=max(workc(i),chsmax)
       enddo
       chsmin=0.0
       nn = nn + 1
@@ -6487,49 +6379,45 @@
       ncnct(nn) = -1
       nxy(nn) = npress
       do ii = 1, nxy(nn)
-         xx(ii,nn) = saipre(ii)
-         yy(ii,nn) = workc(ii)
+        xx(ii,nn) = saipre(ii)
+        yy(ii,nn) = workc(ii)
       enddo
 !
       plot_beam: if (kwripre.eq.1) then
-         if (nbeam.gt.0) then
-            call zpline(nbeam,sibeam,pbeam,bwork,cwork,dwork)
-            call zpline(nw,workb,voln,bvoln,cvoln,dvoln)
-            do i=1,nw
-               sivol(i)=seval(nw,voln(i),workb,voln,bvoln,cvoln,dvoln)
-               xn=sivol(i)
-               workc(i)=seval(nbeam,xn,sibeam,pbeam,bwork,cwork,dwork)
-            enddo
-         endif
-         xdum=0.0
-         dataname=dataname(1:lprx)//'_pbeam'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         do i=1,nw
-            write (62,*) voln(i),workc(i),xdum,xdum
-         enddo
-         close(unit=62)
+        if (nbeam.gt.0) then
+          call zpline(nbeam,sibeam,pbeam,bwork,cwork,dwork)
+          call zpline(nw,workb,voln,bvoln,cvoln,dvoln)
+          do i=1,nw
+            sivol(i)=seval(nw,voln(i),workb,voln,bvoln,cvoln,dvoln)
+            xn=sivol(i)
+            workc(i)=seval(nbeam,xn,sibeam,pbeam,bwork,cwork,dwork)
+          enddo
+        endif
+        xdum=0.0
+        call setfnm('q',ishot,itime,itimeu,'_pbeam',fname)
+        call open_new(62,fname,'','')
+        do i=1,nw
+          write (62,*) voln(i),workc(i),xdum,xdum
+        enddo
+        close(unit=62)
 !---------------------------------------------------------------------
-!--      beam ion density                                                --
+!--     beam ion density
 !---------------------------------------------------------------------
-         if (nbeam.gt.0) then
-            call zpline(nbeam,sibeam,dnbeam,bwork,cwork,dwork)
-            do i=1,nw
-               xn=sivol(i)
-               workc(i)=seval(nbeam,xn,sibeam,dnbeam,bwork,cwork,dwork)
-               workc(i)=workc(i)*1.e19_dp
-            enddo
-         endif
-         xdum=0.0
-         dataname=dataname(1:lprx)//'_nbeam'
-         open(unit=62,file=dataname,status='old',iostat=ioerr)
-         if (ioerr.eq.0) close(unit=62,status='delete')
-         open(unit=62,file=dataname,status='new')
-         do i=1,nw
-            write (62,*) voln(i),workc(i),xdum,xdum
-         enddo
-         close(unit=62)
+        if (nbeam.gt.0) then
+          call zpline(nbeam,sibeam,dnbeam,bwork,cwork,dwork)
+          do i=1,nw
+            xn=sivol(i)
+            workc(i)=seval(nbeam,xn,sibeam,dnbeam,bwork,cwork,dwork)
+            workc(i)=workc(i)*1.e19_dp
+          enddo
+        endif
+        xdum=0.0
+        call setfnm('q',ishot,itime,itimeu,'_nbeam',fname)
+        call open_new(62,fname,'','')
+        do i=1,nw
+          write (62,*) voln(i),workc(i),xdum,xdum
+        enddo
+        close(unit=62)
       endif plot_beam
 !
       xabs=-4.5_dp
@@ -8303,38 +8191,37 @@
 !----------------------------------------------------------------------
 !--   plot time history for kdata=4
 !----------------------------------------------------------------------
-      let = 'qt'
-      call setfnmt(let,ishot,itime,dataname)
-      dataname=dataname(3:7)//'_efitipmhd.dat '
-      call curvec(dataname,jerror,time,ipmhd,ktime,0_i4)
+      write (charshot,14990) ishot
+      fname=charshot//'_efitipmhd.dat'
+      call curvec(fname,jerror,time,ipmhd,ktime,0_i4)
       call zpline(ktime,time,sibdry,bscra,cscra,dscra)
       do i=1,ktime
          if (jerror(i).le.0) cycle
          scrat(i)=-speval(ktime,time(i),time,sibdry,bscra,cscra,dscra)
          scrat(i)=twopi*scrat(i)*1000.+vloopt(i)
       enddo
-      dataname=dataname(3:7)//'_efitvsurf.dat '
-      call curvec(dataname,jerror,time,scrat,ktime,0_i4)
-      dataname=dataname(3:7)//'_efitkappa.dat '
-      call curvec(dataname,jerror,time,elong,ktime,0_i4)
-      dataname=dataname(3:7)//'_efitaminor.dat'
-      call curvec(dataname,jerror,time,aminor,ktime,0_i4)
-      dataname=dataname(3:7)//'_efitzsurf.dat '
-      call curvec(dataname,jerror,time,zout,ktime,0_i4)
-      dataname=dataname(3:7)//'_efitrsurf.dat '
-      call curvec(dataname,jerror,time,rout,ktime,0_i4)
-      dataname=dataname(3:7)//'_efitbetap.dat '
-      call curvec(dataname,jerror,time,betap,ktime,0_i4)
-      dataname=dataname(3:7)//'_efitli.dat    '
-      call curvec(dataname,jerror,time,li,ktime,0_i4)
-      dataname=dataname(3:7)//'_efitq95.dat   '
-      call curvec(dataname,jerror,time,qpsi,ktime,0_i4)
-      dataname=dataname(3:7)//'_efitbetat.dat '
-      call curvec(dataname,jerror,time,betat,ktime,0_i4)
-      dataname=dataname(3:7)//'_efitdensv2.dat'
-      call curvec(dataname,jerror,time,dco2v(1,2),ktime,0_i4)
-      dataname=dataname(3:7)//'_efitwmhd.dat  '
-      call curvec(dataname,jerror,time,wmhd,ktime,0_i4)
+      fname=charshot//'_efitvsurf.dat'
+      call curvec(fname,jerror,time,scrat,ktime,0_i4)
+      fname=charshot//'_efitkappa.dat'
+      call curvec(fname,jerror,time,elong,ktime,0_i4)
+      fname=charshot//'_efitaminor.dat'
+      call curvec(fname,jerror,time,aminor,ktime,0_i4)
+      fname=charshot//'_efitzsurf.dat'
+      call curvec(fname,jerror,time,zout,ktime,0_i4)
+      fname=charshot//'_efitrsurf.dat'
+      call curvec(fname,jerror,time,rout,ktime,0_i4)
+      fname=charshot//'_efitbetap.dat'
+      call curvec(fname,jerror,time,betap,ktime,0_i4)
+      fname=charshot//'_efitli.dat'
+      call curvec(fname,jerror,time,li,ktime,0_i4)
+      fname=charshot//'_efitq95.dat'
+      call curvec(fname,jerror,time,qpsi,ktime,0_i4)
+      fname=charshot//'_efitbetat.dat'
+      call curvec(fname,jerror,time,betat,ktime,0_i4)
+      fname=charshot//'_efitdensv2.dat'
+      call curvec(fname,jerror,time,dco2v(1,2),ktime,0_i4)
+      fname=charshot//'_efitwmhd.dat'
+      call curvec(fname,jerror,time,wmhd,ktime,0_i4)
 !-----------------------------------------------------------------------
 !     Initialize plot parameters
 !-----------------------------------------------------------------------
@@ -9387,6 +9274,7 @@
 10000 format (6e12.6)
 10020 format (5e10.4)
 14980 format (i5)
+14990 format (i6)
 15000 format (2e12.6)
 18950 format (' a, g =',1pe10.3)
 18960 format ('       ',1pe10.3)
@@ -9570,18 +9458,13 @@
 !**                                                                  **
 !**     CALLING ARGUMENTS:                                           **
 !**                                                                  **
-!**     RECORD OF MODIFICATION:                                      **
-!**          11/04/86..........first created                         **
-!**                                                                  **
 !**********************************************************************
-      subroutine curvec(dataname,jerror,xp,yp,np,ns)
+      subroutine curvec(fname,jerror,xp,yp,np,ns)
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       dimension jerror(1),xp(1),yp(1)
-      character*(*) dataname
+      character*(*) fname
 !
-      open(unit=62,file=dataname,status='old',iostat=ioerr)
-      if (ioerr.eq.0) close(unit=62,status='delete')
-      open(unit=62,file=dataname,status='new')
+      call open_new(62,fname,'','')
       do i=1,np
         if (jerror(i).gt.0) cycle
         write (62,6200) xp(i),yp(i)

@@ -43,7 +43,7 @@
 #if defined(USEMPI)
       include 'mpif.h'
 #endif
-      integer*4 :: i,reason,nFiles,itmp,imin
+      integer*4 :: i,reason,nFiles,itmp,imin,ltbdi2
       character(100) :: ftmp
       integer*4 :: shot_tables(100)
       character(100), dimension(:), allocatable :: filenames
@@ -54,17 +54,7 @@
         input_dir=trim(link_efit)
       endif
       if (link_store(1:1).ne.'')  store_dir=trim(link_store)
-
-      ! recalculate length of default directories in case any change
-      ltbdi2=0
-      lindir=0
-      lstdir=0
       table_di2 = table_dir
-      do i=1,len(table_di2)
-        if(table_di2(i:i).ne.' ') ltbdi2=ltbdi2+1
-        if(input_dir(i:i).ne.' ') lindir=lindir+1
-        if(store_dir(i:i).ne.' ') lstdir=lstdir+1
-      enddo
 
       if (rank==0) then
         ! get the files
@@ -100,10 +90,10 @@
         ! set the table directory
         do i=1, nfiles
           if(ishot.ge.shot_tables(i)) &
-            table_di2 = table_di2(1:ltbdi2)//trim(filenames(i))//'/'
+            table_di2 = trim(table_di2)//trim(filenames(i))//'/'
         enddo
         ltbdi2 = len(trim(table_di2))
-        write(nttyo,10000) table_di2(1:ltbdi2)
+        write(nttyo,10000) trim(table_di2)
       endif
 
 #if defined(USEMPI)
@@ -161,7 +151,7 @@
 !--   Read Green's tables from table_di2                            --
 !---------------------------------------------------------------------
       open(unit=mcontr,status='old',form='unformatted', &
-           file=table_di2(1:ltbdi2)//'ec'//trim(ch1)//trim(ch2)//'.ddd')
+           file=trim(table_di2)//'ec'//trim(ch1)//trim(ch2)//'.ddd')
       read (mcontr) mw,mh
 
       if (.not.allocated(rgrid)) then
@@ -190,7 +180,7 @@
 !--   read in the f coil response functions                          --
 !----------------------------------------------------------------------
       open(unit=mcontr,form='unformatted', &
-           status='old',file=table_di2(1:ltbdi2)//'rfcoil.ddd')
+           status='old',file=trim(table_di2)//'rfcoil.ddd')
       if (.not.allocated(rsilfc)) then
         allocate(rsilfc(nsilop,nfsum),stat=iallocate_stat)
         if(iallocate_stat/=0) stop "*** Not enough space for rsilfc ***"
@@ -205,7 +195,7 @@
       close(unit=mcontr)
 
       open(unit=mcontr,status='old',form='unformatted', &
-           file=table_di2(1:ltbdi2)//'ep'//trim(ch1)//trim(ch2)//'.ddd')
+           file=trim(table_di2)//'ep'//trim(ch1)//trim(ch2)//'.ddd')
       if (.not.allocated(gsilpc)) then
         allocate(gsilpc(nsilop,mw*mh),stat=iallocate_stat)
         if(iallocate_stat/=0) stop "*** Not enough space for gsilpc ***"
@@ -223,7 +213,7 @@
 !----------------------------------------------------------------------
       if (iecurr.gt.0) then
         open(unit=mcontr,status='old',form='unformatted', &
-          file=table_di2(1:ltbdi2)//'re'//trim(ch1)//trim(ch2)//'.ddd')
+          file=trim(table_di2)//'re'//trim(ch1)//trim(ch2)//'.ddd')
         read (mcontr) rsilec
         read (mcontr) rmp2ec
         read (mcontr) gridec
@@ -234,7 +224,7 @@
 !----------------------------------------------------------------------
       if (ifitvs.eq.1 .or. ivesel.gt.0) then
         open(unit=mcontr,status='old',form='unformatted', &
-           file=table_di2(1:ltbdi2)//'rv'//trim(ch1)//trim(ch2)//'.ddd')
+           file=trim(table_di2)//'rv'//trim(ch1)//trim(ch2)//'.ddd')
         read (mcontr) rsilvs
         read (mcontr) rmp2vs
         read (mcontr) gridvs
@@ -259,7 +249,7 @@
         endif
       endif
 
-      open(unit=mcontr,status='old',file=table_di2(1:ltbdi2)//'mhdin.dat')
+      open(unit=mcontr,status='old',file=trim(table_di2)//'mhdin.dat')
 
       read (mcontr,in3, iostat=istat)
       if (istat>0) then

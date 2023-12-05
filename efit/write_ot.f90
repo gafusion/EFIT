@@ -11,7 +11,8 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
-      character*30 ofname, chname
+      character*300 ofname
+      character*2 chname
       Character*28 xxtitle,yytitle,zztitle
       data czero/0.0/
 !
@@ -21,12 +22,10 @@
       xdum=0.0
       ydum=0.0
       itime00=time(1)
-      call setfnmt('ot',ishot,itime00,ofname)
+      itimeu00=(time(1)-itime00)*1000
 !
-      ofname=ofname(1:14)//'_chi2mag'
-      open(unit=74,status='old',file=ofname,iostat=ioerr)
-      if(ioerr.eq.0) close(unit=74,status='delete')
-      open(unit=74,status='new',file=ofname)
+      call setfnm('ot',ishot,itime00,itimeu00,'_chi2mag',ofname)
+      call open_new(74,ofname,'','')
       xxtitle='Time(ms)'
       yytitle='Magnetic Chi Square'
       zztitle='EFIT'
@@ -40,10 +39,8 @@
       close(unit=74)
 !
       if (kstark.gt.0) then
-        ofname=ofname(1:14)//'_chi2mse'
-        open(unit=74,status='old',file=ofname,iostat=ioerr)
-        if(ioerr.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=ofname)
+        call setfnm('ot',ishot,itime00,itimeu00,'_chi2mse',ofname)
+        call open_new(74,ofname,'','')
         xxtitle='Time(ms)'
         yytitle='MSE Chi Square'
         zztitle='EFIT'
@@ -58,10 +55,8 @@
       endif
 !
       if (mmbmsels.gt.0) then
-        ofname=ofname(1:14)//'_chi2mls'
-        open(unit=74,status='old',file=ofname,iostat=ioerr)
-        if(ioerr.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=ofname)
+        call setfnm('ot',ishot,itime00,itimeu00,'_chi2mls',ofname)
+        call open_new(74,ofname,'','')
         xxtitle='Time(ms)'
         yytitle='MSE-LS Chi Square'
         zztitle='EFIT'
@@ -76,15 +71,12 @@
 !
         do j=1,nmsels
           if (sinmls(j).gt.0.0) then
-            ichan00=j
-            call setfnmt('ot',ishot,ichan00,chname)
-            ofname=ofname(1:14)//'_echan'//chname(13:14)
-            open(unit=74,status='old',file=ofname,iostat=ioerr)
-            if(ioerr.eq.0) close(unit=74,status='delete')
-            open(unit=74,status='new',file=ofname)
+            write(chname,1000) j
+            call setfnm('ot',ishot,itime00,itimeu00,'_echan'//chname,ofname)
+            call open_new(74,ofname,'','')
             xxtitle='Time(ms)'
             yytitle='Measured B MSE-LS (T)'
-            zztitle='MSE-LS Channel '//chname(13:14)
+            zztitle='MSE-LS Channel '//chname
             write (74,93024) xxtitle
             write (74,93024) yytitle
             write (74,93024) zztitle
@@ -103,15 +95,12 @@
 !
         do j=1,nmsels
           if (sinmls(j).gt.0.0) then
-            ichan00=j
-            call setfnmt('ot',ishot,ichan00,chname)
-            ofname=ofname(1:14)//'_cchan'//chname(13:14)
-            open(unit=74,status='old',file=ofname,iostat=ioerr)
-            if(ioerr.eq.0) close(unit=74,status='delete')
-            open(unit=74,status='new',file=ofname)
+            write(chname,1000) j
+            call setfnm('ot',ishot,itime00,itimeu00,'_cchan'//chname,ofname)
+            call open_new(74,ofname,'','')
             xxtitle='Time(ms)'
             yytitle='Computed B MSE-LS (T)'
-            zztitle='MSE-LS Channel '//chname(13:14)
+            zztitle='MSE-LS Channel '//chname
             write (74,93024) xxtitle
             write (74,93024) yytitle
             write (74,93024) zztitle
@@ -127,6 +116,7 @@
 !
       endif
       return
-92924 format (4(1pe12.5,1x))
-93024 format (a28)
+ 1000 format(i2)
+92924 format(4(1pe12.5,1x))
+93024 format(a28)
       end subroutine write_ot
