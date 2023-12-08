@@ -173,14 +173,14 @@
         call print_header()
         if(idebug>=2) write(6,*) ' Entering data_input subroutine'
 
-        call data_input(ks,kerror)
+        call data_input(ks,ktime,kerror)
 
         if(idebug>=2) write(6,*) ' Entering errctrl_setstate'
         call errctrl_setstate(rank,time(ks))
         if (kerror.gt.0) go to 500
         if (iconvr.lt.0) go to 500
         if (kautoknt .eq. 1) then
-           call autoknot(ks,kerror)
+           call autoknot(ks,ktime,kerror)
         else
 !----------------------------------------------------------------------
 !--  initialize current profile                                      --

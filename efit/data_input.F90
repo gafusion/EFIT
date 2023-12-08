@@ -1,12 +1,14 @@
 #include "config.f"
 !**********************************************************************
+!>  
 !!    data_input sets up the magnetic data and weighting arrays.
 !!
-!!    @param jtime: time index
-!!    @param kerror: error flag
+!!    @param ktime : Number of time slices
+!!    @param jtime : Time index
+!!    @param kerror: Error Flag
 !!
 !**********************************************************************
-      subroutine data_input(jtime,kerror)
+      subroutine data_input(jtime,ktime,kerror)
       use commonblocks,only: c,wk,bkx,bky,wgridpc,rfcpc
       use set_kinds, only: i4
       include 'eparm.inc'
@@ -14,7 +16,7 @@
       include 'modules1.inc'
       implicit none
 
-      integer*4, intent(in) :: jtime
+      integer*4, intent(in) :: jtime,ktime
       integer*4, intent(out) :: kerror
       integer*4 i,j,k,ii,jj,kk,kkkk,m,n
       integer*4 idoac,mcontr,ktear
@@ -631,7 +633,7 @@
           return
         endif
         call open_group(pid,"time_slice",tid,h5err)
-        write(tindex,"(I0)") (jtime-1)*nproc+rank
+        write(tindex,"(I0)") jtime-1+rank*ktime
         call test_group(tid,trim(tindex),file_stat,h5err)
         if (.not. file_stat) then
           call errctrl_msg('data_input', &

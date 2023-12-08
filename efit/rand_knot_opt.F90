@@ -1,14 +1,15 @@
 #include "config.f"
 !*******************************************************************
-!!
+!>  
 !!    rand_knot varies knot positions randomly until convergence
 !!      is achieved
 !!
-!!    @param ks: time index
-!!    @param kerror: error flag
+!!    @param ktime : Number of time slices
+!!    @param jtime : Time index
+!!    @param kerror: Error Flag
 !!
 !*******************************************************************
-      subroutine rand_knot(ks,kerror)
+      subroutine rand_knot(ks,ktime,kerror)
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -17,7 +18,7 @@
       include 'mpif.h'
 #endif
 
-      integer*4, intent(in) :: ks
+      integer*4, intent(in) :: ks,ktime
       integer*4, intent(out) :: kerror
       integer*4 i,j,k,kloop,loc(1),nvary,saveiter
       real*8 berror
@@ -95,7 +96,8 @@
           endif
           ! Warn if the time slice distribution is not balanced
           if(mod(kakloop,nproc) .ne. 0) &
-            write(nttyo,*) 'Warning: knot varitaion loops are not balanced across processors'
+            write(nttyo,*) &
+              'Warning: knot vars are not balanced across processors'
         endif
         if (ttime==1) then
           ! This could be avoided if MPI is handled differently
@@ -119,7 +121,7 @@
         kerror = 0
 
         ! With a bit of careful debugging we should be able to avoid this...
-        call data_input(ks,kerror)
+        call data_input(ks,ktime,kerror)
         if (kerror.gt.0 .or. iconvr.lt.0) then
           write(6,*) 'Error re-reading input, aborting'
           return
@@ -203,7 +205,7 @@
       ! Re-run the best case to use as the final output
       kerror = 0
       ! With a bit of careful debugging we should be able to avoid this...
-      call data_input(ks,kerror)
+      call data_input(ks,ktime,kerror)
       if (kerror.gt.0 .or. iconvr.lt.0) then
         write(6,*) 'Error re-reading input, aborting'
         return
