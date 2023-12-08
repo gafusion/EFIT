@@ -85,7 +85,7 @@
 
 #if defined(USEMPI)
       if (nproc > 1) then
-        if (rank == 0) then
+        if (rank == 0 .and. ktime==1) then
           ! TODO: it should be possible to distribute processors effectively for multiple times and 
           !       leave others for knot optimization, but that logic hasn't been setup yet
           !       (only can parallelize over one or the other and times takes precedence)
@@ -95,15 +95,19 @@
                              'MPI processes have nothing to do')
           endif
           ! Warn if the time slice distribution is not balanced
-          if (mod(kakloop,nproc) .ne. 0) &
+          if(mod(kakloop,nproc) .ne. 0) &
             write(nttyo,*) 'Warning: knot varitaion loops are not balanced across processors'
         endif
-        ! This could be avoided if MPI is handled differently
-        if(nproc > kakloop) stop
-        kloop=kakloop/nproc
-        do k=1,mod(kakloop,nproc)
-          if(rank == k) kloop=kloop+1
-        enddo
+        if (ktime==1) then
+          ! This could be avoided if MPI is handled differently
+          if(nproc > kakloop) stop
+          kloop=kakloop/nproc
+          do k=1,mod(kakloop,nproc)
+            if(rank == k) kloop=kloop+1
+          enddo
+        else
+          kloop=kakloop
+        endif
       else
         kloop=kakloop
       endif
@@ -160,7 +164,7 @@
 
 #if defined(USEMPI)
         ! Get best error and corresponding knot positions from all processors
-        if (nproc > 1) then
+        if (nproc > 1 .and. ktime==1) then
           errall=999.
           call MPI_GATHER(terror(ks),1,MPI_DOUBLE_PRECISION,errall,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
           if(rank==0) loc=minloc(errall)
@@ -172,7 +176,7 @@
 
         ! Check convergence and save best error and knots
         if (terror(ks).le.error) then
-          if (rank == 0) then
+          if (rank == 0 .or. ktime>1) then
             write(6,*) 'New knot locations converged'
             return
           else
@@ -191,7 +195,7 @@
 
 #if defined(USEMPI)
       ! Finished with parallel processing
-      if (rank.gt.0) then
+      if (rank.gt.0 .and. ktime==1) then
         call mpi_finalize(ierr)
         stop
       endif
