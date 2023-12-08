@@ -282,8 +282,8 @@
             call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER, &
                               ifname,ktime*80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
           endif
-        elseif (kdata.eq. 1 .or. ktime.eq.1) then
-          if(ktime.eq.1 .and. rank.gt.0) ALLOCATE(ifname(ktime))
+        elseif (kdata.eq.1 .or. ktime.eq.1) then
+          if(kdata.eq.2 .and. ktime.eq.1 .and. rank.gt.0) ALLOCATE(ifname(ktime))
           call MPI_BARRIER(MPI_COMM_WORLD,ierr)
           call MPI_BCAST(ifname(1),80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
         endif

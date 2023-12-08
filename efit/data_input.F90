@@ -632,7 +632,7 @@
           return
         endif
         call open_group(pid,"time_slice",tid,h5err)
-        write(tindex,"(I0)") jtime-1+rank*ktime
+        write(tindex,"(I0)") (jtime-1)*nproc+rank
         call test_group(tid,trim(tindex),file_stat,h5err)
         if (.not. file_stat) then
           call errctrl_msg('data_input', &
