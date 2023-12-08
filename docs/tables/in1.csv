@@ -149,7 +149,8 @@ KAKLOOP,1,Number of times to loop over every knot position when performing optim
 KAUTOKNT,0,"| - (Integer flag) Activates the knot location optimization.
 | 0 = use input knot locations (default).
 | 1 = optimize knot locations to find lowest possible GS error and chi squared
-| 2 = optimize knot locations until convergence is reached."
+| 2 = optimize knot locations until convergence is reached
+| 3 = vary knots randomly until convergence is reached."
 KBETAPR,,"| - (Integer flag) Specify value of pressure at boundary for integration to calculate beta.
 | 0 = take pressure at boundary to be 0 (default).
 | 1 = get pressure at boundary from kinetic data."

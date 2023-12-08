@@ -231,7 +231,7 @@
 #ifdef DEBUG_LEVEL2
         write(6,*) ' Entering data_input subroutine'
 #endif
-        call data_input(ks,iconvr,ktime,kerror)
+        call data_input(ks,ktime,kerror)
         if ((kerror.gt.0).or.(iconvr.lt.0)) then
           if(k.lt.ktime) kerrot(ks)=kerror
           cycle
@@ -263,17 +263,17 @@
 #ifdef DEBUG_LEVEL2
           write(6,*) ' Entering autoknot subroutine'
 #endif
-          call autoknot(ks,iconvr,ktime,kerror)
+          call autoknot(ks,ktime,kerror)
         elseif (kautoknt .eq. 2) then
 #ifdef DEBUG_LEVEL2
           write(6,*) ' Entering knot_opt subroutine'
 #endif
-          call knot_opt(ks,iconvr,ktime,kerror)
+          call knot_opt(ks,ktime,kerror)
         elseif (kautoknt .eq. 3) then
 #ifdef DEBUG_LEVEL2
           write(6,*) ' Entering rand_knot subroutine'
 #endif
-          call rand_knot(ks,iconvr,ktime,kerror)
+          call rand_knot(ks,ktime,kerror)
         else
 !----------------------------------------------------------------------
 !--       initialize current profile                                 --
@@ -307,7 +307,7 @@
 #ifdef DEBUG_LEVEL2
           write(6,*) 'Entering fit subroutine'
 #endif
-          call fit(ks,kerror)
+          call fit(ktime,ks,kerror)
           if (kerror.gt.0) then
             if(k.lt.ktime) kerrot(ks)=kerror
             cycle

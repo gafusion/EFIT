@@ -173,7 +173,7 @@
         call print_header()
         if(idebug>=2) write(6,*) ' Entering data_input subroutine'
 
-        call data_input(ks,iconvr,ktime,kerror)
+        call data_input(ks,ktime,kerror)
 
         if(idebug>=2) write(6,*) ' Entering errctrl_setstate'
         call errctrl_setstate(rank,time(ks))
@@ -193,7 +193,7 @@
 !----------------------------------------------------------------------
 
            if(idebug>=2) write(6,*) 'Entering fit subroutine'
-           call fit(ks,kerror)
+           call fit(ktime,ks,kerror)
            if (kerror.gt.0) go to 500
         endif
 !----------------------------------------------------------------------
@@ -213,7 +213,7 @@
         if (idebug /= 0) write (6,*) 'Main/write_g ks/kerror = ', ks, kerror
         call write_g(ks)
         if (iconvr.ge.0) then
-           call write_a(ktime,ks)
+           call write_a(ks)
 !DEPRECATED           call wtear(mtear,ks)
         endif
         if (idebug /= 0) write (6,*) 'Main/write_m ks/kerror = ', ks, kerror

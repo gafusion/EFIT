@@ -58,7 +58,7 @@
 
       module var_autoknot
       integer*4 :: kautoknt,kakloop,kakiter
-      integer*4 :: ks_a,lconvr_a,ktime_a,kerror_a,kadknt,mxiter_a
+      integer*4 :: ks_a,ktime_a,kerror_a,kadknt,mxiter_a
       real*8 :: akchiwt,akerrwt,aktol,akgamwt,akprewt
       real*8,dimension(:),allocatable :: aeeknt,awwknt,affknt,appknt
       real*8,dimension(:),allocatable :: aeedf,awwdf,affdf,appdf

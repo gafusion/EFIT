@@ -3,17 +3,17 @@
 !>
 !!    fit carries out the fitting and equilibrium iterations.
 !!
-!!    @param jtime : time index
-!!
-!!    @param kerror : error flag
+!!    @param ktime : Number of time slices
+!!    @param jtime : Time index
+!!    @param kerror : Error Flag
 !!
 !**********************************************************************
-      subroutine fit(jtime,kerror)
+      subroutine fit(ktime,jtime,kerror)
       include 'eparm.inc'
       include 'modules1.inc'
       use var_cvesel, only: vcurrt
       implicit none
-      integer*4, intent(in) :: jtime
+      integer*4, intent(in) :: ktime,jtime
       integer*4, intent(out) :: kerror
       integer*4 i,ii,idone,iend,ichisq,iwantk,nleft
 !-----------------------------------------------------------------------
@@ -31,7 +31,7 @@
       cjeccd=0.0
       lflag=0
       iend=mxiter+1
-      if (iconvr.eq.3) iend=1
+      if(iconvr.eq.3) iend=1
       current_profile: do i=1,iend
         if (i.gt.1) then
           iwantk=iwantk+1
@@ -147,7 +147,8 @@
         end do equilibrium
       end do current_profile
       if ((nbdry.le.0).and.(ivacum.eq.0).and.(iconvr.ne.4)) then
-        call errctrl_msg('fit','not converged, reached max iterations',2)
+        if(rank.eq.0 .or. ktime.gt.1) &
+          call errctrl_msg('fit','not converged, reached max iterations',2)
         lflag=1
       endif
 2020  continue

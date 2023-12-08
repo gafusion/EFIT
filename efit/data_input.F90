@@ -3,12 +3,11 @@
 !!    data_input sets up the magnetic data and weighting arrays.
 !!
 !!    @param jtime: time index
-!!    @param kconvr: convergence flag
 !!    @param ktime : number of time slices
 !!    @param kerror: error flag
 !!
 !**********************************************************************
-      subroutine data_input(jtime,kconvr,ktime,kerror)
+      subroutine data_input(jtime,ktime,kerror)
       use commonblocks,only: c,wk,bkx,bky,wgridpc,rfcpc
       use set_kinds, only: i4
       include 'eparm.inc'
@@ -17,7 +16,7 @@
       implicit none
 
       integer*4, intent(in) :: jtime,ktime
-      integer*4, intent(out) :: kconvr,kerror
+      integer*4, intent(out) :: kerror
       integer*4 i,j,k,ii,jj,kk,kkkk,m,n
       integer*4 idoac,mcontr,ktear
       !integer*4 idodo,idovs
@@ -2357,7 +2356,6 @@
           psiref(jtime)=0. 
         endif 
       endif 
-      kconvr=iconvr
       www=zero 
 !---------------------------------------------------------------------- 
 !--   signal at psi loop # NSLREF is used as reference               -- 
