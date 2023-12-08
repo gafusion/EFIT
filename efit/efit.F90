@@ -29,7 +29,7 @@
       include 'mpif.h'
 #endif
       integer*4 k,krord,kzord,finfo,kerror,terr,ioerr, &
-                   nwrk,ktime,ks
+                nwrk,ktime,ks
       integer*4 i,iend1,iend2
       character inp1*4,inp2*4
       character*80 :: cmdline
@@ -231,7 +231,7 @@
 #ifdef DEBUG_LEVEL2
         write(6,*) ' Entering data_input subroutine'
 #endif
-        call data_input(ks,ktime,kerror)
+        call data_input(ks,kerror)
         if ((kerror.gt.0).or.(iconvr.lt.0)) then
           if(k.lt.ktime) kerrot(ks)=kerror
           cycle
@@ -263,17 +263,17 @@
 #ifdef DEBUG_LEVEL2
           write(6,*) ' Entering autoknot subroutine'
 #endif
-          call autoknot(ks,ktime,kerror)
+          call autoknot(ks,kerror)
         elseif (kautoknt .eq. 2) then
 #ifdef DEBUG_LEVEL2
           write(6,*) ' Entering knot_opt subroutine'
 #endif
-          call knot_opt(ks,ktime,kerror)
+          call knot_opt(ks,kerror)
         elseif (kautoknt .eq. 3) then
 #ifdef DEBUG_LEVEL2
           write(6,*) ' Entering rand_knot subroutine'
 #endif
-          call rand_knot(ks,ktime,kerror)
+          call rand_knot(ks,kerror)
         else
 !----------------------------------------------------------------------
 !--       initialize current profile                                 --
@@ -307,7 +307,7 @@
 #ifdef DEBUG_LEVEL2
           write(6,*) 'Entering fit subroutine'
 #endif
-          call fit(ktime,ks,kerror)
+          call fit(ks,kerror)
           if (kerror.gt.0) then
             if(k.lt.ktime) kerrot(ks)=kerror
             cycle

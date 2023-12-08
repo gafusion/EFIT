@@ -3,11 +3,10 @@
 !!    data_input sets up the magnetic data and weighting arrays.
 !!
 !!    @param jtime: time index
-!!    @param ktime : number of time slices
 !!    @param kerror: error flag
 !!
 !**********************************************************************
-      subroutine data_input(jtime,ktime,kerror)
+      subroutine data_input(jtime,kerror)
       use commonblocks,only: c,wk,bkx,bky,wgridpc,rfcpc
       use set_kinds, only: i4
       include 'eparm.inc'
@@ -15,7 +14,7 @@
       include 'modules1.inc'
       implicit none
 
-      integer*4, intent(in) :: jtime,ktime
+      integer*4, intent(in) :: jtime
       integer*4, intent(out) :: kerror
       integer*4 i,j,k,ii,jj,kk,kkkk,m,n
       integer*4 idoac,mcontr,ktear

@@ -173,14 +173,14 @@
         call print_header()
         if(idebug>=2) write(6,*) ' Entering data_input subroutine'
 
-        call data_input(ks,ktime,kerror)
+        call data_input(ks,kerror)
 
         if(idebug>=2) write(6,*) ' Entering errctrl_setstate'
         call errctrl_setstate(rank,time(ks))
         if (kerror.gt.0) go to 500
         if (iconvr.lt.0) go to 500
         if (kautoknt .eq. 1) then
-           call autoknot(ks,iconvr,ktime,kerror)
+           call autoknot(ks,kerror)
         else
 !----------------------------------------------------------------------
 !--  initialize current profile                                      --
@@ -193,7 +193,7 @@
 !----------------------------------------------------------------------
 
            if(idebug>=2) write(6,*) 'Entering fit subroutine'
-           call fit(ktime,ks,kerror)
+           call fit(ks,kerror)
            if (kerror.gt.0) go to 500
         endif
 !----------------------------------------------------------------------
@@ -213,7 +213,7 @@
         if (idebug /= 0) write (6,*) 'Main/write_g ks/kerror = ', ks, kerror
         call write_g(ks)
         if (iconvr.ge.0) then
-           call write_a(ks)
+           call write_a(ktime,ks)
 !DEPRECATED           call wtear(mtear,ks)
         endif
         if (idebug /= 0) write (6,*) 'Main/write_m ks/kerror = ', ks, kerror

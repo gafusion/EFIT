@@ -5,11 +5,10 @@
 !!      is achieved
 !!
 !!    @param ks: time index
-!!    @param ktime : number of time slices
 !!    @param kerror: error flag
 !!
 !*******************************************************************
-      subroutine rand_knot(ks,ktime,kerror)
+      subroutine rand_knot(ks,kerror)
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -18,7 +17,7 @@
       include 'mpif.h'
 #endif
 
-      integer*4, intent(in) :: ks,ktime
+      integer*4, intent(in) :: ks
       integer*4, intent(out) :: kerror
       integer*4 i,j,k,kloop,loc(1),nvary,saveiter
       real*8 berror
@@ -30,7 +29,7 @@
       ! Run with input settings first
       if(iconvr.lt.0) return
       call set_init(ks)
-      call fit(ktime,ks,kerror)
+      call fit(ks,kerror)
       if(rank==0) write(6,*) 'Initial error is: ',terror(ks)
       if ((kerror == 0) .and. (terror(ks).le.error)) then
         if(rank==0) write(6,*) 'Input settings converged'
@@ -85,7 +84,7 @@
 
 #if defined(USEMPI)
       if (nproc > 1) then
-        if (rank == 0 .and. ktime==1) then
+        if (rank == 0 .and. ttime==1) then
           ! TODO: it should be possible to distribute processors effectively for multiple times and 
           !       leave others for knot optimization, but that logic hasn't been setup yet
           !       (only can parallelize over one or the other and times takes precedence)
@@ -98,12 +97,12 @@
           if(mod(kakloop,nproc) .ne. 0) &
             write(nttyo,*) 'Warning: knot varitaion loops are not balanced across processors'
         endif
-        if (ktime==1) then
+        if (ttime==1) then
           ! This could be avoided if MPI is handled differently
           if(nproc > kakloop) stop
           kloop=kakloop/nproc
           do k=1,mod(kakloop,nproc)
-            if(rank == k) kloop=kloop+1
+            if(rank == k-1) kloop=kloop+1
           enddo
         else
           kloop=kakloop
@@ -120,7 +119,7 @@
         kerror = 0
 
         ! With a bit of careful debugging we should be able to avoid this...
-        call data_input(ks,ktime,kerror)
+        call data_input(ks,kerror)
         if (kerror.gt.0 .or. iconvr.lt.0) then
           write(6,*) 'Error re-reading input, aborting'
           return
@@ -158,13 +157,13 @@
         ! Run fit
         mxiter = kakiter
         call set_init(ks)
-        call fit(ktime,ks,kerror)
+        call fit(ks,kerror)
         if(kerror .ne. 0) terror(ks)=999.
         write(6,*) 'Iteration ',(k-1)*nproc+rank+1,' has error: ',terror(ks)
 
 #if defined(USEMPI)
         ! Get best error and corresponding knot positions from all processors
-        if (nproc > 1 .and. ktime==1) then
+        if (nproc > 1 .and. ttime==1) then
           errall=999.
           call MPI_GATHER(terror(ks),1,MPI_DOUBLE_PRECISION,errall,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
           if(rank==0) loc=minloc(errall)
@@ -176,7 +175,7 @@
 
         ! Check convergence and save best error and knots
         if (terror(ks).le.error) then
-          if (rank == 0 .or. ktime>1) then
+          if (rank == 0 .or. ttime>1) then
             write(6,*) 'New knot locations converged'
             return
           else
@@ -195,7 +194,7 @@
 
 #if defined(USEMPI)
       ! Finished with parallel processing
-      if (rank.gt.0 .and. ktime==1) then
+      if (rank.gt.0 .and. ttime==1) then
         call mpi_finalize(ierr)
         stop
       endif
@@ -204,7 +203,7 @@
       ! Re-run the best case to use as the final output
       kerror = 0
       ! With a bit of careful debugging we should be able to avoid this...
-      call data_input(ks,ktime,kerror)
+      call data_input(ks,kerror)
       if (kerror.gt.0 .or. iconvr.lt.0) then
         write(6,*) 'Error re-reading input, aborting'
         return
@@ -235,7 +234,7 @@
         enddo
       endif
       call set_init(ks)
-      call fit(ktime,ks,kerror)
+      call fit(ks,kerror)
       write(6,*) 'Lowest error found is ',terror(ks)
 
       return

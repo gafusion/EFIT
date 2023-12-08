@@ -22,7 +22,7 @@
       include 'modules1.inc'
       implicit none
       integer*4, intent(out) :: ktime
-      integer*4 i,j
+      integer*4 i,j,mtime
       logical file_stat
 #if defined(USEMPI)
       include 'mpif.h'
@@ -131,19 +131,19 @@
           call open_group(rootgid,"equilibrium",eqid,h5err)
           call test_group(eqid,"code",file_stat,h5err)
           if (.not. file_stat) then
-            call errctrl_msg('data_input','code group not found')
+            call errctrl_msg('get_opt_input','code group not found')
             stop
           endif
           call open_group(eqid,"code",cid,h5err)
           call test_group(cid,"parameters",file_stat,h5err)
           if (.not. file_stat) then
-            call errctrl_msg('data_input','parameters group not found')
+            call errctrl_msg('get_opt_input','parameters group not found')
             stop
           endif
           call open_group(cid,"parameters",pid,h5err)
           call test_group(pid,"time_slice",file_stat,h5err)
           if (.not. file_stat) then
-            call errctrl_msg('data_input','time_slice group not found')
+            call errctrl_msg('get_opt_input','time_slice group not found')
             stop
           endif
           call get_nmembers(pid,"time_slice",ktime,h5err)
@@ -245,47 +245,59 @@
         endif
 
         ! Broadcast inputs 
+        call MPI_BARRIER(MPI_COMM_WORLD,ierr)
         call MPI_BCAST(ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+        ttime=ktime
 
-        if (kdata.eq.2 .and. ktime.gt.1) then
-          ! Distribute steps among ALL processes
-          dist_data = 0
-          dist_data_displs = 0
-          if (rank == 0) then
-            ! Compute number of steps per process
-            i = 1
-            do while (i <= ktime)
-              do j=1,nproc
-                if (i <= ktime) then
-                  dist_data(j) = dist_data(j)+1
-                  i = i+1
-                endif
-              enddo
+        if (kdata.eq.1 .or. kdata.eq.2) then
+          if (ktime.eq.1) then
+            if(rank.gt.0) ALLOCATE(ifname(1))
+            call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+            call MPI_BCAST(ifname(1),80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+          elseif (kdata.eq.1) then
+            call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+            call MPI_BCAST(ifname(1),80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+            mtime=ktime
+            ktime=mtime/nproc
+            do i=1,mod(mtime,nproc)
+              if(rank == i-1) ktime=ktime+1
             enddo
-            ! Compute array displacements
-            do i=2,nproc
-              ! Input filenames are up to 80 characters and displacements given as number of bytes
-              dist_data_displs(i) = sum(dist_data(1:i-1))*80
-            enddo
-          endif
-          ! Explicitly synchronize processes
-          call MPI_BARRIER(MPI_COMM_WORLD,ierr)
-          ! Distribute time step and filename information to ALL processes
-          call MPI_SCATTER(dist_data,1,MPI_INTEGER,ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-          ! Recall each filename 80 characters
-          if (rank == 0) then
-            dist_data = dist_data*80
-            call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER, &
-              MPI_IN_PLACE,dist_data(rank+1),MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
           else
-            ALLOCATE(ifname(ktime))
-            call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER, &
-                              ifname,ktime*80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+            ! Distribute steps among ALL processes
+            dist_data = 0
+            dist_data_displs = 0
+            if (rank == 0) then
+              ! Compute number of steps per process
+              i = 1
+              do while (i <= ktime)
+                do j=1,nproc
+                  if (i <= ktime) then
+                    dist_data(j) = dist_data(j)+1
+                    i = i+1
+                  endif
+                enddo
+              enddo
+              ! Compute array displacements
+              do i=2,nproc
+                ! Input filenames are up to 80 characters and displacements given as number of bytes
+                dist_data_displs(i) = sum(dist_data(1:i-1))*80
+              enddo
+            endif
+            ! Explicitly synchronize processes
+            call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+            ! Distribute time step and filename information to ALL processes
+            call MPI_SCATTER(dist_data,1,MPI_INTEGER,ktime,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+            ! Recall each filename 80 characters
+            if (rank == 0) then
+              dist_data = dist_data*80
+              call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER, &
+                MPI_IN_PLACE,dist_data(rank+1),MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+            else
+              ALLOCATE(ifname(ktime))
+              call MPI_SCATTERV(ifname,dist_data,dist_data_displs,MPI_CHARACTER, &
+                                ifname,ktime*80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
+            endif
           endif
-        elseif (kdata.eq.1 .or. ktime.eq.1) then
-          if(kdata.eq.2 .and. ktime.eq.1 .and. rank.gt.0) ALLOCATE(ifname(ktime))
-          call MPI_BARRIER(MPI_COMM_WORLD,ierr)
-          call MPI_BCAST(ifname(1),80,MPI_CHARACTER,0,MPI_COMM_WORLD,ierr)
         endif
       endif
 #endif
