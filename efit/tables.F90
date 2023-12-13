@@ -54,11 +54,11 @@
         input_dir=trim(link_efit)
       endif
       if (link_store(1:1).ne.'')  store_dir=trim(link_store)
-      table_di2 = table_dir
+      table_di2=table_dir
 
       if (rank==0) then
         ! get the files
-        call system('ls '//trim(table_di2)//' > shot_tables.txt')
+        call system('ls '//trim(table_dir)//' > shot_tables.txt')
         open(31,FILE='shot_tables.txt',action="read")
 
         !how many
@@ -90,7 +90,7 @@
         ! set the table directory
         do i=1, nfiles
           if(ishot.ge.shot_tables(i)) &
-            table_di2 = trim(table_di2)//trim(filenames(i))//'/'
+            table_di2 = trim(table_dir)//trim(filenames(i))//'/'
         enddo
         ltbdi2 = len(trim(table_di2))
         write(nttyo,10000) trim(table_di2)
