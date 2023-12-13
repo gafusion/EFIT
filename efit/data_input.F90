@@ -1,14 +1,14 @@
 #include "config.f"
 !**********************************************************************
+!>  
 !!    data_input sets up the magnetic data and weighting arrays.
 !!
-!!    @param jtime: time index
-!!    @param kconvr: convergence flag
-!!    @param ktime : number of time slices
-!!    @param kerror: error flag
+!!    @param ktime : Number of time slices
+!!    @param jtime : Time index
+!!    @param kerror: Error Flag
 !!
 !**********************************************************************
-      subroutine data_input(jtime,kconvr,ktime,kerror)
+      subroutine data_input(jtime,ktime,kerror)
       use commonblocks,only: c,wk,bkx,bky,wgridpc,rfcpc
       use set_kinds, only: i4
       include 'eparm.inc'
@@ -17,7 +17,7 @@
       implicit none
 
       integer*4, intent(in) :: jtime,ktime
-      integer*4, intent(out) :: kconvr,kerror
+      integer*4, intent(out) :: kerror
       integer*4 i,j,k,ii,jj,kk,kkkk,m,n
       integer*4 idoac,mcontr,ktear
       !integer*4 idodo,idovs
@@ -1502,7 +1502,7 @@
       if(abs(fwtecebz0).le.1.e-30_dp) fwtecebz0=0.0
 
 !--   enforce autoknot requirements
-      if (kautoknt .eq. 2) then
+      if (kautoknt .ge. 2) then
         akchiwt=0.0
         akerrwt=1.0
         akgamwt=0.0
@@ -2398,7 +2398,6 @@
           psiref(jtime)=0. 
         endif 
       endif 
-      kconvr=iconvr
       www=zero 
 !---------------------------------------------------------------------- 
 !--   signal at psi loop # NSLREF is used as reference               -- 

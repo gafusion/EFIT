@@ -3,9 +3,8 @@
 !>
 !!    fit carries out the fitting and equilibrium iterations.
 !!
-!!    @param jtime : time index
-!!
-!!    @param kerror : error flag
+!!    @param jtime : Time index
+!!    @param kerror : Error Flag
 !!
 !**********************************************************************
       subroutine fit(jtime,kerror)
@@ -31,7 +30,7 @@
       cjeccd=0.0
       lflag=0
       iend=mxiter+1
-      if (iconvr.eq.3) iend=1
+      if(iconvr.eq.3) iend=1
       current_profile: do i=1,iend
         if (i.gt.1) then
           iwantk=iwantk+1
@@ -147,7 +146,8 @@
         end do equilibrium
       end do current_profile
       if ((nbdry.le.0).and.(ivacum.eq.0).and.(iconvr.ne.4)) then
-        call errctrl_msg('fit','not converged, reached max iterations',2)
+        if(rank.eq.0 .or. ttime.gt.1) &
+          call errctrl_msg('fit','not converged, reached max iterations',2)
         lflag=1
       endif
 2020  continue

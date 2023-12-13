@@ -2,9 +2,8 @@
 !>
 !!    writes out the plasma shape and quality parameters
 !!    
-!!
-!!    @param ktime : Number of time slices
-!!    @param jtime : Time index
+!!    @param ktime: Number of time slices
+!!    @param jtime: Time index
 !!
 !**********************************************************************
       subroutine write_a(ktime,jtime)
