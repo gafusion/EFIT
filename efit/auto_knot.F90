@@ -1,15 +1,14 @@
 !*******************************************************************
-!!
+!>  
 !!    autoknot minimizes chi-squared and grad-shfranov error
 !!      as a function of knot position
 !!
-!!    @param ks: time index
-!!    @param lconvr: convergence flag
-!!    @param ktime : number of time slices
-!!    @param kerror: error flag
+!!    @param ktime : Number of time slices
+!!    @param jtime : Time index
+!!    @param kerror: Error Flag
 !!
 !*******************************************************************
-      subroutine autoknot(ks,lconvr,ktime,kerror)
+      subroutine autoknot(ks,ktime,kerror)
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -18,7 +17,6 @@
       real*8 fmin
       real*8, external :: ppakfunc,ffakfunc,wwakfunc,eeakfunc
       integer*4, intent(in) :: ks,ktime
-      integer*4, intent(inout) :: lconvr
       integer*4, intent(out) :: kerror
       integer*4 i,j,kloop,saveiter
       real*8 lbnd,rbnd,prevknt
@@ -32,7 +30,6 @@
 !     Store the values away so the functions can restore them 
 !     after re-reading the k file. 
       ks_a = ks
-      lconvr_a = lconvr
       ktime_a = ktime
       kerror_a = kerror
       saveiter = mxiter
@@ -120,9 +117,9 @@
       endif
 !
 !     Now do the final fit with adjusted knots and full iterations
-      call data_input(ks,lconvr,ktime,kerror)
+      call data_input(ks,ktime,kerror)
       if(kerror.gt.0) return
-      if(lconvr.lt.0) return
+      if(iconvr.lt.0) return
       mxiter_a = saveiter
       call restore_autoknotvals
       call set_init(ks)
@@ -132,17 +129,16 @@
       end subroutine autoknot
 
 !*******************************************************************
-!!
+!>  
 !!    knot_opt varies knot positions to target reduce grad-shfranov
-!!      error untile convergence is achieved
+!!      error until convergence is achieved
 !!
-!!    @param ks: time index
-!!    @param lconvr: convergence flag
-!!    @param ktime : number of time slices
-!!    @param kerror: error flag
+!!    @param ktime : Number of time slices
+!!    @param jtime : Time index
+!!    @param kerror: Error Flag
 !!
 !*******************************************************************
-      subroutine knot_opt(ks,lconvr,ktime,kerror)
+      subroutine knot_opt(ks,ktime,kerror)
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
@@ -151,7 +147,6 @@
       real*8 fmin_opt
       real*8, external :: ppakfunc,ffakfunc,wwakfunc,eeakfunc
       integer*4, intent(in) :: ks,ktime
-      integer*4, intent(inout) :: lconvr
       integer*4, intent(out) :: kerror
       integer*4 i,j,kloop,saveiter
       real*8 lbnd,rbnd
@@ -161,7 +156,6 @@
       ! Store the values away so the functions can restore them 
       !  after re-reading the k file. 
       ks_a = ks
-      lconvr_a = lconvr
       ktime_a = ktime
       kerror_a = kerror
       saveiter = mxiter
@@ -173,7 +167,7 @@
                                                          minval(aeedf))))
 
       ! Run with input settings first
-      if(lconvr.lt.0) return
+      if(iconvr.lt.0) return
       call set_init(ks)
       call fit(ks,kerror)
       if ((kerror == 0) .and. (terror(ks).le.error)) then
@@ -319,9 +313,9 @@
       write(6,*)
       write(6,*) ' trying pp knot ',kadknt,' at location ',xknot, &
                  ' out of ',kppknt,' knots'
-      call data_input(ks_a,lconvr_a,ktime_a,kerror)
+      call data_input(ks_a,ktime_a,kerror)
       if(kerror.gt.0) return
-      if(lconvr_a.lt.0) return
+      if(iconvr.lt.0) return
       call restore_autoknotvals
       ppknt(kadknt) = xknot
       call set_init(ks_a)
@@ -351,9 +345,9 @@
       write(6,*)
       write(6,*) ' trying ff knot ',kadknt,' at location ',xknot, &
                  ' out of ',kffknt,' knots'
-      call data_input(ks_a,lconvr_a,ktime_a,kerror)
+      call data_input(ks_a,ktime_a,kerror)
       if(kerror.gt.0) return
-      if(lconvr_a.lt.0) return
+      if(iconvr.lt.0) return
       call restore_autoknotvals
       ffknt(kadknt) = xknot
       call set_init(ks_a)
@@ -383,9 +377,9 @@
       write(6,*)
       write(6,*) ' trying ww knot ',kadknt,' at location ',xknot, &
                  ' out of ',kwwknt,' knots'
-      call data_input(ks_a,lconvr_a,ktime_a,kerror)
+      call data_input(ks_a,ktime_a,kerror)
       if(kerror.gt.0) return
-      if(lconvr_a.lt.0) return
+      if(iconvr.lt.0) return
       call restore_autoknotvals
       wwknt(kadknt) = xknot
       call set_init(ks_a)
@@ -415,9 +409,9 @@
       write(6,*)
       write(6,*) ' trying ee knot ',kadknt,' at location ',xknot, &
                  ' out of ',keeknt,' knots'
-      call data_input(ks_a,lconvr_a,ktime_a,kerror)
+      call data_input(ks_a,ktime_a,kerror)
       if(kerror.gt.0) return
-      if(lconvr_a.lt.0) return
+      if(iconvr.lt.0) return
       call restore_autoknotvals
       eeknt(kadknt) = xknot
       call set_init(ks_a)
