@@ -95,6 +95,7 @@
       kwwfnc=0
       kwwknt=0
       kzeroj=0
+      lead_rank=0
       limid=33
       lring=0
       msebkp=0

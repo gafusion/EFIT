@@ -25,67 +25,76 @@
       real*8, dimension(nproc) :: errall
       real*8, dimension(:), allocatable :: lbnd,krange,kpos,kbest
 
-      kerror = 0
+      kerror=0
+      loc=1
 
       ! Run with input settings first
       if(iconvr.lt.0) return
       call set_init(ks)
       call fit(ks,kerror)
       if(rank==0) write(6,*) 'Initial error is: ',terror(ks)
-      if ((kerror == 0) .and. (terror(ks).le.error)) then
-        if(rank==0) write(6,*) 'Input settings converged'
-        return
+      if ((kerror==0) .and. (terror(ks).le.error)) then
+        if (rank==0) then
+          write(6,*) 'Input settings converged'
+          return
+        else
+          ! No need for parallel processing
+#if defined(USEMPI)
+          call mpi_finalize(ierr)
+#endif
+          stop
+        endif
       endif
-      berror=terror(ks)
+      !berror=terror(ks)
 
       ! Setup bounds for varying each knot
       nvary=0
-      if(kppfnc .eq. 6) nvary=nvary+kppknt-2
-      if(kfffnc .eq. 6) nvary=nvary+kffknt-2
-      if(kwwfnc .eq. 6) nvary=nvary+kwwknt-2
-      if(keefnc .eq. 6) nvary=nvary+keeknt-2
+      if(kppfnc.eq.6) nvary=nvary+kppknt-2
+      if(kfffnc.eq.6) nvary=nvary+kffknt-2
+      if(kwwfnc.eq.6) nvary=nvary+kwwknt-2
+      if(keefnc.eq.6) nvary=nvary+keeknt-2
       if (nvary.le.0) then
         if(rank==0) write(6,*) 'No knots to vary'
         return
       endif
       allocate(lbnd(nvary),krange(nvary),kpos(nvary),kbest(nvary))
       j=0
-      if (kppfnc .eq. 6) then
+      if (kppfnc.eq.6) then
         do i=2,kppknt-1
           j=j+1
-          lbnd(j) = ppknt(i)-appdf(i)*(ppknt(i)-ppknt(i-1))
-          krange(j) = appdf(i)*(ppknt(i+1)-ppknt(i-1))
-          kbest(j) = ppknt(i)
+          lbnd(j)=ppknt(i)-appdf(i)*(ppknt(i)-ppknt(i-1))
+          krange(j)=appdf(i)*(ppknt(i+1)-ppknt(i-1))
+          kbest(j)=ppknt(i)
         enddo
       endif
-      if (kfffnc .eq. 6) then
+      if (kfffnc.eq.6) then
         do i=2,kffknt-1
           j=j+1
-          lbnd(j) = ffknt(i)-affdf(i)*(ffknt(i)-ffknt(i-1))
-          krange(j) = affdf(i)*(ffknt(i+1)-ffknt(i-1))
-          kbest(j) = ffknt(i)
+          lbnd(j)=ffknt(i)-affdf(i)*(ffknt(i)-ffknt(i-1))
+          krange(j)=affdf(i)*(ffknt(i+1)-ffknt(i-1))
+          kbest(j)=ffknt(i)
         enddo
       endif
-      if (kwwfnc .eq. 6) then
+      if (kwwfnc.eq.6) then
         do i=2,kwwknt-1
           j=j+1
-          lbnd(j) = wwknt(i)-awwdf(i)*(wwknt(i)-wwknt(i-1))
-          krange(j) = awwdf(i)*(wwknt(i+1)-wwknt(i-1))
-          kbest(j) = wwknt(i)
+          lbnd(j)=wwknt(i)-awwdf(i)*(wwknt(i)-wwknt(i-1))
+          krange(j)=awwdf(i)*(wwknt(i+1)-wwknt(i-1))
+          kbest(j)=wwknt(i)
         enddo
       endif
-      if (keefnc .eq. 6) then
+      if (keefnc.eq.6) then
         do i=2,keeknt-1
           j=j+1
-          lbnd(j) = eeknt(i)-aeedf(i)*(eeknt(i)-eeknt(i-1))
-          krange(j) = aeedf(i)*(eeknt(i+1)-eeknt(i-1))
-          kbest(j) = eeknt(i)
+          lbnd(j)=eeknt(i)-aeedf(i)*(eeknt(i)-eeknt(i-1))
+          krange(j)=aeedf(i)*(eeknt(i+1)-eeknt(i-1))
+          kbest(j)=eeknt(i)
         enddo
       endif
 
 #if defined(USEMPI)
-      if (nproc > 1) then
-        if (rank == 0 .and. ttime==1) then
+      if (nproc>1) then
+        if (rank==0 .and. ttime==1) then
           ! TODO: it should be possible to distribute processors effectively for multiple times and 
           !       leave others for knot optimization, but that logic hasn't been setup yet
           !       (only can parallelize over one or the other and times takes precedence)
@@ -101,10 +110,10 @@
         endif
         if (ttime==1) then
           ! This could be avoided if MPI is handled differently
-          if(nproc > kakloop) stop
+          if(nproc>kakloop) stop
           kloop=kakloop/nproc
           do k=1,mod(kakloop,nproc)
-            if(rank == k-1) kloop=kloop+1
+            if(rank==k-1) kloop=kloop+1
           enddo
         else
           kloop=kakloop
@@ -118,7 +127,7 @@
 
       ! Vary knots randomly until convergence or max iterations is reached
       do k=1,kloop
-        kerror = 0
+        kerror=0
 
         ! With a bit of careful debugging we should be able to avoid this...
         call data_input(ks,ktime,kerror)
@@ -131,53 +140,54 @@
         call random_number(kpos)
         kpos=lbnd+kpos*krange
         j=0
-        if (kppfnc .eq. 6) then
+        if (kppfnc.eq.6) then
           do i=2,kppknt-1
             j=j+1
-            ppknt(i) = kpos(j)
+            ppknt(i)=kpos(j)
           enddo
         endif
-        if (kfffnc .eq. 6) then
+        if (kfffnc.eq.6) then
           do i=2,kffknt-1
             j=j+1
-            ffknt(i) = kpos(j)
+            ffknt(i)=kpos(j)
           enddo
         endif
-        if (kwwfnc .eq. 6) then
+        if (kwwfnc.eq.6) then
           do i=2,kwwknt-1
             j=j+1
-            wwknt(i) = kpos(j)
+            wwknt(i)=kpos(j)
           enddo
         endif
-        if (keefnc .eq. 6) then
+        if (keefnc.eq.6) then
           do i=2,keeknt-1
             j=j+1
-            eeknt(i) = kpos(j)
+            eeknt(i)=kpos(j)
           enddo
         endif
 
         ! Run fit
-        mxiter = kakiter
+        mxiter=kakiter
         call set_init(ks)
         call fit(ks,kerror)
-        if(kerror .ne. 0) terror(ks)=999.
+        if(kerror.ne.0) terror(ks)=999.
         write(6,*) 'Iteration ',(k-1)*nproc+rank+1,' has error: ',terror(ks)
 
 #if defined(USEMPI)
         ! Get best error and corresponding knot positions from all processors
-        if (nproc > 1 .and. ttime==1) then
+        if (nproc>1 .and. ttime==1) then
           errall=999.
           call MPI_GATHER(terror(ks),1,MPI_DOUBLE_PRECISION,errall,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
           if(rank==0) loc=minloc(errall)
           call MPI_BCAST(loc,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
           call MPI_BCAST(terror(ks),1,MPI_DOUBLE_PRECISION,loc-1,MPI_COMM_WORLD,ierr)
-          call MPI_BCAST(kpos,nvary,MPI_DOUBLE_PRECISION,loc-1,MPI_COMM_WORLD,ierr)
+          !call MPI_BCAST(kpos,nvary,MPI_DOUBLE_PRECISION,loc-1,MPI_COMM_WORLD,ierr)
         endif
 #endif
 
         ! Check convergence and save best error and knots
         if (terror(ks).le.error) then
-          if (rank == 0 .or. ttime>1) then
+          lead_rank=loc(1)-1
+          if (rank==lead_rank .or. ttime>1) then
             write(6,*) 'New knot locations converged'
             return
           else
@@ -188,19 +198,24 @@
             stop
           endif
         endif
-        if (rank.eq.0 .and. terror(ks).le.berror) then
-          berror=terror(ks)
-          kbest=kpos
-        endif
+        !if (rank.eq.0 .and. terror(ks).le.berror) then
+        !  berror=terror(ks)
+        !  kbest=kpos
+        !endif
       enddo
 
 #if defined(USEMPI)
       ! Finished with parallel processing
-      if (rank.gt.0 .and. ttime==1) then
+      if (rank.ne.lead_rank .and. ttime==1) then
         call mpi_finalize(ierr)
         stop
       endif
 #endif
+
+      ! There is a chance that re-running with more iterations could help, but this
+      ! is more likely to increase the runtime than help so it is deactivated for now
+      write(6,*) 'Lowest error found is ',terror(ks)
+      return
 
       ! Re-run the best case to use as the final output
       kerror = 0
@@ -211,28 +226,28 @@
         return
       endif
       j=0
-      if (kppfnc .eq. 6) then
+      if (kppfnc.eq.6) then
         do i=2,kppknt-1
           j=j+1
-          ppknt(i) = kbest(j)
+          ppknt(i)=kbest(j)
         enddo
       endif
-      if (kfffnc .eq. 6) then
+      if (kfffnc.eq.6) then
         do i=2,kffknt-1
           j=j+1
-          ffknt(i) = kbest(j)
+          ffknt(i)=kbest(j)
         enddo
       endif
-      if (kwwfnc .eq. 6) then
+      if (kwwfnc.eq.6) then
         do i=2,kwwknt-1
           j=j+1
-          wwknt(i) = kbest(j)
+          wwknt(i)=kbest(j)
         enddo
       endif
-      if (keefnc .eq. 6) then
+      if (keefnc.eq.6) then
         do i=2,keeknt-1
           j=j+1
-          eeknt(i) = kbest(j)
+          eeknt(i)=kbest(j)
         enddo
       endif
       call set_init(ks)

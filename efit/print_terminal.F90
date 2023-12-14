@@ -49,7 +49,7 @@
 !#if defined(USEMPI)
 !      ! TODO: Currently this ONLY works if nproc == total number of time slices.
 !      ! If running in parallel, write out key info for all ranks
-!      if (nproc > 1) then
+!      if (nproc>1) then
 !        if (rank==0) then
 !          allocate(ishotall(nproc))
 !          allocate(timeall(nproc))
@@ -75,7 +75,7 @@
 !#endif
 !      if ((ivacum.eq.0).and.(itek.le.0)) then
       if (ivacum.eq.0) then
-        mpi_rank: if (rank == 0) then
+        mpi_rank: if (rank==lead_rank) then
           !write (nttyo,10000) trim(ch1),trim(ch2)
           saisq=chisq(it)
           ! avoid roundoff
@@ -99,9 +99,7 @@
 ! --- delete fitout.dat if IOUT does not contain 1
 !
       if (iand(iout,1).eq.0) then ! if iout is even, including zero
-        mpi_rank0: if (rank == 0) then
-          close(unit=nout,status='delete')
-        endif mpi_rank0
+        if(rank==lead_rank) close(unit=nout,status='delete')
       else
         !write (nout,10000) trim(ch1),trim(ch2)
         saisq=chisq(it)
@@ -416,7 +414,7 @@
           enddo
         enddo
 !
-        if (rank == 0) then
+        if (rank==lead_rank) then
           call open_new(80,'mhdin.new','','quote')
           write (80,in3)
           close(unit=80)
@@ -680,7 +678,7 @@
       include 'modules1.inc'
 
       if (itek.le.0) then
-        if(rank == 0) write(nttyo,10001) nw,nh
+        if(rank==0) write(nttyo,10001) nw,nh
       endif
 
       ! if iout is odd
