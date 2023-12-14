@@ -45,7 +45,7 @@
           stop
         endif
       endif
-      !berror=terror(ks)
+      berror=terror(ks)
 
       ! Setup bounds for varying each knot
       nvary=0
@@ -180,7 +180,7 @@
           if(rank==0) loc=minloc(errall)
           call MPI_BCAST(loc,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
           call MPI_BCAST(terror(ks),1,MPI_DOUBLE_PRECISION,loc-1,MPI_COMM_WORLD,ierr)
-          !call MPI_BCAST(kpos,nvary,MPI_DOUBLE_PRECISION,loc-1,MPI_COMM_WORLD,ierr)
+          call MPI_BCAST(kpos,nvary,MPI_DOUBLE_PRECISION,loc-1,MPI_COMM_WORLD,ierr)
         endif
 #endif
 
@@ -198,24 +198,19 @@
             stop
           endif
         endif
-        !if (rank.eq.0 .and. terror(ks).le.berror) then
-        !  berror=terror(ks)
-        !  kbest=kpos
-        !endif
+        if (rank.eq.0 .and. terror(ks).le.berror) then
+          berror=terror(ks)
+          kbest=kpos
+        endif
       enddo
 
 #if defined(USEMPI)
       ! Finished with parallel processing
-      if (rank.ne.lead_rank .and. ttime==1) then
+      if (rank.gt.0 .and. ttime==1) then
         call mpi_finalize(ierr)
         stop
       endif
 #endif
-
-      ! There is a chance that re-running with more iterations could help, but this
-      ! is more likely to increase the runtime than help so it is deactivated for now
-      write(6,*) 'Lowest error found is ',terror(ks)
-      return
 
       ! Re-run the best case to use as the final output
       kerror = 0
