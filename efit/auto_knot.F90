@@ -322,7 +322,7 @@
       call fit(ks_a,kerror_a)
       if(kerror_a .gt. 0) return
       ppakfunc = akchiwt * chisq(ks_a) + akerrwt * errorm &
-               + akgamwt * chigamt + akprewt * chipre
+               + akgamwt * chimse + akprewt * chipre
       return
       end function ppakfunc
 
@@ -354,7 +354,7 @@
       call fit(ks_a,kerror_a)
       if(kerror_a .gt. 0) return
       ffakfunc = akchiwt * chisq(ks_a) + akerrwt * errorm &
-               + akgamwt * chigamt + akprewt * chipre
+               + akgamwt * chimse + akprewt * chipre
       return
       end function ffakfunc
 
@@ -386,7 +386,7 @@
       call fit(ks_a,kerror_a)
       if(kerror_a .gt. 0) return
       wwakfunc = akchiwt * chisq(ks_a) + akerrwt * errorm &
-               + akgamwt * chigamt + akprewt * chipre
+               + akgamwt * chimse + akprewt * chipre
       return
       end function wwakfunc
 
@@ -418,7 +418,7 @@
       call fit(ks_a,kerror_a)
       if(kerror_a .gt. 0) return
       eeakfunc = akchiwt * chisq(ks_a) + akerrwt * errorm &
-               + akgamwt * chigamt + akprewt * chipre
+               + akgamwt * chimse + akprewt * chipre
       return
       end function eeakfunc
 

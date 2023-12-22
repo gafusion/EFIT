@@ -1543,8 +1543,7 @@
           if (kdata.eq.1) then
             ! Use this parameter for COCOs transformation
             sign_ext=twopi
-            if(plasma_ext > 0.0) sign_ext = -twopi !TODO: incorrect COCOs in OMFIT
-            !if(plasma_ext < 0.0) sign_ext = -twopi
+            if(plasma_ext < 0.0) sign_ext = -twopi
           else ! kdata=2
             if(plasma_ext > 0.0) sign_ext = -1.0
           endif
@@ -2454,11 +2453,13 @@
         brsp(1:nfsum)=brsptu(1:nfsum)*turnfc(1:nfsum) 
       reflux=silopt(jtime,iabs(nslref)) 
       do m=1,nsilop 
-        tdata1=errsil*abs(silopt(jtime,m)-reflux) 
-        tdata2=sicont*rsi(m)*abs(ipmeas(jtime)) 
-        tdata=max(tdata1,tdata2) 
-        tdata2=abs(psibit(m))*vbit 
-        tdata=max(tdata,tdata2) 
+        tdata=abs(psibit(m))*vbit 
+        if (errsil.gt.1.e-10_dp) then
+          tdata2=errsil*abs(silopt(jtime,m)-reflux)
+          tdata=max(tdata,tdata2) 
+          tdata2=sicont*rsi(m)*abs(ipmeas(jtime))
+          tdata=max(tdata,tdata2)
+        endif
         sigsil(m)=tdata 
         if (tdata.gt.1.0e-10_dp) then
           fwtsi(m)=fwtsi(m)/tdata**nsq
@@ -2477,11 +2478,13 @@
 !--     Default option for reference flux loop uncertainty
 !---------------------------------------------------------------------- 
         m=iabs(nslref)
-        tdata1=errsil*abs(silopt(jtime,m))
-        tdata2=sicont*rsi(m)*abs(ipmeas(jtime))
-        tdata=max(tdata1,tdata2)
-        tdata2=abs(psibit(m))*vbit
-        tdata=max(tdata,tdata2)
+        tdata=abs(psibit(m))*vbit
+        if (errsil.gt.1.e-10_dp) then
+          tdata2=errsil*abs(silopt(jtime,m))
+          tdata=max(tdata,tdata2)
+          tdata2=sicont*rsi(m)*abs(ipmeas(jtime))
+          tdata=max(tdata,tdata2)
+        endif
         sigsil(m)=tdata
         if (tdata.gt.1.0e-10_dp) then
           fwtsi(m)=fwtref/tdata**nsq

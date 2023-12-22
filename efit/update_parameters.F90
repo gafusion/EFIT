@@ -38,7 +38,7 @@
       zmaxis=0.0
       simag=0.0
       volume=0.0
-      rout=0.0
+      rcntr=0.0
       aminor=0.0
 !
       if(ivacum.eq.1) return
@@ -459,7 +459,7 @@
       endif
       cvolp(ixt)=abs(cvolp(ixt))*1.0e+06_dp
       volume(jtime)=cvolp(ixt)
-      rout(jtime)=(xmax+xmin)/2.*100.
+      rcntr(jtime)=(xmax+xmin)/2.*100.
       aminor(jtime)=100.*(xmax-xmin)/2.0
       csimag(ixt)=simag
       csibry(ixt)=psibry

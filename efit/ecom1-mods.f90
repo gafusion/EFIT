@@ -106,7 +106,7 @@
                  msebkp,msefitfun,kwaitmse,mse_quiet, &
                  mse_strict,ok_30rt,ok_210lt,mse_usecer, &
                  mse_certree,mse_use_cer330,mse_use_cer210
-      real*8 chigamt,chilibt,dtmsefull,t_max_beam_off 
+      real*8 chimse,chilibt,dtmsefull,t_max_beam_off 
       real*8,dimension(:,:),allocatable :: rbrpc,rbzpc,rgampc
       real*8,dimension(:,:),allocatable :: rbrfc,rbzfc
       real*8,dimension(:,:),allocatable :: rbrec,rbzec,rgamec

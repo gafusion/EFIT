@@ -429,21 +429,21 @@
       integer*4, intent(in) :: jges,nplt
       real*8, intent(in) :: xplt(npoint),yplt(npoint)
       integer*4 i,k
-      real*8 rpath,yr1,yr2,zoutjme,zpath
+      real*8 rpath,yr1,yr2,zcntrjme,zpath
       real*8 zuper(nco2v),zlower(nco2v),rco2(nco2r),rco2in(nco2r), &
-                izout(nco2v)
+                izcntr(nco2v)
       real*8, parameter :: zcentr=0.,zlibim=-0.127_dp
 !
       rco2=100.
       rco2in=0.
       zuper=100.
       zlower=0.
-      izout=0.
+      izcntr=0.
       zuperts(jges)=100.
       zlowerts=0.
-      zoutjme=zout(jges)*0.01
+      zcntrjme=zcntr(jges)*0.01
 #ifdef DEBUG_LEVEL1
-      write(6,*) ' ZOUT = ',zoutjme
+      write(6,*) ' ZMID = ',zcntrjme
 #endif
       do i=1,nplt-1
         do k=1,nco2r
@@ -467,11 +467,11 @@
           zpath=yplt(i)+yr1*(yplt(i+1)-yplt(i))/(xplt(i+1)-xplt(i))
 !          if(zpath.ge.zcentr) zuper(k)=zpath
 !          if(zpath.le.zcentr) zlower(k)=zpath
-!          if(zpath.ge.zoutjme) zuper(k)=zpath
-!          if(zpath.le.zoutjme) zlower(k)=zpath
-          izout(k)=izout(k)+1
-          if(izout(k).eq.1) zuper(k)=zpath
-          if (izout(k).eq.2) then
+!          if(zpath.ge.zcntrjme) zuper(k)=zpath
+!          if(zpath.le.zcntrjme) zlower(k)=zpath
+          izcntr(k)=izcntr(k)+1
+          if(izcntr(k).eq.1) zuper(k)=zpath
+          if (izcntr(k).eq.2) then
             zlower(k)=zpath
             if (zuper(k).lt.zpath) then
               zlower(k)=zuper(k)

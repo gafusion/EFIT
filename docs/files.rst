@@ -119,13 +119,13 @@ binary with the same structure using single precision reals and integers)
          betap(ntime),li(ntime),gapin(ntime),gapout(ntime),qstar(ntime), &
          rcurrt(ntime),zcurrt(ntime),qout(ntime),sepin(ntime), &
          sepout(ntime),septop(ntime),sibdry(ntime),area(ntime), &
-         wmhd(ntime),elongm(ntime),qm(ntime),terror(ntime), &
+         wmhd(ntime),elongm(ntime),qm(ntime),error(ntime), &
          rm(ntime),zm(ntime),sepbot(ntime),sepbot(ntime), &
          alpha(ntime),rttt(ntime),dbpli(ntime),delbp(ntime),oring(ntime), &
-         rseps(2,ntime),zseps(2,ntime),sepexp(ntime),shearb(ntime), &
-         xtch(ntime),ytch(ntime),q95(ntime),vertn(ntime),aaq1(ntime), &
-         aaq2(ntime),aaq3(ntime),btaxp(ntime),btaxv(ntime), &
-         psim(ntime),dsep(ntime), &
+         rseps(2,ntime),zseps(2,ntime),sepexp(ntime),shear(ntime), &
+         xtch(ntime),ytch(ntime),q95(ntime),vertn(ntime),aq1(ntime), &
+         aq2(ntime),aq3(ntime),btaxp(ntime),btaxv(ntime), &
+         psim(ntime),dsep(ntime),chimse,vloop(ntime), &
          wbpol(ntime),taumhd(ntime),betapd(ntime),betatd(ntime), &
          li3(ntime),wdia(ntime),taudia(ntime),wbpold(ntime), &
          qmerci(ntime),slantu(ntime),slantl(ntime),zeff(ntime), &
@@ -142,7 +142,7 @@ binary with the same structure using single precision reals and integers)
          rvsid(ntime),zvsid(ntime),rvsou(ntime),zvsou(ntime), &
          rvsod(ntime),zvsod(ntime),condno(ntime),psin32(ntime), &
          psin21(ntime),rq32in(ntime),rq21top(ntime),chilibt(ntime), &
-            xbetapr,tflux(ntime),tchimls,twagap(ntime)
+         xbetapr,tflux(ntime),tchimls,twagap(ntime)
        real*8 csilop(nsilop,ntime),cmpr2(magpri,ntime), &
          ccbrsp(nfcoil,ntime),eccurt(nesum,ntime)
 
@@ -158,20 +158,20 @@ binary with the same structure using single precision reals and integers)
        read (neqdsk,1040) (dco2v(jj,k),k=1,mco2v)
        read (neqdsk,1040) (rco2r(k,jj),k=1,mco2r)
        read (neqdsk,1040) (dco2r(jj,k),k=1,mco2r)
-       read (neqdsk,1040) shearb(jj),bpolav(jj),s1(jj),s2(jj)
+       read (neqdsk,1040) shear(jj),bpolav(jj),s1(jj),s2(jj)
        read (neqdsk,1040) s3(jj),qout(jj),sepin(jj),sepout(jj)
        read (neqdsk,1040) septop(jj),sibdry(jj),area(jj),wmhd(jj)
-       read (neqdsk,1040) terror(jj),elongm(jj),qm(jj),cdflux(jj)
+       read (neqdsk,1040) error(jj),elongm(jj),qm(jj),cdflux(jj)
        read (neqdsk,1040) alpha(jj),rttt(jj),psiref(jj),indent(jj)
        read (neqdsk,1040) rseps(1,jj),zseps(1,jj),rseps(2,jj), &
                           zseps(2,jj)
        read (neqdsk,1040) sepexp(jj),sepbot(jj),btaxp(jj),btaxv(jj)
-       read (neqdsk,1040) aaq1(jj),aaq2(jj),aaq3(jj),dsep(jj)
+       read (neqdsk,1040) aq1(jj),aq2(jj),aq3(jj),dsep(jj)
        read (neqdsk,1040) rm(jj),zm(jj),psim(jj),taumhd(jj)
 
        fluxx=diamag(jj)*1.0e-03
        read (neqdsk,1040) betapd(jj),betatd(jj),wdia(jj),fluxx
-       read (neqdsk,1040) vloopt(jj),taudia(jj),qmerci(jj),tavem
+       read (neqdsk,1040) vloop(jj),taudia(jj),qmerci(jj),tavem
        read (neqdsk, 1041) nsilop,magpri0,nfsum,nesum
        read (neqdsk,1040) (csilop(k,jj),k=1,nsilop), &
                           (cmpr2(k,jj),k=1,magpri0)
@@ -182,7 +182,7 @@ binary with the same structure using single precision reals and integers)
        read (neqdsk,1040) slantu(jj),slantl(jj),zuperts(jj),chipre
        read (neqdsk,1040) cjor95(jj),pp95(jj),drsep(jj),yyy2(jj)
        read (neqdsk,1040) xnnc(jj),cprof,oring(jj),cjor0(jj)
-       read (neqdsk,1040) fexpan,qmin,chigamt,ssi01
+       read (neqdsk,1040) fexpan,qmin,chimse,ssi01
        read (neqdsk,1040) fexpvs,sepnose,ssi95(jj),rhoqmin
        read (neqdsk,1040) cjor99(jj),cj1ave(jj),rmidin(jj),rmidout(jj)
        read (neqdsk,1040) psurfa(jj), peak(jj),dminux(jj),dminlx(jj)

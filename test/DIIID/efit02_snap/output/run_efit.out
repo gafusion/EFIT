@@ -38,13 +38,13 @@
   0 diamagnetic loop
 
 
- shot #   =     186610 time(ms) =       2400 chi**2   =  2.189E+01
- betat(%) =      0.248 betap    =      0.065 li       =      1.194
- vol(cm3) =  1.763E+07 rout(cm) =    172.763 zout(cm) =      6.932
- elong    =      1.798 utriang  =      0.754 ltriang  =      0.350
- a(cm)    =     56.347 lin(cm)  =     14.684 lout(cm) =      5.959
- ltop(cm) =     15.106 q*       =      3.909 rc(cm)   =    170.012
- zc(cm)   =     -2.628 bt0(t)   =      1.638 qout     =      6.359
+ shot #     =     186610 time(ms)   =       2400 chi^2      =  2.189E+01
+ betat(%)   =      0.248 betap      =      0.065 li         =      1.194
+ vol(cm^3)  =  1.763E+07 rcntr(cm)  =    172.763 zcntr(cm)  =      6.932
+ elong      =      1.798 utri       =      0.754 ltri       =      0.350
+ a(cm)      =     56.347 gapin(cm)  =     14.684 gapout(cm) =      5.959
+ gaptop(cm) =     15.106 q95        =      3.022 rm(cm)     =    173.673
+ zm(cm)     =     -3.569 totalchi^2 =  2.189E+01 error      =  7.065E-04
 
   fit errors, shot  186610  2400. msec. all eqdsks are still written
      Error #21, Bp not consistent , error =  0.930E-01

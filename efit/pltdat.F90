@@ -1516,7 +1516,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write(text,9060) rout(jtime)
+      write(text,9060) rcntr(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -1525,7 +1525,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write(text,9080) zout(jtime)
+      write(text,9080) zcntr(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -3410,8 +3410,8 @@
       if (ivacum.eq.0) then
          rx=rm(jtime)/100.
          pleng=0.0
-         f_0=log(8*rout(jtime)/abar)-2+betap(jtime)+li(jtime)/2+.5_dp
-         delr=rout(jtime)/100.-1.67_dp
+         f_0=log(8*rcntr(jtime)/abar)-2+betap(jtime)+li(jtime)/2+.5_dp
+         delr=rcntr(jtime)/100.-1.67_dp
 !-----------------------------------------------------------------------
 !--      metal wall                                                   --
 !-----------------------------------------------------------------------
@@ -3426,7 +3426,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write (text,9492) shearb(jtime)
+      write (text,9492) shear(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -3489,7 +3489,7 @@
 !--   dummy write statement added for HP version 9.01 optimization problems--
 !----------------------------------------------------------------------------
 !      if (iand(iout,1).ne.0) write (nout,*) jtime
-      write (text,9494) aaq1(jtime),aaq2(jtime)
+      write (text,9494) aq1(jtime),aq2(jtime)
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text
@@ -3522,8 +3522,8 @@
          sq295=0.0
       endif
       pbinjmw=pbinj(jtime)/1.e+06_dp
-      pasmma=abs(ipmeas(jtime))/1.e+06_dp
-      routm=rout(jtime)/100.
+!      pasmma=abs(ipmeas(jtime))/1.e+06_dp
+!      routm=rcntr(jtime)/100.
       tauenn=tauthn(jtime)
 !     if (pbinjmw.gt.1.e-03_dp.and.abs(pasmma).gt.1.e-03_dp) then
 !     taud3jet=106._dp*pbinjmw**(-0.46_dp)*pasmma**1.03_dp*routm**1.48_dp
@@ -3597,9 +3597,9 @@
       if (kstark.gt.0.or.mmbmsels.gt.0) then
          !kstnow=mse315/2   ! TODO: mse315 is undefined
          if (mmbmsels.eq.0) then
-           write (text,9930) chigamt,chilibt
+           write (text,9930) chimse,chilibt
          else
-           write (text,99930) chigamt,tchimls
+           write (text,99930) chimse,tchimls
          endif
          msg = msg + 1
          note(msg) = 1
@@ -8207,9 +8207,9 @@
       fname=charshot//'_efitaminor.dat'
       call curvec(fname,jerror,time,aminor,ktime,0_i4)
       fname=charshot//'_efitzsurf.dat'
-      call curvec(fname,jerror,time,zout,ktime,0_i4)
+      call curvec(fname,jerror,time,zcntr,ktime,0_i4)
       fname=charshot//'_efitrsurf.dat'
-      call curvec(fname,jerror,time,rout,ktime,0_i4)
+      call curvec(fname,jerror,time,rcntr,ktime,0_i4)
       fname=charshot//'_efitbetap.dat'
       call curvec(fname,jerror,time,betap,ktime,0_i4)
       fname=charshot//'_efitli.dat'
@@ -9134,8 +9134,8 @@
  9024 format (' Rvt(m)   = ',1pe10.3)
  9026 format (' Kvt(m)   = ',i10)
  9040 format (' chi2(mag)= ',1pe10.3)
- 9060 format (' rout(cm) = ',f10.2)
- 9080 format (' zout(cm) = ',f10.3)
+ 9060 format (' rcntr(cm) = ',f10.2)
+ 9080 format (' zcntr(cm) = ',f10.3)
  9100 format (' a(cm)    = ',f10.2)
  9120 format (' elong    = ',f10.3)
  9140 format (' utri,ltri= ',f6.2,1x,f6.2)

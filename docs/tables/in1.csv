@@ -24,23 +24,24 @@ CSTABTE, 0.0, Stabilization value for Te fitting. (NOT VARIABLE!)
 CUTIP, 80000, Threshold for plasma current (in Amps) below which the vacuum fields are the only solution provided.
 DMASS, zeros, "(array) Mass density in kg/m3. See NMASS.  Only used for rotation calculations."
 DNETHOM,, "Electron density from Thompson scattering, from some other code."
-DNMIN, , Unused variable...
-EELIP,1.2,"Elongation of ellipse for current initialization. "
-ELOMIN,0.9,"Minimum plasma elongation at which EFIT tries to separate betap and li."
-EMP,1.0,GAQ current density profile parameter. Ignored unless ICURRT=4?
-ENP,1.0,GAQ current density profile parameter. Ignored unless ICURRT=4?
-EMW,,GAQ current density profile parameter for rotation. Ignored unless ICURRT=4?
-ENW,,GAQ current density profile parameter for rotation. Ignored unless ICURRT=4?
-ERRMAG,,See IMAGSIGMA (deprecated)
-ERRMAGB,,See IMAGSIGMA (deprecated)
-ERRMIN,1e-2,"Minimum convergence error before exit for ICONVR=2 option.  If chi-squared on any iteration is larger than on previous iteration, then if relative error < ERRMIN and chi-squared < SAICON, iterations stop."
-ERROR,1e-2,"Specifies when EFIT should stop iterating to solution. If chi-squared decreases monotonically, then iterations stop when the relative error (max flux difference between successive iterations) < ERROR.  See also ICONVR and ERRMIN alternatives."
+DNMIN,, Unused variable...
+EELIP, 1.2, "Elongation of ellipse for current initialization. "
+ELOMIN, 0.9, "Minimum plasma elongation at which EFIT tries to separate betap and li."
+EMP, 1.0, GAQ current density profile parameter. Ignored unless ICURRT=4?
+ENP, 1.0, GAQ current density profile parameter. Ignored unless ICURRT=4?
+EMW,, GAQ current density profile parameter for rotation. Ignored unless ICURRT=4?
+ENW,, GAQ current density profile parameter for rotation. Ignored unless ICURRT=4?
+ERRMAG,, See IMAGSIGMA (deprecated)
+ERRMAGB,, See IMAGSIGMA (deprecated)
+ERRMIN, 1e-2, "Minimum convergence error before exit for ICONVR=2 option.  If chi-squared on any iteration is larger than on previous iteration, then if relative error < ERRMIN and chi-squared < SAICON, iterations stop."
+ERROR, 1e-2, "Specifies when EFIT should stop iterating to solution. If chi-squared decreases monotonically, then iterations stop when the relative error (max flux difference between successive iterations) < ERROR.  See also ICONVR and ERRMIN alternatives."
 ERRORQ, 1e-3, "Standard deviation for q fitting."
-GAMMAP,1e10, GAQ current profile parameter. (Used for both P and F profiles)
+ERRSIL, 0.03, "Fraction of measured data values used to define minimum flux loop uncertainty (similar to SERROR).  When this is non-zero there is another minimum uncertainty related to the probe R and Ip as well."
+GAMMAP, 1e10, GAQ current profile parameter. (Used for both P and F profiles)
 IACOIL, 0, 1 = turn on advance divertor coil. 
 IAVED,, "Time in milliseconds for averaging CO2 density data, 10. (actually get +/- this value)"
-IAVEM,5, "Time in milliseconds for averaging magnetic data. (actually get +/- this value) (only used in snap mode, not relevant to k-files)"
-IAVEUS, ,"| Changes units on averaging times (IAVED, IAVEM, IAVEV) to microseconds (only used in snap mode, not relevant to k-files)
+IAVEM, 5, "Time in milliseconds for averaging magnetic data. (actually get +/- this value) (only used in snap mode, not relevant to k-files)"
+IAVEUS, , "| Changes units on averaging times (IAVED, IAVEM, IAVEV) to microseconds (only used in snap mode, not relevant to k-files)
 | >0 change units to microseconds
 | <=0 leave units in milliseconds"
 IAVEV, 10, "Time in milliseconds for averaging loop voltage. (only used in snap mode, not relevant to k-files)"
@@ -245,25 +246,25 @@ RZERO, 1.6955, "GAQ current density profile parameter, 1.43 m for D-III, 1.67 m 
 SAICON, 80.0, "| Minimum chi squared before exit for ICONVR=2 option.
 | If chi-squared on any iteration is larger than on previous iteration, then if relative error < ERRMIN and chi-squared < SAICON, iterations stop. "
 SAIMIN,80.0,"Specifies when EFIT should stop iterating to solution. If the relative error < ERROR, then iterations stop when the total chi squared (without diamagnetic or pressure fit contributions) < SAIMIN.  See also ICONVR and SAICON alternatives."
-SALPHA, 1.0/40.0,parameter for Solovev equilibrium.
-SBETA,1.0/8.0,parameter for Solovev equilibrium. 
-SBETAW,0.0,parameter for rotational Solovev equilibrium.
+SALPHA, 1.0/40.0, parameter for Solovev equilibrium.
+SBETA, 1.0/8.0, parameter for Solovev equilibrium. 
+SBETAW, 0.0, parameter for rotational Solovev equilibrium.
 SCALEA, .false.,
-SCALEPR,scalepr(1)=-1,
+SCALEPR, scalepr(1)=-1,
 SCALESIR, 1e-3, 
-SCRAPE,0.03,Distance in meters between field lines plotted in scrape-off region(?). See NEXTRA.
-SERROR,0.03,"Fraction of measured data values to use to define uncertainty of measurements."
-SIBEAM,,Normalized flux values for beam pressure. Positions correspond to where the PBEAM constraints are applied
-SIREF,0.0,"Poloidal flux at reference flux loop NSLREF in volt-sec/rad . Obtained from data and written into K-file. "
-SRM,-3.5,Parameter for Solovev equilibrium. - = inside limited.
-STORE_DIR,,"see namelist EFITIN"
-TABLE_DIR,,"see namelist EFITIN"
-TETHOM,,"Electron temperature from Thompson."
-TIONEX,,"if nptionf > 100, tionex = tethombfract"
-USE_PREVIOUS,False,"Allows the BRSP variable from the previous timestep to be used as the initial value (indepented of the value of ISICINIT).  This allows for matching to older versions of the code, but is otherwise not recommended."
-VCURFB,"(0.0,500.0,500.0)",
-VLOOP, 0.0,Measured loop voltage. Obtained from data and written into the K-file. 
-VSDAMP,0,Relaxation parameter for scrape-off layer current. (Always set to 0.25.)
+SCRAPE, 0.03, Distance in meters between field lines plotted in scrape-off region(?). See NEXTRA.
+SERROR, 0.03, "Fraction of measured data values used to define minimum uncertainty of measurements (except for flux loops, see ERRSIL)."
+SIBEAM,, Normalized flux values for beam pressure. Positions correspond to where the PBEAM constraints are applied
+SIREF, 0.0, "Poloidal flux at reference flux loop NSLREF in volt-sec/rad . Obtained from data and written into K-file. "
+SRM, -3.5, Parameter for Solovev equilibrium. - = inside limited.
+STORE_DIR,, "see namelist EFITIN"
+TABLE_DIR,, "see namelist EFITIN"
+TETHOM,, "Electron temperature from Thompson."
+TIONEX,, "if nptionf > 100, tionex = tethombfract"
+USE_PREVIOUS, False, "Allows the BRSP variable from the previous timestep to be used as the initial value (indepented of the value of ISICINIT).  This allows for matching to older versions of the code, but is otherwise not recommended."
+VCURFB, "(0.0,500.0,500.0)",
+VLOOP, 0.0, Measured loop voltage. Obtained from data and written into the K-file. 
+VSDAMP, 0, Relaxation parameter for scrape-off layer current. (Always set to 0.25.)
 WCURBD,,"| Omega Current Boundary.
 | 0 = zero boundary gradient (default)
 | 1 = finite rotational pressure gradient POmega' at the boundary"
@@ -271,16 +272,16 @@ XLIM, xlim(1)=-1.0, "Major radius of limiter contour in meters. See also YLIM."
 XLTYPE, 0.0, "| Inward distance of 0 degree outside limiter in cm.
 | - = read from PTDATA if available, otherwise 0.0.
 | + = specified.="
-XLTYPE_180, 0.0,"| Inward distance of 180 degree outside limiter in cm.
+XLTYPE_180, 0.0, "| Inward distance of 180 degree outside limiter in cm.
 | - = read from PTDATA if available, otherwise 0.0.
 | + = specified."
-YLIM,,"Z coordinates of limiter contour in meters. See also XLIM."
-ZBDRY,0.0,Vertical coordinates of boundary.
-ZBOUND,0.0,"Initial guess of Z location in meters for tracing boundary. See also RBOUND."
-ZEFFVS,,Zeff for kinetic fitting. (from ONETWO?)
-ZION,,"if nptionf > 100, zion = zteth"
+YLIM,, "Z coordinates of limiter contour in meters. See also XLIM."
+ZBDRY, 0.0, Vertical coordinates of boundary.
+ZBOUND, 0.0, "Initial guess of Z location in meters for tracing boundary. See also RBOUND."
+ZEFFVS,, Zeff for kinetic fitting. (from ONETWO?)
+ZION,, "if nptionf > 100, zion = zteth"
 ZLOWIMP,, "Low Z impurity for kinetic fitting."
-ZMAXVS , 100.0,
+ZMAXVS, 100.0,
 ZMINVS, -100.0, 
-ZPRESS, ,"Z coordinates of input pressure profile in meters. Ignored when RPRESS<0 (See RPRESS.)"
-ZTETH, ,"Z locations of Thompson?"
+ZPRESS,, "Z coordinates of input pressure profile in meters. Ignored when RPRESS<0 (See RPRESS.)"
+ZTETH,, "Z locations of Thompson?"

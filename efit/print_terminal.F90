@@ -86,13 +86,13 @@
           write (nttyo,9380) iplasm(it)
           write (nttyo,9385) idlopc(it)
           write (nttyo,10480)
-          write (nttyo,10500) ishot,int(time(it)),saisq
+          write (nttyo,10500) ishot,int(time(it)),chifin
           write (nttyo,10520) betat(it),betap(it),li(it)
-          write (nttyo,10540) volume(it),rout(it),zout(it)
+          write (nttyo,10540) volume(it),rcntr(it),zcntr(it)
           write (nttyo,10560) elong(it),utri(it),ltri(it)
           write (nttyo,10580) aminor(it),tin,tout
-          write (nttyo,10600) gaptop(it),qstar(it),rcurrt(it)
-          write (nttyo,10610) zcurrt(it),bcentr(it),qout(it)
+          write (nttyo,10600) gaptop(it),q95(it),rm(it)
+          write (nttyo,10610) zm(it),chitot,terror(it)
         endif mpi_rank
       endif
 !
@@ -109,13 +109,13 @@
         write (nout,9380) iplasm(it)
         write (nout,9385) idlopc(it)
         write (nout,10480)
-        write (nout,10500) ishot,int(time(it)),saisq
+        write (nout,10500) ishot,int(time(it)),chifin
         write (nout,10520) betat(it),betap(it),li(it)
-        write (nout,10540) volume(it),rout(it),zout(it)
+        write (nout,10540) volume(it),rcntr(it),zcntr(it)
         write (nout,10560) elong(it),utri(it),ltri(it)
         write (nout,10580) aminor(it),tin,tout
-        write (nout,10600) gaptop(it),qstar(it),rcurrt(it)
-        write (nout,10610) zcurrt(it),bcentr(it),qout(it)
+        write (nout,10600) gaptop(it),q95(it),rm(it)
+        write (nout,10610) zm(it),chitot,terror(it)
         write (nout,10620) sepin(it),sepout(it),septop(it)
         write (nout,10623) betat2
 
@@ -562,23 +562,23 @@
 10020 format (1x,'  sumif(amp) = ',e10.3,' sumift(amp) = ',e10.3, &
            ' sumifs(amp) = ',e10.3)
 10480 format (1x,/)
-10500 format(' shot #   = ',i10,' time(ms) = ',i10, &
-             ' chi**2   = ',1pe10.3)
-10520 format(' betat(%) = ',f10.3,' betap    = ',f10.3, &
-             ' li       = ',f10.3)
-10540 format(' vol(cm3) = ',1pe10.3,' rout(cm) = ',0pf10.3, &
-             ' zout(cm) = ',0pf10.3)
-10560 format(' elong    = ',f10.3,' utriang  = ',f10.3, &
-             ' ltriang  = ',f10.3)
-10580 format(' a(cm)    = ',f10.3,' lin(cm)  = ',f10.3, &
-             ' lout(cm) = ',f10.3)
-10600 format(' ltop(cm) = ',f10.3,' q*       = ',f10.3, &
-             ' rc(cm)   = ',f10.3)
-10610 format(' zc(cm)   = ',f10.3,' bt0(t)   = ',f10.3, &
-             ' qout     = ',f10.3)
-10620 format(' lins(cm) = ',f10.3,' louts(cm)= ',f10.3, &
-             ' ltops(cm)= ',f10.3)
-10623 format(' beta*(%) = ',f10.3)
+10500 format(' shot #     = ',i10,    ' time(ms)   = ',i10, &
+             ' chi^2      = ',1pe10.3)
+10520 format(' betat(%)   = ',f10.3,  ' betap      = ',f10.3, &
+             ' li         = ',f10.3)
+10540 format(' vol(cm^3)  = ',1pe10.3,' rcntr(cm)  = ',0pf10.3, &
+             ' zcntr(cm)  = ',0pf10.3)
+10560 format(' elong      = ',f10.3,  ' utri       = ',f10.3, &
+             ' ltri       = ',f10.3)
+10580 format(' a(cm)      = ',f10.3,  ' gapin(cm)  = ',f10.3, &
+             ' gapout(cm) = ',f10.3)
+10600 format(' gaptop(cm) = ',f10.3,  ' q95        = ',f10.3, &
+             ' rm(cm)     = ',f10.3)
+10610 format(' zm(cm)     = ',f10.3,  ' totalchi^2 = ',1pe10.3, &
+             ' error      = ',1pe10.3)
+10620 format(' sepin(cm)  = ',f10.3,  ' sepout(cm) = ',f10.3, &
+             ' septop(cm) = ',f10.3)
+10623 format(' beta*(%)   = ',f10.3)
 10622 format(//, &
       ' betat, betat-btvac, beta-total, beta-btvac2, beta-btv :',/, &
       ' betat0 :',/, &

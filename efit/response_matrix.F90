@@ -2446,7 +2446,7 @@
 
       ! MSE-LP
       MSE: if (kstark.gt.0) then
-      chigamt=0.0
+      chimse=0.0
       do m=1,nstark
         chigam(m)=0.0
         cmgam(m,jtime)=0.0
@@ -2503,8 +2503,8 @@
         endif
         cmgam(m,jtime)=cm
       enddo
-      chigamt=chigamt+sum(chigam(1:nmselp))
-      chi2gamt(jtime)=chigamt
+      chimse=chimse+sum(chigam(1:nmselp))
+      chi2gamt(jtime)=chimse
       chilibt=sum(chigam((nmselp+1):nstark))
       if (ishot.le.97400) then
         mcentral=15
@@ -2760,7 +2760,7 @@
 !--------------------------------------------------------------------------
       if (iand(iout,1).ne.0) then
         write (nout,7400) time(jtime),chipre,ipmhd(jtime), &
-          nniter,condno,saisq,chigamt
+          nniter,condno,saisq,chimse
         ! TODO: chimlst and chielst are never defined in efit...
 !        write (nout,97400) time(jtime),chimlst,chielst
         write (nout,7445) need

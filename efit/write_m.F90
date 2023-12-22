@@ -137,7 +137,7 @@
         call open_new(74,sfname,'','')
         do i=ifirsttime,ilast
           pasman=ipmhd(i)/1.e4_dp/aminor(i)/abs(bcentr(i))
-          pasman=pasman*rout(i)/100./rcentr
+          pasman=pasman*rcntr(i)/100./rcentr
           betatnx=betat(i)/pasman
           write (74,*) time(i),betatnx,xdum,xdum
         enddo

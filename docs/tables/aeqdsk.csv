@@ -1,7 +1,7 @@
 Variable, Description
-AAQ1, "minor radius of q=1 surface in cm, 100 if not found"
-AAQ2, "minor radius of q=2 surface in cm, 100 if not found"
-AAQ3, "minor radius of q=3 surface in cm, 100 if not found"
+AQ1, "minor radius of q=1 surface in cm, 100 if not found"
+AQ2, "minor radius of q=2 surface in cm, 100 if not found"
+AQ3, "minor radius of q=3 surface in cm, 100 if not found"
 ALPHA, Shafranov boundary line integral parameter
 AMINOR, plasma minor radius in cm
 AREA, cross sectional area in cm 2
@@ -16,13 +16,13 @@ BTAXV, vacuum toroidal magnetic field at magnetic axis in Tesla
 CCBRSP, computed F-coil currents in Ampere-turns
 CDFLUX, computed diamagnetic flux in Volt-sec
 CHILIBT, total chi^2 Li beam
-CHIGAMT, total chi^2 MSE
+CHIMSE, total chi^2 MSE
 CHIPRE, total chi^2 pressure
 CHISQ, "total chi^2 from magnetic probes, flux loops, Rogowskiand external coils"
-CJ1AVE, normalized average current density in plasma outer 5% normalized poloidal flux region
 CJOR0, normalized axial flux surface average current density
 CJOR95, normalized flux surface average current density at 95% of normalized poloidal flux
 CJOR99, normalized flux surface average current density at 99% of normalized poloidal flux
+CJ1AVE, normalized average current density in plasma outer 5% normalized poloidal flux region
 CONDNO, Condition number
 CPROF, current profile parametrization parameter
 CSILOP, computed flux loop signals in Weber
@@ -39,6 +39,7 @@ DSEP, "> 0 for minimum gap in cm in divertor configurations, < 0 absolute value 
 ECCURT, measured E-coil current in Ampere
 ELONG, Plasma boundary elongation
 ELONGM, elongation at magnetic axis
+ERROR, equilibrium convergence error
 FEXPAN, flux expansion at x point
 FEXPVS, flux expansion at outer lower vessel hit spot
 FLUXX, measured diamagnetic flux in Volt_sec
@@ -52,7 +53,7 @@ IPMHD, fitted plasma toroidal current in Ampere-turn
 JFLAG, "error flag, 0 for error"
 LFLAG, "error flag, > 0 for error"
 LI, li with normalization average poloidal magnetic defined through Ampere’s law
-LI3, alternate form of li
+LI3, li definition used by IMAS 2/R0/mu0^2/Ip^2 * int(Bp^2 dV) 
 LIMLOC, "plasma configuration. IN, OUT, TOP, and BOT for limiter configurations limited at inside, outside, top, and bottom. SNT, SNB, and DN for single null top, single null bottom, and double
 LTRI, upper triangularity
 null configurations. MAR for marginally diverted configurations."
@@ -61,7 +62,7 @@ MCO2R, number of radial CO 2 density chords
 JFLAG, "error flag, 0 for error"
 NLOLD, number of previous version WRITE statements
 NLNEW, number of WRITE statements
-ORING, not used
+ORING, gap between plasma and slanted face in cm
 PBINJ, neutral beam injection power in Watts
 PEAK, ratio of central pressure to average pressure
 PP95, normalized P’(ψ) at 95% normalized poloidal flux
@@ -79,6 +80,7 @@ QSTAR,equivalent safety factor q *
 Q95, q at 95% of poloidal flux
 RATSOL, ratio of the 1 cm external field line distances to separatrix surface at Rmin and Rmax
 RCENCM, major radius in cm for vacuum field BCENTR
+RCNTR, major radius of geometric center in cm
 RCO2R, path length in cm of radial CO 2 density chord
 RCO2V, path length in cm of vertical CO 2 density chord
 RCURRT, major radius in cm of current centroid
@@ -88,7 +90,6 @@ RM, major radius in cm at magnetic axis
 RQ32IN, Minimum major radius in cm of q=3/2 surface
 RQ21TOP, Major radius in cm at maximum Z of q=2 surface
 RHOQMIN, "normalized radius of q min , square root of normalized volume"
-ROUT, major radius of geometric center in cm
 RSEPS, major radius of x point in cm
 RTTT, Shafranov boundary line integral parameter
 RVSID, major radius of lower vessel inner strike point in cm
@@ -100,34 +101,33 @@ RVSOUT, major radius of vessel outer hit spot in cm
 SEPBOT, bottom gap of external second separatrix in cm
 SEPEXP, separatrix radial expansion in cm
 SEPIN, inner gap of external second separatrix in cm
-SEPNOS, radial distance in cm between x point and external field line at ZNOSE
+SEPNOSE, radial distance in cm between x point and external field line at ZNOSE
 SEPOUT, outer gap of external second separatrix in cm
 SEPTOP, top gap of external second separatrix in cm
-SHEARB, magnetic shear at 95% enclosed normalized poloidal flux
+SHEAR, magnetic shear at 95% enclosed normalized poloidal flux
 SIBDRY, plasma boundary poloidal flux in Weber/rad
 SLANTL, gap to lower outboard limiter in cm
 SLANTU, gap to upper outboard limiter in cm
 SSI01, magnetic shear at 1% of normalized poloidal flux
 SSI95, magnetic shear at 95% of normalized poloidal flux
-TAUMHD, energy confinement time in ms
 TAUDIA, diamagnetic energy confinement time in ms
+TAUMHD, energy confinement time in ms
 TAVEM, average time in ms for magnetic and MSE data
-TERROR, equilibrium convergence error
 TIME, time in ms
 UTRI, upper triangularity
 VERTN, vacuum field index at current centroid
-VLOOPT, measured loop voltage in volt
+VLOOP, measured loop voltage in volt
 VOLUME, plasma volume in m 3
-VSURFA, not computed (always zero)
+VSURF, not computed (always zero)
 WBDOT, not computed (always zero)
-WDIA, diamagnetic plasma stored energy in Joule
-WMHD, plasma stored energy in Joule
+WDIA, diamagnetic plasma stored energy in Joules
+WMHD, plasma stored energy in Joules
 WPDOT, not computed (always zero)
 XNNC, "vertical stability parameter, vacuum field index normalized to critical index value"
 YYY2, Shafranov Y2 current moment
+ZCNTR, Z of geometric center in cm
 ZCURRT, Z in cm at current centroid
 ZM, Z in cm at magnetic axis
-ZOUT, Z of geometric center in cm
 ZSEPS, Z of x point in cm
 ZVSID, Z of lower vessel inner strike point in cm
 ZVSIN, Z of vessel inner hit spot in cm
