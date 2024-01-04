@@ -125,9 +125,8 @@
                   limitr,xlim,ylim,limfag,ixt,jtime,kerror)
       if(kerror.gt.0) return
       sidif=simag-psibry
-      eouter=(ymax-ymin)/(xmax-xmin)
-      zplasm=(ymin+ymax)/2.
       aouter=(xmax-xmin)/2.
+      eouter=(ymax-ymin)/(xmax-xmin)
 !-----------------------------------------------------------------------
 !--   force free current in the scrape-off layer                      --
 !-----------------------------------------------------------------------

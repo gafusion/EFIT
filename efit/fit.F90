@@ -181,7 +181,7 @@
 !!
 !**********************************************************************
       subroutine residu(nx,jtime,idone)
-      use commonblocks,only: psiold,psipold
+      use commonblocks,only: psiold
       include 'eparm.inc'
       include 'modules1.inc'
       implicit none

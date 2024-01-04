@@ -172,9 +172,7 @@ ALLOCATE(rmx(mfila),zmx(mfila),rsilpf(nsilop,mfila), &
 ALLOCATE(beti(icycred_loopmax,nw-2),abeti(icycred_loopmax,nw-2), &
    wk1(icycred_loopmax,nw-2),rhsdumy1(nwnh),phi(nw),v(nw), &
    wk2(nw),diagl(nw),diagu(nw),psi(nwnh),xpsi(nwnh), &
-   vfbrrt(nwnh),psipla(nwnh),xout(npoint),yout(npoint))
-
-
+   xout(npoint),yout(npoint))
 
 ALLOCATE(volecs(nesum),volecc(nesum),rsisec(nesum),volfcs(nfsum),volfcc(nfsum), &
    rvs(nvesel),zvs(nvesel),hvs(nvesel),wvs(nvesel),avs(nvesel),avs2(nvesel), &

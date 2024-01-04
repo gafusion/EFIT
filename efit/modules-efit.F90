@@ -392,10 +392,9 @@
       end module var_divdis
 !var_cpsi
       module var_cpsi
-        real*8,dimension(:),allocatable :: psi,xpsi,vfbrrt,psipla
+        real*8,dimension(:),allocatable :: psi,xpsi
         real*8 vcurfb(3)
-        real*8 psibry,simag,sidif,eouter,zplasm,zpwant,difpsi, &
-               cupdown
+        real*8 psibry,simag,sidif,eouter,difpsi,cupdown
       end module var_cpsi
 !var_cvalue
       module var_cvalue
