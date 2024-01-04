@@ -614,9 +614,15 @@
       call dump_h5(nid,"chi_squared",chidflux,h5in,h5err)
       call close_group("diamagnetic_flux",nid,h5err)
 
-      ! write total chi squared *These are not in the IMAS standard yet!
-      call dump_h5(cid,"chi_squared_total",chifin,h5in,h5err)
-      call dump_h5(cid,"chi_squared_extended",chitot,h5in,h5err)
+      ! write reduced chi squared
+      ! the total chi_squared is more commonly used, but IMAS only includes an entry 
+      !   for the reduced chi_squared (total divided by degrees of freedom)
+      ! according to the scientist who proposed it, the DOF should be approximated as 
+      !   the number of observations minus the number of model parameters
+      !   (only documented in PR 4207, not in the schema)
+      ! since this is not commonly used, we will set DOF=1 for now
+      call dump_h5(cid,"chi_squared_reduced",chitot,h5in,h5err)
+      call dump_h5(cid,"fredom_degrees_n",1,h5in,h5err)
 
       call close_group("constraints",cid,h5err)
       call close_group(trim(tindex),sid,h5err)
