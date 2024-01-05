@@ -2602,14 +2602,6 @@
       else 
         kwcurn=kpcurn 
       endif 
-      nqaxis=0 
-      if(fwtqa.gt.1.0e-03_dp) nqaxis=1 
-      nparam=nfnwcr 
-      if(kprfit.gt.0) nparam=nparam+1 
-      if(fitdelz) nparam=nparam+1 
-      if(fitsiref) nparam=nparam+1 
-      if(kedgep.gt.0) nparam=nparam+1 
-      if(kedgef.gt.0) nparam=nparam+1 
       if(fwtqa.gt.0.0) fwtqa=fwtqa/errorq 
       if(fwtbp.gt.0.0) fwtbp=fwtbp/errorq 
       if(fbetap.gt.0.0) betap0=fbetap 
