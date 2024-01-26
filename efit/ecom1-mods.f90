@@ -315,8 +315,8 @@
 
       module var_ecoil 
       !use eparm,only:necoil
-      real*8,dimension(:),allocatable :: re,ze,we,he
-      integer*4,dimension(:),allocatable :: ecid,ecturn
+      real*8,dimension(:),allocatable :: re,ze,we,he,ecturn
+      integer*4,dimension(:),allocatable :: ecid
       end module var_ecoil 
 
       module var_fcoil
