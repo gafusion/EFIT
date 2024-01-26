@@ -316,7 +316,7 @@
       module var_ecoil 
       !use eparm,only:necoil
       real*8,dimension(:),allocatable :: re,ze,we,he
-      integer*4,dimension(:),allocatable :: ecid
+      integer*4,dimension(:),allocatable :: ecid,ecturn
       end module var_ecoil 
 
       module var_fcoil
@@ -374,7 +374,7 @@
       module var_fwtdz
       logical fitdelz
       integer*4 ndelzon,ifitdelz 
-      real*8 errdelz,fgowdz,scaledz,stabdz,relaxdz,cdeljsum
+      real*8 errdelz,fgowdz,scaledz,stabdz,relaxdz,cdeljsum,delzthres
       real*8,dimension(:),allocatable :: gmp2dz
       real*8,dimension(:),allocatable :: gsildz
       real*8,dimension(:),allocatable :: gbrdz,gbzdz,rgamdz

@@ -120,14 +120,13 @@
       implicit none
       integer*4  :: i,j,istat,mcontr,mw,mh
       integer*4 vsid(nvesel) ! unused
-      real*8 ecturn(necoil) ! unused
       character(1000) :: line
       parameter(mcontr=35)
  
       namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,patmp2, &
                    rsi,zsi,wsi,hsi,as,as2,rsisvs,lpname, &
                    rvs,zvs,wvs,hvs,avs,avs2,vsid,vsname, &
-                   racoil,zacoil,wacoil,hacoil, &
+                   racoil,zacoil,wacoil,hacoil,ecturn, &
                    rf,zf,wf,hf,af,af2,fcid,fcturn,turnfc, &
                    re,ze,we,he,ecid,ecturn
         

@@ -124,6 +124,7 @@
       psiloop: do loop=1,nloop
         i=1+(rad(1)-x(1))/dx
         if(rad(1)-x(i).lt.0.0) i=i-1
+        i = min(i,nw-1)
         j=1+(yctr(1)-y(1))/(dy-0.000001_dp)
         jjj=j
 

@@ -268,7 +268,7 @@
             enddo
             bzct=bzct*tmu/fitot
             kkm=ecid(k)  
-            recebzec(kkm)=recebzec(kkm)+bzct
+            recebzec(kkm)=recebzec(kkm)+bzct*ecturn(k)
           enddo
         endif
       endif
