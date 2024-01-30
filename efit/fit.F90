@@ -216,7 +216,7 @@
       !----------------------------------------------------------------------
       !--  Turn on vertical stabilization if error small                   --
       !----------------------------------------------------------------------
-      if ((errorm.le.errdelz*delzthres).and.fitdelz) then
+      if ((errorm.le.errdelz).and.fitdelz) then
         ndelzon = 3
       else
         ndelzon = 999

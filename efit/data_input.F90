@@ -123,7 +123,7 @@
            jbeta,jli,alpax,gamax,jwantm,fwtxxq,fwtxxb,fwtxli,znose, &
            fwtbdry,nqwant,siwantq,n_write,kccoils,ccoils,rexpan, &
            xcoils,kcloops,cloops,xloops,currc79,currc139,nccoil,sizeroj, &
-           fitdelz,ndelzon,relaxdz,stabdz,delzthres,writepc,table_dir,errdelz, &
+           fitdelz,ndelzon,relaxdz,stabdz,writepc,table_dir,errdelz, &
            oldccomp,nicoil,oldcomp,currc199,curriu30,curriu90, &
            curriu150,curril30,curril90,curril150,ifitdelz,scaledz, &
            fwtjtr,sigjtr
@@ -286,7 +286,6 @@
       pprime=0.0
       saisref=0.0
       cdelz=0.0
-      delzthres = 1.0
       if (jtime.eq.0 .or. isicinit.ge.0 .or. isicinit.eq.-3) then
         cdeljsum=0.0
         psi=0.0
