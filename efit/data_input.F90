@@ -2457,7 +2457,7 @@
         tdata1=errsil*abs(silopt(jtime,m)-reflux) 
         tdata2=sicont*rsi(m)*abs(ipmeas(jtime)) 
         tdata=max(tdata1,tdata2) 
-        tdata2=abs(psibit(m))*vbit 
+        tdata=abs(psibit(m))*vbit 
         tdata=max(tdata,tdata2) 
         sigsil(m)=tdata 
         if (tdata.gt.1.0e-10_dp) then
