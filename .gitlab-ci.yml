@@ -132,3 +132,33 @@ pages:  # this job name has special meaning to GitLab
   except:
     variables:
       - $EFIT_CI_SCHEDULED =~ /yes/
+
+build-nersc-image:
+  services:
+    - docker:24.0.5-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+    CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE/nersc:$CI_COMMIT_REF_SLUG
+    CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+    HARBOR_IMAGE_NAME: $HARBOR_HOST/$HARBOR_PROJECT/efit:latest
+  rules:
+    - when: manual
+  stage: stage2
+  image: docker:24.0.5
+  before_script:
+    - docker info
+    - docker login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD $HARBOR_HOST
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - echo 'CI Registry Image $CI_REGISTRY_IMAGE'
+    - echo "CI Commit Ref Slug $CI_COMMIT_REF_SLUG"
+    - echo "CI Registry User  $CI_REGISTRY_USER"
+    - echo "CI Registry  $CI_REGISTRY"
+    - echo "Harbor image name $HARBOR_IMAGE_NAME"
+    - pwd
+    - cd ..
+    - docker build --pull -t $CONTAINER_TEST_IMAGE -f efit/share/config_examples/nersc.Containerfile .
+    - docker push $CONTAINER_TEST_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $HARBOR_IMAGE_NAME
+    - docker push $HARBOR_IMAGE_NAME
