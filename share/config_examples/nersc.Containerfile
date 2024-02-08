@@ -102,7 +102,6 @@ RUN mkdir -p $EFIT_ROOT/build \
             -DHDF5_ROOT:PATH=$HDF5_DIR \
             -DCMAKE_BUILD_TYPE:STRING=Release \
             -DTEST_EFUND:BOOL=False \
-            -DCMAKE_BUILD_TYPE:STRING=Debug \
             /opt/efit
 
 RUN cd $EFIT_ROOT/build && make
