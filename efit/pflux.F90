@@ -312,7 +312,7 @@
 !--   intensive                                                             --
 !-----------------------------------------------------------------------------
       psi=0.0
-      !$omp target teams distribute parallel do simd collapse(2) 
+      !$omp target teams distribute parallel do collapse(2) 
       do i=1,nw
        do j=1,nh
         kk=(i-1)*nh+j
@@ -328,7 +328,6 @@
           psi(kk)=psi(kk)+sum(gridac(kk,:)*caccurt(jtime,:))
         psipla(kk)=psi(kk)
         if (ivacum.eq.0) then
-          !$omp simd reduction(+:tempsum1)
           do ii=1,nw
             do jj=1,nh
               kkkk=(ii-1)*nh+jj
