@@ -1543,7 +1543,10 @@
           if (kdata.eq.1) then
             ! Use this parameter for COCOs transformation
             sign_ext=twopi
-            if(plasma_ext < 0.0) sign_ext = -twopi
+            if(plasma_ext > 0.0) sign_ext = -twopi
+            ! Note: IMAS/OMAS specifies COCOs 11, but doesn't have a
+            !       specific definition for psi, so this sign may not
+            !       be consistent with other codes
           else ! kdata=2
             if(plasma_ext > 0.0) sign_ext = -1.0
           endif
