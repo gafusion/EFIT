@@ -32,7 +32,7 @@
              psic1,psic2,psilu_psill,psiul_psiuu,rcurnow,sumc,vcurfi, &
              zdwn_now,zup_now
       real*8 pds(6)
-      real*8,dimension(nwnh) :: psikkk,gfbsum
+      real*8,dimension(nwnh) :: psipla,psikkk,gfbsum
       logical vfeed
 
       kerror = 0

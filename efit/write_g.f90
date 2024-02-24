@@ -54,7 +54,7 @@
                    eebdry,ee2bdry,keebdry,kee2bdry
       namelist/inwant/psiwant,vzeroj,sizeroj,fwtjtr,sigjtr
       namelist/chiout/saisil,saimpi,chipasma,saipre
-      namelist/eccd/kkstark,chigamt,chigam,bzmse,psiecn,dpsiecn, &
+      namelist/eccd/kkstark,chimse,chigam,bzmse,psiecn,dpsiecn, &
               saisq,cjeccd
 !
       xdum=0.0
