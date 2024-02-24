@@ -29,7 +29,7 @@
 
       ! Set COCOs conversion factor for psi
       cocos=twopi
-      if(ipmeas(jtime).lt.0.0) cocos=-twopi
+      if(ipmeas(jtime).gt.0.0) cocos=-twopi
 
       ! Setup flux scalars
       ssimag=simag*cocos
