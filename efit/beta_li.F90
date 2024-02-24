@@ -137,12 +137,12 @@
       sumbzz=abs(sumbzz)/tmu/abs(ipmhd(jtime))/twopi
       rcurrm=rcentr
       li(jtime)=sumbp2/volume(jtime)/bp2flx*1.0e+06_dp
-      li3(jtime)=(tmu*2.0*pi*ipmhd(jtime))**2*rout(jtime)/200.0
+      li3(jtime)=(tmu*2.0*pi*ipmhd(jtime))**2*rcntr(jtime)/200.0
       li3(jtime)=sumbp2/li3(jtime)
       betap(jtime)=s1(jtime)/4.+s2(jtime)/4.*(1.+rcurrm/rcentr) &
                    -li(jtime)/2.
       betat(jtime)=betap(jtime)*bp2flx/bcentr(jtime)**2*100.
-      betat(jtime)=betat(jtime)*(rout(jtime)/100./rcentr)**2
+      betat(jtime)=betat(jtime)*(rcntr(jtime)/100./rcentr)**2
       qout(jtime)=qout(jtime)*abs(bcentr(jtime))*rcentr/twopi
       wmhd(jtime)=1.5_dp*betap(jtime)*bp2flx/2./tmu/2./pi*volume(jtime) &
                     /1.0e+06_dp
@@ -416,17 +416,17 @@
       end select
       betap(jtime)=sumpre*2.0*twopi*tmu/bp2flx
       betat(jtime)=sumpre*2.0*twopi*tmu/bcentr(jtime)**2
-      betat(jtime)=100.*betat(jtime)*(rout(jtime)/100./rcentr)**2
+      betat(jtime)=100.*betat(jtime)*(rcntr(jtime)/100./rcentr)**2
       wmhd(jtime)=1.5_dp*betap(jtime)*bp2flx/2./tmu/2./pi*volume(jtime) &
                     /1.0e+06_dp
       pasman=ipmhd(jtime)/1.e4_dp/aminor(jtime)/abs(bcentr(jtime))
-      pasman=pasman*rout(jtime)/100./rcentr
+      pasman=pasman*rcntr(jtime)/100./rcentr
       betatn=betat(jtime)/pasman
       dmui=1.0e+06_dp*diamag(jtime)*4.*pi*bcentr(jtime)*rcentr &
            /bp2flx/volume(jtime)
       betapd(jtime)=s1(jtime)/2.+s2(jtime)/2.*(1.-rcurrm/rcentr)-dmui
       betatd(jtime)=betapd(jtime)*bp2flx/bcentr(jtime)**2*100.
-      betatd(jtime)=betatd(jtime)*(rout(jtime)/100./rcentr)**2
+      betatd(jtime)=betatd(jtime)*(rcntr(jtime)/100./rcentr)**2
       wdia(jtime)=1.5_dp*betapd(jtime)*bp2flx/2./tmu/2./pi*volume(jtime) &
                      /1.0e+06_dp
 !-----------------------------------------------------------------------
@@ -481,7 +481,7 @@
         sumpr2=0.0
       endif
       betat2=sumpr2*2.0*twopi*tmu/bcentr(jtime)**2
-      betat2=100.*betat2*(rout(jtime)/100./rcentr)**2
+      betat2=100.*betat2*(rcntr(jtime)/100./rcentr)**2
 !-----------------------------------------------------------------------
 !--   compute the safety factor profile
 !-----------------------------------------------------------------------
@@ -585,7 +585,7 @@
               /plengt(nfound))**2
       const=twopi/volume(jtime)*1.0e+06_dp/bp2flx
       li(jtime)=sumbp2/volume(jtime)/bp2flx*1.0e+06_dp
-      li3(jtime)=(tmu*2.0*pi*ipmhd(jtime))**2*rout(jtime)/200.0
+      li3(jtime)=(tmu*2.0*pi*ipmhd(jtime))**2*rcntr(jtime)/200.0
       li3(jtime)=sumbp2/li3(jtime)
 !
       dsi=(psibry-simag)/(nw-1)
@@ -662,9 +662,9 @@
       end select
       betap(jtime)=sumpre*2.0*twopi*tmu/bp2flx
       betat(jtime)=sumpre*2.0*twopi*tmu/bcentr(jtime)**2
-      betat(jtime)=100.*betat(jtime)*(rout(jtime)/100./rcentr)**2
+      betat(jtime)=100.*betat(jtime)*(rcntr(jtime)/100./rcentr)**2
       pasman=ipmhd(jtime)/1.e4_dp/aminor(jtime)/abs(bcentr(jtime))
-      pasman=pasman*rout(jtime)/100./rcentr
+      pasman=pasman*rcntr(jtime)/100./rcentr
       betatn=betat(jtime)/pasman
 !
       return

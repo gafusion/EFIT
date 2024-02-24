@@ -33,11 +33,11 @@
   0 diamagnetic loop
 
 
- shot #   =     186610 time(ms) =       2400 chi**2   =  2.088E+01
- betat(%) =      0.417 betap    =      0.110 li       =      1.130
- vol(cm3) =  1.780E+07 rout(cm) =    172.912 zout(cm) =      5.466
- elong    =      1.791 utriang  =      0.746 ltriang  =      0.352
- a(cm)    =     56.359 lin(cm)  =     14.820 lout(cm) =      5.799
- ltop(cm) =     16.929 q*       =      3.874 rc(cm)   =    170.276
- zc(cm)   =     -2.694 bt0(t)   =      1.638 qout     =      7.495
+ shot #     =     186610 time(ms)   =       2400 chi^2      =  2.088E+01
+ betat(%)   =      0.417 betap      =      0.110 li         =      1.130
+ vol(cm^3)  =  1.780E+07 rcntr(cm)  =    172.912 zcntr(cm)  =      5.466
+ elong      =      1.791 utri       =      0.746 ltri       =      0.352
+ a(cm)      =     56.359 gapin(cm)  =     14.820 gapout(cm) =      5.799
+ gaptop(cm) =     16.929 q95        =      2.944 rm(cm)     =    174.569
+ zm(cm)     =     -3.211 totalchi^2 =  2.088E+01 error      =  6.063E-05
 INFO in efitd at r=  0, t=  2400: Done processing

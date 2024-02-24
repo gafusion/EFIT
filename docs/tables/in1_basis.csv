@@ -1,6 +1,6 @@
 ﻿Variable, Default, Description
 KFFFNC, 0, "| Choice of basis function for FF'.
-| 0 = standardpolynomial representation FF'(psi)=gamma0+gamma1 psi+...+gamman psi^n.
+| 0 = standard polynomial representation FF'(psi)=gamma0+gamma1 psi+...+gamman psi^n.
 | 1 = polynomial representation...
 | 2 = polynomial representation...
 | 3 = spline respresentation with second constraint... 
@@ -41,8 +41,8 @@ ICPROF, 0,"| Specific choice of current profile
 | 1 = no edge current density allowed
 | 2 = free edge current density
 | 3 = weak edge current density constraint
-| This sets some or all of the variables KFFCUR, KPPCUR, FCURBD, PCURBD, FWTBP, FWTQA, QVFIT, KCALPA, CALPA, XALPA, KCGAMA, CGAMA, and XGAMA to predefined values.
-| NOTE that if these variables are seperately specified in the namelist input, the values set by the ICPROF variable will override them."
+| This sets some or all of the variables KFFCUR, KPPCUR, FCURBD, PCURBD, FWTBP, FWTQA, QVFIT, KCALPA, CALPA, XALPA, KCGAMA, CGAMA, and XGAMA to predefined values (see above).
+| NOTE: if these variables are set differently in the namelist, the values specified by ICPROF>0 will over write them."
 KPPCUR, 3, "Number of coefficients in polynomial representation of P'.  The poynomial order is KPPCUR+PCURBD.  Ignored when using spline representation."
 KFFCUR, 1, "Number of coefficients in polynomial representation of FF'.  The poynomial order is KFFCUR+FCURBD.  Ignored when using spline representation."
 KWWCUR, 1, "Number of coefficients in polynomial representation of POmega'.  The poynomial order is KWWCUR+WCURBD.  Ignored when using spline representation."

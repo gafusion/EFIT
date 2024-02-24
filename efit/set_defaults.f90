@@ -222,7 +222,7 @@
         bitip=0.0
         bzmse=0.0
         cfcoil=-1.
-        chigamt=0.0
+        chimse=0.0
         chilibt=0.0
         chipre=0.0
         condno=0.0

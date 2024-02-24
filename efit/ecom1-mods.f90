@@ -39,7 +39,7 @@
       real*8,dimension(:),allocatable :: brsp
       real*8,dimension(:),allocatable :: chisq
       real*8 cond,tchifcc
-      integer*4 nparam,nfnpcr,nfnwcr,nbase
+      integer*4 nfnpcr,nfnwcr,nbase
       end module var_rmatri
   
       module var_chimag
@@ -106,7 +106,7 @@
                  msebkp,msefitfun,kwaitmse,mse_quiet, &
                  mse_strict,ok_30rt,ok_210lt,mse_usecer, &
                  mse_certree,mse_use_cer330,mse_use_cer210
-      real*8 chigamt,chilibt,dtmsefull,t_max_beam_off 
+      real*8 chimse,chilibt,dtmsefull,t_max_beam_off 
       real*8,dimension(:,:),allocatable :: rbrpc,rbzpc,rgampc
       real*8,dimension(:,:),allocatable :: rbrfc,rbzfc
       real*8,dimension(:,:),allocatable :: rbrec,rbzec,rgamec
@@ -298,7 +298,7 @@
       end module var_inputc
 
       module var_switch
-      integer*4 nqaxis,isumip,jbeta,jli,nqwant
+      integer*4 isumip,jbeta,jli,nqwant
       real*8 sumip,fbetap,fli,fbetat,fbetan 
       real*8,dimension(:),allocatable :: qsiw, pasmsw,fqsiw,siwantq
       real*8,dimension(:,:),allocatable :: fgowsw

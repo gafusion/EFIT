@@ -119,15 +119,13 @@
       nwnh=nw*nh
       nh2=2*nh
       nwrk=2*(nw+1)*nh
-!     nwwf=2*nw
-      nwwf=3*nw
-      nwf=nwwf
+!     nwf=2*nw
+      nwf=3*nw
       kubicx=4
       kubicy=4
       lubicx=nw-kubicx+1
       lubicy=nh-kubicy+1
       kujunk=kubicx*kubicy*lubicx*lubicy
-      boundary_count=2*nh+2*(nw-2)
       lr0=nw-krord+1
       lz0=nh-kzord+1
       nxtrap=npoint

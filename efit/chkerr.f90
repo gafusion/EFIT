@@ -29,8 +29,8 @@
       if(abs((ipmhd(m)-ipmeas(m))/ipmhd(m)).ge.plasma_diff) erflag(m,4)=4
       if(aminor(m).ge.aminor_max .or. aminor(m).le.aminor_min) erflag(m,5)=5
       if(elong(m).ge.elong_max .or. elong(m).le.elong_min) erflag(m,6)=6
-      if(rout(m).gt.rout_max .or. rout(m).lt.rout_min) erflag(m,7)=7
-      if(zout(m).gt.zout_max .or. zout(m).lt.zout_min) erflag(m,9)=9
+      if(rcntr(m).gt.rcntr_max .or. rcntr(m).lt.rcntr_min) erflag(m,7)=7
+      if(zcntr(m).gt.zcntr_max .or. zcntr(m).lt.zcntr_min) erflag(m,9)=9
       if(rcurrt(m).gt.rcurrt_max .or. rcurrt(m).lt.rcurrt_min) erflag(m,8)=8
       if(zcurrt(m).gt.zcurrt_max .or. zcurrt(m).lt.zcurrt_min) erflag(m,10)=10
       if(qstar(m).gt.qstar_max .or. qstar(m).lt.qstar_min) erflag(m,13)=13
@@ -107,8 +107,8 @@
         lflag=erflag(m,6)
       endif
       if (erflag(m,7).eq.7) then
-        write(nttyo,1060) rout_max,rout_min
-        write(40,1060) rout_max,rout_min
+        write(nttyo,1060) rcntr_max,rcntr_min
+        write(40,1060) rcntr_max,rcntr_min
         lflag=erflag(m,7)
       endif
       if (erflag(m,8).eq.8) then
@@ -117,8 +117,8 @@
         lflag=erflag(m,8)
       endif
       if (erflag(m,9).eq.9) then
-        write(nttyo,1080) zout_max,zout_min
-        write(40,1080) zout_max,zout_min
+        write(nttyo,1080) zcntr_max,zcntr_min
+        write(40,1080) zcntr_max,zcntr_min
         lflag=erflag(m,9)
       endif
       if (erflag(m,10).eq.10) then
