@@ -120,7 +120,6 @@
       implicit none
       integer*4  :: i,j,istat,mcontr,mw,mh
       integer*4 vsid(nvesel) ! unused
-      real*8 ecturn(necoil) ! unused
       character(1000) :: line
       parameter(mcontr=35)
  

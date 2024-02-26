@@ -109,7 +109,7 @@
            kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens,fwtbdry, &
            kwwfnc,kwwknt,wwknt,wwtens,fwtec,fitsiref,bitec,scalepr,scalesir, &
            ppbdry,kppbdry,pp2bdry,kpp2bdry,scalea,sigrbd,sigzbd,nbskip, &
-           ffbdry,kffbdry,ff2bdry,kff2bdry,errsil,vbit, &
+           ffbdry,kffbdry,ff2bdry,kff2bdry,errsil,vbit,sicont, &
            wwbdry,kwwbdry,ww2bdry,kww2bdry,f2edge,fe_width,fe_psin,kedgef, &
            ktear,kersil,iout,ixray,pedge,kedgep,pe_width,pe_psin, &
            table_dir,input_dir,store_dir,kautoknt,akchiwt,akerrwt, &
