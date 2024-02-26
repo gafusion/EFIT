@@ -447,8 +447,8 @@
           brct=brct*tmu/fitot
           bzct=bzct*tmu/fitot
           kkm=ecid(k)
-          rbrec(m,kkm)=rbrec(m,kkm)+brct
-          rbzec(m,kkm)=rbzec(m,kkm)+bzct
+          rbrec(m,kkm)=ecturn(k)*rbrec(m,kkm)+brct
+          rbzec(m,kkm)=ecturn(k)*rbzec(m,kkm)+bzct
         enddo
       enddo
 !

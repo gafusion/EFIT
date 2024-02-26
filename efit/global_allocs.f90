@@ -88,7 +88,7 @@ ALLOCATE(rbrpc(nstark,npcurn),rbzpc(nstark,npcurn),rgampc(nstark,npcurn),rbrfc(n
    rsi(nsilop),zsi(nsilop),wsi(nsilop),hsi(nsilop),as(nsilop),as2(nsilop), &
    rf(nfcoil),zf(nfcoil),wf(nfcoil),hf(nfcoil),af(nfcoil),af2(nfcoil), &
    turnfc(nfsum),fcid(nfcoil),fcturn(nfcoil), &
-   re(necoil),ze(necoil),we(necoil),he(necoil),ecid(necoil), &
+   re(necoil),ze(necoil),we(necoil),he(necoil),ecid(necoil),ecturn(necoil), &
    xmp2(magpri),ymp2(magpri),amp2(magpri),smp2(magpri),patmp2(magpri), &
    xlim(nlimit),ylim(nlimit),xlim_180(nlimit),ylim_180(nlimit), &
    xmim(nlimit),ymim(nlimit),xmim_180(nlimit),ymim_180(nlimit), &

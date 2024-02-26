@@ -4,6 +4,7 @@ CCOILS, zeros, "| Matrix which defines constraint for F coil currents I1, I2, ..
 | CCOILS(1,i) I1 + CCOILS(2,i) I2 + ... + CCOILS(18,i) I18 = XCOILS(i) for i=1,KCCOILS."
 CURRC139, 0.0, Current in 139 degree C coil in Amps.
 CURRC79, 0.0, Current in 79 degree C coil in Amps. 
+ERRDELZ, 0.06, Error which delz fitting turns on
 FBETAN,, Desired value for normalized toroidal beta
 FBETAP, 0.0, Fixed betap value for equilibrium calculation. ICONVR must equal 3. ICURRT must equal 2.
 FITDELZ, False, Set FITDELZ=True to turn on vertical shifting of flux surfaces during fitting. 

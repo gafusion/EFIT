@@ -217,7 +217,7 @@
              fcurbd,pcurbd,prbdry,zlowimp,errmag,errmagb, &
              pressbi,prespb,sigppb,rminvs,rmaxvs,zmaxvs,errbry,condin, &
              sgtimin,alphafp,zbound,vsdamp,zminvs,saicon,tolbndpsi, &
-             pptens,fftens,wwtens,scalesir,scalea,errsil,vbit, &
+             pptens,fftens,wwtens,scalesir,scalea,errsil,vbit,sicont, &
              f2edge,fe_width,fe_psin,pedge,pe_width,pe_psin, &
              akchiwt,akerrwt,aktol,akgamwt,akprewt,psiecn,dpsiecn
       integer*4, dimension(2000) :: irfila,jzfila
@@ -263,7 +263,7 @@
         sgtimin,kwripre,kbound,alphafp,kframe,zbound,vsdamp,zminvs,saicon, &
         kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens,fwtbdry, &
         kwwfnc,kwwknt,wwknt,wwtens,fwtec,fitsiref,bitec,scalepr,scalesir, &
-        ppbdry,kppbdry,pp2bdry,kpp2bdry,scalea,sigrbd,sigzbd,nbskip, &
+        ppbdry,kppbdry,pp2bdry,kpp2bdry,scalea,sigrbd,sigzbd,nbskip,sicont, &
         ffbdry,kffbdry,ff2bdry,kff2bdry,errsil,vbit,kersil,iout,ixray, &
         wwbdry,kwwbdry,ww2bdry,kww2bdry,f2edge,fe_width,fe_psin,kedgef, &
         pedge,kedgep,pe_width,pe_psin,chordv,chordr,nw_sub,nh_sub, &
