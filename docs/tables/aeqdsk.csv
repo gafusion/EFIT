@@ -89,7 +89,7 @@ RMIDOUT, outer major radius in m at Z=0.0
 RM, major radius in cm at magnetic axis
 RQ32IN, Minimum major radius in cm of q=3/2 surface
 RQ21TOP, Major radius in cm at maximum Z of q=2 surface
-RHOQMIN, "normalized radius of q min , square root of normalized volume"
+RHOQMIN, "normalized radius of q min, square root of normalized volume"
 RSEPS, major radius of x point in cm
 RTTT, Shafranov boundary line integral parameter
 RVSID, major radius of lower vessel inner strike point in cm
