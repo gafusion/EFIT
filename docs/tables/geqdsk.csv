@@ -31,7 +31,7 @@ R2SURF, Flux surface averaged 1/R^2 in m
 RBBBS, R of boundary points in meter
 RCENTR, R in meter of vacuum toroidal magnetic field BCENTR
 RDIM, Horizontal dimension in meter of computational box
-RHOVN, Normalized toroidal flux on uniform poloidal flux grid
+RHOVN, Normalized radius determined from the square root of toroidal flux on uniform poloidal flux grid
 RGRID, R coordinate vector
 RLEFT, Minimum R in meter of rectangular computational box
 RLIM, R of surrounding limiter contour in meter
