@@ -45,6 +45,9 @@ IAVEUS, ,"| Changes units on averaging times (IAVED, IAVEM, IAVEV) to microsecon
 | <=0 leave units in milliseconds"
 IAVEV, 10, "Time in milliseconds for averaging loop voltage. (only used in snap mode, not relevant to k-files)"
 IBATCH, 0, UNUSED (input and output only)
+IBOUND, 0, "| Controls search points for boundary find 
+| 0 = searches between inboard limiter and grid center
+| 1 = searches between outboard limiter and grid center"
 IBTCOMP,1,"| (Integer flag) Toroidal field pickup compensation. Subtract contributions to poloidal magnetic field probe measurements due to pickup from toroidal field coil (only used in snap mode, not relevant to k-files)
 | 0 = no compensation
 | 1 = apply compensation"
