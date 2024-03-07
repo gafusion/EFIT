@@ -104,7 +104,7 @@
       write (neqdsk,1060) time(jj),jflag,lflag,limloc(jj), &
                           nco2v,nco2r,qmflag,nlold,nlnew
       write (neqdsk,1040) chisq(jj),rcencm,bcentr(jj),ipmeas(jj)
-      write (neqdsk,1040) ipmhd(jj),rout(jj),zout(jj),aminor(jj)
+      write (neqdsk,1040) ipmhd(jj),rcntr(jj),zcntr(jj),aminor(jj)
       write (neqdsk,1040) elong(jj),utri(jj),ltri(jj),volume(jj)
       write (neqdsk,1040) rcurrt(jj),zcurrt(jj),qstar(jj),betat(jj)
       write (neqdsk,1040) betap(jj),li(jj),gapin(jj),gapout(jj)
@@ -113,7 +113,7 @@
       write (neqdsk,1040) (dco2v(jj,k),k=1,nco2v)
       write (neqdsk,1040) (rco2r(k,jj),k=1,nco2r)
       write (neqdsk,1040) (dco2r(jj,k),k=1,nco2r)
-      write (neqdsk,1040) shearb(jj),bpolav(jj),s1(jj),s2(jj)
+      write (neqdsk,1040) shear(jj),bpolav(jj),s1(jj),s2(jj)
       write (neqdsk,1040) s3(jj),qout(jj),sepin(jj),sepout(jj)
       write (neqdsk,1040) septop(jj),sibdry(jj),area(jj),wmhd(jj)
       write (neqdsk,1040) terror(jj),elongm(jj),qm(jj),cdflux(jj)
@@ -121,7 +121,7 @@
       write (neqdsk,1040) rseps(1,jj),zseps(1,jj),rseps(2,jj), &
                           zseps(2,jj)
       write (neqdsk,1040) sepexp(jj),sepbot(jj),btaxp(jj),btaxv(jj)
-      write (neqdsk,1040) aaq1(jj),aaq2(jj),aaq3(jj),dsep(jj)
+      write (neqdsk,1040) aq1(jj),aq2(jj),aq3(jj),dsep(jj)
       write (neqdsk,1040) rm(jj),zm(jj),psim(jj),taumhd(jj)
       fluxx=diamag(jj)*1.0e-03_dp
       write (neqdsk,1040) betapd(jj),betatd(jj),wdia(jj),fluxx
@@ -144,7 +144,7 @@
       write (neqdsk,1040) slantu(jj),slantl(jj),zuperts(jj),chipre
       write (neqdsk,1040) cjor95(jj),pp95(jj),drsep(jj),yyy2(jj)
       write (neqdsk,1040) xnnc(jj),cprof,oring(jj),cjor0(jj)
-      write (neqdsk,1040) fexpan,qmin,chigamt,ssi01
+      write (neqdsk,1040) fexpan,qmin,chimse,ssi01
       write (neqdsk,1040) fexpvs,sepnose,ssi95(jj),rhoqmin
       write (neqdsk,1040) cjor99(jj),cj1ave(jj),rmidin(jj),rmidout(jj)
       write (neqdsk,1040) psurfa(jj),peak(jj),dminux(jj),dminlx(jj)
@@ -182,8 +182,8 @@
                           nco2v,nco2r,qmflag,nlold,nlnew
       write (neqdsk) real(chisq(jj),r4),real(rcencm,r4), &
                      real(bcentr(jj),r4),real(ipmeas(jj),r4)
-      write (neqdsk) real(ipmhd(jj),r4),real(rout(jj),r4), &
-                     real(zout(jj),r4),real(aminor(jj),r4)
+      write (neqdsk) real(ipmhd(jj),r4),real(rcntr(jj),r4), &
+                     real(zcntr(jj),r4),real(aminor(jj),r4)
       write (neqdsk) real(elong(jj),r4),real(utri(jj),r4), &
                      real(ltri(jj),r4),real(volume(jj),r4)
       write (neqdsk) real(rcurrt(jj),r4),real(zcurrt(jj),r4), &
@@ -196,7 +196,7 @@
       write (neqdsk) (real(dco2v(jj,k),r4),k=1,nco2v)
       write (neqdsk) (real(rco2r(k,jj),r4),k=1,nco2r)
       write (neqdsk) (real(dco2r(jj,k),r4),k=1,nco2r)
-      write (neqdsk) real(shearb(jj),r4),real(bpolav(jj),r4), &
+      write (neqdsk) real(shear(jj),r4),real(bpolav(jj),r4), &
                      real(s1(jj),r4),real(s2(jj),r4)
       write (neqdsk) real(s3(jj),r4),real(qout(jj),r4), &
                      real(sepin(jj),r4),real(sepout(jj),r4)
@@ -210,8 +210,8 @@
                      real(rseps(2,jj),r4),real(zseps(2,jj),r4)
       write (neqdsk) real(sepexp(jj),r4),real(sepbot(jj),r4), &
                      real(btaxp(jj),r4),real(btaxv(jj),r4)
-      write (neqdsk) real(aaq1(jj),r4),real(aaq2(jj),r4), &
-                     real(aaq3(jj),r4),real(dsep(jj),r4)
+      write (neqdsk) real(aq1(jj),r4),real(aq2(jj),r4), &
+                     real(aq3(jj),r4),real(dsep(jj),r4)
       write (neqdsk) real(rm(jj),r4),real(zm(jj),r4), &
                      real(psim(jj),r4),real(taumhd(jj),r4)
       fluxx=diamag(jj)*1.0e-03_dp
@@ -243,7 +243,7 @@
       write (neqdsk) real(xnnc(jj),r4),real(cprof,r4), &
                      real(oring(jj),r4),real(cjor0(jj),r4)
       write (neqdsk) real(fexpan,r4),real(qmin,r4), &
-                     real(chigamt,r4),real(ssi01,r4)
+                     real(chimse,r4),real(ssi01,r4)
       write (neqdsk) real(fexpvs,r4),real(sepnose,r4), &
                      real(ssi95(jj),r4),real(rhoqmin,r4)
       write (neqdsk) real(cjor99(jj),r4),real(cj1ave(jj),r4), &

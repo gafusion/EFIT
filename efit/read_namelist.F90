@@ -147,7 +147,7 @@
         icycred_loopmax,nfourier,device,nvsum
       namelist/incheck/li_max,li_min,betap_max,plasma_diff, &
         aminor_max,aminor_min,elong_max,elong_min, &
-        rout_max,rout_min,zout_max,zout_min, &
+        rcntr_max,rcntr_min,zcntr_max,zcntr_min, &
         rcurrt_max,rcurrt_min,zcurrt_max,zcurrt_min, &
         qstar_max,qstar_min,betat_max, &
         gapin_min,gapout_min,gaptop_min, &

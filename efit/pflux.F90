@@ -32,7 +32,7 @@
              psic1,psic2,psilu_psill,psiul_psiuu,rcurnow,sumc,vcurfi, &
              zdwn_now,zup_now
       real*8 pds(6)
-      real*8,dimension(nwnh) :: psikkk,gfbsum
+      real*8,dimension(nwnh) :: psipla,psikkk,gfbsum
       logical vfeed
 
       kerror = 0
@@ -312,7 +312,7 @@
 !--   intensive                                                             --
 !-----------------------------------------------------------------------------
       psi=0.0
-      !$omp target teams distribute parallel do simd collapse(2) 
+      !$omp target teams distribute parallel do collapse(2) 
       do i=1,nw
        do j=1,nh
         kk=(i-1)*nh+j
@@ -328,7 +328,6 @@
           psi(kk)=psi(kk)+sum(gridac(kk,:)*caccurt(jtime,:))
         psipla(kk)=psi(kk)
         if (ivacum.eq.0) then
-          !$omp simd reduction(+:tempsum1)
           do ii=1,nw
             do jj=1,nh
               kkkk=(ii-1)*nh+jj

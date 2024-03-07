@@ -146,8 +146,8 @@
       itimeu=(time(iges)-itime)*1000
       sibdry(iges)=psibry
       psim(iges)=simag
-      rout(iges)=(xmin+xmax)/2.0
-      zout(iges)=(ymin+ymax)/2.0
+      rcntr(iges)=(xmin+xmax)/2.0
+      zcntr(iges)=(ymin+ymax)/2.0
       elong(iges)=(ymax-ymin)/(xmax-xmin)
       aminor(iges)=100.*(xmax-xmin)/2.0
       rexpmx=xmax+rexpan
@@ -165,27 +165,27 @@
         if (xoutp*xoutm.ge.0.0) cycle
         if (xoutp.le.0.) then
           if (abs(xout(i)-xmax).le.1.0e-04_dp) cycle
-          if (abs(yout(i)-zout(iges)).ge.abs(zxmin-zout(iges))) cycle
-          if (xout(i).ge.rout(iges)) cycle
+          if (abs(yout(i)-zcntr(iges)).ge.abs(zxmin-zcntr(iges))) cycle
+          if (xout(i).ge.rcntr(iges)) cycle
           xminn=xout(i)
         else
           if (abs(xout(i)-xmin).le.1.0e-04_dp) cycle
-          if (abs(yout(i)-zout(iges)).ge.abs(zxmax-zout(iges))) cycle
-          if (xout(i).le.rout(iges)) cycle
+          if (abs(yout(i)-zcntr(iges)).ge.abs(zxmax-zcntr(iges))) cycle
+          if (xout(i).le.rcntr(iges)) cycle
           xmaxx=xout(i)
         endif
       enddo
       indent(iges)=(xminn-xmin+xmax-xmaxx)/2./aminor(iges)*100.
-      rout(iges)=100.*rout(iges)
-      zout(iges)=100.*zout(iges)
+      rcntr(iges)=100.*rcntr(iges)
+      zcntr(iges)=100.*zcntr(iges)
 !-----------------------------------------------------------------------
 !--   the distance to the top limiter is found only for values of yout(i)
 !--   which are greater than yulim below.
 !-----------------------------------------------------------------------
       crymin=100.*rymin
       crymax=100.*rymax
-      utri(iges)=(rout(iges)-crymax)/aminor(iges)
-      ltri(iges)=(rout(iges)-crymin)/aminor(iges)
+      utri(iges)=(rcntr(iges)-crymax)/aminor(iges)
+      ltri(iges)=(rcntr(iges)-crymin)/aminor(iges)
 !---------------------------------------------------------------------
 !--   set up P' and FF', then integration                           --
 !--   ffprim = (RBt) * d/dpsi(RBt)                                  --
@@ -369,12 +369,12 @@
         if (delrmax1.lt.deltaa.and.delrmax2.lt.deltaa) then
            limloc(iges)='DN '
            drsep(iges)=max(delrmax1,delrmax2)*100.
-           if (zseps(1,iges).lt.zout(iges)) then
+           if (zseps(1,iges).lt.zcntr(iges)) then
              drsep(iges)=-drsep(iges)
            endif
         else
            if (delrmax1.lt.deltaa) then
-            if (zseps(1,iges).gt.zout(iges)) then
+            if (zseps(1,iges).gt.zcntr(iges)) then
              limloc(iges)='SNT'
              drsep(iges)=abs(delrmax2)*100.
             else
@@ -497,8 +497,8 @@
       ! TODO: xleft, zleft, xright, zright, xztop, ytop, xzbot, and ybot
       !       are never defined in efit... this affects the computation
       !       of sepin, sepout, septop, and sepbot
-      zhp=zout(iges)*0.01_dp
-      radp=rout(iges)*0.01_dp
+      zhp=zcntr(iges)*0.01_dp
+      radp=rcntr(iges)*0.01_dp
       do j=1,nfouns-1
        if (xouts(j).le.radp) then
 !        dxll=(youts(j)-zleft)*(youts(j+1)-zleft)
@@ -557,6 +557,7 @@
 !
  1085 continue
       call chisqr(iges)
+      if(chisq(iges)<1e-20) chisq(iges)=0.0
       chifin=chisq(iges)
       call betaliplus(iges,rgrid,zgrid,kerror)
       if(kerror.gt.0) return
@@ -879,8 +880,8 @@
           yytitle='Chi Square'
           zzztitle='EFIT MSE Chi2  = '
 !
-          ichisq=chigamt
-          ichisq2=(chigamt-ichisq)*10.0
+          ichisq=chimse
+          ichisq2=(chimse-ichisq)*10.0
           write (jchisq2,94010) ichisq2
           write (jchisq,94020) ichisq,jchisq2
           zztitle=zzztitle//jchisq
@@ -1002,9 +1003,9 @@
           if(double.and.(.not.onedone)) psiq1=psiq1+siwant  ! second value
         endif
       enddo
-      aaq1(iges)=pds(1)
-      aaq2(iges)=pds(2)
-      aaq3(iges)=pds(3)
+      aq1(iges)=pds(1)
+      aq2(iges)=pds(2)
+      aq3(iges)=pds(3)
 !---------------------------------------------------------------------
 !--   Get 3/2 and 2/1 surface information        2002Jan25          --
 !---------------------------------------------------------------------
@@ -1076,12 +1077,13 @@
       if(idoqn.eq.1) call zpline(nw,xsisii,qpsi,bfpol,cfpol,dfpol)
       siwant=0.95_dp
       q95(iges)=seval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
-      shearb(iges)=speval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
-      shearb(iges)=shearb(iges)/q95(iges)
+      shear(iges)=speval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
+      shear(iges)=shear(iges)/q95(iges)
       siwant=0.01_dp
       qpsic=seval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
-      shearc=speval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
-      shearc=shearc/qpsic
+      ! Unused:
+      !shearc=speval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
+      !shearc=shearc/qpsic
 !----------------------------------------------------------------------
 !--   if not diverted, get q at PSIWANT by interpolation             --
 !----------------------------------------------------------------------
@@ -1226,7 +1228,7 @@
         zseps(1,iges)=zseps(2,iges)
         zseps(2,iges)=rtemp
       endif
-      aspect=rout(iges)/aminor(iges)
+      aspect=rcntr(iges)/aminor(iges)
       qstar(iges)=rcentr*abs(bcentr(iges))/tmu/abs(ipmhd(iges))* &
                  (elong(iges)**2+1.)/2./aspect**2
       olamda=betap(iges)+li(iges)/2.
@@ -1286,7 +1288,7 @@
         if (ptotal.gt.0.01_dp) then
           consa1=ptotal**0.49_dp
           consa2=(abs(ipmhd(iges))/1.e6_dp)**1.08_dp
-          consa3=(rout(iges)/100.)**1.45_dp
+          consa3=(rcntr(iges)/100.)**1.45_dp
           taujd3(iges)=110.*consa2*consa3/consa1
         else
           taujd3(iges)=0.0
@@ -2419,7 +2421,7 @@
       vbtvac2=vbtvac2/volbt
       vbtor2=vbtor2/volbt
       vbtvac=vbtvac/volbt
-      btuse=bcentr(iges)*rcentr*100./rout(iges)
+      btuse=bcentr(iges)*rcentr*100./rcntr(iges)
       btuse=btuse**2
       vbtot2=betat(iges)*btuse/vbtot2
       vbtvac2=betat(iges)*btuse/vbtvac2
@@ -2428,7 +2430,7 @@
       btvvac2=btvvac2*100./volbt
       btvtor2=btvtor2*100./volbt
       btvtot2=btvtot2*100./volbt
-      vbtmag=betat(iges)*(rmaxis*100./rout(iges))**2
+      vbtmag=betat(iges)*(rmaxis*100./rcntr(iges))**2
       betped=0.0
       betnped=0.0
       if (kedgep.gt.0) then
@@ -2461,7 +2463,7 @@
         rcurrm=rttt(iges)*0.01_dp
         betapd(iges)=s1(iges)/2.+s2(iges)/2.*(1.-rcurrm/rcentr)-dmui
         betatd(iges)=betapd(iges)*bp2flx/bcentr(iges)**2*100.
-        betatd(iges)=betatd(iges)*(rout(iges)/100./rcentr)**2
+        betatd(iges)=betatd(iges)*(rcntr(iges)/100./rcentr)**2
         wdia(iges)=1.5_dp*betapd(iges)*bp2flx/2./tmu/2./pi*volume(iges) &
                       /1.0e+06_dp
         if (kdata.ne.4) then
@@ -2591,7 +2593,7 @@
         if(partic.gt.1.0e+10_dp) tave(iges)=wmhd(iges)/partic/3. &
                                                          /1.602e-16_dp
         resist=vloopt(iges)/ipmhd(iges)
-        zeta=resist*area(iges)/twopi/rout(iges)
+        zeta=resist*area(iges)/twopi/rcntr(iges)
         xlam=20.
         if (tave(iges).gt.0.001_dp) then
           tevolt=sqrt((tave(iges)*1000.)**3)
@@ -2746,8 +2748,8 @@
       call seva2d(bkx,lkx,bky,lky,c,rcur,zcur,pds,ier,n555)
       vertn(jges)=1.-pds(5)/pds(2)*rcur
       rx=rm(jges)/100.
-      f_0=log(8*rout(jges)/abar)-2+betap(jges)+li(jges)/2+.5_dp
-      delr=rout(jges)/100.-1.67_dp
+      f_0=log(8*rcntr(jges)/abar)-2+betap(jges)+li(jges)/2+.5_dp
+      delr=rcntr(jges)/100.-1.67_dp
 !-----------------------------------------------------------------------
 !--   metal wall                                                    --
 !-----------------------------------------------------------------------
@@ -2762,7 +2764,7 @@
       endif
       if ((itek.ge.5).and.(iges.eq.igmax)) close(unit=35)
       ! initialize output variables that weren't set
-      zout=0.0
+      zcntr=0.0
       elong=0.0
       utri=0.0
       ltri=0.0
@@ -2776,7 +2778,7 @@
       septop=0.0
       sepbot=0.0
       q95=0.0
-      shearb=0.0
+      shear=0.0
       vertn=0.0
       rco2v=0.0
       dco2v=0.0
@@ -2796,9 +2798,9 @@
       zseps=0.0
       sepexp=0.0
       dsep=0.0
-      aaq1=0.0
-      aaq2=0.0
-      aaq3=0.0
+      aq1=0.0
+      aq2=0.0
+      aq3=0.0
       rm=0.0
       zm=0.0
       psim=0.0

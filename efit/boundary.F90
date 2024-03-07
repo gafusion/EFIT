@@ -869,6 +869,7 @@
 !---which differs from the bicubic interpolation used here.                  --
 !---the user is informed that psivl was changed by returning iautoc=1.       --
 !---if no change occured iautoc=0.                                           --
+!!    note that nh2=2*nh
 !------------------------------------------------------------------------------
       subroutine cntour(xaxd,yaxd,psivl,xemin,xemax,yemin,yemax, &
       yxmin,yxmax,xymin,xymax,dang,arcl,bperr,dx,dy,xmin,xmax, &
@@ -1397,7 +1398,6 @@
 !!
 !!    findax finds magnetic axis for arbitrary position 
 !!    greater than 3 cells from boundary of grid.
-!!    note that nh2=2*nh, nwrk=2*(nw+1)*nh.
 !! 
 !!    @param nx :
 !!    @param nz :

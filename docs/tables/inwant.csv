@@ -7,7 +7,7 @@ CURRC79, 0.0, Current in 79 degree C coil in Amps.
 ERRDELZ, 0.06, Error which delz fitting turns on
 FBETAN,, Desired value for normalized toroidal beta
 FBETAP, 0.0, Fixed betap value for equilibrium calculation. ICONVR must equal 3. ICURRT must equal 2.
-FITDELZ,, See namelist IN1.
+FITDELZ, False, Set FITDELZ=True to turn on vertical shifting of flux surfaces during fitting. 
 FLI, 0.0, Fixed li value for equilibrium calculation. ICONVR must equal 3. ICURRT must equal 2.
 FQSIW,, "Desired q value at surface PSIWANT, if near boundary FWTCUR (in namelist IN1) must be set to 0."
 FQ95,, (unused variable)
@@ -18,6 +18,10 @@ FWTXXQ, 1.0,
 FWTXXB, 1.0,
 FWTXLI, 1.0,
 GAMAX, GAMAX(JLI)=-106, "Initial guess for the li constraint, array element should be as specified through JLI"
+IFITDELZ,1,"| (Integer flag) This parameter controls where in the EFIT iteration the vertical flux surface shift is fit. (Only activated when FITDELZ=.T.)
+| 1 = after the poloidal flux solve (default).
+| 2 = after the response matrix solve.
+| 3 = after the current solve."
 JBETA, 1, Which coefficient alpha in P' parametrization to vary to get desired betaN = FBETAN value. Assumes polynomial parametrization.
 JLI, 2, Which coefficient gamma in FF' parametrization to vary to get desired li= FLI value. Assumes polynomial parametrization.
 JWANTM, 3, Iteration number when constraints (which ones? all from all namelists?) start.
