@@ -48,7 +48,7 @@
         if(zbound.ne.0.0) yguess=zbound
         if(rbound.ne.0.0) xguess=rbound
         xltrac=xlmin
-        if(ibound.eq.-1) xltrac=xlmax ! hardcoded option only...
+        if(ibound.eq.1) xltrac=xlmax
         radbou=(xguess+xltrac)/2.
       endif
 !----------------------------------------------------------------------

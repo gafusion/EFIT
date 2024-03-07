@@ -268,7 +268,7 @@
         fwtxxj=1.
         fwtxxq=1.
         gammap=1.0e+10_dp
-        ibound=0 ! hardcoded variable, not part of any namelist...
+        ibound=0
         ibtcomp=1
         ibunmn=1
         icalbet=1
