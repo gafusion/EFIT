@@ -12,7 +12,7 @@
     export FC=$MPIF90
 
     cmake \
-    -DMPICMD:STRING='mpirun -n ' \
+    -DMPICMD:STRING='mpirun --bind-to none -n ' \
     -DBLAS_LIBRARIES:PATH="${BLAS_DIR}/lib/libblas.a" \
     -DLAPACK_LIBRARIES:PATH="${BLAS_DIR}/lib/liblapack.a" \
     -DENABLE_NETCDF:BOOL=ON \

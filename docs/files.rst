@@ -114,7 +114,7 @@ binary with the same structure using single precision reals and integers)
        integer*4 nlold,nlnew ! already defined: jj,magpri,magpri0,nsilop,nesum,ntime
        data nlold/40/,nlnew/41/
        integer*4 jflag(ntime),jerror(ntime),
-       real*8 time(ntime),elong(ntime),rout(ntime),zout(ntime),utri(ntime), &
+       real*8 time(ntime),elong(ntime),rcntr(ntime),zcntr(ntime),utri(ntime), &
          ltri(ntime),aminor(ntime),volume(ntime),betat(ntime),gaptop(ntime), &
          betap(ntime),li(ntime),gapin(ntime),gapout(ntime),qstar(ntime), &
          rcurrt(ntime),zcurrt(ntime),qout(ntime),sepin(ntime), &
@@ -131,7 +131,7 @@ binary with the same structure using single precision reals and integers)
          qmerci(ntime),slantu(ntime),slantl(ntime),zeff(ntime), &
          zeffr(ntime),tave(ntime),rvsin(ntime),zvsin(ntime), &
          rvsout(ntime),zvsout(ntime),wpdot(ntime),wbdot(ntime), &
-         vsurfa(ntime),cjor95(ntime),pp95(ntime),drsep(ntime), &
+         vsurf(ntime),cjor95(ntime),pp95(ntime),drsep(ntime), &
          yyy2(ntime),xnnc(ntime),ipmeas,betatn,psiq1,betat2, &
          wtherm(ntime),wfbeam(ntime),taujd3(ntime),tauthn(ntime) &
          qsiwant(ntime),cjorsw(ntime),cjor0(ntime), &
@@ -149,7 +149,7 @@ binary with the same structure using single precision reals and integers)
        read (neqdsk,1060) time(jj),jflag(jj),lflag,limloc(jj), &
                           mco2v,mco2r,qmflag,nlold,nlnew
        read (neqdsk,1040) chisq(jj),rcencm,bcentr(jj),ipmeas(jj)
-       read (neqdsk,1040) ipmhd(jj),rout(jj),zout(jj),aminor(jj)
+       read (neqdsk,1040) ipmhd(jj),rcntr(jj),zcntr(jj),aminor(jj)
        read (neqdsk,1040) elong(jj),utri(jj),ltri(jj),volume(jj)
        read (neqdsk,1040) rcurrt(jj),zcurrt(jj),qstar(jj),betat(jj)
        read (neqdsk,1040) betap(jj),li(jj),gapin(jj),gapout(jj)
@@ -178,7 +178,7 @@ binary with the same structure using single precision reals and integers)
        read (neqdsk,1040) (ccbrsp(k,jj),k=1,nfsum)
        read (neqdsk,1040) (eccurt(jj,k),k=1,nesum)
        read (neqdsk,1040) pbinj(jj),rvsin(jj),zvsin(jj),rvsout(jj)
-       read (neqdsk,1040) zvsout(jj),vsurfa(jj),wpdot(jj),wbdot(jj)
+       read (neqdsk,1040) zvsout(jj),vsurf(jj),wpdot(jj),wbdot(jj)
        read (neqdsk,1040) slantu(jj),slantl(jj),zuperts(jj),chipre
        read (neqdsk,1040) cjor95(jj),pp95(jj),drsep(jj),yyy2(jj)
        read (neqdsk,1040) xnnc(jj),cprof,oring(jj),cjor0(jj)
