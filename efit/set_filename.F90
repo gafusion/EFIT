@@ -19,7 +19,7 @@
       character*(*), intent(in) :: prefix,suffix
       character*(*), intent(inout) :: fname
       integer*4 i,iitime,fnlen,length
-      character*3 timeu
+      character*4 timeu
       character*9 shot,time
 
       ! Warn if a filename length risks overflow (store_dir is 256 chars)
