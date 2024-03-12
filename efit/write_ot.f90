@@ -22,7 +22,7 @@
       xdum=0.0
       ydum=0.0
       itime00=time(1)
-      itimeu00=(time(1)-itime00)*1000
+      itimeu00=(time(1)-itime00)*1000+0.4_dp 
 !
       call setfnm('ot',ishot,itime00,itimeu00,'_chi2mag',ofname)
       call open_new(74,ofname,'','')

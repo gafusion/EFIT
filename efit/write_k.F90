@@ -454,6 +454,7 @@
         itime=time(jtime)
         timems=itime
         timeus=(time(jtime)-timems)*1000.
+        timeus=timeus+0.4_dp 
         itimeu=timeus
 !-----------------------------------------------------------------------
 !--     correction for truncation                                     --

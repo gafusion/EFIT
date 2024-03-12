@@ -143,7 +143,7 @@
 !----------------------------------------------------------------------
       jges=iges
       itime=time(iges)
-      itimeu=(time(iges)-itime)*1000
+      itimeu=(time(iges)-itime)*1000+0.4_dp
       sibdry(iges)=psibry
       psim(iges)=simag
       rcntr(iges)=(xmin+xmax)/2.0

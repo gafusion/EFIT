@@ -164,7 +164,7 @@
       if ((iand(iout,2).ne.0).and.(iand(iout,4).ne.0).and. &
           ((ifirsttime.eq.1).and.(itype.eq.1))) then
         iitime = time(ifirsttime)
-        iitimeu=(time(ifirsttime)-iitime)*1000
+        iitimeu=(time(ifirsttime)-iitime)*1000+0.4_dp
         call setfnm('m',ishot,iitime,iitimeu,'',eqdsk)
         write(last,'(i4.4)') ktime
         eqdsk = trim(eqdsk)//'_'//last
@@ -192,7 +192,7 @@
       elseif ((iand(iout,4).ne.0).and.(iand(iout,2).eq.0).and. &
               (itype.eq.1)) then
         iitime = time(ifirsttime)
-        iitimeu=(time(ifirsttime)-iitime)*1000
+        iitimeu=(time(ifirsttime)-iitime)*1000+0.4_dp
         call setfnm('m',ishot,iitime,iitimeu,'',eqdsk)
         nceq = NCCRE(eqdsk,NCCLOB,ierr)
 !
