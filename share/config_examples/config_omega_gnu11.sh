@@ -32,4 +32,4 @@
     -DCMAKE_BUILD_TYPE:STRING=RELEASE \
     ..
 
-#    -DMSE_LIB:PATH='/fusion/projects/codes/mse/lib/V4_05-gcc8.x/libmse.a' \
+#    -DMSE_LIB:PATH='/fusion/projects/codes/mse/lib/V5_02-gcc8.x/libmse.a' \
