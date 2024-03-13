@@ -21,7 +21,7 @@
     -DD3_LIB:PATH='/fusion/usc/c8/src/d3lib/lib/libd3.a' \
     -DENABLE_MDSPLUS:BOOL=ON \
     -DMDSPLUS_DIR:PATH='/fusion/usc/c8/opt/mdsplus/alpha/7.130.1' \
-    -DMSE_LIB:PATH='/fusion/projects/codes/mse/lib/V4_05-gcc8.x/libmse.a' \
+    -DMSE_LIB:PATH='/fusion/projects/codes/mse/lib/V5_02-gcc8.x/libmse.a' \
     -DENABLE_PARALLEL:BOOL=ON \
     -DCMAKE_BUILD_TYPE:STRING=RELEASE \
     ..
