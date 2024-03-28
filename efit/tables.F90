@@ -142,10 +142,10 @@
         fcid = (/1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 , &
                  10, 11, 12, 13, 14, 15, 16, 17, 18/)
       fcturn = 1.0
-      rsi(1) = -1.
-      re(1) = -1.
-      rf(1) = -1.
-      rvs(1) = -1.
+      if(nsilop.gt.0) rsi(1) = -1.
+      if(necoil.gt.0) re(1) = -1.
+      if(nfcoil.gt.0) rf(1) = -1.
+      if(nvesel.gt.0) rvs(1) = -1.
 !---------------------------------------------------------------------
 !--   Read Green's tables from table_di2                            --
 !---------------------------------------------------------------------
@@ -258,20 +258,26 @@
           'Invalid line in namelist in3: '//trim(line)
         stop
       endif
- 
-      if(rf(1).lt.0)&
-        read (mcontr,10200) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
-                             i=1,nfcoil)
-      if(rsi(1).lt.0.) &
-        read (mcontr,10200) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
-                             i=1,nsilop)
-      if(re(1).lt.0.) &
-        read (mcontr,10220) (re(i),ze(i),we(i),he(i),ecid(i), &
-                             i=1,necoil)
-     
-      if(rvs(1).lt.0 .and. (ifitvs.eq.1.or.ivesel.eq.3.or.icutfp.eq.2)) then
-        read (mcontr,10200) (rvs(i),zvs(i),wvs(i),hvs(i), &
-                             avs(i),avs2(i),i=1,nvesel)
+
+      if (nfcoil.gt.0) then 
+        if(rf(1).lt.0)&
+          read (mcontr,10200) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
+                               i=1,nfcoil)
+      endif
+      if (nsilop.gt.0) then 
+        if(rsi(1).lt.0.) &
+          read (mcontr,10200) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
+                               i=1,nsilop)
+      endif
+      if (necoil.gt.0) then 
+        if(re(1).lt.0.) &
+          read (mcontr,10220) (re(i),ze(i),we(i),he(i),ecid(i), &
+                               i=1,necoil)
+      endif
+      if (nvesel.gt.0) then 
+        if(rvs(1).lt.0 .and. (ifitvs.eq.1.or.ivesel.eq.3.or.icutfp.eq.2)) &
+          read (mcontr,10200) (rvs(i),zvs(i),wvs(i),hvs(i), &
+                               avs(i),avs2(i),i=1,nvesel)
       endif
       close(unit=mcontr)
 
