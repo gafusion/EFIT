@@ -19,7 +19,6 @@ DFLUX, , "Measured diamagnetic fluxes in mv-s. Obtained from data and written in
 DNBEAM, zeros, "(array) Beam particle density, for kinetic fit - from ONETWO code."
 ECURRT, zeros, "(array) E coil section currents in Amps. Length is machine dependent (6 for DIII-D). Obtained from measurements and written into the K-file."
 EXPMP2, zeros, "(array) Magnetic probe signals in T. Length is machine dependent (76 for DIII-D). Obtained from data and written into K-file."
-FITDELZ, False, Set FITDELZ=True to turn on vertical shifting of flux surfaces during fitting. 
 FITSIREF, False, "| Fit value of reference flux
 | True = fit
 | False = use measured reference flux (psf1a for DIII-D)"
@@ -60,10 +59,6 @@ IECURR,1,"| (Integer flag) Ohmic coil (E-coil) current
 | 0 = ignore E coil currents
 | 1 = include E coil currents in calculations, with no uncertainty (default)
 | 2 = fit E-coil currents, these are fit to the experimental coil values when FWTEC>0, otherwise they are fit based on other measurements"
-IFITDELZ,1,"| (Integer flag) This parameter controls where in the EFIT iteration the vertical flux surface shift is fit. (Only activated when FITDELZ=.T.)
-| 1 = after the poloidal flux solve (default).
-| 2 = after the response matrix solve.
-| 3 = after the current solve."
 IFITVS,0,"| (Integer flag) Fit Vessel Current. This parameter is an alternative to IVESEL and takes priority over any IVESEL value that is set.
 | 1 = identical to setting IVESEL=3.
 | 0 = deactivate this parameter (default)."
@@ -103,7 +98,7 @@ RPRESS,,"| - = input pressure profile as function of dimensionless fluxes.
 | + = R coordinates of the input pressure profile data in meters."
 RZEROJ, zeros, "| (array) Radii at which to apply constraints. For each element in the array and corresponding elements in SIZEROJ, VZEROJ, if:
 | RZEROJ>0 Set Jt=0 at coordinate (RZEROJ,SIZEROJ).
-| RZEROJ=0 Set <Jt/R>/<1/R>/Ip equal to VZEROJ at surface specified by normalized flux SIZEROJ.
+| RZEROJ=0 Set <jt/R>/<1/R>/Ip*Area equal to VZEROJ at surface specified by normalized flux SIZEROJ.
 | RZEROJ<0 Set Jt=0 at the separatrix.
 | Constraints are applied only if KZEROJ>0. Default RZEROJ(1)=0.0. If KZEROJ=1, may specify SIZEROJ(1) with PSIWANT. If KZEROJ=1 and SIZEROJ(1)<0, then SIZEROJ(1) is set equal to PSIWANT."
 SGNEMIN,0.0,"Sigma ne Minimum.

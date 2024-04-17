@@ -29,7 +29,7 @@
       include 'mpif.h'
 #endif
       integer*4 k,krord,kzord,finfo,kerror,terr,ioerr, &
-                   nwrk,ktime,ks
+                nwrk,ktime,ks
       integer*4 i,iend1,iend2
       character inp1*4,inp2*4
       character*80 :: cmdline
@@ -119,15 +119,13 @@
       nwnh=nw*nh
       nh2=2*nh
       nwrk=2*(nw+1)*nh
-!     nwwf=2*nw
-      nwwf=3*nw
-      nwf=nwwf
+!     nwf=2*nw
+      nwf=3*nw
       kubicx=4
       kubicy=4
       lubicx=nw-kubicx+1
       lubicy=nh-kubicy+1
       kujunk=kubicx*kubicy*lubicx*lubicy
-      boundary_count=2*nh+2*(nw-2)
       lr0=nw-krord+1
       lz0=nh-kzord+1
       nxtrap=npoint
@@ -231,7 +229,7 @@
 #ifdef DEBUG_LEVEL2
         write(6,*) ' Entering data_input subroutine'
 #endif
-        call data_input(ks,iconvr,ktime,kerror)
+        call data_input(ks,ktime,kerror)
         if ((kerror.gt.0).or.(iconvr.lt.0)) then
           if(k.lt.ktime) kerrot(ks)=kerror
           cycle
@@ -263,12 +261,17 @@
 #ifdef DEBUG_LEVEL2
           write(6,*) ' Entering autoknot subroutine'
 #endif
-          call autoknot(ks,iconvr,ktime,kerror)
+          call autoknot(ks,ktime,kerror)
         elseif (kautoknt .eq. 2) then
 #ifdef DEBUG_LEVEL2
           write(6,*) ' Entering knot_opt subroutine'
 #endif
-          call knot_opt(ks,iconvr,ktime,kerror)
+          call knot_opt(ks,ktime,kerror)
+        elseif (kautoknt .eq. 3) then
+#ifdef DEBUG_LEVEL2
+          write(6,*) ' Entering rand_knot subroutine'
+#endif
+          call rand_knot(ks,ktime,kerror)
         else
 !----------------------------------------------------------------------
 !--       initialize current profile                                 --

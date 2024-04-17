@@ -82,6 +82,45 @@ The variables below are used to specify the representation of the functions :mat
 :math:`FF'` and any desired constraints on those representations. All variables are input
 via the IN1 or EFITIN namelists.
 
+ICPROF is a super variable which will over write other variables as follows::
+
+      select case (icprof)
+      case (1)
+        kffcur=2
+        kppcur=2
+        fcurbd=1.
+        pcurbd=1.
+        fwtbp=1.
+        fwtqa=0.
+        qvfit=0.
+      case (2)
+        kffcur=2
+        kppcur=2
+        fcurbd=0.
+        pcurbd=0.
+        fwtbp=0.
+        fwtqa=0.
+        qvfit=0.
+      case (3)
+        kffcur=3
+        kppcur=2
+        fcurbd=0.
+        pcurbd=0.
+        fwtbp=0.
+        fwtqa=0.
+        qvfit=0.
+        kcalpa=1
+        calpa(1,1)=0.1_dp
+        calpa(2,1)=0.1_dp
+        calpa(3,1)=0.1_dp
+        xalpa(1)=0.0
+        kcgama=1
+        cgama(1,1)=0.1_dp
+        cgama(2,1)=0.1_dp
+        cgama(3,1)=0.1_dp
+        xgama(1)=0.0
+      end select
+
 .. csv-table:: IN1 basis functions
    :file: tables/in1_basis.csv
    :widths: 15,15,70
@@ -204,7 +243,12 @@ EDAT
 PROFILE_EXT
 -----------
 
-(TODO: need to add/describe namelist)
+PROFILE_EXT is the namelist specifying profiles and boundaries which may be fixed or used as constraints or initial conditions depending on the mode being run.
+
+.. csv-table:: PROFILE_EXT
+   :file: tables/profile_ext.csv
+   :widths: 15,15,70
+
 
 MACHINEIN (EFUND)
 -----------------

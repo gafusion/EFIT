@@ -183,13 +183,6 @@
         ! need to use computed fcoil currents
         brsp(1:nfsum)=fcoil_ext
 
-        ! fix signs
-        ! note: plasma_ext does not appear to be useful for this...
-        if (ipmeas(jtime).gt.0.0) then
-          pprime_ext=-pprime_ext
-          ffprim_ext=-ffprim_ext
-        endif
-
         ! get p' and ff' coefficients
         ! note: this could be read in from g-files directly, but needs
         !       to be fit from imas files, so we treat both consistently
@@ -197,10 +190,10 @@
           ! apparently fitting polynomials works equally well with
           ! splines...? (kppfnc=6 and kfffnc=6) - matches esave
           call fitpp(pprime_ext,nw_ext,alpa,kppcur)
-          brsp(1+nfsum:nfsum+kppcur)=alpa(1:kppcur)*darea
+          brsp(1+nfsum:nfsum+kppcur)=alpa(1:kppcur)!*darea
           call fitfp(ffprim_ext,nw_ext,alpa,kffcur)
           brsp(1+nfsum+kppcur:nfsum+kppcur+kffcur)= &
-            alpa(1:kffcur)*darea/twopi/tmu
+            alpa(1:kffcur)!*darea/twopi/tmu
         else
           call errctrl_msg('set_init','icurrt/=2 not set up')
           stop

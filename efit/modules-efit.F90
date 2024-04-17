@@ -20,7 +20,6 @@
 !       store_dir    central directory to collect EFIT results
         character(256) table_dir,input_dir,store_dir,table_di2, &
                        link_efit,link_store
-        integer*4 ltbdir,lindir,lstdir,ltbdi2
         character(7) :: efitvers ! git hash
         character(10) :: efitdate,efitdatealt ! commit dates (legacy formats)
         integer*4 :: efitversion ! commit date (legacy form)
@@ -67,8 +66,8 @@
         integer*4 :: ndim_crv
         integer*4 :: ndim,kxiter,kxiter_save,mqwant
         integer*4 :: nw,nh,nw_sub,nh_sub
-        integer*4 :: nwnh,nh2,nwork,nwwf, &
-                     nwf,lubicx,lubicy,kujunk,boundary_count, &
+        integer*4 :: nwnh,nh2,nwork, &
+                     nwf,lubicx,lubicy,kujunk, &
                      lr0,lz0,npoint,nxtrap
         integer*4 :: kubicx,kubicy
         integer*4 :: ncurrt
@@ -85,7 +84,7 @@
         ! Experiment dependant checks on the solution error
         real*8 li_max,li_min,betap_max,plasma_diff, &
                aminor_max,aminor_min,elong_max,elong_min, &
-               rout_max,rout_min,zout_max,zout_min, &
+               rcntr_max,rcntr_min,zcntr_max,zcntr_min, &
                rcurrt_max,rcurrt_min,zcurrt_max,zcurrt_min, &
                qstar_max,qstar_min,betat_max, &
                gapin_min,gapout_min,gaptop_min, &
@@ -346,7 +345,7 @@
 !var_hist
       module var_hist
         integer*4,dimension(:), allocatable :: jerror
-        real*8,dimension(:), allocatable :: elong,rout,zout,utri, &
+        real*8,dimension(:), allocatable :: elong,rcntr,zcntr,utri, &
           ltri,aminor,volume,betat,gaptop, &
           betap,li,gapin,gapout,qstar, &
           rcurrt,zcurrt,qout,sepin, &
@@ -354,9 +353,9 @@
           wmhd,elongm,qm,terror, &
           rm,zm,gapbot,sepbot, &
           alpha,rttt,dbpli,delbp,oring, &
-          sepexp,shearb, &
-          xtch,ytch,q95,vertn,aaq1, &
-          aaq2,aaq3,btaxp,btaxv,psim,dsep,peak, &
+          sepexp,shear, &
+          xtch,ytch,q95,vertn,aq1, &
+          aq2,aq3,btaxp,btaxv,psim,dsep,peak, &
           taumhd,betapd,betatd,wdia,taudia, &
           qmerci,slantu,slantl,zeff, &
           zeffr,tave,rvsin,zvsin, &
@@ -370,10 +369,10 @@
 !var_hist2
       module var_hist2
         real*8,dimension(:), allocatable :: qsiwant,cjorsw,cjor0, &
-          ssiwant,ssi95,cjor99,cj1ave, &
-          rmidin,rmidout,psurfa
-        real*8 psiwant,rexpan,fexpan,qmin,fexpvs,shearc, &
-          sepnose,ssi01,znose,rhoqmin
+                                            ssiwant,ssi95,cjor99,cj1ave, &
+                                            rmidin,rmidout,psurfa
+        real*8 psiwant,rexpan,fexpan,qmin,fexpvs, &
+               sepnose,ssi01,znose,rhoqmin
       end module var_hist2
 !var_cshape
       module var_cshape
@@ -393,10 +392,9 @@
       end module var_divdis
 !var_cpsi
       module var_cpsi
-        real*8,dimension(:),allocatable :: psi,xpsi,vfbrrt,psipla
+        real*8,dimension(:),allocatable :: psi,xpsi
         real*8 vcurfb(3)
-        real*8 psibry,simag,sidif,eouter,zplasm,zpwant,difpsi, &
-               cupdown
+        real*8 psibry,simag,sidif,eouter,difpsi,cupdown
       end module var_cpsi
 !var_cvalue
       module var_cvalue
@@ -435,8 +433,7 @@
         real*8,dimension(:),allocatable :: rbdry_ext,zbdry_ext,xlim_ext, &
                                            ylim_ext,psirz_ext, &
                                            qpsi_ext,fcoil_ext
-        real*8 :: sign_ext,scalepp_ext,scaleffp_ext,cratio_ext, &
-                  cratiop_ext,cratiof_ext,simag_ext,psibry_ext
+        real*8 :: cratiop_ext,cratiof_ext,simag_ext,psibry_ext
         character*80 :: geqdsk_ext
         logical :: fixpp
       end module profile_ext_mod

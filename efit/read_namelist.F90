@@ -147,7 +147,7 @@
         icycred_loopmax,nfourier,device,nvsum
       namelist/incheck/li_max,li_min,betap_max,plasma_diff, &
         aminor_max,aminor_min,elong_max,elong_min, &
-        rout_max,rout_min,zout_max,zout_min, &
+        rcntr_max,rcntr_min,zcntr_max,zcntr_min, &
         rcurrt_max,rcurrt_min,zcurrt_max,zcurrt_min, &
         qstar_max,qstar_min,betat_max, &
         gapin_min,gapout_min,gaptop_min, &
@@ -155,7 +155,7 @@
         dbpli_diff,delbp_diff
 
       open(unit=nin,status='old', &
-           file=table_di2(1:ltbdi2)//'mhdin.dat')
+           file=trim(table_di2)//'mhdin.dat')
       read (nin,machinein,iostat=istat)
       if (istat>0) then
         backspace(nin)
@@ -206,7 +206,7 @@
                 kersil,iout,ixray,kedgef,kedgep,kautoknt,kakloop,kakiter, &
                 kpphord,kffhord,keehord,isolve,iplcout,imagsigma,ksigma, &
                 nbdrymx,nsol,kbetapr,nbdryp,idebug,ifindopt,npnef,nptef, &
-                nw_sub,nh_sub
+                nw_sub,nh_sub,ibound
       real*8 plasma,btor,fwtcur,fwtqa,qemp,error,serror,psibry, &
              bitip,qenp,fwtbp,relip,zelip,aelip,eelip,qvfit,fwtdlc, &
              betap0,emp,enp,scrape,errmin,rbound,fwacoil,rcentr,rzero, &
@@ -217,7 +217,7 @@
              fcurbd,pcurbd,prbdry,zlowimp,errmag,errmagb, &
              pressbi,prespb,sigppb,rminvs,rmaxvs,zmaxvs,errbry,condin, &
              sgtimin,alphafp,zbound,vsdamp,zminvs,saicon,tolbndpsi, &
-             pptens,fftens,wwtens,scalesir,scalea,errsil,vbit, &
+             pptens,fftens,wwtens,scalesir,scalea,errsil,vbit,sicont, &
              f2edge,fe_width,fe_psin,pedge,pe_width,pe_psin, &
              akchiwt,akerrwt,aktol,akgamwt,akprewt,psiecn,dpsiecn
       integer*4, dimension(2000) :: irfila,jzfila
@@ -263,7 +263,7 @@
         sgtimin,kwripre,kbound,alphafp,kframe,zbound,vsdamp,zminvs,saicon, &
         kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens,fwtbdry, &
         kwwfnc,kwwknt,wwknt,wwtens,fwtec,fitsiref,bitec,scalepr,scalesir, &
-        ppbdry,kppbdry,pp2bdry,kpp2bdry,scalea,sigrbd,sigzbd,nbskip, &
+        ppbdry,kppbdry,pp2bdry,kpp2bdry,scalea,sigrbd,sigzbd,nbskip,sicont, &
         ffbdry,kffbdry,ff2bdry,kff2bdry,errsil,vbit,kersil,iout,ixray, &
         wwbdry,kwwbdry,ww2bdry,kww2bdry,f2edge,fe_width,fe_psin,kedgef, &
         pedge,kedgep,pe_width,pe_psin,chordv,chordr,nw_sub,nh_sub, &
@@ -273,7 +273,7 @@
         nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
         idebug,jdebug,ifindopt,tolbndpsi,siloplim,use_previous,req_valid, &
         appdf,affdf,awwdf,aeedf, &
-        table_dir,input_dir,store_dir
+        table_dir,input_dir,store_dir,ibound
       parameter(nin=343)
 
       open(unit=nin,status='old',file=filename,iostat=istat)

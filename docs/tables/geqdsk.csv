@@ -1,6 +1,8 @@
 Variable, Description
 BCENTR, Vacuum toroidal magnetic field in Tesla at RCENTR
+BPOLSS, Flux surface averaged B_pol determined from Ampere's law
 BRSP, F-coil currents in Ampere-turns
+CJOR, <jt/R>/<1/R> profile in A/m^2
 CURRENT, Total plasma current in Amperes
 DMION, Mass density on uniform poloidal flux grid
 ECURRT, E-coil currents in Amperes
@@ -24,10 +26,12 @@ PRESSW, Rotational pressure PW in n/m2
 PSIZR, Poloidal flux in Weber / rad on the rectangular grid points
 PWPRIM, PW’(y) in (n/m2 )/(web/rad)
 QPSI, q values on uniform flux grid from axis to boundary
+R1SURF, Flux surface averaged 1/R in m
+R2SURF, Flux surface averaged 1/R^2 in m
 RBBBS, R of boundary points in meter
 RCENTR, R in meter of vacuum toroidal magnetic field BCENTR
 RDIM, Horizontal dimension in meter of computational box
-RHOVN, Normalized toroidal flux on uniform poloidal flux grid
+RHOVN, Normalized radius determined from the square root of toroidal flux on uniform poloidal flux grid
 RGRID, R coordinate vector
 RLEFT, Minimum R in meter of rectangular computational box
 RLIM, R of surrounding limiter contour in meter
@@ -35,6 +39,7 @@ RMAXIS, R of magnetic axis in meter
 RVTOR, Toroidal rotation characteristic major radius in m
 SIMAG, poloidal flux at magnetic axis in Weber /rad
 SIBRY, poloidal flux at the plasma boundary in Weber /rad
+VOLP, Flux surface volumes in m^3
 ZBBBS, Z of boundary points in meter
 ZDIM, Vertical dimension in meter of computational box
 ZGRID, Z coordinate vector

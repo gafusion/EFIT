@@ -7,7 +7,7 @@ AKCHIWT, 1.0, Weight of the total coil and probe chi squared when optimizing kno
 AKERRWT, 0.0, Weight of the GS error when optimizing knot locations.  Only active when KAUTOKNT=1.
 AKGAMWT, 0.0, Weight of the MSE chi squared when optimizing knot locations.  Only active when KAUTOKNT=1.
 AKPREWT, 0.0, Weight of the pressure chi squared when optimizing knot locations.  Only active when KAUTOKNT=1.
-AKTOL, -1.0, "Knot optimization stops when the locations change by less than this distance (in psi_n).  If AKTOL<0 then 0.1/max(kppknt,kffknt,kwwknt,keeknt)*akrange is used.  Only active when KAUTOKNT>0."
+AKTOL, -1.0, "Knot optimization stops when the locations change by less than this distance (in psi_n).  If AKTOL<0 then 0.1/max(KPPKNT,KFFKNT,KWWKNT,KEEKNT)*min(APPDF,AFFDF,AWWDF,AEEDF) is used.  Only active when KAUTOKNT=1 or 2."
 ALPHAFP, 0.0, "| Describes the width of the scrapeoff layer in which the halo currents flow. (When ICUTFP=2)
 | 0<= ALPHAFP <=1
 | 1 = zero thickness,
@@ -24,27 +24,31 @@ CSTABTE, 0.0, Stabilization value for Te fitting. (NOT VARIABLE!)
 CUTIP, 80000, Threshold for plasma current (in Amps) below which the vacuum fields are the only solution provided.
 DMASS, zeros, "(array) Mass density in kg/m3. See NMASS.  Only used for rotation calculations."
 DNETHOM,, "Electron density from Thompson scattering, from some other code."
-DNMIN, , Unused variable...
-EELIP,1.2,"Elongation of ellipse for current initialization. "
-ELOMIN,0.9,"Minimum plasma elongation at which EFIT tries to separate betap and li."
-EMP,1.0,GAQ current density profile parameter. Ignored unless ICURRT=4?
-ENP,1.0,GAQ current density profile parameter. Ignored unless ICURRT=4?
-EMW,,GAQ current density profile parameter for rotation. Ignored unless ICURRT=4?
-ENW,,GAQ current density profile parameter for rotation. Ignored unless ICURRT=4?
-ERRMAG,,See IMAGSIGMA (deprecated)
-ERRMAGB,,See IMAGSIGMA (deprecated)
-ERRMIN,1e-2,"Minimum convergence error before exit for ICONVR=2 option.  If chi-squared on any iteration is larger than on previous iteration, then if relative error < ERRMIN and chi-squared < SAICON, iterations stop."
-ERROR,1e-2,"Specifies when EFIT should stop iterating to solution. If chi-squared decreases monotonically, then iterations stop when the relative error (max flux difference between successive iterations) < ERROR.  See also ICONVR and ERRMIN alternatives."
+DNMIN,, Unused variable...
+EELIP, 1.2, "Elongation of ellipse for current initialization. "
+ELOMIN, 0.9, "Minimum plasma elongation at which EFIT tries to separate betap and li."
+EMP, 1.0, GAQ current density profile parameter. Ignored unless ICURRT=4?
+ENP, 1.0, GAQ current density profile parameter. Ignored unless ICURRT=4?
+EMW,, GAQ current density profile parameter for rotation. Ignored unless ICURRT=4?
+ENW,, GAQ current density profile parameter for rotation. Ignored unless ICURRT=4?
+ERRMAG,, See IMAGSIGMA (deprecated)
+ERRMAGB,, See IMAGSIGMA (deprecated)
+ERRMIN, 1e-2, "Minimum convergence error before exit for ICONVR=2 option.  If chi-squared on any iteration is larger than on previous iteration, then if relative error < ERRMIN and chi-squared < SAICON, iterations stop."
+ERROR, 1e-2, "Specifies when EFIT should stop iterating to solution. If chi-squared decreases monotonically, then iterations stop when the relative error (max flux difference between successive iterations) < ERROR.  See also ICONVR and ERRMIN alternatives."
 ERRORQ, 1e-3, "Standard deviation for q fitting."
-GAMMAP,1e10, GAQ current profile parameter. (Used for both P and F profiles)
+ERRSIL, 0.03, "Fraction of measured data values used to define minimum flux loop uncertainty (similar to SERROR).  When this is non-zero there is another minimum uncertainty related to the probe R and Ip as well."
+GAMMAP, 1e10, GAQ current profile parameter. (Used for both P and F profiles)
 IACOIL, 0, 1 = turn on advance divertor coil. 
 IAVED,, "Time in milliseconds for averaging CO2 density data, 10. (actually get +/- this value)"
-IAVEM,5, "Time in milliseconds for averaging magnetic data. (actually get +/- this value) (only used in snap mode, not relevant to k-files)"
-IAVEUS, ,"| Changes units on averaging times (IAVED, IAVEM, IAVEV) to microseconds (only used in snap mode, not relevant to k-files)
+IAVEM, 5, "Time in milliseconds for averaging magnetic data. (actually get +/- this value) (only used in snap mode, not relevant to k-files)"
+IAVEUS, , "| Changes units on averaging times (IAVED, IAVEM, IAVEV) to microseconds (only used in snap mode, not relevant to k-files)
 | >0 change units to microseconds
 | <=0 leave units in milliseconds"
 IAVEV, 10, "Time in milliseconds for averaging loop voltage. (only used in snap mode, not relevant to k-files)"
 IBATCH, 0, UNUSED (input and output only)
+IBOUND, 0, "| Controls search points for boundary find 
+| 0 = searches between inboard limiter and grid center
+| 1 = searches between outboard limiter and grid center"
 IBTCOMP,1,"| (Integer flag) Toroidal field pickup compensation. Subtract contributions to poloidal magnetic field probe measurements due to pickup from toroidal field coil (only used in snap mode, not relevant to k-files)
 | 0 = no compensation
 | 1 = apply compensation"
@@ -60,8 +64,8 @@ ICINIT,2,"| (Integer flag) Current Initialization. Plasma current profile initia
 | 1 = elliptical and uniform flux surface for all timeslices (EELIP,AELIP,RELIP,ZELIP).
 | 2 = elliptical and parabolic for all timeslices (default).
 | -2 = use information from ESAVE.DAT (from an existing EFIT run) for first timeslice and previous timeslice subsequently.
-| -3 = use existing solution from geqdsk_ext or hdf5 file for all timeslices.
-| -4 = use existing solution from geqdsk_ext or hdf5 file for first timeslice and previous timeslice subsequently.
+| -3 = use existing solution from GEQDSK_EXT or hdf5 file for all timeslices (must have same dimensions).
+| -4 = use existing solution from GEQdSK_EXT or hdf5 file for first timeslice and previous timeslice subsequently.
 | -12= elliptical and parabolic first timeslice and previous timeslice subsequently."
 ICNTOUR,,"(Integer flag) Contour.
 | + = bypass CNTOUR routine."
@@ -72,8 +76,8 @@ ICONSI,,"| How to make contour plots of fields
 | 3, 4 = use 'SCALE' in DISSPLA call for field plot."
 ICONVR,2,"| Specify solution mode
 | 1 = fitting mode for mxiter, nxiter iterations until the solution achieves error below ERROR and chi squared below SAIMIN.
-| 2 = fitting mode until chisq reverse, must satisfy minimum error ERRMIN, minimum 8 iterations (or below min elongation ELOMIN), and minimum chisq SAICON (default).
-| 3 = equilibrium mode.
+| 2 = fitting mode until chisq reverses, must satisfy minimum error ERRMIN, minimum 8 iterations (or below min elongation ELOMIN), and minimum chisq SAICON (default).
+| 3 = equilibrium mode, P' and FF' are fixed and must be specified (see PROFILE_EXT). Only a limited number of parameters can be fit.
 | - = Green's table calculations for -ICONVR filaments and write file RPFXX.DAT for use with MFIT."
 ICUTFP,0,"| 0 = enforce vacuum outside of LCFS (Default).
 | 2 = to allow force-free current to flow in scrape-off layer (width set by ALPHAFP)."
@@ -149,7 +153,8 @@ KAKLOOP,1,Number of times to loop over every knot position when performing optim
 KAUTOKNT,0,"| - (Integer flag) Activates the knot location optimization.
 | 0 = use input knot locations (default).
 | 1 = optimize knot locations to find lowest possible GS error and chi squared
-| 2 = optimize knot locations until convergence is reached."
+| 2 = optimize knot locations until convergence is reached
+| 3 = vary knots randomly until convergence is reached."
 KBETAPR,,"| - (Integer flag) Specify value of pressure at boundary for integration to calculate beta.
 | 0 = take pressure at boundary to be 0 (default).
 | 1 = get pressure at boundary from kinetic data."
@@ -169,7 +174,7 @@ KERSIL,3, "| ""Reference Flux Loop Uncertainty Switch"". This parameter controls
 | 2 = use a hard-coded uncertainty of 0.001 for the reference (matches probe 8 on D-III)
 | 3 = use the max of coil current, plasma current, and bit uncertainty for the reference (default)"
 KFRAME,0,Something to do with plotting?
-KINPUT,, "| Write out M(SHOT).(TIME+1) file during execution in equilibrium mode which can be used as input to execution in fitting mode. (Computed signals at probes are used as simulated input for fitting.)
+KINPUT, 0, "| Write out M(SHOT).(TIME+1) file during execution in equilibrium mode which can be used as input to execution in fitting mode. (Computed signals at probes are used as simulated input for fitting.)  WARNING: this file will be overwritten if IOUT=4.
 | >0 write out M(SHOT).(TIME+1) file.
 | <=0 Don't write file"
 KLABEL,,Something to do with plotting.
@@ -190,7 +195,7 @@ LIMFAG,2,"| Specify which method to use to determine which grid points are insid
 LIMVS,1,1 = use limiter contour rather than vessel for attached current model.
 LIMID,33,"Suffix used to identify which of several standard files containing limiter information to use."
 LIMITR,-33,"| Number of limiter points (number of valid points in XLIM and YLIM arrays) except for shots <=76756, where number of limiter points is this number+13
-| <0 read from a standard file (Default).
+| <0 read from a standard file or use a limiter from an existing solution if GEQDSK_EXT is set (Default).
 | 1000+number number of points for symmetrized solution (input only top half of limiter points)."
 SILOPLIM,0, Controls whether the boundary from the previous timeslice (on the same processor) is used as an initial guess for finding the boundary at the current time.  The previous solution is only used when the maximum absolute flux loop difference between the current and previous iteration is less than this value.
 MXITER,25,"| Maximum number of outer fitting iterations (limited to KXITER, see SETUP namelist) Set to 1 for equilibrium solutions. Set negative for iteration history output to terminal during EFIT execution."
@@ -244,25 +249,25 @@ RZERO, 1.6955, "GAQ current density profile parameter, 1.43 m for D-III, 1.67 m 
 SAICON, 80.0, "| Minimum chi squared before exit for ICONVR=2 option.
 | If chi-squared on any iteration is larger than on previous iteration, then if relative error < ERRMIN and chi-squared < SAICON, iterations stop. "
 SAIMIN,80.0,"Specifies when EFIT should stop iterating to solution. If the relative error < ERROR, then iterations stop when the total chi squared (without diamagnetic or pressure fit contributions) < SAIMIN.  See also ICONVR and SAICON alternatives."
-SALPHA, 1.0/40.0,parameter for Solovev equilibrium.
-SBETA,1.0/8.0,parameter for Solovev equilibrium. 
-SBETAW,0.0,parameter for rotational Solovev equilibrium.
+SALPHA, 1.0/40.0, parameter for Solovev equilibrium.
+SBETA, 1.0/8.0, parameter for Solovev equilibrium. 
+SBETAW, 0.0, parameter for rotational Solovev equilibrium.
 SCALEA, .false.,
-SCALEPR,scalepr(1)=-1,
+SCALEPR, scalepr(1)=-1,
 SCALESIR, 1e-3, 
-SCRAPE,0.03,Distance in meters between field lines plotted in scrape-off region(?). See NEXTRA.
-SERROR,0.03,"Fraction of measured data values to use to define uncertainty of measurements."
-SIBEAM,,Normalized flux values for beam pressure. Positions correspond to where the PBEAM constraints are applied
-SIREF,0.0,"Poloidal flux at reference flux loop NSLREF in volt-sec/rad . Obtained from data and written into K-file. "
-SRM,-3.5,Parameter for Solovev equilibrium. - = inside limited.
-STORE_DIR,,"see namelist EFITIN"
-TABLE_DIR,,"see namelist EFITIN"
-TETHOM,,"Electron temperature from Thompson."
-TIONEX,,"if nptionf > 100, tionex = tethombfract"
-USE_PREVIOUS,False,"Allows the BRSP variable from the previous timestep to be used as the initial value (indepented of the value of ISICINIT).  This allows for matching to older versions of the code, but is otherwise not recommended."
-VCURFB,"(0.0,500.0,500.0)",
-VLOOP, 0.0,Measured loop voltage. Obtained from data and written into the K-file. 
-VSDAMP,0,Relaxation parameter for scrape-off layer current. (Always set to 0.25.)
+SCRAPE, 0.03, Distance in meters between field lines plotted in scrape-off region(?). See NEXTRA.
+SERROR, 0.03, "Fraction of measured data values used to define minimum uncertainty of measurements (except for flux loops, see ERRSIL)."
+SIBEAM,, Normalized flux values for beam pressure. Positions correspond to where the PBEAM constraints are applied
+SIREF, 0.0, "Poloidal flux at reference flux loop NSLREF in volt-sec/rad . Obtained from data and written into K-file. "
+SRM, -3.5, Parameter for Solovev equilibrium. - = inside limited.
+STORE_DIR,, "see namelist EFITIN"
+TABLE_DIR,, "see namelist EFITIN"
+TETHOM,, "Electron temperature from Thompson."
+TIONEX,, "if nptionf > 100, tionex = tethombfract"
+USE_PREVIOUS, False, "Allows the BRSP variable from the previous timestep to be used as the initial value (indepented of the value of ISICINIT).  This allows for matching to older versions of the code, but is otherwise not recommended."
+VCURFB, "(0.0,500.0,500.0)",
+VLOOP, 0.0, Measured loop voltage. Obtained from data and written into the K-file. 
+VSDAMP, 0, Relaxation parameter for scrape-off layer current. (Always set to 0.25.)
 WCURBD,,"| Omega Current Boundary.
 | 0 = zero boundary gradient (default)
 | 1 = finite rotational pressure gradient POmega' at the boundary"
@@ -270,16 +275,16 @@ XLIM, xlim(1)=-1.0, "Major radius of limiter contour in meters. See also YLIM."
 XLTYPE, 0.0, "| Inward distance of 0 degree outside limiter in cm.
 | - = read from PTDATA if available, otherwise 0.0.
 | + = specified.="
-XLTYPE_180, 0.0,"| Inward distance of 180 degree outside limiter in cm.
+XLTYPE_180, 0.0, "| Inward distance of 180 degree outside limiter in cm.
 | - = read from PTDATA if available, otherwise 0.0.
 | + = specified."
-YLIM,,"Z coordinates of limiter contour in meters. See also XLIM."
-ZBDRY,0.0,Vertical coordinates of boundary.
-ZBOUND,0.0,"Initial guess of Z location in meters for tracing boundary. See also RBOUND."
-ZEFFVS,,Zeff for kinetic fitting. (from ONETWO?)
-ZION,,"if nptionf > 100, zion = zteth"
+YLIM,, "Z coordinates of limiter contour in meters. See also XLIM."
+ZBDRY, 0.0, Vertical coordinates of boundary.
+ZBOUND, 0.0, "Initial guess of Z location in meters for tracing boundary. See also RBOUND."
+ZEFFVS,, Zeff for kinetic fitting. (from ONETWO?)
+ZION,, "if nptionf > 100, zion = zteth"
 ZLOWIMP,, "Low Z impurity for kinetic fitting."
-ZMAXVS , 100.0,
+ZMAXVS, 100.0,
 ZMINVS, -100.0, 
-ZPRESS, ,"Z coordinates of input pressure profile in meters. Ignored when RPRESS<0 (See RPRESS.)"
-ZTETH, ,"Z locations of Thompson?"
+ZPRESS,, "Z coordinates of input pressure profile in meters. Ignored when RPRESS<0 (See RPRESS.)"
+ZTETH,, "Z locations of Thompson?"

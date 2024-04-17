@@ -72,7 +72,7 @@
       real*8, dimension(:), allocatable :: xsisii,bpres,cpres, &
                     dpres,sjtli,sjtlir,sjtliz,rjtli,bpresw, &
                     cpresw,dpresw,copyn,cjtli,x,y
-      character(30) sfname,ofname
+      character(300) fname
       Character(28) xxtitle,yytitle,zztitle
       character(20) zzztitle
       Character(8) jchisq
@@ -143,10 +143,11 @@
 !----------------------------------------------------------------------
       jges=iges
       itime=time(iges)
+      itimeu=(time(iges)-itime)*1000+0.4_dp
       sibdry(iges)=psibry
       psim(iges)=simag
-      rout(iges)=(xmin+xmax)/2.0
-      zout(iges)=(ymin+ymax)/2.0
+      rcntr(iges)=(xmin+xmax)/2.0
+      zcntr(iges)=(ymin+ymax)/2.0
       elong(iges)=(ymax-ymin)/(xmax-xmin)
       aminor(iges)=100.*(xmax-xmin)/2.0
       rexpmx=xmax+rexpan
@@ -164,27 +165,27 @@
         if (xoutp*xoutm.ge.0.0) cycle
         if (xoutp.le.0.) then
           if (abs(xout(i)-xmax).le.1.0e-04_dp) cycle
-          if (abs(yout(i)-zout(iges)).ge.abs(zxmin-zout(iges))) cycle
-          if (xout(i).ge.rout(iges)) cycle
+          if (abs(yout(i)-zcntr(iges)).ge.abs(zxmin-zcntr(iges))) cycle
+          if (xout(i).ge.rcntr(iges)) cycle
           xminn=xout(i)
         else
           if (abs(xout(i)-xmin).le.1.0e-04_dp) cycle
-          if (abs(yout(i)-zout(iges)).ge.abs(zxmax-zout(iges))) cycle
-          if (xout(i).le.rout(iges)) cycle
+          if (abs(yout(i)-zcntr(iges)).ge.abs(zxmax-zcntr(iges))) cycle
+          if (xout(i).le.rcntr(iges)) cycle
           xmaxx=xout(i)
         endif
       enddo
       indent(iges)=(xminn-xmin+xmax-xmaxx)/2./aminor(iges)*100.
-      rout(iges)=100.*rout(iges)
-      zout(iges)=100.*zout(iges)
+      rcntr(iges)=100.*rcntr(iges)
+      zcntr(iges)=100.*zcntr(iges)
 !-----------------------------------------------------------------------
 !--   the distance to the top limiter is found only for values of yout(i)
 !--   which are greater than yulim below.
 !-----------------------------------------------------------------------
       crymin=100.*rymin
       crymax=100.*rymax
-      utri(iges)=(rout(iges)-crymax)/aminor(iges)
-      ltri(iges)=(rout(iges)-crymin)/aminor(iges)
+      utri(iges)=(rcntr(iges)-crymax)/aminor(iges)
+      ltri(iges)=(rcntr(iges)-crymin)/aminor(iges)
 !---------------------------------------------------------------------
 !--   set up P' and FF', then integration                           --
 !--   ffprim = (RBt) * d/dpsi(RBt)                                  --
@@ -368,12 +369,12 @@
         if (delrmax1.lt.deltaa.and.delrmax2.lt.deltaa) then
            limloc(iges)='DN '
            drsep(iges)=max(delrmax1,delrmax2)*100.
-           if (zseps(1,iges).lt.zout(iges)) then
+           if (zseps(1,iges).lt.zcntr(iges)) then
              drsep(iges)=-drsep(iges)
            endif
         else
            if (delrmax1.lt.deltaa) then
-            if (zseps(1,iges).gt.zout(iges)) then
+            if (zseps(1,iges).gt.zcntr(iges)) then
              limloc(iges)='SNT'
              drsep(iges)=abs(delrmax2)*100.
             else
@@ -496,8 +497,8 @@
       ! TODO: xleft, zleft, xright, zright, xztop, ytop, xzbot, and ybot
       !       are never defined in efit... this affects the computation
       !       of sepin, sepout, septop, and sepbot
-      zhp=zout(iges)*0.01_dp
-      radp=rout(iges)*0.01_dp
+      zhp=zcntr(iges)*0.01_dp
+      radp=rcntr(iges)*0.01_dp
       do j=1,nfouns-1
        if (xouts(j).le.radp) then
 !        dxll=(youts(j)-zleft)*(youts(j+1)-zleft)
@@ -556,9 +557,9 @@
 !
  1085 continue
       call chisqr(iges)
+      if(chisq(iges)<1e-20) chisq(iges)=0.0
       chifin=chisq(iges)
-      nnn=1
-      call betali(iges,rgrid,zgrid,nnn,kerror)
+      call betaliplus(iges,rgrid,zgrid,kerror)
       if(kerror.gt.0) return
       peak(iges)=pres(1)/(.667_dp*wmhd(iges)/(volume(iges)/1.e6_dp))
       do i=2,nw
@@ -613,13 +614,9 @@
 !--   write out S(shot).(time)_X files in flux space                  --
 !-----------------------------------------------------------------------
       kwripre_s: if (kwripre.eq.2) then
-        call setfnmd('s',ishot,itime,sfname)
-        call setfnmd('o',ishot,itime,ofname)
         if (npress.gt.0) then
-          sfname=sfname(1:13)//'_presd'
-          open(unit=74,status='old',file=sfname,iostat=ier)
-          if(ier.eq.0) close(unit=74,status='delete')
-          open(unit=74,status='new',file=sfname)
+          call setfnm('s',ishot,itime,itimeu,'_presd',fname)
+          call open_new(74,fname,'','')
           do i=1,npress
             xrpres=-rpress(i)
             write (74,*) xrpres,pressr(i),xdum,xdum
@@ -627,45 +624,35 @@
           close(unit=74)
         endif
         if (nbeam.gt.0) then
-          sfname=sfname(1:13)//'_pbeam'
-          open(unit=74,status='old',file=sfname,iostat=ier)
-          if(ier.eq.0) close(unit=74,status='delete')
-          open(unit=74,status='new',file=sfname)
+          call setfnm('s',ishot,itime,itimeu,'_pbeam',fname)
+          call open_new(74,fname,'','')
           do i=1,nbeam
             write (74,*) sibeam(i),pbeam(i),xdum,xdum
           enddo
           close(unit=74)
         endif
-        sfname=sfname(1:13)//'_qpsi'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('s',ishot,itime,itimeu,'_qpsi',fname)
+        call open_new(74,fname,'','')
         do i=1,nw
           write (74,*) xsisii(i),qpsi(i),xdum,xdum
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_jor'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('s',ishot,itime,itimeu,'_jor',fname)
+        call open_new(74,fname,'','')
         do i=1,nw
           cjorka=cjor(i)/1000.
           write (74,*) xsisii(i),cjorka,xdum,xdum
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_jorec'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('s',ishot,itime,itimeu,'_jorec',fname)
+        call open_new(74,fname,'','')
         do i=1,nw
           cjorka=cjorec(i)/1000.
           write (74,*) xsisii(i),cjorka,xdum,xdum
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_cjmse'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('s',ishot,itime,itimeu,'_cjmse',fname)
+        call open_new(74,fname,'','')
         if (ishot.le.97400) then
           mcentral=15
         else
@@ -676,10 +663,8 @@
           write (74,*) sigam(i),cjorka,xdum,xdum
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_cjmsec'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('s',ishot,itime,itimeu,'_cjmsec',fname)
+        call open_new(74,fname,'','')
         if (ishot.le.97400) then
           mcentral=15
         else
@@ -690,28 +675,22 @@
           write (74,*) sigam(i),cjorka,xdum,xdum
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_bzmse'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('s',ishot,itime,itimeu,'_bzmse',fname)
+        call open_new(74,fname,'','')
         do i=1,nstark
           cjorka=bzmse(i)
           write (74,*)  sigam(i),cjorka,xdum,xdum
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_bzmsec'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('s',ishot,itime,itimeu,'_bzmsec',fname)
+        call open_new(74,fname,'','')
         do i=1,nstark
           cjorka=bzmsec(i)
           write (74,*)  sigam(i),cjorka,xdum,xdum
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_chigam'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('s',ishot,itime,itimeu,'_chigam',fname)
+        call open_new(74,fname,'','')
         sigams(1:nstark)=sigam(1:nstark)
         do j=1,nstark
           sigamnow=1.e9_dp
@@ -728,26 +707,20 @@
           sigams(inow)=1.e10_dp
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_presf'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('s',ishot,itime,itimeu,'_presf',fname)
+        call open_new(74,fname,'','')
         do i=1,nw
           write (74,*) xsisii(i),pres(i),xdum,xdum
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_prespf'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('s',ishot,itime,itimeu,'_prespf',fname)
+        call open_new(74,fname,'','')
         do i=1,nw
           write (74,*) xsisii(i),pprime(i),xdum,xdum
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_prespfn'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('s',ishot,itime,itimeu,'_presfn',fname)
+        call open_new(74,fname,'','')
         do i=1,nw
           ppnow=pprime(i)/pprime(1)
           write (74,*) xsisii(i),ppnow,xdum,xdum
@@ -757,20 +730,16 @@
 !--     write out MSE-LS files in normalized poloidal flux space      --
 !-----------------------------------------------------------------------
         if (mmbmsels.gt.0.or.kdomsels.gt.0) then
-          sfname=sfname(1:13)//'_cmls'
-          open(unit=74,status='old',file=sfname,iostat=ier)
-          if(ier.eq.0) close(unit=74,status='delete')
-          open(unit=74,status='new',file=sfname)
+          call setfnm('s',ishot,itime,itimeu,'_cmls',fname)
+          call open_new(74,fname,'','')
           do i=1,nmsels
            if(sinmls(i).gt.0.0) &
              write (74,92924) sinmls(i),cmmls(iges,i),xdum,xdum
           enddo
           close(unit=74)
 !
-          ofname=ofname(1:13)//'_cmls'
-          open(unit=74,status='old',file=ofname,iostat=ier)
-          if(ier.eq.0) close(unit=74,status='delete')
-          open(unit=74,status='new',file=ofname)
+          call setfnm('o',ishot,itime,itimeu,'_cmls',fname)
+          call open_new(74,fname,'','')
           xxtitle='Normalized Poloidal Flux'
           yytitle='Computed B MSE-LS (T)'
           zztitle='EFIT MSE-LS'
@@ -783,30 +752,24 @@
           enddo
           close(unit=74)
 !
-          sfname=sfname(1:13)//'_cmls2'
-          open(unit=74,status='old',file=sfname,iostat=ier)
-          if(ier.eq.0) close(unit=74,status='delete')
-          open(unit=74,status='new',file=sfname)
+          call setfnm('s',ishot,itime,itimeu,'_cmls2',fname)
+          call open_new(74,fname,'','')
           do i=1,nmsels
            if(sinmls(i).gt.0.0) &
              write (74,92924) sinmls(i),cmmls2(iges,i),xdum,xdum
           enddo
           close(unit=74)
 !
-          sfname=sfname(1:13)//'_cmlsv'
-          open(unit=74,status='old',file=sfname,iostat=ier)
-          if(ier.eq.0) close(unit=74,status='delete')
-          open(unit=74,status='new',file=sfname)
+          call setfnm('s',ishot,itime,itimeu,'_cmlsv',fname)
+          call open_new(74,fname,'','')
           do i=1,nmsels
            if(sinmls(i).gt.0.0) &
              write (74,92924) sinmls(i),cmmlsv(iges,i),xdum,xdum
           enddo
           close(unit=74)
 !
-          ofname=ofname(1:13)//'_cmlsv'
-          open(unit=74,status='old',file=ofname,iostat=ier)
-          if(ier.eq.0) close(unit=74,status='delete')
-          open(unit=74,status='new',file=ofname)
+          call setfnm('o',ishot,itime,itimeu,'_cmlsv',fname)
+          call open_new(74,fname,'','')
           xxtitle='Normalized Poloidal Flux'
           yytitle='Computed Vacuum B MSE-LS (T)'
           zztitle='EFIT MSE-LS'
@@ -819,10 +782,8 @@
           enddo
           close(unit=74)
 !
-          sfname=sfname(1:13)//'_emls'
-          open(unit=74,status='old',file=sfname,iostat=ier)
-          if(ier.eq.0) close(unit=74,status='delete')
-          open(unit=74,status='new',file=sfname)
+          call setfnm('s',ishot,itime,itimeu,'_emls',fname)
+          call open_new(74,fname,'','')
           do i=1,nmsels
            if (sinmls(i).gt.0.0) then
              ydum=sbmselt(iges,i)
@@ -832,10 +793,8 @@
           enddo
           close(unit=74)
 !
-          ofname=ofname(1:13)//'_emls'
-          open(unit=74,status='old',file=ofname,iostat=ier)
-          if(ier.eq.0) close(unit=74,status='delete')
-          open(unit=74,status='new',file=ofname)
+          call setfnm('o',ishot,itime,itimeu,'_emls',fname)
+          call open_new(74,fname,'','')
           xxtitle='Normalized Poloidal Flux'
           yytitle='Measured B MSE-LS (T)'
           zztitle='EFIT MSE-LS'
@@ -853,9 +812,8 @@
         endif
 !
         if (mmbmsels.gt.0) then
-          open(unit=74,status='old',file=ofname,iostat=ier)
-          if(ier.eq.0) close(unit=74,status='delete')
-          open(unit=74,status='new',file=ofname)
+          call setfnm('o',ishot,itime,itimeu,'',fname)
+          call open_new(74,fname,'','')
           xxtitle='Normalized Poloidal Flux'
           yytitle='Chi Square'
           zzztitle='EFIT MSE-LS Chi2  = '
@@ -884,10 +842,8 @@
 !--     write out MSE O files in normalized poloidal flux space       --
 !-----------------------------------------------------------------------
         if (kstark.gt.0.or.kdomse.gt.0) then
-          ofname=ofname(1:13)//'_cmse'
-          open(unit=74,status='old',file=ofname,iostat=ier)
-          if(ier.eq.0) close(unit=74,status='delete')
-          open(unit=74,status='new',file=ofname)
+          call setfnm('o',ishot,itime,itimeu,'_cmse',fname)
+          call open_new(74,fname,'','')
           xxtitle='Normalized Poloidal Flux'
           yytitle='Computed MSE Pitch Angle'
           zztitle='EFIT MSE'
@@ -900,10 +856,8 @@
           enddo
           close(unit=74)
 !
-          ofname=ofname(1:13)//'_emse'
-          open(unit=74,status='old',file=ofname,iostat=ier)
-          if(ier.eq.0) close(unit=74,status='delete')
-          open(unit=74,status='new',file=ofname)
+          call setfnm('o',ishot,itime,itimeu,'_emse',fname)
+          call open_new(74,fname,'','')
           xxtitle='Normalized Poloidal Flux'
           yytitle='Measured MSE Pitch Angle'
           zztitle='EFIT MSE'
@@ -920,16 +874,14 @@
         endif
 !
         if (kstark.gt.0) then
-          ofname=ofname(1:13)//'_chi2mse'
-          open(unit=74,status='old',file=ofname,iostat=ier)
-          if(ier.eq.0) close(unit=74,status='delete')
-          open(unit=74,status='new',file=ofname)
+          call setfnm('o',ishot,itime,itimeu,'_chi2mse',fname)
+          call open_new(74,fname,'','')
           xxtitle='Normalized Poloidal Flux'
           yytitle='Chi Square'
           zzztitle='EFIT MSE Chi2  = '
 !
-          ichisq=chigamt
-          ichisq2=(chigamt-ichisq)*10.0
+          ichisq=chimse
+          ichisq2=(chimse-ichisq)*10.0
           write (jchisq2,94010) ichisq2
           write (jchisq,94020) ichisq,jchisq2
           zztitle=zzztitle//jchisq
@@ -1051,9 +1003,9 @@
           if(double.and.(.not.onedone)) psiq1=psiq1+siwant  ! second value
         endif
       enddo
-      aaq1(iges)=pds(1)
-      aaq2(iges)=pds(2)
-      aaq3(iges)=pds(3)
+      aq1(iges)=pds(1)
+      aq2(iges)=pds(2)
+      aq3(iges)=pds(3)
 !---------------------------------------------------------------------
 !--   Get 3/2 and 2/1 surface information        2002Jan25          --
 !---------------------------------------------------------------------
@@ -1125,12 +1077,13 @@
       if(idoqn.eq.1) call zpline(nw,xsisii,qpsi,bfpol,cfpol,dfpol)
       siwant=0.95_dp
       q95(iges)=seval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
-      shearb(iges)=speval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
-      shearb(iges)=shearb(iges)/q95(iges)
+      shear(iges)=speval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
+      shear(iges)=shear(iges)/q95(iges)
       siwant=0.01_dp
       qpsic=seval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
-      shearc=speval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
-      shearc=shearc/qpsic
+      ! Unused:
+      !shearc=speval(nw,siwant,xsisii,qpsi,bfpol,cfpol,dfpol)
+      !shearc=shearc/qpsic
 !----------------------------------------------------------------------
 !--   if not diverted, get q at PSIWANT by interpolation             --
 !----------------------------------------------------------------------
@@ -1160,12 +1113,12 @@
            cfpol(k)=bfpol(k)**2
          enddo
          call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                     nh,r2wdry,nzz,sdlobp,sdlbp)
+                     nh,r2wdry(i),nzz,sdlobp,sdlbp)
          do k=1,nfounc
            cfpol(k)=((bfpol(k)/rvtor)**2-1.)**2
          enddo
          call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                     nh,r4wdry,nzz,sdlobp,sdlbp)
+                     nh,r4wdry(i),nzz,sdlobp,sdlbp)
          if (kvtor.eq.3) then
            prew0=pwcurr(psiwant,kwwcur)
            pres0=prcurr(psiwant,kppcur)
@@ -1179,13 +1132,13 @@
              cfpol(k)=cfpol(k)*exp(pwop0*cfpol(k))
            enddo
            call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                       nh,rp2wdry,nzz,sdlobp,sdlbp)
+                       nh,rp2wdry(i),nzz,sdlobp,sdlbp)
            do k=1,nfounc
              cfpol(k)=((bfpol(k)/rvtor)**2-1.)
              cfpol(k)=exp(pwop0*cfpol(k))
            enddo
            call fluxav(cfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid, &
-                       nh,rpwdry,nzz ,sdlobp,sdlbp)
+                       nh,rpwdry(i),nzz,sdlobp,sdlbp)
          endif
        endif rotation_1
        r2surs=r2sdry(i)*sdlobp
@@ -1229,17 +1182,17 @@
       ssi01=speval(nw,xsi01,bpres,qpsi,bfpol,cfpol,dfpol) &
                     /qpsic
 !-------------------------------------------------------------------
-!--    get average current density in outer at 95% flux           --
+!--   get average current density in outer at 95% flux           --
 !-------------------------------------------------------------------
-       siavej=0.95_dp
-       siwant=siavej
-       siwant=simag+siwant*(psibry-simag)
-       call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc, &
-                   npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
-                   rmaxis,zmaxis,negcur,kerror,1)
-       if(kerror.gt.0) return
-       call fluxav(bfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid,nh, &
-                   rxxrry,nzz ,sdlobp,sdlbp)
+      siavej=0.95_dp
+      siwant=siavej
+      siwant=simag+siwant*(psibry-simag)
+      call surfac(siwant,psi,nw,nh,rgrid,zgrid,bfpol,dfpol,nfounc, &
+                  npoint,drgrid,dzgrid,xmin,xmax,ymin,ymax,nnn, &
+                  rmaxis,zmaxis,negcur,kerror,1)
+      if(kerror.gt.0) return
+      call fluxav(bfpol,bfpol,dfpol,nfounc,psi,rgrid,nw,zgrid,nh, &
+                  rxxrry,nzz ,sdlobp,sdlbp)
       aream=0.0
       xyma=dfpol(1)
       do i=2,nfounc
@@ -1275,7 +1228,7 @@
         zseps(1,iges)=zseps(2,iges)
         zseps(2,iges)=rtemp
       endif
-      aspect=rout(iges)/aminor(iges)
+      aspect=rcntr(iges)/aminor(iges)
       qstar(iges)=rcentr*abs(bcentr(iges))/tmu/abs(ipmhd(iges))* &
                  (elong(iges)**2+1.)/2./aspect**2
       olamda=betap(iges)+li(iges)/2.
@@ -1335,7 +1288,7 @@
         if (ptotal.gt.0.01_dp) then
           consa1=ptotal**0.49_dp
           consa2=(abs(ipmhd(iges))/1.e6_dp)**1.08_dp
-          consa3=(rout(iges)/100.)**1.45_dp
+          consa3=(rcntr(iges)/100.)**1.45_dp
           taujd3(iges)=110.*consa2*consa3/consa1
         else
           taujd3(iges)=0.0
@@ -2468,7 +2421,7 @@
       vbtvac2=vbtvac2/volbt
       vbtor2=vbtor2/volbt
       vbtvac=vbtvac/volbt
-      btuse=bcentr(iges)*rcentr*100./rout(iges)
+      btuse=bcentr(iges)*rcentr*100./rcntr(iges)
       btuse=btuse**2
       vbtot2=betat(iges)*btuse/vbtot2
       vbtvac2=betat(iges)*btuse/vbtvac2
@@ -2477,7 +2430,7 @@
       btvvac2=btvvac2*100./volbt
       btvtor2=btvtor2*100./volbt
       btvtot2=btvtot2*100./volbt
-      vbtmag=betat(iges)*(rmaxis*100./rout(iges))**2
+      vbtmag=betat(iges)*(rmaxis*100./rcntr(iges))**2
       betped=0.0
       betnped=0.0
       if (kedgep.gt.0) then
@@ -2502,7 +2455,7 @@
       if (fwtdlc.gt.0.0) then
         chidflux=((diamag(iges)-cdflux(iges))/sigdia(iges))**2
       endif
-      chitot=chipre+chifin+chidflux
+      chitot=chifin+chipre+chidflux+sum(chijtr)
       if (idiart.gt.0) then
         bp2flx=bpolav(iges)**2
         dmui=1.0e+06_dp*diamag(iges)*4.*pi*bcentr(iges)*rcentr &
@@ -2510,7 +2463,7 @@
         rcurrm=rttt(iges)*0.01_dp
         betapd(iges)=s1(iges)/2.+s2(iges)/2.*(1.-rcurrm/rcentr)-dmui
         betatd(iges)=betapd(iges)*bp2flx/bcentr(iges)**2*100.
-        betatd(iges)=betatd(iges)*(rout(iges)/100./rcentr)**2
+        betatd(iges)=betatd(iges)*(rcntr(iges)/100./rcentr)**2
         wdia(iges)=1.5_dp*betapd(iges)*bp2flx/2./tmu/2./pi*volume(iges) &
                       /1.0e+06_dp
         if (kdata.ne.4) then
@@ -2606,40 +2559,28 @@
                       +fpcurr(xpsikk,kffcur)/rnow
            cjtli(i)=cjtli(i)/darea/1000.
         enddo
-        call setfnmd('q',ishot,itime,sfname)
-        sfname=sfname(1:13)//'_jtorli'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('q',ishot,itime,itimeu,'_jtorli',fname)
+        call open_new(74,fname,'','')
         xdum=0.0
         do i=1,nw
           write (74,*) rjtli(i),cjtli(i),xdum,xdum
         enddo
         close(unit=74)
-        call setfnmd('q',ishot,itime,sfname)
-        sfname=sfname(1:13)//'_jtsli'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('q',ishot,itime,itimeu,'_jtsli',fname)
+        call open_new(74,fname,'','')
         xdum=0.0
         do i=1,nw
           write (74,*) rjtli(i),sjtli(i),xdum,xdum
         enddo
         close(unit=74)
-        call setfnmd('q',ishot,itime,sfname)
-        sfname=sfname(1:13)//'_jtslir'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('q',ishot,itime,itimeu,'_jtslir',fname)
+        call open_new(74,fname,'','')
         do i=1,nw
           write (74,*) rjtli(i),sjtlir(i),xdum,xdum
         enddo
         close(unit=74)
-        call setfnmd('q',ishot,itime,sfname)
-        sfname=sfname(1:13)//'_jtsliz'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('q',ishot,itime,itimeu,'_jtsliz',fname)
+        call open_new(74,fname,'','')
         do i=1,nw
           write (74,*) rjtli(i),sjtliz(i),xdum,xdum
         enddo
@@ -2652,7 +2593,7 @@
         if(partic.gt.1.0e+10_dp) tave(iges)=wmhd(iges)/partic/3. &
                                                          /1.602e-16_dp
         resist=vloopt(iges)/ipmhd(iges)
-        zeta=resist*area(iges)/twopi/rout(iges)
+        zeta=resist*area(iges)/twopi/rcntr(iges)
         xlam=20.
         if (tave(iges).gt.0.001_dp) then
           tevolt=sqrt((tave(iges)*1000.)**3)
@@ -2807,8 +2748,8 @@
       call seva2d(bkx,lkx,bky,lky,c,rcur,zcur,pds,ier,n555)
       vertn(jges)=1.-pds(5)/pds(2)*rcur
       rx=rm(jges)/100.
-      f_0=log(8*rout(jges)/abar)-2+betap(jges)+li(jges)/2+.5_dp
-      delr=rout(jges)/100.-1.67_dp
+      f_0=log(8*rcntr(jges)/abar)-2+betap(jges)+li(jges)/2+.5_dp
+      delr=rcntr(jges)/100.-1.67_dp
 !-----------------------------------------------------------------------
 !--   metal wall                                                    --
 !-----------------------------------------------------------------------
@@ -2823,7 +2764,7 @@
       endif
       if ((itek.ge.5).and.(iges.eq.igmax)) close(unit=35)
       ! initialize output variables that weren't set
-      zout=0.0
+      zcntr=0.0
       elong=0.0
       utri=0.0
       ltri=0.0
@@ -2837,7 +2778,7 @@
       septop=0.0
       sepbot=0.0
       q95=0.0
-      shearb=0.0
+      shear=0.0
       vertn=0.0
       rco2v=0.0
       dco2v=0.0
@@ -2857,9 +2798,9 @@
       zseps=0.0
       sepexp=0.0
       dsep=0.0
-      aaq1=0.0
-      aaq2=0.0
-      aaq3=0.0
+      aq1=0.0
+      aq2=0.0
+      aq3=0.0
       rm=0.0
       zm=0.0
       psim=0.0
@@ -2936,37 +2877,28 @@
 !--   write out r(shot).(time)_X files in rho space                   --
 !-----------------------------------------------------------------------
       kwripre_r: if (kwripre.eq.3) then
-        call setfnmd('r',ishot,itime,sfname)
-        sfname=sfname(1:13)//'_qpsi'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('r',ishot,itime,itimeu,'_qpsi',fname)
+        call open_new(74,fname,'','')
         do i=1,nw
           write (74,*) rhovn(i),qpsi(i),xdum,xdum
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_jor'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('r',ishot,itime,itimeu,'_jor',fname)
+        call open_new(74,fname,'','')
         do i=1,nw
           cjorka=cjor(i)/1000.
           write (74,*) rhovn(i),cjorka,xdum,xdum
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_jorec'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('r',ishot,itime,itimeu,'_jorec',fname)
+        call open_new(74,fname,'','')
         do i=1,nw
           cjorka=cjorec(i)/1000.
           write (74,*) rhovn(i),cjorka,xdum,xdum
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_cjmse'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('r',ishot,itime,itimeu,'_cjmse',fname)
+        call open_new(74,fname,'','')
         if (ishot.le.97400) then
           mcentral=15
         else
@@ -2977,53 +2909,41 @@
           write (74,*) rhogam(i),cjorka,xdum,xdum
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_cjmsec'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('r',ishot,itime,itimeu,'_cjmsec',fname)
+        call open_new(74,fname,'','')
         do i=1,mcentral+1
           cjorka=cjmsec(i)/1000.
           write (74,*) rhogam(i),cjorka,xdum,xdum
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_bzmse'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('r',ishot,itime,itimeu,'_bzmse',fname)
+        call open_new(74,fname,'','')
         do i=1,nstark
           write (74,*) rhogam(i),bzmse(i),xdum,xdum
         enddo
+        call setfnm('r',ishot,itime,itimeu,'_bzmsec',fname)
+        call open_new(74,fname,'','')
         close(unit=74)
-        sfname=sfname(1:13)//'_bzmsec'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
         do i=1,nstark
           write (74,*) rhogam(i),bzmsec(i),xdum,xdum
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_presf'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('r',ishot,itime,itimeu,'_presf',fname)
+        call open_new(74,fname,'','')
         do i=1,nw
           write (74,*) rhovn(i),pres(i),xdum,xdum
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_presd'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('r',ishot,itime,itimeu,'_presd',fname)
+        call open_new(74,fname,'','')
         do i=1,npress
           xmnow=-rpress(i)
           ymnow=seval(nw,xmnow,sigrid,rhovn,brhovn,crhovn,drhovn)
           write (74,*) ymnow,pressr(i),xdum,sigpre(i)
         enddo
         close(unit=74)
-        sfname=sfname(1:13)//'_pbeam'
-        open(unit=74,status='old',file=sfname,iostat=ier)
-        if(ier.eq.0) close(unit=74,status='delete')
-        open(unit=74,status='new',file=sfname)
+        call setfnm('r',ishot,itime,itimeu,'_pbeam',fname)
+        call open_new(74,fname,'','')
         do i=1,nbeam
           xmnow=sibeam(i)
           ymnow=seval(nw,xmnow,sigrid,rhovn,brhovn,crhovn,drhovn)
@@ -3031,19 +2951,15 @@
         enddo
         close(unit=74)
         if (keecur.gt.0) then
-          sfname=sfname(1:13)//'_wexb'
-          open(unit=74,status='old',file=sfname,iostat=ier)
-          if(ier.eq.0) close(unit=74,status='delete')
-          open(unit=74,status='new',file=sfname)
+          call setfnm('r',ishot,itime,itimeu,'_wexb',fname)
+          call open_new(74,fname,'','')
           do i=1,nw
             if(rpmid(i).ge.rmaxis) &
               write (74,*) rhopmid(i),eshear(i),xdum,xdum
           enddo
           close(unit=74)
-          sfname=sfname(1:13)//'_errho'
-          open(unit=74,status='old',file=sfname,iostat=ier)
-          if(ier.eq.0) close(unit=74,status='delete')
-          open(unit=74,status='new',file=sfname)
+          call setfnm('r',ishot,itime,itimeu,'_errho',fname)
+          call open_new(74,fname,'','')
           do i=1,nw
             if(rpmid(i).ge.rmaxis) &
               write (74,*) rhopmid(i),ermid(i),xdum,xdum

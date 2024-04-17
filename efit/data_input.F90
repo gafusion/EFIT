@@ -1,14 +1,14 @@
 #include "config.f"
 !**********************************************************************
+!>  
 !!    data_input sets up the magnetic data and weighting arrays.
 !!
-!!    @param jtime: time index
-!!    @param kconvr: convergence flag
-!!    @param ktime : number of time slices
-!!    @param kerror: error flag
+!!    @param ktime : Number of time slices
+!!    @param jtime : Time index
+!!    @param kerror: Error Flag
 !!
 !**********************************************************************
-      subroutine data_input(jtime,kconvr,ktime,kerror)
+      subroutine data_input(jtime,ktime,kerror)
       use commonblocks,only: c,wk,bkx,bky,wgridpc,rfcpc
       use set_kinds, only: i4
       include 'eparm.inc'
@@ -17,13 +17,13 @@
       implicit none
 
       integer*4, intent(in) :: jtime,ktime
-      integer*4, intent(out) :: kconvr,kerror
+      integer*4, intent(out) :: kerror
       integer*4 i,j,k,ii,jj,kk,kkkk,m,n
       integer*4 idoac,mcontr,ktear
       !integer*4 idodo,idovs
       integer*4 istat,lshot,im1,loc,nbdry0,nbdry1,nbdry2,nbdry3,nbryup, &
                 iup,nbranch,nqpsi,idn,limupper,lwant,mmemsels,idofb, &
-                mw,mh,mmf,mx,ix,mj,mk,npc,npack,nskip,kkl,kku,ier,jupper
+                mw,mh,mmf,mx,ix,mj,mk,npc,nskip,kkl,kku,ier,jupper
       integer*4 nrmin_e,nrmax_e,nzmin_e,nzmax_e,nsw,nsh
       integer*4 n_write !unused
       integer*4 nbabs_ext,jb_ext
@@ -45,8 +45,9 @@
              drgrids,dzgrids,psical,rselsum
       real*8 sicont,s1edge,scalep,scalemin,delx2,dely2,rbar,aup
       real*8 rbmin_e,rbmax_e,zbmin_e,zbmax_e
-      real*8 plasma_ext,c_ext,dr_ext,dz_ext,rc_ext,zc_ext,a_ext
-      real*8 eup_ext,elow_ext,dup_ext,dlow_ext,setlim_ext
+      real*8 plasma_ext,c_ext,dr_ext,dz_ext,rc_ext,zc_ext,a_ext, &
+             eup_ext,elow_ext,dup_ext,dlow_ext,setlim_ext,sign_ext, &
+             scaleffp_ext,scalepp_ext
       real*8 plasma_save,btor_save,rcentr_save,fwtcur_save,error_save
       real*8 r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max
       real*8 r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot,dnmin
@@ -65,14 +66,14 @@
       real*8 pds(6),denr(nco2r),denv(nco2v)
       real*8 brsptu(nfsum),brsp_save(nrsmat)
       real*8, dimension(:), allocatable :: expmp2_save,coils_save, &
-                                             rbdry_save,zbdry_save, &
-                                             fwtsi_save,pressr_save, &
-                                             rpress_save,sigpre_save, &
-                                             pprime_temp,ffprim_temp
+                                           rbdry_save,zbdry_save, &
+                                           fwtsi_save,pressr_save, &
+                                           rpress_save,sigpre_save, &
+                                           pprime_temp,ffprim_temp
       real*8, dimension(:,:), allocatable :: psirz_temp
       character(1000) line
       character*10 case_ext(6)
-      character*50 edatname
+      character*300 edatname
       character(256) table_save
       character*10 namedum,tindex,probeind
       character*2 reflect_ext
@@ -108,7 +109,7 @@
            kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens,fwtbdry, &
            kwwfnc,kwwknt,wwknt,wwtens,fwtec,fitsiref,bitec,scalepr,scalesir, &
            ppbdry,kppbdry,pp2bdry,kpp2bdry,scalea,sigrbd,sigzbd,nbskip, &
-           ffbdry,kffbdry,ff2bdry,kff2bdry,errsil,vbit, &
+           ffbdry,kffbdry,ff2bdry,kff2bdry,errsil,vbit,sicont, &
            wwbdry,kwwbdry,ww2bdry,kww2bdry,f2edge,fe_width,fe_psin,kedgef, &
            ktear,kersil,iout,ixray,pedge,kedgep,pe_width,pe_psin, &
            table_dir,input_dir,store_dir,kautoknt,akchiwt,akerrwt, &
@@ -117,14 +118,15 @@
            imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
            nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
            idebug,jdebug,ifindopt,tolbndpsi,siloplim,use_previous, &
-           req_valid,chordv,chordr,nw_sub,nh_sub
+           req_valid,chordv,chordr,nw_sub,nh_sub,ibound
       namelist/inwant/psiwant,vzeroj,fwtxxj,fbetap,fbetan,fli,fq95,fqsiw, &
            jbeta,jli,alpax,gamax,jwantm,fwtxxq,fwtxxb,fwtxli,znose, &
            fwtbdry,nqwant,siwantq,n_write,kccoils,ccoils,rexpan, &
            xcoils,kcloops,cloops,xloops,currc79,currc139,nccoil,sizeroj, &
            fitdelz,ndelzon,relaxdz,stabdz,writepc,table_dir,errdelz, &
            oldccomp,nicoil,oldcomp,currc199,curriu30,curriu90, &
-           curriu150,curril30,curril90,curril150,ifitdelz,scaledz
+           curriu150,curril30,curril90,curril150,ifitdelz,scaledz, &
+           fwtjtr,sigjtr
       namelist/ink/isetfb,ioffr,ioffz,ishiftz,gain,gainp,idplace, &
            symmetrize,backaverage,lring,cupdown
       namelist/ins/tgamma,sgamma,fwtgam,rrrgam,zzzgam,aa1gam,aa2gam, &
@@ -166,7 +168,8 @@
       namelist/out1/ishot,itime,betap0,rzero,qenp,enp,emp,plasma, &
            expmp2,coils,btor,rcentr,brsp,icurrt,rbdry,zbdry, &
            nbdry,fwtsi,fwtcur,mxiter,nxiter,limitr,xlim,ylim,error, &
-           iconvr,ibunmn,pressr,rpress,nqpsi,npress,sigpre
+           iconvr,ibunmn,pressr,rpress,nqpsi,npress,sigpre,qpsi, &
+           pressw
 
       ! set defaults for all modes within loop
       kerror=0
@@ -349,6 +352,9 @@
       reflect_ext='no' 
       setlim_ext=-10. 
       shape_ext=.false. 
+      sign_ext=0.0
+      scaleffp_ext=1.0
+      scalepp_ext=1.0
 
       table_save=table_dir
 
@@ -547,8 +553,8 @@
           sigpre_save=sigpre
           read (neqdsk,out1,iostat=istat)
           if (istat>0) then 
-            backspace(nin)
-            read(nin,fmt='(A)') line
+            backspace(neqdsk)
+            read(neqdsk,fmt='(A)') line
             write(*,'(A)') 'Invalid line in namelist out1: '//trim(line)
             stop
           endif
@@ -1145,6 +1151,8 @@
           call read_h5_ex(nid,"curril150",curril150,h5in,h5err)
           call read_h5_ex(nid,"ifitdelz",ifitdelz,h5in,h5err)
           call read_h5_ex(nid,"scaledz",scaledz,h5in,h5err)
+          call read_h5_ex(nid,"fwtjtr",fwtjtr,h5in,h5err)
+          call read_h5_ex(nid,"sigjtr",sigjtr,h5in,h5err)
           call close_group("inwant",nid,h5err)
         endif
    
@@ -1263,7 +1271,6 @@
           allocate(psirz_ext(nw_ext*nh_ext),pprime_temp(nw_ext), &
                    ffprim_temp(nw_ext),qpsi_ext(nw_ext))
           call read_h5_sq(nid,"psi",psirz_ext,h5in,h5err)
-          psirz_ext=psirz_ext/twopi
           call close_group("0",nid,h5err)
           call close_group("profiles_2d",cid,h5err)
 
@@ -1276,10 +1283,8 @@
           endif
           call open_group(sid,"global_quantities",nid,h5err)
           call read_h5_ex(nid,"psi_axis",simag_ext,h5in,h5err)
-          simag_ext=simag_ext/twopi
           call read_h5_ex(nid,"psi_boundary",psibry_ext,h5in,h5err)
-          psibry_ext=psibry_ext/twopi
-          call read_h5_ex(nid,"ip",plasma_ext,h5in,h5err) ! TODO: could be missing twopi...
+          call read_h5_ex(nid,"ip",plasma_ext,h5in,h5err)
           call close_group("global_quantities",nid,h5err)
 
           ! read in boundary points
@@ -1311,9 +1316,7 @@
           endif
           call open_group(sid,"profiles_1d",nid,h5err)
           call read_h5_ex(nid,"dpressure_dpsi",pprime_temp,h5in,h5err)
-          pprime_temp=pprime_temp*twopi
           call read_h5_ex(nid,"f_df_dpsi",ffprim_temp,h5in,h5err)
-          ffprim_temp=ffprim_temp*twopi
           call read_h5_ex(nid,"q",qpsi_ext,h5in,h5err)
           call close_group("profiles_1d",nid,h5err)
 
@@ -1450,6 +1453,14 @@
       if (iplcout_prior .ne. -1) then
         iplcout = iplcout_prior
       endif
+      if (icinit.eq.-3 .or. icinit.eq.-4) then
+        if (geqdsk_ext.eq.'none') then
+          call errctrl_msg('data_input', &
+            'ICINIT requires and existing solution')
+          kerror=1
+          return
+        endif
+      endif
       
 !--   warn that idebug, jdebug, and ktear inputs are deprecated
       if (idebug.ne.0) write(*,*) &
@@ -1489,15 +1500,15 @@
         if(abs(fwtece0(i)).le.1.e-30_dp) fwtece0(i)=0.0
       enddo
       if(abs(fwtecebz0).le.1.e-30_dp) fwtecebz0=0.0
-!
+
 !--   enforce autoknot requirements
-      if (kautoknt .eq. 2) then
+      if (kautoknt .ge. 2) then
         akchiwt=0.0
         akerrwt=1.0
         akgamwt=0.0
         akprewt=0.0
       endif
-!
+
       if(nbdryp==-1) nbdryp=nbdry
 
 !--   Read msels_all.dat if needed
@@ -1522,14 +1533,40 @@
 91008 format(9e12.5,i2) 
 
 !----------------------------------------------------------------------
-!--   Setup FF', P' arrays
+!--   Setup FF', P', boundary, limiter, and psi inputs
 !----------------------------------------------------------------------
+      if (sign_ext.eq.0.0) then
+        sign_ext=1.0
+        if (geqdsk_ext.eq.'none') then
+          if(plasma_ext > 0.0) sign_ext = -1.0
+        else
+          if (kdata.eq.1) then
+            ! Use this parameter for COCOs transformation
+            sign_ext=twopi
+            if(plasma_ext > 0.0) sign_ext = -twopi
+            ! Note: IMAS/OMAS specifies COCOs 11, but doesn't have a
+            !       specific definition for psi, so this sign may not
+            !       be consistent with other codes
+          else ! kdata=2
+            if(plasma_ext > 0.0) sign_ext = -1.0
+          endif
+        endif
+      endif
+
       if (geqdsk_ext.ne.'none') then
+        psirz_ext=psirz_ext/sign_ext
+        simag_ext=simag_ext/sign_ext
+        psibry_ext=psibry_ext/sign_ext
         if (psin_ext(1) < 0) then
           pprime_ext(1:nw_ext)=pprime_temp
           ffprim_ext(1:nw_ext)=ffprim_temp
         endif
+        if (icinit.eq.-3.or.icinit.eq.-4) then
+          scaleffp_ext=1.0
+          scalepp_ext=1.0
+        endif
       endif
+
       read_geqdsk: if (geqdsk_ext.ne.'none'.and.icinit.ne.-3 &
                                            .and.icinit.ne.-4) then
         if (psin_ext(1) < 0) then
@@ -1541,10 +1578,7 @@
 #ifdef DEBUG_LEVEL1
         write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext,nw_ext 
 #endif
-        if (plasma_ext > 0.0) then 
-          sign_ext = -1.0 
-        endif 
-        write_boundary: if (nbdry.le.0) then 
+        set_boundary: if (nbdry.le.0) then 
           nbabs_ext=nbdry_ext/mbdry1+1 
           jb_ext=0 
           do i=1,nbdry_ext,nbabs_ext 
@@ -1553,7 +1587,7 @@
             zbdry(jb_ext)=zbdry_ext(i) 
           enddo 
           nbdry=jb_ext 
-! 
+ 
           rbmin_e=rbdry(1)
           rbmax_e=rbdry(1)
           zbmin_e=zbdry(1)
@@ -1585,35 +1619,48 @@
           fwtbdry(nrmax_e)=10.
           fwtbdry(nzmin_e)=10.
           fwtbdry(nzmax_e)=10.
-        endif write_boundary
-! 
+        endif set_boundary
+ 
         if (limitr.le.0) then
           xlim(1:limitr_ext)=xlim_ext(1:limitr_ext)
           ylim(1:limitr_ext)=ylim_ext(1:limitr_ext)-1.e-10_dp
         endif
       endif read_geqdsk
+
 #ifdef DEBUG_LEVEL1
       write (nttyo,*) 'npsi_ext=',npsi_ext
 #endif
-      if (npsi_ext > 0) then
+      if (npsi_ext > 0 .or. icinit.eq.-3 .or. icinit.eq.-4) then
 #ifdef DEBUG_LEVEL1
-        write (nttyo,*) 'scalepp_ext,pprime_ext= ',scalepp_ext, &
-           pprime_ext(1)
-        write (nttyo,*) 'scaleffp_ext,ffpprim_ext= ',scaleffp_ext, &
-           ffprim_ext(1)
+        write (nttyo,*) 'sign_ext,scaleffp_ext,ffpprim_ext= ', &
+          sign_ext,scaleffp_ext,ffprim_ext(1)
+        write (nttyo,*) 'sign_ext,scalepp_ext,pprime_ext= ', &
+          sign_ext,scalepp_ext,pprime_ext(1)
 #endif
-        pprime_ext = pprime_ext*darea*sign_ext*scalepp_ext
-        ffprim_ext = ffprim_ext*darea/twopi/tmu*sign_ext*scaleffp_ext
+        ffprim_ext=ffprim_ext*darea/twopi/tmu*sign_ext*scaleffp_ext
+        pprime_ext=pprime_ext*darea*sign_ext*scalepp_ext
         prbdry=prbdry*scalepp_ext*scalepp_ext
 #ifdef DEBUG_LEVEL1
-        write (nttyo,*) 'scalepp_ext,pprime_ext= ',scalepp_ext, &
-           pprime_ext(1)
-        write (nttyo,*) 'scaleffp_ext,ffpprim_ext= ',scaleffp_ext, &
-           ffprim_ext(1)
+        write (nttyo,*) 'sign_ext,scaleffp_ext,ffpprim_ext= ', &
+          sign_ext,scaleffp_ext,ffprim_ext(1)
+        write (nttyo,*) 'sign_ext,scalepp_ext,pprime_ext= ', &
+          sign_ext,scalepp_ext,pprime_ext(1)
 #endif 
- 
-        call zpline(npsi_ext,psin_ext,pprime_ext,bpp_ext,cpp_ext,dpp_ext)
+      endif
+
+      if (npsi_ext > 0) then
+        if(iconvr.eq.1 .or. iconvr.eq.2) &
+          write (nttyo,*) &
+           'WARNING: ffprim and pprime fixed but still in response mat.'
         call zpline(npsi_ext,psin_ext,ffprim_ext,bfp_ext,cfp_ext,dfp_ext)
+        call zpline(npsi_ext,psin_ext,pprime_ext,bpp_ext,cpp_ext,dpp_ext)
+      elseif (iconvr.eq.3) then
+        if (kcalpa+kcgama.eq.0) then
+          call errctrl_msg('data_input', &
+           'ICONVR=3 requires fixed or constr. ffprim and pprime inputs')
+          kerror=1
+          return
+        endif
       endif
 !---------------------------------------------------------------------- 
 !--   Scale boundary points                                          -- 
@@ -1649,28 +1696,30 @@
         if(elow_ext.le.-10.0) elow_ext=e0bot
         if(dup_ext.le.-10.0) dup_ext=d0top
         if(dlow_ext.le.-10.0) dlow_ext=d0bot
-        do i=1,nbdry 
-          if (zbdry0(i).gt.z0ave) then 
+        do i=1,nbdry
+          if (zbdry0(i).gt.z0ave) then
             rbdry(i)=rc_ext+a_ext*(rbdry0(i)-r0ave)/a0ave               & 
                  +a_ext*(d0top-dup_ext)*((zbdry0(i)-z0ave)/e0top/a0ave)**2 
-            zbdry(i)=zc_ext+eup_ext*a_ext*(zbdry0(i)-z0ave)/a0ave/e0top 
+            zbdry(i)=zc_ext+eup_ext*a_ext*(zbdry0(i)-z0ave)/a0ave/e0top
           endif
-          if (zbdry0(i).le.z0ave) then 
+          if (zbdry0(i).le.z0ave) then
             rbdry(i)=rc_ext+a_ext*(rbdry0(i)-r0ave)/a0ave               & 
                 +a_ext*(d0bot-dlow_ext)*((z0ave-zbdry0(i))/e0bot/a0ave)**2 
-            zbdry(i)=zc_ext+elow_ext*a_ext*(zbdry0(i)-z0ave)/a0ave/e0bot 
+            zbdry(i)=zc_ext+elow_ext*a_ext*(zbdry0(i)-z0ave)/a0ave/e0bot
           endif
         enddo
       endif
-      if (reflect_ext.eq.'UL') then
+!---------------------------------------------------------------------- 
+!--   Reflect plasma boundary
+!---------------------------------------------------------------------- 
+      select case (reflect_ext)
+      case('UL')
+        !--   Reflection across Z=0
         rbdry0(1:nbdry)=rbdry(1:nbdry)
         zbdry0(1:nbdry)=zbdry(1:nbdry)
         zbdry(1:nbdry)=-zbdry0(1:nbdry)
-      endif
-!---------------------------------------------------------------------- 
-!--   Reflection, Lower = -Upper                                     -- 
-!---------------------------------------------------------------------- 
-      if (reflect_ext.eq.'UU') then
+      case('UU')
+        !--   Reflection, Lower = -Upper
         rbdry0(1:nbdry)=rbdry(1:nbdry)
         zbdry0(1:nbdry)=zbdry(1:nbdry)
         nbdry0=nbdry
@@ -1734,11 +1783,8 @@
             endif
           enddo
         endif
-      endif
-!---------------------------------------------------------------------- 
-!--   Reflection, Upper = - Lower                                    -- 
-!---------------------------------------------------------------------- 
-      if (reflect_ext.eq.'LL') then
+      case('LL')
+        !--   Reflection, Upper = - Lower
         rbdry0(1:nbdry)=rbdry(1:nbdry)
         zbdry0(1:nbdry)=zbdry(1:nbdry)
         nbdry0=nbdry
@@ -1802,11 +1848,11 @@
             endif
           enddo
         endif
-      endif
+      end select
 !---------------------------------------------------------------------- 
 !--   Scale limiter                                                  -- 
 !---------------------------------------------------------------------- 
-      if (setlim_ext.gt.-10.0) then
+      if (setlim_ext.ge.0.0) then
         rbdry0(1:nbdry)=rbdry(1:nbdry)
         zbdry0(1:nbdry)=zbdry(1:nbdry)
         loc=minloc(rbdry0(1:nbdry),1)
@@ -1830,7 +1876,7 @@
         ylim(3)=ylim(2)
         xlim(4)=xlim(3)
         ylim(4)=ylim(1)
-        xlim(5)=xlim(4)
+        xlim(5)=xlim(3)
         ylim(5)=z0min-setlim_ext*(z0max-z0min)
         xlim(6)=xlim(1)
         ylim(6)=ylim(5)
@@ -1887,7 +1933,9 @@
 !-------------------------------------------------------------------------- 
 !--   itek > 100, write out PLTOUT.OUT individually                      --
 !--
-!--   TODO: nin is closed, what are read statements supposed to do here? 
+!--   TODO: read statements here look like they were meant to read vaules
+!--         appended to the input files outside of the namelists, but we've
+!--         already closed those... does this still need to be supported?
 !-------------------------------------------------------------------------- 
       kgraph=0 
       if (itek.gt.100) then 
@@ -2014,9 +2062,7 @@
       close(unit=nin) 
       kinetic: if (kprfit.eq.1) then 
         if (npress.lt.0) then 
-          call setfnmeq(itimeu,'k',ishot,itime,edatname) 
-          edatname='edat_'//edatname(2:7)// & 
-                       '_'//edatname(9:13)//'.pressure' 
+          call setfnm('edat_',ishot,itime,itimeu,'.pressure',edatname) 
           open(unit=nin,status='old',file=edatname)
           read (nin,edat)
           close(unit=nin) 
@@ -2025,9 +2071,7 @@
         if (npteth.lt.0) then 
           nptef=-npteth 
           npnef=-npneth 
-          call setfnmeq(itimeu,'k',ishot,itime,edatname) 
-          edatname='edat_'//edatname(2:7)// & 
-                       '_'//edatname(9:13)//'.thomson' 
+          call setfnm('edat_',ishot,itime,itimeu,'.thomson',edatname) 
           open(unit=nin,status='old',file=edatname)
           bfract=-1. 
           if (tethom(1).lt.0.0) bfract=-tethom(1) 
@@ -2068,8 +2112,7 @@
         if (nption.lt.0) then
           nptionf=-nption
           if (nptionf.lt.100) then
-            call setfnmeq(itimeu,'k',ishot,itime,edatname)
-            edatname='edat_'//edatname(2:7)//'_'//edatname(9:13)//'.cer'
+            call setfnm('edat_',ishot,itime,itimeu,'.cer',edatname)
             open(unit=nin,status='old',file=edatname)
             bfract=-1.
             if(tionex(1).lt.0.0) bfract=-tionex(1)
@@ -2271,15 +2314,15 @@
         nh_sub=(nh-1)/nsh+1
       endif
 
+      if(kzeroj.gt.0) fwtjtrin=fwtjtr
+
       if(kfffnc.eq.8) rkec=pi/(2.0*dpsiecn) 
       chigam=0.0 
       tchimls=0.0 
 !
-      if (ipmeas(jtime).le.-1.e3_dp) then 
+      negcur=0
+      if(ipmeas(jtime).le.-1.e3_dp) &
         negcur=1 
-      else 
-        negcur=0 
-      endif 
       iexcal=iexcals
       ivacum=0
       ierchk=ierchks
@@ -2322,7 +2365,7 @@
 !--------------------------------------------------------------------- 
       if (oldccomp) then 
         if (n1coil.eq.2.and.ishot.le.108281) then 
-          open(unit=60,file=input_dir(1:lindir)//'n1coil.ddd', & 
+          open(unit=60,file=trim(input_dir)//'n1coil.ddd', & 
                status='old')
           j=jtime
           do i=30,60 
@@ -2336,7 +2379,7 @@
 !--   DIIID correction to 322 and 67 degree probes due to C coil
 !--------------------------------------------------------------------- 
       if (nccoil.eq.1.and.oldccomp) then 
-        open(unit=60,file=input_dir(1:lindir)//'ccoil.ddd', & 
+        open(unit=60,file=trim(input_dir)//'ccoil.ddd', & 
              status='old') 
         j=jtime
         do i=30,60
@@ -2357,7 +2400,6 @@
           psiref(jtime)=0. 
         endif 
       endif 
-      kconvr=iconvr
       www=zero 
 !---------------------------------------------------------------------- 
 !--   signal at psi loop # NSLREF is used as reference               -- 
@@ -2414,11 +2456,13 @@
         brsp(1:nfsum)=brsptu(1:nfsum)*turnfc(1:nfsum) 
       reflux=silopt(jtime,iabs(nslref)) 
       do m=1,nsilop 
-        tdata1=errsil*abs(silopt(jtime,m)-reflux) 
-        tdata2=sicont*rsi(m)*abs(ipmeas(jtime)) 
-        tdata=max(tdata1,tdata2) 
-        tdata2=abs(psibit(m))*vbit 
-        tdata=max(tdata,tdata2) 
+        tdata=abs(psibit(m))*vbit 
+        if (errsil.gt.1.e-10_dp) then
+          tdata2=errsil*abs(silopt(jtime,m)-reflux)
+          tdata=max(tdata,tdata2) 
+          tdata2=sicont*rsi(m)*abs(ipmeas(jtime))
+          tdata=max(tdata,tdata2)
+        endif
         sigsil(m)=tdata 
         if (tdata.gt.1.0e-10_dp) then
           fwtsi(m)=fwtsi(m)/tdata**nsq
@@ -2437,11 +2481,13 @@
 !--     Default option for reference flux loop uncertainty
 !---------------------------------------------------------------------- 
         m=iabs(nslref)
-        tdata1=errsil*abs(silopt(jtime,m))
-        tdata2=sicont*rsi(m)*abs(ipmeas(jtime))
-        tdata=max(tdata1,tdata2)
-        tdata2=abs(psibit(m))*vbit
-        tdata=max(tdata,tdata2)
+        tdata=abs(psibit(m))*vbit
+        if (errsil.gt.1.e-10_dp) then
+          tdata2=errsil*abs(silopt(jtime,m))
+          tdata=max(tdata,tdata2)
+          tdata2=sicont*rsi(m)*abs(ipmeas(jtime))
+          tdata=max(tdata,tdata2)
+        endif
         sigsil(m)=tdata
         if (tdata.gt.1.0e-10_dp) then
           fwtsi(m)=fwtref/tdata**nsq
@@ -2559,14 +2605,6 @@
       else 
         kwcurn=kpcurn 
       endif 
-      nqaxis=0 
-      if(fwtqa.gt.1.0e-03_dp) nqaxis=1 
-      nparam=nfnwcr 
-      if(kprfit.gt.0) nparam=nparam+1 
-      if(fitdelz) nparam=nparam+1 
-      if(fitsiref) nparam=nparam+1 
-      if(kedgep.gt.0) nparam=nparam+1 
-      if(kedgef.gt.0) nparam=nparam+1 
       if(fwtqa.gt.0.0) fwtqa=fwtqa/errorq 
       if(fwtbp.gt.0.0) fwtbp=fwtbp/errorq 
       if(fbetap.gt.0.0) betap0=fbetap 
@@ -2639,7 +2677,7 @@
 !      if (kdata.ne.2) then 
 !      if ((iecurr.le.0).or.(idodo.gt.0)) go to 520 
 !      open(unit=nrsppc,status='old',form='unformatted', & 
-!           file=table_dir(1:ltbdir)//'re'//trim(ch1)//trim(ch2)//'.ddd') 
+!           file=trim(table_di2)//'re'//trim(ch1)//trim(ch2)//'.ddd') 
 !      read (nrsppc) rsilec 
 !      read (nrsppc) rmp2ec 
 !      read (nrsppc) gridec 
@@ -2649,7 +2687,7 @@
 ! 
 !      if ((ivesel.eq.0).or.(idovs.gt.0)) go to 525 
 !      open(unit=nrsppc,status='old',form='unformatted', & 
-!           file=table_dir(1:ltbdir)//'rv'//trim(ch1)//trim(ch2)//'.ddd') 
+!           file=trim(table_di2)//'rv'//trim(ch1)//trim(ch2)//'.ddd') 
 !      read (nrsppc) rsilvs 
 !      read (nrsppc) rmp2vs 
 !      read (nrsppc) gridvs 
@@ -2657,7 +2695,7 @@
 !      idovs=1 
 !      go to  525 
 !      open(unit=nffile,status='old',form='unformatted', & 
-!           file=table_dir(1:ltbdir)//'fc'//trim(ch1)//trim(ch2)//'.ddd') 
+!           file=trim(table_di2)//'fc'//trim(ch1)//trim(ch2)//'.ddd') 
 !      read (nffile) rfcfc 
 !      close(unit=nffile) 
 !      endif 
@@ -2668,7 +2706,7 @@
 !----------------------------------------------------------------------- 
       if ((iacoil.gt.0).and.(idoac.eq.0)) then 
         open(unit=nrsppc,status='old',form='unformatted', & 
-           file=table_di2(1:ltbdi2)//'ra'//trim(ch1)//trim(ch2)//'.ddd')
+           file=trim(table_di2)//'ra'//trim(ch1)//trim(ch2)//'.ddd')
         read (nrsppc) gridac 
         read (nrsppc) rsilac 
         read (nrsppc) rmp2ac 
@@ -2680,7 +2718,7 @@
 !-------------------------------------------------------------------- 
       if (isetfb.ne.0.and.idofb.le.0) then 
         open(unit=mcontr,status='old',form='unformatted', & 
-           file=table_di2(1:ltbdi2)//'ef'//trim(ch1)//trim(ch2)//'.ddd')
+           file=trim(table_di2)//'ef'//trim(ch1)//trim(ch2)//'.ddd')
         read (mcontr) mw,mh 
         read (mcontr) rgrid,zgrid 
         read (mcontr) grdfdb 
@@ -2785,11 +2823,7 @@
       enddo
       mw=nw 
       mh=nh 
-      open(unit=nffile,status='old',form='unformatted', & 
-           file='rpfxx.dat',iostat=istat)
-      if(istat.eq.0) close(unit=nffile,status='delete')
-      open(unit=nffile,status='new',form='unformatted', & 
-           file='rpfxx.dat') 
+      call open_new(nffile,'rpfxx.dat','unformatted','')
       write (nffile) mx,rmx,zmx 
       write (nffile) rsilpf 
       write (nffile) rmp2pf 
@@ -2819,7 +2853,7 @@
       npc=0 
 ! 
       open(unit=nffile,status='old',form='unformatted', & 
-           file=table_di2(1:ltbdi2)//'fc'//trim(ch1)//trim(ch2)//'.ddd')
+           file=trim(table_di2)//'fc'//trim(ch1)//trim(ch2)//'.ddd')
       read (nffile) rfcfc 
       read (nffile) rfcpc 
       close(unit=nffile) 
@@ -2855,11 +2889,7 @@
       wgridpc=wgridpc/xnpc 
       wpcpc=wpcpc/xnpc**2 
 ! 
-      open(unit=nffile,status='old',form='unformatted', & 
-           file='rpcxx.dat',iostat=istat)
-      if(istat.eq.0) close(unit=nffile,status='delete')
-      open(unit=nffile,status='new',form='unformatted', & 
-           file='rpcxx.dat') 
+      call open_new(nffile,'rpcxx.dat','unformatted','')
       write (nffile) wsilpc 
       write (nffile) wmp2pc 
       write (nffile) wfcpc 
@@ -2932,11 +2962,10 @@
           xmax=rgrids(nw-2) 
           ymin=zgrids(3) 
           ymax=zgrids(nh-2) 
-          npack=1 
           rnow=0.5_dp*(rgrids(1)+rgrids(nw)) 
           znow=0.0 
           call surfac(siwant,psi,nw,nh,rgrids,zgrids,xout,yout,nfound, & 
-                      npoint,drgrids,dzgrids,xmin,xmax,ymin,ymax,npack, & 
+                      npoint,drgrids,dzgrids,xmin,xmax,ymin,ymax,1, & 
                       rnow,znow,negcur,kerror,1) 
           if(kerror.gt.0) return 
           xmin=xout(1) 

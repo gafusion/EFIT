@@ -9,14 +9,14 @@ include_directories(
 set(EFITLIB_SOURCES
   modules-efit.F90 set_eparm.F90 psical.f90 mat_solve.f90 
   tables.F90 read_namelist.F90 set_defaults.f90
-  buneman.f90 set_filenames.f90 ecom1-mods.f90 zpline.f90 
+  buneman.f90 set_filename.F90 ecom1-mods.f90 zpline.f90 
   ecom2-mods.f90 curve2d_mod.f90 data_input.F90 set_init.f90
   response_matrix.F90 shapesurf.F90 setup_data_fetch.F90 current.f90
   external_current.F90 boundary.F90 spline.f90 pltdat.F90
   write_a.f90 write_g.f90 write_m.F90 write_ot.f90 print_terminal.F90
   ppbasisfunc.f90 ffbasisfunc.f90 wwbasisfunc.f90 eebasisfunc.f90
   get_exp_data.f90 get_kinetic_data.f90 auto_knot.F90
-  ece.F90 msels.F90 stark.F90 chkerr.f90
+  ece.F90 msels.F90 stark.F90 chkerr.f90 rand_knot_opt.F90
   cyclic.F90 set_basis.f90 pressure.F90 utils.F90
   green.F90 fit.F90 beta_li.F90 pflux.F90 update_parameters.F90
   ${CMAKE_CURRENT_BINARY_DIR}/set_extvars.F90

@@ -1,33 +1,63 @@
 #include "config.f"
 !**********************************************************************
 !*
-!>          FLUXAV does the flux surface average
+!>     open_new is a convenience routine that deletes an existing file
+!!       if found and opens a new one
 !!   
-!!
+!!     @param unit : I/O channel to use
+!!     @param file : filename
+!!     @param form : format specifier (used for both)
+!!     @param delim : delimiter used in new file
+!!  
+!**********************************************************************
+      subroutine open_new(unit,file,form,delim)
+      implicit none
+      integer*4, intent(in) :: unit
+      character*(*), intent(in) :: file,form,delim
+      integer*4 ierr,lform
+
+      lform=len(trim(form))
+      if (lform>0) then
+        open(unit=unit,file=file,status='old', &
+             form=form,iostat=ierr)
+      else
+        open(unit=unit,status='old',file=file,iostat=ierr)
+      endif
+      if(ierr.eq.0) close(unit=unit,status='delete')
+      if (lform>0) then
+        if (len(trim(delim))>0) then
+          open(unit=unit,file=file,status='new', &
+               form=form,delim='quote')
+        else
+          open(unit=unit,file=file,status='new', &
+               form=form)
+        endif
+      else
+        if (len(trim(delim))>0) then
+          open(unit=unit,status='new',delim='quote',file=file)
+        else
+          open(unit=unit,status='new',file=file)
+        endif
+      endif
+      return
+      end subroutine open_new
+
+!**********************************************************************
+!*
+!>     FLUXAV does the flux surface average
+!!   
 !!     @param f : function array 
-!!
 !!     @param si : flux array
-!!
 !!     @param n : length of contour array
-!!
 !!     @param x : R coordinates of contour
-!!
 !!     @param y : Z coordinates of contour     
-!!
 !!     @param fave  : int(dl f/Bp) / sdlobp
-!!
 !!     @param sdlbp : int(dl Bp)
-!!
 !!     @param sdlobp: int(dl/Bp)
-!!
 !!     @param rx: 
-!!
 !!     @param ry: 
-!!
 !!     @param msx: 
-!!
 !!     @param msy: 
-!!
 !!     @param ns: 
 !!  
 !**********************************************************************
@@ -66,32 +96,19 @@
       return
       end subroutine fluxav
 
-
 !**********************************************************************
 !>
-!!    this subroutine does ...
+!!    splitc does ...
 !!    
-!!
 !!    @param is :
-!!
 !!    @param rs :
-!!
 !!    @param zs :
-!!
-!!    @param cs :
-!!
 !!    @param rc :
-!!
 !!    @param zc :
-!!
 !!    @param wc :
-!!
 !!    @param hc :
-!!
 !!    @param ac :
-!!
 !!    @param ac2 :
-!!
 !!    @param cc :
 !!
 !**********************************************************************
@@ -177,7 +194,6 @@
       endif
       return
       end subroutine splitc
-
       
 !**********************************************************************
 !>
@@ -185,17 +201,11 @@
 !!    in ascending order and sets the ne and te data to
 !!    correspond to the new order.
 !!    
-!!
 !!    @param mbox :
-!!
 !!    @param zprof :
-!!
 !!    @param nemprof :
-!!
 !!    @param temprof :
-!!
 !!    @param nerprof :
-!!
 !!    @param terprof :
 !!
 !**********************************************************************
@@ -261,12 +271,9 @@
 !!
 !!    @param y : input array being fitted, supposing X is evenly
 !!               distributed between [0,1]
-!!
 !!    @param ny : number of points
-!!
 !!    @param alpa : return fitting coefficients in its first nalpa
 !!                  elements.  Y(x)=a0+a1*x+a2*x^2+...
-!!
 !!    @param nalpa : number of coefficients
 !!
 !**********************************************************************
@@ -338,12 +345,9 @@
 !!
 !!    @param y : input array being fitted, supposing X is evenly
 !!               distributed between [0,1]
-!!
 !!    @param ny : number of points
-!!
 !!    @param alpa : return fitting coefficients in its first nalpa
 !!                  elements.  Y(x)=a0+a1*x+a2*x^2+...
-!!
 !!    @param nalpa : number of coefficients
 !!
 !**********************************************************************
@@ -425,21 +429,21 @@
       integer*4, intent(in) :: jges,nplt
       real*8, intent(in) :: xplt(npoint),yplt(npoint)
       integer*4 i,k
-      real*8 rpath,yr1,yr2,zoutjme,zpath
+      real*8 rpath,yr1,yr2,zcntrjme,zpath
       real*8 zuper(nco2v),zlower(nco2v),rco2(nco2r),rco2in(nco2r), &
-                izout(nco2v)
+                izcntr(nco2v)
       real*8, parameter :: zcentr=0.,zlibim=-0.127_dp
 !
       rco2=100.
       rco2in=0.
       zuper=100.
       zlower=0.
-      izout=0.
+      izcntr=0.
       zuperts(jges)=100.
       zlowerts=0.
-      zoutjme=zout(jges)*0.01
+      zcntrjme=zcntr(jges)*0.01
 #ifdef DEBUG_LEVEL1
-      write(6,*) ' ZOUT = ',zoutjme
+      write(6,*) ' ZMID = ',zcntrjme
 #endif
       do i=1,nplt-1
         do k=1,nco2r
@@ -463,11 +467,11 @@
           zpath=yplt(i)+yr1*(yplt(i+1)-yplt(i))/(xplt(i+1)-xplt(i))
 !          if(zpath.ge.zcentr) zuper(k)=zpath
 !          if(zpath.le.zcentr) zlower(k)=zpath
-!          if(zpath.ge.zoutjme) zuper(k)=zpath
-!          if(zpath.le.zoutjme) zlower(k)=zpath
-          izout(k)=izout(k)+1
-          if(izout(k).eq.1) zuper(k)=zpath
-          if (izout(k).eq.2) then
+!          if(zpath.ge.zcntrjme) zuper(k)=zpath
+!          if(zpath.le.zcntrjme) zlower(k)=zpath
+          izcntr(k)=izcntr(k)+1
+          if(izcntr(k).eq.1) zuper(k)=zpath
+          if (izcntr(k).eq.2) then
             zlower(k)=zpath
             if (zuper(k).lt.zpath) then
               zlower(k)=zuper(k)

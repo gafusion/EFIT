@@ -21,7 +21,7 @@ RE,zeros, "(array) Major radius of E-coils, it will be read from the 1st column 
 RF,zeros, "(array) Major radius of F-coils, if this variable is not part of the namelist, it will be read from the 1st column of the first NFCOIL lines after the namelist."
 RVS,zeros, "(array) Major radius of vessel segments, it will be read from the 1st column of the first NVESEL lines after the E-coils (if they are not in the namelist)."
 RSI,zeros, "(array) Major radius of flux loops in m, if this variable is not part of the namelist, it will be read from the 1st column of the NSILOP lines after the F-coils (if they are not in the namelist)."
-RSISVS,zeros, (array) Resistivity of vessel segments
+RSISVS,zeros, (array) Resistance of vessel segments (Ohm)
 SMP2,zeros, (array) Lengths of magnetic probes in m
 TURNFC,zeros, (array) Number of turns made by each set of F-coils (expected as part of EFIT the input and output currents)
 VSID,, (integer array) Indices where vessel current Green functions will be stored in table

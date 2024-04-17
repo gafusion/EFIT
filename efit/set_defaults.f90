@@ -95,6 +95,7 @@
       kwwfnc=0
       kwwknt=0
       kzeroj=0
+      lead_rank=0
       limid=33
       lring=0
       msebkp=0
@@ -165,6 +166,11 @@
       vbit=10.
       vsdamp=0
       vzeroj=0.0
+      sigjtr=0.0
+      fwtjtr=0.0
+      fwtjtrin=0.0
+      cjtr=0.0
+      chijtr=0.0
       v30lt=0.0
       v30rt=0.0
       v210lt=0.0
@@ -198,8 +204,8 @@
 !--------------------------------------------------------------------- 
       if ((kdata.eq.5).and.(kdata.eq.6)) then
         appendsnap='KG'
-        fwtcur=1.
-        fwtbp=1.
+        fwtcur=1.  ! TODO: why is this wanted?
+        fwtbp=1.  ! TODO: why is this wanted?
         iout=1                 ! default - write fitout.dat
         kffcur=3
         kppcur=3
@@ -216,7 +222,7 @@
         bitip=0.0
         bzmse=0.0
         cfcoil=-1.
-        chigamt=0.0
+        chimse=0.0
         chilibt=0.0
         chipre=0.0
         condno=0.0
@@ -262,7 +268,7 @@
         fwtxxj=1.
         fwtxxq=1.
         gammap=1.0e+10_dp
-        ibound=0 ! hardcoded variable, not part of any namelist...
+        ibound=0
         ibtcomp=1
         ibunmn=1
         icalbet=1
@@ -425,12 +431,8 @@
         nw_ext=0
         nh_ext=0
         psin_ext(1)=-1000.0 
-        sign_ext=1.0
-        cratio_ext=1.0
         cratiop_ext=1.0
         cratiof_ext=1.0
-        scalepp_ext=1.0
-        scaleffp_ext=1.0
 
         cgama=0.0
         calpa=0.0

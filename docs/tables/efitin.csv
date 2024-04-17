@@ -16,7 +16,7 @@ ELOMIN,,See namelist IN1.
 ERRMIN,,See namelist IN1.
 ERROR,,See namelist IN1.
 FCURBD,,See namelist IN1.
-FITDELZ,,See namelist IN1.
+FITDELZ,,See namelist INWANT.
 FITSIREF,,See namelist IN1.
 FITZTS,,See namelist IN1.
 FWACOIL,,See namelist IN1.
@@ -78,6 +78,7 @@ LOOKFW,,See namelist IN1.
 LOPLIM,,See namelist IN1.
 MSE_QUIET,,See namelist INS.
 MSE_SPAVE_ON,,See namelist INS.
+MSE_STRICT,,See namelist INS.
 MSE_USECER,,See namelist INS.
 MSEBKP,,See namelist INS.
 MSEFITFUN,,See namelist INS.
@@ -94,6 +95,8 @@ NEXTRA,, See namelist IN1.
 NICOIL, 1, "| Switch to turn on magnetic compensation for contributions due to I coil currents.
 | 1 = compensation on (default)
 | 0 = compensation off"
+OK_30RT,,See namelist INS.
+OK_210LT,,See namelist INS.
 PCURBD,,See namelist IN1.
 PSIWANT,,See namelist IN1.
 QVFIT,,See namelist IN1.
@@ -113,7 +116,7 @@ STABDZ,-1e-4,
 STORE_DIR,,"destination for output EQDSK files if ISTORE = 1, default = /link/store/"
 TABLE_DIR,,"area where Green's function tables and the configuration file mhdin.dat (and pcsnames.dat if used) are to be found. default = /link/efit/ (UNIX), lao$efund (VAX)"
 TIMEB,, Start time(?) in ms. (Does this override interactive input?)
-T_MAX_BEAM_OFF,0.0,"Maximum MSE beam offset time, in milliseconds."
+T_MAX_BEAM_OFF,,See namelist INS.
 USE_ALTERNATE_POINTNAMES,0,"If non-zero, PCS data specified in file ALTERNATE_POINTNAME_FILE are used."
 USE_CONSISTENT_DATA,,"When true, the data used to form constraints will be the same regardless of how many timeslices are being loaded.  (One caveat is if the variable size limit is hit, not all data will be fetched - see ntims/npefit in the code.)  Setting this to false will restore the legacy data fetching.  Default = .true."
 VSDAMP,,See namelist IN1.

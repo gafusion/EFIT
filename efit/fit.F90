@@ -3,9 +3,8 @@
 !>
 !!    fit carries out the fitting and equilibrium iterations.
 !!
-!!    @param jtime : time index
-!!
-!!    @param kerror : error flag
+!!    @param jtime : Time index
+!!    @param kerror : Error Flag
 !!
 !**********************************************************************
       subroutine fit(jtime,kerror)
@@ -31,7 +30,7 @@
       cjeccd=0.0
       lflag=0
       iend=mxiter+1
-      if (iconvr.eq.3) iend=1
+      if(iconvr.eq.3) iend=1
       current_profile: do i=1,iend
         if (i.gt.1) then
           iwantk=iwantk+1
@@ -132,7 +131,7 @@
                 jerror(jtime) = 1
                 return
               endif
-            end if
+            endif
           endif
 
 #ifdef DEBUG_LEVEL2
@@ -147,7 +146,8 @@
         end do equilibrium
       end do current_profile
       if ((nbdry.le.0).and.(ivacum.eq.0).and.(iconvr.ne.4)) then
-        call errctrl_msg('fit','not converged, reached max iterations',2)
+        if(rank.eq.0 .or. ttime.gt.1) &
+          call errctrl_msg('fit','not converged, reached max iterations',2)
         lflag=1
       endif
 2020  continue
@@ -181,7 +181,7 @@
 !!
 !**********************************************************************
       subroutine residu(nx,jtime,idone)
-      use commonblocks,only: psiold,psipold
+      use commonblocks,only: psiold
       include 'eparm.inc'
       include 'modules1.inc'
       implicit none
@@ -280,10 +280,8 @@
       endif
       call flush(6)
 #ifdef DEBUG_LEVEL1
-      write (nttyo,*) 'cratio,cratio_ext,cratiop_ext,cratiof_ext= ', &
-        cratio,cratio_ext,cratiop_ext,cratiof_ext
-      write (nttyo,*) 'scalepp_ext,scaleffp_ext= ', &
-        scalepp_ext,scaleffp_ext
+      write (nttyo,*) 'cratio,cratiop_ext,cratiof_ext= ', &
+        cratio,cratiop_ext,cratiof_ext
 #endif
       return
 10009 format (x,'r=',i3,1x,'t=',i6,1x,'iter',i3.3, &

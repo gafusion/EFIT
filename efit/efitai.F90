@@ -87,15 +87,13 @@
       nwnh=nw*nh
       nh2=2*nh
       nwrk=2*(nw+1)*nh
-!      nwwf=2*nw
-      nwwf=3*nw
-      nwf=nwwf
+!      nwf=2*nw
+      nwf=3*nw
       kubicx = 4
       kubicy = 4
       lubicx = nw - kubicx + 1
       lubicy = nh - kubicy + 1
       kujunk = kubicx*kubicy*lubicx*lubicy
-      boundary_count=2*nh+2*(nw-2)
       lr0=nw-krord+1
       lz0=nh-kzord+1
       nxtrap=npoint
@@ -173,14 +171,14 @@
         call print_header()
         if(idebug>=2) write(6,*) ' Entering data_input subroutine'
 
-        call data_input(ks,iconvr,ktime,kerror)
+        call data_input(ks,ktime,kerror)
 
         if(idebug>=2) write(6,*) ' Entering errctrl_setstate'
         call errctrl_setstate(rank,time(ks))
         if (kerror.gt.0) go to 500
         if (iconvr.lt.0) go to 500
         if (kautoknt .eq. 1) then
-           call autoknot(ks,iconvr,ktime,kerror)
+           call autoknot(ks,ktime,kerror)
         else
 !----------------------------------------------------------------------
 !--  initialize current profile                                      --
