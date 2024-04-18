@@ -2345,7 +2345,7 @@
         nload=nload+1
         cdelz(nniter)=brsp(nload)*scaledz*100.*relaxdz
       else
-        cdelz(nniter)=0.0
+        if(nniter.gt.0) cdelz(nniter)=0.0
       endif
       if (iacoil.eq.0) then
         caccurt(jtime,:)=0.0
