@@ -145,7 +145,7 @@
 !---------------------------------------------------------------------------
 !--   close limiter if it is an open curve
 !---------------------------------------------------------------------------
-      if (abs(xlim(1)-xlim(limitr)).gt.1.e-6 .and. &
+      if (abs(xlim(1)-xlim(limitr)).gt.1.e-6 .or. &
           abs(ylim(1)-ylim(limitr)).gt.1.e-6) then
         limitr=limitr+1
         xlim(limitr)=xlim(1)
