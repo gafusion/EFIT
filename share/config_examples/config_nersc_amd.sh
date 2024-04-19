@@ -18,7 +18,7 @@ case $NERSC_HOST in
 
 # Determine architecture from programming environment
     comp=aocc
-    io_ver=3.0
+    io_ver=4.1
     arch=x86_64
     crayroot=/opt/cray/pe
 
