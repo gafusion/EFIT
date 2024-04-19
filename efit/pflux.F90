@@ -43,7 +43,7 @@
       !$omp target teams distribute parallel do
       do i=1,nwnh
         psiold(i)=psi(i)
-        psipold(i)=psipla(i)
+        psipold(i)=0.0
       enddo
 !
       buneman_green: if ((ibunmn.eq.1).or. &
