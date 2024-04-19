@@ -18,7 +18,7 @@ case $NERSC_HOST in
 
 # Determine architecture from programming environment
     comp=nvidia
-    io_ver=20.7
+    io_ver=23.3
     arch=x86_64
     crayroot=/opt/cray/pe
 
