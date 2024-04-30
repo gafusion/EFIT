@@ -191,14 +191,24 @@
 #if defined(USE_MDS)
       do i=1,3
         ierlop=0
+        ndenv(i) = '\'//ndenv(i) ! use tag name instead of relative path
         call amdata(nshot,ndenv(i),i1,ierlop,denvt(1:np,i), &
                     np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact)
-        if(ierlop.eq.0) denvt(1:np,i)=denvt(1:np,i)*50.0
+        if (ierlop.eq.0) then
+          denvt(1:np,i)=denvt(1:np,i)*50.0
+        else
+          write(nttyo,*) "ERROR: could not load from MDS+ ", ndenv(i)
+        endif
       enddo
       ierlop=0
+      ndenr(1) = '\'//ndenr(1) ! use tag name instead of relative path
       call amdata(nshot,ndenr(1),i1,ierlop,denrt(1:np,1), &
                   np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact)
-      if(ierlop.eq.0) denrt(1:np,1)=denrt(1:np,1)*50.0
+      if (ierlop.eq.0) then
+        denrt(1:np,1)=denrt(1:np,1)*50.0
+      else
+        write(nttyo,*) "ERROR: could not load from MDS+ ", ndenr(1)
+      endif
 #else
       write(nttyo,*) "WARNING: density not set because MDS+ is missing"
 #endif
@@ -1047,6 +1057,9 @@
       enddo
       stat = MdsConnect('atlas'//char(0))
       if (stat.eq.-1) then
+#ifdef DEBUG_LEVEL1
+        write(*,*) "MDSConnect error for atlas"
+#endif
         ierror = 1
         return
       endif
@@ -1054,6 +1067,9 @@
       MyTree = 'bci'
       stat = MdsOpen('bci'//char(0), nshot)
       if (mod(stat,2) .eq. 0) then
+#ifdef DEBUG_LEVEL1
+        write(*,*) "MDSOpen error for bci"
+#endif
         ierror = 1
         return
       endif
@@ -1062,6 +1078,10 @@
       stat = MdsValue('SIZE('//ptname(1:lenname)//')'//char(0), &
                       dsc, 0, ldum)
       if (mod(stat,2) .eq. 0) then
+#ifdef DEBUG_LEVEL1
+        write(*,*) "MDSValue error for ",ptname(1:lenname), &
+                   " with status ",stat
+#endif
         ierror = 1
         return
       endif
@@ -1075,7 +1095,7 @@
       allocate(dw(1:mylen),stat=errallot)
       allocate(ew(1:mylen),stat=errallot)
 
-! 20140905 tbt NOTE: This IF only checks the last allocate!
+      ! NOTE: This IF only checks the last allocate!
       if (errallot .ne. 0) then
         ierror = 1
         return
@@ -1086,6 +1106,10 @@
       t_dsc = descr(IDTYPE_FLOAT, xw4, mylen, 0) ! MDSPlus return a descriptor number
       stat=MdsValue(ptname(1:lenname)//char(0), f_dsc, 0, ldum)
       if (mod(stat,2) .eq. 0) then
+#ifdef DEBUG_LEVEL1
+        write(*,*) "MDSValue error for ",ptname(1:lenname), &
+                   " with status ",stat
+#endif
         ierror = 1
         return
       endif
@@ -1097,6 +1121,9 @@
       mave = iabs(kave)
       if(ierror .gt. 0) return
       if (mylen.lt.2) then
+#ifdef DEBUG_LEVEL1
+        write(*,*) "MDS+ error with mylen"
+#endif
         ierror = 1
         return
       endif
@@ -1114,6 +1141,9 @@
       endif
       if(nnp .eq. 0) ktime_err = 1
       if (ktime_err .eq. 1) then
+#ifdef DEBUG_LEVEL1
+        write(*,*) "MDS+ time error"
+#endif
         ierror=1
         return
       endif
