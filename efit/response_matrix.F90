@@ -30,7 +30,7 @@
       integer*4, intent(out) :: ichisq,kerror
       integer*4 i,j,kk,m,mk,mp1,n,ne,nj,nk,nkk,nmw,ier,info,mcentral, &
                 ncrsp,need,needs,nfedge,nfffff,nkb,nload,npedge,nsavdz,nsq
-      real*8 brspmin,cdelznow,cm,cmbr,cmbz,cmv,drgam,erbot,erup,ework, &
+      real*8 brspmin,cm,cmbr,cmbz,cmv,drgam,erbot,erup,ework, &
              fwtbdr,fwtbpp,fwtxxa,fwtxxf,fwtxxo,pcw,pp0,ppw,pres0,prew0, &
              ptop0,pwop0,pwp0r2,saiold,saisq,scadelz,siedge,t,toler,xjj, &
              ysiwant,rdimw

@@ -46,6 +46,7 @@
       if(terror(m).ge.error_max) erflag(m,19)=19
       if(dbpli(m).ge.dbpli_diff) erflag(m,20)=20
       if(delbp(m).ge.delbp_diff) erflag(m,21)=21
+      if(fitdelz.and.cdelznow.ge.error_max) erflag(m,22)=22
       if ((elong(m).le.elomin).and.(fwtdlc.le.0.0)) then
         betap(m)=0.0
         betat(m)=0.0
@@ -166,6 +167,11 @@
         write(40,1190) delbp(m)
         lflag=erflag(m,21)
       endif
+      if (erflag(m,22).eq.22) then
+        write(nttyo,1200) cdelznow
+        write(40,1200) cdelznow
+        lflag=erflag(m,22)
+      endif
       close(unit=40)
 !
       return
@@ -191,6 +197,7 @@
  1150 format(5x,'Error #18, Qout < ',f6.0)
  1160 format(5x,'Error #18, Qout > ',f6.0,' or < ',f6.0)
  1170 format(5x,'Error #19, error > ',e10.3)
- 1180 format(5x,'Error #20, Bp+li/2 not consistent , error = ',e10.3)
- 1190 format(5x,'Error #21, Bp not consistent , error = ',e10.3)
+ 1180 format(5x,'Error #20, Bp+li/2 not consistent, error = ',e10.3)
+ 1190 format(5x,'Error #21, Bp not consistent, error = ',e10.3)
+ 1200 format(5x,'Error #22, delz term does not vanish, delz = ',e10.3)
       end subroutine chkerr
