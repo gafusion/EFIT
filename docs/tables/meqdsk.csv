@@ -4,6 +4,7 @@ Variable, Definition
 "CACCURT(ntime, nacoil)",	calculated A-coil currents in Amp
 "CCBRSP(ntime, nfsum)",	calculated F-coil currents in Amp-turns
 "CCHISQ(ntime, nitera)", total chi squared vs. iteration number
+"CDELZ(ntime, nitera)", delz fit parameter vs. iteration number (only used/output when FITDELZ=T)
 "CDFLUX(ntime)",	calculated diamagnetic flux
 "CECURR(ntime, nesum)",	calculated E-coil currents in Amp
 "CERROR(ntime, nitera)", poloidal flux residual vs. iteration number

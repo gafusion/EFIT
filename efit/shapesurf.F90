@@ -2714,8 +2714,7 @@
       endif
       if((itek.ge.5).and.(iges.eq.igmax)) close(unit=35)
 !-----------------------------------------------------------------------
-!--   vertical stability parameter,  reference Nuc Fusion  18(1978)1331
-!--   move out of pltout so that vertn, xnnc are indepent of itek value
+!--   vertical stability parameter, reference Nuc Fusion 18(1978)1331
 !-----------------------------------------------------------------------
       do i=1,nw
         do j=1,nh
@@ -2749,6 +2748,7 @@
       vertn(jges)=1.-pds(5)/pds(2)*rcur
       rx=rm(jges)/100.
       f_0=log(8*rcntr(jges)/abar)-2+betap(jges)+li(jges)/2+.5_dp
+      ! TODO: this has DIII-D parameters hard-coded
       delr=rcntr(jges)/100.-1.67_dp
 !-----------------------------------------------------------------------
 !--   metal wall                                                    --

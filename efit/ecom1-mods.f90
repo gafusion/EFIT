@@ -374,7 +374,7 @@
       module var_fwtdz
       logical fitdelz
       integer*4 ndelzon,ifitdelz 
-      real*8 errdelz,fgowdz,scaledz,stabdz,relaxdz,cdeljsum
+      real*8 errdelz,fgowdz,scaledz,stabdz,relaxdz,cdelznow,cdeljsum
       real*8,dimension(:),allocatable :: gmp2dz
       real*8,dimension(:),allocatable :: gsildz
       real*8,dimension(:),allocatable :: gbrdz,gbzdz,rgamdz
