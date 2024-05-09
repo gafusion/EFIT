@@ -222,7 +222,7 @@
       !use eparm,only:ntime
       integer*4,dimension(:,:),allocatable ::erflag
       integer*4 lflag
-      integer*4, parameter :: nflag=21
+      integer*4, parameter :: nflag=22
       end module var_check
 
       module var_consum
