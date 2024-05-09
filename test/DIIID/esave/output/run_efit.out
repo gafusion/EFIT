@@ -40,4 +40,5 @@
 
   fit errors, shot  186610  2400. msec. all eqdsks are still written
      Error #21, Bp not consistent , error =  0.113E+00
+     Error #22, delz term does not vanish, delz =  0.206E-02
 INFO in efit at r=  0, t=  2400: Done processing

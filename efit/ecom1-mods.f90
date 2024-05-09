@@ -222,7 +222,7 @@
       !use eparm,only:ntime
       integer*4,dimension(:,:),allocatable ::erflag
       integer*4 lflag
-      integer*4, parameter :: nflag=21
+      integer*4, parameter :: nflag=22
       end module var_check
 
       module var_consum
@@ -374,7 +374,7 @@
       module var_fwtdz
       logical fitdelz
       integer*4 ndelzon,ifitdelz 
-      real*8 errdelz,fgowdz,scaledz,stabdz,relaxdz,cdeljsum
+      real*8 errdelz,fgowdz,scaledz,stabdz,relaxdz,cdelznow,cdeljsum
       real*8,dimension(:),allocatable :: gmp2dz
       real*8,dimension(:),allocatable :: gsildz
       real*8,dimension(:),allocatable :: gbrdz,gbzdz,rgamdz

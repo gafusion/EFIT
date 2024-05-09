@@ -123,7 +123,7 @@ WBDOT, not computed (always zero)
 WDIA, diamagnetic plasma stored energy in Joules
 WMHD, plasma stored energy in Joules
 WPDOT, not computed (always zero)
-XNNC, "vertical stability parameter, vacuum field index normalized to critical index value"
+XNNC, "vertical stability parameter, vacuum field index normalized to critical index value, reference Nuc Fusion 18(1978)1331"
 YYY2, Shafranov Y2 current moment
 ZCNTR, Z of geometric center in cm
 ZCURRT, Z in cm at current centroid

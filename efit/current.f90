@@ -20,7 +20,7 @@
       integer*4, intent(out) :: kerror
       integer*4 i,j,kk,n,nj,ier,info,initc,kknow,n1set,ncrsp,nnow, &
                 nownow,npcur2
-      real*8 aqax,brspmin,calpao,cdeljnow,cdelznow,cgamao,cj0,cm,cwant0, &
+      real*8 aqax,brspmin,calpao,cdeljnow,cgamao,cj0,cm,cwant0, &
              cwant1,ddpsi,fwtcux,fwtqqq,fwtxxi,fwtxxn,fwtxxx,pp0,ppw, &
              pres0,prew0,ptop0,pwop0,pwp0r2,rdiml,rdimw,rxx2,rxxw,rxxx, &
              rxxxf,siedge,sinow,t,tcurrt,tcurrtpp,tcurrtffp,toler,tz, &

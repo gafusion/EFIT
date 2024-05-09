@@ -57,7 +57,7 @@
                 id_fwtprw,id_cpresw,id_saiprw,id_czmaxi,id_cchisq, &
                 id_cerror,id_chifin,id_chitot,id_darea,id_xrsp, &
                 id_sizeroj,id_vzeroj,id_sigjtr,id_fwtjtr,id_cjtr, &
-                id_chijtr,idim_kzeroj
+                id_chijtr,idim_kzeroj,id_cdelz
       real*8 xdum,vm3,betatnx
       integer*4 dim2(2),c11(2),cnn(2),imap(2),stride(2)
       character(len=4) last
@@ -709,6 +709,12 @@
       call NCAPTC(nceq,id_cerror,'long_name',NCCHAR,19, &
                   'error vs. iteration',ierr)
 !
+      if (fitdelz) then
+        id_cdelz = NCVDEF(nceq,'cdelz',NCFLOAT,2,dim2,ierr)
+        call NCAPTC(nceq,id_cdelz,'long_name',NCCHAR,18, &
+                    'delz vs. iteration',ierr)
+      endif
+!
       id_chifin = NCVDEF(nceq,'chifin',NCFLOAT,1,idim_time,ierr)
       call NCAPTC(nceq,id_chifin,'long_name',NCCHAR,15, &
                   'chisq upon exit',ierr)
@@ -853,6 +859,10 @@
       call NCVPT(nceq,id_cchisq,c11,cnn,ziter,ierr)
       ziter = real(cerror(1:nitera),r4)
       call NCVPT(nceq,id_cerror,c11,cnn,ziter,ierr)
+      if (fitdelz) then
+        ziter = real(cdelz(1:nitera)/100.,r4)
+        call NCVPT(nceq,id_cdelz,c11,cnn,ziter,ierr)
+      endif
 !
       cnn(1) = kwcurn
       zwork(1:kwcurn)=real(brsp(nfsum+1:nfsum+kwcurn)/darea,r4)

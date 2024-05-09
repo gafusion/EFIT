@@ -28,9 +28,8 @@
       integer*4, intent(out) :: kerror
       integer*4 i,j,ii,jj,kk,kkkk,kknh,k1,kk1,k2,mj,mk,mjnh,mknh,mj1,mk1, &
                 iinow,imd,idelr,idelz,jtop,jlow,ier,icurfb
-      real*8 tempsum1,tempsum2,val,cdelznow,deltaz,difnow,psibar, &
-             psic1,psic2,psilu_psill,psiul_psiuu,rcurnow,sumc,vcurfi, &
-             zdwn_now,zup_now
+      real*8 tempsum1,tempsum2,val,deltaz,difnow,psibar,psic1,psic2, &
+             psilu_psill,psiul_psiuu,rcurnow,sumc,vcurfi,zdwn_now,zup_now
       real*8 pds(6)
       real*8,dimension(nwnh) :: psipla,psikkk,gfbsum
       logical vfeed
