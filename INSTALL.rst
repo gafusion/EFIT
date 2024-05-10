@@ -15,14 +15,20 @@ and nersc cori supercomputer
 iris (loads DIII-D Green functions by default, to use others set the environment variable link_efit=/fusion/projects/codes/efit/efitai/efit_support_files/{machine}/ after loading the module)::
 
     module purge
-    module load efitai/{pgi pgi_ser gnu gnu_ser intel intel_ser}
+    module load efitai/{gnu gnu_ser pgi pgi_ser intel intel_ser}
     efit {grid_size}
 
-cori (intallation is pending ERCAP setup) (you will need to be added to the project repo in order to access these installations - email kruger@txcorp.com) ::
+omega (this version is part of the default module so the first 2 lines below are only needed when changing from the gnu build, the Green Functions are the same as on iris)::
 
-    module swap PrgEnv-${PE_ENV,,} PrgEnv-{gnu,intel,cray,nvidia,aocc}
+    module purge
+    module load efit/{gnu gnu_ser nvidia nvidia_ser intel intel_ser}
+    efit {grid_size}
+
+perlmutter (you will need to be added to the project repo in order to access these installations - email efit-support@fusion.gat.com) ::
+
+    module swap PrgEnv-${PE_ENV,,} PrgEnv-{gnu,cray,nvidia,aocc}
     export link_efit=/global/common/software/efitai/efit_support_files/{device}/
-    /global/common/software/efitai/{cori,perlmutter}/{gnu,intel,cray,nvidia,amd}{_ser}/efit/efit {grid_size}
+    /global/common/software/efitai/{cori,perlmutter}/{gnu,cray,nvidia,amd}{_ser}/efit/efit {grid_size}
 
 portal::
 
