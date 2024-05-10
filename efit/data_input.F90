@@ -1462,11 +1462,13 @@
         endif
       endif
       
-!--   warn that idebug, jdebug, and ktear inputs are deprecated
+!--   warn that idebug, jdebug, kbound and ktear inputs are deprecated
       if (idebug.ne.0) write(*,*) &
       "idebug input variable is deprecated, set cmake variable instead"
       if (jdebug.ne."NONE") write(*,*) &
       "jdebug input variable is deprecated, set cmake variable instead"
+      if(kbound.ne.0) write(*,*) &
+      "old boundary tracing method is deprecated"
       if(ktear.ne.0) write(*,*) &
       "tearing calculations don't exist, ktear is deprecated"
 !--   roundoff differences can throw off zlim if limiter corners

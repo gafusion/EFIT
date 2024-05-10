@@ -49,7 +49,7 @@
            ishot,itime,limfag,radold,kbound,tolbndpsi)
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      double precision, dimension(nwh) :: psi, zero
+      double precision, dimension(nwh) :: psi,zero
       double precision, dimension(nw) :: x
       double precision, dimension(nh) :: y
       double precision, dimension(npoint) :: xcontr,ycontr
@@ -70,7 +70,6 @@
       !  end do
       !end do
       !close(unit=93)
-
 !----------------------------------------------------------------------
 !--   nerr=10000, negative plasma current                            --
 !----------------------------------------------------------------------
@@ -80,26 +79,6 @@
         do i=1,nwh
           psi(i)=-psi(i)
         end do
-      end if
-!------------------------------------------------------------------------
-!--   BBrown's version of BOUND                                        --
-!------------------------------------------------------------------------
-      if (ix.ge.0 .and. kbound.ne.0) then
-        !call old_new    (psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
-        !     zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
-        !     ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
-        !     ishot,itime,limfag,radold,kbound)
-        if (ncontr.lt.3) then
-          nerr=3
-          call errctrl_msg('bound','Less than 3 contour points found')
-        end if
-        if (nosign.eq.1) then
-          do i=1,nwh
-            psi(i)=-psi(i)
-          end do
-          !psivl=-psivl ! not yet set
-        end if
-        return
       end if
 
       nerr=0
