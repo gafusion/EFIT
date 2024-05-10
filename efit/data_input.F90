@@ -832,7 +832,6 @@
           call read_h5_ex(nid,"iaveus",iaveus,h5in,h5err)
           call read_h5_ex(nid,"sgtimin",sgtimin,h5in,h5err)
           call read_h5_ex(nid,"kwripre",kwripre,h5in,h5err)
-          call read_h5_ex(nid,"kbound",kbound,h5in,h5err)
           call read_h5_ex(nid,"alphafp",alphafp,h5in,h5err)
           call read_h5_ex(nid,"kframe",kframe,h5in,h5err)
           call read_h5_ex(nid,"zbound",zbound,h5in,h5err)
