@@ -165,7 +165,7 @@ if (${CMAKE_Fortran_COMPILER_ID} MATCHES "Cray")
   set(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 elseif (${CMAKE_Fortran_COMPILER_ID} MATCHES "GNU")
   option(__gfortran "using gfortran FC Compiler" on)
-  set(CMAKE_Fortran_FLAGS "-fno-second-underscore -fdefault-real-8 -fdefault-double-8 ${CMAKE_Fortran_FLAGS}")
+  set(CMAKE_Fortran_FLAGS "-fno-second-underscore -fdefault-real-8 -fdefault-double-8 -ffpe-summary=none ${CMAKE_Fortran_FLAGS}")
   #set(CMAKE_Fortran_FLAGS "-Wimplicit-interface -Wimplicit-procedure ${CMAKE_Fortran_FLAGS}")
   # Don't allow automatic reallocation (F2003 standard) as it may be inefficient
   # inside loops, flag only needed for gfortran versions > 4.6  
