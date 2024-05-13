@@ -49,27 +49,27 @@ IBATCH, 0, UNUSED (input and output only)
 IBOUND, 0, "| Controls search points for boundary find 
 | 0 = searches between inboard limiter and grid center
 | 1 = searches between outboard limiter and grid center"
-IBTCOMP,1,"| (Integer flag) Toroidal field pickup compensation. Subtract contributions to poloidal magnetic field probe measurements due to pickup from toroidal field coil (only used in snap mode, not relevant to k-files)
+IBTCOMP, 1, "| (Integer flag) Toroidal field pickup compensation. Subtract contributions to poloidal magnetic field probe measurements due to pickup from toroidal field coil (only used in snap mode, not relevant to k-files)
 | 0 = no compensation
 | 1 = apply compensation"
-IBUNMN,1, "| (Integer flag) Buneman solver method.
+IBUNMN, 1, "| (Integer flag) Buneman solver method.
 | 0 = Green's method.
 | 1 = Buneman's method or single cyclic reduction (see ISOLVE).
 | 2 = Buneman/single cyclic reduction until error is less than 1e-3 then Green's method.
 | 3 = same as 1.
 | 4 = same as 2."
-ICALBET,1, "| - >0 compute beta with various normalizations and output to FITOUT.DAT. (Default=1)
+ICALBET, 1, "| - >0 compute beta with various normalizations and output to FITOUT.DAT. (Default=1)
 | -<=0 don't"
-ICINIT,2,"| (Integer flag) Current Initialization. Plasma current profile initialization parameter.
+ICINIT, 2, "| (Integer flag) Current Initialization. Plasma current profile initialization parameter.
 | 1 = elliptical and uniform flux surface for all timeslices (EELIP,AELIP,RELIP,ZELIP).
 | 2 = elliptical and parabolic for all timeslices (default).
 | -2 = use information from ESAVE.DAT (from an existing EFIT run) for first timeslice and previous timeslice subsequently.
 | -3 = use existing solution from GEQDSK_EXT or hdf5 file for all timeslices (must have same dimensions).
 | -4 = use existing solution from GEQdSK_EXT or hdf5 file for first timeslice and previous timeslice subsequently.
 | -12= elliptical and parabolic first timeslice and previous timeslice subsequently."
-ICNTOUR,,"(Integer flag) Contour.
+ICNTOUR,, "(Integer flag) Contour.
 | + = bypass CNTOUR routine."
-ICONSI,,"| How to make contour plots of fields
+ICONSI,, "| How to make contour plots of fields
 | + = for fluxes and poloidal field contour plot.
 | 1 = Default, horizontal and vertical scans for both fluxes and field plot.
 | 2, 4 = use 'SCALE' in DISSPLA call for fluxes plot.
@@ -79,16 +79,16 @@ ICONVR,2,"| Specify solution mode
 | 2 = fitting mode until chisq reverses, must satisfy minimum error ERRMIN, minimum 8 iterations (or below min elongation ELOMIN), and minimum chisq SAICON (default).
 | 3 = equilibrium mode, P' and FF' are fixed and must be specified (see PROFILE_EXT). Only a limited number of parameters can be fit.
 | - = Green's table calculations for -ICONVR filaments and write file RPFXX.DAT for use with MFIT."
-ICUTFP,0,"| 0 = enforce vacuum outside of LCFS (Default).
+ICUTFP, 0, "| 0 = enforce vacuum outside of LCFS (Default).
 | 2 = to allow force-free current to flow in scrape-off layer (width set by ALPHAFP)."
-ICURRT,2,"| (Integer flag) Sets which current profile parametrization to use
+ICURRT, 2, "| (Integer flag) Sets which current profile parametrization to use
 | 1 = analytic (used with Solovev eq).
 | 2 = linear polynomials for P' and FF' or spline(default).
 | 3 = not implemented.
 | 4 = GAQ type current profile.
 | 5 = same as 2 but include toroidal rotation."
-IDFILA,,Filament set for MFIT (not used in EFIT).
-IECOIL,0,"| (Integer flag) E-coil plotting
+IDFILA,, Filament set for MFIT (not used in EFIT).
+IECOIL, 0, "| (Integer flag) E-coil plotting
 | 0 = do not plot E coils (Default)
 | 1 = plot E coils with color coding for different connections"
 IERCHK,1,"| (Integer flag) Error Check.
@@ -97,10 +97,10 @@ IERCHK,1,"| (Integer flag) Error Check.
 | 2 = don't output any result files (g, a, m, etc.) if checks fail, excluding the error and chi squared check
 | 3 = don't output any result files (g, a, m, etc.) if any error checks fail
 | - = don't call shapesurf to compute plasma quantities or output anything besides the a-file if fit hasn't converged (intended for use in an optimization loop)"
-IEXCAL,0, 1 = plot magnetic signals.
-IMAGSIGMA,0, 1 = computed nonlinear magnetic uncertainties (deprecated).
-INPUT_DIR,,"See namelist EFITIN"
-IOUT,1,"| Output file option. This is a bitwise switch except that 6 overwrites 2 and 4.
+IEXCAL, 0, 1 = plot magnetic signals.
+IMAGSIGMA, 0, 1 = computed nonlinear magnetic uncertainties (deprecated).
+INPUT_DIR,, "See namelist EFITIN"
+IOUT, 1, "| Output file option. This is a bitwise switch except that 6 overwrites 2 and 4.
 | Multiple output options may be achieved by adding up the values of each option.
 | 0 = do NOT write FITOUT.DAT, measurement file, rstarkxx.dat, esave.dat
 | 1 = write FITOUT.DAT (default)
@@ -135,22 +135,22 @@ ITEK,0,"| plotting option. For MSE electric field corrections KEECUR > 0 must se
 | >100= the plot data file for each timeslice wil have a specific name pl(shot).(time).
 | 105=plot data file pl(shot).(time) for every time step.
 | 110+n= pl(shot).(time) for every n time steps."
-ITIME,,"Time in milliseconds of slice to analyze."
-ITIMEU,0,"Microseconds for timeslice to analyze. (added to ITIME)"
-ITRACE,1,"| 1 = compute external separatrix distance. (default)
+ITIME,, "Time in milliseconds of slice to analyze."
+ITIMEU, 0, "Microseconds for timeslice to analyze. (added to ITIME)"
+ITRACE, 1, "| 1 = compute external separatrix distance. (default)
 | 2 = compute and plot."
 IWEIGH, 0,
 IXRAY,, "| 0 = do not plot soft X-ray (default)
 | 1 = plot Poroidal SXR arrays (implied by negative ITEK)
 | 2 = plot Toroidal SXR arrays for shot > 91000
 | 3 = both"
-IXSTRT,,"| 1 = trace field line from outside (default)
+IXSTRT,, "| 1 = trace field line from outside (default)
 | -1 = trace from inside
 | 2 = trace from both inside and outside"
 JZFILA,zeros,Z grid indicies to compute filament Green table at.  Only used when ICONVR<0 and AELIP<=0.
 KAKITER,25,Maximum number of outer fitting iterations during knot optimization (same use as MXITER before final solution).  Only active when KAUTOKNT>0.
 KAKLOOP,1,Number of times to loop over every knot position when performing optimization.  Only active when KAUTOKNT>0.
-KAUTOKNT,0,"| - (Integer flag) Activates the knot location optimization.
+KAUTOKNT, 0, "| - (Integer flag) Activates the knot location optimization.
 | 0 = use input knot locations (default).
 | 1 = optimize knot locations to find lowest possible GS error and chi squared
 | 2 = optimize knot locations until convergence is reached
@@ -158,47 +158,46 @@ KAUTOKNT,0,"| - (Integer flag) Activates the knot location optimization.
 KBETAPR,,"| - (Integer flag) Specify value of pressure at boundary for integration to calculate beta.
 | 0 = take pressure at boundary to be 0 (default).
 | 1 = get pressure at boundary from kinetic data."
-KBOUND,0,"| 0 = run bound algorithm? (Default)
-| otherwise, don't?"
-KCALDIA,0,"| (Integer flag) Determines if compensation is applied to diamagnetic loop data.
+KBOUND, 0, (old boundary tracing method is deprecated)
+KCALDIA, 0, "| (Integer flag) Determines if compensation is applied to diamagnetic loop data.
 | 0 = use compensated diamagnetic flux. (default)
 | 1 = use uncompensated diamagnetic flux directly from PTDATA calls
 | 2 = skip diamagnetic data fetching entirely."
-KEQDSK,1,"| Format of A and G EQDSK files
+KEQDSK, 1, "| Format of A and G EQDSK files
 | 0 = binary EQDSKs
 | 1 = ascii EQDSKs (default)
 | 2 = ascii A EQDSK only, no G
 | -1 = binary A EQDSK only, no G"
-KERSIL,3, "| ""Reference Flux Loop Uncertainty Switch"". This parameter controls how the uncertainty is set for the reference flux loop (NSLREF).
+KERSIL, 3, "| ""Reference Flux Loop Uncertainty Switch"". This parameter controls how the uncertainty is set for the reference flux loop (NSLREF).
 | 1 = use the maximum coil current to set the reference uncertainty
 | 2 = use a hard-coded uncertainty of 0.001 for the reference (matches probe 8 on D-III)
 | 3 = use the max of coil current, plasma current, and bit uncertainty for the reference (default)"
-KFRAME,0,Something to do with plotting?
+KFRAME, 0, Something to do with plotting?
 KINPUT, 0, "| Write out M(SHOT).(TIME+1) file during execution in equilibrium mode which can be used as input to execution in fitting mode. (Computed signals at probes are used as simulated input for fitting.)  WARNING: this file will be overwritten if IOUT=4.
 | >0 write out M(SHOT).(TIME+1) file.
 | <=0 Don't write file"
-KLABEL,,Something to do with plotting.
-KPLOTP,1,"1 = overlay pressure and flux surfaces, match at outboard side.
+KLABEL,, Something to do with plotting.
+KPLOTP, 1, "1 = overlay pressure and flux surfaces, match at outboard side.
 | 2 = match at inboard side."
 KSIGMA,, See IMAGSIGMA (deprecated)
 KSKIPVS, 0,1 = search for external separatrix for attached current model.
-KTEAR,,(deprecated)
-KWRIPRE,,"| Make output files
+KTEAR,, (deprecated)
+KWRIPRE,, "| Make output files
 | 1 = write out pressure and q profile as function of sqrt(Vn) in files Q(shot).(time)_ (q0 files).
 | 2 = S(shot).(time)- --- in normalized flux space.
 | 3 = R(shot).(time)_ --- in rho space.
 | 0 = Don't write either file (default).
 | (How are values of independent variables chosen?)"
-LIMFAG,2,"| Specify which method to use to determine which grid points are inside vessel.
+LIMFAG, 2, "| Specify which method to use to determine which grid points are inside vessel.
 | 1 = assume convex geometry
 | 2 = general (no geometry assumption"
-LIMVS,1,1 = use limiter contour rather than vessel for attached current model.
-LIMID,33,"Suffix used to identify which of several standard files containing limiter information to use."
-LIMITR,-33,"| Number of limiter points (number of valid points in XLIM and YLIM arrays) except for shots <=76756, where number of limiter points is this number+13
+LIMVS, 1, 1 = use limiter contour rather than vessel for attached current model.
+LIMID, 33, "Suffix used to identify which of several standard files containing limiter information to use."
+LIMITR, -33, "| Number of limiter points (number of valid points in XLIM and YLIM arrays) except for shots <=76756, where number of limiter points is this number+13
 | <0 read from a standard file or use a limiter from an existing solution if GEQDSK_EXT is set (Default).
 | 1000+number number of points for symmetrized solution (input only top half of limiter points)."
 SILOPLIM,0, Controls whether the boundary from the previous timeslice (on the same processor) is used as an initial guess for finding the boundary at the current time.  The previous solution is only used when the maximum absolute flux loop difference between the current and previous iteration is less than this value.
-MXITER,25,"| Maximum number of outer fitting iterations (limited to KXITER, see SETUP namelist) Set to 1 for equilibrium solutions. Set negative for iteration history output to terminal during EFIT execution."
+MXITER, 25, "| Maximum number of outer fitting iterations (limited to KXITER, see SETUP namelist) Set to 1 for equilibrium solutions. Set negative for iteration history output to terminal during EFIT execution."
 N1COIL,0,"Compensation for magnetic probe pickup from N1 coil
 | 2 = compensation for n1 coil.
 | 0 = no compensation (default)."

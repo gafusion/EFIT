@@ -328,7 +328,6 @@ Hardcoded
 
 Unfortunately some variables are not a part of any namelists and can only be manipulated from
 within the source code...
-Example: see IBOUND
 
 .. csv-table:: hardcoded
    :file: tables/hardcoded.csv

@@ -454,8 +454,7 @@
       call bound(psi,nw,nh,nwnh,psiots,xmins,xmaxs,ymins,ymaxs,zeros, &
                  rgrid,zgrid,xguess,yguess,jges,limtrs,xlims,ylims, &
                  xouts,youts,nfouns,xlmins,npoint,rymins,rymaxs,dpsis, &
-                 zxmins,zxmaxs,nerr,ishot,itime,limfag,radbou,kbound, &
-                 tolbndpsi)
+                 zxmins,zxmaxs,nerr,ishot,itime,limfag,radbou,tolbndpsi)
       if (nerr.gt.0) then
         kerror = 1
         return
@@ -1431,7 +1430,7 @@
                  rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
                  xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
                  rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-                 limfag,radum,kbound,tolbndpsi)
+                 limfag,radum,tolbndpsi)
       if (nerr.gt.0) then
         kerror = 1
         return
@@ -1645,7 +1644,7 @@
                  rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
                  xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
                  rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-                 limfag,radum,kbound,tolbndpsi)
+                 limfag,radum,tolbndpsi)
       if (nerr.gt.0) then
         kerror = 1
         return
@@ -1799,7 +1798,7 @@
                  rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
                  xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
                  rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-                 limfag,radum,kbound,tolbndpsi)
+                 limfag,radum,tolbndpsi)
       if (nerr.gt.0) then
         kerror = 1
         return
@@ -1951,7 +1950,7 @@
                  rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
                  xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
                  rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-                 limfag,radum,kbound,tolbndpsi)
+                 limfag,radum,tolbndpsi)
       if (nerr.gt.0) then
         kerror = 1
         return
@@ -2162,7 +2161,7 @@
                    rgrid,zgrid,rexpmx,zexpmx,ixyz,limtrs,xlims,ylims, &
                    xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
                    rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-                   limfag,radum,kbound,tolbndpsi)
+                   limfag,radum,tolbndpsi)
         if (nerr.gt.0) then
           kerror = 1
           return
@@ -2243,7 +2242,7 @@
                    rgrid,zgrid,xxtras,yxtras,ixyz,limtrs,xlims,ylims, &
                    xxtra(1,ixl),yxtra(1,ixl),npxtra(ixl),xlims(1),nxtrap, &
                    rymin,rymax,dpsi,zxmin,zxmax,nerr,ishot,itime, &
-                   limfag,radum,kbound,tolbndpsi)
+                   limfag,radum,tolbndpsi)
         if (nerr.gt.0) then
          kerror = 1
          return

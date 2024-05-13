@@ -46,10 +46,10 @@
       subroutine bound(psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
            zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
            ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
-           ishot,itime,limfag,radold,kbound,tolbndpsi)
+           ishot,itime,limfag,radold,tolbndpsi)
       use error_control
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      double precision, dimension(nwh) :: psi, zero
+      double precision, dimension(nwh) :: psi,zero
       double precision, dimension(nw) :: x
       double precision, dimension(nh) :: y
       double precision, dimension(npoint) :: xcontr,ycontr
@@ -70,7 +70,6 @@
       !  end do
       !end do
       !close(unit=93)
-
 !----------------------------------------------------------------------
 !--   nerr=10000, negative plasma current                            --
 !----------------------------------------------------------------------
@@ -80,26 +79,6 @@
         do i=1,nwh
           psi(i)=-psi(i)
         end do
-      end if
-!------------------------------------------------------------------------
-!--   BBrown's version of BOUND                                        --
-!------------------------------------------------------------------------
-      if (ix.ge.0 .and. kbound.ne.0) then
-        !call old_new    (psi,nw,nh,nwh,psivl,xmin,xmax,ymin,ymax, &
-        !     zero,x,y,xctr,yctr,ix,limitr,xlim,ylim,xcontr,ycontr, &
-        !     ncontr,xlmin,npoint,rymin,rymax,dpsi,zxmin,zxmax,nerr, &
-        !     ishot,itime,limfag,radold,kbound)
-        if (ncontr.lt.3) then
-          nerr=3
-          call errctrl_msg('bound','Less than 3 contour points found')
-        end if
-        if (nosign.eq.1) then
-          do i=1,nwh
-            psi(i)=-psi(i)
-          end do
-          !psivl=-psivl ! not yet set
-        end if
-        return
       end if
 
       nerr=0
@@ -284,7 +263,7 @@
 
             ! check if the current point is outside the limiter
             dpsi=min(dpsi,abs(psivl-psilx))
-            if (psilx-psivl.ge.tolbndpsi) then
+            if (psilx-psivl.ge.tolbndpsi .and. ncontr.ne.1) then
               call zlim(zerol,n111,n111,limitr,xlim,ylim,xt,yt,limfag)
               if(zerol(1).le.0.01_dp) exit contr
             end if
@@ -2306,7 +2285,8 @@
 !>    zlim determines whether points on the (x,y) grid are
 !!    inside or outside of the boundary set by the limiters.\n
 !!
-!!    13/07/21..........WARNING added, needs fixing!
+!!    WARNING: this routine is not very accurate for points near the
+!!             limiter, so these need to be handled differently!
 !!
 !!    @param zero : 1 if inside and 0 otherwise 
 !!    @param nw : dimension of x 
@@ -2371,6 +2351,8 @@
 !                  abs(y(j)-ylim(k+1)).lt.1.e-10_dp)
 !               then roundoff errors can affect whether points are inside or
 !               out with this algorithm... more robust method needed
+!               it also appears that when x(j) is near xlim(k) it is
+!               always treated as outside, which can cause problems
                 if (y(j).le.ylim(k).and.y(j).gt.ylim(k+1) &
                   .or.y(j).ge.ylim(k).and.y(j).lt.ylim(k+1)) then
                   c=.true.
