@@ -51,7 +51,7 @@
            psibit,bitmpi,denr,denv,siref,fwtfc,brsp,bitfc,iecurr,iplim, &
            ecurrt,ifitvs,vloop,dflux,ifcurr,iavem,icprof,currn1,n1coil, &
            pnbeam,error,errmin,mxiter,xltype_180,icutfp,keqdsk,ibtcomp, &
-           fcurbd,pcurbd,kbound,alphafp,kskipvs,vsdamp,kframe,zelip, &
+           fcurbd,pcurbd,alphafp,kskipvs,vsdamp,kframe,zelip, &
            fwtdlc,sigdlc,elomin,kcalpa,kcgama,calpa,cgama,xalpa,xgama, &
            kzeroj,rzeroj,iaveus,relax,fwtec,bitec,fitsiref, &
            kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens, &
@@ -668,7 +668,7 @@
            psibit,bitmpi,denr,denv,siref,fwtfc,brsp,bitfc,iecurr,iplim, &
            ecurrt,ifitvs,vloop,dflux,ifcurr,iavem,icprof,currn1,n1coil, &
            pnbeam,error,errmin,mxiter,xltype_180,icutfp,keqdsk,ibtcomp, &
-           fcurbd,pcurbd,kbound,alphafp,kskipvs,vsdamp,kframe,zelip, &
+           fcurbd,pcurbd,alphafp,kskipvs,vsdamp,kframe,zelip, &
            fwtdlc,sigdlc,elomin,kcalpa,kcgama,calpa,cgama,xalpa,xgama, &
            kzeroj,rzeroj,iaveus,relax,fwtec,bitec,fitsiref,nw_sub,nh_sub, &
            kppfnc,kppknt,ppknt,pptens,kfffnc,kffknt,ffknt,fftens, &

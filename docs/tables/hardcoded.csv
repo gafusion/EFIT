@@ -1,8 +1,6 @@
 Variable, Default, Description
 CSTABNE,0.0,Diagonal value to set for the Ne matrix for constraints >=NCSTNE.
 CSTABTE,0.0,Diagonal value to set for the Te matrix for constraints >=NCSTTE.
-IBOUND,0,"| 0 = trace from inside wall. (default)
-| -1 = trace from outside wall."
 ISLPFC,0,When this value is set to 1 a set of flux loops on the F coils can be used.
 LICALC,1,"| Controls how the total B_pol^2 is computed when calculating the internal inductance
 | 1 = using derivatives of the poloidal flux. (default)

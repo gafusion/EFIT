@@ -107,7 +107,7 @@
                  zero,rgrid,zgrid,xguess,yguess,ixt,limitr,xlim,ylim, &
                  xout,yout,nfound,xltrac,npoint,rymin,rymax,dpsi, &
                  zxmin,zxmax,nnerr,ishot,itime, &
-                 limfag,radbou,kbound,tolbndpsi)
+                 limfag,radbou,tolbndpsi)
       if (nnerr.gt.0) then
         kerror=1
         return

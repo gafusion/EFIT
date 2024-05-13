@@ -832,7 +832,6 @@
           call read_h5_ex(nid,"iaveus",iaveus,h5in,h5err)
           call read_h5_ex(nid,"sgtimin",sgtimin,h5in,h5err)
           call read_h5_ex(nid,"kwripre",kwripre,h5in,h5err)
-          call read_h5_ex(nid,"kbound",kbound,h5in,h5err)
           call read_h5_ex(nid,"alphafp",alphafp,h5in,h5err)
           call read_h5_ex(nid,"kframe",kframe,h5in,h5err)
           call read_h5_ex(nid,"zbound",zbound,h5in,h5err)
@@ -1462,11 +1461,13 @@
         endif
       endif
       
-!--   warn that idebug, jdebug, and ktear inputs are deprecated
+!--   warn that idebug, jdebug, kbound and ktear inputs are deprecated
       if (idebug.ne.0) write(*,*) &
       "idebug input variable is deprecated, set cmake variable instead"
       if (jdebug.ne."NONE") write(*,*) &
       "jdebug input variable is deprecated, set cmake variable instead"
+      if(kbound.ne.0) write(*,*) &
+      "old boundary tracing method is deprecated"
       if(ktear.ne.0) write(*,*) &
       "tearing calculations don't exist, ktear is deprecated"
 !--   roundoff differences can throw off zlim if limiter corners

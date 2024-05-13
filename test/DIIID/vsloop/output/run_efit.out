@@ -38,4 +38,7 @@
  a(cm)      =     56.318 gapin(cm)  =     14.812 gapout(cm) =      5.890
  gaptop(cm) =     16.931 q95        =      2.943 rm(cm)     =    174.529
  zm(cm)     =     -3.214 totalchi^2 =  2.097E+01 error      =  6.536E-05
+
+  fit errors, shot  186610  2400. msec. all eqdsks are still written
+     Error #22, delz term does not vanish, delz =  0.671E-03
 INFO in efitd at r=  0, t=  2400: Done processing
