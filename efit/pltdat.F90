@@ -521,7 +521,7 @@
         endif
         call surfac(siwant,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt, &
           npoint,drgrid,dzgrid,rmin,rmax,zmin, &
-          zmax,n11,rmaxis,zmaxis,negcur,kerror)
+          zmax,n11,rmaxis,zmaxis,negcur,kerror,2)
         if (kerror.gt.0) return
         if (kthkcrv.gt.0) thcrv(nn) = 0.010_dp
         clearx(nn) = 'BLUE'
@@ -573,7 +573,7 @@
           spwant=pds(1)
           call surfac(spwant,presst,nw,nh,rgrid,zgrid,xplt,yplt, &
                       nplt,npoint,drgrid,dzgrid,rmin,rmax,zmin, &
-                      zmax,n111,rmaxis,zmaxis,negcur,kerror)
+                      zmax,n111,rmaxis,zmaxis,negcur,kerror,2)
           if (kerror.gt.0) return
           clearx(nn) = 'YELL'
           nxy(nn) = nplt
@@ -694,7 +694,7 @@
          enddo
          call surfac(xpsialp,psi,nw,nh,rgrid,zgrid,xplt,yplt,nplt, &
            npoint,drgrid,dzgrid,rvsmin,rvsmax,zvsmin, &
-           zvsmax,n00,rmaxis,zmaxis,negcur,kerror)
+           zvsmax,n00,rmaxis,zmaxis,negcur,kerror,2)
          if (kerror.gt.0) return
          if (iprobe.ne.90) then
            do i=1,nplt
@@ -5539,7 +5539,7 @@
            spwant=pds(1)
            call surfac(spwant,presst,nw,nh,rgrid,zgrid,xplt,yplt, &
                        nplt,npoint,drgrid,dzgrid,rmin,rmax,zmin, &
-                       zmax,n11,rmaxis,zmaxis,negcur,kerror)
+                       zmax,n11,rmaxis,zmaxis,negcur,kerror,2)
            if (kerror.gt.0) return
            nxy(nn) = nplt
            ndshme(nn) = 1
