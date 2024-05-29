@@ -1,79 +1,74 @@
 #!/bin/sh
 # Note: before building on an ALCF machine, you should load the cray-hdf5 module:
 #     module load cray-hdf5
+# Note: you must have ENABLE_HDF5 set to use the system NetCDF libraries
 # Note: if ENABLE_PARALLEL is on then you will have to build from a compute node to run the tests, e.g.
 #     qsub -I -l select=1 -l filesystems=home:eagle -l walltime=00:15:00 -q debug
 #   with the following modules loaded before starting the build
 #     module use /soft/modulefiles
 #     module load spack-pe-base cmake
-# Note: you must have ENABLE_HDF5 set to use the system NetCDF libraries
 
 #rm -rf CMake*
 
-arch=unknown
+comp=${PE_ENV,,}
+arch=x86_64
+crayroot=/opt/cray/pe
 system=$(hostname -f 2>&1 | sed -n -e 's/^.*hsn.cm.//p')
 env=$(module list 2>&1 | sed -n -e 's/^.*PrgEnv-//p')
 case $system in
   polaris*)
-  case $env in
-    nv*)
-   
-      # Determine architecture from programming environment
-      comp=nvidia
-      io_ver=23.3
-      crayroot=/opt/cray/pe
-   
-      # System linear algebra (no path required, set by environment)
-      SYSTEM_BLAS_SER_LIB=''
-      SYSTEM_LAPACK_SER_LIB=$SYSTEM_BLAS_SER_LIB
-   
-      # System IO libs
-      # HDF5 location is set by modules so locations are not required
-      SYSTEM_NETCDF_SER_DIR=${crayroot}/netcdf/default/${comp}/${io_ver}
-      #SYSTEM_NETCDF_PAR_DIR=${crayroot}/netcdf-hdf5parallel/default/${comp}/${io_ver}
-      ;;
-   
-    gnu*)
-   
-      # Determine architecture from programming environment
-      comp=gnu
-      math_ver=12.3
-      io_ver=12.3
-      arch=x86_64
-      crayroot=/opt/cray/pe
-   
-      # System linear algebra
-      SYSTEM_BLAS_SER_LIB=${crayroot}/libsci/default/${comp}/${math_ver}/${arch}/lib/libsci_gnu.so
-      SYSTEM_LAPACK_SER_LIB=$SYSTEM_BLAS_SER_LIB
-   
-      # System IO libs
-      # HDF5 location is set by modules so locations are not required
-      SYSTEM_NETCDF_SER_DIR=${crayroot}/netcdf/default/${comp}/${io_ver}
-      #SYSTEM_NETCDF_PAR_DIR=${crayroot}/netcdf-hdf5parallel/default/${comp}/${io_ver}
-      ;;
-   
-    cray*)
-   
-      # Determine architecture from programming environment
-      comp=crayclang
-      math_ver=17.0
-      io_ver=17.0
-      arch=x86_64
-      crayroot=/opt/cray/pe
-   
-      # System linear algebra
-      SYSTEM_BLAS_SER_LIB=${crayroot}/libsci/default/${comp}/${math_ver}/${arch}/lib/libsci_cray.so
-      SYSTEM_LAPACK_SER_LIB=$SYSTEM_BLAS_SER_LIB
-   
-      # System IO libs
-      # HDF5 location is set by modules so locations are not required
-      SYSTEM_NETCDF_SER_DIR=${crayroot}/netcdf/default/${comp}/${io_ver}
-      #SYSTEM_NETCDF_PAR_DIR=${crayroot}/netcdf-hdf5parallel/default/${comp}/${io_ver}
-      ;;
-   
-    *)
-      echo "Unknown programming environment, trying to setup build anyway."
-      ;;
+    case ${PE_ENV,,} in
+      nvidia)
+      
+        # Set architecture based on programming environment
+        io_ver=23.3
+      
+        # System linear algebra (no path required, set by environment)
+        SYSTEM_BLAS_SER_LIB=''
+        SYSTEM_LAPACK_SER_LIB=$SYSTEM_BLAS_SER_LIB
+      
+        # System IO libs
+        # HDF5 location is set by modules so locations are not required
+        SYSTEM_NETCDF_SER_DIR=${crayroot}/netcdf/default/${comp}/${io_ver}
+        #SYSTEM_NETCDF_PAR_DIR=${crayroot}/netcdf-hdf5parallel/default/${comp}/${io_ver}
+        ;;
+      
+      gnu)
+      
+        # Set architecture based on programming environment
+        math_ver=12.3
+        io_ver=12.3
+      
+        # System linear algebra
+        SYSTEM_BLAS_SER_LIB=${crayroot}/libsci/default/${comp}/${math_ver}/${arch}/lib/libsci_gnu.so
+        SYSTEM_LAPACK_SER_LIB=$SYSTEM_BLAS_SER_LIB
+      
+        # System IO libs
+        # HDF5 location is set by modules so locations are not required
+        SYSTEM_NETCDF_SER_DIR=${crayroot}/netcdf/default/${comp}/${io_ver}
+        #SYSTEM_NETCDF_PAR_DIR=${crayroot}/netcdf-hdf5parallel/default/${comp}/${io_ver}
+        ;;
+      
+      cray)
+      
+        # Set architecture based on programming environment
+        comp=crayclang
+        math_ver=17.0
+        io_ver=17.0
+      
+        # System linear algebra
+        SYSTEM_BLAS_SER_LIB=${crayroot}/libsci/default/${comp}/${math_ver}/${arch}/lib/libsci_cray.so
+        SYSTEM_LAPACK_SER_LIB=$SYSTEM_BLAS_SER_LIB
+      
+        # System IO libs
+        # HDF5 location is set by modules so locations are not required
+        SYSTEM_NETCDF_SER_DIR=${crayroot}/netcdf/default/${comp}/${io_ver}
+        #SYSTEM_NETCDF_PAR_DIR=${crayroot}/netcdf-hdf5parallel/default/${comp}/${io_ver}
+        ;;
+      
+      *)
+        echo "Unknown programming environment, trying to setup build anyway."
+        ;;
     esac
     ;;
 

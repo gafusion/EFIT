@@ -1,13 +1,13 @@
 #!/bin/sh
 # Note: before building on any NERSC machine, you must load the cray-hdf5 module:
 #    module load cray-hdf5
+# Note: you must have ENABLE_HDF5 set to use the system NetCDF libraries
 # Note: if ENABLE_PARALLEL is on then you will have to submit a job to run the tests, e.g.
 #    salloc --nodes 1 --qos interactive --time 00:05:00 --constraint haswell
-# Note: you must have ENABLE_HDF5 set to use the system NetCDF libraries
 
 #rm -rf CMake*
 
-if ! module list 2>&1 | grep PrgEnv-nvidia 1>/dev/null 2>&1; then
+if ! [ ${PE_ENV,,} = 'nvidia' ]; then
   echo Wrong programming environment. Should be PrgEnv-nvidia.
   exit
 fi

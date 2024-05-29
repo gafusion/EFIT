@@ -1,24 +1,22 @@
 #!/bin/sh
 # Note: before building on any NERSC machine, you must load the cray-hdf5 module:
 #    module load cray-hdf5
+# Note: you must have ENABLE_HDF5 set to use the system NetCDF libraries
 # Note: if ENABLE_PARALLEL is on then you will have to submit a job to run the tests, e.g.
 #    salloc --nodes 1 --qos interactive --time 00:05:00 --constraint haswell
-# Note: you must have ENABLE_HDF5 set to use the system NetCDF libraries
 
 #rm -rf CMake*
 
-arch=unknown
-env=$(module list 2>&1 | sed -n -e 's/^.*PrgEnv-//p')
+comp=${PE_ENV,,}
+arch=x86_64
+crayroot=/opt/cray/pe
 case $NERSC_HOST in
   perlmutter*)
-    case $env in
-      gnu*)
+    case ${PE_ENV,,} in
+      gnu)
     
-        # Determine architecture from programming environment
-        comp=gnu
+        # Set architecture based on programming environment
         io_ver=12.3
-        arch=x86_64
-        crayroot=/opt/cray/pe
 
         # System linear algebra (no path required, set by environment)
         SYSTEM_BLAS_SER_LIB=''
@@ -30,13 +28,10 @@ case $NERSC_HOST in
         #SYSTEM_NETCDF_PAR_DIR=${crayroot}/netcdf-hdf5parallel/default/${comp}/${io_ver}
         ;;
 
-      nvidia*)
+      nvidia)
 
-        # Determine architecture from programming environment
-        comp=nvidia
+        # Set architecture based on programming environment
         io_ver=23.3
-        arch=x86_64
-        crayroot=/opt/cray/pe
 
         # System linear algebra (no path required, set by environment)
         SYSTEM_BLAS_SER_LIB=''
@@ -48,13 +43,10 @@ case $NERSC_HOST in
         #SYSTEM_NETCDF_PAR_DIR=${crayroot}/netcdf-hdf5parallel/default/${comp}/${io_ver}
         ;;
 
-      aocc*)
+      aocc)
 
-        # Determine architecture from programming environment
-        comp=aocc
+        # Set architecture based on programming environment
         io_ver=4.1
-        arch=x86_64
-        crayroot=/opt/cray/pe
 
         # System linear algebra (no path required, set by environment)
         SYSTEM_BLAS_SER_LIB=''
@@ -66,13 +58,11 @@ case $NERSC_HOST in
         #SYSTEM_NETCDF_PAR_DIR=${crayroot}/netcdf-hdf5parallel/default/${comp}/${io_ver}
         ;;
 
-      cray*)
+      cray)
 
-        # Determine architecture from programming environment
+        # Set architecture based on programming environment
         comp=crayclang
         io_ver=17.0
-        arch=x86_64
-        crayroot=/opt/cray/pe
 
         # System linear algebra (no path required, set by environment)
         SYSTEM_BLAS_SER_LIB=''
