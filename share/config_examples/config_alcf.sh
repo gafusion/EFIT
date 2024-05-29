@@ -14,7 +14,6 @@ comp=${PE_ENV,,}
 arch=x86_64
 crayroot=/opt/cray/pe
 system=$(hostname -f 2>&1 | sed -n -e 's/^.*hsn.cm.//p')
-env=$(module list 2>&1 | sed -n -e 's/^.*PrgEnv-//p')
 case $system in
   polaris*)
     case ${PE_ENV,,} in
