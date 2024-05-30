@@ -4,15 +4,10 @@
 !!    get_measurements sets the pointnames and calls subroutines to
 !!      query PTDATA or MDS+ to obtain the machine measurements
 !!
-!!
 !!    @param nshot : shot number
-!!
 !!    @param times : first time requested (in seconds)
-!!
 !!    @param delt : length between time slices (in seconds)
-!!
 !!    @param np : number of time slices
-!!
 !!    @param iierr : error flag
 !!
 !**********************************************************************
@@ -20,13 +15,18 @@
       use vtime_mod
       include 'eparm.inc'
       include 'modules1.inc'
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
 
+      integer*4, intent(in) :: nshot,np
+      real*8, intent(in) :: times,delt
+      integer*4, intent(inout) :: iierr
       character*10 nsingl(10),n1name,btcname, &
                    nc79name,nc139name,ncname(mccoil),niname(micoil)  !EJS(2014)
-
-      integer*4 time_err,ioerr
+      integer*4 i,j,k,time_err,ioerr,krl01,loc1,nccomp,nicomp,nptt,oldexp
+      integer*4 delfl,delno,delta,deltm
+      integer*4 ibtcshot,ierbim,ierbto,ierlop,istat
       integer*4 ndump(np)
+      real*8 bitbim,bitbt,bitbto,bitdia,bitipc,bitn1,bitvl
       real*8 dumbtc,bti322(np)
       real*8,dimension(:),allocatable :: dumccc,dumcic
       character*10 namedum
@@ -34,6 +34,8 @@
       character*10 :: ndenv(nco2v),ndenr(nco2r),fcname(nfsum),ecname(nesum)
       character(len=1000) :: line
       logical read_btcshot
+      integer*4, parameter :: i0=0,i1=1
+      real*8, parameter :: r1=1.
 !
       namelist/in4/mpnam2,lpname,vsname,nsingl,n1name, & !JRF 
                    nc79name,nc139name,btcname,ndenv,ndenr, &
@@ -78,7 +80,6 @@
       fcname(16)='F7B       '
       fcname(17)='F8B       '
       fcname(18)='F9B       '
-      data irdata/0/,baddat/0/
 !
 ! !JRF The if statement here tests a flag from the snap file that
 !     indicates whether the pointnames should be read from an alternate
@@ -109,9 +110,6 @@
       krl01=0
       if(iierr.lt.0) krl01=1
       iierr=0
-      i1 = 1
-      i0 = 0
-      r1 = 1.
 !----------------------------------------------------------------------
 !--   psi-loops
 !----------------------------------------------------------------------
@@ -623,37 +621,21 @@
 !!    avdata gets data from PTDATA and optionally performs the
 !!    average.
 !!
-!!
 !!    @param nshot : shot number
-!!
 !!    @param ptname : the point ptname (10 ASCII characters)
-!!
 !!    @param mmm :
-!!
 !!    @param ierror : error flag
-!!
 !!    @param y : output data for each time
-!!
 !!    @param np : number of time slices
-!!
 !!    @param times : first time requested (in seconds)
-!!
 !!    @param delt : length between time slices (in seconds)
-!!
 !!    @param mm :
-!!
 !!    @param xxd :
-!!
 !!    @param nn :
-!!
 !!    @param bitvld :
-!!
 !!    @param kave : time window for averaging data (in milliseconds)
-!!
 !!    @param time : array of times requested
-!!
 !!    @param ircfact :
-!!
 !!    @param ktime_err : error flag for time not found in database
 !!
 !**********************************************************************
@@ -858,33 +840,19 @@
 !!    apdata gets the data and optionally performs the
 !!    average
 !!
-!!
 !!    @param nshot :
-!!
 !!    @param ptname : the point name (10 ASCII characters)
-!!
 !!    @param mmm :
-!!
 !!    @param ierror : error flag
-!!
 !!    @param y : output data for each time
-!!
 !!    @param np : number of time slices
-!!
 !!    @param times : first time requested (in seconds)
-!!
 !!    @param delt : length between time slices (in seconds)
-!!
 !!    @param mm :
-!!
 !!    @param xxd :
-!!
 !!    @param nn :
-!!
 !!    @param bitvld :
-!!
 !!    @param kave : time window for averaging data (in milliseconds)
-!!
 !!    @param time : array of times requested
 !!
 !**********************************************************************
@@ -997,35 +965,20 @@
 !!    WARNING: this subroutine uses both REAL*4 (used by MDS+) and
 !!             REAL*8 variables conversions must be handled carefully
 !!
-!!
 !!    @param nshot : shot number
-!!
 !!    @param ptname : the point name (10 ASCII characters)
-!!
 !!    @param mmm :
-!!
 !!    @param ierror : error flag
-!!
 !!    @param y : output data for each time
-!!
 !!    @param np : number of time slices
-!!
 !!    @param times : first time requested (in seconds)
-!!
 !!    @param delt : (unused)
-!!
 !!    @param mm :
-!!
 !!    @param xxd : (unused)
-!!
 !!    @param nn :
-!!
 !!    @param bitvld : (unused)
-!!
 !!    @param kave : time window for averaging data (in milliseconds)
-!!
 !!    @param time : array of times requested
-!!
 !!    @param ircfact :
 !!
 !**********************************************************************
@@ -1034,19 +987,25 @@
                         ircfact)
       use set_kinds
       use var_pcsys, only: do_spline_fit
-      implicit integer*4 (i-n), real*8 (a-h,o-z)
+      implicit none
       include 'mdslib.inc'
-      character*10 ptname, MyTree
-      real*8 y(np),time(np),delt,xxd,bitvld,times
+      real*8 seval
+      integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave
+      real*8, intent(in) :: time(np),delt,xxd,times
+      character*10, intent(in) ::  ptname
+      integer*4, intent(out) :: ierror
+      real*8, intent(out) :: y(np),bitvld
+      character*10 MyTree
       real*4, dimension(:), allocatable :: yw4,xw4
       real*8, dimension(:), allocatable :: yw,xw,bw,cw,dw,ew
       real*8 dtmin,dtave,delta_min,delta
-      integer*4 :: stat,nshot,lenname,errallot,npn,mmm,ierror, &
-                   np,mm,nn,kave,ircfact,ktime_err,nnp,mylen, &
+      integer*4 :: stat,lenname,errallot,npn,mave, &
+                   ircfact,ktime_err,nnp,mylen, &
                    i,j,j_save,dsc,f_dsc,t_dsc,ldum
       data dtmin/0.001001/
 !
       ierror=0
+      bitvld=0. ! unused
       if(ptname .eq. 'NONE      ') return !JRF
 !----------------------------------------------------------------------
 !--   Get data from MDS+                                             --
@@ -1181,21 +1140,13 @@
 !!    gettanh gets the edge hyperbolic tangent fit parameters
 !!    from MDS+
 !!
-!!
 !!    @param ishot :
-!!
 !!    @param fitzts :
-!!
 !!    @param ktime :
-!!
 !!    @param time :
-!!
 !!    @param ztssym :
-!!
 !!    @param ztswid :
-!!
 !!    @param ptssym :
-!!
 !!    @param ztserr :
 !!
 !*********************************************************************
@@ -1238,33 +1189,19 @@
 !!    avdiam gets the compensated diamagnetic data and
 !!    and optionally performs the average.
 !!
-!!
 !!    @param nshot : shot number
-!!
 !!    @param mmm :
-!!
 !!    @param ierror : error flag
-!!
 !!    @param y : output data for each time
-!!
 !!    @param np : number of time slices
-!!
 !!    @param delt : length between time slices (in seconds)
-!!
 !!    @param mm :
-!!
 !!    @param xxd :
-!!
 !!    @param nn :
-!!
-!!    @param bitvl :
-!!
+!!    @param bitvl : (unused)
 !!    @param kave : time window for averaging data (in milliseconds)
-!!
 !!    @param time : array of times requested
-!!
 !!    @param sigmay :
-!!
 !!    @param ierdia :
 !!
 !**********************************************************************
@@ -1291,6 +1228,7 @@
       mave=iabs(kave)
       npn=ntims
       tavg=1.0 ! TODO: is this specific to DIII-D?
+      bitvl=0. ! unused
       call getdia(nshot,xw,npn,tavg,ierdia,w,ew)
       if (ierdia(2).gt.0.and.ierdia(3).gt.0) then
         ierror=1
@@ -1322,13 +1260,9 @@
 !!    This subroutine averages data over a sliding window of width
 !!      timint in time twice.
 !!
-!!
 !!    @param times : array of times that data has been sampled
-!!
 !!    @param datarr : array of data to be averaged
-!!
 !!    @param nts : number of elements in data array to apply average
-!!
 !!    @param timint : width of the time window to average data over
 !!
 !**********************************************************************
@@ -1380,15 +1314,10 @@
 !>
 !!    wrapper around get_measurements subroutine to handle MPI comms
 !!
-!!
 !!    @param nshot : shot number
-!!
 !!    @param times : first time requested (in seconds)
-!!
 !!    @param delt : length between time slices (in seconds)
-!!
 !!    @param ktime : number of time slices
-!!
 !!    @param istop : error flag
 !!
 !**********************************************************************
