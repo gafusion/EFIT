@@ -44,6 +44,6 @@
  vol(cm^3)  =  8.304E+08 rcntr(cm)  =    619.456 zcntr(cm)  =     34.197
  elong      =      1.839 utri       =      0.469 ltri       =      0.536
  a(cm)      =    200.192 gapin(cm)  =      0.000 gapout(cm) =      7.963
- gaptop(cm) =     11.499 q95        =      2.857 rm(cm)     =    630.895
+ gaptop(cm) =     54.718 q95        =      2.857 rm(cm)     =    630.895
  zm(cm)     =     58.090 totalchi^2 =  0.000E+00 error      =  7.666E-05
 INFO in efit at r=  0, t=  4910: Done processing

@@ -337,7 +337,7 @@
       module var_hist
         integer*4,dimension(:), allocatable :: jerror
         real*8,dimension(:), allocatable :: elong,rcntr,zcntr,utri, &
-          ltri,aminor,volume,betat,gaptop, &
+          atri,ltri,aminor,volume,betat,gaptop, &
           betap,li,gapin,gapout,qstar, &
           rcurrt,zcurrt,qout,sepin, &
           sepout,septop,sibdry,area, &
@@ -354,7 +354,7 @@
           yyy2,xnnc,wtherm,wfbeam,taujd3,tauthn, &
           li3,tflux,twagap,betan
         real*8,dimension(:,:), allocatable :: rseps,zseps
-        real*8 pasman,psiq1,betat2
+        real*8 pasman,betatn,psiq1,betat2
         integer*4 jtwagap
       end module var_hist
 !var_hist2
@@ -424,7 +424,8 @@
         real*8,dimension(:),allocatable :: rbdry_ext,zbdry_ext,xlim_ext, &
                                            ylim_ext,psirz_ext, &
                                            qpsi_ext,fcoil_ext
-        real*8 :: cratiop_ext,cratiof_ext,simag_ext,psibry_ext
+        real*8 :: sign_ext,scalepp_ext,scaleffp_ext,cratio_ext, &
+                  cratiop_ext,cratiof_ext,simag_ext,psibry_ext
         character*80 :: geqdsk_ext
         logical :: fixpp
       end module profile_ext_mod

@@ -136,8 +136,6 @@ ALLOCATE(xnodef(modef),xnodep(modep),xnodew(modew),kbasef(modef), &
    sigfcc(nfsum),sigecc(nesum),sigsil(nsilop),sigmpi(magpri), &
    signbt(magpri))
    
-allocate(psirz_ext(nw*nh),pprime_ext(nw),ffprim_ext(nw),qpsi_ext(nw))
-
 !-------from ecom2-mods.f90--------
 ALLOCATE(gridec(nwnh,nesum),gridvs(nwnh,nvesel),gbrpc(nstark,nwnh), &
    gbzpc(nstark,nwnh),gridac(nwnh,nacoil), &
@@ -180,8 +178,8 @@ ALLOCATE(volecs(nesum),volecc(nesum),rsisec(nesum),volfcs(nfsum),volfcc(nfsum), 
    rvs(nvesel),zvs(nvesel),hvs(nvesel),wvs(nvesel),avs(nvesel),avs2(nvesel), &
    rsisvs(nvesel),alphab(icycred_loopmax),diag1(icycred_loopmax), &
    tempgrid(ncurrt),tempgrid2(ncurrt),rowscale(nrsmat),colscale(mfnpcr), &
-   elong(ntime),rcntr(ntime),zcntr(ntime),utri(ntime), &
-   ltri(ntime),aminor(ntime),volume(ntime),betat(ntime),gaptop(ntime), &
+   elong(ntime),rcntr(ntime),zcntr(ntime),utri(ntime),betan(ntime), &
+   atri(ntime),ltri(ntime),aminor(ntime),volume(ntime),betat(ntime),gaptop(ntime), &
    betap(ntime),li(ntime),gapin(ntime),gapout(ntime),qstar(ntime), &
    rcurrt(ntime),zcurrt(ntime),qout(ntime),sepin(ntime), &
    sepout(ntime),septop(ntime),sibdry(ntime),area(ntime), &

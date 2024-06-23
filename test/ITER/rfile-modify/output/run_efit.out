@@ -60,9 +60,9 @@
 
  shot #     =      91101 time(ms)   =         60 chi^2      =  0.000E+00
  betat(%)   =      0.242 betap      =      0.067 li         =      1.069
- vol(cm^3)  =  8.532E+08 rcntr(cm)  =    621.464 zcntr(cm)  =     28.390
- elong      =      1.923 utri       =      0.440 ltri       =      0.613
- a(cm)      =    199.220 gapin(cm)  =      0.000 gapout(cm) =      6.766
- gaptop(cm) =      9.546 q95        =      3.132 rm(cm)     =    628.890
- zm(cm)     =     56.473 totalchi^2 =  0.000E+00 error      =  8.513E-05
+ vol(cm^3)  =  8.532E+08 rcntr(cm)  =    621.463 zcntr(cm)  =     28.387
+ elong      =      1.923 utri       =      0.439 ltri       =      0.613
+ a(cm)      =    199.221 gapin(cm)  =      0.000 gapout(cm) =      6.766
+ gaptop(cm) =     45.252 q95        =      3.132 rm(cm)     =    628.888
+ zm(cm)     =     56.470 totalchi^2 =  0.000E+00 error      =  8.512E-05
 INFO in efit at r=  0, t=    60: Done processing

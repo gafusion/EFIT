@@ -2,8 +2,8 @@
 !**********************************************************************
 !>
 !!    Subroutine for writing K file as the exclusive output (from SNAP)
-!!    
-!!    
+!!
+!!
 !!    @param ktime : number of time slices requested
 !!
 !!    @param kerror : Error flag
@@ -226,7 +226,7 @@
       write (6,*) 'WRITE_K fwtbmsels= ',(fwtbmsels(i),i=1,nmsels)
 #endif
 !---------------------------------------------------------------------
-!--   specific choice of current profile                           --
+!--   specific choice of current profile                            --
 !--       ICPROF=1  no edge current density allowed                 --
 !--       ICPROF=2  free edge current density                       --
 !--       ICPROF=3  weak edge current density constraint            --
@@ -546,7 +546,7 @@
         if(write_omas.gt.0) call write_omas_input(jtime,ktime)
         if(write_omas.eq.2) cycle
 #endif
-        call setfnmeq(itimeu,'k',ishot,itime,eqdsk)
+        call setfnm('k',ishot,itime,itimeu,'',eqdsk)
         open(unit=neqdsk,status='old',file=eqdsk,iostat=ioerr)
         if(ioerr.eq.0) close(unit=neqdsk,status='delete')
 !-----------------------------------------------------------------------
@@ -641,7 +641,7 @@
 !**********************************************************************
 !>
 !!    Subroutine for writing K file during execution (with equilibrium)
-!!    
+!!
 !!
 !!    @param jtime : time index
 !!
@@ -661,9 +661,11 @@
       integer*4, intent(in) :: jtime
       integer*4, intent(out) :: kerror
       integer*4 i,ioerr,limitrss,mmstark,nbdryss,kffcurt,kppcurt
+      integer*4 itekt,mxitert,n1coilt
       real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref, &
              pnbeam,timeus,timems,currn1,currc79,currc139,currc199, &
              curriu30,curriu90,curriu150,curril30,curril90,curril150
+      real*8 zeliptt
       character eqdsk*300,header*42,fit_type*3
       integer*4, dimension(npcurn) :: kffbdryss,kff2bdryss, &
                                       kppbdryss,kpp2bdryss, &

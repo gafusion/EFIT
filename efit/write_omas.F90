@@ -23,7 +23,7 @@
       real*8, dimension(nw) :: vprime,dvdrho,bwork,cwork,dwork
       real*8, dimension(nw,nh) :: psirz,pcurrz,brrz,bzrz,btrz
       logical group_exists
-      character fname*15,strout*50
+      character fname*275,strout*50
       character*10 tindex,probeind,names(4)
       data init/0/,tind/0/
 
@@ -88,11 +88,6 @@
 
       ! Set name and open file
       call setfnmomas(ishot,fname)
-!----------------------------------------------------------------------
-!--   If (ISTORE = 1) Then                                           --
-!--   Central directory to collect EFIT results is store_dir         --
-!----------------------------------------------------------------------
-      if(istore .eq. 1) fname = store_dir(1:lstdir)//fname
       call fch5init
       call open_h5file(trim(fname),fileid, &
                   "EFIT output file in OMAS format",rootgid,h5in,h5err)
@@ -277,8 +272,8 @@
       call close_group("1",fid,h5err)
       call close_group("x_point",nid,h5err)
       call make_group(cid,"geometric_axis",nid,group_exists,h5err)
-      call dump_h5(nid,"r",rout(jtime)/100.,h5in,h5err)
-      call dump_h5(nid,"z",zout(jtime)/100.,h5in,h5err)
+      call dump_h5(nid,"r",rcntr(jtime)/100.,h5in,h5err)
+      call dump_h5(nid,"z",zcntr(jtime)/100.,h5in,h5err)
       call close_group("geometric_axis",nid,h5err)
       call make_group(cid,"closest_wall_point",nid,group_exists,h5err)
       call dump_h5(nid,"distance",dsep(jtime)/100.,h5in,h5err)
@@ -664,7 +659,7 @@
       real*8 xltype,xltype_180,timeus,timems
       real*8 rzeros(npcurn)
       logical group_exists
-      character fname*15
+      character fname*275
       character*10 tindex
       data tind/0/
 
@@ -687,11 +682,6 @@
 !--   Write file                                                    --
 !-----------------------------------------------------------------------
       call setfnmomas(ishot,fname)
-!----------------------------------------------------------------------
-!--   If (ISTORE = 1) Then                                           --
-!--   Central directory to collect EFIT results is store_dir         --
-!----------------------------------------------------------------------
-      if(istore .eq. 1) fname = store_dir(1:lstdir)//fname
       call fch5init
       call open_h5file(trim(fname),fileid, &
                        "EFIT input file in OMAS format",rootgid,h5in,h5err)
@@ -734,7 +724,7 @@
       call dump_h5(nid,"kppcur",kppcurs,h5in,h5err)
       call dump_h5(nid,"mxiter",mxiters,h5in,h5err)
       call dump_h5(nid,"ierchk",ierchk,h5in,h5err)
-      call dump_h5(nid,"fwtqa",fwtqa,h5in,h5err)
+      call dump_h5(nid,"fwtqa",fwtqa*1.e-3,h5in,h5err)
       call dump_h5(nid,"qemp",qemp,h5in,h5err)
       call dump_h5(nid,"error",error,h5in,h5err)
       call dump_h5(nid,"limitr",limitr-1,h5in,h5err)

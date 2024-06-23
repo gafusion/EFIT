@@ -120,16 +120,19 @@
 !!
 !**********************************************************************
       subroutine setfnmomas(ishot,fname)
+      use var_nio, only: nttyo
+      use var_input, only: istore
+      use extvars, only: store_dir
       implicit none
       integer*4, intent(in) :: ishot
       character*(*), intent(inout) ::  fname
-      integer*4 i,length
+      integer*4 i,fnlen
 
       ! Warn if a filename length risks overflow (store_dir is 256 chars)
       fnlen=len(fname)
       if(fnlen<275) &
         write(nttyo,'(A)') &
-          'Warning: The filename length is short for: '//prefix
+          'Warning: The omas filename length is too short for'
 
       ! Initialize empty name
       do i=1,fnlen
@@ -138,13 +141,13 @@
 
       ! Convert the shot number to filename
       if (ishot<1e6) then
-        write(shot,1600) ishot
+        write(fname,1600) ishot
       elseif (ishot<1e7) then
-        write(shot,1700) ishot
+        write(fname,1700) ishot
       elseif (ishot<1e8) then
-        write(shot,1800) ishot
+        write(fname,1800) ishot
       elseif (ishot<1e9) then
-        write(shot,1900) ishot
+        write(fname,1900) ishot
       else
         write(nttyo,*) &
           'The shot number is too large for existing file formats: ',ishot

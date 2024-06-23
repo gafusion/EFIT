@@ -14,7 +14,7 @@
       integer*4, intent(in) :: ktime,jtime
 
       integer*4 ierold,iitime,ijtime,ioerr,itsave,jflag,jj,k
-      real*8 btor,cprof,fluxx,plasma,rcencm,tavem,xbetapr
+      real*8 btor,cprof,fluxx,plasma,rcencm,tavem,xbetapr,qvfold
       real*8,dimension(:),allocatable :: coils,expmp2
       character eqdsk*300,header*42,qmflag*3,fit_type*3
       character wform*20,sfile*14

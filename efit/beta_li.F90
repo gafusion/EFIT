@@ -443,9 +443,6 @@
         wplasw(jtime)=betapw(jtime)*bp2flx/2./tmu/2./pi &
                       *volume(jtime)/1.0e+06_dp
       endif
-      pasman=ipmhd(jtime)/1.e4_dp/aminor(jtime)/abs(bcentr(jtime))
-      pasman=pasman*rout(jtime)/100./rcentr
-      betan(jtime)=betat(jtime)/pasman
 !----------------------------------------------------------------------
 !--   get normalized radial coordinate square root of toroidal flux  --
 !--     at uniform poloidal flux grid sigrid                         --

@@ -45,9 +45,6 @@
              drgrids,dzgrids,psical,rselsum
       real*8 sicont,s1edge,scalep,scalemin,delx2,dely2,rbar,aup
       real*8 rbmin_e,rbmax_e,zbmin_e,zbmax_e
-      real*8 plasma_ext,c_ext,dr_ext,dz_ext,rc_ext,zc_ext,a_ext, &
-             eup_ext,elow_ext,dup_ext,dlow_ext,setlim_ext,sign_ext, &
-             scaleffp_ext,scalepp_ext
       real*8 plasma_save,btor_save,rcentr_save,fwtcur_save,error_save
       real*8 r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max
       real*8 r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot,dnmin
@@ -65,7 +62,6 @@
              aa1lib(libim),aa8lib(libim),fwtlib(libim)
       real*8 pds(6),denr(nco2r),denv(nco2v)
       real*8 brsptu(nfsum),brsp_save(nrsmat)
-      real*8 psirz_temp(nw,nh)
       real*8, dimension(:), allocatable :: expmp2_save,coils_save, &
                                            rbdry_save,zbdry_save, &
                                            fwtsi_save,pressr_save, &
@@ -1258,7 +1254,6 @@
           endif
           call read_h5_ex(nid,"psi_axis",simag_ext,h5in,h5err)
           call read_h5_ex(nid,"psi_boundary",psibry_ext,h5in,h5err)
-          psibry_ext=psibry_ext/twopi
           call read_h5_ex(nid,"ip",plasma_ext,h5in,h5err)
           call close_group("global_quantities",nid,h5err)
 
@@ -1294,11 +1289,8 @@
             call errctrl_msg('data_input','profiles_1d group not found')
             stop
           endif
-          call open_group(sid,"profiles_1d",nid,h5err)
           call read_h5_ex(nid,"dpressure_dpsi",pprime_temp,h5in,h5err)
-          pprime_temp=pprime_temp*twopi
           call read_h5_ex(nid,"f_df_dpsi",ffprim_temp,h5in,h5err)
-          ffprim_temp=ffprim_temp*twopi
           call read_h5_ex(nid,"q",qpsi_ext,h5in,h5err)
           call close_group("profiles_1d",nid,h5err)
 
@@ -1429,7 +1421,7 @@
       if (icinit.eq.-3 .or. icinit.eq.-4) then
         if (geqdsk_ext.eq.'none') then
           call errctrl_msg('data_input', &
-            'ICINIT requires and existing solution')
+            'ICINIT requires an existing solution')
           kerror=1
           return
         endif
@@ -1494,6 +1486,19 @@
         akprewt=0.0
       endif
 
+      ! save input values before any manipulation happens
+      nbdrys=nbdry
+      rbdrys=rbdry
+      zbdrys=zbdry
+      srpress=rpress
+      rcs=rc_ext
+      zcs=zc_ext
+      aexts=a_ext
+      eups=eup_ext
+      elows=elow_ext
+      dups=dup_ext
+      dlows=dlow_ext
+      psibrys=psibry
       if(nbdryp==-1) nbdryp=nbdry
 
 !--   Read msels_all.dat if needed
@@ -1563,9 +1568,6 @@
 #ifdef DEBUG_LEVEL1
         write (nttyo,*) 'npsi_ext,nw_ext=',npsi_ext,nw_ext 
 #endif
-        if (plasma_ext > 0.0) then 
-          sign_ext = -1.0 
-        endif 
         set_boundary: if (nbdry.le.0) then 
           nbabs_ext=nbdry_ext/mbdry1+1 
           jb_ext=0 
@@ -2263,6 +2265,9 @@
 !
       call zlim(zero,nw,nh,limitr,xlim,ylim,rgrid,zgrid,limfag)
 
+      ! need to match snap mode saved variables
+      zelipss=zelip
+
       endif snap
 !----------------------------------------------------------------------- 
 !--   set up parameters for all modes                                 --
@@ -2487,7 +2492,7 @@
           fwtsi(m)=0.0
         endif
       endif
-      endif kersil_23
+      endif kersil_1
       sigref=sigsil(iabs(nslref)) 
       fwtref=fwtsi(iabs(nslref)) 
 ! 

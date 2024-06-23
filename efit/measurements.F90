@@ -29,10 +29,9 @@
       real*8 bitbim,bitbt,bitbto,bitdia,bitipc,bitn1,bitvl
       real*8 dumbtc,bti322(np)
       real*8,dimension(:),allocatable :: dumccc,dumcic
+      character*10 namedum
       character*150 textline     !EJS(2014)
-      character*10 namedum,n1name,btcname,nc79name,nc139name
-      character*10 ndenv(nco2v),ndenr(nco2r),fcname(nfsum),ecname(nesum), &
-                   nsingl(10),ncname(mccoil),niname(micoil)  !EJS(2014)
+      character*10 ndenv(nco2v),ndenr(nco2r),fcname(nfsum),ecname(nesum)
       character(len=1000) :: line
       logical read_btcshot
       integer*4, parameter :: i0=0,i1=1
@@ -192,7 +191,7 @@
         ierlop=0
         ndenv(i) = '\'//ndenv(i) ! use tag name instead of relative path
         call amdata(nshot,ndenv(i),i1,ierlop,denvt(1:np,i), &
-                    np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact)
+                    np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np))
         if (ierlop.eq.0) then
           denvt(1:np,i)=denvt(1:np,i)*50.0
         else
@@ -202,7 +201,7 @@
       ierlop=0
       ndenr(1) = '\'//ndenr(1) ! use tag name instead of relative path
       call amdata(nshot,ndenr(1),i1,ierlop,denrt(1:np,1), &
-                  np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np),ircfact)
+                  np,times,delt,i0,r1,i1,bitvl,iaved,time(1:np))
       if (ierlop.eq.0) then
         denrt(1:np,1)=denrt(1:np,1)*50.0
       else
@@ -988,7 +987,7 @@
       implicit none
       include 'mdslib.inc'
       real*8 seval
-      integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave
+      integer*4, intent(in) :: nshot,ical,np,mm,nn,kave
       real*8, intent(in) :: time(np),delt,xxd,times
       character*10, intent(in) ::  ptname
       integer*4, intent(out) :: ierror
@@ -997,8 +996,8 @@
       real*4, dimension(:), allocatable :: yw4,xw4
       real*8, dimension(:), allocatable :: yw,xw,bw,cw,dw,ew
       real*8 dtmin,dtave,delta_min,delta
-      integer*4 :: stat,nshot,lenname,errallot,npn,ical,ierror, &
-                   np,mm,nn,kave,ktime_err,nnp,mylen, &
+      integer*4 :: stat,lenname,errallot,npn,mave, &
+                   ktime_err,nnp,mylen, &
                    i,j,j_save,dsc,f_dsc,t_dsc,ldum
       data dtmin/0.001001/
 !
@@ -1219,7 +1218,6 @@
       mave=iabs(kave)
       npn=ntims
       tavg=1.0 ! TODO: is this specific to DIII-D?
-      bitvl=0. ! unused
       call getdia(nshot,xw,npn,tavg,ierdia,w,ew)
       if (ierdia(2).gt.0.and.ierdia(3).gt.0) then
         ierror=1
