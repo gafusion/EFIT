@@ -171,16 +171,16 @@
 
       read (neqdsk,efitin,iostat=istat)
       if (istat>0) then
-        backspace(nin)
-        read(nin,fmt='(A)') line
+        backspace(neqdsk)
+        read(neqdsk,fmt='(A)') line
         write(*,'(A)') 'Invalid line in namelist efitin: '//trim(line)
         stop
       endif
       rewind(neqdsk)
       read (neqdsk,efitink,iostat=istat)
       if (istat>0) then
-        backspace(nin)
-        read(nin,fmt='(A)') line
+        backspace(neqdsk)
+        read(neqdsk,fmt='(A)') line
         write(*,'(A)') 'Invalid line in namelist efitink: '//trim(line)
         stop
       endif
