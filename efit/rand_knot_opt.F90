@@ -32,9 +32,9 @@
       if(iconvr.lt.0) return
       call set_init(ks)
       call fit(ks,kerror)
-      if(rank==0) write(6,*) 'Initial error is: ',terror(ks)
-      if ((kerror==0) .and. (terror(ks).le.error)) then
-        if (rank==0) then
+      if(rank.eq.0 .or. ttime.gt.1) write(6,*) 'Initial error is: ',terror(ks)
+      if ((kerror.eq.0) .and. (terror(ks).le.error)) then
+        if (rank.eq.0 .or. ttime.gt.1) then
           write(6,*) 'Input settings converged'
           return
         else
@@ -54,7 +54,7 @@
       if(kwwfnc.eq.6) nvary=nvary+kwwknt-2
       if(keefnc.eq.6) nvary=nvary+keeknt-2
       if (nvary.le.0) then
-        if(rank==0) write(6,*) 'No knots to vary'
+        if(rank.eq.0 .or. ttime.gt.1) write(6,*) 'No knots to vary'
         return
       endif
       allocate(lbnd(nvary),krange(nvary),kpos(nvary),kbest(nvary))
@@ -93,12 +93,12 @@
       endif
 
 #if defined(USEMPI)
-      if (nproc>1) then
-        if (rank==0 .and. ttime==1) then
+      if (nproc.gt.1) then
+        if (rank.eq.0 .and. ttime.eq.1) then
           ! TODO: it should be possible to distribute processors effectively for multiple times and 
           !       leave others for knot optimization, but that logic hasn't been setup yet
           !       (only can parallelize over one or the other and times takes precedence)
-          if (nproc > kakloop) then
+          if (nproc .gt. kakloop) then
             ! Ensure there are not more processors than time slices
             call errctrl_msg('rand_knot', &
                              'MPI processes have nothing to do')
@@ -108,12 +108,12 @@
             write(nttyo,*) &
               'Warning: knot vars are not balanced across processors'
         endif
-        if (ttime==1) then
+        if (ttime.eq.1) then
           ! This could be avoided if MPI is handled differently
-          if(nproc>kakloop) stop
+          if(nproc.gt.kakloop) stop
           kloop=kakloop/nproc
           do k=1,mod(kakloop,nproc)
-            if(rank==k-1) kloop=kloop+1
+            if(rank.eq.k-1) kloop=kloop+1
           enddo
         else
           kloop=kakloop
@@ -170,14 +170,18 @@
         call set_init(ks)
         call fit(ks,kerror)
         if(kerror.ne.0) terror(ks)=999.
-        write(6,*) 'Iteration ',(k-1)*nproc+rank+1,' has error: ',terror(ks)
+        if (ttime.eq.1) then
+          write(6,*) 'Iteration ',(k-1)*nproc+rank+1,' has error: ',terror(ks)
+        else
+          write(6,*) 'Iteration ',k,' has error: ',terror(ks)
+        endif
 
 #if defined(USEMPI)
         ! Get best error and corresponding knot positions from all processors
-        if (nproc>1 .and. ttime==1) then
+        if (nproc.gt.1 .and. ttime.eq.1) then
           errall=999.
           call MPI_GATHER(terror(ks),1,MPI_DOUBLE_PRECISION,errall,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-          if(rank==0) loc=minloc(errall)
+          if(rank.eq.0) loc=minloc(errall)
           call MPI_BCAST(loc,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
           call MPI_BCAST(terror(ks),1,MPI_DOUBLE_PRECISION,loc-1,MPI_COMM_WORLD,ierr)
           call MPI_BCAST(kpos,nvary,MPI_DOUBLE_PRECISION,loc-1,MPI_COMM_WORLD,ierr)
@@ -187,7 +191,7 @@
         ! Check convergence and save best error and knots
         if (terror(ks).le.error) then
           lead_rank=loc(1)-1
-          if (rank==lead_rank .or. ttime>1) then
+          if (rank.eq.lead_rank .or. ttime.gt.1) then
             write(6,*) 'New knot locations converged'
             return
           else
@@ -198,7 +202,7 @@
             stop
           endif
         endif
-        if (rank.eq.0 .and. terror(ks).le.berror) then
+        if ((rank.eq.0 .or. ttime.gt.1) .and. terror(ks).le.berror) then
           berror=terror(ks)
           kbest=kpos
         endif
@@ -206,7 +210,7 @@
 
 #if defined(USEMPI)
       ! Finished with parallel processing
-      if (rank.gt.0 .and. ttime==1) then
+      if (rank.gt.0 .and. ttime.eq.1) then
         call mpi_finalize(ierr)
         stop
       endif
