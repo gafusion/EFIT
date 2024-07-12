@@ -78,6 +78,7 @@
         integer*4 :: modef,modep,modew
         integer*4 :: icycred_loopmax
         integer*4 :: nfourier !< nfourier number Fourier components of vessel current
+        real*8 :: rlin,rlout,zlbot,zltop
       end module eparm
 !errlims
       module errlims
