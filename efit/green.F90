@@ -17,7 +17,7 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
-      real*8 pwcurr,prcurr,erpote
+      real*8, external :: pwcurr,prcurr,erpote
       integer*4, intent(in) :: iflag,jtime,niter
       integer*4 i,j,jj,jjk,k,kk,m,ier
       real*8 factor,ecorrect,epotp,kffp1,pres0,prew0,ptop0,pwop0,pwp0r2, &

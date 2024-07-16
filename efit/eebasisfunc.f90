@@ -549,7 +549,7 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
-      real*8 bserel
+      real*8, external :: bserel
       integer*4, intent(in) :: nffcoi
       integer*4, intent(inout) :: ncrsp
       real*8, intent(out) :: crsp(4*(npcurn-2)+6+npcurn*npcurn,nrsmat), &

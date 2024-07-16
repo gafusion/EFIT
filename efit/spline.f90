@@ -40,8 +40,9 @@
       include 'eparm.inc'
       implicit integer*4 (i-n), real*8 (a-h,o-z)
 !
-      INTEGER*4 ier,lx,ly
+      INTEGER*4, intent(in) :: lx,ly
       REAL*8, intent(in) :: xl,yl
+      INTEGER*4, intent(out) :: ier
       REAL*8 cs(kubicx,lubicx,kubicy,lubicy),fs(6), &
              bkx(lubicx+1),bky(lubicy+1)
 !
@@ -458,10 +459,10 @@
 !**********************************************************************
       subroutine bspp2d ( t, bcoef, n, k, m, scrtch, breakpts, coef, l )
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-        parameter (kmax=4)
+      parameter (kmax=4)
       INTEGER*4 k,l,m,n,i,j,jp1,kmj,left
       dimension bcoef(n,m),breakpts(*),coef(m,k,*),scrtch(k,k,m),t(*), &
-           biatx(kmax)
+                biatx(kmax)
       REAL*8 diff,fkmj,sm
 !
       n11=1
@@ -563,7 +564,7 @@
       subroutine bsplvb( t, jhigh, index, x, left, biatx )
       implicit integer*4 (i-n), real*8 (a-h, o-z)
       parameter(jmax = 4)
-      INTEGER*4 index,jhigh,left,   i,j,jp1
+      INTEGER*4 index,jhigh,left,i,j,jp1
       REAL*8 x,saved,term
 !      REAL*8 biatx(jhigh),t(1),x,
       dimension deltal(jmax),deltar(jmax)
@@ -633,9 +634,9 @@
 !!    of  f  is then evaluated (by nested multipication).
 !!
 !**********************************************************************
-      function ppvalw(coef, x, jd )
+      real*8 function ppvalw(coef, x, jd )
       implicit integer*4 (i-n), real*8 (a-h, o-z)
-      REAL*8 ppvalw,x
+      real*8 x
       dimension coef(4)
 !----------------------------------------------------------------------
 ! ASF's may be slightly more efficient than the alternative

@@ -676,6 +676,7 @@
       subroutine print_header()
       include 'eparm.inc'
       include 'modules1.inc'
+      implicit none
 
       if (itek.le.0) then
         if(rank==0) write(nttyo,10001) nw,nh

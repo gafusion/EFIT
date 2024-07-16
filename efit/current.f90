@@ -14,7 +14,7 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
-      real*8 fpcurr,ppcurr,prcurr,pwcurr,prcur4,pwcur4,pwpcur
+      real*8, external :: fpcurr,ppcurr,prcurr,pwcurr,prcur4,pwcur4,pwpcur
 
       integer*4, intent(in) :: iter,jtime,nitett
       integer*4, intent(out) :: kerror
@@ -1018,7 +1018,8 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit none
-      real*8 fpecrr,ffcurr,seval
+      real*8, external :: seval
+      real*8 fpecrr,ffcurr
 
       integer*4, intent(in) :: nnn
       real*8, intent(in) :: upsi

@@ -8,13 +8,12 @@
 !! These data depend on the grid size and spacings.
 !!
 !**********************************************************************  
-      function ef_init_cycred_data()
+      integer*4 function ef_init_cycred_data()
       include 'eparm.inc'
       include 'modules2.inc'
       include 'modules1.inc'
       use var_buneman, only: delrgrid, delz
       implicit none
-      integer*4 ef_init_cycred_data
       real*8 cosdii, sindi, denom, dr, dumy, dumy1
       real*8 dzsq, dz, dzdrsq, dzdr
       integer*4 i, j, k, l, nred, m1,jpow, jpowm1, jstep, jend, jstart, ind
