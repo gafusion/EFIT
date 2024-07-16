@@ -1,5 +1,8 @@
 #!/bin/bash
 
+have_netcdf=@HAVE_NETCDF@
+enable_hdf5=@ENABLE_HDF5@
+
 export link_efit="@CURRENT_MACHINE_LINK_DIR@"
 export link_store=""
 
@@ -18,12 +21,19 @@ export OMP_NUM_THREADS=1
 
 # Remove any previous outputs
 rm -f run_efit.out
-outputs=( @EFIT_OUTPUTS@ )
+if [ ${have_netcdf,,} = on ] || [ ${have_netcdf,,} = true ]; then
+  outputs=( a g m )
+else
+  outputs=( a g )
+fi
 for prefix in ${outputs[*]}; do
   for label in @EFIT_LABEL@; do
     rm -f ${prefix}${label}
   done
 done
+if [ ${enable_hdf5,,} = on ] || [ ${enable_hdf5,,} = true ]; then
+  rm -f @RUNID@.h5
+fi
 
 # Now run efit
 @MPICMD@ @NPROC@ @EFIT_EXEC@ @GRID_SIZE@ << __c__MATCHING_EOF__c__ > run_efit.out

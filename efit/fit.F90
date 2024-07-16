@@ -103,6 +103,7 @@
             jerror(jtime) = 1
             return
           endif
+ 
 #ifdef DEBUG_LEVEL2
           write(6,*) 'Entering pflux'
 #endif
@@ -143,8 +144,8 @@
             go to 2020
           if(idone.gt.0) exit
           if(i.eq.mxiter+1) exit
-        end do equilibrium
-      end do current_profile
+        enddo equilibrium
+      enddo current_profile
       if ((nbdry.le.0).and.(ivacum.eq.0).and.(iconvr.ne.4)) then
         if(rank.eq.0 .or. ttime.gt.1) &
           call errctrl_msg('fit','not converged, reached max iterations',2)
@@ -242,7 +243,7 @@
               errorm,delzmm,sum(chigam),erbmax,erbsmax
           endif
         elseif (itell.eq.2) then
-          write (nttyo,10021) rank,itime,nx,li(jtime),abs(betatn), &
+          write (nttyo,10021) rank,itime,nx,li(jtime),abs(betan(jtime)), &
             errorm,qsiw(1)
         elseif (itell.eq.3) then
           write (nttyo,10023) rank,itime,nx,difpsi,zmaxis,errorm,delzmm

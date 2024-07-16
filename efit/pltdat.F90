@@ -1609,7 +1609,7 @@
       ypos(msg) = yabs
       yabs = yabs - dyabs
       ht(msg) = 0.14_dp
-      write(text,9150) betatn,pasman
+      write(text,9150) betan(jtime),pasman
       msg = msg + 1
       note(msg) = 1
       lmes(msg) = text

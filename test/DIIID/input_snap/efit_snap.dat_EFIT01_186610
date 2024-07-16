@@ -1,5 +1,6 @@
  EFIT_SNAP.DAT_JTA_F  (rename to EFIT_SNAP.DAT for EFITD)
  &efitin
+ write_omas = 1
  mxiter = -25
  scrape = 0.04
  nextra = 2

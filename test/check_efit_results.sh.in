@@ -1,8 +1,13 @@
 #!/bin/bash
 OUTPUT_STORE_DIR=@CMAKE_CURRENT_SOURCE_DIR@/output
 
+have_netcdf=@HAVE_NETCDF@
+enable_hdf5=@ENABLE_HDF5@
+enable_parallel=@ENABLE_PARALLEL@
+rfile_test=@RFILE_TEST@
+
 # check to see if files exist
-if [ @HAVE_NETCDF@ = True ]; then
+if [ ${have_netcdf,,} = on ] || [ ${have_netcdf,,} = true ]; then
   outputs=( a g m )
 else
   outputs=( a g )
@@ -15,8 +20,14 @@ for prefix in ${outputs[*]}; do
     fi
   done
 done
+if [ ${enable_hdf5,,} = on ] || [ ${enable_hdf5,,} = true ]; then
+  if ! test -e @RUNID@.h5; then
+    echo "File does not exist: @RUNID@.h5"
+    exit 1
+  fi
+fi
 
-if [ @RFILE_TEST@ = True ]; then
+if [ ${rfile_test,,} = on ] || [ ${rfile_test,,} = true ]; then
   if ! test -e x@EFIT_NEXT@; then
     echo "File does not exist: x${next}"
     exit 1
@@ -34,7 +45,7 @@ if [ @RFILE_TEST@ = True ]; then
     echo "File does not exist: pltout.out"
     exit 1
   fi
-elif [ @ENABLE_PARALLEL@ = ON ]; then
+elif [ ${enable_parallel,,} = on ] || [ ${enable_parallel,,} = true ]; then
   for (( i = 0; i < @NPROC@; i++ )); do
     if [ $i -lt 10 ]; then
       label=0000$i
@@ -61,8 +72,8 @@ fi
 
 # Check the output of the run itself.  use petscdiff because it's an easily
 # portable way of avoiding testing the numbers -- it's testing the text
-if [ @ENABLE_PARALLEL@ = ON ]; then
-  @CMAKE_SOURCE_DIR@/bin/petscdiff -j -f 'grep -v table_di | grep -v netcdf | grep -v /green | grep -v r= | grep -v msec | grep -v consistent | grep -v Chisq | grep -v Ip-Exp | grep -v -e "^$" | grep -v EFIT | grep -v type | grep -v slices? | grep -v "#$" | grep -v Git | grep -v Simulation | grep -v compiled | grep -v flags | grep -v ">" | grep -v SHAPE | grep -v efit.input | grep -v fpolvs | grep -v "^    0.000" | grep -v Error' -F 'grep -v table_di | grep -v netcdf | grep -v /green | grep -v r= | grep -v msec | grep -v consistent | grep -v Chisq | grep -v Ip-Exp | grep -v -e "^$" | grep -v EFIT | grep -v type | grep -v slices? | grep -v "#$" | grep -v Git | grep -v Simulation | grep -v compiled | grep -v flags | grep -v ">" | grep -v SHAPE | grep -v efit.input | grep -v fpolvs | grep -v "^    0.000" | grep -v Error' ${OUTPUT_STORE_DIR}/run_efit_mpi.out run_efit.out
+if [ ${enable_parallel,,} = on ] || [ ${enable_parallel,,} = true ]; then
+  @CMAKE_SOURCE_DIR@/bin/petscdiff -j -f 'grep -v table_di | grep -v netcdf | grep -v /green | grep -v r= | grep -v msec | grep -v consistent | grep -v Chisq | grep -v Ip-Exp | grep -v -e "^$" | grep -v EFIT | grep -v type | grep -v slices? | grep -v "#$" | grep -v Git | grep -v Simulation | grep -v compiled | grep -v flags | grep -v ">" | grep -v SHAPE | grep -v efit.input | grep -v fpolvs | grep -v "^    0.000" | grep -v Error' -F 'grep -v table_di | grep -v netcdf | grep -v /green | grep -v r= | grep -v msec | grep -v consistent | grep -v Chisq | grep -v Ip-Exp | grep -v -e "^$" | grep -v EFIT | grep -v type | grep -v slices? | grep -v "#$" | grep -v Git | grep -v Simulation | grep -v compiled | grep -v flags | grep -v ">" | grep -v SHAPE | grep -v efit.input | grep -v fpolvs | grep -v "^    0.000" | grep -v Error | grep -v serial' ${OUTPUT_STORE_DIR}/run_efit_mpi.out run_efit.out
   exit $?
 else
   @CMAKE_SOURCE_DIR@/bin/petscdiff -j -f 'grep -v table_di | grep -v netcdf | grep -v /green | grep -v EFIT | grep -v symmetrize | grep -v type | grep -v slices? | grep -v "#$" | grep -v -e "^$" | grep -v Git | grep -v Simulation | grep -v compiled | grep -v flags | grep -v ">" | grep -v SHAPE | grep -v Done | grep -v efit.input | grep -v fpolvs | grep -v "^    0.000"' -F 'grep -v table_di | grep -v netcdf | grep -v /green | grep -v EFIT | grep -v symmetrize | grep -v type | grep -v slices? | grep -v "#$" | grep -v -e "^$" | grep -v Git | grep -v Simulation | grep -v compiled | grep -v flags | grep -v ">" | grep -v SHAPE | grep -v Done | grep -v efit.input | grep -v fpolvs | grep -v "^    0.000"' ${OUTPUT_STORE_DIR}/run_efit.out run_efit.out

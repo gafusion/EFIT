@@ -1,5 +1,8 @@
 #!/bin/bash
 
+have_netcdf=@HAVE_NETCDF@
+enable_hdf5=@ENABLE_HDF5@
+
 # Ubuntu tries to use threads even without implementation in program
 export OMP_NUM_THREADS=1
 
@@ -18,13 +21,23 @@ if ! test -e @CURRENT_MACHINE_LINK_DIR@/lim.dat; then
 fi
 
 # Remove any previous outputs
-rm -f run_efit.out
-outputs=( @EFIT_OUTPUTS@ )
+rm -f run_efit.out run_efit_input.out
+if [ ${have_netcdf,,} = on ] || [ ${have_netcdf,,} = true ]; then
+  outputs=( a g m )
+else
+  outputs=( a g )
+fi
 for prefix in ${outputs[*]}; do
   for label in @EFIT_LABEL@; do
     rm -f ${prefix}${label}
   done
 done
+for label in @EFIT_LABEL@; do
+  rm -f k${label}_input
+done
+if [ ${enable_hdf5,,} = on ] || [ ${enable_hdf5,,} = true ]; then
+  rm -f @RUNID@.h5 @RUNID@_input.h5
+fi
 
 # Now run efit
 @MPICMD@ @NPROC@ @EFIT_EXEC@ @GRID_SIZE@ > run_efit.out

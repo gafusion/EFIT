@@ -23,7 +23,7 @@
       namelist/setup/link_efit,link_store,maxinpfile,ntims,kxiter
       namelist/optin/mode,cmdfile,shotfile,shot,starttime,deltatime, &
                      steps,snapext,inpfile
-      namelist/in0/ierchk,iout,iplcout,req_valid
+      namelist/in0/ierchk,iout,iplcout,req_valid,write_omas
 
       ! Initialize variables
       input_flag = .false.
@@ -50,6 +50,8 @@
       iplcout_prior = -1
       req_valid = .false.
       req_valid_prior = .false.
+      write_omas = -1
+      write_omas_prior = -1
 
       ! Determine if input file exists
       if(rank == 0) inquire(file='efit.input',exist=input_flag)
@@ -119,6 +121,9 @@
       endif
       if (iout .ne. -1) then
         iout_prior = iout
+      endif
+      if (write_omas .ne. -1) then
+        write_omas_prior = write_omas
       endif
 
       return
@@ -206,7 +211,7 @@
                 kersil,iout,ixray,kedgef,kedgep,kautoknt,kakloop,kakiter, &
                 kpphord,kffhord,keehord,isolve,iplcout,imagsigma,ksigma, &
                 nbdrymx,nsol,kbetapr,nbdryp,idebug,ifindopt,npnef,nptef, &
-                nw_sub,nh_sub,ibound
+                write_omas,nw_sub,nh_sub,ibound
       real*8 plasma,btor,fwtcur,fwtqa,qemp,error,serror,psibry, &
              bitip,qenp,fwtbp,relip,zelip,aelip,eelip,qvfit,fwtdlc, &
              betap0,emp,enp,scrape,errmin,rbound,fwacoil,rcentr,rzero, &
@@ -269,11 +274,11 @@
         pedge,kedgep,pe_width,pe_psin,chordv,chordr,nw_sub,nh_sub, &
         kautoknt,akchiwt,akerrwt,kakloop,aktol,kakiter,akgamwt,akprewt, &
         kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout, &
-        imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
+        imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum, &
         nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
         idebug,jdebug,ifindopt,tolbndpsi,siloplim,use_previous,req_valid, &
         appdf,affdf,awwdf,aeedf, &
-        table_dir,input_dir,store_dir,ibound
+        appendsnap,write_omas,table_dir,input_dir,store_dir,ibound
       parameter(nin=343)
 
       open(unit=nin,status='old',file=filename,iostat=istat)
@@ -295,12 +300,12 @@
 !**********************************************************************
 !>
 !!    this subroutine grabs necessary information from file to properly
-!!    set up directory paths from an IMAS equilibrium hdf5 file
+!!    set up directory paths from an OMAS equilibrium hdf5 file
 !!
 !!    timeslice 0 is used, but could be made variable
 !!
 !**********************************************************************
-      subroutine read_dirs_shot_imas(filename)
+      subroutine read_dirs_shot_omas(filename)
       use var_exdata, only: ishot,ifitvs
       use var_cecoil, only: iecurr
       use var_vessel, only: ivesel
@@ -317,44 +322,42 @@
 #if defined(USE_HDF5)
       inquire(file=trim(filename),exist=file_stat)
       if (.not. file_stat) then
-        call errctrl_msg('read_imas_in1',trim(filename)//' not found')
+        call errctrl_msg('read_dirs_shot_omas', &
+                         trim(filename)//' not found')
         stop
       endif
       call fch5init
       call open_oldh5file(trim(filename),fileid,rootgid,h5in,h5err)
-      call test_group(rootgid,"equilibrium",file_stat,h5err)
+      call enter_group(rootgid,"equilibrium",eqid,file_stat,h5err)
       if (.not. file_stat) then
-        call errctrl_msg('read_imas_in1','equilibrium group not found')
+        call errctrl_msg('read_dirs_shot_omas', &
+                         'equilibrium group not found')
         stop
       endif
-      call open_group(rootgid,"equilibrium",eqid,h5err)
-      call test_group(eqid,"code",file_stat,h5err)
+      call enter_group(eqid,"code",cid,file_stat,h5err)
       if (.not. file_stat) then
-        call errctrl_msg('read_imas_in1','code group not found')
+        call errctrl_msg('read_dirs_shot_omas','code group not found')
         stop
       endif
-      call open_group(eqid,"code",cid,h5err)
-      call test_group(cid,"parameters",file_stat,h5err)
+      call enter_group(cid,"parameters",pid,file_stat,h5err)
       if (.not. file_stat) then
-        call errctrl_msg('read_imas_in1','parameters group not found')
+        call errctrl_msg('read_dirs_shot_omas', &
+                         'parameters group not found')
         stop
       endif
-      call open_group(cid,"parameters",pid,h5err)
-      call test_group(pid,"time_slice",file_stat,h5err)
+      call enter_group(pid,"time_slice",tid,file_stat,h5err)
       if (.not. file_stat) then
-        call errctrl_msg('read_imas_in1','time_slice group not found')
+        call errctrl_msg('read_dirs_shot_omas', &
+                         'time_slice group not found')
         stop
       endif
-      call open_group(pid,"time_slice",tid,h5err)
-      call test_group(tid,"0",file_stat,h5err)
+      call enter_group(tid,"0",sid,file_stat,h5err)
       if (.not. file_stat) then
-        call errctrl_msg('read_imas_in1','100 group not found')
+        call errctrl_msg('read_dirs_shot_omas','0 group not found')
         stop
       endif
-      call open_group(tid,"0",sid,h5err)
-      call test_group(sid,"in1",file_stat,h5err)
+      call enter_group(sid,"in1",nid,file_stat,h5err)
       if (file_stat) then
-        call open_group(sid,"in1",nid,h5err)
         call read_h5_ex(nid,"ishot",ishot,h5in,h5err)
         call read_h5_ex(nid,"iecurr",iecurr,h5in,h5err)
         call read_h5_ex(nid,"ivesel",ivesel,h5in,h5err)
@@ -375,7 +378,7 @@
 
 #else
       ! this code should not be reachable
-      call errctrl_msg('read_imas_in1','HDF5 needs to be linked')
+      call errctrl_msg('read_dirs_shot_omas','HDF5 needs to be linked')
       stop
 #endif
-      end subroutine read_dirs_shot_imas
+      end subroutine read_dirs_shot_omas

@@ -57,7 +57,7 @@
            kedgep,pedge,pe_psin,pe_width,kedgef,f2edge,fe_psin,fe_width, &
            psiecn,dpsiecn,relaxdz,fitzts,isolve,stabdz, &
            iplcout,errdelz,imagsigma,errmag,ksigma,saimin,errmagb, &
-           write_kfile,fitfcsum,fwtfcsum,appendsnap, &
+           write_omas,write_kfile,fitfcsum,fwtfcsum,appendsnap, &
            mse_quiet,mse_spave_on,kwaitmse,dtmsefull, &
            mse_strict,t_max_beam_off,ifitdelz,scaledz, &
            mse_usecer,mse_certree,mse_use_cer330,mse_use_cer210, &
@@ -197,13 +197,20 @@
         return
       endif
       if(link_store(1:1).ne.'') store_dir=trim(link_store)
-!--   warn that idebug, jdebug, and ktear inputs are deprecated
+      ! warn that idebug, jdebug, and ktear inputs are deprecated
       if(idebug.ne.0) write(*,*) &
-      "idebug input variable is deprecated, set cmake variable instead"
+       "idebug input variable is deprecated, set cmake variable instead"
       if(jdebug.ne."NONE") write(*,*) &
-      "jdebug input variable is deprecated, set cmake variable instead"
+       "jdebug input variable is deprecated, set cmake variable instead"
       if(ktear.ne.0) write(*,*) &
-      "tearing calculations don't exist, ktear is deprecated"
+       "tearing calculations no longer exist, ktear is deprecated"
+      ! disable unwanted file writes (gets passed to namelist output, wanted?)
+      if (write_omas.eq.2) then
+        iout=0
+        iplcout=0
+        itek=0
+        kwripre=0
+      endif
 !----------------------------------------------------------------------
 !--   writes out the efitin namelist. Flag iout = 32.                --
 !----------------------------------------------------------------------
@@ -216,6 +223,7 @@
 
       iteks=itek
       mxiters=mxiter
+      nxiters=nxiter
       zelipss=zelip
       kffcurs=kffcur
       kppcurs=kppcur
@@ -223,6 +231,14 @@
       iexcals=iexcal
       ibunmns=ibunmn
       ierchks=ierchk
+      nbdrys=nbdry
+      rcs=rc_ext
+      zcs=zc_ext
+      aexts=a_ext
+      eups=eup_ext
+      elows=elow_ext
+      dups=dup_ext
+      dlows=dlow_ext
 !
       ktime=mtime ! don't know why this would be wanted...
       if(qvfit.gt.0.0) qenp=qvfit ! iconvr=2 since not in efitin

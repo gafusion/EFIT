@@ -184,6 +184,7 @@
       use utils, only: mgaus1,mgaus2
       implicit none
       integer*4 i,istat
+      real*8 rlin,rlout,zlbot,zltop ! not used in efund
       real*8 patmp2(magpri)
       character*10 mpnam2(magpri),lpname(nsilop),vsname(nvesel)
       character(1000) line
@@ -193,7 +194,7 @@
                    rvs,zvs,wvs,hvs,avs,avs2,vsid,vsname, &
                    racoil,zacoil,wacoil,hacoil, &
                    rf,zf,wf,hf,af,af2,fcid,fcturn,turnfc, &
-                   re,ze,we,he,ecid,ecturn
+                   re,ze,we,he,ecid,ecturn,rlin,rlout,zlbot,zltop
       namelist/in5/rleft,rright,zbotto,ztop,mgaus1,mgaus2, &
                    nshiftrz,rshift,zshift,pshift,pmprobe,nsmp2, &
                    igrid,ifcoil,islpfc,iecoil,ivesel,iacoil,isize

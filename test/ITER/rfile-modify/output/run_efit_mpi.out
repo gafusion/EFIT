@@ -2,51 +2,54 @@
           EFIT-AI Version
 
  Git repository url git@gitlab.com:efit-ai/efit.git
- Git branch main
- Git hash 92b0940
- Git date 2023-04-24 20:13:52 +0000
- Simulation started on  5/18/2023 at 13:45:12
+ Git branch omas_write
+ Git hash 6cf41be with local modifications
+ Git date 2023-06-12 11:49:00 -0700
+ Simulation started on  6/17/2023 at 11:17:28
  Code compiled with GNU 9.2.0
 
- type mode (1=imas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
+ type mode (1=omas, 2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext):
+
+ number of time slices?
 
  type input file names:
+ #
 
  table_di2 = <../green/>
  ******************** EFIT 65 x 65 grid ********************
 
  r=  0 t=    60 it=  1 chi2=0.00E+00 zm= 2.90E-01 err=6.331E+00 dz= 2.903E-01 chigam= 0.00E+00
- r=  0 t=    60 it=  2 chi2=0.00E+00 zm= 3.73E-01 err=1.168E+00 dz= 8.275E-02 chigam= 0.00E+00
- r=  0 t=    60 it=  3 chi2=0.00E+00 zm= 4.27E-01 err=6.814E-01 dz= 5.426E-02 chigam= 0.00E+00
- r=  0 t=    60 it=  4 chi2=0.00E+00 zm= 4.63E-01 err=4.041E-01 dz= 3.607E-02 chigam= 0.00E+00
- r=  0 t=    60 it=  5 chi2=0.00E+00 zm= 4.88E-01 err=2.450E-01 dz= 2.489E-02 chigam= 0.00E+00
- r=  0 t=    60 it=  6 chi2=0.00E+00 zm= 5.06E-01 err=1.524E-01 dz= 1.792E-02 chigam= 0.00E+00
- r=  0 t=    60 it=  7 chi2=0.00E+00 zm= 5.19E-01 err=9.764E-02 dz= 1.335E-02 chigam= 0.00E+00
- r=  0 t=    60 it=  8 chi2=0.00E+00 zm= 5.30E-01 err=6.447E-02 dz= 1.014E-02 chigam= 0.00E+00
- r=  0 t=    60 it=  9 chi2=0.00E+00 zm= 5.37E-01 err=4.383E-02 dz= 7.798E-03 chigam= 0.00E+00
- r=  0 t=    60 it= 10 chi2=0.00E+00 zm= 5.43E-01 err=3.061E-02 dz= 6.041E-03 chigam= 0.00E+00
- r=  0 t=    60 it= 11 chi2=0.00E+00 zm= 5.48E-01 err=2.187E-02 dz= 4.696E-03 chigam= 0.00E+00
- r=  0 t=    60 it= 12 chi2=0.00E+00 zm= 5.52E-01 err=1.593E-02 dz= 3.659E-03 chigam= 0.00E+00
- r=  0 t=    60 it= 13 chi2=0.00E+00 zm= 5.55E-01 err=1.178E-02 dz= 2.853E-03 chigam= 0.00E+00
- r=  0 t=    60 it= 14 chi2=0.00E+00 zm= 5.57E-01 err=8.816E-03 dz= 2.227E-03 chigam= 0.00E+00
- r=  0 t=    60 it= 15 chi2=0.00E+00 zm= 5.59E-01 err=6.659E-03 dz= 1.738E-03 chigam= 0.00E+00
- r=  0 t=    60 it= 16 chi2=0.00E+00 zm= 5.60E-01 err=5.065E-03 dz= 1.356E-03 chigam= 0.00E+00
- r=  0 t=    60 it= 17 chi2=0.00E+00 zm= 5.61E-01 err=3.873E-03 dz= 1.058E-03 chigam= 0.00E+00
- r=  0 t=    60 it= 18 chi2=0.00E+00 zm= 5.62E-01 err=2.974E-03 dz= 8.256E-04 chigam= 0.00E+00
- r=  0 t=    60 it= 19 chi2=0.00E+00 zm= 5.63E-01 err=2.290E-03 dz= 6.441E-04 chigam= 0.00E+00
- r=  0 t=    60 it= 20 chi2=0.00E+00 zm= 5.63E-01 err=1.767E-03 dz= 5.025E-04 chigam= 0.00E+00
- r=  0 t=    60 it= 21 chi2=0.00E+00 zm= 5.63E-01 err=1.366E-03 dz= 3.920E-04 chigam= 0.00E+00
- r=  0 t=    60 it= 22 chi2=0.00E+00 zm= 5.64E-01 err=1.058E-03 dz= 3.058E-04 chigam= 0.00E+00
- r=  0 t=    60 it= 23 chi2=0.00E+00 zm= 5.64E-01 err=8.200E-04 dz= 2.385E-04 chigam= 0.00E+00
- r=  0 t=    60 it= 24 chi2=0.00E+00 zm= 5.64E-01 err=6.362E-04 dz= 1.860E-04 chigam= 0.00E+00
- r=  0 t=    60 it= 25 chi2=0.00E+00 zm= 5.64E-01 err=4.940E-04 dz= 1.451E-04 chigam= 0.00E+00
- r=  0 t=    60 it= 26 chi2=0.00E+00 zm= 5.64E-01 err=3.838E-04 dz= 1.132E-04 chigam= 0.00E+00
- r=  0 t=    60 it= 27 chi2=0.00E+00 zm= 5.65E-01 err=2.983E-04 dz= 8.829E-05 chigam= 0.00E+00
- r=  0 t=    60 it= 28 chi2=0.00E+00 zm= 5.65E-01 err=2.320E-04 dz= 6.886E-05 chigam= 0.00E+00
- r=  0 t=    60 it= 29 chi2=0.00E+00 zm= 5.65E-01 err=1.805E-04 dz= 5.371E-05 chigam= 0.00E+00
- r=  0 t=    60 it= 30 chi2=0.00E+00 zm= 5.65E-01 err=1.405E-04 dz= 4.189E-05 chigam= 0.00E+00
- r=  0 t=    60 it= 31 chi2=0.00E+00 zm= 5.65E-01 err=1.093E-04 dz= 3.268E-05 chigam= 0.00E+00
- r=  0 t=    60 it= 32 chi2=0.00E+00 zm= 5.65E-01 err=8.513E-05 dz= 2.549E-05 chigam= 0.00E+00
+ r=  0 t=    60 it=  2 chi2=0.00E+00 zm= 3.73E-01 err=1.168E+00 dz= 8.285E-02 chigam= 0.00E+00
+ r=  0 t=    60 it=  3 chi2=0.00E+00 zm= 4.27E-01 err=6.814E-01 dz= 5.412E-02 chigam= 0.00E+00
+ r=  0 t=    60 it=  4 chi2=0.00E+00 zm= 4.63E-01 err=4.041E-01 dz= 3.601E-02 chigam= 0.00E+00
+ r=  0 t=    60 it=  5 chi2=0.00E+00 zm= 4.88E-01 err=2.450E-01 dz= 2.496E-02 chigam= 0.00E+00
+ r=  0 t=    60 it=  6 chi2=0.00E+00 zm= 5.06E-01 err=1.524E-01 dz= 1.800E-02 chigam= 0.00E+00
+ r=  0 t=    60 it=  7 chi2=0.00E+00 zm= 5.20E-01 err=9.766E-02 dz= 1.338E-02 chigam= 0.00E+00
+ r=  0 t=    60 it=  8 chi2=0.00E+00 zm= 5.30E-01 err=6.449E-02 dz= 1.015E-02 chigam= 0.00E+00
+ r=  0 t=    60 it=  9 chi2=0.00E+00 zm= 5.38E-01 err=4.385E-02 dz= 7.790E-03 chigam= 0.00E+00
+ r=  0 t=    60 it= 10 chi2=0.00E+00 zm= 5.44E-01 err=3.062E-02 dz= 6.026E-03 chigam= 0.00E+00
+ r=  0 t=    60 it= 11 chi2=0.00E+00 zm= 5.48E-01 err=2.188E-02 dz= 4.680E-03 chigam= 0.00E+00
+ r=  0 t=    60 it= 12 chi2=0.00E+00 zm= 5.52E-01 err=1.593E-02 dz= 3.644E-03 chigam= 0.00E+00
+ r=  0 t=    60 it= 13 chi2=0.00E+00 zm= 5.55E-01 err=1.178E-02 dz= 2.840E-03 chigam= 0.00E+00
+ r=  0 t=    60 it= 14 chi2=0.00E+00 zm= 5.57E-01 err=8.819E-03 dz= 2.216E-03 chigam= 0.00E+00
+ r=  0 t=    60 it= 15 chi2=0.00E+00 zm= 5.59E-01 err=6.661E-03 dz= 1.729E-03 chigam= 0.00E+00
+ r=  0 t=    60 it= 16 chi2=0.00E+00 zm= 5.60E-01 err=5.066E-03 dz= 1.349E-03 chigam= 0.00E+00
+ r=  0 t=    60 it= 17 chi2=0.00E+00 zm= 5.61E-01 err=3.874E-03 dz= 1.053E-03 chigam= 0.00E+00
+ r=  0 t=    60 it= 18 chi2=0.00E+00 zm= 5.62E-01 err=2.974E-03 dz= 8.213E-04 chigam= 0.00E+00
+ r=  0 t=    60 it= 19 chi2=0.00E+00 zm= 5.63E-01 err=2.290E-03 dz= 6.408E-04 chigam= 0.00E+00
+ r=  0 t=    60 it= 20 chi2=0.00E+00 zm= 5.63E-01 err=1.767E-03 dz= 4.999E-04 chigam= 0.00E+00
+ r=  0 t=    60 it= 21 chi2=0.00E+00 zm= 5.63E-01 err=1.366E-03 dz= 3.900E-04 chigam= 0.00E+00
+ r=  0 t=    60 it= 22 chi2=0.00E+00 zm= 5.64E-01 err=1.058E-03 dz= 3.043E-04 chigam= 0.00E+00
+ r=  0 t=    60 it= 23 chi2=0.00E+00 zm= 5.64E-01 err=8.198E-04 dz= 2.374E-04 chigam= 0.00E+00
+ r=  0 t=    60 it= 24 chi2=0.00E+00 zm= 5.64E-01 err=6.360E-04 dz= 1.851E-04 chigam= 0.00E+00
+ r=  0 t=    60 it= 25 chi2=0.00E+00 zm= 5.64E-01 err=4.938E-04 dz= 1.444E-04 chigam= 0.00E+00
+ r=  0 t=    60 it= 26 chi2=0.00E+00 zm= 5.64E-01 err=3.837E-04 dz= 1.127E-04 chigam= 0.00E+00
+ r=  0 t=    60 it= 27 chi2=0.00E+00 zm= 5.64E-01 err=2.982E-04 dz= 8.788E-05 chigam= 0.00E+00
+ r=  0 t=    60 it= 28 chi2=0.00E+00 zm= 5.65E-01 err=2.319E-04 dz= 6.855E-05 chigam= 0.00E+00
+ r=  0 t=    60 it= 29 chi2=0.00E+00 zm= 5.65E-01 err=1.804E-04 dz= 5.347E-05 chigam= 0.00E+00
+ r=  0 t=    60 it= 30 chi2=0.00E+00 zm= 5.65E-01 err=1.404E-04 dz= 4.171E-05 chigam= 0.00E+00
+ r=  0 t=    60 it= 31 chi2=0.00E+00 zm= 5.65E-01 err=1.093E-04 dz= 3.253E-05 chigam= 0.00E+00
+ r=  0 t=    60 it= 32 chi2=0.00E+00 zm= 5.65E-01 err=8.512E-05 dz= 2.538E-05 chigam= 0.00E+00
 
        data used:   
   0 flux loops
@@ -57,9 +60,9 @@
 
  shot #     =      91101 time(ms)   =         60 chi^2      =  0.000E+00
  betat(%)   =      0.242 betap      =      0.067 li         =      1.069
- vol(cm^3)  =  8.532E+08 rcntr(cm)  =    621.464 zcntr(cm)  =     28.390
- elong      =      1.923 utri       =      0.440 ltri       =      0.613
- a(cm)      =    199.220 gapin(cm)  =      0.000 gapout(cm) =      6.766
- gaptop(cm) =      9.546 q95        =      3.132 rm(cm)     =    628.890
- zm(cm)     =     56.473 totalchi^2 =  0.000E+00 error      =  8.513E-05
+ vol(cm^3)  =  8.532E+08 rcntr(cm)  =    621.463 zcntr(cm)  =     28.387
+ elong      =      1.923 utri       =      0.439 ltri       =      0.613
+ a(cm)      =    199.221 gapin(cm)  =      0.000 gapout(cm) =      6.766
+ gaptop(cm) =     45.252 q95        =      3.132 rm(cm)     =    628.888
+ zm(cm)     =     56.470 totalchi^2 =  0.000E+00 error      =  8.512E-05
 INFO in efit at r=  0, t=    60: Done processing

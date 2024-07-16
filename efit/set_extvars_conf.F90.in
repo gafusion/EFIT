@@ -4,14 +4,12 @@
 !!      cmake setup, and environment options.  Build information is
 !!      then output to the terminal.
 !!
-!!    @param tval : temporary variable for formatting output
 !*********************************************************************
       SUBROUTINE set_extvars
       USE extvars
       USE mpi_info
       USE var_nio
       IMPLICIT NONE
-      INTEGER, DIMENSION(8) :: tval
       CHARACTER(8) :: versiondate
       CHARACTER(256) :: link_efitx,link_storex
       INTEGER :: ioerr

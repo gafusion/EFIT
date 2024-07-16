@@ -45,9 +45,6 @@
              drgrids,dzgrids,psical,rselsum
       real*8 sicont,s1edge,scalep,scalemin,delx2,dely2,rbar,aup
       real*8 rbmin_e,rbmax_e,zbmin_e,zbmax_e
-      real*8 plasma_ext,c_ext,dr_ext,dz_ext,rc_ext,zc_ext,a_ext, &
-             eup_ext,elow_ext,dup_ext,dlow_ext,setlim_ext,sign_ext, &
-             scaleffp_ext,scalepp_ext
       real*8 plasma_save,btor_save,rcentr_save,fwtcur_save,error_save
       real*8 r0min,r0max,z0min,z0max,zr0min,zr0max,rz0min,rz0max
       real*8 r0ave,z0ave,a0ave,e0top,e0bot,d0top,d0bot,dnmin
@@ -76,8 +73,6 @@
       character*300 edatname
       character(256) table_save
       character*10 namedum,tindex,probeind
-      character*2 reflect_ext
-      logical shape_ext
       logical file_stat
       logical writepc ! unused variable
       integer*4, parameter :: m_ext=101,nsq=1
@@ -118,7 +113,7 @@
            imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
            nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
            idebug,jdebug,ifindopt,tolbndpsi,siloplim,use_previous, &
-           req_valid,chordv,chordr,nw_sub,nh_sub,ibound
+           req_valid,write_omas,chordv,chordr,nw_sub,nh_sub,ibound
       namelist/inwant/psiwant,vzeroj,fwtxxj,fbetap,fbetan,fli,fq95,fqsiw, &
            jbeta,jli,alpax,gamax,jwantm,fwtxxq,fwtxxb,fwtxli,znose, &
            fwtbdry,nqwant,siwantq,n_write,kccoils,ccoils,rexpan, &
@@ -512,11 +507,6 @@
 11775   format (6a8,3i4)
 11776   format (5e16.9)
         if ((icinit.eq.-3).or.(icinit.eq.-4 .and. jtime.eq.1)) then
-          if ((nw.ne.nw_ext) .or. (nh.ne.nh_ext)) then
-            call errctrl_msg('data_input', &
-                             'restart file must have same dimensions')
-            stop
-          endif
           do i=1,nw
             do j=1,nh
               kk=(i-1)*nh+j
@@ -611,46 +601,40 @@
         endif
         call fch5init
         call open_oldh5file(trim(ifname(1)),fileid,rootgid,h5in,h5err)
-        call test_group(rootgid,"equilibrium",file_stat,h5err)
+        call enter_group(rootgid,"equilibrium",eqid,file_stat,h5err)
         if (.not. file_stat) then
           call errctrl_msg('data_input','equilibrium group not found')
           kerror=1
           return
         endif
-        call open_group(rootgid,"equilibrium",eqid,h5err)
-        call test_group(eqid,"code",file_stat,h5err)
+        call enter_group(eqid,"code",cid,file_stat,h5err)
         if (.not. file_stat) then
           call errctrl_msg('data_input','code group not found')
           kerror=1
           return
         endif
-        call open_group(eqid,"code",cid,h5err)
-        call test_group(cid,"parameters",file_stat,h5err)
+        call enter_group(cid,"parameters",pid,file_stat,h5err)
         if (.not. file_stat) then
           call errctrl_msg('data_input','parameters group not found')
           kerror=1
           return
         endif
-        call open_group(cid,"parameters",pid,h5err)
-        call test_group(pid,"time_slice",file_stat,h5err)
+        call enter_group(pid,"time_slice",tid,file_stat,h5err)
         if (.not. file_stat) then
           call errctrl_msg('data_input','time_slice group not found')
           kerror=1
           return
         endif
-        call open_group(pid,"time_slice",tid,h5err)
         write(tindex,"(I0)") jtime-1+rank*ktime
-        call test_group(tid,trim(tindex),file_stat,h5err)
+        call enter_group(tid,trim(tindex),sid,file_stat,h5err)
         if (.not. file_stat) then
           call errctrl_msg('data_input', &
                            trim(tindex)//' group not found')
           stop
         endif
-        call open_group(tid,trim(tindex),sid,h5err)
 
-        call test_group(sid,"in1",file_stat,h5err)
+        call enter_group(sid,"in1",nid,file_stat,h5err)
         if (file_stat) then
-          call open_group(sid,"in1",nid,h5err)
           call read_h5_ex(nid,"ishot",ishot,h5in,h5err)
           call read_h5_ex(nid,"itime",itime,h5in,h5err)
           call read_h5_ex(nid,"plasma",plasma,h5in,h5err)
@@ -926,14 +910,17 @@
           call read_h5_ex(nid,"tolbndpsi",tolbndpsi,h5in,h5err)
           call read_h5_ex(nid,"siloplim",siloplim,h5in,h5err)
           call read_h5_ex(nid,"use_previous",use_previous,h5in,h5err)
+          call read_h5_ex(nid,"chordr",req_valid,h5in,h5err)
+          call read_h5_ex(nid,"chordv",req_valid,h5in,h5err)
           call read_h5_ex(nid,"nw_sub",nw_sub,h5in,h5err)
           call read_h5_ex(nid,"nh_sub",nh_sub,h5in,h5err)
+          call read_h5_ex(nid,"req_valid",req_valid,h5in,h5err)
+          call read_h5_ex(nid,"write_omas",write_omas,h5in,h5err)
           call close_group("in1",nid,h5err)
         endif
    
-        call test_group(sid,"ink",file_stat,h5err)
+        call enter_group(sid,"ink",nid,file_stat,h5err)
         if (file_stat) then
-          call open_group(sid,"ink",nid,h5err)
           call read_h5_ex(nid,"isetfb",isetfb,h5in,h5err)
           call read_h5_ex(nid,"ioffr",ioffr,h5in,h5err)
           call read_h5_ex(nid,"ioffz",ioffz,h5in,h5err)
@@ -948,9 +935,8 @@
           call close_group("ink",nid,h5err)
         endif
    
-        call test_group(sid,"ins",file_stat,h5err)
+        call enter_group(sid,"ins",nid,file_stat,h5err)
         if (file_stat) then
-          call open_group(sid,"ins",nid,h5err)
           call read_h5_ex(nid,"tgamma",tgamma,h5in,h5err)
           call read_h5_ex(nid,"sgamma",sgamma,h5in,h5err)
           call read_h5_ex(nid,"fwtgam",fwtgam,h5in,h5err)
@@ -987,9 +973,8 @@
           call close_group("ins",nid,h5err)
         endif
    
-        call test_group(sid,"in_msels",file_stat,h5err)
+        call enter_group(sid,"in_msels",nid,file_stat,h5err)
         if (file_stat) then
-          call open_group(sid,"in_msels",nid,h5err)
           call read_h5_ex(nid,"bmsels",bmsels,h5in,h5err)
           call read_h5_ex(nid,"sbmsels",sbmsels,h5in,h5err)
           call read_h5_ex(nid,"fwtbmsels",fwtbmsels,h5in,h5err)
@@ -1008,16 +993,14 @@
           call close_group("in_msels",nid,h5err)
         endif
 
-        call test_group(sid,"ina",file_stat,h5err)
+        call enter_group(sid,"ina",nid,file_stat,h5err)
         if (file_stat) then
-          call open_group(sid,"ina",nid,h5err)
           call read_h5_ex(nid,"spatial_avg_gam",spatial_avg_gam,h5in,h5err)
           call close_group("ina",nid,h5err)
         endif
 
-        call test_group(sid,"inece",file_stat,h5err)
+        call enter_group(sid,"inece",nid,file_stat,h5err)
         if (file_stat) then
-          call open_group(sid,"inece",nid,h5err)
           call read_h5_ex(nid,"necein",necein,h5in,h5err)
           call read_h5_ex(nid,"teecein0",teecein0,h5in,h5err)
           call read_h5_ex(nid,"feece0",feece0,h5in,h5err)
@@ -1050,9 +1033,8 @@
           call close_group("inece",nid,h5err)
         endif
 
-        call test_group(sid,"edgep",file_stat,h5err)
+        call enter_group(sid,"edgep",nid,file_stat,h5err)
         if (file_stat) then
-          call open_group(sid,"edgep",nid,h5err)
           call read_h5_ex(nid,"symmetrize",symmetrize,h5in,h5err)
           call read_h5_ex(nid,"rpress",rpress,h5in,h5err)
           call read_h5_ex(nid,"pressr",pressr,h5in,h5err)
@@ -1072,9 +1054,8 @@
           call close_group("edgep",nid,h5err)
         endif
 
-        call test_group(sid,"iner",file_stat,h5err)
+        call enter_group(sid,"iner",nid,file_stat,h5err)
         if (file_stat) then
-          call open_group(sid,"iner",nid,h5err)
           call read_h5_ex(nid,"keecur",keecur,h5in,h5err)
           call read_h5_ex(nid,"ecurbd",ecurbd,h5in,h5err)
           call read_h5_ex(nid,"keefnc",keefnc,h5in,h5err)
@@ -1089,18 +1070,16 @@
           call close_group("iner",nid,h5err)
         endif
 
-        call test_group(sid,"insxr",file_stat,h5err)
+        call enter_group(sid,"insxr",nid,file_stat,h5err)
         if (file_stat) then
-          call open_group(sid,"insxr",nid,h5err)
           call read_h5_ex(nid,"ksxr0",ksxr0,h5in,h5err)
           call read_h5_ex(nid,"ksxr2",ksxr2,h5in,h5err)
           call read_h5_ex(nid,"idosxr",idosxr,h5in,h5err)
           call close_group("insxr",nid,h5err)
         endif
 
-        call test_group(sid,"inwant",file_stat,h5err)
+        call enter_group(sid,"inwant",nid,file_stat,h5err)
         if (file_stat) then
-          call open_group(sid,"inwant",nid,h5err)
           call read_h5_ex(nid,"psiwant",psiwant,h5in,h5err)
           call read_h5_ex(nid,"vzeroj",vzeroj,h5in,h5err)
           call read_h5_ex(nid,"fwtxxj",fwtxxj,h5in,h5err)
@@ -1155,9 +1134,8 @@
           call close_group("inwant",nid,h5err)
         endif
    
-        call test_group(sid,"invt",file_stat,h5err)
+        call enter_group(sid,"invt",nid,file_stat,h5err)
         if (file_stat) then
-          call open_group(sid,"invt",nid,h5err)
           call read_h5_ex(nid,"omegat",omegat,h5in,h5err)
           call read_h5_ex(nid,"nomegat",nomegat,h5in,h5err)
           call read_h5_ex(nid,"enw",enw,h5in,h5err)
@@ -1192,9 +1170,8 @@
           call close_group("invt",nid,h5err)
         endif
 
-        call test_group(sid,"profile_ext",file_stat,h5err)
+        call enter_group(sid,"profile_ext",nid,file_stat,h5err)
         if (file_stat) then
-          call open_group(sid,"profile_ext",nid,h5err)
           call read_h5_ex(nid,"npsi_ext",npsi_ext,h5in,h5err)
           call read_h5_ex(nid,"pprime_ext",pprime_ext,h5in,h5err)
           call read_h5_ex(nid,"ffprim_ext",ffprim_ext,h5in,h5err)
@@ -1219,9 +1196,8 @@
           call close_group("profile_ext",nid,h5err)
         endif
 
-        call test_group(sid,"inlibim",file_stat,h5err)
+        call enter_group(sid,"inlibim",nid,file_stat,h5err)
         if (file_stat) then
-          call open_group(sid,"inlibim",nid,h5err)
           call read_h5_ex(nid,"tlibim",tlibim,h5in,h5err)
           call read_h5_ex(nid,"slibim",slibim,h5in,h5err)
           call read_h5_ex(nid,"fwtlib",fwtlib,h5in,h5err)
@@ -1239,31 +1215,27 @@
 
         ! read previous solution if requested
         if ((geqdsk_ext.ne.'none').or.(icinit.eq.-3).or.(icinit.eq.-4)) then
-          call test_group(eqid,"time_slice",file_stat,h5err)
+          call enter_group(eqid,"time_slice",tid,file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('data_input','time_slice group not found')
             stop
           endif
-          call open_group(eqid,"time_slice",tid,h5err)
-          call test_group(tid,trim(tindex),file_stat,h5err)
+          call enter_group(tid,trim(tindex),sid,file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('data_input', &
                              trim(tindex)//' group not found')
             stop
           endif
-          call open_group(tid,trim(tindex),sid,h5err)
-          call test_group(sid,"profiles_2d",file_stat,h5err)
+          call enter_group(sid,"profiles_2d",cid,file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('data_input','profiles_2d group not found')
             stop
           endif
-          call open_group(sid,"profiles_2d",cid,h5err)
-          call test_group(cid,"0",file_stat,h5err)
+          call enter_group(cid,"0",nid,file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('data_input','0 group not found')
             stop
           endif
-          call open_group(cid,"0",nid,h5err)
           call read_dims(nid,"psi",n2d,h5in,h5err)
           nw_ext=int(n2d(1))
           nh_ext=int(n2d(2))
@@ -1274,46 +1246,49 @@
           call close_group("profiles_2d",cid,h5err)
 
           ! read in important scalars
-          call test_group(sid,"global_quantities",file_stat,h5err)
+          call enter_group(sid,"global_quantities",nid,file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('data_input', &
                              'global_quantities group not found')
             stop
           endif
-          call open_group(sid,"global_quantities",nid,h5err)
           call read_h5_ex(nid,"psi_axis",simag_ext,h5in,h5err)
           call read_h5_ex(nid,"psi_boundary",psibry_ext,h5in,h5err)
           call read_h5_ex(nid,"ip",plasma_ext,h5in,h5err)
           call close_group("global_quantities",nid,h5err)
 
           ! read in boundary points
-          call test_group(sid,"boundary",file_stat,h5err)
+          ! try to read from boundary_separatrix first but fall back to
+          ! boundary if missing
+          edatname="boundary_separatrix"
+          call enter_group(sid,trim(edatname),cid,file_stat,h5err)
           if (.not. file_stat) then
-            call errctrl_msg('data_input','boundary group not found')
-            stop
+            edatname="boundary"
+            call enter_group(sid,trim(edatname),cid,file_stat,h5err)
+            if (.not. file_stat) then
+              call errctrl_msg('data_input','boundary group not found')
+              stop
+            endif
           endif
-          call open_group(sid,"boundary",cid,h5err)
-          call test_group(cid,"outline",file_stat,h5err)
+          call enter_group(cid,"outline",nid,file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('data_input','outline group not found')
             stop
           endif
-          call open_group(cid,"outline",nid,h5err)
           call read_dims(nid,"r",n1d,h5in,h5err)
           nbdry_ext=int(n1d(1))
           allocate(rbdry_ext(nbdry_ext),zbdry_ext(nbdry_ext))
           call read_h5_ex(nid,"r",rbdry_ext,h5in,h5err)
           call read_h5_ex(nid,"z",zbdry_ext,h5in,h5err)
           call close_group("outline",nid,h5err)
-          call close_group("boundary",cid,h5err)
+          call close_group(trim(edatname),cid,h5err)
 
           ! read in p', FF', and q
-          call test_group(sid,"profiles_1d",file_stat,h5err)
+          call enter_group(sid,"profiles_1d",nid,file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('data_input','profiles_1d group not found')
             stop
           endif
-          call open_group(sid,"profiles_1d",nid,h5err)
           call read_h5_ex(nid,"dpressure_dpsi",pprime_temp,h5in,h5err)
           call read_h5_ex(nid,"f_df_dpsi",ffprim_temp,h5in,h5err)
           call read_h5_ex(nid,"q",qpsi_ext,h5in,h5err)
@@ -1322,33 +1297,31 @@
           ! read in fcoil currents (skip ecoils)
           if ((icinit.eq.-3).or.(icinit.eq.-4)) then
             allocate(fcoil_ext(nfsum))
-            call test_group(sid,"constraints",file_stat,h5err)
+            call enter_group(sid,"constraints",cid,file_stat,h5err)
             if (.not. file_stat) then
               call errctrl_msg('data_input', &
                                'constraints group not found')
               stop
             endif
-            call open_group(sid,"constraints",cid,h5err)
-            call test_group(cid,"pf_current",file_stat,h5err)
+            call enter_group(cid,"pf_current",nid,file_stat,h5err)
             if (.not. file_stat) then
               call errctrl_msg('data_input', &
                                'pf_current group not found')
               stop
             endif
-            call open_group(cid,"pf_current",nid,h5err)
             do i=nesum,nesum+nfsum-1
               write(probeind,"(I0)") i
-              call test_group(nid,trim(probeind),file_stat,h5err)
+              call enter_group(nid,trim(probeind),fid,file_stat,h5err)
               if (.not. file_stat) then
                 call errctrl_msg('data_input', &
                                  trim(probeind)//' group not found')
                 stop
               endif
-              call open_group(nid,trim(probeind),fid,h5err)
               call read_h5_ex(fid,"reconstructed",fcoil_ext(i-nesum+1), &
                               h5in,h5err)
               call close_group(trim(probeind),fid,h5err)
             enddo
+            fcoil_ext=fcoil_ext*turnfc
             call close_group("pf_current",nid,h5err)
             call close_group("constraints",cid,h5err)
           endif 
@@ -1357,49 +1330,42 @@
           call close_group("equilibrium",eqid,h5err)
 
           ! read in limiter position
-          call test_group(rootgid,"wall",file_stat,h5err)
+          call enter_group(rootgid,"wall",eqid,file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('data_input','wall group not found')
             stop
           endif
-          call open_group(rootgid,"wall",eqid,h5err)
-          call test_group(eqid,"description_2d",file_stat,h5err)
+          call enter_group(eqid,"description_2d",cid,file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('data_input', &
                              'description_2d group not found')
             stop
           endif
-          call open_group(eqid,"description_2d",cid,h5err)
-          call test_group(cid,"0",file_stat,h5err)
+          call enter_group(cid,"0",pid,file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('data_input','0 group not found')
             stop
           endif
-          call open_group(cid,"0",pid,h5err)
-          call test_group(pid,"limiter",file_stat,h5err)
+          call enter_group(pid,"limiter",tid,file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('data_input','limiter group not found')
             stop
           endif
-          call open_group(pid,"limiter",tid,h5err)
-          call test_group(tid,"unit",file_stat,h5err)
+          call enter_group(tid,"unit",sid,file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('data_input','unit group not found')
             stop
           endif
-          call open_group(tid,"unit",sid,h5err)
-          call test_group(sid,"0",file_stat,h5err)
+          call enter_group(sid,"0",fid,file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('data_input','0 group not found')
             stop
           endif
-          call open_group(sid,"0",fid,h5err)
-          call test_group(fid,"outline",file_stat,h5err)
+          call enter_group(fid,"outline",nid,file_stat,h5err)
           if (.not. file_stat) then
             call errctrl_msg('data_input','outline group not found')
             stop
           endif
-          call open_group(fid,"outline",nid,h5err)
           call read_dims(nid,"r",n1d,h5in,h5err)
           limitr_ext = int(n1d(1))
           allocate(xlim_ext(limitr_ext),ylim_ext(limitr_ext))
@@ -1413,7 +1379,7 @@
           call close_group("description_2d",cid,h5err)
           call close_group("wall",eqid,h5err)
 
-          call open_group(rootgid,"equilibrium",eqid,h5err)
+          call enter_group(rootgid,"equilibrium",eqid,file_stat,h5err)
         endif
 
         call close_group("equilibrium",eqid,h5err)
@@ -1455,27 +1421,37 @@
       if (icinit.eq.-3 .or. icinit.eq.-4) then
         if (geqdsk_ext.eq.'none') then
           call errctrl_msg('data_input', &
-            'ICINIT requires and existing solution')
+            'ICINIT requires an existing solution')
           kerror=1
           return
         endif
       endif
+      if (write_omas_prior .ne. -1) then
+        write_omas = write_omas_prior
+      endif
       
 !--   warn that idebug, jdebug, kbound and ktear inputs are deprecated
       if (idebug.ne.0) write(*,*) &
-      "idebug input variable is deprecated, set cmake variable instead"
+       "idebug input variable is deprecated, set cmake variable instead"
       if (jdebug.ne."NONE") write(*,*) &
       "jdebug input variable is deprecated, set cmake variable instead"
       if(kbound.ne.0) write(*,*) &
       "old boundary tracing method is deprecated"
       if(ktear.ne.0) write(*,*) &
-      "tearing calculations don't exist, ktear is deprecated"
-!--   roundoff differences can throw off zlim if limiter corners
-!--   are too close to grid points (maybe zlim needs fixing...)
-      do i=1,limitr
-        ylim(i)=ylim(i)-1.e-10_dp
-      enddo
-!--   protect against underflow in fitting weights 
+       "tearing calculations no longer exist, ktear is deprecated"
+      ! disable unwanted file writes (gets passed to namelist output, wanted?)
+      if (write_omas.eq.2) then
+        iout=0
+        iplcout=0
+        itek=0
+        kinput=0
+        kwripre=0
+        kdomse=0
+      endif
+      ! roundoff differences can throw off zlim if limiter corners
+      ! are too close to grid points (maybe zlim needs fixing...)
+      ylim(1:limitr)=ylim(1:limitr)-1.e-10_dp
+      ! protect against underflow in fitting weights 
       if(abs(fwtdlc).le.1.e-30_dp) fwtdlc=0.0
       if(abs(fwtcur).le.1.e-30_dp) fwtcur=0.0
       do i=1,nfsum
@@ -1510,6 +1486,19 @@
         akprewt=0.0
       endif
 
+      ! save input values before any manipulation happens
+      nbdrys=nbdry
+      rbdrys=rbdry
+      zbdrys=zbdry
+      srpress=rpress
+      rcs=rc_ext
+      zcs=zc_ext
+      aexts=a_ext
+      eups=eup_ext
+      elows=elow_ext
+      dups=dup_ext
+      dlows=dlow_ext
+      psibrys=psibry
       if(nbdryp==-1) nbdryp=nbdry
 
 !--   Read msels_all.dat if needed
@@ -1884,19 +1873,12 @@
         xlim(7)=xlim(1)
         ylim(7)=ylim(1)
       endif
-      call set_basis_params
-      if (kedgep.gt.0) then
-        s1edge=(1.0-pe_psin)/pe_width
-        tpedge=tanh(s1edge)
-        s1edge=(1.0-fe_psin)/fe_width
-        tfedge=tanh(s1edge)
-      endif
+!--------------------------------------------------------------------- 
+!--   save fitting weights and numerical parameters
+!--------------------------------------------------------------------- 
 #ifdef DEBUG_LEVEL1
-      write(*,*)  'before save fitting weights'
+      write(*,*)  'before save fitting'
 #endif
-!--------------------------------------------------------------------- 
-!--   save fitting weights
-!--------------------------------------------------------------------- 
       swtdlc=fwtdlc
       swtcur=fwtcur
       swtfc=fwtfc
@@ -1908,9 +1890,23 @@
       swtemsels=fwtemsels
       swtece=fwtece0
       swtecebz=fwtecebz0
+      iteks=itek
+      mxiters=mxiter
+      nxiters=nxiter
+      zelipss=zelip
+      kffcurs=kffcur
+      kppcurs=kppcur
+      n1coils=n1coil
       iexcals=iexcal
       ibunmns=ibunmn
       ierchks=ierchk
+      call set_basis_params
+      if (kedgep.gt.0) then
+        s1edge=(1.0-pe_psin)/pe_width
+        tpedge=tanh(s1edge)
+        s1edge=(1.0-fe_psin)/fe_width
+        tfedge=tanh(s1edge)
+      endif
 #ifdef DEBUG_LEVEL1
       write(*,*)'adjust fit parameters based on basis function selected'
 #endif
@@ -1921,10 +1917,6 @@
       if (npress.lt.0) then
         kdopre=-npress
         npress=0
-      endif
-      if (itek.lt.0) then
-        ixray=1
-        itek=iabs(itek)
       endif
       if(psiwant.le.0.0) psiwant=1.e-5_dp
 
@@ -1938,6 +1930,10 @@
 !--         appended to the input files outside of the namelists, but we've
 !--         already closed those... does this still need to be supported?
 !-------------------------------------------------------------------------- 
+      if (itek.lt.0) then
+        ixray=1
+        itek=iabs(itek)
+      endif
       kgraph=0 
       if (itek.gt.100) then 
         itek=itek-100 
@@ -1963,10 +1959,10 @@
         call errctrl_msg('data_input','shot number not set')
         return
       endif
-      if ((limitr.gt.0).and.(xlim(1).le.-1.0)) then
+!      if ((limitr.gt.0).and.(xlim(1).le.-1.0)) then
 !        read (nin,5000) (xlim(i),ylim(i),i=1,limitr) 
-        ylim(i)=ylim(i)-1.e-10_dp
-      endif
+!        ylim(i)=ylim(i)-1.e-10_dp
+!      endif
 !      if ((nbdry.gt.0).and.(rbdry(1).le.-1.0)) read (nin,5020) & 
 !          (rbdry(i),zbdry(i),i=1,nbdry) 
       if (kprfit.gt.0) then
@@ -2406,7 +2402,7 @@
 !--   signal at psi loop # NSLREF is used as reference               -- 
 !---------------------------------------------------------------------- 
       fwtref=fwtsi(iabs(nslref)) 
-      kersil_23: if ((kersil.ne.2).and.(kersil.ne.3)) then
+      kersil_1: if (kersil.eq.1) then
       do m=1,nsilop
         tdata1=serror*abs(silopt(jtime,m)) 
         tdata2=abs(psibit(m))*vbit 
@@ -2423,7 +2419,7 @@
         sigsil(iabs(nslref))=coilmx*serror
         fwtsi(iabs(nslref))=1.0/coilmx**nsq/serror**nsq*fwtref
       endif 
-      else kersil_23
+      else kersil_1
 !----------------------------------------------------------------------- 
 !--   Fourier expansion of vessel sgments                             -- 
 !----------------------------------------------------------------------- 
@@ -2496,7 +2492,7 @@
           fwtsi(m)=0.0
         endif
       endif
-      endif kersil_23
+      endif kersil_1
       sigref=sigsil(iabs(nslref)) 
       fwtref=fwtsi(iabs(nslref)) 
 ! 
@@ -2592,8 +2588,6 @@
       fcentr=fbrdy 
       rbetap=(1.-betap0)/betap0 
       rbetaw=betapw0/betap0 
-      fconst=rzero**2*rbetap 
-      pbetap=betap0/(1.0-betap0)/rzero**2 
       emf=emp 
       enf=enp 
       kpcurn=kppcur+kffcur 

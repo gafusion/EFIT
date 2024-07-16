@@ -97,13 +97,13 @@ ALLOCATE(rbrpc(nstark,npcurn),rbzpc(nstark,npcurn),rgampc(nstark,npcurn),rbrfc(n
    aveerr(kxiter),iermax(kxiter),jermax(kxiter))
    
 ALLOCATE(rbdry(mbdry),zbdry(mbdry),fwtbdry(mbdry),fwtbry(mbdry),sigrbd(mbdry), &
-   sigzbd(mbdry),rbdry0(mbdry),zbdry0(mbdry), &
+   sigzbd(mbdry),rbdry0(mbdry),zbdry0(mbdry),rbdrys(mbdry),zbdrys(mbdry), &
    rsol(mbdry),zsol(mbdry),fwtsol(mbdry),fwtsolw(mbdry), &
    rbdrfc(mbdry,nfsum),rsolfc(mbdry,nfsum),rbdrac(mbdry,nacoil), &
    gbdrpc(mbdry,npcurn),gmp2dz(magpri),gsildz(nsilop),gbrdz(nstark), &
    gbzdz(nstark),rgamdz(nstark),rmlsdz(nmsels),relsdz(nmsels),rpredz(mpress), &
    rprwdz(mpress),gbdrdz(mbdry),erbloc(msbdry), erbsloc(msbdry), &
-   fcsum(nfsum),fczero(nfsum),ivbcuse(ndata), &
+   fcsum(nfsum),fczero(nfsum),ivbcuse(ndata),srpress(mpress), &
    pressr(mpress),rpress(mpress),zpress(mpress),tethom(mpress),rteth(mpress), &
    zteth(mpress),tionex(mpress),rion(mpress),zion(mpress),dnethom(mpress), &
    rneth(mpress),zneth(mpress),pbeam(mpress),sibeam(mpress),sgteth(mpress), &
@@ -178,8 +178,8 @@ ALLOCATE(volecs(nesum),volecc(nesum),rsisec(nesum),volfcs(nfsum),volfcc(nfsum), 
    rvs(nvesel),zvs(nvesel),hvs(nvesel),wvs(nvesel),avs(nvesel),avs2(nvesel), &
    rsisvs(nvesel),alphab(icycred_loopmax),diag1(icycred_loopmax), &
    tempgrid(ncurrt),tempgrid2(ncurrt),rowscale(nrsmat),colscale(mfnpcr), &
-   elong(ntime),rcntr(ntime),zcntr(ntime),utri(ntime), &
-   ltri(ntime),aminor(ntime),volume(ntime),betat(ntime),gaptop(ntime), &
+   elong(ntime),rcntr(ntime),zcntr(ntime),utri(ntime),betan(ntime), &
+   atri(ntime),ltri(ntime),aminor(ntime),volume(ntime),betat(ntime),gaptop(ntime), &
    betap(ntime),li(ntime),gapin(ntime),gapout(ntime),qstar(ntime), &
    rcurrt(ntime),zcurrt(ntime),qout(ntime),sepin(ntime), &
    sepout(ntime),septop(ntime),sibdry(ntime),area(ntime), &

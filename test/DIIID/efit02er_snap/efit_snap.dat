@@ -1,4 +1,5 @@
  &efitin
+ write_omas = 1
  scrape = 0.04
  nextra = 2
  itek = 0

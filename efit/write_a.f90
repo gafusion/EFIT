@@ -14,7 +14,7 @@
       integer*4, intent(in) :: ktime,jtime
 
       integer*4 ierold,iitime,ijtime,ioerr,itsave,jflag,jj,k
-      real*8 btor,cprof,fluxx,plasma,rcencm,tavem,xbetapr
+      real*8 btor,cprof,fluxx,plasma,rcencm,tavem,xbetapr,qvfold
       real*8,dimension(:),allocatable :: coils,expmp2
       character eqdsk*300,header*42,qmflag*3,fit_type*3
       character wform*20,sfile*14
@@ -83,6 +83,7 @@
       else
         wform='unformatted'
       endif
+      if(write_omas.eq.2) return
 !
       header = ' '
       call setfnm('a',ishot,ijtime,itimeu,'',eqdsk)
@@ -298,6 +299,7 @@
         fwtsi(1:nsilop)=1.
         iitime=time(jj)+1
         limitr=limitr-1
+        qvfold=qvfit
         qvfit=qenp
         call setfnm('m',ishot,iitime,itimeu,'',eqdsk)
         call open_new(neqdsk,eqdsk,'','quote')
@@ -316,6 +318,7 @@
         close(unit=neqdsk)
         limitr=limitr+1
         ierchk=ierold
+        qvfit=qvfold
       endif
       return
 !

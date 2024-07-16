@@ -175,6 +175,8 @@
       v30rt=0.0
       v210lt=0.0
       v210rt=0.0
+      write_kfile=.false.
+      write_omas=0
       zbdry=0.0
       znose=-1.276_dp
 
@@ -448,7 +450,6 @@
         snapfile='none'
         nsnapf=66
 ! -- Qilong Ren
-        write_kfile=.false.
         fitfcsum=.false.
 !----------------------------------------------------------------------
 !--     istore=0 : Leave EFIT results in the run directory. Otherwise

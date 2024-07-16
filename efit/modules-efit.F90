@@ -23,6 +23,7 @@
         character(7) :: efitvers ! git hash
         character(10) :: efitdate,efitdatealt ! commit dates (legacy formats)
         integer*4 :: efitversion ! commit date (legacy form)
+        INTEGER, DIMENSION(8) :: tval ! run date
         character(512) :: giturl,gitbranch,githash,gitdate,gitdatealt,lmods
         character(512) :: fc,fc_id,fcver
         character(5096) :: fcflags
@@ -78,6 +79,7 @@
         integer*4 :: modef,modep,modew
         integer*4 :: icycred_loopmax
         integer*4 :: nfourier !< nfourier number Fourier components of vessel current
+        real*8 :: rlin,rlout,zlbot,zltop
       end module eparm
 !errlims
       module errlims
@@ -120,24 +122,13 @@
         subroutine fch5init
           logical, save :: h5init=.false.
           if (.not.h5init) then
-            call vshdf5_fcinit
-            call vshdf5_inith5vars(h5in, h5err)
+            call hdf5_fcinit
+            call hdf5_inith5vars(h5in, h5err)
             h5in%verbose=.false.
             h5in%debug=.false.
             h5init=.true.
           endif
         end subroutine fch5init
-!       subprogram 2. fch5resetvars.
-!       reset h5 information for writes and reads.
-        subroutine fch5resetvars
-          h5in%mesh =  " "
-          h5in%vsAxisLabels = " " 
-          h5in%units =  " "
-          h5in%vsCentering =  " "
-          h5in%vsMD =  " "
-          h5in%vsIndexOrder = " "
-          h5in%vsLabels = " "
-        end subroutine fch5resetvars
 #endif
       end module var_nio
 ! error_control
@@ -256,7 +247,7 @@
       end module var_rcfact
 !var_curpo
       module var_curpro
-        real*8 emf,emp,enf,enp,rbetap,rzero,pbetap,qenp,qemp,qenf
+        real*8 emf,emp,enf,enp,rbetap,rzero,qenp,qemp,qenf
       end module var_curpro
 !var_pfterm
       module var_pfterm
@@ -346,7 +337,7 @@
       module var_hist
         integer*4,dimension(:), allocatable :: jerror
         real*8,dimension(:), allocatable :: elong,rcntr,zcntr,utri, &
-          ltri,aminor,volume,betat,gaptop, &
+          atri,ltri,aminor,volume,betat,gaptop, &
           betap,li,gapin,gapout,qstar, &
           rcurrt,zcurrt,qout,sepin, &
           sepout,septop,sibdry,area, &
@@ -361,7 +352,7 @@
           zeffr,tave,rvsin,zvsin, &
           rvsout,zvsout,cjor95,pp95,drsep, &
           yyy2,xnnc,wtherm,wfbeam,taujd3,tauthn, &
-          li3,tflux,twagap
+          li3,tflux,twagap,betan
         real*8,dimension(:,:), allocatable :: rseps,zseps
         real*8 pasman,betatn,psiq1,betat2
         integer*4 jtwagap
@@ -433,7 +424,8 @@
         real*8,dimension(:),allocatable :: rbdry_ext,zbdry_ext,xlim_ext, &
                                            ylim_ext,psirz_ext, &
                                            qpsi_ext,fcoil_ext
-        real*8 :: cratiop_ext,cratiof_ext,simag_ext,psibry_ext
+        real*8 :: sign_ext,scalepp_ext,scaleffp_ext,cratio_ext, &
+                  cratiop_ext,cratiof_ext,simag_ext,psibry_ext
         character*80 :: geqdsk_ext
         logical :: fixpp
       end module profile_ext_mod
