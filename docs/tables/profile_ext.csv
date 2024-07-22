@@ -1,0 +1,26 @@
+﻿Variable, Default, Description
+A_EXT, -10., "Minor radius to scale boundary to.  Only used if SHAPE_EXT=True.  The existing boundary minor radius is preserved if unset."
+DLOW_EXT, -10., "Lower (approximate) x-point major radius (r0ave-rz0min)/a0ave to scale boundary to.  Only used if SHAPE_EXT=True.  The existing boundary lower x-point position is preserved if unset."
+DR_EXT, 0., "R shift applied to the input boundary (constraint).  This is used regardless of whether SHAPE_EXT is set and is applied before any rescaling is performed."
+DUP_EXT, -10., "Upper (approximate) x-point major radius (r0ave-rz0max)/a0ave to scale boundary to.  Only used if SHAPE_EXT=True.  The existing boundary upper x-point position is preserved if unset."
+DZ_EXT, 0., "Z shift applied to the input boundary (constraint).  This is used regardless of whether SHAPE_EXT is set and is applied before any rescaling is performed."
+ELOW_EXT, -10., "Lower elongation (z0ave-z0min)/a0ave to scale boundary to.  Only used if SHAPE_EXT=True.  The existing boundary lower elongation is preserved if unset."
+EUP_EXT, -10., "Upper elongation (z0ave-z0max)/a0ave to scale boundary to.  Only used if SHAPE_EXT=True.  The existing boundary upper elongation is preserved if unset."
+FIXPP, False, "If set, then the only the FF' profile will be scaled to match the target Ip and no scaling will be applied to P'.  The default is to scale both profiles equally."
+GEQDSK_EXT, 'none', "(String) The name of an existing g-file to use for setting fixed P' and FF' profiles, boundary constraints, limiter, and/or initial solution to restart from.  If omas input mode (1) is used, then the existing solution is assumed to be within the same file and instead GEQDSK_EXT/='none' is only used as a flag for reading these parts of the file.  The P' and FF' profiles in this file will be used for the initial condition if ICINIT=-3 or ICINIT=-4 and otherwise will have fixed shape for the simulation(and ICONVR=3 should be set).  They are not used if PSIN_EXT is set in this namelist.  If LIMITR<0 then the limiter shape from the file will be used instead of the standard limiter file."
+NPSI_EXT, -1, "(Integer) Number of points to use in PSIN_EXT, FFPRIM_EXT, and PPRIME_EXT.  If PSIN_EXT is not set and GEQDSK_EXT/='none' then this will match the existing solution provided instead."
+FFPRIM_EXT,, "(Array) Fixed shape for FF' in equilibrium mode (the magnitude will be scaled to match Ip).  Only used if PSIN_EXT is set in this namelist."
+PPRIME_EXT,, "(Array) Fixed shape for P' in equilibrium mode (the magnitude will be scaled to match Ip if FIXPP=False).  Only used if PSIN_EXT is set in this namelist."
+PSIN_EXT, -1000., "(Array) Normalized flux coordinate describing positions for FFPRIM_EXT and PPRIME_EXT in this namelist to be evaluated.  If this is set then ICONVR=3 should be used and the values in this namelist will be used regardless of whether GEQDSK_EXT is set.  Otherwise, if GEQDSK_EXT/='none' then this will match the existing solution provided instead."
+RC_EXT, -10., "Center R position for rescaled boundary.  Only used if SHAPE_EXT=True.  The existing boundary center is retained if unset."
+REFLECT_EXT, 'no', "| Option to reflect input plasma boundary (constraint).  This is applied regardless of how SHAPE_EXT is set and happens after the boundary has been scaled.
+| no = don't reflect the boundary.
+| UL = flip the boundary across Z=0.
+| UU = set the lower half of the boundary to match the upper half.
+| LL = set the upper half of the boundary to match the lower half."
+SCALEFFP_EXT, 1., "Scaling factor applied to FFPRIM_EXT.  This is also applied if GEQDSK_EXT/='none' but not if ICINIT=-3 or ICINIT=-4."
+SCALEPP_EXT, 1., "Scaling factor applied to PPRIME_EXT.  This is also applied if GEQDSK_EXT/='none' but not if ICINIT=-3 or ICINIT=-4."
+SETLIM_EXT, -10., "Instead of using the limiter shape set by LIMITR, make a new rectangular limiter based on the boundary shape.  The value of SETLIM_EXT is used as a multiplier of plasma width and height to set the location of the new limiter (must be greater than 0).  Rleft=r0min-setlim_ext*(r0max-r0min), Rright=r0max+setlim_ext*(r0max-r0min), Ztop=z0max+setlim_ext*(z0max-z0min) and Zbottom=z0min-setlim_ext*(z0max-z0min).  These dimensions are based on the boundary after any shift, reshape, and/or reflection is applied and must lie within the computation domain specified by the Green function tables."
+SHAPE_EXT, False, "Controls whether input boundary (constraint) is rescaled."
+SIGN_EXT, 0., "Sign conversion factor multiplying FFPRIM_EXT, PPRIME_EXT, and (dividing) flux variables (from GEQDSK_EXT).  If this is not specified in the namelist, the default is to set it according to the standard EFIT or OMAS/IMAS COCOs factors, which depend on Ip.  If the profiles are from a different source, then SIGN_EXT should be set according to the COCOs transformation from there (and may need to include 2*pi factors as well)."
+ZC_EXT, -10., "Center Z position for rescaled  boundary.  Only used if SHAPE_EXT=True.  The existing boundary center is retained if unset."
