@@ -127,7 +127,7 @@
       write (neqdsk,1040) betapd(jj),betatd(jj),wdia(jj),fluxx
       write (neqdsk,1040) vloopt(jj),taudia(jj),qmerci(jj),tavem
 !
-      if (ishot.lt.91000) then
+      if (device == "DIII-D" .and. ishot.lt.91000) then
         write (neqdsk,1041) nsilop,magpri67+magpri322,nfsum,nesum
         write (neqdsk,1040) (csilop(k,jj),k=1,nsilop), &
                             (cmpr2(k,jj),k=1,magpri67+magpri322)

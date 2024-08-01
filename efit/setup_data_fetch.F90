@@ -75,7 +75,7 @@
       mdoskip=0
       iout=1                 ! default - write fitout.dat
       appendsnap='KG'
-      patmp2(1)=-1.
+      if(magpri .gt. 0) patmp2(1)=-1.
       ibatch=0 ! never used in code (just gets output)
       ilaser=0
       kffcurs=0

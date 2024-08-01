@@ -2405,24 +2405,25 @@
 !---------------------------------------------------------------------- 
 !--   signal at psi loop # NSLREF is used as reference               -- 
 !---------------------------------------------------------------------- 
-      fwtref=fwtsi(iabs(nslref)) 
-      kersil_23: if ((kersil.ne.2).and.(kersil.ne.3)) then
-      do m=1,nsilop
-        tdata1=serror*abs(silopt(jtime,m)) 
-        tdata2=abs(psibit(m))*vbit 
-        tdata=max(tdata1,tdata2) 
-        sigsil(m)=tdata 
-        if (tdata.gt.1.0e-10_dp) then
-          fwtsi(m)=fwtsi(m)/tdata**nsq
-        else
-          fwtsi(m)=0.0
+      silop: if (nsilop .gt. 0) then
+        fwtref=fwtsi(iabs(nslref)) 
+        kersil_23: if ((kersil.ne.2).and.(kersil.ne.3)) then
+        do m=1,nsilop
+          tdata1=serror*abs(silopt(jtime,m)) 
+          tdata2=abs(psibit(m))*vbit 
+          tdata=max(tdata1,tdata2) 
+          sigsil(m)=tdata 
+          if (tdata.gt.1.0e-10_dp) then
+            fwtsi(m)=fwtsi(m)/tdata**nsq
+          else
+            fwtsi(m)=0.0
+          endif
+        enddo
+        if (abs(psibit(iabs(nslref))).le.1.0e-10_dp) then
+          coilmx=maxval(abs(silopt(jtime,1:nsilop))) 
+          sigsil(iabs(nslref))=coilmx*serror
+          fwtsi(iabs(nslref))=1.0/coilmx**nsq/serror**nsq*fwtref
         endif
-      enddo
-      if (abs(psibit(iabs(nslref))).le.1.0e-10_dp) then
-        coilmx=maxval(abs(silopt(jtime,1:nsilop))) 
-        sigsil(iabs(nslref))=coilmx*serror
-        fwtsi(iabs(nslref))=1.0/coilmx**nsq/serror**nsq*fwtref
-      endif 
       else kersil_23
 !----------------------------------------------------------------------- 
 !--   Fourier expansion of vessel sgments                             -- 
@@ -2499,6 +2500,7 @@
       endif kersil_23
       sigref=sigsil(iabs(nslref)) 
       fwtref=fwtsi(iabs(nslref)) 
+      endif silop
 ! 
       do m=1,magpri 
         tdata1=serror*abs(expmpi(jtime,m)) 
