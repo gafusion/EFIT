@@ -23,7 +23,7 @@
       include 'modules1.inc'
       use omp_lib
       implicit none
-      integer*4 ef_init_cycred_data
+      integer*4, external :: ef_init_cycred_data
       integer*4, intent(in) :: niter,nnin,ntotal,jtime
       integer*4, intent(out) :: kerror
       integer*4 i,j,ii,jj,kk,kkkk,kknh,k1,kk1,k2,mj,mk,mjnh,mknh,mj1,mk1, &

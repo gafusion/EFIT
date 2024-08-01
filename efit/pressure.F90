@@ -14,7 +14,7 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
-      real*8 ppcurr
+      real*8, external :: ppcurr
       integer*4, intent(in) :: jtime,niter
       integer*4, intent(out) :: kerror
       integer*4 i,ier,m
@@ -162,7 +162,8 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit none
-      real*8 prcurr,seval
+      real*8, external :: seval
+      real*8 prcurr
       integer*4, intent(in) :: nnn
       real*8, intent(in) :: ypsi
       integer*4 i,iijj,iiij,nn
@@ -227,7 +228,7 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit none
-      real*8 ppcur4,seval
+      real*8, external :: ppcur4,seval
       integer*4, intent(in) :: n1set
       real*8, intent(in) :: ypsi
       integer*4 i,mw
@@ -275,7 +276,7 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit none
-      real*8 ppcurr,seval
+      real*8, external :: ppcurr,seval
       integer*4, intent(in) :: nnn
       real*8, intent(in) :: ypsi
 
@@ -309,7 +310,7 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
-      real*8 seval,pwpcur
+      real*8, external :: seval,pwpcur
       integer*4, intent(in) :: jtime,niter
       integer*4 init,i,ier,m
       real*8 pds(6),xn,xbaseb,rnow,znow,dmnow
@@ -444,7 +445,7 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit none
-      real*8 pwpcu4,seval
+      real*8, external :: pwpcu4,seval
       integer*4, intent(in) :: n1set
       real*8, intent(in) :: ypsi
       integer*4 i,mw
@@ -492,7 +493,7 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit none
-      real*8 pwpcur
+      real*8, external :: pwpcur
       integer*4, intent(in) :: nnn
       real*8, intent(in) :: ypsi
 

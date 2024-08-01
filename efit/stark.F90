@@ -141,15 +141,16 @@
         ! WARNING : A7GAM explicitly set to zero by original GETSTARK_MPI code
         ! KWAITMSE
         ! FWTGAM (nstark)
-        integer*4 :: i,j,ktime_all,offset,nsize
+        integer*4, intent(out) :: ktime
+        integer*4 i,j,ktime_all,offset,nsize
         integer*4, dimension(:), allocatable :: tmp1,tmp2
-        double precision :: zwork(nmselp*12,ntime)
+        double precision zwork(nmselp*12,ntime)
 
 #ifdef DEBUG_LEVEL1
         ! timing variables
-        integer*4 :: clock0,clock1,clockmax,clockrate,ticks
-        double precision :: secs
-        integer*4 :: total_bytes
+        integer*4 clock0,clock1,clockmax,clockrate,ticks
+        double precision secs
+        integer*4 total_bytes
 #endif
 
         nsize=12*nmselp
@@ -489,7 +490,7 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
-      real*8 ppcurr,fpcurr,fpecrr,seval
+      real*8, external :: ppcurr,fpcurr,fpecrr,seval
 
       integer*4, intent(in) :: jtime
       integer*4, intent(out) :: kerror

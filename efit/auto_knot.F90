@@ -14,8 +14,7 @@
       include 'modules1.inc'
       implicit none
 
-      real*8 fmin
-      real*8, external :: ppakfunc,ffakfunc,wwakfunc,eeakfunc
+      real*8, external :: fmin,ppakfunc,ffakfunc,wwakfunc,eeakfunc
       integer*4, intent(in) :: ks,ktime
       integer*4, intent(out) :: kerror
       integer*4 i,j,kloop,saveiter
@@ -144,8 +143,7 @@
       include 'modules1.inc'
       implicit none
 
-      real*8 fmin_opt
-      real*8, external :: ppakfunc,ffakfunc,wwakfunc,eeakfunc
+      real*8, external :: fmin_opt,ppakfunc,ffakfunc,wwakfunc,eeakfunc
       integer*4, intent(in) :: ks,ktime
       integer*4, intent(out) :: kerror
       integer*4 i,j,kloop,saveiter

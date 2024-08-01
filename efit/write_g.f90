@@ -12,7 +12,7 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
-      real*8 seval
+      real*8, external :: seval
       integer*4, intent(in) :: jtime
       integer*4 ijtime,i,j,jb,kk,ioerr,kkstark,nbsave,nbabs,ndel, &
                 nqpsi,nsw,nsh,sign_out

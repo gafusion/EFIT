@@ -9,7 +9,7 @@ FCSUM, 1.0, "| Identifies which F-coils are included in fitted constraint that
 | 0 = do not include current from this coil in the sum
 | 1 = include current from this coil in the sum (default).
 | Ignored unless IFREF = 2."
-FCZERO, ones,"Fitting weights for zero F coil currents in fixed boundary option. Set to 10000 for zero. Default = all 1.0's"
+FCZERO, ones,"Fitting weights for zero F coil currents in fixed boundary option. Default = all 1.0's"
 FWTBDRY, ones(nbdry),"""Fit Weight Boundary"". Fitting weight for boundary points.  Only used with NBDRY>1."
 IFCURR, 0, "| (Integer flag) Fcoil Currents. Only used in free boundary equilibrium calculations.
 | 1 = fixed F coil currents.

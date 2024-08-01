@@ -38,7 +38,7 @@
                    rvs,zvs,wvs,hvs,avs,avs2,vsname, &
                    racoil,zacoil,wacoil,hacoil, &
                    rf,zf,wf,hf,af,af2,fcid,fcturn,turnfc, &
-                   re,ze,we,he,ecid!,ecturn,vsid ! not used or saved in efit
+                   re,ze,we,he,ecid,rlin,rlout,zlbot,zltop!,ecturn,vsid ! not used or saved in efit
 
       ! avoid write garbage when gapin or gapout not update (e.g. 1.e10)
       tin=gapin(it)
@@ -676,6 +676,7 @@
       subroutine print_header()
       include 'eparm.inc'
       include 'modules1.inc'
+      implicit none
 
       if (itek.le.0) then
         if(rank==0) write(nttyo,10001) nw,nh
