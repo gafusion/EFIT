@@ -20,7 +20,7 @@
       include 'modules1.inc'
       implicit none
 
-      real*8 psical
+      real*8, external :: psical
       integer*4, intent(in) :: jtime,iter,itertt
       integer*4, intent(out) :: kerror
       integer*4 i,ii,j,k,m,nj,nk,nkk,nuuu,idoit,iskip,ier,ioerr,mbdrmax, &

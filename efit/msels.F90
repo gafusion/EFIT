@@ -443,7 +443,8 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit none
-      real*8 erpote,esradial,erppote,seval
+      real*8 esradial
+      real*8, external :: erpote,erppote,seval
       integer*4, intent(in) :: nnn
       real*8, intent(in) :: ypsi,reee,zeee
       integer*4 ier

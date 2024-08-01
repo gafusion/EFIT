@@ -20,7 +20,7 @@
       include 'modules1.inc'
       implicit none
 
-      real*8 fpcurr,ppcurr,prcurr,pwcurr,pwpcur,prcur4,pwcur4,seval
+      real*8, external :: fpcurr,ppcurr,prcurr,pwcurr,pwpcur,prcur4,pwcur4,seval
       integer*4, intent(in) :: jtime
       real*8, intent(in) :: rgrid(nw),zgrid(nh)
       integer*4, intent(out) :: kerror
@@ -548,7 +548,7 @@
       include 'modules1.inc'
       implicit none
 
-      real*8 ppcurr
+      real*8, external :: ppcurr
       integer*4, intent(in) :: jtime
       real*8, intent(in) :: rgrid(nw),zgrid(nh)
       integer*4, intent(out) :: kerror

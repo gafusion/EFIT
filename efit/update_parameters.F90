@@ -18,7 +18,7 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
-      real*8 ffcurr,fpcurr,ppcurr,prcurr,pwcurr,prcur4,pwcur4
+      real*8, external :: ffcurr,fpcurr,ppcurr,prcurr,pwcurr,prcur4,pwcur4
       integer*4, intent(in) :: ix,ixt,ixout,jtime
       integer*4, intent(out) :: kerror
       integer*4 i,iii,j,k,kk,nn,ier,itot,nfounc,nnerr,nqend,nzz
@@ -699,7 +699,7 @@
       include 'modules1.inc'
       implicit none
 
-      real*8 fpcurr,ppcurr,prcurr,pwcurr,pwpcur
+      real*8, external :: fpcurr,ppcurr,prcurr,pwcurr,pwpcur
       integer*4, intent(in) :: jtime
       integer*4 i,m
       real*8 cm,cmbr,cmbz,ce1rbz,ce2rbz,ce3rbr,saisq,rxxx,rxxf,rxxw, &

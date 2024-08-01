@@ -646,7 +646,7 @@
       use var_inaver
       use var_pcsys, only: do_spline_fit
       implicit none
-      real*8 seval
+      real*8, external :: seval
       integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave,ircfact
       real*8, intent(in) :: time(np),delt,xxd,times
       character*10, intent(in) ::  ptname
@@ -861,7 +861,7 @@
       use vtime_mod, only: ntims,npmax
       use var_pcsys, only: do_spline_fit
       implicit none
-      real*8 seval
+      real*8, external :: seval
       integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave
       real*8, intent(in) :: time(np),delt,xxd,times
       character*10, intent(in) ::  ptname
@@ -989,7 +989,7 @@
       use var_pcsys, only: do_spline_fit
       implicit none
       include 'mdslib.inc'
-      real*8 seval
+      real*8, external :: seval
       integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave
       real*8, intent(in) :: time(np),delt,xxd,times
       character*10, intent(in) ::  ptname
@@ -1210,7 +1210,7 @@
                         ierdia)
       use vtime_mod, only: ntims
       implicit none
-      real*8 seval
+      real*8, external :: seval
       integer*4, intent(in) :: nshot,mmm,np,mm,nn,kave,ierdia(3) ! mm, mmm, and nn are unused
       real*8, intent(in) :: time(np),delt,xxd
       integer*4, intent(out) :: ierror

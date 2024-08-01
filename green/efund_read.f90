@@ -184,8 +184,9 @@
       use utils, only: mgaus1,mgaus2
       implicit none
       integer*4 i,istat
-      real*8 patmp2(magpri)
-      character*10 mpnam2(magpri),lpname(nsilop),vsname(nvesel)
+      real*8 rlin,rlout,zlbot,zltop ! not used in efund
+      real*8 patmp2(magpri) ! not used in efund
+      character*10 mpnam2(magpri),lpname(nsilop),vsname(nvesel) ! not used in efund
       character(1000) line
 
       namelist/in3/mpnam2,xmp2,ymp2,amp2,smp2,patmp2, &
@@ -193,7 +194,7 @@
                    rvs,zvs,wvs,hvs,avs,avs2,vsid,vsname, &
                    racoil,zacoil,wacoil,hacoil, &
                    rf,zf,wf,hf,af,af2,fcid,fcturn,turnfc, &
-                   re,ze,we,he,ecid,ecturn
+                   re,ze,we,he,ecid,ecturn,rlin,rlout,zlbot,zltop
       namelist/in5/rleft,rright,zbotto,ztop,mgaus1,mgaus2, &
                    nshiftrz,rshift,zshift,pshift,pmprobe,nsmp2, &
                    igrid,ifcoil,islpfc,iecoil,ivesel,iacoil,isize
@@ -223,6 +224,10 @@
       rvs(1)=-1.
       wvs(1)=-1.
       patmp2=0.
+      rlin=-1.
+      rlout=0.
+      zlbot=0.
+      zltop=0.
 !---------------------------------------------------------------------
 !--   isize=0      no finite size correction for flux loops         --
 !--         1         finite size correction for flux loops         --

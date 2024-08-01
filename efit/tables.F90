@@ -128,7 +128,7 @@
                    rvs,zvs,wvs,hvs,avs,avs2,vsid,vsname, &
                    racoil,zacoil,wacoil,hacoil, &
                    rf,zf,wf,hf,af,af2,fcid,fcturn,turnfc, &
-                   re,ze,we,he,ecid,ecturn
+                   re,ze,we,he,ecid,ecturn,rlin,rlout,zlbot,zltop
         
       ! initialize variables
       gridec = 0.0
@@ -137,6 +137,10 @@
       rsilvs = 0.0
       rsilec = 0.0
       fcid = 1
+      rlin = -1.0
+      rlout = 0.0
+      zlbot = 0.0
+      zltop = 0.0
       ! for DIIID
       if(nfcoil.eq.18 .and. nfsum.eq.18) &
         fcid = (/1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 , &

@@ -24,7 +24,7 @@
       include 'modules2.inc'
       include 'modules1.inc'
       implicit none
-      real*8 ppcurr,fpcurr,pwcurr,prcurr,pwpcur
+      real*8, external :: ppcurr,fpcurr,pwcurr,prcurr,pwpcur
 
       integer*4, intent(in) :: jtime,iter,nniter
       integer*4, intent(out) :: ichisq,kerror

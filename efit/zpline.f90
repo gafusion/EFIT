@@ -302,7 +302,7 @@
 
 !**********************************************************************
 !>
-!!    this subroutine evaluates the cubic spline function
+!!    this function evaluates the cubic spline function
 !!
 !!    seval = y(i) + b(i)*(u-x(i)) + c(i)*(u-x(i))**2 + d(i)*(u-x(i))**3\n
 !!
@@ -362,7 +362,7 @@
 
 !**********************************************************************
 !>
-!!    this subroutine evaluates the *derivative of the cubic spline function
+!!    this function evaluates the *derivative of the cubic spline function
 !!
 !!    where  x(i) .lt. u .lt. x(i+1), using horner's rule\n
 !!
