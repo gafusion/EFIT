@@ -4,8 +4,8 @@
 !!    rand_knot varies knot positions randomly until convergence
 !!      is achieved
 !!
-!!    @param ktime : Number of time slices
-!!    @param jtime : Time index
+!!    @param ks : Number of time slices
+!!    @param ktime : Time index
 !!    @param kerror: Error Flag
 !!
 !*******************************************************************
@@ -20,10 +20,12 @@
 
       integer*4, intent(in) :: ks,ktime
       integer*4, intent(out) :: kerror
-      integer*4 i,j,k,kloop,loc(1),nvary,saveiter
+      integer*4 i,j,k,kloop,loc(1),nvary,npll!,lead_rank
       real*8 berror
-      real*8, dimension(nproc) :: errall
-      real*8, dimension(:), allocatable :: lbnd,krange,kpos,kbest
+      !real*8, dimension(nproc) :: errall
+      character filename*300
+      real*8, dimension(:), allocatable :: lbnd,krange,kpos,kbest,errall
+      real*8, dimension(:,:), allocatable :: kall
 
       kerror=0
       loc=1
@@ -32,20 +34,6 @@
       if(iconvr.lt.0) return
       call set_init(ks)
       call fit(ks,kerror)
-      if(rank.eq.0 .or. ttime.gt.1) write(6,*) 'Initial error is: ',terror(ks)
-      if ((kerror.eq.0) .and. (terror(ks).le.error)) then
-        if (rank.eq.0 .or. ttime.gt.1) then
-          write(6,*) 'Input settings converged'
-          return
-        else
-          ! No need for parallel processing
-#if defined(USEMPI)
-          call mpi_finalize(ierr)
-#endif
-          stop
-        endif
-      endif
-      berror=terror(ks)
 
       ! Setup bounds for varying each knot
       nvary=0
@@ -92,38 +80,57 @@
         enddo
       endif
 
+      ! Open file to store points tested :(ascii for now)
+      if (rank.eq.0 .or. ttime.gt.1) then 
+        call setfnm('n',ishot,ktime,itimeu,'',filename)
+        call open_new(neqdsk,filename,'formatted','quote')
+        write(neqdsk,*) terror(ks),kbest
+        write(6,*) 'Initial error is: ',terror(ks)
+      endif
+
+      ! Stop if converged
+      if ((kerror.eq.0) .and. (terror(ks).le.error)) then
+        if (rank.eq.0 .or. ttime.gt.1) then
+          write(6,*) 'Input settings converged'
+          close(unit=neqdsk)
+          return
+        else
+          ! No need for parallel processing
 #if defined(USEMPI)
-      if (nproc.gt.1) then
-        if (rank.eq.0 .and. ttime.eq.1) then
+          call mpi_finalize(ierr)
+#endif
+          stop
+        endif
+      endif
+      berror=terror(ks)
+
+      if (nproc.gt.1 .and. ttime.eq.1) then
+#if defined(USEMPI)
+        if (rank.eq.0) then
           ! TODO: it should be possible to distribute processors effectively for multiple times and 
           !       leave others for knot optimization, but that logic hasn't been setup yet
           !       (only can parallelize over one or the other and times takes precedence)
           if (nproc .gt. kakloop) then
-            ! Ensure there are not more processors than time slices
+            ! Ensure there are not more processors than knot attempts
             call errctrl_msg('rand_knot', &
                              'MPI processes have nothing to do')
           endif
-          ! Warn if the time slice distribution is not balanced
+          ! Warn that more knot positions will be attempted to equalize work across all processors
           if(mod(kakloop,nproc) .ne. 0) &
             write(nttyo,*) &
-              'Warning: knot vars are not balanced across processors'
+              'Warning: more knots attempted to balanced processors'
         endif
-        if (ttime.eq.1) then
-          ! This could be avoided if MPI is handled differently
-          if(nproc.gt.kakloop) stop
-          kloop=kakloop/nproc
-          do k=1,mod(kakloop,nproc)
-            if(rank.eq.k-1) kloop=kloop+1
-          enddo
-        else
-          kloop=kakloop
-        endif
+        ! This could be avoided if MPI is handled differently
+        if(nproc.gt.kakloop) stop
+        kloop=kakloop/nproc
+        if(kakloop.gt.kloop*nproc) kloop=kloop+1
+        npll=nproc
+#endif 
       else
         kloop=kakloop
+        npll=1
       endif
-#else
-      kloop=kakloop
-#endif 
+      allocate(errall(npll),kall(npll,nvary))
 
       ! Vary knots randomly until convergence or max iterations is reached
       do k=1,kloop
@@ -176,23 +183,47 @@
           write(6,*) 'Iteration ',k,' has error: ',terror(ks)
         endif
 
-#if defined(USEMPI)
-        ! Get best error and corresponding knot positions from all processors
+        ! Gather the knot positions tested and the errors from all processors
+        errall=999.
+        kall=999.
         if (nproc.gt.1 .and. ttime.eq.1) then
-          errall=999.
+#if defined(USEMPI)
           call MPI_GATHER(terror(ks),1,MPI_DOUBLE_PRECISION,errall,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-          if(rank.eq.0) loc=minloc(errall)
-          call MPI_BCAST(loc,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
-          call MPI_BCAST(terror(ks),1,MPI_DOUBLE_PRECISION,loc-1,MPI_COMM_WORLD,ierr)
-          call MPI_BCAST(kpos,nvary,MPI_DOUBLE_PRECISION,loc-1,MPI_COMM_WORLD,ierr)
-        endif
+          call MPI_GATHER(kpos,nvary,MPI_DOUBLE_PRECISION,kall,nvary,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+          loc=minloc(errall)
+          terror(ks)=minval(errall)
+          kpos=kall(loc(1),:)
+
+          ! Broadcast the best error so that processors know to stop execution
+          call MPI_BCAST(terror(ks),1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+
+!          ! Get best error and corresponding knot positions from all processors
+!          errall=999.
+!          call MPI_GATHER(terror(ks),1,MPI_DOUBLE_PRECISION,errall,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+!          if(rank.eq.0) loc=minloc(errall)
+!          call MPI_BCAST(loc,1,MPI_INTEGER,0,MPI_COMM_WORLD,ierr)
+!          call MPI_BCAST(terror(ks),1,MPI_DOUBLE_PRECISION,loc-1,MPI_COMM_WORLD,ierr)
+!          call MPI_BCAST(kpos,nvary,MPI_DOUBLE_PRECISION,loc-1,MPI_COMM_WORLD,ierr)
 #endif
+        else
+          errall(1)=terror(ks)
+          kall(1,:)=kpos
+        endif
+
+        ! Write knot positions attempted and error to file
+        if (rank.eq.0 .or. ttime.gt.1) then
+          do i=1,npll
+            write(neqdsk,*) errall(i),kall(i,:)
+          enddo
+        endif
 
         ! Check convergence and save best error and knots
         if (terror(ks).le.error) then
-          lead_rank=loc(1)-1
-          if (rank.eq.lead_rank .or. ttime.gt.1) then
+          !lead_rank=loc(1)-1
+          !if (rank.eq.lead_rank .or. ttime.gt.1) then
+          if (rank.eq.0 .or. ttime.gt.1) then
             write(6,*) 'New knot locations converged'
+            close(unit=neqdsk)
             return
           else
             ! Finished with parallel processing
@@ -215,6 +246,7 @@
         stop
       endif
 #endif
+      close(unit=neqdsk)
 
       ! Re-run the best case to use as the final output
       kerror = 0
