@@ -82,7 +82,7 @@
 
       ! Open file to store points tested :(ascii for now)
       if (rank.eq.0 .or. ttime.gt.1) then 
-        call setfnm('n',ishot,ktime,itimeu,'',filename)
+        call setfnm('n',ishot,int(time(ktime)),itimeu,'',filename)
         call open_new(neqdsk,filename,'formatted','quote')
         write(neqdsk,*) terror(ks),kbest
         write(6,*) 'Initial error is: ',terror(ks)
