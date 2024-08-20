@@ -7,7 +7,7 @@
 
 #rm -rf CMake*
 
-RUN_CMD='srun --mpi=pmi2 -n '
+RUN_CMD='mpirun --bind-to none -n '
 USE_OPENMP=OFF
 env=$(module list 2>&1 | sed -n -e 's\^.*env/\\p')
 case $env in
@@ -52,9 +52,6 @@ case $env in
     ;;
 
   nvhpc23*)
-
-    # Slurm is not compatible with this compiler so you need to run MPI jobs with mpirun at this time...
-    RUN_CMD='mpirun --bind-to none -n '
 
     # System linear algebra
     SYSTEM_BLAS_SER_LIB=$BLAS_DIR'/lib/libblas.a'
