@@ -407,6 +407,9 @@
         elseif (ishot.ge.187873) then
           jtwagap = 48
           njtwagap = 1
+        elseif (ishot.ge.197555) then
+          jtwagap = 37
+          njtwagap = 1
         endif
         do j=jtwagap,jtwagap+njtwagap
           call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
