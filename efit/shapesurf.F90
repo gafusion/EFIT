@@ -395,32 +395,33 @@
         endif
       endif
 !---------------------------------------------------------------------
-!--   Helicon gap calculation                                       --
+!--   Helicon gap calculation (hard coded for DIII-D parameters)
 !---------------------------------------------------------------------
-      twagap(iges)=1.0e+10_dp
-      if (ishot.ge.197555) then
-        jtwagap = 37
-        njtwagap = 1
-      elseif (ishot.ge.187873) then
-        jtwagap = 48
-        njtwagap = 1
-      elseif (ishot.ge.181292) then
-        jtwagap = 47
-        njtwagap = 1
-      elseif (ishot.ge.139282) then
-        jtwagap = 59
-        njtwagap = 0
-      else
-        jtwagap = 1
-        njtwagap = 0
+      if (device == "DIII-D") then
+        twagap(iges)=1.0e+10_dp
+        if (ishot.ge.197555) then
+          jtwagap = 37
+          njtwagap = 1
+        elseif (ishot.ge.187873) then
+          jtwagap = 48
+          njtwagap = 1
+        elseif (ishot.ge.181292) then
+          jtwagap = 47
+          njtwagap = 1
+        elseif (ishot.ge.139282) then
+          jtwagap = 59
+          njtwagap = 0
+        else
+          jtwagap = 1
+          njtwagap = 0
+        endif
+
+        do j=jtwagap,jtwagap+njtwagap
+          call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
+                      xlim(j),ylim(j),xlim(j+1),ylim(j+1),disnow)
+          twagap(iges) = min(twagap(iges),disnow)
+        enddo
       endif
-
-      do j=jtwagap,jtwagap+njtwagap
-        call dslant(xout,yout,nfound,xmin,xmax,ymin,ymax, &
-                    xlim(j),ylim(j),xlim(j+1),ylim(j+1),disnow)
-        twagap(iges) = min(twagap(iges),disnow)
-      enddo
-
 !
       xlimxs=0.0
       ylimys=0.0
