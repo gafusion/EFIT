@@ -114,6 +114,7 @@ TAUDIA, diamagnetic energy confinement time in ms
 TAUMHD, energy confinement time in ms
 TAVEM, average time in ms for magnetic and MSE data
 TIME, time in ms
+TWAGAP, minimum distance between the antenna segment (defined by a number of limiter points) and the plasma boundary surface
 UTRI, upper triangularity
 VERTN, vacuum field index at current centroid
 VLOOP, measured loop voltage in volt
