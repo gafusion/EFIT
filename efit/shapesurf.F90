@@ -410,6 +410,9 @@
       elseif (ishot.ge.139282) then
         jtwagap = 59
         njtwagap = 0
+      else
+        jtwagap = 1
+        njtwagap = 0
       endif
 
       do j=jtwagap,jtwagap+njtwagap
