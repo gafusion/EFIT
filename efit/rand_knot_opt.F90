@@ -20,12 +20,13 @@
 
       integer*4, intent(in) :: ks,ktime
       integer*4, intent(out) :: kerror
-      integer*4 i,j,k,kloop,loc(1),nvary,npll!,lead_rank
+      integer*4 i,j,k,kloop,loc(1),nvary,npll,ndims,ncoef!,lead_rank
       real*8 berror
       !real*8, dimension(nproc) :: errall
       character filename*300
+      integer*4, dimension(:), allocatable :: knot_sizes,coef_sizes
       real*8, dimension(:), allocatable :: lbnd,krange,kpos,kbest,errall
-      real*8, dimension(:,:), allocatable :: kall
+      real*8, dimension(:,:), allocatable :: kall,coefall
 
       kerror=0
       loc=1
@@ -37,15 +38,29 @@
 
       ! Setup bounds for varying each knot
       nvary=0
-      if(kppfnc.eq.6) nvary=nvary+kppknt-2
-      if(kfffnc.eq.6) nvary=nvary+kffknt-2
-      if(kwwfnc.eq.6) nvary=nvary+kwwknt-2
-      if(keefnc.eq.6) nvary=nvary+keeknt-2
+      ndims=0
+      if (kppfnc.eq.6) then
+        nvary=nvary+kppknt-2
+        ndims=ndims+1
+      endif
+      if (kfffnc.eq.6) then
+        nvary=nvary+kffknt-2
+        ndims=ndims+1
+      endif
+      if (kwwfnc.eq.6) then
+        nvary=nvary+kwwknt-2
+        ndims=ndims+1
+      endif
+      if (keefnc.eq.6) then
+        nvary=nvary+keeknt-2
+        ndims=ndims+1
+      endif
       if (nvary.le.0) then
         if(rank.eq.0 .or. ttime.gt.1) write(6,*) 'No knots to vary'
         return
       endif
       allocate(lbnd(nvary),krange(nvary),kpos(nvary),kbest(nvary))
+      allocate(knot_sizes(ndims),coef_sizes(ndims))
       j=0
       if (kppfnc.eq.6) then
         do i=2,kppknt-1
@@ -80,11 +95,40 @@
         enddo
       endif
 
+      ! Define additional output sizes
+      i=0
+      if (kppfnc.eq.6) then
+        i=i+1
+        knot_sizes(i)=kppknt-2
+        coef_sizes(i)=kppcur
+      endif
+      if (kfffnc.eq.6) then
+        i=i+1
+        knot_sizes(i)=kffknt-2
+        coef_sizes(i)=kffcur
+      endif
+      if (kwwfnc.eq.6) then
+        i=i+1
+        knot_sizes(i)=kwwknt-2
+        coef_sizes(i)=kwwcur
+      endif
+      if (keefnc.eq.6) then
+        i=i+1
+        knot_sizes(i)=keeknt-2
+        coef_sizes(i)=keecur
+      endif
+      ncoef=0
+      do i=1,ndims
+        ncoef=ncoef+coef_sizes(i)
+      enddo
+
       ! Open file to store points tested :(ascii for now)
       if (rank.eq.0 .or. ttime.gt.1) then 
         call setfnm('n',ishot,int(time(ktime)),itimeu,'',filename)
         call open_new(neqdsk,filename,'formatted','quote')
-        write(neqdsk,*) terror(ks),kbest
+        write(neqdsk,*) 1,(knot_sizes(i),i=1,ndims), &
+                        (coef_sizes(i),i=1,ndims)
+        write(neqdsk,*) terror(ks),kbest,(brsp(i),i=nfsum+1,nfsum+ncoef)
         write(6,*) 'Initial error is: ',terror(ks)
       endif
 
@@ -130,7 +174,7 @@
         kloop=kakloop
         npll=1
       endif
-      allocate(errall(npll),kall(npll,nvary))
+      allocate(errall(npll),kall(nvary,npll),coefall(ncoef,npll))
 
       ! Vary knots randomly until convergence or max iterations is reached
       do k=1,kloop
@@ -186,13 +230,19 @@
         ! Gather the knot positions tested and the errors from all processors
         errall=999.
         kall=999.
+        coefall=999.
         if (nproc.gt.1 .and. ttime.eq.1) then
 #if defined(USEMPI)
-          call MPI_GATHER(terror(ks),1,MPI_DOUBLE_PRECISION,errall,1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
-          call MPI_GATHER(kpos,nvary,MPI_DOUBLE_PRECISION,kall,nvary,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+          call MPI_GATHER(terror(ks),1,MPI_DOUBLE_PRECISION,errall,1, &
+                          MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+          call MPI_GATHER(kpos,nvary,MPI_DOUBLE_PRECISION,kall,nvary, &
+                          MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
+          call MPI_GATHER(brsp(nfsum+1:nfsum+ncoef),ncoef, &
+                          MPI_DOUBLE_PRECISION,coefall,ncoef, &
+                          MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
           loc=minloc(errall)
           terror(ks)=minval(errall)
-          kpos=kall(loc(1),:)
+          kpos=kall(:,loc(1))
 
           ! Broadcast the best error so that processors know to stop execution
           call MPI_BCAST(terror(ks),1,MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,ierr)
@@ -207,13 +257,14 @@
 #endif
         else
           errall(1)=terror(ks)
-          kall(1,:)=kpos
+          kall(:,1)=kpos
+          coefall(:,1)=brsp(nfsum+1:nfsum+ncoef)
         endif
 
         ! Write knot positions attempted and error to file
         if (rank.eq.0 .or. ttime.gt.1) then
-          do i=1,npll
-            write(neqdsk,*) errall(i),kall(i,:)
+          do j=1,npll
+            write(neqdsk,*) errall(j),kall(:,j),(coefall(i,j),i=1,ncoef)
           enddo
         endif
 
