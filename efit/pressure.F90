@@ -162,8 +162,7 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit none
-      real*8, external :: seval
-      real*8 prcurr
+      real*8,external :: seval,bsppel
       integer*4, intent(in) :: nnn
       real*8, intent(in) :: ypsi
       integer*4 i,iijj,iiij,nn
@@ -180,10 +179,9 @@
         return
       endif
       ppcurr=0.0
-      call setpp(ypsi,xpsii)
       do iiij=nfsum+1,nnn+nfsum
         iijj=iiij-nfsum
-        ppcurr=ppcurr+brsp(iiij)*xpsii(iijj)
+        ppcurr=ppcurr+brsp(iiij)*bsppel(kppfnc,iijj,ypsi)
       enddo
 !----------------------------------------------------------------------
 !--   edge hyperbolic tangent component                              --
@@ -193,17 +191,26 @@
       p0back=pedge/pe_width/sidif
       ppcurr=ppcurr+p0back/cosh(siedge)**2
       return
+      end function ppcurr
 !
-      entry prcurr(ypsi,nnn)
+      real*8 function prcurr(ypsi,nnn)
+      include 'eparm.inc'
+      include 'modules1.inc'
+      implicit none
+      real*8,external :: bsppin
+      integer*4, intent(in) :: nnn
+      real*8, intent(in) :: ypsi
+      integer*4 i,nn
+      real*8 siedge
+
       if (abs(ypsi).gt.1.0) then
         prcurr=0.0
         return
       endif
       prcurr=0.0
-      call setpr(ypsi,xpsii)
       do i=nfsum+1,nfsum+nnn
         nn=i-nfsum
-        prcurr=prcurr+brsp(i)*xpsii(nn)
+        prcurr=prcurr+brsp(i)*bsppin(kppfnc,nn,ypsi)
       enddo
       prcurr=-sidif*prcurr/darea+prbdry
 !----------------------------------------------------------------------
@@ -213,7 +220,7 @@
       siedge=(ypsi-pe_psin)/pe_width
       prcurr=prcurr+pedge/darea*(tpedge-tanh(siedge))
       return
-      end function ppcurr
+      end function prcurr
 
 !**********************************************************************
 !>
@@ -526,20 +533,19 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit none
+      real*8, external :: bswwin
       integer*4, intent(in) :: nnn
       real*8, intent(in) :: ypsi
       integer*4 i,nn
-      real*8 xpsii(nwwcur)
 
       if (abs(ypsi).gt.1.0) then
         pwcurr=0.0
         return
       endif
       pwcurr=0.0
-      call setpw(ypsi,xpsii)
       do i=nfnpcr+1,nfnpcr+nnn
         nn=i-nfnpcr
-        pwcurr=pwcurr+brsp(i)*xpsii(nn)
+        pwcurr=pwcurr+brsp(i)*bswwin(kwwfnc,nn,ypsi)
       enddo
       pwcurr=-sidif*pwcurr/darea+preswb
       return

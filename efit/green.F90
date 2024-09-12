@@ -90,6 +90,9 @@
         fgowfe=0.0
       endif
 !
+      !$omp parallel do collapse(2) private(kk,xpsii,factor,upsi,wwwww) &
+      !$omp& shared(rgrid) reduction(+:rsilpc,rmp2pc,rbrpc,rbzpc,recepc,recebzpc, &
+      !$omp& gbdrpc,fgowpc) 
       do i=1,nw
         do j=1,nh
           kk=(i-1)*nh+j
@@ -545,6 +548,8 @@
 !--   deltaz in fitting                                                  --
 !--------------------------------------------------------------------------
       if (fitdelz.and.niter.ge.ndelzon) then
+        !$omp parallel do collapse(2) private(kk,xpsii,pds,factor,upsi,wwwww) &
+        !$omp& shared(rgrid,zgrid) reduction(+:gsildz,gmp2dz,fgowdz,gbrdz,gbzdz)
         do i=1,nw
           do j=1,nh
             kk=(i-1)*nh+j
