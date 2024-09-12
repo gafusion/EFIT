@@ -1018,14 +1018,12 @@
       include 'eparm.inc'
       include 'modules1.inc'
       implicit none
-      real*8, external :: seval
-      real*8 fpecrr,ffcurr
+      real*8, external :: seval, bsffel
 
       integer*4, intent(in) :: nnn
       real*8, intent(in) :: upsi
-      integer*4 i,iiij,iijj,nn
-      real*8 f0back,f0edge,fb22,ff22,siedge,xsidif,ypsi
-      real*8 xpsii(nffcur)
+      integer*4 iiij,iijj
+      real*8 f0back,f0edge,siedge,ypsi
 
       if (icutfp.gt.0) then
         ypsi=upsi*xpsimin
@@ -1042,10 +1040,9 @@
         return
       endif
       fpcurr=0.0
-      call setfp(ypsi,xpsii)
       do iiij=nbase+1,nbase+nnn
         iijj=iiij-nbase
-        fpcurr=fpcurr+brsp(iiij)*xpsii(iijj)
+        fpcurr=fpcurr+brsp(iiij)*bsffel(kfffnc,iijj,ypsi)
       enddo
 !----------------------------------------------------------------------
 !--   edge hyperbolic tangent component                              --
@@ -1056,9 +1053,20 @@
       f0back=f0edge/fe_width/sidif
       fpcurr=fpcurr+f0back/cosh(siedge)**2
       return
+      end function fpcurr
 !
-      entry fpecrr(upsi,nnn)
-      if (icutfp.gt.0) then
+      real*8 function fpecrr(upsi,nnn)
+      include 'eparm.inc'
+      include 'modules1.inc'
+      implicit none
+      real*8, external :: bsffel
+
+      integer*4, intent(in) :: nnn
+      real*8, intent(in) :: upsi
+      integer*4 iiij,iijj
+      real*8 ypsi
+
+     if (icutfp.gt.0) then
         ypsi=upsi*xpsimin
       else
         ypsi=upsi
@@ -1068,14 +1076,25 @@
         return
       endif
       fpecrr=0.0
-      call setfp(ypsi,xpsii)
       do iiij=nbase+nnn,nbase+nnn
         iijj=iiij-nbase
-        fpecrr=fpecrr+brsp(iiij)*xpsii(iijj)
+        fpecrr=fpecrr+brsp(iiij)*bsffel(kfffnc,iijj,ypsi)
       enddo
       return
+      end function fpecrr
 !
-      entry ffcurr(upsi,nnn)
+      real*8 function ffcurr(upsi,nnn)
+      include 'eparm.inc'
+      include 'modules1.inc'
+      implicit none
+      real*8, external :: bsffin
+
+      integer*4, intent(in) :: nnn
+      real*8, intent(in) :: upsi
+      integer*4 i,nn
+      real*8 f0edge,fb22,ff22,siedge,xsidif,ypsi
+      real*8 xpsii(nffcur)
+
       if (icutfp.gt.0) then
         ypsi=upsi*xpsimin
         xsidif=-sidif/xpsimin
@@ -1088,10 +1107,9 @@
         return
       endif
       ffcurr=0.0
-      call setff(ypsi,xpsii)
       do i=nbase+1,nbase+nnn
         nn=i-nbase
-        ffcurr=ffcurr+brsp(i)*xpsii(nn)
+        ffcurr=ffcurr+brsp(i)*bsffin(kfffnc,nn,ypsi)
       enddo
       fb22=fbrdy**2
       ff22=fb22+xsidif*ffcurr/constf2
@@ -1107,4 +1125,4 @@
       if(ffcurr.lt.0.0) ffcurr=fb22
       ffcurr=sqrt(ff22)*fbrdy/abs(fbrdy)
       return
-      end function fpcurr
+      end function ffcurr
