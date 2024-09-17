@@ -4,8 +4,8 @@
 !!    rand_knot varies knot positions randomly until convergence
 !!      is achieved
 !!
-!!    @param ks : Number of time slices
-!!    @param ktime : Time index
+!!    @param ks : Time index
+!!    @param ktime : Number of time slices (run by the processor)
 !!    @param kerror: Error Flag
 !!
 !*******************************************************************
@@ -124,7 +124,7 @@
 
       ! Open file to store points tested :(ascii for now)
       if (rank.eq.0 .or. ttime.gt.1) then 
-        call setfnm('n',ishot,int(time(ktime)),itimeu,'',filename)
+        call setfnm('n',ishot,int(time(ks)),itimeu,'',filename)
         call open_new(neqdsk,filename,'formatted','quote')
         write(neqdsk,*) 1,(knot_sizes(i),i=1,ndims), &
                         (coef_sizes(i),i=1,ndims)

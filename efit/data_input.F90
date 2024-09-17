@@ -3,8 +3,8 @@
 !>  
 !!    data_input sets up the magnetic data and weighting arrays.
 !!
-!!    @param ktime : Number of time slices
 !!    @param jtime : Time index
+!!    @param ktime : Number of time slices
 !!    @param kerror: Error Flag
 !!
 !**********************************************************************

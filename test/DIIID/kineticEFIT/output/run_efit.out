@@ -58,6 +58,6 @@ WARNING in fit at r=  0, t=  2300: not converged, reached max iterations
  gaptop(cm) =     18.657 q95        =      3.063 rm(cm)     =    174.464
  zm(cm)     =     -3.951 totalchi^2 =  5.192E+02 error      =  1.862E-04
 
-  fit errors, shot  186610  2300. msec. all eqdsks are still written
-     Error #1, Chisq >    80.
+  Failed to reach fit/convergence criteria, shot  186610  2300. msec. all eqdsks are still written
+     Failure #1, Chisq >    80.
 INFO in efit at r=  0, t=  2300: Done processing
