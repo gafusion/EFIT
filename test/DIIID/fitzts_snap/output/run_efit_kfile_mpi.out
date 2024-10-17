@@ -1,0 +1,606 @@
+
+          EFITD Version  12/15/2022
+
+
+ type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+
+ command file name ( 0=none) ?
+
+ good shot list file name ( 0=tty) ?
+
+ type shot #, start time(ms), time step(ms), steps(<1001):
+ Calling $Name: V4_05 $ of the mse 
+ (mse_lib2:check_bt_direction) reverse Bt
+ (mse_lib2:read_mse_files)       195061
+ (mse_lib2:read_msetup5) /fusion/projects/codes/mse/calib/msetup5.dat                                                                                    
+ (mse_lib2:read_mrz) /fusion/projects/codes/mse/calib/mrz_47.dat                                                                                     
+ (mselib2:read_mcalgain5)  /fusion/projects/codes/mse/calib/mcalgain5_2102.dat                                                                             
+ (mse_lib2:do_setup_and_beams) Beam on volts 
+           30left      79000.0000    
+           210right    79000.0000    
+           210left     58000.0000    
+           30right     58000.0000    
+                 Channel          46
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          46
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          46
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          46
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          47
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          47
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          47
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          47
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          48
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          48
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          48
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          48
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          49
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          49
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          49
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          49
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          50
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          50
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          50
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          50
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          51
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          51
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          51
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          51
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          52
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          52
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          52
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          52
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          53
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          53
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          53
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          53
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          54
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          54
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          54
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          54
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          55
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          55
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          55
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          55
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          56
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          56
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          56
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          56
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          57
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          57
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          57
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          57
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          58
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          58
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          58
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          58
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          59
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          59
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          59
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          59
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          60
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          60
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          60
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          60
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          61
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          61
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          61
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          61
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          62
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          62
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          62
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          62
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          63
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          63
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          63
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          63
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          64
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          64
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          64
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          64
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          65
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          65
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          65
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          65
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          66
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          66
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          66
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          66
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          67
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          67
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          67
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          67
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          68
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          68
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          68
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          68
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          69
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          69
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          69
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          69
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+ (mse_lib2:mse_fastEr_correction)
+            cerbranch    CERQUICK  
+ (mse_lib2:average_data) Cer correction done
+                        use_cer            1
+                        certree            0
+                        use_cer330            1
+                        use_cer210            0
+INFO in efit at r=  0, t=  2820: Done writing k-files

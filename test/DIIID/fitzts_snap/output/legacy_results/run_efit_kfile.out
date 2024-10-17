@@ -1,0 +1,39 @@
+
+          EFITD Version  12/15/2022
+
+
+ type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+
+ command file name ( 0=none) ?
+
+ good shot list file name ( 0=tty) ?
+
+ type shot #, start time(ms), time step(ms), steps(<1001):
+ Calling $Name: V4_05 $ of the mse 
+ (mse_lib2:check_bt_direction) reverse Bt
+ (mse_lib2:read_mse_files)       195061
+ (mse_lib2:read_msetup5)
+ /fusion/projects/codes/mse/calib/msetup5.dat                                                                                    
+  Using users msetup file: 
+ /fusion/projects/codes/mse/calib/msetup5.dat                                                                                    
+ (mse_lib2:read_mrz) 
+ /fusion/projects/codes/mse/calib/mrz_47.dat                                                                                     
+  Using users mrz file: 
+ /fusion/projects/codes/mse/calib/mrz_47.dat                                                                                     
+ (mselib2:read_mcalgain5) 
+ /fusion/projects/codes/mse/calib/mcalgain5_2102.dat                                                                             
+  Using users mcalgain5 file: 
+ /fusion/projects/codes/mse/calib/mcalgain5_2102.dat                                                                             
+ (mse_lib2:do_setup_and_beams) Beam on volts 
+           30left       79000.00    
+           210right     79000.00    
+           210left      58000.00    
+           30right      58000.00    
+ (mse_lib2:mse_fastEr_correction)
+            cerbranch    CERQUICK  
+ (mse_lib2:average_data) Cer correction done
+                        use_cer            1
+                        certree            0
+                        use_cer330            1
+                        use_cer210            0
+INFO in getsets at r= -1, t=    -1: Done writing k-files

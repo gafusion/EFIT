@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Ubuntu tries to use threads even without implementation in program
+export OMP_NUM_THREADS=1
+
+# Remove any previous outputs
+rm -f output.txt
+
+# Now run mtanh
+@CMAKE_BINARY_DIR@/mtanh/test_mtanh > output.txt
+
+# Pass the results of the efit command up so that CTest knows what happened
+exit $result

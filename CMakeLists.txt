@@ -26,9 +26,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/io)
 #---------------------------------------------------------------------
 # EFIT options
 #---------------------------------------------------------------------
-#TODO: Can we turn off?
-#set(ENABLE_CERLIB FALSE CACHE BOOL "Whether to build cerlib ")
-
 set(ENABLE_DOCS FALSE CACHE BOOL "Whether to build the docs or not.")
 set(ENABLE_PRODUCTION FALSE CACHE BOOL "This is meant to be installed.")
 set(TEST_EFUND True CACHE BOOL "Whether to run efund with tests.")
@@ -310,7 +307,7 @@ add_subdirectory(io)
 # Add subdirectories 
 #---------------------------------------------------------------------
 if (HAVE_MDSPLUS)
-add_subdirectory(cerlib)
+add_subdirectory(mtanh)
 endif ()
 add_subdirectory(green)
 add_subdirectory(efit)

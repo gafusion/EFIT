@@ -19,12 +19,12 @@
       character(len=4) :: id  ! ='NONE'
       integer :: shot         !=  -1
       integer :: num          != 0
-      real, pointer, dimension(:) :: time
-      real, pointer, dimension(:) :: alp
-      real, pointer, dimension(:) :: off
-      real, pointer, dimension(:) :: ped
-      real, pointer, dimension(:) :: sym
-      real, pointer, dimension(:) :: wid
+      real*4, pointer, dimension(:) :: time
+      real*4, pointer, dimension(:) :: alp
+      real*4, pointer, dimension(:) :: off
+      real*4, pointer, dimension(:) :: ped
+      real*4, pointer, dimension(:) :: sym
+      real*4, pointer, dimension(:) :: wid
    end type mtanh_ts
 
    interface mtanh_init
@@ -96,7 +96,7 @@
       integer*4 :: isz
       character(len=100) :: mds_node
       character(len=100) :: node_arr
-      real, allocatable, dimension(:) :: rarray
+      real*4, allocatable, dimension(:) :: rarray
       integer :: ilen
       logical :: ok
       character(len=20) :: signal
@@ -109,7 +109,7 @@
 
       ! Connect to mds
       ! Need to connect to atlas as of 6/7/99 for mds+ on unix            
-      ! status = MdsConnect('atlas.gat.com'//CHAR(0)) 
+      ! istat = MdsConnect('atlas.gat.com'//CHAR(0)) 
       ! WAKE_MDS knows if we are already connected and will only connect
       ! if that has not been done
       call wake_mds ()
@@ -313,7 +313,7 @@
       Subroutine Mtanh_Ts_GetTime (self, time)
       implicit none
       type (mtanh_ts), intent(in) :: self
-      real, pointer, dimension(:) :: time
+      real*4, pointer, dimension(:) :: time
       integer :: istat
            
       deallocate (time, stat=istat)
@@ -328,7 +328,7 @@
       Subroutine Mtanh_Ts_GetAlp (self, Alp)
       implicit none
       type (mtanh_ts), intent(in) :: self
-      real, pointer, dimension(:) :: Alp
+      real*4, pointer, dimension(:) :: Alp
       integer :: istat
            
       deallocate (Alp, stat=istat)
@@ -343,7 +343,7 @@
       Subroutine Mtanh_Ts_GetOff (self, Off)
       implicit none
       type (mtanh_ts), intent(in) :: self
-      real, pointer, dimension(:) :: Off
+      real*4, pointer, dimension(:) :: Off
       integer :: istat
            
       deallocate (Off, stat=istat)
@@ -357,7 +357,7 @@
       Subroutine Mtanh_Ts_GetPed (self, Ped)
       implicit none
       type (mtanh_ts), intent(in) :: self
-      real, pointer, dimension(:) :: Ped
+      real*4, pointer, dimension(:) :: Ped
       integer :: istat
            
       deallocate (Ped, stat=istat)
@@ -372,7 +372,7 @@
       Subroutine Mtanh_Ts_GetSym (self, Sym)
       implicit none
       type (mtanh_ts), intent(in) :: self
-      real, pointer, dimension(:) :: Sym
+      real*4, pointer, dimension(:) :: Sym
       integer :: istat
            
       deallocate (Sym, stat=istat)
@@ -387,7 +387,7 @@
       Subroutine Mtanh_Ts_GetWid (self, Wid)
       implicit none
       type (mtanh_ts), intent(in) :: self
-      real, pointer, dimension(:) :: Wid
+      real*4, pointer, dimension(:) :: Wid
       integer :: istat
            
       deallocate (Wid, stat=istat)
@@ -402,7 +402,7 @@
       Subroutine Mtanh_Ts_GetHwd (self, Hwd)
       implicit none
       type (mtanh_ts), intent(in) :: self
-      real, pointer, dimension(:) :: Hwd
+      real*4, pointer, dimension(:) :: Hwd
       integer :: istat
            
       deallocate (Hwd, stat=istat)

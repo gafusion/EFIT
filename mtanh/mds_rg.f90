@@ -39,7 +39,7 @@
         ! zero.
         ! istat is the socket
         istat = Mdsconnect('atlas' // Char(0)) 
-        connected_to_mds  = (istat .gt. 0)
+        connected_to_mds = (istat .ne. -1)
         if (.not. connected_to_mds) print *, 'wake_mds: failed to connect'
      endif
 
@@ -193,7 +193,7 @@
      Character(len=*), intent(in) :: node ! Node name where desired
                                           ! data reside
                                           ! '\top.nb30l:nbvac_scalar'
-     real, intent(out) :: scalar          ! The scalar read from mds+
+     real*4, intent(out) :: scalar          ! The scalar read from mds+
      logical, intent(out) :: aok          ! TRUE if everything is okay
 
      Integer*4 :: istat              ! error code - even bad, odd good.
@@ -226,7 +226,7 @@
 
       Character(len=*), intent(in) :: name   ! Name of mds node, e.g. 'ALP_ERR'
       Integer, intent(in) ::  ntimes         ! Number of data points.
-      Real, dimension(ntimes), intent(in) :: data ! Data
+      Real*4, dimension(ntimes), intent(in) :: data ! Data
       Character(len=*), intent(in) :: cunits_in ! Units to be writtten with data
 
       Integer :: istat
@@ -281,7 +281,7 @@
 
       Character(len=*) :: name        ! input:  name of mds variable, e.g. 'ALP_ERR'
       Integer      ntimes             ! input:  number of data point.
-      Real         data(ntimes)        ! input:  data array
+      Real*4       data(ntimes)        ! input:  data array
       Character*25 ctime              ! input:  time node
 
       Character(len=*) cunits
@@ -337,7 +337,7 @@
 
       Character(len=*) :: name        ! input:  name of mds variable, e.g. 'ALP_ERR'
       Integer      ntimes             ! input:  number of data point.
-      Real         data(ntimes)       ! input:  data array
+      Real*4       data(ntimes)       ! input:  data array
       Character(len=*) cunits
       Integer      ier                ! output: error code - even bad, odd good.
 
@@ -376,18 +376,19 @@
 ! Revised: 03/11/08 by rjg to null out data if ntimes = 0
 
       Subroutine Dump_Mds_Rarray_No_Mult (name, ntimes, data, cunits, ier)
-      use mdslib
+!      use mdslib
       Implicit none
 
       Character(len=*) :: name   ! input:  name of mds variable, e.g. 'ALP_ERR'
       Integer      ntimes             ! input:  number of data point.
-      Real         data(ntimes)       ! input:  data array
+      Real*4       data(ntimes)       ! input:  data array
       Character(len=*) cunits
       Integer      ier             ! output: error code - even bad, odd good.
 
       Integer      istat
       Integer      i
       Integer      m
+!      logical      MdsError
       integer      ilen
 
       logical :: lok
@@ -431,7 +432,7 @@
 ! Revised: 03/11/08 by rjg to null out data if ntimes = 0
 ! Revised: 03/11/08 by rjg to change name and move into this file
       Subroutine Write_Mds_R8array_No_Mult (name, ntimes, data_r8, cunits, ier)
-      use mdslib
+!      use mdslib
       Implicit none
 
       Character(len=*), intent(inout) :: name   ! name of mds variable, e.g. 'ALP_ERR'
@@ -444,6 +445,7 @@
       Integer      istat
       Integer      i
       Integer      m
+!      logical      MdsError
       integer      ilen
       integer :: if
       logical :: lok
@@ -484,7 +486,7 @@
       Implicit none
 
       Character(len=*) :: name        ! input:  name of mds variable, e.g. 'ALP_ERR'
-      Real         datum              ! input:  datum (scalar)
+      Real*4       datum              ! input:  datum (scalar)
       Character(len=*), intent(in) :: cunits_in      ! input, 
       Integer      ier                ! output: error code - even bad, odd good.
       Integer      istat
@@ -519,7 +521,7 @@
 
 
       Character(len=*) :: name        ! input:  name of mds variable, e.g. 'ALP_ERR'
-      Real         datum              ! input:  datum (scalar)
+      Real*4       datum              ! input:  datum (scalar)
       Integer      ier                ! output: error code - even bad, odd good.
       Integer      istat
 
@@ -670,7 +672,7 @@
       Implicit none
 
       Character(len=*) :: name        ! input:  name of mds variable, e.g. 'ALP_ERR'
-      Real         datum              ! input:  datum (scalar)
+      Real*4       datum              ! input:  datum (scalar)
       Integer      ier                ! output: error code - even bad, odd good.
       Integer      istat
 
