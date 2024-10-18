@@ -147,15 +147,16 @@ IXRAY,, "| 0 = do not plot soft X-ray (default)
 IXSTRT,, "| 1 = trace field line from outside (default)
 | -1 = trace from inside
 | 2 = trace from both inside and outside"
-JZFILA,zeros,Z grid indicies to compute filament Green table at.  Only used when ICONVR<0 and AELIP<=0.
-KAKITER,25,Maximum number of outer fitting iterations during knot optimization (same use as MXITER before final solution).  Only active when KAUTOKNT>0.
-KAKLOOP,1,Number of times to loop over every knot position when performing optimization.  Only active when KAUTOKNT>0.
+JZFILA, zeros, Z grid indicies to compute filament Green table at.  Only used when ICONVR<0 and AELIP<=0.
+KAKITER, 25, Maximum number of outer fitting iterations during knot optimization (same use as MXITER before final solution).  Only active when KAUTOKNT>0.
+KAKLOOP, 1, Number of times to loop over every knot position when performing optimization. Only active when KAUTOKNT>0.
+KAKSEED, 0, Seed to use with the random number generator when KAUTOKNT=3. This doesn't need to have high entropy since it is passed through another PRNG before being used. If KAKSEED=0 a random seed will be used.
 KAUTOKNT, 0, "| - (Integer flag) Activates the knot location optimization.
 | 0 = use input knot locations (default).
 | 1 = optimize knot locations to find lowest possible GS error and chi squared
 | 2 = optimize knot locations until convergence is reached
 | 3 = vary knots randomly until convergence is reached."
-KBETAPR,,"| - (Integer flag) Specify value of pressure at boundary for integration to calculate beta.
+KBETAPR,, "| - (Integer flag) Specify value of pressure at boundary for integration to calculate beta.
 | 0 = take pressure at boundary to be 0 (default).
 | 1 = get pressure at boundary from kinetic data."
 KBOUND, 0, (old boundary tracing method is deprecated)

@@ -402,6 +402,7 @@
         kautoknt=0
         kakloop=1
         kakiter=25
+        kakseed=-1
         kbetapr=0
         kfcurb=0
         kplotpr=1
