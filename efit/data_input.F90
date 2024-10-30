@@ -33,7 +33,7 @@
       integer*4 ilower(mbdry)
       integer*8 n1d(1),n2d(2)
       !real*4 spatial_avg_ham(nmselp,ngam_vars,ngam_u,ngam_w)
-      real*8 currn1,co2cor,fq95
+      real*8 currn1,co2cor,fq95,maxdf
       real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref,sgnemin, &
              idfila,sigtii,pnbeam,sgtemin,sgnethi,sgtethi, &
              currc79,currc139,currc199, &
@@ -1509,8 +1509,9 @@
         if (maxdf > 0.5) then 
           write(*,*) "WARNING: large knot variation possible"
           write(*,*) "knots may cross and become disordered"
+        endif
         if (maxdf > 1.0) then 
-          write(*,*) "CAUTION: EFIT will fail if a knot falls outside of [0,1]"
+          write(*,*) "CAUTION: EFIT will fail if a knot leaves [0,1]"
         endif
         if (kautoknt .ge. 2) then
           akchiwt=0.0
