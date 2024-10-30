@@ -1,8 +1,8 @@
 ﻿Variable, Default, Description
 ACOILC,, ADP ring?
-AELIP, 0.60, "Minor radius in meters of ellipse for current initialization."
-AEEDF, ones, "(array) Fraction of the distance between neighboring Er knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
-AFFDF, ones, "(array) Fraction of the distance between neighboring FF' knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
+AELIP, 0.6, "Minor radius in meters of ellipse for current initialization."
+AEEDF, 0.5, "(array) Fraction of the distance between neighboring Er knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
+AFFDF, 0.5, "(array) Fraction of the distance between neighboring FF' knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
 AKCHIWT, 1.0, Weight of the total coil and probe chi squared when optimizing knot locations.  Only active when KAUTOKNT=1.
 AKERRWT, 0.0, Weight of the GS error when optimizing knot locations.  Only active when KAUTOKNT=1.
 AKGAMWT, 0.0, Weight of the MSE chi squared when optimizing knot locations.  Only active when KAUTOKNT=1.
@@ -13,8 +13,8 @@ ALPHAFP, 0.0, "| Describes the width of the scrapeoff layer in which the halo cu
 | 1 = zero thickness,
 | 0 = current layer extends either to the first separatrix surface surrounding the last closed flux surface or, if there is no external separatrix, it can flow anywhere inside the chamber.
 | It is assumed that no current flows outside this external separatrix."
-APPDF, ones, "(array) Fraction of the distance between neighboring P' knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
-AWWDF, ones, "(array) Fraction of the distance between neighboring rotational pressure knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
+APPDF, 0.5, "(array) Fraction of the distance between neighboring P' knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
+AWWDF, 0.5, "(array) Fraction of the distance between neighboring rotational pressure knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
 BETAP0, 0.5, "GAQ current density profile parameter. (Get GAQ form by default when you run fixed boundary calculation?) Ignored unless ICURRT=4?"
 BTOR, ,"Toroidal magnetic field in Tesla. For fixed boundary calculation, this is specified by user. For fitting mode, this is obtained from data using input mode 5 and put into the K-file."
 CO2COR, 1.,"CO2 Correction. Correction factor to apply to Thompson to make calibration match CO2 interferometer(?)."

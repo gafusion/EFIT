@@ -1463,9 +1463,9 @@
       endif
       
 !--   warn that idebug, jdebug, kbound and ktear inputs are deprecated
-      if (idebug.ne.0) write(*,*) &
+      if(idebug.ne.0) write(*,*) &
       "idebug input variable is deprecated, set cmake variable instead"
-      if (jdebug.ne."NONE") write(*,*) &
+      if(jdebug.ne."NONE") write(*,*) &
       "jdebug input variable is deprecated, set cmake variable instead"
       if(kbound.ne.0) write(*,*) &
       "old boundary tracing method is deprecated"
@@ -1503,12 +1503,21 @@
       enddo
       if(abs(fwtecebz0).le.1.e-30_dp) fwtecebz0=0.0
 
-!--   enforce autoknot requirements
-      if (kautoknt .ge. 2) then
-        akchiwt=0.0
-        akerrwt=1.0
-        akgamwt=0.0
-        akprewt=0.0
+!--   check autoknot inputs
+      if (kautoknt .gt. 0) then
+        maxdf = max(max(max(maxval(appdf),maxval(affdf)),maxval(aeedf)),maxval(awwdf))
+        if (maxdf > 0.5) then 
+          write(*,*) "WARNING: large knot variation possible"
+          write(*,*) "knots may cross and become disordered"
+        if (maxdf > 1.0) then 
+          write(*,*) "CAUTION: EFIT will fail if a knot falls outside of [0,1]"
+        endif
+        if (kautoknt .ge. 2) then
+          akchiwt=0.0
+          akerrwt=1.0
+          akgamwt=0.0
+          akprewt=0.0
+        endif
       endif
 
       if(nbdryp==-1) nbdryp=nbdry
