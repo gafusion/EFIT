@@ -56,9 +56,9 @@
       enddo
       close(unit=lfile)
 !----------------------------------------------------------------
-!--   Fixed poloidal limiter for shot > 88400                  --
+!--   Fixed DIII-D poloidal limiter for shot > 88400
 !----------------------------------------------------------------
-      get_pol: if (ishot.le.88400) then
+      get_pol: if (device == "DIII-D" .and. ishot.le.88400) then
       dell=0.01_dp*xltype
       limup=0
       limbot=0
