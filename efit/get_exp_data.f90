@@ -22,7 +22,6 @@
       implicit integer*4 (i-n), real*8 (a-h,o-z)
       integer*4 limmode,ilimshot,ioerr
       logical shape_ext
-      character*100 filin
       data lfile/36/
 !
       read_lim: if ((.not.shape_ext .and. limitr.le.0).or.(limmode.eq.0)) then
@@ -44,8 +43,8 @@
 !
       limid=iabs(limitr)
 
-      filin=trim(input_dir)//'lim.dat'
-      open(unit=lfile,access='sequential',status='old',file=filin)
+      filimt=trim(input_dir)//'lim.dat'
+      open(unit=lfile,access='sequential',status='old',file=filimt)
       ilimshot=999999
       do while (ishot.lt.ilimshot)
         read (lfile,*,iostat=ioerr) ilimshot, limitr
