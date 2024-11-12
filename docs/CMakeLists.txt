@@ -67,4 +67,4 @@ file(GLOB_RECURSE EFITDOC_DEPS RELATIVE ${SRCDIR} *.rst */*.rst */*/*.rst */*/*/
 
 
   # Add top level targets
-add_custom_target(docs ALL DEPENDS docs-html)
+add_custom_target(docs DEPENDS docs-html)
