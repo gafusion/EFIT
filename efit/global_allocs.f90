@@ -128,7 +128,7 @@ ALLOCATE(xnodef(modef),xnodep(modep),xnodew(modew),kbasef(modef), &
    kbasep(modep),kbasew(modew),omegat(mpress),rpresw(mpress),zpresw(mpress), &
    presw(mpress),sigprw(mpress),rpresws(mpress),fwtprw(mpress),romegat(mpress), &
    zomegat(mpress),sigome(mpress),rpreswv(mpress),scalepw(mpress), &
-   saiprw(npress),premew(mpress),saiprw2(mpress),rprwpc(mpress,nwwcur), &
+   saiprw(mpress),premew(mpress),saiprw2(mpress),rprwpc(mpress,nwwcur), &
    betapw(ntime),betatw(ntime),wplasw(ntime), &
    fwtec(nesum),cecurr(nesum),chiecc(nesum), &
    ztssym(ntime),ztswid(ntime),ptssym(ntime),ztserr(ntime), &
