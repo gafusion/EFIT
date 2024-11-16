@@ -175,29 +175,29 @@
       close(unit=40)
 !
       return
-  980 format(2x,/,'  fit errors, shot ',i7,2x,f5.0, &
+  980 format(/,2x,'Failed to reach fit/convergence criteria, shot ',i7,2x,f5.0, &
              ' msec. no eqdsks will be written')
-  990 format(2x,/,'  fit errors, shot ',i7,2x,f5.0, &
+  990 format(/,2x,'Failed to reach fit/convergence criteria, shot ',i7,2x,f5.0, &
              ' msec. only a-eqdsk will be written')
- 1000 format(2x,/,'  fit errors, shot ',i7,2x,f5.0, &
+ 1000 format(/,2x,'Failed to reach fit/convergence criteria, shot ',i7,2x,f5.0, &
              ' msec. all eqdsks are still written')
- 1010 format(5x,'Error #1, Chisq > ',f6.0)
- 1020 format(5x,'Error #2, Li > ',f6.0,' or < ',f6.0)
- 1025 format(5x,'Error #3, Betap > ',f6.0,' or < 0')
- 1030 format(5x,'Error #4, (MHD Ip-Exp Ip)/MHD Ip > ',f6.0)
- 1040 format(5x,'Error #5, a > ',f6.0,' or < ',f6.0)
- 1050 format(5x,'Error #6, b/a > ',f6.0,' or < ',f6.0)
- 1060 format(5x,'Error #7, Rout > ',f6.0,' or < ',f6.0)
- 1070 format(5x,'Error #8, Rcurrt > ',f6.0,' or < ',f6.0)
- 1080 format(5x,'Error #9, Zout > ',f6.0,' or < ',f6.0)
- 1090 format(5x,'Error #10, Zcurrt > ',f6.0,' or < ',f6.0)
- 1100 format(5x,'Error #13, Q* > ',f6.0,' or < ',f6.0)
- 1110 format(5x,'Error #14, Betat > ',f6.0,' or < 0')
- 1120 format(5x,'Error #15, Oleft<',f6.0,' or Oright<',f6.0' or Otop<',f6.0)
- 1150 format(5x,'Error #18, Qout < ',f6.0)
- 1160 format(5x,'Error #18, Qout > ',f6.0,' or < ',f6.0)
- 1170 format(5x,'Error #19, error > ',e10.3)
- 1180 format(5x,'Error #20, Bp+li/2 not consistent, error = ',e10.3)
- 1190 format(5x,'Error #21, Bp not consistent, error = ',e10.3)
- 1200 format(5x,'Error #22, delz term does not vanish, delz = ',e10.3)
+ 1010 format(5x,'Failure #1, Chisq > ',f6.0)
+ 1020 format(5x,'Failure #2, Li > ',f6.0,' or < ',f6.0)
+ 1025 format(5x,'Failure #3, Betap > ',f6.0,' or < 0')
+ 1030 format(5x,'Failure #4, (MHD Ip-Exp Ip)/MHD Ip > ',f6.0)
+ 1040 format(5x,'Failure #5, a > ',f6.0,' or < ',f6.0)
+ 1050 format(5x,'Failure #6, b/a > ',f6.0,' or < ',f6.0)
+ 1060 format(5x,'Failure #7, Rout > ',f6.0,' or < ',f6.0)
+ 1070 format(5x,'Failure #8, Rcurrt > ',f6.0,' or < ',f6.0)
+ 1080 format(5x,'Failure #9, Zout > ',f6.0,' or < ',f6.0)
+ 1090 format(5x,'Failure #10, Zcurrt > ',f6.0,' or < ',f6.0)
+ 1100 format(5x,'Failure #13, Q* > ',f6.0,' or < ',f6.0)
+ 1110 format(5x,'Failure #14, Betat > ',f6.0,' or < 0')
+ 1120 format(5x,'Failure #15, Oleft<',f6.0,' or Oright<',f6.0' or Otop<',f6.0)
+ 1150 format(5x,'Failure #18, Qout < ',f6.0)
+ 1160 format(5x,'Failure #18, Qout > ',f6.0,' or < ',f6.0)
+ 1170 format(5x,'Failure #19, error > ',e10.3)
+ 1180 format(5x,'Failure #20, Bp+li/2 not consistent, error = ',e10.3)
+ 1190 format(5x,'Failure #21, Bp not consistent, error = ',e10.3)
+ 1200 format(5x,'Failure #22, delz term does not vanish, delz = ',e10.3)
       end subroutine chkerr

@@ -206,7 +206,7 @@
                 kersil,iout,ixray,kedgef,kedgep,kautoknt,kakloop,kakiter, &
                 kpphord,kffhord,keehord,isolve,iplcout,imagsigma,ksigma, &
                 nbdrymx,nsol,kbetapr,nbdryp,idebug,ifindopt,npnef,nptef, &
-                nw_sub,nh_sub,ibound
+                nw_sub,nh_sub,ibound,kakseed
       real*8 plasma,btor,fwtcur,fwtqa,qemp,error,serror,psibry, &
              bitip,qenp,fwtbp,relip,zelip,aelip,eelip,qvfit,fwtdlc, &
              betap0,emp,enp,scrape,errmin,rbound,fwacoil,rcentr,rzero, &
@@ -272,7 +272,7 @@
         imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
         nbdrymx,nsol,rsol,zsol,fwtsol,efitversion,kbetapr,nbdryp, &
         idebug,jdebug,ifindopt,tolbndpsi,siloplim,use_previous,req_valid, &
-        appdf,affdf,awwdf,aeedf, &
+        appdf,affdf,awwdf,aeedf,kakseed, &
         table_dir,input_dir,store_dir,ibound
       parameter(nin=343)
 

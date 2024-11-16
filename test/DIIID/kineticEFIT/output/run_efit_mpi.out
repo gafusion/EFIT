@@ -116,9 +116,9 @@ WARNING in fit at r=  0, t=  2300: not converged, reached max iterations
  r=  3 t=  2600 it= 26 chi2=2.99E+02 zm=-2.18E-02 err=3.613E-04 dz=-6.394E-06 delz=-6.149E-02 dj=1.964E-03 chigam= 3.20E+02
 WARNING in fit at r=  3, t=  2600: not converged, reached max iterations
 
-  fit errors, shot  186610  2500. msec. all eqdsks are still written
-     Error #1, Chisq >    80.
-     Error #4, (MHD Ip-Exp Ip)/MHD Ip >     0.
+  Failed to reach fit/convergence criteria, shot  186610  2500. msec. all eqdsks are still written
+     Failure #1, Chisq >    80.
+     Failure #4, (MHD Ip-Exp Ip)/MHD Ip >     0.
 
        data used:   
  39 flux loops
@@ -135,11 +135,11 @@ WARNING in fit at r=  3, t=  2600: not converged, reached max iterations
  gaptop(cm) =     18.657 q95        =      3.063 rm(cm)     =    174.464
  zm(cm)     =     -3.951 totalchi^2 =  5.192E+02 error      =  1.862E-04
 
-  fit errors, shot  186610  2300. msec. all eqdsks are still written
-     Error #1, Chisq >    80.
+  Failed to reach fit/convergence criteria, shot  186610  2300. msec. all eqdsks are still written
+     Failure #1, Chisq >    80.
 
-  fit errors, shot  186610  2600. msec. all eqdsks are still written
-     Error #1, Chisq >    80.
+  Failed to reach fit/convergence criteria, shot  186610  2600. msec. all eqdsks are still written
+     Failure #1, Chisq >    80.
 INFO in efit at r=  2, t=  2500: Done processing
 INFO in efit at r=  0, t=  2300: Done processing
 INFO in efit at r=  3, t=  2600: Done processing

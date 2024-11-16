@@ -57,8 +57,8 @@
  r=  1 t=  2500 it= 10 chi2=2.18E+01 zm=-3.89E-02 err=7.483E-04 dz=-2.345E-05 delz= 1.907E-01 dj=4.797E-03 chigam= 1.26E+01
  r=  3 t=  2700 it=  9 chi2=2.02E+01 zm=-3.45E-02 err=8.140E-04 dz=-5.338E-05 delz= 1.769E-01 dj=3.905E-03 chigam= 3.66E+00
 
-  fit errors, shot  186610  2600. msec. all eqdsks are still written
-     Error #21, Bp not consistent , error =  0.950E-01
+  Failed to reach fit/convergence criteria, shot  186610  2600. msec. all eqdsks are still written
+     Failure #21, Bp not consistent , error =  0.950E-01
 
        data used:   
  39 flux loops
@@ -75,11 +75,11 @@
  gaptop(cm) =     15.195 q95        =      3.024 rm(cm)     =    173.484
  zm(cm)     =     -3.644 totalchi^2 =  2.198E+01 error      =  8.646E-04
 
-  fit errors, shot  186610  2400. msec. all eqdsks are still written
-     Error #21, Bp not consistent , error =  0.109E+00
+  Failed to reach fit/convergence criteria, shot  186610  2400. msec. all eqdsks are still written
+     Failure #21, Bp not consistent , error =  0.109E+00
 
-  fit errors, shot  186610  2500. msec. all eqdsks are still written
-     Error #21, Bp not consistent , error =  0.128E+00
+  Failed to reach fit/convergence criteria, shot  186610  2500. msec. all eqdsks are still written
+     Failure #21, Bp not consistent , error =  0.128E+00
 INFO in efit at r=  2, t=  2600: Done processing
 INFO in efit at r=  0, t=  2400: Done processing
 INFO in efit at r=  1, t=  2500: Done processing
