@@ -22,7 +22,11 @@ set(EFUND_RESULTS_CONFIGFILE ${CMAKE_CURRENT_SOURCE_DIR}/check_green_results.sh.
 # This is a shell script used to drive running efit
 set(MPICMD "mpirun -n " CACHE STRING "Command to invoke ")
 set(NPROC "4" CACHE STRING "Processors to use ")
-if (NOT ${ENABLE_PARALLEL})
+if (${ENABLE_PARALLEL})
+  if (NOT NPROC EQUAL 4)
+    message(WARNING "Testing with NPROC!=4 is only for dev purposes: tests will fail")
+  endif ()
+else ()
   set(MPICMD "")
   set(NPROC "") 
 endif ()

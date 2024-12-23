@@ -127,7 +127,6 @@ is built in your $HOME/software directory)::
         -DLAPACK_DIR:PATH='$HOME/software/lapack' \
         -DENABLE_PARALLEL:BOOL=ON \
         -DMPICMD:STRING='mpirun -n ' \
-        -DNPROC:STRING=2 \
         -DENABLE_NETCDF:BOOL=ON \
         -DNetCDF_DIR:PATH='$HOME/software/netcdf' \
         -DENABLE_HDF5:BOOL=ON \
