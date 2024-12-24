@@ -2290,27 +2290,19 @@
       if(ibunmn.eq.4) ibunmn=2
 
       ! check grid subsampling
-      if (abs(nw_sub).gt.nw) then
+      if (nw_sub.gt.nw) then
         write(*,*)  &
           "Higher resolution output request than run, ignoring nw_sub"
-        nw_sub=nw
-      elseif (nw_sub.le.0) then
-        write(*,*)  &
-          "Negative resolution output not possible, ignoring nw_sub"
-        nw_sub=nw
-      else
+        nw_sub=-1
+      elseif (nw_sub.gt.0) then
         nsw=(nw-1)/(nw_sub-1)
         nw_sub=(nw-1)/nsw+1
       endif
-      if (abs(nh_sub).gt.nh) then
+      if (nh_sub.gt.nh) then
         write(*,*)  &
           "Higher resolution output request than run, ignoring nh_sub"
-        nh_sub=nh
-      elseif (nh_sub.le.0) then
-        write(*,*)  &
-          "Negative resolution output not possible, ignoring nh_sub"
-        nh_sub=nh
-      else
+        nh_sub=-1
+      elseif (nh_sub.gt.0) then
         nsh=(nh-1)/(nh_sub-1)
         nh_sub=(nh-1)/nsh+1
       endif
