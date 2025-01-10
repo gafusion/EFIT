@@ -127,8 +127,16 @@
           psirz(i,j)=psi(kk)*sign_out
         enddo
       enddo
-      nsw=(nw-1)/(nw_sub-1)
-      nsh=(nh-1)/(nh_sub-1)
+      if (nw_sub.gt.0) then
+        nsw=(nw-1)/(nw_sub-1)
+      else
+        nsw=1
+      endif
+      if (nh_sub.gt.0) then
+        nsh=(nh-1)/(nh_sub-1)
+      else
+        nsh=1
+      endif
 !----------------------------------------------------------------------------
 !--   convert the pointwise current density to spatial density and match the
 !--   orientation of psi (if requested)
@@ -164,7 +172,7 @@
       ssimag=simag*sign_out
       ssibry=psibry*sign_out
       eqdsk_format: if (keqdsk.eq.1) then
-      write(neqdsk,2000) (vers(i),i=1,6),0,abs(nw_sub),abs(nh_sub)
+      write(neqdsk,2000) (vers(i),i=1,6),0,nw/nsw,nh/nsh
       write(neqdsk,2020) xdim,zdim,rcentr,rgrid(1),zmid
       write(neqdsk,2020) rmaxis,zmaxis,ssimag,ssibry,bcentr(jtime)
       write(neqdsk,2020) ipmhd(jtime),ssimag,xdum,rmaxis,xdum
@@ -330,7 +338,7 @@
 !--   binary format                                                   --
 !-----------------------------------------------------------------------
       else eqdsk_format
-      write(neqdsk) (vers(i),i=1,6),0,abs(nw_sub),abs(nh_sub)
+      write(neqdsk) (vers(i),i=1,6),0,nw/nsw,nh/nsh
       write(neqdsk) real(xdim,r4),real(zdim,r4),real(rcentr,r4), &
                      real(rgrid(1),r4),real(zmid,r4)
       write(neqdsk) real(rmaxis,r4),real(zmaxis,r4),real(ssimag,r4), &

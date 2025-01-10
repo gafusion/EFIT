@@ -218,11 +218,13 @@
       rright=0.
       ztop=0.
       zbotto=0.
-      rsi(1)=-1
+      if(nsilop .gt. 0) rsi(1)=-1
       rf(1)=-1.
-      re(1)=-1.
-      rvs(1)=-1.
-      wvs(1)=-1.
+      if(nesum .gt. 0) re(1)=-1.
+      if (nvesel .gt. 0) then 
+        rvs(1)=-1.
+        wvs(1)=-1.
+      endif
       patmp2=0.
       rlin=-1.
       rlout=0.
@@ -264,9 +266,11 @@
         read (nin,10000) (rf(i),zf(i),wf(i),hf(i),af(i),af2(i), &
                           i=1,nfcoil)
       endif
+      if (nsilop.gt.0) then
       if (rsi(1).lt.0.0) then
-        read (nin,10000) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
-                          i=1,nsilop)
+          read (nin,10000) (rsi(i),zsi(i),wsi(i),hsi(i),as(i),as2(i), &
+                            i=1,nsilop)
+        endif
       endif
       if ((iecoil.eq.1).or.(ivesel.eq.1)) then
         if (re(1).lt.0.0) then

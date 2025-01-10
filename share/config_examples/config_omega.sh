@@ -46,9 +46,9 @@ case $env in
     SYSTEM_NETCDF_C_DIR=$NETCDF_DIR
     SYSTEM_NETCDF_F_DIR=$NETCDF_F_DIR
 
-    # System physics libs (no compatible is 
+    # System physics libs
     SYSTEM_DD3_LIB='/fusion/usc/c8/src/d3lib/lib/libd3.a'
-    SYSTEM_MSE_LIB=''
+    SYSTEM_MSE_LIB='/fusion/projects/codes/mse/lib/V5_02-gcc8.x/libmse.a'
     ;;
 
   nvhpc23*)

@@ -116,11 +116,11 @@
       nextra=1
       nfit=0
       nharm=1
-      nh_sub=nh
+      nh_sub=-1
       nicoil=1
       nmass=0
       nslref=1
-      nw_sub=nw
+      nw_sub=-1
       n1coil=0
       ok_30rt=0
       ok_210lt=0
