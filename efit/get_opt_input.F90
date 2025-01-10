@@ -230,13 +230,14 @@
           ! TODO: it should be possible to distribute processors effectively for multiple times and 
           !       leave others for knot optimization, but that logic hasn't been setup yet
           !       (only can parallelize over one or the other and times takes precedence)
-          if (nproc > ktime) then
-            if (ktime == 1) then
-              write(nttyo,*) 'All processors are running the only input time'
-            else
-              ! Ensure there are not more processors than time slices
+          if (ktime == 1) then
+            write(nttyo,*) 'All processors are running the only input time'
+          else
+            if (nproc > ktime) then
+              ! There are more processors than time slices
               call errctrl_msg('get_opt_input', &
                                'MPI processes have nothing to do')
+            else
               ! Warn if the time slice distribution is not balanced
               if (mod(ktime,nproc) .ne. 0) &
                 write(nttyo,*) 'Warning: time slices are not balanced across processors'

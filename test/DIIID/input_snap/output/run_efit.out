@@ -36,6 +36,6 @@
  gaptop(cm) =     16.924 q95        =      2.944 rm(cm)     =    174.568
  zm(cm)     =     -3.211 totalchi^2 =  2.090E+01 error      =  6.111E-05
 
-  fit errors, shot  186610  2400. msec. all eqdsks are still written
-     Error #22, delz term does not vanish, delz =  0.596E-03
+  Failed to reach fit/convergence criteria, shot  186610  2400. msec. all eqdsks are still written
+     Failure #22, delz term does not vanish, delz =  0.596E-03
 INFO in efitd at r=  0, t=  2400: Done processing

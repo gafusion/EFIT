@@ -390,10 +390,10 @@
         akerrwt=0.0
         akprewt=0.0
         aktol=-1.0
-        appdf=1.0
-        affdf=1.0
-        awwdf=1.0
-        aeedf=1.0
+        appdf=0.5
+        affdf=0.5
+        awwdf=0.5
+        aeedf=0.5
         alpax(1)=1.e4_dp
         bitfc=0.0
         fwtpre=1.
@@ -402,6 +402,7 @@
         kautoknt=0
         kakloop=1
         kakiter=25
+        kakseed=-1
         kbetapr=0
         kfcurb=0
         kplotpr=1
