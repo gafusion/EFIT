@@ -1,8 +1,8 @@
 ﻿Variable, Default, Description
 ACOILC,, ADP ring?
-AELIP, 0.60, "Minor radius in meters of ellipse for current initialization."
-AEEDF, ones, "(array) Fraction of the distance between neighboring Er knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
-AFFDF, ones, "(array) Fraction of the distance between neighboring FF' knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
+AELIP, 0.6, "Minor radius in meters of ellipse for current initialization."
+AEEDF, 0.5, "(array) Fraction of the distance between neighboring Er knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
+AFFDF, 0.5, "(array) Fraction of the distance between neighboring FF' knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
 AKCHIWT, 1.0, Weight of the total coil and probe chi squared when optimizing knot locations.  Only active when KAUTOKNT=1.
 AKERRWT, 0.0, Weight of the GS error when optimizing knot locations.  Only active when KAUTOKNT=1.
 AKGAMWT, 0.0, Weight of the MSE chi squared when optimizing knot locations.  Only active when KAUTOKNT=1.
@@ -13,8 +13,8 @@ ALPHAFP, 0.0, "| Describes the width of the scrapeoff layer in which the halo cu
 | 1 = zero thickness,
 | 0 = current layer extends either to the first separatrix surface surrounding the last closed flux surface or, if there is no external separatrix, it can flow anywhere inside the chamber.
 | It is assumed that no current flows outside this external separatrix."
-APPDF, ones, "(array) Fraction of the distance between neighboring P' knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
-AWWDF, ones, "(array) Fraction of the distance between neighboring rotational pressure knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
+APPDF, 0.5, "(array) Fraction of the distance between neighboring P' knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
+AWWDF, 0.5, "(array) Fraction of the distance between neighboring rotational pressure knot positions to optimize over.  Indices match those of the knots, so the first and last are ignored (not optimized).  Only active when KAUTOKNT>0."
 BETAP0, 0.5, "GAQ current density profile parameter. (Get GAQ form by default when you run fixed boundary calculation?) Ignored unless ICURRT=4?"
 BTOR, ,"Toroidal magnetic field in Tesla. For fixed boundary calculation, this is specified by user. For fitting mode, this is obtained from data using input mode 5 and put into the K-file."
 CO2COR, 1.,"CO2 Correction. Correction factor to apply to Thompson to make calibration match CO2 interferometer(?)."
@@ -147,15 +147,16 @@ IXRAY,, "| 0 = do not plot soft X-ray (default)
 IXSTRT,, "| 1 = trace field line from outside (default)
 | -1 = trace from inside
 | 2 = trace from both inside and outside"
-JZFILA,zeros,Z grid indicies to compute filament Green table at.  Only used when ICONVR<0 and AELIP<=0.
-KAKITER,25,Maximum number of outer fitting iterations during knot optimization (same use as MXITER before final solution).  Only active when KAUTOKNT>0.
-KAKLOOP,1,Number of times to loop over every knot position when performing optimization.  Only active when KAUTOKNT>0.
+JZFILA, zeros, Z grid indicies to compute filament Green table at.  Only used when ICONVR<0 and AELIP<=0.
+KAKITER, 25, Maximum number of outer fitting iterations during knot optimization (same use as MXITER before final solution).  Only active when KAUTOKNT>0.
+KAKLOOP, 1, Number of times to loop over every knot position when performing optimization. Only active when KAUTOKNT>0.
+KAKSEED, 0, Seed to use with the random number generator when KAUTOKNT=3. This doesn't need to have high entropy since it is passed through another PRNG before being used. If KAKSEED=0 a random seed will be used.
 KAUTOKNT, 0, "| - (Integer flag) Activates the knot location optimization.
 | 0 = use input knot locations (default).
 | 1 = optimize knot locations to find lowest possible GS error and chi squared
 | 2 = optimize knot locations until convergence is reached
 | 3 = vary knots randomly until convergence is reached."
-KBETAPR,,"| - (Integer flag) Specify value of pressure at boundary for integration to calculate beta.
+KBETAPR,, "| - (Integer flag) Specify value of pressure at boundary for integration to calculate beta.
 | 0 = take pressure at boundary to be 0 (default).
 | 1 = get pressure at boundary from kinetic data."
 KBOUND, 0, (old boundary tracing method is deprecated)

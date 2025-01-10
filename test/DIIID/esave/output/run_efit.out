@@ -38,7 +38,7 @@
  gaptop(cm) =     15.189 q95        =      3.025 rm(cm)     =    173.482
  zm(cm)     =     -3.641 totalchi^2 =  2.201E+01 error      =  6.023E-04
 
-  fit errors, shot  186610  2400. msec. all eqdsks are still written
-     Error #21, Bp not consistent , error =  0.113E+00
-     Error #22, delz term does not vanish, delz =  0.206E-02
+  Failed to reach fit/convergence criteria, shot  186610  2400. msec. all eqdsks are still written
+     Failure #21, Bp not consistent , error =  0.113E+00
+     Failure #22, delz term does not vanish, delz =  0.206E-02
 INFO in efit at r=  0, t=  2400: Done processing

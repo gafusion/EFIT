@@ -145,12 +145,12 @@ For debugging, set::
 Config scripts for a number of supercomputers and compilers have already been made
 and can be found in the ``share/config_examples/`` directory, including::
 
+    config_alcf.sh
     config_iris_gnu.sh
     config_iris_intel.sh
     config_iris_pgi.sh
-    config_nersc_gnu.sh
-    config_nersc_intel.sh
-    config_nersc_cray.sh
+    config_nersc.sh
+    config_omega.sh
     config_portal.sh
 
 The required environments for building on these systems are described in the scripts as well 
@@ -160,7 +160,7 @@ They can be used to install with the following commands::
 
     mkdir build
     cd build
-    ../share/config_examples/config_{machine}_{compiler}.sh
+    ../share/config_examples/config_{machine}.sh
     make
 
 If you are trying to build for the first time on a different supercomputer

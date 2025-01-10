@@ -137,20 +137,22 @@
       call set_eparm_defaults()
       ntime = ktime
 
-      select case (kdata)
-      case (1)
-        call read_dirs_shot_imas(ifname(1))
-      case (2)
-        call read_dirs_shot(ifname(1))
-      case (4)
-        call read_dirs_shot('efit_time.dat')
-      case default
-        if (snapextin.eq.'none') then
-          snap_file = 'efit_snap.dat'
-        else
-          snap_file = 'efit_snap.dat_'//adjustl(snapextin)
-        endif
-      end select
+      if (ktime > 0) then
+        select case (kdata)
+        case (1)
+          call read_dirs_shot_imas(ifname(1))
+        case (2)
+          call read_dirs_shot(ifname(1))
+        case (4)
+          call read_dirs_shot('efit_time.dat')
+        case default
+          if (snapextin.eq.'none') then
+            snap_file = 'efit_snap.dat'
+          else
+            snap_file = 'efit_snap.dat_'//adjustl(snapextin)
+          endif
+        end select
+      endif
 
       call set_table_dir
       call read_machinein

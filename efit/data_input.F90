@@ -3,8 +3,8 @@
 !>  
 !!    data_input sets up the magnetic data and weighting arrays.
 !!
-!!    @param ktime : Number of time slices
 !!    @param jtime : Time index
+!!    @param ktime : Number of time slices
 !!    @param kerror: Error Flag
 !!
 !**********************************************************************
@@ -33,7 +33,7 @@
       integer*4 ilower(mbdry)
       integer*8 n1d(1),n2d(2)
       !real*4 spatial_avg_ham(nmselp,ngam_vars,ngam_u,ngam_w)
-      real*8 currn1,co2cor,fq95
+      real*8 currn1,co2cor,fq95,maxdf
       real*8 plasma,btor,dflux,xltype,xltype_180,vloop,siref,sgnemin, &
              idfila,sigtii,pnbeam,sgtemin,sgnethi,sgtethi, &
              currc79,currc139,currc199, &
@@ -112,7 +112,7 @@
            ffbdry,kffbdry,ff2bdry,kff2bdry,errsil,vbit,sicont, &
            wwbdry,kwwbdry,ww2bdry,kww2bdry,f2edge,fe_width,fe_psin,kedgef, &
            ktear,kersil,iout,ixray,pedge,kedgep,pe_width,pe_psin, &
-           table_dir,input_dir,store_dir,kautoknt,akchiwt,akerrwt, &
+           table_dir,input_dir,store_dir,kautoknt,akchiwt,akerrwt,kakseed, &
            akgamwt,akprewt,kakloop,aktol,kakiter,appdf,affdf,awwdf,aeedf, &
            kpphord,kffhord,keehord,psiecn,dpsiecn,fitzts,isolve,iplcout, &
            imagsigma,errmag,ksigma,errmagb,brsptu,fitfcsum,fwtfcsum,appendsnap, &
@@ -896,6 +896,7 @@
           call read_h5_ex(nid,"kakloop",kakloop,h5in,h5err)
           call read_h5_ex(nid,"aktol",aktol,h5in,h5err)
           call read_h5_ex(nid,"kakiter",kakiter,h5in,h5err)
+          call read_h5_ex(nid,"kakseed",kakseed,h5in,h5err)
           call read_h5_ex(nid,"appdf",appdf,h5in,h5err)
           call read_h5_ex(nid,"affdf",affdf,h5in,h5err)
           call read_h5_ex(nid,"aeedf",aeedf,h5in,h5err)
@@ -1462,9 +1463,9 @@
       endif
       
 !--   warn that idebug, jdebug, kbound and ktear inputs are deprecated
-      if (idebug.ne.0) write(*,*) &
+      if(idebug.ne.0) write(*,*) &
       "idebug input variable is deprecated, set cmake variable instead"
-      if (jdebug.ne."NONE") write(*,*) &
+      if(jdebug.ne."NONE") write(*,*) &
       "jdebug input variable is deprecated, set cmake variable instead"
       if(kbound.ne.0) write(*,*) &
       "old boundary tracing method is deprecated"
@@ -1502,12 +1503,22 @@
       enddo
       if(abs(fwtecebz0).le.1.e-30_dp) fwtecebz0=0.0
 
-!--   enforce autoknot requirements
-      if (kautoknt .ge. 2) then
-        akchiwt=0.0
-        akerrwt=1.0
-        akgamwt=0.0
-        akprewt=0.0
+!--   check autoknot inputs
+      if (kautoknt .gt. 0) then
+        maxdf = max(max(max(maxval(appdf),maxval(affdf)),maxval(aeedf)),maxval(awwdf))
+        if (maxdf > 0.5) then 
+          write(*,*) "WARNING: large knot variation possible"
+          write(*,*) "knots may cross and become disordered"
+        endif
+        if (maxdf > 1.0) then 
+          write(*,*) "CAUTION: EFIT will fail if a knot leaves [0,1]"
+        endif
+        if (kautoknt .ge. 2) then
+          akchiwt=0.0
+          akerrwt=1.0
+          akgamwt=0.0
+          akprewt=0.0
+        endif
       endif
 
       if(nbdryp==-1) nbdryp=nbdry

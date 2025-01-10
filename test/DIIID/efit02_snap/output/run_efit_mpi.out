@@ -68,11 +68,11 @@
  r=  0 t=  2400 it=  8 chi2=2.24E+01 zm=-3.51E-02 err=6.295E-03 dz=-6.100E-04 delz= 2.732E-01 dj=6.526E-03 chigam= 4.09E+00
  r=  0 t=  2400 it=  9 chi2=2.21E+01 zm=-3.53E-02 err=4.050E-03 dz=-2.075E-04 delz= 1.807E-01 dj=4.329E-03 chigam= 4.11E+00
 
-  fit errors, shot  186610  2600. msec. all eqdsks are still written
-     Error #21, Bp not consistent , error =  0.854E-01
+  Failed to reach fit/convergence criteria, shot  186610  2600. msec. all eqdsks are still written
+     Failure #21, Bp not consistent , error =  0.854E-01
 
-  fit errors, shot  186610  2500. msec. all eqdsks are still written
-     Error #21, Bp not consistent , error =  0.106E+00
+  Failed to reach fit/convergence criteria, shot  186610  2500. msec. all eqdsks are still written
+     Failure #21, Bp not consistent , error =  0.106E+00
  r=  0 t=  2400 it= 10 chi2=2.21E+01 zm=-3.55E-02 err=2.877E-03 dz=-1.473E-04 delz= 1.691E-01 dj=4.059E-03 chigam= 4.11E+00
 INFO in efit at r=  3, t=  2700: Done processing
 INFO in efit at r=  2, t=  2600: Done processing
@@ -97,6 +97,6 @@ INFO in efit at r=  1, t=  2500: Done processing
  gaptop(cm) =     15.106 q95        =      3.022 rm(cm)     =    173.673
  zm(cm)     =     -3.569 totalchi^2 =  2.189E+01 error      =  7.065E-04
 
-  fit errors, shot  186610  2400. msec. all eqdsks are still written
-     Error #21, Bp not consistent , error =  0.930E-01
+  Failed to reach fit/convergence criteria, shot  186610  2400. msec. all eqdsks are still written
+     Failure #21, Bp not consistent , error =  0.930E-01
 INFO in efit at r=  0, t=  2400: Done processing
