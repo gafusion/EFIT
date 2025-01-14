@@ -112,9 +112,9 @@
          fwtbry(1:nbdry)=fwtbdr*fwtbdry(1:nbdry)
        endif
 #ifdef DEBUG_LEVEL2
-      write (106,*) 'EXTCUR NBDRY,PSIBRY,WSIRY = ', nbdry,psibry,wsibry
-      write (106,*) '       SIDIF,FWTBDR,ERRBRY= ', sidif,fwtbdr,errbry
-      write (106,*) '       PSIBRY0= ', psibry0
+       write (106,*) 'EXTCUR NBDRY,PSIBRY,WSIRY = ', nbdry,psibry,wsibry
+       write (106,*) '       SIDIF,FWTBDR,ERRBRY= ', sidif,fwtbdr,errbry
+       write (106,*) '       PSIBRY0= ', psibry0
 #endif
 !-----------------------------------------------------------------------
 !--    set up response matrix, first fixed boundary, then flux loops  --
