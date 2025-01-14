@@ -429,16 +429,18 @@
       endif
       endif newmhdin
 !
-      if (.not.fitsiref) then
-       ssiref=csilop(iabs(nslref),it)
-       do i=1,nsilop
-         workb_jw4(i)=csilop(i,it)-ssiref
-       enddo
-      else
-       ssiref=0.0
-       do i=1,nsilop
-         workb_jw4(i)=csilop(i,it)+csiref
-       enddo
+      if (nsilop .gt. 0) then
+        if (.not.fitsiref) then
+          ssiref=csilop(iabs(nslref),it)
+          do i=1,nsilop
+            workb_jw4(i)=csilop(i,it)-ssiref
+          enddo
+        else
+          ssiref=0.0
+          do i=1,nsilop
+            workb_jw4(i)=csilop(i,it)+csiref
+          enddo
+        endif
       endif
 !
       if (iand(iout,1).ne.0) then
