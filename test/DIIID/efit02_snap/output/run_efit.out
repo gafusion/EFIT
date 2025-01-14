@@ -17,19 +17,19 @@
  ******************** EFIT 65 x 65 grid ********************
 
  r=  0 t=  2400 it=  1 chi2=4.13E+01 zm=-2.21E-02 err=3.610E+00 dz=-2.212E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
- r=  0 t=  2400 it=  2 chi2=2.74E+01 zm=-2.24E-02 err=1.308E-01 dz=-3.085E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 4.23E+00
- r=  0 t=  2400 it=  3 chi2=2.86E+01 zm=-2.25E-02 err=8.460E-02 dz=-6.774E-05 delz= 0.000E+00 dj=0.000E+00 chigam= 4.26E+00
- r=  0 t=  2400 it=  4 chi2=2.95E+01 zm=-2.25E-02 err=4.310E-02 dz= 2.812E-05 delz= 0.000E+00 dj=0.000E+00 chigam= 4.24E+00
+ r=  0 t=  2400 it=  2 chi2=2.74E+01 zm=-2.24E-02 err=1.308E-01 dz=-3.084E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 4.23E+00
+ r=  0 t=  2400 it=  3 chi2=2.86E+01 zm=-2.25E-02 err=8.460E-02 dz=-6.766E-05 delz= 0.000E+00 dj=0.000E+00 chigam= 4.26E+00
+ r=  0 t=  2400 it=  4 chi2=2.95E+01 zm=-2.25E-02 err=4.310E-02 dz= 2.821E-05 delz= 0.000E+00 dj=0.000E+00 chigam= 4.24E+00
  r=  0 t=  2400 it=  5 chi2=5.53E+01 zm=-2.93E-02 err=3.673E-02 dz=-6.837E-03 delz= 1.551E+00 dj=3.334E-02 chigam= 4.45E+00
  r=  0 t=  2400 it=  6 chi2=2.78E+01 zm=-3.32E-02 err=1.903E-02 dz=-3.909E-03 delz= 1.025E+00 dj=2.606E-02 chigam= 4.18E+00
  r=  0 t=  2400 it=  7 chi2=2.31E+01 zm=-3.45E-02 err=9.628E-03 dz=-1.299E-03 delz= 4.161E-01 dj=9.840E-03 chigam= 4.09E+00
  r=  0 t=  2400 it=  8 chi2=2.24E+01 zm=-3.51E-02 err=6.295E-03 dz=-6.100E-04 delz= 2.732E-01 dj=6.526E-03 chigam= 4.09E+00
- r=  0 t=  2400 it=  9 chi2=2.21E+01 zm=-3.53E-02 err=4.050E-03 dz=-2.075E-04 delz= 1.807E-01 dj=4.329E-03 chigam= 4.11E+00
- r=  0 t=  2400 it= 10 chi2=2.21E+01 zm=-3.55E-02 err=2.877E-03 dz=-1.473E-04 delz= 1.691E-01 dj=4.059E-03 chigam= 4.11E+00
+ r=  0 t=  2400 it=  9 chi2=2.21E+01 zm=-3.53E-02 err=4.050E-03 dz=-2.075E-04 delz= 1.807E-01 dj=4.330E-03 chigam= 4.11E+00
+ r=  0 t=  2400 it= 10 chi2=2.21E+01 zm=-3.55E-02 err=2.877E-03 dz=-1.473E-04 delz= 1.691E-01 dj=4.060E-03 chigam= 4.11E+00
  r=  0 t=  2400 it= 11 chi2=2.20E+01 zm=-3.56E-02 err=2.033E-03 dz=-9.258E-05 delz= 1.576E-01 dj=3.788E-03 chigam= 4.11E+00
  r=  0 t=  2400 it= 12 chi2=2.20E+01 zm=-3.56E-02 err=1.433E-03 dz=-5.783E-05 delz= 1.502E-01 dj=3.611E-03 chigam= 4.11E+00
- r=  0 t=  2400 it= 13 chi2=2.20E+01 zm=-3.57E-02 err=1.007E-03 dz=-3.644E-05 delz= 1.455E-01 dj=3.501E-03 chigam= 4.11E+00
- r=  0 t=  2400 it= 14 chi2=2.20E+01 zm=-3.57E-02 err=7.065E-04 dz=-2.333E-05 delz= 1.427E-01 dj=3.433E-03 chigam= 4.11E+00
+ r=  0 t=  2400 it= 13 chi2=2.20E+01 zm=-3.57E-02 err=1.007E-03 dz=-3.644E-05 delz= 1.456E-01 dj=3.501E-03 chigam= 4.11E+00
+ r=  0 t=  2400 it= 14 chi2=2.20E+01 zm=-3.57E-02 err=7.065E-04 dz=-2.333E-05 delz= 1.427E-01 dj=3.434E-03 chigam= 4.11E+00
 
        data used:   
  39 flux loops

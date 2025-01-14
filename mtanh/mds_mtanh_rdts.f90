@@ -12,10 +12,10 @@
 
    ! Declare module data
    type (mtanh_ts), save :: cached_mtanh_ts
-   real, pointer, save, dimension(:) :: cached_time
-   real, pointer, save, dimension(:) :: cached_wid
-   real, pointer, save, dimension(:) :: cached_sym
-   real, pointer, save, dimension(:) :: cached_ped
+   real*4, pointer, save, dimension(:) :: cached_time
+   real*4, pointer, save, dimension(:) :: cached_wid
+   real*4, pointer, save, dimension(:) :: cached_sym
+   real*4, pointer, save, dimension(:) :: cached_ped
    integer, dimension(:,:), save, allocatable :: index 
    character(len=3), public, parameter :: cped = 'PED'
    character(len=3), public, parameter :: csym = 'SYM'
@@ -55,7 +55,7 @@
       ! Written: 3/2/01 by rjg
       logical function time_range_ok (ntime, time)
       integer, intent(in) :: ntime
-      real, dimension(ntime), intent(in) :: time
+      real*4, dimension(ntime), intent(in) :: time
       if (time(1) .lt. cached_time(1)) then
          time_range_ok = .false.
          print *,' First requested time is less than 1st mtanh time ',   &
@@ -80,7 +80,7 @@
       subroutine make_time_index (ntime, time)
       implicit none
       integer, intent(in) :: ntime
-      real, dimension(ntime), intent(in) :: time
+      real*4, dimension(ntime), intent(in) :: time
       integer :: it    ! Index in time array
       integer :: ict   ! Index in cached_time array
       integer :: ict_strt   ! Location in cached_time array to start search
@@ -116,12 +116,12 @@
 !      function interp_mtanh (ntime,time,goodie) 
       implicit none
       integer, intent(in) :: ntime
-      real, dimension(ntime), intent(in) :: time
+      real*4, dimension(ntime), intent(in) :: time
       character(len=*) :: goodie
-      real, dimension(ntime) :: mtanh_out
-!      real, dimension(ntime) :: interp_mtanh
-      real, dimension(:), pointer :: p_goodie
-      real :: delta
+      real*4, dimension(ntime) :: mtanh_out
+!      real*4, dimension(ntime) :: interp_mtanh
+      real*4, dimension(:), pointer :: p_goodie
+      real*4 :: delta
       integer :: it
 
       ! Find out where to point to
@@ -170,13 +170,13 @@
                                              ! 'NE', 'TE' or 'PE'
                                                   ! which data are desired
       integer, intent(in) :: ntime           ! Number of times
-      real, dimension(ntime), intent(in) :: time  ! Array of times (ms) for 
-      real, dimension(ntime), intent(out) :: sym  ! Symmetry points (m) 
-                                                  ! evaluated on time array
-      real, dimension(ntime), intent(out) :: wid  ! Full widths (m) 
-                                                  ! evaluated on time array
-      real, dimension(ntime), intent(out) :: ped  ! Pedestal values (units 
-                                                  ! vary on time array
+      real*4, dimension(ntime), intent(in) :: time  ! Array of times (ms) for 
+      real*4, dimension(ntime), intent(out) :: sym  ! Symmetry points (m) 
+                                                    ! evaluated on time array
+      real*4, dimension(ntime), intent(out) :: wid  ! Full widths (m) 
+                                                    ! evaluated on time array
+      real*4, dimension(ntime), intent(out) :: ped  ! Pedestal values (units 
+                                                    ! vary on time array
       logical, dimension(ntime), intent(out) :: stat  ! True means no error for
                                                       ! the corresponding time
       logical :: stat_loc

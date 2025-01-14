@@ -1,0 +1,1 @@
+This code was provided by Rich Groebner as a stand alone program for fetching Thomson data for DIII-D and fitting a modified tanh profile to determine the separatrix location based on the pedestal fit. It has since been integrated into CER libraries CER and is used in EFIT with the FITZTS option.

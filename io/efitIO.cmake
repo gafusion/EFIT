@@ -81,13 +81,13 @@ endif()
 option(ENABLE_MDSPLUS "Enable MDS+" off)
 set(HAVE_MDSPLUS False)   # Used in defines
 if(${ENABLE_MDSPLUS})
-	find_package(MDSPLUS COMPONENTS 
+  find_package(MDSPLUS COMPONENTS 
                INSTALL_DIR "mdsplus"
                HEADERS "mdsdescrip.h" "mdslib.h"
 	       LIBRARIES "MdsLib" "MdsShr" "MdsIpShr" "TdiShr" "TreeShr"
                INCLUDE_SUBDIRS "include"
                LIBRARY_SUBDIRS "lib"
-               )
+              )
   if (${MDSPLUS_FOUND})
     message(STATUS "Found MDS+")
     set(HAVE_MDSPLUS True)

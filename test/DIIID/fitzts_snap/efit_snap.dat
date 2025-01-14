@@ -1,0 +1,50 @@
+&efitin
+  scrape=0.04      nextra=2           itek=0           error=1.0e-4
+  qvfit=0.0        fwtbp=0.           kffcur=4         kppcur=3
+  fwtqa=0.00       zelip=1.0e7        iavem=5          iavev=5
+  n1coil=2         errmin=1.0e-4
+  fwtsi = 44*1.0   fwtfc=18*1.0
+  fwtmp2=76*1.0    nicoil = 1
+  fwtcur=1.0       fwtdlc=0.0         mxiter=-80     keqdsk=1
+  
+  fitsiref=.T.   fitdelz=.T.   kersil=3   ifitdelz=3
+  kzeroj = 0    rzeroj = 0.   vzeroj=0.1  psiwant=0.99
+
+  fwtgam = 11*1.0
+	   15*0.0
+	   10*0.0
+	   4*0.0 
+           4*1.0 0.0
+	   8*0.0
+ 	   7*0.0 9*0.0
+
+  fwtgam(43) = 0.
+  fwtmp2(30) = 0.
+  fwtmp2(50) = 0.
+
+  fitzts = 'te'
+ 
+  iecurr=2 fwtec=6*1.
+  relax=0.4  iout = 20
+
+  mse_usecer = 1
+  mse_certree = 0 
+  mse_use_cer330=1
+
+  msebkp=7
+  mse_quiet=1
+  msefitfun=3
+ 
+  kppfnc=6     kfffnc=6
+  kppknt=3     kffknt=3  
+  pptens=0.01     fftens=0.01
+  ppknt=0.0 0.7 1.0
+  ffknt=0.0 0.4 1.0
+  
+  kcalpa=1  kcgama=1  
+  calpa = 0. 0. 0. 0. 1. 0.
+  cgama = 0. 0. 0. 0. 1. 0.
+
+  xalpa=0.
+  xgama=0.
+   /

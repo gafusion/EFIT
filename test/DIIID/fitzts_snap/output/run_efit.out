@@ -1,0 +1,258 @@
+
+          EFITD Version  12/15/2022
+
+
+ type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+
+ type shot #, start time(ms), time step(ms), steps(<1001):
+ Calling $Name: V4_05 $ of the mse 
+ (mse_lib2:check_bt_direction) reverse Bt
+ (mse_lib2:read_mse_files)       195061
+ (mse_lib2:read_msetup5) /fusion/projects/codes/mse/calib/msetup5.dat                                                                                    
+ (mse_lib2:read_mrz) /fusion/projects/codes/mse/calib/mrz_47.dat                                                                                     
+ (mselib2:read_mcalgain5)  /fusion/projects/codes/mse/calib/mcalgain5_2102.dat                                                                             
+ (mse_lib2:do_setup_and_beams) Beam on volts 
+           30left      79000.0000    
+           210right    79000.0000    
+           210left     58000.0000    
+           30right     58000.0000    
+                 Channel          46
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          47
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          48
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          49
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          50
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          51
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          52
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          53
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          54
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          55
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          56
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          57
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          58
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          59
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          60
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          61
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          62
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          63
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          64
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          65
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          66
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          67
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          68
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+                 Channel          69
+   Flags: sin_saturation T
+                 sin_low F
+          cos_saturation T
+                 cos_low F
+       beam_off_too_long F
+ (mse_lib2:mse_fastEr_correction)
+            cerbranch    CERQUICK  
+ (mse_lib2:average_data) Cer correction done
+                        use_cer            1
+                        certree            0
+                        use_cer330            1
+                        use_cer210            0
+
+      ******************** EFITD 65 x  65  output ********************
+ table_dir = </fusion/projects/codes/efit/support_files/2006/181292/>
+
+ r=  0 t=  2670 it=  1 chi2=1.28E+03 zm=-3.35E-02 err=6.517E+00 dz=-3.348E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+ r=  0 t=  2670 it=  2 chi2=5.91E+01 zm=-3.39E-02 err=1.627E-01 dz=-4.025E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 2.21E+01
+ r=  0 t=  2670 it=  3 chi2=3.10E+01 zm=-3.44E-02 err=1.838E-01 dz=-5.488E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 2.00E+01
+ r=  0 t=  2670 it=  4 chi2=2.63E+01 zm=-3.50E-02 err=1.397E-01 dz=-5.639E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.29E+01
+ r=  0 t=  2670 it=  5 chi2=2.62E+01 zm=-3.56E-02 err=8.642E-02 dz=-6.128E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.13E+01
+ r=  0 t=  2670 it=  6 chi2=2.63E+01 zm=-3.62E-02 err=5.189E-02 dz=-5.632E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.04E+01
+ r=  0 t=  2670 it=  7 chi2=3.02E+01 zm=-3.46E-02 err=4.093E-02 dz= 1.538E-03 delz=-6.118E-01 dj=2.818E-02 chigam= 1.00E+01
+ r=  0 t=  2670 it=  8 chi2=2.78E+01 zm=-3.37E-02 err=2.753E-02 dz= 9.302E-04 delz=-4.152E-01 dj=1.855E-02 chigam= 9.59E+00
+ r=  0 t=  2670 it=  9 chi2=2.71E+01 zm=-3.32E-02 err=1.948E-02 dz= 4.758E-04 delz=-3.026E-01 dj=1.305E-02 chigam= 9.29E+00
+ r=  0 t=  2670 it= 10 chi2=2.72E+01 zm=-3.30E-02 err=1.457E-02 dz= 2.455E-04 delz=-2.439E-01 dj=1.038E-02 chigam= 9.09E+00
+ r=  0 t=  2670 it= 11 chi2=2.75E+01 zm=-3.29E-02 err=1.149E-02 dz= 8.433E-05 delz=-2.105E-01 dj=8.796E-03 chigam= 8.95E+00
+ r=  0 t=  2670 it= 12 chi2=2.79E+01 zm=-3.29E-02 err=1.079E-02 dz=-8.055E-06 delz=-1.877E-01 dj=7.700E-03 chigam= 8.86E+00
+ r=  0 t=  2670 it= 13 chi2=2.84E+01 zm=-3.30E-02 err=9.618E-03 dz=-5.289E-05 delz=-1.704E-01 dj=6.940E-03 chigam= 8.79E+00
+ r=  0 t=  2670 it= 14 chi2=2.88E+01 zm=-3.31E-02 err=8.851E-03 dz=-9.774E-05 delz=-1.612E-01 dj=6.463E-03 chigam= 8.75E+00
+ r=  0 t=  2670 it= 15 chi2=2.94E+01 zm=-3.32E-02 err=8.039E-03 dz=-9.493E-05 delz=-1.565E-01 dj=6.257E-03 chigam= 8.72E+00
+ r=  0 t=  2670 it= 16 chi2=2.99E+01 zm=-3.32E-02 err=7.401E-03 dz=-9.064E-05 delz=-1.544E-01 dj=6.158E-03 chigam= 8.69E+00
+ r=  0 t=  2670 it= 17 chi2=3.05E+01 zm=-3.33E-02 err=6.814E-03 dz=-8.517E-05 delz=-1.536E-01 dj=6.118E-03 chigam= 8.67E+00
+ r=  0 t=  2670 it= 18 chi2=3.10E+01 zm=-3.34E-02 err=6.276E-03 dz=-7.898E-05 delz=-1.536E-01 dj=6.111E-03 chigam= 8.66E+00
+ r=  0 t=  2670 it= 19 chi2=3.14E+01 zm=-3.35E-02 err=5.720E-03 dz=-9.855E-05 delz=-1.471E-01 dj=5.821E-03 chigam= 8.65E+00
+ r=  0 t=  2670 it= 20 chi2=3.19E+01 zm=-3.36E-02 err=5.239E-03 dz=-8.029E-05 delz=-1.507E-01 dj=5.966E-03 chigam= 8.64E+00
+ r=  0 t=  2670 it= 21 chi2=3.23E+01 zm=-3.37E-02 err=4.945E-03 dz=-1.061E-04 delz=-1.427E-01 dj=5.614E-03 chigam= 8.64E+00
+ r=  0 t=  2670 it= 22 chi2=3.27E+01 zm=-3.38E-02 err=4.618E-03 dz=-6.723E-05 delz=-1.546E-01 dj=6.049E-03 chigam= 8.64E+00
+ r=  0 t=  2670 it= 23 chi2=3.31E+01 zm=-3.38E-02 err=4.083E-03 dz=-5.594E-05 delz=-1.555E-01 dj=6.083E-03 chigam= 8.64E+00
+ r=  0 t=  2670 it= 24 chi2=3.35E+01 zm=-3.39E-02 err=3.769E-03 dz=-5.344E-05 delz=-1.548E-01 dj=6.049E-03 chigam= 8.64E+00
+ r=  0 t=  2670 it= 25 chi2=3.38E+01 zm=-3.39E-02 err=3.477E-03 dz=-4.492E-05 delz=-1.556E-01 dj=6.082E-03 chigam= 8.64E+00
+ r=  0 t=  2670 it= 26 chi2=3.41E+01 zm=-3.40E-02 err=3.208E-03 dz=-3.934E-05 delz=-1.559E-01 dj=6.099E-03 chigam= 8.64E+00
+ r=  0 t=  2670 it= 27 chi2=3.44E+01 zm=-3.40E-02 err=2.958E-03 dz=-3.505E-05 delz=-1.561E-01 dj=6.108E-03 chigam= 8.63E+00
+ r=  0 t=  2670 it= 28 chi2=3.47E+01 zm=-3.40E-02 err=2.726E-03 dz=-3.157E-05 delz=-1.561E-01 dj=6.113E-03 chigam= 8.63E+00
+ r=  0 t=  2670 it= 29 chi2=3.49E+01 zm=-3.41E-02 err=2.510E-03 dz=-2.861E-05 delz=-1.561E-01 dj=6.116E-03 chigam= 8.63E+00
+ r=  0 t=  2670 it= 30 chi2=3.51E+01 zm=-3.41E-02 err=2.310E-03 dz=-2.601E-05 delz=-1.561E-01 dj=6.117E-03 chigam= 8.63E+00
+ r=  0 t=  2670 it= 31 chi2=3.54E+01 zm=-3.41E-02 err=2.126E-03 dz=-2.542E-05 delz=-1.557E-01 dj=6.100E-03 chigam= 8.63E+00
+ r=  0 t=  2670 it= 32 chi2=3.56E+01 zm=-3.41E-02 err=1.951E-03 dz=-2.252E-05 delz=-1.558E-01 dj=6.108E-03 chigam= 8.63E+00
+ r=  0 t=  2670 it= 33 chi2=3.58E+01 zm=-3.41E-02 err=1.969E-03 dz= 6.341E-06 delz=-1.718E-01 dj=6.657E-03 chigam= 8.63E+00
+ r=  0 t=  2670 it= 34 chi2=3.60E+01 zm=-3.41E-02 err=1.708E-03 dz=-2.777E-05 delz=-1.614E-01 dj=6.250E-03 chigam= 8.63E+00
+ r=  0 t=  2670 it= 35 chi2=3.62E+01 zm=-3.41E-02 err=1.722E-03 dz= 2.103E-06 delz=-1.684E-01 dj=6.524E-03 chigam= 8.63E+00
+ r=  0 t=  2670 it= 36 chi2=3.63E+01 zm=-3.42E-02 err=1.477E-03 dz=-2.982E-05 delz=-1.595E-01 dj=6.180E-03 chigam= 8.62E+00
+ r=  0 t=  2670 it= 37 chi2=3.64E+01 zm=-3.42E-02 err=1.556E-03 dz= 1.492E-06 delz=-1.674E-01 dj=6.488E-03 chigam= 8.62E+00
+ r=  0 t=  2670 it= 38 chi2=3.66E+01 zm=-3.42E-02 err=1.386E-03 dz=-2.674E-06 delz=-1.761E-01 dj=6.741E-03 chigam= 8.62E+00
+ r=  0 t=  2670 it= 39 chi2=3.66E+01 zm=-3.42E-02 err=1.201E-03 dz=-3.267E-05 delz=-1.565E-01 dj=6.063E-03 chigam= 8.62E+00
+ r=  0 t=  2670 it= 40 chi2=3.68E+01 zm=-3.42E-02 err=1.373E-03 dz= 9.434E-08 delz=-1.658E-01 dj=6.428E-03 chigam= 8.62E+00
+ r=  0 t=  2670 it= 41 chi2=3.70E+01 zm=-3.42E-02 err=1.090E-03 dz=-2.248E-06 delz=-1.754E-01 dj=6.718E-03 chigam= 8.62E+00
+ r=  0 t=  2670 it= 42 chi2=3.71E+01 zm=-3.42E-02 err=9.727E-04 dz=-4.698E-06 delz=-1.730E-01 dj=6.624E-03 chigam= 8.62E+00
+ r=  0 t=  2670 it= 43 chi2=3.71E+01 zm=-3.42E-02 err=8.800E-04 dz=-6.644E-06 delz=-1.717E-01 dj=6.574E-03 chigam= 8.62E+00
+ r=  0 t=  2670 it= 44 chi2=3.72E+01 zm=-3.42E-02 err=8.180E-04 dz=-7.710E-06 delz=-1.710E-01 dj=6.547E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 45 chi2=3.73E+01 zm=-3.42E-02 err=7.555E-04 dz=-8.087E-06 delz=-1.707E-01 dj=6.535E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 46 chi2=3.74E+01 zm=-3.42E-02 err=6.949E-04 dz=-8.008E-06 delz=-1.706E-01 dj=6.531E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 47 chi2=3.74E+01 zm=-3.43E-02 err=6.378E-04 dz=-7.658E-06 delz=-1.706E-01 dj=6.531E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 48 chi2=3.75E+01 zm=-3.43E-02 err=5.845E-04 dz=-7.167E-06 delz=-1.706E-01 dj=6.534E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 49 chi2=3.76E+01 zm=-3.43E-02 err=5.352E-04 dz=-6.617E-06 delz=-1.707E-01 dj=6.538E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 50 chi2=3.76E+01 zm=-3.43E-02 err=4.900E-04 dz=-6.059E-06 delz=-1.708E-01 dj=6.542E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 51 chi2=3.77E+01 zm=-3.43E-02 err=4.484E-04 dz=-5.520E-06 delz=-1.709E-01 dj=6.546E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 52 chi2=3.77E+01 zm=-3.43E-02 err=4.104E-04 dz=-5.016E-06 delz=-1.710E-01 dj=6.550E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 53 chi2=3.78E+01 zm=-3.43E-02 err=3.757E-04 dz=-4.551E-06 delz=-1.711E-01 dj=6.553E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 54 chi2=3.78E+01 zm=-3.43E-02 err=3.439E-04 dz=-4.127E-06 delz=-1.711E-01 dj=6.557E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 55 chi2=3.78E+01 zm=-3.43E-02 err=3.151E-04 dz=-3.744E-06 delz=-1.712E-01 dj=6.560E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 56 chi2=3.79E+01 zm=-3.43E-02 err=2.888E-04 dz=-3.397E-06 delz=-1.713E-01 dj=6.563E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 57 chi2=3.79E+01 zm=-3.43E-02 err=2.646E-04 dz=-3.084E-06 delz=-1.713E-01 dj=6.566E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 58 chi2=3.79E+01 zm=-3.43E-02 err=2.425E-04 dz=-2.802E-06 delz=-1.714E-01 dj=6.568E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 59 chi2=3.79E+01 zm=-3.43E-02 err=2.222E-04 dz=-2.548E-06 delz=-1.714E-01 dj=6.570E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 60 chi2=3.80E+01 zm=-3.43E-02 err=2.037E-04 dz=-2.319E-06 delz=-1.715E-01 dj=6.572E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 61 chi2=3.80E+01 zm=-3.43E-02 err=1.866E-04 dz=-2.112E-06 delz=-1.715E-01 dj=6.574E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 62 chi2=3.80E+01 zm=-3.43E-02 err=1.710E-04 dz=-1.924E-06 delz=-1.716E-01 dj=6.576E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 63 chi2=3.80E+01 zm=-3.43E-02 err=1.568E-04 dz=-1.755E-06 delz=-1.716E-01 dj=6.577E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 64 chi2=3.80E+01 zm=-3.43E-02 err=1.437E-04 dz=-1.601E-06 delz=-1.716E-01 dj=6.579E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 65 chi2=3.80E+01 zm=-3.43E-02 err=1.317E-04 dz=-1.461E-06 delz=-1.716E-01 dj=6.580E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 66 chi2=3.81E+01 zm=-3.43E-02 err=1.207E-04 dz=-1.335E-06 delz=-1.717E-01 dj=6.581E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 67 chi2=3.81E+01 zm=-3.43E-02 err=1.106E-04 dz=-1.219E-06 delz=-1.717E-01 dj=6.582E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 68 chi2=3.81E+01 zm=-3.43E-02 err=1.014E-04 dz=-1.114E-06 delz=-1.717E-01 dj=6.583E-03 chigam= 8.61E+00
+ r=  0 t=  2670 it= 69 chi2=3.81E+01 zm=-3.43E-02 err=9.291E-05 dz=-1.019E-06 delz=-1.717E-01 dj=6.584E-03 chigam= 8.61E+00
+
+       data used:   
+ 38 flux loops
+ 67 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #     =     195061 time(ms)   =       2670 chi^2      =  3.696E+01
+ betat(%)   =      2.000 betap      =      1.397 li         =      0.739
+ vol(cm^3)  =  1.913E+07 rcntr(cm)  =    166.284 zcntr(cm)  =     -8.373
+ elong      =      1.780 utri       =      0.350 ltri       =      0.645
+ a(cm)      =     60.627 gapin(cm)  =      3.927 gapout(cm) =      8.111
+ gaptop(cm) =     22.029 q95        =      5.716 rm(cm)     =    176.585
+ zm(cm)     =     -3.432 totalchi^2 =  3.696E+01 error      =  9.291E-05
+INFO in efit at r=  0, t=  2670: Done processing

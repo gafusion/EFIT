@@ -524,14 +524,17 @@
         curril30=curil30(jtime)
         curril90=curil90(jtime)
         curril150=curil150(jtime)
-!-----------------------------------------------------------------------
-!--     Set edge pedestal tanh paramters                              --
-!-----------------------------------------------------------------------
-        if (fitzts.eq.'te'.and.ztserr(jtime)) then
-          nbdry=1
-          rbdry(1)=1.94_dp
-          zbdry(1)=ztssym(jtime)+0.5_dp*ztswid(jtime)
-        endif
+!----------------------------------------------------------------------- 
+!--   Set the boundary position based on the Thomson pedestal fit
+!--   Note: ztswid is the full pedestal width from Rich Groebner's mtanh
+!--         fitting routine (not the half-width) so this differs from
+!--         Gary Porter, PoP 5, 1410 (1998); doi: 10.1063/1.872830
+!----------------------------------------------------------------------- 
+        if (fitzts.eq.'te'.and.ztserr(jtime)) then 
+          nbdry=1 
+          rbdry(1)=1.94_dp ! hardcoded to the DIII-D Thomson location
+          zbdry(1)=ztssym(jtime)+0.5_dp*ztswid(jtime) 
+        endif 
 !-----------------------------------------------------------------------
 !--     Set bit noise for ishot > 152000                              --
 !-----------------------------------------------------------------------

@@ -1,0 +1,308 @@
+
+          EFITD Version  12/15/2022
+
+
+ type mode (2=file, 3=snap, 4=time, 5=input, 6=com file, 7=snap_ext, 8=pefit):
+
+ type shot #, start time(ms), time step(ms), steps(<1001):
+ GETPTS call  15.36 sec
+ GETPTS transfer       9396 bytes in   0.00 sec
+ Calling $Name: V4_05 $ of the mse 
+ (mse_lib2:check_bt_direction) reverse Bt
+ (mse_lib2:read_mse_files)       195061
+ (mse_lib2:read_msetup5)
+ /fusion/projects/codes/mse/calib/msetup5.dat                                                                                    
+  Using users msetup file: 
+ /fusion/projects/codes/mse/calib/msetup5.dat                                                                                    
+ (mse_lib2:read_mrz) 
+ /fusion/projects/codes/mse/calib/mrz_47.dat                                                                                     
+  Using users mrz file: 
+ /fusion/projects/codes/mse/calib/mrz_47.dat                                                                                     
+ (mselib2:read_mcalgain5) 
+ /fusion/projects/codes/mse/calib/mcalgain5_2102.dat                                                                             
+  Using users mcalgain5 file: 
+ /fusion/projects/codes/mse/calib/mcalgain5_2102.dat                                                                             
+ (mse_lib2:do_setup_and_beams) Beam on volts 
+           30left       79000.00    
+           210right     79000.00    
+           210left      58000.00    
+           30right      58000.00    
+ (mse_lib2:mse_fastEr_correction)
+            cerbranch    CERQUICK  
+ (mse_lib2:average_data) Cer correction done
+                        use_cer            1
+                        certree            0
+                        use_cer330            1
+                        use_cer210            0
+ GETSTARK call   9.28 sec
+ GETSTARK transfer      21540 bytes in   0.01 sec
+
+      ******************** EFITD 65 x  65  output ********************
+ table_dir = </fusion/projects/codes/efit/support_files/2006/181292/>
+
+ r=  0 t=  2670 it=  1 chi2=1.28E+03 zm=-3.35E-02 err=2.607E+00 dz=-3.348E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+
+ r=  1 t=  2720 it=  1 chi2=1.68E+03 zm=-3.42E-02 err=2.635E+00 dz=-3.418E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+
+ r=  3 t=  2820 it=  1 chi2=2.18E+03 zm=-3.50E-02 err=2.647E+00 dz=-3.502E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+
+ r=  2 t=  2770 it=  1 chi2=1.81E+03 zm=-3.43E-02 err=2.638E+00 dz=-3.429E-02 delz= 0.000E+00 dj=0.000E+00 chigam= 0.00E+00
+ r=  0 t=  2670 it=  2 chi2=5.91E+01 zm=-3.39E-02 err=6.507E-02 dz=-4.024E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 2.21E+01
+ r=  1 t=  2720 it=  2 chi2=4.96E+01 zm=-3.48E-02 err=6.741E-02 dz=-5.786E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.88E+01
+ r=  3 t=  2820 it=  2 chi2=4.44E+01 zm=-3.53E-02 err=7.576E-02 dz=-2.592E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.61E+01
+ r=  2 t=  2770 it=  2 chi2=4.73E+01 zm=-3.46E-02 err=7.954E-02 dz=-3.412E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 2.21E+01
+ r=  0 t=  2670 it=  3 chi2=3.10E+01 zm=-3.44E-02 err=7.353E-02 dz=-5.488E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 2.00E+01
+ r=  1 t=  2720 it=  3 chi2=2.54E+01 zm=-3.52E-02 err=7.457E-02 dz=-4.896E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.49E+01
+ r=  3 t=  2820 it=  3 chi2=2.39E+01 zm=-3.56E-02 err=7.969E-02 dz=-3.465E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.27E+01
+ r=  2 t=  2770 it=  3 chi2=2.88E+01 zm=-3.49E-02 err=8.062E-02 dz=-2.795E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.56E+01
+ r=  0 t=  2670 it=  4 chi2=2.63E+01 zm=-3.50E-02 err=5.589E-02 dz=-5.639E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 1.29E+01
+ r=  1 t=  2720 it=  4 chi2=2.33E+01 zm=-3.60E-02 err=5.404E-02 dz=-7.208E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 9.13E+00
+ r=  3 t=  2820 it=  4 chi2=2.31E+01 zm=-3.64E-02 err=5.814E-02 dz=-7.528E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 7.32E+00
+ r=  2 t=  2770 it=  4 chi2=3.04E+01 zm=-3.56E-02 err=6.106E-02 dz=-6.716E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 9.49E+00
+ r=  0 t=  2670 it=  5 chi2=2.86E+01 zm=-3.41E-02 err=3.789E-02 dz= 8.598E-04 delz=-4.788E-01 dj=2.434E-02 chigam= 1.15E+01
+ r=  2 t=  2770 it=  5 chi2=3.20E+01 zm=-3.62E-02 err=4.017E-02 dz=-6.538E-04 delz= 0.000E+00 dj=0.000E+00 chigam= 8.59E+00
+ r=  1 t=  2720 it=  5 chi2=2.56E+01 zm=-3.53E-02 err=3.628E-02 dz= 6.750E-04 delz=-4.971E-01 dj=2.625E-02 chigam= 8.37E+00
+ r=  3 t=  2820 it=  5 chi2=2.54E+01 zm=-3.57E-02 err=3.871E-02 dz= 6.351E-04 delz=-5.008E-01 dj=2.439E-02 chigam= 6.66E+00
+ r=  0 t=  2670 it=  6 chi2=2.72E+01 zm=-3.35E-02 err=2.425E-02 dz= 6.803E-04 delz=-3.442E-01 dj=1.666E-02 chigam= 1.05E+01
+ r=  1 t=  2720 it=  6 chi2=2.41E+01 zm=-3.46E-02 err=2.292E-02 dz= 6.554E-04 delz=-3.604E-01 dj=1.777E-02 chigam= 7.82E+00
+ r=  2 t=  2770 it=  6 chi2=3.57E+01 zm=-3.59E-02 err=2.862E-02 dz= 3.524E-04 delz=-3.414E-01 dj=1.623E-02 chigam= 8.16E+00
+ r=  3 t=  2820 it=  6 chi2=2.42E+01 zm=-3.52E-02 err=2.419E-02 dz= 5.798E-04 delz=-3.656E-01 dj=1.681E-02 chigam= 6.26E+00
+ r=  0 t=  2670 it=  7 chi2=2.67E+01 zm=-3.31E-02 err=1.561E-02 dz= 3.703E-04 delz=-2.619E-01 dj=1.190E-02 chigam= 9.86E+00
+ r=  1 t=  2720 it=  7 chi2=2.36E+01 zm=-3.42E-02 err=1.468E-02 dz= 4.279E-04 delz=-2.852E-01 dj=1.319E-02 chigam= 7.54E+00
+ r=  2 t=  2770 it=  7 chi2=3.70E+01 zm=-3.56E-02 err=2.021E-02 dz= 2.509E-04 delz=-2.356E-01 dj=1.071E-02 chigam= 7.83E+00
+ r=  3 t=  2820 it=  7 chi2=2.37E+01 zm=-3.48E-02 err=1.532E-02 dz= 3.931E-04 delz=-2.958E-01 dj=1.267E-02 chigam= 6.07E+00
+ r=  0 t=  2670 it=  8 chi2=2.68E+01 zm=-3.29E-02 err=1.044E-02 dz= 2.081E-04 delz=-2.152E-01 dj=9.478E-03 chigam= 9.47E+00
+ r=  1 t=  2720 it=  8 chi2=2.35E+01 zm=-3.40E-02 err=9.684E-03 dz= 2.267E-04 delz=-2.412E-01 dj=1.075E-02 chigam= 7.37E+00
+ r=  2 t=  2770 it=  8 chi2=3.86E+01 zm=-3.56E-02 err=1.483E-02 dz= 7.752E-05 delz=-1.646E-01 dj=7.202E-03 chigam= 7.65E+00
+ r=  3 t=  2820 it=  8 chi2=2.36E+01 zm=-3.46E-02 err=9.963E-03 dz= 2.212E-04 delz=-2.540E-01 dj=1.044E-02 chigam= 5.97E+00
+ r=  0 t=  2670 it=  9 chi2=2.71E+01 zm=-3.28E-02 err=7.297E-03 dz= 3.363E-05 delz=-1.824E-01 dj=7.838E-03 chigam= 9.21E+00
+ r=  1 t=  2720 it=  9 chi2=2.37E+01 zm=-3.39E-02 err=6.637E-03 dz= 1.273E-04 delz=-2.217E-01 dj=9.728E-03 chigam= 7.25E+00
+ r=  2 t=  2770 it=  9 chi2=4.06E+01 zm=-3.56E-02 err=1.134E-02 dz=-4.500E-05 delz=-1.271E-01 dj=5.424E-03 chigam= 7.55E+00
+ r=  3 t=  2820 it=  9 chi2=2.38E+01 zm=-3.44E-02 err=6.731E-03 dz= 1.149E-04 delz=-2.351E-01 dj=9.398E-03 chigam= 5.91E+00
+ r=  0 t=  2670 it= 10 chi2=2.76E+01 zm=-3.28E-02 err=5.426E-03 dz=-2.218E-06 delz=-1.767E-01 dj=7.525E-03 chigam= 9.03E+00
+ r=  1 t=  2720 it= 10 chi2=2.39E+01 zm=-3.38E-02 err=4.798E-03 dz= 3.263E-05 delz=-2.038E-01 dj=8.763E-03 chigam= 7.17E+00
+ r=  2 t=  2770 it= 10 chi2=4.27E+01 zm=-3.57E-02 err=9.056E-03 dz=-1.188E-04 delz=-1.058E-01 dj=4.446E-03 chigam= 7.48E+00
+ r=  3 t=  2820 it= 10 chi2=2.40E+01 zm=-3.44E-02 err=4.780E-03 dz= 4.331E-05 delz=-2.232E-01 dj=8.739E-03 chigam= 5.88E+00
+ r=  0 t=  2670 it= 11 chi2=2.81E+01 zm=-3.29E-02 err=4.357E-03 dz=-7.615E-05 delz=-1.695E-01 dj=6.992E-03 chigam= 8.92E+00
+ r=  1 t=  2720 it= 11 chi2=2.41E+01 zm=-3.39E-02 err=3.593E-03 dz=-5.419E-05 delz=-1.953E-01 dj=8.196E-03 chigam= 7.12E+00
+ r=  2 t=  2770 it= 11 chi2=4.47E+01 zm=-3.59E-02 err=7.508E-03 dz=-1.675E-04 delz=-9.175E-02 dj=3.787E-03 chigam= 7.44E+00
+ r=  3 t=  2820 it= 11 chi2=2.42E+01 zm=-3.44E-02 err=3.593E-03 dz=-1.040E-06 delz=-2.156E-01 dj=8.330E-03 chigam= 5.86E+00
+ r=  0 t=  2670 it= 12 chi2=2.86E+01 zm=-3.30E-02 err=3.809E-03 dz=-8.488E-05 delz=-1.607E-01 dj=6.572E-03 chigam= 8.84E+00
+ r=  1 t=  2720 it= 12 chi2=2.44E+01 zm=-3.39E-02 err=2.928E-03 dz=-6.496E-05 delz=-1.905E-01 dj=7.934E-03 chigam= 7.08E+00
+ r=  3 t=  2820 it= 12 chi2=2.45E+01 zm=-3.44E-02 err=2.896E-03 dz=-2.855E-05 delz=-2.110E-01 dj=8.082E-03 chigam= 5.85E+00
+ r=  2 t=  2770 it= 12 chi2=4.67E+01 zm=-3.61E-02 err=6.579E-03 dz=-1.711E-04 delz=-8.698E-02 dj=3.570E-03 chigam= 7.42E+00
+ r=  0 t=  2670 it= 13 chi2=2.90E+01 zm=-3.31E-02 err=3.450E-03 dz=-1.085E-04 delz=-1.559E-01 dj=6.274E-03 chigam= 8.78E+00
+ r=  1 t=  2720 it= 13 chi2=2.48E+01 zm=-3.40E-02 err=2.714E-03 dz=-7.061E-05 delz=-1.883E-01 dj=7.797E-03 chigam= 7.05E+00
+ r=  3 t=  2820 it= 13 chi2=2.47E+01 zm=-3.45E-02 err=2.421E-03 dz=-5.164E-05 delz=-2.064E-01 dj=7.845E-03 chigam= 5.85E+00
+ r=  2 t=  2770 it= 13 chi2=4.87E+01 zm=-3.62E-02 err=5.974E-03 dz=-1.681E-04 delz=-8.540E-02 dj=3.496E-03 chigam= 7.41E+00
+ r=  0 t=  2670 it= 14 chi2=2.96E+01 zm=-3.32E-02 err=3.132E-03 dz=-9.448E-05 delz=-1.539E-01 dj=6.173E-03 chigam= 8.74E+00
+ r=  1 t=  2720 it= 14 chi2=2.51E+01 zm=-3.41E-02 err=2.526E-03 dz=-7.511E-05 delz=-1.874E-01 dj=7.728E-03 chigam= 7.03E+00
+ r=  3 t=  2820 it= 14 chi2=2.50E+01 zm=-3.45E-02 err=2.099E-03 dz=-5.453E-05 delz=-2.068E-01 dj=7.819E-03 chigam= 5.84E+00
+ r=  2 t=  2770 it= 14 chi2=5.06E+01 zm=-3.64E-02 err=5.502E-03 dz=-1.573E-04 delz=-8.699E-02 dj=3.560E-03 chigam= 7.41E+00
+ r=  0 t=  2670 it= 15 chi2=3.01E+01 zm=-3.33E-02 err=2.879E-03 dz=-8.618E-05 delz=-1.533E-01 dj=6.129E-03 chigam= 8.71E+00
+ r=  1 t=  2720 it= 15 chi2=2.54E+01 zm=-3.42E-02 err=2.348E-03 dz=-7.498E-05 delz=-1.875E-01 dj=7.711E-03 chigam= 7.02E+00
+ r=  3 t=  2820 it= 15 chi2=2.53E+01 zm=-3.46E-02 err=1.938E-03 dz=-5.725E-05 delz=-2.068E-01 dj=7.801E-03 chigam= 5.84E+00
+ r=  2 t=  2770 it= 15 chi2=5.27E+01 zm=-3.65E-02 err=5.054E-03 dz=-1.167E-04 delz=-1.118E-01 dj=4.470E-03 chigam= 7.40E+00
+ r=  0 t=  2670 it= 16 chi2=3.06E+01 zm=-3.34E-02 err=2.650E-03 dz=-7.890E-05 delz=-1.533E-01 dj=6.117E-03 chigam= 8.68E+00
+ r=  1 t=  2720 it= 16 chi2=2.57E+01 zm=-3.42E-02 err=2.181E-03 dz=-7.312E-05 delz=-1.881E-01 dj=7.722E-03 chigam= 7.01E+00
+ r=  3 t=  2820 it= 16 chi2=2.55E+01 zm=-3.46E-02 err=1.808E-03 dz=-5.748E-05 delz=-2.072E-01 dj=7.808E-03 chigam= 5.84E+00
+ r=  2 t=  2770 it= 16 chi2=5.44E+01 zm=-3.66E-02 err=4.679E-03 dz=-1.158E-04 delz=-1.115E-01 dj=4.462E-03 chigam= 7.41E+00
+ r=  0 t=  2670 it= 17 chi2=3.11E+01 zm=-3.35E-02 err=2.441E-03 dz=-7.236E-05 delz=-1.537E-01 dj=6.124E-03 chigam= 8.67E+00
+ r=  1 t=  2720 it= 17 chi2=2.60E+01 zm=-3.43E-02 err=2.025E-03 dz=-7.012E-05 delz=-1.890E-01 dj=7.748E-03 chigam= 7.00E+00
+ r=  3 t=  2820 it= 17 chi2=2.58E+01 zm=-3.47E-02 err=1.682E-03 dz=-5.629E-05 delz=-2.079E-01 dj=7.827E-03 chigam= 5.84E+00
+ r=  2 t=  2770 it= 17 chi2=5.62E+01 zm=-3.66E-02 err=4.428E-03 dz=-3.385E-05 delz=-1.444E-01 dj=5.718E-03 chigam= 7.42E+00
+ r=  0 t=  2670 it= 18 chi2=3.16E+01 zm=-3.35E-02 err=2.225E-03 dz=-9.252E-05 delz=-1.473E-01 dj=5.836E-03 chigam= 8.66E+00
+ r=  1 t=  2720 it= 18 chi2=2.63E+01 zm=-3.44E-02 err=1.879E-03 dz=-6.648E-05 delz=-1.900E-01 dj=7.784E-03 chigam= 6.99E+00
+ r=  3 t=  2820 it= 18 chi2=2.60E+01 zm=-3.48E-02 err=1.562E-03 dz=-5.421E-05 delz=-2.086E-01 dj=7.855E-03 chigam= 5.84E+00
+ r=  2 t=  2770 it= 18 chi2=5.76E+01 zm=-3.67E-02 err=4.080E-03 dz=-6.188E-05 delz=-1.364E-01 dj=5.358E-03 chigam= 7.42E+00
+ r=  0 t=  2670 it= 19 chi2=3.19E+01 zm=-3.37E-02 err=2.056E-03 dz=-1.121E-04 delz=-1.411E-01 dj=5.558E-03 chigam= 8.65E+00
+ r=  1 t=  2720 it= 19 chi2=2.66E+01 zm=-3.44E-02 err=1.743E-03 dz=-6.253E-05 delz=-1.911E-01 dj=7.825E-03 chigam= 6.99E+00
+ r=  3 t=  2820 it= 19 chi2=2.62E+01 zm=-3.48E-02 err=1.448E-03 dz=-5.162E-05 delz=-2.095E-01 dj=7.888E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 20 chi2=3.24E+01 zm=-3.37E-02 err=1.990E-03 dz=-7.229E-05 delz=-1.540E-01 dj=6.030E-03 chigam= 8.65E+00
+ r=  2 t=  2770 it= 19 chi2=5.91E+01 zm=-3.68E-02 err=3.742E-03 dz=-6.942E-05 delz=-1.321E-01 dj=5.197E-03 chigam= 7.42E+00
+ r=  1 t=  2720 it= 20 chi2=2.68E+01 zm=-3.45E-02 err=1.870E-03 dz=-9.020E-05 delz=-1.928E-01 dj=7.807E-03 chigam= 6.99E+00
+ r=  3 t=  2820 it= 20 chi2=2.65E+01 zm=-3.49E-02 err=1.340E-03 dz=-4.875E-05 delz=-2.104E-01 dj=7.923E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 21 chi2=3.28E+01 zm=-3.38E-02 err=1.751E-03 dz=-5.921E-05 delz=-1.553E-01 dj=6.074E-03 chigam= 8.65E+00
+ r=  1 t=  2720 it= 21 chi2=2.70E+01 zm=-3.46E-02 err=1.761E-03 dz=-9.087E-05 delz=-1.959E-01 dj=7.861E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 20 chi2=6.05E+01 zm=-3.69E-02 err=3.431E-03 dz=-7.195E-05 delz=-1.308E-01 dj=5.153E-03 chigam= 7.43E+00
+ r=  3 t=  2820 it= 21 chi2=2.67E+01 zm=-3.49E-02 err=1.238E-03 dz=-4.699E-05 delz=-2.111E-01 dj=7.945E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 22 chi2=3.32E+01 zm=-3.38E-02 err=1.575E-03 dz=-5.034E-05 delz=-1.560E-01 dj=6.103E-03 chigam= 8.64E+00
+ r=  1 t=  2720 it= 22 chi2=2.73E+01 zm=-3.47E-02 err=1.510E-03 dz=-8.373E-05 delz=-1.930E-01 dj=7.702E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 21 chi2=6.16E+01 zm=-3.70E-02 err=3.236E-03 dz=-1.159E-04 delz=-1.183E-01 dj=4.633E-03 chigam= 7.43E+00
+ r=  3 t=  2820 it= 22 chi2=2.68E+01 zm=-3.49E-02 err=1.142E-03 dz=-4.338E-05 delz=-2.121E-01 dj=7.986E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 23 chi2=3.35E+01 zm=-3.39E-02 err=1.462E-03 dz=-4.965E-05 delz=-1.550E-01 dj=6.061E-03 chigam= 8.64E+00
+ r=  1 t=  2720 it= 23 chi2=2.75E+01 zm=-3.48E-02 err=1.318E-03 dz=-6.428E-05 delz=-1.955E-01 dj=7.800E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 22 chi2=6.26E+01 zm=-3.71E-02 err=2.905E-03 dz=-1.515E-04 delz=-1.063E-01 dj=4.150E-03 chigam= 7.43E+00
+ r=  3 t=  2820 it= 23 chi2=2.69E+01 zm=-3.50E-02 err=1.333E-03 dz=-6.609E-05 delz=-2.170E-01 dj=8.072E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 24 chi2=3.39E+01 zm=-3.39E-02 err=1.351E-03 dz=-4.218E-05 delz=-1.557E-01 dj=6.089E-03 chigam= 8.64E+00
+ r=  1 t=  2720 it= 24 chi2=2.77E+01 zm=-3.48E-02 err=1.180E-03 dz=-5.012E-05 delz=-1.977E-01 dj=7.889E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 23 chi2=6.37E+01 zm=-3.72E-02 err=2.572E-03 dz=-1.114E-04 delz=-1.176E-01 dj=4.601E-03 chigam= 7.44E+00
+ r=  3 t=  2820 it= 24 chi2=2.71E+01 zm=-3.51E-02 err=1.118E-03 dz=-5.029E-05 delz=-2.183E-01 dj=8.125E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 25 chi2=3.42E+01 zm=-3.40E-02 err=1.248E-03 dz=-3.727E-05 delz=-1.560E-01 dj=6.104E-03 chigam= 8.64E+00
+ r=  1 t=  2720 it= 25 chi2=2.79E+01 zm=-3.49E-02 err=1.077E-03 dz=-4.119E-05 delz=-1.990E-01 dj=7.944E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 24 chi2=6.47E+01 zm=-3.73E-02 err=2.306E-03 dz=-9.688E-05 delz=-1.211E-01 dj=4.742E-03 chigam= 7.44E+00
+ r=  3 t=  2820 it= 25 chi2=2.72E+01 zm=-3.51E-02 err=9.597E-04 dz=-4.091E-05 delz=-2.192E-01 dj=8.164E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 26 chi2=3.45E+01 zm=-3.40E-02 err=1.153E-03 dz=-3.344E-05 delz=-1.561E-01 dj=6.111E-03 chigam= 8.64E+00
+ r=  1 t=  2720 it= 26 chi2=2.81E+01 zm=-3.49E-02 err=9.866E-04 dz=-3.508E-05 delz=-1.998E-01 dj=7.979E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 25 chi2=6.56E+01 zm=-3.74E-02 err=2.074E-03 dz=-7.504E-05 delz=-1.271E-01 dj=4.984E-03 chigam= 7.44E+00
+ r=  3 t=  2820 it= 26 chi2=2.74E+01 zm=-3.51E-02 err=8.394E-04 dz=-3.484E-05 delz=-2.200E-01 dj=8.196E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 27 chi2=3.47E+01 zm=-3.40E-02 err=1.063E-03 dz=-3.027E-05 delz=-1.562E-01 dj=6.115E-03 chigam= 8.63E+00
+ r=  1 t=  2720 it= 27 chi2=2.83E+01 zm=-3.49E-02 err=9.056E-04 dz=-3.062E-05 delz=-2.003E-01 dj=8.003E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 26 chi2=6.64E+01 zm=-3.75E-02 err=1.878E-03 dz=-6.596E-05 delz=-1.294E-01 dj=5.078E-03 chigam= 7.45E+00
+ r=  3 t=  2820 it= 27 chi2=2.75E+01 zm=-3.52E-02 err=7.456E-04 dz=-3.048E-05 delz=-2.206E-01 dj=8.222E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 28 chi2=3.50E+01 zm=-3.41E-02 err=9.804E-04 dz=-2.755E-05 delz=-1.561E-01 dj=6.117E-03 chigam= 8.63E+00
+ r=  1 t=  2720 it= 28 chi2=2.84E+01 zm=-3.50E-02 err=8.444E-04 dz=-5.122E-05 delz=-2.034E-01 dj=8.051E-03 chigam= 6.98E+00
+ r=  2 t=  2770 it= 27 chi2=6.72E+01 zm=-3.75E-02 err=1.701E-03 dz=-5.302E-05 delz=-1.329E-01 dj=5.222E-03 chigam= 7.45E+00
+ r=  3 t=  2820 it= 28 chi2=2.76E+01 zm=-3.52E-02 err=6.756E-04 dz=-2.708E-05 delz=-2.211E-01 dj=8.243E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 29 chi2=3.52E+01 zm=-3.41E-02 err=9.033E-04 dz=-2.683E-05 delz=-1.558E-01 dj=6.101E-03 chigam= 8.63E+00
+ r=  1 t=  2720 it= 29 chi2=2.86E+01 zm=-3.50E-02 err=7.855E-04 dz=-1.355E-05 delz=-2.015E-01 dj=8.057E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 28 chi2=6.79E+01 zm=-3.76E-02 err=1.547E-03 dz=-4.495E-05 delz=-1.351E-01 dj=5.313E-03 chigam= 7.45E+00
+ r=  3 t=  2820 it= 29 chi2=2.77E+01 zm=-3.52E-02 err=6.137E-04 dz=-2.427E-05 delz=-2.215E-01 dj=8.262E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 30 chi2=3.54E+01 zm=-3.41E-02 err=8.303E-04 dz=-2.386E-05 delz=-1.559E-01 dj=6.108E-03 chigam= 8.63E+00
+ r=  1 t=  2720 it= 30 chi2=2.87E+01 zm=-3.51E-02 err=9.941E-04 dz=-7.710E-05 delz=-2.054E-01 dj=8.041E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 29 chi2=6.85E+01 zm=-3.76E-02 err=1.410E-03 dz=-3.908E-05 delz=-1.366E-01 dj=5.380E-03 chigam= 7.45E+00
+ r=  3 t=  2820 it= 30 chi2=2.78E+01 zm=-3.52E-02 err=5.584E-04 dz=-2.186E-05 delz=-2.219E-01 dj=8.278E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 31 chi2=3.56E+01 zm=-3.41E-02 err=7.631E-04 dz=-2.144E-05 delz=-1.559E-01 dj=6.112E-03 chigam= 8.63E+00
+ r=  1 t=  2720 it= 31 chi2=2.88E+01 zm=-3.51E-02 err=7.812E-04 dz=-2.250E-05 delz=-2.043E-01 dj=8.082E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 30 chi2=6.91E+01 zm=-3.76E-02 err=1.286E-03 dz=-3.458E-05 delz=-1.379E-01 dj=5.434E-03 chigam= 7.46E+00
+ r=  3 t=  2820 it= 31 chi2=2.79E+01 zm=-3.53E-02 err=5.089E-04 dz=-1.975E-05 delz=-2.222E-01 dj=8.293E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 32 chi2=3.59E+01 zm=-3.41E-02 err=7.761E-04 dz= 7.104E-06 delz=-1.719E-01 dj=6.662E-03 chigam= 8.63E+00
+ r=  1 t=  2720 it= 32 chi2=2.89E+01 zm=-3.51E-02 err=6.740E-04 dz=-4.436E-05 delz=-2.076E-01 dj=8.133E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 31 chi2=6.97E+01 zm=-3.77E-02 err=1.174E-03 dz=-3.096E-05 delz=-1.389E-01 dj=5.477E-03 chigam= 7.46E+00
+ r=  3 t=  2820 it= 32 chi2=2.80E+01 zm=-3.53E-02 err=4.642E-04 dz=-1.788E-05 delz=-2.225E-01 dj=8.306E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 33 chi2=3.60E+01 zm=-3.41E-02 err=6.695E-04 dz=-2.720E-05 delz=-1.615E-01 dj=6.254E-03 chigam= 8.63E+00
+ r=  1 t=  2720 it= 33 chi2=2.90E+01 zm=-3.51E-02 err=6.037E-04 dz=-6.873E-06 delz=-2.052E-01 dj=8.118E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 32 chi2=7.01E+01 zm=-3.77E-02 err=1.072E-03 dz=-2.793E-05 delz=-1.397E-01 dj=5.515E-03 chigam= 7.46E+00
+ r=  3 t=  2820 it= 33 chi2=2.80E+01 zm=-3.53E-02 err=4.239E-04 dz=-1.621E-05 delz=-2.227E-01 dj=8.317E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 34 chi2=3.62E+01 zm=-3.41E-02 err=6.781E-04 dz= 2.575E-06 delz=-1.684E-01 dj=6.526E-03 chigam= 8.63E+00
+ r=  1 t=  2720 it= 34 chi2=2.91E+01 zm=-3.52E-02 err=5.068E-04 dz=-3.538E-05 delz=-2.084E-01 dj=8.163E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 33 chi2=7.06E+01 zm=-3.77E-02 err=9.786E-04 dz=-2.531E-05 delz=-1.404E-01 dj=5.548E-03 chigam= 7.46E+00
+ r=  3 t=  2820 it= 34 chi2=2.81E+01 zm=-3.53E-02 err=3.873E-04 dz=-1.472E-05 delz=-2.230E-01 dj=8.327E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 35 chi2=3.64E+01 zm=-3.42E-02 err=6.379E-04 dz=-2.924E-06 delz=-1.765E-01 dj=6.754E-03 chigam= 8.62E+00
+ r=  1 t=  2720 it= 35 chi2=2.92E+01 zm=-3.52E-02 err=5.530E-04 dz= 1.387E-06 delz=-2.060E-01 dj=8.155E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 34 chi2=7.10E+01 zm=-3.77E-02 err=8.937E-04 dz=-2.299E-05 delz=-1.411E-01 dj=5.578E-03 chigam= 7.46E+00
+ r=  3 t=  2820 it= 35 chi2=2.82E+01 zm=-3.53E-02 err=3.540E-04 dz=-1.337E-05 delz=-2.232E-01 dj=8.337E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 36 chi2=3.63E+01 zm=-3.42E-02 err=5.656E-04 dz=-3.596E-05 delz=-1.478E-01 dj=5.791E-03 chigam= 8.63E+00
+ r=  1 t=  2720 it= 36 chi2=2.93E+01 zm=-3.52E-02 err=4.076E-04 dz=-3.031E-05 delz=-2.090E-01 dj=8.192E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 35 chi2=7.14E+01 zm=-3.78E-02 err=8.162E-04 dz=-2.090E-05 delz=-1.417E-01 dj=5.606E-03 chigam= 7.46E+00
+ r=  3 t=  2820 it= 36 chi2=2.82E+01 zm=-3.53E-02 err=3.237E-04 dz=-1.216E-05 delz=-2.234E-01 dj=8.345E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 37 chi2=3.67E+01 zm=-3.42E-02 err=5.520E-04 dz= 1.585E-06 delz=-1.778E-01 dj=6.810E-03 chigam= 8.62E+00
+ r=  1 t=  2720 it= 37 chi2=2.93E+01 zm=-3.52E-02 err=3.680E-04 dz=-1.932E-05 delz=-2.092E-01 dj=8.207E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 36 chi2=7.17E+01 zm=-3.78E-02 err=7.453E-04 dz=-1.902E-05 delz=-1.423E-01 dj=5.631E-03 chigam= 7.46E+00
+ r=  3 t=  2820 it= 37 chi2=2.83E+01 zm=-3.53E-02 err=2.962E-04 dz=-1.106E-05 delz=-2.235E-01 dj=8.353E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 38 chi2=3.68E+01 zm=-3.42E-02 err=4.909E-04 dz=-3.154E-06 delz=-1.742E-01 dj=6.667E-03 chigam= 8.62E+00
+ r=  1 t=  2720 it= 38 chi2=2.94E+01 zm=-3.52E-02 err=3.336E-04 dz=-1.426E-05 delz=-2.094E-01 dj=8.213E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 37 chi2=7.20E+01 zm=-3.78E-02 err=6.806E-04 dz=-1.730E-05 delz=-1.428E-01 dj=5.654E-03 chigam= 7.46E+00
+ r=  3 t=  2820 it= 38 chi2=2.83E+01 zm=-3.54E-02 err=2.710E-04 dz=-1.007E-05 delz=-2.237E-01 dj=8.360E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 39 chi2=3.67E+01 zm=-3.42E-02 err=4.551E-04 dz=-3.572E-05 delz=-1.468E-01 dj=5.754E-03 chigam= 8.62E+00
+ r=  1 t=  2720 it= 39 chi2=2.94E+01 zm=-3.52E-02 err=5.069E-04 dz= 1.269E-05 delz=-2.065E-01 dj=8.184E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 38 chi2=7.23E+01 zm=-3.78E-02 err=6.215E-04 dz=-1.574E-05 delz=-1.433E-01 dj=5.676E-03 chigam= 7.47E+00
+ r=  3 t=  2820 it= 39 chi2=2.84E+01 zm=-3.54E-02 err=2.480E-04 dz=-9.175E-06 delz=-2.238E-01 dj=8.367E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 40 chi2=3.70E+01 zm=-3.42E-02 err=4.375E-04 dz= 3.022E-06 delz=-1.774E-01 dj=6.800E-03 chigam= 8.62E+00
+ r=  1 t=  2720 it= 40 chi2=2.95E+01 zm=-3.52E-02 err=2.850E-04 dz=-2.254E-05 delz=-2.094E-01 dj=8.216E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 39 chi2=7.26E+01 zm=-3.78E-02 err=5.674E-04 dz=-1.431E-05 delz=-1.437E-01 dj=5.695E-03 chigam= 7.47E+00
+ r=  3 t=  2820 it= 40 chi2=2.84E+01 zm=-3.54E-02 err=2.270E-04 dz=-8.364E-06 delz=-2.239E-01 dj=8.373E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 41 chi2=3.71E+01 zm=-3.42E-02 err=3.871E-04 dz=-1.150E-06 delz=-1.742E-01 dj=6.672E-03 chigam= 8.62E+00
+ r=  1 t=  2720 it= 41 chi2=2.96E+01 zm=-3.53E-02 err=2.579E-04 dz=-1.372E-05 delz=-2.095E-01 dj=8.225E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 40 chi2=7.28E+01 zm=-3.78E-02 err=5.181E-04 dz=-1.301E-05 delz=-1.441E-01 dj=5.713E-03 chigam= 7.47E+00
+ r=  3 t=  2820 it= 41 chi2=2.85E+01 zm=-3.54E-02 err=2.079E-04 dz=-7.628E-06 delz=-2.240E-01 dj=8.378E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 42 chi2=3.72E+01 zm=-3.42E-02 err=3.469E-04 dz=-4.313E-06 delz=-1.724E-01 dj=6.602E-03 chigam= 8.62E+00
+ r=  1 t=  2720 it= 42 chi2=2.96E+01 zm=-3.53E-02 err=2.343E-04 dz=-9.887E-06 delz=-2.096E-01 dj=8.227E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 41 chi2=7.31E+01 zm=-3.79E-02 err=4.730E-04 dz=-1.183E-05 delz=-1.445E-01 dj=5.730E-03 chigam= 7.47E+00
+ r=  3 t=  2820 it= 42 chi2=2.85E+01 zm=-3.54E-02 err=1.903E-04 dz=-6.958E-06 delz=-2.241E-01 dj=8.383E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 43 chi2=3.72E+01 zm=-3.42E-02 err=3.191E-04 dz=-6.209E-06 delz=-1.714E-01 dj=6.564E-03 chigam= 8.61E+00
+ r=  1 t=  2720 it= 43 chi2=2.97E+01 zm=-3.53E-02 err=2.133E-04 dz=-7.858E-06 delz=-2.096E-01 dj=8.229E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 42 chi2=7.33E+01 zm=-3.79E-02 err=4.319E-04 dz=-1.075E-05 delz=-1.448E-01 dj=5.746E-03 chigam= 7.47E+00
+ r=  3 t=  2820 it= 43 chi2=2.85E+01 zm=-3.54E-02 err=1.743E-04 dz=-6.352E-06 delz=-2.242E-01 dj=8.387E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 44 chi2=3.73E+01 zm=-3.42E-02 err=2.960E-04 dz=-7.128E-06 delz=-1.709E-01 dj=6.546E-03 chigam= 8.61E+00
+ r=  1 t=  2720 it= 44 chi2=2.97E+01 zm=-3.53E-02 err=1.946E-04 dz=-6.620E-06 delz=-2.096E-01 dj=8.232E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 43 chi2=7.35E+01 zm=-3.79E-02 err=3.943E-04 dz=-9.760E-06 delz=-1.451E-01 dj=5.760E-03 chigam= 7.47E+00
+ r=  3 t=  2820 it= 44 chi2=2.86E+01 zm=-3.54E-02 err=1.596E-04 dz=-5.800E-06 delz=-2.243E-01 dj=8.392E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 45 chi2=3.74E+01 zm=-3.42E-02 err=2.731E-04 dz=-7.396E-06 delz=-1.707E-01 dj=6.538E-03 chigam= 8.61E+00
+ r=  1 t=  2720 it= 45 chi2=2.97E+01 zm=-3.53E-02 err=1.777E-04 dz=-5.751E-06 delz=-2.096E-01 dj=8.234E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 44 chi2=7.36E+01 zm=-3.79E-02 err=3.600E-04 dz=-8.867E-06 delz=-1.454E-01 dj=5.773E-03 chigam= 7.47E+00
+ r=  3 t=  2820 it= 45 chi2=2.86E+01 zm=-3.54E-02 err=1.462E-04 dz=-5.298E-06 delz=-2.244E-01 dj=8.395E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 46 chi2=3.75E+01 zm=-3.43E-02 err=2.510E-04 dz=-7.262E-06 delz=-1.707E-01 dj=6.536E-03 chigam= 8.61E+00
+ r=  1 t=  2720 it= 46 chi2=2.98E+01 zm=-3.53E-02 err=1.625E-04 dz=-5.079E-06 delz=-2.097E-01 dj=8.235E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 45 chi2=7.38E+01 zm=-3.79E-02 err=3.286E-04 dz=-8.055E-06 delz=-1.457E-01 dj=5.785E-03 chigam= 7.47E+00
+ r=  3 t=  2820 it= 46 chi2=2.86E+01 zm=-3.54E-02 err=1.339E-04 dz=-4.841E-06 delz=-2.245E-01 dj=8.399E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 47 chi2=3.75E+01 zm=-3.43E-02 err=2.303E-04 dz=-6.904E-06 delz=-1.707E-01 dj=6.537E-03 chigam= 8.61E+00
+ r=  1 t=  2720 it= 47 chi2=2.98E+01 zm=-3.53E-02 err=1.487E-04 dz=-4.530E-06 delz=-2.097E-01 dj=8.237E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 46 chi2=7.39E+01 zm=-3.79E-02 err=3.000E-04 dz=-7.317E-06 delz=-1.459E-01 dj=5.796E-03 chigam= 7.47E+00
+ r=  3 t=  2820 it= 47 chi2=2.86E+01 zm=-3.54E-02 err=1.227E-04 dz=-4.426E-06 delz=-2.245E-01 dj=8.402E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 48 chi2=3.76E+01 zm=-3.43E-02 err=2.111E-04 dz=-6.437E-06 delz=-1.707E-01 dj=6.539E-03 chigam= 8.61E+00
+ r=  1 t=  2720 it= 48 chi2=2.98E+01 zm=-3.53E-02 err=1.364E-04 dz=-4.058E-06 delz=-2.097E-01 dj=8.238E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 47 chi2=7.41E+01 zm=-3.79E-02 err=2.739E-04 dz=-6.646E-06 delz=-1.461E-01 dj=5.806E-03 chigam= 7.47E+00
+ r=  3 t=  2820 it= 48 chi2=2.87E+01 zm=-3.54E-02 err=1.123E-04 dz=-4.044E-06 delz=-2.246E-01 dj=8.405E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 49 chi2=3.76E+01 zm=-3.43E-02 err=1.933E-04 dz=-5.930E-06 delz=-1.708E-01 dj=6.543E-03 chigam= 8.61E+00
+ r=  1 t=  2720 it= 49 chi2=2.98E+01 zm=-3.53E-02 err=1.252E-04 dz=-3.653E-06 delz=-2.097E-01 dj=8.239E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 48 chi2=7.42E+01 zm=-3.79E-02 err=2.501E-04 dz=-6.038E-06 delz=-1.464E-01 dj=5.815E-03 chigam= 7.47E+00
+ r=  3 t=  2820 it= 49 chi2=2.87E+01 zm=-3.54E-02 err=1.029E-04 dz=-3.696E-06 delz=-2.246E-01 dj=8.407E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 50 chi2=3.77E+01 zm=-3.43E-02 err=1.770E-04 dz=-5.423E-06 delz=-1.709E-01 dj=6.547E-03 chigam= 8.61E+00
+ r=  1 t=  2720 it= 50 chi2=2.99E+01 zm=-3.53E-02 err=1.150E-04 dz=-3.295E-06 delz=-2.097E-01 dj=8.240E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 49 chi2=7.43E+01 zm=-3.79E-02 err=2.283E-04 dz=-5.485E-06 delz=-1.465E-01 dj=5.824E-03 chigam= 7.47E+00
+ r=  3 t=  2820 it= 50 chi2=2.87E+01 zm=-3.54E-02 err=9.428E-05 dz=-3.383E-06 delz=-2.247E-01 dj=8.410E-03 chigam= 5.84E+00
+ r=  0 t=  2670 it= 51 chi2=3.77E+01 zm=-3.43E-02 err=1.620E-04 dz=-4.938E-06 delz=-1.710E-01 dj=6.550E-03 chigam= 8.61E+00
+ r=  1 t=  2720 it= 51 chi2=2.99E+01 zm=-3.53E-02 err=1.056E-04 dz=-2.983E-06 delz=-2.097E-01 dj=8.241E-03 chigam= 6.99E+00
+ r=  2 t=  2770 it= 50 chi2=7.44E+01 zm=-3.79E-02 err=2.085E-04 dz=-4.987E-06 delz=-1.467E-01 dj=5.832E-03 chigam= 7.47E+00
+ r=  0 t=  2670 it= 52 chi2=3.78E+01 zm=-3.43E-02 err=1.483E-04 dz=-4.487E-06 delz=-1.711E-01 dj=6.554E-03 chigam= 8.61E+00
+ r=  1 t=  2720 it= 52 chi2=2.98E+01 zm=-3.53E-02 err=2.240E-04 dz=-2.702E-05 delz=-2.039E-01 dj=7.965E-03 chigam= 7.00E+00
+ r=  2 t=  2770 it= 51 chi2=7.45E+01 zm=-3.79E-02 err=1.904E-04 dz=-4.530E-06 delz=-1.469E-01 dj=5.839E-03 chigam= 7.47E+00
+ r=  0 t=  2670 it= 53 chi2=3.78E+01 zm=-3.43E-02 err=1.357E-04 dz=-4.076E-06 delz=-1.711E-01 dj=6.557E-03 chigam= 8.61E+00
+ r=  1 t=  2720 it= 53 chi2=2.99E+01 zm=-3.54E-02 err=1.521E-04 dz=-1.417E-05 delz=-2.076E-01 dj=8.117E-03 chigam= 7.00E+00
+ r=  2 t=  2770 it= 52 chi2=7.46E+01 zm=-3.79E-02 err=1.738E-04 dz=-4.120E-06 delz=-1.470E-01 dj=5.845E-03 chigam= 7.47E+00
+ r=  0 t=  2670 it= 54 chi2=3.78E+01 zm=-3.43E-02 err=1.244E-04 dz=-3.698E-06 delz=-1.712E-01 dj=6.561E-03 chigam= 8.61E+00
+ r=  1 t=  2720 it= 54 chi2=2.99E+01 zm=-3.54E-02 err=1.073E-04 dz=-6.985E-06 delz=-2.097E-01 dj=8.199E-03 chigam= 7.00E+00
+ r=  2 t=  2770 it= 53 chi2=7.46E+01 zm=-3.79E-02 err=1.587E-04 dz=-3.745E-06 delz=-1.471E-01 dj=5.851E-03 chigam= 7.47E+00
+ r=  0 t=  2670 it= 55 chi2=3.79E+01 zm=-3.43E-02 err=1.140E-04 dz=-3.355E-06 delz=-1.713E-01 dj=6.563E-03 chigam= 8.61E+00
+ r=  1 t=  2720 it= 55 chi2=2.99E+01 zm=-3.54E-02 err=7.881E-05 dz=-3.051E-06 delz=-2.108E-01 dj=8.246E-03 chigam= 7.00E+00
+ r=  2 t=  2770 it= 54 chi2=7.47E+01 zm=-3.79E-02 err=1.449E-04 dz=-3.408E-06 delz=-1.473E-01 dj=5.856E-03 chigam= 7.47E+00
+ r=  0 t=  2670 it= 56 chi2=3.79E+01 zm=-3.43E-02 err=1.044E-04 dz=-3.045E-06 delz=-1.713E-01 dj=6.566E-03 chigam= 8.61E+00
+ r=  2 t=  2770 it= 55 chi2=7.48E+01 zm=-3.79E-02 err=1.323E-04 dz=-3.098E-06 delz=-1.474E-01 dj=5.861E-03 chigam= 7.47E+00
+ r=  0 t=  2670 it= 57 chi2=3.79E+01 zm=-3.43E-02 err=9.572E-05 dz=-2.767E-06 delz=-1.714E-01 dj=6.568E-03 chigam= 8.61E+00
+ r=  2 t=  2770 it= 56 chi2=7.48E+01 zm=-3.79E-02 err=1.209E-04 dz=-2.818E-06 delz=-1.475E-01 dj=5.866E-03 chigam= 7.47E+00
+INFO in efitd at r=  3, t=  2820: Done processing
+ r=  2 t=  2770 it= 57 chi2=7.49E+01 zm=-3.80E-02 err=1.104E-04 dz=-2.567E-06 delz=-1.476E-01 dj=5.870E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 58 chi2=7.50E+01 zm=-3.79E-02 err=1.697E-04 dz= 8.828E-06 delz=-1.535E-01 dj=6.070E-03 chigam= 7.47E+00
+
+       data used:   
+ 38 flux loops
+ 67 magnetic probes(i)
+  1 full rogowski
+  0 diamagnetic loop
+
+
+ shot #   =     195061 time(ms) =       2670 chi**2   =  3.680E+01
+ betat(%) =      2.000 betap    =      1.397 li       =      0.739
+ vol(cm3) =  1.913E+07 rout(cm) =    166.285 zout(cm) =     -8.369
+ elong    =      1.780 utriang  =      0.350 ltriang  =      0.645
+ a(cm)    =     60.627 lin(cm)  =      3.927 lout(cm) =      8.110
+ ltop(cm) =     22.021 q*       =      8.276 rc(cm)   =    174.835
+ zc(cm)   =     -3.959 bt0(t)   =      1.644 qout     =      9.577
+ r=  2 t=  2770 it= 59 chi2=7.49E+01 zm=-3.79E-02 err=1.091E-04 dz=-6.633E-06 delz=-1.457E-01 dj=5.800E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 60 chi2=7.50E+01 zm=-3.80E-02 err=9.410E-05 dz=-5.268E-06 delz=-1.465E-01 dj=5.831E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 61 chi2=7.50E+01 zm=-3.80E-02 err=8.251E-05 dz=-3.788E-06 delz=-1.471E-01 dj=5.855E-03 chigam= 7.47E+00
+INFO in efitd at r=  1, t=  2720: Done processing
+ r=  2 t=  2770 it= 62 chi2=7.52E+01 zm=-3.79E-02 err=1.361E-04 dz= 8.423E-06 delz=-1.534E-01 dj=6.066E-03 chigam= 7.47E+00
+INFO in efitd at r=  0, t=  2670: Done processing
+ r=  2 t=  2770 it= 63 chi2=7.51E+01 zm=-3.80E-02 err=8.961E-05 dz=-6.554E-06 delz=-1.457E-01 dj=5.802E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 64 chi2=7.51E+01 zm=-3.80E-02 err=7.521E-05 dz=-4.915E-06 delz=-1.466E-01 dj=5.837E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 65 chi2=7.53E+01 zm=-3.80E-02 err=1.154E-04 dz= 7.913E-06 delz=-1.531E-01 dj=6.058E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 66 chi2=7.52E+01 zm=-3.80E-02 err=8.027E-05 dz=-6.744E-06 delz=-1.456E-01 dj=5.800E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 67 chi2=7.52E+01 zm=-3.80E-02 err=6.584E-05 dz=-4.851E-06 delz=-1.466E-01 dj=5.838E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 68 chi2=7.53E+01 zm=-3.80E-02 err=1.027E-04 dz= 8.096E-06 delz=-1.532E-01 dj=6.061E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 69 chi2=7.52E+01 zm=-3.80E-02 err=7.168E-05 dz=-6.471E-06 delz=-1.457E-01 dj=5.804E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 70 chi2=7.53E+01 zm=-3.80E-02 err=5.769E-05 dz=-4.562E-06 delz=-1.467E-01 dj=5.842E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 71 chi2=7.54E+01 zm=-3.80E-02 err=9.403E-05 dz= 8.351E-06 delz=-1.533E-01 dj=6.065E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 72 chi2=7.53E+01 zm=-3.80E-02 err=6.476E-05 dz=-6.190E-06 delz=-1.458E-01 dj=5.807E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 73 chi2=7.53E+01 zm=-3.80E-02 err=5.122E-05 dz=-4.310E-06 delz=-1.468E-01 dj=5.845E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 74 chi2=7.54E+01 zm=-3.80E-02 err=8.786E-05 dz= 8.545E-06 delz=-1.534E-01 dj=6.068E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 75 chi2=7.53E+01 zm=-3.80E-02 err=5.941E-05 dz=-5.976E-06 delz=-1.458E-01 dj=5.810E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 76 chi2=7.53E+01 zm=-3.80E-02 err=4.623E-05 dz=-4.129E-06 delz=-1.469E-01 dj=5.848E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 77 chi2=7.55E+01 zm=-3.80E-02 err=8.335E-05 dz= 8.679E-06 delz=-1.534E-01 dj=6.071E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 78 chi2=7.53E+01 zm=-3.80E-02 err=5.533E-05 dz=-5.821E-06 delz=-1.459E-01 dj=5.812E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 79 chi2=7.55E+01 zm=-3.80E-02 err=7.176E-05 dz= 7.262E-06 delz=-1.528E-01 dj=6.045E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 80 chi2=7.53E+01 zm=-3.80E-02 err=5.762E-05 dz=-6.878E-06 delz=-1.455E-01 dj=5.798E-03 chigam= 7.47E+00
+ r=  2 t=  2770 it= 81 chi2=7.54E+01 zm=-3.80E-02 err=4.360E-05 dz=-4.590E-06 delz=-1.467E-01 dj=5.842E-03 chigam= 7.47E+00
+WARNING in fit at r=  2, t=  2770: not converged, reached max iterations
+INFO in efitd at r=  2, t=  2770: Done processing

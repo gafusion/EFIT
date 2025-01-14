@@ -963,7 +963,7 @@
 !!    average from MDS+
 !!
 !!    WARNING: this subroutine uses both REAL*4 (used by MDS+) and
-!!             REAL*8 variables conversions must be handled carefully
+!!             REAL*8 variables, conversions must be handled carefully
 !!
 !!    @param nshot : shot number
 !!    @param ptname : the point name (10 ASCII characters)
@@ -1140,6 +1140,9 @@
 !!    gettanh gets the edge hyperbolic tangent fit parameters
 !!    from MDS+
 !!
+!!    WARNING: this subroutine uses both REAL*4 (used by get_mtanh_ts) and
+!!             REAL*8 variables, conversions must be handled carefully
+!!
 !!    @param ishot :
 !!    @param fitzts :
 !!    @param ktime :
@@ -1152,6 +1155,7 @@
 !*********************************************************************
       subroutine gettanh(ishot,fitzts,ktime,time,ztssym,ztswid, &
                           ptssym,ztserr)
+      use set_kinds
       implicit none
       integer*4, intent(in) :: ishot,ktime
       real*8, intent(in) ::  time(ktime)
@@ -1161,7 +1165,7 @@
       integer*4 :: iishot,kktime
       character*2 ztsfit
       logical errzts(ktime)
-      real*8 xw(ktime),bw(ktime),cw(ktime),dw(ktime)
+      real*4 xw(ktime),bw(ktime),cw(ktime),dw(ktime)
 !-----------------------------------------------------------------------
 !--   Get edge pedestal tanh paramters                                --
 !-----------------------------------------------------------------------
@@ -1169,11 +1173,11 @@
         ztsfit='TE'
         iishot=ishot
         kktime=ktime
-        xw=time
-        call Get_Mtanh_Ts(iishot,ztsfit,kktime,xw,bw,cw,dw,errzts)
-        ztssym=bw
-        ztswid=cw
-        ptssym=dw
+        xw=real(time,r4)
+        call get_mtanh_ts(iishot,ztsfit,kktime,xw,bw,cw,dw,errzts)
+        ztssym=real(bw,dp)
+        ztswid=real(cw,dp)
+        ptssym=real(dw,dp)
         ztserr=errzts
       endif
 !

@@ -75,5 +75,5 @@ INFO in efitd at r=  3, t=  2700: Done processing
  elong      =      1.791 utri       =      0.746 ltri       =      0.352
  a(cm)      =     56.361 gapin(cm)  =     14.819 gapout(cm) =      5.797
  gaptop(cm) =     16.924 q95        =      2.944 rm(cm)     =    174.568
- zm(cm)     =     -3.211 totalchi^2 =  2.090E+01 error      =  6.111E-05
+ zm(cm)     =     -3.211 totalchi^2 =  2.090E+01 error      =  6.112E-05
 INFO in efitd at r=  0, t=  2400: Done processing
